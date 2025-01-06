@@ -655,6 +655,8 @@ void ComplexTextController::adjustGlyphsAndAdvances()
     bool runForbidsLeftExpansion = m_run.expansionBehavior().left == ExpansionBehavior::Behavior::Forbid;
     bool runForbidsRightExpansion = m_run.expansionBehavior().right == ExpansionBehavior::Behavior::Forbid;
 
+    FloatPoint glyphOrigin;
+
     TextSpacing::CharacterClass previousCharacterClass = m_textSpacingState.lastCharacterClassFromPreviousRun;
     // We are iterating in glyph order, not string order. Compare this to WidthIterator::advanceInternal()
     for (size_t runIndex = 0; runIndex < runCount; ++runIndex) {
@@ -671,7 +673,6 @@ void ComplexTextController::adjustGlyphsAndAdvances()
         // Lower in this function, synthetic bold is blanket-applied to everything, so no need to double-apply it here.
         float spaceWidth = font.spaceWidth(Font::SyntheticBoldInclusion::Exclude);
         auto charactersSpan = complexTextRun.characters();
-        FloatPoint glyphOrigin;
         unsigned previousCharacterIndex = m_run.ltr() ? std::numeric_limits<unsigned>::min() : std::numeric_limits<unsigned>::max();
         bool isMonotonic = true;
 
@@ -810,10 +811,12 @@ void ComplexTextController::adjustGlyphsAndAdvances()
 
             FloatRect glyphBounds = font.boundsForGlyph(glyph);
             glyphBounds.move(glyphOrigin.x(), glyphOrigin.y());
-            m_minGlyphBoundingBoxX = std::min(m_minGlyphBoundingBoxX, glyphBounds.x());
-            m_maxGlyphBoundingBoxX = std::max(m_maxGlyphBoundingBoxX, glyphBounds.maxX());
-            m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, glyphBounds.y());
-            m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, glyphBounds.maxY());
+            if (!(treatAsSpace || character == ideographicSpace)) {
+                m_minGlyphBoundingBoxX = std::min(m_minGlyphBoundingBoxX, glyphBounds.x());
+                m_maxGlyphBoundingBoxX = std::max(m_maxGlyphBoundingBoxX, glyphBounds.maxX());
+                m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, glyphBounds.y());
+                m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, glyphBounds.maxY());
+            }
             glyphOrigin.move(advance);
 
             previousCharacterIndex = characterIndex;

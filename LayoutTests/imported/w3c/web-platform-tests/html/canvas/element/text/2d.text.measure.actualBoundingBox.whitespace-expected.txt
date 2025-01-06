@@ -1,0 +1,6 @@
+2d.text.measure.actualBoundingBox.whitespace
+Testing actualBoundingBox with leading/trailing whitespace
+Actual output:
+
+PASS Testing actualBoundingBox with leading/trailing whitespace
+
