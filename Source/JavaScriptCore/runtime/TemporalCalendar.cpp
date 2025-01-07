@@ -217,7 +217,6 @@ JSObject* TemporalCalendar::from(JSGlobalObject* globalObject, JSValue calendarL
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (calendarLike.isObject()) {
-        // FIXME: Also support PlainMonthDay, PlainYearMonth, ZonedDateTime.
         if (calendarLike.inherits<TemporalPlainDate>())
             return jsCast<TemporalPlainDate*>(calendarLike)->calendar();
 
@@ -226,6 +225,15 @@ JSObject* TemporalCalendar::from(JSGlobalObject* globalObject, JSValue calendarL
 
         if (calendarLike.inherits<TemporalPlainTime>())
             return jsCast<TemporalPlainTime*>(calendarLike)->calendar();
+
+        if (calendarLike.inherits<TemporalPlainMonthDay>())
+            return jsCast<TemporalPlainMonthDay*>(calendarLike)->calendar();
+
+        if (calendarLike.inherits<TemporalPlainYearMonth>())
+            return jsCast<TemporalPlainYearMonth*>(calendarLike)->calendar();
+
+        if (calendarLike.inherits<TemporalZonedDateTime>())
+            return jsCast<TemporalZonedDateTime*>(calendarLike)->calendar();
 
         JSObject* calendarLikeObject = jsCast<JSObject*>(calendarLike);
         bool hasProperty = calendarLikeObject->hasProperty(globalObject, vm.propertyNames->calendar);
