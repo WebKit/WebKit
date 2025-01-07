@@ -157,4 +157,11 @@ constexpr bool isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::P
     return true;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-isodatewithinlimits
+constexpr bool isoDateWithinLimits(ISO8601::PlainDate isoDate)
+{
+    return isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate,
+        ISO8601::PlainTime(12, 0, 0, 0, 0, 0)));
+}
+
 } // namespace JSC
