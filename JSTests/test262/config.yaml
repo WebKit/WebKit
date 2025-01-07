@@ -479,3 +479,16 @@ skip:
     - test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-resolved-time-zone.js
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-resolved-time-zone.js
     - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
+
+    # Depends on support for named time zones
+    - test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js
+    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js
+    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js
+    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js
+    - test/intl402/Temporal/Duration/compare/twenty-five-hour-day.js
+    - test/intl402/Temporal/Duration/prototype/round/adjust-rounded-duration-days.js
+    - test/intl402/Temporal/Duration/prototype/round/dst-balancing-result.js
+    - test/intl402/Temporal/Duration/prototype/round/dst-rounding-result.js
+    - test/intl402/Temporal/Duration/prototype/total/dst-balancing-result.js
+    - test/intl402/Temporal/Duration/prototype/total/dst-day-length.js
+    - test/intl402/Temporal/Duration/prototype/total/dst-rounding-result.js

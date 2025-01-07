@@ -319,42 +319,15 @@ test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
 test/intl402/DateTimeFormat/prototype/format/temporal-objects-not-overlapping-options.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
-test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-not-overlapping-options.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
-test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-test/intl402/DateTimeFormat/prototype/formatRange/to-datetime-formattable-with-different-arg-kinds.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-not-overlapping-options.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
-test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-test/intl402/DateTimeFormat/prototype/formatRangeToParts/to-datetime-formattable-with-different-arg-kinds.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
-  default: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js:
-  default: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
-  default: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-not-overlapping-options.js:
   default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
   strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
-test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
 test/intl402/DateTimeFormat/timezone-case-insensitive.js:
   default: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«"America/Buenos_Aires"», «"America/Argentina/Buenos_Aires"») to be true'
   strict mode: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«"America/Buenos_Aires"», «"America/Argentina/Buenos_Aires"») to be true'
@@ -385,30 +358,9 @@ test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
-test/intl402/Temporal/Duration/compare/twenty-five-hour-day.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941184000_000_000_000n, \"America/Vancouver\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941184000_000_000_000n, \"America/Vancouver\")')"
-test/intl402/Temporal/Duration/prototype/round/adjust-rounded-duration-days.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
-test/intl402/Temporal/Duration/prototype/round/dst-balancing-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/round/dst-rounding-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/intl402/Temporal/Duration/prototype/round/relativeto-sub-minute-offset.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/intl402/Temporal/Duration/prototype/total/dst-balancing-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/total/dst-day-length.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/total/dst-rounding-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/intl402/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
