@@ -604,7 +604,7 @@ static bool canBeTimeZoneAnnotation(const StringParsingBuffer<CharacterType>& bu
 }
 
 template<typename CharacterType>
-static std::optional<TimeZoneRecord> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<TimeZoneAnnotation> parseTimeZoneAnnotation(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
     // TimeZoneAnnotation :
@@ -635,8 +635,7 @@ static std::optional<TimeZoneRecord> parseTimeZoneAnnotation(StringParsingBuffer
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        // TODO: ?? should offset appear in both fields?
-        return TimeZoneRecord { false, std::tuple(asString, offset.value()), asString };
+        return TimeZoneAnnotation { asString, offset.value() };
     }
     case 'E': {
         // "Etc/GMT+20" and "]" => length is 11.
@@ -656,7 +655,7 @@ static std::optional<TimeZoneRecord> parseTimeZoneAnnotation(StringParsingBuffer
                             hour = (secondHourCharacter - '0') + 10 * (firstHourCharacter - '0');
                             if (hour < 24 && buffer[10] == ']') {
                                 Vector<LChar> asString = buffer.consume(11);
-                                return TimeZoneRecord { false, std::tuple(asString, nsPerHour * hour * factor), std::nullopt };
+                                return TimeZoneAnnotation { asString, nsPerHour * hour * factor };
                             }
                         }
                     }
@@ -747,7 +746,7 @@ static std::optional<TimeZoneRecord> parseTimeZoneAnnotation(StringParsingBuffer
         if (*buffer != ']')
             return std::nullopt;
         buffer.advance();
-        return TimeZoneRecord { false, std::nullopt, result };
+        return TimeZoneAnnotation { result, std::nullopt };
     }
     }
 }
@@ -764,12 +763,12 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
     case 'Z': {
         buffer.advance();
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
-            auto timeZoneRecord = parseTimeZoneAnnotation(buffer);
-            if (!timeZoneRecord)
+            auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+            if (!timeZoneAnnotation)
                 return std::nullopt;
-            return TimeZoneRecord { true, timeZoneRecord->m_offset_string, timeZoneRecord->m_annotation };
+            return TimeZoneRecord { true, std::nullopt, timeZoneAnnotation };
         }
-        return TimeZoneRecord { true, std::nullopt, { } };
+        return TimeZoneRecord { true, std::nullopt, std::nullopt };
     }
     // TimeZoneUTCOffsetSign
     // https://tc39.es/proposal-temporal/#prod-TimeZoneUTCOffsetSign
@@ -781,20 +780,18 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
         if (!offset)
             return std::nullopt;
         if (!buffer.atEnd() && *buffer == '[' && canBeTimeZone(buffer, *buffer)) {
-            auto timeZone = parseTimeZoneAnnotation(buffer);
-            if (!timeZone)
+            auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+            if (!timeZoneAnnotation)
                 return std::nullopt;
-            if (timeZone->m_annotation)
-                return TimeZoneRecord { false, std::tuple(chars, offset.value()), timeZone->m_annotation };
-            else if (timeZone->m_offset_string)
-                return TimeZoneRecord { false, std::tuple(chars, offset.value()), std::get<0>(timeZone->m_offset_string.value()) };
+            return TimeZoneRecord { false, TimeZoneOffset { chars, offset.value() }, timeZoneAnnotation };
         }
-        return TimeZoneRecord { false, std::tuple(chars, offset.value()), { } };
+        return TimeZoneRecord { false, TimeZoneOffset { chars, offset.value() }, std::nullopt };
     }
     // TimeZoneBracketedAnnotation
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
     case '[': {
-        return parseTimeZoneAnnotation(buffer);
+        auto timeZoneAnnotation = parseTimeZoneAnnotation(buffer);
+        return TimeZoneRecord { false, std::nullopt, timeZoneAnnotation };
     }
     default:
         return std::nullopt;
@@ -1415,7 +1412,7 @@ std::optional<ExactTime> parseInstant(StringView string)
         if (!datetime)
             return std::nullopt;
         auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(datetime.value());
-        if (!timeZoneOptional || (!timeZoneOptional->m_z && !timeZoneOptional->m_offset_string))
+        if (!timeZoneOptional || (!timeZoneOptional->m_z && !timeZoneOptional->m_offset))
             return std::nullopt;
         if (!buffer.atEnd())
             return std::nullopt;
@@ -1424,8 +1421,8 @@ std::optional<ExactTime> parseInstant(StringView string)
 
         int64_t offset = 0;
         if (!timeZoneOptional->m_z) {
-            if (timeZoneOptional->m_offset_string)
-                offset = std::get<1>(timeZoneOptional->m_offset_string.value());
+            if (timeZoneOptional->m_offset)
+                offset = timeZoneOptional->m_offset->m_offset;
             else
                 return std::nullopt;
         }

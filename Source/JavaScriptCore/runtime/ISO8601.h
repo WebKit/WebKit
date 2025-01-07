@@ -410,18 +410,31 @@ class TimeZone {
     TimeZone(int64_t offset) : m_timezone(offset) {}
     std::variant<TimeZoneID, int64_t> m_timezone;
     std::optional<String> m_offset_string;
-}; 
+};
+
+struct TimeZoneOffset {
+    // Offset in nanoseconds.
+    // Stored as a pair of the original string (so that offset strings
+    // with subsecond precision can be distinguished) and the offset
+    // as an int64_t.
+    Vector<LChar> m_offset_string;
+    int64_t m_offset;
+};
+
+struct TimeZoneAnnotation {
+    Vector<LChar> m_annotation;
+    // If `m_annotation` can be parsed as a numeric offset, then m_offset is non-null.
+    std::optional<int64_t> m_offset;
+};
 
 // https://tc39.es/proposal-temporal/#sec-temporal-iso-string-time-zone-parse-records
 // Record { [[Z]], [[OffsetString]], [[TimeZoneAnnotation]] }
 struct TimeZoneRecord {
     bool m_z { false };
-    // Offset in nanoseconds.
-    // Stored as a pair of the original string (so that offset strings
-    // with subsecond precision can be distinguished) and the offset
-    // as an int64_t.
-    std::optional<std::tuple<Vector<LChar>, int64_t>> m_offset_string;
-    std::optional<Vector<LChar>> m_annotation;
+    // Offset as part of ISO string, if present
+    std::optional<TimeZoneOffset> m_offset;
+    // Bracketed annotation, if present
+    std::optional<TimeZoneAnnotation> m_annotation;
 };
 
 static constexpr unsigned minCalendarLength = 3;
