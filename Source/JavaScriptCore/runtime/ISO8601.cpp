@@ -608,7 +608,7 @@ static std::optional<TimeZoneAnnotation> parseTimeZoneAnnotation(StringParsingBu
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneAnnotation
     // TimeZoneAnnotation :
-    //     [ AnnotationCriticalFlag[opt] TimeZoneIdentifier ]
+    //     [ AnnotationCriticalFlag_opt TimeZoneIdentifier ]
     // TimeZoneIdentifier :
     //     UTCOffset_[~SubMinutePrecision]
     //     TimeZoneIANAName
@@ -1569,11 +1569,11 @@ String formatUTCOffsetNanoseconds(int64_t offsetNanoseconds)
 {
     auto sign = offsetNanoseconds >= 0 ? '+' : '-';
     auto absoluteNanoseconds = std::abs(offsetNanoseconds);
-    double divisor = 3600 * 1000000000.0;
-    auto hour = std::floor((double) absoluteNanoseconds / divisor);
-    divisor = 60 * 1000000000.0;
-    auto minute = std::fmod(std::floor((double) absoluteNanoseconds / divisor), 60);
-    divisor = 1000000000;
+    Int128 divisor = 3600 * 1000000000ll;
+    auto hour = std::floor((double) absoluteNanoseconds / (double) divisor);
+    divisor = 60 * 1000000000ll;
+    auto minute = std::fmod(std::floor((double) absoluteNanoseconds / (double) divisor), 60);
+    divisor = 1000000000ll;
     auto second = std::fmod(std::floor((double) absoluteNanoseconds / divisor), 60);
     auto subSecondNanoseconds = absoluteNanoseconds % ((int64_t) divisor);
     std::optional<TemporalFractionalSecondDigits> precision = std::nullopt;
@@ -1903,8 +1903,7 @@ static bool validateTemporalRoundingIncrement(unsigned increment, Int128 dividen
 // https://tc39.es/proposal-temporal/#sec-temporal-formatdatetimeutcoffsetrounded
 String formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds)
 {
-    Int128 divisor = 1000000000;
-    divisor *= 60;
+    Int128 divisor = 60000000000ll;
     offsetNanoseconds = roundNumberToIncrementInt128(offsetNanoseconds, divisor, RoundingMode::HalfExpand);
     ASSERT(!(offsetNanoseconds % divisor));
     Int128 offsetMinutes = offsetNanoseconds / divisor;
