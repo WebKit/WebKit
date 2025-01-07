@@ -178,6 +178,22 @@ enum class TemporalFractionalSecondDigits : uint8_t {
     Auto,
 };
 
+enum class FieldName : uint8_t {
+    Year,
+    Month,
+    MonthCode,
+    Day,
+    Hour,
+    Minute,
+    Second,
+    Millisecond,
+    Microsecond,
+    Nanosecond,
+    Calendar,
+    Offset,
+    TimeZone,
+};
+
 Int128 nonNegativeModulo(Int128 x, Int128 y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
