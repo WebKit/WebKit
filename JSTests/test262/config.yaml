@@ -471,3 +471,35 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-negative-epochnanoseconds.js
+
+    - test/built-ins/Temporal/PlainTime/prototype/with/plaintimelike-invalid.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/from/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/with/yearmonthlike-invalid.js
+    - test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js
+    - test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js
+    - test/intl402/Temporal/Instant/prototype/toString/timezone-offset.js
+    - test/intl402/Temporal/Instant/prototype/toString/timezone-string-datetime.js
+
+    # Depends on Temporal support in IntlDateTimeFormat::handleDateTimeValue()
+    - test/intl402/DateTimeFormat/prototype/format/temporal-objects-resolved-time-zone.js
+    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-resolved-time-zone.js
+    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-resolved-time-zone.js
+    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
+
+    # Depends on support for named time zones
+    - test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js
+    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js
+    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js
+    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js
+    - test/intl402/Temporal/Duration/compare/twenty-five-hour-day.js
+    - test/intl402/Temporal/Duration/prototype/round/adjust-rounded-duration-days.js
+    - test/intl402/Temporal/Duration/prototype/round/dst-balancing-result.js
+    - test/intl402/Temporal/Duration/prototype/round/dst-rounding-result.js
+    - test/intl402/Temporal/Duration/prototype/total/dst-balancing-result.js
+    - test/intl402/Temporal/Duration/prototype/total/dst-day-length.js
+    - test/intl402/Temporal/Duration/prototype/total/dst-rounding-result.js
+

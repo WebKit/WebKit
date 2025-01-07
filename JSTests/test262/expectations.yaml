@@ -199,48 +199,6 @@ test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js:
 test/built-ins/Temporal/PlainDate/calendar-iso-string.js:
   default: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: An ISO string is not a valid calendar ID for constructor parameter Expected a RangeError to be thrown but no exception was thrown at all'
-<<<<<<< HEAD
-test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-case-insensitive.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/from/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-primitive.js:
-  default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. Failing call before options is processed'
-  strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. Failing call before options is processed'
-test/built-ins/Temporal/PlainDate/from/observable-get-overflow-argument-string-invalid.js:
-  default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
-  strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString] and expected [] should have the same contents. options read after ISO string parsing'
-test/built-ins/Temporal/PlainDate/from/order-of-operations.js:
-  default: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-  strict mode: 'Test262Error: Actual [get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainDate/prototype/equals/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/era/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"era\").get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"era\").get')"
-test/built-ins/Temporal/PlainDate/prototype/era/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-test/built-ins/Temporal/PlainDate/prototype/eraYear/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"eraYear\").get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDate.prototype, \"eraYear\").get')"
-test/built-ins/Temporal/PlainDate/prototype/eraYear/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-test/built-ins/Temporal/PlainDate/prototype/since/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDate/prototype/since/calendar-id-match.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-=======
->>>>>>> d9788e9bbbfc (Update expectations.yaml)
 test/built-ins/Temporal/PlainDate/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString] should have the same contents. order of operations'
@@ -265,27 +223,6 @@ test/built-ins/Temporal/PlainDateTime/from/observable-get-overflow-argument-stri
 test/built-ins/Temporal/PlainDateTime/from/options-wrong-type.js:
   default: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
   strict mode: 'Test262Error: Invalid string processed before throwing TypeError Expected a RangeError but got a TypeError'
-<<<<<<< HEAD
-test/built-ins/Temporal/PlainDateTime/from/order-of-operations.js:
-  default: 'Test262Error: Actual [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-  strict mode: 'Test262Error: Actual [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf] and expected [get fields.calendar, get fields.day, get fields.day.valueOf, call fields.day.valueOf, get fields.hour, get fields.hour.valueOf, call fields.hour.valueOf, get fields.microsecond, get fields.microsecond.valueOf, call fields.microsecond.valueOf, get fields.millisecond, get fields.millisecond.valueOf, call fields.millisecond.valueOf, get fields.minute, get fields.minute.valueOf, call fields.minute.valueOf, get fields.month, get fields.month.valueOf, call fields.month.valueOf, get fields.monthCode, get fields.monthCode.toString, call fields.monthCode.toString, get fields.nanosecond, get fields.nanosecond.valueOf, call fields.nanosecond.valueOf, get fields.second, get fields.second.valueOf, call fields.second.valueOf, get fields.year, get fields.year.valueOf, call fields.year.valueOf, get options.overflow, get options.overflow.toString, call options.overflow.toString] should have the same contents. order of operations'
-test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-iso-string.js:
-  default: 'RangeError: invalid calendar ID'
-  strict mode: 'RangeError: invalid calendar ID'
-test/built-ins/Temporal/PlainDateTime/prototype/era/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"era\").get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"era\").get')"
-test/built-ins/Temporal/PlainDateTime/prototype/era/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-test/built-ins/Temporal/PlainDateTime/prototype/eraYear/branding.js:
-  default: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"eraYear\").get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Object.getOwnPropertyDescriptor(Temporal.PlainDateTime.prototype, \"eraYear\").get')"
-test/built-ins/Temporal/PlainDateTime/prototype/eraYear/prop-desc.js:
-  default: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'descriptor.get')"
-=======
->>>>>>> d9788e9bbbfc (Update expectations.yaml)
 test/built-ins/Temporal/PlainDateTime/prototype/toString/order-of-operations.js:
   default: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString] and expected [get options.calendarName, get options.calendarName.toString, call options.calendarName.toString, get options.fractionalSecondDigits, get options.fractionalSecondDigits.toString, call options.fractionalSecondDigits.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
@@ -386,44 +323,17 @@ test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
   default: 'Test262Error: 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
   strict mode: 'Test262Error: 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
 test/intl402/DateTimeFormat/prototype/format/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-  strict mode: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-  strict mode: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-test/intl402/DateTimeFormat/prototype/formatRange/to-datetime-formattable-with-different-arg-kinds.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-  strict mode: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-test/intl402/DateTimeFormat/prototype/formatRangeToParts/to-datetime-formattable-with-different-arg-kinds.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, \"UTC\")')"
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
-  default: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js:
-  default: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
-test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
-  default: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
-  strict mode: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-not-overlapping-options.js:
-  default: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-  strict mode: "TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare"
-test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+  default: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
+  strict mode: 'TypeError: Temporal.PlainDateTime.prototype.valueOf must not be called. To compare PlainDateTime values, use Temporal.PlainDateTime.compare'
 test/intl402/DateTimeFormat/timezone-case-insensitive.js:
   default: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«"America/Buenos_Aires"», «"America/Argentina/Buenos_Aires"») to be true'
   strict mode: 'Test262Error: Time zone created from string "America/Argentina/Buenos_Aires" Expected SameValue(«"America/Buenos_Aires"», «"America/Argentina/Buenos_Aires"») to be true'
@@ -460,30 +370,9 @@ test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
-test/intl402/Temporal/Duration/compare/twenty-five-hour-day.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941184000_000_000_000n, \"America/Vancouver\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(941184000_000_000_000n, \"America/Vancouver\")')"
-test/intl402/Temporal/Duration/prototype/round/adjust-rounded-duration-days.js:
-  default: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
-  strict mode: "TypeError: undefined is not an object (evaluating 'Temporal.ZonedDateTime.from')"
-test/intl402/Temporal/Duration/prototype/round/dst-balancing-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/round/dst-rounding-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/intl402/Temporal/Duration/prototype/round/relativeto-sub-minute-offset.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
-test/intl402/Temporal/Duration/prototype/total/dst-balancing-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/total/dst-day-length.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-test/intl402/Temporal/Duration/prototype/total/dst-rounding-result.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime("
 test/intl402/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
