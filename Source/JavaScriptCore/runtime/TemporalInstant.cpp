@@ -38,6 +38,7 @@
 #include "StructureInlines.h"
 #include "TemporalDuration.h"
 #include "TemporalObject.h"
+#include "TemporalTimeZone.h"
 #include "TemporalZonedDateTime.h"
 #include <wtf/text/MakeString.h>
 
