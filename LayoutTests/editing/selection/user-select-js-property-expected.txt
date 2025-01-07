@@ -5,6 +5,6 @@ uneditable
 
 PASS user-select-js-property
 PASS 'webkitUserSelect' in style
-PASS webkitUserSelect of '#bar { -webkit-user-select: none; }' should be 'none'
+PASS webkitUserSelect of '#bar { user-select: none; }' should be 'none'
 PASS webkitUserSelect of '-webkit-user-select:none' should be 'none'
 

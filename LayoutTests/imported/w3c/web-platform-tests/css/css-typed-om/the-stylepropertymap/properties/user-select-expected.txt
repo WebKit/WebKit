@@ -1,14 +1,14 @@
 
-FAIL Can set 'user-select' to CSS-wide keywords: initial Invalid property user-select
-FAIL Can set 'user-select' to CSS-wide keywords: inherit Invalid property user-select
-FAIL Can set 'user-select' to CSS-wide keywords: unset Invalid property user-select
-FAIL Can set 'user-select' to CSS-wide keywords: revert Invalid property user-select
-FAIL Can set 'user-select' to var() references:  var(--A) Invalid property user-select
-FAIL Can set 'user-select' to the 'auto' keyword: auto Invalid property user-select
-FAIL Can set 'user-select' to the 'text' keyword: text Invalid property user-select
-FAIL Can set 'user-select' to the 'none' keyword: none Invalid property user-select
-FAIL Can set 'user-select' to the 'contain' keyword: contain Invalid property user-select
-FAIL Can set 'user-select' to the 'all' keyword: all Invalid property user-select
+PASS Can set 'user-select' to CSS-wide keywords: initial
+PASS Can set 'user-select' to CSS-wide keywords: inherit
+PASS Can set 'user-select' to CSS-wide keywords: unset
+PASS Can set 'user-select' to CSS-wide keywords: revert
+PASS Can set 'user-select' to var() references:  var(--A)
+FAIL Can set 'user-select' to the 'auto' keyword: auto assert_equals: expected "auto" but got "text"
+PASS Can set 'user-select' to the 'text' keyword: text
+PASS Can set 'user-select' to the 'none' keyword: none
+FAIL Can set 'user-select' to the 'contain' keyword: contain Invalid values
+PASS Can set 'user-select' to the 'all' keyword: all
 PASS Setting 'user-select' to a length: 0px throws TypeError
 PASS Setting 'user-select' to a length: -3.14em throws TypeError
 PASS Setting 'user-select' to a length: 3.14cm throws TypeError
