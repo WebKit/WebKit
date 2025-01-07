@@ -2189,7 +2189,6 @@ std::tuple<PlainDate, PlainTime> getISODateTimeFor(TimeZone timeZone, ExactTime 
 // https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds
 static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128)
 {
-
     RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
     return 0;
 }
