@@ -216,7 +216,14 @@ void IncomingAudioMediaStreamTrackRendererUnit::renderAudioChunk(uint64_t curren
 
     uint64_t timeStamp = currentAudioSampleCount * m_outputStreamDescription->sampleRate() / LibWebRTCAudioFormat::sampleRate;
 
+    bool hasUpdatedDelay = false;
+    double currentDelay = 0;
     for (auto& renderMixer : m_renderMixers.values()) {
+        if (!hasUpdatedDelay) {
+            hasUpdatedDelay = true;
+            currentDelay = renderMixer.mixedSource->bufferedAmount() / m_outputStreamDescription->sampleRate();
+        }
+
         // Mix all sources.
         bool hasCopiedData = false;
         for (auto& source : renderMixer.inputSources) {
@@ -229,6 +236,21 @@ void IncomingAudioMediaStreamTrackRendererUnit::renderAudioChunk(uint64_t curren
             renderMixer.mixedSource->pushSamples(PAL::toMediaTime(startTime), *m_audioBufferList, m_sampleCount);
         renderMixer.writeCount += m_sampleCount;
     }
+    m_currentDelay = currentDelay;
+}
+
+auto IncomingAudioMediaStreamTrackRendererUnit::stats() -> Stats
+{
+    auto stats = AudioMediaStreamTrackRendererUnit::singleton().stats();
+
+    m_totalPlayoutDelay += (stats.totalSamplesCount - m_previousTotalSamplesCount) * m_currentDelay;
+    m_previousTotalSamplesCount = stats.totalSamplesCount;
+
+    return Stats {
+        .totalSamplesDuration = stats.totalSamplesDuration,
+        .totalPlayoutDelay = stats.totalPlayoutDelay + m_totalPlayoutDelay,
+        .totalSamplesCount = stats.totalSamplesCount
+    };
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -62,12 +62,19 @@ AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit() = defaul
 
 void AudioMediaStreamTrackRendererUnit::setLastDeviceUsed(const String& deviceID)
 {
-    if (supportsPerDeviceRendering())
+    if (supportsPerDeviceRendering()) {
+        Locker locker { m_unitForDelayLock };
+        m_unitForDelay = ensureDeviceUnit(deviceID);
         return;
+    }
 
     UNUSED_PARAM(deviceID);
     Ref unit = ensureDeviceUnit(AudioMediaStreamTrackRenderer::defaultDeviceID());
     unit->setLastDeviceUsed(deviceID);
+
+    Locker locker { m_unitForDelayLock };
+    if (!m_unitForDelay)
+        m_unitForDelay = WTFMove(unit);
 }
 
 void AudioMediaStreamTrackRendererUnit::deleteUnitsIfPossible()
@@ -140,6 +147,16 @@ void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHand
 
     Ref unit = ensureDeviceUnit(AudioMediaStreamTrackRenderer::defaultDeviceID());
     unit->retrieveFormatDescription(WTFMove(callback));
+}
+
+AudioMediaStreamTrackRendererUnit::Stats AudioMediaStreamTrackRendererUnit::stats() const
+{
+    RefPtr<Unit> unitForDelay;
+    {
+        Locker locker { m_unitForDelayLock };
+        unitForDelay = m_unitForDelay;
+    }
+    return unitForDelay ? unitForDelay->stats() : Stats { };
 }
 
 AudioMediaStreamTrackRendererUnit::Unit::Unit(const String& deviceID)
@@ -217,7 +234,11 @@ void AudioMediaStreamTrackRendererUnit::Unit::setLastDeviceUsed(const String& de
 void AudioMediaStreamTrackRendererUnit::Unit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
 {
     assertIsMainThread();
-    m_internalUnit->retrieveFormatDescription(WTFMove(callback));
+    m_internalUnit->retrieveFormatDescription([protectedThis = Ref { *this }, callback = WTFMove(callback)](auto&& result) mutable {
+        if (result)
+            protectedThis->m_sampleRate = result->sampleRate();
+        callback(WTFMove(result));
+    });
 }
 
 void AudioMediaStreamTrackRendererUnit::Unit::start()
@@ -276,6 +297,14 @@ OSStatus AudioMediaStreamTrackRendererUnit::Unit::render(size_t sampleCount, Aud
 
     updateRenderSourcesIfNecessary();
 
+    if (m_sampleRate) {
+        Locker locker(m_statsLock);
+        m_totalSamplesCount += sampleCount;
+        m_totalSamplesDuration += MediaTime(sampleCount, m_sampleRate);
+        double delay = sampleCount / m_sampleRate;
+        m_totalPlayoutDelay += sampleCount * delay;
+    }
+
     // Mix all sources.
     bool hasCopiedData = false;
     for (auto& source : m_renderSources) {
@@ -285,6 +314,16 @@ OSStatus AudioMediaStreamTrackRendererUnit::Unit::render(size_t sampleCount, Aud
     if (!hasCopiedData)
         actionFlags = kAudioUnitRenderAction_OutputIsSilence;
     return 0;
+}
+
+AudioMediaStreamTrackRendererUnit::Stats AudioMediaStreamTrackRendererUnit::Unit::stats() const
+{
+    Locker locker(m_statsLock);
+    return {
+        .totalSamplesDuration = m_totalSamplesDuration.toDouble(),
+        .totalPlayoutDelay = m_totalPlayoutDelay,
+        .totalSamplesCount = m_totalSamplesCount
+    };
 }
 
 } // namespace WebCore

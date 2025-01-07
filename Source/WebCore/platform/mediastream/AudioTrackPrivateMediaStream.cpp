@@ -159,7 +159,7 @@ void AudioTrackPrivateMediaStream::trackEnded(MediaStreamTrackPrivate&)
 
 void AudioTrackPrivateMediaStream::updateRenderer()
 {
-    if (!m_shouldPlay || !volume() || m_muted || m_streamTrack->muted() || m_streamTrack->ended() || !m_streamTrack->enabled()) {
+    if (!m_shouldPlay) {
         stopRenderer();
         return;
     }
@@ -199,8 +199,10 @@ void AudioTrackPrivateMediaStream::createNewRenderer()
 
     float volume = this->volume();
     m_renderer = createRenderer(*this);
-    if (RefPtr renderer = m_renderer)
-        renderer->setVolume(volume);
+    if (RefPtr renderer = m_renderer) {
+        bool shouldBeAudible = !m_muted && !m_streamTrack->muted() && !m_streamTrack->ended() && m_streamTrack->enabled();
+        renderer->setVolume(shouldBeAudible ? volume : 0);
+    }
 
     if (isPlaying)
         startRenderer();

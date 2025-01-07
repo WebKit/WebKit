@@ -63,6 +63,13 @@ public:
     void removeSource(const String&, AudioSampleDataSource&) final;
     void addResetObserver(const String&, ResetObserver&) final;
 
+    struct Stats {
+        double totalSamplesDuration { 0 };
+        double totalPlayoutDelay { 0 };
+        uint64_t totalSamplesCount { 0 };
+    };
+    Stats stats() const;
+
 private:
     AudioMediaStreamTrackRendererUnit();
 
@@ -88,6 +95,8 @@ private:
         void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
         void setLastDeviceUsed(const String&);
 
+        Stats stats() const;
+
     private:
         explicit Unit(const String&);
 
@@ -109,6 +118,13 @@ private:
         const Ref<AudioMediaStreamTrackRendererInternalUnit> m_internalUnit WTF_GUARDED_BY_CAPABILITY(mainThread);
         WeakHashSet<ResetObserver> m_resetObservers WTF_GUARDED_BY_CAPABILITY(mainThread);
         const bool m_isDefaultUnit { false };
+
+        std::atomic<double> m_sampleRate { 0 };
+
+        uint64_t m_totalSamplesCount { 0 };
+        MediaTime m_totalSamplesDuration;
+        double m_totalPlayoutDelay { 0 };
+        mutable Lock m_statsLock;
     };
 
     Ref<Unit> ensureDeviceUnit(const String&);
@@ -116,6 +132,9 @@ private:
 
     HashMap<String, Ref<Unit>> m_units WTF_GUARDED_BY_CAPABILITY(mainThread);
     Timer m_deleteUnitsTimer;
+
+    mutable Lock m_unitForDelayLock;
+    RefPtr<Unit> m_unitForDelay WTF_GUARDED_BY_LOCK(m_unitForDelayLock);
 };
 
 }

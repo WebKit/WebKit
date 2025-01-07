@@ -64,6 +64,13 @@ public:
     void ref() { m_audioModule.get()->ref(); };
     void deref() { m_audioModule.get()->deref(); };
 
+    struct Stats {
+        double totalSamplesDuration { 0 };
+        double totalPlayoutDelay { 0 };
+        uint64_t totalSamplesCount { 0 };
+    };
+    Stats stats();
+
 private:
     struct Mixer;
     void start(Mixer&);
@@ -111,6 +118,9 @@ private:
     std::unique_ptr<WebAudioBufferList> m_audioBufferList WTF_GUARDED_BY_CAPABILITY(m_queue.get());
     size_t m_sampleCount { 0 };
 
+    double m_totalPlayoutDelay { 0 };
+    uint64_t m_previousTotalSamplesCount { 0 };
+    std::atomic<double> m_currentDelay { 0 };
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;
     const uint64_t m_logIdentifier;

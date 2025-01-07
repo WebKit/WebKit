@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <audio controls id=audio></audio>
+        <script src ="routines.js"></script>
+        <script>
+function getAudioPlayoutStats(connection)
+{
+    return connection.getStats().then((report) => {
+        var stats;
+        report.forEach((statItem) => {
+            if (statItem.type === "media-playout") {
+                stats = statItem;
+            }
+        });
+        return stats;
+    });
+}
+
+async function validateAudioPlayoutStats(connection, counter)
+{
+    if (!counter)
+        counter = 0;
+
+    const stats = await getAudioPlayoutStats(connection);
+    if (stats && stats.totalSamplesCount && stats.totalPlayoutDelay && stats.totalSamplesDuration)
+        return true;
+
+   if (counter > 100)
+       return false;
+
+    await new Promise(resolve => setTimeout(resolve, 50));
+    return validateAudioPlayoutStats(connection, ++counter);
+}
+
+promise_test(async test => {
+    let receivingConnection;
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true});
+    const remoteStream = await new Promise((resolve, reject) => {
+        createConnections((connection) => {
+            connection.addTrack(stream.getAudioTracks()[0], stream);
+        }, (connection) => {
+            receivingConnection = connection;
+            connection.ontrack = e => resolve(e.streams[0]);
+        });
+        setTimeout(() => reject("Test timed out"), 5000);
+    });
+    audio.srcObject = remoteStream;
+    await audio.play();
+
+    assert_true(await validateAudioPlayoutStats(receivingConnection));
+    audio.pause();
+}, "Audio silent data being sent in case track is muted");
+        </script>
+    </body>
+</html>

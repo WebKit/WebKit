@@ -141,6 +141,8 @@ private:
     int GetRecordAudioParameters(webrtc::AudioParameters*) const final { return shouldNotBeCalled(-1); }
 #endif
 
+    std::optional<Stats> GetStats() const final;
+
 private:
     void pollAudioData();
     void pollFromSource();

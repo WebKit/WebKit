@@ -82,6 +82,8 @@ public:
     void setLogger(Ref<const Logger>&&, uint64_t);
 #endif
 
+    uint64_t bufferedAmount() const { return m_lastBufferedAmount; }
+
     static constexpr float EquivalentToMaxVolume = 0.95;
 
 private:
@@ -109,7 +111,7 @@ private:
     int64_t m_converterInputOffset { 0 };
     std::optional<int64_t> m_inputSampleOffset;
     int64_t m_outputSampleOffset { 0 };
-    uint64_t m_lastBufferedAmount { 0 };
+    std::atomic<uint64_t> m_lastBufferedAmount { 0 };
 
     AudioSampleDataConverter m_converter;
 

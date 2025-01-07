@@ -157,6 +157,22 @@ BaseAudioMediaStreamTrackRendererUnit& LibWebRTCAudioModule::incomingAudioMediaS
 }
 #endif
 
+std::optional<LibWebRTCAudioModule::Stats> LibWebRTCAudioModule::GetStats() const
+{
+    if (!m_isRenderingIncomingAudioCounter)
+        return std::nullopt;
+
+    auto stats = m_incomingAudioMediaStreamTrackRendererUnit->stats();
+    if (!stats.totalSamplesCount)
+        return std::nullopt;
+
+    return LibWebRTCAudioModule::Stats {
+        .total_samples_duration_s = stats.totalSamplesDuration,
+        .total_playout_delay_s = stats.totalPlayoutDelay,
+        .total_samples_count = stats.totalSamplesCount
+    };
+}
+
 } // namespace WebCore
 
 #endif // USE(LIBWEBRTC)
