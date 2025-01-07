@@ -930,11 +930,11 @@ ISO8601::TimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSGlobalOb
     return timeZoneIdentifierRecord.value();
 }
 
-static bool isUTCTimeZoneAnnotation(std::optional<Vector<LChar>>& annotation)
+static bool isUTCTimeZoneAnnotation(std::optional<ISO8601::TimeZoneAnnotation>& annotation)
 {
     if (!annotation)
         return false;
-    return isUTCTimeZoneString(WTF::String(annotation.value()));
+    return isUTCTimeZoneString(WTF::String(annotation.value().m_annotation));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalzoneddatetime
@@ -1023,7 +1023,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             throwRangeError(globalObject, scope, "string must have a time zone annotation to convert to ZonedDateTime"_s);
             return { };
     }
-        if (!(timeZoneOptional->m_z || timeZoneOptional->m_offset_string || isUTCTimeZoneAnnotation(timeZoneOptional->m_annotation))) {
+        if (!(timeZoneOptional->m_z || timeZoneOptional->m_annotation->m_offset || isUTCTimeZoneAnnotation(timeZoneOptional->m_annotation))) {
             throwRangeError(globalObject, scope, "in Temporal.ZonedDateTime, parsing strings with named time zones not implemented yet"_s);
             return { };
         }
@@ -1034,10 +1034,10 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             return { };
         }
         timeZone =
-            toTemporalTimeZoneIdentifier(globalObject, jsString(vm, WTF::String(annotation.value())));
+            toTemporalTimeZoneIdentifier(globalObject, jsString(vm, WTF::String(annotation->m_annotation)));
         RETURN_IF_EXCEPTION(scope, { });
-        if (timeZoneOptional->m_offset_string)
-            offsetString = WTF::String(std::get<0>(timeZoneOptional->m_offset_string.value()));
+        if (timeZoneOptional->m_offset)
+            offsetString = WTF::String(timeZoneOptional->m_offset->m_offset_string);
         if (timeZoneOptional->m_z)
             offsetBehavior = TemporalOffsetBehavior::Exact;
         else if (!offsetString)
@@ -1054,12 +1054,6 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             RETURN_IF_EXCEPTION(scope, { });
         }
         isoDate = plainDate;
-/*
-        if (!plainTimeOptional) {
-            throwRangeError(globalObject, scope, "string must include time in ZonedDateTime.from"_s);
-            return { };
-        }
-*/
         time = plainTimeOptional.value_or(ISO8601::PlainTime());
     }
     int64_t offsetNanoseconds = 0;
@@ -1068,8 +1062,6 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             throwRangeError(globalObject, scope, "missing offset in ZonedDateTime.from"_s);
             return { };
         }
-        // returns offset in minutes...
-//        std::optional<int64_t> offsetNanosecondsOptional = TemporalTimeZone::parseDateTimeUTCOffset(offsetString.value());
         Vector<LChar> ignore;
         std::optional<int64_t> offsetNanosecondsOptional = ISO8601::parseUTCOffset(offsetString.value(), ignore, true);
         if (!offsetNanosecondsOptional) {
@@ -1077,8 +1069,6 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             return { };
         }
         offsetNanoseconds = offsetNanosecondsOptional.value();
-        // ... so multiply by 60 * 10**9
-//        offsetNanoseconds *= 60000000000ll;
     }
     auto epochNanoseconds = interpretISODateTimeOffset(globalObject, isoDate, time, offsetBehavior, offsetNanoseconds, timeZone, disambiguation, offsetOption, matchBehavior);
     RETURN_IF_EXCEPTION(scope, { });

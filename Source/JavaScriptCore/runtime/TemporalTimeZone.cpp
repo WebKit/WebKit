@@ -87,9 +87,21 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
             return ISO8601::TimeZone::named(parseResult.value());
         return std::nullopt;
     }
+
     int64_t offsetNanoseconds = parseResult.value();
     ASSERT(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute == 0);
     return ISO8601::TimeZone::offset(offsetNanoseconds);
+}
+
+static std::optional<ISO8601::TimeZone> parseTimeZoneFromAnnotation(const ISO8601::TimeZoneAnnotation& annotation)
+{
+    if (annotation.m_offset) {
+        auto offsetNanoseconds = annotation.m_offset.value();
+        ASSERT(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute == 0);
+        return ISO8601::TimeZone::offset(offsetNanoseconds);
+    }
+
+    return parseTimeZoneIdentifier(WTF::String(annotation.m_annotation));
 }
 
 // https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
@@ -179,18 +191,18 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
         }
     }
     if (timeZoneResult.m_annotation) {
-        return parseTimeZoneIdentifier(WTF::String(timeZoneResult.m_annotation.value()));
+        return parseTimeZoneFromAnnotation(timeZoneResult.m_annotation.value());
     }
     if (timeZoneResult.m_z)
         return ISO8601::TimeZone::utc();
-    if (timeZoneResult.m_offset_string) {
+    if (timeZoneResult.m_offset) {
         // Check for sub-minute precision in offset string
         Vector<LChar> ignore;
-        auto result = ISO8601::parseUTCOffset(WTF::String(std::get<0>(timeZoneResult.m_offset_string.value())),
+        auto result = ISO8601::parseUTCOffset(WTF::String(timeZoneResult.m_offset->m_offset_string),
             ignore, false);
         if (!result)
             return std::nullopt;
-        return ISO8601::TimeZone::offset(std::get<1>(timeZoneResult.m_offset_string.value()));
+        return ISO8601::TimeZone::offset(timeZoneResult.m_offset->m_offset);
     }
     return std::nullopt;
 }
