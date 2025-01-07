@@ -40,8 +40,18 @@
 #import "WebExtensionUtilities.h"
 #import <CoreFoundation/CFBundle.h>
 #import <WebCore/LocalizedStrings.h>
+#import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/TextResourceDecoder.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/FileSystem.h>
+#import <wtf/HashSet.h>
+#import <wtf/Language.h>
+#import <wtf/NeverDestroyed.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
+#import <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #import <pal/spi/mac/NSImageSPI.h>
@@ -219,11 +229,42 @@ RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, 
 
     auto *cocoaPath = static_cast<NSString *>(path);
 
-    if ([cocoaPath hasPrefix:@"data:"]) {
-        if (auto base64Range = [cocoaPath rangeOfString:@";base64,"]; base64Range.location != NSNotFound) {
-            auto *base64String = [cocoaPath substringFromIndex:NSMaxRange(base64Range)];
-            auto *data = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
-            return API::Data::createWithoutCopying(data);
+    bool isServiceWorker = backgroundContentIsServiceWorker();
+    if (!isServiceWorker && [path isEqualToString:generatedBackgroundPageFilename])
+        return generatedBackgroundContent();
+
+    if (isServiceWorker && [path isEqualToString:generatedBackgroundServiceWorkerFilename])
+        return generatedBackgroundContent();
+
+    NSData *data = resourceDataForPath(path, outError, CacheResult::No, suppressErrors);
+    if (!data)
+        return nil;
+
+    RefPtr decoder = WebCore::TextResourceDecoder::create(resourceMIMETypeForPath(path), { }, true);
+    auto string = decoder->decode(span(data));
+    if (!string)
+        return nil;
+
+    if (cacheResult == CacheResult::Yes) {
+        if (!m_resources)
+            m_resources = [NSMutableDictionary dictionary];
+        [m_resources setObject:string forKey:path];
+    }
+
+    return string;
+}
+
+NSData *WebExtension::resourceDataForPath(NSString *path, NSError **outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
+{
+    ASSERT(path);
+
+    if (outError)
+        *outError = nil;
+
+    if ([path hasPrefix:@"data:"]) {
+        if (auto base64Range = [path rangeOfString:@";base64,"]; base64Range.location != NSNotFound) {
+            auto *base64String = [path substringFromIndex:NSMaxRange(base64Range)];
+            return [[NSData alloc] initWithBase64EncodedString:base64String options:0];
         }
 
         if (auto commaRange = [cocoaPath rangeOfString:@","]; commaRange.location != NSNotFound) {
