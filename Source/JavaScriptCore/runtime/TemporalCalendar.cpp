@@ -791,7 +791,7 @@ ISO8601::PlainDate calendarDateFromFields(JSGlobalObject* globalObject,
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-interprettemporaldatetimefields
-std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
+ISO8601::PlainDateTime
 TemporalCalendar::interpretTemporalDateTimeFields(JSGlobalObject* globalObject, CalendarID calendar,
     std::optional<double> optionalYear, std::optional<double> optionalMonth, std::optional<String> optionalMonthCode,
     std::optional<double> optionalDay, double hour, double minute, double second, double millisecond,
@@ -984,9 +984,8 @@ ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObj
         auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
         auto destEpochNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTimeOther);
         TemporalDuration::roundRelativeDuration(globalObject,
-            duration, destEpochNs, thisDate, ISO8601::PlainTime(),
-            std::nullopt, largestUnit, increment,
-            smallestUnit, roundingMode);
+            duration, destEpochNs, TemporalDuration::combineISODateAndTimeRecord(thisDate, ISO8601::PlainTime()),
+            std::nullopt, largestUnit, increment, smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });
     }
     auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);

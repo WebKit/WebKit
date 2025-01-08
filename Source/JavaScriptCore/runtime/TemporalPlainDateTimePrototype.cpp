@@ -330,7 +330,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToZonedDateTime, (JSG
     RETURN_IF_EXCEPTION(scope, { });
 
     auto epochNs = TemporalDuration::getEpochNanosecondsFor(globalObject,
-        timeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(plainDateTime->plainDate(), plainDateTime->plainTime()), disambiguation);
+        timeZone, ISO8601::PlainDateTime(plainDateTime->plainDate(), plainDateTime->plainTime()), disambiguation);
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::create(vm, globalObject->zonedDateTimeStructure(), WTFMove(epochNs), WTFMove(timeZone))));

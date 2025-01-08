@@ -168,7 +168,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject,
             millisecond, microsecond, nanosecond, overflow);
         RETURN_IF_EXCEPTION(scope, { });
 
-        RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(std::get<0>(result)), WTFMove(std::get<1>(result))));
+        RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), result.date(), result.time()));
     }
 
     if (!itemValue.isString()) {
@@ -310,8 +310,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::addDurationToDateTime(JSGlobalObje
         ISO8601::PlainTime(timeResult.hours(), timeResult.minutes(), timeResult.seconds(),
             timeResult.milliseconds(), timeResult.microseconds(), timeResult.nanoseconds()));
     RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject,
-        globalObject->plainDateTimeStructure(),
-        WTFMove(std::get<0>(result)), WTFMove(std::get<1>(result))));
+        globalObject->plainDateTimeStructure(), result.date(), result.time()));
 }
 
 TemporalPlainDateTime* TemporalPlainDateTime::with(JSGlobalObject* globalObject, JSObject* temporalDateTimeLike, JSValue optionsValue)

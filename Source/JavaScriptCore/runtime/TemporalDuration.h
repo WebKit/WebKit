@@ -102,10 +102,8 @@ public:
     static int sign(const ISO8601::Duration&);
     static ISO8601::InternalDuration round(JSGlobalObject*, ISO8601::InternalDuration, double increment, TemporalUnit, RoundingMode);
     static ISO8601::InternalDuration roundRelativeDuration(JSGlobalObject*, ISO8601::InternalDuration&, Int128,
-        ISO8601::PlainDate, ISO8601::PlainTime, std::optional<ISO8601::TimeZone>,
-        TemporalUnit, double, TemporalUnit, RoundingMode);
-    static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
-        combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::PlainTime);
+        ISO8601::PlainDateTime, std::optional<ISO8601::TimeZone>, TemporalUnit, double, TemporalUnit, RoundingMode);
+    static ISO8601::PlainDateTime combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::PlainTime);
     static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
     static ISO8601::Duration adjustDateDurationRecord(JSGlobalObject*,
@@ -120,9 +118,9 @@ public:
         int32_t, ISO8601::InternalDuration, Int128,
         ISO8601::PlainDate, ISO8601::PlainTime, std::optional<ISO8601::TimeZone>,
         TemporalUnit, TemporalUnit);
-    static Int128 getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
+    static Int128 getUTCEpochNanoseconds(ISO8601::PlainDateTime);
     static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,
-        ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation);
+        ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
     static Int128 timeDurationFromEpochNanosecondsDifference(ISO8601::ExactTime, ISO8601::ExactTime);
     static int32_t timeDurationSign(Int128);
 
@@ -142,9 +140,9 @@ private:
 };
 
 // https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits
-constexpr bool isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
+constexpr bool isoDateTimeWithinLimits(ISO8601::PlainDateTime isoDateTime)
 {
-    auto isoDate = std::get<0>(isoDateTime);
+    auto isoDate = isoDateTime.date();
 
     if (absInt128(makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day()))
         > 100000001)
@@ -160,7 +158,7 @@ constexpr bool isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::P
 // https://tc39.es/proposal-temporal/#sec-temporal-isodatewithinlimits
 constexpr bool isoDateWithinLimits(ISO8601::PlainDate isoDate)
 {
-    return isoDateTimeWithinLimits(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate,
+    return isoDateTimeWithinLimits(ISO8601::PlainDateTime(isoDate,
         ISO8601::PlainTime(12, 0, 0, 0, 0, 0)));
 }
 

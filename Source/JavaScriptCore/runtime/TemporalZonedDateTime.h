@@ -61,10 +61,10 @@ public:
     JSValue getTimeZoneTransition(JSGlobalObject*, JSValue);
 
     static Vector<ISO8601::ExactTime> getPossibleEpochNanoseconds(JSGlobalObject*,
-        ISO8601::TimeZone, std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>);
+        ISO8601::TimeZone, ISO8601::PlainDateTime);
     static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
-        Vector<ISO8601::ExactTime>, ISO8601::TimeZone,
-        std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>, TemporalDisambiguation disambiguation);
+        Vector<ISO8601::ExactTime>, ISO8601::TimeZone, ISO8601::PlainDateTime,
+        TemporalDisambiguation disambiguation);
  
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, Vector<LChar>);
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
