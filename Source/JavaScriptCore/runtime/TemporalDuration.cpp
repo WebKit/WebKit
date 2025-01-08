@@ -684,15 +684,16 @@ ISO8601::Duration TemporalDuration::adjustDateDurationRecord(JSGlobalObject* glo
     return result;
 }
 
-std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> TemporalDuration::combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
+ISO8601::PlainDateTime TemporalDuration::combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
 {
-    return std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(isoDate, isoTime);
+    return ISO8601::PlainDateTime(isoDate, isoTime);
 }
 
-Int128 TemporalDuration::getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime)
+// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
+Int128 TemporalDuration::getUTCEpochNanoseconds(ISO8601::PlainDateTime isoDateTime)
 {
-    auto isoDate = std::get<0>(isoDateTime);
-    auto isoTime = std::get<1>(isoDateTime);
+    auto isoDate = isoDateTime.date();
+    auto isoTime = isoDateTime.time();
     auto date = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
     auto time = makeTime(isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond());
     auto ms = makeDate(date, time);
@@ -703,8 +704,7 @@ Int128 TemporalDuration::getUTCEpochNanoseconds(std::tuple<ISO8601::PlainDate, I
 }
 
 ISO8601::ExactTime TemporalDuration::getEpochNanosecondsFor(JSGlobalObject* globalObject,
-    ISO8601::TimeZone timeZone,
-    std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> isoDateTime, TemporalDisambiguation disambiguation)
+    ISO8601::TimeZone timeZone, ISO8601::PlainDateTime isoDateTime, TemporalDisambiguation disambiguation)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -1034,10 +1034,13 @@ NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
 // RoundRelativeDuration ( duration, destEpochNs, isoDateTime, timeZone, calendar, largestUnit, increment, smallestUnit, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundrelativeduration
 // TODO: calendar
-ISO8601::InternalDuration TemporalDuration::roundRelativeDuration(JSGlobalObject* globalObject, ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime, std::optional<ISO8601::TimeZone> timeZone, TemporalUnit largestUnit, double increment, TemporalUnit smallestUnit, RoundingMode roundingMode)
+ISO8601::InternalDuration TemporalDuration::roundRelativeDuration(JSGlobalObject* globalObject, ISO8601::InternalDuration& duration, Int128 destEpochNs, ISO8601::PlainDateTime isoDateTime, std::optional<ISO8601::TimeZone> timeZone, TemporalUnit largestUnit, double increment, TemporalUnit smallestUnit, RoundingMode roundingMode)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto isoDate = isoDateTime.date();
+    auto isoTime = isoDateTime.time();
 
     // 1, 2
     bool irregularLengthUnit = smallestUnit <= TemporalUnit::Week;

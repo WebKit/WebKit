@@ -1947,8 +1947,7 @@ static double msFromTime(double t)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getisopartsfromepoch
-std::tuple<PlainDate, PlainTime>
-getISOPartsFromEpoch(ExactTime epochNanoseconds)
+PlainDateTime getISOPartsFromEpoch(ExactTime epochNanoseconds)
 {
     ASSERT(epochNanoseconds.isValid());
     Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
@@ -1967,7 +1966,7 @@ getISOPartsFromEpoch(ExactTime epochNanoseconds)
     auto nanosecond = remainderNs % 1000;
     auto isoDate = PlainDate(year, month, day);
     auto time = PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
-    return std::tuple<PlainDate, PlainTime>(isoDate, time);
+    return PlainDateTime(WTFMove(isoDate), WTFMove(time));
 }
 
 static String formatCalendarAnnotation(TemporalShowCalendar showCalendar)
@@ -1994,7 +1993,7 @@ String temporalZonedDateTimeToString(ExactTime exactTime, TimeZone timeZone,
     Int128 epochNs = roundTemporalInstant(exactTime.epochNanoseconds(), increment, unit, roundingMode);
     auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs);
     auto isoDateTime = getISODateTimeFor(timeZone, ExactTime(epochNs));
-    auto dateTimeString = temporalDateTimeToString(std::get<0>(isoDateTime), std::get<1>(isoDateTime), precision.precision);
+    auto dateTimeString = temporalDateTimeToString(isoDateTime.date(), isoDateTime.time(), precision.precision);
     String offsetString;
     if (showOffset != TemporalShowOffset::Never) {
         offsetString = formatDateTimeUTCOffsetRounded(offsetNanoseconds);
@@ -2165,25 +2164,26 @@ PlainDate createISODateRecord(double year, double month, double day)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodatetime
-std::tuple<PlainDate, PlainTime>
-balanceISODateTime(double year, double month, double day, double hour, double minute,
-    double second, double millisecond, double microsecond, double nanosecond)
+PlainDateTime balanceISODateTime(double year, double month, double day, double hour,
+    double minute, double second, double millisecond, double microsecond, double nanosecond)
 {
     auto balancedTime = TemporalPlainTime::balanceTime(
         hour, minute, second, millisecond, microsecond, nanosecond);
     auto balancedDate = TemporalCalendar::balanceISODate(year, month, day + balancedTime.days());
-    return std::tuple<PlainDate, PlainTime>(balancedDate,
+    return PlainDateTime(WTFMove(balancedDate),
         PlainTime(balancedTime.hours(), balancedTime.minutes(),
             balancedTime.seconds(), balancedTime.milliseconds(),
             balancedTime.microseconds(), balancedTime.nanoseconds()));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
-std::tuple<PlainDate, PlainTime> getISODateTimeFor(TimeZone timeZone, ExactTime epochNs)
+PlainDateTime getISODateTimeFor(TimeZone timeZone, ExactTime epochNs)
 {
     auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs.epochNanoseconds());
-    auto [dateResult, timeResult] = getISOPartsFromEpoch(epochNs);
-    return balanceISODateTime(dateResult.year(), dateResult.month(), dateResult.day(), timeResult.hour(), timeResult.minute(), timeResult.second(), timeResult.millisecond(), timeResult.microsecond(), timeResult.nanosecond() + offsetNanoseconds);
+    auto result = getISOPartsFromEpoch(epochNs);
+    auto date = result.date();
+    auto time = result.time();
+    return balanceISODateTime(date.year(), date.month(), date.day(), time.hour(), time.minute(), time.second(), time.millisecond(), time.microsecond(), time.nanosecond() + offsetNanoseconds);
 }
 
 // https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds

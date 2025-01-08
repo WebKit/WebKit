@@ -61,7 +61,7 @@ public:
         std::optional<double>, std::optional<double>, std::optional<String>, std::optional<ISO8601::TimeZone>>
         prepareCalendarFields(JSGlobalObject*, CalendarID, JSObject*, Vector<FieldName>,
             std::optional<Vector<FieldName>>);
-    static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime> interpretTemporalDateTimeFields(JSGlobalObject*,
+    static ISO8601::PlainDateTime interpretTemporalDateTimeFields(JSGlobalObject*,
         CalendarID, std::optional<double>, std::optional<double>, std::optional<String>, std::optional<double>,
         double, double, double, double, double, double, TemporalOverflow);
     static ISO8601::Duration differenceTemporalPlainYearMonth(JSGlobalObject*,

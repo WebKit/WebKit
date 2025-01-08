@@ -180,8 +180,7 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
                 toTemporalOverflow(globalObject, optionsValue.value());
                 RETURN_IF_EXCEPTION(scope, { });
             }
-            ISO8601::PlainDate date = std::get<0>(isoDateTime);
-            return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), WTFMove(date));
+            return TemporalPlainDate::create(vm, globalObject->plainDateStructure(), isoDateTime.date());
         }
 
         if (itemValue.inherits<TemporalPlainDateTime>()) {
@@ -345,14 +344,7 @@ ISO8601::PlainDate TemporalPlainDate::with(JSGlobalObject* globalObject, JSObjec
     RELEASE_AND_RETURN(scope, TemporalCalendar::isoDateFromFields(globalObject, TemporalDateFormat::Date, y, m, d, overflow));
 }
 
-// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
-static Int128 getUTCEpochNanoseconds(ISO8601::PlainDate isoDate)
-{
-    return TemporalDuration::getUTCEpochNanoseconds(
-        std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(
-            isoDate, ISO8601::PlainTime()));
-}
-
+// https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplaindate
 ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject* globalObject, bool isSince, TemporalPlainDate* other, TemporalUnit smallestUnit, TemporalUnit largestUnit, RoundingMode roundingMode, double increment)
 {
     VM& vm = globalObject->vm();
@@ -371,14 +363,14 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
     RETURN_IF_EXCEPTION(scope, { });
     if (smallestUnit != TemporalUnit::Day || increment != 1) {
         // Step 8a.
-        auto isoDate = plainDate();
+        auto isoDateTime = TemporalDuration::combineISODateAndTimeRecord(plainDate(), ISO8601::PlainTime());
         // Step 8b.
-        auto isoDateOther = other->plainDate();
+        auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(other->plainDate(), ISO8601::PlainTime());
         // Step 8c.
-        Int128 destEpochNs = getUTCEpochNanoseconds(isoDateOther);
+        Int128 destEpochNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTimeOther);
         // Step 8d.
         TemporalDuration::roundRelativeDuration(
-            globalObject, duration, destEpochNs, isoDate, ISO8601::PlainTime(), std::nullopt, largestUnit,
+            globalObject, duration, destEpochNs, isoDateTime, std::nullopt, largestUnit,
             increment, smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });
     }

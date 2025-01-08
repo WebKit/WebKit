@@ -305,6 +305,18 @@ private:
     int32_t m_day : 6; // Starts with 1.
 };
 
+class PlainDateTime {
+public:
+    PlainDate date() const { return m_date; }
+    PlainTime time() const { return m_time; }
+
+    constexpr PlainDateTime(PlainDate date, PlainTime time) : m_date(date), m_time(time) {}
+    constexpr PlainDateTime() = default;
+private:
+    PlainDate m_date;
+    PlainTime m_time;
+};
+
 class PlainYearMonth {
     WTF_MAKE_TZONE_ALLOCATED(PlainYearMonth);
 public:
@@ -489,13 +501,12 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
 bool isYearMonthWithinLimits(double year, double month);
 bool isYearWithinLimits(double year);
 
-std::tuple<PlainDate, PlainTime>
-balanceISODateTime(double, double, double, double, double,
+PlainDateTime balanceISODateTime(double, double, double, double, double,
     double, double, double, double);
 std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);
-std::tuple<PlainDate, PlainTime> getISOPartsFromEpoch(ExactTime);
+PlainDateTime getISOPartsFromEpoch(ExactTime);
 Int128 getOffsetNanosecondsFor(TimeZone, Int128);
-std::tuple<PlainDate, PlainTime> getISODateTimeFor(TimeZone, ExactTime);
+PlainDateTime getISODateTimeFor(TimeZone, ExactTime);
 
 std::optional<Int128> roundTimeDurationToIncrement(Int128, Int128, RoundingMode);
 
