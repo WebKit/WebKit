@@ -64,6 +64,20 @@ static RefPtr<CSSValue> cssValueFromStyleValues(CSSPropertyID propertyID, Vector
 // https://drafts.css-houdini.org/css-typed-om/#dom-stylepropertymap-set
 ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& property, FixedVector<std::variant<RefPtr<CSSStyleValue>, String>>&& values)
 {
+    // 1. If property is not a custom property name string, set property to property ASCII lowercased.
+    // 2. If property is not a valid CSS property, throw a TypeError.
+
+    // 3. If property is a single-valued property and values has more than one item, throw a TypeError.
+    // 4. If any of the items in values have a non-null [[associatedProperty]] internal slot, and that slot’s value is anything other than property, throw a TypeError.
+    // 5. If the size of values is two or more, and one or more of the items are a CSSUnparsedValue or CSSVariableReferenceValue object, throw a TypeError.
+
+    // NOTE: Having 2+ values implies that you’re setting multiple items of a list-valued property, but the presence of a var() function in the string-based OM disables all syntax parsing, including splitting into individual iterations (because there might be more commas inside of the var() value, so you can’t tell how many items are actually going to show up). This step’s restriction preserves the same semantics in the Typed OM.
+    // 6. Let props be the value of this’s [[declarations]] internal slot.
+    // 7. If props[property] exists, remove it.
+    // 8. Let values to set be an empty list.
+    // 9. For each value in values, create an internal representation for property and value, and append the result to values to set.
+    // 10. Set props[property] to values to set.
+
     if (isCustomPropertyName(property)) {
         auto styleValuesOrException = CSSStyleValueFactory::vectorFromStyleValuesOrStrings(property, WTFMove(values), { document });
         if (styleValuesOrException.hasException())
@@ -103,8 +117,14 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     if (styleValuesOrException.hasException())
         return styleValuesOrException.releaseException();
     auto styleValues = styleValuesOrException.releaseReturnValue();
-    if (styleValues.size() > 1) {
+    if (styleValues.size() == 1) {
+        if (auto associatedProperty = styleValues[0]->associatedProperty(); associatedProperty && *associatedProperty != propertyID)
+            return Exception { ExceptionCode::TypeError, "CSSStyleValue has an [[associatedProperty]] that does not match the property being set."_s };
+    } else if (styleValues.size() > 1) {
         for (auto& styleValue : styleValues) {
+            if (auto associatedProperty = styleValue->associatedProperty(); associatedProperty && *associatedProperty != propertyID)
+                return Exception { ExceptionCode::TypeError, "CSSStyleValue has an [[associatedProperty]] that does not match the property being set."_s };
+
             if (is<CSSUnparsedValue>(styleValue.get()))
                 return Exception { ExceptionCode::TypeError, "There is more than one value and one is either a CSSVariableReferenceValue or a CSSUnparsedValue"_s };
         }
@@ -120,13 +140,6 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(*value); primitiveValue && primitiveValue->isNumberOrInteger()) {
         if (!CSSProperty::allowsNumberOrIntegerInput(propertyID))
             return Exception { ExceptionCode::TypeError, "Invalid value: This property doesn't allow <number> input"_s };
-    }
-
-    // FIXME: CSSValuePair has specific behavior related to coalescing its 2 values when they are equal.
-    // Throw an error when using them with Typed OM to avoid subtle bugs when the serialization isn't representative of the value.
-    if (auto pair = dynamicDowncast<CSSValuePair>(value)) {
-        if (pair->canBeCoalesced())
-            return Exception { ExceptionCode::NotSupportedError, "Invalid values"_s };
     }
 
     if (!setProperty(propertyID, value.releaseNonNull()))

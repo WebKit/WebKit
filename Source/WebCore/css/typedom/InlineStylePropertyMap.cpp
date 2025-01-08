@@ -107,20 +107,34 @@ bool InlineStylePropertyMap::setShorthandProperty(CSSPropertyID propertyID, cons
     return !didFailParsing;
 }
 
+static bool isPrimitiveValueCalc(const CSSValue& value)
+{
+    if (auto primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
+        return primitiveValue->isCalculated();
+    return false;
+}
+
 bool InlineStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value)
 {
     if (!m_element)
         return false;
+
     StyleAttributeMutationScope mutationScope { m_element.get() };
-    bool didFailParsing = false;
+
     // FIXME: We should be able to validate CSSValues without having to serialize to text and go through the
     // parser. This is inefficient.
+
+    bool didFailParsing = false;
     m_element->setInlineStyleProperty(propertyID, value->cssText(), IsImportant::No, &didFailParsing);
-    if (!didFailParsing) {
+    if (didFailParsing)
+        return false;
+
+    // Special case CSSVariableReferenceValue and calc(), as the Typed CSSOM assumes these get set as is.
+    if (is<CSSVariableReferenceValue>(value) || isPrimitiveValueCalc(value))
         m_element->setInlineStyleProperty(propertyID, WTFMove(value));
-        mutationScope.enqueueMutationRecord();
-    }
-    return !didFailParsing;
+
+    mutationScope.enqueueMutationRecord();
+    return true;
 }
 
 bool InlineStylePropertyMap::setCustomProperty(Document&, const AtomString& property, Ref<CSSVariableReferenceValue>&& value)

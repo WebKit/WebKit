@@ -167,7 +167,24 @@ void CSSToStyleMap::mapFillRepeat(CSSPropertyID propertyID, FillLayer& layer, co
         return;
     }
 
-    auto* backgroundRepeatValue = dynamicDowncast<CSSBackgroundRepeatValue>(value);
+    if (RefPtr primitive = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        auto ident = primitive->valueID();
+        switch (ident) {
+        case CSSValueRepeatX:
+            layer.setRepeat(FillRepeatXY { FillRepeat::Repeat, FillRepeat::NoRepeat });
+            return;
+        case CSSValueRepeatY:
+            layer.setRepeat(FillRepeatXY { FillRepeat::NoRepeat, FillRepeat::Repeat });
+            return;
+        default:
+            break;
+        }
+        auto repeat = fromCSSValueID<FillRepeat>(ident);
+        layer.setRepeat(FillRepeatXY { repeat, repeat });
+        return;
+    }
+
+    RefPtr backgroundRepeatValue = dynamicDowncast<CSSBackgroundRepeatValue>(value);
     if (!backgroundRepeatValue)
         return;
 
@@ -681,6 +698,12 @@ template<> constexpr NinePieceImageRule fromCSSValueID(CSSValueID valueID)
 
 void CSSToStyleMap::mapNinePieceImageRepeat(const CSSValue& value, NinePieceImage& image)
 {
+    if (auto valueID = value.valueID(); valueID != CSSValueInvalid) {
+        auto repeat = fromCSSValueID<NinePieceImageRule>(valueID);
+        image.setHorizontalRule(repeat);
+        image.setVerticalRule(repeat);
+    }
+
     if (!value.isPair())
         return;
     image.setHorizontalRule(fromCSSValue<NinePieceImageRule>(value.first()));

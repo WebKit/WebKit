@@ -449,10 +449,10 @@ RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange& range, const CSSParserC
     // <repeat-style> = repeat-x | repeat-y | [repeat | space | round | no-repeat]{1,2}
     // https://drafts.csswg.org/css-backgrounds/#typedef-repeat-style
 
-    if (consumeIdentRaw<CSSValueRepeatX>(range))
-        return CSSBackgroundRepeatValue::create(CSSValueRepeat, CSSValueNoRepeat);
-    if (consumeIdentRaw<CSSValueRepeatY>(range))
-        return CSSBackgroundRepeatValue::create(CSSValueNoRepeat, CSSValueRepeat);
+    auto repeatXOrY = consumeIdentRaw<CSSValueRepeatX, CSSValueRepeatY>(range);
+    if (repeatXOrY)
+        return CSSPrimitiveValue::create(*repeatXOrY);
+
     auto value1 = consumeIdentRaw<CSSValueRepeat, CSSValueNoRepeat, CSSValueRound, CSSValueSpace>(range);
     if (!value1)
         return nullptr;

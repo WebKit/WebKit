@@ -305,22 +305,12 @@ std::optional<CSS::EasingFunction> consumeUnresolvedEasingFunction(CSSParserToke
     case CSSValueEaseInOut:
         range.consumeIncludingWhitespace();
         return CSS::EasingFunction { CSS::Keyword::EaseInOut { } };
-
     case CSSValueStepStart:
         range.consumeIncludingWhitespace();
-        return CSS::EasingFunction {
-            CSS::StepsEasingFunction {
-                .parameters = { CSS::StepsEasingParameters::Start { CSS::Integer<CSS::Range{1,CSS::Range::infinity}> { 1 } } }
-            }
-        };
-
+        return CSS::EasingFunction { CSS::Keyword::StepStart { } };
     case CSSValueStepEnd:
         range.consumeIncludingWhitespace();
-        return CSS::EasingFunction {
-            CSS::StepsEasingFunction {
-                .parameters = { CSS::StepsEasingParameters::End { CSS::Integer<CSS::Range{1,CSS::Range::infinity}> { 1 } } }
-            }
-        };
+        return CSS::EasingFunction { CSS::Keyword::StepEnd { } };
 
     default:
         break;
@@ -355,6 +345,8 @@ RefPtr<CSSValue> consumeEasingFunction(CSSParserTokenRange& range, const CSSPars
     case CSSValueEaseIn:
     case CSSValueEaseOut:
     case CSSValueEaseInOut:
+    case CSSValueStepStart:
+    case CSSValueStepEnd:
         return consumeIdent(range);
     default:
         break;
