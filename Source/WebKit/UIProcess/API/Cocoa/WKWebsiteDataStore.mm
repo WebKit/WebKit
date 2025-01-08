@@ -788,12 +788,17 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->setStatisticsTestingCallback(nullptr);
 }
 
-- (void)_setStorageAccessPromptQuirkForTesting:(NSString *)topFrameDomain withSubFrameDomains:(NSArray<NSString *> *)subFrameDomains withTriggerPages:(NSArray<NSString *> *)triggerPages completionHandler:(void(^)(void))completionHandler
+- (void)_setStorageAccessPromptQuirkForTesting:(NSString *)topFrameDomain withSubFrameDomains:(NSArray<NSString *> *)subFrameDomains withTriggerPages:(NSDictionary<NSString *, NSString *> *)triggerPages completionHandler:(void(^)(void))completionHandler
 {
     if (!_websiteDataStore->isPersistent())
         return;
 
-    _websiteDataStore->setStorageAccessPromptQuirkForTesting(topFrameDomain, makeVector<String>(subFrameDomains), makeVector<String>(triggerPages), makeBlockPtr(completionHandler));
+    Vector<std::pair<String, String>> triggerPageVector;
+    triggerPageVector.reserveInitialCapacity(triggerPages.count);
+    for (NSString *key in triggerPages)
+        triggerPageVector.append({ key, triggerPages[key] });
+
+    _websiteDataStore->setStorageAccessPromptQuirkForTesting(topFrameDomain, makeVector<String>(subFrameDomains), WTFMove(triggerPageVector), makeBlockPtr(completionHandler));
 }
 
 - (void)_grantStorageAccessForTesting:(NSString *)topFrameDomain withSubFrameDomains:(NSArray<NSString *> *)subFrameDomains completionHandler:(void(^)(void))completionHandler

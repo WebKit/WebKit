@@ -240,12 +240,15 @@ static HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> q
     return map;
 }
 
-static Vector<URL> quirkPagesArrayToVector(NSArray<NSString *> *triggerPages)
+static Vector<std::pair<URL, StorageAccessPromptQuirkTriggerMatchType>> quirkPagesDictionaryToVector(NSDictionary<NSString *, NSString *> *triggerPages)
 {
-    Vector<URL> triggers;
-    for (NSString *page : triggerPages) {
-        if (![page isEqualToString:@"*"])
-            triggers.append(URL { page });
+    Vector<std::pair<URL, StorageAccessPromptQuirkTriggerMatchType>> triggers;
+    auto* pageURLStrs = triggerPages.allKeys;
+    for (NSString *pageURLStr : pageURLStrs) {
+        if ([pageURLStr isEqualToString:@"*"])
+            continue;
+        auto matchType = [[triggerPages objectForKey:pageURLStr] isEqualToString:@"OriginAndPath"] ? StorageAccessPromptQuirkTriggerMatchType::OriginAndPath : StorageAccessPromptQuirkTriggerMatchType::FullURL;
+        triggers.append(std::make_pair(URL { pageURLStr }, matchType));
     }
     return triggers;
 }
@@ -274,8 +277,9 @@ void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& 
             auto quirks = [data quirks];
             auto hasQuirkDomainsAndTriggerPages = [PAL::getWPStorageAccessPromptQuirkClass() instancesRespondToSelector:@selector(quirkDomains)] && [PAL::getWPStorageAccessPromptQuirkClass() instancesRespondToSelector:@selector(triggerPages)];
             for (WPStorageAccessPromptQuirk *quirk : quirks) {
+//                [quirk.triggerPages isMemberOfClass:[a class]]
                 if (hasQuirkDomainsAndTriggerPages)
-                    result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.quirkDomains), quirkPagesArrayToVector(quirk.triggerPages) });
+                    result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.quirkDomains), quirkPagesDictionaryToVector(quirk.triggerPages) });
                 else
                     result.append(WebCore::OrganizationStorageAccessPromptQuirk { quirk.name, quirkDomainsDictToMap(quirk.domainPairings), { } });
             }

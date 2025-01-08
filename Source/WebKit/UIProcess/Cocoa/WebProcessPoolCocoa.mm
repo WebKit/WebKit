@@ -527,8 +527,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
         if (!entry.triggerPages.isEmpty()) {
-            for (auto&& page : entry.triggerPages)
-                parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { page });
+            for (auto&& pair : entry.triggerPages)
+                parameters.storageAccessPromptQuirksDomains.add(RegistrableDomain { std::get<0>(pair) });
             continue;
         }
         for (auto&& domain : entry.quirkDomains.keys())

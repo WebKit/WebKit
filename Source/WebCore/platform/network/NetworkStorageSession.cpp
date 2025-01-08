@@ -558,10 +558,26 @@ std::optional<RegistrableDomain> NetworkStorageSession::findAdditionalLoginDomai
     return std::nullopt;
 }
 
+static inline bool storageAccessQuirkURLMatchesTriggerPage(const URL& fullURL, const Vector<std::pair<URL, StorageAccessPromptQuirkTriggerMatchType>> triggerPages)
+{
+    for (auto& triggerPage : triggerPages) {
+        switch (std::get<1>(triggerPage)) {
+        case StorageAccessPromptQuirkTriggerMatchType::FullURL:
+            return fullURL == std::get<0>(triggerPage);
+        case StorageAccessPromptQuirkTriggerMatchType::OriginAndPath:
+        default:
+            URL originAndPath = fullURL.isolatedCopy();
+            originAndPath.removeQueryAndFragmentIdentifier();
+            return originAndPath == std::get<0>(triggerPage);
+        }
+    }
+    return false;
+}
+
 Vector<RegistrableDomain> NetworkStorageSession::storageAccessQuirkForTopFrameDomain(const URL& topFrameURL)
 {
     for (auto&& quirk : updatableStorageAccessPromptQuirks()) {
-        if (!quirk.triggerPages.isEmpty() && !quirk.triggerPages.contains(topFrameURL))
+        if (!quirk.triggerPages.isEmpty() && !storageAccessQuirkURLMatchesTriggerPage(topFrameURL, quirk.triggerPages))
             continue;
 
         auto quirkDomains = quirk.quirkDomains;

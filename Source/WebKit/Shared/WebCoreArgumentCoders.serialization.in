@@ -8111,10 +8111,13 @@ struct WebCore::Length {
     WebCore::SourceGraphic
 }
 
+header: <WebCore/OrganizationStorageAccessPromptQuirk.h>
+enum class WebCore::StorageAccessPromptQuirkTriggerMatchType : bool;
+
 struct WebCore::OrganizationStorageAccessPromptQuirk {
     String organizationName;
     HashMap<WebCore::RegistrableDomain, Vector<WebCore::RegistrableDomain>> quirkDomains;
-    Vector<URL> triggerPages;
+    Vector<std::pair<URL, WebCore::StorageAccessPromptQuirkTriggerMatchType>> triggerPages;
 };
 
 #if ENABLE(SHAREABLE_RESOURCE)

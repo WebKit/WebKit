@@ -60,6 +60,7 @@
 #include <WebCore/HTMLMediaElement.h>
 #include <WebCore/NetworkStorageSession.h>
 #include <WebCore/NotificationResources.h>
+#include <WebCore/OrganizationStorageAccessPromptQuirk.h>
 #include <WebCore/OriginLock.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceRequest.h>
@@ -1343,7 +1344,16 @@ void WebsiteDataStore::setResourceLoadStatisticsTimeAdvanceForTesting(Seconds ti
     protectedNetworkProcess()->setResourceLoadStatisticsTimeAdvanceForTesting(m_sessionID, time, WTFMove(completionHandler));
 }
 
-void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDomain, Vector<String>&& subFrameDomains, Vector<String>&& triggerPages, CompletionHandler<void()>&& completionHandler)
+static inline WebCore::StorageAccessPromptQuirkTriggerMatchType convertStringToTriggerMatchType(const String matchTypeStr)
+{
+    if (matchTypeStr == "OriginAndPath"_s)
+        return WebCore::StorageAccessPromptQuirkTriggerMatchType::OriginAndPath;
+    if (matchTypeStr != "FullURL"_s)
+        ASSERT_NOT_REACHED();
+    return WebCore::StorageAccessPromptQuirkTriggerMatchType::FullURL;
+}
+
+void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDomain, Vector<String>&& subFrameDomains, Vector<std::pair<String, String>>&& triggerPages, CompletionHandler<void()>&& completionHandler)
 {
     auto registrableTopFrameDomain = WebCore::RegistrableDomain::fromRawString(WTFMove(topFrameDomain));
     auto registrableTopFrameDomainString = registrableTopFrameDomain.string();
@@ -1354,7 +1364,7 @@ void WebsiteDataStore::setStorageAccessPromptQuirkForTesting(String&& topFrameDo
                 subFrameDomains.map([](auto& domain) { return WebCore::RegistrableDomain::fromRawString(String { domain }); })
             },
         } }, {
-            triggerPages.map([](auto& page) { return URL { page }; })
+            triggerPages.map([](auto& pair) { return std::make_pair(URL { std::get<0>(pair) }, convertStringToTriggerMatchType(std::get<1>(pair))); })
         }
     } };
 

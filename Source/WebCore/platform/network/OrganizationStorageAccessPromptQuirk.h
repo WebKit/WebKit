@@ -31,14 +31,18 @@
 
 namespace WebCore {
 
+enum class StorageAccessPromptQuirkTriggerMatchType : bool {
+    FullURL, OriginAndPath
+};
+
 struct OrganizationStorageAccessPromptQuirk {
     String organizationName;
     HashMap<RegistrableDomain, Vector<RegistrableDomain>> quirkDomains;
-    Vector<URL> triggerPages;
+    Vector<std::pair<URL, StorageAccessPromptQuirkTriggerMatchType>> triggerPages;
 
     bool isHashTableDeletedValue() const { return organizationName.isHashTableDeletedValue(); }
 
-    OrganizationStorageAccessPromptQuirk(String&& organizationName, HashMap<RegistrableDomain, Vector<RegistrableDomain>>&& quirkDomains, Vector<URL>&& triggerPages)
+    OrganizationStorageAccessPromptQuirk(String&& organizationName, HashMap<RegistrableDomain, Vector<RegistrableDomain>>&& quirkDomains, Vector<std::pair<URL, StorageAccessPromptQuirkTriggerMatchType>>&& triggerPages)
         : organizationName { WTFMove(organizationName) }
         , quirkDomains { WTFMove(quirkDomains) }
         , triggerPages { WTFMove(triggerPages) }

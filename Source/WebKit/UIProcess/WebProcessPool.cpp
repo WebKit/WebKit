@@ -346,8 +346,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
             HashSet<WebCore::RegistrableDomain> domainSet;
             for (auto&& entry : StorageAccessPromptQuirkController::sharedSingleton().cachedListData()) {
                 if (!entry.triggerPages.isEmpty()) {
-                    for (auto&& page : entry.triggerPages)
-                        domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(page.string()));
+                    for (auto&& pair : entry.triggerPages)
+                        domainSet.add(RegistrableDomain::uncheckedCreateFromRegistrableDomainString(std::get<0>(pair).string()));
                     continue;
                 }
                 for (auto&& domain : entry.quirkDomains.keys())
