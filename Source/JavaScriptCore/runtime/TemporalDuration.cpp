@@ -701,11 +701,6 @@ ISO8601::Duration TemporalDuration::adjustDateDurationRecord(JSGlobalObject* glo
     return result;
 }
 
-ISO8601::PlainDateTime TemporalDuration::combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
-{
-    return ISO8601::PlainDateTime(isoDate, isoTime);
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-nudgetocalendarunit
 // NudgeToCalendarUnit ( sign, duration, destEpochNs, isoDateTime, timeZone, calendar, increment, unit, roundingMode )
 Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32_t sign,
@@ -769,15 +764,15 @@ Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32
     auto start = TemporalCalendar::isoDateAdd(globalObject, isoDate, startDuration, TemporalOverflow::Constrain);
     auto end = TemporalCalendar::isoDateAdd(globalObject, isoDate, endDuration, TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
-    auto startDateTime = combineISODateAndTimeRecord(start, isoTime);
-    auto endDateTime = combineISODateAndTimeRecord(end, isoTime);
+    auto startDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(start, isoTime);
+    auto endDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(end, isoTime);
     Int128 startEpochNs;
     Int128 endEpochNs;
     if (!timeZoneOptional) {
-        startEpochNs = getUTCEpochNanoseconds(startDateTime);
-        endEpochNs = getUTCEpochNanoseconds(endDateTime);
+        startEpochNs = ISO8601::getUTCEpochNanoseconds(startDateTime);
+        endEpochNs = ISO8601::getUTCEpochNanoseconds(endDateTime);
     } else {
-        auto timeZone = timeZoneOptional.value(); 
+        auto timeZone = timeZoneOptional.value();
         startEpochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, startDateTime,
             TemporalDisambiguation::Compatible).epochNanoseconds();
         RETURN_IF_EXCEPTION(scope, { });
@@ -940,7 +935,7 @@ ISO8601::InternalDuration TemporalDuration::bubbleRelativeDuration(JSGlobalObjec
                 endDuration = adjustDateDurationRecord(globalObject, duration.dateDuration(), 0, weeks, std::nullopt);
             }
             auto end = TemporalCalendar::isoDateAdd(globalObject, isoDate, endDuration, TemporalOverflow::Constrain);
-            auto endDateTime = combineISODateAndTimeRecord(end, isoTime);
+            auto endDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(end, isoTime);
             Int128 endEpochNs = 0;
             if (!timeZone)
                 endEpochNs = getUTCEpochNanoseconds(endDateTime);
@@ -976,6 +971,7 @@ Int128 TemporalDuration::timeDurationFromEpochNanosecondsDifference(ISO8601::Exa
     return result;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-nudgetozonedtime
 NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
     int32_t sign, ISO8601::InternalDuration duration,
     ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime, ISO8601::TimeZone timeZone,
@@ -986,9 +982,9 @@ NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
 
     auto start = TemporalCalendar::isoDateAdd(globalObject, isoDate, duration.dateDuration(), TemporalOverflow::Constrain);
     RETURN_IF_EXCEPTION(scope, { });
-    auto startDateTime = combineISODateAndTimeRecord(start, isoTime);
+    auto startDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(start, isoTime);
     auto endDate = TemporalCalendar::balanceISODate(start.year(), start.month(), start.day() + sign);
-    auto endDateTime = combineISODateAndTimeRecord(endDate, isoTime);
+    auto endDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(endDate, isoTime);
     auto startEpochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, startDateTime,
         TemporalDisambiguation::Compatible);
     RETURN_IF_EXCEPTION(scope, { });

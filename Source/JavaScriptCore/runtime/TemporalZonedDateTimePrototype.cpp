@@ -239,7 +239,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithPlainTime, (JSGlo
     } else {
         auto plainTime = TemporalPlainTime::from(globalObject, plainTimeLike, std::nullopt);
         RETURN_IF_EXCEPTION(scope, { });
-        auto resultISODateTime = TemporalDuration::combineISODateAndTimeRecord(isoDateTime.date(), plainTime->plainTime());
+        auto resultISODateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(isoDateTime.date(), plainTime->plainTime());
         epochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, resultISODateTime,
             TemporalDisambiguation::Compatible);
         RETURN_IF_EXCEPTION(scope, { });

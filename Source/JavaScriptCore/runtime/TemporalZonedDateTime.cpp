@@ -167,7 +167,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
     
-    auto isoDateTime = TemporalDuration::combineISODateAndTimeRecord(isoDate, time);
+    auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(isoDate, time);
 
     if (offsetBehavior == TemporalOffsetBehavior::Wall
         || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Ignore))
@@ -414,7 +414,7 @@ static ISO8601::ExactTime addZonedDateTime(JSGlobalObject* globalObject, ISO8601
         duration.dateDuration(), overflow);
     RETURN_IF_EXCEPTION(scope, { });
     auto intermediateDateTime =
-        TemporalDuration::combineISODateAndTimeRecord(addedDate, isoDateTime.time());
+        TemporalPlainDateTime::combineISODateAndTimeRecord(addedDate, isoDateTime.time());
     if (!isoDateTimeWithinLimits(intermediateDateTime)) {
         throwRangeError(globalObject, scope, "result of adding duration to ZonedDateTime is out of range"_s);
         return { };
@@ -474,7 +474,7 @@ static ISO8601::InternalDuration differenceZonedDateTime(JSGlobalObject* globalO
     while (dayCorrection <= maxDayCorrection && !success) {
         auto intermediateDate = TemporalCalendar::balanceISODate(endDate.year(),
             endDate.month(), endDate.day() - (dayCorrection * sign));
-        intermediateDateTime = TemporalDuration::combineISODateAndTimeRecord(intermediateDate,
+        intermediateDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(intermediateDate,
             startTime);
         auto intermediateNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone,
             intermediateDateTime, TemporalDisambiguation::Compatible);

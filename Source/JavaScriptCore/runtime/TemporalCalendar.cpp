@@ -805,7 +805,7 @@ TemporalCalendar::interpretTemporalDateTimeFields(JSGlobalObject* globalObject, 
     RETURN_IF_EXCEPTION(scope, { });
     auto time = TemporalPlainTime::regulateTime(globalObject, ISO8601::Duration { 0, 0, 0, 0, hour, minute, second, millisecond, microsecond, nanosecond }, overflow);
     RETURN_IF_EXCEPTION(scope, { });
-    return TemporalDuration::combineISODateAndTimeRecord(isoDate, time);
+    return TemporalPlainDateTime::combineISODateAndTimeRecord(isoDate, time);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
@@ -982,10 +982,10 @@ ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObj
     RETURN_IF_EXCEPTION(scope, { });
 
     if (smallestUnit != TemporalUnit::Month || increment != 1) {
-        auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
+        auto isoDateTimeOther = TemporalPlainDateTime::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
         auto destEpochNs = ISO8601::getUTCEpochNanoseconds(isoDateTimeOther);
-        TemporalDuration::roundRelativeDuration(globalObject,
-            duration, destEpochNs, TemporalDuration::combineISODateAndTimeRecord(thisDate, ISO8601::PlainTime()),
+        TemporalDuration::roundRelativeDuration(globalObject, duration, destEpochNs,
+            TemporalPlainDateTime::combineISODateAndTimeRecord(thisDate, ISO8601::PlainTime()),
             std::nullopt, largestUnit, increment, smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });
     }

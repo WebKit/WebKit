@@ -146,7 +146,7 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
         auto earlierTime = TemporalPlainTime::addTime(isoDateTime.time(), timeDuration);
         auto earlierDate = TemporalCalendar::balanceISODate(
             isoDate.year(), isoDate.month(), isoDate.day() + earlierTime.days());
-        auto earlierDateTime = TemporalDuration::combineISODateAndTimeRecord(earlierDate,
+        auto earlierDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(earlierDate,
             ISO8601::PlainTime(earlierTime.hours(), earlierTime.minutes(), earlierTime.seconds(),
                 earlierTime.milliseconds(), earlierTime.microseconds(), earlierTime.nanoseconds()));
         possibleEpochNs = getPossibleEpochNanoseconds(globalObject, timeZone, earlierDateTime);
@@ -157,7 +157,7 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
     auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, nanoseconds);
     auto laterTime = TemporalPlainTime::addTime(isoDateTime.time(), timeDuration);
     auto laterDate = TemporalCalendar::balanceISODate(isoDate.year(), isoDate.month(), isoDate.day() - laterTime.days());
-    auto laterDateTime = TemporalDuration::combineISODateAndTimeRecord(laterDate, 
+    auto laterDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(laterDate, 
         ISO8601::PlainTime(laterTime.hours(), laterTime.minutes(), laterTime.seconds(),
             laterTime.milliseconds(), laterTime.microseconds(), laterTime.nanoseconds()));
     possibleEpochNs = getPossibleEpochNanoseconds(globalObject, timeZone, laterDateTime);
@@ -251,7 +251,7 @@ ISO8601::ExactTime TemporalTimeZone::getStartOfDay(JSGlobalObject* globalObject,
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto isoDateTime = TemporalDuration::combineISODateAndTimeRecord(isoDate, ISO8601::PlainTime());
+    auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(isoDate, ISO8601::PlainTime());
     auto possibleEpochNs = getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
     if (possibleEpochNs.size() > 0)
         return ISO8601::ExactTime(possibleEpochNs[0]);
