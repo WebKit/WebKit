@@ -81,6 +81,10 @@ String makeLogMessage(const URL& url, ScriptTelemetryCategory category)
 {
     return makeString(url.string(), " tried to access "_s, description(category));
 }
-#endif
 
+String telemetryString(const HTMLInputElement&)
+{
+    return String();
+}
+#endif
 } // namespace WebCore

@@ -72,6 +72,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
+#include "ScriptTelemetryCategory.h"
 #include "SearchInputType.h"
 #include "Settings.h"
 #include "StepRange.h"
@@ -1160,7 +1161,7 @@ void HTMLInputElement::copyNonAttributePropertiesFromElement(const Element& sour
 String HTMLInputElement::value() const
 {
     if (document().requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls))
-        return m_inputType->defaultValue();
+        return telemetryString(*this);
     if (auto* fileInput = dynamicDowncast<FileInputType>(*m_inputType))
         return fileInput->firstElementPathForInputValue();
 
