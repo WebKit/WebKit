@@ -158,7 +158,7 @@ ISO8601::Duration TemporalPlainTime::balanceTime(Int128 hour, Int128 minute, Int
     if (nanosecond < 0) {
         microsecond -= 1;
         nanosecond += 1000;
-    }    
+    }
     millisecond += microsecond / 1000;
     microsecond = microsecond % 1000;
     if (microsecond < 0) {

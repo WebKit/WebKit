@@ -139,19 +139,19 @@ JSValue TemporalZonedDateTime::getTimeZoneTransition(JSGlobalObject* globalObjec
             throwRangeError(globalObject, scope, "getTimeZoneTransition: direction option must be present"_s);
             return { };
         }
-        direction = directionOptional.value();            
+        direction = directionOptional.value();
     }
 
-    if (isOffsetTimeZoneIdentifier(timeZone())) {
+    if (isOffsetTimeZoneIdentifier(timeZone()))
         return jsNull();
-    }
     std::optional<ExactTime> transition;
-    if (direction == TemporalDirectionOption::Next)
+    if (direction == TemporalDirectionOption::Next) {
         transition = TemporalTimeZone::getNamedTimeZoneNextTransition(timeZone().asID(),
             exactTime().epochNanoseconds());
-    else
+    } else {
         transition = TemporalTimeZone::getNamedTimeZonePreviousTransition(timeZone().asID(),
             exactTime().epochNanoseconds());
+    }
     if (!transition)
         return jsNull();
     RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(transition.value()), timeZone()));
@@ -166,13 +166,14 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
+
     auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(isoDate, time);
 
     if (offsetBehavior == TemporalOffsetBehavior::Wall
-        || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Ignore))
+        || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Ignore)) {
         return ISO8601::ExactTime(TemporalTimeZone::getEpochNanosecondsFor(
             globalObject, timeZone, isoDateTime, disambiguation));
+    }
 
     if (offsetBehavior == TemporalOffsetBehavior::Exact
         || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Use)) {
@@ -190,8 +191,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
     }
 
     ASSERT(offsetBehavior == TemporalOffsetBehavior::Option);
-    ASSERT(offsetOption == TemporalOffset::Prefer
-           || offsetOption == TemporalOffset::Reject);
+    ASSERT(offsetOption == TemporalOffset::Prefer || offsetOption == TemporalOffset::Reject);
 
     checkISODaysRange(globalObject, isoDate);
     RETURN_IF_EXCEPTION(scope, { });
@@ -215,7 +215,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
         throwRangeError(globalObject, scope, "User-provided offset doesn't match any instants for this time zone and date/time"_s);
         return { };
     }
-    
+
     return TemporalTimeZone::disambiguatePossibleEpochNanoseconds(globalObject,
         possibleEpochNs, timeZone, ISO8601::PlainDateTime(isoDate, time), disambiguation);
 }
@@ -286,7 +286,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
     auto thisNs = m_exactTime.get();
     auto timeZone = m_timeZone;
     auto isoDateTime = getISODateTimeFor(timeZone, thisNs);
-    
+
     ISO8601::ExactTime epochNanoseconds;
     if (smallestUnit == TemporalUnit::Day) {
         auto dateStart = isoDateTime.date();
@@ -305,8 +305,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
             return { };
         }
         epochNanoseconds = ISO8601::ExactTime(startNs.epochNanoseconds() + roundedDayNsOptional.value());
-    }
-    else {
+    } else {
         auto roundResult = TemporalPlainDateTime::roundISODateTime(isoDateTime, roundingIncrement, smallestUnit, roundingMode);
         auto offsetNanoseconds = ISO8601::getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds());
         epochNanoseconds = interpretISODateTimeOffset(globalObject,
@@ -455,9 +454,10 @@ static ISO8601::InternalDuration differenceZonedDateTime(JSGlobalObject* globalO
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (ns1 == ns2)
+    if (ns1 == ns2) {
         RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject,
             ISO8601::Duration(), 0));
+    }
     auto startDateTime = getISODateTimeFor(timeZone, ns1);
     auto startDate = startDateTime.date();
     auto startTime = startDateTime.time();
@@ -540,14 +540,12 @@ ISO8601::Duration TemporalZonedDateTime::differenceTemporalZonedDateTime(bool is
         throwRangeError(globalObject, scope, "time zones must match"_s);
         return { };
     }
-    if (exactTime() == other->exactTime()) {
+    if (exactTime() == other->exactTime())
         return ISO8601::Duration();
-    }
     if (isSince)
         roundingMode = negateTemporalRoundingMode(roundingMode);
-    auto internalDuration = differenceZonedDateTimeWithRounding(globalObject,
-         exactTime(), other->exactTime(), timeZone(),
-         calendar(), largestUnit, increment, smallestUnit, roundingMode);
+    auto internalDuration = differenceZonedDateTimeWithRounding(globalObject, exactTime(), other->exactTime(),
+        timeZone(), calendar(), largestUnit, increment, smallestUnit, roundingMode);
     RETURN_IF_EXCEPTION(scope, { });
     auto result = TemporalDuration::temporalDurationFromInternal(internalDuration, TemporalUnit::Hour);
     if (isSince)
@@ -690,7 +688,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
 
         auto string = itemValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
-        
+
         auto dateTime = ISO8601::parseTemporalDateTimeString(string);
         if (!dateTime) {
             throwRangeError(globalObject, scope, makeString("in Temporal.ZonedDateTime.from, error parsing "_s, string));
@@ -716,7 +714,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             jsString(vm, WTF::String(annotation->m_annotation)));
         RETURN_IF_EXCEPTION(scope, { });
         if (timeZoneOptional->m_offset)
-            offsetString = WTF::String(timeZoneOptional->m_offset->m_offset_string);
+            offsetString = WTF::String(timeZoneOptional->m_offset->m_offsetString);
         if (timeZoneOptional->m_z)
             offsetBehavior = TemporalOffsetBehavior::Exact;
         else if (!offsetString)

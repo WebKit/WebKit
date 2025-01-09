@@ -287,7 +287,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncUntil, (JSGlobalObjec
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-   auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
+    auto* zonedDateTime = jsDynamicCast<TemporalZonedDateTime*>(callFrame->thisValue());
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.since called on value that's not a ZonedDateTime"_s);
 
@@ -485,7 +485,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToInstant, (JSGlobalO
     if (!zonedDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.toInstant called on value that's not a ZonedDateTime"_s);
 
-    RELEASE_AND_RETURN (scope, JSValue::encode(TemporalInstant::create(vm, globalObject->instantStructure(), zonedDateTime->exactTime())));
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalInstant::create(vm, globalObject->instantStructure(), zonedDateTime->exactTime())));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.calendarid
@@ -668,7 +668,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterEpochMilliseconds, 
     auto ns = zonedDateTime->exactTime().epochNanoseconds();
     Int128 ms = ns / 1000000;
     // 4. Let ms be floor(ℝ(ns) / 10**6).
-    if (ns % 1000000 && ms < 0)
+    if ((ns % 1000000) && (ms < 0))
         ms--;
     return JSValue::encode(jsNumber(static_cast<double>(ms)));
 }

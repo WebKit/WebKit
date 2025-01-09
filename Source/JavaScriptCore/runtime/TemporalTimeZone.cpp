@@ -113,7 +113,7 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
     auto n = possibleEpochNs.size();
     if (n == 1)
         return ISO8601::ExactTime(possibleEpochNs[0]);
-    if (n != 0) {
+    if (n) {
         if (disambiguation == TemporalDisambiguation::Earlier
             || disambiguation == TemporalDisambiguation::Compatible)
             return ISO8601::ExactTime(possibleEpochNs[0]);
@@ -138,7 +138,7 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
     auto offsetAfter = ISO8601::getOffsetNanosecondsFor(timeZone, dayAfter);
     auto nanoseconds = offsetAfter - offsetBefore;
     ASSERT(absInt128(nanoseconds) <= ISO8601::ExactTime::nsPerDay);
-    
+
     auto isoDate = isoDateTime.date();
 
     if (disambiguation == TemporalDisambiguation::Earlier) {
@@ -157,19 +157,19 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
     auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, nanoseconds);
     auto laterTime = TemporalPlainTime::addTime(isoDateTime.time(), timeDuration);
     auto laterDate = TemporalCalendar::balanceISODate(isoDate.year(), isoDate.month(), isoDate.day() - laterTime.days());
-    auto laterDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(laterDate, 
+    auto laterDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(laterDate,
         ISO8601::PlainTime(laterTime.hours(), laterTime.minutes(), laterTime.seconds(),
             laterTime.milliseconds(), laterTime.microseconds(), laterTime.nanoseconds()));
     possibleEpochNs = getPossibleEpochNanoseconds(globalObject, timeZone, laterDateTime);
     RETURN_IF_EXCEPTION(scope, { });
     n = possibleEpochNs.size();
-    ASSERT(n != 0);
+    ASSERT(n);
     return ISO8601::ExactTime(possibleEpochNs[n - 1]);
 }
 
 static Int128 beforeFirstDST
     = ISO8601::getUTCEpochNanoseconds(ISO8601::PlainDateTime(ISO8601::PlainDate(1847, 0, 1),
-            ISO8601::PlainTime()));
+        ISO8601::PlainTime()));
 
 static Int128 epochNsToMs(Int128 epochNanoseconds)
 {
@@ -192,9 +192,8 @@ static Int128 bisect(std::function<Int128(Int128)> const& getState, Int128 left,
         } else if (mstate == rstate) {
             right = middle;
             rstate = mstate;
-        } else {
-            ASSERT_NOT_REACHED();
-        }
+        } else
+            RELEASE_ASSERT_NOT_REACHED();
     }
     return right;
 }
@@ -303,7 +302,7 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::getAvailableNamedTimeZoneIden
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
-    
+
     if (chars.size() == 3 && chars[0] == 'U' && chars[1] == 'T' && chars[2] == 'C')
         return ISO8601::TimeZone::offset(0);
     throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
@@ -318,9 +317,8 @@ ISO8601::TimeZone TemporalTimeZone::toTemporalTimeZoneIdentifier(JSGlobalObject*
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (temporalTimeZoneLike.isObject()) {
-        if (temporalTimeZoneLike.inherits<TemporalZonedDateTime>()) {
+        if (temporalTimeZoneLike.inherits<TemporalZonedDateTime>())
             return jsCast<TemporalZonedDateTime*>(temporalTimeZoneLike)->timeZone();
-        }
     }
     if (!temporalTimeZoneLike.isString()) {
         throwTypeError(globalObject, scope, "time zone must be ZonedDateTime or string"_s);
@@ -334,9 +332,8 @@ ISO8601::TimeZone TemporalTimeZone::toTemporalTimeZoneIdentifier(JSGlobalObject*
         return { };
     }
     auto parseResult = parseResultOptional.value();
-    if (parseResult.isOffset()) {
+    if (parseResult.isOffset())
         return parseResult;
-    }
     auto name = parseResult.asID();
     auto timeZoneIdentifierRecord = getAvailableNamedTimeZoneIdentifier(globalObject, name);
     RETURN_IF_EXCEPTION(scope, { });
@@ -368,7 +365,7 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
     }
     if (!parseResult)
         return std::nullopt;
-       
+
     if (isIANAName) {
         if (parseResult)
             return ISO8601::TimeZone::named(parseResult.value());
@@ -376,7 +373,7 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneIdentifier(StringView ident
     }
 
     int64_t offsetNanoseconds = parseResult.value();
-    ASSERT(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute == 0);
+    ASSERT(!(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute));
     return ISO8601::TimeZone::offset(offsetNanoseconds);
 }
 
@@ -384,7 +381,7 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneFromAnnotation(const ISO860
 {
     if (annotation.m_offset) {
         auto offsetNanoseconds = annotation.m_offset.value();
-        ASSERT(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute == 0);
+        ASSERT(!(offsetNanoseconds % ISO8601::ExactTime::nsPerMinute));
         return ISO8601::TimeZone::offset(offsetNanoseconds);
     }
 
@@ -438,54 +435,48 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
             timeZoneResult = optionalTimeZoneRecord.value();
         else
             return std::nullopt;
-    }
-    else {
+    } else {
         auto asExactTime = ISO8601::parseInstant(timeZoneString);
         if (asExactTime) {
             // TODO: support parsing time zone annotation from Instant
             return std::nullopt;
+        }
+        auto asTime = ISO8601::parseCalendarTime(timeZoneString);
+        if (asTime) {
+            auto [time, optionalTimeZoneRecord, optionalCalendarRecord] = asTime.value();
+            if (optionalTimeZoneRecord)
+                timeZoneResult = optionalTimeZoneRecord.value();
+            else
+                return std::nullopt;
         } else {
-            auto asTime = ISO8601::parseCalendarTime(timeZoneString);
-            if (asTime) {
-                auto [time, optionalTimeZoneRecord, optionalCalendarRecord] = asTime.value();
+            auto asMonthDay = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::MonthDay);
+            if (asMonthDay) {
+                auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asMonthDay.value();
                 if (optionalTimeZoneRecord)
                     timeZoneResult = optionalTimeZoneRecord.value();
                 else
                     return std::nullopt;
-            }
-            else {
-                auto asMonthDay = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::MonthDay);
-                if (asMonthDay) {
-                    auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asMonthDay.value();
+            } else {
+                auto asYearMonth = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::YearMonth);
+                if (asYearMonth) {
+                    auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asYearMonth.value();
                     if (optionalTimeZoneRecord)
                         timeZoneResult = optionalTimeZoneRecord.value();
                     else
                         return std::nullopt;
-                }
-                else {
-                    auto asYearMonth = ISO8601::parseCalendarDateTime(timeZoneString, TemporalDateFormat::YearMonth);
-                    if (asYearMonth) {
-                        auto [date, optionalTime, optionalTimeZoneRecord, optionalCalendarRecord] = asYearMonth.value();
-                        if (optionalTimeZoneRecord)
-                            timeZoneResult = optionalTimeZoneRecord.value();
-                        else
-                            return std::nullopt;
-                    } else {
-                        return std::nullopt;
-                    }
-                }
+                } else
+                    return std::nullopt;
             }
         }
     }
-    if (timeZoneResult.m_annotation) {
+    if (timeZoneResult.m_annotation)
         return parseTimeZoneFromAnnotation(timeZoneResult.m_annotation.value());
-    }
     if (timeZoneResult.m_z)
         return ISO8601::TimeZone::utc();
     if (timeZoneResult.m_offset) {
         // Check for sub-minute precision in offset string
         Vector<LChar> ignore;
-        auto result = ISO8601::parseUTCOffset(WTF::String(timeZoneResult.m_offset->m_offset_string),
+        auto result = ISO8601::parseUTCOffset(WTF::String(timeZoneResult.m_offset->m_offsetString),
             ignore, false);
         if (!result)
             return std::nullopt;

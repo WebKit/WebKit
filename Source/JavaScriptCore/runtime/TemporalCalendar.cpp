@@ -535,7 +535,7 @@ static String toMonthCode(JSGlobalObject* globalObject, JSValue argument)
         return { };
     }
     auto monthCodeInteger = parseInt(monthCode.substring(1, 3).span8(), 10);
-    if (monthCodeInteger == 0 && monthCode.length() != 4) {
+    if (!monthCodeInteger && monthCode.length() != 4) {
         throwRangeError(globalObject, scope, "monthCode cannot be 0 if last character is not 'L'"_s);
         return { };
     }
@@ -704,8 +704,7 @@ static void calendarResolveFields(JSGlobalObject* globalObject, CalendarID calen
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (calendar == iso8601CalendarID())
-    {
+    if (calendar == iso8601CalendarID()) {
         if ((format == TemporalDateFormat::Date || format == TemporalDateFormat::YearMonth) && !optionalYear) {
             throwTypeError(globalObject, scope, "year property missing in Temporal.ZonedDateTime.from"_s);
             return;

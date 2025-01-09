@@ -549,8 +549,8 @@ TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject* globalObject, JSO
 std::optional<TemporalDirectionOption> getDirectionOption(JSGlobalObject* globalObject, JSObject* options)
 {
     return intlOption<std::optional<TemporalDirectionOption>>(globalObject, options, globalObject->vm().propertyNames->direction, {
-            { "next"_s, TemporalDirectionOption::Next }, { "previous"_s, TemporalDirectionOption::Previous } },
-            "direction must be \"next\" or \"previous\""_s, std::nullopt);
+        { "next"_s, TemporalDirectionOption::Next }, { "previous"_s, TemporalDirectionOption::Previous } },
+        "direction must be \"next\" or \"previous\""_s, std::nullopt);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-gettemporaloffsetoption
@@ -568,7 +568,7 @@ TemporalOffset getTemporalOffsetOption(JSGlobalObject* globalObject, JSObject* o
 TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject* globalObject, JSObject* options)
 {
     return intlOption<TemporalShowTimeZone>(globalObject, options, globalObject->vm().propertyNames->timeZoneName, {
-        { "auto"_s, TemporalShowTimeZone::Auto }, {"critical"_s, TemporalShowTimeZone::Critical },
+        { "auto"_s, TemporalShowTimeZone::Auto }, { "critical"_s, TemporalShowTimeZone::Critical },
         { "never"_s, TemporalShowTimeZone::Never },
         }, "timeZoneName must be \"auto\", \"never\", or \"critical\""_s, TemporalShowTimeZone::Auto);
 }
@@ -725,7 +725,7 @@ bool validateTemporalRoundingIncrement(unsigned increment, unsigned dividend, bo
     }
     if (increment > maximum)
         return false;
-    if (dividend % increment != 0)
+    if (dividend % increment)
         return false;
     return true;
 }
