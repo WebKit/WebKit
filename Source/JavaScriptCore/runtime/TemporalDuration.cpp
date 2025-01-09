@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "TemporalCalendar.h"
 #include "TemporalObject.h"
+#include "TemporalTimeZone.h"
 #include "TemporalZonedDateTime.h"
 #include <wtf/dtoa/double-conversion.h>
 #include <wtf/text/MakeString.h>
@@ -689,31 +690,6 @@ ISO8601::PlainDateTime TemporalDuration::combineISODateAndTimeRecord(ISO8601::Pl
     return ISO8601::PlainDateTime(isoDate, isoTime);
 }
 
-// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
-Int128 TemporalDuration::getUTCEpochNanoseconds(ISO8601::PlainDateTime isoDateTime)
-{
-    auto isoDate = isoDateTime.date();
-    auto isoTime = isoDateTime.time();
-    auto date = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
-    auto time = makeTime(isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond());
-    auto ms = makeDate(date, time);
-    ASSERT(isInteger(ms));
-    return (((Int128) ms) * 1000000
-        + ((Int128) isoTime.microsecond()) * 1000
-        + ((Int128) isoTime.nanosecond()));
-}
-
-ISO8601::ExactTime TemporalDuration::getEpochNanosecondsFor(JSGlobalObject* globalObject,
-    ISO8601::TimeZone timeZone, ISO8601::PlainDateTime isoDateTime, TemporalDisambiguation disambiguation)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto possibleEpochNs = TemporalZonedDateTime::getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
-    RETURN_IF_EXCEPTION(scope, { });
-    return TemporalZonedDateTime::disambiguatePossibleEpochNanoseconds(globalObject, possibleEpochNs, timeZone, isoDateTime, disambiguation);
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-nudgetocalendarunit
 // NudgeToCalendarUnit ( sign, duration, destEpochNs, isoDateTime, timeZone, calendar, increment, unit, roundingMode )
 Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32_t sign,
@@ -786,9 +762,11 @@ Nudged TemporalDuration::nudgeToCalendarUnit(JSGlobalObject* globalObject, int32
         endEpochNs = getUTCEpochNanoseconds(endDateTime);
     } else {
         auto timeZone = timeZoneOptional.value(); 
-        startEpochNs = getEpochNanosecondsFor(globalObject, timeZone, startDateTime, TemporalDisambiguation::Compatible).epochNanoseconds();
+        startEpochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, startDateTime,
+            TemporalDisambiguation::Compatible).epochNanoseconds();
         RETURN_IF_EXCEPTION(scope, { });
-        endEpochNs = getEpochNanosecondsFor(globalObject, timeZone, endDateTime, TemporalDisambiguation::Compatible).epochNanoseconds();
+        endEpochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, endDateTime,
+            TemporalDisambiguation::Compatible).epochNanoseconds();
         RETURN_IF_EXCEPTION(scope, { });
     }
     ASSERT(sign != 1 || ((startEpochNs <= destEpochNs) && (destEpochNs <= endEpochNs)));
@@ -951,7 +929,8 @@ ISO8601::InternalDuration TemporalDuration::bubbleRelativeDuration(JSGlobalObjec
             if (!timeZone)
                 endEpochNs = getUTCEpochNanoseconds(endDateTime);
             else {
-                endEpochNs = getEpochNanosecondsFor(globalObject, timeZone.value(), endDateTime, TemporalDisambiguation::Compatible).epochNanoseconds();
+                endEpochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone.value(),
+                    endDateTime, TemporalDisambiguation::Compatible).epochNanoseconds();
                 RETURN_IF_EXCEPTION(scope, { });
             }
             auto beyondEnd = nudgedEpochNs - endEpochNs;
@@ -994,9 +973,11 @@ NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
     auto startDateTime = combineISODateAndTimeRecord(start, isoTime);
     auto endDate = TemporalCalendar::balanceISODate(start.year(), start.month(), start.day() + sign);
     auto endDateTime = combineISODateAndTimeRecord(endDate, isoTime);
-    auto startEpochNs = getEpochNanosecondsFor(globalObject, timeZone, startDateTime, TemporalDisambiguation::Compatible);
+    auto startEpochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, startDateTime,
+        TemporalDisambiguation::Compatible);
     RETURN_IF_EXCEPTION(scope, { });
-    auto endEpochNs = getEpochNanosecondsFor(globalObject, timeZone, endDateTime, TemporalDisambiguation::Compatible);
+    auto endEpochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, endDateTime,
+        TemporalDisambiguation::Compatible);
     RETURN_IF_EXCEPTION(scope, { });
     auto daySpan = timeDurationFromEpochNanosecondsDifference(endEpochNs, startEpochNs);
     ASSERT(timeDurationSign(daySpan) == sign);

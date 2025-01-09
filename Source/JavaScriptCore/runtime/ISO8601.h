@@ -492,6 +492,7 @@ bool validMonthCode(StringView);
 uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
+void checkISODaysRange(JSGlobalObject*, ISO8601::PlainDate);
 bool isValidISODate(double, double, double);
 PlainDate createISODateRecord(double, double, double);
 
@@ -505,6 +506,7 @@ PlainDateTime balanceISODateTime(double, double, double, double, double,
     double, double, double, double);
 std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);
 PlainDateTime getISOPartsFromEpoch(ExactTime);
+Int128 getUTCEpochNanoseconds(PlainDateTime);
 Int128 getOffsetNanosecondsFor(TimeZone, Int128);
 PlainDateTime getISODateTimeFor(TimeZone, ExactTime);
 

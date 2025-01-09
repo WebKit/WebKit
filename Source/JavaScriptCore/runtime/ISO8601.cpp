@@ -2145,6 +2145,17 @@ bool isYearWithinLimits(double year)
     return year >= minYear && year <= maxYear;
 }
 
+// https://tc39.es/proposal-temporal/#sec-checkisodaysrange
+void checkISODaysRange(JSGlobalObject* globalObject, ISO8601::PlainDate isoDate)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto val = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
+    if (absInt128(val) > 100000000)
+        throwRangeError(globalObject, scope, "date/time value is outside the supported range"_s);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-isvalidisodate
 bool isValidISODate(double year, double month, double day)
 {
@@ -2199,6 +2210,20 @@ Int128 getOffsetNanosecondsFor(TimeZone timeZone, Int128 epochNs)
     if (timeZone.isOffset())
         return timeZone.offsetNanoseconds();
     return getNamedTimeZoneOffsetNanoseconds(timeZone.asID(), epochNs);
+}
+
+// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
+Int128 getUTCEpochNanoseconds(PlainDateTime isoDateTime)
+{
+    auto isoDate = isoDateTime.date();
+    auto isoTime = isoDateTime.time();
+    auto date = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
+    auto time = makeTime(isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond());
+    auto ms = makeDate(date, time);
+    ASSERT(isInteger(ms));
+    return (((Int128) ms) * 1000000
+        + ((Int128) isoTime.microsecond()) * 1000
+        + ((Int128) isoTime.nanosecond()));
 }
 
 } // namespace ISO8601

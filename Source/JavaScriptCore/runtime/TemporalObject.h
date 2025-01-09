@@ -217,7 +217,8 @@ void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<P
 void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction, PrecisionData);
 std::optional<double> maximumRoundingIncrement(TemporalUnit);
 double doubleNumberOption(JSGlobalObject*, JSObject*, PropertyName, double);
-double temporalRoundingIncrement(JSGlobalObject*, double, std::optional<double> dividend, bool inclusive);
+double temporalRoundingIncrement(JSGlobalObject*, double, std::optional<double>, bool);
+bool validateTemporalRoundingIncrement(unsigned, unsigned, bool);
 double roundNumberToIncrementDouble(double, double increment, RoundingMode);
 Int128 roundNumberToIncrementInt128(Int128, Int128 increment, RoundingMode);
 Int128 roundNumberToIncrementAsIfPositive(Int128, Int128, RoundingMode);

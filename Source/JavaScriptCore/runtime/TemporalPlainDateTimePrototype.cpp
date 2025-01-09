@@ -33,6 +33,7 @@
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
+#include "TemporalTimeZone.h"
 #include "TemporalZonedDateTime.h"
 
 namespace JSC {
@@ -329,7 +330,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToZonedDateTime, (JSG
     auto disambiguation = getTemporalDisambiguationOption(globalObject, resolvedOptions);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto epochNs = TemporalDuration::getEpochNanosecondsFor(globalObject,
+    auto epochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject,
         timeZone, ISO8601::PlainDateTime(plainDateTime->plainDate(), plainDateTime->plainTime()), disambiguation);
     RETURN_IF_EXCEPTION(scope, { });
 

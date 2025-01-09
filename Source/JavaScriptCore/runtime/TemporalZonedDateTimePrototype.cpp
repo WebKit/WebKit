@@ -34,6 +34,7 @@
 #include "TemporalPlainDate.h"
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainTime.h"
+#include "TemporalTimeZone.h"
 
 namespace JSC {
 
@@ -233,13 +234,14 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncWithPlainTime, (JSGlo
     JSValue plainTimeLike = callFrame->argument(0);
     ISO8601::ExactTime epochNs;
     if (plainTimeLike.isUndefined()) {
-        epochNs = getStartOfDay(globalObject, timeZone, isoDateTime.date());
+        epochNs = TemporalTimeZone::getStartOfDay(globalObject, timeZone, isoDateTime.date());
         RETURN_IF_EXCEPTION(scope, { });
     } else {
         auto plainTime = TemporalPlainTime::from(globalObject, plainTimeLike, std::nullopt);
         RETURN_IF_EXCEPTION(scope, { });
         auto resultISODateTime = TemporalDuration::combineISODateAndTimeRecord(isoDateTime.date(), plainTime->plainTime());
-        epochNs = TemporalDuration::getEpochNanosecondsFor(globalObject, timeZone, resultISODateTime, TemporalDisambiguation::Compatible);
+        epochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, resultISODateTime,
+            TemporalDisambiguation::Compatible);
         RETURN_IF_EXCEPTION(scope, { });
     }
 
@@ -454,7 +456,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncStartOfDay, (JSGlobal
 
     auto timeZone = zonedDateTime->timeZone();
     auto isoDateTime = ISO8601::getISODateTimeFor(timeZone, zonedDateTime->exactTime());
-    auto epochNanoseconds = getStartOfDay(globalObject, timeZone, isoDateTime.date());
+    auto epochNanoseconds = TemporalTimeZone::getStartOfDay(globalObject, timeZone, isoDateTime.date());
     RETURN_IF_EXCEPTION(scope, { });
 
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(epochNanoseconds), WTFMove(timeZone))));
@@ -486,7 +488,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalZonedDateTimePrototypeFuncToInstant, (JSGlobalO
     RELEASE_AND_RETURN (scope, JSValue::encode(TemporalInstant::create(vm, globalObject->instantStructure(), zonedDateTime->exactTime())));
 }
 
-
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.calendarid
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterCalendarId, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -500,6 +502,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterCalendarId, (JSGlob
     return JSValue::encode(jsString(vm, String::fromLatin1("iso8601")));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.timezoneid
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterTimeZoneId, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -512,6 +515,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterTimeZoneId, (JSGlob
     return JSValue::encode(jsString(vm, ISO8601::formatTimeZone(zdt->timeZone())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.year
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -525,6 +529,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYear, (JSGlobalObje
     return JSValue::encode(jsNumber(isoDateTime.date().year()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.month
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonth, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -538,6 +543,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonth, (JSGlobalObj
     return JSValue::encode(jsNumber(isoDateTime.date().month()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.monthcode
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonthCode, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -551,6 +557,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonthCode, (JSGloba
     return JSValue::encode(jsNontrivialString(vm, ISO8601::monthCode(isoDateTime.date().month())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.day
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDay, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -564,6 +571,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDay, (JSGlobalObjec
     return JSValue::encode(jsNumber(isoDateTime.date().day()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.hour
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHour, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -577,6 +585,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHour, (JSGlobalObje
     return JSValue::encode(jsNumber(isoDateTime.time().hour()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.minute
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMinute, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -590,6 +599,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMinute, (JSGlobalOb
     return JSValue::encode(jsNumber(isoDateTime.time().minute()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.second
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterSecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -603,6 +613,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterSecond, (JSGlobalOb
     return JSValue::encode(jsNumber(isoDateTime.time().second()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.millisecond
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMillisecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -616,6 +627,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMillisecond, (JSGlo
     return JSValue::encode(jsNumber(isoDateTime.time().millisecond()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.microsecond
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMicrosecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -629,6 +641,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMicrosecond, (JSGlo
     return JSValue::encode(jsNumber(isoDateTime.time().microsecond()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.nanosecond
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterNanosecond, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -642,6 +655,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterNanosecond, (JSGlob
     return JSValue::encode(jsNumber(isoDateTime.time().nanosecond()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.epochmilliseconds
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterEpochMilliseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -659,6 +673,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterEpochMilliseconds, 
     return JSValue::encode(jsNumber(static_cast<double>(ms)));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.epochnanoseconds
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterEpochNanoseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -671,6 +686,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterEpochNanoseconds, (
     return JSValue::encode(JSBigInt::createFrom(globalObject, zonedDateTime->exactTime().epochNanoseconds()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.dayofweek
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -684,6 +700,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfWeek, (JSGloba
     return JSValue::encode(jsNumber(ISO8601::dayOfWeek(isoDateTime.date())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.dayofyear
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -697,6 +714,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDayOfYear, (JSGloba
     return JSValue::encode(jsNumber(ISO8601::dayOfYear(isoDateTime.date())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.weekofyear
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterWeekOfYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -710,6 +728,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterWeekOfYear, (JSGlob
     return JSValue::encode(jsNumber(ISO8601::weekOfYear(isoDateTime.date())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.yearofweek
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -723,6 +742,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek, (JSGlob
     return JSValue::encode(jsNumber(ISO8601::weekOfYear(isoDateTime.date())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.hoursinday
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHoursInDay, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -736,14 +756,15 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterHoursInDay, (JSGlob
     auto isoDateTime = ISO8601::getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
     auto today = isoDateTime.date();
     auto tomorrow = TemporalCalendar::balanceISODate(today.year(), today.month(), today.day() + 1);
-    auto todayNs = getStartOfDay(globalObject, timeZone, today);
+    auto todayNs = TemporalTimeZone::getStartOfDay(globalObject, timeZone, today);
     RETURN_IF_EXCEPTION(scope, { });
-    auto tomorrowNs = getStartOfDay(globalObject, timeZone, tomorrow);
+    auto tomorrowNs = TemporalTimeZone::getStartOfDay(globalObject, timeZone, tomorrow);
     RETURN_IF_EXCEPTION(scope, { });
     auto diff = TemporalDuration::timeDurationFromEpochNanosecondsDifference(tomorrowNs, todayNs);
     RELEASE_AND_RETURN(scope, JSValue::encode(jsNumber(TemporalDuration::totalTimeDuration(globalObject, diff, TemporalUnit::Hour))));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.daysinweek
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInWeek, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -756,6 +777,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInWeek, (JSGlob
     return JSValue::encode(jsNumber(7)); // ISO8601 calendar always returns 7.
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.daysinmonth
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInMonth, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -771,6 +793,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInMonth, (JSGlo
     return JSValue::encode(jsNumber(ISO8601::daysInMonth(isoDate.year(), isoDate.month())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.daysinyear
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -784,6 +807,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterDaysInYear, (JSGlob
     return JSValue::encode(jsNumber(isLeapYear(isoDateTime.date().year()) ? 366 : 365));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.monthsinyear
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonthsInYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -796,6 +820,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterMonthsInYear, (JSGl
     return JSValue::encode(jsNumber(12)); // ISO8601 calendar always returns 12.
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.inleapyear
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterInLeapYear, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -810,6 +835,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterInLeapYear, (JSGlob
     return JSValue::encode(jsBoolean(isLeapYear(isoDateTime.date().year())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.offset
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterOffset, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();
@@ -823,6 +849,7 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterOffset, (JSGlobalOb
     return JSValue::encode(jsString(vm, ISO8601::formatUTCOffsetNanoseconds((int64_t) offsetNanoseconds)));
 }
 
+// https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.offsetnanoseconds
 JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterOffsetNanoseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
 {
     VM& vm = globalObject->vm();

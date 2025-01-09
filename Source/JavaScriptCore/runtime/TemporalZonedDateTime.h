@@ -61,12 +61,6 @@ public:
     ISO8601::Duration until(JSGlobalObject*, JSValue, TemporalZonedDateTime*);
     JSValue getTimeZoneTransition(JSGlobalObject*, JSValue);
 
-    static Vector<ISO8601::ExactTime> getPossibleEpochNanoseconds(JSGlobalObject*,
-        ISO8601::TimeZone, ISO8601::PlainDateTime);
-    static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
-        Vector<ISO8601::ExactTime>, ISO8601::TimeZone, ISO8601::PlainDateTime,
-        TemporalDisambiguation disambiguation);
- 
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, Vector<LChar>);
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
 
