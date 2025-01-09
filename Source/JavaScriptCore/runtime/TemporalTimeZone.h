@@ -66,8 +66,13 @@ public:
     static std::optional<ISO8601::ExactTime> getNamedTimeZoneNextTransition(TimeZoneID, Int128);
     static std::optional<ISO8601::ExactTime> getNamedTimeZonePreviousTransition(TimeZoneID, Int128);
 
+    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
+    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*,
+        const Vector<LChar>&);
+
     static std::optional<int64_t> parseDateTimeUTCOffset(StringView string);
     static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
+    static ISO8601::TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
 
 private:
     TemporalTimeZone(VM&, Structure*, TimeZone);

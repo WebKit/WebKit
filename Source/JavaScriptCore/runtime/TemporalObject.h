@@ -194,6 +194,11 @@ enum class FieldName : uint8_t {
     TimeZone,
 };
 
+enum class TemporalDirectionOption : bool {
+    Next,
+    Previous,
+};
+
 Int128 nonNegativeModulo(Int128 x, Int128 y);
 WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
@@ -204,9 +209,11 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, std::variant<J
 std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit);
 TemporalShowCalendar getTemporalShowCalendarNameOption(JSGlobalObject*, JSObject*);
 TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject*, JSObject*);
+std::optional<TemporalDirectionOption> getDirectionOption(JSGlobalObject*, JSObject*);
 TemporalOffset getTemporalOffsetOption(JSGlobalObject*, JSObject*, TemporalOffset);
 TemporalShowTimeZone getTemporalShowTimeZoneNameOption(JSGlobalObject*, JSObject*);
 TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject*, JSObject*);
+unsigned getRoundingIncrementOption(JSGlobalObject*, JSObject*);
 TemporalFractionalSecondDigits temporalFractionalSecondDigits(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(JSGlobalObject*, JSObject* options);
 PrecisionData secondsStringPrecision(std::optional<TemporalUnit>, TemporalFractionalSecondDigits);
@@ -224,6 +231,7 @@ Int128 roundNumberToIncrementInt128(Int128, Int128 increment, RoundingMode);
 Int128 roundNumberToIncrementAsIfPositive(Int128, Int128, RoundingMode);
 double applyUnsignedRoundingMode(double, double, double, UnsignedRoundingMode);
 void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
+bool isPartialTemporalObject(JSGlobalObject* globalObject, JSObject* value);
 
 constexpr Int128 lengthInNanoseconds(TemporalUnit unit)
 {
@@ -324,11 +332,6 @@ enum class TemporalOffsetOption : uint8_t {
 enum class TemporalMatchBehavior : bool {
     Exactly,
     Minutes,
-};
-
-enum class TemporalDirectionOption : bool {
-    Next,
-    Previous,
 };
 
 } // namespace JSC

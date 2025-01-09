@@ -61,11 +61,6 @@ public:
     ISO8601::Duration until(JSGlobalObject*, JSValue, TemporalZonedDateTime*);
     JSValue getTimeZoneTransition(JSGlobalObject*, JSValue);
 
-    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, Vector<LChar>);
-    static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*, TimeZoneID);
-
-    static TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
-
     String monthCode() const;
     uint8_t dayOfWeek() const;
     uint16_t dayOfYear() const;

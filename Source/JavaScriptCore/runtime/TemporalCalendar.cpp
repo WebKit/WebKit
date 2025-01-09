@@ -38,6 +38,7 @@
 #include "TemporalPlainMonthDay.h"
 #include "TemporalPlainTime.h"
 #include "TemporalPlainYearMonth.h"
+#include "TemporalTimeZone.h"
 #include "TemporalZonedDateTime.h"
 
 namespace JSC {
@@ -105,6 +106,7 @@ JSObject* TemporalCalendar::toTemporalCalendarWithISODefault(JSGlobalObject* glo
     return TemporalCalendar::from(globalObject, temporalCalendarLike);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-totemporalcalendaridentifier
 CalendarID TemporalCalendar::toTemporalCalendarIdentifier(JSGlobalObject* globalObject, JSValue temporalCalendarLike)
 {
     VM& vm = globalObject->vm();
@@ -666,7 +668,7 @@ TemporalCalendar::prepareCalendarFields(JSGlobalObject* globalObject, CalendarID
                 break;
             }
             case FieldName::TimeZone: {
-                ISO8601::TimeZone val = TemporalZonedDateTime::toTemporalTimeZoneIdentifier(globalObject, value);
+                ISO8601::TimeZone val = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject, value);
                 RETURN_IF_EXCEPTION(scope, { });
                 timeZoneOptional = val;
                 break;

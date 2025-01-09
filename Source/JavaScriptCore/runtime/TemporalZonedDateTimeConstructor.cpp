@@ -116,7 +116,7 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalZonedDateTime, (JSGlobalObject* global
             if (timeZoneParse->m_annotation) {
                 if (!timeZoneParse->m_annotation->m_offset) {
                     auto name = timeZoneParse->m_annotation->m_annotation;
-                    auto identifierRecord = TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(globalObject, name);
+                    auto identifierRecord = TemporalTimeZone::getAvailableNamedTimeZoneIdentifier(globalObject, name);
                     RETURN_IF_EXCEPTION(scope, { });
                     if (!identifierRecord)
                         return throwVMRangeError(globalObject, scope, "Unknown time zone name"_s);
