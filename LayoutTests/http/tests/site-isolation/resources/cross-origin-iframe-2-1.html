@@ -1,0 +1,22 @@
+<style>
+    body {
+        background-color: purple;
+        margin: 0;
+        padding: 0;
+        overflow: clip;
+    }
+    h3, span {
+        margin: 5px;
+        color: white;
+    }
+</style>
+<body>
+    <h3>Cross-origin Frame 2-1</h3>
+    <p>
+        <span>This is SVG image: </span>
+        <img src="green-100x100.svg">
+    </p>
+    <script>
+        onload = () => { window.parent.postMessage("onload", "*"); }
+    </script>
+</body>

@@ -30,6 +30,7 @@
 
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
+#include "ImageBufferRemoteDisplayListBackend.h"
 #include "ImageBufferRemotePDFDocumentBackend.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
@@ -228,7 +229,7 @@ bool RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore()
     return !WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM);
 }
 
-RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat)
+RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, const ImageBufferCreationContext& creationContext)
 {
     RefPtr<ImageBuffer> imageBuffer;
 
@@ -236,22 +237,23 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
     case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
         if (canMapRemoteImageBufferBackendBackingStore())
-            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableMappedIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
+            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableMappedIOSurfaceBackend>(size, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, *this);
         else
-            imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
+            imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteIOSurfaceBackend>(size, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, *this);
 #endif
         [[fallthrough]];
 
     case RenderingMode::Unaccelerated:
         if (!imageBuffer)
-            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
+            imageBuffer = RemoteImageBufferProxy::create<ImageBufferShareableBitmapBackend>(size, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, *this);
         break;
 
     case RenderingMode::PDFDocument:
-        imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemotePDFDocumentBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
+        imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemotePDFDocumentBackend>(size, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, *this);
         break;
 
     case RenderingMode::DisplayList:
+        imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteDisplayListBackend>(size, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, *this);
         break;
     }
 
@@ -265,7 +267,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
 std::unique_ptr<RemoteDisplayListRecorderProxy> RemoteRenderingBackendProxy::createDisplayListRecorder(WebCore::RenderingResourceIdentifier renderingResourceIdentifier, const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat)
 {
     ASSERT(WebProcess::singleton().shouldUseRemoteRenderingFor(RenderingPurpose::DOM));
-    ImageBufferParameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
+    ImageBufferParameters parameters { size, purpose, resolutionScale, colorSpace, pixelFormat, std::nullopt };
     auto transform = ImageBufferBackend::calculateBaseTransform(ImageBuffer::backendParameters(parameters));
     return makeUnique<RemoteDisplayListRecorderProxy>(*this, renderingResourceIdentifier, colorSpace, renderingMode, FloatRect { { }, size }, transform);
 }
@@ -306,10 +308,29 @@ void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceId
     send(Messages::RemoteRenderingBackend::MoveToImageBuffer(identifier));
 }
 
-#if PLATFORM(COCOA)
-void RemoteRenderingBackendProxy::didDrawRemoteToPDF(PageIdentifier pageID, RenderingResourceIdentifier imageBufferIdentifier, SnapshotIdentifier snapshotIdentifier)
+void RemoteRenderingBackendProxy::createSnapshotCompositor(SnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, RenderingResourceIdentifier imageBufferIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::DidDrawRemoteToPDF(pageID, imageBufferIdentifier, snapshotIdentifier));
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->createSnapshotCompositor(snapshotIdentifier, frameIdentifier, renderingBackendIdentifier(), imageBufferIdentifier);
+}
+
+void RemoteRenderingBackendProxy::addSnapshotRemoteFrameResource(SnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, FrameIdentifier parentFrameIdentifier, RenderingResourceIdentifier imageBufferIdentifier)
+{
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->addSnapshotRemoteFrameResource(snapshotIdentifier, frameIdentifier, parentFrameIdentifier, renderingBackendIdentifier(), imageBufferIdentifier);
+}
+
+void RemoteRenderingBackendProxy::releaseSnapshotCompositor(SnapshotIdentifier snapshotIdentifier)
+{
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->releaseSnapshotCompositor(snapshotIdentifier);
+}
+
+#if PLATFORM(COCOA)
+void RemoteRenderingBackendProxy::didDrawRemoteToPDF(PageIdentifier pageID, SnapshotIdentifier snapshotIdentifier)
+{
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get())
+        gpuProcessConnection->didDrawRemoteToPDF(pageID, snapshotIdentifier);
 }
 #endif
 

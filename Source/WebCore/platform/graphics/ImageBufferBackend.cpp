@@ -68,9 +68,41 @@ ImageBufferBackend::ImageBufferBackend(const Parameters& parameters)
 
 ImageBufferBackend::~ImageBufferBackend() = default;
 
+RefPtr<NativeImage> ImageBufferBackend::nativeImageForDrawing(GraphicsContext& destContext)
+{
+    if (destContext.isDeferred() == GraphicsContext::IsDeferred::Yes || &context() == &destContext)
+        return copyNativeImage();
+    return createNativeImageReference();
+}
+
 RefPtr<NativeImage> ImageBufferBackend::sinkIntoNativeImage()
 {
     return createNativeImageReference();
+}
+
+void ImageBufferBackend::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions options)
+{
+    FloatRect srcRectScaled = srcRect;
+    srcRectScaled.scale(resolutionScale());
+    if (auto nativeImage = nativeImageForDrawing(destContext))
+        destContext.drawNativeImageInternal(*nativeImage, destRect, srcRectScaled, options);
+}
+
+void ImageBufferBackend::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    ASSERT(&destContext != &context());
+    FloatRect srcRectScaled = srcRect;
+    srcRectScaled.scale(resolutionScale());
+    if (auto nativeImage = sinkIntoNativeImage())
+        destContext.drawNativeImageInternal(*nativeImage, destRect, srcRectScaled, options);
+}
+
+void ImageBufferBackend::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    FloatRect srcRectScaled = srcRect;
+    srcRectScaled.scale(resolutionScale());
+    if (auto nativeImage = nativeImageForDrawing(destContext))
+        destContext.drawPattern(*nativeImage, destRect, srcRectScaled, patternTransform, phase, spacing, options);
 }
 
 void ImageBufferBackend::convertToLuminanceMask()
@@ -159,6 +191,20 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     };
 
     convertImagePixels(source, destination, destinationRect.size());
+}
+
+std::optional<FrameIdentifier> ImageBufferBackend::frameIdentifier() const
+{
+    if (auto& snapshotParameters = m_parameters.snapshotParameters)
+        return snapshotParameters->frameIdentifier;
+    return std::nullopt;
+}
+
+std::optional<SnapshotIdentifier> ImageBufferBackend::snapshotIdentifier() const
+{
+    if (auto& snapshotParameters = m_parameters.snapshotParameters)
+        return snapshotParameters->snapshotIdentifier;
+    return std::nullopt;
 }
 
 RefPtr<SharedBuffer> ImageBufferBackend::sinkIntoPDFDocument()

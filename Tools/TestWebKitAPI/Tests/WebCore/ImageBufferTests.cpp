@@ -235,6 +235,46 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, 0, footprintError));
 }
 
+TEST(ImageBufferTests, ImageBufferDisplayListBackend)
+{
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto pixelFormat = ImageBufferPixelFormat::BGRA8;
+    FloatSize logicalSize { 4096, 4096 };
+    float scale = 1;
+
+    auto sourceDisplayList = ImageBuffer::create(logicalSize, RenderingMode::DisplayList, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    auto destinationDisplayList = ImageBuffer::create(logicalSize, RenderingMode::DisplayList, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+    auto destinationBitmap = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
+
+    auto blueRatio = 0.25;
+    auto blueRect = FloatRect { FloatPoint { logicalSize.scaled((1 - blueRatio) / 2) }, logicalSize.scaled(blueRatio) };
+    sourceDisplayList->context().fillRect(blueRect, Color::blue);
+
+    auto greenRatio = 0.5;
+    auto greenRect = FloatRect { FloatPoint { logicalSize.scaled((1 - greenRatio) / 2) }, logicalSize.scaled(greenRatio) };
+    destinationDisplayList->context().fillRect(greenRect, Color::green);
+    destinationDisplayList->context().drawImageBuffer(*sourceDisplayList, FloatPoint());
+
+    auto redRect = FloatRect { { }, logicalSize };
+    destinationBitmap->context().fillRect(redRect, Color::red);
+    destinationBitmap->context().drawImageBuffer(*destinationDisplayList, FloatPoint());
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destinationBitmap, redRect.x() + 1, redRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destinationBitmap, redRect.maxX() - 1, redRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destinationBitmap, redRect.x() + 1, redRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::red, *destinationBitmap, redRect.maxX() - 1, redRect.maxY() - 1));
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destinationBitmap, greenRect.x() + 1, greenRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destinationBitmap, greenRect.maxX() - 1, greenRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destinationBitmap, greenRect.x() + 1, greenRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *destinationBitmap, greenRect.maxX() - 1, greenRect.maxY() - 1));
+
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destinationBitmap, blueRect.x() + 1, blueRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destinationBitmap, blueRect.maxX() - 1, blueRect.y() + 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destinationBitmap, blueRect.x() + 1, blueRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::blue, *destinationBitmap, blueRect.maxX() - 1, blueRect.maxY() - 1));
+}
+
 enum class TestPreserveResolution : bool { No, Yes };
 
 void PrintTo(TestPreserveResolution value, ::std::ostream* o)

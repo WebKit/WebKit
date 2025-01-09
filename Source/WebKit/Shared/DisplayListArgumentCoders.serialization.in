@@ -151,6 +151,10 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::ImagePaintingOptions options();
 };
 
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawRemoteFrame {
+    WebCore::FrameIdentifier frameIdentifier();
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawSystemImage {
     Ref<WebCore::SystemImage> systemImage();
     WebCore::FloatRect destinationRect();

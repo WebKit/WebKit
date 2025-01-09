@@ -42,10 +42,14 @@ class NullGraphicsContext : public GraphicsContext {
 public:
     using PaintInvalidationReasons = NullGraphicsContextPaintInvalidationReasons;
 
-    NullGraphicsContext() = default;
+    NullGraphicsContext()
+        : GraphicsContext(Type::Null)
+    {
+    }
 
     NullGraphicsContext(PaintInvalidationReasons reasons)
-        : m_paintInvalidationReasons(reasons)
+        : GraphicsContext(Type::Null)
+        , m_paintInvalidationReasons(reasons)
     {
     }
 

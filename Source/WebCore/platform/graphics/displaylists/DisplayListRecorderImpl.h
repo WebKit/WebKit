@@ -96,6 +96,8 @@ public:
 
     void setURLForRect(const URL&, const FloatRect&) final;
 
+    WEBCORE_EXPORT bool recordFrameImageBufferUse(FrameIdentifier, ImageBuffer&) final;
+
 private:
     void recordSetInlineFillColor(PackedColor::RGBA) final;
     void recordSetInlineStroke(SetInlineStroke&&) final;
@@ -107,6 +109,7 @@ private:
     void recordDrawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) final;
     void recordDrawImageBuffer(ImageBuffer&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
     void recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;
+    void recordDrawRemoteFrame(FrameIdentifier) final;
     void recordDrawSystemImage(SystemImage&, const FloatRect&) final;
     void recordDrawPattern(RenderingResourceIdentifier, const FloatRect& destRect, const FloatRect& tileRect, const AffineTransform&, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { }) final;
 #if ENABLE(INLINE_PATH_DATA)
@@ -146,5 +149,9 @@ private:
     DisplayList& m_displayList;
 };
 
-}
-}
+} // namespace DisplayList
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::DisplayList::RecorderImpl)
+    static bool isType(const WebCore::GraphicsContext& context) { return context.type() == WebCore::GraphicsContext::Type::RecorderImpl; }
+SPECIALIZE_TYPE_TRAITS_END()

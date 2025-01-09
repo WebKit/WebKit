@@ -123,7 +123,12 @@ public:
 
     virtual RefPtr<NativeImage> copyNativeImage() = 0;
     virtual RefPtr<NativeImage> createNativeImageReference() = 0;
+    RefPtr<NativeImage> nativeImageForDrawing(GraphicsContext& destContext);
     WEBCORE_EXPORT virtual RefPtr<NativeImage> sinkIntoNativeImage();
+
+    WEBCORE_EXPORT virtual void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions);
+    WEBCORE_EXPORT virtual void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions);
+    WEBCORE_EXPORT virtual void drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions);
 
     WEBCORE_EXPORT void convertToLuminanceMask();
     virtual void transformToColorSpace(const DestinationColorSpace&) { }
@@ -131,6 +136,8 @@ public:
     virtual void getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination) = 0;
     virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) = 0;
 
+    std::optional<FrameIdentifier> frameIdentifier() const;
+    std::optional<SnapshotIdentifier> snapshotIdentifier() const;
     WEBCORE_EXPORT virtual RefPtr<SharedBuffer> sinkIntoPDFDocument();
 
 #if HAVE(IOSURFACE)
@@ -164,7 +171,7 @@ public:
 
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
-    virtual bool canMapBackingStore() const = 0;
+    virtual bool canMapBackingStore() const { return false; }
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
 
     virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }

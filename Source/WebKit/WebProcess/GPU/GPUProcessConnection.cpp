@@ -431,6 +431,28 @@ void GPUProcessConnection::releaseRenderingBackend(RenderingBackendIdentifier id
     protectedConnection()->send(Messages::GPUConnectionToWebProcess::ReleaseRenderingBackend(identifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
+void GPUProcessConnection::createSnapshotCompositor(SnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, RenderingResourceIdentifier imageBufferIdentifier)
+{
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::CreateSnapshotCompositor(snapshotIdentifier, frameIdentifier, renderingBackendIdentifier, imageBufferIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void GPUProcessConnection::addSnapshotRemoteFrameResource(SnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, FrameIdentifier parentFrameIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, RenderingResourceIdentifier imageBufferIdentifier)
+{
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::AddSnapshotRemoteFrameResource(snapshotIdentifier, frameIdentifier, parentFrameIdentifier, renderingBackendIdentifier, imageBufferIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+void GPUProcessConnection::releaseSnapshotCompositor(SnapshotIdentifier snapshotIdentifier)
+{
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::ReleaseSnapshotCompositor(snapshotIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+
+#if PLATFORM(COCOA)
+void GPUProcessConnection::didDrawRemoteToPDF(PageIdentifier pageID, SnapshotIdentifier snapshotIdentifier)
+{
+    protectedConnection()->send(Messages::GPUConnectionToWebProcess::DidDrawRemoteToPDF(pageID, snapshotIdentifier), 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
+}
+#endif
+
 #if ENABLE(WEBGL)
 void GPUProcessConnection::createGraphicsContextGL(GraphicsContextGLIdentifier identifier, const GraphicsContextGLAttributes& contextAttributes, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& serverHandle)
 {

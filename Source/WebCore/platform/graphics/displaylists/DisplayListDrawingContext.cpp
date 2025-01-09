@@ -59,7 +59,6 @@ void DrawingContext::replayDisplayList(GraphicsContext& destContext)
         m_replayedDisplayList = replayer.replay({ }, m_tracksDisplayListReplay).trackedDisplayList;
     else
         replayer.replay();
-    m_displayList.clear();
 }
 
 } // DisplayList

@@ -363,6 +363,11 @@ void RemoteDisplayListRecorder::drawNativeImage(RenderingResourceIdentifier imag
     handleItem(DisplayList::DrawNativeImage(imageIdentifier, destRect, srcRect, options), *image);
 }
 
+void RemoteDisplayListRecorder::drawRemoteFrame(FrameIdentifier frameIdentifier)
+{
+    handleItem(DisplayList::DrawRemoteFrame(frameIdentifier));
+}
+
 void RemoteDisplayListRecorder::drawSystemImage(Ref<SystemImage> systemImage, const FloatRect& destinationRect)
 {
 #if USE(SYSTEM_PREVIEW)

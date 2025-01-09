@@ -48,6 +48,7 @@
 #endif
 
 namespace WebKit {
+using namespace WebCore;
 
 WebMediaStrategy::~WebMediaStrategy() = default;
 

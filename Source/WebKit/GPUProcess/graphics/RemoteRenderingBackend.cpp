@@ -55,6 +55,7 @@
 #include "SwapBuffersDisplayRequirement.h"
 #include "WebPageProxy.h"
 #include <WebCore/HTMLCanvasElement.h>
+#include <WebCore/ImageBufferDisplayListBackend.h>
 #include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CheckedArithmetic.h>
@@ -153,9 +154,11 @@ void RemoteRenderingBackend::workQueueInitialize()
 
 void RemoteRenderingBackend::workQueueUninitialize()
 {
+    Locker locker { m_lock };
+    m_remoteImageBuffers.clear();
+
     assertIsCurrent(workQueue());
     m_remoteDisplayLists.clear();
-    m_remoteImageBuffers.clear();
     m_remoteImageBufferSets.clear();
     // Make sure we destroy the ResourceCache on the WorkQueue since it gets populated on the WorkQueue.
     m_remoteResourceCache.releaseAllResources();
@@ -202,6 +205,7 @@ void RemoteRenderingBackend::didFailCreateImageBuffer(RenderingResourceIdentifie
     // On failure to create a remote image buffer we still create a null display list recorder.
     // Commands to draw to the failed image might have already be issued and we must process
     // them.
+    Locker locker { m_lock };
     auto errorImage = ImageBuffer::create<NullImageBufferBackend>({ 0, 0 }, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, RenderingPurpose::Unspecified, { }, imageBufferIdentifier);
     RELEASE_ASSERT(errorImage);
     m_remoteDisplayLists.add(imageBufferIdentifier, RemoteDisplayListRecorder::create(*errorImage, imageBufferIdentifier, *this));
@@ -211,6 +215,7 @@ void RemoteRenderingBackend::didFailCreateImageBuffer(RenderingResourceIdentifie
 
 void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
 {
+    Locker locker { m_lock };
     auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
     auto* sharing = imageBuffer->toBackendSharing();
     auto handle = sharing ? downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle() : std::nullopt;
@@ -258,25 +263,6 @@ void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier ident
     didCreateImageBuffer(imageBuffer.releaseNonNull());
 }
 
-#if PLATFORM(COCOA)
-void RemoteRenderingBackend::didDrawRemoteToPDF(PageIdentifier pageID, RenderingResourceIdentifier imageBufferIdentifier, SnapshotIdentifier snapshotIdentifier)
-{
-    assertIsCurrent(workQueue());
-    auto imageBuffer = this->imageBuffer(imageBufferIdentifier);
-    if (!imageBuffer) {
-        ASSERT_IS_TESTING_IPC();
-        return;
-    }
-
-    ASSERT(imageBufferIdentifier == imageBuffer->renderingResourceIdentifier());
-    auto data = imageBuffer->sinkIntoPDFDocument();
-
-    callOnMainRunLoop([pageID, data = WTFMove(data), snapshotIdentifier]() mutable {
-        GPUProcess::singleton().didDrawRemoteToPDF(pageID, WTFMove(data), snapshotIdentifier);
-    });
-}
-#endif
-
 template<typename ImageBufferType>
 static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalSize, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, ImageBufferCreationContext& creationContext, RenderingResourceIdentifier imageBufferIdentifier)
 {
@@ -285,7 +271,7 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
     switch (renderingMode) {
     case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
-        if (isSmallLayerBacking({ logicalSize, resolutionScale, colorSpace, pixelFormat, purpose }))
+        if (isSmallLayerBacking({ logicalSize, purpose, resolutionScale, colorSpace, pixelFormat }))
             imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBitmapBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
         if (!imageBuffer)
             imageBuffer = ImageBuffer::create<ImageBufferShareableMappedIOSurfaceBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
@@ -304,6 +290,7 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
         break;
 
     case RenderingMode::DisplayList:
+        imageBuffer = ImageBuffer::create<ImageBufferDisplayListBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
         break;
     }
 
@@ -353,9 +340,11 @@ void RemoteRenderingBackend::createImageBuffer(const FloatSize& logicalSize, Ren
 
 void RemoteRenderingBackend::releaseImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
+    Locker locker { m_lock };
+    bool success = m_remoteImageBuffers.take(renderingResourceIdentifier).get();
+
     assertIsCurrent(workQueue());
     m_remoteDisplayLists.take(renderingResourceIdentifier);
-    bool success = m_remoteImageBuffers.take(renderingResourceIdentifier).get();
     MESSAGE_CHECK(success, "Resource is being released before being cached.");
 }
 
@@ -446,7 +435,6 @@ void RemoteRenderingBackend::cacheFilter(Ref<Filter>&& filter)
 
 void RemoteRenderingBackend::releaseAllDrawingResources()
 {
-
     ASSERT(!RunLoop::isMain());
     m_remoteResourceCache.releaseAllDrawingResources();
 }
@@ -613,7 +601,7 @@ void RemoteRenderingBackend::releaseRemoteTextDetector(ShapeDetectionIdentifier 
 
 RefPtr<ImageBuffer> RemoteRenderingBackend::imageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    assertIsCurrent(workQueue());
+    Locker locker { m_lock };
     RefPtr<RemoteImageBuffer> remoteImageBuffer = m_remoteImageBuffers.get(renderingResourceIdentifier);
     if (!remoteImageBuffer.get())
         return nullptr;
@@ -622,7 +610,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::imageBuffer(RenderingResourceIdentif
 
 RefPtr<ImageBuffer> RemoteRenderingBackend::takeImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier)
 {
-    assertIsCurrent(workQueue());
+    Locker locker { m_lock };
     auto remoteImageBufferReceiveQueue = m_remoteImageBuffers.take(renderingResourceIdentifier);
     if (!remoteImageBufferReceiveQueue.get())
         return nullptr;

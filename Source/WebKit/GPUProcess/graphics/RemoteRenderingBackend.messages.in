@@ -63,10 +63,6 @@ messages -> RemoteRenderingBackend Stream {
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
     MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
 
-#if PLATFORM(COCOA)
-    DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier snapshotIdentifier)
-#endif
-
     [EnabledBy=ShapeDetection] CreateRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier, WebCore::ShapeDetection::BarcodeDetectorOptions barcodeDetectorOptions) AllowedWhenWaitingForSyncReply
     [EnabledBy=ShapeDetection] ReleaseRemoteBarcodeDetector(WebKit::ShapeDetectionIdentifier identifier) AllowedWhenWaitingForSyncReply
     [EnabledBy=ShapeDetection] GetRemoteBarcodeDetectorSupportedFormats() -> (Vector<WebCore::ShapeDetection::BarcodeFormat> formats) Async

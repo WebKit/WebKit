@@ -92,6 +92,11 @@ void DisplayList::cacheFilter(Filter& filter)
     m_resourceHeap.add(Ref { filter });
 }
 
+void DisplayList::cacheFrameImageBuffer(FrameIdentifier frameIdentifier, ImageBuffer& imageBuffer)
+{
+    m_resourceHeap.add(frameIdentifier, Ref { imageBuffer });
+}
+
 String DisplayList::asText(OptionSet<AsTextFlag> flags) const
 {
     TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
