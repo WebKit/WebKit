@@ -54,6 +54,7 @@ public:
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }
 
+    TemporalZonedDateTime* addDurationToZonedDateTime(JSGlobalObject*, bool, ISO8601::Duration, JSObject*);
     TemporalZonedDateTime* with(JSGlobalObject*, JSObject* temporalDateLike, JSValue options);
     TemporalZonedDateTime* round(JSGlobalObject*, JSValue options);
     ISO8601::Duration since(JSGlobalObject*, JSValue, TemporalZonedDateTime*);

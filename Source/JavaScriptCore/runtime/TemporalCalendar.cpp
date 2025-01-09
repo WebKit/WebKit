@@ -93,8 +93,7 @@ static std::optional<CalendarID> parseTemporalCalendarString(JSGlobalObject* glo
         return iso8601CalendarID();
     if (WTF::String(calendarParseResult->m_name).convertToASCIILowercase() == "iso8601"_s)
         return iso8601CalendarID();
-    // return string;
-    // TODO
+
     throwRangeError(globalObject, scope, "calendar ID not supported yet"_s);
     return std::nullopt;
 }
