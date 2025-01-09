@@ -29,6 +29,7 @@
 #include "ISO8601.h"
 #include "JSObjectInlines.h"
 #include "ParseInt.h"
+#include "TemporalZonedDateTime.h"
 #include <wtf/text/StringParsingBuffer.h>
 
 namespace JSC {
@@ -213,7 +214,7 @@ std::optional<ISO8601::ExactTime> TemporalTimeZone::getNamedTimeZonePreviousTran
 
 // https://tc39.es/proposal-temporal/#sec-temporal-getnamedtimezonenexttransition
 std::optional<ISO8601::ExactTime> TemporalTimeZone::getNamedTimeZoneNextTransition(TimeZoneID timeZoneIdentifier,
-    Int128 epochNanoseconds)
+Int128 epochNanoseconds)
 {
     auto epochMilliseconds = epochNsToMs(epochNanoseconds);
     if (epochMilliseconds < beforeFirstDST)
@@ -280,6 +281,70 @@ ISO8601::ExactTime TemporalTimeZone::getEpochNanosecondsFor(JSGlobalObject* glob
     auto possibleEpochNs = getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
     RETURN_IF_EXCEPTION(scope, { });
     return disambiguatePossibleEpochNanoseconds(globalObject, possibleEpochNs, timeZone, isoDateTime, disambiguation);
+}
+
+// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
+std::optional<ISO8601::TimeZone> TemporalTimeZone::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
+    TimeZoneID timeZoneIdentifier)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (timeZoneIdentifier == utcTimeZoneID())
+        return ISO8601::TimeZone::offset(0);
+    // TODO: support named time zones
+    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
+    return { };
+}
+
+// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
+std::optional<ISO8601::TimeZone> TemporalTimeZone::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
+    const Vector<LChar>& chars)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    
+    if (chars.size() == 3 && chars[0] == 'U' && chars[1] == 'T' && chars[2] == 'C')
+        return ISO8601::TimeZone::offset(0);
+    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
+    return { };
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-totemporaltimezoneidentifier
+ISO8601::TimeZone TemporalTimeZone::toTemporalTimeZoneIdentifier(JSGlobalObject* globalObject,
+    JSValue temporalTimeZoneLike)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (temporalTimeZoneLike.isObject()) {
+        if (temporalTimeZoneLike.inherits<TemporalZonedDateTime>()) {
+            return jsCast<TemporalZonedDateTime*>(temporalTimeZoneLike)->timeZone();
+        }
+    }
+    if (!temporalTimeZoneLike.isString()) {
+        throwTypeError(globalObject, scope, "time zone must be ZonedDateTime or string"_s);
+        return { };
+    }
+    auto toParse = temporalTimeZoneLike.toWTFString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto parseResultOptional = TemporalTimeZone::parseTemporalTimeZoneString(toParse);
+    if (!parseResultOptional) {
+        throwRangeError(globalObject, scope, makeString("error parsing time zone from string "_s, toParse));
+        return { };
+    }
+    auto parseResult = parseResultOptional.value();
+    if (parseResult.isOffset()) {
+        return parseResult;
+    }
+    auto name = parseResult.asID();
+    auto timeZoneIdentifierRecord = getAvailableNamedTimeZoneIdentifier(globalObject, name);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!timeZoneIdentifierRecord) {
+        throwRangeError(globalObject, scope, "time zone is invalid"_s);
+        return { };
+    }
+    return timeZoneIdentifierRecord.value();
 }
 
 static std::optional<TimeZoneID> parseTimeZoneIANAName(StringView)

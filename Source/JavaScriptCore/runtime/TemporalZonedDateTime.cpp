@@ -100,13 +100,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::tryCreateIfValid(JSGlobalObject* g
     return TemporalZonedDateTime::create(vm, structure, WTFMove(epochNanoseconds), WTFMove(timeZone));
 }
 
-static std::optional<TemporalDirectionOption> getDirectionOption(JSGlobalObject* globalObject, JSObject* options)
-{
-    return intlOption<std::optional<TemporalDirectionOption>>(globalObject, options, globalObject->vm().propertyNames->direction, {
-            { "next"_s, TemporalDirectionOption::Next }, { "previous"_s, TemporalDirectionOption::Previous } },
-            "direction must be \"next\" or \"previous\""_s, std::nullopt);
-}
-
+// https://tc39.es/proposal-temporal/#sec-isoffsettimezoneidentifier
 static bool isOffsetTimeZoneIdentifier(const ISO8601::TimeZone& t)
 {
     return t.isOffset();
@@ -161,25 +155,6 @@ JSValue TemporalZonedDateTime::getTimeZoneTransition(JSGlobalObject* globalObjec
     if (!transition)
         return jsNull();
     RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(transition.value()), timeZone()));
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-roundisodatetime
-static ISO8601::PlainDateTime roundISODateTime(ISO8601::PlainDateTime isoDateTime,
-    unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
-{
-    auto isoDate = isoDateTime.date();
-    auto isoTime = isoDateTime.time();
-
-    ASSERT(ISO8601::isDateTimeWithinLimits(isoDate.year(), isoDate.month(), isoDate.day(),
-        isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond(),
-        isoTime.microsecond(), isoTime.nanosecond()));
-    auto roundedTime = TemporalPlainTime::roundTime(isoTime, increment, unit, roundingMode, std::nullopt);
-
-    auto balanceResult = TemporalCalendar::balanceISODate(
-        isoDate.year(), isoDate.month(), isoDate.day() + roundedTime.days());
-    return TemporalDuration::combineISODateAndTimeRecord(balanceResult,
-        ISO8601::PlainTime(roundedTime.hours(), roundedTime.minutes(), roundedTime.seconds(),
-            roundedTime.milliseconds(), roundedTime.microseconds(), roundedTime.nanoseconds()));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-interpretisodatetimeoffset
@@ -243,21 +218,6 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
     
     return TemporalTimeZone::disambiguatePossibleEpochNanoseconds(globalObject,
         possibleEpochNs, timeZone, ISO8601::PlainDateTime(isoDate, time), disambiguation);
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getroundingincrementoption
-static unsigned getRoundingIncrementOption(JSGlobalObject* globalObject, JSObject* roundTo)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    unsigned integerIncrement = doubleNumberOption(globalObject, roundTo, vm.propertyNames->roundingIncrement, 1);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (integerIncrement < 1 || integerIncrement > 1000000000) {
-        throwRangeError(globalObject, scope, "rounding increment must be at least 1 and at most 1e9"_s);
-        return { };
-    }
-    return integerIncrement;
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.round
@@ -347,7 +307,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         epochNanoseconds = ISO8601::ExactTime(startNs.epochNanoseconds() + roundedDayNsOptional.value());
     }
     else {
-        auto roundResult = roundISODateTime(isoDateTime, roundingIncrement, smallestUnit, roundingMode);
+        auto roundResult = TemporalPlainDateTime::roundISODateTime(isoDateTime, roundingIncrement, smallestUnit, roundingMode);
         auto offsetNanoseconds = ISO8601::getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds());
         epochNanoseconds = interpretISODateTimeOffset(globalObject,
             roundResult.date(), roundResult.time(), TemporalOffsetBehavior::Option, offsetNanoseconds, timeZone,
@@ -356,32 +316,6 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
     }
     RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(),
         WTFMove(epochNanoseconds), WTFMove(timeZone)));
-}
-
-static bool isPartialTemporalObject(JSGlobalObject* globalObject, JSObject* value)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (value->inherits<TemporalPlainDate>()
-        || value->inherits<TemporalPlainDateTime>()
-        || value->inherits<TemporalPlainMonthDay>()
-        || value->inherits<TemporalPlainTime>()
-        || value->inherits<TemporalPlainYearMonth>()
-        || value->inherits<TemporalZonedDateTime>())
-        return false;
-
-    auto calendarProperty = value->get(globalObject, vm.propertyNames->calendar);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!calendarProperty.isUndefined())
-        return false;
-
-    auto timeZoneProperty = value->get(globalObject, vm.propertyNames->timeZone);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!timeZoneProperty.isUndefined())
-        return false;
-
-    return true;
 }
 
 TemporalZonedDateTime* TemporalZonedDateTime::with(JSGlobalObject* globalObject, JSObject* temporalZonedDateTimeLike, JSValue options)
@@ -621,6 +555,7 @@ ISO8601::Duration TemporalZonedDateTime::differenceTemporalZonedDateTime(bool is
     return result;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.since
 ISO8601::Duration TemporalZonedDateTime::since(JSGlobalObject* globalObject, JSValue options, TemporalZonedDateTime* other)
 {
     VM& vm = globalObject->vm();
@@ -629,6 +564,7 @@ ISO8601::Duration TemporalZonedDateTime::since(JSGlobalObject* globalObject, JSV
     RELEASE_AND_RETURN(scope, differenceTemporalZonedDateTime(true, globalObject, options, other));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.until
 ISO8601::Duration TemporalZonedDateTime::until(JSGlobalObject* globalObject, JSValue options, TemporalZonedDateTime* other)
 {
     VM& vm = globalObject->vm();
@@ -671,70 +607,6 @@ String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue opt
     RETURN_IF_EXCEPTION(scope, { });
 
     return ISO8601::temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone, precision, showCalendar, showTimeZone, showOffset, precision.increment, precision.unit, roundingMode);
-}
-
-
-// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
-std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject,
-    TimeZoneID timeZoneIdentifier)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (timeZoneIdentifier == utcTimeZoneID())
-        return ISO8601::TimeZone::offset(0);
-    // TODO: support named time zones
-    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
-    return { };
-}
-
-// TODO
-// https://tc39.es/proposal-temporal/#sec-getavailablenamedtimezoneidentifier
-std::optional<ISO8601::TimeZone> TemporalZonedDateTime::getAvailableNamedTimeZoneIdentifier(JSGlobalObject* globalObject, Vector<LChar> chars)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    
-    if (chars.size() == 3 && chars[0] == 'U' && chars[1] == 'T' && chars[2] == 'C')
-        return ISO8601::TimeZone::offset(0);
-    throwRangeError(globalObject, scope, "getAvailableNamedTimeZoneIdentifier() not yet implemented"_s);
-    return { };
-}
-
-ISO8601::TimeZone TemporalZonedDateTime::toTemporalTimeZoneIdentifier(JSGlobalObject* globalObject,
-    JSValue temporalTimeZoneLike)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (temporalTimeZoneLike.isObject()) {
-        if (temporalTimeZoneLike.inherits<TemporalZonedDateTime>()) {
-            return jsCast<TemporalZonedDateTime*>(temporalTimeZoneLike)->m_timeZone;
-        }
-    }
-    if (!temporalTimeZoneLike.isString()) {
-        throwTypeError(globalObject, scope, "time zone must be ZonedDateTime or string"_s);
-        return { };
-    }
-    auto toParse = temporalTimeZoneLike.toWTFString(globalObject);
-    RETURN_IF_EXCEPTION(scope, { });
-    auto parseResultOptional = TemporalTimeZone::parseTemporalTimeZoneString(toParse);
-    if (!parseResultOptional) {
-        throwRangeError(globalObject, scope, makeString("error parsing time zone from string "_s, toParse));
-        return { };
-    }
-    auto parseResult = parseResultOptional.value();
-    if (parseResult.isOffset()) {
-        return parseResult;
-    }
-    auto name = parseResult.asID();
-    auto timeZoneIdentifierRecord = getAvailableNamedTimeZoneIdentifier(globalObject, name);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (!timeZoneIdentifierRecord) {
-        throwRangeError(globalObject, scope, "time zone is invalid"_s);
-        return { };
-    }
-    return timeZoneIdentifierRecord.value();
 }
 
 static bool isUTCTimeZoneAnnotation(std::optional<ISO8601::TimeZoneAnnotation>& annotation)
@@ -840,8 +712,8 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             throwRangeError(globalObject, scope, "Temporal.ZonedDateTime requires a time zone ID in brackets"_s);
             return { };
         }
-        timeZone =
-            toTemporalTimeZoneIdentifier(globalObject, jsString(vm, WTF::String(annotation->m_annotation)));
+        timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject,
+            jsString(vm, WTF::String(annotation->m_annotation)));
         RETURN_IF_EXCEPTION(scope, { });
         if (timeZoneOptional->m_offset)
             offsetString = WTF::String(timeZoneOptional->m_offset->m_offset_string);

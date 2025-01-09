@@ -420,4 +420,23 @@ TemporalPlainDateTime* TemporalPlainDateTime::round(JSGlobalObject* globalObject
     RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), WTFMove(plainDate), WTFMove(plainTime)));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-roundisodatetime
+ISO8601::PlainDateTime TemporalPlainDateTime::roundISODateTime(ISO8601::PlainDateTime isoDateTime,
+    unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
+    auto isoDate = isoDateTime.date();
+    auto isoTime = isoDateTime.time();
+
+    ASSERT(ISO8601::isDateTimeWithinLimits(isoDate.year(), isoDate.month(), isoDate.day(),
+        isoTime.hour(), isoTime.minute(), isoTime.second(), isoTime.millisecond(),
+        isoTime.microsecond(), isoTime.nanosecond()));
+    auto roundedTime = TemporalPlainTime::roundTime(isoTime, increment, unit, roundingMode, std::nullopt);
+
+    auto balanceResult = TemporalCalendar::balanceISODate(
+        isoDate.year(), isoDate.month(), isoDate.day() + roundedTime.days());
+    return TemporalDuration::combineISODateAndTimeRecord(balanceResult,
+        ISO8601::PlainTime(roundedTime.hours(), roundedTime.minutes(), roundedTime.seconds(),
+            roundedTime.milliseconds(), roundedTime.microseconds(), roundedTime.nanoseconds()));
+}
+
 } // namespace JSC

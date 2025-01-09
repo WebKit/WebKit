@@ -41,6 +41,7 @@
 #include "TemporalPlainDateTime.h"
 #include "TemporalPlainDateTimeConstructor.h"
 #include "TemporalPlainDateTimePrototype.h"
+#include "TemporalPlainMonthDay.h"
 #include "TemporalPlainMonthDayConstructor.h"
 #include "TemporalPlainMonthDayPrototype.h"
 #include "TemporalPlainTime.h"
@@ -544,6 +545,14 @@ TemporalShowOffset getTemporalShowOffsetOption(JSGlobalObject* globalObject, JSO
         }, "offset must be \"auto\" or \"never\""_s, TemporalShowOffset::Auto);
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-getdirectionoption
+std::optional<TemporalDirectionOption> getDirectionOption(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<std::optional<TemporalDirectionOption>>(globalObject, options, globalObject->vm().propertyNames->direction, {
+            { "next"_s, TemporalDirectionOption::Next }, { "previous"_s, TemporalDirectionOption::Previous } },
+            "direction must be \"next\" or \"previous\""_s, std::nullopt);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-gettemporaloffsetoption
 TemporalOffset getTemporalOffsetOption(JSGlobalObject* globalObject, JSObject* options, TemporalOffset fallback)
 {
@@ -571,6 +580,21 @@ TemporalDisambiguation getTemporalDisambiguationOption(JSGlobalObject* globalObj
         { "compatible"_s, TemporalDisambiguation::Compatible }, { "earlier"_s, TemporalDisambiguation::Earlier },
         { "later"_s, TemporalDisambiguation::Later }, { "reject"_s, TemporalDisambiguation::Reject },
         }, "disambiguation must be \"compatible\", \"earlier\", \"later\", or \"reject\""_s, TemporalDisambiguation::Reject);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getroundingincrementoption
+unsigned getRoundingIncrementOption(JSGlobalObject* globalObject, JSObject* roundTo)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    unsigned integerIncrement = doubleNumberOption(globalObject, roundTo, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (integerIncrement < 1 || integerIncrement > 1000000000) {
+        throwRangeError(globalObject, scope, "rounding increment must be at least 1 and at most 1e9"_s);
+        return { };
+    }
+    return integerIncrement;
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-negatetemporalroundingmode
@@ -872,6 +896,33 @@ void rejectObjectWithCalendarOrTimeZone(JSGlobalObject* globalObject, JSObject* 
         throwTypeError(globalObject, scope, "argument object must not have timeZone property"_s);
         return;
     }
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-ispartialtemporalobject
+bool isPartialTemporalObject(JSGlobalObject* globalObject, JSObject* value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (value->inherits<TemporalPlainDate>()
+        || value->inherits<TemporalPlainDateTime>()
+        || value->inherits<TemporalPlainMonthDay>()
+        || value->inherits<TemporalPlainTime>()
+        || value->inherits<TemporalPlainYearMonth>()
+        || value->inherits<TemporalZonedDateTime>())
+        return false;
+
+    auto calendarProperty = value->get(globalObject, vm.propertyNames->calendar);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!calendarProperty.isUndefined())
+        return false;
+
+    auto timeZoneProperty = value->get(globalObject, vm.propertyNames->timeZone);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!timeZoneProperty.isUndefined())
+        return false;
+
+    return true;
 }
 
 } // namespace JSC

@@ -322,7 +322,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDateTimePrototypeFuncToZonedDateTime, (JSG
     if (!plainDateTime)
         return throwVMTypeError(globalObject, scope, "Temporal.PlainDateTime.prototype.toZonedDateTime called on value that's not a PlainDateTime"_s);
 
-    auto timeZone = TemporalZonedDateTime::toTemporalTimeZoneIdentifier(globalObject, callFrame->argument(0));
+    auto timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
 
     auto resolvedOptions = intlGetOptionsObject(globalObject, callFrame->argument(1));
