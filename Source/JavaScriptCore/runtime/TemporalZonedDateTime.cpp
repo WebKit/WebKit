@@ -100,179 +100,6 @@ TemporalZonedDateTime* TemporalZonedDateTime::tryCreateIfValid(JSGlobalObject* g
     return TemporalZonedDateTime::create(vm, structure, WTFMove(epochNanoseconds), WTFMove(timeZone));
 }
 
-// https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
-static bool validateTemporalRoundingIncrement(unsigned increment, unsigned dividend, bool inclusive)
-{
-    unsigned maximum;
-    if (inclusive)
-        maximum = dividend;
-    else {
-        ASSERT(dividend > 1);
-        maximum = dividend - 1;
-    }
-    if (increment > maximum)
-        return false;
-    if (dividend % increment != 0)
-        return false;
-    return true;
-}
-
-static Int128 getNamedTimeZoneOffsetNanosecondsImpl(TimeZoneID timeZoneIdentifier, Int128)
-{
-
-    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
-    return 0;
-}
-
-// https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds
-static Vector<ISO8601::ExactTime> getNamedTimeZoneEpochNanoseconds(TimeZoneID timeZoneIdentifier, ISO8601::PlainDateTime isoDateTime)
-{
-    // FIXME: handle other named time zones
-    RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
-    Int128 epochNanoseconds = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
-    Vector<ISO8601::ExactTime> result;
-    result.append(epochNanoseconds);
-    return result;
-}
-
-// https://tc39.es/proposal-temporal/#sec-checkisodaysrange
-void checkISODaysRange(JSGlobalObject* globalObject, ISO8601::PlainDate isoDate)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto val = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
-    if (absInt128(val) > 100000000)
-        throwRangeError(globalObject, scope, "date/time value is outside the supported range"_s);
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getpossibleepochnanoseconds
-Vector<ISO8601::ExactTime> TemporalZonedDateTime::getPossibleEpochNanoseconds(JSGlobalObject* globalObject, ISO8601::TimeZone timeZone, ISO8601::PlainDateTime isoDateTime)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto isoDate = isoDateTime.date();
-    auto isoTime = isoDateTime.time();
-
-    Vector<ISO8601::ExactTime> possibleEpochNanoseconds;
-    if (timeZone.isOffset()) {
-        auto balanced = ISO8601::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
-            isoTime.hour(), isoTime.minute() - timeZone.offsetMinutes(), isoTime.second(),
-            isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond());
-        checkISODaysRange(globalObject, balanced.date());
-        RETURN_IF_EXCEPTION(scope, { });
-        ISO8601::ExactTime epochNanoseconds = ISO8601::ExactTime(TemporalDuration::getUTCEpochNanoseconds(balanced));
-        possibleEpochNanoseconds = Vector<ISO8601::ExactTime>({ epochNanoseconds });
-    } else {
-        checkISODaysRange(globalObject, isoDate);
-        RETURN_IF_EXCEPTION(scope, { });
-        possibleEpochNanoseconds = getNamedTimeZoneEpochNanoseconds(timeZone.asID(), isoDateTime);
-    }
-    for (auto epochNanoseconds : possibleEpochNanoseconds) {
-        if (!epochNanoseconds.isValid()) {
-            throwRangeError(globalObject, scope, "invalid epochNanoseconds result in getPossibleEpochNanoseconds()"_s);
-            return { };
-        }
-    }
-    return possibleEpochNanoseconds;
-}
-
-static Int128 beforeFirstDST
-    = TemporalDuration::getUTCEpochNanoseconds(ISO8601::PlainDateTime(ISO8601::PlainDate(1847, 0, 1),
-            ISO8601::PlainTime()));
-
-Int128 epochNsToMs(Int128 epochNanoseconds)
-{
-    auto quotient = epochNanoseconds / 1000000;
-    auto remainder = epochNanoseconds % 1000000;
-    auto epochMilliseconds = +quotient;
-    if (+remainder < 0)
-        epochMilliseconds -= 1;
-    return epochMilliseconds;
-}
-
-static Int128 bisect(std::function<Int128(Int128)> const& getState, Int128 left, Int128 right, Int128 lstate, Int128 rstate)
-{
-    while (right - left > 1) {
-        auto middle = (left + right) / 2;
-        auto mstate = getState(middle);
-        if (mstate == lstate) {
-            left = middle;
-            lstate = mstate;
-        } else if (mstate == rstate) {
-            right = middle;
-            rstate = mstate;
-        } else {
-            ASSERT_NOT_REACHED();
-        }
-    }
-    return right;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getnamedtimezonenexttransition
-std::optional<ISO8601::ExactTime> getNamedTimeZoneNextTransition(TimeZoneID timeZoneIdentifier, Int128 epochNanoseconds)
-{
-    auto epochMilliseconds = epochNsToMs(epochNanoseconds);
-    if (epochMilliseconds < beforeFirstDST)
-        return getNamedTimeZoneNextTransition(timeZoneIdentifier, beforeFirstDST * 1000000);
-
-    auto now = ISO8601::ExactTime::now();
-    auto base = std::max(epochMilliseconds, now.epochNanoseconds() / 1000000);
-    auto dayMs = ISO8601::ExactTime::nsPerDay / 1000000;
-    auto uppercap = base + dayMs * 366 * 3;
-    auto leftMs = epochMilliseconds;
-    auto leftOffsetNs = getNamedTimeZoneOffsetNanosecondsImpl(timeZoneIdentifier, leftMs);
-    auto rightMs = leftMs;
-    auto rightOffsetNs = leftOffsetNs;
-    while (leftOffsetNs == rightOffsetNs && leftMs < uppercap) {
-        rightMs = leftMs + dayMs * 2 * 7;
-        if (rightMs > (ISO8601::ExactTime::maxValue / 1000000))
-            return std::nullopt;
-        rightOffsetNs = getNamedTimeZoneOffsetNanosecondsImpl(timeZoneIdentifier, rightMs);
-        if (leftOffsetNs == rightOffsetNs)
-            leftMs = rightMs;
-    }
-    if (leftOffsetNs == rightOffsetNs)
-        return std::nullopt;
-    auto result = bisect([timeZoneIdentifier](Int128 epochMs)
-        { return getNamedTimeZoneOffsetNanosecondsImpl(timeZoneIdentifier, epochMs); },
-        leftMs, rightMs, leftOffsetNs, rightOffsetNs);
-    return ISO8601::ExactTime(result * 1000000);
-}
-
-// TODO: named time zones
-std::optional<ISO8601::ExactTime> getNamedTimeZonePreviousTransition(TimeZoneID, Int128)
-{
-    return std::nullopt;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getstartofday
-static ISO8601::ExactTime getStartOfDay(JSGlobalObject* globalObject, ISO8601::TimeZone timeZone, ISO8601::PlainDate isoDate)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto isoDateTime = TemporalDuration::combineISODateAndTimeRecord(isoDate, ISO8601::PlainTime());
-    auto possibleEpochNs = TemporalZonedDateTime::getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
-    if (possibleEpochNs.size() > 0)
-        return possibleEpochNs[0];
-    ASSERT(!timeZone.isOffset());
-
-    auto utcNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
-    ISO8601::ExactTime dayBefore = ISO8601::ExactTime(utcNs - ISO8601::ExactTime::nsPerDay);
-    if (!dayBefore.isValid()) {
-        throwRangeError(globalObject, scope, "day before is not valid in getStartOfDay()"_s);
-        return { };
-    }
-    auto result = getNamedTimeZoneNextTransition(timeZone.asID(), dayBefore.epochNanoseconds());
-    if (!result) {
-        throwRangeError(globalObject, scope, "unable to get next transition in getStartOfDay()"_s);
-        return { };
-    }
-    return result.value();
-}
-
 static std::optional<TemporalDirectionOption> getDirectionOption(JSGlobalObject* globalObject, JSObject* options)
 {
     return intlOption<std::optional<TemporalDirectionOption>>(globalObject, options, globalObject->vm().propertyNames->direction, {
@@ -326,9 +153,11 @@ JSValue TemporalZonedDateTime::getTimeZoneTransition(JSGlobalObject* globalObjec
     }
     std::optional<ExactTime> transition;
     if (direction == TemporalDirectionOption::Next)
-        transition = getNamedTimeZoneNextTransition(timeZone().asID(), exactTime().epochNanoseconds());
+        transition = TemporalTimeZone::getNamedTimeZoneNextTransition(timeZone().asID(),
+            exactTime().epochNanoseconds());
     else
-        transition = getNamedTimeZonePreviousTransition(timeZone().asID(), exactTime().epochNanoseconds());
+        transition = TemporalTimeZone::getNamedTimeZonePreviousTransition(timeZone().asID(),
+            exactTime().epochNanoseconds());
     if (!transition)
         return jsNull();
     RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(transition.value()), timeZone()));
@@ -353,71 +182,6 @@ static ISO8601::PlainDateTime roundISODateTime(ISO8601::PlainDateTime isoDateTim
             roundedTime.milliseconds(), roundedTime.microseconds(), roundedTime.nanoseconds()));
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-disambiguatepossibleepochnanoseconds
-ISO8601::ExactTime TemporalZonedDateTime::disambiguatePossibleEpochNanoseconds(JSGlobalObject* globalObject,
-    Vector<ISO8601::ExactTime> possibleEpochNs, ISO8601::TimeZone timeZone, ISO8601::PlainDateTime isoDateTime,
-    TemporalDisambiguation disambiguation)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto n = possibleEpochNs.size();
-    if (n == 1)
-        return possibleEpochNs[0];
-    if (n != 0) {
-        if (disambiguation == TemporalDisambiguation::Earlier
-            || disambiguation == TemporalDisambiguation::Compatible)
-            return possibleEpochNs[0];
-        if (disambiguation == TemporalDisambiguation::Later)
-            return possibleEpochNs[n - 1];
-        throwRangeError(globalObject, scope, "disambiguation is Reject and multiple instants found in disambiguatePossibleEpochNanoseconds()"_s);
-        return { };
-    }
-    // n == 0
-    if (disambiguation == TemporalDisambiguation::Reject) {
-        throwRangeError(globalObject, scope, "disambiguation is Reject in disambiguatePossibleEpochNanoseconds() and no possible instants"_s);
-        return { };
-    }
-    auto utcNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
-    auto dayBefore = utcNs - ISO8601::ExactTime::nsPerDay;
-    if (!ISO8601::ExactTime(dayBefore).isValid()) {
-        throwRangeError(globalObject, scope, "day before is not a valid instant in disambiguatePossibleEpochNanoseconds()"_s);
-        return { };
-    }
-    auto offsetBefore = ISO8601::getOffsetNanosecondsFor(timeZone, dayBefore);
-    auto dayAfter = utcNs + ISO8601::ExactTime::nsPerDay;
-    auto offsetAfter = ISO8601::getOffsetNanosecondsFor(timeZone, dayAfter);
-    auto nanoseconds = offsetAfter - offsetBefore;
-    ASSERT(absInt128(nanoseconds) <= ISO8601::ExactTime::nsPerDay);
-    
-    auto isoDate = isoDateTime.date();
-
-    if (disambiguation == TemporalDisambiguation::Earlier) {
-        auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, -nanoseconds);
-        auto earlierTime = TemporalPlainTime::addTime(isoDateTime.time(), timeDuration);
-        auto earlierDate = TemporalCalendar::balanceISODate(
-            isoDate.year(), isoDate.month(), isoDate.day() + earlierTime.days());
-        auto earlierDateTime = TemporalDuration::combineISODateAndTimeRecord(earlierDate,
-            ISO8601::PlainTime(earlierTime.hours(), earlierTime.minutes(), earlierTime.seconds(),
-                earlierTime.milliseconds(), earlierTime.microseconds(), earlierTime.nanoseconds()));
-        possibleEpochNs = TemporalZonedDateTime::getPossibleEpochNanoseconds(globalObject, timeZone, earlierDateTime);
-        RETURN_IF_EXCEPTION(scope, { });
-        ASSERT(possibleEpochNs.size() > 0);
-        return possibleEpochNs[0];
-    }
-    auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, nanoseconds);
-    auto laterTime = TemporalPlainTime::addTime(isoDateTime.time(), timeDuration);
-    auto laterDate = TemporalCalendar::balanceISODate(isoDate.year(), isoDate.month(), isoDate.day() - laterTime.days());
-    auto laterDateTime = TemporalDuration::combineISODateAndTimeRecord(laterDate, 
-        ISO8601::PlainTime(laterTime.hours(), laterTime.minutes(), laterTime.seconds(),
-            laterTime.milliseconds(), laterTime.microseconds(), laterTime.nanoseconds()));
-    possibleEpochNs = TemporalZonedDateTime::getPossibleEpochNanoseconds(globalObject, timeZone, laterDateTime);
-    RETURN_IF_EXCEPTION(scope, { });
-    n = possibleEpochNs.size();
-    ASSERT(n != 0);
-    return possibleEpochNs[n - 1];
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-interpretisodatetimeoffset
 static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObject,
     ISO8601::PlainDate isoDate, ISO8601::PlainTime time,
@@ -432,7 +196,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
 
     if (offsetBehavior == TemporalOffsetBehavior::Wall
         || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Ignore))
-        return ISO8601::ExactTime(TemporalDuration::getEpochNanosecondsFor(
+        return ISO8601::ExactTime(TemporalTimeZone::getEpochNanosecondsFor(
             globalObject, timeZone, isoDateTime, disambiguation));
 
     if (offsetBehavior == TemporalOffsetBehavior::Exact
@@ -442,7 +206,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
             time.nanosecond() - offsetNanoseconds);
         checkISODaysRange(globalObject, balanced.date());
         RETURN_IF_EXCEPTION(scope, { });
-        auto epochNanoseconds = ISO8601::ExactTime(TemporalDuration::getUTCEpochNanoseconds(balanced));
+        auto epochNanoseconds = ISO8601::ExactTime(ISO8601::getUTCEpochNanoseconds(balanced));
         if (!epochNanoseconds.isValid()) {
             throwRangeError(globalObject, scope, "invalid epochNanoseconds result in interpretISODateTimeOffset()"_s);
             return { };
@@ -456,19 +220,19 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
 
     checkISODaysRange(globalObject, isoDate);
     RETURN_IF_EXCEPTION(scope, { });
-    auto utcEpochNanoseconds = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
-    auto possibleEpochNs = TemporalZonedDateTime::getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
+    auto utcEpochNanoseconds = ISO8601::getUTCEpochNanoseconds(isoDateTime);
+    auto possibleEpochNs = TemporalTimeZone::getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
     RETURN_IF_EXCEPTION(scope, { });
     for (auto candidate : possibleEpochNs) {
-        auto candidateOffset = utcEpochNanoseconds - candidate.epochNanoseconds();
+        auto candidateOffset = utcEpochNanoseconds - candidate;
         if (candidateOffset == offsetNanoseconds)
-            return candidate;
+            return ISO8601::ExactTime(candidate);
         if (matchBehavior == TemporalMatchBehavior::Minutes) {
             Int128 increment = 60;
             increment *= 1000000000;
             auto roundedCandidateNanoseconds = roundNumberToIncrementInt128(candidateOffset, increment, RoundingMode::HalfExpand);
             if (roundedCandidateNanoseconds == offsetNanoseconds)
-                return candidate;
+                return ISO8601::ExactTime(candidate);
         }
     }
 
@@ -477,7 +241,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
         return { };
     }
     
-    return TemporalZonedDateTime::disambiguatePossibleEpochNanoseconds(globalObject,
+    return TemporalTimeZone::disambiguatePossibleEpochNanoseconds(globalObject,
         possibleEpochNs, timeZone, ISO8601::PlainDateTime(isoDate, time), disambiguation);
 }
 
@@ -567,10 +331,10 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
     if (smallestUnit == TemporalUnit::Day) {
         auto dateStart = isoDateTime.date();
         auto dateEnd = TemporalCalendar::balanceISODate(dateStart.year(), dateStart.month(), dateStart.day() + 1);
-        auto startNs = getStartOfDay(globalObject, timeZone, dateStart);
+        auto startNs = TemporalTimeZone::getStartOfDay(globalObject, timeZone, dateStart);
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(thisNs >= startNs);
-        auto endNs = getStartOfDay(globalObject, timeZone, dateEnd);
+        auto endNs = TemporalTimeZone::getStartOfDay(globalObject, timeZone, dateEnd);
         RETURN_IF_EXCEPTION(scope, { });
         ASSERT(thisNs < endNs);
         Int128 dayLengthNs = endNs.epochNanoseconds() - startNs.epochNanoseconds();
@@ -721,7 +485,7 @@ static ISO8601::ExactTime addZonedDateTime(JSGlobalObject* globalObject, ISO8601
         throwRangeError(globalObject, scope, "result of adding duration to ZonedDateTime is out of range"_s);
         return { };
     }
-    auto intermediateNs = TemporalDuration::getEpochNanosecondsFor(globalObject, timeZone,
+    auto intermediateNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone,
         intermediateDateTime, TemporalDisambiguation::Compatible);
     RETURN_IF_EXCEPTION(scope, { });
     return TemporalInstant::addInstant(globalObject, intermediateNs, duration.time());
@@ -778,7 +542,7 @@ static ISO8601::InternalDuration differenceZonedDateTime(JSGlobalObject* globalO
             endDate.month(), endDate.day() - (dayCorrection * sign));
         intermediateDateTime = TemporalDuration::combineISODateAndTimeRecord(intermediateDate,
             startTime);
-        auto intermediateNs = TemporalDuration::getEpochNanosecondsFor(globalObject, timeZone,
+        auto intermediateNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone,
             intermediateDateTime, TemporalDisambiguation::Compatible);
         RETURN_IF_EXCEPTION(scope, { });
         timeDuration = TemporalDuration::timeDurationFromEpochNanosecondsDifference(ns2, intermediateNs);

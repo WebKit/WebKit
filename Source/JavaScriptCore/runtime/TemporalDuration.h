@@ -118,9 +118,6 @@ public:
         int32_t, ISO8601::InternalDuration, Int128,
         ISO8601::PlainDate, ISO8601::PlainTime, std::optional<ISO8601::TimeZone>,
         TemporalUnit, TemporalUnit);
-    static Int128 getUTCEpochNanoseconds(ISO8601::PlainDateTime);
-    static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,
-        ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
     static Int128 timeDurationFromEpochNanosecondsDifference(ISO8601::ExactTime, ISO8601::ExactTime);
     static int32_t timeDurationSign(Int128);
 
@@ -138,28 +135,5 @@ private:
         ISO8601::TimeZone, double, TemporalUnit, RoundingMode);
     ISO8601::Duration m_duration;
 };
-
-// https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits
-constexpr bool isoDateTimeWithinLimits(ISO8601::PlainDateTime isoDateTime)
-{
-    auto isoDate = isoDateTime.date();
-
-    if (absInt128(makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day()))
-        > 100000001)
-        return false;
-    auto ns = TemporalDuration::getUTCEpochNanoseconds(isoDateTime);
-    if (ns <= ISO8601::ExactTime::minValue - ISO8601::ExactTime::nsPerDay)
-        return false;
-    if (ns >= ISO8601::ExactTime::maxValue + ISO8601::ExactTime::nsPerDay)
-        return false;
-    return true;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-isodatewithinlimits
-constexpr bool isoDateWithinLimits(ISO8601::PlainDate isoDate)
-{
-    return isoDateTimeWithinLimits(ISO8601::PlainDateTime(isoDate,
-        ISO8601::PlainTime(12, 0, 0, 0, 0, 0)));
-}
 
 } // namespace JSC

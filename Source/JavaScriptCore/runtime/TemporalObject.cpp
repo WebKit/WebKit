@@ -689,6 +689,23 @@ double temporalRoundingIncrement(JSGlobalObject* globalObject, double increment,
     return increment;
 }
 
+// https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
+bool validateTemporalRoundingIncrement(unsigned increment, unsigned dividend, bool inclusive)
+{
+    unsigned maximum;
+    if (inclusive)
+        maximum = dividend;
+    else {
+        ASSERT(dividend > 1);
+        maximum = dividend - 1;
+    }
+    if (increment > maximum)
+        return false;
+    if (dividend % increment != 0)
+        return false;
+    return true;
+}
+
 // TODO: See comment on roundNumberToIncrementInt128()
 // RoundNumberToIncrement ( x, increment, roundingMode )
 // https://tc39.es/proposal-temporal/#sec-temporal-roundnumbertoincrement

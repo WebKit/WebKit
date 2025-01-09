@@ -91,4 +91,20 @@ private:
     LazyProperty<TemporalPlainDateTime, TemporalCalendar> m_calendar;
 };
 
+// https://tc39.es/proposal-temporal/#sec-temporal-isodatetimewithinlimits
+constexpr bool isoDateTimeWithinLimits(ISO8601::PlainDateTime isoDateTime)
+{
+    auto isoDate = isoDateTime.date();
+
+    if (absInt128(makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day()))
+        > 100000001)
+        return false;
+    auto ns = ISO8601::getUTCEpochNanoseconds(isoDateTime);
+    if (ns <= ISO8601::ExactTime::minValue - ISO8601::ExactTime::nsPerDay)
+        return false;
+    if (ns >= ISO8601::ExactTime::maxValue + ISO8601::ExactTime::nsPerDay)
+        return false;
+    return true;
+}
+
 } // namespace JSC

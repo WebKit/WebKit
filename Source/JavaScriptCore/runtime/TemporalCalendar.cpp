@@ -981,7 +981,7 @@ ISO8601::Duration TemporalCalendar::differenceTemporalPlainYearMonth(JSGlobalObj
 
     if (smallestUnit != TemporalUnit::Month || increment != 1) {
         auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(otherDate, ISO8601::PlainTime());
-        auto destEpochNs = TemporalDuration::getUTCEpochNanoseconds(isoDateTimeOther);
+        auto destEpochNs = ISO8601::getUTCEpochNanoseconds(isoDateTimeOther);
         TemporalDuration::roundRelativeDuration(globalObject,
             duration, destEpochNs, TemporalDuration::combineISODateAndTimeRecord(thisDate, ISO8601::PlainTime()),
             std::nullopt, largestUnit, increment, smallestUnit, roundingMode);

@@ -28,6 +28,7 @@
 #include "ISO8601.h"
 #include "LazyProperty.h"
 #include "TemporalCalendar.h"
+#include "TemporalPlainDateTime.h"
 
 namespace JSC {
 
@@ -93,5 +94,12 @@ private:
     ISO8601::PlainDate m_plainDate;
     LazyProperty<TemporalPlainDate, TemporalCalendar> m_calendar;
 };
+
+// https://tc39.es/proposal-temporal/#sec-temporal-isodatewithinlimits
+constexpr bool isoDateWithinLimits(ISO8601::PlainDate isoDate)
+{
+    return isoDateTimeWithinLimits(ISO8601::PlainDateTime(isoDate,
+        ISO8601::PlainTime(12, 0, 0, 0, 0, 0)));
+}
 
 } // namespace JSC
