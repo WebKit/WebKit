@@ -115,7 +115,6 @@ public:
     bool encoderIsCurrent(id<MTLCommandEncoder>) const;
     bool submitWillBeInvalid() const { return m_makeSubmitInvalid; }
     void addBuffer(id<MTLBuffer>);
-    void addICB(id<MTLIndirectCommandBuffer>);
     void addTexture(id<MTLTexture>);
     void addTexture(const Texture&);
     void addSampler(const Sampler&);
@@ -166,7 +165,6 @@ private:
     NSMutableSet<id<MTLTexture>> *m_managedTextures { nil };
     NSMutableSet<id<MTLBuffer>> *m_managedBuffers { nil };
 #endif
-    NSMutableSet<id<MTLIndirectCommandBuffer>> *m_retainedICBs { nil };
     NSMutableSet<id<MTLTexture>> *m_retainedTextures { nil };
     NSMutableSet<id<MTLBuffer>> *m_retainedBuffers { nil };
     HashSet<RefPtr<const Sampler>> m_retainedSamplers;

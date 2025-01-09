@@ -1106,13 +1106,9 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
                     id<MTLBuffer> indirectCommandBufferContainer = icb.indirectCommandBufferContainer;
                     CHECKED_SET_PSO(commandEncoder, renderPipelineState);
                     [commandEncoder setVertexBytes:&data.indexData length:sizeof(data.indexData) atIndex:0];
-                    m_parentEncoder->addBuffer(indirectCommandBufferContainer);
                     [commandEncoder setVertexBuffer:indirectCommandBufferContainer offset:0 atIndex:1];
-                    m_parentEncoder->addBuffer(indexBuffer->buffer());
                     [commandEncoder useResource:indexBuffer->buffer() usage:MTLResourceUsageRead stages:MTLRenderStageVertex];
-                    m_parentEncoder->addICB(icb.indirectCommandBuffer);
                     [commandEncoder useResource:icb.indirectCommandBuffer usage:MTLResourceUsageRead | MTLResourceUsageWrite stages:MTLRenderStageVertex];
-                    m_parentEncoder->addBuffer(icb.outOfBoundsReadFlag);
                     [commandEncoder useResource:icb.outOfBoundsReadFlag usage:MTLResourceUsageWrite stages:MTLRenderStageVertex];
                     [commandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:data.indexData.indexCount];
 
