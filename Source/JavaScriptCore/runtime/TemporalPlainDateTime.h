@@ -100,8 +100,7 @@ constexpr bool isoDateTimeWithinLimits(ISO8601::PlainDateTime isoDateTime)
 {
     auto isoDate = isoDateTime.date();
 
-    if (absInt128(makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day()))
-        > 100000001)
+    if (absInt128(makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day())) > 100000001)
         return false;
     auto ns = ISO8601::getUTCEpochNanoseconds(isoDateTime);
     if (ns <= ISO8601::ExactTime::minValue - ISO8601::ExactTime::nsPerDay)

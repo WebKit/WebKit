@@ -978,8 +978,8 @@ NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
     auto daySpan = timeDurationFromEpochNanosecondsDifference(endEpochNs, startEpochNs);
     ASSERT(timeDurationSign(daySpan) == sign);
     auto unitLength = lengthInNanoseconds(unit);
-    auto roundedTimeDuration = ISO8601::roundTimeDurationToIncrement(duration.time(),
-        increment * unitLength, roundingMode);
+    auto roundedTimeDuration =
+        ISO8601::roundTimeDurationToIncrement(duration.time(), increment * unitLength, roundingMode);
     if (!roundedTimeDuration) {
         throwRangeError(globalObject, scope, "time duration too large in nudgeToZonedTime()"_s);
         return { };
@@ -991,8 +991,8 @@ NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
     if (timeDurationSign(beyondDaySpan) != -sign) {
         didRoundBeyondDay = true;
         dayDelta = sign;
-        roundedTimeDuration = ISO8601::roundTimeDurationToIncrement(beyondDaySpan,
-            increment * unitLength, roundingMode);
+        roundedTimeDuration =
+            ISO8601::roundTimeDurationToIncrement(beyondDaySpan, increment * unitLength, roundingMode);
         nudgedEpochNs = roundedTimeDuration.value() + endEpochNs.epochNanoseconds();
     } else {
         didRoundBeyondDay = false;
@@ -1019,36 +1019,25 @@ ISO8601::InternalDuration TemporalDuration::roundRelativeDuration(JSGlobalObject
     auto isoDate = isoDateTime.date();
     auto isoTime = isoDateTime.time();
 
-    // 1, 2
     bool irregularLengthUnit = smallestUnit <= TemporalUnit::Week;
-    // 3
     if (timeZone && smallestUnit == TemporalUnit::Day)
         irregularLengthUnit = true;
-    // 4
     int32_t sign = duration.sign() < 0 ? -1 : 1;
     NudgeResult nudgeResult;
-    // 5
     if (irregularLengthUnit) {
         Nudged record = nudgeToCalendarUnit(globalObject, sign, duration, destEpochNs, isoDate, isoTime, timeZone, increment, smallestUnit, roundingMode);
         nudgeResult = record.m_nudgeResult;
     } else if (timeZone) {
-        // 6
         nudgeResult = nudgeToZonedTime(globalObject, sign, duration, isoDate, isoTime,
             timeZone.value(), increment, smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });
-    }
-    else {
-        // 7
+    } else
         nudgeResult = nudgeToDayOrTime(globalObject, duration, destEpochNs, largestUnit, increment, smallestUnit, roundingMode);
-    }
-    // 8.
     duration = nudgeResult.m_duration;
-    // 9.
     if (nudgeResult.m_didExpandCalendarUnit && smallestUnit != TemporalUnit::Week) {
         auto startUnit = smallestUnit <= TemporalUnit::Day ? smallestUnit : TemporalUnit::Day;
         duration = bubbleRelativeDuration(globalObject, sign, duration, nudgeResult.m_nudgedEpochNs, isoDate, isoTime, timeZone, largestUnit, startUnit);
     }
-    // 10
     return duration;
 }
 

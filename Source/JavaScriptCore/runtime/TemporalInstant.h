@@ -59,7 +59,7 @@ public:
     static TemporalInstant* fromEpochNanoseconds(JSGlobalObject*, JSValue);
     static JSValue compare(JSGlobalObject*, JSValue, JSValue);
     static ISO8601::ExactTime addInstant(JSGlobalObject*, ISO8601::ExactTime, Int128);
-    
+
     ISO8601::ExactTime exactTime() const { return m_exactTime.get(); }
 
     ISO8601::Duration difference(JSGlobalObject*, TemporalInstant*, JSValue options) const;

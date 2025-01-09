@@ -59,8 +59,7 @@ public:
     static Vector<Int128> getPossibleEpochNanoseconds(JSGlobalObject*,
         ISO8601::TimeZone, ISO8601::PlainDateTime);
     static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
-        Vector<Int128>, ISO8601::TimeZone, ISO8601::PlainDateTime,
-        TemporalDisambiguation disambiguation);
+        Vector<Int128>, ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
     static ISO8601::ExactTime getStartOfDay(JSGlobalObject*, ISO8601::TimeZone, ISO8601::PlainDate);
 
     static std::optional<ISO8601::ExactTime> getNamedTimeZoneNextTransition(TimeZoneID, Int128);
@@ -70,7 +69,7 @@ public:
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*,
         const Vector<LChar>&);
 
-    static std::optional<int64_t> parseDateTimeUTCOffset(StringView string);
+    static std::optional<int64_t> parseDateTimeUTCOffset(StringView);
     static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
     static ISO8601::TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
 

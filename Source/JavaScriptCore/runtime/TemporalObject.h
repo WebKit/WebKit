@@ -231,7 +231,7 @@ Int128 roundNumberToIncrementInt128(Int128, Int128 increment, RoundingMode);
 Int128 roundNumberToIncrementAsIfPositive(Int128, Int128, RoundingMode);
 double applyUnsignedRoundingMode(double, double, double, UnsignedRoundingMode);
 void rejectObjectWithCalendarOrTimeZone(JSGlobalObject*, JSObject*);
-bool isPartialTemporalObject(JSGlobalObject* globalObject, JSObject* value);
+bool isPartialTemporalObject(JSGlobalObject*, JSObject* value);
 
 constexpr Int128 lengthInNanoseconds(TemporalUnit unit)
 {

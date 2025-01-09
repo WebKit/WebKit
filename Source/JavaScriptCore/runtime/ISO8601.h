@@ -310,7 +310,7 @@ public:
     PlainDate date() const { return m_date; }
     PlainTime time() const { return m_time; }
 
-    constexpr PlainDateTime(PlainDate date, PlainTime time) : m_date(date), m_time(time) {}
+    constexpr PlainDateTime(PlainDate date, PlainTime time) : m_date(date), m_time(time) { }
     constexpr PlainDateTime() = default;
 private:
     PlainDate m_date;
@@ -386,7 +386,7 @@ class TimeZone {
     bool isUTC() const
     {
         return (std::holds_alternative<TimeZoneID>(m_timezone) && std::get<TimeZoneID>(m_timezone) == utcTimeZoneID())
-            || (std::holds_alternative<int64_t>(m_timezone) && std::get<int64_t>(m_timezone) == 0);
+            || (std::holds_alternative<int64_t>(m_timezone) && !std::get<int64_t>(m_timezone));
     }
     bool isOffset() const
     {
@@ -405,8 +405,8 @@ class TimeZone {
     const String& offsetString() const
     {
         RELEASE_ASSERT(isOffset());
-        RELEASE_ASSERT(m_offset_string);
-        return m_offset_string.value();
+        RELEASE_ASSERT(m_offsetString);
+        return m_offsetString.value();
     }
     TimeZoneID asID() const
     {
@@ -416,12 +416,15 @@ class TimeZone {
     static TimeZone utc() { return named(utcTimeZoneID()); }
     static TimeZone offset(int64_t offset) { return TimeZone(offset); }
     static TimeZone named(TimeZoneID id) { return TimeZone(id); }
-    TimeZone() : m_timezone(utcTimeZoneID()) {}
+    TimeZone()
+        : m_timezone(utcTimeZoneID()) { }
     private:
-    TimeZone(TimeZoneID id) : m_timezone(id) {}
-    TimeZone(int64_t offset) : m_timezone(offset) {}
+    TimeZone(TimeZoneID id)
+        : m_timezone(id) { }
+    TimeZone(int64_t offset)
+        : m_timezone(offset) { }
     std::variant<TimeZoneID, int64_t> m_timezone;
-    std::optional<String> m_offset_string;
+    std::optional<String> m_offsetString;
 };
 
 struct TimeZoneOffset {
@@ -429,7 +432,7 @@ struct TimeZoneOffset {
     // Stored as a pair of the original string (so that offset strings
     // with subsecond precision can be distinguished) and the offset
     // as an int64_t.
-    Vector<LChar> m_offset_string;
+    Vector<LChar> m_offsetString;
     int64_t m_offset;
 };
 
@@ -483,8 +486,8 @@ String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
 String temporalZonedDateTimeToString(ExactTime, TimeZone,
-  PrecisionData, TemporalShowCalendar, TemporalShowTimeZone, TemporalShowOffset,
-  unsigned, TemporalUnit, RoundingMode);
+    PrecisionData, TemporalShowCalendar, TemporalShowTimeZone, TemporalShowOffset,
+    unsigned, TemporalUnit, RoundingMode);
 String temporalYearMonthToString(PlainYearMonth, StringView);
 String temporalMonthDayToString(PlainMonthDay, StringView);
 String monthCode(uint32_t);

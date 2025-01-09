@@ -800,7 +800,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
 
 std::optional<TimeZoneRecord> parseTimeZone(StringView string)
 {
-  return readCharactersForParsing(string, [](auto buffer) -> std::optional<TimeZoneRecord> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<TimeZoneRecord> {
         auto result = parseTimeZone(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
@@ -870,7 +870,7 @@ static std::optional<CalendarRecord> parseCalendarName(StringParsingBuffer<Chara
 
 std::optional<CalendarRecord> parseCalendarName(StringView string)
 {
-  return readCharactersForParsing(string, [](auto buffer) -> std::optional<CalendarRecord> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<CalendarRecord> {
         auto result = parseCalendarName(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
@@ -915,7 +915,7 @@ static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<Character
 
 std::optional<CalendarRecord> parseCalendar(StringView string)
 {
-  return readCharactersForParsing(string, [](auto buffer) -> std::optional<CalendarRecord> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<CalendarRecord> {
         auto result = parseCalendar(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
@@ -1181,9 +1181,10 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
         timeZoneOptional = timeZone;
     }
 
-    if (!timeZoneOptional)
+    if (!timeZoneOptional) {
         if (canBeTimeZoneAnnotation(buffer, *buffer))
             timeZoneOptional = parseTimeZone(buffer);
+    }
 
     if (buffer.atEnd())
         return std::tuple { WTFMove(plainDate.value()), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), std::nullopt };
@@ -1988,22 +1989,21 @@ static String formatCalendarAnnotation(TemporalShowCalendar showCalendar)
 
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalzoneddatetimetostring
 String temporalZonedDateTimeToString(ExactTime exactTime, TimeZone timeZone,
-  PrecisionData precision, TemporalShowCalendar showCalendar, TemporalShowTimeZone showTimeZone,
-  TemporalShowOffset showOffset, unsigned increment, TemporalUnit unit, RoundingMode roundingMode) {
+    PrecisionData precision, TemporalShowCalendar showCalendar, TemporalShowTimeZone showTimeZone,
+    TemporalShowOffset showOffset, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
+{
     Int128 epochNs = roundTemporalInstant(exactTime.epochNanoseconds(), increment, unit, roundingMode);
     auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs);
     auto isoDateTime = getISODateTimeFor(timeZone, ExactTime(epochNs));
     auto dateTimeString = temporalDateTimeToString(isoDateTime.date(), isoDateTime.time(), precision.precision);
     String offsetString;
-    if (showOffset != TemporalShowOffset::Never) {
+    if (showOffset != TemporalShowOffset::Never)
         offsetString = formatDateTimeUTCOffsetRounded(offsetNanoseconds);
-    }
     String timeZoneString;
     if (showTimeZone != TemporalShowTimeZone::Never) {
         String flag;
-        if (showTimeZone == TemporalShowTimeZone::Critical) {
+        if (showTimeZone == TemporalShowTimeZone::Critical)
             flag = "!"_s;
-        }
         timeZoneString = makeString('[', flag, formatTimeZone(timeZone), ']');
     }
     auto calendarString = formatCalendarAnnotation(showCalendar);
