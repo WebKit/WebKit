@@ -69,8 +69,6 @@ public:
     WEBCORE_EXPORT static bool vorbisDecoderEnabled();
     WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
     WEBCORE_EXPORT static bool opusDecoderEnabled();
-    WEBCORE_EXPORT static void setAlternateWebMPlayerEnabled(bool);
-    WEBCORE_EXPORT static bool alternateWebMPlayerEnabled();
     WEBCORE_EXPORT static void setUseSCContentSharingPicker(bool);
     WEBCORE_EXPORT static bool useSCContentSharingPicker();
 
@@ -274,9 +272,6 @@ private:
 #endif
 #if ENABLE(OPUS)
     static bool m_opusDecoderEnabled;
-#endif
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    static bool m_alternateWebMPlayerEnabled;
 #endif
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     static bool s_useSCContentSharingPicker;

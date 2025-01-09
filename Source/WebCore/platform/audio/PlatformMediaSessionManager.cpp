@@ -51,10 +51,6 @@ bool PlatformMediaSessionManager::m_vorbisDecoderEnabled;
 bool PlatformMediaSessionManager::m_opusDecoderEnabled;
 #endif
 
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-bool PlatformMediaSessionManager::m_alternateWebMPlayerEnabled;
-#endif
-
 #if HAVE(SC_CONTENT_SHARING_PICKER)
 bool PlatformMediaSessionManager::s_useSCContentSharingPicker;
 #endif
@@ -801,24 +797,6 @@ void PlatformMediaSessionManager::setOpusDecoderEnabled(bool enabled)
     m_opusDecoderEnabled = enabled;
 #else
     UNUSED_PARAM(enabled);
-#endif
-}
-
-void PlatformMediaSessionManager::setAlternateWebMPlayerEnabled(bool enabled)
-{
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    m_alternateWebMPlayerEnabled = enabled;
-#else
-    UNUSED_PARAM(enabled);
-#endif
-}
-
-bool PlatformMediaSessionManager::alternateWebMPlayerEnabled()
-{
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    return m_alternateWebMPlayerEnabled;
-#else
-    return false;
 #endif
 }
 

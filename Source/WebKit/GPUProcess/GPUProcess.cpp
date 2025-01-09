@@ -296,11 +296,6 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
         MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(*m_preferences.shouldUseModernAVContentKeySession);
 #endif
 
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    if (updatePreference(m_preferences.alternateWebMPlayerEnabled, preferences.alternateWebMPlayerEnabled))
-        PlatformMediaSessionManager::setAlternateWebMPlayerEnabled(*m_preferences.alternateWebMPlayerEnabled);
-#endif
-
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     if (updatePreference(m_preferences.useSCContentSharingPicker, preferences.useSCContentSharingPicker))
         PlatformMediaSessionManager::setUseSCContentSharingPicker(*m_preferences.useSCContentSharingPicker);

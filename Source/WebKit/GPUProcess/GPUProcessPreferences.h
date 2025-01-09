@@ -48,10 +48,6 @@ struct GPUProcessPreferences {
     std::optional<bool> shouldUseModernAVContentKeySession;
 #endif
 
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    std::optional<bool> alternateWebMPlayerEnabled;
-#endif
-
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     std::optional<bool> useSCContentSharingPicker;
 #endif

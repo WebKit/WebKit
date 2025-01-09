@@ -52,11 +52,6 @@ void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webP
     if (webPreferences.shouldUseModernAVContentKeySession())
         shouldUseModernAVContentKeySession = true;
 #endif
-        
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    if (webPreferences.alternateWebMPlayerEnabled())
-        alternateWebMPlayerEnabled = true;
-#endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     if (webPreferences.mediaCapabilityGrantsEnabled())

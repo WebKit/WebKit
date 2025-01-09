@@ -4818,10 +4818,6 @@ void WebPage::updatePreferences(const WebPreferencesStore& store)
         modelProcessConnection->connection().setIgnoreInvalidMessageForTesting();
 #endif // ENABLE(MODEL_PROCESS)
 #endif // ENABLE(IPC_TESTING_API)
-    
-#if ENABLE(ALTERNATE_WEBM_PLAYER)
-    PlatformMediaSessionManager::setAlternateWebMPlayerEnabled(settings.alternateWebMPlayerEnabled());
-#endif
 
 #if HAVE(SC_CONTENT_SHARING_PICKER)
     PlatformMediaSessionManager::setUseSCContentSharingPicker(settings.useSCContentSharingPicker());
