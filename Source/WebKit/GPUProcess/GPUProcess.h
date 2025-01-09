@@ -31,6 +31,7 @@
 #include "GPUProcessPreferences.h"
 #include "SandboxExtension.h"
 #include "WebPageProxyIdentifier.h"
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/IntDegrees.h>
 #include <WebCore/MediaPlayerIdentifier.h>
 #include <WebCore/PageIdentifier.h>
@@ -64,6 +65,7 @@ class SharedFileHandle;
 
 namespace WebCore {
 class CaptureDevice;
+class ImageBuffer;
 class NowPlayingManager;
 class SecurityOriginData;
 
@@ -77,6 +79,7 @@ namespace WebKit {
 
 class GPUConnectionToWebProcess;
 class RemoteAudioSessionProxyManager;
+class SnapshotCompositor;
 struct CoreIPCAuditToken;
 struct GPUProcessConnectionParameters;
 struct GPUProcessCreationParameters;
@@ -157,8 +160,11 @@ public:
     void setPresentingApplicationAuditToken(WebCore::ProcessIdentifier, WebCore::PageIdentifier, std::optional<CoreIPCAuditToken>&&);
 #endif
 
+    void createSnapshotCompositor(WebCore::SnapshotIdentifier, WebCore::FrameIdentifier, Ref<WebCore::ImageBuffer>&&);
+    void addSnapshotRemoteFrameResource(WebCore::SnapshotIdentifier, WebCore::FrameIdentifier, WebCore::FrameIdentifier parentFrameIdentifier, Ref<WebCore::ImageBuffer>&&);
+    void releaseSnapshotCompositor(WebCore::SnapshotIdentifier);
 #if PLATFORM(COCOA)
-    void didDrawRemoteToPDF(WebCore::PageIdentifier, RefPtr<WebCore::SharedBuffer>&&, WebCore::SnapshotIdentifier);
+    void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::SnapshotIdentifier);
 #endif
 
 #if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
@@ -287,6 +293,7 @@ private:
     bool m_haveEnabledVP9Decoder { false };
 #endif
 
+    HashMap<WebCore::SnapshotIdentifier, std::unique_ptr<SnapshotCompositor>> m_remoteSnapshotCompositorMap;
 };
 
 } // namespace WebKit

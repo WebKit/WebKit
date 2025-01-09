@@ -53,7 +53,7 @@ messages -> GPUProcessProxy {
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 
 #if PLATFORM(COCOA)
-    DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, RefPtr<WebCore::SharedBuffer> data, WebCore::SnapshotIdentifier snapshotIdentifier)
+    DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, WebCore::SnapshotIdentifier snapshotIdentifier, RefPtr<WebCore::SharedBuffer> data)
 #endif
 }
 

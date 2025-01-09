@@ -43,6 +43,7 @@ private:
     bool canMapBackingStore() const final { return false; }
     unsigned bytesPerRow() const final { return 0; }
 
+    void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions) final;
     GraphicsContext& context() final;
 
     RefPtr<NativeImage> copyNativeImage() final;

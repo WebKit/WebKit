@@ -305,6 +305,13 @@ private:
     void createRenderingBackend(RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseRenderingBackend(RenderingBackendIdentifier);
 
+    void createSnapshotCompositor(WebCore::SnapshotIdentifier, WebCore::FrameIdentifier, RenderingBackendIdentifier, WebCore::RenderingResourceIdentifier imageBufferIdentifier);
+    void addSnapshotRemoteFrameResource(WebCore::SnapshotIdentifier, WebCore::FrameIdentifier, WebCore::FrameIdentifier parentFrameIdentifier, RenderingBackendIdentifier, WebCore::RenderingResourceIdentifier imageBufferIdentifier);
+    void releaseSnapshotCompositor(WebCore::SnapshotIdentifier);
+#if PLATFORM(COCOA)
+    void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::SnapshotIdentifier);
+#endif
+
 #if ENABLE(WEBGL)
     void createGraphicsContextGL(GraphicsContextGLIdentifier, WebCore::GraphicsContextGLAttributes, RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseGraphicsContextGL(GraphicsContextGLIdentifier);

@@ -12811,7 +12811,7 @@ void WebPageProxy::drawRemoteToPDF(FrameIdentifier frameID, const std::optional<
     send(Messages::WebPage::DrawRemoteToPDF(frameID, rect, allowTransparentBackground, snapshotIdentifier));
 }
 
-void WebPageProxy::didDrawRemoteToPDF(RefPtr<SharedBuffer>&& data, SnapshotIdentifier snapshotIdentifier)
+void WebPageProxy::didDrawRemoteToPDF(SnapshotIdentifier snapshotIdentifier, RefPtr<SharedBuffer>&& data)
 {
     auto callback = m_pdfSnapshots.take(snapshotIdentifier);
     if (!callback)
@@ -15854,6 +15854,13 @@ void WebPageProxy::documentURLForConsoleLog(WebCore::FrameIdentifier frameID, Co
     if (RefPtr frame = WebFrameProxy::webFrame(frameID))
         return completionHandler(frame->url());
     completionHandler({ });
+}
+
+void WebPageProxy::paintRemoteFrameContents(FrameIdentifier frameID, const IntRect& rect, SnapshotIdentifier snapshotIdentifier, FrameIdentifier parentFrameID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::PaintFrameContents(frameID, rect, snapshotIdentifier, parentFrameID));
+    auto [result] = sendResult.takeReplyOr(false);
+    completionHandler(result);
 }
 
 void WebPageProxy::resetVisibilityAdjustmentsForTargetedElements(const Vector<Ref<API::TargetedElementInfo>>& elements, CompletionHandler<void(bool)>&& completion)

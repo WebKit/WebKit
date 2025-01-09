@@ -1,0 +1,22 @@
+<style>
+    body {
+        background-color: green;
+        margin: 0;
+        padding: 0;
+        overflow: clip;
+    }
+    h3, span {
+        margin: 5px;
+        color: white;
+    }
+</style>
+<body>
+    <h3>Cross-origin Frame 1-2</h3>
+    <p>
+        <span>This is PNG image: </span>
+        <img src="red-100x100.png">
+    </p>
+    <script>
+        onload = () => { window.parent.postMessage("onload", "*"); }
+    </script>
+</body>

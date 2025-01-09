@@ -123,7 +123,7 @@ public:
 #endif
 
 #if PLATFORM(COCOA)
-    void didDrawRemoteToPDF(WebCore::PageIdentifier, RefPtr<WebCore::SharedBuffer>&&, WebCore::SnapshotIdentifier);
+    void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::SnapshotIdentifier, RefPtr<WebCore::SharedBuffer>&&);
 #endif
 
     void removeSession(PAL::SessionID);

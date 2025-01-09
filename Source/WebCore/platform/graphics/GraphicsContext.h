@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "FloatSegment.h"
 #include "FontCascade.h"
+#include "FrameIdentifier.h"
 #include "GraphicsContextState.h"
 #include "Image.h"
 #include "ImageOrientation.h"
@@ -69,17 +70,28 @@ class GraphicsContext {
     friend class BifurcatedGraphicsContext;
     friend class DisplayList::DrawNativeImage;
     friend class NativeImage;
-    friend class ImageBuffer;
+    friend class ImageBufferBackend;
 public:
+    enum class Type : uint8_t {
+        Null,
+        Platform,
+        RecorderImpl,
+        RemoteRecorderProxy,
+        Bifurcated,
+    };
+
     // Indicates if draw operations read the sources such as NativeImage backing stores immediately
     // during draw operations.
     enum class IsDeferred : bool {
         No,
         Yes
     };
-    WEBCORE_EXPORT GraphicsContext(IsDeferred = IsDeferred::No, const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
-    WEBCORE_EXPORT GraphicsContext(IsDeferred, const GraphicsContextState&);
+    WEBCORE_EXPORT GraphicsContext(Type, IsDeferred = IsDeferred::No, const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
+    WEBCORE_EXPORT GraphicsContext(Type, IsDeferred, const GraphicsContextState&);
     WEBCORE_EXPORT virtual ~GraphicsContext();
+
+    Type type() const { return m_type; }
+    IsDeferred isDeferred() const { return m_isDeferred; }
 
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
@@ -353,6 +365,7 @@ public:
     WEBCORE_EXPORT FloatSize scaleFactorForDrawing(const FloatRect& destRect, const FloatRect& srcRect) const;
 
     // PDF, printing and snapshotting
+    virtual void drawRemoteFrame(FrameIdentifier) { }
     virtual void beginPage(const IntSize&) { }
     virtual void endPage() { }
 
@@ -380,7 +393,6 @@ private:
     virtual void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 
 protected:
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);
     WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
     WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
 
@@ -406,6 +418,7 @@ private:
     Vector<GraphicsContextState, 1> m_stack;
 
     unsigned m_transparencyLayerCount { 0 };
+    Type m_type { Type::Null };
     const IsDeferred m_isDeferred : 1; // NOLINT
     bool m_contentfulPaintDetected : 1 { false };
 };

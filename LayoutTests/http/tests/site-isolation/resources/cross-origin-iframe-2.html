@@ -1,0 +1,30 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<style>
+    body {
+        background-color: Lavender;
+        margin: 10px;
+        overflow: clip;
+    }
+    iframe {
+        width: 300px;
+        height: 160px;
+        margin: 10px;
+        display: inline-block;
+        background-color: red;
+    }
+</style>
+<body>
+    <h3>Cross-origin Frame 2</h3>
+    <iframe src="http://localhost/site-isolation/resources/cross-origin-iframe-2-1.html" frameborder=0></iframe>
+    <iframe src="http://localhost/site-isolation/resources/cross-origin-iframe-2-2.html" frameborder=0></iframe>
+    <script>
+        let loaded = 0;
+        let iframes = document.querySelectorAll("iframe");
+        iframes.forEach(iframe => {
+            iframe.onload = () => {
+                if (++loaded == iframes.length)
+                    window.parent.postMessage("onload", "*");
+            }
+        });
+    </script>
+</body>

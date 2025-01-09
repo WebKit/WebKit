@@ -33,18 +33,32 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(ImageBufferRemoteDisplayListBackend);
 
-std::unique_ptr<ImageBufferRemoteDisplayListBackend> ImageBufferRemoteDisplayListBackend::create(const Parameters& parameters)
+std::unique_ptr<ImageBufferRemoteDisplayListBackend> ImageBufferRemoteDisplayListBackend::create(const Parameters& parameters, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, RenderingResourceIdentifier imageBufferIdentifier)
 {
-    return std::unique_ptr<ImageBufferRemoteDisplayListBackend> { new ImageBufferRemoteDisplayListBackend { parameters } };
+    return std::unique_ptr<ImageBufferRemoteDisplayListBackend> { new ImageBufferRemoteDisplayListBackend { parameters, remoteRenderingBackendProxy, imageBufferIdentifier } };
 }
 
-ImageBufferRemoteDisplayListBackend::ImageBufferRemoteDisplayListBackend(const Parameters& parameters)
+ImageBufferRemoteDisplayListBackend::ImageBufferRemoteDisplayListBackend(const Parameters& parameters, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, RenderingResourceIdentifier imageBufferIdentifier)
     : WebCore::NullImageBufferBackend(parameters)
+    , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
 {
+    ASSERT(m_parameters.snapshotParameters);
+    auto& snapshotParameters = m_parameters.snapshotParameters;
+    if (auto parentFrameIdentifier = snapshotParameters->parentFrameIdentifier)
+        m_remoteRenderingBackendProxy->addSnapshotRemoteFrameResource(snapshotParameters->snapshotIdentifier, snapshotParameters->frameIdentifier, *parentFrameIdentifier, imageBufferIdentifier);
+    else
+        m_remoteRenderingBackendProxy->createSnapshotCompositor(snapshotParameters->snapshotIdentifier, snapshotParameters->frameIdentifier, imageBufferIdentifier);
 }
 
 ImageBufferRemoteDisplayListBackend::~ImageBufferRemoteDisplayListBackend()
 {
+    ASSERT(m_parameters.snapshotParameters);
+    auto& snapshotParameters = m_parameters.snapshotParameters;
+
+    if (snapshotParameters->parentFrameIdentifier || !m_remoteRenderingBackendProxy)
+        return;
+
+    m_remoteRenderingBackendProxy->releaseSnapshotCompositor(snapshotParameters->snapshotIdentifier);
 }
 
 RefPtr<NativeImage> ImageBufferRemoteDisplayListBackend::createNativeImageReference()

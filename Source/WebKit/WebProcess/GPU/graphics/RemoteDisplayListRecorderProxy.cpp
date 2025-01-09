@@ -54,7 +54,7 @@ using namespace WebCore;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDisplayListRecorderProxy);
 
 RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteImageBufferProxy& imageBuffer, RemoteRenderingBackendProxy& renderingBackend, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, imageBuffer.colorSpace(), DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
+    : DisplayList::Recorder(Type::RemoteRecorderProxy, IsDeferred::No, { }, initialClip, initialCTM, imageBuffer.colorSpace(), DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
     , m_destinationBufferIdentifier(imageBuffer.renderingResourceIdentifier())
     , m_imageBuffer(imageBuffer)
     , m_renderingBackend(renderingBackend)
@@ -63,7 +63,7 @@ RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteImageBuffer
 }
 
 RemoteDisplayListRecorderProxy::RemoteDisplayListRecorderProxy(RemoteRenderingBackendProxy& renderingBackend, RenderingResourceIdentifier renderingResourceIdentifier, const DestinationColorSpace& colorSpace, RenderingMode renderingMode, const FloatRect& initialClip, const AffineTransform& initialCTM)
-    : DisplayList::Recorder(IsDeferred::No, { }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
+    : DisplayList::Recorder(Type::RemoteRecorderProxy, IsDeferred::No, { }, initialClip, initialCTM, colorSpace, DrawGlyphsMode::DeconstructUsingDrawGlyphsCommands)
     , m_destinationBufferIdentifier(renderingResourceIdentifier)
     , m_renderingBackend(renderingBackend)
     , m_renderingMode(renderingMode)
@@ -104,6 +104,11 @@ void RemoteDisplayListRecorderProxy::didBecomeUnresponsive() const
     if (UNLIKELY(!backend))
         return;
     backend->didBecomeUnresponsive();
+}
+
+ImageBuffer* RemoteDisplayListRecorderProxy::imageBuffer() const
+{
+    return m_imageBuffer.get().get();
 }
 
 RenderingMode RemoteDisplayListRecorderProxy::renderingMode() const
@@ -277,6 +282,11 @@ void RemoteDisplayListRecorderProxy::recordDrawImageBuffer(ImageBuffer& imageBuf
 void RemoteDisplayListRecorderProxy::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     send(Messages::RemoteDisplayListRecorder::DrawNativeImage(imageIdentifier, destRect, srcRect, options));
+}
+
+void RemoteDisplayListRecorderProxy::recordDrawRemoteFrame(FrameIdentifier frameIdentifier)
+{
+    send(Messages::RemoteDisplayListRecorder::DrawRemoteFrame(frameIdentifier));
 }
 
 void RemoteDisplayListRecorderProxy::recordDrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
@@ -667,7 +677,7 @@ RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createImageBuffer(const Floa
 
     // FIXME: Ideally we'd plumb the purpose through for callers of GraphicsContext::createImageBuffer().
     RenderingPurpose purpose = RenderingPurpose::Unspecified;
-    return renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingModeForCompatibleBuffer()), purpose, resolutionScale, colorSpace, ImageBufferPixelFormat::BGRA8);
+    return renderingBackend->createImageBuffer(size, renderingMode.value_or(this->renderingModeForCompatibleBuffer()), purpose, resolutionScale, colorSpace, ImageBufferPixelFormat::BGRA8, { });
 }
 
 RefPtr<ImageBuffer> RemoteDisplayListRecorderProxy::createAlignedImageBuffer(const FloatSize& size, const DestinationColorSpace& colorSpace, std::optional<RenderingMethod> renderingMethod) const

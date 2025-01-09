@@ -353,6 +353,21 @@ void DrawNativeImage::dump(TextStream& ts, OptionSet<AsTextFlag> flags) const
     ts.dumpProperty("dest-rect", destinationRect());
 }
 
+void DrawRemoteFrame::apply(GraphicsContext& context) const
+{
+    context.drawRemoteFrame(m_frameIdentifier);
+}
+
+void DrawRemoteFrame::apply(GraphicsContext& context, ImageBuffer& imageBuffer) const
+{
+    context.drawImageBuffer(imageBuffer, FloatPoint::zero());
+}
+
+void DrawRemoteFrame::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("frame-identifier", frameIdentifier());
+}
+
 void DrawSystemImage::apply(GraphicsContext& context) const
 {
     context.drawSystemImage(m_systemImage, m_destinationRect);

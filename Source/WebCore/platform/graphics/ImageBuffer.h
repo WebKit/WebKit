@@ -76,28 +76,30 @@ struct ImageBufferCreationContext {
     DynamicContentScalingResourceCache dynamicContentScalingResourceCache;
 #endif
     ProcessIdentity resourceOwner;
+    std::optional<ImageBufferSnapshotParameters> snapshotParameters;
 
     ImageBufferCreationContext() = default;
 };
 
 struct ImageBufferParameters {
     FloatSize logicalSize;
+    RenderingPurpose purpose;
     float resolutionScale;
     DestinationColorSpace colorSpace;
     ImageBufferPixelFormat pixelFormat;
-    RenderingPurpose purpose;
+    std::optional<ImageBufferSnapshotParameters> snapshotParameters;
 };
 
 class ImageBuffer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ImageBuffer> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageBuffer, WEBCORE_EXPORT);
 public:
     using Parameters = ImageBufferParameters;
-    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat, GraphicsClient* = nullptr);
+    WEBCORE_EXPORT static RefPtr<ImageBuffer> create(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat, const ImageBufferCreationContext& = { }, GraphicsClient* = nullptr);
 
     template<typename BackendType, typename ImageBufferType = ImageBuffer, typename... Arguments>
     static RefPtr<ImageBufferType> create(const FloatSize& size, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, RenderingPurpose purpose, const ImageBufferCreationContext& creationContext, Arguments&&... arguments)
     {
-        Parameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
+        Parameters parameters { size, purpose, resolutionScale, colorSpace, pixelFormat, creationContext.snapshotParameters };
         auto backendParameters = ImageBuffer::backendParameters(parameters);
         auto backend = BackendType::create(backendParameters, creationContext);
         if (!backend)
@@ -173,6 +175,8 @@ public:
     // Useful when caller can guarantee the use of the NativeImage ends "immediately", before the next draw to this ImageBuffer.
     WEBCORE_EXPORT virtual RefPtr<NativeImage> createNativeImageReference() const;
 
+    RefPtr<NativeImage> nativeImageForDrawing(GraphicsContext& destContext);
+
     WEBCORE_EXPORT virtual RefPtr<NativeImage> filteredNativeImage(Filter&);
     RefPtr<NativeImage> filteredNativeImage(Filter&, Function<void(GraphicsContext&)> drawCallback);
 
@@ -222,6 +226,10 @@ public:
     static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
     WEBCORE_EXPORT static RefPtr<SharedBuffer> sinkIntoPDFDocument(RefPtr<ImageBuffer>);
 
+    WEBCORE_EXPORT void draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions);
+    WEBCORE_EXPORT void drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions);
+    WEBCORE_EXPORT void drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, const ImagePaintingOptions);
+
     WEBCORE_EXPORT virtual void convertToLuminanceMask();
     WEBCORE_EXPORT virtual void transformToColorSpace(const DestinationColorSpace& newColorSpace);
 
@@ -234,6 +242,8 @@ public:
     WEBCORE_EXPORT virtual RefPtr<PixelBuffer> getPixelBuffer(const PixelBufferFormat& outputFormat, const IntRect& srcRect, const ImageBufferAllocator& = ImageBufferAllocator()) const;
     WEBCORE_EXPORT virtual void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint = { }, AlphaPremultiplication destFormat = AlphaPremultiplication::Premultiplied);
 
+    WEBCORE_EXPORT virtual std::optional<FrameIdentifier> frameIdentifier();
+    WEBCORE_EXPORT virtual std::optional<SnapshotIdentifier> snapshotIdentifier();
     WEBCORE_EXPORT virtual RefPtr<SharedBuffer> sinkIntoPDFDocument();
 
     WEBCORE_EXPORT bool isInUse() const;

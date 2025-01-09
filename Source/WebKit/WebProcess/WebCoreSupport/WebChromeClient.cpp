@@ -974,13 +974,13 @@ WebCore::DisplayRefreshMonitorFactory* WebChromeClient::displayRefreshMonitorFac
 }
 
 #if ENABLE(GPU_PROCESS)
-RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat) const
+RefPtr<ImageBuffer> WebChromeClient::createImageBuffer(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, const ImageBufferCreationContext& creationContext) const
 {
     if (WebProcess::singleton().shouldUseRemoteRenderingFor(purpose))
-        return protectedPage()->ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat);
+        return protectedPage()->ensureRemoteRenderingBackendProxy().createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext);
 
     if (purpose == RenderingPurpose::ShareableSnapshot || purpose == RenderingPurpose::ShareableLocalSnapshot)
-        return ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, resolutionScale, colorSpace, ImageBufferPixelFormat::BGRA8, purpose, { });
+        return ImageBuffer::create<ImageBufferShareableBitmapBackend>(size, resolutionScale, colorSpace, ImageBufferPixelFormat::BGRA8, purpose, creationContext);
 
     return nullptr;
 }

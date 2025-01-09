@@ -131,7 +131,7 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
         << m_backBuffer << " (in-use " << (m_backBuffer && protectedBackBuffer()->isInUse()) << ") "
         << m_secondaryBackBuffer << " (in-use " << (m_secondaryBackBuffer && protectedSecondaryBackBuffer()->isInUse()) << ") ");
 
-    displayRequirement = swapBuffersForDisplay(inputData.hasEmptyDirtyRegion, inputData.supportsPartialRepaint && !isSmallLayerBacking({ m_configuration.logicalSize, m_configuration.resolutionScale, m_configuration.colorSpace, m_configuration.pixelFormat, m_configuration.renderingPurpose }));
+    displayRequirement = swapBuffersForDisplay(inputData.hasEmptyDirtyRegion, inputData.supportsPartialRepaint && !isSmallLayerBacking({ m_configuration.logicalSize, m_configuration.renderingPurpose, m_configuration.resolutionScale, m_configuration.colorSpace, m_configuration.pixelFormat, std::nullopt }));
     if (displayRequirement == SwapBuffersDisplayRequirement::NeedsFullDisplay) {
         auto layerBounds = WebCore::IntRect { { }, expandedIntSize(m_configuration.logicalSize) };
         MESSAGE_CHECK(isSync || inputData.dirtyRegion.contains(layerBounds), "Can't asynchronously require full display for a buffer set");

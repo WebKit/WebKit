@@ -661,6 +661,7 @@ messages -> WebPageProxy {
     [EnabledBy=SiteIsolationEnabled] BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken) -> (Vector<uint8_t> token, int processIdentifier) Synchronous
     [EnabledBy=SiteIsolationEnabled] UpdateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
     [EnabledBy=SiteIsolationEnabled] DocumentURLForConsoleLog(WebCore::FrameIdentifier frameID) -> (URL url)
+    [EnabledBy=SiteIsolationEnabled] PaintRemoteFrameContents(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebCore::SnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier parentFrameID) -> (bool result) Synchronous
 
     NowPlayingMetadataChanged(struct WebCore::NowPlayingMetadata metadata)
 

@@ -46,7 +46,7 @@ namespace DisplayList {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RecorderImpl);
 
 RecorderImpl::RecorderImpl(DisplayList& displayList, const GraphicsContextState& state, const FloatRect& initialClip, const AffineTransform& initialCTM, const DestinationColorSpace& colorSpace, DrawGlyphsMode drawGlyphsMode)
-    : Recorder(state, initialClip, initialCTM, colorSpace, drawGlyphsMode)
+    : Recorder(Type::RecorderImpl, IsDeferred::Yes, state, initialClip, initialCTM, colorSpace, drawGlyphsMode)
     , m_displayList(displayList)
 {
     LOG_WITH_STREAM(DisplayLists, stream << "\nRecording with clip " << initialClip);
@@ -218,6 +218,11 @@ void RecorderImpl::recordDrawImageBuffer(ImageBuffer& imageBuffer, const FloatRe
 void RecorderImpl::recordDrawNativeImage(RenderingResourceIdentifier imageIdentifier, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     append(DrawNativeImage(imageIdentifier, destRect, srcRect, options));
+}
+
+void RecorderImpl::recordDrawRemoteFrame(FrameIdentifier frameIdentifier)
+{
+    append(DrawRemoteFrame(frameIdentifier));
 }
 
 void RecorderImpl::recordDrawSystemImage(SystemImage& systemImage, const FloatRect& destinationRect)
@@ -554,6 +559,12 @@ bool RecorderImpl::recordResourceUse(Gradient& gradient)
 bool RecorderImpl::recordResourceUse(Filter& filter)
 {
     m_displayList.cacheFilter(filter);
+    return true;
+}
+
+bool RecorderImpl::recordFrameImageBufferUse(FrameIdentifier frameIdentifier, ImageBuffer& imageBuffer)
+{
+    m_displayList.cacheFrameImageBuffer(frameIdentifier, imageBuffer);
     return true;
 }
 

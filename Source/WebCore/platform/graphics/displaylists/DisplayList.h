@@ -64,6 +64,7 @@ public:
     void cacheDecomposedGlyphs(DecomposedGlyphs&);
     void cacheGradient(Gradient&);
     void cacheFilter(Filter&);
+    void cacheFrameImageBuffer(FrameIdentifier, ImageBuffer&);
 
     WEBCORE_EXPORT String asText(OptionSet<AsTextFlag>) const;
     void dump(WTF::TextStream&) const;

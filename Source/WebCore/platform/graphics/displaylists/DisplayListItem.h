@@ -70,6 +70,7 @@ class DrawNativeImage;
 class DrawPath;
 class DrawPattern;
 class DrawRect;
+class DrawRemoteFrame;
 class DrawSystemImage;
 class EndTransparencyLayer;
 class FillCompositedRect;
@@ -149,6 +150,7 @@ using Item = std::variant
     , DrawPath
     , DrawPattern
     , DrawRect
+    , DrawRemoteFrame
     , DrawSystemImage
     , EndTransparencyLayer
     , FillCompositedRect

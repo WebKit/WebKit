@@ -142,9 +142,6 @@ private:
     void releaseImageBuffer(WebCore::RenderingResourceIdentifier);
     void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
     void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
-#if PLATFORM(COCOA)
-    void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier, WebCore::SnapshotIdentifier);
-#endif
     void destroyGetPixelBufferSharedMemory();
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);
     void cacheDecomposedGlyphs(Ref<WebCore::DecomposedGlyphs>&&);
@@ -199,8 +196,9 @@ private:
     RenderingBackendIdentifier m_renderingBackendIdentifier;
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
 
+    Lock m_lock;
     HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteDisplayListRecorder>> m_remoteDisplayLists WTF_GUARDED_BY_CAPABILITY(workQueue());
-    HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBuffer>> m_remoteImageBuffers WTF_GUARDED_BY_CAPABILITY(workQueue());
+    HashMap<WebCore::RenderingResourceIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBuffer>> m_remoteImageBuffers WTF_GUARDED_BY_LOCK(m_lock);
     HashMap<WebKit::RemoteImageBufferSetIdentifier, IPC::ScopedActiveMessageReceiveQueue<RemoteImageBufferSet>> m_remoteImageBufferSets WTF_GUARDED_BY_CAPABILITY(workQueue());
     Ref<ShapeDetection::ObjectHeap> m_shapeDetectionObjectHeap;
 };

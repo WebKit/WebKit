@@ -36,17 +36,19 @@ class ImageBufferRemoteDisplayListBackend : public WebCore::NullImageBufferBacke
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ImageBufferRemoteDisplayListBackend);
     WTF_MAKE_NONCOPYABLE(ImageBufferRemoteDisplayListBackend);
 public:
-    static std::unique_ptr<ImageBufferRemoteDisplayListBackend> create(const Parameters&);
+    static std::unique_ptr<ImageBufferRemoteDisplayListBackend> create(const Parameters&, RemoteRenderingBackendProxy&, WebCore::RenderingResourceIdentifier);
 
     virtual ~ImageBufferRemoteDisplayListBackend();
 
     static constexpr WebCore::RenderingMode renderingMode = WebCore::RenderingMode::DisplayList;
 
 private:
-    ImageBufferRemoteDisplayListBackend(const Parameters&);
+    ImageBufferRemoteDisplayListBackend(const Parameters&, RemoteRenderingBackendProxy&, WebCore::RenderingResourceIdentifier);
 
     RefPtr<WebCore::NativeImage> createNativeImageReference() override;
     String debugDescription() const override;
+
+    WeakPtr<RemoteRenderingBackendProxy> m_remoteRenderingBackendProxy;
 };
 
 } // namespace WebKit

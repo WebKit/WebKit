@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,14 +47,16 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContext);
 
-GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState::ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
+GraphicsContext::GraphicsContext(Type type, IsDeferred isDeferred, const GraphicsContextState::ChangeFlags& changeFlags, InterpolationQuality imageInterpolationQuality)
     : m_state(changeFlags, imageInterpolationQuality)
+    , m_type(type)
     , m_isDeferred(isDeferred)
 {
 }
 
-GraphicsContext::GraphicsContext(IsDeferred isDeferred, const GraphicsContextState& state)
+GraphicsContext::GraphicsContext(Type type, IsDeferred isDeferred, const GraphicsContextState& state)
     : m_state(state)
+    , m_type(type)
     , m_isDeferred(isDeferred)
 {
 }
@@ -358,13 +360,6 @@ ImageDrawResult GraphicsContext::drawTiledImage(Image& image, const FloatRect& d
     return image.drawTiled(*this, destination, source, tileScaleFactor, hRule, vRule, { options.compositeOperator() });
 }
 
-RefPtr<NativeImage> GraphicsContext::nativeImageForDrawing(ImageBuffer& imageBuffer)
-{
-    if (m_isDeferred == IsDeferred::Yes || &imageBuffer.context() == this)
-        return imageBuffer.copyNativeImage();
-    return imageBuffer.createNativeImageReference();
-}
-
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
 {
     drawImageBuffer(image, FloatRect(destination, image.logicalSize()), FloatRect({ }, image.logicalSize()), imagePaintingOptions);
@@ -378,10 +373,7 @@ void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& desti
 void GraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
 {
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
-    FloatRect sourceScaled = source;
-    sourceScaled.scale(image.resolutionScale());
-    if (auto nativeImage = nativeImageForDrawing(image))
-        drawNativeImageInternal(*nativeImage, destination, sourceScaled, options);
+    image.draw(*this, destination, source, options);
 }
 
 void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatPoint& destination, ImagePaintingOptions imagePaintingOptions)
@@ -404,12 +396,8 @@ void GraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const 
 {
     if (!image)
         return;
-    ASSERT(this != &image->context());
     InterpolationQualityMaintainer interpolationQualityForThisScope(*this, options.interpolationQuality());
-    FloatRect scaledSource = source;
-    scaledSource.scale(image->resolutionScale());
-    if (auto nativeImage = ImageBuffer::sinkIntoNativeImage(WTFMove(image)))
-        drawNativeImageInternal(*nativeImage, destination, scaledSource, options);
+    return image->drawConsuming(*this, destination, source, options);
 }
 
 void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
@@ -429,10 +417,7 @@ void GraphicsContext::drawFilteredImageBuffer(ImageBuffer* sourceImage, const Fl
 
 void GraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& source, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
 {
-    FloatRect scaledSource = source;
-    scaledSource.scale(image.resolutionScale());
-    if (auto nativeImage = nativeImageForDrawing(image))
-        drawPattern(*nativeImage, destRect, source, patternTransform, phase, spacing, options);
+    image.drawPattern(*this, destRect, source, patternTransform, phase, spacing, options);
 }
 
 void GraphicsContext::drawControlPart(ControlPart& part, const FloatRoundedRect& borderRect, float deviceScaleFactor, const ControlStyle& style)

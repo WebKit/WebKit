@@ -6595,12 +6595,15 @@ void WebPage::drawRemoteToPDF(FrameIdentifier frameID, const std::optional<Float
     Ref frameView = *localMainFrame->view();
     auto snapshotRect = IntRect { rect.value_or(FloatRect { { }, frameView->contentsSize() }) };
 
-    RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::DisplayList, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, &m_page->chrome());
+    ImageBufferCreationContext creationContext;
+    creationContext.snapshotParameters = { snapshotIdentifier, frameID, std::nullopt };
+
+    RefPtr buffer = ImageBuffer::create(snapshotRect.size(), RenderingMode::DisplayList, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, creationContext, &m_page->chrome());
     if (!buffer)
         return;
 
     drawMainFrameToPDF(*localMainFrame, buffer->context(), snapshotRect, allowTransparentBackground);
-    ensureProtectedRemoteRenderingBackendProxy()->didDrawRemoteToPDF(m_identifier, buffer->renderingResourceIdentifier(), snapshotIdentifier);
+    ensureProtectedRemoteRenderingBackendProxy()->didDrawRemoteToPDF(m_identifier, snapshotIdentifier);
 }
 
 void WebPage::drawRectToImage(FrameIdentifier frameID, const PrintInfo& printInfo, const IntRect& rect, const WebCore::IntSize& imageSize, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
@@ -9858,6 +9861,46 @@ void WebPage::frameTextForTesting(WebCore::FrameIdentifier frameID, CompletionHa
     }
     constexpr bool includeSubframes { true };
     completionHandler(webFrame->frameTextForTesting(includeSubframes));
+}
+
+void WebPage::paintFrameContents(FrameIdentifier frameID, const IntRect& rect, SnapshotIdentifier snapshotIdentifier, FrameIdentifier parentFrameID, CompletionHandler<void(bool)>&& completionHandler)
+{
+    ASSERT(m_page->settings().siteIsolationEnabled());
+
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame) {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+        return;
+    }
+
+    RefPtr coreLocalFrame = webFrame->coreLocalFrame();
+    if (!coreLocalFrame) {
+        ASSERT_NOT_REACHED();
+        completionHandler(false);
+        return;
+    }
+
+    RefPtr frameView = coreLocalFrame->view();
+    if (!frameView) {
+        completionHandler(false);
+        return;
+    }
+
+    ImageBufferCreationContext creationContext;
+    creationContext.snapshotParameters = { snapshotIdentifier, frameID, { parentFrameID } };
+
+    RefPtr buffer = ImageBuffer::create(rect.size(), RenderingMode::DisplayList, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8, creationContext, &m_page->chrome());
+    if (!buffer) {
+        completionHandler(false);
+        return;
+    }
+
+    LocalFrameView::SelectionInSnapshot shouldPaintSelection = LocalFrameView::IncludeSelection;
+    LocalFrameView::CoordinateSpaceForSnapshot coordinateSpace = LocalFrameView::DocumentCoordinates;
+
+    frameView->paintContentsForSnapshot(buffer->context(), rect, shouldPaintSelection, coordinateSpace);
+    completionHandler(true);
 }
 
 void WebPage::requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<String, WebCore::FloatRect>>&&)>&& completion)

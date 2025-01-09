@@ -598,6 +598,25 @@ private:
     ImagePaintingOptions m_options;
 };
 
+class DrawRemoteFrame {
+public:
+    static constexpr char name[] = "draw-remote-frame";
+
+    DrawRemoteFrame(FrameIdentifier frameIdentifier)
+        : m_frameIdentifier(frameIdentifier)
+    {
+    }
+
+    FrameIdentifier frameIdentifier() const { return m_frameIdentifier; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    WEBCORE_EXPORT void apply(GraphicsContext&, ImageBuffer&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    FrameIdentifier m_frameIdentifier;
+};
+
 class DrawSystemImage {
 public:
     static constexpr char name[] = "draw-system-image";

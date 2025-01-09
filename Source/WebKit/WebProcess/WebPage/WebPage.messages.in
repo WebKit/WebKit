@@ -767,6 +767,7 @@ messages -> WebPage WantsAsyncDispatchMessage {
     DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 
     FrameWasFocusedInAnotherProcess(WebCore::FrameIdentifier frameID)
+    PaintFrameContents(WebCore::FrameIdentifier frameID, WebCore::IntRect rect, WebCore::SnapshotIdentifier snapshotIdentifier, WebCore::FrameIdentifier parentFrameID) -> (bool result) Synchronous
 
     RemotePostMessage(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
     RenderTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous

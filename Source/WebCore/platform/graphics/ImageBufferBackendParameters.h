@@ -30,15 +30,23 @@
 #include "IntSize.h"
 #include "PixelFormat.h"
 #include "RenderingMode.h"
+#include "SnapshotIdentifier.h"
 
 namespace WebCore {
 
+struct ImageBufferSnapshotParameters {
+    SnapshotIdentifier snapshotIdentifier;
+    FrameIdentifier frameIdentifier;
+    std::optional<FrameIdentifier> parentFrameIdentifier;
+};
+
 struct ImageBufferBackendParameters {
     IntSize backendSize;
+    RenderingPurpose purpose;
     float resolutionScale; // Resolution scale is of the ImageBuffer logical size.
     DestinationColorSpace colorSpace;
     ImageBufferPixelFormat pixelFormat;
-    RenderingPurpose purpose;
+    std::optional<ImageBufferSnapshotParameters> snapshotParameters;
 };
 
-} // namespace WTF
+} // namespace WebCore

@@ -72,12 +72,12 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(SerializedImageBuffer);
 static const float MaxClampedLength = 4096;
 static const float MaxClampedArea = MaxClampedLength * MaxClampedLength;
 
-RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, GraphicsClient* graphicsClient)
+RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode renderingMode, RenderingPurpose purpose, float resolutionScale, const DestinationColorSpace& colorSpace, ImageBufferPixelFormat pixelFormat, const ImageBufferCreationContext& creationContext, GraphicsClient* graphicsClient)
 {
     RefPtr<ImageBuffer> imageBuffer;
 
     if (graphicsClient) {
-        if (auto imageBuffer = graphicsClient->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat))
+        if (auto imageBuffer = graphicsClient->createImageBuffer(size, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext))
             return imageBuffer;
     }
 
@@ -85,30 +85,30 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
     case RenderingMode::Accelerated:
 #if HAVE(IOSURFACE)
         if (ProcessCapabilities::canUseAcceleratedBuffers()) {
-            ImageBufferCreationContext creationContext;
+            ImageBufferCreationContext acceleratedCreationContext = creationContext;
             if (graphicsClient)
-                creationContext.displayID = graphicsClient->displayID();
-            if (auto imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
+                acceleratedCreationContext.displayID = graphicsClient->displayID();
+            if (auto imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, acceleratedCreationContext))
                 return imageBuffer;
         }
 #elif USE(SKIA)
-        if (auto imageBuffer = ImageBuffer::create<ImageBufferSkiaAcceleratedBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { }))
+        if (auto imageBuffer = ImageBuffer::create<ImageBufferSkiaAcceleratedBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext))
             return imageBuffer;
 #endif
         [[fallthrough]];
 
     case RenderingMode::Unaccelerated:
-        return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
+        return create<ImageBufferPlatformBitmapBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
 
     case RenderingMode::PDFDocument:
 #if USE(CG)
-        return ImageBuffer::create<ImageBufferCGPDFDocumentBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
+        return ImageBuffer::create<ImageBufferCGPDFDocumentBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
 #else
         return nullptr;
 #endif
 
     case RenderingMode::DisplayList:
-        return ImageBuffer::create<ImageBufferDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
+        return ImageBuffer::create<ImageBufferDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, creationContext);
     }
 
     ASSERT_NOT_REACHED();
@@ -135,7 +135,7 @@ IntSize ImageBuffer::calculateBackendSize(FloatSize logicalSize, float resolutio
 
 ImageBufferBackendParameters ImageBuffer::backendParameters(const ImageBufferParameters& parameters)
 {
-    return { calculateBackendSize(parameters.logicalSize, parameters.resolutionScale), parameters.resolutionScale, parameters.colorSpace, parameters.pixelFormat, parameters.purpose };
+    return { calculateBackendSize(parameters.logicalSize, parameters.resolutionScale), parameters.purpose, parameters.resolutionScale, parameters.colorSpace, parameters.pixelFormat, parameters.snapshotParameters };
 }
 
 bool ImageBuffer::sizeNeedsClamping(const FloatSize& size)
@@ -326,15 +326,26 @@ IntSize ImageBuffer::backendSize() const
 
 RefPtr<NativeImage> ImageBuffer::copyNativeImage() const
 {
-    if (auto* backend = ensureBackend())
+    if (auto* backend = ensureBackend()) {
+        const_cast<ImageBuffer&>(*this).flushDrawingContext();
         return backend->copyNativeImage();
+    }
     return nullptr;
 }
 
 RefPtr<NativeImage> ImageBuffer::createNativeImageReference() const
 {
-    if (auto* backend = ensureBackend())
+    if (auto* backend = ensureBackend()) {
+        const_cast<ImageBuffer&>(*this).flushDrawingContext();
         return backend->createNativeImageReference();
+    }
+    return nullptr;
+}
+
+RefPtr<NativeImage> ImageBuffer::nativeImageForDrawing(GraphicsContext& destContext)
+{
+    if (auto* backend = ensureBackend())
+        return backend->nativeImageForDrawing(destContext);
     return nullptr;
 }
 
@@ -497,6 +508,30 @@ RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
     return source->sinkIntoNativeImage();
 }
 
+void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions options)
+{
+    if (auto* backend = ensureBackend()) {
+        flushDrawingContext();
+        backend->draw(destContext, destRect, srcRect, options);
+    }
+}
+
+void ImageBuffer::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    if (auto* backend = ensureBackend()) {
+        flushDrawingContext();
+        backend->drawConsuming(destContext, destRect, srcRect, options);
+    }
+}
+
+void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    if (auto* backend = ensureBackend()) {
+        flushDrawingContext();
+        backend->drawPattern(destContext, destRect, srcRect, patternTransform, phase, spacing, options);
+    }
+}
+
 void ImageBuffer::convertToLuminanceMask()
 {
     if (auto* backend = ensureBackend())
@@ -563,6 +598,20 @@ void ImageBuffer::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& 
     auto destinationPointScaled = destinationPoint;
     destinationPointScaled.scale(resolutionScale());
     backend->putPixelBuffer(pixelBuffer, sourceRectScaled, destinationPointScaled, destinationFormat);
+}
+
+std::optional<FrameIdentifier> ImageBuffer::frameIdentifier()
+{
+    if (auto* backend = ensureBackend())
+        return backend->frameIdentifier();
+    return std::nullopt;
+}
+
+std::optional<SnapshotIdentifier> ImageBuffer::snapshotIdentifier()
+{
+    if (auto* backend = ensureBackend())
+        return backend->snapshotIdentifier();
+    return std::nullopt;
 }
 
 RefPtr<SharedBuffer> ImageBuffer::sinkIntoPDFDocument()

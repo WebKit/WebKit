@@ -208,7 +208,7 @@ static GraphicsContext::IsDeferred isDeferredForCGContext(CGContextRef cgContext
 }
 
 GraphicsContextCG::GraphicsContextCG(CGContextRef cgContext, CGContextSource source, std::optional<RenderingMode> knownRenderingMode)
-    : GraphicsContext(isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
+    : GraphicsContext(Type::Platform, isDeferredForCGContext(cgContext), GraphicsContextState::basicChangeFlags, coreInterpolationQuality(cgContext))
     , m_cgContext(cgContext)
     , m_renderingMode(knownRenderingMode.value_or(renderingModeForCGContext(cgContext, source)))
     , m_isLayerCGContext(source == GraphicsContextCG::CGContextFromCALayer)

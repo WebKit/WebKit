@@ -47,6 +47,11 @@ GraphicsContext& ImageBufferDisplayListBackend::context()
     return m_drawingContext.context();
 }
 
+void ImageBufferDisplayListBackend::draw(GraphicsContext& destContext, const FloatRect&, const FloatRect&, const ImagePaintingOptions)
+{
+    m_drawingContext.replayDisplayList(destContext);
+}
+
 RefPtr<NativeImage> ImageBufferDisplayListBackend::copyNativeImage()
 {
     RefPtr buffer = ImageBuffer::create(size(), RenderingMode::Unaccelerated, RenderingPurpose::Snapshot, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
