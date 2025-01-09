@@ -682,8 +682,9 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 #define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(T) \
 void operator delete(T* object, std::destroying_delete_t, size_t size) { \
     ASSERT(sizeof(T) == size); \
+    auto checkedPtrCountWithoutThreadCheck = object->checkedPtrCountWithoutThreadCheck(); \
     object->T::~T(); \
-    if (UNLIKELY(object->checkedPtrCountWithoutThreadCheck())) { \
+    if (UNLIKELY(checkedPtrCountWithoutThreadCheck)) { \
         memset(static_cast<void*>(object), 0, size); \
         return; \
     } \
