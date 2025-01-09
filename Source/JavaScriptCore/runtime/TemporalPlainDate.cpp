@@ -350,25 +350,15 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // Steps 1-4 already done
-    // Step 5
-    if (!TemporalCalendar::isoDateCompare(plainDate(), other->plainDate())) {
-        // 5a.
+    if (!TemporalCalendar::isoDateCompare(plainDate(), other->plainDate()))
         return ISO8601::Duration();
-    }
-    // Step 6
     ISO8601::Duration dateDifference = TemporalCalendar::calendarDateUntil(plainDate(), other->plainDate(), largestUnit);
-    // Step 7
     ISO8601::InternalDuration duration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, dateDifference, 0);
     RETURN_IF_EXCEPTION(scope, { });
     if (smallestUnit != TemporalUnit::Day || increment != 1) {
-        // Step 8a.
-        auto isoDateTime = TemporalDuration::combineISODateAndTimeRecord(plainDate(), ISO8601::PlainTime());
-        // Step 8b.
-        auto isoDateTimeOther = TemporalDuration::combineISODateAndTimeRecord(other->plainDate(), ISO8601::PlainTime());
-        // Step 8c.
+        auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(plainDate(), ISO8601::PlainTime());
+        auto isoDateTimeOther = TemporalPlainDateTime::combineISODateAndTimeRecord(other->plainDate(), ISO8601::PlainTime());
         Int128 destEpochNs = ISO8601::getUTCEpochNanoseconds(isoDateTimeOther);
-        // Step 8d.
         TemporalDuration::roundRelativeDuration(
             globalObject, duration, destEpochNs, isoDateTime, std::nullopt, largestUnit,
             increment, smallestUnit, roundingMode);

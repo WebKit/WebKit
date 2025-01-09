@@ -108,6 +108,12 @@ TemporalPlainDateTime* TemporalPlainDateTime::tryCreateIfValid(JSGlobalObject* g
     RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject, structure, WTFMove(plainDate), WTFMove(plainTime)));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-combineisodateandtimerecord
+ISO8601::PlainDateTime TemporalPlainDateTime::combineISODateAndTimeRecord(ISO8601::PlainDate isoDate, ISO8601::PlainTime isoTime)
+{
+    return ISO8601::PlainDateTime(isoDate, isoTime);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporaldatetime
 TemporalPlainDateTime* TemporalPlainDateTime::from(JSGlobalObject* globalObject, JSValue itemValue, std::optional<JSObject*> optionsValue)
 {
@@ -306,7 +312,7 @@ TemporalPlainDateTime* TemporalPlainDateTime::addDurationToDateTime(JSGlobalObje
     RETURN_IF_EXCEPTION(scope, { });
     auto addedDate = TemporalCalendar::isoDateAdd(globalObject, m_plainDate, dateDuration, overflow);
     RETURN_IF_EXCEPTION(scope, { });
-    auto result = TemporalDuration::combineISODateAndTimeRecord(addedDate,
+    auto result = combineISODateAndTimeRecord(addedDate,
         ISO8601::PlainTime(timeResult.hours(), timeResult.minutes(), timeResult.seconds(),
             timeResult.milliseconds(), timeResult.microseconds(), timeResult.nanoseconds()));
     RELEASE_AND_RETURN(scope, TemporalPlainDateTime::tryCreateIfValid(globalObject,
@@ -434,7 +440,7 @@ ISO8601::PlainDateTime TemporalPlainDateTime::roundISODateTime(ISO8601::PlainDat
 
     auto balanceResult = TemporalCalendar::balanceISODate(
         isoDate.year(), isoDate.month(), isoDate.day() + roundedTime.days());
-    return TemporalDuration::combineISODateAndTimeRecord(balanceResult,
+    return combineISODateAndTimeRecord(balanceResult,
         ISO8601::PlainTime(roundedTime.hours(), roundedTime.minutes(), roundedTime.seconds(),
             roundedTime.milliseconds(), roundedTime.microseconds(), roundedTime.nanoseconds()));
 }
