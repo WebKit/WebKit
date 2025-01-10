@@ -69,10 +69,13 @@ public:
     ExactTime exactTime() const { return m_exactTime.get(); }
     TimeZone timeZone() const { return m_timeZone; }
 
+    static String temporalZonedDateTimeToString(ExactTime, TimeZone,
+        PrecisionData, TemporalShowCalendar, TemporalShowTimeZone, TemporalShowOffset,
+        unsigned, TemporalUnit, RoundingMode);
     String toString(JSGlobalObject*, JSValue options) const;
     String toString() const
     {
-        return ISO8601::temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone,
+        return temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone,
             PrecisionData { { Precision::Auto, 0 }, TemporalUnit::Nanosecond, 1 },
             TemporalShowCalendar::Auto,
             TemporalShowTimeZone::Auto, TemporalShowOffset::Auto, 1, TemporalUnit::Nanosecond, RoundingMode::Trunc);

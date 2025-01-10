@@ -211,6 +211,83 @@ std::optional<CalendarID> TemporalCalendar::isBuiltinCalendar(StringView string)
     return std::nullopt;
 }
 
+// https://tc39.es/ecma262/#sec-hourfromtime
+static double hourFromTime(double t)
+{
+    double result = std::trunc(std::fmod(std::floor(t / msPerHour), WTF::hoursPerDay));
+    if (result < 0)
+        result += WTF::hoursPerDay;
+    return result;
+}
+
+// https://tc39.es/ecma262/#sec-minfromtime
+static double minFromTime(double t)
+{
+    double result = std::trunc(std::fmod(std::floor(t / msPerMinute), minutesPerHour));
+    if (result < 0)
+        result += minutesPerHour;
+    return result;
+}
+
+// https://tc39.es/ecma262/#sec-secfromtime
+static double secFromTime(double t)
+{
+    double result = std::trunc(std::fmod(std::floor(t / msPerSecond), secondsPerMinute));
+    if (result < 0)
+        result += secondsPerMinute;
+    return result;
+}
+
+// https://tc39.es/ecma262/#sec-msfromtime
+static double msFromTime(double t)
+{
+    double result = std::fmod(t, msPerSecond);
+    if (result < 0)
+        result += msPerSecond;
+    return std::trunc(result);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getisopartsfromepoch
+ISO8601::PlainDateTime TemporalCalendar::getISOPartsFromEpoch(ISO8601::ExactTime epochNanoseconds)
+{
+    ASSERT(epochNanoseconds.isValid());
+    Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
+    if (remainderNs < 0)
+        remainderNs += 1000000;
+    auto epochMilliseconds = (epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000;
+    auto year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
+    auto month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
+    auto day = TemporalCalendar::epochTimeToDate(epochMilliseconds);
+    auto hour = hourFromTime(epochMilliseconds);
+    auto minute = minFromTime(epochMilliseconds);
+    auto second = secFromTime(epochMilliseconds);
+    auto millisecond = msFromTime(epochMilliseconds);
+    auto microsecond = remainderNs / 1000;
+    ASSERT(microsecond < 1000);
+    auto nanosecond = remainderNs % 1000;
+    auto isoDate = ISO8601::PlainDate(year, month, day);
+    auto time = ISO8601::PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
+    return ISO8601::PlainDateTime(WTFMove(isoDate), WTFMove(time));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatcalendarannotation
+String TemporalCalendar::formatCalendarAnnotation(TemporalShowCalendar showCalendar)
+{
+    // TODO: non-iso8601 calendars
+    switch (showCalendar) {
+    case TemporalShowCalendar::Never:
+        return ""_s;
+    case TemporalShowCalendar::Auto:
+        return ""_s;
+    case TemporalShowCalendar::Critical:
+        return "[!u-ca=iso8601]"_s;
+    case TemporalShowCalendar::Always:
+        return "[u-ca=iso8601]"_s;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalcalendar
 JSObject* TemporalCalendar::from(JSGlobalObject* globalObject, JSValue calendarLike)
 {
@@ -424,7 +501,7 @@ ISO8601::PlainDate TemporalCalendar::monthDayFromFields(JSGlobalObject* globalOb
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     double year = referenceYear.value_or(1972);
-    auto plainDateOptional = TemporalDuration::regulateISODate(year, month, day, overflow);
+    auto plainDateOptional = TemporalPlainDate::regulateISODate(year, month, day, overflow);
     if (!plainDateOptional) {
         throwRangeError(globalObject, scope, "monthDayFromFields: date is out of range of ECMAScript representation"_s);
         return { };
@@ -757,7 +834,7 @@ ISO8601::PlainDate calendarDateToISO(JSGlobalObject* globalObject, CalendarID ca
 
     if (calendar == iso8601CalendarID()) {
         ASSERT(optionalYear && optionalMonth && optionalDay);
-        auto result = TemporalDuration::regulateISODate(optionalYear.value(),
+        auto result = TemporalPlainDate::regulateISODate(optionalYear.value(),
             optionalMonth.value(), optionalDay.value(), overflow);
         if (!result) {
             throwRangeError(globalObject, scope, "invalid date in calendarDateToISO"_s);
@@ -840,8 +917,8 @@ ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, co
     double months = plainDate.month() + duration.months();
     double days = plainDate.day();
     ISO8601::PlainYearMonth intermediate = balanceISOYearMonth(years, months);
-    std::optional<ISO8601::PlainDate> intermediate1 = TemporalDuration::regulateISODate(intermediate.year(), intermediate.month(), days, overflow);
-
+    std::optional<ISO8601::PlainDate> intermediate1 = TemporalPlainDate::regulateISODate(intermediate.year(),
+        intermediate.month(), days, overflow);
     if (!intermediate1) {
         throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
         return { };
@@ -923,7 +1000,8 @@ ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& 
     }
 
     auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + months);
-    auto constrained = TemporalDuration::regulateISODate(intermediate.year, intermediate.month, one.day(), TemporalOverflow::Constrain);
+    auto constrained = TemporalPlainDate::regulateISODate(intermediate.year(), intermediate.month(),
+        one.day(), TemporalOverflow::Constrain);
     ASSERT(constrained); // regulateISODate() should succeed, because the overflow mode is Constrain
 
     double weeks = 0;

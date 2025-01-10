@@ -445,4 +445,17 @@ ISO8601::PlainDateTime TemporalPlainDateTime::roundISODateTime(ISO8601::PlainDat
             roundedTime.milliseconds(), roundedTime.microseconds(), roundedTime.nanoseconds()));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-balanceisodatetime
+ISO8601::PlainDateTime TemporalPlainDateTime::balanceISODateTime(double year, double month, double day,
+    double hour, double minute, double second, double millisecond, double microsecond, double nanosecond)
+{
+    auto balancedTime = TemporalPlainTime::balanceTime(
+        hour, minute, second, millisecond, microsecond, nanosecond);
+    auto balancedDate = TemporalCalendar::balanceISODate(year, month, day + balancedTime.days());
+    return ISO8601::PlainDateTime(WTFMove(balancedDate),
+        ISO8601::PlainTime(balancedTime.hours(), balancedTime.minutes(),
+            balancedTime.seconds(), balancedTime.milliseconds(),
+            balancedTime.microseconds(), balancedTime.nanoseconds()));
+}
+
 } // namespace JSC

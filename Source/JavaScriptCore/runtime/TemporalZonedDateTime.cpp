@@ -177,7 +177,7 @@ static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject* globalObjec
 
     if (offsetBehavior == TemporalOffsetBehavior::Exact
         || (offsetBehavior == TemporalOffsetBehavior::Option && offsetOption == TemporalOffset::Use)) {
-        auto balanced = ISO8601::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
+        auto balanced = TemporalPlainDateTime::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
             time.hour(), time.minute(), time.second(), time.millisecond(), time.microsecond(),
             time.nanosecond() - offsetNanoseconds);
         checkISODaysRange(globalObject, balanced.date());
@@ -285,7 +285,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
 
     auto thisNs = m_exactTime.get();
     auto timeZone = m_timeZone;
-    auto isoDateTime = getISODateTimeFor(timeZone, thisNs);
+    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(timeZone, thisNs);
 
     ISO8601::ExactTime epochNanoseconds;
     if (smallestUnit == TemporalUnit::Day) {
@@ -307,7 +307,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         epochNanoseconds = ISO8601::ExactTime(startNs.epochNanoseconds() + roundedDayNsOptional.value());
     } else {
         auto roundResult = TemporalPlainDateTime::roundISODateTime(isoDateTime, roundingIncrement, smallestUnit, roundingMode);
-        auto offsetNanoseconds = ISO8601::getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds());
+        auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds());
         epochNanoseconds = interpretISODateTimeOffset(globalObject,
             roundResult.date(), roundResult.time(), TemporalOffsetBehavior::Option, offsetNanoseconds, timeZone,
             TemporalDisambiguation::Compatible, TemporalOffset::Prefer, TemporalMatchBehavior::Exactly);
@@ -332,8 +332,8 @@ TemporalZonedDateTime* TemporalZonedDateTime::with(JSGlobalObject* globalObject,
     auto epochNs = exactTime();
     auto thisTimeZone = timeZone();
     auto thisCalendar = calendar();
-    auto offsetNanoseconds = ISO8601::getOffsetNanosecondsFor(thisTimeZone, epochNs.epochNanoseconds());
-    auto isoDateTime = ISO8601::getISODateTimeFor(thisTimeZone, epochNs);
+    auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(thisTimeZone, epochNs.epochNanoseconds());
+    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(thisTimeZone, epochNs);
     auto isoDate = isoDateTime.date();
     auto isoTime = isoDateTime.time();
     auto year = isoDate.year();
@@ -408,7 +408,7 @@ static ISO8601::ExactTime addZonedDateTime(JSGlobalObject* globalObject, ISO8601
 
     if (!duration.sign())
         return TemporalInstant::addInstant(globalObject, epochNanoseconds, duration.time());
-    auto isoDateTime = ISO8601::getISODateTimeFor(timeZone, epochNanoseconds);
+    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(timeZone, epochNanoseconds);
     auto addedDate = TemporalCalendar::isoDateAdd(globalObject, isoDateTime.date(),
         duration.dateDuration(), overflow);
     RETURN_IF_EXCEPTION(scope, { });
@@ -458,10 +458,10 @@ static ISO8601::InternalDuration differenceZonedDateTime(JSGlobalObject* globalO
         RELEASE_AND_RETURN(scope, ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject,
             ISO8601::Duration(), 0));
     }
-    auto startDateTime = getISODateTimeFor(timeZone, ns1);
+    auto startDateTime = TemporalTimeZone::getISODateTimeFor(timeZone, ns1);
     auto startDate = startDateTime.date();
     auto startTime = startDateTime.time();
-    auto endDateTime = getISODateTimeFor(timeZone, ns2);
+    auto endDateTime = TemporalTimeZone::getISODateTimeFor(timeZone, ns2);
     auto endDate = endDateTime.date();
     auto sign = (ns2.epochNanoseconds() - ns1.epochNanoseconds() < 0) ? -1 : 1;
     auto maxDayCorrection = (sign == 1) ? 2 : 1;
@@ -511,7 +511,7 @@ static ISO8601::InternalDuration differenceZonedDateTimeWithRounding(JSGlobalObj
     if (smallestUnit == TemporalUnit::Nanosecond && roundingIncrement == 1)
         return difference;
 
-    auto dateTime = getISODateTimeFor(timeZone, ns1);
+    auto dateTime = TemporalTimeZone::getISODateTimeFor(timeZone, ns1);
     RELEASE_AND_RETURN(scope, TemporalDuration::roundRelativeDuration(globalObject,
         difference, ns2.epochNanoseconds(), dateTime, timeZone,
         largestUnit, roundingIncrement, smallestUnit, roundingMode));
@@ -571,6 +571,30 @@ ISO8601::Duration TemporalZonedDateTime::until(JSGlobalObject* globalObject, JSV
     RELEASE_AND_RETURN(scope, differenceTemporalZonedDateTime(false, globalObject, options, other));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-temporalzoneddatetimetostring
+String TemporalZonedDateTime::temporalZonedDateTimeToString(ISO8601::ExactTime exactTime,
+    ISO8601::TimeZone timeZone, PrecisionData precision, TemporalShowCalendar showCalendar,
+    TemporalShowTimeZone showTimeZone, TemporalShowOffset showOffset, unsigned increment,
+    TemporalUnit unit, RoundingMode roundingMode)
+{
+    Int128 epochNs = TemporalInstant::roundTemporalInstant(exactTime.epochNanoseconds(), increment, unit, roundingMode);
+    auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(timeZone, epochNs);
+    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(timeZone, ISO8601::ExactTime(epochNs));
+    auto dateTimeString = temporalDateTimeToString(isoDateTime.date(), isoDateTime.time(), precision.precision);
+    String offsetString;
+    if (showOffset != TemporalShowOffset::Never)
+        offsetString = TemporalTimeZone::formatDateTimeUTCOffsetRounded(offsetNanoseconds);
+    String timeZoneString;
+    if (showTimeZone != TemporalShowTimeZone::Never) {
+        String flag;
+        if (showTimeZone == TemporalShowTimeZone::Critical)
+            flag = "!"_s;
+        timeZoneString = makeString('[', flag, formatTimeZone(timeZone), ']');
+    }
+    auto calendarString = TemporalCalendar::formatCalendarAnnotation(showCalendar);
+    return makeString(dateTimeString, offsetString, timeZoneString, calendarString);
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal.zoneddatetime.prototype.tostring
 String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue optionsValue) const
 {
@@ -604,7 +628,8 @@ String TemporalZonedDateTime::toString(JSGlobalObject* globalObject, JSValue opt
     PrecisionData precision = secondsStringPrecision(smallestUnit, digits);
     RETURN_IF_EXCEPTION(scope, { });
 
-    return ISO8601::temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone, precision, showCalendar, showTimeZone, showOffset, precision.increment, precision.unit, roundingMode);
+    return temporalZonedDateTimeToString(m_exactTime.get(), m_timeZone, precision, showCalendar, showTimeZone,
+        showOffset, precision.increment, precision.unit, roundingMode);
 }
 
 static bool isUTCTimeZoneAnnotation(std::optional<ISO8601::TimeZoneAnnotation>& annotation)

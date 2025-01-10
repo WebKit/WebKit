@@ -72,6 +72,8 @@ public:
 
     TemporalPlainDateTime* addDurationToDateTime(JSGlobalObject*, bool, ISO8601::Duration, JSObject*);
     static ISO8601::PlainDateTime combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::PlainTime);
+    static ISO8601::PlainDateTime balanceISODateTime(double, double, double, double, double, double, double,
+        double, double);
 
     String monthCode() const;
     uint8_t dayOfWeek() const;
