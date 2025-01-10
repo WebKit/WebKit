@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GPRInfo.h"
 #include "MacroAssembler.h"
 #include "ProbeStack.h"
 #include <wtf/TZoneMalloc.h>
@@ -249,6 +250,16 @@ public:
     template<typename T> T gpr(RegisterID id) const { return cpu.gpr<T>(id); }
     template<typename T> T spr(SPRegisterID id) const { return cpu.spr<T>(id); }
     template<typename T> T fpr(FPRegisterID id) const { return cpu.fpr<T>(id); }
+
+    JSValue jsr(JSValueRegs regs) const
+    {
+#if CPU(ARM_THUMB2)
+        EncodedJSValue e = (gpr<uint64_t>(regs.tagGPR()) << 32) | gpr<uint64_t>(regs.payloadGPR());
+        return JSValue::decode(e);
+#else
+        return JSValue::decode(gpr<uint64_t>(regs.payloadGPR()));
+#endif
+    }
 
     void*& pc() { return cpu.pc(); }
     void*& fp() { return cpu.fp(); }

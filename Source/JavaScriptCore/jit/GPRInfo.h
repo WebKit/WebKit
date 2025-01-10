@@ -510,9 +510,8 @@ public:
     static constexpr GPRReg nonPreservedNonReturnGPR = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR0 = ARMRegisters::r5;
     static constexpr GPRReg nonPreservedNonArgumentGPR1 = ARMRegisters::r4;
-    static constexpr GPRReg nonPreservedNonArgumentGPR2 = ARMRegisters::r9;
 
-    static constexpr GPRReg handlerGPR = GPRInfo::nonPreservedNonArgumentGPR2;
+    static constexpr GPRReg handlerGPR = regCS0;
 
     static constexpr GPRReg wasmScratchGPR0 = regT5;
     static constexpr GPRReg wasmScratchGPR1 = regT6;
@@ -534,11 +533,11 @@ public:
         return registerForIndex[index];
     }
 
-    static unsigned toIndex(GPRReg reg)
+    static constexpr unsigned toIndex(GPRReg reg)
     {
-        ASSERT(reg != InvalidGPRReg);
-        ASSERT(static_cast<int>(reg) < 16);
-        static const unsigned indexForRegister[16] =
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(reg != InvalidGPRReg);
+        ASSERT_UNDER_CONSTEXPR_CONTEXT(static_cast<int>(reg) < 16);
+        constexpr unsigned indexForRegister[16] =
             { 0, 1, 2, 3, 4, 5, InvalidIndex, InvalidIndex, 6, 7, 8, 9, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex };
         unsigned result = indexForRegister[reg];
         return result;
@@ -1140,7 +1139,7 @@ struct StaticScratchRegisterAllocator {
         unsigned resultIndex = 0;
         for (unsigned index = 0; index < RegisterBank::numberOfRegisters; ++index) {
             auto reg = RegisterBank::toRegister(index);
-            if (noOverlap(registers..., reg))
+            if (resultIndex < size && noOverlap(registers..., reg))
                 array[resultIndex++] = reg;
         }
         return array;

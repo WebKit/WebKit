@@ -270,7 +270,10 @@ public:
         load64(address, regs.gpr());
 #else
         static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        loadPair32(address, regs.payloadGPR(), regs.tagGPR());
+        if (regs.tagGPR() == InvalidGPRReg)
+            load32(address, regs.payloadGPR());
+        else
+            loadPair32(address, regs.payloadGPR(), regs.tagGPR());
 #endif
     }
     
@@ -280,7 +283,11 @@ public:
         load64(address, regs.gpr());
 #else
         static_assert(!PayloadOffset && TagOffset == 4, "Assumes little-endian system");
-        loadPair32(address, regs.payloadGPR(), regs.tagGPR());
+        ASSERT(regs.payloadGPR() != InvalidGPRReg);
+        if (regs.tagGPR() == InvalidGPRReg)
+            load32(address, regs.payloadGPR());
+        else
+            loadPair32(address, regs.payloadGPR(), regs.tagGPR());
 #endif
     }
 
@@ -289,17 +296,20 @@ public:
 #if USE(JSVALUE64)
         load64(address, regs.gpr());
 #else
-        loadPair32(AbsoluteAddress(address), regs.payloadGPR(), regs.tagGPR());
+        if (regs.tagGPR() == InvalidGPRReg)
+            load32(address, regs.payloadGPR());
+        else
+            loadPair32(AbsoluteAddress(address), regs.payloadGPR(), regs.tagGPR());
 #endif
     }
-    
+
     // Note that these clobber offset.
     void loadProperty(GPRReg object, GPRReg offset, JSValueRegs result);
     void storeProperty(JSValueRegs value, GPRReg object, GPRReg offset, GPRReg scratch);
 
-    JumpList loadMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
-    std::tuple<JumpList, JumpList> storeMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, GPRReg valueGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
-    JumpList hasMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
+    JumpList loadMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, JSValueRegs resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
+    std::tuple<JumpList, JumpList, GPRReg> storeMegamorphicProperty(VM&, GPRReg baseGPR, std::variant<GPRReg, UniquedStringImpl*> uid, JSValueRegs valueJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
+    JumpList hasMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, JSValueRegs resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
 
     void moveValueRegs(JSValueRegs srcRegs, JSValueRegs destRegs)
     {

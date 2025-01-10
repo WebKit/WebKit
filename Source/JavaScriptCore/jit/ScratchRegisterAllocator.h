@@ -46,13 +46,18 @@ public:
     void lock(GPRReg);
     void lock(FPRReg);
     void lock(JSValueRegs);
-    
+
+    template<typename BankInfo>
+    typename BankInfo::RegisterType tryAllocateScratch();
+
     template<typename BankInfo>
     typename BankInfo::RegisterType allocateScratch();
-    
+
     GPRReg allocateScratchGPR();
+    GPRReg tryAllocateScratchGPR();
     FPRReg allocateScratchFPR();
-    
+    FPRReg tryAllocateScratchFPR();
+
     bool didReuseRegisters() const
     {
         return !!m_numberOfReusedRegisters;

@@ -734,6 +734,9 @@ static InlineCacheAction tryCacheArrayGetByVal(JSGlobalObject* globalObject, Cod
     {
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
 
+        if (forceICFailure(globalObject))
+            return GiveUpOnCache;
+
         JSCell* base = baseValue.asCell();
 
         RefPtr<AccessCase> newCase;
@@ -1281,6 +1284,9 @@ static InlineCacheAction tryCacheArrayPutByVal(JSGlobalObject* globalObject, Cod
 
     {
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
+
+        if (forceICFailure(globalObject))
+            return GiveUpOnCache;
 
         JSCell* base = baseValue.asCell();
 
@@ -1883,6 +1889,8 @@ static InlineCacheAction tryCacheArrayInByVal(JSGlobalObject* globalObject, Code
 
     {
         GCSafeConcurrentJSLocker locker(codeBlock->m_lock, globalObject->vm());
+        if (forceICFailure(globalObject))
+            return GiveUpOnCache;
 
         JSCell* base = baseValue.asCell();
 

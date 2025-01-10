@@ -5260,7 +5260,7 @@ static inline void prepareForTailCallImpl(unsigned functionIndex, CCallHelpers& 
     for (unsigned i = lastPatchArg; i < params.size(); ++i) {
         auto arg = params[i];
         if (arg.isStack()) {
-            unsigned scratch = -1;
+            int scratch = -1;
             for (unsigned i = 0; i < tailCallPatchpointScratchCount; ++i) {
                 if (!stackPatchArg[i]) {
                     scratch = i;

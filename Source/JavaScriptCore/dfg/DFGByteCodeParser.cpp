@@ -5565,14 +5565,12 @@ void ByteCodeParser::handleGetById(
                 return;
             }
         }
-#if USE(JSVALUE64)
-        if (type == AccessType::GetById) {
+        if (type == AccessType::GetById && is64Bit()) {
             if (getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, identifier.uid())) {
                 set(destination, addToGraph(GetByIdMegamorphic, OpInfo(data), OpInfo(prediction), base));
                 return;
             }
         }
-#endif
     }
 
     // Special path for custom accessors since custom's offset does not have any meaning.
@@ -5977,7 +5975,7 @@ void ByteCodeParser::handleInById(VirtualRegister destination, Node* base, Cache
             return;
     }
 
-    if (status.isMegamorphic() && canUseMegamorphicInById(*m_vm, identifier.uid())) {
+    if (status.isMegamorphic() && canUseMegamorphicInById(*m_vm, identifier.uid()) && is64Bit()) {
         set(destination, addToGraph(InByIdMegamorphic, OpInfo(identifier), base));
         return;
     }
@@ -6007,7 +6005,7 @@ void ByteCodeParser::emitPutById(
     if (isDirect)
         addToGraph(PutByIdDirect, OpInfo(identifier), OpInfo(ecmaMode), base, value);
     else
-        addToGraph((putByStatus.isMegamorphic() && canUseMegamorphicPutById(*m_vm, identifier.uid())) ? PutByIdMegamorphic : putByStatus.makesCalls() ? PutByIdFlush : PutById, OpInfo(identifier), OpInfo(ecmaMode), base, value);
+        addToGraph((putByStatus.isMegamorphic() && canUseMegamorphicPutById(*m_vm, identifier.uid()) && is64Bit()) ? PutByIdMegamorphic : putByStatus.makesCalls() ? PutByIdFlush : PutById, OpInfo(identifier), OpInfo(ecmaMode), base, value);
 }
 
 void ByteCodeParser::handlePutById(
@@ -7565,7 +7563,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                 addVarArgChild(base);
                 addVarArgChild(property);
                 addVarArgChild(nullptr); // Leave room for property storage.
-                Node* getByVal = addToGraph(Node::VarArg, getByStatus.isMegamorphic() ? GetByValMegamorphic : GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
+                Node* getByVal = addToGraph(Node::VarArg, (getByStatus.isMegamorphic() && is64Bit()) ? GetByValMegamorphic : GetByVal, OpInfo(arrayMode.asWord()), OpInfo(prediction));
                 m_exitOK = false; // GetByVal must be treated as if it clobbers exit state, since FixupPhase may make it generic.
                 set(bytecode.m_dst, getByVal);
                 if (!getByStatus.isMegamorphic() && getByStatus.observedStructureStubInfoSlowPath())
@@ -7584,7 +7582,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* property = get(bytecode.m_property);
 
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
-            Node* getByValWithThis = addToGraph(getByStatus.isMegamorphic() ? GetByValWithThisMegamorphic : GetByValWithThis, OpInfo(), OpInfo(prediction), base, thisValue, property);
+            Node* getByValWithThis = addToGraph((getByStatus.isMegamorphic() && is64Bit()) ? GetByValWithThisMegamorphic : GetByValWithThis, OpInfo(), OpInfo(prediction), base, thisValue, property);
             set(bytecode.m_dst, getByValWithThis);
 
             NEXT_OPCODE(op_get_by_val_with_this);
@@ -7840,7 +7838,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
 
             auto* data = m_graph.m_getByIdData.add(GetByIdData { CacheableIdentifier::createFromIdentifierOwnedByCodeBlock(m_inlineStackTop->m_profiledBlock, uid), CacheType::GetByIdSelf });
-            set(bytecode.m_dst, addToGraph(getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, uid) ? GetByIdWithThisMegamorphic : GetByIdWithThis, OpInfo(data), OpInfo(prediction), base, thisValue));
+            set(bytecode.m_dst, addToGraph((getByStatus.isMegamorphic() && canUseMegamorphicGetById(*m_vm, uid) && is64Bit()) ? GetByIdWithThisMegamorphic : GetByIdWithThis, OpInfo(data), OpInfo(prediction), base, thisValue));
 
             NEXT_OPCODE(op_get_by_id_with_this);
         }
@@ -9668,7 +9666,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     }
                 }
                 ArrayMode arrayMode = getArrayMode(bytecode.metadata(codeBlock).m_arrayProfile, Array::Read);
-                set(bytecode.m_dst, addToGraph(status.isMegamorphic() ? InByValMegamorphic : InByVal, OpInfo(arrayMode.asWord()), base, property));
+                set(bytecode.m_dst, addToGraph((status.isMegamorphic() && is64Bit()) ? InByValMegamorphic : InByVal, OpInfo(arrayMode.asWord()), base, property));
             }
             NEXT_OPCODE(op_in_by_val);
         }
@@ -9818,7 +9816,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             }
 
             GetByStatus getByStatus = GetByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
-            if (getByStatus.isMegamorphic()) {
+            if (getByStatus.isMegamorphic() && is64Bit()) {
                 SpeculatedType prediction = getPrediction();
                 addVarArgChild(base);
                 addVarArgChild(propertyName);
@@ -9880,7 +9878,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
             Node* property = get(bytecode.m_propertyName);
 
             InByStatus inByStatus = InByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
-            if (inByStatus.isMegamorphic()) {
+            if (inByStatus.isMegamorphic() && is64Bit()) {
                 set(bytecode.m_dst, addToGraph(InByValMegamorphic, OpInfo(arrayMode.asWord()), base, property));
                 NEXT_OPCODE(op_enumerator_in_by_val);
             }
@@ -9955,7 +9953,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             // FIXME: Checking for a BadConstantValue causes us to always use the Generic variant if we switched from IndexedMode -> IndexedMode + OwnStructureMode even though that might be fine.
             PutByStatus putByStatus = PutByStatus::computeFor(m_inlineStackTop->m_profiledBlock, m_inlineStackTop->m_baselineMap, m_icContextStack, currentCodeOrigin());
-            if (putByStatus.isMegamorphic()) {
+            if (putByStatus.isMegamorphic() && is64Bit()) {
                 addVarArgChild(base);
                 addVarArgChild(propertyName);
                 addVarArgChild(value);
@@ -10361,7 +10359,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
     addVarArgChild(value);
     addVarArgChild(nullptr); // Leave room for property storage.
     addVarArgChild(nullptr); // Leave room for length.
-    Node* putByVal = addToGraph(Node::VarArg, isDirect ? PutByValDirect : status.isMegamorphic() ? PutByValMegamorphic : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
+    Node* putByVal = addToGraph(Node::VarArg, isDirect ? PutByValDirect : (status.isMegamorphic() && is64Bit()) ? PutByValMegamorphic : PutByVal, OpInfo(arrayMode.asWord()), OpInfo(bytecode.m_ecmaMode));
     m_exitOK = false; // PutByVal and PutByValDirect must be treated as if they clobber exit state, since FixupPhase may make them generic.
     if (!status.isMegamorphic() && status.observedStructureStubInfoSlowPath())
         m_graph.m_slowPutByVal.add(putByVal);
