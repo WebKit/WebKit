@@ -1494,11 +1494,7 @@ bool canUseJITCage() { return false; }
 
 bool canUseHandlerIC()
 {
-#if USE(JSVALUE64)
     return true;
-#else
-    return false;
-#endif
 }
 
 bool hasCapacityToUseLargeGigacage()

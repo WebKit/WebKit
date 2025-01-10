@@ -309,6 +309,10 @@ public:
 
     JumpList loadMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, JSValueRegs resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
     std::tuple<JumpList, JumpList, GPRReg> storeMegamorphicProperty(VM&, GPRReg baseGPR, std::variant<GPRReg, UniquedStringImpl*> uid, JSValueRegs valueJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
+#if USE(JSVALUE32_64)
+    // Scratch3GPR is only clobbered at the end, so loadUID can also use it.
+    std::tuple<JumpList, JumpList, GPRReg> storeMegamorphicProperty(VM&, GPRReg baseGPR, std::function<void(GPRReg)> loadUID, JSValueRegs valueJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
+#endif
     JumpList hasMegamorphicProperty(VM&, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl*, JSValueRegs resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR);
 
     void moveValueRegs(JSValueRegs srcRegs, JSValueRegs destRegs)

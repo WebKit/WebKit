@@ -653,6 +653,18 @@ void JIT::emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers& jit)
     jit.loadPairPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister, GPRInfo::metadataTableRegister);
 }
 
+void JIT::emitMaterializeConstantPoolRegister()
+{
+    emitMaterializeConstantPoolRegister(*this);
+}
+
+void JIT::emitMaterializeConstantPoolRegister(CCallHelpers& jit)
+{
+    jit.loadPtr(addressFor(CallFrameSlot::codeBlock), GPRInfo::jitDataRegister);
+    static_assert(static_cast<ptrdiff_t>(CodeBlock::offsetOfJITData() + sizeof(void*)) == CodeBlock::offsetOfMetadataTable());
+    jit.loadPtr(Address(GPRInfo::jitDataRegister, CodeBlock::offsetOfJITData()), GPRInfo::jitDataRegister);
+}
+
 void JIT::emitSaveCalleeSaves()
 {
     Base::emitSaveCalleeSavesFor(&RegisterAtOffsetList::llintBaselineCalleeSaveRegisters());

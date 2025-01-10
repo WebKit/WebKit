@@ -230,6 +230,7 @@ namespace JSC {
         void loadConstant(unsigned constantIndex, GPRReg);
         void loadStructureStubInfo(StructureStubInfoIndex, GPRReg);
         static void emitMaterializeMetadataAndConstantPoolRegisters(CCallHelpers&);
+        static void emitMaterializeConstantPoolRegister(CCallHelpers&);
     private:
         void loadGlobalObject(GPRReg);
 
@@ -831,6 +832,7 @@ namespace JSC {
 #endif
 
         void emitMaterializeMetadataAndConstantPoolRegisters();
+        void emitMaterializeConstantPoolRegister();
 
         void emitSaveCalleeSaves();
         void emitRestoreCalleeSaves();
@@ -920,6 +922,34 @@ namespace JSC {
 
         bool m_isShareable { true };
     };
+
+inline void ensureValidMetadataAndConstantPoolRegisters(CCallHelpers& jit)
+{
+#if CPU(ARM_THUMB2)
+    JIT::emitMaterializeMetadataAndConstantPoolRegisters(jit);
+#else
+    UNUSED_PARAM(jit);
+#endif
+}
+
+inline void ensureValidConstantPoolRegister(CCallHelpers& jit)
+{
+#if CPU(ARM_THUMB2)
+    JIT::emitMaterializeConstantPoolRegister(jit);
+#else
+    UNUSED_PARAM(jit);
+#endif
+}
+
+inline void constantPoolRegisterCanBeClobbered(CCallHelpers& jit)
+{
+#if CPU(ARM_THUMB2)
+    if (ASSERT_ENABLED)
+        jit.move(CCallHelpers::TrustedImmPtr(0xBEEF), GPRInfo::jitDataRegister);
+#else
+    UNUSED_PARAM(jit);
+#endif
+}
 
 } // namespace JSC
 

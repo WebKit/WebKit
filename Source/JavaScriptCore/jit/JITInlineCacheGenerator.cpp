@@ -75,6 +75,7 @@ void JITInlineCacheGenerator::generateDataICFastPath(CCallHelpers& jit, GPRReg s
     m_start = jit.label();
     if (Options::useHandlerIC()) {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+        ensureValidConstantPoolRegister(jit);
         jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     } else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
@@ -166,12 +167,14 @@ static void generateGetByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
     slowCases.link(&jit);
     if (Options::useHandlerIC()) {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+        ensureValidConstantPoolRegister(jit);
         jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     } else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
         jit.farJump(CCallHelpers::Address(jit.scratchRegister(), InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     }
     doneCases.link(&jit);
+    ensureValidMetadataAndConstantPoolRegisters(jit);
 }
 
 void JITGetByIdGenerator::generateFastPath(CCallHelpers& jit)
@@ -249,6 +252,7 @@ static void generatePutByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg 
     doNotInlineAccess.link(&jit);
     if (Options::useHandlerIC()) {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+        ensureValidConstantPoolRegister(jit);
         jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     } else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
@@ -389,6 +393,7 @@ static void generateInByIdInlineAccessBaselineDataIC(CCallHelpers& jit, GPRReg s
     skipInlineAccess.link(&jit);
     if (Options::useHandlerIC()) {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), GPRInfo::handlerGPR);
+        ensureValidConstantPoolRegister(jit);
         jit.call(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfCallTarget()), JITStubRoutinePtrTag);
     } else {
         jit.loadPtr(CCallHelpers::Address(stubInfoGPR, StructureStubInfo::offsetOfHandler()), jit.scratchRegister());
