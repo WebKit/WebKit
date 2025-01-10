@@ -56,6 +56,7 @@ public:
     void disconnect();
 
     WebCore::RenderingResourceIdentifier identifier() const { return m_destinationBufferIdentifier; }
+    WebCore::ImageBuffer* imageBuffer() const;
 
 private:
     template<typename T> void send(T&& message);
@@ -132,6 +133,7 @@ private:
     void recordDrawImageBuffer(WebCore::ImageBuffer&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions) final;
     void recordDrawSystemImage(WebCore::SystemImage&, const WebCore::FloatRect&);
+    void recordDrawRemoteFrame(WebCore::FrameIdentifier);
     void recordDrawPattern(WebCore::RenderingResourceIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint& phase, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions = { }) final;
 #if ENABLE(INLINE_PATH_DATA)
     void recordFillLine(const WebCore::PathDataLine&) final;
@@ -176,5 +178,9 @@ private:
 };
 
 } // namespace WebKit
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteDisplayListRecorderProxy)
+    static bool isType(const WebCore::GraphicsContext& context) { return context.type() == WebCore::GraphicsContext::Type::RemoteRecorderProxy; }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

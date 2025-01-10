@@ -758,6 +758,34 @@ void GPUConnectionToWebProcess::releaseRenderingBackend(RenderingBackendIdentifi
     protectedGPUProcess()->tryExitIfUnusedAndUnderMemoryPressure();
 }
 
+void GPUConnectionToWebProcess::createSnapshotCompositor(SnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, RenderingResourceIdentifier imageBufferIdentifier)
+{
+    RefPtr remoteRenderingBackend = m_remoteRenderingBackendMap.get(renderingBackendIdentifier);
+
+    if (RefPtr imageBuffer = remoteRenderingBackend ? remoteRenderingBackend->imageBuffer(imageBufferIdentifier) : nullptr)
+        protectedGPUProcess()->createSnapshotCompositor(snapshotIdentifier, frameIdentifier, imageBuffer.releaseNonNull());
+}
+
+void GPUConnectionToWebProcess::addSnapshotRemoteFrameResource(SnapshotIdentifier snapshotIdentifier, FrameIdentifier frameIdentifier, FrameIdentifier parentFrameIdentifier, RenderingBackendIdentifier renderingBackendIdentifier, RenderingResourceIdentifier imageBufferIdentifier)
+{
+    RefPtr remoteRenderingBackend = m_remoteRenderingBackendMap.get(renderingBackendIdentifier);
+
+    if (RefPtr imageBuffer = remoteRenderingBackend ? remoteRenderingBackend->imageBuffer(imageBufferIdentifier) : nullptr)
+        protectedGPUProcess()->addSnapshotRemoteFrameResource(snapshotIdentifier, frameIdentifier, parentFrameIdentifier, imageBuffer.releaseNonNull());
+}
+
+void GPUConnectionToWebProcess::releaseSnapshotCompositor(SnapshotIdentifier snapshotIdentifier)
+{
+    protectedGPUProcess()->releaseSnapshotCompositor(snapshotIdentifier);
+}
+
+#if PLATFORM(COCOA)
+void GPUConnectionToWebProcess::didDrawRemoteToPDF(PageIdentifier pageID, SnapshotIdentifier snapshotIdentifier)
+{
+    protectedGPUProcess()->didDrawRemoteToPDF(pageID, snapshotIdentifier);
+}
+#endif
+
 #if ENABLE(WEBGL)
 void GPUConnectionToWebProcess::createGraphicsContextGL(GraphicsContextGLIdentifier identifier, WebCore::GraphicsContextGLAttributes attributes, RenderingBackendIdentifier renderingBackendIdentifier, IPC::StreamServerConnection::Handle&& connectionHandle)
 {

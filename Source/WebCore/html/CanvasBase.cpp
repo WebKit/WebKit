@@ -321,7 +321,7 @@ RefPtr<ImageBuffer> CanvasBase::allocateImageBuffer() const
     auto colorSpace = context ? context->colorSpace() : DestinationColorSpace::SRGB();
     auto pixelFormat = context ? context->pixelFormat() : ImageBufferPixelFormat::BGRA8;
 
-    return ImageBuffer::create(size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, scriptExecutionContext()->graphicsClient());
+    return ImageBuffer::create(size(), renderingMode, RenderingPurpose::Canvas, 1, colorSpace, pixelFormat, { }, scriptExecutionContext()->graphicsClient());
 }
 
 bool CanvasBase::shouldInjectNoiseBeforeReadback() const

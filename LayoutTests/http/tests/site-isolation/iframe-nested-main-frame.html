@@ -1,0 +1,20 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<meta name="fuzzy" content="maxDifference=255; totalPixels=17095" />
+<style>
+    body {
+        overflow: clip;
+    }
+    iframe {
+        margin: 5px;
+        width: 670px;
+        height: 250px;
+        display: inline-block;
+        background-color: red;
+    }
+</style>
+<body>
+    <h2>Main Frame</h2>
+    <iframe src="http://127.0.0.1/site-isolation/resources/cross-origin-iframe-1.html" frameborder=0></iframe>
+    <br>
+    <iframe src="http://127.0.0.1/site-isolation/resources/cross-origin-iframe-2.html" frameborder=0></iframe>
+</body>

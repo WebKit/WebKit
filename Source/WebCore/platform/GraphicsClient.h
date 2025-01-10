@@ -36,6 +36,7 @@ class ImageBuffer;
 class SerializedImageBuffer;
 
 struct GraphicsContextGLAttributes;
+struct ImageBufferCreationContext;
 
 enum class ImageBufferPixelFormat : uint8_t;
 enum class RenderingMode : uint8_t;
@@ -63,7 +64,7 @@ public:
 
 private:
     // Called by passing GraphicsClient into ImageBuffer functions.
-    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat) const = 0;
+    virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float resolutionScale, const DestinationColorSpace&, ImageBufferPixelFormat, const ImageBufferCreationContext&) const = 0;
 
     // Called by passing GraphicsClient into SerializedImageBuffer functions.
     virtual RefPtr<WebCore::ImageBuffer> sinkIntoImageBuffer(std::unique_ptr<WebCore::SerializedImageBuffer>) = 0;

@@ -147,6 +147,17 @@ inline static std::optional<RenderingResourceIdentifier> applyDrawDecomposedGlyp
     return std::nullopt;
 }
 
+template<class T>
+inline static std::optional<FrameIdentifier> applyDrawRemoteFrame(GraphicsContext& context, const ResourceHeap& resourceHeap, const T& item)
+{
+    auto frameIdentifier = item.frameIdentifier();
+    if (auto* imageBuffer = resourceHeap.getImageBuffer(frameIdentifier)) {
+        item.apply(context, *imageBuffer);
+        return std::nullopt;
+    }
+    return frameIdentifier;
+}
+
 ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resourceHeap, ControlFactory& controlFactory, const Item& item, OptionSet<ReplayOption> options)
 {
     if (!isValid(item))
@@ -186,6 +197,10 @@ ApplyItemResult applyItem(GraphicsContext& context, const ResourceHeap& resource
         }, [&](const DrawPattern& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applySourceImageItem<DrawPattern>(context, resourceHeap, item, options))
                 return { StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier) };
+            return { };
+        }, [&](const DrawRemoteFrame& item) -> ApplyItemResult {
+            if (auto missingCachedRemoteFrameIdentifier = applyDrawRemoteFrame(context, resourceHeap, item))
+                return { /*StopReplayReason::MissingCachedResource, WTFMove(missingCachedResourceIdentifier)*/ };
             return { };
         }, [&](const SetState& item) -> ApplyItemResult {
             if (auto missingCachedResourceIdentifier = applySetStateItem(context, resourceHeap, item, options))

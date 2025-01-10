@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcessMessages.h"
 #include "IPCEvent.h"
+#include "ImageBufferRemoteDisplayListBackend.h"
 #include "ImageBufferRemotePDFDocumentBackend.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
@@ -144,6 +145,10 @@ void RemoteImageBufferProxy::backingStoreWillChange()
 void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHandle> backendHandle)
 {
     ASSERT(!m_backend);
+    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+    if (!remoteRenderingBackendProxy)
+        return;
+
     // This should match RemoteImageBufferProxy::create<>() call site and RemoteImageBuffer::create<>() call site.
     // FIXME: this will be removed and backend be constructed in the contructor.
     std::unique_ptr<ImageBufferBackend> backend;
@@ -156,7 +161,7 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
             if (RemoteRenderingBackendProxy::canMapRemoteImageBufferBackendBackingStore())
                 backend = ImageBufferShareableMappedIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
             else
-                backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle));
+                backend = ImageBufferRemoteIOSurfaceBackend::create(backendParameters, WTFMove(*backendHandle), *remoteRenderingBackendProxy, renderingResourceIdentifier());
         }
 #endif
         [[fallthrough]];
@@ -175,12 +180,13 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
         break;
 
     case RenderingMode::DisplayList:
+        ASSERT(renderingPurpose() == RenderingPurpose::Snapshot);
+        backend = ImageBufferRemoteDisplayListBackend::create(backendParameters, *m_remoteRenderingBackendProxy, renderingResourceIdentifier());
         break;
     }
 
     if (!backend) {
         m_remoteDisplayList.disconnect();
-        RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
         remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(renderingResourceIdentifier());
         remoteRenderingBackendProxy->releaseImageBuffer(renderingResourceIdentifier());
         m_remoteRenderingBackendProxy = nullptr;
@@ -205,37 +211,6 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
         }
     }
     return m_backend.get();
-}
-
-RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const
-{
-    auto* backend = ensureBackend();
-    if (!backend)
-        return { };
-    if (backend->canMapBackingStore()) {
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return ImageBuffer::copyNativeImage();
-    }
-    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
-    if (UNLIKELY(!remoteRenderingBackendProxy))
-        return { };
-
-    auto bitmap = remoteRenderingBackendProxy->getShareableBitmap(m_renderingResourceIdentifier, PreserveResolution::Yes);
-    if (!bitmap)
-        return { };
-    return NativeImage::create(bitmap->createPlatformImage(DontCopyBackingStore));
-}
-
-RefPtr<NativeImage> RemoteImageBufferProxy::createNativeImageReference() const
-{
-    auto* backend = ensureBackend();
-    if (!backend)
-        return { };
-    if (backend->canMapBackingStore()) {
-        const_cast<RemoteImageBufferProxy*>(this)->flushDrawingContext();
-        return ImageBuffer::createNativeImageReference();
-    }
-    return copyNativeImage();
 }
 
 RefPtr<NativeImage> RemoteImageBufferProxy::sinkIntoNativeImage()
@@ -302,6 +277,8 @@ void RemoteImageBufferProxy::clearBackend()
 
 GraphicsContext& RemoteImageBufferProxy::context() const
 {
+    if (renderingMode() == RenderingMode::DisplayList)
+        ensureBackend();
     return const_cast<RemoteImageBufferProxy*>(this)->m_remoteDisplayList;
 }
 

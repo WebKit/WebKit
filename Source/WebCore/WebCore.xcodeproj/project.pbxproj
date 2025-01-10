@@ -2811,6 +2811,7 @@
 		721B3E9629679E38004F5FF6 /* InnerSpinButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3E9529679E38004F5FF6 /* InnerSpinButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3ECF29680811004F5FF6 /* ColorWellPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3ECE29680811004F5FF6 /* ColorWellPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		721B3EF52968F47D004F5FF6 /* MenuListButtonPart.h in Headers */ = {isa = PBXBuildFile; fileRef = 721B3EF42968F47D004F5FF6 /* MenuListButtonPart.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		721CC4CE2D14D8FC00FE277B /* ImageBufferDisplayListBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 721CC4CC2D14D89A00FE277B /* ImageBufferDisplayListBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7220742F2D07C7F6009FA90F /* ImageBufferCGPDFDocumentBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 72D1DC382D03583800B52E57 /* ImageBufferCGPDFDocumentBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2DE27E1C2060078D997 /* GraphicsContextStateSaver.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DB27E1C2040078D997 /* GraphicsContextStateSaver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		722AF2DF27E1C2060078D997 /* GraphicsContextState.h in Headers */ = {isa = PBXBuildFile; fileRef = 722AF2DC27E1C2050078D997 /* GraphicsContextState.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13266,6 +13267,8 @@
 		721B3EF22968F45D004F5FF6 /* MenuListButtonMac.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MenuListButtonMac.h; sourceTree = "<group>"; };
 		721B3EF32968F45E004F5FF6 /* MenuListButtonMac.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MenuListButtonMac.mm; sourceTree = "<group>"; };
 		721B3EF42968F47D004F5FF6 /* MenuListButtonPart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuListButtonPart.h; sourceTree = "<group>"; };
+		721CC4CC2D14D89A00FE277B /* ImageBufferDisplayListBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferDisplayListBackend.h; sourceTree = "<group>"; };
+		721CC4CD2D14D89A00FE277B /* ImageBufferDisplayListBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferDisplayListBackend.cpp; sourceTree = "<group>"; };
 		7224ABCF2C0174EE00D85362 /* BitmapImageDescriptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapImageDescriptor.h; sourceTree = "<group>"; };
 		7225E8062A3E298C00947EBF /* RotationDirection.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RotationDirection.cpp; sourceTree = "<group>"; };
 		722623BF29486B28006DCCF1 /* ControlFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ControlFactory.cpp; sourceTree = "<group>"; };
@@ -33854,6 +33857,8 @@
 				86BBA9EF2987EBF100A78986 /* ImageBufferBackendParameters.h */,
 				72FE4047292F3D3B001D3855 /* ImageBufferContextSwitcher.cpp */,
 				72FE4046292F3D3A001D3855 /* ImageBufferContextSwitcher.h */,
+				721CC4CD2D14D89A00FE277B /* ImageBufferDisplayListBackend.cpp */,
+				721CC4CC2D14D89A00FE277B /* ImageBufferDisplayListBackend.h */,
 				3D0F80C52BCA014D006C8023 /* ImageBufferPixelFormat.h */,
 				72BAC3A623E17328008D741C /* ImageBufferPlatformBackend.h */,
 				322B61142C50C22D00FB5440 /* ImageBufferResourceLimits.h */,
@@ -41377,6 +41382,7 @@
 				550640B02407587E00AAE045 /* ImageBufferCGBackend.h in Headers */,
 				2D7705C925528D34001D0C94 /* ImageBufferCGBitmapBackend.h in Headers */,
 				7220742F2D07C7F6009FA90F /* ImageBufferCGPDFDocumentBackend.h in Headers */,
+				721CC4CE2D14D8FC00FE277B /* ImageBufferDisplayListBackend.h in Headers */,
 				727A7F3A24078B84004D2931 /* ImageBufferIOSurfaceBackend.h in Headers */,
 				3DFAB6FE2BCDA7AB00EDC3C4 /* ImageBufferPixelFormat.h in Headers */,
 				2D7705C7255276CD001D0C94 /* ImageBufferPlatformBackend.h in Headers */,

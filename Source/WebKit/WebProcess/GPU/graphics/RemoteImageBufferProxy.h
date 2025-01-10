@@ -50,9 +50,9 @@ class RemoteImageBufferProxy : public WebCore::ImageBuffer {
     friend class RemoteSerializedImageBufferProxy;
 public:
     template<typename BackendType>
-    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingPurpose purpose, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
+    static RefPtr<RemoteImageBufferProxy> create(const WebCore::FloatSize& size, WebCore::RenderingPurpose purpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat, const WebCore::ImageBufferCreationContext& creationContext, RemoteRenderingBackendProxy& remoteRenderingBackendProxy)
     {
-        Parameters parameters { size, resolutionScale, colorSpace, pixelFormat, purpose };
+        Parameters parameters { size, purpose, resolutionScale, colorSpace, pixelFormat, creationContext.snapshotParameters };
         auto backendParameters = ImageBuffer::backendParameters(parameters);
         if (BackendType::calculateSafeBackendSize(backendParameters).isEmpty())
             return nullptr;
@@ -76,8 +76,6 @@ public:
 private:
     RemoteImageBufferProxy(Parameters, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
 
-    RefPtr<WebCore::NativeImage> copyNativeImage() const final;
-    RefPtr<WebCore::NativeImage> createNativeImageReference() const final;
     RefPtr<WebCore::NativeImage> sinkIntoNativeImage() final;
 
     RefPtr<ImageBuffer> sinkIntoBufferForDifferentThread() final;

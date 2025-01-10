@@ -6400,6 +6400,8 @@
 		71FB810A2260627A00323677 /* WebsiteSimulatedMouseEventsDispatchPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebsiteSimulatedMouseEventsDispatchPolicy.h; sourceTree = "<group>"; };
 		7203449A26A6C44C000A5F54 /* MonotonicObjectIdentifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MonotonicObjectIdentifier.h; sourceTree = "<group>"; };
 		7203449B26A6C476000A5F54 /* RenderingUpdateID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderingUpdateID.h; sourceTree = "<group>"; };
+		721CC4CA2D14CCA500FE277B /* ImageBufferRemoteDisplayListBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferRemoteDisplayListBackend.h; sourceTree = "<group>"; };
+		721CC4CB2D14CCA500FE277B /* ImageBufferRemoteDisplayListBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferRemoteDisplayListBackend.cpp; sourceTree = "<group>"; };
 		722074302D07D671009FA90F /* ImageBufferRemotePDFDocumentBackend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageBufferRemotePDFDocumentBackend.h; sourceTree = "<group>"; };
 		722074312D07D671009FA90F /* ImageBufferRemotePDFDocumentBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBufferRemotePDFDocumentBackend.cpp; sourceTree = "<group>"; };
 		723C90A22A377AB400038126 /* PathSegment.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PathSegment.serialization.in; sourceTree = "<group>"; };
@@ -6418,6 +6420,8 @@
 		727A7F492408AEE6004D2931 /* RemoteImageBufferProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteImageBufferProxy.h; sourceTree = "<group>"; };
 		728E86EF1795188C0087879E /* WebColorPickerMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebColorPickerMac.h; sourceTree = "<group>"; };
 		728E86F01795188C0087879E /* WebColorPickerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebColorPickerMac.mm; sourceTree = "<group>"; };
+		729732692D303ED0009970AA /* SnapshotCompositor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SnapshotCompositor.h; sourceTree = "<group>"; };
+		7297326A2D303ED0009970AA /* SnapshotCompositor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotCompositor.cpp; sourceTree = "<group>"; };
 		72A87BBB287678A700289098 /* RemoteRenderingBackend.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteRenderingBackend.cpp; sourceTree = "<group>"; };
 		72B53157253C1E4D0049295A /* RemoteResourceCacheProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteResourceCacheProxy.cpp; sourceTree = "<group>"; };
 		72B53158253C1E4D0049295A /* RemoteResourceCacheProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteResourceCacheProxy.h; sourceTree = "<group>"; };
@@ -12775,6 +12779,8 @@
 				7B64C0B6254C5C250006B4AF /* GraphicsContextGLIdentifier.h */,
 				727A7F39240788F1004D2931 /* ImageBufferBackendHandle.h */,
 				0FA7467E27BB611800B5FF5A /* ImageBufferBackendHandleSharing.h */,
+				721CC4CB2D14CCA500FE277B /* ImageBufferRemoteDisplayListBackend.cpp */,
+				721CC4CA2D14CCA500FE277B /* ImageBufferRemoteDisplayListBackend.h */,
 				722074312D07D671009FA90F /* ImageBufferRemotePDFDocumentBackend.cpp */,
 				722074302D07D671009FA90F /* ImageBufferRemotePDFDocumentBackend.h */,
 				727A7F37240788F0004D2931 /* ImageBufferShareableBitmapBackend.cpp */,
@@ -12842,6 +12848,8 @@
 				7BCF70CE2614935F00E4FB70 /* ScopedWebGLRenderingResourcesRequest.h */,
 				72C11DB52849933700E826DD /* ShareablePixelBuffer.cpp */,
 				72C11DB62849933700E826DD /* ShareablePixelBuffer.h */,
+				7297326A2D303ED0009970AA /* SnapshotCompositor.cpp */,
+				729732692D303ED0009970AA /* SnapshotCompositor.h */,
 			);
 			path = graphics;
 			sourceTree = "<group>";
