@@ -1372,7 +1372,7 @@ inline void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::asa
     if (!buffer())
         return;
 
-    RELEASE_ASSERT_WITH_MESSAGE(newSize <= capacity(), "Attempt to expand size (%lu) beyond current capacity (%lu)", newSize, capacity());
+    RELEASE_ASSERT_WITH_MESSAGE(newSize <= capacity(), "Attempt to expand size (%zu) beyond current capacity (%zu)", newSize, capacity());
 
     // Change allowed range.
     __sanitizer_annotate_contiguous_container(buffer(), endOfBuffer(), buffer() + size(), buffer() + newSize);

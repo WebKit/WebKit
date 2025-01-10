@@ -31,6 +31,7 @@
 #include "DFGJITCode.h"
 #include "DisallowMacroScratchRegisterUsage.h"
 #include "FunctionCodeBlock.h"
+#include "JIT.h"
 #include "JITThunks.h"
 #include "JSCellInlines.h"
 #include "JSWebAssemblyModule.h"

@@ -65,7 +65,7 @@ void ScratchRegisterAllocator::lock(JSValueRegs regs)
 }
 
 template<typename BankInfo>
-typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
+typename BankInfo::RegisterType ScratchRegisterAllocator::tryAllocateScratch()
 {
     // First try to allocate a register that is totally free.
     for (unsigned i = 0; i < BankInfo::numberOfRegisters; ++i) {
@@ -88,15 +88,22 @@ typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
             return reg;
         }
     }
-        
-    // We failed.
-    CRASH();
-    // Make some silly compilers happy.
     return static_cast<typename BankInfo::RegisterType>(-1);
 }
 
+template<typename BankInfo>
+typename BankInfo::RegisterType ScratchRegisterAllocator::allocateScratch()
+{
+    auto result = tryAllocateScratch<BankInfo>();
+    if (result == static_cast<typename BankInfo::RegisterType>(-1))
+        CRASH();
+    return result;
+}
+
 GPRReg ScratchRegisterAllocator::allocateScratchGPR() { return allocateScratch<GPRInfo>(); }
+GPRReg ScratchRegisterAllocator::tryAllocateScratchGPR() { return allocateScratch<GPRInfo>(); }
 FPRReg ScratchRegisterAllocator::allocateScratchFPR() { return allocateScratch<FPRInfo>(); }
+FPRReg ScratchRegisterAllocator::tryAllocateScratchFPR() { return allocateScratch<FPRInfo>(); }
 
 ScratchRegisterAllocator::PreservedState ScratchRegisterAllocator::preserveReusedRegistersByPushing(AssemblyHelpers& jit, ExtraStackSpace extraStackSpace)
 {

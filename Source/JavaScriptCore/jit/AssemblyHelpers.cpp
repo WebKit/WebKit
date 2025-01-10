@@ -430,6 +430,7 @@ void AssemblyHelpers::emitStoreStructureWithTypeInfo(AssemblyHelpers& jit, Trust
 void AssemblyHelpers::loadProperty(GPRReg object, GPRReg offset, JSValueRegs result)
 {
     ASSERT(noOverlap(offset, result));
+    ASSERT(result.payloadGPR() != InvalidGPRReg);
     Jump isInline = branch32(LessThan, offset, TrustedImm32(firstOutOfLineOffset));
 
     loadPtr(Address(object, JSObject::butterflyOffset()), result.payloadGPR());
@@ -474,10 +475,12 @@ void AssemblyHelpers::storeProperty(JSValueRegs value, GPRReg object, GPRReg off
     ready.link(this);
 
     storeValue(value, BaseIndex(scratch, offset, TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)));
+#if ASSERT_ENABLED
+    move(TrustedImm32(0xBEEF), scratch);
+#endif
 }
 
-#if USE(JSVALUE64)
-AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, JSValueRegs resultJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
     // uidGPR can be InvalidGPRReg if uid is non-nullptr.
 
@@ -535,9 +538,9 @@ AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRRe
     Label cacheHit = label();
     loadPtr(Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfHolder()), scratch2GPR);
     auto missed = branchTestPtr(Zero, scratch2GPR);
-    moveConditionally64(Equal, scratch2GPR, TrustedImm32(std::bit_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects())), baseGPR, scratch2GPR, scratch1GPR);
+    moveConditionallyPtr(Equal, scratch2GPR, TrustedImm32(std::bit_cast<uintptr_t>(JSCell::seenMultipleCalleeObjects())), baseGPR, scratch2GPR, scratch1GPR);
     load16(Address(scratch3GPR, MegamorphicCache::LoadEntry::offsetOfOffset()), scratch2GPR);
-    loadProperty(scratch1GPR, scratch2GPR, JSValueRegs { resultGPR });
+    loadProperty(scratch1GPR, scratch2GPR, resultJSR);
     auto done = jump();
 
     // Secondary cache lookup. Now,
@@ -565,19 +568,23 @@ AssemblyHelpers::JumpList AssemblyHelpers::loadMegamorphicProperty(VM& vm, GPRRe
     jump().linkTo(cacheHit, this);
 
     missed.link(this);
-    moveTrustedValue(jsUndefined(), JSValueRegs { resultGPR });
+    moveTrustedValue(jsUndefined(), JSValueRegs { resultJSR });
 
     done.link(this);
 
     return slowCases;
 }
 
-std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg valueGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList, GPRReg> AssemblyHelpers::storeMegamorphicProperty(VM& vm, GPRReg baseGPR, std::variant<GPRReg, UniquedStringImpl*> uid, JSValueRegs valueJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
-    // uidGPR can be InvalidGPRReg if uid is non-nullptr.
-
-    if (!uid)
-        ASSERT(uidGPR != InvalidGPRReg);
+    std::visit(WTF::makeVisitor(
+        [&](auto* uid) {
+            ASSERT_UNUSED(uid, uid);
+        },
+        [&](GPRReg uidGPR) {
+            ASSERT_UNUSED(uidGPR, uidGPR != InvalidGPRReg);
+        }
+    ), uid);
 
     JumpList primaryFail;
     JumpList slowCases;
@@ -593,19 +600,22 @@ std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers
     xor32(scratch2GPR, scratch3GPR);
 #endif
 
-    if (uid)
-        add32(TrustedImm32(uid->hash()), scratch3GPR);
-    else {
-        // Note that we don't test if the hash is zero here. AtomStringImpl's can't have a zero
-        // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
-        // ever load the result from the cache if the cache entry matches what we are querying for.
-        // So we either get super lucky and use zero for the hash and somehow collide with the entity
-        // we're looking for, or we realize we're comparing against another entity, and go to the
-        // slow path anyways.
-        load32(Address(uidGPR, UniquedStringImpl::flagsOffset()), scratch2GPR);
-        urshift32(TrustedImm32(StringImpl::s_flagCount), scratch2GPR);
-        add32(scratch2GPR, scratch3GPR);
-    }
+    std::visit(WTF::makeVisitor(
+        [&](auto* uid) {
+            add32(TrustedImm32(uid->hash()), scratch3GPR);
+        },
+        [&](GPRReg uidGPR) {
+            // Note that we don't test if the hash is zero here. AtomStringImpl's can't have a zero
+            // hash, however, a SymbolImpl may. But, because this is a cache, we don't care. We only
+            // ever load the result from the cache if the cache entry matches what we are querying for.
+            // So we either get super lucky and use zero for the hash and somehow collide with the entity
+            // we're looking for, or we realize we're comparing against another entity, and go to the
+            // slow path anyways.
+            load32(Address(uidGPR, UniquedStringImpl::flagsOffset()), scratch2GPR);
+            urshift32(TrustedImm32(StringImpl::s_flagCount), scratch2GPR);
+            add32(scratch2GPR, scratch3GPR);
+        }
+    ), uid);
 
     and32(TrustedImm32(MegamorphicCache::storeCachePrimaryMask), scratch3GPR);
     if (hasOneBitSet(sizeof(MegamorphicCache::StoreEntry))) // is a power of 2
@@ -620,10 +630,14 @@ std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers
     load16(Address(scratch2GPR, MegamorphicCache::offsetOfEpoch()), scratch2GPR);
 
     primaryFail.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfOldStructureID())));
-    if (uid)
-        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), TrustedImmPtr(uid)));
-    else
-        primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), uidGPR));
+    std::visit(WTF::makeVisitor(
+        [&](auto* uid) {
+            primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), TrustedImmPtr(uid)));
+        },
+        [&](GPRReg uidGPR) {
+            primaryFail.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), uidGPR));
+        }
+    ), uid);
     // We already hit StructureID and uid. And we get stale epoch for this entry.
     // Since all entries in the secondary cache has stale epoch for this StructureID and uid pair, we should just go to the slow case.
     slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfEpoch()), scratch2GPR));
@@ -639,15 +653,19 @@ std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers
     store32(scratch2GPR, Address(baseGPR, JSCell::structureIDOffset()));
 
     replaceCase.link(this);
-    storeProperty(JSValueRegs { valueGPR }, baseGPR, scratch3GPR, scratch1GPR);
+    storeProperty(valueJSR, baseGPR, scratch3GPR, scratch1GPR);
     auto done = jump();
 
     // Secondary cache lookup
     primaryFail.link(this);
-    if (uid)
-        add32(TrustedImm32(static_cast<uint32_t>(std::bit_cast<uintptr_t>(uid))), scratch1GPR, scratch3GPR);
-    else
-        add32(uidGPR, scratch1GPR, scratch3GPR);
+    std::visit(WTF::makeVisitor(
+        [&](auto* uid) {
+            add32(TrustedImm32(static_cast<uint32_t>(std::bit_cast<uintptr_t>(uid))), scratch1GPR, scratch3GPR);
+        },
+        [&](GPRReg uidGPR) {
+            add32(uidGPR, scratch1GPR, scratch3GPR);
+        }
+    ), uid);
     addUnsignedRightShift32(scratch3GPR, scratch3GPR, TrustedImm32(MegamorphicCache::structureIDHashShift5), scratch3GPR);
     and32(TrustedImm32(MegamorphicCache::storeCacheSecondaryMask), scratch3GPR);
     if constexpr (hasOneBitSet(sizeof(MegamorphicCache::StoreEntry))) // is a power of 2
@@ -657,19 +675,23 @@ std::tuple<AssemblyHelpers::JumpList, AssemblyHelpers::JumpList> AssemblyHelpers
     addPtr(TrustedImmPtr(std::bit_cast<uint8_t*>(&cache) + MegamorphicCache::offsetOfStoreCacheSecondaryEntries()), scratch3GPR);
 
     slowCases.append(branch32(NotEqual, scratch1GPR, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfOldStructureID())));
-    if (uid)
-        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), TrustedImmPtr(uid)));
-    else
-        slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), uidGPR));
+    std::visit(WTF::makeVisitor(
+        [&](auto* uid) {
+            slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), TrustedImmPtr(uid)));
+        },
+        [&](GPRReg uidGPR) {
+            slowCases.append(branchPtr(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfUid()), uidGPR));
+        }
+    ), uid);
     slowCases.append(branch32WithMemory16(NotEqual, Address(scratch3GPR, MegamorphicCache::StoreEntry::offsetOfEpoch()), scratch2GPR));
     jump().linkTo(cacheHit, this);
 
     done.link(this);
 
-    return std::tuple { slowCases, reallocatingCases };
+    return std::tuple { slowCases, reallocatingCases, scratch3GPR };
 }
 
-AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, GPRReg resultGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
+AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg baseGPR, GPRReg uidGPR, UniquedStringImpl* uid, JSValueRegs resultJSR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
     // uidGPR can be InvalidGPRReg if uid is non-nullptr.
 
@@ -726,7 +748,7 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
     // Cache hit!
     Label cacheHit = label();
     load16(Address(scratch3GPR, MegamorphicCache::HasEntry::offsetOfResult()), scratch2GPR);
-    boxBoolean(scratch2GPR, JSValueRegs { resultGPR });
+    boxBoolean(scratch2GPR, resultJSR);
     auto done = jump();
 
     // Secondary cache lookup. Now,
@@ -757,7 +779,6 @@ AssemblyHelpers::JumpList AssemblyHelpers::hasMegamorphicProperty(VM& vm, GPRReg
 
     return slowCases;
 }
-#endif
 
 void AssemblyHelpers::emitNonNullDecodeZeroExtendedStructureID(RegisterID source, RegisterID dest)
 {

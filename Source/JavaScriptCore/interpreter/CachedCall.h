@@ -138,6 +138,8 @@ public:
 
 #if CPU(ARM64) && CPU(ADDRESS64) && !ENABLE(C_LOOP)
         constexpr unsigned argumentCountIncludingThis = 1 + sizeof...(args);
+        ASSERT(m_valid);
+        ASSERT(argumentCountIncludingThis == static_cast<size_t>(m_protoCallFrame.argumentCount()));
         if constexpr (argumentCountIncludingThis <= 4) {
             if (LIKELY(m_numParameters <= argumentCountIncludingThis)) {
                 JSValue result = m_vm.interpreter.tryCallWithArguments(*this, thisValue, args...);

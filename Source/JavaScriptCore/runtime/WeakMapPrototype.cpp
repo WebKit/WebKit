@@ -199,7 +199,7 @@ JSC_DEFINE_HOST_FUNCTION(protoFuncWeakMapGetOrInsertComputed, (JSGlobalObject* g
             ASSERT(callData.type != CallData::Type::None);
 
             if (LIKELY(callData.type == CallData::Type::JS)) {
-                CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 2);
+                CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 1);
                 RETURN_IF_EXCEPTION(scope, { });
 
                 value = cachedCall.callWithArguments(globalObject, jsUndefined(), key);
