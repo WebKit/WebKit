@@ -30,6 +30,7 @@
 #include "IntlObject.h"
 #include "ParseInt.h"
 #include "TemporalCalendar.h"
+#include "TemporalInstant.h"
 #include "TemporalObject.h"
 #include "TemporalPlainTime.h"
 #include <limits>
@@ -1554,17 +1555,6 @@ String formatTimeString(int64_t hour, int64_t minute, int64_t second, int64_t su
     return makeString(hh, separator, mm, separator, ss, subSecondsPart);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-formatoffsettimezoneidentifier
-String formatOffsetTimeZoneIdentifier(int64_t offsetMinutes, std::optional<bool> isSeparated)
-{
-    auto sign = offsetMinutes >= 0 ? '+' : '-';
-    auto absoluteMinutes = std::abs(offsetMinutes);
-    auto hour = std::floor(absoluteMinutes / 60);
-    auto minute = std::fmod(absoluteMinutes, 60);
-    auto timeString = formatTimeString(hour, minute, 0, 0, std::nullopt, isSeparated);
-    return makeString(sign, timeString);
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-formatutcoffsetnanoseconds
 String formatUTCOffsetNanoseconds(int64_t offsetNanoseconds)
 {
@@ -1876,14 +1866,6 @@ std::optional<ExactTime> ExactTime::add(Duration duration) const
     return result;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-roundtemporalinstant
-static Int128 roundTemporalInstant(Int128 ns, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
-{
-    auto unitLength = lengthInNanoseconds(unit);
-    auto incrementNs = increment * unitLength;
-    return roundNumberToIncrementAsIfPositive(ns, incrementNs, roundingMode);
-}
-
 // https://tc39.es/proposal-temporal/#sec-validatetemporalroundingincrement
 static bool validateTemporalRoundingIncrement(unsigned increment, Int128 dividend, bool inclusive)
 {
@@ -1899,115 +1881,6 @@ static bool validateTemporalRoundingIncrement(unsigned increment, Int128 dividen
     if (dividend % increment)
         return false;
     return true;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-formatdatetimeutcoffsetrounded
-String formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds)
-{
-    Int128 divisor = 60000000000ll;
-    offsetNanoseconds = roundNumberToIncrementInt128(offsetNanoseconds, divisor, RoundingMode::HalfExpand);
-    ASSERT(!(offsetNanoseconds % divisor));
-    Int128 offsetMinutes = offsetNanoseconds / divisor;
-    return formatOffsetTimeZoneIdentifier((int64_t) offsetMinutes, std::nullopt);
-}
-
-// https://tc39.es/ecma262/#sec-hourfromtime
-static double hourFromTime(double t)
-{
-    double result = std::trunc(std::fmod(std::floor(t / msPerHour), WTF::hoursPerDay));
-    if (result < 0)
-        result += WTF::hoursPerDay;
-    return result;
-}
-
-// https://tc39.es/ecma262/#sec-minfromtime
-static double minFromTime(double t)
-{
-    double result = std::trunc(std::fmod(std::floor(t / msPerMinute), minutesPerHour));
-    if (result < 0)
-        result += minutesPerHour;
-    return result;
-}
-
-// https://tc39.es/ecma262/#sec-secfromtime
-static double secFromTime(double t)
-{
-    double result = std::trunc(std::fmod(std::floor(t / msPerSecond), secondsPerMinute));
-    if (result < 0)
-        result += secondsPerMinute;
-    return result;
-}
-
-// https://tc39.es/ecma262/#sec-msfromtime
-static double msFromTime(double t)
-{
-    double result = std::fmod(t, msPerSecond);
-    if (result < 0)
-        result += msPerSecond;
-    return std::trunc(result);
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getisopartsfromepoch
-PlainDateTime getISOPartsFromEpoch(ExactTime epochNanoseconds)
-{
-    ASSERT(epochNanoseconds.isValid());
-    Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
-    if (remainderNs < 0)
-        remainderNs += 1000000;
-    auto epochMilliseconds = (epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000;
-    auto year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
-    auto month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
-    auto day = TemporalCalendar::epochTimeToDate(epochMilliseconds);
-    auto hour = hourFromTime(epochMilliseconds);
-    auto minute = minFromTime(epochMilliseconds);
-    auto second = secFromTime(epochMilliseconds);
-    auto millisecond = msFromTime(epochMilliseconds);
-    auto microsecond = remainderNs / 1000;
-    ASSERT(microsecond < 1000);
-    auto nanosecond = remainderNs % 1000;
-    auto isoDate = PlainDate(year, month, day);
-    auto time = PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
-    return PlainDateTime(WTFMove(isoDate), WTFMove(time));
-}
-
-static String formatCalendarAnnotation(TemporalShowCalendar showCalendar)
-{
-    // TODO: non-iso8601 calendars
-    switch (showCalendar) {
-    case TemporalShowCalendar::Never:
-        return ""_s;
-    case TemporalShowCalendar::Auto:
-        return ""_s;
-    case TemporalShowCalendar::Critical:
-        return "[!u-ca=iso8601]"_s;
-    case TemporalShowCalendar::Always:
-        return "[u-ca=iso8601]"_s;
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-    }
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-temporalzoneddatetimetostring
-String temporalZonedDateTimeToString(ExactTime exactTime, TimeZone timeZone,
-    PrecisionData precision, TemporalShowCalendar showCalendar, TemporalShowTimeZone showTimeZone,
-    TemporalShowOffset showOffset, unsigned increment, TemporalUnit unit, RoundingMode roundingMode)
-{
-    Int128 epochNs = roundTemporalInstant(exactTime.epochNanoseconds(), increment, unit, roundingMode);
-    auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs);
-    auto isoDateTime = getISODateTimeFor(timeZone, ExactTime(epochNs));
-    auto dateTimeString = temporalDateTimeToString(isoDateTime.date(), isoDateTime.time(), precision.precision);
-    String offsetString;
-    if (showOffset != TemporalShowOffset::Never)
-        offsetString = formatDateTimeUTCOffsetRounded(offsetNanoseconds);
-    String timeZoneString;
-    if (showTimeZone != TemporalShowTimeZone::Never) {
-        String flag;
-        if (showTimeZone == TemporalShowTimeZone::Critical)
-            flag = "!"_s;
-        timeZoneString = makeString('[', flag, formatTimeZone(timeZone), ']');
-    }
-    auto calendarString = formatCalendarAnnotation(showCalendar);
-    return makeString(dateTimeString, offsetString, timeZoneString, calendarString);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.round
@@ -2027,9 +1900,8 @@ std::optional<Int128> ExactTime::round(Int128 quantity, unsigned increment, Temp
     }
     if (!validateTemporalRoundingIncrement(increment, maximum, true))
         return std::nullopt;
-    return roundTemporalInstant(quantity, increment, unit, roundingMode);
+    return TemporalInstant::roundTemporalInstant(quantity, increment, unit, roundingMode);
 }
-
 
 // https://tc39.es/proposal-temporal/#sec-temporal-roundtimedurationtoincrement
 std::optional<Int128> roundTimeDurationToIncrement(Int128 d, Int128 increment, RoundingMode roundingMode)
@@ -2156,60 +2028,11 @@ void checkISODaysRange(JSGlobalObject* globalObject, ISO8601::PlainDate isoDate)
         throwRangeError(globalObject, scope, "date/time value is outside the supported range"_s);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-isvalidisodate
-bool isValidISODate(double year, double month, double day)
-{
-    if (month < 1 || month > 12)
-        return false;
-    auto daysInMonth1 = daysInMonth(year, month);
-    if (day < 1 || day > daysInMonth1)
-        return false;
-    return true;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-create-iso-date-record
-PlainDate createISODateRecord(double year, double month, double day)
-{
-    ASSERT(isValidISODate(year, month, day));
-    return PlainDate(year, month, day);
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-balanceisodatetime
-PlainDateTime balanceISODateTime(double year, double month, double day, double hour,
-    double minute, double second, double millisecond, double microsecond, double nanosecond)
-{
-    auto balancedTime = TemporalPlainTime::balanceTime(
-        hour, minute, second, millisecond, microsecond, nanosecond);
-    auto balancedDate = TemporalCalendar::balanceISODate(year, month, day + balancedTime.days());
-    return PlainDateTime(WTFMove(balancedDate),
-        PlainTime(balancedTime.hours(), balancedTime.minutes(),
-            balancedTime.seconds(), balancedTime.milliseconds(),
-            balancedTime.microseconds(), balancedTime.nanoseconds()));
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
-PlainDateTime getISODateTimeFor(TimeZone timeZone, ExactTime epochNs)
-{
-    auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs.epochNanoseconds());
-    auto result = getISOPartsFromEpoch(epochNs);
-    auto date = result.date();
-    auto time = result.time();
-    return balanceISODateTime(date.year(), date.month(), date.day(), time.hour(), time.minute(), time.second(), time.millisecond(), time.microsecond(), time.nanosecond() + offsetNanoseconds);
-}
-
 // https://tc39.es/ecma262/#sec-getnamedtimezoneoffsetnanoseconds
-static Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128)
+Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128)
 {
     RELEASE_ASSERT(timeZoneIdentifier == utcTimeZoneID());
     return 0;
-}
-
-// https://tc39.es/proposal-temporal/#sec-temporal-getoffsetnanosecondsfor
-Int128 getOffsetNanosecondsFor(TimeZone timeZone, Int128 epochNs)
-{
-    if (timeZone.isOffset())
-        return timeZone.offsetNanoseconds();
-    return getNamedTimeZoneOffsetNanoseconds(timeZone.asID(), epochNs);
 }
 
 // https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds

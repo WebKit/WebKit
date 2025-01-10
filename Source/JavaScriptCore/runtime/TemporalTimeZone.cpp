@@ -61,6 +61,26 @@ TemporalTimeZone::TemporalTimeZone(VM& vm, Structure* structure, TimeZone timeZo
 {
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-getoffsetnanosecondsfor
+Int128 TemporalTimeZone::getOffsetNanosecondsFor(ISO8601::TimeZone timeZone, Int128 epochNs)
+{
+    if (timeZone.isOffset())
+        return timeZone.offsetNanoseconds();
+    return ISO8601::getNamedTimeZoneOffsetNanoseconds(timeZone.asID(), epochNs);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-getisodatetimefor
+ISO8601::PlainDateTime TemporalTimeZone::getISODateTimeFor(ISO8601::TimeZone timeZone, ISO8601::ExactTime epochNs)
+{
+    auto offsetNanoseconds = getOffsetNanosecondsFor(timeZone, epochNs.epochNanoseconds());
+    auto result = TemporalCalendar::getISOPartsFromEpoch(epochNs);
+    auto date = result.date();
+    auto time = result.time();
+    return TemporalPlainDateTime::balanceISODateTime(date.year(), date.month(), date.day(), time.hour(),
+        time.minute(), time.second(), time.millisecond(), time.microsecond(),
+        time.nanosecond() + offsetNanoseconds);
+}
+
 // https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds
 static Vector<Int128> getNamedTimeZoneEpochNanoseconds(TimeZoneID timeZoneIdentifier, ISO8601::PlainDateTime isoDateTime)
 {
@@ -81,7 +101,7 @@ Vector<Int128> TemporalTimeZone::getPossibleEpochNanoseconds(JSGlobalObject* glo
 
     Vector<Int128> possibleEpochNanoseconds;
     if (timeZone.isOffset()) {
-        auto balanced = ISO8601::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
+        auto balanced = TemporalPlainDateTime::balanceISODateTime(isoDate.year(), isoDate.month(), isoDate.day(),
             isoTime.hour(), isoTime.minute() - timeZone.offsetMinutes(), isoTime.second(),
             isoTime.millisecond(), isoTime.microsecond(), isoTime.nanosecond());
         ISO8601::checkISODaysRange(globalObject, balanced.date());
@@ -133,9 +153,9 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
         throwRangeError(globalObject, scope, "day before is not a valid instant in disambiguatePossibleEpochNanoseconds()"_s);
         return { };
     }
-    auto offsetBefore = ISO8601::getOffsetNanosecondsFor(timeZone, dayBefore);
+    auto offsetBefore = TemporalTimeZone::getOffsetNanosecondsFor(timeZone, dayBefore);
     auto dayAfter = utcNs + ISO8601::ExactTime::nsPerDay;
-    auto offsetAfter = ISO8601::getOffsetNanosecondsFor(timeZone, dayAfter);
+    auto offsetAfter = TemporalTimeZone::getOffsetNanosecondsFor(timeZone, dayAfter);
     auto nanoseconds = offsetAfter - offsetBefore;
     ASSERT(absInt128(nanoseconds) <= ISO8601::ExactTime::nsPerDay);
 
@@ -342,6 +362,27 @@ ISO8601::TimeZone TemporalTimeZone::toTemporalTimeZoneIdentifier(JSGlobalObject*
         return { };
     }
     return timeZoneIdentifierRecord.value();
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatoffsettimezoneidentifier
+String TemporalTimeZone::formatOffsetTimeZoneIdentifier(int64_t offsetMinutes, std::optional<bool> isSeparated)
+{
+    auto sign = offsetMinutes >= 0 ? '+' : '-';
+    auto absoluteMinutes = std::abs(offsetMinutes);
+    auto hour = std::floor(absoluteMinutes / 60);
+    auto minute = std::fmod(absoluteMinutes, 60);
+    auto timeString = ISO8601::formatTimeString(hour, minute, 0, 0, std::nullopt, isSeparated);
+    return makeString(sign, timeString);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-formatdatetimeutcoffsetrounded
+String TemporalTimeZone::formatDateTimeUTCOffsetRounded(Int128 offsetNanoseconds)
+{
+    Int128 divisor = 60000000000ll;
+    offsetNanoseconds = roundNumberToIncrementInt128(offsetNanoseconds, divisor, RoundingMode::HalfExpand);
+    ASSERT(!(offsetNanoseconds % divisor));
+    Int128 offsetMinutes = offsetNanoseconds / divisor;
+    return formatOffsetTimeZoneIdentifier((int64_t) offsetMinutes, std::nullopt);
 }
 
 static std::optional<TimeZoneID> parseTimeZoneIANAName(StringView)

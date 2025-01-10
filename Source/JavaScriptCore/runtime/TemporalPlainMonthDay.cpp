@@ -88,7 +88,7 @@ TemporalPlainMonthDay* TemporalPlainMonthDay::tryCreateIfValid(JSGlobalObject* g
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!ISO8601::isValidISODate(plainDate.year(), plainDate.month(), plainDate.day())) {
+    if (!TemporalPlainDate::isValidISODate(plainDate.year(), plainDate.month(), plainDate.day())) {
         throwRangeError(globalObject, scope, "PlainMonthDay: invalid date"_s);
         return { };
     }

@@ -258,7 +258,7 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainYearMonthPrototypeFuncToPlainDate, (JSGlob
     }
 
     auto plainDateOptional =
-        TemporalDuration::regulateISODate(thisYear, thisMonth, itemDay.value(), TemporalOverflow::Constrain);
+        TemporalPlainDate::regulateISODate(thisYear, thisMonth, itemDay.value(), TemporalOverflow::Constrain);
     if (!plainDateOptional) {
         throwRangeError(globalObject, scope, "Temporal.PlainYearMonth.prototype.toPlainDate: date is invalid"_s);
         return { };

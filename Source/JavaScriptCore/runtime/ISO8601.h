@@ -478,16 +478,12 @@ uint8_t weeksInYear(int32_t year);
 uint8_t weekOfYear(PlainDate);
 uint8_t daysInMonth(int32_t year, uint8_t month);
 uint8_t daysInMonth(uint8_t month);
+String formatTimeString(int64_t, int64_t, int64_t, int64_t, std::optional<TemporalFractionalSecondDigits>, std::optional<bool>);
 String formatTimeZone(TimeZone);
-String formatOffsetTimeZoneIdentifier(int64_t, std::optional<bool>);
-String formatDateTimeUTCOffsetRounded(Int128);
 String formatUTCOffsetNanoseconds(int64_t);
 String temporalTimeToString(PlainTime, std::tuple<Precision, unsigned>);
 String temporalDateToString(PlainDate);
 String temporalDateTimeToString(PlainDate, PlainTime, std::tuple<Precision, unsigned>);
-String temporalZonedDateTimeToString(ExactTime, TimeZone,
-    PrecisionData, TemporalShowCalendar, TemporalShowTimeZone, TemporalShowOffset,
-    unsigned, TemporalUnit, RoundingMode);
 String temporalYearMonthToString(PlainYearMonth, StringView);
 String temporalMonthDayToString(PlainMonthDay, StringView);
 String monthCode(uint32_t);
@@ -496,8 +492,6 @@ uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
 void checkISODaysRange(JSGlobalObject*, ISO8601::PlainDate);
-bool isValidISODate(double, double, double);
-PlainDate createISODateRecord(double, double, double);
 
 std::optional<ExactTime> parseInstant(StringView);
 
@@ -505,13 +499,9 @@ bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned h
 bool isYearMonthWithinLimits(double year, double month);
 bool isYearWithinLimits(double year);
 
-PlainDateTime balanceISODateTime(double, double, double, double, double,
-    double, double, double, double);
 std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);
-PlainDateTime getISOPartsFromEpoch(ExactTime);
 Int128 getUTCEpochNanoseconds(PlainDateTime);
-Int128 getOffsetNanosecondsFor(TimeZone, Int128);
-PlainDateTime getISODateTimeFor(TimeZone, ExactTime);
+Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128);
 
 std::optional<Int128> roundTimeDurationToIncrement(Int128, Int128, RoundingMode);
 

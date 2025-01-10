@@ -79,6 +79,10 @@ public:
     ISO8601::Duration until(JSGlobalObject*, TemporalPlainDate*, JSValue options);
     ISO8601::Duration since(JSGlobalObject*, TemporalPlainDate*, JSValue options);
 
+    static bool isValidISODate(double, double, double);
+    static ISO8601::PlainDate createISODateRecord(double, double, double);
+    static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
+
     DECLARE_VISIT_CHILDREN;
 
 private:

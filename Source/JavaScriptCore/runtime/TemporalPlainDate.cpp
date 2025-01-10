@@ -175,7 +175,7 @@ TemporalPlainDate* TemporalPlainDate::from(JSGlobalObject* globalObject, JSValue
 
         if (itemValue.inherits<TemporalZonedDateTime>()) {
             auto zdt = jsCast<TemporalZonedDateTime*>(itemValue);
-            auto isoDateTime = ISO8601::getISODateTimeFor(zdt->timeZone(), zdt->exactTime());
+            auto isoDateTime = TemporalTimeZone::getISODateTimeFor(zdt->timeZone(), zdt->exactTime());
             if (optionsValue) {
                 toTemporalOverflow(globalObject, optionsValue.value());
                 RETURN_IF_EXCEPTION(scope, { });
@@ -459,6 +459,43 @@ ISO8601::Duration TemporalPlainDate::since(JSGlobalObject* globalObject, Tempora
     roundingMode = negateTemporalRoundingMode(roundingMode);
 
     RELEASE_AND_RETURN(scope, differenceTemporalPlainDate(globalObject, true, other, smallestUnit, largestUnit, roundingMode, increment));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-create-iso-date-record
+ISO8601::PlainDate TemporalPlainDate::createISODateRecord(double year, double month, double day)
+{
+    ASSERT(isValidISODate(year, month, day));
+    return ISO8601::PlainDate(year, month, day);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-isvalidisodate
+bool TemporalPlainDate::isValidISODate(double year, double month, double day)
+{
+    if (month < 1 || month > 12)
+        return false;
+    auto daysInMonth1 = ISO8601::daysInMonth(year, month);
+    if (day < 1 || day > daysInMonth1)
+        return false;
+    return true;
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-regulateisodate
+std::optional<ISO8601::PlainDate> TemporalPlainDate::regulateISODate(double year, double month, double day,
+    TemporalOverflow overflow)
+{
+    if (overflow == TemporalOverflow::Constrain) {
+        if (month < 1)
+            month = 1;
+        if (month > 12)
+            month = 12;
+        auto daysInMonth = ISO8601::daysInMonth(year, month);
+        if (day < 1)
+            day = 1;
+        if (day > daysInMonth)
+            day = daysInMonth;
+    } else if (!isValidISODate(year, month, day))
+        return std::nullopt;
+    return createISODateRecord(year, month, day);
 }
 
 String TemporalPlainDate::monthCode() const

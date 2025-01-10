@@ -341,24 +341,6 @@ static TemporalUnit largestSubduration(const ISO8601::Duration& duration)
     return static_cast<TemporalUnit>(index);
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal-regulateisodate
-std::optional<ISO8601::PlainDate> TemporalDuration::regulateISODate(double year, double month, double day, TemporalOverflow overflow)
-{
-    if (overflow == TemporalOverflow::Constrain) {
-        if (month < 1)
-            month = 1;
-        if (month > 12)
-            month = 12;
-        auto daysInMonth = ISO8601::daysInMonth(year, month);
-        if (day < 1)
-            day = 1;
-        if (day > daysInMonth)
-            day = daysInMonth;
-    } else if (!ISO8601::isValidISODate(year, month, day))
-        return std::nullopt;
-    return ISO8601::createISODateRecord(year, month, day);
-}
-
 // https://tc39.es/proposal-temporal/#sec-temporal-todatedurationrecordwithouttime
 // ToDateDurationRecordWithoutTime ( duration )
 ISO8601::Duration TemporalDuration::toDateDurationRecordWithoutTime(JSGlobalObject* globalObject, const ISO8601::Duration& duration)

@@ -54,8 +54,10 @@ public:
 
     static JSObject* from(JSGlobalObject*, JSValue);
 
+    static Int128 getOffsetNanosecondsFor(ISO8601::TimeZone, Int128);
     static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,
         ISO8601::TimeZone, ISO8601::PlainDateTime, TemporalDisambiguation);
+    static ISO8601::PlainDateTime getISODateTimeFor(ISO8601::TimeZone, ISO8601::ExactTime);
     static Vector<Int128> getPossibleEpochNanoseconds(JSGlobalObject*,
         ISO8601::TimeZone, ISO8601::PlainDateTime);
     static ISO8601::ExactTime disambiguatePossibleEpochNanoseconds(JSGlobalObject*,
@@ -72,6 +74,8 @@ public:
     static std::optional<int64_t> parseDateTimeUTCOffset(StringView);
     static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
     static ISO8601::TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
+    static String formatDateTimeUTCOffsetRounded(Int128);
+    static String formatOffsetTimeZoneIdentifier(int64_t, std::optional<bool>);
 
 private:
     TemporalTimeZone(VM&, Structure*, TimeZone);
