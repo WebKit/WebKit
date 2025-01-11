@@ -2048,7 +2048,7 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         auto tempRegs = JSValueRegs(scratch2GPR, scratchGPR);
 #endif
         jit.loadValue(CCallHelpers::BaseIndex(scratch3GPR, scratch2GPR, CCallHelpers::TimesEight), tempRegs);
-        failAndIgnore.append(jit.branchIfEmpty(tempRegs.payloadGPR()));
+        failAndIgnore.append(jit.branchIfEmpty(tempRegs));
         if (forInBy(accessCase.m_type))
             jit.moveTrustedValue(jsBoolean(true), valueRegs);
         else
@@ -2337,6 +2337,9 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
         auto allocator = makeDefaultScratchAllocator(scratchGPR);
 
         GPRReg scratch2GPR = allocator.allocateScratchGPR();
+#if USE(JSVALUE32_64)
+        GPRReg scratch3GPR = allocator.allocateScratchGPR();
+#endif
         ScratchRegisterAllocator::PreservedState preservedState;
 
         CCallHelpers::JumpList failAndIgnore;
@@ -2358,10 +2361,10 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 #if USE(JSVALUE64)
             auto tempRegs = JSValueRegs(scratchGPR);
 #else
-            auto tempRegs = JSValueRegs(scratch2GPR, scratchGPR);
+            auto tempRegs = JSValueRegs(scratch3GPR, scratchGPR);
 #endif
             jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight, ArrayStorage::vectorOffset()), tempRegs);
-            failAndIgnore.append(jit.branchIfEmpty(tempRegs.payloadGPR()));
+            failAndIgnore.append(jit.branchIfEmpty(tempRegs));
             if (forInBy(accessCase.m_type))
                 jit.moveTrustedValue(jsBoolean(true), valueRegs);
             else
@@ -2407,10 +2410,10 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 #if USE(JSVALUE64)
                 auto tempRegs = JSValueRegs(scratchGPR);
 #else
-                auto tempRegs = JSValueRegs(scratch2GPR, scratchGPR);
+                auto tempRegs = JSValueRegs(scratch3GPR, scratchGPR);
 #endif
                 jit.loadValue(CCallHelpers::BaseIndex(scratchGPR, scratch2GPR, CCallHelpers::TimesEight), tempRegs);
-                failAndIgnore.append(jit.branchIfEmpty(tempRegs.payloadGPR()));
+                failAndIgnore.append(jit.branchIfEmpty(tempRegs));
                 if (forInBy(accessCase.m_type))
                     jit.moveTrustedValue(jsBoolean(true), valueRegs);
                 else
@@ -3439,7 +3442,6 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
             ASSERT(scratchGPR != GPRInfo::handlerGPR);
             // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
             if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
-                ASSERT(noOverlap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR()));
                 jit.swap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
                 jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), scratchGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
             } else {
@@ -3447,14 +3449,12 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
                 jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
             }
 #if USE(JSVALUE32_64)
-            // We *always* know that the proxy function, if non-null, is a cell.
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
             CallLinkInfo::emitDataICFastPath(jit);
         } else {
             jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
 #if USE(JSVALUE32_64)
-            // We *always* know that the proxy function, if non-null, is a cell.
             jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
             m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo.codeOrigin, nullptr);
@@ -4175,7 +4175,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
     if (useHandlerIC()) {
         // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
         if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
-            ASSERT(noOverlap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR()));
             jit.swap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
             jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), scratchGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
         } else {
@@ -4184,7 +4183,6 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
         }
 
 #if USE(JSVALUE32_64)
-        // We *always* know that the proxy function, if non-null, is a cell.
         jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
 
@@ -4192,8 +4190,7 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
     } else {
         jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
 #if USE(JSVALUE32_64)
-    // We *always* know that the proxy function, if non-null, is a cell.
-    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+        jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
 #endif
         // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
         if (is32Bit())
@@ -6718,6 +6715,8 @@ MacroAssemblerCodeRef<JITThunkPtrTag> setPrivateBrandHandler(VM&)
 AccessGenerationResult InlineCacheCompiler::compileHandler(const GCSafeConcurrentJSLocker&, Vector<AccessCase*, 16>&& poly, CodeBlock* codeBlock, AccessCase& accessCase)
 {
     SuperSamplerScope superSamplerScope(false);
+    if (is32Bit())
+        return { };
 
     if (!accessCase.couldStillSucceed())
         return AccessGenerationResult::MadeNoChanges;
