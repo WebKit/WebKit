@@ -477,6 +477,8 @@ static bool forInBy(AccessCase::AccessType type)
 
 static bool isStateless(AccessCase::AccessType type)
 {
+    if (is32Bit())
+        return false;
     switch (type) {
     case AccessCase::Load:
     case AccessCase::Transition:
@@ -1211,7 +1213,7 @@ ScratchRegisterAllocator InlineCacheCompiler::makeDefaultScratchAllocator(GPRReg
     allocator.lock(extraToLock);
 
     // 32-bit does not have enough registers to avoid re-using this.
-    if (useHandlerIC() && !is32Bit())
+    if (useHandlerIC() && is64Bit())
         allocator.lock(GPRInfo::handlerGPR);
 
     return allocator;
@@ -2800,6 +2802,8 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
     case AccessCase::IndexedMegamorphicLoad: {
         ASSERT(!accessCase.viaGlobalProxy());
+        if (is32Bit())
+            return;
 
         CCallHelpers::JumpList slowCases;
 
@@ -2837,6 +2841,9 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
     case AccessCase::LoadMegamorphic: {
         ASSERT(!accessCase.viaGlobalProxy());
+        if (is32Bit())
+            return;
+
         CCallHelpers::JumpList failAndRepatch;
         auto* uid = accessCase.m_identifier.uid();
 
@@ -2868,6 +2875,9 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
     case AccessCase::StoreMegamorphic: {
         ASSERT(!accessCase.viaGlobalProxy());
+        if (is32Bit())
+            return;
+
         CCallHelpers::JumpList failAndRepatch;
         auto* uid = accessCase.m_identifier.uid();
 
@@ -2916,6 +2926,9 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
     case AccessCase::InMegamorphic: {
         ASSERT(!accessCase.viaGlobalProxy());
+        if (is32Bit())
+            return;
+
         CCallHelpers::JumpList failAndRepatch;
         auto* uid = accessCase.m_identifier.uid();
 
@@ -2947,6 +2960,8 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
     case AccessCase::IndexedMegamorphicIn: {
         ASSERT(!accessCase.viaGlobalProxy());
+        if (is32Bit())
+            return;
 
         CCallHelpers::JumpList slowCases;
 
@@ -2984,6 +2999,8 @@ void InlineCacheCompiler::generateWithGuard(unsigned index, AccessCase& accessCa
 
     case AccessCase::IndexedMegamorphicStore: {
         ASSERT(!accessCase.viaGlobalProxy());
+        if (is32Bit())
+            return;
 
         CCallHelpers::JumpList slowCases;
 
@@ -3418,24 +3435,28 @@ void InlineCacheCompiler::generateAccessCase(unsigned index, AccessCase& accessC
         if (!isGetter)
             jit.storeValue(valueRegs, calleeFrame.withOffset(virtualRegisterForArgumentIncludingThis(1).offset() * sizeof(Register)));
 
-#if USE(JSVALUE32_64)
-        // We *always* know that the getter/setter, if non-null, is a cell.
-        jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
-#endif
-
         if (useHandlerIC()) {
             ASSERT(scratchGPR != GPRInfo::handlerGPR);
             // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
             if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+                ASSERT(noOverlap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR()));
                 jit.swap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
                 jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), scratchGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
             } else {
                 jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
                 jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
             }
+#if USE(JSVALUE32_64)
+            // We *always* know that the proxy function, if non-null, is a cell.
+            jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
             CallLinkInfo::emitDataICFastPath(jit);
         } else {
             jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+#if USE(JSVALUE32_64)
+            // We *always* know that the proxy function, if non-null, is a cell.
+            jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
             m_callLinkInfos[index] = makeUnique<OptimizingCallLinkInfo>(m_stubInfo.codeOrigin, nullptr);
             auto* callLinkInfo = m_callLinkInfos[index].get();
             callLinkInfo->setUpCall(CallLinkInfo::Call);
@@ -4151,14 +4172,10 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
 
     jit.storeCell(scratchGPR, calleeFrame.withOffset(CallFrameSlot::callee * sizeof(Register)));
 
-#if USE(JSVALUE32_64)
-    // We *always* know that the proxy function, if non-null, is a cell.
-    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
-#endif
-
     if (useHandlerIC()) {
         // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
         if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+            ASSERT(noOverlap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR()));
             jit.swap(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
             jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), scratchGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
         } else {
@@ -4166,9 +4183,18 @@ void InlineCacheCompiler::emitProxyObjectAccess(unsigned index, AccessCase& acce
             jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos() + sizeof(DataOnlyCallLinkInfo) * index), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
         }
 
+#if USE(JSVALUE32_64)
+        // We *always* know that the proxy function, if non-null, is a cell.
+        jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
+
         CallLinkInfo::emitDataICFastPath(jit);
     } else {
         jit.move(scratchGPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
+#if USE(JSVALUE32_64)
+    // We *always* know that the proxy function, if non-null, is a cell.
+    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
         // ARMv7 clobbers metadataTable register. Thus we need to restore them back here.
         if (is32Bit())
             JIT::emitMaterializeMetadataAndConstantPoolRegisters(jit);
@@ -4507,7 +4533,7 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
             if (!canUseMegamorphicGetById(vm(), identifier.uid()))
                 allAreSimpleLoadOrMiss = false;
 
-            if (allAreSimpleLoadOrMiss && !is32Bit())
+            if (allAreSimpleLoadOrMiss && is64Bit())
                 return AccessCase::create(vm(), codeBlock, AccessCase::LoadMegamorphic, useHandlerIC() ? nullptr : identifier);
             return nullptr;
         }
@@ -4529,7 +4555,7 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
                 }
             }
 
-            if (allAreSimpleLoadOrMiss && !is32Bit())
+            if (allAreSimpleLoadOrMiss && is64Bit())
                 return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicLoad, nullptr);
             return nullptr;
         }
@@ -4560,7 +4586,7 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
             if (!canUseMegamorphicPutById(vm(), identifier.uid()))
                 allAreSimpleReplaceOrTransition = false;
 
-            if (allAreSimpleReplaceOrTransition && !is32Bit())
+            if (allAreSimpleReplaceOrTransition && is64Bit())
                 return AccessCase::create(vm(), codeBlock, AccessCase::StoreMegamorphic, useHandlerIC() ? nullptr : identifier);
             return nullptr;
         }
@@ -4585,7 +4611,7 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
                     break;
                 }
             }
-            if (allAreSimpleReplaceOrTransition && !is32Bit())
+            if (allAreSimpleReplaceOrTransition && is64Bit())
                 return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicStore, nullptr);
             return nullptr;
         }
@@ -4611,7 +4637,7 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
             if (!canUseMegamorphicInById(vm(), identifier.uid()))
                 allAreSimpleHitOrMiss = false;
 
-            if (allAreSimpleHitOrMiss && !is32Bit())
+            if (allAreSimpleHitOrMiss && is64Bit())
                 return AccessCase::create(vm(), codeBlock, AccessCase::InMegamorphic, useHandlerIC() ? nullptr : identifier);
             return nullptr;
         }
@@ -4632,7 +4658,7 @@ RefPtr<AccessCase> InlineCacheCompiler::tryFoldToMegamorphic(CodeBlock* codeBloc
                 }
             }
 
-            if (allAreSimpleHitOrMiss && !is32Bit())
+            if (allAreSimpleHitOrMiss && is64Bit())
                 return AccessCase::create(vm(), codeBlock, AccessCase::IndexedMegamorphicIn, nullptr);
             return nullptr;
         }
@@ -5202,6 +5228,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM& vm)
 
 static void getterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg stubInfoGPR, GPRReg scratch1GPR, GPRReg scratch2GPR)
 {
+    ASSERT(noOverlap(baseJSR, stubInfoGPR, scratch1GPR, scratch2GPR, GPRInfo::handlerGPR));
 #if USE(JSVALUE64)
     JSValueRegs scratch1JSR(scratch1GPR);
 #else
@@ -5257,12 +5284,16 @@ static void getterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSVal
 
     // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
     if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+        ASSERT(noOverlap(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR()));
         jit.swap(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
         jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos()), scratch1GPR, BaselineJITRegisters::Call::callLinkInfoGPR);
     } else {
         jit.move(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
         jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos()), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
     }
+#if USE(JSVALUE32_64)
+    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
     CallLinkInfo::emitDataICFastPath(jit);
     jit.setupResults(resultJSR);
 
@@ -5361,6 +5392,9 @@ MacroAssemblerCodeRef<JITThunkPtrTag> getByIdProxyObjectLoadHandler(VM&)
         jit.move(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
         jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos()), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
     }
+#if USE(JSVALUE32_64)
+    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
     CallLinkInfo::emitDataICFastPath(jit);
     jit.setupResults(resultJSR);
 
@@ -5613,6 +5647,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdTransitionReallocatingOutOfLineHand
 template<bool isAccessor>
 static void customSetterHandlerImpl(VM& vm, CCallHelpers& jit, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg stubInfoGPR, GPRReg scratch1GPR, GPRReg scratch2GPR, GPRReg scratch3GPR)
 {
+    ASSERT(noOverlap(baseJSR, valueJSR, scratch1GPR, scratch2GPR, scratch3GPR, GPRInfo::handlerGPR));
     if constexpr (!isAccessor) {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), scratch3GPR);
         jit.moveConditionallyPtr(CCallHelpers::Equal, scratch3GPR, CCallHelpers::TrustedImm32(0), baseJSR.payloadGPR(), scratch3GPR, baseJSR.payloadGPR());
@@ -5686,6 +5721,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> putByIdCustomValueHandler(VM& vm)
 template<bool isStrict>
 static void setterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSValueRegs valueJSR, GPRReg stubInfoGPR, GPRReg scratch1GPR, GPRReg scratch2GPR)
 {
+    ASSERT(noOverlap(baseJSR, valueJSR, stubInfoGPR, scratch1GPR, scratch2GPR, GPRInfo::handlerGPR));
 #if USE(JSVALUE64)
     JSValueRegs tempRegs(scratch1GPR);
 #else
@@ -5742,12 +5778,16 @@ static void setterHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSVal
 
     // handlerGPR can be the same to BaselineJITRegisters::Call::calleeJSR.
     if constexpr (GPRInfo::handlerGPR == BaselineJITRegisters::Call::calleeJSR.payloadGPR()) {
+        ASSERT(noOverlap(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR()));
         jit.swap(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
         jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos()), scratch1GPR, BaselineJITRegisters::Call::callLinkInfoGPR);
     } else {
         jit.move(scratch1GPR, BaselineJITRegisters::Call::calleeJSR.payloadGPR());
         jit.addPtr(CCallHelpers::TrustedImm32(InlineCacheHandler::offsetOfCallLinkInfos()), GPRInfo::handlerGPR, BaselineJITRegisters::Call::callLinkInfoGPR);
     }
+#if USE(JSVALUE32_64)
+    jit.move(CCallHelpers::TrustedImm32(JSValue::CellTag), BaselineJITRegisters::Call::calleeJSR.tagGPR());
+#endif
     CallLinkInfo::emitDataICFastPath(jit);
 
     jit.loadPtr(CCallHelpers::Address(GPRInfo::jitDataRegister, BaselineJITData::offsetOfStackOffset()), scratch1GPR);
