@@ -1359,4 +1359,115 @@ FloatRect TextureMapperLayer::effectiveLayerRect() const
     return layerRect();
 }
 
+// TODO: #if !LOG_DISABLED && ENABLE(TEXMAP_DEBUGGING)
+
+void TextureMapperLayer::showTree(const TextureMapperLayer& layer)
+{
+    layer.showTreeForThis();
+}
+
+void TextureMapperLayer::showTreeForThis() const
+{
+    TextStream stream(TextStream::LineMode::MultipleLine, TextStream::Formatting::SVGStyleRect);
+
+    stream.nextLine();
+    stream << "TextureMapperLayer tree:";
+
+    // Legend.
+    stream.nextLine();
+    stream << "(V)isible/(I)nvisible, (F)lattened, (L)eaf of..., (P)reserves 3D, Has (M)ask, Has (B)ackdrop, Has (C)ontents";
+    stream.nextLine();
+
+    outputSubTree(stream, 1);
+    WTFLogAlways("%s", stream.release().utf8().data());
+}
+
+void TextureMapperLayer::outputSubTree(TextStream& stream, int depth) const
+{
+    outputLayer(stream, depth);
+
+    for (auto* child : m_children)
+        child->outputSubTree(stream, depth + 1);
+}
+
+WTF::TextStream& operator<<(WTF::TextStream& stream, const TransformationMatrix::Decomposed2Type& decomposed)
+{
+    stream << "[";
+    stream << "t(" << decomposed.translateX << "," << decomposed.translateY << "), ";
+    stream << "s(" << decomposed.scaleX << "," << decomposed.scaleY << "), ";
+    stream << "a(" << decomposed.angle << "), ";
+    stream << "m(" << decomposed.m11 << "," << decomposed.m12 << "," << decomposed.m21 << "," << decomposed.m22 << ")";
+    stream << "]";
+    return stream;
+}
+
+void TextureMapperLayer::outputLayer(TextStream& stream, int depth) const
+{
+    if (isVisible())
+        stream << "V";
+    else
+        stream << "I";
+
+    if (isFlattened())
+        stream << "F";
+    else
+        stream << "-";
+
+    if (isLeafOf3DRenderingContext())
+        stream << "L";
+    else
+        stream << "-";
+
+    if (preserves3D())
+        stream << "P";
+    else
+        stream << "-";
+
+    if (hasMask())
+        stream << "M";
+    else
+        stream << "-";
+
+    if (hasBackdrop())
+        stream << "B";
+    else
+        stream << "-";
+
+    if (m_contentsLayer)
+        stream << "C";
+    else
+        stream << "-";
+
+    for (int i = 0; i < depth * 2; i++)
+        stream << " ";
+
+    stream << "Layer (" << this << ") ";
+    stream << effectiveLayerRect();
+
+    // TODO: Extract helper function.
+    {
+        stream << " transform";
+        TransformationMatrix::Decomposed2Type decomposedTransform;
+        if (m_state.transform.isIdentity())
+            stream << "[identity]";
+        else if (m_state.transform.decompose2(decomposedTransform))
+            stream << decomposedTransform;
+        else
+        stream << "[cannot decompose]";
+    }
+
+    {
+        stream << " childrenTransform";
+        TransformationMatrix::Decomposed2Type decomposedTransform;
+        if (m_state.childrenTransform.isIdentity())
+            stream << "[identity]";
+        else if (m_state.childrenTransform.decompose2(decomposedTransform))
+            stream << decomposedTransform;
+        else
+            stream << "[cannot decompose]";
+    }
+
+    stream.nextLine();
+}
+
 }

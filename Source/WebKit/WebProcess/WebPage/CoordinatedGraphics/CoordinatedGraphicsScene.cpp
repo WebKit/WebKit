@@ -103,6 +103,9 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         m_textureMapper->endPainting();
     }
 
+    // TODO: #if !LOG_DISABLED && ENABLE(TEXMAP_DEBUGGING)
+    TextureMapperLayer::showTree(currentRootLayer);
+
     if (sceneHasRunningAnimations)
         updateViewport();
 }

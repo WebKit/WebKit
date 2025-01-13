@@ -124,6 +124,12 @@ public:
 
     FloatRect effectiveLayerRect() const;
 
+    // TODO: #if !LOG_DISABLED && ENABLE(TEXMAP_DEBUGGING)
+    static void showTree(const TextureMapperLayer&);
+    void showTreeForThis() const;
+    void outputSubTree(TextStream& stream, int depth) const;
+    void outputLayer(TextStream& stream, int depth) const; // TODO: outputThis/outputSelf
+
 private:
     TextureMapperLayer& backdropRootLayer() const
     {
