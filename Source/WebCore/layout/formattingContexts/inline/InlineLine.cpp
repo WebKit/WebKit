@@ -377,7 +377,7 @@ void Line::appendTextContent(const InlineTextItem& inlineTextItem, const RenderS
         if (m_runs.isEmpty())
             return true;
         auto& lastRun = m_runs.last();
-        if (&lastRun.layoutBox() != &inlineTextItem.layoutBox())
+        if (lastRun.layoutBox() != inlineTextItem.layoutBox())
             return true;
         if (lastRun.bidiLevel() != inlineTextItem.bidiLevel())
             return true;
@@ -499,7 +499,7 @@ void Line::appendTextFast(const InlineTextItem& inlineTextItem, const RenderStyl
         auto& lastRun = m_runs.last();
         if (lastRun.hasCollapsedTrailingWhitespace())
             return true;
-        if (&lastRun.layoutBox() != &inlineTextItem.layoutBox())
+        if (lastRun.layoutBox() != inlineTextItem.layoutBox())
             return true;
         if (inlineTextItem.isZeroWidthSpaceSeparator())
             return true;
