@@ -50,6 +50,7 @@
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
 #include "CSSValueList.h"
+#include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CSSVariableData.h"
 #include "CSSVariableReferenceValue.h"
@@ -327,7 +328,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
                 return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueNone)));
             },
             [&](const auto&) -> ExceptionOr<Ref<CSSStyleValue>> {
-                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), propertyID);
             }
         );
     } else if (RefPtr property = dynamicDowncast<CSSAppleColorFilterPropertyValue>(cssValue)) {
@@ -336,7 +337,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
                 return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueNone)));
             },
             [&](const auto&) -> ExceptionOr<Ref<CSSStyleValue>> {
-                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), propertyID);
             }
         );
     } else if (RefPtr property = dynamicDowncast<CSSBoxShadowPropertyValue>(cssValue)) {
@@ -345,7 +346,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
                 return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueNone)));
             },
             [&](const auto&) -> ExceptionOr<Ref<CSSStyleValue>> {
-                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), propertyID);
             }
         );
     } else if (RefPtr property = dynamicDowncast<CSSTextShadowPropertyValue>(cssValue)) {
@@ -354,7 +355,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
                 return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueNone)));
             },
             [&](const auto&) -> ExceptionOr<Ref<CSSStyleValue>> {
-                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), propertyID);
             }
         );
     } else if (RefPtr property = dynamicDowncast<CSSEasingFunctionValue>(cssValue)) {
@@ -363,9 +364,13 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
                 return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(keyword)));
             },
             [&](const auto&) -> ExceptionOr<Ref<CSSStyleValue>> {
-                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+                return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), propertyID);
             }
         );
+    } else if (RefPtr valuePair = dynamicDowncast<CSSValuePair>(cssValue)) {
+        if (valuePair->canBeCoalesced())
+            return reifyValue(valuePair->first(), propertyID, document);
+        return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), propertyID);
     } else if (auto* valueList = dynamicDowncast<CSSValueList>(cssValue)) {
         // Reifying the first value in value list.
         // FIXME: Verify this is the expected behavior.
@@ -376,7 +381,7 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
             return reifyValue((*valueList)[0], propertyID, document);
     }
     
-    return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+    return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)), propertyID);
 }
 
 RefPtr<CSSStyleValue> CSSStyleValueFactory::constructStyleValueForCustomPropertySyntaxValue(const CSSCustomPropertyValue::SyntaxValue& syntaxValue)

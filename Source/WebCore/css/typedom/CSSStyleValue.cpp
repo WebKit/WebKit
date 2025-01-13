@@ -69,6 +69,11 @@ Ref<CSSStyleValue> CSSStyleValue::create(RefPtr<CSSValue>&& cssValue, String&& p
     return adoptRef(*new CSSStyleValue(WTFMove(cssValue), WTFMove(property)));
 }
 
+Ref<CSSStyleValue> CSSStyleValue::create(RefPtr<CSSValue>&& cssValue, std::optional<CSSPropertyID> associatedProperty)
+{
+    return adoptRef(*new CSSStyleValue(WTFMove(cssValue), associatedProperty));
+}
+
 Ref<CSSStyleValue> CSSStyleValue::create()
 {
     return adoptRef(*new CSSStyleValue());
@@ -76,6 +81,14 @@ Ref<CSSStyleValue> CSSStyleValue::create()
 
 CSSStyleValue::CSSStyleValue(RefPtr<CSSValue>&& cssValue, String&& property)
     : m_customPropertyName(WTFMove(property))
+    , m_associatedProperty(std::nullopt)
+    , m_propertyValue(WTFMove(cssValue))
+{
+}
+
+CSSStyleValue::CSSStyleValue(RefPtr<CSSValue>&& cssValue, std::optional<CSSPropertyID> associatedProperty)
+    : m_customPropertyName(String())
+    , m_associatedProperty(associatedProperty)
     , m_propertyValue(WTFMove(cssValue))
 {
 }

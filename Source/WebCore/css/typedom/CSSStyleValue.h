@@ -120,16 +120,21 @@ IGNORE_GCC_WARNINGS_END
     static ExceptionOr<Vector<Ref<CSSStyleValue>>> parseAll(const Document&, const AtomString&, const String&);
 
     static Ref<CSSStyleValue> create(RefPtr<CSSValue>&&, String&& = String());
+    static Ref<CSSStyleValue> create(RefPtr<CSSValue>&&, std::optional<CSSPropertyID>);
     static Ref<CSSStyleValue> create();
 
     virtual RefPtr<CSSValue> toCSSValue() const { return m_propertyValue; }
     virtual RefPtr<CSSValue> toCSSValueWithProperty(CSSPropertyID) const { return toCSSValue(); }
 
+    std::optional<CSSPropertyID> associatedProperty() const { return m_associatedProperty; }
+
 protected:
     CSSStyleValue(RefPtr<CSSValue>&&, String&& = String());
+    CSSStyleValue(RefPtr<CSSValue>&&, std::optional<CSSPropertyID>);
     CSSStyleValue() = default;
     
     String m_customPropertyName;
+    std::optional<CSSPropertyID> m_associatedProperty;
     RefPtr<CSSValue> m_propertyValue;
 };
 

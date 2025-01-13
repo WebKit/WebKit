@@ -1348,14 +1348,14 @@ PASS Can set 'border-start-start-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-start-start-radius' to CSS-wide keywords: unset
 PASS Can set 'border-start-start-radius' to CSS-wide keywords: revert
 PASS Can set 'border-start-start-radius' to var() references:  var(--A)
-FAIL Can set 'border-start-start-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-start-start-radius' to a percent: 0%
 FAIL Can set 'border-start-start-radius' to a percent: -3.14% Invalid values
-FAIL Can set 'border-start-start-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-start-start-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-start-start-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-start-start-radius' to a percent: 3.14%
+FAIL Can set 'border-start-start-radius' to a percent: calc(0% + 0%) assert_equals: unit expected "percent" but got "px"
+PASS Can set 'border-start-start-radius' to a length: 0px
 FAIL Can set 'border-start-start-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-start-start-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-start-start-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+PASS Can set 'border-start-start-radius' to a length: 3.14cm
+PASS Can set 'border-start-start-radius' to a length: calc(0px + 0em)
 PASS Setting 'border-start-start-radius' to a time: 0s throws TypeError
 PASS Setting 'border-start-start-radius' to a time: -3.14ms throws TypeError
 PASS Setting 'border-start-start-radius' to a time: 3.14s throws TypeError
@@ -1379,14 +1379,14 @@ PASS Can set 'border-start-end-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-start-end-radius' to CSS-wide keywords: unset
 PASS Can set 'border-start-end-radius' to CSS-wide keywords: revert
 PASS Can set 'border-start-end-radius' to var() references:  var(--A)
-FAIL Can set 'border-start-end-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-start-end-radius' to a percent: 0%
 FAIL Can set 'border-start-end-radius' to a percent: -3.14% Invalid values
-FAIL Can set 'border-start-end-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-start-end-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-start-end-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-start-end-radius' to a percent: 3.14%
+FAIL Can set 'border-start-end-radius' to a percent: calc(0% + 0%) assert_equals: unit expected "percent" but got "px"
+PASS Can set 'border-start-end-radius' to a length: 0px
 FAIL Can set 'border-start-end-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-start-end-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-start-end-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+PASS Can set 'border-start-end-radius' to a length: 3.14cm
+PASS Can set 'border-start-end-radius' to a length: calc(0px + 0em)
 PASS Setting 'border-start-end-radius' to a time: 0s throws TypeError
 PASS Setting 'border-start-end-radius' to a time: -3.14ms throws TypeError
 PASS Setting 'border-start-end-radius' to a time: 3.14s throws TypeError
@@ -1410,14 +1410,14 @@ PASS Can set 'border-end-start-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-end-start-radius' to CSS-wide keywords: unset
 PASS Can set 'border-end-start-radius' to CSS-wide keywords: revert
 PASS Can set 'border-end-start-radius' to var() references:  var(--A)
-FAIL Can set 'border-end-start-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-end-start-radius' to a percent: 0%
 FAIL Can set 'border-end-start-radius' to a percent: -3.14% Invalid values
-FAIL Can set 'border-end-start-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-end-start-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-end-start-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-end-start-radius' to a percent: 3.14%
+FAIL Can set 'border-end-start-radius' to a percent: calc(0% + 0%) assert_equals: unit expected "percent" but got "px"
+PASS Can set 'border-end-start-radius' to a length: 0px
 FAIL Can set 'border-end-start-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-end-start-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-end-start-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+PASS Can set 'border-end-start-radius' to a length: 3.14cm
+PASS Can set 'border-end-start-radius' to a length: calc(0px + 0em)
 PASS Setting 'border-end-start-radius' to a time: 0s throws TypeError
 PASS Setting 'border-end-start-radius' to a time: -3.14ms throws TypeError
 PASS Setting 'border-end-start-radius' to a time: 3.14s throws TypeError
@@ -1441,14 +1441,14 @@ PASS Can set 'border-end-end-radius' to CSS-wide keywords: inherit
 PASS Can set 'border-end-end-radius' to CSS-wide keywords: unset
 PASS Can set 'border-end-end-radius' to CSS-wide keywords: revert
 PASS Can set 'border-end-end-radius' to var() references:  var(--A)
-FAIL Can set 'border-end-end-radius' to a percent: 0% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-end-end-radius' to a percent: 0%
 FAIL Can set 'border-end-end-radius' to a percent: -3.14% Invalid values
-FAIL Can set 'border-end-end-radius' to a percent: 3.14% assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
-FAIL Can set 'border-end-end-radius' to a percent: calc(0% + 0%) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-end-end-radius' to a length: 0px assert_equals: expected "CSSUnitValue" but got "CSSStyleValue"
+PASS Can set 'border-end-end-radius' to a percent: 3.14%
+FAIL Can set 'border-end-end-radius' to a percent: calc(0% + 0%) assert_equals: unit expected "percent" but got "px"
+PASS Can set 'border-end-end-radius' to a length: 0px
 FAIL Can set 'border-end-end-radius' to a length: -3.14em Invalid values
-FAIL Can set 'border-end-end-radius' to a length: 3.14cm assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
-FAIL Can set 'border-end-end-radius' to a length: calc(0px + 0em) assert_class_string: relative lengths must compute to a CSSUnitValue expected "[object CSSUnitValue]" but got "[object CSSStyleValue]"
+PASS Can set 'border-end-end-radius' to a length: 3.14cm
+PASS Can set 'border-end-end-radius' to a length: calc(0px + 0em)
 PASS Setting 'border-end-end-radius' to a time: 0s throws TypeError
 PASS Setting 'border-end-end-radius' to a time: -3.14ms throws TypeError
 PASS Setting 'border-end-end-radius' to a time: 3.14s throws TypeError
