@@ -42,11 +42,23 @@ namespace JSC { namespace DFG {
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor>
 void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def)
 {
-    clobberize(graph, node, read, write, def, [] { });
+    clobberize(graph, node, read, write, [](const HeapLocation&) { }, def, [] { });
 }
 
 template<typename ReadFunctor, typename WriteFunctor, typename DefFunctor, typename ClobberTopFunctor>
 void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const DefFunctor& def, const ClobberTopFunctor& clobberTopFunctor)
+{
+    clobberize(graph, node, read, write, [](const HeapLocation&) { }, def, clobberTopFunctor);
+}
+
+template<typename ReadFunctor, typename WriteFunctor, typename PreciseWriteFunctor, typename DefFunctor>
+void preciseClobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const PreciseWriteFunctor& preciseWrite, const DefFunctor& def)
+{
+    clobberize(graph, node, read, write, preciseWrite, def, [] { });
+}
+
+template<typename ReadFunctor, typename WriteFunctor, typename PreciseWriteFunctor, typename DefFunctor, typename ClobberTopFunctor>
+void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFunctor& write, const PreciseWriteFunctor& preciseWrite, const DefFunctor& def, const ClobberTopFunctor& clobberTopFunctor)
 {
     // Some notes:
     //
@@ -129,6 +141,13 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             clobberTopFunctor();
         read(World);
         write(Heap);
+    };
+
+    auto tryPreciseWrite = [&] (const HeapLocation& location, AbstractHeapKind kind) {
+        if (graph.m_planStage == PlanStage::InLastGlobalCSE && location.hasConstantOffset())
+            preciseWrite(location);
+        else
+            write(kind);
     };
 
     // Since Fixup can widen our ArrayModes based on profiling from other nodes we pessimistically assume
@@ -1161,8 +1180,8 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case Array::BigUint64Array:
             clobberTop();
             return;
-            
-        case Array::Int32:
+
+        case Array::Int32: {
             if (mode.isOutOfBounds()) {
                 clobberTop();
                 return;
@@ -1170,12 +1189,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             read(Butterfly_publicLength);
             read(Butterfly_vectorLength);
             read(IndexedInt32Properties);
-            write(IndexedInt32Properties);
             if (mode.mayStoreToHole())
                 write(Butterfly_publicLength);
-            def(HeapLocation(indexedPropertyLoc, IndexedInt32Properties, base, index), LazyNode(value));
+            HeapLocation location = HeapLocation(indexedPropertyLoc, IndexedInt32Properties, base, index);
+            tryPreciseWrite(location, IndexedInt32Properties);
+            def(location, LazyNode(value));
             def(HeapLocation(IndexedPropertyInt32OutOfBoundsSaneChainLoc, IndexedInt32Properties, base, index), LazyNode(value));
             return;
+        }
             
         case Array::Double:
             if (mode.isOutOfBounds()) {
@@ -1193,7 +1214,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             def(HeapLocation(IndexedPropertyDoubleOutOfBoundsSaneChainLoc, IndexedDoubleProperties, base, index), LazyNode(value));
             return;
             
-        case Array::Contiguous:
+        case Array::Contiguous: {
             if (mode.isOutOfBounds()) {
                 clobberTop();
                 return;
@@ -1201,12 +1222,14 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
             read(Butterfly_publicLength);
             read(Butterfly_vectorLength);
             read(IndexedContiguousProperties);
-            write(IndexedContiguousProperties);
             if (mode.mayStoreToHole())
                 write(Butterfly_publicLength);
-            def(HeapLocation(indexedPropertyLoc, IndexedContiguousProperties, base, index), LazyNode(value));
+            HeapLocation location = HeapLocation(indexedPropertyLoc, IndexedContiguousProperties, base, index);
+            tryPreciseWrite(location, IndexedContiguousProperties);
+            def(location, LazyNode(value));
             def(HeapLocation(IndexedPropertyJSOutOfBoundsSaneChainLoc, IndexedContiguousProperties, base, index), LazyNode(value));
             return;
+        }
             
         case Array::ArrayStorage:
             if (node->arrayMode().isOutOfBounds()) {
@@ -2388,6 +2411,22 @@ private:
 };
 
 template<typename T>
+class PreciseWriteMethodClobberize {
+public:
+    PreciseWriteMethodClobberize(T& value)
+        : m_value(value)
+    {
+    }
+
+    void operator()(const HeapLocation& location) const
+    {
+        m_value.preciseWrite(location);
+    }
+private:
+    T& m_value;
+};
+
+template<typename T>
 class DefMethodClobberize {
 public:
     DefMethodClobberize(T& value)
@@ -2410,12 +2449,13 @@ private:
 };
 
 template<typename Adaptor>
-void clobberize(Graph& graph, Node* node, Adaptor& adaptor)
+void preciseClobberize(Graph& graph, Node* node, Adaptor& adaptor)
 {
     ReadMethodClobberize<Adaptor> read(adaptor);
     WriteMethodClobberize<Adaptor> write(adaptor);
+    PreciseWriteMethodClobberize<Adaptor> preciseWrite(adaptor);
     DefMethodClobberize<Adaptor> def(adaptor);
-    clobberize(graph, node, read, write, def);
+    preciseClobberize(graph, node, read, write, preciseWrite, def);
 }
 
 } } // namespace JSC::DFG

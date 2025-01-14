@@ -153,6 +153,11 @@ static const IndexingType CopyOnWriteArrayWithContiguous  = IsArray | Contiguous
     case NonArrayWithSlowPutArrayStorage:               \
     case ARRAY_WITH_ARRAY_STORAGE_INDEXING_TYPES
 
+#define ALL_COPY_ON_WRITE_INDEXING_TYPES \
+    CopyOnWriteArrayWithInt32:           \
+    case CopyOnWriteArrayWithDouble:     \
+    case CopyOnWriteArrayWithContiguous
+
 inline bool hasIndexedProperties(IndexingType indexingType)
 {
     return (indexingType & IndexingShapeMask) != NoIndexingShape;

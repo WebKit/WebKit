@@ -74,7 +74,9 @@ public:
         
         RELEASE_ASSERT(!heap.overlaps(Stack));
     }
-    
+
+    void preciseWrite(const HeapLocation&) { }
+
     void def(PureValue)
     {
         // PureValue defs never have anything to do with locals, so ignore this.
@@ -291,7 +293,7 @@ void preciseLocalClobberize(
 {
     PreciseLocalClobberizeAdaptor<ReadFunctor, WriteFunctor, DefFunctor>
         adaptor(graph, node, read, write, def);
-    clobberize(graph, node, adaptor);
+    preciseClobberize(graph, node, adaptor);
 }
 
 } } // namespace JSC::DFG

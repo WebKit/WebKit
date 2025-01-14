@@ -115,7 +115,7 @@ public:
         m_abstractHeapStackMap.swap(other.m_abstractHeapStackMap);
         m_fallbackStackMap.swap(other.m_fallbackStackMap);
         m_heapMap.swap(other.m_heapMap);
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
         m_debugImpureData.swap(other.m_debugImpureData);
 #endif
     }
@@ -124,7 +124,7 @@ public:
     {
         const ImpureDataSlot* result = addImpl(location, node);
 
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
         auto addResult = m_debugImpureData.add(location, node);
         ASSERT(!!result == !addResult.isNewEntry);
 #endif
@@ -134,10 +134,25 @@ public:
     LazyNode get(const HeapLocation& location) const
     {
         LazyNode result = getImpl(location);
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
         ASSERT(result == m_debugImpureData.get(location));
 #endif
         return result;
+    }
+
+    void clobber(int32_t offset)
+    {
+        m_heapMap.removeIf([&](const std::unique_ptr<ImpureDataSlot>& slot) -> bool {
+            const HeapLocation& target = slot->key;
+            if (!target.hasConstantOffset() || target.constantOffset() == offset) {
+#if ASSERT_ENABLED
+                m_debugImpureData.remove(target);
+#endif
+                dataLogLnIf(DFGCSEPhaseInternal::verbose, "precise clobber remove location=", target);
+                return true;
+            }
+            return false;
+        });
     }
 
     void clobber(AbstractHeap heap, bool clobberConservatively)
@@ -165,7 +180,7 @@ public:
                 clobber(m_heapMap, heap);
             break;
         }
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
         m_debugImpureData.removeIf([heap, clobberConservatively, this](const UncheckedKeyHashMap<HeapLocation, LazyNode>::KeyValuePairType& pair) -> bool {
             switch (heap.kind()) {
             case World:
@@ -213,7 +228,7 @@ public:
         m_abstractHeapStackMap.clear();
         m_fallbackStackMap.clear();
         m_heapMap.clear();
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
         m_debugImpureData.clear();
 #endif
     }
@@ -306,7 +321,7 @@ private:
 
     Map m_heapMap;
 
-#if !defined(NDEBUG)
+#if ASSERT_ENABLED
     UncheckedKeyHashMap<HeapLocation, LazyNode> m_debugImpureData;
 #endif
 };
@@ -597,7 +612,7 @@ private:
                             m_node->setOp(PutByValAlias);
                     }
 
-                    clobberize(m_graph, m_node, *this);
+                    preciseClobberize(m_graph, m_node, *this);
                 }
             }
 
@@ -613,7 +628,9 @@ private:
             dataLogLnIf(DFGCSEPhaseInternal::verbose, "\tWrite to heap ", heap);
             m_maps.write(heap);
         }
-        
+
+        void preciseWrite(const HeapLocation&) { }
+
         void def(PureValue value)
         {
             dataLogLnIf(DFGCSEPhaseInternal::verbose, "\tDef of value ", value, " at node ", m_node->index());
@@ -687,6 +704,9 @@ public:
     
     bool run()
     {
+        SetForScope scope(m_graph.m_planStage);
+        if (m_graph.m_planStage >= PlanStage::LICMAndLater)
+            scope.set(PlanStage::InLastGlobalCSE);
 
         if (DFGCSEPhaseInternal::verbose) {
             dataLog("Graph before Global CSE:\n");
@@ -707,7 +727,7 @@ public:
             m_block = m_preOrder[i];
             m_impureData = &m_impureDataMap[m_block];
             for (unsigned nodeIndex = m_block->size(); nodeIndex--;)
-                addWrites(m_graph, m_block->at(nodeIndex), m_impureData->writes);
+                addPreciseWrites(m_graph, m_block->at(nodeIndex), m_impureData->writes, m_impureData->preciseWrites);
         }
         
         // Based on my experience doing this before, what follows might have to be made iterative.
@@ -720,7 +740,12 @@ public:
         // run it a second time. Unfortunately, we cannot assert this right now. Note that if we did
         // this, we'd have to first reset all of our state.
         // https://bugs.webkit.org/show_bug.cgi?id=145853
-        
+
+        if (DFGCSEPhaseInternal::verbose) {
+            dataLog("Graph after Global CSE:\n");
+            m_graph.dump();
+        }
+
         return changed;
     }
     
@@ -752,7 +777,7 @@ public:
                     m_node->replaceWith(m_graph, m_node->child1().node());
                     m_changed = true;
                 } else
-                    clobberize(m_graph, m_node, *this);
+                    preciseClobberize(m_graph, m_node, *this);
             }
 
             m_insertionSet.execute(m_block);
@@ -772,6 +797,38 @@ public:
         m_writesSoFar.add(heap);
     }
     
+    bool canPreciseWrite(LocationKind kind)
+    {
+        switch (kind) {
+        case IndexedPropertyJSLoc:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool canPreciseWrite(AbstractHeap heap)
+    {
+        switch (heap.kind()) {
+        case IndexedInt32Properties:
+        case IndexedContiguousProperties:
+            return true;
+        default:
+            return false;
+        }
+    }
+
+    bool canPreciseWrite(const HeapLocation& location)
+    {
+        return location.hasConstantOffset() && canPreciseWrite(location.kind()) && canPreciseWrite(location.heap());
+    }
+
+    void preciseWrite(const HeapLocation& location)
+    {
+        ASSERT(canPreciseWrite(location));
+        m_impureData->availableAtTail.clobber(location.constantOffset());
+    }
+
     void def(PureValue value)
     {
         // With pure values we do not have to worry about the possibility of some control flow path
@@ -902,6 +959,11 @@ public:
                     dataLog("        Clobbered.\n");
                 return nullptr;
             }
+            if (data.preciseWrites.overlaps(location)) {
+                if (DFGCSEPhaseInternal::verbose)
+                    dataLog("        PreciseClobbered.\n");
+                return nullptr;
+            }
             
             for (unsigned i = block->predecessors.size(); i--;) {
                 BasicBlock* predecessor = block->predecessors[i];
@@ -981,6 +1043,7 @@ public:
         }
         
         ClobberSet writes;
+        PreciseClobberSet preciseWrites;
         ImpureMap availableAtTail;
         bool didVisit;
     };

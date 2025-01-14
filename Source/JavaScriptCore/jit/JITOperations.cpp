@@ -1617,11 +1617,9 @@ static void putByVal(JSGlobalObject* globalObject, JSValue baseValue, JSValue su
         uint32_t i = *index;
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (object->trySetIndexQuickly(vm, i, value, arrayProfile))
+            if (object->trySetIndexQuickly<JSObject::UpdateOutOfBound::Yes>(vm, i, value, arrayProfile))
                 return;
 
-            if (arrayProfile)
-                arrayProfile->setOutOfBounds();
             scope.release();
             object->methodTable()->putByIndex(object, globalObject, i, value, ecmaMode.isStrict());
             return;

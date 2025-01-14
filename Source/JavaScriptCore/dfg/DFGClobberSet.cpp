@@ -150,6 +150,14 @@ void addWrites(Graph& graph, Node* node, ClobberSet& writeSet)
     clobberize(graph, node, noOp, addWrite, noOp);
 }
 
+void addPreciseWrites(Graph& graph, Node* node, ClobberSet& writeSet, PreciseClobberSet& preciseWriteSet)
+{
+    NoOpClobberize noOp;
+    ClobberSetAdd addWrite(writeSet);
+    PreciseClobberSetAdd addPreciseWrite(preciseWriteSet);
+    preciseClobberize(graph, node, noOp, addWrite, addPreciseWrite, noOp);
+}
+
 void addReadsAndWrites(Graph& graph, Node* node, ClobberSet& readSet, ClobberSet& writeSet)
 {
     ClobberSetAdd addRead(readSet);

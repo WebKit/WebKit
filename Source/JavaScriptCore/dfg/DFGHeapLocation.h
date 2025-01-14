@@ -169,6 +169,17 @@ public:
     {
         return m_heap.isHashTableDeletedValue();
     }
+
+    bool hasConstantOffset() const
+    {
+        return m_index && m_index.isNode() && m_index->isInt32Constant();
+    }
+
+    int32_t constantOffset() const
+    {
+        ASSERT(hasConstantOffset());
+        return m_index->asInt32();
+    }
     
     void dump(PrintStream& out) const;
     

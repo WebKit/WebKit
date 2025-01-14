@@ -631,6 +631,78 @@ inline bool JSObject::trySetIndexQuicklyForTypedArray(unsigned i, JSValue v, Arr
     }
 }
 
+template<JSObject::UpdateOutOfBound update>
+inline bool JSObject::trySetIndexQuickly(VM& vm, unsigned i, JSValue v, ArrayProfile* arrayProfile)
+{
+    Butterfly* butterfly = this->butterfly();
+    switch (indexingMode()) {
+    case ALL_BLANK_INDEXING_TYPES:
+        if (trySetIndexQuicklyForTypedArray(i, v, arrayProfile))
+            return true;
+        break;
+    case ALL_UNDECIDED_INDEXING_TYPES:
+        break;
+    case ALL_WRITABLE_INT32_INDEXING_TYPES: {
+        if (i >= butterfly->vectorLength())
+            break;
+        if (!v.isInt32()) {
+            convertInt32ToDoubleOrContiguousWhilePerformingSetIndex(vm, i, v);
+            return true;
+        }
+        FALLTHROUGH;
+    }
+    case ALL_WRITABLE_CONTIGUOUS_INDEXING_TYPES: {
+        if (i >= butterfly->vectorLength())
+            break;
+        butterfly->contiguous().at(this, i).setWithoutWriteBarrier(v);
+        if (i >= butterfly->publicLength())
+            butterfly->setPublicLength(i + 1);
+        vm.writeBarrier(this, v);
+        return true;
+    }
+    case ALL_WRITABLE_DOUBLE_INDEXING_TYPES: {
+        if (i >= butterfly->vectorLength())
+            break;
+        if (!v.isNumber()) {
+            convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
+            return true;
+        }
+        double value = v.asNumber();
+        if (value != value) {
+            convertDoubleToContiguousWhilePerformingSetIndex(vm, i, v);
+            return true;
+        }
+        butterfly->contiguousDouble().at(this, i) = value;
+        if (i >= butterfly->publicLength())
+            butterfly->setPublicLength(i + 1);
+        return true;
+    }
+    case NonArrayWithArrayStorage:
+    case ArrayWithArrayStorage:
+        if (i >= butterfly->vectorLength())
+            break;
+        setIndexQuicklyForArrayStorageIndexingType(vm, i, v);
+        return true;
+    case NonArrayWithSlowPutArrayStorage:
+    case ArrayWithSlowPutArrayStorage:
+        if (i >= butterfly->arrayStorage()->vectorLength() || !butterfly->arrayStorage()->m_vector[i])
+            break;
+        setIndexQuicklyForArrayStorageIndexingType(vm, i, v);
+        return true;
+    case ALL_COPY_ON_WRITE_INDEXING_TYPES:
+        return false;
+    default:
+        RELEASE_ASSERT(isCopyOnWrite(indexingMode()));
+        break;
+    }
+
+    if constexpr (update == UpdateOutOfBound::Yes) {
+        if (arrayProfile)
+            arrayProfile->setOutOfBounds();
+    }
+    return false;
+}
+
 inline void JSObject::validatePutOwnDataProperty(VM& vm, PropertyName propertyName, JSValue value)
 {
 #if ASSERT_ENABLED

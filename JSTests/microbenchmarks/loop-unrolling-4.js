@@ -11,15 +11,14 @@ function test(s) {
     for (var i = 0; i < len; i++) {
         a[i] = s[i];
     }
-    // FIXME: why read a[0] is not eliminated but a[1] does?
     s[0] = a[0] ^ a[1];
     return s;
 }
 noInline(test);
 
 let expected;
-for (let i = 0; i < 1e5; i++) {
-    let a = [0, 0];
+for (let i = 0; i < 1e6; i++) {
+    let a = [0, 0, 0, 0];
     let res = test(a);
     if (i == 0)
         expected = res;

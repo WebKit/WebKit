@@ -1354,7 +1354,7 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_val)
         uint32_t i = *index;
         if (baseValue.isObject()) {
             JSObject* object = asObject(baseValue);
-            if (!object->trySetIndexQuickly(vm, i, value, &metadata.m_arrayProfile))
+            if (!object->trySetIndexQuickly<JSObject::UpdateOutOfBound::No>(vm, i, value, &metadata.m_arrayProfile))
                 object->methodTable()->putByIndex(object, globalObject, i, value, isStrictMode);
             LLINT_END();
         }

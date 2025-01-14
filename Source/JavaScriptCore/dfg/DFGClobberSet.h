@@ -27,7 +27,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGAbstractHeap.h"
+#include "DFGHeapLocation.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PrintStream.h>
@@ -74,6 +74,25 @@ private:
     UncheckedKeyHashMap<AbstractHeap, bool> m_clobbers;
 };
 
+class PreciseClobberSet {
+public:
+    bool overlaps(const HeapLocation& location)
+    {
+        if (location.hasConstantOffset())
+            return m_clobberedOffsets.contains(location.constantOffset());
+        return false;
+    }
+
+    void add(const HeapLocation& location)
+    {
+        if (location.hasConstantOffset())
+            m_clobberedOffsets.add(location.constantOffset());
+    }
+
+private:
+    UncheckedKeyHashSet<int32_t, DefaultHash<int32_t>, WTF::SignedWithZeroKeyHashTraits<int32_t>> m_clobberedOffsets;
+};
+
 class ClobberSetAdd {
 public:
     ClobberSetAdd(ClobberSet& set)
@@ -87,6 +106,21 @@ public:
     }
 private:
     ClobberSet& m_set;
+};
+
+class PreciseClobberSetAdd {
+public:
+    PreciseClobberSetAdd(PreciseClobberSet& set)
+        : m_set(set)
+    {
+    }
+
+    void operator()(const HeapLocation& location) const
+    {
+        m_set.add(location);
+    }
+private:
+    PreciseClobberSet& m_set;
 };
 
 class ClobberSetOverlaps {
@@ -111,6 +145,7 @@ private:
 
 void addReads(Graph&, Node*, ClobberSet&);
 void addWrites(Graph&, Node*, ClobberSet&);
+void addPreciseWrites(Graph&, Node*, ClobberSet&, PreciseClobberSet&);
 void addReadsAndWrites(Graph&, Node*, ClobberSet& reads, ClobberSet& writes);
 
 ClobberSet writeSet(Graph&, Node*);

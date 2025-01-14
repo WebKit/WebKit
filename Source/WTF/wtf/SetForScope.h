@@ -71,6 +71,12 @@ public:
         m_scopedVariable = WTFMove(m_valueToRestore);
     }
 
+    template<typename U>
+    void set(U&& newValue)
+    {
+        m_scopedVariable = std::forward<U>(newValue);
+    }
+
 private:
     T& m_scopedVariable;
     T m_valueToRestore;
