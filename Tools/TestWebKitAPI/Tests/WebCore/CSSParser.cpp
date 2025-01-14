@@ -25,11 +25,13 @@
  */
 
 #include "config.h"
+#include "wtf/text/ASCIILiteral.h"
 
 #include <WebCore/CSSColorValue.h>
 #include <WebCore/CSSCustomPropertyValue.h>
 #include <WebCore/CSSGridIntegerRepeatValue.h>
 #include <WebCore/CSSParser.h>
+#include <WebCore/CSSParserFastPaths.h>
 #include <WebCore/CSSValueList.h>
 #include <WebCore/Color.h>
 #include <WebCore/MutableStyleProperties.h>
@@ -38,6 +40,48 @@
 namespace TestWebKitAPI {
 
 using namespace WebCore;
+
+TEST(CSSParser, ParseNumericColor)
+{
+    // auto res = CSSParserFastPaths::parseSimpleColor("rgb(255,0,0)"_s);
+    // EXPECT_TRUE(res);
+    auto res = CSSParserFastPaths::parseSimpleColor("rgb(0% 50% 0%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(255,0,0)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(0 128.0 0)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(0% 50% 0% / 1.0)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(0 128.0 0 / 1)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(0% 50% 0% / 100%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(0 128.0 0 / 100%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(0%, 50%, 0%, 100%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgb(0, 128.0, 0, 100%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0% 50% 0%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0 128.0 0)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0% 50% 0% / 1.0)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0 128.0 0 / 1)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0% 50% 0% / 100%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0 128.0 0 / 100%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0%, 50%, 0%, 100%)"_s);
+    EXPECT_TRUE(res);
+    res = CSSParserFastPaths::parseSimpleColor("rgba(0, 128.0, 0, 100%)"_s);
+    EXPECT_TRUE(res);
+    printf("HERE!\n");
+    // printf("HERE2!\n");
+}
 
 TEST(CSSParser, ParseColorInput)
 {

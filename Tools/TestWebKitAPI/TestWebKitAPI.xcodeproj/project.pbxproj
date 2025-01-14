@@ -368,7 +368,6 @@
 		7AC7B57120D9BA5B002C09A0 /* CustomBundleObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AC7B56F20D9BA5B002C09A0 /* CustomBundleObject.mm */; };
 		7AEAD47F1E20116C00416EFE /* CrossPartitionFileSchemeAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7AEAD47C1E20113800416EFE /* CrossPartitionFileSchemeAccess.mm */; };
 		7AFEA3172CB83910007EFE75 /* element-targeting-11.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7AFEA30F2CB838FF007EFE75 /* element-targeting-11.html */; };
-		7AEAD4811E20122700416EFE /* CrossPartitionFileSchemeAccess.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = 7AEAD47D1E20114E00416EFE /* CrossPartitionFileSchemeAccess.html */; };
 		7B0594792CB44CF600B571AC /* RegionTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B0594782CB44CF600B571AC /* RegionTests.cpp */; };
 		7B06F95F2A377E23000DFC95 /* SequenceLockedTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B06F95E2A377E23000DFC95 /* SequenceLockedTest.cpp */; };
 		7B18417C2673860200ED4F8D /* ImageBufferTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B18417B2673860200ED4F8D /* ImageBufferTests.cpp */; };

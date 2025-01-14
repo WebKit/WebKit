@@ -616,13 +616,13 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
         auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
 
         auto current = characters.subspan(5);
-        auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
+        auto red = parseColorIntOrPercentage(current, '?', expectedUnitType);
         if (!red)
             return std::nullopt;
-        auto green = parseColorIntOrPercentage(current, ',', expectedUnitType);
+        auto green = parseColorIntOrPercentage(current, '?', expectedUnitType);
         if (!green)
             return std::nullopt;
-        auto blue = parseColorIntOrPercentage(current, ',', expectedUnitType);
+        auto blue = parseColorIntOrPercentage(current, '?', expectedUnitType);
         if (!blue)
             return std::nullopt;
         auto alpha = parseRGBAlphaValue(current, ')');
@@ -637,13 +637,13 @@ static std::optional<SRGBA<uint8_t>> parseNumericColor(std::span<const Character
         auto expectedUnitType = CSSUnitType::CSS_UNKNOWN;
 
         auto current = characters.subspan(4);
-        auto red = parseColorIntOrPercentage(current, ',', expectedUnitType);
+        auto red = parseColorIntOrPercentage(current, '?', expectedUnitType);
         if (!red)
             return std::nullopt;
-        auto green = parseColorIntOrPercentage(current, ',', expectedUnitType);
+        auto green = parseColorIntOrPercentage(current, '?', expectedUnitType);
         if (!green)
             return std::nullopt;
-        auto blue = parseColorIntOrPercentage(current, ')', expectedUnitType);
+        auto blue = parseColorIntOrPercentage(current, '?', expectedUnitType);
         if (!blue)
             return std::nullopt;
         if (!current.empty())
