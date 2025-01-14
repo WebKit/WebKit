@@ -947,30 +947,12 @@ sub printTagNameHeaderFile
     print F "#if ASSERT_ENABLED\n";
     print F "TagName findTagName(const String&);\n";
     print F "#endif\n";
-    for my $namespace (sort keys %namespacesWithTagsRequiringAdjustment) {
-        print F "TagName adjust${namespace}TagName(TagName);\n";
-    }
     print F "\n";
     print F "inline const AtomString& tagNameAsString(TagName tagName)\n";
     print F "{\n";
     print F "    return tagNameStrings.get()[tagName];\n";
     print F "}\n";
     print F "\n";
-    for my $namespace (sort keys %namespacesWithTagsRequiringAdjustment) {
-        print F "inline TagName adjust${namespace}TagName(TagName tagName)\n";
-        print F "{\n";
-        print F "    switch (tagName) {\n";
-        for my $elementKey (sort byElementNameOrder keys %allElements) {
-            next if $allElements{$elementKey}{namespace} ne $namespace || $allElements{$elementKey}{unadjustedTagEnumValue} eq "";
-            print F "    case TagName::$allElements{$elementKey}{unadjustedTagEnumValue}:\n";
-            print F "        return TagName::$allElements{$elementKey}{tagEnumValue};\n";
-        }
-        print F "    default:\n";
-        print F "        return tagName;\n";
-        print F "    }\n";
-        print F "}\n";
-        print F "\n";
-    }
     print F "} // namespace WebCore\n";
     close F;
 }

@@ -474,6 +474,88 @@ template <bool shouldClose(const HTMLStackItem&)> void HTMLTreeBuilder::processC
     m_tree.insertHTMLElement(WTFMove(token));
 }
 
+static TagName adjustSVGTagName(TagName tagName)
+{
+    switch (tagName) {
+    case TagName::altglyphCaseUnadjusted:
+        return TagName::altGlyph;
+    case TagName::altglyphdefCaseUnadjusted:
+        return TagName::altGlyphDef;
+    case TagName::altglyphitemCaseUnadjusted:
+        return TagName::altGlyphItem;
+    case TagName::animatecolorCaseUnadjusted:
+        return TagName::animateColor;
+    case TagName::animatemotionCaseUnadjusted:
+        return TagName::animateMotion;
+    case TagName::animatetransformCaseUnadjusted:
+        return TagName::animateTransform;
+    case TagName::clippathCaseUnadjusted:
+        return TagName::clipPath;
+    case TagName::feblendCaseUnadjusted:
+        return TagName::feBlend;
+    case TagName::fecolormatrixCaseUnadjusted:
+        return TagName::feColorMatrix;
+    case TagName::fecomponenttransferCaseUnadjusted:
+        return TagName::feComponentTransfer;
+    case TagName::fecompositeCaseUnadjusted:
+        return TagName::feComposite;
+    case TagName::feconvolvematrixCaseUnadjusted:
+        return TagName::feConvolveMatrix;
+    case TagName::fediffuselightingCaseUnadjusted:
+        return TagName::feDiffuseLighting;
+    case TagName::fedisplacementmapCaseUnadjusted:
+        return TagName::feDisplacementMap;
+    case TagName::fedistantlightCaseUnadjusted:
+        return TagName::feDistantLight;
+    case TagName::fedropshadowCaseUnadjusted:
+        return TagName::feDropShadow;
+    case TagName::fefloodCaseUnadjusted:
+        return TagName::feFlood;
+    case TagName::fefuncaCaseUnadjusted:
+        return TagName::feFuncA;
+    case TagName::fefuncbCaseUnadjusted:
+        return TagName::feFuncB;
+    case TagName::fefuncgCaseUnadjusted:
+        return TagName::feFuncG;
+    case TagName::fefuncrCaseUnadjusted:
+        return TagName::feFuncR;
+    case TagName::fegaussianblurCaseUnadjusted:
+        return TagName::feGaussianBlur;
+    case TagName::feimageCaseUnadjusted:
+        return TagName::feImage;
+    case TagName::femergeCaseUnadjusted:
+        return TagName::feMerge;
+    case TagName::femergenodeCaseUnadjusted:
+        return TagName::feMergeNode;
+    case TagName::femorphologyCaseUnadjusted:
+        return TagName::feMorphology;
+    case TagName::feoffsetCaseUnadjusted:
+        return TagName::feOffset;
+    case TagName::fepointlightCaseUnadjusted:
+        return TagName::fePointLight;
+    case TagName::fespecularlightingCaseUnadjusted:
+        return TagName::feSpecularLighting;
+    case TagName::fespotlightCaseUnadjusted:
+        return TagName::feSpotLight;
+    case TagName::fetileCaseUnadjusted:
+        return TagName::feTile;
+    case TagName::feturbulenceCaseUnadjusted:
+        return TagName::feTurbulence;
+    case TagName::foreignobjectCaseUnadjusted:
+        return TagName::foreignObject;
+    case TagName::glyphrefCaseUnadjusted:
+        return TagName::glyphRef;
+    case TagName::lineargradientCaseUnadjusted:
+        return TagName::linearGradient;
+    case TagName::radialgradientCaseUnadjusted:
+        return TagName::radialGradient;
+    case TagName::textpathCaseUnadjusted:
+        return TagName::textPath;
+    default:
+        return tagName;
+    }
+}
+
 static void adjustSVGTagNameCase(AtomHTMLToken& token)
 {
     if (auto currentTagName = token.tagName(); currentTagName != TagName::Unknown)
