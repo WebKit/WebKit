@@ -90,7 +90,7 @@ public:
     // Resets the HistoryItem to its initial state, as returned by create().
     void reset();
 
-    bool operator==(const HistoryItem& other) const { return itemID() == other.itemID(); }
+    bool operator==(const HistoryItem& other) const { return itemID() == other.itemID() && frameItemID() == other.frameItemID(); }
 
     WEBCORE_EXPORT const String& originalURLString() const;
     WEBCORE_EXPORT const String& urlString() const;
