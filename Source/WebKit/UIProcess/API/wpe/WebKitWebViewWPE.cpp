@@ -30,9 +30,18 @@
 #include <wpe/wpe-platform.h>
 #endif
 
-gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest*)
+gboolean webkitWebViewAuthenticate(WebKitWebView*, WebKitAuthenticationRequest* request)
 {
-    return FALSE;
+    switch (webkit_authentication_request_get_scheme(request)) {
+    case WEBKIT_AUTHENTICATION_SCHEME_CLIENT_CERTIFICATE_REQUESTED:
+        webkit_authentication_request_authenticate(request, nullptr);
+        break;
+    default:
+        webkit_authentication_request_cancel(request);
+        break;
+    }
+
+    return TRUE;
 }
 
 gboolean webkitWebViewScriptDialog(WebKitWebView* webview, WebKitScriptDialog* dialog)
