@@ -52,6 +52,7 @@ struct WEBCORE_EXPORT QuirksData {
     bool needsBodyScrollbarWidthNoneDisabledQuirk { false };
     bool needsCanPlayAfterSeekedQuirk { false };
     bool needsChromeMediaControlsPseudoElementQuirk { false };
+    bool needsDisableDOMPasteAccessQuirk { false };
     bool needsMozillaFileTypeForDataTransferQuirk { false };
     bool needsRelaxedCorsMixedContentCheckQuirk { false };
     bool needsResettingTransitionCancelsRunningTransitionQuirk { false };
@@ -79,9 +80,6 @@ struct WEBCORE_EXPORT QuirksData {
     bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk { false };
     bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk { false };
     bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk { false };
-
-    // Requires check at moment of use
-    std::optional<bool> needsDisableDOMPasteAccessQuirk;
 
 #if PLATFORM(IOS_FAMILY)
     bool mayNeedToIgnoreContentObservation { false };

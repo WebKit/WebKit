@@ -750,6 +750,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebsitePoliciesData.serialization.in \
 	Shared/WebsitePopUpPolicy.serialization.in \
 	Shared/WebsitePushAndNotificationsEnabledPolicy.serialization.in \
+    Shared/WebsiteQuirks.serialization.in \
 	Shared/ApplePay/ApplePayPaymentSetupFeatures.serialization.in \
 	Shared/ApplePay/PaymentSetupConfiguration.serialization.in \
 	Shared/Databases/IndexedDB/WebIDBResult.serialization.in \

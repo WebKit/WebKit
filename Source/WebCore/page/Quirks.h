@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -241,6 +241,8 @@ public:
 
     bool needsFacebookStoriesCreationFormQuirk(const Element&, const RenderStyle&) const;
 
+    WEBCORE_EXPORT static std::optional<QuirksData> identifyQuirksForURL(const URL&);
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
@@ -263,10 +265,12 @@ private:
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     mutable WeakPtr<const Element, WeakPtrImplWithEventTargetData> m_facebookStoriesCreationFormContainer;
 
-    mutable QuirksData m_quirksData;
+    mutable std::optional<QuirksData> m_maybeQuirksData;
 
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
     bool m_needsToCopyUserSelectNoneQuirk { false };
+    mutable bool m_didAssessEmbeddedFullscreenQuirk { false };
+    mutable bool m_didAssessDisableDOMPasteAccessQuirk { false };
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
     URL m_topDocumentURLForTesting;

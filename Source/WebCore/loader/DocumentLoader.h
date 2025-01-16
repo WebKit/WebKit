@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -45,6 +45,7 @@
 #include "LinkIcon.h"
 #include "NavigationAction.h"
 #include "NavigationIdentifier.h"
+#include "QuirksData.h"
 #include "ResourceError.h"
 #include "ResourceLoaderIdentifier.h"
 #include "ResourceLoaderOptions.h"
@@ -106,6 +107,7 @@ class SharedBuffer;
 class SubresourceLoader;
 class SubstituteResource;
 class UserContentURLPattern;
+struct WebsiteQuirks;
 
 enum class ClearSiteDataValue : uint8_t;
 enum class LoadWillContinueInAnotherProcess : bool;
@@ -382,6 +384,9 @@ public:
 
     OptionSet<AutoplayQuirk> allowedAutoplayQuirks() const { return m_allowedAutoplayQuirks; }
     void setAllowedAutoplayQuirks(OptionSet<AutoplayQuirk> allowedQuirks) { m_allowedAutoplayQuirks = allowedQuirks; }
+
+    std::optional<QuirksData> maybeQuirksData() const { return m_maybeQuirksData; }
+    WEBCORE_EXPORT void setQuirksData(std::optional<QuirksData>&&);
 
     PopUpPolicy popUpPolicy() const { return m_popUpPolicy; }
     void setPopUpPolicy(PopUpPolicy popUpPolicy) { m_popUpPolicy = popUpPolicy; }
@@ -753,6 +758,7 @@ private:
     HTTPSByDefaultMode m_httpsByDefaultMode { HTTPSByDefaultMode::Disabled };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     PushAndNotificationsEnabledPolicy m_pushAndNotificationsEnabledPolicy { PushAndNotificationsEnabledPolicy::UseGlobalPolicy };
+    std::optional<QuirksData> m_maybeQuirksData;
 
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 

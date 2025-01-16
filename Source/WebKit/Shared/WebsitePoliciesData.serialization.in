@@ -83,4 +83,5 @@ struct WebKit::WebsitePoliciesData {
     bool allowPrivacyProxy;
     bool allowSiteSpecificQuirksToOverrideContentMode;
     WebKit::WebsitePushAndNotificationsEnabledPolicy pushAndNotificationsEnabledPolicy;
+    std::optional<WebCore::QuirksData> maybeSiteQuirks;
 };

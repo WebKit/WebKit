@@ -8897,3 +8897,153 @@ header: <WebCore/DocumentClasses.h>
 #endif
     PDF
 };
+
+#if ENABLE(TOUCH_EVENTS)
+[Nested] enum class WebCore::QuirksData::ShouldDispatchSimulatedMouseEvents : uint8_t {
+    Unknown,
+    No,
+    DependingOnTargetFor_mybinder_org,
+    Yes,
+};
+#endif
+
+header: <WebCore/QuirksData.h>
+struct WebCore::QuirksData {
+    bool isAmazon;
+    bool isBankOfAmerica;
+    bool isBing;
+    bool isCBSSports;
+    bool isESPN;
+    bool isFacebook;
+    bool isGoogleDocs;
+    bool isGoogleProperty;
+    bool isGoogleMaps;
+    bool isNetflix;
+    bool isSoundCloud;
+    bool isSpotify;
+    bool isThesaurus;
+    bool isVimeo;
+    bool isWebEx;
+    bool isYouTube;
+    bool isZoom;
+
+    bool hasBrokenEncryptedMediaAPISupportQuirk;
+    bool implicitMuteWhenVolumeSetToZero;
+    bool maybeBypassBackForwardCache;
+    bool needsBingGestureEventQuirk;
+    bool needsBodyScrollbarWidthNoneDisabledQuirk;
+    bool needsCanPlayAfterSeekedQuirk;
+    bool needsChromeMediaControlsPseudoElementQuirk;
+    bool needsDisableDOMPasteAccessQuirk;
+    bool needsMozillaFileTypeForDataTransferQuirk;
+    bool needsRelaxedCorsMixedContentCheckQuirk;
+    bool needsResettingTransitionCancelsRunningTransitionQuirk;
+    bool needsScrollbarWidthThinDisabledQuirk;
+    bool needsSeekingSupportDisabledQuirk;
+    bool needsVP9FullRangeFlagQuirk;
+    bool needsVideoShouldMaintainAspectRatioQuirk;
+    bool returnNullPictureInPictureElementDuringFullscreenChangeQuirk;
+    bool shouldAllowDownloadsInSpiteOfCSPQuirk;
+    bool shouldAutoplayWebAudioForArbitraryUserGestureQuirk;
+    bool shouldAvoidResizingWhenInputViewBoundsChangeQuirk;
+    bool shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk;
+    bool shouldBypassAsyncScriptDeferring;
+    bool shouldDisableDataURLPaddingValidation;
+    bool shouldDisableElementFullscreen;
+    bool shouldDisableFetchMetadata;
+    bool shouldDisableLazyIframeLoadingQuirk;
+    bool shouldDisablePushStateFilePathRestrictions;
+    bool shouldDisableWritingSuggestionsByDefaultQuirk;
+    bool shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk;
+    bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPreventedQuirk;
+    bool shouldEnableFontLoadingAPIQuirk;
+    bool shouldExposeShowModalDialog;
+    bool shouldIgnorePlaysInlineRequirementQuirk;
+    bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk;
+    bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk;
+    bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk;
+
+#if PLATFORM(IOS_FAMILY)
+    bool mayNeedToIgnoreContentObservation;
+    bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk;
+    bool needsFullscreenDisplayNoneQuirk;
+    bool needsFullscreenObjectFitQuirk;
+    bool needsGMailOverflowScrollQuirk;
+    bool needsGoogleMapsScrollingQuirk;
+    bool needsIPadSkypeOverflowScrollQuirk;
+    bool needsPreloadAutoQuirk;
+    bool needsScriptToEvaluateBeforeRunningScriptFromURLQuirk;
+    bool needsYouTubeMouseOutQuirk;
+    bool needsYouTubeOverflowScrollQuirk;
+    bool shouldAvoidPastingImagesAsWebContent;
+    bool shouldDisablePointerEventsQuirk;
+    bool shouldEnableApplicationCacheQuirk;
+    bool shouldIgnoreAriaForFastPathContentObservationCheckQuirk;
+    bool shouldNavigatorPluginsBeEmpty;
+    bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk;
+    bool shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk;
+#endif
+
+#if PLATFORM(IOS)
+    bool needsGetElementsByNameQuirk;
+#endif
+
+#if PLATFORM(IOS) || PLATFORM(VISION)
+    bool allowLayeredFullscreenVideos;
+    bool shouldSilenceMediaQueryListChangeEvents;
+    bool shouldSilenceResizeObservers;
+    bool shouldSilenceWindowResizeEvents;
+#endif
+
+#if PLATFORM(VISION)
+    bool shouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk;
+#endif
+
+#if PLATFORM(MAC)
+    bool isNeverRichlyEditableForTouchBarQuirk;
+    bool isTouchBarUpdateSuppressedForHiddenContentEditableQuirk;
+    bool needsFormControlToBeMouseFocusableQuirk;
+    bool needsPrimeVideoUserSelectNoneQuirk;
+    bool shouldAvoidStartingSelectionOnMouseDown;
+#endif
+
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
+    bool needsZeroMaxTouchPointsQuirk;
+    bool shouldHideCoarsePointerCharacteristicsQuirk;
+#endif
+
+#if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
+    bool shouldFlipScreenDimensionsQuirk;
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    bool shouldDisableImageCaptureQuirk;
+    bool shouldEnableLegacyGetUserMediaQuirk;
+#endif
+
+#if ENABLE(META_VIEWPORT)
+    bool shouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk;
+#endif
+
+#if ENABLE(TEXT_AUTOSIZING)
+    bool shouldIgnoreTextAutoSizingQuirk;
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+    QuirksData::ShouldDispatchSimulatedMouseEvents shouldDispatchSimulatedMouseEventsQuirk { WebCore::QuirksData::ShouldDispatchSimulatedMouseEvents::Unknown };
+    bool shouldDispatchPointerOutAfterHandlingSyntheticClick;
+    bool shouldPreventDispatchOfTouchEventQuirk;
+#endif
+
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
+    bool blocksEnteringStandardFullscreenFromPictureInPictureQuirk;
+    bool blocksReturnToFullscreenFromPictureInPictureQuirk;
+#endif
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    bool requiresUserGestureToLoadInPictureInPictureQuirk;
+    bool requiresUserGestureToPauseInPictureInPictureQuirk;
+    bool shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
+    bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
+#endif
+};
