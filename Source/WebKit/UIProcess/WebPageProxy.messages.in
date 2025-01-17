@@ -251,14 +251,14 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(WRITING_TOOLS)
-    ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
+    [EnabledBy=TextAnimationsEnabled] ProofreadingSessionShowDetailsForSuggestionWithIDRelativeToRect(struct WebCore::WritingTools::TextSuggestion::ID replacementID, WebCore::IntRect selectionBoundsInRootView)
 
-    ProofreadingSessionUpdateStateForSuggestionWithID(enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
+    [EnabledBy=TextAnimationsEnabled] ProofreadingSessionUpdateStateForSuggestionWithID(enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion::ID replacementID)
 
-    AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData)
-    AddTextAnimationForAnimationIDWithCompletionHandler(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData) -> (enum:uint8_t WebCore::TextAnimationRunMode runMode)
-    RemoveTextAnimationForAnimationID(WTF::UUID uuid)
-    DidEndPartialIntelligenceTextAnimation()
+    [EnabledBy=TextAnimationsEnabled] AddTextAnimationForAnimationID(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData)
+    [EnabledBy=TextAnimationsEnabled] AddTextAnimationForAnimationIDWithCompletionHandler(WTF::UUID uuid, struct WebCore::TextAnimationData styleData, struct WebCore::TextIndicatorData indicatorData) -> (enum:uint8_t WebCore::TextAnimationRunMode runMode)
+    [EnabledBy=TextAnimationsEnabled] RemoveTextAnimationForAnimationID(WTF::UUID uuid)
+    [EnabledBy=TextAnimationsEnabled] DidEndPartialIntelligenceTextAnimation()
 #endif
 
 #if ENABLE(MEDIA_CONTROLS_CONTEXT_MENUS) && USE(UICONTEXTMENU)
