@@ -818,10 +818,6 @@ webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFail
 
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
-# These seem to be like the above, but they fail locally on Yosemite with AMD graphics (Mac Pro Late 2013).
-fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
-fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
-
 # Underlines' starting and ending positions need to be pixel-snapped
 
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
