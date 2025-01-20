@@ -209,14 +209,6 @@ class GenerationContext:
         to.write("%%\n")
 
     def _generate_name_string_tables(self, *, to):
-        to.write(f"constexpr ASCIILiteral valueList[] = {{\n")
-        to.write(f"    \"\"_s,\n")
-
-        for value in self.values:
-            to.write(f"    \"{value.name}\"_s,\n")
-
-        to.write(f"    ASCIILiteral()\n")
-        to.write(f"}};\n")
         to.write(f"constexpr ASCIILiteral valueListForSerialization[] = {{\n")
         to.write(f"    \"\"_s,\n")
 
@@ -238,16 +230,14 @@ class GenerationContext:
             {
                 if (static_cast<uint16_t>(id) >= numCSSValueKeywords)
                     return { };
-                return valueList[id];
+                return valueListForSerialization[id];
             }
 
             // When serializing a CSS keyword, it should be converted to ASCII lowercase.
             // https://drafts.csswg.org/cssom/#serialize-a-css-component-value
             ASCIILiteral nameLiteralForSerialization(CSSValueID id)
             {
-                if (static_cast<uint16_t>(id) >= numCSSValueKeywords)
-                    return { };
-                return valueListForSerialization[id];
+                return nameLiteral(id);
             }
 
             const AtomString& nameString(CSSValueID id)
@@ -258,7 +248,7 @@ class GenerationContext:
                 static NeverDestroyed<std::array<AtomString, numCSSValueKeywords>> strings;
                 auto& string = strings.get()[id];
                 if (string.isNull())
-                    string = valueList[id];
+                    string = valueListForSerialization[id];
                 return string;
             }
 
@@ -266,14 +256,7 @@ class GenerationContext:
             // https://drafts.csswg.org/cssom/#serialize-a-css-component-value
             const AtomString& nameStringForSerialization(CSSValueID id)
             {
-                if (static_cast<uint16_t>(id) >= numCSSValueKeywords)
-                    return nullAtom();
-
-                static NeverDestroyed<std::array<AtomString, numCSSValueKeywords>> strings;
-                auto& string = strings.get()[id];
-                if (string.isNull())
-                    string = valueListForSerialization[id];
-                return string;
+                return nameString(id);
             }
 
             """))
