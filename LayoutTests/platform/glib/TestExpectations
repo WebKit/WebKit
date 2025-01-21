@@ -2004,7 +2004,7 @@ webkit.org/b/221021 webanimations/combining-transform-animations-with-different-
 webkit.org/b/221021 webanimations/combining-transform-animations-with-different-acceleration-capabilities.html [ Skip ]
 
 webkit.org/b/281211 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Crash ]
-
+webkit.org/b/281211 [ Debug ] fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Crash ]
 webkit.org/b/281211 [ Debug ] http/wpt/mediastream/transfer-videotrackgenerator-track.html [ Crash ]
 webkit.org/b/281211 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-in-auto-subtree.html [ Crash ]
 webkit.org/b/281211 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-entry.html [ Crash ]
@@ -2241,6 +2241,7 @@ webkit.org/b/235885 webrtc/peerconnection-page-cache.html [ Timeout ]
 webkit.org/b/235885 webrtc/video-stats.html [ Failure ]
 webkit.org/b/235885 webrtc/vp8-then-h264.html [ Failure Timeout Crash ]
 webkit.org/b/252878 fast/mediastream/mediastreamtrack-video-clone.html [ Failure ]
+webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Pass Timeout ]
 # webkit.org/b/252878 fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Pass Timeout ]
 webkit.org/b/252878 http/tests/webrtc/video-mediastream-invisible-autoplay-detached.html [ Pass Timeout ]
 webkit.org/b/187064 webrtc/video-addTrack.html [ Failure Pass Timeout ]
@@ -2868,10 +2869,6 @@ fast/mediastream/captureInGPUProcess.html [ Skip ]
 fast/mediastream/video-rotation-gpu-process-crash.html [ Skip ]
 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable-gpuprocess.html [ Skip ]
 webgl/webgl-fail-after-context-creation-no-crash.html [ Skip ]
-fast/mediastream/mediastreamtrack-clone-muted.html [ Skip ]
-fast/mediastream/video-background-with-canvas.html [ Skip ]
-fast/mediastream/video-mediastream-restricted-invisible-autoplay-not-allowed.html [ Skip ]
-fast/mediastream/video-mediastream-restricted-invisible-autoplay-user-click.html [ Skip ]
 
 # Payment Request
 imported/w3c/web-platform-tests/payment-request [ Skip ]
