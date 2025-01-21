@@ -25,11 +25,11 @@
 
 #pragma once
 
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeWeakHashSet.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/URL.h>
-#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 // All of these methods should be called on the Main Thread.
@@ -42,7 +42,7 @@ class WorkerThread;
 
 enum class WorkerThreadStartMode;
 
-class WorkerInspectorProxy : public RefCounted<WorkerInspectorProxy>, public CanMakeWeakPtr<WorkerInspectorProxy, WeakPtrFactoryInitialization::Eager> {
+class WorkerInspectorProxy : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WorkerInspectorProxy> {
     WTF_MAKE_TZONE_ALLOCATED(WorkerInspectorProxy);
     WTF_MAKE_NONCOPYABLE(WorkerInspectorProxy);
 public:
@@ -60,7 +60,7 @@ public:
         virtual void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&&) = 0;
     };
 
-    static WeakHashSet<WorkerInspectorProxy> allWorkerInspectorProxiesCopy();
+    static const ThreadSafeWeakHashSet<WorkerInspectorProxy>& allWorkerInspectorProxies();
 
     const URL& url() const { return m_url; }
     const String& name() const { return m_name; }

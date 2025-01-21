@@ -42,16 +42,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorProxy);
 
 using namespace Inspector;
 
-static Lock proxiesLock;
-static WeakHashSet<WorkerInspectorProxy>& proxies() WTF_REQUIRES_LOCK(proxiesLock)
+static ThreadSafeWeakHashSet<WorkerInspectorProxy>& proxies()
 {
-    static NeverDestroyed<WeakHashSet<WorkerInspectorProxy>> proxies;
+    static NeverDestroyed<ThreadSafeWeakHashSet<WorkerInspectorProxy>> proxies;
     return proxies;
 }
 
-WeakHashSet<WorkerInspectorProxy> WorkerInspectorProxy::allWorkerInspectorProxiesCopy()
+const ThreadSafeWeakHashSet<WorkerInspectorProxy>& WorkerInspectorProxy::allWorkerInspectorProxies()
 {
-    Locker lock { proxiesLock };
     return proxies();
 }
 
@@ -79,10 +77,7 @@ void WorkerInspectorProxy::workerStarted(ScriptExecutionContext* scriptExecution
     m_workerThread = thread;
     m_url = url;
     m_name = name;
-    {
-        Locker lock { proxiesLock };
-        proxies().add(*this);
-    }
+    proxies().add(*this);
 
     InspectorInstrumentation::workerStarted(*this);
 }
@@ -93,10 +88,7 @@ void WorkerInspectorProxy::workerTerminated()
         return;
 
     InspectorInstrumentation::workerTerminated(*this);
-    {
-        Locker lock { proxiesLock };
-        proxies().remove(*this);
-    }
+    proxies().remove(*this);
 
     m_scriptExecutionContext = nullptr;
     m_workerThread = nullptr;

@@ -44,7 +44,7 @@ WorkerWorkerAgent::~WorkerWorkerAgent() = default;
 
 void WorkerWorkerAgent::connectToAllWorkerInspectorProxies()
 {
-    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxiesCopy()) {
+    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxies()) {
         if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(proxy->scriptExecutionContext())) {
             if (globalScope == &m_globalScope)
                 connectToWorkerInspectorProxy(proxy);

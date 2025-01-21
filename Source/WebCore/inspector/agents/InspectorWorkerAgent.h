@@ -73,7 +73,7 @@ private:
     std::unique_ptr<Inspector::WorkerFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::WorkerBackendDispatcher> m_backendDispatcher;
 
-    MemoryCompactRobinHoodHashMap<String, WeakPtr<WorkerInspectorProxy>> m_connectedProxies;
+    MemoryCompactRobinHoodHashMap<String, ThreadSafeWeakPtr<WorkerInspectorProxy>> m_connectedProxies;
     bool m_enabled { false };
 };
 

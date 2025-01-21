@@ -44,7 +44,7 @@ PageWorkerAgent::~PageWorkerAgent() = default;
 
 void PageWorkerAgent::connectToAllWorkerInspectorProxies()
 {
-    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxiesCopy()) {
+    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxies()) {
         if (auto* document = dynamicDowncast<Document>(proxy->scriptExecutionContext())) {
             if (document->page() == &m_page)
                 connectToWorkerInspectorProxy(proxy);
