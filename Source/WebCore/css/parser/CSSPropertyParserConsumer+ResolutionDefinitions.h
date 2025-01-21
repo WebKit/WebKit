@@ -36,7 +36,7 @@ struct ResolutionValidator {
         return CSS::UnitTraits<CSS::ResolutionUnit>::validate(unitType);
     }
 
-    template<auto R> static bool isValid(CSS::ResolutionRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::ResolutionRaw<R, V> raw, CSSPropertyParserOptions)
     {
         return isValidDimensionValue(raw, [&] {
             auto canonicalValue = CSS::canonicalize(raw);
@@ -45,9 +45,9 @@ struct ResolutionValidator {
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::Resolution<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Resolution<R>>;
-    using DimensionToken = DimensionConsumer<CSS::Resolution<R>, ResolutionValidator>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Resolution<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Resolution<R, V>>;
+    using DimensionToken = DimensionConsumer<CSS::Resolution<R, V>, ResolutionValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

@@ -610,18 +610,18 @@ bool RenderStyle::isIdempotentTextAutosizingCandidate(AutosizeStatus status) con
             if (whiteSpace() == WhiteSpace::NoWrap) {
                 if (width().isFixed())
                     return false;
-                if (height().isFixed() && specifiedLineHeight().isFixed()) {
+                if (auto fixedHeight = height().fixed(); fixedHeight && specifiedLineHeight().isFixed()) {
                     float specifiedSize = specifiedFontSize();
-                    if (height().value() == specifiedSize && specifiedLineHeight().value() == specifiedSize)
+                    if (*fixedHeight == specifiedSize && specifiedLineHeight().value() == specifiedSize)
                         return false;
                 }
                 return true;
             }
             if (fields.contains(AutosizeStatus::Fields::Floating)) {
-                if (specifiedLineHeight().isFixed() && height().isFixed()) {
+                if (auto fixedHeight = height().fixed(); fixedHeight && specifiedLineHeight().isFixed()) {
                     float specifiedSize = specifiedFontSize();
                     if (specifiedLineHeight().value() - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText
-                        && height().value() - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText) {
+                        && fixedHeight->value - specifiedSize > smallMinimumDifferenceThresholdBetweenLineHeightAndSpecifiedFontSizeForBoostingText) {
                         return true;
                     }
                 }
@@ -673,7 +673,7 @@ void RenderStyle::setAutosizeStatus(AutosizeStatus autosizeStatus)
 
 #endif // ENABLE(TEXT_AUTOSIZING)
 
-static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b, const Length& width)
+static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b, const Style::PreferredSize& width)
 {
     // If any unit types are different, then we can't guarantee
     // that this was just a movement.
@@ -692,7 +692,7 @@ static bool positionChangeIsMovementOnly(const LengthBox& a, const LengthBox& b,
         return false;
     // If our width is auto and left or right is specified then this 
     // is not just a movement - we need to resize to our container.
-    if ((!a.left().isIntrinsicOrAuto() || !a.right().isIntrinsicOrAuto()) && width.isIntrinsicOrAuto())
+    if ((!a.left().isIntrinsicOrAuto() || !a.right().isIntrinsicOrAuto()) && !width.isSpecified())
         return false;
 
     // One of the units is fixed or percent in both directions and stayed

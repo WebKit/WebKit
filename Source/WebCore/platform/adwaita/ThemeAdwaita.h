@@ -45,8 +45,8 @@ public:
     void setAccentColor(const Color&);
     Color accentColor();
 private:
-    LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
-    LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const final;
+    ThemeControlSizeOverride controlSize(StyleAppearance, const FontCascade&, const ThemeControlSizeInput&, float) const final;
+    ThemeControlMinimumSizeOverride minimumControlSize(StyleAppearance, const FontCascade&, const ThemeControlMinimumSizeInput&, float) const final;
     LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox&, float) const final;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)

@@ -60,17 +60,17 @@ template<Numeric StyleType> struct Blending<StyleType> {
 
 // MARK: Interpolation of mixed numeric types
 // https://drafts.csswg.org/css-values/#combine-mixed
-template<auto R> struct Blending<LengthPercentage<R>> {
-    constexpr auto canBlend(const LengthPercentage<R>&, const LengthPercentage<R>&) -> bool
+template<auto R, typename V> struct Blending<LengthPercentage<R, V>> {
+    constexpr auto canBlend(const LengthPercentage<R, V>&, const LengthPercentage<R, V>&) -> bool
     {
         return true;
     }
 
-    auto blend(const LengthPercentage<R>& from, const LengthPercentage<R>& to, const BlendingContext& context) -> LengthPercentage<R>
+    auto blend(const LengthPercentage<R, V>& from, const LengthPercentage<R, V>& to, const BlendingContext& context) -> LengthPercentage<R, V>
     {
-        using Length = typename LengthPercentage<R>::Dimension;
-        using Percentage = typename LengthPercentage<R>::Percentage;
-        using Calc = typename LengthPercentage<R>::Calc;
+        using Length = typename LengthPercentage<R, V>::Dimension;
+        using Percentage = typename LengthPercentage<R, V>::Percentage;
+        using Calc = typename LengthPercentage<R, V>::Calc;
 
         // Interpolation of dimension-percentage value combinations (e.g. <length-percentage>, <frequency-percentage>,
         // <angle-percentage>, <time-percentage> or equivalent notations) is defined as:

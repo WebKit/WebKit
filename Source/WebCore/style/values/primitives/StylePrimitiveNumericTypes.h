@@ -124,6 +124,10 @@ using LengthPercentageAll = LengthPercentage<CSS::All>;
 using LengthPercentageNonnegative = LengthPercentage<CSS::Nonnegative>;
 
 // Standard Percentages
+using PercentageAll = Percentage<CSS::All>;
+using PercentageNonnegative = Percentage<CSS::Nonnegative>;
+using PercentageAllFloat = Percentage<CSS::All, float>;
+using PercentageNonnegativeFloat = Percentage<CSS::Nonnegative, float>;
 using Percentage0To100 = LengthPercentage<CSS::Range{0,100}>;
 
 // Standard Points

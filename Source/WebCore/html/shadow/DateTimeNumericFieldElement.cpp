@@ -83,9 +83,9 @@ void DateTimeNumericFieldElement::adjustMinInlineSize(RenderStyle& style) const
     }
 
     if (style.writingMode().isHorizontal())
-        style.setMinWidth({ inlineSize, LengthType::Fixed });
+        style.setMinWidth(Style::MinimumSize::Fixed { inlineSize });
     else
-        style.setMinHeight({ inlineSize, LengthType::Fixed });
+        style.setMinHeight(Style::MinimumSize::Fixed { inlineSize });
 }
 
 int DateTimeNumericFieldElement::maximum() const

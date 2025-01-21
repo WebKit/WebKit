@@ -88,6 +88,7 @@
 namespace WebCore {
 namespace Style {
 
+using namespace CSS::Literals;
 using namespace HTMLNames;
 
 Adjuster::Adjuster(const Document& document, const RenderStyle& parentStyle, const RenderStyle* parentBoxStyle, Element* element)
@@ -106,7 +107,7 @@ static void addIntrinsicMargins(RenderStyle& style)
 
     // FIXME: Using width/height alone and not also dealing with min-width/max-width is flawed.
     // FIXME: Using "hasQuirk" to decide the margin wasn't set is kind of lame.
-    if (style.width().isIntrinsicOrAuto()) {
+    if (!style.width().isSpecified()) {
         if (style.marginLeft().hasQuirk())
             style.setMarginLeft(WebCore::Length(intrinsicMargin, LengthType::Fixed));
         if (style.marginRight().hasQuirk())
@@ -590,7 +591,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             }
             // Apparently this is the expected legacy behavior.
             if (isVertical && style.height().isAuto())
-                style.setHeight(WebCore::Length(200, LengthType::Fixed));
+                style.setHeight(200_css_px);
         }
 
         if (UNLIKELY(m_element->visibilityAdjustment().contains(VisibilityAdjustment::Subtree) || m_parentStyle.isInVisibilityAdjustmentSubtree()))
@@ -907,15 +908,15 @@ void Adjuster::adjustThemeStyle(RenderStyle& style, const RenderStyle* userAgent
     if (style.containsSize()) {
         if (style.containIntrinsicWidthType() != ContainIntrinsicSizeType::None) {
             if (isOldWidthAuto)
-                style.setWidth(WebCore::Length(LengthType::Auto));
+                style.setWidth(CSS::Keyword::Auto { });
             if (isOldMinWidthAuto)
-                style.setMinWidth(WebCore::Length(LengthType::Auto));
+                style.setMinWidth(CSS::Keyword::Auto { });
         }
         if (style.containIntrinsicHeightType() != ContainIntrinsicSizeType::None) {
             if (isOldHeightAuto)
-                style.setHeight(WebCore::Length(LengthType::Auto));
+                style.setHeight(CSS::Keyword::Auto { });
             if (isOldMinHeightAuto)
-                style.setMinHeight(WebCore::Length(LengthType::Auto));
+                style.setMinHeight(CSS::Keyword::Auto { });
         }
     }
 }
@@ -964,10 +965,10 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             && style.flexGrow() == 1
             && style.flexShrink() == 1
             && (flexBasis.isPercent() || flexBasis.isFixed())
-            && flexBasis.value() == 0
+            && flexBasis.isZero()
             && m_element->hasClassName(class1)
             && m_element->hasClassName(class2))
-            style.setMinHeight(WebCore::Length(0, LengthType::Fixed));
+            style.setMinHeight(0_css_px);
     }
     if (m_document->quirks().needsPrimeVideoUserSelectNoneQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("webPlayerSDKUiContainer"_s);

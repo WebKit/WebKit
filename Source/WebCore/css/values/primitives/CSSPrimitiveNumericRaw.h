@@ -178,53 +178,53 @@ template<Range R = All, typename V = int> struct IntegerRaw : PrimitiveNumericRa
 
 // MARK: Number Primitive Raw
 
-template<Range R = All> struct NumberRaw : PrimitiveNumericRaw<R, NumberUnit, double> {
-    using Base = PrimitiveNumericRaw<R, NumberUnit, double>;
+template<Range R = All, typename V = double> struct NumberRaw : PrimitiveNumericRaw<R, NumberUnit, V> {
+    using Base = PrimitiveNumericRaw<R, NumberUnit, V>;
     using Base::Base;
 };
 
 // MARK: Percentage Primitive Raw
 
-template<Range R = All> struct PercentageRaw : PrimitiveNumericRaw<R, PercentageUnit, double> {
-    using Base = PrimitiveNumericRaw<R, PercentageUnit, double>;
+template<Range R = All, typename V = double> struct PercentageRaw : PrimitiveNumericRaw<R, PercentageUnit, V> {
+    using Base = PrimitiveNumericRaw<R, PercentageUnit, V>;
     using Base::Base;
 };
 
 // MARK: Dimension Primitives Raw
 
-template<Range R = All> struct AngleRaw : PrimitiveNumericRaw<R, AngleUnit, double> {
-    using Base = PrimitiveNumericRaw<R, AngleUnit, double>;
+template<Range R = All, typename V = double> struct AngleRaw : PrimitiveNumericRaw<R, AngleUnit, V> {
+    using Base = PrimitiveNumericRaw<R, AngleUnit, V>;
     using Base::Base;
 };
-template<Range R = All> struct LengthRaw : PrimitiveNumericRaw<R, LengthUnit, float> {
-    using Base = PrimitiveNumericRaw<R, LengthUnit, float>;
+template<Range R = All, typename V = float> struct LengthRaw : PrimitiveNumericRaw<R, LengthUnit, V> {
+    using Base = PrimitiveNumericRaw<R, LengthUnit, V>;
     using Base::Base;
 };
-template<Range R = All> struct TimeRaw : PrimitiveNumericRaw<R, TimeUnit, double> {
-    using Base = PrimitiveNumericRaw<R, TimeUnit, double>;
+template<Range R = All, typename V = double> struct TimeRaw : PrimitiveNumericRaw<R, TimeUnit, V> {
+    using Base = PrimitiveNumericRaw<R, TimeUnit, V>;
     using Base::Base;
 };
-template<Range R = All> struct FrequencyRaw : PrimitiveNumericRaw<R, FrequencyUnit, double> {
-    using Base = PrimitiveNumericRaw<R, FrequencyUnit, double>;
+template<Range R = All, typename V = double> struct FrequencyRaw : PrimitiveNumericRaw<R, FrequencyUnit, V> {
+    using Base = PrimitiveNumericRaw<R, FrequencyUnit, V>;
     using Base::Base;
 };
-template<Range R = Nonnegative> struct ResolutionRaw : PrimitiveNumericRaw<R, ResolutionUnit, double> {
-    using Base = PrimitiveNumericRaw<R, ResolutionUnit, double>;
+template<Range R = Nonnegative, typename V = double> struct ResolutionRaw : PrimitiveNumericRaw<R, ResolutionUnit, V> {
+    using Base = PrimitiveNumericRaw<R, ResolutionUnit, V>;
     using Base::Base;
 };
-template<Range R = All> struct FlexRaw : PrimitiveNumericRaw<R, FlexUnit, double> {
-    using Base = PrimitiveNumericRaw<R, FlexUnit, double>;
+template<Range R = All, typename V = double> struct FlexRaw : PrimitiveNumericRaw<R, FlexUnit, V> {
+    using Base = PrimitiveNumericRaw<R, FlexUnit, V>;
     using Base::Base;
 };
 
 // MARK: Dimension + Percentage Primitives Raw
 
-template<Range R = All> struct AnglePercentageRaw : PrimitiveNumericRaw<R, AnglePercentageUnit, double> {
-    using Base = PrimitiveNumericRaw<R, AnglePercentageUnit, double>;
+template<Range R = All, typename V = double> struct AnglePercentageRaw : PrimitiveNumericRaw<R, AnglePercentageUnit, V> {
+    using Base = PrimitiveNumericRaw<R, AnglePercentageUnit, V>;
     using Base::Base;
 };
-template<Range R = All> struct LengthPercentageRaw : PrimitiveNumericRaw<R, LengthPercentageUnit, double> {
-    using Base = PrimitiveNumericRaw<R, LengthPercentageUnit, double>;
+template<Range R = All, typename V = float> struct LengthPercentageRaw : PrimitiveNumericRaw<R, LengthPercentageUnit, V> {
+    using Base = PrimitiveNumericRaw<R, LengthPercentageUnit, V>;
     using Base::Base;
 };
 

@@ -31,16 +31,18 @@
 
 namespace TestWebKitAPI {
 
+using namespace WebCore::CSS::Literals;
+
 static WebCore::Style::GradientLinearColorStopList cacheableStops()
 {
     return {
         {
             WebCore::Style::Color { WebCore::Style::ResolvedColor { WebCore::Color::red } },
-            WebCore::Style::Percentage<> { 50 }
+            50_css_percentage
         },
         {
             WebCore::Style::Color { WebCore::Style::ResolvedColor { WebCore::Color::blue } },
-            WebCore::Style::Percentage<> { 100 }
+            100_css_percentage
         }
     };
 }
@@ -50,11 +52,11 @@ static WebCore::Style::GradientLinearColorStopList someUncacheableStops()
     return {
         {
             WebCore::Style::Color { WebCore::Style::CurrentColor { } },
-            WebCore::Style::Percentage<> { 50 }
+            50_css_percentage
         },
         {
             WebCore::Style::Color { WebCore::Style::ResolvedColor { WebCore::Color::blue } },
-            WebCore::Style::Percentage<> { 100 }
+            100_css_percentage
         }
     };
 }
@@ -64,11 +66,11 @@ static WebCore::Style::GradientLinearColorStopList allUncacheableStops()
     return {
         {
             WebCore::Style::Color { WebCore::Style::CurrentColor { } },
-            WebCore::Style::Percentage<> { 50 }
+            50_css_percentage
         },
         {
             WebCore::Style::Color { WebCore::Style::CurrentColor { } },
-            WebCore::Style::Percentage<> { 100 }
+            100_css_percentage
         }
     };
 }

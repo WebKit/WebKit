@@ -41,6 +41,24 @@ class ScrollView;
 
 struct LengthSize;
 
+struct ThemeControlSizeInput {
+    bool specifiedWidth;
+    bool specifiedHeight;
+};
+struct ThemeControlSizeOverride {
+    std::optional<float> overrideWidth;
+    std::optional<float> overrideHeight;
+};
+
+struct ThemeControlMinimumSizeInput {
+    bool specifiedMinWidth;
+    bool specifiedMinHeight;
+};
+struct ThemeControlMinimumSizeOverride {
+    std::optional<float> overrideMinWidth;
+    std::optional<float> overrideMinHeight;
+};
+
 class Theme {
 public:
     static Theme& singleton();
@@ -48,12 +66,12 @@ public:
     // The font description result should have a zoomed font size.
     virtual std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float) const;
 
-    // The size here is in zoomed coordinates already. If a new size is returned, it also needs to be in zoomed coordinates.
-    virtual LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const;
+    // Returns override preferred sizes for a control in zoomed coordinates.
+    virtual ThemeControlSizeOverride controlSize(StyleAppearance, const FontCascade&, const ThemeControlSizeInput&, float) const;
 
-    // Returns the minimum size for a control in zoomed coordinates.
-    LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoomFactor) const;
-    
+    // Returns override minimum sizes for a control in zoomed coordinates.
+    virtual ThemeControlMinimumSizeOverride minimumControlSize(StyleAppearance, const FontCascade&, const ThemeControlMinimumSizeInput& zoomedSize, float zoomFactor) const;
+
     // Allows the theme to modify the existing padding/border.
     virtual LengthBox controlPadding(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const;
     virtual LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const;
@@ -70,8 +88,6 @@ public:
 protected:
     Theme() = default;
     virtual ~Theme() = default;
-
-    virtual LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, float zoomFactor) const;
 
 private:
     Theme(const Theme&) = delete;

@@ -55,7 +55,9 @@ DEFINE_TYPE_MAPPING(CSS::ScrollMargin, ScrollMargin)
 
 // MARK: - Conversion
 
-ScrollMarginEdge scrollMarginEdgeFromCSSValue(const CSSValue&, const BuilderState&);
+template<> struct CSSValueConversions<ScrollMarginEdge> {
+    ScrollMarginEdge operator()(const CSSValue&, const BuilderState&);
+};
 
 // MARK: - Evaluation
 

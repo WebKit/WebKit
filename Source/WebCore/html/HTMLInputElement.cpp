@@ -94,6 +94,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLInputElement);
 
+using namespace CSS::Literals;
 using namespace HTMLNames;
 
 #if ENABLE(DATALIST_ELEMENT)
@@ -2351,10 +2352,10 @@ static Ref<StyleGradientImage> autoFillStrongPasswordMaskImage()
         FunctionNotation<CSSValueLinearGradient, Style::LinearGradient> {
             .parameters = {
                 .colorInterpolationMethod = Style::GradientColorInterpolationMethod::legacyMethod(AlphaPremultiplication::Unpremultiplied),
-                .gradientLine = { Style::Angle<> { 90 } },
+                .gradientLine = { 90_css_deg },
                 .stops = {
-                    { Style::Color { Color::black },            Style::LengthPercentage<> { Style::Percentage<> { 50 } } },
-                    { Style::Color { Color::transparentBlack }, Style::LengthPercentage<> { Style::Percentage<> { 100 } } }
+                    { Style::Color { Color::black },            50_css_percentage },
+                    { Style::Color { Color::transparentBlack }, 100_css_percentage },
                 }
             }
         }
@@ -2378,7 +2379,7 @@ RenderStyle HTMLInputElement::createInnerTextStyle(const RenderStyle& style)
 
     if (hasAutofillStrongPasswordButton() && isMutable()) {
         textBlockStyle.setDisplay(DisplayType::InlineBlock);
-        textBlockStyle.setLogicalMaxWidth(Length { 100, LengthType::Percent });
+        textBlockStyle.setLogicalMaxWidth(100_css_percentage);
         textBlockStyle.setColor(Color::black.colorWithAlphaByte(153));
         textBlockStyle.setTextOverflow(TextOverflow::Clip);
         textBlockStyle.setMaskImage(autoFillStrongPasswordMaskImage());

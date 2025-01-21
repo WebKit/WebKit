@@ -40,18 +40,18 @@ struct LengthPercentageValidator {
         return std::nullopt;
     }
 
-    template<auto R> static bool isValid(CSS::LengthPercentageRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::LengthPercentageRaw<R, V> raw, CSSPropertyParserOptions)
     {
         // Values other than 0 and +/-∞ are not supported for <length-percentage> numeric ranges currently.
         return isValidNonCanonicalizableDimensionValue(raw);
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::LengthPercentage<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::LengthPercentage<R>>;
-    using DimensionToken = DimensionConsumer<CSS::LengthPercentage<R>, LengthPercentageValidator>;
-    using PercentageToken = PercentageConsumer<CSS::LengthPercentage<R>, LengthPercentageValidator>;
-    using NumberToken = NumberConsumerForUnitlessValues<CSS::LengthPercentage<R>, LengthPercentageValidator, CSS::LengthUnit::Px>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::LengthPercentage<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::LengthPercentage<R, V>>;
+    using DimensionToken = DimensionConsumer<CSS::LengthPercentage<R, V>, LengthPercentageValidator>;
+    using PercentageToken = PercentageConsumer<CSS::LengthPercentage<R, V>, LengthPercentageValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::LengthPercentage<R, V>, LengthPercentageValidator, CSS::LengthUnit::Px>;
 };
 
 } // namespace CSSPropertyParserHelpers

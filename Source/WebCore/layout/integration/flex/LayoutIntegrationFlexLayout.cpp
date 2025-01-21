@@ -39,6 +39,10 @@
 #include "RenderBoxInlines.h"
 #include "RenderFlexibleBox.h"
 #include "RenderView.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
+#include "StylePreferredSize.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -67,38 +71,52 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
     auto boxSizingIsContentBox = flexBoxStyle.boxSizing() == BoxSizing::ContentBox;
     auto availableLogicalWidth = flexContainerRenderer.contentBoxRect().width();
     // FIXME: Use root's BoxGeometry which first needs to stop flipping for the formatting context.
-    auto horizontallMarginBorderAndPadding = flexContainerRenderer.marginAndBorderAndPaddingStart() + flexContainerRenderer.marginAndBorderAndPaddingEnd();
+    auto horizontalMarginBorderAndPadding = flexContainerRenderer.marginAndBorderAndPaddingStart() + flexContainerRenderer.marginAndBorderAndPaddingEnd();
     auto verticalMarginBorderAndPadding = flexContainerRenderer.marginAndBorderAndPaddingBefore() + flexContainerRenderer.marginAndBorderAndPaddingAfter();
 
-    auto widthValue = [&](auto& computedValue) -> std::optional<LayoutUnit> {
-        if (computedValue.isFixed())
-            return LayoutUnit { boxSizingIsContentBox ? computedValue.value() : computedValue.value() - horizontallMarginBorderAndPadding };
-
-        if (computedValue.isPercent()) {
-            auto value = valueForLength(computedValue, flexContainerRenderer.containingBlock()->logicalWidth());
-            return LayoutUnit { boxSizingIsContentBox ? value : value - horizontallMarginBorderAndPadding };
-        }
-        return { };
+    auto widthValue = [&]<typename SizeType>(const SizeType& computedValue) -> std::optional<LayoutUnit> {
+        return WTF::switchOn(computedValue,
+            [&](const typename SizeType::Fixed& fixed) -> std::optional<LayoutUnit> {
+                return LayoutUnit { boxSizingIsContentBox ? static_cast<float>(fixed.value) : static_cast<float>(fixed.value) - horizontalMarginBorderAndPadding };
+            },
+            [&](const typename SizeType::Percentage& percentage) -> std::optional<LayoutUnit> {
+                auto value = Style::evaluate(percentage, flexContainerRenderer.containingBlock()->logicalWidth());
+                return LayoutUnit { boxSizingIsContentBox ? value : value - horizontalMarginBorderAndPadding };
+            },
+            [](const auto&) -> std::optional<LayoutUnit> {
+                return { };
+            }
+        );
     };
 
-    auto heightValue = [&](auto& computedValue, bool callRendererForPercentValue = false) -> std::optional<LayoutUnit> {
-        if (computedValue.isFixed())
-            return LayoutUnit { boxSizingIsContentBox ? computedValue.value() : computedValue.value() - verticalMarginBorderAndPadding };
+    auto heightValue = [&]<typename SizeType>(const SizeType& computedValue, bool callRendererForPercentValue = false) -> std::optional<LayoutUnit> {
+        return WTF::switchOn(computedValue,
+            [&](const typename SizeType::Fixed& fixed) -> std::optional<LayoutUnit> {
+                return LayoutUnit { boxSizingIsContentBox ? static_cast<float>(fixed.value) : static_cast<float>(fixed.value) - verticalMarginBorderAndPadding };
+            },
+            [&](const typename SizeType::Percentage& percentage) -> std::optional<LayoutUnit> {
+                if (callRendererForPercentValue)
+                    return flexContainerRenderer.computePercentageLogicalHeight(computedValue, RenderBox::UpdatePercentageHeightDescendants::No);
 
-        if (computedValue.isPercent()) {
-            if (callRendererForPercentValue)
-                return flexContainerRenderer.computePercentageLogicalHeight(computedValue, RenderBox::UpdatePercentageHeightDescendants::No);
-
-            if (flexContainerRenderer.containingBlock()->style().logicalHeight().isFixed()) {
-                auto value = valueForLength(computedValue, flexContainerRenderer.containingBlock()->style().height().value());
-                return LayoutUnit { boxSizingIsContentBox ? value : value - verticalMarginBorderAndPadding };
+                if (auto logicalHeightFixed = flexContainerRenderer.containingBlock()->style().logicalHeight().fixed()) {
+                    auto value = Style::evaluate(percentage, static_cast<float>(logicalHeightFixed->value));
+                    return LayoutUnit { boxSizingIsContentBox ? value : value - verticalMarginBorderAndPadding };
+                }
+                return { };
+            },
+            [](const auto&) -> std::optional<LayoutUnit> {
+                return { };
             }
-        }
-        return { };
+        );
     };
 
     auto widthGeometry = [&]() -> Layout::ConstraintsForFlexContent::AxisGeometry {
-        return { widthValue(flexBoxStyle.minWidth()), widthValue(flexBoxStyle.maxWidth()), availableLogicalWidth ? availableLogicalWidth : widthValue(flexBoxStyle.width()), flexContainerRenderer.contentBoxLocation().x() };
+        return {
+            widthValue(flexBoxStyle.minWidth()),
+            widthValue(flexBoxStyle.maxWidth()),
+            availableLogicalWidth ? availableLogicalWidth : widthValue(flexBoxStyle.width()),
+            flexContainerRenderer.contentBoxLocation().x()
+        };
     };
 
     auto heightGeometry = [&]() -> Layout::ConstraintsForFlexContent::AxisGeometry {
@@ -108,7 +126,12 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
         if (!availableSize || (logicalMaxHeight && *logicalMaxHeight < *availableSize))
             availableSize = logicalMaxHeight;
 
-        return Layout::ConstraintsForFlexContent::AxisGeometry { logicalMinHeight, logicalMaxHeight, availableSize, flexContainerRenderer.contentBoxLocation().y() };
+        return {
+            logicalMinHeight,
+            logicalMaxHeight,
+            availableSize,
+            flexContainerRenderer.contentBoxLocation().y()
+        };
     };
 
     return Layout::FlexFormattingUtils::isMainAxisParallelWithInlineAxis(flexContainer) ? Layout::ConstraintsForFlexContent(widthGeometry(), heightGeometry(), false) : Layout::ConstraintsForFlexContent(heightGeometry(), widthGeometry(), false);

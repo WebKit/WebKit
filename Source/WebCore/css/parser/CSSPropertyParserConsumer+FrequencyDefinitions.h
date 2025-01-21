@@ -36,7 +36,7 @@ struct FrequencyValidator {
         return CSS::UnitTraits<CSS::FrequencyUnit>::validate(unitType);
     }
 
-    template<auto R> static bool isValid(CSS::FrequencyRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::FrequencyRaw<R, V> raw, CSSPropertyParserOptions)
     {
         return isValidDimensionValue(raw, [&] {
             auto canonicalValue = CSS::canonicalize(raw);
@@ -45,9 +45,9 @@ struct FrequencyValidator {
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::Frequency<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Frequency<R>>;
-    using DimensionToken = DimensionConsumer<CSS::Frequency<R>, FrequencyValidator>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Frequency<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Frequency<R, V>>;
+    using DimensionToken = DimensionConsumer<CSS::Frequency<R, V>, FrequencyValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

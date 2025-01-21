@@ -40,18 +40,6 @@
 namespace WebCore {
 namespace Style {
 
-// MARK: - Offset Point Evaluation
-
-static float evaluate(const std::variant<HLineCommand::To, HLineCommand::By>& value, float width)
-{
-    return WTF::switchOn(value, [&](const auto& value) -> float { return evaluate(value.offset, width); });
-}
-
-static float evaluate(const std::variant<VLineCommand::To, VLineCommand::By>& value, float height)
-{
-    return WTF::switchOn(value, [&](const auto& value) -> float { return evaluate(value.offset, height); });
-}
-
 // MARK: - Control Point Evaluation
 
 template<typename ControlPoint> static ControlPointAnchor evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)

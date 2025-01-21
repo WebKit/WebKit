@@ -311,6 +311,61 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CommaSeparatedV
     }
 };
 
+// MARK: - Conversion from `WebCore::CSSValue` to "Style"
+
+// Types that want to participate in direct conversion from CSSValue must specialize the following interface:
+//
+//    template<> struct WebCore::Style::CSSValueConversions<StyleType> {
+//        StyleType operator()(const CSSValue&, const BuilderState&);
+//    };
+
+template<typename StyleType> struct CSSValueConversions;
+
+// `CSSValueConversions` Invoker
+template<typename StyleType> StyleType convertFromCSSValue(const CSSValue& value, const BuilderState& state)
+{
+    return CSSValueConversions<StyleType>{}(value, state);
+}
+
+// MARK: - Evaluation
+
+// Types that want to participate in evaluation overloading must specialize the following interface:
+//
+//    template<> struct WebCore::Style::Evaluation<StyleType> {
+//        decltype(auto) operator()(const StyleType&, ...);
+//    };
+
+template<typename StyleType> struct Evaluation;
+
+// `Evaluation` Invokers
+template<typename StyleType> decltype(auto) evaluate(const StyleType& value)
+{
+    return Evaluation<StyleType>{}(value);
+}
+
+template<typename StyleType, typename Reference> decltype(auto) evaluate(const StyleType& value, Reference&& reference)
+{
+    return Evaluation<StyleType>{}(value, std::forward<Reference>(reference));
+}
+
+// Specialization for `VariantLike`.
+template<VariantLike StyleType> struct Evaluation<StyleType> {
+    template<typename... Rest> decltype(auto) operator()(const StyleType& value, Rest&&... rest)
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) { return evaluate(alternative, std::forward<Rest>(rest)...); });
+    }
+};
+
+// MARK: - TupleLike (wrapper)
+
+// Specialization for `TupleLike` (wrapper).
+template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) struct Evaluation<StyleType> {
+    template<typename... Rest> decltype(auto) operator()(const StyleType& value, Rest&&... rest)
+    {
+        return evaluate(get<0>(value), std::forward<Rest>(rest)...);
+    }
+};
+
 // MARK: - Blending
 
 // All non-tuple-like leaf types must specialize `Blending` with the following member functions:

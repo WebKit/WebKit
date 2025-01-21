@@ -878,10 +878,10 @@ static void setSizeFromFont(RenderStyle& style, std::span<const IntSize, 4> size
 {
     // FIXME: Check is flawed, since it doesn't take min-width/max-width into account.
     IntSize size = sizeForFont(style, sizes);
-    if (style.width().isIntrinsicOrAuto() && size.width() > 0)
-        style.setWidth(Length(size.width(), LengthType::Fixed));
+    if (!style.width().isSpecified() && size.width() > 0)
+        style.setWidth({ Style::PreferredSize::Fixed { static_cast<float>(size.width()) } });
     if (style.height().isAuto() && size.height() > 0)
-        style.setHeight(Length(size.height(), LengthType::Fixed));
+        style.setHeight({ Style::PreferredSize::Fixed { static_cast<float>(size.height()) } });
 }
 
 static void setFontFromControlSize(RenderStyle& style, NSControlSize controlSize)
@@ -912,8 +912,8 @@ void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) c
 #if ENABLE(SERVICE_CONTROLS)
 void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const Element*) const
 {
-    style.setHeight(Length(imageControlsButtonSize().height(), LengthType::Fixed));
-    style.setWidth(Length(imageControlsButtonSize().width(), LengthType::Fixed));
+    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(imageControlsButtonSize().height()) });
+    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(imageControlsButtonSize().width()) });
 }
 #endif
 
@@ -967,7 +967,7 @@ void RenderThemeMac::adjustMenuListStyle(RenderStyle& style, const Element* e) c
     style.resetPadding();
 
     // Height is locked to auto.
-    style.setHeight(Length(LengthType::Auto));
+    style.setHeight(CSS::Keyword::Auto { });
 
     // White-space is locked to pre
     style.setWhiteSpaceCollapse(WhiteSpaceCollapse::Preserve);
@@ -1034,7 +1034,7 @@ void RenderThemeMac::adjustMenuListButtonStyle(RenderStyle& style, const Element
     style.setBorderRadius(IntSize(int(baseBorderRadius + fontScale - 1), int(baseBorderRadius + fontScale - 1))); // FIXME: Round up?
 
     const int minHeight = 18;
-    style.setMinHeight(Length(minHeight, LengthType::Fixed));
+    style.setMinHeight(Style::MinimumSize::Fixed { minHeight } );
 
     style.setLineHeight(RenderStyle::initialLineHeight());
 }
@@ -1070,7 +1070,7 @@ std::span<const IntSize, 4> RenderThemeMac::searchFieldSizes() const
 void RenderThemeMac::setSearchFieldSize(RenderStyle& style) const
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
+    if (style.width().isSpecified() && !style.height().isAuto())
         return;
 
     // Use the font size to determine the intrinsic width of the control.
@@ -1096,7 +1096,7 @@ void RenderThemeMac::adjustSearchFieldStyle(RenderStyle& style, const Element*) 
     setFontFromControlSize(style, controlSizeForFont(style));
 
     // Override height.
-    style.setHeight(Length(LengthType::Auto));
+    style.setHeight(CSS::Keyword::Auto { });
     setSearchFieldSize(style);
 
     // Override padding size to match AppKit text positioning.
@@ -1118,8 +1118,8 @@ std::span<const IntSize, 4> RenderThemeMac::cancelButtonSizes() const
 void RenderThemeMac::adjustSearchFieldCancelButtonStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, cancelButtonSizes());
-    style.setWidth(Length(size.width(), LengthType::Fixed));
-    style.setHeight(Length(size.height(), LengthType::Fixed));
+    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width()) });
+    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
     style.setBoxShadow(nullptr);
 }
 
@@ -1140,24 +1140,24 @@ void RenderThemeMac::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
         widthOffset = emptyResultsOffset;
     else
         heightOffset = emptyResultsOffset;
-    style.setWidth(Length(size.width() - widthOffset, LengthType::Fixed));
-    style.setHeight(Length(size.height() - heightOffset, LengthType::Fixed));
+    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width() - widthOffset) });
+    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height() - heightOffset) });
     style.setBoxShadow(nullptr);
 }
 
 void RenderThemeMac::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style.setWidth(Length(size.width(), LengthType::Fixed));
-    style.setHeight(Length(size.height(), LengthType::Fixed));
+    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width()) });
+    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
     style.setBoxShadow(nullptr);
 }
 
 void RenderThemeMac::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element*) const
 {
     IntSize size = sizeForSystemFont(style, resultsButtonSizes());
-    style.setWidth(Length(size.width() + resultsArrowWidth, LengthType::Fixed));
-    style.setHeight(Length(size.height(), LengthType::Fixed));
+    style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(size.width() + resultsArrowWidth) });
+    style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(size.height()) });
     style.setBoxShadow(nullptr);
 }
 
@@ -1181,8 +1181,8 @@ void RenderThemeMac::adjustSliderThumbSize(RenderStyle& style, const Element*) c
 {
     float zoomLevel = style.usedZoom();
     if (style.usedAppearance() == StyleAppearance::SliderThumbHorizontal || style.usedAppearance() == StyleAppearance::SliderThumbVertical) {
-        style.setWidth(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
-        style.setHeight(Length(static_cast<int>(sliderThumbThickness * zoomLevel), LengthType::Fixed));
+        style.setWidth(Style::PreferredSize::Fixed { static_cast<float>(static_cast<int>(sliderThumbThickness * zoomLevel)) });
+        style.setHeight(Style::PreferredSize::Fixed { static_cast<float>(static_cast<int>(sliderThumbThickness * zoomLevel)) });
     }
 }
 

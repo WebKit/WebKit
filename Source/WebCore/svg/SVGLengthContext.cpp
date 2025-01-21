@@ -33,6 +33,8 @@
 #include "RenderView.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGSVGElement.h"
+#include "StylePreferredSize.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -120,6 +122,28 @@ float SVGLengthContext::valueForLength(const Length& length, SVGLengthMode lengt
     default:
         return 0;
     }
+}
+
+float SVGLengthContext::valueForLength(const Style::PreferredSize& size, SVGLengthMode lengthMode)
+{
+    return WTF::switchOn(size,
+        [&](const Style::PreferredSize::Percentage& percentage) -> float {
+            auto result = convertValueFromPercentageToUserUnits(percentage.value / 100, lengthMode);
+            if (result.hasException())
+                return 0;
+            return result.releaseReturnValue();
+        },
+        [&](const Style::PreferredSize::Fixed& fixed) -> float {
+            return fixed.value;
+        },
+        [&](const Style::PreferredSize::Calc& calc) -> float {
+            auto viewportSize = this->viewportSize().value_or(FloatSize { });
+            return Style::evaluate(calc, dimensionForLengthMode(lengthMode, viewportSize));
+        },
+        [&](const auto&) -> float {
+            return 0;
+        }
+    );
 }
 
 ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLengthType lengthType, SVGLengthMode lengthMode) const

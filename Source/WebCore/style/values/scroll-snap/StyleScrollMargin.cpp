@@ -25,22 +25,22 @@
 #include "config.h"
 #include "StyleScrollMargin.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueConversions.h"
 #include "CSSScrollMarginEdgeValue.h"
 #include "LayoutRect.h"
 #include "StyleBuilderState.h"
+#include "StylePrimitiveNumericTypes+CSSValueConversions.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
 
-ScrollMarginEdge scrollMarginEdgeFromCSSValue(const CSSValue& value, const BuilderState& state)
+ScrollMarginEdge CSSValueConversions<ScrollMarginEdge>::operator()(const CSSValue& value, const BuilderState& state)
 {
     if (RefPtr edge = dynamicDowncast<CSSScrollMarginEdgeValue>(value))
         return toStyle(edge->edge(), state);
 
-    return ScrollMarginEdge { toStyle(CSS::convertFromCSSValue<CSS::Length<>>(value), state) };
+    return { convertFromCSSValue<ScrollMarginEdge::Wrapped>(value, state) };
 }
 
 LayoutBoxExtent extentForRect(const ScrollMargin& margin, const LayoutRect& rect)

@@ -59,7 +59,7 @@ auto ToStyle<CSS::BorderRadius>::operator()(const CSS::BorderRadius& value, cons
     };
 }
 
-FloatRoundedRect::Radii evaluate(const BorderRadius& value, FloatSize referenceBox)
+auto Evaluation<BorderRadius>::operator()(const BorderRadius& value, FloatSize referenceBox) -> FloatRoundedRect::Radii
 {
     return {
         evaluate(value.topLeft, referenceBox),

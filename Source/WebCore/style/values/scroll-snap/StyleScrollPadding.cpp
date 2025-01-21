@@ -25,33 +25,25 @@
 #include "config.h"
 #include "StyleScrollPadding.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueConversions.h"
 #include "CSSScrollPaddingEdgeValue.h"
 #include "LayoutRect.h"
 #include "StyleBuilderState.h"
-#include "StylePrimitiveNumericOrKeyword+Conversions.h"
+#include "StylePrimitiveNumericOrKeyword+CSSValueConversions.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
 namespace Style {
 
-ScrollPaddingEdge scrollPaddingEdgeFromCSSValue(const CSSValue& value, const BuilderState& state)
+ScrollPaddingEdge CSSValueConversions<ScrollPaddingEdge>::operator()(const CSSValue& value, const BuilderState& state)
 {
     if (RefPtr edge = dynamicDowncast<CSSScrollPaddingEdgeValue>(value))
         return toStyle(edge->edge(), state);
 
-    if (value.valueID() == CSSValueAuto)
-        return ScrollPaddingEdge { CSS::Keyword::Auto { } };
-    return ScrollPaddingEdge {
-        toStyle(
-            CSS::convertFromCSSValue<CSS::LengthPercentage<CSS::Nonnegative>>(value),
-            state
-        )
-    };
+    return { convertFromCSSValue<ScrollPaddingEdge::Wrapped>(value, state) };
 }
 
-double evaluate(const ScrollPaddingEdge& edge, double referenceLength)
+double Evaluation<ScrollPaddingEdge>::operator()(const ScrollPaddingEdge& edge, double referenceLength)
 {
     return WTF::switchOn(edge.value,
         [&](const CSS::Keyword::Auto&) -> double {
@@ -63,7 +55,7 @@ double evaluate(const ScrollPaddingEdge& edge, double referenceLength)
     );
 }
 
-float evaluate(const ScrollPaddingEdge& edge, float referenceLength)
+float Evaluation<ScrollPaddingEdge>::operator()(const ScrollPaddingEdge& edge, float referenceLength)
 {
     return WTF::switchOn(edge.value,
         [&](const CSS::Keyword::Auto&) -> float {
@@ -75,11 +67,11 @@ float evaluate(const ScrollPaddingEdge& edge, float referenceLength)
     );
 }
 
-LayoutUnit evaluate(const ScrollPaddingEdge& edge, LayoutUnit referenceLength)
+LayoutUnit Evaluation<ScrollPaddingEdge>::operator()(const ScrollPaddingEdge& edge, LayoutUnit referenceLength)
 {
     return WTF::switchOn(edge.value,
         [&](const CSS::Keyword::Auto&) -> LayoutUnit {
-            return LayoutUnit(0);
+            return 0_lu;
         },
         [&](const auto& length) -> LayoutUnit {
             return evaluate(length, referenceLength);

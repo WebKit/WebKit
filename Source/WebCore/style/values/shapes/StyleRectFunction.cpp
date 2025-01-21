@@ -31,6 +31,8 @@
 namespace WebCore {
 namespace Style {
 
+using namespace CSS::Literals;
+
 // MARK: - Conversion
 
 auto ToStyle<CSS::Rect>::operator()(const CSS::Rect& value, const BuilderState& state) -> Inset
@@ -49,7 +51,7 @@ auto ToStyle<CSS::Rect>::operator()(const CSS::Rect& value, const BuilderState& 
                 return toStyle(value, state);
             },
             [&](const CSS::Keyword::Auto&) -> LengthPercentage<> {
-                return { Percentage<> { 0 } };
+                return 0_css_percentage;
             }
         );
     };
@@ -60,7 +62,7 @@ auto ToStyle<CSS::Rect>::operator()(const CSS::Rect& value, const BuilderState& 
                 return reflect(toStyle(value, state));
             },
             [&](const CSS::Keyword::Auto&) -> LengthPercentage<> {
-                return { Percentage<> { 0 } };
+                return 0_css_percentage;
             }
         );
     };

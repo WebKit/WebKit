@@ -88,6 +88,13 @@ template<NumericRaw RawType> struct PrimitiveNumeric {
     {
     }
 
+    // Constructor used by `PrimitiveNumericOrKeyword<N, Ks...>` to efficiently construct `N`.
+    template<std::derived_from<PrimitiveNumeric<RawType>> OtherN, PrimitiveKeyword... Ks>
+    explicit constexpr PrimitiveNumeric(const PrimitiveData<OtherN, Ks...>& other)
+        : m_data { other }
+    {
+    }
+
     // MARK: Copy/Move Construction/Assignment
 
     PrimitiveNumeric(const PrimitiveNumeric& other)
@@ -199,64 +206,64 @@ template<Range R = All, typename V = int> struct Integer : PrimitiveNumeric<Inte
 
 // MARK: Number Primitive
 
-template<Range R = All> struct Number : PrimitiveNumeric<NumberRaw<R>> {
-    using Base = PrimitiveNumeric<NumberRaw<R>>;
+template<Range R = All, typename V = double> struct Number : PrimitiveNumeric<NumberRaw<R, V>> {
+    using Base = PrimitiveNumeric<NumberRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Number>;
 };
 
 // MARK: Percentage Primitive
 
-template<Range R = All> struct Percentage : PrimitiveNumeric<PercentageRaw<R>> {
-    using Base = PrimitiveNumeric<PercentageRaw<R>>;
+template<Range R = All, typename V = double> struct Percentage : PrimitiveNumeric<PercentageRaw<R, V>> {
+    using Base = PrimitiveNumeric<PercentageRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Percentage>;
 };
 
 // MARK: Dimension Primitives
 
-template<Range R = All> struct Angle : PrimitiveNumeric<AngleRaw<R>> {
-    using Base = PrimitiveNumeric<AngleRaw<R>>;
+template<Range R = All, typename V = double> struct Angle : PrimitiveNumeric<AngleRaw<R, V>> {
+    using Base = PrimitiveNumeric<AngleRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Angle>;
 };
-template<Range R = All> struct Length : PrimitiveNumeric<LengthRaw<R>> {
-    using Base = PrimitiveNumeric<LengthRaw<R>>;
+template<Range R = All, typename V = float> struct Length : PrimitiveNumeric<LengthRaw<R, V>> {
+    using Base = PrimitiveNumeric<LengthRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Length>;
 };
-template<Range R = All> struct Time : PrimitiveNumeric<TimeRaw<R>> {
-    using Base = PrimitiveNumeric<TimeRaw<R>>;
+template<Range R = All, typename V = double> struct Time : PrimitiveNumeric<TimeRaw<R, V>> {
+    using Base = PrimitiveNumeric<TimeRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Time>;
 };
-template<Range R = All> struct Frequency : PrimitiveNumeric<FrequencyRaw<R>> {
-    using Base = PrimitiveNumeric<FrequencyRaw<R>>;
+template<Range R = All, typename V = double> struct Frequency : PrimitiveNumeric<FrequencyRaw<R, V>> {
+    using Base = PrimitiveNumeric<FrequencyRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Frequency>;
 };
-template<Range R = Nonnegative> struct Resolution : PrimitiveNumeric<ResolutionRaw<R>> {
-    using Base = PrimitiveNumeric<ResolutionRaw<R>>;
+template<Range R = Nonnegative, typename V = double> struct Resolution : PrimitiveNumeric<ResolutionRaw<R, V>> {
+    using Base = PrimitiveNumeric<ResolutionRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Resolution>;
 };
-template<Range R = All> struct Flex : PrimitiveNumeric<FlexRaw<R>> {
-    using Base = PrimitiveNumeric<FlexRaw<R>>;
+template<Range R = All, typename V = double> struct Flex : PrimitiveNumeric<FlexRaw<R, V>> {
+    using Base = PrimitiveNumeric<FlexRaw<R, V>>;
     using Base::Base;
     using MarkableTraits = PrimitiveDataMarkableTraits<Flex>;
 };
 
 // MARK: Dimension + Percentage Primitives
 
-template<Range R = All> struct AnglePercentage : PrimitiveNumeric<AnglePercentageRaw<R>> {
-    using Base = PrimitiveNumeric<AnglePercentageRaw<R>>;
+template<Range R = All, typename V = double> struct AnglePercentage : PrimitiveNumeric<AnglePercentageRaw<R, V>> {
+    using Base = PrimitiveNumeric<AnglePercentageRaw<R, V>>;
     using Base::Base;
-    using MarkableTraits = PrimitiveDataMarkableTraits<AnglePercentage<R>>;
+    using MarkableTraits = PrimitiveDataMarkableTraits<AnglePercentage>;
 };
-template<Range R = All> struct LengthPercentage : PrimitiveNumeric<LengthPercentageRaw<R>> {
-    using Base = PrimitiveNumeric<LengthPercentageRaw<R>>;
+template<Range R = All, typename V = float> struct LengthPercentage : PrimitiveNumeric<LengthPercentageRaw<R, V>> {
+    using Base = PrimitiveNumeric<LengthPercentageRaw<R, V>>;
     using Base::Base;
-    using MarkableTraits = PrimitiveDataMarkableTraits<LengthPercentage<R>>;
+    using MarkableTraits = PrimitiveDataMarkableTraits<LengthPercentage>;
 };
 
 } // namespace CSS
@@ -264,14 +271,14 @@ template<Range R = All> struct LengthPercentage : PrimitiveNumeric<LengthPercent
 
 template<typename Raw> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::PrimitiveNumeric<Raw>> = true;
 
-template<auto R, typename T> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Integer<R, T>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Number<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Percentage<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Angle<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Length<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Time<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Frequency<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Resolution<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Flex<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::AnglePercentage<R>> = true;
-template<auto R> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::LengthPercentage<R>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Integer<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Number<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Percentage<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Angle<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Length<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Time<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Frequency<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Resolution<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::Flex<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::AnglePercentage<R, V>> = true;
+template<auto R, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::LengthPercentage<R, V>> = true;

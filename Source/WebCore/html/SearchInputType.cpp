@@ -191,9 +191,9 @@ float SearchInputType::decorationWidth() const
 {
     float width = 0;
     if (m_resultsButton && m_resultsButton->renderStyle())
-        width += m_resultsButton->renderStyle()->logicalWidth().value();
+        width += m_resultsButton->renderStyle()->logicalWidth().fixed()->value;
     if (m_cancelButton && m_cancelButton->renderStyle())
-        width += m_cancelButton->renderStyle()->logicalWidth().value();
+        width += m_cancelButton->renderStyle()->logicalWidth().fixed()->value;
     return width;
 }
 

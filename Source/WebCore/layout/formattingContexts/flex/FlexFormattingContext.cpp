@@ -35,6 +35,7 @@
 #include "LayoutState.h"
 #include "LengthFunctions.h"
 #include "RenderStyleInlines.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include <wtf/FixedVector.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -88,23 +89,23 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
             auto mainAxis = LogicalFlexItem::MainAxisGeometry { };
             auto crossAxis = LogicalFlexItem::CrossAxisGeometry { };
 
-            auto propertyValueForLength = [&](auto& propertyValue, auto availableSize) -> std::optional<LayoutUnit> {
-                if (propertyValue.isFixed())
-                    return LayoutUnit { propertyValue.value() };
+            auto propertyValueForSize = [&](auto& propertyValue, auto availableSize) -> std::optional<LayoutUnit> {
+                if (auto propertyValueFixed = propertyValue.fixed())
+                    return LayoutUnit { propertyValueFixed->value };
                 if (propertyValue.isSpecified() && availableSize)
-                    return valueForLength(propertyValue, *availableSize);
+                    return Style::evaluate(propertyValue, *availableSize);
                 return { };
             };
 
             auto setMainAxisValues = [&] {
                 auto flexContainerMainInnerSize = constraints.mainAxis().availableSize;
 
-                mainAxis.size = propertyValueForLength(isMainAxisParallelWithInlineAxis ? style.width() : style.height(), flexContainerMainInnerSize);
-                mainAxis.minimumSize = propertyValueForLength(isMainAxisParallelWithInlineAxis ? style.minWidth() : style.minHeight(), flexContainerMainInnerSize);
-                mainAxis.maximumSize = propertyValueForLength(isMainAxisParallelWithInlineAxis ? style.maxWidth() : style.maxHeight(), flexContainerMainInnerSize);
+                mainAxis.size = propertyValueForSize(isMainAxisParallelWithInlineAxis ? style.width() : style.height(), flexContainerMainInnerSize);
+                mainAxis.minimumSize = propertyValueForSize(isMainAxisParallelWithInlineAxis ? style.minWidth() : style.minHeight(), flexContainerMainInnerSize);
+                mainAxis.maximumSize = propertyValueForSize(isMainAxisParallelWithInlineAxis ? style.maxWidth() : style.maxHeight(), flexContainerMainInnerSize);
                 // Auto keyword retrieves the value of the main size property as the used flex-basis.
                 // If that value is itself auto, then the used value is content.
-                mainAxis.definiteFlexBasis = style.flexBasis().isAuto() ? mainAxis.size : propertyValueForLength(style.flexBasis(), flexContainerMainInnerSize);
+                mainAxis.definiteFlexBasis = style.flexBasis().isAuto() ? mainAxis.size : propertyValueForSize(style.flexBasis(), flexContainerMainInnerSize);
 
                 auto marginStart = [&]() -> std::optional<LayoutUnit> {
                     if (direction == FlexDirection::Row && !style.marginStart().isAuto())
@@ -138,9 +139,9 @@ FlexLayout::LogicalFlexItems FlexFormattingContext::convertFlexItemsToLogicalSpa
             auto setCrossAxisValues = [&] {
                 auto flexContainerCrossInnerSize = constraints.crossAxis().availableSize;
 
-                crossAxis.definiteSize = propertyValueForLength(isMainAxisParallelWithInlineAxis ? style.height() : style.width(), flexContainerCrossInnerSize);
-                crossAxis.minimumSize = propertyValueForLength(isMainAxisParallelWithInlineAxis ? style.minHeight() : style.minWidth(), flexContainerCrossInnerSize);
-                crossAxis.maximumSize = propertyValueForLength(isMainAxisParallelWithInlineAxis ? style.maxHeight() : style.maxWidth(), flexContainerCrossInnerSize);
+                crossAxis.definiteSize = propertyValueForSize(isMainAxisParallelWithInlineAxis ? style.height() : style.width(), flexContainerCrossInnerSize);
+                crossAxis.minimumSize = propertyValueForSize(isMainAxisParallelWithInlineAxis ? style.minHeight() : style.minWidth(), flexContainerCrossInnerSize);
+                crossAxis.maximumSize = propertyValueForSize(isMainAxisParallelWithInlineAxis ? style.maxHeight() : style.maxWidth(), flexContainerCrossInnerSize);
 
                 auto marginStart = [&]() -> std::optional<LayoutUnit> {
                     if (!isReversedInCrossAxis) {

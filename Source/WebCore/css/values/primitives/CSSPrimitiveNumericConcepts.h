@@ -80,8 +80,11 @@ template<typename T> concept NumericRaw = std::derived_from<T, PrimitiveNumericR
 // Forward declaration of PrimitiveNumeric to needed to create a hard constraint for the Numeric concept below.
 template<NumericRaw> struct PrimitiveNumeric;
 
-// Concept for use in generic contexts to filter on numeric CSS types.
+// Concept for use in generic contexts to filter on all numeric CSS types.
 template<typename T> concept Numeric = VariantLike<T> && std::derived_from<T, PrimitiveNumeric<typename T::Raw>>;
+
+// Concept for use in generic contexts to filter on non-composite numeric CSS types.
+template<typename T> concept NonCompositeNumeric = Numeric<T> && (!CompositeUnitEnum<typename T::UnitType>);
 
 // Concept for use in generic contexts to filter on dimension-percentage numeric CSS types.
 template<typename T> concept DimensionPercentageNumeric = Numeric<T> && CompositeUnitEnum<typename T::UnitType>;

@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "Length.h"
+#include "StyleFlexBasis.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -50,7 +50,7 @@ public:
 
     float flexGrow;
     float flexShrink;
-    Length flexBasis;
+    Style::FlexBasis flexBasis;
 
     unsigned flexDirection : 2; // FlexDirection
     unsigned flexWrap : 2; // FlexWrap

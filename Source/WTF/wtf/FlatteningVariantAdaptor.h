@@ -86,10 +86,15 @@ public:
     {
     }
 
+    constexpr size_t index() const
+    {
+        return m_value.index();
+    }
+
     // Checks if type `T` is included in the flattened list of types.
     template<typename T> constexpr bool holdsAlternative() const
     {
-        return holdsAlternative<T>(m_value);
+        return WTF::holdsAlternative<T>(m_value);
     }
 
     // Switches on the flattened list of types.

@@ -3062,9 +3062,20 @@ header: <WebCore/StylePrimitiveNumericTypes.h>
     double value;
 };
 
-[CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::Nonnegative> {
+using WebCore::Style::PercentageNonnegativeFloat = WebCore::Style::Percentage<WebCore::CSS::Nonnegative, float>;
+[CustomHeader, Nested] struct WebCore::Style::PercentageNonnegativeFloat {
     float value;
 };
+using WebCore::Style::PercentageAllFloat = WebCore::Style::Percentage<WebCore::CSS::All, float>;
+[CustomHeader, Nested] struct WebCore::Style::PercentageAllFloat {
+    float value;
+};
+
+using WebCore::Style::LengthNonnegative = WebCore::Style::Length<WebCore::CSS::Nonnegative>;
+[CustomHeader, Nested] struct WebCore::Style::LengthNonnegative {
+    float value;
+};
+using WebCore::Style::LengthAll = WebCore::Style::Length<WebCore::CSS::All>;
 [CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::All> {
     float value;
 };
@@ -3077,10 +3088,10 @@ header: <WebCore/StylePrimitiveNumericTypes.h>
 };
 
 [CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::All> {
-    std::variant<WebCore::Style::Length<WebCore::CSS::All>, WebCore::Style::Percentage<WebCore::CSS::All>> ipcData()
+    std::variant<WebCore::Style::LengthAll, WebCore::Style::PercentageAllFloat> ipcData()
 };
 [CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative> {
-    std::variant<WebCore::Style::Length<WebCore::CSS::Nonnegative>, WebCore::Style::Percentage<WebCore::CSS::Nonnegative>> ipcData();
+    std::variant<WebCore::Style::LengthNonnegative, WebCore::Style::PercentageNonnegativeFloat> ipcData();
 };
 
 using WebCore::Style::LengthPercentageNonnegative = WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative>;

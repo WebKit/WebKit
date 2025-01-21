@@ -365,8 +365,8 @@ void RenderThemeAdwaita::adjustSliderThumbSize(RenderStyle& style, const Element
     if (appearance != StyleAppearance::SliderThumbHorizontal && appearance != StyleAppearance::SliderThumbVertical)
         return;
 
-    style.setWidth(Length(sliderThumbSize, LengthType::Fixed));
-    style.setHeight(Length(sliderThumbSize, LengthType::Fixed));
+    style.setWidth(Style::PreferredSize::Fixed { sliderThumbSize });
+    style.setHeight(Style::PreferredSize::Fixed { sliderThumbSize });
 }
 
 #if ENABLE(DATALIST_ELEMENT)

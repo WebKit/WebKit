@@ -39,6 +39,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
     using ResolvedValueType = typename NumericType::ResolvedValueType;
     using Data = PrimitiveData<NumericType, Ks...>;
     using Index = typename Data::Index;
+    using KeywordList = typename Data::KeywordList;
     using Keywords = typename Data::Keywords;
     static constexpr auto range = NumericType::range;
     static constexpr auto category = NumericType::category;
@@ -82,7 +83,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
                 [](NumericType&& numeric) {
                     return Data { WTFMove(numeric.m_data) };
                 },
-                [](ValidKeywordForList<Keywords> auto keyword) {
+                [](ValidKeywordForList<KeywordList> auto keyword) {
                     return Data { keyword };
                 }
             )
@@ -138,9 +139,9 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
         return *this;
     }
 
-    // MARK: Construction/Assignment from `Keywords...`
+    // MARK: Construction/Assignment from `Ks...`
 
-    PrimitiveNumericOrKeyword(ValidKeywordForList<Keywords> auto keyword)
+    PrimitiveNumericOrKeyword(ValidKeywordForList<KeywordList> auto keyword)
         : m_data { keyword }
     {
     }
@@ -152,7 +153,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
         return m_data == other.m_data;
     }
 
-    bool operator==(ValidKeywordForList<Keywords> auto const& other) const
+    bool operator==(ValidKeywordForList<KeywordList> auto const& other) const
     {
         return m_data == other;
     }
@@ -186,6 +187,9 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
     std::optional<Raw> raw() const { return m_data.raw(); }
     std::optional<Calc> calc() const { return m_data.calc(); }
 
+    std::optional<NumericType> specified() const { return m_data.specified(); }
+    std::optional<Keywords> keywords() const { return m_data.keywords(); }
+
     // MARK: Variant-Like Conformance
 
     template<typename T> bool holdsAlternative() const
@@ -196,7 +200,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
             return isCalc();
         else if constexpr (std::same_as<T, Raw>)
             return isRaw();
-        else if constexpr (ValidKeywordForList<T, Keywords>)
+        else if constexpr (ValidKeywordForList<T, KeywordList>)
             return isKeyword<T>();
     }
 
@@ -210,7 +214,7 @@ template<Numeric NumericType, PrimitiveKeyword... Ks> struct PrimitiveNumericOrK
 
     bool isRaw() const { return m_data.isRaw(); }
     bool isCalc() const { return m_data.isCalc(); }
-    template<ValidKeywordForList<Keywords> Keyword>
+    template<ValidKeywordForList<KeywordList> Keyword>
     bool isKeyword() const { return m_data.template isKeyword<Keyword>(); }
     bool isEmpty() const { return m_data.isEmpty(); }
 

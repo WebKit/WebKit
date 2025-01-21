@@ -22,35 +22,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "StyleSizing.h"
 
-#include "CSSPrimitiveNumericTypes.h"
-#include "CSSPrimitiveValue.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 
 namespace WebCore {
-namespace CSS {
+namespace Style {
 
-// MARK: - Conversion from `WebCore::CSSValue` types to strongly typed `CSS::` value types.
-
-template<typename CSSType> struct CSSValueConversions;
-
-template<typename CSSType> CSSType convertFromCSSValue(const CSSValue& value)
+LayoutUnit evaluateMinimum(const LengthPercentage<CSS::Nonnegative>::Dimension& fixed, LayoutUnit)
 {
-    return CSSValueConversions<CSSType>{}(value);
+    return LayoutUnit(fixed.value);
 }
 
-template<Numeric CSSType> struct CSSValueConversions<CSSType> {
-    CSSType operator()(const CSSValue& value)
-    {
-        auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-        if (RefPtr calc = const_cast<CSSCalcValue*>(primitiveValue.cssCalcValue()))
-            return { typename CSSType::Calc { calc.releaseNonNull() } };
+LayoutUnit evaluateMinimum(const LengthPercentage<CSS::Nonnegative>::Percentage& percentage, LayoutUnit maximumValue)
+{
+    return LayoutUnit(static_cast<float>(maximumValue * percentage.value / 100.0f));
+}
 
-        auto unit = CSSType::UnitTraits::validate(primitiveValue.primitiveType());
-        RELEASE_ASSERT(unit);
-        return CSSType { typename CSSType::Raw { *unit, primitiveValue.valueNoConversionDataRequired() } };
-    }
-};
+LayoutUnit evaluateMinimum(const LengthPercentage<CSS::Nonnegative>::Calc& calc, LayoutUnit maximumValue)
+{
+    return Style::evaluate(calc, maximumValue);
+}
 
-} // namespace CSS
+} // namespace Style
 } // namespace WebCore

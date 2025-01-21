@@ -92,6 +92,11 @@
 #include "ScrollbarTheme.h"
 #include "ScrollbarsController.h"
 #include "Settings.h"
+#include "StyleFlexBasis.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
+#include "StylePreferredSize.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "StyleReflection.h"
 #include "StyleScrollSnapPoints.h"
 #include "TransformOperationData.h"
@@ -117,15 +122,16 @@ struct SameSizeAsRenderBox : public RenderBoxModelObject {
 
 static_assert(sizeof(RenderBox) == sizeof(SameSizeAsRenderBox), "RenderBox should stay small");
 
+using namespace CSS::Literals;
 using namespace HTMLNames;
 
 using OverrideSizeMap = SingleThreadWeakHashMap<const RenderBox, LayoutUnit>;
 static OverrideSizeMap* gOverridingLogicalHeightMap = nullptr;
 static OverrideSizeMap* gOverridingLogicalWidthMap = nullptr;
 
-using OverridingLengthMap = SingleThreadWeakHashMap<const RenderBox, Length>;
-static OverridingLengthMap* gOverridingLogicalHeightMapForFlexBasisComputation = nullptr;
-static OverridingLengthMap* gOverridingLogicalWidthMapForFlexBasisComputation = nullptr;
+using OverridingPreferredSizeMap = SingleThreadWeakHashMap<const RenderBox, Style::PreferredSize>;
+static OverridingPreferredSizeMap* gOverridingLogicalHeightMapForFlexBasisComputation = nullptr;
+static OverridingPreferredSizeMap* gOverridingLogicalWidthMapForFlexBasisComputation = nullptr;
 
 // FIXME: We should store these based on physical direction.
 using OverrideOptionalSizeMap = SingleThreadWeakHashMap<const RenderBox, RenderBox::GridAreaSize>;
@@ -714,8 +720,8 @@ LayoutUnit RenderBox::constrainLogicalWidthByMinMax(LayoutUnit logicalWidth, Lay
 {
     const RenderStyle& styleToUse = style();
     LayoutUnit computedMaxWidth = LayoutUnit::max();
-    if (!styleToUse.logicalMaxWidth().isUndefined() && (allowIntrinsic == AllowIntrinsic::Yes || !styleToUse.logicalMaxWidth().isIntrinsic()))
-        computedMaxWidth = computeLogicalWidthUsing(SizeType::MaxSize, styleToUse.logicalMaxWidth(), availableWidth, cb);
+    if (!styleToUse.logicalMaxWidth().isNone() && (allowIntrinsic == AllowIntrinsic::Yes || !styleToUse.logicalMaxWidth().isIntrinsic()))
+        computedMaxWidth = computeLogicalWidthUsing(styleToUse.logicalMaxWidth(), availableWidth, cb);
 
     if (allowIntrinsic == AllowIntrinsic::No && styleToUse.logicalMinWidth().isIntrinsic())
         return std::min(logicalWidth, computedMaxWidth);
@@ -725,10 +731,10 @@ LayoutUnit RenderBox::constrainLogicalWidthByMinMax(LayoutUnit logicalWidth, Lay
     MinimumSizeIsAutomaticContentBased minimumSizeType = MinimumSizeIsAutomaticContentBased::No;
     if (logicalMinWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio() && (styleToUse.logicalWidth().isAuto() || styleToUse.logicalWidth().isMinContent() || styleToUse.logicalWidth().isMaxContent()) && !is<RenderReplaced>(*this) && effectiveOverflowInlineDirection() == Overflow::Visible) {
         // The automatic minimum size in the ratio-dependent axis is  its min-content size. See https://www.w3.org/TR/css-sizing-4/#aspect-ratio-minimum
-        logicalMinWidth = Length(LengthType::MinContent);
+        logicalMinWidth = CSS::Keyword::MinContent { };
         minimumSizeType = MinimumSizeIsAutomaticContentBased::Yes;
     }
-    computedMinWidth = computeLogicalWidthUsing(SizeType::MinSize, logicalMinWidth, availableWidth, cb);
+    computedMinWidth = computeLogicalWidthUsing(logicalMinWidth, availableWidth, cb);
 
     if (styleToUse.hasAspectRatio())
         constrainLogicalMinMaxSizesByAspectRatio(computedMinWidth, computedMaxWidth, logicalWidth, minimumSizeType, ConstrainDimension::Width);
@@ -741,8 +747,8 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
 {
     const RenderStyle& styleToUse = style();
     std::optional<LayoutUnit> computedLogicalMaxHeight;
-    if (!styleToUse.logicalMaxHeight().isUndefined())
-        computedLogicalMaxHeight = computeLogicalHeightUsing(SizeType::MaxSize, styleToUse.logicalMaxHeight(), intrinsicContentHeight);
+    if (!styleToUse.logicalMaxHeight().isNone())
+        computedLogicalMaxHeight = computeLogicalHeightUsing(styleToUse.logicalMaxHeight(), intrinsicContentHeight);
 
     MinimumSizeIsAutomaticContentBased minimumSizeType = MinimumSizeIsAutomaticContentBased::No;
     auto logicalMinHeight = styleToUse.logicalMinHeight();
@@ -750,12 +756,12 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
         auto heightFromAspectRatio = blockSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatioType(), isRenderReplaced()) - borderAndPaddingLogicalHeight();
         if (firstChild())
             heightFromAspectRatio = std::max(heightFromAspectRatio, *intrinsicContentHeight);
-        logicalMinHeight = Length(heightFromAspectRatio, LengthType::Fixed);
+        logicalMinHeight = Style::MinimumSize::Fixed { heightFromAspectRatio };
         minimumSizeType = MinimumSizeIsAutomaticContentBased::Yes;
     }
     if (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent())
-        logicalMinHeight = Length();
-    std::optional<LayoutUnit> computedLogicalMinHeight = computeLogicalHeightUsing(SizeType::MinSize, logicalMinHeight, intrinsicContentHeight);
+        logicalMinHeight = CSS::Keyword::Auto { };
+    std::optional<LayoutUnit> computedLogicalMinHeight = computeLogicalHeightUsing(logicalMinHeight, intrinsicContentHeight);
     LayoutUnit maxHeight = computedLogicalMaxHeight ? computedLogicalMaxHeight.value() : LayoutUnit::max();
     LayoutUnit minHeight = computedLogicalMinHeight ? computedLogicalMinHeight.value() : LayoutUnit();
     if (styleToUse.hasAspectRatio())
@@ -769,21 +775,26 @@ LayoutUnit RenderBox::constrainContentBoxLogicalHeightByMinMax(LayoutUnit logica
     // If the min/max height and logical height are both percentages we take advantage of already knowing the current resolved percentage height
     // to avoid recursing up through our containing blocks again to determine it.
     const RenderStyle& styleToUse = style();
-    if (!styleToUse.logicalMaxHeight().isUndefined()) {
-        if (styleToUse.logicalMaxHeight().isPercent() && styleToUse.logicalHeight().isPercent()) {
-            auto availableLogicalHeight = logicalHeight / styleToUse.logicalHeight().value() * 100;
-            logicalHeight = std::min(logicalHeight, valueForLength(styleToUse.logicalMaxHeight(), availableLogicalHeight));
+
+    auto percentageLogicalHeight = styleToUse.logicalHeight().percentage();
+    auto percentageLogicalMinHeight = styleToUse.logicalMinHeight().percentage();
+
+    if (!styleToUse.logicalMaxHeight().isNone()) {
+        auto percentageLogicalMaxHeight = styleToUse.logicalMaxHeight().percentage();
+        if (percentageLogicalMaxHeight && percentageLogicalHeight) {
+            auto availableLogicalHeight = LayoutUnit { logicalHeight / static_cast<float>(percentageLogicalHeight->value) * 100 };
+            logicalHeight = std::min(logicalHeight, Style::evaluate(*percentageLogicalMaxHeight, availableLogicalHeight));
         } else {
-            if (std::optional<LayoutUnit> maxH = computeContentLogicalHeight(SizeType::MaxSize, styleToUse.logicalMaxHeight(), intrinsicContentHeight))
+            if (std::optional<LayoutUnit> maxH = computeContentLogicalHeight(styleToUse.logicalMaxHeight(), intrinsicContentHeight))
                 logicalHeight = std::min(logicalHeight, maxH.value());
         }
     }
 
-    if (styleToUse.logicalMinHeight().isPercent() && styleToUse.logicalHeight().isPercent()) {
-        auto availableLogicalHeight = logicalHeight / styleToUse.logicalHeight().value() * 100;
-        logicalHeight = std::max(logicalHeight, valueForLength(styleToUse.logicalMinHeight(), availableLogicalHeight));
+    if (percentageLogicalMinHeight && percentageLogicalHeight) {
+        auto availableLogicalHeight = LayoutUnit { logicalHeight / static_cast<float>(percentageLogicalHeight->value) * 100 };
+        logicalHeight = std::max(logicalHeight, Style::evaluate(*percentageLogicalMinHeight, availableLogicalHeight));
     } else {
-        if (std::optional<LayoutUnit> computedContentLogicalHeight = computeContentLogicalHeight(SizeType::MinSize, styleToUse.logicalMinHeight(), intrinsicContentHeight))
+        if (std::optional<LayoutUnit> computedContentLogicalHeight = computeContentLogicalHeight(styleToUse.logicalMinHeight(), intrinsicContentHeight))
             logicalHeight = std::max(logicalHeight, computedContentLogicalHeight.value());
     }
     return logicalHeight;
@@ -1370,7 +1381,7 @@ void RenderBox::clearGridAreaContentLogicalHeight()
         gGridAreaContentLogicalHeightMap->remove(*this);
 }
 
-std::optional<Length> RenderBox::overridingLogicalHeightForFlexBasisComputation() const
+std::optional<Style::PreferredSize> RenderBox::overridingLogicalHeightForFlexBasisComputation() const
 {
     if (!gOverridingLogicalHeightMapForFlexBasisComputation)
         return { };
@@ -1379,11 +1390,11 @@ std::optional<Length> RenderBox::overridingLogicalHeightForFlexBasisComputation(
     return { };
 }
 
-void RenderBox::setOverridingBorderBoxLogicalHeightForFlexBasisComputation(const Length& height)
+void RenderBox::setOverridingBorderBoxLogicalHeightForFlexBasisComputation(Style::PreferredSize&& height)
 {
     if (!gOverridingLogicalHeightMapForFlexBasisComputation)
-        gOverridingLogicalHeightMapForFlexBasisComputation = new OverridingLengthMap();
-    gOverridingLogicalHeightMapForFlexBasisComputation->set(*this, height);
+        gOverridingLogicalHeightMapForFlexBasisComputation = new OverridingPreferredSizeMap();
+    gOverridingLogicalHeightMapForFlexBasisComputation->set(*this, WTFMove(height));
 }
 
 void RenderBox::clearOverridingLogicalHeightForFlexBasisComputation()
@@ -1392,7 +1403,7 @@ void RenderBox::clearOverridingLogicalHeightForFlexBasisComputation()
         gOverridingLogicalHeightMapForFlexBasisComputation->remove(*this);
 }
 
-std::optional<Length> RenderBox::overridingLogicalWidthForFlexBasisComputation() const
+std::optional<Style::PreferredSize> RenderBox::overridingLogicalWidthForFlexBasisComputation() const
 {
     if (!gOverridingLogicalWidthMapForFlexBasisComputation)
         return { };
@@ -1401,11 +1412,11 @@ std::optional<Length> RenderBox::overridingLogicalWidthForFlexBasisComputation()
     return { };
 }
 
-void RenderBox::setOverridingBorderBoxLogicalWidthForFlexBasisComputation(const Length& height)
+void RenderBox::setOverridingBorderBoxLogicalWidthForFlexBasisComputation(Style::PreferredSize&& width)
 {
     if (!gOverridingLogicalWidthMapForFlexBasisComputation)
-        gOverridingLogicalWidthMapForFlexBasisComputation = new OverridingLengthMap();
-    gOverridingLogicalWidthMapForFlexBasisComputation->set(*this, height);
+        gOverridingLogicalWidthMapForFlexBasisComputation = new OverridingPreferredSizeMap();
+    gOverridingLogicalWidthMapForFlexBasisComputation->set(*this, WTFMove(width));
 }
 
 void RenderBox::clearOverridingLogicalWidthForFlexBasisComputation()
@@ -1435,20 +1446,18 @@ bool RenderBox::hasTrimmedMargin(std::optional<MarginTrimType> marginTrimType) c
     return marginTrimType ? rareData().trimmedMargins.contains(*marginTrimType) : !rareData().trimmedMargins.isEmpty();
 }
 
-LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const
+LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(CSS::Keyword::Auto) const
 {
-    auto width = LayoutUnit { logicalWidth.value() };
-    LayoutUnit bordersPlusPadding = borderAndPaddingLogicalWidth();
-    if (style().boxSizing() == BoxSizing::ContentBox || logicalWidth.isIntrinsicOrAuto())
-        return width + bordersPlusPadding;
-    return std::max(width, bordersPlusPadding);
+    return borderAndPaddingLogicalWidth();
 }
 
-LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth, LengthType originalType) const
+LayoutUnit RenderBox::adjustBorderBoxLogicalWidthForBoxSizing(const Style::FixedSize& logicalWidth) const
 {
-    if (originalType == LengthType::Calculated)
-        return adjustBorderBoxLogicalWidthForBoxSizing({ computedLogicalWidth, LengthType::Fixed, false });
-    return adjustBorderBoxLogicalWidthForBoxSizing({ computedLogicalWidth, originalType, false });
+    auto width = LayoutUnit { logicalWidth.value };
+    LayoutUnit bordersPlusPadding = borderAndPaddingLogicalWidth();
+    if (style().boxSizing() == BoxSizing::ContentBox)
+        return width + bordersPlusPadding;
+    return std::max(width, bordersPlusPadding);
 }
 
 LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height) const
@@ -1459,19 +1468,89 @@ LayoutUnit RenderBox::adjustBorderBoxLogicalHeightForBoxSizing(LayoutUnit height
     return std::max(height, bordersPlusPadding);
 }
 
-LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(const Length& logicalWidth) const
+LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(CSS::Keyword::Auto) const
 {
-    auto width = LayoutUnit { logicalWidth.value() };
-    if (style().boxSizing() == BoxSizing::ContentBox || logicalWidth.isIntrinsicOrAuto())
+    return 0_lu;
+}
+
+LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(const Style::FixedSize& logicalWidth) const
+{
+    auto width = LayoutUnit { logicalWidth.value };
+    if (style().boxSizing() == BoxSizing::ContentBox)
         return std::max(0_lu, width);
     return std::max(0_lu, width - borderAndPaddingLogicalWidth());
 }
 
-LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth, LengthType originalType) const
+LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth, const Style::PreferredSize& originalLogicalWidth) const
 {
-    if (originalType == LengthType::Calculated)
-        return adjustContentBoxLogicalWidthForBoxSizing({ computedLogicalWidth, LengthType::Fixed, false });
-    return adjustContentBoxLogicalWidthForBoxSizing({ computedLogicalWidth, originalType, false });
+    return WTF::switchOn(originalLogicalWidth,
+        [&](const Style::PreferredSize::Fixed&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const Style::PreferredSize::Percentage&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const Style::PreferredSize::Calc&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const auto&) {
+            return std::max(0_lu, computedLogicalWidth);
+        }
+    );
+}
+
+LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth, const Style::MinimumSize& originalLogicalWidth) const
+{
+    return WTF::switchOn(originalLogicalWidth,
+        [&](const Style::MinimumSize::Fixed&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const Style::MinimumSize::Percentage&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const Style::MinimumSize::Calc&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const auto&) {
+            return std::max(0_lu, computedLogicalWidth);
+        }
+    );
+}
+
+LayoutUnit RenderBox::adjustContentBoxLogicalWidthForBoxSizing(LayoutUnit computedLogicalWidth, const Style::MaximumSize& originalLogicalWidth) const
+{
+    return WTF::switchOn(originalLogicalWidth,
+        [&](const Style::MaximumSize::Fixed&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const Style::MaximumSize::Percentage&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const Style::MaximumSize::Calc&) {
+            if (style().boxSizing() == BoxSizing::ContentBox)
+                return std::max(0_lu, computedLogicalWidth);
+            return std::max(0_lu, computedLogicalWidth - borderAndPaddingLogicalWidth());
+        },
+        [&](const auto&) {
+            return std::max(0_lu, computedLogicalWidth);
+        }
+    );
 }
 
 LayoutUnit RenderBox::adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit> height) const
@@ -2313,21 +2392,21 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
         return containingBlock->contentBoxLogicalHeight(*overridingLogicalHeight);
 
     const RenderStyle& containingBlockStyle = containingBlock->style();
-    Length logicalHeightLength = containingBlockStyle.logicalHeight();
+    auto logicalHeightLength = containingBlockStyle.logicalHeight();
 
     // FIXME: For now just support fixed heights.  Eventually should support percentage heights as well.
-    if (!logicalHeightLength.isFixed()) {
-        LayoutUnit fillFallbackExtent = containingBlockStyle.writingMode().isHorizontal()
-            ? view().frameView().layoutSize().height()
-            : view().frameView().layoutSize().width();
-        LayoutUnit fillAvailableExtent = containingBlock->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
-        view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=158286 We also need to perform the same percentHeightDescendant treatment to the element which dictates the return value for containingBlock()->availableLogicalHeight() above.
-        return std::min(fillAvailableExtent, fillFallbackExtent);
+    if (auto fixedLogicalHeight = logicalHeightLength.fixed()) {
+        // Use the content box logical height as specified by the style.
+        return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(fixedLogicalHeight->value));
     }
 
-    // Use the content box logical height as specified by the style.
-    return containingBlock->adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(logicalHeightLength.value()));
+    LayoutUnit fillFallbackExtent = containingBlockStyle.writingMode().isHorizontal()
+        ? view().frameView().layoutSize().height()
+        : view().frameView().layoutSize().width();
+    LayoutUnit fillAvailableExtent = containingBlock->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
+    view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=158286 We also need to perform the same percentHeightDescendant treatment to the element which dictates the return value for containingBlock()->availableLogicalHeight() above.
+    return std::min(fillAvailableExtent, fillFallbackExtent);
 }
 
 void RenderBox::mapLocalToContainer(const RenderLayerModelObject* ancestorContainer, TransformState& transformState, OptionSet<MapCoordinatesMode> mode, bool* wasFixed) const
@@ -2637,11 +2716,11 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         return !isGridItem() || !hasStretchedLogicalWidth();
     }();
 
-    auto usedLogicalWidthLength = [&] {
+    auto usedLogicalWidthLength = [&] -> Style::PreferredSize {
         if (auto overridingLogicalWidthLength = overridingLogicalWidthForFlexBasisComputation())
             return *overridingLogicalWidthLength;
         if (treatAsReplaced)
-            return Length { computeReplacedLogicalWidth(), LengthType::Fixed };
+            return Style::PreferredSize::Fixed { computeReplacedLogicalWidth() };
         return style().logicalWidth();
     }();
 
@@ -2652,7 +2731,7 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         computedValues.m_margins.m_start = minimumValueForLength(styleToUse.marginStart(), containerLogicalWidth);
         computedValues.m_margins.m_end = minimumValueForLength(styleToUse.marginEnd(), containerLogicalWidth);
         if (treatAsReplaced)
-            computedValues.m_extent = std::max(LayoutUnit(floatValueForLength(usedLogicalWidthLength, 0) + borderAndPaddingLogicalWidth()), minPreferredLogicalWidth());
+            computedValues.m_extent = std::max(LayoutUnit(Style::evaluate(usedLogicalWidthLength, 0.0f) + borderAndPaddingLogicalWidth()), minPreferredLogicalWidth());
         return;
     }
 
@@ -2663,12 +2742,12 @@ void RenderBox::computeLogicalWidth(LogicalExtentComputedValues& computedValues)
         if (auto overridingLogicalWidth = this->overridingBorderBoxLogicalWidth())
             return *overridingLogicalWidth;
         if (treatAsReplaced)
-            return LayoutUnit { usedLogicalWidthLength.value() } + borderAndPaddingLogicalWidth();
+            return LayoutUnit { usedLogicalWidthLength.fixed()->value } + borderAndPaddingLogicalWidth();
         if (shouldComputeLogicalWidthFromAspectRatio() && style().logicalWidth().isAuto())
             return computeLogicalWidthFromAspectRatio();
 
         auto containerWidthInInlineDirection = !hasPerpendicularContainingBlock ? containerLogicalWidth : perpendicularContainingBlockLogicalHeight();
-        auto preferredWidth = computeLogicalWidthUsing(SizeType::MainOrPreferredSize, usedLogicalWidthLength, containerWidthInInlineDirection, containingBlock);
+        auto preferredWidth = computeLogicalWidthUsing(usedLogicalWidthLength, containerWidthInInlineDirection, containingBlock);
         return constrainLogicalWidthByMinMax(preferredWidth, containerWidthInInlineDirection, containingBlock);
     };
     computedValues.m_extent = logicalWidth();
@@ -2740,14 +2819,11 @@ LayoutUnit RenderBox::fillAvailableMeasure(LayoutUnit availableLogicalWidth, Lay
     return availableLogicalWidth - marginStart - marginEnd;
 }
 
-LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(Length logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+template<CSSValueID Id> std::pair<LayoutUnit, LayoutUnit> RenderBox::computeMinMaxIntrinsicLogicalWidth(Constant<Id>, LayoutUnit borderAndPadding) const
 {
-    if (logicalWidthLength.isFillAvailable())
-        return std::max(borderAndPadding, fillAvailableMeasure(availableLogicalWidth));
-
     LayoutUnit minLogicalWidth;
     LayoutUnit maxLogicalWidth;
-    if (!logicalWidthLength.isMinIntrinsic() && shouldComputeLogicalWidthFromAspectRatio()) {
+    if (Id != CSSValueMinIntrinsic && shouldComputeLogicalWidthFromAspectRatio()) {
         minLogicalWidth = maxLogicalWidth = computeLogicalWidthFromAspectRatioInternal() - borderAndPadding;
         if (firstChild()) {
             LayoutUnit minChildrenLogicalWidth;
@@ -2759,46 +2835,162 @@ LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(Length logicalWidthLengt
     } else
         computeIntrinsicKeywordLogicalWidths(minLogicalWidth, maxLogicalWidth);
 
-    if (logicalWidthLength.isMinContent() || logicalWidthLength.isMinIntrinsic())
-        return minLogicalWidth + borderAndPadding;
-
-    if (logicalWidthLength.isMaxContent())
-        return maxLogicalWidth + borderAndPadding;
-
-    if (logicalWidthLength.isFitContent()) {
-        minLogicalWidth += borderAndPadding;
-        maxLogicalWidth += borderAndPadding;
-        return std::max(minLogicalWidth, std::min(maxLogicalWidth, fillAvailableMeasure(availableLogicalWidth)));
-    }
-
-    ASSERT_NOT_REACHED();
-    return 0;
+    return { minLogicalWidth, maxLogicalWidth };
 }
 
-LayoutUnit RenderBox::computeLogicalWidthUsing(SizeType widthType, Length logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(CSS::Keyword::WebkitFillAvailable, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
 {
-    ASSERT(widthType == SizeType::MinSize || widthType == SizeType::MainOrPreferredSize || !logicalWidth.isAuto());
-    if (widthType == SizeType::MinSize && logicalWidth.isAuto())
-        return adjustBorderBoxLogicalWidthForBoxSizing(0, logicalWidth.type());
+    return std::max(borderAndPadding, fillAvailableMeasure(availableLogicalWidth));
+}
 
-    if (!logicalWidth.isIntrinsicOrAuto()) {
-        // FIXME: If the containing block flow is perpendicular to our direction we need to use the available logical height instead.
-        return adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, availableLogicalWidth), logicalWidth.type());
-    }
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(CSS::Keyword::FitContent keyword, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+{
+    auto [minLogicalWidth, maxLogicalWidth] = computeMinMaxIntrinsicLogicalWidth(keyword, borderAndPadding);
+    minLogicalWidth += borderAndPadding;
+    maxLogicalWidth += borderAndPadding;
+    return std::max(minLogicalWidth, std::min(maxLogicalWidth, fillAvailableMeasure(availableLogicalWidth)));
+}
 
-    if (logicalWidth.isIntrinsic() || logicalWidth.isMinIntrinsic())
-        return computeIntrinsicLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPaddingLogicalWidth());
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(CSS::Keyword::MaxContent keyword, LayoutUnit, LayoutUnit borderAndPadding) const
+{
+    auto [minLogicalWidth, maxLogicalWidth] = computeMinMaxIntrinsicLogicalWidth(keyword, borderAndPadding);
+    UNUSED_VARIABLE(minLogicalWidth);
+    return maxLogicalWidth + borderAndPadding;
+}
 
-    LayoutUnit marginStart;
-    LayoutUnit marginEnd;
-    LayoutUnit logicalWidthResult = fillAvailableMeasure(availableLogicalWidth, marginStart, marginEnd);
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(CSS::Keyword::MinContent keyword, LayoutUnit, LayoutUnit borderAndPadding) const
+{
+    auto [minLogicalWidth, maxLogicalWidth] = computeMinMaxIntrinsicLogicalWidth(keyword, borderAndPadding);
+    UNUSED_VARIABLE(maxLogicalWidth);
+    return minLogicalWidth + borderAndPadding;
+}
 
-    if (shrinkToAvoidFloats() && containingBlock.containsFloats())
-        logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(CSS::Keyword::MinIntrinsic keyword, LayoutUnit, LayoutUnit borderAndPadding) const
+{
+    auto [minLogicalWidth, maxLogicalWidth] = computeMinMaxIntrinsicLogicalWidth(keyword, borderAndPadding);
+    UNUSED_VARIABLE(maxLogicalWidth);
+    return minLogicalWidth + borderAndPadding;
+}
 
-    if (widthType == SizeType::MainOrPreferredSize && sizesLogicalWidthToFitContent(widthType))
-        return std::max(minPreferredLogicalWidth(), std::min(maxPreferredLogicalWidth(), logicalWidthResult));
-    return logicalWidthResult;
+template<typename SizeType> LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsingImpl(const SizeType& logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+{
+    return WTF::switchOn(logicalWidthLength,
+        [&](const CSS::Keyword::WebkitFillAvailable& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding);
+        },
+        [&](const CSS::Keyword::MinContent& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding);
+        },
+        [&](const CSS::Keyword::MinIntrinsic& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding);
+        },
+        [&](const CSS::Keyword::MaxContent& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding);
+        },
+        [&](const CSS::Keyword::FitContent& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPadding);
+        },
+        [&](const auto&) {
+            ASSERT_NOT_REACHED();
+            return 0_lu;
+        }
+    );
+}
+
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(const Style::PreferredSize& logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+{
+    return computeIntrinsicLogicalWidthUsingImpl(logicalWidthLength, availableLogicalWidth, borderAndPadding);
+}
+
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(const Style::MinimumSize& logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+{
+    return computeIntrinsicLogicalWidthUsingImpl(logicalWidthLength, availableLogicalWidth, borderAndPadding);
+}
+
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(const Style::MaximumSize& logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const
+{
+    return computeIntrinsicLogicalWidthUsingImpl(logicalWidthLength, availableLogicalWidth, borderAndPadding);
+}
+
+template<typename SizeType> LayoutUnit RenderBox::computeLogicalWidthUsingImpl(const SizeType& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+{
+    auto handleIntrinsic = [&] {
+        LayoutUnit marginStart;
+        LayoutUnit marginEnd;
+        LayoutUnit logicalWidthResult = fillAvailableMeasure(availableLogicalWidth, marginStart, marginEnd);
+
+        if (shrinkToAvoidFloats() && containingBlock.containsFloats())
+            logicalWidthResult = std::min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, containingBlock));
+
+        if constexpr (std::same_as<SizeType, Style::PreferredSize>) {
+            if (sizesLogicalWidthToFitContent())
+                return std::max(minPreferredLogicalWidth(), std::min(maxPreferredLogicalWidth(), logicalWidthResult));
+        }
+
+        return logicalWidthResult;
+    };
+
+    return WTF::switchOn(logicalWidth,
+        [&](const typename SizeType::Fixed& fixed) {
+            return adjustBorderBoxLogicalWidthForBoxSizing(
+                typename SizeType::Fixed { Style::evaluate(fixed, availableLogicalWidth) }
+            );
+        },
+        [&](const typename SizeType::Percentage& percentage) {
+            return adjustBorderBoxLogicalWidthForBoxSizing(
+                typename SizeType::Fixed { Style::evaluate(percentage, availableLogicalWidth) }
+            );
+        },
+        [&](const typename SizeType::Calc& calc) {
+            return adjustBorderBoxLogicalWidthForBoxSizing(
+                typename SizeType::Fixed { Style::evaluate(calc, availableLogicalWidth) }
+            );
+        },
+        [&](const CSS::Keyword::Auto&) {
+            if constexpr (std::same_as<SizeType, Style::MinimumSize>)
+                return adjustBorderBoxLogicalWidthForBoxSizing(CSS::Keyword::Auto { });
+            else
+                return handleIntrinsic();
+        },
+        [&](const CSS::Keyword::MinContent& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPaddingLogicalWidth());
+        },
+        [&](const CSS::Keyword::MaxContent& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPaddingLogicalWidth());
+        },
+        [&](const CSS::Keyword::FitContent& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPaddingLogicalWidth());
+        },
+        [&](const CSS::Keyword::WebkitFillAvailable& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPaddingLogicalWidth());
+        },
+        [&](const CSS::Keyword::MinIntrinsic& keyword) {
+            return computeIntrinsicLogicalWidthUsing(keyword, availableLogicalWidth, borderAndPaddingLogicalWidth());
+        },
+        [&](const auto&) {
+            return handleIntrinsic();
+        }
+    );
+}
+
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::FlexBasis& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+{
+    return computeLogicalWidthUsingImpl(logicalWidth, availableLogicalWidth, containingBlock);
+}
+
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::PreferredSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+{
+    return computeLogicalWidthUsingImpl(logicalWidth, availableLogicalWidth, containingBlock);
+}
+
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::MinimumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+{
+    return computeLogicalWidthUsingImpl(logicalWidth, availableLogicalWidth, containingBlock);
+}
+
+LayoutUnit RenderBox::computeLogicalWidthUsing(const Style::MaximumSize& logicalWidth, LayoutUnit availableLogicalWidth, const RenderBlock& containingBlock) const
+{
+    return computeLogicalWidthUsingImpl(logicalWidth, availableLogicalWidth, containingBlock);
 }
 
 bool RenderBox::columnFlexItemHasStretchAlignment() const
@@ -2868,7 +3060,7 @@ bool RenderBox::hasStretchedLogicalWidth(StretchingMode stretchingMode) const
     return style.resolvedJustifySelf(&containingBlock->style(), normalItemPosition).position() == ItemPosition::Stretch;
 }
 
-bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
+bool RenderBox::sizesLogicalWidthToFitContent() const
 {
     // Marquees in WinIE are like a mixture of blocks and inline-blocks.  They size as though they're blocks,
     // but they allow text to sit on the same line as the marquee.
@@ -2884,8 +3076,8 @@ bool RenderBox::sizesLogicalWidthToFitContent(SizeType widthType) const
 
     // This code may look a bit strange.  Basically width:intrinsic should clamp the size when testing both
     // min-width and width.  max-width is only clamped if it is also intrinsic.
-    Length logicalWidth = (widthType == SizeType::MaxSize) ? style().logicalMaxWidth() : style().logicalWidth();
-    if (logicalWidth.type() == LengthType::Intrinsic)
+    auto logicalWidth = style().logicalWidth();
+    if (logicalWidth.isIntrinsicKeyword())
         return true;
 
     // Children of a horizontal marquee do not fill the container by default.
@@ -3143,7 +3335,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
     }
 
     bool checkMinMaxHeight = false;
-    auto computedHeightValue = [&]() -> Length {
+    auto computedHeightValue = [&]() -> Style::PreferredSize {
         auto& parent = *this->parent();
 
         if (is<RenderTable>(*this)) {
@@ -3151,7 +3343,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             auto heightValue = logicalHeight;
             if (shouldComputeLogicalHeightFromAspectRatio())
                 heightValue = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatioType(), is<RenderReplaced>(*this));
-            return { heightValue, LengthType::Fixed };
+            return Style::PreferredSize::Fixed { heightValue };
         }
 
         if (is<RenderFlexibleBox>(parent)) {
@@ -3162,10 +3354,10 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
             }
 
             if (auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight())
-                return { *overridingLogicalHeight, LengthType::Fixed };
+                return Style::PreferredSize::Fixed { *overridingLogicalHeight };
 
             if (is<RenderReplaced>(*this))
-                return { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight(), LengthType::Fixed };
+                return Style::PreferredSize::Fixed { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight() };
 
             checkMinMaxHeight = true;
             return style().logicalHeight();
@@ -3173,7 +3365,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
         if (CheckedPtr deprecatedFlexBox = dynamicDowncast<RenderDeprecatedFlexibleBox>(parent)) {
             if (auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight())
-                return { *overridingLogicalHeight, LengthType::Fixed };
+                return Style::PreferredSize::Fixed { *overridingLogicalHeight };
 
             auto& flexBoxStyle = deprecatedFlexBox->style();
             auto treatAsReplaced = [&] {
@@ -3184,11 +3376,11 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
                 return !inHorizontalBox || !stretching;
             };
             if (treatAsReplaced())
-                return { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight(), LengthType::Fixed };
+                return Style::PreferredSize::Fixed { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight() };
 
             // Block children of horizontal flexible boxes fill the height of the box.
             if (style().logicalHeight().isAuto() && flexBoxStyle.boxOrient() == BoxOrient::Horizontal && deprecatedFlexBox->isStretchingChildren())
-                return { deprecatedFlexBox->contentBoxLogicalHeight() - marginBefore() - marginAfter(), LengthType::Fixed };
+                return Style::PreferredSize::Fixed { deprecatedFlexBox->contentBoxLogicalHeight() - marginBefore() - marginAfter() };
 
             checkMinMaxHeight = true;
             return style().logicalHeight();
@@ -3196,17 +3388,17 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
         if (is<RenderGrid>(parent)) {
             if (auto overridingLogicalHeight = this->overridingBorderBoxLogicalHeight())
-                return { *overridingLogicalHeight, LengthType::Fixed };
+                return Style::PreferredSize::Fixed { *overridingLogicalHeight };
 
             if (is<RenderReplaced>(*this))
-                return { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight(), LengthType::Fixed };
+                return Style::PreferredSize::Fixed { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight() };
 
             checkMinMaxHeight = true;
             return style().logicalHeight();
         }
 
         if (is<RenderReplaced>(*this))
-            return { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight(), LengthType::Fixed };
+            return Style::PreferredSize::Fixed { computeReplacedLogicalHeight() + borderAndPaddingLogicalHeight() };
 
         checkMinMaxHeight = true;
         return style().logicalHeight();
@@ -3214,8 +3406,9 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
     auto computedLogicalHeight = [&] {
         if (!checkMinMaxHeight) {
-            ASSERT(computedHeightValue.isFixed());
-            return LayoutUnit { computedHeightValue.value() };
+            auto computedHeightValueFixed = computedHeightValue.fixed();
+            ASSERT(computedHeightValueFixed);
+            return LayoutUnit { computedHeightValueFixed->value };
         }
 
         // Callers passing LayoutUnit::max() for logicalHeight means an indefinite height, so
@@ -3230,7 +3423,7 @@ RenderBox::LogicalExtentComputedValues RenderBox::computeLogicalHeight(LayoutUni
 
         if (intrinsicHeight)
             *intrinsicHeight -= borderAndPaddingLogicalHeight();
-        auto mainOrPreferredHeight = computeLogicalHeightUsing(SizeType::MainOrPreferredSize, computedHeightValue, intrinsicHeight).value_or(computedValues.m_extent);
+        auto mainOrPreferredHeight = computeLogicalHeightUsing(computedHeightValue, intrinsicHeight).value_or(computedValues.m_extent);
         return constrainLogicalHeightByMinMax(mainOrPreferredHeight, intrinsicHeight);
     };
     computedValues.m_extent = computedLogicalHeight();
@@ -3288,23 +3481,63 @@ LayoutUnit RenderBox::computeLogicalHeightWithoutLayout() const
     return computedValues.m_extent;
 }
 
-std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsingImpl(const SizeType& height, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
     if (is<RenderReplaced>(this)) {
-        if ((heightType == SizeType::MinSize || heightType == SizeType::MaxSize) && !replacedMinMaxLogicalHeightComputesAsNone(heightType))
-            return computeReplacedLogicalHeightUsing(heightType, height) + borderAndPaddingLogicalHeight();
+        if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+            if (!replacedMinLogicalHeightComputesAsNone())
+                return computeReplacedLogicalHeightUsing(height) + borderAndPaddingLogicalHeight();
+        } else if (std::same_as<SizeType, Style::MaximumSize>) {
+            if (!replacedMaxLogicalHeightComputesAsNone())
+                return computeReplacedLogicalHeightUsing(height) + borderAndPaddingLogicalHeight();
+        }
         return std::nullopt;
     }
-    if (std::optional<LayoutUnit> logicalHeight = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight))
+    if (std::optional<LayoutUnit> logicalHeight = computeContentAndScrollbarLogicalHeightUsing(height, intrinsicContentHeight))
         return adjustBorderBoxLogicalHeightForBoxSizing(logicalHeight.value());
     return std::nullopt;
 }
 
-std::optional<LayoutUnit> RenderBox::computeContentLogicalHeight(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(const Style::PreferredSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
-    if (std::optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(heightType, height, intrinsicContentHeight))
+    return computeLogicalHeightUsingImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(const Style::MinimumSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeLogicalHeightUsingImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeLogicalHeightUsing(const Style::MaximumSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeLogicalHeightUsingImpl(height, intrinsicContentHeight);
+}
+
+template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentLogicalHeightImpl(const SizeType& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    if (std::optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(height, intrinsicContentHeight))
         return std::max<LayoutUnit>(0, adjustContentBoxLogicalHeightForBoxSizing(heightIncludingScrollbar) - scrollbarLogicalHeight());
     return std::nullopt;
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentLogicalHeight(const Style::PreferredSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentLogicalHeightImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentLogicalHeight(const Style::FlexBasis& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentLogicalHeightImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentLogicalHeight(const Style::MinimumSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentLogicalHeightImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentLogicalHeight(const Style::MaximumSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentLogicalHeightImpl(height, intrinsicContentHeight);
 }
 
 static inline bool isOrthogonal(const RenderBox& renderer, const RenderElement& ancestor)
@@ -3312,16 +3545,16 @@ static inline bool isOrthogonal(const RenderBox& renderer, const RenderElement& 
     return renderer.isHorizontalWritingMode() != ancestor.isHorizontalWritingMode();
 }
 
-std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(Length logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
+template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsingImpl(const SizeType& logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
 {
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isLegacyIntrinsic()) {
         if (auto* renderImage = dynamicDowncast<RenderImage>(this)) {
             auto computedLogicalWidth = style().logicalWidth();
-            if ((logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent()) && computedLogicalWidth.isFixed() && !style().hasAspectRatio()) {
+            if (auto fixedComputedLogicalWidth = computedLogicalWidth.fixed(); (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent()) && fixedComputedLogicalWidth && !style().hasAspectRatio()) {
                 auto intrinsicRatio = renderImage->intrinsicRatio();
-                return resolveHeightForRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), LayoutUnit(computedLogicalWidth.value()), intrinsicRatio.transposedSize().aspectRatio(), BoxSizing::ContentBox);
+                return resolveHeightForRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), LayoutUnit { fixedComputedLogicalWidth->value }, intrinsicRatio.transposedSize().aspectRatio(), BoxSizing::ContentBox);
             }
         }
 
@@ -3335,24 +3568,63 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
     return 0_lu;
 }
 
-std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(SizeType heightType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+
+std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(const Style::FlexBasis& logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
 {
-    if (height.isAuto()) {
-        if (heightType != SizeType::MinSize)
+    return computeIntrinsicLogicalContentHeightUsingImpl(logicalHeightLength, intrinsicContentHeight, borderAndPadding);
+}
+
+std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(const Style::PreferredSize& logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
+{
+    return computeIntrinsicLogicalContentHeightUsingImpl(logicalHeightLength, intrinsicContentHeight, borderAndPadding);
+}
+
+std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(const Style::MinimumSize& logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
+{
+    return computeIntrinsicLogicalContentHeightUsingImpl(logicalHeightLength, intrinsicContentHeight, borderAndPadding);
+}
+
+std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(const Style::MaximumSize& logicalHeightLength, std::optional<LayoutUnit> intrinsicContentHeight, LayoutUnit borderAndPadding) const
+{
+    return computeIntrinsicLogicalContentHeightUsingImpl(logicalHeightLength, intrinsicContentHeight, borderAndPadding);
+}
+
+template<typename SizeType> std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsingImpl(const SizeType& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    if constexpr (!std::same_as<SizeType, Style::MaximumSize>) {
+        if (height.isAuto())
             return std::nullopt;
-        if (intrinsicContentHeight && isFlexItem() && downcast<RenderFlexibleBox>(parent())->shouldApplyMinBlockSizeAutoForFlexItem(*this))
-            return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
-        return std::optional<LayoutUnit>(0);
     }
+
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (height.isIntrinsic() || height.isLegacyIntrinsic())
         return computeIntrinsicLogicalContentHeightUsing(height, intrinsicContentHeight, borderAndPaddingLogicalHeight());
-    if (height.isFixed())
-        return LayoutUnit(height.value());
+    if (auto heightFixed = height.fixed())
+        return LayoutUnit { heightFixed->value };
     if (height.isPercentOrCalculated())
         return computePercentageLogicalHeight(height);
     return std::nullopt;
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(const Style::FlexBasis& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentAndScrollbarLogicalHeightUsingImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(const Style::PreferredSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentAndScrollbarLogicalHeightUsingImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(const Style::MinimumSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentAndScrollbarLogicalHeightUsingImpl(height, intrinsicContentHeight);
+}
+
+std::optional<LayoutUnit> RenderBox::computeContentAndScrollbarLogicalHeightUsing(const Style::MaximumSize& height, std::optional<LayoutUnit> intrinsicContentHeight) const
+{
+    return computeContentAndScrollbarLogicalHeightUsingImpl(height, intrinsicContentHeight);
 }
 
 bool RenderBox::skipContainingBlockForPercentHeightCalculation(const RenderBox& containingBlock, bool isPerpendicularWritingMode) const
@@ -3407,7 +3679,7 @@ static bool tableCellShouldHaveZeroInitialSize(const RenderTableCell& tableCell,
     return true;
 }
 
-std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants updateDescendants) const
+template<typename SizeType> std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeightImpl(const SizeType& height, UpdatePercentageHeightDescendants updateDescendants) const
 {
     bool skippedAutoHeightContainingBlock = false;
     auto* containingBlock = this->containingBlock();
@@ -3459,7 +3731,7 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length
     if (!availableHeight)
         return { };
 
-    auto result = valueForLength(height, *availableHeight - rootMarginBorderPaddingHeight + (isRenderTable() && isOutOfFlowPositioned() ? containingBlock->paddingBefore() + containingBlock->paddingAfter() : 0_lu));
+    auto result = Style::evaluate(height, *availableHeight - rootMarginBorderPaddingHeight + (isRenderTable() && isOutOfFlowPositioned() ? containingBlock->paddingBefore() + containingBlock->paddingAfter() : 0_lu));
     
     // |overridingLogicalHeight| is the maximum height made available by the
     // cell to its percent height children when we decide they can determine the
@@ -3475,9 +3747,29 @@ std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Length
     return result;
 }
 
+std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::FlexBasis& height, UpdatePercentageHeightDescendants updateDescendants) const
+{
+    return computePercentageLogicalHeightImpl(height, updateDescendants);
+}
+
+std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::PreferredSize& height, UpdatePercentageHeightDescendants updateDescendants) const
+{
+    return computePercentageLogicalHeightImpl(height, updateDescendants);
+}
+
+std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::MinimumSize& height, UpdatePercentageHeightDescendants updateDescendants) const
+{
+    return computePercentageLogicalHeightImpl(height, updateDescendants);
+}
+
+std::optional<LayoutUnit> RenderBox::computePercentageLogicalHeight(const Style::MaximumSize& height, UpdatePercentageHeightDescendants updateDescendants) const
+{
+    return computePercentageLogicalHeightImpl(height, updateDescendants);
+}
+
 LayoutUnit RenderBox::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
-    return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(SizeType::MainOrPreferredSize, style().logicalWidth()), shouldComputePreferred);
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style().logicalWidth()), shouldComputePreferred);
 }
 
 LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred shouldComputePreferred) const
@@ -3488,64 +3780,107 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUni
     auto& logicalMinWidth = style().logicalMinWidth();
     auto& logicalMaxWidth = style().logicalMaxWidth();
     bool useLogicalWidthForMinWidth = (shouldComputePreferred == ShouldComputePreferred::ComputePreferred && logicalMinWidth.isPercentOrCalculated());
-    bool useLogicalWidthForMaxWidth = (shouldComputePreferred == ShouldComputePreferred::ComputePreferred && logicalMaxWidth.isPercentOrCalculated()) || logicalMaxWidth.isUndefined();
-    auto minLogicalWidth =  useLogicalWidthForMinWidth ? logicalWidth : computeReplacedLogicalWidthUsing(SizeType::MinSize, logicalMinWidth);
-    auto maxLogicalWidth =  useLogicalWidthForMaxWidth ? logicalWidth : computeReplacedLogicalWidthUsing(SizeType::MaxSize, logicalMaxWidth);
+    bool useLogicalWidthForMaxWidth = (shouldComputePreferred == ShouldComputePreferred::ComputePreferred && logicalMaxWidth.isPercentOrCalculated()) || logicalMaxWidth.isNone();
+    auto minLogicalWidth = useLogicalWidthForMinWidth ? logicalWidth : computeReplacedLogicalWidthUsing(logicalMinWidth);
+    auto maxLogicalWidth = useLogicalWidthForMaxWidth ? logicalWidth : computeReplacedLogicalWidthUsing(logicalMaxWidth);
     return std::max(minLogicalWidth, std::min(logicalWidth, maxLogicalWidth));
 }
 
-LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType widthType, Length logicalWidth) const
+template<typename SizeType> LayoutUnit RenderBox::computeReplacedLogicalWidthUsingImpl(const SizeType& logicalWidth) const
 {
-    ASSERT(widthType == SizeType::MinSize || widthType == SizeType::MainOrPreferredSize || !logicalWidth.isAuto());
-    if (widthType == SizeType::MinSize && logicalWidth.isAuto())
-        return adjustContentBoxLogicalWidthForBoxSizing(0, logicalWidth.type());
+    // FIXME: Handle cases when containing block width is calculated or viewport percent.
+    // https://bugs.webkit.org/show_bug.cgi?id=91071
 
-    switch (logicalWidth.type()) {
-    case LengthType::Fixed:
-        return adjustContentBoxLogicalWidthForBoxSizing(logicalWidth);
-    case LengthType::MinContent:
-    case LengthType::MaxContent: {
-        // MinContent/MaxContent don't need the availableLogicalWidth argument.
-        LayoutUnit availableLogicalWidth;
-        return computeIntrinsicLogicalWidthUsing(logicalWidth, availableLogicalWidth, borderAndPaddingLogicalWidth()) - borderAndPaddingLogicalWidth();
-    }
-    case LengthType::FitContent:
-    case LengthType::FillAvailable:
-    case LengthType::Percent:
-    case LengthType::Calculated: {
-        LayoutUnit containerWidth;
+    auto calculateContainerWidth = [&] {
         if (isOutOfFlowPositioned())
-            containerWidth = containingBlockLogicalWidthForPositioned(downcast<RenderBoxModelObject>(*container()));
-        else if (isHorizontalWritingMode() == containingBlock()->isHorizontalWritingMode())
-            containerWidth = containingBlockLogicalWidthForContent();
-        else
-            containerWidth = perpendicularContainingBlockLogicalHeight();
-        Length containerLogicalWidth = containingBlock()->style().logicalWidth();
+            return containingBlockLogicalWidthForPositioned(downcast<RenderBoxModelObject>(*container()));
+        if (isHorizontalWritingMode() == containingBlock()->isHorizontalWritingMode())
+            return containingBlockLogicalWidthForContent();
+        return perpendicularContainingBlockLogicalHeight();
+    };
+
+    auto handlePercentOrCalc = [&](const auto& value) {
         // FIXME: Handle cases when containing block width is calculated or viewport percent.
         // https://bugs.webkit.org/show_bug.cgi?id=91071
-        if (logicalWidth.isIntrinsic())
-            return computeIntrinsicLogicalWidthUsing(logicalWidth, containerWidth, borderAndPaddingLogicalWidth()) - borderAndPaddingLogicalWidth();
+        auto containerWidth = calculateContainerWidth();
+        auto containerLogicalWidth = containingBlock()->style().logicalWidth();
         if (containerWidth > 0 || (!containerWidth && (containerLogicalWidth.isFixed() || containerLogicalWidth.isPercentOrCalculated())))
-            return adjustContentBoxLogicalWidthForBoxSizing(minimumValueForLength(logicalWidth, containerWidth), logicalWidth.type());
+            return adjustContentBoxLogicalWidthForBoxSizing(Style::FixedSize { Style::evaluateMinimum(value, containerWidth) });
         return 0_lu;
-    }
-    case LengthType::Intrinsic:
-    case LengthType::MinIntrinsic:
-    case LengthType::Auto:
-    case LengthType::Normal:
-    case LengthType::Content:
-    case LengthType::Relative:
-    case LengthType::Undefined:
-        return intrinsicLogicalWidth();
-    }
+    };
 
-    ASSERT_NOT_REACHED();
-    return 0;
+    auto handleFillAvailableOrFitContent = [&](auto keyword) {
+        return computeIntrinsicLogicalWidthUsing(keyword, calculateContainerWidth(), borderAndPaddingLogicalWidth()) - borderAndPaddingLogicalWidth();
+    };
+
+    auto handleMinContentOrMaxContent = [&](auto keyword) {
+        // MinContent/MaxContent don't need the availableLogicalWidth argument.
+        return computeIntrinsicLogicalWidthUsing(keyword, 0_lu, borderAndPaddingLogicalWidth()) - borderAndPaddingLogicalWidth();
+    };
+
+    return WTF::switchOn(logicalWidth,
+        [&](const typename SizeType::Fixed& fixed) {
+            return adjustContentBoxLogicalWidthForBoxSizing(fixed);
+        },
+        [&](const typename SizeType::Percentage& percentage) {
+            return handlePercentOrCalc(percentage);
+        },
+        [&](const typename SizeType::Calc& calc) {
+            return handlePercentOrCalc(calc);
+        },
+        [&](const CSS::Keyword::WebkitFillAvailable& keyword) {
+            return handleFillAvailableOrFitContent(keyword);
+        },
+        [&](const CSS::Keyword::FitContent& keyword) {
+            return handleFillAvailableOrFitContent(keyword);
+        },
+        [&](const CSS::Keyword::MinContent& keyword) {
+            return handleMinContentOrMaxContent(keyword);
+        },
+        [&](const CSS::Keyword::MaxContent& keyword) {
+            return handleMinContentOrMaxContent(keyword);
+        },
+        [&](const CSS::Keyword::Intrinsic&) {
+            return intrinsicLogicalWidth();
+        },
+        [&](const CSS::Keyword::MinIntrinsic&) {
+            return intrinsicLogicalWidth();
+        },
+        [&](const CSS::Keyword::Auto&) {
+            if constexpr (std::same_as<SizeType, Style::MinimumSize>)
+                return adjustContentBoxLogicalWidthForBoxSizing(CSS::Keyword::Auto { });
+            else if constexpr (std::same_as<SizeType, Style::PreferredSize>)
+                return intrinsicLogicalWidth();
+            else if constexpr (std::same_as<SizeType, Style::MaximumSize>)
+                RELEASE_ASSERT_NOT_REACHED();
+        },
+        [&](const CSS::Keyword::None&) {
+            if constexpr (std::same_as<SizeType, Style::MaximumSize>)
+                return intrinsicLogicalWidth();
+            else if constexpr (std::same_as<SizeType, Style::PreferredSize> || std::same_as<SizeType, Style::MinimumSize>)
+                RELEASE_ASSERT_NOT_REACHED();
+        }
+    );
+}
+
+LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(const Style::PreferredSize& logicalWidth) const
+{
+    return computeReplacedLogicalWidthUsingImpl(logicalWidth);
+}
+
+LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(const Style::MinimumSize& logicalWidth) const
+{
+    return computeReplacedLogicalWidthUsingImpl(logicalWidth);
+}
+
+LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(const Style::MaximumSize& logicalWidth) const
+{
+    return computeReplacedLogicalWidthUsingImpl(logicalWidth);
 }
 
 LayoutUnit RenderBox::computeReplacedLogicalHeight(std::optional<LayoutUnit>) const
 {
-    return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(SizeType::MainOrPreferredSize, style().logicalHeight()));
+    return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style().logicalHeight()));
 }
 
 static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
@@ -3560,7 +3895,8 @@ static bool allowMinMaxPercentagesInAutoHeightBlocksQuirk()
 bool RenderBox::shouldComputePreferredLogicalWidthsFromStyle() const
 {
     auto logicalWidthLength = overridingLogicalWidthForFlexBasisComputation().value_or(style().logicalWidth());
-    return logicalWidthLength.isFixed() && logicalWidthLength.value() >= 0 && !(isDeprecatedFlexItem() && !logicalWidthLength.intValue());
+    auto fixedLogicalWidth = logicalWidthLength.fixed();
+    return fixedLogicalWidth && fixedLogicalWidth->value >= 0 && !(isDeprecatedFlexItem() /* FIXME: Why is this needed && !logicalWidthLength.intValue() */);
 }
 
 void RenderBox::computePreferredLogicalWidths()
@@ -3571,26 +3907,26 @@ void RenderBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderBox::computePreferredLogicalWidths(const Length& minLogicalWidth, const Length& maxLogicalWidth, LayoutUnit borderAndPaddingLogicalWidth)
+void RenderBox::computePreferredLogicalWidths(const Style::MinimumSize& minLogicalWidth, const Style::MaximumSize& maxLogicalWidth, LayoutUnit borderAndPaddingLogicalWidth)
 {
     auto usedMaxLogicalWidth = [&] {
         // FIXME: We should be able to handle other values for the max logical width here.
-        if (maxLogicalWidth.isFixed())
-            return adjustContentBoxLogicalWidthForBoxSizing(maxLogicalWidth);
+        if (auto fixedMaxLogicalWidth = maxLogicalWidth.fixed())
+            return adjustContentBoxLogicalWidthForBoxSizing(*fixedMaxLogicalWidth);
 
         if (maxLogicalWidth.isMinContent()) {
             if (!shouldComputePreferredLogicalWidthsFromStyle())
                 return m_minPreferredLogicalWidth;
 
-            return computeIntrinsicLogicalWidthUsing(maxLogicalWidth, contentBoxLogicalWidth(), { });
+            return computeIntrinsicLogicalWidthUsing(CSS::Keyword::MinContent { }, contentBoxLogicalWidth(), { });
         }
         return LayoutUnit::max();
     }();
 
     auto usedMinLogicalWidth = [&]() -> LayoutUnit {
         // FIXME: We should be able to handle other values for the min logical width here.
-        if (minLogicalWidth.isFixed() && minLogicalWidth.value() > 0)
-            return adjustContentBoxLogicalWidthForBoxSizing(minLogicalWidth);
+        if (auto fixedMinLogicalWidth = minLogicalWidth.fixed(); fixedMinLogicalWidth && fixedMinLogicalWidth->value > 0)
+            return adjustContentBoxLogicalWidthForBoxSizing(*fixedMinLogicalWidth);
         if (minLogicalWidth.isMaxContent())
             return m_maxPreferredLogicalWidth;
         return { };
@@ -3614,13 +3950,34 @@ void RenderBox::computePreferredLogicalWidths(const Length& minLogicalWidth, con
     m_maxPreferredLogicalWidth += borderAndPaddingLogicalWidth;
 }
 
-bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) const
+bool RenderBox::replacedMinLogicalHeightComputesAsNone() const
 {
-    ASSERT(sizeType == SizeType::MinSize || sizeType == SizeType::MaxSize);
+    auto logicalHeight = style().logicalMinHeight();
+    auto initialLogicalHeight = RenderStyle::initialMinimumSize();
+
+    if (logicalHeight == initialLogicalHeight)
+        return true;
     
-    auto logicalHeight = sizeType == SizeType::MinSize ? style().logicalMinHeight() : style().logicalMaxHeight();
-    auto initialLogicalHeight = sizeType == SizeType::MinSize ? RenderStyle::initialMinSize() : RenderStyle::initialMaxSize();
-    
+    if (isGridItem() && logicalHeight.isPercentOrCalculated()) {
+        if (auto gridAreaContentLogicalHeight = this->gridAreaContentLogicalHeight())
+            return !*gridAreaContentLogicalHeight;
+    }
+
+    // Make sure % min-height and % max-height resolve to none if the containing block has auto height.
+    // Note that the "height" case for replaced elements was handled by hasReplacedLogicalHeight, which is why
+    // min and max-height are the only ones handled here.
+    // FIXME: For now we put in a quirk for iBooks until we can move them to viewport units.
+    if (auto* cb = containingBlockForAutoHeightDetection(logicalHeight))
+        return allowMinMaxPercentagesInAutoHeightBlocksQuirk() ? false : cb->hasAutoHeightOrContainingBlockWithAutoHeight();
+
+    return false;
+}
+
+bool RenderBox::replacedMaxLogicalHeightComputesAsNone() const
+{
+    auto logicalHeight = style().logicalMaxHeight();
+    auto initialLogicalHeight = RenderStyle::initialMaximumSize();
+
     if (logicalHeight == initialLogicalHeight)
         return true;
     
@@ -3642,32 +3999,32 @@ bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) con
 LayoutUnit RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const
 {
     LayoutUnit minLogicalHeight;
-    if (!replacedMinMaxLogicalHeightComputesAsNone(SizeType::MinSize))
-        minLogicalHeight = computeReplacedLogicalHeightUsing(SizeType::MinSize, style().logicalMinHeight());
+    if (!replacedMinLogicalHeightComputesAsNone())
+        minLogicalHeight = computeReplacedLogicalHeightUsing(style().logicalMinHeight());
     LayoutUnit maxLogicalHeight = logicalHeight;
-    if (!replacedMinMaxLogicalHeightComputesAsNone(SizeType::MaxSize))
-        maxLogicalHeight = computeReplacedLogicalHeightUsing(SizeType::MaxSize, style().logicalMaxHeight());
+    if (!replacedMaxLogicalHeightComputesAsNone())
+        maxLogicalHeight = computeReplacedLogicalHeightUsing(style().logicalMaxHeight());
     return std::max(minLogicalHeight, std::min(logicalHeight, maxLogicalHeight));
 }
 
-LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Length logicalHeight) const
+template<typename SizeType> LayoutUnit RenderBox::computeReplacedLogicalHeightUsingImpl(const SizeType& logicalHeight) const
 {
-    ASSERT(heightType == SizeType::MinSize || heightType == SizeType::MainOrPreferredSize || !logicalHeight.isAuto());
 #if ASSERT_ENABLED
-    // This function should get called with SizeType::MinSize/SizeType::MaxSize only if replacedMinMaxLogicalHeightComputesAsNone
-    // returns false, otherwise we should not try to compute those values as they may be incorrect. The caller
-    // should make sure this condition holds before calling this function
-    if (heightType == SizeType::MinSize || heightType == SizeType::MaxSize)
-        ASSERT(!replacedMinMaxLogicalHeightComputesAsNone(heightType));
+    // This function should get called with Style::MinimumSize/Style::MaximumSize only if replacedMinLogicalHeightComputesAsNone/replacedMaxLogicalHeightComputesAsNone
+    // return false, otherwise we should not try to compute those values as they may be incorrect. The caller
+    // should make sure this condition holds before calling this function.
+    if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+        ASSERT(!replacedMinLogicalHeightComputesAsNone());
+    } else if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+        ASSERT(!replacedMaxLogicalHeightComputesAsNone());
+    }
 #endif
-    if (heightType == SizeType::MinSize && logicalHeight.isAuto())
-        return adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit>(0));
+    if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+        if (logicalHeight.isAuto())
+            return adjustContentBoxLogicalHeightForBoxSizing(std::optional<LayoutUnit>(0));
+    }
 
-    switch (logicalHeight.type()) {
-    case LengthType::Fixed:
-        return adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(logicalHeight.value()));
-    case LengthType::Percent:
-    case LengthType::Calculated: {
+    auto handlePercentageOrCalc = [&](const auto& value) {
         auto* container = isOutOfFlowPositioned() ? this->container() : containingBlock();
         while (container && container->isAnonymousForPercentageResolution()) {
             // Stop at rendering context root.
@@ -3693,7 +4050,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
             auto& block = downcast<RenderBlock>(*container);
             auto computedValues = block.computeLogicalHeight(block.logicalHeight(), 0);
             LayoutUnit newContentHeight = computedValues.m_extent - block.borderAndPaddingLogicalHeight() - block.scrollbarLogicalHeight();
-            return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, newContentHeight));
+            return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate(value, newContentHeight));
         }
         
         LayoutUnit availableHeight;
@@ -3716,22 +4073,56 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
                     // Don't let table cells squeeze percent-height replaced elements
                     // <http://bugs.webkit.org/show_bug.cgi?id=15359>
                     availableHeight = std::max(availableHeight, intrinsicLogicalHeight());
-                    return valueForLength(logicalHeight, availableHeight - borderAndPaddingLogicalHeight());
+                    return Style::evaluate(logicalHeight, availableHeight - borderAndPaddingLogicalHeight());
                 }
                 downcast<RenderBlock>(*container).addPercentHeightDescendant(const_cast<RenderBox&>(*this));
                 container = container->containingBlock();
             }
         }
-        return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeight, availableHeight));
-    }
-    case LengthType::MinContent:
-    case LengthType::MaxContent:
-    case LengthType::FitContent:
-    case LengthType::FillAvailable:
-        return adjustContentBoxLogicalHeightForBoxSizing(computeIntrinsicLogicalContentHeightUsing(logicalHeight, intrinsicLogicalHeight(), borderAndPaddingLogicalHeight()));
-    default:
-        return intrinsicLogicalHeight();
-    }
+        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate(value, availableHeight));
+    };
+
+    return WTF::switchOn(logicalHeight,
+        [&](const typename SizeType::Fixed& fixed) {
+            return adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit(fixed.value));
+        },
+        [&](const typename SizeType::Percentage& percentage) {
+            return handlePercentageOrCalc(percentage);
+        },
+        [&](const typename SizeType::Calc& calc) {
+            return handlePercentageOrCalc(calc);
+        },
+        [&](const CSS::Keyword::MinContent&) {
+            return adjustContentBoxLogicalHeightForBoxSizing(computeIntrinsicLogicalContentHeightUsing(logicalHeight, intrinsicLogicalHeight(), borderAndPaddingLogicalHeight()));
+        },
+        [&](const CSS::Keyword::MaxContent&) {
+            return adjustContentBoxLogicalHeightForBoxSizing(computeIntrinsicLogicalContentHeightUsing(logicalHeight, intrinsicLogicalHeight(), borderAndPaddingLogicalHeight()));
+        },
+        [&](const CSS::Keyword::FitContent&) {
+            return adjustContentBoxLogicalHeightForBoxSizing(computeIntrinsicLogicalContentHeightUsing(logicalHeight, intrinsicLogicalHeight(), borderAndPaddingLogicalHeight()));
+        },
+        [&](const CSS::Keyword::WebkitFillAvailable&) {
+            return adjustContentBoxLogicalHeightForBoxSizing(computeIntrinsicLogicalContentHeightUsing(logicalHeight, intrinsicLogicalHeight(), borderAndPaddingLogicalHeight()));
+        },
+        [&](const auto&) {
+            return intrinsicLogicalHeight();
+        }
+    );
+}
+
+LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(const Style::PreferredSize& logicalHeight) const
+{
+    return computeReplacedLogicalHeightUsingImpl(logicalHeight);
+}
+
+LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(const Style::MinimumSize& logicalHeight) const
+{
+    return computeReplacedLogicalHeightUsingImpl(logicalHeight);
+}
+
+LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(const Style::MaximumSize& logicalHeight) const
+{
+    return computeReplacedLogicalHeightUsingImpl(logicalHeight);
 }
 
 LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightType) const
@@ -3739,7 +4130,7 @@ LayoutUnit RenderBox::availableLogicalHeight(AvailableLogicalHeightType heightTy
     return constrainContentBoxLogicalHeightByMinMax(availableLogicalHeightUsing(style().logicalHeight(), heightType), std::nullopt);
 }
 
-LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogicalHeightType heightType) const
+LayoutUnit RenderBox::availableLogicalHeightUsing(const Style::PreferredSize& h, AvailableLogicalHeightType heightType) const
 {
     // We need to stop here, since we don't want to increase the height of the table
     // artificially.  We're going to rely on this cell getting expanded to some new
@@ -3764,10 +4155,10 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     if (h.isPercentOrCalculated() && isOutOfFlowPositioned() && !isRenderFragmentedFlow()) {
         // FIXME: This is wrong if the containingBlock has a perpendicular writing mode.
         LayoutUnit availableHeight = containingBlockLogicalHeightForPositioned(*containingBlock());
-        return adjustContentBoxLogicalHeightForBoxSizing(valueForLength(h, availableHeight));
+        return adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate(h, availableHeight));
     }
 
-    if (std::optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(SizeType::MainOrPreferredSize, h, std::nullopt))
+    if (std::optional<LayoutUnit> heightIncludingScrollbar = computeContentAndScrollbarLogicalHeightUsing(h, std::nullopt))
         return std::max<LayoutUnit>(0, adjustContentBoxLogicalHeightForBoxSizing(heightIncludingScrollbar) - scrollbarLogicalHeight());
 
     // Height of absolutely positioned, non-replaced elements section 5.3 rule 5
@@ -4071,10 +4462,7 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     computeInlineStaticDistance(logicalLeftLength, logicalRightLength, this, containerBlock, containerLogicalWidth);
     
     // Calculate constraint equation values for 'width' case.
-    computePositionedLogicalWidthUsing(SizeType::MainOrPreferredSize, style().logicalWidth(), containerBlock, containerWritingMode,
-                                       containerLogicalWidth, bordersPlusPadding,
-                                       logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                       computedValues);
+    computePositionedLogicalWidthUsing(style().logicalWidth(), containerBlock, containerWritingMode, containerLogicalWidth, bordersPlusPadding, logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight, computedValues);
 
     LayoutUnit transferredMinSize = LayoutUnit::min();
     LayoutUnit transferredMaxSize = LayoutUnit::max();
@@ -4084,18 +4472,12 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     LogicalExtentComputedValues maxValues;
     maxValues.m_extent = LayoutUnit::max();
     // Calculate constraint equation values for 'max-width' case.
-    if (!style().logicalMaxWidth().isUndefined()) {
-        computePositionedLogicalWidthUsing(SizeType::MaxSize, style().logicalMaxWidth(), containerBlock, containerWritingMode,
-                                           containerLogicalWidth, bordersPlusPadding,
-                                           logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                           maxValues);
-    }
-    if (transferredMaxSize < maxValues.m_extent) {
-        computePositionedLogicalWidthUsing(SizeType::MaxSize, Length(transferredMaxSize, LengthType::Fixed), containerBlock, containerWritingMode,
-            containerLogicalWidth, bordersPlusPadding,
-            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-            maxValues);
-    }
+    if (!style().logicalMaxWidth().isNone())
+        computePositionedLogicalWidthUsing(style().logicalMaxWidth(), containerBlock, containerWritingMode, containerLogicalWidth, bordersPlusPadding, logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight, maxValues);
+
+    if (transferredMaxSize < maxValues.m_extent)
+        computePositionedLogicalWidthUsing(Style::MaximumSize { Style::MaximumSize::Fixed { transferredMaxSize } }, containerBlock, containerWritingMode, containerLogicalWidth, bordersPlusPadding, logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight, maxValues);
+
     if (computedValues.m_extent > maxValues.m_extent) {
         computedValues.m_extent = maxValues.m_extent;
         computedValues.m_position = maxValues.m_position;
@@ -4106,18 +4488,12 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     LogicalExtentComputedValues minValues;
     minValues.m_extent = LayoutUnit::min();
     // Calculate constraint equation values for 'min-width' case.
-    if (!style().logicalMinWidth().isZero() || style().logicalMinWidth().isIntrinsic()) {
-        computePositionedLogicalWidthUsing(SizeType::MinSize, style().logicalMinWidth(), containerBlock, containerWritingMode,
-            containerLogicalWidth, bordersPlusPadding,
-            logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-            minValues);
-    }
-    if (transferredMinSize > minValues.m_extent) {
-        computePositionedLogicalWidthUsing(SizeType::MinSize, Length(transferredMinSize, LengthType::Fixed), containerBlock, containerWritingMode,
-                                           containerLogicalWidth, bordersPlusPadding,
-                                           logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                           minValues);
-    }
+    if (!style().logicalMinWidth().isZero() || style().logicalMinWidth().isIntrinsic())
+        computePositionedLogicalWidthUsing(style().logicalMinWidth(), containerBlock, containerWritingMode, containerLogicalWidth, bordersPlusPadding, logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight, minValues);
+
+    if (transferredMinSize > minValues.m_extent)
+        computePositionedLogicalWidthUsing(Style::MinimumSize { Style::MinimumSize::Fixed { transferredMinSize } }, containerBlock, containerWritingMode, containerLogicalWidth, bordersPlusPadding, logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight, minValues);
+
     if (computedValues.m_extent < minValues.m_extent) {
         computedValues.m_extent = minValues.m_extent;
         computedValues.m_position = minValues.m_position;
@@ -4192,30 +4568,41 @@ static std::optional<float> positionWithRTLInlineBoxContainingBlock(const Render
     return logicalLeftValue + marginLogicalLeftValue + distance;
 }
 
-void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length logicalWidth, const RenderBoxModelObject& containerBlock, WritingMode containerWritingMode,
-                                                   LayoutUnit containerLogicalWidth, LayoutUnit bordersPlusPadding,
-                                                   Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight,
-                                                   LogicalExtentComputedValues& computedValues) const
+template<typename SizeType> void RenderBox::computePositionedLogicalWidthUsing(SizeType logicalWidth, const RenderBoxModelObject& containerBlock, WritingMode containerWritingMode, LayoutUnit containerLogicalWidth, LayoutUnit bordersPlusPadding, Length logicalLeft, Length logicalRight, Length marginLogicalLeft, Length marginLogicalRight, LogicalExtentComputedValues& computedValues) const
 {
-    ASSERT(widthType == SizeType::MinSize || widthType == SizeType::MainOrPreferredSize || !logicalWidth.isAuto());
-    auto originalLogicalWidthType = logicalWidth.type();
-    if (widthType == SizeType::MinSize && logicalWidth.isAuto()) {
-        if (shouldComputeLogicalWidthFromAspectRatio()) {
-            LayoutUnit minLogicalWidth;
-            LayoutUnit maxLogicalWidth;
-            computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
-            logicalWidth = Length(minLogicalWidth, LengthType::Fixed);
-        } else
-            logicalWidth = Length(0, LengthType::Fixed);
-    } else if (widthType == SizeType::MainOrPreferredSize && logicalWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio())
-        logicalWidth = Length(computeLogicalWidthFromAspectRatio(), LengthType::Fixed);
-    else if (logicalWidth.isIntrinsic()) {
+    auto originalLogicalWidth = logicalWidth;
+
+    auto handleIntrinsic = [&] {
         auto availableSpace = [&] {
             auto logicalLeftValue = !logicalLeft.isAuto() ? std::make_optional(valueForLength(logicalLeft, containerLogicalWidth)) : std::nullopt;
             auto logicalRightValue = !logicalRight.isAuto() ? std::make_optional(valueForLength(logicalRight, containerLogicalWidth)) : std::nullopt;
             return containerLogicalWidth - (logicalLeftValue.value_or(0_lu) + logicalRightValue.value_or(0_lu));
         };
-        logicalWidth = Length(computeIntrinsicLogicalWidthUsing(logicalWidth, availableSpace(), bordersPlusPadding) - bordersPlusPadding, LengthType::Fixed);
+
+        return typename SizeType::Fixed {
+            computeIntrinsicLogicalWidthUsing(logicalWidth, availableSpace(), bordersPlusPadding) - bordersPlusPadding
+        };
+    };
+
+    if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+        if (logicalWidth.isAuto()) {
+            if (shouldComputeLogicalWidthFromAspectRatio()) {
+                LayoutUnit minLogicalWidth;
+                LayoutUnit maxLogicalWidth;
+                computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+                logicalWidth = typename SizeType::Fixed { minLogicalWidth };
+            } else
+                logicalWidth = 0_css_px;
+        } else if (logicalWidth.isIntrinsic())
+            logicalWidth = handleIntrinsic();
+    } else if constexpr (std::same_as<SizeType, Style::PreferredSize>) {
+        if (logicalWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio())
+            logicalWidth = typename SizeType::Fixed { computeLogicalWidthFromAspectRatio() };
+        else if (logicalWidth.isIntrinsic())
+            logicalWidth = handleIntrinsic();
+    } else if constexpr (std::same_as<SizeType, Style::MaximumSize>) {
+        if (logicalWidth.isIntrinsic())
+            logicalWidth = handleIntrinsic();
     }
 
     // 'left' and 'right' cannot both be 'auto' because one would of been
@@ -4226,7 +4613,7 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
 
     const LayoutUnit containerRelativeLogicalWidth = containingBlockLogicalWidthForPositioned(containerBlock, false);
 
-    bool logicalWidthIsAuto = logicalWidth.isIntrinsicOrAuto() && !shouldComputeLogicalWidthFromAspectRatio();
+    bool logicalWidthIsAuto = !logicalWidth.isSpecified() && !shouldComputeLogicalWidthFromAspectRatio();
     bool logicalLeftIsAuto = logicalLeft.isAuto();
     bool logicalRightIsAuto = logicalRight.isAuto();
     LayoutUnit& marginLogicalLeftValue = writingMode().isLogicalLeftInlineStart()
@@ -4251,7 +4638,8 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
         // case because the value is not used for any further calculations.
 
         logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth);
-        computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, containerLogicalWidth), originalLogicalWidthType);
+        computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(
+            Style::evaluate(logicalWidth, containerLogicalWidth), originalLogicalWidth);
 
         const LayoutUnit availableSpace = containerLogicalWidth - (logicalLeftValue + computedValues.m_extent + valueForLength(logicalRight, containerLogicalWidth) + bordersPlusPadding);
 
@@ -4362,7 +4750,7 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
             computedValues.m_extent = std::min(std::max(preferredMinWidth, availableWidth), preferredWidth);
         } else if (logicalLeftIsAuto && !logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 4: (solve for left)
-            computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, containerLogicalWidth), originalLogicalWidthType);
+            computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate(logicalWidth, containerLogicalWidth), originalLogicalWidth);
             logicalLeftValue = availableSpace - (computedValues.m_extent + valueForLength(logicalRight, containerLogicalWidth));
         } else if (!logicalLeftIsAuto && logicalWidthIsAuto && !logicalRightIsAuto) {
             // RULE 5: (solve for width)
@@ -4371,7 +4759,7 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
         } else if (!logicalLeftIsAuto && !logicalWidthIsAuto && logicalRightIsAuto) {
             // RULE 6: (no need solve for right)
             logicalLeftValue = valueForLength(logicalLeft, containerLogicalWidth);
-            computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, containerLogicalWidth), originalLogicalWidthType);
+            computedValues.m_extent = adjustContentBoxLogicalWidthForBoxSizing(Style::evaluate(logicalWidth, containerLogicalWidth), originalLogicalWidth);
         }
     }
 
@@ -4506,20 +4894,16 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
 
     // Calculate constraint equation values for 'height' case.
     LayoutUnit logicalHeight = computedValues.m_extent;
-    computePositionedLogicalHeightUsing(SizeType::MainOrPreferredSize, styleToUse.logicalHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
-                                        logicalTopLength, logicalBottomLength, marginBefore, marginAfter,
-                                        computedValues);
+    computePositionedLogicalHeightUsing(styleToUse.logicalHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight, logicalTopLength, logicalBottomLength, marginBefore, marginAfter, computedValues);
 
     // Avoid doing any work in the common case (where the values of min-height and max-height are their defaults).
     // see FIXME 2
 
     // Calculate constraint equation values for 'max-height' case.
-    if (!styleToUse.logicalMaxHeight().isUndefined()) {
+    if (!styleToUse.logicalMaxHeight().isNone()) {
         LogicalExtentComputedValues maxValues;
 
-        computePositionedLogicalHeightUsing(SizeType::MaxSize, styleToUse.logicalMaxHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
-                                            logicalTopLength, logicalBottomLength, marginBefore, marginAfter,
-                                            maxValues);
+        computePositionedLogicalHeightUsing(styleToUse.logicalMaxHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight, logicalTopLength, logicalBottomLength, marginBefore, marginAfter, maxValues);
 
         if (computedValues.m_extent > maxValues.m_extent) {
             computedValues.m_extent = maxValues.m_extent;
@@ -4530,13 +4914,11 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     }
 
     // Calculate constraint equation values for 'min-height' case.
-    Length logicalMinHeight = styleToUse.logicalMinHeight();
+    auto logicalMinHeight = styleToUse.logicalMinHeight();
     if (logicalMinHeight.isAuto() || !logicalMinHeight.isZero() || logicalMinHeight.isIntrinsic()) {
         LogicalExtentComputedValues minValues;
 
-        computePositionedLogicalHeightUsing(SizeType::MinSize, styleToUse.logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
-                                            logicalTopLength, logicalBottomLength, marginBefore, marginAfter,
-                                            minValues);
+        computePositionedLogicalHeightUsing(styleToUse.logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight, logicalTopLength, logicalBottomLength, marginBefore, marginAfter, minValues);
 
         if (computedValues.m_extent < minValues.m_extent) {
             computedValues.m_extent = minValues.m_extent;
@@ -4608,17 +4990,15 @@ static void computeLogicalTopPositionedOffset(LayoutUnit& logicalTopPos, const R
     }
 }
 
-void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length logicalHeightLength, const RenderBoxModelObject& containerBlock,
-                                                    LayoutUnit containerLogicalHeight, LayoutUnit bordersPlusPadding, LayoutUnit logicalHeight,
-                                                    Length logicalTop, Length logicalBottom, Length marginBefore, Length marginAfter,
-                                                    LogicalExtentComputedValues& computedValues) const
+template<typename SizeType> void RenderBox::computePositionedLogicalHeightUsing(SizeType logicalHeightLength, const RenderBoxModelObject& containerBlock, LayoutUnit containerLogicalHeight, LayoutUnit bordersPlusPadding, LayoutUnit logicalHeight, Length logicalTop, Length logicalBottom, Length marginBefore, Length marginAfter, LogicalExtentComputedValues& computedValues) const
 {
-    ASSERT(heightType == SizeType::MinSize || heightType == SizeType::MainOrPreferredSize || !logicalHeightLength.isAuto());
-    if (heightType == SizeType::MinSize && logicalHeightLength.isAuto()) {
-        if (shouldComputeLogicalHeightFromAspectRatio())
-            logicalHeightLength = Length(logicalHeight, LengthType::Fixed);
-        else
-            logicalHeightLength = Length(0, LengthType::Fixed);
+    if constexpr (std::same_as<SizeType, Style::MinimumSize>) {
+        if (logicalHeightLength.isAuto()) {
+            if (shouldComputeLogicalHeightFromAspectRatio())
+                logicalHeightLength = typename SizeType::Fixed { logicalHeight };
+            else
+                logicalHeightLength = 0_css_px;
+        }
     }
 
     // 'top' and 'bottom' cannot both be 'auto' because 'top would of been
@@ -4632,8 +5012,15 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
 
     LayoutUnit logicalTopValue;
 
-    bool fromAspectRatio = heightType == SizeType::MainOrPreferredSize && shouldComputeLogicalHeightFromAspectRatio();
-    bool logicalHeightIsAuto = logicalHeightLength.isAuto() && !fromAspectRatio;
+    auto isLogicalHeightAuto = [&] {
+        if constexpr (std::same_as<SizeType, Style::MaximumSize>)
+            return false;
+        else
+            return logicalHeightLength.isAuto();
+    };
+
+    bool fromAspectRatio = std::same_as<SizeType, Style::PreferredSize> && shouldComputeLogicalHeightFromAspectRatio();
+    bool logicalHeightIsAuto = isLogicalHeightAuto() && !fromAspectRatio;
     bool logicalTopIsAuto = logicalTop.isAuto();
     bool logicalBottomIsAuto = logicalBottom.isAuto();
 
@@ -4649,7 +5036,7 @@ void RenderBox::computePositionedLogicalHeightUsing(SizeType heightType, Length 
             resolvedLogicalHeight = blockSizeFromAspectRatio(horizontalBorderAndPaddingExtent(), verticalBorderAndPaddingExtent(), style().logicalAspectRatio(), style().boxSizingForAspectRatio(), logicalWidth(), style().aspectRatioType(), isRenderReplaced());
             resolvedLogicalHeight = std::max(LayoutUnit(), resolvedLogicalHeight - bordersPlusPadding);
         } else
-            resolvedLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(valueForLength(logicalHeightLength, containerLogicalHeight));
+            resolvedLogicalHeight = adjustContentBoxLogicalHeightForBoxSizing(Style::evaluate(logicalHeightLength, containerLogicalHeight));
     }
 
     if (!logicalTopIsAuto && !logicalHeightIsAuto && !logicalBottomIsAuto) {
@@ -5368,8 +5755,8 @@ bool RenderBox::percentageLogicalHeightIsResolvable() const
 {
     // Do this to avoid duplicating all the logic that already exists when computing
     // an actual percentage height.
-    Length fakeLength(100, LengthType::Percent);
-    return computePercentageLogicalHeight(fakeLength) != std::nullopt;
+    Style::PreferredSize fakeSize { 100_css_percentage };
+    return computePercentageLogicalHeight(fakeSize) != std::nullopt;
 }
 
 bool RenderBox::hasUnsplittableScrollingOverflow() const
@@ -5390,9 +5777,9 @@ bool RenderBox::hasUnsplittableScrollingOverflow() const
     // Note this is just a heuristic, and it's still possible to have overflow under these
     // conditions, but it should work out to be good enough for common cases. Paginating overflow
     // with scrollbars present is not the end of the world and is what we used to do in the old model anyway.
-    return !style().logicalHeight().isIntrinsicOrAuto()
-        || (!style().logicalMaxHeight().isIntrinsicOrAuto() && !style().logicalMaxHeight().isUndefined() && (!style().logicalMaxHeight().isPercentOrCalculated() || percentageLogicalHeightIsResolvable()))
-        || (!style().logicalMinHeight().isIntrinsicOrAuto() && style().logicalMinHeight().isPositive() && (!style().logicalMinHeight().isPercentOrCalculated() || percentageLogicalHeightIsResolvable()));
+    return style().logicalHeight().isSpecified()
+        || (style().logicalMaxHeight().isSpecified() && (!style().logicalMaxHeight().isPercentOrCalculated() || percentageLogicalHeightIsResolvable()))
+        || (style().logicalMinHeight().isSpecified() && style().logicalMinHeight().isPositive() && (!style().logicalMinHeight().isPercentOrCalculated() || percentageLogicalHeightIsResolvable()));
 }
 
 bool RenderBox::isUnsplittableForPagination() const
@@ -5763,12 +6150,12 @@ std::pair<LayoutUnit, LayoutUnit> RenderBox::computeMinMaxLogicalHeightFromAspec
         return { transferredMinSize, transferredMaxSize };
 
     if (style().logicalMinWidth().isSpecified()) {
-        if (LayoutUnit inlineMinSize = computeLogicalWidthUsing(SizeType::MinSize, style().logicalMinWidth(), containingBlockLogicalWidthForContent(), *containingBlock()); inlineMinSize > LayoutUnit())
+        if (LayoutUnit inlineMinSize = computeLogicalWidthUsing(style().logicalMinWidth(), containingBlockLogicalWidthForContent(), *containingBlock()); inlineMinSize > LayoutUnit())
             transferredMinSize = blockSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), *aspectRatio, style().boxSizingForAspectRatio(), inlineMinSize, style().aspectRatioType(), isRenderReplaced());
     }
 
     if (style().logicalMaxWidth().isSpecified()) {
-        if (LayoutUnit inlineMaxSize = computeLogicalWidthUsing(SizeType::MaxSize, style().logicalMaxWidth(), containingBlockLogicalWidthForContent(), *containingBlock()); inlineMaxSize != LayoutUnit::max())
+        if (LayoutUnit inlineMaxSize = computeLogicalWidthUsing(style().logicalMaxWidth(), containingBlockLogicalWidthForContent(), *containingBlock()); inlineMaxSize != LayoutUnit::max())
             transferredMaxSize = blockSizeFromAspectRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), *aspectRatio, style().boxSizingForAspectRatio(), inlineMaxSize, style().aspectRatioType(), isRenderReplaced());
     }
     // Spec says the transferred max size should be floored by the transferred min size 
@@ -6058,7 +6445,7 @@ void RenderBox::computeAnchorCenteredPosition(LogicalExtentComputedValues& compu
 
 bool RenderBox::hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants updatePercentageDescendants) const
 {
-    Length logicalHeightLength = style().logicalHeight();
+    auto logicalHeightLength = style().logicalHeight();
     auto* containingBlock = containingBlockForAutoHeightDetection(logicalHeightLength);
 
     if (updatePercentageDescendants == UpdatePercentageHeightDescendants::Yes && logicalHeightLength.isPercentOrCalculated() && containingBlock)

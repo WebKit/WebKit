@@ -1079,11 +1079,13 @@ void RenderTreeBuilder::reportVisuallyNonEmptyContent(const RenderElement& paren
         return;
     }
     if (child.isRenderOrLegacyRenderSVGRoot()) {
-        auto fixedSize = [] (const auto& renderer) -> std::optional<IntSize> {
+        auto fixedSize = [](const auto& renderer) -> std::optional<IntSize> {
             auto& style = renderer.style();
-            if (!style.width().isFixed() || !style.height().isFixed())
+            auto width = style.width().fixed();
+            auto height = style.height().fixed();
+            if (!width || !height)
                 return { };
-            return std::make_optional(IntSize { style.width().intValue(), style.height().intValue() });
+            return { { static_cast<int>(width->value), static_cast<int>(height->value) } };
         };
         // SVG content tends to have a fixed size construct. However this is known to be inaccurate in certain cases (box-sizing: border-box) or especially when the parent box is oversized.
         auto candidateSize = IntSize { };

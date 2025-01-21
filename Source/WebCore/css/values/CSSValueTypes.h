@@ -397,5 +397,21 @@ template<> struct CSSValueChildrenVisitor<CustomIdentifier> {
     }
 };
 
+// MARK: - Conversion to `WebCore::CSSValue`
+
+// Types that want to participate in direct conversion to CSSValue must specialize the following interface:
+//
+//    template<> struct WebCore::Style::CSSValueConversions<T> {
+//        Ref<CSSValue> operator()(const T&, ...);
+//    };
+
+template<typename T> struct CSSValueCreation;
+
+// `CSSValueCreation` Invoker
+template<typename T, typename... Rest> Ref<CSSValue> createCSSValue(const T& value, Rest&&... rest)
+{
+    return CSSValueCreation<T>{}(value, std::forward<Rest>(rest)...);
+}
+
 } // namespace CSS
 } // namespace WebCore

@@ -57,13 +57,17 @@ DEFINE_TYPE_MAPPING(CSS::ScrollPadding, ScrollPadding)
 
 // MARK: - Conversion
 
-ScrollPaddingEdge scrollPaddingEdgeFromCSSValue(const CSSValue&, const BuilderState&);
+template<> struct CSSValueConversions<ScrollPaddingEdge> {
+    ScrollPaddingEdge operator()(const CSSValue&, const BuilderState&);
+};
 
 // MARK: - Evaluation
 
-double evaluate(const ScrollPaddingEdge& edge, double referenceLength);
-float evaluate(const ScrollPaddingEdge& edge, float referenceLength);
-LayoutUnit evaluate(const ScrollPaddingEdge&, LayoutUnit referenceLength);
+template<> struct Evaluation<ScrollPaddingEdge> {
+    double operator()(const ScrollPaddingEdge&, double);
+    float operator()(const ScrollPaddingEdge&, float);
+    LayoutUnit operator()(const ScrollPaddingEdge&, LayoutUnit);
+};
 
 LayoutBoxExtent extentForRect(const ScrollPadding&, const LayoutRect&);
 

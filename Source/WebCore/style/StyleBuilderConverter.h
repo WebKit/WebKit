@@ -78,7 +78,11 @@
 #include "StyleBuilderState.h"
 #include "StyleColorScheme.h"
 #include "StyleEasingFunction.h"
+#include "StyleFlexBasis.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
 #include "StylePathData.h"
+#include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
 #include "StyleReflection.h"
@@ -107,8 +111,6 @@ public:
     static WebCore::Length convertLength(const BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthOrAuto(const BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthOrAutoOrContent(const BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthSizing(const BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthMaxSizing(const BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthAllowingNumber(const BuilderState&, const CSSValue&); // Assumes unit is 'px' if input is a number.
     static WebCore::Length convertTextLengthOrNormal(const BuilderState&, const CSSValue&); // Converts length by text zoom factor, normal to zero
     static TabSize convertTabSize(const BuilderState&, const CSSValue&);
@@ -261,6 +263,10 @@ public:
 
     static Style::ScrollPaddingEdge convertScrollPaddingEdge(const BuilderState&, const CSSValue&);
     static Style::ScrollMarginEdge convertScrollMarginEdge(const BuilderState&, const CSSValue&);
+    static Style::PreferredSize convertPreferredSize(const BuilderState&, const CSSValue&);
+    static Style::MinimumSize convertMinimumSize(const BuilderState&, const CSSValue&);
+    static Style::MaximumSize convertMaximumSize(const BuilderState&, const CSSValue&);
+    static Style::FlexBasis convertFlexBasis(const BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -321,37 +327,6 @@ inline WebCore::Length BuilderConverter::convertLengthOrAuto(const BuilderState&
     return convertLength(builderState, value);
 }
 
-inline WebCore::Length BuilderConverter::convertLengthSizing(const BuilderState& builderState, const CSSValue& value)
-{
-    auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
-    switch (primitiveValue.valueID()) {
-    case CSSValueInvalid:
-        return convertLength(builderState, value);
-    case CSSValueIntrinsic:
-        return WebCore::Length(LengthType::Intrinsic);
-    case CSSValueMinIntrinsic:
-        return WebCore::Length(LengthType::MinIntrinsic);
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
-        return WebCore::Length(LengthType::MinContent);
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
-        return WebCore::Length(LengthType::MaxContent);
-    case CSSValueWebkitFillAvailable:
-        return WebCore::Length(LengthType::FillAvailable);
-    case CSSValueFitContent:
-    case CSSValueWebkitFitContent:
-        return WebCore::Length(LengthType::FitContent);
-    case CSSValueAuto:
-        return WebCore::Length(LengthType::Auto);
-    case CSSValueContent:
-        return WebCore::Length(LengthType::Content);
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-}
-
 inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState& builderState, const CSSValue& value)
 {
     auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
@@ -368,13 +343,6 @@ inline ListStyleType BuilderConverter::convertListStyleType(const BuilderState& 
     UNUSED_PARAM(builderState);
 #endif
     return { ListStyleType::Type::String, makeAtomString(primitiveValue.stringValue()) };
-}
-
-inline WebCore::Length BuilderConverter::convertLengthMaxSizing(const BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueNone)
-        return WebCore::Length(LengthType::Undefined);
-    return convertLengthSizing(builderState, value);
 }
 
 inline TabSize BuilderConverter::convertTabSize(const BuilderState& builderState, const CSSValue& value)
@@ -2241,12 +2209,32 @@ inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks
 
 inline Style::ScrollPaddingEdge BuilderConverter::convertScrollPaddingEdge(const BuilderState& builderState, const CSSValue& value)
 {
-    return Style::scrollPaddingEdgeFromCSSValue(value, builderState);
+    return Style::convertFromCSSValue<Style::ScrollPaddingEdge>(value, builderState);
 }
 
 inline Style::ScrollMarginEdge BuilderConverter::convertScrollMarginEdge(const BuilderState& builderState, const CSSValue& value)
 {
-    return Style::scrollMarginEdgeFromCSSValue(value, builderState);
+    return Style::convertFromCSSValue<Style::ScrollMarginEdge>(value, builderState);
+}
+
+inline Style::PreferredSize BuilderConverter::convertPreferredSize(const BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::PreferredSize>(value, builderState);
+}
+
+inline Style::MinimumSize BuilderConverter::convertMinimumSize(const BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::MinimumSize>(value, builderState);
+}
+
+inline Style::MaximumSize BuilderConverter::convertMaximumSize(const BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::MaximumSize>(value, builderState);
+}
+
+inline Style::FlexBasis BuilderConverter::convertFlexBasis(const BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::FlexBasis>(value, builderState);
 }
 
 } // namespace Style

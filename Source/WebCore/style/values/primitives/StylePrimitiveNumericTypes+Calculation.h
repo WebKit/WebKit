@@ -42,12 +42,12 @@ inline Calculation::Child copyCalculation(Calc auto const& value)
     return value.protectedCalculation()->copyRoot();
 }
 
-template<auto R> Calculation::Child copyCalculation(const Number<R>& value)
+template<auto R, typename V> Calculation::Child copyCalculation(const Number<R, V>& value)
 {
     return Calculation::number(value.value);
 }
 
-template<auto R> Calculation::Child copyCalculation(const Percentage<R>& value)
+template<auto R, typename V> Calculation::Child copyCalculation(const Percentage<R, V>& value)
 {
     return Calculation::percentage(value.value);
 }

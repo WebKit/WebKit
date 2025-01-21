@@ -65,6 +65,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(TextControlPlaceholderElement);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SearchFieldResultsButtonElement);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(SearchFieldCancelButtonElement);
 
+using namespace CSS::Literals;
 using namespace HTMLNames;
 
 TextControlInnerContainer::TextControlInnerContainer(Document& document)
@@ -117,9 +118,9 @@ std::optional<Style::ResolvedStyle> TextControlInnerElement::resolveCustomStyle(
 
     // Needed for correct shrinking.
     if (newStyle->writingMode().isHorizontal())
-        newStyle->setMinWidth(Length { 0, LengthType::Fixed });
+        newStyle->setMinWidth(0_css_px);
     else
-        newStyle->setMinHeight(Length { 0, LengthType::Fixed });
+        newStyle->setMinHeight(0_css_px);
 
     newStyle->setDisplay(DisplayType::Block);
     newStyle->setDirection(TextDirection::LTR);
@@ -137,7 +138,7 @@ std::optional<Style::ResolvedStyle> TextControlInnerElement::resolveCustomStyle(
         // for the root element style, the parent element style, and the render view.
         auto emSize = CSSPrimitiveValue::create(1, CSSUnitType::CSS_EM);
         int pixels = emSize->resolveAsLength<int>(CSSToLengthConversionData { *newStyle, nullptr, nullptr, nullptr });
-        newStyle->setFlexBasis(Length { pixels, LengthType::Fixed });
+        newStyle->setFlexBasis(Style::FlexBasis::Fixed { static_cast<float>(pixels) });
     }
 
     return Style::ResolvedStyle { WTFMove(newStyle) };

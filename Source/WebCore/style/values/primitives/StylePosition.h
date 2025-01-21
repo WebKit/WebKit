@@ -92,9 +92,7 @@ template<> struct ToStyle<CSS::Position> { auto operator()(const CSS::Position&,
 
 // MARK: - Evaluation
 
-FloatPoint evaluate(const Position&, FloatSize referenceBox);
-float evaluate(const TwoComponentPositionHorizontal&, float referenceWidth);
-float evaluate(const TwoComponentPositionVertical&, float referenceHeight);
+template<> struct Evaluation<Position> { auto operator()(const Position&, FloatSize) -> FloatPoint; };
 
 } // namespace Style
 } // namespace WebCore

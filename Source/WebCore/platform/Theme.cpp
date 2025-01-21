@@ -38,27 +38,14 @@ std::optional<FontCascadeDescription> Theme::controlFont(StyleAppearance, const 
     return std::nullopt;
 }
 
-LengthSize Theme::controlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, float) const
+ThemeControlSizeOverride Theme::controlSize(StyleAppearance, const FontCascade&, const ThemeControlSizeInput&, float) const
 {
-    return zoomedSize;
+    return { std::nullopt, std::nullopt };
 }
 
-LengthSize Theme::minimumControlSize(StyleAppearance appearance, const FontCascade& fontCascade, const LengthSize& zoomedSize, const LengthSize& nonShrinkableZoomedSize, float zoom) const
+ThemeControlMinimumSizeOverride Theme::minimumControlSize(StyleAppearance, const FontCascade&, const ThemeControlMinimumSizeInput&, float) const
 {
-    auto minSize = minimumControlSize(appearance, fontCascade, zoomedSize, zoom);
-    // Other StyleAppearance types are composed controls with shadow subtree.
-    if (appearance == StyleAppearance::Radio || appearance == StyleAppearance::Checkbox) {
-        if (zoomedSize.width.isIntrinsicOrAuto())
-            minSize.width = nonShrinkableZoomedSize.width;
-        if (zoomedSize.height.isIntrinsicOrAuto())
-            minSize.height = nonShrinkableZoomedSize.height;
-    }
-    return minSize;
-}
-
-LengthSize Theme::minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float) const
-{
-    return { { 0, LengthType::Fixed }, { 0, LengthType::Fixed } };
+    return { std::nullopt, std::nullopt };
 }
 
 LengthBox Theme::controlBorder(StyleAppearance appearance, const FontCascade&, const LengthBox& zoomedBox, float) const

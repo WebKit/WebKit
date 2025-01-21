@@ -30,20 +30,20 @@
 namespace WebCore {
 namespace Style {
 
-template<auto R, CSS::PrimitiveKeyword... Ks> struct ToCSS<PrimitiveNumericOrKeyword<LengthPercentage<R>, Ks...>> {
-    using Result = CSS::PrimitiveNumericOrKeyword<CSS::LengthPercentage<R>, Ks...>;
+template<auto R, typename V, CSS::PrimitiveKeyword... Ks> struct ToCSS<PrimitiveNumericOrKeyword<LengthPercentage<R, V>, Ks...>> {
+    using Result = CSS::PrimitiveNumericOrKeyword<CSS::LengthPercentage<R, V>, Ks...>;
 
-    auto operator()(const PrimitiveNumericOrKeyword<LengthPercentage<R>, Ks...>& value, const RenderStyle& style) -> Result
+    auto operator()(const PrimitiveNumericOrKeyword<LengthPercentage<R, V>, Ks...>& value, const RenderStyle& style) -> Result
     {
         return WTF::switchOn(value,
-            [&](const typename LengthPercentage<R>::Dimension& length) -> Result {
-                return CSS::LengthPercentageRaw<R> { length.unit, adjustForZoom(length.value, style) };
+            [&](const typename LengthPercentage<R, V>::Dimension& length) -> Result {
+                return CSS::LengthPercentageRaw<R, V> { length.unit, adjustForZoom(length.value, style) };
             },
-            [&](const typename LengthPercentage<R>::Percentage& percentage) -> Result {
-                return CSS::LengthPercentageRaw<R> { percentage.unit, percentage.value };
+            [&](const typename LengthPercentage<R, V>::Percentage& percentage) -> Result {
+                return CSS::LengthPercentageRaw<R, V> { percentage.unit, percentage.value };
             },
-            [&](const typename LengthPercentage<R>::Calc& calculation) -> Result {
-                return CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<R>> { makeCalc(calculation.protectedCalculation(), style) };
+            [&](const typename LengthPercentage<R, V>::Calc& calculation) -> Result {
+                return CSS::UnevaluatedCalc<CSS::LengthPercentageRaw<R, V>> { makeCalc(calculation.protectedCalculation(), style) };
             },
             [&]<CSSValueID Id>(const Constant<Id>& identifier) -> Result {
                 return toCSS(identifier, style);

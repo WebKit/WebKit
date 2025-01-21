@@ -27,6 +27,10 @@
 
 namespace WebCore {
 
+namespace Style {
+struct PreferredSize;
+}
+
 class SVGElement;
 class WeakPtrImplWithEventTargetData;
 
@@ -48,6 +52,7 @@ public:
     static float resolveLength(const SVGElement*, SVGUnitTypes::SVGUnitType, const SVGLengthValue&);
 
     float valueForLength(const Length&, SVGLengthMode = SVGLengthMode::Other);
+    float valueForLength(const Style::PreferredSize&, SVGLengthMode = SVGLengthMode::Other);
     ExceptionOr<float> convertValueToUserUnits(float, SVGLengthType, SVGLengthMode) const;
     ExceptionOr<float> convertValueFromUserUnits(float, SVGLengthType, SVGLengthMode) const;
 

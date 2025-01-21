@@ -79,28 +79,28 @@ void ThemeAdwaita::refreshSettings()
 
 #endif // PLATFORM(GTK) || PLATFORM(WPE)
 
-LengthSize ThemeAdwaita::controlSize(StyleAppearance appearance, const FontCascade& fontCascade, const LengthSize& zoomedSize, float zoomFactor) const
+ThemeControlSizeOverride ThemeAdwaita::controlSize(StyleAppearance appearance, const FontCascade& fontCascade, const ThemeControlSizeInput& zoomedSize, float zoomFactor) const
 {
-    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
+    if (zoomedSize.specifiedWidth && zoomedSize.specifiedHeight)
         return Theme::controlSize(appearance, fontCascade, zoomedSize, zoomFactor);
 
     switch (appearance) {
     case StyleAppearance::Checkbox:
     case StyleAppearance::Radio: {
-        LengthSize buttonSize = zoomedSize;
-        if (buttonSize.width.isIntrinsicOrAuto())
-            buttonSize.width = Length(12 * zoomFactor, LengthType::Fixed);
-        if (buttonSize.height.isIntrinsicOrAuto())
-            buttonSize.height = Length(12 * zoomFactor, LengthType::Fixed);
-        return buttonSize;
+        ThemeControlSizeOverride buttonSizeOverrides { std::nullopt, std::nullopt };
+        if (!zoomedSize.specifiedWidth)
+            buttonSizeOverrides.overrideWidth = 12 * zoomFactor;
+        if (!zoomedSize.specifiedHeight)
+            buttonSizeOverrides.overrideHeight = 12 * zoomFactor;
+        return buttonSizeOverrides;
     }
     case StyleAppearance::InnerSpinButton: {
-        LengthSize spinButtonSize = zoomedSize;
-        if (spinButtonSize.width.isIntrinsicOrAuto())
-            spinButtonSize.width = Length(static_cast<int>(arrowSize * zoomFactor), LengthType::Fixed);
-        if (spinButtonSize.height.isIntrinsicOrAuto() || fontCascade.size() > arrowSize)
-            spinButtonSize.height = Length(fontCascade.size(), LengthType::Fixed);
-        return spinButtonSize;
+        ThemeControlSizeOverride spinButtonSizeOverrides { std::nullopt, std::nullopt };
+        if (!zoomedSize.specifiedWidth)
+            spinButtonSizeOverrides.overrideWidth = static_cast<int>(arrowSize * zoomFactor);
+        if (!zoomedSize.specifiedHeight || fontCascade.size() > arrowSize)
+            spinButtonSizeOverrides.overrideHeight = fontCascade.size();
+        return spinButtonSizeOverrides;
     }
     default:
         break;
@@ -109,17 +109,17 @@ LengthSize ThemeAdwaita::controlSize(StyleAppearance appearance, const FontCasca
     return Theme::controlSize(appearance, fontCascade, zoomedSize, zoomFactor);
 }
 
-LengthSize ThemeAdwaita::minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize& zoomedSize, float) const
+ThemeControlMinimumSizeOverride ThemeAdwaita::minimumControlSize(StyleAppearance, const FontCascade&, const ThemeControlMinimumSizeInput& zoomedSize, float) const
 {
-    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-        return zoomedSize;
+    if (zoomedSize.specifiedMinWidth && zoomedSize.specifiedMinHeight)
+        return { std::nullopt, std::nullopt };
 
-    LengthSize minSize = zoomedSize;
-    if (minSize.width.isIntrinsicOrAuto())
-        minSize.width = Length(0, LengthType::Fixed);
-    if (minSize.height.isIntrinsicOrAuto())
-        minSize.height = Length(0, LengthType::Fixed);
-    return minSize;
+    ThemeControlMinimumSizeOverride minSizeOverrides { std::nullopt, std::nullopt };
+    if (!zoomedSize.specifiedMinWidth)
+        minSizeOverrides.overrideMinWidth = 0;
+    if (!zoomedSize.specifiedMinHeight)
+        minSizeOverrides.overrideMinHeight = 0;
+    return minSizeOverrides;
 }
 
 LengthBox ThemeAdwaita::controlBorder(StyleAppearance appearance, const FontCascade& font, const LengthBox& zoomedBox, float zoomFactor) const

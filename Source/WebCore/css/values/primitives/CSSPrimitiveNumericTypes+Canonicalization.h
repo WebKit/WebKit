@@ -36,7 +36,7 @@ namespace CSS {
 
 double canonicalizeAngle(double value, AngleUnit);
 
-template<auto R> double canonicalize(AngleRaw<R> raw)
+template<auto R, typename V> double canonicalize(AngleRaw<R, V> raw)
 {
     return canonicalizeAngle(raw.value, raw.unit);
 }
@@ -45,7 +45,7 @@ template<auto R> double canonicalize(AngleRaw<R> raw)
 
 double canonicalizeTime(double, TimeUnit);
 
-template<auto R> double canonicalize(TimeRaw<R> raw)
+template<auto R, typename V> double canonicalize(TimeRaw<R, V> raw)
 {
     return canonicalizeTime(raw.value, raw.unit);
 }
@@ -54,7 +54,7 @@ template<auto R> double canonicalize(TimeRaw<R> raw)
 
 double canonicalizeFrequency(double, FrequencyUnit);
 
-template<auto R> double canonicalize(FrequencyRaw<R> raw)
+template<auto R, typename V> double canonicalize(FrequencyRaw<R, V> raw)
 {
     return canonicalizeFrequency(raw.value, raw.unit);
 }
@@ -63,7 +63,7 @@ template<auto R> double canonicalize(FrequencyRaw<R> raw)
 
 double canonicalizeResolution(double, ResolutionUnit);
 
-template<auto R> double canonicalize(ResolutionRaw<R> raw)
+template<auto R, typename V> double canonicalize(ResolutionRaw<R, V> raw)
 {
     return canonicalizeResolution(raw.value, raw.unit);
 }

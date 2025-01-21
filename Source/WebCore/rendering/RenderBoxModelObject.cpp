@@ -246,8 +246,8 @@ static inline bool isOutOfFlowPositionedWithImplicitHeight(const RenderBoxModelO
 {
     return child.isOutOfFlowPositioned() && !child.style().logicalTop().isAuto() && !child.style().logicalBottom().isAuto();
 }
-    
-RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length logicalHeight) const
+
+template<typename SizeType> RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetectionImpl(const SizeType& logicalHeight) const
 {
     // For percentage heights: The percentage is calculated with respect to the
     // height of the generated box's containing block. If the height of the
@@ -281,6 +281,21 @@ RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(Length 
         return nullptr;
     
     return cb;
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::PreferredSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionImpl(logicalHeight);
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::MinimumSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionImpl(logicalHeight);
+}
+
+RenderBlock* RenderBoxModelObject::containingBlockForAutoHeightDetection(const Style::MaximumSize& logicalHeight) const
+{
+    return containingBlockForAutoHeightDetectionImpl(logicalHeight);
 }
 
 DecodingMode RenderBoxModelObject::decodingModeForImageDraw(const Image& image, const PaintInfo& paintInfo) const

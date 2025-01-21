@@ -40,16 +40,16 @@ bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle&
         return false;
 
     auto& maxHeight = style.maxHeight();
-    std::optional<Length> heightOrMaxHeightAsLength;
-    if (maxHeight.isFixed())
-        heightOrMaxHeightAsLength = style.maxHeight();
-    else if (style.height().isFixed() && (!maxHeight.isSpecified() || maxHeight.isUndefined()))
-        heightOrMaxHeightAsLength = style.height();
+    std::optional<Style::FixedSize> heightOrMaxHeightAsFixed;
+    if (auto fixedMaxHeight = maxHeight.fixed())
+        heightOrMaxHeightAsFixed = *fixedMaxHeight;
+    else if (auto fixedHeight = style.height().fixed() && (!maxHeight.isSpecified() || maxHeight.isNone()))
+        heightOrMaxHeightAsFixed = fixedHeight;
 
-    if (!heightOrMaxHeightAsLength)
+    if (!heightOrMaxHeightAsFixed)
         return false;
 
-    float heightOrMaxHeight = heightOrMaxHeightAsLength->value();
+    float heightOrMaxHeight = heightOrMaxHeightAsFixed->value;
     if (heightOrMaxHeight <= 0)
         return false;
 

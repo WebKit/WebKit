@@ -117,8 +117,8 @@ std::unique_ptr<Layout::LayoutTree> TreeBuilder::buildLayoutTree(const RenderVie
     PhaseScope scope(Phase::Type::TreeBuilding);
 
     auto rootStyle = RenderStyle::clone(renderView.style());
-    rootStyle.setLogicalWidth(Length(renderView.width(), LengthType::Fixed));
-    rootStyle.setLogicalHeight(Length(renderView.height(), LengthType::Fixed));
+    rootStyle.setLogicalWidth(Style::PreferredSize::Fixed { renderView.width() });
+    rootStyle.setLogicalHeight(Style::PreferredSize::Fixed { renderView.height() });
 
     auto rootLayoutBox = makeUnique<InitialContainingBlock>(WTFMove(rootStyle));
     TreeBuilder().buildSubTree(renderView, *rootLayoutBox);

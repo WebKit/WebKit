@@ -3755,8 +3755,8 @@
         },
         "height": {
             "codegen-properties": {
-                "initial": "initialSize",
-                "converter": "LengthSizing",
+                "initial": "initialPreferredSize",
+                "converter": "PreferredSize",
                 "logical-property-group": {
                     "name": "size",
                     "resolver": "vertical"
@@ -4781,8 +4781,8 @@
         },
         "max-height": {
             "codegen-properties": {
-                "initial": "initialMaxSize",
-                "converter": "LengthMaxSizing",
+                "initial": "initialMaximumSize",
+                "converter": "MaximumSize",
                 "logical-property-group": {
                     "name": "max-size",
                     "resolver": "vertical"
@@ -4827,8 +4827,8 @@
         },
         "max-width": {
             "codegen-properties": {
-                "initial": "initialMaxSize",
-                "converter": "LengthMaxSizing",
+                "initial": "initialMaximumSize",
+                "converter": "MaximumSize",
                 "logical-property-group": {
                     "name": "max-size",
                     "resolver": "horizontal"
@@ -4859,8 +4859,8 @@
         },
         "min-height": {
             "codegen-properties": {
-                "initial": "initialMinSize",
-                "converter": "LengthSizing",
+                "initial": "initialMinimumSize",
+                "converter": "MinimumSize",
                 "logical-property-group": {
                     "name": "min-size",
                     "resolver": "vertical"
@@ -4891,8 +4891,8 @@
         },
         "min-width": {
             "codegen-properties": {
-                "initial": "initialMinSize",
-                "converter": "LengthSizing",
+                "initial": "initialMinimumSize",
+                "converter": "MinimumSize",
                 "logical-property-group": {
                     "name": "min-size",
                     "resolver": "horizontal"
@@ -6445,8 +6445,8 @@
         },
         "width": {
             "codegen-properties": {
-                "initial": "initialSize",
-                "converter": "LengthSizing",
+                "initial": "initialPreferredSize",
+                "converter": "PreferredSize",
                 "logical-property-group": {
                     "name": "size",
                     "resolver": "horizontal"
@@ -7459,7 +7459,8 @@
                 "aliases": [
                     "-webkit-flex-basis"
                 ],
-                "converter": "LengthSizing",
+                "initial": "initialFlexBasis",
+                "converter": "FlexBasis",
                 "parser-grammar": "auto | content | <width-or-height-keyword> | <length-percentage [0,inf]>"
             },
             "specification": {

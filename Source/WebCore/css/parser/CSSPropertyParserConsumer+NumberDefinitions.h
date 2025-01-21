@@ -35,15 +35,15 @@ struct NumberValidator {
         return CSS::UnitTraits<CSS::NumberUnit>::validate(unitType);
     }
 
-    template<auto R> static bool isValid(CSS::NumberRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::NumberRaw<R, V> raw, CSSPropertyParserOptions)
     {
         return isValidCanonicalValue(raw);
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::Number<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Number<R>>;
-    using NumberToken = NumberConsumer<CSS::Number<R>, NumberValidator>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Number<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Number<R, V>>;
+    using NumberToken = NumberConsumer<CSS::Number<R, V>, NumberValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers
