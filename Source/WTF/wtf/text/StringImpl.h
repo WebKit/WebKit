@@ -257,7 +257,7 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(std::span<const UChar>);
 
     // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
-    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(WTF::span8(characters)); }
+    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(unsafeSpan8(characters)); }
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 

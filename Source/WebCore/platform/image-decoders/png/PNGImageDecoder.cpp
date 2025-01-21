@@ -565,7 +565,7 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
 
 void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 {
-    if (chunk->size == 8 && spanHasPrefix(span(chunk->name), "acTL"_span)) {
+    if (chunk->size == 8 && spanHasPrefix(unsafeSpan(chunk->name), "acTL"_span)) {
         if (m_hasInfo || m_isAnimated)
             return;
 
@@ -585,7 +585,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             return;
 
         m_frameBufferCache.resize(m_frameCount);
-    } else if (chunk->size == 26 && spanHasPrefix(span(chunk->name), "fcTL"_span)) {
+    } else if (chunk->size == 26 && spanHasPrefix(unsafeSpan(chunk->name), "fcTL"_span)) {
         if (m_hasInfo && !m_isAnimated)
             return;
 
@@ -652,7 +652,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             fallbackNotAnimated();
             return;
         }
-    } else if (chunk->size >= 4 && spanHasPrefix(span(chunk->name), "fdAT"_span)) {
+    } else if (chunk->size >= 4 && spanHasPrefix(unsafeSpan(chunk->name), "fdAT"_span)) {
         if (!m_frameInfo || !m_isAnimated)
             return;
 

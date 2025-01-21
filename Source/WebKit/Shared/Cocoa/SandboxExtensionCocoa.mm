@@ -94,7 +94,7 @@ std::span<const uint8_t> SandboxExtensionImpl::getSerializedFormat()
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     ASSERT(strlen(m_token));
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    return span8(m_token);
+    return unsafeSpan8(m_token);
 }
 
 char* SandboxExtensionImpl::sandboxExtensionForType(const char* path, SandboxExtension::Type type, std::optional<audit_token_t> auditToken, OptionSet<SandboxExtension::Flags> flags)

@@ -715,7 +715,7 @@ void setSsrcAudioLevelVadOn(GstStructure* structure)
 {
     unsigned totalFields = gst_structure_n_fields(structure);
     for (unsigned i = 0; i < totalFields; i++) {
-        String fieldName = WTF::span(gst_structure_nth_field_name(structure, i));
+        String fieldName = unsafeSpan(gst_structure_nth_field_name(structure, i));
         if (!fieldName.startsWith("extmap-"_s))
             continue;
 

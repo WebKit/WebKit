@@ -828,14 +828,14 @@ void WebProcess::registerLogHook()
             return;
 #endif
 
-        auto logChannel = span8IncludingNullTerminator(msg->subsystem);
-        auto logCategory = span8IncludingNullTerminator(msg->category);
+        auto logChannel = unsafeSpan8IncludingNullTerminator(msg->subsystem);
+        auto logCategory = unsafeSpan8IncludingNullTerminator(msg->category);
 
         if (type == OS_LOG_TYPE_FAULT)
             type = OS_LOG_TYPE_ERROR;
 
         if (char* messageString = os_log_copy_message_string(msg)) {
-            auto logString = span8IncludingNullTerminator(messageString);
+            auto logString = unsafeSpan8IncludingNullTerminator(messageString);
             WebProcess::singleton().sendLogOnStream(logChannel, logCategory, logString, type);
             free(messageString);
         }

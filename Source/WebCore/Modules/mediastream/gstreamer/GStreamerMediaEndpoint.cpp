@@ -1943,7 +1943,7 @@ void GStreamerMediaEndpoint::onIceCandidate(guint sdpMLineIndex, gchararray cand
     if (isStopped())
         return;
 
-    String candidateString = span(candidate);
+    String candidateString = unsafeSpan(candidate);
 
     // webrtcbin notifies an empty ICE candidate when gathering is complete.
     if (candidateString.isEmpty())

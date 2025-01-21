@@ -50,35 +50,35 @@ inline std::span<const UChar> span(const UChar& character)
     return unsafeMakeSpan(&character, 1);
 }
 
-inline std::span<const LChar> span8(const char* string)
+inline std::span<const LChar> unsafeSpan8(const char* string)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return unsafeMakeSpan(byteCast<LChar>(string), string ? strlen(string) : 0);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-inline std::span<const LChar> span8IncludingNullTerminator(const char* string)
+inline std::span<const LChar> unsafeSpan8IncludingNullTerminator(const char* string)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return unsafeMakeSpan(byteCast<LChar>(string), string ? strlen(string) + 1 : 0);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-inline std::span<const char> span(const char* string)
+inline std::span<const char> unsafeSpan(const char* string)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return unsafeMakeSpan(string, string ? strlen(string) : 0);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-inline std::span<const char> spanIncludingNullTerminator(const char* string)
+inline std::span<const char> unsafeSpanIncludingNullTerminator(const char* string)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return unsafeMakeSpan(string, string ? strlen(string) + 1 : 0);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-inline std::span<const LChar> span(const LChar* string)
+inline std::span<const LChar> unsafeSpan(const LChar* string)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return unsafeMakeSpan(string, string ? strlen(byteCast<char>(string)) : 0);
@@ -86,7 +86,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-inline std::span<const UChar> span(const UChar* string)
+inline std::span<const UChar> unsafeSpan(const UChar* string)
 {
     if (!string)
         return { };
@@ -549,7 +549,7 @@ bool equalIgnoringASCIICaseCommon(const StringClassA& a, const StringClassB& b)
 
 template<typename StringClassA> bool equalIgnoringASCIICaseCommon(const StringClassA& a, const char* b)
 {
-    auto bSpan = span8(b);
+    auto bSpan = unsafeSpan8(b);
     if (a.length() != bSpan.size())
         return false;
     if (a.is8Bit())
@@ -576,8 +576,8 @@ size_t findIgnoringASCIICase(std::span<const SearchCharacterType> source, std::s
 
 inline size_t findIgnoringASCIICaseWithoutLength(const char* source, const char* matchCharacters)
 {
-    auto searchSpan = span(source);
-    auto matchSpan = span(matchCharacters);
+    auto searchSpan = unsafeSpan(source);
+    auto matchSpan = unsafeSpan(matchCharacters);
 
     return matchSpan.size() <= searchSpan.size() ? findIgnoringASCIICase(searchSpan, matchSpan, 0) : notFound;
 }
@@ -926,7 +926,7 @@ template<typename StringClass> inline bool startsWithLettersIgnoringASCIICaseCom
 
 inline bool equalIgnoringASCIICase(const char* a, const char* b)
 {
-    return equalIgnoringASCIICase(span8(a), span8(b));
+    return equalIgnoringASCIICase(unsafeSpan8(a), unsafeSpan8(b));
 }
 
 inline bool equalLettersIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
@@ -936,7 +936,7 @@ inline bool equalLettersIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
 
 inline bool equalIgnoringASCIICase(const char* string, ASCIILiteral literal)
 {
-    return equalIgnoringASCIICase(span8(string), literal.span8());
+    return equalIgnoringASCIICase(unsafeSpan8(string), literal.span8());
 }
 
 inline bool equalIgnoringASCIICase(ASCIILiteral a, ASCIILiteral b)
@@ -1225,13 +1225,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 }
 
+using WTF::charactersContain;
 using WTF::equalIgnoringASCIICase;
 using WTF::equalIgnoringASCIICaseWithLength;
 using WTF::equalLettersIgnoringASCIICase;
 using WTF::equalLettersIgnoringASCIICaseWithLength;
 using WTF::isLatin1;
 using WTF::span;
-using WTF::spanIncludingNullTerminator;
-using WTF::span8;
-using WTF::span8IncludingNullTerminator;
-using WTF::charactersContain;
+using WTF::unsafeSpan;
+using WTF::unsafeSpan8;
+using WTF::unsafeSpanIncludingNullTerminator;
+using WTF::unsafeSpan8IncludingNullTerminator;

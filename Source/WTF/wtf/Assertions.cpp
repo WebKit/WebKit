@@ -80,7 +80,7 @@ static String createWithFormatAndArguments(const char* format, va_list args)
 ALLOW_NONLITERAL_FORMAT_BEGIN
 
 #if USE(CF)
-    if (contains(span8(format), "%@"_span)) {
+    if (contains(unsafeSpan(format), "%@"_span)) {
         auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, format, kCFStringEncodingUTF8, kCFAllocatorNull));
         auto result = adoptCF(CFStringCreateWithFormatAndArguments(kCFAllocatorDefault, nullptr, cfFormat.get(), args));
         va_end(argsCopy);
@@ -152,7 +152,7 @@ WTF_ATTRIBUTE_PRINTF(2, 0)
 static void vprintf_stderr_common([[maybe_unused]] WTFLogChannel* channel, const char* format, va_list args)
 {
 #if USE(CF)
-    if (contains(span8(format), "%@"_span)) {
+    if (contains(unsafeSpan(format), "%@"_span)) {
         auto cfFormat = adoptCF(CFStringCreateWithCStringNoCopy(nullptr, format, kCFStringEncodingUTF8, kCFAllocatorNull));
 
 ALLOW_NONLITERAL_FORMAT_BEGIN
@@ -200,8 +200,8 @@ ALLOW_NONLITERAL_FORMAT_END
 WTF_ATTRIBUTE_PRINTF(2, 0)
 static void vprintf_stderr_with_prefix(const char* rawPrefix, const char* rawFormat, va_list args)
 {
-    auto prefix = span(rawPrefix);
-    auto format = span(rawFormat);
+    auto prefix = unsafeSpan(rawPrefix);
+    auto format = unsafeSpan(rawFormat);
     Vector<char> formatWithPrefix(prefix.size() + format.size() + 1);
     memcpySpan(formatWithPrefix.mutableSpan(), prefix);
     memcpySpan(formatWithPrefix.mutableSpan().subspan(prefix.size()), format);
@@ -215,7 +215,7 @@ ALLOW_NONLITERAL_FORMAT_END
 WTF_ATTRIBUTE_PRINTF(2, 0)
 static void vprintf_stderr_with_trailing_newline(WTFLogChannel* channel, const char* rawFormat, va_list args)
 {
-    auto format = span(rawFormat);
+    auto format = unsafeSpan(rawFormat);
     if (!format.empty() && format.back() == '\n') {
         vprintf_stderr_common(channel, rawFormat, args);
         return;

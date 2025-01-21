@@ -294,7 +294,7 @@ DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<UChar>& source)
 DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char* name)
 {
     HTMLEntitySearch search;
-    for (char character : span(name)) {
+    for (char character : unsafeSpan(name)) {
         search.advance(character);
         if (!search.isEntityPrefix())
             return { };

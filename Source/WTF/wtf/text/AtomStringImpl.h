@@ -116,7 +116,7 @@ ALWAYS_INLINE Ref<AtomStringImpl> AtomStringImpl::add(ASCIILiteral literal)
 
 ALWAYS_INLINE RefPtr<AtomStringImpl> AtomStringImpl::addCString(const char* s)
 {
-    return s ? add(WTF::span8(s)) : nullptr;
+    return s ? add(unsafeSpan8(s)) : nullptr;
 }
 
 template<typename StringTableProvider>

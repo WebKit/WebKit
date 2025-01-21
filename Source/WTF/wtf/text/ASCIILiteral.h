@@ -70,7 +70,7 @@ public:
     constexpr size_t length() const { return !m_charactersWithNullTerminator.empty() ? m_charactersWithNullTerminator.size() - 1 : 0; }
     constexpr std::span<const char> span() const { return m_charactersWithNullTerminator.first(length()); }
     std::span<const LChar> span8() const { return byteCast<LChar>(m_charactersWithNullTerminator.first(length())); }
-    std::span<const char> spanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
+    std::span<const char> unsafeSpanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }
 
     constexpr char operator[](size_t index) const { return m_charactersWithNullTerminator[index]; }

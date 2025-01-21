@@ -107,7 +107,7 @@ static const String& fullyQualifiedInfoTableName()
 
 static String formatErrorMessage(ASCIILiteral message, int sqliteErrorCode, const char* sqliteErrorMessage)
 {
-    return makeString(message, " ("_s, sqliteErrorCode, ' ', span(sqliteErrorMessage), ')');
+    return makeString(message, " ("_s, sqliteErrorCode, ' ', unsafeSpan(sqliteErrorMessage), ')');
 }
 
 static bool setTextValueInDatabase(SQLiteDatabase& db, StringView query, const String& value)

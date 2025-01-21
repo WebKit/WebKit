@@ -595,7 +595,7 @@ String serializationForCSS(SRGBA<uint8_t> color, bool useColorFunctionSerializat
     case 0xFF:
         return makeString("rgb("_s, red, ", "_s, green, ", "_s, blue, ')');
     default:
-        return makeString("rgba("_s, red, ", "_s, green, ", "_s, blue, ", 0."_s, span(fractionDigitsForFractionalAlphaValue(alpha).data()), ')');
+        return makeString("rgba("_s, red, ", "_s, green, ", "_s, blue, ", 0."_s, unsafeSpan(fractionDigitsForFractionalAlphaValue(alpha).data()), ')');
     }
 }
 

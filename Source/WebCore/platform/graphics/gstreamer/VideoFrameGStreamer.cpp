@@ -351,7 +351,7 @@ RefPtr<VideoFrameGStreamer> VideoFrameGStreamer::createFromPixelBuffer(Ref<Pixel
         format = GST_VIDEO_FORMAT_BGRA;
         break;
     }
-    auto formatName = WTF::span(gst_video_format_to_string(format));
+    auto formatName = unsafeSpan(gst_video_format_to_string(format));
     GST_TRACE("Creating %s VideoFrame from pixel buffer", formatName.data());
 
     int frameRateNumerator, frameRateDenominator;
@@ -616,7 +616,7 @@ GRefPtr<GstSample> VideoFrameGStreamer::convert(GstVideoFormat format, const Int
 
     auto width = destinationSize.width();
     auto height = destinationSize.height();
-    auto formatName = WTF::span(gst_video_format_to_string(format));
+    auto formatName = unsafeSpan(gst_video_format_to_string(format));
     auto outputCaps = adoptGRef(gst_caps_new_simple("video/x-raw", "format", G_TYPE_STRING, formatName.data(), "width", G_TYPE_INT, width, "height", G_TYPE_INT, height, "framerate", GST_TYPE_FRACTION, frameRateNumerator, frameRateDenominator, nullptr));
 
     if (gst_caps_is_equal(caps, outputCaps.get()))

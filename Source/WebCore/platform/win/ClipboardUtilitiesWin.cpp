@@ -214,7 +214,7 @@ static String getFullCFHTML(IDataObject* data)
 
 static void append(Vector<char>& vector, const char* string)
 {
-    vector.append(span(string));
+    vector.append(unsafeSpan(string));
 }
 
 static void append(Vector<char>& vector, const CString& string)

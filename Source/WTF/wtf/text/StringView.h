@@ -404,7 +404,7 @@ inline StringView::StringView(std::span<const UChar> characters)
 
 inline StringView::StringView(const char* characters)
 {
-    initialize(WTF::span8(characters));
+    initialize(unsafeSpan8(characters));
 }
 
 inline StringView::StringView(std::span<const char> characters)
@@ -765,7 +765,7 @@ inline bool equal(StringView a, const LChar* b)
     if (a.isEmpty())
         return !b;
 
-    auto bSpan = span8(byteCast<char>(b));
+    auto bSpan = unsafeSpan8(byteCast<char>(b));
     if (a.length() != bSpan.size())
         return false;
 

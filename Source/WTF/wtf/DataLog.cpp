@@ -112,7 +112,7 @@ static void initializeLogFileOnce()
 #endif
 #endif // DATA_LOG_TO_FILE
     char actualFilename[maxPathLength + 1];
-    if (filename && !contains(span8(filename), "%pid"_span)) {
+    if (filename && !contains(unsafeSpan(filename), "%pid"_span)) {
         snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
         filename = actualFilename;
     }
@@ -138,7 +138,7 @@ void setDataFile(const char* path)
     const char* pathToOpen = path;
 
     if (path) {
-        auto pathSpan = span(path);
+        auto pathSpan = unsafeSpan(path);
         if (size_t pidIndex = find(pathSpan, "%pid"_span); pidIndex != notFound) {
             size_t pathCharactersAvailable = std::min(maxPathLength, pidIndex);
             strncpy(formattedPath, path, pathCharactersAvailable);

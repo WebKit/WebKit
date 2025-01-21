@@ -46,7 +46,7 @@ public:
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     std::span<const LChar> span() const LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast_ptr<const LChar*>(this + 1), m_length); }
-    std::span<const char> spanIncludingNullTerminator() const LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast_ptr<const char*>(this + 1), m_length + 1); }
+    std::span<const char> unsafeSpanIncludingNullTerminator() const LIFETIME_BOUND { return unsafeMakeSpan(reinterpret_cast_ptr<const char*>(this + 1), m_length + 1); }
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 private:
@@ -79,10 +79,10 @@ public:
 
     const char* data() const LIFETIME_BOUND;
 
-    std::string toStdString() const { return m_buffer ? std::string(m_buffer->spanIncludingNullTerminator().data()) : std::string(); }
+    std::string toStdString() const { return m_buffer ? std::string(m_buffer->unsafeSpanIncludingNullTerminator().data()) : std::string(); }
 
     std::span<const LChar> span() const LIFETIME_BOUND;
-    std::span<const char> spanIncludingNullTerminator() const LIFETIME_BOUND;
+    std::span<const char> unsafeSpanIncludingNullTerminator() const LIFETIME_BOUND;
 
     WTF_EXPORT_PRIVATE std::span<char> mutableSpan() LIFETIME_BOUND;
     WTF_EXPORT_PRIVATE std::span<char> mutableSpanIncludingNullTerminator() LIFETIME_BOUND;
@@ -129,7 +129,7 @@ inline CString::CString(std::span<const LChar> bytes)
 
 inline const char* CString::data() const
 {
-    return m_buffer ? m_buffer->spanIncludingNullTerminator().data() : nullptr;
+    return m_buffer ? m_buffer->unsafeSpanIncludingNullTerminator().data() : nullptr;
 }
 
 inline std::span<const LChar> CString::span() const
@@ -139,10 +139,10 @@ inline std::span<const LChar> CString::span() const
     return { };
 }
 
-inline std::span<const char> CString::spanIncludingNullTerminator() const
+inline std::span<const char> CString::unsafeSpanIncludingNullTerminator() const
 {
     if (m_buffer)
-        return m_buffer->spanIncludingNullTerminator();
+        return m_buffer->unsafeSpanIncludingNullTerminator();
     return { };
 }
 

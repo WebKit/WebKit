@@ -3433,7 +3433,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData(WebCore::SharedBuffer::create(span8(plainText)), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(unsafeSpan8(plainText)), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
 }
 
 /**

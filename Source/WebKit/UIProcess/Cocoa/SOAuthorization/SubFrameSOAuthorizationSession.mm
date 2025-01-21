@@ -76,7 +76,7 @@ void SubFrameSOAuthorizationSession::fallBackToWebPathInternal()
 {
     AUTHORIZATIONSESSION_RELEASE_LOG("fallBackToWebPathInternal: navigationAction=%p", navigationAction());
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(span8(soAuthorizationPostDidCancelMessageToParent)));
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(unsafeSpan8(soAuthorizationPostDidCancelMessageToParent)));
     appendRequestToLoad(URL(navigationAction()->request().url()), String(navigationAction()->request().httpReferrer()));
 }
 
@@ -102,7 +102,7 @@ void SubFrameSOAuthorizationSession::beforeStart()
     // Cancelled the current load before loading the data to post SOAuthorizationDidStart to the parent frame.
     invokeCallback(true);
     ASSERT(navigationAction());
-    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(span8(soAuthorizationPostDidStartMessageToParent)));
+    appendRequestToLoad(URL(navigationAction()->request().url()), Vector<uint8_t>(unsafeSpan8(soAuthorizationPostDidStartMessageToParent)));
 }
 
 void SubFrameSOAuthorizationSession::didFinishLoad(IsMainFrame, const URL&)

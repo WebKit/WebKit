@@ -70,7 +70,7 @@ static void initializeDMABufAvailability()
         if (!webkitGstCheckVersion(1, 20, 0))
             return;
 
-        auto value = WTF::span(g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED"));
+        auto value = unsafeSpan(g_getenv("WEBKIT_GST_DMABUF_SINK_DISABLED"));
         s_isDMABufDisabled = value.data() && (equalLettersIgnoringASCIICase(value, "true"_s) || equalLettersIgnoringASCIICase(value, "1"_s));
         if (!s_isDMABufDisabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
             s_isDMABufDisabled = true;

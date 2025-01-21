@@ -207,7 +207,7 @@ std::optional<T> parse(const char* string);
 template<>
 std::optional<OptionsStorage::Bool> parse(const char* string)
 {
-    auto span = WTF::span(string);
+    auto span = unsafeSpan(string);
     if (equalLettersIgnoringASCIICase(span, "true"_s) || equalLettersIgnoringASCIICase(span, "yes"_s) || !strcmp(string, "1"))
         return true;
     if (equalLettersIgnoringASCIICase(span, "false"_s) || equalLettersIgnoringASCIICase(span, "no"_s) || !strcmp(string, "0"))
@@ -278,7 +278,7 @@ std::optional<OptionsStorage::OptionString> parse(const char* string)
 template<>
 std::optional<OptionsStorage::GCLogLevel> parse(const char* string)
 {
-    auto span = WTF::span(string);
+    auto span = unsafeSpan(string);
     if (equalLettersIgnoringASCIICase(span, "none"_s) || equalLettersIgnoringASCIICase(span, "no"_s) || equalLettersIgnoringASCIICase(span, "false"_s) || !strcmp(string, "0"))
         return GCLogging::None;
 
@@ -296,7 +296,7 @@ std::optional<OptionsStorage::OSLogType> parse(const char* string)
 {
     std::optional<OptionsStorage::OSLogType> result;
 
-    auto span = WTF::span(string);
+    auto span = unsafeSpan(string);
     if (equalLettersIgnoringASCIICase(span, "none"_s) || equalLettersIgnoringASCIICase(span, "false"_s) || !strcmp(string, "0"))
         result = OSLogType::None;
     else if (equalLettersIgnoringASCIICase(span, "true"_s) || !strcmp(string, "1"))
@@ -428,7 +428,7 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
     if (!stringValue)
         return false;
 
-    auto aliasedOption = makeString(span(&name[4]), '=', span(stringValue));
+    auto aliasedOption = makeString(unsafeSpan(&name[4]), '=', unsafeSpan(stringValue));
     if (Options::setOption(aliasedOption.utf8().data()))
         return true;
 
@@ -1262,7 +1262,7 @@ bool Options::setAliasedOption(const char* arg, bool verify)
         && !strncasecmp(arg, #aliasedName_, equalStr - arg)) {          \
         auto unaliasedOption = String::fromLatin1(#unaliasedName_);     \
         if (equivalence == SameOption)                                  \
-            unaliasedOption = makeString(unaliasedOption, span(equalStr)); \
+            unaliasedOption = makeString(unaliasedOption, unsafeSpan(equalStr)); \
         else {                                                          \
             ASSERT(equivalence == InvertedOption);                      \
             auto invertedValueStr = invertBoolOptionValue(equalStr + 1); \
@@ -1439,10 +1439,10 @@ void Option::dump(StringBuilder& builder) const
         builder.append(m_int32);
         break;
     case Options::Type::OptionRange:
-        builder.append(span(m_optionRange.rangeString()));
+        builder.append(unsafeSpan(m_optionRange.rangeString()));
         break;
     case Options::Type::OptionString:
-        builder.append('"', m_optionString ? span8(m_optionString) : ""_span, '"');
+        builder.append('"', m_optionString ? unsafeSpan8(m_optionString) : ""_span, '"');
         break;
     case Options::Type::GCLogLevel:
         builder.append(m_gcLogLevel);

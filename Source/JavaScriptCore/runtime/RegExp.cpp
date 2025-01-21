@@ -683,7 +683,7 @@ String RegExp::escapedPattern() const
 
 String RegExp::toSourceString() const
 {
-    return makeString('/', escapedPattern(), '/', span(Yarr::flagsString(flags()).data()));
+    return makeString('/', escapedPattern(), '/', unsafeSpan(Yarr::flagsString(flags()).data()));
 }
 
 } // namespace JSC

@@ -123,7 +123,7 @@ private:
 template<> class StringTypeAdapter<const LChar*, void> {
 public:
     StringTypeAdapter(const LChar* characters)
-        : m_characters { span(characters) }
+        : m_characters { unsafeSpan(characters) }
     {
         RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
     }
@@ -139,7 +139,7 @@ private:
 template<> class StringTypeAdapter<const UChar*, void> {
 public:
     StringTypeAdapter(const UChar* characters)
-        : m_characters { span(characters) }
+        : m_characters { unsafeSpan(characters) }
     {
         RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
     }

@@ -392,7 +392,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
-    return makeString("pageProperty() unimplemented for: "_s, span(propertyName));
+    return makeString("pageProperty() unimplemented for: "_s, unsafeSpan(propertyName));
 }
 
 bool PrintContext::isPageBoxVisible(LocalFrame* frame, int pageNumber)

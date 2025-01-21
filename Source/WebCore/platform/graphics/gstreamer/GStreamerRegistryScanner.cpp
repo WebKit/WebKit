@@ -1041,7 +1041,7 @@ static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExte
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> extensions;
     for (const auto& uri : candidates) {
         if (auto extension = adoptGRef(gst_rtp_header_extension_create_from_uri(uri.characters())))
-            extensions.append(makeString(span(uri)));
+            extensions.append(makeString(unsafeSpan(uri)));
     }
     return extensions;
 }

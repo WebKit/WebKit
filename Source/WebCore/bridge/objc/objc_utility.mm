@@ -255,7 +255,7 @@ ObjcValueType objcValueTypeForType(const char* rawType)
 {
     ObjcValueType objcValueType = ObjcInvalidType;
 
-    for (char typeChar : span(rawType)) {
+    for (char typeChar : unsafeSpan(rawType)) {
         switch (typeChar) {
             case _C_CONST:
             case _C_BYCOPY:

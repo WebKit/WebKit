@@ -108,7 +108,7 @@ TextStream& TextStream::operator<<(double d)
 
 TextStream& TextStream::operator<<(const char* string)
 {
-    m_text.append(span(string));
+    m_text.append(unsafeSpan(string));
     return *this;
 }
 

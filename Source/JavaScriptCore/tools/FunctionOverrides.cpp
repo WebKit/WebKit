@@ -244,7 +244,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             builder.append(std::span { line, p + 1 });
             return builder.toString();
         }
-        builder.append(span(line));
+        builder.append(unsafeSpan(line));
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     } while ((line = fgets(buffer, bufferSize, file)));

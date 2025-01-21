@@ -1479,7 +1479,7 @@ static inline BOOL read2DigitNumber(std::span<const char>& p, int8_t& outval)
 
 static inline NSDate *_dateForString(NSString *string)
 {
-    auto p = spanIncludingNullTerminator([string UTF8String]);
+    auto p = unsafeSpanIncludingNullTerminator([string UTF8String]);
     RetainPtr<NSDateComponents> dateComponents = adoptNS([[NSDateComponents alloc] init]);
 
     // Set the time zone to GMT

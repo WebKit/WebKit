@@ -43,7 +43,7 @@ TEST(WTF, StringImplCreationFromLiteral)
 
     // Constructor taking the size explicitly.
     const char* programmaticStringData = "Explicit Size Literal";
-    auto programmaticString = StringImpl::createWithoutCopying(span(programmaticStringData));
+    auto programmaticString = StringImpl::createWithoutCopying(unsafeSpan(programmaticStringData));
     ASSERT_EQ(strlen(programmaticStringData), programmaticString->length());
     ASSERT_TRUE(equal(programmaticString.get(), StringView::fromLatin1(programmaticStringData)));
     ASSERT_EQ(programmaticStringData, reinterpret_cast<const char*>(programmaticString->span8().data()));

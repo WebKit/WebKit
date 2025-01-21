@@ -2665,7 +2665,7 @@ static String commandNameForSelector(SEL selector)
     // Remove the trailing colon.
     // No need to capitalize the command name since Editor command names are
     // not case sensitive.
-    auto selectorName = span(sel_getName(selector));
+    auto selectorName = unsafeSpan(sel_getName(selector));
     if (selectorName.size() < 2 || selectorName[selectorName.size() - 1] != ':')
         return String();
     return String(selectorName.first(selectorName.size() - 1));

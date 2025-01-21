@@ -301,7 +301,7 @@ CDMInstanceSessionThunder::CDMInstanceSessionThunder(CDMInstanceThunder& instanc
     };
     m_thunderSessionCallbacks.error_message_callback = [](OpenCDMSession*, void* userData, const char message[]) {
         GST_ERROR("Got 'error' OCDM notification: %s", message);
-        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(span(message))]() mutable {
+        callOnMainThread([session = WeakPtr { static_cast<CDMInstanceSessionThunder*>(userData) }, buffer = WebCore::SharedBuffer::create(unsafeSpan(message))]() mutable {
             if (!session)
                 return;
             session->errorCallback(WTFMove(buffer));

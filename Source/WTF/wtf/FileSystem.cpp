@@ -65,7 +65,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static String fromStdFileSystemPath(const std::filesystem::path& path)
 {
 #if HAVE(MISSING_U8STRING)
-    return String::fromUTF8(span8(path.u8string().c_str()));
+    return String::fromUTF8(unsafeSpan8(path.u8string().c_str()));
 #else
     return String::fromUTF8(span(path.u8string()));
 #endif

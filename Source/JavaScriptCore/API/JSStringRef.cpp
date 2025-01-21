@@ -45,7 +45,7 @@ JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
     JSC::initialize();
     if (string) {
-        auto stringSpan = span8(string);
+        auto stringSpan = unsafeSpan8(string);
         Vector<UChar, 1024> buffer(stringSpan.size());
         auto result = WTF::Unicode::convert(spanReinterpretCast<const char8_t>(stringSpan), buffer.mutableSpan());
         if (result.code == WTF::Unicode::ConversionResultCode::Success) {

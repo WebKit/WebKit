@@ -58,7 +58,7 @@ static constexpr auto notOpenErrorMessage = "database is not open"_s;
 static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value **)
 {
     auto* functionName = static_cast<const char*>(sqlite3_user_data(context));
-    sqlite3_result_error(context, makeString("Function "_s, span(functionName), " is unauthorized"_s).utf8().data(), -1);
+    sqlite3_result_error(context, makeString("Function "_s, unsafeSpan(functionName), " is unauthorized"_s).utf8().data(), -1);
 }
 
 static void initializeSQLiteIfNecessary()
@@ -779,7 +779,7 @@ static Expected<sqlite3_stmt*, int> constructAndPrepareStatement(SQLiteDatabase&
 Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatementSlow(StringView queryString)
 {
     auto query = queryString.trim(isUnicodeCompatibleASCIIWhitespace<UChar>).utf8();
-    auto sqlStatement = constructAndPrepareStatement(*this, query.spanIncludingNullTerminator());
+    auto sqlStatement = constructAndPrepareStatement(*this, query.unsafeSpanIncludingNullTerminator());
     if (!sqlStatement) {
         RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.data());
         return makeUnexpected(sqlStatement.error());
@@ -789,7 +789,7 @@ Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatementSlow(StringView q
 
 Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatement(ASCIILiteral query)
 {
-    auto sqlStatement = constructAndPrepareStatement(*this, query.spanIncludingNullTerminator());
+    auto sqlStatement = constructAndPrepareStatement(*this, query.unsafeSpanIncludingNullTerminator());
     if (!sqlStatement) {
         RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.characters());
         return makeUnexpected(sqlStatement.error());
@@ -800,7 +800,7 @@ Expected<SQLiteStatement, int> SQLiteDatabase::prepareStatement(ASCIILiteral que
 Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatementSlow(StringView queryString)
 {
     auto query = queryString.trim(isUnicodeCompatibleASCIIWhitespace<UChar>).utf8();
-    auto sqlStatement = constructAndPrepareStatement(*this, query.spanIncludingNullTerminator());
+    auto sqlStatement = constructAndPrepareStatement(*this, query.unsafeSpanIncludingNullTerminator());
     if (!sqlStatement) {
         RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareHeapStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.data());
         return makeUnexpected(sqlStatement.error());
@@ -810,7 +810,7 @@ Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatementSl
 
 Expected<UniqueRef<SQLiteStatement>, int> SQLiteDatabase::prepareHeapStatement(ASCIILiteral query)
 {
-    auto sqlStatement = constructAndPrepareStatement(*this, query.spanIncludingNullTerminator());
+    auto sqlStatement = constructAndPrepareStatement(*this, query.unsafeSpanIncludingNullTerminator());
     if (!sqlStatement) {
         RELEASE_LOG_ERROR(SQLDatabase, "SQLiteDatabase::prepareHeapStatement: Failed to prepare statement %" PUBLIC_LOG_STRING, query.characters());
         return makeUnexpected(sqlStatement.error());

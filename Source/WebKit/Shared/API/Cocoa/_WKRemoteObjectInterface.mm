@@ -88,7 +88,7 @@ static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL sel
 
     bool foundBlock = false;
     for (NSUInteger i = firstArgument; i < argumentCount; ++i) {
-        auto argumentType = span([methodSignature getArgumentTypeAtIndex:i]);
+        auto argumentType = unsafeSpan([methodSignature getArgumentTypeAtIndex:i]);
 
         if (argumentType.empty() || argumentType.front() != '@') {
             // This is a non-object type; we won't allow any classes to be decoded for it.

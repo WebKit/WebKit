@@ -268,7 +268,7 @@ public:
     WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const char8_t>);
     static String fromUTF8(std::span<const LChar> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
     static String fromUTF8(std::span<const char> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
-    static String fromUTF8(const char* string) { return fromUTF8(WTF::span8(string)); }
+    static String fromUTF8(const char* string) { return fromUTF8(unsafeSpan8(string)); }
     static String fromUTF8ReplacingInvalidSequences(std::span<const char8_t>);
     static String fromUTF8ReplacingInvalidSequences(std::span<const LChar> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
 

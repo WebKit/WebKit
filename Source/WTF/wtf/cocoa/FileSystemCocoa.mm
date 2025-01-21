@@ -151,7 +151,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     
     // Append the file name suffix.
     CString suffixUTF8 = suffix.utf8();
-    temporaryFilePath.append(suffixUTF8.spanIncludingNullTerminator());
+    temporaryFilePath.append(suffixUTF8.unsafeSpanIncludingNullTerminator());
 
     platformFileHandle = mkostemps(temporaryFilePath.data(), suffixUTF8.length(), O_CLOEXEC);
     if (platformFileHandle == invalidPlatformFileHandle)
@@ -170,7 +170,7 @@ NSString *createTemporaryDirectory(NSString *directoryPrefix)
         return nil;
 
     NSString *tempDirectoryComponent = [directoryPrefix stringByAppendingString:@"-XXXXXXXX"];
-    auto tempDirectorySpanIncludingNullTerminator = spanIncludingNullTerminator([[tempDirectory stringByAppendingPathComponent:tempDirectoryComponent] fileSystemRepresentation]);
+    auto tempDirectorySpanIncludingNullTerminator = unsafeSpanIncludingNullTerminator([[tempDirectory stringByAppendingPathComponent:tempDirectoryComponent] fileSystemRepresentation]);
     if (tempDirectorySpanIncludingNullTerminator.empty())
         return nil;
 

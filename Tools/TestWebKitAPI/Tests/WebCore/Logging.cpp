@@ -96,7 +96,7 @@ public:
         char* line;
 
         while ((line = fgets(buffer, sizeof(buffer), m_stderr)))
-            result.append(span(line));
+            result.append(unsafeSpan(line));
 
         return result.toString();
     }

@@ -166,7 +166,7 @@ Vector<RefPtr<PlatformSpeechSynthesisVoice>> SpielSpeechWrapper::initializeVoice
         auto isDefault = true;
         const auto languages = span(const_cast<char**>(spiel_voice_get_languages(voice)));
         for (const auto language : languages) {
-            auto languageString = makeString(span(language));
+            auto languageString = makeString(unsafeSpan(language));
             auto uri = generateVoiceURI(voice, languageString);
             platformVoices.append(PlatformSpeechSynthesisVoice::create(uri, name, languageString, false, isDefault));
             m_voices.add(uri, GRefPtr(voice));

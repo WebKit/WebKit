@@ -57,7 +57,7 @@ const CString& applicationID()
         // and won't flood xdg-desktop-portal with new ids.
         if (auto executablePath = FileSystem::currentExecutablePath(); !executablePath.isNull()) {
             GUniquePtr<char> digest(g_compute_checksum_for_data(G_CHECKSUM_SHA256, reinterpret_cast<const uint8_t*>(executablePath.data()), executablePath.length()));
-            id.get() = makeString("org.webkit.app-"_s, span(digest.get())).utf8();
+            id.get() = makeString("org.webkit.app-"_s, unsafeSpan(digest.get())).utf8();
             return;
         }
 

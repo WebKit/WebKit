@@ -42,7 +42,7 @@ public:
     }
     static Ref<SQLError> create(unsigned code, ASCIILiteral message, int sqliteCode, const char* sqliteMessage)
     {
-        return create(code, makeString(message, " ("_s, sqliteCode, ' ', span(sqliteMessage), ')'));
+        return create(code, makeString(message, " ("_s, sqliteCode, ' ', unsafeSpan(sqliteMessage), ')'));
     }
 
     unsigned code() const { return m_code; }

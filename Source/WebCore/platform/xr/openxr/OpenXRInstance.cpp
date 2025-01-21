@@ -67,7 +67,7 @@ Instance::Impl::Impl()
 
         auto createInfo = createStructure<XrInstanceCreateInfo, XR_TYPE_INSTANCE_CREATE_INFO>();
         createInfo.createFlags = 0;
-        memcpySpan(std::span { createInfo.applicationInfo.applicationName }, s_applicationName.spanIncludingNullTerminator());
+        memcpySpan(std::span { createInfo.applicationInfo.applicationName }, s_applicationName.unsafeSpanIncludingNullTerminator());
         createInfo.applicationInfo.apiVersion = XR_CURRENT_API_VERSION;
         createInfo.applicationInfo.applicationVersion = s_applicationVersion;
         createInfo.enabledApiLayerCount = 0;

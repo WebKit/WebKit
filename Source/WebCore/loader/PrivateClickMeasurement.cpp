@@ -263,7 +263,7 @@ bool PrivateClickMeasurement::hasHigherPriorityThan(const PrivateClickMeasuremen
 
 static URL makeValidURL(const RegistrableDomain& domain, const char* path)
 {
-    URL validURL { makeString("https://"_s, domain.string(), span(path)) };
+    URL validURL { makeString("https://"_s, domain.string(), unsafeSpan(path)) };
     return validURL.isValid() ? validURL : URL { };
 }
 

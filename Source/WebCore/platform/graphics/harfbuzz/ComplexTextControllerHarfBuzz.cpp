@@ -192,7 +192,7 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontP
     auto* fcPattern = fontPlatformData.fcPattern();
     FcChar8* fcFontFeature;
     for (int i = 0; FcPatternGetString(fcPattern, FC_FONT_FEATURES, i, &fcFontFeature) == FcResultMatch; ++i) {
-        auto fcFontFeatureSpan = spanIncludingNullTerminator(reinterpret_cast<char*>(fcFontFeature)).subspan<0, 5>();
+        auto fcFontFeatureSpan = unsafeSpanIncludingNullTerminator(reinterpret_cast<char*>(fcFontFeature)).subspan<0, 5>();
         featuresToBeApplied.set(fontFeatureTag(fcFontFeatureSpan), 1);
     }
 

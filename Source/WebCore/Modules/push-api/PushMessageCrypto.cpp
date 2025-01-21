@@ -268,7 +268,7 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
      */
     static constexpr auto cekInfoHeader = "Content-Encoding: aesgcm"_s;
     std::array<uint8_t, cekInfoHeader.length() + 1 + sizeof(context)> cekInfo;
-    memcpySpan(std::span { cekInfo }, cekInfoHeader.spanIncludingNullTerminator());
+    memcpySpan(std::span { cekInfo }, cekInfoHeader.unsafeSpanIncludingNullTerminator());
     memcpySpan(std::span { cekInfo }.subspan(cekInfoHeader.length() + 1), asByteSpan(context));
 
     auto cek = hmacSHA256(prk, cekInfo);
@@ -280,7 +280,7 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
      */
     static constexpr auto nonceInfoHeader = "Content-Encoding: nonce"_s;
     std::array<uint8_t, nonceInfoHeader.length() + 1 + sizeof(context)> nonceInfo;
-    memcpySpan(std::span { nonceInfo }, nonceInfoHeader.spanIncludingNullTerminator());
+    memcpySpan(std::span { nonceInfo }, nonceInfoHeader.unsafeSpanIncludingNullTerminator());
     memcpySpan(std::span { nonceInfo }.subspan(nonceInfoHeader.length() + 1), asByteSpan(context));
 
     auto nonce = hmacSHA256(prk, nonceInfo);

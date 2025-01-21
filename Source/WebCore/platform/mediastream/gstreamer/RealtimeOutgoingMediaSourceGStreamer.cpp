@@ -503,8 +503,8 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
     }
 
     StringBuilder simulcastBuilder;
-    const char* direction = "send";
-    simulcastBuilder.append(span(direction));
+    auto direction = "send"_s;
+    simulcastBuilder.append(direction);
     simulcastBuilder.append(' ');
     unsigned totalStreams = 0;
     for (auto& packetizer : m_packetizers) {
@@ -515,7 +515,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
         if (totalStreams > 0)
             simulcastBuilder.append(';');
         simulcastBuilder.append(rtpStreamId);
-        gst_structure_set(structure, makeString("rid-"_s, rtpStreamId).ascii().data(), G_TYPE_STRING, direction, nullptr);
+        gst_structure_set(structure, makeString("rid-"_s, rtpStreamId).ascii().data(), G_TYPE_STRING, direction.characters(), nullptr);
         packetizer->configureExtensions();
         totalStreams++;
     }

@@ -94,7 +94,7 @@ IdentifierRep* IdentifierRep::get(const char* name)
     if (!name)
         return nullptr;
   
-    String string = String::fromUTF8WithLatin1Fallback(span(name));
+    String string = String::fromUTF8WithLatin1Fallback(unsafeSpan(name));
     StringIdentifierMap::AddResult result = stringIdentifierMap().add(string.impl(), nullptr);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);

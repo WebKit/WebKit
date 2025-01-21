@@ -200,7 +200,7 @@ static inline RTCRtpCodecParameters toRTCCodecParameters(const webrtc::RtpCodecP
             sdpFmtpLineBuilder.append(';');
         else
             isFirst = false;
-        sdpFmtpLineBuilder.append(span(keyValue.first.c_str()), '=', span(keyValue.second.c_str()));
+        sdpFmtpLineBuilder.append(std::span { keyValue.first }, '=', std::span { keyValue.second });
     }
     parameters.sdpFmtpLine = sdpFmtpLineBuilder.toString();
 

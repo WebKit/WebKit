@@ -2403,7 +2403,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedNewWindowNavigation)
 
     RetainPtr<NSURL> baseURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
     URL testURL { "http://www.example.com"_str };
-    auto testHtml = generateHtml(openerTemplate, testURL.string(), makeString("newWindow.location = '"_s, span(baseURL.get().absoluteString.UTF8String), "';"_s)); // Starts a new navigation on the new window.
+    auto testHtml = generateHtml(openerTemplate, testURL.string(), makeString("newWindow.location = '"_s, unsafeSpan(baseURL.get().absoluteString.UTF8String), "';"_s)); // Starts a new navigation on the new window.
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);

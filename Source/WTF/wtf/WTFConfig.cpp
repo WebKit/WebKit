@@ -129,7 +129,7 @@ void Config::initialize()
 
     const char* useAllocationProfilingRaw = getenv("JSC_useAllocationProfiling");
     if (useAllocationProfilingRaw) {
-        auto useAllocationProfiling = span(useAllocationProfilingRaw);
+        auto useAllocationProfiling = unsafeSpan(useAllocationProfilingRaw);
         if (equalLettersIgnoringASCIICase(useAllocationProfiling, "true"_s)
             || equalLettersIgnoringASCIICase(useAllocationProfiling, "yes"_s)
             || equal(useAllocationProfiling, "1"_s))

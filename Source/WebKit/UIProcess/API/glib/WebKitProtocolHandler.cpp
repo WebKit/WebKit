@@ -422,7 +422,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
 
     startTable("Version Information"_s);
     auto versionObject = JSON::Object::create();
-    addTableRow(versionObject, "WebKit version"_s, makeString(webkitPortName(), ' ', WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION, '.', WEBKIT_MICRO_VERSION, " ("_s, WTF::span(BUILD_REVISION), ')'));
+    addTableRow(versionObject, "WebKit version"_s, makeString(webkitPortName(), ' ', WEBKIT_MAJOR_VERSION, '.', WEBKIT_MINOR_VERSION, '.', WEBKIT_MICRO_VERSION, " ("_s, unsafeSpan(BUILD_REVISION), ')'));
 
 #if OS(UNIX)
     struct utsname osName;
@@ -434,7 +434,7 @@ void WebKitProtocolHandler::handleGPU(WebKitURISchemeRequest* request)
     addTableRow(versionObject, "Desktop"_s, (desktopName && *desktopName) ? String::fromUTF8(desktopName) : "Unknown"_s);
 
 #if USE(CAIRO)
-    addTableRow(versionObject, "Cairo version"_s, makeString(WTF::span(CAIRO_VERSION_STRING), " (build) "_s, WTF::span(cairo_version_string()), " (runtime)"_s));
+    addTableRow(versionObject, "Cairo version"_s, makeString(unsafeSpan(CAIRO_VERSION_STRING), " (build) "_s, unsafeSpan(cairo_version_string()), " (runtime)"_s));
 #endif
 
 #if USE(GSTREAMER)

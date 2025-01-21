@@ -158,7 +158,7 @@ public:
         case WebXRCPFrameStartSubmissionStart:
         case WebXRCPFrameEndSubmissionStart:
         case WakeUpAndApplyDisplayListStart:
-            beginMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
+            beginMark(nullptr, tracePointCodeName(code).unsafeSpanIncludingNullTerminator(), "%s", "");
             break;
 
         case VMEntryScopeEnd:
@@ -218,7 +218,7 @@ public:
         case WebXRCPFrameStartSubmissionEnd:
         case WebXRCPFrameEndSubmissionEnd:
         case WakeUpAndApplyDisplayListEnd:
-            endMark(nullptr, tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
+            endMark(nullptr, tracePointCodeName(code).unsafeSpanIncludingNullTerminator(), "%s", "");
             break;
 
         case DisplayRefreshDispatchingToMainThread:
@@ -228,7 +228,7 @@ public:
         case SyntheticMomentumEvent:
         case RemoteLayerTreeScheduleRenderingUpdate:
         case DisplayLinkUpdate:
-            instantMark(tracePointCodeName(code).spanIncludingNullTerminator(), "%s", "");
+            instantMark(tracePointCodeName(code).unsafeSpanIncludingNullTerminator(), "%s", "");
             break;
 
         case WTFRange:

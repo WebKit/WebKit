@@ -660,7 +660,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
         const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
         if (descriptionOSStatus && descriptionOSStatus[0] != '\0')
-            description = makeString("OSStatus Error "_s, errorCode, ": "_s, span(descriptionOSStatus));
+            description = makeString("OSStatus Error "_s, errorCode, ": "_s, unsafeSpan(descriptionOSStatus));
     }
 
 ALLOW_DEPRECATED_DECLARATIONS_END
