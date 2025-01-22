@@ -206,6 +206,13 @@ void RemoteVideoFrameObjectHeap::lowMemoryHandler()
 #endif
 }
 
+void RemoteVideoFrameObjectHeap::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
+{
+    remoteVideoFrameObjectHeapQueueSingleton().dispatch([this, protectedThis = Ref { *this }, sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess)] {
+        m_sharedPreferencesForWebProcess = sharedPreferencesForWebProcess;
+    });
+}
+
 }
 
 #endif
