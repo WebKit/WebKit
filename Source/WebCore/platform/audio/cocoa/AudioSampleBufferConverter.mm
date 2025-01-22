@@ -507,11 +507,11 @@ void AudioSampleBufferConverter::processSampleBuffers()
 
         do {
             if (isPCM()) {
+                fillBufferList.reset();
                 for (auto& buffer : fillBufferList.buffers()) {
-                    buffer.mDataByteSize = sizeRemaining;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                    buffer.mData = static_cast<uint8_t*>(buffer.mData) + bytesWritten;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                    auto span = mutableSpan<uint8_t>(buffer).subspan(bytesWritten, sizeRemaining);
+                    buffer.mDataByteSize = span.size();
+                    buffer.mData = span.data();
                 }
             }
             if (auto error = AudioConverterFillComplexBuffer(m_converter, audioConverterComplexInputDataProc, this, &numOutputPackets, fillBufferList.list(), isPCM() ? nullptr : m_destinationPacketDescriptions.data())) {
