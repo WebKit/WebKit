@@ -1795,6 +1795,7 @@ CacheAPIEnabled:
     WebCore:
       default: false
   disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 CanvasColorSpaceEnabled:
   type: bool
@@ -3044,6 +3045,7 @@ FileSystemAccessEnabled:
       "PLATFORM(COCOA)" : true
       default: false
   disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 FileSystemWritableStreamEnabled:
   type: bool
@@ -3715,6 +3717,7 @@ IndexedDBAPIEnabled:
     WebCore:
       default: true
   disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 InlineMediaPlaybackRequiresPlaysInlineAttribute:
   type: bool
@@ -7246,6 +7249,7 @@ StorageAPIEnabled:
     WebCore:
       "PLATFORM(COCOA)" : true
       default: false
+  sharedPreferenceForWebProcess: true
 
 StorageAPIEstimateEnabled:
   type: bool
@@ -7262,6 +7266,7 @@ StorageAPIEstimateEnabled:
     WebCore:
       "PLATFORM(COCOA)" : true
       default: false
+  sharedPreferenceForWebProcess: true
 
 StorageBlockingPolicy:
   type: uint32_t
