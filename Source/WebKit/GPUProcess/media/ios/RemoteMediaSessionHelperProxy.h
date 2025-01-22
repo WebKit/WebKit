@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
+#if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SESSION) && PLATFORM(IOS_FAMILY)
 
 #include "MessageReceiver.h"
 #include <WebCore/MediaSessionHelperIOS.h>
