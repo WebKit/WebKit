@@ -582,7 +582,16 @@ void AnimationTimelinesController::unregisterNamedTimelinesAssociatedWithElement
     for (auto& entry : m_nameToTimelineMap) {
         auto& timelines = entry.value;
         timelines.removeAllMatching([&] (const auto& timeline) {
-            return originatingElement(timeline) == &element;
+            if (originatingElement(timeline) == &element) {
+                auto animations = timeline->relevantAnimations();
+                for (Ref animation : animations) {
+                    if (RefPtr effect = dynamicDowncast<KeyframeEffect>(animation->effect()))
+                        m_pendingAttachOperations.append(TimelineMapAttachOperation { effect->target(), entry.key, animation });
+                    animation->setTimeline(nullptr);
+                }
+                return true;
+            }
+            return false;
         });
         if (timelines.isEmpty())
             namesToClear.add(entry.key);
