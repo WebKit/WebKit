@@ -164,7 +164,7 @@ public:
 
     static constexpr RenderingMode renderingMode = RenderingMode::Unaccelerated;
 
-    virtual bool canMapBackingStore() const = 0;
+    virtual bool canMapBackingStore() const { return false; }
     virtual void ensureNativeImagesHaveCopiedBackingStore() { }
 
     virtual ImageBufferBackendSharing* toBackendSharing() { return nullptr; }
