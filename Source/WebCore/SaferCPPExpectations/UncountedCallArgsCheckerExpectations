@@ -1119,7 +1119,6 @@ platform/graphics/FontRanges.cpp
 platform/graphics/GradientImage.cpp
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/GraphicsLayer.h
-platform/graphics/ImageAdapter.cpp
 platform/graphics/ImageBackingStore.h
 platform/graphics/ImageBufferContextSwitcher.cpp
 platform/graphics/ImageFrame.cpp
@@ -1165,7 +1164,6 @@ platform/graphics/cg/PDFDocumentImage.cpp
 platform/graphics/cg/ShareableBitmapCG.mm
 platform/graphics/cocoa/CMUtilities.mm
 platform/graphics/cocoa/FontCacheCoreText.cpp
-platform/graphics/cocoa/ImageAdapterCocoa.mm
 platform/graphics/cocoa/MediaPlayerPrivateWebM.mm
 platform/graphics/cocoa/SourceBufferParser.cpp
 platform/graphics/cocoa/SourceBufferParserWebM.cpp

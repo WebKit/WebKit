@@ -121,7 +121,7 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
             [cocoaTransform concat];
 
             FloatRect imageRect(FloatPoint(), imageSize);
-            [image->adapter().snapshotNSImage() drawInRect:imageRect fromRect:imageRect operation:NSCompositingOperationSourceOver fraction:1.0];
+            [image->snapshotNSImage().get() drawInRect:imageRect fromRect:imageRect operation:NSCompositingOperationSourceOver fraction:1.0];
 
             [rotatedDragImage unlockFocus];
 
@@ -130,8 +130,8 @@ RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orien
     }
 
     FloatSize imageSize = image->size();
-    auto dragImage = image->adapter().snapshotNSImage();
-    [dragImage setSize:(NSSize)imageSize];
+    auto dragImage = image->snapshotNSImage();
+    [dragImage.get() setSize:(NSSize)imageSize];
     return dragImage;
 }
     

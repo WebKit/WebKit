@@ -99,6 +99,20 @@ cairo_matrix_t toCairoMatrix(const AffineTransform&);
 void attachSurfaceUniqueID(cairo_surface_t*);
 uintptr_t getSurfaceUniqueID(cairo_surface_t*);
 
+inline std::span<const uint8_t> span(cairo_surface_t* surface)
+{
+    size_t stride = cairo_image_surface_get_stride(surface);
+    size_t height = cairo_image_surface_get_height(surface);
+    return unsafeMakeSpan(cairo_image_surface_get_data(surface), stride * height);
+}
+
+inline std::span<uint8_t> mutableSpan(cairo_surface_t* surface)
+{
+    size_t stride = cairo_image_surface_get_stride(surface);
+    size_t height = cairo_image_surface_get_height(surface);
+    return unsafeMakeSpan(cairo_image_surface_get_data(surface), stride * height);
+}
+
 } // namespace WebCore
 
 #endif // USE(CAIRO)

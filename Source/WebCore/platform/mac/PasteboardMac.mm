@@ -272,7 +272,7 @@ static void writeFileWrapperAsRTFDAttachment(NSFileWrapper *wrapper, const Strin
 
 void Pasteboard::write(const PasteboardImage& pasteboardImage)
 {
-    CFDataRef imageData = pasteboardImage.image->adapter().tiffRepresentation();
+    RetainPtr imageData = pasteboardImage.image->tiffRepresentation();
     if (!imageData)
         return;
 
@@ -289,7 +289,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     m_changeCount = writeURLForTypes(types, m_pasteboardName, pasteboardImage.url, context());
-    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(imageData).ptr(), legacyTIFFPasteboardType(), m_pasteboardName, context());
+    m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::create(imageData.get()).ptr(), legacyTIFFPasteboardType(), m_pasteboardName, context());
     if (auto archiveData = pasteboardImage.dataInWebArchiveFormat) {
         m_changeCount = platformStrategies()->pasteboardStrategy()->setBufferForType(archiveData.get(), WebArchivePboardType, m_pasteboardName, context());
 

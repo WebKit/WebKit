@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008-2024 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,52 +24,35 @@
  */
 
 #include "config.h"
-#include "ImageAdapter.h"
+#include "Image.h"
+
+#if PLATFORM(WIN)
 
 #include "BitmapImage.h"
-#include <wtf/TZoneMallocInlines.h>
+#include "SharedBuffer.h"
+#include "WebCoreBundleWin.h"
+#include <windows.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageAdapter);
-
-#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
-Ref<Image> ImageAdapter::loadPlatformResource(const char* resource)
+Ref<Image> Image::createFromPlatformResource(ASCIILiteral name)
 {
-    WTFLogAlways("WARNING: trying to load platform resource '%s'", resource);
-    return BitmapImage::create();
-}
-
-void ImageAdapter::invalidate()
-{
-}
-#endif // !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
-
-RefPtr<NativeImage> ImageAdapter::nativeImageOfSize(const IntSize& size)
-{
-    unsigned count = image().frameCount();
-
-    for (unsigned i = 0; i < count; ++i) {
-        RefPtr nativeImage = image().nativeImageAtIndex(i);
-        if (nativeImage && nativeImage->size() == size)
-            return nativeImage;
+    if (auto data = FileSystem::readEntireFile(webKitBundlePath(name, "png"_s, "icons"_s))) {
+        auto image = BitmapImage::create();
+        image->setData(FragmentedSharedBuffer::create(WTFMove(*data)), true);
+        return image;
     }
-
-    // Fallback to the first frame image if we can't find the right size
-    return image().nativeImageAtIndex(0);
+    return Image::nullImage();
 }
 
-Vector<Ref<NativeImage>> ImageAdapter::allNativeImages()
+#if USE(SKIA)
+bool Image::getHBITMAP(HBITMAP)
 {
-    Vector<Ref<NativeImage>> nativeImages;
-    unsigned count = image().frameCount();
-
-    for (unsigned i = 0; i < count; ++i) {
-        if (RefPtr nativeImage = image().nativeImageAtIndex(i))
-            nativeImages.append(nativeImage.releaseNonNull());
-    }
-
-    return nativeImages;
+    return false;
 }
+#endif
 
 } // namespace WebCore
+
+#endif // PLATFORM(WIN)

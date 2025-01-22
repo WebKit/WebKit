@@ -73,7 +73,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/win/FullScreenWindow.cpp
     platform/graphics/win/GraphicsContextWin.cpp
     platform/graphics/win/IconWin.cpp
-    platform/graphics/win/ImageAdapterWin.cpp
+    platform/graphics/win/ImageWin.cpp
     platform/graphics/win/IntPointWin.cpp
     platform/graphics/win/IntRectWin.cpp
     platform/graphics/win/IntSizeWin.cpp
@@ -214,7 +214,7 @@ if (USE_CAIRO)
         platform/graphics/win/cairo/FontCustomPlatformDataWinCairo.cpp
         platform/graphics/win/cairo/FontPlatformDataWinCairo.cpp
         platform/graphics/win/cairo/GraphicsContextWinCairo.cpp
-        platform/graphics/win/cairo/ImageAdapterWinCairo.cpp
+        platform/graphics/win/cairo/ImageWinCairo.cpp
         platform/graphics/win/cairo/MediaPlayerPrivateMediaFoundationCairo.cpp
 
         platform/win/cairo/DragImageWinCairo.cpp

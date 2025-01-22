@@ -32,6 +32,7 @@
 
 #include "BitmapImage.h"
 #include "CairoOperations.h"
+#include "CairoUtilities.h"
 #include "Color.h"
 #include "GraphicsContext.h"
 #include "ImageBufferUtilitiesCairo.h"
@@ -94,20 +95,6 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::cairoSurfaceCoerceToImage()
     if (cairo_surface_get_type(m_surface.get()) == CAIRO_SURFACE_TYPE_IMAGE && cairo_surface_get_content(m_surface.get()) == CAIRO_CONTENT_COLOR_ALPHA)
         return createNativeImageReference();
     return copyNativeImage();
-}
-
-static std::span<const uint8_t> span(cairo_surface_t* surface)
-{
-    size_t stride = cairo_image_surface_get_stride(surface);
-    size_t height = cairo_image_surface_get_height(surface);
-    return unsafeMakeSpan(cairo_image_surface_get_data(surface), stride * height);
-}
-
-static std::span<uint8_t> mutableSpan(cairo_surface_t* surface)
-{
-    size_t stride = cairo_image_surface_get_stride(surface);
-    size_t height = cairo_image_surface_get_height(surface);
-    return unsafeMakeSpan(cairo_image_surface_get_data(surface), stride * height);
 }
 
 void ImageBufferCairoSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)

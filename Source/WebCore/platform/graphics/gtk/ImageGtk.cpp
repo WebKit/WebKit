@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "ImageAdapter.h"
+#include "Image.h"
 
 #include "BitmapImage.h"
 #include "GdkCairoUtilities.h"
@@ -37,28 +37,19 @@
 
 namespace WebCore {
 
-static Ref<Image> loadImageFromGResource(const char* iconName)
+Ref<Image> Image::createFromPlatformResource(ASCIILiteral name)
 {
     auto icon = BitmapImage::create();
-    GUniquePtr<char> path(g_strdup_printf("/org/webkitgtk/resources/images/%s", iconName));
+    GUniquePtr<char> path(g_strdup_printf("/org/webkitgtk/resources/images/%s", name.characters()));
     GRefPtr<GBytes> data = adoptGRef(g_resources_lookup_data(path.get(), G_RESOURCE_LOOKUP_FLAGS_NONE, nullptr));
     ASSERT(data);
     icon->setData(SharedBuffer::create(span(data)), true);
     return icon;
 }
 
-Ref<Image> ImageAdapter::loadPlatformResource(const char* name)
+GRefPtr<GdkPixbuf> Image::gdkPixbuf()
 {
-    return loadImageFromGResource(name);
-}
-
-void ImageAdapter::invalidate()
-{
-}
-
-GRefPtr<GdkPixbuf> ImageAdapter::gdkPixbuf()
-{
-    RefPtr nativeImage = image().currentNativeImage();
+    RefPtr nativeImage = currentNativeImage();
     if (!nativeImage)
         return nullptr;
 
@@ -71,9 +62,9 @@ GRefPtr<GdkPixbuf> ImageAdapter::gdkPixbuf()
 }
 
 #if USE(GTK4)
-GRefPtr<GdkTexture> ImageAdapter::gdkTexture()
+GRefPtr<GdkTexture> Image::gdkTexture()
 {
-    RefPtr nativeImage = image().currentNativeImage();
+    RefPtr nativeImage = currentNativeImage();
     if (!nativeImage)
         return nullptr;
 

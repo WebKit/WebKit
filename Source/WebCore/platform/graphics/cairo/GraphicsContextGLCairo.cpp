@@ -40,13 +40,6 @@
 
 namespace WebCore {
 
-static std::span<const uint8_t> span(cairo_surface_t* surface)
-{
-    size_t stride = cairo_image_surface_get_stride(surface);
-    size_t height = cairo_image_surface_get_height(surface);
-    return unsafeMakeSpan(cairo_image_surface_get_data(surface), stride * height);
-}
-
 GraphicsContextGLImageExtractor::~GraphicsContextGLImageExtractor() = default;
 
 bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool ignoreGammaAndColorProfile, bool)
