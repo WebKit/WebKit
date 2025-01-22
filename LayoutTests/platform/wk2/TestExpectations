@@ -803,3 +803,5 @@ imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visib
 webkit.org/b/261314 [ Debug ] fast/mediastream/captureStream/canvas3d.html [ Pass Failure ]
 
 webkit.org/b/265700 webrtc/multi-video.html [ Pass Failure ]
+
+webkit.org/b/286371 [ Sequoia Release x86_64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Failure ]
