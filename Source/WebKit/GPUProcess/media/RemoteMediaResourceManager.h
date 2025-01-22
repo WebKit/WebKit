@@ -29,6 +29,7 @@
 
 #include "Connection.h"
 #include "RemoteMediaResourceIdentifier.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WorkQueueMessageReceiver.h"
 #include <WebCore/PolicyChecker.h>
 #include <WebCore/SharedMemory.h>
@@ -70,6 +71,8 @@ public:
 
     // IPC::Connection::WorkQueueMessageReceiver.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
+    void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess);
 
 private:
     RemoteMediaResourceManager();
@@ -87,6 +90,7 @@ private:
     HashMap<RemoteMediaResourceIdentifier, ThreadSafeWeakPtr<RemoteMediaResource>> m_remoteMediaResources WTF_GUARDED_BY_LOCK(m_lock);
 
     RefPtr<IPC::Connection> m_connection;
+    SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
 };
 
 } // namespace WebKit

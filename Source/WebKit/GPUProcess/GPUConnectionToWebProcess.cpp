@@ -1313,6 +1313,9 @@ void GPUConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedPrefe
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     protectedSampleBufferDisplayLayerManager()->updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess);
 #endif
+#if ENABLE(VIDEO)
+    protectedRemoteMediaResourceManager()->updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess);
+#endif
 
     enableMediaPlaybackIfNecessary();
 }

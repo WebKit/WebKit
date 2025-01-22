@@ -175,6 +175,16 @@ void RemoteMediaResourceManager::loadFinished(RemoteMediaResourceIdentifier iden
         resource->loadFinished(metrics);
 }
 
+void RemoteMediaResourceManager::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
+{
+    assertIsMainThread();
+
+    Ref queue = RemoteMediaResourceLoader::defaultQueue();
+    queue->dispatch([this, protectedThis = Ref { *this }, sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess)] {
+        m_sharedPreferencesForWebProcess = sharedPreferencesForWebProcess;
+    });
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
