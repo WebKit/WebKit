@@ -5780,10 +5780,10 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/text/canvas.2d.fontStretch
 imported/w3c/web-platform-tests/webcodecs/videoFrame-drawImage.any.worker.html [ Failure ]
 
 # Flac and Vorbis decoding requires an extra description which isn't provided.
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?flac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?vorbis [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?flac [ Failure ]
-imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?vorbis [ Failure ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?flac [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?vorbis [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?flac [ Skip ]
+imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?vorbis [ Skip ]
 
 # HEVC support may not be available to all platforms.
 imported/w3c/web-platform-tests/webcodecs/full-cycle-test.https.any.html?h265_annexb [ Pass Failure ]

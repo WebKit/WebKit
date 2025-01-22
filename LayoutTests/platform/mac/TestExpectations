@@ -2402,30 +2402,8 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 http/tests/media/fairplay/fps-mse-multi-key-renewal.html [ Pass Failure ] 
 
 # webkit.org/b/284075 Opus and MP3 decoders aren't working with raw content (no magic cookie)
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Skip ]
 [ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?opus [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Skip ]
 [ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?opus [ Skip ]
-
-# Ventura doesn't support some sampling rates or contents used by the tests. tracked by webkit.org/b/284671
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?adts_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp4_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_alaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_ulaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_u8 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_s16 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_s24 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_s32 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_f32 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_alaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_ulaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_u8 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_s16 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_s24 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_s32 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_f32 [ Skip ]
 
 # Ventura doesn't support resampling when encoding to Opus, causing the test to fail.
 [ Ventura ] imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Failure ]
