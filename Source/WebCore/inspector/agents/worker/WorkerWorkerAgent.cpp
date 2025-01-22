@@ -44,12 +44,9 @@ WorkerWorkerAgent::~WorkerWorkerAgent() = default;
 
 void WorkerWorkerAgent::connectToAllWorkerInspectorProxies()
 {
-    for (Ref proxy : WorkerInspectorProxy::allWorkerInspectorProxiesCopy()) {
-        if (auto* globalScope = dynamicDowncast<WorkerOrWorkletGlobalScope>(proxy->scriptExecutionContext())) {
-            if (globalScope == &m_globalScope)
-                connectToWorkerInspectorProxy(proxy);
-        }
-    }
+    WorkerInspectorProxy::forEachProxyInContext(m_globalScope.identifier(), [&](auto& proxy) {
+        connectToWorkerInspectorProxy(proxy);
+    });
 }
 
 } // namespace Inspector

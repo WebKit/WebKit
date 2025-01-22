@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include "PageIdentifier.h"
+#include "ScriptExecutionContextIdentifier.h"
+#include <variant>
+#include <wtf/Function.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URL.h>
-#include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
 // All of these methods should be called on the Main Thread.
@@ -41,6 +44,8 @@ class ScriptExecutionContext;
 class WorkerThread;
 
 enum class WorkerThreadStartMode;
+
+using PageOrWorkerGlobalScopeIdentifier = std::variant<PageIdentifier, ScriptExecutionContextIdentifier>;
 
 class WorkerInspectorProxy : public RefCounted<WorkerInspectorProxy>, public CanMakeWeakPtr<WorkerInspectorProxy, WeakPtrFactoryInitialization::Eager> {
     WTF_MAKE_TZONE_ALLOCATED(WorkerInspectorProxy);
@@ -60,7 +65,7 @@ public:
         virtual void sendMessageFromWorkerToFrontend(WorkerInspectorProxy&, String&&) = 0;
     };
 
-    static WeakHashSet<WorkerInspectorProxy> allWorkerInspectorProxiesCopy();
+    static void forEachProxyInContext(PageOrWorkerGlobalScopeIdentifier, NOESCAPE const Function<void(WorkerInspectorProxy&)>&);
 
     const URL& url() const { return m_url; }
     const String& name() const { return m_name; }
@@ -68,7 +73,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext.get(); }
 
     WorkerThreadStartMode workerStartMode(ScriptExecutionContext&);
-    void workerStarted(ScriptExecutionContext*, WorkerThread*, const URL&, const String& name);
+    void workerStarted(ScriptExecutionContext&, WorkerThread*, const URL&, const String& name);
     void workerTerminated();
 
     void resumeWorkerIfPaused();
@@ -81,6 +86,7 @@ private:
     explicit WorkerInspectorProxy(const String& identifier);
 
     RefPtr<ScriptExecutionContext> m_scriptExecutionContext;
+    std::optional<PageOrWorkerGlobalScopeIdentifier> m_contextIdentifier;
     RefPtr<WorkerThread> m_workerThread;
     String m_identifier;
     URL m_url;

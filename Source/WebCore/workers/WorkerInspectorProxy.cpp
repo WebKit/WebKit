@@ -35,6 +35,24 @@
 #include <JavaScriptCore/InspectorAgentBase.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/WeakHashSet.h>
+
+namespace WTF {
+
+struct HashTraits<std::variant<WebCore::PageIdentifier, WebCore::ScriptExecutionContextIdentifier>> : public VariantHashTraits<HashTraits<WebCore::PageIdentifier>, HashTraits<WebCore::ScriptExecutionContextIdentifier>> {
+    static void constructDeletedValue(std::variant<WebCore::PageIdentifier, WebCore::ScriptExecutionContextIdentifier>& slot)
+    {
+        slot = WebCore::PageIdentifier::hashTableDeletedValue();
+    }
+    static bool isDeletedValue(const std::variant<WebCore::PageIdentifier, WebCore::ScriptExecutionContextIdentifier>& value)
+    {
+        if (auto* pageIdentifier = std::get_if<WebCore::PageIdentifier>(&value))
+            return pageIdentifier->isHashTableDeletedValue();
+        return false;
+    }
+};
+
+}
 
 namespace WebCore {
 
@@ -42,17 +60,36 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerInspectorProxy);
 
 using namespace Inspector;
 
-static Lock proxiesLock;
-static WeakHashSet<WorkerInspectorProxy>& proxies() WTF_REQUIRES_LOCK(proxiesLock)
+static std::optional<PageOrWorkerGlobalScopeIdentifier> pageOrWorkerGlobalScopeIdentifier(ScriptExecutionContext& context)
 {
-    static NeverDestroyed<WeakHashSet<WorkerInspectorProxy>> proxies;
+    if (auto* document = dynamicDowncast<Document>(context)) {
+        if (auto* page = document->page(); page && page->identifier())
+            return PageOrWorkerGlobalScopeIdentifier { *page->identifier() };
+        return std::nullopt;
+    }
+    return context.identifier();
+}
+
+static Lock proxiesLock;
+static HashMap<PageOrWorkerGlobalScopeIdentifier, WeakHashSet<WorkerInspectorProxy>>& proxies() WTF_REQUIRES_LOCK(proxiesLock)
+{
+    static NeverDestroyed<HashMap<PageOrWorkerGlobalScopeIdentifier, WeakHashSet<WorkerInspectorProxy>>> proxies;
     return proxies;
 }
 
-WeakHashSet<WorkerInspectorProxy> WorkerInspectorProxy::allWorkerInspectorProxiesCopy()
+void WorkerInspectorProxy::forEachProxyInContext(PageOrWorkerGlobalScopeIdentifier contextIdentifier, NOESCAPE const Function<void(WorkerInspectorProxy&)>& apply)
 {
-    Locker lock { proxiesLock };
-    return proxies();
+    Vector<Ref<WorkerInspectorProxy>> proxiesForContext;
+    {
+        Locker lock { proxiesLock };
+        auto iterator = proxies().find(contextIdentifier);
+        if (iterator == proxies().end())
+            return;
+        proxiesForContext = copyToVectorOf<Ref<WorkerInspectorProxy>>(iterator->value);
+    }
+
+    for (auto& proxy : proxiesForContext)
+        apply(proxy);
 }
 
 WorkerInspectorProxy::WorkerInspectorProxy(const String& identifier)
@@ -72,16 +109,19 @@ WorkerThreadStartMode WorkerInspectorProxy::workerStartMode(ScriptExecutionConte
     return pauseOnStart ? WorkerThreadStartMode::WaitForInspector : WorkerThreadStartMode::Normal;
 }
 
-void WorkerInspectorProxy::workerStarted(ScriptExecutionContext* scriptExecutionContext, WorkerThread* thread, const URL& url, const String& name)
+void WorkerInspectorProxy::workerStarted(ScriptExecutionContext& scriptExecutionContext, WorkerThread* thread, const URL& url, const String& name)
 {
     ASSERT(!m_workerThread);
-    m_scriptExecutionContext = scriptExecutionContext;
+    m_scriptExecutionContext = &scriptExecutionContext;
+    m_contextIdentifier = pageOrWorkerGlobalScopeIdentifier(scriptExecutionContext);
+
     m_workerThread = thread;
     m_url = url;
     m_name = name;
-    {
+    if (m_contextIdentifier) {
         Locker lock { proxiesLock };
-        proxies().add(*this);
+        auto& proxiesForContext = proxies().add(*m_contextIdentifier, WeakHashSet<WorkerInspectorProxy> { }).iterator->value;
+        proxiesForContext.add(*this);
     }
 
     InspectorInstrumentation::workerStarted(*this);
@@ -93,9 +133,15 @@ void WorkerInspectorProxy::workerTerminated()
         return;
 
     InspectorInstrumentation::workerTerminated(*this);
-    {
+    if (m_contextIdentifier) {
         Locker lock { proxiesLock };
-        proxies().remove(*this);
+        auto iterator = proxies().find(*m_contextIdentifier);
+        RELEASE_ASSERT(iterator != proxies().end());
+        auto& proxiesForContext = iterator->value;
+        ASSERT(proxiesForContext.contains(*this));
+        proxiesForContext.remove(*this);
+        if (proxiesForContext.isEmptyIgnoringNullReferences())
+            proxies().remove(iterator);
     }
 
     m_scriptExecutionContext = nullptr;
