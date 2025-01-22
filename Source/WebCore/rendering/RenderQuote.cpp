@@ -105,19 +105,17 @@ static SubtagComparison subtagCompare(std::span<const LChar> key, std::span<cons
 
     result.keyLength = key.size();
     result.keyContinue = result.keyLength;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    if (auto* hyphenPointer = memchr(key.data(), '-', key.size())) {
-        result.keyLength = static_cast<const LChar*>(hyphenPointer) - key.data();
+    if (size_t hyphenIndex = find(key, '-'); hyphenIndex != notFound) {
+        result.keyLength = hyphenIndex;
         result.keyContinue = result.keyLength + 1;
     }
 
     result.rangeLength = range.size();
     result.rangeContinue = result.rangeLength;
-    if (auto* hyphenPointer = memchr(range.data(), '-', range.size())) {
-        result.rangeLength = static_cast<const LChar*>(hyphenPointer) - range.data();
+    if (size_t hyphenIndex = find(range, '-'); hyphenIndex != notFound) {
+        result.rangeLength = hyphenIndex;
         result.rangeContinue = result.rangeLength + 1;
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (result.keyLength == result.rangeLength)
         result.comparison = compareSpans(key.first(result.keyLength), range.first(result.keyLength));

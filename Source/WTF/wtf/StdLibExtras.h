@@ -1073,6 +1073,8 @@ int compareSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 size_t find(std::span<T, TExtent> haystack, std::span<U, UExtent> needle)
 {
+    static_assert(sizeof(T) == 1);
+    static_assert(sizeof(T) == sizeof(U));
     auto* result = static_cast<T*>(memmem(haystack.data(), haystack.size(), needle.data(), needle.size())); // NOLINT
     if (!result)
         return notFound;

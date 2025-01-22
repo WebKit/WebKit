@@ -47,9 +47,10 @@ static const char* dataAsString(NSData *data)
     static std::array<char, 1000> buffer;
     if ([data length] > buffer.size() - 1)
         return "ERROR";
-    if (memchr([data bytes], 0, [data length]))
+    auto dataSpan = span(data);
+    if (find(dataSpan, 0) != notFound)
         return "ERROR";
-    memcpySpan(std::span { buffer }, span(data));
+    memcpySpan(std::span { buffer }, dataSpan);
     buffer[[data length]] = '\0';
     return buffer.data();
 }

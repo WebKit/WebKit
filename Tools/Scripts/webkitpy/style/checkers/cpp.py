@@ -3517,6 +3517,10 @@ def check_safer_cpp(clean_lines, line_number, error):
     if uses_memmem:
         error(line_number, 'safercpp/memmem', 4, "Use WTF::find() or WTF::contains() instead of memmem().")
 
+    uses_memchr = search(r'memchr\(', line)
+    if uses_memchr:
+        error(line_number, 'safercpp/memchr', 4, "Use WTF::find() instead of memchr().")
+
     uses_strstr = search(r'strstr\(', line)
     if uses_strstr:
         error(line_number, 'safercpp/strstr', 4, "Use WTF::find() or WTF::contains() instead of strstr().")
@@ -4860,6 +4864,7 @@ class CppChecker(object):
         'runtime/wtf_make_unique',
         'runtime/wtf_move',
         'runtime/wtf_never_destroyed',
+        'safercpp/memchr',
         'safercpp/memcmp',
         'safercpp/memcpy',
         'safercpp/memmem',

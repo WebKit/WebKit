@@ -526,6 +526,13 @@ template<typename CharacterTypeA, typename CharacterTypeB> inline bool equalIgno
     return true;
 }
 
+template<typename CharacterTypeA, typename CharacterTypeB> inline bool spanHasPrefixIgnoringASCIICase(std::span<const CharacterTypeA> span, std::span<const CharacterTypeB> prefix)
+{
+    if (span.size() < prefix.size())
+        return false;
+    return equalIgnoringASCIICaseWithLength(span, prefix, prefix.size());
+}
+
 template<typename CharacterTypeA, typename CharacterTypeB> inline bool equalIgnoringASCIICase(std::span<const CharacterTypeA> a, std::span<const CharacterTypeB> b)
 {
     return a.size() == b.size() && equalIgnoringASCIICaseWithLength(a, b, a.size());
@@ -787,23 +794,23 @@ ALWAYS_INLINE const UChar* find16NonASCII(std::span<const UChar> data)
 }
 #endif
 
-template<typename CharacterType, std::enable_if_t<std::is_integral_v<CharacterType>>* = nullptr>
-inline size_t find(std::span<const CharacterType> characters, CharacterType matchCharacter, size_t index = 0)
+template<typename CharacterType1, typename CharacterType2, std::enable_if_t<std::is_integral_v<CharacterType1> && std::is_integral_v<CharacterType2> && sizeof(CharacterType1) == sizeof(CharacterType2)>* = nullptr>
+inline size_t find(std::span<const CharacterType1> characters, CharacterType2 matchCharacter, size_t index = 0)
 {
-    if constexpr (sizeof(CharacterType) == 1) {
+    if constexpr (sizeof(CharacterType1) == 1) {
         if (index >= characters.size())
             return notFound;
-        auto* result = reinterpret_cast<const CharacterType*>(find8(std::bit_cast<const uint8_t*>(characters.data() + index), matchCharacter, characters.size() - index));
+        auto* result = reinterpret_cast<const CharacterType1*>(find8(std::bit_cast<const uint8_t*>(characters.data() + index), matchCharacter, characters.size() - index));
         ASSERT(!result || static_cast<unsigned>(result - characters.data()) >= index);
         if (result)
             return result - characters.data();
         return notFound;
     }
 
-    if constexpr (sizeof(CharacterType) == 2) {
+    if constexpr (sizeof(CharacterType1) == 2) {
         if (index >= characters.size())
             return notFound;
-        auto* result = reinterpret_cast<const CharacterType*>(find16(std::bit_cast<const uint16_t*>(characters.data() + index), matchCharacter, characters.size() - index));
+        auto* result = reinterpret_cast<const CharacterType1*>(find16(std::bit_cast<const uint16_t*>(characters.data() + index), matchCharacter, characters.size() - index));
         ASSERT(!result || static_cast<unsigned>(result - characters.data()) >= index);
         if (result)
             return result - characters.data();
@@ -1233,5 +1240,6 @@ using WTF::isLatin1;
 using WTF::span;
 using WTF::spanIncludingNullTerminator;
 using WTF::span8;
+using WTF::spanHasPrefixIgnoringASCIICase;
 using WTF::span8IncludingNullTerminator;
 using WTF::charactersContain;
