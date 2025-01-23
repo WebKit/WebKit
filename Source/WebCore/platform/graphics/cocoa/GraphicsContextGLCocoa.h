@@ -115,14 +115,13 @@ public:
 #if ENABLE(VIDEO)
     bool copyTextureFromVideoFrame(VideoFrame&, PlatformGLObject texture, uint32_t target, int32_t level, uint32_t internalFormat, uint32_t format, uint32_t type, bool premultiplyAlpha, bool flipY) final;
 #endif
+    RefPtr<Image> surfaceBufferToImage(SurfaceBuffer) final;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
     RefPtr<PixelBuffer> readCompositedResults() final;
     void setDrawingBufferColorSpace(const DestinationColorSpace&) final;
     void prepareForDisplay() override;
-
-    RefPtr<NativeImage> bufferAsNativeImage(SurfaceBuffer) override;
 
     // Prepares current frame for display. The `finishedSignal` will be invoked once the frame has finished rendering.
     void prepareForDisplayWithFinishedSignal(Function<void()> finishedSignal);

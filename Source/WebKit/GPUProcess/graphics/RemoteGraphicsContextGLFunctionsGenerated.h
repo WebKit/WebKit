@@ -1981,11 +1981,6 @@
         protectedContext()->getInternalformativ(target, internalformat, pname, params);
         completionHandler(spanReinterpretCast<const int32_t>(params.span()));
     }
-    void setDrawingBufferColorSpace(WebCore::DestinationColorSpace&& arg0)
-    {
-        assertIsCurrent(workQueue());
-        protectedContext()->setDrawingBufferColorSpace(arg0);
-    }
 #if ENABLE(WEBXR)
     void createExternalImage(uint32_t name, WebCore::GraphicsContextGL::ExternalImageSource&& arg0, uint32_t internalFormat, int32_t layer)
     {

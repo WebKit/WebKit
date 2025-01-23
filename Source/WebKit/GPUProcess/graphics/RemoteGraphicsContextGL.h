@@ -31,6 +31,7 @@
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
 #include "GraphicsContextGLIdentifier.h"
+#include "RemoteImageIdentifier.h"
 #include "RemoteRenderingBackend.h"
 #include "RemoteSharedResourceCache.h"
 #include "ScopedWebGLRenderingResourcesRequest.h"
@@ -131,7 +132,8 @@ IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_END
     void prepareForDisplay(CompletionHandler<void()>&&);
 #endif
     void getErrors(CompletionHandler<void(GCGLErrorCodeSet)>&&);
-    void drawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer, WebCore::RenderingResourceIdentifier, CompletionHandler<void()>&&);
+    void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&);
+    void surfaceBufferToImage(WebCore::GraphicsContextGL::SurfaceBuffer, RemoteImageIdentifier);
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     void surfaceBufferToVideoFrame(WebCore::GraphicsContextGL::SurfaceBuffer, CompletionHandler<void(std::optional<WebKit::RemoteVideoFrameProxy::Properties>&&)>&&);
 #endif

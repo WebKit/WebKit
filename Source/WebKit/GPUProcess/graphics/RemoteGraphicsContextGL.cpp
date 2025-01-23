@@ -200,12 +200,19 @@ void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
     protectedContext()->ensureExtensionEnabled(extension);
 }
 
-void RemoteGraphicsContextGL::drawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
+void RemoteGraphicsContextGL::setDrawingBufferColorSpace(const WebCore::DestinationColorSpace& colorSpace)
 {
     assertIsCurrent(workQueue());
-    if (RefPtr image = protectedContext()->bufferAsNativeImage(buffer))
-        paintNativeImageToImageBuffer(*image, imageBufferIdentifier);
-    completionHandler();
+    protectedContext()->setDrawingBufferColorSpace(colorSpace);
+}
+
+void RemoteGraphicsContextGL::surfaceBufferToImage(WebCore::GraphicsContextGL::SurfaceBuffer buffer, RemoteImageIdentifier identifier)
+{
+    assertIsCurrent(workQueue());
+    RefPtr image = protectedContext()->surfaceBufferToImage(buffer);
+    if (!image)
+        image = &Image::nullImage();
+    m_sharedResourceCache->addImage(identifier, image.releaseNonNull());
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
@@ -218,37 +225,6 @@ void RemoteGraphicsContextGL::surfaceBufferToVideoFrame(WebCore::GraphicsContext
     completionHandler(WTFMove(result));
 }
 #endif
-
-void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, RenderingResourceIdentifier imageBufferIdentifier)
-{
-    assertIsCurrent(workQueue());
-    // FIXME: We do not have functioning read/write fences in RemoteRenderingBackend. Thus this is synchronous,
-    // as are the messages that call these.
-    Lock lock;
-    Condition conditionVariable;
-    bool isFinished = false;
-
-    Ref renderingBackend = m_renderingBackend;
-    renderingBackend->dispatch([&]() mutable {
-        if (auto imageBuffer = renderingBackend->imageBuffer(imageBufferIdentifier)) {
-            // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
-            // image buffers and there's no good way to add display lists.
-            GraphicsContextGL::paintToCanvas(image, imageBuffer->backendSize(), imageBuffer->context());
-
-
-            // We know that the image might be updated afterwards, so flush the drawing so that read back does not occur.
-            // Unfortunately "flush" implementation in RemoteRenderingBackend overloads ordering and effects.
-            imageBuffer->flushDrawingContext();
-        }
-        Locker locker { lock };
-        isFinished = true;
-        conditionVariable.notifyOne();
-    });
-    Locker locker { lock };
-    conditionVariable.wait(lock, [&] {
-        return isFinished;
-    });
-}
 
 bool RemoteGraphicsContextGL::webXREnabled() const
 {

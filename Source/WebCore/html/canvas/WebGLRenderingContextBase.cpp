@@ -768,11 +768,10 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::surfaceBufferToImageBuffer(Surfac
     if (sourceBuffer == SurfaceBuffer::DrawingBuffer)
         clearIfComposited(CallerTypeOther);
     m_canvasBufferContents = sourceBuffer;
-    // FIXME: Remote ImageBuffers do not flush the buffers that are drawn to a buffer.
-    // Avoid leaking the WebGL content in the cases where a WebGL canvas element is drawn to a Context2D
-    // canvas element repeatedly.
-    buffer->flushDrawingContext();
-    m_context->drawSurfaceBufferToImageBuffer(toGCGLSurfaceBuffer(sourceBuffer), *buffer);
+    if (RefPtr image = m_context->surfaceBufferToImage(toGCGLSurfaceBuffer(sourceBuffer))) {
+        buffer->context().drawImage(*image, { { }, buffer->logicalSize() }, { CompositeOperator::Copy, InterpolationQuality::DoNotInterpolate });
+        buffer->flushDrawingContextAsync(); // Opportunistic flush to avoid copying source buffer.
+    }
     return buffer;
 }
 
@@ -832,7 +831,10 @@ RefPtr<ImageBuffer> WebGLRenderingContextBase::transferToImageBuffer()
         return nullptr;
     if (compositingResultsNeedUpdating())
         prepareForDisplay();
-    m_context->drawSurfaceBufferToImageBuffer(GraphicsContextGL::SurfaceBuffer::DisplayBuffer, *buffer);
+    if (RefPtr image = m_context->surfaceBufferToImage(GraphicsContextGL::SurfaceBuffer::DisplayBuffer)) {
+        buffer->context().drawImage(*image, { { }, buffer->logicalSize() }, { CompositeOperator::Copy, InterpolationQuality::DoNotInterpolate });
+        buffer->flushDrawingContextAsync(); // Opportunistic flush to avoid copying source buffer.
+    }
     // Any draw or read sees cleared drawing buffer.
     m_defaultFramebuffer->markAllBuffersDirty();
     // Next transfer uses the cleared drawing buffer.

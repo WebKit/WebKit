@@ -3262,13 +3262,7 @@ void GraphicsContextGLANGLE::simulateEventForTesting(SimulatedEventForTesting ev
     }
 }
 
-void GraphicsContextGLANGLE::drawSurfaceBufferToImageBuffer(SurfaceBuffer buffer, ImageBuffer& imageBuffer)
-{
-    if (RefPtr image = bufferAsNativeImage(buffer))
-        paintToCanvas(*image, imageBuffer.backendSize(), imageBuffer.context());
-}
-
-RefPtr<NativeImage> GraphicsContextGLANGLE::bufferAsNativeImage(SurfaceBuffer source)
+RefPtr<Image> GraphicsContextGLANGLE::surfaceBufferToImage(SurfaceBuffer source)
 {
     if (!makeContextCurrent())
         return nullptr;
@@ -3281,7 +3275,10 @@ RefPtr<NativeImage> GraphicsContextGLANGLE::bufferAsNativeImage(SurfaceBuffer so
         pixelBuffer = readCompositedResults();
     if (!pixelBuffer)
         return nullptr;
-    return createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
+    RefPtr nativeImage = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
+    if (!nativeImage)
+        return nullptr;
+    return Image::create(nativeImage.releaseNonNull(), ImageOrientation::Orientation::OriginBottomLeft);
 }
 
 RefPtr<PixelBuffer> GraphicsContextGLANGLE::drawingBufferToPixelBuffer(FlipY flipY)

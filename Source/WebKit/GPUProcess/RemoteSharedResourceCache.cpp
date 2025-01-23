@@ -82,9 +82,48 @@ RefPtr<ImageBuffer> RemoteSharedResourceCache::takeSerializedImageBuffer(Renderi
     return m_serializedImageBuffers.take({ { identifier, 0 }, 0 }, defaultRemoteSharedResourceCacheTimeout);
 }
 
+void RemoteSharedResourceCache::addImage(RemoteImageIdentifier identifier, Ref<WebCore::Image> image)
+{
+    m_images.add({ identifier, 0 }, WTFMove(image));
+}
+
+RefPtr<WebCore::Image> RemoteSharedResourceCache::readImage(RemoteImageReadReference&& read)
+{
+    return m_images.read(WTFMove(read), defaultRemoteSharedResourceCacheTimeout);
+}
+
 void RemoteSharedResourceCache::releaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier identifier)
 {
     m_serializedImageBuffers.remove({ { identifier, 0 }, 0 });
+}
+
+void RemoteSharedResourceCache::releaseImage(RemoteImageWriteReference write)
+{
+    bool success = m_images.remove(WTFMove(write));
+    if (!success)
+        ASSERT_IS_TESTING_IPC();
+}
+
+void RemoteSharedResourceCache::getShareableBitmap(RemoteImageReadReference&& read, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&& completionHandler)
+{
+    std::optional<WebCore::ShareableBitmap::Handle> handle = [&]() -> std::optional<WebCore::ShareableBitmap::Handle> {
+        RefPtr image = readImage(WTFMove(read));
+        if (!image)
+            return std::nullopt;
+        RefPtr nativeImage = image->nativeImage();
+        if (!nativeImage)
+            return std::nullopt;
+        RefPtr bitmap = ShareableBitmap::createFromImagePixels(*nativeImage);
+        if (!bitmap)
+            bitmap = ShareableBitmap::createFromImageDraw(*nativeImage);
+        if (!bitmap)
+            return std::nullopt;
+        auto handle = bitmap->createHandle();
+        if (resourceOwner())
+            handle->setOwnershipOfMemory(resourceOwner(), WebCore::MemoryLedger::Graphics);
+        return handle;
+    }();
+    completionHandler(WTFMove(handle));
 }
 
 void RemoteSharedResourceCache::lowMemoryHandler()

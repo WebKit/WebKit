@@ -46,7 +46,7 @@ Ref<BitmapImage> BitmapImage::create(Ref<NativeImage>&& nativeImage)
     return adoptRef(*new BitmapImage(WTFMove(nativeImage)));
 }
 
-RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
+RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage, ImageOrientation::Orientation)
 {
     if (!nativeImage)
         return nullptr;
@@ -56,6 +56,11 @@ RefPtr<BitmapImage> BitmapImage::create(RefPtr<NativeImage>&& nativeImage)
 RefPtr<BitmapImage> BitmapImage::create(PlatformImagePtr&& platformImage)
 {
     return create(NativeImage::create(WTFMove(platformImage)));
+}
+
+RefPtr<Image> Image::create(Ref<NativeImage> image, ImageOrientation::Orientation orientation)
+{
+    return BitmapImage::create(WTFMove(image), orientation);
 }
 
 BitmapImage::BitmapImage(ImageObserver* observer, AlphaOption alphaOption, GammaAndColorProfileOption gammaAndColorProfileOption)

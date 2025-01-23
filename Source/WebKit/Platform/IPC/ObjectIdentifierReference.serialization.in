@@ -28,6 +28,7 @@ additional_forward_declaration: namespace WebCore { using RenderingResourceIdent
 additional_forward_declaration: namespace WebCore { using SnapshotIdentifier = AtomicObjectIdentifier<SnapshotIdentifierType>; }
 additional_forward_declaration: namespace WebKit { using RemoteVideoFrameIdentifier = AtomicObjectIdentifier<RemoteVideoFrameIdentifierType>; }
 additional_forward_declaration: namespace WebKit { using RemoteSerializedImageBufferIdentifier = WebCore::RenderingResourceIdentifier; }
+additional_forward_declaration: namespace WebKit { using RemoteImageIdentifier = AtomicObjectIdentifier<RemoteImageIdentifierType>; }
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
 
@@ -67,6 +68,23 @@ header: "RemoteSerializedImageBufferIdentifier.h"
 header: "RemoteSerializedImageBufferIdentifier.h"
 [Alias=class IPC::ObjectIdentifierReadReference<WebKit::RemoteSerializedImageBufferIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteSerializedImageBufferReadReference {
     WebKit::RemoteSerializedImageBufferReference reference();
+};
+
+header: "RemoteImageIdentifier.h"
+[Alias=class IPC::ObjectIdentifierReference<WebKit::RemoteImageIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteImageReference {
+    WebKit::RemoteImageIdentifier identifier();
+    uint64_t version();
+};
+
+header: "RemoteImageIdentifier.h"
+[Alias=class IPC::ObjectIdentifierWriteReference<WebKit::RemoteImageIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteImageWriteReference {
+    WebKit::RemoteImageReference reference();
+    uint64_t pendingReads();
+};
+
+header: "RemoteImageIdentifier.h"
+[Alias=class IPC::ObjectIdentifierReadReference<WebKit::RemoteImageIdentifier>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::RemoteImageReadReference {
+    WebKit::RemoteImageReference reference();
 };
 
 #endif

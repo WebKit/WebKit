@@ -41,7 +41,7 @@ class BitmapImage final : public Image {
 public:
     WEBCORE_EXPORT static Ref<BitmapImage> create(ImageObserver* = nullptr, AlphaOption = AlphaOption::Premultiplied, GammaAndColorProfileOption = GammaAndColorProfileOption::Applied);
     WEBCORE_EXPORT static Ref<BitmapImage> create(Ref<NativeImage>&&);
-    WEBCORE_EXPORT static RefPtr<BitmapImage> create(RefPtr<NativeImage>&&);
+    WEBCORE_EXPORT static RefPtr<BitmapImage> create(RefPtr<NativeImage>&&, ImageOrientation::Orientation = ImageOrientation::Orientation::FromImage);
     WEBCORE_EXPORT static RefPtr<BitmapImage> create(PlatformImagePtr&&);
 
     // Animation

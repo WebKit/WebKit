@@ -28,12 +28,15 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "MessageReceiver.h"
+#include "RemoteImageIdentifier.h"
 #include "RemoteSerializedImageBufferIdentifier.h"
 #include "ThreadSafeObjectHeap.h"
+#include <WebCore/Image.h>
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImageBufferResourceLimits.h>
 #include <WebCore/ProcessIdentity.h>
 #include <WebCore/RenderingResourceIdentifier.h>
+#include <WebCore/ShareableBitmap.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
@@ -60,8 +63,12 @@ public:
     void addSerializedImageBuffer(WebCore::RenderingResourceIdentifier, Ref<WebCore::ImageBuffer>);
     RefPtr<WebCore::ImageBuffer> takeSerializedImageBuffer(WebCore::RenderingResourceIdentifier);
 
+    void addImage(RemoteImageIdentifier, Ref<WebCore::Image>);
+    RefPtr<WebCore::Image> readImage(RemoteImageReadReference&&);
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
+    bool didReceiveSyncMessage(IPC::Connection&, IPC::Decoder&, UniqueRef<IPC::Encoder>&) final;
 
     const WebCore::ProcessIdentity& resourceOwner() const { return m_resourceOwner; }
 #if HAVE(IOSURFACE)
@@ -81,8 +88,12 @@ private:
 
     // Messages
     void releaseSerializedImageBuffer(WebCore::RenderingResourceIdentifier);
+    void getShareableBitmap(RemoteImageReadReference&&, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
+    void releaseImage(RemoteImageWriteReference);
 
     IPC::ThreadSafeObjectHeap<RemoteSerializedImageBufferIdentifier, RefPtr<WebCore::ImageBuffer>> m_serializedImageBuffers;
+    IPC::ThreadSafeObjectHeap<RemoteImageIdentifier, RefPtr<WebCore::Image>> m_images;
+
     WebCore::ProcessIdentity m_resourceOwner;
 #if HAVE(IOSURFACE)
     Ref<WebCore::IOSurfacePool> m_ioSurfacePool;

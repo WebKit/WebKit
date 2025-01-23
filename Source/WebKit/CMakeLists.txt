@@ -335,6 +335,7 @@ set(WebKit_MESSAGES_IN_FILES
     WebProcess/GPU/graphics/RemoteGraphicsContextGLProxy
     WebProcess/GPU/graphics/RemoteImageBufferProxy
     WebProcess/GPU/graphics/RemoteImageBufferSetProxy
+    WebProcess/GPU/graphics/RemoteImageProxy
     WebProcess/GPU/graphics/RemoteRenderingBackendProxy
 
     WebProcess/GPU/graphics/WebGPU/RemoteGPUProxy
