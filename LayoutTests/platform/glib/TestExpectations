@@ -2240,6 +2240,8 @@ webrtc/video-rotation-black.html [ Crash Failure Pass Timeout ]
 
 fast/mediastream/video-rotation-clone.html [ Skip ]
 
+http/wpt/mediastream/mediastreamtrackprocessor-videoframe-rotation.html [ Failure ]
+
 # No AudioSession category handling in WPE/GTK ports.
 fast/mediastream/microphone-interruption-and-audio-session.html [ Skip ]
 

@@ -5,4 +5,7 @@ PASS Track is enabled, video should not be black
 PASS Track is enabled and rotated, local video should not be black and should change size
 PASS Track is enabled and rotated, remote video should not be black and should change size
 PASS Track is enabled and rotated again, video should not be black and should change size
+PASS Validate visible rect information for 0 rotated frames
+PASS Validate visible rect information for 90 rotated frames
+PASS Validate visible rect information for 180 rotated frames
 

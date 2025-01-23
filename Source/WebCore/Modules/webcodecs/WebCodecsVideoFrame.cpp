@@ -353,6 +353,8 @@ Ref<WebCodecsVideoFrame> WebCodecsVideoFrame::create(ScriptExecutionContext& con
     } else {
         result->m_data.visibleWidth = result->m_data.codedWidth;
         result->m_data.visibleHeight = result->m_data.codedHeight;
+        if (result->m_data.internalFrame->rotation() == VideoFrame::Rotation::Left || result->m_data.internalFrame->rotation() == VideoFrame::Rotation::Right)
+            std::swap(result->m_data.visibleWidth, result->m_data.visibleHeight);
     }
 
     result->m_data.displayWidth = init.displayWidth.value_or(result->m_data.visibleWidth);
@@ -428,7 +430,11 @@ ExceptionOr<Ref<WebCodecsVideoFrame>> WebCodecsVideoFrame::initializeFrameFromOt
     result->m_data.codedWidth = codedWidth;
     result->m_data.codedHeight = codedHeight;
 
-    initializeVisibleRectAndDisplaySize(result.get(), init, DOMRectInit { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) }, result->m_data.codedWidth, result->m_data.codedHeight);
+    DOMRectInit visibleRect { 0, 0 , static_cast<double>(result->m_data.codedWidth), static_cast<double>(result->m_data.codedHeight) };
+    if (result->m_data.internalFrame->rotation() == VideoFrame::Rotation::Left || result->m_data.internalFrame->rotation() == VideoFrame::Rotation::Right)
+        std::swap(visibleRect.width, visibleRect.height);
+
+    initializeVisibleRectAndDisplaySize(result.get(), init, visibleRect, result->m_data.codedWidth, result->m_data.codedHeight);
 
     result->m_data.duration = init.duration;
     if (init.timestamp)

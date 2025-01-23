@@ -96,9 +96,21 @@ promise_test((test) => {
     });
 }, "Setting video exchange");
 
-promise_test(async (test) => {
+promise_test(async t => {
    await checkVideoBlack(false, remoteVideo, "canvas0");
    await waitForVideoSize(remoteVideo, 320, 240);
+
+    test(t => {
+        const localFrame = new VideoFrame(localVideo);
+        t.add_cleanup(() => localFrame.close());
+        const remoteFrame = new VideoFrame(remoteVideo);
+        t.add_cleanup(() => remoteFrame.close());
+
+        assert_equals(localFrame.visibleRect.width, localFrame.codedWidth, "local frame width");
+        assert_equals(localFrame.visibleRect.height, localFrame.codedHeight, "local frame height");
+        assert_equals(remoteFrame.visibleRect.width, remoteFrame.codedWidth, "remote frame width");
+        assert_equals(remoteFrame.visibleRect.height, remoteFrame.codedHeight, "remote frame height");
+    }, "Validate visible rect information for 0 rotated frames");
 }, "Track is enabled, video should not be black");
 
 promise_test(async (test) => {
@@ -114,7 +126,7 @@ promise_test(async (test) => {
     await waitForVideoSize(localVideo, 240, 320);
 }, "Track is enabled and rotated, local video should not be black and should change size");
 
-promise_test(async (test) => {
+promise_test(async t => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 90);
     if (window.testRunner)
@@ -125,9 +137,21 @@ promise_test(async (test) => {
     });
 
     await waitForTrackRotation(remoteVideo.srcObject.getVideoTracks()[0], 90);
+
+    test(t => {
+        const localFrame = new VideoFrame(localVideo);
+        t.add_cleanup(() => localFrame.close());
+        const remoteFrame = new VideoFrame(remoteVideo);
+        t.add_cleanup(() => remoteFrame.close());
+
+        assert_equals(localFrame.visibleRect.width, localFrame.codedHeight, "local frame width");
+        assert_equals(localFrame.visibleRect.height, localFrame.codedWidth, "local frame height");
+        assert_equals(remoteFrame.visibleRect.width, remoteFrame.codedHeight, "remote frame width");
+        assert_equals(remoteFrame.visibleRect.height, remoteFrame.codedWidth, "remote frame height");
+    }, "Validate visible rect information for 90 rotated frames");
 }, "Track is enabled and rotated, remote video should not be black and should change size");
 
-promise_test(async (test) => {
+promise_test(async t => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 180);
     if (window.testRunner)
@@ -138,6 +162,18 @@ promise_test(async (test) => {
     });
 
     await waitForTrackRotation(remoteVideo.srcObject.getVideoTracks()[0], 180);
+
+    test(t => {
+        const localFrame = new VideoFrame(localVideo);
+        t.add_cleanup(() => localFrame.close());
+        const remoteFrame = new VideoFrame(remoteVideo);
+        t.add_cleanup(() => remoteFrame.close());
+
+        assert_equals(localFrame.visibleRect.width, localFrame.codedWidth, "local frame width");
+        assert_equals(localFrame.visibleRect.height, localFrame.codedHeight, "local frame height");
+        assert_equals(remoteFrame.visibleRect.width, remoteFrame.codedWidth, "remote frame width");
+        assert_equals(remoteFrame.visibleRect.height, remoteFrame.codedHeight, "remote frame height");
+    }, "Validate visible rect information for 180 rotated frames");
 }, "Track is enabled and rotated again, video should not be black and should change size");
         </script>
     </body>
