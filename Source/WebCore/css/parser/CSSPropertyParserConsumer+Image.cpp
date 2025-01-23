@@ -304,7 +304,7 @@ template<SupportsColorHints supportsColorHints, typename Stop, typename Consumer
         return std::nullopt;
 
     // Must have two or more stops to be valid.
-    if (stops.size() < 2)
+    if (stops.size() < 1)
         return std::nullopt;
 
     stops.shrinkToFit();
