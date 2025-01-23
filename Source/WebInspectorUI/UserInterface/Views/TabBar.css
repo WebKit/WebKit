@@ -58,30 +58,18 @@ body.window-inactive .tab-bar {
     --tab-bar-background: hsl(0, 0%, 92%);
 }
 
-.tab-bar > .border {
-    position: absolute;
-    left: 0;
-    right: 0;
-    z-index: var(--tab-bar-border-z-index);
-    background-color: var(--tab-item-medium-border-color);
-}
-
-.tab-bar > .border.top {
-    top: 0;
-    height: calc(1px / var(--zoom-factor));
-}
-
-.tab-bar > .border.bottom {
-    bottom: 0;
-    height: 1px;
-}
-
-body.window-inactive .tab-bar > .border {
-    background-color: var(--tab-item-light-border-color);
-}
-
 .tab-bar > .navigation-bar {
     height: var(--tab-bar-height);
+    border-top: var(--tab-item-medium-border-style);
+    border-bottom: var(--tab-item-medium-border-style);
+}
+
+body.window-inactive .tab-bar > .navigation-bar {
+    border-color: var(--tab-item-light-border-color);
+}
+
+.tab-bar > .navigation-bar > .item.group {
+    margin-top: -1px;
 }
 
 .tab-bar > .navigation-bar > .item.group > .item {
