@@ -63,7 +63,7 @@ public:
     virtual ~Image();
     
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
-    WEBCORE_EXPORT static std::optional<Ref<Image>> create(RefPtr<ShareableBitmap>&&);
+    WEBCORE_EXPORT static RefPtr<Image> create(RefPtr<ShareableBitmap>&&);
     WEBCORE_EXPORT static bool supportsType(const String&);
     static bool isPDFResource(const String& mimeType, const URL&);
 

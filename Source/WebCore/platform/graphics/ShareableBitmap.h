@@ -147,7 +147,7 @@ public:
     WEBCORE_EXPORT static RefPtr<ShareableBitmap> create(Handle&&, SharedMemory::Protection = SharedMemory::Protection::ReadWrite);
 
     // Create a shareable bitmap from a ReadOnly handle.
-    WEBCORE_EXPORT static std::optional<Ref<ShareableBitmap>> createReadOnly(std::optional<Handle>&&);
+    WEBCORE_EXPORT static RefPtr<ShareableBitmap> createReadOnly(std::optional<Handle>&&);
 
     WEBCORE_EXPORT std::optional<Handle> createHandle(SharedMemory::Protection = SharedMemory::Protection::ReadWrite) const;
 

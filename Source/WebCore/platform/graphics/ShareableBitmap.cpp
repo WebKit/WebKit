@@ -137,16 +137,16 @@ RefPtr<ShareableBitmap> ShareableBitmap::create(Handle&& handle, SharedMemory::P
     return create(handle.m_configuration, sharedMemory.releaseNonNull());
 }
 
-std::optional<Ref<ShareableBitmap>> ShareableBitmap::createReadOnly(std::optional<Handle>&& handle)
+RefPtr<ShareableBitmap> ShareableBitmap::createReadOnly(std::optional<Handle>&& handle)
 {
     if (!handle)
-        return std::nullopt;
+        return nullptr;
 
-    auto sharedMemory = SharedMemory::map(WTFMove(handle->m_handle), SharedMemory::Protection::ReadOnly);
+    RefPtr sharedMemory = SharedMemory::map(WTFMove(handle->m_handle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemory)
-        return std::nullopt;
+        return nullptr;
 
-    return adoptRef(*new ShareableBitmap(handle->m_configuration, sharedMemory.releaseNonNull()));
+    return adoptRef(new ShareableBitmap(handle->m_configuration, sharedMemory.releaseNonNull()));
 }
 
 auto ShareableBitmap::createHandle(SharedMemory::Protection protection) const -> std::optional<Handle>
