@@ -4448,6 +4448,9 @@
     "imported/w3c/web-platform-tests/import-maps/import-maps-base-url.sub.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/loading/early-hints/early-hints-response-time.h2.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/mathml/presentation-markup/operators/operator-dictionary-001.html": [
         "slow"
     ],

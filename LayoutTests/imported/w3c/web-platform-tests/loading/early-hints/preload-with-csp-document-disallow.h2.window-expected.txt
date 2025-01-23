@@ -1,0 +1,3 @@
+
+FAIL Early hints preload CSP = allowed, document disallowed the preload later. promise_test: Unhandled rejection with value: object "TypeError: URL is not valid or contains user credentials."
+

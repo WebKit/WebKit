@@ -1,0 +1,3 @@
+
+FAIL Modulepreload works in early hints from cross-origin url promise_test: Unhandled rejection with value: object "Error: Failed to fetch resource: https://www.127.0.0.1:9000/loading/early-hints/resources/empty.js?034b01e3-4e78-40c5-be6e-e15cedb80e36"
+

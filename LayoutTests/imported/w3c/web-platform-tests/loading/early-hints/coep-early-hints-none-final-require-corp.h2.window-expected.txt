@@ -1,0 +1,3 @@
+
+PASS Early Hints COEP mismatch: Early Hints policy = unsafe-none, final response policy = require-corp.
+

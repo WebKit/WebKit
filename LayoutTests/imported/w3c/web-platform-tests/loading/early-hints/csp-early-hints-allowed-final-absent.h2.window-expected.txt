@@ -1,0 +1,3 @@
+
+FAIL Early Hints CSP: Early Hints policy = allowed, final response policy = absent. promise_test: Unhandled rejection with value: object "Error: Failed to fetch resource: https://www.127.0.0.1:9000/loading/early-hints/resources/empty.js?dce90a81-f74e-465b-9c81-4970584d3dc0"
+

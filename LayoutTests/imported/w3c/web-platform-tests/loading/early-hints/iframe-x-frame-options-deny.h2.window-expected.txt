@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: Refused to display 'https://localhost:9000/loading/early-hints/resources/html-with-early-hints.h2.py?resource-url=https%3A%2F%2Flocalhost%3A9000%2Floading%2Fearly-hints%2Fresources%2Fempty.js%3Fb265c3d8-fae4-4811-83fe-3bba9e15775e&token=1674eda0-8e0d-483d-9276-e5e20548ea18&x-frame-options=DENY' in a frame because it set 'X-Frame-Options' to 'DENY'.
+CONSOLE MESSAGE: Sandbox access violation: Blocked a frame at "https://localhost:9000" from accessing a frame at "https://localhost:9000".  The frame being accessed is sandboxed and lacks the "allow-same-origin" flag.
+
+PASS Early hints for an iframe that violates X-Frame-Options should be ignored.
+

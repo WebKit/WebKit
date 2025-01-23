@@ -1,0 +1,72 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/404-with-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/404-with-early-hints.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/arbitrary-header-in-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/arbitrary-header-in-early-hints.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/coep-mismatch.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/coep-mismatch.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/csp-basic-loader.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/csp-basic.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/csp-document-disallow-loader.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/csp-document-disallow.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/delayed-js.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/early-hints-delay.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/early-hints-helpers.sub.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/early-hints-test-loader.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/empty-corp-absent.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/empty-corp-absent.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/empty.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/empty.js.headers
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/empty.json
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/empty.json.headers
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/example.pdf
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/fetch-and-record-js.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/get-fetch-timing-and-headers.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/html-with-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/invalid-headers-in-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/modulepreload-in-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/modulepreload-in-early-hints.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/multiple-early-hints-responses.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/multiple-early-hints-responses.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/pdf-with-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/png-with-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preconnect-in-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preconnect-in-early-hints.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-as-test.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-as-test.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-fetch.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-fetchpriority.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-finished-before-final-response.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-finished-before-final-response.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-finished-while-receiving-final-response-body.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-finished-while-receiving-final-response-body.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-in-flight-when-consumed.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-in-flight-when-consumed.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/preload-initiator-type.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-between-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-cross-origin-between-early-hints.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-cross-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-same-origin-between-early-hints.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-same-origin.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/redirect-with-early-hints.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/referrer-policy-test-loader.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/referrer-policy-test.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/resume-delayed-js.h2.py
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/square.png
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/square.png.headers
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/resources/utils.py

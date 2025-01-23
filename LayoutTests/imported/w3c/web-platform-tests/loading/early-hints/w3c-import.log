@@ -1,0 +1,61 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/404-with-early-hints.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/arbitrary-header-in-early-hints.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/coep-early-hints-none-final-require-corp.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/coep-early-hints-require-corp-final-none.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-absent-final-absent.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-absent-final-allowed.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-absent-final-disallowed.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-allowed-final-absent.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-allowed-final-allowed.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-allowed-final-disallowed.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-disallowed-final-absent.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-disallowed-final-allowed.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-disallowed-final-disallowed.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/early-hints-response-time.h2.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/embed-object.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/iframe-coep-disallow.h2.html
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/iframe-coep-disallow.h2.html.headers
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/iframe-pdf.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/iframe-x-frame-options-deny.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/invalid-headers-in-early-hints.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/modulepreload-as-worker-cross-origin.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/modulepreload-as-worker.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/modulepreload-cross-origin.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/modulepreload-in-early-hints.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/multiple-early-hints-responses.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preconnect-in-early-hints.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-fetch.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-fetchpriority.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-finished-before-final-response.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-finished-while-receiving-final-response-body.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-in-flight-when-consumed.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-initiator-type.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-with-csp-document-disallow.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-with-invalid-as.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-without-as.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/preload-without-csp-document-disallow.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/redirect-cross-origin-between-early-hints.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/redirect-cross-origin.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/redirect-same-origin-between-early-hints.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/redirect-same-origin.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/referrer-policy-no-referrer.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/referrer-policy-origin-when-cross-origin.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/referrer-policy-origin.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/referrer-policy-same-origin.h2.window.js
+/LayoutTests/imported/w3c/web-platform-tests/loading/early-hints/referrer-policy-unsafe-url.h2.window.js

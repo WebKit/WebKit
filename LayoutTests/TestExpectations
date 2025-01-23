@@ -7657,3 +7657,24 @@ imported/w3c/web-platform-tests/css/selectors/featureless-005.html [ ImageOnlyFa
 
 # webkit.org/b/285913 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html is extremely flakey
 imported/w3c/web-platform-tests/web-animations/timing-model/timelines/timelines.html [ Pass Failure ]
+
+# webkit.org/b/286350 The tests below are either timing out and failing with a different expectation every time. We should fix them.
+imported/w3c/web-platform-tests/loading/early-hints/embed-object.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/preload-fetchpriority.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/preload-finished-before-final-response.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/preload-finished-while-receiving-final-response-body.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/redirect-cross-origin-between-early-hints.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/redirect-cross-origin.h2.window.html [ Skip ]
+imported/w3c/web-platform-tests/loading/early-hints/coep-early-hints-require-corp-final-none.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-absent-final-absent.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-absent-final-allowed.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-allowed-final-absent.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-allowed-final-allowed.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-disallowed-final-absent.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/csp-early-hints-disallowed-final-allowed.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/iframe-x-frame-options-deny.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/modulepreload-as-worker-cross-origin.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/modulepreload-cross-origin.h2.window.html [ Failure ]
+imported/w3c/web-platform-tests/loading/early-hints/preconnect-in-early-hints.h2.window.html [ Failure ]
+
+

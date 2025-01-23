@@ -1,0 +1,3 @@
+
+FAIL Early Hints COEP mismatch: Early Hints policy = require-corp, final response policy = unsafe-none. promise_test: Unhandled rejection with value: object "Error: Failed to fetch resource: https://www.127.0.0.1:9000/loading/early-hints/resources/empty-corp-absent.js?7130eee8-5315-45c2-bb2c-3f72115f8a3f"
+

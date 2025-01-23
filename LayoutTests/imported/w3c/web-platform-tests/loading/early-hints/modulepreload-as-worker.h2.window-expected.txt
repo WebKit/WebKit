@@ -1,0 +1,3 @@
+
+FAIL Modulepreload should load with as="worker" from same-origin url assert_equals: expected true but got false
+
