@@ -87,6 +87,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/VoidCallback.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/WheelEventTestMonitor.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -630,6 +631,11 @@ void PDFPlugin::installPDFDocument()
         RELEASE_LOG(IncrementalPDF, "PDFPlugin::installPDFDocument called - Plug-in has not been destroyed, but there's also no view.");
         return;
     }
+
+    auto handlePDFTestCallback = makeScopeExit([testCallback = WTFMove(m_pdfTestCallback)] {
+        if (testCallback)
+            testCallback->handleEvent();
+    });
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     maybeClearHighLatencyDataProviderFlag();

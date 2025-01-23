@@ -18,7 +18,8 @@ if (window.accessibilityController) {
     window.jsTestIsAsync = true;
 
     var hitTestResult, pdfAxObject, pdfEmbedElement, pdfPageObject, searchResultElement;
-    setTimeout(async function() {
+    internals?.registerPDFTest(async () => {
+        await UIHelper.waitForPDFFadeIn();
         await waitFor(() => {
             embedContainer = accessibilityController.accessibleElementById("embedContainer");
             return embedContainer && embedContainer.childrenCount >= 1;
@@ -79,7 +80,7 @@ if (window.accessibilityController) {
 
         debug(output);
         finishJSTest();
-    }, 0);
+    }, plugin);
 }
 </script>
 </body>
