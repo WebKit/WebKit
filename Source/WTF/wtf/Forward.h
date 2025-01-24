@@ -84,6 +84,7 @@ template<typename, size_t = 0> class Deque;
 template<typename Key, typename, Key> class EnumeratedArray;
 template<typename> class FixedVector;
 template<typename> class Function;
+template<typename> struct FlatteningVariantTraits;
 template<typename> struct IsSmartPtr;
 template<typename, typename = AnyThreadsAccessTraits> class LazyNeverDestroyed;
 template<typename T, typename Traits = typename T::MarkableTraits> class Markable;

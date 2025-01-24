@@ -1596,5 +1596,28 @@ Tree copyAndSimplify(const Tree& tree, const SimplificationOptions& options)
     };
 }
 
+// MARK: - Can Simplify
+
+bool canSimplify(const Tree& tree, const SimplificationOptions&)
+{
+    // NOTE: This is a simple and conservative implementation of `canSimplify`. A more precise implementation
+    // is possible by utilizing the provided `SimplificationOptions` if that should be necessary.
+
+    return WTF::switchOn(tree.root,
+        [&](const Number&) -> bool {
+            return false;
+        },
+        [&](const Percentage&) -> bool {
+            return false;
+        },
+        [&](const CanonicalDimension&) -> bool {
+            return false;
+        },
+        [&](auto const&) -> bool {
+            return true;
+        }
+    );
+}
+
 } // namespace CSSCalc
 } // namespace WebCore

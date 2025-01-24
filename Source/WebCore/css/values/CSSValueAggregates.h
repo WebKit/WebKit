@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,6 +46,39 @@ template<typename> inline constexpr ASCIILiteral SerializationSeparator = ""_s;
 #define DEFINE_TYPE_WRAPPER_GET(t, name) \
     template<size_t> const auto& get(const t& value) { return value.name; }
 
+// Helper to define a type by extending another type via inheritance.
+#define DEFINE_TYPE_EXTENDER(wrapper, wrapped)                                \
+    struct wrapper : wrapped {                                                \
+        using Wrapped = wrapped;                                              \
+        using Wrapped::Wrapped;                                               \
+        template<size_t I> friend const auto& get(const wrapper& self)        \
+        {                                                                     \
+            return get<I>(static_cast<const wrapped&>(self));                 \
+        }                                                                     \
+        bool operator==(const wrapper&) const = default;                      \
+    };
+
+// Helper to define a type via direct wrapping of another type.
+#define DEFINE_TYPE_WRAPPER(wrapper, wrapped)                                 \
+    struct wrapper {                                                          \
+        using Wrapped = wrapped;                                              \
+        wrapped value;                                                        \
+        template<typename... Args>                                            \
+        wrapper(Args&&... args) requires (requires { { wrapped(args...) }; }) \
+            : value(std::forward<Args>(args)...)                              \
+        {                                                                     \
+        }                                                                     \
+        const Wrapped& operator*() const { return value; }                    \
+        Wrapped& operator*() { return value; }                                \
+        const Wrapped* operator->() const { return &value; }                  \
+        Wrapped* operator->() { return &value; }                              \
+        template<size_t> friend const auto& get(const wrapper& self)          \
+        {                                                                     \
+            return self.value;                                                \
+        }                                                                     \
+        bool operator==(const wrapper&) const = default;                      \
+    };
+
 // Helper to define a tuple-like conformance for a type with `numberOfArguments` arguments.
 #define DEFINE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
     namespace std { \
@@ -67,6 +100,15 @@ template<typename> inline constexpr ASCIILiteral SerializationSeparator = ""_s;
     DEFINE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
     template<> inline constexpr ASCIILiteral WebCore::SerializationSeparator<t> = ", "_s;
 
+// Helper to define a tuple-like conformance based on the type being extended.
+#define DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_EXTENDER(t) \
+    DEFINE_TUPLE_LIKE_CONFORMANCE(t, std::tuple_size_v<t::Wrapped>) \
+    template<> inline constexpr ASCIILiteral WebCore::SerializationSeparator<t> = WebCore::SerializationSeparator<t::Wrapped>;
+
+// Helper to define a tuple-like conformance for a wrapper type.
+#define DEFINE_TUPLE_LIKE_CONFORMANCE_FOR_TYPE_WRAPPER(t) \
+    DEFINE_TUPLE_LIKE_CONFORMANCE(t, 1)
+
 // MARK: - Conforming Existing Types
 
 // - Optional-like
@@ -78,12 +120,6 @@ template<typename... Ts> inline constexpr auto TreatAsTupleLike<std::tuple<Ts...
 
 // - Variant-like
 template<typename... Ts> inline constexpr auto TreatAsVariantLike<std::variant<Ts...>> = true;
-
-// MARK: Utility Concepts
-
-template<typename T> concept HasIsZero = requires(T t) {
-    { t.isZero() } -> std::convertible_to<bool>;
-};
 
 // MARK: - Standard Leaf Types
 
@@ -393,12 +429,6 @@ template<typename T> struct SpaceSeparatedPoint {
     const T& x() const { return get<0>(value); }
     const T& y() const { return get<1>(value); }
 
-    bool isZero() const
-        requires HasIsZero<T>
-    {
-        return x().isZero() && y().isZero();
-    }
-
     SpaceSeparatedPair<T> value;
 };
 
@@ -430,18 +460,6 @@ template<typename T> struct SpaceSeparatedSize {
     const T& width() const { return get<0>(value); }
     const T& height() const { return get<1>(value); }
 
-    bool isZero() const
-        requires HasIsZero<T>
-    {
-        return width().isZero() && height().isZero();
-    }
-
-    bool isEmpty() const
-        requires HasIsZero<T>
-    {
-        return width().isZero() || height().isZero();
-    }
-
     SpaceSeparatedPair<T> value;
 };
 
@@ -457,6 +475,11 @@ template<typename T> inline constexpr auto SerializationSeparator<SpaceSeparated
 template<typename T> struct SpaceSeparatedRectEdges {
     using value_type = T;
 
+    constexpr SpaceSeparatedRectEdges(T repeat)
+        : value { repeat, repeat, repeat, repeat }
+    {
+    }
+
     constexpr SpaceSeparatedRectEdges(T top, T right, T bottom, T left)
         : value { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) }
     {
@@ -467,12 +490,17 @@ template<typename T> struct SpaceSeparatedRectEdges {
     {
     }
 
-    constexpr bool operator==(const SpaceSeparatedRectEdges<T>&) const = default;
-
     const T& top() const { return value.top(); }
     const T& right() const { return value.right(); }
     const T& bottom() const { return value.bottom(); }
     const T& left() const { return value.left(); }
+
+    T& top() { return value.top(); }
+    T& right() { return value.right(); }
+    T& bottom() { return value.bottom(); }
+    T& left() { return value.left(); }
+
+    constexpr bool operator==(const SpaceSeparatedRectEdges<T>&) const = default;
 
     RectEdges<T> value;
 };
@@ -520,6 +548,11 @@ template<typename T> struct MinimallySerializingSpaceSeparatedRectEdges {
     const T& right() const  { return value.right(); }
     const T& bottom() const { return value.bottom(); }
     const T& left() const   { return value.left(); }
+
+    T& top() { return value.top(); }
+    T& right() { return value.right(); }
+    T& bottom() { return value.bottom(); }
+    T& left() { return value.left(); }
 
     constexpr bool operator==(const MinimallySerializingSpaceSeparatedRectEdges<T>&) const = default;
 

@@ -486,6 +486,86 @@ template<class... F> ALWAYS_INLINE Visitor<F...> makeVisitor(F... f)
     return Visitor<F...>(f...);
 }
 
+// Macros to implement switching over an integer range in chunks of 32.
+// Useful for efficient implementations of variant and tuple type visiting.
+// Adapted from https://www.reddit.com/r/cpp/comments/kst2pu/comment/giilcxv/.
+
+#define WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, Min, Max, N)      \
+    case Min + N:                                                   \
+    {                                                               \
+        if constexpr (Min + N < Max) {                              \
+            return CASE(Min, Max, N);                               \
+        } else {                                                    \
+            WTF_UNREACHABLE();                                      \
+        }                                                           \
+    }                                                               \
+
+#define WTF_UNROLLED_32_CASE_VISIT_SWITCH(INDEX, MIN, MAX, CASE, NEXT) \
+    switch (INDEX) {                                                \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 0)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 1)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 2)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 3)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 4)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 5)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 6)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 7)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 8)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 9)          \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 10)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 11)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 12)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 13)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 14)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 15)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 16)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 17)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 18)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 19)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 20)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 21)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 22)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 23)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 24)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 25)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 26)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 27)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 28)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 29)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 30)         \
+    WTF_UNROLLED_CASE_VISIT_SWITCH_CASE(CASE, MIN, MAX, 31)         \
+    }                                                               \
+                                                                    \
+    constexpr auto nextMin = std::min(MIN + 32, MAX);               \
+    if constexpr (nextMin < MAX)                                    \
+        return NEXT(nextMin, MAX);                                  \
+    WTF_UNREACHABLE();
+
+
+// Calls a zero argument functor with a non-type template argument set to the index.
+//
+// e.g.
+//   visitAtIndex<0 /* minimum */, 10 /* maximum */>(7,
+//       []<size_t I>() {
+//           if constexpr (I == 7) {
+//               print("will be called");
+//           } else {
+//               print("will not be called");
+//           }
+//       }
+//   );
+//
+template<size_t Minimum, size_t Maximum, class F> ALWAYS_INLINE decltype(auto) visitAtIndex(size_t index, NOESCAPE F&& f)
+{
+#define WTF_INDEX_VISIT_CASE(Min, Max, N) f.template operator()<Min + N>()
+#define WTF_INDEX_VISIT_NEXT(Min, Max)    visitAtIndex<Min, Max>(index, std::forward<F>(f))
+
+    WTF_UNROLLED_32_CASE_VISIT_SWITCH(index, Minimum, Maximum, WTF_INDEX_VISIT_CASE, WTF_INDEX_VISIT_NEXT)
+
+#undef WTF_INDEX_VISIT_NEXT
+#undef WTF_INDEX_VISIT_CASE
+}
+
 // `asVariant` is used to allow subclasses of std::variant to work with `switchOn`.
 
 template<class... Ts> ALWAYS_INLINE constexpr std::variant<Ts...>& asVariant(std::variant<Ts...>& v)
@@ -518,65 +598,18 @@ template<typename T> concept HasSwitchOn = requires(T t) {
 // Works around bad code generation for std::visit with one std::variant by some standard library / compilers that
 // lead to excessive binary size growth. Currently only needed by libc++. See https://webkit.org/b/279498.
 
-template<size_t I = 0, class F, class V> ALWAYS_INLINE decltype(auto) visitOneVariant(NOESCAPE F&& f, V&& v)
+
+template<size_t Minimum = 0, class F, class V> ALWAYS_INLINE decltype(auto) visitOneVariant(NOESCAPE F&& f, V&& v)
 {
-    constexpr auto size = std::variant_size_v<std::remove_cvref_t<V>>;
+    constexpr auto Maximum = std::variant_size_v<std::remove_cvref_t<V>>;
 
-#define WTF_VISIT_CASE_COUNT 32
-#define WTF_VISIT_CASE(N, D) \
-        case I + N:                                                                                 \
-        {                                                                                           \
-            if constexpr (I + N < size) {                                                           \
-                return std::invoke(std::forward<F>(f), std::get<I + N>(std::forward<V>(v)));        \
-            } else {                                                                                \
-                WTF_UNREACHABLE();                                                                  \
-            }                                                                                       \
-        }                                                                                           \
+#define WTF_INDEX_VISIT_CASE(Min, Max, N) f(std::get<Min + N>(std::forward<V>(v)))
+#define WTF_INDEX_VISIT_NEXT(Min, Max)    visitOneVariant<Min>(std::forward<F>(f), std::forward<V>(v))
 
-    switch (v.index()) {
-        WTF_VISIT_CASE(0, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(1, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(2, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(3, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(4, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(5, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(6, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(7, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(8, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(9, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(10, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(11, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(12, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(13, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(14, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(15, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(16, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(17, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(18, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(19, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(20, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(21, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(22, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(23, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(24, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(25, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(26, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(27, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(28, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(29, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(30, WTF_VISIT_CASE_COUNT)
-        WTF_VISIT_CASE(31, WTF_VISIT_CASE_COUNT)
-    }
+    WTF_UNROLLED_32_CASE_VISIT_SWITCH(v.index(), Minimum, Maximum, WTF_INDEX_VISIT_CASE, WTF_INDEX_VISIT_NEXT)
 
-    constexpr auto nextI = std::min(I + WTF_VISIT_CASE_COUNT, size);
-
-    if constexpr (nextI < size)
-        return visitOneVariant<nextI>(std::forward<F>(f), std::forward<V>(v));
-
-    WTF_UNREACHABLE();
-
-#undef WTF_VISIT_CASE_COUNT
-#undef WTF_VISIT_CASE
+#undef WTF_INDEX_VISIT_NEXT
+#undef WTF_INDEX_VISIT_CASE
 }
 
 template<class V, class... F> requires (!HasSwitchOn<V>) ALWAYS_INLINE auto switchOn(V&& v, F&&... f) -> decltype(visitOneVariant(makeVisitor(std::forward<F>(f)...), asVariant(std::forward<V>(v))))
@@ -710,6 +743,35 @@ template<typename T> struct IsStdInPlaceIndexImpl : std::false_type { };
 template<size_t I>   struct IsStdInPlaceIndexImpl<std::in_place_index_t<I>> : std::true_type { };
 template<typename T> using IsStdInPlaceIndex = IsStdInPlaceIndexImpl<std::remove_cvref_t<T>>;
 template<typename T> constexpr bool IsStdInPlaceIndexV = IsStdInPlaceIndex<T>::value;
+
+// MARK: - Runtime get<> for std::tuple and "Tuple-like" types
+
+// Example usage:
+//
+//   std::tuple<int, float> foo = std::make_tuple(1, 2.0f);
+//   switchOnTupleAtIndex(0,
+//       [](const int& value) {
+//           print("we got an int");  <--- this will get called
+//       },
+//       [](const int& value) {
+//           print("we got an int");  <--- this will NOT get called
+//       },
+//   );
+
+template<class F, class Tuple> ALWAYS_INLINE constexpr decltype(auto) visitTupleElementAtIndex(F&& f, size_t index, Tuple&& tuple)
+{
+    return visitAtIndex<0, std::tuple_size_v<std::remove_cvref_t<Tuple>>>(
+        index,
+        [&]<size_t I>() ALWAYS_INLINE_LAMBDA {
+            return std::invoke(std::forward<F>(f), std::get<I>(std::forward<Tuple>(tuple)));
+        }
+    );
+}
+
+template<typename Tuple, typename... F> ALWAYS_INLINE constexpr auto switchOnTupleAtIndex(size_t index, Tuple&& tuple, F&&... f) -> decltype(visitTupleElementAtIndex(index, WTF::makeVisitor(std::forward<F>(f)...), std::forward<Tuple>(tuple)))
+{
+    return visitTupleElementAtIndex(WTF::makeVisitor(std::forward<F>(f)...), index, std::forward<Tuple>(tuple));
+}
 
 namespace Detail
 {

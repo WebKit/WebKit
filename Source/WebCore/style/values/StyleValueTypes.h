@@ -601,5 +601,82 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
     }
 };
 
+// MARK: - IsZero
+
+// All leaf types that want to conform to IsZero must implement
+// the following:
+//
+//    template<> struct WebCore::Style::IsZero<CSSType> {
+//        bool operator()(const CSSType&);
+//    };
+//
+// or have a member function such that the type matches the
+// `HasIsZero` concept.
+
+template<typename T> struct IsZero;
+
+// IsZero Invoker
+template<typename T> bool isZero(const T& value)
+{
+    return IsZero<T>{}(value);
+}
+
+template<HasIsZero T> struct IsZero<T> {
+    bool operator()(const T& value)
+    {
+        return value.isZero();
+    }
+};
+
+// Constrained for `TreatAsTupleLike`.
+template<TupleLike T> struct IsZero<T> {
+    bool operator()(const T& value)
+    {
+        return WTF::apply([&](const auto& ...x) { return (isZero(x) && ...); }, value);
+    }
+};
+
+// Constrained for `TreatAsVariantLike`.
+template<VariantLike T> struct IsZero<T> {
+    bool operator()(const T& value)
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) { return isZero(alternative); });
+    }
+};
+
+// MARK: - IsEmpty
+
+// All leaf types that want to conform to IsEmpty must implement
+// the following:
+//
+//    template<> struct WebCore::Style::IsEmpty<CSSType> {
+//        bool operator()(const CSSType&);
+//    };
+//
+// or have a member function such that the type matches the
+// `HasIsEmpty` concept.
+
+template<typename T> struct IsEmpty;
+
+// IsEmpty Invoker
+template<typename T> bool isEmpty(const T& value)
+{
+    return IsEmpty<T>{}(value);
+}
+
+template<HasIsEmpty T> struct IsEmpty<T> {
+    bool operator()(const T& value)
+    {
+        return value.isEmpty();
+    }
+};
+
+template<typename T> struct IsEmpty<SpaceSeparatedSize<T>> {
+    bool operator()(const auto& value)
+    {
+        return isZero(value.width()) || isZero(value.height());
+    }
+};
+
 } // namespace Style
 } // namespace WebCore

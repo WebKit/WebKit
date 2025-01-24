@@ -42,21 +42,6 @@ namespace Style {
 
 // MARK: - Offset Point Evaluation
 
-static FloatPoint evaluate(const ByCoordinatePair& value, const FloatSize& boxSize)
-{
-    return evaluate(value.offset, boxSize);
-}
-
-static FloatPoint evaluate(const ToPosition& value, const FloatSize& boxSize)
-{
-    return evaluate(value.offset, boxSize);
-}
-
-static FloatPoint evaluate(const std::variant<ToPosition, ByCoordinatePair>& value, const FloatSize& boxSize)
-{
-    return WTF::switchOn(value, [&](const auto& value) -> FloatPoint { return evaluate(value, boxSize); });
-}
-
 static float evaluate(const std::variant<HLineCommand::To, HLineCommand::By>& value, float width)
 {
     return WTF::switchOn(value, [&](const auto& value) -> float { return evaluate(value.offset, width); });

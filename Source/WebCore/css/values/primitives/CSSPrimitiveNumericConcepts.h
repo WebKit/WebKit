@@ -32,7 +32,10 @@
 
 namespace WebCore {
 
+enum CSSValueID : uint16_t;
 enum class CSSUnitType : uint8_t;
+
+template<CSSValueID> struct Constant;
 
 namespace Calculation {
 enum class Category : uint8_t;

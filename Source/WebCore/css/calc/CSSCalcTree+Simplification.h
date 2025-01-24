@@ -55,6 +55,11 @@ struct SimplificationOptions {
     bool allowZeroValueLengthRemovalFromSum = false;
 };
 
+
+// MARK: Can Simplify
+
+bool canSimplify(const Tree&, const SimplificationOptions&);
+
 // MARK: Copy & Simplify
 
 Tree copyAndSimplify(const Tree&, const SimplificationOptions&);

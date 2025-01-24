@@ -27,6 +27,7 @@
 #include "FloatConversion.h"
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "LayoutUnit.h"
 #include "StylePrimitiveNumericTypes+Calculation.h"
 #include "StylePrimitiveNumericTypes.h"
 
@@ -57,6 +58,12 @@ template<auto R> constexpr double evaluate(const Percentage<R>& percentage, doub
     return percentage.value / 100.0 * referenceLength;
 }
 
+template<auto R> constexpr LayoutUnit evaluate(const Percentage<R>& percentage, LayoutUnit referenceLength)
+{
+    // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
+    return LayoutUnit(static_cast<float>(percentage.value / 100.0 * referenceLength));
+}
+
 // MARK: - Numeric
 
 constexpr float evaluate(Numeric auto const& value, float)
@@ -69,6 +76,11 @@ constexpr double evaluate(Numeric auto const& value, double)
     return value.value;
 }
 
+constexpr LayoutUnit evaluate(Numeric auto const& value, LayoutUnit)
+{
+    return LayoutUnit(value.value);
+}
+
 inline float evaluate(const CalculationValue& calculation, float referenceValue)
 {
     return calculation.evaluate(referenceValue);
@@ -79,12 +91,22 @@ inline double evaluate(const CalculationValue& calculation, double referenceValu
     return calculation.evaluate(referenceValue);
 }
 
+inline LayoutUnit evaluate(const CalculationValue& calculation, LayoutUnit referenceValue)
+{
+    return LayoutUnit(calculation.evaluate(referenceValue));
+}
+
 inline float evaluate(Calc auto const& calculation, float referenceValue)
 {
     return evaluate(calculation.protectedCalculation(), referenceValue);
 }
 
 inline double evaluate(Calc auto const& calculation, double referenceValue)
+{
+    return evaluate(calculation.protectedCalculation(), referenceValue);
+}
+
+inline LayoutUnit evaluate(Calc auto const& calculation, LayoutUnit referenceValue)
 {
     return evaluate(calculation.protectedCalculation(), referenceValue);
 }
@@ -101,13 +123,18 @@ inline double evaluate(DimensionPercentageNumeric auto const& value, double refe
     return WTF::switchOn(value, [&referenceValue](const auto& value) -> double { return evaluate(value, referenceValue); });
 }
 
+inline LayoutUnit evaluate(DimensionPercentageNumeric auto const& value, LayoutUnit referenceValue)
+{
+    return WTF::switchOn(value, [&referenceValue](const auto& value) -> LayoutUnit { return evaluate(value, referenceValue); });
+}
+
 // MARK: - NumberOrPercentage
 
 template<auto nR, auto pR> double evaluate(const NumberOrPercentage<nR, pR>& value)
 {
     return WTF::switchOn(value,
-        [](Number<nR> number) -> double { return number.value; },
-        [](Percentage<pR> percentage) -> double { return percentage.value / 100.0; }
+        [](const Number<nR>& number) -> double { return number.value; },
+        [](const Percentage<pR>& percentage) -> double { return percentage.value / 100.0; }
     );
 }
 
@@ -129,6 +156,20 @@ template<typename T> FloatSize evaluate(const SpaceSeparatedSize<T>& value, Floa
         evaluate(value.width(), referenceBox.width()),
         evaluate(value.height(), referenceBox.height())
     };
+}
+
+// MARK: - VariantLike
+
+template<VariantLike CSSType, typename... Rest> decltype(auto) evaluate(const CSSType& value, Rest&& ...rest)
+{
+    return WTF::switchOn(value, [&](const auto& alternative) { return evaluate(alternative, std::forward<Rest>(rest)...); });
+}
+
+// MARK: - TupleLike
+
+template<TupleLike CSSType, typename... Rest> requires (std::tuple_size_v<CSSType> == 1) decltype(auto) evaluate(const CSSType& value, Rest&& ...rest)
+{
+    return evaluate(get<0>(value), std::forward<Rest>(rest)...);
 }
 
 // MARK: - Calculated Evaluations

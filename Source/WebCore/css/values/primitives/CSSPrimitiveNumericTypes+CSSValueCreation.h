@@ -42,50 +42,57 @@ template<typename CSSType> Ref<CSSValue> createCSSValue(const CSSType& value)
     return CSSValueCreation<CSSType>{}(value);
 }
 
-template<NumericRaw T> struct CSSValueCreation<T> {
-    Ref<CSSValue> operator()(const T& raw)
+template<CSSValueID Id> struct CSSValueCreation<Constant<Id>> {
+    Ref<CSSValue> operator()(const Constant<Id>&)
+    {
+        return CSSPrimitiveValue::create(Id);
+    }
+};
+
+template<VariantLike CSSType> struct CSSValueCreation<CSSType> {
+    Ref<CSSValue> operator()(const CSSType& value)
+    {
+        return WTF::switchOn(value, [](const auto& alternative) { return createCSSValue(alternative); });
+    }
+};
+
+template<TupleLike CSSType> requires (std::tuple_size_v<CSSType> == 1) struct CSSValueCreation<CSSType> {
+    Ref<CSSValue> operator()(const CSSType& value)
+    {
+        return createCSSValue(get<0>(value));;
+    }
+};
+
+template<NumericRaw CSSType> struct CSSValueCreation<CSSType> {
+    Ref<CSSValue> operator()(const CSSType& raw)
     {
         return CSSPrimitiveValue::create(raw.value, toCSSUnitType(raw.unit));
     }
 };
 
-template<Calc T> struct CSSValueCreation<T> {
-    Ref<CSSValue> operator()(const T& calc)
+template<Calc CSSType> struct CSSValueCreation<CSSType> {
+    Ref<CSSValue> operator()(const CSSType& calc)
     {
         return CSSPrimitiveValue::create(calc.protectedCalc());
     }
 };
 
-template<Numeric T> struct CSSValueCreation<T> {
-    Ref<CSSValue> operator()(const T& value)
+template<typename CSSType> struct CSSValueCreation<SpaceSeparatedPoint<CSSType>> {
+    Ref<CSSValue> operator()(const SpaceSeparatedPoint<CSSType>& value)
     {
-        return WTF::switchOn(value,
-            [](const typename T::Raw& raw) {
-                return CSSPrimitiveValue::create(raw.value, toCSSUnitType(raw.unit));
-            },
-            [](const typename T::Calc& calc) {
-                return CSSPrimitiveValue::create(calc.protectedCalc());
-            }
+        return CSSValuePair::create(
+            createCSSValue(value.x()),
+            createCSSValue(value.y())
         );
     }
 };
 
-template<typename T> struct CSSValueCreation<SpaceSeparatedPoint<T>> {
-    Ref<CSSValue> operator()(const SpaceSeparatedPoint<T>& value)
+template<typename CSSType> struct CSSValueCreation<SpaceSeparatedSize<CSSType>> {
+    Ref<CSSValue> operator()(const SpaceSeparatedSize<CSSType>& value)
     {
         return CSSValuePair::create(
-            WebCore::CSS::createCSSValue(value.x()),
-            WebCore::CSS::createCSSValue(value.y())
-        );
-    }
-};
-
-template<typename T> struct CSSValueCreation<SpaceSeparatedSize<T>> {
-    Ref<CSSValue> operator()(const SpaceSeparatedSize<T>& value)
-    {
-        return CSSValuePair::create(
-            WebCore::CSS::createCSSValue(value.width()),
-            WebCore::CSS::createCSSValue(value.height())
+            createCSSValue(value.width()),
+            createCSSValue(value.height())
         );
     }
 };
