@@ -97,6 +97,8 @@
 #include "StyleReflection.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleScrollMargin.h"
+#include "StyleScrollPadding.h"
 #include "StyleTextShadow.h"
 #include "Styleable.h"
 #include "TimelineRange.h"
@@ -4710,13 +4712,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyScrollMargin:
         return getCSSPropertyValuesFor4SidesShorthand(scrollMarginShorthand());
     case CSSPropertyScrollMarginBottom:
-        return zoomAdjustedPixelValueForLength(style.scrollMarginBottom(), style);
+        return style.scrollMarginBottom().toCSS(style);
     case CSSPropertyScrollMarginTop:
-        return zoomAdjustedPixelValueForLength(style.scrollMarginTop(), style);
+        return style.scrollMarginTop().toCSS(style);
     case CSSPropertyScrollMarginRight:
-        return zoomAdjustedPixelValueForLength(style.scrollMarginRight(), style);
+        return style.scrollMarginRight().toCSS(style);
     case CSSPropertyScrollMarginLeft:
-        return zoomAdjustedPixelValueForLength(style.scrollMarginLeft(), style);
+        return style.scrollMarginLeft().toCSS(style);
     case CSSPropertyScrollMarginBlock:
         return getCSSPropertyValuesFor2SidesShorthand(scrollMarginBlockShorthand());
     case CSSPropertyScrollMarginInline:
@@ -4724,13 +4726,13 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyScrollPadding:
         return getCSSPropertyValuesFor4SidesShorthand(scrollPaddingShorthand());
     case CSSPropertyScrollPaddingBottom:
-        return zoomAdjustedPixelValueForLength(style.scrollPaddingBottom(), style);
+        return style.scrollPaddingBottom().toCSS(style);
     case CSSPropertyScrollPaddingTop:
-        return zoomAdjustedPixelValueForLength(style.scrollPaddingTop(), style);
+        return style.scrollPaddingTop().toCSS(style);
     case CSSPropertyScrollPaddingRight:
-        return zoomAdjustedPixelValueForLength(style.scrollPaddingRight(), style);
+        return style.scrollPaddingRight().toCSS(style);
     case CSSPropertyScrollPaddingLeft:
-        return zoomAdjustedPixelValueForLength(style.scrollPaddingLeft(), style);
+        return style.scrollPaddingLeft().toCSS(style);
     case CSSPropertyScrollPaddingBlock:
         return getCSSPropertyValuesFor2SidesShorthand(scrollPaddingBlockShorthand());
     case CSSPropertyScrollPaddingInline:

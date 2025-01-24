@@ -77,6 +77,8 @@ inline LengthBox forwardInheritedValue(const LengthBox& value) { auto copy = val
 inline GapLength forwardInheritedValue(const GapLength& value) { auto copy = value; return copy; }
 inline FilterOperations forwardInheritedValue(const FilterOperations& value) { auto copy = value; return copy; }
 inline TransformOperations forwardInheritedValue(const TransformOperations& value) { auto copy = value; return copy; }
+inline ScrollMarginEdge forwardInheritedValue(const ScrollMarginEdge& value) { auto copy = value; return copy; }
+inline ScrollPaddingEdge forwardInheritedValue(const ScrollPaddingEdge& value) { auto copy = value; return copy; }
 
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class BuilderCustom {

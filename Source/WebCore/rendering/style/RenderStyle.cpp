@@ -3553,94 +3553,94 @@ bool RenderStyle::customPropertiesEqual(const RenderStyle& other) const
         && m_rareInheritedData->customProperties == other.m_rareInheritedData->customProperties;
 }
 
-const LengthBox& RenderStyle::scrollMargin() const
+const Style::ScrollMargin& RenderStyle::scrollMargin() const
 {
     return m_nonInheritedData->rareData->scrollMargin;
 }
 
-const Length& RenderStyle::scrollMarginTop() const
+const Style::ScrollMarginEdge& RenderStyle::scrollMarginTop() const
 {
     return scrollMargin().top();
 }
 
-const Length& RenderStyle::scrollMarginBottom() const
+const Style::ScrollMarginEdge& RenderStyle::scrollMarginBottom() const
 {
     return scrollMargin().bottom();
 }
 
-const Length& RenderStyle::scrollMarginLeft() const
+const Style::ScrollMarginEdge& RenderStyle::scrollMarginLeft() const
 {
     return scrollMargin().left();
 }
 
-const Length& RenderStyle::scrollMarginRight() const
+const Style::ScrollMarginEdge& RenderStyle::scrollMarginRight() const
 {
     return scrollMargin().right();
 }
 
-void RenderStyle::setScrollMarginTop(Length&& length)
+void RenderStyle::setScrollMarginTop(Style::ScrollMarginEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.top(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.top(), WTFMove(edge));
 }
 
-void RenderStyle::setScrollMarginBottom(Length&& length)
+void RenderStyle::setScrollMarginBottom(Style::ScrollMarginEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.bottom(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.bottom(), WTFMove(edge));
 }
 
-void RenderStyle::setScrollMarginLeft(Length&& length)
+void RenderStyle::setScrollMarginLeft(Style::ScrollMarginEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.left(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.left(), WTFMove(edge));
 }
 
-void RenderStyle::setScrollMarginRight(Length&& length)
+void RenderStyle::setScrollMarginRight(Style::ScrollMarginEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.right(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollMargin.right(), WTFMove(edge));
 }
 
-const LengthBox& RenderStyle::scrollPadding() const
+const Style::ScrollPadding& RenderStyle::scrollPadding() const
 {
     return m_nonInheritedData->rareData->scrollPadding;
 }
 
-const Length& RenderStyle::scrollPaddingTop() const
+const Style::ScrollPaddingEdge& RenderStyle::scrollPaddingTop() const
 {
     return scrollPadding().top();
 }
 
-const Length& RenderStyle::scrollPaddingBottom() const
+const Style::ScrollPaddingEdge& RenderStyle::scrollPaddingBottom() const
 {
     return scrollPadding().bottom();
 }
 
-const Length& RenderStyle::scrollPaddingLeft() const
+const Style::ScrollPaddingEdge& RenderStyle::scrollPaddingLeft() const
 {
     return scrollPadding().left();
 }
 
-const Length& RenderStyle::scrollPaddingRight() const
+const Style::ScrollPaddingEdge& RenderStyle::scrollPaddingRight() const
 {
     return scrollPadding().right();
 }
 
-void RenderStyle::setScrollPaddingTop(Length&& length)
+void RenderStyle::setScrollPaddingTop(Style::ScrollPaddingEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.top(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.top(), WTFMove(edge));
 }
 
-void RenderStyle::setScrollPaddingBottom(Length&& length)
+void RenderStyle::setScrollPaddingBottom(Style::ScrollPaddingEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.bottom(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.bottom(), WTFMove(edge));
 }
 
-void RenderStyle::setScrollPaddingLeft(Length&& length)
+void RenderStyle::setScrollPaddingLeft(Style::ScrollPaddingEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.left(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.left(), WTFMove(edge));
 }
 
-void RenderStyle::setScrollPaddingRight(Length&& length)
+void RenderStyle::setScrollPaddingRight(Style::ScrollPaddingEdge&& edge)
 {
-    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.right(), WTFMove(length));
+    SET_NESTED_VAR(m_nonInheritedData, rareData, scrollPadding.right(), WTFMove(edge));
 }
 
 ScrollSnapType RenderStyle::initialScrollSnapType()

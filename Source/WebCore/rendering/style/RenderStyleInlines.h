@@ -70,6 +70,8 @@
 
 namespace WebCore {
 
+using namespace CSS::Literals;
+
 inline const Style::Color& RenderStyle::accentColor() const { return m_rareInheritedData->accentColor; }
 inline bool RenderStyle::affectsTransform() const { return hasTransform() || offsetPath() || rotate() || scale() || translate(); }
 inline const StyleContentAlignmentData& RenderStyle::alignContent() const { return m_nonInheritedData->miscData->alignContent; }
@@ -480,8 +482,8 @@ inline GapLength RenderStyle::initialRowGap() { return { }; }
 constexpr RubyPosition RenderStyle::initialRubyPosition() { return RubyPosition::Over; }
 constexpr RubyAlign RenderStyle::initialRubyAlign() { return RubyAlign::SpaceAround; }
 constexpr RubyOverhang RenderStyle::initialRubyOverhang() { return RubyOverhang::Auto; }
-inline Length RenderStyle::initialScrollMargin() { return zeroLength(); }
-inline Length RenderStyle::initialScrollPadding() { return { }; }
+inline Style::ScrollMarginEdge RenderStyle::initialScrollMargin() { return Style::ScrollMarginEdge { 0_css_px }; }
+inline Style::ScrollPaddingEdge RenderStyle::initialScrollPadding() { return Style::ScrollPaddingEdge { CSS::Keyword::Auto { } }; }
 inline std::optional<ScrollbarColor> RenderStyle::initialScrollbarColor() { return std::nullopt; }
 constexpr ScrollbarWidth RenderStyle::initialScrollbarWidth() { return ScrollbarWidth::Auto; }
 constexpr StyleSelfAlignmentData RenderStyle::initialSelfAlignment() { return { ItemPosition::Auto, OverflowAlignment::Default }; }

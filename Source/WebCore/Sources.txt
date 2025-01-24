@@ -3167,6 +3167,8 @@ style/values/images/StyleGradient.cpp
 style/values/primitives/StyleLengthResolution.cpp
 style/values/primitives/StylePosition.cpp
 style/values/primitives/StylePrimitiveNumericTypes+Conversions.cpp
+style/values/scroll-snap/StyleScrollMargin.cpp
+style/values/scroll-snap/StyleScrollPadding.cpp
 style/values/shapes/StyleBasicShape.cpp
 style/values/shapes/StyleCircleFunction.cpp
 style/values/shapes/StyleEllipseFunction.cpp

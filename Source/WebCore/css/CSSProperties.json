@@ -8930,7 +8930,7 @@
         "scroll-margin-bottom": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-bottom"
                 ],
@@ -8948,7 +8948,7 @@
         "scroll-margin-left": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-left"
                 ],
@@ -8966,7 +8966,7 @@
         "scroll-margin-right": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-right"
                 ],
@@ -8984,7 +8984,7 @@
         "scroll-margin-top": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-top"
                 ],
@@ -9096,7 +9096,7 @@
         "scroll-padding-bottom": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "bottom"
@@ -9111,7 +9111,7 @@
         "scroll-padding-left": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "left"
@@ -9126,7 +9126,7 @@
         "scroll-padding-right": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "right"
@@ -9141,7 +9141,7 @@
         "scroll-padding-top": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "top"

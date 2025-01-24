@@ -83,6 +83,8 @@
 #include "StyleRayFunction.h"
 #include "StyleReflection.h"
 #include "StyleResolveForFont.h"
+#include "StyleScrollMargin.h"
+#include "StyleScrollPadding.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleTextEdge.h"
 #include "TabSize.h"
@@ -256,6 +258,9 @@ public:
     static Vector<PositionTryFallback> convertPositionTryFallbacks(const BuilderState&, const CSSValue&);
 
     template<CSSValueID, CSSValueID> static WebCore::Length convertPositionComponent(const BuilderState&, const CSSValue&);
+
+    static Style::ScrollPaddingEdge convertScrollPaddingEdge(const BuilderState&, const CSSValue&);
+    static Style::ScrollMarginEdge convertScrollMarginEdge(const BuilderState&, const CSSValue&);
 
 private:
     friend class BuilderCustom;
@@ -2232,6 +2237,16 @@ inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks
         auto fallback = fallbackForValueList(*itemList);
         return fallback ? *fallback : PositionTryFallback { };
     });
+}
+
+inline Style::ScrollPaddingEdge BuilderConverter::convertScrollPaddingEdge(const BuilderState& builderState, const CSSValue& value)
+{
+    return Style::scrollPaddingEdgeFromCSSValue(value, builderState);
+}
+
+inline Style::ScrollMarginEdge BuilderConverter::convertScrollMarginEdge(const BuilderState& builderState, const CSSValue& value)
+{
+    return Style::scrollMarginEdgeFromCSSValue(value, builderState);
 }
 
 } // namespace Style
