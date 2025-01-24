@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2017 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -146,19 +147,21 @@ void RenderTreeBuilder::Inline::insertChildToContinuation(RenderInline& parent, 
     } else
         ASSERT_NOT_REACHED();
 
-    if (child->isFloatingOrOutOfFlowPositioned())
-        return m_builder.attachIgnoringContinuation(*beforeChildAncestor, WTFMove(child), beforeChild);
-
+    // If the two candidates are the same, no further checking is necessary.
     if (flow == beforeChildAncestor)
         return m_builder.attachIgnoringContinuation(*flow, WTFMove(child), beforeChild);
-    // A continuation always consists of two potential candidates: an inline or an anonymous
-    // block box holding block children.
-    bool childInline = newChildIsInline(parent, *child);
+
+    // A table part will be wrapped by an inline anonymous table when it is added
+    // to the layout tree, so treat it as inline when deciding where to add
+    // it. Floating and out-of-flow-positioned objects can also live under
+    // inlines, and since this about adding a child to an inline parent, we
+    // should not put them into a block continuation.
+    bool addInsideInline = newChildIsInline(parent, *child) || child->isFloatingOrOutOfFlowPositioned() || child->isTablePart();
     // The goal here is to match up if we can, so that we can coalesce and create the
     // minimal # of continuations needed for the inline.
-    if (childInline == beforeChildAncestor->isInline() || (beforeChild && beforeChild->isInline()))
+    if (addInsideInline == beforeChildAncestor->isInline() || (beforeChild && beforeChild->isInline()))
         return m_builder.attachIgnoringContinuation(*beforeChildAncestor, WTFMove(child), beforeChild);
-    if (flow->isInline() == childInline)
+    if (flow->isInline() == addInsideInline)
         return m_builder.attachIgnoringContinuation(*flow, WTFMove(child)); // Just treat like an append.
     return m_builder.attachIgnoringContinuation(*beforeChildAncestor, WTFMove(child), beforeChild);
 }
