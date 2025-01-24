@@ -321,13 +321,13 @@ void pas_probabilistic_guard_malloc_initialize_pgm(void)
 {
     if (!pas_probabilistic_guard_malloc_is_initialized) {
         pas_probabilistic_guard_malloc_is_initialized = true;
-
+#if 0
         if (PAS_LIKELY(pas_get_fast_random(1000) >= 1)) {
             pas_probabilistic_guard_malloc_can_use = false;
             return;
         }
-
-        pas_probabilistic_guard_malloc_random = pas_get_secure_random(1000) + 4000;
+#endif
+        pas_probabilistic_guard_malloc_random = pas_get_secure_random(20) + 100;
     }
 }
 
