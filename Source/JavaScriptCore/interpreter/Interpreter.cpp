@@ -257,9 +257,6 @@ unsigned sizeOfVarargs(JSGlobalObject* globalObject, JSValue arguments, uint32_t
     }
     RETURN_IF_EXCEPTION(scope, 0);
     
-    if (length > maxArguments)
-        throwStackOverflowError(globalObject, scope);
-
     if (length >= firstVarArgOffset)
         length -= firstVarArgOffset;
     else
@@ -288,7 +285,7 @@ unsigned sizeFrameForVarargs(JSGlobalObject* globalObject, CallFrame* callFrame,
     RETURN_IF_EXCEPTION(scope, 0);
 
     CallFrame* calleeFrame = calleeFrameForVarargs(callFrame, numUsedStackSlots, length + 1);
-    if (UNLIKELY(length > maxArguments || !vm.ensureStackCapacityFor(calleeFrame->registers()))) {
+    if (UNLIKELY(!vm.ensureStackCapacityFor(calleeFrame->registers()))) {
         throwStackOverflowError(globalObject, scope);
         return 0;
     }
@@ -1246,7 +1243,7 @@ ALWAYS_INLINE JSValue Interpreter::executeCallImpl(VM& vm, JSObject* function, c
     size_t argsCount = 1 + args.size(); // implicit "this" parameter
 
     VMEntryScope entryScope(vm, globalObject);
-    if (UNLIKELY(!vm.isSafeToRecurseSoft() || args.size() > maxArguments))
+    if (UNLIKELY(!vm.isSafeToRecurseSoft()))
         return throwStackOverflowError(globalObject, scope);
 
     if (UNLIKELY(vm.disallowVMEntryCount))
@@ -1341,7 +1338,7 @@ JSObject* Interpreter::executeConstruct(JSObject* constructor, const CallData& c
     }
 
     VMEntryScope entryScope(vm, globalObject);
-    if (UNLIKELY(!vm.isSafeToRecurseSoft() || args.size() > maxArguments)) {
+    if (UNLIKELY(!vm.isSafeToRecurseSoft())) {
         throwStackOverflowError(globalObject, throwScope);
         return nullptr;
     }
