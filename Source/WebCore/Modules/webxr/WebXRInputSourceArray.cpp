@@ -133,7 +133,7 @@ void WebXRInputSourceArray::handleRemovedInputSources(const InputSourceList& inp
     //  3.1 Let inputSource be the XRInputSource in session's list of active XR input sources associated with the XR input source.
     //  3.2 Add inputSource to removed.
     m_inputSources.removeAllMatching([&inputSources, &removed, &removedWithInputEvents, &inputEvents](auto& source) {
-        if (!WTF::anyOf(inputSources, [&source](auto& item) { return item.handle == source->handle(); })) {
+        if (!std::ranges::any_of(inputSources, [&source](auto& item) { return item.handle == source->handle(); })) {
             Vector<Ref<XRInputSourceEvent>> sourceInputEvents;
             source->disconnect();
             source->pollEvents(sourceInputEvents);

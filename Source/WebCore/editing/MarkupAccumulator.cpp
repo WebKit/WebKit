@@ -876,7 +876,7 @@ static bool isElementExcludedByRule(const MarkupExclusionRule& rule, const Eleme
 
 bool MarkupAccumulator::shouldExcludeElement(const Element& element)
 {
-    return WTF::anyOf(m_exclusionRules, [&](auto& rule) {
+    return std::ranges::any_of(m_exclusionRules, [&](auto& rule) {
         return isElementExcludedByRule(rule, element);
     });
 }

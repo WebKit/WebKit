@@ -580,7 +580,7 @@ std::optional<OrganizationStorageAccessPromptQuirk> NetworkStorageSession::stora
         auto entry = quirkDomains.find(topDomain);
         if (entry == quirkDomains.end())
             continue;
-        if (!WTF::anyOf(entry->value, [&subDomain](auto&& entry) { return entry == subDomain; }))
+        if (!std::ranges::any_of(entry->value, [&subDomain](auto&& entry) { return entry == subDomain; }))
             break;
         return quirk;
     }

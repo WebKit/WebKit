@@ -210,7 +210,9 @@ static bool isAudioTransceiver(const RTCPeerConnection::AddTransceiverTrackOrKin
 static std::optional<Exception> validateSendEncodings(Vector<RTCRtpEncodingParameters>& encodings, bool isAudio)
 {
     size_t encodingIndex = 0;
-    bool hasAnyScaleResolutionDownBy = !isAudio && WTF::anyOf(encodings, [] (auto& encoding){ return !!encoding.scaleResolutionDownBy; });
+    bool hasAnyScaleResolutionDownBy = !isAudio && std::ranges::any_of(encodings, [] (auto& encoding) {
+        return !!encoding.scaleResolutionDownBy;
+    });
     for (auto& encoding: encodings) {
         // FIXME: Validate rid and codec
         if (isAudio) {

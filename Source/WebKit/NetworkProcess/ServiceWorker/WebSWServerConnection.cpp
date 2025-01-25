@@ -556,7 +556,7 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionC
 
 bool WebSWServerConnection::hasMatchingClient(const RegistrableDomain& domain) const
 {
-    return WTF::anyOf(m_clientOrigins.values(), [&domain](auto& origin) {
+    return std::ranges::any_of(m_clientOrigins.values(), [&domain](auto& origin) {
         return domain.matches(origin.clientOrigin);
     });
 }

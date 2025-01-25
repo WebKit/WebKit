@@ -860,7 +860,7 @@ auto TextManipulationController::replace(const ManipulationItemData& item, const
         } else
             tokensInCurrentNode = createUnit(content.text, *content.node).tokens;
 
-        bool isNodeIncluded = WTF::anyOf(tokensInCurrentNode, [] (auto& token) {
+        bool isNodeIncluded = std::ranges::any_of(tokensInCurrentNode, [] (auto& token) {
             return !token.isExcluded;
         });
         for (auto& token : tokensInCurrentNode) {

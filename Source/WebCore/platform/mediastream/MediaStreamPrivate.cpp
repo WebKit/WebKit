@@ -127,7 +127,9 @@ void MediaStreamPrivate::forEachTrack(const Function<void(MediaStreamTrackPrivat
 
 bool MediaStreamPrivate::computeActiveState()
 {
-    return WTF::anyOf(m_trackSet, [](auto& track) { return !track.value->ended(); });
+    return WTF::anyOf(m_trackSet, [](auto& track) {
+        return !track.value->ended();
+    });
 }
 
 void MediaStreamPrivate::updateActiveState()

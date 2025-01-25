@@ -828,7 +828,9 @@ bool WebProcessProxy::shouldDropNearSuspendedAssertionAfterDelay() const
         // The setting come from pages but this process has no page, we thus use the default setting value.
         return defaultShouldDropNearSuspendedAssertionAfterDelay();
     }
-    return WTF::anyOf(m_pageMap.values(), [](auto& page) { return page->preferences().shouldDropNearSuspendedAssertionAfterDelay(); });
+    return std::ranges::any_of(m_pageMap.values(), [](auto& page) {
+        return page->preferences().shouldDropNearSuspendedAssertionAfterDelay();
+    });
 }
 
 void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataStore beginsUsingDataStore)
@@ -1946,7 +1948,7 @@ void WebProcessProxy::updateAudibleMediaAssertions()
         return;
 #endif
 
-    bool hasAudibleWebPage = WTF::anyOf(pages(), [] (auto& page) {
+    bool hasAudibleWebPage = std::ranges::any_of(pages(), [] (auto& page) {
         return page->isPlayingAudio();
     });
 
@@ -1967,7 +1969,7 @@ void WebProcessProxy::updateAudibleMediaAssertions()
 
 void WebProcessProxy::updateMediaStreamingActivity()
 {
-    bool hasMediaStreamingWebPage = WTF::anyOf(pages(), [] (auto& page) {
+    bool hasMediaStreamingWebPage = std::ranges::any_of(pages(), [] (auto& page) {
         return page->hasMediaStreaming();
     });
 
@@ -2590,7 +2592,7 @@ void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType worker
 
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateRemoteWorkerProcessAssertion: workerType=%" PUBLIC_LOG_STRING, workerType == RemoteWorkerType::SharedWorker ? "shared" : "service");
 
-    bool shouldTakeForegroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
+    bool shouldTakeForegroundActivity = std::ranges::any_of(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_foregroundToken;
     });
     if (shouldTakeForegroundActivity) {
@@ -2599,7 +2601,7 @@ void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType worker
         return;
     }
 
-    bool shouldTakeBackgroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
+    bool shouldTakeBackgroundActivity = std::ranges::any_of(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_backgroundToken;
     });
     if (shouldTakeBackgroundActivity) {

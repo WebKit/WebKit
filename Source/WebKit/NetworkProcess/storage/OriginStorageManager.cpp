@@ -299,7 +299,7 @@ bool OriginStorageManager::StorageBucket::isEmpty()
     ASSERT(!RunLoop::isMain());
 
     auto files = FileSystem::listDirectory(m_rootPath);
-    auto hasValidFile = WTF::anyOf(files, [&](auto file) {
+    auto hasValidFile = std::ranges::any_of(files, [&](auto file) {
         bool isInvalidFile = (file == originFileName);
 #if PLATFORM(COCOA)
         isInvalidFile |= (file == ".DS_Store"_s);

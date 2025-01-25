@@ -613,7 +613,7 @@ void IDBServer::closeDatabasesForOrigins(const Vector<SecurityOriginData>& targe
     HashSet<UniqueIDBDatabase*> openDatabases;
     for (auto& database : m_uniqueIDBDatabaseMap.values()) {
         const auto& databaseOrigin = database->identifier().origin();
-        bool filtered = WTF::anyOf(targetOrigins, [&databaseOrigin, &filter](auto& targetOrigin) {
+        bool filtered = std::ranges::any_of(targetOrigins, [&databaseOrigin, &filter](auto& targetOrigin) {
             return filter(targetOrigin, databaseOrigin);
         });
         if (filtered)

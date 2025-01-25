@@ -40,7 +40,7 @@ bool contentTypeMeetsContainerAndCodecTypeRequirements(const ContentType& type, 
         return true;
 
     return WTF::allOf(type.codecs(), [&] (auto& codec) {
-        return WTF::anyOf(*allowedMediaCodecTypes, [&] (auto& allowedCodec) {
+        return std::ranges::any_of(*allowedMediaCodecTypes, [&] (auto& allowedCodec) {
             return codec.startsWith(allowedCodec);
         });
     });

@@ -328,7 +328,7 @@ Vector<AtomString> CDMPrivateFairPlayStreaming::supportedInitDataTypes() const
 
 bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfiguration& configuration) const
 {
-    if (!WTF::anyOf(configuration.initDataTypes, [] (auto& initDataType) { return validInitDataTypes().contains(initDataType); })) {
+    if (!std::ranges::any_of(configuration.initDataTypes, [] (auto& initDataType) { return validInitDataTypes().contains(initDataType); })) {
         INFO_LOG(LOGIDENTIFIER, " false, no initDataType supported");
         return false;
     }
@@ -353,7 +353,7 @@ bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfig
     }
 
     if (!configuration.audioCapabilities.isEmpty()
-        && !WTF::anyOf(configuration.audioCapabilities, [](auto& capability) {
+        && !std::ranges::any_of(configuration.audioCapabilities, [](auto& capability) {
             return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
         })) {
         INFO_LOG(LOGIDENTIFIER, "false, no audio configuration supported");
@@ -361,7 +361,7 @@ bool CDMPrivateFairPlayStreaming::supportsConfiguration(const CDMKeySystemConfig
     }
 
     if (!configuration.videoCapabilities.isEmpty()
-        && !WTF::anyOf(configuration.videoCapabilities, [](auto& capability) {
+        && !std::ranges::any_of(configuration.videoCapabilities, [](auto& capability) {
             return CDMInstanceFairPlayStreamingAVFObjC::supportsMediaCapability(capability);
         })) {
             INFO_LOG(LOGIDENTIFIER, "false, no video configuration supported");
@@ -459,7 +459,7 @@ bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataTyp
         return false;
 
     if (initDataType == sinfName()) {
-        return WTF::anyOf(extractSchemeAndKeyIdFromSinf(initData), [](auto& result) {
+        return std::ranges::any_of(extractSchemeAndKeyIdFromSinf(initData), [](auto& result) {
             return validFairPlayStreamingSchemes().contains(result.first);
         });
     }
@@ -470,7 +470,7 @@ bool CDMPrivateFairPlayStreaming::supportsInitData(const AtomString& initDataTyp
         if (!psshBoxes)
             return false;
 
-        return WTF::anyOf(psshBoxes.value(), [](auto& psshBox) {
+        return std::ranges::any_of(psshBoxes.value(), [](auto& psshBox) {
             return is<ISOFairPlayStreamingPsshBox>(*psshBox);
         });
     }

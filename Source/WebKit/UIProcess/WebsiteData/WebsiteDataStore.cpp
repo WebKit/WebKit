@@ -991,7 +991,9 @@ void WebsiteDataStore::resetServiceWorkerTimeoutForTesting()
 
 bool WebsiteDataStore::hasServiceWorkerBackgroundActivityForTesting() const
 {
-    return WTF::anyOf(WebProcessPool::allProcessPools(), [](auto& pool) { return pool->hasServiceWorkerBackgroundActivityForTesting(); });
+    return std::ranges::any_of(WebProcessPool::allProcessPools(), [](auto& pool) {
+        return pool->hasServiceWorkerBackgroundActivityForTesting();
+    });
 }
 
 void WebsiteDataStore::runningOrTerminatingServiceWorkerCountForTesting(CompletionHandler<void(unsigned)>&& completionHandler)
@@ -1893,8 +1895,8 @@ void WebsiteDataStore::setPrivateTokenIPCForTesting(bool enabled)
 
 bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const
 {
-    return WTF::anyOf(m_processes, [] (const WebProcessProxy& process) {
-        return WTF::anyOf(process.pages(), [](auto& page) {
+    return std::ranges::any_of(m_processes, [] (const WebProcessProxy& process) {
+        return std::ranges::any_of(process.pages(), [](auto& page) {
             return page->preferences().blobRegistryTopOriginPartitioningEnabled();
         });
     });
@@ -1903,8 +1905,8 @@ bool WebsiteDataStore::isBlobRegistryPartitioningEnabled() const
 #if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
 bool WebsiteDataStore::isOptInCookiePartitioningEnabled() const
 {
-    return WTF::anyOf(m_processes, [] (const WebProcessProxy& process) {
-        return WTF::anyOf(process.pages(), [](auto& page) {
+    return std::ranges::any_of(m_processes, [] (const WebProcessProxy& process) {
+        return std::ranges::any_of(process.pages(), [](auto& page) {
             return page->preferences().optInPartitionedCookiesEnabled();
         });
     });
@@ -2584,7 +2586,7 @@ void WebsiteDataStore::resumeDownload(const DownloadProxy& downloadProxy, const 
 
 bool WebsiteDataStore::hasActivePages()
 {
-    return WTF::anyOf(WebProcessPool::allProcessPools(), [&](auto& pool) {
+    return std::ranges::any_of(WebProcessPool::allProcessPools(), [&](auto& pool) {
         return pool->hasPagesUsingWebsiteDataStore(*this);
     });
 }

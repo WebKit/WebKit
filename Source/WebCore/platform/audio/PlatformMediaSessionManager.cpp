@@ -139,7 +139,7 @@ bool PlatformMediaSessionManager::activeAudioSessionRequired() const
     if (anyOfSessions([] (auto& session) { return session.activeAudioSessionRequired(); }))
         return true;
 
-    return WTF::anyOf(m_audioCaptureSources, [](auto& source) {
+    return std::ranges::any_of(m_audioCaptureSources, [](auto& source) {
         return source.isCapturingAudio();
     });
 #else
@@ -701,7 +701,7 @@ void PlatformMediaSessionManager::forEachSession(const Function<void(PlatformMed
 
 bool PlatformMediaSessionManager::anyOfSessions(const Function<bool(const PlatformMediaSession&)>& predicate) const
 {
-    return WTF::anyOf(m_sessions, [&predicate](const auto& session) {
+    return std::ranges::any_of(m_sessions, [&predicate](const auto& session) {
         return predicate(*session);
     });
 }

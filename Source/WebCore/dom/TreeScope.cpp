@@ -707,7 +707,7 @@ bool TreeScope::isElementWithPendingSVGResources(SVGElement& element) const
 {
     // This algorithm takes time proportional to the number of pending resources and need not.
     // If performance becomes an issue we can keep a counted set of elements and answer the question efficiently.
-    return WTF::anyOf(svgResourcesMap().pendingResources.values(), [&] (auto& elements) {
+    return std::ranges::any_of(svgResourcesMap().pendingResources.values(), [&] (auto& elements) {
         return elements.contains(element);
     });
 }

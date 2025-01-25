@@ -2147,10 +2147,10 @@ void WebProcess::grantUserMediaDeviceSandboxExtensions(MediaDeviceSandboxExtensi
 static inline void checkDocumentsCaptureStateConsistency(const Vector<String>& extensionIDs)
 {
 #if ASSERT_ENABLED
-    bool isCapturingAudio = WTF::anyOf(Document::allDocumentsMap().values(), [](auto& document) {
+    bool isCapturingAudio = std::ranges::any_of(Document::allDocumentsMap().values(), [](auto& document) {
         return document->mediaState() & MediaProducer::MicrophoneCaptureMask;
     });
-    bool isCapturingVideo = WTF::anyOf(Document::allDocumentsMap().values(), [](auto& document) {
+    bool isCapturingVideo = std::ranges::any_of(Document::allDocumentsMap().values(), [](auto& document) {
         return document->mediaState() & MediaProducer::VideoCaptureMask;
     });
 

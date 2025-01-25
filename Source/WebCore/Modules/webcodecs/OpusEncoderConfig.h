@@ -37,7 +37,7 @@ struct OpusEncoderConfig {
     bool isValid()
     {
         float frameDurationMs = frameDuration / 1000.0;
-        if (!WTF::anyOf(Vector<float> { 2.5, 5, 10, 20, 40, 60, 120 }, [frameDurationMs](auto value) -> bool {
+        if (!std::ranges::any_of(Vector<float> { 2.5, 5, 10, 20, 40, 60, 120 }, [frameDurationMs](auto value) -> bool {
             return WTF::areEssentiallyEqual(value, frameDurationMs);
         })) {
             return false;

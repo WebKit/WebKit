@@ -43,7 +43,7 @@ void NetworkOriginAccessPatterns::allowAccessTo(const WebCore::UserContentURLPat
 bool NetworkOriginAccessPatterns::anyPatternMatches(const URL& url) const
 {
     ASSERT(RunLoop::isMain());
-    return WTF::anyOf(m_patterns, [&] (auto& pattern) {
+    return std::ranges::any_of(m_patterns, [&] (auto& pattern) {
         return pattern.matches(url);
     });
 }

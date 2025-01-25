@@ -105,6 +105,30 @@ namespace WTF {
         typename HashTableType::iterator m_impl;
     };
 
+    template<typename T, typename U>
+    inline bool operator==(const HashTableConstIteratorAdapter<T, U>& a, const HashTableConstIteratorAdapter<T, U>& b)
+    {
+        return a.m_impl == b.m_impl;
+    }
+
+    template<typename T, typename U>
+    inline bool operator==(const HashTableIteratorAdapter<T, U>& a, const HashTableIteratorAdapter<T, U>& b)
+    {
+        return a.m_impl == b.m_impl;
+    }
+
+    template<typename T, typename U>
+    inline bool operator==(const HashTableConstIteratorAdapter<T, U>& a, const HashTableIteratorAdapter<T, U>& b)
+    {
+        return a.m_impl == b.m_impl;
+    }
+
+    template<typename T, typename U>
+    inline bool operator==(const HashTableIteratorAdapter<T, U>& a, const HashTableConstIteratorAdapter<T, U>& b)
+    {
+        return a.m_impl == b.m_impl;
+    }
+
     template<typename HashTableType, typename KeyType, typename MappedType> struct HashTableConstKeysIterator {
     public:
         using iterator_category = std::forward_iterator_tag;
