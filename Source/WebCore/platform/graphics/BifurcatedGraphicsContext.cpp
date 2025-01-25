@@ -419,6 +419,14 @@ void BifurcatedGraphicsContext::drawPattern(NativeImage& nativeImage, const Floa
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
+void BifurcatedGraphicsContext::drawPattern(ImageBuffer& image, const FloatRect& destRect, const FloatRect& source, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    m_primaryContext.drawPattern(image, destRect, source, patternTransform, phase, spacing, options);
+    m_secondaryContext.drawPattern(image, destRect, source, patternTransform, phase, spacing, options);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
 ImageDrawResult BifurcatedGraphicsContext::drawImage(Image& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
 {
     auto result = m_primaryContext.drawImage(image, destination, source, options);
@@ -447,6 +455,22 @@ ImageDrawResult BifurcatedGraphicsContext::drawTiledImage(Image& image, const Fl
     VERIFY_STATE_SYNCHRONIZATION();
 
     return result;
+}
+
+void BifurcatedGraphicsContext::drawImageBuffer(ImageBuffer& image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+{
+    m_primaryContext.drawImageBuffer(image, destination, source, options);
+    m_secondaryContext.drawImageBuffer(image, destination, source, options);
+
+    VERIFY_STATE_SYNCHRONIZATION();
+}
+
+void BifurcatedGraphicsContext::drawConsumingImageBuffer(RefPtr<ImageBuffer> image, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions options)
+{
+    m_primaryContext.drawConsumingImageBuffer(image, destination, source, options);
+    m_secondaryContext.drawConsumingImageBuffer(image, destination, source, options);
+
+    VERIFY_STATE_SYNCHRONIZATION();
 }
 
 #if ENABLE(VIDEO)

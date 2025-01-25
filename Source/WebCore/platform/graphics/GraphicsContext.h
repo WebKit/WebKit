@@ -68,7 +68,7 @@ class GraphicsContext {
     friend class BifurcatedGraphicsContext;
     friend class DisplayList::DrawNativeImage;
     friend class NativeImage;
-    friend class ImageBuffer;
+    friend class ImageBufferBackend;
 public:
     // Indicates if draw operations read the sources such as NativeImage backing stores immediately
     // during draw operations.
@@ -79,6 +79,8 @@ public:
     WEBCORE_EXPORT GraphicsContext(IsDeferred = IsDeferred::No, const GraphicsContextState::ChangeFlags& = { }, InterpolationQuality = InterpolationQuality::Default);
     WEBCORE_EXPORT GraphicsContext(IsDeferred, const GraphicsContextState&);
     WEBCORE_EXPORT virtual ~GraphicsContext();
+
+    IsDeferred isDeferred() const { return m_isDeferred; }
 
     virtual bool hasPlatformContext() const { return false; }
     virtual PlatformGraphicsContext* platformContext() const { return nullptr; }
@@ -377,7 +379,6 @@ private:
     virtual void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions = { }) = 0;
 
 protected:
-    WEBCORE_EXPORT RefPtr<NativeImage> nativeImageForDrawing(ImageBuffer&);
     WEBCORE_EXPORT void fillEllipseAsPath(const FloatRect&);
     WEBCORE_EXPORT void strokeEllipseAsPath(const FloatRect&);
 

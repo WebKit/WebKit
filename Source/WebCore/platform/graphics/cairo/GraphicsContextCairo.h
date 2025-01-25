@@ -109,8 +109,6 @@ public:
     Vector<float>& layers();
     void pushImageMask(cairo_surface_t*, const FloatRect&);
 
-    // Exposed as public because freestanding functions use this.
-    using GraphicsContext::nativeImageForDrawing;
 private:
     RefPtr<cairo_t> m_cr;
 

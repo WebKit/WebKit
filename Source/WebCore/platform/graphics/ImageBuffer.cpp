@@ -325,15 +325,26 @@ IntSize ImageBuffer::backendSize() const
 
 RefPtr<NativeImage> ImageBuffer::copyNativeImage() const
 {
-    if (auto* backend = ensureBackend())
+    if (auto* backend = ensureBackend()) {
+        const_cast<ImageBuffer&>(*this).flushDrawingContext();
         return backend->copyNativeImage();
+    }
     return nullptr;
 }
 
 RefPtr<NativeImage> ImageBuffer::createNativeImageReference() const
 {
-    if (auto* backend = ensureBackend())
+    if (auto* backend = ensureBackend()) {
+        const_cast<ImageBuffer&>(*this).flushDrawingContext();
         return backend->createNativeImageReference();
+    }
+    return nullptr;
+}
+
+RefPtr<NativeImage> ImageBuffer::nativeImageForDrawing(GraphicsContext& destContext)
+{
+    if (auto* backend = ensureBackend())
+        return backend->nativeImageForDrawing(destContext);
     return nullptr;
 }
 
@@ -494,6 +505,30 @@ RefPtr<NativeImage> ImageBuffer::sinkIntoNativeImage(RefPtr<ImageBuffer> source)
     if (!source)
         return nullptr;
     return source->sinkIntoNativeImage();
+}
+
+void ImageBuffer::draw(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const ImagePaintingOptions options)
+{
+    if (auto* backend = ensureBackend()) {
+        flushDrawingContext();
+        backend->draw(destContext, destRect, srcRect, options);
+    }
+}
+
+void ImageBuffer::drawConsuming(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions options)
+{
+    if (auto* backend = ensureBackend()) {
+        flushDrawingContext();
+        backend->drawConsuming(destContext, destRect, srcRect, options);
+    }
+}
+
+void ImageBuffer::drawPattern(GraphicsContext& destContext, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions options)
+{
+    if (auto* backend = ensureBackend()) {
+        flushDrawingContext();
+        backend->drawPattern(destContext, destRect, srcRect, patternTransform, phase, spacing, options);
+    }
 }
 
 void ImageBuffer::convertToLuminanceMask()
