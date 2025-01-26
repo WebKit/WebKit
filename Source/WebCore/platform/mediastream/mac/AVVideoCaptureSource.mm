@@ -30,6 +30,7 @@
 
 #import "FillLightMode.h"
 #import "ImageBuffer.h"
+#import "ImageRotationSessionVT.h"
 #import "ImageTransferSessionVT.h"
 #import "IntRect.h"
 #import "Logging.h"
@@ -250,6 +251,7 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const Capt
     , m_device(avDevice)
     , m_zoomScaleFactor(cameraZoomScaleFactor([avDevice deviceType]))
     , m_defaultTorchMode((int64_t)[m_device torchMode])
+    , m_currentRotationSessionAngle(VideoFrameRotation::None)
 {
     [m_device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
 }
@@ -1243,12 +1245,28 @@ void AVVideoCaptureSource::captureOutputDidOutputSampleBufferFromConnection(AVCa
     if (++m_framesCount <= framesToDropWhenStarting)
         return;
 
-    auto videoFrame = VideoFrameCV::create(sampleBuffer, [captureConnection isVideoMirrored], m_videoFrameRotation);
-    m_buffer = &videoFrame.get();
+    RefPtr<VideoFrame> videoFrame;
+    if (m_shouldApplyRotation && m_videoFrameRotation != VideoFrameRotation::None) {
+        auto pixelBuffer = static_cast<CVPixelBufferRef>(PAL::CMSampleBufferGetImageBuffer(sampleBuffer));
+
+        RetainPtr rotatedPixelBuffer = rotatePixelBuffer(pixelBuffer, m_videoFrameRotation);
+        if (!pixelBuffer) {
+            ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "failed to apply rotation");
+            return;
+        }
+
+        auto timeStamp = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sampleBuffer);
+        if (CMTIME_IS_INVALID(timeStamp))
+            timeStamp = PAL::CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+
+        videoFrame = VideoFrameCV::create(PAL::toMediaTime(timeStamp), [captureConnection isVideoMirrored], VideoFrameRotation::None, rotatedPixelBuffer.get());
+    } else
+        videoFrame = VideoFrameCV::create(sampleBuffer, [captureConnection isVideoMirrored], m_videoFrameRotation);
+    m_buffer = videoFrame.get();
     setIntrinsicSize(expandedIntSize(videoFrame->presentationSize()));
     VideoFrameTimeMetadata metadata;
     metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-    dispatchVideoFrameToObservers(WTFMove(videoFrame), metadata);
+    dispatchVideoFrameToObservers(videoFrame.releaseNonNull(), metadata);
 }
 
 void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCapturePhotoOutput>, RetainPtr<AVCapturePhoto> photo, RetainPtr<NSError> error)
@@ -1399,6 +1417,28 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
     ALWAYS_LOG_IF(loggerPtr(), LOGIDENTIFIER);
     if (this->device() == [notification object])
         captureFailed();
+}
+
+RetainPtr<CVPixelBufferRef> AVVideoCaptureSource::rotatePixelBuffer(CVPixelBufferRef pixelBuffer, VideoFrameRotation rotation)
+{
+    ASSERT(rotation != VideoFrameRotation::None);
+    if (rotation == VideoFrameRotation::None)
+        return pixelBuffer;
+
+    auto pixelWidth = CVPixelBufferGetWidth(pixelBuffer);
+    auto pixelHeight = CVPixelBufferGetHeight(pixelBuffer);
+    if (!m_rotationSession || rotation != m_currentRotationSessionAngle || pixelWidth != m_rotatedWidth || pixelHeight != m_rotatedHeight) {
+        RELEASE_LOG_INFO(WebRTC, "RealtimeOutgoingVideoSourceCocoa::rotatePixelBuffer creating rotation session for rotation %hu", rotation);
+        AffineTransform transform;
+        transform.rotate(static_cast<double>(rotation));
+        m_rotationSession = makeUnique<ImageRotationSessionVT>(WTFMove(transform), FloatSize { static_cast<float>(pixelWidth), static_cast<float>(pixelHeight) }, ImageRotationSessionVT::IsCGImageCompatible::No, ImageRotationSessionVT::ShouldUseIOSurface::Yes);
+
+        m_currentRotationSessionAngle = rotation;
+        m_rotatedWidth = pixelWidth;
+        m_rotatedHeight = pixelHeight;
+    }
+
+    return m_rotationSession->rotate(pixelBuffer);
 }
 
 } // namespace WebCore

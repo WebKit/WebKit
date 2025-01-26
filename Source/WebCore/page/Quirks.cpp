@@ -879,6 +879,11 @@ bool Quirks::shouldEnableSpeakerSelectionPermissionsPolicyQuirk() const
 {
     return needsQuirks() && m_quirksData.shouldEnableSpeakerSelectionPermissionsPolicyQuirk;
 }
+
+bool Quirks::shouldCameraTracksApplyRotationQuirk() const
+{
+    return needsQuirks() && m_quirksData.shouldCameraTracksApplyRotationQuirk;
+}
 #endif
 
 // hulu.com rdar://55041979
@@ -2685,6 +2690,10 @@ static void handleZoomQuirks(QuirksData& quirksData, const URL& quirksURL, const
 #if ENABLE(MEDIA_STREAM)
     // zoom.us rdar://118185086
     quirksData.shouldDisableImageCaptureQuirk = true;
+#if PLATFORM(VISION)
+    // zoom.us rdar://143095522
+    quirksData.shouldCameraTracksApplyRotationQuirk = true;
+#endif
 #endif
 }
 
