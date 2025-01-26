@@ -421,9 +421,9 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 #endif
 
         HashTable();
-        ~HashTable() 
+        ~HashTable()
         {
-            invalidateIterators(this); 
+            invalidateIterators(this);
             if (m_table)
                 deallocateTable(m_table);
 #if CHECK_HASHTABLE_USE_AFTER_DESTRUCTION
@@ -558,7 +558,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ValueType* expand(ValueType* entry = nullptr);
         void shrink() { rehash(tableSize() / 2, nullptr); }
         void shrinkToBestSize();
-    
+
         void deleteReleasedWeakBuckets();
 
         ValueType* rehash(unsigned newTableSize, ValueType* entry);
@@ -693,18 +693,18 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         while (true) {
             ValueType* entry = table + i;
-                
+
             // we count on the compiler to optimize out this branch
             if (HashFunctions::safeToCompareToEmptyOrDeleted) {
                 if (HashTranslator::equal(Extractor::extract(*entry), key))
                     return entry;
-                
+
                 if (isEmptyBucket(*entry))
                     return nullptr;
             } else {
                 if (isEmptyBucket(*entry))
                     return nullptr;
-                
+
                 if (!isDeletedBucket(*entry) && HashTranslator::equal(Extractor::extract(*entry), key))
                     return entry;
             }
@@ -789,21 +789,21 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         while (true) {
             ValueType* entry = table + i;
-            
+
             // we count on the compiler to optimize out this branch
             if (HashFunctions::safeToCompareToEmptyOrDeleted) {
                 if (isEmptyBucket(*entry))
                     return makeLookupResult(deletedEntry ? deletedEntry : entry, false, h);
-                
+
                 if (HashTranslator::equal(Extractor::extract(*entry), key))
                     return makeLookupResult(entry, true, h);
-                
+
                 if (isDeletedBucket(*entry))
                     deletedEntry = entry;
             } else {
                 if (isEmptyBucket(*entry))
                     return makeLookupResult(deletedEntry ? deletedEntry : entry, false, h);
-            
+
                 if (isDeletedBucket(*entry))
                     deletedEntry = entry;
                 else if (HashTranslator::equal(Extractor::extract(*entry), key))
@@ -858,7 +858,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             zeroBytes(bucket);
         }
     };
-    
+
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     inline void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::initializeBucket(ValueType& bucket)
     {
@@ -897,21 +897,21 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ValueType* entry;
         while (true) {
             entry = table + i;
-            
+
             // we count on the compiler to optimize out this branch
             if (HashFunctions::safeToCompareToEmptyOrDeleted) {
                 if (isEmptyBucket(*entry))
                     break;
-                
+
                 if (HashTranslator::equal(Extractor::extract(*entry), key))
                     return AddResult(makeKnownGoodIterator(entry), false);
-                
+
                 if (isDeletedBucket(*entry))
                     deletedEntry = entry;
             } else {
                 if (isEmptyBucket(*entry))
                     break;
-            
+
                 if (isDeletedBucket(*entry))
                     deletedEntry = entry;
                 else if (HashTranslator::equal(Extractor::extract(*entry), key))
@@ -939,12 +939,12 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         HashTranslator::translate(*entry, std::forward<T>(key), functor);
         setKeyCount(keyCount() + 1);
-        
+
         if (shouldExpand())
             entry = expand(entry);
 
         internalCheckTableConsistency();
-        
+
         return AddResult(makeKnownGoodIterator(entry), true);
     }
 
@@ -966,10 +966,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ValueType* entry = lookupResult.first.first;
         bool found = lookupResult.first.second;
         unsigned h = lookupResult.second;
-        
+
         if (found)
             return AddResult(makeKnownGoodIterator(entry), false);
-        
+
         if (isDeletedBucket(*entry)) {
             initializeBucket(*entry);
             setDeletedCount(deletedCount() - 1);
@@ -1007,7 +1007,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
-    template <typename HashTranslator, typename T> 
+    template <typename HashTranslator, typename T>
     auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::find(const T& key) -> iterator
     {
         if (!m_table)
@@ -1021,7 +1021,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
-    template <typename HashTranslator, typename T> 
+    template <typename HashTranslator, typename T>
     auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::find(const T& key) const -> const_iterator
     {
         if (!m_table)
@@ -1035,7 +1035,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
-    template <typename HashTranslator, typename T> 
+    template <typename HashTranslator, typename T>
     bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::contains(const T& key) const
     {
         if (!m_table)
@@ -1125,10 +1125,10 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
             ValueType& bucket = table[i];
             if (isEmptyOrDeletedBucket(bucket))
                 continue;
-            
+
             if (!functor(bucket))
                 continue;
-            
+
             deleteBucket(bucket);
             ++removedBucketCount;
         }
@@ -1139,7 +1139,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
         if (shouldShrink())
             shrinkToBestSize();
-        
+
         internalCheckTableConsistency();
         return removedBucketCount;
     }
@@ -1558,7 +1558,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         const ValueType* operator->() const { return get(); }
 
         HashTableConstIteratorAdapter& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableConstIteratorAdapter& operator++(int) { auto prev = *this; ++m_impl; return prev; }
 
         typename HashTableType::const_iterator m_impl;
     };
@@ -1578,7 +1578,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         ValueType* operator->() const { return get(); }
 
         HashTableIteratorAdapter& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableIteratorAdapter& operator++(int) { auto prev = *this; ++m_impl; return prev; }
 
         operator HashTableConstIteratorAdapter<HashTableType, ValueType>() {
             typename HashTableType::const_iterator i = m_impl;

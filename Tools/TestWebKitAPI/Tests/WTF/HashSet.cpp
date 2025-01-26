@@ -209,7 +209,7 @@ TEST(WTF_HashSet, UniquePtrKey_TakeUsingRawPointer)
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
     EXPECT_EQ(0u, ConstructorDestructorCounter::destructionCount);
-    
+
     result = nullptr;
 
     EXPECT_EQ(1u, ConstructorDestructorCounter::constructionCount);
@@ -437,7 +437,7 @@ TEST(WTF_HashSet, Ref)
 
         Ref<RefLogger> ref(a);
         set.add(WTFMove(ref));
-        
+
         ASSERT_TRUE(set.contains(&a));
     }
 
@@ -941,6 +941,20 @@ TEST(WTF_HashSet, FormSymmetricDifference)
         result.formSymmetricDifference(sequence);
         EXPECT_EQ(result, set3);
     }
+}
+
+TEST(WTF_HashSet, RangesAllAnyNoneOf)
+{
+    HashSet<int> set1 { 1, 2, 3 };
+    EXPECT_TRUE(std::ranges::all_of(set1, [] (int el) {
+        return el < 4;
+    }));
+    EXPECT_TRUE(std::ranges::none_of(set1, [] (int el) {
+        return el > 4;
+    }));
+    EXPECT_TRUE(std::ranges::any_of(set1, [] (int el) {
+        return el < 2;
+    }));
 }
 
 } // namespace TestWebKitAPI

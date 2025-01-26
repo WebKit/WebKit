@@ -95,7 +95,7 @@ public:
         for (const auto& keyValuePair : initializerList)
             add(keyValuePair.key, keyValuePair.value);
     }
-    
+
     template<typename... Items>
     static HashMap from(Items&&... items)
     {
@@ -119,7 +119,7 @@ public:
     iterator end();
     const_iterator begin() const;
     const_iterator end() const;
-    
+
     iterator random() { return m_impl.random(); }
     const_iterator random() const { return m_impl.random(); }
 
@@ -290,13 +290,13 @@ inline void HashMap<T, U, V, W, X, Y, shouldValidateKey>::swap(HashMap& other)
 template<typename T, typename U, typename V, typename W, typename X, typename Y, ShouldValidateKey shouldValidateKey>
 inline unsigned HashMap<T, U, V, W, X, Y, shouldValidateKey>::size() const
 {
-    return m_impl.size(); 
+    return m_impl.size();
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y, ShouldValidateKey shouldValidateKey>
 inline unsigned HashMap<T, U, V, W, X, Y, shouldValidateKey>::capacity() const
-{ 
-    return m_impl.capacity(); 
+{
+    return m_impl.capacity();
 }
 
 template<typename T, typename U, typename V, typename W, typename X, typename Y, ShouldValidateKey shouldValidateKey>
@@ -498,7 +498,7 @@ auto HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg, TableTra
 {
     return inlineEnsure(std::forward<KeyType>(key), functor);
 }
-    
+
 template<typename T, typename U, typename V, typename W, typename X, typename Y, ShouldValidateKey shouldValidateKey>
 inline auto HashMap<T, U, V, W, X, Y, shouldValidateKey>::get(const KeyType& key) const -> MappedPeekType
 {

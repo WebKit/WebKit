@@ -108,7 +108,7 @@ public:
     //   static bool equal(const ValueType&, const T&);
     //   static translate(ValueType&, const T&, unsigned hashCode);
     template<typename HashTranslator, typename T> AddResult add(const T&);
-    
+
     // An alternate version of translated add(), ensure() will still do translation
     // by hashing and comparing with some other type, to avoid the cost of type
     // conversion if the object is already in the table, but rather than a static
@@ -221,7 +221,7 @@ struct HashSetTranslator {
     static unsigned hash(const auto& key) { return HashFunctions::hash(key); }
     static bool equal(const auto& a, const auto& b) { return HashFunctions::equal(a, b); }
     static void translate(auto& location, auto&&, NOESCAPE const Invocable<typename ValueTraits::TraitType()> auto& functor)
-    { 
+    {
         ValueTraits::assignToEmpty(location, functor());
     }
 };
@@ -249,19 +249,19 @@ struct HashSetEnsureTranslatorAdaptor {
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline void HashSet<T, U, V, W, shouldValidateKey>::swap(HashSet& other)
 {
-    m_impl.swap(other.m_impl); 
+    m_impl.swap(other.m_impl);
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline unsigned HashSet<T, U, V, W, shouldValidateKey>::size() const
 {
-    return m_impl.size(); 
+    return m_impl.size();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline unsigned HashSet<T, U, V, W, shouldValidateKey>::capacity() const
 {
-    return m_impl.capacity(); 
+    return m_impl.capacity();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
@@ -273,31 +273,31 @@ inline unsigned HashSet<T, U, V, W, shouldValidateKey>::memoryUse() const
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline bool HashSet<T, U, V, W, shouldValidateKey>::isEmpty() const
 {
-    return m_impl.isEmpty(); 
+    return m_impl.isEmpty();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline auto HashSet<T, U, V, W, shouldValidateKey>::begin() const -> iterator
 {
-    return m_impl.begin(); 
+    return m_impl.begin();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline auto HashSet<T, U, V, W, shouldValidateKey>::end() const -> iterator
 {
-    return m_impl.end(); 
+    return m_impl.end();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline auto HashSet<T, U, V, W, shouldValidateKey>::find(const ValueType& value) const -> iterator
 {
-    return m_impl.find(value); 
+    return m_impl.find(value);
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline bool HashSet<T, U, V, W, shouldValidateKey>::contains(const ValueType& value) const
 {
-    return m_impl.contains(value); 
+    return m_impl.contains(value);
 }
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits, ShouldValidateKey shouldValidateKey>
@@ -397,7 +397,7 @@ inline bool HashSet<T, U, V, W, shouldValidateKey>::removeIf(NOESCAPE const Invo
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
 inline void HashSet<T, U, V, W, shouldValidateKey>::clear()
 {
-    m_impl.clear(); 
+    m_impl.clear();
 }
 
 template<typename T, typename U, typename V, typename W, ShouldValidateKey shouldValidateKey>
