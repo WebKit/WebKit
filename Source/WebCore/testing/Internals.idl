@@ -991,10 +991,6 @@ enum RenderingMode {
 
     boolean isSelectPopupVisible(HTMLSelectElement element);
 
-    boolean isPluginUnavailabilityIndicatorObscured(Element element);
-    DOMString unavailablePluginReplacementText(Element element);
-    boolean isPluginSnapshotted(Element element);
-
     DOMRect selectionBounds();
     StaticRange? selectedRange();
     undefined setSelectionWithoutValidation(Node baseNode, unsigned long baseOffset, Node? extentNode, unsigned long extentOffset);

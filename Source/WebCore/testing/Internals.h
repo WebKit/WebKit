@@ -827,10 +827,6 @@ public:
     void setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset);
     void setSelectionFromNone();
 
-    ExceptionOr<bool> isPluginUnavailabilityIndicatorObscured(Element&);
-    ExceptionOr<String> unavailablePluginReplacementText(Element&);
-    bool isPluginSnapshotted(Element&);
-
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
     void setMaximumSourceBufferSize(SourceBuffer&, uint64_t, DOMPromiseDeferred<void>&&);

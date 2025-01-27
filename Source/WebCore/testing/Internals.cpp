@@ -4755,31 +4755,6 @@ void Internals::setSelectionFromNone()
         localFrame->selection().setSelectionFromNone();
 }
 
-ExceptionOr<bool> Internals::isPluginUnavailabilityIndicatorObscured(Element& element)
-{
-    if (!is<HTMLPlugInElement>(element))
-        return Exception { ExceptionCode::InvalidAccessError };
-
-    return downcast<HTMLPlugInElement>(element).isReplacementObscured();
-}
-
-ExceptionOr<String> Internals::unavailablePluginReplacementText(Element& element)
-{
-    if (!is<HTMLPlugInElement>(element))
-        return Exception { ExceptionCode::InvalidAccessError };
-
-    auto* renderer = element.renderer();
-    if (!is<RenderEmbeddedObject>(renderer))
-        return String { };
-
-    return String { downcast<RenderEmbeddedObject>(*renderer).pluginReplacementTextIfUnavailable() };
-}
-
-bool Internals::isPluginSnapshotted(Element&)
-{
-    return false;
-}
-
 #if ENABLE(MEDIA_SOURCE)
 
 void Internals::initializeMockMediaSource()
