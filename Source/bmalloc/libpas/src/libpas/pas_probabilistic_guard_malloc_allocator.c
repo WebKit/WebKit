@@ -327,7 +327,7 @@ void pas_probabilistic_guard_malloc_initialize_pgm(void)
             return;
         }
 #endif
-        pas_probabilistic_guard_malloc_random = pas_get_secure_random(4) + 10;
+        pas_probabilistic_guard_malloc_random = pas_get_secure_random(10) + 60;
     }
 }
 
