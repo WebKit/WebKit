@@ -65,7 +65,7 @@ public:
 
     std::optional<WebCore::MediaPlayerIdentifier> findRemotePlayerId(const WebCore::MediaPlayerPrivateInterface*);
 
-    RemoteMediaPlayerMIMETypeCache& typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
+    RemoteMediaPlayerMIMETypeCache* typeCache(WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
     WTF_ABSTRACT_THREAD_SAFE_REF_COUNTED_AND_CAN_MAKE_WEAK_PTR_IMPL;
 
@@ -73,7 +73,7 @@ public:
 
 private:
     RemoteMediaPlayerManager();
-    Ref<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
+    RefPtr<WebCore::MediaPlayerPrivateInterface> createRemoteMediaPlayer(WebCore::MediaPlayer*, WebCore::MediaPlayerEnums::MediaEngineIdentifier);
 
     // GPUProcessConnection::Client
     void gpuProcessConnectionDidClose(GPUProcessConnection&) final;
@@ -83,6 +83,9 @@ private:
     WebCore::MediaPlayer::SupportsType supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const WebCore::MediaEngineSupportParameters&);
     bool supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String& keySystem, const String& mimeType);
 
+#if PLATFORM(COCOA)
+    Vector<String> m_mediaMIMETypes;
+#endif
     HashMap<WebCore::MediaPlayerIdentifier, ThreadSafeWeakPtr<MediaPlayerPrivateRemote>> m_players;
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
 };

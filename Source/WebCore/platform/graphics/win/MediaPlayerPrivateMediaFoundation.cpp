@@ -142,7 +142,7 @@ class MediaPlayerFactoryMediaFoundation final : public MediaPlayerFactory {
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::MediaFoundation; };
 
-    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    RefPtr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
         return adoptRef(*new MediaPlayerPrivateMediaFoundation(player));
     }

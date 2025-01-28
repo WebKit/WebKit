@@ -60,7 +60,7 @@ WorkQueue& MediaSourcePrivateRemote::queue()
     return workQueue.get();
 }
 
-Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient& client)
+Ref<MediaSourcePrivateRemote> MediaSourcePrivateRemote::create(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache* mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient& client)
 {
     auto mediaSourcePrivate = adoptRef(*new MediaSourcePrivateRemote(gpuProcessConnection, identifier, mimeTypeCache, mediaPlayerPrivate, client));
     client.setPrivateAndOpen(mediaSourcePrivate.copyRef());
@@ -75,7 +75,7 @@ void MediaSourcePrivateRemote::ensureOnDispatcherSync(Function<void()>&& functio
         queue().dispatchSync(WTFMove(function));
 }
 
-MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache& mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient& client)
+MediaSourcePrivateRemote::MediaSourcePrivateRemote(GPUProcessConnection& gpuProcessConnection, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerMIMETypeCache* mimeTypeCache, const MediaPlayerPrivateRemote& mediaPlayerPrivate, MediaSourcePrivateClient& client)
     : MediaSourcePrivate(client, queue())
     , m_gpuProcessConnection(gpuProcessConnection)
     , m_receiver(MessageReceiver::create(*this))
@@ -122,7 +122,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const Co
         MediaEngineSupportParameters parameters;
         parameters.isMediaSource = true;
         parameters.type = contentType;
-        if (m_mimeTypeCache->supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported) {
+        if (!m_mimeTypeCache || m_mimeTypeCache->supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported) {
             returnedStatus = AddStatus::NotSupported;
             return;
         }

@@ -197,6 +197,7 @@ MediaPlayerPrivateRemote::MediaPlayerPrivateRemote(MediaPlayer* player, MediaPla
     , m_id(playerIdentifier)
     , m_documentSecurityOrigin(player->documentSecurityOrigin())
 {
+    ASSERT(WebProcess::singleton().mediaPlaybackEnabled());
     ALWAYS_LOG(LOGIDENTIFIER);
 }
 

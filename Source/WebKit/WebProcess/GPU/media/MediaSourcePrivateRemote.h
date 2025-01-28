@@ -59,7 +59,7 @@ class MediaSourcePrivateRemote final
 #endif
 {
 public:
-    static Ref<MediaSourcePrivateRemote> create(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);
+    static Ref<MediaSourcePrivateRemote> create(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache*, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);
     virtual ~MediaSourcePrivateRemote();
 
     // MediaSourcePrivate overrides
@@ -105,7 +105,7 @@ public:
     };
 private:
     friend class MessageReceiver;
-    MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache&, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);
+    MediaSourcePrivateRemote(GPUProcessConnection&, RemoteMediaSourceIdentifier, RemoteMediaPlayerMIMETypeCache*, const MediaPlayerPrivateRemote&, WebCore::MediaSourcePrivateClient&);
 
     void bufferedChanged(const WebCore::PlatformTimeRanges&) final;
 
@@ -116,7 +116,7 @@ private:
     ThreadSafeWeakPtr<GPUProcessConnection> m_gpuProcessConnection;
     Ref<MessageReceiver> m_receiver;
     RemoteMediaSourceIdentifier m_identifier;
-    CheckedRef<RemoteMediaPlayerMIMETypeCache> m_mimeTypeCache;
+    CheckedPtr<RemoteMediaPlayerMIMETypeCache> m_mimeTypeCache;
     ThreadSafeWeakPtr<MediaPlayerPrivateRemote> m_mediaPlayerPrivate;
     std::atomic<bool> m_shutdown { false };
     std::atomic<WebCore::MediaPlayer::ReadyState> m_mediaPlayerReadyState { WebCore::MediaPlayer::ReadyState::HaveNothing };

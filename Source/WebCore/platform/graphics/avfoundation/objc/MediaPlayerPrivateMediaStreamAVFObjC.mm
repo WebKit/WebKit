@@ -198,7 +198,7 @@ public:
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::AVFoundationMediaStream; };
 
-    Ref<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
+    RefPtr<MediaPlayerPrivateInterface> createMediaEnginePlayer(MediaPlayer* player) const final
     {
         return adoptRef(*new MediaPlayerPrivateMediaStreamAVFObjC(player));
     }
