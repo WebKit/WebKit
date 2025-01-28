@@ -2144,8 +2144,8 @@ enum LengthConversion {
 
 template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLengthConversionData& conversionData) const
 {
-    if (!convertingToLengthHasRequiredConversionData(supported, conversionData))
-        return Length(LengthType::Undefined);
+    RELEASE_ASSERT(convertingToLengthHasRequiredConversionData(supported, conversionData));
+
     if ((supported & FixedIntegerConversion) && isLength())
         return resolveAsLength<Length>(conversionData);
     if ((supported & FixedFloatConversion) && isLength())
@@ -2156,6 +2156,8 @@ template<int supported> Length CSSPrimitiveValue::convertToLength(const CSSToLen
         return Length(LengthType::Auto);
     if ((supported & CalculatedConversion) && isCalculated())
         return Length(cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }));
+
+    RELEASE_ASSERT_NOT_REACHED();
     return Length(LengthType::Undefined);
 }
 
