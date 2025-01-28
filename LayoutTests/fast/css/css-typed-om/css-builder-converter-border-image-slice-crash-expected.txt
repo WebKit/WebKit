@@ -1,0 +1,5 @@
+This test passes if WebKit does not crash.
+
+
+PASS CSS typed OM should perform type checks
+

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CSS typed OM should perform type checks</title>
+    <script src="../../../resources/testharness.js"></script>
+    <script src="../../../resources/testharnessreport.js"></script>
+</head>
+  <body>
+    <p>This test passes if WebKit does not crash.</p>
+    <script>
+      test(t => {
+        const borderImageSlice = document.body.computedStyleMap().get('border-image-slice');
+        assert_throws_js(TypeError, () => {
+          document.body.attributeStyleMap.set('width', borderImageSlice);
+        }, "attributeStyleMap.set() throws an error");
+      });
+    </script>
+  </body>
+</html>

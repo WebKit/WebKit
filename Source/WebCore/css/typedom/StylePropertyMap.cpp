@@ -135,6 +135,12 @@ ExceptionOr<void> StylePropertyMap::set(Document& document, const AtomString& pr
             return Exception { ExceptionCode::TypeError, "Invalid values"_s };
     }
 
+    // FIXME: If https://bugs.webkit.org/show_bug.cgi?id=285867 is implemented this is not needed.
+    if (value->isBorderImageSliceValue()) {
+        if (propertyID != CSSPropertyBorderImageSlice && propertyID != CSSPropertyMaskBorderSlice)
+            return Exception { ExceptionCode::TypeError, "Invalid values"_s };
+    }
+
     if (!setProperty(propertyID, value.releaseNonNull()))
         return Exception { ExceptionCode::TypeError, "Invalid values"_s };
 
