@@ -238,7 +238,8 @@ private:
     void setPrimitiveUnitType(CSSUnitType type) { m_primitiveUnitType = enumToUnderlyingType(type); }
 
     // MARK: Length converting
-    double resolveAsLengthDouble(const CSSToLengthConversionData&) const;
+    double resolveAsLengthDoubleClamping(const CSSToLengthConversionData&) const;
+    double resolveAsLengthDoubleNoClamping(const CSSToLengthConversionData&) const;
 
     // MARK: Arbitrarily converting
     double doubleValue(CSSUnitType targetUnit, const CSSToLengthConversionData&) const;

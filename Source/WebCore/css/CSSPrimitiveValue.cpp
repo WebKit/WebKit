@@ -567,45 +567,50 @@ bool CSSPrimitiveValue::conversionToCanonicalUnitRequiresConversionData() const
 
 template<> int CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<int>(resolveAsLengthDouble(conversionData));
+    return roundForImpreciseConversion<int>(resolveAsLengthDoubleClamping(conversionData));
 }
 
 template<> unsigned CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<unsigned>(resolveAsLengthDouble(conversionData));
+    return roundForImpreciseConversion<unsigned>(resolveAsLengthDoubleClamping(conversionData));
 }
 
 template<> float CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return narrowPrecisionToFloat(resolveAsLengthDouble(conversionData));
+    return static_cast<float>(resolveAsLengthDoubleClamping(conversionData));
 }
 
 template<> double CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return resolveAsLengthDouble(conversionData);
+    return resolveAsLengthDoubleClamping(conversionData);
 }
 
 template<> Length CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return Length(clampTo<float>(resolveAsLength(conversionData), minValueForCssLength, maxValueForCssLength), LengthType::Fixed);
+    return Length(static_cast<float>(resolveAsLengthDoubleClamping(conversionData)), LengthType::Fixed);
 }
 
 template<> short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<short>(resolveAsLengthDouble(conversionData));
+    return roundForImpreciseConversion<short>(resolveAsLengthDoubleClamping(conversionData));
 }
 
 template<> unsigned short CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return roundForImpreciseConversion<unsigned short>(resolveAsLengthDouble(conversionData));
+    return roundForImpreciseConversion<unsigned short>(resolveAsLengthDoubleClamping(conversionData));
 }
 
 template<> LayoutUnit CSSPrimitiveValue::resolveAsLength(const CSSToLengthConversionData& conversionData) const
 {
-    return LayoutUnit(resolveAsLengthDouble(conversionData));
+    return LayoutUnit(resolveAsLengthDoubleClamping(conversionData));
 }
 
-double CSSPrimitiveValue::resolveAsLengthDouble(const CSSToLengthConversionData& conversionData) const
+double CSSPrimitiveValue::resolveAsLengthDoubleClamping(const CSSToLengthConversionData& conversionData) const
+{
+    return clampTo<double>(resolveAsLengthDoubleNoClamping(conversionData), static_cast<double>(minValueForCssLength), static_cast<double>(maxValueForCssLength));
+}
+
+double CSSPrimitiveValue::resolveAsLengthDoubleNoClamping(const CSSToLengthConversionData& conversionData) const
 {
     if (isCalculated()) {
         // The multiplier and factor is applied to each value in the calc expression individually
