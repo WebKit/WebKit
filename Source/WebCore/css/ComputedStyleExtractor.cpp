@@ -4136,7 +4136,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyTextAlignLast:
         return createConvertingToCSSValueID(style.textAlignLast());
     case CSSPropertyTextDecoration:
-        return renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine());
+        return CSSValuePair::create(renderTextDecorationLineFlagsToCSSValue(style.textDecorationLine()), currentColorOrValidColor(style, style.textDecorationColor()));
     case CSSPropertyTextJustify:
         return createConvertingToCSSValueID(style.textJustify());
     case CSSPropertyWebkitTextDecoration:
