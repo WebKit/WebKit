@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "ImageAdapter.h"
+#import "Image.h"
 
 #import "BitmapImage.h"
 #import "FloatRect.h"
@@ -38,10 +38,11 @@
 #endif
 
 #if PLATFORM(IOS_FAMILY)
-#import "UIFoundationSoftLink.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <ImageIO/ImageIO.h>
 #import <MobileCoreServices/MobileCoreServices.h>
+
+#import "UIFoundationSoftLink.h"
 #endif
 
 @interface WebCoreBundleFinder : NSObject
@@ -52,13 +53,15 @@
 
 namespace WebCore {
 
-Ref<Image> ImageAdapter::loadPlatformResource(const char *name)
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ImagePlatformData);
+
+Ref<Image> Image::createFromPlatformResource(ASCIILiteral name)
 {
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreBundleFinder class]];
-    NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"png"];
+    NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name.characters()] ofType:@"png"];
     NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
-        auto image = BitmapImage::create();
+        Ref image = BitmapImage::create();
         image->setData(SharedBuffer::create(namedImageData), true);
         return WTFMove(image);
     }
@@ -70,7 +73,7 @@ Ref<Image> ImageAdapter::loadPlatformResource(const char *name)
     return Image::nullImage();
 }
 
-RetainPtr<CFDataRef> ImageAdapter::tiffRepresentation(const Vector<Ref<NativeImage>>& nativeImages)
+static RetainPtr<CFDataRef> tiffRepresentation(const Vector<Ref<NativeImage>>& nativeImages)
 {
     // If nativeImages.size() is zero, we know for certain this image doesn't have valid data
     // Even though the call to CGImageDestinationCreateWithData will fail and we'll handle it gracefully,
@@ -94,73 +97,63 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return data;
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-NSAdaptiveImageGlyph *ImageAdapter::multiRepresentationHEIC()
+static void ensurePlatformData(std::unique_ptr<ImagePlatformData>& platformData)
 {
-    if (m_multiRepHEIC)
-        return m_multiRepHEIC.get();
+    if (!platformData)
+        platformData = makeUnique<ImagePlatformData>();
+}
 
-    auto buffer = image().data();
-    if (!buffer)
-        return nullptr;
-
-    Vector<uint8_t> data = buffer->copyData();
-
-    RetainPtr nsData = toNSData(data.span());
-    m_multiRepHEIC = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:nsData.get()]);
-
-    return m_multiRepHEIC.get();
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+RetainPtr<NSAdaptiveImageGlyph> Image::multiRepresentationHEIC()
+{
+    ensurePlatformData(m_platformData);
+    if (!m_platformData->multiRepHEIC) {
+        if (auto* buffer = data()) {
+            Vector<uint8_t> data = buffer->copyData();
+            RetainPtr nsData = toNSData(data.span());
+            m_platformData->multiRepHEIC = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:nsData.get()]);
+        }
+    }
+    return m_platformData->multiRepHEIC;
 }
 #endif
 
-void ImageAdapter::invalidate()
+RetainPtr<CFDataRef> Image::tiffRepresentation()
 {
-#if USE(APPKIT)
-    m_nsImage = nullptr;
-#endif
-    m_tiffRep = nullptr;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    m_multiRepHEIC = nullptr;
-#endif
-}
-
-CFDataRef ImageAdapter::tiffRepresentation()
-{
-    if (m_tiffRep)
-        return m_tiffRep.get();
-
-    auto data = tiffRepresentation(allNativeImages());
-    if (!data)
-        return nullptr;
-
-    m_tiffRep = data;
-    return m_tiffRep.get();
+    ensurePlatformData(m_platformData);
+    if (!m_platformData->tiffRep) {
+        Vector<Ref<NativeImage>> nativeImages;
+        {
+            unsigned count = frameCount();
+            for (unsigned i = 0; i < count; ++i) {
+                if (RefPtr nativeImage = nativeImageAtIndex(i))
+                    nativeImages.append(nativeImage.releaseNonNull());
+            }
+        }
+        m_platformData->tiffRep = WebCore::tiffRepresentation(nativeImages);
+    }
+    return m_platformData->tiffRep;
 }
 
 #if USE(APPKIT)
-NSImage* ImageAdapter::nsImage()
+RetainPtr<NSImage> Image::nsImage()
 {
-    if (m_nsImage)
-        return m_nsImage.get();
-
-    CFDataRef data = tiffRepresentation();
-    if (!data)
-        return nullptr;
-
-    m_nsImage = adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data]);
-    return m_nsImage.get();
+    ensurePlatformData(m_platformData);
+    if (!m_platformData->nsImage) {
+        if (RetainPtr data = tiffRepresentation())
+            m_platformData->nsImage = adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data.get()]);
+    }
+    return m_platformData->nsImage;
 }
 
-RetainPtr<NSImage> ImageAdapter::snapshotNSImage()
+RetainPtr<NSImage> Image::snapshotNSImage()
 {
-    RefPtr nativeImage =  image().currentNativeImage();
+    RefPtr nativeImage = currentNativeImage();
     if (!nativeImage)
         return nullptr;
-
-    auto data = tiffRepresentation({ nativeImage.releaseNonNull() });
+    RetainPtr data = WebCore::tiffRepresentation({ nativeImage.releaseNonNull() });
     if (!data)
         return nullptr;
-
     return adoptNS([[NSImage alloc] initWithData:(__bridge NSData *)data.get()]);
 }
 #endif

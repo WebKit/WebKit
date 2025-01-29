@@ -79,7 +79,7 @@ platform/graphics/gtk/ColorGtk.cpp
 platform/graphics/gtk/GdkCairoUtilities.cpp
 platform/graphics/gtk/GdkSkiaUtilities.cpp
 platform/graphics/gtk/IconGtk.cpp
-platform/graphics/gtk/ImageAdapterGtk.cpp
+platform/graphics/gtk/ImageGtk.cpp
 platform/graphics/gtk/SystemFontDatabaseGTK.cpp
 
 platform/graphics/opentype/OpenTypeVerticalData.cpp

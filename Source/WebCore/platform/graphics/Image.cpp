@@ -48,7 +48,19 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
+#include "NotImplemented.h"
+#endif
+
 namespace WebCore {
+
+#if !PLATFORM(COCOA) && !PLATFORM(GTK) && !PLATFORM(WIN)
+Ref<Image> Image::createFromPlatformResource(ASCIILiteral)
+{
+    notImplemented();
+    return Image::nullImage();
+}
+#endif
 
 Image::Image(ImageObserver* observer)
     : m_imageObserver(observer)
@@ -67,18 +79,11 @@ void Image::setImageObserver(RefPtr<ImageObserver>&& observer)
     m_imageObserver = observer.get();
 }
 
-ImageAdapter& Image::adapter()
+void Image::invalidateCaches()
 {
-    if (!m_adapter)
-        m_adapter = makeUnique<ImageAdapter>(*this);
-    return *m_adapter;
-}
-
-void Image::invalidateAdapter()
-{
-    if (!m_adapter)
-        return;
-    m_adapter->invalidate();
+#if PLATFORM(COCOA)
+    m_platformData = { };
+#endif
 }
 
 Image& Image::nullImage()

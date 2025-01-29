@@ -77,7 +77,7 @@ EncodedDataStatus BitmapImage::dataChanged(bool allDataReceived)
 void BitmapImage::destroyDecodedData(bool destroyAll)
 {
     m_source->destroyDecodedData(destroyAll);
-    invalidateAdapter();
+    invalidateCaches();
 }
 
 ImageDrawResult BitmapImage::draw(GraphicsContext& context, const FloatRect& destinationRect, const FloatRect& sourceRect, ImagePaintingOptions options)

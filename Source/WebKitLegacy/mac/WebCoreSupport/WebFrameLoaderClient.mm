@@ -2003,7 +2003,7 @@ void WebFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<WebCor
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static NSImage *webGetNSImage(WebCore::Image* image, NSSize size)
+static RetainPtr<NSImage> webGetNSImage(WebCore::Image& image, NSSize size)
 {
     ASSERT(size.width);
     ASSERT(size.height);
@@ -2011,9 +2011,7 @@ static NSImage *webGetNSImage(WebCore::Image* image, NSSize size)
     // FIXME: We're doing the resize here for now because WebCore::Image doesn't yet support resizing/multiple representations
     // This makes it so there's effectively only one size of a particular icon in the system at a time. We should move this
     // to WebCore::Image at some point.
-    if (!image)
-        return nil;
-    NSImage* nsImage = image->adapter().nsImage();
+    RetainPtr nsImage = image.nsImage();
     if (!nsImage)
         return nil;
     if (!NSEqualSizes([nsImage size], size)) {
@@ -2040,9 +2038,9 @@ void WebFrameLoaderClient::finishedLoadingIcon(WebCore::FragmentedSharedBuffer* 
     if (image->setData(iconData, true) < WebCore::EncodedDataStatus::SizeAvailable)
         return;
 
-    NSImage *icon = webGetNSImage(image.ptr(), NSMakeSize(16, 16));
+    RetainPtr icon = webGetNSImage(image, NSMakeSize(16, 16));
     if (icon)
-        [webView _setMainFrameIcon:icon];
+        [webView _setMainFrameIcon:icon.get()];
 #else
     UNUSED_PARAM(iconData);
 #endif

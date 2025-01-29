@@ -1212,7 +1212,7 @@ BOOL HTMLConverter::_addMultiRepresentationHEICAttachmentForImageElement(HTMLIma
     if (!image)
         return NO;
 
-    NSAdaptiveImageGlyph *attachment = image->adapter().multiRepresentationHEIC();
+    RetainPtr attachment = image->multiRepresentationHEIC();
     if (!attachment)
         return NO;
 
@@ -1226,7 +1226,7 @@ BOOL HTMLConverter::_addMultiRepresentationHEICAttachmentForImageElement(HTMLIma
     if (rangeToReplace.location < _domRangeStartIndex)
         _domRangeStartIndex += rangeToReplace.length;
 
-    [_attrStr addAttribute:NSAdaptiveImageGlyphAttributeName value:attachment range:rangeToReplace];
+    [_attrStr addAttribute:NSAdaptiveImageGlyphAttributeName value:attachment.get() range:rangeToReplace];
 
     _flags.isSoft = NO;
     return YES;
@@ -2380,7 +2380,7 @@ static RetainPtr<NSFileWrapper> fileWrapperForElement(const HTMLImageElement& el
     if (auto* renderImage = dynamicDowncast<RenderImage>(renderer)) {
         CachedResourceHandle image = renderImage->cachedImage();
         if (image && !image->errorOccurred()) {
-            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)image->imageForRenderer(renderer)->adapter().tiffRepresentation()]);
+            RetainPtr<NSFileWrapper> wrapper = adoptNS([[NSFileWrapper alloc] initRegularFileWithContents:(__bridge NSData *)image->imageForRenderer(renderer)->tiffRepresentation().get()]);
             [wrapper setPreferredFilename:@"image.tiff"];
             return wrapper;
         }
@@ -2419,10 +2419,10 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(co
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if (element.isMultiRepresentationHEIC()) {
         if (RefPtr image = element.image()) {
-            if (NSAdaptiveImageGlyph *attachment = image->adapter().multiRepresentationHEIC()) {
+            if (RetainPtr attachment = image->multiRepresentationHEIC()) {
                 RetainPtr attachmentString = adoptNS([[NSString alloc] initWithFormat:@"%C", static_cast<unichar>(NSAttachmentCharacter)]);
                 RetainPtr attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:attachmentString.get()]);
-                [attributedString addAttribute:NSAdaptiveImageGlyphAttributeName value:attachment range:NSMakeRange(0, 1)];
+                [attributedString addAttribute:NSAdaptiveImageGlyphAttributeName value:attachment.get() range:NSMakeRange(0, 1)];
                 return attributedString;
             }
         }

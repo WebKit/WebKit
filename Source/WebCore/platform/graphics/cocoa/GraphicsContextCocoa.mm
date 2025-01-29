@@ -68,7 +68,7 @@ namespace WebCore {
 
 ImageDrawResult GraphicsContext::drawMultiRepresentationHEIC(Image& image, const Font& font, const FloatRect& destination, ImagePaintingOptions options)
 {
-    RetainPtr multiRepresentationHEIC = image.adapter().multiRepresentationHEIC();
+    RetainPtr multiRepresentationHEIC = image.multiRepresentationHEIC();
     if (!multiRepresentationHEIC)
         return ImageDrawResult::DidNothing;
 

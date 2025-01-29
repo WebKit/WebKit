@@ -31,7 +31,6 @@
 #include "FloatRect.h"
 #include "FloatSize.h"
 #include "GraphicsTypes.h"
-#include "ImageAdapter.h"
 #include "ImageOrientation.h"
 #include "ImagePaintingOptions.h"
 #include "ImageTypes.h"
@@ -39,18 +38,46 @@
 #include "Timer.h"
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 #include <wtf/TypeCasts.h>
 #include <wtf/text/WTFString.h>
+
+#if PLATFORM(COCOA)
+#include <wtf/RetainPtr.h>
+#endif
+
+#if PLATFORM(GTK)
+#include <wtf/glib/GRefPtr.h>
+#endif
+
+#if USE(APPKIT)
+OBJC_CLASS NSImage;
+#endif
+
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+OBJC_CLASS NSAdaptiveImageGlyph;
+#endif
+
+#if PLATFORM(GTK)
+typedef struct _GdkPixbuf GdkPixbuf;
+#endif
+
+#if USE(GTK4)
+typedef struct _GdkTexture GdkTexture;
+#endif
+
+#if PLATFORM(WIN)
+typedef struct HBITMAP__ *HBITMAP;
+#endif
 
 namespace WebCore {
 
 class AffineTransform;
 class FloatPoint;
 class FloatSize;
-class GraphicsContext;
 class FragmentedSharedBuffer;
+class GraphicsContext;
 class ShareableBitmap;
+struct ImagePlatformData;
 struct Length;
 
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
@@ -64,6 +91,8 @@ public:
     
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
     WEBCORE_EXPORT static std::optional<Ref<Image>> create(RefPtr<ShareableBitmap>&&);
+    WEBCORE_EXPORT static Ref<Image> createFromPlatformResource(ASCIILiteral name);
+
     WEBCORE_EXPORT static bool supportsType(const String&);
 
     virtual bool isBitmapImage() const { return false; }
@@ -138,9 +167,6 @@ public:
     RefPtr<ImageObserver> imageObserver() const;
     void setImageObserver(RefPtr<ImageObserver>&&);
 
-    WEBCORE_EXPORT ImageAdapter& adapter();
-    void invalidateAdapter();
-
     URL sourceURL() const;
     WEBCORE_EXPORT String mimeType() const;
     long long expectedContentLength() const;
@@ -169,8 +195,29 @@ public:
 
     WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 
+#if PLATFORM(COCOA)
+    WEBCORE_EXPORT RetainPtr<CFDataRef> tiffRepresentation();
+#endif
+#if USE(APPKIT)
+    WEBCORE_EXPORT RetainPtr<NSImage> nsImage();
+    WEBCORE_EXPORT RetainPtr<NSImage> snapshotNSImage();
+#endif
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    RetainPtr<NSAdaptiveImageGlyph> multiRepresentationHEIC();
+#endif
+#if PLATFORM(GTK)
+    GRefPtr<GdkPixbuf> gdkPixbuf();
+#endif
+#if USE(GTK4)
+    GRefPtr<GdkTexture> gdkTexture();
+#endif
+#if PLATFORM(WIN)
+    WEBCORE_EXPORT bool getHBITMAP(HBITMAP);
+#endif
+
 protected:
     WEBCORE_EXPORT Image(ImageObserver* = nullptr);
+    void invalidateCaches();
 
     static void fillWithSolidColor(GraphicsContext&, const FloatRect& dstRect, const Color&, CompositeOperator);
 
@@ -186,15 +233,31 @@ protected:
 private:
     RefPtr<FragmentedSharedBuffer> m_encodedImageData;
     WeakPtr<ImageObserver> m_imageObserver;
-    std::unique_ptr<ImageAdapter> m_adapter;
-
+#if PLATFORM(COCOA)
+    mutable std::unique_ptr<ImagePlatformData> m_platformData;
+#endif
+    std::unique_ptr<Timer> m_animationStartTimer;
     // A value of true or false will override the default Page::imageAnimationEnabled state.
     std::optional<bool> m_allowsAnimation { std::nullopt };
-    std::unique_ptr<Timer> m_animationStartTimer;
     static bool gSystemAllowsAnimationControls;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const Image&);
+
+#if PLATFORM(COCOA)
+// Rare data for Image, Cocoa variant.
+struct ImagePlatformData {
+    WTF_MAKE_TZONE_ALLOCATED(ImagePlatformData);
+public:
+    RetainPtr<CFDataRef> tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
+#if USE(APPKIT)
+    RetainPtr<NSImage> nsImage; // A cached NSImage of all the frames. Only built lazily if someone actually queries for one.
+#endif
+#if ENABLE(MULTI_REPRESENTATION_HEIC)
+    RetainPtr<NSAdaptiveImageGlyph> multiRepHEIC;
+#endif
+};
+#endif
 
 } // namespace WebCore
 
