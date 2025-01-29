@@ -43,7 +43,6 @@ libraries = os.path.join(os.path.abspath(os.path.dirname(os.path.dirname(__file_
 webkitcorepy_path = os.path.join(libraries, 'webkitcorepy')
 if webkitcorepy_path not in sys.path:
     sys.path.insert(0, webkitcorepy_path)
-import webkitcorepy
 
 if sys.platform == 'darwin':
     is_root = not os.getuid()
@@ -106,8 +105,6 @@ AutoInstall.register(Package('reporelaypy', Version(0, 4, 1)), local=True)
 AutoInstall.register(Package('webkitflaskpy', Version(0, 3, 0)), local=True)
 AutoInstall.register(Package('webkitscmpy', Version(4, 0, 0)), local=True)
 AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)
-
-import webkitscmpy
 
 # Disable IPV6 if Bugzilla can't use IPV6.
 try:
