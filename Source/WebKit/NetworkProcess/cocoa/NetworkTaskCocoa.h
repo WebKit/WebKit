@@ -50,11 +50,12 @@ public:
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&);
     virtual std::optional<WebCore::FrameIdentifier> frameID() const = 0;
     virtual std::optional<WebCore::PageIdentifier> pageID() const = 0;
+    virtual std::optional<WebPageProxyIdentifier> webPageProxyID() const = 0;
 
-    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const { return m_shouldRelaxThirdPartyCookieBlocking; }
+    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking() const;
 
 protected:
-    NetworkTaskCocoa(NetworkSession&, WebCore::ShouldRelaxThirdPartyCookieBlocking);
+    NetworkTaskCocoa(NetworkSession&);
 
     static NSHTTPCookieStorage *statelessCookieStorage();
     bool shouldApplyCookiePolicyForThirdPartyCloaking() const;
@@ -87,7 +88,6 @@ private:
     bool m_hasBeenSetToUseStatelessCookieStorage { false };
     Seconds m_ageCapForCNAMECloakedCookies { 24_h * 7 };
     bool m_isAlwaysOnLoggingAllowed { false };
-    WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
 };
 
 } // namespace WebKit

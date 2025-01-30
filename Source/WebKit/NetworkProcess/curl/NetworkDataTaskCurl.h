@@ -103,7 +103,7 @@ private:
 
     Markable<WebCore::FrameIdentifier> m_frameID;
     Markable<WebCore::PageIdentifier> m_pageID;
-    WebCore::ShouldRelaxThirdPartyCookieBlocking m_shouldRelaxThirdPartyCookieBlocking { WebCore::ShouldRelaxThirdPartyCookieBlocking::No };
+    Markable<WebPageProxyIdentifier> m_webPageProxyID;
     RefPtr<WebCore::SecurityOrigin> m_sourceOrigin;
 
     State m_state { State::Suspended };

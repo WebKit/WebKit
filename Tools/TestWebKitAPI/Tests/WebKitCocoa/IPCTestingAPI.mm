@@ -400,7 +400,6 @@ TEST(IPCTestingAPI, EmptyFirstPartyForCookiesCookieRequestHeaderFieldValue)
         "        {type: 'uint64_t', value: IPC.pageID},"
         "        {type: 'uint8_t', value: 1},"
         "        {type: 'uint8_t', value: 0},"
-        "        {type: 'uint8_t', value: 1},"
         "    ]"
         ");";
     [webView evaluateJavaScript:sendMessage completionHandler:nil];
@@ -431,7 +430,6 @@ TEST(IPCTestingAPI, InvalidSameSiteInfoCookieRequestHeaderFieldValue)
         "        {type: 'uint64_t', value: IPC.pageID},"
         "        {type: 'uint8_t', value: 1},"
         "        {type: 'uint8_t', value: 0},"
-        "        {type: 'uint8_t', value: 1},"
         "    ]"
         ");";
     [webView evaluateJavaScript:sendMessage completionHandler:nil];

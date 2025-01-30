@@ -32,6 +32,7 @@
 #include "APIDataTaskClient.h"
 #include "APIHTTPCookieStore.h"
 #include "APINavigation.h"
+#include "APIPageConfiguration.h"
 #include "AuthenticationChallengeProxy.h"
 #include "AuthenticationManager.h"
 #include "BackgroundFetchState.h"
@@ -77,6 +78,7 @@
 #include <WebCore/PushPermissionState.h>
 #include <WebCore/RegistrableDomain.h>
 #include <WebCore/ResourceError.h>
+#include <WebCore/ShouldRelaxThirdPartyCookieBlocking.h>
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -317,6 +319,10 @@ void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProces
     parameters.ignoreInvalidMessageForTesting = webProcessProxy.ignoreInvalidMessageForTesting();
 #endif
     parameters.sharedPreferencesForWebProcess = *webProcessProxy.sharedPreferencesForWebProcess();
+    for (Ref page : webProcessProxy.mainPages()) {
+        if (page->configuration().shouldRelaxThirdPartyCookieBlocking() == ShouldRelaxThirdPartyCookieBlocking::Yes)
+            parameters.pagesWithRelaxedThirdPartyCookieBlocking.append(page->identifier());
+    }
     sendWithAsyncReply(Messages::NetworkProcess::CreateNetworkConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), parameters }, [weakThis = WeakPtr { *this }, reply = WTFMove(reply)](auto&& identifier, auto cookieAcceptPolicy) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis) {
