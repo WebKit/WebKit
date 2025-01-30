@@ -290,7 +290,6 @@ static void convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView
     }
 }
 
-#if !(USE(ACCELERATE) && USE(CG))
 static void copyImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
     size_t bytesPerRow = destinationSize.width() * 4;
@@ -306,7 +305,6 @@ static void copyImagePixels(const ConstPixelBufferConversionView& source, const 
         memcpySpan(destinationRow, sourceRow.first(bytesPerRow));
     }
 }
-#endif
 
 void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
@@ -314,29 +312,19 @@ void convertImagePixels(const ConstPixelBufferConversionView& source, const Pixe
     ASSERT(source.format.pixelFormat == PixelFormat::RGBA8 || source.format.pixelFormat == PixelFormat::BGRA8 || source.format.pixelFormat == PixelFormat::BGRX8);
     ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8 || destination.format.pixelFormat == PixelFormat::BGRA8 || destination.format.pixelFormat == PixelFormat::BGRX8);
 
-#if USE(ACCELERATE) && USE(CG)
     if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace) {
-        // FIXME: Can thes both just use per-row memcpy?
-        if (source.format.alphaFormat == AlphaPremultiplication::Premultiplied)
-            convertImagePixelsUnaccelerated<convertSinglePixelPremultipliedToPremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
-        else
-            convertImagePixelsUnaccelerated<convertSinglePixelUnpremultipliedToUnpremultiplied<PixelFormatConversion::None>>(source, destination, destinationSize);
-    } else
-        convertImagePixelsAccelerated(source, destination, destinationSize);
-#elif USE(SKIA)
-    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat && source.format.colorSpace == destination.format.colorSpace)
         copyImagePixels(source, destination, destinationSize);
-    else
-        convertImagePixelsSkia(source, destination, destinationSize);
+        return;
+    }
+
+#if USE(ACCELERATE) && USE(CG)
+    convertImagePixelsAccelerated(source, destination, destinationSize);
+#elif USE(SKIA)
+    convertImagePixelsSkia(source, destination, destinationSize);
 #else
     // FIXME: We don't currently support converting pixel data between different color spaces in the non-accelerated path.
     // This could be added using conversion functions from ColorConversion.h.
     ASSERT(source.format.colorSpace == destination.format.colorSpace);
-
-    if (source.format.alphaFormat == destination.format.alphaFormat && source.format.pixelFormat == destination.format.pixelFormat) {
-        copyImagePixels(source, destination, destinationSize);
-        return;
-    }
 
     // FIXME: In Linux platform the following paths could be optimized with ORC.
 
