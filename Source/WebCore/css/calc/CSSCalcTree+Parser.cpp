@@ -1466,16 +1466,16 @@ std::optional<TypedChild> parseCalcSum(CSSParserTokenRange& tokens, int depth, P
     auto sumType = firstValue->type;
     Children children;
 
-    auto originalTokens = tokens.span();
     while (!tokens.atEnd()) {
         auto& token = tokens.peek();
         char operatorCharacter = token.type() == DelimiterToken ? token.delimiter() : 0;
         if (operatorCharacter != static_cast<char>(Calculation::Operator::Sum) && operatorCharacter != static_cast<char>(Calculation::Operator::Negate))
             break;
 
-        auto previousToken = originalTokens[tokens.begin() - originalTokens.data() - 1];
-        if (!CSSTokenizer::isWhitespace(previousToken.type()))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        if (!CSSTokenizer::isWhitespace((&tokens.peek() - 1)->type()))
             return std::nullopt; // calc(1px+ 2px) is invalid
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         tokens.consume();
         if (!CSSTokenizer::isWhitespace(tokens.peek().type()))
