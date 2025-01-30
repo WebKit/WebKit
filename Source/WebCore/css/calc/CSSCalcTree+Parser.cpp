@@ -1459,14 +1459,14 @@ std::optional<TypedChild> parseCalcSum(CSSParserTokenRange& tokens, int depth, P
     if (checkDepth(depth) != ParseStatus::Ok)
         return std::nullopt;
 
-    auto originalTokens = tokens.span();
-
     auto firstValue = parseCalcProduct(tokens, depth, state);
     if (!firstValue)
         return std::nullopt;
 
     auto sumType = firstValue->type;
     Vector<Child> children;
+
+    auto originalTokens = tokens.span();
 
     while (!tokens.atEnd()) {
         auto& token = tokens.peek();
