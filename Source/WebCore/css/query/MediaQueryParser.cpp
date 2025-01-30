@@ -79,11 +79,11 @@ MediaQueryList MediaQueryParser::consumeMediaQueryList(CSSParserTokenRange& rang
     MediaQueryList list;
 
     while (true) {
-        auto begin = range.begin();
+        auto begin = range.span();
         while (!range.atEnd() && range.peek().type() != CommaToken)
             range.consumeComponentValue();
 
-        auto subrange = range.makeSubRange(begin, &range.peek());
+        auto subrange = range.makeSubRange(begin.first(&range.peek() - begin.data()));
 
         auto consumeMediaQueryOrNotAll = [&] {
             if (auto query = consumeMediaQuery(subrange, context))

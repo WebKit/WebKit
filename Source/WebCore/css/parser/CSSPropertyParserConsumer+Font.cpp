@@ -884,10 +884,10 @@ RefPtr<CSSValueList> consumeFontFaceSrc(CSSParserTokenRange& range, const CSSPar
         return nullptr;
     };
     while (!range.atEnd()) {
-        auto begin = range.begin();
+        auto begin = range.span();
         while (!range.atEnd() && range.peek().type() != CSSParserTokenType::CommaToken)
             range.consumeComponentValue();
-        auto subrange = range.makeSubRange(begin, &range.peek());
+        auto subrange = range.makeSubRange(begin.first(&range.peek() - begin.data()));
         if (RefPtr parsedValue = consumeSrcListComponent(subrange))
             values.append(parsedValue.releaseNonNull());
         if (!range.atEnd())

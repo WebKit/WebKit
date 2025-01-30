@@ -437,14 +437,14 @@ ExceptionOr<Ref<CSSNumericValue>> CSSNumericValue::parse(Document& document, Str
     range.consumeWhitespace();
     if (range.atEnd())
         return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
-    const CSSParserToken* componentValueStart = &range.peek();
+    auto componentValueStart = range.span();
     range.consumeComponentValue();
     const CSSParserToken* componentValueEnd = &range.peek();
     range.consumeWhitespace();
     if (!range.atEnd())
         return Exception { ExceptionCode::SyntaxError, "Failed to parse CSS text"_s };
 
-    auto componentValueRange = range.makeSubRange(componentValueStart, componentValueEnd);
+    auto componentValueRange = range.makeSubRange(componentValueStart.first(componentValueEnd - componentValueStart.data()));
     // https://drafts.css-houdini.org/css-typed-om/#reify-a-numeric-value
     switch (componentValueRange.peek().type()) {
     case CSSParserTokenType::DimensionToken:

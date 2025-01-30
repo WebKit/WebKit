@@ -42,20 +42,6 @@ CSSParserToken& CSSParserTokenRange::eofToken()
     return eofToken.get();
 }
 
-CSSParserTokenRange CSSParserTokenRange::makeSubRange(const CSSParserToken* first, const CSSParserToken* last) const
-{
-    if (first == &eofToken())
-        first = std::to_address(m_tokens.end());
-
-    if (last == &eofToken())
-        last = std::to_address(m_tokens.end());
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    ASSERT(first <= last);
-    return { std::span { first, last } };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-}
-
 CSSParserTokenRange CSSParserTokenRange::makeSubRange(std::span<const CSSParserToken> subrange) const
 {
     ASSERT(std::to_address(subrange.end()) <= std::to_address(m_tokens.end()));

@@ -117,22 +117,22 @@ bool SizesAttributeParser::parse(CSSParserTokenRange range, const CSSParserConte
 {
     // Split on a comma token and parse the result tokens as (media-condition, length) pairs
     while (!range.atEnd()) {
-        const CSSParserToken* mediaConditionStart = &range.peek();
+        auto mediaConditionStart = range.span();
         // The length is the last component value before the comma which isn't whitespace or a comment
-        const CSSParserToken* lengthTokenStart = &range.peek();
+        auto lengthTokenStart = range.span();
         const CSSParserToken* lengthTokenEnd = &range.peek();
         while (!range.atEnd() && range.peek().type() != CommaToken) {
-            lengthTokenStart = &range.peek();
+            lengthTokenStart = range.span();
             range.consumeComponentValue();
             lengthTokenEnd = &range.peek();
             range.consumeWhitespace();
         }
         range.consume();
 
-        auto length = calculateLengthInPixels(range.makeSubRange(lengthTokenStart, lengthTokenEnd));
+        auto length = calculateLengthInPixels(range.makeSubRange(lengthTokenStart.first(lengthTokenEnd - lengthTokenStart.data())));
         if (!length)
             continue;
-        auto mediaCondition = MQ::MediaQueryParser::parseCondition(range.makeSubRange(mediaConditionStart, lengthTokenStart), MediaQueryParserContext(context));
+        auto mediaCondition = MQ::MediaQueryParser::parseCondition(range.makeSubRange(mediaConditionStart.first(lengthTokenStart.data() - mediaConditionStart.data())), MediaQueryParserContext(context));
         if (!mediaCondition)
             continue;
         bool matches = mediaConditionMatches(*mediaCondition);

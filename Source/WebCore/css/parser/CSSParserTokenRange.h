@@ -52,7 +52,6 @@ public:
     }
 
     // This should be called on a range with tokens returned by that range.
-    CSSParserTokenRange makeSubRange(const CSSParserToken* first, const CSSParserToken* last) const;
     CSSParserTokenRange makeSubRange(std::span<const CSSParserToken> subrange) const;
 
     bool atEnd() const { return m_tokens.empty(); }
