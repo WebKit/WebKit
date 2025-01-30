@@ -2437,8 +2437,6 @@ webkit.org/b/284082 [ Sequoia+ ] http/tests/media/fairplay/legacy-fairplay-mse-m
 
 webkit.org/b/284597 [ Ventura+ ] http/tests/misc/repeat-open-cancel.html [ Slow ]
 
-webkit.org/b/284653 [ Ventura+ ] http/tests/site-isolation/compositing/iframes/resize-from-zero-size.html [ Pass Failure ]
-
 webkit.org/b/285954 [ Ventura+ Debug ] inspector/worker/runtime-basic-subworker.html [ Pass Crash ]
 
 webkit.org/b/286039 imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html [ Pass Failure ]

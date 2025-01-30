@@ -7647,8 +7647,6 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/fieldset-source
 
 webkit.org/b/284419 imported/w3c/web-platform-tests/html/rendering/the-details-element/details-pseudo-elements-006.html [ Failure ]
 
-webkit.org/b/284653 http/tests/site-isolation/compositing/iframes/resize-from-zero-size.html [ Pass Failure ]
-
 webkit.org/b/284761 imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Skip ]
 
 # Following test fails due to lack of `tabbing` to move focus

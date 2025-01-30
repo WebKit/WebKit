@@ -28,8 +28,10 @@
         }
 
         window.addEventListener('load', () => {
-            setTimeout(() => {
+            setTimeout(async () => {
                 document.getElementById('wrapper').classList.add('resized');
+                await new Promise(requestAnimationFrame);
+                await new Promise(requestAnimationFrame);
                 if (window.testRunner) {
                      document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
                      testRunner.notifyDone();
