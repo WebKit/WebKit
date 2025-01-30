@@ -36,6 +36,7 @@
 #include <mutex>
 #include <unicode/ucol.h>
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
 #if OS(DARWIN) && USE(CF)
@@ -59,18 +60,19 @@ static inline const char* resolveDefaultLocale(const char* locale)
 
 #else
 
-static inline char* copyShortASCIIString(CFStringRef string)
+static inline CString copyShortASCIIString(CFStringRef string)
 {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    // OK to have a fixed size buffer and to only handle ASCII since we only use this for locale names.
-    char buffer[256];
-    if (!string || !CFStringGetCString(string, buffer, sizeof(buffer), kCFStringEncodingASCII))
-        return strdup("");
-    return strdup(buffer);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    if (!string)
+        return CString(""_s);
+
+    std::span<char> buffer;
+    auto result = CString::newUninitialized(CFStringGetLength(string) + 1, buffer);
+    if (!CFStringGetCString(string, buffer.data(), buffer.size(), kCFStringEncodingASCII))
+        return CString(""_s);
+    return result;
 }
 
-static char* copyDefaultLocale()
+static CString copyDefaultLocale()
 {
 #if !PLATFORM(IOS_FAMILY)
     return copyShortASCIIString(static_cast<CFStringRef>(CFLocaleGetValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleCollatorIdentifier)));
@@ -86,12 +88,12 @@ static inline const char* resolveDefaultLocale(const char* locale)
         return locale;
     // Since iOS and OS X don't set UNIX locale to match the user's selected locale, the ICU default locale is not the right one.
     // So, instead of passing null to ICU, we pass the name of the user's selected locale.
-    static char* defaultLocale;
+    static LazyNeverDestroyed<CString> defaultLocale;
     static std::once_flag initializeDefaultLocaleOnce;
     std::call_once(initializeDefaultLocaleOnce, []{
-        defaultLocale = copyDefaultLocale();
+        defaultLocale.construct(copyDefaultLocale());
     });
-    return defaultLocale;
+    return defaultLocale.get().data();
 }
 
 #endif
