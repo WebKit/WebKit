@@ -535,7 +535,6 @@ bool FullscreenManager::willEnterFullscreen(Element& element, HTMLMediaElementEn
             containingBlockBeforeStyleResolution = renderer->containingBlock();
 
         ancestor->setFullscreenFlag(true);
-        ancestor->document().resolveStyle(Document::ResolveStyleType::Rebuild);
 
         // Remove before adding, so we always add at the end of the top layer.
         if (ancestor->isInTopLayer())
