@@ -165,7 +165,7 @@ void RemoteMediaPlayerProxy::getConfiguration(RemoteMediaPlayerConfiguration& co
     });
 }
 
-void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const ContentType& contentType, const String& keySystem, bool requiresRemotePlayback, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
+void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Handle>&& sandboxExtensionHandle, const ContentType& contentType, bool requiresRemotePlayback, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&& completionHandler)
 {
     RemoteMediaPlayerConfiguration configuration;
     if (sandboxExtensionHandle) {
@@ -176,7 +176,7 @@ void RemoteMediaPlayerProxy::load(URL&& url, std::optional<SandboxExtension::Han
             WTFLogAlways("Unable to create sandbox extension for media url.\n");
     }
 
-    protectedPlayer()->load(url, contentType, keySystem, requiresRemotePlayback);
+    protectedPlayer()->load(url, contentType, requiresRemotePlayback);
     getConfiguration(configuration);
     completionHandler(WTFMove(configuration));
 }

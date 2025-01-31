@@ -514,7 +514,7 @@ void MediaPlayer::invalidate()
     m_client = nullMediaPlayerClient();
 }
 
-bool MediaPlayer::load(const URL& url, const ContentType& contentType, const String& keySystem, bool requiresRemotePlayback)
+bool MediaPlayer::load(const URL& url, const ContentType& contentType, bool requiresRemotePlayback)
 {
     ASSERT(!m_reloadTimer.isActive());
 
@@ -523,7 +523,6 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, const Str
 
     m_contentType = contentType;
     m_url = url;
-    m_keySystem = keySystem.convertToASCIILowercase();
     m_requiresRemotePlayback = requiresRemotePlayback;
 
 #if ENABLE(MEDIA_SOURCE)
@@ -545,7 +544,6 @@ bool MediaPlayer::load(const URL& url, const ContentType& contentType, MediaSour
     m_mediaSource = mediaSource;
     m_contentType = contentType;
     m_url = url;
-    m_keySystem = emptyString();
     m_requiresRemotePlayback = false;
     loadWithNextMediaEngine(nullptr);
     return m_currentMediaEngine;
@@ -568,7 +566,6 @@ bool MediaPlayer::load(MediaStreamPrivate& mediaStream)
     ASSERT(!m_reloadTimer.isActive());
 
     m_mediaStream = &mediaStream;
-    m_keySystem = emptyString();
     m_requiresRemotePlayback = false;
     m_contentType = { };
     loadWithNextMediaEngine(nullptr);
@@ -687,7 +684,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
             m_private->load(*m_mediaStream);
         else
 #endif
-        m_private->load(m_url, m_contentType, m_keySystem);
+        m_private->load(m_url, m_contentType);
     } else {
         m_private = NullMediaPlayerPrivate::create(*this);
         if (!m_activeEngineIdentifier

@@ -55,7 +55,7 @@ public:
     virtual constexpr MediaPlayerType mediaPlayerType() const = 0;
 
     virtual void load(const String&) { }
-    virtual void load(const URL& url, const ContentType&, const String&) { load(url.string()); }
+    virtual void load(const URL& url, const ContentType&) { load(url.string()); }
 
 #if ENABLE(MEDIA_SOURCE)
     virtual void load(const URL&, const ContentType&, MediaSourcePrivateClient&) = 0;

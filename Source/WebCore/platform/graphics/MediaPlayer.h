@@ -415,7 +415,7 @@ public:
     IntSize presentationSize() const { return m_presentationSize; }
     void setPresentationSize(const IntSize& size);
 
-    bool load(const URL&, const ContentType&, const String&, bool);
+    bool load(const URL&, const ContentType&, bool);
 #if ENABLE(MEDIA_SOURCE)
     bool load(const URL&, const ContentType&, MediaSourcePrivateClient&);
 #endif
@@ -804,7 +804,6 @@ private:
     WeakHashSet<const MediaPlayerFactory> m_attemptedEngines;
     URL m_url;
     ContentType m_contentType;
-    String m_keySystem;
     std::optional<MediaPlayerEnums::MediaEngineIdentifier> m_activeEngineIdentifier;
     std::optional<MediaTime> m_pendingSeekRequest;
     IntSize m_presentationSize;

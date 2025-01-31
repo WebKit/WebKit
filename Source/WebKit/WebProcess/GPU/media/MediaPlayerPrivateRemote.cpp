@@ -238,7 +238,7 @@ void MediaPlayerPrivateRemote::prepareForPlayback(bool privateMode, MediaPlayer:
     connection().send(Messages::RemoteMediaPlayerProxy::PrepareForPlayback(privateMode, preload, preservesPitch, pitchCorrectionAlgorithm, prepareToPlay, prepareToRender, presentationSize, scale, preferredDynamicRangeMode), m_id);
 }
 
-void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType, const String& keySystem)
+void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentType)
 {
     std::optional<SandboxExtension::Handle> sandboxExtensionHandle;
     if (url.protocolIsFile()) {
@@ -273,7 +273,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
         sandboxExtensionHandle = WTFMove(handle);
     }
 
-    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, WTFMove(sandboxExtensionHandle), contentType, keySystem, m_player.get()->requiresRemotePlayback()), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& configuration) {
+    connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::Load(url, WTFMove(sandboxExtensionHandle), contentType, m_player.get()->requiresRemotePlayback()), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& configuration) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;

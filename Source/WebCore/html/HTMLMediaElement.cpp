@@ -1916,8 +1916,7 @@ void HTMLMediaElement::loadResource(const URL& initialURL, const ContentType& in
         }
 #endif
 
-        // FIXME: Figure out if the third argument can be removed. Was used for a legacy keySystem implementation.
-        if (!player->load(url, *result, emptyString(), !!m_remotePlaybackConfiguration))
+        if (!player->load(url, *result, !!m_remotePlaybackConfiguration))
             mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
         else
             mediaPlayerRenderingModeChanged();
@@ -2936,7 +2935,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
                 return;
             }
             player->reset();
-            if (result->isEmpty() || lastContentType == *result || !player->load(url, *result, String { }, !!m_remotePlaybackConfiguration))
+            if (result->isEmpty() || lastContentType == *result || !player->load(url, *result, !!m_remotePlaybackConfiguration))
                 mediaLoadingFailed(MediaPlayer::NetworkState::FormatError);
             else
                 mediaPlayerRenderingModeChanged();
