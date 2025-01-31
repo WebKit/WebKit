@@ -76,7 +76,7 @@ bool Highlight::removeFromSetLike(const AbstractRange& range)
 
 void Highlight::clearFromSetLike()
 {
-    for (auto& highlightRange : m_highlightRanges)
+    for (Ref highlightRange : m_highlightRanges)
         repaintRange(highlightRange->range());
     m_highlightRanges.clear();
 }
