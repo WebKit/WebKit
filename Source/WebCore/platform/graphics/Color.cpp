@@ -28,7 +28,6 @@
 
 #include "ColorLuminance.h"
 #include "ColorSerialization.h"
-#include <cmath>
 #include <wtf/Assertions.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
@@ -43,12 +42,28 @@ static constexpr auto darkenedWhite = SRGBA<uint8_t> { 171, 171, 171 };
 Color::Color(const Color& other)
     : m_colorAndFlags(other.m_colorAndFlags)
 {
-    if (isOutOfLine())
+    ASSERT(!other.isExtendedStyleColor());
+
+    if (UNLIKELY(isOutOfLine()))
         asOutOfLine().ref();
+
+}
+
+Style::ExtendedStyleColor& Color::decodedOutOfLineExtendedStyleColor(uint64_t value)
+{
+    return *static_cast<Style::ExtendedStyleColor*>(decodedOutOfLinePointer(value));
+}
+
+const Style::ExtendedStyleColor& Color::asExtendedStyleColor() const
+{
+    ASSERT(isExtendedStyleColor());
+    return decodedOutOfLineExtendedStyleColor(m_colorAndFlags);
 }
 
 Color::Color(Color&& other)
 {
+    ASSERT(!other.isExtendedStyleColor());
+
     *this = WTFMove(other);
 }
 
@@ -104,6 +119,9 @@ std::optional<ColorDataForIPC> Color::data() const
 
 Color& Color::operator=(const Color& other)
 {
+    ASSERT(!isExtendedStyleColor());
+    ASSERT(!other.isExtendedStyleColor());
+
     if (*this == other)
         return *this;
 
@@ -120,6 +138,9 @@ Color& Color::operator=(const Color& other)
 
 Color& Color::operator=(Color&& other)
 {
+    ASSERT(!isExtendedStyleColor());
+    ASSERT(!other.isExtendedStyleColor());
+
     if (*this == other)
         return *this;
 
@@ -129,6 +150,7 @@ Color& Color::operator=(Color&& other)
     m_colorAndFlags = other.m_colorAndFlags;
     other.m_colorAndFlags = invalidColorAndFlags;
 
+    // Moving the object doesn't change the ref count.
     return *this;
 }
 

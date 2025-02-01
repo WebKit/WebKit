@@ -55,6 +55,10 @@ typedef struct _GdkRGBA GdkRGBA;
 
 namespace WebCore {
 
+namespace Style {
+class ExtendedStyleColor;
+}
+
 struct OutOfLineColorDataForIPC {
     ColorSpace colorSpace;
     float c1;
@@ -105,7 +109,7 @@ public:
     WEBCORE_EXPORT Color& operator=(const Color&);
     WEBCORE_EXPORT Color& operator=(Color&&);
 
-    ~Color();
+    WEBCORE_EXPORT ~Color();
 
     bool isValid() const;
     bool isSemantic() const;
@@ -246,24 +250,32 @@ private:
         Semantic                        = static_cast<uint8_t>(Flags::Semantic),
         UseColorFunctionSerialization   = static_cast<uint8_t>(Flags::UseColorFunctionSerialization),
         Valid                           = 1 << 2,
-        OutOfLine                       = 1 << 3,
-        HashTableEmptyValue             = 1 << 4,
-        HashTableDeletedValue           = 1 << 5,
+        CurrentColor                    = 1 << 3, // This only has meaning for CSS.
+        ExtendedStyleColor              = 1 << 4, // This only has meaning for CSS.
+        OutOfLine                       = 1 << 5,
+        HashTableEmptyValue             = 1 << 6,
+        HashTableDeletedValue           = 1 << 7,
     };
     static OptionSet<FlagsIncludingPrivate> toFlagsIncludingPrivate(OptionSet<Flags> flags) { return OptionSet<FlagsIncludingPrivate>::fromRaw(flags.toRaw()); }
-
+public:
     OptionSet<FlagsIncludingPrivate> flags() const;
+    bool isCurrentColor() const;
     bool isOutOfLine() const;
+    bool isExtendedStyleColor() const;
     bool isInline() const;
 
+    void setCurrentColor();
     void setColor(SRGBA<uint8_t>, OptionSet<FlagsIncludingPrivate> = { });
     void setOutOfLineComponents(Ref<OutOfLineComponents>&&, ColorSpace, OptionSet<FlagsIncludingPrivate> = { });
+    void setExtendedStyleColor(Ref<Style::ExtendedStyleColor>&&);
 
     SRGBA<uint8_t> asInline() const;
     PackedColor::RGBA asPackedInline() const;
 
     const OutOfLineComponents& asOutOfLine() const;
     Ref<OutOfLineComponents> asOutOfLineRef() const;
+
+    WEBCORE_EXPORT const Style::ExtendedStyleColor& asExtendedStyleColor() const;
 
 #if CPU(ADDRESS64)
     static constexpr unsigned maxNumberOfBitsInPointer = 48;
@@ -282,12 +294,16 @@ private:
     static uint64_t encodedInlineColor(SRGBA<uint8_t>);
     static uint64_t encodedPackedInlineColor(PackedColor::RGBA);
     static uint64_t encodedOutOfLineComponents(Ref<OutOfLineComponents>&&);
+    static uint64_t encodedOutOfLineExtendedStyleColor(Ref<Style::ExtendedStyleColor>&&);
+    static uint64_t encodedOutOfLinePointer(void*);
 
     static OptionSet<FlagsIncludingPrivate> decodedFlags(uint64_t);
     static ColorSpace decodedColorSpace(uint64_t);
     static SRGBA<uint8_t> decodedInlineColor(uint64_t);
     static PackedColor::RGBA decodedPackedInlineColor(uint64_t);
     static OutOfLineComponents& decodedOutOfLineComponents(uint64_t);
+    static Style::ExtendedStyleColor& decodedOutOfLineExtendedStyleColor(uint64_t);
+    static void* decodedOutOfLinePointer(uint64_t);
 
     static constexpr uint64_t invalidColorAndFlags = 0;
     uint64_t m_colorAndFlags { invalidColorAndFlags };
@@ -297,6 +313,8 @@ inline void add(Hasher& hasher, const Color& color)
 {
     if (color.isOutOfLine())
         add(hasher, color.asOutOfLine().unresolvedComponents(), color.colorSpace(), color.flags());
+    else if (color.isExtendedStyleColor())
+        add(hasher, &color.asExtendedStyleColor(), color.flags());
     else
         add(hasher, color.asPackedInline().value, color.flags());
 }
@@ -317,8 +335,10 @@ WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 
 inline bool operator==(const Color& a, const Color& b)
 {
-    if (a.isOutOfLine() || b.isOutOfLine())
+    if (UNLIKELY(a.isOutOfLine() || b.isOutOfLine()))
         return outOfLineComponentsEqual(a, b);
+    if (UNLIKELY(a.isExtendedStyleColor() || b.isExtendedStyleColor()))
+        ASSERT_NOT_REACHED();
     return a.m_colorAndFlags == b.m_colorAndFlags;
 }
 
@@ -404,8 +424,10 @@ inline bool Color::isHashTableEmptyValue() const
 
 inline Color::~Color()
 {
-    if (isOutOfLine())
+    if (UNLIKELY(isOutOfLine()))
         asOutOfLine().deref();
+    else if (UNLIKELY(isExtendedStyleColor()))
+        ASSERT_NOT_REACHED();
 }
 
 inline bool Color::isValid() const
@@ -416,6 +438,16 @@ inline bool Color::isValid() const
 inline bool Color::isSemantic() const
 {
     return flags().contains(FlagsIncludingPrivate::Semantic);
+}
+
+inline bool Color::isCurrentColor() const
+{
+    return flags().contains(FlagsIncludingPrivate::CurrentColor);
+}
+
+inline void Color::setCurrentColor()
+{
+    m_colorAndFlags = encodedFlags({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::CurrentColor });
 }
 
 inline bool Color::usesColorFunctionSerialization() const
@@ -477,6 +509,11 @@ inline OptionSet<Color::FlagsIncludingPrivate> Color::flags() const
 inline bool Color::isOutOfLine() const
 {
     return flags().contains(FlagsIncludingPrivate::OutOfLine);
+}
+
+inline bool Color::isExtendedStyleColor() const
+{
+    return flags().contains(FlagsIncludingPrivate::ExtendedStyleColor);
 }
 
 inline bool Color::isInline() const
@@ -542,13 +579,23 @@ inline uint64_t Color::encodedPackedInlineColor(PackedColor::RGBA color)
     return color.value;
 }
 
-inline uint64_t Color::encodedOutOfLineComponents(Ref<OutOfLineComponents>&& outOfLineComponents)
+inline uint64_t Color::encodedOutOfLinePointer(void* pointer)
 {
 #if CPU(ADDRESS64)
-    return std::bit_cast<uint64_t>(&outOfLineComponents.leakRef());
+    return std::bit_cast<uint64_t>(pointer);
 #else
-    return std::bit_cast<uint32_t>(&outOfLineComponents.leakRef());
+    return std::bit_cast<uint32_t>(pointer);
 #endif
+}
+
+inline uint64_t Color::encodedOutOfLineComponents(Ref<OutOfLineComponents>&& outOfLineComponents)
+{
+    return encodedOutOfLinePointer(&outOfLineComponents.leakRef());
+}
+
+inline uint64_t Color::encodedOutOfLineExtendedStyleColor(Ref<Style::ExtendedStyleColor>&& styleColor)
+{
+    return encodedOutOfLinePointer(&styleColor.leakRef());
 }
 
 inline OptionSet<Color::FlagsIncludingPrivate> Color::decodedFlags(uint64_t value)
@@ -571,13 +618,18 @@ inline PackedColor::RGBA Color::decodedPackedInlineColor(uint64_t value)
     return PackedColor::RGBA { static_cast<uint32_t>(value & colorValueMask) };
 }
 
-inline Color::OutOfLineComponents& Color::decodedOutOfLineComponents(uint64_t value)
+inline void* Color::decodedOutOfLinePointer(uint64_t value)
 {
 #if CPU(ADDRESS64)
-    return *std::bit_cast<OutOfLineComponents*>(value & colorValueMask);
+    return std::bit_cast<void*>(value & colorValueMask);
 #else
-    return *std::bit_cast<OutOfLineComponents*>(static_cast<uint32_t>(value & colorValueMask));
+    return std::bit_cast<void*>(static_cast<uint32_t>(value & colorValueMask));
 #endif
+}
+
+inline Color::OutOfLineComponents& Color::decodedOutOfLineComponents(uint64_t value)
+{
+    return *static_cast<OutOfLineComponents*>(decodedOutOfLinePointer(value));
 }
 
 inline void Color::setColor(SRGBA<uint8_t> color, OptionSet<FlagsIncludingPrivate> flags)
@@ -592,6 +644,14 @@ inline void Color::setOutOfLineComponents(Ref<OutOfLineComponents>&& color, Colo
     flags.add({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::OutOfLine });
     m_colorAndFlags = encodedOutOfLineComponents(WTFMove(color)) | encodedColorSpace(colorSpace) | encodedFlags(flags);
     ASSERT(isOutOfLine());
+}
+
+inline void Color::setExtendedStyleColor(Ref<Style::ExtendedStyleColor>&& color)
+{
+    OptionSet<FlagsIncludingPrivate> flags;
+    flags.add({ FlagsIncludingPrivate::Valid, FlagsIncludingPrivate::ExtendedStyleColor });
+    m_colorAndFlags = encodedOutOfLineExtendedStyleColor(WTFMove(color)) | encodedFlags(flags);
+    ASSERT(isExtendedStyleColor());
 }
 
 } // namespace WebCore

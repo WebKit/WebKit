@@ -32,6 +32,7 @@
 #include "Color.h"
 #include "ColorSerialization.h"
 #include "StyleColor.h"
+#include "StyleColorResolutionState.h"
 #include "StyleResolvedColor.h"
 #include <wtf/text/TextStream.h>
 

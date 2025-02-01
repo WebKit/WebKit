@@ -18727,6 +18727,8 @@
 		BED8BAF628EB3560003C7D65 /* CSSFontFeatureValuesRule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSFontFeatureValuesRule.h; sourceTree = "<group>"; };
 		BEF29EE91715DD0900C4B4C9 /* AudioTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioTrackPrivate.h; sourceTree = "<group>"; };
 		BEF29EEA1715DD0900C4B4C9 /* VideoTrackPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoTrackPrivate.h; sourceTree = "<group>"; };
+		BEFD2B962D4C5520000BCCE1 /* ExtendedStyleColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtendedStyleColor.h; sourceTree = "<group>"; };
+		BEFD2B972D4C5520000BCCE1 /* ExtendedStyleColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ExtendedStyleColor.cpp; sourceTree = "<group>"; };
 		C0400C7C261CB3DB00AF44FA /* AXImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AXImage.h; sourceTree = "<group>"; };
 		C0400C7E261CB3DB00AF44FA /* AXImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AXImage.cpp; sourceTree = "<group>"; };
 		C046E1AB1208A9FE00BA2CF7 /* LocalizedStrings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocalizedStrings.cpp; sourceTree = "<group>"; };
@@ -34500,6 +34502,8 @@
 		BC4AF4272CFA23040037C65C /* color */ = {
 			isa = PBXGroup;
 			children = (
+				BEFD2B972D4C5520000BCCE1 /* ExtendedStyleColor.cpp */,
+				BEFD2B962D4C5520000BCCE1 /* ExtendedStyleColor.h */,
 				BCF0BCDE2BEE8A6500F42CCD /* StyleAbsoluteColor.h */,
 				BCF0BCDF2BEE8A6500F42CCD /* StyleColor.cpp */,
 				BCF0BCE02BEE8A6500F42CCD /* StyleColor.h */,

@@ -2658,6 +2658,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/backgrounds/StyleBorderRadius.h
 
+    style/values/color/ExtendedStyleColor.h
     style/values/color/StyleColor.h
     style/values/color/StyleColorOptions.h
     style/values/color/StyleCurrentColor.h

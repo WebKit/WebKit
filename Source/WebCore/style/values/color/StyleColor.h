@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +34,7 @@
 #include "CSSColor.h"
 #include "CSSColorDescriptors.h"
 #include "CSSColorType.h"
+#include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
 #include "StyleColorOptions.h"
 #include "StyleCurrentColor.h"
@@ -44,57 +45,29 @@
 
 namespace WebCore {
 
-class Color;
 class Document;
 class RenderStyle;
 
 namespace Style {
 
+class ExtendedStyleColor;
+
 enum class ForVisitedLink : bool;
 
 // The following style color kinds are forward declared and stored in
-// UniqueRefs to avoid unnecessarily growing the size of Color for the
+// UniqueRefs to avoid unnecessarily growing the size of StyleColor for the
 // uncommon case of un-resolvability due to currentColor.
+using ColorKind = std::variant<ResolvedColor, CurrentColor, Ref<ExtendedStyleColor>>;
+
 struct ColorLayers;
 struct ColorMix;
 struct ContrastColor;
-template<typename Descriptor> struct RelativeColor;
+template <typename T> struct RelativeColor;
 
 struct Color {
-private:
-    struct EmptyToken { constexpr bool operator==(const EmptyToken&) const = default; };
-
-    // FIXME: Replace std::variant with a generic CompactPointerVariant type.
-    using ColorKind = std::variant<
-        EmptyToken,
-        ResolvedColor,
-        CurrentColor,
-        UniqueRef<ColorLayers>,
-        UniqueRef<ColorMix>,
-        UniqueRef<ContrastColor>,
-        UniqueRef<RelativeColor<RGBFunctionModernRelative>>,
-        UniqueRef<RelativeColor<HSLFunctionModern>>,
-        UniqueRef<RelativeColor<HWBFunction>>,
-        UniqueRef<RelativeColor<LabFunction>>,
-        UniqueRef<RelativeColor<LCHFunction>>,
-        UniqueRef<RelativeColor<OKLabFunction>>,
-        UniqueRef<RelativeColor<OKLCHFunction>>,
-        UniqueRef<RelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>,
-        UniqueRef<RelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>,
-        UniqueRef<RelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>,
-        UniqueRef<RelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>,
-        UniqueRef<RelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>,
-        UniqueRef<RelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>>,
-        UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>>,
-        UniqueRef<RelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>>
-    >;
-
-    Color(EmptyToken);
-    Color(ColorKind&&);
-
 public:
-    // The default constructor initializes to Style::CurrentColor to preserve old behavior,
-    // we might want to remove it entirely at some point.
+    // The default constructor initializes to StyleCurrentColor to preserve old behavior,
+    // we might want to change it to invalid color at some point.
     Color();
 
     // Convenience constructors that create Style::ResolvedColor.
@@ -103,8 +76,10 @@ public:
 
     WEBCORE_EXPORT Color(ResolvedColor&&);
     WEBCORE_EXPORT Color(CurrentColor&&);
-    Color(ColorLayers&&);
+
+    Color(Ref<ExtendedStyleColor>&&);
     Color(ColorMix&&);
+    Color(ColorLayers&&);
     Color(ContrastColor&&);
     Color(RelativeColor<RGBFunctionModernRelative>&&);
     Color(RelativeColor<HSLFunctionModern>&&);
@@ -130,38 +105,67 @@ public:
 
     WEBCORE_EXPORT ~Color();
 
-    bool operator==(const Color&) const;
-
     static Color currentColor();
+    static Color invalidColor();
+
+    static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
+    static Color colorFromAbsoluteKeyword(CSSValueID);
+
+    static bool containsCurrentColor(const CSSPrimitiveValue&);
+    static bool isAbsoluteColorKeyword(CSSValueID);
+    static bool isCurrentColorKeyword(CSSValueID id) { return id == CSSValueCurrentcolor; }
+    static bool isCurrentColor(const CSSPrimitiveValue& value) { return isCurrentColorKeyword(value.valueID()); }
+
+    WEBCORE_EXPORT static bool isSystemColorKeyword(CSSValueID);
+    static bool isDeprecatedSystemColorKeyword(CSSValueID);
+
+    static bool containsColorSchemeDependentColor(const CSSPrimitiveValue&);
+
+    enum class CSSColorType : uint8_t {
+        Absolute = 1 << 0,
+        Current = 1 << 1,
+        System = 1 << 2,
+    };
+
+    // https://drafts.csswg.org/css-color-4/#typedef-color
+    static bool isColorKeyword(CSSValueID, OptionSet<CSSColorType> = { CSSColorType::Absolute, CSSColorType::Current, CSSColorType::System });
 
     bool containsCurrentColor() const;
+
     bool isCurrentColor() const;
+    bool isExtendedStyleColor() const;
     bool isColorMix() const;
     bool isContrastColor() const;
     bool isRelativeColor() const;
-
     bool isResolvedColor() const;
+
     const WebCore::Color& resolvedColor() const;
 
-    WEBCORE_EXPORT WebCore::Color resolveColor(const WebCore::Color& currentColor) const;
+    const ExtendedStyleColor& extendedStyleColor() const;
+    Ref<const ExtendedStyleColor> protectedExtendedStyleColor() const;
 
-    // This helper allows us to treat all the alternatives in ColorKind
-    // as const references, pretending the UniqueRefs don't exist.
-    template<typename... F> decltype(auto) switchOn(F&&...) const;
+    WEBCORE_EXPORT WebCore::Color resolveColor(const WebCore::Color& currentColor) const;
+    bool operator==(const Color&) const;
+
+    /*
+    friend WEBCORE_EXPORT String serializationForCSS(const Color&);
+    friend void serializationForCSS(StringBuilder&, const Color&);
+    friend WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
+    */
+    String debugDescription() const;
+
+    void store(ColorKind&&);
 
     struct MarkableTraits {
         static bool isEmptyValue(const Color&);
         static Color emptyValue();
     };
 
-    String debugDescription() const;
+    template<typename StyleColorType>
+    static ColorKind makeIndirectColor(StyleColorType&&);
 
 private:
-    template<typename T>
-    static ColorKind makeIndirectColor(T&&);
-    static ColorKind copy(const ColorKind&);
-
-    ColorKind value;
+    WebCore::Color m_color;
 };
 
 WebCore::Color resolveColor(const Color&, const WebCore::Color& currentColor);
@@ -169,11 +173,9 @@ bool containsCurrentColor(const Color&);
 
 void serializationForCSS(StringBuilder&, const Color&);
 WEBCORE_EXPORT String serializationForCSS(const Color&);
-
 WTF::TextStream& operator<<(WTF::TextStream&, const Color&);
 
 // MARK: - Conversion
-
 Color toStyleColor(const CSS::Color&, ColorResolutionState&);
 Color toStyleColor(const CSS::Color&, Ref<const Document>, const RenderStyle&, const CSSToLengthConversionData&, ForVisitedLink);
 Color toStyleColorWithResolvedCurrentColor(const CSS::Color&, Ref<const Document>, RenderStyle&, const CSSToLengthConversionData&, ForVisitedLink);
@@ -186,28 +188,5 @@ template<> struct ToStyle<CSS::Color> {
     auto operator()(const CSS::Color&, const BuilderState&) -> Color;
 };
 
-template<typename... F> decltype(auto) Color::switchOn(F&&... f) const
-{
-    auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
-    using ResultType = decltype(visitor(std::declval<ResolvedColor>()));
-
-    return WTF::switchOn(value,
-        [&](const EmptyToken&) -> ResultType {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const ResolvedColor& resolvedColor) -> ResultType {
-            return visitor(resolvedColor);
-        },
-        [&](const CurrentColor& currentColor) -> ResultType {
-            return visitor(currentColor);
-        },
-        [&]<typename T>(const UniqueRef<T>& color) -> ResultType {
-            return visitor(color.get());
-        }
-    );
-}
-
 } // namespace Style
 } // namespace WebCore
-
-template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::Style::Color> = true;

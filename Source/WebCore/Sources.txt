@@ -3137,6 +3137,7 @@ style/UserAgentStyle.cpp
 style/values/backgrounds/StyleBorderRadius.cpp
 style/values/backgrounds/StyleBoxShadow.cpp
 style/values/color-adjust/StyleColorScheme.cpp
+style/values/color/ExtendedStyleColor.cpp
 style/values/color/StyleColor.cpp
 style/values/color/StyleColorLayers.cpp
 style/values/color/StyleColorMix.cpp
