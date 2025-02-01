@@ -35,6 +35,10 @@
 #include <WebCore/WebGPUTextureFormat.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if PLATFORM(COCOA)
+#include "RemoteDeviceProxy.h"
+#endif
+
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteCompositorIntegrationProxy);

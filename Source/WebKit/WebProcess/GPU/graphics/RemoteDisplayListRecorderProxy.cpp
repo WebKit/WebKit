@@ -31,6 +31,7 @@
 #include "Logging.h"
 #include "RemoteDisplayListRecorderMessages.h"
 #include "RemoteImageBufferProxy.h"
+#include "RemoteImageProxy.h"
 #include "RemoteRenderingBackendProxy.h"
 #include "SharedVideoFrame.h"
 #include "StreamClientConnection.h"
@@ -462,6 +463,17 @@ void RemoteDisplayListRecorderProxy::drawVideoFrame(VideoFrame& frame, const Flo
 #endif
 }
 #endif
+
+ImageDrawResult RemoteDisplayListRecorderProxy::drawImage(Image& image, const FloatRect& destRect, const FloatRect& sourceRect, ImagePaintingOptions options)
+{
+    RefPtr remoteImage = dynamicDowncast<RemoteImageProxy>(image);
+    if (!remoteImage)
+        return GraphicsContext::drawImage(image, destRect, sourceRect, options);
+    appendStateChangeItemIfNecessary();
+    send(Messages::RemoteDisplayListRecorder::DrawImage(remoteImage->newReadReference(), destRect, sourceRect, options));
+    return ImageDrawResult::DidDraw;
+}
+
 
 void RemoteDisplayListRecorderProxy::strokeRect(const FloatRect& rect, float width)
 {

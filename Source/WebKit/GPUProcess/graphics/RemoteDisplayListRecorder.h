@@ -95,6 +95,7 @@ public:
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     void drawVideoFrame(SharedVideoFrame&&, const WebCore::FloatRect& destination, WebCore::ImageOrientation, bool shouldDiscardAlpha);
 #endif
+    void drawImage(RemoteImageReadReference, WebCore::FloatRect destination, WebCore::FloatRect source, struct WebCore::ImagePaintingOptions);
     void drawPattern(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& tileRect, const WebCore::AffineTransform&, const WebCore::FloatPoint&, const WebCore::FloatSize& spacing, WebCore::ImagePaintingOptions);
     void beginTransparencyLayer(float opacity);
     void beginTransparencyLayerWithCompositeMode(WebCore::CompositeMode);
@@ -186,7 +187,7 @@ private:
     Ref<WebCore::ImageBuffer> m_imageBuffer;
     WebCore::RenderingResourceIdentifier m_imageBufferIdentifier;
     RefPtr<RemoteRenderingBackend> m_renderingBackend;
-    Ref<RemoteSharedResourceCache> m_sharedResourceCache;
+    const Ref<RemoteSharedResourceCache> m_sharedResourceCache;
     RefPtr<WebCore::ControlFactory> m_controlFactory;
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     std::unique_ptr<SharedVideoFrameReader> m_sharedVideoFrameReader;

@@ -1651,7 +1651,7 @@ public:
     // display buffer abstractions that the caller should hold separate to
     // the context.
     using SurfaceBuffer = GraphicsContextGLSurfaceBuffer;
-    virtual void drawSurfaceBufferToImageBuffer(SurfaceBuffer, ImageBuffer&) = 0;
+    virtual RefPtr<Image> surfaceBufferToImage(SurfaceBuffer) = 0;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     virtual RefPtr<VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) = 0;
 #endif
@@ -1709,8 +1709,6 @@ public:
     static bool packImageData(Image*, std::span<const uint8_t> pixels, GCGLenum format, GCGLenum type, bool flipY, AlphaOp, DataFormat sourceFormat, unsigned sourceImageWidth, unsigned sourceImageHeight, const IntRect& sourceImageSubRectangle, int depth, unsigned sourceUnpackAlignment, int unpackImageHeight, Vector<uint8_t>& data);
 
     WEBCORE_EXPORT static RefPtr<NativeImage> createNativeImageFromPixelBuffer(const GraphicsContextGLAttributes&, Ref<PixelBuffer>&&);
-    WEBCORE_EXPORT static void paintToCanvas(NativeImage&, const IntSize& canvasSize, GraphicsContext&);
-    WEBCORE_EXPORT static void paintToCanvas(const GraphicsContextGLAttributes&, Ref<PixelBuffer>&&, const IntSize& canvasSize, GraphicsContext&);
 
     bool isContextLost() const { return m_contextLost; }
 protected:

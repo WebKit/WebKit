@@ -76,10 +76,11 @@ public:
     // WebCore::GraphicsContextGL overrides.
     std::tuple<GCGLenum, GCGLenum> externalImageTextureBindingPoint() final;
     void reshape(int width, int height) final;
+    void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
     bool supportsExtension(const String&) final;
     void ensureExtensionEnabled(const String&) final;
     bool isExtensionEnabled(const String&) final;
-    void drawSurfaceBufferToImageBuffer(SurfaceBuffer, WebCore::ImageBuffer&) final;
+    RefPtr<WebCore::Image> surfaceBufferToImage(SurfaceBuffer) final;
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     RefPtr<WebCore::VideoFrame> surfaceBufferToVideoFrame(SurfaceBuffer) final;
 #endif
@@ -360,7 +361,6 @@ public:
     void polygonOffsetClampEXT(GCGLfloat factor, GCGLfloat units, GCGLfloat clamp) final;
     void renderbufferStorageMultisampleANGLE(GCGLenum target, GCGLsizei samples, GCGLenum internalformat, GCGLsizei width, GCGLsizei height) final;
     void getInternalformativ(GCGLenum target, GCGLenum internalformat, GCGLenum pname, std::span<GCGLint> params) final;
-    void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
 
 #if ENABLE(WEBXR)
     GCGLExternalImage createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
@@ -421,10 +421,13 @@ private:
 
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only main thread use.
     RefPtr<IPC::StreamClientConnection> m_streamConnection;
+    RefPtr<IPC::Connection> m_connection;
+
     bool m_didInitialize { false };
     HashSet<String> m_availableExtensions; // Guarded by waitUntilInitialized().
     HashSet<String> m_requestableExtensions; // Guarded by waitUntilInitialized().
     HashSet<String> m_enabledExtensions;
+    WebCore::DestinationColorSpace m_drawingBufferColorSpace { WebCore::DestinationColorSpace::SRGB() };
 #if PLATFORM(COCOA)
     SharedVideoFrameWriter m_sharedVideoFrameWriter;
 #endif

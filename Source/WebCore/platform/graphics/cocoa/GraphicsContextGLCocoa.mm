@@ -825,9 +825,8 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
         m_cv->invalidateKnownTextureContent(texture);
 }
 
-RefPtr<NativeImage> GraphicsContextGLCocoa::bufferAsNativeImage(SurfaceBuffer buffer)
+RefPtr<Image> GraphicsContextGLCocoa::surfaceBufferToImage(SurfaceBuffer buffer)
 {
-    RetainPtr<CGContextRef> cgContext;
     RefPtr<NativeImage> image;
     if (contextAttributes().premultipliedAlpha) {
         // Use the IOSurface backed image directly
@@ -862,7 +861,7 @@ RefPtr<NativeImage> GraphicsContextGLCocoa::bufferAsNativeImage(SurfaceBuffer bu
         return nullptr;
 
     CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
-    return image;
+    return Image::create(image.releaseNonNull(), ImageOrientation::Orientation::OriginBottomLeft);
 }
 
 void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signal)

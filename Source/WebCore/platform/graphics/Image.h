@@ -60,10 +60,11 @@ class Image : public RefCountedAndCanMakeWeakPtr<Image> {
     friend class CachedSubimage;
     friend class GraphicsContext;
 public:
-    virtual ~Image();
+    WEBCORE_EXPORT virtual ~Image();
     
     WEBCORE_EXPORT static RefPtr<Image> create(ImageObserver&);
     WEBCORE_EXPORT static std::optional<Ref<Image>> create(RefPtr<ShareableBitmap>&&);
+    WEBCORE_EXPORT static RefPtr<Image> create(Ref<NativeImage>, ImageOrientation::Orientation = { });
     WEBCORE_EXPORT static bool supportsType(const String&);
 
     virtual bool isBitmapImage() const { return false; }
@@ -76,6 +77,7 @@ public:
     virtual bool isSVGResourceImage() const { return false; }
     virtual bool isPDFDocumentImage() const { return false; }
     virtual bool isCustomPaintImage() const { return false; }
+    virtual bool isRemoteImageProxy() const { return false; }
 
     bool drawsSVGImage() const { return isSVGImage() || isSVGImageForContainer(); }
 
@@ -96,7 +98,7 @@ public:
     virtual bool usesContainerSize() const { return false; }
     virtual bool hasRelativeWidth() const { return false; }
     virtual bool hasRelativeHeight() const { return false; }
-    virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
+    WEBCORE_EXPORT virtual void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
     virtual FloatSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const = 0;
     virtual FloatSize sourceSize(ImageOrientation orientation = ImageOrientation::Orientation::FromImage) const { return size(orientation); }
@@ -119,7 +121,7 @@ public:
     FragmentedSharedBuffer* data() { return m_encodedImageData.get(); }
     const FragmentedSharedBuffer* data() const { return m_encodedImageData.get(); }
 
-    virtual DestinationColorSpace colorSpace();
+    WEBCORE_EXPORT virtual DestinationColorSpace colorSpace();
 
     // Animation begins whenever someone draws the image, so startAnimation() is not normally called.
     // It will automatically pause once all observers no longer want to render the image anywhere.
@@ -152,7 +154,7 @@ public:
     virtual RefPtr<NativeImage> currentNativeImage() { return nativeImage(); }
     virtual RefPtr<NativeImage> currentPreTransformedNativeImage(ImageOrientation = ImageOrientation::Orientation::FromImage) { return currentNativeImage(); }
 
-    virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
+    WEBCORE_EXPORT virtual void drawPattern(GraphicsContext&, const FloatRect& destRect, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, const FloatSize& spacing, ImagePaintingOptions = { });
 
 #if ASSERT_ENABLED
     virtual bool hasSolidColor() { return false; }
@@ -165,7 +167,7 @@ public:
     virtual bool isSpatial() const { return false; }
 #endif
 
-    virtual void dump(WTF::TextStream&) const;
+    WEBCORE_EXPORT virtual void dump(WTF::TextStream&) const;
 
     WEBCORE_EXPORT RefPtr<ShareableBitmap> toShareableBitmap() const;
 

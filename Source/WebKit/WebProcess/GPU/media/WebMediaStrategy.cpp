@@ -122,7 +122,7 @@ void WebMediaStrategy::enableMockMediaSource()
 #endif
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-std::unique_ptr<MediaRecorderPrivateWriter> WebMediaStrategy::createMediaRecorderPrivateWriter(const String& type, WebCore::MediaRecorderPrivateWriterListener& listener) const
+std::unique_ptr<WebCore::MediaRecorderPrivateWriter> WebMediaStrategy::createMediaRecorderPrivateWriter(const String& type, WebCore::MediaRecorderPrivateWriterListener& listener) const
 {
     ASSERT(isMainRunLoop());
 #if ENABLE(GPU_PROCESS)

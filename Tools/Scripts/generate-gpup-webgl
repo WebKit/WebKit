@@ -86,8 +86,12 @@ context_messages_template = (
     template_preamble
     + """#if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
 
-[EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled]
-messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
+[
+    DispatchedFrom=WebContent,
+    DispatchedTo=GPU,
+    EnabledBy=WebGLEnabled && UseGPUProcessForWebGLEnabled
+]
+messages -> RemoteGraphicsContextGL Stream {{
     void Reshape(int32_t width, int32_t height)
 #if PLATFORM(COCOA)
     void PrepareForDisplay(IPC::Semaphore finishedFence) -> (MachSendRight displayBuffer) Synchronous NotStreamEncodable NotStreamEncodableReply
@@ -103,7 +107,8 @@ messages -> RemoteGraphicsContextGL NotRefCounted Stream {{
 #endif
     void EnsureExtensionEnabled(String extension)
     void GetErrors() -> (GCGLErrorCodeSet returnValue) Synchronous
-    void DrawSurfaceBufferToImageBuffer(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBuffer) -> () Synchronous
+    void SetDrawingBufferColorSpace(WebCore::DestinationColorSpace colorSpace)
+    void SurfaceBufferToImage(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer, WebKit::RemoteImageIdentifier image)
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
     void SurfaceBufferToVideoFrame(enum:bool WebCore::GraphicsContextGLSurfaceBuffer buffer) -> (std::optional<WebKit::RemoteVideoFrameProxyProperties> properties) Synchronous
 #endif
@@ -138,6 +143,8 @@ context_proxy_functions_template = (
 #include "RemoteGraphicsContextGLProxy.h"
 
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {{
 {}
@@ -761,7 +768,7 @@ class webkit_ipc_cpp_proxy_impl(object):
                 if o.type.is_dynamic_span():
                     self.in_exprs += [cpp_expr(get_cpp_type("size_t"), f"{o.name}.size()")]
                 self.post_call_stmts += [
-                    f"memcpy({o.name}.data(), {v.name}.data(), {o.name}.size() * sizeof({str(webkit_ipc_type.get_contained_type())}));"
+                    f"memcpySpan({o.name}, {v.name});"
                 ]
             else:
                 self.out_exprs += [cpp_expr(o.type, o.name)]

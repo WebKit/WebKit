@@ -345,12 +345,10 @@ public:
     void deleteShader(PlatformGLObject) final;
     void deleteTexture(PlatformGLObject) final;
     void simulateEventForTesting(SimulatedEventForTesting) override;
-    void drawSurfaceBufferToImageBuffer(SurfaceBuffer, ImageBuffer&) override;
+    RefPtr<Image> surfaceBufferToImage(SurfaceBuffer) override;
     RefPtr<PixelBuffer> drawingBufferToPixelBuffer(FlipY);
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
-
-    virtual RefPtr<NativeImage> bufferAsNativeImage(SurfaceBuffer);
 
     // Returns the span of valid data read on success.
     bool getBufferSubDataWithStatus(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data);

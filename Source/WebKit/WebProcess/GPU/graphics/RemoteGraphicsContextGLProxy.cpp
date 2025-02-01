@@ -116,6 +116,7 @@ void RemoteGraphicsContextGLProxy::initializeIPC(Ref<IPC::StreamClientConnection
         Ref gpuProcessConnection = WebProcess::singleton().ensureGPUProcessConnection();
         gpuProcessConnection->createGraphicsContextGL(m_identifier, contextAttributes(), renderingBackend, WTFMove(serverHandle));
         m_gpuProcessConnection = gpuProcessConnection.get();
+        m_connection = gpuProcessConnection->protectedConnection();
 #if ENABLE(VIDEO)
         m_videoFrameObjectHeapProxy = &gpuProcessConnection->videoFrameObjectHeapProxy();
 #endif
@@ -177,16 +178,27 @@ void RemoteGraphicsContextGLProxy::reshape(int width, int height)
         markContextLost();
 }
 
-void RemoteGraphicsContextGLProxy::drawSurfaceBufferToImageBuffer(SurfaceBuffer buffer, ImageBuffer& imageBuffer)
+void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::DestinationColorSpace& colorSpace)
 {
     if (isContextLost())
         return;
-    imageBuffer.flushDrawingContext();
-    auto sendResult = sendSync(Messages::RemoteGraphicsContextGL::DrawSurfaceBufferToImageBuffer(buffer, imageBuffer.renderingResourceIdentifier()));
-    if (!sendResult.succeeded()) {
+    m_drawingBufferColorSpace = colorSpace;
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::SetDrawingBufferColorSpace(colorSpace));
+    if (sendResult != IPC::Error::NoError)
         markContextLost();
-        return;
+}
+
+RefPtr<Image> RemoteGraphicsContextGLProxy::surfaceBufferToImage(SurfaceBuffer buffer)
+{
+    if (isContextLost())
+        return nullptr;
+    Ref image = RemoteImageProxy::create(getInternalFramebufferSize(), m_drawingBufferColorSpace, *m_connection);
+    auto sendResult = send(Messages::RemoteGraphicsContextGL::SurfaceBufferToImage(buffer, image->identifier()));
+    if (sendResult != IPC::Error::NoError) {
+        markContextLost();
+        return nullptr;
     }
+    return image;
 }
 
 #if ENABLE(MEDIA_STREAM) || ENABLE(WEB_CODECS)
@@ -532,6 +544,7 @@ void RemoteGraphicsContextGLProxy::abandonGpuProcess()
     if (!m_streamConnection)
         return;
     protectedStreamConnection()->invalidate();
+    m_connection = nullptr;
     m_streamConnection = nullptr;
     m_gpuProcessConnection = nullptr;
 }
@@ -544,6 +557,7 @@ void RemoteGraphicsContextGLProxy::disconnectGpuProcessIfNeeded()
     if (!m_streamConnection)
         return;
     protectedStreamConnection()->invalidate();
+    m_connection = nullptr;
     m_streamConnection = nullptr;
     ensureOnMainRunLoop([identifier = m_identifier, weakGPUProcessConnection = WTFMove(m_gpuProcessConnection)]() {
         RefPtr gpuProcessConnection = weakGPUProcessConnection.get();

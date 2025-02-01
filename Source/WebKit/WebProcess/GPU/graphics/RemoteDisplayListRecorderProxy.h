@@ -94,6 +94,7 @@ private:
     void drawPath(const WebCore::Path&) final;
     void drawFocusRing(const WebCore::Path&, float outlineWidth, const WebCore::Color&) final;
     void drawFocusRing(const Vector<WebCore::FloatRect>&, float outlineOffset, float outlineWidth, const WebCore::Color&) final;
+    WebCore::ImageDrawResult drawImage(WebCore::Image&, const WebCore::FloatRect& destRect, const WebCore::FloatRect& sourceRect, WebCore::ImagePaintingOptions = { WebCore::ImageOrientation::Orientation::FromImage });
     void fillRect(const WebCore::FloatRect&, RequiresClipToRect) final;
     void fillRect(const WebCore::FloatRect&, const WebCore::Color&) final;
     void fillRect(const WebCore::FloatRect&, WebCore::Gradient&) final;

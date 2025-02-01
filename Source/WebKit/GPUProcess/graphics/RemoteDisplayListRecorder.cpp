@@ -534,6 +534,16 @@ void RemoteDisplayListRecorder::drawVideoFrame(SharedVideoFrame&& frame, const F
         drawingContext().drawVideoFrame(*videoFrame, destination, orientation, shouldDiscardAlpha);
 }
 
+void RemoteDisplayListRecorder::drawImage(RemoteImageReadReference ref, WebCore::FloatRect destination, WebCore::FloatRect source, struct WebCore::ImagePaintingOptions options)
+{
+    RefPtr image = m_sharedResourceCache->readImage(WTFMove(ref));
+    if (!image) {
+        ASSERT_IS_TESTING_IPC();
+        return;
+    }
+    drawingContext().drawImage(*image, destination, source, options);
+}
+
 void RemoteDisplayListRecorder::setSharedVideoFrameSemaphore(IPC::Semaphore&& semaphore)
 {
     sharedVideoFrameReader().setSemaphore(WTFMove(semaphore));

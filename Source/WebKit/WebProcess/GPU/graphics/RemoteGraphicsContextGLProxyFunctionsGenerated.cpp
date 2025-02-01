@@ -26,9 +26,9 @@
 #include "config.h"
 #include "RemoteGraphicsContextGLProxy.h"
 
-#include <wtf/StdLibExtras.h>
-
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL)
+
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
@@ -3036,17 +3036,6 @@ void RemoteGraphicsContextGLProxy::getInternalformativ(GCGLenum target, GCGLenum
     }
     auto& [paramsReply] = sendResult.reply();
     memcpySpan(params, paramsReply);
-}
-
-void RemoteGraphicsContextGLProxy::setDrawingBufferColorSpace(const WebCore::DestinationColorSpace& arg0)
-{
-    if (isContextLost())
-        return;
-    auto sendResult = send(Messages::RemoteGraphicsContextGL::SetDrawingBufferColorSpace(arg0));
-    if (sendResult != IPC::Error::NoError) {
-        markContextLost();
-        return;
-    }
 }
 
 #if ENABLE(WEBXR)
