@@ -824,6 +824,12 @@ void RTCPeerConnection::updateIceConnectionState(RTCIceConnectionState)
     });
 }
 
+static bool isIceTransportUsedByTransceiver(const RTCIceTransport& iceTransport, RTCRtpTransceiver& transceiver)
+{
+    auto* dtlsTransport = transceiver.sender().transport();
+    return dtlsTransport && &dtlsTransport->iceTransport() == &iceTransport;
+}
+
 // https://w3c.github.io/webrtc-pc/#rtcpeerconnectionstate-enum
 RTCPeerConnectionState RTCPeerConnection::computeConnectionState()
 {
@@ -834,7 +840,7 @@ RTCPeerConnectionState RTCPeerConnection::computeConnectionState()
     iceTransports.removeAllMatching([&](auto& iceTransport) {
         if (m_sctpTransport && &m_sctpTransport->transport().iceTransport() == iceTransport.ptr())
             return false;
-        return allOf(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
+        return std::ranges::all_of(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
             return !isIceTransportUsedByTransceiver(iceTransport.get(), *transceiver);
         });
     });
@@ -843,7 +849,7 @@ RTCPeerConnectionState RTCPeerConnection::computeConnectionState()
     dtlsTransports.removeAllMatching([&](auto& dtlsTransport) {
         if (m_sctpTransport && &m_sctpTransport->transport() == dtlsTransport.ptr())
             return false;
-        return allOf(m_transceiverSet.list(), [&dtlsTransport](auto& transceiver) {
+        return std::ranges::all_of(m_transceiverSet.list(), [&dtlsTransport](auto& transceiver) {
             return transceiver->sender().transport() != dtlsTransport.ptr();
         });
     });
@@ -854,13 +860,17 @@ RTCPeerConnectionState RTCPeerConnection::computeConnectionState()
     if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Disconnected; }))
         return RTCPeerConnectionState::Disconnected;
 
-    if (allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }) && allOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Closed; }))
+    if (std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; })
+        && std::ranges::all_of(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Closed; }))
         return RTCPeerConnectionState::New;
 
     if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Checking; }) || anyOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::New || transport->state() == RTCDtlsTransportState::Connecting; }))
         return RTCPeerConnectionState::Connecting;
 
-    ASSERT(allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }) && allOf(dtlsTransports, [](auto& transport) { return transport->state() == RTCDtlsTransportState::Connected || transport->state() == RTCDtlsTransportState::Closed; }));
+    ASSERT(std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; })
+        && std::ranges::all_of(dtlsTransports, [](auto& transport) {
+            return transport->state() == RTCDtlsTransportState::Connected || transport->state() == RTCDtlsTransportState::Closed;
+        }));
     return RTCPeerConnectionState::Connected;
 }
 
@@ -877,12 +887,6 @@ void RTCPeerConnection::updateConnectionState()
     scheduleEvent(Event::create(eventNames().connectionstatechangeEvent, Event::CanBubble::No, Event::IsCancelable::No));
 }
 
-static bool isIceTransportUsedByTransceiver(const RTCIceTransport& iceTransport, RTCRtpTransceiver& transceiver)
-{
-    auto* dtlsTransport = transceiver.sender().transport();
-    return dtlsTransport && &dtlsTransport->iceTransport() == &iceTransport;
-}
-
 // https://w3c.github.io/webrtc-pc/#dom-rtciceconnectionstate
 RTCIceConnectionState RTCPeerConnection::computeIceConnectionStateFromIceTransports()
 {
@@ -894,7 +898,7 @@ RTCIceConnectionState RTCPeerConnection::computeIceConnectionStateFromIceTranspo
     iceTransports.removeAllMatching([&](auto& iceTransport) {
         if (m_sctpTransport && &m_sctpTransport->transport().iceTransport() == iceTransport.ptr())
             return false;
-        return allOf(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
+        return std::ranges::all_of(m_transceiverSet.list(), [&iceTransport](auto& transceiver) {
             return !isIceTransportUsedByTransceiver(iceTransport.get(), *transceiver);
         });
     });
@@ -903,13 +907,15 @@ RTCIceConnectionState RTCPeerConnection::computeIceConnectionStateFromIceTranspo
         return RTCIceConnectionState::Failed;
     if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Disconnected; }))
         return RTCIceConnectionState::Disconnected;
-    if (allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }))
+    if (std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Closed; }))
         return RTCIceConnectionState::New;
     if (anyOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::New || transport->state() == RTCIceTransportState::Checking; }))
         return RTCIceConnectionState::Checking;
-    if (allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }))
+    if (std::ranges::all_of(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }))
         return RTCIceConnectionState::Completed;
-    ASSERT(allOf(iceTransports, [](auto& transport) { return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed; }));
+    ASSERT(std::ranges::all_of(iceTransports, [](auto& transport) {
+        return transport->state() == RTCIceTransportState::Connected || transport->state() == RTCIceTransportState::Completed || transport->state() == RTCIceTransportState::Closed;
+    }));
     return RTCIceConnectionState::Connected;
 }
 

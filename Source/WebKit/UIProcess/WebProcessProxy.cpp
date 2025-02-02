@@ -2984,7 +2984,7 @@ void WebProcessProxy::updateRuntimeStatistics()
 
 bool WebProcessProxy::isAlwaysOnLoggingAllowed() const
 {
-    return WTF::allOf(pages(), [](auto& page) {
+    return std::ranges::all_of(pages(), [](auto& page) {
         return page->isAlwaysOnLoggingAllowed();
     });
 }

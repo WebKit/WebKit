@@ -151,7 +151,7 @@ static inline bool isMediaStreamCorrectlyStarted(const MediaStream& stream)
     if (stream.getTracks().isEmpty())
         return false;
 
-    return WTF::allOf(stream.getTracks(), [](auto& track) {
+    return std::ranges::all_of(stream.getTracks(), [](auto& track) {
         return !track->source().captureDidFail();
     });
 }

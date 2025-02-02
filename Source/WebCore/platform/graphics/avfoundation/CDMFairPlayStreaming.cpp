@@ -385,7 +385,7 @@ bool CDMPrivateFairPlayStreaming::supportsConfigurationWithRestrictions(const CD
     if (restrictions.persistentStateDenied && configuration.persistentState == CDMRequirement::Required)
         return false;
 
-    if (WTF::allOf(configuration.sessionTypes, [restrictions](auto& sessionType) {
+    if (std::ranges::all_of(configuration.sessionTypes, [restrictions](auto& sessionType) {
         return restrictions.deniedSessionTypes.contains(sessionType);
     }))
         return false;

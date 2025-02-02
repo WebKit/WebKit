@@ -154,7 +154,7 @@ WebMediaSessionLogger& WebMediaSessionManager::logger()
 
 bool WebMediaSessionManager::alwaysOnLoggingAllowed() const
 {
-    return allOf(m_clientState, [] (auto& state) {
+    return std::ranges::all_of(m_clientState, [] (auto& state) {
         return state->client.alwaysOnLoggingAllowed();
     });
 }

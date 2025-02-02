@@ -1625,7 +1625,7 @@ ExceptionOr<GStreamerMediaEndpoint::Backends> GStreamerMediaEndpoint::createTran
         scaleValues.reserveInitialCapacity(sendEncodings.size());
         if (sendEncodings.size() == 1 && sendEncodings[0].scaleResolutionDownBy)
             scaleValues.append(sendEncodings[0].scaleResolutionDownBy.value());
-        else if (allOf(sendEncodings, [](auto& encoding) { return encoding.scaleResolutionDownBy.value_or(1) == 1; })) {
+        else if (std::ranges::all_of(sendEncodings, [](auto& encoding) { return encoding.scaleResolutionDownBy.value_or(1) == 1; })) {
             for (unsigned i = sendEncodings.size() - 1; i >= 1; i--)
                 scaleValues.append(i * 2);
             scaleValues.append(1);

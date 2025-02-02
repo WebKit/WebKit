@@ -42,14 +42,4 @@ bool anyOf(ContainerType&& container, NOESCAPE AnyOfFunction&& anyOfFunction)
     return false;
 }
 
-template<typename ContainerType, typename AllOfFunction>
-bool allOf(ContainerType&& container, NOESCAPE AllOfFunction&& allOfFunction)
-{
-    for (auto& value : container) {
-        if (!allOfFunction(value))
-            return false;
-    }
-    return true;
-}
-
 } // namespace WTF

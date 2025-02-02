@@ -145,7 +145,7 @@ static std::pair<std::array<int, 4>, std::array<int, 4>> boundingNeighbors(int i
     const auto compareColorsAndSetBounds = [&areColorsRelated](const auto& bytes, auto& tightestBoundingColors, auto& tightestBoundingDiff, auto colorIndex, auto neighborIndex1, auto neighborIndex2) {
         if (areColorsRelated(neighborIndex1, colorIndex, neighborIndex2)) {
             if (setTightnessBounds(bytes, tightestBoundingDiff, neighborIndex1, colorIndex, neighborIndex2)) {
-                if (WTF::allOf(tightestBoundingDiff, [](auto& item) { return !item; })) {
+                if (std::ranges::all_of(tightestBoundingDiff, [](auto& item) { return !item; })) {
                     tightestBoundingColors = {
                         { bytes[colorIndex], bytes[colorIndex + 1], bytes[colorIndex + 2], bytes[colorIndex + 3] },
                         { bytes[colorIndex], bytes[colorIndex + 1], bytes[colorIndex + 2], bytes[colorIndex + 3] }

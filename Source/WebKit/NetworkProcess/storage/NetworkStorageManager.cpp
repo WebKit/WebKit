@@ -128,7 +128,7 @@ static bool isEmptyOriginDirectory(const String& directory)
         , ".DS_Store"_s
 #endif
     };
-    return WTF::allOf(children, [&] (auto& child) {
+    return std::ranges::all_of(children, [&] (auto& child) {
         return invalidFileNames.contains(child);
     });
 }
