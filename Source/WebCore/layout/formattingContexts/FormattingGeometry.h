@@ -29,6 +29,13 @@
 #include "LayoutBoxGeometry.h"
 
 namespace WebCore {
+
+namespace Style {
+struct MaximumSize;
+struct MinimumSize;
+struct PreferredSize;
+}
+
 namespace Layout {
 
 struct ComputedHorizontalMargin;
@@ -68,7 +75,13 @@ public:
     ComputedVerticalMargin computedVerticalMargin(const Box&, const HorizontalConstraints&) const;
 
     std::optional<LayoutUnit> computedValue(const Length& geometryProperty, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> computedValue(const Style::PreferredSize& geometryProperty, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> computedValue(const Style::MinimumSize& geometryProperty, LayoutUnit containingBlockWidth) const;
+    std::optional<LayoutUnit> computedValue(const Style::MaximumSize& geometryProperty, LayoutUnit containingBlockWidth) const;
     std::optional<LayoutUnit> fixedValue(const Length& geometryProperty) const;
+    std::optional<LayoutUnit> fixedValue(const Style::PreferredSize& geometryProperty) const;
+    std::optional<LayoutUnit> fixedValue(const Style::MinimumSize& geometryProperty) const;
+    std::optional<LayoutUnit> fixedValue(const Style::MaximumSize& geometryProperty) const;
 
     std::optional<LayoutUnit> computedMinHeight(const Box&, std::optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
     std::optional<LayoutUnit> computedMaxHeight(const Box&, std::optional<LayoutUnit> containingBlockHeight = std::nullopt) const;
@@ -109,10 +122,10 @@ private:
     LayoutUnit staticHorizontalPositionForOutOfFlowPositioned(const Box&, const HorizontalConstraints&) const;
 
     enum class HeightType { Min, Max, Normal };
-    std::optional<LayoutUnit> computedHeightValue(const Box&, HeightType, std::optional<LayoutUnit> containingBlockHeight) const;
+    template<HeightType> std::optional<LayoutUnit> computedHeightValue(const Box&, std::optional<LayoutUnit> containingBlockHeight) const;
 
     enum class WidthType { Min, Max, Normal };
-    std::optional<LayoutUnit> computedWidthValue(const Box&, WidthType, LayoutUnit containingBlockWidth) const;
+    template<WidthType> std::optional<LayoutUnit> computedWidthValue(const Box&, LayoutUnit containingBlockWidth) const;
 
     const FormattingContext& m_formattingContext;
 };

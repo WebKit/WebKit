@@ -29,39 +29,10 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
+#include "CSSValueTypes.h"
 
 namespace WebCore {
 namespace CSS {
-
-// MARK: - Conversion from strongly typed `CSS::` value types to `WebCore::CSSValue` types.
-
-template<typename CSSType> struct CSSValueCreation;
-
-template<typename CSSType> Ref<CSSValue> createCSSValue(const CSSType& value)
-{
-    return CSSValueCreation<CSSType>{}(value);
-}
-
-template<CSSValueID Id> struct CSSValueCreation<Constant<Id>> {
-    Ref<CSSValue> operator()(const Constant<Id>&)
-    {
-        return CSSPrimitiveValue::create(Id);
-    }
-};
-
-template<VariantLike CSSType> struct CSSValueCreation<CSSType> {
-    Ref<CSSValue> operator()(const CSSType& value)
-    {
-        return WTF::switchOn(value, [](const auto& alternative) { return createCSSValue(alternative); });
-    }
-};
-
-template<TupleLike CSSType> requires (std::tuple_size_v<CSSType> == 1) struct CSSValueCreation<CSSType> {
-    Ref<CSSValue> operator()(const CSSType& value)
-    {
-        return createCSSValue(get<0>(value));;
-    }
-};
 
 template<NumericRaw CSSType> struct CSSValueCreation<CSSType> {
     Ref<CSSValue> operator()(const CSSType& raw)

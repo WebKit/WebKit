@@ -157,9 +157,14 @@ public:
         return index() == I;
     }
 
-    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    template<typename... F> decltype(auto) switchOn(F&&... f) const &
     {
         return Operations::constPayloadForData(m_data, std::forward<F>(f)...);
+    }
+
+    template<typename... F> decltype(auto) switchOn(F&&... f) &&
+    {
+        return Operations::payloadForData(m_data, std::forward<F>(f)...);
     }
 
     bool operator==(const CompactVariant& other) const

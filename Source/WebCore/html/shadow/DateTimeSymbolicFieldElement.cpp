@@ -59,9 +59,9 @@ void DateTimeSymbolicFieldElement::adjustMinInlineSize(RenderStyle& style) const
         inlineSize = std::max(inlineSize, font.width(RenderBlock::constructTextRun(symbol, style)));
 
     if (style.writingMode().isHorizontal())
-        style.setMinWidth({ inlineSize, LengthType::Fixed });
+        style.setMinWidth(Style::MinimumSize::Fixed { inlineSize });
     else
-        style.setMinHeight({ inlineSize, LengthType::Fixed });
+        style.setMinHeight(Style::MinimumSize::Fixed { inlineSize });
 }
 
 bool DateTimeSymbolicFieldElement::hasValue() const

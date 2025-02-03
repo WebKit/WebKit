@@ -203,7 +203,10 @@ float NumberInputType::decorationWidth() const
         width += spinRenderer->borderAndPaddingLogicalWidth();
         // Since the width of spinRenderer is not calculated yet, spinRenderer->logicalWidth() returns 0.
         // So computedStyle()->logicalWidth() is used instead.
-        width += spinButton->computedStyle()->logicalWidth().value();
+
+        // FIXME: Handle non-fixed logical widths.
+        if (auto fixedLogicalWidth = spinButton->computedStyle()->logicalWidth().fixed())
+            width += fixedLogicalWidth->value;
     }
     return width;
 }

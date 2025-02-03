@@ -29,20 +29,27 @@
 namespace WebCore {
 
 struct SameSizeAsStyleBoxData : public RefCounted<SameSizeAsStyleBoxData> {
-    Length length[7];
+    Style::PreferredSize preferredSize[2];
+    Style::MinimumSize minSize[2];
+    Style::MaximumSize maxSize[2];
+    Length verticalAlignLength;
     int m_zIndex[2];
     uint32_t bitfields;
 };
-
+static_assert(sizeof(Style::PreferredSize) <= sizeof(Length));
+static_assert(sizeof(Style::MinimumSize) <= sizeof(Length));
+static_assert(sizeof(Style::MaximumSize) <= sizeof(Length));
 static_assert(sizeof(StyleBoxData) == sizeof(SameSizeAsStyleBoxData), "StyleBoxData should not grow");
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleBoxData);
 
 StyleBoxData::StyleBoxData()
-    : m_minWidth(RenderStyle::initialMinSize())
-    , m_maxWidth(RenderStyle::initialMaxSize())
-    , m_minHeight(RenderStyle::initialMinSize())
-    , m_maxHeight(RenderStyle::initialMaxSize())
+    : m_width(RenderStyle::initialPreferredSize())
+    , m_height(RenderStyle::initialPreferredSize())
+    , m_minWidth(RenderStyle::initialMinimumSize())
+    , m_minHeight(RenderStyle::initialMinimumSize())
+    , m_maxWidth(RenderStyle::initialMaximumSize())
+    , m_maxHeight(RenderStyle::initialMaximumSize())
     , m_specifiedZIndex(0)
     , m_usedZIndex(0)
     , m_hasAutoSpecifiedZIndex(true)
@@ -58,8 +65,8 @@ inline StyleBoxData::StyleBoxData(const StyleBoxData& o)
     , m_width(o.m_width)
     , m_height(o.m_height)
     , m_minWidth(o.m_minWidth)
-    , m_maxWidth(o.m_maxWidth)
     , m_minHeight(o.m_minHeight)
+    , m_maxWidth(o.m_maxWidth)
     , m_maxHeight(o.m_maxHeight)
     , m_verticalAlignLength(o.m_verticalAlignLength)
     , m_specifiedZIndex(o.m_specifiedZIndex)
@@ -82,8 +89,8 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
     return m_width == o.m_width
         && m_height == o.m_height
         && m_minWidth == o.m_minWidth
-        && m_maxWidth == o.m_maxWidth
         && m_minHeight == o.m_minHeight
+        && m_maxWidth == o.m_maxWidth
         && m_maxHeight == o.m_maxHeight
         && m_verticalAlignLength == o.m_verticalAlignLength
         && m_specifiedZIndex == o.m_specifiedZIndex

@@ -42,7 +42,7 @@ namespace CSS {
 //        void operator()(StringBuilder&, const CSSType&);
 //    };
 
-template<typename CSSType> struct Serialize;
+template<typename> struct Serialize;
 
 // Serialization Invokers
 template<typename CSSType> void serializationForCSS(StringBuilder& builder, const CSSType& value)
@@ -197,7 +197,7 @@ template<typename CSSType> struct Serialize<MinimallySerializingSpaceSeparatedRe
 //        void operator()(ComputedStyleDependencies&, const CSSType&);
 //    };
 
-template<typename CSSType> struct ComputedStyleDependenciesCollector;
+template<typename> struct ComputedStyleDependenciesCollector;
 
 // ComputedStyleDependencies Invoker
 template<typename CSSType> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const CSSType& value)
@@ -290,6 +290,8 @@ template<> struct ComputedStyleDependenciesCollector<CustomIdentifier> {
     }
 };
 
+// MARK: - Interoperability with `CSSValue` types.
+
 // MARK: - CSSValue Visitation
 
 // All non-tuple-like leaf types must implement the following conversions:
@@ -298,7 +300,7 @@ template<> struct ComputedStyleDependenciesCollector<CustomIdentifier> {
 //        IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const CSSType&);
 //    };
 
-template<typename CSSType> struct CSSValueChildrenVisitor;
+template<typename> struct CSSValueChildrenVisitor;
 
 // CSSValueVisitor Invoker
 template<typename CSSType> IterationStatus visitCSSValueChildren(const Function<IterationStatus(CSSValue&)>& func, const CSSType& value)
@@ -396,6 +398,69 @@ template<> struct CSSValueChildrenVisitor<CustomIdentifier> {
         return IterationStatus::Continue;
     }
 };
+
+// MARK: - Conversion from CSS type to `WebCore::CSSValue`
+
+// Types that want to participate in conversion from a CSS type to `CSSValue` must specialize the following interface:
+//
+//    template<> struct WebCore::CSS::CSSValueCreation<CSSType> {
+//        Ref<CSSValue> operator()(const CSSType&, ...);
+//    };
+//
+// NOTE: There is an analog of this in the Style namespace for direct conversion from Style type directly to CSSValue.
+
+template<typename> struct CSSValueCreation;
+
+// `CSSValueCreation` Invoker
+template<typename CSSType, typename... Rest> Ref<CSSValue> createCSSValue(const CSSType& value, Rest&&... rest)
+{
+    return CSSValueCreation<CSSType>{}(value, std::forward<Rest>(rest)...);
+}
+
+// Out of line to avoid inclusion of CSSPrimitiveValue.h
+Ref<CSSValue> makeCSSPrimitiveValue(CSSValueID);
+
+// Specialization for `Constant`.
+template<CSSValueID Id> struct CSSValueCreation<Constant<Id>> {
+    Ref<CSSValue> operator()(const Constant<Id>&)
+    {
+        return makeCSSPrimitiveValue(Id);
+    }
+};
+
+// Specialization for `VariantLike`.
+template<VariantLike CSSType> struct CSSValueCreation<CSSType> {
+    Ref<CSSValue> operator()(const CSSType& value)
+    {
+        return WTF::switchOn(value, [](const auto& alternative) { return createCSSValue(alternative); });
+    }
+};
+
+// Specialization for `TupleLike` (wrapper).
+template<TupleLike CSSType> requires (std::tuple_size_v<CSSType> == 1) struct CSSValueCreation<CSSType> {
+    Ref<CSSValue> operator()(const CSSType& value)
+    {
+        return createCSSValue(get<0>(value));;
+    }
+};
+
+// MARK: - Conversion from `WebCore::CSSValue` to "CSS"
+
+// Types that want to participate in conversion from CSSValue to CSS types must specialize the following interface:
+//
+//    template<> struct WebCore::CSS::CSSValueConversions<CSSType> {
+//        CSSType operator()(const CSSValue&, ...);
+//    };
+//
+// NOTE: There is an analog of this in the Style namespace for direct conversion from CSSValue to Style type.
+
+template<typename> struct CSSValueConversions;
+
+// `CSSValueConversions` Invoker
+template<typename CSSType, typename... Rest> CSSType createCSSValue(const CSSValue& value, Rest&&... rest)
+{
+    return CSSValueConversions<CSSType>{}(value, std::forward<Rest>(rest)...);
+}
 
 } // namespace CSS
 } // namespace WebCore

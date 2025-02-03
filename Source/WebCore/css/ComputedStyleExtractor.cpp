@@ -90,7 +90,11 @@
 #include "StyleColorScheme.h"
 #include "StyleEasingFunction.h"
 #include "StyleFilterProperty.h"
+#include "StyleFlexBasis.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
 #include "StylePathData.h"
+#include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
@@ -3711,7 +3715,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyFlex:
         return getCSSPropertyValuesForShorthandProperties(flexShorthand());
     case CSSPropertyFlexBasis:
-        return CSSPrimitiveValue::create(style.flexBasis(), style);
+        return Style::createCSSValue(style.flexBasis(), style);
     case CSSPropertyFlexDirection:
         return createConvertingToCSSValueID(style.flexDirection());
     case CSSPropertyFlexFlow: {
@@ -3876,7 +3880,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (!isNonReplacedInline(*renderer))
                 return zoomAdjustedPixelValue(sizingBox(*renderer).height(), style);
         }
-        return zoomAdjustedPixelValueForLength(style.height(), style);
+        return Style::createCSSValue(style.height(), style);
     case CSSPropertyHyphens:
         return createConvertingToCSSValueID(style.hyphens());
     case CSSPropertyHyphenateCharacter:
@@ -4002,32 +4006,24 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     }
     case CSSPropertyWebkitUserModify:
         return createConvertingToCSSValueID(style.userModify());
-    case CSSPropertyMaxHeight: {
-        const Length& maxHeight = style.maxHeight();
-        if (maxHeight.isUndefined())
-            return CSSPrimitiveValue::create(CSSValueNone);
-        return zoomAdjustedPixelValueForLength(maxHeight, style);
-    }
-    case CSSPropertyMaxWidth: {
-        const Length& maxWidth = style.maxWidth();
-        if (maxWidth.isUndefined())
-            return CSSPrimitiveValue::create(CSSValueNone);
-        return zoomAdjustedPixelValueForLength(maxWidth, style);
-    }
+    case CSSPropertyMaxHeight:
+        return Style::createCSSValue(style.maxHeight(), style);
+    case CSSPropertyMaxWidth:
+        return Style::createCSSValue(style.maxWidth(), style);
     case CSSPropertyMinHeight:
         if (style.minHeight().isAuto()) {
             if (isFlexOrGridItem(renderer))
                 return CSSPrimitiveValue::create(CSSValueAuto);
             return zoomAdjustedPixelValue(0, style);
         }
-        return zoomAdjustedPixelValueForLength(style.minHeight(), style);
+        return Style::createCSSValue(style.minHeight(), style);
     case CSSPropertyMinWidth:
         if (style.minWidth().isAuto()) {
             if (isFlexOrGridItem(renderer))
                 return CSSPrimitiveValue::create(CSSValueAuto);
             return zoomAdjustedPixelValue(0, style);
         }
-        return zoomAdjustedPixelValueForLength(style.minWidth(), style);
+        return Style::createCSSValue(style.minWidth(), style);
     case CSSPropertyObjectFit:
         return createConvertingToCSSValueID(style.objectFit());
     case CSSPropertyObjectPosition:
@@ -4270,7 +4266,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
             if (!isNonReplacedInline(*renderer))
                 return zoomAdjustedPixelValue(sizingBox(*renderer).width(), style);
         }
-        return zoomAdjustedPixelValueForLength(style.width(), style);
+        return Style::createCSSValue(style.width(), style);
     case CSSPropertyWillChange:
         return willChangePropertyValue(style.willChange());
     case CSSPropertyWordBreak:

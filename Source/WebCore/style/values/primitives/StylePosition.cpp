@@ -34,6 +34,8 @@
 namespace WebCore {
 namespace Style {
 
+using namespace CSS::Literals;
+
 auto ToStyle<CSS::TwoComponentPositionHorizontal>::operator()(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state) -> TwoComponentPositionHorizontal
 {
     return WTF::switchOn(value.offset,

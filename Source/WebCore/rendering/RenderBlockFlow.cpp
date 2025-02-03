@@ -121,7 +121,7 @@ RenderBlockFlow::MarginInfo::MarginInfo(const RenderBlockFlow& block, LayoutUnit
     // effects when the children overflow out of the parent block and yet still collapse
     // with it. We also don't collapse if we have any bottom border/padding.
     m_canCollapseMarginAfterWithChildren = m_canCollapseWithChildren && !afterBorderPadding
-        && blockStyle.logicalHeight().isAuto() && !blockStyle.logicalHeight().value();
+        && blockStyle.logicalHeight().isAuto();
     
     m_quirkContainer = block.isRenderTableCell() || block.isBody();
 
@@ -323,9 +323,9 @@ void RenderBlockFlow::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth,
     }
 
     if (auto* cell = dynamicDowncast<RenderTableCell>(*this)) {
-        Length tableCellWidth = cell->styleOrColLogicalWidth();
-        if (tableCellWidth.isFixed() && tableCellWidth.value() > 0)
-            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(tableCellWidth));
+        auto tableCellWidth = cell->styleOrColLogicalWidth();
+        if (auto tableCellWidthFixed = tableCellWidth.fixed(); tableCellWidthFixed && tableCellWidthFixed->value > 0)
+            maxLogicalWidth = std::max(minLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(*tableCellWidthFixed));
     }
 
     int scrollbarWidth = intrinsicScrollbarLogicalWidthIncludingGutter();
@@ -4122,7 +4122,7 @@ static bool isNonBlocksOrNonFixedHeightListItems(const RenderObject& renderer)
     if (!renderer.isRenderBlock())
         return true;
     if (renderer.isRenderListItem())
-        return renderer.style().height().type() != LengthType::Fixed;
+        return !renderer.style().height().isFixed();
     return false;
 }
 
@@ -4541,9 +4541,9 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     RenderObject* trailingSpaceChild = nullptr;
 
     // Firefox and Opera will allow a table cell to grow to fit an image inside it under
-    // very specific cirucumstances (in order to match common WinIE renderings). 
+    // very specific circumstances (in order to match common WinIE renderings).
     // Not supporting the quirk has caused us to mis-render some real sites. (See Bugzilla 10517.) 
-    bool allowImagesToBreak = !document().inQuirksMode() || !isRenderTableCell() || !styleToUse.logicalWidth().isIntrinsicOrAuto();
+    bool allowImagesToBreak = !document().inQuirksMode() || !isRenderTableCell() || styleToUse.logicalWidth().isSpecified();
 
     bool oldAutoWrap = styleToUse.autoWrap();
 
@@ -4557,10 +4557,12 @@ void RenderBlockFlow::computeInlinePreferredLogicalWidths(LayoutUnit& minLogical
     auto textIndent = LayoutUnit { };
     if (styleToUse.textIndent().isFixed())
         textIndent = LayoutUnit { styleToUse.textIndent().value() };
-    else if (auto* containingBlock = this->containingBlock(); containingBlock && containingBlock->style().logicalWidth().isFixed()) {
-        // At this point of the shrink-to-fit computatation, we don't have a used value for the containing block width
-        // (that's exactly to what we try to contribute here) unless the computed value is fixed.
-        textIndent = minimumValueForLength(styleToUse.textIndent(), containingBlock->style().logicalWidth().value());
+    else if (auto* containingBlock = this->containingBlock()) {
+        if (auto fixedLogicalWidth = containingBlock->style().logicalWidth().fixed()) {
+            // At this point of the shrink-to-fit computation, we don't have a used value for the containing block width
+            // (that's exactly to what we try to contribute here) unless the computed value is fixed.
+            textIndent = minimumValueForLength(styleToUse.textIndent(), fixedLogicalWidth->value);
+        }
     }
     RenderObject* previousFloat = 0;
     bool isPrevChildInlineFlow = false;

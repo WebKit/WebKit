@@ -43,6 +43,12 @@ template<auto R, typename V> struct Evaluation<Percentage<R, V>> {
         return static_cast<double>(percentage.value) / 100.0;
     }
 
+    constexpr auto operator()(const Percentage<R, V>& percentage, LayoutUnit referenceLength) -> LayoutUnit
+    {
+        // Don't remove the extra cast to float. It is needed for rounding on 32-bit Intel machines that use the FPU stack.
+        return LayoutUnit(static_cast<float>(percentage.value / 100.0 * referenceLength));
+    }
+
     template<typename Reference> constexpr auto operator()(const Percentage<R, V>& percentage, Reference referenceLength) -> Reference
     {
         return static_cast<Reference>(percentage.value) / 100.0 * referenceLength;

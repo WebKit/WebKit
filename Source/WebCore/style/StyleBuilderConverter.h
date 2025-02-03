@@ -78,7 +78,11 @@
 #include "StyleBuilderState.h"
 #include "StyleColorScheme.h"
 #include "StyleEasingFunction.h"
+#include "StyleFlexBasis.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
 #include "StylePathData.h"
+#include "StylePreferredSize.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StyleRayFunction.h"
 #include "StyleReflection.h"
@@ -105,8 +109,6 @@ public:
     static WebCore::Length convertLength(BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthOrAuto(BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthOrAutoOrContent(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthSizing(BuilderState&, const CSSValue&);
-    static WebCore::Length convertLengthMaxSizing(BuilderState&, const CSSValue&);
     static WebCore::Length convertLengthAllowingNumber(BuilderState&, const CSSValue&); // Assumes unit is 'px' if input is a number.
     static WebCore::Length convertTextLengthOrNormal(BuilderState&, const CSSValue&); // Converts length by text zoom factor, normal to zero
     static TabSize convertTabSize(BuilderState&, const CSSValue&);
@@ -253,6 +255,11 @@ public:
     static SingleTimelineRange convertAnimationRangeStart(BuilderState&, const CSSValue&);
     static SingleTimelineRange convertAnimationRangeEnd(BuilderState&, const CSSValue&);
 
+    static Style::PreferredSize convertPreferredSize(BuilderState&, const CSSValue&);
+    static Style::MinimumSize convertMinimumSize(BuilderState&, const CSSValue&);
+    static Style::MaximumSize convertMaximumSize(BuilderState&, const CSSValue&);
+    static Style::FlexBasis convertFlexBasis(BuilderState&, const CSSValue&);
+
     static Vector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
 
     template<CSSValueID, CSSValueID> static WebCore::Length convertPositionComponent(BuilderState&, const CSSValue&);
@@ -351,40 +358,6 @@ inline WebCore::Length BuilderConverter::convertLengthOrAuto(BuilderState& build
     return convertLength(builderState, value);
 }
 
-inline WebCore::Length BuilderConverter::convertLengthSizing(BuilderState& builderState, const CSSValue& value)
-{
-    auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
-    if (!primitiveValue)
-        return { };
-
-    switch (primitiveValue->valueID()) {
-    case CSSValueInvalid:
-        return convertLength(builderState, value);
-    case CSSValueIntrinsic:
-        return WebCore::Length(LengthType::Intrinsic);
-    case CSSValueMinIntrinsic:
-        return WebCore::Length(LengthType::MinIntrinsic);
-    case CSSValueMinContent:
-    case CSSValueWebkitMinContent:
-        return WebCore::Length(LengthType::MinContent);
-    case CSSValueMaxContent:
-    case CSSValueWebkitMaxContent:
-        return WebCore::Length(LengthType::MaxContent);
-    case CSSValueWebkitFillAvailable:
-        return WebCore::Length(LengthType::FillAvailable);
-    case CSSValueFitContent:
-    case CSSValueWebkitFitContent:
-        return WebCore::Length(LengthType::FitContent);
-    case CSSValueAuto:
-        return WebCore::Length(LengthType::Auto);
-    case CSSValueContent:
-        return WebCore::Length(LengthType::Content);
-    default:
-        ASSERT_NOT_REACHED();
-        return { };
-    }
-}
-
 inline ListStyleType BuilderConverter::convertListStyleType(BuilderState& builderState, const CSSValue& value)
 {
     auto* primitiveValue = requiredDowncast<CSSPrimitiveValue>(builderState, value);
@@ -404,13 +377,6 @@ inline ListStyleType BuilderConverter::convertListStyleType(BuilderState& builde
     UNUSED_PARAM(builderState);
 #endif
     return { ListStyleType::Type::String, makeAtomString(primitiveValue->stringValue()) };
-}
-
-inline WebCore::Length BuilderConverter::convertLengthMaxSizing(BuilderState& builderState, const CSSValue& value)
-{
-    if (value.valueID() == CSSValueNone)
-        return WebCore::Length(LengthType::Undefined);
-    return convertLengthSizing(builderState, value);
 }
 
 inline TabSize BuilderConverter::convertTabSize(BuilderState& builderState, const CSSValue& value)
@@ -2369,6 +2335,26 @@ inline Vector<PositionTryFallback> BuilderConverter::convertPositionTryFallbacks
         auto fallback = fallbackForValueList(*itemList);
         return fallback ? *fallback : PositionTryFallback { };
     });
+}
+
+inline Style::PreferredSize BuilderConverter::convertPreferredSize(BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::PreferredSize>(builderState, value);
+}
+
+inline Style::MinimumSize BuilderConverter::convertMinimumSize(BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::MinimumSize>(builderState, value);
+}
+
+inline Style::MaximumSize BuilderConverter::convertMaximumSize(BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::MaximumSize>(builderState, value);
+}
+
+inline Style::FlexBasis BuilderConverter::convertFlexBasis(BuilderState& builderState, const CSSValue& value)
+{
+    return Style::convertFromCSSValue<Style::FlexBasis>(builderState, value);
 }
 
 } // namespace Style

@@ -559,7 +559,7 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
     if (object->document().settings().layerBasedSVGEngineEnabled() && object->isSVGLayerAwareRenderer())
         return false;
 
-    if (object->style().width().isIntrinsicOrAuto() || object->style().height().isIntrinsicOrAuto() || object->style().height().isPercentOrCalculated())
+    if (!object->style().width().isSpecified() || !object->style().height().isFixed())
         return false;
 
     // Table parts can't be relayout roots since the table is responsible for layouting all the parts.

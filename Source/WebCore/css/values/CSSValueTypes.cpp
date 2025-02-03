@@ -25,12 +25,22 @@
 #include "config.h"
 #include "CSSValueTypes.h"
 
+#include "CSSPrimitiveValue.h"
+#include "CSSValuePool.h"
+
 namespace WebCore {
 namespace CSS {
 
 void Serialize<CustomIdentifier>::operator()(StringBuilder& builder, const CustomIdentifier& value)
 {
     builder.append(value.value);
+}
+
+// Out of line to avoid inclusion of CSSPrimitiveValue.h
+
+Ref<CSSValue> makeCSSPrimitiveValue(CSSValueID valueID)
+{
+    return CSSPrimitiveValue::create(valueID);
 }
 
 } // namespace CSS

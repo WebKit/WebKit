@@ -165,6 +165,7 @@ public:
     bool isUndefined() const;
     bool isFillAvailable() const;
     bool isFitContent() const;
+    bool isIntrinsicKeyword() const;
     bool isMinIntrinsic() const;
     bool isContent() const;
 
@@ -596,6 +597,11 @@ inline bool Length::isFillAvailable() const
 inline bool Length::isFitContent() const
 {
     return type() == LengthType::FitContent;
+}
+
+inline bool Length::isIntrinsicKeyword() const
+{
+    return type() == LengthType::Intrinsic;
 }
 
 inline bool Length::isMinIntrinsic() const

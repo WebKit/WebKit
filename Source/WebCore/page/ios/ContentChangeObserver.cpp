@@ -103,16 +103,21 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
         return true;
 
     auto width = style.logicalWidth();
+    auto fixedWidth = width.fixed();
+    if (fixedWidth && !fixedWidth->value)
+        return true;
+
     auto height = style.logicalHeight();
-    if ((width.isFixed() && !width.value()) || (height.isFixed() && !height.value()))
+    auto fixedHeight = height.fixed();
+    if (fixedHeight && !fixedHeight->value)
         return true;
 
     auto top = style.logicalTop();
     auto left = style.logicalLeft();
     // FIXME: This is trying to check if the element is outside of the viewport. This is incorrect for many reasons.
-    if (left.isFixed() && width.isFixed() && -left.value() >= width.value())
+    if (left.isFixed() && fixedWidth && -left.value() >= fixedWidth->value)
         return true;
-    if (top.isFixed() && height.isFixed() && -top.value() >= height.value())
+    if (top.isFixed() && fixedHeight && -top.value() >= fixedHeight->value)
         return true;
 
     // It's a common technique used to position content offscreen.
@@ -121,7 +126,7 @@ bool ContentChangeObserver::isVisuallyHidden(const Node& node)
 
     // FIXME: Check for other cases like zero height with overflow hidden.
     auto maxHeight = style.maxHeight();
-    if (maxHeight.isFixed() && !maxHeight.value())
+    if (auto fixedMaxHeight = maxHeight.fixed(); fixedMaxHeight && !fixedMaxHeight->value)
         return true;
 
     // Special case opacity, because a descendant with non-zero opacity should still be considered hidden when one of its ancetors has opacity: 0;
@@ -148,11 +153,11 @@ bool ContentChangeObserver::isConsideredVisible(const Node& node)
     auto& style = *node.renderStyle();
     auto width = style.logicalWidth();
     // 1px width or height content is not considered visible.
-    if (width.isFixed() && width.value() <= 1)
+    if (auto fixedWidth = width.fixed(); fixedWidth && fixedWidth->value <= 1)
         return false;
 
     auto height = style.logicalHeight();
-    if (height.isFixed() && height.value() <= 1)
+    if (auto fixedHeight = height.fixed(); fixedHeight && fixedHeight->value <= 1)
         return false;
 
     return true;

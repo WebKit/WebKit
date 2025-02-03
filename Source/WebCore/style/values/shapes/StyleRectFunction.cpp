@@ -31,6 +31,8 @@
 namespace WebCore {
 namespace Style {
 
+using namespace CSS::Literals;
+
 // MARK: - Conversion
 
 auto ToStyle<CSS::Rect>::operator()(const CSS::Rect& value, const BuilderState& state) -> Inset

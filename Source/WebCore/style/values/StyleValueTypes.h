@@ -715,5 +715,75 @@ template<typename T> struct IsEmpty<SpaceSeparatedSize<T>> {
     }
 };
 
+// MARK: - Interoperability with `CSSValue` types.
+
+// MARK: - Conversion from Style type directly to `WebCore::CSSValue`
+
+// Types that want to participate in direct conversion from a Style type to `CSSValue` must specialize the following interface:
+//
+//    template<> struct WebCore::Style::CSSValueCreation<StyleType> {
+//        Ref<CSSValue> operator()(const StyleType&, ...);
+//    };
+//
+// NOTE: There is an analog of this in the CSS namespace for conversion from CSS type to CSSValue.
+
+template<typename> struct CSSValueCreation;
+
+// `CSSValueCreation` Invoker
+template<typename StyleType, typename... Rest> Ref<CSSValue> createCSSValue(const StyleType& value, Rest&&... rest)
+{
+    return CSSValueCreation<StyleType>{}(value, std::forward<Rest>(rest)...);
+}
+
+// Default implementation.
+template<typename StyleType> struct CSSValueCreation {
+    Ref<CSSValue> operator()(const StyleType& value, const RenderStyle& style)
+    {
+        return CSS::createCSSValue(Style::toCSS(value, style));
+    }
+};
+
+// Specialization for `Constant`.
+template<CSSValueID Id> struct CSSValueCreation<Constant<Id>> {
+    Ref<CSSValue> operator()(const Constant<Id>& value)
+    {
+        return CSS::createCSSValue(value);
+    }
+};
+
+// Specialization for `VariantLike`.
+template<VariantLike StyleType> struct CSSValueCreation<StyleType> {
+    Ref<CSSValue> operator()(const StyleType& value)
+    {
+        return WTF::switchOn(value, [](const auto& alternative) { return createCSSValue(alternative); });
+    }
+};
+
+// Specialization for `TupleLike` (wrapper).
+template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) struct CSSValueCreation<StyleType> {
+    Ref<CSSValue> operator()(const StyleType& value)
+    {
+        return createCSSValue(get<0>(value));;
+    }
+};
+
+// MARK: - Conversion from `WebCore::CSSValue` to "Style"
+
+// Types that want to participate in direct conversion from CSSValue to Style types must specialize the following interface:
+//
+//    template<> struct WebCore::Style::CSSValueConversions<StyleType> {
+//        StyleType operator()(BuilderState&, const CSSValue&);
+//    };
+//
+// NOTE: There is an analog of this in the CSS namespace for conversion from CSSValue to CSS type.
+
+template<typename> struct CSSValueConversions;
+
+// `CSSValueConversions` Invoker
+template<typename StyleType> StyleType convertFromCSSValue(BuilderState& state, const CSSValue& value)
+{
+    return CSSValueConversions<StyleType>{}(state, value);
+}
+
 } // namespace Style
 } // namespace WebCore

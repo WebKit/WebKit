@@ -132,12 +132,12 @@ void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* elem
 {
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Checkbox, style);
 
-    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
+    if (style.width().isSpecified() && !style.height().isAuto())
         return;
 
     auto size = std::max(style.computedFontSize(), 10.f);
-    style.setWidth({ size, LengthType::Fixed });
-    style.setHeight({ size, LengthType::Fixed });
+    style.setWidth(Style::PreferredSize::Fixed { size });
+    style.setHeight(Style::PreferredSize::Fixed { size });
 
     UNUSED_PARAM(element);
 }
@@ -182,25 +182,16 @@ bool RenderThemeIOS::isControlStyled(const RenderStyle& style, const RenderStyle
     return RenderTheme::isControlStyled(style, userAgentStyle);
 }
 
-void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance appearance, RenderStyle& style) const
-{
-    auto minControlSize = Theme::singleton().minimumControlSize(appearance, style.fontCascade(), { style.minWidth(), style.minHeight() }, { style.width(), style.height() }, style.usedZoom());
-    if (minControlSize.width.value() > style.minWidth().value())
-        style.setMinWidth(WTFMove(minControlSize.width));
-    if (minControlSize.height.value() > style.minHeight().value())
-        style.setMinHeight(WTFMove(minControlSize.height));
-}
-
 void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Radio, style);
 
-    if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
+    if (style.width().isSpecified() && !style.height().isAuto())
         return;
 
-    auto size = std::max(style.computedFontSize(), 10.f);
-    style.setWidth({ size, LengthType::Fixed });
-    style.setHeight({ size, LengthType::Fixed });
+    auto size = std::max(style.computedFontSize(), 10.0f);
+    style.setWidth(Style::PreferredSize::Fixed { size });
+    style.setHeight(Style::PreferredSize::Fixed { size });
     style.setBorderRadius({ static_cast<int>(size / 2), static_cast<int>(size / 2) });
 
     UNUSED_PARAM(element);
@@ -418,7 +409,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
     applyCommonButtonPaddingToStyle(style, inputElement);
 
     // Don't adjust the style if the width is specified.
-    if (style.logicalWidth().isFixed() && style.logicalWidth().value() > 0)
+    if (auto fixedLogicalWidth = style.logicalWidth().fixed(); fixedLogicalWidth && fixedLogicalWidth->value > 0)
         return;
 
     // Don't adjust for unsupported date input types.
@@ -440,7 +431,7 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
     if (maximumWidth > 0) {
         int width = static_cast<int>(std::ceil(maximumWidth));
-        style.setLogicalWidth(Length(width, LengthType::Fixed));
+        style.setLogicalWidth(Style::PreferredSize::Fixed { static_cast<float>(width) });
         style.setBoxSizing(BoxSizing::ContentBox);
     }
 }
@@ -449,9 +440,9 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
 {
     // Set the min-height to be at least MenuListMinHeight.
     if (style.logicalHeight().isAuto())
-        style.setLogicalMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
+        style.setLogicalMinHeight(Style::MinimumSize::Fixed { static_cast<float>(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize()))) });
     else
-        style.setLogicalMinHeight(Length(MenuListMinHeight, LengthType::Fixed));
+        style.setLogicalMinHeight(Style::MinimumSize::Fixed { MenuListMinHeight });
 
     if (!element)
         return;
@@ -655,9 +646,9 @@ void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) c
     style.setBorderRadius({ { 50, LengthType::Percent }, { 50, LengthType::Percent } });
 
     // Enforce a 16x16 size if no size is provided.
-    if (style.width().isIntrinsicOrAuto() || style.height().isAuto()) {
-        style.setWidth({ kDefaultSliderThumbSize, LengthType::Fixed });
-        style.setHeight({ kDefaultSliderThumbSize, LengthType::Fixed });
+    if (!style.width().isSpecified() || style.height().isAuto()) {
+        style.setWidth(Style::PreferredSize::Fixed { kDefaultSliderThumbSize });
+        style.setHeight(Style::PreferredSize::Fixed { kDefaultSliderThumbSize });
     }
 }
 
@@ -683,8 +674,8 @@ void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element*) const
 {
     // FIXME: Deduplicate sizing with the generic code somehow.
     if (style.width().isAuto() || style.height().isAuto()) {
-        style.setLogicalWidth({ logicalSwitchWidth * style.usedZoom(), LengthType::Fixed });
-        style.setLogicalHeight({ logicalSwitchHeight * style.usedZoom(), LengthType::Fixed });
+        style.setLogicalWidth(Style::PreferredSize::Fixed { logicalSwitchWidth * style.usedZoom() });
+        style.setLogicalHeight(Style::PreferredSize::Fixed { logicalSwitchHeight * style.usedZoom() });
     }
 
     adjustSwitchStyleDisplay(style);
@@ -875,12 +866,12 @@ void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* elemen
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
-    if (style.logicalWidth().isIntrinsicOrAuto() || style.logicalHeight().isAuto()) {
+    if (!style.logicalWidth().isSpecified() || style.logicalHeight().isAuto()) {
         auto minimumHeight = ControlBaseHeight / ControlBaseFontSize * style.fontDescription().computedSize();
-        if (style.logicalMinHeight().isFixed())
-            minimumHeight = std::max(minimumHeight, style.logicalMinHeight().value());
+        if (auto fixedLogicalMinHeight = style.logicalMinHeight().fixed())
+            minimumHeight = std::max(minimumHeight, fixedLogicalMinHeight->value);
         // FIXME: This may need to be a layout time adjustment to support various values like fit-content etc.
-        style.setLogicalMinHeight(Length(minimumHeight, LengthType::Fixed));
+        style.setLogicalMinHeight(Style::MinimumSize::Fixed { minimumHeight });
     }
 
     if (style.usedAppearance() == StyleAppearance::ColorWell)
@@ -1799,8 +1790,8 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
     auto emSize = CSSPrimitiveValue::create(searchFieldDecorationEmSize, CSSUnitType::CSS_EM);
     auto size = emSize->resolveAsLength<float>(conversionData);
 
-    style.setWidth({ size, LengthType::Fixed });
-    style.setHeight({ size, LengthType::Fixed });
+    style.setWidth(Style::PreferredSize::Fixed { size });
+    style.setHeight(Style::PreferredSize::Fixed { size });
     style.setMarginEnd({ searchFieldDecorationMargin, LengthType::Fixed });
 }
 

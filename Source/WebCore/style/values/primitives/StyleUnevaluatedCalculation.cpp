@@ -26,6 +26,7 @@
 #include "StyleUnevaluatedCalculation.h"
 
 #include "CalculationValue.h"
+#include "Length.h"
 
 namespace WebCore {
 namespace Style {
@@ -36,13 +37,18 @@ UnevaluatedCalculationBase::UnevaluatedCalculationBase(Ref<CalculationValue>&& v
 }
 
 UnevaluatedCalculationBase::UnevaluatedCalculationBase(Calculation::Child&& root, Calculation::Category category, CSS::Range range)
-    : calc {
+    : UnevaluatedCalculationBase {
         CalculationValue::create(
             category,
             Calculation::Range { range.min, range.max },
             Calculation::Tree { WTFMove(root) }
         )
     }
+{
+}
+
+UnevaluatedCalculationBase::UnevaluatedCalculationBase(const WebCore::Length& length)
+    : UnevaluatedCalculationBase { length.protectedCalculationValue() }
 {
 }
 

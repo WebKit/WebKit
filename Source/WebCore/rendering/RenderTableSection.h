@@ -90,7 +90,7 @@ public:
         Row row;
         RenderTableRow* rowRenderer { nullptr };
         LayoutUnit baseline;
-        Length logicalHeight;
+        Style::PreferredSize logicalHeight;
     };
 
     inline const BorderValue& borderAdjoiningTableStart() const;

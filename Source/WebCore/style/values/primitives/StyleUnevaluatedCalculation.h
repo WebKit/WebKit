@@ -35,6 +35,7 @@ struct Child;
 }
 
 class CalculationValue;
+struct Length;
 
 namespace Style {
 
@@ -42,6 +43,7 @@ namespace Style {
 struct UnevaluatedCalculationBase {
     explicit UnevaluatedCalculationBase(Ref<CalculationValue>&&);
     explicit UnevaluatedCalculationBase(Calculation::Child&&, Calculation::Category, CSS::Range);
+    explicit UnevaluatedCalculationBase(const WebCore::Length&);
 
     WEBCORE_EXPORT UnevaluatedCalculationBase(const UnevaluatedCalculationBase&);
     WEBCORE_EXPORT UnevaluatedCalculationBase(UnevaluatedCalculationBase&&);

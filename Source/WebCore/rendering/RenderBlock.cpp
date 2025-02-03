@@ -479,7 +479,7 @@ bool RenderBlock::isSelfCollapsingBlock() const
         || style().logicalMinHeight().isPositive())
         return false;
 
-    Length logicalHeightLength = style().logicalHeight();
+    auto logicalHeightLength = style().logicalHeight();
     bool hasAutoHeight = logicalHeightLength.isAuto();
     if (logicalHeightLength.isPercentOrCalculated() && !document().inQuirksMode()) {
         hasAutoHeight = true;
@@ -2349,8 +2349,9 @@ void RenderBlock::computePreferredLogicalWidths()
 
     const RenderStyle& styleToUse = style();
     auto lengthToUse = overridingLogicalWidthForFlexBasisComputation().value_or(styleToUse.logicalWidth());
-    if (!isRenderTableCell() && lengthToUse.isFixed() && lengthToUse.value() >= 0 && !(isDeprecatedFlexItem() && !lengthToUse.intValue())) {
-        m_minPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(lengthToUse);
+    auto fixedLengthToUse = lengthToUse.fixed();
+    if (!isRenderTableCell() && fixedLengthToUse && fixedLengthToUse->value >= 0 && !(isDeprecatedFlexItem() && lengthToUse.isZero())) {
+        m_minPreferredLogicalWidth = adjustContentBoxLogicalWidthForBoxSizing(*fixedLengthToUse);
         m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth;
     } else if (shouldComputeLogicalWidthFromAspectRatio()) {
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = (computeLogicalWidthFromAspectRatio() - borderAndPaddingLogicalWidth());
@@ -2485,12 +2486,13 @@ void RenderBlock::computeChildPreferredLogicalWidths(RenderBox& childBox, Layout
             return;
         }
         auto& childBoxStyle = childBox.style();
-        if (childBox.shouldComputeLogicalHeightFromAspectRatio() && childBoxStyle.logicalWidth().isFixed()) {
+        auto logicalWidthFixed = childBoxStyle.logicalWidth().fixed();
+        if (childBox.shouldComputeLogicalHeightFromAspectRatio() && logicalWidthFixed) {
             auto aspectRatioSize = blockSizeFromAspectRatio(childBox.horizontalBorderAndPaddingExtent()
                 , childBox.verticalBorderAndPaddingExtent()
                 , LayoutUnit { childBoxStyle.logicalAspectRatio() }
                 , childBoxStyle.boxSizingForAspectRatio()
-                , LayoutUnit { childBoxStyle.logicalWidth().value() }
+                , LayoutUnit { static_cast<float>(logicalWidthFixed->value) }
                 , style().aspectRatioType()
                 , isRenderReplaced());
             minPreferredLogicalWidth = aspectRatioSize;
@@ -3312,8 +3314,8 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
             return contentBoxLogicalHeight(*overridingLogicalHeightForGrid);
 
         auto& style = this->style();
-        if (style.logicalHeight().isFixed()) {
-            auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { style.logicalHeight().value() });
+        if (auto fixedLogicalHeight = style.logicalHeight().fixed()) {
+            auto contentBoxHeight = adjustContentBoxLogicalHeightForBoxSizing(LayoutUnit { fixedLogicalHeight->value });
             return std::max(0_lu, constrainContentBoxLogicalHeightByMinMax(contentBoxHeight - scrollbarLogicalHeight(), { }));
         }
 

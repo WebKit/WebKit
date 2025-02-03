@@ -190,10 +190,16 @@ bool SearchInputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
 float SearchInputType::decorationWidth() const
 {
     float width = 0;
-    if (m_resultsButton && m_resultsButton->renderStyle())
-        width += m_resultsButton->renderStyle()->logicalWidth().value();
-    if (m_cancelButton && m_cancelButton->renderStyle())
-        width += m_cancelButton->renderStyle()->logicalWidth().value();
+    if (m_resultsButton && m_resultsButton->renderStyle()) {
+        // FIXME: Handle non-fixed logical widths.
+        if (auto fixedLogicalWidth = m_resultsButton->renderStyle()->logicalWidth().fixed())
+            width += fixedLogicalWidth->value;
+    }
+    if (m_cancelButton && m_cancelButton->renderStyle()) {
+        // FIXME: Handle non-fixed logical widths.
+        if (auto fixedLogicalWidth = m_cancelButton->renderStyle()->logicalWidth().fixed())
+            width += fixedLogicalWidth->value;
+    }
     return width;
 }
 

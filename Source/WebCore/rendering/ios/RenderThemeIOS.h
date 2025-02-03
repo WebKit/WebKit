@@ -190,8 +190,6 @@ private:
     Color pictureFrameColor(const RenderObject&) override;
 
     Color controlTintColor(const RenderStyle&, OptionSet<StyleColorOptions>) const;
-
-    void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
 };
 
 }

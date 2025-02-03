@@ -414,6 +414,9 @@ protected:
 
     virtual Color autocorrectionReplacementMarkerColor(const RenderText&) const;
 
+    void adjustIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
+    void adjustMinimumIntrinsicSizeForAppearance(StyleAppearance, RenderStyle&) const;
+
 private:
     StyleAppearance autoAppearanceForElement(RenderStyle&, const Element*) const;
     StyleAppearance adjustAppearanceForElement(RenderStyle&, const Element*, StyleAppearance) const;

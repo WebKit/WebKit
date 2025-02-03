@@ -67,6 +67,10 @@
 #include "StyleCachedImage.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleFilterImage.h"
+#include "StyleFlexBasis.h"
+#include "StyleMaximumSize.h"
+#include "StyleMinimumSize.h"
+#include "StylePreferredSize.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
 #include "StyleTextEdge.h"
@@ -154,6 +158,26 @@ static inline LengthSize blendFunc(const LengthSize& from, const LengthSize& to,
 static inline LengthPoint blendFunc(const LengthPoint& from, const LengthPoint& to, const CSSPropertyBlendingContext& context)
 {
     return blend(from, to, context);
+}
+
+static inline Style::FlexBasis blendFunc(const Style::FlexBasis& from, const Style::FlexBasis& to, const CSSPropertyBlendingContext& context)
+{
+    return Style::blend(from, to, context);
+}
+
+static inline Style::PreferredSize blendFunc(const Style::PreferredSize& from, const Style::PreferredSize& to, const CSSPropertyBlendingContext& context)
+{
+    return Style::blend(from, to, context);
+}
+
+static inline Style::MinimumSize blendFunc(const Style::MinimumSize& from, const Style::MinimumSize& to, const CSSPropertyBlendingContext& context)
+{
+    return Style::blend(from, to, context);
+}
+
+static inline Style::MaximumSize blendFunc(const Style::MaximumSize& from, const Style::MaximumSize& to, const CSSPropertyBlendingContext& context)
+{
+    return Style::blend(from, to, context);
 }
 
 static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, const ShadowData* to, const RenderStyle& fromStyle, const RenderStyle& toStyle, const CSSPropertyBlendingContext& context)
@@ -1254,6 +1278,41 @@ public:
     OptionSet<Flags> m_flags;
 };
 
+template<typename SizeType>
+class SizePropertyWrapper final : public PropertyWrapperGetter<const SizeType&> {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+public:
+    SizePropertyWrapper(CSSPropertyID property, const SizeType& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(SizeType&&))
+        : PropertyWrapperGetter<const SizeType&>(property, getter)
+        , m_setter(setter)
+    {
+    }
+
+protected:
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const override
+    {
+        return Style::canBlend(this->value(from), this->value(to));
+    }
+
+    bool requiresBlendingForAccumulativeIteration(const RenderStyle& from, const RenderStyle& to) const final
+    {
+        return lengthsRequireBlendingForAccumulativeIteration(this->value(from), this->value(to));
+    }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    {
+        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
+    }
+
+    static bool lengthsRequireBlendingForAccumulativeIteration(const SizeType& from, const SizeType& to)
+    {
+        // If blending the values can yield a calc() value, we must go through the blending code for iterationComposite.
+        return from.isCalculated() || to.isCalculated() || from.type() != to.type();
+    }
+
+private:
+    void (RenderStyle::*m_setter)(SizeType&&);
+};
 
 
 class ClipWrapper final : public LengthBoxPropertyWrapper {
@@ -2560,8 +2619,6 @@ private:
     Vector<AnimationPropertyWrapperBase*> m_propertyWrappers;
 };
 
-
-
 class PropertyWrapperFlex final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
@@ -2576,12 +2633,16 @@ private:
         if (&a == &b)
             return true;
 
-        return a.flexBasis() == b.flexBasis() && a.flexGrow() == b.flexGrow() && a.flexShrink() == b.flexShrink();
+        return a.flexBasis() == b.flexBasis()
+            && a.flexGrow() == b.flexGrow()
+            && a.flexShrink() == b.flexShrink();
     }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
     {
-        return from.flexGrow() != to.flexGrow() && from.flexShrink() != to.flexShrink() && canInterpolateLengths(from.flexBasis(), to.flexBasis(), false);
+        return from.flexGrow() != to.flexGrow()
+            && from.flexShrink() != to.flexShrink()
+            && Style::canBlend(from.flexBasis(), to.flexBasis());
     }
 
     void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
@@ -2599,8 +2660,6 @@ private:
     }
 #endif
 };
-
-
 
 class PropertyWrapperSVGPaint final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
@@ -3775,13 +3834,13 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new LengthPropertyWrapper(CSSPropertyTop, &RenderStyle::top, &RenderStyle::setTop, { LengthPropertyWrapper::Flags::IsLengthPercentage }),
         new LengthPropertyWrapper(CSSPropertyBottom, &RenderStyle::bottom, &RenderStyle::setBottom, { LengthPropertyWrapper::Flags::IsLengthPercentage }),
 
-        new LengthPropertyWrapper(CSSPropertyWidth, &RenderStyle::width, &RenderStyle::setWidth, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
-        new LengthPropertyWrapper(CSSPropertyMinWidth, &RenderStyle::minWidth, &RenderStyle::setMinWidth, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
-        new LengthPropertyWrapper(CSSPropertyMaxWidth, &RenderStyle::maxWidth, &RenderStyle::setMaxWidth, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new SizePropertyWrapper<Style::PreferredSize>(CSSPropertyWidth, &RenderStyle::width, &RenderStyle::setWidth),
+        new SizePropertyWrapper<Style::MinimumSize>(CSSPropertyMinWidth, &RenderStyle::minWidth, &RenderStyle::setMinWidth),
+        new SizePropertyWrapper<Style::MaximumSize>(CSSPropertyMaxWidth, &RenderStyle::maxWidth, &RenderStyle::setMaxWidth),
 
-        new LengthPropertyWrapper(CSSPropertyHeight, &RenderStyle::height, &RenderStyle::setHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
-        new LengthPropertyWrapper(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
-        new LengthPropertyWrapper(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new SizePropertyWrapper<Style::PreferredSize>(CSSPropertyHeight, &RenderStyle::height, &RenderStyle::setHeight),
+        new SizePropertyWrapper<Style::MinimumSize>(CSSPropertyMinHeight, &RenderStyle::minHeight, &RenderStyle::setMinHeight),
+        new SizePropertyWrapper<Style::MaximumSize>(CSSPropertyMaxHeight, &RenderStyle::maxHeight, &RenderStyle::setMaxHeight),
 
         new PropertyWrapperFlex,
 
@@ -3949,7 +4008,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new PropertyWrapperTextUnderlineOffset,
         new PropertyWrapperVisitedAffectedStyleColor(CSSPropertyTextDecorationColor, &RenderStyle::textDecorationColor, &RenderStyle::setTextDecorationColor, &RenderStyle::visitedLinkTextDecorationColor, &RenderStyle::setVisitedLinkTextDecorationColor),
 
-        new LengthPropertyWrapper(CSSPropertyFlexBasis, &RenderStyle::flexBasis, &RenderStyle::setFlexBasis, { LengthPropertyWrapper::Flags::IsLengthPercentage, LengthPropertyWrapper::Flags::NegativeLengthsAreInvalid }),
+        new SizePropertyWrapper<Style::FlexBasis>(CSSPropertyFlexBasis, &RenderStyle::flexBasis, &RenderStyle::setFlexBasis),
         new FloatPropertyWrapper(CSSPropertyFlexGrow, &RenderStyle::flexGrow, &RenderStyle::setFlexGrow, FloatPropertyWrapper::ValueRange::NonNegative),
         new FloatPropertyWrapper(CSSPropertyFlexShrink, &RenderStyle::flexShrink, &RenderStyle::setFlexShrink, FloatPropertyWrapper::ValueRange::NonNegative),
         new PropertyWrapper<int>(CSSPropertyOrder, &RenderStyle::order, &RenderStyle::setOrder),

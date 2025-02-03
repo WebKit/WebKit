@@ -42,8 +42,8 @@ private:
 
     std::optional<FontCascadeDescription> controlFont(StyleAppearance, const FontCascade&, float zoomFactor) const final;
 
-    LengthSize controlSize(StyleAppearance, const FontCascade&, const LengthSize&, float zoomFactor) const final;
-    LengthSize minimumControlSize(StyleAppearance, const FontCascade&, const LengthSize&, float zoomFactor) const final;
+    ThemeControlSizeOverride controlSize(StyleAppearance, const FontCascade&, const ThemeControlSizeInput&, float zoomFactor) const final;
+    ThemeControlMinimumSizeOverride minimumControlSize(StyleAppearance, const FontCascade&, const ThemeControlMinimumSizeInput&, float zoomFactor) const final;
 
     LengthBox controlPadding(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;
     LengthBox controlBorder(StyleAppearance, const FontCascade&, const LengthBox& zoomedBox, float zoomFactor) const final;

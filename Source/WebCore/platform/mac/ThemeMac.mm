@@ -68,20 +68,21 @@ static NSControlSize controlSizeForFont(const FontCascade& font)
     return NSControlSizeMini;
 }
 
-static LengthSize sizeFromNSControlSize(NSControlSize nsControlSize, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 4>& sizes)
+static ThemeControlSizeOverride sizeFromNSControlSize(NSControlSize nsControlSize, const ThemeControlSizeInput& zoomedSize, float zoomFactor, const std::array<IntSize, 4>& sizes)
 {
-    IntSize controlSize = sizes[nsControlSize];
+    auto controlSize = sizes[nsControlSize];
     if (zoomFactor != 1.0f)
         controlSize = IntSize(controlSize.width() * zoomFactor, controlSize.height() * zoomFactor);
-    LengthSize result = zoomedSize;
-    if (zoomedSize.width.isIntrinsicOrAuto() && controlSize.width() > 0)
-        result.width = { controlSize.width(), LengthType::Fixed };
-    if (zoomedSize.height.isIntrinsicOrAuto() && controlSize.height() > 0)
-        result.height = { controlSize.height(), LengthType::Fixed };
+
+    ThemeControlSizeOverride result = { std::nullopt, std::nullopt };
+    if (!zoomedSize.specifiedWidth && controlSize.width() > 0)
+        result.overrideWidth = controlSize.width();
+    if (!zoomedSize.specifiedHeight && controlSize.height() > 0)
+        result.overrideHeight = controlSize.height();
     return result;
 }
 
-static LengthSize sizeFromFont(const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor, const std::array<IntSize, 4>& sizes)
+static ThemeControlSizeOverride sizeFromFont(const FontCascade& font, const ThemeControlSizeInput& zoomedSize, float zoomFactor, const std::array<IntSize, 4>& sizes)
 {
     return sizeFromNSControlSize(controlSizeForFont(font), zoomedSize, zoomFactor, sizes);
 }
@@ -139,11 +140,11 @@ static std::span<const int> checkboxMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize checkboxSize(const LengthSize& zoomedSize, float zoomFactor)
+static ThemeControlSizeOverride checkboxSize(const ThemeControlSizeInput& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-        return zoomedSize;
+    if (zoomedSize.specifiedWidth && zoomedSize.specifiedHeight)
+        return { std::nullopt, std::nullopt };
 
     return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, checkboxSizes());
 }
@@ -176,11 +177,11 @@ static std::span<const int> radioMargins(NSControlSize controlSize)
     return margins[controlSize];
 }
 
-static LengthSize radioSize(const LengthSize& zoomedSize, float zoomFactor)
+static ThemeControlSizeOverride radioSize(const ThemeControlSizeInput& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-        return zoomedSize;
+    if (zoomedSize.specifiedWidth && zoomedSize.specifiedHeight)
+        return { std::nullopt, std::nullopt };
 
     return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, radioSizes());
 }
@@ -296,13 +297,28 @@ static std::span<const int> visualSwitchMargins(NSControlSize controlSize, bool 
     return margins;
 }
 
-static LengthSize switchSize(const LengthSize& zoomedSize, float zoomFactor)
+static ThemeControlSizeOverride switchSize(const ThemeControlSizeInput& zoomedSize, float zoomFactor)
 {
     // If the width and height are both specified, then we have nothing to do.
-    if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-        return zoomedSize;
+    if (zoomedSize.specifiedWidth && zoomedSize.specifiedHeight)
+        return { std::nullopt, std::nullopt };
 
     return sizeFromNSControlSize(NSControlSizeSmall, zoomedSize, zoomFactor, switchSizes());
+}
+
+static ThemeControlSizeOverride pushButtonSize(const FontCascade& font, const ThemeControlSizeInput& zoomedSize, float zoomFactor)
+{
+    // Height is reset to non-specified so that specified heights can be ignored.
+    return sizeFromFont(font, { zoomedSize.specifiedWidth, false }, zoomFactor, buttonSizes());
+}
+
+static ThemeControlSizeOverride innerSpinButtonSize(const FontCascade& font, const ThemeControlSizeInput& zoomedSize, float zoomFactor)
+{
+    // If the width and height are both specified, then we have nothing to do.
+    if (zoomedSize.specifiedWidth && zoomedSize.specifiedHeight)
+        return { std::nullopt, std::nullopt };
+
+    return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
 }
 
 // Theme overrides
@@ -325,7 +341,7 @@ std::optional<FontCascadeDescription> ThemeMac::controlFont(StyleAppearance appe
     }
 }
 
-LengthSize ThemeMac::controlSize(StyleAppearance appearance, const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor) const
+ThemeControlSizeOverride ThemeMac::controlSize(StyleAppearance appearance, const FontCascade& font, const ThemeControlSizeInput& zoomedSize, float zoomFactor) const
 {
     switch (appearance) {
     case StyleAppearance::Checkbox:
@@ -335,29 +351,25 @@ LengthSize ThemeMac::controlSize(StyleAppearance appearance, const FontCascade& 
     case StyleAppearance::Switch:
         return switchSize(zoomedSize, zoomFactor);
     case StyleAppearance::PushButton:
-        // Height is reset to auto so that specified heights can be ignored.
-        return sizeFromFont(font, { zoomedSize.width, { } }, zoomFactor, buttonSizes());
+        return pushButtonSize(font, zoomedSize, zoomFactor);
     case StyleAppearance::InnerSpinButton:
-        if (!zoomedSize.width.isIntrinsicOrAuto() && !zoomedSize.height.isIntrinsicOrAuto())
-            return zoomedSize;
-        return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
+        return innerSpinButtonSize(font, zoomedSize, zoomFactor);
     default:
-        return zoomedSize;
+        return { std::nullopt, std::nullopt };
     }
 }
 
-LengthSize ThemeMac::minimumControlSize(StyleAppearance appearance, const FontCascade& font, const LengthSize& zoomedSize, float zoomFactor) const
+ThemeControlMinimumSizeOverride ThemeMac::minimumControlSize(StyleAppearance appearance, const FontCascade& font, const ThemeControlMinimumSizeInput& zoomedSize, float zoomFactor) const
 {
     switch (appearance) {
     case StyleAppearance::SquareButton:
     case StyleAppearance::ColorWell:
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
-        return { { 0, LengthType::Fixed }, { static_cast<int>(15 * zoomFactor), LengthType::Fixed } };
+        return { 0, static_cast<int>(15 * zoomFactor) };
     case StyleAppearance::InnerSpinButton: {
         auto& base = stepperSizes()[NSControlSizeMini];
-        return { { static_cast<int>(base.width() * zoomFactor), LengthType::Fixed },
-            { static_cast<int>(base.height() * zoomFactor), LengthType::Fixed } };
+        return { static_cast<int>(base.width() * zoomFactor), static_cast<int>(base.height() * zoomFactor) };
     }
     default:
         return Theme::minimumControlSize(appearance, font, zoomedSize, zoomFactor);

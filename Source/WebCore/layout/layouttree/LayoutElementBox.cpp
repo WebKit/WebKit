@@ -206,7 +206,7 @@ LayoutUnit ElementBox::intrinsicWidth() const
     ASSERT(hasIntrinsicWidth());
     if (m_replacedData && m_replacedData->intrinsicSize)
         return m_replacedData->intrinsicSize->width();
-    return LayoutUnit { style().logicalWidth().value() };
+    return LayoutUnit { style().logicalWidth().fixed()->value };
 }
 
 LayoutUnit ElementBox::intrinsicHeight() const
@@ -214,7 +214,7 @@ LayoutUnit ElementBox::intrinsicHeight() const
     ASSERT(hasIntrinsicHeight());
     if (m_replacedData && m_replacedData->intrinsicSize)
         return m_replacedData->intrinsicSize->height();
-    return LayoutUnit { style().logicalHeight().value() };
+    return LayoutUnit { style().logicalHeight().fixed()->value };
 }
 
 LayoutUnit ElementBox::intrinsicRatio() const

@@ -28,6 +28,7 @@
 #include "CSSPrimitiveNumericRange.h"
 #include "CSSUnits.h"
 #include "CalculationCategory.h"
+#include <compare>
 #include <wtf/Brigand.h>
 #include <wtf/EnumTraits.h>
 #include <wtf/MathExtras.h>
@@ -45,6 +46,8 @@ struct ValueLiteral {
 
     static constexpr UnitType unit = unitValue;
     double value;
+
+    auto operator<=>(const ValueLiteral&) const = default;
 };
 
 #define CSS_DEFINE_UNIT_LITERAL(type, name) \
