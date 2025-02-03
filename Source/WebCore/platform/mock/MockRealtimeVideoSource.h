@@ -60,7 +60,7 @@ public:
 protected:
     MockRealtimeVideoSource(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);
 
-    virtual void updateSampleBuffer() = 0;
+    virtual void updateSampleBuffer() { };
 
     Seconds elapsedTime();
     void settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag>) override;

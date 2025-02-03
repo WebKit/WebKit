@@ -62,16 +62,16 @@ CaptureSourceOrError MockRealtimeVideoSource::create(String&& deviceID, AtomStri
     auto device = MockRealtimeMediaSourceCenter::mockDeviceWithPersistentID(deviceID);
     ASSERT(device);
     if (!device)
-        return { "No mock camera device"_s };
+        return CaptureSourceOrError({ "No mock camera device"_s, MediaAccessDenialReason::NoCaptureDevices });
 #endif
 
     auto source = adoptRef(*new MockRealtimeVideoSource(WTFMove(deviceID), WTFMove(name), WTFMove(hashSalts), pageIdentifier));
     if (constraints) {
         if (auto error = source->applyConstraints(*constraints))
-            return CaptureSourceOrError({ WTFMove(error->invalidConstraint), MediaAccessDenialReason::InvalidConstraint });
+            return CaptureSourceOrError(CaptureSourceError { WTFMove(error->invalidConstraint) });
     }
 
-    return CaptureSourceOrError(RealtimeVideoSource::create(WTFMove(source)));
+    return CaptureSourceOrError(WTFMove(source));
 }
 #endif
 
