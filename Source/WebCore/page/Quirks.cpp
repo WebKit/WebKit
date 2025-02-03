@@ -1477,7 +1477,7 @@ bool Quirks::needsPartitionedCookies(const ResourceRequest& request)
 {
     if (request.isTopSite())
         return false;
-    return request.url().protocolIsInHTTPFamily() && request.url().host().endsWith(".billpaysite.com"_s);
+    return request.url().protocolIsInHTTPFamily() && (request.url().host().endsWith(".billpaysite.com"_s) || request.url().host().endsWith("queue-it.net"_s));
 }
 
 // premierleague.com: rdar://123721211
@@ -1488,21 +1488,6 @@ bool Quirks::shouldIgnorePlaysInlineRequirementQuirk() const
 #else
     return false;
 #endif
-}
-
-bool Quirks::shouldUseEphemeralPartitionedStorageForDOMCookies(const URL& url) const
-{
-    if (!needsQuirks())
-        return false;
-
-    auto firstPartyDomain = RegistrableDomain(m_document->firstPartyForCookies()).string();
-    auto domain = RegistrableDomain(url).string();
-
-    // rdar://113830141
-    if (firstPartyDomain == "cagreatamerica.com"_s && domain == "queue-it.net"_s)
-        return true;
-
-    return false;
 }
 
 // This quirk has intentionally limited exposure to increase the odds of being able to remove it

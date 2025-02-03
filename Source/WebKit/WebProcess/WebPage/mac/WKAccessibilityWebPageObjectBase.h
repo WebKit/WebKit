@@ -72,6 +72,7 @@ class AXCoreObject;
 - (void)setRemoteFrameOffset:(WebCore::IntPoint)offset;
 - (void)setHasMainFramePlugin:(bool)hasPlugin;
 - (void)setFrameIdentifier:(const WebCore::FrameIdentifier&)frameID;
+- (void)enableAccessibilityForAllProcesses;
 
 - (id)accessibilityRootObjectWrapper;
 - (id)accessibilityFocusedUIElement;
