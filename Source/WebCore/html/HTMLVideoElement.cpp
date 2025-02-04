@@ -587,6 +587,61 @@ auto HTMLVideoElement::webkitPresentationModeForBindings() const -> VideoPresent
     return mode;
 }
 
+void HTMLVideoElement::didEnterPictureInPicture(const FloatSize& size)
+{
+    m_enteringPictureInPicture = false;
+    setChangingVideoFullscreenMode(false);
+
+    setFullscreenMode(fullscreenMode() | VideoFullscreenModePictureInPicture);
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    if (m_pictureInPictureObserver)
+        m_pictureInPictureObserver->didEnterPictureInPicture(flooredIntSize(size));
+#else
+    UNUSED_PARAM(size);
+#endif
+}
+
+void HTMLVideoElement::failedToEnterPictureInPicture()
+{
+    m_enteringPictureInPicture = false;
+    setChangingVideoFullscreenMode(false);
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    if (m_pictureInPictureObserver)
+        m_pictureInPictureObserver->failedToEnterPictureInPicture();
+#endif
+}
+
+void HTMLVideoElement::didExitPictureInPicture()
+{
+    if (RefPtr player = this->player())
+        player->setInFullscreenOrPictureInPicture(false);
+
+    m_exitingPictureInPicture = false;
+    setChangingVideoFullscreenMode(false);
+
+    setFullscreenMode(fullscreenMode() & ~VideoFullscreenModePictureInPicture);
+
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    if (m_pictureInPictureObserver)
+        m_pictureInPictureObserver->didExitPictureInPicture();
+#endif
+}
+
+void HTMLVideoElement::failedToExitPictureInPicture()
+{
+    m_exitingPictureInPicture = false;
+    setChangingVideoFullscreenMode(false);
+#if ENABLE(PICTURE_IN_PICTURE_API)
+    if (m_pictureInPictureObserver)
+        m_pictureInPictureObserver->failedToExitPictureInPicture();
+#endif
+}
+
+void HTMLVideoElement::willEnterFullscreen()
+{
+}
+
 void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& size)
 {
     if (RefPtr player = this->player())
@@ -614,6 +669,20 @@ void HTMLVideoElement::didEnterFullscreenOrPictureInPicture(const FloatSize& siz
     }
 
     HTMLMediaElement::didBecomeFullscreenElement();
+}
+
+void HTMLVideoElement::willExitFullscreen()
+{
+    if (RefPtr player = this->player())
+        player->updateVideoFullscreenInlineImage();
+}
+
+void HTMLVideoElement::didExitFullscreen()
+{
+    didStopBeingFullscreenElement();
+    setChangingVideoFullscreenMode(false);
+
+    setFullscreenMode(fullscreenMode() & ~VideoFullscreenModeStandard);
 }
 
 void HTMLVideoElement::didExitFullscreenOrPictureInPicture()

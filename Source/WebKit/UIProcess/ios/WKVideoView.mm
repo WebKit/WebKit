@@ -43,7 +43,6 @@
         return nil;
 
     _playerView = playerView;
-    [self addSubview:playerView];
 
     return self;
 }

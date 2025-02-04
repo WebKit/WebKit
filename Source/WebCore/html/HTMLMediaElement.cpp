@@ -7504,12 +7504,6 @@ void HTMLMediaElement::waitForPreparedForInlineThen(Function<void()>&& completio
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
 
-void HTMLMediaElement::willExitFullscreen()
-{
-    if (RefPtr player = m_player)
-        player->updateVideoFullscreenInlineImage();
-}
-
 bool HTMLMediaElement::isVideoLayerInline()
 {
     return !m_videoFullscreenLayer;
@@ -9471,6 +9465,9 @@ bool HTMLMediaElement::shouldOverrideBackgroundLoadingRestriction() const
 
 void HTMLMediaElement::setFullscreenMode(VideoFullscreenMode mode)
 {
+    if (mode == fullscreenMode())
+        return;
+
     INFO_LOG(LOGIDENTIFIER, "changed from ", fullscreenMode(), ", to ", mode);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     scheduleEvent(eventNames().webkitpresentationmodechangedEvent);

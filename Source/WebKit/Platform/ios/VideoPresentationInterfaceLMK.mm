@@ -100,14 +100,14 @@ void VideoPresentationInterfaceLMK::setSpatialImmersive(bool immersive)
     linearMediaPlayer().spatialImmersive = immersive;
 }
 
-void VideoPresentationInterfaceLMK::setupFullscreen(const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, UIView* parentView, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+void VideoPresentationInterfaceLMK::setupFullscreen(const WebCore::FloatRect& initialRect, const WebCore::FloatSize& videoDimensions, WebCore::HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     linearMediaPlayer().contentDimensions = videoDimensions;
     if (!linearMediaPlayer().enteredFromInline && playerViewController()) {
         playableViewController().wks_automaticallyDockOnFullScreenPresentation = NO;
         playableViewController().wks_dismissFullScreenOnExitingDocking = NO;
     }
-    VideoPresentationInterfaceIOS::setupFullscreen(initialRect, videoDimensions, parentView, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
+    VideoPresentationInterfaceIOS::setupFullscreen(initialRect, videoDimensions, mode, allowsPictureInPicturePlayback, standby, blocksReturnToFullscreenFromPictureInPicture);
 }
 
 void VideoPresentationInterfaceLMK::finalizeSetup()

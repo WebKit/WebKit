@@ -59,7 +59,17 @@ public:
     HTMLVideoElement* videoElement() const { return m_videoElement.get(); }
     WEBCORE_EXPORT RetainPtr<PlatformLayer> createVideoFullscreenLayer();
     WEBCORE_EXPORT void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler = [] { });
+
+    WEBCORE_EXPORT void willEnterPictureInPicture() final;
+    WEBCORE_EXPORT void didEnterPictureInPicture(const FloatSize&) final;
+    WEBCORE_EXPORT void failedToEnterPictureInPicture() final;
+    WEBCORE_EXPORT void willExitPictureInPicture() final;
+    WEBCORE_EXPORT void didExitPictureInPicture() final;
+
+    WEBCORE_EXPORT void willEnterFullscreen() final;
+    WEBCORE_EXPORT void didEnterFullscreen(const FloatSize&) final;
     WEBCORE_EXPORT void willExitFullscreen() final;
+    WEBCORE_EXPORT void didExitFullscreen() final;
     WEBCORE_EXPORT void waitForPreparedForInlineThen(Function<void()>&& completionHandler);
 
     WEBCORE_EXPORT void addClient(VideoPresentationModelClient&) final;
@@ -106,12 +116,6 @@ private:
     void setHasVideo(bool);
     void setVideoDimensions(const FloatSize&);
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
-
-    void willEnterPictureInPicture() final;
-    void didEnterPictureInPicture() final;
-    void failedToEnterPictureInPicture() final;
-    void willExitPictureInPicture() final;
-    void didExitPictureInPicture() final;
 
     static std::span<const AtomString> observedEventNames();
     static std::span<const AtomString> documentObservedEventNames();

@@ -77,7 +77,7 @@ public:
     virtual bool hasVideo() const = 0;
 
     virtual void willEnterPictureInPicture() = 0;
-    virtual void didEnterPictureInPicture() = 0;
+    virtual void didEnterPictureInPicture(const WebCore::FloatSize&) = 0;
     virtual void failedToEnterPictureInPicture() = 0;
     virtual void willExitPictureInPicture() = 0;
     virtual void didExitPictureInPicture() = 0;
@@ -85,14 +85,15 @@ public:
     virtual void requestUpdateInlineRect() { };
     virtual void requestVideoContentLayer() { };
     virtual void returnVideoContentLayer() { };
-    virtual void returnVideoView() { };
     virtual void didSetupFullscreen() { };
+    virtual void willEnterFullscreen() { };
     virtual void didEnterFullscreen(const FloatSize&) { };
     virtual void failedToEnterFullscreen() { };
     virtual void willExitFullscreen() { };
     virtual void didExitFullscreen() { };
     virtual void didCleanupFullscreen() { };
-    virtual void fullscreenMayReturnToInline() { };
+    using FullscreenMayReturnToInlineReply = CompletionHandler<void(bool visible, FloatRect)>;
+    virtual void fullscreenMayReturnToInline(FullscreenMayReturnToInlineReply&& reply) { reply(false, { }); };
     virtual void setRequiresTextTrackRepresentation(bool) { }
     virtual void setTextTrackRepresentationBounds(const IntRect&) { }
 
@@ -123,7 +124,7 @@ public:
     virtual void hasVideoChanged(bool) { }
     virtual void videoDimensionsChanged(const FloatSize&) { }
     virtual void willEnterPictureInPicture() { }
-    virtual void didEnterPictureInPicture() { }
+    virtual void didEnterPictureInPicture(const FloatSize&) { }
     virtual void failedToEnterPictureInPicture() { }
     virtual void willExitPictureInPicture() { }
     virtual void didExitPictureInPicture() { }

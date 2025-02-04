@@ -55,7 +55,7 @@ public:
 #endif
 
     WEBCORE_EXPORT AVPlayerViewController *avPlayerViewController() const final;
-    WEBCORE_EXPORT void setupFullscreen(const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
+    WEBCORE_EXPORT void setupFullscreen(const FloatRect& initialRect, const FloatSize& videoDimensions, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
     WEBCORE_EXPORT bool pictureInPictureWasStartedWhenEnteringBackground() const final;
     WEBCORE_EXPORT void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>) final;
     WEBCORE_EXPORT bool mayAutomaticallyShowVideoPictureInPicture() const;
@@ -63,6 +63,9 @@ public:
     bool allowsPictureInPicturePlayback() const { return m_allowsPictureInPicturePlayback; }
     void presentFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
     void dismissFullscreen(bool animated, Function<void(BOOL, NSError *)>&&) final;
+
+    WebAVPlayerLayer *fullscreenPlayerLayer() const;
+    WebAVPlayerLayerView *fullscreenPlayerLayerView() const;
 
     // VideoFullscreenCaptions:
     WEBCORE_EXPORT void setupCaptionsLayer(CALayer *parent, const WebCore::FloatSize&) final;
@@ -81,7 +84,11 @@ private:
     void setAllowsPictureInPicturePlayback(bool) final;
     bool isExternalPlaybackActive() const final;
     bool willRenderToLayer() const final;
-    void returnVideoView() final;
+    bool videoViewIsFullscreen() const final;
+    bool videoViewIsInline() const final;
+    void transferVideoViewToFullscreen() final;
+    void returnVideoViewToInline() final;
+    FloatSize fullscreenVideoViewSize() const final;
 
     RetainPtr<WebAVPlayerViewControllerDelegate> m_playerViewControllerDelegate;
     RetainPtr<WebAVPlayerViewController> m_playerViewController;

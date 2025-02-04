@@ -40,7 +40,7 @@ class DeferredPromise;
 class HTMLVideoElement;
 class PictureInPictureWindow;
 
-class HTMLVideoElementPictureInPicture
+class HTMLVideoElementPictureInPicture final
     : public Supplement<HTMLVideoElement>
     , public PictureInPictureObserver
 #if !RELEASE_LOG_DISABLED
@@ -62,9 +62,11 @@ public:
 
     void exitPictureInPicture(Ref<DeferredPromise>&&);
 
-    void didEnterPictureInPicture(const IntSize&);
-    void didExitPictureInPicture();
-    void pictureInPictureWindowResized(const IntSize&);
+    void didEnterPictureInPicture(const IntSize&) final;
+    void failedToEnterPictureInPicture() final;
+    void didExitPictureInPicture() final;
+    void failedToExitPictureInPicture() final;
+    void pictureInPictureWindowResized(const IntSize&) final;
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }

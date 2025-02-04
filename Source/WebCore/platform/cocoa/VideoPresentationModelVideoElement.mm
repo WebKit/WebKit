@@ -166,11 +166,32 @@ void VideoPresentationModelVideoElement::documentVisibilityChanged()
         client->documentVisibilityChanged(m_documentIsVisible);
 }
 
+void VideoPresentationModelVideoElement::willEnterFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_videoElement)
+        m_videoElement->willEnterFullscreen();
+}
+
+void VideoPresentationModelVideoElement::didEnterFullscreen(const FloatSize& size)
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_videoElement)
+        m_videoElement->didEnterFullscreenOrPictureInPicture(size);
+}
+
 void VideoPresentationModelVideoElement::willExitFullscreen()
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     if (m_videoElement)
         m_videoElement->willExitFullscreen();
+}
+
+void VideoPresentationModelVideoElement::didExitFullscreen()
+{
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
+    if (m_videoElement)
+        m_videoElement->didExitFullscreen();
 }
 
 RetainPtr<PlatformLayer> VideoPresentationModelVideoElement::createVideoFullscreenLayer()
@@ -356,11 +377,14 @@ void VideoPresentationModelVideoElement::willEnterPictureInPicture()
         client->willEnterPictureInPicture();
 }
 
-void VideoPresentationModelVideoElement::didEnterPictureInPicture()
+void VideoPresentationModelVideoElement::didEnterPictureInPicture(const FloatSize& size)
 {
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
-        client->didEnterPictureInPicture();
+        client->didEnterPictureInPicture(size);
+
+    if (RefPtr videoElement = m_videoElement)
+        videoElement->didEnterPictureInPicture(size);
 }
 
 void VideoPresentationModelVideoElement::failedToEnterPictureInPicture()
@@ -368,6 +392,9 @@ void VideoPresentationModelVideoElement::failedToEnterPictureInPicture()
     ERROR_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->failedToEnterPictureInPicture();
+
+    if (RefPtr videoElement = m_videoElement)
+        videoElement->failedToEnterPictureInPicture();
 }
 
 void VideoPresentationModelVideoElement::willExitPictureInPicture()
@@ -382,6 +409,9 @@ void VideoPresentationModelVideoElement::didExitPictureInPicture()
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     for (auto& client : copyToVector(m_clients))
         client->didExitPictureInPicture();
+
+    if (RefPtr videoElement = m_videoElement)
+        videoElement->didExitPictureInPicture();
 }
 
 void VideoPresentationModelVideoElement::setRequiresTextTrackRepresentation(bool requiresTextTrackRepresentation)

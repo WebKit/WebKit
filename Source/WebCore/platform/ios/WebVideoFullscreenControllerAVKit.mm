@@ -212,7 +212,7 @@ private:
     bool isPictureInPictureSupported() const override;
     bool isPictureInPictureActive() const override;
     void willEnterPictureInPicture() final;
-    void didEnterPictureInPicture() final;
+    void didEnterPictureInPicture(const FloatSize&) final;
     void failedToEnterPictureInPicture() final;
     void willExitPictureInPicture() final;
     void didExitPictureInPicture() final;
@@ -220,12 +220,11 @@ private:
     void requestUpdateInlineRect() final;
     void requestVideoContentLayer() final;
     void returnVideoContentLayer() final;
-    void returnVideoView() final { }
     void didSetupFullscreen() final;
     void willExitFullscreen() final;
     void didExitFullscreen() final;
     void didCleanupFullscreen() final;
-    void fullscreenMayReturnToInline() final;
+    void fullscreenMayReturnToInline(FullscreenMayReturnToInlineReply&&) final;
 
     UncheckedKeyHashSet<CheckedPtr<PlaybackSessionModelClient>> m_playbackClients;
     UncheckedKeyHashSet<CheckedPtr<VideoPresentationModelClient>> m_presentationClients;
@@ -376,13 +375,13 @@ void VideoFullscreenControllerContext::didCleanupFullscreen()
     });
 }
 
-void VideoFullscreenControllerContext::fullscreenMayReturnToInline()
+void VideoFullscreenControllerContext::fullscreenMayReturnToInline(VideoPresentationModel::FullscreenMayReturnToInlineReply&& reply)
 {
     ASSERT(isUIThread());
-    WebThreadRun([protectedThis = Ref { *this }, this] () mutable {
+    ensureOnMainThread([protectedThis = Ref { *this }, this, reply = WTFMove(reply)] () mutable {
         IntRect clientRect = elementRectInWindow(m_videoElement.get());
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), this, clientRect] {
-            m_interface->preparedToReturnToInline(true, clientRect);
+        ensureOnMainRunLoop([clientRect, reply = WTFMove(reply)] () mutable {
+            reply(true, clientRect);
         });
     });
 }
@@ -670,11 +669,11 @@ void VideoFullscreenControllerContext::willEnterPictureInPicture()
         client->willEnterPictureInPicture();
 }
 
-void VideoFullscreenControllerContext::didEnterPictureInPicture()
+void VideoFullscreenControllerContext::didEnterPictureInPicture(const FloatSize& size)
 {
     ASSERT(isUIThread());
     for (auto& client : m_presentationClients)
-        client->didEnterPictureInPicture();
+        client->didEnterPictureInPicture(size);
 }
 
 void VideoFullscreenControllerContext::failedToEnterPictureInPicture()
@@ -1021,16 +1020,17 @@ void VideoFullscreenControllerContext::setUpFullscreen(HTMLVideoElement& videoEl
 
     FloatSize videoDimensions = { (float)videoElement.videoWidth(), (float)videoElement.videoHeight() };
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, videoElementClientRect, videoDimensions, viewRef, mode, allowsPictureInPicture] {
+    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, videoElementClientRect, videoDimensions, viewRef, mode, allowsPictureInPicture] () mutable {
         ASSERT(isUIThread());
         WebThreadLock();
         Ref<PlaybackSessionInterfaceIOS> sessionInterface = PlaybackSessionInterfaceAVKitLegacy::create(*this);
         m_interface = VideoPresentationInterfaceAVKitLegacy::create(sessionInterface.get());
         m_interface->setVideoPresentationModel(this);
+        m_interface->setParentView(WTFMove(viewRef));
 
         m_videoFullscreenView = adoptNS([PAL::allocUIViewInstance() init]);
 
-        m_interface->setupFullscreen(videoElementClientRect, videoDimensions, viewRef.get(), mode, allowsPictureInPicture, false, false);
+        m_interface->setupFullscreen(videoElementClientRect, videoDimensions, mode, allowsPictureInPicture, false, false);
     });
 }
 
