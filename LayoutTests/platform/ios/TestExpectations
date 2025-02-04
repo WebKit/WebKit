@@ -7684,3 +7684,7 @@ webkit.org/b/286594 http/wpt/cache-storage/quota-third-party.https.html [ Pass F
 webkit.org/b/286318 http/tests/iframe-monitor [ Pass ]
 
 webkit.org/b/286934 [ Debug ] ipc/create-media-source-with-invalid-constraints-crash.html [ Skip ]
+
+# webkit.org/b/286962 [ iOS ] imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html is a constant failure on Debug and a flaky failure on Release.
+[ Debug ] imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Failure ]
+[ Release ] imported/w3c/web-platform-tests/trusted-types/trusted-types-reporting.html [ Pass Failure ]
