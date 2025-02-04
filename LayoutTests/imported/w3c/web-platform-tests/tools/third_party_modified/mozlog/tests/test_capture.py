@@ -1,4 +1,5 @@
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import unittest
 
 from mozlog import capture, structuredlog

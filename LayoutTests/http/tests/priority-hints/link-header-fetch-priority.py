@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Link: <../resources/dummy.css?lh0>; rel=preload; as=style; fetchpriority=low;\r\n'

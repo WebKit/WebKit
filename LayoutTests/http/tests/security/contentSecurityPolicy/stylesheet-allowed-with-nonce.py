@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy: script-src \'unsafe-inline\' \'self\'; style-src \'nonce-test\'\r\n'

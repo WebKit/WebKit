@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy-Report-Only: script-src \'sha256-AJqUvsXuHfMNXALcBPVqeiKkFk8OLvn3U7ksHP/QQ90=\' \'nonce-dump-as-text\'\r\n'

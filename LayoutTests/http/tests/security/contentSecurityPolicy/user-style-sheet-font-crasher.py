@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy: font-src http://webkit.org; report-uri http://webkit.org/report;\r\n'

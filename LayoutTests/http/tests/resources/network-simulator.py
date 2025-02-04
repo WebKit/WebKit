@@ -6,6 +6,7 @@
 import os
 import re
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import tempfile
 import time
 from datetime import datetime

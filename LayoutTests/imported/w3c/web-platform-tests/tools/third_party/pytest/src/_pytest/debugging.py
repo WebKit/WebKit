@@ -4,6 +4,7 @@
 import argparse
 import functools
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import types
 from typing import Any
 from typing import Callable

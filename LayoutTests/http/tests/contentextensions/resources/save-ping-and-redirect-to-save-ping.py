@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from save_ping import save_ping
 
 query_string = os.environ.get('QUERY_STRING', None)

@@ -4,6 +4,7 @@ import json
 import os
 import random
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import time
 from datetime import datetime
 

@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 filename = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))), 'resources', 'square.png')
 

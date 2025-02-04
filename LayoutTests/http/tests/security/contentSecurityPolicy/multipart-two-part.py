@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Type: multipart/x-mixed-replace; boundary=TEST\r\n'

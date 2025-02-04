@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy: script-src \'self\'; report-uri //127.0.0.1:8080/security/contentSecurityPolicy/resources/save-report.py\r\n'

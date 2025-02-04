@@ -3,6 +3,7 @@
 import gzip
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 text = b'''Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus a luctus justo, a placerat est. Vestibulum a venenatis lectus. Phasellus vehicula neque id est semper, ac congue felis commodo. Suspendisse potenti. Nam eget placerat erat. Nulla ultricies consequat eros ac vestibulum. Aliquam imperdiet massa augue, nec faucibus nisi semper ac. Ut nibh nisl, iaculis id mattis sit amet, ultricies sed eros. Vivamus vel mi ante. Praesent commodo finibus justo, sed hendrerit urna convallis eget. Maecenas condimentum mi elit, eu gravida eros consequat at. Nulla rutrum lorem neque, ut finibus metus posuere non. Quisque nulla justo, scelerisque sed ornare eu, aliquet id est. Ut at ornare dui.
 

@@ -4,6 +4,7 @@ import argparse
 import os
 import signal
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import threading
 
 

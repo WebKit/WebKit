@@ -3,6 +3,7 @@
 import os
 import sys
 from urllib.parse import parse_qs
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)
 
@@ -21,4 +22,4 @@ else:
         '    </object>\n'
         '    PASS - nested image objects with bad mimetype do not cause a crash.\n'
         '</html>\n'
-)
+    )

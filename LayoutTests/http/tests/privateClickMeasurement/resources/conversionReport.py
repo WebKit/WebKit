@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from conversionFilePath import conversion_file_path
 
 file = __file__.split(':/cygwin')[-1]

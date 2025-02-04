@@ -3,6 +3,7 @@
 from ast import literal_eval
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from urllib.parse import parse_qs, unquote_plus
 
 query = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True)

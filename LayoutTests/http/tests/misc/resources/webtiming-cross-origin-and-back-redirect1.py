@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Location: http://localhost:8000/misc/resources/webtiming-cross-origin-and-back-redirect2.py\r\n'

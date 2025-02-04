@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 if os.environ.get('HTTP_AUTHORIZATION'):
     import authenticate

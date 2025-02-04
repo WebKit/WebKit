@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 cookies = {}
 if 'HTTP_COOKIE' in os.environ:

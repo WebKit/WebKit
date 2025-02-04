@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from datetime import datetime, timedelta
 
 max_age = 12 * 31 * 24 * 60 * 60

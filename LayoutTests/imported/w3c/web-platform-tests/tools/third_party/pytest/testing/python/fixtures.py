@@ -2,6 +2,7 @@
 import os
 from pathlib import Path
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import textwrap
 
 from _pytest.compat import getfuncargnames
@@ -628,6 +629,7 @@ class TestFillFixtures:
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import traceback
             import pytest
 
@@ -720,6 +722,7 @@ class TestRequestBasic:
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import pytest
             from _pytest.fixtures import PseudoFixtureDef
             import gc
@@ -1974,6 +1977,7 @@ class TestAutouseManagement:
                 @pytest.fixture(autouse=True)
                 def app():
                     import sys
+                    sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
                     sys._myapp = "hello"
                 """
             ),
@@ -1987,6 +1991,7 @@ class TestAutouseManagement:
             textwrap.dedent(
                 """\
                 import sys
+                sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
                 def test_app():
                     assert sys._myapp == "hello"
                 """
@@ -2941,6 +2946,7 @@ class TestFixtureMarker:
             """
             import pytest
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
             @pytest.fixture
             def browser(request):

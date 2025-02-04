@@ -3,6 +3,7 @@
 import json
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from urllib.parse import quote
 
 file = __file__.split(':/cygwin')[-1]

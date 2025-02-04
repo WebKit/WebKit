@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 # 127.0.0.1 is where the test originally started. We redirected to "localhost" before this.
 sys.stdout.write(

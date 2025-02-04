@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import random
 import string
 from urllib.parse import parse_qs

@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from datetime import datetime, timedelta
 from ping_file_path import ping_filepath
 

@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 from collections import OrderedDict
 

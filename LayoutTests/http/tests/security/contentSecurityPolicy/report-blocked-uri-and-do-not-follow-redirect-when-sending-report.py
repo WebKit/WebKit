@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy-Report-Only: img-src \'none\'; report-uri resources/save-report-and-redirect-to-save-report.py\r\n'

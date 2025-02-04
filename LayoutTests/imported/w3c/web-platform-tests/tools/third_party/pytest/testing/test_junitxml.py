@@ -509,6 +509,7 @@ class TestPython:
             """
             import logging
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
             def test_fail():
                 print("hello-stdout")
@@ -572,6 +573,7 @@ class TestPython:
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             def test_fail():
                 assert 0, "An error"
         """
@@ -685,6 +687,7 @@ class TestPython:
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import pytest
 
             @pytest.mark.xfail()
@@ -825,6 +828,7 @@ class TestPython:
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             def test_pass():
                 sys.stderr.write('hello-stderr')
         """
@@ -878,6 +882,7 @@ class TestPython:
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import pytest
 
             @pytest.fixture
@@ -908,6 +913,7 @@ class TestPython:
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import pytest
 
             @pytest.fixture
@@ -1006,6 +1012,7 @@ def test_nullbyte(pytester: Pytester, junit_logging: str) -> None:
     pytester.makepyfile(
         """
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
         def test_print_nullbyte():
             sys.stdout.write('Here the null -->' + chr(0) + '<--')
             sys.stdout.write('In repr form -->' + repr(chr(0)) + '<--')
@@ -1028,6 +1035,7 @@ def test_nullbyte_replace(pytester: Pytester, junit_logging: str) -> None:
     pytester.makepyfile(
         """
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
         def test_print_nullbyte():
             sys.stdout.write('Here the null -->' + chr(0) + '<--')
             sys.stdout.write('In repr form -->' + repr(chr(0)) + '<--')
@@ -1707,6 +1715,7 @@ def test_logging_passing_tests_disabled_does_not_log_test_output(
         import pytest
         import logging
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
         def test_func():
             sys.stdout.write('This is stdout')
@@ -1741,6 +1750,7 @@ def test_logging_passing_tests_disabled_logs_output_for_failing_test_issue5430(
         import pytest
         import logging
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
         def test_func():
             logging.warning('hello')

@@ -3,6 +3,7 @@
 import cgi
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 request_method = os.environ.get('REQUEST_METHOD', '')
 

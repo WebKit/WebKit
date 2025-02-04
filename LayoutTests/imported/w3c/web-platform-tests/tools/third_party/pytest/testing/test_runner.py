@@ -4,6 +4,7 @@ import inspect
 import os
 from pathlib import Path
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import types
 from typing import Dict
 from typing import List
@@ -316,6 +317,7 @@ class BaseFunctionalTests:
 
             def test_func():
                 import sys
+                sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
                 # on python2 exc_info is kept till a function exits
                 # so we would end up calling test functions while
                 # sys.exc_info would return the indexerror
@@ -1019,6 +1021,7 @@ def test_current_test_env_var(pytester: Pytester, monkeypatch: MonkeyPatch) -> N
         """
         import pytest
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
         import os
 
         @pytest.fixture
@@ -1101,6 +1104,7 @@ class TestReportContents:
             """
             import pytest
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
             @pytest.fixture
             def fix():

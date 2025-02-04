@@ -2,6 +2,7 @@
 
 import cgi
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 form = cgi.FieldStorage()
 data = form.getvalue('data')

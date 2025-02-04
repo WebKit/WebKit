@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from datetime import datetime, timedelta
 from report_file_path import report_filepath
 

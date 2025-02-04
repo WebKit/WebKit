@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 match = os.environ.get('HTTP_IF_NONE_MATCH', '')
 if match == 'foo':

@@ -4,6 +4,7 @@
 from argparse import Action
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from typing import Generator
 from typing import List
 from typing import Optional

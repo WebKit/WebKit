@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 koi8 = '\xF0\xD2\xC9\xD7\xC5\xD4'.encode('latin-1').decode('utf-8', 'replace')
 windows = '\xCF\xF0\xE8\xE2\xE5\xF2'.encode('latin-1').decode('utf-8', 'replace')

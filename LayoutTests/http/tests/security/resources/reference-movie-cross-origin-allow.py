@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 if os.environ.get('HTTP_IF_MODIFIED_SINCE', None) is not None or os.environ.get('HTTP_IF_NONE_MATCH', None) is not None:
     sys.stdout.write(

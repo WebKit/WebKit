@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 origin = True if os.environ.get('HTTP_ORIGIN', None) is not None else False
 

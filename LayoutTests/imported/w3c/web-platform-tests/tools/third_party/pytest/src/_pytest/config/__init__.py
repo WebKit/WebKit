@@ -15,6 +15,7 @@ from pathlib import Path
 import re
 import shlex
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from textwrap import dedent
 import types
 from types import FunctionType

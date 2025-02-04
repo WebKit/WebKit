@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import time
 from conversionFilePath import conversion_file_path
 from urllib.parse import parse_qs

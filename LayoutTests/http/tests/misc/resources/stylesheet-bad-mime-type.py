@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 http_accept = os.environ.get('HTTP_ACCEPT', '')
 

@@ -2,6 +2,7 @@
 import os
 import re
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import tempfile
 
 file = __file__.split(':/cygwin')[-1]

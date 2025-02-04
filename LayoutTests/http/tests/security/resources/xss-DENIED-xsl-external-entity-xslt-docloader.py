@@ -3,6 +3,7 @@
 import base64
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write('Access-Control-Allow-Origin: *\r\n')
 sys.stdout.write('\r\n')

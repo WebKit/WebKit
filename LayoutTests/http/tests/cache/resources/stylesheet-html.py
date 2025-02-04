@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from urllib.parse import parse_qs
 
 sheet = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True).get('sheet', ['404.css'])[0]

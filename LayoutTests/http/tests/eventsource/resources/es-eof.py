@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 id = float(os.environ.get('HTTP_LAST_EVENT_ID', 0)) + 1
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy-Report-Only: script-src \'unsafe-inline\' \'self\'; report-uri resources/does-not-exist\r\n'

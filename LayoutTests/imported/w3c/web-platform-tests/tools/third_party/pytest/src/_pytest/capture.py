@@ -8,6 +8,7 @@ import io
 from io import UnsupportedOperation
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from tempfile import TemporaryFile
 from types import TracebackType
 from typing import Any

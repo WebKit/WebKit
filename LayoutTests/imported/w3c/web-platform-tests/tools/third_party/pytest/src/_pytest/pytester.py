@@ -18,6 +18,7 @@ import re
 import shutil
 import subprocess
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import traceback
 from typing import Any
 from typing import Callable

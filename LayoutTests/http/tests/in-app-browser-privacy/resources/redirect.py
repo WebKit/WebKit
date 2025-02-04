@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from urllib.parse import parse_qs
 
 step = int(parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True).get('step', [0])[0])

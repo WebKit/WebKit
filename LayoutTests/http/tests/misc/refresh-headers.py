@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 cache_control = os.environ.get('HTTP_CACHE_CONTROL', '')
 pragma = os.environ.get('HTTP_PRAGMA', '')

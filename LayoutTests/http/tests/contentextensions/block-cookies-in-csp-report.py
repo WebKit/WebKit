@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy: img-src \'self\'; report-uri /contentextensions/resources/save-ping.py?test=contentextensions-block-cookies-in-csp-report\r\n'

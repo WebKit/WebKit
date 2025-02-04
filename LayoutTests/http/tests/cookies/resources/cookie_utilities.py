@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from datetime import datetime, timedelta
 
 file = __file__.split(':/cygwin')[-1]

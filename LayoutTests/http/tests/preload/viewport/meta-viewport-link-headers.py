@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Link: <http://127.0.0.1:8000/resources/square100.png?timer>;rel=preload;as=image;\"\r\n'

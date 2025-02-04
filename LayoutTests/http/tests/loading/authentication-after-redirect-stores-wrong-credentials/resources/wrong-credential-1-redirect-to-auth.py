@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 # This page was supposed to be loaded using a localhost URL.
 # That is important, and the next page has to be loaded using 127.0.0.1.

@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from tokenSigningFilePath import token_signing_filepath
 
 file = __file__.split(':/cygwin')[-1]

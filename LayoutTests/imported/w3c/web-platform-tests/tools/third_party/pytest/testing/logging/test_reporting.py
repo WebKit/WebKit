@@ -16,6 +16,7 @@ def test_nothing_logged(pytester: Pytester) -> None:
     pytester.makepyfile(
         """
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
         def test_foo():
             sys.stdout.write('text going to stdout')
@@ -35,6 +36,7 @@ def test_messages_logged(pytester: Pytester) -> None:
     pytester.makepyfile(
         """
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
         import logging
 
         logger = logging.getLogger(__name__)

@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 user_agent = os.environ.get('HTTP_USER_AGENT', '')
 

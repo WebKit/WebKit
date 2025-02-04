@@ -1,5 +1,6 @@
 # mypy: allow-untyped-defs
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 from _pytest.config import ExitCode
 from _pytest.pytester import Pytester

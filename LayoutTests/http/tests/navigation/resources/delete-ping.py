@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from ping_file_path import ping_filepath
 
 sys.stdout.write('Content-Type: text/html\r\n\r\n')

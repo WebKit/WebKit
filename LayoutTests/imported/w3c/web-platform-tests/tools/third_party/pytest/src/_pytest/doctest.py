@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import platform
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import traceback
 import types
 from typing import Any

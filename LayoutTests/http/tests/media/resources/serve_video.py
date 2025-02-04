@@ -9,6 +9,7 @@ import json
 import math
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import time
 from datetime import datetime
 from urllib.parse import parse_qs

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy-Report-Only: block-all-mixed-content; report-uri ../../resources/save-report.py?test=/security/contentSecurityPolicy/block-all-mixed-content/resources/frame-with-insecure-css-report-only.py\r\n'

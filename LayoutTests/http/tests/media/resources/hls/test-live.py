@@ -4,6 +4,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from datetime import datetime
 from urllib.parse import parse_qs
 

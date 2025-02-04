@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import time
 from ping_file_path import ping_filepath
 from urllib.parse import parse_qs

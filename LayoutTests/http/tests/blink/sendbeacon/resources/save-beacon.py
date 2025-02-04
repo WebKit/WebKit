@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import tempfile
 from base64 import b64encode
 from datetime import datetime, timedelta

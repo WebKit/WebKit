@@ -5,6 +5,7 @@ from io import UnsupportedOperation
 import os
 import subprocess
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import textwrap
 from typing import BinaryIO
 from typing import cast
@@ -107,6 +108,7 @@ def test_capturing_unicode(pytester: Pytester, method: str) -> None:
         # taken from issue 227 from nosetests
         def test_unicode():
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             print(sys.stdout)
             print(%s)
         """
@@ -132,6 +134,7 @@ def test_collect_capturing(pytester: Pytester) -> None:
     p = pytester.makepyfile(
         """
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
         print("collect %s failure" % 13)
         sys.stderr.write("collect %s_stderr failure" % 13)
@@ -181,6 +184,7 @@ class TestPerTestCapturing:
         p = pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             def setup_module(func):
                 print("module-setup")
             def setup_function(func):
@@ -268,6 +272,7 @@ class TestPerTestCapturing:
         p1 = pytester.makepyfile(
             """\
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             def test_capturing():
                 print(42)
                 sys.stderr.write(str(23))
@@ -551,6 +556,7 @@ class TestCaptureFixture:
             r"""
             def test_hello(capsysbinary):
                 import sys
+                sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
                 sys.stdout.buffer.write(b'hello')
 
@@ -680,6 +686,7 @@ class TestCaptureFixture:
         pytester.makepyfile(
             f"""\
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import pytest
 
             @pytest.fixture
@@ -715,6 +722,7 @@ class TestCaptureFixture:
         pytester.makepyfile(
             f"""\
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import pytest
             import os
 
@@ -807,6 +815,7 @@ def test_capture_binary_output(pytester: Pytester) -> None:
 
         def test_a():
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import subprocess
             subprocess.call([sys.executable, __file__])
 
@@ -1423,6 +1432,7 @@ def test_error_attribute_issue555(pytester: Pytester) -> None:
     pytester.makepyfile(
         """
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
         def test_capattr():
             assert sys.stdout.errors == "replace"
             assert sys.stderr.errors == "replace"
@@ -1455,6 +1465,7 @@ def test_dontreadfrominput_has_encoding(pytester: Pytester) -> None:
     pytester.makepyfile(
         """
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
         def test_capattr():
             # should not raise AttributeError
             assert sys.stdout.encoding
@@ -1472,6 +1483,7 @@ def test_crash_on_closing_tmpfile_py27(
         """
         import threading
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
         printing = threading.Event()
 
@@ -1523,6 +1535,7 @@ def test_global_capture_with_live_logging(pytester: Pytester) -> None:
         """
         import logging
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
         import pytest
 
         logger = logging.getLogger(__name__)
@@ -1571,6 +1584,7 @@ def test_capture_with_live_logging(
         f"""
         import logging
         import sys
+        sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
         logger = logging.getLogger(__name__)
 
@@ -1600,6 +1614,7 @@ def test_typeerror_encodedfile_write(pytester: Pytester) -> None:
         """
         def test_fails():
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             sys.stdout.write(b"foo")
     """
     )

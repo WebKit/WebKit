@@ -2,6 +2,7 @@ import json
 import os
 import re
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from typing import IO, Container, Dict, Iterable, List, Optional
 
 GIT_PUSH = re.compile(

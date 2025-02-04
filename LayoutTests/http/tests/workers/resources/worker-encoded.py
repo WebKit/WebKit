@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from urllib.parse import parse_qs
 
 koi8 = '\xF0\xD2\xC9\xD7\xC5\xD4'

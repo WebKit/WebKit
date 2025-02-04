@@ -5,6 +5,7 @@ from io import StringIO
 import os
 from pathlib import Path
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import textwrap
 from types import SimpleNamespace
 from typing import cast
@@ -1569,6 +1570,7 @@ def pytest_report_header(config, start_path):
         pytester.makepyfile(
             """
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import logging
             def test_one():
                 sys.stdout.write('!This is stdout!')
@@ -1622,6 +1624,7 @@ def pytest_report_header(config, start_path):
             """
             import logging
             import sys
+            sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
             import pytest
 
             @pytest.fixture(scope="function", autouse="True")

@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 from urllib.parse import parse_qs
 
 secFetchSite = os.environ.get('HTTP_SEC_FETCH_SITE', 'missing')

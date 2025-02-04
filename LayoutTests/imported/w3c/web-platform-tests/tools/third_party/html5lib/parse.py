@@ -5,6 +5,7 @@ Parse a document to a tree, with optional profiling
 
 import argparse
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 import traceback
 
 from html5lib import html5parser

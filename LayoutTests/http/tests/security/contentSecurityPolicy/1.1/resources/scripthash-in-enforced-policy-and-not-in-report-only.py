@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     'Content-Security-Policy: script-src \'sha256-c8f8z1SC90Yj05k41+FT0HF/rrGJP94TPLhRvGGE8eM=\'\r\n'

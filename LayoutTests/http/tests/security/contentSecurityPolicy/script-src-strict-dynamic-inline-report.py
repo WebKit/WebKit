@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write(
     "Content-Security-Policy: script-src 'nonce-dummy' 'strict-dynamic'; report-uri resources/save-report.py\r\n"

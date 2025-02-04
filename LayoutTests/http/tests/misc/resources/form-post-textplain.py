@@ -2,6 +2,7 @@
 
 import os
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 content_type = os.environ.get('CONTENT_TYPE', '')
 data = ''.join(sys.stdin.readlines())

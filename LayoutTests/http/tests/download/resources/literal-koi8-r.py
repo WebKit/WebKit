@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import sys
+sys.stdout.reconfigure(newline="")  # prevent windows \n -> \n\r conversion
 
 sys.stdout.write('Content-Disposition: attachment; filename=SU\xf3\xf3\xe5SS.txt\r\n'.encode('latin-1').decode('koi8-r', 'replace'))
 sys.stdout.write(
