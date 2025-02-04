@@ -157,7 +157,7 @@ void UniqueIDBDatabaseTransaction::createObjectStore(const IDBRequestData& reque
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createObjectStore");
 
-    ASSERT(isVersionChange());
+    RELEASE_ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
@@ -182,7 +182,7 @@ void UniqueIDBDatabaseTransaction::deleteObjectStore(const IDBRequestData& reque
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteObjectStore");
 
-    ASSERT(isVersionChange());
+    RELEASE_ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
@@ -209,7 +209,7 @@ void UniqueIDBDatabaseTransaction::renameObjectStore(const IDBRequestData& reque
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameObjectStore");
 
-    ASSERT(isVersionChange());
+    RELEASE_ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
@@ -256,11 +256,35 @@ void UniqueIDBDatabaseTransaction::clearObjectStore(const IDBRequestData& reques
     });
 }
 
+void UniqueIDBDatabaseTransaction::createIndex(const IDBRequestData& requestData, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createIndex");
+
+    RELEASE_ASSERT(isVersionChange());
+    ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
+
+    auto* database = this->database();
+    if (!database)
+        return;
+
+    database->createIndex(*this, info, [this, weakThis = WeakPtr { *this }, requestData](auto& error) {
+        LOG(IndexedDB, "UniqueIDBDatabaseTransaction::createIndex (callback)");
+
+        if (!weakThis || !m_databaseConnection)
+            return;
+
+        if (error.isNull())
+            m_databaseConnection->didCreateIndex(IDBResultData::createIndexSuccess(requestData.requestIdentifier()));
+        else
+            m_databaseConnection->didCreateIndex(IDBResultData::error(requestData.requestIdentifier(), error));
+    });
+}
+
 void UniqueIDBDatabaseTransaction::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::deleteIndex");
 
-    ASSERT(isVersionChange());
+    RELEASE_ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();
@@ -285,7 +309,7 @@ void UniqueIDBDatabaseTransaction::renameIndex(const IDBRequestData& requestData
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::renameIndex");
 
-    ASSERT(isVersionChange());
+    RELEASE_ASSERT(isVersionChange());
     ASSERT(m_transactionInfo.identifier() == requestData.transactionIdentifier());
 
     auto* database = this->database();

@@ -141,8 +141,8 @@ IDBError MemoryIDBBackingStore::createObjectStore(const IDBResourceIdentifier& t
     m_databaseInfo->addExistingObjectStore(info);
 
     auto rawTransaction = m_transactions.get(transactionIdentifier);
-    ASSERT(rawTransaction);
-    ASSERT(rawTransaction->isVersionChange());
+    RELEASE_ASSERT(rawTransaction);
+    RELEASE_ASSERT(rawTransaction->isVersionChange());
 
     rawTransaction->addNewObjectStore(objectStore.get());
     registerObjectStore(WTFMove(objectStore));
@@ -159,8 +159,8 @@ IDBError MemoryIDBBackingStore::deleteObjectStore(const IDBResourceIdentifier& t
         return IDBError { ExceptionCode::ConstraintError };
 
     auto transaction = m_transactions.get(transactionIdentifier);
-    ASSERT(transaction);
-    ASSERT(transaction->isVersionChange());
+    RELEASE_ASSERT(transaction);
+    RELEASE_ASSERT(transaction->isVersionChange());
 
     auto objectStore = takeObjectStoreByIdentifier(objectStoreIdentifier);
     ASSERT(objectStore);
@@ -182,8 +182,8 @@ IDBError MemoryIDBBackingStore::renameObjectStore(const IDBResourceIdentifier& t
         return IDBError { ExceptionCode::ConstraintError };
 
     auto transaction = m_transactions.get(transactionIdentifier);
-    ASSERT(transaction);
-    ASSERT(transaction->isVersionChange());
+    RELEASE_ASSERT(transaction);
+    RELEASE_ASSERT(transaction->isVersionChange());
 
     RefPtr objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     ASSERT(objectStore);
@@ -222,6 +222,32 @@ IDBError MemoryIDBBackingStore::clearObjectStore(const IDBResourceIdentifier& tr
     return IDBError { };
 }
 
+IDBError MemoryIDBBackingStore::createIndex(const IDBResourceIdentifier& transactionIdentifier, const IDBIndexInfo& info)
+{
+    LOG(IndexedDB, "MemoryIDBBackingStore::createIndex");
+
+    ASSERT(m_databaseInfo);
+    auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(info.objectStoreIdentifier());
+    if (!objectStoreInfo)
+        return IDBError { ExceptionCode::ConstraintError };
+
+    auto rawTransaction = m_transactions.get(transactionIdentifier);
+    RELEASE_ASSERT(rawTransaction);
+    RELEASE_ASSERT(rawTransaction->isVersionChange());
+
+    auto* objectStore = m_objectStoresByIdentifier.get(info.objectStoreIdentifier());
+    if (!objectStore)
+        return IDBError { ExceptionCode::ConstraintError };
+
+    auto error = objectStore->createIndex(*rawTransaction, info);
+    if (error.isNull()) {
+        objectStoreInfo->addExistingIndex(info);
+        m_databaseInfo->setMaxIndexID(info.identifier().toRawValue());
+    }
+
+    return error;
+}
+
 IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier)
 {
     LOG(IndexedDB, "MemoryIDBBackingStore::deleteIndex");
@@ -236,8 +262,8 @@ IDBError MemoryIDBBackingStore::deleteIndex(const IDBResourceIdentifier& transac
         return IDBError { ExceptionCode::ConstraintError };
 
     auto rawTransaction = m_transactions.get(transactionIdentifier);
-    ASSERT(rawTransaction);
-    ASSERT(rawTransaction->isVersionChange());
+    RELEASE_ASSERT(rawTransaction);
+    RELEASE_ASSERT(rawTransaction->isVersionChange());
 
     RefPtr objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     if (!objectStore)
@@ -264,8 +290,8 @@ IDBError MemoryIDBBackingStore::renameIndex(const IDBResourceIdentifier& transac
         return IDBError { ExceptionCode::ConstraintError };
 
     auto transaction = m_transactions.get(transactionIdentifier);
-    ASSERT(transaction);
-    ASSERT(transaction->isVersionChange());
+    RELEASE_ASSERT(transaction);
+    RELEASE_ASSERT(transaction->isVersionChange());
 
     RefPtr objectStore = m_objectStoresByIdentifier.get(objectStoreIdentifier);
     ASSERT(objectStore);

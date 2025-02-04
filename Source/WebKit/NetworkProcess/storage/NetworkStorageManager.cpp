@@ -1795,29 +1795,32 @@ WebCore::IDBServer::UniqueIDBDatabaseTransaction* NetworkStorageManager::idbTran
     return m_idbStorageRegistry->transaction(requestData.transactionIdentifier());
 }
 
-void NetworkStorageManager::createObjectStore(const WebCore::IDBRequestData& requestData, const WebCore::IDBObjectStoreInfo& objectStoreInfo)
+void NetworkStorageManager::createObjectStore(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBObjectStoreInfo& objectStoreInfo)
 {
     RefPtr transaction = idbTransaction(requestData);
-    if (!transaction || !transaction->isVersionChange())
+    if (!transaction)
         return;
+    MESSAGE_CHECK(transaction->isVersionChange(), connection);
 
     transaction->createObjectStore(requestData, objectStoreInfo);
 }
 
-void NetworkStorageManager::deleteObjectStore(const WebCore::IDBRequestData& requestData, const String& objectStoreName)
+void NetworkStorageManager::deleteObjectStore(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const String& objectStoreName)
 {
     RefPtr transaction = idbTransaction(requestData);
-    if (!transaction || !transaction->isVersionChange())
+    if (!transaction)
         return;
+    MESSAGE_CHECK(transaction->isVersionChange(), connection);
 
     transaction->deleteObjectStore(requestData, objectStoreName);
 }
 
-void NetworkStorageManager::renameObjectStore(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
+void NetworkStorageManager::renameObjectStore(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& newName)
 {
     RefPtr transaction = idbTransaction(requestData);
-    if (!transaction || !transaction->isVersionChange())
+    if (!transaction)
         return;
+    MESSAGE_CHECK(transaction->isVersionChange(), connection);
 
     transaction->renameObjectStore(requestData, objectStoreIdentifier, newName);
 }
@@ -1830,21 +1833,32 @@ void NetworkStorageManager::clearObjectStore(const WebCore::IDBRequestData& requ
 
 void NetworkStorageManager::createIndex(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBIndexInfo& indexInfo)
 {
-    MESSAGE_CHECK(!requestData.requestIdentifier().isEmpty(), connection);
-    if (RefPtr transaction = idbTransaction(requestData))
-        transaction->createIndex(requestData, indexInfo);
+    RefPtr transaction = idbTransaction(requestData);
+    if (!transaction)
+        return;
+    MESSAGE_CHECK(transaction->isVersionChange(), connection);
+
+    transaction->createIndex(requestData, indexInfo);
 }
 
-void NetworkStorageManager::deleteIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
+void NetworkStorageManager::deleteIndex(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, const String& indexName)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
-        transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
+    RefPtr transaction = idbTransaction(requestData);
+    if (!transaction)
+        return;
+    MESSAGE_CHECK(transaction->isVersionChange(), connection);
+
+    transaction->deleteIndex(requestData, objectStoreIdentifier, indexName);
 }
 
-void NetworkStorageManager::renameIndex(const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, const String& newName)
+void NetworkStorageManager::renameIndex(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, WebCore::IDBObjectStoreIdentifier objectStoreIdentifier, WebCore::IDBIndexIdentifier indexIdentifier, const String& newName)
 {
-    if (RefPtr transaction = idbTransaction(requestData))
-        transaction->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
+    RefPtr transaction = idbTransaction(requestData);
+    if (!transaction)
+        return;
+    MESSAGE_CHECK(transaction->isVersionChange(), connection);
+
+    transaction->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
 }
 
 void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, const WebCore::IndexIDToIndexKeyMap& indexKeys, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
