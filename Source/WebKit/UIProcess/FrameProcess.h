@@ -48,8 +48,8 @@ public:
 
 private:
     friend class BrowsingContextGroup; // FrameProcess should not be created except by BrowsingContextGroup.
-    static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::Site& site, const WebPreferences& preferences, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess) { return adoptRef(*new FrameProcess(process, group, site, preferences, injectBrowsingContextIntoProcess)); }
-    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const WebCore::Site&, const WebPreferences&, InjectBrowsingContextIntoProcess);
+    static Ref<FrameProcess> create(WebProcessProxy& process, BrowsingContextGroup& group, const WebCore::Site& site, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess) { return adoptRef(*new FrameProcess(process, group, site, injectBrowsingContextIntoProcess)); }
+    FrameProcess(WebProcessProxy&, BrowsingContextGroup&, const WebCore::Site&, InjectBrowsingContextIntoProcess);
 
     Ref<WebProcessProxy> m_process;
     WeakPtr<BrowsingContextGroup> m_browsingContextGroup;

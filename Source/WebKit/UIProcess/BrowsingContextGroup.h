@@ -50,7 +50,7 @@ public:
     static Ref<BrowsingContextGroup> create() { return adoptRef(*new BrowsingContextGroup()); }
     ~BrowsingContextGroup();
 
-    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, WebProcessProxy&, const WebPreferences&, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
+    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, WebProcessProxy&, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
     FrameProcess* processForSite(const WebCore::Site&);
     void addFrameProcess(FrameProcess&);
     void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);

@@ -42,16 +42,16 @@ BrowsingContextGroup::BrowsingContextGroup() = default;
 
 BrowsingContextGroup::~BrowsingContextGroup() = default;
 
-Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, WebProcessProxy& process, const WebPreferences& preferences, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
+Ref<FrameProcess> BrowsingContextGroup::ensureProcessForSite(const Site& site, WebProcessProxy& process, InjectBrowsingContextIntoProcess injectBrowsingContextIntoProcess)
 {
-    if (!site.isEmpty() && preferences.siteIsolationEnabled()) {
+    if (!site.isEmpty() && process.sharedPreferencesForWebProcessValue().siteIsolationEnabled) {
         if (auto* existingProcess = processForSite(site)) {
             if (existingProcess->process().coreProcessIdentifier() == process.coreProcessIdentifier())
                 return *existingProcess;
         }
     }
 
-    return FrameProcess::create(process, *this, site, preferences, injectBrowsingContextIntoProcess);
+    return FrameProcess::create(process, *this, site, injectBrowsingContextIntoProcess);
 }
 
 FrameProcess* BrowsingContextGroup::processForSite(const Site& site)

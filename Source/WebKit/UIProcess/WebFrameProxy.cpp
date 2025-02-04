@@ -434,7 +434,7 @@ void WebFrameProxy::prepareForProvisionalLoadInProcess(WebProcessProxy& process,
     RegistrableDomain mainFrameDomain(page->mainFrame()->url());
 
     m_provisionalFrame = nullptr;
-    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, group.ensureProcessForSite(navigationSite, process, page->preferences()));
+    m_provisionalFrame = makeUnique<ProvisionalFrameProxy>(*this, group.ensureProcessForSite(navigationSite, process));
     page->websiteDataStore().protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, mainFrameDomain, LoadedWebArchive::No, WTFMove(completionHandler));
 }
 
