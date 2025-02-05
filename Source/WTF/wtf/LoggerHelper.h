@@ -42,6 +42,7 @@ public:
 #if !RELEASE_LOG_DISABLED
 
 #define LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, logIdentifier())
+#define LOGIDENTIFIER_WITH_THIS(thisPtr) WTF::Logger::LogSiteIdentifier(thisPtr->logClassName(), __func__, thisPtr->logIdentifier())
 
 #if VERBOSE_RELEASE_LOG
 #define ALWAYS_LOG(...)     Ref { logger() }->logAlwaysVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
@@ -57,6 +58,7 @@ public:
 #define DEBUG_LOG(...)      Ref { logger() }->debug(logChannel(), __VA_ARGS__)
 
 #define ALWAYS_LOG_WITH_THIS(thisPtr, ...)     Ref { thisPtr->logger() }->logAlways(thisPtr->logChannel(), __VA_ARGS__)
+#define ERROR_LOG_WITH_THIS(thisPtr, ...)      Ref { thisPtr->logger() }->error(thisPtr->logChannel(), __VA_ARGS__)
 #endif
 
 #define WILL_LOG(_level_)   Ref { logger() }->willLog(logChannel(), _level_)

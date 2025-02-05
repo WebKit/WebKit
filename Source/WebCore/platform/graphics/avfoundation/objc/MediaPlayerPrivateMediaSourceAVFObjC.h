@@ -256,6 +256,8 @@ private:
     void updateDisplayLayer();
     RefPtr<VideoMediaSampleRenderer> layerOrVideoRenderer() const;
 
+    RefPtr<MediaSourcePrivateAVFObjC> protectedMediaSourcePrivate() const;
+
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by
     // javascript running in the page, the video will, by necessity, always be CORS correct and
     // in the page's origin.
@@ -408,7 +410,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
-    Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
+    const Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
     uint64_t m_sampleCount { 0 };
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };

@@ -95,6 +95,8 @@ private:
     void load(const URL&, const LoadOptions&) final;
     bool createResourceClient();
 
+    RefPtr<VideoMediaSampleRenderer> protectedVideoRenderer() const;
+
 #if ENABLE(MEDIA_SOURCE)
     void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) final;
 #endif
@@ -300,6 +302,7 @@ private:
     AcceleratedVideoMode acceleratedVideoMode() const;
 
     const Logger& logger() const final { return m_logger.get(); }
+    Ref<const Logger> protectedLogger() const { return logger(); }
     ASCIILiteral logClassName() const final { return "MediaPlayerPrivateWebM"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
@@ -335,7 +338,7 @@ private:
     RetainPtr<AVSampleBufferDisplayLayer> m_sampleBufferDisplayLayer;
     RetainPtr<AVSampleBufferVideoRenderer> m_sampleBufferVideoRenderer;
     StdUnorderedMap<TrackID, RetainPtr<AVSampleBufferAudioRenderer>> m_audioRenderers;
-    Ref<SourceBufferParserWebM> m_parser;
+    const Ref<SourceBufferParserWebM> m_parser;
     const Ref<WTF::WorkQueue> m_appendQueue;
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
@@ -376,7 +379,7 @@ private:
     bool m_loadFinished { false };
     bool m_errored { false };
     bool m_processingInitializationSegment { false };
-    Ref<WebAVSampleBufferListener> m_listener;
+    const Ref<WebAVSampleBufferListener> m_listener;
 
     // Seek logic support
     void seekToTarget(const SeekTarget&) final;
