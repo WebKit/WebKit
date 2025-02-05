@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>audioworklet-denormal-float-values</title>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script>
+    promise_test(async test => {
+        const worklet_source = `
+            const denormal = 5e-324;  
+
+            class DenormalProcessor extends AudioWorkletProcessor {
+                process(inputs, outputs, parameters) {
+                    this.port.postMessage(\`Denormal value in inside processor: \${ denormal }\`);  
+                    return true;
+                }
+            }
+            registerProcessor('denormal-processor', DenormalProcessor);
+        `;
+
+        const denormal = 5e-324;
+        assert_equals(`Denormal value outside processor: ${ denormal }`, 'Denormal value outside processor: 5e-324');
+
+        let blob = new Blob([worklet_source], { type: 'application/javascript' });
+        let worklet = URL.createObjectURL(blob);
+
+        var context = new AudioContext({ sampleRate: 44100});
+        const dest = context.destination;
+
+        await context.audioWorklet.addModule(worklet);
+        var audioWorklet = new AudioWorkletNode(context, 'denormal-processor');
+        audioWorklet.connect(dest);
+
+        audioWorklet.port.onmessage = (msg) => console.log(msg.data);
+        audioWorkletMessagePromise = new Promise((resolve, reject) => {
+            audioWorklet.port.onmessage = resolve;
+            setTimeout(() => reject('audioWorklet message promise timed out'), 5000);
+        });
+
+        let message = await audioWorkletMessagePromise;
+        assert_equals(message.data, 'Denormal value in inside processor: 0');
+
+        context.suspend();
+    });
+</script>
+</head>
+<body>
+
+</body>
+</html>

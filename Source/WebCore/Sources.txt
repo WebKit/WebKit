@@ -2373,6 +2373,7 @@ platform/audio/AudioResamplerKernel.cpp
 platform/audio/AudioUtilities.cpp
 platform/audio/Biquad.cpp
 platform/audio/Cone.cpp
+platform/audio/DenormalDisabler.cpp
 platform/audio/DirectConvolver.cpp
 platform/audio/Distance.cpp
 platform/audio/DownSampler.cpp

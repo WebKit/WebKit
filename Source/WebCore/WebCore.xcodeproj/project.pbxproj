@@ -19431,6 +19431,7 @@
 		CDD8D310271F2C8D00DAA256 /* FormatDescriptionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FormatDescriptionUtilities.h; sourceTree = "<group>"; };
 		CDD8D311271F2C8D00DAA256 /* FormatDescriptionUtilities.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FormatDescriptionUtilities.cpp; sourceTree = "<group>"; };
 		CDDC1E7918A952F30027A9D4 /* MediaSourcePrivateClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaSourcePrivateClient.h; sourceTree = "<group>"; };
+		CDDD004A2D49B890000B23CC /* DenormalDisabler.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DenormalDisabler.cpp; sourceTree = "<group>"; };
 		CDDDEA222538CD8000A1300C /* MediaSession.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = MediaSession.idl; sourceTree = "<group>"; };
 		CDDDEA232538CD8000A1300C /* MediaSession.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSession.h; sourceTree = "<group>"; };
 		CDDDEA242538CD8000A1300C /* MediaSession.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaSession.cpp; sourceTree = "<group>"; };
@@ -39653,6 +39654,7 @@
 				FD31605712B026F700C1A359 /* Biquad.h */,
 				FD31605812B026F700C1A359 /* Cone.cpp */,
 				FD31605912B026F700C1A359 /* Cone.h */,
+				CDDD004A2D49B890000B23CC /* DenormalDisabler.cpp */,
 				FD1660A413787C6D001FFA7B /* DenormalDisabler.h */,
 				FDAF19961513D131008DB0C3 /* DirectConvolver.cpp */,
 				FDAF19971513D131008DB0C3 /* DirectConvolver.h */,
