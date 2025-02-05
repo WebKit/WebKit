@@ -220,7 +220,7 @@ bool RemoteLayerTreeHost::updateLayerTree(const IPC::Connection& connection, con
         auto layerID = changedLayer.key;
         const auto& properties = *changedLayer.value;
 
-        auto* node = nodeForID(layerID);
+        RefPtr node = nodeForID(layerID);
         ASSERT(node);
 
         if (!node) {
@@ -313,7 +313,7 @@ void RemoteLayerTreeHost::layerWillBeRemoved(WebCore::ProcessIdentifier processI
     auto videoLayerIter = m_videoLayers.find(layerID);
     if (videoLayerIter != m_videoLayers.end()) {
         RefPtr page = m_drawingArea->page();
-        if (auto videoManager = page ? page->videoPresentationManager() : nullptr)
+        if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr)
             videoManager->willRemoveLayerForID(videoLayerIter->value);
         m_videoLayers.remove(videoLayerIter);
     }
@@ -478,7 +478,7 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 #if HAVE(AVKIT)
         if (properties.videoElementData) {
             RefPtr page = m_drawingArea->page();
-            if (auto videoManager = page ? page->videoPresentationManager() : nullptr) {
+            if (RefPtr videoManager = page ? page->videoPresentationManager() : nullptr) {
                 m_videoLayers.add(*properties.layerID, properties.videoElementData->playerIdentifier);
                 return makeWithLayer(videoManager->createLayerWithID(properties.videoElementData->playerIdentifier, properties.hostingContextID(), properties.videoElementData->initialSize, properties.videoElementData->naturalSize, properties.hostingDeviceScaleFactor()));
             }

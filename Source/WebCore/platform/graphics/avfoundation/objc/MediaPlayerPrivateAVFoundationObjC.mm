@@ -1328,11 +1328,11 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateAVFoundationObjC::createVideoFullscre
 
 void MediaPlayerPrivateAVFoundationObjC::setVideoFullscreenLayer(PlatformLayer* videoFullscreenLayer, Function<void()>&& completionHandler)
 {
-    auto completion = [&] {
-        RefPtr lastImage = m_lastImage;
-        m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), lastImage ? lastImage->platformImage() : nullptr);
-        updateVideoLayerGravity(ShouldAnimate::Yes);
-        updateDisableExternalPlayback();
+    auto completion = [videoFullscreenLayer, completionHandler = WTFMove(completionHandler), protectedThis = Ref { *this }]() mutable {
+        RefPtr lastImage = protectedThis->m_lastImage;
+        protectedThis->m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), lastImage ? lastImage->platformImage() : nullptr);
+        protectedThis->updateVideoLayerGravity(ShouldAnimate::Yes);
+        protectedThis->updateDisableExternalPlayback();
     };
     if (videoFullscreenLayer)
         updateLastImage(WTFMove(completion));
