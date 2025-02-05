@@ -65,7 +65,7 @@ Vector<WebSocket*> WorkerNetworkAgent::activeWebSockets()
 
 void WorkerNetworkAgent::setResourceCachingDisabledInternal(bool disabled)
 {
-    if (auto* workerDebuggerProxy = m_globalScope.workerOrWorkletThread()->workerDebuggerProxy())
+    if (auto* workerDebuggerProxy = m_globalScope->workerOrWorkletThread()->workerDebuggerProxy())
         workerDebuggerProxy->setResourceCachingDisabledByWebInspector(disabled);
 }
 
@@ -80,12 +80,12 @@ bool WorkerNetworkAgent::setEmulatedConditionsInternal(std::optional<int>&& /* b
 
 ScriptExecutionContext* WorkerNetworkAgent::scriptExecutionContext(Inspector::Protocol::ErrorString&, const Inspector::Protocol::Network::FrameId&)
 {
-    return &m_globalScope;
+    return m_globalScope.ptr();
 }
 
 void WorkerNetworkAgent::addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&& message)
 {
-    m_globalScope.addConsoleMessage(WTFMove(message));
+    Ref { m_globalScope.get() }->addConsoleMessage(WTFMove(message));
 }
 
 } // namespace WebCore
