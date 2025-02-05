@@ -117,11 +117,16 @@ IDBError MemoryObjectStore::addIndex(MemoryBackingStoreTransaction& transaction,
     if (!m_writeTransaction || !m_writeTransaction->isVersionChange() || m_writeTransaction != &transaction)
         return IDBError { ExceptionCode::ConstraintError, "Transaction state is invalid."_s };
 
+    ASSERT(!m_indexesByIdentifier.contains(indexInfo.identifier()));
     if (m_indexesByIdentifier.contains(indexInfo.identifier()))
         return IDBError { ExceptionCode::ConstraintError, "Index identifier already exists"_s };
 
     auto index = MemoryIndex::create(indexInfo, *this);
     index->writeTransactionStarted(transaction);
+    // If there was an error populating the new index, then the current records in the object store violate its contraints
+    auto error = populateIndexWithExistingRecords(index.get());
+    if (!error.isNull())
+        return error;
     m_info.addExistingIndex(indexInfo);
     transaction.addNewIndex(index.get());
     registerIndex(WTFMove(index));
