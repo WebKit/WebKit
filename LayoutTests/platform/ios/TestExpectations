@@ -7687,3 +7687,5 @@ webkit.org/b/286594 http/wpt/cache-storage/quota-third-party.https.html [ Pass F
 webkit.org/b/286318 http/tests/iframe-monitor [ Pass ]
 
 webkit.org/b/286934 [ Debug ] ipc/create-media-source-with-invalid-constraints-crash.html [ Skip ]
+
+webkit.org/b/287046 fast/events/ios/single-tap-verify-user-gesture.html [ Timeout ]
