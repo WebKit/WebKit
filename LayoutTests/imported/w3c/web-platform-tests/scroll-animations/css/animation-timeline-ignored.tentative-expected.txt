@@ -3,5 +3,5 @@ PASS Changing animation-timeline changes the timeline (sanity check)
 PASS animation-timeline ignored after setting timeline with JS (ScrollTimeline from JS)
 PASS animation-timeline ignored after setting timeline with JS (ScrollTimeline from CSS)
 PASS animation-timeline ignored after setting timeline with JS (document timeline)
-FAIL animation-timeline ignored after setting timeline with JS (null) assert_false: expected false got true
+PASS animation-timeline ignored after setting timeline with JS (null)
 

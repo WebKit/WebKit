@@ -86,6 +86,7 @@ private:
 
     String m_animationName;
     OptionSet<Property> m_overriddenProperties;
+    std::optional<AnimationPlayState> m_lastStyleOriginatedPlayState;
 };
 
 } // namespace WebCore
