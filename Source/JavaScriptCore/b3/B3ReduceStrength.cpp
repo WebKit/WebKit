@@ -938,7 +938,8 @@ private:
                 break;
 
             if (m_value->child(1)->hasInt()) {
-                switch (m_value->child(1)->asInt()) {
+                int64_t divisor64 = m_value->child(1)->asInt();
+                switch (divisor64) {
                 case -1:
                     // Turn this: Div(value, -1)
                     // Into this: Neg(value)
@@ -960,6 +961,16 @@ private:
                     break;
 
                 default:
+                    // Turn this: Div(value, constant)
+                    // Into this: Shr(value, log2(constant))
+                    if (divisor64 > 0 && hasOneBitSet(divisor64)) {
+                        unsigned shiftAmount = WTF::fastLog2(static_cast<uint64_t>(divisor64));
+                        replaceWithNew<Value>(
+                            SShr, m_value->origin(), m_value->child(0),
+                            m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), shiftAmount));
+                        break;
+                    }
+
                     // Perform super comprehensive strength reduction of division. Currently we
                     // only do this for 32-bit divisions, since we need a high multiply
                     // operation. We emulate it using 64-bit multiply. We can't emulate 64-bit
@@ -972,7 +983,7 @@ private:
                     if (m_proc.optLevel() < 2)
                         break;
 
-                    int32_t divisor = m_value->child(1)->asInt32();
+                    int32_t divisor = static_cast<int32_t>(divisor64);
                     DivisionMagic<int32_t> magic = computeDivisionMagic(divisor);
 
                     // Perform the "high" multiplication. We do it just to get the high bits.
@@ -1025,7 +1036,8 @@ private:
                 break;
 
             if (m_value->child(1)->hasInt()) {
-                switch (m_value->child(1)->asInt()) {
+                uint64_t divisor64 = static_cast<uint64_t>(m_value->child(1)->asInt());
+                switch (divisor64) {
                 case 0:
                     // Turn this: UDiv(value, 0)
                     // Into this: 0
@@ -1040,6 +1052,19 @@ private:
                     replaceWithIdentity(m_value->child(0));
                     break;
                 default:
+                    // Turn this: UDiv(value, constant)
+                    // Into this: ZShr(value, log2(constant))
+                    if (m_value->type() == Int32)
+                        divisor64 = static_cast<uint32_t>(divisor64);
+
+                    if (hasOneBitSet(divisor64)) {
+                        unsigned shiftAmount = WTF::fastLog2(divisor64);
+                        replaceWithNew<Value>(
+                            ZShr, m_value->origin(), m_value->child(0),
+                            m_insertionSet.insert<Const32Value>(m_index, m_value->origin(), shiftAmount));
+                        break;
+                    }
+
                     // FIXME: We should do comprehensive strength reduction for unsigned numbers. Likely,
                     // we will just want copy what llvm does. https://bugs.webkit.org/show_bug.cgi?id=164809
                     break;
