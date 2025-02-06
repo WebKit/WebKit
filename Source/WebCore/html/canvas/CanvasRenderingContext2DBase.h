@@ -505,7 +505,7 @@ private:
     unsigned m_unrealizedSaveCount { 0 };
     bool m_usesCSSCompatibilityParseMode;
     mutable std::variant<CachedContentsTransparent, CachedContentsUnknown, CachedContentsImageData> m_cachedContents;
-    CanvasRenderingContext2DSettings m_settings;
+    const CanvasRenderingContext2DSettings m_settings;
     bool m_hasDeferredOperations { false };
 };
 

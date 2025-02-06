@@ -298,6 +298,7 @@ static void convertImagePixelsUnaccelerated(const ConstPixelBufferConversionView
     }
 }
 
+<<<<<<< HEAD
 #if !(USE(ACCELERATE) && USE(CG))
 static void copyImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
@@ -315,11 +316,96 @@ static void copyImagePixels(const ConstPixelBufferConversionView& source, const 
     }
 }
 #endif
+=======
+static void convertImagePixelsToFloatUnaccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
+{
+    ASSERT(source.format.pixelFormat == PixelFormat::RGBA8 || source.format.pixelFormat == PixelFormat::BGRA8 || source.format.pixelFormat == PixelFormat::BGRX8);
+    ASSERT(destination.format.pixelFormat == PixelFormat::RGBA16F);
+
+    RELEASE_ASSERT(!(destination.bytesPerRow % sizeof(Float16)));
+    auto intermediateBytesPerRow = destination.bytesPerRow / unsigned(sizeof(Float16));
+    Vector<uint8_t> intermediateBuffer(intermediateBytesPerRow * destinationSize.height());
+    auto intermediateRowsSpan = intermediateBuffer.mutableSpan();
+
+    PixelBufferConversionView intermediate {
+        .format = PixelBufferFormat {
+            .alphaFormat = destination.format.alphaFormat,
+            .pixelFormat = PixelFormat::RGBA8,
+            .colorSpace = destination.format.colorSpace
+        },
+        .bytesPerRow = intermediateBytesPerRow,
+        .rows = intermediateRowsSpan
+    };
+
+    convertImagePixels(source, intermediate, destinationSize);
+
+    auto pixelComponentsPerRow = intermediateBytesPerRow;
+
+    size_t intermediateRowsByteIndex = 0;
+    size_t destinationRowsFloat16Index = 0;
+    for (int y = 0; y < destinationSize.height(); ++y) {
+        for (size_t i = 0; i < pixelComponentsPerRow; ++i) {
+            Float16 f16 = double(intermediateRowsSpan[intermediateRowsByteIndex + i]) / 255.0;
+            uint8_t u[sizeof(Float16)];
+            memcpy(u, &f16, sizeof(Float16));
+            destination.rows[destinationRowsFloat16Index * sizeof(Float16) + i + 0] = u[0];
+            destination.rows[destinationRowsFloat16Index * sizeof(Float16) + i + 1] = u[1];
+        }
+        intermediateRowsByteIndex += pixelComponentsPerRow;
+        destinationRowsFloat16Index += pixelComponentsPerRow;
+    }
+}
+
+static void convertImagePixelsFromFloatUnaccelerated(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
+{
+    ASSERT(source.format.pixelFormat == PixelFormat::RGBA16F);
+
+    RELEASE_ASSERT(!(source.bytesPerRow % sizeof(Float16)));
+    auto sourcePixelComponentsPerRow = source.bytesPerRow / unsigned(sizeof(Float16));
+
+    auto newSourceBytesPerRow = sourcePixelComponentsPerRow * unsigned(sizeof(uint8_t));
+    Vector<uint8_t> newSourceBuffer(newSourceBytesPerRow * destinationSize.height());
+
+    size_t sourceRowsFloat16Index = 0;
+    size_t newSourceRowsByteIndex = 0;
+    for (int y = 0; y < destinationSize.height(); ++y) {
+        for (size_t i = 0; i < sourcePixelComponentsPerRow; ++i) {
+            uint8_t u[sizeof(Float16)];
+            u[0] = source.rows[sourceRowsFloat16Index * sizeof(Float16) + i + 0];
+            u[1] = source.rows[sourceRowsFloat16Index * sizeof(Float16) + i + 1];
+            Float16 f16;
+            memcpy(&f16, u, sizeof(Float16));
+            newSourceBuffer[newSourceRowsByteIndex + i] = std::clamp(double(f16), 0.0, 1.0) * 255.0;
+        }
+        sourceRowsFloat16Index += sourcePixelComponentsPerRow;
+        newSourceRowsByteIndex += sourcePixelComponentsPerRow;
+    }
+
+    ConstPixelBufferConversionView newSource {
+        .format = PixelBufferFormat {
+            .alphaFormat = source.format.alphaFormat,
+            .pixelFormat = PixelFormat::RGBA8,
+            .colorSpace = source.format.colorSpace
+        },
+        .bytesPerRow = newSourceBytesPerRow,
+        .rows = newSourceBuffer.span()
+    };
+
+    convertImagePixels(newSource, destination, destinationSize);
+}
+>>>>>>> ed4d067b4e4f (CanvasRenderingContext2DBase output bitmap using CanvasPixelFormat)
 
 void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize& destinationSize)
 {
-    // We currently only support converting between RGBA8, BGRA8, and BGRX8.
+    // We currently only support converting between RGBA8, BGRA8, BGRX8, and RGBA16F.
+    if (source.format.pixelFormat == PixelFormat::RGBA16F)
+        return convertImagePixelsFromFloatUnaccelerated(source, destination, destinationSize);
+
     ASSERT(source.format.pixelFormat == PixelFormat::RGBA8 || source.format.pixelFormat == PixelFormat::BGRA8 || source.format.pixelFormat == PixelFormat::BGRX8);
+
+    if (destination.format.pixelFormat == PixelFormat::RGBA16F)
+        return convertImagePixelsToFloatUnaccelerated(source, destination, destinationSize);
+
     ASSERT(destination.format.pixelFormat == PixelFormat::RGBA8 || destination.format.pixelFormat == PixelFormat::BGRA8 || destination.format.pixelFormat == PixelFormat::BGRX8);
 
 #if USE(ACCELERATE) && USE(CG)

@@ -393,6 +393,15 @@ public:
 #endif
     }
 
+    ExceptionOr<bool> haveHDRSupport()
+    {
+#if HAVE(HDR_SUPPORT)
+        return true;
+#else
+        return false;
+#endif
+    }
+
     ExceptionOr<void> setPagination(const String& mode, int gap, int pageLength);
     ExceptionOr<uint64_t> lineIndexAfterPageBreak(Element&);
     ExceptionOr<String> configurationForViewport(float devicePixelRatio, int deviceWidth, int deviceHeight, int availableWidth, int availableHeight);

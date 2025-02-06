@@ -36,6 +36,7 @@ class Float16ArrayPixelBuffer : public PixelBuffer {
 public:
     WEBCORE_EXPORT static Ref<Float16ArrayPixelBuffer> create(const PixelBufferFormat&, const IntSize&, JSC::Float16Array&);
     WEBCORE_EXPORT static std::optional<Ref<Float16ArrayPixelBuffer>> create(const PixelBufferFormat&, const IntSize&, std::span<const Float16> data);
+    WEBCORE_EXPORT static std::optional<Ref<Float16ArrayPixelBuffer>> create(const PixelBufferFormat&, const IntSize&, std::span<const uint8_t> data);
 
     WEBCORE_EXPORT static RefPtr<Float16ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&);
     WEBCORE_EXPORT static RefPtr<Float16ArrayPixelBuffer> tryCreate(const PixelBufferFormat&, const IntSize&, Ref<JSC::ArrayBuffer>&&);

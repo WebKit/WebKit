@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PixelBuffer.h"
 
+#include "ByteArrayPixelBuffer.h"
+#include "Float16ArrayPixelBuffer.h"
 #include <JavaScriptCore/TypedArrayInlines.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/TextStream.h>
@@ -54,6 +56,27 @@ bool PixelBuffer::supportedPixelFormat(PixelFormat pixelFormat)
 
     ASSERT_NOT_REACHED();
     return false;
+}
+
+RefPtr<PixelBuffer> PixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
+{
+    if (!supportedPixelFormat(format.pixelFormat))
+        return nullptr;
+
+    switch (format.pixelFormat) {
+    case PixelFormat::RGBA8:
+    case PixelFormat::BGRA8:
+        ASSERT(supportedPixelFormat(format.pixelFormat));
+        return ByteArrayPixelBuffer::tryCreate(format, size);
+#if HAVE(HDR_SUPPORT)
+    case PixelFormat::RGBA16F:
+        ASSERT(supportedPixelFormat(format.pixelFormat));
+        return Float16ArrayPixelBuffer::tryCreate(format, size);
+#endif
+    default:
+        ASSERT(!supportedPixelFormat(format.pixelFormat));
+    }
+    return nullptr;
 }
 
 static CheckedUint32 mustFitInInt32(CheckedUint32 uint32)

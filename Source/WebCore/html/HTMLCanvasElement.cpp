@@ -31,6 +31,7 @@
 #include "BitmapImage.h"
 #include "Blob.h"
 #include "BlobCallback.h"
+#include "ByteArrayPixelBuffer.h"
 #include "CSSParserContext.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
@@ -808,7 +809,7 @@ RefPtr<ImageData> HTMLCanvasElement::getImageData()
         return nullptr;
 
     postProcessPixelBufferResults(*pixelBuffer);
-    return ImageData::create(pixelBuffer.releaseNonNull());
+    return ImageData::create(Ref<PixelBuffer>(pixelBuffer.releaseNonNull()));
 #else
     return nullptr;
 #endif

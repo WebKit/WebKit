@@ -57,6 +57,16 @@ verifyImageData('created_imageData_float16', 'Float16Array', float16_bytes_per_e
 var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
 verifyImageData('gotten_imageData_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance);
 
+context.clearRect(0, 0, 1, 1);
+context.putImageData(gotten_imageData_uint8, 0, 0);
+var gotten_imageData_uint8_from_uint8 = context.getImageData(0, 0, 1, 1);
+verifyImageData('gotten_imageData_uint8_from_uint8', 'Uint8ClampedArray', uint8_bytes_per_element, r, g, b, a);
+
+context.clearRect(0, 0, 1, 1);
+context.putImageData(gotten_imageData_float16, 0, 0);
+var gotten_imageData_float16_from_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
+verifyImageData('gotten_imageData_float16_from_float16', 'Float16Array', float16_bytes_per_element, r / 255, g / 255, b / 255, a / 255, float16_nonzero_tolerance);
+
 // Put the float16 ImageData back into the (uint8-backed) canvas, and get a default (uint8) ImageData.
 // This verifies the basic uint8->float16 conversion:
 context.clearRect(0, 0, 1, 1);

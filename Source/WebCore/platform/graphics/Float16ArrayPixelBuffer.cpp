@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Float16ArrayPixelBuffer.h"
+#include <wtf/StdLibExtras.h>
 
 #if ENABLE(PIXEL_FORMAT_RGBA16F)
 
@@ -63,6 +64,15 @@ std::optional<Ref<Float16ArrayPixelBuffer>> Float16ArrayPixelBuffer::create(cons
     }
 
     return Float16ArrayPixelBuffer::create(format, size, buffer.releaseNonNull());
+}
+
+std::optional<Ref<Float16ArrayPixelBuffer>> Float16ArrayPixelBuffer::create(const PixelBufferFormat& format, const IntSize& size, std::span<const uint8_t> data)
+{
+    if (data.size_bytes() % sizeof(Float16))
+        return { };
+    if (uintptr_t(data.data()) % alignof(Float16))
+        return { };
+    return create(format, size, spanReinterpretCast<const Float16>(data));
 }
 
 RefPtr<Float16ArrayPixelBuffer> Float16ArrayPixelBuffer::tryCreate(const PixelBufferFormat& format, const IntSize& size)
