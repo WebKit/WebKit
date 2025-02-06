@@ -183,7 +183,7 @@ CSSPropertyParser::CSSPropertyParser(const CSSParserTokenRange& range, const CSS
         m_range.consumeWhitespace();
 }
 
-void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID currentShorthand, RefPtr<CSSValue>&& value, bool important, bool implicit)
+void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID currentShorthand, RefPtr<CSSValue>&& value, IsImportant important, IsImplicit implicit)
 {
     int shorthandIndex = 0;
     bool setFromShorthand = false;
@@ -202,20 +202,20 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
     ASSERT(isExposed(property, &m_context.propertySettings) || setFromShorthand || isInternal(property));
 
     if (value && !value->isImplicitInitialValue())
-        m_parsedProperties->append(CSSProperty(property, WTFMove(value), important ? IsImportant::Yes : IsImportant::No, setFromShorthand, shorthandIndex, implicit));
+        m_parsedProperties->append(CSSProperty(property, WTFMove(value), important, setFromShorthand, shorthandIndex, implicit));
     else {
         ASSERT(setFromShorthand);
-        m_parsedProperties->append(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important ? IsImportant::Yes : IsImportant::No, setFromShorthand, shorthandIndex, true));
+        m_parsedProperties->append(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important, setFromShorthand, shorthandIndex, IsImplicit::Yes));
     }
 }
 
-void CSSPropertyParser::addExpandedProperty(CSSPropertyID shorthand, RefPtr<CSSValue>&& value, bool important, bool implicit)
+void CSSPropertyParser::addExpandedProperty(CSSPropertyID shorthand, RefPtr<CSSValue>&& value, IsImportant important, IsImplicit implicit)
 {
     for (auto longhand : shorthandForProperty(shorthand))
         addProperty(longhand, shorthand, value.copyRef(), important, implicit);
 }
 
-bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, bool important, const CSSParserTokenRange& range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRuleType ruleType)
+bool CSSPropertyParser::parseValue(CSSPropertyID propertyID, IsImportant important, const CSSParserTokenRange& range, const CSSParserContext& context, ParsedPropertyVector& parsedProperties, StyleRuleType ruleType)
 {
     int parsedPropertiesSize = parsedProperties.size();
     
@@ -324,7 +324,7 @@ bool CSSPropertyParser::isValidCustomPropertyValueForSyntax(const CSSCustomPrope
     return !!parser.consumeCustomPropertyValueWithSyntax(syntax).first;
 }
 
-bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important)
+bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, IsImportant important)
 {
     if (consumeCSSWideKeyword(propertyID, important))
         return true;
@@ -356,7 +356,7 @@ bool CSSPropertyParser::parseValueStart(CSSPropertyID propertyID, bool important
     return false;
 }
 
-bool CSSPropertyParser::consumeCSSWideKeyword(CSSPropertyID propertyID, bool important)
+bool CSSPropertyParser::consumeCSSWideKeyword(CSSPropertyID propertyID, IsImportant important)
 {
     CSSParserTokenRange rangeCopy = m_range;
     RefPtr value = maybeConsumeCSSWideKeyword(rangeCopy);
@@ -577,7 +577,7 @@ bool CSSPropertyParser::parseCounterStyleDescriptor(CSSPropertyID property)
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), IsImportant::No);
     return true;
 }
 
@@ -589,7 +589,7 @@ bool CSSPropertyParser::parseViewTransitionDescriptor(CSSPropertyID property)
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), IsImportant::No);
     return true;
 }
 
@@ -606,12 +606,12 @@ static bool propertyAllowedInPositionTryRule(CSSPropertyID property)
     // FIXME (webkit.org/b/281289): allow position-area when it's implemented
 }
 
-bool CSSPropertyParser::parsePositionTryDescriptor(CSSPropertyID property, bool important)
+bool CSSPropertyParser::parsePositionTryDescriptor(CSSPropertyID property, IsImportant important)
 {
     ASSERT(m_context.propertySettings.cssAnchorPositioningEnabled);
 
     // Per spec, !important is not allowed and makes the whole declaration invalid.
-    if (important)
+    if (important == IsImportant::Yes)
         return false;
 
     if (!propertyAllowedInPositionTryRule(property))
@@ -629,7 +629,7 @@ bool CSSPropertyParser::parseFontFaceDescriptor(CSSPropertyID property)
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), IsImportant::No);
     return true;
 }
 
@@ -639,13 +639,13 @@ bool CSSPropertyParser::parseFontFaceDescriptorShorthand(CSSPropertyID property)
 
     switch (property) {
     case CSSPropertyFontVariant:
-        return consumeFontVariantShorthand(false);
+        return consumeFontVariantShorthand(IsImportant::No);
     default:
         return false;
     }
 }
 
-bool CSSPropertyParser::parseKeyframeDescriptor(CSSPropertyID propertyID, bool important)
+bool CSSPropertyParser::parseKeyframeDescriptor(CSSPropertyID propertyID, IsImportant important)
 {
     // https://www.w3.org/TR/css-animations-1/#keyframes
     // The <declaration-list> inside of <keyframe-block> accepts any CSS property except those
@@ -672,7 +672,7 @@ bool CSSPropertyParser::parsePropertyDescriptor(CSSPropertyID property)
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), IsImportant::No);
     return true;
 }
 
@@ -682,11 +682,11 @@ bool CSSPropertyParser::parseFontPaletteValuesDescriptor(CSSPropertyID property)
     if (!parsedValue || !m_range.atEnd())
         return false;
 
-    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), IsImportant::No);
     return true;
 }
 
-bool CSSPropertyParser::parsePageDescriptor(CSSPropertyID property, bool important)
+bool CSSPropertyParser::parsePageDescriptor(CSSPropertyID property, IsImportant important)
 {
     // Does not apply in @page per-spec.
     if (property == CSSPropertyPage)
@@ -699,11 +699,11 @@ bool CSSPropertyParser::parsePageDescriptor(CSSPropertyID property, bool importa
     if (!m_range.atEnd())
         return false;
 
-    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), false);
+    addProperty(property, CSSPropertyInvalid, WTFMove(parsedValue), IsImportant::No);
     return true;
 }
 
-bool CSSPropertyParser::consumeFont(bool important)
+bool CSSPropertyParser::consumeFont(IsImportant important)
 {
     if (CSSPropertyParserHelpers::isSystemFontShorthand(m_range.peek().id())) {
         auto systemFont = m_range.consumeIncludingWhitespace().id();
@@ -716,7 +716,7 @@ bool CSSPropertyParser::consumeFont(bool important)
         // Instead, we store sentinel values, later replaced by environment-sensitive values
         // inside Style::BuilderCustom and Style::BuilderConverter.
         for (auto property : fontShorthand())
-            addProperty(property, CSSPropertyFont, CSSPrimitiveValue::create(systemFont), important, true);
+            addProperty(property, CSSPropertyFont, CSSPrimitiveValue::create(systemFont), important, IsImplicit::Yes);
 
         return true;
     }
@@ -771,12 +771,12 @@ bool CSSPropertyParser::consumeFont(bool important)
     m_range = range;
     auto shorthand = fontShorthand();
     for (auto [i, longhand] : indexedRange(shorthand.properties()))
-        addProperty(longhand, CSSPropertyFont, i < values.size() ? WTFMove(values[i]) : nullptr, important, true);
+        addProperty(longhand, CSSPropertyFont, i < values.size() ? WTFMove(values[i]) : nullptr, important, IsImplicit::Yes);
 
     return true;
 }
 
-bool CSSPropertyParser::consumeTextDecorationSkip(bool important)
+bool CSSPropertyParser::consumeTextDecorationSkip(IsImportant important)
 {
     if (RefPtr skip = consumeIdent<CSSValueNone, CSSValueAuto, CSSValueInk>(m_range)) {
         switch (skip->valueID()) {
@@ -797,7 +797,7 @@ bool CSSPropertyParser::consumeTextDecorationSkip(bool important)
     return false;
 }
 
-bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
+bool CSSPropertyParser::consumeFontVariantShorthand(IsImportant important)
 {
     if (identMatches<CSSValueNormal, CSSValueNone>(m_range.peek().id())) {
         addProperty(CSSPropertyFontVariantLigatures, CSSPropertyFontVariant, consumeIdent(m_range), important);
@@ -817,8 +817,8 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     RefPtr<CSSValue> emojiValue;
     CSSFontVariantLigaturesParser ligaturesParser;
     CSSFontVariantNumericParser numericParser;
-    bool implicitLigatures = true;
-    bool implicitNumeric = true;
+    auto implicitLigatures = IsImplicit::Yes;
+    auto implicitNumeric = IsImplicit::Yes;
     do {
         if (m_range.peek().id() == CSSValueNormal)
             return false;
@@ -835,11 +835,11 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
         CSSFontVariantLigaturesParser::ParseResult ligaturesParseResult = ligaturesParser.consumeLigature(m_range);
         CSSFontVariantNumericParser::ParseResult numericParseResult = numericParser.consumeNumeric(m_range);
         if (ligaturesParseResult == CSSFontVariantLigaturesParser::ParseResult::ConsumedValue) {
-            implicitLigatures = false;
+            implicitLigatures = IsImplicit::No;
             continue;
         }
         if (numericParseResult == CSSFontVariantNumericParser::ParseResult::ConsumedValue) {
-            implicitNumeric = false;
+            implicitNumeric = IsImplicit::No;
             continue;
         }
 
@@ -868,7 +868,7 @@ bool CSSPropertyParser::consumeFontVariantShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeFontSynthesis(bool important)
+bool CSSPropertyParser::consumeFontSynthesis(IsImportant important)
 {
     // none | [ weight || style || small-caps ]
     if (m_range.peek().id() == CSSValueNone) {
@@ -918,7 +918,7 @@ bool CSSPropertyParser::consumeFontSynthesis(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeBorderSpacing(bool important)
+bool CSSPropertyParser::consumeBorderSpacing(IsImportant important)
 {
     RefPtr horizontalSpacing = consumeLength(m_range, m_context, ValueRange::NonNegative, UnitlessQuirk::Allow);
     if (!horizontalSpacing)
@@ -933,7 +933,7 @@ bool CSSPropertyParser::consumeBorderSpacing(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeColumns(bool important)
+bool CSSPropertyParser::consumeColumns(IsImportant important)
 {
     RefPtr<CSSValue> columnWidth;
     RefPtr<CSSValue> columnCount;
@@ -1520,7 +1520,7 @@ CSSValueID initialValueIDForLonghand(CSSPropertyID longhand)
     });
 }
 
-bool CSSPropertyParser::consumeShorthandGreedily(const StylePropertyShorthand& shorthand, bool important)
+bool CSSPropertyParser::consumeShorthandGreedily(const StylePropertyShorthand& shorthand, IsImportant important)
 {
     ASSERT(shorthand.length() <= 6); // Existing shorthands have at most 6 longhands.
     std::array<RefPtr<CSSValue>, 6> longhands;
@@ -1544,7 +1544,7 @@ bool CSSPropertyParser::consumeShorthandGreedily(const StylePropertyShorthand& s
     return true;
 }
 
-bool CSSPropertyParser::consumeFlex(bool important)
+bool CSSPropertyParser::consumeFlex(IsImportant important)
 {
     // <'flex'>        = none | [ <'flex-grow'> <'flex-shrink'>? || <'flex-basis'> ]
     // <'flex-grow'>   = <number [0,∞]>
@@ -1627,7 +1627,7 @@ bool CSSPropertyParser::consumeFlex(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeBorderShorthand(CSSPropertyID widthProperty, CSSPropertyID styleProperty, CSSPropertyID colorProperty, bool important)
+bool CSSPropertyParser::consumeBorderShorthand(CSSPropertyID widthProperty, CSSPropertyID styleProperty, CSSPropertyID colorProperty, IsImportant important)
 {
     RefPtr<CSSValue> width;
     RefPtr<CSSValue> style;
@@ -1663,7 +1663,7 @@ bool CSSPropertyParser::consumeBorderShorthand(CSSPropertyID widthProperty, CSSP
     return true;
 }
 
-bool CSSPropertyParser::consume2ValueShorthand(const StylePropertyShorthand& shorthand, bool important)
+bool CSSPropertyParser::consume2ValueShorthand(const StylePropertyShorthand& shorthand, IsImportant important)
 {
     ASSERT(shorthand.length() == 2);
     auto longhands = shorthand.properties();
@@ -1672,8 +1672,8 @@ bool CSSPropertyParser::consume2ValueShorthand(const StylePropertyShorthand& sho
         return false;
 
     RefPtr end = parseSingleValue(longhands[1], shorthand.id());
-    bool endImplicit = !end;
-    if (endImplicit)
+    auto endImplicit = !end ? IsImplicit::Yes : IsImplicit::No;
+    if (endImplicit == IsImplicit::Yes)
         end = start;
     addProperty(longhands[0], shorthand.id(), start.releaseNonNull(), important);
     addProperty(longhands[1], shorthand.id(), end.releaseNonNull(), important, endImplicit);
@@ -1681,7 +1681,7 @@ bool CSSPropertyParser::consume2ValueShorthand(const StylePropertyShorthand& sho
     return m_range.atEnd();
 }
 
-bool CSSPropertyParser::consume4ValueShorthand(const StylePropertyShorthand& shorthand, bool important)
+bool CSSPropertyParser::consume4ValueShorthand(const StylePropertyShorthand& shorthand, IsImportant important)
 {
     ASSERT(shorthand.length() == 4);
     auto longhands = shorthand.properties();
@@ -1698,9 +1698,9 @@ bool CSSPropertyParser::consume4ValueShorthand(const StylePropertyShorthand& sho
             left = parseSingleValue(longhands[3], shorthand.id());
     }
 
-    bool rightImplicit = !right;
-    bool bottomImplicit = !bottom;
-    bool leftImplicit = !left;
+    auto rightImplicit = !right ? IsImplicit::Yes : IsImplicit::No;
+    auto bottomImplicit = !bottom ? IsImplicit::Yes : IsImplicit::No;
+    auto leftImplicit = !left ? IsImplicit::Yes : IsImplicit::No;
 
     if (!right)
         right = top;
@@ -1717,7 +1717,7 @@ bool CSSPropertyParser::consume4ValueShorthand(const StylePropertyShorthand& sho
     return m_range.atEnd();
 }
 
-bool CSSPropertyParser::consumeBorderRadius(CSSPropertyID property, bool important)
+bool CSSPropertyParser::consumeBorderRadius(CSSPropertyID property, IsImportant important)
 {
     auto borderRadius = property == CSSPropertyWebkitBorderRadius ? consumeUnresolvedWebKitBorderRadius(m_range, m_context) : consumeUnresolvedBorderRadius(m_range, m_context);
     if (!borderRadius)
@@ -1730,7 +1730,7 @@ bool CSSPropertyParser::consumeBorderRadius(CSSPropertyID property, bool importa
     return true;
 }
 
-bool CSSPropertyParser::consumeBorderImage(CSSPropertyID property, bool important)
+bool CSSPropertyParser::consumeBorderImage(CSSPropertyID property, IsImportant important)
 {
     RefPtr<CSSValue> source;
     RefPtr<CSSValue> slice;
@@ -1792,7 +1792,7 @@ static inline CSSPropertyID mapFromLegacyBreakProperty(CSSPropertyID property)
     return CSSPropertyBreakInside;
 }
 
-bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool important)
+bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, IsImportant important)
 {
     // The fragmentation spec says that page-break-(after|before|inside) are to be treated as
     // shorthands for their break-(after|before|inside) counterparts. We'll do the same for the
@@ -1827,7 +1827,7 @@ bool CSSPropertyParser::consumeLegacyBreakProperty(CSSPropertyID property, bool 
     return true;
 }
 
-bool CSSPropertyParser::consumeLegacyTextOrientation(bool important)
+bool CSSPropertyParser::consumeLegacyTextOrientation(IsImportant important)
 {
     // -webkit-text-orientation is a legacy shorthand for text-orientation.
     // The only difference is that it accepts 'sideways-right', which is mapped into 'sideways'.
@@ -1894,7 +1894,7 @@ static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property
     }
 }
 
-bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& shorthand, bool important)
+bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& shorthand, IsImportant important)
 {
     auto shorthandProperties = shorthand.properties();
     const unsigned longhandCount = shorthand.length();
@@ -2027,7 +2027,7 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
 
 // Note: consumeBackgroundShorthand assumes y properties (for example background-position-y) follow
 // the x properties in the shorthand array.
-bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand& shorthand, bool important)
+bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand& shorthand, IsImportant important)
 {
     auto shorthandProperties = shorthand.properties();
     unsigned longhandCount = shorthand.length();
@@ -2133,7 +2133,7 @@ bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand&
     return true;
 }
 
-bool CSSPropertyParser::consumeOverflowShorthand(bool important)
+bool CSSPropertyParser::consumeOverflowShorthand(IsImportant important)
 {
     CSSValueID xValueID = m_range.consumeIncludingWhitespace().id();
     if (!CSSParserFastPaths::isKeywordValidForStyleProperty(CSSPropertyOverflowY, xValueID, m_context))
@@ -2168,7 +2168,7 @@ static bool isCustomIdentValue(const CSSValue& value)
     return primitiveValue && primitiveValue->isCustomIdent();
 }
 
-bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthandId, bool important)
+bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthandId, IsImportant important)
 {
     const StylePropertyShorthand& shorthand = shorthandForProperty(shorthandId);
     ASSERT(shorthand.length() == 2);
@@ -2192,7 +2192,7 @@ bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthand
     return true;
 }
 
-bool CSSPropertyParser::consumeGridAreaShorthand(bool important)
+bool CSSPropertyParser::consumeGridAreaShorthand(IsImportant important)
 {
     RefPtr rowStartValue = consumeGridLine(m_range, m_context);
     if (!rowStartValue)
@@ -2231,7 +2231,7 @@ bool CSSPropertyParser::consumeGridAreaShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns(CSSPropertyID shorthandId, bool important)
+bool CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns(CSSPropertyID shorthandId, IsImportant important)
 {
     NamedGridAreaMap gridAreaMap;
     size_t rowCount = 0;
@@ -2289,7 +2289,7 @@ bool CSSPropertyParser::consumeGridTemplateRowsAndAreasAndColumns(CSSPropertyID 
     return true;
 }
 
-bool CSSPropertyParser::consumeGridTemplateShorthand(CSSPropertyID shorthandId, bool important)
+bool CSSPropertyParser::consumeGridTemplateShorthand(CSSPropertyID shorthandId, IsImportant important)
 {
     CSSParserTokenRange rangeCopy = m_range;
     RefPtr<CSSValue> rowsValue = consumeIdent<CSSValueNone>(m_range);
@@ -2340,7 +2340,7 @@ static RefPtr<CSSValue> consumeImplicitGridAutoFlow(CSSParserTokenRange& range, 
         CSSPrimitiveValue::create(CSSValueDense));
 }
 
-bool CSSPropertyParser::consumeGridShorthand(bool important)
+bool CSSPropertyParser::consumeGridShorthand(IsImportant important)
 {
     ASSERT(shorthandForProperty(CSSPropertyGrid).length() == 6);
 
@@ -2422,7 +2422,7 @@ bool CSSPropertyParser::consumeGridShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeAlignShorthand(const StylePropertyShorthand& shorthand, bool important)
+bool CSSPropertyParser::consumeAlignShorthand(const StylePropertyShorthand& shorthand, IsImportant important)
 {
     // Used to implement the rules in CSS Align for the following shorthands:
     //   <'place-content'> https://drafts.csswg.org/css-align/#propdef-place-content
@@ -2452,7 +2452,7 @@ bool CSSPropertyParser::consumeAlignShorthand(const StylePropertyShorthand& shor
     return true;
 }
 
-bool CSSPropertyParser::consumeBlockStepShorthand(bool important)
+bool CSSPropertyParser::consumeBlockStepShorthand(IsImportant important)
 {
     // https://drafts.csswg.org/css-rhythm/#block-step
     RefPtr<CSSValue> size;
@@ -2494,7 +2494,7 @@ bool CSSPropertyParser::consumeBlockStepShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
+bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(IsImportant important)
 {
     ASSERT(shorthandForProperty(CSSPropertyOverscrollBehavior).length() == 2);
 
@@ -2521,7 +2521,7 @@ bool CSSPropertyParser::consumeOverscrollBehaviorShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeContainerShorthand(bool important)
+bool CSSPropertyParser::consumeContainerShorthand(IsImportant important)
 {
     RefPtr name = consumeContainerName(m_range, m_context);
     if (!name)
@@ -2548,7 +2548,7 @@ bool CSSPropertyParser::consumeContainerShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(bool important)
+bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(IsImportant important)
 {
     ASSERT(shorthandForProperty(CSSPropertyContainIntrinsicSize).length() == 2);
     ASSERT(isExposed(CSSPropertyContainIntrinsicSize, &m_context.propertySettings));
@@ -2576,7 +2576,7 @@ bool CSSPropertyParser::consumeContainIntrinsicSizeShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeTransformOrigin(bool important)
+bool CSSPropertyParser::consumeTransformOrigin(IsImportant important)
 {
     if (auto resultXY = consumeOneOrTwoValuedPositionCoordinates(m_range, m_context, UnitlessQuirk::Forbid)) {
         m_range.consumeWhitespace();
@@ -2593,7 +2593,7 @@ bool CSSPropertyParser::consumeTransformOrigin(bool important)
     return false;
 }
 
-bool CSSPropertyParser::consumePerspectiveOrigin(bool important)
+bool CSSPropertyParser::consumePerspectiveOrigin(IsImportant important)
 {
     if (auto result = consumePositionCoordinates(m_range, m_context, UnitlessQuirk::Forbid, PositionSyntax::Position)) {
         addProperty(CSSPropertyPerspectiveOriginX, CSSPropertyPerspectiveOrigin, WTFMove(result->x), important);
@@ -2603,7 +2603,7 @@ bool CSSPropertyParser::consumePerspectiveOrigin(bool important)
     return false;
 }
 
-bool CSSPropertyParser::consumePrefixedPerspective(bool important)
+bool CSSPropertyParser::consumePrefixedPerspective(IsImportant important)
 {
     if (RefPtr value = CSSPropertyParsing::consumePerspective(m_range, m_context)) {
         addProperty(CSSPropertyPerspective, CSSPropertyWebkitPerspective, value.releaseNonNull(), important);
@@ -2618,7 +2618,7 @@ bool CSSPropertyParser::consumePrefixedPerspective(bool important)
     return false;
 }
 
-bool CSSPropertyParser::consumeOffset(bool important)
+bool CSSPropertyParser::consumeOffset(IsImportant important)
 {
     // The offset shorthand is defined as:
     // [ <'offset-position'>?
@@ -2669,7 +2669,7 @@ bool CSSPropertyParser::consumeOffset(bool important)
     return m_range.atEnd();
 }
 
-bool CSSPropertyParser::consumeListStyleShorthand(bool important)
+bool CSSPropertyParser::consumeListStyleShorthand(IsImportant important)
 {
     RefPtr<CSSValue> position;
     RefPtr<CSSValue> image;
@@ -2713,7 +2713,7 @@ bool CSSPropertyParser::consumeListStyleShorthand(bool important)
     return m_range.atEnd();
 }
 
-bool CSSPropertyParser::consumeLineClampShorthand(bool important)
+bool CSSPropertyParser::consumeLineClampShorthand(IsImportant important)
 {
     ASSERT(m_context.propertySettings.cssLineClampEnabled);
 
@@ -2750,7 +2750,7 @@ bool CSSPropertyParser::consumeLineClampShorthand(bool important)
     return m_range.atEnd();
 }
 
-bool CSSPropertyParser::consumeTextBoxShorthand(bool important)
+bool CSSPropertyParser::consumeTextBoxShorthand(IsImportant important)
 {
     if (m_range.peek().id() == CSSValueNormal) {
         // if the single keyword normal is specified, it sets text-box-trim to none and text-box-edge to auto.
@@ -2788,7 +2788,7 @@ bool CSSPropertyParser::consumeTextBoxShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeTextWrapShorthand(bool important)
+bool CSSPropertyParser::consumeTextWrapShorthand(IsImportant important)
 {
     RefPtr<CSSValue> mode;
     RefPtr<CSSValue> style;
@@ -2817,7 +2817,7 @@ bool CSSPropertyParser::consumeTextWrapShorthand(bool important)
 }
 
 
-bool CSSPropertyParser::consumeWhiteSpaceShorthand(bool important)
+bool CSSPropertyParser::consumeWhiteSpaceShorthand(IsImportant important)
 {
     RefPtr<CSSValue> whiteSpaceCollapse;
     RefPtr<CSSValue> textWrapMode;
@@ -2879,7 +2879,7 @@ bool CSSPropertyParser::consumeWhiteSpaceShorthand(bool important)
 }
 
 
-bool CSSPropertyParser::consumeAnimationRangeShorthand(bool important)
+bool CSSPropertyParser::consumeAnimationRangeShorthand(IsImportant important)
 {
     CSSValueListBuilder startList;
     CSSValueListBuilder endList;
@@ -2924,7 +2924,7 @@ bool CSSPropertyParser::consumeAnimationRangeShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeScrollTimelineShorthand(bool important)
+bool CSSPropertyParser::consumeScrollTimelineShorthand(IsImportant important)
 {
     CSSValueListBuilder namesList;
     CSSValueListBuilder axesList;
@@ -2954,7 +2954,7 @@ bool CSSPropertyParser::consumeScrollTimelineShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::consumeViewTimelineShorthand(bool important)
+bool CSSPropertyParser::consumeViewTimelineShorthand(IsImportant important)
 {
     CSSValueListBuilder namesList;
     CSSValueListBuilder axesList;
@@ -2996,7 +2996,7 @@ bool CSSPropertyParser::consumeViewTimelineShorthand(bool important)
     return true;
 }
 
-bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
+bool CSSPropertyParser::parseShorthand(CSSPropertyID property, IsImportant important)
 {
     switch (property) {
     case CSSPropertyOverflow:

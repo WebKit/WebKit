@@ -32,14 +32,15 @@ namespace WebCore {
 class CSSValueList;
 
 enum class IsImportant : bool { No, Yes };
+enum class IsImplicit : bool { No, Yes };
 
 struct StylePropertyMetadata {
-    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, IsImportant important, bool implicit, bool inherited)
+    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, IsImportant important, IsImplicit implicit, bool inherited)
         : m_propertyID(propertyID)
         , m_isSetFromShorthand(isSetFromShorthand)
         , m_indexInShorthandsVector(indexInShorthandsVector)
         , m_important(important == IsImportant::Yes)
-        , m_implicit(implicit)
+        , m_implicit(implicit == IsImplicit::Yes)
         , m_inherited(inherited)
     {
         ASSERT(propertyID != CSSPropertyInvalid);
@@ -60,7 +61,7 @@ struct StylePropertyMetadata {
 
 class CSSProperty {
 public:
-    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
+    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, IsImplicit implicit = IsImplicit::No)
         : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit, isInheritedProperty(propertyID))
         , m_value(WTFMove(value))
     {

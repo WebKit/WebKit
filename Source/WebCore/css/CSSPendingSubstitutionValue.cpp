@@ -35,7 +35,7 @@ RefPtr<CSSValue> CSSPendingSubstitutionValue::resolveValue(Style::BuilderState& 
 {
     auto cacheValue = [&](auto data) {
         ParsedPropertyVector parsedProperties;
-        if (!CSSPropertyParser::parseValue(m_shorthandPropertyId, false, data->tokens(), data->context(), parsedProperties, StyleRuleType::Style)) {
+        if (!CSSPropertyParser::parseValue(m_shorthandPropertyId, IsImportant::No, data->tokens(), data->context(), parsedProperties, StyleRuleType::Style)) {
             m_cachedPropertyValues = { };
             return;
         }

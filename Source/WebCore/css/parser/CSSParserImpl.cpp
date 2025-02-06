@@ -1617,7 +1617,7 @@ void CSSParserImpl::consumeCustomPropertyValue(CSSParserTokenRange range, const 
 
 void CSSParserImpl::consumeDeclarationValue(CSSParserTokenRange range, CSSPropertyID propertyID, IsImportant important, StyleRuleType ruleType)
 {
-    CSSPropertyParser::parseValue(propertyID, important == IsImportant::Yes, range, m_context, topContext().m_parsedProperties, ruleType);
+    CSSPropertyParser::parseValue(propertyID, important, range, m_context, topContext().m_parsedProperties, ruleType);
 }
 
 Vector<double> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
