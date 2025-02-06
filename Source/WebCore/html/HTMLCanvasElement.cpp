@@ -69,7 +69,7 @@
 #include "RenderHTMLCanvas.h"
 #include "ResourceLoadObserver.h"
 #include "ScriptController.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "Settings.h"
 #include "StringAdaptors.h"
 #include "WebCoreOpaqueRoot.h"

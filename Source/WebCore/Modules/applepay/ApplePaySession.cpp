@@ -61,7 +61,7 @@
 #include "PaymentMethod.h"
 #include "PaymentRequestUtilities.h"
 #include "PaymentRequestValidator.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "UserGestureIndicator.h"

@@ -71,6 +71,7 @@
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
 #include "ScopedEventQueue.h"
+#include "ScriptTelemetryTypes.h"
 #include "SearchInputType.h"
 #include "Settings.h"
 #include "StepRange.h"

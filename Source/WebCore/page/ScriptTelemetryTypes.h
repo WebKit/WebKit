@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "HTMLInputElement.h"
 #include <wtf/HashTraits.h>
 #include <wtf/text/ASCIILiteral.h>
 
@@ -51,6 +52,8 @@ enum class ScriptTelemetryCategory : uint8_t {
 
 String makeLogMessage(const URL&, ScriptTelemetryCategory);
 ASCIILiteral description(ScriptTelemetryCategory);
+
+String telemetryString(const HTMLInputElement&);
 
 } // namespace WebCore
 

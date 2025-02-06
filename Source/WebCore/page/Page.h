@@ -36,7 +36,7 @@
 #include "Pagination.h"
 #include "PlaybackTargetClientContextIdentifier.h"
 #include "RegistrableDomain.h"
-#include "ScriptTelemetryCategory.h"
+#include "ScriptTelemetryTypes.h"
 #include "ScrollTypes.h"
 #include "SpatialBackdropSource.h"
 #include "Supplementable.h"
