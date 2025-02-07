@@ -69,8 +69,10 @@ public:
     inline float logicalBottom() const;
     inline float logicalHeight() const;
     inline float logicalWidth() const;
+    inline float logicalLeft() const;
+    inline float logicalRight() const;
 
-    // Return visual left/right coords in inline direction (they are still considered logical values as there's no flip for writing mode).
+    // Return line-relative left/right coords (they are still considered logical values as there's no flip for writing mode).
     inline float logicalLeftIgnoringInlineDirection() const;
     inline float logicalRightIgnoringInlineDirection() const;
 
@@ -81,9 +83,11 @@ public:
     unsigned leftmostCaretOffset() const { return isLeftToRightDirection() ? minimumCaretOffset() : maximumCaretOffset(); }
     unsigned rightmostCaretOffset() const { return isLeftToRightDirection() ? maximumCaretOffset() : minimumCaretOffset(); }
 
+    // isLeftToRightDirection() here is not the same as writingMode().isBidiLTR().
     unsigned char bidiLevel() const;
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
+    bool isInlineFlipped() const { return !(isLeftToRightDirection() == writingMode().isLogicalLeftLineLeft()); }
 
     RenderObject::HighlightState selectionState() const;
 

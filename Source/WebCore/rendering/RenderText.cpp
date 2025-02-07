@@ -294,11 +294,15 @@ static LayoutRect selectionRectForTextBox(const InlineIterator::TextBox& textBox
     }
 
     auto lineSelectionRect = LineSelection::logicalRect(*textBox.lineBox());
-    auto selectionRect = LayoutRect { textBox.logicalLeftIgnoringInlineDirection(), lineSelectionRect.y(), textBox.logicalWidth(), lineSelectionRect.height() };
+    auto selectionRect = LayoutRect { 0, lineSelectionRect.y(), textBox.logicalWidth(), lineSelectionRect.height() };
 
     auto textRun = textBox.textRun();
     if (clampedStart || clampedEnd != textRun.length())
         textBox.fontCascade().adjustSelectionRectForText(textBox.renderer().canUseSimplifiedTextMeasuring().value_or(false), textRun, selectionRect, clampedStart, clampedEnd);
+
+    if (!textBox.writingMode().isLogicalLeftLineLeft())
+        selectionRect.setX(textBox.logicalWidth() - selectionRect.maxX());
+    selectionRect.move(textBox.logicalLeftIgnoringInlineDirection(), 0);
 
     return snappedSelectionRect(selectionRect, textBox.logicalRightIgnoringInlineDirection(), textBox.writingMode());
 }
@@ -307,11 +311,16 @@ static unsigned offsetForPositionInRun(const InlineIterator::TextBox& textBox, f
 {
     if (textBox.isLineBreak())
         return 0;
-    if (x - textBox.logicalLeftIgnoringInlineDirection() > textBox.logicalWidth())
-        return textBox.isLeftToRightDirection() ? textBox.length() : 0;
-    if (x - textBox.logicalLeftIgnoringInlineDirection() < 0)
-        return textBox.isLeftToRightDirection() ? 0 : textBox.length();
-    return textBox.fontCascade().offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), x - textBox.logicalLeftIgnoringInlineDirection(), true);
+
+    auto runPosition = x - textBox.logicalLeftIgnoringInlineDirection();
+    if (runPosition > textBox.logicalWidth())
+        return textBox.isInlineFlipped() ? 0 : textBox.length();
+    if (runPosition < 0)
+        return textBox.isInlineFlipped() ? textBox.length() : 0;
+
+    if (!textBox.writingMode().isLogicalLeftLineLeft())
+        runPosition = textBox.logicalWidth() - runPosition;
+    return textBox.fontCascade().offsetForPosition(textBox.textRun(InlineIterator::TextRunMode::Editing), runPosition, true);
 }
 
 inline RenderText::RenderText(Type type, Node& node, const String& text)
@@ -738,15 +747,15 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineIter
     // the x coordinate is equal to the left edge of this box
     // the affinity must be downstream so the position doesn't jump back to the previous line
     // except when box is the first box in the line
-    if (pointLineDirection <= textRun->logicalLeftIgnoringInlineDirection()) {
-        shouldAffinityBeDownstream = !textRun->nextLineLeftwardOnLine() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
+    if (pointLineDirection <= textRun->logicalLeft()) {
+        shouldAffinityBeDownstream = !textRun->nextLogicalLeftwardOnLine() ? UpstreamIfPositionIsNotAtStart : AlwaysDownstream;
         return true;
     }
 
 #if !PLATFORM(IOS_FAMILY)
     // and the x coordinate is to the left of the right edge of this box
     // check to see if position goes in this box
-    if (pointLineDirection < textRun->logicalRightIgnoringInlineDirection()) {
+    if (pointLineDirection < textRun->logicalRight()) {
         shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
         return true;
     }
@@ -754,10 +763,10 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, const InlineIter
 
     // box is first on line
     // and the x coordinate is to the left of the first text box left edge
-    if (!textRun->nextLineLeftwardOnLineIgnoringLineBreak() && pointLineDirection < textRun->logicalLeftIgnoringInlineDirection())
+    if (!textRun->nextLogicalLeftwardOnLineIgnoringLineBreak() && pointLineDirection < textRun->logicalLeft())
         return true;
 
-    if (!textRun->nextLineRightwardOnLineIgnoringLineBreak()) {
+    if (!textRun->nextLogicalRightwardOnLineIgnoringLineBreak()) {
         // box is last on line
         // and the x coordinate is to the right of the last text box right edge
         // generate VisiblePosition, use Affinity::Upstream affinity if possible
@@ -867,8 +876,9 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, HitTestSo
     if (!firstRun || !text().length())
         return createVisiblePosition(0, Affinity::Downstream);
 
-    auto pointLineDirection = firstRun->isHorizontal() ? point.x() : point.y();
-    auto pointBlockDirection = firstRun->isHorizontal() ? point.y() : point.x();
+    auto logicalPoint = firstRun->isHorizontal()
+        ? LayoutPoint { point.x(), point.y() }
+        : LayoutPoint { point.y(), point.x() };
     bool blocksAreFlipped = writingMode().isBlockFlipped();
 
     InlineIterator::TextBoxIterator lastRun;
@@ -878,22 +888,22 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, HitTestSo
 
         auto lineBox = run->lineBox();
         auto top = LayoutUnit { std::min(previousLineBoxContentBottomOrBorderAndPadding(*lineBox), lineBox->contentLogicalTop()) };
-        if (pointBlockDirection > top || (!blocksAreFlipped && pointBlockDirection == top)) {
+        if (logicalPoint.y() > top || (!blocksAreFlipped && logicalPoint.y() == top)) {
             auto bottom = LayoutUnit { LineSelection::logicalBottom(*lineBox) };
             if (auto nextLineBox = lineBox->next())
                 bottom = std::min(bottom, LayoutUnit { nextLineBox->contentLogicalTop() });
 
-            if (pointBlockDirection < bottom || (blocksAreFlipped && pointBlockDirection == bottom)) {
+            if (logicalPoint.y() < bottom || (blocksAreFlipped && logicalPoint.y() == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;
 #if PLATFORM(IOS_FAMILY)
-                if (pointLineDirection != run->logicalLeftIgnoringInlineDirection() && point.x() < run->visualRectIgnoringBlockDirection().x() + run->logicalWidth()) {
-                    auto half = LayoutUnit { run->visualRectIgnoringBlockDirection().x() + run->logicalWidth() / 2.f };
+                if (logicalPoint.x() != run->logicalLeft() && point.x() < run->logicalLeft() + run->logicalWidth()) {
+                    auto half = LayoutUnit { run->logicalLeft() + run->logicalWidth() / 2.f };
                     shouldAffinityBeDownstream = point.x() < half ? AlwaysDownstream : AlwaysUpstream;
-                    return createVisiblePositionAfterAdjustingOffsetForBiDi(run, offsetForPositionInRun(*run, pointLineDirection), shouldAffinityBeDownstream);
+                    return createVisiblePositionAfterAdjustingOffsetForBiDi(run, offsetForPositionInRun(*run, logicalPoint.x()), shouldAffinityBeDownstream);
                 }
 #endif
-                if (lineDirectionPointFitsInBox(pointLineDirection, run, shouldAffinityBeDownstream))
-                    return createVisiblePositionAfterAdjustingOffsetForBiDi(run, offsetForPositionInRun(*run, pointLineDirection), shouldAffinityBeDownstream);
+                if (lineDirectionPointFitsInBox(logicalPoint.x(), run, shouldAffinityBeDownstream))
+                    return createVisiblePositionAfterAdjustingOffsetForBiDi(run, offsetForPositionInRun(*run, logicalPoint.x()), shouldAffinityBeDownstream);
             }
         }
         lastRun = run;
@@ -901,8 +911,8 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, HitTestSo
 
     if (lastRun) {
         ShouldAffinityBeDownstream shouldAffinityBeDownstream;
-        lineDirectionPointFitsInBox(pointLineDirection, lastRun, shouldAffinityBeDownstream);
-        return createVisiblePositionAfterAdjustingOffsetForBiDi(lastRun, offsetForPositionInRun(*lastRun, pointLineDirection) + lastRun->start(), shouldAffinityBeDownstream);
+        lineDirectionPointFitsInBox(logicalPoint.x(), lastRun, shouldAffinityBeDownstream);
+        return createVisiblePositionAfterAdjustingOffsetForBiDi(lastRun, offsetForPositionInRun(*lastRun, logicalPoint.x()) + lastRun->start(), shouldAffinityBeDownstream);
     }
     return createVisiblePosition(0, Affinity::Downstream);
 }

@@ -43,5 +43,19 @@ inline float contentStartInBlockDirection(const LineBox& lineBox)
     return std::min(lineBox.contentLogicalBottom(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
 }
 
+inline LeafBoxIterator LineBox::logicalLeftmostLeafBox() const
+{
+    return formattingContextRoot().writingMode().isLogicalLeftLineLeft()
+        ? lineLeftmostLeafBox()
+        : lineRightmostLeafBox();
+}
+
+inline LeafBoxIterator LineBox::logicalRightmostLeafBox() const
+{
+    return formattingContextRoot().writingMode().isLogicalLeftLineLeft()
+        ? lineRightmostLeafBox()
+        : lineLeftmostLeafBox();
+}
+
 }
 }

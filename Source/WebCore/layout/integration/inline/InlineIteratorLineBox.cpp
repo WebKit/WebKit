@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "InlineIteratorLineBox.h"
+#include "InlineIteratorLineBoxInlines.h"
 
 #include "InlineIteratorBoxInlines.h"
 #include "LayoutIntegrationLineLayout.h"
@@ -130,29 +131,29 @@ LeafBoxIterator closestBoxForHorizontalPosition(const LineBox& lineBox, float ho
         return box && box->renderer().node() && box->renderer().node()->hasEditableStyle();
     };
 
-    auto firstBox = lineBox.lineLeftmostLeafBox();
-    auto lastBox = lineBox.lineRightmostLeafBox();
+    auto firstBox = lineBox.logicalLeftmostLeafBox();
+    auto lastBox = lineBox.logicalRightmostLeafBox();
 
     if (firstBox != lastBox) {
         if (firstBox->isLineBreak())
-            firstBox = firstBox->nextLineRightwardOnLineIgnoringLineBreak();
+            firstBox = firstBox->nextLogicalRightwardOnLineIgnoringLineBreak();
         else if (lastBox->isLineBreak())
-            lastBox = lastBox->nextLineLeftwardOnLineIgnoringLineBreak();
+            lastBox = lastBox->nextLogicalLeftwardOnLineIgnoringLineBreak();
     }
 
     if (firstBox == lastBox && (!editableOnly || isEditable(firstBox)))
         return firstBox;
 
-    if (firstBox && horizontalPosition <= firstBox->logicalLeftIgnoringInlineDirection() && !firstBox->renderer().isRenderListMarker() && (!editableOnly || isEditable(firstBox)))
+    if (firstBox && horizontalPosition <= firstBox->logicalLeft() && !firstBox->renderer().isRenderListMarker() && (!editableOnly || isEditable(firstBox)))
         return firstBox;
 
-    if (lastBox && horizontalPosition >= lastBox->logicalRightIgnoringInlineDirection() && !lastBox->renderer().isRenderListMarker() && (!editableOnly || isEditable(lastBox)))
+    if (lastBox && horizontalPosition >= lastBox->logicalRight() && !lastBox->renderer().isRenderListMarker() && (!editableOnly || isEditable(lastBox)))
         return lastBox;
 
     auto closestBox = lastBox;
-    for (auto box = firstBox; box; box = box.traverseLineRightwardOnLineIgnoringLineBreak()) {
+    for (auto box = firstBox; box; box = box.traverseLogicalRightwardOnLineIgnoringLineBreak()) {
         if (!box->renderer().isRenderListMarker() && (!editableOnly || isEditable(box))) {
-            if (horizontalPosition < box->logicalRightIgnoringInlineDirection())
+            if (horizontalPosition < box->logicalRight())
                 return box;
             closestBox = box;
         }
