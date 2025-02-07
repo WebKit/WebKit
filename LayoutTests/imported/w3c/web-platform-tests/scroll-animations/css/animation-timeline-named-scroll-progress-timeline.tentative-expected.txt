@@ -3,8 +3,8 @@ PASS scroll-timeline-name is referenceable in animation-timeline on the declarin
 PASS scroll-timeline-name is referenceable in animation-timeline on that element's descendants
 PASS scroll-timeline-name is not referenceable in animation-timeline on that element's siblings
 PASS scroll-timeline-name on an element which is not a scroll-container
-FAIL Change in scroll-timeline-name to match animation timeline updates animation. assert_equals: expected null but got object "[object DocumentTimeline]"
-FAIL Change in scroll-timeline-name to no longer match animation timeline updates animation. assert_equals: Failed to remove timeline expected null but got object "[object ScrollTimeline]"
+PASS Change in scroll-timeline-name to match animation timeline updates animation.
+PASS Change in scroll-timeline-name to no longer match animation timeline updates animation.
 PASS Timeline lookup updates candidate when closer match available.
 PASS Timeline lookup updates candidate when match becomes available.
 PASS scroll-timeline-axis is block

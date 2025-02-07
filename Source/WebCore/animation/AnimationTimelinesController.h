@@ -86,6 +86,7 @@ public:
     void updateNamedTimelineMapForTimelineScope(const TimelineScope&, const Styleable&);
     void updateTimelineForTimelineScope(const Ref<ScrollTimeline>&, const AtomString&);
     void unregisterNamedTimelinesAssociatedWithElement(const Styleable&);
+    void removePendingOperationsForCSSAnimation(const CSSAnimation&);
     void documentDidResolveStyle();
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -104,6 +105,8 @@ private:
     bool isPendingTimelineAttachment(const WebAnimation&) const;
     void updateCSSAnimationsAssociatedWithNamedTimeline(const AtomString&);
 
+    enum class AllowsDeferral : bool { No, Yes };
+    void setTimelineForName(const AtomString&, const Styleable&, CSSAnimation&, AllowsDeferral);
     ScrollTimeline* determineTimelineForElement(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Vector<WeakStyleable>&);
     ScrollTimeline* determineTreeOrder(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Vector<WeakStyleable>&);
     ScrollTimeline& inactiveNamedTimeline(const AtomString&);

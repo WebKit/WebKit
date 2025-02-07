@@ -1,5 +1,5 @@
 
 PASS Animation.timeline returns attached timeline
-FAIL Animation.timeline returns a timeline with no source for inactive deferred timeline promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'animating.getAnimations()[0].timeline')"
+PASS Animation.timeline returns a timeline with no source for inactive deferred timeline
 PASS Animation.timeline returns a timeline with no source for inactive (overattached) deferred timeline
 

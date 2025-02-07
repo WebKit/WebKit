@@ -155,6 +155,8 @@ void CSSAnimation::syncStyleOriginatedTimeline()
     WTF::switchOn(backingAnimation().timeline(),
         [&] (Animation::TimelineKeyword keyword) {
             setTimeline(keyword == Animation::TimelineKeyword::None ? nullptr : RefPtr { document->existingTimeline() });
+            CheckedRef timelinesController = document->ensureTimelinesController();
+            timelinesController->removePendingOperationsForCSSAnimation(*this);
         }, [&] (const AtomString& name) {
             CheckedRef timelinesController = document->ensureTimelinesController();
             timelinesController->setTimelineForName(name, *owningElement(), *this);

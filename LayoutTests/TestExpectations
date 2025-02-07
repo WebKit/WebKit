@@ -6952,9 +6952,6 @@ webkit.org/b/283701 imported/w3c/web-platform-tests/scroll-animations/css/deferr
 webkit.org/b/283702 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/constructor-no-document.html [ Skip ]
 webkit.org/b/283107 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
 
-# webkit.org/b/263871 [scroll-animations] some WPT tests are failures or flaky failures
-imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Pass Failure ]
-
 webkit.org/b/284299 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Pass Failure ]
 
 # webkit.org/b/263872 [scroll-animations] some WPT tests are ImageOnlyFailure
