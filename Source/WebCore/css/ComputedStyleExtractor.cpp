@@ -3903,6 +3903,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return CSSPrimitiveValue::create(CSSValueNone);
     case CSSPropertyImageRendering:
         return createConvertingToCSSValueID(style.imageRendering());
+    case CSSPropertyDynamicRangeLimit:
+        return createConvertingToCSSValueID(style.dynamicRangeLimit());
     case CSSPropertyInputSecurity:
         return createConvertingToCSSValueID(style.inputSecurity());
     case CSSPropertyLeft:

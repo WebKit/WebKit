@@ -1090,6 +1090,11 @@ CSSDocumentation = {
         "syntax": "[ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/display"
     },
+    "dynamic-range-limit": {
+        "description": "Controls how much headroom is desired.",
+        "syntax": "standard | high | constrained-high",
+        "url": "https://drafts.csswg.org/css-color-hdr/#the-dynamic-range-limit-property"
+    },
     "empty-cells": {
         "description": "In the separated borders model, this property controls the rendering of borders and backgrounds around cells that have no visible content.",
         "syntax": "show | hide",

@@ -1997,6 +1997,36 @@ template<> constexpr ImageRendering fromCSSValueID(CSSValueID valueID)
     return ImageRendering::Auto;
 }
 
+constexpr CSSValueID toCSSValueID(DynamicRangeLimit dynamicRangeLimit)
+{
+    switch (dynamicRangeLimit) {
+    case DynamicRangeLimit::Standard:
+        return CSSValueStandard;
+    case DynamicRangeLimit::High:
+        return CSSValueHigh;
+    case DynamicRangeLimit::ConstrainedHigh:
+        return CSSValueConstrainedHigh;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return CSSValueInvalid;
+}
+
+template<> constexpr DynamicRangeLimit fromCSSValueID(CSSValueID valueID)
+{
+    switch (valueID) {
+    case CSSValueStandard:
+        return DynamicRangeLimit::Standard;
+    case CSSValueHigh:
+        return DynamicRangeLimit::High;
+    case CSSValueConstrainedHigh:
+        return DynamicRangeLimit::ConstrainedHigh;
+    default:
+        break;
+    }
+    ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
+    return DynamicRangeLimit::High;
+}
+
 #if HAVE(CORE_MATERIAL)
 
 constexpr CSSValueID toCSSValueID(AppleVisualEffect effect)

@@ -1,7 +1,7 @@
 
-FAIL e.style['dynamic-range-limit'] = "standard" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['dynamic-range-limit'] = "high" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['dynamic-range-limit'] = "constrained-high" should set the property value assert_not_equals: property should be set got disallowed value ""
+PASS e.style['dynamic-range-limit'] = "standard" should set the property value
+PASS e.style['dynamic-range-limit'] = "high" should set the property value
+PASS e.style['dynamic-range-limit'] = "constrained-high" should set the property value
 FAIL e.style['dynamic-range-limit'] = "dynamic-range-limit-mix(high 80%, standard 20%)" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['dynamic-range-limit'] = "dynamic-range-limit-mix(high 8%, standard 2%)" should set the property value assert_not_equals: property should be set got disallowed value ""
 FAIL e.style['dynamic-range-limit'] = "dynamic-range-limit-mix(high 99%, standard 99%)" should set the property value assert_not_equals: property should be set got disallowed value ""

@@ -139,6 +139,7 @@ public:
     // CSS Image Values Level 3
     unsigned imageOrientation : 1; // ImageOrientation
     unsigned imageRendering : 3; // ImageRendering
+    unsigned dynamicRangeLimit : 2; // DynamicRangeLimit
     unsigned lineSnap : 2; // LineSnap
     unsigned lineAlign : 1; // LineAlign
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)

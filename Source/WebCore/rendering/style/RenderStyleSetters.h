@@ -197,6 +197,7 @@ inline void RenderStyle::setHyphenationString(const AtomString& h) { SET(m_rareI
 inline void RenderStyle::setHyphens(Hyphens hyphens) { SET(m_rareInheritedData, hyphens, static_cast<unsigned>(hyphens)); }
 inline void RenderStyle::setImageOrientation(ImageOrientation value) { SET(m_rareInheritedData, imageOrientation, static_cast<unsigned>(value)); }
 inline void RenderStyle::setImageRendering(ImageRendering value) { SET(m_rareInheritedData, imageRendering, static_cast<unsigned>(value)); }
+inline void RenderStyle::setDynamicRangeLimit(DynamicRangeLimit value) { SET(m_rareInheritedData, dynamicRangeLimit, static_cast<unsigned>(value)); }
 inline void RenderStyle::setImplicitNamedGridColumnLines(const NamedGridLinesMap& namedGridColumnLines) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, implicitNamedGridColumnLines, namedGridColumnLines); }
 inline void RenderStyle::setImplicitNamedGridRowLines(const NamedGridLinesMap& namedGridRowLines) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, grid, implicitNamedGridRowLines, namedGridRowLines); }
 inline void RenderStyle::setInitialLetter(const IntSize& size) { SET_NESTED(m_nonInheritedData, rareData, initialLetter, size); }

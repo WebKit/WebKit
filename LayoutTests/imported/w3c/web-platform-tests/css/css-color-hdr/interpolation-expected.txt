@@ -1,32 +1,32 @@
 
-FAIL CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false
+FAIL CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high] assert_equals: expected "high " but got "standard "
+FAIL CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)] assert_equals: expected "high " but got "standard "
+FAIL CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_equals: expected "high " but got "standard "
+PASS CSS Transitions: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard]
+FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high] assert_equals: expected "high " but got "standard "
+FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)] assert_equals: expected "high " but got "standard "
+FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_equals: expected "high " but got "standard "
+PASS CSS Transitions with transition: all: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard]
+PASS CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high]
+PASS CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)]
+FAIL CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_equals: expected "high " but got "standard "
+PASS CSS Animations: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard]
+PASS Web Animations: property <dynamic-range-limit> from [high] to [standard] at (0) should be [high]
+PASS Web Animations: property <dynamic-range-limit> from [high] to [standard] at (0.25) should be [dynamic-range-limit-mix(standard 25%, high 75%)]
+FAIL Web Animations: property <dynamic-range-limit> from [high] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 75%, high 25%)] assert_equals: expected "high " but got "standard "
+PASS Web Animations: property <dynamic-range-limit> from [high] to [standard] at (1) should be [standard]
+FAIL CSS Transitions: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high] assert_equals: expected "constrained - high " but got "standard "
+FAIL CSS Transitions: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_equals: expected "high " but got "standard "
+PASS CSS Transitions: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard]
+FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high] assert_equals: expected "constrained - high " but got "standard "
+FAIL CSS Transitions with transition: all: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_equals: expected "high " but got "standard "
+PASS CSS Transitions with transition: all: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard]
+PASS CSS Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high]
+FAIL CSS Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_equals: expected "high " but got "standard "
+PASS CSS Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard]
+PASS Web Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0) should be [constrained-high]
+FAIL Web Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (0.5) should be [dynamic-range-limit-mix(standard 50%, constrained-high 50%)] assert_equals: expected "high " but got "standard "
+PASS Web Animations: property <dynamic-range-limit> from [constrained-high] to [standard] at (1) should be [standard]
 FAIL CSS Transitions: property <dynamic-range-limit> from [dynamic-range-limit-mix(standard 50%, high 50%)] to [standard] at (0) should be [dynamic-range-limit-mix(standard 50%, high 50%)] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <dynamic-range-limit> from [dynamic-range-limit-mix(standard 50%, high 50%)] to [standard] at (0.75) should be [dynamic-range-limit-mix(standard 87.5%, high 12.5%)] assert_true: 'from' value should be supported expected true got false
 FAIL CSS Transitions: property <dynamic-range-limit> from [dynamic-range-limit-mix(standard 50%, high 50%)] to [standard] at (1) should be [standard] assert_true: 'from' value should be supported expected true got false

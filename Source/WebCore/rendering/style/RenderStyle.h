@@ -147,6 +147,7 @@ enum class ContentVisibility : uint8_t;
 enum class CursorType : uint8_t;
 enum class CursorVisibility : bool;
 enum class DisplayType : uint8_t;
+enum class DynamicRangeLimit : uint8_t;
 enum class EmptyCell : bool;
 enum class EventListenerRegionType : uint8_t;
 enum class FieldSizing : bool;
@@ -1123,6 +1124,7 @@ public:
 
     inline ImageOrientation imageOrientation() const;
     inline ImageRendering imageRendering() const;
+    inline DynamicRangeLimit dynamicRangeLimit() const;
 
     inline OptionSet<SpeakAs> speakAs() const;
 
@@ -1340,6 +1342,7 @@ public:
 
     inline void setImageOrientation(ImageOrientation);
     inline void setImageRendering(ImageRendering);
+    inline void setDynamicRangeLimit(DynamicRangeLimit);
 
     void setWhiteSpaceCollapse(WhiteSpaceCollapse v) { m_inheritedFlags.whiteSpaceCollapse = static_cast<unsigned>(v); }
 
@@ -2081,6 +2084,7 @@ public:
     static constexpr OptionSet<LineBoxContain> initialLineBoxContain();
     static constexpr ImageOrientation initialImageOrientation();
     static constexpr ImageRendering initialImageRendering();
+    static constexpr DynamicRangeLimit initialDynamicRangeLimit();
     static StyleImage* initialBorderImageSource() { return nullptr; }
     static StyleImage* initialMaskBorderSource() { return nullptr; }
     static constexpr PrintColorAdjust initialPrintColorAdjust();

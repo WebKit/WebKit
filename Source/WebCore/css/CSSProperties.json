@@ -3593,6 +3593,21 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#DominantBaselineProperty"
             }
         },
+        "dynamic-range-limit": {
+            "inherited": true,
+            "values": [
+                "standard",
+                "high",
+                "constrained-high"
+            ],
+            "codegen-properties": {
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-color",
+                "url": "https://drafts.csswg.org/css-color-hdr/#the-dynamic-range-limit-property"
+            }
+        },
         "empty-cells": {
             "inherited": true,
             "values": [

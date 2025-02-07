@@ -484,6 +484,16 @@ TextStream& operator<<(TextStream& ts, DisplayType display)
     return ts;
 }
 
+TextStream& operator<<(TextStream& ts, DynamicRangeLimit dynamicRangeLimit)
+{
+    switch (dynamicRangeLimit) {
+    case DynamicRangeLimit::Standard: ts << "standard"; break;
+    case DynamicRangeLimit::High: ts << "high"; break;
+    case DynamicRangeLimit::ConstrainedHigh: ts << "constrained-high"; break;
+    }
+    return ts;
+}
+
 TextStream& operator<<(TextStream& ts, Edge edge)
 {
     switch (edge) {

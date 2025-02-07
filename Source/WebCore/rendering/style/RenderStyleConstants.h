@@ -986,6 +986,12 @@ enum class ImageRendering : uint8_t {
     Pixelated
 };
 
+enum class DynamicRangeLimit : uint8_t {
+    Standard,
+    High,
+    ConstrainedHigh
+};
+
 enum class Order : bool {
     Logical,
     Visual
@@ -1261,6 +1267,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, CursorType);
 WTF::TextStream& operator<<(WTF::TextStream&, CursorVisibility);
 #endif
 WTF::TextStream& operator<<(WTF::TextStream&, DisplayType);
+WTF::TextStream& operator<<(WTF::TextStream&, DynamicRangeLimit);
 WTF::TextStream& operator<<(WTF::TextStream&, Edge);
 WTF::TextStream& operator<<(WTF::TextStream&, EmptyCell);
 WTF::TextStream& operator<<(WTF::TextStream&, EventListenerRegionType);

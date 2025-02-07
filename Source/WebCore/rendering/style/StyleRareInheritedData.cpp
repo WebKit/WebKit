@@ -114,6 +114,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , lineBoxContain(static_cast<unsigned>(RenderStyle::initialLineBoxContain().toRaw()))
     , imageOrientation(RenderStyle::initialImageOrientation())
     , imageRendering(static_cast<unsigned>(RenderStyle::initialImageRendering()))
+    , dynamicRangeLimit(static_cast<unsigned>(RenderStyle::initialDynamicRangeLimit()))
     , lineSnap(static_cast<unsigned>(RenderStyle::initialLineSnap()))
     , lineAlign(static_cast<unsigned>(RenderStyle::initialLineAlign()))
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
@@ -213,6 +214,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , lineBoxContain(o.lineBoxContain)
     , imageOrientation(o.imageOrientation)
     , imageRendering(o.imageRendering)
+    , dynamicRangeLimit(o.dynamicRangeLimit)
     , lineSnap(o.lineSnap)
     , lineAlign(o.lineAlign)
 #if ENABLE(OVERFLOW_SCROLLING_TOUCH)
@@ -349,6 +351,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && lineGrid == o.lineGrid
         && imageOrientation == o.imageOrientation
         && imageRendering == o.imageRendering
+        && dynamicRangeLimit == o.dynamicRangeLimit
         && textAlignLast == o.textAlignLast
         && textJustify == o.textJustify
         && textDecorationSkipInk == o.textDecorationSkipInk
@@ -457,6 +460,7 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
 
     LOG_IF_DIFFERENT_WITH_CAST(ImageOrientation, imageOrientation);
     LOG_IF_DIFFERENT_WITH_CAST(ImageRendering, imageRendering);
+    LOG_IF_DIFFERENT_WITH_CAST(DynamicRangeLimit, dynamicRangeLimit);
     LOG_IF_DIFFERENT_WITH_CAST(LineSnap, lineSnap);
     LOG_IF_DIFFERENT_WITH_CAST(LineAlign, lineAlign);
 
