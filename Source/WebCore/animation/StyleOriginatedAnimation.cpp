@@ -195,27 +195,19 @@ void StyleOriginatedAnimation::flushPendingStyleChanges() const
 
 void StyleOriginatedAnimation::setTimeline(RefPtr<AnimationTimeline>&& newTimeline)
 {
-    if (timeline() && !newTimeline)
-        cancel();
-
-    WebAnimation::setTimeline(WTFMove(newTimeline));
+    if (timeline() && !newTimeline) {
+        invalidateDOMEvents([protectedThis = Ref { *this }] {
+            protectedThis->WebAnimation::setTimeline(nullptr);
+        });
+    } else
+        WebAnimation::setTimeline(WTFMove(newTimeline));
 }
 
 void StyleOriginatedAnimation::cancel(WebAnimation::Silently silently)
 {
-    WebAnimationTime cancelationTime = 0_s;
-
-    auto shouldFireEvents = shouldFireDOMEvents();
-    if (shouldFireEvents != ShouldFireEvents::No) {
-        if (auto* animationEffect = effect()) {
-            if (auto activeTime = animationEffect->getBasicTiming().activeTime)
-                cancelationTime = *activeTime;
-        }
-    }
-
-    WebAnimation::cancel(silently);
-
-    invalidateDOMEvents(shouldFireEvents, cancelationTime);
+    invalidateDOMEvents([protectedThis = Ref { *this }, silently] {
+        protectedThis->WebAnimation::cancel(silently);
+    });
 }
 
 void StyleOriginatedAnimation::cancelFromStyle(WebAnimation::Silently silently)
@@ -281,7 +273,24 @@ auto StyleOriginatedAnimation::shouldFireDOMEvents() const -> ShouldFireEvents
     return ShouldFireEvents::No;
 }
 
-void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, WebAnimationTime elapsedTime)
+template<typename F> void StyleOriginatedAnimation::invalidateDOMEvents(F&& callback)
+{
+    WebAnimationTime cancelationTime = 0_s;
+
+    auto shouldFireEvents = shouldFireDOMEvents();
+    if (shouldFireEvents != ShouldFireEvents::No) {
+        if (auto* animationEffect = effect()) {
+            if (auto activeTime = animationEffect->getBasicTiming().activeTime)
+                cancelationTime = *activeTime;
+        }
+    }
+
+    callback();
+
+    invalidateDOMEvents(shouldFireEvents, cancelationTime);
+}
+
+void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEvents, WebAnimationTime cancelationTime)
 {
     if (!m_owningElement)
         return;
@@ -353,7 +362,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
             enqueueDOMEvent(eventNames().animationstartEvent, intervalEnd, effectTimeAtStart());
             enqueueDOMEvent(eventNames().animationendEvent, intervalStart, effectTimeAtEnd());
         } else if ((!wasIdle && !wasAfter) && isIdle)
-            enqueueDOMEvent(eventNames().animationcancelEvent, elapsedTime, elapsedTime);
+            enqueueDOMEvent(eventNames().animationcancelEvent, cancelationTime, cancelationTime);
         break;
     case ShouldFireEvents::YesForCSSTransition:
         // https://drafts.csswg.org/css-transitions-2/#transition-events
@@ -382,7 +391,7 @@ void StyleOriginatedAnimation::invalidateDOMEvents(ShouldFireEvents shouldFireEv
             enqueueDOMEvent(eventNames().transitionstartEvent, intervalEnd, effectTimeAtStart());
             enqueueDOMEvent(eventNames().transitionendEvent, intervalStart, effectTimeAtEnd());
         } else if ((!wasIdle && !wasAfter) && isIdle)
-            enqueueDOMEvent(eventNames().transitioncancelEvent, elapsedTime, elapsedTime);
+            enqueueDOMEvent(eventNames().transitioncancelEvent, cancelationTime, cancelationTime);
         break;
     case ShouldFireEvents::No:
         break;

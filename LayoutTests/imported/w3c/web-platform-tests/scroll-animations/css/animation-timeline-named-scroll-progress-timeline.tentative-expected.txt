@@ -1,7 +1,7 @@
 
 PASS scroll-timeline-name is referenceable in animation-timeline on the declaring element itself
 PASS scroll-timeline-name is referenceable in animation-timeline on that element's descendants
-FAIL scroll-timeline-name is not referenceable in animation-timeline on that element's siblings assert_equals: Animation with unknown timeline name holds current time at zero expected "50px" but got "none"
+PASS scroll-timeline-name is not referenceable in animation-timeline on that element's siblings
 PASS scroll-timeline-name on an element which is not a scroll-container
 FAIL Change in scroll-timeline-name to match animation timeline updates animation. assert_equals: expected null but got object "[object DocumentTimeline]"
 FAIL Change in scroll-timeline-name to no longer match animation timeline updates animation. assert_equals: Failed to remove timeline expected null but got object "[object ScrollTimeline]"

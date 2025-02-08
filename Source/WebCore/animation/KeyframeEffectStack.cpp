@@ -52,7 +52,7 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 {
     // To qualify for membership in an effect stack, an effect must have a target, an animation, a timeline and be relevant.
     // This method will be called in WebAnimation and KeyframeEffect as those properties change.
-    if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
+    if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->isRelevant())
         return false;
 
     ASSERT(!m_effects.contains(&effect));
@@ -186,8 +186,8 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
 
         // If one of the effect's resolved property changed it could affect whether that effect's animation is removed.
         if (keyframeRecomputationReason && *keyframeRecomputationReason == KeyframeEffect::RecomputationReason::LogicalPropertyChange) {
-            ASSERT(animation->timeline());
-            animation->timeline()->animationTimingDidChange(*animation);
+            if (RefPtr timeline = animation->timeline())
+                timeline->animationTimingDidChange(*animation);
         }
 
         affectedProperties.formUnion(effect->animatedProperties());
