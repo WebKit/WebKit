@@ -379,7 +379,7 @@ static Elements updateSubtree(HTMLElement& element, const TextRecognitionResult&
             rootContainer->setIdAttribute(imageOverlayElementIdentifier());
             rootContainer->setTranslate(false);
             if (document->isImageDocument())
-                rootContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, CSSValueText);
+                rootContainer->setInlineStyleProperty(CSSPropertyUserSelect, CSSValueText);
 
             if (mediaControlsContainer)
                 mediaControlsContainer->appendChild(rootContainer);
@@ -579,7 +579,7 @@ void updateWithTextRecognitionResult(HTMLElement& element, const TextRecognition
                 "scale("_s, targetSize.width() / sizeBeforeTransform.width(), ", "_s, targetSize.height() / sizeBeforeTransform.height(), ") "_s
             ));
 
-            textContainer->setInlineStyleProperty(CSSPropertyWebkitUserSelect, applyUserSelectAll ? CSSValueAll : CSSValueNone);
+            textContainer->setInlineStyleProperty(CSSPropertyUserSelect, applyUserSelectAll ? CSSValueAll : CSSValueNone);
 
             if (line.isVertical)
                 textContainer->setInlineStyleProperty(CSSPropertyWritingMode, CSSValueVerticalRl);

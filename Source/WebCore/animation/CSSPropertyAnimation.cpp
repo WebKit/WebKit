@@ -4286,7 +4286,7 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         case CSSPropertyViewTimeline:
         case CSSPropertyViewTimelineInset: // FIXME: view-timeline-inset should be animatable (bug 265690)
-        case CSSPropertyWebkitUserSelect:
+        case CSSPropertyUserSelect:
 
         // Not animatable per-spec:
         case CSSPropertyAnimation:

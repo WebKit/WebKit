@@ -268,6 +268,7 @@ PASS perspective-origin
 PASS pointer-events
 PASS position
 PASS position-anchor
+PASS position-try-fallbacks
 PASS position-try-order
 PASS print-color-adjust
 PASS quotes
@@ -367,6 +368,7 @@ PASS transition-property
 PASS transition-timing-function
 PASS translate
 PASS unicode-bidi
+PASS user-select
 PASS vector-effect
 PASS vertical-align
 PASS view-timeline-axis
@@ -424,5 +426,4 @@ PASS -webkit-text-stroke-width
 PASS -webkit-text-zoom
 PASS -webkit-user-drag
 PASS -webkit-user-modify
-PASS -webkit-user-select
 

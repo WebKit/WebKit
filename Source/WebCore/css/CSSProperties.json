@@ -8872,7 +8872,7 @@
             },
             "status": "non-standard"
         },
-        "-webkit-user-select": {
+        "user-select": {
             "inherited": true,
             "values": [
                 "auto",
@@ -8885,7 +8885,10 @@
                 "all"
             ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "aliases": [
+                    "-webkit-user-select"
+                ]
             },
             "status": {
                 "status": "experimental"
