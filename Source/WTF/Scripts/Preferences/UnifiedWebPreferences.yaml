@@ -4559,6 +4559,20 @@ LowPowerVideoAudioBufferSizeEnabled:
       default: false
     WebKit:
       default: true
+      
+MacStyleControlsOnCatalyst:
+  type: bool
+  status: internal
+  humanReadableName: "Mac style controls on Catalyst"
+  humanReadableDescription: "Use Mac style controls on Catalyst"
+  defaultValue:
+    WebKit:
+      "ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)" : true
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
 
 MainContentUserGestureOverrideEnabled:
   type: bool

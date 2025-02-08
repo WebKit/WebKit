@@ -37,6 +37,7 @@
 #import "Page.h"
 #import "RenderProgress.h"
 #import "RenderText.h"
+#import "Theme.h"
 #import "UserAgentScripts.h"
 #import "UserAgentStyleSheets.h"
 #import <CoreGraphics/CoreGraphics.h>
@@ -65,6 +66,10 @@
 
 #if PLATFORM(IOS_FAMILY)
 #import <pal/ios/UIKitSoftLink.h>
+#endif
+
+#if USE(APPLE_INTERNAL_SDK)
+#import <WebKitAdditions/RenderThemeIOSAdditions.mm>
 #endif
 
 @interface WebCoreRenderThemeBundle : NSObject

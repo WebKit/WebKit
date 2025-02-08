@@ -131,6 +131,10 @@ bool RenderThemeIOS::canCreateControlPartForRenderer(const RenderObject& rendere
 
 void RenderThemeIOS::adjustCheckboxStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustCheckboxStyleForCatalyst(style, element))
+        return;
+#endif
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Checkbox, style);
 
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
@@ -194,6 +198,10 @@ void RenderThemeIOS::adjustMinimumIntrinsicSizeForAppearance(StyleAppearance app
 
 void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustRadioStyleForCatalyst(style, element))
+        return;
+#endif
     adjustMinimumIntrinsicSizeForAppearance(StyleAppearance::Radio, style);
 
     if (!style.width().isIntrinsicOrAuto() && !style.height().isAuto())
@@ -209,6 +217,10 @@ void RenderThemeIOS::adjustRadioStyle(RenderStyle& style, const Element* element
 
 void RenderThemeIOS::adjustTextFieldStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustTextFieldStyleForCatalyst(style, element))
+        return;
+#endif
     if (!element)
         return;
 
@@ -270,6 +282,10 @@ void RenderThemeIOS::paintTextFieldInnerShadow(const PaintInfo& paintInfo, const
 
 void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintTextFieldDecorationsForCatalyst(box, paintInfo, rect))
+        return;
+#endif
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
@@ -293,6 +309,10 @@ void RenderThemeIOS::paintTextFieldDecorations(const RenderBox& box, const Paint
 
 void RenderThemeIOS::adjustTextAreaStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustTextAreaStyleForCatalyst(style, element))
+        return;
+#endif
     if (!element)
         return;
 
@@ -305,6 +325,10 @@ void RenderThemeIOS::adjustTextAreaStyle(RenderStyle& style, const Element* elem
 
 void RenderThemeIOS::paintTextAreaDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintTextAreaDecorationsForCatalyst(box, paintInfo, rect))
+        return;
+#endif
     paintTextFieldDecorations(box, paintInfo, rect);
 }
 
@@ -446,6 +470,10 @@ static void adjustInputElementButtonStyle(RenderStyle& style, const HTMLInputEle
 
 void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustMenuListButtonStyleForCatalyst(style, element))
+        return;
+#endif
     // Set the min-height to be at least MenuListMinHeight.
     if (style.logicalHeight().isAuto())
         style.setLogicalMinHeight(Length(std::max(MenuListMinHeight, static_cast<int>(MenuListBaseHeight / MenuListBaseFontSize * style.fontDescription().computedSize())), LengthType::Fixed));
@@ -468,6 +496,10 @@ void RenderThemeIOS::adjustMenuListButtonStyle(RenderStyle& style, const Element
 
 void RenderThemeIOS::paintMenuListButtonDecorations(const RenderBox& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintMenuListButtonDecorationsForCatalyst(box, paintInfo, rect))
+        return;
+#endif
     if (is<HTMLInputElement>(box.element()))
         return;
 
@@ -562,6 +594,10 @@ const int kDefaultSliderThumbSize = 16;
 
 void RenderThemeIOS::adjustSliderTrackStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustSliderTrackStyleForCatalyst(style, element))
+        return;
+#endif
     RenderTheme::adjustSliderTrackStyle(style, element);
 
     // FIXME: We should not be relying on border radius for the appearance of our controls <rdar://problem/7675493>.
@@ -573,6 +609,10 @@ constexpr auto nativeControlBorderInlineSize = 1.0f;
 
 bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintSliderTrackForCatalyst(box, paintInfo, rect))
+        return false;
+#endif
     auto* renderSlider = dynamicDowncast<RenderSlider>(box);
     if (!renderSlider)
         return true;
@@ -645,8 +685,12 @@ bool RenderThemeIOS::paintSliderTrack(const RenderObject& box, const PaintInfo& 
     return false;
 }
 
-void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustSliderThumbSize(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustSliderThumbSizeForCatalyst(style, element))
+        return;
+#endif
     if (style.usedAppearance() != StyleAppearance::SliderThumbHorizontal && style.usedAppearance() != StyleAppearance::SliderThumbVertical)
         return;
 
@@ -678,8 +722,12 @@ static bool renderThemePaintSwitchTrack(OptionSet<ControlStyle::State>, const Re
 }
 #endif
 
-void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element*) const
+void RenderThemeIOS::adjustSwitchStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustSwitchStyleForCatalyst(style, element))
+        return;
+#endif
     // FIXME: Deduplicate sizing with the generic code somehow.
     if (style.width().isAuto() || style.height().isAuto()) {
         style.setLogicalWidth({ logicalSwitchWidth * style.usedZoom(), LengthType::Fixed });
@@ -704,6 +752,10 @@ bool RenderThemeIOS::paintSwitchTrack(const RenderObject& renderer, const PaintI
 
 bool RenderThemeIOS::paintProgressBar(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintProgressBarForCatalyst(renderer, paintInfo, rect))
+        return false;
+#endif
     auto* renderProgress = dynamicDowncast<RenderProgress>(renderer);
     if (!renderProgress)
         return true;
@@ -800,12 +852,16 @@ IntSize RenderThemeIOS::sliderTickSize() const
 
 int RenderThemeIOS::sliderTickOffsetFromTrackCenter() const
 {
-    // FIXME: <rdar://problem/12271791> MERGEBOT: Correct values for slider tick of <input type="range"> elements (requires ENABLE_DATALIST_ELEMENT)
+    // FIXME: <rdar://problem/12271791> MERGEBOT: Correct values for slider tick of <input type="range"> elements a(requires ENABLE_DATALIST_ELEMENT)
     return -9;
 }
 
 void RenderThemeIOS::adjustSearchFieldStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustSearchFieldStyleForCatalyst(style, element))
+        return;
+#endif
     RenderTheme::adjustSearchFieldStyle(style, element);
 
     if (!element)
@@ -823,6 +879,10 @@ void RenderThemeIOS::adjustSearchFieldStyle(RenderStyle& style, const Element* e
 
 void RenderThemeIOS::paintSearchFieldDecorations(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintSearchFieldDecorationsForCatalyst(box, paintInfo, rect))
+        return;
+#endif
     paintTextFieldDecorations(box, paintInfo, rect);
 }
 
@@ -870,6 +930,10 @@ void RenderThemeIOS::adjustButtonLikeControlStyle(RenderStyle& style, const Elem
 
 void RenderThemeIOS::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustButtonStyleForCatalyst(style, element))
+        return;
+#endif
     // If no size is specified, ensure the height of the button matches ControlBaseHeight scaled
     // with the font size. min-height is used rather than height to avoid clipping the contents of
     // the button in cases where the button contains more than one line of text.
@@ -1458,6 +1522,10 @@ void RenderThemeIOS::paintCheckboxRadioInnerShadow(const PaintInfo& paintInfo, c
 
 bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintCheckboxForCatalyst(box, paintInfo, rect))
+        return false;
+#endif
     bool isVision = PAL::currentUserInterfaceIdiomIsVision();
 
     auto& context = paintInfo.context();
@@ -1543,6 +1611,10 @@ bool RenderThemeIOS::paintCheckbox(const RenderObject& box, const PaintInfo& pai
 
 bool RenderThemeIOS::paintRadio(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintRadioForCatalyst(box, paintInfo, rect))
+        return false;
+#endif
     bool isVision = PAL::currentUserInterfaceIdiomIsVision();
 
     auto& context = paintInfo.context();
@@ -1600,6 +1672,10 @@ bool RenderThemeIOS::supportsMeter(StyleAppearance appearance) const
 
 bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintMeterForCatalyst(renderer, paintInfo, rect))
+        return false;
+#endif
     auto* renderMeter = dynamicDowncast<RenderMeter>(renderer);
     if (!renderMeter)
         return true;
@@ -1652,6 +1728,10 @@ bool RenderThemeIOS::paintMeter(const RenderObject& renderer, const PaintInfo& p
 
 bool RenderThemeIOS::paintListButton(const RenderObject& box, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintListButtonForCatalyst(box, paintInfo, rect))
+        return false;
+#endif
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
@@ -1751,8 +1831,12 @@ void RenderThemeIOS::paintSliderTicks(const RenderObject& box, const PaintInfo& 
     }
 }
 
-void RenderThemeIOS::paintColorWellDecorations(const RenderObject&, const PaintInfo& paintInfo, const FloatRect& rect)
+void RenderThemeIOS::paintColorWellDecorations(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintColorWellDecorationsForCatalyst(renderer, paintInfo, rect))
+        return;
+#endif
     constexpr int strokeThickness = 3;
     constexpr std::array colorStops {
         DisplayP3<float> { 1, 1, 0, 1 },
@@ -1785,6 +1869,10 @@ void RenderThemeIOS::paintColorWellDecorations(const RenderObject&, const PaintI
 
 void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustSearchFieldDecorationPartStyleForCatalyst(style, element))
+        return;
+#endif
     if (!element)
         return;
 
@@ -1803,6 +1891,10 @@ void RenderThemeIOS::adjustSearchFieldDecorationPartStyle(RenderStyle& style, co
 
 bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderObject& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintSearchFieldDecorationPartForCatalyst(box, paintInfo, rect))
+        return false;
+#endif
     auto& context = paintInfo.context();
     GraphicsContextStateSaver stateSaver(context);
 
@@ -1842,21 +1934,37 @@ bool RenderThemeIOS::paintSearchFieldDecorationPart(const RenderObject& box, con
 
 void RenderThemeIOS::adjustSearchFieldResultsDecorationPartStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustSearchFieldResultsDecorationPartStyleForCatalyst(style, element))
+        return;
+#endif
     adjustSearchFieldDecorationPartStyle(style, element);
 }
 
 bool RenderThemeIOS::paintSearchFieldResultsDecorationPart(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintSearchFieldResultsDecorationPartForCatalyst(box, paintInfo, rect))
+        return false;
+#endif
     return paintSearchFieldDecorationPart(box, paintInfo, rect);
 }
 
 void RenderThemeIOS::adjustSearchFieldResultsButtonStyle(RenderStyle& style, const Element* element) const
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (adjustSearchFieldResultsButtonStyleForCatalyst(style, element))
+        return;
+#endif
     adjustSearchFieldDecorationPartStyle(style, element);
 }
 
 bool RenderThemeIOS::paintSearchFieldResultsButton(const RenderBox& box, const PaintInfo& paintInfo, const IntRect& rect)
 {
+#if ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+    if (paintSearchFieldResultsButtonForCatalyst(box, paintInfo, rect))
+        return false;
+#endif
     return paintSearchFieldDecorationPart(box, paintInfo, rect);
 }
 
