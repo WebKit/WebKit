@@ -1267,6 +1267,7 @@ i, cite, em, var, address, dfn {
 
 tt, code, kbd, samp {
     font-family: monospace;
+    text-autospace: no-autospace;
 }
 
 pre, xmp, plaintext, listing {
@@ -1274,6 +1275,7 @@ pre, xmp, plaintext, listing {
     font-family: monospace;
     white-space: pre;
     margin: 1__qem 0;
+    text-autospace: no-autospace;
 }
 
 mark {
