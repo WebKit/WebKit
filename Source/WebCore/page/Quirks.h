@@ -212,7 +212,6 @@ public:
 
     bool shouldDisableElementFullscreenQuirk() const;
     bool shouldIgnorePlaysInlineRequirementQuirk() const;
-    WEBCORE_EXPORT bool shouldUseEphemeralPartitionedStorageForDOMCookies(const URL&) const;
 
     bool needsGetElementsByNameQuirk() const;
     bool needsRelaxedCorsMixedContentCheckQuirk() const;
