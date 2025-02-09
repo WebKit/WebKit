@@ -81,6 +81,7 @@ public:
     bool isCrossfadeValue() const { return m_classType == ClassType::Crossfade; }
     bool isCursorImageValue() const { return m_classType == ClassType::CursorImage; }
     bool isCustomPropertyValue() const { return m_classType == ClassType::CustomProperty; }
+    bool isDynamicRangeLimitValue() const { return m_classType == ClassType::DynamicRangeLimit; }
     bool isEasingFunctionValue() const { return m_classType == ClassType::EasingFunction; }
     bool isFilterImageValue() const { return m_classType == ClassType::FilterImage; }
     bool isFilterPropertyValue() const { return m_classType == ClassType::FilterProperty; }
@@ -224,6 +225,7 @@ protected:
         ContentDistribution,
         Counter,
         CustomProperty,
+        DynamicRangeLimit,
         EasingFunction,
         FilterProperty,
         Font,

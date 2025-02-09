@@ -1707,7 +1707,9 @@ from-font
 
 // dynamic-range
 standard
+constrained-high
 high
+dynamic-range-limit-mix
 
 // @counter-style `system` descriptor values
 // https://www.w3.org/TR/css-counter-styles-3/#counter-style-system

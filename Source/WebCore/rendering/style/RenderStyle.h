@@ -292,6 +292,7 @@ class CustomPropertyRegistry;
 class ViewTransitionName;
 struct Color;
 struct ColorScheme;
+struct DynamicRangeLimit;
 struct ScopedName;
 struct ScrollMargin;
 struct ScrollMarginEdge;
@@ -952,6 +953,8 @@ public:
     inline bool hasExplicitlySetColorScheme() const;
 #endif
 
+    inline const Style::DynamicRangeLimit& dynamicRangeLimit() const;
+
     inline TableLayoutType tableLayout() const;
 
     inline ObjectFit objectFit() const;
@@ -1576,6 +1579,8 @@ public:
     inline void setColorScheme(Style::ColorScheme);
 #endif
 
+    inline void setDynamicRangeLimit(Style::DynamicRangeLimit&&);
+
     inline void setTableLayout(TableLayoutType);
 
     inline void setFilter(FilterOperations&&);
@@ -2089,6 +2094,8 @@ public:
 #if ENABLE(DARK_MODE_CSS)
     static inline Style::ColorScheme initialColorScheme();
 #endif
+
+    static inline Style::DynamicRangeLimit initialDynamicRangeLimit();
 
     static constexpr TextIndentLine initialTextIndentLine();
     static constexpr TextIndentType initialTextIndentType();

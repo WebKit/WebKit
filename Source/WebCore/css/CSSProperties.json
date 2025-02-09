@@ -3593,6 +3593,25 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#DominantBaselineProperty"
             }
         },
+        "dynamic-range-limit": {
+            "inherited": true,
+            "values": [
+                "standard",
+                "constrained-high",
+                "high"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssDynamicRangeLimitPropertyEnabled",
+                "converter": "DynamicRangeLimit",
+                "parser-function": "consumeDynamicRangeLimit",
+                "parser-grammar-unused": "<<values>> | <dynamic-range-limit-mix()>",
+                "parser-grammar-unused-reason": "Needs support for functional notation."
+           },
+           "specification": {
+               "category": "css-color",
+               "url": "https://drafts.csswg.org/css-color-hdr/#the-dynamic-range-limit-property"
+           }
+        },
         "empty-cells": {
             "inherited": true,
             "values": [

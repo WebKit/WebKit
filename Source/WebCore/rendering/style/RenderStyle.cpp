@@ -2120,6 +2120,8 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         if (first.colorScheme != second.colorScheme)
             changingProperties.m_properties.set(CSSPropertyColorScheme);
 #endif
+        if (first.dynamicRangeLimit != second.dynamicRangeLimit)
+            changingProperties.m_properties.set(CSSPropertyDynamicRangeLimit);
         if (first.textEmphasisFill != second.textEmphasisFill || first.textEmphasisMark != second.textEmphasisMark)
             changingProperties.m_properties.set(CSSPropertyTextEmphasisStyle);
         if (!arePointingToEqualData(first.quotes, second.quotes))

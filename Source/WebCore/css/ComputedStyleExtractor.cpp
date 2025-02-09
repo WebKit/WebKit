@@ -32,6 +32,7 @@
 #include "CSSBoxShadowPropertyValue.h"
 #include "CSSColorSchemeValue.h"
 #include "CSSCounterValue.h"
+#include "CSSDynamicRangeLimitValue.h"
 #include "CSSEasingFunctionValue.h"
 #include "CSSFilterPropertyValue.h"
 #include "CSSFontFeatureValue.h"
@@ -89,6 +90,7 @@
 #include "StyleAppleColorFilterProperty.h"
 #include "StyleBoxShadow.h"
 #include "StyleColorScheme.h"
+#include "StyleDynamicRangeLimit.h"
 #include "StyleEasingFunction.h"
 #include "StyleFilterProperty.h"
 #include "StylePathData.h"
@@ -3842,6 +3844,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     }
     case CSSPropertyDisplay:
         return createConvertingToCSSValueID(style.display());
+    case CSSPropertyDynamicRangeLimit:
+        return CSSDynamicRangeLimitValue::create(Style::toCSS(style.dynamicRangeLimit(), style));
     case CSSPropertyEmptyCells:
         return createConvertingToCSSValueID(style.emptyCells());
     case CSSPropertyAlignContent:

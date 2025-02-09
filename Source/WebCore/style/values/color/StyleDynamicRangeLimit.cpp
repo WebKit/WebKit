@@ -1,0 +1,112 @@
+/*
+ * Copyright (C) 2025 Sam Weinig. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include "config.h"
+#include "StyleDynamicRangeLimit.h"
+
+#include "AnimationUtilities.h"
+#include "CSSDynamicRangeLimit.h"
+#include "CSSDynamicRangeLimitMix.h"
+#include "StyleDynamicRangeLimitMix.h"
+#include <wtf/text/TextStream.h>
+
+namespace WebCore {
+namespace Style {
+
+using namespace CSS::Literals;
+
+// Resolves a `dynamic-range-limit-mix` function value for the `dynamic-range-limit` property.
+static DynamicRangeLimit resolve(DynamicRangeLimitMixFunction&& mix)
+{
+    // https://drafts.csswg.org/css-color-hdr/#computing-dynamic-range-limit
+
+    // This function implements steps 5 and 6 of the algorithm for computing the dynamic
+    // range limit value. The first 4 steps are in `ToStyle<CSS::DynamicRangeLimitMixFunction>`.
+
+    if (mix->standard == 100_css_percentage)
+        return DynamicRangeLimit(CSS::Keyword::Standard { });
+    if (mix->constrainedHigh == 100_css_percentage)
+        return DynamicRangeLimit(CSS::Keyword::ConstrainedHigh { });
+    if (mix->high == 100_css_percentage)
+        return DynamicRangeLimit(CSS::Keyword::High { });
+    return DynamicRangeLimit(WTFMove(mix));
+}
+
+// MARK: - Conversion
+
+auto ToCSS<DynamicRangeLimit>::operator()(const DynamicRangeLimit& limit, const RenderStyle& style) -> CSS::DynamicRangeLimit
+{
+    return WTF::switchOn(limit,
+        [&](const auto& value) -> CSS::DynamicRangeLimit {
+            return CSS::DynamicRangeLimit(toCSS(value, style));
+        }
+    );
+}
+
+auto ToStyle<CSS::DynamicRangeLimit>::operator()(const CSS::DynamicRangeLimit& limit, const BuilderState& state) -> DynamicRangeLimit
+{
+    return WTF::switchOn(limit,
+        [&]<CSSValueID Id>(const Constant<Id>& keyword) -> DynamicRangeLimit {
+            return DynamicRangeLimit(keyword);
+        },
+        [&](const CSS::DynamicRangeLimitMixFunction& mix) -> DynamicRangeLimit {
+            return resolve(toStyle(mix, state));
+        }
+    );
+}
+
+// MARK: - Blending
+
+auto Blending<DynamicRangeLimit>::blend(const DynamicRangeLimit& from, const DynamicRangeLimit& to, const BlendingContext& context) -> DynamicRangeLimit
+{
+    // Blending is defined as "by dynamic-range-limit-mix()". This requires computing the equivalent of:
+    //
+    //   dynamic-range-limit-mix(`from` (1 - context.progress) * 100%, `to` context.progress * 100%)
+    //
+    // and then resolving that as we would when converting from CSS::DynamicRangeLimit. Rather than
+    // construct a full fledged CSS::DynamicRangeLimitMixFunction, we can utilize the weighted sum
+    // addition functionality to construct just what we need and then resolve that directly.
+
+    DynamicRangeLimitMixPercentage fromMixPercentage = (1.0 - context.progress) * 100.0;
+    DynamicRangeLimitMixPercentage toMixPercentage   = (context.progress) * 100.0;
+
+    DynamicRangeLimitMixFunction function { .parameters = { 0_css_percentage, 0_css_percentage, 0_css_percentage } };
+
+    addWeightedLimitTo(function, from, fromMixPercentage);
+    addWeightedLimitTo(function, to, toMixPercentage);
+
+    return resolve(WTFMove(function));
+}
+
+// MARK: - Logging
+
+TextStream& operator<<(TextStream& ts, const DynamicRangeLimit& limit)
+{
+    WTF::switchOn(limit, [&](const auto& value) { ts << value; });
+    return ts;
+}
+
+} // namespace Style
+} // namespace WebCore

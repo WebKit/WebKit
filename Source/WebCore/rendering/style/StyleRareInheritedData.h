@@ -31,6 +31,7 @@
 #include "ScrollbarColor.h"
 #include "StyleColor.h"
 #include "StyleCustomPropertyData.h"
+#include "StyleDynamicRangeLimit.h"
 #include "StyleTextEdge.h"
 #include "TabSize.h"
 #include "TextUnderlineOffset.h"
@@ -95,6 +96,8 @@ public:
     Style::Color visitedLinkCaretColor;
 
     Style::Color accentColor;
+
+    Style::DynamicRangeLimit dynamicRangeLimit;
 
     std::unique_ptr<ShadowData> textShadow;
     

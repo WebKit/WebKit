@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007-2023 Apple Inc. All rights reserved.
  * Copyright (C) 2012, 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2025 Sam Weinig. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,6 +67,7 @@
 #include "StyleBoxShadow.h"
 #include "StyleCachedImage.h"
 #include "StyleCrossfadeImage.h"
+#include "StyleDynamicRangeLimit.h"
 #include "StyleFilterImage.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
@@ -3153,7 +3155,43 @@ private:
     }
 };
 
+class PropertyWrapperDynamicRangeLimit final : public AnimationPropertyWrapperBase {
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+public:
+    PropertyWrapperDynamicRangeLimit()
+        : AnimationPropertyWrapperBase(CSSPropertyDynamicRangeLimit)
+    {
+    }
 
+    bool equals(const RenderStyle& a, const RenderStyle& b) const final
+    {
+        if (&a == &b)
+            return true;
+        return a.dynamicRangeLimit() == b.dynamicRangeLimit();
+    }
+
+    bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation) const final
+    {
+        return Style::canBlend(value(from), value(to));
+    }
+
+#if !LOG_DISABLED
+    void logBlend(const RenderStyle& from, const RenderStyle& to, const RenderStyle& destination, double progress) const final
+    {
+        LOG_WITH_STREAM(Animations, stream << "  blending " << property() << " from " << value(from) << " to " << value(to) << " at " << TextStream::FormatNumberRespectingIntegers(progress) << " -> " << value(destination));
+    }
+#endif
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const final
+    {
+        return destination.setDynamicRangeLimit(Style::blend(value(from), value(to), context));
+    }
+
+    static const Style::DynamicRangeLimit& value(const RenderStyle& style)
+    {
+        return style.dynamicRangeLimit();
+    }
+};
 
 class PropertyWrapperAspectRatio final : public AnimationPropertyWrapperBase {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
@@ -4066,6 +4104,8 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
 #endif
         new PropertyWrapperAspectRatio,
         new DiscretePropertyWrapper<const FontPalette&>(CSSPropertyFontPalette, &RenderStyle::fontPalette, &RenderStyle::setFontPalette),
+
+        new PropertyWrapperDynamicRangeLimit,
 
         new OffsetPathWrapper,
         new OffsetDistanceWrapper,

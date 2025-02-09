@@ -880,6 +880,7 @@ css/CSSCounterValue.cpp
 css/CSSCrossfadeValue.cpp
 css/CSSCursorImageValue.cpp
 css/CSSCustomPropertyValue.cpp
+css/CSSDynamicRangeLimitValue.cpp
 css/CSSEasingFunctionValue.cpp
 css/CSSFilterImageValue.cpp
 css/CSSFilterPropertyValue.cpp
@@ -1161,6 +1162,7 @@ css/values/color/CSSColorMixResolver.cpp
 css/values/color/CSSColorMixSerialization.cpp
 css/values/color/CSSContrastColor.cpp
 css/values/color/CSSContrastColorResolver.cpp
+css/values/color/CSSDynamicRangeLimit.cpp
 css/values/color/CSSHexColor.cpp
 css/values/color/CSSKeywordColor.cpp
 css/values/color/CSSLightDarkColor.cpp
@@ -3145,6 +3147,8 @@ style/values/color/StyleColorMix.cpp
 style/values/color/StyleColorOptions.cpp
 style/values/color/StyleContrastColor.cpp
 style/values/color/StyleCurrentColor.cpp
+style/values/color/StyleDynamicRangeLimit.cpp
+style/values/color/StyleDynamicRangeLimitMix.cpp
 style/values/color/StyleHexColor.cpp
 style/values/color/StyleKeywordColor.cpp
 style/values/color/StyleLightDarkColor.cpp

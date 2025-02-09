@@ -39,6 +39,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     void* styleImage;
     Style::Color firstColor;
     Style::Color colors[10];
+    Style::DynamicRangeLimit dynamicRangeLimit;
     void* ownPtrs[1];
     AtomString atomStrings[5];
     void* refPtrs[3];
@@ -85,6 +86,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , caretColor(Style::Color::currentColor())
     , visitedLinkCaretColor(Style::Color::currentColor())
     , accentColor(Style::Color::currentColor())
+    , dynamicRangeLimit(RenderStyle::initialDynamicRangeLimit())
     , indent(RenderStyle::initialTextIndent())
     , usedZoom(RenderStyle::initialZoom())
     , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
@@ -181,6 +183,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , caretColor(o.caretColor)
     , visitedLinkCaretColor(o.visitedLinkCaretColor)
     , accentColor(o.accentColor)
+    , dynamicRangeLimit(o.dynamicRangeLimit)
     , textShadow(o.textShadow ? makeUnique<ShadowData>(*o.textShadow) : nullptr)
     , cursorData(o.cursorData)
     , indent(o.indent)
@@ -294,6 +297,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && caretColor == o.caretColor
         && visitedLinkCaretColor == o.visitedLinkCaretColor
         && accentColor == o.accentColor
+        && dynamicRangeLimit == o.dynamicRangeLimit
 #if ENABLE(TOUCH_EVENTS)
         && tapHighlightColor == o.tapHighlightColor
 #endif
@@ -411,6 +415,8 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
 
     LOG_IF_DIFFERENT(caretColor);
     LOG_IF_DIFFERENT(visitedLinkCaretColor);
+
+    LOG_IF_DIFFERENT(dynamicRangeLimit);
 
     LOG_IF_DIFFERENT(textShadow);
 

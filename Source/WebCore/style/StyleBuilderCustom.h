@@ -79,6 +79,7 @@ inline FilterOperations forwardInheritedValue(const FilterOperations& value) { a
 inline TransformOperations forwardInheritedValue(const TransformOperations& value) { auto copy = value; return copy; }
 inline ScrollMarginEdge forwardInheritedValue(const ScrollMarginEdge& value) { auto copy = value; return copy; }
 inline ScrollPaddingEdge forwardInheritedValue(const ScrollPaddingEdge& value) { auto copy = value; return copy; }
+inline DynamicRangeLimit forwardInheritedValue(const DynamicRangeLimit& value) { auto copy = value; return copy; }
 
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class BuilderCustom {

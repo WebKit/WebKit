@@ -374,6 +374,8 @@ inline void RenderStyle::setColorScheme(Style::ColorScheme scheme) { SET(m_rareI
 inline void RenderStyle::setHasExplicitlySetColorScheme() { SET_NESTED(m_nonInheritedData, miscData, hasExplicitlySetColorScheme, true); }
 #endif
 
+inline void RenderStyle::setDynamicRangeLimit(Style::DynamicRangeLimit&& limit) { SET(m_rareInheritedData, dynamicRangeLimit, WTFMove(limit)); }
+
 inline void RenderStyle::setBackdropFilter(FilterOperations&& ops) { SET_DOUBLY_NESTED(m_nonInheritedData, rareData, backdropFilter, operations, WTFMove(ops)); }
 
 #if PLATFORM(IOS_FAMILY)

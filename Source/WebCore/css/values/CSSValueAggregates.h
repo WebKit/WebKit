@@ -49,6 +49,7 @@ template<typename> inline constexpr ASCIILiteral SerializationSeparator = ""_s;
 // Helper to define a type by extending another type via inheritance.
 #define DEFINE_TYPE_EXTENDER(wrapper, wrapped)                                \
     struct wrapper : wrapped {                                                \
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;                                       \
         using Wrapped = wrapped;                                              \
         using Wrapped::Wrapped;                                               \
         template<size_t I> friend const auto& get(const wrapper& self)        \
@@ -61,6 +62,7 @@ template<typename> inline constexpr ASCIILiteral SerializationSeparator = ""_s;
 // Helper to define a type via direct wrapping of another type.
 #define DEFINE_TYPE_WRAPPER(wrapper, wrapped)                                 \
     struct wrapper {                                                          \
+        WTF_MAKE_STRUCT_FAST_ALLOCATED;                                       \
         using Wrapped = wrapped;                                              \
         wrapped value;                                                        \
         template<typename... Args>                                            \
@@ -136,6 +138,8 @@ WTF::TextStream& operator<<(WTF::TextStream&, const CustomIdentifier&);
 
 // Helper type used to represent a CSS function.
 template<CSSValueID C, typename T> struct FunctionNotation {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+
     static constexpr auto name = C;
     T parameters;
 
@@ -149,6 +153,11 @@ template<CSSValueID C, typename T> struct FunctionNotation {
 
     bool operator==(const FunctionNotation<C, T>&) const = default;
 };
+
+template<CSSValueID C, typename T> bool operator==(const UniqueRef<FunctionNotation<C, T>>& a, const UniqueRef<FunctionNotation<C, T>>& b)
+{
+    return a.get() == b.get();
+}
 
 template<size_t, CSSValueID C, typename T> const auto& get(const FunctionNotation<C, T>& function)
 {

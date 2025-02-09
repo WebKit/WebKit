@@ -1217,6 +1217,20 @@ CSSDPropertyEnabled:
     WebCore:
       default: false
 
+CSSDynamicRangeLimitPropertyEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS dynamic-range-limit"
+  humanReadableDescription: "Enable support for the CSS Color HDR Module Level 1 dynamic-range-limit CSS property"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSFieldSizingEnabled:
   type: bool
   status: testable

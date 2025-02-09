@@ -46,6 +46,7 @@
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSDynamicRangeLimitValue.h"
 #include "CSSEasingFunctionValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFilterPropertyValue.h"
@@ -146,6 +147,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCursorImageValue>(*this));
     case CustomProperty:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCustomPropertyValue>(*this));
+    case DynamicRangeLimit:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSDynamicRangeLimitValue>(*this));
     case EasingFunction:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSEasingFunctionValue>(*this));
     case FilterImage:

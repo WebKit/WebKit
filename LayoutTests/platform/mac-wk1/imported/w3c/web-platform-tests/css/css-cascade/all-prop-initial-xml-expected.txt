@@ -123,6 +123,7 @@ PASS d
 PASS direction
 PASS display
 PASS dominant-baseline
+PASS dynamic-range-limit
 PASS empty-cells
 PASS field-sizing
 PASS fill

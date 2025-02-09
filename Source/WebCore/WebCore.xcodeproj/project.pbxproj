@@ -4905,6 +4905,9 @@
 		BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86820C33676000EEA649 /* DOMSelection.h */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
 		BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C76291497FE1400BC4775 /* PlatformEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5C89BB2D567D06000F45B7 /* CSSDynamicRangeLimitValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C89BA2D567D06000F45B7 /* CSSDynamicRangeLimitValue.h */; };
+		BC5C89BE2D567E23000F45B7 /* StyleDynamicRangeLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C89BD2D567E23000F45B7 /* StyleDynamicRangeLimit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5C89C02D567E31000F45B7 /* StyleDynamicRangeLimitMix.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C89BF2D567E31000F45B7 /* StyleDynamicRangeLimitMix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DB0E81B7EA00B25965 /* BorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5EB5DF0E81B9AB00B25965 /* CollapsedBorderValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -16257,8 +16260,8 @@
 		A3456F382BBD8E820046C5E6 /* SVGAnimatedString.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedString.cpp; sourceTree = "<group>"; };
 		A3456F392BBD8E820046C5E6 /* SVGAnimatedString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedString.h; sourceTree = "<group>"; };
 		A363392B2A280D8000C6EA55 /* ScrollbarColor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScrollbarColor.h; sourceTree = "<group>"; };
-		A363392C2A280D9C00C6EA55 /* ScrollbarColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarColor.cpp; sourceTree = "<group>"; };
 		A363392B2A280D8000C6EA56 /* PositionArea.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PositionArea.h; sourceTree = "<group>"; };
+		A363392C2A280D9C00C6EA55 /* ScrollbarColor.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ScrollbarColor.cpp; sourceTree = "<group>"; };
 		A363392C2A280D9C00C6EA56 /* PositionArea.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PositionArea.cpp; sourceTree = "<group>"; };
 		A37049D8251D4B8E009BA1B3 /* EXTFloatBlend.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EXTFloatBlend.idl; sourceTree = "<group>"; };
 		A37049DA251D4B8E009BA1B3 /* EXTFloatBlend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTFloatBlend.h; sourceTree = "<group>"; };
@@ -18077,6 +18080,15 @@
 		BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMSelection.h; sourceTree = "<group>"; };
 		BC5BFB16291AA2C5000A5E60 /* process-css-values.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "process-css-values.py"; sourceTree = "<group>"; };
 		BC5C76291497FE1400BC4775 /* PlatformEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformEvent.h; sourceTree = "<group>"; };
+		BC5C89B52D567ABF000F45B7 /* CSSDynamicRangeLimit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSDynamicRangeLimit.h; sourceTree = "<group>"; };
+		BC5C89B72D567B25000F45B7 /* CSSDynamicRangeLimitMix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSDynamicRangeLimitMix.h; sourceTree = "<group>"; };
+		BC5C89B82D567B2D000F45B7 /* CSSDynamicRangeLimit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSDynamicRangeLimit.cpp; sourceTree = "<group>"; };
+		BC5C89BA2D567D06000F45B7 /* CSSDynamicRangeLimitValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSDynamicRangeLimitValue.h; sourceTree = "<group>"; };
+		BC5C89BC2D567D19000F45B7 /* CSSDynamicRangeLimitValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSDynamicRangeLimitValue.cpp; sourceTree = "<group>"; };
+		BC5C89BD2D567E23000F45B7 /* StyleDynamicRangeLimit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleDynamicRangeLimit.h; sourceTree = "<group>"; };
+		BC5C89BF2D567E31000F45B7 /* StyleDynamicRangeLimitMix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleDynamicRangeLimitMix.h; sourceTree = "<group>"; };
+		BC5C89C12D56806C000F45B7 /* StyleDynamicRangeLimit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleDynamicRangeLimit.cpp; sourceTree = "<group>"; };
+		BC5C89C32D5681D0000F45B7 /* StyleDynamicRangeLimitMix.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleDynamicRangeLimitMix.cpp; sourceTree = "<group>"; };
 		BC5EB5DA0E81B7EA00B25965 /* BorderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BorderValue.h; sourceTree = "<group>"; };
 		BC5EB5DC0E81B8DD00B25965 /* OutlineValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutlineValue.h; sourceTree = "<group>"; };
 		BC5EB5DE0E81B9AB00B25965 /* CollapsedBorderValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CollapsedBorderValue.h; sourceTree = "<group>"; };
@@ -34624,6 +34636,10 @@
 				BCA407B42C9B2EC8006B037F /* StyleContrastColor.h */,
 				BCF0BCE32BEE8A6500F42CCD /* StyleCurrentColor.cpp */,
 				BCF0BCE42BEE8A6500F42CCD /* StyleCurrentColor.h */,
+				BC5C89C12D56806C000F45B7 /* StyleDynamicRangeLimit.cpp */,
+				BC5C89BD2D567E23000F45B7 /* StyleDynamicRangeLimit.h */,
+				BC5C89C32D5681D0000F45B7 /* StyleDynamicRangeLimitMix.cpp */,
+				BC5C89BF2D567E31000F45B7 /* StyleDynamicRangeLimitMix.h */,
 				BC4AF40A2CF631B40037C65C /* StyleHexColor.cpp */,
 				BC4AF4072CF6316D0037C65C /* StyleHexColor.h */,
 				BC4AF4092CF631AF0037C65C /* StyleKeywordColor.cpp */,
@@ -35397,6 +35413,9 @@
 				BCA407B82C9B30CD006B037F /* CSSContrastColorResolver.cpp */,
 				BCA407B62C9B2FC0006B037F /* CSSContrastColorResolver.h */,
 				BCA407B72C9B2FC0006B037F /* CSSContrastColorSerialization.h */,
+				BC5C89B82D567B2D000F45B7 /* CSSDynamicRangeLimit.cpp */,
+				BC5C89B52D567ABF000F45B7 /* CSSDynamicRangeLimit.h */,
+				BC5C89B72D567B25000F45B7 /* CSSDynamicRangeLimitMix.h */,
 				BC2CFBB42BEFC6F6008CA222 /* CSSHexColor.cpp */,
 				BC2CFBB52BEFC6F6008CA222 /* CSSHexColor.h */,
 				BC2CFBB62BEFC6F6008CA222 /* CSSKeywordColor.cpp */,
@@ -37626,6 +37645,8 @@
 				AA0978EE0ABAA6E100874480 /* CSSCursorImageValue.h */,
 				94D4AC611DC24C810080F02D /* CSSCustomPropertyValue.cpp */,
 				BC779E131BB215BB00CAA8BF /* CSSCustomPropertyValue.h */,
+				BC5C89BC2D567D19000F45B7 /* CSSDynamicRangeLimitValue.cpp */,
+				BC5C89BA2D567D06000F45B7 /* CSSDynamicRangeLimitValue.h */,
 				BCD2C6EE2D0F4B7300F77591 /* CSSEasingFunctionValue.cpp */,
 				BCD2C6ED2D0F4B5B00F77591 /* CSSEasingFunctionValue.h */,
 				FB965B8217BBB62C00E835B9 /* CSSFilterImageValue.cpp */,
@@ -40494,6 +40515,7 @@
 				2D8FEBDD143E3EF70072502B /* CSSCrossfadeValue.h in Headers */,
 				AA21ECCD0ABF0FC6002B834C /* CSSCursorImageValue.h in Headers */,
 				BC779E141BB215BB00CAA8BF /* CSSCustomPropertyValue.h in Headers */,
+				BC5C89BB2D567D06000F45B7 /* CSSDynamicRangeLimitValue.h in Headers */,
 				BCB2721B2CC1F21B00265123 /* CSSEllipseFunction.h in Headers */,
 				BCB272162CC1F21B00265123 /* CSSFillRule.h in Headers */,
 				7246963B275C5FA600A9156A /* CSSFilter.h in Headers */,
@@ -44294,6 +44316,8 @@
 				A8C4A7FD09D563270003AC8D /* StyledElement.h in Headers */,
 				BC5EB8B90E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h in Headers */,
 				E440FD5325A4AFDF00F7C849 /* StyledMarkedText.h in Headers */,
+				BC5C89BE2D567E23000F45B7 /* StyleDynamicRangeLimit.h in Headers */,
+				BC5C89C02D567E31000F45B7 /* StyleDynamicRangeLimitMix.h in Headers */,
 				BCB2720B2CC1F1DB00265123 /* StyleEllipseFunction.h in Headers */,
 				BCB272072CC1F1DB00265123 /* StyleFillRule.h in Headers */,
 				319AE064142D6B24006563A1 /* StyleFilterData.h in Headers */,

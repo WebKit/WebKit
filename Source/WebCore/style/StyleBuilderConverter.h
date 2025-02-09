@@ -36,6 +36,7 @@
 #include "CSSColorSchemeValue.h"
 #include "CSSContentDistributionValue.h"
 #include "CSSCounterStyleRegistry.h"
+#include "CSSDynamicRangeLimitValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleWithAngleValue.h"
 #include "CSSFontVariationValue.h"
@@ -77,6 +78,7 @@
 #include "StyleBasicShape.h"
 #include "StyleBuilderState.h"
 #include "StyleColorScheme.h"
+#include "StyleDynamicRangeLimit.h"
 #include "StyleEasingFunction.h"
 #include "StylePathData.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
@@ -258,6 +260,7 @@ public:
 
     static Style::ScrollPaddingEdge convertScrollPaddingEdge(BuilderState&, const CSSValue&);
     static Style::ScrollMarginEdge convertScrollMarginEdge(BuilderState&, const CSSValue&);
+    static Style::DynamicRangeLimit convertDynamicRangeLimit(BuilderState&, const CSSValue&);
 
     static Vector<PositionTryFallback> convertPositionTryFallbacks(BuilderState&, const CSSValue&);
 
@@ -2761,6 +2764,31 @@ inline Style::ScrollPaddingEdge BuilderConverter::convertScrollPaddingEdge(Build
 inline Style::ScrollMarginEdge BuilderConverter::convertScrollMarginEdge(BuilderState& builderState, const CSSValue& value)
 {
     return Style::scrollMarginEdgeFromCSSValue(value, builderState);
+}
+
+inline Style::DynamicRangeLimit BuilderConverter::convertDynamicRangeLimit(BuilderState& builderState, const CSSValue& value)
+{
+    if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
+        switch (primitiveValue->valueID()) {
+        case CSSValueStandard:
+            return Style::DynamicRangeLimit { CSS::Keyword::Standard { } };
+        case CSSValueConstrainedHigh:
+            return Style::DynamicRangeLimit { CSS::Keyword::ConstrainedHigh { } };
+        case CSSValueHigh:
+            return Style::DynamicRangeLimit { CSS::Keyword::High { } };
+        default:
+            break;
+        }
+
+        builderState.setCurrentPropertyInvalidAtComputedValueTime();
+        return Style::DynamicRangeLimit { CSS::Keyword::High { } };
+    }
+
+    RefPtr dynamicRangeLimit = requiredDowncast<CSSDynamicRangeLimitValue>(builderState, value);
+    if (!dynamicRangeLimit)
+        return Style::DynamicRangeLimit { CSS::Keyword::High { } };
+
+    return toStyle(dynamicRangeLimit->dynamicRangeLimit(), builderState);
 }
 
 } // namespace Style

@@ -17,6 +17,7 @@ css/CSSCrossfadeValue.h
 css/CSSCursorImageValue.h
 css/CSSCustomPropertyValue.h
 css/CSSEasingFunctionValue.h
+css/CSSDynamicRangeLimitValue.h
 css/CSSFilterImageValue.h
 css/CSSFilterPropertyValue.h
 css/CSSFontFaceSrcValue.h
