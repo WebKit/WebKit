@@ -9,6 +9,14 @@
 <script>
 'use strict';
 
+const makeSource = (src, type) => {
+    const source = document.createElement("source");
+    source.src = src;
+    if (type)
+        source.type = type;
+    return source;
+}
+
 promise_test(async t => {
     const [model, source] = createModelAndSource(t, "resources/cube.usdz");
     await model.ready;

@@ -59,7 +59,7 @@
 
 #import "WebKitSwiftSoftLink.h"
 
-@interface WKModelProcessModelPlayerProxyObjCAdapter : NSObject<WKSRKEntityDelegate>
+@interface WKModelProcessModelPlayerProxyObjCAdapter : NSObject<WKSRKEntityDelegate, WKStageModeInteractionAware>
 - (instancetype)initWithModelProcessModelPlayerProxy:(std::reference_wrapper<WebKit::ModelProcessModelPlayerProxy>)modelProcessModelPlayerProxy;
 @end
 
@@ -79,6 +79,11 @@
 - (void)entityAnimationPlaybackStateDidUpdate:(id)entity
 {
     _modelProcessModelPlayerProxy->animationPlaybackStateDidUpdate();
+}
+
+- (void)stageModeInteractionDidUpdateModel
+{
+    _modelProcessModelPlayerProxy->stageModeInteractionDidUpdateModel();
 }
 
 @end
@@ -361,7 +366,7 @@ static CGFloat effectivePointsPerMeter(CALayer *caLayer)
 
 void ModelProcessModelPlayerProxy::computeTransform()
 {
-    if (!m_model || !m_layer)
+    if (!m_model || !m_layer || stageModeInteractionInProgress())
         return;
 
     // FIXME: Use the value of the 'object-fit' property here to compute an appropriate SRT.
@@ -375,7 +380,7 @@ void ModelProcessModelPlayerProxy::computeTransform()
 
 void ModelProcessModelPlayerProxy::updateTransform()
 {
-    if (!m_model || !m_layer)
+    if (!m_model || !m_layer || stageModeInteractionInProgress())
         return;
 
     [m_modelRKEntity setTransform:WKEntityTransform({ m_transformSRT.scale, m_transformSRT.rotation, m_transformSRT.translation })];
@@ -419,34 +424,29 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
 {
     dispatch_assert_queue(dispatch_get_main_queue());
     ASSERT(&loader == m_loader.get());
-
     bool canLoadWithRealityKit = [getWKSRKEntityClass() isLoadFromDataAvailable];
-
     m_loader = nullptr;
     m_model = WTFMove(model);
+
     if (canLoadWithRealityKit)
         m_modelRKEntity = m_model->rootRKEntity();
     else if (m_model->rootEntity())
         m_modelRKEntity = adoptNS([allocWKSRKEntityInstance() initWithCoreEntity:m_model->rootEntity()]);
-    [m_modelRKEntity setDelegate:m_objCAdapter.get()];
 
+    [m_modelRKEntity setDelegate:m_objCAdapter.get()];
     m_originalBoundingBoxExtents = [m_modelRKEntity boundingBoxExtents];
     m_originalBoundingBoxCenter = [m_modelRKEntity boundingBoxCenter];
-
     m_hostingEntity = adoptRE(REEntityCreate());
     REEntitySetName(m_hostingEntity.get(), "WebKit:EntityWithRootComponent");
-
     REPtr<REComponentRef> layerComponent = adoptRE(RECALayerServiceCreateRootComponent(webDefaultLayerService(), CALayerGetContext(m_layer.get()), m_hostingEntity.get(), nil));
     RESceneAddEntity(m_scene.get(), m_hostingEntity.get());
-
     CALayer *contextEntityLayer = RECALayerClientComponentGetCALayer(layerComponent.get());
-    [contextEntityLayer setSeparatedState:kCALayerSeparatedStateTracked];
-
+    [contextEntityLayer setSeparatedState:kCALayerSeparatedStateSeparated];
     RECALayerClientComponentSetShouldSyncToRemotes(layerComponent.get(), true);
-
     auto clientComponent = RECALayerGetCALayerClientComponent(m_layer.get());
     auto clientComponentEntity = REComponentGetEntity(clientComponent);
     REEntitySetName(clientComponentEntity, "WebKit:ClientComponentEntity");
+
     if (canLoadWithRealityKit)
         [m_model->rootRKEntity() setName:@"WebKit:ModelRootEntity"];
     else
@@ -458,7 +458,7 @@ void ModelProcessModelPlayerProxy::didFinishLoading(WebCore::REModelLoader& load
         REEntitySetParent(m_model->rootEntity(), clientComponentEntity);
     }
 
-    m_stageModeInteractionDriver = adoptNS([[WKStageModeInteractionDriver alloc] initWithModel:m_modelRKEntity.get() container:clientComponentEntity]);
+    m_stageModeInteractionDriver = adoptNS([[WKStageModeInteractionDriver alloc] initWithModel:m_modelRKEntity.get() container:clientComponentEntity delegate:m_objCAdapter.get()]);
     applyStageModeOperationToDriver();
 
     if (!canLoadWithRealityKit)
@@ -692,6 +692,22 @@ void ModelProcessModelPlayerProxy::endStageModeInteraction()
     [m_stageModeInteractionDriver interactionDidEnd];
 }
 
+void ModelProcessModelPlayerProxy::stageModeInteractionDidUpdateModel()
+{
+    if (stageModeInteractionInProgress() && m_modelRKEntity) {
+        WKEntityTransform tf = [m_modelRKEntity transform];
+        m_transformSRT = RESRT {
+            .scale = tf.scale,
+            .rotation = tf.rotation,
+            .translation = tf.translation
+        };
+
+        simd_float4x4 matrix = RESRTMatrix(m_transformSRT);
+        WebCore::TransformationMatrix transform = WebCore::TransformationMatrix(matrix);
+        send(Messages::ModelProcessModelPlayer::DidUpdateEntityTransform(transform));
+    }
+}
+
 void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease()
 {
     if (m_transientEnvironmentMapData) {
@@ -740,6 +756,11 @@ void ModelProcessModelPlayerProxy::applyStageModeOperationToDriver()
         break;
     }
     }
+}
+
+bool ModelProcessModelPlayerProxy::stageModeInteractionInProgress()
+{
+    return [m_stageModeInteractionDriver stageModeInteractionInProgress];
 }
 
 } // namespace WebKit

@@ -29,6 +29,7 @@
 #include "MessageReceiver.h"
 #include <WebCore/BoxExtents.h>
 #include <WebCore/CryptoKeyData.h>
+#include <WebCore/ElementTargetingTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayerTreeAsTextOptions.h>
 #include <WebCore/NavigationIdentifier.h>

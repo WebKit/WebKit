@@ -532,6 +532,22 @@ static void dumpUIView(TextStream& ts, UIView *view)
     }).get()];
 }
 
+- (void)_simulatePanGestureBeginAtPoint:(CGPoint)hitPoint
+{
+    [_contentView _simulatePanGestureBeginAtPoint:hitPoint];
+
+}
+
+- (void)_simulatePanGestureUpdateAtPoint:(CGPoint)hitPoint
+{
+    [_contentView _simulatePanGestureUpdateAtPoint:hitPoint];
+}
+
+- (NSDictionary *) _stageModeInfoForTesting
+{
+    return [_contentView _stageModeInfoForTesting];
+}
+
 @end
 
 #endif // PLATFORM(IOS_FAMILY)

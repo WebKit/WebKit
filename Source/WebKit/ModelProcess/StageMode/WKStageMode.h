@@ -36,14 +36,19 @@ typedef NS_ENUM(NSInteger, WKStageModeOperation) {
     WKStageModeOperationOrbit,
 };
 
+@protocol WKStageModeInteractionAware <NSObject>
+- (void) stageModeInteractionDidUpdateModel;
+@end
+
 @interface WKStageModeInteractionDriver : NSObject
-- (instancetype)initWithModel:(WKSRKEntity * _Nonnull)model container:(REEntityRef)container NS_SWIFT_NAME(init(with:container:));
+- (instancetype)initWithModel:(WKSRKEntity * _Nonnull)model container:(REEntityRef)container delegate:(id<WKStageModeInteractionAware> _Nullable)delegate NS_SWIFT_NAME(init(with:container:delegate:));
 - (void)setContainerTransformInPortal NS_SWIFT_NAME(setContainerTransformInPortal());
 - (void)interactionDidBegin:(simd_float4x4)transform NS_SWIFT_NAME(interactionDidBegin(_:));
 - (void)interactionDidUpdate:(simd_float4x4)transform NS_SWIFT_NAME(interactionDidUpdate(_:));
 - (void)interactionDidEnd NS_SWIFT_NAME(interactionDidEnd());
 - (void)operationDidUpdate:(WKStageModeOperation)operation NS_SWIFT_NAME(operationDidUpdate(_:));
 - (void)removeInteractionContainerFromSceneOrParent;
+- (bool)stageModeInteractionInProgress;
 @end
 
 NS_ASSUME_NONNULL_END

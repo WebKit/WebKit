@@ -41,6 +41,7 @@
 #include <WebCore/DigitalCredentialsResponseData.h>
 #include <WebCore/DragActions.h>
 #include <WebCore/EditorClient.h>
+#include <WebCore/ElementTargetingTypes.h>
 #include <WebCore/ExceptionData.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/FrameIdentifier.h>

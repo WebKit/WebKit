@@ -107,16 +107,17 @@ public final class WKSRKEntity: NSObject {
 
     @objc(transform) public var transform: WKEntityTransform {
         get {
-            guard let transformComponent = entity.components[Transform.self] else {
-                Logger.realityKitEntity.error("No transform component available from entity")
-                return WKEntityTransform(scale: simd_float3.one, rotation: simd_quatf(ix: 0, iy: 0, iz: 0, r: 1), translation: simd_float3.zero)
-            }
-
-            return WKEntityTransform(scale: transformComponent.scale, rotation: transformComponent.rotation, translation: transformComponent.translation)
+            let transform = Transform(matrix: entity.transformMatrix(relativeTo: nil))
+            return WKEntityTransform(scale: transform.scale, rotation: transform.rotation, translation: transform.translation)
         }
 
         set {
-            entity.components[Transform.self] = Transform(scale: newValue.scale, rotation: newValue.rotation, translation: newValue.translation)
+            var adjustedTransform = Transform(scale: newValue.scale, rotation: newValue.rotation, translation: newValue.translation)
+            if let container = entity.parent {
+                adjustedTransform = container.convert(transform: adjustedTransform, from: nil)
+            }
+            
+            entity.transform = adjustedTransform
         }
     }
 
@@ -274,6 +275,10 @@ public final class WKSRKEntity: NSObject {
     @objc(setParentCoreEntity:preservingWorldTransform:) public func setParent(_ coreEntity: REEntityRef, preservingWorldTransform: Bool) {
         let parentEntity = Entity.__fromCore(__EntityRef.__fromCore(coreEntity))
         entity.setParent(parentEntity, preservingWorldTransform: preservingWorldTransform)
+    }
+    
+    @objc(interactionContainerDidRecenterWithTransform:) public func interactionContainerDidRecenter(_ worldTransform: simd_float4x4) {
+        self.entity.setTransformMatrix(worldTransform, relativeTo: nil)
     }
 }
 

@@ -1018,6 +1018,12 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_selectDataListOption:(NSInteger)optionIndex;
 - (void)_setDataListSuggestionsControl:(WKDataListSuggestionsControl *)control;
 
+- (void)_simulatePanGestureBeginAtPoint:(CGPoint)hitPoint;
+- (void)_simulatePanGestureUpdateAtPoint:(CGPoint)hitPoint;
+#if ENABLE(MODEL_PROCESS)
+- (NSDictionary *) _stageModeInfoForTesting;
+#endif
+
 @property (nonatomic, readonly) BOOL isShowingDataListSuggestions;
 
 @property (nonatomic, readonly) NSString *textContentTypeForTesting;

@@ -14352,6 +14352,21 @@ static inline WKTextAnimationType toWKTextAnimationType(WebCore::TextAnimationTy
 #endif
 }
 
+- (void)_simulatePanGestureBeginAtPoint:(CGPoint)hitPoint
+{
+}
+
+- (void)_simulatePanGestureUpdateAtPoint:(CGPoint)hitPoint
+{
+}
+
+#if ENABLE(MODEL_PROCESS)
+- (NSDictionary *) _stageModeInfoForTesting
+{
+    return @{ };
+}
+#endif
+
 - (UITapGestureRecognizer *)singleTapGestureRecognizer
 {
     return _singleTapGestureRecognizer.get();

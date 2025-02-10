@@ -2445,9 +2445,10 @@
 		EBA8D3B727A5E33F00CB7900 /* PushServiceConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = EBA8D3B127A5E33F00CB7900 /* PushServiceConnection.mm */; };
 		EBDF51D12C8FBC4700EA1376 /* WebsitePushAndNotificationsEnabledPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = EBDF51CF2C8FBC4700EA1376 /* WebsitePushAndNotificationsEnabledPolicy.h */; };
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		EEA52EC42D6D3CD600D578B5 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		EEA52F002D6E69EC00D578B5 /* WKStageMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA52EFE2D6E69EC00D578B5 /* WKStageMode.swift */; };
+		EEA52F012D6E69EC00D578B5 /* WKStageMode.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA52EFD2D6E69EC00D578B5 /* WKStageMode.h */; };
 		EEFE72792D64FE5600DC6214 /* StageModeInteractionState.h in Headers */ = {isa = PBXBuildFile; fileRef = EEFE72782D64FE5600DC6214 /* StageModeInteractionState.h */; };
-		EEFE727D2D65184C00DC6214 /* WKStageMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0D3CDC2D3709BE00072978 /* WKStageMode.swift */; };
-		EEFE72C02D67FA9700DC6214 /* WKStageMode.h in Headers */ = {isa = PBXBuildFile; fileRef = EE0D3CDD2D3709BE00072978 /* WKStageMode.h */; };
 		F404455C2D5CFB56000E587E /* AppKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = F404455A2D5CFB56000E587E /* AppKitSoftLink.h */; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F40C3B712AB401C5007A3567 /* WKDatePickerPopoverController.h in Headers */ = {isa = PBXBuildFile; fileRef = F40C3B6F2AB40167007A3567 /* WKDatePickerPopoverController.h */; };
@@ -8232,8 +8233,8 @@
 		EBF4E32F2C2E105A00FAC85C /* NotificationAllowLists.xcfilelist */ = {isa = PBXFileReference; lastKnownFileType = text.xcfilelist; path = NotificationAllowLists.xcfilelist; sourceTree = "<group>"; };
 		ECA680D31E6904B500731D20 /* ExtraPrivateSymbolsForTAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraPrivateSymbolsForTAPI.h; sourceTree = "<group>"; };
 		ECBFC1DB1E6A4D66000300C7 /* ExtraPublicSymbolsForTAPI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ExtraPublicSymbolsForTAPI.h; sourceTree = "<group>"; };
-		EE0D3CDC2D3709BE00072978 /* WKStageMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKStageMode.swift; sourceTree = "<group>"; };
-		EE0D3CDD2D3709BE00072978 /* WKStageMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKStageMode.h; sourceTree = "<group>"; };
+		EEA52EFD2D6E69EC00D578B5 /* WKStageMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKStageMode.h; sourceTree = "<group>"; };
+		EEA52EFE2D6E69EC00D578B5 /* WKStageMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKStageMode.swift; sourceTree = "<group>"; };
 		EEFE72782D64FE5600DC6214 /* StageModeInteractionState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StageModeInteractionState.h; sourceTree = "<group>"; };
 		F036978715F4BF0500C3A80E /* WebColorPicker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebColorPicker.cpp; sourceTree = "<group>"; };
 		F404455A2D5CFB56000E587E /* AppKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppKitSoftLink.h; sourceTree = "<group>"; };
@@ -10893,10 +10894,10 @@
 		2D56C1A128A367760081BD25 /* ModelProcess */ = {
 			isa = PBXGroup;
 			children = (
+				EEA52EFF2D6E69EC00D578B5 /* StageMode */,
 				2D56C1AF28A367760081BD25 /* cocoa */,
 				2D56C1B228A367760081BD25 /* EntryPoint */,
 				2D56C1A628A367760081BD25 /* ios */,
-				EE0D3CDE2D3709BE00072978 /* StageMode */,
 				2D56C1B928A367760081BD25 /* ModelConnectionToWebProcess.cpp */,
 				2D56C1A828A367760081BD25 /* ModelConnectionToWebProcess.h */,
 				2D56C1AE28A367760081BD25 /* ModelConnectionToWebProcess.messages.in */,
@@ -16241,11 +16242,11 @@
 			path = NotificationAllowList;
 			sourceTree = "<group>";
 		};
-		EE0D3CDE2D3709BE00072978 /* StageMode */ = {
+		EEA52EFF2D6E69EC00D578B5 /* StageMode */ = {
 			isa = PBXGroup;
 			children = (
-				EE0D3CDD2D3709BE00072978 /* WKStageMode.h */,
-				EE0D3CDC2D3709BE00072978 /* WKStageMode.swift */,
+				EEA52EFD2D6E69EC00D578B5 /* WKStageMode.h */,
+				EEA52EFE2D6E69EC00D578B5 /* WKStageMode.swift */,
 			);
 			path = StageMode;
 			sourceTree = "<group>";
@@ -16998,6 +16999,7 @@
 				513A164D1630A9BF005D7D22 /* NetworkConnectionToWebProcess.h in Headers */,
 				51DD9F2916367DA2001578E9 /* NetworkConnectionToWebProcessMessages.h in Headers */,
 				46DF063C1F3905F8001980BB /* NetworkCORSPreflightChecker.h in Headers */,
+				EEA52F012D6E69EC00D578B5 /* WKStageMode.h in Headers */,
 				5CBC9B8E1C652CA000A8FDCF /* NetworkDataTask.h in Headers */,
 				53BA47D11DC2EF5E004DF4AD /* NetworkDataTaskBlob.h in Headers */,
 				532159561DBAE72D0054AA3C /* NetworkDataTaskCocoa.h in Headers */,
@@ -17998,7 +18000,6 @@
 				DF7A231C291B088D00B98DF3 /* WKSnapshotConfigurationPrivate.h in Headers */,
 				57FD318722B35170008D0E8B /* WKSOAuthorizationDelegate.h in Headers */,
 				93D6B7B925534A170058DD3A /* WKSpeechRecognitionPermissionCallback.h in Headers */,
-				EEFE72C02D67FA9700DC6214 /* WKStageMode.h in Headers */,
 				445979392BBB8E9A00087EBC /* WKSTextAnimationManager.h in Headers */,
 				44DBDA502BB23DE9004E3712 /* WKSTextAnimationSourceDelegate.h in Headers */,
 				7A78FF32224191960096483E /* WKStorageAccessAlert.h in Headers */,
@@ -20026,6 +20027,7 @@
 				5790A6812567A1AC0077C5A7 /* _WKAuthenticatorResponse.mm in Sources */,
 				5790A66725679CEA0077C5A7 /* _WKAuthenticatorSelectionCriteria.mm in Sources */,
 				5CBD595C2280EDF4002B22AA /* _WKCustomHeaderFields.mm in Sources */,
+				EEA52F002D6E69EC00D578B5 /* WKStageMode.swift in Sources */,
 				511FD1132C51AF4300BD8163 /* _WKMockUserNotificationCenter.mm in Sources */,
 				5790A67525679F740077C5A7 /* _WKPublicKeyCredentialCreationOptions.mm in Sources */,
 				5790A66D25679EB70077C5A7 /* _WKPublicKeyCredentialDescriptor.mm in Sources */,
@@ -20468,7 +20470,7 @@
 				B62449482CF672D800CBB3CF /* WKSeparatedImageView.mm in Sources */,
 				B66047412CED45F600ADE38E /* WKSeparatedImageView.swift in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,
-				EEFE727D2D65184C00DC6214 /* WKStageMode.swift in Sources */,
+				EEA52EC42D6D3CD600D578B5 /* (null) in Sources */,
 				7A78FF332241919B0096483E /* WKStorageAccessAlert.mm in Sources */,
 				076897F02D07B330006F9FA7 /* WKUIDelegateAdapter.swift in Sources */,
 				1C627479288B2F7400CED3A2 /* WKWebExtension.mm in Sources */,
@@ -20824,6 +20826,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = NO;
 			};
 			name = Debug;
 		};
@@ -20831,6 +20834,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = NO;
 			};
 			name = Release;
 		};
@@ -20838,6 +20842,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = NO;
 			};
 			name = Debug;
 		};
@@ -20845,6 +20850,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = NO;
 			};
 			name = Release;
 		};
@@ -21122,6 +21128,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1A4F976A100E7B6600637A18 /* Base.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = NO;
 			};
 			name = Production;
 		};
@@ -21136,6 +21143,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB86F4B116AAACD00CE20B7 /* WebKit.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = NO;
 			};
 			name = Production;
 		};
@@ -21301,6 +21309,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				COMPILER_INDEX_STORE_ENABLE = Default;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -21309,6 +21318,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				COMPILER_INDEX_STORE_ENABLE = Default;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -21317,6 +21327,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				COMPILER_INDEX_STORE_ENABLE = Default;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
@@ -21325,6 +21336,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = Default;
 			};
 			name = Debug;
 		};
@@ -21332,6 +21344,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = Default;
 			};
 			name = Release;
 		};
@@ -21339,6 +21352,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CD09FD0A26152E2300E4ACF1 /* WebKitSwift.xcconfig */;
 			buildSettings = {
+				COMPILER_INDEX_STORE_ENABLE = Default;
 			};
 			name = Production;
 		};

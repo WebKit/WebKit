@@ -66,8 +66,10 @@ typedef struct {
 - (void)setUpAnimationWithAutoPlay:(BOOL)autoPlay;
 - (void)applyIBLData:(NSData *)data withCompletion:(void (^)(BOOL success))completion;
 - (void)removeIBL;
+- (void)interactionContainerDidRecenterWithTransform:(simd_float4x4)transformMatrix NS_SWIFT_NAME(interactionContainerDidRecenter(_:));
 @end
 
 NS_ASSUME_NONNULL_END
 
 #endif // defined(TARGET_OS_VISION) && TARGET_OS_VISION
+

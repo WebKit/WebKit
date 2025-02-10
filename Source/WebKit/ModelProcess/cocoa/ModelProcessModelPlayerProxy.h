@@ -135,6 +135,7 @@ public:
     void beginStageModeTransform(const WebCore::TransformationMatrix&) final;
     void updateStageModeTransform(const WebCore::TransformationMatrix&) final;
     void endStageModeInteraction() final;
+    void stageModeInteractionDidUpdateModel();
 
     USING_CAN_MAKE_WEAKPTR(WebCore::REModelLoaderClient);
 
@@ -144,6 +145,7 @@ private:
     void computeTransform();
     void applyEnvironmentMapDataAndRelease();
     void applyStageModeOperationToDriver();
+    bool stageModeInteractionInProgress();
 
     WebCore::ModelPlayerIdentifier m_id;
     Ref<IPC::Connection> m_webProcessConnection;

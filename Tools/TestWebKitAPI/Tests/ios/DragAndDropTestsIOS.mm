@@ -2286,6 +2286,102 @@ TEST(DragAndDropTests, CheckModelDragPreview)
     done = false;
 }
 
+TEST(DragAndDropTests, IgnoreHitTestStageModeModel)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ModelElementEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    // FIXME: Remove this after <rdar://problem/83863149> is fixed.
+    // It should not be necessary to use WKURLSchemeHandler here, but CFNetwork does not correctly identify USDZ files.
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    RetainPtr<NSData> modelData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"cube" withExtension:@"usdz"]];
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"model/vnd.usdz+zip" expectedContentLength:[modelData length] textEncodingName:nil] autorelease];
+        [task didReceiveResponse:response];
+        [task didReceiveData:modelData.get()];
+        [task didFinish];
+    }];
+
+    auto messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"model"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<model stagemode='none'><source src='model://cube.usdz'></model><script>document.querySelector('model').addEventListener('load', event => window.webkit.messageHandlers.modelLoading.postMessage('READY'));</script>"];
+
+    while (![messageHandler didLoadModel])
+        Util::spinRunLoop();
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+
+    // Case 1: Hitting out of the model should fail
+    [simulator hitTestForStageModeAt:CGPointMake(320, 500)];
+
+    while ([simulator awaitingStageModeHitResult])
+        Util::spinRunLoop();
+
+    EXPECT_FALSE([simulator stageModeHitTestValidModel]);
+
+    // Case 2: Hitting a model with stagemode='none' should fail
+    [simulator hitTestForStageModeAt:CGPointMake(50, 50)];
+
+    while ([simulator awaitingStageModeHitResult])
+        Util::spinRunLoop();
+
+    EXPECT_FALSE([simulator stageModeHitTestValidModel]);
+}
+
+TEST(DragAndDropTests, CanHitTestStageModeModel)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ModelElementEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    // FIXME: Remove this after <rdar://problem/83863149> is fixed.
+    // It should not be necessary to use WKURLSchemeHandler here, but CFNetwork does not correctly identify USDZ files.
+    auto handler = adoptNS([TestURLSchemeHandler new]);
+    RetainPtr<NSData> modelData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"cube" withExtension:@"usdz"]];
+    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
+        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"model/vnd.usdz+zip" expectedContentLength:[modelData length] textEncodingName:nil] autorelease];
+        [task didReceiveResponse:response];
+        [task didReceiveData:modelData.get()];
+        [task didFinish];
+    }];
+
+    auto messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
+    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"model"];
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView synchronouslyLoadHTMLString:@"<model stagemode='orbit'><source src='model://cube.usdz'></model><script>document.querySelector('model').addEventListener('load', event => window.webkit.messageHandlers.modelLoading.postMessage('READY'));</script>"];
+
+    while (![messageHandler didLoadModel])
+        Util::spinRunLoop();
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+
+    // Case 1: Hitting out of the model should fail
+    [simulator hitTestForStageModeAt:CGPointMake(320, 500)];
+
+    while ([simulator awaitingStageModeHitResult])
+        Util::spinRunLoop();
+
+    EXPECT_FALSE([simulator stageModeHitTestValidModel]);
+
+    // Case 2: Hitting a model with stagemode='orbit' should succeed
+    [simulator hitTestForStageModeAt:CGPointMake(50, 50)];
+
+    while ([simulator awaitingStageModeHitResult])
+        Util::spinRunLoop();
+
+    EXPECT_TRUE([simulator stageModeHitTestValidModel]);
+}
+
 #endif
 
 } // namespace TestWebKitAPI

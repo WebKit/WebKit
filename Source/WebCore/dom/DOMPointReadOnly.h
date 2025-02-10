@@ -57,6 +57,7 @@ public:
     double w() const { return m_w; }
 
     ExceptionOr<Ref<DOMPoint>> matrixTransform(DOMMatrixInit&&) const;
+    FloatPoint3D floatPoint3D() const { return FloatPoint3D(m_x, m_y, m_z); }
 
 protected:
     DOMPointReadOnly(double x, double y, double z, double w)

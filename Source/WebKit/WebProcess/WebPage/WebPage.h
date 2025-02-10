@@ -186,6 +186,7 @@ class HTMLPlugInElement;
 class HTMLSelectElement;
 class HTMLTextFormControlElement;
 class HTMLVideoElement;
+class HTMLModelElement;
 class HandleUserInputEventResult;
 class HistoryItem;
 class IgnoreSelectionChangeForScope;

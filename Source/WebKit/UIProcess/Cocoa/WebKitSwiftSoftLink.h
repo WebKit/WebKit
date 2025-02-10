@@ -45,3 +45,4 @@ SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionTextItem)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionScrollableItem)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKTextExtractionImageItem)
 SOFT_LINK_CLASS_FOR_HEADER(WebKit, WKSLinearMediaSpatialVideoMetadata)
+

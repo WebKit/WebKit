@@ -56,7 +56,6 @@ Tests/WebKitCocoa/AlwaysRevalidatedURLSchemes.mm
 Tests/WebKitCocoa/AnimatedResize.mm
 Tests/WebKitCocoa/AppPrivacyReport.mm
 Tests/WebKitCocoa/ApplePay.mm
-Tests/WebKitCocoa/AppleVisualEffectTests.mm
 Tests/WebKitCocoa/ApplicationManifest.mm
 Tests/WebKitCocoa/AsyncFunction.mm
 Tests/WebKitCocoa/AsyncPolicyForNavigationResponse.mm

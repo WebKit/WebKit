@@ -26,7 +26,6 @@
 #import "config.h"
 
 #import "PlatformUtilities.h"
-#import "Test.h"
 #import "TestNavigationDelegate.h"
 #import "TestURLSchemeHandler.h"
 #import <WebKit/WKNavigationPrivate.h>
