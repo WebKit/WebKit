@@ -264,28 +264,30 @@ bool CrossOriginAccessControlCheckDisabler::crossOriginAccessControlCheckEnabled
     return m_accessControlCheckEnabled;
 }
 
-Expected<void, String> passesAccessControlCheck(const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
+Expected<void, String> passesAccessControlCheck(const ResourceResponse& response, FetchOptionsCredentials fetchOptionsCredentials, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
-    // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
-    // even with Access-Control-Allow-Credentials set to true.
     const String& accessControlOriginString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowOrigin);
-    bool starAllowed = storedCredentialsPolicy == StoredCredentialsPolicy::DoNotUse;
-    if (!starAllowed)
-        starAllowed = checkDisabler && !checkDisabler->crossOriginAccessControlCheckEnabled();
-    if (accessControlOriginString == "*"_s && starAllowed)
-        return { };
-
-    String securityOriginString = securityOrigin.toString();
-    if (accessControlOriginString != securityOriginString) {
-        if (accessControlOriginString == "*"_s)
+    const String securityOriginString = securityOrigin.toString();
+    if (accessControlOriginString == "*"_s) {
+        if (checkDisabler && !checkDisabler->crossOriginAccessControlCheckEnabled())
+            return { };
+        // A wildcard Access-Control-Allow-Origin can not be used if credentials are to be sent,
+        // even with Access-Control-Allow-Credentials set to true.
+        // https://fetch.spec.whatwg.org/#cors-protocol-and-credentials.
+        if (fetchOptionsCredentials == FetchOptionsCredentials::Include)
             return makeUnexpected("Cannot use wildcard in Access-Control-Allow-Origin when credentials flag is true."_s);
+    } else if (accessControlOriginString != securityOriginString) {
+        // Multiple origins are not allowed in the allow origin header.
+        // https://fetch.spec.whatwg.org/#http-access-control-allow-origin.
         if (accessControlOriginString.find(',') != notFound)
             return makeUnexpected("Access-Control-Allow-Origin cannot contain more than one origin."_s);
+
         return makeUnexpected(makeString("Origin "_s, securityOriginString, " is not allowed by Access-Control-Allow-Origin."_s, " Status code: "_s, response.httpStatusCode()));
     }
 
-    if (storedCredentialsPolicy == StoredCredentialsPolicy::Use) {
+    if (fetchOptionsCredentials == FetchOptionsCredentials::Include) {
         const String& accessControlCredentialsString = response.httpHeaderField(HTTPHeaderName::AccessControlAllowCredentials);
+        // https://fetch.spec.whatwg.org/#http-access-control-allow-credentials.
         if (accessControlCredentialsString != "true"_s)
             return makeUnexpected("Credentials flag is true, but Access-Control-Allow-Credentials is not \"true\"."_s);
     }
@@ -293,12 +295,12 @@ Expected<void, String> passesAccessControlCheck(const ResourceResponse& response
     return { };
 }
 
-Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
+Expected<void, String> validatePreflightResponse(PAL::SessionID sessionID, const ResourceRequest& request, const ResourceResponse& response, FetchOptionsCredentials fetchOptionsCredentials, StoredCredentialsPolicy storedCredentialsPolicy, const SecurityOrigin& topOrigin, const SecurityOrigin& securityOrigin, const CrossOriginAccessControlCheckDisabler* checkDisabler)
 {
     if (!response.isSuccessful())
         return makeUnexpected(makeString("Preflight response is not successful. Status code: "_s, response.httpStatusCode()));
 
-    auto accessControlCheckResult = passesAccessControlCheck(response, storedCredentialsPolicy, securityOrigin, checkDisabler);
+    auto accessControlCheckResult = passesAccessControlCheck(response, fetchOptionsCredentials, securityOrigin, checkDisabler);
     if (!accessControlCheckResult)
         return accessControlCheckResult;
 

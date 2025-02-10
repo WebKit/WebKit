@@ -47,7 +47,8 @@ function runTest(url, expectSyncSuccess, expectAsyncSuccess)
 var tests = [
     ["/resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", true, true],
     ["http://localhost:8000/resources/redirect.py?url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false],
-    ["http://localhost:8000/resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false]
+    ["http://localhost:8000/resources/redirect.py?url=http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow.cgi", false, false],
+    ["resources/redirect-cors.py?access-control-allow-origin=*&url=http://localhost:8000/xmlhttprequest/resources/redirect-cors.py?access-control-allow-origin=*%26url=http://127.0.0.1:8000/xmlhttprequest/resources/access-control-basic-allow-star.cgi", true, true]
 ]
 
 var currentTest = 0;

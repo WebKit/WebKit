@@ -61,6 +61,7 @@ public:
         String userAgent;
         PAL::SessionID sessionID;
         Markable<WebPageProxyIdentifier> webPageProxyID;
+        WebCore::FetchOptionsCredentials fetchOptionsCredentials;
         WebCore::StoredCredentialsPolicy storedCredentialsPolicy;
         bool allowPrivacyProxy { true };
         OptionSet<WebCore::AdvancedPrivacyProtections> advancedPrivacyProtections;
