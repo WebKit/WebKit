@@ -50,7 +50,8 @@ class BitmapTexturePool {
 public:
     BitmapTexturePool();
 
-    Ref<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>);
+    enum class Mode : bool { ExactSize, BigEnoughSize };
+    Ref<BitmapTexture> acquireTexture(const IntSize&, OptionSet<BitmapTexture::Flags>, Mode = Mode::ExactSize);
     void releaseUnusedTexturesTimerFired();
 
 private:

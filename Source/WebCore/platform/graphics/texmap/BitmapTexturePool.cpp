@@ -49,14 +49,23 @@ BitmapTexturePool::BitmapTexturePool()
 {
 }
 
-Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, OptionSet<BitmapTexture::Flags> flags)
+Ref<BitmapTexture> BitmapTexturePool::acquireTexture(const IntSize& size, OptionSet<BitmapTexture::Flags> flags, Mode mode)
 {
-    Entry* selectedEntry = std::find_if(m_textures.begin(), m_textures.end(),
-        [&](Entry& entry) {
-            return entry.m_texture->refCount() == 1
-                && entry.m_texture->size() == size
-                && entry.m_texture->flags().contains(BitmapTexture::Flags::DepthBuffer) == flags.contains(BitmapTexture::Flags::DepthBuffer);
-        });
+    Entry* selectedEntry = std::find_if(m_textures.begin(), m_textures.end(), [&](Entry& entry) {
+        if (entry.m_texture->refCount() != 1)
+            return false;
+
+        if (entry.m_texture->flags().contains(BitmapTexture::Flags::DepthBuffer) != flags.contains(BitmapTexture::Flags::DepthBuffer))
+            return false;
+
+        if (entry.m_texture->size() == size)
+            return true;
+
+        if (mode == Mode::BigEnoughSize && entry.m_texture->size().width() >= size.width() && entry.m_texture->size().height() >= size.height())
+            return true;
+
+        return false;
+    });
 
     if (selectedEntry == m_textures.end()) {
         m_textures.append(Entry(BitmapTexture::create(size, flags)));

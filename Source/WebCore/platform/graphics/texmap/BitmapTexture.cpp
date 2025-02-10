@@ -143,8 +143,13 @@ void BitmapTexture::reset(const IntSize& size, OptionSet<Flags> flags)
 
     if (m_size != size) {
         m_size = size;
+        GLint boundTexture = 0;
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &boundTexture);
+
         glBindTexture(GL_TEXTURE_2D, m_id);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.width(), m_size.height(), 0, textureFormat, s_pixelDataType, nullptr);
+
+        glBindTexture(GL_TEXTURE_2D, boundTexture);
     }
 }
 
