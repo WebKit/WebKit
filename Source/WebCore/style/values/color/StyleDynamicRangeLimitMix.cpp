@@ -49,11 +49,11 @@ void addWeightedLimitTo(DynamicRangeLimitMixFunction& addingTo, const DynamicRan
             addingTo->high.value                += mixPercentage.value; /* implicit multiplication by (100 / 100) elided */
         },
         [&](const DynamicRangeLimitMixFunction& innerMix) {
-            if (!Style::isZero(innerMix->standard))
+            if (!isZero(innerMix->standard))
                 addingTo->standard.value        += mixPercentage.value * (innerMix->standard.value        / 100.0);
-            if (!Style::isZero(innerMix->constrainedHigh))
+            if (!isZero(innerMix->constrainedHigh))
                 addingTo->constrainedHigh.value += mixPercentage.value * (innerMix->constrainedHigh.value / 100.0);
-            if (!Style::isZero(innerMix->high))
+            if (!isZero(innerMix->high))
                 addingTo->high.value            += mixPercentage.value * (innerMix->high.value            / 100.0);
         }
     );
@@ -65,11 +65,11 @@ auto ToCSS<DynamicRangeLimitMixFunction>::operator()(const DynamicRangeLimitMixF
 {
     CSS::DynamicRangeLimitMixFunction result;
 
-    if (!Style::isZero(mix.parameters.standard))
+    if (!isZero(mix.parameters.standard))
         result->parameters.value.append({ { CSS::Keyword::Standard { } },        toCSS(mix.parameters.standard, style) });
-    if (!Style::isZero(mix.parameters.constrainedHigh))
+    if (!isZero(mix.parameters.constrainedHigh))
         result->parameters.value.append({ { CSS::Keyword::ConstrainedHigh { } }, toCSS(mix.parameters.constrainedHigh, style) });
-    if (!Style::isZero(mix.parameters.high))
+    if (!isZero(mix.parameters.high))
         result->parameters.value.append({ { CSS::Keyword::High { } },            toCSS(mix.parameters.high, style) });
 
     return result;
@@ -132,17 +132,17 @@ auto ToStyle<CSS::DynamicRangeLimitMixFunction>::operator()(const CSS::DynamicRa
 TextStream& operator<<(TextStream& ts, const DynamicRangeLimitMixParameters& mix)
 {
     bool needsComma = false;
-    if (!Style::isZero(mix.standard)) {
+    if (!isZero(mix.standard)) {
         ts << "standard " << mix.standard;
         needsComma = true;
     }
-    if (!Style::isZero(mix.constrainedHigh)) {
+    if (!isZero(mix.constrainedHigh)) {
         if (needsComma)
             ts << ", ";
         ts << "constrained-high " << mix.constrainedHigh;
         needsComma = true;
     }
-    if (!Style::isZero(mix.high)) {
+    if (!isZero(mix.high)) {
         if (needsComma)
             ts << ", ";
         ts << "high " << mix.high;

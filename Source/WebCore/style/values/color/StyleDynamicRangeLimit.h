@@ -28,7 +28,7 @@
 #include "StyleDynamicRangeLimitMix.h"
 #include "StyleValueTypes.h"
 #include <wtf/CompactVariant.h>
-#include <wtf/UniqueRef.h>
+#include <wtf/Indirect.h>
 
 namespace WebCore {
 
@@ -44,12 +44,6 @@ struct DynamicRangeLimit {
     DynamicRangeLimit(CSS::Keyword::High);
     DynamicRangeLimit(DynamicRangeLimitMixFunction&&);
 
-    DynamicRangeLimit(DynamicRangeLimit&&) = default;
-    DynamicRangeLimit& operator=(DynamicRangeLimit&&) = default;
-
-    DynamicRangeLimit(const DynamicRangeLimit&);
-    DynamicRangeLimit& operator=(const DynamicRangeLimit&);
-
     template<typename... F> decltype(auto) switchOn(F&&...) const;
 
     bool operator==(const DynamicRangeLimit&) const = default;
@@ -59,10 +53,8 @@ private:
        CSS::Keyword::Standard,
        CSS::Keyword::ConstrainedHigh,
        CSS::Keyword::High,
-       UniqueRef<DynamicRangeLimitMixFunction>
+       indirect<DynamicRangeLimitMixFunction>
     >;
-
-    static Kind copyKind(const Kind&);
 
     Kind value;
 };
@@ -83,21 +75,8 @@ inline DynamicRangeLimit::DynamicRangeLimit(CSS::Keyword::High keyword)
 }
 
 inline DynamicRangeLimit::DynamicRangeLimit(DynamicRangeLimitMixFunction&& mix)
-    : value { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(WTFMove(mix)) }
+    : value { indirect(WTFMove(mix)) }
 {
-}
-
-inline DynamicRangeLimit::DynamicRangeLimit(const DynamicRangeLimit& other)
-    : value { copyKind(other.value) }
-{
-}
-
-inline DynamicRangeLimit& DynamicRangeLimit::operator=(const DynamicRangeLimit& other)
-{
-    if (this == &other)
-        return *this;
-    value = copyKind(other.value);
-    return *this;
 }
 
 template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(F&&... f) const
@@ -109,20 +88,8 @@ template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(F&&... f) con
         [&]<CSSValueID Id>(const Constant<Id>& keyword) -> ResultType {
             return visitor(keyword);
         },
-        [&](const UniqueRef<DynamicRangeLimitMixFunction>& mix) -> ResultType {
-            return visitor(mix.get());
-        }
-    );
-}
-
-inline DynamicRangeLimit::Kind DynamicRangeLimit::copyKind(const Kind& other)
-{
-    return WTF::switchOn(other,
-        []<CSSValueID Id>(const Constant<Id>& keyword) {
-            return Kind { keyword };
-        },
-        [](const UniqueRef<DynamicRangeLimitMixFunction>& mix) {
-            return Kind { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(*mix) };
+        [&](const indirect<DynamicRangeLimitMixFunction>& mix) -> ResultType {
+            return visitor(*mix);
         }
     );
 }

@@ -50,7 +50,7 @@ DynamicRangeLimit::DynamicRangeLimit(CSS::Keyword::High keyword)
 }
 
 DynamicRangeLimit::DynamicRangeLimit(DynamicRangeLimitMixFunction&& mix)
-    : value { WTF::makeUniqueRef<DynamicRangeLimitMixFunction>(WTFMove(mix)) }
+    : value { indirect(WTFMove(mix)) }
 {
 }
 

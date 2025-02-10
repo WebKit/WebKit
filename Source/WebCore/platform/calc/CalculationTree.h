@@ -29,6 +29,7 @@
 #include <optional>
 #include <tuple>
 #include <variant>
+#include <wtf/Indirect.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -121,19 +122,7 @@ struct None {
     constexpr bool operator==(const None&) const = default;
 };
 
-template<typename Op> struct IndirectNode {
-    UniqueRef<Op> op;
-
-    // Forward * and -> to the operation for convenience.
-    const Op& operator*() const { return *op; }
-    Op& operator*() { return *op; }
-    const Op* operator->() const { return op.ptr(); }
-    Op* operator->() { return op.ptr(); }
-    operator const Op&() const { return *op; }
-    operator Op&() { return *op; }
-
-    bool operator==(const IndirectNode<Op>& other) const { return op.get() == other.op.get(); }
-};
+template<typename Op> using IndirectNode = indirect<Op>;
 
 using Node = std::variant<
     Number,
@@ -547,7 +536,7 @@ static_assert(sizeof(Child) <= 16, "Child should stay small");
 
 // Default implementation of ChildConstruction used for all indirect nodes.
 template<typename Op> struct ChildConstruction {
-    static Child make(Op&& op) { return Child { IndirectNode<Op> { makeUniqueRef<Op>(WTFMove(op)) } }; }
+    static Child make(Op&& op) { return Child { IndirectNode<Op> { WTFMove(op) } }; }
 };
 
 // Specialized implementation of ChildConstruction for Number, needed to avoid `makeUniqueRef`.

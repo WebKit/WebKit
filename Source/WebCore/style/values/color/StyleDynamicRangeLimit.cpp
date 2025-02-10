@@ -38,7 +38,7 @@ namespace Style {
 using namespace CSS::Literals;
 
 // Resolves a `dynamic-range-limit-mix` function value for the `dynamic-range-limit` property.
-static DynamicRangeLimit resolve(DynamicRangeLimitMixFunction&& mix)
+static DynamicRangeLimit resolveLimit(DynamicRangeLimitMixFunction&& mix)
 {
     // https://drafts.csswg.org/css-color-hdr/#computing-dynamic-range-limit
 
@@ -54,27 +54,23 @@ static DynamicRangeLimit resolve(DynamicRangeLimitMixFunction&& mix)
     return DynamicRangeLimit(WTFMove(mix));
 }
 
+// Resolves a supported keyword values for the `dynamic-range-limit` property.
+template<CSSValueID Id>
+static DynamicRangeLimit resolveLimit(Constant<Id> keyword)
+{
+    return DynamicRangeLimit(keyword);
+}
+
 // MARK: - Conversion
 
 auto ToCSS<DynamicRangeLimit>::operator()(const DynamicRangeLimit& limit, const RenderStyle& style) -> CSS::DynamicRangeLimit
 {
-    return WTF::switchOn(limit,
-        [&](const auto& value) -> CSS::DynamicRangeLimit {
-            return CSS::DynamicRangeLimit(toCSS(value, style));
-        }
-    );
+    return WTF::switchOn(limit, [&](const auto& value) -> CSS::DynamicRangeLimit { return toCSS(value, style); });
 }
 
 auto ToStyle<CSS::DynamicRangeLimit>::operator()(const CSS::DynamicRangeLimit& limit, const BuilderState& state) -> DynamicRangeLimit
 {
-    return WTF::switchOn(limit,
-        [&]<CSSValueID Id>(const Constant<Id>& keyword) -> DynamicRangeLimit {
-            return DynamicRangeLimit(keyword);
-        },
-        [&](const CSS::DynamicRangeLimitMixFunction& mix) -> DynamicRangeLimit {
-            return resolve(toStyle(mix, state));
-        }
-    );
+    return WTF::switchOn(limit, [&](const auto& value) -> DynamicRangeLimit { return resolveLimit(toStyle(value, state)); });
 }
 
 // MARK: - Blending
@@ -97,7 +93,7 @@ auto Blending<DynamicRangeLimit>::blend(const DynamicRangeLimit& from, const Dyn
     addWeightedLimitTo(function, from, fromMixPercentage);
     addWeightedLimitTo(function, to, toMixPercentage);
 
-    return resolve(WTFMove(function));
+    return resolveLimit(WTFMove(function));
 }
 
 // MARK: - Logging

@@ -223,6 +223,7 @@
 		BC05ACA62CEA70E500750CB1 /* VariantListOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = BC05ACA52CEA70E500750CB1 /* VariantListOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC2C0C212D2C54A900FCFBA0 /* FlatteningVariantAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2C0C202D2C54A900FCFBA0 /* FlatteningVariantAdaptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5267672C2726D600E422DD /* MakeString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5267662C2726D600E422DD /* MakeString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C64CB2D5947CD002B8E80 /* Indirect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C64CA2D5946A9002B8E80 /* Indirect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE0DFA72D1865B9003F0349 /* CompactVariant.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0DFA62D1865B9003F0349 /* CompactVariant.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE0DFA92D1865C4003F0349 /* CompactVariantOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0DFA82D1865C4003F0349 /* CompactVariantOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCE0DFAB2D18670B003F0349 /* VariantExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE0DFAA2D18670B003F0349 /* VariantExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1583,6 +1584,7 @@
 		BC05ACA52CEA70E500750CB1 /* VariantListOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VariantListOperations.h; sourceTree = "<group>"; };
 		BC2C0C202D2C54A900FCFBA0 /* FlatteningVariantAdaptor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FlatteningVariantAdaptor.h; sourceTree = "<group>"; };
 		BC5267662C2726D600E422DD /* MakeString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MakeString.h; sourceTree = "<group>"; };
+		BC9C64CA2D5946A9002B8E80 /* Indirect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Indirect.h; sourceTree = "<group>"; };
 		BCE0DFA62D1865B9003F0349 /* CompactVariant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompactVariant.h; sourceTree = "<group>"; };
 		BCE0DFA82D1865C4003F0349 /* CompactVariantOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CompactVariantOperations.h; sourceTree = "<group>"; };
 		BCE0DFAA2D18670B003F0349 /* VariantExtras.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VariantExtras.h; sourceTree = "<group>"; };
@@ -2315,6 +2317,7 @@
 				5B43383A5D0B463C9433D933 /* IndexMap.h */,
 				3137E1D7DBD84AC38FAE4D34 /* IndexSet.h */,
 				2684D4351C000D400081D663 /* IndexSparseSet.h */,
+				BC9C64CA2D5946A9002B8E80 /* Indirect.h */,
 				A8A472BC151A825A004123FF /* InlineASM.h */,
 				A70DA0821799F04D00529A9B /* Insertion.h */,
 				5182C22C1F2BC7E60059BA7C /* InstanceCounted.h */,
@@ -3420,6 +3423,7 @@
 				DD3DC94327A4BF8E007E5B61 /* IndexMap.h in Headers */,
 				DD3DC93F27A4BF8E007E5B61 /* IndexSet.h in Headers */,
 				DD3DC96627A4BF8E007E5B61 /* IndexSparseSet.h in Headers */,
+				BC9C64CB2D5947CD002B8E80 /* Indirect.h in Headers */,
 				DD3DC97227A4BF8E007E5B61 /* InlineASM.h in Headers */,
 				DD3DC91327A4BF8E007E5B61 /* Insertion.h in Headers */,
 				DD3DC98B27A4BF8E007E5B61 /* InstanceCounted.h in Headers */,

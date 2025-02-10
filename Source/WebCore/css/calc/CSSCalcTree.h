@@ -30,6 +30,7 @@
 #include "CSSUnits.h"
 #include "CSSValueKeywords.h"
 #include <variant>
+#include <wtf/Indirect.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -163,17 +164,15 @@ struct Symbol {
 
 template<typename Op> struct IndirectNode {
     Type type;
-    UniqueRef<Op> op;
+    indirect<Op> op;
 
     // Forward * and -> to the operation for convenience.
     const Op& operator*() const { return *op; }
     Op& operator*() { return *op; }
-    const Op* operator->() const { return op.ptr(); }
-    Op* operator->() { return op.ptr(); }
-    operator const Op&() const { return *op; }
-    operator Op&() { return *op; }
+    const Op* operator->() const { return op.operator->(); }
+    Op* operator->() { return op.operator->(); }
 
-    bool operator==(const IndirectNode<Op>& other) const { return type == other.type && op.get() == other.op.get(); }
+    bool operator==(const IndirectNode<Op>& other) const { return type == other.type && op == other.op; }
 };
 
 using Node = std::variant<
@@ -870,34 +869,34 @@ TextStream& operator<<(TextStream&, Tree);
 
 // Default implementation of ChildConstruction used for all indirect nodes.
 template<typename Op> struct ChildConstruction {
-    static Child make(Op&& op, Type type) { return Child { IndirectNode<Op> { type, makeUniqueRef<Op>(WTFMove(op)) } }; }
+    static Child make(Op&& op, Type type) { return Child { IndirectNode<Op> { type, indirect(WTFMove(op)) } }; }
 };
 
-// Specialized implementation of ChildConstruction for Number, needed to avoid `makeUniqueRef`.
+// Specialized implementation of ChildConstruction for Number.
 template<> struct ChildConstruction<Number> {
     static Child make(Number&& op, Type) { return Child { WTFMove(op) }; }
     static Child make(Number&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for Percentage, needed to avoid `makeUniqueRef`.
+// Specialized implementation of ChildConstruction for Percentage.
 template<> struct ChildConstruction<Percentage> {
     static Child make(Percentage&& op, Type) { return Child { WTFMove(op) }; }
     static Child make(Percentage&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for CanonicalDimension, needed to avoid `makeUniqueRef`.
+// Specialized implementation of ChildConstruction for CanonicalDimension.
 template<> struct ChildConstruction<CanonicalDimension> {
     static Child make(CanonicalDimension&& op, Type) { return Child { WTFMove(op) }; }
     static Child make(CanonicalDimension&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for NonCanonicalDimension, needed to avoid `makeUniqueRef`.
+// Specialized implementation of ChildConstruction for NonCanonicalDimension.
 template<> struct ChildConstruction<NonCanonicalDimension> {
     static Child make(NonCanonicalDimension&& op, Type) { return Child { WTFMove(op) }; }
     static Child make(NonCanonicalDimension&& op) { return Child { WTFMove(op) }; }
 };
 
-// Specialized implementation of ChildConstruction for Symbol, needed to avoid `makeUniqueRef`.
+// Specialized implementation of ChildConstruction for Symbol.
 template<> struct ChildConstruction<Symbol> {
     static Child make(Symbol&& op, Type) { return Child { WTFMove(op) }; }
     static Child make(Symbol&& op) { return Child { WTFMove(op) }; }

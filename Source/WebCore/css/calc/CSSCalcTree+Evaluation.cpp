@@ -225,7 +225,7 @@ std::optional<double> evaluate(const IndirectNode<MediaProgress>& root, const Ev
         return { };
 
     Ref document = options.conversionData->styleBuilderState()->document();
-    auto value = evaluateMediaProgress(root, document, *options.conversionData);
+    auto value = evaluateMediaProgress(*root, document, *options.conversionData);
     return Calculation::executeOperation<ToCalculationTreeOp<Progress>>(value, *start, *end);
 }
 
@@ -243,7 +243,7 @@ std::optional<double> evaluate(const IndirectNode<ContainerProgress>& root, cons
         return { };
 
     Ref element = *options.conversionData->styleBuilderState()->element();
-    auto value = evaluateContainerProgress(root, element, *options.conversionData);
+    auto value = evaluateContainerProgress(*root, element, *options.conversionData);
     if (!value)
         return { };
 

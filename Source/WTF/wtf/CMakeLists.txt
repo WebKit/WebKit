@@ -126,6 +126,7 @@ set(WTF_PUBLIC_HEADERS
     IndexSet.h
     IndexSparseSet.h
     IndexedContainerIterator.h
+    Indirect.h
     InlineASM.h
     Insertion.h
     InstanceCounted.h

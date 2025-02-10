@@ -27,6 +27,7 @@
 
 #include "CSSValueTypes.h"
 #include <wtf/CompactVariant.h>
+#include <wtf/Indirect.h>
 
 namespace WebCore {
 namespace CSS {
@@ -44,7 +45,7 @@ struct DynamicRangeLimit {
     DynamicRangeLimit(DynamicRangeLimit&&);
     DynamicRangeLimit& operator=(DynamicRangeLimit&&);
 
-    // Delete to avoid unnecessary unnecessary allocations on accidental copy.
+    // Deleted to avoid unnecessary unnecessary allocations on accidental copy.
     DynamicRangeLimit(const DynamicRangeLimit&) = delete;
     DynamicRangeLimit& operator=(const DynamicRangeLimit&) = delete;
 
@@ -59,7 +60,7 @@ private:
        CSS::Keyword::Standard,
        CSS::Keyword::ConstrainedHigh,
        CSS::Keyword::High,
-       UniqueRef<DynamicRangeLimitMixFunction>
+       indirect<DynamicRangeLimitMixFunction>
     >;
 
     Kind value;
@@ -74,8 +75,8 @@ template<typename... F> decltype(auto) DynamicRangeLimit::switchOn(F&&... f) con
         [&]<CSSValueID Id>(const Constant<Id>& keyword) -> ResultType {
             return visitor(keyword);
         },
-        [&](const UniqueRef<DynamicRangeLimitMixFunction>& mix) -> ResultType {
-            return visitor(mix.get());
+        [&](const indirect<DynamicRangeLimitMixFunction>& mix) -> ResultType {
+            return visitor(*mix);
         }
     );
 }
