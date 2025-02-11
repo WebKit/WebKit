@@ -550,6 +550,8 @@ public:
     void setResourceMonitorRuleLists(RefPtr<WebCompiledContentRuleList>, CompletionHandler<void()>&&);
 #endif
 
+    static Vector<Ref<WebPageProxy>> globalPages();
+
 private:
     Type type() const final { return Type::WebContent; }
 
@@ -583,7 +585,6 @@ private:
     static WebProcessProxyMap& allProcessMap();
     static Vector<Ref<WebProcessProxy>> allProcesses();
     static WebPageProxyMap& globalPageMap();
-    static Vector<Ref<WebPageProxy>> globalPages();
 
     void initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy&);
 

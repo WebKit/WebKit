@@ -344,6 +344,8 @@ void NetworkProcess::initializeNetworkProcess(NetworkProcessCreationParameters&&
 
     updateStorageAccessPromptQuirks(WTFMove(parameters.storageAccessPromptQuirksData));
 
+    m_resourceLoadWebPages = WTFMove(parameters.resourceLoadWebPages);
+
     RELEASE_LOG(Process, "%p - NetworkProcess::initializeNetworkProcess: Presenting processPID=%d", this, legacyPresentingApplicationPID());
 }
 
@@ -3048,6 +3050,14 @@ void NetworkProcess::removeWebPageNetworkParameters(PAL::SessionID sessionID, We
         resourceLoadStatistics->clearFrameLoadRecordsForStorageAccess(pageID);
 
     m_pagesWithRelaxedThirdPartyCookieBlocking.remove(pageID);
+}
+
+void NetworkProcess::enableResourceLoadForWebPage(WebPageProxyIdentifier pageID, bool enabled)
+{
+    if (enabled)
+        m_resourceLoadWebPages.add(pageID);
+    else
+        m_resourceLoadWebPages.remove(pageID);
 }
 
 void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, CompletionHandler<void(size_t)>&& completionHandler)

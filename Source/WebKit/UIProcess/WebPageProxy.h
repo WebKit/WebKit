@@ -3310,7 +3310,6 @@ private:
     bool hasValidOpeningAppLinkActivity() const;
 #endif
 
-
 #if ENABLE(CONTENT_EXTENSIONS)
     void shouldOffloadIFrameForHost(const String& host, CompletionHandler<void(bool)>&&) const;
 #endif

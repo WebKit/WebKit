@@ -548,6 +548,11 @@ void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadPara
 
     CONNECTION_RELEASE_LOG(Loading, "scheduleResourceLoad: (parentPID=%d, pageProxyID=%" PRIu64 ", webPageID=%" PRIu64 ", frameID=%" PRIu64 ", resourceID=%" PRIu64 ", existingLoaderToResume=%" PRIu64 ")", loadParameters.parentPID, loadParameters.webPageProxyID ? loadParameters.webPageProxyID->toUInt64() : 0, loadParameters.webPageID ? loadParameters.webPageID->toUInt64() : 0, loadParameters.webFrameID ? loadParameters.webFrameID->object().toUInt64() : 0, loadParameters.identifier ? loadParameters.identifier->toUInt64() : 0, existingLoaderToResume ? existingLoaderToResume->toUInt64() : 0);
 
+    if (auto pageID = loadParameters.webPageProxyID) {
+        if (!protectedNetworkProcess()->resourceLoadEnabledForWebPage(*pageID))
+            return;
+    }
+
     if (auto* session = networkSession()) {
         if (Ref server = session->ensureSWServer(); !server->isImportCompleted()) {
             server->whenImportIsCompleted([this, protectedThis = Ref { *this }, loadParameters = WTFMove(loadParameters), existingLoaderToResume]() mutable {

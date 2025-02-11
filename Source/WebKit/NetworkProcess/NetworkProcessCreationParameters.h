@@ -28,6 +28,7 @@
 #include "AuxiliaryProcessCreationParameters.h"
 #include "CacheModel.h"
 #include "SandboxExtension.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/Cookie.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RegistrableDomain.h>
@@ -82,6 +83,7 @@ struct NetworkProcessCreationParameters {
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
+    HashSet<WebPageProxyIdentifier> resourceLoadWebPages;
 };
 
 } // namespace WebKit

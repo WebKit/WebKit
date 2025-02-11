@@ -224,6 +224,11 @@ void NetworkProcessProxy::sendCreationParametersToNewProcess()
     parameters.storageAccessPromptQuirksData = StorageAccessPromptQuirkController::sharedSingleton().cachedListData();
 #endif
 
+    for (auto& page : WebProcessProxy::globalPages()) {
+        if (!page->isClosed())
+            parameters.resourceLoadWebPages.add(page->identifier());
+    }
+
     WebProcessPool::platformInitializeNetworkProcess(parameters);
     sendWithAsyncReply(Messages::NetworkProcess::InitializeNetworkProcess(WTFMove(parameters)), [weakThis = WeakPtr { *this }, initializationActivityAndGrant = initializationActivityAndGrant()] {
         if (RefPtr protectedThis = weakThis.get())

@@ -61,6 +61,7 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
     Vector<std::pair<WebCore::ProcessIdentifier, WebCore::RegistrableDomain>> allowedFirstPartiesForCookies;
     HashSet<String> localhostAliasesForTesting;
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
+    HashSet<WebKit::WebPageProxyIdentifier> resourceLoadWebPages;
 }
 
 enum class WebKit::LoadedWebArchive : bool

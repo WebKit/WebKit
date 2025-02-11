@@ -1672,6 +1672,7 @@ void WebPageProxy::initializeWebPage(const Site& site, WebCore::SandboxFlags eff
             networkProcess->send(Messages::NetworkProcess::CloneSessionStorageForWebPage(sessionID(), m_pageToCloneSessionStorageFrom->identifier(), identifier()), 0);
         if (m_configuration->shouldRelaxThirdPartyCookieBlocking() == ShouldRelaxThirdPartyCookieBlocking::Yes)
             networkProcess->send(Messages::NetworkProcess::SetShouldRelaxThirdPartyCookieBlockingForPage(identifier()), 0);
+        networkProcess->send(Messages::NetworkProcess::EnableResourceLoadForWebPage(identifier(), true), 0);
     }
     m_pageToCloneSessionStorageFrom = nullptr;
 
@@ -1785,6 +1786,9 @@ void WebPageProxy::close()
         process->send(Messages::WebPage::Close(), destinationID);
     });
     process->removeWebPage(*this, WebProcessProxy::EndsUsingDataStore::Yes);
+    if (RefPtr networkProcess = websiteDataStore().networkProcessIfExists())
+        networkProcess->send(Messages::NetworkProcess::EnableResourceLoadForWebPage(identifier(), false), 0);
+
     removeAllMessageReceivers();
     processPool->protectedSupplement<WebNotificationManagerProxy>()->clearNotifications(this);
 

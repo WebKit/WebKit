@@ -228,6 +228,7 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
 
     AddWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID, WebKit::WebPageNetworkParameters parameters)
     RemoveWebPageNetworkParameters(PAL::SessionID sessionID, WebKit::WebPageProxyIdentifier pageID)
+    EnableResourceLoadForWebPage(WebKit::WebPageProxyIdentifier pageID, bool enabled)
     CountNonDefaultSessionSets(PAL::SessionID sessionID) -> (size_t count)
 
     AllowFileAccessFromWebProcess(WebCore::ProcessIdentifier processIdentifier, String url) -> ()

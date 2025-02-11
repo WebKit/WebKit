@@ -467,6 +467,8 @@ public:
 
     WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlockingForPage(std::optional<WebPageProxyIdentifier>) const;
 
+    bool resourceLoadEnabledForWebPage(WebPageProxyIdentifier pageID) const { return m_resourceLoadWebPages.contains(pageID); }
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 
@@ -534,6 +536,7 @@ private:
 
     void addWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier, WebPageNetworkParameters&&);
     void removeWebPageNetworkParameters(PAL::SessionID, WebPageProxyIdentifier);
+    void enableResourceLoadForWebPage(WebPageProxyIdentifier, bool enabled);
     void countNonDefaultSessionSets(PAL::SessionID, CompletionHandler<void(size_t)>&&);
 
 #if HAVE(NW_PROXY_CONFIG)
@@ -620,6 +623,7 @@ private:
     Seconds m_serviceWorkerFetchTimeout { defaultServiceWorkerFetchTimeout };
 
     HashMap<WebCore::PageIdentifier, Vector<WebCore::UserContentURLPattern>> m_extensionCORSDisablingPatterns;
+    HashSet<WebPageProxyIdentifier> m_resourceLoadWebPages;
     HashSet<RefPtr<NetworkStorageManager>> m_closingStorageManagers;
     HashSet<String> m_localhostAliasesForTesting;
     HashSet<WebPageProxyIdentifier> m_pagesWithRelaxedThirdPartyCookieBlocking;
