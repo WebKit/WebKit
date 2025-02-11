@@ -457,6 +457,11 @@ FloatRect RenderListMarker::relativeMarkerRect()
         relativeRect.setX(width() - relativeRect.x() - relativeRect.width());
     }
 
+    RenderBox& parentBox = parent()->enclosingBox();
+    if (parentBox.style().position() == PositionType::Relative)
+        relativeRect.moveBy(FloatPoint(parentBox.style().left().value(), 0.0));
+
+
     return relativeRect;
 }
 
