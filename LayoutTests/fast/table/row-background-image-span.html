@@ -1,0 +1,92 @@
+<html>
+<head>
+<meta name="fuzzy" content="maxDifference=0-67; totalPixels=0-15000" />
+<title>Row background image span</title>
+<style>* { box-sizing: border-box }
+caption { caption-side: bottom; font-family: sans-serif; font-size: smaller; text-align: left; margin-top: 16px }</style>
+</head>
+<body>
+    <p>A repeating background image applied to a table row should cover the whole area of contained cells, even if those cells span multiple rows, since this is how background colors behave. Also, rounded borders apply to cells, and row backgrounds are restricted to cell contents. If a cell spans multiple rows or columns, rounding should apply at the relevant <em>cell</em> corners.</p>
+
+<div style="display: flex; flex-wrap: wrap; align-items: start; gap: 10px">
+    <table style="width: 120px; border-spacing: 0; margin-bottom: 1em">
+        <caption>1. Row background color</caption>
+        <tr style="background-color: black">
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+            <td style="width: 60px; height: 120px" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+        </tr>
+    </table>
+
+    <table style="width: 120px; border-spacing: 0; margin-bottom: 1em">
+        <caption>2. Row repeating solid gradient (should equal #1)</caption>
+        <tr style="background: repeat top/100% 100% linear-gradient(to bottom, black 0, black 100%)">
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+            <td style="width: 60px; height: 120px" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+        </tr>
+    </table>
+
+    <table style="width: 120px; border-spacing: 0; margin-bottom: 1em">
+        <caption>3. Row repeating gradient</caption>
+        <tr style="background: repeat top/30px 30px linear-gradient(to bottom, royalblue 0, black 100%)">
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+            <td style="width: 60px; height: 120px" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+        </tr>
+    </table>
+
+    <table style="width: 120px; border-spacing: 0; margin-bottom: 1em">
+        <caption>4. Row non-repeating gradient should not span to second row</caption>
+        <tr style="background: no-repeat top/100% 100% linear-gradient(to bottom, black 0, black 100%)">
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+            <td style="width: 60px; height: 120px" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua"></td>
+        </tr>
+    </table>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; align-items: start; gap: 10px">
+    <table style="width: 120px; border-spacing: 0; margin-bottom: 1em">
+        <caption>5. Row background color with rounded corners</caption>
+        <tr style="background-color: black">
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua; border-radius: 10px"></td>
+            <td style="width: 60px; height: 120px; border-radius: 10px" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua; border-radius: 10px"></td>
+        </tr>
+    </table>
+
+    <table style="width: 120px; border-spacing: 0; margin-bottom: 1em">
+        <caption>6. Repeating solid gradient with rounded corners (should equal #5)</caption>
+        <tr style="background: repeat center/100% 100% linear-gradient(to bottom, black 0, black 100%)">
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua; border-radius: 10px"></td>
+            <td style="width: 60px; height: 120px; border-radius: 10px" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua; border-radius: 10px"></td>
+        </tr>
+    </table>
+
+    <table style="width: 120px; border-spacing: 0; margin-bottom: 1em">
+        <caption>7. Non-repeating solid gradient with rounded corners</caption>
+        <tr style="background: no-repeat center/100% 100% linear-gradient(to bottom, black 0, black 100%)">
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua; border-radius: 10px"></td>
+            <td style="width: 60px; height: 120px; border-radius: 10px" rowspan="2"></td>
+        </tr>
+        <tr>
+            <td style="width: 60px; height: 60px; border: 5px dashed aqua; border-radius: 10px"></td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

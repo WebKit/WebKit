@@ -308,14 +308,14 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
     BackgroundPainter backgroundPainter { renderer(), m_paintInfo };
 
     if (!hasFillImageOrBorderRadious || !m_inlineBox.isSplit() || m_isRootInlineBox) {
-        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, { }, op);
+        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, op);
         return;
     }
 
     if (renderer().style().boxDecorationBreak() == BoxDecorationBreak::Clone) {
         GraphicsContextStateSaver stateSaver(m_paintInfo.context());
         m_paintInfo.context().clip({ rect.location(), m_inlineBox.visualRectIgnoringBlockDirection().size() });
-        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, { }, op);
+        backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, op);
         return;
     }
 
@@ -346,10 +346,11 @@ void InlineBoxPainter::paintFillLayer(const Color& color, const FillLayer& fillL
         isHorizontal() ? totalLogicalWidth : LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().width()),
         isHorizontal() ? LayoutUnit(m_inlineBox.visualRectIgnoringBlockDirection().height()) : totalLogicalWidth
     };
+    backgroundPainter.setImageRect(backgroundImageStrip);
 
     GraphicsContextStateSaver stateSaver(m_paintInfo.context());
     m_paintInfo.context().clip(FloatRect { rect });
-    backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, backgroundImageStrip, op);
+    backgroundPainter.paintFillLayer(color, fillLayer, rect, BleedAvoidance::None, m_inlineBox, op);
 }
 
 void InlineBoxPainter::paintBoxShadow(ShadowStyle shadowStyle, const LayoutRect& paintRect)
