@@ -4603,8 +4603,11 @@ RenderLayer::HitLayer RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLa
 
     auto offsetFromRoot = offsetFromAncestor(rootLayer);
     // FIXME: We need to correctly hit test the clip-path when we have a RenderInline too.
-    if (auto* rendererBox = this->renderBox(); rendererBox && !rendererBox->hitTestClipPath(hitTestLocation, toLayoutPoint(offsetFromRoot - toLayoutSize(rendererLocation()))))
-        return { };
+    if (auto* rendererBox = this->renderBox(); rendererBox) {
+        auto layoutPoint = toLayoutPoint(offsetFromRoot - toLayoutSize(rendererLocation()));
+        if (!rendererBox->hitTestClipPath(hitTestLocation, layoutPoint) || !rendererBox->hitTestMask(hitTestLocation, layoutPoint))
+            return { };
+    }
 
     // Begin by walking our list of positive layers from highest z-index down to the lowest z-index.
     auto hitLayer = hitTestList(positiveZOrderLayers(), rootLayer, request, result, hitTestRect, hitTestLocation, localTransformState.get(), zOffsetForDescendantsPtr, depthSortDescendants);

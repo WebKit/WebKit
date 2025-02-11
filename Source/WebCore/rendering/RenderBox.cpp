@@ -1562,6 +1562,18 @@ bool RenderBox::hitTestBorderRadius(const HitTestLocation& hitTestLocation, cons
     return hitTestLocation.intersects(borderShape.deprecatedRoundedRect());
 }
 
+bool RenderBox::hitTestMask(const HitTestLocation& hitTestLocation, const LayoutPoint& accumulatedOffset) const
+{
+    if (isRenderView() || !hasMask())
+        return true;
+
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
+    LayoutRect maskRect = maskClipRect(LayoutPoint());
+    maskRect.moveBy(adjustedLocation);
+
+    return hitTestLocation.intersects(maskRect);
+}
+
 bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
     LayoutPoint adjustedLocation = accumulatedOffset + location();
@@ -1586,6 +1598,9 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
             return false;
 
         if (!hitTestBorderRadius(locationInContainer, accumulatedOffset))
+            return false;
+
+        if (!hitTestMask(locationInContainer, accumulatedOffset))
             return false;
 
         updateHitTestResult(result, locationInContainer.point() - toLayoutSize(adjustedLocation));
@@ -1966,7 +1981,7 @@ void RenderBox::paintMaskImages(const PaintInfo& paintInfo, const LayoutRect& pa
         paintInfo.context().endTransparencyLayer();
 }
 
-LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset)
+LayoutRect RenderBox::maskClipRect(const LayoutPoint& paintOffset) const
 {
     const NinePieceImage& maskBorder = style().maskBorder();
     if (maskBorder.image()) {

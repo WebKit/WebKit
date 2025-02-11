@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hit testing of children outside of the bounds of parent's mask-image</title>
+    <script src="../../resources/js-test.js"></script>
+    <style>
+      .parent {
+          mask-image: linear-gradient(white, white);
+          width: 64px;
+          height: 64px;
+      }
+
+      .child {
+          width: 128px;
+          height: 128px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="parent">
+      <div class="child"></div>
+    </div>
+
+    <script>
+      description("Test whether the bounds of the mask-image of an element are taken into account when hit-testing it's children.");
+
+      let b = document.querySelector(".parent").getBoundingClientRect();
+      shouldBeEqualToString("document.elementFromPoint(b.x, b.y).localName", "div");
+      shouldBeEqualToString("document.elementFromPoint(b.x + 96, b.y + 96).localName", "html");
+    </script>
+  </body>
+</html>

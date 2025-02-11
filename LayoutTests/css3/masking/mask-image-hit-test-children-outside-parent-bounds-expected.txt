@@ -1,0 +1,11 @@
+Test whether the bounds of the mask-image of an element are taken into account when hit-testing it's children.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.elementFromPoint(b.x, b.y).localName is "div"
+PASS document.elementFromPoint(b.x + 96, b.y + 96).localName is "html"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

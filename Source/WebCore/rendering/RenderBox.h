@@ -267,6 +267,7 @@ public:
     bool hitTestVisualOverflow(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
     bool hitTestClipPath(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
     bool hitTestBorderRadius(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
+    bool hitTestMask(const HitTestLocation&, const LayoutPoint& accumulatedOffset) const;
 
     LayoutUnit minPreferredLogicalWidth() const override;
     LayoutUnit maxPreferredLogicalWidth() const override;
@@ -492,7 +493,7 @@ public:
         return true;
     }
 
-    LayoutRect maskClipRect(const LayoutPoint& paintOffset);
+    LayoutRect maskClipRect(const LayoutPoint& paintOffset) const;
 
     VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
 
