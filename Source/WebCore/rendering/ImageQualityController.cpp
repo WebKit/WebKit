@@ -104,13 +104,13 @@ void ImageQualityController::restartTimer()
 std::optional<InterpolationQuality> ImageQualityController::interpolationQualityFromStyle(const RenderStyle& style)
 {
     switch (style.imageRendering()) {
-    case ImageRendering::OptimizeSpeed:
-        return InterpolationQuality::Low;
+    case ImageRendering::Smooth:
+        return InterpolationQuality::Default;
+    case ImageRendering::HighQuality:
+        return InterpolationQuality::High;
     case ImageRendering::CrispEdges:
     case ImageRendering::Pixelated:
         return InterpolationQuality::DoNotInterpolate;
-    case ImageRendering::OptimizeQuality:
-        return InterpolationQuality::Default; // FIXME: CSS 3 Images says that optimizeQuality should behave like 'auto', but that prevents authors from overriding this low quality rendering behavior.
     case ImageRendering::Auto:
         break;
     }

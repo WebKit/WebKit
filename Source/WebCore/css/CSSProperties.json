@@ -3811,14 +3811,8 @@
             "inherited": true,
             "values": [
                 "auto",
-                {
-                    "value": "smooth",
-                    "status": "unimplemented"
-                },
-                {
-                    "value": "high-quality",
-                    "status": "unimplemented"
-                },
+                "smooth",
+                "high-quality",
                 "pixelated",
                 "crisp-edges",
                 {

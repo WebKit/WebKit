@@ -880,12 +880,18 @@ void RenderLayerBacking::updateContentsScalingFilters(const RenderStyle& style)
     auto minificationFilter = GraphicsLayer::ScalingFilter::Linear;
     auto magnificationFilter = GraphicsLayer::ScalingFilter::Linear;
     switch (style.imageRendering()) {
+    case ImageRendering::HighQuality:
+        minificationFilter = GraphicsLayer::ScalingFilter::Trilinear;
+        magnificationFilter = GraphicsLayer::ScalingFilter::Trilinear;
+        break;
     case ImageRendering::CrispEdges:
     case ImageRendering::Pixelated:
         // FIXME: In order to match other code-paths, we treat these the same.
         minificationFilter = GraphicsLayer::ScalingFilter::Nearest;
         magnificationFilter = GraphicsLayer::ScalingFilter::Nearest;
         break;
+    case ImageRendering::Smooth:
+    case ImageRendering::Auto:
     default:
         break;
     }
