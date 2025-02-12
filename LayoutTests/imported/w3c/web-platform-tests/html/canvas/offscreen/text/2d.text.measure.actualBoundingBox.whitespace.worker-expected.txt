@@ -1,0 +1,3 @@
+
+PASS Testing actualBoundingBox with leading/trailing whitespace
+

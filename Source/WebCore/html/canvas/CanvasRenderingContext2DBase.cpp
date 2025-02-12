@@ -2973,7 +2973,7 @@ Ref<TextMetrics> CanvasRenderingContext2DBase::measureTextInternal(const TextRun
     metrics->setIdeographicBaseline(-descent - offset.y());
 
     metrics->setActualBoundingBoxLeft(glyphOverflow.left - offset.x());
-    metrics->setActualBoundingBoxRight(fontWidth + glyphOverflow.right + offset.x());
+    metrics->setActualBoundingBoxRight(glyphOverflow.right + offset.x());
 
     return metrics;
 }

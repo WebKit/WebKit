@@ -1611,8 +1611,9 @@ float FontCascade::widthForComplexText(const TextRun& run, SingleThreadWeakHashS
     if (glyphOverflow) {
         glyphOverflow->top = std::max<double>(glyphOverflow->top, -controller.minGlyphBoundingBoxY() - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().ascent()));
         glyphOverflow->bottom = std::max<double>(glyphOverflow->bottom, controller.maxGlyphBoundingBoxY() - (glyphOverflow->computeBounds ? 0 : metricsOfPrimaryFont().descent()));
-        glyphOverflow->left = std::max<double>(0, -controller.minGlyphBoundingBoxX());
-        glyphOverflow->right = std::max<double>(0, controller.maxGlyphBoundingBoxX() - controller.totalAdvance().width());
+        auto minGlyphBoundingBoxX = controller.minGlyphBoundingBoxX();
+        glyphOverflow->left = fabs(minGlyphBoundingBoxX);
+        glyphOverflow->right = std::max<double>(0, controller.maxGlyphBoundingBoxX());
     }
     return controller.totalAdvance().width();
 }

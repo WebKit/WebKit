@@ -465,13 +465,14 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         width = Ref { * advanceInternalState.nextRangeFont }->widthForGlyph(glyph, Font::SyntheticBoldInclusion::Exclude); // We apply synthetic bold after shaping, in applyCSSVisibilityRules().
         advanceInternalState.widthOfCurrentFontRange += width;
 
-        if (FontCascade::treatAsSpace(characterToWrite))
+        bool treatAsSpace = FontCascade::treatAsSpace(character);
+        if (treatAsSpace)
             advanceInternalState.charactersTreatedAsSpace.constructAndAppend(advanceInternalState.currentCharacterIndex, characterToWrite == space, characterToWrite == tabCharacter ? width : advanceInternalState.nextRangeFont->spaceWidth(Font::SyntheticBoldInclusion::Exclude));
 
         if (m_accountForGlyphBounds) {
             bounds = Ref { *advanceInternalState.nextRangeFont }->boundsForGlyph(glyph);
-            if (!advanceInternalState.currentCharacterIndex)
-                m_firstGlyphOverflow = std::max<float>(0, -bounds.x());
+            if (!m_firstGlyphOverflow && !(treatAsSpace || character == ideographicSpace))
+                m_firstGlyphOverflow = std::max<float>(0, m_runWidthSoFar - bounds.x());
         }
 
         if (m_forTextEmphasis && !FontCascade::canReceiveTextEmphasis(characterToWrite))
@@ -488,7 +489,8 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
         if (m_accountForGlyphBounds) {
             m_maxGlyphBoundingBoxY = std::max(m_maxGlyphBoundingBoxY, bounds.maxY());
             m_minGlyphBoundingBoxY = std::min(m_minGlyphBoundingBoxY, bounds.y());
-            m_lastGlyphOverflow = std::max<float>(0, bounds.maxX() - width);
+            if (!(treatAsSpace || character == ideographicSpace))
+                m_lastGlyphOverflow = std::max<float>(0, m_runWidthSoFar + bounds.maxX() - width);
         }
     }
     advanceInternalState.rangeFont = advanceInternalState.nextRangeFont;
