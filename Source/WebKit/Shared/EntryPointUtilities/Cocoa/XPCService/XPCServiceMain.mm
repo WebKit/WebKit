@@ -263,7 +263,9 @@ int XPCServiceMain(int, const char**)
 #if ASAN_ENABLED
         // EXC_RESOURCE on ASAN builds freezes the process for several minutes: rdar://65027596
         if (char *disableFreezingOnExcResource = getenv("DISABLE_FREEZING_ON_EXC_RESOURCE")) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             if (!strcasecmp(disableFreezingOnExcResource, "yes") || !strcasecmp(disableFreezingOnExcResource, "true") || !strcasecmp(disableFreezingOnExcResource, "1")) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 int val = 1;
                 int rc = sysctlbyname("debug.toggle_address_reuse", nullptr, 0, &val, sizeof(val));
                 if (rc < 0)
