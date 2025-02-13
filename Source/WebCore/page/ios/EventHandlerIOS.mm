@@ -584,14 +584,14 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
     return PlatformEventFactory::createPlatformMouseEvent(currentEvent());
 }
     
-void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
+void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInDocument)
 {
     Ref frame = m_frame.get();
     RefPtr frameView = frame->view();
     if (!frameView)
         return;
 
-    m_targetAutoscrollPositionInRootView = roundedIntPoint(positionInWindow);
+    m_targetAutoscrollPositionInRootView = roundedIntPoint(positionInDocument);
     m_targetAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInRootView - toIntSize(frameView->documentScrollPositionRelativeToViewOrigin());
 
     if (!m_isAutoscrolling)

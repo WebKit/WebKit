@@ -353,7 +353,7 @@ public:
 #endif
     
 #if PLATFORM(IOS_FAMILY)
-    WEBCORE_EXPORT void startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow);
+    WEBCORE_EXPORT void startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInDocument);
     WEBCORE_EXPORT void cancelSelectionAutoscroll();
 #endif
 

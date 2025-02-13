@@ -1146,7 +1146,7 @@ public:
     void requestRectsAtSelectionOffsetWithText(int32_t offset, const String&, CompletionHandler<void(const Vector<WebCore::SelectionGeometry>&)>&&);
     void autofillLoginCredentials(const String& username, const String& password);
     void storeSelectionForAccessibility(bool);
-    void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow);
+    void startAutoscrollAtPosition(const WebCore::FloatPoint& positionInDocument);
     void cancelAutoscroll();
     void hardwareKeyboardAvailabilityChanged(HardwareKeyboardState);
     bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }

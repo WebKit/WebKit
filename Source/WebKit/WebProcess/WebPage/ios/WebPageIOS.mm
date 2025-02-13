@@ -2363,14 +2363,14 @@ void WebPage::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& 
     completionHandler();
 }
     
-void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
+void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInDocument)
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
         return;
 
     if (m_focusedElement && m_focusedElement->renderer()) {
-        frame->eventHandler().startSelectionAutoscroll(m_focusedElement->renderer(), positionInWindow);
+        frame->eventHandler().startSelectionAutoscroll(m_focusedElement->renderer(), positionInDocument);
         return;
     }
 
@@ -2386,7 +2386,7 @@ void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWin
     if (!renderer)
         return;
 
-    frame->eventHandler().startSelectionAutoscroll(renderer, positionInWindow);
+    frame->eventHandler().startSelectionAutoscroll(renderer, positionInDocument);
 }
     
 void WebPage::cancelAutoscroll()
