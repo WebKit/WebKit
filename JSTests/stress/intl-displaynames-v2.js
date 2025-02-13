@@ -62,7 +62,7 @@ function shouldThrow(func, errorMessage) {
     shouldBe(dn.of("month"), "月");
     shouldBe(dn.of("quarter"), "季度");
     shouldBe(dn.of("weekOfYear"), "周");
-    shouldBe(dn.of("weekday"), "工作日");
+    shouldBe(dn.of("weekday"), $vm.icuVersion() >= 76 ? "星期" : "工作日");
     shouldBe(dn.of("dayPeriod"), "上午/下午");
     shouldBe(dn.of("day"), "日");
     shouldBe(dn.of("hour"), "小时");

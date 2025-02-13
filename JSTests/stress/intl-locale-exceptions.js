@@ -1,16 +1,20 @@
-function shouldThrow(func, errorType) {
+function runTest(func, errorType) {
     let error;
     try {
         func();
     } catch (e) {
         error = e;
     }
-
-    if (!(error instanceof errorType))
-        throw new Error(`Expected ${errorType.name}!`);
+    if ($vm.icuVersion() >= 76) {
+        if (error)
+            throw new Error(`Expected no exception but got: ${error}`);
+    } else {
+        if (!(error instanceof errorType))
+            throw new Error(`Expected ${errorType.name}!`);
+    }
 }
 
-shouldThrow(() => {
+runTest(() => {
     let calendarValue = 'buddhist';
     calendarValue = calendarValue.toLocaleString().padEnd(calendarValue.length + 510 * 4, -169);
     var loc = new Intl.Locale('ko', {
@@ -18,7 +22,7 @@ shouldThrow(() => {
     });
 }, RangeError);
 
-shouldThrow(() => {
+runTest(() => {
     let collationValue = 'zhuyin';
     collationValue = collationValue.toLocaleString().padEnd(collationValue.length + 510 * 4, -169);
     var loc = new Intl.Locale('ko', {
@@ -26,7 +30,7 @@ shouldThrow(() => {
     });
 }, RangeError);
 
-shouldThrow(() => {
+runTest(() => {
     let numberingSystemValue = 'latn';
     numberingSystemValue = numberingSystemValue.toLocaleString().padEnd(numberingSystemValue.length + 510 * 4, -169);
     var loc = new Intl.Locale('ko', {

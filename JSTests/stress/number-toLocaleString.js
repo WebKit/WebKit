@@ -44,7 +44,7 @@ shouldThrow(() => (0).toLocaleString('i'), RangeError);
 shouldBe(Infinity.toLocaleString(), '∞');
 
 // Test that locale parameter is passed through properly.
-if ($vm.icuVersion() >= 74 && $vm.icuMinorVersion() >= 2)
+if (($vm.icuVersion() === 74 && $vm.icuMinorVersion() >= 2) || $vm.icuVersion() >= 75)
     shouldBe((123456.789).toLocaleString('ar'), '123,456.789');
 else
     shouldBe((123456.789).toLocaleString('ar'), '١٢٣٬٤٥٦٫٧٨٩');

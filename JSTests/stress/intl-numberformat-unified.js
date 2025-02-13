@@ -49,4 +49,5 @@ shouldBe((100).toLocaleString("en-CA", {
     style: "currency",
     currency: "USD",
     currencyDisplay: "narrowSymbol"
-}), $vm.icuVersion() >= 72 ? `US$100.00` : `$100.00`);
+}), 72 <= $vm.icuVersion() && $vm.icuVersion() < 76 ? `US$100.00` : `$100.00`);
+

@@ -42,7 +42,7 @@ shouldBe(BigInt(1).toLocaleString(), '1');
 shouldThrow(() => 0n.toLocaleString('i'), RangeError);
 
 // Test that locale parameter is passed through properly.
-if ($vm.icuVersion() >= 74 && $vm.icuMinorVersion() >= 2)
+if (($vm.icuVersion() === 74 && $vm.icuMinorVersion() >= 2) || $vm.icuVersion() >= 75)
     shouldBe(123456789n.toLocaleString('ar'), '123,456,789');
 else
     shouldBe(123456789n.toLocaleString('ar'), '١٢٣٬٤٥٦٬٧٨٩');
