@@ -55,18 +55,18 @@ class JSModuleNamespaceObject;
 class JSWebAssemblyModule;
 class WebAssemblyModuleRecord;
 
-class JSWebAssemblyInstance final : public JSNonFinalObject {
+class JSWebAssemblyInstance final : public JSDestructibleObject {
     friend class LLIntOffsetsExtractor;
     using WasmOrJSImportableFunctionCallLinkInfo = Wasm::WasmOrJSImportableFunctionCallLinkInfo;
 
 public:
-    using Base = JSNonFinalObject;
+    using Base = JSDestructibleObject;
     static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 
-    static constexpr bool usePreciseAllocationsOnly = true;
+    static constexpr bool usePreciseAllocationsOnly = false;
     template<typename CellType, SubspaceAccess mode>
-    static GCClient::IsoSubspace* subspaceFor(VM& vm)
+    static CompleteSubspace* subspaceFor(VM& vm)
     {
         return vm.webAssemblyInstanceSpace<mode>();
     }

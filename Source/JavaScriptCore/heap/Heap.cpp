@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -377,7 +377,6 @@ Heap::Heap(VM& vm, HeapType heapType)
     , webAssemblyExceptionHeapCellType(IsoHeapCellType::Args<JSWebAssemblyException>())
     , webAssemblyFunctionHeapCellType(IsoHeapCellType::Args<WebAssemblyFunction>())
     , webAssemblyGlobalHeapCellType(IsoHeapCellType::Args<JSWebAssemblyGlobal>())
-    , webAssemblyInstanceHeapCellType(IsoHeapCellType::Args<JSWebAssemblyInstance>())
     , webAssemblyMemoryHeapCellType(IsoHeapCellType::Args<JSWebAssemblyMemory>())
     , webAssemblyStructHeapCellType(IsoHeapCellType::Args<JSWebAssemblyStruct>())
     , webAssemblyModuleHeapCellType(IsoHeapCellType::Args<JSWebAssemblyModule>())
@@ -2452,15 +2451,16 @@ void Heap::updateAllocationLimits()
 
     // It's up to the user to ensure that extraMemorySize() ends up corresponding to allocation-time
     // extra memory reporting.
-    currentHeapSize += extraMemorySize();
+    auto computedExtraMemorySize = extraMemorySize();
+    currentHeapSize += computedExtraMemorySize;
     if (ASSERT_ENABLED) {
         CheckedSize checkedCurrentHeapSize = m_totalBytesVisited;
-        checkedCurrentHeapSize += extraMemorySize();
+        checkedCurrentHeapSize += computedExtraMemorySize;
         ASSERT(!checkedCurrentHeapSize.hasOverflowed() && checkedCurrentHeapSize == currentHeapSize);
     }
 
-    dataLogLnIf(verbose, "extraMemorySize() = ", extraMemorySize(), ", currentHeapSize = ", currentHeapSize);
-    
+    dataLogLnIf(verbose, "extraMemorySize() = ", computedExtraMemorySize, ", currentHeapSize = ", currentHeapSize);
+
     if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
         // To avoid pathological GC churn in very small and very large heaps, we set
         // the new allocation limit based on the current size of the heap, with a
@@ -3365,6 +3365,17 @@ void Heap::scheduleOpportunisticFullCollection()
 {
     m_shouldDoOpportunisticFullCollection = true;
 }
+
+#if ENABLE(WEBASSEMBLY)
+CompleteSubspace* Heap::webAssemblyInstanceSpaceSlow()
+{
+    ASSERT(!m_webAssemblyInstanceSpace);
+    auto space = makeUnique<CompleteSubspace>("JSWebAssemblyInstance"_s, *this, destructibleObjectHeapCellType, fastMallocAllocator.get());
+    WTF::storeStoreFence();
+    m_webAssemblyInstanceSpace = WTFMove(space);
+    return m_webAssemblyInstanceSpace.get();
+}
+#endif // ENABLE(WEBASSEMBLY)
 
 #define DEFINE_DYNAMIC_ISO_SUBSPACE_MEMBER_SLOW(name, heapCellType, type) \
     IsoSubspace* Heap::name##Slow() \

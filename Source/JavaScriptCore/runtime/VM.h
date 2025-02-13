@@ -473,6 +473,10 @@ public:
     ALWAYS_INLINE CompleteSubspace& cellSpace() { return heap.cellSpace; }
     ALWAYS_INLINE CompleteSubspace& variableSizedCellSpace() { return heap.variableSizedCellSpace; }
     ALWAYS_INLINE CompleteSubspace& destructibleObjectSpace() { return heap.destructibleObjectSpace; }
+#if ENABLE(WEBASSEMBLY)
+    template<SubspaceAccess mode>
+    ALWAYS_INLINE CompleteSubspace* webAssemblyInstanceSpace() { return heap.webAssemblyInstanceSpace<mode>(); }
+#endif
 
 #define DEFINE_ISO_SUBSPACE_ACCESSOR(name, heapCellType, type) \
     ALWAYS_INLINE GCClient::IsoSubspace& name() { return clientHeap.name; }

@@ -181,7 +181,6 @@ class Heap;
     v(webAssemblyExceptionSpace, webAssemblyExceptionHeapCellType, JSWebAssemblyException) \
     v(webAssemblyFunctionSpace, webAssemblyFunctionHeapCellType, WebAssemblyFunction) \
     v(webAssemblyGlobalSpace, webAssemblyGlobalHeapCellType, JSWebAssemblyGlobal) \
-    v(webAssemblyInstanceSpace, webAssemblyInstanceHeapCellType, JSWebAssemblyInstance) \
     v(webAssemblyMemorySpace, webAssemblyMemoryHeapCellType, JSWebAssemblyMemory) \
     v(webAssemblyStructSpace, webAssemblyStructHeapCellType, JSWebAssemblyStruct) \
     v(webAssemblyModuleSpace, webAssemblyModuleHeapCellType, JSWebAssemblyModule) \
@@ -1032,7 +1031,6 @@ public:
     IsoHeapCellType webAssemblyExceptionHeapCellType;
     IsoHeapCellType webAssemblyFunctionHeapCellType;
     IsoHeapCellType webAssemblyGlobalHeapCellType;
-    IsoHeapCellType webAssemblyInstanceHeapCellType;
     IsoHeapCellType webAssemblyMemoryHeapCellType;
     IsoHeapCellType webAssemblyStructHeapCellType;
     IsoHeapCellType webAssemblyModuleHeapCellType;
@@ -1072,6 +1070,18 @@ public:
     CompleteSubspace cellSpace;
     CompleteSubspace variableSizedCellSpace; // FIXME: This space is problematic because we have things in here like DirectArguments and ScopedArguments; those should be split into JSValueOOB cells and JSValueStrict auxiliaries. https://bugs.webkit.org/show_bug.cgi?id=182858
     CompleteSubspace destructibleObjectSpace;
+
+#if ENABLE(WEBASSEMBLY)
+    template<SubspaceAccess mode>
+    CompleteSubspace* webAssemblyInstanceSpace()
+    {
+        if (m_webAssemblyInstanceSpace || mode == SubspaceAccess::Concurrently)
+            return m_webAssemblyInstanceSpace.get();
+        return webAssemblyInstanceSpaceSlow();
+    }
+    JS_EXPORT_PRIVATE CompleteSubspace* webAssemblyInstanceSpaceSlow();
+    std::unique_ptr<CompleteSubspace> m_webAssemblyInstanceSpace;
+#endif
 
 #define DECLARE_ISO_SUBSPACE(name, heapCellType, type) \
     IsoSubspace name;
