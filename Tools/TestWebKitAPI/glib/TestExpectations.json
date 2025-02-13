@@ -403,9 +403,6 @@
             "/webkit/WebKitPolicyClient/autoplay-policy": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/222091"},
                              "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/281986"}}
-            },
-            "/webkit/WebKitPolicyClient/new-window-policy": {
-                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/281812"}}
             }
         }
     },

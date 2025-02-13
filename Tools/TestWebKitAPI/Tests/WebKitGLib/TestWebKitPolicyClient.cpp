@@ -285,7 +285,7 @@ static void testNewWindowPolicy(PolicyClientTest* test, gconstpointer)
     g_signal_connect(test->m_webView, "create", G_CALLBACK(createCallback), &data);
     test->m_policyDecisionResponse = PolicyClientTest::Use;
     test->loadHtml(windowOpeningHTML, "http://webkitgtk.org/");
-    test->wait(1);
+    test->waitUntilLoadFinished();
     g_assert_true(data.triedToOpenWindow);
 
     WebKitNavigationPolicyDecision* decision = WEBKIT_NAVIGATION_POLICY_DECISION(test->m_previousPolicyDecision.get());
