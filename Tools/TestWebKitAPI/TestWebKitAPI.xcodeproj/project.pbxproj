@@ -360,6 +360,7 @@
 		7A7B0E7F1EAFE4C3006AB8AE /* LimitTitleSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A7B0E7E1EAFE454006AB8AE /* LimitTitleSize.mm */; };
 		7A89BB682331643A0042CB1E /* BundleFormDelegatePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7A89BB662331635D0042CB1E /* BundleFormDelegatePlugIn.mm */; };
 		7A909A7D1D877480007E10F8 /* AffineTransform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A6F1D877475007E10F8 /* AffineTransform.cpp */; };
+		7A909A801D877480007E10F9 /* PlatformDynamicRangeLimitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A721D877475007E10F9 /* PlatformDynamicRangeLimitTests.cpp */; };
 		7A909A7E1D877480007E10F8 /* FloatPointTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A701D877475007E10F8 /* FloatPointTests.cpp */; };
 		7A909A7F1D877480007E10F8 /* FloatRectTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A711D877475007E10F8 /* FloatRectTests.cpp */; };
 		7A909A801D877480007E10F8 /* FloatSizeTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7A909A721D877475007E10F8 /* FloatSizeTests.cpp */; };
@@ -3025,6 +3026,7 @@
 		7A89BB662331635D0042CB1E /* BundleFormDelegatePlugIn.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BundleFormDelegatePlugIn.mm; sourceTree = "<group>"; };
 		7A89BB69233165650042CB1E /* BundleFormDelegateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BundleFormDelegateProtocol.h; sourceTree = "<group>"; };
 		7A909A6F1D877475007E10F8 /* AffineTransform.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AffineTransform.cpp; sourceTree = "<group>"; };
+		7A909A721D877475007E10F9 /* PlatformDynamicRangeLimitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformDynamicRangeLimitTests.cpp; sourceTree = "<group>"; };
 		7A909A701D877475007E10F8 /* FloatPointTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatPointTests.cpp; sourceTree = "<group>"; };
 		7A909A711D877475007E10F8 /* FloatRectTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatRectTests.cpp; sourceTree = "<group>"; };
 		7A909A721D877475007E10F8 /* FloatSizeTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FloatSizeTests.cpp; sourceTree = "<group>"; };
@@ -4793,6 +4795,7 @@
 				AA96CAB421C7DB4200FD2F97 /* ParsedContentType.cpp */,
 				0F5EC8BB2C7F76B900B8051B /* PathTests.cpp */,
 				7141156329754422005011D6 /* PlatformCAAnimationKeyPath.cpp */,
+				7A909A721D877475007E10F9 /* PlatformDynamicRangeLimitTests.cpp */,
 				6B0A07F621FA9C2B00D57391 /* PrivateClickMeasurement.cpp */,
 				041A1E33216FFDBC00789E0A /* PublicSuffix.cpp */,
 				EB9AD8C627646E7300D893A4 /* PushDatabase.cpp */,
@@ -7234,6 +7237,7 @@
 				7C83E0531D0A643A00FEBCF3 /* PendingAPIRequestURL.cpp in Sources */,
 				E325C90723E3870200BC7D3B /* PictureInPictureSupport.mm in Sources */,
 				7141156429754422005011D6 /* PlatformCAAnimationKeyPath.cpp in Sources */,
+				7A909A801D877480007E10F9 /* PlatformDynamicRangeLimitTests.cpp in Sources */,
 				7CCE7EA61A411A0F00447C4C /* PlatformUtilitiesMac.mm in Sources */,
 				7CCE7EA71A411A1300447C4C /* PlatformWebViewMac.mm in Sources */,
 				F4010B8324DA267F00A876E2 /* PoseAsClass.mm in Sources */,

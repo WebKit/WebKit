@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+class PlatformDynamicRangeLimit;
+
 namespace CSS {
 struct DynamicRangeLimit;
 }
@@ -51,6 +53,8 @@ struct DynamicRangeLimit {
     DynamicRangeLimit& operator=(const DynamicRangeLimit&);
 
     template<typename... F> decltype(auto) switchOn(F&&...) const;
+
+    WEBCORE_EXPORT PlatformDynamicRangeLimit toPlatformDynamicRangeLimit() const;
 
     bool operator==(const DynamicRangeLimit&) const = default;
 

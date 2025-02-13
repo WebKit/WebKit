@@ -1836,6 +1836,10 @@ enum class WebCore::ContentsFormat : uint8_t {
 #endif
 };
 
+class WebCore::PlatformDynamicRangeLimit {
+    float m_value;
+};
+
 enum class WebCore::RotationDirection : bool
 
 #if ENABLE(CONTENT_FILTERING)

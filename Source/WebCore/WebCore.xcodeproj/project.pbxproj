@@ -2852,6 +2852,7 @@
 		7263D505292C472D00CA9D10 /* GraphicsStyle.h in Headers */ = {isa = PBXBuildFile; fileRef = 7263D503292C472B00CA9D10 /* GraphicsStyle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726516E62C9CB75600647895 /* ContentsFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 726516E42C9BB70E00647895 /* ContentsFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726516F72CA4B4A300647895 /* ContentsFormatCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 726516F52CA4AEDC00647895 /* ContentsFormatCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		726516E62C9CB75600647896 /* PlatformDynamicRangeLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 726516E42C9BB70E00647896 /* PlatformDynamicRangeLimit.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726CDE202759735000A445B2 /* FilterEffectGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 729661A2275960A500E7DF9B /* FilterEffectGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E2253AE28D0002EF90 /* PlatformImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 726D56E1253AE0430002EF90 /* PlatformImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E3253AE3660002EF90 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13410,6 +13411,8 @@
 		726516E42C9BB70E00647895 /* ContentsFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentsFormat.h; sourceTree = "<group>"; };
 		726516E52C9CB59900647895 /* ContentsFormat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ContentsFormat.cpp; sourceTree = "<group>"; };
 		726516F52CA4AEDC00647895 /* ContentsFormatCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentsFormatCocoa.h; sourceTree = "<group>"; };
+		726516E42C9BB70E00647896 /* PlatformDynamicRangeLimit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformDynamicRangeLimit.h; sourceTree = "<group>"; };
+		726516E52C9CB59900647896 /* PlatformDynamicRangeLimit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformDynamicRangeLimit.cpp; sourceTree = "<group>"; };
 		7266F0132241BCE200833975 /* SVGPropertyAnimatorFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPropertyAnimatorFactory.h; sourceTree = "<group>"; };
 		7266F0142241BFB200833975 /* SVGPrimitivePropertyAnimatorImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPrimitivePropertyAnimatorImpl.h; sourceTree = "<group>"; };
 		7266F0152241C09800833975 /* SVGPrimitivePropertyAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPrimitivePropertyAnimator.h; sourceTree = "<group>"; };
@@ -34154,6 +34157,8 @@
 				BCA55912263DBD79007F19B3 /* PixelFormat.h */,
 				CDD08ABF277E54F000EA3755 /* PlatformAudioTrackConfiguration.h */,
 				BC3E62422659791700548ACD /* PlatformColorSpace.h */,
+				726516E52C9CB59900647896 /* PlatformDynamicRangeLimit.cpp */,
+				726516E42C9BB70E00647896 /* PlatformDynamicRangeLimit.h */,
 				722AF2E127E1C4030078D997 /* PlatformGraphicsContext.h */,
 				726D56E1253AE0430002EF90 /* PlatformImage.h */,
 				0562F9601573F88F0031CA16 /* PlatformLayer.h */,
@@ -43443,6 +43448,7 @@
 				BC3E62432659791800548ACD /* PlatformColorSpace.h in Headers */,
 				A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */,
 				72A645212949049700C14BA3 /* PlatformControl.h in Headers */,
+				726516E62C9CB75600647896 /* PlatformDynamicRangeLimit.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				F4CCD04E2A9917ED00536C6B /* PlatformEvent.serialization.in in Headers */,
 				26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */,
