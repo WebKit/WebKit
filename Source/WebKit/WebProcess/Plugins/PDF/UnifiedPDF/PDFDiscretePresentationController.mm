@@ -1105,7 +1105,6 @@ void PDFDiscretePresentationController::buildRows()
         RefPtr rowContentsLayer = row.contentsLayer = createGraphicsLayer(makeString("Row contents "_s, rowIndex), GraphicsLayer::Type::TiledBacking);
         rowContentsLayer->setAnchorPoint({ });
         rowContentsLayer->setDrawsContent(true);
-        rowContentsLayer->setAcceleratesDrawing(true);
 
         // This is the call that enables async rendering.
         asyncRenderer()->startTrackingLayer(*rowContentsLayer);
@@ -1403,6 +1402,19 @@ std::optional<float> PDFDiscretePresentationController::customContentsScale(cons
         return scaleForPagePreviews();
 
     return { };
+}
+
+bool PDFDiscretePresentationController::layerNeedsPlatformContext(const GraphicsLayer* layer) const
+{
+    auto rowIndex = m_layerToRowIndexMap.getOptional(layer);
+    if (!rowIndex)
+        return false;
+    if (*rowIndex >= m_rows.size())
+        return false;
+    auto& rowData = m_rows[*rowIndex];
+    if (rowData.isPageBackgroundLayer(layer))
+        return true;
+    return layer == rowData.contentsLayer;
 }
 
 void PDFDiscretePresentationController::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)

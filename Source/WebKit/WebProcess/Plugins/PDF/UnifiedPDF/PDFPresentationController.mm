@@ -123,7 +123,6 @@ RefPtr<GraphicsLayer> PDFPresentationController::makePageContainerLayer(PDFDocum
     pageBackgroundLayer->setBackgroundColor(Color::white);
 
     pageBackgroundLayer->setDrawsContent(true);
-    pageBackgroundLayer->setAcceleratesDrawing(true);
     pageBackgroundLayer->setShouldUpdateRootRelativeScaleFactor(false);
     pageBackgroundLayer->setAllowsTiling(false);
     pageBackgroundLayer->setNeedsDisplay(); // We only need to paint this layer once when page backgrounds change.

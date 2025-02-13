@@ -151,7 +151,6 @@ void PDFScrollingPresentationController::setupLayers(GraphicsLayer& scrolledCont
         m_contentsLayer = createGraphicsLayer("PDF contents"_s, m_plugin->isFullMainFramePlugin() ? GraphicsLayer::Type::PageTiledBacking : GraphicsLayer::Type::TiledBacking);
         m_contentsLayer->setAnchorPoint({ });
         m_contentsLayer->setDrawsContent(true);
-        m_contentsLayer->setAcceleratesDrawing(true);
         scrolledContentsLayer.addChild(*m_contentsLayer);
 
         // This is the call that enables async rendering.
@@ -370,6 +369,11 @@ std::optional<float> PDFScrollingPresentationController::customContentsScale(con
         return scaleForPagePreviews();
 
     return { };
+}
+
+bool PDFScrollingPresentationController::layerNeedsPlatformContext(const GraphicsLayer* layer) const
+{
+    return layer == m_contentsLayer || pageIndexForPageBackgroundLayer(layer);
 }
 
 void PDFScrollingPresentationController::tiledBackingUsageChanged(const GraphicsLayer* layer, bool usingTiledBacking)
