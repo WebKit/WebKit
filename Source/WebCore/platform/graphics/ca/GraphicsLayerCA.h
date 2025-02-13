@@ -71,6 +71,7 @@ public:
 
     WEBCORE_EXPORT PlatformLayer* platformLayer() const override;
     PlatformCALayer* platformCALayer() const { return primaryLayer(); }
+    RefPtr<PlatformCALayer> protectedPlatformCALayer() const { return primaryLayer(); }
 
     WEBCORE_EXPORT bool setChildren(Vector<Ref<GraphicsLayer>>&&) override;
     WEBCORE_EXPORT void addChild(Ref<GraphicsLayer>&&) override;
