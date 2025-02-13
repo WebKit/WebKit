@@ -440,7 +440,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
 #endif
             }
 
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView);
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, hostingView);
         } else
             [layer _web_clearContents];
     }

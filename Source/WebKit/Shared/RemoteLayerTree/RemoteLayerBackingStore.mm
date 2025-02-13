@@ -519,7 +519,7 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
     return contents;
 }
 
-void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, bool replayDynamicContentScalingDisplayListsIntoBackingStore, UIView *hostingView)
+void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, UIView *hostingView)
 {
     if (asyncContentsIdentifier && m_contentsRenderingResourceIdentifier && *asyncContentsIdentifier >= m_contentsRenderingResourceIdentifier)
         return;
@@ -549,28 +549,6 @@ void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer,
         [layer _web_clearContents];
         return;
     }
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_displayListBufferHandle) {
-        ASSERT([layer isKindOfClass:[WKCompositingLayer class]]);
-        if (![layer isKindOfClass:[WKCompositingLayer class]])
-            return;
-
-        layer.drawsAsynchronously = (m_type == RemoteLayerBackingStore::Type::IOSurface);
-
-        if (!replayDynamicContentScalingDisplayListsIntoBackingStore) {
-            [layer setValue:@1 forKeyPath:WKDynamicContentScalingEnabledKey];
-            [layer setValue:@1 forKeyPath:WKDynamicContentScalingBifurcationEnabledKey];
-            [layer setValue:@(layer.contentsScale) forKeyPath:WKDynamicContentScalingBifurcationScaleKey];
-        } else
-            layer.opaque = m_isOpaque;
-        [(WKCompositingLayer *)layer _setWKContents:contents.get() withDisplayList:WTFMove(std::get<DynamicContentScalingDisplayList>(*m_displayListBufferHandle)) replayForTesting:replayDynamicContentScalingDisplayListsIntoBackingStore];
-        return;
-    } else
-        [layer _web_clearDynamicContentScalingDisplayListIfNeeded];
-#else
-    UNUSED_PARAM(replayDynamicContentScalingDisplayListsIntoBackingStore);
-#endif
 
     layer.contents = contents.get();
     if ([CALayer instancesRespondToSelector:@selector(contentsDirtyRect)]) {

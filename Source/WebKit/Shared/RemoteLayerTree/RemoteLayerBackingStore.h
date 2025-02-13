@@ -219,7 +219,7 @@ public:
     RemoteLayerBackingStoreProperties() = default;
     RemoteLayerBackingStoreProperties(RemoteLayerBackingStoreProperties&&) = default;
 
-    void applyBackingStoreToLayer(CALayer *, LayerContentsType, std::optional<WebCore::RenderingResourceIdentifier>, bool replayDynamicContentScalingDisplayListsIntoBackingStore, UIView * hostingView);
+    void applyBackingStoreToLayer(CALayer *, LayerContentsType, std::optional<WebCore::RenderingResourceIdentifier>, UIView * hostingView);
 
     void updateCachedBuffers(RemoteLayerTreeNode&, LayerContentsType);
 
@@ -247,10 +247,6 @@ private:
     std::optional<WebCore::RenderingResourceIdentifier> m_contentsRenderingResourceIdentifier;
 
     std::optional<WebCore::IntRect> m_paintedRect;
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    std::optional<ImageBufferBackendHandle> m_displayListBufferHandle;
-#endif
 
     bool m_isOpaque;
     RemoteLayerBackingStore::Type m_type;
