@@ -441,20 +441,6 @@ function flatMap(callback)
     return @flatIntoArrayWithCallback(result, array, length, 0, callback, thisArg);
 }
 
-function at(index)
-{
-    "use strict";
-
-    var array = @toObject(this, "Array.prototype.at requires that |this| not be null or undefined");
-    var length = @toLength(array.length);
-
-    var k = @toIntegerOrInfinity(index);
-    if (k < 0)
-        k += length;
-
-    return (k >= 0 && k < length) ? array[k] : @undefined;
-}
-
 function toSpliced(start, deleteCount /*, ...items */)
 {
     "use strict"

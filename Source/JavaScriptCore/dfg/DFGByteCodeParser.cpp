@@ -2578,6 +2578,56 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             setResult(addToGraph(ArithPow, get(xOperand), get(yOperand)));
             return CallOptimizationResult::Inlined;
         }
+        case ArrayAtIntrinsic: {
+            if (!is64Bit())
+                return CallOptimizationResult::DidNothing;
+
+            if (argumentCountIncludingThis < 2)
+                return CallOptimizationResult::DidNothing;
+
+            if (m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadType))
+                return CallOptimizationResult::DidNothing;
+
+            ArrayMode arrayMode = getArrayMode(Array::Read);
+            if (!arrayMode.isJSArray())
+                return CallOptimizationResult::DidNothing;
+
+            if (!arrayMode.isJSArrayWithOriginalStructure())
+                return CallOptimizationResult::DidNothing;
+
+            // We do not want to convert arrays into one type just to perform Array#at.
+            if (arrayMode.doesConversion())
+                return CallOptimizationResult::DidNothing;
+
+            switch (arrayMode.type()) {
+            case Array::Double:
+            case Array::Int32:
+            case Array::Contiguous: {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(currentNodeOrigin().semantic);
+                if (globalObject->arrayPrototypeChainIsSaneWatchpointSet().state() == IsWatched && globalObject->havingABadTimeWatchpointSet().isStillValid()) {
+                    m_graph.watchpoints().addLazily(globalObject->arrayPrototypeChainIsSaneWatchpointSet());
+
+                    insertChecks();
+
+                    addVarArgChild(get(virtualRegisterForArgumentIncludingThis(0, registerOffset)));
+                    addVarArgChild(get(virtualRegisterForArgumentIncludingThis(1, registerOffset)));
+                    addVarArgChild(nullptr);
+
+                    bool hasOutOfBoundsExitSite = m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, OutOfBounds);
+                    auto updatedArrayMode = hasOutOfBoundsExitSite ? arrayMode.withSpeculation(Array::OutOfBoundsSaneChain) : arrayMode;
+                    Node* node = addToGraph(Node::VarArg, ArrayAt, OpInfo(updatedArrayMode.asWord()), OpInfo());
+                    setResult(node);
+                    return CallOptimizationResult::Inlined;
+                }
+                return CallOptimizationResult::DidNothing;
+            }
+            default:
+                return CallOptimizationResult::DidNothing;
+            }
+
+            RELEASE_ASSERT_NOT_REACHED();
+            return CallOptimizationResult::DidNothing;
+        }
 
         case TypedArrayEntriesIntrinsic:
         case TypedArrayKeysIntrinsic:

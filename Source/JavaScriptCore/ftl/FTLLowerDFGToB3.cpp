@@ -1139,6 +1139,9 @@ private:
         case DefineAccessorProperty:
             compileDefineAccessorProperty();
             break;
+        case ArrayAt:
+            compileArrayAt();
+            break;
         case ArrayPush:
             compileArrayPush();
             break;
@@ -5950,11 +5953,18 @@ IGNORE_CLANG_WARNINGS_END
     {
         JSGlobalObject* globalObject = m_graph.globalObjectFor(m_origin.semantic);
         ArrayMode arrayMode = m_node->arrayMode();
+
+        // This function is used by `ArrayAt` but it supports only Int32, Contiguous, Double.
+        ASSERT(m_node->op() != ArrayAt || (arrayMode.type() == Array::Int32 || arrayMode.type() == Array::Contiguous || arrayMode.type() == Array::Double));
+
         switch (arrayMode.type()) {
         case Array::Int32:
         case Array::Contiguous: {
-            LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+            LValue originalIndex = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
+
+            LValue arrayLength = m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength);
+            LValue index = m_node->op() == ArrayAt ? m_out.select(m_out.lessThan(originalIndex, m_out.int32Zero), m_out.add(arrayLength, originalIndex), originalIndex) : originalIndex;
 
             IndexedAbstractHeap& heap = arrayMode.type() == Array::Int32 ?
                 m_heaps.indexedInt32Properties : m_heaps.indexedContiguousProperties;
@@ -5962,7 +5972,13 @@ IGNORE_CLANG_WARNINGS_END
             LValue base = lowCell(m_graph.varArgChild(m_node, 0));
 
             if (arrayMode.isInBounds()) {
-                LValue result = m_out.load64(baseIndexWithProvenValue(heap, storage, index, m_graph.varArgChild(m_node, 1)));
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=286056
+                if (m_node->op() == ArrayAt)
+                    speculate(OutOfBounds, noValue(), nullptr, m_out.aboveOrEqual(index, arrayLength));
+                LValue result = m_out.load64(
+                    m_node->op() == ArrayAt
+                        ? m_out.baseIndex(heap, storage, m_out.zeroExtPtr(index))
+                        : baseIndexWithProvenValue(heap, storage, originalIndex, m_graph.varArgChild(m_node, 1)));
                 LValue isHole = m_out.isZero64(result);
                 if (arrayMode.isInBoundsSaneChain()) {
                     DFG_ASSERT(
@@ -5976,19 +5992,18 @@ IGNORE_CLANG_WARNINGS_END
                     ensureStillAliveHere(base);
                 return result;
             }
-
             LBasicBlock fastCase = m_out.newBlock();
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            m_out.branch(
-                m_out.aboveOrEqual(
-                    index, m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength)),
-                rarely(slowCase), usually(fastCase));
+            m_out.branch(m_out.aboveOrEqual(index, arrayLength), rarely(slowCase), usually(fastCase));
 
             LBasicBlock lastNext = m_out.appendTo(fastCase, slowCase);
 
-            LValue fastResultValue = m_out.load64(baseIndexWithProvenValue(heap, storage, index, m_graph.varArgChild(m_node, 1)));
+            LValue fastResultValue = m_out.load64(
+                m_node->op() == ArrayAt
+                    ? m_out.baseIndex(heap, storage, m_out.zeroExtPtr(index))
+                    : baseIndexWithProvenValue(heap, storage, originalIndex, m_graph.varArgChild(m_node, 1)));
             ValueFromBlock fastResult = m_out.anchor(fastResultValue);
             m_out.branch(
                 m_out.isZero64(fastResultValue), rarely(slowCase), usually(continuation));
@@ -5996,7 +6011,8 @@ IGNORE_CLANG_WARNINGS_END
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult;
             if (arrayMode.isOutOfBoundsSaneChain()) {
-                speculate(NegativeIndex, noValue(), nullptr, m_out.lessThan(index, m_out.int32Zero));
+                if (m_node->op() != ArrayAt)
+                    speculate(NegativeIndex, noValue(), nullptr, m_out.lessThan(originalIndex, m_out.int32Zero));
                 slowResult = m_out.anchor(m_out.constInt64(JSValue::ValueUndefined));
             } else
                 slowResult = m_out.anchor(vmCall(Int64, operationGetByValObjectInt, weakPointer(globalObject), base, index));
@@ -6011,14 +6027,22 @@ IGNORE_CLANG_WARNINGS_END
 
         case Array::Double: {
             LValue base = lowCell(m_graph.varArgChild(m_node, 0));
-            LValue index = lowInt32(m_graph.varArgChild(m_node, 1));
+            LValue originalIndex = lowInt32(m_graph.varArgChild(m_node, 1));
             LValue storage = lowStorage(m_graph.varArgChild(m_node, 2));
+
+            LValue arrayLength = m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength);
+            LValue index = m_node->op() == ArrayAt ? m_out.select(m_out.lessThan(originalIndex, m_out.int32Zero), m_out.add(arrayLength, originalIndex), originalIndex) : originalIndex;
 
             IndexedAbstractHeap& heap = m_heaps.indexedDoubleProperties;
 
             if (arrayMode.isInBounds()) {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=286056
+                if (m_node->op() == ArrayAt)
+                    speculate(OutOfBounds, noValue(), nullptr, m_out.aboveOrEqual(index, arrayLength));
                 LValue result = m_out.loadDouble(
-                    baseIndexWithProvenValue(heap, storage, index, m_graph.varArgChild(m_node, 1)));
+                    m_node->op() == ArrayAt
+                        ? m_out.baseIndex(heap, storage, m_out.zeroExtPtr(index))
+                        : baseIndexWithProvenValue(heap, storage, index, m_graph.varArgChild(m_node, 1)));
 
                 if (!arrayMode.isInBoundsSaneChain()) {
                     speculate(
@@ -6036,14 +6060,13 @@ IGNORE_CLANG_WARNINGS_END
             LBasicBlock slowCase = m_out.newBlock();
             LBasicBlock continuation = m_out.newBlock();
 
-            m_out.branch(
-                m_out.aboveOrEqual(
-                    index, m_out.load32NonNegative(storage, m_heaps.Butterfly_publicLength)),
-                rarely(slowCase), usually(inBounds));
+            m_out.branch(m_out.aboveOrEqual(index, arrayLength), rarely(slowCase), usually(inBounds));
 
             LBasicBlock lastNext = m_out.appendTo(inBounds, boxPath);
             LValue doubleValue = m_out.loadDouble(
-                baseIndexWithProvenValue(heap, storage, index, m_graph.varArgChild(m_node, 1)));
+                m_node->op() == ArrayAt
+                    ? m_out.baseIndex(heap, storage, m_out.zeroExtPtr(index))
+                    : baseIndexWithProvenValue(heap, storage, index, m_graph.varArgChild(m_node, 1)));
             m_out.branch(
                 m_out.doubleNotEqualOrUnordered(doubleValue, doubleValue),
                 rarely(slowCase), usually(boxPath));
@@ -6055,7 +6078,8 @@ IGNORE_CLANG_WARNINGS_END
             m_out.appendTo(slowCase, continuation);
             ValueFromBlock slowResult;
             if (arrayMode.isOutOfBoundsSaneChain()) {
-                speculate(NegativeIndex, noValue(), nullptr, m_out.lessThan(index, m_out.int32Zero));
+                if (m_node->op() != ArrayAt)
+                    speculate(NegativeIndex, noValue(), nullptr, m_out.lessThan(index, m_out.int32Zero));
                 if (resultIsUnboxed)
                     slowResult = m_out.anchor(m_out.constDouble(PNaN));
                 else
@@ -7212,6 +7236,15 @@ IGNORE_CLANG_WARNINGS_END
             DFG_CRASH(m_graph, m_node, "Bad use kind");
             return;
         }
+    }
+
+    void compileArrayAt()
+    {
+        LValue result = compileGetByValImpl();
+        if (result->type() == Double)
+            setDouble(result);
+        else
+            setJSValue(result);
     }
 
     void compileArrayPush()

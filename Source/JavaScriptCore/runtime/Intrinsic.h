@@ -52,6 +52,7 @@ namespace JSC {
     macro(CoshIntrinsic) \
     macro(SinhIntrinsic) \
     macro(TanhIntrinsic) \
+    macro(ArrayAtIntrinsic) \
     macro(ArrayPushIntrinsic) \
     macro(ArrayPopIntrinsic) \
     macro(ArraySliceIntrinsic) \

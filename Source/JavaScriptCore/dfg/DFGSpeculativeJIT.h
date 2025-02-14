@@ -1796,6 +1796,7 @@ public:
     void compileNumberIsNaN(Node*);
     void compileToIntegerOrInfinity(Node*);
     void compileToLength(Node*);
+    void compileArrayAt(Node*, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix);
 
     template<typename JSClass, typename Operation>
     void compileCreateInternalFieldObject(Node*, Operation);

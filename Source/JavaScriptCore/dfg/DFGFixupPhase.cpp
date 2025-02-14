@@ -1105,6 +1105,28 @@ private:
             break;
         }
 
+        case ArrayAt: {
+            blessArrayOperation(m_graph.varArgChild(node, 0), m_graph.varArgChild(node, 1), m_graph.varArgChild(node, 2));
+            fixEdge<KnownCellUse>(m_graph.varArgChild(node, 0));
+            fixEdge<Int32Use>(m_graph.varArgChild(node, 1));
+            ArrayMode arrayMode = node->arrayMode();
+            switch (arrayMode.type()) {
+            case Array::Double:
+                if (!arrayMode.isOutOfBounds()
+                    || (arrayMode.isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther)))
+                    node->setResult(NodeResultDouble);
+                break;
+            case Array::Contiguous:
+            case Array::Int32: {
+                break;
+            }
+            default:
+                RELEASE_ASSERT_NOT_REACHED();
+                break;
+            }
+            break;
+        }
+
         case EnumeratorGetByVal: {
             fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 3));
             fixEdge<KnownInt32Use>(m_graph.varArgChild(node, 4));

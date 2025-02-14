@@ -2629,6 +2629,227 @@ void SpeculativeJIT::compileMapGet(Node* node)
         RELEASE_ASSERT_NOT_REACHED();
 }
 
+void SpeculativeJIT::compileArrayAt(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix)
+{
+    ASSERT(node->op() == ArrayAt);
+    ASSERT(node->arrayMode().type() == Array::Int32 || node->arrayMode().type() == Array::Contiguous || node->arrayMode().type() == Array::Double);
+
+    switch (node->arrayMode().type()) {
+    case Array::Int32:
+    case Array::Contiguous: {
+        if (node->arrayMode().isInBounds()) {
+            SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
+            StorageOperand storage(this, m_graph.varArgChild(node, 2));
+            GPRTemporary propertyTemp(this);
+
+            GPRReg propertyReg = property.gpr();
+            GPRReg storageReg = storage.gpr();
+            GPRReg propertyTempReg = propertyTemp.gpr();
+
+            if (!m_compileOkay)
+                return;
+
+            JSValueRegs resultRegs;
+            DataFormat format;
+            constexpr bool needsFlush = false;
+            std::tie(resultRegs, format) = prefix(node->arrayMode().type() == Array::Int32 ? DataFormatJSInt32 : DataFormatJS, needsFlush);
+            GPRReg result = resultRegs.gpr();
+            GPRReg scratchReg = resultRegs.payloadGPR();
+
+            move(propertyReg, propertyTempReg);
+
+            Jump isNotNegativeIndex = branch32(GreaterThanOrEqual, propertyTempReg, TrustedImm32(0));
+            load32(Address(storageReg, Butterfly::offsetOfPublicLength()), scratchReg);
+            add32(scratchReg, propertyTempReg, propertyTempReg);
+
+            isNotNegativeIndex.link(this);
+
+            speculationCheck(OutOfBounds, JSValueRegs(), nullptr, branch32(AboveOrEqual, propertyTempReg, Address(storageReg, Butterfly::offsetOfPublicLength())));
+
+            load64(BaseIndex(storageReg, propertyTempReg, TimesEight), result);
+            if (node->arrayMode().isInBoundsSaneChain()) {
+                ASSERT(node->arrayMode().type() == Array::Contiguous);
+                Jump notHole = branchIfNotEmpty(result);
+                move(TrustedImm64(JSValue::encode(jsUndefined())), result);
+                notHole.link(this);
+            } else {
+                speculationCheck(
+                    LoadFromHole, JSValueRegs(), nullptr,
+                    branchIfEmpty(result));
+            }
+            jsValueResult(result, node, format);
+            break;
+        }
+        SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+        SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
+        StorageOperand storage(this, m_graph.varArgChild(node, 2));
+        GPRTemporary propertyTemp(this);
+
+        GPRReg baseReg = base.gpr();
+        GPRReg propertyReg = property.gpr();
+        GPRReg storageReg = storage.gpr();
+        GPRReg propertyTempReg = propertyTemp.gpr();
+
+        if (!m_compileOkay)
+            return;
+
+        JSValueRegs resultRegs;
+        constexpr bool needsFlush = false;
+        std::tie(resultRegs, std::ignore) = prefix(DataFormatJS, needsFlush);
+        GPRReg resultReg = resultRegs.gpr();
+        GPRReg scratchReg = resultRegs.payloadGPR();
+
+        move(propertyReg, propertyTempReg);
+
+        Jump isNotNegativeIndex = branch32(GreaterThanOrEqual, propertyTempReg, TrustedImm32(0));
+        load32(Address(storageReg, Butterfly::offsetOfPublicLength()), scratchReg);
+        add32(scratchReg, propertyTempReg, propertyTempReg);
+
+        isNotNegativeIndex.link(this);
+
+        JumpList slowCases;
+
+        slowCases.append(branch32(AboveOrEqual, propertyTempReg, Address(storageReg, Butterfly::offsetOfPublicLength())));
+
+        load64(BaseIndex(storageReg, propertyTempReg, TimesEight), resultReg);
+
+        if (node->arrayMode().isOutOfBoundsSaneChain()) {
+            auto done = branchIfNotEmpty(resultReg);
+            slowCases.link(this);
+            move(TrustedImm64(JSValue::encode(jsUndefined())), resultReg);
+            done.link(this);
+        } else {
+            slowCases.append(branchIfEmpty(resultReg));
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowCases, this, operationGetByValObjectInt,
+                    resultReg, LinkableConstant::globalObject(*this, node), baseReg, propertyTempReg));
+        }
+
+
+        jsValueResult(resultReg, node);
+        break;
+    }
+
+    case Array::Double: {
+        if (node->arrayMode().isInBounds()) {
+            SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
+            StorageOperand storage(this, m_graph.varArgChild(node, 2));
+            GPRTemporary propertyTemp(this);
+            GPRTemporary scratchTemp(this);
+
+            GPRReg propertyReg = property.gpr();
+            GPRReg storageReg = storage.gpr();
+            GPRReg propertyTempReg = propertyTemp.gpr();
+            GPRReg scratchTempReg = scratchTemp.gpr();
+
+            if (!m_compileOkay)
+                return;
+
+            FPRTemporary result(this);
+            FPRReg resultReg = result.fpr();
+
+            JSValueRegs resultRegs;
+            DataFormat format;
+            constexpr bool needsFlush = false;
+            std::tie(resultRegs, format) = prefix(DataFormatDouble, needsFlush);
+
+            move(propertyReg, propertyTempReg);
+
+            Jump isNotNegativeIndex = branch32(GreaterThanOrEqual, propertyTempReg, TrustedImm32(0));
+            load32(Address(storageReg, Butterfly::offsetOfPublicLength()), scratchTempReg);
+            add32(scratchTempReg, propertyTempReg, propertyTempReg);
+
+            isNotNegativeIndex.link(this);
+
+            speculationCheck(OutOfBounds, JSValueRegs(), nullptr, branch32(AboveOrEqual, propertyTempReg, Address(storageReg, Butterfly::offsetOfPublicLength())));
+
+            loadDouble(BaseIndex(storageReg, propertyTempReg, TimesEight), resultReg);
+            if (!node->arrayMode().isInBoundsSaneChain())
+                speculationCheck(LoadFromHole, JSValueRegs(), nullptr, branchIfNaN(resultReg));
+            if (format == DataFormatJS) {
+                boxDouble(resultReg, resultRegs);
+                jsValueResult(resultRegs, node);
+            } else {
+                ASSERT(format == DataFormatDouble && !resultRegs);
+                doubleResult(resultReg, node);
+            }
+            break;
+        }
+
+        bool resultIsUnboxed = node->arrayMode().isOutOfBoundsSaneChain() && !(node->flags() & NodeBytecodeUsesAsOther);
+
+        SpeculateCellOperand base(this, m_graph.varArgChild(node, 0));
+        SpeculateStrictInt32Operand property(this, m_graph.varArgChild(node, 1));
+        StorageOperand storage(this, m_graph.varArgChild(node, 2));
+        GPRTemporary propertyTemp(this);
+        GPRTemporary scratchTemp(this);
+
+        GPRReg baseReg = base.gpr();
+        GPRReg propertyReg = property.gpr();
+        GPRReg storageReg = storage.gpr();
+        GPRReg propertyTempReg = propertyTemp.gpr();
+        GPRReg scratchTempReg = scratchTemp.gpr();
+
+        if (!m_compileOkay)
+            return;
+
+        FPRTemporary temp(this);
+        FPRReg tempReg = temp.fpr();
+
+        JSValueRegs resultRegs;
+        DataFormat format;
+        constexpr bool needsFlush = false;
+        std::tie(resultRegs, format) = prefix(resultIsUnboxed ? DataFormatDouble : DataFormatJS, needsFlush);
+
+        move(propertyReg, propertyTempReg);
+
+        Jump isNotNegativeIndex = branch32(GreaterThanOrEqual, propertyTempReg, TrustedImm32(0));
+        load32(Address(storageReg, Butterfly::offsetOfPublicLength()), scratchTempReg);
+        add32(scratchTempReg, propertyTempReg, propertyTempReg);
+
+        isNotNegativeIndex.link(this);
+
+        JumpList slowCases;
+
+        slowCases.append(branch32(AboveOrEqual, propertyTempReg, Address(storageReg, Butterfly::offsetOfPublicLength())));
+
+        loadDouble(BaseIndex(storageReg, propertyTempReg, TimesEight), tempReg);
+        if (node->arrayMode().isOutOfBoundsSaneChain()) {
+            if (format == DataFormatDouble) {
+                auto done = jump();
+                slowCases.link(this);
+                move64ToDouble(TrustedImm64(std::bit_cast<uint64_t>(PNaN)), tempReg);
+                done.link(this);
+                ASSERT(!resultRegs);
+                doubleResult(tempReg, node);
+            } else {
+                slowCases.append(branchIfNaN(tempReg));
+                boxDouble(tempReg, resultRegs.gpr());
+                auto done = jump();
+                slowCases.link(this);
+                move(TrustedImm64(JSValue::encode(jsUndefined())), resultRegs.gpr());
+                done.link(this);
+                jsValueResult(resultRegs.gpr(), node);
+            }
+        } else {
+            slowCases.append(branchIfNaN(tempReg));
+            boxDouble(tempReg, resultRegs.gpr());
+            addSlowPathGenerator(
+                slowPathCall(
+                    slowCases, this, operationGetByValObjectInt,
+                    resultRegs.gpr(), LinkableConstant::globalObject(*this, node), baseReg, propertyTempReg));
+            jsValueResult(resultRegs.gpr(), node);
+        }
+
+        break;
+    }
+    default:
+        DFG_CRASH(m_graph, node, "Bad array mode type");
+        break;
+    }
+}
+
 void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix)
 {
     switch (node->arrayMode().type()) {
@@ -2700,15 +2921,10 @@ void SpeculativeJIT::compileGetByVal(Node* node, const ScopedLambda<std::tuple<J
         JSValueRegs baseRegs { baseGPR };
         JSValueRegs propertyRegs { propertyGPR };
         auto [ stubInfo, stubInfoConstant ] = addStructureStubInfo();
-        shuffleRegisters<GPRReg, 2>(
-            {
-                baseGPR,
-                propertyGPR,
-            },
-            {
-                BaselineJITRegisters::GetByVal::baseJSR.payloadGPR(),
-                BaselineJITRegisters::GetByVal::propertyJSR.payloadGPR(),
-            });
+        shuffleRegisters<GPRReg, 2>({ baseGPR, propertyGPR }, {
+            BaselineJITRegisters::GetByVal::baseJSR.payloadGPR(),
+            BaselineJITRegisters::GetByVal::propertyJSR.payloadGPR(),
+        });
         addPtr(TrustedImm32(JITData::offsetOfDummyArrayProfile()), GPRInfo::jitDataRegister, BaselineJITRegisters::GetByVal::profileGPR);
         JITGetByValGenerator gen(
             codeBlock(), stubInfo, JITType::DFGJIT, codeOrigin, callSite, AccessType::GetByVal, usedRegisters,
@@ -4138,7 +4354,33 @@ void SpeculativeJIT::compile(Node* node)
         compileRecordRegExpCachedResult(node);
         break;
     }
-        
+
+    case ArrayAt: {
+        JSValueRegsTemporary result;
+        std::optional<JSValueRegsFlushedCallResult> flushedResult;
+        compileArrayAt(node, scopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>([&] (DataFormat preferredFormat, bool needsFlush) {
+            JSValueRegs resultRegs;
+            switch (preferredFormat) {
+            case DataFormatDouble:
+                break;
+            default: {
+                if (!needsFlush) {
+                    result = JSValueRegsTemporary(this);
+                    resultRegs = result.regs();
+                } else {
+                    ASSERT(preferredFormat == DataFormatJS);
+                    flushRegisters();
+                    flushedResult.emplace(this);
+                    resultRegs = flushedResult->regs();
+                }
+                break;
+            }
+            };
+            return std::tuple { resultRegs, preferredFormat };
+        }));
+        break;
+    }
+
     case ArrayPush: {
         compileArrayPush(node);
         break;

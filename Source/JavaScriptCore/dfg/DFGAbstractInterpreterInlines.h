@@ -370,7 +370,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
     verifyEdges(node);
     
     m_state.createValueForNode(node);
-    
+
     switch (node->op()) {
     case JSConstant:
     case DoubleConstant:
@@ -2851,6 +2851,41 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setNonCellTypeForNode(node, SpecBytecodeDouble | SpecOther);
             else
                 setNonCellTypeForNode(node, SpecFullDouble);
+            break;
+        default:
+            RELEASE_ASSERT_NOT_REACHED();
+            break;
+        }
+        break;
+    }
+
+    case ArrayAt: {
+        ArrayMode arrayMode = node->arrayMode();
+        if (arrayMode.isEffectfulOutOfBounds()) {
+            clobberWorld();
+            makeHeapTopForNode(node);
+            break;
+        }
+        switch (arrayMode.type()) {
+        case Array::Int32:
+            if (arrayMode.isOutOfBoundsSaneChain())
+                setNonCellTypeForNode(node, SpecInt32Only | SpecOther);
+            else
+                setNonCellTypeForNode(node, SpecInt32Only);
+            break;
+        case Array::Double:
+            if (arrayMode.isInBoundsSaneChain())
+                setNonCellTypeForNode(node, SpecBytecodeDouble);
+            else if (arrayMode.isOutOfBoundsSaneChain()) {
+                if (!!(node->flags() & NodeBytecodeUsesAsOther))
+                    setNonCellTypeForNode(node, SpecBytecodeDouble | SpecOther);
+                else
+                    setNonCellTypeForNode(node, SpecBytecodeDouble);
+            } else
+                setNonCellTypeForNode(node, SpecDoubleReal);
+            break;
+        case Array::Contiguous:
+            makeHeapTopForNode(node);
             break;
         default:
             RELEASE_ASSERT_NOT_REACHED();

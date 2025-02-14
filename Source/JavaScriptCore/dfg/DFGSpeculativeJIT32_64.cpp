@@ -2787,6 +2787,11 @@ void SpeculativeJIT::compile(Node* node)
         compileRecordRegExpCachedResult(node);
         break;
     }
+
+    case ArrayAt: {
+        DFG_CRASH(m_graph, node, "ArrayAt only used in 64-bit DFG");
+        break;
+    }
         
     case ArrayPush: {
         compileArrayPush(node);

@@ -256,6 +256,7 @@ namespace JSC { namespace DFG {
     macro(CheckArrayOrEmpty, NodeMustGenerate) \
     macro(GetPrivateName, NodeResultJS | NodeMustGenerate) \
     macro(GetPrivateNameById, NodeResultJS | NodeMustGenerate) \
+    macro(ArrayAt, NodeResultJS | NodeHasVarArgs | NodeMustGenerate) \
     /* This checks if the edge is a typed array and if it is detached. */ \
     macro(CheckDetached, NodeMustGenerate) \
     macro(Arrayify, NodeMustGenerate) \

@@ -2020,6 +2020,7 @@ public:
         case GetInternalField:
         case GetFromArguments:
         case GetArgument:
+        case ArrayAt:
         case ArrayPop:
         case ArrayPush:
         case ArraySplice:
@@ -2216,6 +2217,7 @@ public:
         case GetTypedArrayLengthAsInt52:
         case HasIndexedProperty:
         case EnumeratorNextUpdateIndexAndMode:
+        case ArrayAt:
         case ArrayIndexOf:
             return true;
         default:
@@ -2557,6 +2559,7 @@ public:
         case CheckArrayOrEmpty:
         case Arrayify:
         case ArrayifyToStructure:
+        case ArrayAt:
         case ArrayPush:
         case ArrayPop:
         case ArrayIndexOf:

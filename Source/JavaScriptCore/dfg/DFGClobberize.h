@@ -139,6 +139,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case CheckArray:
         case CheckArrayOrEmpty:
             break;
+        case ArrayAt:
         case EnumeratorNextUpdateIndexAndMode:
         case EnumeratorGetByVal:
         case EnumeratorPutByVal:
@@ -990,6 +991,12 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
     case EnumeratorGetByVal: {
         clobberTop();
         return;
+    }
+
+    case ArrayAt: {
+        ASSERT(node->arrayMode().type() == Array::Int32 || node->arrayMode().type() == Array::Double || node->arrayMode().type() == Array::Contiguous);
+
+        FALLTHROUGH;
     }
         
     case GetByVal:

@@ -556,6 +556,7 @@ private:
             break;
         }
 
+        case ArrayAt:
         case GetByVal:
         case AtomicsAdd:
         case AtomicsAnd:
@@ -1528,7 +1529,8 @@ private:
         case AtomicsStore:
         case AtomicsSub:
         case AtomicsXor:
-        case StringAt: {
+        case StringAt:
+        case ArrayAt: {
             m_dependentNodes.append(m_currentNode);
             break;
         }

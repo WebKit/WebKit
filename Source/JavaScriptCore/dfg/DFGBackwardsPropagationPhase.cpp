@@ -506,6 +506,7 @@ private:
             break;
         }
 
+        case ArrayAt:
         case EnumeratorGetByVal:
         case GetByVal:
         case GetByValMegamorphic: {
@@ -513,7 +514,7 @@ private:
             m_graph.varArgChild(node, 1)->mergeFlags(NodeBytecodeUsesAsArrayIndex);
             break;
         }
-            
+
         case NewTypedArray:
         case NewArrayWithSize:
         case NewArrayWithConstantSize:
