@@ -1005,7 +1005,7 @@ void AVVideoCaptureSource::updateWhiteBalanceMode()
     @try {
         device.whiteBalanceMode = whiteBalanceModeFromMeteringMode(whiteBalanceMode());
     } @catch(NSException *exception) {
-        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error setting white balance mode ", [[exception name] UTF8String], ", reason : ", exception.reason);
+        ERROR_LOG_IF(loggerPtr(), LOGIDENTIFIER, "error setting white balance mode ", exception.name, ", reason : ", exception.reason);
     }
 
     [device unlockForConfiguration];
