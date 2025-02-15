@@ -54,7 +54,7 @@ WorkerDebuggerAgent::~WorkerDebuggerAgent() = default;
 
 void WorkerDebuggerAgent::breakpointActionLog(JSGlobalObject* lexicalGlobalObject, const String& message)
 {
-    m_globalScope.addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject)));
+    Ref { m_globalScope.get() }->addConsoleMessage(makeUnique<ConsoleMessage>(MessageSource::JS, MessageType::Log, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject)));
 }
 
 InjectedScript WorkerDebuggerAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
@@ -66,7 +66,7 @@ InjectedScript WorkerDebuggerAgent::injectedScriptForEval(Inspector::Protocol::E
 
     // FIXME: What guarantees m_globalScope.script() is non-null?
     // FIXME: What guarantees globalScopeWrapper() is non-null?
-    return injectedScriptManager().injectedScriptFor(m_globalScope.script()->globalScopeWrapper());
+    return injectedScriptManager().injectedScriptFor(m_globalScope->script()->globalScopeWrapper());
 }
 
 } // namespace WebCore

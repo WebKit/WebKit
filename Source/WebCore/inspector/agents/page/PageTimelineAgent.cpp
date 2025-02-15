@@ -322,7 +322,7 @@ void PageTimelineAgent::captureScreenshot()
 
     auto snapshotStartTime = timestamp();
 
-    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
+    RefPtr localMainFrame = Ref { m_inspectedPage.get() }->localMainFrame();
     if (!localMainFrame)
         return;
 
