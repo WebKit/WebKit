@@ -25,7 +25,9 @@
 #include "GStreamerCommon.h"
 #include <gst/app/gstappsink.h>
 #include <gst/app/gstappsrc.h>
+#if USE(GSTREAMER_GL)
 #include <gst/gl/gl.h>
+#endif
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 
@@ -62,10 +64,12 @@ GRefPtr<GstSample> GStreamerVideoFrameConverter::convert(const GRefPtr<GstSample
     if (gst_caps_is_equal(inputCaps, destinationCaps.get()))
         return GRefPtr(sample);
 
+#if USE(GSTREAMER_GL)
     if (!setGstElementGLContext(m_sink.get(), GST_GL_DISPLAY_CONTEXT_TYPE))
         return nullptr;
     if (!setGstElementGLContext(m_sink.get(), "gst.gl.app_context"))
         return nullptr;
+#endif
 
     unsigned capsSize = gst_caps_get_size(destinationCaps.get());
     auto newCaps = adoptGRef(gst_caps_new_empty());

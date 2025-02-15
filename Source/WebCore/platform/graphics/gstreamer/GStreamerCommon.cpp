@@ -1829,6 +1829,7 @@ GRefPtr<GstCaps> buildDMABufCaps()
 }
 #endif // USE(GBM)
 
+#if USE(GSTREAMER_GL)
 static std::optional<GRefPtr<GstContext>> requestGLContext(const char* contextType)
 {
     auto& sharedDisplay = PlatformDisplay::sharedDisplay();
@@ -1865,6 +1866,7 @@ bool setGstElementGLContext(GstElement* element, const char* contextType)
     }
     return true;
 }
+#endif
 
 #undef GST_CAT_DEFAULT
 
