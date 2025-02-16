@@ -386,7 +386,7 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 {
     ASSERT(hasOneRef());
 
-    flushDrawingContext();
+    flushDrawingContextAsync();
     m_remoteDisplayList.disconnect();
 
     RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
