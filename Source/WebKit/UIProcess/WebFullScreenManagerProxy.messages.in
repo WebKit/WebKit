@@ -24,11 +24,11 @@
 [
     DispatchedFrom=WebContent,
     DispatchedTo=UI,
+    SharedPreferencesNeedsConnection,
     EnabledBy=FullScreenEnabled || VideoFullscreenRequiresElementFullscreen
 ]
 messages -> WebFullScreenManagerProxy {
-    SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen) Synchronous
-    EnterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails)
+    EnterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails) -> (bool success)
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     UpdateImageSource(struct WebKit::FullScreenMediaDetails mediaDetails)
 #endif

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebCoreTestUtilities.h"
 
-#import <wtf/MemoryFootprint.h>
+#include <wtf/MemoryFootprint.h>
 
 namespace TestWebKitAPI {
 

@@ -115,8 +115,10 @@ RetainPtr<id> CoreIPCNSURLProtectionSpace::toID() const
 
     [dict setObject:[NSNumber numberWithUnsignedChar:static_cast<uint8_t>(m_data.scheme)] forKey:@"scheme"];
 
-    if (m_data.trust)
-        [dict setObject:(id)m_data.trust->createSecTrust().get() forKey:@"trust"];
+    if (m_data.trust) {
+        if (RetainPtr trust = m_data.trust->createSecTrust())
+            [dict setObject:(id)trust.get() forKey:@"trust"];
+    }
 
     if (m_data.distnames) {
         auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:m_data.distnames->size()]);

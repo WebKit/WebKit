@@ -719,14 +719,14 @@ ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lex(Literal
     while (m_ptr < m_end && isJSONWhiteSpace(*m_ptr))
         ++m_ptr;
 
-    if constexpr (reviverMode == JSONReviverMode::Enabled)
+    if constexpr (reviverMode == JSONReviverMode::Enabled) {
         m_currentTokenStart = m_ptr;
+        m_currentTokenEnd = m_ptr;
+    }
 
     ASSERT(m_ptr <= m_end);
     if (m_ptr == m_end) {
         token.type = TokEnd;
-        if constexpr (reviverMode == JSONReviverMode::Enabled)
-            m_currentTokenEnd = m_ptr;
         return TokEnd;
     }
     ASSERT(m_ptr < m_end);
@@ -735,17 +735,18 @@ ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lex(Literal
     if (LIKELY(isLatin1(character))) {
         TokenType tokenType = tokenTypesOfLatin1Characters[character];
         switch (tokenType) {
-        case TokString:
+        case TokString: {
             if (UNLIKELY(character == '\'' && m_mode == StrictJSON)) {
                 m_lexErrorMessage = "Single quotes (\') are not allowed in JSON"_s;
+                if constexpr (reviverMode == JSONReviverMode::Enabled)
+                    m_currentTokenEnd = m_ptr;
                 return TokError;
             }
-            if constexpr (reviverMode == JSONReviverMode::Enabled) {
-                auto result = lexString<hint>(token, character);
+            auto result = lexString<hint>(token, character);
+            if constexpr (reviverMode == JSONReviverMode::Enabled)
                 m_currentTokenEnd = m_ptr;
-                return result;
-            }
-            return lexString<hint>(token, character);
+            return result;
+        }
 
         case TokIdentifier: {
             switch (character) {
@@ -777,21 +778,18 @@ ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lex(Literal
                 }
                 break;
             }
-            if constexpr (reviverMode == JSONReviverMode::Enabled) {
-                auto result = lexIdentifier(token);
+            auto result = lexIdentifier(token);
+            if constexpr (reviverMode == JSONReviverMode::Enabled)
                 m_currentTokenEnd = m_ptr;
-                return result;
-            }
-            return lexIdentifier(token);
+            return result;
         }
 
-        case TokNumber:
-            if constexpr (reviverMode == JSONReviverMode::Enabled) {
-                auto result = lexNumber(token);
+        case TokNumber: {
+            auto result = lexNumber(token);
+            if constexpr (reviverMode == JSONReviverMode::Enabled)
                 m_currentTokenEnd = m_ptr;
-                return result;
-            }
-            return lexNumber(token);
+            return result;
+        }
 
         case TokError:
         case TokErrorSpace:
@@ -817,6 +815,8 @@ ALWAYS_INLINE TokenType LiteralParser<CharType, reviverMode>::Lexer::lex(Literal
         }
     }
     m_lexErrorMessage = makeString("Unrecognized token '"_s, span(*m_ptr), '\'');
+    if constexpr (reviverMode == JSONReviverMode::Enabled)
+        m_currentTokenEnd = m_ptr;
     return TokError;
 }
 
@@ -1423,7 +1423,7 @@ JSValue LiteralParser<CharType, reviverMode>::parse(VM& vm, ParserState initialS
                     unsigned startOffset = static_cast<unsigned>(m_lexer.currentTokenStart() - m_lexer.start());
                     m_rangesStack.append({
                         sourceRanges->record(array),
-                        WTF::Range<unsigned> { startOffset, startOffset },
+                        WTF::Range<unsigned> { startOffset },
                         JSONRanges::Array { }
                     });
                 }
@@ -1489,7 +1489,7 @@ JSValue LiteralParser<CharType, reviverMode>::parse(VM& vm, ParserState initialS
                     unsigned startOffset = static_cast<unsigned>(m_lexer.currentTokenStart() - m_lexer.start());
                     m_rangesStack.append({
                         sourceRanges->record(object),
-                        WTF::Range<unsigned> { startOffset, startOffset },
+                        WTF::Range<unsigned> { startOffset },
                         JSONRanges::Object { }
                     });
                 }

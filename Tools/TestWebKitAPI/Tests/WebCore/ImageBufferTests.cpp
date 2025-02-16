@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "GraphicsTestUtilities.h"
 #include "Test.h"
 #include "WebCoreTestUtilities.h"
 #include <WebCore/Color.h>
@@ -38,18 +39,6 @@
 namespace TestWebKitAPI {
 using namespace WebCore;
 
-static ::testing::AssertionResult imageBufferPixelIs(Color expected, ImageBuffer& imageBuffer, int x, int y)
-{
-    PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
-    auto frontPixelBuffer = imageBuffer.getPixelBuffer(format, { x, y, 1, 1 });
-    auto got = Color { SRGBA<uint8_t> { frontPixelBuffer->item(0), frontPixelBuffer->item(1), frontPixelBuffer->item(2), frontPixelBuffer->item(3) } };
-    if (got != expected) {
-        // Use this to debug the contents in the browser.
-        // WTFLogAlways("%s", imageBuffer.toDataURL("image/png"_s).latin1().data());
-        return ::testing::AssertionFailure() << "color is not expected at (" << x << ", " << y << "). Got: " << got << ", expected: " << expected << ".";
-    }
-    return ::testing::AssertionSuccess();
-}
 namespace {
 struct TestPattern {
     FloatRect unitRect;
@@ -79,12 +68,12 @@ static ::testing::AssertionResult hasTestPattern(ImageBuffer& buffer, int seed)
         rect = enclosingIntRect(rect);
         auto p1 = rect.minXMinYCorner();
         p1.move(fuzz, fuzz);
-        auto result = imageBufferPixelIs(pattern.color, buffer, p1.x(), p1.y());
+        auto result = imageBufferPixelIs(pattern.color, buffer, p1);
         if (!result)
             return result;
         p1 = rect.maxXMaxYCorner();
         p1.move(-fuzz, -fuzz);
-        result = imageBufferPixelIs(pattern.color, buffer, p1.x() - 1, p1.y() - 1);
+        result = imageBufferPixelIs(pattern.color, buffer, p1 + FloatPoint(-1, -1));
         if (!result)
             return result;
     }
@@ -167,15 +156,15 @@ TEST(ImageBufferTests, ImageBufferSubPixelDrawing)
         frontContext.drawImageBuffer(*backImageBuffer, WebCore::FloatPoint { }, { WebCore::CompositeOperator::Copy });
     }
 
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.x() + 1, fillRect.y() + 1));
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.maxX() - 1, fillRect.y() + 1));
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.x() + 1, fillRect.maxY() - 1));
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.maxX() - 1, fillRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.minXMinYCorner() + FloatPoint(1, 1)));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.maxXMinYCorner() + FloatPoint(-1, 1)));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.minXMaxYCorner() + FloatPoint(1, -1)));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *frontImageBuffer, fillRect.maxXMaxYCorner() + FloatPoint(-1, -1)));
 
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.x() + 1, fillRect.y() + 1));
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.maxX() - 1, fillRect.y() + 1));
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.x() + 1, fillRect.maxY() - 1));
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.maxX() - 1, fillRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.minXMinYCorner() + FloatPoint(1, 1)));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.maxXMinYCorner() + FloatPoint(-1, 1)));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.minXMaxYCorner() + FloatPoint(1, -1)));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *backImageBuffer, fillRect.maxXMaxYCorner() + FloatPoint(-1, -1)));
 }
 
 // Test that drawing an accelerated ImageBuffer to an unaccelerated does not store extra
@@ -205,7 +194,7 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
         auto accelerated = ImageBuffer::create(logicalSize, RenderingMode::Accelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
         auto fillRect = FloatRect { { }, logicalSize };
         accelerated->context().fillRect(fillRect, Color::green);
-        EXPECT_TRUE(imageBufferPixelIs(Color::green, *accelerated, fillRect.maxX() - 1, fillRect.maxY() - 1));
+        EXPECT_TRUE(imageBufferPixelIs(Color::green, *accelerated, fillRect.maxXMaxYCorner() + FloatPoint(-1, -1)));
     }
     WTF::releaseFastMallocFreeMemory();
     auto initialFootprint = memoryFootprint();
@@ -220,13 +209,13 @@ TEST(ImageBufferTests, DISABLED_DrawImageBufferDoesNotReferenceExtraMemory)
 
     auto unaccelerated = ImageBuffer::create(logicalSize, RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, scale, colorSpace, pixelFormat);
     unaccelerated->context().fillRect(fillRect, Color::yellow);
-    EXPECT_TRUE(imageBufferPixelIs(Color::yellow, *unaccelerated, fillRect.maxX() - 1, fillRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::yellow, *unaccelerated, fillRect.maxXMaxYCorner() + FloatPoint(-1, -1)));
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, logicalSizeBytes, footprintError));
 
     // The purpose of the whole test is to test that drawImageBuffer does not increase
     // memory footprint.
     unaccelerated->context().drawImageBuffer(*accelerated, FloatRect { { }, logicalSize }, FloatRect { { }, logicalSize }, { WebCore::CompositeOperator::Copy });
-    EXPECT_TRUE(imageBufferPixelIs(Color::green, *unaccelerated, fillRect.maxX() - 1, fillRect.maxY() - 1));
+    EXPECT_TRUE(imageBufferPixelIs(Color::green, *unaccelerated, fillRect.maxXMaxYCorner() + FloatPoint(-1, -1)));
     EXPECT_TRUE(memoryFootprintChangedBy(lastFootprint, 0 + drawImageBitmapUnaccountedFootprint, footprintError));
     // sleep(10000); // Enable this to inspect the process manually.
     accelerated = nullptr;

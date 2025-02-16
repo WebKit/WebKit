@@ -75,9 +75,14 @@ TreeResolver::TreeResolver(Document& document, std::unique_ptr<Update> update)
     : m_document(document)
     , m_update(WTFMove(update))
 {
+    // FIXME: Move transient state to TreeResolver similar to QueryContainerState.
+    m_document->styleScope().resetAnchorPositioningStateBeforeStyleResolution();
 }
 
-TreeResolver::~TreeResolver() = default;
+TreeResolver::~TreeResolver()
+{
+    m_document->styleScope().updateAnchorPositioningStateAfterStyleResolution();
+}
 
 TreeResolver::Scope::Scope(Document& document, Update& update)
     : resolver(document.styleScope().resolver())
@@ -237,6 +242,7 @@ auto TreeResolver::computeDescendantsToResolve(const ElementUpdate& update, cons
     case Change::NonInherited:
         return DescendantsToResolve::ChildrenWithExplicitInherit;
     case Change::FastPathInherited:
+    case Change::NonInheritedAndFastPathInherited:
     case Change::Inherited:
         return DescendantsToResolve::Children;
     case Change::Descendants:
@@ -680,7 +686,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
 
         if ((oldStyle && oldStyle->timelineScope().type != TimelineScope::Type::None) || resolvedStyle.style->timelineScope().type != TimelineScope::Type::None) {
             CheckedRef timelinesController = element.protectedDocument()->ensureTimelinesController();
-            timelinesController->updateNamedTimelineMapForTimelineScope(resolvedStyle.style->timelineScope(), element);
+            timelinesController->updateNamedTimelineMapForTimelineScope(resolvedStyle.style->timelineScope(), styleable);
         }
 
         // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style
@@ -703,7 +709,7 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         styleable.setLastStyleChangeEventStyle(RenderStyle::clonePtr(*resolvedStyle.style));
 
         // Apply all keyframe effects to the new style.
-        HashSet<AnimatableCSSProperty> animatedProperties;
+        UncheckedKeyHashSet<AnimatableCSSProperty> animatedProperties;
         auto animatedStyle = RenderStyle::clonePtr(*resolvedStyle.style);
 
         auto animationImpact = styleable.applyKeyframeEffects(*animatedStyle, animatedProperties, previousLastStyleChangeEventStyle.get(), resolutionContext);
@@ -870,7 +876,7 @@ const RenderStyle& TreeResolver::parentAfterChangeStyle(const Styleable& styleab
     return *resolutionContext.parentStyle;
 }
 
-HashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const HashSet<AnimatableCSSProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
+UncheckedKeyHashSet<AnimatableCSSProperty> TreeResolver::applyCascadeAfterAnimation(RenderStyle& animatedStyle, const UncheckedKeyHashSet<AnimatableCSSProperty>& animatedProperties, bool isTransition, const MatchResult& matchResult, const Element& element, const ResolutionContext& resolutionContext)
 {
     auto builderContext = BuilderContext {
         m_document.get(),
@@ -976,12 +982,19 @@ auto TreeResolver::determineResolutionType(const Element& element, const RenderS
         return { };
     case DescendantsToResolve::RebuildAllUsingExisting:
         return existingStyle ? ResolutionType::RebuildUsingExisting : ResolutionType::Full;
-    case DescendantsToResolve::Children:
-        if (parentChange == Change::FastPathInherited) {
-            if (existingStyle && !existingStyle->disallowsFastPathInheritance())
-                return ResolutionType::FastPathInherit;
-        }
-        return ResolutionType::Full;
+    case DescendantsToResolve::Children: {
+        auto canFastPathInherit = [&] {
+            if (parentChange != Change::FastPathInherited && parentChange != Change::NonInheritedAndFastPathInherited)
+                return false;
+            if (!existingStyle || existingStyle->disallowsFastPathInheritance())
+                return false;
+            // Some non-inherited property changed along with a fast-path property and we may need to inherit it too.
+            if (parentChange == Change::NonInheritedAndFastPathInherited && existingStyle->hasExplicitlyInheritedProperties())
+                return false;
+            return true;
+        };
+        return canFastPathInherit() ? ResolutionType::FastPathInherit : ResolutionType::Full;
+    }
     case DescendantsToResolve::All:
         return ResolutionType::Full;
     case DescendantsToResolve::ChildrenWithExplicitInherit:

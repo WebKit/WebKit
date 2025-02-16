@@ -252,8 +252,8 @@ bool OptimizeAssociativeExpressionTrees::run()
     m_proc.resetValueOwners();
 
     Vector<unsigned> useCounts(m_proc.values().size(), 0); // Mapping from Value::m_index to use counts.
-    HashSet<Value*> expressionTreeRoots;
-    HashSet<BasicBlock*> rootOwners;
+    UncheckedKeyHashSet<Value*> expressionTreeRoots;
+    UncheckedKeyHashSet<BasicBlock*> rootOwners;
 
     for (BasicBlock* block : m_proc) {
         for (Value* value : *block) {

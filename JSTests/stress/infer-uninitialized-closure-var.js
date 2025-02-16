@@ -8,7 +8,7 @@ function foo(p) {
         
         foo(false);
         
-        for (var i = 0; i < 10000; ++i) {
+        for (var i = 0; i < testLoopCount; ++i) {
             var result = f();
             if (result !== void 0)
                 throw "Error: bad result (1): " + result;

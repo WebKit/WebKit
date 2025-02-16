@@ -12,7 +12,7 @@ var data = [
     [1.2, 1.2, true]
 ];
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var test = data[i % data.length];
     var result = foo(test[0], test[1]);
     if (result != test[2])

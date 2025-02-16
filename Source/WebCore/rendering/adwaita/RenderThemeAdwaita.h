@@ -51,15 +51,15 @@ private:
     String mediaControlsStyleSheet() final;
 #endif
 
-#if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#if ENABLE(VIDEO)
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) final;
     String mediaControlsFormattedStringForDuration(double) final;
 
     String m_mediaControlsStyleSheet;
-#endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#endif // ENABLE(VIDEO)
 
     bool supportsHover() const final { return true; }
-    bool supportsFocusRing(const RenderStyle&) const final;
+    bool supportsFocusRing(const RenderObject&, const RenderStyle&) const final;
     bool supportsSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return false; }
     bool supportsListBoxSelectionForegroundColors(OptionSet<StyleColorOptions>) const final { return true; }
     bool shouldHaveCapsLockIndicator(const HTMLInputElement&) const final;
@@ -91,11 +91,9 @@ private:
 
     Color systemColor(CSSValueID, OptionSet<StyleColorOptions>) const final;
 
-#if ENABLE(DATALIST_ELEMENT)
     IntSize sliderTickSize() const final;
     int sliderTickOffsetFromTrackCenter() const final;
     void adjustListButtonStyle(RenderStyle&, const Element*) const final;
-#endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
     std::optional<Seconds> caretBlinkInterval() const override;

@@ -73,7 +73,6 @@ class VideoMediaSampleRenderer;
 class VideoTrackPrivate;
 class AudioTrackPrivateMediaSourceAVFObjC;
 class VideoTrackPrivateMediaSourceAVFObjC;
-class WebCoreDecompressionSession;
 class SharedBuffer;
 
 struct TrackInfo;
@@ -237,7 +236,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<SharedBuffer> m_initData;
-    WeakPtr<CDMSessionAVContentKeySession> m_session { nullptr };
+    WeakPtr<CDMSessionAVContentKeySession> m_session;
 #endif
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
     using KeyIDs = Vector<Ref<SharedBuffer>>;

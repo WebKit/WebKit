@@ -1,0 +1,9 @@
+This test ensures we don't ignore visibility:visible elements that have a visibility:hidden ancestor.
+
+PASS: button.role.toLowerCase().includes('button') === true
+PASS: button.isIgnored === false
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Press

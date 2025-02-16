@@ -654,13 +654,13 @@ void ViewTransition::setupDynamicStyleSheet(const AtomString& name, const Captur
         return;
 
     // group keyframes
-    Ref props = MutableStyleProperties::createEmpty();
-    props->setProperty(CSSPropertyWidth, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyWidth));
-    props->setProperty(CSSPropertyHeight, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyHeight));
-    props->setProperty(CSSPropertyTransform, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyTransform));
-    props->setProperty(CSSPropertyBackdropFilter, capturedElement.oldProperties->getPropertyCSSValue(CSSPropertyBackdropFilter));
-
-    Ref keyframe = StyleRuleKeyframe::create(WTFMove(props));
+    CSSPropertyID keyframeProperties[] = {
+        CSSPropertyWidth,
+        CSSPropertyHeight,
+        CSSPropertyTransform,
+        CSSPropertyBackdropFilter,
+    };
+    Ref keyframe = StyleRuleKeyframe::create(capturedElement.oldProperties->copyProperties(keyframeProperties));
     keyframe->setKeyText("from"_s);
 
     Ref keyframes = StyleRuleKeyframes::create(AtomString(makeString("-ua-view-transition-group-anim-"_s, name)));

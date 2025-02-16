@@ -62,6 +62,14 @@
 @property (nonatomic, readonly) BOOL _wk_isInFullscreenPresentation;
 @end
 
+#if USE(UICONTEXTMENU)
+
+@interface UIContextMenuInteraction (WebKitInternal)
+@property (nonatomic, readonly) BOOL _wk_isMenuVisible;
+@end
+
+#endif
+
 namespace WebKit {
 
 RetainPtr<UIAlertController> createUIAlertController(NSString *title, NSString *message);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -113,7 +113,7 @@ template<typename F, typename Op> void forAllChildNodes(const Op& root, const F&
         {
             WTF::switchOn(root,
                 [&](const Child& root) { functor(root); },
-                [&](const CSS::NoneRaw&) { }
+                [&](const CSS::Keyword::None&) { }
             );
         }
         void operator()(const Child& root)
@@ -127,6 +127,9 @@ template<typename F, typename Op> void forAllChildNodes(const Op& root, const F&
         {
         }
         void operator()(const CQ::ContainerProgressProviding*)
+        {
+        }
+        void operator()(const Random::CachingOptions&)
         {
         }
     };

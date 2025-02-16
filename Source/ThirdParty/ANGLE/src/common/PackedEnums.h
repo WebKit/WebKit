@@ -925,6 +925,27 @@ PackParam(FromT from)
         "Data types are different");
     return reinterpret_cast<EnumT>(from);
 }
+
+// Optimized specialization to avoid function call in common cases
+template <>
+ANGLE_INLINE typename gl::BufferBinding PackParam<gl::BufferBinding>(GLenum from)
+{
+    if (ANGLE_LIKELY(from == GL_ARRAY_BUFFER))
+    {
+        return gl::BufferBinding::Array;
+    }
+    if (ANGLE_LIKELY(from == GL_ELEMENT_ARRAY_BUFFER))
+    {
+        return gl::BufferBinding::ElementArray;
+    }
+    if (ANGLE_LIKELY(from == GL_UNIFORM_BUFFER))
+    {
+        return gl::BufferBinding::Uniform;
+    }
+
+    // Fall back to the default implementation
+    return FromGLenum<gl::BufferBinding>(from);
+}
 }  // namespace gl
 
 #endif  // COMMON_PACKEDGLENUMS_H_

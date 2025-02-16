@@ -13,13 +13,13 @@ noInline(foo);
 
 var array = new Int8Array(1);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     foo(array, true);
 
 if (reoptimizationRetryCount(foo))
     throw "Error: unexpected retry count: " + reoptimizationRetryCount(foo);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     foo(array, false);
 
 if (reoptimizationRetryCount(foo) != 1)

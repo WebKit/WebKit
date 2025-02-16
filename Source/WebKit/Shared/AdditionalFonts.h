@@ -40,6 +40,8 @@ struct FontData {
 
 struct AdditionalFonts {
     Vector<FontData> fontDataList;
+
+    static AdditionalFonts additionalFonts(const Vector<URL>& fontURLs, std::optional<audit_token_t>);
 };
 
 }

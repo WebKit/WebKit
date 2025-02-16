@@ -1,4 +1,3 @@
-Modules/webaudio/AudioWorkletThread.h
 Modules/websockets/WorkerThreadableWebSocketChannel.h
 html/parser/HTMLTreeBuilder.h
 loader/WorkerThreadableLoader.h

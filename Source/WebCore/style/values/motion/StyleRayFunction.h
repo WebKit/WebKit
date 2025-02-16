@@ -66,4 +66,4 @@ DEFINE_TYPE_MAPPING(CSS::Ray, Ray)
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(Ray, 4)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Ray, 4)

@@ -2,7 +2,7 @@ class Foo extends Promise { }
 
 noInline(Foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var completed = false;
     try {
         Foo();

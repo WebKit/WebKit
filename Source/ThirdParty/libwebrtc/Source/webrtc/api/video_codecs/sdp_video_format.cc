@@ -83,6 +83,7 @@ bool AV1IsSameLevelIdx(const CodecParameterMap& left,
 }
 
 #ifdef RTC_ENABLE_H265
+#ifdef RTC_ENABLE_H265_TIGHT_CHECKS
 std::string GetH265TxModeOrDefault(const CodecParameterMap& params) {
   // If TxMode is not present, a value of "SRST" must be inferred.
   // https://tools.ietf.org/html/rfc7798@section-7.1
@@ -94,6 +95,7 @@ bool IsSameH265TxMode(const CodecParameterMap& left,
   return absl::EqualsIgnoreCase(GetH265TxModeOrDefault(left),
                                 GetH265TxModeOrDefault(right));
 }
+#endif
 #endif
 
 // Some (video) codecs are actually families of codecs and rely on parameters
@@ -119,9 +121,13 @@ bool IsSameCodecSpecific(const std::string& name1,
              AV1IsSameLevelIdx(params1, params2);
 #ifdef RTC_ENABLE_H265
     case kVideoCodecH265:
+#ifdef RTC_ENABLE_H265_TIGHT_CHECKS
       return H265IsSameProfile(params1, params2) &&
              H265IsSameTier(params1, params2) &&
              IsSameH265TxMode(params1, params2);
+#else
+      return true;
+#endif
 #endif
     default:
       return true;

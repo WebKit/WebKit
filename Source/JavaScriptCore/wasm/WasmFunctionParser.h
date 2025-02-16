@@ -524,8 +524,23 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
             WasmOpcodeCounter::singleton().increment(m_currentOpcode);
 #endif
 
-        if (verbose) {
-            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawHex(m_currentOpcode), ", ", makeString(static_cast<OpType>(m_currentOpcode)), " at offset: ", RawHex(m_currentOpcodeStartingOffset));
+        if constexpr (verbose) {
+            String extOpString;
+            auto computeExtOpString = [&]<typename ExtOpEnum>() {
+                uint32_t extOpBits;
+                if (peekVarUInt32(extOpBits))
+                    extOpString = makeString("::"_s, makeString(static_cast<ExtOpEnum>(extOpBits)));
+                else
+                    extOpString = makeString(" with invalid extension: "_s, extOpBits);
+            };
+
+#define HANDLE_EXT_OP_PREFIX(name, id, b3, hasExtra, ExtOpEnumType) \
+            if (m_currentOpcode == OpType::name) \
+                computeExtOpString.template operator()<ExtOpEnumType>();
+            FOR_EACH_WASM_EXT_PREFIX_OP_WITH_ENUM(HANDLE_EXT_OP_PREFIX)
+#undef HANDLE_EXT_OP_PREFIX
+
+            dataLogLn("processing op (", m_unreachableBlocks, "): ",  RawHex(m_currentOpcode), ", ", makeString(static_cast<OpType>(m_currentOpcode)), extOpString, " at offset: ", RawHex(m_currentOpcodeStartingOffset));
             m_context.dump(m_controlStack, &m_expressionStack);
         }
 
@@ -537,6 +552,8 @@ auto FunctionParser<Context>::parseBody() -> PartialResult
         m_context.didParseOpcode();
     }
     WASM_FAIL_IF_HELPER_FAILS(m_context.endTopLevel({ m_signature.as<FunctionSignature>(), nullptr }, m_expressionStack));
+    if (Context::validateFunctionBodySize)
+        WASM_PARSER_FAIL_IF(m_offset != source().size(), "function body size doesn't match the expected size");
 
     ASSERT(op == OpType::End);
     return { };
@@ -1505,7 +1522,7 @@ auto FunctionParser<Context>::parseTableIndex(unsigned& result) -> PartialResult
 }
 
 template<typename Context>
-auto FunctionParser<Context>::parseIndexForLocal(uint32_t& resultIndex) -> PartialResult
+ALWAYS_INLINE auto FunctionParser<Context>::parseIndexForLocal(uint32_t& resultIndex) -> PartialResult
 {
     uint32_t index;
     WASM_PARSER_FAIL_IF(!parseVarUInt32(index), "can't get index for local"_s);
@@ -2191,7 +2208,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case ExtGC: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse extended GC opcode"_s);
         m_context.willParseExtendedOpcode();
 
@@ -2705,6 +2721,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type "_s, ref.type(), " expected an externref"_s);
                     break;
                 case TypeKind::Exn:
+                case TypeKind::Nullexn:
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), exnrefType()), opName, " to type "_s, ref.type(), " expected an exn"_s);
                     break;
                 case TypeKind::Eqref:
@@ -2955,14 +2972,15 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_TRY_ADD_TO_CONTEXT(addBranchNull(data, ref, m_expressionStack, true, unused));
 
         // On a non-taken branch, the value is null so it's not needed on the stack.
+        // We add a drop to ensure the context knows we are discarding this ref value,
+        // not popping it before use in some operation.
         WASM_TRY_POP_EXPRESSION_STACK_INTO(ref, "br_on_non_null"_s);
+        WASM_TRY_ADD_TO_CONTEXT(addDrop(ref));
 
         return { };
     }
 
     case RefEq: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
-
         TypedExpression ref0;
         TypedExpression ref1;
         WASM_TRY_POP_EXPRESSION_STACK_INTO(ref0, "ref.eq"_s);
@@ -3135,6 +3153,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         WASM_PARSER_FAIL_IF(m_info.tables[tableIndex].type() != TableElementType::Funcref, "call_indirect is only valid when a table has type funcref"_s);
 
         const TypeDefinition& typeDefinition = m_info.typeSignatures[signatureIndex].get();
+        WASM_VALIDATOR_FAIL_IF(!typeDefinition.expand().is<FunctionSignature>(), "invalid type index (not a function signature) for call_indirect, got ", signatureIndex);
         const auto& calleeSignature = *typeDefinition.expand().as<FunctionSignature>();
         size_t argumentCount = calleeSignature.argumentCount() + 1; // Add the callee's index.
         WASM_PARSER_FAIL_IF(argumentCount > m_expressionStack.size(), "call_indirect expects "_s, argumentCount, " arguments, but the expression stack currently holds "_s, m_expressionStack.size(), " values"_s);
@@ -3371,7 +3390,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         uint32_t exceptionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
         TypeIndex typeIndex = m_info.typeIndexFromExceptionIndexSpace(exceptionIndex);
-        const TypeDefinition& exceptionSignature = TypeInformation::get(typeIndex).expand();
+        const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+        const auto& exceptionSignature = *signature.as<FunctionSignature>();
 
         ControlEntry& controlEntry = m_controlStack.last();
         WASM_VALIDATOR_FAIL_IF(!isTryOrCatch(controlEntry.controlData), "catch block isn't associated to a try");
@@ -3380,11 +3400,11 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         ResultList results;
         Stack preCatchStack;
         m_expressionStack.swap(preCatchStack);
-        WASM_TRY_ADD_TO_CONTEXT(addCatch(exceptionIndex, exceptionSignature, preCatchStack, controlEntry.controlData, results));
+        WASM_TRY_ADD_TO_CONTEXT(addCatch(exceptionIndex, signature, preCatchStack, controlEntry.controlData, results));
 
-        RELEASE_ASSERT(exceptionSignature.as<FunctionSignature>()->argumentCount() == results.size());
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
-            Type argumentType = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+        RELEASE_ASSERT(exceptionSignature.argumentCount() == results.size());
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+            Type argumentType = exceptionSignature.argumentType(i);
             if (argumentType.isV128()) {
                 m_context.notifyFunctionUsesSIMD();
                 if (!Context::tierSupportsSIMD)
@@ -3443,10 +3463,12 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             if (catchOpcode < CatchKind::CatchAll) {
                 WASM_PARSER_FAIL_IF(!parseExceptionIndex(exceptionTag), "can't read tag of try_table catch at index "_s, i);
                 TypeIndex typeIndex = m_info.typeIndexFromExceptionIndexSpace(exceptionTag);
-                const TypeDefinition& exceptionSignature = TypeInformation::get(typeIndex).expand();
-                signature = &exceptionSignature;
-                for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
-                    Type argumentType = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+                const TypeDefinition& specifiedSignature = TypeInformation::get(typeIndex).expand();
+                const auto& exceptionSignature = *specifiedSignature.as<FunctionSignature>();
+
+                signature = &specifiedSignature;
+                for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+                    Type argumentType = exceptionSignature.argumentType(i);
                     if (argumentType.isV128()) {
                         m_context.notifyFunctionUsesSIMD();
                         if constexpr (!Context::tierSupportsSIMD)
@@ -3523,7 +3545,8 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         uint32_t exceptionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
         TypeIndex typeIndex = m_info.typeIndexFromExceptionIndexSpace(exceptionIndex);
-        const auto& exceptionSignature = TypeInformation::getFunctionSignature(typeIndex);
+        const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+        const auto& exceptionSignature = *signature.as<FunctionSignature>();
 
         WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < exceptionSignature.argumentCount(), "Too few arguments on stack for the exception being thrown. The exception expects ", exceptionSignature.argumentCount(), ", but only ", m_expressionStack.size(), " were present. Exception has signature: ", exceptionSignature.toString());
         unsigned offset = m_expressionStack.size() - exceptionSignature.argumentCount();
@@ -3665,10 +3688,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
     }
 
     case Drop: {
-        WASM_PARSER_FAIL_IF(!m_expressionStack.size(), "can't drop on empty stack"_s);
-        auto last = m_expressionStack.takeLast();
+        TypedExpression last;
+        WASM_TRY_POP_EXPRESSION_STACK_INTO(last, "can't drop on empty stack"_s);
         WASM_TRY_ADD_TO_CONTEXT(addDrop(last));
-        m_context.didPopValueFromStack(last, "Drop"_s);
         return { };
     }
 
@@ -3767,7 +3789,8 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         uint32_t exceptionIndex;
         WASM_FAIL_IF_HELPER_FAILS(parseExceptionIndex(exceptionIndex));
         TypeIndex typeIndex = m_info.typeIndexFromExceptionIndexSpace(exceptionIndex);
-        const TypeDefinition& exceptionSignature = TypeInformation::get(typeIndex).expand();
+        const TypeDefinition& signature = TypeInformation::get(typeIndex).expand();
+        const auto& exceptionSignature = *signature.as<FunctionSignature>();
 
         if (m_unreachableBlocks > 1)
             return { };
@@ -3778,11 +3801,11 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
         m_unreachableBlocks = 0;
         m_expressionStack = { };
         ResultList results;
-        WASM_TRY_ADD_TO_CONTEXT(addCatchToUnreachable(exceptionIndex, exceptionSignature, data.controlData, results));
+        WASM_TRY_ADD_TO_CONTEXT(addCatchToUnreachable(exceptionIndex, signature, data.controlData, results));
 
-        RELEASE_ASSERT(exceptionSignature.as<FunctionSignature>()->argumentCount() == results.size());
-        for (unsigned i = 0; i < exceptionSignature.as<FunctionSignature>()->argumentCount(); ++i) {
-            Type argumentType = exceptionSignature.as<FunctionSignature>()->argumentType(i);
+        RELEASE_ASSERT(exceptionSignature.argumentCount() == results.size());
+        for (unsigned i = 0; i < exceptionSignature.argumentCount(); ++i) {
+            Type argumentType = exceptionSignature.argumentType(i);
             if (argumentType.isV128()) {
                 m_context.notifyFunctionUsesSIMD();
                 if (!Context::tierSupportsSIMD)
@@ -4093,7 +4116,6 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
     }
 
     case ExtGC: {
-        WASM_PARSER_FAIL_IF(!Options::useWasmGC(), "Wasm GC is not enabled"_s);
         WASM_PARSER_FAIL_IF(!parseVarUInt32(m_currentExtOp), "can't parse extended GC opcode"_s);
         m_context.willParseExtendedOpcode();
 

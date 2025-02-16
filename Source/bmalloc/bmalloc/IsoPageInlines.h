@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "CryptoRandom.h"
 #include "IsoDirectory.h"
 #include "IsoHeapImpl.h"
@@ -257,3 +259,4 @@ IsoHeapImpl<Config>& IsoPage<Config>::heap()
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

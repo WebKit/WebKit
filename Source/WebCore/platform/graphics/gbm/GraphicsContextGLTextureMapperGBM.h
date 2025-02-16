@@ -27,26 +27,24 @@
 
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "GraphicsContextGLTextureMapperANGLE.h"
-#include "GraphicsLayerContentsDisplayDelegateGBM.h"
+#include "GraphicsLayerContentsDisplayDelegate.h"
 
 typedef void* EGLImageKHR;
 struct gbm_bo;
 
 namespace WebCore {
-
 class DMABufBuffer;
-class GraphicsLayerContentsDisplayDelegateGBM;
 
 class GraphicsContextGLTextureMapperGBM final : public GraphicsContextGLTextureMapperANGLE {
 public:
-    static RefPtr<GraphicsContextGLTextureMapperGBM> create(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegateGBM>&& = nullptr);
+    static RefPtr<GraphicsContextGLTextureMapperGBM> create(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegate>&& = nullptr);
     virtual ~GraphicsContextGLTextureMapperGBM();
 
     void prepareForDisplayWithFinishedSignal(Function<void()>&&);
     DMABufBuffer* displayBuffer() { return m_displayBuffer.dmabuf.get(); }
 
 private:
-    GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegateGBM>&&);
+    GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&&, RefPtr<GraphicsLayerContentsDisplayDelegate>&&);
 
     bool platformInitialize() override;
     bool platformInitializeExtensions() override;

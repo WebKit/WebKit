@@ -206,6 +206,9 @@
         "L8A8_UNORM": {
             "image": "R8G8_UNORM"
         },
+        "L4A4_UNORM": {
+            "image": "R8G8_UNORM"
+        },
         "R4G4B4A4_UNORM": {
             "image": "R8G8B8A8_UNORM"
         },

@@ -100,7 +100,7 @@ public:
 
     const BufferAndType* dynamicBuffer(uint32_t) const;
     uint32_t dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;
-    void rebindSamplersIfNeeded() const;
+    bool rebindSamplersIfNeeded() const;
     bool updateExternalTextures(ExternalTexture&);
     bool makeSubmitInvalid(ShaderStage, const BindGroupLayout*) const;
     const SamplersContainer& samplers() const { return m_samplers; }

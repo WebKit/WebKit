@@ -34,9 +34,9 @@ function target3() {
 }
 noInline(target3);
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     target1();
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     target2();
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     target3();

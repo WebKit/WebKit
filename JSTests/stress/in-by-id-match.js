@@ -22,11 +22,11 @@ let array = [
         }
     }, true]
 ];
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let [obj, result] of array)
         shouldBe(test1(obj), result);
 }
 
 // OSRExits.
-for (let i = 0; i < 1e5; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     shouldBe(test1({}), false);

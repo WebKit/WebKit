@@ -202,10 +202,14 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_Depth32FloatStencil8;
     case FeatureName::TextureCompressionBc:
         return WGPUFeatureName_TextureCompressionBC;
+    case FeatureName::TextureCompressionBcSliced3d:
+        return WGPUFeatureName_TextureCompressionBCSliced3D;
     case FeatureName::TextureCompressionEtc2:
-        return static_cast<WGPUFeatureName>(WGPUFeatureName_TextureCompressionETC2);
+        return WGPUFeatureName_TextureCompressionETC2;
     case FeatureName::TextureCompressionAstc:
-        return static_cast<WGPUFeatureName>(WGPUFeatureName_TextureCompressionASTC);
+        return WGPUFeatureName_TextureCompressionASTC;
+    case FeatureName::TextureCompressionAstcSliced3d:
+        return WGPUFeatureName_TextureCompressionASTCSliced3D;
     case FeatureName::TimestampQuery:
         return WGPUFeatureName_TimestampQuery;
     case FeatureName::IndirectFirstInstance:
@@ -218,6 +222,16 @@ WGPUFeatureName ConvertToBackingContext::convertToBacking(FeatureName featureNam
         return WGPUFeatureName_RG11B10UfloatRenderable;
     case FeatureName::Float32Filterable:
         return WGPUFeatureName_Float32Filterable;
+    case FeatureName::Float16Renderable:
+        return WGPUFeatureName_Float16Renderable;
+    case FeatureName::Float32Renderable:
+        return WGPUFeatureName_Float32Renderable;
+    case FeatureName::Float32Blendable:
+        return WGPUFeatureName_Float32Blendable;
+    case FeatureName::ClipDistances:
+        return WGPUFeatureName_ClipDistances;
+    case FeatureName::DualSourceBlending:
+        return WGPUFeatureName_DualSourceBlending;
     }
 }
 

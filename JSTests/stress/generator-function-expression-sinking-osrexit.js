@@ -11,7 +11,7 @@ function sink (p, q) {
 }
 noInline(sink);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var f = sink(true, false);
     shouldBe(f.__proto__, GeneratorFunctionPrototype);
     var result = f(42);

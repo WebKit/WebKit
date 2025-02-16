@@ -92,6 +92,7 @@ ExitMode mayExitImpl(Graph& graph, Node* node, StateType& state)
     case DoubleRep:
     case Int52Rep:
     case ValueRep:
+    case PurifyNaN:
     case ExtractOSREntryLocal:
     case ExtractCatchLocal:
     case ClearCatchLocals:

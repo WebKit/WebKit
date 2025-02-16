@@ -75,7 +75,7 @@ private:
     std::array<std::optional<ProcessIdentifier>, 2> m_processes;
     std::array<RefPtr<MessagePortChannel>, 2> m_entangledToProcessProtectors;
     std::array<Vector<MessageWithMessagePorts>, 2> m_pendingMessages;
-    std::array<HashSet<RefPtr<MessagePortChannel>>, 2> m_pendingMessagePortTransfers;
+    std::array<UncheckedKeyHashSet<RefPtr<MessagePortChannel>>, 2> m_pendingMessagePortTransfers;
     std::array<RefPtr<MessagePortChannel>, 2> m_pendingMessageProtectors;
     uint64_t m_messageBatchesInFlight { 0 };
 

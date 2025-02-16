@@ -58,14 +58,12 @@ platform/mac/WebPlaybackControlsManager.mm
 rendering/AccessibilityRegionContext.cpp
 rendering/BackgroundPainter.cpp
 rendering/RenderBlock.cpp
-rendering/RenderBlockFlow.cpp
 rendering/RenderBox.cpp
 rendering/RenderBoxModelObject.cpp
 rendering/RenderLayer.cpp
 rendering/RenderLayerBacking.cpp
 rendering/RenderLayerCompositor.cpp
 rendering/RenderLayerModelObject.cpp
-rendering/RenderLayerScrollableArea.cpp
 rendering/RenderListBox.cpp
 rendering/RenderMarquee.cpp
 rendering/RenderObject.cpp

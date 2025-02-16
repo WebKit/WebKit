@@ -48,15 +48,15 @@
 
 namespace WebKit {
 
-static HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>& webExtensionContextProxies()
+static HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>& webExtensionContextProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakRef<WebExtensionContextProxy>>> contexts;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionContextIdentifier, WeakPtr<WebExtensionContextProxy>>> contexts;
     return contexts;
 }
 
 RefPtr<WebExtensionContextProxy> WebExtensionContextProxy::get(WebExtensionContextIdentifier identifier)
 {
-    return webExtensionContextProxies().get(identifier);
+    return webExtensionContextProxies().get(identifier).get();
 }
 
 WebExtensionContextProxy::WebExtensionContextProxy(const WebExtensionContextParameters& parameters)
@@ -70,6 +70,7 @@ WebExtensionContextProxy::WebExtensionContextProxy(const WebExtensionContextPara
 
 WebExtensionContextProxy::~WebExtensionContextProxy()
 {
+    webExtensionContextProxies().remove(m_identifier);
     WebProcess::singleton().removeMessageReceiver(*this);
 }
 
@@ -181,7 +182,7 @@ RefPtr<WebExtensionLocalization> WebExtensionContextProxy::parseLocalization(Ref
     return nullptr;
 }
 
-WebCore::DOMWrapperWorld& WebExtensionContextProxy::toDOMWrapperWorld(WebExtensionContentWorldType contentWorldType) const
+Ref<WebCore::DOMWrapperWorld> WebExtensionContextProxy::toDOMWrapperWorld(WebExtensionContentWorldType contentWorldType) const
 {
     switch (contentWorldType) {
     case WebExtensionContentWorldType::Main:

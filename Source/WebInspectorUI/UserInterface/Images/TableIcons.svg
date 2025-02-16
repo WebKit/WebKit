@@ -32,10 +32,6 @@
             .session {
                 --border: hsl(336, 19%, 53%);
             }
-
-            .application-cache {
-                --border: hsl(136, 19%, 52%);
-            }
         </style>
     </defs>
 
@@ -52,6 +48,4 @@
     <g id="local-dark" class="local dark"><use href="#i"/></g>
     <g id="session-light" class="session light"><use href="#i"/></g>
     <g id="session-dark" class="session dark"><use href="#i"/></g>
-    <g id="application-cache-light" class="application-cache light"><use href="#i"/></g>
-    <g id="application-cache-dark" class="application-cache dark"><use href="#i"/></g>
 </svg>

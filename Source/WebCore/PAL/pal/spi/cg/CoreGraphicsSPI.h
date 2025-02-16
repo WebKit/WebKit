@@ -27,6 +27,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/text/WTFString.h>
 
 #if HAVE(IOSURFACE)
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
@@ -51,6 +52,10 @@
 #if PLATFORM(MAC)
 #include <CoreGraphics/CGAccessibility.h>
 #include <CoreGraphics/CGEventPrivate.h>
+#endif
+
+#if ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
+#include <CoreGraphics/CGDataProviderPrivate.h>
 #endif
 
 #else // USE(APPLE_INTERNAL_SDK)
@@ -256,6 +261,33 @@ WTF_EXTERN_C_END
 
 #endif // ENABLE(UNIFIED_PDF)
 
+#if ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
+
+WTF_EXTERN_C_BEGIN
+
+extern const off_t kCGDataProviderIndeterminateSize;
+extern const CFStringRef kCGDataProviderHasHighLatency;
+
+typedef void (*CGDataProviderGetByteRangesCallback)(void *info,
+    CFMutableArrayRef buffers, const CFRange *ranges, size_t count);
+
+struct CGDataProviderDirectAccessRangesCallbacks {
+    unsigned version;
+    CGDataProviderGetBytesAtPositionCallback getBytesAtPosition;
+    CGDataProviderGetByteRangesCallback getBytesInRanges;
+    CGDataProviderReleaseInfoCallback releaseInfo;
+};
+typedef struct CGDataProviderDirectAccessRangesCallbacks CGDataProviderDirectAccessRangesCallbacks;
+
+extern void CGDataProviderSetProperty(CGDataProviderRef, CFStringRef key, CFTypeRef value);
+extern CGDataProviderRef CGDataProviderCreateMultiRangeDirectAccess(
+    void *info, off_t size,
+    const CGDataProviderDirectAccessRangesCallbacks *);
+
+WTF_EXTERN_C_END
+
+#endif // ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
+
 #endif // USE(APPLE_INTERNAL_SDK)
 
 #if PLATFORM(COCOA)
@@ -343,6 +375,7 @@ CGImageRef CGIOSurfaceContextCreateImageReference(CGContextRef);
 CGColorSpaceRef CGIOSurfaceContextGetColorSpace(CGContextRef);
 void CGIOSurfaceContextSetDisplayMask(CGContextRef, uint32_t mask);
 IOSurfaceRef CGIOSurfaceContextGetSurface(CGContextRef);
+void CGIOSurfaceContextInvalidateSurface(CGContextRef);
 #endif // HAVE(IOSURFACE)
 
 #if PLATFORM(COCOA)
@@ -418,29 +451,6 @@ IOHIDEventRef CGEventCopyIOHIDEvent(CGEventRef);
 CGError CGSSetDenyWindowServerConnections(bool);
 #endif
 
-#if ENABLE(LEGACY_PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
-
-extern const off_t kCGDataProviderIndeterminateSize;
-extern const CFStringRef kCGDataProviderHasHighLatency;
-
-typedef void (*CGDataProviderGetByteRangesCallback)(void *info,
-    CFMutableArrayRef buffers, const CFRange *ranges, size_t count);
-    
-struct CGDataProviderDirectAccessRangesCallbacks {
-    unsigned version;
-    CGDataProviderGetBytesAtPositionCallback getBytesAtPosition;
-    CGDataProviderGetByteRangesCallback getBytesInRanges;
-    CGDataProviderReleaseInfoCallback releaseInfo;
-};
-typedef struct CGDataProviderDirectAccessRangesCallbacks CGDataProviderDirectAccessRangesCallbacks;
-
-extern void CGDataProviderSetProperty(CGDataProviderRef, CFStringRef key, CFTypeRef value);
-extern CGDataProviderRef CGDataProviderCreateMultiRangeDirectAccess(
-    void *info, off_t size,
-    const CGDataProviderDirectAccessRangesCallbacks *);
-
-#endif // ENABLE(LEGACY_PDFKIT_PLUGIN) && !USE(APPLE_INTERNAL_SDK)
-
 #if HAVE(LOCKDOWN_MODE_PDF_ADDITIONS)
 CG_EXTERN void CGEnterLockdownModeForPDF();
 CG_LOCAL bool CGIsInLockdownModeForPDF();
@@ -448,3 +458,10 @@ CG_EXTERN void CGEnterLockdownModeForFonts();
 #endif
 
 WTF_EXTERN_C_END
+
+inline String CGPDFDictionaryGetNameString(CGPDFDictionaryRef dictionary, ASCIILiteral key)
+{
+    const char* value = nullptr;
+    CGPDFDictionaryGetName(dictionary, key.characters(), &value);
+    return value ? String::fromUTF8(value) : String();
+}

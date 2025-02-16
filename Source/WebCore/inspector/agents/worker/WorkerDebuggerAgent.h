@@ -47,9 +47,11 @@ private:
     void muteConsole() { }
     void unmuteConsole() { }
 
+    Ref<WorkerOrWorkletGlobalScope> protectedGlobalScope() const;
+
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
-    WorkerOrWorkletGlobalScope& m_globalScope;
+    WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;
 };
 
 } // namespace WebCore

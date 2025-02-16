@@ -20,7 +20,7 @@ foo[Symbol.iterator] = iterator;
 
 (function body() {
 
-    for (var i = 1; i < 100000; i++) {
+    for (var i = 1; i < testLoopCount; i++) {
         if (new Int32Array(foo).length !== 2)
             throw "iterator did not run";
     }

@@ -791,16 +791,18 @@ void AsyncScrollingCoordinator::reconcileScrollingState(LocalFrameView& frameVie
 
     ASSERT(frameView.scrollPosition() == roundedIntPoint(scrollPosition));
     LayoutPoint scrollPositionForFixed = frameView.scrollPositionForFixedPosition();
-    float topContentInset = frameView.topContentInset();
+    auto obscuredContentInsets = frameView.obscuredContentInsets();
 
     FloatPoint positionForInsetClipLayer;
-    if (insetClipLayer)
-        positionForInsetClipLayer = FloatPoint(insetClipLayer->position().x(), LocalFrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
+    if (insetClipLayer) {
+        positionForInsetClipLayer = LocalFrameView::positionForInsetClipLayer(scrollPosition, obscuredContentInsets);
+        positionForInsetClipLayer.move(frameView.insetForLeftScrollbarSpace(), 0);
+    }
     FloatPoint positionForContentsLayer = frameView.positionForRootContentLayer();
     
-    FloatPoint positionForHeaderLayer = FloatPoint(scrollPositionForFixed.x(), LocalFrameView::yPositionForHeaderLayer(scrollPosition, topContentInset));
+    FloatPoint positionForHeaderLayer = FloatPoint(scrollPositionForFixed.x(), LocalFrameView::yPositionForHeaderLayer(scrollPosition, obscuredContentInsets.top()));
     FloatPoint positionForFooterLayer = FloatPoint(scrollPositionForFixed.x(),
-        LocalFrameView::yPositionForFooterLayer(scrollPosition, topContentInset, frameView.totalContentsSize().height(), frameView.footerHeight()));
+        LocalFrameView::yPositionForFooterLayer(scrollPosition, obscuredContentInsets.top(), frameView.totalContentsSize().height(), frameView.footerHeight()));
 
     if (scrollType == ScrollType::Programmatic || scrollingLayerPositionAction == ScrollingLayerPositionAction::Set) {
         reconcileScrollPosition(frameView, ScrollingLayerPositionAction::Set);
@@ -1001,7 +1003,7 @@ void AsyncScrollingCoordinator::setFrameScrollingNodeState(ScrollingNodeID nodeI
     frameScrollingNode->setFrameScaleFactor(frameView.frame().frameScaleFactor());
     frameScrollingNode->setHeaderHeight(frameView.headerHeight());
     frameScrollingNode->setFooterHeight(frameView.footerHeight());
-    frameScrollingNode->setTopContentInset(frameView.topContentInset());
+    frameScrollingNode->setObscuredContentInsets(frameView.obscuredContentInsets());
     frameScrollingNode->setLayoutViewport(frameView.layoutViewportRect());
     frameScrollingNode->setAsyncFrameOrOverflowScrollingEnabled(settings.asyncFrameScrollingEnabled() || settings.asyncOverflowScrollingEnabled());
     frameScrollingNode->setScrollingPerformanceTestingEnabled(settings.scrollingPerformanceTestingEnabled());

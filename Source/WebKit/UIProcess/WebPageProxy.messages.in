@@ -54,12 +54,14 @@ messages -> WebPageProxy {
     SetWindowFrame(WebCore::FloatRect windowFrame)
     GetWindowFrame() -> (WebCore::FloatRect windowFrame) Synchronous
     ScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
-    RootViewToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
+    RootViewPointToScreen(WebCore::IntPoint rect) -> (WebCore::IntPoint viewPoint) Synchronous
+    RootViewRectToScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
     AccessibilityScreenToRootView(WebCore::IntPoint screenPoint) -> (WebCore::IntPoint windowPoint) Synchronous
     RootViewToAccessibilityScreen(WebCore::IntRect rect) -> (WebCore::IntRect screenFrame) Synchronous
 #if PLATFORM(IOS_FAMILY)
     RelayAccessibilityNotification(String notificationName, std::span<const uint8_t> notificationData)
 #endif
+    EnableAccessibilityForAllProcesses()
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     ShowValidationMessage(WebCore::IntRect anchorRect, String message)
@@ -72,6 +74,12 @@ messages -> WebPageProxy {
     RunOpenPanel(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, struct WebCore::FileChooserSettings parameters)
     ShowShareSheet(struct WebCore::ShareDataWithParsedURL shareData) -> (bool granted)
     [EnabledBy=ContactPickerAPIEnabled] ShowContactPicker(struct WebCore::ContactsRequestData requestData) -> (std::optional<Vector<WebCore::ContactInfo>> info)
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    [EnabledBy=DigitalCredentialsEnabled] ShowDigitalCredentialsPicker(struct WebCore::DigitalCredentialsRequestData requestData) -> (Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData> response)
+    [EnabledBy=DigitalCredentialsEnabled] DismissDigitalCredentialsPicker() -> (bool didDismiss)
+#endif
+
     PrintFrame(WebCore::FrameIdentifier frameID, String title, WebCore::FloatSize pdfFirstPageSize) -> () Synchronous
     RunModal()
     NotifyScrollerThumbIsVisibleInRect(WebCore::IntRect scrollerThumb)
@@ -82,6 +90,9 @@ messages -> WebPageProxy {
 #if PLATFORM(MAC)
     ThemeColorChanged(WebCore::Color themeColor)
 #endif
+#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+    [EnabledBy=WebPageSpatialBackdropEnabled] SpatialBackdropSourceChanged(std::optional<WebCore::SpatialBackdropSource> spatialBackdropSource)
+#endif
     PageExtendedBackgroundColorDidChange(WebCore::Color backgroundColor)
     SampledPageTopColorChanged(WebCore::Color sampledPageTopColor)
     SetCanShortCircuitHorizontalWheelEvents(bool canShortCircuitHorizontalWheelEvents)
@@ -89,22 +100,16 @@ messages -> WebPageProxy {
     DidChangeContentSize(WebCore::IntSize newSize)
     DidChangeIntrinsicContentSize(WebCore::IntSize newIntrinsicContentSize)
 
-#if ENABLE(INPUT_TYPE_COLOR)
     [EnabledBy=InputTypeColorEnabled] ShowColorPicker(WebCore::Color initialColor, WebCore::IntRect elementRect, enum:bool WebKit::ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color> suggestions);
     [EnabledBy=InputTypeColorEnabled] SetColorPickerColor(WebCore::Color color);
     [EnabledBy=InputTypeColorEnabled] EndColorPicker();
-#endif
 
-#if ENABLE(DATALIST_ELEMENT)
     [EnabledBy=DataListElementEnabled] ShowDataListSuggestions(struct WebCore::DataListSuggestionInformation suggestionInformation);
     [EnabledBy=DataListElementEnabled] HandleKeydownInDataList(String key);
     [EnabledBy=DataListElementEnabled] EndDataListSuggestions();
-#endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    ShowDateTimePicker(struct WebCore::DateTimeChooserParameters params);
-    EndDateTimePicker();
-#endif
+    [EnabledBy=InputTypeDateEnabled || InputTypeDateTimeLocalEnabled || InputTypeMonthEnabled || InputTypeTimeEnabled || InputTypeWeekEnabled] ShowDateTimePicker(struct WebCore::DateTimeChooserParameters params);
+    [EnabledBy=InputTypeDateEnabled || InputTypeDateTimeLocalEnabled || InputTypeMonthEnabled || InputTypeTimeEnabled || InputTypeWeekEnabled] EndDateTimePicker();
 
     # Policy messages
     DecidePolicyForResponse(struct WebKit::FrameInfoData frameInfo, std::optional<WebCore::NavigationIdentifier> navigationID, WebCore::ResourceResponse response, WebCore::ResourceRequest request, bool canShowMIMEType, String downloadAttribute, bool isShowingInitialAboutBlank, enum:uint8_t WebCore::CrossOriginOpenerPolicyValue activeDocumentCOOPValue) -> (struct WebKit::PolicyDecision PolicyDecision)
@@ -133,7 +138,7 @@ messages -> WebPageProxy {
     DidCancelClientRedirectForFrame(WebCore::FrameIdentifier frameID)
     DidChangeProvisionalURLForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, URL url)
     DidFailProvisionalLoadForFrame(struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, String provisionalURL, WebCore::ResourceError error, enum:bool WebCore::WillContinueLoading willContinueLoading, WebKit::UserData userData, enum:bool WebCore::WillInternallyHandleFailure willInternallyHandleFailure)
-    DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, String mimeType, bool hasCustomContentProvider, enum:uint8_t WebCore::FrameLoadType loadType, WebCore::CertificateInfo certificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, bool containsPluginDocument, enum:bool WebCore::HasInsecureContent hasInsecureContent, enum:uint8_t WebCore::MouseEventPolicy mouseEventPolicy, WebKit::UserData userData)
+    DidCommitLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, String mimeType, bool hasCustomContentProvider, enum:uint8_t WebCore::FrameLoadType loadType, WebCore::CertificateInfo certificateInfo, bool usedLegacyTLS, bool wasPrivateRelayed, String proxyName, enum:uint8_t WebCore::ResourceResponseSource source, bool containsPluginDocument, enum:bool WebCore::HasInsecureContent hasInsecureContent, enum:uint8_t WebCore::MouseEventPolicy mouseEventPolicy, WebKit::UserData userData)
     DidFailLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, WebCore::ResourceError error, WebKit::UserData userData)
     DidFinishDocumentLoadForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, WebKit::UserData userData, WallTime timestamp)
     DidFinishLoadForFrame(WebCore::FrameIdentifier frameID, struct WebKit::FrameInfoData frameInfo, WebCore::ResourceRequest request, std::optional<WebCore::NavigationIdentifier> navigationID, WebKit::UserData userData)
@@ -177,7 +182,7 @@ messages -> WebPageProxy {
     WillSubmitForm(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier sourceFrameID, Vector<std::pair<String, String>> textFieldValues, WebKit::UserData userData) -> ()
 
 #if PLATFORM(IOS_FAMILY)
-    InterpretKeyEvent(struct WebKit::EditorState state, bool isCharEvent) -> (bool handled) Synchronous
+    InterpretKeyEvent(struct WebKit::EditorState state, struct WebKit::KeyEventInterpretationContext context) -> (bool handled) Synchronous
     DidReceivePositionInformation(struct WebKit::InteractionInformationAtPosition information) CanDispatchOutOfOrder
     SaveImageToLibrary(WebCore::SharedMemory::Handle handle, String authorizationToken)
     ShowPlaybackTargetPicker(bool hasVideo, WebCore::IntRect elementRect, enum:uint8_t WebCore::RouteSharingPolicy policy, String routingContextUID)
@@ -186,7 +191,7 @@ messages -> WebPageProxy {
     DidCompleteSyntheticClick()
     DidHandleTapAsHover()
     DisableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier requestID)
-    HandleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel)
+    HandleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel, bool nodeIsPluginElement)
     IsPotentialTapInProgress() -> (bool result)
 #endif
 #if ENABLE(DATA_DETECTION)
@@ -209,14 +214,17 @@ messages -> WebPageProxy {
     # BackForward messages
     BackForwardAddItem(Ref<WebKit::FrameState> navigatedFrameState)
     BackForwardSetChildItem(WebCore::BackForwardFrameItemIdentifier frameItemID, Ref<WebKit::FrameState> frameState)
+    BackForwardClearChildren(WebCore::BackForwardItemIdentifier itemID, WebCore::BackForwardFrameItemIdentifier frameItemID)
     BackForwardUpdateItem(Ref<WebKit::FrameState> frameState)
     BackForwardGoToItem(WebCore::BackForwardItemIdentifier itemID) -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
     BackForwardItemAtIndex(int32_t itemIndex, WebCore::FrameIdentifier frameID) -> (RefPtr<WebKit::FrameState> frameState) Synchronous
     BackForwardListContainsItem(WebCore::BackForwardItemIdentifier itemID) -> (bool contains) Synchronous
     BackForwardListCounts() -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
-    WillGoToBackForwardListItem(WebCore::BackForwardItemIdentifier itemID, bool inBackForwardCache)
+    ShouldGoToBackForwardListItem(WebCore::BackForwardItemIdentifier itemID, bool inBackForwardCache) -> (bool shouldGoToItem)
+    ShouldGoToBackForwardListItemSync(WebCore::BackForwardItemIdentifier itemID) -> (bool shouldGoToItem) Synchronous
     BackForwardGoToProvisionalItem(WebCore::BackForwardItemIdentifier itemID) -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
-    BackForwardClearProvisionalItem(WebCore::BackForwardItemIdentifier itemID, WebCore::BackForwardFrameItemIdentifier frameItemID)
+    BackForwardClearProvisionalItem(WebCore::BackForwardItemIdentifier itemID, WebCore::BackForwardFrameItemIdentifier frameItemID) -> (struct WebKit::WebBackForwardListCounts counts) Synchronous
+    BackForwardCommitProvisionalItem(WebCore::BackForwardItemIdentifier itemID, WebCore::BackForwardFrameItemIdentifier frameItemID)
 
     # Undo/Redo messages
     RegisterEditCommandForUndo(uint64_t commandID, String label) AllowedWhenWaitingForSyncReply
@@ -296,10 +304,10 @@ messages -> WebPageProxy {
 
 #if ENABLE(MEDIA_STREAM)
     # MediaSteam messages
-    RequestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier userMediaID, WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
+    RequestUserMediaPermissionForFrame(WebCore::UserMediaRequestIdentifier userMediaID, struct WebKit::FrameInfoData frameInfo, WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, WebCore::SecurityOriginData topLevelDocumentOriginIdentifier, struct WebCore::MediaStreamRequest request)
     EnumerateMediaDevicesForFrame(WebCore::FrameIdentifier frameID, WebCore::SecurityOriginData userMediaDocumentOriginIdentifier, WebCore::SecurityOriginData topLevelDocumentOriginIdentifier) -> (Vector<WebCore::CaptureDeviceWithCapabilities> devices, struct WebCore::MediaDeviceHashSalts mediaDeviceIdentifierHashSalts)
     BeginMonitoringCaptureDevices()
-    ValidateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier userMediaID, struct WebCore::ClientOrigin clientOrigin, WebCore::FrameIdentifier frameID, bool isActive, enum:uint8_t WebCore::MediaProducerMediaCaptureKind kind) -> (std::optional<WebCore::Exception> result)
+    ValidateCaptureStateUpdate(WebCore::UserMediaRequestIdentifier userMediaID, struct WebCore::ClientOrigin clientOrigin, struct WebKit::FrameInfoData frameInfo, bool isActive, enum:uint8_t WebCore::MediaProducerMediaCaptureKind kind) -> (std::optional<WebCore::Exception> result)
     SetShouldListenToVoiceActivity(bool shouldListen);
 #endif
 
@@ -490,7 +498,7 @@ messages -> WebPageProxy {
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    SetMockVideoPresentationModeEnabled(bool enabled)
+    [EnabledBy=VideoPresentationManagerEnabled || VideoPresentationModeAPIEnabled] SetMockVideoPresentationModeEnabled(bool enabled)
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -549,10 +557,6 @@ messages -> WebPageProxy {
 
 #if PLATFORM(MAC)
     ShowPDFContextMenu(struct WebKit::PDFContextMenu contextMenu, WebKit::PDFPluginIdentifier identifier) -> (std::optional<int32_t> selectedItem)
-#endif
-
-#if PLATFORM(IOS_FAMILY)
-    PluginDidInstallPDFDocument(double initialScale);
 #endif
 
 #endif
@@ -671,8 +675,4 @@ messages -> WebPageProxy {
     HasActiveNowPlayingSessionChanged(bool hasActiveNowPlayingSessionChanged)
 
     SetAllowsLayoutViewportHeightExpansion(bool newValue)
-
-#if ENABLE(CONTENT_EXTENSIONS)
-    ShouldOffloadIFrameForHost(String host) -> (bool wasGranted)
-#endif
 }

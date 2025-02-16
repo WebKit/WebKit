@@ -25,7 +25,7 @@ function target(set)
 }
 noInline(target);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var set = new Set();
     shouldBe(target(set), set);
     shouldBe(set.has(42), true);

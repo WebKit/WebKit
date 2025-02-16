@@ -26,8 +26,8 @@
 
 #include "EventTarget.h"
 #include "MouseEventInit.h"
+#include "MouseEventTypes.h"
 #include "MouseRelatedEvent.h"
-#include "PlatformMouseEvent.h"
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 #include "PlatformTouchEventIOS.h"

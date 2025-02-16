@@ -27,6 +27,7 @@
 
 #include <wtf/Expected.h>
 #include <wtf/HashMap.h>
+#include <wtf/HashSet.h>
 #include <wtf/URL.h>
 #include <wtf/URLHash.h>
 #include <wtf/Vector.h>
@@ -83,8 +84,8 @@ private:
     // of prefixes resolved in them. That permits us to reduce the cost of merging
     // a new map, by performing more work at addModuleToResolvedModuleSet time,
     // and by keeping more prefixes in memory.
-    HashSet<AtomString> m_toplevelResolvedModuleSet;
-    UncheckedKeyHashMap<AtomString, HashSet<AtomString>> m_scopedResolvedModuleMap;
+    UncheckedKeyHashSet<AtomString> m_toplevelResolvedModuleSet;
+    UncheckedKeyHashMap<AtomString, UncheckedKeyHashSet<AtomString>> m_scopedResolvedModuleMap;
 };
 
 } // namespace JSC

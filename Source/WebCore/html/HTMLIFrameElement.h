@@ -46,8 +46,8 @@ public:
     String referrerPolicyForBindings() const;
     ReferrerPolicy referrerPolicy() const final;
 
-    const AtomString& loadingForBindings() const;
-    void setLoadingForBindings(const AtomString&);
+    const AtomString& loading() const;
+    void setLoading(const AtomString&);
 
     String srcdoc() const;
     ExceptionOr<void> setSrcdoc(std::variant<RefPtr<TrustedHTML>, String>&&);

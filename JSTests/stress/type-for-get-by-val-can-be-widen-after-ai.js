@@ -20,6 +20,6 @@ for (let i = 0; i < 100; ++i) {
 }
 
 // Busy loop to let the crash reporter have a chance to capture the crash log for the Compiler thread.
-for (let i = 0; i < 1000000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     $vm.ftlTrue();
 }

@@ -21,7 +21,7 @@ let oneGiga = 1024 * 1024 * 1024;
 
 function test(array, actualLength, string)
 {
-    for (var i = 0; i < 100000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var l = getArrayLength(array);
         if (l != actualLength)
             throw ("Wrong array length: " + l + " instead of the expected " + actualLength + " in case " + string);

@@ -1,0 +1,5 @@
+
+PASS A constructor with only a scoped custom element registry definition should fail upon construction
+PASS A constructor uses the global registry to create an element
+PASS A constructor creating an element from another registry before or after super call should work
+

@@ -151,13 +151,13 @@ class BuiltinsGenerator:
 
     def generate_embedded_code_string_section_for_data(self, data):
         lines = []
-        lines.append("const JSC::ConstructAbility s_%(codeName)sConstructAbility = JSC::ConstructAbility::%(constructAbility)s;" % data)
-        lines.append("const JSC::ConstructorKind s_%(codeName)sConstructorKind = JSC::ConstructorKind::%(constructorKind)s;" % data)
-        lines.append("const JSC::ImplementationVisibility s_%(codeName)sImplementationVisibility = JSC::ImplementationVisibility::%(visibility)s;" % data)
-        lines.append("const JSC::InlineAttribute s_%(codeName)sInlineAttribute = JSC::InlineAttribute::%(inlineAttribute)s;" % data)
-        lines.append("const int s_%(codeName)sLength = %(embeddedSourceLength)d;" % data)
-        lines.append("static const JSC::Intrinsic s_%(codeName)sIntrinsic = JSC::%(intrinsic)s;" % data)
-        lines.append("const char* const s_%(codeName)s =\n%(embeddedSource)s\n;" % data)
+        lines.append("constinit const JSC::ConstructAbility s_%(codeName)sConstructAbility = JSC::ConstructAbility::%(constructAbility)s;" % data)
+        lines.append("constinit const JSC::ConstructorKind s_%(codeName)sConstructorKind = JSC::ConstructorKind::%(constructorKind)s;" % data)
+        lines.append("constinit const JSC::ImplementationVisibility s_%(codeName)sImplementationVisibility = JSC::ImplementationVisibility::%(visibility)s;" % data)
+        lines.append("constinit const JSC::InlineAttribute s_%(codeName)sInlineAttribute = JSC::InlineAttribute::%(inlineAttribute)s;" % data)
+        lines.append("constinit const int s_%(codeName)sLength = %(embeddedSourceLength)d;" % data)
+        lines.append("static constinit const JSC::Intrinsic s_%(codeName)sIntrinsic = JSC::%(intrinsic)s;" % data)
+        lines.append("constinit const char* const s_%(codeName)s =\n%(embeddedSource)s\n;" % data)
         return '\n'.join(lines)
 
     # Helper methods.

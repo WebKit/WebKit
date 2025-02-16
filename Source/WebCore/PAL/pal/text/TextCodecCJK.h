@@ -45,7 +45,7 @@ private:
     Vector<uint8_t> encode(StringView, UnencodableHandling) const final;
 
     enum class SawError : bool { No, Yes };
-    String decodeCommon(std::span<const uint8_t>, bool, bool, bool&, const Function<SawError(uint8_t, StringBuilder&)>&);
+    String decodeCommon(std::span<const uint8_t>, bool, bool, bool&, NOESCAPE const Function<SawError(uint8_t, StringBuilder&)>&);
 
     String eucJPDecode(std::span<const uint8_t>, bool, bool, bool&);
     String iso2022JPDecode(std::span<const uint8_t>, bool, bool, bool&);

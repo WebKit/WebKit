@@ -32,6 +32,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
+#include <wtf/URLHash.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

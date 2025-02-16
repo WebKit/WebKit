@@ -98,7 +98,7 @@ public:
         auto* imageBuffer = get<ImageBuffer>(renderingResourceIdentifier);
 
 #if USE(SKIA)
-        if (imageBuffer && options.contains(ReplayOption::FlushImagesAndWaitForCompletion))
+        if (imageBuffer && options.contains(ReplayOption::FlushAcceleratedImagesAndWaitForCompletion))
             imageBuffer->waitForAcceleratedRenderingFenceCompletion();
 #else
         UNUSED_PARAM(options);
@@ -113,7 +113,7 @@ public:
         auto* nativeImage = dynamicDowncast<NativeImage>(renderingResource);
 
 #if USE(SKIA)
-        if (nativeImage && options.contains(ReplayOption::FlushImagesAndWaitForCompletion))
+        if (nativeImage && options.contains(ReplayOption::FlushAcceleratedImagesAndWaitForCompletion))
             nativeImage->backend().waitForAcceleratedRenderingFenceCompletion();
 #else
         UNUSED_PARAM(options);

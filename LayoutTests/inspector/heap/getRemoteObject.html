@@ -34,8 +34,8 @@ function test()
             HeapAgent.snapshot((error, timestamp, snapshotStringData) => {
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                    let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
                     snapshot.instancesWithClassName("Window", (windowHeapSnapshotNodes) => {
                         if (!windowHeapSnapshotNodes.length) {
                             reject("Should should include at least one 'Window' instance.");
@@ -85,8 +85,8 @@ function test()
                 HeapAgent.snapshot((error, timestamp, snapshotStringData) => { // Newly created objects.
                     InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                     let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-                    workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                        let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                    workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                        let snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
                         snapshot.instancesWithClassName("Map", (maps) => {
                             InspectorTest.expectThat(maps.length, "Should should include at least one 'Map' instance.");
 

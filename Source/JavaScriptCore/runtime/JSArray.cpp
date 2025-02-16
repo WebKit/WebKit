@@ -496,6 +496,10 @@ bool JSArray::fastFill(VM& vm, unsigned startIndex, unsigned endIndex, JSValue v
 
     ASSERT(nextType == indexingType());
 
+    // There is a chance that endIndex is beyond the length. If it is, let's just fail.
+    if (endIndex > this->butterfly()->publicLength())
+        return false;
+
     if (nextType == ArrayWithDouble) {
         auto* data = butterfly()->contiguousDouble().data();
         double pattern = value.asNumber();
@@ -698,6 +702,32 @@ JSArray* JSArray::fastWith(JSGlobalObject* globalObject, uint32_t index, JSValue
         }
 
         return result;
+    }
+    case ArrayWithArrayStorage: {
+        auto& storage = *this->butterfly()->arrayStorage();
+        if (storage.m_sparseMap.get())
+            return nullptr;
+        if (length > storage.vectorLength())
+            return nullptr;
+        if (storage.hasHoles())
+            return nullptr;
+
+        Structure* resultStructure = globalObject->arrayStructureForIndexingTypeDuringAllocation(ArrayWithContiguous);
+        if (UNLIKELY(hasAnyArrayStorage(resultStructure->indexingType())))
+            return nullptr;
+
+        ASSERT(!globalObject->isHavingABadTime());
+        ObjectInitializationScope scope(vm);
+        JSArray* resultArray = JSArray::tryCreateUninitializedRestricted(scope, resultStructure, length);
+        if (UNLIKELY(!resultArray))
+            return nullptr;
+        gcSafeMemcpy(resultArray->butterfly()->contiguous().data(), this->butterfly()->arrayStorage()->m_vector, sizeof(JSValue) * static_cast<uint32_t>(length));
+        ASSERT(resultArray->butterfly()->publicLength() == length);
+
+        resultArray->butterfly()->contiguous().at(resultArray, index).setWithoutWriteBarrier(value);
+        vm.writeBarrier(resultArray);
+
+        return resultArray;
     }
     default:
         return nullptr;

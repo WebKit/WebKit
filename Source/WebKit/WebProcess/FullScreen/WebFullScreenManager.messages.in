@@ -28,13 +28,10 @@
 messages -> WebFullScreenManager {
     RequestRestoreFullScreen() -> (bool succeeded) Async
     RequestExitFullScreen()
-    WillEnterFullScreen(WebCore::MediaPlayerEnums::VideoFullscreenMode mode);
     DidEnterFullScreen()
     WillExitFullScreen()
     DidExitFullScreen()
     SetAnimatingFullScreen(bool animating)
-    SaveScrollPosition()
-    RestoreScrollPosition()
     SetFullscreenInsets(WebCore::FloatBoxExtent insets)
     SetFullscreenAutoHideDuration(Seconds duration)
 }

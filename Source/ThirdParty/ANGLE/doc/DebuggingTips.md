@@ -111,12 +111,14 @@ On desktop:
 ```
 ANGLE_GL_VENDOR="foo"
 ANGLE_GL_RENDERER="bar"
+ANGLE_GL_VERSION="blee"
 ```
 
 On Android:
 ```
 adb shell setprop debug.angle.gl_vendor "foo"
 adb shell setprop debug.angle.gl_renderer "bar"
+adb shell setprop debug.angle.gl_version "blee"
 ```
 
 ## Enabling Debug-Utils Markers

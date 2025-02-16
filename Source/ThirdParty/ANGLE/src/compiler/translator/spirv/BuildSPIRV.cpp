@@ -98,7 +98,7 @@ TLayoutBlockStorage GetBlockStorage(const TType &type)
 
 ShaderVariable ToShaderVariable(const TFieldListCollection *block,
                                 GLenum type,
-                                const TSpan<const unsigned int> arraySizes,
+                                const angle::Span<const unsigned int> arraySizes,
                                 bool isRowMajor)
 {
     ShaderVariable var;

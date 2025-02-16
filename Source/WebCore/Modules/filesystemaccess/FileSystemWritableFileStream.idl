@@ -33,6 +33,8 @@ enum WriteCommandType {
 
 [
     EnabledBySetting=FileSystemWritableStreamEnabled,
+    JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary WriteParams {
     required WriteCommandType type;
     unsigned long long? size;
@@ -47,7 +49,7 @@ typedef (BufferSource or Blob or USVString or WriteParams) FileSystemWriteChunkT
     Exposed=(Window,Worker),
     SecureContext
 ] interface FileSystemWritableFileStream : WritableStream {
-    Promise<undefined> write(FileSystemWriteChunkType data);
-    Promise<undefined> seek(unsigned long long position);
-    Promise<undefined> truncate(unsigned long long size);
+    [CallWith=CurrentGlobalObject] Promise<undefined> write(FileSystemWriteChunkType data);
+    [CallWith=CurrentGlobalObject] Promise<undefined> seek(unsigned long long position);
+    [CallWith=CurrentGlobalObject] Promise<undefined> truncate(unsigned long long size);
 };

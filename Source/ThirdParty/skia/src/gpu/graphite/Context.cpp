@@ -91,14 +91,16 @@ Context::Context(sk_sp<SharedContext> sharedContext,
     // SingleOwner object and it is declared last
     fResourceProvider = fSharedContext->makeResourceProvider(&fSingleOwner,
                                                              SK_InvalidGenID,
-                                                             options.fGpuBudgetInBytes,
-                                                             /* avoidBufferAlloc= */ false);
+                                                             options.fGpuBudgetInBytes);
     fMappedBufferManager = std::make_unique<ClientMappedBufferManager>(this->contextID());
 #if defined(GPU_TEST_UTILS)
     if (options.fOptionsPriv) {
         fStoreContextRefInRecorder = options.fOptionsPriv->fStoreContextRefInRecorder;
     }
 #endif
+
+    fSharedContext->globalCache()->setPipelineCallback(options.fPipelineCallback,
+                                                       options.fPipelineCallbackContext);
 }
 
 Context::~Context() {
@@ -759,6 +761,8 @@ void Context::checkForFinishedWork(SyncToCpu syncToCpu) {
 
     fQueueManager->checkForFinishedWork(syncToCpu);
     fMappedBufferManager->process();
+    // Process the return queue periodically to make sure it doesn't get too big
+    fResourceProvider->forceProcessReturnedResources();
 }
 
 void Context::checkAsyncWorkCompletion() {

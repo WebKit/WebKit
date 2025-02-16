@@ -35,7 +35,6 @@
 
     // the following attribute and constants are historical
     [ImplementedAs=typeForCSSOM] readonly attribute unsigned short type;
-    [ImplementedAs=Unknown] const unsigned short UNKNOWN_RULE = 0;
     [ImplementedAs=Style] const unsigned short STYLE_RULE = 1;
     [ImplementedAs=Charset] const unsigned short CHARSET_RULE = 2;
     [ImplementedAs=Import] const unsigned short IMPORT_RULE = 3;

@@ -10,7 +10,7 @@ function foo(a, b) {
 }
 noInline(foo);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(!foo(2n, 3n));
     assert(foo(3n, 3n));
 }
@@ -32,6 +32,6 @@ function bar() {
 }
 noInline(bar);
 
-for (let i = 0; i < 100000; i++)
+for (let i = 0; i < testLoopCount; i++)
     assert(bar() === bar());
 

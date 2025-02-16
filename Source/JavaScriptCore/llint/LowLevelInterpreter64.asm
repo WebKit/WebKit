@@ -202,7 +202,6 @@ macro doVMEntry(makeCall)
     addp CallFrameHeaderSlots, t4, t4
     lshiftp 3, t4
     subp sp, t4, t3
-    bqbeq sp, t3, _llint_throw_stack_overflow_error_from_vm_entry
 
     # Ensure that we have enough additional stack capacity for the incoming args,
     # and the frame for the JS code we're executing. We need to do this check
@@ -224,7 +223,7 @@ macro doVMEntry(makeCall)
 .stackHeightOK:
         move t3, sp
     else
-        bpb t3, VM::m_softStackLimit[vm],  _llint_throw_stack_overflow_error_from_vm_entry
+        bplteq t3, VM::m_softStackLimit[vm],  _llint_throw_stack_overflow_error_from_vm_entry
         move t3, sp
     end
 
@@ -727,9 +726,9 @@ macro functionArityCheck(opcodeName, doneLabel)
     subp cfr, t3, t5
     loadp CodeBlock::m_vm[t1], t0
     if C_LOOP
-        bpbeq VM::m_cloopStackLimit[t0], t5, .stackHeightOK
+        bplteq VM::m_cloopStackLimit[t0], t5, .stackHeightOK
     else
-        bpbeq VM::m_softStackLimit[t0], t5, .stackHeightOK
+        bplteq VM::m_softStackLimit[t0], t5, .stackHeightOK
     end
 
     prepareStateForCCall()
@@ -1741,11 +1740,9 @@ llintOpWithProfile(op_get_prototype_of, OpGetPrototypeOf, macro (size, get, disp
 
     btqnz t0, notCellMask, .opGetPrototypeOfSlow
     bbb JSCell::m_type[t0], ObjectType, .opGetPrototypeOfSlow
+    btbnz JSCell::m_flags[t0], OverridesGetPrototype, .opGetPrototypeOfSlow
 
     loadStructureWithScratch(t0, t2, t1)
-    loadh Structure::m_outOfLineTypeFlags[t2], t3
-    btinz t3, OverridesGetPrototypeOutOfLine, .opGetPrototypeOfSlow
-
     loadq Structure::m_prototype[t2], t2
     btqz t2, .opGetPrototypeOfPolyProto
     return(t2)

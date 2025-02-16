@@ -94,6 +94,11 @@ const D3DFormat &GetD3DFormatInfo(D3DFORMAT format)
             static const D3DFormat info(16, 1, 1, 0, 0, 0, 8, 8, 0, 0, FormatID::L8A8_UNORM);
             return info;
         }
+        case D3DFMT_A4L4:
+        {
+            static const D3DFormat info(8, 1, 1, 0, 0, 0, 4, 4, 0, 0, FormatID::L4A4_UNORM);
+            return info;
+        }
 
         case D3DFMT_A4R4G4B4:
         {

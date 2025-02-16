@@ -52,7 +52,9 @@ std::unique_ptr<FilePrintStream> FilePrintStream::open(const char* filename, con
 
 void FilePrintStream::vprintf(const char* format, va_list argList)
 {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     vfprintf(m_file, format, argList);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void FilePrintStream::flush()

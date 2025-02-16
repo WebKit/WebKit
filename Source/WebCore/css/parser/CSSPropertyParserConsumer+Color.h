@@ -41,6 +41,7 @@ struct CSSParserContext;
 
 namespace CSS {
 struct Color;
+struct DynamicRangeLimit;
 }
 
 namespace CSSPropertyParserHelpers {
@@ -80,6 +81,12 @@ template<typename F> WebCore::Color parseColorRaw(const String& string, const CS
 
     return parseColorRawSlow(string, context, options, eagerResolutionState);
 }
+
+// MARK: <dynamic-range-limit> (unresolved)
+std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimit(CSSParserTokenRange&, const CSSParserContext&);
+
+// MARK: <dynamic-range-limit> (CSSValue)
+RefPtr<CSSValue> consumeDynamicRangeLimit(CSSParserTokenRange&, const CSSParserContext&);
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

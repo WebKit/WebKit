@@ -85,6 +85,14 @@
 42266651 WIN VULKAN : dEQP-EGL.functional.render.multi_thread.gles2.other = SKIP
 42266651 WIN VULKAN : dEQP-EGL.functional.render.multi_thread.gles2_gles3.other = SKIP
 42266651 WIN VULKAN : dEQP-EGL.functional.render.multi_thread.gles3.other = SKIP
+// Driver crash in 31.0.15.4601, causing next tests in batch to fail
+381211730 WIN NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.reads.shader_storage_block.compute = SKIP
+381211730 WIN NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.reads.shader_storage_block.fragment = SKIP
+381211730 WIN NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.reads.shader_storage_block.vertex = SKIP
+381211730 WIN NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.reads.shader_storage_block.vertex_and_fragment = SKIP
+381211730 WIN NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.local_array.compute = SKIP
+381211730 WIN NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.shader_storage_block.compute = SKIP
+381211730 WIN NVIDIA VULKAN : dEQP-EGL.functional.robustness.reset_context.shaders.out_of_bounds_non_robust.reset_status.writes.uniform_block.compute = SKIP
 
 // Linux failures
 42261255 LINUX : dEQP-EGL.functional.negative_api.copy_buffers = SKIP
@@ -158,9 +166,7 @@ b/286921997 SWIFTSHADER : dEQP-EGL.functional.robustness.reset_context.shaders.o
 b/267953710 GALAXYS22 VULKAN : dEQP-EGL.functional.wide_color.window_*_colorspace_srgb = SKIP
 
 // Snapdragon 8 Gen3 Mobile Reference Device
-b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.*_pbuffer = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.*.other = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.create.gles2_renderbuffer_stencil_stencil_buffer = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.modify.renderbuffer_stencil_renderbuffer_clear_stencil = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-EGL.functional.image.render_multiple_contexts.gles2_renderbuffer_stencil_stencil_buffer = SKIP
 

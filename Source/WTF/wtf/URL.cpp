@@ -900,7 +900,7 @@ bool protocolIs(StringView string, ASCIILiteral protocol)
 
 void URL::print() const
 {
-    printf("%s\n", m_string.utf8().data());
+    SAFE_PRINTF("%s\n", m_string.utf8());
 }
 
 #endif
@@ -1348,7 +1348,7 @@ bool isEqualIgnoringQueryAndFragments(const URL& a, const URL& b)
     return substringIgnoringQueryAndFragments(a) == substringIgnoringQueryAndFragments(b);
 }
 
-Vector<String> removeQueryParameters(URL& url, const HashSet<String>& keysToRemove)
+Vector<String> removeQueryParameters(URL& url, const UncheckedKeyHashSet<String>& keysToRemove)
 {
     if (keysToRemove.isEmpty())
         return { };
@@ -1358,7 +1358,7 @@ Vector<String> removeQueryParameters(URL& url, const HashSet<String>& keysToRemo
     });
 }
 
-Vector<String> removeQueryParameters(URL& url, Function<bool(const String&)>&& shouldRemove) 
+Vector<String> removeQueryParameters(URL& url, NOESCAPE const Function<bool(const String&)>& shouldRemove)
 {
     if (!url.hasQuery())
         return { };

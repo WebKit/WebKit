@@ -11,7 +11,7 @@ noInline(foo);
 
 Object.defineProperty(Object.prototype, "10000", {get() { return 20; }});
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let a = 10.5;
     let b = 1.1;
     let c = 1.2;

@@ -119,6 +119,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/history"
     "${WEBCORE_DIR}/html"
     "${WEBCORE_DIR}/html/canvas"
+    "${WEBCORE_DIR}/html/closewatcher"
     "${WEBCORE_DIR}/html/forms"
     "${WEBCORE_DIR}/html/parser"
     "${WEBCORE_DIR}/html/shadow"
@@ -201,6 +202,7 @@ set(WebCore_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/style/values/images"
     "${WEBCORE_DIR}/style/values/motion"
     "${WEBCORE_DIR}/style/values/primitives"
+    "${WEBCORE_DIR}/style/values/scroll-snap"
     "${WEBCORE_DIR}/style/values/shapes"
     "${WEBCORE_DIR}/style/values/text-decoration"
     "${WEBCORE_DIR}/svg"
@@ -277,6 +279,7 @@ set(WebCore_IDL_INCLUDES
     css/typedom/transform
 
     html/canvas
+    html/closewatcher
     html/shadow
     html/track
 
@@ -397,10 +400,10 @@ set(WebCore_NON_SVG_IDL_FILES
     Modules/highlight/HighlightRegistry.idl
 
     Modules/identity/DigitalCredential.idl
+    Modules/identity/DigitalCredentialRequest.idl
     Modules/identity/DigitalCredentialRequestOptions.idl
     Modules/identity/IdentityCredentialProtocol.idl
-    Modules/identity/IdentityRequestProvider.idl
-    Modules/identity/Navigator+Identity.idl
+    Modules/identity/MobileDocumentRequest.idl
     Modules/identity/OpenID4VPRequest.idl
 
     Modules/indexeddb/IDBCursor.idl
@@ -987,7 +990,6 @@ set(WebCore_NON_SVG_IDL_FILES
     css/CSSStyleRule.idl
     css/CSSStyleSheet.idl
     css/CSSSupportsRule.idl
-    css/CSSUnknownRule.idl
     css/CSSViewTransitionRule.idl
     css/DocumentOrShadowRoot+CSSOM.idl
     css/DOMCSSCustomPropertyDescriptor.idl
@@ -1134,6 +1136,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Element+PointerLock.idl
     dom/Element.idl
     dom/ElementContentEditable.idl
+    dom/ElementCreationOptions.idl
     dom/ElementInternals.idl
     dom/ErrorEvent.idl
     dom/Event.idl
@@ -1153,6 +1156,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/IdleDeadline.idl
     dom/IdleRequestCallback.idl
     dom/IdleRequestOptions.idl
+    dom/ImportNodeOptions.idl
     dom/InnerHTML.idl
     dom/InputEvent.idl
     dom/KeyboardEvent.idl
@@ -1177,6 +1181,7 @@ set(WebCore_NON_SVG_IDL_FILES
     dom/Observable.idl
     dom/ObservableInspector.idl
     dom/ObservableInspectorAbortCallback.idl
+    dom/OverflowEvent.idl
     dom/PageRevealEvent.idl
     dom/PageSwapEvent.idl
     dom/PageTransitionEvent.idl
@@ -1341,7 +1346,6 @@ set(WebCore_NON_SVG_IDL_FILES
     html/ImageData.idl
     html/ImageDataSettings.idl
     html/ImageDataStorageFormat.idl
-    html/InvokerElement.idl
     html/MediaController.idl
     html/MediaEncryptedEvent.idl
     html/MediaError.idl
@@ -1392,6 +1396,8 @@ set(WebCore_NON_SVG_IDL_FILES
     html/canvas/PaintRenderingContext2D.idl
     html/canvas/Path2D.idl
     html/canvas/PredefinedColorSpace.idl
+
+    html/closewatcher/CloseWatcher.idl
 
     html/track/AudioTrack.idl
     html/track/AudioTrackConfiguration.idl
@@ -1533,6 +1539,12 @@ set(WebCore_NON_SVG_IDL_FILES
     workers/service/ExtendableEventInit.idl
     workers/service/ExtendableMessageEvent.idl
     workers/service/FetchEvent.idl
+    workers/service/InstallEvent.idl
+    workers/service/RouterCondition.idl
+    workers/service/RouterRule.idl
+    workers/service/RouterSourceDict.idl
+    workers/service/RouterSourceEnum.idl
+    workers/service/RunningStatus.idl
     workers/service/NavigationPreloadManager.idl
     workers/service/NavigationPreloadState.idl
     workers/service/ServiceWorker.idl
@@ -1997,7 +2009,6 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/htmlSwitchControl.css
     ${WEBCORE_DIR}/css/mathml.css
-    ${WEBCORE_DIR}/css/plugIns.css
     ${WEBCORE_DIR}/css/popover.css
     ${WEBCORE_DIR}/css/quirks.css
     ${WEBCORE_DIR}/css/svg.css
@@ -2006,10 +2017,6 @@ set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/html/shadow/detailsElementShadow.css
     ${WEBCORE_DIR}/html/shadow/imageOverlay.css
     ${WEBCORE_DIR}/html/shadow/meterElementShadow.css
-)
-
-set(WebCore_PLUG_INS_RESOURCES
-    ${WEBCORE_DIR}/Resources/plugIns.js
 )
 
 set(WebCore_LIBRARIES
@@ -2730,15 +2737,6 @@ if (WebCore_USER_AGENT_SCRIPTS)
     )
     list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/UserAgentScriptsData.cpp)
 endif ()
-
-# Generate plug-in resources
-add_custom_command(
-    OUTPUT ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResourcesData.cpp ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResources.h
-    MAIN_DEPENDENCY ${WEBCORE_DIR}/css/make-css-file-arrays.pl
-    DEPENDS ${WebCore_PLUG_INS_RESOURCES} ${WEBCORE_DIR}/bindings/scripts/preprocessor.pm
-    COMMAND ${PERL_EXECUTABLE} ${WEBCORE_DIR}/css/make-css-file-arrays.pl --defines "${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}" --preprocessor "${CODE_GENERATOR_PREPROCESSOR}" ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResources.h ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResourcesData.cpp ${WebCore_PLUG_INS_RESOURCES}
-    VERBATIM)
-list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResourcesData.cpp)
 
 set(FEATURE_DEFINES_JAVASCRIPT "LANGUAGE_JAVASCRIPT ${FEATURE_DEFINES_WITH_SPACE_SEPARATOR}")
 

@@ -71,6 +71,8 @@ directory Source/ThirdParty/skia/modules/skresources/include
 directory Source/ThirdParty/skia/modules/skresources/src
 directory Source/ThirdParty/skia/modules/skshaper/include
 directory Source/ThirdParty/skia/modules/skshaper/src
+directory Source/ThirdParty/skia/modules/skunicode/include
+directory Source/ThirdParty/skia/modules/skunicode/src
 directory Source/ThirdParty/skia/modules/svg/include
 directory Source/ThirdParty/skia/modules/svg/src
 directory Source/ThirdParty/skia/src
@@ -93,7 +95,6 @@ file Source/WebCore/Resources/missingImage.png
 file Source/WebCore/Resources/missingImage@2x.png
 file Source/WebCore/Resources/missingImage@3x.png
 file Source/WebCore/Resources/panIcon.png
-file Source/WebCore/Resources/plugIns.js
 file Source/WebCore/Resources/textAreaResizeCorner.png
 file Source/WebCore/Resources/textAreaResizeCorner@2x.png
 file Source/WebCore/platform/audio/resources/Composite.wav

@@ -124,7 +124,6 @@ const TestFeatures& TestOptions::defaults()
             { "DigitalCredentialsEnabled", false },
             { "GenericCueAPIEnabled", false },
             { "LoginStatusAPIEnabled", false },
-            { "LazyIframeLoadingEnabled", false },
             { "LazyImageLoadingEnabled", false },
             { "RequestIdleCallbackEnabled", false },
             { "WebAuthenticationEnabled", false },

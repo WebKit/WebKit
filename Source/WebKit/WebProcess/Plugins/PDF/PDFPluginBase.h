@@ -65,6 +65,7 @@ OBJC_CLASS WKAccessibilityPDFDocumentObject;
 #endif
 
 namespace WebCore {
+class Color;
 class FragmentedSharedBuffer;
 class GraphicsContext;
 class Element;
@@ -332,6 +333,10 @@ public:
 
     bool populateEditorStateIfNeeded(EditorState&) const;
 
+    virtual bool shouldSizeToFitContent() const { return false; }
+
+    virtual WebCore::FloatRect absoluteBoundingRectForSmartMagnificationAtPoint(WebCore::FloatPoint) const { return { }; }
+
 protected:
     virtual double contentScaleFactor() const = 0;
     virtual bool platformPopulateEditorStateIfNeeded(EditorState&) const { return false; }
@@ -348,9 +353,14 @@ private:
     // Returns the number of bytes copied.
     size_t copyDataAtPosition(std::span<uint8_t> buffer, uint64_t sourcePosition) const;
     // FIXME: It would be nice to avoid having both the "copy into a buffer" and "return a pointer" ways of getting data.
-    std::span<const uint8_t> dataSpanForRange(uint64_t sourcePosition, size_t count, CheckValidRanges) const;
+    void dataSpanForRange(uint64_t sourcePosition, size_t count, CheckValidRanges, CompletionHandler<void(std::span<const uint8_t>)>&&) const;
     // Returns true only if we can satisfy all of the requests.
     bool getByteRanges(CFMutableArrayRef, std::span<const CFRange>) const;
+
+#if !LOG_DISABLED
+    uint64_t streamedBytesForDebugLogging() const;
+    void incrementalLoaderLogWithBytes(const String&, uint64_t streamedBytes);
+#endif
 
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);
@@ -447,6 +457,8 @@ protected:
 #endif
 
     std::optional<WebCore::PageIdentifier> pageIdentifier() const;
+
+    static WebCore::Color pluginBackgroundColor();
 
     SingleThreadWeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;

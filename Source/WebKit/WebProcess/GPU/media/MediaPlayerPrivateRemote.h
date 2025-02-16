@@ -39,6 +39,7 @@
 #include "TextTrackPrivateRemote.h"
 #include "VideoTrackPrivateRemote.h"
 #include <WebCore/MediaPlayerPrivate.h>
+#include <WebCore/PlatformLayer.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/VideoFrameMetadata.h>
 #include <wtf/Lock.h>
@@ -222,6 +223,7 @@ private:
         Lock& lock() const { return m_lock; };
         MediaTime currentTimeWithLockHeld() const;
         MediaTime cachedTimeWithLockHeld() const;
+        void forceUseOfCachedTimeUntilNextSetTime();
 
     private:
         Ref<const MediaPlayerPrivateRemote> protectedParent() const { return m_parent.get().releaseNonNull(); }
@@ -231,6 +233,8 @@ private:
         MediaTime m_cachedMediaTime WTF_GUARDED_BY_LOCK(m_lock);
         MonotonicTime m_cachedMediaTimeQueryTime WTF_GUARDED_BY_LOCK(m_lock);
         double m_rate WTF_GUARDED_BY_LOCK(m_lock) { 1.0 };
+        mutable std::optional<MediaTime> m_lastReturnedTime WTF_GUARDED_BY_LOCK(m_lock);
+        bool m_forceUseCachedTime WTF_GUARDED_BY_LOCK(m_lock) { false };
         ThreadSafeWeakPtr<const MediaPlayerPrivateRemote> m_parent; // Cannot be null.
     };
     TimeProgressEstimator m_currentTimeEstimator;
@@ -247,11 +251,11 @@ private:
     const uint64_t m_logIdentifier;
 #endif
 
-    void load(const URL&, const WebCore::ContentType&, const String&) final;
+    void load(const URL&, const LoadOptions&) final;
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayer::Preload, bool preservesPitch, bool prepareToPlay, bool prepareToRender) final;
 
 #if ENABLE(MEDIA_SOURCE)
-    void load(const URL&, const WebCore::ContentType&, WebCore::MediaSourcePrivateClient&) final;
+    void load(const URL&, const LoadOptions&, WebCore::MediaSourcePrivateClient&) final;
 #endif
 #if ENABLE(MEDIA_STREAM)
     void load(WebCore::MediaStreamPrivate&) final;
@@ -265,6 +269,7 @@ private:
     long platformErrorCode() const final { return m_platformErrorCode; }
 
     double rate() const final { return m_rate; }
+    void setVolumeLocked(bool) final;
     void setVolumeDouble(double) final;
     void setMuted(bool) final;
     void setPrivateBrowsingMode(bool) final;
@@ -382,8 +387,6 @@ private:
 
     MediaTime mediaTimeForTimeValue(const MediaTime& timeValue) const final;
 
-    double maximumDurationToCacheMediaTime() const final;
-
     unsigned decodedFrameCount() const final;
     unsigned droppedFrameCount() const final;
     unsigned audioDecodedByteCount() const final;
@@ -480,14 +483,15 @@ private:
     void pushVideoFrameMetadata(WebCore::VideoFrameMetadata&&, RemoteVideoFrameProxy::Properties&&);
 #endif
     RemoteVideoFrameObjectHeapProxy& videoFrameObjectHeapProxy() const { return protectedManager()->protectedGPUProcessConnection()->videoFrameObjectHeapProxy(); }
+    Ref<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy() const { return videoFrameObjectHeapProxy(); }
 
     Ref<RemoteMediaPlayerManager> protectedManager() const;
 
     ThreadSafeWeakPtr<WebCore::MediaPlayer> m_player;
 #if PLATFORM(COCOA)
     mutable UniqueRef<WebCore::VideoLayerManager> m_videoLayerManager;
-#endif
     mutable PlatformLayerContainer m_videoLayer;
+#endif
 
     ThreadSafeWeakPtr<RemoteMediaPlayerManager> m_manager; // Cannot be null.
     WebCore::MediaPlayerEnums::MediaEngineIdentifier m_remoteEngineIdentifier;

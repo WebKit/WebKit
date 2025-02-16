@@ -108,6 +108,8 @@ public:
     void remotePageProcessDidTerminate(WebCore::ProcessIdentifier);
 
 private:
+    Ref<RemoteLayerTreeDrawingAreaProxy> protectedDrawingArea() const;
+
     void createLayer(const RemoteLayerTreeTransaction::LayerCreationProperties&);
     RefPtr<RemoteLayerTreeNode> makeNode(const RemoteLayerTreeTransaction::LayerCreationProperties&);
 

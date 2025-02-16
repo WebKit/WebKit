@@ -71,7 +71,7 @@ GraphicsContext* CanvasLayerContextSwitcher::drawingContext() const
 
 FloatBoxExtent CanvasLayerContextSwitcher::outsets() const
 {
-    return protectedContext()->calculateFilterOutsets(m_bounds);
+    return toFloatBoxExtent(protectedContext()->calculateFilterOutsets(m_bounds));
 }
 
 } // namespace WebCore

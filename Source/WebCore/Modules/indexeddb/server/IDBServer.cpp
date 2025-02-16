@@ -147,7 +147,7 @@ void IDBServer::openDatabase(const IDBOpenRequestData& requestData)
     if (!connectionIdentifier)
         return;
 
-    auto connection = m_connectionMap.get(*connectionIdentifier);
+    RefPtr connection = m_connectionMap.get(*connectionIdentifier);
     if (!connection) {
         // If the connection back to the client is gone, there's no way to open the database as
         // well as no way to message back failure.
@@ -167,7 +167,7 @@ void IDBServer::deleteDatabase(const IDBOpenRequestData& requestData)
     if (!connectionIdentifier)
         return;
 
-    auto connection = m_connectionMap.get(*connectionIdentifier);
+    RefPtr connection = m_connectionMap.get(*connectionIdentifier);
     if (!connection) {
         // If the connection back to the client is gone, there's no way to delete the database as
         // well as no way to message back failure.
@@ -189,7 +189,7 @@ void IDBServer::abortTransaction(const IDBResourceIdentifier& transactionIdentif
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(transactionIdentifier);
+    RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         // If there is no transaction there is nothing to abort.
         // We also have no access to a connection over which to message failure-to-abort.
@@ -210,7 +210,7 @@ void IDBServer::createObjectStore(const IDBRequestData& requestData, const IDBOb
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -224,7 +224,7 @@ void IDBServer::deleteObjectStore(const IDBRequestData& requestData, const Strin
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -238,7 +238,7 @@ void IDBServer::renameObjectStore(const IDBRequestData& requestData, IDBObjectSt
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -252,7 +252,7 @@ void IDBServer::clearObjectStore(const IDBRequestData& requestData, IDBObjectSto
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -265,7 +265,7 @@ void IDBServer::createIndex(const IDBRequestData& requestData, const IDBIndexInf
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -279,7 +279,7 @@ void IDBServer::deleteIndex(const IDBRequestData& requestData, IDBObjectStoreIde
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -293,7 +293,7 @@ void IDBServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIde
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -301,17 +301,17 @@ void IDBServer::renameIndex(const IDBRequestData& requestData, IDBObjectStoreIde
     transaction->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
 }
 
-void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void IDBServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexIDToIndexKeyMap& indexKeys, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBServer::putOrAdd");
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
-    transaction->putOrAdd(requestData, keyData, value, overwriteMode);
+    transaction->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode);
 }
 
 void IDBServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData)
@@ -320,7 +320,7 @@ void IDBServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordD
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -333,7 +333,7 @@ void IDBServer::getAllRecords(const IDBRequestData& requestData, const IDBGetAll
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -346,7 +346,7 @@ void IDBServer::getCount(const IDBRequestData& requestData, const IDBKeyRangeDat
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -359,7 +359,7 @@ void IDBServer::deleteRecord(const IDBRequestData& requestData, const IDBKeyRang
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -372,7 +372,7 @@ void IDBServer::openCursor(const IDBRequestData& requestData, const IDBCursorInf
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -385,7 +385,7 @@ void IDBServer::iterateCursor(const IDBRequestData& requestData, const IDBIterat
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = idbTransaction(requestData);
+    RefPtr transaction = idbTransaction(requestData);
     if (!transaction)
         return;
 
@@ -414,7 +414,7 @@ void IDBServer::commitTransaction(const IDBResourceIdentifier& transactionIdenti
     ASSERT(!isMainThread());
     ASSERT(m_lock.isHeld());
 
-    auto transaction = m_transactions.get(transactionIdentifier);
+    RefPtr transaction = m_transactions.get(transactionIdentifier);
     if (!transaction) {
         // If there is no transaction there is nothing to commit.
         // We also have no access to a connection over which to message failure-to-commit.
@@ -473,7 +473,7 @@ void IDBServer::abortOpenAndUpgradeNeeded(IDBDatabaseConnectionIdentifier databa
     ASSERT(m_lock.isHeld());
 
     if (transactionIdentifier) {
-        if (auto transaction = m_transactions.get(*transactionIdentifier))
+        if (RefPtr transaction = m_transactions.get(*transactionIdentifier))
             transaction->abortWithoutCallback();
     }
 
@@ -548,7 +548,7 @@ void IDBServer::getAllDatabaseNamesAndVersions(IDBConnectionIdentifier serverCon
     auto directory = IDBDatabaseIdentifier::databaseDirectoryRelativeToRoot(origin, m_databaseDirectoryPath, "v1"_s);
     getDatabaseNameAndVersionFromOriginDirectory(directory, visitedDatabasePaths, result);
 
-    auto connection = m_connectionMap.get(serverConnectionIdentifier);
+    RefPtr connection = m_connectionMap.get(serverConnectionIdentifier);
     if (!connection)
         return;
 

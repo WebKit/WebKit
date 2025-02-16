@@ -12,7 +12,7 @@ var arr = a => arguments;
 
 noInline(arr);
 
-for (let i=0; i<10000; i++) {
+for (let i=0; i<testLoopCount; i++) {
     let value = arr(i);
 
     testCase(value, text_value, txtMsg + "#1");
@@ -26,7 +26,7 @@ var af0 = afFactory0('ABC', 'DEF');
 
 noInline(af0);
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     var arr = af0(i);
 
     testCase(arr.length, 2, txtMsg + "#2");
@@ -44,7 +44,7 @@ var innerUseStrict = function () {
     let af = createArrow('A', 'B', 'C');
     noInline(af);
 
-    for (var i=0; i<10000; i++) {
+    for (var i=0; i<testLoopCount; i++) {
         let arr = af('D', 'E');
         testCase(arr, 'ABCDE', txtMsg + "#6");
     }
@@ -58,7 +58,7 @@ var obj = function (value) {
 
 var arr_nesting = () => () => () => new obj('data');
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     testCase(arr_nesting()()().id, 'data');
 }
 
@@ -88,13 +88,13 @@ function test() {
         b.addObj({ operand : (value) =>  value + value });
     }
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         runTest();
     }
 
     b.runAll();
 
-    testCase(b.result, 40000, txtMsg + "#7");
+    testCase(b.result, 4 * testLoopCount, txtMsg + "#7");
 }
 
 test();

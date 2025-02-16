@@ -2,13 +2,13 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      `yield` expressions are not LogicalOrExpressions.
-  features: [generators]
-  es6id: 12.1.1
-  negative:
-    phase: parse
-    type: SyntaxError
+description: >
+    `yield` expressions are not LogicalOrExpressions.
+features: [generators]
+es6id: 12.1.1
+negative:
+  phase: parse
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

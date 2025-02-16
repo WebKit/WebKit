@@ -82,8 +82,8 @@ private:
 
 TEST(SVGImageCasts, SVGImageForContainerIsNotSVGImage)
 {
-    auto imageObserver = TestImageObserver::create();
-    auto svgImage = SVGImage::create(imageObserver);
+    Ref imageObserver = TestImageObserver::create();
+    Ref svgImage = SVGImage::create(imageObserver.ptr());
     Image& svgImageBase = svgImage.get();
     EXPECT_TRUE(is<SVGImage>(svgImageBase));
     EXPECT_FALSE(is<SVGImageForContainer>(svgImageBase));

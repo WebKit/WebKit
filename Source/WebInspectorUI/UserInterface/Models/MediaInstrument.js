@@ -25,21 +25,6 @@
 
 WI.MediaInstrument = class MediaInstrument extends WI.Instrument
 {
-    constructor()
-    {
-        super();
-
-        console.assert(WI.MediaInstrument.supported());
-    }
-
-    // Static
-
-    static supported()
-    {
-        // COMPATIBILITY (iOS 12): DOM.didFireEvent did not exist yet.
-        return InspectorBackend.hasEvent("DOM.didFireEvent");
-    }
-
     // Protected
 
     get timelineRecordType()

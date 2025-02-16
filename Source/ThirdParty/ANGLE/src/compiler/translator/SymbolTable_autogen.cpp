@@ -20835,13 +20835,13 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, 0>(&textureSize_00a),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_texture_multisample)>(&textureSizeExt_00a),
     Rule::Get<320, Shader::ALL, 0>(&textureSize_00P),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
+    Rule::Get<300, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &textureSizeExt_00P),
     Rule::Get<320, Shader::ALL, 0>(&textureSize_00V),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
+    Rule::Get<300, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &textureSizeExt_00V),
     Rule::Get<320, Shader::ALL, 0>(&textureSize_00b),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
+    Rule::Get<300, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &textureSizeExt_00b),
     Rule::Get<300, Shader::ALL, EXT_INDEX(OES_EGL_image_external_essl3)>(&textureSize_00L00C),
     Rule::Get<300, Shader::ALL, EXT_INDEX(EXT_YUV_target)>(&textureSize_00M00C),
@@ -20880,13 +20880,13 @@ constexpr SymbolRule kRules[] = {
     Rule::Get<310, Shader::ALL, 0>(&texelFetch_00a10C00C),
     Rule::Get<300, Shader::ALL, EXT_INDEX(ANGLE_texture_multisample)>(&texelFetchExt_00a10C00C),
     Rule::Get<320, Shader::ALL, 0>(&texelFetch_00P20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
+    Rule::Get<300, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &texelFetchExt_00P20C00C),
     Rule::Get<320, Shader::ALL, 0>(&texelFetch_00V20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
+    Rule::Get<300, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &texelFetchExt_00V20C00C),
     Rule::Get<320, Shader::ALL, 0>(&texelFetch_00b20C00C),
-    Rule::Get<310, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
+    Rule::Get<300, Shader::ALL, EXT_INDEX(OES_texture_storage_multisample_2d_array)>(
         &texelFetchExt_00b20C00C),
     Rule::Get<300, Shader::ALL, EXT_INDEX(OES_EGL_image_external_essl3)>(&texelFetch_00L10C00C),
     Rule::Get<300, Shader::ALL, EXT_INDEX(EXT_YUV_target)>(&texelFetch_00M10C00C),
@@ -26226,10 +26226,10 @@ constexpr UnmangledEntry unmangled[] = {
     {"textureLod",
      std::array<TExtension, 2>{{Ext::OES_texture_cube_map_array, Ext::EXT_texture_cube_map_array}},
      310, Shader::ALL},
-    {"textureSize", std::array<TExtension, 1>{{Ext::OES_EGL_image_external_essl3}}, 300,
+    {"textureSize", std::array<TExtension, 1>{{Ext::OES_texture_storage_multisample_2d_array}}, 300,
      Shader::ALL},
     {"textureProjLod", std::array<TExtension, 1>{{Ext::UNDEFINED}}, 300, Shader::ALL},
-    {"texelFetch", std::array<TExtension, 1>{{Ext::OES_EGL_image_external_essl3}}, 300,
+    {"texelFetch", std::array<TExtension, 1>{{Ext::OES_texture_storage_multisample_2d_array}}, 300,
      Shader::ALL},
     {"textureGrad",
      std::array<TExtension, 2>{{Ext::OES_texture_cube_map_array, Ext::EXT_texture_cube_map_array}},

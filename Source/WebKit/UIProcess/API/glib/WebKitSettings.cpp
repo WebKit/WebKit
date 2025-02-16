@@ -206,10 +206,6 @@ static void webKitSettingsConstructed(GObject* object)
     WebKitSettings* settings = WEBKIT_SETTINGS(object);
     [[maybe_unused]] RefPtr prefs = settings->priv->preferences.get();
 
-#if ENABLE(MEDIA_STREAM)
-    ASSERT(prefs->mediaDevicesEnabled() == prefs->mediaStreamEnabled());
-#endif
-
     // FIXME: Expose API for MediaSession when the feature is officially non-experimental.
 }
 
@@ -1050,14 +1046,16 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
      *
      * Determines whether or not to prefetch domain names. DNS prefetching attempts
      * to resolve domain names before a user tries to follow a link.
+     *
+     * Deprecated: 2.48
      */
     sObjProperties[PROP_ENABLE_DNS_PREFETCHING] =
         g_param_spec_boolean(
             "enable-dns-prefetching",
             _("Enable DNS prefetching"),
             _("Whether to enable DNS prefetching"),
-            FEATURE_DEFAULT(DNSPrefetchingEnabled),
-            readWriteConstructParamFlags);
+            FALSE,
+            static_cast<GParamFlags>(readWriteConstructParamFlags | G_PARAM_DEPRECATED));
 
     /**
      * WebKitSettings:enable-caret-browsing:
@@ -1388,7 +1386,7 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
             _("Enable MediaStream"),
             _("Whether MediaStream content should be handled"),
 #if ENABLE(MEDIA_STREAM)
-            FEATURE_DEFAULT(MediaStreamEnabled),
+            FEATURE_DEFAULT(MediaDevicesEnabled),
 #else
             FALSE,
 #endif
@@ -2725,12 +2723,16 @@ void webkit_settings_set_enable_tabs_to_links(WebKitSettings* settings, gboolean
  * Get the #WebKitSettings:enable-dns-prefetching property.
  *
  * Returns: %TRUE If DNS prefetching is enabled or %FALSE otherwise.
+ *
+ * Deprecated: 2.48.
  */
 gboolean webkit_settings_get_enable_dns_prefetching(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->dnsPrefetchingEnabled();
+    g_warning("webkit_settings_get_enable_dns_prefetching is deprecated and always returns FALSE.");
+
+    return FALSE;
 }
 
 /**
@@ -2739,18 +2741,15 @@ gboolean webkit_settings_get_enable_dns_prefetching(WebKitSettings* settings)
  * @enabled: Value to be set
  *
  * Set the #WebKitSettings:enable-dns-prefetching property.
+ *
+ * Deprecated: 2.48.
  */
 void webkit_settings_set_enable_dns_prefetching(WebKitSettings* settings, gboolean enabled)
 {
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
-    WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->dnsPrefetchingEnabled();
-    if (currentValue == enabled)
-        return;
-
-    priv->preferences->setDNSPrefetchingEnabled(enabled);
-    g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_DNS_PREFETCHING]);
+    if (enabled)
+        g_warning("webkit_settings_set_enable_dns_prefetching is deprecated and does nothing.");
 }
 
 /**
@@ -3450,7 +3449,8 @@ gboolean webkit_settings_get_enable_media_stream(WebKitSettings* settings)
 {
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
 
-    return settings->priv->preferences->mediaStreamEnabled();
+    // FIXME: We may want to deprecate this and add new API for media devices.
+    return settings->priv->preferences->mediaDevicesEnabled();
 }
 
 /**
@@ -3467,12 +3467,11 @@ void webkit_settings_set_enable_media_stream(WebKitSettings* settings, gboolean 
     g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
 
     WebKitSettingsPrivate* priv = settings->priv;
-    bool currentValue = priv->preferences->mediaStreamEnabled();
+    bool currentValue = priv->preferences->mediaDevicesEnabled();
     if (currentValue == enabled)
         return;
 
     priv->preferences->setMediaDevicesEnabled(enabled);
-    priv->preferences->setMediaStreamEnabled(enabled);
     g_object_notify_by_pspec(G_OBJECT(settings), sObjProperties[PROP_ENABLE_MEDIA_STREAM]);
 }
 

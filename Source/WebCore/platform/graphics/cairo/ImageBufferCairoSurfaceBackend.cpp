@@ -32,6 +32,7 @@
 
 #include "BitmapImage.h"
 #include "CairoOperations.h"
+#include "CairoUtilities.h"
 #include "Color.h"
 #include "GraphicsContext.h"
 #include "ImageBufferUtilitiesCairo.h"
@@ -48,6 +49,7 @@ ImageBufferCairoSurfaceBackend::ImageBufferCairoSurfaceBackend(const Parameters&
     , m_context(m_surface.get())
 {
     ASSERT(cairo_surface_status(m_surface.get()) == CAIRO_STATUS_SUCCESS);
+    m_context.applyDeviceScaleFactor(parameters.resolutionScale);
 }
 
 GraphicsContext& ImageBufferCairoSurfaceBackend::context()
@@ -98,12 +100,12 @@ RefPtr<NativeImage> ImageBufferCairoSurfaceBackend::cairoSurfaceCoerceToImage()
 
 void ImageBufferCairoSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBuffer& destination)
 {
-    ImageBufferBackend::getPixelBuffer(srcRect, cairo_image_surface_get_data(m_surface.get()), destination);
+    ImageBufferBackend::getPixelBuffer(srcRect, span(m_surface.get()), destination);
 }
 
 void ImageBufferCairoSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
-    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, cairo_image_surface_get_data(m_surface.get()));
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, mutableSpan(m_surface.get()));
 
     cairo_surface_mark_dirty_rectangle(m_surface.get(), destPoint.x(), destPoint.y(), srcRect.width(), srcRect.height());
 }

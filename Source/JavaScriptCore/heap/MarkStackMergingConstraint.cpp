@@ -35,7 +35,7 @@ namespace JSC {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MarkStackMergingConstraint);
 
 MarkStackMergingConstraint::MarkStackMergingConstraint(JSC::Heap& heap)
-    : MarkingConstraint("Msm", "Mark Stack Merging", ConstraintVolatility::GreyedByExecution)
+    : MarkingConstraint("Msm"_s, "Mark Stack Merging"_s, ConstraintVolatility::GreyedByExecution)
     , m_heap(heap)
 {
 }

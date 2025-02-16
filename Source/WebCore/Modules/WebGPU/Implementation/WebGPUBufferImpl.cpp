@@ -73,7 +73,7 @@ void BufferImpl::mapAsync(MapModeFlags mapModeFlags, Size64 offset, std::optiona
     wgpuBufferMapAsync(m_backing.get(), backingMapModeFlags, static_cast<size_t>(offset), static_cast<size_t>(usedSize), &mapAsyncCallback, Block_copy(blockPtr.get())); // Block_copy is matched with Block_release above in mapAsyncCallback().
 }
 
-void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, Function<void(std::span<uint8_t>)>&& callback)
+void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, NOESCAPE Function<void(std::span<uint8_t>)>&& callback)
 {
     auto usedSize = getMappedSize(m_backing.get(), size, offset);
 

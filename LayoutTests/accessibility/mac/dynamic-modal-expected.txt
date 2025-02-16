@@ -5,8 +5,8 @@ Show button reachable: true
 
 Clicking on show button
 
-New focus: dialog_ok
-Show button reachable: false
+PASS: accessibilityController.focusedElement?.domIdentifier === 'dialog_ok' === true
+PASS: !!accessibilityController.accessibleElementById('show') === false
 
 PASS successfullyParsed is true
 

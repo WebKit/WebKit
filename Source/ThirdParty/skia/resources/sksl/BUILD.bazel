@@ -370,6 +370,7 @@ skia_filegroup(
         "errors/Ossfuzz38108.sksl",
         "errors/Ossfuzz38140.sksl",
         "errors/Ossfuzz38560.sksl",
+        "errors/Ossfuzz38831.sksl",
         "errors/Ossfuzz38865.sksl",
         "errors/Ossfuzz38944.sksl",
         "errors/Ossfuzz39000.sksl",

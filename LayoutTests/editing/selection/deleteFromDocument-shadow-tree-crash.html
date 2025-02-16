@@ -8,7 +8,7 @@ if (window.testRunner) {
 }
 
  function runTest() {
-    document.getElementById('input_0').disabled = true;
+    document.getElementById('input_0').focus();
     document.getElementById('input_0').setRangeText("abc");
     window.getSelection().extend(document.getElementById('input_0'), 0);
     window.getSelection().deleteFromDocument();

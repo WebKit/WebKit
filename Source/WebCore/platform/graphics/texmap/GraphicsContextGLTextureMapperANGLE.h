@@ -32,10 +32,6 @@
 
 namespace WebCore {
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-class GLFence;
-#endif
-
 class TextureMapperGCGLPlatformLayer;
 
 class GraphicsContextGLTextureMapperANGLE : public GLContextWrapper, public GraphicsContextGLANGLE {
@@ -83,10 +79,6 @@ private:
 
     GCGLuint m_compositorTexture { 0 };
     bool m_isCompositorTextureInitialized { false };
-
-#if PLATFORM(GTK) || PLATFORM(WPE)
-    std::unique_ptr<GLFence> m_frameFence;
-#endif
 
 #if USE(COORDINATED_GRAPHICS) && USE(LIBEPOXY)
     GCGLuint m_textureID { 0 };

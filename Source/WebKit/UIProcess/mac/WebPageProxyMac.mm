@@ -42,6 +42,7 @@
 #import "PageClient.h"
 #import "PageClientImplMac.h"
 #import "PlatformFontInfo.h"
+#import "PlatformWritingToolsUtilities.h"
 #import "RemoteLayerTreeHost.h"
 #import "RemoteLayerTreeNode.h"
 #import "TextChecker.h"
@@ -68,12 +69,14 @@
 #import <mach-o/dyld.h>
 #import <pal/spi/mac/NSApplicationSPI.h>
 #import <pal/spi/mac/NSMenuSPI.h>
+#import <wtf/FileSystem.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 #define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_BASE(assertion, connection)
 #define MESSAGE_CHECK_COMPLETION(assertion, connection, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection, completion)
-#define MESSAGE_CHECK_URL(process, url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(process, url), process->connection())
+#define MESSAGE_CHECK_URL(url) MESSAGE_CHECK_BASE(checkURLReceivedFromCurrentOrPreviousWebProcess(m_legacyMainFrameProcess, url), m_legacyMainFrameProcess->connection())
 #define MESSAGE_CHECK_WITH_RETURN_VALUE(assertion, returnValue) MESSAGE_CHECK_WITH_RETURN_VALUE_BASE(assertion, process().connection(), returnValue)
 
 @interface NSApplication ()
@@ -257,9 +260,8 @@ bool WebPageProxy::readSelectionFromPasteboard(const String& pasteboardName)
 void WebPageProxy::setPromisedDataForImage(IPC::Connection& connection, const String& pasteboardName, SharedMemory::Handle&& imageHandle, const String& filename, const String& extension,
     const String& title, const String& url, const String& visibleURL, SharedMemory::Handle&& archiveHandle, const String& originIdentifier)
 {
-    Ref process = *downcast<WebProcessProxy>(AuxiliaryProcessProxy::fromConnection(connection));
-    MESSAGE_CHECK_URL(process, url);
-    MESSAGE_CHECK_URL(process, visibleURL);
+    MESSAGE_CHECK_URL(url);
+    MESSAGE_CHECK_URL(visibleURL);
     MESSAGE_CHECK(extension == FileSystem::lastComponentOfPathIgnoringTrailingSlash(extension), connection);
 
     auto sharedMemoryImage = SharedMemory::map(WTFMove(imageHandle), SharedMemory::Protection::ReadOnly);
@@ -401,55 +403,59 @@ void WebPageProxy::updateContentInsetsIfAutomatic()
     if (!m_automaticallyAdjustsContentInsets)
         return;
 
-    m_pendingTopContentInset = std::nullopt;
+    m_pendingObscuredContentInsets = std::nullopt;
 
-    scheduleSetTopContentInsetDispatch();
+    scheduleSetObscuredContentInsetsDispatch();
 }
 
-void WebPageProxy::setTopContentInsetAsync(float contentInset)
+void WebPageProxy::setObscuredContentInsetsAsync(const FloatBoxExtent& obscuredContentInsets)
 {
-    m_pendingTopContentInset = contentInset;
-    scheduleSetTopContentInsetDispatch();
+    m_pendingObscuredContentInsets = obscuredContentInsets;
+    scheduleSetObscuredContentInsetsDispatch();
 }
 
-float WebPageProxy::pendingOrActualTopContentInset() const
+FloatBoxExtent WebPageProxy::pendingOrActualObscuredContentInsets() const
 {
-    return m_pendingTopContentInset.value_or(m_topContentInset);
+    return m_pendingObscuredContentInsets.value_or(m_obscuredContentInsets);
 }
 
-void WebPageProxy::scheduleSetTopContentInsetDispatch()
+void WebPageProxy::scheduleSetObscuredContentInsetsDispatch()
 {
-    if (m_didScheduleSetTopContentInsetDispatch)
+    if (m_didScheduleSetObscuredContentInsetsDispatch)
         return;
 
-    m_didScheduleSetTopContentInsetDispatch = true;
+    m_didScheduleSetObscuredContentInsetsDispatch = true;
 
     callOnMainRunLoop([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
-        weakThis->dispatchSetTopContentInset();
+        weakThis->dispatchSetObscuredContentInsets();
     });
 }
 
-void WebPageProxy::dispatchSetTopContentInset()
+void WebPageProxy::dispatchSetObscuredContentInsets()
 {
-    bool wasScheduled = std::exchange(m_didScheduleSetTopContentInsetDispatch, false);
+    bool wasScheduled = std::exchange(m_didScheduleSetObscuredContentInsetsDispatch, false);
     if (!wasScheduled)
         return;
 
-    if (!m_pendingTopContentInset) {
+    if (!m_pendingObscuredContentInsets) {
         if (!m_automaticallyAdjustsContentInsets)
             return;
 
-        if (RefPtr pageClient = this->pageClient())
-            m_pendingTopContentInset = pageClient->computeAutomaticTopContentInset();
+        if (RefPtr pageClient = this->pageClient()) {
+            if (auto automaticTopInset = pageClient->computeAutomaticTopObscuredInset()) {
+                m_pendingObscuredContentInsets = m_obscuredContentInsets;
+                m_pendingObscuredContentInsets->setTop(*automaticTopInset);
+            }
+        }
 
-        if (!m_pendingTopContentInset)
-            m_pendingTopContentInset = 0;
+        if (!m_pendingObscuredContentInsets)
+            m_pendingObscuredContentInsets = FloatBoxExtent { };
     }
 
-    setTopContentInset(*m_pendingTopContentInset);
-    m_pendingTopContentInset = std::nullopt;
+    setObscuredContentInsets(*m_pendingObscuredContentInsets);
+    m_pendingObscuredContentInsets = std::nullopt;
 }
 
 void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
@@ -517,11 +523,7 @@ static NSString *pathToPDFOnDisk(const String& suggestedFilename)
 
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if ([fileManager fileExistsAtPath:path]) {
-        NSString *pathTemplatePrefix = [pdfDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
-        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:suggestedFilename];
-        CString pathTemplateRepresentation = [pathTemplate fileSystemRepresentation];
-
-        int fd = mkstemps(pathTemplateRepresentation.mutableSpanIncludingNullTerminator().data(), pathTemplateRepresentation.length() - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
+        auto [fd, pathTemplateRepresentation] = FileSystem::createTemporaryFileInDirectory(pdfDirectoryPath, makeString('-', suggestedFilename));
         if (fd < 0) {
             WTFLogAlways("Cannot create PDF file in the temporary directory (%s).", suggestedFilename.utf8().data());
             return nil;
@@ -598,6 +600,10 @@ void WebPageProxy::showPDFContextMenu(const WebKit::PDFContextMenu& contextMenu,
         [nsItem setTitle:item.title];
         [nsItem setEnabled:item.enabled == ContextMenuItemEnablement::Enabled];
         [nsItem setState:item.state];
+#if ENABLE(CONTEXT_MENU_IMAGES_FOR_INTERNAL_CLIENTS)
+        if (m_preferences->contextMenuImagesForInternalClientsEnabled() && [nsItem respondsToSelector:@selector(_setActionImage:)])
+            [nsItem _setActionImage:[NSImage imageWithSystemSymbolName:symbolNameForAction(item.action, false) accessibilityDescription:nil]];
+#endif
         if (item.hasAction == ContextMenuItemHasAction::Yes) {
             [nsItem setTarget:menuTarget.get()];
             [nsItem setAction:@selector(contextMenuAction:)];
@@ -914,6 +920,25 @@ void WebPageProxy::handleContextMenuCopySubject(const String& preferredMIMEType)
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
 #if ENABLE(WRITING_TOOLS)
+
+bool WebPageProxy::shouldEnableWritingToolsRequestedTool(WebCore::WritingTools::RequestedTool tool) const
+{
+    WTRequestedTool requestedTool = convertToPlatformRequestedTool(tool);
+
+    if (requestedTool == WTRequestedToolIndex)
+        return true;
+
+    auto& editorState = this->editorState();
+    bool editorStateIsContentEditable = editorState.isContentEditable;
+
+    if (requestedTool == WTRequestedToolCompose)
+        return editorStateIsContentEditable;
+
+    if (editorStateIsContentEditable)
+        return editorState.hasPostLayoutData() && !editorState.postLayoutData->paragraphContextForCandidateRequest.isEmpty();
+
+    return true;
+}
 
 void WebPageProxy::handleContextMenuWritingTools(WebCore::WritingTools::RequestedTool tool)
 {

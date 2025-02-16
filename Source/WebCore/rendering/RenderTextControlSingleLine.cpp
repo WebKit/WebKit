@@ -99,7 +99,7 @@ void RenderTextControlSingleLine::layout()
     //   the inner elements when the field has a strong password button.
     //
     // We don't honor padding and borders for textfields without decorations
-    // and type=search if the text height is taller than the contentHeight()
+    // and type=search if the text height is taller than the contentBoxHeight()
     // because of compability.
 
     RenderTextControlInnerBlock* innerTextRenderer = innerTextElement() ? innerTextElement()->renderer() : nullptr;
@@ -119,7 +119,7 @@ void RenderTextControlSingleLine::layout()
     if (innerTextRenderer)
         oldInnerTextSize = innerTextRenderer->size();
 
-    RenderBlockFlow::layoutBlock(false);
+    RenderBlockFlow::layoutBlock(RelayoutChildren::No);
 
     // Set the text block height
     LayoutUnit inputContentBoxLogicalHeight = logicalHeight() - borderAndPaddingLogicalHeight();
@@ -178,8 +178,8 @@ void RenderTextControlSingleLine::layout()
         } else if (containerLogicalHeight > logicalHeightLimit) {
             containerRenderer->mutableStyle().setLogicalHeight(Length(logicalHeightLimit, LengthType::Fixed));
             setNeedsLayout(MarkOnlyThis);
-        } else if (containerRenderer->logicalHeight() < contentLogicalHeight()) {
-            containerRenderer->mutableStyle().setLogicalHeight(Length(contentLogicalHeight(), LengthType::Fixed));
+        } else if (containerRenderer->logicalHeight() < contentBoxLogicalHeight()) {
+            containerRenderer->mutableStyle().setLogicalHeight(Length(contentBoxLogicalHeight(), LengthType::Fixed));
             setNeedsLayout(MarkOnlyThis);
         } else
             containerRenderer->mutableStyle().setLogicalHeight(Length(containerLogicalHeight, LengthType::Fixed));
@@ -187,7 +187,7 @@ void RenderTextControlSingleLine::layout()
 
     // If we need another layout pass, we have changed one of children's height so we need to relayout them.
     if (needsLayout())
-        RenderBlockFlow::layoutBlock(true);
+        RenderBlockFlow::layoutBlock(RelayoutChildren::Yes);
 
     // Fix up the y-position of the container as it may have been flexed when the strong password or strong
     // confirmation password button wraps to the next line.
@@ -203,7 +203,7 @@ void RenderTextControlSingleLine::layout()
             }
             return renderer.logicalHeight();
         }();
-        auto contentBoxHeight = contentLogicalHeight();
+        auto contentBoxHeight = contentBoxLogicalHeight();
         if (contentBoxHeight == height)
             return;
         renderer.setLogicalTop(renderer.logicalTop() + (contentBoxHeight / 2 - height / 2));
@@ -386,7 +386,7 @@ LayoutUnit RenderTextControlSingleLine::preferredContentLogicalWidth(float charW
     if (family == "Lucida Grande"_s)
         maxCharWidth = scaleEmToUnits(4027);
     else if (style().fontCascade().hasValidAverageCharWidth())
-        maxCharWidth = roundf(style().fontCascade().primaryFont().maxCharWidth());
+        maxCharWidth = roundf(style().fontCascade().primaryFont()->maxCharWidth());
 #endif
 
     // For text inputs, IE adds some extra width.

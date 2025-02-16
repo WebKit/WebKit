@@ -79,7 +79,7 @@ Vector<MachSendRight> CompositorIntegrationImpl::recreateRenderBuffers(int width
     case TextureFormat::Rgba8unormSRGB:
         colorFormat = alphaMode == AlphaPremultiplication::Unpremultiplied ? IOSurface::Format::RGBX : IOSurface::Format::RGBA;
         break;
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case TextureFormat::Rgba16float:
         colorFormat = IOSurface::Format::RGBA16F;
         break;

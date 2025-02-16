@@ -45,7 +45,7 @@ async function buildWat(types) {
 `;
     let calleeInst = await instantiate(watCallee);
     let callerInst = await instantiate(watCaller, { env: calleeInst.exports });
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         calleeInst.exports.caller();
         callerInst.exports.caller();
     }

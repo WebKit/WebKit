@@ -584,7 +584,7 @@ const NumberOfTypedArrayTypesExcludingBigIntArraysAndDataView = constexpr Number
 # Type flags constants.
 const MasqueradesAsUndefined = constexpr MasqueradesAsUndefined
 const ImplementsDefaultHasInstance = constexpr ImplementsDefaultHasInstance
-const OverridesGetPrototypeOutOfLine = constexpr OverridesGetPrototypeOutOfLine
+const OverridesGetPrototype = constexpr OverridesGetPrototype
 
 # Bytecode operand constants.
 const FirstConstantRegisterIndexNarrow = constexpr FirstConstantRegisterIndex8
@@ -1539,12 +1539,14 @@ macro prologue(osrSlowPath, traceSlowPath)
     # Get new sp in t0 and check stack height.
     getFrameRegisterSizeForCodeBlock(t1, t0)
     subp cfr, t0, t0
+if not ADDRESS64
     bpa t0, cfr, .needStackCheck
+end
     loadp CodeBlock::m_vm[t1], t2
     if C_LOOP
-        bpbeq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
+        bplteq VM::m_cloopStackLimit[t2], t0, .stackHeightOK
     else
-        bpbeq VM::m_softStackLimit[t2], t0, .stackHeightOK
+        bplteq VM::m_softStackLimit[t2], t0, .stackHeightOK
     end
 
 .needStackCheck:
@@ -2880,6 +2882,10 @@ op(js_to_wasm_wrapper_entry, macro ()
 end)
 
 op(wasm_to_wasm_wrapper_entry, macro ()
+    crash()
+end)
+
+op(wasm_to_wasm_ipint_wrapper_entry, macro ()
     crash()
 end)
 

@@ -18,7 +18,7 @@ function foo() {
     }();
 
     bar();
-    for (j = 0; j < 10000; j++) {
+    for (j = 0; j < testLoopCount; j++) {
         if (/\s/.test(' ')) {
             hello(j);
         }

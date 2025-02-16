@@ -31,8 +31,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include "BaseClickableWithKeyInputType.h"
 #include "ColorChooser.h"
 #include "ColorChooserClient.h"
@@ -97,5 +95,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(ColorInputType, Type::Color)
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

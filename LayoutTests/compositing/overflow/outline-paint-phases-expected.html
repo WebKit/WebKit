@@ -1,0 +1,32 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            margin: 20px;
+            width: 300px;
+            height: 150px;
+            overflow: scroll;
+            border: 1px solid black;
+        }
+        
+        .contents {
+            height: 300%;
+        }
+        
+        .outlined {
+            margin: 10px;
+            outline: 10px solid green;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">
+            <div class="outlined">
+                This should have an outline.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

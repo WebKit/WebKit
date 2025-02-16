@@ -220,7 +220,7 @@ void AuxiliaryProcess::stopRunLoop()
 #if !PLATFORM(COCOA)
 void AuxiliaryProcess::platformStopRunLoop()
 {
-    RunLoop::main().stop();
+    RunLoop::protectedMain()->stop();
 }
 #endif
 
@@ -256,12 +256,6 @@ void AuxiliaryProcess::populateMobileGestaltCache(std::optional<SandboxExtension
 #endif
 
 #if !PLATFORM(COCOA)
-
-#if !OS(UNIX)
-void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
-{
-}
-#endif
 
 void AuxiliaryProcess::initializeSandbox(const AuxiliaryProcessInitializationParameters&, SandboxInitializationParameters&)
 {

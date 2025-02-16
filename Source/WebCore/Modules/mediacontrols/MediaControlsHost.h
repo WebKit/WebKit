@@ -112,7 +112,6 @@ public:
 
     static String generateUUID();
 
-#if ENABLE(MODERN_MEDIA_CONTROLS)
     static String shadowRootCSSText();
     static String base64StringForIconNameAndType(const String& iconName, const String& iconType);
     static String formattedStringForDuration(double);
@@ -122,7 +121,6 @@ public:
 
     using SourceType = HTMLMediaElement::SourceType;
     std::optional<SourceType> sourceType() const;
-#endif // ENABLE(MODERN_MEDIA_CONTROLS)
 
     void presentationModeChanged();
 

@@ -25,7 +25,9 @@
 
 #pragma once
 
-#include "IsoDirectoryPageInlines.h"
+#if !BUSE(TZONE)
+
+#include "IsoDirectoryPage.h"
 
 #if !BUSE(LIBPAS)
 
@@ -48,3 +50,4 @@ IsoDirectoryPage<Config>* IsoDirectoryPage<Config>::pageFor(IsoDirectory<Config,
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

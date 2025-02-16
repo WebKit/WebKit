@@ -1,0 +1,10 @@
+This test ensures we don't hang forever when deleting a select element from the DOM.
+
+PASS: We didn't loop infinitely as a result of the select element deleting itself.
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+First text
+Make a selection:
+Last text

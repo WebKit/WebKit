@@ -21,7 +21,8 @@ WindowSurfaceVkAndroid::WindowSurfaceVkAndroid(const egl::SurfaceState &surfaceS
     : WindowSurfaceVk(surfaceState, window)
 {}
 
-angle::Result WindowSurfaceVkAndroid::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)
+angle::Result WindowSurfaceVkAndroid::createSurfaceVk(vk::ErrorContext *context,
+                                                      gl::Extents *extentsOut)
 {
     VkAndroidSurfaceCreateInfoKHR createInfo = {};
 
@@ -34,7 +35,7 @@ angle::Result WindowSurfaceVkAndroid::createSurfaceVk(vk::Context *context, gl::
     return getCurrentWindowSize(context, extentsOut);
 }
 
-angle::Result WindowSurfaceVkAndroid::getCurrentWindowSize(vk::Context *context,
+angle::Result WindowSurfaceVkAndroid::getCurrentWindowSize(vk::ErrorContext *context,
                                                            gl::Extents *extentsOut)
 {
     vk::Renderer *renderer                 = context->getRenderer();

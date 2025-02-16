@@ -24,7 +24,7 @@ function runWithNumber(num) {
     `);
     noInline(test);
 
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test(5, 1, 2, 100);
 
     test(5, 2000000000, 2000000000, 1);

@@ -43,10 +43,12 @@ public:
         m_out.flush();
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     void vprintf(const char* format, va_list argList) final WTF_ATTRIBUTE_PRINTF(2, 0)
     {
         m_buffer.vprintf(format, argList);
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     void reset() { m_buffer.reset(); }
 

@@ -33,17 +33,26 @@ PASS created_imageData_float16.data.at(0) is 0
 PASS created_imageData_float16.data.at(1) is 0
 PASS created_imageData_float16.data.at(2) is 0
 PASS created_imageData_float16.data.at(3) is 0
-FIXME: gotten_imageData_float16.data below should eventually become Float16Array.
 PASS gotten_imageData_float16.width is 1
 PASS gotten_imageData_float16.height is 1
-PASS gotten_imageData_float16.data.constructor is Uint8ClampedArray
-PASS gotten_imageData_float16.data.BYTES_PER_ELEMENT is 1
+PASS gotten_imageData_float16.data.constructor is Float16Array
+PASS gotten_imageData_float16.data.BYTES_PER_ELEMENT is 2
 PASS gotten_imageData_float16.data.length is 4
-PASS gotten_imageData_float16.data.byteLength is 4
-PASS gotten_imageData_float16.data.at(0) is 0
-PASS gotten_imageData_float16.data.at(1) is 128
-PASS gotten_imageData_float16.data.at(2) is 255
-PASS gotten_imageData_float16.data.at(3) is 255
+PASS gotten_imageData_float16.data.byteLength is 8
+PASS gotten_imageData_float16.data.at(0) is within 0.001953125 of 0
+PASS gotten_imageData_float16.data.at(1) is within 0.001953125 of 0.5019607843137255
+PASS gotten_imageData_float16.data.at(2) is within 0.001953125 of 1
+PASS gotten_imageData_float16.data.at(3) is within 0.001953125 of 1
+PASS gotten_imageData_uint8_from_float16.width is 1
+PASS gotten_imageData_uint8_from_float16.height is 1
+PASS gotten_imageData_uint8_from_float16.data.constructor is Uint8ClampedArray
+PASS gotten_imageData_uint8_from_float16.data.BYTES_PER_ELEMENT is 1
+PASS gotten_imageData_uint8_from_float16.data.length is 4
+PASS gotten_imageData_uint8_from_float16.data.byteLength is 4
+PASS gotten_imageData_uint8_from_float16.data.at(0) is 0
+PASS gotten_imageData_uint8_from_float16.data.at(1) is 128
+PASS gotten_imageData_uint8_from_float16.data.at(2) is 255
+PASS gotten_imageData_uint8_from_float16.data.at(3) is 255
 PASS context.createImageData(1, 1, { storageFormat: "foo" }) threw exception TypeError: Type error.
 PASS context.getImageData(0, 0, 1, 1, { storageFormat: "foo" }) threw exception TypeError: Type error.
 PASS successfullyParsed is true

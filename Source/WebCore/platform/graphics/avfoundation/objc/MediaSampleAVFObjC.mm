@@ -107,7 +107,7 @@ void MediaSampleAVFObjC::commonInit()
         }
 
 #if HAVE(FAIRPLAYSTREAMING_MTPS_INITDATA)
-        if (auto transportStreamData = static_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("TransportStreamEncryptionInitData")))) {
+        if (static_cast<CFDataRef>(PAL::CMFormatDescriptionGetExtension(description, CFSTR("TransportStreamEncryptionInitData")))) {
             // AVStreamDataParser will attach a JSON transport stream encryption
             // description object to each sample. Use a static keyID in this case
             // as MPEG2-TS encryption dose not specify a particular keyID in the
@@ -170,12 +170,12 @@ static bool isCMSampleBufferRandomAccess(CMSampleBufferRef sample)
     CFArrayRef attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sample, false);
     if (!attachments)
         return true;
-    
-    for (CFIndex i = 0, count = CFArrayGetCount(attachments); i < count; ++i) {
-        if (!isCMSampleBufferAttachmentRandomAccess(checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments, i))))
-            return false;
-    }
-    return true;
+
+    if (CFArrayGetCount(attachments) < 1)
+        return true;
+
+    CFDictionaryRef firstAttachment = checked_cf_cast<CFDictionaryRef>(CFArrayGetValueAtIndex(attachments, 0));
+    return isCMSampleBufferAttachmentRandomAccess(firstAttachment);
 }
 
 static bool isCMSampleBufferAttachmentNonDisplaying(CFDictionaryRef attachmentDict)

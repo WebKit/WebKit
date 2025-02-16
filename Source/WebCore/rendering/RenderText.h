@@ -23,6 +23,7 @@
 
 #pragma once
 
+#include "FontCascade.h"
 #include "RenderElement.h"
 #include "RenderTextLineBoxes.h"
 #include "Text.h"
@@ -33,7 +34,6 @@
 namespace WebCore {
 
 class Font;
-class LegacyInlineTextBox;
 struct GlyphOverflow;
 struct WordTrailingSpace;
 enum class DocumentMarkerType : uint32_t;
@@ -59,6 +59,7 @@ public:
     const Layout::InlineTextBox* layoutBox() const;
 
     WEBCORE_EXPORT Text* textNode() const;
+    RefPtr<Text> protectedTextNode() const { return textNode(); }
 
     const RenderStyle& style() const;
     const RenderStyle& firstLineStyle() const;
@@ -75,16 +76,9 @@ public:
 
     virtual String originalText() const;
 
-    void extractTextBox(LegacyInlineTextBox& box) { m_legacyLineBoxes.extract(box); }
-    void attachTextBox(LegacyInlineTextBox& box) { m_legacyLineBoxes.attach(box); }
-    void removeTextBox(LegacyInlineTextBox& box) { m_legacyLineBoxes.remove(box); }
 
     const String& text() const { return m_text; }
     String textWithoutConvertingBackslashToYenSymbol() const;
-
-    LegacyInlineTextBox* createInlineTextBox() { return m_legacyLineBoxes.createAndAppendLineBox(*this); }
-    void dirtyLegacyLineBoxes(bool fullLayout);
-    void deleteLegacyLineBoxes();
 
     void boundingRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset) const final;
     Vector<IntRect> absoluteRectsForRange(unsigned startOffset = 0, unsigned endOffset = UINT_MAX, bool useSelectionHeight = false, bool* wasFixed = nullptr) const;
@@ -103,8 +97,6 @@ public:
 
     UChar characterAt(unsigned) const;
     unsigned length() const final { return text().length(); }
-
-    void positionLineBox(LegacyInlineTextBox&);
 
     float width(unsigned from, unsigned length, const FontCascade&, float xPos, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
     float width(unsigned from, unsigned length, float xPos, bool firstLine = false, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
@@ -138,7 +130,7 @@ public:
     WEBCORE_EXPORT IntPoint firstRunLocation() const;
 
     void setText(const String&, bool force = false);
-    void setTextWithOffset(const String&, unsigned offset, unsigned len, bool force = false);
+    void setTextWithOffset(const String&, unsigned offset);
 
     bool canBeSelectionLeaf() const override { return true; }
 
@@ -146,8 +138,6 @@ public:
 
     inline LayoutUnit marginLeft() const;
     inline LayoutUnit marginRight() const;
-
-    LegacyInlineTextBox* firstLegacyTextBox() const { return m_legacyLineBoxes.first(); }
 
     int caretMinOffset() const final;
     int caretMaxOffset() const final;
@@ -168,20 +158,16 @@ public:
 
     bool containsOnlyCollapsibleWhitespace() const;
 
-    bool canUseSimpleFontCodePath() const { return m_canUseSimpleFontCodePath; }
-
-    void removeAndDestroyLegacyTextBoxes();
+    FontCascade::CodePath fontCodePath() const { return static_cast<FontCascade::CodePath>(m_fontCodePath); }
+    bool canUseSimpleFontCodePath() const { return fontCodePath() == FontCascade::CodePath::Simple; }
+    bool shouldUseSimpleGlyphOverflowCodePath() const { return fontCodePath() == FontCascade::CodePath::SimpleWithGlyphOverflow; }
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
-    virtual std::unique_ptr<LegacyInlineTextBox> createTextBox();
 
 #if ENABLE(TEXT_AUTOSIZING)
     float candidateComputedTextSize() const { return m_candidateComputedTextSize; }
     void setCandidateComputedTextSize(float size) { m_candidateComputedTextSize = size; }
 #endif
-
-    bool usesLegacyLineLayoutPath() const;
 
     StringView stringView(unsigned start = 0, std::optional<unsigned> stop = std::nullopt) const;
     
@@ -215,8 +201,6 @@ protected:
 
     virtual void setTextInternal(const String&, bool force);
 
-    RenderTextLineBoxes m_legacyLineBoxes;
-
 private:
     RenderText(Type, Node&, const String&);
 
@@ -228,12 +212,11 @@ private:
 
     void setSelectionState(HighlightState) final;
     LayoutRect selectionRectForRepaint(const RenderLayerModelObject* repaintContainer, bool clipToVisibleContent = true) final;
-    LayoutRect clippedOverflowRect(const RenderLayerModelObject* repaintContainer, VisibleRectContext) const final;
-    RepaintRects rectsForRepaintingAfterLayout(const RenderLayerModelObject* repaintContainer, RepaintOutlineBounds) const final;
+    RepaintRects localRectsForRepaint(RepaintOutlineBounds) const final;
 
     void computePreferredLogicalWidths(float leadWidth, SingleThreadWeakHashSet<const Font>& fallbackFonts, GlyphOverflow&, bool forcedMinMaxWidthComputation = false);
 
-    bool computeCanUseSimpleFontCodePath() const;
+    void computeFontCodePath();
     
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint&, HitTestAction) final { ASSERT_NOT_REACHED(); return false; }
 
@@ -273,18 +256,14 @@ private:
     unsigned m_hasTab : 1 { false }; // Whether or not we have a variable width tab character (e.g., <pre> with '\t').
     unsigned m_hasBeginWS : 1 { false }; // Whether or not we begin with WS (only true if we aren't pre)
     unsigned m_hasEndWS : 1 { false }; // Whether or not we end with WS (only true if we aren't pre)
-    unsigned m_linesDirty : 1 { false }; // This bit indicates that the text run has already dirtied specific
-                                         // line boxes, and this hint will enable layoutInlineChildren to avoid
-                                         // just dirtying everything when character data is modified (e.g., appended/inserted
-                                         // or removed).
     unsigned m_needsVisualReordering : 1 { false };
     unsigned m_containsOnlyASCII : 1 { false };
-    unsigned m_canUseSimpleFontCodePath : 1 { false };
     mutable unsigned m_knownToHaveNoOverflowAndNoFallbackFonts : 1 { false };
     unsigned m_useBackslashAsYenSymbol : 1 { false };
     unsigned m_originalTextDiffersFromRendered : 1 { false };
     unsigned m_hasInlineWrapperForDisplayContents : 1 { false };
     unsigned m_hasSecureTextTimer : 1 { false };
+    unsigned m_fontCodePath : 2 { 0 };
 };
 
 String applyTextTransform(const RenderStyle&, const String&, Vector<UChar> previousCharacter);

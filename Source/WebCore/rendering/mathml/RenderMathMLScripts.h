@@ -49,7 +49,7 @@ protected:
     ASCIILiteral renderName() const override { return "RenderMathMLScripts"_s; }
     MathMLScriptsElement::ScriptType scriptType() const;
     void computePreferredLogicalWidths() override;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
 private:
     MathMLScriptsElement& element() const;

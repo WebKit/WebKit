@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "IsoHeap.h"
 
+#if !BUSE(TZONE)
 #include "AllocationCounts.h"
 
 #if BUSE(LIBPAS)
@@ -121,4 +123,4 @@ void isoDeallocate(void* ptr)
 } } // namespace bmalloc::api
 
 #endif // BUSE(LIBPAS)
-
+#endif // !BUSE(TZONE)

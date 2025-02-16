@@ -30,7 +30,7 @@ if (window.accessibilityController) {
     var newScrollViewHeight, newScrollViewY;
     setTimeout(async function() {
         if (window.testRunner)
-            await testRunner.setTopContentInset(100);
+            await testRunner.setObscuredContentInsets(100, 0, 0, 0);
         await waitFor(() => {
             newScrollViewY =  scrollView.y - scrollView.height;
             return newScrollViewY - scrollViewY === 100;

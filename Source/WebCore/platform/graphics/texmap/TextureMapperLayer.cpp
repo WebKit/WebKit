@@ -259,6 +259,9 @@ void TextureMapperLayer::computeTransformsRecursive(ComputeTransformData& data)
         const float originX = m_state.anchorPoint.x() * m_state.size.width();
         const float originY = m_state.anchorPoint.y() * m_state.size.height();
 
+#if ENABLE(DAMAGE_TRACKING)
+        TransformationMatrix oldCombined = m_layerTransforms.combined;
+#endif
         m_layerTransforms.combined = parentTransform;
         m_layerTransforms.combined
             .translate3d(originX + (m_state.pos.x() - m_state.boundsOrigin.x()), originY + (m_state.pos.y() - m_state.boundsOrigin.y()), m_state.anchorPoint.z())
@@ -295,6 +298,11 @@ void TextureMapperLayer::computeTransformsRecursive(ComputeTransformData& data)
             m_layerTransforms.futureCombinedForChildren.flatten();
         m_layerTransforms.futureCombinedForChildren.multiply(m_state.childrenTransform);
         m_layerTransforms.futureCombinedForChildren.translate3d(-originX, -originY, -m_state.anchorPoint.z());
+#endif
+
+#if ENABLE(DAMAGE_TRACKING)
+        if (canInferDamage() && oldCombined != m_layerTransforms.combined)
+            damageWholeLayerDueToTransformChange(oldCombined, m_layerTransforms.combined);
 #endif
     }
 
@@ -341,14 +349,20 @@ void TextureMapperLayer::computeTransformsRecursive(ComputeTransformData& data)
 #endif
 }
 
-void TextureMapperLayer::paint(TextureMapper& textureMapper)
+void TextureMapperLayer::prepareForPainting(TextureMapper& textureMapper)
 {
     processDescendantLayersFlatteningRequirements();
 
     ComputeTransformData data;
     computeTransformsRecursive(data);
     textureMapper.setDepthRange(data.zNear, data.zFar);
+}
 
+void TextureMapperLayer::paint(TextureMapper& textureMapper)
+{
+#if !ENABLE(DAMAGE_TRACKING)
+    prepareForPainting(textureMapper);
+#endif
     TextureMapperPaintOptions options(textureMapper);
     options.surface = textureMapper.currentSurface();
     paintRecursive(options);
@@ -376,14 +390,23 @@ void TextureMapperLayer::collectDamageRecursive(TextureMapperPaintOptions& optio
 
     SetForScope scopedOpacity(options.opacity, options.opacity * m_currentOpacity);
 
-    collectDamageSelf(options, damage);
+    if (preserves3D() || isFlattened() || shouldBlend())
+        collectDamageSelfAndChildren(options, damage);
+    else
+        collectDamageSelfChildrenReplicaFilterAndMask(options, damage);
+}
 
+void TextureMapperLayer::collectDamageSelfAndChildren(TextureMapperPaintOptions& options, Damage& damage)
+{
+    collectDamageSelf(options, damage);
     for (auto* child : m_children)
         child->collectDamageRecursive(options, damage);
 }
 
 void TextureMapperLayer::collectDamageSelf(TextureMapperPaintOptions& options, Damage& damage)
 {
+    ASSERT(m_damagePropagation);
+
     if (!m_state.visible || !m_state.contentsVisible)
         return;
 
@@ -396,8 +419,16 @@ void TextureMapperLayer::collectDamageSelf(TextureMapperPaintOptions& options, D
     transform.multiply(options.transform);
     transform.multiply(m_layerTransforms.combined);
 
-    if (m_contentsLayer || m_damage.isInvalid()) {
-        // Layers with content layer are always fully damaged for now...
+    ASSERT(!m_damage.isInvalid());
+    ASSERT(!m_inferredDamage.isInvalid());
+    if (!m_inferredDamage.isEmpty()) {
+        for (const auto& rect : m_inferredDamage.rects()) {
+            ASSERT(!rect.isEmpty());
+            damage.add(rect);
+        }
+    } else if (m_contentsLayer) {
+        // Layers with content layer are fully damaged if there's no explicit damage.
+        // FIXME: Remove that special case.
         damage.add(transformRectForDamage(targetRect, transform, options));
     } else {
         // Use the damage information we received from the GraphicsLayer
@@ -410,14 +441,58 @@ void TextureMapperLayer::collectDamageSelf(TextureMapperPaintOptions& options, D
         }
     }
 
-    m_damage = Damage();
+    m_damage = { };
+    m_inferredDamage = { };
+}
+
+void TextureMapperLayer::collectDamageSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions& options, Damage& damage)
+{
+    const bool hasFilterOrMask = hasFilters() || m_state.maskLayer || (m_state.replicaLayer && m_state.replicaLayer->m_state.maskLayer);
+    auto collectDamageSelfAndOthers = [&]() {
+        if (hasFilterOrMask)
+            collectDamageSelfChildrenFilterAndMask(options, damage);
+        else
+            collectDamageSelfAndChildren(options, damage);
+    };
+
+    if (m_state.replicaLayer) {
+        SetForScope scopedReplicaLayer(options.replicaLayer, this);
+        SetForScope scopedTransform(options.transform, options.transform);
+        options.transform.multiply(replicaTransform());
+        collectDamageSelfAndOthers();
+    }
+    collectDamageSelfAndOthers();
+}
+
+void TextureMapperLayer::collectDamageSelfChildrenFilterAndMask(TextureMapperPaintOptions& options, Damage& damage)
+{
+    const IntSize maxTextureSize = options.textureMapper.maxTextureSize();
+    for (auto& rect : computeConsolidatedOverlapRegionRects(options)) {
+        for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
+            for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
+                IntRect tileRect(IntPoint(x, y), maxTextureSize);
+                tileRect.intersect(rect);
+
+                m_accumulatedOverlapRegionDamage.unite(transformRectForDamage(tileRect, options.transform, options));
+            }
+        }
+    }
+
+    if (!m_accumulatedOverlapRegionDamage.isEmpty())
+        damage.add(m_accumulatedOverlapRegionDamage);
+}
+
+void TextureMapperLayer::damageWholeLayerDueToTransformChange(const TransformationMatrix& beforeChange, const TransformationMatrix& afterChange)
+{
+    // When the layer's transform changes, we must not only damage whole layer using new transform,
+    // but also using old transform to cover the area not affected by layer anymore.
+    m_inferredDamage.add(afterChange.mapRect(layerRect()));
+    m_inferredDamage.add(beforeChange.mapRect(layerRect()));
 }
 
 FloatRect TextureMapperLayer::transformRectForDamage(const FloatRect& rect, const TransformationMatrix& transform, const TextureMapperPaintOptions& options)
 {
-    FloatQuad quad(rect);
-    quad = transform.mapQuad(quad);
-    FloatRect transformedRect = quad.boundingBox();
+    auto transformedRect = transform.mapRect(rect);
     // Some layers are drawn on an intermediate surface and have this offset applied to convert to the
     // intermediate surface coordinates. In order to translate back to actual coordinates,
     // we have to undo it.
@@ -888,7 +963,7 @@ void TextureMapperLayer::paintUsingOverlapRegions(TextureMapperPaintOptions& opt
     }
 }
 
-void TextureMapperLayer::paintSelfChildrenFilterAndMask(TextureMapperPaintOptions& options)
+Vector<IntRect, 1> TextureMapperLayer::computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions& options)
 {
     Region overlapRegion;
     Region nonOverlapRegion;
@@ -912,8 +987,13 @@ void TextureMapperLayer::paintSelfChildrenFilterAndMask(TextureMapperPaintOption
         rects.append(overlapRegion.bounds());
     }
 
+    return rects;
+}
+
+void TextureMapperLayer::paintSelfChildrenFilterAndMask(TextureMapperPaintOptions& options)
+{
     IntSize maxTextureSize = options.textureMapper.maxTextureSize();
-    for (auto& rect : rects) {
+    for (auto& rect : computeConsolidatedOverlapRegionRects(options)) {
         for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
             for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
                 IntRect tileRect(IntPoint(x, y), maxTextureSize);
@@ -1180,6 +1260,13 @@ void TextureMapperLayer::setBoundsOrigin(const FloatPoint& boundsOrigin)
 
 void TextureMapperLayer::setSize(const FloatSize& size)
 {
+#if ENABLE(DAMAGE_TRACKING)
+    if (canInferDamage() && m_state.size != size) {
+        // When layer size changes, we damage whole layer for now.
+        // FIXME: Damage only affected area.
+        m_inferredDamage.add(m_state.transform.mapRect(FloatRect(FloatPoint::zero(), size)));
+    }
+#endif
     m_state.size = size;
 }
 

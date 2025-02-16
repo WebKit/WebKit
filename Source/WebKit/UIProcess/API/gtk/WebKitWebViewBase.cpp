@@ -484,6 +484,28 @@ void webkitWebViewBaseToplevelWindowIsActiveChanged(WebKitWebViewBase* webViewBa
     priv->pageProxy->activityStateDidChange(ActivityState::WindowIsActive);
 }
 
+static void webkitWebViewBaseUpdateVisibility(WebKitWebViewBase* webViewBase)
+{
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    const bool isVisible = gtk_widget_get_mapped(GTK_WIDGET(webViewBase))
+        && priv->toplevelOnScreenWindow->isInMonitor()
+        && !priv->toplevelOnScreenWindow->isMinimized()
+        && !priv->toplevelOnScreenWindow->isSuspended();
+
+    if (isVisible) {
+        if (priv->activityState & ActivityState::IsVisible)
+            return;
+
+        priv->activityState.add(ActivityState::IsVisible);
+    } else {
+        if (!(priv->activityState & ActivityState::IsVisible))
+            return;
+
+        priv->activityState.remove(ActivityState::IsVisible);
+    }
+    priv->pageProxy->activityStateDidChange(ActivityState::IsVisible);
+}
+
 void webkitWebViewBaseToplevelWindowStateChanged(WebKitWebViewBase* webViewBase, uint32_t changedMask, uint32_t state)
 {
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
@@ -517,40 +539,22 @@ void webkitWebViewBaseToplevelWindowStateChanged(WebKitWebViewBase* webViewBase,
 
 #if USE(GTK4)
     bool changedMinimized = changedMask & GDK_TOPLEVEL_STATE_MINIMIZED;
-    bool visible = !(state & GDK_TOPLEVEL_STATE_MINIMIZED);
+#if GTK_CHECK_VERSION(4, 12, 0)
+    bool changedSuspended = changedMask & GDK_TOPLEVEL_STATE_SUSPENDED;
+#else
+    bool changedSuspended = false;
+#endif
 #else
     bool changedMinimized = changedMask & GDK_WINDOW_STATE_ICONIFIED;
-    bool visible = !(state & GDK_WINDOW_STATE_ICONIFIED);
+    bool changedSuspended = false;
 #endif
-    if (!changedMinimized)
-        return;
-
-    if (visible) {
-        if (priv->activityState & ActivityState::IsVisible || !gtk_widget_get_mapped(GTK_WIDGET(webViewBase)) || !priv->toplevelOnScreenWindow->isInMonitor())
-            return;
-        priv->activityState.add(ActivityState::IsVisible);
-    } else {
-        if (!(priv->activityState & ActivityState::IsVisible))
-            return;
-        priv->activityState.remove(ActivityState::IsVisible);
-    }
-    priv->pageProxy->activityStateDidChange(ActivityState::IsVisible);
+    if (changedMinimized || changedSuspended)
+        webkitWebViewBaseUpdateVisibility(webViewBase);
 }
 
 void webkitWebViewBaseToplevelWindowMonitorChanged(WebKitWebViewBase* webViewBase, GdkMonitor* monitor)
 {
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (priv->toplevelOnScreenWindow->isInMonitor()) {
-        if (!(priv->activityState & ActivityState::IsVisible) && gtk_widget_get_mapped(GTK_WIDGET(webViewBase)) && !priv->toplevelOnScreenWindow->isMinimized()) {
-            priv->activityState.add(ActivityState::IsVisible);
-            priv->pageProxy->activityStateDidChange(ActivityState::IsVisible);
-        }
-    } else {
-        if (priv->activityState & ActivityState::IsVisible) {
-            priv->activityState.remove(ActivityState::IsVisible);
-            priv->pageProxy->activityStateDidChange(ActivityState::IsVisible);
-        }
-    }
+    webkitWebViewBaseUpdateVisibility(webViewBase);
     webkitWebViewBaseUpdateDisplayID(webViewBase, monitor);
 }
 
@@ -1076,24 +1080,14 @@ static void webkitWebViewBaseMap(GtkWidget* widget)
             webkitWebViewBaseSetSize(webViewBase, size);
     }
 
-    if (priv->activityState & ActivityState::IsVisible)
-        return;
-
-    priv->activityState.add(ActivityState::IsVisible);
-    priv->pageProxy->activityStateDidChange(ActivityState::IsVisible);
+    webkitWebViewBaseUpdateVisibility(webViewBase);
 }
 
 static void webkitWebViewBaseUnmap(GtkWidget* widget)
 {
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->unmap(widget);
 
-    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-    WebKitWebViewBasePrivate* priv = webViewBase->priv;
-    if (!(priv->activityState & ActivityState::IsVisible))
-        return;
-
-    priv->activityState.remove(ActivityState::IsVisible);
-    priv->pageProxy->activityStateDidChange(ActivityState::IsVisible);
+    webkitWebViewBaseUpdateVisibility(WEBKIT_WEB_VIEW_BASE(widget));
 }
 
 static bool shouldForwardKeyEvent(WebKitWebViewBase* webViewBase, GdkEvent* event)
@@ -2626,12 +2620,14 @@ static bool webkitWebViewBaseToplevelOnScreenWindowIsFullScreen(WebKitWebViewBas
     return priv->toplevelOnScreenWindow && priv->toplevelOnScreenWindow->isFullscreen();
 }
 
-void webkitWebViewBaseWillEnterFullScreen(WebKitWebViewBase* webkitWebViewBase)
+void webkitWebViewBaseWillEnterFullScreen(WebKitWebViewBase* webkitWebViewBase, CompletionHandler<void(bool)>&& completionHandler)
 {
     WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
     ASSERT(priv->fullScreenState == WebFullScreenManagerProxy::FullscreenState::NotInFullscreen);
     if (auto* fullScreenManagerProxy = priv->pageProxy->fullScreenManager())
-        fullScreenManagerProxy->willEnterFullScreen();
+        fullScreenManagerProxy->willEnterFullScreen(WTFMove(completionHandler));
+    else
+        completionHandler(false);
     priv->fullScreenState = WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen;
 }
 
@@ -3047,7 +3043,7 @@ static void emojiChooserClosed(WebKitWebViewBase* webkitWebViewBase)
 {
     // The emoji chooser first closes the popover and then emits emoji-picked signal, so complete
     // the request if the emoji isn't picked before the next run loop iteration.
-    RunLoop::main().dispatch([webViewBase = GRefPtr<WebKitWebViewBase>(webkitWebViewBase)] {
+    RunLoop::protectedMain()->dispatch([webViewBase = GRefPtr<WebKitWebViewBase>(webkitWebViewBase)] {
         webkitWebViewBaseCompleteEmojiChooserRequest(webViewBase.get(), emptyString());
     });
     webkitWebViewBase->priv->releaseEmojiChooserTimer.startOneShot(2_min);

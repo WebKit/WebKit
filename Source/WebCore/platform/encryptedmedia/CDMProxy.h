@@ -232,7 +232,7 @@ private:
         m_references.remove(id);
     }
 
-    HashSet<KeyStoreIDType> m_references;
+    UncheckedKeyHashSet<KeyStoreIDType> m_references;
 };
 
 class ReferenceAwareKeyStore : public KeyStoreBase<ReferenceAwareKeyHandle> {

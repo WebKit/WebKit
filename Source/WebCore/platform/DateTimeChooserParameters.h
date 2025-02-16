@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "IntRect.h"
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -55,5 +53,3 @@ struct DateTimeChooserParameters {
 };
 
 } // namespace WebCore
-
-#endif

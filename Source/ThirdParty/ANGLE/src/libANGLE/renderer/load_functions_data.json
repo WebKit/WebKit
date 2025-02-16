@@ -215,6 +215,17 @@
       "GL_INT": "LoadToNative<GLint, 4>"
     }
   },
+  "GL_LUMINANCE4_ALPHA4_OES": {
+    "R8G8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 2>"
+    },
+    "R8G8B8A8_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadLA8ToRGBA8"
+    },
+    "B4G4R4A4_UNORM": {
+      "GL_UNSIGNED_BYTE": "LoadLA8ToRGBA4"
+    }
+  },
   "GL_LUMINANCE8_ALPHA8_EXT": {
     "R8G8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadToNative<GLubyte, 2>"
@@ -233,7 +244,7 @@
       "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadToNative<GLuint, 1>"
     }
   },
-  "GL_RGB10_UNORM_ANGLEX": {
+  "GL_RGB10_EXT": {
     "R10G10B10A2_UNORM": {
       "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadRGB10A2ToRGB10X2"
     },
@@ -293,10 +304,12 @@
   },
   "GL_RGB8": {
     "R8G8B8A8_UNORM": {
-      "GL_UNSIGNED_BYTE": "LoadToNative3To4<GLubyte, 0xFF>"
+      "GL_UNSIGNED_BYTE": "LoadToNative3To4<GLubyte, 0xFF>",
+      "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadRGB10A2ToRGBA8"
     },
     "R8G8B8_UNORM": {
-      "GL_UNSIGNED_BYTE": "LoadToNative<GLbyte, 3>"
+      "GL_UNSIGNED_BYTE": "LoadToNative<GLbyte, 3>",
+      "GL_UNSIGNED_INT_2_10_10_10_REV": "LoadRGB10A2ToRGB8"
     }
   },
   "GL_LUMINANCE_ALPHA": {
@@ -751,7 +764,8 @@
   "GL_RGB565": {
     "R5G6B5_UNORM" : {
       "GL_UNSIGNED_BYTE": "LoadRGB8ToBGR565",
-      "GL_UNSIGNED_SHORT_5_6_5": "LoadToNative<GLushort, 1>"
+      "GL_UNSIGNED_SHORT_5_6_5": "LoadToNative<GLushort, 1>",
+      "GL_UNSIGNED_INT_2_10_10_10_REV_EXT": "LoadRGB10A2ToRGB565"
     },
     "R8G8B8A8_UNORM": {
       "GL_UNSIGNED_BYTE": "LoadToNative3To4<GLubyte, 0xFF>",

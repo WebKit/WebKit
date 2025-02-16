@@ -1,4 +1,4 @@
-//@ runWebAssemblySuite("--useWasmGC=true", "--collectContinuously=true")
+//@ runWebAssemblySuite("--collectContinuously=true")
 
 import { compile, instantiate } from "./wast-wrapper.js";
 

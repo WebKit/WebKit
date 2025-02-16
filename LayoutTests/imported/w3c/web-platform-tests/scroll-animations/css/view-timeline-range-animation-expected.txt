@@ -1,18 +1,18 @@
 
-FAIL Animation with ranges [initial, initial] assert_equals: expected "50" but got "47"
-FAIL Animation with ranges [cover 0%, cover 100%] assert_equals: expected "50" but got "47"
-FAIL Animation with ranges [contain 0%, contain 100%] assert_equals: expected "50" but got "40"
-FAIL Animation with ranges [entry 0%, entry 100%] assert_equals: expected "50" but got "40"
-FAIL Animation with ranges [exit 0%, exit 100%] assert_equals: expected "50" but got "40"
-FAIL Animation with ranges [contain -50%, entry 200%] assert_equals: expected "50" but got "43"
-FAIL Animation with ranges [entry 0%, exit 100%] assert_equals: expected "50" but got "47"
-FAIL Animation with ranges [cover 20px, cover 100px] assert_equals: expected "50" but got "38"
-FAIL Animation with ranges [contain 20px, contain 100px] assert_equals: expected "50" but got "37"
-FAIL Animation with ranges [entry 20px, entry 100px] assert_equals: expected "50" but got "38"
-FAIL Animation with ranges [entry-crossing 20px, entry-crossing 100px] assert_equals: expected "50" but got "38"
-FAIL Animation with ranges [exit 20px, exit 80px] assert_equals: expected "50" but got "33"
-FAIL Animation with ranges [exit-crossing 20px, exit-crossing 80px] assert_equals: expected "50" but got "33"
-FAIL Animation with ranges [contain 20px, contain calc(100px - 10%)] assert_equals: expected "50" but got "36"
-FAIL Animation with ranges [exit 2em, exit 8em] assert_equals: expected "50" but got "33"
-FAIL Animation with ranges [exit 2em, exit 8em] (scoped) assert_equals: expected "0" but got "100"
+PASS Animation with ranges [initial, initial]
+PASS Animation with ranges [cover 0%, cover 100%]
+PASS Animation with ranges [contain 0%, contain 100%]
+PASS Animation with ranges [entry 0%, entry 100%]
+PASS Animation with ranges [exit 0%, exit 100%]
+PASS Animation with ranges [contain -50%, entry 200%]
+PASS Animation with ranges [entry 0%, exit 100%]
+PASS Animation with ranges [cover 20px, cover 100px]
+PASS Animation with ranges [contain 20px, contain 100px]
+PASS Animation with ranges [entry 20px, entry 100px]
+PASS Animation with ranges [entry-crossing 20px, entry-crossing 100px]
+PASS Animation with ranges [exit 20px, exit 80px]
+PASS Animation with ranges [exit-crossing 20px, exit-crossing 80px]
+PASS Animation with ranges [contain 20px, contain calc(100px - 10%)]
+PASS Animation with ranges [exit 2em, exit 8em]
+PASS Animation with ranges [exit 2em, exit 8em] (scoped)
 

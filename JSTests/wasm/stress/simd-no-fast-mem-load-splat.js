@@ -23,7 +23,7 @@ import * as assert from "../assert.js"
         v128_load8_splat,
     } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(v128_load8_splat(), 31)
     }
  }

@@ -74,30 +74,31 @@ std::optional<SharedPreferencesForWebProcess> SpeechRecognitionServer::sharedPre
     SUPPRESS_UNCOUNTED_ARG return m_process ? m_process->sharedPreferencesForWebProcess() : std::nullopt;
 }
 
-void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier frameIdentifier)
+void SpeechRecognitionServer::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& origin, WebCore::FrameIdentifier mainFrameIdentifier, FrameInfoData&& frameInfo)
 {
     ASSERT(!m_requests.contains(clientIdentifier));
-    auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTFMove(lang), continuous, interimResults, maxAlternatives, WTFMove(origin), frameIdentifier };
+    auto requestInfo = WebCore::SpeechRecognitionRequestInfo { clientIdentifier, WTFMove(lang), continuous, interimResults, maxAlternatives, WTFMove(origin), mainFrameIdentifier };
     auto& newRequest = m_requests.add(clientIdentifier, makeUnique<WebCore::SpeechRecognitionRequest>(WTFMove(requestInfo))).iterator->value;
 
-    requestPermissionForRequest(*newRequest);
+    requestPermissionForRequest(*newRequest, WTFMove(frameInfo));
 }
 
-void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecognitionRequest& request)
+void SpeechRecognitionServer::requestPermissionForRequest(WebCore::SpeechRecognitionRequest& request, FrameInfoData&& frameInfo)
 {
-    m_permissionChecker(request, [this, weakThis = WeakPtr { *this }, weakRequest = WeakPtr { request }](auto error) mutable {
-        if (!weakThis || !weakRequest)
+    m_permissionChecker(request, WTFMove(frameInfo), [weakThis = WeakPtr { *this }, weakRequest = WeakPtr { request }](auto error) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !weakRequest)
             return;
 
         auto identifier = weakRequest->clientIdentifier();
-        auto request = m_requests.take(identifier);
+        auto request = protectedThis->m_requests.take(identifier);
         if (error) {
-            sendUpdate(identifier, WebCore::SpeechRecognitionUpdateType::Error, WTFMove(error));
+            protectedThis->sendUpdate(identifier, WebCore::SpeechRecognitionUpdateType::Error, WTFMove(error));
             return;
         }
 
         ASSERT(request);
-        handleRequest(makeUniqueRefFromNonNullUniquePtr(WTFMove(request)));
+        protectedThis->handleRequest(makeUniqueRefFromNonNullUniquePtr(WTFMove(request)));
     });
 }
 
@@ -109,16 +110,17 @@ void SpeechRecognitionServer::handleRequest(UniqueRef<WebCore::SpeechRecognition
     }
 
     auto clientIdentifier = request->clientIdentifier();
-    m_recognizer = makeUnique<WebCore::SpeechRecognizer>([this, weakThis = WeakPtr { *this }](auto& update) {
-        if (!weakThis)
+    m_recognizer = makeUnique<WebCore::SpeechRecognizer>([weakThis = WeakPtr { *this }](auto& update) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        sendUpdate(update);
+        protectedThis->sendUpdate(update);
 
         if (update.type() == WebCore::SpeechRecognitionUpdateType::Error)
-            m_recognizer->abort();
+            protectedThis->m_recognizer->abort();
         else if (update.type() == WebCore::SpeechRecognitionUpdateType::End)
-            m_recognizer->setInactive();
+            protectedThis->m_recognizer->setInactive();
     }, WTFMove(request));
 
 #if ENABLE(MEDIA_STREAM)

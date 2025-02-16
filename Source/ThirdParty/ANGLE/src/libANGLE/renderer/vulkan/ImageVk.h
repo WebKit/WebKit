@@ -40,6 +40,8 @@ class ImageVk : public ImageImpl
 
     egl::Error exportVkImage(void *vkImage, void *vkImageCreateInfo) override;
 
+    bool isFixedRatedCompression(const gl::Context *context) override;
+
     vk::ImageHelper *getImage() const { return mImage; }
     gl::TextureType getImageTextureType() const;
     gl::LevelIndex getImageLevel() const;

@@ -41,7 +41,7 @@ class StyleSurroundData : public RefCounted<StyleSurroundData> {
 public:
     static Ref<StyleSurroundData> create() { return adoptRef(*new StyleSurroundData); }
     Ref<StyleSurroundData> copy() const;
-    
+
     bool operator==(const StyleSurroundData&) const;
 
 #if !LOG_DISABLED

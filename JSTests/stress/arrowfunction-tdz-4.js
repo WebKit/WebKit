@@ -31,7 +31,7 @@ var B = class B extends A {
   }
 };
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < testLoopCount; i++) {
     var exception;
     try {
         new B(false);

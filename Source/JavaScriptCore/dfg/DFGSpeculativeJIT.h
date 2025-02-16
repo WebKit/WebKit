@@ -1501,7 +1501,10 @@ public:
     void compileMapIteratorNext(Node*);
     void compileMapIteratorKey(Node*);
     void compileMapIteratorValue(Node*);
+    template<typename Operation>
+    ALWAYS_INLINE void compileMapStorageImpl(Node*, Operation, Operation);
     void compileMapStorage(Node*);
+    void compileMapStorageOrSentinel(Node*);
     void compileMapIterationNext(Node*);
     void compileMapIterationEntry(Node*);
     void compileMapIterationEntryKey(Node*);
@@ -1616,6 +1619,7 @@ public:
     void compileArithUnary(Node*);
     void compileArithSqrt(Node*);
     void compileArithMinMax(Node*);
+    void compilePurifyNaN(Node*);
     void compileConstantStoragePointer(Node*);
     void compileGetIndexedPropertyStorage(Node*);
     void compileResolveRope(Node*);

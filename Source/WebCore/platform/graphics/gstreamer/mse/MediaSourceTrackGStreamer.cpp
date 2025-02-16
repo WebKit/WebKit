@@ -34,8 +34,8 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
-#define GST_CAT_DEFAULT webkit_mse_debug
+GST_DEBUG_CATEGORY_STATIC(webkit_mse_track_debug);
+#define GST_CAT_DEFAULT webkit_mse_track_debug
 
 namespace WebCore {
 
@@ -44,7 +44,12 @@ MediaSourceTrackGStreamer::MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::
     , m_id(trackId)
     , m_initialCaps(WTFMove(initialCaps))
     , m_queueDataMutex(trackId)
-{ }
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_mse_track_debug, "webkitmsetrack", 0, "WebKit MSE Track");
+    });
+}
 
 MediaSourceTrackGStreamer::~MediaSourceTrackGStreamer()
 {

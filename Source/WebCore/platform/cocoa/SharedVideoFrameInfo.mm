@@ -50,8 +50,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <pal/cf/CoreMediaSoftLink.h>
 #include "CoreVideoSoftLink.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 SharedVideoFrameInfo SharedVideoFrameInfo::fromCVPixelBuffer(CVPixelBufferRef pixelBuffer)
@@ -169,12 +167,12 @@ std::optional<SharedVideoFrameInfo> SharedVideoFrameInfo::decode(std::span<const
 
 static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
 {
-    auto* destination = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, planeIndex));
+    auto destination = CVPixelBufferGetSpanOfPlane(pixelBuffer, planeIndex);
     uint32_t bytesPerRowDestination = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, planeIndex);
     for (unsigned i = 0; i < height; ++i) {
-        std::memcpy(destination, source.data(), std::min(bytesPerRowSource, bytesPerRowDestination));
+        memcpySpan(destination, source.first(std::min(bytesPerRowSource, bytesPerRowDestination)));
         skip(source, bytesPerRowSource);
-        destination += bytesPerRowDestination;
+        skip(destination, bytesPerRowDestination);
     }
     return source;
 }
@@ -234,34 +232,31 @@ bool SharedVideoFrameInfo::writePixelBuffer(CVPixelBufferRef pixelBuffer, std::s
     encode(data);
     skip(data, sizeof(SharedVideoFrameInfo));
 
-    auto* planeA = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
-    if (!planeA) {
+    auto planeA = CVPixelBufferGetSpanOfPlane(pixelBuffer, 0);
+    if (!planeA.data()) {
         RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameInfo::writePixelBuffer plane A is null");
         return false;
     }
 
-    size_t planeASize = m_height * m_bytesPerRow;
-    memcpySpan(data, unsafeMakeSpan(planeA, planeASize));
+    memcpySpan(data, planeA);
 
     if (CVPixelBufferGetPlaneCount(pixelBuffer) >= 2) {
-        auto* planeB = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
-        if (!planeB) {
+        auto planeB = CVPixelBufferGetSpanOfPlane(pixelBuffer, 1);
+        if (!planeB.data()) {
             RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameInfo::writePixelBuffer plane B is null");
             return false;
         }
 
-        size_t planeBSize = m_heightPlaneB * m_bytesPerRowPlaneB;
-        memcpySpan(data.subspan(planeASize), unsafeMakeSpan(planeB, planeBSize));
+        memcpySpan(data.subspan(planeA.size()), planeB);
 
         if (CVPixelBufferGetPlaneCount(pixelBuffer) == 3) {
-            auto* planeAlpha = static_cast<const uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2));
-            if (!planeAlpha) {
+            auto planeAlpha = CVPixelBufferGetSpanOfPlane(pixelBuffer, 2);
+            if (!planeAlpha.data()) {
                 RELEASE_LOG_ERROR(WebRTC, "SharedVideoFrameInfo::writePixelBuffer plane A is null");
                 return false;
             }
 
-            size_t planeAlphaSize = m_height * m_bytesPerRowPlaneAlpha;
-            memcpySpan(data.subspan(planeASize + planeBSize), unsafeMakeSpan(planeAlpha, planeAlphaSize));
+            memcpySpan(data.subspan(planeA.size() + planeB.size()), planeAlpha);
         }
     }
 
@@ -305,7 +300,5 @@ bool SharedVideoFrameInfo::writeVideoFrameBuffer(webrtc::VideoFrameBuffer& frame
 #endif
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_STREAM) && PLATFORM(COCOA)

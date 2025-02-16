@@ -375,7 +375,7 @@ void Step::nodesInAxis(Node& context, NodeSet& nodes) const
             if (!contextElement->hasAttributes())
                 return;
 
-            for (const Attribute& attribute : contextElement->attributesIterator()) {
+            for (auto& attribute : contextElement->attributes()) {
                 auto attr = contextElement->ensureAttr(attribute.name());
                 if (nodeMatches(attr.get(), AttributeAxis, m_nodeTest))
                     nodes.append(WTFMove(attr));

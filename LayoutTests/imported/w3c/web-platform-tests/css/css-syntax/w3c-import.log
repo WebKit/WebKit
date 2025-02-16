@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/ident-three-code-points.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/inclusive-ranges.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/input-preprocessing.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/invalid-nested-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/missing-semicolon-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/missing-semicolon-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-syntax/missing-semicolon.html

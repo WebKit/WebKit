@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include <wtf/CheckedPtr.h>
 #include <wtf/FastMalloc.h>
 
@@ -50,5 +48,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

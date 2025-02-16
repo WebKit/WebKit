@@ -1,6 +1,6 @@
 function F () { this.inner = 42; };
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var x = new F(false);
     F.prototype = Object; // Force clearing of the function's rare data
     var result = x.inner;

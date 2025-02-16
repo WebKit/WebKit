@@ -60,6 +60,8 @@ class ComplexTextController {
 public:
     ComplexTextController(const FontCascade&, const TextRun&, bool mayUseNaturalWritingDirection = false, SingleThreadWeakHashSet<const Font>* fallbackFonts = 0, bool forTextEmphasis = false);
 
+    static std::pair<float, float> enclosingGlyphBoundsForTextRun(const FontCascade&, const TextRun&);
+
     class ComplexTextRun;
     WEBCORE_EXPORT ComplexTextController(const FontCascade&, const TextRun&, Vector<Ref<ComplexTextRun>>&);
 
@@ -110,12 +112,12 @@ public:
         unsigned indexBegin() const { return m_indexBegin; }
         unsigned indexEnd() const { return m_indexEnd; }
         unsigned endOffsetAt(unsigned i) const { ASSERT(!m_isMonotonic); return m_glyphEndOffsets[i]; }
-        const CGGlyph* glyphs() const { return m_glyphs.data(); }
+        std::span<const CGGlyph> glyphs() const { return m_glyphs.span(); }
 
         void growInitialAdvanceHorizontally(float delta) { m_initialAdvance.expand(delta, 0); }
         FloatSize initialAdvance() const { return m_initialAdvance; }
-        const FloatSize* baseAdvances() const { return m_baseAdvances.data(); }
-        const FloatPoint* glyphOrigins() const { return m_glyphOrigins.size() == glyphCount() ? m_glyphOrigins.data() : nullptr; }
+        std::span<const FloatSize> baseAdvances() const { return m_baseAdvances.span(); }
+        std::span<const FloatPoint> glyphOrigins() const { return m_glyphOrigins.size() == glyphCount() ? m_glyphOrigins.span() : std::span<const FloatPoint> { }; }
         bool isLTR() const { return m_isLTR; }
         bool isMonotonic() const { return m_isMonotonic; }
         void setIsNonMonotonic();
@@ -148,6 +150,8 @@ public:
         float m_textAutospaceSize { 0 };
     };
 private:
+    ComplexTextController(const TextRun&, const FontCascade&);
+
     void computeExpansionOpportunity();
     void finishConstruction();
     

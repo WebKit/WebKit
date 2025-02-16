@@ -67,14 +67,7 @@ WPEScreen* wpeScreenDRMCreate(std::unique_ptr<WPE::DRM::Crtc>&& crtc, const WPE:
     auto* priv = WPE_SCREEN_DRM(screen)->priv;
     priv->crtc = WTFMove(crtc);
 
-    double scale = 1;
-    if (const char* scaleString = getenv("WPE_DRM_SCALE"))
-        scale = g_ascii_strtod(scaleString, nullptr);
-
-    wpe_screen_set_position(screen, priv->crtc->x() / scale, priv->crtc->y() / scale);
-    wpe_screen_set_size(screen, priv->crtc->width() / scale, priv->crtc->height() / scale);
     wpe_screen_set_physical_size(screen, connector.widthMM(), connector.heightMM());
-    wpe_screen_set_scale(screen, scale);
 
     if (const auto& mode = priv->crtc->currentMode())
         priv->mode = mode.value();

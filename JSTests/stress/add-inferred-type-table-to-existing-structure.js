@@ -17,7 +17,7 @@ noInline(baz);
 var o0 = baz();
 bar(o0, "f", "hello");
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = baz();
     o.f = 42;
     var result = foo(o);

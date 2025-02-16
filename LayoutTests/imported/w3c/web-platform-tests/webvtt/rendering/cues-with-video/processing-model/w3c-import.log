@@ -67,6 +67,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/audio_has_no_subtitles-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/audio_has_no_subtitles.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/background.png
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic-cue-rendering-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic-cue-rendering.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/basic.html
@@ -179,3 +181,5 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/too_many_cues_wrapped-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/too_many_cues_wrapped-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/too_many_cues_wrapped.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/white-space-pre-line-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/white-space-pre-line.html

@@ -27,7 +27,7 @@ import Foundation
 
 // MARK: Supporting types
 
-extension WebPage_v0 {
+extension WebPage {
     @MainActor
     @_spi(Private)
     public struct NavigationAction: Sendable {
@@ -51,7 +51,8 @@ extension WebPage_v0 {
         public var buttonNumber: Int { wrapped.buttonNumber }
 #endif
 
-        var wrapped: WKNavigationAction
+        @_spi(CrossImportOverlay)
+        public var wrapped: WKNavigationAction
     }
 
     @MainActor
@@ -76,10 +77,10 @@ extension WebPage_v0 {
 @_spi(Private)
 public protocol NavigationDeciding {
     @MainActor
-    func decidePolicy(for action: WebPage_v0.NavigationAction, preferences: inout WebPage_v0.NavigationPreferences) async -> WKNavigationActionPolicy
+    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy
 
     @MainActor
-    func decidePolicy(for response: WebPage_v0.NavigationResponse) async -> WKNavigationResponsePolicy
+    func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy
 
     @MainActor
     func decideAuthenticationChallengeDisposition(for challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
@@ -90,12 +91,12 @@ public protocol NavigationDeciding {
 @_spi(Private)
 public extension NavigationDeciding {
     @MainActor
-    func decidePolicy(for action: WebPage_v0.NavigationAction, preferences: inout WebPage_v0.NavigationPreferences) async -> WKNavigationActionPolicy {
+    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {
         .allow
     }
 
     @MainActor
-    func decidePolicy(for response: WebPage_v0.NavigationResponse) async -> WKNavigationResponsePolicy {
+    func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy {
         .allow
     }
 

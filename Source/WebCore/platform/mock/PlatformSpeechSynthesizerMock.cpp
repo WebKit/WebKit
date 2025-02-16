@@ -63,12 +63,12 @@ void PlatformSpeechSynthesizerMock::initializeVoiceList()
 void PlatformSpeechSynthesizerMock::speak(RefPtr<PlatformSpeechSynthesisUtterance>&& utterance)
 {
     ASSERT(!m_utterance);
-    m_utterance = WTFMove(utterance);
-    client().didStartSpeaking(*m_utterance);
+    m_utterance = utterance;
+    client().didStartSpeaking(*utterance);
 
     // Fire a fake word and then sentence boundary event. Since the entire sentence is the full length, pick arbitrary (3) length for the word.
-    client().boundaryEventOccurred(*m_utterance, SpeechBoundary::SpeechWordBoundary, 0, 3);
-    client().boundaryEventOccurred(*m_utterance, SpeechBoundary::SpeechSentenceBoundary, 0, m_utterance->text().length());
+    client().boundaryEventOccurred(*utterance, SpeechBoundary::SpeechWordBoundary, 0, 3);
+    client().boundaryEventOccurred(*utterance, SpeechBoundary::SpeechSentenceBoundary, 0, utterance->text().length());
 
     // Give the fake speech job some time so that pause and other functions have time to be called.
     m_speakingFinishedTimer.startOneShot(m_utteranceDuration);
@@ -80,24 +80,20 @@ void PlatformSpeechSynthesizerMock::cancel()
         return;
 
     m_speakingFinishedTimer.stop();
-    auto utterance = std::exchange(m_utterance, nullptr);
+    RefPtr utterance = std::exchange(m_utterance, nullptr);
     client().speakingErrorOccurred(*utterance);
 }
 
 void PlatformSpeechSynthesizerMock::pause()
 {
-    if (!m_utterance)
-        return;
-
-    client().didPauseSpeaking(*m_utterance);
+    if (RefPtr utterance = m_utterance)
+        client().didPauseSpeaking(*utterance);
 }
 
 void PlatformSpeechSynthesizerMock::resume()
 {
-    if (!m_utterance)
-        return;
-
-    client().didResumeSpeaking(*m_utterance);
+    if (RefPtr utterance = m_utterance)
+        client().didResumeSpeaking(*utterance);
 }
 
 } // namespace WebCore

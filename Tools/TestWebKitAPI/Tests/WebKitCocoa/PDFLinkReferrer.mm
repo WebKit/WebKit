@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import "Utilities.h"
 #import <WebKit/WKFoundation.h>
+#import <wtf/text/StringCommon.h>
 
 static size_t putPDFBytesCallback(void* info, void* buffer, size_t count)
 {
@@ -77,11 +78,11 @@ TEST(WebKit, PDFLinkReferrer)
         connection.receiveHTTPRequest([=](Vector<char>&& requestBytes) {
             requestBytes.append('\0');
             // Look for a referer header.
-            const auto* currentLine = byteCast<char>(requestBytes.data());
-            while (currentLine) {
-                EXPECT_NE(strncasecmp(currentLine, "referer:", 8), 0);
-                const char* nextLine = strchr(currentLine, '\n');
-                currentLine = nextLine ? nextLine + 1 : 0;
+            auto currentLine = requestBytes.span();
+            while (!currentLine.empty()) {
+                EXPECT_FALSE(spanHasPrefixIgnoringASCIICase(currentLine, "referer:"_span));
+                size_t nextLineIndex = find(currentLine, '\n');
+                currentLine = nextLineIndex != notFound ? currentLine.subspan(nextLineIndex + 1) : std::span<const char> { };
             }
             constexpr auto responseHeader =
                 "HTTP/1.1 200 OK\r\n"

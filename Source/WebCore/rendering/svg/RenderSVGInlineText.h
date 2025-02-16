@@ -56,22 +56,31 @@ public:
     // Preserves floating point precision for the use in DRT. It knows how to round and does a better job than enclosingIntRect.
     FloatRect floatLinesBoundingBox() const;
 
+    void removeTextBox(LegacyInlineTextBox& box) { m_legacyLineBoxes.remove(box); }
+    LegacyInlineTextBox* createInlineTextBox() { return m_legacyLineBoxes.createAndAppendLineBox(*this); }
+    void deleteLegacyLineBoxes();
+    LegacyInlineTextBox* firstLegacyTextBox() const { return m_legacyLineBoxes.first(); }
+    void removeAndDestroyLegacyTextBoxes();
+    std::unique_ptr<LegacyInlineTextBox> createTextBox();
+
 private:
+    void willBeDestroyed() final;
     ASCIILiteral renderName() const override { return "RenderSVGInlineText"_s; }
 
     String originalText() const override;
-    void setRenderedText(const String&) override;
     void styleDidChange(StyleDifference, const RenderStyle*) override;
 
     FloatRect objectBoundingBox() const override { return floatLinesBoundingBox(); }
 
     VisiblePosition positionForPoint(const LayoutPoint&, HitTestSource, const RenderFragmentContainer*) override;
     IntRect linesBoundingBox() const override;
-    std::unique_ptr<LegacyInlineTextBox> createTextBox() override;
+
+    void setTextInternal(const String&, bool force) final;
 
     float m_scalingFactor;
     FontCascade m_scaledFont;
     SVGTextLayoutAttributes m_layoutAttributes;
+    RenderTextLineBoxes m_legacyLineBoxes;
 };
 
 } // namespace WebCore

@@ -2241,6 +2241,9 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMark
 
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
+    if (!element)
+        return nullptr;
+
     BEGIN_AX_OBJC_EXCEPTIONS
     auto textMarkerRange = attributeValueForParameter(@"AXTextMarkerRangeForUIElement", element->platformUIElement());
     return AccessibilityTextMarkerRange::create(textMarkerRange.get());

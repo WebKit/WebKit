@@ -28,43 +28,35 @@
 #if PLATFORM(COCOA)
 
 #include "ArgumentCodersCocoa.h"
-#include "CoreIPCSecureCoding.h"
+#include <CoreGraphics/CGGeometry.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSValue;
 
 namespace WebKit {
 
-class CoreIPCSecureCoding;
+class CoreIPCNSCFObject;
 
 class CoreIPCNSValue {
 public:
     CoreIPCNSValue(NSValue *);
     CoreIPCNSValue(const RetainPtr<NSValue>& value)
-        : CoreIPCNSValue(value.get())
-    {
-    }
+        : CoreIPCNSValue(value.get()) { }
+    CoreIPCNSValue(CoreIPCNSValue&&);
+    ~CoreIPCNSValue();
 
     RetainPtr<id> toID() const;
 
     static bool shouldWrapValue(NSValue *);
 
-#if PLATFORM(MAC)
-    using WrappedNSValue = std::variant<NSRange, NSRect>;
-#else
-    using WrappedNSValue = std::variant<NSRange>;
-#endif
-    using Value = std::variant<WrappedNSValue, CoreIPCSecureCoding>;
+    using Value = std::variant<NSRange, CGRect, UniqueRef<CoreIPCNSCFObject>>;
 
 private:
     friend struct IPC::ArgumentCoder<CoreIPCNSValue, void>;
 
     static Value valueFromNSValue(NSValue *);
 
-    CoreIPCNSValue(Value&& value)
-        : m_value(WTFMove(value))
-    {
-    }
+    CoreIPCNSValue(Value&&);
 
     Value m_value;
 };

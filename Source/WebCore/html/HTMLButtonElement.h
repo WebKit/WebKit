@@ -40,6 +40,8 @@ public:
     
     const AtomString& value() const;
 
+    RefPtr<Element> commandForElement() const;
+
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
     RenderButton* renderer() const;
@@ -62,6 +64,9 @@ private:
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const final;
     void defaultEventHandler(Event&) final;
+
+    CommandType commandType() const;
+    void handleCommand();
 
     bool appendFormData(DOMFormData&) final;
 

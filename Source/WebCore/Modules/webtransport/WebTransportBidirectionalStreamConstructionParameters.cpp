@@ -40,4 +40,9 @@ WebTransportBidirectionalStreamConstructionParameters& WebTransportBidirectional
 
 WebTransportBidirectionalStreamConstructionParameters::~WebTransportBidirectionalStreamConstructionParameters() = default;
 
+WebTransportBidirectionalStreamConstructionParameters WebTransportBidirectionalStreamConstructionParameters::isolatedCopy() &&
+{
+    return { identifier, Ref { sink } };
+}
+
 }

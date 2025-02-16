@@ -59,6 +59,9 @@ public:
     bool operator==(const ContentType& other) const { return raw() == other.raw(); }
     bool operator!=(const ContentType& other) const { return !(*this == other); }
 
+    ContentType isolatedCopy() const & { return { m_type.isolatedCopy(), m_typeWasInferredFromExtension }; }
+    ContentType isolatedCopy() && { return { WTFMove(m_type).isolatedCopy(), m_typeWasInferredFromExtension }; }
+
 private:
     String m_type;
     bool m_typeWasInferredFromExtension { false };

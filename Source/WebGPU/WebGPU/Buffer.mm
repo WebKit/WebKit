@@ -27,6 +27,7 @@
 #import "Buffer.h"
 
 #import "APIConversions.h"
+#import "CommandBuffer.h"
 #import "Device.h"
 
 #import <wtf/CheckedArithmetic.h>
@@ -42,9 +43,17 @@ DEFINE_SWIFTCXX_THUNK(WebGPU::Buffer, getMappedRange, std::span<uint8_t>, size_t
 
 namespace WebGPU {
 
+template <typename T>
 static inline auto span(id<MTLBuffer> buffer)
 {
-    return unsafeMakeSpan(static_cast<uint8_t*>(buffer.contents), static_cast<size_t>(buffer.length));
+    return unsafeMakeSpan(static_cast<T*>(buffer.contents), buffer.length / sizeof(T));
+}
+
+template <typename T>
+static inline auto span(id<MTLBuffer> buffer, uint64_t byteOffset)
+{
+    auto byteSpan = span<uint8_t>(buffer).subspan(byteOffset);
+    return unsafeMakeSpan(static_cast<T*>(static_cast<void*>(byteSpan.data())), (byteOffset < buffer.length) ? (buffer.length - byteOffset) / sizeof(T) : 0);
 }
 
 static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor& descriptor)
@@ -156,6 +165,11 @@ Ref<Buffer> Device::createBuffer(const WGPUBufferDescriptor& descriptor)
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Buffer);
+
+id<MTLBuffer> Buffer::makeIndexIndirectBuffer()
+{
+    return m_device->safeCreateBuffer(sizeof(MTLDrawIndexedPrimitivesIndirectArguments) + sizeof(uint32_t), MTLStorageModeShared);
+}
 
 Buffer::Buffer(id<MTLBuffer> buffer, uint64_t initialSize, WGPUBufferUsageFlags usage, State initialState, MappingRange initialMappingRange, Device& device)
     : m_buffer(buffer)
@@ -281,7 +295,7 @@ std::span<uint8_t> Buffer::getMappedRange(size_t offset, size_t size)
 
 std::span<uint8_t> Buffer::getBufferContents()
 {
-    return span(m_buffer);
+    return span<uint8_t>(m_buffer);
 }
 
 NSString* Buffer::errorValidatingMapAsync(WGPUMapModeFlags mode, size_t offset, size_t rangeSize) const
@@ -440,15 +454,234 @@ static uint64_t makeValue(uint32_t vertexCount, MTLIndexType indexType)
     return vertexCount | (static_cast<uint64_t>(indexType) << 32);
 }
 
-bool Buffer::canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType) const
+uint64_t Buffer::mapGPUAddress(MTLResourceID resourceId, uint32_t firstInstance) const
 {
-    auto it = m_drawIndexedCache.find(makeKey(firstIndex, indexCount));
-    return it != m_drawIndexedCache.end() && it->value == makeValue(vertexCount, indexType);
+    ASSERT(m_gpuResourceMap.size() < UINT32_MAX);
+    auto addResult = m_gpuResourceMap.add(resourceId._impl, static_cast<uint32_t>(m_gpuResourceMap.size()));
+    return makeKey(addResult.iterator->value, firstInstance);
 }
 
-void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType)
+bool Buffer::canSkipDrawIndexedValidation(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t firstInstance, id<MTLIndirectCommandBuffer> icb) const
 {
-    m_drawIndexedCache.set(makeKey(firstIndex, indexCount), makeValue(vertexCount, indexType));
+    auto containerIt = m_drawIndexedCache.find(mapGPUAddress(icb.gpuResourceID, firstInstance));
+    if (containerIt == m_drawIndexedCache.end())
+        return false;
+
+    auto& drawIndexedCache = containerIt->value;
+    auto it = drawIndexedCache.find(makeKey(firstIndex, indexCount));
+    return it != drawIndexedCache.end() && it->value == makeValue(vertexCount, indexType);
+}
+
+void Buffer::drawIndexedValidated(uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, MTLIndexType indexType, uint32_t firstInstance, id<MTLIndirectCommandBuffer> icb)
+{
+    auto mappedGPUAddress = mapGPUAddress(icb.gpuResourceID, firstInstance);
+    auto containerIt = m_drawIndexedCache.find(mappedGPUAddress);
+    if (containerIt == m_drawIndexedCache.end())
+        containerIt = m_drawIndexedCache.add(mappedGPUAddress, DrawIndexCacheContainer()).iterator;
+
+    auto& drawIndexedCache = containerIt->value;
+    drawIndexedCache.set(makeKey(firstIndex, indexCount), makeValue(vertexCount, indexType));
+}
+
+template <typename T>
+static bool verifyIndexBufferData(id<MTLBuffer> buffer, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, uint32_t instanceCount, uint32_t baseVertex, uint32_t baseInstance, uint32_t minInstanceCount, uint32_t primitiveRestart, uint32_t indexBufferOffsetInBytes = 0)
+{
+    if (baseInstance + instanceCount > minInstanceCount || baseInstance >= minInstanceCount)
+        return false;
+
+    bool negativeCondition = baseVertex + primitiveRestart < baseVertex;
+    auto indexData = span<T>(buffer, indexBufferOffsetInBytes);
+    if (firstIndex + indexCount > indexData.size() || negativeCondition)
+        return false;
+    for (size_t index = firstIndex; index < firstIndex + indexCount; ++index) {
+        T vertexIndex = primitiveRestart + indexData[index];
+        if (vertexIndex + baseVertex >= vertexCount + primitiveRestart)
+            return false;
+    }
+
+    return true;
+}
+
+void Buffer::takeSlowIndexValidationPath(CommandBuffer& commandBuffer, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, uint32_t instanceCount, MTLIndexType indexType, uint32_t firstInstance, uint32_t baseVertex, uint32_t minInstanceCount, uint32_t primitiveOffset)
+{
+    WTFLogAlways("WARNING: Severe performance penalty due to encoding drawIndexed calls out of order with submission"); // NOLINT
+    auto queue = protectedDevice()->protectedQueue();
+    queue->waitForAllCommitedWorkToComplete();
+    queue->synchronizeResourceAndWait(m_buffer);
+    bool verified = false;
+    if (indexType == MTLIndexTypeUInt16)
+        verified = verifyIndexBufferData<uint16_t>(m_buffer, firstIndex, indexCount, vertexCount, instanceCount, baseVertex, firstInstance, minInstanceCount, primitiveOffset);
+    else
+        verified = verifyIndexBufferData<uint32_t>(m_buffer, firstIndex, indexCount, vertexCount, instanceCount, baseVertex, firstInstance, minInstanceCount, primitiveOffset);
+
+    if (!verified) {
+        auto priorData = getBufferContents();
+        queue->clearBuffer(m_buffer);
+        queue->finalizeBlitCommandEncoder();
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        if (m_buffer.storageMode == MTLStorageModeManaged)
+            [m_buffer didModifyRange:NSMakeRange(0, m_buffer.length)];
+#endif
+        commandBuffer.addPostCommitHandler([queue, priorData, protectedThis = Ref { *this }](id<MTLCommandBuffer> mtlCommandBuffer) {
+            [mtlCommandBuffer waitUntilCompleted];
+
+            queue->writeBuffer(*protectedThis.ptr(), 0, priorData);
+        });
+    }
+}
+
+void Buffer::takeSlowIndirectIndexValidationPath(CommandBuffer& commandBuffer, Buffer& apiIndexBuffer, MTLIndexType indexType, uint32_t indexBufferOffsetInBytes, uint32_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType primitiveType)
+{
+    WTFLogAlways("WARNING: Severe performance penalty due to encoding drawIndexedIndirect calls out of order with submission"); // NOLINT
+    auto queue = protectedDevice()->protectedQueue();
+    queue->waitForAllCommitedWorkToComplete();
+    queue->synchronizeResourceAndWait(m_buffer);
+    if (m_buffer.length < indexBufferOffsetInBytes + sizeof(MTLDrawIndexedPrimitivesIndirectArguments))
+        return;
+    auto bufferSubData = span<MTLDrawIndexedPrimitivesIndirectArguments>(m_buffer, indexBufferOffsetInBytes);
+    if (!bufferSubData.data() || !bufferSubData.size())
+        return;
+
+    auto& args = *bufferSubData.data();
+    bool verified = false;
+    auto primitiveOffset = primitiveType == MTLPrimitiveTypeLineStrip || primitiveType == MTLPrimitiveTypeTriangleStrip ? 1u : 0u;
+    auto effectiveVertexCount = minVertexCount == RenderBundleEncoder::invalidVertexInstanceCount ? (minVertexCount - primitiveOffset) : (args.baseVertex + minVertexCount);
+    if (indexType == MTLIndexTypeUInt16)
+        verified = verifyIndexBufferData<uint16_t>(apiIndexBuffer.buffer(), args.indexStart, args.indexCount, effectiveVertexCount, args.instanceCount, args.baseVertex, args.baseInstance, minInstanceCount, primitiveOffset);
+    else
+        verified = verifyIndexBufferData<uint32_t>(apiIndexBuffer.buffer(), args.indexStart, args.indexCount, effectiveVertexCount, args.instanceCount, args.baseVertex, args.baseInstance, minInstanceCount, primitiveOffset);
+
+    if (!verified) {
+        auto priorData = getBufferContents();
+        queue->clearBuffer(m_buffer, indirectOffset, sizeof(MTLDrawPrimitivesIndirectArguments));
+        queue->finalizeBlitCommandEncoder();
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        if (m_buffer.storageMode == MTLStorageModeManaged)
+            [m_buffer didModifyRange:NSMakeRange(0, m_buffer.length)];
+#endif
+        commandBuffer.addPostCommitHandler([queue, priorData, protectedThis = Ref { *this }](id<MTLCommandBuffer> mtlCommandBuffer) {
+            [mtlCommandBuffer waitUntilCompleted];
+
+            queue->writeBuffer(*protectedThis.ptr(), 0, priorData);
+        });
+    }
+}
+
+static bool verifyIndirectBufferData(MTLDrawPrimitivesIndirectArguments& input, uint32_t minVertexCount, uint32_t minInstanceCount)
+{
+    bool vertexCondition = input.vertexCount + input.vertexStart > minVertexCount || input.vertexStart >= minVertexCount;
+    bool instanceCondition = input.baseInstance + input.instanceCount > minInstanceCount || input.baseInstance >= minInstanceCount;
+    return !vertexCondition && !instanceCondition;
+}
+
+void Buffer::takeSlowIndirectValidationPath(CommandBuffer& commandBuffer, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount)
+{
+    WTFLogAlways("WARNING: Severe performance penalty due to encoding drawIndirect calls out of order with submission"); // NOLINT
+    auto queue = protectedDevice()->protectedQueue();
+    queue->waitForAllCommitedWorkToComplete();
+    queue->synchronizeResourceAndWait(m_buffer);
+    auto bufferSubData = span<MTLDrawPrimitivesIndirectArguments>(m_buffer, indirectOffset);
+    if (!bufferSubData.data() || !bufferSubData.size())
+        return;
+
+    auto& args = *bufferSubData.data();
+    bool verified = verifyIndirectBufferData(args, minVertexCount, minInstanceCount);
+
+    if (!verified) {
+        auto priorData = getBufferContents();
+        MTLDrawPrimitivesIndirectArguments data = {
+            .vertexCount = std::min(args.vertexCount, minVertexCount),
+            .instanceCount = std::min(args.instanceCount, minInstanceCount),
+            .vertexStart = args.vertexStart,
+            .baseInstance = args.baseInstance
+        };
+        auto newDataSpan = unsafeMakeSpan(static_cast<uint8_t*>(static_cast<void*>(&data)), sizeof(data));
+        queue->writeBuffer(m_buffer, indirectOffset, newDataSpan);
+        queue->finalizeBlitCommandEncoder();
+#if PLATFORM(MAC) || PLATFORM(MACCATALYST)
+        if (m_buffer.storageMode == MTLStorageModeManaged)
+            [m_buffer didModifyRange:NSMakeRange(0, m_buffer.length)];
+#endif
+        commandBuffer.addPostCommitHandler([queue, priorData, protectedThis = Ref { *this }](id<MTLCommandBuffer> mtlCommandBuffer) {
+            [mtlCommandBuffer waitUntilCompleted];
+
+            queue->writeBuffer(*protectedThis.ptr(), 0, priorData);
+        });
+    }
+}
+
+void Buffer::skippedDrawIndexedValidation(CommandEncoder& commandEncoder, uint32_t firstIndex, uint32_t indexCount, uint32_t vertexCount, uint32_t instanceCount, MTLIndexType indexType, uint32_t firstInstance, uint32_t baseVertex, uint32_t minInstanceCount, uint32_t primitiveOffset, id<MTLIndirectCommandBuffer>)
+{
+    CommandEncoder::trackEncoder(commandEncoder, m_skippedValidationCommandEncoders);
+    commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = WeakPtr { commandEncoder }, firstIndex, indexCount, vertexCount, instanceCount, indexType, firstInstance, primitiveOffset, baseVertex, minInstanceCount](CommandBuffer& commandBuffer) {
+        if (!weakThis.get() || !weakCommandEncoder)
+            return true;
+
+        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedCommandEncoder = weakCommandEncoder.get();
+        protectedThis->m_skippedValidationCommandEncoders.remove(*protectedCommandEncoder.get());
+        if (protectedThis->m_mustTakeSlowIndexValidationPath) {
+            protectedThis->takeSlowIndexValidationPath(commandBuffer, firstIndex, indexCount, vertexCount, instanceCount, indexType, firstInstance, baseVertex, minInstanceCount, primitiveOffset);
+            commandBuffer.addPostCommitHandler([protectedThis = WTFMove(protectedThis)](id<MTLCommandBuffer>) {
+                protectedThis->m_mustTakeSlowIndexValidationPath = false;
+            });
+        }
+        return true;
+    });
+}
+
+void Buffer::skippedDrawIndirectIndexedValidation(CommandEncoder& commandEncoder, Buffer* apiIndexBuffer, MTLIndexType indexType, uint32_t indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount, MTLPrimitiveType primitiveType)
+{
+    if (!apiIndexBuffer)
+        return;
+
+    CommandEncoder::trackEncoder(commandEncoder, m_skippedValidationCommandEncoders);
+    commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, apiIndexBuffer = RefPtr { apiIndexBuffer }, weakCommandEncoder = WeakPtr { commandEncoder }, indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, primitiveType](CommandBuffer& commandBuffer) {
+        if (!weakThis.get() || !weakCommandEncoder)
+            return true;
+
+        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedCommandEncoder = weakCommandEncoder.get();
+        protectedThis->m_skippedValidationCommandEncoders.remove(*protectedCommandEncoder.get());
+        if (protectedThis->m_mustTakeSlowIndexValidationPath) {
+            protectedThis->takeSlowIndirectIndexValidationPath(commandBuffer, *apiIndexBuffer.get(), indexType, indexBufferOffsetInBytes, indirectOffset, minVertexCount, minInstanceCount, primitiveType);
+            commandBuffer.addPostCommitHandler([protectedThis = WTFMove(protectedThis)](id<MTLCommandBuffer>) {
+                protectedThis->m_mustTakeSlowIndexValidationPath = false;
+            });
+        }
+        return true;
+    });
+}
+
+void Buffer::skippedDrawIndirectValidation(CommandEncoder& commandEncoder, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount)
+{
+    CommandEncoder::trackEncoder(commandEncoder, m_skippedValidationCommandEncoders);
+    commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = WeakPtr { commandEncoder }, indirectOffset, minVertexCount, minInstanceCount](CommandBuffer& commandBuffer) {
+        if (!weakThis.get() || !weakCommandEncoder)
+            return true;
+
+        RefPtr protectedThis = weakThis.get();
+        RefPtr protectedCommandEncoder = weakCommandEncoder.get();
+        protectedThis->m_skippedValidationCommandEncoders.remove(*protectedCommandEncoder.get());
+        if (protectedThis->m_mustTakeSlowIndexValidationPath) {
+            protectedThis->takeSlowIndirectValidationPath(commandBuffer, indirectOffset, minVertexCount, minInstanceCount);
+            commandBuffer.addPostCommitHandler([protectedThis = WTFMove(protectedThis)](id<MTLCommandBuffer>) {
+                protectedThis->m_mustTakeSlowIndexValidationPath = false;
+            });
+        }
+        return true;
+    });
+}
+
+bool Buffer::didReadOOB(id<MTLIndirectCommandBuffer> icb) const
+{
+    auto it = m_didReadOOB.find(icb.gpuResourceID._impl);
+    return it == m_didReadOOB.end() ? false : it->value;
+}
+
+void Buffer::didReadOOB(uint32_t v, id<MTLIndirectCommandBuffer> icb)
+{
+    m_didReadOOB.set(icb.gpuResourceID._impl, !!v || didReadOOB(icb));
 }
 
 bool Buffer::indirectBufferRequiresRecomputation(uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount) const
@@ -477,11 +710,33 @@ void Buffer::indirectIndexedBufferRecomputed(MTLIndexType indexType, NSUInteger 
     m_indirectCache.minInstanceCount = minInstanceCount;
 }
 
-void Buffer::indirectBufferInvalidated()
+void Buffer::indirectBufferInvalidated(CommandEncoder& commandEncoder)
+{
+    indirectBufferInvalidated();
+
+    commandEncoder.addOnCommitHandler([weakThis = ThreadSafeWeakPtr { *this }, weakCommandEncoder = WeakPtr { commandEncoder }](CommandBuffer&) {
+        if (!weakThis.get() || !weakCommandEncoder)
+            return true;
+
+        RefPtr protectedThis = weakThis.get();
+        RefPtr commandEncoder = weakCommandEncoder.get();
+        protectedThis->indirectBufferInvalidated(commandEncoder.get());
+        return true;
+    });
+}
+
+void Buffer::indirectBufferInvalidated(CommandEncoder* commandEncoder)
 {
     if (!(m_usage & (WGPUBufferUsage_Indirect | WGPUBufferUsage_Index)))
         return;
 
+    if (auto currentSize = m_skippedValidationCommandEncoders.computeSize()) {
+        bool validationNotNeeded = currentSize == 1 && commandEncoder && commandEncoder == m_skippedValidationCommandEncoders.begin().get();
+        if (!validationNotNeeded)
+            m_mustTakeSlowIndexValidationPath = true;
+    }
+
+    m_gpuResourceMap.clear();
     m_drawIndexedCache.clear();
     m_indirectCache = {
         .indirectOffset = UINT64_MAX,

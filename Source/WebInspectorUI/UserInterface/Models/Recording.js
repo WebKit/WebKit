@@ -117,13 +117,6 @@ WI.Recording = class Recording extends WI.Object
                 WI.Recording.synthesizeWarning(WI.UIString("non-array %s").format(WI.unlocalizedString("initialState.states")));
 
             payload.initialState.states = [];
-
-            // COMPATIBILITY (iOS 12.0): Recording.InitialState.states did not exist yet
-            if (!isEmptyObject(payload.initialState.attributes)) {
-                let {width, height, ...state} = payload.initialState.attributes;
-                if (!isEmptyObject(state))
-                    payload.initialState.states.push(state);
-            }
         }
 
         if (!Array.isArray(payload.initialState.parameters)) {

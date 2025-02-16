@@ -93,7 +93,7 @@ public:
 
     virtual bool isKnownToBeLiveAfterGC();
     virtual bool isKnownToBeLiveDuringGC(AbstractSlotVisitor&);
-    virtual bool iterateCodeBlocksForGC(AbstractSlotVisitor&, const Function<void(CodeBlock*)>&);
+    virtual bool iterateCodeBlocksForGC(AbstractSlotVisitor&, NOESCAPE const Function<void(CodeBlock*)>&);
     virtual bool checkLivenessAndVisitChildren(AbstractSlotVisitor&);
 
     bool isInSafepoint() const;

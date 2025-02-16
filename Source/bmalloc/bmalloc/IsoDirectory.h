@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "Bits.h"
 #include "EligibilityResult.h"
 #include "IsoPage.h"
@@ -97,3 +99,4 @@ private:
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

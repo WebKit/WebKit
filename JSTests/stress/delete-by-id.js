@@ -16,7 +16,7 @@ function test2(object)
 }
 noInline(test2);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var object = {
         cocoa: 42
     };

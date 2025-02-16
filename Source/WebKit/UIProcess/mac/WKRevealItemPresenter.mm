@@ -30,6 +30,7 @@
 
 #if PLATFORM(MAC) && ENABLE(REVEAL)
 
+#import "WKWebView.h"
 #import "WebViewImpl.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/WeakPtr.h>

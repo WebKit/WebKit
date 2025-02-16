@@ -3,5 +3,5 @@ TBODY
 TR
 TD
 
-FAIL Table borders track writing mode changes assert_equals: expected 132 but got 152
+PASS Table borders track writing mode changes
 

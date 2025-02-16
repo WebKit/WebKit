@@ -66,19 +66,16 @@ public:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     bool supportsFullScreenForElement(const WebCore::Element&, bool withKeyboard);
-    void enterFullScreenForElement(WebCore::Element*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode);
+    void enterFullScreenForElement(WebCore::Element&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(WebCore::ExceptionOr<void>)>&&);
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     void updateImageSource(WebCore::Element&);
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
     void exitFullScreenForElement(WebCore::Element*);
 
-    void willEnterFullScreen(WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    void willEnterFullScreen(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&, WebCore::HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard);
     void didEnterFullScreen();
     void willExitFullScreen();
     void didExitFullScreen();
-
-    void saveScrollPosition();
-    void restoreScrollPosition();
 
     WebCore::Element* element();
 
@@ -100,7 +97,6 @@ protected:
     WebCore::IntRect m_initialFrame;
     WebCore::IntRect m_finalFrame;
     WebCore::IntPoint m_scrollPosition;
-    float m_topContentInset { 0 };
     Ref<WebPage> m_page;
     RefPtr<WebCore::Element> m_element;
     WeakPtr<WebCore::Element, WebCore::WeakPtrImplWithEventTargetData> m_elementToRestore;

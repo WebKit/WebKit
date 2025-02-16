@@ -1,13 +1,7 @@
 AutomationProtocolObjects.h
 NetworkProcess/Downloads/cocoa/DownloadCocoa.mm
-NetworkProcess/ServiceWorker/WebSWServerConnection.cpp
-NetworkProcess/cocoa/NetworkSessionCocoa.mm
 NetworkProcess/cocoa/WebSocketTaskCocoa.mm
-NetworkProcess/webrtc/NetworkRTCMonitor.cpp
-NetworkProcess/webrtc/NetworkRTCProvider.cpp
-NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 Platform/cocoa/CocoaHelpers.mm
-Platform/cocoa/WebPrivacyHelpers.mm
 Shared/API/APIArray.h
 Shared/API/APIDictionary.h
 Shared/API/c/WKSharedAPICast.h
@@ -16,8 +10,6 @@ Shared/API/c/cf/WKURLCF.mm
 Shared/APIWebArchive.mm
 Shared/Cocoa/WKNSURL.mm
 Shared/Cocoa/WKObject.h
-Shared/RTCNetwork.cpp
-Shared/RemoteLayerTree/RemoteLayerTreePropertyApplier.mm
 Shared/UserData.cpp
 UIProcess/API/C/WKPage.cpp
 UIProcess/API/Cocoa/WKDownload.mm
@@ -27,14 +19,9 @@ UIProcess/API/Cocoa/WKWebViewConfiguration.mm
 UIProcess/API/Cocoa/WKWebsiteDataStore.mm
 UIProcess/API/Cocoa/_WKDataTask.mm
 UIProcess/API/Cocoa/_WKInspectorConfiguration.mm
-UIProcess/RemoteLayerTree/mac/RemoteLayerTreeDrawingAreaProxyMac.mm
-UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/WebAuthentication/Virtual/VirtualService.mm
 UIProcess/mac/WebViewImpl.mm
-WebProcess/GPU/graphics/WebGPU/RemoteCompositorIntegrationProxy.cpp
-WebProcess/GPU/graphics/WebGPU/RemoteXRBindingProxy.cpp
 WebProcess/GPU/graphics/WebGPU/WebGPUDowncastConvertToBackingContext.cpp
-WebProcess/GPU/media/MediaPlayerPrivateRemote.cpp
 WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.cpp
 WebProcess/InjectedBundle/API/mac/WKDOMInternals.mm
 WebProcess/Network/NetworkProcessConnection.cpp
@@ -45,7 +32,6 @@ WebProcess/Plugins/PluginView.cpp
 WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
 WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.h
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
-WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeDrawingArea.mm
 WebProcess/WebPage/ViewGestureGeometryCollector.cpp
 WebProcess/WebPage/WebFrame.cpp

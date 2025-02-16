@@ -3,7 +3,7 @@ var wasm_code = read('simple-inline-stacktrace.wasm', 'binary')
 var wasm_module = new WebAssembly.Module(wasm_code);
 var wasm_instance = new WebAssembly.Instance(wasm_module, { a: { doThrow: () => { throw new Error() } } });
 var f = wasm_instance.exports.main;
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     try {
         f()
     } catch (e) {
@@ -25,5 +25,5 @@ for (let i = 0; i < 10000; ++i) {
 }
 
 let mem = new Int32Array(wasm_instance.exports.mem.buffer)[0]
-if (mem != 10000)
-    throw "Expected 10000, got " + mem
+if (mem != wasmTestLoopCount)
+    throw `Expected ${wasmTestLoopCount}, got ${mem}`

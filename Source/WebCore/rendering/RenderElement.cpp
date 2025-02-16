@@ -1641,7 +1641,7 @@ const Element* RenderElement::defaultAnchor() const
     auto defaultAnchorLookupResult = anchoringState.anchorElements.find(anchorName->name);
     if (defaultAnchorLookupResult == anchoringState.anchorElements.end())
         return nullptr;
-    return &defaultAnchorLookupResult->value.get();
+    return defaultAnchorLookupResult->value.get();
 }
 
 const RenderElement* RenderElement::defaultAnchorRenderer() const
@@ -1922,12 +1922,12 @@ bool RenderElement::getLeadingCorner(FloatPoint& point, bool& insideFixed) const
             return true;
         }
 
-        if (p->node() && p->node() == element() && is<RenderText>(*o) && !InlineIterator::firstTextBoxFor(downcast<RenderText>(*o))) {
+        if (p->node() && p->node() == element() && is<RenderText>(*o) && !InlineIterator::lineLeftmostTextBoxFor(downcast<RenderText>(*o))) {
             // do nothing - skip unrendered whitespace that is a child or next sibling of the anchor
         } else if (is<RenderText>(*o) || o->isReplacedOrAtomicInline()) {
             point = FloatPoint();
             if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*o)) {
-                if (auto run = InlineIterator::firstTextBoxFor(*textRenderer))
+                if (auto run = InlineIterator::lineLeftmostTextBoxFor(*textRenderer))
                     point.move(textRenderer->linesBoundingBox().x(), run->lineBox()->contentLogicalTop());
             } else if (auto* box = dynamicDowncast<RenderBox>(*o))
                 point.moveBy(box->location());
@@ -2018,22 +2018,18 @@ LayoutRect RenderElement::absoluteAnchorRect(bool* insideFixed) const
 
 MarginRect RenderElement::absoluteAnchorRectWithScrollMargin(bool* insideFixed) const
 {
-    LayoutRect anchorRect = absoluteAnchorRect(insideFixed);
-    const LengthBox& scrollMargin = style().scrollMargin();
-    if (scrollMargin.isZero())
+    auto anchorRect = absoluteAnchorRect(insideFixed);
+
+    const auto& scrollMargin = style().scrollMargin();
+    if (Style::isZero(scrollMargin))
         return { anchorRect, anchorRect };
 
     // The scroll snap specification says that the scroll-margin should be applied in the
     // coordinate system of the scroll container and applied to the rectangular bounding
     // box of the transformed border box of the target element.
     // See https://www.w3.org/TR/css-scroll-snap-1/#scroll-margin.
-    const LayoutBoxExtent margin(
-        valueForLength(scrollMargin.top(), anchorRect.height()),
-        valueForLength(scrollMargin.right(), anchorRect.width()),
-        valueForLength(scrollMargin.bottom(), anchorRect.height()),
-        valueForLength(scrollMargin.left(), anchorRect.width()));
     auto marginRect = anchorRect;
-    marginRect.expand(margin);
+    marginRect.expand(Style::extentForRect(scrollMargin, anchorRect));
     return { marginRect, anchorRect };
 }
 
@@ -2460,43 +2456,6 @@ Overflow RenderElement::effectiveOverflowY() const
     if (paintContainmentApplies() && overflowY == Overflow::Visible)
         return Overflow::Clip;
     return overflowY;
-}
-
-bool RenderElement::createsNewFormattingContext() const
-{
-    // Writing-mode changes establish an independent block formatting context
-    // if the box is a block-container.
-    // https://drafts.csswg.org/css-writing-modes/#block-flow
-    if (isWritingModeRoot() && isBlockContainer())
-        return true;
-    auto& style = this->style();
-    if (isBlockContainer() && !style.alignContent().isNormal())
-        return true;
-    return isNonReplacedAtomicInline()
-        || isFlexItemIncludingDeprecated()
-        || isRenderTableCell()
-        || isRenderTableCaption()
-        || isFieldset()
-        || isDocumentElementRenderer()
-        || isRenderFragmentedFlow()
-        || isRenderSVGForeignObject()
-        || style.specifiesColumns()
-        || style.columnSpan() == ColumnSpan::All
-        || style.display() == DisplayType::FlowRoot
-        || style.display() == DisplayType::Flex
-        || style.display() == DisplayType::Grid
-        || establishesIndependentFormattingContext();
-}
-
-bool RenderElement::establishesIndependentFormattingContext() const
-{
-    auto& style = this->style();
-    return isFloatingOrOutOfFlowPositioned()
-        || (isBlockBox() && hasPotentiallyScrollableOverflow())
-        || style.containsLayout()
-        || style.containerType() != ContainerType::Normal
-        || paintContainmentApplies()
-        || (style.isDisplayBlockLevel() && style.blockStepSize());
 }
 
 FloatRect RenderElement::referenceBoxRect(CSSBoxType boxType) const

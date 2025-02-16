@@ -249,8 +249,8 @@ public:
     Inspector::Protocol::ErrorStringOr<void> generateTestReport(const String& browsingContextHandle, const String& message, const String& group) override;
 
 #if ENABLE(WK_WEB_EXTENSIONS_IN_WEBDRIVER)
-    void loadWebExtension(const Inspector::Protocol::Automation::WebExtensionResourceOptions, const String& resource, Ref<LoadWebExtensionCallback>&&);
-    void unloadWebExtension(const String& identifier, Ref<UnloadWebExtensionCallback>&&);
+    void loadWebExtension(const Inspector::Protocol::Automation::WebExtensionResourceOptions, const String& resource, Ref<LoadWebExtensionCallback>&&) override;
+    void unloadWebExtension(const String& identifier, Ref<UnloadWebExtensionCallback>&&) override;
 #endif
 
 #if PLATFORM(MAC)
@@ -336,7 +336,9 @@ private:
 
     Ref<Inspector::FrontendRouter> protectedFrontendRouter() const;
     Ref<Inspector::BackendDispatcher> protectedBackendDispatcher() const;
+#if ENABLE(REMOTE_INSPECTOR)
     Ref<Debuggable> protectedDebuggable() const;
+#endif
 
     WeakPtr<WebProcessPool> m_processPool;
 

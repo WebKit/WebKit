@@ -111,7 +111,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateDynamicRules(NSDictionary *opti
     for (NSDictionary *ruleDictionary in rulesToAdd) {
         if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
-            *outExceptionString = toErrorString(nil, addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString);
+            *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString);
             return;
         }
 
@@ -167,7 +167,7 @@ void WebExtensionAPIDeclarativeNetRequest::updateSessionRules(NSDictionary *opti
     for (NSDictionary *ruleDictionary in rulesToAdd) {
         if (![[_WKWebExtensionDeclarativeNetRequestRule  alloc] initWithDictionary:ruleDictionary errorString:&ruleErrorString]) {
             ASSERT(ruleErrorString);
-            *outExceptionString = toErrorString(nil, addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString);
+            *outExceptionString = toErrorString(nullString(), addRulesKey, @"an error with rule at index %lu: %@", index, ruleErrorString);
             return;
         }
 
@@ -227,7 +227,7 @@ void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter,
     bool hasActiveTabPermission = extensionContext().hasPermission("activeTab"_s);
 
     if (!hasFeedbackPermission && !hasActiveTabPermission) {
-        *outExceptionString = toErrorString(nil, nil, @"either the 'declarativeNetRequestFeedback' or 'activeTab' permission is required");
+        *outExceptionString = toErrorString(nullString(), nullString(), @"either the 'declarativeNetRequestFeedback' or 'activeTab' permission is required");
         return;
     }
 
@@ -247,7 +247,7 @@ void WebExtensionAPIDeclarativeNetRequest::getMatchedRules(NSDictionary *filter,
     NSNumber *tabID = objectForKey<NSNumber>(filter, getMatchedRulesTabIDKey);
     auto optionalTabIdentifier = tabID ? toWebExtensionTabIdentifier(tabID.doubleValue) : std::nullopt;
     if (tabID && !isValid(optionalTabIdentifier)) {
-        *outExceptionString = toErrorString(nil, getMatchedRulesTabIDKey, @"%@ is not a valid tab identifier", tabID);
+        *outExceptionString = toErrorString(nullString(), getMatchedRulesTabIDKey, @"%@ is not a valid tab identifier", tabID);
         return;
     }
 
@@ -306,7 +306,7 @@ void WebExtensionAPIDeclarativeNetRequest::setExtensionActionOptions(NSDictionar
         NSNumber *tabID = objectForKey<NSNumber>(tabUpdateDictionary, actionCountTabIDKey);
         auto tabIdentifier = toWebExtensionTabIdentifier(tabID.doubleValue);
         if (!isValid(tabIdentifier)) {
-            *outExceptionString = toErrorString(nil, actionCountTabIDKey, @"%@ is not a valid tab identifier", tabID);
+            *outExceptionString = toErrorString(nullString(), actionCountTabIDKey, @"%@ is not a valid tab identifier", tabID);
             return;
         }
 

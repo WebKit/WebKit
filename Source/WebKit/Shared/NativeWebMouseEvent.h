@@ -31,6 +31,7 @@
 #if USE(APPKIT)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS NSView;
+OBJC_CLASS NSEvent;
 #endif
 
 #if PLATFORM(GTK)

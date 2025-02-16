@@ -34,7 +34,7 @@ function test(array) {
     checkEqual(actual, array);
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     for (var j = 0; j < i % 6; ++j)
         array.push(j);

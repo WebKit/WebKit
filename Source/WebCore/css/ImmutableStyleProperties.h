@@ -35,8 +35,8 @@ public:
     inline void deref() const;
 
     WEBCORE_EXPORT ~ImmutableStyleProperties();
-    static Ref<ImmutableStyleProperties> create(const CSSProperty* properties, unsigned count, CSSParserMode);
-    static Ref<ImmutableStyleProperties> createDeduplicating(const CSSProperty* properties, unsigned count, CSSParserMode);
+    static Ref<ImmutableStyleProperties> create(std::span<const CSSProperty> properties, CSSParserMode);
+    static Ref<ImmutableStyleProperties> createDeduplicating(std::span<const CSSProperty> properties, CSSParserMode);
 
     unsigned propertyCount() const { return m_arraySize; }
     bool isEmpty() const { return !propertyCount(); }
@@ -58,7 +58,7 @@ public:
 private:
     PackedPtr<const CSSValue>* valueArray() const;
     const StylePropertyMetadata* metadataArray() const;
-    ImmutableStyleProperties(const CSSProperty*, unsigned count, CSSParserMode);
+    ImmutableStyleProperties(std::span<const CSSProperty>, CSSParserMode);
 };
 
 inline void ImmutableStyleProperties::deref() const

@@ -44,6 +44,7 @@
 #import <wtf/Scope.h>
 #import <wtf/WeakRandom.h>
 #import <wtf/cocoa/VectorCocoa.h>
+#import <wtf/posix/SocketPOSIX.h>
 #import <wtf/text/MakeString.h>
 #import <pal/cocoa/WebPrivacySoftLink.h>
 
@@ -254,7 +255,7 @@ void StorageAccessPromptQuirkController::updateList(CompletionHandler<void()>&& 
 {
     ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessPromptQuirksData:completionHandler:)]) {
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -296,7 +297,7 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
 {
     ASSERT(RunLoop::isMain());
     if (!PAL::isWebPrivacyFrameworkAvailable() || ![PAL::getWPResourcesClass() instancesRespondToSelector:@selector(requestStorageAccessUserAgentStringQuirksData:completionHandler:)]) {
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
         return;
     }
 
@@ -324,11 +325,6 @@ void StorageAccessUserAgentStringQuirkController::updateList(CompletionHandler<v
     }];
 }
 
-static uint64_t approximateContinuousTimeNanoseconds()
-{
-    return clock_gettime_nsec_np(CLOCK_MONOTONIC_RAW_APPROX);
-}
-
 RestrictedOpenerDomainsController& RestrictedOpenerDomainsController::shared()
 {
     static MainThreadNeverDestroyed<RestrictedOpenerDomainsController> sharedInstance;
@@ -337,7 +333,7 @@ RestrictedOpenerDomainsController& RestrictedOpenerDomainsController::shared()
 
 RestrictedOpenerDomainsController::RestrictedOpenerDomainsController()
 {
-    scheduleNextUpdate(approximateContinuousTimeNanoseconds());
+    scheduleNextUpdate(ContinuousApproximateTime::now());
     update();
 
     m_notificationListener = adoptNS([[WKWebPrivacyNotificationListener alloc] initWithType:static_cast<WPResourceType>(WPResourceTypeRestrictedOpenerDomains) callback:^{
@@ -354,14 +350,11 @@ static RestrictedOpenerType restrictedOpenerType(WPRestrictedOpenerType type)
     }
 }
 
-void RestrictedOpenerDomainsController::scheduleNextUpdate(uint64_t now)
+void RestrictedOpenerDomainsController::scheduleNextUpdate(ContinuousApproximateTime now)
 {
     // Allow the list to be re-requested from the server sometime between [24, 26) hours from now.
     static WeakRandom random;
-    static constexpr int64_t oneDay = 24 * 60 * 60 * NSEC_PER_SEC;
-    int64_t zeroToTwoHours = random.get() * (2 * 60 * 60 * NSEC_PER_SEC);
-
-    m_nextScheduledUpdateTime = now + oneDay + zeroToTwoHours;
+    m_nextScheduledUpdateTime = now + 24_h + random.get() * 2_h;
 }
 
 void RestrictedOpenerDomainsController::update()
@@ -395,7 +388,7 @@ void RestrictedOpenerDomainsController::update()
 
 RestrictedOpenerType RestrictedOpenerDomainsController::lookup(const WebCore::RegistrableDomain& domain) const
 {
-    auto now = approximateContinuousTimeNanoseconds();
+    auto now = ContinuousApproximateTime::now();
     if (now > m_nextScheduledUpdateTime) {
         auto mutableThis = const_cast<RestrictedOpenerDomainsController*>(this);
         mutableThis->scheduleNextUpdate(now);
@@ -440,11 +433,11 @@ void ResourceMonitorURLsController::prepare(CompletionHandler<void(WKContentRule
 
 inline static std::optional<WebCore::IPAddress> ipAddress(const struct sockaddr* address)
 {
-    if (address->sa_family == AF_INET)
-        return WebCore::IPAddress { reinterpret_cast<const sockaddr_in*>(address)->sin_addr };
+    if (auto* addressV4 = dynamicCastToIPV4SocketAddress(*address))
+        return WebCore::IPAddress { addressV4->sin_addr };
 
-    if (address->sa_family == AF_INET6)
-        return WebCore::IPAddress { reinterpret_cast<const sockaddr_in6*>(address)->sin6_addr };
+    if (auto* addressV6 = dynamicCastToIPV6SocketAddress(*address))
+        return WebCore::IPAddress { addressV6->sin6_addr };
 
     return std::nullopt;
 }
@@ -710,9 +703,24 @@ void configureForAdvancedPrivacyProtections(NSURLSession *session)
     });
 }
 
+bool isKnownTrackerAddressOrDomain(StringView host)
+{
+    TrackerAddressLookupInfo::populateIfNeeded();
+    TrackerDomainLookupInfo::populateIfNeeded();
+
+    if (auto address = URL::hostIsIPAddress(host) ? IPAddress::fromString(host.toStringWithoutCopying()) : std::nullopt) {
+        if (TrackerAddressLookupInfo::find(*address))
+            return true;
+    }
+
+    auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, host) } };
+    return TrackerDomainLookupInfo::find(domain.string()).owner().length();
+}
+
 #else
 
 void configureForAdvancedPrivacyProtections(NSURLSession *) { }
+bool isKnownTrackerAddressOrDomain(StringView) { return false; }
 
 #endif
 
@@ -721,7 +729,7 @@ void configureForAdvancedPrivacyProtections(NSURLSession *) { }
 #else
 void ScriptTelemetryController::updateList(CompletionHandler<void()>&& completion)
 {
-    RunLoop::main().dispatch(WTFMove(completion));
+    RunLoop::protectedMain()->dispatch(WTFMove(completion));
 }
 
 WPResourceType ScriptTelemetryController::resourceType() const

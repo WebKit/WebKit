@@ -93,3 +93,8 @@ header: <WebCore/ProcessQualified.h>
     WTF::UUID object();
     WebCore::ProcessIdentifier processIdentifier();
 };
+
+[Alias=class WebCore::ProcessQualified<TransactionIdentifier>, CustomHeader] alias WebKit::TransactionID {
+    WebKit::TransactionIdentifier object();
+    WebCore::ProcessIdentifier processIdentifier();
+};

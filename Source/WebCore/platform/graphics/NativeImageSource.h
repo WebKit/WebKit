@@ -39,6 +39,7 @@ private:
     IntSize size(ImageOrientation = ImageOrientation::Orientation::FromImage) const final { return m_frame.size(); }
     DestinationColorSpace colorSpace() const final { return m_frame.nativeImage()->colorSpace(); }
     std::optional<Color> singlePixelSolidColor() const final { return m_frame.nativeImage()->singlePixelSolidColor(); }
+    Headroom headroom() const final { return m_frame.nativeImage()->headroom(); }
 
     const ImageFrame& primaryImageFrame(const std::optional<SubsamplingLevel>& = std::nullopt) final { return m_frame; }
 

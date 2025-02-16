@@ -32,6 +32,8 @@
 
 namespace WebCore {
 
+enum class IncludeDynamicContentScalingDisplayList : bool { No, Yes };
+
 class DynamicContentScalingDisplayList {
 public:
     DynamicContentScalingDisplayList(Ref<WebCore::SharedBuffer> displayList, Vector<MachSendRight>&& surfaces)

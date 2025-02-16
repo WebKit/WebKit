@@ -122,8 +122,11 @@ String AudioTrackPrivateWebM::codec() const
     if (codecID == "A_VORBIS"_s)
         return "vorbis"_s;
 
-    if (codecID == "V_OPUS"_s)
+    if (codecID == "A_OPUS"_s)
         return "opus"_s;
+
+    if (codecID == "A_PCM/FLOAT/IEEE"_s)
+        return "pcm"_s;
 
     return emptyString();
 }

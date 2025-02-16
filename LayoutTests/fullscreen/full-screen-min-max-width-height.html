@@ -27,34 +27,40 @@ window.addEventListener('load', async event => {
     target.className = 'explicit-width-height';
     runWithKeyDown(() => { target.webkitRequestFullscreen(); })
     await waitFor(document, 'webkitfullscreenchange');
+    if (window.testRunner) { await testRunner.updatePresentation() }
 
     testExpected('target.clientWidth === document.documentElement.clientWidth', true);
     testExpected('target.clientHeight === document.documentElement.clientHeight', true);
 
     runWithKeyDown(() => { document.webkitExitFullscreen(); });
     await waitFor(document, 'webkitfullscreenchange');
+    if (window.testRunner) { await testRunner.updatePresentation() }
 
     consoleWrite('Testing with max-width and max-height');
     target.className = 'max-width-height';
     runWithKeyDown(() => { target.webkitRequestFullscreen(); })
     await waitFor(document, 'webkitfullscreenchange');
+    if (window.testRunner) { await testRunner.updatePresentation() }
 
     testExpected('target.clientWidth === document.documentElement.clientWidth', true);
     testExpected('target.clientHeight === document.documentElement.clientHeight', true);
 
     runWithKeyDown(() => { document.webkitExitFullscreen(); });
     await waitFor(document, 'webkitfullscreenchange');
+    if (window.testRunner) { await testRunner.updatePresentation() }
 
     consoleWrite('Testing with min-width and min-height');
     target.className = 'min-width-height';
     runWithKeyDown(() => { target.webkitRequestFullscreen(); })
     await waitFor(document, 'webkitfullscreenchange');
+    if (window.testRunner) { await testRunner.updatePresentation() }
 
     testExpected('target.clientWidth === document.documentElement.clientWidth', true);
     testExpected('target.clientHeight === document.documentElement.clientHeight', true);
 
     runWithKeyDown(() => { document.webkitExitFullscreen(); });
     await waitFor(document, 'webkitfullscreenchange');
+    if (window.testRunner) { await testRunner.updatePresentation() }
 
     endTest();
 });

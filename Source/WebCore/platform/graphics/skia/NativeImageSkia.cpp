@@ -168,6 +168,15 @@ void NativeImage::clearSubimages()
 {
 }
 
+#if USE(COORDINATED_GRAPHICS)
+uint64_t NativeImage::uniqueID() const
+{
+    if (auto& image = platformImage())
+        return image->uniqueID();
+    return 0;
+}
+#endif
+
 } // namespace WebCore
 
 #endif // USE(SKIA)

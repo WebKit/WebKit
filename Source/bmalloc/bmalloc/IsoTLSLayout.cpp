@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "IsoTLSLayout.h"
+
+#if !BUSE(TZONE)
 
 #include "IsoTLSEntry.h"
 
@@ -64,3 +67,4 @@ void IsoTLSLayout::add(IsoTLSEntry* entry)
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

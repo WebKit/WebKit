@@ -556,6 +556,7 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
         auto delegatesFocus = ShadowRootDelegatesFocus::No;
         auto clonable = ShadowRootClonable::No;
         auto serializable = ShadowRootSerializable::No;
+        auto registryKind = Element::CustomElementRegistryKind::Window;
         for (auto& attribute : token.attributes()) {
             if (attribute.name() == HTMLNames::shadowrootmodeAttr) {
                 if (equalLettersIgnoringASCIICase(attribute.value(), "closed"_s))
@@ -568,9 +569,11 @@ void HTMLConstructionSite::insertHTMLTemplateElement(AtomHTMLToken&& token)
                 clonable = ShadowRootClonable::Yes;
             else if (attribute.name() == HTMLNames::shadowrootserializableAttr)
                 serializable = ShadowRootSerializable::Yes;
+            else if (attribute.name() == HTMLNames::shadowrootcustomelementsAttr)
+                registryKind = Element::CustomElementRegistryKind::Null;
         }
         if (mode && is<Element>(currentNode())) {
-            auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus, clonable, serializable);
+            auto exceptionOrShadowRoot = currentElement().attachDeclarativeShadow(*mode, delegatesFocus, clonable, serializable, registryKind);
             if (!exceptionOrShadowRoot.hasException()) {
                 Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
                 auto element = createHTMLElement(token);
@@ -780,7 +783,7 @@ static inline QualifiedName qualifiedNameForHTMLTag(const AtomHTMLToken& token)
 
 Ref<Element> HTMLConstructionSite::createElement(AtomHTMLToken& token, const AtomString& namespaceURI)
 {
-    auto element = treeScopeForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
+    auto element = ownerDocumentForCurrentNode().createElement(qualifiedNameForTag(token, namespaceURI), true);
     setAttributes(element, token, m_parserContentPolicy);
     return element;
 }
@@ -799,6 +802,16 @@ inline Document& HTMLConstructionSite::ownerDocumentForCurrentNode()
     return currentNode().document();
 }
 
+static CustomElementRegistry* registryForCurrentNode(Node& currentNode, TreeScope& treeScope)
+{
+    if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(currentNode)) {
+        auto& templateFragmentTreeScope = templateElement->fragmentForInsertion().treeScope();
+        if (templateFragmentTreeScope.rootNode().usesNullCustomElementRegistry())
+            return nullptr;
+    }
+    return CustomElementRegistry::registryForNodeOrTreeScope(currentNode, treeScope);
+}
+
 std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomElementRegistry>> HTMLConstructionSite::createHTMLElementOrFindCustomElementInterface(AtomHTMLToken& token)
 {
     // FIXME: This can't use HTMLConstructionSite::createElement because we
@@ -810,7 +823,7 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     bool insideTemplateElement = !ownerDocument->frame();
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
-        RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? CustomElementRegistry::registryForNodeOrTreeScope(currentNode(), treeScope) : m_registry;
+        RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? registryForCurrentNode(currentNode(), treeScope) : m_registry;
         auto* elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (UNLIKELY(elementInterface)) {
             if (!m_isParsingFragment)
@@ -825,12 +838,12 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
             auto qualifiedName = qualifiedNameForHTMLTag(token);
             if (Document::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
                 element = HTMLMaybeFormAssociatedCustomElement::create(qualifiedName, ownerDocument);
-                if (UNLIKELY(registry && registry->isScoped()))
-                    CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
                 element->setIsCustomElementUpgradeCandidate();
             } else
                 element = HTMLUnknownElement::create(qualifiedName, ownerDocument);
         }
+        if (!registry)
+            element->setUsesNullCustomElementRegistry();
     }
     ASSERT(element);
 

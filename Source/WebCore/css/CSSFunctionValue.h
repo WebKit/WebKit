@@ -42,7 +42,7 @@ public:
 
     CSSValueID name() const { return m_name; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSFunctionValue& other) const { return m_name == other.m_name && itemsEqual(other); }
 
 private:

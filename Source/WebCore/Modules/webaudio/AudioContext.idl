@@ -34,9 +34,7 @@
     [CallWith=CurrentDocument] constructor(optional AudioContextOptions contextOptions);
 
     readonly attribute double baseLatency;
-
-    // FIXME: Add support.
-    // readonly attribute double outputLatency;
+    readonly attribute double outputLatency;
 
     AudioTimestamp getOutputTimestamp();
 

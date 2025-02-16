@@ -23,10 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if PLATFORM(COCOA)
-
 #import "config.h"
 #import "CoreIPCSecureCoding.h"
+
+#if PLATFORM(COCOA)
 
 #import "ArgumentCodersCocoa.h"
 #import "AuxiliaryProcessCreationParameters.h"
@@ -84,19 +84,17 @@ void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters& pa
 
 } // namespace SecureCoding
 
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CoreIPCSecureCoding);
+#endif
 
-bool CoreIPCSecureCoding::conformsToWebKitSecureCoding(id object)
+bool conformsToWebKitSecureCoding(id object)
 {
     return [object respondsToSelector:@selector(_webKitPropertyListData)]
         && [object respondsToSelector:@selector(_initWithWebKitPropertyListData:)];
 }
 
-bool CoreIPCSecureCoding::conformsToSecureCoding(id object)
-{
-    return [object conformsToProtocol:@protocol(NSSecureCoding)];
-}
-
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 NO_RETURN static void crashWithClassName(Class objectClass)
 {
     WebKit::logAndSetCrashLogMessage("NSSecureCoding path used for unexpected object"_s);
@@ -120,6 +118,7 @@ CoreIPCSecureCoding::CoreIPCSecureCoding(id object)
 
     crashWithClassName([object class]);
 }
+#endif
 
 } // namespace WebKit
 

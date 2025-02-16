@@ -51,7 +51,7 @@ public:
     unsigned size() const { return m_size; }
     bool mayHaveAnimatableProperties() const { return m_mayHaveAnimatableProperties; }
 
-    void forEach(const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CSSCustomPropertyValue>>&)>&) const;
+    void forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CSSCustomPropertyValue>>&)>&) const;
     AtomString findKeyAtIndex(unsigned) const;
 
 private:

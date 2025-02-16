@@ -14,7 +14,7 @@ function main() {
             return inlinee(value);`)
     };
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         object.opt(BigInt(i));
     }
 

@@ -51,7 +51,7 @@ function test8(num)
 }
 noInline(test8);
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(0), -4);
     shouldBe(test1(-100), -100);
     shouldBe(test2(0), 20000);

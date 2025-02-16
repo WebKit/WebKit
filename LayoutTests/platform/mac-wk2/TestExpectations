@@ -42,6 +42,7 @@ http/tests/pdf [ Pass ]
 [ Sonoma+ ] pdf [ Pass ]
 tiled-drawing [ Pass ]
 ipc/restrictedendpoints/mac [ Pass ]
+fast/page-color-sampling [ Pass ]
 
 fast/events/autoscroll-when-zoomed.html [ Pass ]
 fast/events/autoscroll-main-document.html [ Pass ]
@@ -927,6 +928,8 @@ webkit.org/b/197662 imported/w3c/web-platform-tests/webrtc/RTCPeerConnection-get
 
 webkit.org/b/198195 fast/css/sticky/sticky-left-percentage.html [ Pass ImageOnlyFailure ]
 
+fast/css/accent-color/datalist.html [ Pass ]
+
 webkit.org/b/187828 [ Release ] fast/css-grid-layout/flex-content-sized-columns-resize.html [ Pass ImageOnlyFailure ]
 
 #webkit.org/b/198663 http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.html [ Pass Timeout ]
@@ -1600,6 +1603,9 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 # WebGPU
 [ Release ] http/tests/webgpu/webgpu/api/validation/encoding/cmds/copyTextureToTexture.html
 
+# skipped due to infinite loop compute shaders normally not terminating on macOS, test must be run locally for now
+fast/webgpu/nocrash/fuzz-286820.html [ Skip ]
+
 # skipped outside of macOS Sequoia due to crash in failed allocation
 [ Ventura Sonoma ] fast/webgpu/nocrash/fuzz-279086.html [ Skip ]
 
@@ -1622,9 +1628,9 @@ webkit.org/b/263396 css3/color/text.html [ Skip ]
 # skipped due to failing when run in stress test mode
 [ Ventura Sonoma ] fast/webgpu/nocrash/RenderBundle_WRITE.html [ Skip ]
 
-[ Release arm64 ] http/tests/webgpu/webgpu/api [ Pass Failure Timeout ]
-[ Release arm64 ] http/tests/webgpu/webgpu/shader [ Pass Failure Timeout ]
-[ Release arm64 ] http/tests/webgpu/webgpu/web_platform [ Pass Failure Timeout ]
+[ Release arm64 Sequoia+ ] http/tests/webgpu/webgpu/api [ Pass Failure Timeout ]
+[ Release arm64 Sequoia+ ] http/tests/webgpu/webgpu/shader [ Pass Failure Timeout ]
+[ Release arm64 Sequoia+ ] http/tests/webgpu/webgpu/web_platform [ Pass Failure Timeout ]
 
 # timeout on Intel Macs due to difference in handling infinite loops
 [ x86_64 ] fast/webgpu/regression/repro_283595-for.html [ Skip ]
@@ -1661,6 +1667,9 @@ http/tests/webgpu/webgpu/api/validation/queue/buffer_mapped.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/destroyed [ Pass ]
 [ arm64 ] http/tests/webgpu/webgpu/api/operation/command_buffer/queries [ Pass ]
+
+# this test is very slow so expect a timeout or pass
+http/tests/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.html [ Pass Timeout ]
 
 http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass ]
 # arm64 release only because the tests are incredibly slow due to their extensiveness
@@ -1850,10 +1859,6 @@ editing/input/scroll-viewport-page-up-down.html [ Pass Failure ]
 # webkit.org/b/280413 [ macOS wk2 arm64 ] fast/forms/password-scrolled-after-caps-lock-toggled.html is a flaky failure 
 [ arm64 ] fast/forms/password-scrolled-after-caps-lock-toggled.html  [ Pass Failure ]
 
-# webkit.org/b/280415 [ Sequoia wk2 release arm64 ] 2x fast/selectors/* are flaky image only failures. 
-[ Sequoia+ arm64 Release ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
-[ Sequoia+ arm64 Release ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/280418 [ Sequoia wk2 ] fast/speechsynthesis/mac/samantha-voice-available.html is a constant failure. 
 [ Sequoia+ ] fast/speechsynthesis/mac/samantha-voice-available.html [ Pass Failure ]
 
@@ -1880,14 +1885,12 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-summary-
 # webkit.org/b/277908 [ iOS macOS Debug wk2 ] imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html is a flaky text failure
 [ Debug ] imported/w3c/web-platform-tests/mediacapture-insertable-streams/VideoTrackGenerator-with-window-tracks.https.html [ Pass Failure ]
 
-webkit.org/b/281531 [ Sequoia+ ] accessibility/mac/basic-embed-pdf-accessibility.html [ Timeout ]
-webkit.org/b/281531 [ Sequoia+ ] accessibility/mac/iframe-pdf.html [ Timeout ]
-
 # webkit.org/b/282046 REGRESSION(285592@main): [ macOS iOS wk2 ] http/tests/site-isolation/l oad-event.html are near constant failures.
 http/tests/site-isolation/load-event.html [ Pass Failure ]
 
 # webkit.org/b/282051 REGRESSION(285577@main): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html is a constant timeout
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Timeout ]
+# webkit.org/b/286584 REGRESSION (286180@main): [ macOS wk2 debug ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html is a flaky failure
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Pass Failure Timeout ]
 
 # webkit.org/b/282063 REGRESSION (285464@main?) : [ macOS iOS wk2 ] media/remote-control-comman d-is-user-gesture.html is a constant timeout.
 media/remote-control-command-is-user-gesture.html [ Timeout ]
@@ -1896,9 +1899,6 @@ media/remote-control-command-is-user-gesture.html [ Timeout ]
 [ Sequoia+ x86_64 ] http/tests/swipe/swipe-back-with-outstanding-load-cancellation.html [ Timeout ]
 [ Sequoia+ x86_64 ] swipe/navigate-event-back-swipe-verify-ua-transition.html [ Timeout ]
 [ Sequoia+ x86_64 ] swipe/pushState-back-swipe-verify-ua-transition.html [ Timeout ]
-
-# webkit.org/b/282477 [macOS wk2 Debug ] fast/events/drag-and-drop-autoscroll-inner-frame.html is flaky failure (failure in EWS)
-fast/events/drag-and-drop-autoscroll-inner-frame.html [ Pass Failure ]
 
 webkit.org/b/282565 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html [ ImageOnlyFailure ]
 
@@ -1915,12 +1915,8 @@ webkit.org/b/282726 http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure
 # webkit.org/b/282126 NEW TEST [ Sequoia+ x86_64 ] 5 swipe layout tests are timing due to "Timed out waiting for notifyDone to be called"
 swipe/main-frame-pinning-requirement.html [ Failure Timeout ]
 
-webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
-webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
-webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure ]
-webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.https.html [ Failure ]
-
-webkit.org/b/283210 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Pass Failure ]
+# On x86_64 Ventura bots, stream recording doesnt always complete within the 2s.
+[ Ventura x86_64 ] http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Pass Failure ]
 
 webkit.org/b/283596 [ Sequoia+ Debug ] ipc/cfnetwork-crashes-with-string-to-string-http-headers.html [ Skip ]
 
@@ -1938,13 +1934,38 @@ webkit.org/b/284492 [ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/
 
 webkit.org/b/232282 [ Ventura+ ] fast/scrolling/mac/scrollbars/overlay-scrollbar-hovered.html [ Pass Failure ]
 
-# webkit.org/b/284853 REGRESSION(287869@main?): [macOS Debug wk2] ASSERTION FAILED: WebCore::MediaRecorderPrivateEncoder::interleaveAndEnqueueNextFrame() in http/wpt/mediarecorder tests (flaky in EWS)
-[ Debug ] http/wpt/mediarecorder/MediaRecorder-video-bitrate.html [ Skip ]
-[ Debug ] http/wpt/mediarecorder/pause-recording.html [ Skip ]
-
 webkit.org/b/285033 [ Ventura+ ] http/tests/download/sandboxed-iframe-download-not-allowed.html [ Pass Failure ]
 
-# webkit.org/b/285039 REGRESSION(288091@main?): [macOS Debug wk2] Crash in  WebCore::MediaRecorderPrivateWriterAVFObjC::writeFrame
-[ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Skip ]
-[ Debug ] http/wpt/mediarecorder/pause-recording-timeSlice.html [ Skip ]
-[ Debug ] imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-no-sink.https.html [ Skip ]
+# webkit.org/b/288409 [ MacOS iOS ] 3x imported/w3c/web-platform-tests/navigation-api/navigation are consistent failures 
+imported/w3c/web-platform-tests/navigation-api/navigation-activation/activation-traverse-not-in-entries.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-forward.html [ Failure ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/disambigaute-traverseTo-forward-multiple.html [ Failure ]
+
+# webkit.org/b/280415 [ Sequoia wk2 release arm64 ] 2x fast/selectors/* are flaky image only failures.
+[ Ventura+ arm64 ] fast/selectors/selection-window-inactive-stroke-color.html [ Pass ImageOnlyFailure ]
+[ Ventura+ arm64 ] fast/selectors/text-field-selection-stroke-color.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/286371 [ Sequoia Release x86_64 ] webrtc/captureCanvas-webrtc-software-h264-high.html [ Failure ]
+
+webkit.org/b/286318 http/tests/iframe-monitor [ Pass ]
+
+webkit.org/b/286693 [ Sequoia Debug arm64 ] media/video-canvas-createPattern.html [ Pass Failure ]
+
+webkit.org/b/286843 [ Debug ] imported/w3c/web-platform-tests/screen-orientation/orientation-reading.html [ Pass Failure ]
+
+webkit.org/b/287040 [ Sonoma arm64 ] fast/webgpu/ftoi.html [ Skip ]
+
+webkit.org/b/286653 [ Sequoia ] pdf/images/jpeg2000-embed-pdf.html [ Pass Failure ]
+
+webkit.org/b/287122 [ Ventura+ ] imported/w3c/web-platform-tests/html/capability-delegation/delegate-fullscreen-request-subframe-same-origin.https.tentative.html [ Pass Failure ]
+
+# rdar://141631699 ([ macOS wk2 arm64 ] Multiple fast/webgpu/* tests are causing testing instability.)
+[ arm64 ] fast/webgpu/regression/repro_283595-for.html [ Skip ]
+[ arm64 ] fast/webgpu/regression/repro_283595-loop.html [ Skip ]
+[ arm64 ] fast/webgpu/regression/repro_283595-while.html [ Skip ]
+[ arm64 ] fast/webgpu/nocrash/fuzz-284937.html [ Skip ]
+[ arm64 ] fast/webgpu/nocrash/fuzz-287444.html [ Skip ]
+
+webkit.org/b/287679 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html [ Pass Failure ]
+
+webkit.org/b/287753 [ Debug ] http/tests/cache/network-error-during-revalidation.html [ Skip ]

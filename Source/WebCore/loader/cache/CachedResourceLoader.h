@@ -53,7 +53,9 @@ class CachedFont;
 class CachedImage;
 class CachedRawResource;
 class CachedScript;
+#if ENABLE(VIDEO)
 class CachedTextTrack;
+#endif
 class CachedXSLStyleSheet;
 class Document;
 class DocumentLoader;

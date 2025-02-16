@@ -43,9 +43,10 @@ function selectLine(node) {
         range.setEnd(container, range.startOffset + 'in'.length);
         selection.addRange(range);
     } else {
-       node.selectionDirection = 'none';
-       node.selectionStart = node.value.search('ine 2');
-       node.selectionEnd = node.selectionStart + 'in'.length;
+        node.focus();
+        node.selectionDirection = 'none';
+        node.selectionStart = node.value.search('ine 2');
+        node.selectionEnd = node.selectionStart + 'in'.length;
     }
 }
 

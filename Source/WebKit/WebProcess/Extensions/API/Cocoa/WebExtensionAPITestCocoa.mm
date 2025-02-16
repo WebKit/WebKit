@@ -33,14 +33,17 @@
 #import "CocoaHelpers.h"
 #import "MessageSenderInlines.h"
 #import "WebExtensionAPINamespace.h"
+#import "WebExtensionAPIWebPageNamespace.h"
 #import "WebExtensionControllerMessages.h"
 #import "WebExtensionControllerProxy.h"
 #import "WebExtensionEventListenerType.h"
+#import "WebFrame.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/ScriptCallStack.h>
 #import <JavaScriptCore/ScriptCallStackFactory.h>
+#import <WebCore/LocalFrame.h>
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
@@ -89,21 +92,6 @@ void WebExtensionAPITest::notifyPass(JSContextRef context, NSString *message)
     WebProcess::singleton().send(Messages::WebExtensionController::TestFinished(true, message, location.first, location.second), webExtensionControllerProxy->identifier());
 }
 
-void WebExtensionAPITest::yield(JSContextRef context, NSString *message)
-{
-    auto location = scriptLocation(context);
-
-    RefPtr page = toWebPage(context);
-    if (!page)
-        return;
-
-    RefPtr webExtensionControllerProxy = page->webExtensionControllerProxy();
-    if (!webExtensionControllerProxy)
-        return;
-
-    WebProcess::singleton().send(Messages::WebExtensionController::TestYielded(message, location.first, location.second), webExtensionControllerProxy->identifier());
-}
-
 void WebExtensionAPITest::sendMessage(JSContextRef context, NSString *message, JSValue *argument)
 {
     auto location = scriptLocation(context);
@@ -127,6 +115,19 @@ WebExtensionAPIEvent& WebExtensionAPITest::onMessage()
     return *m_onMessage;
 }
 
+JSValue *WebExtensionAPITest::runWithUserGesture(WebFrame& frame, JSValue *function)
+{
+    RefPtr coreFrame = frame.protectedCoreLocalFrame();
+    WebCore::UserGestureIndicator gestureIndicator(WebCore::IsProcessingUserGesture::Yes, coreFrame ? coreFrame->document() : nullptr);
+
+    return [function callWithArguments:@[ ]];
+}
+
+bool WebExtensionAPITest::isProcessingUserGesture()
+{
+    return WebCore::UserGestureIndicator::processingUserGesture();
+}
+
 inline NSString *debugString(JSValue *value)
 {
     if (value._isRegularExpression || value._isFunction)
@@ -146,7 +147,7 @@ void WebExtensionAPITest::log(JSContextRef context, JSValue *value)
     if (!webExtensionControllerProxy)
         return;
 
-    WebProcess::singleton().send(Messages::WebExtensionController::TestMessage(debugString(value), location.first, location.second), webExtensionControllerProxy->identifier());
+    WebProcess::singleton().send(Messages::WebExtensionController::TestLogMessage(debugString(value), location.first, location.second), webExtensionControllerProxy->identifier());
 }
 
 void WebExtensionAPITest::fail(JSContextRef context, NSString *message)
@@ -360,13 +361,21 @@ JSValue *WebExtensionAPITest::assertSafeResolve(JSContextRef context, JSValue *f
     return assertResolves(context, result, message);
 }
 
-void WebExtensionContextProxy::dispatchTestMessageEvent(const String& message, const String& argumentJSON)
+void WebExtensionContextProxy::dispatchTestMessageEvent(const String& message, const String& argumentJSON, WebExtensionContentWorldType contentWorldType)
 {
     id argument = parseJSON(argumentJSON, JSONOptions::FragmentsAllowed);
 
-    enumerateNamespaceObjects([&](auto& namespaceObject) {
+    if (contentWorldType == WebExtensionContentWorldType::WebPage) {
+        enumerateFramesAndWebPageNamespaceObjects([&](auto&, auto& namespaceObject) {
+            namespaceObject.test().onMessage().invokeListenersWithArgument(message, argument);
+        });
+
+        return;
+    }
+
+    enumerateFramesAndNamespaceObjects([&](auto&, auto& namespaceObject) {
         namespaceObject.test().onMessage().invokeListenersWithArgument(message, argument);
-    });
+    }, toDOMWrapperWorld(contentWorldType));
 }
 
 } // namespace WebKit

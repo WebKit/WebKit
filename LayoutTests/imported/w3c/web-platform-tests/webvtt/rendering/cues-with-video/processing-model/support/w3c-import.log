@@ -28,6 +28,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/align_end_long.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/align_start.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/align_start_long.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/basic-cue-rendering.webvtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/bidi_ruby.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/bidi_text-combine-upright.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/bidi_vertical_lr.vtt
@@ -72,6 +73,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/line_percent_and_integer_overlap.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/line_percent_and_integer_overlap_move_up.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/one_line_cue_plus_wrapped_cue.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/reference.css
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/size_50.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/snap-to-line.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/start_alignment.vtt
@@ -104,6 +106,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/voice_long.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/voice_with_2_timestamps.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/voice_with_timestamp.vtt
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/webvtt-rendering-test.js
+/LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/white-space-pre-line.webvtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/white-spaces.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/white-spaces_long.vtt
 /LayoutTests/imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/support/white-spaces_long_size_20.vtt

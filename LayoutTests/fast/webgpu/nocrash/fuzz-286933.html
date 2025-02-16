@@ -1,0 +1,92 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+    try {
+        let adapter0 = await navigator.gpu.requestAdapter({powerPreference: 'high-performance'});
+// START
+promise0 = adapter0.requestDevice();
+device0 = await promise0;
+texture10 = device0.createTexture({
+  size : {width : 8001, depthOrArrayLayers : 60},
+  format : 'rg16sint',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT});
+textureView8 = texture10.createView(
+    {dimension : '2d', });
+querySet0 = device0.createQuerySet({type : 'occlusion', count : 0});
+commandEncoder47 = device0.createCommandEncoder();
+renderPassEncoder17 = commandEncoder47.beginRenderPass({
+  colorAttachments : [ {
+    view : textureView8,
+    clearValue : {
+      r : 797.1,
+      g : 641.7,
+      b : 397.6,
+      a : 543.7},
+    loadOp : 'clear',
+    storeOp : 'store'} ],
+  occlusionQuerySet : querySet0});
+try {
+  renderPassEncoder17.beginOcclusionQuery(0)} catch {
+}
+// END
+        await device0.queue.onSubmittedWorkDone();
+    } catch {}
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

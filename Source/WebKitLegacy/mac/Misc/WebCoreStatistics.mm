@@ -79,7 +79,7 @@ using namespace WebCore;
     return commonVM().heap.protectedGlobalObjectCount();
 }
 
-static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<const char*>& set)
+static RetainPtr<NSCountedSet> createNSCountedSet(const HashCountedSet<ASCIILiteral>& set)
 {
     auto result = adoptNS([[NSCountedSet alloc] initWithCapacity:set.size()]);
     for (auto& entry : set) {

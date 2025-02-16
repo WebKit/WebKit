@@ -1,0 +1,22 @@
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+
+PASS No violation reported for trusted input (innerText).
+PASS Violation report for plain string (innerText)
+PASS No violation reported for trusted input (textContent).
+PASS Violation report for plain string (textContent)
+PASS No violation reported for trusted input (src).
+PASS Violation report for plain string (src)
+PASS No violation reported for trusted input (text).
+PASS Violation report for plain string (text)
+

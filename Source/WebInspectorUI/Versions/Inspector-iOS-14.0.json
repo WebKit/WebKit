@@ -176,99 +176,6 @@
 }
 ,
 {
-    "domain": "ApplicationCache",
-    "debuggableTypes": ["page", "web-page"],
-    "targetTypes": ["page"],
-    "types": [
-        {
-            "id": "ApplicationCacheResource",
-            "type": "object",
-            "description": "Detailed application cache resource information.",
-            "properties": [
-                { "name": "url", "type": "string", "description": "Resource url." },
-                { "name": "size", "type": "integer", "description": "Resource size." },
-                { "name": "type", "type": "string", "description": "Resource type." }
-            ]
-        },
-        {
-            "id": "ApplicationCache",
-            "type": "object",
-            "description": "Detailed application cache information.",
-            "properties": [
-                { "name": "manifestURL", "type": "string", "description": "Manifest URL." },
-                { "name": "size", "type": "number", "description": "Application cache size." },
-                { "name": "creationTime", "type": "number", "description": "Application cache creation time." },
-                { "name": "updateTime", "type": "number", "description": "Application cache update time." },
-                { "name": "resources", "type": "array", "items": { "$ref": "ApplicationCacheResource" }, "description": "Application cache resources." }
-            ]
-        },
-        {
-            "id": "FrameWithManifest",
-            "type": "object",
-            "description": "Frame identifier - manifest URL pair.",
-            "properties": [
-                { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame identifier." },
-                { "name": "manifestURL", "type": "string", "description": "Manifest URL." },
-                { "name": "status", "type": "integer", "description": "Application cache status." }
-            ]
-        }
-    ],
-    "commands": [
-        {
-            "name": "getFramesWithManifests",
-            "description": "Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.",
-            "returns": [
-                { "name": "frameIds", "type": "array", "items": { "$ref": "FrameWithManifest" }, "description": "Array of frame identifiers with manifest urls for each frame containing a document associated with some application cache." }
-            ]
-        },
-        {
-            "name": "enable",
-            "description": "Enables application cache domain notifications."
-        },
-        {
-            "name": "disable",
-            "description": "Disable application cache domain notifications."
-        },
-        {
-            "name": "getManifestForFrame",
-            "description": "Returns manifest URL for document in the given frame.",
-            "parameters": [
-                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose manifest is retrieved." }
-            ],
-            "returns": [
-                { "name": "manifestURL", "type": "string", "description": "Manifest URL for document in the given frame." }
-            ]
-        },
-        {
-            "name": "getApplicationCacheForFrame",
-            "description": "Returns relevant application cache data for the document in given frame.",
-            "parameters": [
-                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose application cache is retrieved." }
-            ],
-            "returns": [
-                { "name": "applicationCache", "$ref": "ApplicationCache", "description": "Relevant application cache data for the document in given frame." }
-            ]
-        }
-    ],
-    "events": [
-        {
-            "name": "applicationCacheStatusUpdated",
-            "parameters": [
-                { "name": "frameId", "$ref": "Network.FrameId", "description": "Identifier of the frame containing document whose application cache updated status." },
-                { "name": "manifestURL", "type": "string", "description": "Manifest URL." },
-                { "name": "status", "type": "integer", "description": "Updated application cache status." }
-            ]
-        },
-        {
-            "name": "networkStateUpdated",
-            "parameters": [
-                { "name": "isNowOnline", "type": "boolean" }
-            ]
-        }
-    ]
-}
-,
-{
     "domain": "Audit",
     "description": "",
     "version": 3,
@@ -1105,7 +1012,6 @@
                 "network",
                 "console-api",
                 "storage",
-                "appcache",
                 "rendering",
                 "css",
                 "security",
@@ -1999,6 +1905,7 @@
         {
             "name": "setDOMBreakpoint",
             "description": "Sets breakpoint on particular operation with DOM.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to set breakpoint on." },
                 { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." }
@@ -2007,6 +1914,7 @@
         {
             "name": "removeDOMBreakpoint",
             "description": "Removes DOM breakpoint that was set using <code>setDOMBreakpoint</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to remove breakpoint from." },
                 { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the breakpoint to remove." }
@@ -2138,79 +2046,6 @@
                 { "name": "key", "type": "string" },
                 { "name": "oldValue", "type": "string" },
                 { "name": "newValue", "type": "string" }
-            ]
-        }
-    ]
-}
-,
-{
-    "domain": "Database",
-    "debuggableTypes": ["page", "web-page"],
-    "targetTypes": ["page"],
-    "types": [
-        {
-            "id": "DatabaseId",
-            "type": "string",
-            "description": "Unique identifier of Database object."
-        },
-        {
-            "id": "Database",
-            "type": "object",
-            "description": "Database object.",
-            "properties": [
-                { "name": "id", "$ref": "DatabaseId", "description": "Database ID." },
-                { "name": "domain", "type": "string", "description": "Database domain." },
-                { "name": "name", "type": "string", "description": "Database name." },
-                { "name": "version", "type": "string", "description": "Database version." }
-            ]
-        },
-        {
-            "id": "Error",
-            "type": "object",
-            "description": "Database error.",
-            "properties": [
-                { "name": "message", "type": "string", "description": "Error message." },
-                { "name": "code", "type": "integer", "description": "Error code." }
-            ]
-        }
-    ],
-    "commands": [
-        {
-            "name": "enable",
-            "description": "Enables database tracking, database events will now be delivered to the client."
-        },
-        {
-            "name": "disable",
-            "description": "Disables database tracking, prevents database events from being sent to the client."
-        },
-        {
-            "name": "getDatabaseTableNames",
-            "parameters": [
-                { "name": "databaseId", "$ref": "DatabaseId" }
-            ],
-            "returns": [
-                { "name": "tableNames", "type": "array", "items": { "type": "string" } }
-            ]
-        },
-        {
-            "name": "executeSQL",
-            "async": true,
-            "parameters": [
-                { "name": "databaseId", "$ref": "DatabaseId" },
-                { "name": "query", "type": "string" }
-            ],
-            "returns": [
-                { "name": "columnNames", "type": "array", "optional": true, "items": { "type": "string" } },
-                { "name": "values", "type": "array", "optional": true, "items": { "type": "any" }},
-                { "name": "sqlError", "$ref": "Error", "optional": true }
-            ]
-        }
-    ],
-    "events": [
-        {
-            "name": "addDatabase",
-            "parameters": [
-                { "name": "database", "$ref": "Database" }
             ]
         }
     ]

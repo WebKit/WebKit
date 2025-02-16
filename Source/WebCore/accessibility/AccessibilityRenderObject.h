@@ -102,7 +102,9 @@ public:
     String selectedText() const final;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     AXTextRuns textRuns() final;
-#endif
+    AXTextRunLineID listMarkerLineID() const final;
+    String listMarkerText() const final;
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     bool isWidget() const final;
     Widget* widget() const final;

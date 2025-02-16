@@ -6,7 +6,7 @@ function narrow(x) {
 
 noInline(narrow);
 
-for (var i = 0; i < 1000000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let expected = i << 24;
     let got = narrow(i);
     expected = expected >> 24;

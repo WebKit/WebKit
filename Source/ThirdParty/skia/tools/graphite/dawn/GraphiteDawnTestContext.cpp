@@ -36,6 +36,10 @@ std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType bac
     static SkOnce sOnce;
 
     static constexpr const char* kToggles[] = {
+#if !defined(SK_DEBUG)
+        "skip_validation",
+#endif
+        "disable_lazy_clear_for_mapped_at_creation_buffer", // matches Chromes toggles
         "allow_unsafe_apis",  // Needed for dual-source blending.
         "use_user_defined_labels_in_backend",
         // Robustness impacts performance and is always disabled when running Graphite in Chrome,
@@ -152,13 +156,14 @@ std::unique_ptr<GraphiteTestContext> DawnTestContext::Make(wgpu::BackendType bac
     desc.nextInChain           = &togglesDesc;
     desc.SetDeviceLostCallback(
             wgpu::CallbackMode::AllowSpontaneous,
-            [](const wgpu::Device&, wgpu::DeviceLostReason reason, const char* message) {
+            [](const wgpu::Device&, wgpu::DeviceLostReason reason, wgpu::StringView message) {
                 if (reason != wgpu::DeviceLostReason::Destroyed) {
-                    SK_ABORT("Device lost: %s\n", message);
+                    SK_ABORT("Device lost: %.*s\n", static_cast<int>(message.length), message.data);
                 }
             });
-    desc.SetUncapturedErrorCallback([](const wgpu::Device&, wgpu::ErrorType, const char* message) {
-        SkDebugf("Device error: %s\n", message);
+    desc.SetUncapturedErrorCallback([](const wgpu::Device&, wgpu::ErrorType,
+                                       wgpu::StringView message) {
+        SkDebugf("Device error: %.*s\n", static_cast<int>(message.length), message.data);
     });
 
     wgpu::Device device = wgpu::Device::Acquire(matchedAdaptor.CreateDevice(&desc));

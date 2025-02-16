@@ -73,11 +73,6 @@ void WebProcessProxy::platformInitialize()
     }
 
     throttler().setAllowsActivities(!m_processPool->processesShouldSuspend());
-
-#if ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
-    if (WTF::CocoaApplication::isIBooks())
-        protectedProcessPool()->registerAssetFonts(*this);
-#endif
 }
 
 void WebProcessProxy::platformDestroy()

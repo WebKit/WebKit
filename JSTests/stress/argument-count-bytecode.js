@@ -22,7 +22,7 @@ function assert(condition, message) {
         throw new Error(message);
 }
 
-for (i = 0; i < 1000000; i++) {
+for (i = 0; i < testLoopCount; i++) {
     assert(count(1,1,2) === 3, i);
     assert(count() === 0, i);
     assert(count(1) === 1, i);

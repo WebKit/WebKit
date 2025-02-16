@@ -1,3 +1,4 @@
+load("@skia_user_config//:copts.bzl", "DEFAULT_OBJC_COPTS")
 load("//bazel:skia_rules.bzl", "skia_objc_library", "split_srcs_and_hdrs")
 
 package(
@@ -21,6 +22,7 @@ METAL_FILES = [
     "MtlComputePipeline.mm",
     "MtlGraphicsPipeline.h",
     "MtlGraphicsPipeline.mm",
+    "MtlGraphiteTypesPriv.h",
     "MtlGraphiteTypes.mm",
     "MtlGraphiteUtils.mm",
     "MtlGraphiteUtilsPriv.h",
@@ -56,6 +58,7 @@ skia_objc_library(
         "//include/gpu/mtl:public_hdrs",
         "//include/ports:core_foundation_hdrs",
     ],
+    copts = DEFAULT_OBJC_COPTS + ["-fno-objc-arc"],
     defines = ["SK_METAL"],
     sdk_frameworks = [
         "Foundation",

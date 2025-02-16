@@ -1,0 +1,5 @@
+
+PASS Create a CustomElementRegistry not identically equal to window.customElements
+PASS Defining an element in the global registry does not add a definition to a scoped CustomElementRegistry
+PASS Defining an element in a scoped global registry does not add a definition to the global registry
+

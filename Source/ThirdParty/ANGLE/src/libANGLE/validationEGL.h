@@ -100,6 +100,13 @@ GetDefaultReturnValue<angle::EntryPoint::EGLLabelObjectKHR, EGLint>(Thread *thre
     return thread->getError();
 }
 
+template <>
+ANGLE_INLINE EGLint
+GetDefaultReturnValue<angle::EntryPoint::EGLDupNativeFenceFDANDROID, EGLint>(Thread *thread)
+{
+    return EGL_NO_NATIVE_FENCE_FD_ANDROID;
+}
+
 template <angle::EntryPoint EP, typename ReturnType>
 ANGLE_INLINE ReturnType GetDefaultReturnValue(Thread *thread)
 {

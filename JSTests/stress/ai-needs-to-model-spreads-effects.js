@@ -23,7 +23,7 @@ try {
        a[2] = 2.3023e-320
    }
 
-   for (var i = 0; i < 0x100000; i++) {
+   for (var i = 0; i < testLoopCount; i++) {
        go(ary_1, f64_1, p)
    }
 

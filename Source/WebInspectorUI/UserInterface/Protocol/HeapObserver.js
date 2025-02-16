@@ -35,8 +35,8 @@ WI.HeapObserver = class HeapObserver extends InspectorBackend.Dispatcher
     trackingStart(timestamp, snapshotStringData)
     {
         let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-        workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-            let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+        workerProxy.createSnapshot(this._target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+            let snapshot = WI.HeapSnapshotProxy.deserialize(this._target, objectId, serializedSnapshot);
             snapshot.snapshotStringData = snapshotStringData;
             WI.timelineManager.heapTrackingStarted(timestamp, snapshot);
         });
@@ -45,8 +45,8 @@ WI.HeapObserver = class HeapObserver extends InspectorBackend.Dispatcher
     trackingComplete(timestamp, snapshotStringData)
     {
         let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-        workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-            let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+        workerProxy.createSnapshot(this._target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+            let snapshot = WI.HeapSnapshotProxy.deserialize(this._target, objectId, serializedSnapshot);
             snapshot.snapshotStringData = snapshotStringData;
             WI.timelineManager.heapTrackingCompleted(timestamp, snapshot);
         });

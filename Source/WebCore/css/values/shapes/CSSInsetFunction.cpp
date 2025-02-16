@@ -31,15 +31,15 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Inset>::operator()(StringBuilder& builder, const Inset& value)
+void Serialize<Inset>::operator()(StringBuilder& builder, const SerializationContext& context, const Inset& value)
 {
     // <inset()> = inset( <length-percentage>{1,4} [ round <'border-radius'> ]? )
 
-    serializationForCSS(builder, value.insets);
+    serializationForCSS(builder, context, value.insets);
 
     if (!hasDefaultValue(value.radii)) {
         builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
-        serializationForCSS(builder, value.radii);
+        serializationForCSS(builder, context, value.radii);
     }
 }
 

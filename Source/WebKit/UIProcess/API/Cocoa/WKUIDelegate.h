@@ -254,7 +254,7 @@ WK_SWIFT_UI_ACTOR
 
  If you do not implement this method, the web view will display the default Lockdown Mode message.
  */
-- (void)webView:(WKWebView *)webView showLockdownModeFirstUseMessage:(NSString *)message completionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKDialogResult))completionHandler WK_API_AVAILABLE(ios(13.0));
+- (void)webView:(WKWebView *)webView showLockdownModeFirstUseMessage:(NSString *)message completionHandler:(WK_SWIFT_UI_ACTOR void (^)(WKDialogResult))completionHandler WK_API_AVAILABLE(ios(16.0));
 
 #endif // TARGET_OS_IOS || (defined(TARGET_OS_VISION) && TARGET_OS_VISION)
 

@@ -16,7 +16,7 @@ var af0 = afFactory0('ABC', 'DEF');
 
 noInline(af0);
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     let args = af0(i);
 
     testCase(args.length, 2, txtMsg + "#2");
@@ -25,7 +25,7 @@ for (var i=0; i<10000; i++) {
     testCase(typeof args[2], 'undefined', txtMsg + "#5");
 }
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     let args = af0.call(this, i);
 
     testCase(args.length, 2, txtMsg + "#2");
@@ -34,7 +34,7 @@ for (var i=0; i<10000; i++) {
     testCase(typeof args[2], 'undefined', txtMsg + "#5");
 }
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     var args = af0.apply(this, [i]);
 
     testCase(args.length, 2, txtMsg + "#2");
@@ -51,7 +51,7 @@ var innerUseStrict = function () {
     let af = createArrow('A', 'B', 'C');
     noInline(af);
 
-    for (var i=0; i<10000; i++) {
+    for (var i=0; i<testLoopCount; i++) {
         let args = af('D', 'E');
         testCase(args, 'ABCDE', txtMsg + "#6");
     }
@@ -65,7 +65,7 @@ var obj = function (value) {
 
 var arr_nesting = () => () => () => new obj('data');
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     testCase(arr_nesting()()().id, 'data');
 }
 
@@ -76,7 +76,7 @@ function foo() {
 
 var foo_arr = foo('A', 'B');
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(foo_arr('arguments[0]'), 'A', txtMsg + "#15");
     testCase(foo_arr('arguments[1]'), 'B', txtMsg + "#16");
 }
@@ -91,7 +91,7 @@ function boo() {
     }
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(boo('A' + i)('B' + i)('D' + i)('E' + i)('G' + i)[0], 'E' + i, txtMsg + "#17");
 }
 
@@ -121,13 +121,13 @@ function test() {
         b.addObj({ operand : (value) =>  value + value });
     }
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         runTest();
     }
 
     b.runAll();
 
-    testCase(b.result, 40000, txtMsg + "#18");
+    testCase(b.result, 4 * testLoopCount, txtMsg + "#18");
 }
 
 test();
@@ -146,7 +146,7 @@ function f_args () {
     return () => 'no-value';
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let v = f_args(testValue, 'anotherValue')()()();
     testCase(v, testValue);
 }
@@ -163,7 +163,7 @@ function f_args_eval () {
     return () => 'no-value';
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let v = f_args_eval(testValue, 'anotherValue')()()();
     testCase(v, testValue);
 }

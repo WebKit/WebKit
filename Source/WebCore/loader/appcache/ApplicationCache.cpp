@@ -171,7 +171,7 @@ void ApplicationCache::clearStorageID()
 void ApplicationCache::dump()
 {
     for (const auto& urlAndResource : m_resources) {
-        printf("%s ", urlAndResource.key.utf8().data());
+        SAFE_PRINTF("%s ", urlAndResource.key.utf8());
         ApplicationCacheResource::dumpType(urlAndResource.value->type());
     }
 }

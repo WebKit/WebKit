@@ -26,7 +26,7 @@ function foo(x, o) {
 noInline(foo);
 
 let x = 20.5;
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(foo(x, o) === 5.5);
 }
 flag = true;
@@ -52,7 +52,7 @@ function bar(x, o) {
 noInline(bar);
 
 flag = false;
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(bar(x, o) === false);
 }
 flag = true;

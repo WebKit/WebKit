@@ -160,7 +160,8 @@ static WebCore::IntPoint viewportLocationToWindowLocation(WebCore::IntPoint loca
 {
     IntRect windowRect;
 
-    IntPoint locationInView = locationInViewport + IntPoint(0, page.topContentInset());
+    auto obscuredContentInsets = page.obscuredContentInsets();
+    IntPoint locationInView = locationInViewport + IntPoint(obscuredContentInsets.left(), obscuredContentInsets.top());
     page.rootViewToWindow(IntRect(locationInView, IntSize()), windowRect);
     return windowRect.location();
 }

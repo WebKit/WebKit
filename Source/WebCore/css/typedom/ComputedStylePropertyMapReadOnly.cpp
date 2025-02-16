@@ -28,6 +28,7 @@
 
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyParser.h"
+#include "CSSSerializationContext.h"
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "Element.h"
@@ -56,7 +57,7 @@ RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::propertyValue(CSSPropertyID p
 String ComputedStylePropertyMapReadOnly::shorthandPropertySerialization(CSSPropertyID propertyID) const
 {
     auto value = propertyValue(propertyID);
-    return value ? value->cssText() : String();
+    return value ? value->cssText(CSS::defaultSerializationContext()) : String();
 }
 
 RefPtr<CSSValue> ComputedStylePropertyMapReadOnly::customPropertyValue(const AtomString& property) const

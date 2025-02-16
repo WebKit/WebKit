@@ -147,7 +147,7 @@ void CustomElementReactionQueue::tryToUpgradeElement(Element& element)
 {
     ASSERT(CustomElementReactionDisallowedScope::isReactionAllowed());
     ASSERT(element.isCustomElementUpgradeCandidate());
-    RefPtr registry = element.treeScope().customElementRegistry();
+    RefPtr registry = CustomElementRegistry::registryForElement(element);
     if (!registry)
         return;
 
@@ -271,7 +271,7 @@ void CustomElementReactionQueue::enqueuePostUpgradeReactions(Element& element)
     auto& queue = *element.reactionQueue();
 
     if (element.hasAttributes()) {
-        for (auto& attribute : element.attributesIterator()) {
+        for (auto& attribute : element.attributes()) {
             if (queue.m_interface->observesAttribute(attribute.localName()))
                 queue.m_items.append({ Item::Type::AttributeChanged, std::make_tuple(attribute.name(), nullAtom(), attribute.value()) });
         }

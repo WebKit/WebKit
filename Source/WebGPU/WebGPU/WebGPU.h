@@ -360,13 +360,20 @@ typedef enum WGPUFeatureName {
     WGPUFeatureName_Depth32FloatStencil8 = 0x00000002,
     WGPUFeatureName_TimestampQuery = 0x00000003,
     WGPUFeatureName_TextureCompressionBC = 0x00000004,
-    WGPUFeatureName_TextureCompressionETC2 = 0x00000005,
-    WGPUFeatureName_TextureCompressionASTC = 0x00000006,
-    WGPUFeatureName_IndirectFirstInstance = 0x00000007,
-    WGPUFeatureName_ShaderF16 = 0x00000008,
-    WGPUFeatureName_RG11B10UfloatRenderable = 0x00000009,
-    WGPUFeatureName_BGRA8UnormStorage = 0x0000000A,
-    WGPUFeatureName_Float32Filterable = 0x0000000B,
+    WGPUFeatureName_TextureCompressionBCSliced3D = 0x00000005,
+    WGPUFeatureName_TextureCompressionETC2 = 0x00000006,
+    WGPUFeatureName_TextureCompressionASTC = 0x00000007,
+    WGPUFeatureName_TextureCompressionASTCSliced3D = 0x00000008,
+    WGPUFeatureName_IndirectFirstInstance = 0x00000009,
+    WGPUFeatureName_ShaderF16 = 0x0000000A,
+    WGPUFeatureName_RG11B10UfloatRenderable = 0x0000000B,
+    WGPUFeatureName_BGRA8UnormStorage = 0x0000000C,
+    WGPUFeatureName_Float32Filterable = 0x0000000D,
+    WGPUFeatureName_Float32Blendable = 0x0000000E,
+    WGPUFeatureName_ClipDistances = 0x0000000F,
+    WGPUFeatureName_DualSourceBlending = 0x00000010,
+    WGPUFeatureName_Float16Renderable = 0x00000011,
+    WGPUFeatureName_Float32Renderable = 0x00000012,
     WGPUFeatureName_Force32 = 0x7FFFFFFF
 } WGPUFeatureName WGPU_ENUM_ATTRIBUTE;
 
@@ -889,6 +896,8 @@ typedef struct WGPULimits {
     uint32_t maxComputeWorkgroupSizeY;
     uint32_t maxComputeWorkgroupSizeZ;
     uint32_t maxComputeWorkgroupsPerDimension;
+    uint32_t maxStorageBuffersInFragmentStage;
+    uint32_t maxStorageTexturesInFragmentStage;
 } WGPULimits WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUMultisampleState {

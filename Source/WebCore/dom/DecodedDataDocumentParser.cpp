@@ -43,7 +43,7 @@ void DecodedDataDocumentParser::appendBytes(DocumentWriter& writer, std::span<co
     if (data.empty())
         return;
 
-    String decoded = writer.decoder().decode(data);
+    String decoded = writer.protectedDecoder()->decode(data);
     if (decoded.isEmpty())
         return;
 
@@ -53,7 +53,7 @@ void DecodedDataDocumentParser::appendBytes(DocumentWriter& writer, std::span<co
 
 void DecodedDataDocumentParser::flush(DocumentWriter& writer)
 {
-    String remainingData = writer.decoder().flush();
+    String remainingData = writer.protectedDecoder()->flush();
     if (remainingData.isEmpty())
         return;
 

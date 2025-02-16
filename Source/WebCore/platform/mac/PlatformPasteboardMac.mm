@@ -73,7 +73,7 @@ static bool canWriteAllPasteboardTypes(const Vector<String>& types)
     });
 }
 
-void PlatformPasteboard::performAsDataOwner(DataOwnerType, Function<void()>&& actions)
+void PlatformPasteboard::performAsDataOwner(DataOwnerType, NOESCAPE Function<void()>&& actions)
 {
     actions();
 }

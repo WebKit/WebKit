@@ -106,7 +106,7 @@ public:
     FloatRect coverageRect() const final { return { }; };
     bool tilesWouldChangeForCoverageRect(const FloatRect&) const final { return false; }
     void setTiledScrollingIndicatorPosition(const FloatPoint&) final { }
-    void setTopContentInset(float) final { }
+    void setObscuredContentInsets(const FloatBoxExtent&) final { }
     void setVelocity(const VelocityData&) final { }
     void setTileSizeUpdateDelayDisabledForTesting(bool) final { };
     void setScrollability(OptionSet<Scrollability>) final { }
@@ -527,7 +527,7 @@ void GraphicsLayerWC::noteLayerPropertyChanged(OptionSet<WCLayerChange> flags, S
         return;
     bool needsFlush = !m_uncommittedChanges;
     m_uncommittedChanges.add(flags);
-    if (m_isFlushing)
+    if (client().isFlushingLayers())
         return;
     if (needsFlush && scheduleFlush == ScheduleFlush)
         client().notifyFlushRequired(this);
@@ -739,7 +739,6 @@ GraphicsLayerWC::VisibleAndCoverageRects GraphicsLayerWC::computeVisibleAndCover
 void GraphicsLayerWC::recursiveCommitChanges(const TransformState& state)
 {
     TransformState localState = state;
-    SetForScope<bool> scopedIsFlushing(m_isFlushing, true);
 
     bool accumulateTransform = accumulatesTransform(*this);
     VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulateTransform);

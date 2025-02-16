@@ -72,6 +72,9 @@ public:
     Position positionAtLeftBoundaryOfBiDiRun() const;
     Position positionAtRightBoundaryOfBiDiRun() const;
 
+    bool atLeftmostOffsetInBox() const { return m_box && m_offset == m_box->leftmostCaretOffset(); }
+    bool atRightmostOffsetInBox() const { return m_box && m_offset == m_box->rightmostCaretOffset(); }
+
     IntRect absoluteRect(CaretRectMode = CaretRectMode::Normal) const;
 
     std::optional<BoundaryPoint> boundaryPoint() const;
@@ -82,8 +85,6 @@ private:
 
     InlineIterator::LeafBoxIterator previousLeafOnLine() const;
     InlineIterator::LeafBoxIterator nextLeafOnLine() const;
-    bool atLeftmostOffsetInBox() const { return m_box && m_offset == m_box->leftmostCaretOffset(); }
-    bool atRightmostOffsetInBox() const { return m_box && m_offset == m_box->rightmostCaretOffset(); }
     bool atLeftBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
     bool atRightBoundaryOfBidiRun(ShouldMatchBidiLevel, unsigned char bidiLevelOfRun) const;
 

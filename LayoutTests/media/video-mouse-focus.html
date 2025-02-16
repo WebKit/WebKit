@@ -18,13 +18,15 @@
                 eventSender.mouseDown();
                 eventSender.mouseUp();
 
-                testExpected("document.activeElement.id", "video", "!=");
+                testExpected("document.activeElement.id", "video");
+                testExpected("getComputedStyle(video).outlineStyle", "none");
+                testExpected("getComputedStyle(video).outlineWidth", "0px");
                 endTest();
             };
         </script>
     </head>
     <body onload="startTest();">
-        <p>This tests that a mouse click event will not cause a media element to gain focus.</p>
+        <p>This tests that a mouse click event will cause a media element to gain focus without displaying an outline.</p>
         <video id="video" controls></video>
     </body>
 </html>

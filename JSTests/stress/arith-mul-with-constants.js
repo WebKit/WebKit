@@ -232,7 +232,7 @@ function testArithMulWithTypeConfusedConstant() {
         return v2 * v3;
     }
 
-    for (let i = 13.37; i < 10000; i++) {
+    for (let i = 13.37; i < testLoopCount; i++) {
         let result = testMult(i);
         if ((result / 2 - i) > 0.1E-20)
             throw "testArithMulWithTypeConfusedConstant(i) = " + result + ", expected " + (i * 2);

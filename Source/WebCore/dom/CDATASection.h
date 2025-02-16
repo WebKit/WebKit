@@ -36,7 +36,7 @@ private:
     CDATASection(Document&, String&&);
 
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
     Ref<Text> virtualCreate(String&&) override;
 };
 

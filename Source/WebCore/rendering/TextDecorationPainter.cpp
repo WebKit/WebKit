@@ -99,7 +99,7 @@ static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& 
     FloatPoint controlPoint1(0, yAxis + wavyStrokeParameters.controlPointDistance);
     FloatPoint controlPoint2(0, yAxis - wavyStrokeParameters.controlPointDistance);
 
-    for (float x = x1; x + 2 * wavyStrokeParameters.step <= x2;) {
+    for (double x = x1; x + 2 * wavyStrokeParameters.step <= x2;) {
         controlPoint1.setX(x + wavyStrokeParameters.step);
         controlPoint2.setX(x + wavyStrokeParameters.step);
         x += 2 * wavyStrokeParameters.step;
@@ -109,58 +109,6 @@ static void strokeWavyTextDecoration(GraphicsContext& context, const FloatRect& 
     context.setShouldAntialias(true);
     context.setStrokeThickness(rect.height());
     context.strokePath(path);
-}
-
-static bool compareTuples(std::pair<float, float> l, std::pair<float, float> r)
-{
-    return l.first < r.first;
-}
-
-static DashArray translateIntersectionPointsToSkipInkBoundaries(const DashArray& intersections, float dilationAmount, float totalWidth)
-{
-    ASSERT(!(intersections.size() % 2));
-    
-    // Step 1: Make pairs so we can sort based on range starting-point. We dilate the ranges in this step as well.
-    Vector<std::pair<float, float>> tuples;
-    for (size_t i = 0; i < intersections.size(); i += 2)
-        tuples.append(std::pair { intersections[i] - dilationAmount, intersections[i + 1] + dilationAmount });
-    std::sort(tuples.begin(), tuples.end(), &compareTuples);
-
-    // Step 2: Deal with intersecting ranges.
-    Vector<std::pair<float, float>> intermediateTuples;
-    if (tuples.size() >= 2) {
-        intermediateTuples.append(tuples.first());
-        for (size_t i = 1; i < tuples.size(); ++i) {
-            auto [secondStart, secondEnd] = tuples[i];
-            float& firstEnd = intermediateTuples.last().second;
-            if (secondStart <= firstEnd && secondEnd <= firstEnd) {
-                // Ignore this range completely
-            } else if (secondStart <= firstEnd)
-                firstEnd = secondEnd;
-            else
-                intermediateTuples.append(std::pair { secondStart, secondEnd });
-        }
-    } else {
-        // XXX(274780): A plain assignment or move here makes Clang generate bad code in LTO builds.
-        intermediateTuples.swap(tuples);
-    }
-
-    // Step 3: Output the space between the ranges, but only if the space warrants an underline.
-    float previous = 0;
-    DashArray result;
-    for (const auto& tuple : intermediateTuples) {
-        if (tuple.first - previous > dilationAmount) {
-            result.append(previous);
-            result.append(tuple.first);
-        }
-        previous = tuple.second;
-    }
-    if (totalWidth - previous > dilationAmount) {
-        result.append(previous);
-        result.append(totalWidth);
-    }
-    
-    return result;
 }
 
 static StrokeStyle textDecorationStyleToStrokeStyle(TextDecorationStyle decorationStyle)
@@ -203,15 +151,6 @@ TextDecorationPainter::TextDecorationPainter(GraphicsContext& context, const Fon
 {
 }
 
-static inline FloatSize convertShadowOffset(const LengthPoint& offset, WritingMode writingMode)
-{
-    if (writingMode.isHorizontal())
-        return { offset.x.value(), offset.y.value() };
-    if (writingMode.isLineOverLeft()) // sideways-lr
-        return { -offset.y.value(), offset.x.value() };
-    return { offset.y.value(), -offset.x.value() };
-}
-
 // Paint text-shadow, underline, overline
 void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style, const TextRun& textRun, const BackgroundDecorationGeometry& decorationGeometry, OptionSet<TextDecorationLine> decorationType, const Styles& decorationStyle)
 {
@@ -228,13 +167,12 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
                 && !m_writingMode.isVerticalTypographic()) {
                 if (!m_context.paintingDisabled()) {
                     auto underlineBoundingBox = m_context.computeUnderlineBoundsForText(rect, m_isPrinting);
-                    auto intersections = m_font.dashesForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
+                    auto intersections = m_font.lineSegmentsForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
                     if (!intersections.isEmpty()) {
                         auto dilationAmount = std::min(underlineBoundingBox.height(), style.metricsOfPrimaryFont().height() / 5);
-                        auto boundaries = translateIntersectionPointsToSkipInkBoundaries(intersections, dilationAmount, rect.width());
-                        ASSERT(!(boundaries.size() % 2));
+                        auto boundaries = differenceWithDilation({ 0, rect.width() }, WTFMove(intersections), dilationAmount);
                         // We don't use underlineBoundingBox here because drawLinesForText() will run computeUnderlineBoundsForText() internally.
-                        m_context.drawLinesForText(rect.location(), rect.height(), boundaries, m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle);
+                        m_context.drawLinesForText(rect.location(), rect.height(), boundaries.span(), m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle);
                     } else
                     m_context.drawLineForText(rect, m_isPrinting, underlineStyle == TextDecorationStyle::Double, strokeStyle);
                 }

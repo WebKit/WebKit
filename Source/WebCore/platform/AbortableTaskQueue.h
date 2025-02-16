@@ -221,7 +221,7 @@ private:
         ASSERT(m_lock.isHeld());
         Ref<Task> task = Task::create(this, WTFMove(callback));
         m_channel.append(task.copyRef());
-        RunLoop::main().dispatch([task = WTFMove(task)]() { task->dispatch(); });
+        RunLoop::protectedMain()->dispatch([task = WTFMove(task)]() { task->dispatch(); });
     }
 
     void cancelAllTasks() WTF_REQUIRES_LOCK(m_lock)

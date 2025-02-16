@@ -26,7 +26,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(target({}), Object.prototype);
         shouldBe(target((function() {}).prototype), Object.prototype);
         shouldBe(target((class {}).prototype), Object.prototype);
@@ -43,7 +43,7 @@ function shouldThrow(func, errorMessage) {
     var F = function() {};
     var C = class {};
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(target(new F()), F.prototype);
         shouldBe(target(new C()), C.prototype);
     }
@@ -56,7 +56,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(target(Array.prototype), Object.prototype);
         shouldBe(target([]), Array.prototype);
         shouldBe(target(Array(3)), Array.prototype);
@@ -71,7 +71,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(target(Object.prototype), null);
         shouldBe(target(Object.create(null)), null);
         shouldBe(target(Object.setPrototypeOf({}, null)), null);
@@ -86,7 +86,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(target(function() {}), Function.prototype);
         shouldBe(target(class {}), Function.prototype);
         shouldBe(target(() => {}), Function.prototype);
@@ -106,7 +106,7 @@ function shouldThrow(func, errorMessage) {
     var weakSet = new WeakSet();
     var promise = Promise.resolve(1);
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(target(regExp), RegExp.prototype);
         shouldBe(target(date), Date.prototype);
         shouldBe(target(map), Map.prototype);
@@ -139,7 +139,7 @@ function shouldThrow(func, errorMessage) {
 
     var polyProtoObject = makePolyProtoObject();
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(target(polyProtoObject), polyProtoObject.constructor.prototype);
 }());
 
@@ -155,7 +155,7 @@ function shouldThrow(func, errorMessage) {
         getPrototypeOf: () => proxyPrototype,
     });
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(target(proxy), proxyPrototype);
 }());
 
@@ -166,7 +166,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldThrow(() => target(null), `TypeError: null is not an object (evaluating 'Object.getPrototypeOf(object)')`);
         shouldThrow(() => target(undefined), `TypeError: undefined is not an object (evaluating 'Object.getPrototypeOf(object)')`);
     }
@@ -179,7 +179,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(target("Cocoa"), String.prototype);
 }());
 
@@ -190,7 +190,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(target(42), Number.prototype);
 }());
 
@@ -201,7 +201,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(target(42.195), Number.prototype);
 }());
 
@@ -212,7 +212,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(target(true), Boolean.prototype);
 }());
 
@@ -223,7 +223,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(target(Symbol()), Symbol.prototype);
 }());
 
@@ -234,7 +234,7 @@ function shouldThrow(func, errorMessage) {
     }
     noInline(target);
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(target("Cocoa"), String.prototype);
         shouldBe(target(42), Number.prototype);
         shouldBe(target(42.195), Number.prototype);

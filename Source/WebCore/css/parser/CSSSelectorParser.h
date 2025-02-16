@@ -52,7 +52,8 @@ struct PseudoElementIdentifier;
 
 class CSSSelectorParser {
 public:
-    CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::NestedContext = { });
+    enum class DisallowPseudoElement : bool { No, Yes };
+    CSSSelectorParser(const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::NestedContext = { }, DisallowPseudoElement= DisallowPseudoElement::No);
 
     MutableCSSSelectorList consumeComplexSelectorList(CSSParserTokenRange&);
     MutableCSSSelectorList consumeNestedSelectorList(CSSParserTokenRange&);
@@ -117,6 +118,6 @@ private:
 
 std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange, const CSSSelectorParserContext&, StyleSheetContents* = nullptr, CSSParserEnum::NestedContext = { });
 
-MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange&, const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::NestedContext, CSSParserEnum::IsForgiving);
+MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange&, const CSSSelectorParserContext&, StyleSheetContents*, CSSParserEnum::NestedContext, CSSParserEnum::IsForgiving, CSSSelectorParser::DisallowPseudoElement);
 
 } // namespace WebCore

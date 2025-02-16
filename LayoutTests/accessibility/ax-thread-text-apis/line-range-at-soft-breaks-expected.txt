@@ -1,0 +1,10 @@
+This test verifies that all characters in each line are included in the line range when at soft line breaks.
+
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'WebKit is the web browser engine used by Safari, Mail, App Store, and many'
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'other apps on macOS, iOS, and Linux. Get started contributing code, or'
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'reporting bugs.'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+WebKit is the web browser engine used by Safari, Mail, App Store, and many other apps on macOS, iOS, and Linux. Get started contributing code, or reporting bugs.

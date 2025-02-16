@@ -223,7 +223,7 @@ static bool shouldLogFullImageTranslationResults()
 void requestVisualTranslation(CocoaImageAnalyzer *analyzer, NSURL *imageURL, const String& sourceLocale, const String& targetLocale, CGImageRef image, CompletionHandler<void(TextRecognitionResult&&)>&& completion)
 {
     auto startTime = MonotonicTime::now();
-    static TransactionID imageAnalysisRequestID;
+    static auto imageAnalysisRequestID = TransactionID::generateMonotonic();
     auto currentRequestID = imageAnalysisRequestID.increment();
     if (shouldLogFullImageTranslationResults())
         RELEASE_LOG(Translation, "[#%{public}s] Image translation started for %{private}@", currentRequestID.loggingString().utf8().data(), imageURL);

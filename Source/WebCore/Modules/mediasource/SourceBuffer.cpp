@@ -420,6 +420,9 @@ ExceptionOr<void> SourceBuffer::remove(const MediaTime& start, const MediaTime& 
 
 void SourceBuffer::rangeRemoval(const MediaTime& start, const MediaTime& end)
 {
+    if (isRemoved())
+        return;
+
     // 3.5.7 Range Removal
     // https://rawgit.com/w3c/media-source/7bbe4aa33c61ec025bc7acbd80354110f6a000f9/media-source.html#sourcebuffer-range-removal
     // 1. Let start equal the starting presentation timestamp for the removal range.
@@ -575,7 +578,7 @@ void SourceBuffer::seekToTime(const MediaTime& time)
 
 bool SourceBuffer::virtualHasPendingActivity() const
 {
-    return m_source;
+    return !!m_source;
 }
 
 bool SourceBuffer::isRemoved() const
@@ -704,7 +707,8 @@ void SourceBuffer::sourceBufferPrivateDidReceiveRenderingError(int64_t error)
 
     ERROR_LOG(LOGIDENTIFIER, error);
 
-    m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
+    if (!isRemoved())
+        m_source->streamEndedWithError(MediaSource::EndOfStreamError::Decode);
 }
 
 uint64_t SourceBuffer::maximumBufferSize() const
@@ -780,6 +784,9 @@ void SourceBuffer::setActive(bool active)
 Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidReceiveInitializationSegment(SourceBufferPrivateClient::InitializationSegment&& segment)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
+
+    if (isRemoved())
+        return MediaPromise::createAndReject(PlatformMediaError::NotReady);
 
     // 3.5.8 Initialization Segment Received (ctd)
     // https://rawgit.com/w3c/media-source/c3ad59c7a370d04430969ba73d18dc9bcde57a33/index.html#sourcebuffer-init-segment-received [Editor's Draft 09 January 2015]
@@ -1274,7 +1281,8 @@ void SourceBuffer::textTrackLanguageChanged(TextTrack& track)
 
 Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDurationChanged(const MediaTime& duration)
 {
-    m_source->setDurationInternal(duration);
+    if (!isRemoved())
+        m_source->setDurationInternal(duration);
     if (m_textTracks)
         m_textTracks->setDuration(duration);
     return MediaPromise::createAndResolve();
@@ -1287,7 +1295,8 @@ void SourceBuffer::sourceBufferPrivateHighestPresentationTimestampChanged(const 
 
 void SourceBuffer::sourceBufferPrivateDidDropSample()
 {
-    m_source->incrementDroppedFrameCount();
+    if (!isRemoved())
+        m_source->incrementDroppedFrameCount();
 }
 
 void SourceBuffer::reportExtraMemoryAllocated(uint64_t extraMemory)
@@ -1419,9 +1428,8 @@ void SourceBuffer::updateBuffered()
 
             queueTaskToDispatchEvent(*this, TaskSource::MediaElement, BufferedChangeEvent::create(WTFMove(addedTimeRanges), WTFMove(removedTimeRanges)));
         }
-        if (isRemoved())
-            return;
-        m_source->monitorSourceBuffers();
+        if (!isRemoved())
+            m_source->monitorSourceBuffers();
     });
 
     // 3.1 Attributes, buffered
@@ -1477,8 +1485,10 @@ void SourceBuffer::setBufferedDirty(bool flag)
 {
     if (m_bufferedDirty == flag)
         return;
+
     m_bufferedDirty = flag;
-    if (flag && m_source)
+
+    if (!isRemoved() && flag)
         m_source->sourceBufferBufferedChanged();
 }
 
@@ -1503,7 +1513,9 @@ void SourceBuffer::memoryPressure()
 {
     if (!isManaged())
         return;
-    m_private->memoryPressure(m_source->currentTime());
+
+    if (!isRemoved())
+        m_private->memoryPressure(m_source->currentTime());
 }
 
 #if !RELEASE_LOG_DISABLED
@@ -1546,6 +1558,9 @@ Ref<MediaPromise> SourceBuffer::sourceBufferPrivateDidAttach(SourceBufferPrivate
     ALWAYS_LOG(LOGIDENTIFIER);
 
     ASSERT(m_receivedFirstInitializationSegment);
+
+    if (isRemoved())
+        return MediaPromise::createAndReject(PlatformMediaError::NotReady);
 
     // 3.2 Add the appropriate track descriptions from this initialization segment to each of the track buffers.
     ASSERT(segment.audioTracks.size() == audioTracks().length());

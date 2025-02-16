@@ -42,7 +42,7 @@ class alignas(alignof(EncodedJSValue)) MarkedVectorBase {
 protected:
     enum class Status { Success, Overflowed };
 public:
-    typedef HashSet<MarkedVectorBase*> ListSet;
+    typedef UncheckedKeyHashSet<MarkedVectorBase*> ListSet;
 
     ~MarkedVectorBase()
     {

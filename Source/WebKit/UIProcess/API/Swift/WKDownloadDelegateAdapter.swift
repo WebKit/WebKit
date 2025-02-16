@@ -30,14 +30,14 @@ private struct DefaultDownloadCoordinator: DownloadCoordinator {
 
 @MainActor
 final class WKDownloadDelegateAdapter: NSObject, WKDownloadDelegate {
-    init(downloadProgressContinuation: AsyncStream<WebPage_v0.DownloadEvent>.Continuation, downloadCoordinator: (any DownloadCoordinator)?) {
+    init(downloadProgressContinuation: AsyncStream<WebPage.DownloadEvent>.Continuation, downloadCoordinator: (any DownloadCoordinator)?) {
         self.downloadProgressContinuation = downloadProgressContinuation
         self.downloadCoordinator = downloadCoordinator ?? DefaultDownloadCoordinator()
     }
 
-    weak var owner: WebPage_v0? = nil
+    weak var owner: WebPage? = nil
 
-    private let downloadProgressContinuation: AsyncStream<WebPage_v0.DownloadEvent>.Continuation
+    private let downloadProgressContinuation: AsyncStream<WebPage.DownloadEvent>.Continuation
     private let downloadCoordinator: any DownloadCoordinator
 
     // MARK: Progress reporting

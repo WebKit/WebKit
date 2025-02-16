@@ -30,8 +30,8 @@
 #include "CSSFunctionValue.h"
 #include "CSSMarkup.h"
 #include "CSSParserIdioms.h"
+#include "CSSSerializationContext.h"
 #include "CSSTokenizer.h"
-#include "ColorSerialization.h"
 #include "ComputedStyleExtractor.h"
 #include "RenderStyle.h"
 #include <wtf/NeverDestroyed.h>
@@ -69,23 +69,23 @@ bool CSSCustomPropertyValue::equals(const CSSCustomPropertyValue& other) const
     });
 }
 
-String CSSCustomPropertyValue::customCSSText() const
+String CSSCustomPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    auto serializeSyntaxValue = [](const SyntaxValue& syntaxValue) -> String {
+    auto serializeSyntaxValue = [&](const SyntaxValue& syntaxValue) -> String {
         return WTF::switchOn(syntaxValue, [&](const Length& value) {
             if (value.type() == LengthType::Calculated) {
                 // FIXME: Implement serialization for CalculationValue directly.
                 auto calcValue = CSSCalcValue::create(value.calculationValue(), RenderStyle::defaultStyle());
-                return calcValue->cssText();
+                return calcValue->cssText(context);
             }
-            return CSSPrimitiveValue::create(value, RenderStyle::defaultStyle())->cssText();
+            return CSSPrimitiveValue::create(value, RenderStyle::defaultStyle())->cssText(context);
         }, [&](const NumericSyntaxValue& value) {
-            return CSSPrimitiveValue::create(value.value, value.unitType)->cssText();
+            return CSSPrimitiveValue::create(value.value, value.unitType)->cssText(context);
         }, [&](const Style::Color& value) {
-            return serializationForCSS(value);
+            return serializationForCSS(context, value);
         }, [&](const RefPtr<StyleImage>& value) {
             // FIXME: This is not right for gradients that use `currentcolor`. There should be a way preserve it.
-            return value->computedStyleValue(RenderStyle::defaultStyle())->cssText();
+            return value->computedStyleValue(RenderStyle::defaultStyle())->cssText(context);
         }, [&](const URL& value) {
             return serializeURL(value.string());
         }, [&](const String& value) {
@@ -94,13 +94,13 @@ String CSSCustomPropertyValue::customCSSText() const
             auto cssValue = transformOperationAsCSSValue(value.transform, RenderStyle::defaultStyle());
             if (!cssValue)
                 return emptyString();
-            return cssValue->cssText();
+            return cssValue->cssText(context);
         });
     };
 
     auto serialize = [&] {
         return WTF::switchOn(m_value, [&](const Ref<CSSVariableReferenceValue>& value) {
-            return value->cssText();
+            return value->cssText(context);
         }, [&](const CSSValueID& value) {
             return nameString(value).string();
         }, [&](const Ref<CSSVariableData>& value) {
@@ -139,7 +139,7 @@ const Vector<CSSParserToken>& CSSCustomPropertyValue::tokens() const
         return value->tokens();
     }, [&](auto&) -> const Vector<CSSParserToken>& {
         if (!m_cachedTokens) {
-            CSSTokenizer tokenizer { customCSSText() };
+            CSSTokenizer tokenizer { customCSSText(CSS::defaultSerializationContext()) };
             m_cachedTokens = CSSVariableData::create(tokenizer.tokenRange());
         }
         return m_cachedTokens->tokens();

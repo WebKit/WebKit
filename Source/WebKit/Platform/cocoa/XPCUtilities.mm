@@ -65,8 +65,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 void handleXPCExitMessage(xpc_object_t event)
 {
     if (xpc_get_type(event) == XPC_TYPE_DICTIONARY) {
-        auto* messageName = xpc_dictionary_get_string(event, messageNameKey);
-        if (exitProcessMessage == messageName) {
+        String messageName = xpc_dictionary_get_wtfstring(event, messageNameKey);
+        if (messageName == exitProcessMessage) {
             RELEASE_LOG_ERROR(IPC, "Received exit message, exiting now.");
             terminateProcess(EXIT_FAILURE);
         }

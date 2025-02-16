@@ -1,7 +1,7 @@
 This directory contains a copy of Skia from the official repository.
 
   - URL: https://skia.googlesource.com/skia
-  - Commit: 2cf673f5ebbb1c2a3688a73fa66c1d0110a7bd38
+  - Commit: 108cb2280ec2ce380d0b9421656fe413f1c08e81
 
 The simplest way of updating its contents is to re-create the directory
 from scratch, and restoring the needed files with Git. Example commands:
@@ -10,8 +10,7 @@ from scratch, and restoring the needed files with Git. Example commands:
   cp -ar ../path/to/skia Source/ThirdParty/
   git checkout -- \
       Source/ThirdParty/skia/README.WebKit \
-      Source/ThirdParty/skia/CMakeLists.txt \
-      Source/ThirdParty/skia/ext-skia-configure \
+      Source/ThirdParty/skia/CMakeLists.txt
   rm -rf Source/ThirdParty/skia/.git/
   git add -A Source/ThirdParty/skia/
 

@@ -44,9 +44,8 @@ String Comment::nodeName() const
     return "#comment"_s;
 }
 
-Ref<Node> Comment::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
+Ref<Node> Comment::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
 {
-    Ref document = treeScope.documentScope();
     return create(document, String { data() });
 }
 

@@ -32,6 +32,7 @@
 
 #include "CSSParser.h"
 #include "CSSPropertyParser.h"
+#include "CSSSerializationContext.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -90,7 +91,7 @@ String CSSStyleValue::toString() const
 void CSSStyleValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
     if (m_propertyValue)
-        builder.append(m_propertyValue->cssText());
+        builder.append(m_propertyValue->cssText(CSS::defaultSerializationContext()));
 }
 
 } // namespace WebCore

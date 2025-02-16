@@ -162,7 +162,7 @@ private:
     UncheckedKeyHashMap<JSCell*, RootData> m_rootData;
     UncheckedKeyHashMap<JSCell*, void*> m_wrappedObjectPointers;
     UncheckedKeyHashMap<JSCell*, String> m_cellLabels;
-    HashSet<JSCell*> m_appendedCells;
+    UncheckedKeyHashSet<JSCell*> m_appendedCells;
     SnapshotType m_snapshotType;
 };
 

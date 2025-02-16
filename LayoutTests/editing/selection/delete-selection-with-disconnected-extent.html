@@ -4,6 +4,7 @@ function runTest() {
     if (window.testRunner)
         testRunner.dumpAsText();
 
+    document.querySelector('input').focus();
     document.querySelector('input').setRangeText('aa', 0, 1, 'end');
     getSelection().extend(document.createElement('select'));
     document.execCommand('delete', false);

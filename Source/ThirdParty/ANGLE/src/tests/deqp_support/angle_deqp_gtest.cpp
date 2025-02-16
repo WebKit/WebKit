@@ -141,6 +141,9 @@ const char *gTestExpectationsFiles[] = {
 using APIInfo = std::pair<const char *, GPUTestConfig::API>;
 
 constexpr APIInfo kEGLDisplayAPIs[] = {
+#if defined(ANGLE_PLATFORM_ANDROID)
+    {"native-gles", GPUTestConfig::kAPIGLES},
+#endif
     {"angle-d3d9", GPUTestConfig::kAPID3D9},
     {"angle-d3d11", GPUTestConfig::kAPID3D11},
     {"angle-d3d11-ref", GPUTestConfig::kAPID3D11},
@@ -152,7 +155,8 @@ constexpr APIInfo kEGLDisplayAPIs[] = {
     {"angle-vulkan", GPUTestConfig::kAPIVulkan},
     {"angle-webgpu", GPUTestConfig::kAPIWgpu},
     {"win32", GPUTestConfig::kAPIUnknown},
-    {"x11", GPUTestConfig::kAPIUnknown},
+    {"x11", GPUTestConfig::kAPIUnknown}
+
 };
 
 constexpr char kdEQPEGLString[]             = "--deqp-egl-display-type=";
@@ -199,10 +203,13 @@ constexpr bool kEnableRenderDocCapture = true;
 constexpr bool kEnableRenderDocCapture = false;
 #endif
 
+constexpr dEQPDriverOption kDeqpDriverOption = dEQPDriverOption::ANGLE;
+
 const APIInfo *gInitAPI = nullptr;
 dEQPOptions gOptions    = {
     kDefaultPreRotation,      // preRotation
     kEnableRenderDocCapture,  // enableRenderDocCapture
+    kDeqpDriverOption,        // useANGLE
 };
 
 std::vector<const char *> gdEQPForwardFlags;
@@ -782,12 +789,12 @@ void HandleDisplayType(const char *displayTypeString)
         argStream2 << "angle-" << displayTypeString;
         std::string arg2 = argStream2.str();
         gInitAPI         = FindAPIInfo(arg2);
+    }
 
-        if (!gInitAPI)
-        {
-            std::cout << "Unknown API: " << displayTypeString << std::endl;
-            exit(1);
-        }
+    if (!gInitAPI)
+    {
+        std::cout << "Unknown API: " << displayTypeString << std::endl;
+        exit(1);
     }
 }
 
@@ -953,6 +960,14 @@ int RunGLCTSTests(int *argc, char **argv)
     if (gInitAPI)
     {
         api = gInitAPI->second;
+        // On Android, if --deqp-egl-display-type=native-gles, set driverOption to NATIVE
+        // We will load egl libs from native gles driver instead of ANGLE.
+#if defined(ANGLE_PLATFORM_ANDROID)
+        if (strcmp(gInitAPI->first, "native-gles") == 0)
+        {
+            gOptions.driverOption = dEQPDriverOption::NATIVE;
+        }
+#endif
     }
     if (gOptions.preRotation != 0 && api != GPUTestConfig::kAPIVulkan &&
         api != GPUTestConfig::kAPISwiftShader)

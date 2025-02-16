@@ -33,7 +33,9 @@ PAS_BEGIN_EXTERN_C;
 struct pas_cartesian_tree_node;
 typedef struct pas_cartesian_tree_node pas_cartesian_tree_node;
 
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 PAS_DEFINE_COMPACT_PTR(pas_cartesian_tree_node, pas_compact_cartesian_tree_node_ptr);
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 PAS_END_EXTERN_C;
 

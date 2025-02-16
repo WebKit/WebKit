@@ -68,4 +68,4 @@ template<> struct Blending<Circle> {
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(Circle, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Circle, 2)

@@ -22,7 +22,12 @@
 
 #if ENABLE(XSLT)
 
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+IGNORE_WARNINGS_BEGIN("undef")
 #include <libxml/tree.h>
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>

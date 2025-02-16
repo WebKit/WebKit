@@ -153,19 +153,19 @@ namespace WebCore {
     String contextMenuItemTagCopyVideoLinkToClipboard();
     String contextMenuItemTagCopyAudioLinkToClipboard();
     String contextMenuItemTagToggleMediaControls();
-    String contextMenuItemTagShowMediaControls();
+    WEBCORE_EXPORT String contextMenuItemTagShowMediaControls();
     String contextMenuItemTagHideMediaControls();
     String contextMenuItemTagToggleMediaLoop();
     String contextMenuItemTagEnterVideoFullscreen();
-    String contextMenuItemTagExitVideoFullscreen();
+    WEBCORE_EXPORT String contextMenuItemTagExitVideoFullscreen();
 #if PLATFORM(MAC) && ENABLE(VIDEO_PRESENTATION_MODE)
     String contextMenuItemTagEnterVideoEnhancedFullscreen();
-    String contextMenuItemTagExitVideoEnhancedFullscreen();
+    WEBCORE_EXPORT String contextMenuItemTagExitVideoEnhancedFullscreen();
     String contextMenuItemTagEnterVideoViewer();
-    String contextMenuItemTagExitVideoViewer();
+    WEBCORE_EXPORT String contextMenuItemTagExitVideoViewer();
 #endif
     String contextMenuItemTagMediaPlay();
-    String contextMenuItemTagMediaPause();
+    WEBCORE_EXPORT String contextMenuItemTagMediaPause();
     String contextMenuItemTagMediaMute();
 #if ENABLE(ACCESSIBILITY_ANIMATION_CONTROL)
     String contextMenuItemTagPlayAllAnimations();
@@ -371,11 +371,6 @@ namespace WebCore {
 #endif // PLATFORM(COCOA)
     String contextMenuItemTagShowMediaStats();
 #endif // ENABLE(VIDEO)
-
-    String snapshottedPlugInLabelTitle();
-    String snapshottedPlugInLabelSubtitle();
-
-    WEBCORE_EXPORT String useBlockedPlugInContextMenuTitle();
 
 #if PLATFORM(COCOA)
     String webCryptoMasterKeyKeychainLabel(const String& localizedApplicationName);

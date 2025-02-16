@@ -29,7 +29,6 @@
 #if ENABLE(PDF_PLUGIN)
 
 #import "PDFAnnotationTypeHelpers.h"
-#import "PDFPlugin.h"
 #import "PDFPluginBase.h"
 #import "PDFPluginChoiceAnnotation.h"
 #import "PDFPluginTextAnnotation.h"

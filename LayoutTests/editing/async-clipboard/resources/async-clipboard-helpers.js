@@ -45,6 +45,7 @@ function writeToClipboardUsingDataTransfer(data) {
     const input = document.createElement("input");
     document.body.appendChild(input);
     input.value = "a";
+    input.focus();
     input.setSelectionRange(0, 1);
     input.addEventListener("copy", event => {
         for (const type of Object.keys(data))

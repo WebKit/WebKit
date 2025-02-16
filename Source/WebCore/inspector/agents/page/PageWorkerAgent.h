@@ -26,20 +26,25 @@
 #pragma once
 
 #include "InspectorWorkerAgent.h"
+#include <wtf/FastMalloc.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class Page;
 
 class PageWorkerAgent final : public InspectorWorkerAgent {
+    WTF_MAKE_TZONE_ALLOCATED(PageWorkerAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PageWorkerAgent);
 public:
-    PageWorkerAgent(PageAgentContext&);
+    explicit PageWorkerAgent(PageAgentContext&);
+
     ~PageWorkerAgent();
 
 private:
     void connectToAllWorkerInspectorProxies() override;
 
-    Page& m_page;
+    WeakRef<Page> m_page;
 };
 
 } // namespace WebCore

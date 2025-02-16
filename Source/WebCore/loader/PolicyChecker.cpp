@@ -46,11 +46,13 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTMLPlugInElement.h"
 #include "HitTestResult.h"
+#include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
 #include "Logging.h"
 #include "Navigation.h"
+#include "PlatformStrategies.h"
 #include "ThreadableBlobRegistry.h"
 #include "URLKeepingBlobAlive.h"
 #include <wtf/CompletionHandler.h>
@@ -253,7 +255,7 @@ void PolicyChecker::checkNavigationPolicy(ResourceRequest&& request, const Resou
             return;
         case PolicyAction::Use:
             if (!requestIsJavaScriptURL && !frameLoader->client().canHandleRequest(request)) {
-                handleUnimplementablePolicy(frameLoader->client().cannotShowURLError(request));
+                handleUnimplementablePolicy(platformStrategies()->loaderStrategy()->cannotShowURLError(request));
                 POLICYCHECKER_RELEASE_LOG("checkNavigationPolicy: ignoring because frame loader client can't handle the request");
                 return function({ }, { }, NavigationPolicyDecision::IgnoreLoad);
             }
@@ -359,7 +361,7 @@ void PolicyChecker::stopCheck()
 
 void PolicyChecker::cannotShowMIMEType(const ResourceResponse& response)
 {
-    handleUnimplementablePolicy(protectedFrame()->protectedLoader()->client().cannotShowMIMETypeError(response));
+    handleUnimplementablePolicy(platformStrategies()->loaderStrategy()->cannotShowMIMETypeError(response));
 }
 
 void PolicyChecker::handleUnimplementablePolicy(const ResourceError& error)

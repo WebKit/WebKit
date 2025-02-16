@@ -109,7 +109,7 @@ public:
     // Used to avoid excessive brace scoping when only small parts of the code need to be run unlocked.
     // Please be mindful that accessing the wrapped data from the callback is unsafe and will fail on assertions.
     // It's helpful to use a minimal lambda capture to be conscious of what data you're having access to in these sections.
-    void runUnlocked(const Function<void()>& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+    void runUnlocked(NOESCAPE const Function<void()>& callback) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
         unlock();
         callback();

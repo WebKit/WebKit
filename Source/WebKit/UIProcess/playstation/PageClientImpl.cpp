@@ -181,6 +181,11 @@ WebCore::IntPoint PageClientImpl::screenToRootView(const WebCore::IntPoint& poin
     return point;
 }
 
+WebCore::IntPoint PageClientImpl::rootViewToScreen(const WebCore::IntPoint& point)
+{
+    return point;
+}
+
 WebCore::IntRect PageClientImpl::rootViewToScreen(const WebCore::IntRect& rect)
 {
     return rect;
@@ -242,6 +247,10 @@ WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
     return *(WebFullScreenManagerProxyClient*)this;
 }
 
+void PageClientImpl::setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&&)
+{
+}
+
 void PageClientImpl::closeFullScreenManager()
 {
     m_view.closeFullScreenManager();
@@ -252,9 +261,9 @@ bool PageClientImpl::isFullScreen()
     return m_view.isFullScreen();
 }
 
-void PageClientImpl::enterFullScreen()
+void PageClientImpl::enterFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_view.enterFullScreen();
+    m_view.enterFullScreen(WTFMove(completionHandler));
 }
 
 void PageClientImpl::exitFullScreen()

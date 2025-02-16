@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FileSystemStorageHandle.h"
+#include "FileSystemStorageManagerLock.h"
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
@@ -50,8 +51,10 @@ public:
     void closeHandle(FileSystemStorageHandle&);
     void connectionClosed(IPC::Connection::UniqueID);
     Expected<WebCore::FileSystemHandleIdentifier, FileSystemStorageError> getDirectory(IPC::Connection::UniqueID);
-    bool acquireLockForFile(const String& path, WebCore::FileSystemHandleIdentifier);
-    bool releaseLockForFile(const String& path, WebCore::FileSystemHandleIdentifier);
+
+    enum class LockType : bool { Exclusive, Shared };
+    bool acquireLockForFile(const String& path, LockType);
+    bool releaseLockForFile(const String& path);
     void requestSpace(uint64_t spaceRequested, CompletionHandler<void(bool)>&&);
 
 private:
@@ -59,12 +62,14 @@ private:
 
     void close();
 
+    using Lock = FileSystemStorageManagerLock;
+
     String m_path;
     WeakPtr<FileSystemStorageHandleRegistry> m_registry;
     QuotaCheckFunction m_quotaCheckFunction;
     HashMap<IPC::Connection::UniqueID, HashSet<WebCore::FileSystemHandleIdentifier>> m_handlesByConnection;
     HashMap<WebCore::FileSystemHandleIdentifier, RefPtr<FileSystemStorageHandle>> m_handles;
-    HashMap<String, WebCore::FileSystemHandleIdentifier> m_lockMap;
+    HashMap<String, Lock> m_lockMap;
 };
 
 } // namespace WebKit

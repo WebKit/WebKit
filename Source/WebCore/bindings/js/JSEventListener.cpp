@@ -63,7 +63,7 @@ JSEventListener::JSEventListener(JSObject* function, JSObject* wrapper, bool isA
         m_isInitialized = true;
     }
     if (&isolatedWorld.vm() != commonVMOrNull())
-        static_cast<JSVMClientData*>(isolatedWorld.vm().clientData)->addClient(*this);
+        downcast<JSVMClientData>(isolatedWorld.vm().clientData)->addClient(*this);
 }
 
 JSEventListener::~JSEventListener() = default;

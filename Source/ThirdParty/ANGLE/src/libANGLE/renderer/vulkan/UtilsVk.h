@@ -580,7 +580,7 @@ class UtilsVk : angle::NonCopyable
     struct ComputeShaderProgramAndPipelines
     {
         vk::ShaderProgramHelper program;
-        vk::ComputePipelineCache pipelines;
+        ComputePipelineCache pipelines;
     };
 
     // Common functions that create the pipeline for the specified function, binds it and prepares

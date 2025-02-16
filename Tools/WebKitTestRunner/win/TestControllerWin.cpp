@@ -37,6 +37,7 @@
 #include <windows.h>
 #include <wtf/RunLoop.h>
 #include <wtf/WTFProcess.h>
+#include <wtf/win/WTFCRTDebug.h>
 
 
 #define INJECTED_BUNDLE_DLL_NAME "TestRunnerInjectedBundle.dll"
@@ -105,6 +106,8 @@ void TestController::platformInitialize(const Options&)
     // testing/debugging, as it causes the post-mortem debugger not to be invoked. We reset the
     // error mode here to work around Cygwin's behavior. See <http://webkit.org/b/55222>.
     ::SetErrorMode(0);
+
+    WTF::disableCRTDebugAssertDialog();
 
     _setmode(1, _O_BINARY);
     _setmode(2, _O_BINARY);

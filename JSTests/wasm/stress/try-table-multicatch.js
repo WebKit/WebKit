@@ -43,7 +43,7 @@ var instance = new WebAssembly.Instance(wasm_module);
 
 const { simple_throw_catch } = instance.exports
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     assert.eq(simple_throw_catch(1, 1), 1)
     assert.eq(simple_throw_catch(1, 0), 2)
     assert.eq(simple_throw_catch(0, 1), 3)

@@ -102,6 +102,7 @@ private:
     const Ref<Device> m_device;
     MTLSize m_threadsPerThreadgroup;
     Vector<uint32_t> m_computeDynamicOffsets;
+    Vector<uint32_t> m_priorComputeDynamicOffsets;
     RefPtr<const ComputePipeline> m_pipeline;
     Ref<CommandEncoder> m_parentEncoder;
     HashMap<uint32_t, Vector<uint32_t>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_bindGroupDynamicOffsets;

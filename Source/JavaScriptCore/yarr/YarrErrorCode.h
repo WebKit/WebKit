@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +38,13 @@ namespace Yarr {
 
 enum class ErrorCode : uint8_t {
     NoError = 0,
+
+    // A hard error means that no matter what string the RegExp is evaluated on, it will
+    // always fail. A SyntaxError is a hard error because the RegExp will never succeed no
+    // matter what string it is run on. An OOME is not a hard error because the RegExp may
+    // succeed when run on a different string.
+
+    // The following are hard errors.
     PatternTooLarge,
     QuantifierOutOfOrder,
     QuantifierWithoutAtom,
@@ -62,12 +70,14 @@ enum class ErrorCode : uint8_t {
     InvalidOctalEscape,
     InvalidControlLetterEscape,
     InvalidUnicodePropertyExpression,
-    TooManyDisjunctions,
     OffsetTooLarge,
     InvalidRegularExpressionFlags,
     InvalidClassSetOperation,
     NegatedClassSetMayContainStrings,
     InvalidClassSetCharacter,
+
+    // The following are NOT hard errors.
+    TooManyDisjunctions, // we ran out stack compiling.
 };
 
 JS_EXPORT_PRIVATE ASCIILiteral errorMessage(ErrorCode);
@@ -78,9 +88,8 @@ inline bool hasError(ErrorCode errorCode)
 
 inline bool hasHardError(ErrorCode errorCode)
 {
-    // TooManyDisjunctions means that we ran out stack compiling.
-    // All other errors are due to problems in the expression.
-    return hasError(errorCode) && errorCode != ErrorCode::TooManyDisjunctions;
+    // See comment in the enum class ErrorCode above for the definition of hard errors.
+    return hasError(errorCode) && errorCode < ErrorCode::TooManyDisjunctions;
 }
 JS_EXPORT_PRIVATE JSObject* errorToThrow(JSGlobalObject*, ErrorCode);
 

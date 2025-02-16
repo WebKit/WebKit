@@ -37,15 +37,8 @@ namespace JSC {
 
 const ClassInfo JSWebAssemblyTable::s_info = { "WebAssembly.Table"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWebAssemblyTable) };
 
-JSWebAssemblyTable* JSWebAssemblyTable::tryCreate(JSGlobalObject* globalObject, VM& vm, Structure* structure, Ref<Wasm::Table>&& table)
+JSWebAssemblyTable* JSWebAssemblyTable::create(VM& vm, Structure* structure, Ref<Wasm::Table>&& table)
 {
-    auto throwScope = DECLARE_THROW_SCOPE(vm);
-
-    if (!globalObject->webAssemblyEnabled()) {
-        throwException(globalObject, throwScope, createEvalError(globalObject, globalObject->webAssemblyDisabledErrorMessage()));
-        return nullptr;
-    }
-
     auto* instance = new (NotNull, allocateCell<JSWebAssemblyTable>(vm)) JSWebAssemblyTable(vm, structure, WTFMove(table));
     instance->table()->setOwner(instance);
     instance->finishCreation(vm);
@@ -85,14 +78,31 @@ std::optional<uint32_t> JSWebAssemblyTable::grow(JSGlobalObject* globalObject, u
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    uint64_t wasmValue = toWebAssemblyValue(globalObject, m_table->wasmType(), defaultValue);
-    RETURN_IF_EXCEPTION(scope, false);
+    uint64_t wasmValue = 0;
+    if (UNLIKELY(isExnref(m_table->wasmType()))) {
+        if (!defaultValue.isNull()) {
+            throwTypeError(globalObject, scope, "Table.grow cannot handle exnref table"_s);
+            return { };
+        }
+        wasmValue = JSValue::encode(defaultValue);
+    } else {
+        wasmValue = toWebAssemblyValue(globalObject, m_table->wasmType(), defaultValue);
+        RETURN_IF_EXCEPTION(scope, false);
+    }
 
     return m_table->grow(delta, JSValue::decode(wasmValue));
 }
 
-JSValue JSWebAssemblyTable::get(uint32_t index)
+JSValue JSWebAssemblyTable::get(JSGlobalObject* globalObject, uint32_t index)
 {
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(isExnref(m_table->wasmType()))) {
+        throwTypeError(globalObject, scope, "Table.get cannot handle exnref table"_s);
+        return { };
+    }
+
     return m_table->get(index);
 }
 
@@ -100,6 +110,11 @@ void JSWebAssemblyTable::set(JSGlobalObject* globalObject, uint32_t index, JSVal
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (UNLIKELY(isExnref(m_table->wasmType()))) {
+        throwTypeError(globalObject, scope, "Table.set cannot handle exnref table"_s);
+        return;
+    }
 
     uint64_t wasmValue = toWebAssemblyValue(globalObject, m_table->wasmType(), value);
     RETURN_IF_EXCEPTION(scope, void());

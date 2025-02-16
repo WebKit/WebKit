@@ -27,8 +27,6 @@
 #include "config.h"
 #include "DateTimeFieldElement.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "CSSPropertyNames.h"
 #include "DateComponents.h"
 #include "EventNames.h"
@@ -209,5 +207,3 @@ bool DateTimeFieldElement::supportsFocus() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

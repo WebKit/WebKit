@@ -111,7 +111,7 @@ void NfcService::platformStartDiscovery()
             return;
         }
 
-        RunLoop::main().dispatch([weakThis = WTFMove(weakThis), this, session = retainPtr(session)] () mutable {
+        RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), this, session = retainPtr(session)] () mutable {
             if (!weakThis) {
                 [session endSession];
                 return;

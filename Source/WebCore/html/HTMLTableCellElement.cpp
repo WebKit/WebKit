@@ -59,8 +59,14 @@ unsigned HTMLTableCellElement::colSpan() const
 
 unsigned HTMLTableCellElement::rowSpan() const
 {
-    // FIXME: a rowSpan equal to 0 should be allowed, and mean that the cell is to span all the remaining rows in the row group.
-    return std::max(1u, rowSpanForBindings());
+    unsigned rowSpanValue = rowSpanForBindings();
+    // when rowspan=0, the HTML spec says it should apply to the full remaining rows.
+    // In https://html.spec.whatwg.org/multipage/tables.html#attr-tdth-rowspan
+    // > For this attribute, the value zero means that the cell is
+    // > to span all the remaining rows in the row group.
+    if (!rowSpanValue)
+        return maxRowspan;
+    return std::max(1u, rowSpanValue);
 }
 
 unsigned HTMLTableCellElement::rowSpanForBindings() const

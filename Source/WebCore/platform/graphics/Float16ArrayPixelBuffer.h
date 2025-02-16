@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
 
 #include "PixelBuffer.h"
 #include <JavaScriptCore/Float16Array.h>
@@ -59,4 +59,4 @@ SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::Float16ArrayPixelBuffer)
     static bool isType(const WebCore::PixelBuffer& pixelBuffer) { return pixelBuffer.type() == WebCore::PixelBuffer::Type::Float16Array; }
 SPECIALIZE_TYPE_TRAITS_END()
 
-#endif // HAVE(HDR_SUPPORT)
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)

@@ -38,9 +38,9 @@
 
 namespace WebCore {
 
-String CSSBasicShapeValue::customCSSText() const
+String CSSBasicShapeValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(m_shape);
+    return CSS::serializationForCSS(context, m_shape);
 }
 
 bool CSSBasicShapeValue::equals(const CSSBasicShapeValue& other) const
@@ -48,7 +48,7 @@ bool CSSBasicShapeValue::equals(const CSSBasicShapeValue& other) const
     return m_shape == other.m_shape;
 }
 
-IterationStatus CSSBasicShapeValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSBasicShapeValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_shape);
 }

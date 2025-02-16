@@ -18,4 +18,8 @@ PASS :scope within nested and scoped rule (relative)
 PASS Scoped nested group rule
 PASS Scoped nested within another scope
 PASS Implicit (prelude-less) @scope as a nested group rule
+PASS Insert a nested style rule within @scope, &
+FAIL Insert a nested style rule within @scope, :scope assert_equals: expected "rgb(0, 128, 0)" but got "rgb(255, 0, 0)"
+FAIL Insert a CSSNestedDeclarations rule directly in top-level @scope The string did not match the expected pattern.
+PASS Mutating selectorText on outer style rule causes correct inner specificity
 

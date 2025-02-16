@@ -90,7 +90,8 @@ void RenderVideo::intrinsicSizeChanged()
 {
     if (videoElement().shouldDisplayPosterImage())
         RenderMedia::intrinsicSizeChanged();
-    updateIntrinsicSize(); 
+    if (updateIntrinsicSize())
+        invalidateLineLayout();
 }
 
 bool RenderVideo::updateIntrinsicSize()
@@ -110,8 +111,6 @@ bool RenderVideo::updateIntrinsicSize()
     setIntrinsicSize(size);
     setPreferredLogicalWidthsDirty(true);
     setNeedsLayout();
-    if (auto* inlineLayout = LayoutIntegration::LineLayout::containing(*this))
-        inlineLayout->boxContentWillChange(*this);
     return true;
 }
 
@@ -175,7 +174,8 @@ void RenderVideo::imageChanged(WrappedImagePtr newImage, const IntRect* rect)
 
     // The intrinsic size is now that of the image, but in case we already had the
     // intrinsic size of the video we call this here to restore the video size.
-    updateIntrinsicSize();
+    if (updateIntrinsicSize() || selfNeedsLayout())
+        invalidateLineLayout();
 }
 
 IntRect RenderVideo::videoBox() const
@@ -190,6 +190,17 @@ IntRect RenderVideo::videoBox() const
         intrinsicSize = m_cachedImageSize;
 
     return snappedIntRect(replacedContentRect(intrinsicSize));
+}
+
+IntRect RenderVideo::videoBoxInRootView() const
+{
+    RefPtr view = document().view();
+    if (!view)
+        return { };
+
+    auto videoBox = this->videoBox();
+    videoBox.moveBy(absoluteBoundingBoxRect().location());
+    return view->contentsToRootView(videoBox);
 }
 
 bool RenderVideo::shouldDisplayVideo() const
@@ -286,26 +297,27 @@ HTMLVideoElement& RenderVideo::videoElement() const
 void RenderVideo::updateFromElement()
 {
     RenderMedia::updateFromElement();
-    updatePlayer();
+    if (updatePlayer())
+        invalidateLineLayout();
 }
 
-void RenderVideo::updatePlayer()
+bool RenderVideo::updatePlayer()
 {
     if (renderTreeBeingDestroyed())
-        return;
+        return false;
 
-    bool intrinsicSizeChanged;
-    intrinsicSizeChanged = updateIntrinsicSize();
-    ASSERT_UNUSED(intrinsicSizeChanged, !intrinsicSizeChanged || !view().frameView().layoutContext().isInRenderTreeLayout());
+    auto intrinsicSizeChanged = updateIntrinsicSize();
+    ASSERT(!intrinsicSizeChanged || !view().frameView().layoutContext().isInRenderTreeLayout());
 
     RefPtr mediaPlayer = videoElement().player();
     if (!mediaPlayer)
-        return;
+        return intrinsicSizeChanged;
 
     if (videoElement().inActiveDocument())
         contentChanged(ContentChangeType::Video);
 
     videoElement().updateMediaPlayer(videoBox().size(), style().objectFit() != ObjectFit::Fill);
+    return intrinsicSizeChanged;
 }
 
 LayoutUnit RenderVideo::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
@@ -366,6 +378,12 @@ bool RenderVideo::hasPosterFrameSize() const
 bool RenderVideo::hasDefaultObjectSize() const
 {
     return !hasVideoMetadata() && !hasPosterFrameSize() && !shouldApplySizeContainment();
+}
+
+void RenderVideo::invalidateLineLayout()
+{
+    if (auto* inlineLayout = LayoutIntegration::LineLayout::containing(*this))
+        inlineLayout->boxContentWillChange(*this);
 }
 
 } // namespace WebCore

@@ -94,13 +94,6 @@ MediaStreamTrack::MediaStreamTrack(ScriptExecutionContext& context, Ref<MediaStr
     ASSERT(isMainThread());
     ASSERT(is<Document>(context));
 
-    auto& settings = m_private->settings();
-    if (settings.supportsGroupId()) {
-        RefPtr window = downcast<Document>(context).domWindow();
-        if (RefPtr mediaDevices = window ? NavigatorMediaDevices::mediaDevices(window->navigator()) : nullptr)
-            m_groupId = mediaDevices->hashedGroupId(settings.groupId());
-    }
-
     m_isInterrupted = m_private->interrupted();
 
     if (m_private->isAudio())
@@ -283,7 +276,7 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
     if (settings.supportsDeviceId())
         result.deviceId = settings.deviceId();
     if (settings.supportsGroupId())
-        result.groupId = m_groupId;
+        result.groupId = settings.groupId();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
         result.displaySurface = RealtimeMediaSourceSettings::displaySurface(settings.displaySurface());
 
@@ -305,7 +298,7 @@ MediaStreamTrack::TrackSettings MediaStreamTrack::getSettings() const
 
 MediaStreamTrack::TrackCapabilities MediaStreamTrack::getCapabilities() const
 {
-    auto result = toMediaTrackCapabilities(m_private->capabilities(), m_groupId);
+    auto result = toMediaTrackCapabilities(m_private->capabilities());
 
     auto settings = m_private->settings();
     if (settings.supportsDisplaySurface() && settings.displaySurface() != DisplaySurfaceType::Invalid)
@@ -318,7 +311,7 @@ auto MediaStreamTrack::takePhoto(PhotoSettings&& settings) -> Ref<TakePhotoPromi
 {
     ASSERT(!m_ended);
 
-    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->takePhoto(WTFMove(settings))->whenSettled(RunLoop::protectedMain(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#dom-imagecapture-takephoto
         // If the operation cannot be completed for any reason (for example, upon
@@ -340,7 +333,7 @@ auto MediaStreamTrack::getPhotoCapabilities() -> Ref<PhotoCapabilitiesPromise>
 {
     ASSERT(!m_ended);
 
-    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->getPhotoCapabilities()->whenSettled(RunLoop::protectedMain(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotocapabilities②
         // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended
@@ -361,7 +354,7 @@ auto MediaStreamTrack::getPhotoSettings() -> Ref<PhotoSettingsPromise>
 {
     ASSERT(!m_ended);
 
-    return m_private->getPhotoSettings()->whenSettled(RunLoop::main(), [protectedThis = Ref { *this }] (auto&& result) mutable {
+    return m_private->getPhotoSettings()->whenSettled(RunLoop::protectedMain(), [protectedThis = Ref { *this }] (auto&& result) mutable {
 
         // https://w3c.github.io/mediacapture-image/#ref-for-dom-imagecapture-getphotosettings②
         // If the data cannot be gathered for any reason (for example, the MediaStreamTrack being ended

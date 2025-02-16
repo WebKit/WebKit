@@ -21,6 +21,7 @@
         {
             "name": "setDOMBreakpoint",
             "description": "Sets breakpoint on particular operation with DOM.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to set breakpoint on." },
                 { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." },
@@ -30,6 +31,7 @@
         {
             "name": "removeDOMBreakpoint",
             "description": "Removes DOM breakpoint that was set using <code>setDOMBreakpoint</code>.",
+            "targetTypes": ["page"],
             "parameters": [
                 { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to remove breakpoint from." },
                 { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the breakpoint to remove." }

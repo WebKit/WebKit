@@ -148,7 +148,7 @@ bool ShuffleCustom::isValidForm(Inst& inst)
     // - Closed loops. These loops consist of nodes that have one successor and one predecessor, so
     //   there is no way to "get into" the loop from outside of it. These can be executed using swaps
     //   or by saving one of the Args to a scratch register and executing it as a shift.
-    HashSet<Arg> dsts;
+    UncheckedKeyHashSet<Arg> dsts;
 
     for (unsigned i = 0; i < inst.args.size(); ++i) {
         Arg arg = inst.args[i];
@@ -226,11 +226,11 @@ MacroAssembler::Jump WasmBoundsCheckCustom::generate(Inst& inst, CCallHelpers& j
             outOfBounds.link(&jit);
             switch (value->boundsType()) {
             case WasmBoundsCheckValue::Type::Pinned:
-                context.code->wasmBoundsCheckGenerator()->run(jit, value->bounds().pinnedSize);
+                context.code->wasmBoundsCheckGenerator()->run(jit, value, value->bounds().pinnedSize);
                 break;
 
             case WasmBoundsCheckValue::Type::Maximum:
-                context.code->wasmBoundsCheckGenerator()->run(jit, InvalidGPRReg);
+                context.code->wasmBoundsCheckGenerator()->run(jit, value, InvalidGPRReg);
                 break;
             }
         }));

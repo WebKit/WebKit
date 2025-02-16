@@ -439,7 +439,7 @@ private:
     static JSValueRef sessionID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef pageID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef frameID(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
-    static JSValueRef retrieveID(JSContextRef, JSObjectRef thisObject, JSValueRef* exception, const WTF::Function<uint64_t(JSIPC&)>&);
+    static JSValueRef retrieveID(JSContextRef, JSObjectRef thisObject, JSValueRef* exception, NOESCAPE const WTF::Function<uint64_t(JSIPC&)>&);
 
     static JSValueRef messages(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
     static JSValueRef serializedTypeInfo(JSContextRef, JSObjectRef, JSStringRef, JSValueRef* exception);
@@ -2903,7 +2903,7 @@ JSValueRef JSIPC::webPageProxyID(JSContextRef context, JSObjectRef thisObject, J
     });
 }
 
-JSValueRef JSIPC::retrieveID(JSContextRef context, JSObjectRef thisObject, JSValueRef* exception, const WTF::Function<uint64_t(JSIPC&)>& callback)
+JSValueRef JSIPC::retrieveID(JSContextRef context, JSObjectRef thisObject, JSValueRef* exception, NOESCAPE const WTF::Function<uint64_t(JSIPC&)>& callback)
 {
     auto* globalObject = toJS(context);
     auto& vm = globalObject->vm();
@@ -2943,14 +2943,6 @@ static JSC::JSValue createJSArrayForArgumentDescriptions(JSC::JSGlobalObject* gl
 
         jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "type"_s), JSC::jsString(vm, String::fromLatin1(description.type)));
         RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
-
-        jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "optional"_s), JSC::jsBoolean(description.isOptional));
-        RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
-
-        if (description.enumName) {
-            jsDescriptions->putDirect(vm, JSC::Identifier::fromString(vm, "enum"_s), JSC::jsString(vm, String::fromLatin1(description.enumName)));
-            RETURN_IF_EXCEPTION(scope, JSC::jsTDZValue());
-        }
     }
     return argumentsArray;
 }
@@ -2998,7 +2990,7 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
         dictionary->putDirect(vm, isSyncIdent, JSC::jsBoolean(messageIsSync(name)));
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
-        messagesObject->putDirect(vm, JSC::Identifier::fromLatin1(vm, description(name)), dictionary);
+        messagesObject->putDirect(vm, JSC::Identifier::fromString(vm, description(name)), dictionary);
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
     }
 
@@ -3082,7 +3074,7 @@ void JSMessageListener::willSendMessage(const IPC::Encoder& encoder, OptionSet<I
     Ref protectOwnerOfThis = *m_jsIPC;
 
     auto decoder = IPC::Decoder::create(encoder.span(), { });
-    RunLoop::main().dispatch([this, protectOwnerOfThis = WTFMove(protectOwnerOfThis), decoder = WTFMove(decoder)] {
+    RunLoop::protectedMain()->dispatch([this, protectOwnerOfThis = WTFMove(protectOwnerOfThis), decoder = WTFMove(decoder)] {
         auto* globalObject = m_globalObject.get();
         if (!globalObject)
             return;

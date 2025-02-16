@@ -78,6 +78,10 @@
 #import <Network/Network.h>
 #endif
 
+#if ENABLE(SCREEN_TIME)
+#import <pal/cocoa/ScreenTimeSoftLink.h>
+#endif
+
 #if PLATFORM(IOS_FAMILY)
 #import "UIKitSPI.h"
 #endif
@@ -85,6 +89,12 @@
 @interface WKWebsiteDataStore (WKWebPushHandling)
 - (void)_handleWebPushAction:(_WKWebPushAction *)webPushAction;
 @end
+
+#if ENABLE(SCREEN_TIME)
+@interface STWebHistory (Staging_140439004)
+- (void)fetchAllHistoryWithCompletionHandler:(void (^)(NSSet<NSURL *> *urls, NSError *error))completionHandler;
+@end
+#endif
 
 class WebsiteDataStoreClient final : public WebKit::WebsiteDataStoreClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(WebsiteDataStoreClient);
@@ -165,6 +175,35 @@ private:
 
         [m_delegate.getAutoreleased() didReceiveAuthenticationChallenge:nsURLChallenge completionHandler:completionHandler.get()];
     }
+
+#if ENABLE(SCREEN_TIME)
+    void getScreenTimeURLs(std::optional<WTF::UUID> identifier, CompletionHandler<void(HashSet<URL>&&)>&& completionHandler) const final
+    {
+        if (![PAL::getSTWebHistoryClass() instancesRespondToSelector:@selector(fetchAllHistoryWithCompletionHandler:)])
+            return completionHandler({ });
+
+        STWebHistoryProfileIdentifier profileIdentifier = nil;
+        if (identifier)
+            profileIdentifier = identifier->toString();
+
+        RetainPtr webHistory = adoptNS([PAL::allocSTWebHistoryInstance() initWithProfileIdentifier:profileIdentifier]);
+
+        [webHistory fetchAllHistoryWithCompletionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler)](NSSet<NSURL *> *urls, NSError *error) mutable {
+            if (error != nil) {
+                completionHandler({ });
+                return;
+            }
+
+            HashSet<URL> result;
+            for (NSURL *site in urls) {
+                URL url { site };
+                if (url.isValid())
+                    result.add(url);
+            }
+            completionHandler(WTFMove(result));
+        }).get()];
+    }
+#endif
 
     void openWindowFromServiceWorker(const String& url, const WebCore::SecurityOriginData& serviceWorkerOrigin, CompletionHandler<void(WebKit::WebPageProxy*)>&& callback)
     {
@@ -466,7 +505,24 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     static dispatch_once_t onceToken;
     static NeverDestroyed<RetainPtr<NSSet>> allWebsiteDataTypes;
     dispatch_once(&onceToken, ^{
-        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[ WKWebsiteDataTypeDiskCache, WKWebsiteDataTypeFetchCache, WKWebsiteDataTypeMemoryCache, WKWebsiteDataTypeOfflineWebApplicationCache, WKWebsiteDataTypeCookies, WKWebsiteDataTypeSessionStorage, WKWebsiteDataTypeLocalStorage, WKWebsiteDataTypeIndexedDBDatabases, WKWebsiteDataTypeServiceWorkerRegistrations, WKWebsiteDataTypeWebSQLDatabases, WKWebsiteDataTypeFileSystem, WKWebsiteDataTypeSearchFieldRecentSearches, WKWebsiteDataTypeMediaKeys, WKWebsiteDataTypeHashSalt ]]);
+        allWebsiteDataTypes.get() = adoptNS([[NSSet alloc] initWithArray:@[
+            WKWebsiteDataTypeDiskCache,
+            WKWebsiteDataTypeFetchCache,
+            WKWebsiteDataTypeMemoryCache,
+            WKWebsiteDataTypeOfflineWebApplicationCache,
+            WKWebsiteDataTypeCookies,
+            WKWebsiteDataTypeSessionStorage,
+            WKWebsiteDataTypeLocalStorage,
+            WKWebsiteDataTypeIndexedDBDatabases,
+            WKWebsiteDataTypeServiceWorkerRegistrations,
+            WKWebsiteDataTypeWebSQLDatabases,
+            WKWebsiteDataTypeFileSystem,
+            WKWebsiteDataTypeSearchFieldRecentSearches,
+            WKWebsiteDataTypeMediaKeys,
+#if ENABLE(SCREEN_TIME)
+            _WKWebsiteDataTypeScreenTime,
+#endif
+            WKWebsiteDataTypeHashSalt ]]);
     });
 
     return allWebsiteDataTypes.get().get();
@@ -1088,6 +1144,12 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
 + (void)_setNetworkProcessSuspensionAllowedForTesting:(BOOL)allowed
 {
     WebKit::NetworkProcessProxy::setSuspensionAllowedForTesting(allowed);
+}
+
+- (void)_forceNetworkProcessToTaskSuspendForTesting
+{
+    if (RefPtr networkProcess = _websiteDataStore->networkProcessIfExists())
+        networkProcess->protectedThrottler()->invalidateAllActivitiesAndDropAssertion();
 }
 
 - (BOOL)_networkProcessExists

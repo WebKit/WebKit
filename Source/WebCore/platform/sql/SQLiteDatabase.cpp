@@ -58,7 +58,7 @@ static constexpr auto notOpenErrorMessage = "database is not open"_s;
 static void unauthorizedSQLFunction(sqlite3_context *context, int, sqlite3_value **)
 {
     auto* functionName = static_cast<const char*>(sqlite3_user_data(context));
-    sqlite3_result_error(context, makeString("Function "_s, span(functionName), " is unauthorized"_s).utf8().data(), -1);
+    sqlite3_result_error(context, makeString("Function "_s, unsafeSpan(functionName), " is unauthorized"_s).utf8().data(), -1);
 }
 
 static void initializeSQLiteIfNecessary()

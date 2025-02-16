@@ -69,7 +69,7 @@ public:
 #if PLATFORM(COCOA)
     void cloneFileWrapperTo(Attachment&);
     bool shouldUseFileWrapperIconForDirectory() const;
-    void doWithFileWrapper(Function<void(NSFileWrapper *)>&&) const;
+    void doWithFileWrapper(NOESCAPE Function<void(NSFileWrapper *)>&&) const;
     void setFileWrapper(NSFileWrapper *);
     void setFileWrapperAndUpdateContentType(NSFileWrapper *, NSString *contentType);
     WTF::String utiType() const;

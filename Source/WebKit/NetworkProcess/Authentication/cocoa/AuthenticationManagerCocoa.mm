@@ -62,7 +62,7 @@ void AuthenticationManager::initializeConnection(IPC::Connection* connection)
             if (type == XPC_TYPE_ERROR || !weakThis)
                 return;
 
-            if (type != XPC_TYPE_DICTIONARY || strcmp(xpc_dictionary_get_string(event.get(), ClientCertificateAuthentication::XPCMessageNameKey), ClientCertificateAuthentication::XPCMessageNameValue)) {
+            if (type != XPC_TYPE_DICTIONARY || xpc_dictionary_get_wtfstring(event.get(), ClientCertificateAuthentication::XPCMessageNameKey) != ClientCertificateAuthentication::XPCMessageNameValue) {
                 ASSERT_NOT_REACHED();
                 return;
             }

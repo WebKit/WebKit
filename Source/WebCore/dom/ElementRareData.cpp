@@ -47,6 +47,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     Markable<LayoutUnit, LayoutUnitMarkableTraits> lastRemembedSize[2];
     ExplicitlySetAttrElementsMap explicitlySetAttrElementsMap;
     uint8_t visibilityAdjustment;
+    HashMap<std::optional<Style::PseudoElementIdentifier>, Ref<Calculation::RandomKeyMap>> randomKeyMap;
 };
 
 static_assert(sizeof(ElementRareData) == sizeof(SameSizeAsElementRareData), "ElementRareData should stay small");

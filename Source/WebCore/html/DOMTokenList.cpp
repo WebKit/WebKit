@@ -227,7 +227,7 @@ void DOMTokenList::updateTokensFromAttributeValue(const AtomString& value)
     // Clear tokens but not capacity.
     m_tokens.shrink(0);
 
-    HashSet<AtomString> addedTokens;
+    UncheckedKeyHashSet<AtomString> addedTokens;
     // https://dom.spec.whatwg.org/#ordered%20sets
     for (unsigned start = 0; ; ) {
         while (start < value.length() && isASCIIWhitespace(value[start]))

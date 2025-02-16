@@ -13,8 +13,8 @@ function test2() {
 }
 noInline(test2);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(), `112`);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test2(), `1REPLACE1REPLACE2`);

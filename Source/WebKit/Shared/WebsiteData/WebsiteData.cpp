@@ -79,6 +79,10 @@ WebsiteDataProcessType WebsiteData::ownerProcess(WebsiteDataType dataType)
 #endif
     case WebsiteDataType::FileSystem:
         return WebsiteDataProcessType::Network;
+#if ENABLE(SCREEN_TIME)
+    case WebsiteDataType::ScreenTime:
+        return WebsiteDataProcessType::UI;
+#endif
     }
 
     RELEASE_ASSERT_NOT_REACHED();

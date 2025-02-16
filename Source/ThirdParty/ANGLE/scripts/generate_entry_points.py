@@ -63,13 +63,19 @@ PLS_ALLOW_LIST = {
     "BindBuffer",
     "BindBufferBase",
     "BindBufferRange",
+    "BindFramebuffer",
     "BindSampler",
     "BindTexture",
     "BindVertexArray",
+    "BlendEquation",
+    "BlendEquationSeparate",
+    "BlendFunc",
+    "BlendFuncSeparate",
     "BufferData",
     "BufferSubData",
     "CheckFramebufferStatus",
     "ClipControlEXT",
+    "ColorMask",
     "CullFace",
     "DepthFunc",
     "DepthMask",
@@ -77,14 +83,20 @@ PLS_ALLOW_LIST = {
     "Disable",
     "DisableVertexAttribArray",
     "DispatchComputeIndirect",
+    "DrawBuffers",
     "Enable",
     "EnableClientState",
     "EnableVertexAttribArray",
     "EndPixelLocalStorageANGLE",
+    "FenceSync",
+    "FlushMappedBufferRange",
+    "FramebufferMemorylessPixelLocalStorageANGLE",
     "FramebufferPixelLocalStorageInterruptANGLE",
+    "FramebufferRenderbuffer",
     "FrontFace",
     "MapBufferRange",
     "PixelLocalStorageBarrierANGLE",
+    "ProvokingVertexANGLE",
     "Scissor",
     "StencilFunc",
     "StencilFuncSeparate",
@@ -96,9 +108,6 @@ PLS_ALLOW_LIST = {
     "UseProgram",
     "ValidateProgram",
     "Viewport",
-    "ProvokingVertexANGLE",
-    "FenceSync",
-    "FlushMappedBufferRange",
 }
 PLS_ALLOW_WILDCARDS = [
     "BlendEquationSeparatei*",
@@ -116,6 +125,8 @@ PLS_ALLOW_WILDCARDS = [
     "DrawElements*",
     "DrawRangeElements*",
     "Enablei*",
+    "FramebufferParameter*",
+    "FramebufferTexture*",
     "Gen*",
     "Get*",
     "Is*",
@@ -348,6 +359,7 @@ TEMPLATE_ENTRY_POINT_DECL = """{angle_export}{return_type} {export_def} {name}({
 TEMPLATE_GLES_ENTRY_POINT_NO_RETURN = """\
 void GL_APIENTRY GL_{name}({params})
 {{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
     {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
@@ -372,6 +384,7 @@ void GL_APIENTRY GL_{name}({params})
 TEMPLATE_GLES_CONTEXT_PRIVATE_ENTRY_POINT_NO_RETURN = """\
 void GL_APIENTRY GL_{name}({params})
 {{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
     {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
@@ -395,6 +408,7 @@ void GL_APIENTRY GL_{name}({params})
 TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
 {return_type} GL_APIENTRY GL_{name}({params})
 {{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
     {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
@@ -426,6 +440,7 @@ TEMPLATE_GLES_ENTRY_POINT_WITH_RETURN = """\
 TEMPLATE_GLES_CONTEXT_PRIVATE_ENTRY_POINT_WITH_RETURN = """\
 {return_type} GL_APIENTRY GL_{name}({params})
 {{
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = {context_getter};
     {event_comment}EVENT(context, GL{name}, "context = %d{comma_if_needed}{format_params}", CID(context){comma_if_needed}{pass_params});
 
@@ -458,6 +473,7 @@ void EGLAPIENTRY EGL_{name}({params})
 {{
     {preamble}
     Thread *thread = egl::GetCurrentThread();
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {{
         ANGLE_SCOPED_GLOBAL_LOCK();
         EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
@@ -484,11 +500,41 @@ void EGLAPIENTRY EGL_{name}({params})
 }}
 """
 
+TEMPLATE_EGL_ENTRY_POINT_NO_RETURN_NO_LOCKS = """\
+void EGLAPIENTRY EGL_{name}({params})
+{{
+    {preamble}
+    Thread *thread = egl::GetCurrentThread();
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
+
+    EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
+
+    {packed_gl_enum_conversions}
+
+    {{
+        if (IsEGLValidationEnabled())
+        {{
+            ANGLE_EGL_VALIDATE_VOID(thread, {name}, {labeled_object}, {internal_params});
+        }}
+        else
+        {{
+            {attrib_map_init}
+        }}
+
+        {name}(thread{comma_if_needed}{internal_params});
+    }}
+
+    ANGLE_CAPTURE_EGL({name}, true, {egl_capture_params});
+    {epilog}
+}}
+"""
+
 TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
 {return_type} EGLAPIENTRY EGL_{name}({params})
 {{
     {preamble}
     Thread *thread = egl::GetCurrentThread();
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {return_type} returnValue;
     {{
         {egl_lock}
@@ -522,6 +568,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN_NO_LOCKS = """\
 {{
     {preamble}
     Thread *thread = egl::GetCurrentThread();
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     {return_type} returnValue;
 
     EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
@@ -1134,6 +1181,7 @@ TEMPLATE_SOURCES_INCLUDES = """\
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/context_private_call_autogen.h"
+#include "libANGLE/context_private_call.inl.h"
 #include "libANGLE/capture/capture_{header_version}_autogen.h"
 #include "libANGLE/validation{validation_header_version}.h"
 #include "libANGLE/entry_points_utils.h"
@@ -1585,7 +1633,8 @@ def is_context_private_state_command(api, name):
 
 def is_lockless_egl_entry_point(cmd_name):
     if cmd_name in [
-            "eglGetError", "eglGetCurrentContext", "eglGetCurrentSurface", "eglGetCurrentDisplay"
+            "eglGetError", "eglGetCurrentContext", "eglGetCurrentSurface", "eglGetCurrentDisplay",
+            "eglLockVulkanQueueANGLE", "eglUnlockVulkanQueueANGLE"
     ]:
         return True
     return False
@@ -1859,7 +1908,10 @@ def get_packed_enums(api, cmd_packed_gl_enums, cmd_name, packed_param_types, par
 def get_def_template(api, cmd_name, return_type, has_errcode_ret):
     if return_type == "void":
         if api == apis.EGL:
-            return TEMPLATE_EGL_ENTRY_POINT_NO_RETURN
+            if is_lockless_egl_entry_point(cmd_name):
+                return TEMPLATE_EGL_ENTRY_POINT_NO_RETURN_NO_LOCKS
+            else:
+                return TEMPLATE_EGL_ENTRY_POINT_NO_RETURN
         elif api == apis.CL:
             return TEMPLATE_CL_ENTRY_POINT_NO_RETURN
         elif is_context_private_state_command(api, cmd_name):
@@ -3167,11 +3219,14 @@ def get_unlocked_tail_call(api, cmd_name):
     #   eglGetCompositorTimingANDROID, eglGetFrameTimestampsANDROID -> Calls
     #   native EGL function in tail call
     #
+    # - glFlush, glFinish -> May perform the CPU throttling from the implicit swap buffers call when
+    #   the current Window Surface is in the single buffer mode.
+    #
     if (cmd_name in [
             'eglDestroySurface', 'eglMakeCurrent', 'eglReleaseThread', 'eglCreateWindowSurface',
             'eglCreatePlatformWindowSurface', 'eglCreatePlatformWindowSurfaceEXT',
             'eglPrepareSwapBuffersANGLE', 'eglSwapBuffersWithFrameTokenANGLE', 'glFinishFenceNV',
-            'glCompileShader', 'glLinkProgram', 'glShaderBinary'
+            'glCompileShader', 'glLinkProgram', 'glShaderBinary', 'glFlush', 'glFinish'
     ] or cmd_name.startswith('glTexImage2D') or cmd_name.startswith('glTexImage3D') or
             cmd_name.startswith('glTexSubImage2D') or cmd_name.startswith('glTexSubImage3D') or
             cmd_name.startswith('glCompressedTexImage2D') or

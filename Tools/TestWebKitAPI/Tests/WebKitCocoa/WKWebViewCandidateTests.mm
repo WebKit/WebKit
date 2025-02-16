@@ -83,7 +83,8 @@ static NSString *GetDocumentScrollTopJSExpression = @"document.body.scrollTop";
 - (void)insertCandidatesAndWaitForResponse:(NSString *)replacementString range:(NSRange)range
 {
     _isDoneWaitingForCandidate = false;
-    [self _handleAcceptedCandidate:[[TestCandidate alloc] initWithReplacementString:replacementString inRange:range]];
+    RetainPtr candidate = adoptNS([[TestCandidate alloc] initWithReplacementString:replacementString inRange:range]);
+    [self _handleAcceptedCandidate:candidate.get()];
     TestWebKitAPI::Util::run(&_isDoneWaitingForCandidate);
 }
 
@@ -165,8 +166,8 @@ TEST(WKWebViewCandidateTests, InsertCharactersAfterCandidateInsertionWithSoftSpa
     EXPECT_WK_STREQ("foo a", [wkWebView stringByEvaluatingJavaScript:GetInputValueJSExpression]);
 }
 
-// rdar://137237282
-#if (!defined(NDEBUG) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000)
+// rdar://137237282 && rdar://142904687
+#if (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000)
 TEST(WKWebViewCandidateTests, DISABLED_InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
 #else
 TEST(WKWebViewCandidateTests, InsertCandidateFromPartiallyTypedPhraseWithSoftSpace)
@@ -213,42 +214,36 @@ TEST(WKWebViewCandidateTests, ShouldNotRequestCandidatesInPasswordField)
     [wkWebView waitForMessage:@"loaded"];
     [wkWebView _forceRequestCandidates];
 
-    dispatch_async(dispatch_get_main_queue(), ^()
-    {
+    dispatch_async(dispatch_get_main_queue(), ^{
         [wkWebView mouseDownAtPoint:NSMakePoint(400, 150) simulatePressure:YES];
     });
     [wkWebView waitForMessage:@"password-focused"];
-
-    [wkWebView typeString:@"foo" inputMessage:@"password-input"];
+    [wkWebView insertText:@"foo"];
+    [wkWebView waitForNextPresentationUpdate];
     EXPECT_FALSE([wkWebView _shouldRequestCandidates]);
 
     NSString *passwordFieldValue = [wkWebView stringByEvaluatingJavaScript:@"document.querySelector('#password').value"];
-    EXPECT_STREQ(passwordFieldValue.UTF8String, "foo");
+    EXPECT_WK_STREQ(passwordFieldValue, "foo");
 }
-
-#if USE(APPLE_INTERNAL_SDK)
 
 TEST(WKWebViewCandidateTests, ShouldRequestCandidatesInTextField)
 {
-    auto wkWebView = adoptNS([[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    RetainPtr wkWebView = adoptNS([[CandidateTestWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
     [wkWebView loadTestPageNamed:@"text-and-password-inputs"];
     [wkWebView waitForMessage:@"loaded"];
     [wkWebView _forceRequestCandidates];
 
-    dispatch_async(dispatch_get_main_queue(), ^()
-    {
+    dispatch_async(dispatch_get_main_queue(), ^{
         [wkWebView mouseDownAtPoint:NSMakePoint(400, 450) simulatePressure:YES];
     });
     [wkWebView waitForMessage:@"text-focused"];
-
-    [wkWebView typeString:@"bar" inputMessage:@"text-input"];
+    [wkWebView insertText:@"bar"];
+    [wkWebView waitForNextPresentationUpdate];
     EXPECT_TRUE([wkWebView _shouldRequestCandidates]);
 
     NSString *textFieldValue = [wkWebView stringByEvaluatingJavaScript:@"document.querySelector('#text').value"];
-    EXPECT_STREQ(textFieldValue.UTF8String, "bar");
+    EXPECT_WK_STREQ(textFieldValue, "bar");
 }
-
-#endif
 
 TEST(WKWebViewCandidateTests, CandidateRectForEmptyParagraph)
 {

@@ -29,6 +29,7 @@
 
 #include "AudioSessionCocoa.h"
 #include <pal/spi/cf/CoreAudioSPI.h>
+#include <wtf/BlockPtr.h>
 #include <wtf/TZoneMalloc.h>
 
 typedef UInt32 AudioObjectID;
@@ -40,10 +41,10 @@ class AudioSessionMac final : public AudioSessionCocoa {
     WTF_MAKE_TZONE_ALLOCATED(AudioSessionMac);
 public:
     static Ref<AudioSessionMac> create();
-    virtual ~AudioSessionMac() = default;
+    ~AudioSessionMac();
 
 private:
-    AudioSessionMac() = default;
+    AudioSessionMac();
 
     void addSampleRateObserverIfNeeded() const;
     void addBufferSizeObserverIfNeeded() const;
@@ -55,17 +56,20 @@ private:
     std::optional<size_t> bufferSizeWithoutCaching() const;
     void removePropertyListenersForDefaultDevice() const;
 
-    static OSStatus handleSampleRateChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
+    void handleDefaultDeviceChange();
     void handleSampleRateChange() const;
-    static OSStatus handleBufferSizeChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
     void handleBufferSizeChange() const;
-    static OSStatus handleDefaultDeviceChange(AudioObjectID, UInt32, const AudioObjectPropertyAddress*, void* inClientData);
 
     AudioDeviceID defaultDevice() const;
     static const AudioObjectPropertyAddress& defaultOutputDeviceAddress();
     static const AudioObjectPropertyAddress& nominalSampleRateAddress();
     static const AudioObjectPropertyAddress& bufferSizeAddress();
     static const AudioObjectPropertyAddress& muteAddress();
+
+    bool hasSampleRateObserver() const { return !!m_handleSampleRateChangeBlock; };
+    bool hasBufferSizeObserver() const { return !!m_handleBufferSizeChangeBlock; };
+    bool hasDefaultDeviceObserver() const { return !!m_handleDefaultDeviceChangeBlock; };
+    bool hasMuteChangeObserver() const { return !!m_handleMutedStateChangeBlock; };
 
     // AudioSession
     CategoryType category() const final { return m_category; }
@@ -80,6 +84,7 @@ private:
     String routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;
+    size_t outputLatency() const final;
     bool isMuted() const final;
     void handleMutedStateChange() final;
     void addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&) final;
@@ -98,13 +103,14 @@ private:
     std::optional<bool> m_playingToBluetooth;
     std::optional<bool> m_playingToBluetoothOverride;
 #endif
-    mutable bool m_hasSampleRateObserver { false };
-    mutable bool m_hasBufferSizeObserver { false };
-    mutable bool m_hasDefaultDeviceObserver { false };
-    mutable bool m_hasMuteChangeObserver { false };
     mutable std::optional<double> m_sampleRate;
     mutable std::optional<size_t> m_bufferSize;
     mutable std::optional<AudioDeviceID> m_defaultDevice;
+
+    mutable BlockPtr<void(unsigned, const struct AudioObjectPropertyAddress*)> m_handleDefaultDeviceChangeBlock;
+    mutable BlockPtr<void(unsigned, const struct AudioObjectPropertyAddress*)> m_handleSampleRateChangeBlock;
+    mutable BlockPtr<void(unsigned, const struct AudioObjectPropertyAddress*)> m_handleBufferSizeChangeBlock;
+    mutable BlockPtr<void(unsigned, const struct AudioObjectPropertyAddress*)> m_handleMutedStateChangeBlock;
 };
 
 }

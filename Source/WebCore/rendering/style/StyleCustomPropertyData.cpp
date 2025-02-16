@@ -151,7 +151,7 @@ void StyleCustomPropertyData::forEachInternal(Callback&& callback) const
     }
 }
 
-void StyleCustomPropertyData::forEach(const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CSSCustomPropertyValue>>&)>& callback) const
+void StyleCustomPropertyData::forEach(NOESCAPE const Function<IterationStatus(const KeyValuePair<AtomString, RefPtr<const CSSCustomPropertyValue>>&)>& callback) const
 {
     forEachInternal(callback);
 }

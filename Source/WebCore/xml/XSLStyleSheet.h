@@ -26,8 +26,13 @@
 
 #include "ProcessingInstruction.h"
 #include "StyleSheet.h"
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+IGNORE_WARNINGS_BEGIN("undef")
 #include <libxml/parser.h>
 #include <libxslt/transform.h>
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
 #include <wtf/Ref.h>
 #include <wtf/TypeCasts.h>
 

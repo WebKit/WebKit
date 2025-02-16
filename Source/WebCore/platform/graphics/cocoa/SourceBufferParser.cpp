@@ -47,9 +47,9 @@ MediaPlayerEnums::SupportsType SourceBufferParser::isContentTypeSupported(const 
     return supports;
 }
 
-RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type, bool webMParserEnabled)
+RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type)
 {
-    if (SourceBufferParserWebM::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported && webMParserEnabled)
+    if (SourceBufferParserWebM::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
         return SourceBufferParserWebM::create();
 
     if (SourceBufferParserAVFObjC::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)

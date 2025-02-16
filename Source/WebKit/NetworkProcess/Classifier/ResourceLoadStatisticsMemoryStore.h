@@ -56,7 +56,7 @@ public:
     void mergeWithDataFromDecoder(WebCore::KeyedDecoder&);
 
     void mergeStatistics(Vector<ResourceLoadStatistics>&&) override;
-    void processStatistics(const Function<void(const ResourceLoadStatistics&)>&) const;
+    void processStatistics(NOESCAPE const Function<void(const ResourceLoadStatistics&)>&) const;
 
     void updateCookieBlocking(CompletionHandler<void()>&&) override;
 

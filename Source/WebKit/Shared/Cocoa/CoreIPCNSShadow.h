@@ -28,15 +28,12 @@
 #if PLATFORM(COCOA)
 
 #include "ArgumentCodersCocoa.h"
-#include "CoreIPCSecureCoding.h"
 #include <WebCore/ColorCocoa.h>
 #include <wtf/RetainPtr.h>
 
 OBJC_CLASS NSShadow;
 
 namespace WebKit {
-
-class CoreIPCSecureCoding;
 
 class CoreIPCNSShadow {
 public:

@@ -336,6 +336,7 @@ def serialized_identifiers():
         'WebCore::FetchIdentifier',
         'WebCore::FileSystemHandleIdentifier',
         'WebCore::FileSystemSyncAccessHandleIdentifier',
+        'WebCore::FileSystemWritableFileStreamIdentifier',
         'WebCore::FrameIdentifierID',
         'WebCore::IDBIndexIdentifier',
         'WebCore::IDBObjectStoreIdentifier',
@@ -430,7 +431,6 @@ def serialized_identifiers():
         'WebKit::StorageNamespaceIdentifier',
         'WebKit::TapIdentifier',
         'WebKit::TextCheckerRequestID',
-        'WebKit::TransactionID',
         'WebKit::UserContentControllerIdentifier',
         'WebKit::UserScriptIdentifier',
         'WebKit::UserStyleSheetIdentifier',
@@ -482,6 +482,7 @@ def types_that_cannot_be_forward_declared():
         'WebCore::GraphicsContextGL::ExternalSyncSource',
         'WebCore::GraphicsContextGLAttributes',
         'WebCore::IntDegrees',
+        'WebCore::IndexIDToIndexKeyMap',
         'WebCore::MediaAccessDenialReason',
         'WebCore::ModalContainerControlType',
         'WebCore::NativeImageReference',
@@ -767,6 +768,12 @@ def sync_message_statement(receiver, message):
         maybe_reply_encoder = ', replyEncoder'
 
     result = []
+    message_runtime_enablement = True if message.enabled_by or message.enabled_by_exception else False
+    receiver_runtime_enablement = True if receiver.receiver_enabled_by or receiver.receiver_enabled_by_exception else False
+    receiver_dispatched_to_webcontent = True if receiver.receiver_dispatched_to == 'WebContent' else False
+    if not message_runtime_enablement and not receiver_runtime_enablement and not receiver_dispatched_to_webcontent:
+        return '#error "Receiver %s or message %s must be annotated with \'EnabledBy=[FeatureFlag]\' in messages.in file\n' % (receiver.name, message.name)
+
     runtime_enablement = generate_runtime_enablement(receiver, message)
     if runtime_enablement:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name() && %s)\n' % (receiver.name, message.name, runtime_enablement))
@@ -957,6 +964,7 @@ def headers_for_type(type):
         'WebCore::ImageDecodingError': ['<WebCore/ImageUtilities.h>'],
         'WebCore::InbandTextTrackPrivateMode': ['<WebCore/InbandTextTrackPrivate.h>'],
         'WebCore::IncludeSecureCookies': ['<WebCore/CookieJar.h>'],
+        'WebCore::IndexIDToIndexKeyMap': ['<WebCore/IndexKey.h>'],
         'WebCore::IndexedDB::ObjectStoreOverwriteMode': ['<WebCore/IndexedDB.h>'],
         'WebCore::InputMode': ['<WebCore/InputMode.h>'],
         'WebCore::InspectorClientDeveloperPreference': ['<WebCore/InspectorClient.h>'],
@@ -982,6 +990,7 @@ def headers_for_type(type):
         'WebCore::MediaPlayerSupportsType': ['<WebCore/MediaPlayerEnums.h>'],
         'WebCore::MediaPlayerVideoGravity': ['<WebCore/MediaPlayerEnums.h>'],
         'WebCore::MediaEngineSupportParameters': ['<WebCore/MediaPlayer.h>'],
+        'WebCore::MediaPlayerLoadOptions': ['<WebCore/MediaPlayer.h>'],
         'WebCore::MediaPlayerReadyState': ['<WebCore/MediaPlayerEnums.h>'],
         'WebCore::MediaProducerMediaCaptureKind': ['<WebCore/MediaProducer.h>'],
         'WebCore::MediaProducerMediaState': ['<WebCore/MediaProducer.h>'],
@@ -1025,6 +1034,7 @@ def headers_for_type(type):
         'WebCore::ReasonForDismissingAlternativeText': ['<WebCore/AlternativeTextClient.h>'],
         'WebCore::RecentSearch': ['<WebCore/SearchPopupMenu.h>'],
         'WebCore::RedEyeReduction': ['<WebCore/RedEyeReduction.h>'],
+        'WebCore::ResourceResponseSource': ['<WebCore/ResourceResponseBase.h>'],
         'WebCore::ReloadOption': ['<WebCore/FrameLoaderTypes.h>'],
         'WebCore::RenderAsTextFlag': ['<WebCore/RenderTreeAsText.h>'],
         'WebCore::RenderingPurpose': ['<WebCore/RenderingMode.h>'],
@@ -1064,6 +1074,7 @@ def headers_for_type(type):
         'WebCore::ShouldSample': ['<WebCore/DiagnosticLoggingClient.h>'],
         'WebCore::SourceBufferAppendMode': ['<WebCore/SourceBufferPrivate.h>'],
         'WebCore::SourceBufferEvictionData': ['<WebCore/SourceBufferPrivateClient.h>'],
+        'WebCore::StageModeOperation': ['<WebCore/StageModeOperations.h>'],
         'WebCore::StorageAccessPromptWasShown': ['<WebCore/DocumentStorageAccess.h>'],
         'WebCore::StorageAccessScope': ['<WebCore/DocumentStorageAccess.h>'],
         'WebCore::StorageAccessWasGranted': ['<WebCore/DocumentStorageAccess.h>'],
@@ -1743,15 +1754,9 @@ def generate_js_argument_descriptions(receivers, function_name, arguments_from_m
             result.append('        return Vector<ArgumentDescription> {\n')
             for argument in argument_list:
                 argument_type = argument.type
-                enum_type = None
-                is_optional = False
                 if argument.kind.startswith('enum:'):
-                    enum_type = '"%s"_s' % argument_type
                     argument_type = argument.kind[5:]
-                if argument_type.startswith('std::optional<') and argument_type.endswith('>'):
-                    argument_type = argument_type[14:-1]
-                    is_optional = True
-                result.append('            { "%s"_s, "%s"_s, %s, %s },\n' % (argument.name, argument_type, enum_type or 'ASCIILiteral()', 'true' if is_optional else 'false'))
+                result.append('            { "%s"_s, "%s"_s },\n' % (argument.name, argument_type))
             result.append('        };\n')
         if previous_message_condition:
             result.append('#endif\n')

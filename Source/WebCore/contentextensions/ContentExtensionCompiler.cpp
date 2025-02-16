@@ -171,7 +171,7 @@ static Vector<unsigned> serializeActions(const Vector<ContentExtensionRule>& rul
     return actionLocations;
 }
 
-using UniversalActionSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+using UniversalActionSet = UncheckedKeyHashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
 static void addUniversalActionsToDFA(DFA& dfa, UniversalActionSet&& universalActions)
 {

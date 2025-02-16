@@ -20,7 +20,7 @@ function sink (p, q) {
 }
 noInline(sink);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = sink(true, false);
     shouldBe(o.__proto__, GeneratorFunctionPrototype);
     if (o.x != 3)

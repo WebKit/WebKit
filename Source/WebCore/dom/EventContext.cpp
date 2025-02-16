@@ -91,12 +91,6 @@ void EventContext::handleLocalEvents(Event& event, EventInvokePhase phase) const
     if (!m_node->hasEventTargetData())
         return;
 
-    if (event.isTrusted() && is<MouseEvent>(event) && !event.isWheelEvent() && !m_node->document().settings().sendMouseEventsToDisabledFormControlsEnabled()) {
-        auto* element = dynamicDowncast<Element>(m_node.get());
-        if (element && element->isDisabledFormControl())
-            return;
-    }
-
     protectedNode()->fireEventListeners(event, phase);
 }
 

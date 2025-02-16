@@ -112,6 +112,12 @@ bool CoordinatedBackingStoreProxy::setContentsScale(float contentsScale)
     m_visibleRect = { };
     m_coverRect = { };
     m_keepRect = { };
+    m_tiles.clear();
+
+    {
+        Locker locker { m_update.lock };
+        m_update.pending = Update();
+    }
 
     return true;
 }

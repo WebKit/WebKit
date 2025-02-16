@@ -90,7 +90,7 @@ static String encode(const String& string, FileSystem::Salt salt)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     auto utf8String = string.utf8();
-    crypto->addBytes(utf8String.span());
+    crypto->addBytes(byteCast<uint8_t>(utf8String.span()));
     crypto->addBytes(salt);
     return base64URLEncodeToString(crypto->computeHash());
 }
@@ -1023,18 +1023,18 @@ void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(WebCore::FileS
     handle->requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, WTFMove(completionHandler));
 }
 
-void NetworkStorageManager::createWritable(WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::createWritable(WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, CompletionHandler<void(Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
     RefPtr handle = protectedFileSystemStorageHandleRegistry()->getHandle(identifier);
     if (!handle)
-        return completionHandler(FileSystemStorageError::Unknown);
+        return completionHandler(makeUnexpected(FileSystemStorageError::Unknown));
 
     completionHandler(handle->createWritable(keepExistingData));
 }
 
-void NetworkStorageManager::closeWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWriteCloseReason reason, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::closeWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCloseReason reason, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1042,10 +1042,10 @@ void NetworkStorageManager::closeWritable(WebCore::FileSystemHandleIdentifier id
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
-    completionHandler(handle->closeWritable(reason));
+    completionHandler(handle->closeWritable(streamIdentifier, reason));
 }
 
-void NetworkStorageManager::executeCommandForWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
+void NetworkStorageManager::executeCommandForWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1053,7 +1053,7 @@ void NetworkStorageManager::executeCommandForWritable(WebCore::FileSystemHandleI
     if (!handle)
         return completionHandler(FileSystemStorageError::Unknown);
 
-    completionHandler(handle->executeCommandForWritable(type, position, size, dataBytes, hasDataError));
+    completionHandler(handle->executeCommandForWritable(streamIdentifier, type, position, size, dataBytes, hasDataError));
 }
 
 void NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
@@ -1082,7 +1082,7 @@ void NetworkStorageManager::getHandle(IPC::Connection& connection, WebCore::File
         completionHandler(makeUnexpected(result.error()));
 }
 
-void NetworkStorageManager::forEachOriginDirectory(const Function<void(const String&)>& apply)
+void NetworkStorageManager::forEachOriginDirectory(NOESCAPE const Function<void(const String&)>& apply)
 {
     for (auto& topOrigin : FileSystem::listDirectory(m_path)) {
         auto topOriginDirectory = FileSystem::pathByAppendingComponent(m_path, topOrigin);
@@ -1172,7 +1172,7 @@ void NetworkStorageManager::fetchData(OptionSet<WebsiteDataType> types, ShouldCo
     });
 }
 
-HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet<WebsiteDataType> types, WallTime modifiedSinceTime, const Function<bool(const WebCore::ClientOrigin&)>& filter)
+HashSet<WebCore::ClientOrigin> NetworkStorageManager::deleteDataOnDisk(OptionSet<WebsiteDataType> types, WallTime modifiedSinceTime, NOESCAPE const Function<bool(const WebCore::ClientOrigin&)>& filter)
 {
     ASSERT(!RunLoop::isMain());
 
@@ -1498,7 +1498,7 @@ void NetworkStorageManager::setBackupExclusionPeriodForTesting(Seconds period, C
 
     m_queue->dispatch([this, protectedThis = Ref { *this }, period, completionHandler = WTFMove(completionHandler)]() mutable {
         m_backupExclusionPeriod = period;
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
     });
 }
 
@@ -1839,7 +1839,7 @@ void NetworkStorageManager::renameIndex(const WebCore::IDBRequestData& requestDa
         transaction->renameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName);
 }
 
-void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore::IDBRequestData& requestData, const WebCore::IDBKeyData& keyData, const WebCore::IDBValue& value, const WebCore::IndexIDToIndexKeyMap& indexKeys, WebCore::IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     assertIsCurrent(workQueue());
     RefPtr transaction = idbTransaction(requestData);
@@ -1871,7 +1871,7 @@ void NetworkStorageManager::putOrAdd(IPC::Connection& connection, const WebCore:
         }
     }
 
-    transaction->putOrAdd(requestData, keyData, value, overwriteMode);
+    transaction->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode);
 }
 
 void NetworkStorageManager::getRecord(const WebCore::IDBRequestData& requestData, const WebCore::IDBGetRecordData& getRecordData)

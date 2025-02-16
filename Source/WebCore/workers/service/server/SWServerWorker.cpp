@@ -62,7 +62,7 @@ SWServerWorker::SWServerWorker(SWServer& server, SWServerRegistration& registrat
     , m_scriptResourceMap(WTFMove(scriptResourceMap))
     , m_terminationTimer(*this, &SWServerWorker::terminationTimerFired)
     , m_terminationIfPossibleTimer(*this, &SWServerWorker::terminationIfPossibleTimerFired)
-    , m_lastNavigationWasAppInitiated(m_server->clientIsAppInitiatedForRegistrableDomain(m_topSite.domain()))
+    , m_lastNavigationWasAppInitiated(server.clientIsAppInitiatedForRegistrableDomain(m_topSite.domain()))
 {
     m_data.scriptURL.removeFragmentIdentifier();
 

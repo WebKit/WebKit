@@ -30,6 +30,62 @@
 #include <memory>
 #include <unordered_map>
 
+namespace angle
+{
+template <typename T>
+struct Extents
+{
+    Extents() : width(0), height(0), depth(0) {}
+    Extents(T width_, T height_, T depth_) : width(width_), height(height_), depth(depth_) {}
+
+    Extents(const Extents &other)            = default;
+    Extents &operator=(const Extents &other) = default;
+
+    bool empty() const { return (width * height * depth) == 0; }
+
+    T width;
+    T height;
+    T depth;
+};
+
+template <typename T>
+struct Offset
+{
+  public:
+    constexpr Offset() : x(0), y(0), z(0) {}
+    constexpr Offset(T x_in, T y_in, T z_in) : x(x_in), y(y_in), z(z_in) {}
+
+    T x;
+    T y;
+    T z;
+};
+
+template <typename T>
+inline bool operator==(const Extents<T> &lhs, const Extents<T> &rhs)
+{
+    return lhs.width == rhs.width && lhs.height == rhs.height && lhs.depth == rhs.depth;
+}
+
+template <typename T>
+inline bool operator!=(const Extents<T> &lhs, const Extents<T> &rhs)
+{
+    return !(lhs == rhs);
+}
+
+template <typename T>
+inline bool operator==(const Offset<T> &a, const Offset<T> &b)
+{
+    return a.x == b.x && a.y == b.y && a.z == b.z;
+}
+
+template <typename T>
+inline bool operator!=(const Offset<T> &a, const Offset<T> &b)
+{
+    return !(a == b);
+}
+
+}  // namespace angle
+
 namespace gl
 {
 class Buffer;
@@ -159,38 +215,9 @@ void GetEnclosingRectangle(const Rectangle &rect1, const Rectangle &rect2, Recta
 //
 void ExtendRectangle(const Rectangle &source, const Rectangle &extend, Rectangle *extended);
 
-struct Offset
-{
-    constexpr Offset() : x(0), y(0), z(0) {}
-    constexpr Offset(int x_in, int y_in, int z_in) : x(x_in), y(y_in), z(z_in) {}
-
-    int x;
-    int y;
-    int z;
-};
-
+using Extents = angle::Extents<int>;
+using Offset  = angle::Offset<int>;
 constexpr Offset kOffsetZero(0, 0, 0);
-
-bool operator==(const Offset &a, const Offset &b);
-bool operator!=(const Offset &a, const Offset &b);
-
-struct Extents
-{
-    Extents() : width(0), height(0), depth(0) {}
-    Extents(int width_, int height_, int depth_) : width(width_), height(height_), depth(depth_) {}
-
-    Extents(const Extents &other)            = default;
-    Extents &operator=(const Extents &other) = default;
-
-    bool empty() const { return (width * height * depth) == 0; }
-
-    int width;
-    int height;
-    int depth;
-};
-
-bool operator==(const Extents &lhs, const Extents &rhs);
-bool operator!=(const Extents &lhs, const Extents &rhs);
 
 struct Box
 {

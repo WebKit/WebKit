@@ -161,7 +161,7 @@ struct EditorState {
         std::optional<WebCore::ScrollingNodeID> enclosingScrollingNodeID;
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtStart;
         std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtEnd;
-        WebCore::ScrollPosition enclosingScrollPosition;
+        WebCore::ScrollOffset enclosingScrollOffset;
 #endif // PLATFORM(IOS_FAMILY)
     };
 

@@ -105,7 +105,7 @@ try {
     v_41 = [];
 } catch (e) {;
 }
-for (var v_43 = 0; v_43 < 100000; v_43++) try {
+for (var v_43 = 0; v_43 < wasmTestLoopCount; v_43++) try {
     v_41[v_43] = [];
 } catch (e) {
     "Caught: " + e;

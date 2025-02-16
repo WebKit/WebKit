@@ -52,7 +52,13 @@ RemoteLayerTreeTransaction::RemoteLayerTreeTransaction(RemoteLayerTreeTransactio
 
 RemoteLayerTreeTransaction& RemoteLayerTreeTransaction::operator=(RemoteLayerTreeTransaction&&) = default;
 
-RemoteLayerTreeTransaction::RemoteLayerTreeTransaction() = default;
+RemoteLayerTreeTransaction::RemoteLayerTreeTransaction(TransactionID transactionID)
+    : m_transactionID(transactionID)
+{ }
+
+RemoteLayerTreeTransaction::RemoteLayerTreeTransaction()
+    : m_transactionID(TransactionIdentifier(), WebCore::Process::identifier())
+{ }
 
 RemoteLayerTreeTransaction::~RemoteLayerTreeTransaction() = default;
 
@@ -94,7 +100,9 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
 
     // Dump the layer properties sorted by layer ID.
     auto layerIDs = copyToVector(changedLayerProperties.keys());
-    std::sort(layerIDs.begin(), layerIDs.end());
+    std::sort(layerIDs.begin(), layerIDs.end(), [](auto& lhs, auto& rhs) {
+        return lhs.object() < rhs.object();
+    });
 
     for (auto& layerID : layerIDs) {
         const auto& layerProperties = *changedLayerProperties.get(layerID);
@@ -248,7 +256,7 @@ static void dumpChangedLayers(TextStream& ts, const LayerPropertiesMap& changedL
 
 #if HAVE(CORE_MATERIAL)
         if (layerProperties.changedProperties & LayerChange::AppleVisualEffectChanged)
-            ts.dumpProperty("appleVisualEffect", layerProperties.appleVisualEffect);
+            ts.dumpProperty("appleVisualEffectData", layerProperties.appleVisualEffectData);
 #endif
     }
 }

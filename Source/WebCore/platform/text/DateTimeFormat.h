@@ -23,10 +23,8 @@
  * DAMAGE.
  */
 
-#ifndef DateTimeFormat_h
-#define DateTimeFormat_h
+#pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -107,6 +105,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif
-#endif // DateTimeFormat_h

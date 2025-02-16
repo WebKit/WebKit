@@ -4,7 +4,7 @@ function shouldBe(actual, expected) {
 }
 
 var array = [];
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     array.push(new Promise(function (resolve, reject) {
         resolve(i);
     }));

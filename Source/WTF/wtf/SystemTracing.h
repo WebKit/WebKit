@@ -262,6 +262,7 @@ WTF_EXTERN_C_END
     M(NavigationAndPaintTiming) \
     M(ExecuteScriptElement) \
     M(RegisterImportMap) \
+    M(JSCGarbageCollector) \
     M(JSCJITCompiler) \
     M(JSCJSGlobalObject) \
     M(IPCConnection) \

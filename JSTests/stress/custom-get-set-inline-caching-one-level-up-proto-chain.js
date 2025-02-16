@@ -41,7 +41,7 @@ noInline(validate);
 
 
 let start = Date.now();
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let i = 0; i < items.length; ++i) {
         validate(items[i], customGetterSetter, items[i]);
     }
@@ -49,7 +49,7 @@ for (let i = 0; i < 10000; ++i) {
 
 customGetterSetter.randomProp = 42;
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let i = 0; i < items.length; ++i) {
         validate(items[i], customGetterSetter, items[i]);
     }
@@ -82,7 +82,7 @@ items.forEach((x) => {
     });
 });
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let i = 0; i < items.length; ++i) {
         validate2(items[i], 42, 22);
     }

@@ -357,6 +357,7 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:

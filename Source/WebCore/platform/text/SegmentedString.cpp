@@ -246,7 +246,7 @@ void SegmentedString::setCurrentPosition(OrdinalNumber line, OrdinalNumber colum
 SegmentedString::AdvancePastResult SegmentedString::advancePastSlowCase(ASCIILiteral literal, bool lettersIgnoringASCIICase)
 {
     constexpr unsigned maxLength = 10;
-    ASSERT(!strchr(literal.characters(), '\n'));
+    ASSERT(!WTF::contains(literal.span(), '\n'));
     auto length = literal.length();
     ASSERT(length <= maxLength);
     if (length > this->length())

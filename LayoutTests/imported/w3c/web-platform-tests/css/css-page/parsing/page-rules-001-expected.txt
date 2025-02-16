@@ -1,0 +1,10 @@
+
+PASS page-rules-001
+PASS @page , { } should be an invalid rule
+PASS @page { } should be a valid rule
+PASS @page a { } should be a valid rule
+PASS @page page1 { } should be a valid rule
+FAIL @page name1, name2 { } should be a valid rule The string did not match the expected pattern.
+PASS @page a, { } should be an invalid rule
+PASS @page ,a { } should be an invalid rule
+

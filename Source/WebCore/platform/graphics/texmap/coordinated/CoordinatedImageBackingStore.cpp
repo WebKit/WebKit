@@ -30,10 +30,6 @@
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
 #include "NativeImage.h"
 
-#if USE(CAIRO)
-#include "CairoUtilities.h"
-#endif
-
 namespace WebCore {
 
 Ref<CoordinatedImageBackingStore> CoordinatedImageBackingStore::create(Ref<NativeImage>&& nativeImage)
@@ -48,18 +44,9 @@ CoordinatedImageBackingStore::CoordinatedImageBackingStore(Ref<NativeImage>&& na
 
 CoordinatedImageBackingStore::~CoordinatedImageBackingStore() = default;
 
-uint64_t CoordinatedImageBackingStore::uniqueIDForNativeImage(const NativeImage& nativeImage)
-{
-#if USE(CAIRO)
-    return getSurfaceUniqueID(nativeImage.platformImage().get());
-#elif USE(SKIA)
-    return nativeImage.platformImage()->uniqueID();
-#endif
-}
-
 bool CoordinatedImageBackingStore::isSameNativeImage(const NativeImage& nativeImage)
 {
-    return uniqueIDForNativeImage(nativeImage) == uniqueIDForNativeImage(downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image());
+    return nativeImage.uniqueID() == downcast<CoordinatedPlatformLayerBufferNativeImage>(*m_buffer).image().uniqueID();
 }
 
 } // namespace WebCore

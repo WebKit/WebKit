@@ -338,18 +338,6 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
-    FeatureInfo asyncCommandQueue = {
-        "asyncCommandQueue",
-        FeatureCategory::VulkanFeatures,
-        &members,
-    };
-
-    FeatureInfo slowAsyncCommandQueueForTesting = {
-        "slowAsyncCommandQueueForTesting",
-        FeatureCategory::VulkanWorkarounds,
-        &members,
-    };
-
     FeatureInfo supportsShaderFloat16 = {
         "supportsShaderFloat16",
         FeatureCategory::VulkanFeatures,
@@ -1244,6 +1232,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo useVkEventForBufferBarrier = {
+        "useVkEventForBufferBarrier",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
     FeatureInfo supportsSynchronization2 = {
         "supportsSynchronization2",
         FeatureCategory::VulkanFeatures,
@@ -1408,6 +1402,42 @@ struct FeaturesVk : FeatureSetBase
 
     FeatureInfo supportsAstcSliced3d = {
         "supportsAstcSliced3d",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsTextureCompressionAstcHdr = {
+        "supportsTextureCompressionAstcHdr",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsImageCompressionControlSwapchain = {
+        "supportsImageCompressionControlSwapchain",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsAngleRgbxInternalFormat = {
+        "supportsAngleRgbxInternalFormat",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsAppleClipDistance = {
+        "supportsAppleClipDistance",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo supportsUniformBufferStandardLayout = {
+        "supportsUniformBufferStandardLayout",
+        FeatureCategory::VulkanFeatures,
+        &members,
+    };
+
+    FeatureInfo usesNativeBuiltinClKernel = {
+        "usesNativeBuiltinClKernel",
         FeatureCategory::VulkanFeatures,
         &members,
     };

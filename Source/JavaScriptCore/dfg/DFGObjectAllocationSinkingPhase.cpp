@@ -1759,7 +1759,7 @@ private:
     {
         // Collect the set of heap locations that we will be operating
         // over.
-        HashSet<PromotedHeapLocation> locations;
+        UncheckedKeyHashSet<PromotedHeapLocation> locations;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             m_heap = m_heapAtHead[block];
 
@@ -1819,7 +1819,7 @@ private:
         if (!m_bottom)
             m_bottom = m_insertionSet.insertConstant(0, m_graph.block(0)->at(0)->origin, jsNumber(1927));
 
-        Vector<HashSet<PromotedHeapLocation>> hintsForPhi(m_sinkCandidates.size());
+        Vector<UncheckedKeyHashSet<PromotedHeapLocation>> hintsForPhi(m_sinkCandidates.size());
 
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             m_heap = m_heapAtHead[block];
@@ -1911,6 +1911,12 @@ private:
 
                 // Don't create Phi nodes once we are escaped
                 if (m_heapAtHead[block].getAllocation(location.base()).isEscapedAllocation())
+                    return nullptr;
+
+                // If we point to a single dead allocation, we will directly use its materialization since it would be invalid to
+                // create a Phi for a Phantom.
+                Node* identifier = m_heapAtHead[block].follow(location);
+                if (identifier && m_sinkCandidates.contains(identifier))
                     return nullptr;
 
                 Node* phiNode = m_graph.addNode(SpecHeapTop, Phi, block->at(0)->origin.withInvalidExit());

@@ -31,6 +31,7 @@
 #endif
 #include <CommonCrypto/CommonCrypto.h>
 #include <optional>
+#include <span>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
@@ -54,11 +55,6 @@ inline CC_SHA1_CTX* toSHA1Context(CryptoDigestContext* context)
 {
     ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_1);
     return static_cast<CC_SHA1_CTX*>(std::get<std::unique_ptr<CC_SHA1_CTX>>(context->ccContext).get());
-}
-inline CC_SHA256_CTX* toSHA224Context(CryptoDigestContext* context)
-{
-    ASSERT(context->algorithm == CryptoDigest::Algorithm::SHA_224);
-    return static_cast<CC_SHA256_CTX*>(std::get<std::unique_ptr<CC_SHA256_CTX>>(context->ccContext).get());
 }
 inline CC_SHA256_CTX* toSHA256Context(CryptoDigestContext* context)
 {
@@ -129,9 +125,10 @@ static std::variant<std::unique_ptr<CC_SHA1_CTX>, std::unique_ptr<CC_SHA256_CTX>
         return WTF::makeUniqueWithoutFastMallocCheck<PAL::Digest>(PAL::Digest::sha512Init());
     }
 #endif
-    case CryptoDigest::Algorithm::SHA_224: {
+    case CryptoDigest::Algorithm::DEPRECATED_SHA_224: {
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("SHA224 is not supported.");
         std::unique_ptr<CC_SHA256_CTX> context = WTF::makeUniqueWithoutFastMallocCheck<CC_SHA256_CTX>();
-        CC_SHA224_Init(context.get());
+        CC_SHA256_Init(context.get());
         return context;
     }
     }
@@ -172,8 +169,9 @@ void CryptoDigest::addBytes(std::span<const uint8_t> input)
         std::get<std::unique_ptr<PAL::Digest>>(m_context->ccContext)->update(input);
         return;
 #endif
-    case CryptoDigest::Algorithm::SHA_224:
-        CC_SHA224_Update(toSHA224Context(m_context.get()), static_cast<const void*>(input.data()), input.size());
+    case CryptoDigest::Algorithm::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("SHA224 is not supported.");
+        CC_SHA256_Update(toSHA256Context(m_context.get()), static_cast<const void*>(input.data()), input.size());
         return;
     }
 }
@@ -208,11 +206,9 @@ Vector<uint8_t> CryptoDigest::computeHash()
     case CryptoDigest::Algorithm::SHA_512:
         return std::get<std::unique_ptr<PAL::Digest>>(m_context->ccContext)->finalize();
 #endif
-    case CryptoDigest::Algorithm::SHA_224:
-        result.grow(CC_SHA224_DIGEST_LENGTH);
-        CC_SHA224_Final(result.data(), toSHA224Context(m_context.get()));
+    case CryptoDigest::Algorithm::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("SHA224 is not supported.");
         break;
-
     }
     return result;
 }

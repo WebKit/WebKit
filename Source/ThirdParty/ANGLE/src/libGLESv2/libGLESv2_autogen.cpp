@@ -5781,6 +5781,8 @@ GLbitfield GL_APIENTRY glQueryMatrixxOES(GLfixed *mantissa, GLint *exponent)
     return GL_QueryMatrixxOES(mantissa, exponent);
 }
 
+// GL_OES_required_internalformat
+
 // GL_OES_rgb8_rgba8
 
 // GL_OES_sample_shading

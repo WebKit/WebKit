@@ -50,6 +50,8 @@ public:
     void keyframesRuleDidChange();
     void updateKeyframesIfNeeded(const RenderStyle* oldStyle, const RenderStyle& newStyle, const Style::ResolutionContext&);
 
+    void syncStyleOriginatedTimeline();
+
 private:
     CSSAnimation(const Styleable&, const Animation&);
 
@@ -78,11 +80,13 @@ private:
         Keyframes = 1 << 8,
         CompositeOperation = 1 << 9,
         Timeline = 1 << 10,
-        Range = 1 << 11
+        RangeStart = 1 << 11,
+        RangeEnd = 1 << 12,
     };
 
     String m_animationName;
     OptionSet<Property> m_overriddenProperties;
+    std::optional<AnimationPlayState> m_lastStyleOriginatedPlayState;
 };
 
 } // namespace WebCore

@@ -408,9 +408,6 @@ EventRegion::EventRegion(Region&& region
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion> interactionRegions
 #endif
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    , WebCore::Region scrollOverlayRegion
-#endif
     )
     : m_region(WTFMove(region))
 #if ENABLE(TOUCH_ACTION_REGIONS)
@@ -425,9 +422,6 @@ EventRegion::EventRegion(Region&& region
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , m_interactionRegions(WTFMove(interactionRegions))
-#endif
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    , m_scrollOverlayRegion(WTFMove(scrollOverlayRegion))
 #endif
 {
 }
@@ -456,11 +450,7 @@ void EventRegion::unite(const Region& region, RenderObject& renderer, const Rend
     UNUSED_PARAM(overrideUserModifyIsEditable);
 #endif
 
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    uniteScrollOverlayRegion(region, style);
-#endif
-
-#if !ENABLE(TOUCH_ACTION_REGIONS) && !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(EDITABLE_REGION) &&!ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+#if !ENABLE(TOUCH_ACTION_REGIONS) && !ENABLE(WHEEL_EVENT_REGIONS) && !ENABLE(EDITABLE_REGION)
     UNUSED_PARAM(style);
 #endif
 }
@@ -579,14 +569,6 @@ OptionSet<TouchAction> EventRegion::touchActionsForPoint(const IntPoint& point) 
         return { TouchAction::Auto };
 
     return actions;
-}
-#endif
-
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-void EventRegion::uniteScrollOverlayRegion(const Region& region, const RenderStyle& style)
-{
-    if (style.hasAutoSpecifiedZIndex() || style.specifiedZIndex() > 0)
-        m_scrollOverlayRegion.unite(region);
 }
 #endif
 

@@ -17,7 +17,7 @@ namespace rx
 {
 namespace vk
 {
-angle::Result VulkanSecondaryCommandBuffer::InitializeCommandPool(Context *context,
+angle::Result VulkanSecondaryCommandBuffer::InitializeCommandPool(ErrorContext *context,
                                                                   SecondaryCommandPool *pool,
                                                                   uint32_t queueFamilyIndex,
                                                                   ProtectionType protectionType)
@@ -55,7 +55,7 @@ angle::Result VulkanSecondaryCommandBuffer::InitializeRenderPassInheritanceInfo(
     return angle::Result::Continue;
 }
 
-angle::Result VulkanSecondaryCommandBuffer::initialize(Context *context,
+angle::Result VulkanSecondaryCommandBuffer::initialize(ErrorContext *context,
                                                        SecondaryCommandPool *pool,
                                                        bool isRenderPassCommandBuffer,
                                                        SecondaryCommandMemoryAllocator *allocator)
@@ -88,7 +88,7 @@ void VulkanSecondaryCommandBuffer::destroy()
 }
 
 angle::Result VulkanSecondaryCommandBuffer::begin(
-    Context *context,
+    ErrorContext *context,
     const VkCommandBufferInheritanceInfo &inheritanceInfo)
 {
     ASSERT(!mAnyCommand);
@@ -109,7 +109,7 @@ angle::Result VulkanSecondaryCommandBuffer::begin(
     return angle::Result::Continue;
 }
 
-angle::Result VulkanSecondaryCommandBuffer::end(Context *context)
+angle::Result VulkanSecondaryCommandBuffer::end(ErrorContext *context)
 {
     ANGLE_VK_TRY(context, CommandBuffer::end());
     return angle::Result::Continue;

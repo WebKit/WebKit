@@ -701,9 +701,9 @@ void OperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint& poi
     append(createCommand<DrawLine>(point1, point2, state.strokeStyle(), state.strokeBrush().color(), state.strokeThickness(), state.shouldAntialias()));
 }
 
-void OperationRecorder::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines, StrokeStyle)
+void OperationRecorder::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle)
 {
-    struct DrawLinesForText final : PaintingOperation, OperationData<FloatPoint, float, DashArray, bool, bool, Color> {
+    struct DrawLinesForText final : PaintingOperation, OperationData<FloatPoint, float, Vector<FloatSegment>, bool, bool, Color> {
         virtual ~DrawLinesForText() = default;
 
         void execute(WebCore::GraphicsContextCairo& context) override
@@ -717,11 +717,12 @@ void OperationRecorder::drawLinesForText(const FloatPoint& point, float thicknes
         }
     };
 
-    if (widths.isEmpty())
+    if (lineSegments.empty())
         return;
 
     auto& state = this->state();
-    append(createCommand<DrawLinesForText>(point, thickness, widths, printing, doubleUnderlines, state.strokeBrush().color()));
+    Vector<FloatSegment> segmentVector { WTFMove(lineSegments) };
+    append(createCommand<DrawLinesForText>(point, thickness, WTFMove(segmentVector), printing, doubleUnderlines, state.strokeBrush().color()));
 }
 
 void OperationRecorder::drawDotsForDocumentMarker(const FloatRect& rect, DocumentMarkerLineStyle style)

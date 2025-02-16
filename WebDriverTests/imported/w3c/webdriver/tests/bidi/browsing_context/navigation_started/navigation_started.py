@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 from tests.support.sync import AsyncPoll
 
@@ -17,6 +18,7 @@ PAGE_REDIRECT_HTTP_EQUIV = (
     "/webdriver/tests/bidi/network/support/redirect_http_equiv.html"
 )
 PAGE_REDIRECTED_HTML = "/webdriver/tests/bidi/network/support/redirected.html"
+USER_PROMPT_OPENED_EVENT = "browsingContext.userPromptOpened"
 
 
 async def test_unsubscribe(bidi_session):
@@ -211,22 +213,6 @@ async def test_nested_iframes(
     remove_listener()
 
 
-@pytest.mark.parametrize("type_hint", ["tab", "window"])
-async def test_new_context(bidi_session, subscribe_events, wait_for_event, wait_for_future_safe, type_hint):
-    await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
-
-    on_entry = wait_for_event(NAVIGATION_STARTED_EVENT)
-    top_level_context = await bidi_session.browsing_context.create(type_hint="tab")
-    navigation_info = await wait_for_future_safe(on_entry)
-    assert_navigation_info(
-        navigation_info,
-        {
-            "context": top_level_context["context"],
-            "url": "about:blank",
-        },
-    )
-
-
 async def test_same_document_navigation(bidi_session, new_tab, url, subscribe_events):
     await bidi_session.browsing_context.navigate(
         context=new_tab["context"], url=url(PAGE_EMPTY), wait="complete"
@@ -251,32 +237,8 @@ async def test_same_document_navigation(bidi_session, new_tab, url, subscribe_ev
     remove_listener()
 
 
-async def test_window_open(bidi_session, subscribe_events, wait_for_event, wait_for_future_safe, top_context):
-    await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
-
-    on_entry = wait_for_event(NAVIGATION_STARTED_EVENT)
-
-    await bidi_session.script.evaluate(
-        expression="""window.open('about:blank');""",
-        target=ContextTarget(top_context["context"]),
-        await_promise=False,
-    )
-
-    navigation_info = await wait_for_future_safe(on_entry)
-    assert_navigation_info(
-        navigation_info,
-        {
-            "url": "about:blank",
-        },
-    )
-    assert navigation_info["navigation"] is not None
-
-    # Retrieve all contexts to get the context for the new window.
-    contexts = await bidi_session.browsing_context.get_tree()
-    assert navigation_info["context"] == contexts[-1]["context"]
-
-
-async def test_document_write(bidi_session, subscribe_events, top_context):
+@pytest.mark.parametrize("sandbox", [None, "sandbox_1"])
+async def test_document_write(bidi_session, subscribe_events, new_tab, sandbox):
     await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
 
     # Track all received browsingContext.navigationStarted events in the events array
@@ -291,7 +253,7 @@ async def test_document_write(bidi_session, subscribe_events, top_context):
 
     await bidi_session.script.evaluate(
         expression="""document.open(); document.write("<h1>Replaced</h1>"); document.close();""",
-        target=ContextTarget(top_context["context"]),
+        target=ContextTarget(new_tab["context"], sandbox),
         await_promise=False,
     )
 
@@ -461,3 +423,183 @@ async def test_navigate_history_pushstate(
     event = await wait_for_future_safe(on_entry)
 
     assert event["navigation"] == result["navigation"]
+
+
+@pytest.mark.capabilities({"unhandledPromptBehavior": {"beforeUnload": "ignore"}})
+async def test_with_beforeunload_prompt(
+    bidi_session,
+    new_tab,
+    wait_for_event,
+    wait_for_future_safe,
+    url,
+    subscribe_events,
+    setup_beforeunload_page,
+):
+    await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
+    await setup_beforeunload_page(new_tab)
+    target_url = url("/webdriver/tests/support/html/default.html", domain="alt")
+
+    on_navigation_started = wait_for_event(NAVIGATION_STARTED_EVENT)
+    result = await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=target_url, wait="none"
+    )
+
+    event = await wait_for_future_safe(on_navigation_started)
+
+    assert event["context"] == new_tab["context"]
+    assert event["navigation"] == result["navigation"]
+    assert event["url"] == target_url
+
+
+@pytest.mark.capabilities({"unhandledPromptBehavior": {"beforeUnload": "ignore"}})
+async def test_with_accepted_beforeunload_prompt(
+    bidi_session,
+    new_tab,
+    wait_for_event,
+    wait_for_future_safe,
+    url,
+    subscribe_events,
+    setup_beforeunload_page,
+):
+    await subscribe_events(events=[NAVIGATION_STARTED_EVENT, USER_PROMPT_OPENED_EVENT])
+    await setup_beforeunload_page(new_tab)
+    target_url = url("/webdriver/tests/support/html/default.html", domain="alt")
+
+    # Track all received browsingContext.navigationStarted events in the events array
+    events = []
+
+    async def on_event(method, data):
+        events.append(data)
+
+    remove_listener = bidi_session.add_event_listener(
+        NAVIGATION_STARTED_EVENT, on_event
+    )
+
+    on_user_prompt_opened = wait_for_event(USER_PROMPT_OPENED_EVENT)
+    task = asyncio.ensure_future(
+        bidi_session.browsing_context.navigate(
+            context=new_tab["context"], url=target_url, wait="complete"
+        )
+    )
+
+    await wait_for_future_safe(on_user_prompt_opened)
+
+    await bidi_session.browsing_context.handle_user_prompt(
+        context=new_tab["context"], accept=True
+    )
+
+    result = await task
+
+    assert len(events) == 1
+    assert events[0]["context"] == new_tab["context"]
+    assert events[0]["navigation"] == result["navigation"]
+    assert events[0]["url"] == target_url
+
+    remove_listener()
+
+
+@pytest.mark.parametrize("type_hint", ["tab", "window"])
+async def test_new_context(bidi_session, subscribe_events, type_hint):
+    await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
+
+    # Track all received browsingContext.navigationStarted events in the events array
+    events = []
+
+    async def on_event(method, data):
+        events.append(data)
+
+    remove_listener = bidi_session.add_event_listener(
+        NAVIGATION_STARTED_EVENT, on_event
+    )
+
+    await bidi_session.browsing_context.create(type_hint=type_hint)
+
+    # In the future we can wait for "browsingContext.contextCreated" event instead.
+    wait = AsyncPoll(bidi_session, timeout=0.5)
+    with pytest.raises(TimeoutException):
+        await wait.until(lambda _: len(events) > 0)
+
+    remove_listener()
+
+
+async def test_navigate_to_about_blank(
+    bidi_session, subscribe_events, new_tab, wait_for_event, wait_for_future_safe
+):
+    await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
+
+    on_entry = wait_for_event(NAVIGATION_STARTED_EVENT)
+    url = "about:blank"
+    result = await bidi_session.browsing_context.navigate(
+        context=new_tab["context"], url=url
+    )
+    event = await wait_for_future_safe(on_entry)
+
+    assert_navigation_info(
+        event,
+        {
+            "context": new_tab["context"],
+            "navigation": result["navigation"],
+            "url": url,
+        },
+    )
+
+
+@pytest.mark.parametrize("url", ["", "about:blank", "about:blank?test"])
+async def test_window_open_with_about_blank(
+    bidi_session, subscribe_events, top_context, url
+):
+    await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
+
+    # Track all received browsingContext.navigationStarted events in the events array
+    events = []
+
+    async def on_event(method, data):
+        events.append(data)
+
+    remove_listener = bidi_session.add_event_listener(
+        NAVIGATION_STARTED_EVENT, on_event
+    )
+
+    await bidi_session.script.evaluate(
+        expression=f"window.open('{url}');",
+        target=ContextTarget(top_context["context"]),
+        await_promise=False,
+    )
+
+    # In the future we can wait for "browsingContext.contextCreated" event instead.
+    wait = AsyncPoll(bidi_session, timeout=0.5)
+    with pytest.raises(TimeoutException):
+        await wait.until(lambda _: len(events) > 0)
+
+    remove_listener()
+
+
+async def test_window_open_with_url(
+    bidi_session,
+    subscribe_events,
+    top_context,
+    wait_for_event,
+    inline,
+    wait_for_future_safe,
+):
+    await subscribe_events(events=[NAVIGATION_STARTED_EVENT])
+    on_navigation_started = wait_for_event(NAVIGATION_STARTED_EVENT)
+    url = inline("<div>foo</div>")
+
+    await bidi_session.script.evaluate(
+        expression=f"window.open('{url}');",
+        target=ContextTarget(top_context["context"]),
+        await_promise=False,
+    )
+
+    event = await wait_for_future_safe(on_navigation_started)
+
+    result = await bidi_session.browsing_context.get_tree()
+
+    assert_navigation_info(
+        event,
+        {
+            "context": result[1]["context"],
+            "url": url,
+        },
+    )

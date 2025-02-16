@@ -33,6 +33,8 @@
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 
+#if ENABLE(VIDEO)
+
 namespace WebCore {
 
 CachedTextTrack::CachedTextTrack(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
@@ -64,3 +66,5 @@ void CachedTextTrack::finishLoading(const FragmentedSharedBuffer* data, const Ne
 }
 
 }
+
+#endif // ENABLE(VIDEO)

@@ -19,7 +19,7 @@ function func(flag) {
     return x;
 }
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (func(i % 2) !== 1)
         throw new Error();
 }

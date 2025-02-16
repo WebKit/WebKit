@@ -26,7 +26,7 @@
 import Testing
 @_spi(Private) import WebKit
 
-fileprivate struct TestURLSchemeHandler: URLSchemeHandler_v0, Sendable {
+fileprivate struct TestURLSchemeHandler: URLSchemeHandler, Sendable {
     struct Failure: Error {
     }
 
@@ -43,7 +43,7 @@ fileprivate struct TestURLSchemeHandler: URLSchemeHandler_v0, Sendable {
     private let mimeType: String
     private let replyContinuation: AsyncStream<URL>.Continuation
 
-    func reply(for request: URLRequest) -> AsyncThrowingStream<URLSchemeTaskResult_v0, any Error> {
+    func reply(for request: URLRequest) -> AsyncThrowingStream<URLSchemeTaskResult, any Error> {
         AsyncThrowingStream { continuation in
             defer {
                 replyContinuation.yield(request.url!)
@@ -69,13 +69,13 @@ fileprivate struct TestURLSchemeHandler: URLSchemeHandler_v0, Sendable {
 struct URLSchemeHandlerTests {
     @Test
     func basicSchemeValidation() async throws {
-        let customScheme = URLScheme_v0("my-custom-scheme")
+        let customScheme = URLScheme("my-custom-scheme")
         #expect(customScheme != nil)
 
-        let httpsScheme = URLScheme_v0("https")
+        let httpsScheme = URLScheme("https")
         #expect(httpsScheme == nil)
 
-        let invalidScheme = URLScheme_v0("invalid scheme")
+        let invalidScheme = URLScheme("invalid scheme")
         #expect(invalidScheme == nil)
     }
 
@@ -88,10 +88,10 @@ struct URLSchemeHandlerTests {
         """.data(using: .utf8)!
 
         let handler = TestURLSchemeHandler(data: html, mimeType: "text/html")
-        var configuration = WebPage_v0.Configuration()
-        configuration.urlSchemeHandlers[URLScheme_v0("testing")!] = handler
+        var configuration = WebPage.Configuration()
+        configuration.urlSchemeHandlers[URLScheme("testing")!] = handler
 
-        let page = WebPage_v0(configuration: configuration)
+        let page = WebPage(configuration: configuration)
 
         let url = URL(string: "testing:main")!
         let request = URLRequest(url: url)

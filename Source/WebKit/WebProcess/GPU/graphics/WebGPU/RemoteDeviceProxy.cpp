@@ -176,10 +176,10 @@ RefPtr<WebCore::WebGPU::ExternalTexture> RemoteDeviceProxy::importExternalTextur
     if (!convertedDescriptor->mediaIdentifier) {
         auto* videoFrame = std::get_if<RefPtr<WebCore::VideoFrame>>(&descriptor.videoBacking);
         if (videoFrame && videoFrame->get()) {
-            convertedDescriptor->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), [&](auto& semaphore) {
+            convertedDescriptor->sharedFrame = m_sharedVideoFrameWriter.write(*videoFrame->get(), [this, protectedThis = Ref { *this }](auto& semaphore) {
                 auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameSemaphore { semaphore });
                 UNUSED_VARIABLE(sendResult);
-            }, [&](WebCore::SharedMemory::Handle&& handle) {
+            }, [this, protectedThis = Ref { *this }](WebCore::SharedMemory::Handle&& handle) {
                 auto sendResult = send(Messages::RemoteDevice::SetSharedVideoFrameMemory { WTFMove(handle) });
                 UNUSED_VARIABLE(sendResult);
             });

@@ -68,7 +68,7 @@ public:
     NetworkSessionCurl* networkSession();
     SessionSet* sessionSet() { return nullptr; }
 
-    WebPageProxyIdentifier webProxyPageID() const { return m_webProxyPageID; }
+    WebPageProxyIdentifier webPageProxyID() const { return m_webProxyPageID; }
 
     const WebCore::SecurityOriginData& topOrigin() const { return m_topOrigin; }
 

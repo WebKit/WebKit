@@ -1,0 +1,4 @@
+
+FAIL Property page has initial value auto assert_equals: expected "auto" but got ""
+FAIL Property page does not inherit assert_equals: expected "koko" but got ""
+

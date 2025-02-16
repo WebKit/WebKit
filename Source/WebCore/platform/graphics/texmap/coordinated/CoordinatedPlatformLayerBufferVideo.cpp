@@ -47,39 +47,13 @@
 
 namespace WebCore {
 
-std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(GstSample* sample, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
+std::unique_ptr<CoordinatedPlatformLayerBufferVideo> CoordinatedPlatformLayerBufferVideo::create(GstSample* sample, GstVideoInfo* videoInfo, std::optional<DMABufFormat> dmabufFormat, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)
 {
-    GstCaps* caps = gst_sample_get_caps(sample);
-    if (UNLIKELY(!caps))
-        return nullptr;
-
-    GstVideoInfo videoInfo;
-    gst_video_info_init(&videoInfo);
-
-    std::optional<std::pair<uint32_t, uint64_t>> dmabufFormat;
-#if USE(GBM) && GST_CHECK_VERSION(1, 24, 0)
-    GstVideoInfoDmaDrm drmVideoInfo;
-    gst_video_info_dma_drm_init(&drmVideoInfo);
-    if (gst_video_is_dma_drm_caps(caps)) {
-        if (!gst_video_info_dma_drm_from_caps(&drmVideoInfo, caps))
-            return nullptr;
-
-        if (!gst_video_info_dma_drm_to_video_info(&drmVideoInfo, &videoInfo))
-            return nullptr;
-
-        dmabufFormat = std::pair<uint32_t, uint64_t> { drmVideoInfo.drm_fourcc, drmVideoInfo.drm_modifier };
-    }
-#endif
-    if (!dmabufFormat) {
-        if (!gst_video_info_from_caps(&videoInfo, caps))
-            return nullptr;
-    }
-
     auto* buffer = gst_sample_get_buffer(sample);
     if (UNLIKELY(!GST_IS_BUFFER(buffer)))
         return nullptr;
 
-    return makeUnique<CoordinatedPlatformLayerBufferVideo>(buffer, &videoInfo, dmabufFormat, videoDecoderPlatform, gstGLEnabled, flags);
+    return makeUnique<CoordinatedPlatformLayerBufferVideo>(buffer, videoInfo, dmabufFormat, videoDecoderPlatform, gstGLEnabled, flags);
 }
 
 CoordinatedPlatformLayerBufferVideo::CoordinatedPlatformLayerBufferVideo(GstBuffer* buffer, GstVideoInfo* videoInfo, std::optional<std::pair<uint32_t, uint64_t>> dmabufFormat, std::optional<GstVideoDecoderPlatform> videoDecoderPlatform, bool gstGLEnabled, OptionSet<TextureMapperFlags> flags)

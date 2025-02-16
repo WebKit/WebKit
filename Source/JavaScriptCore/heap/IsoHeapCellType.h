@@ -41,7 +41,7 @@ public:
     template<typename CellType>
     struct Args {
         Args()
-            : mode(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction)
+            : mode(CellType::needsDestruction)
             , functionPtr(&CellType::destroy)
         { }
 

@@ -33,6 +33,7 @@
 #include "LiteralParser.h"
 #include "OpaqueJSString.h"
 #include "TypedArrayType.h"
+#include <array>
 #include <gobject/gvaluecollector.h>
 #include <wtf/glib/GRefPtr.h>
 #include <wtf/glib/GUniquePtr.h>
@@ -502,7 +503,7 @@ JSCValue* jsc_value_new_array(JSCContext* context, GType firstItemType, ...)
         G_VALUE_COLLECT_INIT(&item, itemType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (error) {
-            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect array item: "_s, span(error.get()))));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect array item: "_s, unsafeSpan(error.get()))));
             jscContextHandleExceptionIfNeeded(context, exception);
             jsArray = nullptr;
             break;
@@ -904,7 +905,7 @@ static GRefPtr<JSCValue> jscValueCallFunction(JSCValue* value, JSObjectRef funct
         G_VALUE_COLLECT_INIT(&parameter, parameterType, args, G_VALUE_NOCOPY_CONTENTS, &error.outPtr());
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (error) {
-            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect function paramater: "_s, span(error.get()))));
+            exception = toRef(JSC::createTypeError(globalObject, makeString("failed to collect function paramater: "_s, unsafeSpan(error.get()))));
             jscContextHandleExceptionIfNeeded(priv->context.get(), exception);
             return adoptGRef(jsc_value_new_undefined(priv->context.get()));
         }
@@ -2144,4 +2145,60 @@ char* jsc_value_to_json(JSCValue* value, unsigned indent)
     }
 
     return json;
+}
+
+/**
+ * JSCExecutor:
+ * @resolve: #JSCValue function to call to resolve the promise
+ * @reject: #JSCValue function to call to reject the promise
+ * @user_data: user data
+ *
+ * A function passed to @jsc_value_new_promise called during initialization
+ *
+ * It is called like a JavaScript function, so exceptions raised will not be propagated
+ * to the context, but handled by the promise causing a rejection.
+ * @resolve and @reject can be reffed for later use to handle async task completion.
+ *
+ * Since: 2.48
+ */
+
+/**
+ * jsc_value_new_promise:
+ * @context: a #JSCContext
+ * @executor: (scope call) (closure user_data): an initialization callback
+ * @user_data: (nullable): user data passed in @executor
+ *
+ * Creates a new Promise. @executor will be invoked during promise initialization
+ * and it receives the @resolve and @reject objects than can be called to resolve
+ * or reject the promise. It is called like a JavaScript function, so exceptions raised
+ * during the executor invocation will not be propagated to the context, but
+ * handled by the promise causing a rejection.
+ *
+ * Returns: (transfer full): a deferred promise object
+ *
+ * Since: 2.48
+ */
+JSCValue* jsc_value_new_promise(JSCContext* context, JSCExecutor executor, gpointer userData)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+    auto* jsContext = jscContextGetJSContext(context);
+    JSObjectRef resolveObj = nullptr;
+    JSObjectRef rejectObj = nullptr;
+    JSValueRef exception = nullptr;
+    JSObjectRef promise = JSObjectMakeDeferredPromise(jsContext, &resolveObj, &rejectObj, &exception);
+    if (jscContextHandleExceptionIfNeeded(context, exception))
+        return nullptr;
+
+    constexpr size_t argumentCount = 2;
+    std::array<JSValueRef, argumentCount> arguments = { resolveObj, rejectObj };
+
+    auto callbackData = jscContextPushCallback(context, nullptr, promise, argumentCount, arguments.data());
+    GRefPtr<JSCValue> resolve = jscContextGetOrCreateValue(context, resolveObj);
+    GRefPtr<JSCValue> reject = jscContextGetOrCreateValue(context, rejectObj);
+    executor(resolve.get(), reject.get(), userData);
+    if (JSCException* unhandledException = jsc_context_get_exception(context))
+        g_object_unref(jsc_value_function_call(reject.get(), JSC_TYPE_EXCEPTION, unhandledException, G_TYPE_NONE));
+    jscContextPopCallback(context, WTFMove(callbackData));
+
+    return jscContextGetOrCreateValue(context, promise).leakRef();
 }

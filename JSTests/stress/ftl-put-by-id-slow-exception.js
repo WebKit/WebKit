@@ -17,7 +17,7 @@
 noInline(foo);
 
 // Warm up foo() with polymorphic objects and getters.
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {};
     if (i & 1)
         o["i" + i] = i; // Make it polymorphic.

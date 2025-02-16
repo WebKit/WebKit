@@ -99,7 +99,7 @@ private:
         OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) final;
         void reset() final;
 
-        HashSet<Ref<AudioSampleDataSource>> m_sources WTF_GUARDED_BY_CAPABILITY(mainThread);
+        UncheckedKeyHashSet<Ref<AudioSampleDataSource>> m_sources WTF_GUARDED_BY_CAPABILITY(mainThread);
         Vector<Ref<AudioSampleDataSource>> m_renderSources;
 
         Lock m_pendingRenderSourcesLock;

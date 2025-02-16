@@ -111,6 +111,7 @@ set(WebKitGLibAPITests_DEFINITIONS
     WEBKIT_INJECTED_BUNDLE_PATH="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}"
     WEBKIT_INSPECTOR_RESOURCES_PATH="${CMAKE_BINARY_DIR}/share"
     WEBKIT_TEST_RESOURCES_DIR="${TEST_RESOURCES_DIR}"
+    WPE_MOCK_PLATFORM_DIR="${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/wpe-mock-platform"
 )
 
 add_library(WebKitGLibAPITestsCore STATIC ${WebKitGLibAPITests_SOURCES})
@@ -143,6 +144,24 @@ if (ENABLE_WPE_PLATFORM)
     if (COMPILER_IS_GCC_OR_CLANG)
         WEBKIT_ADD_TARGET_CXX_FLAGS(TestWPESettings -Wno-unused-parameter)
     endif ()
+
+    add_executable(TestWPEDisplay
+        ${TOOLS_DIR}/TestWebKitAPI/glib/WebKitGLib/TestMain.cpp
+        ${TOOLS_DIR}/TestWebKitAPI/Tests/WPEPlatform/TestDisplay.cpp
+    )
+    target_link_libraries(TestWPEDisplay
+        ${WebKitGLibAPITest_LIBRARIES}
+        WPEPlatform-${WPE_API_VERSION}
+    )
+    target_include_directories(TestWPEDisplay PRIVATE
+        ${WebKitGLibAPITests_INCLUDE_DIRECTORIES}
+        ${WPEPlatform_DERIVED_SOURCES_DIR}
+        ${WEBKIT_DIR}/WPEPlatform
+    )
+    target_compile_definitions(TestWPEDisplay PRIVATE ${WebKitGLibAPITests_DEFINITIONS})
+    set_target_properties(TestWPEDisplay PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/TestWebKitAPI/WPEPlatform)
+
+    WEBKIT_ADD_TARGET_CXX_FLAGS(TestWPEDisplay -Wno-unused-parameter)
 endif ()
 
 GLIB_COMPILE_RESOURCES(

@@ -472,7 +472,7 @@ public:
     constexpr ScalarRegisterSet() { }
 
     inline constexpr unsigned hash() const { return m_bits.hash(); }
-    inline uint64_t bitsForDebugging() const { return *m_bits.storage(); }
+    inline uint64_t bitsForDebugging() const { return m_bits.storage()[0]; }
     friend constexpr bool operator==(const ScalarRegisterSet&, const ScalarRegisterSet&) = default;
 
     inline constexpr RegisterSet toRegisterSet() const WARN_UNUSED_RETURN

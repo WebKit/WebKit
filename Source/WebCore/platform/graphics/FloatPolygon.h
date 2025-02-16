@@ -44,12 +44,10 @@ typedef PODIntervalTree<float, FloatPolygonEdge*> EdgeIntervalTree;
 
 class FloatPolygon {
 public:
-    FloatPolygon(Vector<FloatPoint>&& vertices, WindRule fillRule);
+    FloatPolygon(Vector<FloatPoint>&& vertices);
 
     const FloatPoint& vertexAt(unsigned index) const { return m_vertices[index]; }
     unsigned numberOfVertices() const { return m_vertices.size(); }
-
-    WindRule fillRule() const { return m_fillRule; }
 
     const FloatPolygonEdge& edgeAt(unsigned index) const { return m_edges[index]; }
     unsigned numberOfEdges() const { return m_edges.size(); }
@@ -60,11 +58,7 @@ public:
     bool isEmpty() const { return m_empty; }
 
 private:
-    bool containsNonZero(const FloatPoint&) const;
-    bool containsEvenOdd(const FloatPoint&) const;
-
     Vector<FloatPoint> m_vertices;
-    WindRule m_fillRule;
     FloatRect m_boundingBox;
     bool m_empty;
     Vector<FloatPolygonEdge> m_edges;

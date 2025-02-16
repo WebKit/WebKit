@@ -856,7 +856,7 @@ class RunTest262Tests(TestWithFailureCount, CustomFlagsMixin):
         return self.failedTestCount
 
 
-class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin):
+class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin, ShellMixin):
     name = "layout-test"
     description = ["layout-tests running"]
     descriptionDone = ["layout-tests"]
@@ -888,6 +888,7 @@ class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin):
 
     def __init__(self, *args, **kwargs):
         kwargs['logEnviron'] = False
+        kwargs['timeout'] = 3 * 60 * 60
         super().__init__(*args, **kwargs)
 
     def run(self):
@@ -909,6 +910,9 @@ class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin):
 
         if additionalArguments:
             self.command += additionalArguments
+
+        filter_command = ' '.join(self.command) + ' 2>&1 | python3 Tools/Scripts/filter-test-logs layout'
+        self.command = self.shell_command(filter_command)
         return super().run()
 
     def _strip_python_logging_prefix(self, line):
@@ -939,6 +943,19 @@ class RunWebKitTests(shell.TestNewStyle, CustomFlagsMixin):
     def evaluateCommand(self, cmd):
         self.processTestFailures()
         result = SUCCESS
+
+        steps_to_add = [
+            GenerateS3URL(
+                f"{self.getProperty('fullPlatform')}-{self.getProperty('architecture')}-{self.getProperty('configuration')}-{self.name}",
+                extension='txt',
+                content_type='text/plain',
+            ), UploadFileToS3(
+                'logs.txt',
+                links={self.name: 'Full logs'},
+                content_type='text/plain',
+            )
+        ]
+        self.build.addStepsAfterCurrentStep(steps_to_add)
 
         if self.incorrectLayoutLines:
             if len(self.incorrectLayoutLines) == 1:
@@ -984,7 +1001,7 @@ class RunDashboardTests(RunWebKitTests):
     resultDirectory = os.path.join(RunWebKitTests.resultDirectory, "dashboard-layout-test-results")
 
     def run(self):
-        self.command += ["--layout-tests-directory", "Tools/CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"]
+        self.command += ["--no-http-servers", "--layout-tests-directory", "Tools/CISupport/build-webkit-org/public_html/dashboard/Scripts/tests"]
         return super().run()
 
 
@@ -993,6 +1010,14 @@ class RunWorldLeaksTests(RunWebKitTests):
     description = ["world-leaks-tests running"]
     descriptionDone = ["world-leaks-tests"]
     resultDirectory = os.path.join(RunWebKitTests.resultDirectory, "world-leaks-layout-test-results")
+    command = ["python3", "Tools/Scripts/run-webkit-tests",
+               "--no-build",
+               "--no-show-results",
+               "--no-new-test-results",
+               "--clobber-old-results",
+               "--exit-after-n-crashes-or-timeouts", "50",
+               "--exit-after-n-failures", "500",
+               WithProperties("--%(configuration)s")]
 
     def run(self):
         self.command += ["--world-leaks"]
@@ -1245,6 +1270,27 @@ class RunBuiltinsTests(shell.TestNewStyle):
     description = ["builtins-generator-tests running"]
     descriptionDone = ["builtins-generator-tests"]
     command = ["python3", "Tools/Scripts/run-builtins-generator-tests"]
+
+
+class RunMVTTests(shell.TestNewStyle):
+    command = ["Tools/Scripts/run-mvt-tests", WithProperties("--%(configuration)s"),
+               WithProperties("--%(fullPlatform)s"), "--headless"]
+    name = "MVT-tests"
+    description = ["MVT tests running"]
+    descriptionDone = ["MVT tests"]
+
+    def evaluateCommand(self, cmd):
+        self.totalUnexpectedFailures = cmd.rc
+        if self.totalUnexpectedFailures != 0:
+            self.commandFailed = True
+            return FAILURE
+        return SUCCESS
+
+    def getResultSummary(self):
+        if self.results != SUCCESS and self.totalUnexpectedFailures > 0:
+            s = "s" if self.totalUnexpectedFailures > 1 else ""
+            return {'step': f"MVT Tests: {self.totalUnexpectedFailures} unexpected failure{s}"}
+        return super().getResultSummary()
 
 
 class RunGLibAPITests(shell.TestNewStyle):

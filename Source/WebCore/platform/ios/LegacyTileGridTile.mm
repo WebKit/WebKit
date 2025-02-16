@@ -35,7 +35,7 @@
 #import "LegacyTileGrid.h"
 #import "LegacyTileLayer.h"
 #import "LegacyTileLayerPool.h"
-#import "PlatformScreen.h"
+#import "PlatformCALayer.h"
 #import "WAKWindow.h"
 #import <algorithm>
 #import <functional>
@@ -65,7 +65,7 @@ LegacyTileGridTile::LegacyTileGridTile(LegacyTileGrid* tileGrid, const IntRect& 
     }
     LegacyTileLayer* layer = m_tileLayer.get();
 
-    if (NSString *formatString = contentsFormatString(screenContentsFormat()))
+    if (NSString *formatString = contentsFormatString(PlatformCALayer::contentsFormatForLayer()))
         layer.contentsFormat = formatString;
 
     [layer setTileGrid:tileGrid];

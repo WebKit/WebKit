@@ -226,8 +226,7 @@ std::unique_ptr<AudioFileReaderWebMData> AudioFileReader::demuxWebMData(std::spa
 
 struct PassthroughUserData {
     const UInt32 m_channels;
-    const UInt32 m_dataSize;
-    const char* m_data;
+    std::span<const uint8_t> m_data;
     const bool m_eos;
     const Vector<AudioStreamPacketDescription>& m_packets;
     UInt32 m_index;
@@ -265,15 +264,13 @@ static OSStatus passthroughInputDataCallback(AudioConverterRef, UInt32* numDataP
     firstBuffer.mNumberChannels = userData->m_channels;
     firstBuffer.mDataByteSize = userData->m_packets[userData->m_index].mDataByteSize;
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    firstBuffer.mData = const_cast<char*>(userData->m_data + userData->m_packets[userData->m_index].mStartOffset);
+    firstBuffer.mData = const_cast<uint8_t*>(userData->m_data.subspan(userData->m_packets[userData->m_index].mStartOffset).data());
 
     // Sanity check
-    if (static_cast<char*>(firstBuffer.mData) + firstBuffer.mDataByteSize > userData->m_data + userData->m_dataSize) {
+    if (std::to_address(span<uint8_t>(firstBuffer).end()) > std::to_address(userData->m_data.end())) {
         RELEASE_LOG_FAULT(WebAudio, "Nonsensical data structure, aborting");
         return kAudioConverterErr_UnspecifiedError;
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     *numDataPackets = 1;
     userData->m_index++;
@@ -338,9 +335,8 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
             buffer = adoptCF(contiguousBuffer);
         }
 
-        size_t srcSize = PAL::CMBlockBufferGetDataLength(buffer.get());
-        char* srcData = nullptr;
-        if (PAL::CMBlockBufferGetDataPointer(buffer.get(), 0, nullptr, nullptr, &srcData) != noErr) {
+        auto srcData = PAL::CMBlockBufferGetDataSpan(buffer.get());
+        if (!srcData.data()) {
             RELEASE_LOG_FAULT(WebAudio, "Unable to retrieve data");
             return { };
         }
@@ -349,7 +345,7 @@ std::optional<size_t> AudioFileReader::decodeWebMData(AudioBufferList& bufferLis
         if (descriptions.isEmpty())
             return { };
 
-        PassthroughUserData userData = { inFormat.mChannelsPerFrame, UInt32(srcSize), srcData, i == m_webmData->m_samples.size() - 1, descriptions, 0, { } };
+        PassthroughUserData userData = { inFormat.mChannelsPerFrame, srcData, i == m_webmData->m_samples.size() - 1, descriptions, 0, { } };
 
         do {
             if (numberOfFrames < decodedFrames) {

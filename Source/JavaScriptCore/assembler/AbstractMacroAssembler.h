@@ -100,7 +100,7 @@ class AbstractMacroAssembler : public AbstractMacroAssemblerBase {
 public:
     typedef AbstractMacroAssembler<AssemblerType> AbstractMacroAssemblerType;
     typedef AssemblerType AssemblerType_T;
-    friend class SuppressRegisetrAllocationValidation;
+    friend class SuppressRegisterAllocationValidation;
 
     template<PtrTag tag> using CodeRef = MacroAssemblerCodeRef<tag>;
 
@@ -893,10 +893,10 @@ public:
     }
 
     // DFG register allocation validation is broken in various cases. We need suppression mechanism otherwise, it introduces a new bug rather to bypass the issue.
-    class SuppressRegisetrAllocationValidation {
+    class SuppressRegisterAllocationValidation {
     public:
 #if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
-        SuppressRegisetrAllocationValidation(AbstractMacroAssemblerType& assembler)
+        SuppressRegisterAllocationValidation(AbstractMacroAssemblerType& assembler)
             : m_suppressRegisterValidation(assembler.m_suppressRegisterValidation, true)
         {
         }
@@ -904,7 +904,7 @@ public:
     private:
         SetForScope<bool> m_suppressRegisterValidation;
 #else
-        SuppressRegisetrAllocationValidation(AbstractMacroAssemblerType&) { }
+        SuppressRegisterAllocationValidation(AbstractMacroAssemblerType&) { }
 #endif
     };
 
@@ -945,6 +945,15 @@ public:
 
         for (auto& offset : m_registerAllocationForOffsets)
             offset.checkOffsets(offset1, offset2);
+    }
+
+    void checkRegisterAllocationAgainstSlowPathCall(const JumpList &from)
+    {
+        if (m_suppressRegisterValidation)
+            return;
+
+        for (auto& jump : from.jumps())
+            checkRegisterAllocationAgainstBranchRange(jump.label().m_label.offset(), debugOffset());
     }
 #endif
 

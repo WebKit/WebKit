@@ -12,7 +12,7 @@ function putById() {
 }
 noInline(putById);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     putByVal();
     putById();
 }

@@ -1560,6 +1560,9 @@ bool TestSuite::finishProcess(ProcessInfo *processInfo)
         {
             printf(" (TIMEOUT in %0.1lf s)\n", result.elapsedTimeSeconds.back());
             mFailureCount++;
+
+            const std::string &batchStdout = processInfo->process->getStdout();
+            PrintTestOutputSnippet(id, result, batchStdout);
         }
         else
         {

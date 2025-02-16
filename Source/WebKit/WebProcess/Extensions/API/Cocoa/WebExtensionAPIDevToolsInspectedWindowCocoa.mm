@@ -67,7 +67,7 @@ void WebExtensionAPIDevToolsInspectedWindow::eval(WebPageProxyIdentifier webPage
         frameURL = URL { url };
 
         if (!frameURL.value().isValid()) {
-            *outExceptionString = toErrorString(nil, frameURLKey, @"'%@' is not a valid URL", url);
+            *outExceptionString = toErrorString(nullString(), frameURLKey, @"'%@' is not a valid URL", url);
             return;
         }
     }

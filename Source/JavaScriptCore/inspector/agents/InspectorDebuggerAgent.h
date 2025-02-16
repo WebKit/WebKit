@@ -253,9 +253,9 @@ private:
     UncheckedKeyHashMap<JSC::SourceID, JSC::Debugger::Script> m_scripts;
 
     using BlackboxParameters = std::tuple<String /* url */, bool /* caseSensitive */, bool /* isRegex */>;
-    UncheckedKeyHashMap<BlackboxParameters, HashSet<JSC::Debugger::BlackboxRange>> m_blackboxedURLs;
+    UncheckedKeyHashMap<BlackboxParameters, UncheckedKeyHashSet<JSC::Debugger::BlackboxRange>> m_blackboxedURLs;
 
-    HashSet<Listener*> m_listeners;
+    UncheckedKeyHashSet<Listener*> m_listeners;
 
     JSC::JSGlobalObject* m_pausedGlobalObject { nullptr };
     JSC::Strong<JSC::Unknown> m_currentCallStack;
@@ -290,7 +290,7 @@ private:
         RefPtr<JSC::Breakpoint> specialBreakpoint;
 
         // Avoid having to (re)match the regex each time a function as called.
-        HashSet<String> knownMatchingSymbols;
+        UncheckedKeyHashSet<String> knownMatchingSymbols;
 
         inline bool operator==(const SymbolicBreakpoint& other) const
         {

@@ -52,22 +52,22 @@ static ParseResult parseSidebarActionDetails(NSDictionary *details)
     id maybeWindowId = [details objectForKey:windowIdKey];
 
     if (maybeTabId && maybeWindowId)
-        return toErrorString(nil, @"details", @"it cannot specify both 'tabId' and 'windowId'");
+        return toErrorString(nullString(), @"details", @"it cannot specify both 'tabId' and 'windowId'");
 
     if (maybeTabId && ![maybeTabId isKindOfClass:NSNumber.class])
-        return toErrorString(nil, @"details", @"'tabId' must be a number");
+        return toErrorString(nullString(), @"details", @"'tabId' must be a number");
 
     if (maybeWindowId && ![maybeWindowId isKindOfClass:NSNumber.class])
-        return toErrorString(nil, @"details", @"'windowId' must be a number");
+        return toErrorString(nullString(), @"details", @"'windowId' must be a number");
 
     if (maybeTabId) {
         auto tabId = toWebExtensionTabIdentifier(((NSNumber *) maybeTabId).doubleValue);
-        return isValid(tabId) ? ParseResult(tabId.value()) : ParseResult(toErrorString(nil, @"details", @"'tabId' is invalid"));
+        return isValid(tabId) ? ParseResult(tabId.value()) : ParseResult(toErrorString(nullString(), @"details", @"'tabId' is invalid"));
     }
 
     if (maybeWindowId) {
         auto windowId = toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue);
-        return isValid(windowId) ? ParseResult(windowId.value()) : ParseResult(toErrorString(nil, @"details", @"'windowId' is invalid"));
+        return isValid(windowId) ? ParseResult(windowId.value()) : ParseResult(toErrorString(nullString(), @"details", @"'windowId' is invalid"));
     }
 
     return std::monostate();
@@ -77,18 +77,18 @@ static std::variant<std::monostate, String, SidebarError> parseDetailsStringFrom
 {
     id maybeValue = [dict objectForKey:key];
     if (!maybeValue && required)
-        return SidebarError { toErrorString(nil, @"details", [NSString stringWithFormat:@"'%@' is required", key]) };
+        return SidebarError { toErrorString(nullString(), @"details", [NSString stringWithFormat:@"'%@' is required", key]) };
 
     if ([maybeValue isKindOfClass:NSNull.class]) {
         if (required)
-            return SidebarError { toErrorString(nil, @"details", [NSString stringWithFormat:@"'%@' is required", key]) };
+            return SidebarError { toErrorString(nullString(), @"details", [NSString stringWithFormat:@"'%@' is required", key]) };
         return std::monostate();
     }
 
     if (![maybeValue isKindOfClass:NSString.class]) {
         if (required)
-            return SidebarError { toErrorString(nil, @"details", [NSString stringWithFormat:@"'%@' must be of type 'string'", key]) };
-        return SidebarError { toErrorString(nil, @"details", [NSString stringWithFormat:@"'%@' must be of type 'string' or 'null'", key]) };
+            return SidebarError { toErrorString(nullString(), @"details", [NSString stringWithFormat:@"'%@' must be of type 'string'", key]) };
+        return SidebarError { toErrorString(nullString(), @"details", [NSString stringWithFormat:@"'%@' must be of type 'string' or 'null'", key]) };
     }
 
     return String((NSString *)maybeValue);
@@ -106,7 +106,7 @@ static std::tuple<std::optional<WebExtensionWindowIdentifier>, std::optional<Web
 void WebExtensionAPISidebarAction::open(Ref<WebExtensionCallbackHandler>&& callback , NSString **outExceptionString)
 {
     if (!WebCore::UserGestureIndicator::processingUserGesture()) {
-        *outExceptionString = toErrorString(nil, nil, @"it must be called during a user gesture");
+        *outExceptionString = toErrorString(nullString(), nil, @"it must be called during a user gesture");
         return;
     }
 
@@ -123,7 +123,7 @@ void WebExtensionAPISidebarAction::open(Ref<WebExtensionCallbackHandler>&& callb
 void WebExtensionAPISidebarAction::close(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     if (!WebCore::UserGestureIndicator::processingUserGesture()) {
-        *outExceptionString = toErrorString(nil, nil, @"it must be called during a user gesture");
+        *outExceptionString = toErrorString(nullString(), nil, @"it must be called during a user gesture");
         return;
     }
 
@@ -140,7 +140,7 @@ void WebExtensionAPISidebarAction::close(Ref<WebExtensionCallbackHandler>&& call
 void WebExtensionAPISidebarAction::toggle(Ref<WebExtensionCallbackHandler>&& callback, NSString **outExceptionString)
 {
     if (!WebCore::UserGestureIndicator::processingUserGesture()) {
-        *outExceptionString = toErrorString(nil, nil, @"it must be called during a user gesture");
+        *outExceptionString = toErrorString(nullString(), nil, @"it must be called during a user gesture");
         return;
     }
 
@@ -159,13 +159,13 @@ void WebExtensionAPISidebarAction::isOpen(NSDictionary *details, Ref<WebExtensio
     // we don't use parseSidebarActionDetails here because we only need windowId for isOpen
     id maybeWindowId = details[windowIdKey];
     if (maybeWindowId && ![maybeWindowId isKindOfClass:NSNumber.class]) {
-        *outExceptionString = toErrorString(nil, @"details", @"'windowId' must be a number");
+        *outExceptionString = toErrorString(nullString(), @"details", @"'windowId' must be a number");
         return;
     }
 
     std::optional<WebExtensionWindowIdentifier> windowId = maybeWindowId ? toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue) : std::nullopt;
     if (windowId && !isValid(windowId)) {
-        *outExceptionString = toErrorString(nil, @"details", @"'windowId' is invalid");
+        *outExceptionString = toErrorString(nullString(), @"details", @"'windowId' is invalid");
         return;
     }
 

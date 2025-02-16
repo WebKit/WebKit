@@ -2,8 +2,6 @@
 
 "use strict";
 
-var n = 10000000;
-
 function shouldThrowTDZ(func) {
     var hasThrown = false;
     try {
@@ -34,7 +32,7 @@ function foo(b) {
 noInline(bar);
 noInline(foo);
 
-for (var i = 0; i < n; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     var bool = !(i % 100);
     if (bool)
         shouldThrowTDZ(function() { foo(bool); });

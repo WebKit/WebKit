@@ -647,7 +647,7 @@ static inline UGPRPair doWasmCall(Register* partiallyConstructedCalleeFrame, JSW
         // For the non-jit wasm_to_js case specifically, we also pass along this functionInfo*, since
         // this new callee will have no way to access it.
         if (!functionInfo->targetInstance)
-            functionInfoSlot = reinterpret_cast<uintptr_t>(static_cast<Wasm::WasmOrJSImportableFunction*>(functionInfo));
+            functionInfoSlot = reinterpret_cast<uintptr_t>(functionInfo);
         else
             functionInfoSlot = functionInfo->targetInstance.get();
     } else {
@@ -694,7 +694,7 @@ static inline UGPRPair doWasmCallIndirect(Register* partiallyConstructedCalleeFr
         calleeStackSlot = CalleeBits::encodeNullCallee();
 
     if (!function.m_function.targetInstance)
-        functionInfoSlot = reinterpret_cast<uintptr_t>(static_cast<const Wasm::WasmOrJSImportableFunction*>(&function.m_function));
+        functionInfoSlot = reinterpret_cast<uintptr_t>(function.m_callLinkInfo);
     else
         functionInfoSlot = function.m_instance;
 
@@ -723,26 +723,25 @@ static inline UGPRPair doWasmCallRef(Register* partiallyConstructedCalleeFrame, 
 
     ASSERT(referenceAsObject->inherits<WebAssemblyFunctionBase>());
     auto* wasmFunction = jsCast<WebAssemblyFunctionBase*>(referenceAsObject);
-    auto* function = &wasmFunction->importableFunction();
+    auto& function = wasmFunction->importableFunction();
     JSWebAssemblyInstance* calleeInstance = wasmFunction->instance();
 
     Register& calleeStackSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::callee)];
     Register& functionInfoSlot = partiallyConstructedCalleeFrame[static_cast<int>(CallFrameSlot::codeBlock)];
     ASSERT(calleeStackSlot.unboxedInt64() == 0xBEEF);
 
-    if (function->boxedWasmCalleeLoadLocation)
-        calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function->boxedWasmCalleeLoadLocation));
+    if (function.boxedWasmCalleeLoadLocation)
+        calleeStackSlot = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.boxedWasmCalleeLoadLocation));
     else
         calleeStackSlot = CalleeBits::encodeNullCallee();
-    if (!function->targetInstance)
-        functionInfoSlot = reinterpret_cast<uintptr_t>(static_cast<const Wasm::WasmOrJSImportableFunction*>(function));
+    if (!function.targetInstance)
+        functionInfoSlot = reinterpret_cast<uintptr_t>(wasmFunction->callLinkInfo());
     else
-        functionInfoSlot = function->targetInstance.get();
+        functionInfoSlot = function.targetInstance.get();
 
-    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=260820
-    ASSERT(function->typeIndex == CALLEE()->signature(typeIndex).index());
+    ASSERT(Wasm::isSubtypeIndex(function.typeIndex, CALLEE()->signature(typeIndex).index()));
     UNUSED_PARAM(typeIndex);
-    auto callTarget = *function->entrypointLoadLocation;
+    auto callTarget = *function.entrypointLoadLocation;
     WASM_CALL_RETURN(calleeInstance, callTarget);
 }
 
@@ -1034,13 +1033,13 @@ WASM_SLOW_PATH_DECL(throw)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto instruction = pc->as<WasmThrow>();
-    const Wasm::Tag& tag = instance->tag(instruction.m_exceptionIndex);
+    Ref<const Wasm::Tag> tag = instance->tag(instruction.m_exceptionIndex);
 
-    FixedVector<uint64_t> values(tag.parameterBufferSize());
-    for (unsigned i = 0; i < tag.parameterBufferSize(); ++i)
+    FixedVector<uint64_t> values(tag->parameterBufferSize());
+    for (unsigned i = 0; i < tag->parameterBufferSize(); ++i)
         values[i] = READ((instruction.m_firstValue - i)).encodedJSValue();
 
-    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), tag, WTFMove(values));
+    JSWebAssemblyException* exception = JSWebAssemblyException::create(vm, globalObject->webAssemblyExceptionStructure(), WTFMove(tag), WTFMove(values));
     throwException(globalObject, throwScope, exception);
 
     genericUnwind(vm, callFrame);
@@ -1058,8 +1057,15 @@ WASM_SLOW_PATH_DECL(rethrow)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto instruction = pc->as<WasmRethrow>();
-    JSValue exception = READ(instruction.m_exception).jsValue();
-    throwException(globalObject, throwScope, exception);
+    JSValue exceptionValue = READ(instruction.m_exception).jsValue();
+
+    JSValue thrownValue = exceptionValue;
+    if (auto* exception = jsDynamicCast<JSWebAssemblyException*>(exceptionValue)) {
+        if (&exception->tag() == &Wasm::Tag::jsExceptionTag())
+            thrownValue = JSValue::decode(exception->payload().at(0));
+    }
+
+    throwException(globalObject, throwScope, thrownValue);
 
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
@@ -1076,17 +1082,22 @@ WASM_SLOW_PATH_DECL(throw_ref)
     auto throwScope = DECLARE_THROW_SCOPE(vm);
 
     auto instruction = pc->as<WasmThrowRef>();
-    auto exception = READ(instruction.m_exception).jsValue();
+    auto exceptionValue = READ(instruction.m_exception).jsValue();
 
-    if (exception == jsNull())
+    if (exceptionValue == jsNull())
         WASM_THROW(Wasm::ExceptionType::NullExnReference);
 
-    throwException(globalObject, throwScope, jsCast<JSWebAssemblyException*>(exception));
+    auto* exception = jsCast<JSWebAssemblyException*>(exceptionValue);
+    JSValue thrownValue = exceptionValue;
+    if (&exception->tag() == &Wasm::Tag::jsExceptionTag())
+        thrownValue = JSValue::decode(exception->payload().at(0));
+
+    throwException(globalObject, throwScope, thrownValue);
 
     genericUnwind(vm, callFrame);
     ASSERT(!!vm.callFrameForCatch);
     ASSERT(!!vm.targetMachinePCForThrow);
-    WASM_RETURN_TWO(vm.targetMachinePCForThrow, jsCast<JSWebAssemblyException*>(exception));
+    WASM_RETURN_TWO(vm.targetMachinePCForThrow, exception);
 }
 
 WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
@@ -1344,6 +1355,17 @@ WASM_SLOW_PATH_DECL(i64_trunc_sat_f64_s)
 extern "C" UGPRPair SYSV_ABI slow_path_wasm_throw_exception(CallFrame* callFrame, JSWebAssemblyInstance* instance, Wasm::ExceptionType exceptionType)
 {
     SlowPathFrameTracer tracer(instance->vm(), callFrame);
+#if ENABLE(WEBASSEMBLY_BBQJIT)
+    void* pc = instance->faultPC();
+    instance->setFaultPC(nullptr);
+    auto* callee = callFrame->callee().asNativeCallee();
+    ASSERT(callee->category() == NativeCallee::Category::Wasm);
+    auto& wasmCallee = static_cast<Wasm::Callee&>(*callee);
+    if (isAnyOMG(wasmCallee.compilationMode())) {
+        if (auto callSiteIndexFromPC = static_cast<Wasm::OptimizingJITCallee&>(wasmCallee).tryGetCallSiteIndex(pc))
+            callFrame->setCallSiteIndex(callSiteIndexFromPC.value());
+    }
+#endif
     WASM_RETURN_TWO(Wasm::throwWasmToJSException(callFrame, exceptionType, instance), nullptr);
 }
 

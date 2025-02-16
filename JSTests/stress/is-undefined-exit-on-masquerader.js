@@ -21,7 +21,7 @@ function test(o, expected) {
         throw new Error("bad result: " + result);
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(void 0, true);
     test(null, false);
     test(42, false);

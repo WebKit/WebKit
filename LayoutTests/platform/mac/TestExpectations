@@ -575,8 +575,6 @@ webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ 
 # resizing didn't work. Now the test fails. I believe this bug was never fixed for the Mac port.
 fast/dom/rtl-scroll-to-leftmost-and-resize.html [ Failure ]
 
-webkit.org/b/187408 [ Debug ] imported/w3c/web-platform-tests/WebCryptoAPI/generateKey/successes_RSA-PSS.https.any.worker.html [ Slow ]
-
 webkit.org/b/131477 fast/repaint/obscured-background-no-repaint.html [ Pass Failure ]
 
 webkit.org/b/116259 http/tests/cache/willsendrequest-returns-null-for-memory-cache-load.html [ Pass Failure ]
@@ -818,17 +816,6 @@ webkit.org/b/136109 fast/multicol/mixed-opacity-fixed-test.html  [ ImageOnlyFail
 
 webkit.org/b/137589 compositing/hidpi-compositing-vs-non-compositing-check-on-testing-framework.html [ Pass ImageOnlyFailure ]
 
-# These tests fail on machines with AMD (ATI) graphics cards - that is, on EWS and locally.
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-array-buffer-view.html [ Pass Failure ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgb565.html [ Pass Failure ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba4444.html [ Pass Failure ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data-rgba5551.html [ Pass Failure ]
-webkit.org/b/93560 fast/canvas/webgl/tex-image-and-sub-image-2d-with-image-data.html [ Pass Failure ]
-
-# These seem to be like the above, but they fail locally on Yosemite with AMD graphics (Mac Pro Late 2013).
-fast/canvas/canvas-draw-canvas-on-canvas-shadow.html [ Pass Failure ]
-fast/canvas/canvas-fillRect-gradient-shadow.html [ Pass Failure ]
-
 # Underlines' starting and ending positions need to be pixel-snapped
 
 # Tests that fail with the SVG -> OTF font converter, but are lower priority than live-on
@@ -848,9 +835,6 @@ fast/forms/focus-selection-textarea.html [ Pass Failure ]
 
 # See also: rdar://problem/27356144
 webkit.org/b/142726 fast/images/animated-png.html [ Skip ]
-
-# OS X 10.10.3+ has the necessary glyphs.
-webkit.org/b/142548 editing/selection/extend-by-character-007.html [ Pass ]
 
 webkit.org/b/145432 media/video-transformed-by-javascript.html [ Failure ]
 
@@ -1196,7 +1180,6 @@ fast/canvas/set-colors.html [ Failure ]
 
 # WebCryptoAPI features that enabled only for High Sierra/iOS 11
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
@@ -1206,7 +1189,6 @@ crypto/subtle/rsa-pss-generate-key.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
@@ -2139,11 +2121,6 @@ fast/box-shadow/inset-box-shadow-fractional-radius.html [ ImageOnlyFailure ]
 # rdar://105307989 (REGRESSION ( Sonoma ): [ Sonoma ] svg/custom/hidpi-masking-clipping.svg is a consistent failure)
 svg/custom/hidpi-masking-clipping.svg [ Pass ImageOnlyFailure ]
 
-# rdar://111077813 (REGRESSION ( Sonoma ): [ Sonoma ] css3/color-filters/color-filter-caret-color.html is a consistent image failure)
-css3/color-filters/color-filter-caret-color.html [ ImageOnlyFailure ]
-fast/css/caret-color-fallback-to-color.html [ ImageOnlyFailure ]
-fast/css/caret-color-span-inside-editable-parent.html [ ImageOnlyFailure ]
-
 # Caps lock indicator is disabled on Sonoma, as it is provided by the OS.
 fast/forms/caps-lock-indicator-width.html [ Skip ]
 
@@ -2414,37 +2391,12 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-same-key.html [ Failure ]
 http/tests/media/fairplay/fps-mse-multi-key-renewal.html [ Pass Failure ] 
 
-# webkit.org/b/284075 Opus and MP3 decoders aren't working with raw content (no magic cookie)
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp3 [ Skip ]
+# webkit.org/b/284075 Opus decoder isn't working with raw content (no magic cookie provided)
 [ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?opus [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp3 [ Skip ]
 [ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?opus [ Skip ]
-
-# Ventura doesn't support some sampling rates or contents used by the tests. tracked by webkit.org/b/284671
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?adts_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?mp4_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_alaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_ulaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_u8 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_s16 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_s24 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_s32 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.html?pcm_f32 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?adts_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?mp4_aac [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_alaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_ulaw [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_u8 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_s16 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_s24 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_s32 [ Skip ]
-[ Ventura ] imported/w3c/web-platform-tests/webcodecs/audioDecoder-codec-specific.https.any.worker.html?pcm_f32 [ Skip ]
 
 # Ventura doesn't support resampling when encoding to Opus, causing the test to fail.
 [ Ventura ] imported/w3c/web-platform-tests/webcodecs/audio-encoder.https.any.html [ Failure ]
-
-# webkit.org/b/280424 [ Sequoia ] fast/table/col-and-colgroup-offsets.html is a constant failure.
-[ Sequoia+ ] fast/table/col-and-colgroup-offsets.html [ Failure ]
 
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
 
@@ -2472,11 +2424,12 @@ media/webkit-media-controls-not-visible-after-exiting-fullscreen.html [ Pass ]
 # webkit.org/b/280304 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html is a constant image only failure.
 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
 
+# rdar://143398895
+media/modern-media-controls/scrubber-support/scrubber-support-seek-back.html [ Skip ]
+
 # webkit.org/b/280792 [macOS] ASSERTION FAILED: Unsafe to ref/deref from different threads (flaky in EWS)
 inspector/worker/debugger-pause-subworker.html [ Skip ]
 inspector/worker/console-basic-subworker.html [ Skip ]
-
-webkit.org/b/283203 [ Ventura+ ] fast/canvas/imageData-consistency.html [ Pass Timeout ]
 
 webkit.org/b/284082 [ Sequoia+ ] http/tests/media/fairplay/legacy-fairplay-mse-muxed-nowait.html [ Timeout Failure ]
 
@@ -2484,3 +2437,10 @@ webkit.org/b/284597 [ Ventura+ ] http/tests/misc/repeat-open-cancel.html [ Slow 
 
 webkit.org/b/284653 [ Ventura+ ] http/tests/site-isolation/compositing/iframes/resize-from-zero-size.html [ Pass Failure ]
 
+webkit.org/b/285954 [ Ventura+ Debug ] inspector/worker/runtime-basic-subworker.html [ Pass Crash ]
+
+webkit.org/b/286039 imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html [ Pass Failure ]
+
+webkit.org/b/286107 [ Release ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-013.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/274792 compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Pass Failure ]

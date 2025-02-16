@@ -45,6 +45,23 @@ bool isValidToUseWith(const T& object, const U& targetObject)
 }
 
 template <typename T, typename U>
+bool isValidToUseWithDevice(const T& object, const U& targetObject)
+{
+    // https://gpuweb.github.io/gpuweb/#abstract-opdef-valid-to-use-with
+
+    if (!object.isValid())
+        return false;
+
+    if (!object.device().isValid())
+        return false;
+
+    if (&object.device() != &targetObject)
+        return false;
+
+    return true;
+}
+
+template <typename T, typename U>
 bool isValidToUseWith(const Ref<T>& object, const U& targetObject)
 {
     return isValidToUseWith(object.get(), targetObject);

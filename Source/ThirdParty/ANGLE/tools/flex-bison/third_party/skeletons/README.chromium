@@ -1,7 +1,7 @@
 Name: Bison skeletons
-URL: https://www.gnu.org/software/bison/
+URL: https://git.savannah.gnu.org/r/bison.git/
 Version: 3.3.2
-License: GPL
+License: GPL-3.0
 License File: LICENSE
 Shipped: no
 Security critical: no

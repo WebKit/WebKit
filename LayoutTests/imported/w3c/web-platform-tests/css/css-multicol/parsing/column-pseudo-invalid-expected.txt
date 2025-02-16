@@ -1,0 +1,8 @@
+
+PASS "::column:hover" should be an invalid selector
+PASS "::column::before" should be an invalid selector
+PASS "::column::first-letter" should be an invalid selector
+PASS "::column::first-line" should be an invalid selector
+PASS "::first-letter::column" should be an invalid selector
+PASS "::column::slotted(*)" should be an invalid selector
+

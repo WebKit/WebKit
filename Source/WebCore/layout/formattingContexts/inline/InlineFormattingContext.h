@@ -49,6 +49,7 @@ struct InlineLayoutResult {
         PartialFromDamage // Display content represents part of the inline content starting from damaged line until damage stops -result of partial layout with damage that does not cover the entire inline content
     };
     Range range { Range::Full };
+    bool didDiscardContent { false };
 };
 
 // This class implements the layout logic for inline formatting context.

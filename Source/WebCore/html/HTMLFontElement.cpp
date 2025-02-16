@@ -200,7 +200,7 @@ void HTMLFontElement::collectPresentationalHintsForAttribute(const QualifiedName
     case AttributeNames::faceAttr:
         if (!value.isEmpty()) {
             if (auto fontFaceValue = CSSValuePool::singleton().createFontFaceValue(value))
-                style.setProperty(CSSProperty(CSSPropertyFontFamily, WTFMove(fontFaceValue)));
+                style.setProperty(CSSProperty(CSSPropertyFontFamily, fontFaceValue.releaseNonNull()));
         }
         break;
     default:

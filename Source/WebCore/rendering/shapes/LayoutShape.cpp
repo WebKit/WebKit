@@ -62,9 +62,9 @@ static Ref<LayoutShape> createEllipseShape(const FloatPoint& center, const Float
     return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii, boxLogicalWidth));
 }
 
-static Ref<LayoutShape> createPolygonShape(Vector<FloatPoint>&& vertices, WindRule fillRule, float boxLogicalWidth)
+static Ref<LayoutShape> createPolygonShape(Vector<FloatPoint>&& vertices, float boxLogicalWidth)
 {
-    return adoptRef(*new PolygonLayoutShape(WTFMove(vertices), fillRule, boxLogicalWidth));
+    return adoptRef(*new PolygonLayoutShape(WTFMove(vertices), boxLogicalWidth));
 }
 
 static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
@@ -151,11 +151,11 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
         [&](const Style::PolygonFunction& polygon) -> Ref<LayoutShape> {
             auto boxSize = FloatSize { boxWidth, boxHeight };
 
-            auto vertices = polygon->vertices.value.map([&](const auto& vertex) -> FloatPoint {
+            auto vertices = polygon->vertices.value.map([&](const auto& vertex) {
                 return physicalPointToLogical(Style::evaluate(vertex, boxSize) + borderBoxOffset, logicalBoxSize.height(), writingMode);
             });
 
-            return createPolygonShape(WTFMove(vertices), Style::windRule(*polygon), logicalBoxSize.width());
+            return createPolygonShape(WTFMove(vertices), logicalBoxSize.width());
         },
         [&](const Style::PathFunction&) -> Ref<LayoutShape> {
             RELEASE_ASSERT_NOT_REACHED();

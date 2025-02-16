@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,38 +27,83 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CredentialRequestCoordinatorClient.h"
-#include "IDLTypes.h"
-#include <wtf/CompletionHandler.h>
+#include "BasicCredential.h"
+#include "JSDOMPromiseDeferred.h"
+#include <optional>
+#include <wtf/CanMakeWeakPtr.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/UniqueRef.h>
 
 namespace WebCore {
 
 class AbortSignal;
-class BasicCredential;
 class CredentialRequestCoordinatorClient;
 class Document;
-struct CredentialRequestOptions;
-
-template<typename IDLType> class DOMPromiseDeferred;
+class LocalFrame;
+struct DigitalCredentialsRequestData;
+struct DigitalCredentialsResponseData;
+struct ExceptionData;
 
 using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
-class CredentialRequestCoordinator final {
+class CredentialRequestCoordinator final : public RefCounted<CredentialRequestCoordinator>, public CanMakeWeakPtr<CredentialRequestCoordinator> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CredentialRequestCoordinator, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(CredentialRequestCoordinator);
 
 public:
-    WEBCORE_EXPORT explicit CredentialRequestCoordinator(std::unique_ptr<CredentialRequestCoordinatorClient>&&);
-    void discoverFromExternalSource(const Document&, CredentialRequestOptions&&, CredentialPromise&&);
+    static Ref<CredentialRequestCoordinator> create(UniqueRef<CredentialRequestCoordinatorClient>&&, Page&);
+    WEBCORE_EXPORT void presentPicker(CredentialPromise&&, DigitalCredentialsRequestData&&, RefPtr<AbortSignal>);
+    WEBCORE_EXPORT void abortPicker(JSC::JSValue reason);
+    ~CredentialRequestCoordinator();
 
 private:
-    CredentialRequestCoordinator() = default;
+    static constexpr bool canPresentDigitalCredentialsUI()
+    {
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+        return true;
+#else
+        return false;
+#endif
+    }
+    class PickerStateGuard final {
+    public:
+        explicit PickerStateGuard(CredentialRequestCoordinator&);
+        PickerStateGuard(const PickerStateGuard&) = delete;
+        PickerStateGuard& operator=(const PickerStateGuard&) = delete;
 
-    std::unique_ptr<CredentialRequestCoordinatorClient> m_client;
-    bool m_isCancelling = false;
-    CompletionHandler<void()> m_queuedRequest;
+        PickerStateGuard(PickerStateGuard&&) noexcept;
+        PickerStateGuard& operator=(PickerStateGuard&&) noexcept;
+
+        ~PickerStateGuard();
+
+    private:
+        WeakRef<CredentialRequestCoordinator> m_coordinator;
+        bool m_active { true };
+    }; // class PickerStateGuard
+
+    enum class PickerState : uint8_t {
+        Idle,
+        Presenting,
+        Aborting
+    }; // enum class PickerState
+
+    bool canTransitionTo(PickerState) const;
+    PickerState currentState() const;
+    void setState(PickerState);
+    bool hasCurrentPromise() const { return m_currentPromise.has_value(); }
+    void setCurrentPromise(CredentialPromise&&);
+    CredentialPromise* currentPromise();
+
+    bool parseDigitalCredentialsResponseData(Document&, const String&, JSC::JSObject*&) const;
+    void handleDigitalCredentialsPickerResult(Expected<DigitalCredentialsResponseData, ExceptionData>&& responseOrException, RefPtr<AbortSignal>);
+    void finalizeDigitalCredential(const DigitalCredentialsResponseData&);
+
+    explicit CredentialRequestCoordinator(UniqueRef<CredentialRequestCoordinatorClient>&&, Page&);
+    const UniqueRef<CredentialRequestCoordinatorClient> m_client;
+    PickerState m_state { PickerState::Idle };
+    std::optional<CredentialPromise> m_currentPromise;
+    WeakPtr<Page> m_page;
 };
 
 } // namespace WebCore

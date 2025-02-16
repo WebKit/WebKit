@@ -39,14 +39,14 @@ class CommandEvent final : public Event {
 
 public:
     struct Init : EventInit {
-        RefPtr<Element> invoker;
+        RefPtr<Element> source;
         String command;
     };
 
     static Ref<CommandEvent> create(const AtomString& type, const Init&, IsTrusted = IsTrusted::No);
     static Ref<CommandEvent> createForBindings();
 
-    RefPtr<Element> invoker() const;
+    RefPtr<Element> source() const;
 
     String command() const { return m_command; }
 
@@ -56,9 +56,7 @@ private:
 
     bool isCommandEvent() const final;
 
-    void setCommandr(RefPtr<Element>&& invoker) { m_invoker = WTFMove(invoker); }
-
-    RefPtr<Element> m_invoker;
+    RefPtr<Element> m_source;
     String m_command;
 };
 

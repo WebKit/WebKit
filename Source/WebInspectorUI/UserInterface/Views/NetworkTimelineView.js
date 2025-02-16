@@ -158,6 +158,8 @@ WI.NetworkTimelineView = class NetworkTimelineView extends WI.TimelineView
         this.representedObject.removeEventListener(WI.Timeline.Event.RecordAdded, this._networkTimelineRecordAdded, this);
 
         this._dataGrid.closed();
+
+        super.closed();
     }
 
     reset()

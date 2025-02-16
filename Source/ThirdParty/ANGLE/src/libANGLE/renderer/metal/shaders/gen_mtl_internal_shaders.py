@@ -100,7 +100,13 @@ def generate_combined_metal_src(metal_src_files):
     args = [clang]
     if not os.name == 'nt':
         args += ['-xc++']
-    args += ['-E', temp_fname]
+
+    # Run clang with these options:
+    # '-E' - Only run the preprocessor
+    # '-P' - Disable linemarker output in -E mode
+    # Line markers are removed from the checked-in code
+    # as they are only useful for shader debugging.
+    args += ['-E', '-P', temp_fname]
 
     combined_source = subprocess.check_output(args)
     os.remove(temp_fname)

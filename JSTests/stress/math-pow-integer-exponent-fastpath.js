@@ -13,13 +13,13 @@ function mathPowDoubleIntTestExponentFifty(x, y) {
 }
 noInline(mathPowDoubleIntTestExponentFifty);
 function testExponentFifty(x, y, expected) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDoubleTestExponentFifty(x, y);
         if (!valuesAreClose(result, expected))
             throw "Error: bad result, Math.pow(" + x + ", " + y + ") = " + result + " expected value close to " + expected;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleIntTestExponentFifty(x, integerY);
         if (!valuesAreClose(result, expected))
             throw "Error: bad result, Math.pow(" + x + ", " + integerY + ") = " + result + " expected value close to " + expected;
@@ -39,13 +39,13 @@ function mathPowDoubleIntTestExponentTenThousands(x, y) {
 }
 noInline(mathPowDoubleIntTestExponentTenThousands);
 function testExponentTenThousands(x, y, expected) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDoubleTestExponentTenThousands(x, y);
         if (!valuesAreClose(result, expected))
             throw "Error: bad result, Math.pow(" + x + ", " + y + ") = " + result + " expected value close to " + expected;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleIntTestExponentTenThousands(x, integerY);
         if (!valuesAreClose(result, expected))
             throw "Error: bad result, Math.pow(" + x + ", " + integerY + ") = " + result + " expected value close to " + expected;

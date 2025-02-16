@@ -1354,25 +1354,11 @@ void PDFDiscretePresentationController::didGeneratePreviewForPage(PDFDocumentLay
 
 #pragma mark -
 
-auto PDFDiscretePresentationController::pdfPositionForCurrentView(bool preservePosition) const -> std::optional<VisiblePDFPosition>
+std::optional<PDFDocumentLayout::PageIndex> PDFDiscretePresentationController::pageIndexForCurrentView(AnchorPoint) const
 {
-    if (!preservePosition)
-        return { };
-
-    auto& documentLayout = m_plugin->documentLayout();
-    if (!documentLayout.hasLaidOutPDFDocument())
-        return { };
-
-    auto visibleRow = this->visibleRow();
-    if (!visibleRow)
-        return { };
-
-    auto pageIndex = visibleRow->pages[0];
-    auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
-    auto topLeftInDocumentSpace = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatPoint { });
-    auto pagePoint = documentLayout.documentToPDFPage(FloatPoint { pageBounds.center().x(), topLeftInDocumentSpace.y() }, pageIndex);
-
-    return VisiblePDFPosition { pageIndex, pagePoint };
+    return visibleRow().transform([](const auto& row) {
+        return row.pages[0];
+    });
 }
 
 void PDFDiscretePresentationController::restorePDFPosition(const VisiblePDFPosition& info)

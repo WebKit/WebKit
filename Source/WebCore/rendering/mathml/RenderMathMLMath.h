@@ -44,7 +44,7 @@ private:
     ASCIILiteral renderName() const final { return "RenderMathMLMath"_s; }
 
     void centerChildren(LayoutUnit contentWidth);
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
 };
 
 }

@@ -125,7 +125,7 @@ private:
     RefPtr<HTMLVideoElement> m_videoElement;
     RetainPtr<PlatformLayer> m_videoFullscreenLayer;
     bool m_isListening { false };
-    HashSet<CheckedPtr<VideoPresentationModelClient>> m_clients;
+    UncheckedKeyHashSet<CheckedPtr<VideoPresentationModelClient>> m_clients;
     bool m_hasVideo { false };
     bool m_documentIsVisible { true };
     FloatSize m_videoDimensions;

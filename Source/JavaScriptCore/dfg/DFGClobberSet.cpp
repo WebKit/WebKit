@@ -111,12 +111,12 @@ void ClobberSet::clear()
     m_clobbers.clear();
 }
 
-HashSet<AbstractHeap> ClobberSet::direct() const
+UncheckedKeyHashSet<AbstractHeap> ClobberSet::direct() const
 {
     return setOf(true);
 }
 
-HashSet<AbstractHeap> ClobberSet::super() const
+UncheckedKeyHashSet<AbstractHeap> ClobberSet::super() const
 {
     return setOf(false);
 }
@@ -126,9 +126,9 @@ void ClobberSet::dump(PrintStream& out) const
     out.print("(Direct:[", sortedListDump(direct()), "], Super:[", sortedListDump(super()), "])");
 }
 
-HashSet<AbstractHeap> ClobberSet::setOf(bool direct) const
+UncheckedKeyHashSet<AbstractHeap> ClobberSet::setOf(bool direct) const
 {
-    HashSet<AbstractHeap> result;
+    UncheckedKeyHashSet<AbstractHeap> result;
     for (auto& clobber : m_clobbers) {
         if (clobber.value == direct)
             result.add(clobber.key);

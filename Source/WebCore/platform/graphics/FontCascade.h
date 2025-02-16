@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "DashArray.h"
+#include "FloatSegment.h"
 #include "Font.h"
 #include "FontCascadeDescription.h"
 #include "FontCascadeFonts.h"
@@ -144,7 +144,7 @@ public:
     static void drawGlyphs(GraphicsContext&, const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint&, FontSmoothingMode);
     void drawEmphasisMarks(GraphicsContext&, const TextRun&, const AtomString& mark, const FloatPoint&, unsigned from = 0, std::optional<unsigned> to = std::nullopt) const;
 
-    DashArray dashesForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
+    Vector<FloatSegment> lineSegmentsForIntersectionsWithRect(const TextRun&, const FloatPoint& textOrigin, const FloatRect& lineExtents) const;
 
     float widthOfTextRange(const TextRun&, unsigned from, unsigned to, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, float* outWidthBeforeRange = nullptr, float* outWidthAfterRange = nullptr) const;
     WEBCORE_EXPORT float width(const TextRun&, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr, GlyphOverflow* = nullptr) const;
@@ -152,7 +152,6 @@ public:
     WEBCORE_EXPORT float widthForSimpleTextWithFixedPitch(StringView text, bool whitespaceIsCollapsed) const;
 
     std::unique_ptr<TextLayout, TextLayoutDeleter> createLayout(RenderText&, float xPos, bool collapseWhiteSpace) const;
-    static float width(TextLayout&, unsigned from, unsigned len, SingleThreadWeakHashSet<const Font>* fallbackFonts = nullptr);
     float widthOfSpaceString() const
     {
         return width(TextRun { StringView(WTF::span(space)) });
@@ -190,7 +189,7 @@ public:
 
     bool isPlatformFont() const { return m_fonts->isForPlatformFont(); }
 
-    const FontMetrics& metricsOfPrimaryFont() const { return primaryFont().fontMetrics(); }
+    const FontMetrics& metricsOfPrimaryFont() const { return primaryFont()->fontMetrics(); }
     float zeroWidth() const;
     float tabWidth(const Font&, const TabSize&, float, Font::SyntheticBoldInclusion) const;
     bool hasValidAverageCharWidth() const;
@@ -201,7 +200,7 @@ public:
     int emphasisMarkHeight(const AtomString&) const;
     float floatEmphasisMarkHeight(const AtomString&) const;
 
-    const Font& primaryFont() const;
+    Ref<const Font> primaryFont() const;
     const FontRanges& fallbackRangesAt(unsigned) const;
     WEBCORE_EXPORT GlyphData glyphDataForCharacter(char32_t, bool mirror, FontVariant = AutoVariant) const;
     bool canUseSimplifiedTextMeasuring(char32_t, FontVariant, bool whitespaceIsCollapsed, const Font&) const;
@@ -225,6 +224,7 @@ public:
     WEBCORE_EXPORT static void setDisableFontSubpixelAntialiasingForTesting(bool);
     WEBCORE_EXPORT static bool shouldDisableFontSubpixelAntialiasingForTesting();
 
+    // Keep this in sync with RenderText's m_fontCodePath
     enum class CodePath : uint8_t { Auto, Simple, Complex, SimpleWithGlyphOverflow };
     WEBCORE_EXPORT CodePath codePath(const TextRun&, std::optional<unsigned> from = std::nullopt, std::optional<unsigned> to = std::nullopt) const;
     static CodePath characterRangeCodePath(std::span<const LChar>) { return CodePath::Simple; }
@@ -381,10 +381,10 @@ private:
     mutable WTF::BitSet<256 * bitsPerCharacterInCanUseSimplifiedTextMeasuringForAutoVariantCache> m_canUseSimplifiedTextMeasuringForAutoVariantCache;
 };
 
-inline const Font& FontCascade::primaryFont() const
+inline Ref<const Font> FontCascade::primaryFont() const
 {
     ASSERT(m_fonts);
-    auto& font = protectedFonts()->primaryFont(m_fontDescription);
+    Ref font = protectedFonts()->primaryFont(m_fontDescription);
     m_fontDescription.resolveFontSizeAdjustFromFontIfNeeded(font);
     return font;
 }

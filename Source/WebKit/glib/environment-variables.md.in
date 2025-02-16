@@ -38,3 +38,14 @@ You can ask WebKit to try to use a format instead the one that is recommended by
 Example: `AR24:0:scanout`
 
 #endif
+
+
+## Remote Web Inspector Variables
+
+- `WEBKIT_INSPECTOR_SERVER`: The address and port in `ip:port` format (e.g.
+  `127.0.0.1:10000`) where the remote inspector service will listen for
+  connections.
+- `WEBKIT_INSPECTOR_HTTP_SERVER`: The address and port in `ip:port` format
+  where the remote inspector service will listen for HTTP connections.
+
+See [Remote Web Inspector](remote-inspector.html) for more details.

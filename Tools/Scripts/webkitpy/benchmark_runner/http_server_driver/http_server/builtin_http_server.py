@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from http.server import SimpleHTTPRequestHandler, HTTPServer
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import argparse
 import logging
 import sys
@@ -80,6 +80,6 @@ if __name__ == '__main__':
     logging.basicConfig(datefmt='%Y-%m-%d %H:%M:%S',
                         format='%(asctime)s [%(levelname)s]: %(message)s', filename=args.log_path, level=logging.INFO)
     Handler.web_root = args.web_root
-    HTTPServer.address_family = family_type
-    httpd = HTTPServer(addr_pair, Handler)
+    ThreadingHTTPServer.address_family = family_type
+    httpd = ThreadingHTTPServer(addr_pair, Handler)
     httpd.serve_forever()

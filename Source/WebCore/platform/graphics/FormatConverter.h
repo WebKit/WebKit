@@ -31,8 +31,8 @@
 
 #include "GraphicsContextGL.h"
 #include "IntRect.h"
+#include <wtf/MallocSpan.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/UniqueArray.h>
 
 namespace WebCore {
 
@@ -42,16 +42,18 @@ public:
         const IntRect& sourceDataSubRectangle,
         int depth,
         int unpackImageHeight,
-        const void* srcStart,
-        void* dstStart,
+        std::span<const uint8_t> source,
+        std::span<uint8_t> destinationCursor,
+        std::span<uint8_t> destination,
         int srcStride,
         int srcRowOffset,
         int dstStride)
             : m_srcSubRectangle(sourceDataSubRectangle)
             , m_depth(depth)
             , m_unpackImageHeight(unpackImageHeight)
-            , m_srcStart(srcStart)
-            , m_dstStart(dstStart)
+            , m_source(source)
+            , m_destinationCursor(destinationCursor)
+            , m_destination(destination)
             , m_srcStride(srcStride)
             , m_srcRowOffset(srcRowOffset)
             , m_dstStride(dstStride)
@@ -59,9 +61,8 @@ public:
     {
         const unsigned MaxNumberOfComponents = 4;
         const unsigned MaxBytesPerComponent  = 4;
-        m_unpackedIntermediateSrcData = makeUniqueArray<uint8_t>(Checked<size_t>(m_srcSubRectangle.width()) * MaxNumberOfComponents * MaxBytesPerComponent);
-
-        ASSERT(m_unpackedIntermediateSrcData.get());
+        m_unpackedIntermediateSrcData = MallocSpan<uint8_t>::malloc(Checked<size_t>(m_srcSubRectangle.width()) * MaxNumberOfComponents * MaxBytesPerComponent);
+        ASSERT(m_unpackedIntermediateSrcData);
     }
 
     void convert(GraphicsContextGL::DataFormat srcFormat, GraphicsContextGL::DataFormat dstFormat, GraphicsContextGL::AlphaOp);
@@ -80,11 +81,12 @@ private:
     const IntRect& m_srcSubRectangle;
     const int m_depth;
     const int m_unpackImageHeight;
-    const void* const m_srcStart;
-    void* const m_dstStart;
+    std::span<const uint8_t> m_source;
+    std::span<uint8_t> m_destinationCursor;
+    std::span<uint8_t> m_destination;
     const int m_srcStride, m_srcRowOffset, m_dstStride;
     bool m_success;
-    UniqueArray<uint8_t> m_unpackedIntermediateSrcData;
+    MallocSpan<uint8_t> m_unpackedIntermediateSrcData;
 };
 
 } // namespace WebCore

@@ -60,7 +60,7 @@ function uint32ToNumberOnHiddenLargeNegativeNumber3()
 }
 noInline(uint32ToNumberOnHiddenLargeNegativeNumber3);
 
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (uint32ToNumberMinusOne() !== 4294967295)
         throw "Failed uint32ToNumberMinusOne()";
 

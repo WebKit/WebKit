@@ -175,6 +175,7 @@ class FastVector final
   private:
     void assign_from_initializer_list(std::initializer_list<value_type> init);
     void ensure_capacity(size_t capacity);
+    void increase_capacity(size_t capacity);
     bool uses_fixed_storage() const;
     void resize_impl(size_type count);
 
@@ -488,7 +489,7 @@ ANGLE_INLINE void FastVector<T, N, Storage>::resize_down(size_type count)
                   "This is a special method for non trivially constructible types. "
                   "Please use regular resize(count) method.");
     ASSERT(count <= mSize);
-    resize_impl(count);
+    mSize = count;
 }
 
 template <class T, size_t N, class Storage>
@@ -561,28 +562,34 @@ void FastVector<T, N, Storage>::ensure_capacity(size_t capacity)
     // We have a minimum capacity of N.
     if (mReservedSize < capacity)
     {
-        ASSERT(capacity > N);
-        size_type newSize = std::max(mReservedSize, N);
-        while (newSize < capacity)
-        {
-            newSize *= 2;
-        }
-
-        pointer newData = new value_type[newSize];
-
-        if (mSize > 0)
-        {
-            std::move(begin(), end(), newData);
-        }
-
-        if (!uses_fixed_storage())
-        {
-            delete[] mData;
-        }
-
-        mData         = newData;
-        mReservedSize = newSize;
+        increase_capacity(capacity);
     }
+}
+
+template <class T, size_t N, class Storage>
+ANGLE_NOINLINE void FastVector<T, N, Storage>::increase_capacity(size_t capacity)
+{
+    ASSERT(capacity > N);
+    size_type newSize = std::max(mReservedSize, N);
+    while (newSize < capacity)
+    {
+        newSize *= 2;
+    }
+
+    pointer newData = new value_type[newSize];
+
+    if (mSize > 0)
+    {
+        std::move(begin(), end(), newData);
+    }
+
+    if (!uses_fixed_storage())
+    {
+        delete[] mData;
+    }
+
+    mData         = newData;
+    mReservedSize = newSize;
 }
 
 template <class Value, size_t N, class Storage = FastVector<Value, N>>

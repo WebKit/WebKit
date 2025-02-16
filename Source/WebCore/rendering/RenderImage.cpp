@@ -127,8 +127,8 @@ void RenderImage::collectSelectionGeometries(Vector<SelectionGeometry>& geometri
         int selectionTop = !containingBlock->writingMode().isBlockFlipped() ? selectionLogicalRect.y() - logicalTop() : logicalBottom() - selectionLogicalRect.maxY();
         int selectionHeight = selectionLogicalRect.height();
         imageRect = IntRect { 0,  selectionTop, logicalWidth(), selectionHeight };
-        isFirstOnLine = !run->previousOnLine();
-        isLastOnLine = !run->nextOnLine();
+        isFirstOnLine = !run->nextLineLeftwardOnLine();
+        isLastOnLine = !run->nextLineRightwardOnLine();
         LogicalSelectionOffsetCaches cache(*containingBlock);
         LayoutUnit leftOffset = containingBlock->logicalLeftSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
         LayoutUnit rightOffset = containingBlock->logicalRightSelectionOffset(*containingBlock, LayoutUnit(run->logicalTop()), cache);
@@ -310,7 +310,7 @@ LayoutUnit RenderImage::baselinePosition(FontBaseline baselineType, bool firstLi
     LayoutUnit offset;
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if (isMultiRepresentationHEIC()) {
-        auto metrics = style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC();
+        auto metrics = style().fontCascade().primaryFont()->metricsForMultiRepresentationHEIC();
         offset = LayoutUnit::fromFloatRound(metrics.descent);
     }
 #endif
@@ -490,7 +490,7 @@ bool RenderImage::isMultiRepresentationHEIC() const
 
 void RenderImage::paintIncompleteImageOutline(PaintInfo& paintInfo, LayoutPoint paintOffset, LayoutUnit borderWidth) const
 {
-    auto contentSize = this->contentSize();
+    auto contentSize = this->contentBoxSize();
     if (contentSize.width() <= 2 || contentSize.height() <= 2)
         return;
 
@@ -522,7 +522,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOf
         return;
     }
 
-    auto contentSize = this->contentSize();
+    auto contentSize = this->contentBoxSize();
     float deviceScaleFactor = document().deviceScaleFactor();
     LayoutUnit missingImageBorderWidth(1 / deviceScaleFactor);
 
@@ -741,13 +741,11 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
     if (!img || img->isNull())
         return ImageDrawResult::DidNothing;
 
-    auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
-
     // FIXME: Document when image != img.get().
     auto* image = imageResource().image().get();
 
     ImagePaintingOptions options = {
-        imageElement ? imageElement->compositeOperator() : CompositeOperator::SourceOver,
+        CompositeOperator::SourceOver,
         decodingModeForImageDraw(*image, paintInfo),
         imageOrientation(),
         image ? chooseInterpolationQuality(paintInfo.context(), *image, image, LayoutSize(rect.size())) : InterpolationQuality::Default,
@@ -771,6 +769,7 @@ ImageDrawResult RenderImage::paintIntoRect(PaintInfo& paintInfo, const FloatRect
         imageResource().cachedImage()->addClientWaitingForAsyncDecoding(*this);
 
 #if USE(SYSTEM_PREVIEW)
+    auto* imageElement = dynamicDowncast<HTMLImageElement>(element());
     if (imageElement && imageElement->isSystemPreviewImage() && drawResult == ImageDrawResult::DidDraw && imageElement->document().settings().systemPreviewEnabled())
         theme().paintSystemPreviewBadge(*img, paintInfo, rect);
 #endif
@@ -900,7 +899,7 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, Flo
     if (intrinsicSize.isEmpty() && (imageResource().imageHasRelativeWidth() || imageResource().imageHasRelativeHeight())) {
         RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
         if (auto* box = dynamicDowncast<RenderBox>(*containingBlock)) {
-            intrinsicSize.setWidth(box->availableLogicalWidth());
+            intrinsicSize.setWidth(box->contentBoxLogicalWidth());
             intrinsicSize.setHeight(box->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
         }
     }

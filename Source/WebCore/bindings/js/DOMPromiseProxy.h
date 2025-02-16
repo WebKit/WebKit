@@ -53,7 +53,7 @@ public:
     void reject(Exception, RejectAsHandled = RejectAsHandled::No);
     
 private:
-    JSC::JSValue resolvePromise(JSC::JSGlobalObject&, JSDOMGlobalObject&, const Function<void(DeferredPromise&)>&);
+    JSC::JSValue resolvePromise(JSC::JSGlobalObject&, JSDOMGlobalObject&, NOESCAPE const Function<void(DeferredPromise&)>&);
 
     std::optional<ExceptionOr<Value>> m_valueOrException;
     Vector<Ref<DeferredPromise>, 1> m_deferredPromises;
@@ -118,7 +118,7 @@ WTF_MAKE_TZONE_ALLOCATED_TEMPLATE_IMPL(template<typename IDLType>, DOMPromisePro
 // MARK: - DOMPromiseProxy<IDLType> generic implementation
 
 template<typename IDLType>
-inline JSC::JSValue DOMPromiseProxy<IDLType>::resolvePromise(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const Function<void(DeferredPromise&)>& resolvePromiseCallback)
+inline JSC::JSValue DOMPromiseProxy<IDLType>::resolvePromise(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, NOESCAPE const Function<void(DeferredPromise&)>& resolvePromiseCallback)
 {
     UNUSED_PARAM(lexicalGlobalObject);
     for (auto& deferredPromise : m_deferredPromises) {

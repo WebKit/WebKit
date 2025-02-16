@@ -195,6 +195,48 @@ typedef enum {
  * Default: 400
  */
 #define WPE_SETTING_DOUBLE_CLICK_TIME "/wpe-platform/events/double-click/time"
+/**
+ * WPE_SETTING_DRAG_THRESHOLD:
+ *
+ * The number of pixels the cursor travelled to activate a drag gesture.
+ *
+ * VariantType: uint32
+ *
+ * Default: 8
+ */
+#define WPE_SETTING_DRAG_THRESHOLD "/wpe-platform/events/gestures/drag-thresold"
+/**
+ * WPE_SETTING_KEY_REPEAT_DELAY:
+ *
+ * The allowed delay in milliseconds to begin listening to a key repeat
+ * event since the start of handling the key.
+ *
+ * VariantType: uint32
+ *
+ * Default: 400
+ */
+#define WPE_SETTING_KEY_REPEAT_DELAY "/wpe-platform/events/key-repeat/delay"
+/**
+ * WPE_SETTING_KEY_REPEAT_INTERVAL:
+ *
+ * The allowed interval in milliseconds on top of the key repeat delay to
+ * listen to a key repeat event.
+ *
+ * VariantType: uint32
+ *
+ * Default: 80
+ */
+#define WPE_SETTING_KEY_REPEAT_INTERVAL "/wpe-platform/events/key-repeat/interval"
+/**
+ * WPE_SETTING_DRM_SCALE:
+ *
+ * The scale size of the DRM screen.
+ *
+ * VariantType: double
+ *
+ * Default: 1.0
+ */
+#define WPE_SETTING_DRM_SCALE "/wpe-platform/drm/scale"
 
 /**
  * WPESettingsSource:

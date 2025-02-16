@@ -59,7 +59,7 @@ TEST(_WKActivatedElementInfo, InfoForLink)
     [webView _requestActivatedElementAtPosition:CGPointMake(50, 50) completionBlock: ^(_WKActivatedElementInfo *elementInfo) {
 
         EXPECT_TRUE(elementInfo.type == _WKActivatedElementTypeLink);
-        EXPECT_WK_STREQ(elementInfo.URL.absoluteString, "testURL.test");
+        EXPECT_WK_STREQ(elementInfo.URL.absoluteString, "");
         EXPECT_WK_STREQ(elementInfo.title, "HitTestLinkTitle");
         EXPECT_WK_STREQ(elementInfo.ID, @"testID");
         EXPECT_NOT_NULL(elementInfo.image);

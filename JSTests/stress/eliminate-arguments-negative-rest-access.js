@@ -9,7 +9,7 @@ function opt() {
 }
 noInline(opt);
 
-for (let i = 0; i < 1e6; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     const value = opt();
     if (value !== undefined)
         throw new Error(`${i}: ${value}`);

@@ -32,6 +32,7 @@
 #import "WKSecurityOriginInternal.h"
 #import "WebPushDaemonConnectionConfiguration.h"
 #import "_WKNotificationDataInternal.h"
+#import "_WKWebPushMessageInternal.h"
 #import "_WKWebPushSubscriptionDataInternal.h"
 #import <WebCore/ExceptionData.h>
 #import <WebCore/PushPermissionState.h>

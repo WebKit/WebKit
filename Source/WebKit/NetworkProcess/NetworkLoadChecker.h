@@ -157,6 +157,8 @@ private:
     void processContentRuleListsForLoad(WebCore::ResourceRequest&&, ContentExtensionCallback&&);
 #endif
 
+    RefPtr<NetworkCORSPreflightChecker> protectedCORSPreflightChecker() const;
+    RefPtr<WebCore::SecurityOrigin> protectedOrigin() const { return m_origin; }
     RefPtr<WebCore::SecurityOrigin> parentOrigin() const { return m_parentOrigin; }
 
     bool checkTAO(const WebCore::ResourceResponse&);
@@ -198,7 +200,7 @@ private:
     WebCore::NetworkLoadInformation m_loadInformation;
 
     LoadType m_requestLoadType;
-    RefPtr<NetworkSchemeRegistry> m_schemeRegistry;
+    const RefPtr<NetworkSchemeRegistry> m_schemeRegistry;
     WeakPtr<NetworkResourceLoader> m_networkResourceLoader;
 
     bool m_timingAllowFailedFlag { false };

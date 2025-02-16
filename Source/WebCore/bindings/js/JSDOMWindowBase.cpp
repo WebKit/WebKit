@@ -367,7 +367,7 @@ LocalDOMWindow& legacyActiveDOMWindowForAccessor(JSGlobalObject& fallbackGlobalO
 void JSDOMWindowBase::fireFrameClearedWatchpointsForWindow(LocalDOMWindow* window)
 {
     JSC::VM& vm = commonVM();
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData);
+    JSVMClientData* clientData = downcast<JSVMClientData>(vm.clientData);
     Vector<Ref<DOMWrapperWorld>> wrapperWorlds;
     clientData->getAllWorlds(wrapperWorlds);
     for (unsigned i = 0; i < wrapperWorlds.size(); ++i) {

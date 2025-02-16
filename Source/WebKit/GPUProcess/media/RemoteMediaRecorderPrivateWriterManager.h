@@ -87,9 +87,13 @@ public:
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 private:
-    HashMap<RemoteMediaRecorderPrivateWriterIdentifier, Ref<RemoteMediaRecorderPrivateWriterProxy>> m_remoteMediaRecorderPrivateWriters;
-    RefPtr<WebCore::AudioInfo> m_audioInfo;
-    RefPtr<WebCore::VideoInfo> m_videoInfo;
+    struct Writer {
+        RefPtr<RemoteMediaRecorderPrivateWriterProxy> proxy;
+        RefPtr<WebCore::AudioInfo> audioInfo;
+        RefPtr<WebCore::VideoInfo> videoInfo;
+    };
+
+    HashMap<RemoteMediaRecorderPrivateWriterIdentifier, Writer> m_remoteMediaRecorderPrivateWriters;
 
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 };

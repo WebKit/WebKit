@@ -94,7 +94,7 @@ let args = [];
 for (let i = 1; i <= count; ++i)
     args.push(i);
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let a1 = new Float64Array(count);
     let a2 = new Float64Array(count);
     _f(a1, a2, ...args);

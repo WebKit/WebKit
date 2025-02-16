@@ -62,11 +62,6 @@ config:
       version: '3.22'
       download-if: active-gtk-theme
 
-    Extension org.freedesktop.Platform.openh264:
-      directory: '%{lib}/openh264'
-      add-ld-path: extra
-      version: '%{sdk-branch}'
-
     Extension org.freedesktop.Sdk.Extension:
       subdirectories: 'true'
       directory: lib/sdk

@@ -47,10 +47,11 @@ struct ClientOrigin;
 namespace WebKit {
 
 class WebProcessProxy;
+struct FrameInfoData;
 struct SharedPreferencesForWebProcess;
 
 using SpeechRecognitionServerIdentifier = WebCore::PageIdentifier;
-using SpeechRecognitionPermissionChecker = Function<void(WebCore::SpeechRecognitionRequest&, SpeechRecognitionPermissionRequestCallback&&)>;
+using SpeechRecognitionPermissionChecker = Function<void(WebCore::SpeechRecognitionRequest&, FrameInfoData&&, SpeechRecognitionPermissionRequestCallback&&)>;
 using SpeechRecognitionCheckIfMockSpeechRecognitionEnabled = Function<bool()>;
 
 class SpeechRecognitionServer : public IPC::MessageReceiver, private IPC::MessageSender, public RefCounted<SpeechRecognitionServer> {
@@ -68,7 +69,7 @@ public:
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
-    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier);
+    void start(WebCore::SpeechRecognitionConnectionClientIdentifier, String&& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&&, WebCore::FrameIdentifier, FrameInfoData&&);
     void stop(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void abort(WebCore::SpeechRecognitionConnectionClientIdentifier);
     void invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier);
@@ -81,7 +82,7 @@ private:
 #endif
         );
 
-    void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&);
+    void requestPermissionForRequest(WebCore::SpeechRecognitionRequest&, FrameInfoData&&);
     void handleRequest(UniqueRef<WebCore::SpeechRecognitionRequest>&&);
     void sendUpdate(WebCore::SpeechRecognitionConnectionClientIdentifier, WebCore::SpeechRecognitionUpdateType, std::optional<WebCore::SpeechRecognitionError> = std::nullopt, std::optional<Vector<WebCore::SpeechRecognitionResultData>> = std::nullopt);
     void sendUpdate(const WebCore::SpeechRecognitionUpdate&);

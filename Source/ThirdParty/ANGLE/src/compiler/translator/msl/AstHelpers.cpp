@@ -27,7 +27,7 @@ const TVariable &sh::CreateInstanceVariable(TSymbolTable &symbolTable,
                                             const TStructure &structure,
                                             const Name &name,
                                             TQualifier qualifier,
-                                            const TSpan<const unsigned int> *arraySizes)
+                                            const angle::Span<const unsigned int> *arraySizes)
 {
     TType *type = new TType(&structure, false);
     type->setQualifier(qualifier);

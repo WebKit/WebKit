@@ -64,14 +64,20 @@ SkiaPaintingEngine::SkiaPaintingEngine(unsigned numberOfCPUThreads, unsigned num
         m_cpuWorkerPool = WorkerPool::create("SkiaCPUWorker"_s, numberOfCPUThreads);
 }
 
+SkiaPaintingEngine::~SkiaPaintingEngine() = default;
+
 std::unique_ptr<SkiaPaintingEngine> SkiaPaintingEngine::create()
 {
     return makeUnique<SkiaPaintingEngine>(numberOfCPUPaintingThreads(), numberOfGPUPaintingThreads());
 }
 
-std::unique_ptr<DisplayList::DisplayList> SkiaPaintingEngine::recordDisplayList(const GraphicsLayer& layer, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale) const
+std::unique_ptr<DisplayList::DisplayList> SkiaPaintingEngine::recordDisplayList(RenderingMode renderingMode, const GraphicsLayer& layer, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale) const
 {
-    auto displayList = makeUnique<DisplayList::DisplayList>(DisplayList::ReplayOption::FlushImagesAndWaitForCompletion);
+    OptionSet<DisplayList::ReplayOption> options;
+    if (renderingMode == RenderingMode::Accelerated)
+        options.add(DisplayList::ReplayOption::FlushAcceleratedImagesAndWaitForCompletion);
+
+    auto displayList = makeUnique<DisplayList::DisplayList>(options);
     DisplayList::RecorderImpl recordingContext(*displayList, GraphicsContextState(), FloatRect({ }, dirtyRect.size()), AffineTransform());
     paintIntoGraphicsContext(layer, recordingContext, dirtyRect, contentsOpaque, contentsScale);
     return displayList;
@@ -185,7 +191,7 @@ Ref<CoordinatedTileBuffer> SkiaPaintingEngine::paintLayer(const GraphicsLayer& l
 Ref<CoordinatedTileBuffer> SkiaPaintingEngine::postPaintingTask(const GraphicsLayer& layer, RenderingMode renderingMode, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale)
 {
     WTFBeginSignpost(this, RecordTile);
-    auto displayList = recordDisplayList(layer, dirtyRect, contentsOpaque, contentsScale);
+    auto displayList = recordDisplayList(renderingMode, layer, dirtyRect, contentsOpaque, contentsScale);
     WTFEndSignpost(this, RecordTile);
 
     auto buffer = createBuffer(renderingMode, dirtyRect.size(), contentsOpaque);

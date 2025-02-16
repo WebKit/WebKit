@@ -51,7 +51,7 @@ private:
     void muteConsole();
     void unmuteConsole();
 
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
 };
 
 } // namespace WebCore

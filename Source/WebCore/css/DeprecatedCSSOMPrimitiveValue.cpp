@@ -29,12 +29,18 @@
 #include "CSSColorValue.h"
 #include "CSSCounterValue.h"
 #include "CSSRectValue.h"
+#include "CSSSerializationContext.h"
 #include "DeprecatedCSSOMCounter.h"
 #include "DeprecatedCSSOMRGBColor.h"
 #include "DeprecatedCSSOMRect.h"
 
 namespace WebCore {
-    
+
+String DeprecatedCSSOMPrimitiveValue::cssText() const
+{
+    return protectedValue()->cssText(CSS::defaultSerializationContext());
+}
+
 unsigned short DeprecatedCSSOMPrimitiveValue::primitiveType() const
 {
     if (m_value->isCounter())

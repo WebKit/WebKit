@@ -67,7 +67,7 @@ static std::pair<SpaceSeparatedVector<LengthPercentage<Nonnegative>, 4>, bool> g
     return { { WTFMove(result) }, isDefaultValue };
 }
 
-void Serialize<BorderRadius>::operator()(StringBuilder& builder, const BorderRadius& borderRadius)
+void Serialize<BorderRadius>::operator()(StringBuilder& builder, const SerializationContext& context, const BorderRadius& borderRadius)
 {
     // <'border-radius'> = <length-percentage [0,∞]>{1,4} [ / <length-percentage [0,∞]>{1,4} ]?
 
@@ -75,11 +75,11 @@ void Serialize<BorderRadius>::operator()(StringBuilder& builder, const BorderRad
     auto [vertical, verticalIsDefault] = gatherSerializableRadiiForAxis(borderRadius.vertical);
 
     if (!horizontalIsDefault || !verticalIsDefault) {
-        serializationForCSS(builder, horizontal);
+        serializationForCSS(builder, context, horizontal);
 
         if (horizontal != vertical) {
             builder.append(" / "_s);
-            serializationForCSS(builder, vertical);
+            serializationForCSS(builder, context, vertical);
         }
     }
 }

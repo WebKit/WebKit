@@ -97,14 +97,7 @@ SVGRenderStyle::~SVGRenderStyle() = default;
 
 bool SVGRenderStyle::operator==(const SVGRenderStyle& other) const
 {
-    return m_fillData == other.m_fillData
-        && m_strokeData == other.m_strokeData
-        && m_stopData == other.m_stopData
-        && m_miscData == other.m_miscData
-        && m_layoutData == other.m_layoutData
-        && m_inheritedResourceData == other.m_inheritedResourceData
-        && m_inheritedFlags == other.m_inheritedFlags
-        && m_nonInheritedFlags == other.m_nonInheritedFlags;
+    return inheritedEqual(other) && nonInheritedEqual(other);
 }
 
 bool SVGRenderStyle::inheritedEqual(const SVGRenderStyle& other) const
@@ -113,6 +106,14 @@ bool SVGRenderStyle::inheritedEqual(const SVGRenderStyle& other) const
         && m_strokeData == other.m_strokeData
         && m_inheritedResourceData == other.m_inheritedResourceData
         && m_inheritedFlags == other.m_inheritedFlags;
+}
+
+bool SVGRenderStyle::nonInheritedEqual(const SVGRenderStyle& other) const
+{
+    return m_stopData == other.m_stopData
+        && m_miscData == other.m_miscData
+        && m_layoutData == other.m_layoutData
+        && m_nonInheritedFlags == other.m_nonInheritedFlags;
 }
 
 void SVGRenderStyle::inheritFrom(const SVGRenderStyle& other)

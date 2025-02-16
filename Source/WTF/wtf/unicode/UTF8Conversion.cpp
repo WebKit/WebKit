@@ -30,9 +30,8 @@
 #include <unicode/uchar.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringHasherInlines.h>
+#include <wtf/text/icu/UnicodeExtras.h>
 #include <wtf/unicode/CharacterNames.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF::Unicode {
 
@@ -51,14 +50,14 @@ template<> char32_t next<Replacement::None, LChar>(std::span<const LChar> charac
 template<> char32_t next<Replacement::None, char8_t>(std::span<const char8_t> characters, size_t& offset)
 {
     char32_t character;
-    U8_NEXT(characters, offset, characters.size(), character);
+    U8_NEXT_SPAN(characters, offset, character);
     return U_IS_SURROGATE(character) ? sentinelCodePoint : character;
 }
 
 template<> char32_t next<Replacement::ReplaceInvalidSequences, char8_t>(std::span<const char8_t> characters, size_t& offset)
 {
     char32_t character;
-    U8_NEXT_OR_FFFD(characters, offset, characters.size(), character);
+    U8_NEXT_OR_FFFD_SPAN(characters, offset, character);
     return character;
 }
 
@@ -211,5 +210,3 @@ bool equal(std::span<const LChar> a, std::span<const char8_t> b)
 }
 
 } // namespace WTF::Unicode
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

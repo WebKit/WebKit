@@ -34,14 +34,19 @@
 
 #if ENABLE(MEDIA_SOURCE) && USE(GSTREAMER)
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
-#define GST_CAT_DEFAULT webkit_mse_debug
+GST_DEBUG_CATEGORY_STATIC(webkit_mse_track_queue_debug);
+#define GST_CAT_DEFAULT webkit_mse_track_queue_debug
 
 namespace WebCore {
 
 TrackQueue::TrackQueue(TrackID trackId)
     : m_trackId(trackId)
-{ }
+{
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_mse_track_queue_debug, "webkitmsetrackqueue", 0, "WebKit MSE TrackQueue");
+    });
+}
 
 void TrackQueue::enqueueObject(GRefPtr<GstMiniObject>&& object)
 {

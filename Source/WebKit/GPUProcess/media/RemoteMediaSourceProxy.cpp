@@ -46,10 +46,9 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaSourceProxy);
 
-RemoteMediaSourceProxy::RemoteMediaSourceProxy(RemoteMediaPlayerManagerProxy& manager, RemoteMediaSourceIdentifier identifier, bool webMParserEnabled, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
+RemoteMediaSourceProxy::RemoteMediaSourceProxy(RemoteMediaPlayerManagerProxy& manager, RemoteMediaSourceIdentifier identifier, RemoteMediaPlayerProxy& remoteMediaPlayerProxy)
     : m_manager(manager)
     , m_identifier(identifier)
-    , m_webMParserEnabled(webMParserEnabled)
     , m_remoteMediaPlayerProxy(remoteMediaPlayerProxy)
 {
     ASSERT(RunLoop::isMain());
@@ -128,7 +127,7 @@ void RemoteMediaSourceProxy::addSourceBuffer(const WebCore::ContentType& content
         return;
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
-    MediaSourcePrivate::AddStatus status = mediaSourcePrivate()->addSourceBuffer(contentType, m_webMParserEnabled, sourceBufferPrivate);
+    MediaSourcePrivate::AddStatus status = mediaSourcePrivate()->addSourceBuffer(contentType, sourceBufferPrivate);
 
     std::optional<RemoteSourceBufferIdentifier> remoteSourceIdentifier;
     if (status == MediaSourcePrivate::AddStatus::Ok) {

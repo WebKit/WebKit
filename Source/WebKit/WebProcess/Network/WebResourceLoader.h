@@ -74,6 +74,8 @@ public:
 
     WebCore::ResourceLoader* resourceLoader() const { return m_coreLoader.get(); }
 
+    RefPtr<WebCore::ResourceLoader> protectedCoreLoader() const;
+
     void detachFromCoreLoader();
 
 private:
@@ -86,7 +88,7 @@ private:
     void willSendRequest(WebCore::ResourceRequest&&, IPC::FormDataReference&& requestBody, WebCore::ResourceResponse&&, CompletionHandler<void(WebCore::ResourceRequest&&, bool)>&&);
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent);
     void didReceiveResponse(WebCore::ResourceResponse&&, PrivateRelayed, bool needsContinueDidReceiveResponseMessage, std::optional<WebCore::NetworkLoadMetrics>&&);
-    void didReceiveData(IPC::SharedBufferReference&& data, uint64_t encodedDataLength);
+    void didReceiveData(IPC::SharedBufferReference&& data, uint64_t encodedDataLength, uint64_t bytesTransferredOverNetwork);
     void didFinishResourceLoad(WebCore::NetworkLoadMetrics&&);
     void didFailResourceLoad(const WebCore::ResourceError&);
     void didFailServiceWorkerLoad(const WebCore::ResourceError&);
@@ -105,11 +107,14 @@ private:
 #if ENABLE(CONTENT_FILTERING)
     void contentFilterDidBlockLoad(const WebCore::ContentFilterUnblockHandler&, String&& unblockRequestDeniedScript, const WebCore::ResourceError&, const URL& blockedPageURL, WebCore::SubstituteData&&);
 #endif
-    
+
+    void updateBytesTransferredOverNetwork(uint64_t bytesTransferredOverNetwork);
+
     RefPtr<WebCore::ResourceLoader> m_coreLoader;
     const TrackingParameters m_trackingParameters;
     WebResourceInterceptController m_interceptController;
     size_t m_numBytesReceived { 0 };
+    size_t m_bytesTransferredOverNetwork { 0 };
 
 #if ASSERT_ENABLED
     bool m_isProcessingNetworkResponse { false };

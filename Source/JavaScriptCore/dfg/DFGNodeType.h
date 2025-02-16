@@ -147,6 +147,7 @@ namespace JSC { namespace DFG {
     macro(DoubleRep, NodeResultDouble) \
     macro(Int52Rep, NodeResultInt52) \
     macro(ValueRep, NodeResultJS) \
+    macro(PurifyNaN, NodeResultDouble) \
     \
     /* Bogus type asserting node. Useful for testing, disappears during Fixup. */\
     macro(FiatInt52, NodeResultJS) \
@@ -565,7 +566,8 @@ namespace JSC { namespace DFG {
     macro(MapIteratorNext, NodeResultBoolean) \
     macro(MapIteratorKey, NodeResultJS) \
     macro(MapIteratorValue, NodeResultJS) \
-    macro(MapStorage, NodeResultJS) \
+    macro(MapStorage, NodeResultJS) /* Get the map storage and materialize if needed. */ \
+    macro(MapStorageOrSentinel, NodeResultJS) /* If the map storage is not materialized, return the sentinel. */ \
     macro(MapIterationNext, NodeResultJS) \
     macro(MapIterationEntry, NodeResultJS) \
     macro(MapIterationEntryKey, NodeResultInt32) \

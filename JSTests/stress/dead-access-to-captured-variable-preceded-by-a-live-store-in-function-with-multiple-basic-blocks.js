@@ -19,7 +19,7 @@ function foo(p) {
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(i & 1);
     if (result != ((i & 1) ? 44 : 47))
         throw "Error: bad result with i = " + i + ": " + result;

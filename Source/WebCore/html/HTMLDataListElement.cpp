@@ -31,8 +31,6 @@
 
 #include "config.h"
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "HTMLDataListElement.h"
 
 #include "GenericCachedHTMLCollection.h"
@@ -86,7 +84,7 @@ void HTMLDataListElement::optionElementChildrenChanged()
 {
     if (auto& id = getIdAttribute(); !id.isEmpty()) {
         if (CheckedPtr observerRegistry = treeScope().idTargetObserverRegistryIfExists())
-            observerRegistry->notifyObservers(id);
+            observerRegistry->notifyObservers(*this, id);
     }
 }
 
@@ -101,5 +99,3 @@ bool HTMLDataListElement::isSuggestion(const HTMLOptionElement& descendant)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATALIST_ELEMENT)

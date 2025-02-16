@@ -42,6 +42,12 @@ void printInternal(PrintStream& out, ClockType type)
     case ClockType::Approximate:
         out.print("Approximate");
         return;
+    case ClockType::Continuous:
+        out.print("Continuous");
+        return;
+    case ClockType::ContinuousApproximate:
+        out.print("ContinuousApproximate");
+        return;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

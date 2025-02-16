@@ -8,7 +8,7 @@ function foo(x) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(5.5);
     if (result[0].toString() != "5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5,5.5")
         throw "Error: bad array: " + result[0];

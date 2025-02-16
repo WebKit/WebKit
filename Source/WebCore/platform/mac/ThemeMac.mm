@@ -350,9 +350,7 @@ LengthSize ThemeMac::minimumControlSize(StyleAppearance appearance, const FontCa
 {
     switch (appearance) {
     case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
         return { { 0, LengthType::Fixed }, { static_cast<int>(15 * zoomFactor), LengthType::Fixed } };
@@ -370,9 +368,7 @@ LengthBox ThemeMac::controlBorder(StyleAppearance appearance, const FontCascade&
 {
     switch (appearance) {
     case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
         return LengthBox(0, zoomedBox.right().value(), 0, zoomedBox.left().value());

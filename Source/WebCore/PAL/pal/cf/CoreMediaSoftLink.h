@@ -30,7 +30,9 @@
 
 #include <CoreAudio/CoreAudioTypes.h>
 #include <pal/spi/cf/CoreMediaSPI.h>
+#include <span>
 #include <wtf/SoftLinking.h>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(WATCHOS)
 #define SOFTLINK_AVKIT_FRAMEWORK() SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(AVKit)
@@ -300,6 +302,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueCallForEachBuffer, OS
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleAttachmentKey_DoNotDisplay, CFStringRef)
 #define kCMSampleAttachmentKey_DoNotDisplay get_CoreMedia_kCMSampleAttachmentKey_DoNotDisplay()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleAttachmentKey_HDR10PlusPerFrameData, CFStringRef)
+#define kCMSampleAttachmentKey_HDR10PlusPerFrameData get_CoreMedia_kCMSampleAttachmentKey_HDR10PlusPerFrameData()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleAttachmentKey_NotSync, CFStringRef)
 #define kCMSampleAttachmentKey_NotSync get_CoreMedia_kCMSampleAttachmentKey_NotSync()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleBufferAttachmentKey_DisplayEmptyMediaImmediately, CFStringRef)
@@ -408,6 +412,28 @@ SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionExten
 #define kCMFormatDescriptionExtension_ProjectionKind get_CoreMedia_kCMFormatDescriptionExtension_ProjectionKind()
 SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionProjectionKind_Rectilinear, CFStringRef)
 #define kCMFormatDescriptionProjectionKind_Rectilinear get_CoreMedia_kCMFormatDescriptionProjectionKind_Rectilinear()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionProjectionKind_Equirectangular, CFStringRef)
+#define kCMFormatDescriptionProjectionKind_Equirectangular get_CoreMedia_kCMFormatDescriptionProjectionKind_Equirectangular()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionProjectionKind_HalfEquirectangular, CFStringRef)
+#define kCMFormatDescriptionProjectionKind_HalfEquirectangular get_CoreMedia_kCMFormatDescriptionProjectionKind_HalfEquirectangular()
+SOFT_LINK_CONSTANT_MAY_FAIL_FOR_HEADER(PAL, CoreMedia, kCMFormatDescriptionProjectionKind_ParametricImmersive, CFStringRef)
+#define kCMFormatDescriptionProjectionKind_ParametricImmersive get_CoreMedia_kCMFormatDescriptionProjectionKind_ParametricImmersive()
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMVideoFormatDescriptionCreateFromH264ParameterSets, OSStatus, (CFAllocatorRef allocator, size_t parameterSetCount, const uint8_t* const* parameterSetPointers, const size_t* parameterSetSizes, int NALUnitHeaderLength, CMFormatDescriptionRef* formatDescriptionOut), (allocator, parameterSetCount, parameterSetPointers, parameterSetSizes, NALUnitHeaderLength, formatDescriptionOut))
+#define CMVideoFormatDescriptionCreateFromH264ParameterSets softLink_CoreMedia_CMVideoFormatDescriptionCreateFromH264ParameterSets
+
+namespace PAL {
+
+inline std::span<uint8_t> CMBlockBufferGetDataSpan(CMBlockBufferRef theBuffer, size_t offset = 0)
+{
+    char* data = nullptr;
+    size_t lengthAtOffset = 0;
+    if (PAL::CMBlockBufferGetDataPointer(theBuffer, offset, &lengthAtOffset, nullptr, &data))
+        return { };
+    return unsafeMakeSpan(byteCast<uint8_t>(data), lengthAtOffset);
+}
+
+} // namespace PAL
 
 #if PLATFORM(MAC)
 

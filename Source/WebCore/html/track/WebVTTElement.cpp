@@ -84,9 +84,8 @@ Ref<Element> WebVTTElement::create(WebVTTNodeType nodeType, AtomString language,
     return adoptRef(*new WebVTTElement(nodeType, language, document));
 }
 
-Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(TreeScope& treeScope)
+Ref<Element> WebVTTElement::cloneElementWithoutAttributesAndChildren(Document& document, CustomElementRegistry*)
 {
-    Ref document = treeScope.documentScope();
     return create(m_webVTTNodeType, m_language, document);
 }
 

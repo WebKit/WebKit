@@ -233,10 +233,12 @@ void disableScavenger()
 #endif
 }
 
-void forceEnablePGM()
+void forceEnablePGM(uint16_t guardMallocRate)
 {
 #if BUSE(LIBPAS)
-    pas_probabilistic_guard_malloc_initialize_pgm_as_enabled();
+    pas_probabilistic_guard_malloc_initialize_pgm_as_enabled(guardMallocRate);
+#else
+    BUNUSED_PARAM(guardMallocRate);
 #endif
 }
 

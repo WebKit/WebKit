@@ -52,7 +52,7 @@ void MeterMac::updateCellStates(const FloatRect& rect, const ControlStyle& style
 
     ControlMac::updateCellStates(rect, style);
 
-    [m_levelIndicatorCell setUserInterfaceLayoutDirection:style.states.contains(ControlStyle::State::RightToLeft) ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
+    [m_levelIndicatorCell setUserInterfaceLayoutDirection:style.states.contains(ControlStyle::State::InlineFlippedWritingMode) ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
 
     auto& meterPart = owningMeterPart();
     

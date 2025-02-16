@@ -22,11 +22,10 @@
 #pragma once
 
 #include "FilterEffectApplier.h"
+#include "SourceGraphic.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-
-class SourceGraphic;
 
 class SourceGraphicSoftwareApplier final : public FilterEffectConcreteApplier<SourceGraphic> {
     WTF_MAKE_TZONE_ALLOCATED(SourceGraphicSoftwareApplier);

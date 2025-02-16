@@ -90,6 +90,9 @@ void InitMinimumTextureCapsMap(const Version &clientVersion,
 // present. Does not determine if they are natively supported without decompression.
 bool DetermineCompressedTextureETCSupport(const TextureCapsMap &textureCaps);
 
+// Determine support for signed normalized format renderability.
+bool DetermineRenderSnormSupport(const TextureCapsMap &textureCaps, bool textureNorm16EXT);
+
 // Pointer to a boolean member of the Extensions struct
 using ExtensionBool = bool Extensions::*;
 
@@ -710,6 +713,12 @@ struct DisplayExtensions
 
     // EGL_ANGLE_global_fence_sync
     bool globalFenceSyncANGLE = false;
+
+    // EGL_ANGLE_memory_usage_report
+    bool memoryUsageReportANGLE = false;
+
+    // EGL_EXT_surface_compression
+    bool surfaceCompressionEXT = false;
 };
 
 struct DeviceExtensions
@@ -793,6 +802,9 @@ struct ClientExtensions
 
     // EGL_ANGLE_platform_angle_vulkan
     bool platformANGLEVulkan = false;
+
+    // EGL_ANGLE_platform_angle_vulkan_device_uuid
+    bool platformANGLEVulkanDeviceUUID = false;
 
     // EGL_ANGLE_platform_angle_metal
     bool platformANGLEMetal = false;

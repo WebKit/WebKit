@@ -87,12 +87,8 @@ bool ValidatedFormListedElement::willValidate() const
 bool ValidatedFormListedElement::computeWillValidate() const
 {
     if (m_isInsideDataList == TriState::Indeterminate) {
-#if ENABLE(DATALIST_ELEMENT)
         const HTMLElement& element = asHTMLElement();
         m_isInsideDataList = triState(element.document().hasDataListElements() && ancestorsOfType<HTMLDataListElement>(element).first());
-#else
-        m_isInsideDataList = TriState::False;
-#endif
     }
     // readonly bars constraint validation for *all* <input> elements, regardless of the <input> type, for compat reasons.
     return m_isInsideDataList == TriState::False && !isDisabled() && !(m_hasReadOnlyAttribute && readOnlyBarsFromConstraintValidation());

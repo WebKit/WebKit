@@ -45,7 +45,7 @@ private:
     void executeApply();
 
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(NodeSet&) override;
 #endif
 
     RefPtr<Element> protectedElement1() const { return m_element1; }

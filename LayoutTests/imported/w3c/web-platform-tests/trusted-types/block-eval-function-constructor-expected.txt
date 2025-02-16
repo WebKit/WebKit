@@ -1,0 +1,20 @@
+
+PASS Blocked eval in Window.
+PASS Blocked indirect eval in Window.
+PASS Blocked Function constructor in Window.
+PASS Blocked AsyncFunction constructor in Window.
+PASS Blocked GeneratorFunction constructor in Window.
+PASS Blocked AsyncGeneratorFunction constructor in Window.
+PASS Blocked eval in DedicatedWorkerGlobalScope.
+PASS Blocked indirect eval in DedicatedWorkerGlobalScope.
+PASS Blocked Function constructor in DedicatedWorkerGlobalScope.
+PASS Blocked AsyncFunction constructor in DedicatedWorkerGlobalScope.
+PASS Blocked GeneratorFunction constructor in DedicatedWorkerGlobalScope.
+PASS Blocked AsyncGeneratorFunction constructor in DedicatedWorkerGlobalScope.
+PASS Blocked eval in SharedWorkerGlobalScope.
+PASS Blocked indirect eval in SharedWorkerGlobalScope.
+PASS Blocked Function constructor in SharedWorkerGlobalScope.
+PASS Blocked AsyncFunction constructor in SharedWorkerGlobalScope.
+PASS Blocked GeneratorFunction constructor in SharedWorkerGlobalScope.
+PASS Blocked AsyncGeneratorFunction constructor in SharedWorkerGlobalScope.
+

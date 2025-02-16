@@ -159,7 +159,7 @@ void FrameLoadState::setUnreachableURL(const URL& unreachableURL)
     m_unreachableURL = unreachableURL;
 }
 
-void FrameLoadState::forEachObserver(const Function<void(FrameLoadStateObserver&)>& callback)
+void FrameLoadState::forEachObserver(NOESCAPE const Function<void(FrameLoadStateObserver&)>& callback)
 {
     m_observers.forEach([&callback](FrameLoadStateObserver& observer) {
         callback(Ref { observer });

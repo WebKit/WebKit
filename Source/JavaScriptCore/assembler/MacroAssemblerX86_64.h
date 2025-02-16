@@ -1297,6 +1297,26 @@ public:
             m_assembler.roundss_mr(src.offset, src.base, dst, X86Assembler::RoundingType::TowardNegativeInfiniti);
     }
 
+    void truncDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        roundTowardZeroDouble(src, dst);
+    }
+
+    void truncDouble(Address src, FPRegisterID dst)
+    {
+        roundTowardZeroDouble(src, dst);
+    }
+
+    void truncFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        roundTowardZeroFloat(src, dst);
+    }
+
+    void truncFloat(Address src, FPRegisterID dst)
+    {
+        roundTowardZeroFloat(src, dst);
+    }
+
     void roundTowardNearestIntDouble(FPRegisterID src, FPRegisterID dst)
     {
         if (supportsAVX())

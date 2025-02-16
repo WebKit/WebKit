@@ -10,7 +10,7 @@ function bigIntBitAnd(a, b) {
 }
 noInline(bigIntBitAnd);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntBitAnd(0b11n, 0b1010n);
     assert.sameValue(r, 0b10n, 0b11n + " & " + 0b1010n + " = " + r);
 }

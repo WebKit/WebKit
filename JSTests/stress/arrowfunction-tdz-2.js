@@ -14,7 +14,7 @@ var B = class B extends A {
 };
 
 var exception = null;
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     try {
         new B(true, true);
     } catch (e) {

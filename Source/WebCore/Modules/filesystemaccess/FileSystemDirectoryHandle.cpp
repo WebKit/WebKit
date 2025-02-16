@@ -157,19 +157,19 @@ void FileSystemDirectoryHandleIterator::next(CompletionHandler<void(ExceptionOr<
     ASSERT(!m_isWaitingForResult);
     m_isWaitingForResult = true;
 
-    auto wrappedCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
-        m_isWaitingForResult = false;
+    auto wrappedCompletionHandler = [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](auto result) mutable {
+        protectedThis->m_isWaitingForResult = false;
         completionHandler(WTFMove(result));
     };
 
     if (!m_isInitialized) {
-        m_source->getHandleNames([this, protectedThis = Ref { *this }, completionHandler = WTFMove(wrappedCompletionHandler)](auto result) mutable {
-            m_isInitialized = true;
+        m_source->getHandleNames([protectedThis = Ref { *this }, completionHandler = WTFMove(wrappedCompletionHandler)](auto result) mutable {
+            protectedThis->m_isInitialized = true;
             if (result.hasException())
                 return completionHandler(result.releaseException());
 
-            m_keys = result.releaseReturnValue();
-            advance(WTFMove(completionHandler));
+            protectedThis->m_keys = result.releaseReturnValue();
+            protectedThis->advance(WTFMove(completionHandler));
         });
         return;
     }
@@ -187,10 +187,10 @@ void FileSystemDirectoryHandleIterator::advance(CompletionHandler<void(Exception
     }
 
     auto key = m_keys[m_index++];
-    m_source->getHandle(key, [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), key](auto result) mutable {
+    m_source->getHandle(key, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), key](auto result) mutable {
         if (result.hasException()) {
             if (result.exception().code() == ExceptionCode::NotFoundError)
-                return advance(WTFMove(completionHandler));
+                return protectedThis->advance(WTFMove(completionHandler));
 
             return completionHandler(result.releaseException());
         }

@@ -55,7 +55,7 @@ function foo9(bytes) {
 }
 noInline(foo9);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(0);
     if (result !== false)
         throw new Error("Bad result: " + result);

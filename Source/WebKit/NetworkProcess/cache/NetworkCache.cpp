@@ -381,9 +381,12 @@ void Cache::startAsyncRevalidationIfNeeded(const WebCore::ResourceRequest& reque
         auto addResult = m_pendingAsyncRevalidationByPage.ensure(frameID, [] {
             return WeakHashSet<AsyncRevalidation>();
         });
-        Ref revalidation = AsyncRevalidation::create(*this, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, [this, key](auto result) {
-            ASSERT(m_pendingAsyncRevalidations.contains(key));
-            m_pendingAsyncRevalidations.remove(key);
+        Ref revalidation = AsyncRevalidation::create(*this, frameID, request, WTFMove(entry), isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections, [weakThis = WeakPtr { *this }, key](auto result) {
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            ASSERT(protectedThis->m_pendingAsyncRevalidations.contains(key));
+            protectedThis->m_pendingAsyncRevalidations.remove(key);
             LOG(NetworkCache, "(NetworkProcess) revalidation completed for '%s' with result %d", key.identifier().utf8().data(), static_cast<int>(result));
         });
         addResult.iterator->value.add(revalidation.get());
@@ -396,8 +399,8 @@ void Cache::browsingContextRemoved(WebPageProxyIdentifier webPageProxyID, WebCor
 {
 #if ENABLE(NETWORK_CACHE_STALE_WHILE_REVALIDATE)
     auto loaders = m_pendingAsyncRevalidationByPage.take({ webPageProxyID, webPageID, webFrameID });
-    for (auto& loader : loaders)
-        loader.cancel();
+    for (Ref loader : loaders)
+        loader->cancel();
 #endif
 }
 
@@ -501,14 +504,14 @@ void Cache::completeRetrieve(RetrieveCompletionHandler&& handler, std::unique_pt
     
 std::unique_ptr<Entry> Cache::makeEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData)
 {
-    return makeUnique<Entry>(makeCacheKey(request), response, privateRelayed, WTFMove(responseData), WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), request, response));
+    return makeUnique<Entry>(makeCacheKey(request), response, privateRelayed, WTFMove(responseData), WebCore::collectVaryingRequestHeaders(m_networkProcess->storageSession(m_sessionID), request, response));
 }
 
 std::unique_ptr<Entry> Cache::makeRedirectEntry(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, const WebCore::ResourceRequest& redirectRequest)
 {
     auto cachedRedirectRequest = redirectRequest;
     cachedRedirectRequest.clearHTTPAuthorization();
-    return makeUnique<Entry>(makeCacheKey(request), response, WTFMove(cachedRedirectRequest), WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), request, response));
+    return makeUnique<Entry>(makeCacheKey(request), response, WTFMove(cachedRedirectRequest), WebCore::collectVaryingRequestHeaders(m_networkProcess->storageSession(m_sessionID), request, response));
 }
 
 std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse& response, PrivateRelayed privateRelayed, RefPtr<WebCore::FragmentedSharedBuffer>&& responseData, Function<void(MappedBody&&)>&& completionHandler)
@@ -544,7 +547,7 @@ std::unique_ptr<Entry> Cache::store(const WebCore::ResourceRequest& request, con
                     completionHandler(WTFMove(mappedBody));
                 return;
             }
-            if (auto handle = mappedBody.shareableResource->createHandle())
+            if (auto handle = Ref { *mappedBody.shareableResource }->createHandle())
                 mappedBody.shareableResourceHandle = WTFMove(*handle);
         }
 #endif
@@ -587,7 +590,7 @@ std::unique_ptr<Entry> Cache::update(const WebCore::ResourceRequest& originalReq
     WebCore::ResourceResponse response = existingEntry.response();
     WebCore::updateResponseHeadersAfterRevalidation(response, validatingResponse);
 
-    auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), WebCore::collectVaryingRequestHeaders(networkProcess().storageSession(m_sessionID), originalRequest, response));
+    auto updateEntry = makeUnique<Entry>(existingEntry.key(), response, privateRelayed, existingEntry.buffer(), WebCore::collectVaryingRequestHeaders(m_networkProcess->storageSession(m_sessionID), originalRequest, response));
     auto updateRecord = updateEntry->encodeAsStorageRecord();
 
     m_storage->store(updateRecord, { });
@@ -617,7 +620,7 @@ void Cache::traverse(Function<void(const TraversalEntry*)>&& traverseHandler)
     if (m_traverseCount >= maximumTraverseCount) {
         WTFLogAlways("Maximum parallel cache traverse count exceeded. Ignoring traversal request.");
 
-        RunLoop::main().dispatch([traverseHandler = WTFMove(traverseHandler)] () mutable {
+        RunLoop::protectedMain()->dispatch([traverseHandler = WTFMove(traverseHandler)] () mutable {
             traverseHandler(nullptr);
         });
         return;
@@ -692,7 +695,7 @@ void Cache::dumpContentsToFile()
                 "\"averageWorth\": "_s, totals.count ? totals.worth / totals.count : 0, "\n"
                 "}\n}\n"_s
             ).utf8();
-            writeToFile(fd, writeData.span());
+            writeToFile(fd, byteCast<uint8_t>(writeData.span()));
             closeFile(fd);
             return;
         }
@@ -706,7 +709,7 @@ void Cache::dumpContentsToFile()
         StringBuilder json;
         entry->asJSON(json, info);
         json.append(",\n"_s);
-        writeToFile(fd, json.toString().utf8().span());
+        writeToFile(fd, byteCast<uint8_t>(json.toString().utf8().span()));
     });
 }
 

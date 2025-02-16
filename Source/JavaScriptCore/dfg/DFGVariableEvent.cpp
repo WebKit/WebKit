@@ -34,6 +34,8 @@
 
 namespace JSC { namespace DFG {
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void VariableEvent::dump(PrintStream& out) const
 {
     switch (kind()) {
@@ -90,6 +92,8 @@ void VariableEvent::dumpSpillInfo(const char* name, PrintStream& out) const
 {
     out.print(name, "(", id(), ", ", spillRegister(), ", ", dataFormatToString(dataFormat()), ")");
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } } // namespace JSC::DFG
 

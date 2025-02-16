@@ -14,7 +14,7 @@ function foo(z) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let str = 'a' + constStr();
     let result = foo(str);
     if (result !== 2)

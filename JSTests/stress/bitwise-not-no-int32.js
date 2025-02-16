@@ -8,7 +8,7 @@ function bitNot(a) {
 }
 noInline(bitNot);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bitNot("0");
     assert(r, -1);
     r = bitNot("1");

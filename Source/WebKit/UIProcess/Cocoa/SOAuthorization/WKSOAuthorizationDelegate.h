@@ -32,10 +32,7 @@ class SOAuthorizationSession;
 class WebPageProxy;
 }
 
-@interface WKSOAuthorizationDelegate : NSObject <SOAuthorizationDelegate> {
-@package
-    RefPtr<WebKit::SOAuthorizationSession> _session;
-}
+@interface WKSOAuthorizationDelegate : NSObject <SOAuthorizationDelegate>
 - (void)setSession:(RefPtr<WebKit::SOAuthorizationSession>&&)session;
 @end
 

@@ -15,7 +15,7 @@ function assert(a, e) {
     }
     noInline(foo);
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(foo("10"), 0);
     }
 })();
@@ -32,7 +32,7 @@ function assert(a, e) {
     }
     noInline(foo);
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(foo("10"), 0.5);
     }
 })();

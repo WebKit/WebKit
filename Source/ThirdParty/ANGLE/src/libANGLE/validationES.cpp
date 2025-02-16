@@ -2315,7 +2315,7 @@ bool ValidateReadnPixelsEXT(const Context *context,
 {
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -2899,73 +2899,6 @@ bool ValidateGetQueryObjectui64vRobustANGLE(const Context *context,
     return true;
 }
 
-bool ValidateUniformCommonBase(const Context *context,
-                               angle::EntryPoint entryPoint,
-                               const Program *program,
-                               UniformLocation location,
-                               GLsizei count,
-                               const LinkedUniform **uniformOut)
-{
-    // TODO(Jiajia): Add image uniform check in future.
-    if (count < 0)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeCount);
-        return false;
-    }
-
-    if (!program)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidProgramName);
-        return false;
-    }
-
-    if (!program->isLinked())
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kProgramNotLinked);
-        return false;
-    }
-
-    if (location.value == -1)
-    {
-        // Silently ignore the uniform command
-        return false;
-    }
-
-    const ProgramExecutable &executable = program->getExecutable();
-    const auto &uniformLocations        = executable.getUniformLocations();
-    size_t castedLocation               = static_cast<size_t>(location.value);
-    if (castedLocation >= uniformLocations.size())
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidUniformLocation);
-        return false;
-    }
-
-    const auto &uniformLocation = uniformLocations[castedLocation];
-    if (uniformLocation.ignored)
-    {
-        // Silently ignore the uniform command
-        return false;
-    }
-
-    if (!uniformLocation.used())
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidUniformLocation);
-        return false;
-    }
-
-    const LinkedUniform &uniform = executable.getUniformByIndex(uniformLocation.index);
-
-    // attempting to write an array to a non-array uniform is an INVALID_OPERATION
-    if (count > 1 && !uniform.isArray())
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidUniformCount);
-        return false;
-    }
-
-    *uniformOut = &uniform;
-    return true;
-}
-
 bool ValidateUniform1ivValue(const Context *context,
                              angle::EntryPoint entryPoint,
                              GLenum uniformType,
@@ -3092,14 +3025,7 @@ bool ValidateStateQuery(const Context *context,
         case GL_TEXTURE_BINDING_3D:
         case GL_TEXTURE_BINDING_2D_ARRAY:
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE:
-            break;
-
         case GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY:
-            if (!context->getExtensions().textureStorageMultisample2dArrayOES)
-            {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kMultisampleArrayExtensionRequired);
-                return false;
-            }
             break;
 
         case GL_TEXTURE_BINDING_RECTANGLE_ANGLE:
@@ -3350,6 +3276,8 @@ bool ValidateCopyImageSubDataTarget(const Context *context,
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
         case GL_TEXTURE_EXTERNAL_OES:
+        case GL_TEXTURE_2D_MULTISAMPLE:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
         {
             TextureID texture = PackParam<TextureID>(name);
             if (!context->isTexture(texture))
@@ -3396,6 +3324,8 @@ bool ValidateCopyImageSubDataLevel(const Context *context,
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
         case GL_TEXTURE_EXTERNAL_OES:
+        case GL_TEXTURE_2D_MULTISAMPLE:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
         {
             if (!ValidMipLevel(context, PackParam<TextureType>(target), level))
             {
@@ -3525,6 +3455,8 @@ const InternalFormat &GetTargetFormatInfo(const Context *context,
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
         case GL_TEXTURE_EXTERNAL_OES:
+        case GL_TEXTURE_2D_MULTISAMPLE:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
         {
             Texture *texture          = context->getTexture(PackParam<TextureID>(name));
             GLenum textureTargetToUse = target;
@@ -3862,6 +3794,15 @@ bool ValidateCopyImageSubDataBase(const Context *context,
         return false;
     }
 
+    // From EXT_copy_image: INVALID_OPERATION is generated if the source and destination formats
+    // are not compatible, if one image is compressed and the other is uncompressed and the block
+    // size of compressed image is not equal to the texel size of the compressed image.
+    if (!ValidateCopyFormatCompatible(srcFormatInfo, dstFormatInfo))
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIncompatibleTextures);
+        return false;
+    }
+
     if (!ValidateCopyImageSubDataTargetRegion(context, entryPoint, srcName, srcTarget, srcLevel,
                                               srcX, srcY, srcZ, srcWidth, srcHeight, &srcSamples))
     {
@@ -3916,15 +3857,6 @@ bool ValidateCopyImageSubDataBase(const Context *context,
     if (dstFormatInfo.compressed && !fillsEntireMip &&
         !ValidateCompressedRegion(context, entryPoint, dstFormatInfo, dstWidth, dstHeight))
     {
-        return false;
-    }
-
-    // From EXT_copy_image: INVALID_OPERATION is generated if the source and destination formats
-    // are not compatible, if one image is compressed and the other is uncompressed and the block
-    // size of compressed image is not equal to the texel size of the compressed image.
-    if (!ValidateCopyFormatCompatible(srcFormatInfo, dstFormatInfo))
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kIncompatibleTextures);
         return false;
     }
 
@@ -4320,10 +4252,11 @@ const char *ValidateDrawStates(const Context *context, GLenum *outErrorCode)
     if (framebufferIsYUV)
     {
         const BlendState &blendState = state.getBlendState();
-        if (!blendState.colorMaskRed || !blendState.colorMaskGreen || !blendState.colorMaskBlue)
+        if (!blendState.colorMaskRed || !blendState.colorMaskGreen || !blendState.colorMaskBlue ||
+            !blendState.colorMaskAlpha)
         {
-            // When rendering into a YUV framebuffer, the color mask must have r g and b set to
-            // true.
+            // When rendering into a YUV framebuffer, the color mask must have r g b and alpha set
+            // to true.
             return kInvalidColorMaskForYUV;
         }
 
@@ -4856,7 +4789,7 @@ bool ValidateSizedGetUniform(const Context *context,
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kNegativeBufSize);
         return false;
     }
 
@@ -5284,11 +5217,18 @@ bool ValidateEGLImageTargetRenderbufferStorageOES(const Context *context,
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kEGLImageRenderbufferFormatNotSupported);
         return false;
     }
-
-    if (imageObject->hasProtectedContent() != context->getState().hasProtectedContent())
+    const auto &glState = context->getState();
+    if (imageObject->hasProtectedContent() != glState.hasProtectedContent())
     {
         ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION,
                                "Mismatch between Image and Context Protected Content state");
+        return false;
+    }
+
+    Renderbuffer *renderbuffer = glState.getCurrentRenderbuffer();
+    if (renderbuffer == nullptr)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kRenderbufferNotBound);
         return false;
     }
 
@@ -5683,7 +5623,7 @@ bool ValidateRobustEntryPoint(const Context *context, angle::EntryPoint entryPoi
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -7510,6 +7450,16 @@ bool ValidatePixelPack(const Context *context,
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kParamOverflow);
             return false;
         }
+
+        const auto &typeInfo = GetTypeInfo(type);
+        if (reinterpret_cast<uintptr_t>(pixels) % typeInfo.bytes != 0)
+        {
+            // data is not evenly divisible by the number of basic machine units needed
+            // to store in memory the corresponding GL data type from table 8.4 for the
+            // type parameter.
+            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBufferOffsetNotAligned);
+            return false;
+        }
     }
 
     if (pixelPackBuffer == nullptr && length != nullptr)
@@ -8464,10 +8414,11 @@ bool ValidateGetInternalFormativBase(const Context *context,
                 return false;
             }
             break;
-        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
-            if (!context->getExtensions().textureStorageMultisample2dArrayOES)
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
+            if (context->getClientVersion() < ES_3_2 &&
+                !context->getExtensions().textureStorageMultisample2dArrayOES)
             {
-                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kMultisampleArrayExtensionRequired);
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kMultisampleArrayExtensionOrES32Required);
                 return false;
             }
             break;
@@ -8642,6 +8593,37 @@ bool ValidateTexStorage2DMultisampleBase(const Context *context,
     }
 
     return ValidateTexStorageMultisample(context, entryPoint, target, samples, internalFormat,
+                                         width, height);
+}
+
+bool ValidateTexStorage3DMultisampleBase(const Context *context,
+                                         angle::EntryPoint entryPoint,
+                                         TextureType target,
+                                         GLsizei samples,
+                                         GLenum internalformat,
+                                         GLsizei width,
+                                         GLsizei height,
+                                         GLsizei depth)
+{
+    if (target != TextureType::_2DMultisampleArray)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kInvalidTarget);
+        return false;
+    }
+
+    if (width < 1 || height < 1 || depth < 1)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureSizeTooSmall);
+        return false;
+    }
+
+    if (depth > context->getCaps().maxArrayTextureLayers)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureDepthOutOfRange);
+        return false;
+    }
+
+    return ValidateTexStorageMultisample(context, entryPoint, target, samples, internalformat,
                                          width, height);
 }
 

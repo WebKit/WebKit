@@ -95,7 +95,9 @@ RefPtr<GenericTypedArrayView<Adaptor>> GenericTypedArrayView<Adaptor>::tryCreate
     RefPtr<GenericTypedArrayView> result = tryCreate(length);
     if (!result)
         return nullptr;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memcpy(result->data(), array, length * sizeof(typename Adaptor::Type));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return result;
 }
 

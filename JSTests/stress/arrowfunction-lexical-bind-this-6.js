@@ -17,7 +17,7 @@ noInline(d.getName());
 noInline(d.getNameNestingLevel1()());
 noInline(d.getNameNestingLevel2()()());
 
-for (var i=0;i<10000; i++) {
+for (var i=0;i<testLoopCount; i++) {
   testCase(d.getName(), d.name, "Error: this is not lexically binded inside of the arrow function #1");
   testCase(d.getNameNestingLevel1()(), d.name, "Error: this is not lexically binded inside of the arrow function #2");
   testCase(d.getNameNestingLevel2()()(), d.name, "Error: this is not lexically binded inside of the arrow function #3");

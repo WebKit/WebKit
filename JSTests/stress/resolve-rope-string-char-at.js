@@ -10,7 +10,7 @@ function test(string)
 {
     var result = ["", "", "", ""];
     var object = { };
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var index = i % 4;
         result[index] = string.charAt(index);
         if (i === 5000) {

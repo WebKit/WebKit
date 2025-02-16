@@ -258,6 +258,9 @@ UnlinkedFunctionExecutable* CodeCache::getUnlinkedGlobalFunctionExecutable(VM& v
     if (!source.provider()->sourceMappingURLDirective().isNull())
         functionExecutable->setSourceMappingURLDirective(source.provider()->sourceMappingURLDirective());
 
+    // We initially start with hasCapturedVariables = false.
+    functionExecutable->recordParse(program->features(), metadata->lexicallyScopedFeatures(), /* hasCapturedVariables */ false);
+
     if (Options::useCodeCache())
         m_sourceCode.addCache(key, SourceCodeValue(vm, functionExecutable, m_sourceCode.age()));
     return functionExecutable;

@@ -92,4 +92,21 @@ inline IntRect cgImageRect(CGImageRef image)
     return { 0, 0, static_cast<int>(CGImageGetWidth(image)), static_cast<int>(CGImageGetHeight(image)) };
 }
 
+inline std::span<CGPoint> pointsSpan(const CGPathElement* element)
+{
+    switch (element->type) {
+    case kCGPathElementMoveToPoint:
+        return unsafeMakeSpan(element->points, 1);
+    case kCGPathElementAddLineToPoint:
+        return unsafeMakeSpan(element->points, 1);
+    case kCGPathElementAddQuadCurveToPoint:
+        return unsafeMakeSpan(element->points, 2);
+    case kCGPathElementAddCurveToPoint:
+        return unsafeMakeSpan(element->points, 3);
+    case kCGPathElementCloseSubpath:
+        break;
+    }
+    return { };
+}
+
 }

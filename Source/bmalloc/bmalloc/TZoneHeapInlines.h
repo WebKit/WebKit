@@ -25,8 +25,6 @@
 
 #pragma once
 
-#include "BPlatform.h"
-
 #if BUSE(TZONE)
 
 #include "TZoneHeap.h"
@@ -35,26 +33,12 @@ namespace bmalloc { namespace api {
 
 // This is most appropriate for classes defined in a .cpp/.mm file.
 
-#define MAKE_BTZONE_MALLOCED_COMMON_INLINE(_type, _compactMode, _fallbackMode, _exportMacro) \
+#define MAKE_BTZONE_MALLOCED_COMMON_INLINE(_type, _compactMode, _exportMacro) \
 public: \
     using HeapRef = ::bmalloc::api::HeapRef; \
     using SizeAndAlignment = ::bmalloc::api::SizeAndAlignment; \
     using TZoneMallocFallback = ::bmalloc::api::TZoneMallocFallback; \
-private: \
-    static BNO_INLINE void* operatorNewSlow(size_t size) \
-    { \
-        const auto& heapSpec = tzoneHeap().second; \
-        return ::bmalloc::api::tzoneAllocate ## _compactMode ## With ## _fallbackMode ## Slow(size, heapSpec); \
-    } \
     \
-    static _exportMacro std::pair<HeapRef&, const TZoneSpecification&> tzoneHeap() \
-    { \
-        static HeapRef s_heapRef; \
-        static const TZoneSpecification s_heapSpec TZONE_SPEC_ATTRIBUTE = { &s_heapRef, sizeof(_type), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
-        return { s_heapRef, s_heapSpec }; \
-    } \
-    \
-public: \
     BINLINE void* operator new(size_t, void* p) { return p; } \
     BINLINE void* operator new[](size_t, void* p) { return p; } \
     \
@@ -69,40 +53,42 @@ public: \
     \
     void* operator new(size_t size) \
     { \
-        auto heapRef = tzoneHeap().first; \
-        if (BUNLIKELY(!heapRef || size != sizeof(_type))) \
-            BMUST_TAIL_CALL return operatorNewSlow(size); \
-        BASSERT(::bmalloc::api::tzoneMallocFallback >= TZoneMallocFallback::ForceSpecifiedFallBack); \
-        return ::bmalloc::api::tzoneAllocate ## _compactMode(heapRef); \
+        static HeapRef s_heapRef; \
+        static const TZoneSpecification s_heapSpec = { &s_heapRef, sizeof(_type), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
+    \
+        if (BUNLIKELY(!s_heapRef || size != sizeof(_type))) \
+            return ::bmalloc::api::tzoneAllocate ## _compactMode ## Slow(size, s_heapSpec); \
+        BASSERT(::bmalloc::api::tzoneMallocFallback > TZoneMallocFallback::ForceDebugMalloc); \
+        return ::bmalloc::api::tzoneAllocate ## _compactMode(s_heapRef); \
     } \
     \
     BINLINE void operator delete(void* p) \
     { \
-        ::bmalloc::api::tzoneFreeWith ## _fallbackMode(p); \
+        ::bmalloc::api::tzoneFree(p); \
     } \
     \
     BINLINE static void freeAfterDestruction(void* p) \
     { \
-        ::bmalloc::api::tzoneFreeWith ## _fallbackMode(p); \
+        ::bmalloc::api::tzoneFree(p); \
     } \
     \
     using WTFIsFastAllocated = int;
 
 #define MAKE_BTZONE_MALLOCED_INLINE(_type, _compactMode) \
 public: \
-    MAKE_BTZONE_MALLOCED_COMMON_INLINE(_type, _compactMode, FastFallback, BNOEXPORT) \
+    MAKE_BTZONE_MALLOCED_COMMON_INLINE(_type, _compactMode, BNOEXPORT) \
 private: \
     using __makeBtzoneMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 
-#define MAKE_BTZONE_MALLOCED_IMPL(_type, _compactMode, _fallbackMode) \
+#define MAKE_BTZONE_MALLOCED_IMPL(_type, _compactMode) \
 ::bmalloc::api::HeapRef _type::s_heapRef; \
 \
-const TZoneSpecification _type::s_heapSpec TZONE_SPEC_ATTRIBUTE = { &_type::s_heapRef, sizeof(_type), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
+const TZoneSpecification _type::s_heapSpec = { &_type::s_heapRef, sizeof(_type), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
 \
 void* _type::operatorNewSlow(size_t size) \
 { \
-    return ::bmalloc::api::tzoneAllocate ## _compactMode ## With ## _fallbackMode ## Slow(size, s_heapSpec); \
+    return ::bmalloc::api::tzoneAllocate ## _compactMode ## Slow(size, s_heapSpec); \
 } \
 \
 using __makeBtzoneMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int

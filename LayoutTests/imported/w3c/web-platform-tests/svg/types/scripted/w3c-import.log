@@ -33,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration-SVGTextPathElement.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedEnumeration.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedInteger.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedLength-initial-values.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedLength.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedLengthList.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/types/scripted/SVGAnimatedNumber.html

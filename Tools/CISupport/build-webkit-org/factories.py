@@ -112,7 +112,7 @@ class TestFactory(Factory):
             self.addStep(ExtractTestResults())
             self.addStep(SetPermissions())
 
-        if platform.startswith(('win', 'mac', 'ios-simulator')):
+        if platform.startswith(('win', 'mac', 'ios-simulator')) and self.LayoutTestClass != RunWorldLeaksTests:
             self.addStep(RunAPITests())
 
         # FIXME: Re-enable these tests for Monterey once webkit.org/b/239463 is resolved.
@@ -258,6 +258,13 @@ class TestWebDriverFactory(Factory):
         self.addStep(ExtractBuiltProduct())
         self.addStep(RunWebDriverTests())
 
+
+class TestMVTFactory(Factory):
+    def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None):
+        Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model)
+        self.addStep(DownloadBuiltProduct())
+        self.addStep(ExtractBuiltProduct())
+        self.addStep(RunMVTTests())
 
 class TestWebKit1Factory(TestFactory):
     LayoutTestClass = RunWebKit1Tests

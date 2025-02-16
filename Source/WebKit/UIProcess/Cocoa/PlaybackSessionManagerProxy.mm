@@ -483,6 +483,17 @@ void PlaybackSessionModelContext::spatialVideoMetadataChanged(const std::optiona
     for (CheckedRef client : m_clients)
         client->spatialVideoMetadataChanged(m_spatialVideoMetadata);
 }
+
+void PlaybackSessionModelContext::isImmersiveVideoChanged(bool value)
+{
+    if (m_isImmersiveVideo == value)
+        return;
+    ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, value);
+    m_isImmersiveVideo = value;
+
+    for (CheckedRef client : m_clients)
+        client->isImmersiveVideoChanged(m_isImmersiveVideo);
+}
 #endif
 
 void PlaybackSessionModelContext::invalidate()
@@ -754,6 +765,11 @@ void PlaybackSessionManagerProxy::supportsLinearMediaPlayerChanged(PlaybackSessi
 void PlaybackSessionManagerProxy::spatialVideoMetadataChanged(PlaybackSessionContextIdentifier contextId, const std::optional<WebCore::SpatialVideoMetadata>& metadata)
 {
     ensureModel(contextId)->spatialVideoMetadataChanged(metadata);
+}
+
+void PlaybackSessionManagerProxy::isImmersiveVideoChanged(PlaybackSessionContextIdentifier contextId, bool value)
+{
+    ensureModel(contextId)->isImmersiveVideoChanged(value);
 }
 
 #endif

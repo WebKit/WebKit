@@ -57,8 +57,6 @@ public:
     void deleteLineBoxTree();
     void deleteLineBoxes();
 
-    void extractLineBox(LegacyInlineFlowBox*);
-    void attachLineBox(LegacyInlineFlowBox*);
     void removeLineBox(LegacyInlineFlowBox*);
     
     void dirtyLineBoxes();

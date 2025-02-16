@@ -129,8 +129,8 @@ private:
     uint32_t m_functionIndex { 0 };
 
     uint32_t m_functionSize { 0 };
+    size_t m_totalFunctionSize { 0 };
 
-    Lock m_stateLock;
     State m_state { State::ModuleHeader };
     Section m_section { Section::Begin };
     Section m_previousKnownSection { Section::Begin };

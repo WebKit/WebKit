@@ -1,0 +1,205 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+// START
+adapter0 = await navigator.gpu.requestAdapter();
+promise0 = adapter0.requestDevice();
+device0 = await promise0;
+buffer0 = device0.createBuffer({
+  size : 4483,
+  usage : GPUBufferUsage.STORAGE | GPUBufferUsage});
+videoFrame0 = new VideoFrame(new ArrayBuffer(16), {
+  codedWidth : 2,
+  codedHeight : 2,
+  format : 'I420',
+  timestamp : 0,
+  });
+veryExplicitBindGroupLayout4 = device0.createBindGroupLayout({
+  entries : [
+    {
+      binding : 4,
+      visibility : GPUShaderStage.COMPUTE | GPUShaderStage,
+      externalTexture : {}
+    },
+    {
+      binding : 110,
+      visibility : GPUShaderStage.COMPUTE | GPUShaderStage,
+      buffer : {type : 'storage', }},
+    {
+      binding : 208,
+      visibility : GPUShaderStage.COMPUTE,
+      buffer : {type : 'storage', }}]});
+externalTexture1 =
+    device0.importExternalTexture({source : videoFrame0, });
+buffer9 = device0.createBuffer({
+  size : 1199,
+  usage : GPUBufferUsage.STORAGE | GPUBufferUsage});
+
+device0.createBindGroup({
+  layout : veryExplicitBindGroupLayout4,
+  entries : [
+    {binding : 110, resource : {buffer : buffer0, size : 608}},
+    {binding : 208, resource : {buffer : buffer9, size : 488}},
+    {binding : 4, resource : externalTexture1}]});
+bindGroup11 = device0.createBindGroup({
+  layout : veryExplicitBindGroupLayout4,
+  entries : [
+    {binding : 208, resource : {buffer : buffer0}},
+    {binding : 110, resource : {buffer : buffer9}},
+    {binding : 4, resource : externalTexture1}]});
+
+shaderModule0 = device0.createShaderModule({
+  code : ` ;
+              var<workgroup> vw0: vec4h;
+              fn unconst_f32(v: f32) -> f32 {
+            return v;
+            }
+              fn unconst_u32(v: u32) -> u32 {
+            return v;
+            }
+              struct T4 {
+              @size(8) f0: atomic<u32>}
+              fn unconst_f16(v: f16) -> f16 {
+            return v;
+            }
+              @group(0) @binding(208) var<storage, read_write> buffer14: array<array<array<f16, 9>, 16>>;
+              fn unconst_bool(v: bool) -> bool {
+            return v;
+            }
+              struct FragmentOutput0 {
+              @location(0) f0: vec4f}
+              @group(0) @binding(4) var et0: texture_external;
+              var<private> vp0= vec2i(548, 40);
+              @must_use  fn fn1() -> FragmentOutput0 {
+              var out: FragmentOutput0;
+              buffer14[unconst_u32(636)][unconst_u32(772)][unconst_u32(68)] = buffer14[arrayLength(&buffer14)][unconst_u32(105)][unconst_u32(843)];
+              let ptr0= &(buffer13)[unconst_u32(45)][u32()];
+              vw0 = vec4h(buffer13[unconst_u32(61)][unconst_u32(56)][unconst_u32(96)][0][0]);
+              let ptr1= &(buffer13)[(79)][0][0];
+              let ptr2: ptr<storage, array<array<array<f16, 1>, 1>, 3>, read_write> = &buffer13[(142)][0];
+              var vf1vec2f = sin(vec2f(unconst_f32(0.00835), unconst_f32(0.08881)));
+              let ptr3= &buffer14[(3)][15][(6)];
+              out.f0 = vec4f(f32(buffer13[arrayLength(&buffer13)][unconst_u32(179)][unconst_u32(5)][unconst_u32(250)][unconst_u32(2)]));
+              return out;
+              _ = buffer13;
+              _ = buffer14;
+            }
+              struct T3 {
+              @align(8) @size(8) f0: array<array<array<array<array<u32, 1>, 1>, 1>, 1>, >}
+              fn fn2() -> T7 {
+              var out: T7;
+              out.f0 -= vec4f(f32(mix(unconst_f16(22810.8), unconst_f16(1406.4), unconst_f16(970.0))));
+              let vf4vec2f = step(vec2f(unconst_f32(0.2235), unconst_f32(0.06957)), vec2f(unconst_f32(0.1694), unconst_f32(0.1216)));
+              var vf5= any(unconst_bool(true));
+              vf5 = bool(step(vec2f(unconst_f32(-0.03114), unconst_f32(0.04869)), vec2f(unconst_f32(-0.1820), unconst_f32(0.4481)))[0]);
+              let vf6bool = (unconst_bool(true) || any(vec4(unconst_bool(true), unconst_bool(false), unconst_bool(true), unconst_bool(true))));
+              if vf5 {
+            let vf9vec3f = faceForward(vec3f(unconst_f32(0.07414), unconst_f32(0.1799), unconst_f32(0.01477)), vec3f(unconst_f32(0.09116), unconst_f32(0.1702), unconst_f32(0.1474)), vec3f(unconst_f32(-0.1086), unconst_f32(0.2409), unconst_f32(0.1656)));
+          }
+              let vf11vec2u = textureDimensions(et0);
+              let ptr4= &vf5;
+              return out;
+            }
+              struct T7 {
+              @size(48) f0: vec4f}
+              @group(0) @binding(110) var<storage, read_write> buffer13: array<array<array<array<array<f16, 1>, 1>, 3>, 1>>;
+              @compute @workgroup_size(2, ) fn compute0() {
+              _ = fn1();
+              let ptr11: ptr<storage, array<array<f16, 1>, 1>, read_write> = &(buffer13)[arrayLength(&(buffer13))][unconst_u32(4)][unconst_u32(91)];
+              buffer13[unconst_u32(27)][unconst_u32(342)][unconst_u32(204)][unconst_u32(6)][unconst_u32(46)] = buffer13[unconst_u32(333)][unconst_u32(317)][2][0][0];
+            }
+             `});
+{
+}
+pipelineLayout4 = device0.createPipelineLayout(
+    {bindGroupLayouts : [ veryExplicitBindGroupLayout4 ]});
+{
+}
+pipeline6 = await device0.createComputePipelineAsync({
+  layout : pipelineLayout4,
+  compute : {module : shaderModule0 }
+});
+commandEncoder52 = device0.createCommandEncoder();
+{
+}
+computePassEncoder38 = commandEncoder52.beginComputePass();
+try {
+  computePassEncoder38.setPipeline(pipeline6)} catch {
+}
+try {
+  computePassEncoder38.setBindGroup(0, bindGroup11)} catch {
+}
+{
+}
+try {
+  computePassEncoder38.dispatchWorkgroups(11)} catch {
+}
+{
+}
+try {
+  computePassEncoder38.end()} catch {
+}
+commandBuffer3 = commandEncoder52.finish();
+{
+}
+try {
+  device0.queue.submit([ commandBuffer3 ])} catch {
+}
+// END
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

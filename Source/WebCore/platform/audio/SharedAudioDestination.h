@@ -52,10 +52,11 @@ private:
     void stop(CompletionHandler<void(bool)>&&) final;
     bool isPlaying() final { return m_isPlaying; }
     unsigned framesPerBuffer() const final;
+    MediaTime outputLatency() const final;
 
     void setIsPlaying(bool);
 
-    Ref<SharedAudioDestinationAdapter> protectedOutputAdapter();
+    Ref<SharedAudioDestinationAdapter> protectedOutputAdapter() const;
 
     Lock m_dispatchToRenderThreadLock;
     Function<void(Function<void()>&&)> m_dispatchToRenderThread WTF_GUARDED_BY_LOCK(m_dispatchToRenderThreadLock);

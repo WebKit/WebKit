@@ -44,13 +44,13 @@ public:
     static Ref<CachedScriptFetcher> create(const AtomString& charset);
 
 protected:
-    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriorityHint, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+    CachedScriptFetcher(const String& nonce, ReferrerPolicy referrerPolicy, RequestPriority fetchPriority, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
         : m_nonce(nonce)
         , m_charset(charset)
         , m_initiatorType(initiatorType)
         , m_isInUserAgentShadowTree(isInUserAgentShadowTree)
         , m_referrerPolicy(referrerPolicy)
-        , m_fetchPriorityHint(fetchPriorityHint)
+        , m_fetchPriority(fetchPriority)
     {
     }
 
@@ -67,7 +67,7 @@ private:
     AtomString m_initiatorType;
     bool m_isInUserAgentShadowTree { false };
     ReferrerPolicy m_referrerPolicy { ReferrerPolicy::EmptyString };
-    RequestPriority m_fetchPriorityHint { RequestPriority::Auto };
+    RequestPriority m_fetchPriority { RequestPriority::Auto };
 };
 
 } // namespace WebCore

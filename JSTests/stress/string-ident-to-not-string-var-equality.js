@@ -16,7 +16,7 @@ function test(a, b, expected) {
         throw new Error("Bad result: " + barActual);
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test("foo", "foo", true);
     test("foo", "bar", false);
     test("fuz", 42, false);

@@ -54,7 +54,7 @@ enum GridTrackSizeType {
 // case) was causing a severe performance drop.
 class GridTrackSize {
 public:
-    GridTrackSize(const GridLength& length, GridTrackSizeType trackSizeType = LengthTrackSizing)
+    GridTrackSize(const GridLength& length = GridLength({ }), GridTrackSizeType trackSizeType = LengthTrackSizing)
         : m_type(trackSizeType)
         , m_minTrackBreadth(trackSizeType == FitContentTrackSizing ? Length(LengthType::Auto) : length)
         , m_maxTrackBreadth(trackSizeType == FitContentTrackSizing ? Length(LengthType::Auto) : length)

@@ -52,6 +52,13 @@ public:
                               RenderPassDesc*,
                               const RendererProvider*) const override;
 
+    bool deserializeTextureInfo(SkStream*,
+                                BackendApi,
+                                Mipmapped,
+                                Protected,
+                                uint32_t sampleCount,
+                                TextureInfo* out) const override;
+
     // Get a sufficiently unique bit representation for the RenderPassDesc to be embedded in other
     // UniqueKeys (e.g. makeGraphicsPipelineKey).
     uint64_t getRenderPassDescKey(const RenderPassDesc&) const;
@@ -67,7 +74,6 @@ public:
     void buildKeyForTexture(SkISize dimensions,
                             const TextureInfo&,
                             ResourceType,
-                            Shareable,
                             GraphiteResourceKey*) const override;
 
 private:

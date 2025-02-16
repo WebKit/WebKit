@@ -10,10 +10,10 @@ class A {
     #i = eval("false");
 }
 
-for (var i = 0; i < 10000; i++)
+for (var i = 0; i < testLoopCount; i++)
     new A();
 
 fullGC();
 
-for (var i = 0; i < 10000; i++)
+for (var i = 0; i < testLoopCount; i++)
     new A();

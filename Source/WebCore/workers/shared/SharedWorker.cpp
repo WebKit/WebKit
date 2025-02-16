@@ -42,8 +42,13 @@
 #include "TrustedType.h"
 #include "WorkerOptions.h"
 #include <JavaScriptCore/IdentifiersFactory.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
+
+#if ENABLE(CONTENT_EXTENSIONS)
+#include "ResourceMonitor.h"
+#endif
 
 namespace WebCore {
 
@@ -124,6 +129,9 @@ SharedWorker::SharedWorker(Document& document, const SharedWorkerKey& key, Ref<M
     , m_port(WTFMove(port))
     , m_identifierForInspector(makeString("SharedWorker:"_s, Inspector::IdentifiersFactory::createIdentifier()))
     , m_blobURLExtension({ m_key.url.protocolIsBlob() ? m_key.url : URL(), document.topOrigin().data() }) // Keep blob URL alive until the worker has finished loading.
+#if ENABLE(CONTENT_EXTENSIONS)
+    , m_resourceMonitor(document.resourceMonitorIfExists())
+#endif
 {
     SHARED_WORKER_RELEASE_LOG("SharedWorker:");
     allSharedWorkers().add(identifier(), *this);
@@ -183,6 +191,21 @@ void SharedWorker::resume()
         mainThreadConnection()->resumeForBackForwardCache(m_key, identifier());
         m_isSuspendedForBackForwardCache = false;
     }
+}
+
+void SharedWorker::reportNetworkUsage(size_t bytesTransferredOverNetwork)
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    CheckedSize delta = bytesTransferredOverNetwork - m_bytesTransferredOverNetwork;
+    ASSERT(!delta.hasOverflowed());
+
+    if (delta) {
+        if (RefPtr resourceMonitor = m_resourceMonitor)
+            resourceMonitor->addNetworkUsage(delta);
+    }
+#endif
+
+    m_bytesTransferredOverNetwork = bytesTransferredOverNetwork;
 }
 
 #undef SHARED_WORKER_RELEASE_LOG

@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.zoneddatetime
 description: Basic tests for time zone IDs
-features: [Temporal]
+features: [Temporal, canonical-tz]
 ---*/
 
 const valid = [

@@ -23,7 +23,7 @@ function testAddOtherPropertyInBranch() {
 }
 noInline(testAddOtherPropertyInBranch);
 
-for (i = 0; i < 100000; i++) {
+for (i = 0; i < testLoopCount; i++) {
     if (testModifyLength(1) !== 10)
         throw "bad";
     if (testAddOtherProperty(1) !== 1)

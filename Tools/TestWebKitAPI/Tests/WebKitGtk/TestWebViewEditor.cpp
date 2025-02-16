@@ -302,6 +302,8 @@ static const char* selectedSpanHTMLFormat =
 
 static void testWebViewEditorCutCopyPasteNonEditable(EditorTest* test, gconstpointer)
 {
+    test->flushEditorState();
+
     // Nothing loaded yet.
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_CUT));
     g_assert_false(test->canExecuteEditingCommand(WEBKIT_EDITING_COMMAND_COPY));

@@ -36,7 +36,6 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
-#import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
 
 #if USE(APPLE_INTERNAL_SDK)
@@ -86,7 +85,7 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
     }
 #endif
 
-    m_context = [allocLAContextInstance() init];
+    m_context = adoptNS([allocLAContextInstance() init]);
 
     auto options = adoptNS([[NSMutableDictionary alloc] init]);
 #if HAVE(UNIFIED_ASC_AUTH_UI)
@@ -108,7 +107,7 @@ void LocalConnection::verifyUser(const String& rpId, ClientDataType type, SecAcc
             verification = UserVerification::Presence;
 
         // This block can be executed in another thread.
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), verification, context = WTFMove(context)] () mutable {
+        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), verification, context = WTFMove(context)] () mutable {
             completionHandler(verification, context.get());
         });
     });
@@ -152,7 +151,7 @@ void LocalConnection::verifyUser(SecAccessControlRef accessControl, LAContext *c
             verification = UserVerification::Presence;
 
         // This block can be executed in another thread.
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), verification] () mutable {
+        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), verification] () mutable {
             completionHandler(verification);
         });
     });
@@ -215,7 +214,6 @@ RetainPtr<NSArray> LocalConnection::getExistingCredentials(const String& rpId)
     // Search Keychain for existing credential matched the RP ID.
     NSDictionary *query = @{
         (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecAttrAccessGroup: LocalAuthenticatorAccessGroup,
         (id)kSecAttrLabel: rpId,

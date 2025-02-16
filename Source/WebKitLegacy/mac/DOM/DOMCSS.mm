@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2006 James G. Speth (speth@end.com)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
  *
@@ -39,7 +39,6 @@
 #import "DOMCSSStyleDeclaration.h"
 #import "DOMCSSStyleRule.h"
 #import "DOMCSSStyleSheet.h"
-#import "DOMCSSUnknownRule.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMCSSValueList.h"
 #import "DOMInternal.h"
@@ -61,8 +60,6 @@ Class kitClass(WebCore::StyleSheet* impl)
 Class kitClass(WebCore::CSSRule* impl)
 {
     switch (impl->styleRuleType()) {
-    case WebCore::StyleRuleType::Unknown:
-        return [DOMCSSUnknownRule class];
     case WebCore::StyleRuleType::Style:
         return [DOMCSSStyleRule class];
     case WebCore::StyleRuleType::Charset:

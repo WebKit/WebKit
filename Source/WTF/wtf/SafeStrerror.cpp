@@ -38,10 +38,14 @@ CString safeStrerror(int errnum)
     constexpr size_t bufferLength = 1024;
     std::span<char> cstringBuffer;
     auto result = CString::newUninitialized(bufferLength, cstringBuffer);
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if OS(WINDOWS)
     strerror_s(cstringBuffer.data(), cstringBuffer.size(), errnum);
 #else
     auto ret = strerror_r(errnum, cstringBuffer.data(), cstringBuffer.size());
+
     if constexpr (std::is_same<decltype(ret), char*>::value) {
         // We have GNU strerror_r(), which returns char*. This may or may not be a pointer into
         // cstringBuffer. We also have to be careful because this has to compile even if ret is
@@ -55,6 +59,9 @@ CString safeStrerror(int errnum)
             snprintf(cstringBuffer.data(), cstringBuffer.size(), "%s %d", "Unknown error", errnum);
     }
 #endif // OS(WINDOWS)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     return result;
 }
 

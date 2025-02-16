@@ -51,6 +51,7 @@
 #include <WebCore/File.h>
 #include <WebCore/FileList.h>
 #include <WebCore/FrameTree.h>
+#include <WebCore/HTMLDataListElement.h>
 #include <WebCore/HTMLFrameElement.h>
 #include <WebCore/HTMLIFrameElement.h>
 #include <WebCore/HTMLInputElement.h>
@@ -66,10 +67,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
-
-#if ENABLE(DATALIST_ELEMENT)
-#include <WebCore/HTMLDataListElement.h>
-#endif
 
 #if ENABLE(WEBDRIVER_BIDI)
 #include <WebCore/AutomationInstrumentation.h>
@@ -396,7 +393,7 @@ void WebAutomationSessionProxy::ensureObserverForFrame(WebFrame& frame)
         return;
 
     auto frameID = frame.frameID();
-    m_frameObservers.set(frameID, WebAutomationDOMWindowObserver::create(*window, [this, frameID] (WebAutomationDOMWindowObserver&) {
+    m_frameObservers.set(frameID, WebAutomationDOMWindowObserver::create(*window, [this, protectedThis = Ref { *this }, frameID] (WebAutomationDOMWindowObserver&) {
         willDestroyGlobalObjectForFrame(frameID);
     }));
 }
@@ -650,10 +647,8 @@ static WebCore::Element* containerElementForElement(WebCore::Element& element)
     // §13. Element State.
     // https://w3c.github.io/webdriver/webdriver-spec.html#dfn-container.
     if (is<WebCore::HTMLOptionElement>(element)) {
-#if ENABLE(DATALIST_ELEMENT)
         if (RefPtr parentElement = WebCore::ancestorsOfType<WebCore::HTMLDataListElement>(element).first())
             return parentElement.get();
-#endif
         if (RefPtr parentElement = downcast<WebCore::HTMLOptionElement>(element).ownerSelectElement())
             return parentElement.get();
 

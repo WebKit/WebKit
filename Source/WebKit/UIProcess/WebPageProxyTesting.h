@@ -45,7 +45,6 @@ class WebPageProxyTesting : public IPC::MessageSender, public RefCounted<WebPage
 public:
     static Ref<WebPageProxyTesting> create(WebPageProxy& page) { return adoptRef(*new WebPageProxyTesting(page)); }
 
-    void setDefersLoading(bool);
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
     void dispatchActivityStateUpdate();
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
@@ -77,7 +76,7 @@ public:
     void setSystemCanPromptForGetDisplayMediaForTesting(bool);
 #endif
 
-    void setTopContentInset(float, CompletionHandler<void()>&&);
+    void setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&&);
 
     void clearBackForwardList(CompletionHandler<void()>&&);
 

@@ -1,6 +1,6 @@
 
 FAIL Dynamically changing view-timeline attachment assert_equals: ambiguous expected "-1" but got "75"
-FAIL Dynamically changing view-timeline-axis assert_equals: horizontal expected "10" but got "25"
-FAIL Dynamically changing view-timeline-inset assert_equals: with inset expected "0" but got "25"
+PASS Dynamically changing view-timeline-axis
+PASS Dynamically changing view-timeline-inset
 PASS Element with scoped view-timeline becoming display:none
 

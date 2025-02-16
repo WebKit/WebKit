@@ -42,6 +42,7 @@
 #include "PageConsoleClient.h"
 #include "RealtimeMediaSource.h"
 #include "RenderingMode.h"
+#include "ResourceMonitorChecker.h"
 #include "SleepDisabler.h"
 #include "TextIndicator.h"
 #include "VP9Utilities.h"
@@ -492,7 +493,7 @@ public:
     bool isOverwriteModeEnabled();
     void toggleOverwriteModeEnabled();
 
-    bool testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
+    ExceptionOr<bool> testProcessIncomingSyncMessagesWhenWaitingForSyncReply();
 
     ExceptionOr<RefPtr<Range>> rangeOfString(const String&, RefPtr<Range>&&, const Vector<String>& findOptions);
     ExceptionOr<unsigned> countMatchesForText(const String&, const Vector<String>& findOptions, const String& markMatches);
@@ -587,6 +588,7 @@ public:
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
     unsigned referencingNodeCount(const Document&) const;
+    ExceptionOr<void> executeOpportunisticallyScheduledTasks() const;
 
 #if ENABLE(WEB_AUDIO)
     // BaseAudioContext lifetime testing.
@@ -599,7 +601,7 @@ public:
     unsigned numberOfResizeObservers(const Document&) const;
 
     String documentIdentifier(const Document&) const;
-    bool isDocumentAlive(const String& documentIdentifier) const;
+    ExceptionOr<bool> isDocumentAlive(const String& documentIdentifier) const;
 
     uint64_t messagePortIdentifier(const MessagePort&) const;
     bool isMessagePortAlive(uint64_t messagePortIdentifier) const;
@@ -640,14 +642,6 @@ public:
     void setHeaderHeight(float);
     void setFooterHeight(float);
 
-#if ENABLE(FULLSCREEN_API)
-    void webkitWillEnterFullScreenForElement(Element&);
-    void webkitDidEnterFullScreenForElement(Element&);
-    void webkitWillExitFullScreenForElement(Element&);
-    void webkitDidExitFullScreenForElement(Element&);
-    bool isAnimatingFullScreen() const;
-#endif
-
     struct FullscreenInsets {
         float top { 0 };
         float left { 0 };
@@ -655,7 +649,7 @@ public:
         float right { 0 };
     };
     void setFullscreenInsets(FullscreenInsets);
-    void setFullscreenAutoHideDuration(double);
+    ExceptionOr<void> setFullscreenAutoHideDuration(double);
 
 #if ENABLE(VIDEO)
     bool isChangingPresentationMode(HTMLVideoElement&) const;
@@ -825,10 +819,6 @@ public:
     ExceptionOr<RefPtr<StaticRange>> selectedRange();
     void setSelectionWithoutValidation(Ref<Node> baseNode, unsigned baseOffset, RefPtr<Node> extentNode, unsigned extentOffset);
     void setSelectionFromNone();
-
-    ExceptionOr<bool> isPluginUnavailabilityIndicatorObscured(Element&);
-    ExceptionOr<String> unavailablePluginReplacementText(Element&);
-    bool isPluginSnapshotted(Element&);
 
 #if ENABLE(MEDIA_SOURCE)
     WEBCORE_TESTSUPPORT_EXPORT void initializeMockMediaSource();
@@ -1088,7 +1078,7 @@ public:
     NO_RETURN_DUE_TO_CRASH void terminateWebContentProcess();
 
 #if ENABLE(APPLE_PAY)
-    MockPaymentCoordinator& mockPaymentCoordinator(Document&);
+    ExceptionOr<Ref<MockPaymentCoordinator>> mockPaymentCoordinator(Document&);
 #endif
 
     struct ImageOverlayText {
@@ -1286,7 +1276,7 @@ public:
         String domain;
         String path;
         // Expiration dates are expressed as milliseconds since the UNIX epoch.
-        double expires { 0 };
+        std::optional<double> expires;
         bool isHttpOnly { false };
         bool isSecure { false };
         bool isSession { false };
@@ -1299,7 +1289,7 @@ public:
             , value(cookie.value)
             , domain(cookie.domain)
             , path(cookie.path)
-            , expires(cookie.expires.value_or(0))
+            , expires(cookie.expires)
             , isHttpOnly(cookie.httpOnly)
             , isSecure(cookie.secure)
             , isSession(cookie.session)
@@ -1313,7 +1303,27 @@ public:
         CookieData()
         {
         }
+
+        static Cookie toCookie(CookieData&& cookieData)
+        {
+            Cookie cookie;
+            cookie.name = WTFMove(cookieData.name);
+            cookie.value = WTFMove(cookieData.value);
+            cookie.domain = WTFMove(cookieData.domain);
+            cookie.path = WTFMove(cookieData.path);
+            cookie.expires = WTFMove(cookieData.expires);
+            if (cookieData.isSameSiteNone)
+                cookie.sameSite = Cookie::SameSitePolicy::None;
+            else if (cookieData.isSameSiteLax)
+                cookie.sameSite = Cookie::SameSitePolicy::Lax;
+            else if (cookieData.isSameSiteStrict)
+                cookie.sameSite = Cookie::SameSitePolicy::Strict;
+
+            return cookie;
+        }
     };
+
+    void setCookie(CookieData&&);
     Vector<CookieData> getCookies() const;
 
     void setAlwaysAllowLocalWebarchive(bool);
@@ -1379,7 +1389,7 @@ public:
 
     String windowLocationHost(DOMWindow&);
 
-    String systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
+    ExceptionOr<String> systemColorForCSSValue(const String& cssValue, bool useDarkModeAppearance, bool useElevatedUserInterfaceLevel);
 
     bool systemHasBattery() const;
 
@@ -1529,6 +1539,12 @@ public:
     void getImageBufferResourceLimits(ImageBufferResourceLimitsPromise&&);
 
     void setResourceCachingDisabledByWebInspector(bool);
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    void setResourceMonitorNetworkUsageThreshold(size_t threshold, double randomness = ResourceMonitorChecker::networkUsageThresholdRandomness);
+    bool shouldSkipResourceMonitorThrottling() const;
+    void setShouldSkipResourceMonitorThrottling(bool);
+#endif
 
 private:
     explicit Internals(Document&);

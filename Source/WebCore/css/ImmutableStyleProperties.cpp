@@ -29,26 +29,27 @@
 #include "StylePropertiesInlines.h"
 #include <wtf/HashMap.h>
 #include <wtf/Hasher.h>
+#include <wtf/IndexedRange.h>
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties, unsigned length, CSSParserMode mode)
-    : StyleProperties(mode, length)
+ImmutableStyleProperties::ImmutableStyleProperties(std::span<const CSSProperty> properties, CSSParserMode mode)
+    : StyleProperties(mode, properties.size())
 {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     auto* metadataArray = const_cast<StylePropertyMetadata*>(this->metadataArray());
     auto* valueArray = std::bit_cast<PackedPtr<CSSValue>*>(this->valueArray());
-    for (unsigned i = 0; i < length; ++i) {
-        metadataArray[i] = properties[i].metadata();
-        RefPtr value = properties[i].value();
+    for (auto [i, property] : indexedRange(properties)) {
+        metadataArray[i] = property.metadata();
+        RefPtr value = property.value();
         valueArray[i] = value.get();
         value->ref();
     }
-}
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
 
 ImmutableStyleProperties::~ImmutableStyleProperties()
 {
@@ -59,10 +60,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
-Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(const CSSProperty* properties, unsigned count, CSSParserMode mode)
+Ref<ImmutableStyleProperties> ImmutableStyleProperties::create(std::span<const CSSProperty> properties, CSSParserMode mode)
 {
-    void* slot = ImmutableStylePropertiesMalloc::malloc(objectSize(count));
-    return adoptRef(*new (NotNull, slot) ImmutableStyleProperties(properties, count, mode));
+    void* slot = ImmutableStylePropertiesMalloc::malloc(objectSize(properties.size()));
+    return adoptRef(*new (NotNull, slot) ImmutableStyleProperties(properties, mode));
 }
 
 static auto& deduplicationMap()
@@ -71,8 +72,7 @@ static auto& deduplicationMap()
     return map.get();
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-Ref<ImmutableStyleProperties> ImmutableStyleProperties::createDeduplicating(const CSSProperty* properties, unsigned count, CSSParserMode mode)
+Ref<ImmutableStyleProperties> ImmutableStyleProperties::createDeduplicating(std::span<const CSSProperty> properties, CSSParserMode mode)
 {
     static constexpr auto maximumDeduplicationMapSize = 1024u;
     if (deduplicationMap().size() >= maximumDeduplicationMapSize)
@@ -81,40 +81,39 @@ Ref<ImmutableStyleProperties> ImmutableStyleProperties::createDeduplicating(cons
     auto computeHash = [&] {
         Hasher hasher;
         add(hasher, mode);
-        for (auto* property = properties; property < properties + count; ++property) {
-            if (!property->value()->addHash(hasher))
+        for (auto& property : properties) {
+            if (!property.value()->addHash(hasher))
                 return 0u;
-            add(hasher, property->id(), property->isImportant());
+            add(hasher, property.id(), property.isImportant());
         }
         return hasher.hash();
     };
 
     auto hash = computeHash();
     if (!hash)
-        return create(properties, count, mode);
+        return create(properties, mode);
 
     auto result = deduplicationMap().ensure(hash, [&] {
-        return create(properties, count, mode);
+        return create(properties, mode);
     });
 
     auto isEqual = [&](auto& existingValue) {
-        if (existingValue.propertyCount() != count)
+        if (existingValue.propertyCount() != properties.size())
             return false;
         if (existingValue.cssParserMode() != mode)
             return false;
-        for (unsigned i = 0; i < count; ++i) {
-            if (existingValue.propertyAt(i).toCSSProperty() != *(properties + i))
+        for (auto [i, property] : indexedRange(properties)) {
+            if (existingValue.propertyAt(i).toCSSProperty() != property)
                 return false;
         }
         return true;
     };
 
     if (!result.isNewEntry && !isEqual(result.iterator->value.get()))
-        return create(properties, count, mode);
+        return create(properties, mode);
 
     return result.iterator->value;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void ImmutableStyleProperties::clearDeduplicationMap()
 {

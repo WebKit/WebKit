@@ -2,11 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      `yield` is a valid BindingIdentifier for GeneratorMethods outside of
-      strict mode.
-  features: [generators]
-  es6id: 12.1.1
+description: >
+    `yield` is a valid BindingIdentifier for GeneratorMethods outside of
+    strict mode.
+features: [generators]
+es6id: 12.1.1
 ---*/
 
 var iter, result;

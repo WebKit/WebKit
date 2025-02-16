@@ -1,0 +1,82 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<head>
+<style>
+html {
+    font-size: 32pt;
+}
+
+@view-transition { navigation: auto; }
+</style>
+<script src="resources/swipe-test.js"></script>
+<script>
+function didBeginSwipeCallback()
+{
+    log("didBeginSwipe");
+
+    completeSwipeGesture();
+}
+
+function willEndSwipeCallback()
+{
+    log("willEndSwipe");
+
+    shouldBe(false, isFirstPage(), "The swipe should not yet have navigated away from the second page.");
+}
+
+function didEndSwipeCallback()
+{
+    log("didEndSwipe");
+
+    startMeasuringDuration("snapshotRemoval");
+}
+
+function didRemoveSwipeSnapshotCallback()
+{
+    log("didRemoveSwipeSnapshot");
+    
+    shouldBe(true, isFirstPage(), "The swipe should have navigated back to the first page.");
+    measuredDurationShouldBeLessThan("snapshotRemoval", 1000, "Because we're using the page cache, it shouldn't be long between the gesture completing and the snapshot being removed.")
+
+    testComplete();
+}
+
+function isFirstPage()
+{
+    return window.location.href.indexOf("second") == -1;
+}
+
+window.onload = async function () {
+    if (!window.eventSender || !window.testRunner) {
+        document.body.innerHTML = "This test must be run in WebKitTestRunner.";
+        return;
+    }
+
+    document.body.innerHTML = isFirstPage() ? "first" : "second";
+
+    if (isFirstPage()) {
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        await initializeSwipeTest();
+
+        testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
+        testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
+        testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
+        testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
+
+        onpagereveal = (e) => {
+            shouldBe(e.viewTransition, null, "View transitions should be disabled when using a swipe animation");
+        }
+
+        setTimeout(function () { 
+            window.location.href = window.location.href + "?second";
+        }, 0);
+        return;
+    }
+
+    await startSwipeGesture();
+};
+</script>
+</head>
+<body>
+</body>

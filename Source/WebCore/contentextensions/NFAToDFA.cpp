@@ -206,7 +206,7 @@ struct UniqueNodeIdSetHashHashTraits : public WTF::CustomHashTraits<UniqueNodeId
     static const int minimumTableSize = 128;
 };
 
-typedef HashSet<std::unique_ptr<UniqueNodeIdSet>, UniqueNodeIdSetHash, UniqueNodeIdSetHashHashTraits> UniqueNodeIdSetTable;
+typedef UncheckedKeyHashSet<std::unique_ptr<UniqueNodeIdSet>, UniqueNodeIdSetHash, UniqueNodeIdSetHashHashTraits> UniqueNodeIdSetTable;
 
 struct NodeIdSetToUniqueNodeIdSetSource {
     NodeIdSetToUniqueNodeIdSetSource(DFA& dfa, const SerializedNFA& nfa, const NodeIdSet& nodeIdSet)
@@ -241,7 +241,7 @@ struct NodeIdSetToUniqueNodeIdSetTranslator {
     {
         DFANode newDFANode;
 
-        HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> actions;
+        UncheckedKeyHashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> actions;
 
         for (unsigned nfaNodeId : source.nodeIdSet) {
             const auto* nfaNode = source.nfa.nodes().pointerAt(nfaNodeId);

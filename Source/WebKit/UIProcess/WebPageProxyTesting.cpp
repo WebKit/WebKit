@@ -74,11 +74,6 @@ uint64_t WebPageProxyTesting::messageSenderDestinationID() const
     return protectedPage()->webPageIDInMainFrameProcess().toUInt64();
 }
 
-void WebPageProxyTesting::setDefersLoading(bool defersLoading)
-{
-    send(Messages::WebPageTesting::SetDefersLoading(defersLoading));
-}
-
 void WebPageProxyTesting::dispatchActivityStateUpdate()
 {
     RunLoop::protectedCurrent()->dispatch([protectedPage = protectedPage()] {
@@ -201,9 +196,9 @@ void WebPageProxyTesting::setSystemCanPromptForGetDisplayMediaForTesting(bool ca
 }
 #endif
 
-void WebPageProxyTesting::setTopContentInset(float contentInset, CompletionHandler<void()>&& completionHandler)
+void WebPageProxyTesting::setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&& completionHandler)
 {
-    sendWithAsyncReply(Messages::WebPageTesting::SetTopContentInset(contentInset), WTFMove(completionHandler));
+    sendWithAsyncReply(Messages::WebPageTesting::SetObscuredContentInsets(top, right, bottom, left), WTFMove(completionHandler));
 }
 
 Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
@@ -226,7 +221,7 @@ void WebPageProxyTesting::resetStateBetweenTests()
 void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& completionHandler)
 {
     Ref page = m_page.get();
-    page->protectedBackForwardList()->clear();
+    Ref { page->backForwardList() }->clear();
 
     Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
     page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {

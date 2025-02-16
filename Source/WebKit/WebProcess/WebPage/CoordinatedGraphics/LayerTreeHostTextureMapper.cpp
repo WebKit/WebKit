@@ -64,7 +64,7 @@ bool LayerTreeHost::prepareForRendering()
 
 void LayerTreeHost::compositeLayersToContext()
 {
-    IntSize windowSize = flooredIntSize(m_rootLayer->size() * deviceScaleFactor());
+    IntSize windowSize = flooredIntSize(m_rootLayer->size() * m_webPage.intrinsicDeviceScaleFactor());
     glViewport(0, 0, windowSize.width(), windowSize.height());
 
     m_textureMapper->beginPainting();
@@ -136,7 +136,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage)
 
 LayerTreeHost::~LayerTreeHost() = default;
 
-void LayerTreeHost::setLayerFlushSchedulingEnabled(bool)
+void LayerTreeHost::setLayerTreeStateIsFrozen(bool)
 {
 }
 
@@ -257,10 +257,6 @@ void LayerTreeHost::setIsDiscardable(bool)
 {
 }
 
-void LayerTreeHost::deviceOrPageScaleFactorChanged()
-{
-}
-
 void LayerTreeHost::backgroundColorDidChange()
 {
 }
@@ -296,13 +292,14 @@ float LayerTreeHost::deviceScaleFactor() const
 
 void LayerTreeHost::applyDeviceScaleFactor()
 {
+    float intrinsicDeviceScaleFactor = m_webPage.intrinsicDeviceScaleFactor();
     const FloatSize& size = m_rootLayer->size();
 
     TransformationMatrix m;
-    m.scale(deviceScaleFactor());
+    m.scale(intrinsicDeviceScaleFactor);
     // Center view
-    double tx = (size.width() - size.width() / deviceScaleFactor()) / 2.0;
-    double ty = (size.height() - size.height() / deviceScaleFactor()) / 2.0;
+    double tx = (size.width() - size.width() / intrinsicDeviceScaleFactor) / 2.0;
+    double ty = (size.height() - size.height() / intrinsicDeviceScaleFactor) / 2.0;
     m.translate(tx, ty);
     m_rootLayer->setTransform(m);
 }

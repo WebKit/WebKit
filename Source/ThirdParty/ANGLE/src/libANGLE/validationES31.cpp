@@ -1344,7 +1344,7 @@ bool ValidateGetProgramResourceName(const Context *context,
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -1977,7 +1977,7 @@ bool ValidateGetProgramPipelineInfoLogBase(const Context *context,
 {
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -2830,23 +2830,11 @@ bool ValidateFramebufferTextureCommon(const Context *context,
             return false;
         }
 
-        // GLES spec 3.1, Section 9.2.8 "Attaching Texture Images to a Framebuffer"
-        // If textarget is TEXTURE_2D_MULTISAMPLE, then level must be zero.
-        if (tex->getType() == TextureType::_2DMultisample && level != 0)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kLevelNotZero);
-            return false;
-        }
-
-        // [OES_texture_storage_multisample_2d_array] Section 9.2.2 "Attaching Images to Framebuffer
-        // Objects"
-        // If texture is a two-dimensional multisample array texture, then level must be zero.
-        if (context->getExtensions().textureStorageMultisample2dArrayOES &&
-            tex->getType() == TextureType::_2DMultisampleArray && level != 0)
-        {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kLevelNotZero);
-            return false;
-        }
+        // GLES spec 3.2, Section 9.2.8 "Attaching Texture Images to a Framebuffer"
+        // * If textarget is TEXTURE_2D_MULTISAMPLE, then level must be zero.
+        // * If texture is a two-dimensional multisample array texture, then level must be zero.
+        // Already validated in ValidMipLevel.
+        ASSERT(level == 0 || !IsMultisampled(tex->getType()));
     }
 
     if (!ValidateFramebufferTextureBase(context, entryPoint, target, attachment, texture, level))
@@ -2889,45 +2877,6 @@ bool ValidateFramebufferTextureOES(const Context *context,
 
     return ValidateFramebufferTextureCommon(context, entryPoint, target, attachment, texture,
                                             level);
-}
-
-// GL_OES_texture_storage_multisample_2d_array
-bool ValidateTexStorage3DMultisampleOES(const Context *context,
-                                        angle::EntryPoint entryPoint,
-                                        TextureType target,
-                                        GLsizei samples,
-                                        GLenum sizedinternalformat,
-                                        GLsizei width,
-                                        GLsizei height,
-                                        GLsizei depth,
-                                        GLboolean fixedsamplelocations)
-{
-    if (!context->getExtensions().textureStorageMultisample2dArrayOES)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kMultisampleArrayExtensionRequired);
-        return false;
-    }
-
-    if (target != TextureType::_2DMultisampleArray)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTargetMustBeTexture2DMultisampleArrayOES);
-        return false;
-    }
-
-    if (width < 1 || height < 1 || depth < 1)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeSize);
-        return false;
-    }
-
-    if (depth > context->getCaps().maxArrayTextureLayers)
-    {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kTextureDepthOutOfRange);
-        return false;
-    }
-
-    return ValidateTexStorageMultisample(context, entryPoint, target, samples, sizedinternalformat,
-                                         width, height);
 }
 
 bool ValidateTexStorageMem3DMultisampleEXT(const Context *context,
@@ -3099,6 +3048,17 @@ bool ValidateTexBufferBase(const Context *context,
         case GL_RGBA16UI:
         case GL_RGBA32UI:
             break;
+        case GL_R16_EXT:
+        case GL_RG16_EXT:
+        case GL_RGBA16_EXT:
+        {
+            if (!context->getExtensions().textureNorm16EXT)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTextureBufferInternalFormat);
+                return false;
+            }
+            break;
+        }
 
         default:
             ANGLE_VALIDATION_ERROR(GL_INVALID_ENUM, kTextureBufferInternalFormat);

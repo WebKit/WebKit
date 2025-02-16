@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FilterImageVector.h"
+#include <wtf/CheckedRef.h>
 
 namespace WebCore {
 
@@ -54,7 +55,7 @@ public:
     }
     
 protected:
-    const FilterEffectType& m_effect;
+    const CheckedRef<const FilterEffectType> m_effect;
 };
 
 } // namespace WebCore

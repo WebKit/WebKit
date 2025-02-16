@@ -322,8 +322,6 @@ TEST(DragAndDropTests, DoNotCrashWhenRemovingNodeOnDrop)
     EXPECT_TRUE([[webView contentsAsString] containsString:@"Drag me"]);
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 TEST(DragAndDropTests, ColorInputToColorInput)
 {
     auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebViewFrame:CGRectMake(0, 0, 320, 500)]);
@@ -393,8 +391,6 @@ TEST(DragAndDropTests, ColorInputEvents)
     TestWebKitAPI::Util::run(&inputEventFired);
     TestWebKitAPI::Util::run(&changeEventFired);
 }
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
 
 #if ENABLE(IMAGE_ANALYSIS)
 

@@ -736,6 +736,9 @@ class Manager(object):
         results_file = self._filesystem.join(base_dir, filename)
         # Note that the results.html template file won't exist when we're using a MockFileSystem during unit tests,
         # so make sure it exists before we try to copy it.
+        if not self._filesystem.exists(results_file):
+            backup_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../../../../', 'LayoutTests', 'fast', 'harness'))
+            results_file = self._filesystem.join(backup_dir, filename)
         if self._filesystem.exists(results_file):
             self._filesystem.copyfile(results_file, destination_path)
 

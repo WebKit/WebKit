@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -365,7 +365,7 @@ float FontCascade::widthForSimpleTextWithFixedPitch(StringView text, bool whites
     if (text.isEmpty())
         return 0;
 
-    auto monospaceCharacterWidth = primaryFont().spaceWidth();
+    auto monospaceCharacterWidth = primaryFont()->spaceWidth();
     if (whitespaceIsCollapsed)
         return text.length() * monospaceCharacterWidth;
 
@@ -521,7 +521,7 @@ bool FontCascade::fastAverageCharWidthIfAvailable(float& width) const
 {
     bool success = hasValidAverageCharWidth();
     if (success)
-        width = roundf(primaryFont().avgCharWidth()); // FIXME: primaryFont() might not correspond to firstFamily().
+        width = roundf(primaryFont()->avgCharWidth()); // FIXME: primaryFont() might not correspond to firstFamily().
     return success;
 }
 
@@ -1248,15 +1248,41 @@ bool FontCascade::rightExpansionOpportunity(StringView stringView, TextDirection
     return treatAsSpace(finalCharacter) || (canExpandAroundIdeographsInComplexText() && isCJKIdeographOrSymbol(finalCharacter));
 }
 
+// https://www.w3.org/TR/css-text-decor-3/#text-emphasis-style-property
 bool FontCascade::canReceiveTextEmphasis(char32_t c)
 {
-    if (U_GET_GC_MASK(c) & (U_GC_Z_MASK | U_GC_CN_MASK | U_GC_CC_MASK | U_GC_CF_MASK))
+    auto mask = U_GET_GC_MASK(c);
+    if (mask & (U_GC_Z_MASK | U_GC_CN_MASK | U_GC_CC_MASK | U_GC_CF_MASK))
         return false;
 
     // Additional word-separator characters listed in CSS Text Level 3 Editor's Draft 3 November 2010.
+    // https://www.w3.org/TR/css-text-3/#word-separator
     if (c == ethiopicWordspace || c == aegeanWordSeparatorLine || c == aegeanWordSeparatorDot
         || c == ugariticWordDivider || c == tibetanMarkIntersyllabicTsheg || c == tibetanMarkDelimiterTshegBstar)
         return false;
+
+    if (mask & U_GC_P_MASK) {
+        return c == '#' || c == '%' || c == '&' || c == '@'
+            || c == arabicIndicPerMilleSign
+            || c == arabicIndicPerTenThousandSign
+            || c == arabicPercentSign
+            || c == fullwidthAmpersand
+            || c == fullwidthCommercialAt
+            || c == fullwidthNumberSign
+            || c == fullwidthPercentSign
+            || c == partAlternationMark
+            || c == perMilleSign
+            || c == perTenThousandSign
+            || c == pilcrowSign
+            || c == reversedPilcrowSign
+            || c == sectionSign
+            || c == smallAmpersand
+            || c == smallCommercialAt
+            || c == smallNumberSign
+            || c == smallPercentSign
+            || c == swungDash
+            || c == tironianSignEt;
+    }
 
     return true;
 }
@@ -1521,7 +1547,7 @@ inline static float offsetToMiddleOfGlyph(const Font& fontData, Glyph glyph)
 
 inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer, unsigned i)
 {
-    return offsetToMiddleOfGlyph(glyphBuffer.fontAt(i), glyphBuffer.glyphAt(i));
+    return offsetToMiddleOfGlyph(glyphBuffer.protectedFontAt(i), glyphBuffer.glyphAt(i));
 }
 
 void FontCascade::drawEmphasisMarks(GraphicsContext& context, const GlyphBuffer& glyphBuffer, const AtomString& mark, const FloatPoint& point) const
@@ -1832,19 +1858,18 @@ RefPtr<FontCascadeFonts> FontCascade::protectedFonts() const
     return m_fonts;
 }
 
-DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
+Vector<FloatSegment> FontCascade::lineSegmentsForIntersectionsWithRect(const TextRun& run, const FloatPoint& textOrigin, const FloatRect& lineExtents) const
 {
+    Vector<FloatSegment> result;
     if (isLoadingCustomFonts())
-        return DashArray();
+        return result;
 
     auto glyphBuffer = layoutText(codePath(run), run, 0, run.length());
-
     if (!glyphBuffer.size())
-        return DashArray();
+        return result;
 
     FloatPoint origin = textOrigin + WebCore::size(glyphBuffer.initialAdvance());
     GlyphToPathTranslator translator(run, glyphBuffer, origin);
-    DashArray result;
     for (; translator.containsMorePaths(); translator.advance()) {
         GlyphIterationState info = { FloatPoint(0, 0), FloatPoint(0, 0), lineExtents.y(), lineExtents.y() + lineExtents.height(), lineExtents.x() + lineExtents.width(), lineExtents.x() };
         switch (translator.underlineType()) {
@@ -1853,16 +1878,13 @@ DashArray FontCascade::dashesForIntersectionsWithRect(const TextRun& run, const 
             path.applyElements([&](const PathElement& element) {
                 findPathIntersections(info, element);
             });
-            if (info.minX < info.maxX) {
-                result.append(info.minX - lineExtents.x());
-                result.append(info.maxX - lineExtents.x());
-            }
+            if (info.minX < info.maxX)
+                result.append({ info.minX - lineExtents.x(), info.maxX - lineExtents.x() });
             break;
         }
         case GlyphUnderlineType::SkipGlyph: {
             std::pair<float, float> extents = translator.extents();
-            result.append(extents.first - lineExtents.x());
-            result.append(extents.second - lineExtents.x());
+            result.append({ extents.first - lineExtents.x(), extents.second - lineExtents.x() });
             break;
         }
         case GlyphUnderlineType::DrawOverGlyph:

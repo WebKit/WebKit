@@ -230,7 +230,7 @@ BEXPORT void enableMiniMode();
 
 // Used for debugging only.
 BEXPORT void disableScavenger();
-BEXPORT void forceEnablePGM();
+BEXPORT void forceEnablePGM(uint16_t guardMallocRate);
 
 #if BENABLE(MALLOC_SIZE)
 inline size_t mallocSize(const void* object)

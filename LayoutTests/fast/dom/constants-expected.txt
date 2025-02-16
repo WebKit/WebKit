@@ -2,14 +2,12 @@ This page tests CSSRule, CSSValue, NodeFilter, and Event. It tests:
 
 Whether their global constructors have the correct constant values
 Whether their objects have the correct constant values
-PASS: cssRule.UNKNOWN_RULE should be 0 and is.
 PASS: cssRule.STYLE_RULE should be 1 and is.
 PASS: cssRule.CHARSET_RULE should be 2 and is.
 PASS: cssRule.IMPORT_RULE should be 3 and is.
 PASS: cssRule.MEDIA_RULE should be 4 and is.
 PASS: cssRule.FONT_FACE_RULE should be 5 and is.
 PASS: cssRule.PAGE_RULE should be 6 and is.
-PASS: window.CSSRule.UNKNOWN_RULE should be 0 and is.
 PASS: window.CSSRule.STYLE_RULE should be 1 and is.
 PASS: window.CSSRule.CHARSET_RULE should be 2 and is.
 PASS: window.CSSRule.IMPORT_RULE should be 3 and is.

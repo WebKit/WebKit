@@ -322,6 +322,15 @@ JSC_API char *
 jsc_value_to_json                         (JSCValue             *value,
                                            guint                 indent);
 
+typedef void  (*JSCExecutor)              (JSCValue             *resolve,
+                                           JSCValue             *reject,
+                                           gpointer              user_data);
+
+JSC_API JSCValue *
+jsc_value_new_promise                     (JSCContext           *context,
+                                           JSCExecutor           executor,
+                                           gpointer              user_data);
+
 G_END_DECLS
 
 #endif /* JSCValue_h */

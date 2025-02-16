@@ -27,15 +27,89 @@
 
 #if USE(CF)
 
+#import "CoreIPCData.h"
+#import "CoreIPCDate.h"
+#import "CoreIPCNumber.h"
+#import "CoreIPCString.h"
+
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMalloc.h>
 #import <wtf/cf/VectorCF.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 
 namespace WebKit {
 
-// For now, the only way to serialize/deserialize SecTrust objects is via
-// SecTrustSerialize()/SecTrustDeserialize(). rdar://122051469
+#if HAVE(WK_SECURE_CODING_SECTRUST)
 
+enum class CoreIPCSecTrustResult : uint8_t {
+    Invalid = 0,
+    Proceed,
+    Confirm,
+    Deny,
+    Unspecified,
+    RecoverableTrustFailure,
+    FatalTrustFailure,
+    OtherError
+};
+
+struct CoreIPCSecTrustData {
+    using Detail = Vector<std::pair<CoreIPCString, bool>>;
+    using InfoOption = std::variant<CoreIPCDate, CoreIPCString, bool>;
+    using InfoType = Vector<std::pair<CoreIPCString, InfoOption>>;
+    using PolicyDictionaryValueIsNumber = Vector<std::pair<CoreIPCString, CoreIPCNumber>>;
+    using PolicyArrayOfArrayContainingDateOrNumbers = Vector<Vector<std::variant<CoreIPCNumber, CoreIPCDate>>>;
+    using PolicyArrayOfNumbers = Vector<CoreIPCNumber>;
+    using PolicyArrayOfStrings = Vector<CoreIPCString>;
+    using PolicyArrayOfData = Vector<CoreIPCData>;
+    using PolicyVariant = std::variant<bool, CoreIPCString, PolicyArrayOfNumbers, PolicyArrayOfStrings, PolicyArrayOfData, PolicyArrayOfArrayContainingDateOrNumbers, PolicyDictionaryValueIsNumber>;
+    using PolicyOption = Vector<std::pair<CoreIPCString, PolicyVariant>>;
+    using PolicyValue = std::variant<CoreIPCString, PolicyOption>;
+    using PolicyType = Vector<std::pair<CoreIPCString, PolicyValue>>;
+    using ExceptionType = Vector<std::pair<CoreIPCString, std::variant<CoreIPCNumber, CoreIPCData, bool>>>;
+
+    CoreIPCSecTrustResult result { CoreIPCSecTrustResult::Invalid };
+    bool anchorsOnly { false };
+    bool keychainsAllowed { false };
+    Vector<CoreIPCData> certificates;
+    Vector<CoreIPCData> chain;
+    Vector<Detail> details;
+    Vector<PolicyType> policies;
+    std::optional<InfoType> info;
+    std::optional<CoreIPCDate> verifyDate;
+    std::optional<Vector<CoreIPCData>> responses;
+    std::optional<Vector<CoreIPCData>> scts;
+    std::optional<Vector<CoreIPCData>> anchors;
+    std::optional<Vector<CoreIPCData>> trustedLogs;
+    std::optional<Vector<ExceptionType>> exceptions;
+};
+
+class CoreIPCSecTrust {
+    WTF_MAKE_TZONE_ALLOCATED(CoreIPCSecTrust);
+public:
+    CoreIPCSecTrust() { }
+
+    CoreIPCSecTrust(SecTrustRef);
+
+    CoreIPCSecTrust(std::optional<WebKit::CoreIPCSecTrustData>&& data)
+        : m_data(WTFMove(data)) { }
+
+    RetainPtr<SecTrustRef> createSecTrust() const;
+
+    std::optional<CoreIPCSecTrustData> m_data;
+
+    enum class PolicyOptionValueShape {
+        Invalid,
+        Bool,
+        String,
+        ArrayOfNumbers,
+        ArrayOfStrings,
+        ArrayOfData,
+        ArrayOfArrayContainingDateOrNumber,
+        DictionaryValueIsNumber,
+    };
+    static PolicyOptionValueShape detectPolicyOptionShape(id);
+};
+#else // !HAVE(WK_SECURE_CODING_SECTRUST)
 class CoreIPCSecTrust {
 public:
     CoreIPCSecTrust()
@@ -75,6 +149,7 @@ public:
 private:
     RetainPtr<CFDataRef> m_trustData;
 };
+#endif
 
 } // namespace WebKit
 

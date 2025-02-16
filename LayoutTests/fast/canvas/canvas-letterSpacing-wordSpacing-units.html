@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>Regression test for bug <a href="http://webkit.org/b/285404">285404</a></p>
+<p>Test passes by not crashing.</p>
+<canvas id="test"></canvas>
+</body>
+<script>
+if (window.testRunner)
+   testRunner.dumpAsText();
+
+const units = [
+ 'px', 'cm', 'mm', 'q', 'in', 'pt', 'pc', 'em', 'ex', 'lh', 'cap', 'ch', 'ic', 'rcap', 'rch', 'rem', 'rex', 'ric', 'rlh', 'vw', 'vh', 'vmin', 'vmax', 'vb', 'vi', 'svw', 'svh', 'svmin', 'svmax', 'svb', 'svi', 'lvw', 'lvh', 'lvmin', 'lvmax', 'lvb', 'lvi', 'dvw', 'dvh', 'dvmin', 'dvmax', 'dvb', 'dvi', 'cqw', 'cqh', 'cqi', 'cqb', 'cqmin', 'cqmax'
+];
+
+var canvas = document.getElementById("test");
+var context = canvas.getContext("2d");
+for (unit of units) {
+  context.letterSpacing = `10${unit}`;
+  context.wordSpacing = `10${unit}`;
+}
+</script>
+</html>

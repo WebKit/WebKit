@@ -1,6 +1,0 @@
-
-
-PASS Trusted Type violation report: evaluating a string.
-PASS Trusted Type violation report: evaluating a Trusted Script.
-FAIL Trusted Type violation report: default policy transforms the script before CSP checks runs. Refused to evaluate a string as JavaScript because this document requires a 'Trusted Type' assignment.
-

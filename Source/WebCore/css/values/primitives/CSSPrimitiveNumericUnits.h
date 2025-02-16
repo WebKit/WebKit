@@ -45,12 +45,73 @@ struct ValueLiteral {
 
     static constexpr UnitType unit = unitValue;
     double value;
+
+    constexpr explicit ValueLiteral(double initialValue)
+        : value { initialValue }
+    {
+    }
+
+    // Synthesize all comparison and equality operators.
+
+    auto operator<=>(const ValueLiteral&) const = default;
+
+    // Support binary arithmetic between `ValueLiteral` and machine numeric types.
+
+    constexpr ValueLiteral& operator+=(const ValueLiteral& rhs)
+    {
+        value += rhs.value;
+        return *this;
+    }
+
+    constexpr ValueLiteral& operator+=(std::convertible_to<double> auto const& rhs)
+    {
+        value += static_cast<double>(rhs);
+        return *this;
+    }
+
+    constexpr ValueLiteral& operator-=(const ValueLiteral& rhs)
+    {
+        value -= rhs.value;
+        return *this;
+    }
+
+    constexpr ValueLiteral& operator-=(std::convertible_to<double> auto const& rhs)
+    {
+        value -= static_cast<double>(rhs);
+        return *this;
+    }
+
+    friend constexpr ValueLiteral operator+(const ValueLiteral& lhs, const ValueLiteral& rhs)
+    {
+        return ValueLiteral { lhs.value + rhs.value };
+    }
+    friend constexpr ValueLiteral operator+(const ValueLiteral& lhs, std::convertible_to<double> auto const& rhs)
+    {
+        return ValueLiteral { lhs.value + static_cast<double>(rhs) };
+    }
+    friend constexpr ValueLiteral operator+(std::convertible_to<double> auto const& lhs, const ValueLiteral& rhs)
+    {
+        return ValueLiteral { static_cast<double>(lhs) + rhs.value };
+    }
+
+    friend constexpr ValueLiteral operator-(const ValueLiteral& lhs, const ValueLiteral& rhs)
+    {
+        return ValueLiteral { lhs.value - rhs.value };
+    }
+    friend constexpr ValueLiteral operator-(const ValueLiteral& lhs, std::convertible_to<double> auto const& rhs)
+    {
+        return ValueLiteral { lhs.value - static_cast<double>(rhs) };
+    }
+    friend constexpr ValueLiteral operator-(std::convertible_to<double> auto const& lhs, const ValueLiteral& rhs)
+    {
+        return ValueLiteral { static_cast<double>(lhs) - rhs.value };
+    }
 };
 
 #define CSS_DEFINE_UNIT_LITERAL(type, name) \
     inline namespace Literals { \
-        consteval ValueLiteral<type> operator""_css_##name(long double value) { return { static_cast<double>(value) }; } \
-        consteval ValueLiteral<type> operator""_css_##name(unsigned long long value) { return { static_cast<double>(value) }; } \
+        consteval ValueLiteral<type> operator""_css_##name(long double value) { return ValueLiteral<type> { static_cast<double>(value) }; } \
+        consteval ValueLiteral<type> operator""_css_##name(unsigned long long value) { return ValueLiteral<type> { static_cast<double>(value) }; } \
     }
 
 // MARK: - Unit Cast

@@ -1,4 +1,4 @@
 Subject
 
-FAIL View timeline bottom-sticky during entry and top-sticky during exit. assert_equals: Effect at the midpoint of the active range: cover 0% to cover 100% expected "0.5" but got "0.516667"
+PASS View timeline bottom-sticky during entry and top-sticky during exit.
 

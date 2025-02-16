@@ -11,5 +11,5 @@ noInline(run);
 
 var arr = new Uint32Array([0x80000000,1]); 
 var resultArr = [];
-for (var i = 0; i < 10000; i++)
+for (var i = 0; i < testLoopCount; i++)
     test(resultArr, arr, getter);

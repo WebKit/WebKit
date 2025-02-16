@@ -570,7 +570,7 @@ LayoutUnit RenderReplaced::computeConstrainedLogicalWidth() const
     // 'padding-right' + 'border-right-width' + 'margin-right' = width of
     // containing block
     // see https://www.w3.org/TR/CSS22/visudet.html#blockwidth
-    LayoutUnit logicalWidth = containingBlock()->availableLogicalWidth();
+    LayoutUnit logicalWidth = containingBlock()->contentBoxLogicalWidth();
     
     // This solves above equation for 'width' (== logicalWidth).
     LayoutUnit marginStart = minimumValueForLength(style().marginStart(), logicalWidth);
@@ -703,7 +703,7 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight(std::optional<LayoutUnit
     // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
     // (used width) / (intrinsic ratio)
     if (!intrinsicRatio.isEmpty()) {
-        LayoutUnit usedWidth = estimatedUsedWidth ? estimatedUsedWidth.value() : availableLogicalWidth();
+        LayoutUnit usedWidth = estimatedUsedWidth ? estimatedUsedWidth.value() : contentBoxLogicalWidth();
         BoxSizing boxSizing = BoxSizing::ContentBox;
         if (style().hasAspectRatio())
             boxSizing = style().boxSizingForAspectRatio();
@@ -877,13 +877,17 @@ bool RenderReplaced::needsPreferredWidthsRecalculation() const
 
 LayoutSize RenderReplaced::intrinsicSize() const
 {
-    LayoutSize size = m_intrinsicSize;
-    auto zoomValue = style().usedZoom();
+    if (!view().frameView().layoutContext().isInRenderTreeLayout()) {
+        // 'contain' removes the natural aspect ratio / width / height only for the purposes of sizing and layout of the box.
+        return m_intrinsicSize;
+    }
 
+    auto size = m_intrinsicSize;
+    auto zoomValue = style().usedZoom();
     if (isHorizontalWritingMode() ? shouldApplySizeOrInlineSizeContainment() : shouldApplySizeContainment())
-        size.setWidth(explicitIntrinsicInnerWidth().value_or(0) * zoomValue);
+        size.setWidth(explicitIntrinsicInnerWidth().value_or(0_lu) * zoomValue);
     if (isHorizontalWritingMode() ? shouldApplySizeContainment() : shouldApplySizeOrInlineSizeContainment())
-        size.setHeight(explicitIntrinsicInnerHeight().value_or(0) * zoomValue);
+        size.setHeight(explicitIntrinsicInnerHeight().value_or(0_lu) * zoomValue);
     return size;
 }
 
@@ -896,8 +900,7 @@ void RenderReplaced::layoutShadowContent(const LayoutSize& oldSize)
             bool childNeedsLayout = renderBox.needsLayout();
             // If the region chain has changed we also need to relayout the children to update the region box info.
             // FIXME: We can do better once we compute region box info for RenderReplaced, not only for RenderBlock.
-            auto* fragmentedFlow = enclosingFragmentedFlow();
-            if (fragmentedFlow && !childNeedsLayout) {
+            if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow(); fragmentedFlow && !childNeedsLayout) {
                 if (fragmentedFlow->pageLogicalSizeChanged())
                     childNeedsLayout = true;
             }

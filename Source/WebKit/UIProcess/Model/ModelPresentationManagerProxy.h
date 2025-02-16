@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
 
 #import <WebCore/ModelContext.h>
+#import <WebCore/PlatformLayerIdentifier.h>
 #import <wtf/RefCounted.h>
 #import <wtf/TZoneMalloc.h>
 #import <wtf/UniqueRef.h>
@@ -51,6 +52,8 @@ public:
     virtual ~ModelPresentationManagerProxy();
 
     RetainPtr<WKPageHostedModelView> setUpModelView(Ref<WebCore::ModelContext>);
+    RetainPtr<UIView> startDragForModel(const WebCore::PlatformLayerIdentifier&);
+    void doneWithCurrentDragSession();
     void invalidateModel(const WebCore::PlatformLayerIdentifier&);
     void invalidateAllModels();
 
@@ -69,6 +72,7 @@ private:
     ModelPresentation& ensureModelPresentation(Ref<WebCore::ModelContext>, const WebPageProxy&);
 
     HashMap<WebCore::PlatformLayerIdentifier, UniqueRef<ModelPresentation>> m_modelPresentations;
+    HashSet<WebCore::PlatformLayerIdentifier> m_activelyDraggedModelLayerIDs;
     WeakPtr<WebPageProxy> m_page;
 };
 

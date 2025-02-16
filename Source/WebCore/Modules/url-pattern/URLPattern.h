@@ -27,6 +27,7 @@
 
 #include "ExceptionOr.h"
 #include "URLPatternComponent.h"
+#include "URLPatternInit.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -36,7 +37,6 @@
 namespace WebCore {
 
 class ScriptExecutionContext;
-struct URLPatternInit;
 struct URLPatternOptions;
 struct URLPatternResult;
 enum class BaseURLStringType : bool { Pattern, URL };
@@ -52,6 +52,10 @@ public:
 
     static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, URLPatternInput&&, String&& baseURL, URLPatternOptions&&);
     static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, std::optional<URLPatternInput>&&, URLPatternOptions&&);
+
+    using Compatible = std::variant<String, URLPatternInit, RefPtr<URLPattern>>;
+    static ExceptionOr<Ref<URLPattern>> create(ScriptExecutionContext&, Compatible&&, const String&);
+
     ~URLPattern();
 
     ExceptionOr<bool> test(ScriptExecutionContext&, std::optional<URLPatternInput>&&, String&& baseURL) const;

@@ -65,6 +65,7 @@ private:
 };
 
 class SourceCodeKey {
+    WTF_MAKE_FAST_ALLOCATED(SourceCodeKey);
     friend class CachedSourceCodeKey;
 
 public:
@@ -104,6 +105,8 @@ public:
     StringView string() const { return m_sourceCode.view(); }
 
     StringView host() const { return m_sourceCode.provider().sourceOrigin().url().host(); }
+
+    int functionConstructorParametersEndPosition() const { return m_functionConstructorParametersEndPosition; }
 
     bool operator==(const SourceCodeKey& other) const
     {

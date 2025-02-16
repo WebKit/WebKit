@@ -35,21 +35,24 @@ namespace WebCore {
 class IndexKey {
 public:
     using Data = std::variant<std::nullptr_t, IDBKeyData, Vector<IDBKeyData>>;
-    IndexKey();
-    IndexKey(Data&&);
+    WEBCORE_EXPORT IndexKey();
+    WEBCORE_EXPORT IndexKey(Data&&);
 
-    IndexKey isolatedCopy() const &;
-    IndexKey isolatedCopy() &&;
+    WEBCORE_EXPORT IndexKey isolatedCopy() const &;
+    WEBCORE_EXPORT IndexKey isolatedCopy() &&;
 
     IDBKeyData asOneKey() const;
     Vector<IDBKeyData> multiEntry() const;
 
     bool isNull() const { return std::holds_alternative<std::nullptr_t>(m_keys); }
+    Data data() const { return m_keys; }
+
+    void updatePlaceholderKeys(const IDBKeyData&);
 
 private:
     Data m_keys;
 };
 
-typedef HashMap<IDBIndexIdentifier, IndexKey> IndexIDToIndexKeyMap;
+using IndexIDToIndexKeyMap = HashMap<IDBIndexIdentifier, IndexKey>;
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ void WKRunLoopRunMain()
 
 void WKRunLoopStopMain()
 {
-    RunLoop::main().stop();
+    RunLoop::protectedMain()->stop();
 }
 
 void WKRunLoopCallOnMainThread(WKRunLoopCallback callback, void* userData)

@@ -44,74 +44,11 @@ CSSPropertyID StylePropertyMetadata::shorthandID() const
     return shorthands[m_indexInShorthandsVector].id();
 }
 
-bool CSSProperty::isInsetProperty(CSSPropertyID propertyID)
+bool CSSProperty::isSizingProperty(CSSPropertyID propertyId)
 {
-    switch (propertyID) {
-    case CSSPropertyInset:
-    case CSSPropertyLeft:
-    case CSSPropertyRight:
-    case CSSPropertyTop:
-    case CSSPropertyBottom:
-
-    case CSSPropertyInsetInline:
-    case CSSPropertyInsetInlineStart:
-    case CSSPropertyInsetInlineEnd:
-
-    case CSSPropertyInsetBlock:
-    case CSSPropertyInsetBlockStart:
-    case CSSPropertyInsetBlockEnd:
-        return true;
-    default:
-        return false;
-    }
-};
-
-bool CSSProperty::isSizingProperty(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyWidth:
-    case CSSPropertyMinWidth:
-    case CSSPropertyMaxWidth:
-
-    case CSSPropertyHeight:
-    case CSSPropertyMinHeight:
-    case CSSPropertyMaxHeight:
-
-    case CSSPropertyBlockSize:
-    case CSSPropertyMinBlockSize:
-    case CSSPropertyMaxBlockSize:
-
-    case CSSPropertyInlineSize:
-    case CSSPropertyMinInlineSize:
-    case CSSPropertyMaxInlineSize:
-        return true;
-    default:
-        return false;
-    }
+    return isSizeProperty(propertyId)
+        || isMaxSizeProperty(propertyId)
+        || isMinSizeProperty(propertyId);
 }
-
-bool CSSProperty::isMarginProperty(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyMargin:
-    case CSSPropertyMarginLeft:
-    case CSSPropertyMarginRight:
-    case CSSPropertyMarginTop:
-    case CSSPropertyMarginBottom:
-
-    case CSSPropertyMarginBlock:
-    case CSSPropertyMarginBlockStart:
-    case CSSPropertyMarginBlockEnd:
-
-    case CSSPropertyMarginInline:
-    case CSSPropertyMarginInlineStart:
-    case CSSPropertyMarginInlineEnd:
-        return true;
-
-    default:
-        return false;
-    }
-}
-
 
 } // namespace WebCore

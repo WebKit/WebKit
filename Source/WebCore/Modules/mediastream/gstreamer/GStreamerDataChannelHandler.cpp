@@ -357,22 +357,22 @@ void GStreamerDataChannelHandler::onMessageData(GBytes* bytes)
     DC_DEBUG("Incoming data of size: %zu", g_bytes_get_size(bytes));
     Locker locker { m_clientLock };
 
+    auto buffer = SharedBuffer::create(bytes);
     if (!m_client) {
-        m_pendingMessages.append(SharedBuffer::create(bytes));
+        m_pendingMessages.append(WTFMove(buffer));
         return;
     }
 
     if (!*m_client)
         return;
 
-    postTask([this, client = m_client, bytes = GRefPtr<GBytes>(bytes)] {
+    postTask([this, client = m_client, buffer = WTFMove(buffer)] {
         UNUSED_VARIABLE(this); // Conditionally used in DC_MEMDUMP.
         if (!*client)
             return;
-        gsize size = 0;
-        const auto* data = reinterpret_cast<const uint8_t*>(g_bytes_get_data(bytes.get(), &size));
-        DC_MEMDUMP("Incoming raw data", data, size);
-        client.value()->didReceiveRawData(std::span { data, size });
+        auto span = buffer->span();
+        DC_MEMDUMP("Incoming raw data", span.data(), span.size());
+        client.value()->didReceiveRawData(span);
     });
 }
 

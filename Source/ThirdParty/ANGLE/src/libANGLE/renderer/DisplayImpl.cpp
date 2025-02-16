@@ -147,4 +147,14 @@ egl::Error DisplayImpl::queryDmaBufModifiers(EGLint format,
     UNREACHABLE();
     return egl::NoError();
 }
+
+egl::Error DisplayImpl::querySupportedCompressionRates(const egl::Config *configuration,
+                                                       const egl::AttributeMap &attributes,
+                                                       EGLint *rates,
+                                                       EGLint rate_size,
+                                                       EGLint *num_rates) const
+{
+    UNREACHABLE();
+    return egl::NoError();
+}
 }  // namespace rx

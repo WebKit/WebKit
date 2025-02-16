@@ -83,7 +83,7 @@ int testFunctionOverrides()
     JSC::Options::functionOverrides() = oldFunctionOverrides;
     JSC::FunctionOverrides::reinstallOverrides();
 
-    printf("%s: function override tests.\n", failed ? "FAIL" : "PASS");
+    SAFE_PRINTF("%s: function override tests.\n", failed ? "FAIL"_s : "PASS"_s);
 
     return failed;
 }

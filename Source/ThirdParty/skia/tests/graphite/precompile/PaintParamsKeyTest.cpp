@@ -370,6 +370,7 @@ enum class ColorSpaceType {
     kNone,
     kSRGB,
     kSRGBLinear,
+    kSRGBSpin,
     kRGB,
 
     kLast = kRGB
@@ -391,6 +392,8 @@ sk_sp<SkColorSpace> random_colorspace(SkRandom* rand) {
             return SkColorSpace::MakeSRGB();
         case ColorSpaceType::kSRGBLinear:
             return SkColorSpace::MakeSRGBLinear();
+        case ColorSpaceType::kSRGBSpin:
+            return SkColorSpace::MakeSRGB()->makeColorSpin();
         case ColorSpaceType::kRGB:
             return SkColorSpace::MakeRGB(random_xfer_function(rand), random_gamut(rand));
     }
@@ -2023,13 +2026,11 @@ void extract_vs_build_subtest(skiatest::Reporter* reporter,
         };
         Coverage coverage = coverageOptions[rand->nextULessThan(3)];
 
-        DstReadRequirement dstReadReq = DstReadRequirement::kNone;
         const SkBlenderBase* blender = as_BB(paint.getBlender());
-        if (blender) {
-            dstReadReq = GetDstReadRequirement(recorder->priv().caps(),
-                                               blender->asBlendMode(),
-                                               coverage);
-        }
+        bool dstReadRequired = blender ? IsDstReadRequired(recorder->priv().caps(),
+                                                           blender->asBlendMode(),
+                                                           coverage)
+                                       : false;
 
         // In the normal API this modification happens in SkDevice::clipShader()
         // All clipShaders get wrapped in a CTMShader
@@ -2052,7 +2053,7 @@ void extract_vs_build_subtest(skiatest::Reporter* reporter,
                                              primitiveBlender,
                                              {}, // TODO (jvanverth): add analytic clip to test
                                              std::move(modifiedClipShader),
-                                             dstReadReq,
+                                             dstReadRequired,
                                              /* skipColorXform= */ false),
                                  {},
                                  precompileKeyContext.dstColorInfo());

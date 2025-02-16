@@ -31,19 +31,13 @@ list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/themeAdwaita.css
 )
 
-if (ENABLE_MODERN_MEDIA_CONTROLS)
-    list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-        ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
-    )
+list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
+    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.css
+)
 
-    list(APPEND WebCore_USER_AGENT_SCRIPTS
-        ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
-    )
-else ()
-    list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-        ${WEBCORE_DIR}/css/mediaControls.css
-    )
-endif ()
+list(APPEND WebCore_USER_AGENT_SCRIPTS
+    ${WebCore_DERIVED_SOURCES_DIR}/ModernMediaControls.js
+)
 
 set(WebCore_USER_AGENT_SCRIPTS_DEPENDENCIES ${WEBCORE_DIR}/rendering/adwaita/RenderThemeAdwaita.cpp)
 

@@ -77,24 +77,26 @@ bool StyleFilterImage::equalInputImages(const StyleFilterImage& other) const
 
 Ref<CSSValue> StyleFilterImage::computedStyleValue(const RenderStyle& style) const
 {
+    RefPtr image = m_image;
     return CSSFilterImageValue::create(
-        m_image ? m_image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone)),
+        image ? image->computedStyleValue(style) : static_reference_cast<CSSValue>(CSSPrimitiveValue::create(CSSValueNone)),
         Style::toCSSFilterProperty(m_filterOperations, style)
     );
 }
 
 bool StyleFilterImage::isPending() const
 {
-    return m_image ? m_image->isPending() : false;
+    RefPtr image = m_image;
+    return image && image->isPending();
 }
 
 void StyleFilterImage::load(CachedResourceLoader& cachedResourceLoader, const ResourceLoaderOptions& options)
 {
     CachedResourceHandle<CachedImage> oldCachedImage = m_cachedImage;
 
-    if (m_image) {
-        m_image->load(cachedResourceLoader, options);
-        m_cachedImage = m_image->cachedImage();
+    if (RefPtr image = m_image) {
+        image->load(cachedResourceLoader, options);
+        m_cachedImage = image->cachedImage();
     } else
         m_cachedImage = nullptr;
 
@@ -121,14 +123,15 @@ RefPtr<Image> StyleFilterImage::image(const RenderElement* renderer, const Float
     if (size.isEmpty())
         return nullptr;
 
-    if (!m_image)
+    RefPtr styleImage = m_image;
+    if (!styleImage)
         return &Image::nullImage();
 
-    auto image = m_image->image(renderer, size, isForFirstLine);
+    auto image = styleImage->image(renderer, size, isForFirstLine);
     if (!image || image->isNull())
         return &Image::nullImage();
 
-    auto preferredFilterRenderingModes = renderer->page().preferredFilterRenderingModes();
+    auto preferredFilterRenderingModes = renderer->protectedPage()->preferredFilterRenderingModes();
     auto sourceImageRect = FloatRect { { }, size };
 
     auto cssFilter = CSSFilter::create(const_cast<RenderElement&>(*renderer), m_filterOperations, preferredFilterRenderingModes, FloatSize { 1, 1 }, sourceImageRect, NullGraphicsContext());
@@ -156,10 +159,9 @@ bool StyleFilterImage::knownToBeOpaque(const RenderElement&) const
 
 FloatSize StyleFilterImage::fixedSize(const RenderElement& renderer) const
 {
-    if (!m_image)
-        return { };
-
-    return m_image->imageSize(&renderer, 1);
+    if (RefPtr image = m_image)
+        return image->imageSize(&renderer, 1);
+    return { };
 }
 
 void StyleFilterImage::imageChanged(CachedImage*, const IntRect*)

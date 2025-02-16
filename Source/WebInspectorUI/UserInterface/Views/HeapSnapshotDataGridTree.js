@@ -254,7 +254,7 @@ WI.HeapSnapshotInstancesDataGridTree = class HeapSnapshotInstancesDataGridTree e
     }
 };
 
-WI.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDataGridTree extends WI.HeapSnapshotDataGridTree
+WI.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotObjectGraphDataGridTree extends WI.HeapSnapshotDataGridTree
 {
     get alwaysShowRetainedSize()
     {
@@ -275,7 +275,8 @@ WI.HeapSnapshotObjectGraphDataGridTree = class HeapSnapshotInstancesDataGridTree
                 this.appendChild(new WI.HeapSnapshotInstanceDataGridNode(instance, this));
         });
 
-        this.heapSnapshot.instancesWithClassName("Window", (instances) => {
+        let rootClassName = this.heapSnapshot.target.type === WI.TargetType.Worker ? "DedicatedWorkerGlobalScope" : "Window";
+        this.heapSnapshot.instancesWithClassName(rootClassName, (instances) => {
             for (let instance of instances) {
                 // FIXME: Why is the window.Window Function classified as a Window?
                 // In any case, ignore objects not dominated by the root, as they

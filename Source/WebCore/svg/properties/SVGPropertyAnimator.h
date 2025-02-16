@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSPropertyParser.h"
+#include "CSSSerializationContext.h"
 #include "ComputedStyleExtractor.h"
 #include "SVGAttributeAnimator.h"
 #include "SVGElement.h"
@@ -86,7 +87,10 @@ protected:
         targetElement.setUseOverrideComputedStyle(true);
         RefPtr<CSSValue> value = ComputedStyleExtractor(&targetElement).propertyValue(id);
         targetElement.setUseOverrideComputedStyle(false);
-        return value ? value->cssText() : String();
+        if (!value)
+            return String();
+
+        return value->cssText(CSS::defaultSerializationContext());
     }
 
     String computeInheritedCSSPropertyValue(SVGElement& targetElement) const

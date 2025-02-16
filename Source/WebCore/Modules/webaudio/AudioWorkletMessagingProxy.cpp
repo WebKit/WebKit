@@ -113,9 +113,9 @@ void AudioWorkletMessagingProxy::postTaskToLoader(ScriptExecutionContext::Task&&
 
 void AudioWorkletMessagingProxy::postTaskToAudioWorklet(Function<void(AudioWorklet&)>&& task)
 {
-    m_document->postTask([this, protectedThis = Ref { *this }, task = WTFMove(task)](ScriptExecutionContext&) {
-        if (m_worklet)
-            task(*m_worklet);
+    m_document->postTask([protectedThis = Ref { *this }, task = WTFMove(task)](ScriptExecutionContext&) {
+        if (protectedThis->m_worklet)
+            task(*protectedThis->m_worklet);
     });
 }
 

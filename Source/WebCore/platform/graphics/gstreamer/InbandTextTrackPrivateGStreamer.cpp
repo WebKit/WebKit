@@ -131,7 +131,7 @@ void InbandTextTrackPrivateGStreamer::notifyTrackOfSample()
         ASSERT(isMainThread());
         ASSERT(!hasClients() || hasOneClient());
         notifyMainThreadClient([&](auto& client) {
-            downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(mappedBuffer.span());
+            downcast<InbandTextTrackPrivateClient>(client).parseWebVTTCueData(mappedBuffer.span<uint8_t>());
         });
     }
 }

@@ -862,7 +862,7 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
         break;
     }
 
-    if (self.axBackingObject->isAttachmentElement())
+    if (self.axBackingObject->hasAttachmentTag())
         traits |= [self _axUpdatesFrequentlyTrait];
     
     if (self.axBackingObject->isSelected())
@@ -1237,7 +1237,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     if (AXCoreObject* parent = Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, true, [] (const AXCoreObject& object) {
         return object.isExposedTableCell();
     }))
-        return static_cast<AccessibilityTableCell*>(parent);
+        return &downcast<AccessibilityTableCell>(*parent);
     return nil;
 }
 
@@ -1404,12 +1404,58 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         return NSMakeRange(radioButtonSiblings.find(Ref { *self.axBackingObject }), radioButtonSiblings.size());
     }
 
-    AccessibilityTableCell* tableCell = [self tableCellParent];
-    if (!tableCell)
-        return NSMakeRange(NSNotFound, 0);
+    RefPtr<AXCoreObject> tableCellAncestor;
+    RefPtr<AXCoreObject> listItemAncestor;
+    Accessibility::findAncestor<AXCoreObject>(*self.axBackingObject, true, [&] (auto& object) {
+        if (object.isExposedTableCell()) {
+            tableCellAncestor = &object;
+            return true;
+        }
 
-    auto rowRange = tableCell->rowIndexRange();
-    return NSMakeRange(rowRange.first, rowRange.second);
+        if (object.isListItem()) {
+            listItemAncestor = &object;
+            return true;
+        }
+        return false;
+    });
+
+    if (tableCellAncestor) {
+        auto rowRange = tableCellAncestor->rowIndexRange();
+        return NSMakeRange(rowRange.first, rowRange.second);
+    }
+
+    if (listItemAncestor && listItemAncestor.get() != self.axBackingObject) {
+        const auto& listItemChildren = listItemAncestor->unignoredChildren();
+        if (listItemChildren.isEmpty())
+            return NSMakeRange(NSNotFound, 0);
+
+        // Only expose positional information for the first non-list-marker child in a list item.
+        for (const auto& child : listItemChildren) {
+            if (child->roleValue() != AccessibilityRole::ListMarker) {
+                if (child.ptr() == self.axBackingObject)
+                    break;
+                return NSMakeRange(NSNotFound, 0);
+            }
+        }
+
+        if (RefPtr listAncestor = Accessibility::findAncestor(*self.axBackingObject, false, [] (const auto& object) {
+            return object.isList();
+        })) {
+            size_t listItemCount = 0;
+            size_t indexOfListItem = notFound;
+            for (Ref child : listAncestor->unignoredChildren()) {
+                if (child.ptr() == listItemAncestor.get())
+                    indexOfListItem = listItemCount;
+
+                if (child->isListItem())
+                    ++listItemCount;
+            }
+
+            if (indexOfListItem != notFound)
+                return NSMakeRange(indexOfListItem, listItemCount);
+        }
+    }
+    return NSMakeRange(NSNotFound, 0);
 }
 
 - (NSRange)accessibilityColumnRange
@@ -1777,7 +1823,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     // Verify this is the top document. If not, we might need to go through the platform widget.
     auto* frameView = self.axBackingObject->documentFrameView();
     auto* document = self.axBackingObject->document();
-    if (document && frameView && document != &document->topDocument())
+    if (document && frameView && !document->isTopDocument())
         return frameView->platformWidget();
     
     // The top scroll view's parent is the web document view.

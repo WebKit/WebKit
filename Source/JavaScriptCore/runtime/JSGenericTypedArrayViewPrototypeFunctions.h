@@ -724,11 +724,13 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToReversed(VM& vm, JS
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
     RETURN_IF_EXCEPTION(scope, { });
 
-    const typename ViewClass::ElementType* from = thisObject->typedVector();
-    typename ViewClass::ElementType* to = result->typedVector();
+    auto from = const_cast<const ViewClass*>(thisObject)->typedSpan();
+    ASSERT(from.size() == length);
+    auto to = result->typedSpan();
+    ASSERT(to.size() == length);
 
-    WTF::copyElements(to, from, length);
-    std::reverse(to, to + length);
+    WTF::copyElements(to, from);
+    std::ranges::reverse(to);
 
     return JSValue::encode(result);
 }
@@ -758,7 +760,7 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
     if (length < 2)
         return JSValue::encode(thisObject);
 
-    auto* originalArray = thisObject->typedVector();
+    auto originalSpan = thisObject->typedSpan();
 
     Vector<typename ViewClass::ElementType, 256> vector;
     auto totalSize = CheckedSize { length } * 2U;
@@ -767,9 +769,11 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
         return { };
     }
 
-    std::span src { vector.data(), length };
-    std::span dst { vector.data() + length, length };
-    WTF::copyElements(src.data(), originalArray, length);
+    auto src = vector.mutableSpan().first(length);
+    auto dst = vector.mutableSpan().subspan(length);
+    ASSERT(dst.size() == length);
+    ASSERT(originalSpan.size() == length);
+    WTF::copyElements(src, spanConstCast<const typename ViewClass::ElementType>(originalSpan));
 
     auto result = src;
 
@@ -820,7 +824,7 @@ static ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncSortImpl(VM& v
         return JSValue::encode(thisObject);
 
     size_t copyLength = std::min<size_t>(thisObject->length(), result.size());
-    WTF::copyElements(originalArray, result.data(), copyLength);
+    WTF::copyElements(originalSpan, spanConstCast<const typename ViewClass::ElementType>(result.first(copyLength)));
 
     return JSValue::encode(thisObject);
 }
@@ -864,10 +868,11 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncToSorted(VM& vm, JSGl
     ViewClass* result = ViewClass::createUninitialized(globalObject, structure, length);
     RETURN_IF_EXCEPTION(scope, { });
 
-    const typename ViewClass::ElementType* from = thisObject->typedVector();
-    typename ViewClass::ElementType* to = result->typedVector();
+    auto from = const_cast<const ViewClass*>(thisObject)->typedSpan();
+    ASSERT(from.size() == length);
+    auto to = result->typedSpan();
 
-    WTF::copyElements(to, from, length);
+    WTF::copyElements(to, from);
 
     RELEASE_AND_RETURN(scope, genericTypedArrayViewProtoFuncSortImpl(vm, globalObject, result, comparatorValue));
 }
@@ -1201,9 +1206,10 @@ ALWAYS_INLINE EncodedJSValue genericTypedArrayViewProtoFuncWith(VM& vm, JSGlobal
             result->setIndexQuicklyToNativeValue(index, fromValue);
         }
     } else {
-        typename ViewClass::ElementType* from = thisObject->typedVector();
-        typename ViewClass::ElementType* to = result->typedVector();
-        WTF::copyElements(to, from, thisLength);
+        auto from = const_cast<const ViewClass*>(thisObject)->typedSpan();
+        ASSERT(from.size() == thisLength);
+        auto to = result->typedSpan();
+        WTF::copyElements(to, from);
         to[replaceIndex] = nativeValue;
     }
 

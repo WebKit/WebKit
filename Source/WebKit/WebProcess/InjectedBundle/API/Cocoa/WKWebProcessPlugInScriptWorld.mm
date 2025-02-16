@@ -39,7 +39,7 @@
 
 + (WKWebProcessPlugInScriptWorld *)normalWorld
 {
-    return WebKit::wrapper(WebKit::InjectedBundleScriptWorld::normalWorld());
+    return WebKit::wrapper(WebKit::InjectedBundleScriptWorld::normalWorldSingleton());
 }
 
 - (void)dealloc

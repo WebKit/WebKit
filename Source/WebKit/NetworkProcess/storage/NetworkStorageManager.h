@@ -41,10 +41,12 @@
 #include <WebCore/DOMCacheEngine.h>
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
+#include <WebCore/FileSystemWritableFileStreamIdentifier.h>
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
 #include <WebCore/IDBIndexIdentifier.h>
 #include <WebCore/IDBObjectStoreIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
+#include <WebCore/IndexKey.h>
 #include <WebCore/IndexedDB.h>
 #include <WebCore/ServiceWorkerTypes.h>
 #include <pal/SessionID.h>
@@ -162,10 +164,10 @@ private:
     CheckedRef<OriginStorageManager> checkedOriginStorageManager(const WebCore::ClientOrigin& origin, ShouldWriteOriginFile shouldWriteOriginFile = ShouldWriteOriginFile::Yes) { return originStorageManager(origin, shouldWriteOriginFile); }
     bool removeOriginStorageManagerIfPossible(const WebCore::ClientOrigin&);
 
-    void forEachOriginDirectory(const Function<void(const String&)>&);
+    void forEachOriginDirectory(NOESCAPE const Function<void(const String&)>&);
     HashSet<WebCore::ClientOrigin> getAllOrigins();
     Vector<WebsiteData::Entry> fetchDataFromDisk(OptionSet<WebsiteDataType>, ShouldComputeSize);
-    HashSet<WebCore::ClientOrigin> deleteDataOnDisk(OptionSet<WebsiteDataType>, WallTime, const Function<bool(const WebCore::ClientOrigin&)>&);
+    HashSet<WebCore::ClientOrigin> deleteDataOnDisk(OptionSet<WebsiteDataType>, WallTime, NOESCAPE const Function<bool(const WebCore::ClientOrigin&)>&);
 #if PLATFORM(IOS_FAMILY)
     void includeOriginInBackupIfNecessary(OriginStorageManager&);
 #endif
@@ -190,9 +192,9 @@ private:
     void createSyncAccessHandle(WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<FileSystemSyncAccessHandleInfo, FileSystemStorageError>)>&&);
     void closeSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, CompletionHandler<void()>&&);
     void requestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemSyncAccessHandleIdentifier, uint64_t newCapacity, CompletionHandler<void(std::optional<uint64_t>)>&&);
-    void createWritable(WebCore::FileSystemHandleIdentifier, bool keepExistingData, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
-    void closeWritable(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWriteCloseReason, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
-    void executeCommandForWritable(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
+    void createWritable(WebCore::FileSystemHandleIdentifier, bool keepExistingData, CompletionHandler<void(Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>)>&&);
+    void closeWritable(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCloseReason, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
+    void executeCommandForWritable(WebCore::FileSystemHandleIdentifier, WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, CompletionHandler<void(std::optional<FileSystemStorageError>)>&&);
     void getHandleNames(WebCore::FileSystemHandleIdentifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&&);
     void getHandle(IPC::Connection&, WebCore::FileSystemHandleIdentifier, String&& name, CompletionHandler<void(Expected<std::optional<std::pair<WebCore::FileSystemHandleIdentifier, bool>>, FileSystemStorageError>)>&&);
     
@@ -224,7 +226,7 @@ private:
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
     void deleteIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, const String& indexName);
     void renameIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, WebCore::IDBIndexIdentifier, const String& newName);
-    void putOrAdd(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
+    void putOrAdd(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, const WebCore::IndexIDToIndexKeyMap&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
     void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);
     void getCount(const WebCore::IDBRequestData&, const WebCore::IDBKeyRangeData&);

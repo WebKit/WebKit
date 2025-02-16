@@ -259,6 +259,7 @@ void ContextMenuController::didDismissContextMenu()
 {
     if (RefPtr menuProvider = m_menuProvider)
         menuProvider->didDismissContextMenu();
+    m_context = ContextMenuContext();
 }
 
 static void openNewWindow(const URL& urlToLoad, LocalFrame& frame, Event* event, ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy)

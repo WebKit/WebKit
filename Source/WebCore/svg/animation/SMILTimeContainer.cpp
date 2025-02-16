@@ -247,7 +247,7 @@ void SMILTimeContainer::sortByPriority(AnimationsVector& animations, SMILTime el
     std::sort(animations.begin(), animations.end(), PriorityCompare(elapsed));
 }
 
-void SMILTimeContainer::processScheduledAnimations(const Function<void(SVGSMILElement&)>& callback)
+void SMILTimeContainer::processScheduledAnimations(NOESCAPE const Function<void(SVGSMILElement&)>& callback)
 {
     for (auto& animations : copyToVector(m_scheduledAnimations.values())) {
         for (RefPtr animation : animations)

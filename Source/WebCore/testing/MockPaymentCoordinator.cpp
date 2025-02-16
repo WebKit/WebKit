@@ -88,14 +88,14 @@ bool MockPaymentCoordinator::canMakePayments()
 
 void MockPaymentCoordinator::canMakePaymentsWithActiveCard(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
+    RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), canMakePaymentsWithActiveCard = m_canMakePaymentsWithActiveCard]() mutable {
         completionHandler(canMakePaymentsWithActiveCard);
     });
 }
 
 void MockPaymentCoordinator::openPaymentSetup(const String&, const String&, CompletionHandler<void(bool)>&& completionHandler)
 {
-    RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
+    RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(true);
     });
 }
@@ -110,7 +110,7 @@ void MockPaymentCoordinator::dispatchIfShowing(Function<void()>&& function)
     if (m_showCount <= m_hideCount)
         return;
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, currentShowCount = m_showCount, function = WTFMove(function)]() {
+    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, currentShowCount = m_showCount, function = WTFMove(function)]() {
         if (protectedThis->m_showCount > protectedThis->m_hideCount && protectedThis->m_showCount == currentShowCount)
             function();
     });

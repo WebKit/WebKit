@@ -42,6 +42,7 @@
 #include "WebAnimation.h"
 #include "WebAnimationTypes.h"
 #include <wtf/TZoneMallocInlines.h>
+#include "Animation.h"
 
 namespace WebCore {
 

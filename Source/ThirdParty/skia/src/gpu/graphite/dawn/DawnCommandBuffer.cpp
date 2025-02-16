@@ -314,7 +314,11 @@ bool DawnCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
 #endif
 
 #if WGPU_TIMESTAMP_WRITES_DEFINED
+#if defined(__EMSCRIPTEN__)
     wgpu::RenderPassTimestampWrites wgpuTimestampWrites;
+#else
+    wgpu::PassTimestampWrites wgpuTimestampWrites;
+#endif
     if (!fSharedContext->dawnCaps()->supportsCommandBufferTimestamps() && fTimestampQueryBuffer) {
         SkASSERT(fTimestampQuerySet);
         wgpuTimestampWrites.querySet = fTimestampQuerySet;
@@ -663,7 +667,7 @@ bool DawnCommandBuffer::bindGraphicsPipeline(const GraphicsPipeline* graphicsPip
     fActiveRenderPassEncoder.SetPipeline(wgpuPipeline);
     fBoundUniformBuffersDirty = true;
 
-    if (fActiveGraphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy &&
+    if (fActiveGraphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy &&
         fActiveGraphicsPipeline->numFragTexturesAndSamplers() == 2) {
         // The pipeline has a single paired texture+sampler and uses texture copies for dst reads.
         // This situation comes about when the program requires complex blending but otherwise
@@ -745,7 +749,7 @@ void DawnCommandBuffer::bindTextureAndSamplers(
     // NOTE: This is in units of pairs of textures and samplers, whereas the value reported by
     // the current pipeline is in net bindings (textures + samplers).
     int numTexturesAndSamplers = command.fNumTexSamplers;
-    if (fActiveGraphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy) {
+    if (fActiveGraphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy) {
         numTexturesAndSamplers++;
     }
     SkASSERT(fActiveGraphicsPipeline->numFragTexturesAndSamplers() == 2*numTexturesAndSamplers);
@@ -759,7 +763,7 @@ void DawnCommandBuffer::bindTextureAndSamplers(
                 TextureInfos::GetDawnTextureSpec(
                         drawPass.getTexture(command.fTextureIndices[0])->textureInfo())
                         .fYcbcrVkDescriptor;
-        usingSingleStaticSampler = ycbcrUtils::DawnDescriptorIsValid(ycbcrDesc);
+        usingSingleStaticSampler = DawnDescriptorIsValid(ycbcrDesc);
     }
 #endif
 
@@ -767,7 +771,7 @@ void DawnCommandBuffer::bindTextureAndSamplers(
     // Optimize for single texture with dynamic sampling.
     if (numTexturesAndSamplers == 1 && !usingSingleStaticSampler) {
         SkASSERT(fActiveGraphicsPipeline->numFragTexturesAndSamplers() == 2);
-        SkASSERT(fActiveGraphicsPipeline->dstReadRequirement() != DstReadRequirement::kTextureCopy);
+        SkASSERT(fActiveGraphicsPipeline->dstReadStrategy() != DstReadStrategy::kTextureCopy);
 
         const auto* texture =
                 static_cast<const DawnTexture*>(drawPass.getTexture(command.fTextureIndices[0]));
@@ -799,7 +803,7 @@ void DawnCommandBuffer::bindTextureAndSamplers(
             // Only add a sampler as a bind group entry if it's a regular dynamic sampler. A valid
             // YCbCrVkDescriptor indicates the usage of a static sampler, which should not be
             // included here. They should already be fully specified in the bind group layout.
-            if (!ycbcrUtils::DawnDescriptorIsValid(ycbcrDesc)) {
+            if (!DawnDescriptorIsValid(ycbcrDesc)) {
 #endif
                 wgpu::BindGroupEntry samplerEntry;
                 samplerEntry.binding = 2 * i;
@@ -814,7 +818,7 @@ void DawnCommandBuffer::bindTextureAndSamplers(
             entries.push_back(textureEntry);
         }
 
-        if (fActiveGraphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy) {
+        if (fActiveGraphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy) {
             // Append the dstCopy sampler and texture as the very last two bind group entries
             wgpu::BindGroupEntry samplerEntry;
             samplerEntry.binding = 2*numTexturesAndSamplers - 2;
@@ -887,7 +891,7 @@ void DawnCommandBuffer::setScissor(const Scissor& scissor) {
 
 bool DawnCommandBuffer::updateIntrinsicUniforms(SkIRect viewport) {
     UniformManager intrinsicValues{Layout::kStd140};
-    CollectIntrinsicUniforms(fSharedContext->caps(), viewport, fDstCopyBounds, &intrinsicValues);
+    CollectIntrinsicUniforms(fSharedContext->caps(), viewport, fDstReadBounds, &intrinsicValues);
 
     BindBufferInfo binding = fResourceProvider->findOrCreateIntrinsicBindBufferInfo(
             this, UniformDataBlock::Wrap(&intrinsicValues));
@@ -992,7 +996,11 @@ void DawnCommandBuffer::beginComputePass() {
     SkASSERT(!fActiveComputePassEncoder);
     wgpu::ComputePassDescriptor wgpuComputePassDescriptor = {};
 #if WGPU_TIMESTAMP_WRITES_DEFINED
+#if defined(__EMSCRIPTEN__)
     wgpu::ComputePassTimestampWrites wgpuTimestampWrites;
+#else
+    wgpu::PassTimestampWrites wgpuTimestampWrites;
+#endif
     if (!fSharedContext->dawnCaps()->supportsCommandBufferTimestamps() && fTimestampQueryBuffer) {
         SkASSERT(fTimestampQuerySet);
         wgpuTimestampWrites.querySet = fTimestampQuerySet;

@@ -186,6 +186,29 @@ void WebDebuggerAgent::didDispatchPostMessage(int postMessageIdentifier)
     m_postMessageTasks.remove(it);
 }
 
+void WebDebuggerAgent::didRequestAnimationFrame(int callbackId, JSC::JSGlobalObject& state)
+{
+    if (!breakpointsActive())
+        return;
+
+    didScheduleAsyncCall(&state, InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId, true);
+}
+
+void WebDebuggerAgent::willFireAnimationFrame(int callbackId)
+{
+    willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
+}
+
+void WebDebuggerAgent::didCancelAnimationFrame(int callbackId)
+{
+    didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
+}
+
+void WebDebuggerAgent::didFireAnimationFrame(int callbackId)
+{
+    didDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
+}
+
 void WebDebuggerAgent::didClearAsyncStackTraceData()
 {
     InspectorDebuggerAgent::didClearAsyncStackTraceData();

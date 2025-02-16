@@ -890,6 +890,20 @@ TEST(WebKit, ScrollToFoundRangeAtTopWithObscuredContentInsets)
     EXPECT_TRUE(CGPointEqualToPoint([webView scrollView].contentOffset, initialContentOffset));
 }
 
+TEST(WebKit, ScrollToFoundRangeInNonScrollableIframe)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 300, 400)]);
+    [webView synchronouslyLoadHTMLString:@"<meta name='viewport' content='width=device-width,initial-scale=1'><iframe id='frame' scrolling='no' srcdoc='<style> p { margin-bottom: 800px; } </style><p>Top</p><p>Bottom</p>'></iframe>"];
+
+    EXPECT_WK_STREQ("0", [webView stringByEvaluatingJavaScript:@"document.getElementById('frame').contentWindow.scrollY"]);
+
+    RetainPtr ranges = textRangesForQueryString(webView.get(), @"Bottom");
+    [webView scrollRangeToVisible:[ranges firstObject] inDocument:nil];
+
+    TestWebKitAPI::Util::runFor(500_ms);
+    EXPECT_WK_STREQ("771", [webView stringByEvaluatingJavaScript:@"document.getElementById('frame').contentWindow.scrollY"]);
+}
+
 TEST(WebKit, CannotHaveMultipleFindOverlays)
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);

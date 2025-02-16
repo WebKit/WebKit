@@ -685,6 +685,8 @@ class Texture final : public RefCountObject<TextureID>,
         return false;
     }
 
+    bool isEGLImageSource(const ImageIndex &index) const;
+
     bool isDepthOrStencil() const
     {
         return mState.getBaseLevelDesc().format.info->isDepthOrStencil();

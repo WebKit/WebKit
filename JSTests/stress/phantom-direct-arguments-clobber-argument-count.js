@@ -9,7 +9,7 @@ function bar(a, b) {
 
 noInline(bar);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = "" + bar(1, []);
     if (result != "1,1,1,1,1,1,1,1,43")
         throw "Error: bad result: " + result;

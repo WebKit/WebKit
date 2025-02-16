@@ -29,34 +29,39 @@
 #include "ScriptExecutionContext.h"
 #include "WebTransport.h"
 #include "WebTransportBidirectionalStreamConstructionParameters.h"
+#include "WritableStreamSink.h"
 
 namespace WebCore {
 
-Ref<WorkerWebTransportSession> WorkerWebTransportSession::create(ScriptExecutionContextIdentifier contextID, WebTransportSessionClient& client, Ref<WebTransportSession>&& session)
+Ref<WorkerWebTransportSession> WorkerWebTransportSession::create(ScriptExecutionContextIdentifier contextID, WebTransportSessionClient& client)
 {
     ASSERT(!RunLoop::isMain());
-    return adoptRef(*new WorkerWebTransportSession(contextID, client, WTFMove(session)));
+    return adoptRef(*new WorkerWebTransportSession(contextID, client));
 }
 
 WorkerWebTransportSession::~WorkerWebTransportSession() = default;
 
-WorkerWebTransportSession::WorkerWebTransportSession(ScriptExecutionContextIdentifier contextID, WebTransportSessionClient& client, Ref<WebTransportSession>&& session)
+WorkerWebTransportSession::WorkerWebTransportSession(ScriptExecutionContextIdentifier contextID, WebTransportSessionClient& client)
     : m_contextID(contextID)
     , m_client(client)
-    , m_session(WTFMove(session))
 {
     ASSERT(!RunLoop::isMain());
-    m_session->attachClient(*this);
 }
 
-void WorkerWebTransportSession::receiveDatagram(std::span<const uint8_t> span)
+void WorkerWebTransportSession::attachSession(Ref<WebTransportSession>&& session)
+{
+    ASSERT(!m_session);
+    m_session = WTFMove(session);
+}
+
+void WorkerWebTransportSession::receiveDatagram(std::span<const uint8_t> span, bool withFin, std::optional<Exception>&& exception)
 {
     ASSERT(RunLoop::isMain());
-    ScriptExecutionContext::postTaskTo(m_contextID, [vector = Vector<uint8_t> { span }, weakClient = m_client] (auto&) mutable {
+    ScriptExecutionContext::postTaskTo(m_contextID, [vector = Vector<uint8_t> { span }, withFin, exception = WTFMove(exception), weakClient = m_client] (auto&) mutable {
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->receiveDatagram(vector.span());
+        client->receiveDatagram(vector.span(), withFin, WTFMove(exception));
     });
 }
 
@@ -93,39 +98,67 @@ void WorkerWebTransportSession::receiveBidirectionalStream(WebTransportBidirecti
     });
 }
 
-void WorkerWebTransportSession::streamReceiveBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> data, bool withFin)
+void WorkerWebTransportSession::streamReceiveBytes(WebTransportStreamIdentifier identifier, std::span<const uint8_t> data, bool withFin, std::optional<Exception>&& exception)
 {
     ASSERT(RunLoop::isMain());
-    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, data = Vector<uint8_t> { data }, withFin, weakClient = m_client] (auto&) mutable {
+    ScriptExecutionContext::postTaskTo(m_contextID, [identifier, data = Vector<uint8_t> { data }, withFin, exception = WTFMove(exception),  weakClient = m_client] (auto&) mutable {
         RefPtr client = weakClient.get();
         if (!client)
             return;
-        client->streamReceiveBytes(identifier, data.span(), withFin);
+        client->streamReceiveBytes(identifier, data.span(), withFin, WTFMove(exception));
     });
 }
 
-Ref<GenericPromise> WorkerWebTransportSession::sendDatagram(std::span<const uint8_t> datagram)
+Ref<WebTransportSendPromise> WorkerWebTransportSession::sendDatagram(std::span<const uint8_t> datagram)
 {
     ASSERT(!RunLoop::isMain());
-    return m_session->sendDatagram(datagram);
+    if (RefPtr session = m_session)
+        return session->sendDatagram(datagram);
+    return WebTransportSendPromise::createAndReject();
 }
 
 Ref<WritableStreamPromise> WorkerWebTransportSession::createOutgoingUnidirectionalStream()
 {
     ASSERT(!RunLoop::isMain());
-    return m_session->createOutgoingUnidirectionalStream();
+    if (RefPtr session = m_session)
+        return session->createOutgoingUnidirectionalStream();
+    return WritableStreamPromise::createAndReject();
 }
 
 Ref<BidirectionalStreamPromise> WorkerWebTransportSession::createBidirectionalStream()
 {
     ASSERT(!RunLoop::isMain());
-    return m_session->createBidirectionalStream();
+    if (RefPtr session = m_session)
+        return session->createBidirectionalStream();
+    return BidirectionalStreamPromise::createAndReject();
 }
 
-void WorkerWebTransportSession::terminate(uint32_t code, CString&& reason)
+void WorkerWebTransportSession::terminate(WebTransportSessionErrorCode code, CString&& reason)
 {
     ASSERT(!RunLoop::isMain());
-    m_session->terminate(code, WTFMove(reason));
+    if (RefPtr session = m_session)
+        session->terminate(code, WTFMove(reason));
+}
+
+void WorkerWebTransportSession::cancelReceiveStream(WebTransportStreamIdentifier identifier, std::optional<WebTransportStreamErrorCode> errorCode)
+{
+    ASSERT(!RunLoop::isMain());
+    if (RefPtr session = m_session)
+        session->cancelReceiveStream(identifier, errorCode);
+}
+
+void WorkerWebTransportSession::cancelSendStream(WebTransportStreamIdentifier identifier, std::optional<WebTransportStreamErrorCode> errorCode)
+{
+    ASSERT(!RunLoop::isMain());
+    if (RefPtr session = m_session)
+        session->cancelSendStream(identifier, errorCode);
+}
+
+void WorkerWebTransportSession::destroyStream(WebTransportStreamIdentifier identifier, std::optional<WebTransportStreamErrorCode> errorCode)
+{
+    ASSERT(!RunLoop::isMain());
+    if (RefPtr session = m_session)
+        session->destroyStream(identifier, errorCode);
 }
 
 }

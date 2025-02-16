@@ -207,7 +207,6 @@ template <> void derefGPtr(GDBusNodeInfo* ptr)
         g_dbus_node_info_unref(ptr);
 }
 
-#if HAVE(GURI)
 template <> GUri* refGPtr(GUri* ptr)
 {
     if (ptr)
@@ -220,7 +219,6 @@ template <> void derefGPtr(GUri* ptr)
     if (ptr)
         g_uri_unref(ptr);
 }
-#endif
 
 template <>
 GArray* refGPtr(GArray* ptr)

@@ -25,8 +25,9 @@
 
 import Foundation
 
-extension WebPage_v0 {
+extension WebPage {
     @MainActor
+    @_spi(Private)
     public struct Download: Sendable {
         public enum RedirectPolicy: Sendable {
             case allow
@@ -48,7 +49,7 @@ extension WebPage_v0 {
 
         public var isUserInitiated: Bool { wrapped.isUserInitiated }
 
-        public var originatingFrame: WebPage_v0.FrameInfo { .init(wrapped.originatingFrame) }
+        public var originatingFrame: WebPage.FrameInfo { .init(wrapped.originatingFrame) }
 
         public var progress: Progress { wrapped.progress }
 
@@ -69,7 +70,8 @@ extension WebPage_v0 {
     }
 }
 
-extension WebPage_v0 {
+extension WebPage {
+    @_spi(Private)
     public struct DownloadID: Sendable, Hashable, Equatable {
         let rawValue: ObjectIdentifier
 
@@ -78,6 +80,7 @@ extension WebPage_v0 {
         }
     }
 
+    @_spi(Private)
     public struct DownloadEvent: Sendable {
         public enum Kind: Sendable {
             case started
@@ -92,14 +95,14 @@ extension WebPage_v0 {
         }
 
         @_spi(Testing)
-        public init(kind: Kind, download: WebPage_v0.Download) {
+        public init(kind: Kind, download: WebPage.Download) {
             self.kind = kind
             self.download = download
         }
 
         public let kind: Kind
 
-        public let download: WebPage_v0.Download
+        public let download: WebPage.Download
     }
 
     @_spi(Private)
@@ -122,9 +125,9 @@ extension WebPage_v0 {
     }
 }
 
-extension WebPage_v0.Downloads {
+extension WebPage.Downloads {
     public struct Iterator: AsyncIteratorProtocol {
-        public typealias Element = WebPage_v0.DownloadEvent
+        public typealias Element = WebPage.DownloadEvent
 
         public typealias Failure = Never
 

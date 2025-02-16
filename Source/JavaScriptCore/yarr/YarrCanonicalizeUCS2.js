@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +29,7 @@ function printHeader()
     var copyright = (
                      "/*"                                                                            + "\n" +
                      " * Copyright (C) 2012-2018 Apple Inc. All rights reserved."                    + "\n" +
+                     " * Copyright (C) 2025 Tetsuharu Ohzeki <tetsuharu.ohzeki@gmail.com>."          + "\n" +
                      " *"                                                                            + "\n" +
                      " * Redistribution and use in source and binary forms, with or without"         + "\n" +
                      " * modification, are permitted provided that the following conditions"         + "\n" +
@@ -109,7 +111,6 @@ function createUCS2CanonicalGroups()
 function createTables(prefix, maxValue, canonicalGroups)
 {
     var prefixLower = prefix.toLowerCase();
-    var prefixUpper = prefix.toUpperCase();
     var typeInfo = [];
     var characterSetInfo = [];
     // Pass 2: populate typeInfo & characterSetInfo. For every character calculate
@@ -160,22 +161,25 @@ function createTables(prefix, maxValue, canonicalGroups)
         rangeInfo.push({begin:begin, end:end, type:type});
     }
 
+    const characterSetVarName = `${prefixLower}CharacterSet`;
     for (i in characterSetInfo) {
         var characters = ""
         var set = characterSetInfo[i];
         for (var j in set)
             characters += hex(set[j]) + ", ";
-        print("constexpr char32_t " + prefixLower + "CharacterSet" + i + "[] = { " + characters + "0 };");
+        print(`constexpr char32_t ${characterSetVarName + i}[] = { ${characters}0 };`);
     }
     print();
-    print("static constexpr size_t " + prefixUpper + "_CANONICALIZATION_SETS = " + characterSetInfo.length + ";");
-    print("const char32_t* const " + prefixLower + "CharacterSetInfo[" + prefixUpper + "_CANONICALIZATION_SETS] = {");
+    const canonicalizationSetsVarName = `${prefixLower}CanonicalizationSets`;
+    print(`static constexpr size_t ${canonicalizationSetsVarName} = ${characterSetInfo.length};`);
+    print(`const char32_t* const ${prefixLower}CharacterSetInfo[${canonicalizationSetsVarName}] = {`);
     for (i in characterSetInfo)
-    print("    " + prefixLower + "CharacterSet" + i + ",");
+        print(`    ${characterSetVarName + i},`);
     print("};");
     print();
-    print("const size_t " + prefixUpper + "_CANONICALIZATION_RANGES = " + rangeInfo.length + ";");
-    print("const CanonicalizationRange " + prefixLower + "RangeInfo[" + prefixUpper + "_CANONICALIZATION_RANGES] = {");
+    const canonicalizationRangesVarName = `${prefixLower}CanonicalizationRanges`;
+    print(`const size_t ${canonicalizationRangesVarName} = ${rangeInfo.length};`);
+    print(`const CanonicalizationRange ${prefixLower}RangeInfo[${canonicalizationRangesVarName}] = {`);
     for (i in rangeInfo) {
         var info = rangeInfo[i];
         var typeAndValue = info.type.split(':');
@@ -205,7 +209,7 @@ function createTables(prefix, maxValue, canonicalGroups)
 
 printHeader();
 
-createTables("UCS2", MAX_UCS2, createUCS2CanonicalGroups());
+createTables("ucs2", MAX_UCS2, createUCS2CanonicalGroups());
 
 printFooter();
 

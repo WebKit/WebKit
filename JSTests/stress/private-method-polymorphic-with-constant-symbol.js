@@ -39,7 +39,7 @@ class C extends Base {
 }
 noInline(C.prototype.access);
 
-for (; i < 10000; i++) {
+for (; i < testLoopCount; i++) {
     count = i;
     let c = new C();
     assert.sameValue(c.access(), 'test');

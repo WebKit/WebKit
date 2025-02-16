@@ -308,8 +308,10 @@ IntSize ScrollView::sizeForUnobscuredContent(VisibleContentRectIncludesScrollbar
     if (platformWidget())
         return platformVisibleContentSize(scrollbarInclusion == VisibleContentRectIncludesScrollbars::Yes);
 
+    auto obscuredContentInsets = this->obscuredContentInsets();
     IntSize visibleContentSize = sizeForVisibleContent(scrollbarInclusion);
-    visibleContentSize.setHeight(visibleContentSize.height() - topContentInset());
+    visibleContentSize.setWidth(visibleContentSize.width() - obscuredContentInsets.left());
+    visibleContentSize.setHeight(visibleContentSize.height() - obscuredContentInsets.top());
     return visibleContentSize;
 }
 
@@ -335,11 +337,9 @@ IntRect ScrollView::visibleContentRectInternal(VisibleContentRectIncludesScrollb
 
 IntRect ScrollView::frameRectShrunkByInset() const
 {
-    auto rect = frameRect();
-    float inset = topContentInset();
-    rect.move(0, inset);
-    rect.contract(0, inset);
-    return rect;
+    FloatRect rect = frameRect();
+    rect.contract(obscuredContentInsets());
+    return roundedIntRect(rect);
 }
 
 IntSize ScrollView::layoutSize() const
@@ -432,8 +432,8 @@ void ScrollView::cacheCurrentScrollState()
 
 ScrollPosition ScrollView::documentScrollPositionRelativeToViewOrigin() const
 {
-    return scrollPosition() - IntSize(insetForLeftScrollbarSpace(),
-        headerHeight() + topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
+    auto obscuredContentInsets = this->obscuredContentInsets(InsetType::WebCoreOrPlatformInset);
+    return scrollPosition() - IntSize(insetForLeftScrollbarSpace() + obscuredContentInsets.left(), headerHeight() + obscuredContentInsets.top());
 }
 
 ScrollPosition ScrollView::documentScrollPositionRelativeToScrollableAreaOrigin() const
@@ -763,13 +763,15 @@ void ScrollView::updateScrollbars(const ScrollPosition& desiredPosition)
     } 
 
     if (m_verticalScrollbar) {
+        auto obscuredContentInsets = this->obscuredContentInsets();
         int clientHeight = visibleHeight();
         IntRect oldRect(m_verticalScrollbar->frameRect());
-        IntRect vBarRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
-            topContentInset(),
-            m_verticalScrollbar->width(),
-            height() - topContentInset() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0));
-        m_verticalScrollbar->setFrameRect(vBarRect);
+        m_verticalScrollbar->setFrameRect(roundedIntRect({
+            obscuredContentInsets.left() + (shouldPlaceVerticalScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width()),
+            obscuredContentInsets.top(),
+            static_cast<float>(m_verticalScrollbar->width()),
+            height() - obscuredContentInsets.top() - (m_horizontalScrollbar ? m_horizontalScrollbar->occupiedHeight() : 0)
+        }));
         if (!m_scrollbarsSuppressed && oldRect != m_verticalScrollbar->frameRect())
             m_verticalScrollbar->invalidate();
 
@@ -1030,7 +1032,8 @@ IntPoint ScrollView::rootViewToTotalContents(const IntPoint& rootViewPoint) cons
 
     IntPoint viewPoint = convertFromRootView(rootViewPoint);
     // Like rootViewToContents(), but ignores headerHeight.
-    return viewPoint + toIntSize(scrollPosition()) - IntSize(0, topContentInset(TopContentInsetType::WebCoreOrPlatformContentInset));
+    auto obscuredContentInsets = this->obscuredContentInsets(InsetType::WebCoreOrPlatformInset);
+    return viewPoint + toIntSize(scrollPosition()) - IntSize(obscuredContentInsets.left(), obscuredContentInsets.top());
 }
 
 IntRect ScrollView::contentsToRootView(const IntRect& contentsRect) const
@@ -1238,18 +1241,21 @@ IntRect ScrollView::scrollCornerRect() const
     if (hasOverlayScrollbars())
         return cornerRect;
 
-    int heightTrackedByScrollbar = height() - topContentInset();
+    auto obscuredContentInsets = this->obscuredContentInsets();
+    int widthTrackedByScrollbar = width() - obscuredContentInsets.left() - obscuredContentInsets.right();
+    int heightTrackedByScrollbar = height() - obscuredContentInsets.top() - obscuredContentInsets.bottom();
 
-    if (m_horizontalScrollbar && width() - m_horizontalScrollbar->width() > 0) {
+    if (m_horizontalScrollbar && widthTrackedByScrollbar > m_horizontalScrollbar->width()) {
+        // FIXME: This may need to account for non-zero left or right content insets.
         cornerRect.unite(IntRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : m_horizontalScrollbar->width(),
             height() - m_horizontalScrollbar->height(),
             width() - m_horizontalScrollbar->width(),
             m_horizontalScrollbar->height()));
     }
 
-    if (m_verticalScrollbar && heightTrackedByScrollbar - m_verticalScrollbar->height() > 0) {
+    if (m_verticalScrollbar && heightTrackedByScrollbar > m_verticalScrollbar->height()) {
         cornerRect.unite(IntRect(shouldPlaceVerticalScrollbarOnLeft() ? 0 : width() - m_verticalScrollbar->width(),
-            m_verticalScrollbar->height() + topContentInset(),
+            m_verticalScrollbar->height() + obscuredContentInsets.top(),
             m_verticalScrollbar->width(),
             heightTrackedByScrollbar - m_verticalScrollbar->height()));
     }
@@ -1673,12 +1679,12 @@ IntRect ScrollView::platformVisibleContentRect(bool) const
     return { };
 }
 
-float ScrollView::platformTopContentInset() const
+FloatBoxExtent ScrollView::platformContentInsets() const
 {
-    return 0;
+    return { };
 }
 
-void ScrollView::platformSetTopContentInset(float)
+void ScrollView::platformSetContentInsets(const FloatBoxExtent&)
 {
 }
 

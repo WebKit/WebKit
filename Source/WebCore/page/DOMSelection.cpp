@@ -201,7 +201,8 @@ String DOMSelection::direction() const
     if (!frame)
         return noneAtom();
     auto& selection = frame->selection().selection();
-    if (!selection.isDirectional() || selection.isNone())
+    // FIXME: This can return a direction for a caret, which does not make logical sense.
+    if (selection.directionality() == Directionality::None || selection.isNone())
         return noneAtom();
     return selection.isBaseFirst() ? "forward"_s : "backward"_s;
 }
@@ -469,7 +470,7 @@ Vector<Ref<StaticRange>> DOMSelection::getComposedRanges(FixedVector<std::refere
     if (!range)
         return { };
 
-    HashSet<Ref<ShadowRoot>> shadowRootSet;
+    UncheckedKeyHashSet<Ref<ShadowRoot>> shadowRootSet;
     shadowRootSet.reserveInitialCapacity(shadowRoots.size());
     for (auto& root : shadowRoots)
         shadowRootSet.add(root.get());

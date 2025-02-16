@@ -15,7 +15,7 @@ function classExpr() {
     }
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let C = classExpr();
     let c = new C();
     assert(c.access(), 'foo');

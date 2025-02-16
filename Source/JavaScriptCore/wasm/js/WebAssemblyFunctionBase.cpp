@@ -39,9 +39,10 @@ namespace JSC {
 
 const ClassInfo WebAssemblyFunctionBase::s_info = { "WebAssemblyFunctionBase"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyFunctionBase) };
 
-WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, WasmOrJSImportableFunction importableFunction)
+WebAssemblyFunctionBase::WebAssemblyFunctionBase(VM& vm, NativeExecutable* executable, JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, Wasm::WasmOrJSImportableFunction&& importableFunction, Wasm::WasmOrJSImportableFunctionCallLinkInfo* callLinkInfo)
     : Base(vm, executable, globalObject, structure)
-    , m_importableFunction(importableFunction)
+    , m_importableFunction(WTFMove(importableFunction))
+    , m_callLinkInfo(callLinkInfo)
     , m_instance(instance, WriteBarrierEarlyInit)
 { }
 

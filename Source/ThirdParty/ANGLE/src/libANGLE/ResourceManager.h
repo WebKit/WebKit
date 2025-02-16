@@ -122,7 +122,25 @@ class TypedResourceManager : public ResourceManagerBase
     }
 };
 
-class BufferManager : public TypedResourceManager<Buffer, BufferManager, BufferID>
+template <typename ResourceType, typename ImplT, typename IDType>
+class TypedResourceManagerWithTotalMemorySize
+    : public TypedResourceManager<ResourceType, ImplT, IDType>
+{
+  public:
+    size_t getTotalMemorySize() const
+    {
+        size_t totalBytes = 0;
+
+        for (const auto &rb : UnsafeResourceMapIter(this->mObjectMap))
+        {
+            totalBytes += static_cast<size_t>(rb.second->getMemorySize());
+        }
+        return totalBytes;
+    }
+};
+
+class BufferManager
+    : public TypedResourceManagerWithTotalMemorySize<Buffer, BufferManager, BufferID>
 {
   public:
     BufferID createBuffer();
@@ -208,12 +226,15 @@ class TextureManager : public TypedResourceManager<Texture, TextureManager, Text
 
     void enableHandleAllocatorLogging();
 
+    size_t getTotalMemorySize() const;
+
   protected:
     ~TextureManager() override;
 };
 
-class RenderbufferManager
-    : public TypedResourceManager<Renderbuffer, RenderbufferManager, RenderbufferID>
+class RenderbufferManager : public TypedResourceManagerWithTotalMemorySize<Renderbuffer,
+                                                                           RenderbufferManager,
+                                                                           RenderbufferID>
 {
   public:
     RenderbufferID createRenderbuffer();
@@ -235,8 +256,8 @@ class SamplerManager : public TypedResourceManager<Sampler, SamplerManager, Samp
 {
   public:
     SamplerID createSampler();
-    Sampler *getSampler(SamplerID handle) const;
-    bool isSampler(SamplerID sampler) const;
+    Sampler *getSampler(SamplerID handle) const { return mObjectMap.query(handle); }
+    bool isSampler(SamplerID sampler) const { return mObjectMap.contains(sampler); }
 
     Sampler *checkSamplerAllocation(rx::GLImplFactory *factory, SamplerID handle)
     {

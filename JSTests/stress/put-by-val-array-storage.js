@@ -9,14 +9,14 @@ function testArrayStorageInBounds(array, index, value)
 }
 noInline(testArrayStorageInBounds);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [1, 2, 3, 4, 5];
     ensureArrayStorage(array);
     shouldBe(array[0], 1);
     testArrayStorageInBounds(array, 0, 42);
     shouldBe(array[0], 42);
 }
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [, 2, 3, 4];
     ensureArrayStorage(array);
     shouldBe(array[0], undefined);
@@ -30,7 +30,7 @@ for (var i = 0; i < 1e5; ++i) {
     shouldBe(array[4], 42);
     shouldBe(array.length, 5);
 }
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [, 2, 3, 4];
     ensureArrayStorage(array);
     shouldBe(array[6], undefined);

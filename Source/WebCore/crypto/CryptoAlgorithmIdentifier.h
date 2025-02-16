@@ -27,6 +27,7 @@
 
 namespace WebCore {
 
+constexpr auto sha224DeprecationMessage = "SHA224 is not supported";
 enum class CryptoAlgorithmIdentifier : uint8_t {
     RSAES_PKCS1_v1_5 = 1,
     RSASSA_PKCS1_v1_5,
@@ -41,7 +42,7 @@ enum class CryptoAlgorithmIdentifier : uint8_t {
     AES_KW,
     HMAC,
     SHA_1,
-    SHA_224,
+    DEPRECATED_SHA_224,
     SHA_256,
     SHA_384,
     SHA_512,

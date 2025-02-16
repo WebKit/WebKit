@@ -11,6 +11,7 @@
 
 #include <TargetConditionals.h>
 
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
@@ -36,7 +37,7 @@ angle::Result StreamVertexData(ContextMtl *contextMtl,
                                SimpleWeakBufferHolderMtl *bufferHolder,
                                size_t *bufferOffsetOut)
 {
-    ANGLE_CHECK(contextMtl, vertexLoadFunction, "Unsupported format conversion", GL_INVALID_ENUM);
+    ANGLE_CHECK(contextMtl, vertexLoadFunction, gl::err::kInternalError, GL_INVALID_OPERATION);
     uint8_t *dst = nullptr;
     mtl::BufferRef newBuffer;
     ANGLE_TRY(dynamicBuffer->allocate(contextMtl, bytesToAllocate, &dst, &newBuffer,

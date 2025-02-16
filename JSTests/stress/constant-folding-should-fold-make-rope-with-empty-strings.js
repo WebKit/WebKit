@@ -49,7 +49,7 @@ function readWord4(flag)
 }
 noInline(readWord4);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(readWord1(false), "HelloWorld");
     shouldBe(readWord2(false), "HelloWorld");
     shouldBe(readWord3(false), "");

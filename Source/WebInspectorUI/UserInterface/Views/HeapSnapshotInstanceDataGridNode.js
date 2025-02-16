@@ -55,17 +55,20 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             let addSpecialUserLogClass = !gcRootPath.length;
 
             if (gcRootPath.length) {
+                let rootClassName = node.target.type === WI.TargetType.Worker ? "DedicatedWorkerGlobalScope" : "Window";
+                let rootObjectName = node.target.type === WI.TargetType.Worker ? "self" : "window";
+
                 gcRootPath = gcRootPath.slice().reverse();
-                let windowIndex = gcRootPath.findIndex((x) => {
-                    return x instanceof WI.HeapSnapshotNodeProxy && x.className === "Window";
+                let rootIndex = gcRootPath.findIndex((x) => {
+                    return x instanceof WI.HeapSnapshotNodeProxy && x.className === rootClassName;
                 });
 
                 let heapSnapshotRootPath = WI.HeapSnapshotRootPath.emptyPath();
-                for (let i = windowIndex === -1 ? 0 : windowIndex; i < gcRootPath.length; ++i) {
+                for (let i = rootIndex === -1 ? 0 : rootIndex; i < gcRootPath.length; ++i) {
                     let component = gcRootPath[i];
                     if (component instanceof WI.HeapSnapshotNodeProxy) {
-                        if (component.className === "Window")
-                            heapSnapshotRootPath = heapSnapshotRootPath.appendGlobalScopeName(component, "window");
+                        if (component.className === rootClassName)
+                            heapSnapshotRootPath = heapSnapshotRootPath.appendGlobalScopeName(component, rootObjectName);
                     } else if (component instanceof WI.HeapSnapshotEdgeProxy)
                         heapSnapshotRootPath = heapSnapshotRootPath.appendEdge(component);
                 }
@@ -85,7 +88,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
                 });
             } else {
                 WI.heapManager.getRemoteObject(node, WI.RuntimeManager.ConsoleObjectGroup, function(error, remoteObjectPayload) {
-                    let remoteObject = error ? WI.RemoteObject.fromPrimitiveValue(undefined) : WI.RemoteObject.fromPayload(remoteObjectPayload, WI.assumingMainTarget());
+                    let remoteObject = error ? WI.RemoteObject.fromPrimitiveValue(undefined) : WI.RemoteObject.fromPayload(remoteObjectPayload, node.target);
                     WI.consoleLogViewController.appendImmediateExecutionWithResult(text, remoteObject, {addSpecialUserLogClass, shouldRevealConsole});
                 });
             }
@@ -172,8 +175,9 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             let spacerElement = containerElement.appendChild(document.createElement("span"));
             spacerElement.textContent = " ";
 
-            if (className === "Window" && this._node.dominatorNodeIdentifier === 0) {
-                containerElement.append("Window ");
+            let rootClassName = this._node.target.type === WI.TargetType.Worker ? "DedicatedWorkerGlobalScope" : "Window";
+            if (className === rootClassName && this._node.dominatorNodeIdentifier === 0) {
+                containerElement.append(rootClassName, " ");
                 this._populateWindowPreview(containerElement);
             } else
                 this._populatePreview(containerElement);
@@ -274,7 +278,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
                 return this.location.href;
             }
 
-            let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload, WI.assumingMainTarget());
+            let remoteObject = WI.RemoteObject.fromPayload(remoteObjectPayload, this._node.target);
             remoteObject.callFunctionJSON(inspectedPage_window_getLocationHref, undefined, (href) => {
                 remoteObject.release();
 
@@ -312,7 +316,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
                 let functionNameElement = containerElement.appendChild(document.createElement("span"));
                 functionNameElement.classList.add("function-name");
                 functionNameElement.textContent = name || displayName || WI.UIString("(anonymous function)");
-                let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, WI.assumingMainTarget());
+                let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, this._node.target);
                 if (sourceCode) {
                     let locationElement = containerElement.appendChild(document.createElement("span"));
                     locationElement.classList.add("location");
@@ -349,6 +353,9 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
         if (this._tree.popoverGridNode === this._node)
             return;
 
+        let rootClassName = this._node.target.type === WI.TargetType.Worker ? "DedicatedWorkerGlobalScope" : "Window";
+        let rootObjectName = this._node.target.type === WI.TargetType.Worker ? "self" : "window";
+
         this._tree.popoverGridNode = this._node;
         this._tree.popoverTargetElement = event.target;
 
@@ -376,7 +383,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
 
             path = path.slice().reverse();
             let windowIndex = path.findIndex((x) => {
-                return x instanceof WI.HeapSnapshotNodeProxy && x.className === "Window";
+                return x instanceof WI.HeapSnapshotNodeProxy && x.className === rootClassName;
             });
 
             let edge = null;
@@ -398,8 +405,8 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
             let pathDataElement = tableRow.appendChild(document.createElement("td"));
             pathDataElement.classList.add("edge-name");
 
-            if (node.className === "Window")
-                pathDataElement.textContent = "window";
+            if (node.className === rootClassName)
+                pathDataElement.textContent = rootObjectName;
             else if (edge) {
                 let edgeString = stringifyEdge(edge);
                 pathDataElement.textContent = typeof edgeString === "string" ? edgeString : emDash;
@@ -435,7 +442,7 @@ WI.HeapSnapshotInstanceDataGridNode = class HeapSnapshotInstanceDataGridNode ext
                 WI.heapManager.getPreview(node, function(error, string, functionDetails, objectPreviewPayload) {
                     if (functionDetails) {
                         let location = functionDetails.location;
-                        let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, WI.assumingMainTarget());
+                        let sourceCode = WI.debuggerManager.scriptForIdentifier(location.scriptId, node.target);
                         if (sourceCode) {
                             let sourceCodeLocation = sourceCode.createSourceCodeLocation(location.lineNumber, location.columnNumber);
 

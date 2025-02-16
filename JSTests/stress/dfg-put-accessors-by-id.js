@@ -68,7 +68,7 @@ function accessors()
 }
 noInline(accessors);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(getter(), 42);
     shouldBe(setter(), 42);
     shouldBe(accessors(), 42);

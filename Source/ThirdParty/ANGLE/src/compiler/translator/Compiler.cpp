@@ -47,6 +47,7 @@
 #include "compiler/translator/tree_ops/RemoveDynamicIndexing.h"
 #include "compiler/translator/tree_ops/RemoveInvariantDeclaration.h"
 #include "compiler/translator/tree_ops/RemoveUnreferencedVariables.h"
+#include "compiler/translator/tree_ops/RemoveUnusedFramebufferFetch.h"
 #include "compiler/translator/tree_ops/RescopeGlobalVariables.h"
 #include "compiler/translator/tree_ops/RewritePixelLocalStorage.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
@@ -60,6 +61,7 @@
 #include "compiler/translator/tree_ops/glsl/apple/RewriteDoWhile.h"
 #include "compiler/translator/tree_ops/glsl/apple/UnfoldShortCircuitAST.h"
 #include "compiler/translator/tree_util/BuiltIn.h"
+#include "compiler/translator/tree_util/FindSymbolNode.h"
 #include "compiler/translator/tree_util/IntermNodePatternMatcher.h"
 #include "compiler/translator/tree_util/ReplaceShadowingVariables.h"
 #include "compiler/translator/tree_util/ReplaceVariable.h"
@@ -112,6 +114,30 @@ bool IsTopLevelNodeUnusedFunction(const CallDAG &callDag,
 
     ASSERT(callDagIndex < metadata.size());
     return !metadata[callDagIndex].used;
+}
+
+void AddBuiltInToInitList(TSymbolTable *symbolTable,
+                          int shaderVersion,
+                          TIntermBlock *root,
+                          const char *name,
+                          InitVariableList *list)
+{
+    const TIntermSymbol *builtin = FindSymbolNode(root, ImmutableString(name));
+    const TVariable *builtinVar  = nullptr;
+    if (builtin != nullptr)
+    {
+        builtinVar = &builtin->variable();
+    }
+    else
+    {
+        builtinVar = static_cast<const TVariable *>(
+            symbolTable->findBuiltIn(ImmutableString(name), shaderVersion));
+    }
+
+    if (builtinVar != nullptr)
+    {
+        list->push_back(builtinVar);
+    }
 }
 
 #if defined(ANGLE_FUZZER_CORPUS_OUTPUT_DIR)
@@ -773,6 +799,19 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
     if (!validateAST(root))
     {
         return false;
+    }
+
+    // Turn |inout| variables that are never read from into |out| before collecting variables and
+    // before PLS uses them.
+    if (mShaderVersion >= 300 &&
+        (IsExtensionEnabled(mExtensionBehavior, TExtension::EXT_shader_framebuffer_fetch) ||
+         IsExtensionEnabled(mExtensionBehavior,
+                            TExtension::EXT_shader_framebuffer_fetch_non_coherent)))
+    {
+        if (!RemoveUnusedFramebufferFetch(this, root, &mSymbolTable))
+        {
+            return false;
+        }
     }
 
     // For now, rewrite pixel local storage before collecting variables or any operations on images.
@@ -1767,10 +1806,16 @@ bool TCompiler::limitExpressionComplexity(TIntermBlock *root)
 
 bool TCompiler::initializeGLPosition(TIntermBlock *root)
 {
-    sh::ShaderVariable var(GL_FLOAT_VEC4);
-    var.name = "gl_Position";
-    return InitializeVariables(this, root, {var}, &mSymbolTable, mShaderVersion, mExtensionBehavior,
-                               false, false);
+    InitVariableList list;
+    AddBuiltInToInitList(&mSymbolTable, mShaderVersion, root, "gl_Position", &list);
+
+    if (!list.empty())
+    {
+        return InitializeVariables(this, root, list, &mSymbolTable, mShaderVersion,
+                                   mExtensionBehavior, false, false);
+    }
+
+    return true;
 }
 
 bool TCompiler::useAllMembersInUnusedStandardAndSharedBlocks(TIntermBlock *root)
@@ -1792,34 +1837,52 @@ bool TCompiler::useAllMembersInUnusedStandardAndSharedBlocks(TIntermBlock *root)
 bool TCompiler::initializeOutputVariables(TIntermBlock *root)
 {
     InitVariableList list;
-    list.reserve(mOutputVaryings.size());
-    if (mShaderType == GL_VERTEX_SHADER || mShaderType == GL_GEOMETRY_SHADER_EXT ||
-        mShaderType == GL_TESS_CONTROL_SHADER_EXT || mShaderType == GL_TESS_EVALUATION_SHADER_EXT)
+
+    for (TIntermNode *node : *root->getSequence())
     {
-        for (const sh::ShaderVariable &var : mOutputVaryings)
+        TIntermDeclaration *asDecl = node->getAsDeclarationNode();
+        if (asDecl == nullptr)
         {
-            list.push_back(var);
-            if (var.name == "gl_Position")
-            {
-                ASSERT(!mGLPositionInitialized);
-                mGLPositionInitialized = true;
-            }
+            continue;
+        }
+
+        TIntermSymbol *symbol = asDecl->getSequence()->front()->getAsSymbolNode();
+        if (symbol == nullptr)
+        {
+            TIntermBinary *initNode = asDecl->getSequence()->front()->getAsBinaryNode();
+            ASSERT(initNode->getOp() == EOpInitialize);
+            symbol = initNode->getLeft()->getAsSymbolNode();
+        }
+        ASSERT(symbol);
+
+        // inout variables represent the context of the framebuffer when the draw call starts, so
+        // they have to be considered as already initialized.
+        const TQualifier qualifier = symbol->getType().getQualifier();
+        if (qualifier != EvqFragmentInOut && IsShaderOut(symbol->getType().getQualifier()))
+        {
+            list.push_back(&symbol->variable());
         }
     }
-    else
+
+    // Initialize built-in outputs as well.
+    const std::vector<ShaderVariable> &outputVariables =
+        mShaderType == GL_FRAGMENT_SHADER ? mOutputVariables : mOutputVaryings;
+
+    for (const ShaderVariable &var : outputVariables)
     {
-        ASSERT(mShaderType == GL_FRAGMENT_SHADER);
-        for (const sh::ShaderVariable &var : mOutputVariables)
+        if (var.isFragmentInOut || !var.isBuiltIn())
         {
-            // in-out variables represent the context of the framebuffer
-            // when the draw call starts, so they have to be considered
-            // as already initialized.
-            if (!var.isFragmentInOut)
-            {
-                list.push_back(var);
-            }
+            continue;
+        }
+
+        AddBuiltInToInitList(&mSymbolTable, mShaderVersion, root, var.name.c_str(), &list);
+        if (var.name == "gl_Position")
+        {
+            ASSERT(!mGLPositionInitialized);
+            mGLPositionInitialized = true;
         }
     }
+
     return InitializeVariables(this, root, list, &mSymbolTable, mShaderVersion, mExtensionBehavior,
                                false, false);
 }

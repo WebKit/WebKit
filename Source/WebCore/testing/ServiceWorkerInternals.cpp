@@ -70,10 +70,8 @@ void ServiceWorkerInternals::schedulePushEvent(const String& message, RefPtr<Def
     m_pushEventPromises.add(counter, WTFMove(promise));
 
     std::optional<Vector<uint8_t>> data;
-    if (!message.isNull()) {
-        auto utf8 = message.utf8();
-        data = Vector(utf8.span());
-    }
+    if (!message.isNull())
+        data = Vector(byteCast<uint8_t>(message.utf8().span()));
     callOnMainThread([identifier = m_identifier, data = WTFMove(data), weakThis = WeakPtr { *this }, counter]() mutable {
         SWContextManager::singleton().firePushEvent(identifier, WTFMove(data), std::nullopt, [identifier, weakThis = WTFMove(weakThis), counter](bool result, std::optional<NotificationPayload>&&) mutable {
             if (auto* proxy = SWContextManager::singleton().serviceWorkerThreadProxy(identifier)) {

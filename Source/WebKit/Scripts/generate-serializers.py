@@ -452,9 +452,9 @@ class ConditionalHeader(object):
 
 
 class UsingStatement(object):
-    def __init__(self, name, alias, condition):
+    def __init__(self, name, alias_lines, condition):
         self.name = name
-        self.alias = alias
+        self.alias_lines = alias_lines
         self.condition = condition
 
 
@@ -1235,20 +1235,19 @@ def generate_impl(serialized_types, serialized_enums, headers, generating_webkit
 
 
 def generate_optional_tuple_type_info(type):
-    result = []
-    result.append('            {')
-    result.append('                "OptionalTuple<"')
+    result = ['                "OptionalTuple<"']
     serialized_members = type.serialized_members()
-    for i in range(1, len(serialized_members)):
+    found_first_optional_tuple_bit_member = False
+    for i in range(len(serialized_members)):
         member = serialized_members[i]
-        if member.condition is not None:
-            result.append(f'#if {member.condition}')
-        result.append(f'                    "{", " if i > 1 else ""}{member.type}"')
-        if member.condition is not None:
-            result.append('#endif')
-    result.append('                ">"_s,')
-    result.append('                "optionalTuple"_s')
-    result.append('            },')
+        if member.optional_tuple_bit():
+            if member.condition is not None:
+                result.append(f'#if {member.condition}')
+            result.append(f'                    "{", " if found_first_optional_tuple_bit_member else ""}{member.name}"')
+            found_first_optional_tuple_bit_member = True
+            if member.condition is not None:
+                result.append('#endif')
+    result.append('                ">"_s')
     return result
 
 
@@ -1314,7 +1313,7 @@ def generate_one_serialized_type_info(type):
         else:
             if optional_tuple_state == 'middle':
                 result.append('                ">"_s,')
-                result.append('                "optionalTuple"_s')
+                result = result + generate_optional_tuple_type_info(type)
                 result.append('            },')
                 optional_tuple_state = None
             result.append('            {')
@@ -1331,7 +1330,7 @@ def generate_one_serialized_type_info(type):
             result.append('#endif')
     if optional_tuple_state == 'middle':
         result.append('                ">"_s,')
-        result.append('                "optionalTuple"_s')
+        result = result + generate_optional_tuple_type_info(type)
         result.append('            },')
     result.append('        } },')
     if type.condition is not None:
@@ -1366,7 +1365,13 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
     for using_statement in using_statements:
         if using_statement.condition is not None:
             result.append(f'#if {using_statement.condition}')
-        result.append(f'static_assert(std::is_same_v<{using_statement.name}, {using_statement.alias}>);')
+        result.append(f'static_assert(std::is_same_v<{using_statement.name},')
+        for alias_line in using_statement.alias_lines:
+            if '#' in alias_line:
+                result.append(f'{alias_line.strip()}')
+            else:
+                result.append(f'    {alias_line}')
+        result.append('>);')
         if using_statement.condition is not None:
             result.append('#endif')
 
@@ -1398,7 +1403,16 @@ def generate_serialized_type_info(serialized_types, serialized_enums, headers, u
         if using_statement.condition is not None:
             result.append(f'#if {using_statement.condition}')
         result.append(f'        {{ "{using_statement.name}"_s, {{')
-        result.append(f'            {{ "{using_statement.alias}"_s, "alias"_s }}')
+        result.append(f'        {{')
+        for line_number in range(len(using_statement.alias_lines)):
+            alias_line = using_statement.alias_lines[line_number]
+            if '#' in alias_line:
+                result.append(f'{alias_line.strip()}')
+            else:
+                underscore_s_after_last_line = '_s' if line_number is len(using_statement.alias_lines) - 1 else ''
+                extra_space_after_comma = ' ' if alias_line.endswith(',') else ''
+                result.append(f'            "{alias_line.strip()}{extra_space_after_comma}"{underscore_s_after_last_line}')
+        result.append(f'            , "alias"_s }}')
         result.append('        } },')
         if using_statement.condition is not None:
             result.append('#endif')
@@ -1483,8 +1497,12 @@ def parse_serialized_types(file):
     metadata = None
     templates = []
 
+    file_lines = []
     for line in file:
-        line = line.strip()
+        file_lines.append(line.strip())
+
+    for line_number in range(len(file_lines)):
+        line = file_lines[line_number]
         if line.startswith('#'):
             if line == '#else':
                 if name is None:
@@ -1630,9 +1648,19 @@ def parse_serialized_types(file):
             declaration = match.groups()[0]
             additional_forward_declarations.append(ConditionalForwardDeclaration(declaration, type_condition))
             continue
+        match = re.search(r'using (.*) = std::variant<$', line)
+        if match:
+            line_number = line_number + 1
+            alias_lines = ['std::variant<']
+            while not file_lines[line_number].startswith('>'):
+                alias_lines.append('    ' + file_lines[line_number])
+                line_number = line_number + 1
+            alias_lines.append('>')
+            using_statements.append(UsingStatement(match.groups()[0], alias_lines, type_condition))
+            continue
         match = re.search(r'using (.*) = ([^;]*)', line)
         if match:
-            using_statements.append(UsingStatement(match.groups()[0], match.groups()[1], type_condition))
+            using_statements.append(UsingStatement(match.groups()[0], [match.groups()[1]], type_condition))
             continue
         if underlying_type is not None:
             members.append(EnumMember(line.strip(' ,'), member_condition))
@@ -1707,7 +1735,7 @@ def generate_webkit_secure_coding_impl(serialized_types, headers):
     result.append('')
     result.append('static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)')
     result.append('{')
-    result.append('    if (WebKit::CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))')
+    result.append('    if (WebKit::conformsToWebKitSecureCoding(object))')
     result.append('        return [object _webKitPropertyListData];')
     result.append('')
     result.append('    return dictionaryForWebKitSecureCodingTypeFromWKKeyedCoder(object);')

@@ -119,6 +119,7 @@ sub getDefaultConfigForTestDirectory
     my $testharnesscssDirectory = File::Spec->catfile($testDirectory, "resources", "testharness.css");
     my $testharnessjsDirectory = File::Spec->catfile($testDirectory, "resources", "testharness.js");
     my $testharnessreportjsDirectory = File::Spec->catfile($testDirectory, "resources", "testharnessreport.js");
+    my $coreipcjsDirectory = File::Spec->catfile($testDirectory, "ipc", "coreipc.js");
 
     my $typesConfig = File::Spec->catfile($testDirectory, "http", "conf", "mime.types");
     my $httpdLockFile = File::Spec->catfile($httpdPidDir, "httpd.lock");
@@ -133,6 +134,7 @@ sub getDefaultConfigForTestDirectory
         "-c", "Alias /testharness.css \"$testharnesscssDirectory\"",
         "-c", "Alias /testharness.js \"$testharnessjsDirectory\"",
         "-c", "Alias /testharnessreport.js \"$testharnessreportjsDirectory\"",
+        "-c", "Alias /ipc/coreipc.js \"$coreipcjsDirectory\"",
         "-c", "TypesConfig \"$typesConfig\"",
         # Apache wouldn't run CGIs with permissions==700 otherwise
         "-c", "PidFile \"$httpdPidFile\"",

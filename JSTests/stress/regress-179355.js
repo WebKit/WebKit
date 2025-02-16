@@ -6,7 +6,7 @@ Array.prototype.__defineGetter__(1, function() {
 });
 
 Array.prototype.__defineGetter__(Symbol.isConcatSpreadable, (function() {
-    for(var i=0;i<10000;i++) {
+    for(var i=0;i<testLoopCount;i++) {
         if(i==0)
             arr1[i];
         this.x = 1.1;

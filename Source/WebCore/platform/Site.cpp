@@ -52,9 +52,15 @@ bool Site::matches(const URL& url) const
     return url.protocol() == m_protocol && m_domain.matches(url);
 }
 
-String Site::string() const
+String Site::toString() const
 {
     return isEmpty() ? emptyString() : makeString(m_protocol, "://"_s, m_domain.string());
+}
+
+TextStream& operator<<(TextStream& ts, const Site& site)
+{
+    ts << site.toString();
+    return ts;
 }
 
 } // namespace WebKit

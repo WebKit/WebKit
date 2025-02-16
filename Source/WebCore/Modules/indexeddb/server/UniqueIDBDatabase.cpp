@@ -844,7 +844,7 @@ void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, I
     callback(error);
 }
 
-void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode, KeyDataCallback&& callback)
+void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexIDToIndexKeyMap& indexKeys, IndexedDB::ObjectStoreOverwriteMode overwriteMode, KeyDataCallback&& callback)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::putOrAdd");
@@ -892,24 +892,25 @@ void UniqueIDBDatabase::putOrAdd(const IDBRequestData& requestData, const IDBKey
             return callback(error, usedKey);
     }
 
-    // Generate index keys up front for more accurate quota check.
-    IndexIDToIndexKeyMap indexKeys;
-    callOnIDBSerializationThreadAndWait([objectStoreInfo = objectStoreInfo->isolatedCopy(), key = usedKey.isolatedCopy(), value = value.isolatedCopy(), &indexKeys](auto& globalObject) {
-        indexKeys = generateIndexKeyMapForValueIsolatedCopy(globalObject, objectStoreInfo, key, value);
-    });
+    auto usedIndexKeys = indexKeys;
+    if (usedKeyIsGenerated) {
+        // If key is generated on server, client does not know about that and uses placeholder in index keys.
+        for (auto& indexKey : usedIndexKeys.values())
+            indexKey.updatePlaceholderKeys(usedKey);
+    }
 
     generatedKeyResetter.release();
     auto keySize = estimateSize(usedKey);
     auto valueSize = estimateSize(value);
-    auto indexSize = estimateSize(*objectStoreInfo, indexKeys, keySize);
+    auto indexSize = estimateSize(*objectStoreInfo, usedIndexKeys, keySize);
     auto taskSize = defaultWriteOperationCost + keySize + valueSize + indexSize;
 
     LOG(IndexedDB, "UniqueIDBDatabase::putOrAdd quota check with task size: %" PRIu64 " key size: %" PRIu64 " value size: %" PRIu64 " index size: %" PRIu64, taskSize, keySize, valueSize, indexSize);
-    m_manager->requestSpace(m_identifier.origin(), taskSize, [this, weakThis = WeakPtr { *this }, requestData, usedKey, value, overwriteMode, callback = WTFMove(callback), usedKeyIsGenerated, indexKeys, objectStoreInfo = *objectStoreInfo](bool granted) mutable {
+    m_manager->requestSpace(m_identifier.origin(), taskSize, [this, weakThis = WeakPtr { *this }, requestData, usedKey, value, overwriteMode, callback = WTFMove(callback), usedKeyIsGenerated, usedIndexKeys, objectStoreInfo = *objectStoreInfo](bool granted) mutable {
         if (!weakThis)
             return callback(IDBError { ExceptionCode::InvalidStateError, "Database is closed"_s }, usedKey);
 
-        putOrAddAfterSpaceCheck(requestData, usedKey, value, overwriteMode, WTFMove(callback), usedKeyIsGenerated, indexKeys, objectStoreInfo, granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
+        putOrAddAfterSpaceCheck(requestData, usedKey, value, overwriteMode, WTFMove(callback), usedKeyIsGenerated, usedIndexKeys, objectStoreInfo, granted ? SpaceCheckResult::Pass : SpaceCheckResult::Fail);
     });
 }
 

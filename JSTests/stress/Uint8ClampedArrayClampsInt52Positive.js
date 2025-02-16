@@ -1,7 +1,7 @@
 let x = 123
 
 function test(fn, expected) {
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         const arr = new Uint8ClampedArray(1)
         fn(arr)
         x = arr[0]

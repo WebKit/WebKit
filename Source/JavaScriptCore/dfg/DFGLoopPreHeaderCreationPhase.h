@@ -29,9 +29,9 @@
 
 namespace JSC { namespace DFG {
 
+class BasicBlock;
 class BlockInsertionSet;
 class Graph;
-struct BasicBlock;
 
 // Inserts dummy basic blocks before any loop headers that don't already have
 // a single non-loop predecessor.

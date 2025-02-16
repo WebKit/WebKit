@@ -27,7 +27,7 @@
 
 #include "LegacyInlineTextBox.h"
 #include "LegacyRootInlineBox.h"
-#include "RenderText.h"
+#include "RenderSVGInlineText.h"
 #include "SVGInlineTextBox.h"
 #include "TextBoxSelectableRange.h"
 #include <wtf/Vector.h>

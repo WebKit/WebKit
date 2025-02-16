@@ -45,7 +45,7 @@ Ref<CSSContentDistributionValue> CSSContentDistributionValue::create(CSSValueID 
     return adoptRef(*new CSSContentDistributionValue(distribution, position, overflow));
 }
 
-String CSSContentDistributionValue::customCSSText() const
+String CSSContentDistributionValue::customCSSText(const CSS::SerializationContext&) const
 {
     auto word1 = m_distribution;
     CSSValueID word2;

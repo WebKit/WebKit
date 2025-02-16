@@ -348,12 +348,14 @@ bool canUseForPreferredWidthComputation(const RenderBlockFlow& blockContainer)
 {
     for (auto walker = InlineWalker(blockContainer); !walker.atEnd(); walker.advance()) {
         auto& renderer = *walker.current();
+        if (!renderer.isInFlow())
+            return false;
 
-        auto isFullySupportedRenderer = renderer.isRenderText() || is<RenderLineBreak>(renderer) || is<RenderInline>(renderer) || is<RenderListMarker>(renderer);
-        if (isFullySupportedRenderer)
+        auto isFullySupportedInFlowRenderer = renderer.isRenderText() || is<RenderLineBreak>(renderer) || is<RenderInline>(renderer) || is<RenderListMarker>(renderer);
+        if (isFullySupportedInFlowRenderer)
             continue;
 
-        if (!renderer.isInFlow() || !renderer.writingMode().isHorizontal() || !renderer.style().logicalWidth().isFixed())
+        if (!renderer.writingMode().isHorizontal() || !renderer.style().logicalWidth().isFixed())
             return false;
 
         auto isNonSupportedFixedWidthContent = [&] {

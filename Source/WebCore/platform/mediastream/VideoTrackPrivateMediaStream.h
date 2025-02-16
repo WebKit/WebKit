@@ -46,6 +46,7 @@ public:
     void setTrackIndex(int index) { m_index = index; }
 
     MediaStreamTrackPrivate& streamTrack() { return m_streamTrack.get(); }
+    Ref<MediaStreamTrackPrivate> protectedStreamTrack() { return m_streamTrack; }
 
 private:
     VideoTrackPrivateMediaStream(MediaStreamTrackPrivate& track)

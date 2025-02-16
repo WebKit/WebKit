@@ -53,7 +53,7 @@ public:
     bool reallyAdd(CodeBlock*, DesiredIdentifiers&, WatchpointCollector&);
 
 private:
-    HashSet<DesiredGlobalProperty> m_set;
+    UncheckedKeyHashSet<DesiredGlobalProperty> m_set;
 };
 
 } } // namespace JSC::DFG

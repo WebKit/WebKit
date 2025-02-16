@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script src="../debugger/resources/log-active-stack-trace.js"></script>
 <script src="resources/dom-debugger-utilities.js"></script>
 <script>
 function test()
@@ -11,30 +12,36 @@ function test()
     let suite = InspectorTest.createAsyncSuite("Worker.DOMDebugger.EventBreakpoint.AnimationFrame");
 
     suite.addTestCase({
-        name: "Worker.DOMDebugger.EventBreakpoint.AnimationFrame.setEventBreakpoint",
-        description: "Check setting an event breakpoint on all animation frames is not supported for a Worker target.",
+        name: "Worker.DOMDebugger.EventBreakpoint.AnimationFrame.Basic",
+        description: "Check that adding/removing animation frame event breakpoints work for a Worker target.",
         async test() {
             InspectorTest.assert(workerTarget.DOMDebuggerAgent, "Worker target should have a DOMDebuggerAgent.");
             InspectorTest.assert(workerTarget.DOMDebuggerAgent.setEventBreakpoint, "The Worker's DOMDebuggerAgent should have a setEventBreakpoint command.");
-
-            await InspectorTest.expectException(async function() {
-                const breakpointType = "animation-frame";
-                await workerTarget.DOMDebuggerAgent.setEventBreakpoint(breakpointType);
-            });
-        },
-    });
-
-    suite.addTestCase({
-        name: "Worker.DOMDebugger.EventBreakpoint.AnimationFrame.removeEventBreakpoint",
-        description: "Check setting an event breakpoint on all animation frames is not supported for a Worker target.",
-        async test() {
-            InspectorTest.assert(workerTarget.DOMDebuggerAgent, "Worker target should have a DOMDebuggerAgent.");
             InspectorTest.assert(workerTarget.DOMDebuggerAgent.removeEventBreakpoint, "The Worker's DOMDebuggerAgent should have a removeEventBreakpoint command.");
 
-            await InspectorTest.expectException(async function() {
-                const breakpointType = "animation-frame";
-                await workerTarget.DOMDebuggerAgent.removeEventBreakpoint(breakpointType);
-            });
+            const breakpointType = "animation-frame";
+
+            await workerTarget.DOMDebuggerAgent.setEventBreakpoint(breakpointType);
+
+            await Promise.all([
+                WI.debuggerManager.awaitEvent(WI.DebuggerManager.Event.Paused),
+                InspectorTest.evaluateInPage(`worker.postMessage("triggerAnimationFrame")`),
+            ]);
+
+            let paused = WI.debuggerManager.paused;
+
+            let targetData = WI.debuggerManager.dataForTarget(WI.debuggerManager.activeCallFrame.target);
+            let pauseReason = targetData.pauseReason;
+
+            let stackTrace = getActiveStackTrace();
+
+            await workerTarget.DOMDebuggerAgent.removeEventBreakpoint(breakpointType);
+
+            await WI.debuggerManager.resume();
+
+            InspectorTest.expectThat(paused, "Should have paused.");
+            InspectorTest.expectEqual(pauseReason, WI.DebuggerManager.PauseReason.AnimationFrame, "Pause reason should have been AnimationFrame.");
+            logStackTrace(stackTrace);
         },
     });
 

@@ -33,7 +33,7 @@ class Attachment;
 
 @interface WKQLThumbnailQueueManager : NSObject
 
-@property (nonatomic, readonly, retain) NSOperationQueue *queue;
+@property (nonatomic, readonly) NSOperationQueue *queue;
 
 - (instancetype)init;
 + (WKQLThumbnailQueueManager *)sharedInstance;

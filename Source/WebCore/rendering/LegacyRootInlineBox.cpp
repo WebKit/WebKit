@@ -31,6 +31,7 @@
 #include "LocalFrame.h"
 #include "LogicalSelectionOffsetCaches.h"
 #include "PaintInfo.h"
+#include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderInline.h"
@@ -163,19 +164,6 @@ RenderBlockFlow& LegacyRootInlineBox::blockFlow() const
 
 void LegacyRootInlineBox::removeLineBoxFromRenderObject()
 {
-    // Null if we are destroying LegacyLineLayout.
-    if (auto* legacyLineLayout = blockFlow().svgTextLayout())
-        legacyLineLayout->lineBoxes().removeLineBox(this);
-}
-
-void LegacyRootInlineBox::extractLineBoxFromRenderObject()
-{
-    blockFlow().svgTextLayout()->lineBoxes().extractLineBox(this);
-}
-
-void LegacyRootInlineBox::attachLineBoxToRenderObject()
-{
-    blockFlow().svgTextLayout()->lineBoxes().attachLineBox(this);
 }
 
 LayoutUnit LegacyRootInlineBox::lineBoxWidth() const

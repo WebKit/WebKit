@@ -25,8 +25,8 @@
     DispatchedTo=WebContent
 ]
 messages -> WebTransportSession {
-    ReceiveDatagram(std::span<const uint8_t> datagram)
+    ReceiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<WebCore::Exception> exception)
     ReceiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
     ReceiveBidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
-    StreamReceiveBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
+    StreamReceiveBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, std::optional<WebCore::Exception> exception)
 }

@@ -70,19 +70,18 @@ void DirectConvolver::process(AudioFloatArray* convolutionKernel, std::span<cons
     if (!isCopyGood)
         return;
 
-    auto inputP = m_buffer.span().subspan(m_inputBlockSize);
+    auto inputBuffer = m_buffer.span();
+    auto inputP = inputBuffer.subspan(m_inputBlockSize);
 
     // Copy samples to 2nd half of input buffer.
     memcpySpan(inputP, source);
 
 #if USE(ACCELERATE)
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    vDSP_conv(inputP.data() - kernelSize + 1, 1, kernelP.subspan(kernelSize - 1).data(), -1, destination.data(), 1, source.size(), kernelSize);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    vDSP_conv(inputBuffer.subspan(inputP.data() - inputBuffer.data() - kernelSize + 1).data(), 1, kernelP.subspan(kernelSize - 1).data(), -1, destination.data(), 1, source.size(), kernelSize);
 #else
     // FIXME: The macro can be further optimized to avoid pipeline stalls. One possibility is to maintain 4 separate sums and change the macro to CONVOLVE_FOUR_SAMPLES.
-#define CONVOLVE_ONE_SAMPLE             \
-    sum += inputP[i - j] * kernelP[j];  \
+#define CONVOLVE_ONE_SAMPLE                                    \
+    sum += inputBuffer[m_inputBlockSize + i - j] * kernelP[j]; \
     j++;
 
     size_t i = 0;

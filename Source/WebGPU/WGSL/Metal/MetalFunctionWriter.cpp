@@ -45,6 +45,9 @@ namespace WGSL {
 
 namespace Metal {
 
+#define DECLARE_FORWARD_PROGRESS "volatile uint32_t __wgslEnsureForwardProgress = 0; if (!__wgslEnsureForwardProgress)"
+#define CHECK_FORWARD_PROGRESS "if (++__wgslEnsureForwardProgress == 4294967295u) break;"
+
 class FunctionDefinitionWriter : public AST::Visitor {
 public:
     FunctionDefinitionWriter(ShaderModule& shaderModule, StringBuilder& stringBuilder, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
@@ -523,6 +526,20 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
             m_stringBuilder.append(m_indent, "volatile T va = a;\n"_s,
                 m_indent, "volatile T vb = b;\n"_s,
                 m_indent, "return min(va, vb);\n"_s);
+        }
+        m_stringBuilder.append(m_indent, "}\n\n"_s);
+    }
+
+    if (m_shaderModule.usesFtoi()) {
+        m_stringBuilder.append(m_indent, "template <typename T, typename S>\n"_s,
+            m_indent, "static T __wgslFtoi(S value)\n"_s,
+            m_indent, "{\n"_s);
+        {
+            IndentationScope scope(m_indent);
+            m_stringBuilder.append(m_indent, "if constexpr (is_same_v<make_scalar_t<S>, half>)\n"_s);
+            m_stringBuilder.append(m_indent, "return T(select(clamp(value, max(S(numeric_limits<T>::min()), numeric_limits<S>::lowest()), numeric_limits<S>::max()), S(0), isnan(value)));\n"_s);
+            m_stringBuilder.append(m_indent, "else\n"_s);
+            m_stringBuilder.append(m_indent, "return T(select(clamp(value, S(numeric_limits<T>::min()), S(numeric_limits<T>::max() - ((128 << (!is_signed_v<T>)) - 1))), S(0), isnan(value)));\n"_s);
         }
         m_stringBuilder.append(m_indent, "}\n\n"_s);
     }
@@ -2031,7 +2048,12 @@ void FunctionDefinitionWriter::visit(const Type* type, AST::CallExpression& call
         };
         static constexpr SortedArrayMap mappedNames { directMappings };
         if (call.isConstructor()) {
-            visit(type);
+            if (call.isFloatToIntConversion()) {
+                m_stringBuilder.append("__wgslFtoi<"_s);
+                visit(type);
+                m_stringBuilder.append(">"_s);
+            } else
+                visit(type);
         } else if (auto mappedName = mappedNames.get(targetName))
             m_stringBuilder.append(mappedName);
         else
@@ -2421,7 +2443,7 @@ void FunctionDefinitionWriter::visit(AST::ReturnStatement& statement)
 
 void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
 {
-    m_stringBuilder.append("for ("_s);
+    m_stringBuilder.append("{ " DECLARE_FORWARD_PROGRESS " for ("_s);
     if (auto* initializer = statement.maybeInitializer())
         visit(*initializer);
     m_stringBuilder.append(';');
@@ -2434,14 +2456,15 @@ void FunctionDefinitionWriter::visit(AST::ForStatement& statement)
         m_stringBuilder.append(' ');
         visit(*update);
     }
-    m_stringBuilder.append(") { volatile bool __wgslEnsureForwardProgress = true; "_s);
+    m_stringBuilder.append(") { " CHECK_FORWARD_PROGRESS " "_s);
     visit(statement.body());
+    m_stringBuilder.append('}');
     m_stringBuilder.append('}');
 }
 
 void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
 {
-    m_stringBuilder.append("while (true) { volatile bool __wgslEnsureForwardProgress = true; \n"_s);
+    m_stringBuilder.append("{ " DECLARE_FORWARD_PROGRESS " while (true) { " CHECK_FORWARD_PROGRESS " \n"_s);
     {
         if (statement.containsSwitch())
             m_stringBuilder.append("bool __continuing = false;\n"_s, m_indent);
@@ -2456,6 +2479,7 @@ void FunctionDefinitionWriter::visit(AST::LoopStatement& statement)
             visit(*continuing);
         }
     }
+    m_stringBuilder.append(m_indent, '}');
     m_stringBuilder.append(m_indent, '}');
 }
 
@@ -2483,10 +2507,11 @@ void FunctionDefinitionWriter::visit(AST::Continuing& continuing)
 
 void FunctionDefinitionWriter::visit(AST::WhileStatement& statement)
 {
-    m_stringBuilder.append("while ("_s);
+    m_stringBuilder.append("{ " DECLARE_FORWARD_PROGRESS " while ("_s);
     visit(statement.test());
-    m_stringBuilder.append(") { volatile bool __wgslEnsureForwardProgress = true; "_s);
+    m_stringBuilder.append(") { " CHECK_FORWARD_PROGRESS " "_s);
     visit(statement.body());
+    m_stringBuilder.append('}');
     m_stringBuilder.append('}');
 }
 
@@ -2704,6 +2729,9 @@ void emitMetalFunctions(StringBuilder& stringBuilder, ShaderModule& shaderModule
     FunctionDefinitionWriter functionDefinitionWriter(shaderModule, stringBuilder, prepareResult, constantValues);
     functionDefinitionWriter.write();
 }
+
+#undef DECLARE_FORWARD_PROGRESS
+#undef CHECK_FORWARD_PROGRESS
 
 } // namespace Metal
 } // namespace WGSL

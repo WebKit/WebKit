@@ -9,7 +9,7 @@ function toInt32(number)
     return (number * 0.5) >> 0;
 }
 noInline(toInt32);
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     toInt32(i * 1.0);
 
 function test(number)

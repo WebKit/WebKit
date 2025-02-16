@@ -252,6 +252,54 @@ TEST_P(EGLBufferAgeTest, QueryBufferAge)
     context = EGL_NO_CONTEXT;
 }
 
+// Query for buffer age after several loops of swapping buffers
+TEST_P(EGLBufferAgeTest, QueryBufferAgeAfterLoop)
+{
+    ANGLE_SKIP_TEST_IF(!mExtensionSupported);
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    EXPECT_TRUE(chooseConfig(&config));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLBufferAgeTest", kWidth, kHeight);
+    EXPECT_TRUE(createWindowSurface(config, osWindow->getNativeWindow(), &surface));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    glClearColor(1.0, 0.0, 0.0, 1.0);
+
+    const uint32_t loopcount = 5;
+    for (uint32_t i = 0; i < loopcount; i++)
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR() << "glClear failed";
+        eglSwapBuffers(mDisplay, surface);
+        ASSERT_EGL_SUCCESS() << "eglSwapBuffers failed.";
+    }
+
+    // This query age should not reset age
+    EXPECT_GT(queryAge(surface), 0);
+
+    EXPECT_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
 // Verify contents of buffer are as expected
 TEST_P(EGLBufferAgeTest, VerifyContents)
 {

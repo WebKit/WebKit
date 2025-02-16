@@ -77,7 +77,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     int headerHeight,
     int footerHeight,
     ScrollBehaviorForFixedElements&& scrollBehaviorForFixedElements,
-    float topContentInset,
+    FloatBoxExtent&& obscuredContentInsets,
     bool visualViewportIsSmallerThanLayoutViewport,
     bool asyncFrameOrOverflowScrollingEnabled,
     bool wheelEventGesturesBecomeNonBlocking,
@@ -129,7 +129,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(
     , m_maxLayoutViewportOrigin(maxLayoutViewportOrigin)
     , m_overrideVisualViewportSize(overrideVisualViewportSize)
     , m_frameScaleFactor(frameScaleFactor)
-    , m_topContentInset(topContentInset)
+    , m_obscuredContentInsets(obscuredContentInsets)
     , m_headerHeight(headerHeight)
     , m_footerHeight(footerHeight)
     , m_behaviorForFixed(WTFMove(scrollBehaviorForFixedElements))
@@ -157,7 +157,7 @@ ScrollingStateFrameScrollingNode::ScrollingStateFrameScrollingNode(const Scrolli
     , m_maxLayoutViewportOrigin(stateNode.maxLayoutViewportOrigin())
     , m_overrideVisualViewportSize(stateNode.overrideVisualViewportSize())
     , m_frameScaleFactor(stateNode.frameScaleFactor())
-    , m_topContentInset(stateNode.topContentInset())
+    , m_obscuredContentInsets(stateNode.obscuredContentInsets())
     , m_headerHeight(stateNode.headerHeight())
     , m_footerHeight(stateNode.footerHeight())
     , m_behaviorForFixed(stateNode.scrollBehaviorForFixedElements())
@@ -207,7 +207,7 @@ OptionSet<ScrollingStateNode::Property> ScrollingStateFrameScrollingNode::applic
         Property::HeaderLayer,
         Property::FooterLayer,
         Property::BehaviorForFixedElements,
-        Property::TopContentInset,
+        Property::ObscuredContentInsets,
         Property::VisualViewportIsSmallerThanLayoutViewport,
         Property::AsyncFrameOrOverflowScrollingEnabled,
         Property::WheelEventGesturesBecomeNonBlocking,
@@ -306,13 +306,13 @@ void ScrollingStateFrameScrollingNode::setFooterHeight(int footerHeight)
     setPropertyChanged(Property::FooterHeight);
 }
 
-void ScrollingStateFrameScrollingNode::setTopContentInset(float topContentInset)
+void ScrollingStateFrameScrollingNode::setObscuredContentInsets(const FloatBoxExtent& obscuredContentInsets)
 {
-    if (m_topContentInset == topContentInset)
+    if (m_obscuredContentInsets == obscuredContentInsets)
         return;
 
-    m_topContentInset = topContentInset;
-    setPropertyChanged(Property::TopContentInset);
+    m_obscuredContentInsets = obscuredContentInsets;
+    setPropertyChanged(Property::ObscuredContentInsets);
 }
 
 void ScrollingStateFrameScrollingNode::setRootContentsLayer(const LayerRepresentation& layerRepresentation)
@@ -440,8 +440,14 @@ void ScrollingStateFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<
 
     if (m_frameScaleFactor != 1)
         ts.dumpProperty("frame scale factor", m_frameScaleFactor);
-    if (m_topContentInset)
-        ts.dumpProperty("top content inset", m_topContentInset);
+    if (m_obscuredContentInsets.top())
+        ts.dumpProperty("top content inset", m_obscuredContentInsets.top());
+    if (m_obscuredContentInsets.bottom())
+        ts.dumpProperty("bottom content inset", m_obscuredContentInsets.bottom());
+    if (m_obscuredContentInsets.left())
+        ts.dumpProperty("left content inset", m_obscuredContentInsets.left());
+    if (m_obscuredContentInsets.right())
+        ts.dumpProperty("right content inset", m_obscuredContentInsets.right());
     if (m_headerHeight)
         ts.dumpProperty("header height", m_headerHeight);
     if (m_footerHeight)

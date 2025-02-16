@@ -35,7 +35,7 @@ class ScopeChainIterator;
 class SymbolTable;
 class WatchpointSet;
 
-using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+using TDZEnvironment = UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
 class JSScope : public JSNonFinalObject {
 public:

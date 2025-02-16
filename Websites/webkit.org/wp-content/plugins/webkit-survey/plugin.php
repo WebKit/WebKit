@@ -26,12 +26,12 @@ class WebKit_Survey {
         add_shortcode('survey', ['WebKit_Survey', 'survey_shortcode']);
     }
     
-    public function process_survey($post_id, $post_after, $post_before) {
+    public static function process_survey($post_id, $post_after, $post_before) {
         self::$post_update = true;
         do_shortcode($post_after->post_content);
     }
     
-    public function survey_shortcode($atts, $content) {
+    public static function survey_shortcode($atts, $content) {
         $json_string = str_replace(array('“','”'), '"', html_entity_decode(strip_tags($content)));
         $Survey = json_decode($json_string);
 
@@ -57,7 +57,7 @@ class WebKit_Survey {
         return ob_get_clean();
     }
 
-    public function add_survey_boxes() {
+    public static function add_survey_boxes() {
         $post_id = get_the_ID();
         $settings = get_post_meta($post_id, 'webkit_survey_settings');
         if (!$settings)
@@ -74,7 +74,7 @@ class WebKit_Survey {
         }
     }
     
-    public function admin_box() {
+    public static function admin_box() {
         $post_id = get_the_ID();
         $settings = get_post_meta($post_id, 'webkit_survey_settings');
         ?>
@@ -89,7 +89,7 @@ class WebKit_Survey {
         echo '<strong>' . number_format($total) . '</strong> Total Votes';
     }
 
-    public function process_vote() {
+    public static function process_vote() {
         if (self::responded()) {
             self::$responded = true;
             return;

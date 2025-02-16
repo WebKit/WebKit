@@ -91,7 +91,6 @@ public:
     void gatherRTCLogs(JSC::JSGlobalObject&, RefPtr<RTCLogsCallback>&&);
 #endif
 
-    String databaseId(Database&);
     String storageId(Storage&);
 
     JSC::JSValue wrapper(JSC::JSGlobalObject*, JSDOMGlobalObject*);

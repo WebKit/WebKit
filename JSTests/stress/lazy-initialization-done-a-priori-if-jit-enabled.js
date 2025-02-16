@@ -6,7 +6,7 @@ function getRandomProperty(obj) {
 }
 var number = 981428;
 getRandomProperty(number);
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     try {
         undef, void false;
     } catch (e) {

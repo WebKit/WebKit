@@ -5,5 +5,5 @@ function test() {
 }
 noInline(test);
 
-for (i = 0; i < 100000; i++)
+for (i = 0; i < testLoopCount; i++)
     test();

@@ -95,7 +95,7 @@ function test(actual, expected) {
 }());
 
 (function () {
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         Symbol.for(i);
     gc();
 }());

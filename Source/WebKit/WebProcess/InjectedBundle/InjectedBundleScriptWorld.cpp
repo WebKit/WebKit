@@ -64,7 +64,7 @@ Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::create(const String& n
 Ref<InjectedBundleScriptWorld> InjectedBundleScriptWorld::getOrCreate(DOMWrapperWorld& world)
 {
     if (&world == &mainThreadNormalWorld())
-        return normalWorld();
+        return normalWorldSingleton();
 
     if (auto existingWorld = allWorlds().get(world))
         return *existingWorld;
@@ -81,7 +81,7 @@ InjectedBundleScriptWorld* InjectedBundleScriptWorld::find(const String& name)
     return nullptr;
 }
 
-InjectedBundleScriptWorld& InjectedBundleScriptWorld::normalWorld()
+InjectedBundleScriptWorld& InjectedBundleScriptWorld::normalWorldSingleton()
 {
     static InjectedBundleScriptWorld& world = adoptRef(*new InjectedBundleScriptWorld(mainThreadNormalWorld(), String())).leakRef();
     return world;

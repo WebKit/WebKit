@@ -124,7 +124,7 @@ testCase(tryCatch(H), false, 'Error: ReferenceError was raised but should not be
 testCase(count, 4, 'Excpected two call of parent constructor #7');
 
 noInline(B);
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     count = 0;
     let result = false;
     try {

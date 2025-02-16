@@ -61,7 +61,7 @@ public:
 
     constexpr MediaPlatformType platformType() const final { return MediaPlatformType::GStreamer; }
 
-    AddStatus addSourceBuffer(const ContentType&, bool, RefPtr<SourceBufferPrivate>&) override;
+    AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) override;
 
     void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
@@ -105,7 +105,7 @@ private:
     // Stores known track IDs, so we can work around ID collisions between multiple source buffers.
     // The registry is placed here to enforce ID uniqueness specifically by player, not by process,
     // since its not an issue if multiple players use the same ID, and we want to preserve IDs as much as possible.
-    HashSet<TrackID, WTF::IntHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>> m_trackIdRegistry;
+    UncheckedKeyHashSet<TrackID, WTF::IntHash<TrackID>, WTF::UnsignedWithZeroKeyHashTraits<TrackID>> m_trackIdRegistry;
 };
 
 } // namespace WebCore

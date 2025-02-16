@@ -15,7 +15,7 @@ noInline(baz);
 
 var array = [0, 0, 0, 42];
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(bar, array);
     if (result != 42)
         throw "Error: bad result: " + result;

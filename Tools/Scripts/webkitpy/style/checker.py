@@ -277,6 +277,8 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GStreamerSinksWorkarounds.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GLVideoSinkGStreamer.h'),
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GstAllocatorFastMalloc.cpp'),
+      os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'GstAllocatorFastMalloc.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.cpp'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerGStreamer.h'),
       os.path.join('Source', 'WebCore', 'platform', 'graphics', 'gstreamer', 'TextCombinerPadGStreamer.cpp'),
@@ -314,6 +316,10 @@ _PATH_RULES_SPECIFIER = [
       os.path.join('Source', 'WebCore', 'platform', 'skia', 'SkiaAllocatorFastMalloc.cpp')],
      ["-build/include_order",
       "-readability/naming/underscores"]),
+
+    ([  # This file has >= symbols in templates, which looks like a closing bracket to the style checker
+     os.path.join('Source', 'WebKit', 'Shared', 'Extensions', 'WebExtensionSQLiteHelpers.h')],
+     ["-readability/naming/underscores"]),
 
     # For third-party code, keep only the following checks--
     #

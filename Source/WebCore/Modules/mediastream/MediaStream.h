@@ -142,7 +142,7 @@ private:
     void setIsActive(bool);
     void statusDidChange();
 
-    MediaStreamTrackVector filteredTracks(const Function<bool(const MediaStreamTrack&)>&) const;
+    MediaStreamTrackVector filteredTracks(NOESCAPE const Function<bool(const MediaStreamTrack&)>&) const;
 
     Document* document() const;
 

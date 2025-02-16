@@ -350,6 +350,7 @@ static gboolean fillReportCallback(const GValue* value, Ref<ReportHolder>& repor
 }
 
 struct CallbackHolder {
+    RefPtr<GStreamerStatsCollector> collector;
     GStreamerStatsCollector::CollectorCallback callback;
     GStreamerStatsCollector::PreprocessCallback preprocessCallback;
     GRefPtr<GstPad> pad;
@@ -369,7 +370,24 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, const GRefP
         return;
     }
 
+    static const auto s_maximumReportAge = 300_ms;
+    auto now = MonotonicTime::now();
+    if (!pad) {
+        if (m_cachedGlobalReport && (now - m_cachedGlobalReport->generationTime < s_maximumReportAge)) {
+            GST_TRACE_OBJECT(m_webrtcBin.get(), "Returning cached global stats report");
+            callback(m_cachedGlobalReport->report.get());
+            return;
+        }
+    } else if (auto report = m_cachedReportsPerPad.getOptional(pad)) {
+        if (now - report->generationTime < s_maximumReportAge) {
+            GST_TRACE_OBJECT(m_webrtcBin.get(), "Returning cached stats report for pad %" GST_PTR_FORMAT, pad.get());
+            callback(report->report.get());
+            return;
+        }
+    }
+
     auto* holder = createCallbackHolder();
+    holder->collector = this;
     holder->callback = WTFMove(callback);
     holder->preprocessCallback = WTFMove(preprocessCallback);
     holder->pad = pad;
@@ -395,18 +413,32 @@ void GStreamerStatsCollector::getStats(CollectorCallback&& callback, const GRefP
             return;
         }
 
-        callOnMainThreadAndWait([holder, stats] {
+        callOnMainThreadAndWait([holder, stats] mutable {
             auto preprocessedStats = holder->preprocessCallback(holder->pad, stats);
             if (!preprocessedStats)
                 return;
-            holder->callback(RTCStatsReport::create([stats = WTFMove(preprocessedStats)](auto& mapAdapter) mutable {
+            auto report = RTCStatsReport::create([stats = WTFMove(preprocessedStats)](auto& mapAdapter) mutable {
                 auto holder = adoptRef(*new ReportHolder(&mapAdapter));
                 gstStructureForeach(stats.get(), [&](auto, const auto value) -> bool {
                     return fillReportCallback(value, holder);
                 });
-            }));
+            });
+            CachedReport cachedReport;
+            cachedReport.generationTime = MonotonicTime::now();
+            cachedReport.report = report.ptr();
+            if (holder->pad)
+                holder->collector->m_cachedReportsPerPad.set(holder->pad, WTFMove(cachedReport));
+            else
+                holder->collector->m_cachedGlobalReport = WTFMove(cachedReport);
+            holder->callback(WTFMove(report));
         });
     }, holder, reinterpret_cast<GDestroyNotify>(destroyCallbackHolder)));
+}
+
+void GStreamerStatsCollector::invalidateCache()
+{
+    m_cachedGlobalReport = std::nullopt;
+    m_cachedReportsPerPad.clear();
 }
 
 #undef GST_CAT_DEFAULT

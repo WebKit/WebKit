@@ -82,7 +82,6 @@
 
 @property (nonatomic, setter=_setAutomaticallyAdjustsContentInsets:) BOOL _automaticallyAdjustsContentInsets;
 
-@property (readonly) NSColor *_pageExtendedBackgroundColor;
 @property (copy, nonatomic) NSColor *underlayColor;
 
 @property (nonatomic, setter=_setBackgroundColor:) NSColor *_backgroundColor WK_API_AVAILABLE(macos(10.14));

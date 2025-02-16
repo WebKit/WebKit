@@ -49,6 +49,7 @@
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/WeakObjCPtr.h>
 #import <wtf/cf/TypeCastsCF.h>
 #import <wtf/text/MakeString.h>
 
@@ -65,10 +66,10 @@
 #endif
 
 @interface WebAVStreamDataParserListener : NSObject<AVStreamDataParserOutputHandling> {
-    WebCore::SourceBufferParserAVFObjC* _parent;
-    AVStreamDataParser* _parser;
+    ThreadSafeWeakPtr<WebCore::SourceBufferParserAVFObjC> _parent;
+    WeakObjCPtr<AVStreamDataParser> _parser;
 }
-@property (assign) WebCore::SourceBufferParserAVFObjC* parent;
+@property (assign) ThreadSafeWeakPtr<WebCore::SourceBufferParserAVFObjC> parent;
 - (id)initWithParser:(AVStreamDataParser*)parser parent:(WebCore::SourceBufferParserAVFObjC*)parent;
 @end
 
@@ -102,43 +103,43 @@
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset
 {
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
-    _parent->didParseStreamDataAsAsset(asset);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
+    _parent.get()->didParseStreamDataAsAsset(asset);
 }
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didParseStreamDataAsAsset:(AVAsset *)asset withDiscontinuity:(BOOL)discontinuity
 {
     UNUSED_PARAM(discontinuity);
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
-    _parent->didParseStreamDataAsAsset(asset);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
+    _parent.get()->didParseStreamDataAsAsset(asset);
 }
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didFailToParseStreamDataWithError:(NSError *)error
 {
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
-    _parent->didFailToParseStreamDataWithError(error);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
+    _parent.get()->didFailToParseStreamDataWithError(error);
 }
 
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideMediaData:(CMSampleBufferRef)sample forTrackID:(CMPersistentTrackID)trackID mediaType:(NSString *)nsMediaType flags:(AVStreamDataParserOutputMediaDataFlags)flags
 {
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
-    _parent->didProvideMediaDataForTrackID(trackID, sample, nsMediaType, flags);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
+    _parent.get()->didProvideMediaDataForTrackID(trackID, sample, nsMediaType, flags);
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)streamDataParserWillProvideContentKeyRequestInitializationData:(AVStreamDataParser *)streamDataParser forTrackID:(CMPersistentTrackID)trackID
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
-    _parent->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
+    _parent.get()->willProvideContentKeyRequestInitializationDataForTrackID(trackID);
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeyRequestInitializationData:(NSData *)initData forTrackID:(CMPersistentTrackID)trackID
 ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
-    _parent->didProvideContentKeyRequestInitializationDataForTrackID(initData, trackID);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
+    _parent.get()->didProvideContentKeyRequestInitializationDataForTrackID(initData, trackID);
 }
 
 @end
@@ -150,9 +151,9 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 @implementation WebAVStreamDataParserWithKeySpecifierListener
 - (void)streamDataParser:(AVStreamDataParser *)streamDataParser didProvideContentKeySpecifier:(AVContentKeySpecifier *)keySpecifier forTrackID:(CMPersistentTrackID)trackID
 {
-    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser);
+    ASSERT_UNUSED(streamDataParser, streamDataParser == _parser.get());
     if ([keySpecifier respondsToSelector:@selector(initializationData)])
-        _parent->didProvideContentKeyRequestSpecifierForTrackID(keySpecifier.initializationData, trackID);
+        _parent.get()->didProvideContentKeyRequestSpecifierForTrackID(keySpecifier.initializationData, trackID);
 }
 @end
 #endif

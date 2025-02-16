@@ -9,7 +9,7 @@ function testSurrogatePair(testString, expected) {
 }
 noInline(testSurrogatePair);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var testString = 'Cocoa';
     var expected = [
         67,

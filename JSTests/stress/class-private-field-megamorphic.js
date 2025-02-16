@@ -22,5 +22,5 @@ function test(i)
     return instance.get();
 }
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(i), i);

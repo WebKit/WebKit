@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcessMessages.h"
 #include "IPCEvent.h"
+#include "ImageBufferRemoteDisplayListBackend.h"
 #include "ImageBufferRemotePDFDocumentBackend.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
@@ -175,6 +176,8 @@ void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHa
         break;
 
     case RenderingMode::DisplayList:
+        ASSERT(renderingPurpose() == RenderingPurpose::Snapshot);
+        backend = ImageBufferRemoteDisplayListBackend::create(backendParameters);
         break;
     }
 
@@ -194,17 +197,26 @@ ImageBufferBackend* RemoteImageBufferProxy::ensureBackend() const
 {
     if (m_backend)
         return m_backend.get();
+
     RefPtr connection = this->connection();
-    if (connection) {
-        auto error = connection->waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier);
-        if (error != IPC::Error::NoError) {
-            RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
-                m_remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
-            didBecomeUnresponsive();
-            return nullptr;
-        }
+    if (!connection)
+        return nullptr;
+
+    auto error = connection->waitForAndDispatchImmediately<Messages::RemoteImageBufferProxy::DidCreateBackend>(m_renderingResourceIdentifier);
+    if (error == IPC::Error::NoError)
+        return m_backend.get();
+
+    RefPtr remoteRenderingBackendProxy = m_remoteRenderingBackendProxy.get();
+    if (UNLIKELY(!remoteRenderingBackendProxy)) {
+        RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend was deleted] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
+            IPC::errorAsString(error).characters());
+        return nullptr;
     }
-    return m_backend.get();
+
+    RELEASE_LOG(RemoteLayerBuffers, "[renderingBackend=%" PRIu64 "] RemoteImageBufferProxy::ensureBackendCreated - waitForAndDispatchImmediately returned error: %" PUBLIC_LOG_STRING,
+        remoteRenderingBackendProxy->renderingBackendIdentifier().toUInt64(), IPC::errorAsString(error).characters());
+    didBecomeUnresponsive();
+    return nullptr;
 }
 
 RefPtr<NativeImage> RemoteImageBufferProxy::copyNativeImage() const

@@ -364,7 +364,9 @@ private:
 
         U()
         {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             memset(static_cast<void*>(this), 0, sizeof(*this));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
     } u;
     Kind m_kind;

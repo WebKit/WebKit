@@ -36,7 +36,7 @@
     noInline(d);
 
     var array = [0, 1, 2, 3, 4, 5];
-    for (var i = 0; i < 1e6; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         flag = i > (1e6 - 100);
         var ret = a(...array);
         if (!flag)

@@ -99,4 +99,6 @@ private:
 
 } // namespace WebCore
 
-SPECIALIZE_TYPE_TRAITS_CACHED_RESOURCE(CachedFont, CachedResource::Type::FontResource)
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::CachedFont)
+    static bool isType(const WebCore::CachedResource& resource) { return resource.type() == WebCore::CachedResource::Type::FontResource || resource.type() == WebCore::CachedResource::Type::SVGFontResource; }
+SPECIALIZE_TYPE_TRAITS_END()

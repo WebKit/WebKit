@@ -219,7 +219,7 @@ static inline bool fullyClipsContents(Node& node)
     if (is<HTMLTextAreaElement>(node))
         return box->size().isEmpty();
 
-    return box->contentSize().isEmpty();
+    return box->contentBoxSize().isEmpty();
 }
 
 static inline bool ignoresContainerClip(Node& node)
@@ -1769,7 +1769,7 @@ static UStringSearch* createSearcher()
     // but it doesn't matter exactly what it is, since we don't perform any searches
     // without setting both the pattern and the text.
     UErrorCode status = U_ZERO_ERROR;
-    auto searchCollatorName = makeString(span(currentSearchLocaleID()), "@collation=search"_s);
+    auto searchCollatorName = makeString(unsafeSpan(currentSearchLocaleID()), "@collation=search"_s);
     UStringSearch* searcher = usearch_open(&newlineCharacter, 1, &newlineCharacter, 1, searchCollatorName.utf8().data(), 0, &status);
     ASSERT(U_SUCCESS(status) || status == U_USING_FALLBACK_WARNING || status == U_USING_DEFAULT_WARNING);
     return searcher;
@@ -2589,7 +2589,7 @@ String plainTextReplacingNoBreakSpace(const SimpleRange& range, TextIteratorBeha
     return makeStringByReplacingAll(plainText(range, defaultBehaviors, isDisplayString), noBreakSpace, ' ');
 }
 
-static void forEachMatch(const SimpleRange& range, const String& target, FindOptions options, const Function<bool(CharacterRange)>& match)
+static void forEachMatch(const SimpleRange& range, const String& target, FindOptions options, NOESCAPE const Function<bool(CharacterRange)>& match)
 {
     SearchBuffer buffer(target, options);
     if (buffer.needsMoreContext()) {

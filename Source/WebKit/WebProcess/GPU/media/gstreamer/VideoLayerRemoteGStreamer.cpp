@@ -27,16 +27,10 @@
 #include "VideoLayerRemote.h"
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
-
 #include <WebCore/NotImplemented.h>
-#include <WebCore/PlatformLayer.h>
 
-#if PLATFORM(GTK) || PLATFORM(WPE)
-#include <WebCore/TextureMapperPlatformLayerProxy.h>
-#elif USE(COORDINATED_GRAPHICS)
-#include <WebCore/TextureMapperPlatformLayerProxyProvider.h>
-#elif USE(TEXTURE_MAPPER)
-#include <WebCore/TextureMapperPlatformLayer.h>
+#if USE(COORDINATED_GRAPHICS)
+#include <WebCore/CoordinatedPlatformLayerBufferProxy.h>
 #endif
 
 namespace WebKit {

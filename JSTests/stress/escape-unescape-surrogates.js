@@ -13,7 +13,8 @@ function toLowSurrogate(code)
     return (code & ((1 << 10) - 1)) + 0xDC00;
 }
 
-for (var i = 0x10000; i < 0x10ffff; ++i) {
+loopFinishCount = testLoopCount + 0xffff;
+for (var i = testLoopCount; i < loopFinishCount; ++i) {
     var high = toHighSurrogate(i);
     var low = toLowSurrogate(i);
     var str = String.fromCharCode(high, low);

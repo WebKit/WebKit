@@ -19,7 +19,7 @@ namespace rx
 {
 namespace vk
 {
-class Context;
+class ErrorContext;
 class VulkanSecondaryCommandBuffer;
 
 // VkCommandPool must be externally synchronized when its Command Buffers are: allocated, freed,
@@ -31,16 +31,17 @@ class SecondaryCommandPool final : angle::NonCopyable
     SecondaryCommandPool();
     ~SecondaryCommandPool();
 
-    angle::Result init(Context *context, uint32_t queueFamilyIndex, ProtectionType protectionType);
+    angle::Result init(ErrorContext *context,
+                       uint32_t queueFamilyIndex,
+                       ProtectionType protectionType);
     void destroy(VkDevice device);
 
     bool valid() const { return mCommandPool.valid(); }
 
     // Call only from the Context thread that owns the SecondaryCommandPool instance.
-    angle::Result allocate(Context *context, VulkanSecondaryCommandBuffer *buffer);
+    angle::Result allocate(ErrorContext *context, VulkanSecondaryCommandBuffer *buffer);
 
     // Single threaded - use external synchronization.
-    // Example threads: any Context thread or "asyncCommandQueue" thread.
     void collect(VulkanSecondaryCommandBuffer *buffer);
 
   private:

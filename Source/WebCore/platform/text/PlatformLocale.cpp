@@ -41,8 +41,6 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Locale);
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 class DateTimeStringBuilder : private DateTimeFormat::TokenHandler {
     WTF_MAKE_NONCOPYABLE(DateTimeStringBuilder);
 
@@ -181,8 +179,6 @@ String DateTimeStringBuilder::toString()
 {
     return m_builder.toString();
 }
-
-#endif
 
 Locale::~Locale() = default;
 
@@ -341,7 +337,6 @@ Locale::WritingDirection Locale::defaultWritingDirection() const
     return WritingDirection::Default;
 }
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
 {
     if (date.type() == DateComponentsType::Invalid)
@@ -376,6 +371,5 @@ String Locale::localizedDecimalSeparator()
     initializeLocaleData();
     return m_decimalSymbols[DecimalSeparatorIndex];
 }
-#endif
 
 }

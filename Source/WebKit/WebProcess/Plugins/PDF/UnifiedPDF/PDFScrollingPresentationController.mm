@@ -335,22 +335,9 @@ std::optional<PDFDocumentLayout::PageIndex> PDFScrollingPresentationController::
 
 #pragma mark -
 
-auto PDFScrollingPresentationController::pdfPositionForCurrentView(bool preservePosition) const -> std::optional<VisiblePDFPosition>
+std::optional<PDFDocumentLayout::PageIndex> PDFScrollingPresentationController::pageIndexForCurrentView(AnchorPoint anchorPoint) const
 {
-    if (!preservePosition)
-        return { };
-
-    auto& documentLayout = m_plugin->documentLayout();
-
-    if (!documentLayout.hasLaidOutPDFDocument())
-        return { };
-
-    auto topLeftInDocumentSpace = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatPoint { });
-    auto [pageIndex, pointInPDFPageSpace] = documentLayout.pageIndexAndPagePointForDocumentYOffset(topLeftInDocumentSpace.y());
-
-    LOG_WITH_STREAM(PDF, stream << "PDFScrollingPresentationController::pdfPositionForCurrentView - point " << pointInPDFPageSpace << " in page " << pageIndex);
-
-    return VisiblePDFPosition { pageIndex, pointInPDFPageSpace };
+    return m_plugin->documentLayout().pageIndexAndPagePointForDocumentYOffset(anchorPointInDocumentSpace(anchorPoint).y()).first;
 }
 
 void PDFScrollingPresentationController::restorePDFPosition(const VisiblePDFPosition& info)
@@ -393,7 +380,6 @@ void PDFScrollingPresentationController::tiledBackingUsageChanged(const Graphics
 
 void PDFScrollingPresentationController::paintContents(const GraphicsLayer* layer, GraphicsContext& context, const FloatRect& clipRect, OptionSet<GraphicsLayerPaintBehavior>)
 {
-
     if (layer == m_contentsLayer.get()) {
         RefPtr asyncRenderer = asyncRendererIfExists();
         m_plugin->paintPDFContent(layer, context, clipRect, { }, asyncRenderer.get());

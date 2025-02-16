@@ -60,6 +60,7 @@ struct IPAddress {
     {
     }
 
+    IPAddress isolatedCopy() const { return *this; }
     rtc::IPAddress rtcAddress() const;
 
     bool isUnspecified() const { return std::holds_alternative<UnspecifiedFamily>(value); }
@@ -74,6 +75,7 @@ struct InterfaceAddress {
     }
 
     rtc::InterfaceAddress rtcAddress() const;
+    InterfaceAddress isolatedCopy() const { return *this; }
 
     IPAddress address;
     int ipv6Flags;
@@ -104,6 +106,7 @@ struct RTCNetwork {
 
     RTCNetwork() = default;
     explicit RTCNetwork(Vector<char>&& name, Vector<char>&& description, IPAddress prefix, int prefixLength, int type, uint16_t id, int preference, bool active, bool ignored, int scopeID, Vector<InterfaceAddress>&& ips);
+    RTCNetwork isolatedCopy() const;
 
     rtc::Network value() const;
 

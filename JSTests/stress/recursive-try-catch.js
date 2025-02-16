@@ -1,4 +1,4 @@
-//@ defaultNoSamplingProfilerRun
+//@ defaultNoSamplingProfilerRun("--useConcurrentGC=0")
 // This test should run to completion without excessive memory usage
 
 let maxHeapAllowed = 10 * 1024 * 1024; // This test should run using much less than 10MB.
@@ -76,6 +76,7 @@ function test()
         if (error != "RangeError: Maximum call stack size exceeded.")
             throw "Expected: \"RangeError: Maximum call stack size exceeded.\", but got: " + error;
 
+        // The --useConcurrentGC=0 option is required in order to be able to get a predictable heap size here.
         let heapUsed = gcHeapSize();
         if (heapUsed > maxHeapAllowed)
             throw "Used too much heap.  Limit was " + maxHeapAllowed + " bytes, but we used " + heapUsed + " bytes.";

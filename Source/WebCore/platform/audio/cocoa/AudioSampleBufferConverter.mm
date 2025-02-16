@@ -30,6 +30,7 @@
 #include "CAAudioStreamDescription.h"
 #include "CMUtilities.h"
 #include "Logging.h"
+#include "SpanCoreAudio.h"
 #include "WebAudioBufferList.h"
 #include <AudioToolbox/AudioCodec.h>
 #include <AudioToolbox/AudioConverter.h>
@@ -40,14 +41,13 @@
 #include <pal/avfoundation/MediaTimeAVFoundation.h>
 #include <wtf/NativePromise.h>
 #include <wtf/Scope.h>
+#include <wtf/ZippedRange.h>
 
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 
 // Error value we pass through the converter to signal that nothing has gone wrong during encoding and we're done processing the packet.
 constexpr uint32_t kNoMoreDataErr = 'MOAR';
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -434,8 +434,9 @@ OSStatus AudioSampleBufferConverter::provideSourceDataNumOutputPackets(UInt32* n
     if (!m_options.generateTimestamp)
         setTimeFromSample(sampleBuffer.get());
 
-    for (size_t index = 0; index < list->mNumberBuffers; index++)
-        audioBufferList->mBuffers[index] = list->mBuffers[index];
+    auto audioBufferListSpan = span(*audioBufferList);
+    for (auto [destination, source] : zippedRange(audioBufferListSpan, span(*list)))
+        destination = source;
 
     m_packetDescriptions = getPacketDescriptions(sampleBuffer.get());
     if (packetDescriptionOut) {
@@ -443,7 +444,7 @@ OSStatus AudioSampleBufferConverter::provideSourceDataNumOutputPackets(UInt32* n
         *packetDescriptionOut = m_packetDescriptions.data();
     } else if (m_sourceFormat.mFormatID == kAudioFormatLinearPCM) {
         ASSERT(audioBufferList->mNumberBuffers && m_sourceFormat.mBytesPerPacket);
-        *numOutputPacketsPtr = (audioBufferList->mBuffers[0].mDataByteSize / m_sourceFormat.mBytesPerPacket);
+        *numOutputPacketsPtr = (audioBufferListSpan[0].mDataByteSize / m_sourceFormat.mBytesPerPacket);
     } else
         *numOutputPacketsPtr = 1;
 
@@ -506,9 +507,11 @@ void AudioSampleBufferConverter::processSampleBuffers()
 
         do {
             if (isPCM()) {
+                fillBufferList.reset();
                 for (auto& buffer : fillBufferList.buffers()) {
-                    buffer.mDataByteSize = sizeRemaining;
-                    buffer.mData = static_cast<uint8_t*>(buffer.mData) + bytesWritten;
+                    auto span = mutableSpan<uint8_t>(buffer).subspan(bytesWritten, sizeRemaining);
+                    buffer.mDataByteSize = span.size();
+                    buffer.mData = span.data();
                 }
             }
             if (auto error = AudioConverterFillComplexBuffer(m_converter, audioConverterComplexInputDataProc, this, &numOutputPackets, fillBufferList.list(), isPCM() ? nullptr : m_destinationPacketDescriptions.data())) {
@@ -610,7 +613,5 @@ bool AudioSampleBufferConverter::isEmpty() const
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)

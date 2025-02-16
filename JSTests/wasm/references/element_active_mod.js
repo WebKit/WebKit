@@ -1,5 +1,3 @@
-//@ runWebAssemblySuite("--useWasmGC=false")
-
 import * as assert from '../assert.js';
 
 function module(bytes, valid = true) {

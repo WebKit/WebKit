@@ -42,6 +42,9 @@ struct CookieChangeSubscription {
         , url(WTFMove(url))
     { }
 
+    CookieChangeSubscription isolatedCopy() const & { return { name.isolatedCopy(), url.isolatedCopy() }; }
+    CookieChangeSubscription isolatedCopy() && { return { WTFMove(name).isolatedCopy(), WTFMove(url).isolatedCopy() }; }
+
     explicit CookieChangeSubscription(WTF::HashTableDeletedValueType deletedValue)
         : name(deletedValue)
     { }

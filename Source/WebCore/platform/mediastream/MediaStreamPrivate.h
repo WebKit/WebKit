@@ -91,8 +91,8 @@ public:
 
     MediaStreamTrackPrivateVector tracks() const;
     bool hasTracks() const { return !m_trackSet.isEmpty(); }
-    void forEachTrack(const Function<void(const MediaStreamTrackPrivate&)>&) const;
-    void forEachTrack(const Function<void(MediaStreamTrackPrivate&)>&);
+    void forEachTrack(NOESCAPE const Function<void(const MediaStreamTrackPrivate&)>&) const;
+    void forEachTrack(NOESCAPE const Function<void(MediaStreamTrackPrivate&)>&);
     MediaStreamTrackPrivate* activeVideoTrack() { return m_activeVideoTrack; }
 
     bool active() const { return m_isActive; }
@@ -132,7 +132,7 @@ private:
     void updateActiveVideoTrack();
 
     bool computeActiveState();
-    void forEachObserver(const Function<void(MediaStreamPrivateObserver&)>&);
+    void forEachObserver(NOESCAPE const Function<void(MediaStreamPrivateObserver&)>&);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MediaStreamPrivate"_s; }

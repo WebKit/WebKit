@@ -327,9 +327,11 @@ private:
                     if (attemptTwoOperandsSimplify(value, index, insertionSet))
                         value->setType(Float);
                     break;
+                case PurifyNaN:
                 case Abs:
                 case Ceil:
                 case Floor:
+                case FTrunc:
                 case Neg:
                 case Sqrt: {
                     Value* child = value->child(0);

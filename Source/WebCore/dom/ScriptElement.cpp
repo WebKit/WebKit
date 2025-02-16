@@ -186,9 +186,10 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
         m_forceAsync = true;
 
     String sourceText = scriptContent();
-    Ref context = *element().scriptExecutionContext();
+    Ref element = this->element();
+    Ref context = *element->scriptExecutionContext();
     if (context->settingsValues().trustedTypesEnabled && sourceText != m_trustedScriptText) {
-        auto trustedText = trustedTypeCompliantString(TrustedType::TrustedScript, context, sourceText, is<HTMLScriptElement>(element()) ? "HTMLScriptElement text"_s : "SVGScriptElement text"_s);
+        auto trustedText = trustedTypeCompliantString(TrustedType::TrustedScript, context, sourceText, is<HTMLScriptElement>(element) ? "HTMLScriptElement text"_s : "SVGScriptElement text"_s);
         if (trustedText.hasException())
             return false;
         sourceText = trustedText.releaseReturnValue();
@@ -197,7 +198,7 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     if (!hasSourceAttribute() && sourceText.isEmpty())
         return false;
 
-    if (!element().isConnected())
+    if (!element->isConnected())
         return false;
 
     ScriptType scriptType = ScriptType::Classic;
@@ -214,7 +215,6 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
 
     m_alreadyStarted = true;
 
-    auto element = protectedElement();
     // FIXME: If script is parser inserted, verify it's still in the original document.
     Ref document = element->document();
 
@@ -260,10 +260,9 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     }
     case ScriptType::ImportMap: {
         // If the element’s node document's acquiring import maps is false, then queue a task to fire an event named error at the element, and return.
-        RefPtr frame { element->document().frame() };
         if (hasSourceAttribute()) {
-            element->document().eventLoop().queueTask(TaskSource::DOMManipulation, [this, element] {
-                dispatchErrorEvent();
+            element->protectedDocument()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }] {
+                protectedThis->dispatchErrorEvent();
             });
             return false;
         }
@@ -288,11 +287,11 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     } else if ((isClassicExternalScript || scriptType == ScriptType::Module) && !hasAsyncAttribute() && !m_forceAsync) {
         m_willExecuteInOrder = true;
         ASSERT(m_loadableScript);
-        document->protectedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::IN_ORDER_EXECUTION);
+        document->protectedScriptRunner()->queueScriptForExecution(*this, *protectedLoadableScript(), ScriptRunner::IN_ORDER_EXECUTION);
     } else if (hasSourceAttribute() || scriptType == ScriptType::Module) {
         ASSERT(m_loadableScript);
         ASSERT(hasAsyncAttribute() || m_forceAsync);
-        document->protectedScriptRunner()->queueScriptForExecution(*this, *m_loadableScript, ScriptRunner::ASYNC_EXECUTION);
+        document->protectedScriptRunner()->queueScriptForExecution(*this, *protectedLoadableScript(), ScriptRunner::ASYNC_EXECUTION);
     } else if (!hasSourceAttribute() && m_parserInserted == ParserInserted::Yes && !document->haveStylesheetsLoaded()) {
         ASSERT(scriptType == ScriptType::Classic || scriptType == ScriptType::ImportMap);
         m_willBeParserExecuted = true;
@@ -332,7 +331,7 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     ASSERT(!m_loadableScript);
     Ref document = element->document();
     if (!StringView(sourceURL).containsOnly<isASCIIWhitespace<UChar>>()) {
-        auto script = LoadableClassicScript::create(element->nonce(), element->attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriorityHint(),
+        auto script = LoadableClassicScript::create(element->nonce(), element->attributeWithoutSynchronization(HTMLNames::integrityAttr), referrerPolicy(), fetchPriority(),
             element->attributeWithoutSynchronization(HTMLNames::crossoriginAttr), scriptCharset(), element->localName(), element->isInUserAgentShadowTree(), hasAsyncAttribute());
 
         auto scriptURL = document->completeURL(sourceURL);
@@ -350,8 +349,8 @@ bool ScriptElement::requestClassicScript(const String& sourceURL)
     if (m_loadableScript)
         return true;
 
-    document->eventLoop().queueTask(TaskSource::DOMManipulation, [this, element = protectedElement()] {
-        dispatchErrorEvent();
+    document->eventLoop().queueTask(TaskSource::DOMManipulation, [protectedThis = Ref { *this }] {
+        protectedThis->dispatchErrorEvent();
     });
     return false;
 }
@@ -386,7 +385,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         AtomString integrity = element->attributeWithoutSynchronization(HTMLNames::integrityAttr);
         if (integrity.isNull())
             integrity = AtomString { document->globalObject()->importMap().integrityForURL(moduleScriptRootURL) };
-        Ref script = LoadableModuleScript::create(nonce, integrity, referrerPolicy(), fetchPriorityHint(), crossOriginMode,
+        Ref script = LoadableModuleScript::create(nonce, integrity, referrerPolicy(), fetchPriority(), crossOriginMode,
             scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
         m_loadableScript = script.copyRef();
         if (RefPtr frame = element->document().frame())
@@ -394,7 +393,7 @@ bool ScriptElement::requestModuleScript(const TextPosition& scriptStartPosition)
         return true;
     }
 
-    Ref script = LoadableModuleScript::create(nonce, emptyAtom(), referrerPolicy(), fetchPriorityHint(), crossOriginMode, scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
+    Ref script = LoadableModuleScript::create(nonce, emptyAtom(), referrerPolicy(), fetchPriority(), crossOriginMode, scriptCharset(), element->localName(), element->isInUserAgentShadowTree());
 
     TextPosition position = document->isInDocumentWrite() ? TextPosition() : scriptStartPosition;
     ScriptSourceCode sourceCode(scriptContent(), m_taintedOrigin, URL(document->url()), position, JSC::SourceProviderSourceType::Module, script.copyRef());
@@ -530,7 +529,7 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
             // When the script is "null" due to a fetch error, an error event
             // should be dispatched for the script element.
             if (std::optional<LoadableScript::ConsoleMessage> message = error->consoleMessage)
-                element().document().addConsoleMessage(message->source, message->level, message->message);
+                element().protectedDocument()->addConsoleMessage(message->source, message->level, message->message);
             dispatchErrorEvent();
             break;
         }
@@ -563,8 +562,8 @@ void ScriptElement::executeScriptAndDispatchEvent(LoadableScript& loadableScript
 void ScriptElement::executePendingScript(PendingScript& pendingScript)
 {
     unblockRendering();
-    auto* loadableScript = pendingScript.loadableScript();
-    RefPtr<Document> document { &element().document() };
+    RefPtr loadableScript = pendingScript.loadableScript();
+    Ref document = element().document();
     if (document->identifier() != m_preparationTimeDocumentIdentifier) {
         document->addConsoleMessage(MessageSource::Security, MessageLevel::Error, "Not executing script because it moved between documents during fetching"_s);
     } else {
@@ -574,9 +573,9 @@ void ScriptElement::executePendingScript(PendingScript& pendingScript)
             ASSERT(!pendingScript.hasError());
             ASSERT_WITH_MESSAGE(scriptType() == ScriptType::Classic || scriptType() == ScriptType::ImportMap, "Module script always have a loadableScript pointer.");
             if (scriptType() == ScriptType::Classic)
-                executeClassicScript(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(element().document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
+                executeClassicScript(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(document->url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::Program, InlineClassicScript::create(*this)));
             else
-                registerImportMap(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(element().document().url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::ImportMap));
+                registerImportMap(ScriptSourceCode(scriptContent(), m_taintedOrigin, URL(document->url()), pendingScript.startingPosition(), JSC::SourceProviderSourceType::ImportMap));
             dispatchLoadEventRespectingUserGestureIndicator();
         }
     }

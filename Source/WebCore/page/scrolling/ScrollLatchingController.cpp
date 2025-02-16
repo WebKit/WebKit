@@ -189,7 +189,7 @@ void ScrollLatchingController::removeLatchingStateForFrame(const LocalFrame& fra
         return;
 
     // If the frame was in the latching stack, just clear state.
-    if (auto* frameState = stateForFrame(frame))
+    if (stateForFrame(frame))
         clear();
 }
 

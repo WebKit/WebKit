@@ -184,7 +184,7 @@ function test()
 
                 InspectorTest.expectThat(curl[1] === "-X 'PUT'", "Command should be a PUT request.");
                 InspectorTest.expectThat(curl.find((cmd) => cmd.includes('Content-Type')) === "-H 'Content-Type: application/json'", "Command should have JSON Content-Type.");
-                InspectorTest.expectThat(curl.find((cmd) => cmd === "--data-binary '{\"update\":\"now\"}'") !== undefined, "Command should contain correct JSON data.");
+                InspectorTest.expectThat(curl.find((cmd) => cmd === "--data-raw '{\"update\":\"now\"}'") !== undefined, "Command should contain correct JSON data.");
             })
             .then(resolve, reject);
 

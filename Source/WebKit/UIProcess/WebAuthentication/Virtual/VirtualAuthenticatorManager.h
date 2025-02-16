@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@ namespace WebKit {
 struct VirtualCredential;
 
 class VirtualAuthenticatorManager final : public AuthenticatorManager {
+    WTF_MAKE_TZONE_ALLOCATED(VirtualAuthenticatorManager);
 public:
     static Ref<VirtualAuthenticatorManager> create();
 

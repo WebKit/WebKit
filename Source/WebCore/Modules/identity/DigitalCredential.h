@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,27 +28,30 @@
 #if ENABLE(WEB_AUTHN)
 
 #include "BasicCredential.h"
-#include "IDLTypes.h"
-#include "IdentityCredentialProtocol.h"
-#include <wtf/RefCounted.h>
+#include "JSDOMPromiseDeferred.h"
+#include "JSDOMPromiseDeferredForward.h"
+#include <JavaScriptCore/Strong.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+class Document;
 
-class DigitalCredential;
+enum class IdentityCredentialProtocol : uint8_t;
+struct CredentialRequestOptions;
+
 template<typename IDLType> class DOMPromiseDeferred;
+using CredentialPromise = DOMPromiseDeferred<IDLNullable<IDLInterface<BasicCredential>>>;
 
-using DigitalCredentialPromise = DOMPromiseDeferred<IDLInterface<DigitalCredential>>;
 
 class DigitalCredential final : public BasicCredential {
 public:
-    static Ref<DigitalCredential> create(Ref<Uint8Array>&& data, IdentityCredentialProtocol);
+    static Ref<DigitalCredential> create(JSC::Strong<JSC::JSObject>&&, IdentityCredentialProtocol);
 
     virtual ~DigitalCredential();
 
-    Uint8Array* data() const
+    const JSC::Strong<JSC::JSObject>& data() const
     {
-        return m_data.get();
+        return m_data;
     };
 
     IdentityCredentialProtocol protocol() const
@@ -56,13 +59,17 @@ public:
         return m_protocol;
     }
 
+    static void discoverFromExternalSource(const Document&, CredentialPromise&&, CredentialRequestOptions&&);
+
 private:
-    DigitalCredential(Ref<Uint8Array>&& data, IdentityCredentialProtocol);
+    DigitalCredential(JSC::Strong<JSC::JSObject>&&, IdentityCredentialProtocol);
+
+    static bool parseResponseData(RefPtr<Document>, const String&, JSC::JSObject*&);
 
     Type credentialType() const final { return Type::DigitalCredential; }
 
     IdentityCredentialProtocol m_protocol;
-    RefPtr<Uint8Array> m_data;
+    const JSC::Strong<JSC::JSObject> m_data;
 };
 
 } // namespace WebCore

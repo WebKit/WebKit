@@ -15,6 +15,6 @@ noInline(test);
 delete object.problemId;
 object.problemId = 2;
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(JSON.stringify(test({}, object)), `{"problemId":2}`);
 }

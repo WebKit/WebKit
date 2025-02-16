@@ -58,6 +58,8 @@ static Ref<LegacyPreviewLoaderClient> makeClient(const ResourceLoader& loader, c
 {
     if (RefPtr client = testingClient())
         return client.releaseNonNull();
+    if (!loader.frameLoader())
+        return emptyClient();
     if (RefPtr client = loader.frameLoader()->client().createPreviewLoaderClient(previewFileName, previewType))
         return client.releaseNonNull();
     return emptyClient();

@@ -61,7 +61,7 @@ struct GradientColorInterpolationMethod {
 };
 
 template<> struct ComputedStyleDependenciesCollector<GradientColorInterpolationMethod> { constexpr void operator()(ComputedStyleDependencies&, const GradientColorInterpolationMethod&) { } };
-template<> struct CSSValueChildrenVisitor<GradientColorInterpolationMethod> { constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const GradientColorInterpolationMethod&) { return IterationStatus::Continue; } };
+template<> struct CSSValueChildrenVisitor<GradientColorInterpolationMethod> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const GradientColorInterpolationMethod&) { return IterationStatus::Continue; } };
 
 // MARK: - Gradient Color Stop Definitions.
 
@@ -101,9 +101,9 @@ using GradientDeprecatedColorStopPosition = NumberOrPercentageResolvedToNumber<>
 using GradientDeprecatedColorStop = GradientColorStop<GradientDeprecatedColorStopColor, GradientDeprecatedColorStopPosition>;
 using GradientDeprecatedColorStopList = GradientColorStopList<GradientDeprecatedColorStop>;
 
-template<> struct Serialize<GradientAngularColorStop> { void operator()(StringBuilder&, const GradientAngularColorStop&); };
-template<> struct Serialize<GradientLinearColorStop> { void operator()(StringBuilder&, const GradientLinearColorStop&); };
-template<> struct Serialize<GradientDeprecatedColorStop> { void operator()(StringBuilder&, const GradientDeprecatedColorStop&); };
+template<> struct Serialize<GradientAngularColorStop> { void operator()(StringBuilder&, const SerializationContext&, const GradientAngularColorStop&); };
+template<> struct Serialize<GradientLinearColorStop> { void operator()(StringBuilder&, const SerializationContext&, const GradientLinearColorStop&); };
+template<> struct Serialize<GradientDeprecatedColorStop> { void operator()(StringBuilder&, const SerializationContext&, const GradientDeprecatedColorStop&); };
 
 // MARK: - LinearGradient
 
@@ -117,7 +117,7 @@ struct LinearGradient {
     bool operator==(const LinearGradient&) const = default;
 };
 
-template<> struct Serialize<LinearGradient> { void operator()(StringBuilder&, const LinearGradient&); };
+template<> struct Serialize<LinearGradient> { void operator()(StringBuilder&, const SerializationContext&, const LinearGradient&); };
 
 template<size_t I> const auto& get(const LinearGradient& gradient)
 {
@@ -141,7 +141,7 @@ struct PrefixedLinearGradient {
     bool operator==(const PrefixedLinearGradient&) const = default;
 };
 
-template<> struct Serialize<PrefixedLinearGradient> { void operator()(StringBuilder&, const PrefixedLinearGradient&); };
+template<> struct Serialize<PrefixedLinearGradient> { void operator()(StringBuilder&, const SerializationContext&, const PrefixedLinearGradient&); };
 
 template<size_t I> const auto& get(const PrefixedLinearGradient& gradient)
 {
@@ -165,7 +165,7 @@ struct DeprecatedLinearGradient {
     bool operator==(const DeprecatedLinearGradient&) const = default;
 };
 
-template<> struct Serialize<DeprecatedLinearGradient> { void operator()(StringBuilder&, const DeprecatedLinearGradient&); };
+template<> struct Serialize<DeprecatedLinearGradient> { void operator()(StringBuilder&, const SerializationContext&, const DeprecatedLinearGradient&); };
 
 template<size_t I> const auto& get(const DeprecatedLinearGradient& gradient)
 {
@@ -202,9 +202,9 @@ struct RadialGradient {
     bool operator==(const RadialGradient&) const = default;
 };
 
-template<> struct Serialize<RadialGradient::Ellipse> { void operator()(StringBuilder&, const RadialGradient::Ellipse&); };
-template<> struct Serialize<RadialGradient::Circle> { void operator()(StringBuilder&, const RadialGradient::Circle&); };
-template<> struct Serialize<RadialGradient> { void operator()(StringBuilder&, const RadialGradient&); };
+template<> struct Serialize<RadialGradient::Ellipse> { void operator()(StringBuilder&, const SerializationContext&, const RadialGradient::Ellipse&); };
+template<> struct Serialize<RadialGradient::Circle> { void operator()(StringBuilder&, const SerializationContext&, const RadialGradient::Circle&); };
+template<> struct Serialize<RadialGradient> { void operator()(StringBuilder&, const SerializationContext&, const RadialGradient&); };
 
 template<size_t I> const auto& get(const RadialGradient::Ellipse& ellipse)
 {
@@ -256,9 +256,9 @@ struct PrefixedRadialGradient {
     bool operator==(const PrefixedRadialGradient&) const = default;
 };
 
-template<> struct Serialize<PrefixedRadialGradient::Ellipse> { void operator()(StringBuilder&, const PrefixedRadialGradient::Ellipse&); };
-template<> struct Serialize<PrefixedRadialGradient::Circle> { void operator()(StringBuilder&, const PrefixedRadialGradient::Circle&); };
-template<> struct Serialize<PrefixedRadialGradient> { void operator()(StringBuilder&, const PrefixedRadialGradient&); };
+template<> struct Serialize<PrefixedRadialGradient::Ellipse> { void operator()(StringBuilder&, const SerializationContext&, const PrefixedRadialGradient::Ellipse&); };
+template<> struct Serialize<PrefixedRadialGradient::Circle> { void operator()(StringBuilder&, const SerializationContext&, const PrefixedRadialGradient::Circle&); };
+template<> struct Serialize<PrefixedRadialGradient> { void operator()(StringBuilder&, const SerializationContext&, const PrefixedRadialGradient&); };
 
 template<size_t I> const auto& get(const PrefixedRadialGradient::Ellipse& ellipse)
 {
@@ -305,8 +305,8 @@ struct DeprecatedRadialGradient {
     bool operator==(const DeprecatedRadialGradient&) const = default;
 };
 
-template<> struct Serialize<DeprecatedRadialGradient::GradientBox> { void operator()(StringBuilder&, const DeprecatedRadialGradient::GradientBox&); };
-template<> struct Serialize<DeprecatedRadialGradient> { void operator()(StringBuilder&, const DeprecatedRadialGradient&); };
+template<> struct Serialize<DeprecatedRadialGradient::GradientBox> { void operator()(StringBuilder&, const SerializationContext&, const DeprecatedRadialGradient::GradientBox&); };
+template<> struct Serialize<DeprecatedRadialGradient> { void operator()(StringBuilder&, const SerializationContext&, const DeprecatedRadialGradient&); };
 
 template<size_t I> const auto& get(const DeprecatedRadialGradient::GradientBox& gradientBox)
 {
@@ -347,8 +347,8 @@ struct ConicGradient {
     bool operator==(const ConicGradient&) const = default;
 };
 
-template<> struct Serialize<ConicGradient::GradientBox> { void operator()(StringBuilder&, const ConicGradient::GradientBox&); };
-template<> struct Serialize<ConicGradient> { void operator()(StringBuilder&, const ConicGradient&); };
+template<> struct Serialize<ConicGradient::GradientBox> { void operator()(StringBuilder&, const SerializationContext&, const ConicGradient::GradientBox&); };
+template<> struct Serialize<ConicGradient> { void operator()(StringBuilder&, const SerializationContext&, const ConicGradient&); };
 
 template<size_t I> const auto& get(const ConicGradient::GradientBox& gradientBox)
 {
@@ -393,19 +393,19 @@ using Gradient = std::variant<
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(LinearGradient, 3)
-CSS_TUPLE_LIKE_CONFORMANCE(PrefixedLinearGradient, 3)
-CSS_TUPLE_LIKE_CONFORMANCE(DeprecatedLinearGradient, 3)
-CSS_TUPLE_LIKE_CONFORMANCE(RadialGradient::Ellipse, 2)
-CSS_TUPLE_LIKE_CONFORMANCE(RadialGradient::Circle, 2)
-CSS_TUPLE_LIKE_CONFORMANCE(RadialGradient, 3)
-CSS_TUPLE_LIKE_CONFORMANCE(PrefixedRadialGradient::Ellipse, 2)
-CSS_TUPLE_LIKE_CONFORMANCE(PrefixedRadialGradient::Circle, 2)
-CSS_TUPLE_LIKE_CONFORMANCE(PrefixedRadialGradient, 3)
-CSS_TUPLE_LIKE_CONFORMANCE(DeprecatedRadialGradient::GradientBox, 4)
-CSS_TUPLE_LIKE_CONFORMANCE(DeprecatedRadialGradient, 3)
-CSS_TUPLE_LIKE_CONFORMANCE(ConicGradient::GradientBox, 2)
-CSS_TUPLE_LIKE_CONFORMANCE(ConicGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedLinearGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DeprecatedLinearGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::RadialGradient::Ellipse, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::RadialGradient::Circle, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::RadialGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedRadialGradient::Ellipse, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedRadialGradient::Circle, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::PrefixedRadialGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DeprecatedRadialGradient::GradientBox, 4)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DeprecatedRadialGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ConicGradient::GradientBox, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ConicGradient, 3)
 
 template<typename C, typename P> inline constexpr bool WebCore::TreatAsTupleLike<WebCore::CSS::GradientColorStop<C, P>> = true;
 

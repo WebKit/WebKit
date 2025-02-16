@@ -74,7 +74,7 @@ void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfigu
         m_label = configuration.label;
         if (changed) {
             notifyClients([label = crossThreadCopy(m_label)](auto& client) {
-                client.labelChanged(AtomString { label });
+                client.labelChanged(AtomString { label.isolatedCopy() });
             });
         };
     }
@@ -84,7 +84,7 @@ void AudioTrackPrivateRemote::updateConfiguration(AudioTrackPrivateRemoteConfigu
         m_language = configuration.language;
         if (changed) {
             notifyClients([language = crossThreadCopy(m_language)](auto& client) {
-                client.languageChanged(AtomString { language });
+                client.languageChanged(AtomString { language.isolatedCopy() });
             });
         };
     }

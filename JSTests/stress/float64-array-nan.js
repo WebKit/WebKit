@@ -22,7 +22,7 @@ function test(a, b, x) {
         throw "Error: bad result for " + a + ", " + b + ": " + result + ", but expected: " + x + "; loaded " + element + " from the array";
 }
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(0, 0, 1);
 
 if (isBigEndian()) {

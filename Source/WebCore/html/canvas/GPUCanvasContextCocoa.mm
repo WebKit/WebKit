@@ -290,7 +290,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     }
 
     if (configuration.toneMapping.mode != GPUCanvasToneMappingMode::Standard) {
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_WEBGPU)
         RefPtr scriptExecutionContext = canvasBase().scriptExecutionContext();
         if (!scriptExecutionContext || !scriptExecutionContext->settingsValues().webGPUHDREnabled)
             configuration.toneMapping.mode = GPUCanvasToneMappingMode::Standard;
@@ -300,7 +300,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     }
 
     auto textureFormat = computeTextureFormat(configuration.format, configuration.toneMapping.mode);
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     // Only use RGBA16F when CALayer HDR is needed.
     m_layerContentsDisplayDelegate->setContentsFormat(textureFormat != WebGPU::TextureFormat::Rgba16float ? ContentsFormat::RGBA8 : ContentsFormat::RGBA16F);
 #endif

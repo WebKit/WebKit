@@ -74,15 +74,16 @@ InProcessIDBServer::InProcessIDBServer(PAL::SessionID sessionID, const String& d
     : m_queue(WorkQueue::create("com.apple.WebKit.IndexedDBServer"_s))
 {
     ASSERT(isMainThread());
-    m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this);
+    m_connectionToServer = IDBClient::IDBConnectionToServer::create(*this, sessionID);
     dispatchTask([this, protectedThis = Ref { *this }, directory = databaseDirectoryPath.isolatedCopy()] () mutable {
-        m_connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
+        Ref connectionToClient = IDBServer::IDBConnectionToClient::create(*this);
+        m_connectionToClient = connectionToClient.copyRef();
 
         Locker locker { m_serverLock };
         m_server = makeUnique<IDBServer::IDBServer>(directory, [](const ClientOrigin&, uint64_t) {
             return true;
         }, m_serverLock);
-        m_server->registerConnection(*m_connectionToClient);
+        m_server->registerConnection(connectionToClient);
     });
 }
 
@@ -325,11 +326,11 @@ void InProcessIDBServer::renameIndex(const WebCore::IDBRequestData& requestData,
     });
 }
 
-void InProcessIDBServer::putOrAdd(const WebCore::IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void InProcessIDBServer::putOrAdd(const WebCore::IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexIDToIndexKeyMap& indexKeys, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
-    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyData = keyData.isolatedCopy(), value = value.isolatedCopy(), overwriteMode] {
+    dispatchTask([this, protectedThis = Ref { *this }, requestData = requestData.isolatedCopy(), keyData = keyData.isolatedCopy(), value = value.isolatedCopy(), indexKeys = crossThreadCopy(indexKeys), overwriteMode] {
         Locker locker { m_serverLock };
-        m_server->putOrAdd(requestData, keyData, value, overwriteMode);
+        m_server->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode);
     });
 }
 

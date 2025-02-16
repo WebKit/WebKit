@@ -40,6 +40,32 @@ class ShadowRoot:
         )
 
     def find_element(self, by: str = By.ID, value: str = None):
+        """Find an element inside a shadow root given a By strategy and
+        locator.
+
+        Parameters:
+        ----------
+        by : selenium.webdriver.common.by.By
+            The locating strategy to use. Default is `By.ID`. Supported values include:
+            - By.ID: Locate by element ID.
+            - By.NAME: Locate by the `name` attribute.
+            - By.XPATH: Locate by an XPath expression.
+            - By.CSS_SELECTOR: Locate by a CSS selector.
+            - By.CLASS_NAME: Locate by the `class` attribute.
+            - By.TAG_NAME: Locate by the tag name (e.g., "input", "button").
+            - By.LINK_TEXT: Locate a link element by its exact text.
+            - By.PARTIAL_LINK_TEXT: Locate a link element by partial text match.
+            - RelativeBy: Locate elements relative to a specified root element.
+
+        Example:
+        --------
+        element = driver.find_element(By.ID, 'foo')
+
+        Returns:
+        -------
+        WebElement
+            The first matching `WebElement` found on the page.
+        """
         if by == By.ID:
             by = By.CSS_SELECTOR
             value = f'[id="{value}"]'
@@ -53,6 +79,31 @@ class ShadowRoot:
         return self._execute(Command.FIND_ELEMENT_FROM_SHADOW_ROOT, {"using": by, "value": value})["value"]
 
     def find_elements(self, by: str = By.ID, value: str = None):
+        """Find elements inside a shadow root given a By strategy and locator.
+
+        Parameters:
+        ----------
+        by : selenium.webdriver.common.by.By
+            The locating strategy to use. Default is `By.ID`. Supported values include:
+            - By.ID: Locate by element ID.
+            - By.NAME: Locate by the `name` attribute.
+            - By.XPATH: Locate by an XPath expression.
+            - By.CSS_SELECTOR: Locate by a CSS selector.
+            - By.CLASS_NAME: Locate by the `class` attribute.
+            - By.TAG_NAME: Locate by the tag name (e.g., "input", "button").
+            - By.LINK_TEXT: Locate a link element by its exact text.
+            - By.PARTIAL_LINK_TEXT: Locate a link element by partial text match.
+            - RelativeBy: Locate elements relative to a specified root element.
+
+        Example:
+        --------
+        element = driver.find_element(By.ID, 'foo')
+
+        Returns:
+        -------
+        WebElement
+            list of `WebElements` matching locator strategy found on the page.
+        """
         if by == By.ID:
             by = By.CSS_SELECTOR
             value = f'[id="{value}"]'

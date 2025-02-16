@@ -74,7 +74,7 @@ ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<CSSNumericValue> angle)
 
 ExceptionOr<Ref<CSSRotate>> CSSRotate::create(Ref<const CSSFunctionValue> cssFunctionValue)
 {
-    auto makeRotate = [&](const Function<ExceptionOr<Ref<CSSRotate>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSRotate>> {
+    auto makeRotate = [&](NOESCAPE const Function<ExceptionOr<Ref<CSSRotate>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSRotate>> {
         Vector<RefPtr<CSSNumericValue>> components;
         for (auto& componentCSSValue : cssFunctionValue.get()) {
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);

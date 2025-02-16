@@ -167,7 +167,7 @@ private:
     bool m_persistentStateAllowed { true };
     RetainPtr<NSURL> m_storageURL;
     Vector<WeakPtr<CDMInstanceSessionFairPlayStreamingAVFObjC>> m_sessions;
-    HashSet<RetainPtr<AVContentKeyRequest>> m_unexpectedKeyRequests;
+    UncheckedKeyHashSet<RetainPtr<AVContentKeyRequest>> m_unexpectedKeyRequests;
     WeakHashSet<KeyStatusesChangedObserver> m_keyStatusChangedObservers;
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;

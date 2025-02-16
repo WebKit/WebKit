@@ -194,22 +194,16 @@ std::optional<Vector<Ref<SharedBuffer>>> InitDataRegistry::extractKeyIDsCenc(con
 #if USE(GSTREAMER)
 bool isPlayReadySanitizedInitializationData(const SharedBuffer& buffer)
 {
-    auto* protectionData = byteCast<char>(buffer.span().data());
-    size_t protectionDataLength = buffer.size();
-
     // The protection data starts with a 10-byte PlayReady version
     // header that needs to be skipped over to avoid XML parsing
     // errors.
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    char* startTag = const_cast<char*>(protectionData);
-    while (startTag && *startTag != '<')
-        startTag++;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    if (!startTag)
+    auto view = StringView::fromLatin1(byteCast<char>(buffer.span().data()));
+    auto startTag = view.find('<');
+    if (startTag == notFound)
         return false;
 
-    size_t protectionDataXMLLength = protectionDataLength - (startTag - protectionData);
-    xmlDocPtr protectionDataXML = xmlReadMemory(static_cast<const char*>(startTag), protectionDataXMLLength, "protectionData", "utf-16", 0);
+    auto xmlPayload = buffer.span().subspan(startTag);
+    xmlDocPtr protectionDataXML = xmlReadMemory(reinterpret_cast<const char*>(xmlPayload.data()), xmlPayload.size_bytes(), "protectionData", "utf-16", 0);
     if (!protectionDataXML)
         return false;
 
@@ -247,7 +241,8 @@ bool isPlayReadySanitizedInitializationData(const SharedBuffer& buffer)
         return false;
 
     xmlChar* encodedKeyID = xmlNodeGetContent(keyIDNode->nodeTab[0]);
-    std::optional<Vector<uint8_t>> decodedKeyID = base64Decode({ reinterpret_cast<const uint8_t*>(encodedKeyID), static_cast<size_t>(xmlStrlen(encodedKeyID)) });
+    auto encodedKeyIDSpan = unsafeMakeSpan(reinterpret_cast<const uint8_t*>(encodedKeyID), static_cast<size_t>(xmlStrlen(encodedKeyID)));
+    std::optional<Vector<uint8_t>> decodedKeyID = base64Decode(encodedKeyIDSpan);
     xmlFree(encodedKeyID);
     if (!decodedKeyID)
         return false;

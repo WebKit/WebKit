@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
 #import "AuxiliaryProcessExtensionBridge.h"
 
 #import "ExtensionEventHandler.h"

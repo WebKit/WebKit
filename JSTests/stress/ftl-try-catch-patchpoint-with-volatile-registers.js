@@ -67,7 +67,7 @@ function foo(o) {
 }
 noInline(foo);
 
-for (var i = 0; i < 1000000; i++)
+for (var i = 0; i < testLoopCount; i++)
     foo(i % 2 ? o1 : o2);
 flag = true;
 foo(o1);

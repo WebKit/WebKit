@@ -198,10 +198,8 @@ bool CoreAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
 #if HAVE(VOICEACTIVITYDETECTION)
 #if PLATFORM(MAC)
     auto deviceID = CoreAudioSharedUnit::singleton().captureDeviceID();
-    if (!deviceID) {
-        if (auto err = defaultInputDevice(&deviceID))
-            return false;
-    }
+    if (!deviceID && defaultInputDevice(&deviceID))
+        return false;
     return manageSpeechActivityListener(deviceID, shouldEnable);
 #else
     const UInt32 outputBus = 0;
@@ -213,8 +211,8 @@ bool CoreAudioSharedInternalUnit::setVoiceActivityDetection(bool shouldEnable)
         }
     };
 
-    auto err = set(kAUVoiceIOProperty_MutedSpeechActivityEventListener, kAudioUnitScope_Global, outputBus, shouldEnable ? &listener : nullptr, sizeof(AUVoiceIOMutedSpeechActivityEventListener));
-    RELEASE_LOG_ERROR_IF(err, WebRTC, "@@@@@ CoreAudioSharedInternalUnit::setVoiceActivityDetection failed activation, error %d (%.4s)", (int)err, (char*)&err);
+    auto err = set(kAUVoiceIOProperty_MutedSpeechActivityEventListener, kAudioUnitScope_Global, outputBus, shouldEnable ? &listener : nullptr, shouldEnable ? sizeof(AUVoiceIOMutedSpeechActivityEventListener) : 0);
+    RELEASE_LOG_ERROR_IF(err, WebRTC, "CoreAudioSharedInternalUnit::setVoiceActivityDetection failed activation, error %d (%.4s)", (int)err, (char*)&err);
     return !err;
 #endif
 #else

@@ -1173,12 +1173,12 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
 void SamplingProfiler::registerForReportAtExit()
 {
     static Lock registrationLock;
-    static HashSet<RefPtr<SamplingProfiler>>* profilesToReport;
+    static UncheckedKeyHashSet<RefPtr<SamplingProfiler>>* profilesToReport;
 
     Locker locker { registrationLock };
 
     if (!profilesToReport) {
-        profilesToReport = new HashSet<RefPtr<SamplingProfiler>>();
+        profilesToReport = new UncheckedKeyHashSet<RefPtr<SamplingProfiler>>();
         atexit([]() {
             for (const auto& profile : *profilesToReport)
                 profile->reportDataToOptionFile();
@@ -1315,7 +1315,7 @@ void SamplingProfiler::reportTopBytecodes(PrintStream& out)
         auto frameDescription = makeString(frame.displayName(m_vm), descriptionForLocation(frame.semanticLocation, frame.wasmCompilationMode, frame.wasmOffset));
         if (std::optional<std::pair<StackFrame::CodeLocation, CodeBlock*>> machineLocation = frame.machineLocation) {
             frameDescription = makeString(frameDescription, " <-- "_s,
-                span(machineLocation->second->inferredName().data()), descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
+                unsafeSpan(machineLocation->second->inferredName().data()), descriptionForLocation(machineLocation->first, std::nullopt, BytecodeIndex()));
         }
         bytecodeCounts.add(frameDescription, 0).iterator->value++;
 

@@ -25,7 +25,7 @@ import * as assert from "../assert.js"
         v128_store8_lane,
     } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(v128_store8_lane(), 7)
     }
  }

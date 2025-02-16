@@ -424,7 +424,7 @@ GROUP BEGIN Texture {"queryFunction": true}
       ivec2 textureSize(gsampler2DMS);
     DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS"}
       ivec3 textureSize(gsampler2DMSArray);
-    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
       ivec3 textureSize(gsampler2DMSArray);
     DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "essl_extension": "OES_EGL_image_external_essl3"}
       ivec2 textureSize(samplerExternalOES, int);
@@ -448,7 +448,7 @@ GROUP BEGIN Texture {"queryFunction": true}
       gvec4 texelFetch(gsampler2DMS, ivec2, int);
     DEFAULT METADATA {"essl_level": "ESSL3_2_BUILTINS"}
       gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
-    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "essl_extension": "OES_texture_storage_multisample_2d_array", "suffix": "Ext"}
       gvec4 texelFetch(gsampler2DMSArray, ivec3, int);
     DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "essl_extension": "OES_EGL_image_external_essl3"}
       vec4 texelFetch(samplerExternalOES, ivec2, int);

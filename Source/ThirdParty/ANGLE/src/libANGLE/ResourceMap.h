@@ -120,16 +120,13 @@ class ResourceMap final : angle::NonCopyable
         // locking is not needed.
         static_assert(!kNeedsLock || kInitialFlatResourcesSize == kFlatResourcesLimit);
 
-        if (handle < mFlatResourcesSize)
+        if (ANGLE_LIKELY(handle < mFlatResourcesSize))
         {
             ResourceType *value = mFlatResources[handle];
             return (value == InvalidPointer() ? nullptr : value);
         }
 
-        std::lock_guard<Mutex> lock(mMutex);
-
-        auto it = mHashedResources.find(handle);
-        return (it == mHashedResources.end() ? nullptr : it->second);
+        return findInHashedResources(handle);
     }
 
     // Returns true if the handle was reserved. Not necessarily if the resource is created.
@@ -203,6 +200,12 @@ class ResourceMap final : angle::NonCopyable
     static_assert(((kFlatResourcesLimit / kInitialFlatResourcesSize) &
                    (kFlatResourcesLimit / kInitialFlatResourcesSize - 1)) == 0);
 
+    bool containsInHashedResources(GLuint handle) const;
+    ResourceType *findInHashedResources(GLuint handle) const;
+    bool eraseFromHashedResources(GLuint handle, ResourceType **resourceOut);
+    void assignAboveCurrentFlatSize(GLuint handle, ResourceType *resource);
+    void assignInHashedResources(GLuint handle, ResourceType *resource);
+
     size_t mFlatResourcesSize;
     ResourceType **mFlatResources;
 
@@ -268,22 +271,56 @@ ResourceMap<ResourceType, IDType>::~ResourceMap()
 }
 
 template <typename ResourceType, typename IDType>
+bool ResourceMap<ResourceType, IDType>::containsInHashedResources(GLuint handle) const
+{
+    std::lock_guard<Mutex> lock(mMutex);
+
+    return mHashedResources.find(handle) != mHashedResources.end();
+}
+
+template <typename ResourceType, typename IDType>
+ResourceType *ResourceMap<ResourceType, IDType>::findInHashedResources(GLuint handle) const
+{
+    std::lock_guard<Mutex> lock(mMutex);
+
+    auto it = mHashedResources.find(handle);
+    // Note: it->second can also be nullptr, so nullptr check doesn't work for "contains"
+    return (it == mHashedResources.end() ? nullptr : it->second);
+}
+
+template <typename ResourceType, typename IDType>
+bool ResourceMap<ResourceType, IDType>::eraseFromHashedResources(GLuint handle,
+                                                                 ResourceType **resourceOut)
+{
+    std::lock_guard<Mutex> lock(mMutex);
+
+    auto it = mHashedResources.find(handle);
+    if (it == mHashedResources.end())
+    {
+        return false;
+    }
+    *resourceOut = it->second;
+    mHashedResources.erase(it);
+    return true;
+}
+
+template <typename ResourceType, typename IDType>
 ANGLE_INLINE bool ResourceMap<ResourceType, IDType>::contains(IDType id) const
 {
     GLuint handle = GetIDValue(id);
-    if (handle < mFlatResourcesSize)
+    if (ANGLE_LIKELY(handle < mFlatResourcesSize))
     {
         return mFlatResources[handle] != InvalidPointer();
     }
-    std::lock_guard<Mutex> lock(mMutex);
-    return mHashedResources.find(handle) != mHashedResources.end();
+
+    return containsInHashedResources(handle);
 }
 
 template <typename ResourceType, typename IDType>
 bool ResourceMap<ResourceType, IDType>::erase(IDType id, ResourceType **resourceOut)
 {
     GLuint handle = GetIDValue(id);
-    if (handle < mFlatResourcesSize)
+    if (ANGLE_LIKELY(handle < mFlatResourcesSize))
     {
         auto &value = mFlatResources[handle];
         if (value == InvalidPointer())
@@ -292,49 +329,38 @@ bool ResourceMap<ResourceType, IDType>::erase(IDType id, ResourceType **resource
         }
         *resourceOut = value;
         value        = InvalidPointer();
+        return true;
     }
-    else
-    {
-        std::lock_guard<Mutex> lock(mMutex);
 
-        auto it = mHashedResources.find(handle);
-        if (it == mHashedResources.end())
-        {
-            return false;
-        }
-        *resourceOut = it->second;
-        mHashedResources.erase(it);
-    }
-    return true;
+    return eraseFromHashedResources(handle, resourceOut);
 }
 
 template <typename ResourceType, typename IDType>
-void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceType *resource)
+void ResourceMap<ResourceType, IDType>::assignAboveCurrentFlatSize(GLuint handle,
+                                                                   ResourceType *resource)
 {
-    GLuint handle = GetIDValue(id);
-    if (handle < kFlatResourcesLimit)
+    if (ANGLE_LIKELY(handle < kFlatResourcesLimit))
     {
-        if (handle >= mFlatResourcesSize)
+        // No need for a lock as the flat map never grows when locking is needed.
+        static_assert(!kNeedsLock || kInitialFlatResourcesSize == kFlatResourcesLimit);
+
+        // Use power-of-two.
+        size_t newSize = mFlatResourcesSize;
+        while (newSize <= handle)
         {
-            // No need for a lock as the flat map never grows when locking is needed.
-            static_assert(!kNeedsLock || kInitialFlatResourcesSize == kFlatResourcesLimit);
-
-            // Use power-of-two.
-            size_t newSize = mFlatResourcesSize;
-            while (newSize <= handle)
-            {
-                newSize *= 2;
-            }
-
-            ResourceType **oldResources = mFlatResources;
-
-            mFlatResources = new ResourceType *[newSize];
-            memset(&mFlatResources[mFlatResourcesSize], kInvalidPointer,
-                   (newSize - mFlatResourcesSize) * sizeof(mFlatResources[0]));
-            memcpy(mFlatResources, oldResources, mFlatResourcesSize * sizeof(mFlatResources[0]));
-            mFlatResourcesSize = newSize;
-            delete[] oldResources;
+            newSize *= 2;
         }
+
+        ResourceType **oldResources = mFlatResources;
+
+        mFlatResources = new ResourceType *[newSize];
+        memset(&mFlatResources[mFlatResourcesSize], kInvalidPointer,
+               (newSize - mFlatResourcesSize) * sizeof(mFlatResources[0]));
+        memcpy(mFlatResources, oldResources, mFlatResourcesSize * sizeof(mFlatResources[0]));
+        mFlatResourcesSize = newSize;
+        ASSERT(mFlatResourcesSize <= kFlatResourcesLimit);
+        delete[] oldResources;
+
         ASSERT(mFlatResourcesSize > handle);
         mFlatResources[handle] = resource;
     }
@@ -342,6 +368,20 @@ void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceType *resource
     {
         std::lock_guard<Mutex> lock(mMutex);
         mHashedResources[handle] = resource;
+    }
+}
+
+template <typename ResourceType, typename IDType>
+ANGLE_INLINE void ResourceMap<ResourceType, IDType>::assign(IDType id, ResourceType *resource)
+{
+    GLuint handle = GetIDValue(id);
+    if (ANGLE_LIKELY(handle < mFlatResourcesSize))
+    {
+        mFlatResources[handle] = resource;
+    }
+    else
+    {
+        assignAboveCurrentFlatSize(handle, resource);
     }
 }
 

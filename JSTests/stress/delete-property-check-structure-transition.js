@@ -158,7 +158,7 @@ function testDeleteWithInlineCache() {
 
     function doTest(xVal) {
         for (let j=0; j<50; ++j) {
-            for (let z=0; z<10000; ++z) {
+            for (let z=0; z<testLoopCount; ++z) {
                 const foo = arr[j]
 
                 assert(foo.baz === 1)

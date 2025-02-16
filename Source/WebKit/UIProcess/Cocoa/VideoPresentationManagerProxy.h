@@ -71,20 +71,6 @@ public:
     }
     virtual ~VideoPresentationModelContext();
 
-    PlatformView *layerHostView() const { return m_layerHostView.get(); }
-    void setLayerHostView(RetainPtr<PlatformView>&& layerHostView) { m_layerHostView = WTFMove(layerHostView); }
-
-    WebAVPlayerLayer *playerLayer() const { return m_playerLayer.get(); }
-    void setPlayerLayer(RetainPtr<WebAVPlayerLayer>&&);
-
-#if PLATFORM(IOS_FAMILY)
-    WebAVPlayerLayerView *playerView() const { return m_playerView.get(); }
-    void setPlayerView(RetainPtr<WebAVPlayerLayerView>&& playerView) { m_playerView = WTFMove(playerView); }
-
-    WKVideoView *videoView() const { return m_videoView.get(); }
-    void setVideoView(RetainPtr<WKVideoView>&& videoView) { m_videoView = WTFMove(videoView); }
-#endif
-
     void requestCloseAllMediaPresentations(bool finishedWithMedia, CompletionHandler<void()>&&);
 
 private:
@@ -140,13 +126,6 @@ private:
     WeakPtr<VideoPresentationManagerProxy> m_manager;
     Ref<PlaybackSessionModelContext> m_playbackSessionModel;
     PlaybackSessionContextIdentifier m_contextId;
-    RetainPtr<PlatformView> m_layerHostView;
-    RetainPtr<WebAVPlayerLayer> m_playerLayer;
-
-#if PLATFORM(IOS_FAMILY)
-    RetainPtr<WebAVPlayerLayerView> m_playerView;
-    RetainPtr<WKVideoView> m_videoView;
-#endif
 
     WeakHashSet<WebCore::VideoPresentationModelClient> m_clients;
     WebCore::FloatSize m_videoDimensions;
@@ -222,6 +201,7 @@ private:
     void ensureClientForContext(PlaybackSessionContextIdentifier);
     void addClientForContext(PlaybackSessionContextIdentifier);
     void removeClientForContext(PlaybackSessionContextIdentifier);
+    void invalidateInterface(WebCore::PlatformVideoPresentationInterface&);
 
     void hasVideoInPictureInPictureDidChange(bool);
 

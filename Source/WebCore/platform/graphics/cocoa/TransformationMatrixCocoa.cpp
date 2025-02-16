@@ -30,6 +30,8 @@
 
 #include <simd/simd.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 TransformationMatrix::TransformationMatrix(const simd_float4x4& t)
@@ -51,5 +53,7 @@ TransformationMatrix::operator simd_float4x4() const
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(COCOA)

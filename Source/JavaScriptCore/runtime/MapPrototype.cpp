@@ -223,7 +223,7 @@ JSC_DEFINE_HOST_FUNCTION(mapProtoFuncGetOrInsertComputed, (JSGlobalObject* globa
         ASSERT(callData.type != CallData::Type::None);
 
         if (LIKELY(callData.type == CallData::Type::JS)) {
-            CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 2);
+            CachedCall cachedCall(globalObject, jsCast<JSFunction*>(valueCallback), 1);
             RETURN_IF_EXCEPTION(scope, JSValue());
 
             return cachedCall.callWithArguments(globalObject, jsUndefined(), key);

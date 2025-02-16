@@ -17,7 +17,7 @@ o = { num: 0,
       }
     };
 
-for(i = 0; i < 100000; ++i) {
+for(i = 0; i < testLoopCount; ++i) {
     let num = i % 2;
     o.num = num;
     if (foo(o, "hello") !== num)

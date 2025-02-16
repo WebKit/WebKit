@@ -14,7 +14,7 @@ function getter() { return arr.byteOffset }
 noDFG(getter)
 
 function test() {
-    for (var i = 0; i < 1e5; i++)
+    for (var i = 0; i < testLoopCount; i++)
         shouldBe(getter(), 0)
 
     Object.defineProperty(Uint8Array.prototype.__proto__, "byteOffset", {

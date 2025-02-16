@@ -32,6 +32,7 @@
 #import "KeyEventCocoa.h"
 #import "KeyEventCodesIOS.h"
 #import "Logging.h"
+#import "MouseEventTypes.h"
 #import "WAKAppKitStubs.h"
 #import "WebEvent.h"
 #import "WindowsKeyboardCodes.h"

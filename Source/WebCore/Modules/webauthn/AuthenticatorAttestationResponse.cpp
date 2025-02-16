@@ -188,14 +188,14 @@ RegistrationResponseJSON::AuthenticatorAttestationResponseJSON AuthenticatorAtte
         transports.append(toString(transport));
     RegistrationResponseJSON::AuthenticatorAttestationResponseJSON value;
     if (auto clientData = clientDataJSON())
-        value.clientDataJSON = base64EncodeToString(clientData->span());
+        value.clientDataJSON = base64URLEncodeToString(clientData->span());
     value.transports = transports;
     if (auto authData = getAuthenticatorData())
-        value.authenticatorData = base64EncodeToString(authData->span());
+        value.authenticatorData = base64URLEncodeToString(authData->span());
     if (auto publicKey = getPublicKey())
-        value.publicKey = base64EncodeToString(publicKey->span());
+        value.publicKey = base64URLEncodeToString(publicKey->span());
     if (auto attestationObj = attestationObject())
-        value.attestationObject = base64EncodeToString(attestationObj->span());
+        value.attestationObject = base64URLEncodeToString(attestationObj->span());
     value.publicKeyAlgorithm = getPublicKeyAlgorithm();
 
     return value;

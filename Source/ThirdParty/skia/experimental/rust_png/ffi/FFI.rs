@@ -7,6 +7,7 @@
 //! The public API of this crate is the C++ API declared by the `#[cxx::bridge]`
 //! macro below and exposed through the auto-generated `FFI.rs.h` header.
 
+use std::borrow::Cow;
 use std::io::{ErrorKind, Read, Write};
 use std::pin::Pin;
 
@@ -14,9 +15,6 @@ use std::pin::Pin;
 // spell out if it means `ffi::ColorType` vs `png::ColorType` (or `Reader`
 // vs `png::Reader`).
 
-// TODO(https://crbug.com/383521545): Remove `allow(unused_unsafe)` if/when
-// `cxx`-generated code is clean of warnings.
-#[allow(unused_unsafe)]
 #[cxx::bridge(namespace = "rust_png")]
 mod ffi {
     /// FFI-friendly equivalent of `png::ColorType`.
@@ -120,6 +118,8 @@ mod ffi {
             is_full_range: &mut bool,
         ) -> bool;
         fn try_get_gama(self: &Reader, gamma: &mut f32) -> bool;
+        fn has_exif_chunk(self: &Reader) -> bool;
+        fn get_exif_chunk(self: &Reader) -> &[u8];
         fn has_iccp_chunk(self: &Reader) -> bool;
         fn get_iccp_chunk(self: &Reader) -> &[u8];
         fn has_trns_chunk(self: &Reader) -> bool;
@@ -163,6 +163,7 @@ mod ffi {
             color: ColorType,
             bits_per_component: u8,
             compression: Compression,
+            icc_profile: &[u8],
         ) -> Box<ResultOfWriter>;
 
         type ResultOfWriter;
@@ -410,8 +411,8 @@ impl Reader {
         by: &mut f32,
     ) -> bool {
         fn copy_channel(channel: &(png::ScaledFloat, png::ScaledFloat), x: &mut f32, y: &mut f32) {
-            *x = channel.0.into_value();
-            *y = channel.1.into_value();
+            *x = png_u32_into_f32(channel.0);
+            *y = png_u32_into_f32(channel.1);
         }
 
         match self.reader.info().chrm_chunk.as_ref() {
@@ -454,11 +455,22 @@ impl Reader {
     fn try_get_gama(&self, gamma: &mut f32) -> bool {
         match self.reader.info().gama_chunk.as_ref() {
             None => false,
-            Some(scaled_float) => {
-                *gamma = scaled_float.into_value();
+            Some(&scaled_float) => {
+                *gamma = png_u32_into_f32(scaled_float);
                 true
             }
         }
+    }
+
+    /// Returns whether the `eXIf` chunk exists.
+    fn has_exif_chunk(&self) -> bool {
+        self.reader.info().exif_metadata.is_some()
+    }
+
+    /// Returns contents of the `eXIf` chunk.  Panics if there is no `eXIf`
+    /// chunk.
+    fn get_exif_chunk(&self) -> &[u8] {
+        self.reader.info().exif_metadata.as_ref().unwrap().as_ref()
     }
 
     /// Returns whether the `iCCP` chunk exists.
@@ -610,6 +622,14 @@ impl Reader {
     }
 }
 
+fn png_u32_into_f32(v: png::ScaledFloat) -> f32 {
+    // This uses `0.00001_f32 * (v.into_scaled() as f32)` instead of just
+    // `v.into_value()` for compatibility with the legacy implementation
+    // of `ReadColorProfile` in
+    // `.../blink/renderer/platform/image-decoders/png/png_image_decoder.cc`.
+    0.00001_f32 * (v.into_scaled() as f32)
+}
+
 /// This provides a public C++ API for decoding a PNG image.
 fn new_reader(input: cxx::UniquePtr<ffi::ReadTrait>) -> Box<ResultOfReader> {
     Box::new(ResultOfReader(Reader::new(input)))
@@ -647,16 +667,21 @@ impl Writer {
         color: ffi::ColorType,
         bits_per_component: u8,
         compression: ffi::Compression,
+        icc_profile: &[u8],
     ) -> Result<Self, png::EncodingError> {
-        let mut encoder = png::Encoder::new(output, width, height);
-        encoder.set_color(color.into());
-        encoder.set_depth(match bits_per_component {
+        let mut info = png::Info::with_size(width, height);
+        info.color_type = color.into();
+        info.bit_depth = match bits_per_component {
             8 => png::BitDepth::Eight,
             16 => png::BitDepth::Sixteen,
 
             // `SkPngRustEncoderImpl` only encodes 8-bit or 16-bit images.
             _ => unreachable!(),
-        });
+        };
+        if !icc_profile.is_empty() {
+            info.icc_profile = Some(Cow::Owned(icc_profile.to_owned()));
+        }
+        let mut encoder = png::Encoder::with_info(output, info)?;
         encoder.set_compression(compression.into());
         encoder.set_adaptive_filter(match compression {
             ffi::Compression::Fast => png::AdaptiveFilterType::NonAdaptive,
@@ -753,6 +778,8 @@ impl StreamWriter {
 }
 
 /// This provides a public C++ API for encoding a PNG image.
+///
+/// `icc_profile` set to an empty slice acts as null / `None`.
 fn new_writer(
     output: cxx::UniquePtr<ffi::WriteTrait>,
     width: u32,
@@ -760,6 +787,7 @@ fn new_writer(
     color: ffi::ColorType,
     bits_per_component: u8,
     compression: ffi::Compression,
+    icc_profile: &[u8],
 ) -> Box<ResultOfWriter> {
     Box::new(ResultOfWriter(Writer::new(
         output,
@@ -768,6 +796,7 @@ fn new_writer(
         color,
         bits_per_component,
         compression,
+        icc_profile,
     )))
 }
 

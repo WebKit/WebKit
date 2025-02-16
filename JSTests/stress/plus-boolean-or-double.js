@@ -10,7 +10,7 @@ function test(a, b, c) {
         throw "Error: expected " + c + " but got: " + result;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(true, 42, 43);
     test(42.5, 10, 52.5);
 }

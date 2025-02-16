@@ -4,7 +4,7 @@ function simpleArith(number)
 }
 noInline(simpleArith);
 
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let simpleArithResult = simpleArith(i);
     if (simpleArithResult !== i + 1)
         throw "Failed simpleArith(i) at i = " + i;
@@ -31,7 +31,7 @@ function compareToLargeNumber(value)
 }
 noInline(compareToLargeNumber);
 
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let compareResult = compareToLargeNumber(i);
     if (compareResult !== true)
         throw "Failed compareToLargeNumber(i) at i = " + i;

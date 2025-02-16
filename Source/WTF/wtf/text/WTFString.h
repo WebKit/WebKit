@@ -268,7 +268,7 @@ public:
     WTF_EXPORT_PRIVATE static String fromUTF8(std::span<const char8_t>);
     static String fromUTF8(std::span<const LChar> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
     static String fromUTF8(std::span<const char> characters) { return fromUTF8(byteCast<char8_t>(characters)); }
-    static String fromUTF8(const char* string) { return fromUTF8(WTF::span8(string)); }
+    static String fromUTF8(const char* string) { return fromUTF8(unsafeSpan8(string)); }
     static String fromUTF8ReplacingInvalidSequences(std::span<const char8_t>);
     static String fromUTF8ReplacingInvalidSequences(std::span<const LChar> characters) { return fromUTF8ReplacingInvalidSequences(byteCast<char8_t>(characters)); }
 
@@ -498,7 +498,7 @@ inline Expected<std::invoke_result_t<Func, std::span<const char8_t>>, UTF8Conver
 {
     if (!m_impl)
         return function(nonNullEmptyUTF8Span());
-    return m_impl->tryGetUTF8(function, mode);
+    SUPPRESS_UNCOUNTED_ARG return m_impl->tryGetUTF8(function, mode);
 }
 
 #if USE(FOUNDATION) && defined(__OBJC__)
@@ -559,20 +559,15 @@ inline bool startsWithLettersIgnoringASCIICase(const String& string, ASCIILitera
 
 inline namespace StringLiterals {
 
-#ifndef __swift__
-// Swift will import this as global and then all literals will be WTF.String
-// instead of Swift.String
 inline String operator""_str(const char* characters, size_t)
 {
     return ASCIILiteral::fromLiteralUnsafe(characters);
 }
 
-// FIXME: rdar://136156228
 inline String operator""_str(const UChar* characters, size_t length)
 {
     return String({ characters, length });
 }
-#endif
 
 } // inline StringLiterals
 

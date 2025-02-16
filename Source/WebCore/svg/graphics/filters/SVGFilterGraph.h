@@ -79,10 +79,10 @@ public:
     RefPtr<NodeType> getNamedNode(const AtomString& id) const
     {
         if (!id.isEmpty()) {
-            if (auto sourceNode = m_sourceNodes.get(id))
+            if (RefPtr sourceNode = m_sourceNodes.get(id))
                 return sourceNode;
 
-            if (auto namedNode = m_namedNodes.get(id))
+            if (RefPtr namedNode = m_namedNodes.get(id))
                 return namedNode;
         }
 
@@ -129,13 +129,14 @@ public:
     NodeType* lastNode() const { return m_lastNode.get(); }
 
     template<typename Callback>
-    bool visit(Callback callback)
+    bool visit(NOESCAPE const Callback& callback)
     {
-        if (!lastNode())
+        RefPtr lastNode = m_lastNode;
+        if (!lastNode)
             return false;
 
         Vector<Ref<NodeType>> stack;
-        return visit(*lastNode(), stack, 0, callback);
+        return visit(*lastNode, stack, 0, callback);
     }
 
 private:
@@ -145,7 +146,7 @@ private:
     }
 
     template<typename Callback>
-    bool visit(NodeType& node, Vector<Ref<NodeType>>& stack, unsigned level, Callback callback)
+    bool visit(NodeType& node, Vector<Ref<NodeType>>& stack, unsigned level, NOESCAPE const Callback& callback)
     {
         // A cycle is detected.
         if (stack.containsIf([&](auto& item) { return item.ptr() == &node; }))

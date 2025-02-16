@@ -28,10 +28,10 @@
 
 #include "AcceleratedBackingStoreDMABufMessages.h"
 #include "AcceleratedSurfaceDMABufMessages.h"
-#include "DMABufRendererBufferMode.h"
 #include "DRMDevice.h"
 #include "Display.h"
 #include "LayerTreeContext.h"
+#include "RendererBufferTransportMode.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 #include <WebCore/GLContext.h>
@@ -39,6 +39,7 @@
 #include <WebCore/NativeImage.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformDisplay.h>
+#include <WebCore/RefPtrCairo.h>
 #include <WebCore/ShareableBitmap.h>
 #include <WebCore/SharedMemory.h>
 #include <epoxy/egl.h>
@@ -76,9 +77,9 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AcceleratedBackingStoreDMABuf);
 
-OptionSet<DMABufRendererBufferMode> AcceleratedBackingStoreDMABuf::rendererBufferMode()
+OptionSet<RendererBufferTransportMode> AcceleratedBackingStoreDMABuf::rendererBufferTransportMode()
 {
-    static OptionSet<DMABufRendererBufferMode> mode;
+    static OptionSet<RendererBufferTransportMode> mode;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
         const char* disableDMABuf = getenv("WEBKIT_DISABLE_DMABUF_RENDERER");
@@ -91,7 +92,7 @@ OptionSet<DMABufRendererBufferMode> AcceleratedBackingStoreDMABuf::rendererBuffe
             return;
         }
 
-        mode.add(DMABufRendererBufferMode::SharedMemory);
+        mode.add(RendererBufferTransportMode::SharedMemory);
 
         const char* forceSHM = getenv("WEBKIT_DMABUF_RENDERER_FORCE_SHM");
         if (forceSHM && strcmp(forceSHM, "0"))
@@ -105,21 +106,21 @@ OptionSet<DMABufRendererBufferMode> AcceleratedBackingStoreDMABuf::rendererBuffe
         if (auto* glDisplay = Display::singleton().glDisplay()) {
             const auto& eglExtensions = glDisplay->extensions();
             if (eglExtensions.KHR_image_base && eglExtensions.EXT_image_dma_buf_import)
-                mode.add(DMABufRendererBufferMode::Hardware);
+                mode.add(RendererBufferTransportMode::Hardware);
         }
     });
     return mode;
 }
 bool AcceleratedBackingStoreDMABuf::checkRequirements()
 {
-    return !rendererBufferMode().isEmpty();
+    return !rendererBufferTransportMode().isEmpty();
 }
 
 #if USE(GBM)
 Vector<DMABufRendererBufferFormat> AcceleratedBackingStoreDMABuf::preferredBufferFormats()
 {
-    auto mode = rendererBufferMode();
-    if (!mode.contains(DMABufRendererBufferMode::Hardware))
+    auto mode = rendererBufferTransportMode();
+    if (!mode.contains(RendererBufferTransportMode::Hardware))
         return { };
 
     auto& display = Display::singleton();
@@ -589,7 +590,7 @@ void AcceleratedBackingStoreDMABuf::BufferSHM::didUpdateContents(Buffer*, const 
 #if USE(CAIRO)
     m_surface = m_bitmap->createCairoSurface();
 #elif USE(SKIA)
-    m_surface = cairo_image_surface_create_for_data(m_bitmap->mutableSpan().data(), CAIRO_FORMAT_ARGB32, m_size.width(), m_size.height(), m_bitmap->bytesPerRow());
+    m_surface = adoptRef(cairo_image_surface_create_for_data(m_bitmap->mutableSpan().data(), CAIRO_FORMAT_ARGB32, m_size.width(), m_size.height(), m_bitmap->bytesPerRow()));
     m_bitmap->ref();
     static cairo_user_data_key_t s_surfaceDataKey;
     cairo_surface_set_user_data(m_surface.get(), &s_surfaceDataKey, m_bitmap.get(), [](void* userData) {

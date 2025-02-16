@@ -15,7 +15,7 @@ function test(o, value, expectedCount) {
         throw new Error("Bad counter value: " + counter);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {
         get f() {
             return this._f;

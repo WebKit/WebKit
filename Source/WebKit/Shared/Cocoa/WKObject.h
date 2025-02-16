@@ -144,7 +144,7 @@ WK_OBJECT_DEALLOC_ON_MAIN_THREAD(objcClass); \
 - (void)dealloc \
 { \
     ASSERT(isMainRunLoop()); \
-    storageVar->~implClass(); \
+    SUPPRESS_UNCOUNTED_ARG storageVar->~implClass(); \
 } \
 \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int

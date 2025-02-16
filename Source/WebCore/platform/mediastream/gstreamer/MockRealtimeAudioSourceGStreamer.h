@@ -35,7 +35,7 @@ class MockRealtimeAudioSourceGStreamer final : public MockRealtimeAudioSource, G
 public:
     static Ref<MockRealtimeAudioSource> createForMockAudioCapturer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&);
 
-    static const HashSet<MockRealtimeAudioSource*>& allMockRealtimeAudioSources();
+    static const UncheckedKeyHashSet<MockRealtimeAudioSource*>& allMockRealtimeAudioSources();
 
     ~MockRealtimeAudioSourceGStreamer();
 
@@ -52,7 +52,6 @@ private:
     friend class MockRealtimeAudioSource;
     MockRealtimeAudioSourceGStreamer(String&& deviceID, AtomString&& name, MediaDeviceHashSalts&&);
     void reconfigure();
-    void addHum(float amplitude, float frequency, float sampleRate, uint64_t start, float *p, uint64_t count);
 
     void startProducingData() final;
     void stopProducingData() final;

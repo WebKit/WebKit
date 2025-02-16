@@ -50,10 +50,10 @@ LayerPool::~LayerPool()
     allLayerPools().remove(this);
 }
 
-HashSet<CheckedPtr<LayerPool>>& LayerPool::allLayerPools()
+UncheckedKeyHashSet<CheckedPtr<LayerPool>>& LayerPool::allLayerPools()
 {
     RELEASE_ASSERT(isMainThread());
-    static NeverDestroyed<HashSet<CheckedPtr<LayerPool>>> allLayerPools;
+    static NeverDestroyed<UncheckedKeyHashSet<CheckedPtr<LayerPool>>> allLayerPools;
     return allLayerPools.get();
 }
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
+<button id="copyButton">Copy foo</button>
+<button id="pasteButton">Paste</button>
+<input id="result">
+<script>
+jsTestIsAsync = true;
+description("Test that we unconditionally allow copying from uneditable elements");
+
+addEventListener("load", async () => {
+    copyButton.addEventListener("click", () => {
+        const input = document.createElement("input");
+        input.hidden = true;
+        input.value = "value";
+        document.body.append(input);
+        input.select();
+        document.execCommand("copy");
+        input.remove();
+    });
+    pasteButton.addEventListener("click", () => {
+        result.focus();
+        document.execCommand("paste", true);
+    });
+
+    document.addEventListener("copy", (e) => {
+        e.clipboardData?.clearData();
+        e.clipboardData?.setData("text/plain", "foo");
+        e.preventDefault();
+    }, true);
+
+    doneWithPaste = false;
+    result.addEventListener("paste", event => {
+        setTimeout(() => {
+            shouldBeEqualToString("result.value", "foo");
+            finishJSTest();
+        }, 0);
+        doneWithPaste = true;
+    });
+
+    if (window.testRunner) {
+        await UIHelper.activateElement(copyButton);
+        result.focus();
+        document.execCommand("paste");
+        await shouldBecomeEqual("doneWithPaste", "true");
+    }
+});
+</script>

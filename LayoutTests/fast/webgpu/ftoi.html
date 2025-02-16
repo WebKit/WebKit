@@ -1,0 +1,200 @@
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+
+var output;
+const BUFFER_SIZE = 24 * 4;
+
+const SHADER = `
+enable f16;
+
+@group(0) @binding(0) var<storage, read_write> buf: array<atomic<i32>, 24>;
+@group(0) @binding(1) var<storage, read_write> buf2: array<atomic<u32>, 24>;
+
+@compute @workgroup_size(1)
+fn main() {
+  { var x = -65504h; atomicStore(&buf[0], i32(x)); }
+  { var x = -1.0e36f; atomicStore(&buf[1], i32(x)); }
+  { var x = 65504.0h; atomicStore(&buf[2], i32(x)); }
+  { var x = 1.0e36f; atomicStore(&buf[3], i32(x)); }
+  { var x = 0h; atomicStore(&buf[4], i32(-x/x)); }
+  { var x = 0h; atomicStore(&buf[5], i32(x/x)); }
+  { var x = 0h; atomicStore(&buf[6], i32(-1/x)); }
+  { var x = 0h; atomicStore(&buf[7], i32(1/x)); }
+  { var x = 0f; atomicStore(&buf[8], i32(-x/x)); }
+  { var x = 0f; atomicStore(&buf[9], i32(x/x)); }
+  { var x = 0f; atomicStore(&buf[10], i32(-1/x)); }
+  { var x = 0f; atomicStore(&buf[11], i32(1/x)); }
+
+  { var x = -65504h; atomicStore(&buf[12], vec2i(vec2(x)).x); }
+  { var x = -1.0e36f; atomicStore(&buf[13], vec2i(vec2(x)).x); }
+  { var x = 65504.0h; atomicStore(&buf[14], vec2i(vec2(x)).x); }
+  { var x = 1.0e36f; atomicStore(&buf[15], vec2i(vec2(x)).x); }
+  { var x = 0h; atomicStore(&buf[16], vec2i(vec2(-x/x)).x); }
+  { var x = 0h; atomicStore(&buf[17], vec2i(vec2(x/x)).x); }
+  { var x = 0h; atomicStore(&buf[18], vec2i(vec2(-1/x)).x); }
+  { var x = 0h; atomicStore(&buf[19], vec2i(vec2(1/x)).x); }
+  { var x = 0f; atomicStore(&buf[20], vec2i(vec2(-x/x)).x); }
+  { var x = 0f; atomicStore(&buf[21], vec2i(vec2(x/x)).x); }
+  { var x = 0f; atomicStore(&buf[22], vec2i(vec2(-1/x)).x); }
+  { var x = 0f; atomicStore(&buf[23], vec2i(vec2(1/x)).x); }
+
+
+  { var x = -65504h; atomicStore(&buf2[0], u32(x)); }
+  { var x = -1.0e36f; atomicStore(&buf2[1], u32(x)); }
+  { var x = 65504h; atomicStore(&buf2[2], u32(x)); }
+  { var x = 1.0e36f; atomicStore(&buf2[3], u32(x)); }
+  { var x = 0h; atomicStore(&buf2[4], u32(-x/x)); }
+  { var x = 0h; atomicStore(&buf2[5], u32(x/x)); }
+  { var x = 0h; atomicStore(&buf2[6], u32(-1/x)); }
+  { var x = 0h; atomicStore(&buf2[7], u32(1/x)); }
+  { var x = 0f; atomicStore(&buf2[8], u32(-x/x)); }
+  { var x = 0f; atomicStore(&buf2[9], u32(x/x)); }
+  { var x = 0f; atomicStore(&buf2[10], u32(-1/x)); }
+  { var x = 0f; atomicStore(&buf2[11], u32(1/x)); }
+
+  { var x = -65504h; atomicStore(&buf2[12], vec2u(vec2h(x)).x); }
+  { var x = -1.0e36f; atomicStore(&buf2[13], vec2u(vec2f(x)).x); }
+  { var x = 65504h; atomicStore(&buf2[14], vec2u(vec2h(x)).x); }
+  { var x = 1.0e36f; atomicStore(&buf2[15], vec2u(vec2f(x)).x); }
+  { var x = 0h; atomicStore(&buf2[16], vec2u(vec2h(-x/x)).x); }
+  { var x = 0h; atomicStore(&buf2[17], vec2u(vec2h(x/x)).x); }
+  { var x = 0h; atomicStore(&buf2[18], vec2u(vec2h(-1/x)).x); }
+  { var x = 0h; atomicStore(&buf2[19], vec2u(vec2h(1/x)).x); }
+  { var x = 0f; atomicStore(&buf2[20], vec2u(vec2f(-x/x)).x); }
+  { var x = 0f; atomicStore(&buf2[21], vec2u(vec2f(x/x)).x); }
+  { var x = 0f; atomicStore(&buf2[22], vec2u(vec2f(-1/x)).x); }
+  { var x = 0f; atomicStore(&buf2[23], vec2u(vec2f(1/x)).x); }
+
+}
+`;
+
+
+async function main() {
+    const adapter = await navigator.gpu.requestAdapter({});
+    const device = await adapter.requestDevice({});
+
+    device.pushErrorScope('validation');
+
+    const shaderModule = device.createShaderModule({code: SHADER});
+    const bindGroupLayout = device.createBindGroupLayout({
+        entries: [
+            {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+            {binding: 1, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        ]
+    });
+
+    const buffer = device.createBuffer({
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+        size: BUFFER_SIZE
+    });
+
+    const buffer2 = device.createBuffer({
+        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+        size: BUFFER_SIZE
+    });
+
+    const outputBuffer = device.createBuffer({
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        size: BUFFER_SIZE
+    });
+
+    const outputBuffer2 = device.createBuffer({
+        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        size: BUFFER_SIZE
+    });
+
+    const bindGroup = device.createBindGroup({
+        layout: bindGroupLayout, entries: [
+            {binding: 0, resource: {buffer: buffer}},
+            {binding: 1, resource: {buffer: buffer2}},
+        ],
+    });
+
+    const commandEncoder = device.createCommandEncoder();
+    const computePassEncoder = commandEncoder.beginComputePass({});
+    const pipelineLayout = device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout]});
+    const computePipeline = device.createComputePipeline({layout: pipelineLayout, compute: {module: shaderModule}});
+    computePassEncoder.setPipeline(computePipeline);
+    computePassEncoder.setBindGroup(0, bindGroup);
+    computePassEncoder.dispatchWorkgroups(1);
+    computePassEncoder.end();
+
+    commandEncoder.copyBufferToBuffer(buffer, 0, outputBuffer, 0, BUFFER_SIZE);
+    commandEncoder.copyBufferToBuffer(buffer2, 0, outputBuffer2, 0, BUFFER_SIZE);
+
+    device.queue.submit([commandEncoder.finish()]);
+
+    await device.queue.onSubmittedWorkDone();
+
+    await outputBuffer.mapAsync(GPUMapMode.READ);
+    await outputBuffer2.mapAsync(GPUMapMode.READ);
+    output = new Int32Array(outputBuffer.getMappedRange());
+    output2 = new Uint32Array(outputBuffer2.getMappedRange());
+
+    debug(output);
+    debug(output2);
+
+    shouldBe('output[0]', '-65504');
+    shouldBe('output[1]', '-2147483648');
+    shouldBe('output[2]', '65504');
+    shouldBe('output[3]', '2147483520');
+    shouldBe('output[4]', '0');
+    shouldBe('output[5]', '0');
+    shouldBe('output[6]', '-65504');
+    shouldBe('output[7]', '65504');
+    shouldBe('output[8]', '0');
+    shouldBe('output[9]', '0');
+    shouldBe('output[10]', '-2147483648');
+    shouldBe('output[11]', '2147483520');
+    shouldBe('output[12]', '-65504');
+    shouldBe('output[13]', '-2147483648');
+    shouldBe('output[14]', '65504');
+    shouldBe('output[15]', '2147483520');
+    shouldBe('output[16]', '0');
+    shouldBe('output[17]', '0');
+    shouldBe('output[18]', '-65504');
+    shouldBe('output[19]', '65504');
+    shouldBe('output[20]', '0');
+    shouldBe('output[21]', '0');
+    shouldBe('output[22]', '-2147483648');
+    shouldBe('output[23]', '2147483520');
+
+    shouldBe('output2[0]', '0');
+    shouldBe('output2[1]', '0');
+    shouldBe('output2[2]', '65504');
+    shouldBe('output2[3]', '4294967040');
+    shouldBe('output2[4]', '0');
+    shouldBe('output2[5]', '0');
+    shouldBe('output2[6]', '0');
+    shouldBe('output2[7]', '65504');
+    shouldBe('output2[8]', '0');
+    shouldBe('output2[9]', '0');
+    shouldBe('output2[10]', '0');
+    shouldBe('output2[11]', '4294967040');
+    shouldBe('output2[12]', '0');
+    shouldBe('output2[13]', '0');
+    shouldBe('output2[14]', '65504');
+    shouldBe('output2[15]', '4294967040');
+    shouldBe('output2[16]', '0');
+    shouldBe('output2[17]', '0');
+    shouldBe('output2[18]', '0');
+    shouldBe('output2[19]', '65504');
+    shouldBe('output2[20]', '0');
+    shouldBe('output2[21]', '0');
+    shouldBe('output2[22]', '0');
+    shouldBe('output2[23]', '4294967040');
+
+    outputBuffer.unmap();
+    outputBuffer2.unmap();
+}
+
+
+globalThis.testRunner?.waitUntilDone();
+
+main().catch(e => {
+    debug(e);
+}).finally(() => {
+    globalThis.testRunner?.notifyDone();
+});
+
+</script>

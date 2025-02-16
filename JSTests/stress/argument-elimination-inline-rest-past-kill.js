@@ -9,7 +9,7 @@ function f3(...a2) {
 }
 noInline(f3);
 
-for (let i = 0; i < 1e5; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     var v3 = f3();
     if (!Array.isArray(v3[v3.length - 1]))
         throw new Error('Should be an array');

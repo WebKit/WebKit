@@ -357,7 +357,7 @@ std::unique_ptr<ScrollingStateTree> ScrollingStateTree::commit(LayerRepresentati
     return treeStateClone;
 }
 
-void ScrollingStateTree::traverse(const ScrollingStateNode& node, const Function<void(const ScrollingStateNode&)>& traversalFunc) const
+void ScrollingStateTree::traverse(const ScrollingStateNode& node, NOESCAPE const Function<void(const ScrollingStateNode&)>& traversalFunc) const
 {
     traversalFunc(node);
 

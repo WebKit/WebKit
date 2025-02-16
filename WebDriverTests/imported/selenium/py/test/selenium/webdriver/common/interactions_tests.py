@@ -253,6 +253,7 @@ def test_can_pause(driver, pages):
 
 @pytest.mark.xfail_firefox
 @pytest.mark.xfail_remote
+@pytest.mark.xfail_safari
 def test_can_scroll_to_element(driver, pages):
     pages.load("scrolling_tests/frame_with_nested_scrolling_frame_out_of_view.html")
     iframe = driver.find_element(By.TAG_NAME, "iframe")
@@ -266,6 +267,7 @@ def test_can_scroll_to_element(driver, pages):
 
 @pytest.mark.xfail_firefox
 @pytest.mark.xfail_remote
+@pytest.mark.xfail_safari
 def test_can_scroll_from_element_by_amount(driver, pages):
     pages.load("scrolling_tests/frame_with_nested_scrolling_frame_out_of_view.html")
     iframe = driver.find_element(By.TAG_NAME, "iframe")
@@ -280,6 +282,7 @@ def test_can_scroll_from_element_by_amount(driver, pages):
 
 @pytest.mark.xfail_firefox
 @pytest.mark.xfail_remote
+@pytest.mark.xfail_safari
 def test_can_scroll_from_element_with_offset_by_amount(driver, pages):
     pages.load("scrolling_tests/frame_with_nested_scrolling_frame_out_of_view.html")
     footer = driver.find_element(By.TAG_NAME, "footer")
@@ -314,6 +317,7 @@ def test_can_scroll_from_viewport_by_amount(driver, pages):
     assert _in_viewport(driver, footer)
 
 
+@pytest.mark.xfail_safari
 def test_can_scroll_from_viewport_with_offset_by_amount(driver, pages):
     pages.load("scrolling_tests/frame_with_nested_scrolling_frame.html")
     scroll_origin = ScrollOrigin.from_viewport(10, 10)

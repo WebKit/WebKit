@@ -190,66 +190,42 @@ void InsertInitCode(TCompiler *compiler,
                     bool highPrecisionSupported)
 {
     TIntermSequence *mainBody = FindMainBody(root)->getSequence();
-    for (const ShaderVariable &var : variables)
+    for (const TVariable *var : variables)
     {
-        // Note that tempVariableName will reference a short-lived char array here - that's fine
-        // since we're only using it to find symbols.
-        ImmutableString tempVariableName(var.name.c_str(), var.name.length());
-
         TIntermTyped *initializedSymbol = nullptr;
-        if (var.isBuiltIn() && !symbolTable->findUserDefined(tempVariableName))
+
+        if (var->symbolType() == SymbolType::Empty)
         {
+            // Must be a nameless interface block.
+            ASSERT(var->getType().getInterfaceBlock() != nullptr);
+            ASSERT(!var->getType().getInterfaceBlock()->name().empty());
+
+            const TInterfaceBlock *block = var->getType().getInterfaceBlock();
+            for (const TField *field : block->fields())
+            {
+                initializedSymbol = ReferenceGlobalVariable(field->name(), *symbolTable);
+
+                TIntermSequence initCode;
+                CreateInitCode(initializedSymbol, canUseLoopsToInitialize, highPrecisionSupported,
+                               &initCode, symbolTable);
+                mainBody->insert(mainBody->begin(), initCode.begin(), initCode.end());
+            }
+
+            // All done with the interface block
+            continue;
+        }
+
+        const TQualifier qualifier = var->getType().getQualifier();
+
+        initializedSymbol = new TIntermSymbol(var);
+        if (qualifier == EvqFragData &&
+            !IsExtensionEnabled(extensionBehavior, TExtension::EXT_draw_buffers))
+        {
+            // If GL_EXT_draw_buffers is disabled, only the 0th index of gl_FragData can be
+            // written to.
             initializedSymbol =
-                ReferenceBuiltInVariable(tempVariableName, *symbolTable, shaderVersion);
-            if (initializedSymbol->getQualifier() == EvqFragData &&
-                !IsExtensionEnabled(extensionBehavior, TExtension::EXT_draw_buffers))
-            {
-                // If GL_EXT_draw_buffers is disabled, only the 0th index of gl_FragData can be
-                // written to.
-                // TODO(oetuaho): This is a bit hacky and would be better to remove, if we came up
-                // with a good way to do it. Right now "gl_FragData" in symbol table is initialized
-                // to have the array size of MaxDrawBuffers, and the initialization happens before
-                // the shader sets the extensions it is using.
-                initializedSymbol =
-                    new TIntermBinary(EOpIndexDirect, initializedSymbol, CreateIndexNode(0));
-            }
-            else if (initializedSymbol->getQualifier() == EvqClipDistance ||
-                     initializedSymbol->getQualifier() == EvqCullDistance)
-            {
-                // The built-in may have been implicitly resized.
-                initializedSymbol =
-                    new TIntermSymbol(&FindSymbolNode(root, tempVariableName)->variable());
-            }
+                new TIntermBinary(EOpIndexDirect, initializedSymbol, CreateIndexNode(0));
         }
-        else
-        {
-            if (tempVariableName != "")
-            {
-                initializedSymbol =
-                    new TIntermSymbol(&FindSymbolNode(root, tempVariableName)->variable());
-            }
-            else
-            {
-                // Must be a nameless interface block.
-                ASSERT(var.structOrBlockName != "");
-                const TSymbol *symbol = symbolTable->findGlobal(var.structOrBlockName);
-                ASSERT(symbol && symbol->isInterfaceBlock());
-                const TInterfaceBlock *block = static_cast<const TInterfaceBlock *>(symbol);
-
-                for (const TField *field : block->fields())
-                {
-                    initializedSymbol = ReferenceGlobalVariable(field->name(), *symbolTable);
-
-                    TIntermSequence initCode;
-                    CreateInitCode(initializedSymbol, canUseLoopsToInitialize,
-                                   highPrecisionSupported, &initCode, symbolTable);
-                    mainBody->insert(mainBody->begin(), initCode.begin(), initCode.end());
-                }
-                // Already inserted init code in this case
-                continue;
-            }
-        }
-        ASSERT(initializedSymbol != nullptr);
 
         TIntermSequence initCode;
         CreateInitCode(initializedSymbol, canUseLoopsToInitialize, highPrecisionSupported,

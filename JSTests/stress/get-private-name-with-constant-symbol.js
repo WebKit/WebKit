@@ -42,7 +42,7 @@ noInline(C.prototype.getField);
 noDFG(C.prototype.setField);
 noFTL(C.prototype.setField);
 
-for (; i < 10000; i++) {
+for (; i < testLoopCount; i++) {
     count = i;
     let c = new C();
     assert.equals(c.getField(), 'test');

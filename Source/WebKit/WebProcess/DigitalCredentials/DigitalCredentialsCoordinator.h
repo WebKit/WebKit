@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,27 +28,24 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <WebCore/CredentialRequestCoordinatorClient.h>
-#include <WebCore/FrameIdentifier.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
 
 class WebPage;
 
-class DigitalCredentialsCoordinator final : public WebCore::CredentialRequestCoordinatorClient {
+class DigitalCredentialsCoordinator : public WebCore::CredentialRequestCoordinatorClient {
     WTF_MAKE_TZONE_ALLOCATED(DigitalCredentialsCoordinator);
 public:
     explicit DigitalCredentialsCoordinator(WebPage&);
 
+    void showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&) final;
+    void dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&&) final;
+
 private:
-    // WebCore::CredentialRequestCoordinatorClient
-    void requestDigitalCredential(const WebCore::LocalFrame&, const WebCore::DigitalCredentialRequestOptions&, WebCore::DigitalCredentialRequestCompletionHandler&&);
-    void cancel(CompletionHandler<void()>&&) final;
-
     RefPtr<WebPage> protectedPage() const;
-
     WeakPtr<WebPage> m_page;
+
 };
 
 } // namespace WebKit

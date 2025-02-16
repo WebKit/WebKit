@@ -1,0 +1,9 @@
+
+PASS HTMLIFrameElement.setAttribute('srcdoc', plain_string)
+PASS HTMLIFrameElement.setAttributeNS(null, 'srcdoc', plain_string)
+PASS HTMLScriptElement.setAttribute('src', plain_string)
+PASS HTMLScriptElement.setAttributeNS(null, 'src', plain_string)
+PASS SVGScriptElement.setAttribute('href', plain_string)
+PASS SVGScriptElement.setAttributeNS(null, 'href', plain_string)
+PASS SVGScriptElement.setAttributeNS(NSURI_XLINK, 'href', plain_string)
+

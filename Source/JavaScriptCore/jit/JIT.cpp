@@ -771,12 +771,14 @@ RefPtr<BaselineJITCode> JIT::compileAndLinkWithoutFinalizing(JITCompilationEffor
     jitAssertCodeBlockMatchesCurrentCalleeCodeBlockOnCallFrame(regT1, regT2, *m_unlinkedCodeBlock);
 
     int frameTopOffset = stackPointerOffsetFor(m_unlinkedCodeBlock) * sizeof(Register);
-    unsigned maxFrameSize = -frameTopOffset;
     addPtr(TrustedImm32(frameTopOffset), callFrameRegister, regT1);
     JumpList stackOverflow;
+#if !CPU(ADDRESS64)
+    unsigned maxFrameSize = -frameTopOffset;
     if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
         stackOverflow.append(branchPtr(Above, regT1, callFrameRegister));
-    stackOverflow.append(branchPtr(Above, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
+#endif
+    stackOverflow.append(branchPtr(GreaterThan, AbsoluteAddress(m_vm->addressOfSoftStackLimit()), regT1));
 
     move(regT1, stackPointerRegister);
     checkStackPointerAlignment();
@@ -1063,14 +1065,14 @@ UncheckedKeyHashMap<CString, Seconds> JIT::compileTimeStats()
 {
     UncheckedKeyHashMap<CString, Seconds> result;
     if (Options::reportTotalCompileTimes()) {
-        result.add("Total Compile Time", totalCompileTime());
-        result.add("Baseline Compile Time", totalBaselineCompileTime);
+        result.add("Total Compile Time"_s, totalCompileTime());
+        result.add("Baseline Compile Time"_s, totalBaselineCompileTime);
 #if ENABLE(DFG_JIT)
-        result.add("DFG Compile Time", totalDFGCompileTime);
+        result.add("DFG Compile Time"_s, totalDFGCompileTime);
 #if ENABLE(FTL_JIT)
-        result.add("FTL Compile Time", totalFTLCompileTime);
-        result.add("FTL (DFG) Compile Time", totalFTLDFGCompileTime);
-        result.add("FTL (B3) Compile Time", totalFTLB3CompileTime);
+        result.add("FTL Compile Time"_s, totalFTLCompileTime);
+        result.add("FTL (DFG) Compile Time"_s, totalFTLDFGCompileTime);
+        result.add("FTL (B3) Compile Time"_s, totalFTLB3CompileTime);
 #endif // ENABLE(FTL_JIT)
 #endif // ENABLE(DFG_JIT)
     }

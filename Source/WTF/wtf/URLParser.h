@@ -158,4 +158,6 @@ private:
     bool shouldPopPath(unsigned);
 };
 
+WTF_EXPORT_PRIVATE bool isForbiddenHostCodePoint(UChar);
+
 }

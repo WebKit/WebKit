@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/Forward.h>
+#include <wtf/ObjectIdentifier.h>
 #include <wtf/Ref.h>
 
 namespace WebCore {
@@ -40,6 +41,7 @@ struct WebTransportBidirectionalStreamConstructionParameters {
     WEBCORE_EXPORT WebTransportBidirectionalStreamConstructionParameters(WebTransportBidirectionalStreamConstructionParameters&&);
     WEBCORE_EXPORT WebTransportBidirectionalStreamConstructionParameters& operator=(WebTransportBidirectionalStreamConstructionParameters&&);
     WEBCORE_EXPORT ~WebTransportBidirectionalStreamConstructionParameters();
+    WEBCORE_EXPORT WebTransportBidirectionalStreamConstructionParameters isolatedCopy() &&;
 
     WebTransportStreamIdentifier identifier;
     Ref<WritableStreamSink> sink;

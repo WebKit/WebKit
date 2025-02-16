@@ -1,0 +1,4 @@
+
+PASS Property dynamic-range-limit has initial value high
+PASS Property dynamic-range-limit inherits
+

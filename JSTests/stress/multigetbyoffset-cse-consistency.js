@@ -32,7 +32,7 @@ function func(flag1, flag2) {
     return x;
 }
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (func(i % 2, i % 3) !== 1)
         throw new Error();
 }

@@ -36,19 +36,20 @@ using namespace WebCore;
 
 @implementation WebKitFullScreenListener
 
-- (id)initWithElement:(Element*)element
+- (id)initWithElement:(Element*)element completionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)completionHandler
 {
     if (!(self = [super init]))
         return nil;
 
     _element = element;
+    _completionHandler = WTFMove(completionHandler);
     return self;
 }
 
 - (void)webkitWillEnterFullScreen
 {
-    if (_element)
-        _element->document().fullscreenManager().willEnterFullscreen(*_element);
+    if (_element && _completionHandler)
+        _element->document().fullscreenManager().willEnterFullscreen(*_element, WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard, WTFMove(_completionHandler));
 }
 
 - (void)webkitDidEnterFullScreen

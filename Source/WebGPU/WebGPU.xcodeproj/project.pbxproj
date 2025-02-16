@@ -142,6 +142,8 @@
 		94200C512CADBD7200484401 /* CommandEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94200C502CADBD6B00484401 /* CommandEncoder.swift */; };
 		94200C522CADBE5200484401 /* CommandsMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C582FF827E04131009B40F0 /* CommandsMixin.h */; };
 		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
+		94989BA12D5AA41500E9458A /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = 94989BA02D5AA40E00E9458A /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		94989BA42D5ACCFF00E9458A /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 94989BA22D5AC2C800E9458A /* Logging.cpp */; };
 		94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */; };
 		94E02AFC2CF03B580052068F /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAA5273A426D0095F8D5 /* Buffer.h */; };
 		97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */; };
@@ -465,6 +467,8 @@
 		941C1EE42CA328EE004D4220 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		94200C502CADBD6B00484401 /* CommandEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandEncoder.swift; sourceTree = "<group>"; };
 		947871492C98CEC6003DB695 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
+		94989BA02D5AA40E00E9458A /* Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		94989BA22D5AC2C800E9458A /* Logging.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwiftInternal.h; sourceTree = "<group>"; };
 		97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTElaboratedTypeExpression.h; sourceTree = "<group>"; };
 		97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTReferenceTypeExpression.h; sourceTree = "<group>"; };
@@ -900,6 +904,8 @@
 		DD8EE22E2CE6B490004DD6F8 /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				94989BA22D5AC2C800E9458A /* Logging.cpp */,
+				94989BA02D5AA40E00E9458A /* Logging.h */,
 				DD8EE22F2CE6B4B3004DD6F8 /* module.modulemap */,
 				94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */,
 			);
@@ -920,6 +926,7 @@
 				941C64B72CAB4A0700A63214 /* Device.h in Headers */,
 				0D30F93929F1FAC50055D9F1 /* ExternalTexture.h in Headers */,
 				941C1EE72CA46829004D4220 /* Instance.h in Headers */,
+				94989BA12D5AA41500E9458A /* Logging.h in Headers */,
 				0D509DCD29CAB6EC00546D84 /* MetalSPI.h in Headers */,
 				973F784729C8A78200166C66 /* Pipeline.h in Headers */,
 				941C2CF32CBDB0E700B5DB48 /* QuerySet.h in Headers */,
@@ -1228,6 +1235,7 @@
 				0D30F93729F1F94A0055D9F1 /* ExternalTexture.mm in Sources */,
 				1C0F41EE280940650005886D /* HardwareCapabilities.mm in Sources */,
 				1C5ACA94273A41C20095F8D5 /* Instance.mm in Sources */,
+				94989BA42D5ACCFF00E9458A /* Logging.cpp in Sources */,
 				973F784829C8A78200166C66 /* Pipeline.mm in Sources */,
 				1C5ACAE5273A55DD0095F8D5 /* PipelineLayout.mm in Sources */,
 				1C9F7CDF29762F51006B5BE9 /* PresentationContext.mm in Sources */,

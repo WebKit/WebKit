@@ -32,30 +32,27 @@ fileprivate struct DefaultNavigationDecider: NavigationDeciding {
 @MainActor
 final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
     init(
-        navigationProgressContinuation: AsyncStream<WebPage_v0.NavigationEvent>.Continuation,
-        downloadProgressContinuation: AsyncStream<WebPage_v0.DownloadEvent>.Continuation,
+        downloadProgressContinuation: AsyncStream<WebPage.DownloadEvent>.Continuation,
         navigationDecider: (any NavigationDeciding)?
     ) {
-        self.navigationProgressContinuation = navigationProgressContinuation
         self.downloadProgressContinuation = downloadProgressContinuation
         self.navigationDecider = navigationDecider ?? DefaultNavigationDecider()
     }
 
-    weak var owner: WebPage_v0? = nil
+    weak var owner: WebPage? = nil
 
-    private let navigationProgressContinuation: AsyncStream<WebPage_v0.NavigationEvent>.Continuation
-    private let downloadProgressContinuation: AsyncStream<WebPage_v0.DownloadEvent>.Continuation
+    private let downloadProgressContinuation: AsyncStream<WebPage.DownloadEvent>.Continuation
     private let navigationDecider: any NavigationDeciding
 
     // MARK: Navigation progress reporting
 
-    private func yieldNavigationProgress(kind: WebPage_v0.NavigationEvent.Kind, cocoaNavigation: WKNavigation!) {
-        let navigation = WebPage_v0.NavigationEvent(kind: kind, navigationID: .init(cocoaNavigation))
-        navigationProgressContinuation.yield(navigation)
+    private func yieldNavigationProgress(kind: WebPage.NavigationEvent.Kind, cocoaNavigation: WKNavigation!) {
+        let navigation = WebPage.NavigationEvent(kind: kind, navigationID: .init(cocoaNavigation))
+        owner?.currentNavigationEvent = navigation
     }
 
-    private func yieldDownloadProgress(kind: WebPage_v0.DownloadEvent.Kind, download: WKDownload) {
-        let downloadEvent = WebPage_v0.DownloadEvent(kind: kind, download: .init(download))
+    private func yieldDownloadProgress(kind: WebPage.DownloadEvent.Kind, download: WKDownload) {
+        let downloadEvent = WebPage.DownloadEvent(kind: kind, download: .init(download))
         downloadProgressContinuation.yield(downloadEvent)
     }
 
@@ -111,8 +108,8 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
     // MARK: Navigation decisions
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences) async -> (WKNavigationActionPolicy, WKWebpagePreferences) {
-        let convertedAction = WebPage_v0.NavigationAction(navigationAction)
-        var convertedPreferences = WebPage_v0.NavigationPreferences(preferences)
+        let convertedAction = WebPage.NavigationAction(navigationAction)
+        var convertedPreferences = WebPage.NavigationPreferences(preferences)
 
         let result = await navigationDecider.decidePolicy(for: convertedAction, preferences: &convertedPreferences)
         let newPreferences = WKWebpagePreferences(convertedPreferences)
@@ -121,7 +118,7 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
     }
 
     func webView(_ webView: WKWebView, decidePolicyFor navigationResponse: WKNavigationResponse) async -> WKNavigationResponsePolicy {
-        let convertedResponse = WebPage_v0.NavigationResponse(navigationResponse)
+        let convertedResponse = WebPage.NavigationResponse(navigationResponse)
         return await navigationDecider.decidePolicy(for: convertedResponse)
     }
 

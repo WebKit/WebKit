@@ -18,7 +18,7 @@ noInline(test);
 var map = new Map([[1, 1], [2, 2], [3, 3]]);
 var iterator = map.values();
 var mapIteratorPrototype = iterator.__proto__;
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var flag = i % 10000 === 0;
     var result = test(map, i, flag);
     if (flag) {

@@ -22,7 +22,7 @@ async function test() {
     
         (func (export "main")
             (local $i i32)
-            (local.set $i (i32.const 100000))
+            (local.set $i (i32.const ${wasmTestLoopCount}))
             (loop
                 (i32.sub (local.get $i) (i32.const 1))
                 (local.tee $i)

@@ -1,0 +1,9 @@
+This tests that fetching the string for the line range corresponding to a text marker fetches the whole string, and it doesn't get truncated due to the list marker adding extra characters
+
+stringForTextMarkerRange: • Once upon a time
+attributedStringForTextMarkerRange: Attributes in range {0, 18}: } • Once upon a time
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -249,6 +249,11 @@ PlatformCALayerCocoa::PlatformCALayerCocoa(LayerType layerType, PlatformCALayerC
         layerClass = PAL::getMTMaterialLayerClass();
         break;
 #endif
+#if HAVE(MATERIAL_HOSTING)
+    case LayerType::LayerTypeMaterialHostingLayer:
+        layerClass = [CALayer class];
+        break;
+#endif
     case LayerType::LayerTypeTiledBackingLayer:
     case LayerType::LayerTypePageTiledBackingLayer:
         layerClass = [WebTiledBackingLayer class];
@@ -388,7 +393,7 @@ Ref<PlatformCALayer> PlatformCALayerCocoa::clone(PlatformCALayerClient* owner) c
         AVPlayerLayer *sourcePlayerLayer = avPlayerLayer();
         ASSERT(sourcePlayerLayer);
 
-        RunLoop::main().dispatch([destinationPlayerLayer = retainPtr(destinationPlayerLayer), sourcePlayerLayer = retainPtr(sourcePlayerLayer)] {
+        RunLoop::protectedMain()->dispatch([destinationPlayerLayer = retainPtr(destinationPlayerLayer), sourcePlayerLayer = retainPtr(sourcePlayerLayer)] {
             [destinationPlayerLayer setPlayer:[sourcePlayerLayer player]];
         });
     }
@@ -1154,16 +1159,15 @@ void PlatformCALayerCocoa::setIsDescendentOfSeparatedPortal(bool)
 
 #if HAVE(CORE_MATERIAL)
 
-AppleVisualEffect PlatformCALayerCocoa::appleVisualEffect() const
+AppleVisualEffectData PlatformCALayerCocoa::appleVisualEffectData() const
 {
     // FIXME: Add an implementation for when UI-side compositing is disabled.
-    return m_appleVisualEffect;
+    return { };
 }
 
-void PlatformCALayerCocoa::setAppleVisualEffect(AppleVisualEffect effect)
+void PlatformCALayerCocoa::setAppleVisualEffectData(AppleVisualEffectData)
 {
     // FIXME: Add an implementation for when UI-side compositing is disabled.
-    m_appleVisualEffect = effect;
 }
 
 #endif
@@ -1176,7 +1180,7 @@ void PlatformCALayerCocoa::updateContentsFormat()
 
         if (NSString *formatString = contentsFormatString(contentsFormat))
             [m_layer setContentsFormat:formatString];
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
         if (contentsFormat == ContentsFormat::RGBA16F) {
             [m_layer setWantsExtendedDynamicRangeContent:true];
             [m_layer setToneMapMode:CAToneMapModeIfSupported];
@@ -1207,7 +1211,7 @@ bool PlatformCALayer::isWebLayer()
 
 void PlatformCALayer::setBoundsOnMainThread(CGRect bounds)
 {
-    RunLoop::main().dispatch([layer = m_layer, bounds] {
+    RunLoop::protectedMain()->dispatch([layer = m_layer, bounds] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [layer setBounds:bounds];
         END_BLOCK_OBJC_EXCEPTIONS
@@ -1216,7 +1220,7 @@ void PlatformCALayer::setBoundsOnMainThread(CGRect bounds)
 
 void PlatformCALayer::setPositionOnMainThread(CGPoint position)
 {
-    RunLoop::main().dispatch([layer = m_layer, position] {
+    RunLoop::protectedMain()->dispatch([layer = m_layer, position] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [layer setPosition:position];
         END_BLOCK_OBJC_EXCEPTIONS
@@ -1225,7 +1229,7 @@ void PlatformCALayer::setPositionOnMainThread(CGPoint position)
 
 void PlatformCALayer::setAnchorPointOnMainThread(FloatPoint3D value)
 {
-    RunLoop::main().dispatch([layer = m_layer, value] {
+    RunLoop::protectedMain()->dispatch([layer = m_layer, value] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [layer setAnchorPoint:CGPointMake(value.x(), value.y())];
         [layer setAnchorPointZ:value.z()];

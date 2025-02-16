@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT fullscreen root block sizing Test timed out
+PASS fullscreen root block sizing
 

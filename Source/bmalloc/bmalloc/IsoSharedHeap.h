@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "IsoSharedConfig.h"
 #include "IsoSharedPage.h"
 #include "StaticPerProcess.h"
@@ -76,3 +78,4 @@ BALLOW_DEPRECATED_DECLARATIONS_END
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

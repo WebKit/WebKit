@@ -9,6 +9,7 @@
 
 #include "libANGLE/renderer/metal/RenderBufferMtl.h"
 
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/ImageMtl.h"
 #include "libANGLE/renderer/metal/mtl_format_utils.h"
@@ -70,7 +71,7 @@ angle::Result RenderbufferMtl::setStorageImpl(const gl::Context *context,
         const gl::TextureCaps &textureCaps =
             contextMtl->getTextureCaps().get(mFormat.intendedFormatId);
         actualSamples = textureCaps.getNearestSamples(actualSamples);
-        ANGLE_MTL_CHECK(contextMtl, actualSamples != 0, GL_INVALID_VALUE);
+        ANGLE_CHECK(contextMtl, actualSamples != 0, gl::err::kInternalError, GL_INVALID_VALUE);
     }
 
     if ((mTexture == nullptr || !mTexture->valid()) && (width != 0 && height != 0))

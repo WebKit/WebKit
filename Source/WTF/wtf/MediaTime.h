@@ -136,6 +136,7 @@ public:
     };
 
     MediaTime toTimeScale(uint32_t, RoundingFlags = RoundingFlags::HalfAwayFromZero) const;
+    MediaTime isolatedCopy() const;
 
 private:
     void setTimeScale(uint32_t, RoundingFlags = RoundingFlags::HalfAwayFromZero);

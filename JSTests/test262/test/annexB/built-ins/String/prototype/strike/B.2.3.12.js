@@ -5,11 +5,11 @@
 // http://mathias.html5.org/tests/javascript/string/
 
 /*---
- description: >
-     String.prototype.strike returns a string of HTML describing a single HTML
-     strikethrough element. The element's content is the `this` value of the
-     function invocation, coerced to a string.
- es6id: B.2.3.12
+description: >
+    String.prototype.strike returns a string of HTML describing a single HTML
+    strikethrough element. The element's content is the `this` value of the
+    function invocation, coerced to a string.
+es6id: B.2.3.12
 ---*/
 
 assert.sameValue('_'.strike(), '<strike>_</strike>');

@@ -18,7 +18,7 @@ for (var i = 0; i < 10; ++i)
 for (var i = 0; i < 10; ++i)
     foo(true, 42);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar();
     if (result != 42)
         throw "Error: bad result: " + result;

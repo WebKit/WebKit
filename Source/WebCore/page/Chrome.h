@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
@@ -85,10 +85,15 @@ class WorkerClient;
 struct AppHighlight;
 struct ContactInfo;
 struct ContactsRequestData;
-struct DateTimeChooserParameters;
 struct ShareDataWithParsedURL;
 struct ViewportArguments;
 struct WindowFeatures;
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+struct DigitalCredentialsRequestData;
+struct DigitalCredentialsResponseData;
+struct ExceptionData;
+#endif
 
 class Chrome : public HostWindow {
     WTF_MAKE_TZONE_ALLOCATED(Chrome);
@@ -105,6 +110,7 @@ public:
     void invalidateContentsForSlowScroll(const IntRect&) override;
     void scroll(const IntSize&, const IntRect&, const IntRect&) override;
     IntPoint screenToRootView(const IntPoint&) const override;
+    IntPoint rootViewToScreen(const IntPoint&) const override;
     IntRect rootViewToScreen(const IntRect&) const override;
     IntPoint accessibilityScreenToRootView(const IntPoint&) const override;
     IntRect rootViewToAccessibilityScreen(const IntRect&) const override;
@@ -192,23 +198,23 @@ public:
     WEBCORE_EXPORT void enableSuddenTermination();
     WEBCORE_EXPORT void disableSuddenTermination();
 
-#if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color& initialColor);
-#endif
 
-#if ENABLE(DATALIST_ELEMENT)
     RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&);
-#endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&);
-#endif
 
     std::unique_ptr<WorkerClient> createWorkerClient(SerialFunctionDispatcher&);
 
     void runOpenPanel(LocalFrame&, FileChooser&);
     void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&&);
     void showContactPicker(const ContactsRequestData&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&&);
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    void showDigitalCredentialsPicker(const DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&);
+    void dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&&);
+#endif
+
     void loadIconForFiles(const Vector<String>&, FileIconLoader&);
 
     void dispatchDisabledAdaptationsDidChange(const OptionSet<DisabledAdaptations>&) const;

@@ -26,9 +26,10 @@
 #include "config.h"
 #include "ResourceMonitorThrottler.h"
 
-#include <wtf/CryptographicallyRandomNumber.h>
+#include "Logging.h"
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringHash.h>
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
@@ -40,9 +41,14 @@ static constexpr size_t defaultThrottleAccessCount = 5;
 static constexpr Seconds defaultThrottleDuration = 24_h;
 static constexpr size_t defaultMaxHosts = 100;
 
-ResourceMonitorThrottler::ResourceMonitorThrottler()
-    : ResourceMonitorThrottler(defaultThrottleAccessCount, defaultThrottleDuration, defaultMaxHosts)
+Ref<ResourceMonitorThrottler> ResourceMonitorThrottler::create()
 {
+    return create(defaultThrottleAccessCount, defaultThrottleDuration, defaultMaxHosts);
+}
+
+Ref<ResourceMonitorThrottler> ResourceMonitorThrottler::create(size_t count, Seconds duration, size_t maxHosts)
+{
+    return adoptRef(*new ResourceMonitorThrottler(count, duration, maxHosts));
 }
 
 ResourceMonitorThrottler::ResourceMonitorThrottler(size_t count, Seconds duration, size_t maxHosts)
@@ -85,8 +91,8 @@ bool ResourceMonitorThrottler::tryAccess(const String& host, ApproximateTime tim
 
     if (m_throttlersByHost.size() > m_config.maxHosts) {
         // Update and remove all expired access times. If no entry in throttler, remove it.
-        m_throttlersByHost.removeIf([&](auto& it) -> bool {
-            return it.value.tryExpire(time, m_config);
+        m_throttlersByHost.removeIf([protectedThis = Ref { *this }, &time](auto& it) -> bool {
+            return it.value.tryExpire(time, protectedThis->m_config);
         });
 
         // If there are still too many hosts, then remove oldest one.
@@ -128,6 +134,12 @@ bool ResourceMonitorThrottler::AccessThrottler::tryExpire(ApproximateTime time, 
     }
     // Tell caller that the queue is empty.
     return true;
+}
+
+void ResourceMonitorThrottler::setCountPerDuration(size_t count, Seconds duration)
+{
+    m_config.count = count;
+    m_config.duration = duration;
 }
 
 } // namespace WebCore

@@ -64,6 +64,8 @@ PrintStream& logFile()
 #endif
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void logF(const char* format, ...)
 {
     va_list argList;
@@ -80,6 +82,8 @@ void logLnF(const char* format, ...)
     va_end(argList);
     logFile().println();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 Random::Random(VM& vm)
 {

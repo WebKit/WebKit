@@ -35,7 +35,7 @@ function shouldBe(actual, expected)
     var stringArray = [ "cocoa", "cappuccino", "matcha", "rize", "kilimanjaro" ];
     var objectArray = [ {}, {}, {}, {}, {}, key, {}, {}, {}, null, undefined ];
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(indexOfInt32(int32Array, null, 0), -1);
         shouldBe(indexOfInt32(int32Array, undefined, 0), -1);
         shouldBe(indexOfDouble(doubleArray, null, 0), -1);

@@ -32,7 +32,7 @@ class ContextVk;
 
 namespace vk
 {
-class Context;
+class ErrorContext;
 class RenderPassDesc;
 class SecondaryCommandPool;
 
@@ -41,7 +41,7 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
   public:
     VulkanSecondaryCommandBuffer() = default;
 
-    static angle::Result InitializeCommandPool(Context *context,
+    static angle::Result InitializeCommandPool(ErrorContext *context,
                                                SecondaryCommandPool *pool,
                                                uint32_t queueFamilyIndex,
                                                ProtectionType protectionType);
@@ -53,7 +53,7 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
         VkCommandBufferInheritanceRenderingInfo *renderingInfoOut,
         gl::DrawBuffersArray<VkFormat> *colorFormatStorageOut);
 
-    angle::Result initialize(Context *context,
+    angle::Result initialize(ErrorContext *context,
                              SecondaryCommandPool *pool,
                              bool isRenderPassCommandBuffer,
                              SecondaryCommandMemoryAllocator *allocator);
@@ -64,8 +64,9 @@ class VulkanSecondaryCommandBuffer : public priv::CommandBuffer
 
     void detachAllocator(SecondaryCommandMemoryAllocator *destination) {}
 
-    angle::Result begin(Context *context, const VkCommandBufferInheritanceInfo &inheritanceInfo);
-    angle::Result end(Context *context);
+    angle::Result begin(ErrorContext *context,
+                        const VkCommandBufferInheritanceInfo &inheritanceInfo);
+    angle::Result end(ErrorContext *context);
     VkResult reset();
 
     void executeCommands(PrimaryCommandBuffer *primary) { primary->executeCommands(1, this); }

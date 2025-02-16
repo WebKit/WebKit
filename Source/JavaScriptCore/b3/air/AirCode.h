@@ -51,6 +51,7 @@ class CCallHelpers;
 namespace B3 {
 
 class Procedure;
+class WasmBoundsCheckValue;
 
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
@@ -65,7 +66,7 @@ class CFG;
 class Code;
 class Disassembler;
 
-typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg);
+typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, WasmBoundsCheckValue*, GPRReg);
 typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
 
 typedef void PrologueGeneratorFunction(CCallHelpers&, Code&);

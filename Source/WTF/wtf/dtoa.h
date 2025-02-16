@@ -38,18 +38,18 @@ using NumberToCSSStringBuffer = std::array<char, 329>;
 
 using NumberToStringSpan = std::span<const char>;
 
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer& LIFETIME_BOUND, bool truncateTrailingZeros = false);
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedWidthString(float, unsigned decimalPlaces, NumberToStringBuffer& LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedPrecisionString(float, unsigned significantFigures, NumberToStringBuffer& buffer LIFETIME_BOUND, bool truncateTrailingZeros = false);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedWidthString(float, unsigned decimalPlaces, NumberToStringBuffer& buffer LIFETIME_BOUND);
 
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringWithTrailingPoint(double, NumberToStringBuffer& LIFETIME_BOUND);
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer& LIFETIME_BOUND, bool truncateTrailingZeros = false);
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer& LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringWithTrailingPoint(double, NumberToStringBuffer& buffer LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedPrecisionString(double, unsigned significantFigures, NumberToStringBuffer& buffer LIFETIME_BOUND, bool truncateTrailingZeros = false);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToFixedWidthString(double, unsigned decimalPlaces, NumberToStringBuffer& buffer LIFETIME_BOUND);
 
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringAndSize(float, NumberToStringBuffer& LIFETIME_BOUND);
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringAndSize(double, NumberToStringBuffer& LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringAndSize(float, NumberToStringBuffer& buffer LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToStringAndSize(double, NumberToStringBuffer& buffer LIFETIME_BOUND);
 
 // Fixed width with up to 6 decimal places, trailing zeros truncated.
-WTF_EXPORT_PRIVATE NumberToStringSpan numberToCSSString(double, NumberToCSSStringBuffer& LIFETIME_BOUND);
+WTF_EXPORT_PRIVATE NumberToStringSpan numberToCSSString(double, NumberToCSSStringBuffer& buffer LIFETIME_BOUND);
 
 inline double parseDouble(StringView string, size_t& parsedLength)
 {

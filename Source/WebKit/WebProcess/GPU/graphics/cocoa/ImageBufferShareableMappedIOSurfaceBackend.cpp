@@ -47,7 +47,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::nameForRenderingPurpose(parameters.purpose), convertToIOSurfaceFormat(parameters.pixelFormat));
+    auto surface = IOSurface::create(RefPtr { creationContext.surfacePool }.get(), backendSize, parameters.colorSpace, IOSurface::nameForRenderingPurpose(parameters.purpose), convertToIOSurfaceFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
     if (creationContext.resourceOwner)
@@ -59,7 +59,7 @@ std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareable
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), 0, creationContext.surfacePool } };
+    return std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> { new ImageBufferShareableMappedIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), 0, creationContext.surfacePool.get() } };
 }
 
 std::unique_ptr<ImageBufferShareableMappedIOSurfaceBackend> ImageBufferShareableMappedIOSurfaceBackend::create(const Parameters& parameters, ImageBufferBackendHandle handle)

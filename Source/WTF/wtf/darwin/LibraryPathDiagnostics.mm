@@ -134,10 +134,12 @@ void LibraryPathDiagnosticsLogger::logObject(const Vector<String>& path, Ref<JSO
 void LibraryPathDiagnosticsLogger::logError(const char* format, ...)
 {
     StringPrintStream stream;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     va_list argList;
     va_start(argList, format);
     stream.vprintf(format, argList);
     va_end(argList);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     os_log_error(m_osLog, "%{public}s", stream.toCString().data());
 }

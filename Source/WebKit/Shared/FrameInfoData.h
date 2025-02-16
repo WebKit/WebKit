@@ -42,6 +42,7 @@ struct FrameInfoData {
     WebCore::ResourceRequest request;
     WebCore::SecurityOriginData securityOrigin;
     String frameName;
+    // FIXME: Make this no longer Markable. That requires fixes in WebAuthN code.
     Markable<WebCore::FrameIdentifier> frameID;
     Markable<WebCore::FrameIdentifier> parentFrameID;
     Markable<WebCore::ScriptExecutionContextIdentifier> documentID;

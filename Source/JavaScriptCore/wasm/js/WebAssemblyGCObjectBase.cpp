@@ -36,9 +36,9 @@ namespace JSC {
 
 const ClassInfo WebAssemblyGCObjectBase::s_info = { "WebAssemblyGCObjectBase"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyGCObjectBase) };
 
-WebAssemblyGCObjectBase::WebAssemblyGCObjectBase(VM& vm, Structure* structure, RefPtr<const Wasm::RTT> rtt)
+WebAssemblyGCObjectBase::WebAssemblyGCObjectBase(VM& vm, Structure* structure, RefPtr<const Wasm::RTT>&& rtt)
     : Base(vm, structure)
-    , m_rtt(rtt)
+    , m_rtt(WTFMove(rtt))
 {
 }
 

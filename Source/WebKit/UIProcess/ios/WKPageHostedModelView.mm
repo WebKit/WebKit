@@ -28,10 +28,88 @@
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
 
+#import "Logging.h"
+#import "RealityKitBridging.h"
+#import <CoreRE/CoreRE.h>
+#import <UIKit/UIKit.h>
+#import <WebKitAdditions/REPtr.h>
+#import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/RetainPtr.h>
+
+#import "WebKitSwiftSoftLink.h"
 
 @implementation WKPageHostedModelView {
     RetainPtr<UIView> _remoteModelView;
+    RetainPtr<UIView> _containerView;
+    REPtr<REEntityRef> _rootEntity;
+    REPtr<REEntityRef> _containerEntity;
+}
+
+- (instancetype)init
+{
+    if (!(self = [super init]))
+        return nil;
+
+    CALayer *portalLayer = self.layer;
+    portalLayer.name = @"WebKit:PortalLayer";
+    [portalLayer setValue:@YES forKeyPath:@"separatedOptions.updates.clippingPrimitive"];
+    [portalLayer setValue:@YES forKeyPath:@"separatedOptions.updates.transform"];
+    [portalLayer setValue:@YES forKeyPath:@"separatedOptions.updates.collider"];
+    [portalLayer setValue:@YES forKeyPath:@"separatedOptions.updates.mesh"];
+    [portalLayer setValue:@YES forKeyPath:@"separatedOptions.updates.material"];
+    [portalLayer setValue:@YES forKeyPath:@"separatedOptions.updates.texture"];
+    [portalLayer setValue:@YES forKeyPath:@"separatedOptions.isPortal"];
+    [portalLayer setSeparatedState:kCALayerSeparatedStateSeparated];
+
+    REPtr<REComponentRef> clientComponent = RECALayerGetCALayerClientComponent(portalLayer);
+    if (clientComponent) {
+        _rootEntity = REComponentGetEntity(clientComponent.get());
+        REEntitySetName(_rootEntity.get(), "WebKit:PageHostedModelViewEntity");
+    }
+
+    _containerView = adoptNS([[UIView alloc] initWithFrame:self.bounds]);
+    [_containerView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
+    [self addSubview:_containerView.get()];
+    CALayer *containerViewLayer = [_containerView layer];
+    containerViewLayer.name = @"ModelContainerLayer";
+    [containerViewLayer setValue:@NO forKeyPath:@"separatedOptions.updates.transform"];
+    containerViewLayer.separatedState = kCALayerSeparatedStateTracked;
+    REPtr<REComponentRef> containerViewLayerClientComponent = RECALayerGetCALayerClientComponent(containerViewLayer);
+    if (containerViewLayerClientComponent) {
+        _containerEntity = REComponentGetEntity(containerViewLayerClientComponent.get());
+        REEntitySetName(_containerEntity.get(), "WebKit:ModelContainerEntity");
+        REEntitySetParent(_containerEntity.get(), _rootEntity.get());
+        REEntitySubtreeAddNetworkComponentRecursive(_containerEntity.get());
+
+        // FIXME: Clipping workaround for rdar://125188888 (blocked by rdar://123516357 -> rdar://124718417).
+        // containerEntity is required to add a clipping primitive that is independent from model's rootEntity.
+        // Adding the primitive directly to clientComponentEntity has no visual effect.
+        constexpr float clippingBoxHalfSize = 500; // meters
+        REPtr<REComponentRef> clipComponent = REEntityGetOrAddComponentByClass(_containerEntity.get(), REClippingPrimitiveComponentGetComponentType());
+        REClippingPrimitiveComponentSetShouldClipChildren(clipComponent.get(), true);
+        REClippingPrimitiveComponentSetShouldClipSelf(clipComponent.get(), true);
+
+        REAABB clipBounds { simd_make_float3(-clippingBoxHalfSize, -clippingBoxHalfSize, -2 * clippingBoxHalfSize),
+            simd_make_float3(clippingBoxHalfSize, clippingBoxHalfSize, 0) };
+        REClippingPrimitiveComponentClipToBox(clipComponent.get(), clipBounds);
+
+        RENetworkMarkEntityMetadataDirty(_rootEntity.get());
+        RENetworkMarkEntityMetadataDirty(_containerEntity.get());
+    }
+
+    [self applyBackgroundColor:std::nullopt];
+
+    return self;
+}
+
+- (void)dealloc
+{
+    if (_containerEntity)
+        REEntityRemoveFromSceneOrParent(_containerEntity.get());
+    if (_rootEntity)
+        REEntityRemoveFromSceneOrParent(_rootEntity.get());
+
+    [super dealloc];
 }
 
 - (UIView *)remoteModelView
@@ -47,10 +125,36 @@
     [_remoteModelView removeFromSuperview];
 
     _remoteModelView = remoteModelView;
-    CGRect bounds = self.bounds;
+    CGRect bounds = [_containerView bounds];
     [_remoteModelView setFrame:bounds];
     [_remoteModelView setAutoresizingMask:(UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight)];
-    [self addSubview:_remoteModelView.get()];
+    [_containerView addSubview:_remoteModelView.get()];
+}
+
+- (void)setShouldDisablePortal:(BOOL)shouldDisablePortal
+{
+    if (_shouldDisablePortal == shouldDisablePortal)
+        return;
+
+    _shouldDisablePortal = shouldDisablePortal;
+
+    if (_shouldDisablePortal) {
+        [self.layer setValue:nil forKeyPath:@"separatedOptions.isPortal"];
+        [self.layer setValue:@NO forKeyPath:@"separatedOptions.updates.clippingPrimitive"];
+    } else {
+        [self.layer setValue:@YES forKeyPath:@"separatedOptions.isPortal"];
+        [self.layer setValue:@YES forKeyPath:@"separatedOptions.updates.clippingPrimitive"];
+    }
+}
+
+- (void)applyBackgroundColor:(std::optional<WebCore::Color>)backgroundColor
+{
+    if (!backgroundColor || !backgroundColor->isValid()) {
+        [self.layer setValue:(__bridge id)CGColorGetConstantColor(kCGColorWhite) forKeyPath:@"separatedOptions.material.clearColor"];
+        return;
+    }
+
+    [self.layer setValue:(__bridge id)cachedCGColor(*backgroundColor).get() forKeyPath:@"separatedOptions.material.clearColor"];
 }
 
 @end

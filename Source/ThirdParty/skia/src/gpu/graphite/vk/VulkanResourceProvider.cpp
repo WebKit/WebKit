@@ -42,13 +42,42 @@ namespace skgpu::graphite {
 
 constexpr int kMaxNumberOfCachedBufferDescSets = 1024;
 
+namespace {
+VkPipelineLayout create_mock_layout(const VulkanSharedContext* sharedContext) {
+    SkASSERT(sharedContext);
+    VkPushConstantRange pushConstantRange;
+    pushConstantRange.offset = 0;
+    pushConstantRange.size = VulkanResourceProvider::kIntrinsicConstantSize;
+    pushConstantRange.stageFlags = VulkanResourceProvider::kIntrinsicConstantStageFlags;
+
+    VkPipelineLayoutCreateInfo layoutCreateInfo;
+    memset(&layoutCreateInfo, 0, sizeof(VkPipelineLayoutCreateFlags));
+    layoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    layoutCreateInfo.pNext = nullptr;
+    layoutCreateInfo.flags = 0;
+    layoutCreateInfo.setLayoutCount = 0;
+    layoutCreateInfo.pSetLayouts = nullptr;
+    layoutCreateInfo.pushConstantRangeCount = 1;
+    layoutCreateInfo.pPushConstantRanges = &pushConstantRange;
+
+    VkResult result;
+    VkPipelineLayout layout;
+    VULKAN_CALL_RESULT(sharedContext,
+                       result,
+                       CreatePipelineLayout(sharedContext->device(),
+                                            &layoutCreateInfo,
+                                            /*const VkAllocationCallbacks*=*/nullptr,
+                                            &layout));
+    return layout;
+}
+} // anonymous
 VulkanResourceProvider::VulkanResourceProvider(SharedContext* sharedContext,
                                                SingleOwner* singleOwner,
                                                uint32_t recorderID,
-                                               size_t resourceBudget,
-                                               sk_sp<Buffer> intrinsicConstantUniformBuffer)
+                                               size_t resourceBudget)
         : ResourceProvider(sharedContext, singleOwner, recorderID, resourceBudget)
-        , fIntrinsicUniformBuffer(std::move(intrinsicConstantUniformBuffer))
+        , fMockPushConstantPipelineLayout(
+                create_mock_layout(static_cast<const VulkanSharedContext*>(sharedContext)))
         , fUniformBufferDescSetCache(kMaxNumberOfCachedBufferDescSets) {}
 
 VulkanResourceProvider::~VulkanResourceProvider() {
@@ -76,6 +105,12 @@ VulkanResourceProvider::~VulkanResourceProvider() {
                                           fMSAALoadPipelineLayout,
                                           nullptr));
     }
+    if (fMockPushConstantPipelineLayout) {
+        VULKAN_CALL(this->vulkanSharedContext()->interface(),
+                    DestroyPipelineLayout(this->vulkanSharedContext()->device(),
+                                          fMockPushConstantPipelineLayout,
+                                          nullptr));
+    }
 }
 
 const VulkanSharedContext* VulkanResourceProvider::vulkanSharedContext() const {
@@ -101,10 +136,6 @@ sk_sp<Texture> VulkanResourceProvider::onCreateWrappedTexture(const BackendTextu
                                       std::move(ycbcrConversion));
 }
 
-sk_sp<Buffer> VulkanResourceProvider::refIntrinsicConstantBuffer() const {
-    return fIntrinsicUniformBuffer;
-}
-
 sk_sp<GraphicsPipeline> VulkanResourceProvider::createGraphicsPipeline(
         const RuntimeEffectDictionary* runtimeDict,
         const UniqueKey& pipelineKey,
@@ -126,8 +157,7 @@ sk_sp<ComputePipeline> VulkanResourceProvider::createComputePipeline(const Compu
 }
 
 sk_sp<Texture> VulkanResourceProvider::createTexture(SkISize size,
-                                                     const TextureInfo& info,
-                                                     skgpu::Budgeted budgeted) {
+                                                     const TextureInfo& info) {
     sk_sp<VulkanYcbcrConversion> ycbcrConversion;
     if (TextureInfos::GetVulkanYcbcrConversionInfo(info).isValid()) {
         ycbcrConversion = this->findOrCreateCompatibleYcbcrConversion(
@@ -140,7 +170,6 @@ sk_sp<Texture> VulkanResourceProvider::createTexture(SkISize size,
     return VulkanTexture::Make(this->vulkanSharedContext(),
                                size,
                                info,
-                               budgeted,
                                std::move(ycbcrConversion));
 }
 
@@ -154,23 +183,13 @@ sk_sp<Sampler> VulkanResourceProvider::createSampler(const SamplerDesc& samplerD
     sk_sp<VulkanYcbcrConversion> ycbcrConversion = nullptr;
 
     // Non-zero conversion information means the sampler utilizes a ycbcr conversion.
-    bool usesYcbcrConversion = (samplerDesc.desc() >> SamplerDesc::kImmutableSamplerInfoShift) != 0;
+    const bool usesYcbcrConversion = samplerDesc.isImmutable();
     if (usesYcbcrConversion) {
-        GraphiteResourceKey ycbcrKey = VulkanYcbcrConversion::GetKeyFromSamplerDesc(samplerDesc);
-        if (Resource* resource = fResourceCache->findAndRefResource(ycbcrKey,
-                                                                    skgpu::Budgeted::kYes)) {
-            ycbcrConversion =
-                    sk_sp<VulkanYcbcrConversion>(static_cast<VulkanYcbcrConversion*>(resource));
-        } else {
-            ycbcrConversion = VulkanYcbcrConversion::Make(
-                    this->vulkanSharedContext(),
-                    static_cast<uint32_t>(
-                            samplerDesc.desc() >> SamplerDesc::kImmutableSamplerInfoShift),
-                    (uint64_t)(samplerDesc.externalFormatMSBs()) << 32 | samplerDesc.format());
-            SkASSERT(ycbcrConversion);
-
-            ycbcrConversion->setKey(ycbcrKey);
-            fResourceCache->insertResource(ycbcrConversion.get());
+        VulkanYcbcrConversionInfo ycbcrInfo = VulkanYcbcrConversion::FromImmutableSamplerInfo(
+                samplerDesc.immutableSamplerInfo());
+        ycbcrConversion = this->findOrCreateCompatibleYcbcrConversion(ycbcrInfo);
+        if (!ycbcrConversion) {
+            return nullptr;
         }
     }
 
@@ -224,7 +243,7 @@ GraphiteResourceKey build_desc_set_key(const SkSpan<DescriptorData>& requestedDe
     }
 
     GraphiteResourceKey key;
-    GraphiteResourceKey::Builder builder(&key, kType, keyData.size(), Shareable::kNo);
+    GraphiteResourceKey::Builder builder(&key, kType, keyData.size());
 
     for (int i = 0; i < keyData.size(); i++) {
         builder[i] = keyData[i];
@@ -242,8 +261,7 @@ sk_sp<VulkanDescriptorSet> add_new_desc_set_to_cache(const VulkanSharedContext* 
     if (!descSet) {
         return nullptr;
     }
-    descSet->setKey(descSetKey);
-    resourceCache->insertResource(descSet.get());
+    resourceCache->insertResource(descSet.get(), descSetKey, Budgeted::kYes, Shareable::kNo);
 
     return descSet;
 }
@@ -254,9 +272,11 @@ sk_sp<VulkanDescriptorSet> VulkanResourceProvider::findOrCreateDescriptorSet(
     if (requestedDescriptors.empty()) {
         return nullptr;
     }
+
     // Search for available descriptor sets by assembling a key based upon the set's structure.
     GraphiteResourceKey key = build_desc_set_key(requestedDescriptors);
-    if (auto descSet = fResourceCache->findAndRefResource(key, skgpu::Budgeted::kYes)) {
+    if (auto descSet = fResourceCache->findAndRefResource(
+                key, skgpu::Budgeted::kYes, Shareable::kNo)) {
         // A non-null resource pointer indicates we have found an available descriptor set.
         return sk_sp<VulkanDescriptorSet>(static_cast<VulkanDescriptorSet*>(descSet));
     }
@@ -420,8 +440,10 @@ sk_sp<VulkanRenderPass> VulkanResourceProvider::findOrCreateRenderPassWithKnownK
             const RenderPassDesc& renderPassDesc,
             bool compatibleOnly,
             const GraphiteResourceKey& rpKey) {
-    if (Resource* resource =
-            fResourceCache->findAndRefResource(rpKey, skgpu::Budgeted::kYes)) {
+    static constexpr Budgeted kBudgeted = Budgeted::kYes;
+    static constexpr Shareable kShareable = Shareable::kYes;
+
+    if (Resource* resource = fResourceCache->findAndRefResource(rpKey, kBudgeted, kShareable)) {
         return sk_sp<VulkanRenderPass>(static_cast<VulkanRenderPass*>(resource));
     }
 
@@ -433,8 +455,7 @@ sk_sp<VulkanRenderPass> VulkanResourceProvider::findOrCreateRenderPassWithKnownK
         return nullptr;
     }
 
-    renderPass->setKey(rpKey);
-    fResourceCache->insertResource(renderPass.get());
+    fResourceCache->insertResource(renderPass.get(), rpKey, kBudgeted, kShareable);
 
     return renderPass;
 }
@@ -518,15 +539,26 @@ void VulkanResourceProvider::onDeleteBackendTexture(const BackendTexture& textur
 
 sk_sp<VulkanYcbcrConversion> VulkanResourceProvider::findOrCreateCompatibleYcbcrConversion(
         const VulkanYcbcrConversionInfo& ycbcrInfo) const {
+    static constexpr Budgeted kBudgeted = Budgeted::kYes;
+    static constexpr Shareable kShareable = Shareable::kYes;
     if (!ycbcrInfo.isValid()) {
         return nullptr;
     }
-    GraphiteResourceKey ycbcrConversionKey =
-            VulkanYcbcrConversion::MakeYcbcrConversionKey(this->vulkanSharedContext(), ycbcrInfo);
 
-    if (Resource* resource = fResourceCache->findAndRefResource(ycbcrConversionKey,
-                                                                skgpu::Budgeted::kYes)) {
-        return sk_sp<VulkanYcbcrConversion>(static_cast<VulkanYcbcrConversion*>(resource));
+    GraphiteResourceKey key;
+    {
+        static const ResourceType kType = GraphiteResourceKey::GenerateResourceType();
+        static constexpr int kKeySize = 3;
+
+        GraphiteResourceKey::Builder builder(&key, kType, kKeySize);
+        ImmutableSamplerInfo packedInfo = VulkanYcbcrConversion::ToImmutableSamplerInfo(ycbcrInfo);
+        builder[0] = packedInfo.fNonFormatYcbcrConversionInfo;
+        builder[1] = (uint32_t) packedInfo.fFormat;
+        builder[2] = (uint32_t) (packedInfo.fFormat >> 32);
+    }
+
+    if (Resource* resource = fResourceCache->findAndRefResource(key, kBudgeted, kShareable)) {
+        return sk_sp(static_cast<VulkanYcbcrConversion*>(resource));
     }
 
     auto ycbcrConversion = VulkanYcbcrConversion::Make(this->vulkanSharedContext(), ycbcrInfo);
@@ -534,9 +566,7 @@ sk_sp<VulkanYcbcrConversion> VulkanResourceProvider::findOrCreateCompatibleYcbcr
         return nullptr;
     }
 
-    ycbcrConversion->setKey(ycbcrConversionKey);
-    fResourceCache->insertResource(ycbcrConversion.get());
-
+    fResourceCache->insertResource(ycbcrConversion.get(), key, kBudgeted, kShareable);
     return ycbcrConversion;
 }
 

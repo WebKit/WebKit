@@ -157,9 +157,8 @@ String Text::nodeName() const
     return "#text"_s;
 }
 
-Ref<Node> Text::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
+Ref<Node> Text::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
 {
-    Ref document = treeScope.documentScope();
     return create(document, String { data() });
 }
 

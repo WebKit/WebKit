@@ -11,11 +11,11 @@ for (let i = 0; i < 10; ++i) {
             function bar(arg) {
                 return arg.baz = 42;
             }
-            for (let k = 0; k < 10000; ++k) {
+            for (let k = 0; k < testLoopCount; ++k) {
                 bar({}, ...arguments);
             }
         }
-        for (let j = 0; j < 1000000; ++j) {}
+        for (let j = 0; j < testLoopCount; ++j) {}
     }
     foo();
 }

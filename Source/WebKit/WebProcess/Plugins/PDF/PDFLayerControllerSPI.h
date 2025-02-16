@@ -170,8 +170,4 @@ typedef NS_ENUM(NSInteger, PDFLayerControllerCursorType) {
 
 @end
 
-@interface PDFAnnotation (AccessibilityPrivate)
-- (id)accessibilityNode;
-@end
-
 #endif // ENABLE(LEGACY_PDFKIT_PLUGIN)

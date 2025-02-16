@@ -5,9 +5,9 @@ function shouldBe(actual, expected) {
 
 {
     let string = '';
-    for (let i = 0; i < 1e5; ++i)
+    for (let i = 0; i < testLoopCount; ++i)
         string += String.fromCharCode(i);
-    shouldBe(string.length, 1e5);
-    for (let i = 0; i < 1e5; ++i)
+    shouldBe(string.length, testLoopCount);
+    for (let i = 0; i < testLoopCount; ++i)
         shouldBe(string[i], String.fromCharCode(i));
 }

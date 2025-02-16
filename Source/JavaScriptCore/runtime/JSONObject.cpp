@@ -1212,7 +1212,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             auto result = std::to_chars(temporary.data(), temporary.data() + maxInt32StringLength, number);
             ASSERT(result.ec != std::errc::value_too_large);
             unsigned lengthToCopy = result.ptr - temporary.data();
-            WTF::copyElements(std::bit_cast<uint16_t*>(buffer() + m_length), std::bit_cast<const uint8_t*>(temporary.data()), lengthToCopy);
+            WTF::copyElements(spanReinterpretCast<uint16_t>(bufferSpan().subspan(m_length)), spanReinterpretCast<const uint8_t>(std::span { temporary }).first(lengthToCopy));
             m_length += lengthToCopy;
         }
         return;
@@ -1235,7 +1235,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             std::array<char, WTF::dragonbox::max_string_length<WTF::dragonbox::ieee754_binary64>()> temporary;
             const char* cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, temporary.data());
             size_t length = cursor - temporary.data();
-            WTF::copyElements(std::bit_cast<uint16_t*>(buffer() + m_length), std::bit_cast<const uint8_t*>(temporary.data()), length);
+            WTF::copyElements(spanReinterpretCast<uint16_t>(bufferSpan().subspan(m_length)), spanReinterpretCast<const uint8_t>(std::span { temporary }).first(length));
             m_length += length;
         }
         return;

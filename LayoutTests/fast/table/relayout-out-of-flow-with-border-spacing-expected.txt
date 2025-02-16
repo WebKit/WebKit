@@ -1,0 +1,7 @@
+The two Xs below should be horizontally aligned
+
+X
+X
+
+PASS Test a re-layout of out-of-flow children of a table cell with border-spacing.
+

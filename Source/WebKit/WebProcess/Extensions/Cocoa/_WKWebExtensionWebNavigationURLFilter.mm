@@ -153,7 +153,7 @@ static NSString * const portsKey = @"ports";
         ASSERT([rawValue isKindOfClass:NSString.class]);
 
         if (!(_value = [NSRegularExpression regularExpressionWithPattern:rawValue options:0 error:nil])) {
-            *outErrorMessage = toErrorString(nil, originAndPathMatchesKey, @"'%@' is not a valid regular expression", rawValue);
+            *outErrorMessage = toErrorString(nullString(), originAndPathMatchesKey, @"'%@' is not a valid regular expression", rawValue);
             return nil;
         }
 
@@ -181,21 +181,21 @@ static NSString * const portsKey = @"ports";
             if (NSNumber *number = dynamic_objc_cast<NSNumber>(portOrRange)) {
                 NSInteger integerValue = number.integerValue;
                 if (integerValue < 0 || integerValue > maximumPortNumber) {
-                    *outErrorMessage = toErrorString(nil, portsKey, @"'%zd' is not a valid port", integerValue);
+                    *outErrorMessage = toErrorString(nullString(), portsKey, @"'%zd' is not a valid port", integerValue);
                     return nil;
                 }
 
                 [ports addIndex:(NSUInteger)integerValue];
             } else if (NSArray<NSNumber *> *rangeArray = dynamic_objc_cast<NSArray>(portOrRange)) {
                 if (rangeArray.count != 2) {
-                    *outErrorMessage = toErrorString(nil, portsKey, @"a port range must specify 2 numbers");
+                    *outErrorMessage = toErrorString(nullString(), portsKey, @"a port range must specify 2 numbers");
                     return nil;
                 }
 
                 for (NSNumber *number in rangeArray) {
                     NSInteger integerValue = number.integerValue;
                     if (integerValue < 0 || integerValue > maximumPortNumber) {
-                        *outErrorMessage = toErrorString(nil, portsKey, @"'%zd' is not a valid port", integerValue);
+                        *outErrorMessage = toErrorString(nullString(), portsKey, @"'%zd' is not a valid port", integerValue);
                         return nil;
                     }
                 }
@@ -203,7 +203,7 @@ static NSString * const portsKey = @"ports";
                 NSUInteger firstPort = rangeArray[0].unsignedIntegerValue;
                 NSUInteger lastPort = rangeArray[1].unsignedIntegerValue;
                 if (firstPort >= lastPort) {
-                    *outErrorMessage = toErrorString(nil, portsKey, @"'%zd-%zd' is not a valid port range", firstPort, lastPort);
+                    *outErrorMessage = toErrorString(nullString(), portsKey, @"'%zd-%zd' is not a valid port range", firstPort, lastPort);
                     return nil;
                 }
 

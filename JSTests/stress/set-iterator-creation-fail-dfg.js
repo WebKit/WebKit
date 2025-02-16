@@ -20,7 +20,7 @@ function test1(set)
 noInline(test1);
 
 var set = new Set();
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test1(set);
 
 shouldThrow(() => {
@@ -33,7 +33,7 @@ function test2(set)
 }
 noInline(test2);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test2(set);
 
 shouldThrow(() => {

@@ -331,7 +331,7 @@ private:
     std::unique_ptr<VariableEnvironment::RareData> m_rareData;
 };
 
-using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+using TDZEnvironment = UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
 class CompactTDZEnvironment {
     WTF_MAKE_TZONE_ALLOCATED(CompactTDZEnvironment);

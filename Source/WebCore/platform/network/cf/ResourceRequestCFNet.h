@@ -122,7 +122,7 @@ inline RetainPtr<CFStringRef> httpHeaderValueUsingSuitableEncoding(HTTPHeaderMap
         auto utf8Value = header.value.utf8();
         auto utf8ValueSpan = utf8Value.span();
         // Constructing a string with the UTF-8 bytes but claiming that it’s Latin-1 is the way to get CFNetwork to put those UTF-8 bytes on the wire.
-        return adoptCF(CFStringCreateWithBytes(nullptr, utf8ValueSpan.data(), utf8ValueSpan.size(), kCFStringEncodingISOLatin1, false));
+        return adoptCF(CFStringCreateWithBytes(nullptr, byteCast<UInt8>(utf8ValueSpan.data()), utf8ValueSpan.size(), kCFStringEncodingISOLatin1, false));
     }
     return header.value.createCFString();
 }

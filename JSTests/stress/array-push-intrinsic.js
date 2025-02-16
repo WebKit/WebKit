@@ -41,7 +41,7 @@ for (let i = 0; i < 5; ++i) {
 
 (() => {
     const arr = [];
-    for (let i = 0; i < 1e5; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         arrayPush(arr, i);
         shouldBe(arr[i], i);
         shouldBe(arr.length, i + 1);

@@ -90,6 +90,7 @@ protected:
     bool WARN_UNUSED_RETURN parseImmByteArray16(v128_t&);
     PartialResult WARN_UNUSED_RETURN parseImmLaneIdx(uint8_t laneCount, uint8_t&);
     bool WARN_UNUSED_RETURN parseVarUInt32(uint32_t&);
+    bool WARN_UNUSED_RETURN peekVarUInt32(uint32_t&);
     bool WARN_UNUSED_RETURN parseVarUInt64(uint64_t&);
 
     bool WARN_UNUSED_RETURN parseVarInt32(int32_t&);
@@ -196,6 +197,12 @@ ALWAYS_INLINE bool ParserBase::consumeUTF8String(Name& result, size_t stringLeng
 ALWAYS_INLINE bool ParserBase::parseVarUInt32(uint32_t& result)
 {
     return WTF::LEBDecoder::decodeUInt32(m_source, m_offset, result);
+}
+
+ALWAYS_INLINE bool ParserBase::peekVarUInt32(uint32_t& result)
+{
+    SetForScope savedOffset(m_offset, m_offset);
+    return parseVarUInt32(result);
 }
 
 ALWAYS_INLINE bool ParserBase::parseVarUInt64(uint64_t& result)

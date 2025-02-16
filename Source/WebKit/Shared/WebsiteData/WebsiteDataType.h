@@ -50,6 +50,9 @@ enum class WebsiteDataType : uint32_t {
 #endif
     FileSystem = 1 << 19,
     BackgroundFetchStorage = 1 << 20,
+#if ENABLE(SCREEN_TIME)
+    ScreenTime = 1 << 21,
+#endif
 };
 
 } // namespace WebKit
@@ -81,6 +84,9 @@ template<> struct EnumTraitsForPersistence<WebKit::WebsiteDataType> {
 #endif
         WebKit::WebsiteDataType::FileSystem,
         WebKit::WebsiteDataType::BackgroundFetchStorage
+#if ENABLE(SCREEN_TIME)
+        , WebKit::WebsiteDataType::ScreenTime
+#endif
     >;
 };
 

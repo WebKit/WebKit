@@ -33,8 +33,6 @@ public:
     AtomString(std::span<const LChar>);
     AtomString(std::span<const UChar>);
 
-    ALWAYS_INLINE static AtomString fromLatin1(const char* characters) { return AtomString(characters); }
-
     AtomString(AtomStringImpl*);
     AtomString(RefPtr<AtomStringImpl>&&);
     AtomString(Ref<AtomStringImpl>&&);
@@ -62,7 +60,7 @@ public:
     String releaseString() { return WTFMove(m_string); }
 
     // FIXME: What guarantees this isn't a SymbolImpl rather than an AtomStringImpl?
-    AtomStringImpl* impl() const { return static_cast<AtomStringImpl*>(m_string.impl()); }
+    AtomStringImpl* impl() const { SUPPRESS_MEMORY_UNSAFE_CAST return static_cast<AtomStringImpl*>(m_string.impl()); }
     RefPtr<AtomStringImpl> releaseImpl() { return static_pointer_cast<AtomStringImpl>(m_string.releaseImpl()); }
 
     bool is8Bit() const { return m_string.is8Bit(); }
@@ -166,11 +164,6 @@ WTF_EXPORT_PRIVATE AtomString replaceUnpairedSurrogatesWithReplacementCharacter(
 WTF_EXPORT_PRIVATE String replaceUnpairedSurrogatesWithReplacementCharacter(String&&);
 
 inline AtomString::AtomString()
-{
-}
-
-inline AtomString::AtomString(const char* string)
-    : m_string(AtomStringImpl::addCString(string))
 {
 }
 
@@ -282,7 +275,7 @@ inline AtomString AtomString::fromUTF8(const char* characters)
         return nullAtom();
     if (!*characters)
         return emptyAtom();
-    return fromUTF8Internal(span(characters));
+    return fromUTF8Internal(unsafeSpan(characters));
 }
 
 inline AtomString String::toExistingAtomString() const

@@ -9,7 +9,7 @@ try {
   gc;
 } catch (e) {
   this.gc = function () {
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
       let s = new String("AAAA" + Math.random());
     }
   };
@@ -1276,7 +1276,7 @@ function __f_4() {
 
   let __v_29 = new DataView(__v_27);
 
-  for (let __v_33 = 0; __v_33 < 10000; ++__v_33) {
+  for (let __v_33 = 0; __v_33 < testLoopCount; ++__v_33) {
     /* CrossOverMutator: Crossover from v8/test/mjsunit/compiler/regress-1067544.js */
     Int8Array.prototype.values.call([__v_5]);
 

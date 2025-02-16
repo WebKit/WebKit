@@ -86,7 +86,7 @@ void WrapContentsInDummySpanCommand::doReapply()
 }
 
 #ifndef NDEBUG
-void WrapContentsInDummySpanCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
+void WrapContentsInDummySpanCommand::getNodesInCommand(NodeSet& nodes)
 {
     addNodeAndDescendants(protectedElement().ptr(), nodes);
     addNodeAndDescendants(protectedDummySpan().get(), nodes);

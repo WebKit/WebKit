@@ -7,13 +7,21 @@
 //
 
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
+#include "common/log_utils.h"
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
 
+#include "libANGLE/CLDevice.h"
+#include "libANGLE/renderer/driver_utils.h"
+
+#include <mutex>
 #include <string>
 
-#include "common/string_utils.h"
-
 #include "CL/cl_half.h"
+
+#include "clspv/Compiler.h"
+
+#include "spirv-tools/libspirv.h"
+#include "spirv-tools/libspirv.hpp"
 
 namespace rx
 {
@@ -282,7 +290,34 @@ void ProcessPrintfStatement(unsigned char *&data,
     std::printf("%s", printfOutput.c_str());
 }
 
-}  // namespace
+std::string GetSpvVersionAsClspvString(spv_target_env spvVersion)
+{
+    switch (spvVersion)
+    {
+        default:
+        case SPV_ENV_VULKAN_1_0:
+            return "1.0";
+        case SPV_ENV_VULKAN_1_1:
+            return "1.3";
+        case SPV_ENV_VULKAN_1_1_SPIRV_1_4:
+            return "1.4";
+        case SPV_ENV_VULKAN_1_2:
+            return "1.5";
+        case SPV_ENV_VULKAN_1_3:
+            return "1.6";
+    }
+}
+
+std::vector<std::string> GetNativeBuiltins(const vk::Renderer *renderer)
+{
+    if (renderer->getFeatures().usesNativeBuiltinClKernel.enabled)
+    {
+        return std::vector<std::string>({"fma", "half_exp2", "exp2"});
+    }
+
+    return {};
+}
+}  // anonymous namespace
 
 // Process the data recorded into printf storage buffer along with the info in printfino descriptor
 // and write it to stdout.
@@ -318,19 +353,51 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
     ASSERT(device && device->getRenderer());
     const vk::Renderer *rendererVk = device->getRenderer();
     std::string options{""};
+    std::vector<std::string> featureMacros;
 
     cl_uint addressBits;
     if (IsError(device->getInfoUInt(cl::DeviceInfo::AddressBits, &addressBits)))
     {
-        // This should'nt fail here
+        // This shouldn't fail here
         ASSERT(false);
     }
     options += addressBits == 64 ? " -arch=spir64" : " -arch=spir";
+
+    // select SPIR-V version target
+    options += " --spv-version=" + GetSpvVersionAsClspvString(device->getSpirvVersion());
+
+    cl_uint nonUniformNDRangeSupport;
+    if (IsError(device->getInfoUInt(cl::DeviceInfo::NonUniformWorkGroupSupport,
+                                    &nonUniformNDRangeSupport)))
+    {
+        // This shouldn't fail here
+        ASSERT(false);
+    }
+    // This "cl-arm-non-uniform-work-group-size" flag is needed to generate region reflection
+    // instructions since clspv builtin pass is conditionally dependant on it:
+    /*
+        bool NonUniformNDRangeSupported() {
+            return ((Language() == SourceLanguage::OpenCL_CPP) ||
+                    (Language() == SourceLanguage::OpenCL_C_20) ||
+                    (Language() == SourceLanguage::OpenCL_C_30) ||
+                    ArmNonUniformWorkGroupSize()) &&
+                    !UniformWorkgroupSize();
+        }
+        ...
+            Value *Ret = GidBase;
+            if (clspv::Option::NonUniformNDRangeSupported()) {
+                auto Ptr = GetPushConstantPointer(BB, clspv::PushConstant::RegionOffset);
+                auto DimPtr = Builder.CreateInBoundsGEP(VT, Ptr, Indices);
+                auto Size = Builder.CreateLoad(IT, DimPtr);
+                ...
+    */
+    options += nonUniformNDRangeSupport == CL_TRUE ? " -cl-arm-non-uniform-work-group-size" : "";
 
     // Other internal Clspv compiler flags that are needed/required
     options += " --long-vector";
     options += " --global-offset";
     options += " --enable-printf";
+    options += " --cl-kernel-arg-info";
 
     // 8 bit storage buffer support
     if (!rendererVk->getFeatures().supports8BitStorageBuffer.enabled)
@@ -360,7 +427,160 @@ std::string ClspvGetCompilerOptions(const CLDeviceVk *device)
         options += " --no-16bit-storage=pushconstant";
     }
 
+    if (rendererVk->getFeatures().supportsUniformBufferStandardLayout.enabled)
+    {
+        options += " --std430-ubo-layout";
+    }
+
+    std::string nativeBuiltins{""};
+    for (const std::string &builtin : GetNativeBuiltins(rendererVk))
+    {
+        nativeBuiltins += builtin + ",";
+    }
+    options += " --use-native-builtins=" + nativeBuiltins;
+    std::vector<std::string> rteModes;
+    if (rendererVk->getFeatures().supportsRoundingModeRteFp32.enabled)
+    {
+        rteModes.push_back("32");
+    }
+    if (rendererVk->getFeatures().supportsShaderFloat16.enabled)
+    {
+        options += " --fp16";
+        if (rendererVk->getFeatures().supportsRoundingModeRteFp16.enabled)
+        {
+            rteModes.push_back("16");
+        }
+    }
+    if (rendererVk->getFeatures().supportsShaderFloat64.enabled)
+    {
+        options += " --fp64";
+        featureMacros.push_back("__opencl_c_fp64");
+        if (rendererVk->getFeatures().supportsRoundingModeRteFp64.enabled)
+        {
+            rteModes.push_back("64");
+        }
+    }
+    else
+    {
+        options += " --fp64=0";
+    }
+
+    if (device->getFrontendObject().getInfo().imageSupport)
+    {
+        featureMacros.push_back("__opencl_c_images");
+        featureMacros.push_back("__opencl_c_3d_image_writes");
+        featureMacros.push_back("__opencl_c_read_write_images");
+    }
+
+    if (rendererVk->getEnabledFeatures().features.shaderInt64)
+    {
+        featureMacros.push_back("__opencl_c_int64");
+    }
+
+    if (!rteModes.empty())
+    {
+        options += " --rounding-mode-rte=";
+        options += std::reduce(std::next(rteModes.begin()), rteModes.end(), rteModes[0],
+                               [](const auto a, const auto b) { return a + "," + b; });
+    }
+    if (!featureMacros.empty())
+    {
+        options += " --enable-feature-macros=";
+        options +=
+            std::reduce(std::next(featureMacros.begin()), featureMacros.end(), featureMacros[0],
+                        [](const std::string a, const std::string b) { return a + "," + b; });
+    }
+
     return options;
+}
+
+// A locked wrapper for clspvCompileFromSourcesString - the underneath LLVM parser is non-rentrant.
+// So protecting it with mutex.
+ClspvError ClspvCompileSource(const size_t programCount,
+                              const size_t *programSizes,
+                              const char **programs,
+                              const char *options,
+                              char **outputBinary,
+                              size_t *outputBinarySize,
+                              char **outputLog)
+{
+    [[clang::no_destroy]] static angle::SimpleMutex mtx;
+
+    std::lock_guard<angle::SimpleMutex> lock(mtx);
+
+    return clspvCompileFromSourcesString(programCount, programSizes, programs, options,
+                                         outputBinary, outputBinarySize, outputLog);
+}
+
+spv_target_env ClspvGetSpirvVersion(const vk::Renderer *renderer)
+{
+    uint32_t vulkanApiVersion = renderer->getDeviceVersion();
+    if (vulkanApiVersion < VK_API_VERSION_1_1)
+    {
+        // Minimum supported Vulkan version is 1.1 by Angle
+        UNREACHABLE();
+        return SPV_ENV_MAX;
+    }
+    else if (vulkanApiVersion < VK_API_VERSION_1_2)
+    {
+        // TODO: Might be worthwhile to make Vulkan 1.3 as minimum requirement
+        // http://anglebug.com/383824579
+        if (renderer->getFeatures().supportsSPIRV14.enabled)
+        {
+            return SPV_ENV_VULKAN_1_1_SPIRV_1_4;
+        }
+        return SPV_ENV_VULKAN_1_1;
+    }
+    else if (vulkanApiVersion < VK_API_VERSION_1_3)
+    {
+        return SPV_ENV_VULKAN_1_2;
+    }
+    else
+    {
+        // return the latest supported version
+        return SPV_ENV_VULKAN_1_3;
+    }
+}
+
+bool ClspvValidate(vk::Renderer *rendererVk, const angle::spirv::Blob &blob)
+{
+    spvtools::SpirvTools spvTool(ClspvGetSpirvVersion(rendererVk));
+    spvTool.SetMessageConsumer([](spv_message_level_t level, const char *,
+                                  const spv_position_t &position, const char *message) {
+        switch (level)
+        {
+            case SPV_MSG_FATAL:
+            case SPV_MSG_ERROR:
+            case SPV_MSG_INTERNAL_ERROR:
+                ERR() << "SPV validation error (" << position.line << "." << position.column
+                      << "): " << message;
+                break;
+            case SPV_MSG_WARNING:
+                WARN() << "SPV validation warning (" << position.line << "." << position.column
+                       << "): " << message;
+                break;
+            case SPV_MSG_INFO:
+                INFO() << "SPV validation info (" << position.line << "." << position.column
+                       << "): " << message;
+                break;
+            case SPV_MSG_DEBUG:
+                INFO() << "SPV validation debug (" << position.line << "." << position.column
+                       << "): " << message;
+                break;
+            default:
+                UNREACHABLE();
+                break;
+        }
+    });
+
+    spvtools::ValidatorOptions options;
+    if (rendererVk->getFeatures().supportsUniformBufferStandardLayout.enabled)
+    {
+        // Allow UBO layouts that conform to std430 (SSBO) layout requirements
+        options.SetUniformBufferStandardLayout(true);
+    }
+
+    return spvTool.Validate(blob.data(), blob.size(), options);
 }
 
 }  // namespace rx

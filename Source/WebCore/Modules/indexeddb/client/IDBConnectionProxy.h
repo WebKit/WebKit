@@ -30,6 +30,7 @@
 #include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
+#include "IndexKey.h"
 #include "TransactionOperation.h"
 #include <wtf/CrossThreadQueue.h>
 #include <wtf/CrossThreadTask.h>
@@ -64,7 +65,7 @@ class IDBConnectionToServer;
 class WEBCORE_EXPORT IDBConnectionProxy final {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(IDBConnectionProxy, WEBCORE_EXPORT);
 public:
-    IDBConnectionProxy(IDBConnectionToServer&);
+    IDBConnectionProxy(IDBConnectionToServer&, PAL::SessionID);
 
     Ref<IDBOpenDBRequest> openDatabase(ScriptExecutionContext&, const IDBDatabaseIdentifier&, uint64_t version);
     void didOpenDatabase(const IDBResultData&);
@@ -77,7 +78,7 @@ public:
     void clearObjectStore(TransactionOperation&, IDBObjectStoreIdentifier);
     void createIndex(TransactionOperation&, const IDBIndexInfo&);
     void deleteIndex(TransactionOperation&, IDBObjectStoreIdentifier, const String& indexName);
-    void putOrAdd(TransactionOperation&, IDBKeyData&&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode);
+    void putOrAdd(TransactionOperation&, IDBKeyData&&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(TransactionOperation&, const IDBGetRecordData&);
     void getAllRecords(TransactionOperation&, const IDBGetAllRecordsData&);
     void getCount(TransactionOperation&, const IDBKeyRangeData&);
@@ -121,7 +122,7 @@ public:
     void getAllDatabaseNamesAndVersions(ScriptExecutionContext&, Function<void(std::optional<Vector<IDBDatabaseNameAndVersion>>&&)>&&);
     void didGetAllDatabaseNamesAndVersions(const IDBResourceIdentifier&, std::optional<Vector<IDBDatabaseNameAndVersion>>&&);
 
-    void registerDatabaseConnection(IDBDatabase&);
+    void registerDatabaseConnection(IDBDatabase&, ScriptExecutionContextIdentifier);
     void unregisterDatabaseConnection(IDBDatabase&);
 
     void forgetActiveOperations(const Vector<RefPtr<TransactionOperation>>&);
@@ -129,11 +130,14 @@ public:
     void abortActivitiesForCurrentThread();
     void setContextSuspended(ScriptExecutionContext& currentContext, bool isContextSuspended);
 
+    PAL::SessionID sessionID() const;
+
 private:
     void completeOpenDBRequest(const IDBResultData&);
     bool hasRecordOfTransaction(const IDBTransaction&) const WTF_REQUIRES_LOCK(m_transactionMapLock);
 
     void saveOperation(TransactionOperation&);
+    std::pair<RefPtr<IDBDatabase>, std::optional<ScriptExecutionContextIdentifier>> databaseFromConnectionIdentifier(IDBDatabaseConnectionIdentifier);
 
     template<typename... Parameters, typename... Arguments>
     void callConnectionOnMainThread(void (IDBConnectionToServer::*method)(Parameters...), Arguments&&... arguments)
@@ -166,7 +170,11 @@ private:
     Lock m_databaseInfoMapLock;
     Lock m_mainThreadTaskLock;
 
-    HashMap<IDBDatabaseConnectionIdentifier, IDBDatabase*> m_databaseConnectionMap WTF_GUARDED_BY_LOCK(m_databaseConnectionMapLock);
+    struct WeakIDBDatabase {
+        ThreadSafeWeakPtr<IDBDatabase> database;
+        std::optional<ScriptExecutionContextIdentifier> contextIdentifier;
+    };
+    HashMap<IDBDatabaseConnectionIdentifier, WeakIDBDatabase> m_databaseConnectionMap WTF_GUARDED_BY_LOCK(m_databaseConnectionMapLock);
     HashMap<IDBResourceIdentifier, RefPtr<IDBOpenDBRequest>> m_openDBRequestMap WTF_GUARDED_BY_LOCK(m_openDBRequestMapLock);
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_pendingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
     HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions WTF_GUARDED_BY_LOCK(m_transactionMapLock);
@@ -176,6 +184,7 @@ private:
 
     CrossThreadQueue<CrossThreadTask> m_mainThreadQueue;
     RefPtr<IDBConnectionToServer> m_mainThreadProtector WTF_GUARDED_BY_LOCK(m_mainThreadTaskLock);
+    PAL::SessionID m_sessionID;
 };
 
 } // namespace IDBClient

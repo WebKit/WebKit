@@ -40,7 +40,6 @@ private:
     NameNodeList(ContainerNode& rootNode, const AtomString& name);
 
     AtomString m_name;
-    bool m_needsGetElementsByNameQuirk;
 };
 
 } // namespace WebCore

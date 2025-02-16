@@ -368,7 +368,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'upload',
             'extract-test-results',
             'set-permissions',
-            'run-api-tests',
             'lldb-webkit-test',
             'webkitpy-test',
             'webkitperl-test',
@@ -1439,7 +1438,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'generate-minibrowser-bundle'
         ],
-        'GTK-Linux-64-bit-Release-GTK3-Tests': [
+        'GTK-Linux-64-bit-Release-GTK3-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1449,21 +1448,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
             'jhbuild',
-            'compile-webkit',
-            'layout-test',
-            'dashboard-tests',
-            'archive-test-results',
-            'upload',
-            'extract-test-results',
-            'set-permissions',
-            'webkitpy-test',
-            'webkitperl-test',
-            'bindings-generation-tests',
-            'builtins-generator-tests',
-            'API-tests',
-            'archive-built-product',
-            'upload-built-product',
-            'webdriver-test'
+            'compile-webkit'
         ],
         'GTK-Linux-64-bit-Release-SDK-Container': [
             'configure-build',
@@ -1523,6 +1508,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'install-built-product',
             'archive-built-product',
             'upload-built-product-via-sftp'
+        ],
+        'GTK-Linux-64-bit-Release-MVT-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'download-built-product',
+            'extract-built-product',
+            'MVT-tests'
         ],
         'Windows-64-bit-Release-Build': [
             'configure-build',
@@ -1941,6 +1940,20 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'API-tests',
             'archive-built-product',
             'upload-built-product'
+        ],
+        'WPE-Linux-64-bit-Release-MVT-Tests': [
+            'configure-build',
+            'configuration',
+            'clean-and-update-working-directory',
+            'checkout-specific-revision',
+            'show-identifier',
+            'kill-old-processes',
+            'delete-WebKitBuild-directory',
+            'delete-stale-build-files',
+            'jhbuild',
+            'download-built-product',
+            'extract-built-product',
+            'MVT-tests'
         ],
     }
 

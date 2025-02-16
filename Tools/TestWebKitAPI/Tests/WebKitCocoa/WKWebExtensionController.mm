@@ -514,8 +514,7 @@ TEST(WKWebExtensionController, ContentScriptLoading)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"content.js": contentScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"content.js": contentScript });
 
     WKWebExtensionMatchPattern *matchPattern = [WKWebExtensionMatchPattern matchPatternWithString:@"*://localhost/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
@@ -535,7 +534,7 @@ TEST(WKWebExtensionController, ContentScriptLoading)
 
     [webView loadRequest:server.requestWithLocalhost()];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionController, CSSUserOrigin)
@@ -573,15 +572,14 @@ TEST(WKWebExtensionController, CSSUserOrigin)
         @"content.js": contentScript
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionController, CSSAuthorOrigin)
@@ -619,15 +617,14 @@ TEST(WKWebExtensionController, CSSAuthorOrigin)
         @"content.js": contentScript
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionController, ContentSecurityPolicyV2BlockingImageLoad)
@@ -781,14 +778,13 @@ TEST(WKWebExtensionController, WebAccessibleResources)
         @"bad.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionController, WebAccessibleResourcesV2)
@@ -851,14 +847,13 @@ TEST(WKWebExtensionController, WebAccessibleResourcesV2)
         @"bad.svg": @"<svg xmlns='http://www.w3.org/2000/svg'></svg>"
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 } // namespace TestWebKitAPI

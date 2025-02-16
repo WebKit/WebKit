@@ -158,7 +158,7 @@ CString CodeBlock::hashAsStringIfPossible() const
 {
     if (hasHash() || isSafeToComputeHash())
         return toCString(hash());
-    return "<no-hash>";
+    return "<no-hash>"_s;
 }
 
 void CodeBlock::dumpAssumingJITType(PrintStream& out, JITType jitType) const
@@ -436,7 +436,7 @@ bool CodeBlock::finishCreation(VM& vm, ScriptExecutable* ownerExecutable, Unlink
     }
 
     // Bookkeep the strongly referenced module environments.
-    HashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
+    UncheckedKeyHashSet<JSModuleEnvironment*> stronglyReferencedModuleEnvironments;
 
     auto link_objectAllocationProfile = [&](const auto& /*instruction*/, auto bytecode, auto& metadata) {
         metadata.m_objectAllocationProfile.initializeProfile(vm, m_globalObject.get(), this, m_globalObject->objectPrototype(), bytecode.m_inlineCapacity);
@@ -2766,7 +2766,7 @@ bool CodeBlock::hasIdentifier(UniquedStringImpl* uid)
         if (m_cachedIdentifierUids.size() != numberOfIdentifiers) {
             Locker locker(m_cachedIdentifierUidsLock);
             createRareDataIfNecessary();
-            HashSet<UniquedStringImpl*> cachedIdentifierUids;
+            UncheckedKeyHashSet<UniquedStringImpl*> cachedIdentifierUids;
             cachedIdentifierUids.reserveInitialCapacity(numberOfIdentifiers);
             for (unsigned index = 0; index < unlinkedIdentifiers; ++index) {
                 const Identifier& identifier = unlinkedCode->identifier(index);

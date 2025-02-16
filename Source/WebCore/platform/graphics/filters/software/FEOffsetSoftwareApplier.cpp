@@ -37,16 +37,16 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FEOffsetSoftwareApplier);
 
 bool FEOffsetSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr inputImage = input.imageBuffer();
+    RefPtr inputImage = input->imageBuffer();
     if (!resultImage || !inputImage)
         return false;
 
-    FloatRect inputImageRect = input.absoluteImageRectRelativeTo(result);
+    FloatRect inputImageRect = input->absoluteImageRectRelativeTo(result);
 
-    auto offset = filter.resolvedSize({ m_effect.dx(), m_effect.dy() });
+    auto offset = filter.resolvedSize({ m_effect->dx(), m_effect->dy() });
     auto absoluteOffset = filter.scaledByFilterScale(offset);
 
     inputImageRect.move(absoluteOffset);

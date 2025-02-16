@@ -50,6 +50,7 @@ static BlockPtr<void(WKNavigationActionPolicy)> delayedDecision;
 
 static NSString *firstURL = @"data:text/html,First";
 static NSString *secondURL = @"data:text/html,Second";
+static NSString *thirdURL = @"data:text/html,Third";
 
 @interface DecidePolicyForNavigationActionController : NSObject <WKNavigationDelegate, WKUIDelegate>
 @end
@@ -256,6 +257,30 @@ TEST(WebKit, DecidePolicyForNavigationActionCancelAndGoBack)
     [webView goBack];
     TestWebKitAPI::Util::run(&finishedNavigation);
     EXPECT_WK_STREQ(firstURL, [webView URL].absoluteString);
+
+    newWebView = nullptr;
+    action = nullptr;
+}
+
+TEST(WebKit, DecidePolicyForNavigationActionCancelAfterDiscardingForwardItems)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600)]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:firstURL]]];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:secondURL]]];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:thirdURL]]];
+    [webView synchronouslyGoBack];
+    [webView synchronouslyGoBack];
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:secondURL]]];
+
+    RetainPtr controller = adoptNS([[DecidePolicyForNavigationActionController alloc] init]);
+    [webView setNavigationDelegate:controller.get()];
+
+    shouldCancelNavigation = true;
+    decidedPolicy = false;
+    [webView goBack];
+    TestWebKitAPI::Util::run(&decidedPolicy);
+    [webView waitForNextPresentationUpdate];
+    [[webView backForwardList] currentItem];
 
     newWebView = nullptr;
     action = nullptr;

@@ -46,7 +46,7 @@ let o2 = {
     }
 }
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (i % 2) {
         assert(foo(o1) === 60);
     } else {

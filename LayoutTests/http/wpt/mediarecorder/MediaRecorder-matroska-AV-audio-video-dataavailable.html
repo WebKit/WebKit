@@ -1,0 +1,145 @@
+<!doctype html><!-- webkit-test-runner [ LimitedMatroskaSupportEnabled=true ] -->
+<html>
+<head>
+    <title>MediaRecorder Dataavailable</title>
+    <link rel="help" href="https://w3c.github.io/mediacapture-record/MediaRecorder.html#mediarecorder">
+    <script src="/resources/testharness.js"></script>
+    <script src="/resources/testharnessreport.js"></script>
+    <script src="../common/canvas-tests.js"></script>
+</head>
+<body>
+<div>
+    <video id="player">
+    </video>
+</div>
+<div>
+    <canvas id="canvas" width="200" height="200">
+    </canvas>
+    <canvas id="frame" width="200" height="200">
+    </canvas>
+</div>
+<script>
+    const MIMETYPE = 'video/webm; codecs=avc1.42000a,pcm';
+    var context;
+    var blobData = new Blob();
+    var paintingState = 0;
+    var canPlayReceived = false;
+    var playbackStarted = false;
+    // Needs to be a global variable to avoid being GCed (webkit.org/b/271227)
+    var oscillator;
+
+    function createVideoStream() {
+        const canvas = document.getElementById("canvas");
+        context = canvas.getContext('2d');
+        return canvas.captureStream();
+    }
+
+    function doRedImageDraw() {
+        if (context) {
+            context.fillStyle = "#ff0000";
+            context.fillRect(0, 0, 200, 200);
+            if (paintingState == 0)
+                window.requestAnimationFrame(doRedImageDraw);
+        }
+    }
+
+    function doGreenImageDraw() {
+        if (context) {
+            context.fillStyle = "#00ff00";
+            context.fillRect(0, 0, 200, 200);
+            if (paintingState == 1)
+                window.requestAnimationFrame(doGreenImageDraw);
+        }
+    }
+
+    function maybeStartPlayback() {
+        if (canPlayReceived && player.duration > 1 && !playbackStarted) {
+            playbackStarted = true;
+            player.play();
+        }
+    }
+
+    async_test(t => {
+        const ac = new AudioContext();
+        oscillator = ac.createOscillator();
+        const dest = ac.createMediaStreamDestination();
+        const audio = dest.stream;
+        oscillator.connect(dest);
+        oscillator.start();
+
+        const video = createVideoStream();
+        assert_equals(video.getAudioTracks().length, 0, "video mediastream starts with no audio track");
+        assert_equals(audio.getAudioTracks().length, 1, "audio mediastream starts with one audio track");
+        video.addTrack(audio.getAudioTracks()[0]);
+        assert_equals(video.getAudioTracks().length, 1, "video mediastream starts with one audio track");
+        const recorder = new MediaRecorder(video, { mimeType: MIMETYPE });
+        let mode = 0;
+
+        recorder.ondataavailable = t.step_func(blobEvent => {
+            assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
+            assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
+            assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');
+            assert_true(blobEvent.data instanceof Blob, 'the type of data should be Blob');
+            assert_true(blobEvent.data.size > 0, 'the blob should contain some buffers');
+            blobData = new Blob([blobData, blobEvent.data]);
+
+            if (blobEvent.timecode == 0)
+                return;
+            if (blobEvent.timecode >= 0.2 && paintingState == 0) {
+                paintingState = 1;
+                doGreenImageDraw();
+                return;
+            }
+            assert_greater_than(blobEvent.timecode, .4, "more than .4s recorded");
+            if (++paintingState == 2) {
+                recorder.stop();
+                ac.close();
+                return;
+            }
+            player.src = window.URL.createObjectURL(blobData);
+            const resFrame = document.getElementById("frame");
+            const resContext = resFrame.getContext('2d');
+            player.load();
+
+            player.oncanplay = t.step_func(() => {
+                canPlayReceived = true;
+                maybeStartPlayback();
+            });
+            player.ondurationchange = t.step_func(() => {
+                maybeStartPlayback();
+            });
+            player.onplay = () => {
+                player.pause();
+                assert_greater_than(player.duration, .4, 'the duration should be greater than .4s')
+                player.currentTime = player.duration - 0.05;
+            };
+            player.onseeked = t.step_func(() => {
+                resContext.drawImage(player, 0, 0);
+                if (!mode) {
+                    _assertPixelApprox(resFrame, 20, 20, 20, 255, 0, 255, "20, 20", "0, 255, 0, 255", 50);
+                    _assertPixelApprox(resFrame, 199, 199, 20, 255, 0, 255, "199, 199", "0, 255, 0, 255", 50);
+                    player.currentTime = 0;
+                    mode = 1;
+                } else {
+                    _assertPixelApprox(resFrame, 25, 25, 255, 0, 0, 255, "25, 25", "255, 0, 0, 255", 50);
+                    _assertPixelApprox(resFrame, 50, 50, 255, 0, 0, 255, "50, 50", "255, 0, 0, 255", 50);
+                    t.done();
+                }
+            });
+        });
+
+        doRedImageDraw();
+        recorder.start(200);
+        assert_equals(recorder.state, 'recording', 'MediaRecorder has been started successfully');
+
+        setTimeout(() => {
+            paintingState = 3;
+            recorder.stop();
+            ac.close();
+            assert_unreached("recording didn't finish on time");
+        }, 5000);
+    }, 'MediaRecorder can successfully record the video for an audio-video stream into a matroska file');
+
+</script>
+</body>
+</html>

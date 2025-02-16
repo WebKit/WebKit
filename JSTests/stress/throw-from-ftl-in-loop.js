@@ -1,7 +1,7 @@
 var didThrow = false;
 try {
     (function() {
-        for (var i = 0; i < 1000000; ++i) { }
+        for (var i = 0; i < testLoopCount; ++i) { }
         throw 42;
     })();
 } catch (e) {

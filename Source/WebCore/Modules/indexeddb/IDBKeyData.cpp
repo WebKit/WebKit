@@ -71,7 +71,9 @@ IDBKeyData::IDBKeyData(const IDBKey* key)
 }
 
 IDBKeyData::IDBKeyData(const IDBKeyData& data, IsolatedCopyTag)
-    : m_value(crossThreadCopy(data.m_value))
+    : m_isDeletedValue(data.m_isDeletedValue)
+    , m_isPlaceholder(data.m_isPlaceholder)
+    , m_value(crossThreadCopy(data.m_value))
 {
 }
 
@@ -135,7 +137,7 @@ RefPtr<IDBKey> IDBKeyData::maybeCreateIDBKey() const
 
 IDBKeyData IDBKeyData::isolatedCopy() const
 {
-    return { crossThreadCopy(m_value) };
+    return { *this, IsolatedCopy };
 }
 
 void IDBKeyData::encode(KeyedEncoder& encoder) const
@@ -312,7 +314,6 @@ int IDBKeyData::compare(const IDBKeyData& other) const
     return 0;
 }
 
-#if !LOG_DISABLED
 String IDBKeyData::loggingString() const
 {
     if (isNull())
@@ -369,7 +370,6 @@ String IDBKeyData::loggingString() const
 
     return result;
 }
-#endif
 
 void IDBKeyData::setArrayValue(const Vector<IDBKeyData>& value)
 {

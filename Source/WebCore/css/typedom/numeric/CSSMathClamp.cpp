@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathClamp.h"
 
+#include "CSSCalcTree.h"
 #include "CSSNumericValue.h"
 #include "ExceptionOr.h"
 #include <wtf/TZoneMallocInlines.h>

@@ -37,10 +37,10 @@
 
 namespace WebCore {
 
-String CSSRayValue::customCSSText() const
+String CSSRayValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
-    CSS::serializationForCSS(builder, m_ray);
+    CSS::serializationForCSS(builder, context, m_ray);
 
     if (m_coordinateBox != CSSBoxType::BoxMissing)
         builder.append(' ', nameLiteralForSerialization(toCSSValueID(m_coordinateBox)));
@@ -54,7 +54,7 @@ bool CSSRayValue::equals(const CSSRayValue& other) const
         && m_coordinateBox == other.m_coordinateBox;
 }
 
-IterationStatus CSSRayValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSRayValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_ray);
 }

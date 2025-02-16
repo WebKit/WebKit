@@ -125,7 +125,7 @@ void WebExtensionAPIWebNavigation::getFrame(NSDictionary *details, Ref<WebExtens
     NSNumber *frameId = details[frameIdKey];
     auto frameIdentifier = toWebExtensionFrameIdentifier(frameId.doubleValue);
     if (!isValid(frameIdentifier)) {
-        *outExceptionString = toErrorString(nil, frameIdKey, @"it is not a frame identifier");
+        *outExceptionString = toErrorString(nullString(), frameIdKey, @"it is not a frame identifier");
         return;
     }
 

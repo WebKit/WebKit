@@ -104,7 +104,7 @@ TEST(BifurcatedGraphicsContextTests, Text)
         EXPECT_FALSE(displayList.isEmpty());
         bool sawDrawGlyphs = false;
         for (auto& displayListItem : displayList.items()) {
-            if (auto* item = std::get_if<DrawGlyphs>(&displayListItem))
+            if (std::holds_alternative<DrawGlyphs>(displayListItem))
                 sawDrawGlyphs = true;
         }
 

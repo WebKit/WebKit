@@ -71,6 +71,9 @@
 #if USE(CURL)
 #include "NetworkSessionCurl.h"
 #endif
+#if ENABLE(CONTENT_EXTENSIONS)
+#include <WebCore/ResourceMonitorThrottler.h>
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -133,7 +136,7 @@ static Ref<NetworkStorageManager> createNetworkStorageManager(NetworkProcess& ne
 static WebPushD::WebPushDaemonConnectionConfiguration configurationWithHostAuditToken(NetworkProcess& networkProcess, WebPushD::WebPushDaemonConnectionConfiguration configuration)
 {
 #if !USE(EXTENSIONKIT)
-    auto token = networkProcess.parentProcessConnection()->getAuditToken();
+    auto token = networkProcess.protectedParentProcessConnection()->getAuditToken();
     if (token) {
         Vector<uint8_t> auditTokenData(sizeof(*token));
         memcpySpan(auditTokenData.mutableSpan(), asByteSpan(*token));
@@ -168,6 +171,9 @@ NetworkSession::NetworkSession(NetworkProcess& networkProcess, const NetworkSess
     , m_storageManager(createNetworkStorageManager(networkProcess, parameters))
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     , m_notificationManager(NetworkNotificationManager::create(parameters.sessionID.isEphemeral() ? String { } : parameters.webPushMachServiceName, configurationWithHostAuditToken(networkProcess, parameters.webPushDaemonConnectionConfiguration), networkProcess))
+#endif
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    , m_isDeclarativeWebPushEnabled(parameters.isDeclarativeWebPushEnabled)
 #endif
 {
     if (!m_sessionID.isEphemeral()) {
@@ -250,7 +256,7 @@ void NetworkSession::invalidateAndCancel()
 
 void NetworkSession::destroyPrivateClickMeasurementStore(CompletionHandler<void()>&& completionHandler)
 {
-    privateClickMeasurement().destroyStoreForTesting(WTFMove(completionHandler));
+    m_privateClickMeasurement->destroyStoreForTesting(WTFMove(completionHandler));
 }
 
 void NetworkSession::setTrackingPreventionEnabled(bool enabled)
@@ -396,7 +402,7 @@ void NetworkSession::storePrivateClickMeasurement(WebCore::PrivateClickMeasureme
     if (unattributedPrivateClickMeasurement.isSKAdNetworkAttribution())
         return donateToSKAdNetwork(WTFMove(unattributedPrivateClickMeasurement));
 
-    privateClickMeasurement().storeUnattributed(WTFMove(unattributedPrivateClickMeasurement), [] { });
+    m_privateClickMeasurement->storeUnattributed(WTFMove(unattributedPrivateClickMeasurement), [] { });
 }
 
 void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::AttributionTriggerData&& attributionTriggerData, const URL& requestURL, const WebCore::ResourceRequest& redirectRequest, String&& attributedBundleIdentifier)
@@ -418,7 +424,7 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
 
         bool hasAgedOut = WallTime::now() - ephemeralMeasurement.timeOfAdClick() > WebCore::PrivateClickMeasurement::maxAge();
         if (hasAgedOut) {
-            networkProcess().broadcastConsoleMessage(m_sessionID, JSC::MessageSource::PrivateClickMeasurement, JSC::MessageLevel::Info, "[Private Click Measurement] Aging out ephemeral click measurement."_s);
+            m_networkProcess->broadcastConsoleMessage(m_sessionID, JSC::MessageSource::PrivateClickMeasurement, JSC::MessageLevel::Info, "[Private Click Measurement] Aging out ephemeral click measurement."_s);
             return;
         }
 
@@ -429,62 +435,62 @@ void NetworkSession::handlePrivateClickMeasurementConversion(WebCore::PCM::Attri
             return;
 
         // Insert ephemeral measurement right before attribution.
-        privateClickMeasurement().storeUnattributed(WTFMove(ephemeralMeasurement), [this, weakThis = WeakPtr { *this }, attributionTriggerData = WTFMove(attributionTriggerData), requestURL, redirectDomain = WTFMove(redirectDomain), firstPartyForCookies = WTFMove(firstPartyForCookies), appBundleID = WTFMove(appBundleID)] () mutable {
+        m_privateClickMeasurement->storeUnattributed(WTFMove(ephemeralMeasurement), [this, weakThis = WeakPtr { *this }, attributionTriggerData = WTFMove(attributionTriggerData), requestURL, redirectDomain = WTFMove(redirectDomain), firstPartyForCookies = WTFMove(firstPartyForCookies), appBundleID = WTFMove(appBundleID)] () mutable {
             if (!weakThis)
                 return;
-            privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, WTFMove(redirectDomain), firstPartyForCookies, appBundleID);
+            m_privateClickMeasurement->handleAttribution(WTFMove(attributionTriggerData), requestURL, WTFMove(redirectDomain), firstPartyForCookies, appBundleID);
         });
         return;
     }
 
-    privateClickMeasurement().handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyForCookies(), appBundleID);
+    m_privateClickMeasurement->handleAttribution(WTFMove(attributionTriggerData), requestURL, RegistrableDomain(redirectRequest.url()), redirectRequest.firstPartyForCookies(), appBundleID);
 }
 
 void NetworkSession::dumpPrivateClickMeasurement(CompletionHandler<void(String)>&& completionHandler)
 {
-    privateClickMeasurement().toStringForTesting(WTFMove(completionHandler));
+    m_privateClickMeasurement->toStringForTesting(WTFMove(completionHandler));
 }
 
 void NetworkSession::clearPrivateClickMeasurement(CompletionHandler<void()>&& completionHandler)
 {
-    privateClickMeasurement().clear(WTFMove(completionHandler));
+    m_privateClickMeasurement->clear(WTFMove(completionHandler));
     m_ephemeralMeasurement = std::nullopt;
     m_isRunningEphemeralMeasurementTest = false;
 }
 
 void NetworkSession::clearPrivateClickMeasurementForRegistrableDomain(WebCore::RegistrableDomain&& domain, CompletionHandler<void()>&& completionHandler)
 {
-    privateClickMeasurement().clearForRegistrableDomain(WTFMove(domain), WTFMove(completionHandler));
+    m_privateClickMeasurement->clearForRegistrableDomain(WTFMove(domain), WTFMove(completionHandler));
 }
 
 void NetworkSession::setPrivateClickMeasurementOverrideTimerForTesting(bool value)
 {
-    privateClickMeasurement().setOverrideTimerForTesting(value);
+    m_privateClickMeasurement->setOverrideTimerForTesting(value);
 }
 
 void NetworkSession::markAttributedPrivateClickMeasurementsAsExpiredForTesting(CompletionHandler<void()>&& completionHandler)
 {
-    privateClickMeasurement().markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
+    m_privateClickMeasurement->markAttributedPrivateClickMeasurementsAsExpiredForTesting(WTFMove(completionHandler));
 }
 
 void NetworkSession::setPrivateClickMeasurementTokenPublicKeyURLForTesting(URL&& url)
 {
-    privateClickMeasurement().setTokenPublicKeyURLForTesting(WTFMove(url));
+    m_privateClickMeasurement->setTokenPublicKeyURLForTesting(WTFMove(url));
 }
 
 void NetworkSession::setPrivateClickMeasurementTokenSignatureURLForTesting(URL&& url)
 {
-    privateClickMeasurement().setTokenSignatureURLForTesting(WTFMove(url));
+    m_privateClickMeasurement->setTokenSignatureURLForTesting(WTFMove(url));
 }
 
 void NetworkSession::setPrivateClickMeasurementAttributionReportURLsForTesting(URL&& sourceURL, URL&& destinationURL)
 {
-    privateClickMeasurement().setAttributionReportURLsForTesting(WTFMove(sourceURL), WTFMove(destinationURL));
+    m_privateClickMeasurement->setAttributionReportURLsForTesting(WTFMove(sourceURL), WTFMove(destinationURL));
 }
 
 void NetworkSession::markPrivateClickMeasurementsAsExpiredForTesting()
 {
-    privateClickMeasurement().markAllUnattributedAsExpiredForTesting();
+    m_privateClickMeasurement->markAllUnattributedAsExpiredForTesting();
 }
 
 void NetworkSession::setPrivateClickMeasurementEphemeralMeasurementForTesting(bool value)
@@ -495,7 +501,7 @@ void NetworkSession::setPrivateClickMeasurementEphemeralMeasurementForTesting(bo
 // FIXME: Switch to non-mocked test data once the right cryptography library is available in open source.
 void NetworkSession::setPCMFraudPreventionValuesForTesting(String&& unlinkableToken, String&& secretToken, String&& signature, String&& keyID)
 {
-    privateClickMeasurement().setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
+    m_privateClickMeasurement->setPCMFraudPreventionValuesForTesting(WTFMove(unlinkableToken), WTFMove(secretToken), WTFMove(signature), WTFMove(keyID));
 }
 
 void NetworkSession::setPrivateClickMeasurementDebugMode(bool enabled)
@@ -509,7 +515,7 @@ void NetworkSession::setPrivateClickMeasurementDebugMode(bool enabled)
 
 void NetworkSession::firePrivateClickMeasurementTimerImmediatelyForTesting()
 {
-    privateClickMeasurement().startTimerImmediatelyForTesting();
+    m_privateClickMeasurement->startTimerImmediatelyForTesting();
 }
 
 void NetworkSession::setBlobRegistryTopOriginPartitioningEnabled(bool enabled)
@@ -537,7 +543,7 @@ void NetworkSession::setOptInCookiePartitioningEnabled(bool enabled)
 
 void NetworkSession::allowTLSCertificateChainForLocalPCMTesting(const WebCore::CertificateInfo& certificateInfo)
 {
-    privateClickMeasurement().allowTLSCertificateChainForLocalPCMTesting(certificateInfo);
+    m_privateClickMeasurement->allowTLSCertificateChainForLocalPCMTesting(certificateInfo);
 }
 
 void NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting(String&& appBundleIDForTesting)
@@ -548,7 +554,7 @@ void NetworkSession::setPrivateClickMeasurementAppBundleIDForTesting(String&& ap
         WTFLogAlways("isRunningTest() returned false. appBundleID is %s.", appBundleID.isEmpty() ? "empty" : appBundleID.utf8().data());
     RELEASE_ASSERT(isRunningTest(applicationBundleIdentifier()));
 #endif
-    privateClickMeasurement().setPrivateClickMeasurementAppBundleIDForTesting(WTFMove(appBundleIDForTesting));
+    m_privateClickMeasurement->setPrivateClickMeasurementAppBundleIDForTesting(WTFMove(appBundleIDForTesting));
 }
 
 void NetworkSession::addKeptAliveLoad(Ref<NetworkResourceLoader>&& loader)
@@ -584,12 +590,13 @@ RefPtr<NetworkResourceLoader> NetworkSession::CachedNetworkResourceLoader::takeL
 
 void NetworkSession::CachedNetworkResourceLoader::expirationTimerFired()
 {
-    auto session = m_loader->connectionToWebProcess().networkSession();
+    RefPtr loader = m_loader;
+    auto session = loader->protectedConnectionToWebProcess()->networkSession();
     ASSERT(session);
     if (!session)
         return;
 
-    session->removeLoaderWaitingWebProcessTransfer(m_loader->identifier());
+    session->removeLoaderWaitingWebProcessTransfer(loader->identifier());
 }
 
 void NetworkSession::addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoader>&& loader)
@@ -612,7 +619,7 @@ void NetworkSession::removeLoaderWaitingWebProcessTransfer(NetworkResourceLoadId
         cachedResourceLoader->takeLoader()->abort();
 }
 
-std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy)
+std::unique_ptr<WebSocketTask> NetworkSession::createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool, bool, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy)
 {
     return nullptr;
 }
@@ -649,7 +656,7 @@ String NetworkSession::attributedBundleIdentifierFromPageIdentifier(WebPageProxy
 
 void NetworkSession::reportNetworkIssue(WebPageProxyIdentifier pageIdentifier, const URL& requestURL)
 {
-    m_networkProcess->parentProcessConnection()->send(Messages::NetworkProcessProxy::ReportNetworkIssue(pageIdentifier, requestURL), 0);
+    m_networkProcess->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ReportNetworkIssue(pageIdentifier, requestURL), 0);
 }
 
 #endif // ENABLE(NETWORK_ISSUE_REPORTING)
@@ -658,8 +665,8 @@ void NetworkSession::lowMemoryHandler(Critical)
 {
     clearPrefetchCache();
 
-    if (m_swServer)
-        m_swServer->handleLowMemoryWarning();
+    if (RefPtr swServer = m_swServer)
+        swServer->handleLowMemoryWarning();
     m_storageManager->handleLowMemoryWarning();
 }
 
@@ -803,7 +810,7 @@ void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefre
 void NetworkSession::createContextConnection(const WebCore::Site& site, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     ASSERT(!site.isEmpty());
-    m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, site, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTFMove(completionHandler)] (auto) mutable {
+    m_networkProcess->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, site, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTFMove(completionHandler)] (auto) mutable {
         completionHandler();
     }, 0);
 }
@@ -811,7 +818,7 @@ void NetworkSession::createContextConnection(const WebCore::Site& site, std::opt
 void NetworkSession::appBoundDomains(CompletionHandler<void(HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
 {
 #if ENABLE(APP_BOUND_DOMAINS)
-    m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { m_sessionID }, WTFMove(completionHandler), 0);
+    m_networkProcess->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::GetAppBoundDomains { m_sessionID }, WTFMove(completionHandler), 0);
 #else
     completionHandler({ });
 #endif
@@ -819,7 +826,7 @@ void NetworkSession::appBoundDomains(CompletionHandler<void(HashSet<WebCore::Reg
 
 void NetworkSession::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier webProcessIdentifier, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, WebCore::RegistrableDomain&& firstPartyForCookies)
 {
-    if (requestingProcessIdentifier && (requestingProcessIdentifier != webProcessIdentifier) && !m_networkProcess->allowsFirstPartyForCookies(requestingProcessIdentifier.value(), firstPartyForCookies)) {
+    if (requestingProcessIdentifier && (requestingProcessIdentifier != webProcessIdentifier) && m_networkProcess->allowsFirstPartyForCookies(requestingProcessIdentifier.value(), firstPartyForCookies) != NetworkProcess::AllowCookieAccess::Allow) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -852,34 +859,39 @@ BackgroundFetchStoreImpl& NetworkSession::ensureBackgroundFetchStore()
     return *m_backgroundFetchStore;
 }
 
+Ref<BackgroundFetchStoreImpl> NetworkSession::ensureProtectedBackgroundFetchStore()
+{
+    return ensureBackgroundFetchStore();
+}
+
 void NetworkSession::getAllBackgroundFetchIdentifiers(CompletionHandler<void(Vector<String>&&)>&& callback)
 {
-    ensureBackgroundFetchStore().getAllBackgroundFetchIdentifiers(WTFMove(callback));
+    ensureProtectedBackgroundFetchStore()->getAllBackgroundFetchIdentifiers(WTFMove(callback));
 }
 
 void NetworkSession::getBackgroundFetchState(const String& identifier, CompletionHandler<void(std::optional<BackgroundFetchState>&&)>&& callback)
 {
-    ensureBackgroundFetchStore().getBackgroundFetchState(identifier, WTFMove(callback));
+    ensureProtectedBackgroundFetchStore()->getBackgroundFetchState(identifier, WTFMove(callback));
 }
 
 void NetworkSession::abortBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
 {
-    ensureBackgroundFetchStore().abortBackgroundFetch(identifier, WTFMove(callback));
+    ensureProtectedBackgroundFetchStore()->abortBackgroundFetch(identifier, WTFMove(callback));
 }
 
 void NetworkSession::pauseBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
 {
-    ensureBackgroundFetchStore().pauseBackgroundFetch(identifier, WTFMove(callback));
+    ensureProtectedBackgroundFetchStore()->pauseBackgroundFetch(identifier, WTFMove(callback));
 }
 
 void NetworkSession::resumeBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
 {
-    ensureBackgroundFetchStore().resumeBackgroundFetch(identifier, WTFMove(callback));
+    ensureProtectedBackgroundFetchStore()->resumeBackgroundFetch(identifier, WTFMove(callback));
 }
 
 void NetworkSession::clickBackgroundFetch(const String& identifier, CompletionHandler<void()>&& callback)
 {
-    ensureBackgroundFetchStore().clickBackgroundFetch(identifier, WTFMove(callback));
+    ensureProtectedBackgroundFetchStore()->clickBackgroundFetch(identifier, WTFMove(callback));
 }
 
 void NetworkSession::setInspectionForServiceWorkersAllowed(bool inspectable)
@@ -889,8 +901,8 @@ void NetworkSession::setInspectionForServiceWorkersAllowed(bool inspectable)
 
     m_inspectionForServiceWorkersAllowed = inspectable;
 
-    if (m_swServer)
-        m_swServer->setInspectable(inspectable ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No);
+    if (RefPtr swServer = m_swServer)
+        swServer->setInspectable(inspectable ? ServiceWorkerIsInspectable::Yes : ServiceWorkerIsInspectable::No);
 }
 
 void NetworkSession::setPersistedDomains(HashSet<WebCore::RegistrableDomain>&& domains)
@@ -917,5 +929,25 @@ Ref<NetworkBroadcastChannelRegistry> NetworkSession::protectedBroadcastChannelRe
 {
     return m_broadcastChannelRegistry;
 }
+
+#if ENABLE(CONTENT_EXTENSIONS)
+WebCore::ResourceMonitorThrottler& NetworkSession::resourceMonitorThrottler()
+{
+    if (!m_resourceMonitorThrottler)
+        m_resourceMonitorThrottler = WebCore::ResourceMonitorThrottler::create();
+
+    return *m_resourceMonitorThrottler;
+}
+
+Ref<WebCore::ResourceMonitorThrottler> NetworkSession::protectedResourceMonitorThrottler()
+{
+    return resourceMonitorThrottler();
+}
+
+void NetworkSession::resetResourceMonitorThrottlerForTesting()
+{
+    m_resourceMonitorThrottler = nullptr;
+}
+#endif
 
 } // namespace WebKit

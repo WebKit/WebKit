@@ -65,6 +65,8 @@ struct SupportedLimits {
     uint32_t maxComputeWorkgroupSizeY { 0 };
     uint32_t maxComputeWorkgroupSizeZ { 0 };
     uint32_t maxComputeWorkgroupsPerDimension { 0 };
+    uint32_t maxStorageBuffersInFragmentStage { 0 };
+    uint32_t maxStorageTexturesInFragmentStage { 0 };
 };
 
 } // namespace WebKit::WebGPU

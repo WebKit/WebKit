@@ -24,14 +24,9 @@
 
 #include "AudioSampleFormat.h"
 #include "GStreamerCommon.h"
-#include "GUniquePtrGStreamer.h"
 #include "MediaSampleGStreamer.h"
 #include "SharedBuffer.h"
 #include "WebCodecsAudioDataAlgorithms.h"
-#include <gst/audio/audio-converter.h>
-#include <wtf/HashMap.h>
-#include <wtf/NeverDestroyed.h>
-#include <wtf/text/StringCommon.h>
 
 GST_DEBUG_CATEGORY(webkit_audio_data_debug);
 #define GST_CAT_DEFAULT webkit_audio_data_debug
@@ -44,15 +39,6 @@ static void ensureAudioDataDebugCategoryInitialized()
     std::call_once(debugRegisteredFlag, [] {
         GST_DEBUG_CATEGORY_INIT(webkit_audio_data_debug, "webkitaudiodata", 0, "WebKit Audio Data");
     });
-}
-
-GstAudioConverter* getAudioConvertedForFormat(StringView&& key, GstAudioInfo& sourceInfo, GstAudioInfo& destinationInfo)
-{
-    static NeverDestroyed<UncheckedKeyHashMap<String, GUniquePtr<GstAudioConverter>>> audioConverters;
-    auto result = audioConverters->ensure(key.toString(), [&] {
-        return GUniquePtr<GstAudioConverter>(gst_audio_converter_new(GST_AUDIO_CONVERTER_FLAG_NONE, &sourceInfo, &destinationInfo, nullptr));
-    });
-    return result.iterator->value.get();
 }
 
 static std::pair<GstAudioFormat, GstAudioLayout> convertAudioSampleFormatToGStreamerFormat(const AudioSampleFormat& format)
@@ -96,6 +82,7 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
 
     auto caps = adoptGRef(gst_audio_info_to_caps(&info));
     GST_TRACE("Creating raw audio wrapper with caps %" GST_PTR_FORMAT, caps.get());
+    GST_MEMDUMP("Source", sourceData.data(), sourceData.size());
 
     Ref data = SharedBuffer::create(Vector<uint8_t>(sourceData));
     gpointer bufferData = const_cast<void*>(static_cast<const void*>(data->span().data()));
@@ -165,8 +152,7 @@ size_t PlatformRawAudioDataGStreamer::numberOfChannels() const
 
 size_t PlatformRawAudioDataGStreamer::numberOfFrames() const
 {
-    auto totalSamples = gst_buffer_get_size(gst_sample_get_buffer(m_sample.get())) / GST_AUDIO_INFO_BPS(&m_info);
-    return totalSamples / numberOfChannels();
+    return gst_buffer_get_size(gst_sample_get_buffer(m_sample.get())) / GST_AUDIO_INFO_BPF(&m_info);
 }
 
 std::optional<uint64_t> PlatformRawAudioDataGStreamer::duration() const
@@ -188,67 +174,101 @@ int64_t PlatformRawAudioDataGStreamer::timestamp() const
     return timestamp;
 }
 
+bool PlatformRawAudioDataGStreamer::isInterleaved() const
+{
+    return GST_AUDIO_INFO_LAYOUT(&m_info) == GST_AUDIO_LAYOUT_INTERLEAVED;
+}
+
 size_t PlatformRawAudioDataGStreamer::memoryCost() const
 {
     return gst_buffer_get_size(gst_sample_get_buffer(m_sample.get()));
 }
 
-void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFormat format, size_t planeIndex, std::optional<size_t> frameOffset, std::optional<size_t>, unsigned long)
+std::variant<Vector<std::span<uint8_t>>, Vector<std::span<int16_t>>, Vector<std::span<int32_t>>, Vector<std::span<float>>> PlatformRawAudioDataGStreamer::planesOfSamples(size_t samplesOffset)
 {
-    auto& self = *reinterpret_cast<PlatformRawAudioDataGStreamer*>(this);
+    GstMappedAudioBuffer mappedBuffer(m_sample, GST_MAP_READ);
 
-    [[maybe_unused]] auto [sourceFormat, sourceLayout] = convertAudioSampleFormatToGStreamerFormat(self.format());
-    auto [destinationFormat, destinationLayout] = convertAudioSampleFormatToGStreamerFormat(format);
-    auto sourceOffset = frameOffset.value_or(0);
+    switch (format()) {
+    case AudioSampleFormat::U8:
+    case AudioSampleFormat::U8Planar:
+        return mappedBuffer.samples<uint8_t>(samplesOffset);
+    case AudioSampleFormat::S16:
+    case AudioSampleFormat::S16Planar:
+        return mappedBuffer.samples<int16_t>(samplesOffset);
+    case AudioSampleFormat::S32:
+    case AudioSampleFormat::S32Planar:
+        return mappedBuffer.samples<int32_t>(samplesOffset);
+    case AudioSampleFormat::F32:
+    case AudioSampleFormat::F32Planar:
+        return mappedBuffer.samples<float>(samplesOffset);
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return Vector<std::span<uint8_t>> { };
+}
 
 #ifndef GST_DISABLE_GST_DEBUG
-    const char* destinationFormatDescription = gst_audio_format_to_string(destinationFormat);
-    GST_TRACE("Copying %s data at planeIndex %zu, destination format is %s, source offset: %zu", gst_audio_format_to_string(sourceFormat), planeIndex, destinationFormatDescription, sourceOffset);
+static const char* layoutToString(GstAudioLayout layout)
+{
+    switch (layout) {
+    case GST_AUDIO_LAYOUT_INTERLEAVED:
+        return "interleaved";
+    case GST_AUDIO_LAYOUT_NON_INTERLEAVED:
+        return "planar";
+    }
+    return "unknown";
+}
 #endif
 
-    GST_TRACE("Input caps: %" GST_PTR_FORMAT, gst_sample_get_caps(self.sample()));
+void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFormat format, size_t planeIndex, std::optional<size_t> frameOffset, std::optional<size_t>, unsigned long copyElementCount)
+{
+    // WebCodecsAudioDataAlgorithms's computeCopyElementCount ensures that all parameters are correct.
+    auto& audioData = downcast<PlatformRawAudioDataGStreamer>(*this);
 
-    GstMappedAudioBuffer mappedBuffer(self.sample(), GST_MAP_READ);
-    const auto inputBuffer = mappedBuffer.get();
+    auto sourceFormat = audioData.format();
+    const auto& sourceSample = audioData.sample();
+    bool isDestinationInterleaved = isAudioSampleFormatInterleaved(format);
 
-    if (self.format() == format) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        if (destinationLayout == GST_AUDIO_LAYOUT_NON_INTERLEAVED) {
-            auto size = computeBytesPerSample(format) * inputBuffer->n_samples;
-            memcpy(destination.data(), static_cast<uint8_t*>(inputBuffer->planes[planeIndex]) + sourceOffset, size);
-        } else {
-            GstMappedBuffer in(inputBuffer->buffer, GST_MAP_READ);
-            memcpy(destination.data(), in.data() + sourceOffset, in.size() - sourceOffset);
-        }
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+#ifndef GST_DISABLE_GST_DEBUG
+    [[maybe_unused]] auto [gstSourceFormat, sourceLayout] = convertAudioSampleFormatToGStreamerFormat(sourceFormat);
+    auto [gstDestinationFormat, destinationLayout] = convertAudioSampleFormatToGStreamerFormat(format);
+    auto sourceOffset = frameOffset.value_or(0);
+    const char* destinationFormatDescription = gst_audio_format_to_string(gstDestinationFormat);
+    GST_TRACE("Copying %s %s data at planeIndex %zu, destination format is %s %s, source offset: %zu", layoutToString(sourceLayout), gst_audio_format_to_string(gstSourceFormat), planeIndex, layoutToString(destinationLayout), destinationFormatDescription, sourceOffset);
+#endif
+
+    if (audioSampleElementFormat(sourceFormat) == audioSampleElementFormat(format) && (numberOfChannels() == 1 || (audioData.isInterleaved() && isDestinationInterleaved))) {
+        ASSERT(!planeIndex);
+        GstMappedBuffer mappedBuffer(gst_sample_get_buffer(sourceSample.get()), GST_MAP_READ);
+        auto source = mappedBuffer.span<uint8_t>();
+        GUniquePtr<GstAudioInfo> sourceInfo(gst_audio_info_copy(audioData.info()));
+        size_t frameOffsetInBytes = frameOffset.value_or(0) * GST_AUDIO_INFO_BPF(sourceInfo.get());
+        RELEASE_ASSERT(frameOffsetInBytes <= source.size());
+        auto subSource = source.subspan(frameOffsetInBytes, source.size() - frameOffsetInBytes);
+        memcpySpan(destination, subSource);
         return;
     }
 
-    GstAudioInfo destinationInfo;
-    gst_audio_info_set_format(&destinationInfo, destinationFormat, static_cast<int>(self.sampleRate()), self.numberOfChannels(), nullptr);
-    GST_AUDIO_INFO_LAYOUT(&destinationInfo) = destinationLayout;
+    auto source = audioData.planesOfSamples(sourceOffset * (audioData.isInterleaved() ? numberOfChannels() : 1));
 
-    auto outputCaps = adoptGRef(gst_audio_info_to_caps(&destinationInfo));
-    GST_TRACE("Output caps: %" GST_PTR_FORMAT, outputCaps.get());
+    if (isDestinationInterleaved) {
+        // Copy of all channels of the source into the destination buffer and deinterleave.
+        ASSERT(!planeIndex);
+        copyToInterleaved(source, destination, format, copyElementCount);
+        return;
+    }
 
-    GUniquePtr<GstAudioInfo> sourceInfo(gst_audio_info_copy(self.info()));
-    GUniquePtr<char> key(gst_info_strdup_printf("%" GST_PTR_FORMAT ";%" GST_PTR_FORMAT, gst_sample_get_caps(self.sample()), outputCaps.get()));
-    auto converter = getAudioConvertedForFormat(StringView { span(key.get()) }, *sourceInfo.get(), destinationInfo);
+    auto copyElements = []<typename T>(std::span<T> destination, const auto& sourcePlane, size_t samples)
+    {
+        RELEASE_ASSERT(destination.size() >= samples);
+        for (size_t sample = 0; sample < samples; sample++)
+            destination[sample] = convertAudioSample<T>(sourcePlane[sample]);
+    };
 
-    auto inFrames = gst_buffer_get_size(gst_sample_get_buffer(self.sample())) / GST_AUDIO_INFO_BPF(sourceInfo.get());
-    auto outFrames = gst_audio_converter_get_out_frames(converter, inFrames);
-    auto destinationBuffer = adoptGRef(gst_buffer_new_and_alloc(outFrames * GST_AUDIO_INFO_BPF(&destinationInfo)));
-    if (destinationLayout == GST_AUDIO_LAYOUT_NON_INTERLEAVED)
-        gst_buffer_add_audio_meta(destinationBuffer.get(), &destinationInfo, self.numberOfFrames(), nullptr);
-
-    GstMappedAudioBuffer mappedDestinationBuffer(destinationBuffer.get(), destinationInfo, GST_MAP_WRITE);
-    auto outputBuffer = mappedDestinationBuffer.get();
-    gst_audio_converter_samples(converter, GST_AUDIO_CONVERTER_FLAG_NONE, inputBuffer->planes, inputBuffer->n_samples, outputBuffer->planes, outputBuffer->n_samples);
-
-    auto planeSize = computeBytesPerSample(format) * outputBuffer->n_samples;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    memcpy(destination.data(), static_cast<uint8_t*>(outputBuffer->planes[planeIndex]) + sourceOffset, planeSize);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    WTF::switchOn(audioElementSpan(format, destination), [&](auto dst) {
+        switchOn(source, [&](auto& src) {
+            copyElements(dst, src[planeIndex], copyElementCount);
+        });
+    });
 }
 
 } // namespace WebCore

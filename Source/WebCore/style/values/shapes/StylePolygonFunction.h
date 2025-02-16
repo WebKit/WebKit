@@ -67,4 +67,4 @@ template<> struct Blending<Polygon> {
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(Polygon, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Polygon, 2)

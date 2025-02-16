@@ -34,7 +34,7 @@ function test(i, opaqueCondition) {
 noInline(test);
 
 function loop() {
-    for (let i = 0; i < 1e6; ++i)
+    for (let i = 0; i < testLoopCount; ++i)
         test(1, 1);
 }
 noInline(loop);

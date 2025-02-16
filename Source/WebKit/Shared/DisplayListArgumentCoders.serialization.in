@@ -132,11 +132,6 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier();
 };
 
-[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawDisplayListItems {
-    Vector<WebCore::DisplayList::Item> items();
-    WebCore::FloatPoint destination();
-};
-
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawImageBuffer {
     WebCore::RenderingResourceIdentifier imageBufferIdentifier();
     WebCore::FloatRect destinationRect();
@@ -189,7 +184,7 @@ headers: <WebCore/DisplayListItems.h>
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::DrawLinesForText {
     WebCore::FloatPoint point();
-    WebCore::DashArray widths();
+    Vector<WebCore::FloatSegment> lineSegments();
     float thickness();
     bool isPrinting();
     bool doubleLines();
@@ -366,4 +361,9 @@ headers: <WebCore/DisplayListItems.h>
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::EndPage {
+};
+
+[CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetURLForRect {
+    URL link();
+    WebCore::FloatRect destRect();
 };

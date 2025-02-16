@@ -26,8 +26,8 @@
 
 #include "DataTransfer.h"
 #include "EventNames.h"
+#include "MouseEventTypes.h"
 #include "Node.h"
-#include "PlatformMouseEvent.h"
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 

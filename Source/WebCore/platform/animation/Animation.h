@@ -28,9 +28,9 @@
 #include "CompositeOperation.h"
 #include "RenderStyleConstants.h"
 #include "ScopedName.h"
-#include "ScrollTimeline.h"
+#include "ScrollAxis.h"
+#include "TimelineRange.h"
 #include "TimingFunction.h"
-#include "ViewTimeline.h"
 #include "WebAnimationTypes.h"
 
 namespace WebCore {

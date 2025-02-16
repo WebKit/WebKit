@@ -19,7 +19,7 @@ function shouldThrow(func, errorMessage) {
 (function stringLength() {
     let str = "foo";
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         str.length = 0;
         shouldBe(str.length, 3);
         shouldThrow(() => { "use strict"; "bar".length = 3; }, "TypeError: Attempted to assign to readonly property.");

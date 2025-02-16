@@ -20,7 +20,7 @@ function bar(o) {
 noInline(foo);
 noInline(bar);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     // Call bar() in such a way that all of those callee-save variables have fairly unique
     // looking values, to maximize the chances of foo() clobbering them in a recognizable
     // way.

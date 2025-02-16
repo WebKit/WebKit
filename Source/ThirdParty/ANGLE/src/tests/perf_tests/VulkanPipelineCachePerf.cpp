@@ -95,8 +95,8 @@ void VulkanPipelineCachePerfTest::step()
     vk::PipelineLayout pl;
     vk::PipelineCache pc;
     vk::PipelineCacheAccess spc;
-    vk::ShaderModulePtr vs = vk::ShaderModulePtr::MakeShared();
-    vk::ShaderModulePtr fs = vk::ShaderModulePtr::MakeShared();
+    vk::ShaderModulePtr vs = vk::ShaderModulePtr::MakeShared(VK_NULL_HANDLE);
+    vk::ShaderModulePtr fs = vk::ShaderModulePtr::MakeShared(VK_NULL_HANDLE);
     vk::ShaderModuleMap ssm;
     const vk::GraphicsPipelineDesc *desc = nullptr;
     vk::PipelineHelper *result           = nullptr;

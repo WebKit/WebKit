@@ -414,6 +414,33 @@ void ImageTestMetal::sourceMetalTarget2D_helper(GLubyte data[4],
     *textureOut = target;
 }
 
+// Test that trying to set renderbuffer storage without a renderbuffer is an error.
+TEST_P(ImageTestMetal, RenderbufferStorageNoRenderbufferIsError)
+{
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt());
+    ANGLE_SKIP_TEST_IF(!hasImageNativeMetalTextureExt());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    const int bufferSize = 32;
+    ScopedMetalTextureRef textureMtl =
+        createMtlTexture2DArray(bufferSize, bufferSize, 1, MTLPixelFormatDepth32Float_Stencil8);
+    const EGLint attribs[] = {EGL_TEXTURE_INTERNAL_FORMAT_ANGLE, GL_DEPTH24_STENCIL8, EGL_NONE};
+    EGLImageKHR image =
+        eglCreateImageKHR(display, EGL_NO_CONTEXT, EGL_METAL_TEXTURE_ANGLE,
+                          reinterpret_cast<EGLClientBuffer>(textureMtl.get()), attribs);
+    EXPECT_EGL_SUCCESS();
+    EXPECT_NE(image, nullptr);
+
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, image);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    GLRenderbuffer depthStencilBuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilBuffer);
+    glEGLImageTargetRenderbufferStorageOES(GL_RENDERBUFFER, image);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Testing source metal EGL image, target 2D texture
 TEST_P(ImageTestMetal, SourceMetalTarget2D)
 {

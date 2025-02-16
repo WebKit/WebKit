@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003-2020 Apple Inc.  All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -96,6 +96,7 @@ namespace WebCore {
     M(ContentObservation) \
     M(Crypto) \
     M(DatabaseTracker) \
+    M(DigitalCredentials) \
     M(DisplayLink) \
     M(DisplayLists) \
     M(DragAndDrop) \
@@ -150,6 +151,7 @@ namespace WebCore {
     M(Progress) \
     M(Push) \
     M(RemoteInspector) \
+    M(RenderBlocking) \
     M(RequestAnimationFrame) \
     M(ResizeObserver) \
     M(ResourceLoading) \
@@ -165,6 +167,7 @@ namespace WebCore {
     M(Services) \
     M(ServiceWorker) \
     M(SharedWorker) \
+    M(SiteIsolation) \
     M(SpellingAndGrammar) \
     M(SQLDatabase) \
     M(Storage) \

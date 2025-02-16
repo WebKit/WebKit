@@ -1,10 +1,9 @@
 {
     "repository": "https://github.com/SeleniumHQ/selenium.git",
-    "revision": "00a3f4c2d20d74cf0148c273786bfc712923ca6c",
+    "revision": "7425162bbc9b7e747118a8ccffeb9efb5f6b8d37",
     "paths_to_import": [
         "common",
         "py/conftest.py",
-        "py/setup.cfg",
         "py/selenium",
         "py/test"
     ],
@@ -35,7 +34,7 @@
         "common/src/web/Settings.StyleCop",
         "common/src/web/upload_hidden.html",
         "common/src/web/upload_multiple.html",
-        "common/webextensions",
+        "common/extensions",
         "py/selenium/webdriver/android",
         "py/selenium/webdriver/blackberry",
         "py/selenium/webdriver/chrome",
@@ -50,6 +49,7 @@
         "py/test/selenium/webdriver/chrome",
         "py/test/selenium/webdriver/firefox",
         "py/test/selenium/webdriver/ie",
+        "py/test/selenium/webdriver/edge",
         "py/test/selenium/webdriver/marionette",
         "py/test/selenium/webdriver/common/devtools_tests.py",
         "py/test/selenium/webdriver/common/driver_finder_tests.py"

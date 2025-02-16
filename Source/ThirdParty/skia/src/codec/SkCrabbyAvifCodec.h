@@ -55,7 +55,7 @@ protected:
                        const Options& options,
                        int* rowsDecoded) override;
 
-    SkEncodedImageFormat onGetEncodedFormat() const override { return SkEncodedImageFormat::kAVIF; }
+    SkEncodedImageFormat onGetEncodedFormat() const override { return fFormat; }
 
     int onGetFrameCount() override;
     bool onGetFrameInfo(int, FrameInfo*) const override;
@@ -63,6 +63,7 @@ protected:
     const SkFrameHolder* getFrameHolder() const override { return &fFrameHolder; }
     bool conversionSupported(const SkImageInfo&, bool, bool) override;
     bool onGetGainmapCodec(SkGainmapInfo* info, std::unique_ptr<SkCodec>* gainmapCodec) override;
+    bool onGetValidSubset(SkIRect*) const override { return true; }
 
 private:
     SkCrabbyAvifCodec(SkEncodedInfo&&,
@@ -71,7 +72,8 @@ private:
                       AvifDecoder,
                       SkEncodedOrigin,
                       bool,
-                      bool);
+                      bool,
+                      SkEncodedImageFormat);
 
     static std::unique_ptr<SkCodec> MakeFromData(std::unique_ptr<SkStream>,
                                                  sk_sp<SkData>,
@@ -86,6 +88,7 @@ private:
     AvifDecoder fAvifDecoder;
     bool fUseAnimation;
     bool fGainmapOnly;
+    const SkEncodedImageFormat fFormat;
 
     class Frame : public SkFrame {
     public:

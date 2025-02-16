@@ -56,7 +56,7 @@ namespace WebKit {
 using namespace WebCore;
 
 #if ENABLE(NOTIFICATIONS)
-static bool sendMessage(WebPage* page, const Function<bool(IPC::Connection&, uint64_t)>& sendMessage)
+static bool sendMessage(WebPage* page, NOESCAPE const Function<bool(IPC::Connection&, uint64_t)>& sendMessage)
 {
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     if (DeprecatedGlobalSettings::builtInNotificationsEnabled()) {

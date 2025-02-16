@@ -25,9 +25,11 @@
 
 #pragma once
 
+#include "HeapCellInlines.h"
 #include "JSGlobalObjectInlines.h"
 #include "JSString.h"
 #include "KeyAtomStringCacheInlines.h"
+#include "MarkedBlockInlines.h"
 #include <wtf/text/MakeString.h>
 #include <wtf/text/ParsingUtilities.h>
 
@@ -205,6 +207,7 @@ inline void JSRopeString::convertToNonRope(String&& string) const
     static_assert(sizeof(String) == sizeof(RefPtr<StringImpl>), "JSString's String initialization must be done in one pointer move.");
     // We do not clear the trailing fibers and length information (fiber1 and fiber2) because we could be reading the length concurrently.
     ASSERT(!JSString::isRope());
+    notifyNeedsDestruction();
 }
 
 // Overview: These functions convert a JSString from holding a string in rope form
@@ -338,7 +341,7 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
                 StringView view0 = *rope0->substringBase()->valueInternal().impl();
                 unsigned offset = rope0->substringOffset();
 
-                view0.substring(offset, rope0Length).getCharacters(buffer.first(buffer.size() - rope0Length));
+                view0.substring(offset, rope0Length).getCharacters(buffer);
                 return;
             }
             MUST_TAIL_CALL return resolveToBuffer(rope0->fiber0(), rope0->fiber1(), rope0->fiber2(), buffer.first(rope0Length), stackLimit);

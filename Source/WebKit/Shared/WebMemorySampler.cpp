@@ -89,12 +89,12 @@ void WebMemorySampler::start(SandboxExtension::Handle&& sampleLogFileHandle, con
 void WebMemorySampler::initializeTimers(double interval)
 {
     m_sampleTimer.startRepeating(1_s);
-    printf("Started memory sampler for process %s %d", processName().utf8().data(), getCurrentProcessID());
+    SAFE_PRINTF("Started memory sampler for process %s %d", processName().utf8(), getCurrentProcessID());
     if (interval > 0) {
         m_stopTimer.startOneShot(1_s * interval);
         printf(" for a interval of %g seconds", interval);
     }
-    printf("; Sampler log file stored at: %s\n", m_sampleLogFilePath.utf8().data());
+    SAFE_PRINTF("; Sampler log file stored at: %s\n", m_sampleLogFilePath.utf8());
     m_runningTime = interval;
     m_isRunning = true;
 }
@@ -106,7 +106,7 @@ void WebMemorySampler::stop()
     m_sampleTimer.stop();
     FileSystem::closeFile(m_sampleLogFile);
 
-    printf("Stopped memory sampler for process %s %d\n", processName().utf8().data(), getCurrentProcessID());
+    SAFE_PRINTF("Stopped memory sampler for process %s %d\n", processName().utf8(), getCurrentProcessID());
     // Flush stdout buffer so python script can be guaranteed to read up to this point.
     fflush(stdout);
     m_isRunning = false;
@@ -146,7 +146,7 @@ void WebMemorySampler::initializeSandboxedLogFile(SandboxExtension::Handle&& sam
 void WebMemorySampler::writeHeaders()
 {
     auto processDetails = makeString("Process: "_s, processName(), " Pid: "_s, getCurrentProcessID(), '\n').utf8();
-    FileSystem::writeToFile(m_sampleLogFile, processDetails.span());
+    FileSystem::writeToFile(m_sampleLogFile, byteCast<uint8_t>(processDetails.span()));
 }
 
 void WebMemorySampler::sampleTimerFired()
@@ -180,7 +180,7 @@ void WebMemorySampler::appendCurrentMemoryUsageToFile(FileSystem::PlatformFileHa
     statString.append('\n');
 
     CString utf8String = statString.toString().utf8();
-    FileSystem::writeToFile(m_sampleLogFile, utf8String.span());
+    FileSystem::writeToFile(m_sampleLogFile, byteCast<uint8_t>(utf8String.span()));
 }
 
 }

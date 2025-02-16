@@ -15,7 +15,7 @@ function test(num)
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     if (i & 1)
         shouldBe(test(i), 42);
     else

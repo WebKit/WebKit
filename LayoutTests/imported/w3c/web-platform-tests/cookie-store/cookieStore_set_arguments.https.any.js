@@ -307,7 +307,7 @@ promise_test(async testCase => {
   assert_equals(cookie_attributes.value, 'old-cookie-value');
 
   cookie_attributes.value = 'new-cookie-value';
-  await cookieStore.set(cookie_attributes);
+  await cookieStore.set(cookie_attributes.name, cookie_attributes.value);
   const cookie = await cookieStore.get('cookie-name');
   assert_equals(cookie.name, 'cookie-name');
   assert_equals(cookie.value, 'new-cookie-value');

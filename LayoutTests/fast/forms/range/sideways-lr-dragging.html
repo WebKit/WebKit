@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="../../../resources/js-test.js"></script>
+        <script src="../../../resources/ui-helper.js"></script>
+        <script>
+            async function drag()
+            {
+                if (!window.testRunner)
+                    return;
+
+                const slider = document.getElementById("slider");
+
+                testRunner.dumpAsText();
+                testRunner.waitUntilDone();
+
+                shouldBe("slider.value", "'0'");
+
+                const thumbCenter = slider.offsetWidth / 2;
+
+                debug("Dragging slider");
+                await UIHelper.dragFromPointToPoint(
+                    slider.offsetLeft + thumbCenter, slider.offsetTop + slider.offsetHeight - thumbCenter, // from
+                    slider.offsetLeft + thumbCenter, slider.offsetTop + thumbCenter, // to
+                    0.1, // duration
+                );
+
+                shouldBe("slider.value", "'100'");
+
+                debug("Dragging slider back");
+                await UIHelper.dragFromPointToPoint(
+                    slider.offsetLeft + thumbCenter, slider.offsetTop + thumbCenter, // from
+                    slider.offsetLeft + thumbCenter, slider.offsetTop + slider.offsetHeight - thumbCenter, // to
+                    0.1, // duration
+                );
+
+                shouldBe("slider.value", "'0'");
+
+                testRunner.notifyDone();
+            }
+        </script>
+    </head>
+    <body onload="drag()">
+        <p>This tests that dragging a slider in sideways-lr writing mode works as expected.</p>
+        <input style="writing-mode: sideways-lr;" type="range" id="slider" value="0">
+        <div id="console"></div>
+    </body>
+</html>

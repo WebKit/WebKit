@@ -1,6 +1,9 @@
 <html>
 <head>
 <script>
+if (window.internals)
+    internals.clearMemoryCache();
+
 if (window.testRunner)
     testRunner.dumpDOMAsWebArchive();
 </script>

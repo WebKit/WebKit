@@ -61,7 +61,7 @@ void Attachment::setFileWrapper(NSFileWrapper *fileWrapper)
     m_fileWrapper = fileWrapper;
 }
 
-void Attachment::doWithFileWrapper(Function<void(NSFileWrapper *)>&& function) const
+void Attachment::doWithFileWrapper(NOESCAPE Function<void(NSFileWrapper *)>&& function) const
 {
     Locker locker { m_fileWrapperLock };
 

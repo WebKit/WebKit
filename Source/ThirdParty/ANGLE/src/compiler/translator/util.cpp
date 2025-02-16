@@ -8,6 +8,7 @@
 
 #include <limits>
 
+#include "common/span.h"
 #include "common/utilities.h"
 #include "compiler/preprocessor/numeric_lex.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
@@ -447,7 +448,7 @@ ImmutableString ArrayString(const TType &type)
     if (!type.isArray())
         return ImmutableString("");
 
-    const TSpan<const unsigned int> &arraySizes     = type.getArraySizes();
+    const angle::Span<const unsigned int> &arraySizes = type.getArraySizes();
     constexpr const size_t kMaxDecimalDigitsPerSize = 10u;
     ImmutableStringBuilder arrayString(arraySizes.size() * (kMaxDecimalDigitsPerSize + 2u));
     for (auto arraySizeIter = arraySizes.rbegin(); arraySizeIter != arraySizes.rend();

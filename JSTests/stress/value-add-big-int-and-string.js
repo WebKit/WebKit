@@ -9,7 +9,7 @@ function bigIntOperations(a, b) {
 }
 noInline(bigIntOperations);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let out = bigIntOperations(0b1111n, "16");
     assert(out, "151516");
 }

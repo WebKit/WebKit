@@ -14,4 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/scripted/pattern-transform-clear-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/pservers/scripted/pattern-transform-clear.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/pservers/scripted/stop-color-inheritance-currentcolor.svg

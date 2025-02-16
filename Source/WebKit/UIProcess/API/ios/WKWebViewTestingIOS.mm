@@ -170,18 +170,12 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
 
 - (void)_selectDataListOption:(int)optionIndex
 {
-#if ENABLE(DATALIST_ELEMENT)
     [_contentView _selectDataListOption:optionIndex];
-#endif
 }
 
 - (BOOL)_isShowingDataListSuggestions
 {
-#if ENABLE(DATALIST_ELEMENT)
     return [_contentView isShowingDataListSuggestions];
-#else
-    return NO;
-#endif
 }
 
 - (NSString *)textContentTypeForTesting

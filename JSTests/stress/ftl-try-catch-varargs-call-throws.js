@@ -25,7 +25,7 @@ function f(arg1, arg2, arg3) {
 }
 noInline(f);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     foo(f, [10, 20, 30]);
 }
 flag = true;

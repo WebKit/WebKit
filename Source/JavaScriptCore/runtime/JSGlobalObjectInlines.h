@@ -352,7 +352,10 @@ ALWAYS_INLINE JSArray* tryCreateContiguousArrayWithPattern(JSGlobalObject* globa
     for (unsigned i = initialLength; i < vectorLength; ++i)
         butterfly->contiguous().atUnsafe(i).clear();
 #endif
-    return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
+    auto* array = JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
+    // Clang can optimize this away, and butterfly doesn't visit anything.
+    ensureStillAliveHere(pattern);
+    return array;
 }
 
 ALWAYS_INLINE JSArray* createPatternFilledArray(JSGlobalObject* globalObject, JSString* pattern, size_t count)

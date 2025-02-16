@@ -171,7 +171,9 @@ enum class PIPState {
 {
     _playing = isPlaying && playbackRate;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pipViewController setPlaying:_playing];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 - (void)setVideoDimensions:(NSSize)videoDimensions
@@ -191,8 +193,10 @@ enum class PIPState {
 
     _pipViewController = adoptNS([allocPIPViewControllerInstance() init]);
     [_pipViewController setDelegate:self];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pipViewController setUserCanResize:YES];
     [_pipViewController setPlaying:_playing];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     [self setVideoDimensions:NSEqualSizes(_videoDimensions, NSZeroSize) ? frame.size : _videoDimensions];
     auto model = _videoPresentationInterfaceMac ? _videoPresentationInterfaceMac->videoPresentationModel() : nullptr;
     if (model)
@@ -245,8 +249,10 @@ enum class PIPState {
     _returningWindow = window;
     _returningRect = rect;
 
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [_pipViewController setReplacementRect:rect];
     [_pipViewController setReplacementWindow:window];
+    ALLOW_DEPRECATED_DECLARATIONS_END
 
     [self exitPIP];
 }
@@ -309,6 +315,7 @@ enum class PIPState {
     return NO;
 }
 
+ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
 - (void)pipDidClose:(PIPViewController *)pip
 {
     ASSERT_UNUSED(pip, pip == _pipViewController);
@@ -319,7 +326,9 @@ enum class PIPState {
     if (_pipState != PIPState::ExitingPIP) {
         // We got told to close without going through -pipActionStop, nor by exlicitly being asked to in -exitPiP:.
         // Call -pipActionStop: here in order to set the fullscreen state to an expected value.
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         [self pipActionStop:pip];
+        ALLOW_DEPRECATED_DECLARATIONS_END
     }
 
     if (auto model = _videoPresentationInterfaceMac->videoPresentationModel()) {
@@ -372,6 +381,7 @@ enum class PIPState {
     _videoPresentationInterfaceMac->requestHideAndExitPiP();
     _pipState = PIPState::ExitingPIP;
 }
+ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
@@ -461,7 +471,7 @@ WebVideoPresentationInterfaceMacObjC *VideoPresentationInterfaceMac::videoPresen
     return m_webVideoPresentationInterfaceObjC.get();
 }
 
-void VideoPresentationInterfaceMac::setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
+void VideoPresentationInterfaceMac::setupFullscreen(const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
 {
     LOG(Fullscreen, "VideoPresentationInterfaceMac::setupFullscreen(%p), initialRect:{%d, %d, %d, %d}, parentWindow:%p, mode:%d", this, initialRect.x(), initialRect.y(), initialRect.width(), initialRect.height(), parentWindow, mode);
 
@@ -470,9 +480,9 @@ void VideoPresentationInterfaceMac::setupFullscreen(NSView& layerHostedView, con
 
     m_mode |= mode;
 
-    [videoPresentationInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
+    [videoPresentationInterfaceObjC() setUpPIPForVideoView:layerHostView() withFrame:(NSRect)initialRect inWindow:parentWindow];
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
+    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this] {
         if (RefPtr model = videoPresentationModel()) {
             model->didSetupFullscreen();
             model->setRequiresTextTrackRepresentation(true);

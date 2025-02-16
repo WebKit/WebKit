@@ -181,8 +181,10 @@ void GamepadManager::makeGamepadVisible(PlatformGamepad& platformGamepad, WeakHa
         NavigatorGamepad& navigator = navigatorGamepadFromDOMWindow(*window);
 
         Ref gamepad = navigator.gamepadFromPlatformGamepad(platformGamepad);
+        RefPtr document = navigator.navigator().document();
 
         LOG(Gamepad, "(%u) GamepadManager::makeGamepadVisible - Dispatching gamepadconnected event for gamepad '%s'", (unsigned)getpid(), platformGamepad.id().utf8().data());
+        UserGestureIndicator gestureIndicator(IsProcessingUserGesture::Yes, document.get());
         window->dispatchEvent(GamepadEvent::create(eventNames().gamepadconnectedEvent, gamepad.get()), window->document());
     }
 }

@@ -84,7 +84,7 @@ public:
     DecodingStatus frameDecodingStatusAtIndex(unsigned index) const final;
 
     // Testing support
-    const char* sourceUTF8() const;
+    CString sourceUTF8() const;
 
 private:
     BitmapImageSource(BitmapImage&, AlphaOption, GammaAndColorProfileOption);
@@ -157,6 +157,7 @@ private:
     ImageOrientation orientation() const final { return m_descriptor.orientation(); }
     DestinationColorSpace colorSpace() const final { return m_descriptor.colorSpace(); }
     std::optional<Color> singlePixelSolidColor() const final { return m_descriptor.singlePixelSolidColor(); }
+    Headroom headroom() const final { return m_descriptor.headroom(); }
 
     String uti() const final { return m_descriptor.uti(); }
     String filenameExtension() const final { return m_descriptor.filenameExtension(); }
@@ -175,7 +176,6 @@ private:
 
     // ImageFrame metadata
     ImageOrientation frameOrientationAtIndex(unsigned index) const final;
-    Headroom frameHeadroomAtIndex(unsigned index) const final;
 
     // BitmapImage metadata
     RefPtr<ImageObserver> imageObserver() const;

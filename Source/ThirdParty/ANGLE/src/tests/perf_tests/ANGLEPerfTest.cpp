@@ -27,6 +27,10 @@
 #include "util/shader_utils.h"
 #include "util/test_utils.h"
 
+#if defined(ANGLE_PLATFORM_ANDROID)
+#    include "util/android/AndroidWindow.h"
+#endif
+
 #include <cassert>
 #include <cmath>
 #include <fstream>
@@ -237,6 +241,19 @@ void FinishAndCheckForContextLoss()
     }
 }
 
+void DumpFpsValues(const char *test, double mean_time)
+{
+#if defined(ANGLE_PLATFORM_ANDROID)
+    std::ofstream fp(AndroidWindow::GetExternalStorageDirectory() + "/traces_fps.txt",
+                     std::ios::app);
+#else
+    std::ofstream fp("traces_fps.txt", std::ios::app);
+#endif
+    double fps_value = 1000 / mean_time;
+    fp << test << " " << fps_value << std::endl;
+    fp.close();
+}
+
 #if defined(ANGLE_PLATFORM_ANDROID)
 constexpr bool kHasATrace = true;
 
@@ -383,6 +400,12 @@ void ANGLEPerfTest::run()
         {
             printf("Mean result time: %.4lf ms.\n", mean);
         }
+
+        if (kStandaloneBenchmark)
+        {
+            DumpFpsValues(mStory.c_str(), mean);
+        }
+
         printf("Coefficient of variation: %.2lf%%\n", coefficientOfVariation * 100.0);
     }
 }
@@ -448,6 +471,15 @@ void ANGLEPerfTest::runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolic
             }
         }
 
+        if (gFpsLimit)
+        {
+            double wantTime    = mTrialNumStepsPerformed / double(gFpsLimit);
+            double currentTime = mTrialTimer.getElapsedWallClockTime();
+            if (currentTime < wantTime)
+            {
+                std::this_thread::sleep_for(std::chrono::duration<double>(wantTime - currentTime));
+            }
+        }
         step();
 
         if (runPolicy == RunTrialPolicy::FinishEveryStep)

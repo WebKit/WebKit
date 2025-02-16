@@ -122,12 +122,6 @@ WI.DOMObserver = class DOMObserver extends InspectorBackend.Dispatcher
         WI.domManager.didFireEvent(nodeId, eventName, timestamp, data);
     }
 
-    videoLowPowerChanged(nodeId, timestamp, isLowPower)
-    {
-        // COMPATIBILITY (iOS 12.2): DOM.videoLowPowerChanged was renamed to DOM.powerEfficientPlaybackStateChanged.
-        WI.domManager.powerEfficientPlaybackStateChanged(nodeId, timestamp, isLowPower);
-    }
-
     powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient)
     {
         WI.domManager.powerEfficientPlaybackStateChanged(nodeId, timestamp, isPowerEfficient);

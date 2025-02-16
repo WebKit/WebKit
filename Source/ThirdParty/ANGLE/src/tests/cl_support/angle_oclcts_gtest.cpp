@@ -48,10 +48,20 @@ class OpenCLCaseList
     struct CaseInfo
     {
         CaseInfo(const std::string &testNameIn, int expectationIn)
-            : testName(testNameIn), expectation(expectationIn)
-        {}
+            : testCaseDescription(testNameIn), expectation(expectationIn)
+        {
+            // The test list is specified in the form <testSuiteName.testName testArgs>. Parse the
+            // string as such.
+            size_t startPos  = testCaseDescription.find('.');
+            testSuiteName    = testCaseDescription.substr(0, startPos);
+            testNameWithArgs = "";
+            if (startPos != std::string::npos)
+                testNameWithArgs = testCaseDescription.substr(startPos + 1);
+        }
 
-        std::string testName;
+        std::string testCaseDescription;
+        std::string testSuiteName;
+        std::string testNameWithArgs;
         int expectation;
     };
 
@@ -260,18 +270,21 @@ void OpenCLTest::TestBody()
         return;
     }
 
-    size_t pos           = caseInfo.testName.find('.');
-    std::string testName = caseInfo.testName.substr(pos + 1);
+    // test name and options
+    std::vector<std::string> testNameVector;
+    angle::SplitStringAlongWhitespace(caseInfo.testNameWithArgs, &testNameVector);
 
-    // Invoke the CTS's main() with the test name
-    const int argc      = 2;
-    const char *argv[3] = {
-        "executable",
-        testName.c_str(),
-        nullptr,
-    };
+    std::vector<const char *> argv;
+    argv.push_back(caseInfo.testSuiteName.c_str());
+    for (const auto &str : testNameVector)
+    {
+        argv.push_back(str.c_str());
+    }
+    int argc = argv.size();
+    // C requires argv[argc] shall be null pointer
+    argv.push_back(nullptr);
 
-    const int result = ANGLE_oclcts_main(argc, argv);
+    const int result = ANGLE_oclcts_main(argc, argv.data());
 
     sTestSuiteData.countTestResult(result);
     if (caseInfo.expectation == angle::GPUTestExpectationsParser::kGpuTestPass ||
@@ -280,13 +293,13 @@ void OpenCLTest::TestBody()
         EXPECT_EQ(result, EXIT_SUCCESS);
         if (result != EXIT_SUCCESS)
         {
-            sTestSuiteData.mUnexpectedFailed.push_back(caseInfo.testName);
+            sTestSuiteData.mUnexpectedFailed.push_back(caseInfo.testCaseDescription);
         }
     }
     else if (result == EXIT_SUCCESS)
     {
         std::cout << "Test expected to fail but passed!" << std::endl;
-        sTestSuiteData.mUnexpectedPasses.push_back(caseInfo.testName);
+        sTestSuiteData.mUnexpectedPasses.push_back(caseInfo.testCaseDescription);
     }
 }
 
@@ -297,18 +310,14 @@ void RegisterCLCTSTests()
     {
         auto factory = [caseIndex]() { return new OpenCLTest(caseIndex); };
 
-        const std::string testCaseName = testList.getCaseInfo(caseIndex).testName;
-        size_t pos                     = testCaseName.find('.');
-        ASSERT(pos != std::string::npos);
-
         // The mustpass list contains lines in the form suite.name.  There is one executable per
         // test suite, and the suite name can be found in ANGLE_CL_SUITE_NAME.  Tests that are from
         // other suites are excluded for this executable.
         //
         // Note that the CTS has groups of test suites, but so far the test suite names alone are
         // unique so the group name is not placed in the mustpass.
-        std::string testSuiteName = testCaseName.substr(0, pos);
-        std::string testName      = testCaseName.substr(pos + 1);
+        const std::string &testSuiteName = testList.getCaseInfo(caseIndex).testSuiteName;
+        const std::string &testName      = testList.getCaseInfo(caseIndex).testNameWithArgs;
 
         if (testSuiteName != ANGLE_CL_SUITE_NAME)
         {

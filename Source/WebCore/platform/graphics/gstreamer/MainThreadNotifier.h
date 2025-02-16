@@ -57,7 +57,7 @@ public:
         if (!addPendingNotification(notificationType))
             return;
 
-        RunLoop::main().dispatch([this, protectedThis = Ref { *this }, notificationType, callback = Function<void()>(WTFMove(callbackFunctor))] {
+        RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, notificationType, callback = Function<void()>(WTFMove(callbackFunctor))] {
             if (!m_isValid.load())
                 return;
             if (removePendingNotification(notificationType))

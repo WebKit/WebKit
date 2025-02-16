@@ -29,10 +29,16 @@
 #include <JavaScriptCore/ExecutableAllocator.h>
 #include <cstring>
 #include <wtf/text/StringToIntegerConversion.h>
+#include <wtf/win/WTFCRTDebug.h>
 
 namespace WebKit {
 
 AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon() { }
+
+void AuxiliaryProcess::platformInitialize(const AuxiliaryProcessInitializationParameters&)
+{
+    WTF::disableCRTDebugAssertDialog();
+}
 
 bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 {

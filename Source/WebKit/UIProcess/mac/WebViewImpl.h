@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 
 #if PLATFORM(MAC)
 
+#include "AppKitSPI.h"
 #include "DrawingAreaInfo.h"
 #include "EditorState.h"
 #include "ImageAnalysisUtilities.h"
@@ -92,6 +93,10 @@ OBJC_CLASS WKTextTouchBarItemController;
 OBJC_CLASS WebPlaybackControlsManager;
 #endif // HAVE(TOUCH_BAR)
 
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+OBJC_CLASS WKDigitalCredentialsPicker;
+#endif
+
 OBJC_CLASS WKPDFHUDView;
 
 OBJC_CLASS VKCImageAnalysis;
@@ -128,6 +133,10 @@ enum class ReplacementBehavior : uint8_t;
 }
 
 } // namespace WebCore
+
+#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/WebViewImplAdditionsBefore.h>)
+#import <WebKitAdditions/WebViewImplAdditionsBefore.h>
+#endif
 
 @protocol WebViewImplDelegate
 
@@ -176,6 +185,9 @@ enum class ReplacementBehavior : uint8_t;
 namespace WebCore {
 struct DragItem;
 struct KeypressCommand;
+#if ENABLE(DIGITAL_CREDENTIALS_UI)
+struct DigitalCredentialsRequestData;
+#endif
 }
 
 namespace WebKit {
@@ -208,7 +220,7 @@ class WebViewImpl final : public CanMakeWeakPtr<WebViewImpl>, public CanMakeChec
     WTF_MAKE_TZONE_ALLOCATED(WebViewImpl);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebViewImpl);
 public:
-    WebViewImpl(NSView <WebViewImplDelegate> *, WKWebView *outerWebView, WebProcessPool&, Ref<API::PageConfiguration>&&);
+    WebViewImpl(WKWebView *, WebProcessPool&, Ref<API::PageConfiguration>&&);
 
     ~WebViewImpl();
 
@@ -217,7 +229,7 @@ public:
     WebPageProxy& page() { return m_page.get(); }
     Ref<WebPageProxy> protectedPage() const;
 
-    NSView *view() const { return m_view.getAutoreleased(); }
+    WKWebView *view() const { return m_view.getAutoreleased(); }
 
     void processWillSwap();
     void processDidExit();
@@ -270,9 +282,9 @@ public:
     void setAutomaticallyAdjustsContentInsets(bool);
     bool automaticallyAdjustsContentInsets() const;
     void updateContentInsetsIfAutomatic();
-    void setTopContentInset(CGFloat);
-    CGFloat topContentInset() const;
-    void flushPendingTopContentInset();
+    void setObscuredContentInsets(const WebCore::FloatBoxExtent&);
+    WebCore::FloatBoxExtent obscuredContentInsets() const;
+    void flushPendingObscuredContentInsetChanges();
 
     void prepareContentInRect(CGRect);
     void updateViewExposedRect();
@@ -512,6 +524,11 @@ public:
     
     void showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&, WKWebView *);
     void shareSheetDidDismiss(WKShareSheet *);
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    void showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&, WKWebView*);
+    void dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&&, WKWebView*);
+#endif
 
     _WKRemoteObjectRegistry *remoteObjectRegistry();
 
@@ -759,6 +776,10 @@ public:
     bool allowsInlinePredictions() const;
 #endif
 
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    void updateContentInsetFillViews();
+#endif
+
 private:
 #if HAVE(TOUCH_BAR)
     void setUpTextTouchBar(NSTouchBar *);
@@ -860,7 +881,7 @@ private:
 
     std::optional<EditorState::PostLayoutData> postLayoutDataForContentEditable();
 
-    WeakObjCPtr<NSView<WebViewImplDelegate>> m_view;
+    WeakObjCPtr<WKWebView> m_view;
     std::unique_ptr<PageClient> m_pageClient;
     Ref<WebPageProxy> m_page;
 
@@ -898,6 +919,10 @@ private:
     HashMap<WebKit::PDFPluginIdentifier, RetainPtr<WKPDFHUDView>> _pdfHUDViews;
 
     RetainPtr<WKShareSheet> _shareSheet;
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    RetainPtr<WKDigitalCredentialsPicker> _digitalCredentialsPicker;
+#endif
 
     RetainPtr<WKWindowVisibilityObserver> m_windowVisibilityObserver;
     RetainPtr<WKAccessibilitySettingsObserver> m_accessibilitySettingsObserver;
@@ -1024,8 +1049,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     WeakObjCPtr<NSPopover> m_lastContextMenuTranslationPopover;
 #endif
 
-#if HAVE(REDESIGNED_TEXT_CURSOR) && PLATFORM(MAC)
-    RetainPtr<_WKWebViewTextInputNotifications> _textInputNotifications;
+#if HAVE(REDESIGNED_TEXT_CURSOR)
+    RetainPtr<_WKWebViewTextInputNotifications> m_textInputNotifications;
+#endif
+
+#if ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+    RetainPtr<WKNSContentInsetFillView> m_topContentInsetFillView;
 #endif
 
 #if HAVE(INLINE_PREDICTIONS)

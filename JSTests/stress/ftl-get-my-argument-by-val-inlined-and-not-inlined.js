@@ -18,7 +18,7 @@ function arraycmp(a, b) {
     return true;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var thingies = [i % 4, "one", 2, "three"];
     var otherThingies = [i % 4, "five", 6, "seven"];
     var result = bar(i % 4, "five", 6, "seven");

@@ -103,11 +103,9 @@ TextStream& operator<<(TextStream& ts, StyleAppearance appearance)
     case StyleAppearance::TextField:
         ts << "textfield";
         break;
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         ts << "color-well";
         break;
-#endif
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
         ts << "image-controls-button";
@@ -116,11 +114,9 @@ TextStream& operator<<(TextStream& ts, StyleAppearance appearance)
     case StyleAppearance::InnerSpinButton:
         ts << "inner-spin-button";
         break;
-#if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
         ts << "list-button";
         break;
-#endif
     case StyleAppearance::SearchFieldDecoration:
         ts << "searchfield-decoration";
         break;

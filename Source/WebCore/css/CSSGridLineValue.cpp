@@ -32,19 +32,19 @@
 
 namespace WebCore {
 
-String CSSGridLineValue::customCSSText() const
+String CSSGridLineValue::customCSSText(const CSS::SerializationContext& context) const
 {
     Vector<String> parts;
     if (m_spanValue)
-        parts.append(m_spanValue->cssText());
+        parts.append(m_spanValue->cssText(context));
     // Only return the numeric value if not 1, or if it provided without a span value.
     // https://drafts.csswg.org/css-grid-2/#grid-placement-span-int
     if (m_numericValue) {
         if (m_numericValue->isOne() != true || !m_spanValue || !m_gridLineName)
-            parts.append(m_numericValue->cssText());
+            parts.append(m_numericValue->cssText(context));
     }
     if (m_gridLineName)
-        parts.append(m_gridLineName->cssText());
+        parts.append(m_gridLineName->cssText(context));
     return makeStringByJoining(parts, " "_s);
 }
 

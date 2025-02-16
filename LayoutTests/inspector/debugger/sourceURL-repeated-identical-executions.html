@@ -44,7 +44,7 @@ function test()
                     seen++;
             });
             InspectorTest.evaluateInPage("triggerFunctionConstructorMultipleTimes()", () => {
-                InspectorTest.expectThat(seen === 3, "Should see 3 Scripts with sourceURL");
+                InspectorTest.expectThat(seen === 1, "Should see 1 Scripts with sourceURL");
                 resolve();
             });
         }

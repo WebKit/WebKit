@@ -50,7 +50,7 @@ void MenuListAdwaita::draw(GraphicsContext& graphicsContext, const FloatRoundedR
     auto zoomedArrowSize = menuListButtonArrowSize * style.zoomFactor;
     FloatRect fieldRect = borderRect.rect();
     fieldRect.inflate(menuListButtonBorderSize);
-    if (style.states.contains(ControlStyle::State::RightToLeft))
+    if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
         fieldRect.move(menuListButtonPadding, 0);
     else
         fieldRect.move(fieldRect.width() - (zoomedArrowSize + menuListButtonPadding), 0);

@@ -687,12 +687,17 @@ static EncodedJSValue setNewValueFromTimeArgs(JSGlobalObject* globalObject, Call
     if (UNLIKELY(!thisDateObj))
         return throwVMTypeError(globalObject, scope);
 
-    double milli = thisDateObj->internalNumber();
+    if (!callFrame->argumentCount()) {
+        thisDateObj->setInternalNumber(PNaN);
+        return JSValue::encode(jsNaN());
+    }
 
-    if (!callFrame->argumentCount() || std::isnan(milli)) {
+    double milli = thisDateObj->internalNumber();
+    if (std::isnan(milli)) {
         applyToNumberToOtherwiseIgnoredArguments(globalObject, callFrame, numArgsToUse);
         RETURN_IF_EXCEPTION(scope, { });
-        thisDateObj->setInternalNumber(PNaN);
+        if (std::isnan(thisDateObj->internalNumber()))
+            thisDateObj->setInternalNumber(PNaN);
         return JSValue::encode(jsNaN());
     }
      
@@ -734,8 +739,6 @@ static EncodedJSValue setNewValueFromDateArgs(JSGlobalObject* globalObject, Call
         return throwVMTypeError(globalObject, scope);
 
     if (!callFrame->argumentCount()) {
-        applyToNumberToOtherwiseIgnoredArguments(globalObject, callFrame, numArgsToUse);
-        RETURN_IF_EXCEPTION(scope, { });
         thisDateObj->setInternalNumber(PNaN);
         return JSValue::encode(jsNaN());
     }

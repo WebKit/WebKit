@@ -429,7 +429,7 @@ bool PathCairo::contains(const FloatPoint &point, WindRule rule) const
     return contains;
 }
 
-bool PathCairo::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
+bool PathCairo::strokeContains(const FloatPoint& point, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     ASSERT(strokeStyleApplier);
 
@@ -462,7 +462,7 @@ FloatRect PathCairo::boundingRect() const
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
-FloatRect PathCairo::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
+FloatRect PathCairo::strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     if (isEmpty())
         return { };

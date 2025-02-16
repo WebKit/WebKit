@@ -191,8 +191,10 @@ static Vector<hb_feature_t, 4> fontFeatures(const FontCascade& font, const FontP
     //    font-feature-settings descriptor in the @font-face rule.
     auto* fcPattern = fontPlatformData.fcPattern();
     FcChar8* fcFontFeature;
-    for (int i = 0; FcPatternGetString(fcPattern, FC_FONT_FEATURES, i, &fcFontFeature) == FcResultMatch; ++i)
-        featuresToBeApplied.set(fontFeatureTag(reinterpret_cast<char*>(fcFontFeature)), 1);
+    for (int i = 0; FcPatternGetString(fcPattern, FC_FONT_FEATURES, i, &fcFontFeature) == FcResultMatch; ++i) {
+        auto fcFontFeatureSpan = unsafeSpanIncludingNullTerminator(reinterpret_cast<char*>(fcFontFeature)).subspan<0, 5>();
+        featuresToBeApplied.set(fontFeatureTag(fcFontFeatureSpan), 1);
+    }
 
     // 3. Font features implied by the value of the ‘font-variant’ property, the related ‘font-variant’
     //    subproperties and any other CSS property that uses OpenType features.

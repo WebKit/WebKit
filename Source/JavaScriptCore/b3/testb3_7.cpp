@@ -175,7 +175,7 @@ void testX86LeaAddAdd()
                 return strstr(disassembly, "lea 0x64(%rdi,%rsi,1), %rax")
                     || strstr(disassembly, "lea 0x64(%rsi,%rdi,1), %rax");
             },
-            "Expected to find something like lea 0x64(%rdi,%rsi,1), %rax but didn't!");
+            "Expected to find something like lea 0x64(%rdi,%rsi,1), %rax but didn't!"_s);
     }
 }
 
@@ -1199,7 +1199,7 @@ void testWasmBoundsCheck(unsigned offset)
     GPRReg pinned = GPRInfo::argumentGPR1;
     proc.pinRegister(pinned);
 
-    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
+    proc.setWasmBoundsCheckGenerator([=](CCallHelpers& jit, WasmBoundsCheckValue*, GPRReg pinnedGPR) {
         CHECK_EQ(pinnedGPR, pinned);
 
         // This should always work because a function this simple should never have callee
@@ -2646,6 +2646,43 @@ void testVectorExtractLane0Double()
 
         double result = invoke<double>(*code, &vector0);
         checkDouble(result, operand0.value);
+    }
+}
+
+void testInt52RoundTripUnary(int32_t constant)
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t>(proc, root);
+    Value* argA = arguments[0];
+    Value* int52A = root->appendNew<Value>(proc, Shl, Origin(), root->appendNew<Value>(proc, SExt32, Origin(), argA), root->appendNew<Const32Value>(proc, Origin(), 12));
+    Value* int52B = root->appendNew<Value>(proc, Shl, Origin(), root->appendNew<Value>(proc, SExt32, Origin(), root->appendNew<Const32Value>(proc, Origin(), constant)), root->appendNew<Const32Value>(proc, Origin(), 12));
+    Value* node = root->appendNew<Value>(proc, Add, Origin(), int52A, int52B);
+    Value* result = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<Value>(proc, SShr, Origin(), node, root->appendNew<Const32Value>(proc, Origin(), 12)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    auto code = compileProc(proc);
+
+    for (auto value : int32Operands())
+        CHECK_EQ(invoke<int32_t>(*code, value.value), static_cast<int32_t>(((static_cast<int64_t>(value.value) << 12) + (static_cast<int64_t>(constant) << 12)) >> 12));
+}
+
+void testInt52RoundTripBinary()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    Value* argA = arguments[0];
+    Value* argB = arguments[1];
+    Value* int52A = root->appendNew<Value>(proc, Shl, Origin(), root->appendNew<Value>(proc, SExt32, Origin(), argA), root->appendNew<Const32Value>(proc, Origin(), 12));
+    Value* int52B = root->appendNew<Value>(proc, Shl, Origin(), root->appendNew<Value>(proc, SExt32, Origin(), argB), root->appendNew<Const32Value>(proc, Origin(), 12));
+    Value* node = root->appendNew<Value>(proc, Add, Origin(), int52A, int52B);
+    Value* result = root->appendNew<Value>(proc, Trunc, Origin(), root->appendNew<Value>(proc, SShr, Origin(), node, root->appendNew<Const32Value>(proc, Origin(), 12)));
+    root->appendNew<Value>(proc, Return, Origin(), result);
+    auto code = compileProc(proc);
+
+    for (auto lhs : int32Operands()) {
+        for (auto rhs : int32Operands())
+            CHECK_EQ(invoke<int32_t>(*code, lhs.value, rhs.value), static_cast<int32_t>(((static_cast<int64_t>(lhs.value) << 12) + (static_cast<int64_t>(rhs.value) << 12)) >> 12));
     }
 }
 

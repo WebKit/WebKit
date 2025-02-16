@@ -179,7 +179,7 @@ import * as assert from "../assert.js"
         pmin,
     } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(bitmask(), 0b010)
         assert.eq(add(), 30n)
         assert.eq(sub(), 10n)

@@ -13,5 +13,5 @@ function t() {
     return bound(2, 3, 4);
 }
 noInline(t);
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(t(), 6);

@@ -585,7 +585,7 @@ luci.cq_group(
     acls = [
         acl.entry(
             acl.CQ_COMMITTER,
-            groups = "project-angle-committers",
+            groups = "project-angle-submit-access",
         ),
         acl.entry(
             acl.CQ_DRY_RUNNER,

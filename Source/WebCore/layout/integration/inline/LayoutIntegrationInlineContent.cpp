@@ -35,8 +35,8 @@
 namespace WebCore {
 namespace LayoutIntegration {
 
-InlineContent::InlineContent(const LineLayout& lineLayout)
-    : m_lineLayout(lineLayout)
+InlineContent::InlineContent(const RenderBlockFlow& formattingContextRoot)
+    : m_formattingContextRoot(formattingContextRoot)
 {
 }
 
@@ -62,7 +62,7 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
         return { boxes.begin(), boxes.end() };
 
     // The optimization below relies on line paint bounds not exeeding those of the neighboring lines
-    if (hasMultilinePaintOverlap)
+    if (m_hasMultilinePaintOverlap)
         return { boxes.begin(), boxes.end() };
 
     auto height = lines.last().lineBoxBottom() - lines.first().lineBoxTop();
@@ -94,7 +94,7 @@ IteratorRange<const InlineDisplay::Box*> InlineContent::boxesForRect(const Layou
 
 const RenderBlockFlow& InlineContent::formattingContextRoot() const
 {
-    return lineLayout().flow();
+    return m_formattingContextRoot;
 }
 
 size_t InlineContent::indexForBox(const InlineDisplay::Box& box) const

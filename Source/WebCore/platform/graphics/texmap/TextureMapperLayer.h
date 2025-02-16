@@ -113,11 +113,13 @@ public:
     bool syncAnimations(MonotonicTime);
     WEBCORE_EXPORT bool descendantsOrSelfHaveRunningAnimations() const;
 
+    WEBCORE_EXPORT void prepareForPainting(TextureMapper&);
     WEBCORE_EXPORT void paint(TextureMapper&);
 
     void addChild(TextureMapperLayer*);
 
 #if ENABLE(DAMAGE_TRACKING)
+    void setDamagePropagation(bool enabled) { m_damagePropagation = enabled; }
     void setDamage(const Damage&);
     void collectDamage(TextureMapper&, Damage&);
 #endif
@@ -166,6 +168,7 @@ private:
         Region& nonOverlapRegion;
     };
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix&, bool includesReplica = true);
+    Vector<IntRect, 1> computeConsolidatedOverlapRegionRects(TextureMapperPaintOptions&);
 
     void paintRecursive(TextureMapperPaintOptions&);
     void paintFlattened(TextureMapperPaintOptions&);
@@ -184,8 +187,13 @@ private:
     void collect3DRenderingContextLayers(Vector<TextureMapperLayer*>&);
 
 #if ENABLE(DAMAGE_TRACKING)
+    bool canInferDamage() const { return m_damagePropagation && !m_damage.isInvalid(); }
     void collectDamageRecursive(TextureMapperPaintOptions&, Damage&);
+    void collectDamageSelfAndChildren(TextureMapperPaintOptions&, Damage&);
     void collectDamageSelf(TextureMapperPaintOptions&, Damage&);
+    void collectDamageSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&, Damage&);
+    void collectDamageSelfChildrenFilterAndMask(TextureMapperPaintOptions&, Damage&);
+    void damageWholeLayerDueToTransformChange(const TransformationMatrix& beforeChange, const TransformationMatrix& afterChange);
     FloatRect transformRectForDamage(const FloatRect&, const TransformationMatrix&, const TextureMapperPaintOptions&);
 #endif
 
@@ -278,7 +286,10 @@ private:
     bool m_isReplica { false };
 
 #if ENABLE(DAMAGE_TRACKING)
-    Damage m_damage;
+    bool m_damagePropagation { false };
+    Damage m_damage; // In layer coordinate space.
+    Damage m_inferredDamage; // In global coordinate space.
+    FloatRect m_accumulatedOverlapRegionDamage;
 #endif
 
     struct {

@@ -42,7 +42,7 @@ c[1].bar = 99;
 c[2] = {};
 Object.defineProperty(c[2], 'c2', { get: getter });
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (numberOfDFGCompiles(c1) > 0)
         c1(c[2]);
     else

@@ -139,7 +139,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                 return box->isLeftToRightDirection() ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
             if (!renderer->node()) {
-                box.traversePreviousOnLine();
+                box.traverseLineLeftwardOnLine();
                 if (!box)
                     return primaryDirection == TextDirection::LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
                 renderer = &box->renderer();
@@ -158,7 +158,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
             if (offset != box->leftmostCaretOffset()) {
                 // Overshot to the left.
-                auto previousBox = box->previousOnLineIgnoringLineBreak();
+                auto previousBox = box->nextLineLeftwardOnLineIgnoringLineBreak();
                 if (!previousBox) {
                     Position positionOnLeft = primaryDirection == TextDirection::LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
                     auto boxOnLeft = positionOnLeft.inlineBoxAndOffset(m_affinity, primaryDirection).box;
@@ -175,7 +175,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             }
 
             unsigned char level = box->bidiLevel();
-            auto previousBox = box->previousOnLine();
+            auto previousBox = box->nextLineLeftwardOnLine();
 
             if (box->direction() == primaryDirection) {
                 if (!previousBox) {
@@ -196,7 +196,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
 
                 auto nextBox = box;
                 do {
-                    nextBox.traverseNextOnLine();
+                    nextBox.traverseLineRightwardOnLine();
                 } while (nextBox && nextBox->bidiLevel() > level);
 
                 if (nextBox && nextBox->bidiLevel() == level)
@@ -211,7 +211,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             }
 
             while (previousBox && !previousBox->renderer().node())
-                previousBox.traversePreviousOnLine();
+                previousBox.traverseLineLeftwardOnLine();
 
             if (previousBox) {
                 box = previousBox;
@@ -219,7 +219,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                 offset = box->rightmostCaretOffset();
                 if (box->bidiLevel() > level) {
                     do {
-                        previousBox = previousBox.traversePreviousOnLine();
+                        previousBox = previousBox.traverseLineLeftwardOnLine();
                     } while (previousBox && previousBox->bidiLevel() > level);
 
                     if (!previousBox || previousBox->bidiLevel() < level)
@@ -228,7 +228,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
             } else {
                 // Trailing edge of a secondary box. Set to the leading edge of the entire box.
                 while (true) {
-                    while (auto nextBox = box->nextOnLine()) {
+                    while (auto nextBox = box->nextLineRightwardOnLine()) {
                         if (nextBox->bidiLevel() < level)
                             break;
                         box = nextBox;
@@ -236,7 +236,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                     if (box->bidiLevel() == level)
                         break;
                     level = box->bidiLevel();
-                    while (auto previousBox = box->previousOnLine()) {
+                    while (auto previousBox = box->nextLineLeftwardOnLine()) {
                         if (previousBox->bidiLevel() < level)
                             break;
                         box = previousBox;
@@ -304,7 +304,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                 return box->isLeftToRightDirection() ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
             if (!renderer->node()) {
-                box.traverseNextOnLine();
+                box.traverseLineRightwardOnLine();
                 if (!box)
                     return primaryDirection == TextDirection::LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
                 renderer = &box->renderer();
@@ -323,7 +323,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
             if (offset != box->rightmostCaretOffset()) {
                 // Overshot to the right.
-                auto nextBox = box->nextOnLineIgnoringLineBreak();
+                auto nextBox = box->nextLineRightwardOnLineIgnoringLineBreak();
                 if (!nextBox) {
                     Position positionOnRight = primaryDirection == TextDirection::LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
                     auto boxOnRight = positionOnRight.inlineBoxAndOffset(m_affinity, primaryDirection).box;
@@ -340,7 +340,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             }
 
             unsigned char level = box->bidiLevel();
-            auto nextBox = box->nextOnLine();
+            auto nextBox = box->nextLineRightwardOnLine();
 
             if (box->direction() == primaryDirection) {
                 if (!nextBox) {
@@ -363,7 +363,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
                 auto previousBox = box;
                 do {
-                    previousBox.traversePreviousOnLine();
+                    previousBox.traverseLineLeftwardOnLine();
                 } while (previousBox && previousBox->bidiLevel() > level);
 
                 if (previousBox && previousBox->bidiLevel() == level) // For example, abc FED 123 ^ CBA
@@ -379,7 +379,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             }
 
             while (nextBox && !nextBox->renderer().node())
-                nextBox.traverseNextOnLine();
+                nextBox.traverseLineRightwardOnLine();
 
             if (nextBox) {
                 box = nextBox;
@@ -388,7 +388,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
 
                 if (box->bidiLevel() > level) {
                     do {
-                        nextBox.traverseNextOnLine();
+                        nextBox.traverseLineRightwardOnLine();
                     } while (nextBox && nextBox->bidiLevel() > level);
 
                     if (!nextBox || nextBox->bidiLevel() < level)
@@ -397,7 +397,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
             } else {
                 // Trailing edge of a secondary box. Set to the leading edge of the entire box.
                 while (true) {
-                    while (auto previousBox = box->previousOnLine()) {
+                    while (auto previousBox = box->nextLineLeftwardOnLine()) {
                         if (previousBox->bidiLevel() < level)
                             break;
                         box = previousBox;
@@ -405,7 +405,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                     if (box->bidiLevel() == level)
                         break;
                     level = box->bidiLevel();
-                    while (auto nextBox = box->nextOnLine()) {
+                    while (auto nextBox = box->nextLineRightwardOnLine()) {
                         if (nextBox->bidiLevel() < level)
                             break;
                         box = nextBox;
@@ -692,12 +692,12 @@ int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-void VisiblePosition::debugPosition(const char* msg) const
+void VisiblePosition::debugPosition(ASCIILiteral msg) const
 {
     if (isNull())
-        fprintf(stderr, "Position [%s]: null\n", msg);
+        SAFE_FPRINTF(stderr, "Position [%s]: null\n", msg);
     else {
-        fprintf(stderr, "Position [%s]: %s, ", msg, m_deepPosition.deprecatedNode()->nodeName().utf8().data());
+        SAFE_FPRINTF(stderr, "Position [%s]: %s, ", msg, m_deepPosition.deprecatedNode()->nodeName().utf8());
         m_deepPosition.showAnchorTypeAndOffset();
     }
 }

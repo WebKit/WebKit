@@ -94,7 +94,7 @@ public:
     explicit xmlCasingTestBuiltinsWrapper(JSC::VM& vm)
         : m_vm(vm)
         WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying({ s_##name, static_cast<size_t>(length) }), { }, JSC::SourceTaintedOrigin::Untainted))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying(unsafeMakeSpan(s_##name, static_cast<size_t>(length))), { }, JSC::SourceTaintedOrigin::Untainted))
         WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef INITIALIZE_BUILTIN_SOURCE_MEMBERS
     {
@@ -231,13 +231,13 @@ template void xmlCasingTestBuiltinFunctions::visit(JSC::SlotVisitor&);
 
 namespace WebCore {
 
-const JSC::ConstructAbility s_xmlCasingTestXMLCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_xmlCasingTestXMLCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_xmlCasingTestXMLCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_xmlCasingTestXMLCasingTestCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_xmlCasingTestXMLCasingTestCodeLength = 71;
-static const JSC::Intrinsic s_xmlCasingTestXMLCasingTestCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_xmlCasingTestXMLCasingTestCode =
+constinit const JSC::ConstructAbility s_xmlCasingTestXMLCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_xmlCasingTestXMLCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_xmlCasingTestXMLCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_xmlCasingTestXMLCasingTestCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_xmlCasingTestXMLCasingTestCodeLength = 71;
+static constinit const JSC::Intrinsic s_xmlCasingTestXMLCasingTestCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_xmlCasingTestXMLCasingTestCode =
     "(function (stream)\n" \
     "{\n" \
     "   \"use strict\";\n" \
@@ -246,13 +246,13 @@ const char* const s_xmlCasingTestXMLCasingTestCode =
     "})\n" \
 ;
 
-const JSC::ConstructAbility s_xmlCasingTestCssCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_xmlCasingTestCssCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_xmlCasingTestCssCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_xmlCasingTestCssCasingTestCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_xmlCasingTestCssCasingTestCodeLength = 402;
-static const JSC::Intrinsic s_xmlCasingTestCssCasingTestCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_xmlCasingTestCssCasingTestCode =
+constinit const JSC::ConstructAbility s_xmlCasingTestCssCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_xmlCasingTestCssCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_xmlCasingTestCssCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_xmlCasingTestCssCasingTestCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_xmlCasingTestCssCasingTestCodeLength = 402;
+static constinit const JSC::Intrinsic s_xmlCasingTestCssCasingTestCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_xmlCasingTestCssCasingTestCode =
     "(function (stream, reason)\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -267,13 +267,13 @@ const char* const s_xmlCasingTestCssCasingTestCode =
     "})\n" \
 ;
 
-const JSC::ConstructAbility s_xmlCasingTestUrlCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_xmlCasingTestUrlCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_xmlCasingTestUrlCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_xmlCasingTestUrlCasingTestCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_xmlCasingTestUrlCasingTestCodeLength = 338;
-static const JSC::Intrinsic s_xmlCasingTestUrlCasingTestCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_xmlCasingTestUrlCasingTestCode =
+constinit const JSC::ConstructAbility s_xmlCasingTestUrlCasingTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_xmlCasingTestUrlCasingTestCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_xmlCasingTestUrlCasingTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_xmlCasingTestUrlCasingTestCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_xmlCasingTestUrlCasingTestCodeLength = 338;
+static constinit const JSC::Intrinsic s_xmlCasingTestUrlCasingTestCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_xmlCasingTestUrlCasingTestCode =
     "(function (object, key, args)\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -295,7 +295,7 @@ const char* const s_xmlCasingTestUrlCasingTestCode =
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
+    JSVMClientData* clientData = downcast<JSVMClientData>(vm.clientData); \
     return clientData->builtinFunctions().xmlCasingTestBuiltins().codeName##Executable()->link(vm, nullptr, clientData->builtinFunctions().xmlCasingTestBuiltins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_XMLCASINGTEST_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)

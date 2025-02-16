@@ -28,13 +28,15 @@
 
 #if PLATFORM(MAC)
 
+#import <WebCore/FloatConversion.h>
+
 namespace WebKit {
 
 PrintInfo::PrintInfo(NSPrintInfo *printInfo)
     : pageSetupScaleFactor([[[printInfo dictionary] objectForKey:NSPrintScalingFactor] floatValue])
     , availablePaperWidth([printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin])
     , availablePaperHeight([printInfo paperSize].height - [printInfo topMargin] - [printInfo bottomMargin])
-    , margin([printInfo topMargin], [printInfo rightMargin], [printInfo bottomMargin], [printInfo leftMargin])
+    , margin(WebCore::narrowPrecisionToFloatFromCGFloat([printInfo topMargin]), WebCore::narrowPrecisionToFloatFromCGFloat([printInfo rightMargin]), WebCore::narrowPrecisionToFloatFromCGFloat([printInfo bottomMargin]), WebCore::narrowPrecisionToFloatFromCGFloat([printInfo leftMargin]))
 {
     ASSERT(printInfo);
 }

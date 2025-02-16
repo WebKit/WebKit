@@ -45,4 +45,7 @@ headers: "WebsiteDataType.h"
 #endif
     FileSystem,
     BackgroundFetchStorage,
+#if ENABLE(SCREEN_TIME)
+    ScreenTime,
+#endif
 };

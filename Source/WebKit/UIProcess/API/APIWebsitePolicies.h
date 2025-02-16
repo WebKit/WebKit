@@ -147,6 +147,9 @@ public:
     void setOverrideTouchEventDOMAttributesEnabled(bool value) { m_data.overrideTouchEventDOMAttributesEnabled = value; }
 #endif
 
+    WebKit::WebsiteInlineMediaPlaybackPolicy inlineMediaPlaybackPolicy() const { return m_data.inlineMediaPlaybackPolicy; }
+    void setInlineMediaPlaybackPolicy(WebKit::WebsiteInlineMediaPlaybackPolicy policy) { m_data.inlineMediaPlaybackPolicy = policy; }
+
 private:
     WebKit::WebsitePoliciesData m_data;
     RefPtr<WebKit::WebsiteDataStore> m_websiteDataStore;

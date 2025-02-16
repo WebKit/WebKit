@@ -1,0 +1,9 @@
+Input 1
+Input 1 via Options
+Input 2 Input 2 via Options
+
+FAIL Label applies to descendant custom element that uses shadowrootreferencetarget (Input 1) assert_equals: expected "Input 1" but got ""
+FAIL Label applies to descendant custom element that uses shadowrootreferencetarget (Input 1 via Options) assert_equals: expected "Input 1 via Options" but got ""
+FAIL Label applies to multiple layers of descendant custom elements that use shadowrootreferencetarget (Input 2) assert_equals: expected "Input 2" but got ""
+FAIL Label applies to multiple layers of descendant custom elements that use shadowrootreferencetarget (Input 2 via Options) assert_equals: expected "Input 2 via Options" but got ""
+

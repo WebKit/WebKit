@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2008-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2008-2025 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,8 +69,8 @@
 
 namespace WebCore {
 
-SVGImage::SVGImage(ImageObserver& observer)
-    : Image(&observer)
+SVGImage::SVGImage(ImageObserver* observer)
+    : Image(observer)
     , m_startAnimationTimer(*this, &SVGImage::startAnimationTimerFired)
 {
 }
@@ -185,7 +185,6 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
         return ImageDrawResult::DidNothing;
 
     RefPtr observer = imageObserver();
-    ASSERT(observer);
 
     // Temporarily reset image observer, we don't want to receive any changeInRect() calls due to this relayout.
     setImageObserver(nullptr);
@@ -211,6 +210,11 @@ ImageDrawResult SVGImage::drawForContainer(GraphicsContext& context, const Float
 
 RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpace)
 {
+    return nativeImage(size(), colorSpace);
+}
+
+RefPtr<NativeImage> SVGImage::nativeImage(const FloatSize& size, const DestinationColorSpace& colorSpace)
+{
     if (!m_page)
         return nullptr;
 
@@ -220,13 +224,13 @@ RefPtr<NativeImage> SVGImage::nativeImage(const DestinationColorSpace& colorSpac
     if (CheckedPtr contentRenderer = embeddedContentBox())
         hostWindow = contentRenderer->hostWindow();
 
-    RefPtr imageBuffer = ImageBuffer::create(size(), renderingMode, RenderingPurpose::DOM, 1, colorSpace, ImageBufferPixelFormat::BGRA8, hostWindow);
+    RefPtr imageBuffer = ImageBuffer::create(size, renderingMode, RenderingPurpose::DOM, 1, colorSpace, ImageBufferPixelFormat::BGRA8, hostWindow);
     if (!imageBuffer)
         return nullptr;
 
     RefPtr observer = imageObserver();
     setImageObserver(nullptr);
-    setContainerSize(size());
+    setContainerSize(size);
 
     imageBuffer->context().drawImage(*this, FloatPoint(0, 0));
 
@@ -528,10 +532,20 @@ bool isInSVGImage(const Element* element)
     return page->chrome().client().isSVGImageChromeClient();
 }
 
+RefPtr<SVGImage> SVGImage::tryCreateFromData(std::span<const uint8_t> data)
+{
+    Ref svgImage = SVGImage::create(nullptr);
+    Ref buffer = FragmentedSharedBuffer::create(data);
+    svgImage->setData(buffer.ptr(), true);
+    if (!svgImage->rootElement())
+        return nullptr;
+    return svgImage;
+}
+
 bool SVGImage::isDataDecodable(const Settings& settings, std::span<const uint8_t> data)
 {
-    auto document = Document::create(settings, aboutBlankURL());
-    auto domParser = DOMParser::create(document.get());
+    Ref document = Document::create(settings, aboutBlankURL());
+    Ref domParser = DOMParser::create(document.get());
     auto parseResult = domParser->parseFromString(String::fromUTF8(data), imageSVGContentTypeAtom());
     if (parseResult.hasException())
         return false;

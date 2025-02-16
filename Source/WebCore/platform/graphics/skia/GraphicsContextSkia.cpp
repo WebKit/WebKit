@@ -38,6 +38,7 @@
 #include "PlatformDisplay.h"
 #include "ProcessCapabilities.h"
 #include "SkiaPaintingEngine.h"
+#include <cmath>
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorFilter.h>
 #include <skia/core/SkImage.h>
@@ -330,21 +331,29 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
 
 void GraphicsContextSkia::drawFilteredImageBuffer(ImageBuffer* sourceImage, const FloatRect& sourceImageRect, Filter& filter, FilterResults& results)
 {
-    auto* sourceImageGrContext = sourceImage ? sourceImage->skiaGrContext() : nullptr;
-    if (sourceImageGrContext && sourceImageGrContext != PlatformDisplay::sharedDisplay().skiaGrContext()) {
-        // If we encounter an accelerated ImageBuffer (skiaGrContext() != nullptr), we are in the threaded GPU rendering painting mode, verify that.
-        ASSERT(m_renderingMode == RenderingMode::Accelerated);
-        ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
-#if USE(COORDINATED_GRAPHICS)
-        ASSERT(SkiaPaintingEngine::numberOfGPUPaintingThreads() > 0);
-#endif
-        // The 'image' was produced on another thread -- to use it here, we need to create a new ImageBuffer, that wraps the existing GPU resource.
-        auto newSourceImage = sourceImage->copyAcceleratedImageBufferBorrowingBackendRenderTarget();
-        GraphicsContext::drawFilteredImageBuffer(newSourceImage.get(), sourceImageRect, filter, results);
+    auto needsAcceleratedImageBufferCopy = [&]() -> bool {
+        if (m_renderingMode == RenderingMode::Unaccelerated)
+            return false;
+        if (!sourceImage || !sourceImage->skiaGrContext())
+            return false;
+        if (sourceImage->skiaGrContext() == PlatformDisplay::sharedDisplay().skiaGrContext())
+            return false;
+        return true;
+    };
+
+    if (!needsAcceleratedImageBufferCopy()) {
+        GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
         return;
     }
 
-    GraphicsContext::drawFilteredImageBuffer(sourceImage, sourceImageRect, filter, results);
+    // If we encounter an accelerated ImageBuffer (skiaGrContext() != nullptr), we are in the threaded GPU rendering painting mode, verify that.
+    ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
+#if USE(COORDINATED_GRAPHICS)
+    ASSERT(SkiaPaintingEngine::numberOfGPUPaintingThreads() > 0);
+#endif
+    // The 'image' was produced on another thread -- to use it here, we need to create a new ImageBuffer, that wraps the existing GPU resource.
+    auto newSourceImage = sourceImage->copyAcceleratedImageBufferBorrowingBackendRenderTarget();
+    GraphicsContext::drawFilteredImageBuffer(newSourceImage.get(), sourceImageRect, filter, results);
 }
 
 // This is only used to draw borders, so we should not draw shadows.
@@ -673,54 +682,13 @@ void GraphicsContextSkia::drawFocusRing(const Vector<FloatRect>& rects, float, f
 #endif
 }
 
-void GraphicsContextSkia::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleUnderlines, StrokeStyle strokeStyle)
+void GraphicsContextSkia::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleUnderlines, StrokeStyle strokeStyle)
 {
-    if (widths.isEmpty())
+    auto [rects, strokeColor] = computeRectsAndStrokeColorForLinesForText(point, thickness, lineSegments, printing, doubleUnderlines, strokeStyle);
+    if (rects.isEmpty())
         return;
-
-    Color localStrokeColor(strokeColor());
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(FloatRect(point, FloatSize(widths.last(), thickness)), printing, localStrokeColor);
-    if (bounds.isEmpty())
-        return;
-
-    Vector<FloatRect, 4> dashBounds;
-    ASSERT(!(widths.size() % 2));
-    dashBounds.reserveInitialCapacity(dashBounds.size() / 2);
-
-    float dashWidth = 0;
-    switch (strokeStyle) {
-    case StrokeStyle::DottedStroke:
-        dashWidth = bounds.height();
-        break;
-    case StrokeStyle::DashedStroke:
-        dashWidth = 2 * bounds.height();
-        break;
-    case StrokeStyle::SolidStroke:
-    default:
-        break;
-    }
-
-    for (size_t i = 0; i < widths.size(); i += 2) {
-        auto left = widths[i];
-        auto width = widths[i+1] - widths[i];
-        if (!dashWidth)
-            dashBounds.append({ bounds.x() + left, bounds.y(), width, bounds.height() });
-        else {
-            auto startParticle = static_cast<int>(std::ceil(left / (2 * dashWidth)));
-            auto endParticle = static_cast<int>((left + width) / (2 * dashWidth));
-            for (auto j = startParticle; j < endParticle; ++j)
-                dashBounds.append({ bounds.x() + j * 2 * dashWidth, bounds.y(), dashWidth, bounds.height() });
-        }
-    }
-
-    if (doubleUnderlines) {
-        // The space between double underlines is equal to the height of the underline
-        for (size_t i = 0; i < widths.size(); i += 2)
-            dashBounds.append({ bounds.x() + widths[i], bounds.y() + 2 * bounds.height(), widths[i+1] - widths[i], bounds.height() });
-    }
-
-    for (auto& dash : dashBounds)
-        fillRect(dash, localStrokeColor);
+    for (auto& rect : rects)
+        fillRect(rect, strokeColor);
 }
 
 // Creates a path comprising of two triangle waves separated by some empty space in Y axis.
@@ -898,9 +866,22 @@ void GraphicsContextSkia::setLineCap(LineCap lineCap)
     m_skiaState.m_stroke.cap = toSkiaCap(lineCap);
 }
 
+static bool isValidDashArray(const DashArray& dashArray)
+{
+    // See 'dom-context-2d-setlinedash': if the array contains not finite or negative values, return.
+    DashArray::value_type total = 0;
+    for (const auto& dash : dashArray) {
+        if (dash < 0 || !std::isfinite(dash))
+            return false;
+        total += dash;
+    }
+    // Nothing to be done for all-zero or empty arrays.
+    return total > 0;
+}
+
 void GraphicsContextSkia::setLineDash(const DashArray& dashArray, float dashOffset)
 {
-    if (dashArray.isEmpty()) {
+    if (!isValidDashArray(dashArray)) {
         m_skiaState.m_stroke.dash = nullptr;
         return;
     }

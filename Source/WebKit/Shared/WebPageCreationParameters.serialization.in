@@ -68,12 +68,15 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     bool canRunModal;
 
     float deviceScaleFactor;
+#if USE(GRAPHICS_LAYER_WC) || USE(GRAPHICS_LAYER_TEXTURE_MAPPER)
+    float intrinsicDeviceScaleFactor;
+#endif
     float viewScaleFactor;
 
     double textZoomFactor;
     double pageZoomFactor;
 
-    float topContentInset;
+    WebCore::FloatBoxExtent obscuredContentInsets;
 
     float mediaVolume;
     WebCore::MediaProducerMutedStateFlags muted;
@@ -226,10 +229,6 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
     bool httpsUpgradeEnabled;
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    bool allowsDeprecatedSynchronousXMLHttpRequestDuringUnload;
-#endif
-
 #if ENABLE(APP_HIGHLIGHTS)
     WebCore::HighlightVisibility appHighlightsVisible;
 #endif
@@ -243,6 +242,7 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
     WebCore::ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension;
 
     std::optional<WebKit::RemotePageParameters> remotePageParameters;
+    std::optional<WebKit::ProvisionalFrameCreationParameters> provisionalFrameCreationParameters;
     WebCore::FrameIdentifier mainFrameIdentifier;
     String openedMainFrameName;
     std::optional<WebCore::FrameIdentifier> mainFrameOpenerIdentifier;
@@ -270,6 +270,10 @@ enum class WebCore::UserInterfaceLayoutDirection : bool;
 
 #if HAVE(AUDIT_TOKEN)
     std::optional<WebKit::CoreIPCAuditToken> presentingApplicationAuditToken;
+#endif
+
+#if PLATFORM(COCOA)
+    String presentingApplicationBundleIdentifier;
 #endif
 }
 

@@ -1,5 +1,6 @@
 
 
-
-PASS MediaRecorder can successfully record the video for a audio-video stream
+PASS MediaRecorder can successfully record the video for a audio-video (aac) stream
+PASS MediaRecorder can successfully record the video for a audio-video (pcm) stream
+PASS MediaRecorder can successfully record the video for a audio-video (alac) stream
 

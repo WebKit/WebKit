@@ -97,7 +97,7 @@ void TextBreakingPositionCache::clear()
 
 void add(Hasher& hasher, const TextBreakingPositionContext& context)
 {
-    add(hasher, context.whitespace, context.overflowWrap, context.lineBreak, context.wordBreak, context.nbspMode, context.locale);
+    add(hasher, context.whitespaceCollapseBehavior, context.overflowWrap, context.lineBreak, context.wordBreak, context.nbspMode, context.locale);
 }
 
 }

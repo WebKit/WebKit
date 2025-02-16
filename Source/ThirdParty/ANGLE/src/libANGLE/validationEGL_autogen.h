@@ -232,6 +232,10 @@ bool ValidateCreateDeviceANGLE(const ValidationContext *val,
                                const EGLAttrib *attrib_list);
 bool ValidateReleaseDeviceANGLE(const ValidationContext *val, const egl::Device *devicePacked);
 
+// EGL_ANGLE_device_vulkan
+bool ValidateLockVulkanQueueANGLE(const ValidationContext *val, const egl::Display *dpyPacked);
+bool ValidateUnlockVulkanQueueANGLE(const ValidationContext *val, const egl::Display *dpyPacked);
+
 // EGL_ANGLE_external_context_and_surface
 bool ValidateAcquireExternalContextANGLE(const ValidationContext *val,
                                          const egl::Display *dpyPacked,
@@ -389,6 +393,15 @@ bool ValidateGetPlatformDisplayEXT(const ValidationContext *val,
                                    EGLenum platform,
                                    const void *native_display,
                                    const AttributeMap &attrib_listPacked);
+
+// EGL_EXT_surface_compression
+bool ValidateQuerySupportedCompressionRatesEXT(const ValidationContext *val,
+                                               const egl::Display *dpyPacked,
+                                               const egl::Config *configPacked,
+                                               const EGLAttrib *attrib_list,
+                                               const EGLint *rates,
+                                               EGLint rate_size,
+                                               const EGLint *num_rates);
 
 // EGL_KHR_debug
 bool ValidateDebugMessageControlKHR(const ValidationContext *val,

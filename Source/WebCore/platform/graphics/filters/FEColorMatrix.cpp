@@ -37,8 +37,6 @@
 #include "FEColorMatrixSkiaApplier.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 Ref<FEColorMatrix> FEColorMatrix::create(ColorMatrixType type, Vector<float>&& values, DestinationColorSpace colorSpace)
@@ -76,7 +74,7 @@ bool FEColorMatrix::setValues(const Vector<float> &values)
     return true;
 }
 
-void FEColorMatrix::calculateSaturateComponents(std::span<float> components, float value)
+void FEColorMatrix::calculateSaturateComponents(std::span<float, 9> components, float value)
 {
     auto saturationMatrix = saturationColorMatrix(value);
 
@@ -93,7 +91,7 @@ void FEColorMatrix::calculateSaturateComponents(std::span<float> components, flo
     components[8] = saturationMatrix.at(2, 2);
 }
 
-void FEColorMatrix::calculateHueRotateComponents(std::span<float> components, float angleInDegrees)
+void FEColorMatrix::calculateHueRotateComponents(std::span<float, 9> components, float angleInDegrees)
 {
     auto hueRotateMatrix = hueRotateColorMatrix(angleInDegrees);
 
@@ -197,13 +195,13 @@ TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, FilterRepresen
     ts << " type=\"" << m_type << "\"";
     if (!m_values.isEmpty()) {
         ts << " values=\"";
-        Vector<float>::const_iterator ptr = m_values.begin();
-        const Vector<float>::const_iterator end = m_values.end();
-        while (ptr < end) {
-            ts << *ptr;
-            ++ptr;
-            if (ptr < end)
-                ts << " ";
+        bool isFirst = true;
+        for (auto value : m_values) {
+            if (isFirst)
+                isFirst = false;
+            else
+                ts << " "_s;
+            ts << value;
         }
         ts << "\"";
     }
@@ -213,5 +211,3 @@ TextStream& FEColorMatrix::externalRepresentation(TextStream& ts, FilterRepresen
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

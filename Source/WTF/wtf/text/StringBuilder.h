@@ -285,7 +285,7 @@ inline bool StringBuilder::is8Bit() const
 
 template<typename CharacterType> inline std::span<const CharacterType> StringBuilder::span() const
 {
-    if (!m_length)
+    if (!m_length || hasOverflowed())
         return { };
     if (!m_string.isNull()) {
         ASSERT(m_string.length() == m_length);

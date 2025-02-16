@@ -28,8 +28,6 @@
 #include "IntRect.h"
 #include <wtf/Vector.h>
 
-#if ENABLE(DATALIST_ELEMENT)
-
 namespace WebCore {
 
 enum class DataListSuggestionActivationType : uint8_t {
@@ -51,5 +49,3 @@ struct DataListSuggestionInformation {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATALIST_ELEMENT)

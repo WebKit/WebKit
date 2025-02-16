@@ -38,6 +38,8 @@ namespace WebCore {
 struct FELightingPaintingDataForNeon;
 
 class FELighting : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FELighting);
 public:
     bool operator==(const FELighting&) const;
 

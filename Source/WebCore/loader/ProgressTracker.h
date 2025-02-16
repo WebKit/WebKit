@@ -32,8 +32,8 @@
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/RefPtr.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
@@ -77,7 +77,7 @@ private:
 
     WeakRef<Page> m_page;
     UniqueRef<ProgressTrackerClient> m_client;
-    RefPtr<LocalFrame> m_originatingProgressFrame;
+    WeakPtr<LocalFrame> m_originatingProgressFrame;
     HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;
     Timer m_progressHeartbeatTimer;
 

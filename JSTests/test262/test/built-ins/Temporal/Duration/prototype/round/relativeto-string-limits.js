@@ -7,21 +7,34 @@ description: ISO strings at the edges of the representable range
 features: [Temporal]
 ---*/
 
-const instance = new Temporal.Duration();
+const instance = new Temporal.Duration(0, 0, 0, 0, 0, /* minutes = */ 5);
+const blankInstance = new Temporal.Duration();
 
 const validStrings = [
   "-271821-04-20T00:00Z[UTC]",
-  "+275760-09-13T00:00Z[UTC]",
-  "+275760-09-13T01:00+01:00[+01:00]",
-  "+275760-09-13T23:59+23:59[+23:59]",
-  "-271821-04-19",
-  "-271821-04-19T01:00",
   "+275760-09-13",
   "+275760-09-13T23:00",
 ];
 
 for (const relativeTo of validStrings) {
   instance.round({ smallestUnit: "minutes", relativeTo });
+  blankInstance.round({ smallestUnit: "minutes", relativeTo });
+}
+
+const validStringsThatFailAfterEarlyReturn = [
+  "+275760-09-13T00:00Z[UTC]",
+  "+275760-09-13T01:00+01:00[+01:00]",
+  "+275760-09-13T23:59+23:59[+23:59]",
+  "-271821-04-19",
+  "-271821-04-19T01:00",
+];
+for (const relativeTo of validStringsThatFailAfterEarlyReturn) {
+  blankInstance.round({ smallestUnit: "minutes", relativeTo });
+  assert.throws(
+    RangeError,
+    () => instance.round({ smallestUnit: "minutes", relativeTo }),
+    `"${relativeTo}" is outside the representable range for a relativeTo parameter after conversion to DateTime`
+  );
 }
 
 const invalidStrings = [
@@ -43,6 +56,11 @@ for (const relativeTo of invalidStrings) {
   assert.throws(
     RangeError,
     () => instance.round({ smallestUnit: "minutes", relativeTo }),
+    `"${relativeTo}" is outside the representable range for a relativeTo parameter`
+  );
+  assert.throws(
+    RangeError,
+    () => blankInstance.round({ smallestUnit: "minutes", relativeTo }),
     `"${relativeTo}" is outside the representable range for a relativeTo parameter`
   );
 }

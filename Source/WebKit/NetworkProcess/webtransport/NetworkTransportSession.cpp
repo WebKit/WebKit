@@ -29,6 +29,8 @@
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcess.h"
 #include "NetworkTransportStream.h"
+#include "WebCore/Exception.h"
+#include "WebCore/ExceptionCode.h"
 #include "WebTransportSessionMessages.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -56,24 +58,18 @@ uint64_t NetworkTransportSession::messageSenderDestinationID() const
 }
 
 #if !PLATFORM(COCOA)
-void NetworkTransportSession::sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&& completionHandler)
+void NetworkTransportSession::sendDatagram(std::span<const uint8_t>, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
-    completionHandler();
+    completionHandler(std::nullopt);
 }
 #endif
 
-void NetworkTransportSession::sendStreamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, CompletionHandler<void()>&& completionHandler)
+void NetworkTransportSession::streamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
 {
     if (RefPtr stream = m_streams.get(identifier))
-        stream->sendBytes(bytes, withFin);
-    completionHandler();
-}
-
-void NetworkTransportSession::streamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, CompletionHandler<void()>&& completionHandler)
-{
-    if (RefPtr stream = m_streams.get(identifier))
-        stream->sendBytes(bytes, withFin);
-    completionHandler();
+        stream->sendBytes(bytes, withFin, WTFMove(completionHandler));
+    else
+        completionHandler(WebCore::Exception { WebCore::ExceptionCode::InvalidStateError });
 }
 
 #if !PLATFORM(COCOA)
@@ -88,31 +84,20 @@ void NetworkTransportSession::createBidirectionalStream(CompletionHandler<void(s
 }
 #endif
 
-void NetworkTransportSession::destroyOutgoingUnidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
+#if !PLATFORM(COCOA)
+void NetworkTransportSession::terminate(WebCore::WebTransportSessionErrorCode, CString&&)
 {
-    ASSERT(m_streams.contains(identifier));
-    m_streams.remove(identifier);
+}
+#endif
+
+void NetworkTransportSession::receiveDatagram(std::span<const uint8_t> datagram, bool withFin, std::optional<WebCore::Exception>&& exception)
+{
+    send(Messages::WebTransportSession::ReceiveDatagram(datagram, withFin, WTFMove(exception)));
 }
 
-void NetworkTransportSession::destroyBidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
+void NetworkTransportSession::streamReceiveBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin, std::optional<WebCore::Exception>&& exception)
 {
-    ASSERT(m_streams.contains(identifier));
-    m_streams.remove(identifier);
-}
-
-void NetworkTransportSession::terminate(uint32_t, CString&&)
-{
-    // FIXME: Implement.
-}
-
-void NetworkTransportSession::receiveDatagram(std::span<const uint8_t> datagram)
-{
-    send(Messages::WebTransportSession::ReceiveDatagram(datagram));
-}
-
-void NetworkTransportSession::streamReceiveBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin)
-{
-    send(Messages::WebTransportSession::StreamReceiveBytes(identifier, bytes, withFin));
+    send(Messages::WebTransportSession::StreamReceiveBytes(identifier, bytes, withFin, WTFMove(exception)));
 }
 
 void NetworkTransportSession::receiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
@@ -123,6 +108,29 @@ void NetworkTransportSession::receiveIncomingUnidirectionalStream(WebCore::WebTr
 void NetworkTransportSession::receiveBidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
 {
     send(Messages::WebTransportSession::ReceiveBidirectionalStream(identifier));
+}
+
+void NetworkTransportSession::cancelReceiveStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<WebCore::WebTransportStreamErrorCode> errorCode)
+{
+    if (RefPtr stream = m_streams.get(identifier))
+        stream->cancelReceive(errorCode);
+    // Stream could have been destroyed gracefully when reads and writes were completed.
+}
+
+void NetworkTransportSession::cancelSendStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<WebCore::WebTransportStreamErrorCode> errorCode)
+{
+    if (RefPtr stream = m_streams.get(identifier))
+        stream->cancelSend(errorCode);
+    // Stream could have been destroyed gracefully when reads and writes were completed.
+}
+
+void NetworkTransportSession::destroyStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<WebCore::WebTransportStreamErrorCode> errorCode)
+{
+    if (RefPtr stream = m_streams.get(identifier)) {
+        stream->cancel(errorCode);
+        m_streams.remove(identifier);
+    }
+    // Stream could have been destroyed gracefully when reads and writes were completed.
 }
 
 std::optional<SharedPreferencesForWebProcess> NetworkTransportSession::sharedPreferencesForWebProcess() const

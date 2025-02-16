@@ -19,12 +19,12 @@ class DeviceMemory;
 
 namespace rx
 {
-class Context;
+class ErrorContext;
 
 namespace vk
 {
 class Renderer;
-angle::Result InitAndroidExternalMemory(Context *context,
+angle::Result InitAndroidExternalMemory(ErrorContext *context,
                                         EGLClientBuffer clientBuffer,
                                         VkMemoryPropertyFlags memoryProperties,
                                         Buffer *buffer,

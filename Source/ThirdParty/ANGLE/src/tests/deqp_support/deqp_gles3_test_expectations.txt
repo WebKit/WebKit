@@ -74,6 +74,9 @@
 
 // Fails on 451.48 driver version
 40644748 D3D11 NVIDIA : dEQP-GLES3.functional.shaders.texture_functions.texturesize.* = FAIL
+// Fails on 546.01 driver version
+42267037 D3D11 NVIDIA : dEQP-GLES3.functional.rasterization.fbo.rbo_multisample_max.interpolation.lines = FAIL
+42267037 D3D11 NVIDIA : dEQP-GLES3.functional.rasterization.fbo.rbo_multisample_max.primitives.lines = FAIL
 
 42264508 WIN D3D11 NVIDIA : dEQP-GLES3.functional.texture.specification.texsubimage2d_pbo.pbo_bounds_2d = FAIL
 
@@ -85,6 +88,9 @@
 42262131 D3D9 : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = FAIL
 42262131 D3D11 : dEQP-GLES3.functional.attribute_location.bind_aliasing.cond* = FAIL
 42262131 D3D11 : dEQP-GLES3.functional.attribute_location.bind_aliasing.max_cond* = FAIL
+
+// D3D11's depth component 32 does not have enough precision
+364069034 D3D11 : dEQP-GLES3.functional.fbo.completeness.renderable.texture.depth.depth_component32 = FAIL
 
 // Windows and Linux failures
 42260101 LINUX : dEQP-GLES3.functional.texture.mipmap.2d.projected.* = FAIL
@@ -233,6 +239,9 @@
 40096462 MAC INTEL : dEQP-GLES3.functional.fbo.color.repeated_clear.sample.tex2d.* = FAIL
 
 // Linux only failures
+
+388052193 LINUX UBSAN : dEQP-GLES3.functional.fragment_ops.interaction.basic_shader.* = SKIP
+
 
 // While loops with 'continue' seem flaky on Linux. (Possibly all GL renderers)
 42260333 LINUX OPENGL : dEQP-GLES3.functional.shaders.loops.while_constant_iterations.conditional_continue_vertex = FAIL

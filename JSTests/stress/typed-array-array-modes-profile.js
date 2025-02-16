@@ -12,7 +12,7 @@ let typedArrays = [
 
 for (let constructor of typedArrays) {
     let a = new constructor(0);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         foo(a);
     }
 }

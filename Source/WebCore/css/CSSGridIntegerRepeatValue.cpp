@@ -46,11 +46,11 @@ Ref<CSSGridIntegerRepeatValue> CSSGridIntegerRepeatValue::create(Ref<CSSPrimitiv
     return adoptRef(*new CSSGridIntegerRepeatValue(WTFMove(repetitions), WTFMove(builder)));
 }
 
-String CSSGridIntegerRepeatValue::customCSSText() const
+String CSSGridIntegerRepeatValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder result;
-    result.append("repeat("_s, m_repetitions->cssText(), ", "_s);
-    serializeItems(result);
+    result.append("repeat("_s, m_repetitions->cssText(context), ", "_s);
+    serializeItems(result, context);
     result.append(')');
     return result.toString();
 }

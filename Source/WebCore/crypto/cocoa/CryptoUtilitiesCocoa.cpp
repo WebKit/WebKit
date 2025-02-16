@@ -146,7 +146,8 @@ Vector<uint8_t> calculateHMACSignature(CCHmacAlgorithm algorithm, const Vector<u
         digestLength = CC_SHA1_DIGEST_LENGTH;
         break;
     case kCCHmacAlgSHA224:
-        digestLength = CC_SHA224_DIGEST_LENGTH;
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        digestLength = CC_SHA256_DIGEST_LENGTH;
         break;
     case kCCHmacAlgSHA256:
         digestLength = CC_SHA256_DIGEST_LENGTH;

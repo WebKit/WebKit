@@ -36,6 +36,10 @@ class BoxedUint32
     {
         return mValue.value == other.mValue.value;
     }
+    constexpr bool operator!=(const BoxedUint32 &other) const
+    {
+        return mValue.value != other.mValue.value;
+    }
     // Applicable to ids, which cannot be 0.
     constexpr bool valid() const { return static_cast<bool>(mValue.value); }
 

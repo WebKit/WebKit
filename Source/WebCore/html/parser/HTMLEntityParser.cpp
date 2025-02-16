@@ -34,11 +34,9 @@
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
-static constexpr UChar windowsLatin1ExtensionArray[32] = {
+static constexpr std::array<UChar, 32> windowsLatin1ExtensionArray {
     0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021, // 80-87
     0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F, // 88-8F
     0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014, // 90-97
@@ -128,11 +126,11 @@ public:
     UChar currentCharacter() const { return m_source.atEnd() ? 0 : *m_source; }
     void advance() { m_source.advance(); }
     void pushEverythingBack() { m_source.setPosition(m_startPosition); }
-    void pushBackButKeep(unsigned keepCount) { m_source.setPosition(m_startPosition + keepCount); }
+    void pushBackButKeep(unsigned keepCount) { m_source.setPosition(m_startPosition.subspan(keepCount)); }
 
 private:
     StringParsingBuffer<CharacterType>& m_source;
-    const CharacterType* m_startPosition;
+    std::span<const CharacterType> m_startPosition;
 };
 
 SegmentedStringSource::SegmentedStringSource(SegmentedString& source)
@@ -142,7 +140,7 @@ SegmentedStringSource::SegmentedStringSource(SegmentedString& source)
 
 template<typename CharacterType> StringParsingBufferSource<CharacterType>::StringParsingBufferSource(StringParsingBuffer<CharacterType>& source)
     : m_source { source }
-    , m_startPosition { source.position() }
+    , m_startPosition { source.span() }
 {
 }
 
@@ -296,8 +294,8 @@ DecodedHTMLEntity consumeHTMLEntity(StringParsingBuffer<UChar>& source)
 DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char* name)
 {
     HTMLEntitySearch search;
-    while (*name) {
-        search.advance(*name++);
+    for (char character : unsafeSpan(name)) {
+        search.advance(character);
         if (!search.isEntityPrefix())
             return { };
     }
@@ -308,5 +306,3 @@ DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char* name)
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

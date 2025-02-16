@@ -91,10 +91,8 @@ void FFTFrame::doFFT(std::span<const float> data)
 {
     gst_fft_f32_fft(m_fft.get(), data.data(), m_complexData.get());
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    float* imagData = m_imagData.data();
-    float* realData = m_realData.data();
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto imagData = m_imagData.span();
+    auto realData = m_realData.span();
     for (unsigned i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
         imagData[i] = m_complexData[i].i;
         realData[i] = m_complexData[i].r;
@@ -104,11 +102,8 @@ void FFTFrame::doFFT(std::span<const float> data)
 void FFTFrame::doInverseFFT(std::span<float> data)
 {
     //  Merge the real and imaginary vectors to complex vector.
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    float* realData = m_realData.data();
-    float* imagData = m_imagData.data();
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
+    auto imagData = m_imagData.span();
+    auto realData = m_realData.span();
     for (size_t i = 0; i < unpackedFFTDataSize(m_FFTSize); ++i) {
         m_complexData[i].i = imagData[i];
         m_complexData[i].r = realData[i];

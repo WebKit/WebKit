@@ -205,39 +205,56 @@ String codecFromFormatDescription(CMFormatDescriptionRef formatDescription)
     return emptyString();
 }
 
-std::optional<SpatialVideoMetadata> videoMetadataFromFormatDescription(CMFormatDescriptionRef formatDescription)
+std::optional<VideoMetadata> videoMetadataFromFormatDescription(CMFormatDescriptionRef formatDescription)
 {
-    if (!formatDescription || !PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_StereoCameraBaseline() || !PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_HorizontalDisparityAdjustment())
+    if (!formatDescription)
         return { };
 
     // Note: this assumes that the spatial metadata is in the first section of the format description.
     if (PAL::CMFormatDescriptionGetMediaType(formatDescription) != kCMMediaType_Video)
         return { };
 
-    SInt32 value;
-    SpatialVideoMetadata metadata;
-    auto horizontalFieldOfView = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_HorizontalFieldOfView));
-    if (!horizontalFieldOfView)
-        return { };
-    CFNumberGetValue(horizontalFieldOfView, kCFNumberSInt32Type, &value);
-    metadata.horizontalFOVDegrees = value / 1000.0;
+    auto checkForSpatialMetadata = [&]() -> std::optional<SpatialVideoMetadata> {
+        if (!PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_StereoCameraBaseline() || !PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_HorizontalDisparityAdjustment())
+            return { };
+        SInt32 value;
+        SpatialVideoMetadata metadata;
+        auto horizontalFieldOfView = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_HorizontalFieldOfView));
+        if (!horizontalFieldOfView)
+            return { };
+        CFNumberGetValue(horizontalFieldOfView, kCFNumberSInt32Type, &value);
+        metadata.horizontalFOVDegrees = value / 1000.0;
 
-    auto baselineField = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_StereoCameraBaseline));
-    if (!baselineField)
-        return { };
-    CFNumberGetValue(baselineField, kCFNumberSInt32Type, &value);
-    metadata.baseline = value;
+        auto baselineField = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_StereoCameraBaseline));
+        if (!baselineField)
+            return { };
+        CFNumberGetValue(baselineField, kCFNumberSInt32Type, &value);
+        metadata.baseline = value;
 
-    auto disparityAdjustmentField = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_HorizontalDisparityAdjustment));
-    if (!disparityAdjustmentField)
-        return { };
-    CFNumberGetValue(disparityAdjustmentField, kCFNumberSInt32Type, &value);
-    metadata.disparityAdjustment = value / 10000.0;
+        auto disparityAdjustmentField = dynamic_cf_cast<CFNumberRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_HorizontalDisparityAdjustment));
+        if (!disparityAdjustmentField)
+            return { };
+        CFNumberGetValue(disparityAdjustmentField, kCFNumberSInt32Type, &value);
+        metadata.disparityAdjustment = value / 10000.0;
 
-    CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(formatDescription);
-    metadata.size = { dimensions.width, dimensions.height };
+        CMVideoDimensions dimensions = PAL::CMVideoFormatDescriptionGetDimensions(formatDescription);
+        metadata.size = { dimensions.width, dimensions.height };
+        return metadata;
+    };
+    if (auto spatialVideoMetadata = checkForSpatialMetadata())
+        return spatialVideoMetadata;
 
-    return metadata;
+    auto checkForImmersiveData = [&]() -> bool {
+        if (!PAL::canLoad_CoreMedia_kCMFormatDescriptionExtension_ProjectionKind() || !PAL::canLoad_CoreMedia_kCMFormatDescriptionProjectionKind_Equirectangular() || !PAL::canLoad_CoreMedia_kCMFormatDescriptionProjectionKind_HalfEquirectangular())
+            return false;
+        auto projectionKind = dynamic_cf_cast<CFStringRef>(PAL::CMFormatDescriptionGetExtension(formatDescription, PAL::kCMFormatDescriptionExtension_ProjectionKind));
+
+        return projectionKind && (CFStringCompare(projectionKind, PAL::kCMFormatDescriptionProjectionKind_Equirectangular, 0) == kCFCompareEqualTo || CFStringCompare(projectionKind, PAL::kCMFormatDescriptionProjectionKind_HalfEquirectangular, 0) == kCFCompareEqualTo || (PAL::canLoad_CoreMedia_kCMFormatDescriptionProjectionKind_ParametricImmersive() && CFStringCompare(projectionKind, PAL::kCMFormatDescriptionProjectionKind_ParametricImmersive, 0) == kCFCompareEqualTo));
+    };
+    if (auto isImmersive = checkForImmersiveData())
+        return isImmersive;
+
+    return { };
 }
 
 } // namespace WebCore

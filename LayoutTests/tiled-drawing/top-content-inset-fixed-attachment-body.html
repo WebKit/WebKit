@@ -15,7 +15,7 @@ body {
 <script>
 async function runTest() {
     if (window.testRunner)
-        await testRunner.setTopContentInset(50);
+        await testRunner.setObscuredContentInsets(50, 0, 0, 0);
 }
 
 window.addEventListener('load', runTest, false);

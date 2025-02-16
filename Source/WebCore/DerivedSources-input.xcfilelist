@@ -510,10 +510,10 @@ $(PROJECT_DIR)/Modules/geolocation/PositionOptions.idl
 $(PROJECT_DIR)/Modules/highlight/Highlight.idl
 $(PROJECT_DIR)/Modules/highlight/HighlightRegistry.idl
 $(PROJECT_DIR)/Modules/identity/DigitalCredential.idl
+$(PROJECT_DIR)/Modules/identity/DigitalCredentialRequest.idl
 $(PROJECT_DIR)/Modules/identity/DigitalCredentialRequestOptions.idl
 $(PROJECT_DIR)/Modules/identity/IdentityCredentialProtocol.idl
-$(PROJECT_DIR)/Modules/identity/IdentityRequestProvider.idl
-$(PROJECT_DIR)/Modules/identity/Navigator+Identity.idl
+$(PROJECT_DIR)/Modules/identity/MobileDocumentRequest.idl
 $(PROJECT_DIR)/Modules/identity/OpenID4VPRequest.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursor.idl
 $(PROJECT_DIR)/Modules/indexeddb/IDBCursorDirection.idl
@@ -1163,7 +1163,6 @@ $(PROJECT_DIR)/Modules/webxr/XRVisibilityState.idl
 $(PROJECT_DIR)/Modules/webxr/XRWebGLBinding.idl
 $(PROJECT_DIR)/Modules/webxr/XRWebGLLayerInit.idl
 $(PROJECT_DIR)/Modules/webxr/XRWebGLSubImage.idl
-$(PROJECT_DIR)/Resources/plugIns.js
 $(PROJECT_DIR)/Scripts/GenerateSettings.rb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.cpp.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
@@ -1283,7 +1282,6 @@ $(PROJECT_DIR)/css/CSSStyleDeclaration.idl
 $(PROJECT_DIR)/css/CSSStyleRule.idl
 $(PROJECT_DIR)/css/CSSStyleSheet.idl
 $(PROJECT_DIR)/css/CSSSupportsRule.idl
-$(PROJECT_DIR)/css/CSSUnknownRule.idl
 $(PROJECT_DIR)/css/CSSValueKeywords.in
 $(PROJECT_DIR)/css/CSSViewTransitionRule.idl
 $(PROJECT_DIR)/css/DOMCSSCustomPropertyDescriptor.idl
@@ -1324,8 +1322,6 @@ $(PROJECT_DIR)/css/html.css
 $(PROJECT_DIR)/css/htmlSwitchControl.css
 $(PROJECT_DIR)/css/make-css-file-arrays.pl
 $(PROJECT_DIR)/css/mathml.css
-$(PROJECT_DIR)/css/mediaControls.css
-$(PROJECT_DIR)/css/plugIns.css
 $(PROJECT_DIR)/css/popover.css
 $(PROJECT_DIR)/css/process-css-properties.py
 $(PROJECT_DIR)/css/process-css-pseudo-selectors.py
@@ -1448,6 +1444,7 @@ $(PROJECT_DIR)/dom/Element+PointerEvents.idl
 $(PROJECT_DIR)/dom/Element+PointerLock.idl
 $(PROJECT_DIR)/dom/Element.idl
 $(PROJECT_DIR)/dom/ElementContentEditable.idl
+$(PROJECT_DIR)/dom/ElementCreationOptions.idl
 $(PROJECT_DIR)/dom/ElementInternals.idl
 $(PROJECT_DIR)/dom/ErrorEvent.idl
 $(PROJECT_DIR)/dom/Event.idl
@@ -1471,6 +1468,7 @@ $(PROJECT_DIR)/dom/HashChangeEvent.idl
 $(PROJECT_DIR)/dom/IdleDeadline.idl
 $(PROJECT_DIR)/dom/IdleRequestCallback.idl
 $(PROJECT_DIR)/dom/IdleRequestOptions.idl
+$(PROJECT_DIR)/dom/ImportNodeOptions.idl
 $(PROJECT_DIR)/dom/InnerHTML.idl
 $(PROJECT_DIR)/dom/InputEvent.idl
 $(PROJECT_DIR)/dom/KeyboardEvent.idl
@@ -1495,6 +1493,7 @@ $(PROJECT_DIR)/dom/NonElementParentNode.idl
 $(PROJECT_DIR)/dom/Observable.idl
 $(PROJECT_DIR)/dom/ObservableInspector.idl
 $(PROJECT_DIR)/dom/ObservableInspectorAbortCallback.idl
+$(PROJECT_DIR)/dom/OverflowEvent.idl
 $(PROJECT_DIR)/dom/PageRevealEvent.idl
 $(PROJECT_DIR)/dom/PageSwapEvent.idl
 $(PROJECT_DIR)/dom/PageTransitionEvent.idl
@@ -1668,7 +1667,6 @@ $(PROJECT_DIR)/html/ImageBitmapOptions.idl
 $(PROJECT_DIR)/html/ImageData.idl
 $(PROJECT_DIR)/html/ImageDataSettings.idl
 $(PROJECT_DIR)/html/ImageDataStorageFormat.idl
-$(PROJECT_DIR)/html/InvokerElement.idl
 $(PROJECT_DIR)/html/MediaController.idl
 $(PROJECT_DIR)/html/MediaEncryptedEvent.idl
 $(PROJECT_DIR)/html/MediaError.idl
@@ -1795,6 +1793,7 @@ $(PROJECT_DIR)/html/canvas/WebGLTransformFeedback.idl
 $(PROJECT_DIR)/html/canvas/WebGLUniformLocation.idl
 $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObject.idl
 $(PROJECT_DIR)/html/canvas/WebGLVertexArrayObjectOES.idl
+$(PROJECT_DIR)/html/closewatcher/CloseWatcher.idl
 $(PROJECT_DIR)/html/parser/HTMLEntityNames.in
 $(PROJECT_DIR)/html/parser/create-html-entity-table
 $(PROJECT_DIR)/html/shadow/attachmentElementShadow.css
@@ -2110,11 +2109,17 @@ $(PROJECT_DIR)/workers/service/ExtendableEvent.idl
 $(PROJECT_DIR)/workers/service/ExtendableEventInit.idl
 $(PROJECT_DIR)/workers/service/ExtendableMessageEvent.idl
 $(PROJECT_DIR)/workers/service/FetchEvent.idl
+$(PROJECT_DIR)/workers/service/InstallEvent.idl
 $(PROJECT_DIR)/workers/service/NavigationPreloadManager.idl
 $(PROJECT_DIR)/workers/service/NavigationPreloadState.idl
 $(PROJECT_DIR)/workers/service/PushEvent.idl
 $(PROJECT_DIR)/workers/service/PushEventInit.idl
 $(PROJECT_DIR)/workers/service/PushMessageData.idl
+$(PROJECT_DIR)/workers/service/RouterCondition.idl
+$(PROJECT_DIR)/workers/service/RouterRule.idl
+$(PROJECT_DIR)/workers/service/RouterSourceDict.idl
+$(PROJECT_DIR)/workers/service/RouterSourceEnum.idl
+$(PROJECT_DIR)/workers/service/RunningStatus.idl
 $(PROJECT_DIR)/workers/service/ServiceWorker.idl
 $(PROJECT_DIR)/workers/service/ServiceWorkerClient.idl
 $(PROJECT_DIR)/workers/service/ServiceWorkerClientType.idl

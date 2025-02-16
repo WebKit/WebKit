@@ -5,7 +5,7 @@ class P extends Promise {
     }
 }
 
-for (var i = 0; i < 1e6; i++)
+for (var i = 0; i < testLoopCount; i++)
     var p = new P(() => {});
 
 if (p.constructor !== P)

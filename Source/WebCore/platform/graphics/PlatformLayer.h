@@ -32,9 +32,9 @@ OBJC_CLASS CALayer;
 using PlatformLayer = CALayer;
 #elif USE(COORDINATED_GRAPHICS)
 namespace WebCore {
-class TextureMapperPlatformLayerProxy;
+class CoordinatedPlatformLayerBufferProxy;
 };
-using PlatformLayer = WebCore::TextureMapperPlatformLayerProxy;
+using PlatformLayer = WebCore::CoordinatedPlatformLayerBufferProxy;
 #elif USE(TEXTURE_MAPPER)
 namespace WebCore {
 class TextureMapperPlatformLayer;

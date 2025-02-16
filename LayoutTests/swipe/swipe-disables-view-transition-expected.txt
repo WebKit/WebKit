@@ -1,0 +1,8 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: AbortError: Skipping view transition because skipTransition() was called.
+startSwipeGesture
+didBeginSwipe
+completeSwipeGesture
+willEndSwipe
+didEndSwipe
+didRemoveSwipeSnapshot
+

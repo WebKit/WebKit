@@ -56,6 +56,7 @@ public:
     int logicalWidth() const { return m_isHorizontal ? rect().width() : rect().height(); }
     int logicalTop() const { return m_isHorizontal ? rect().y() : rect().x(); }
     int logicalHeight() const { return m_isHorizontal ? rect().height() : rect().width(); }
+    int logicalLeftExtent() const { return logicalLeft() + logicalWidth(); }
 
     TextDirection direction() const { return m_direction; }
     int minX() const { return m_minX; }

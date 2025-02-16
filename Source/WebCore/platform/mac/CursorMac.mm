@@ -129,47 +129,47 @@ static Class coreCursorClass()
     return coreCursorClass;
 }
 
-static NSCursor *cursor(const char *name)
+static NSCursor *cursor(ASCIILiteral name)
 {
     __strong NSCursor **slot = nullptr;
     
-    if (!strcmp(name, "BusyButClickable"))
+    if (name == "BusyButClickable"_s)
         slot = &busyButClickableNSCursor;
-    else if (!strcmp(name, "MakeAlias"))
+    else if (name == "MakeAlias"_s)
         slot = &makeAliasNSCursor;
-    else if (!strcmp(name, "Move"))
+    else if (name == "Move"_s)
         slot = &moveNSCursor;
-    else if (!strcmp(name, "ResizeEast"))
+    else if (name == "ResizeEast"_s)
         slot = &resizeEastNSCursor;
-    else if (!strcmp(name, "ResizeEastWest"))
+    else if (name == "ResizeEastWest"_s)
         slot = &resizeEastWestNSCursor;
-    else if (!strcmp(name, "ResizeNorth"))
+    else if (name == "ResizeNorth"_s)
         slot = &resizeNorthNSCursor;
-    else if (!strcmp(name, "ResizeNorthSouth"))
+    else if (name == "ResizeNorthSouth"_s)
         slot = &resizeNorthSouthNSCursor;
-    else if (!strcmp(name, "ResizeNortheast"))
+    else if (name == "ResizeNortheast"_s)
         slot = &resizeNortheastNSCursor;
-    else if (!strcmp(name, "ResizeNortheastSouthwest"))
+    else if (name == "ResizeNortheastSouthwest"_s)
         slot = &resizeNortheastSouthwestNSCursor;
-    else if (!strcmp(name, "ResizeNorthwest"))
+    else if (name == "ResizeNorthwest"_s)
         slot = &resizeNorthwestNSCursor;
-    else if (!strcmp(name, "ResizeNorthwestSoutheast"))
+    else if (name == "ResizeNorthwestSoutheast"_s)
         slot = &resizeNorthwestSoutheastNSCursor;
-    else if (!strcmp(name, "ResizeSouth"))
+    else if (name == "ResizeSouth"_s)
         slot = &resizeSouthNSCursor;
-    else if (!strcmp(name, "ResizeSoutheast"))
+    else if (name == "ResizeSoutheast"_s)
         slot = &resizeSoutheastNSCursor;
-    else if (!strcmp(name, "ResizeSouthwest"))
+    else if (name == "ResizeSouthwest"_s)
         slot = &resizeSouthwestNSCursor;
-    else if (!strcmp(name, "ResizeWest"))
+    else if (name == "ResizeWest"_s)
         slot = &resizeWestNSCursor;
-    else if (!strcmp(name, "Cell"))
+    else if (name == "Cell"_s)
         slot = &cellNSCursor;
-    else if (!strcmp(name, "Help"))
+    else if (name == "Help"_s)
         slot = &helpNSCursor;
-    else if (!strcmp(name, "ZoomIn"))
+    else if (name == "ZoomIn"_s)
         slot = &zoomInNSCursor;
-    else if (!strcmp(name, "ZoomOut"))
+    else if (name == "ZoomOut"_s)
         slot = &zoomOutNSCursor;
     
     if (!slot)
@@ -182,7 +182,7 @@ static NSCursor *cursor(const char *name)
 
 #else
 
-static NSCursor *cursor(const char *)
+static NSCursor *cursor(ASCIILiteral)
 {
     return [NSCursor arrowCursor];
 }
@@ -256,72 +256,72 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Type::Wait:
-        m_platformCursor = cursor("BusyButClickable");
+        m_platformCursor = cursor("BusyButClickable"_s);
         break;
 
     case Type::Help:
-        m_platformCursor = cursor("Help");
+        m_platformCursor = cursor("Help"_s);
         break;
 
     case Type::Move:
     case Type::MiddlePanning:
-        m_platformCursor = cursor("Move");
+        m_platformCursor = cursor("Move"_s);
         break;
 
     case Type::EastResize:
     case Type::EastPanning:
-        m_platformCursor = cursor("ResizeEast");
+        m_platformCursor = cursor("ResizeEast"_s);
         break;
 
     case Type::NorthResize:
     case Type::NorthPanning:
-        m_platformCursor = cursor("ResizeNorth");
+        m_platformCursor = cursor("ResizeNorth"_s);
         break;
 
     case Type::NorthEastResize:
     case Type::NorthEastPanning:
-        m_platformCursor = cursor("ResizeNortheast");
+        m_platformCursor = cursor("ResizeNortheast"_s);
         break;
 
     case Type::NorthWestResize:
     case Type::NorthWestPanning:
-        m_platformCursor = cursor("ResizeNorthwest");
+        m_platformCursor = cursor("ResizeNorthwest"_s);
         break;
 
     case Type::SouthResize:
     case Type::SouthPanning:
-        m_platformCursor = cursor("ResizeSouth");
+        m_platformCursor = cursor("ResizeSouth"_s);
         break;
 
     case Type::SouthEastResize:
     case Type::SouthEastPanning:
-        m_platformCursor = cursor("ResizeSoutheast");
+        m_platformCursor = cursor("ResizeSoutheast"_s);
         break;
 
     case Type::SouthWestResize:
     case Type::SouthWestPanning:
-        m_platformCursor = cursor("ResizeSouthwest");
+        m_platformCursor = cursor("ResizeSouthwest"_s);
         break;
 
     case Type::WestResize:
     case Type::WestPanning:
-        m_platformCursor = cursor("ResizeWest");
+        m_platformCursor = cursor("ResizeWest"_s);
         break;
 
     case Type::NorthSouthResize:
-        m_platformCursor = cursor("ResizeNorthSouth");
+        m_platformCursor = cursor("ResizeNorthSouth"_s);
         break;
 
     case Type::EastWestResize:
-        m_platformCursor = cursor("ResizeEastWest");
+        m_platformCursor = cursor("ResizeEastWest"_s);
         break;
 
     case Type::NorthEastSouthWestResize:
-        m_platformCursor = cursor("ResizeNortheastSouthwest");
+        m_platformCursor = cursor("ResizeNortheastSouthwest"_s);
         break;
 
     case Type::NorthWestSouthEastResize:
-        m_platformCursor = cursor("ResizeNorthwestSoutheast");
+        m_platformCursor = cursor("ResizeNorthwestSoutheast"_s);
         break;
 
     case Type::ColumnResize:
@@ -337,7 +337,7 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Type::Cell:
-        m_platformCursor = cursor("Cell");
+        m_platformCursor = cursor("Cell"_s);
         break;
 
     case Type::ContextMenu:
@@ -345,11 +345,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Type::Alias:
-        m_platformCursor = cursor("MakeAlias");
+        m_platformCursor = cursor("MakeAlias"_s);
         break;
 
     case Type::Progress:
-        m_platformCursor = cursor("BusyButClickable");
+        m_platformCursor = cursor("BusyButClickable"_s);
         break;
 
     case Type::NoDrop:
@@ -373,11 +373,11 @@ void Cursor::ensurePlatformCursor() const
         break;
 
     case Type::ZoomIn:
-        m_platformCursor = cursor("ZoomIn");
+        m_platformCursor = cursor("ZoomIn"_s);
         break;
 
     case Type::ZoomOut:
-        m_platformCursor = cursor("ZoomOut");
+        m_platformCursor = cursor("ZoomOut"_s);
         break;
 
     case Type::Grab:

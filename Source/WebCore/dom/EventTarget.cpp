@@ -326,9 +326,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
     ASSERT(scriptExecutionContext());
 
     Ref context = *scriptExecutionContext();
-    auto* document = dynamicDowncast<Document>(context.get());
-    if (document)
-        InspectorInstrumentation::willDispatchEvent(*document, event);
+    InspectorInstrumentation::willDispatchEvent(context, event);
 
     for (auto& registeredListener : listeners) {
         if (UNLIKELY(registeredListener->wasRemoved()))
@@ -378,8 +376,7 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
             event.setInPassiveListener(false);
     }
 
-    if (document)
-        InspectorInstrumentation::didDispatchEvent(*document, event);
+    InspectorInstrumentation::didDispatchEvent(context, event);
 }
 
 Vector<AtomString> EventTarget::eventTypes() const

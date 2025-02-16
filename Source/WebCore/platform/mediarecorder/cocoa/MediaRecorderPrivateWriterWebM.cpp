@@ -40,11 +40,12 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateWriterWebM);
+
+static const char* kH264CodecId = "V_MPEG4/ISO/AVC";
+static const char* kPcmCodecId = "A_PCM/FLOAT/IEEE";
 
 static const char* mkvCodeIcForMediaVideoCodecId(FourCC codec)
 {
@@ -53,7 +54,9 @@ static const char* mkvCodeIcForMediaVideoCodecId(FourCC codec)
     case 'vp92':
     case kCMVideoCodecType_VP9: return mkvmuxer::Tracks::kVp9CodecId;
     case kCMVideoCodecType_AV1: return mkvmuxer::Tracks::kAv1CodecId;
+    case kCMVideoCodecType_H264: return kH264CodecId;
     case kAudioFormatOpus: return mkvmuxer::Tracks::kOpusCodecId;
+    case kAudioFormatLinearPCM: return kPcmCodecId;
     default:
         ASSERT_NOT_REACHED("Unsupported codec");
         return "";
@@ -98,9 +101,12 @@ public:
         ASSERT(audioTrack);
         audioTrack->set_bit_depth(32u);
         audioTrack->set_codec_id(mkvCodeIcForMediaVideoCodecId(info.codecName));
-        auto description = audioStreamDescriptionFromAudioInfo(info);
-        auto opusHeader = createOpusPrivateData(description.streamDescription());
-        audioTrack->SetCodecPrivate(opusHeader.data(), opusHeader.size());
+        ASSERT(info.codecName == kAudioFormatOpus || info.codecName == kAudioFormatLinearPCM);
+        if (info.codecName == kAudioFormatOpus) {
+            auto description = audioStreamDescriptionFromAudioInfo(info);
+            auto opusHeader = createOpusPrivateData(description.streamDescription());
+            audioTrack->SetCodecPrivate(opusHeader.data(), opusHeader.size());
+        }
         return trackIndex;
     }
 
@@ -112,6 +118,8 @@ public:
         auto* videoTrack = reinterpret_cast<mkvmuxer::VideoTrack*>(m_segment.GetTrackByNumber(trackIndex));
         ASSERT(videoTrack);
         videoTrack->set_codec_id(mkvCodeIcForMediaVideoCodecId(info.codecName));
+        if (RefPtr atomData = info.atomData; atomData && atomData->span().size())
+            videoTrack->SetCodecPrivate(atomData->span().data(), atomData->span().size());
         return trackIndex;
     }
 
@@ -181,7 +189,5 @@ Ref<GenericPromise> MediaRecorderPrivateWriterWebM::close(const MediaTime&)
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_RECORDER)

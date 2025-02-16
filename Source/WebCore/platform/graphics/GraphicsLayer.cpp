@@ -420,7 +420,7 @@ void GraphicsLayer::removeFromParentInternal()
 bool GraphicsLayer::needsBackdrop() const
 {
 #if HAVE(CORE_MATERIAL)
-    if (appleVisualEffectNeedsBackdrop(m_appleVisualEffect))
+    if (appleVisualEffectNeedsBackdrop(m_appleVisualEffectData.effect))
         return true;
 #endif
     return !m_backdropFilters.isEmpty();
@@ -877,7 +877,7 @@ void GraphicsLayer::addRepaintRect(const FloatRect& repaintRect)
     repaintRectMap().add(this, Vector<FloatRect>()).iterator->value.append(WTFMove(largestRepaintRect));
 }
 
-void GraphicsLayer::traverse(GraphicsLayer& layer, const Function<void(GraphicsLayer&)>& traversalFunc)
+void GraphicsLayer::traverse(GraphicsLayer& layer, NOESCAPE const Function<void(GraphicsLayer&)>& traversalFunc)
 {
     traversalFunc(layer);
 
@@ -1016,8 +1016,8 @@ void GraphicsLayer::dumpProperties(TextStream& ts, OptionSet<LayerTreeAsTextOpti
     }
 
 #if HAVE(CORE_MATERIAL)
-    if (m_appleVisualEffect != AppleVisualEffect::None)
-        ts << indent << "(appleVisualEffect "_s << m_appleVisualEffect << ")\n"_s;
+    if (m_appleVisualEffectData.effect != AppleVisualEffect::None)
+        ts << indent << "(appleVisualEffectData "_s << m_appleVisualEffectData << ")\n"_s;
 #endif
 
     if (m_maskLayer) {
@@ -1155,7 +1155,7 @@ void showGraphicsLayerTree(const WebCore::GraphicsLayer* layer)
     // to a file in case we don't have easy access to stderr.
     auto [tempFilePath, fileHandle] = FileSystem::openTemporaryFile("GraphicsLayerTree"_s);
     if (FileSystem::isHandleValid(fileHandle)) {
-        FileSystem::writeToFile(fileHandle, output.utf8().span());
+        FileSystem::writeToFile(fileHandle, byteCast<uint8_t>(output.utf8().span()));
         FileSystem::closeFile(fileHandle);
         WTFLogAlways("Saved GraphicsLayer Tree to %s", tempFilePath.utf8().data());
     } else

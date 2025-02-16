@@ -349,7 +349,7 @@ template<typename MatchFunction>
 void JITWorklist::removeMatchingPlansForVM(VM& vm, const MatchFunction& matches)
 {
     Locker locker { *m_lock };
-    HashSet<JITCompilationKey> deadPlanKeys;
+    UncheckedKeyHashSet<JITCompilationKey> deadPlanKeys;
     for (auto& entry : m_plans) {
         JITPlan* plan = entry.value.get();
         if (plan->vm() != &vm)

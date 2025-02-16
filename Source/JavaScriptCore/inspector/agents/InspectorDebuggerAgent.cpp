@@ -1309,7 +1309,7 @@ Protocol::ErrorStringOr<void> InspectorDebuggerAgent::setShouldBlackboxURL(const
         return makeUnexpected("Blackboxing of internal scripts is controlled by 'Debugger.setPauseForInternalScripts'"_s);
 
     if (shouldBlackbox) {
-        HashSet<JSC::Debugger::BlackboxRange> blackboxRanges;
+        UncheckedKeyHashSet<JSC::Debugger::BlackboxRange> blackboxRanges;
         if (protocolSourceRanges) {
             if (protocolSourceRanges->length() % 4)
                 return makeUnexpected("Unexpected format for given sourceRanges"_s);

@@ -215,12 +215,12 @@ PASS CSSPositionTryDescriptors[position-anchor] (set)
 PASS CSSPositionTryDescriptors[position-anchor] (get)
 PASS CSSPositionTryDescriptors[positionAnchor] (get)
 PASS CSSPositionTryDescriptors[positionAnchor] (set)
-FAIL CSSPositionTryDescriptors.getPropertyValue(position-area) assert_equals: expected "unset" but got ""
-FAIL CSSPositionTryDescriptors.setProperty(position-area) assert_equals: expected "unset" but got ""
-FAIL CSSPositionTryDescriptors[position-area] (set) assert_equals: expected (string) "unset" but got (undefined) undefined
-FAIL CSSPositionTryDescriptors[position-area] (get) assert_equals: expected "unset" but got ""
-FAIL CSSPositionTryDescriptors[positionArea] (get) assert_equals: expected (string) "unset" but got (undefined) undefined
-FAIL CSSPositionTryDescriptors[positionArea] (set) assert_equals: expected "unset" but got ""
+PASS CSSPositionTryDescriptors.getPropertyValue(position-area)
+PASS CSSPositionTryDescriptors.setProperty(position-area)
+PASS CSSPositionTryDescriptors[position-area] (set)
+PASS CSSPositionTryDescriptors[position-area] (get)
+PASS CSSPositionTryDescriptors[positionArea] (get)
+PASS CSSPositionTryDescriptors[positionArea] (set)
 PASS CSSPositionTryDescriptors.getPropertyValue(color)
 PASS CSSPositionTryDescriptors.setProperty(color)
 FAIL CSSPositionTryDescriptors[color] (set) assert_equals: expected (undefined) undefined but got (string) ""

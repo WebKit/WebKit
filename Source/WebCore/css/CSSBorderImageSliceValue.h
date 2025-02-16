@@ -40,7 +40,7 @@ public:
     const Quad& slices() const { return m_slices; }
     bool fill() const { return m_fill; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBorderImageSliceValue&) const;
 
 private:

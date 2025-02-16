@@ -55,7 +55,7 @@ struct FormDataElement {
     explicit FormDataElement(const URL& blobURL)
         : data(EncodedBlobData { blobURL }) { }
 
-    uint64_t lengthInBytes(const Function<uint64_t(const URL&)>&) const;
+    uint64_t lengthInBytes(NOESCAPE const Function<uint64_t(const URL&)>&) const;
     uint64_t lengthInBytes() const;
 
     FormDataElement isolatedCopy() const;

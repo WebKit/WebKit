@@ -263,6 +263,9 @@ inline std::unique_ptr<SlowPathGenerator> slowPathCall(
     SpillRegistersMode spillMode, ExceptionCheckRequirement requirement,
     ResultType result, Arguments... arguments)
 {
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+    jit->checkRegisterAllocationAgainstSlowPathCall(from);
+#endif
     return makeUnique<CallResultAndArgumentsSlowPathGenerator<JumpType, FunctionType, ResultType, Arguments...>>(
         from, jit, function, spillMode, requirement, result, arguments...);
 }

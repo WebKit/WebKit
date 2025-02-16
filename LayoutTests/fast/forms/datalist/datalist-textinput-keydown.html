@@ -37,6 +37,24 @@ UIHelper.activateElement(input);
 eventSender.keyDown("\r");
 shouldBe('input.value', '"Appl"');
 
+const arrowKeysCycleThroughOptions = !(UIHelper.isIOSFamily() || UIHelper.isMac());
+
+input.value = "";
+
+UIHelper.activateElement(input);
+eventSender.keyDown("downArrow");
+eventSender.keyDown("upArrow");
+eventSender.keyDown("\r");
+shouldBe('input.value', arrowKeysCycleThroughOptions ? '"Pear"' : '"Apple"');
+
+input.value = "";
+
+UIHelper.activateElement(input);
+eventSender.keyDown("upArrow");
+eventSender.keyDown("downArrow");
+eventSender.keyDown("\r");
+shouldBe('input.value', arrowKeysCycleThroughOptions ? '"Apple"' : '"Pear"');
+
 </script>
 
 <script src="../../../resources/js-test-post.js"></script>

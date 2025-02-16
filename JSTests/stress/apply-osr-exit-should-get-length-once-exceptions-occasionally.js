@@ -22,7 +22,7 @@ let array = { 0: 1, 1: 2, get length() {
         throw new Error("throwing an exception in length");
     return currentArgCount
 } }
-for (let i = 0; i < 1e6; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     try {
         test(array);
     } catch { }

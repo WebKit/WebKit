@@ -143,7 +143,7 @@ public:
     void addAllowedFirstPartyForCookies(WebProcessProxy&, const WebCore::RegistrableDomain& firstPartyForCookies, LoadedWebArchive, CompletionHandler<void()>&&);
 
     void fetchWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, OptionSet<WebsiteDataFetchOption>, CompletionHandler<void(WebsiteData)>&&);
-    void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler);
+    void deleteWebsiteData(PAL::SessionID, OptionSet<WebsiteDataType>, WallTime modifiedSince, const HashSet<WebCore::ProcessIdentifier>&, CompletionHandler<void()>&&);
     void deleteWebsiteDataForOrigins(PAL::SessionID, OptionSet<WebKit::WebsiteDataType>, const Vector<WebCore::SecurityOriginData>& origins, const Vector<String>& cookieHostNames, const Vector<String>& HSTSCacheHostNames, const Vector<RegistrableDomain>&, CompletionHandler<void()>&&);
     void renameOriginInWebsiteData(PAL::SessionID, const WebCore::SecurityOriginData&, const WebCore::SecurityOriginData&, OptionSet<WebsiteDataType>, CompletionHandler<void()>&&);
     void websiteDataOriginDirectoryForTesting(PAL::SessionID, WebCore::ClientOrigin&&, OptionSet<WebsiteDataType>, CompletionHandler<void(const String&)>&&);
@@ -344,6 +344,10 @@ public:
     void fetchLocalStorage(PAL::SessionID, CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>&&)>&&);
     void restoreLocalStorage(PAL::SessionID, HashMap<WebCore::ClientOrigin, HashMap<String, String>>&&, CompletionHandler<void(bool)>&&);
 
+#if ENABLE(CONTENT_EXTENSIONS)
+    void resetResourceMonitorThrottlerForTesting(PAL::SessionID, CompletionHandler<void()>&&);
+#endif
+
 private:
     explicit NetworkProcessProxy();
 
@@ -424,6 +428,10 @@ private:
 #if PLATFORM(IOS_FAMILY)
     void addBackgroundStateObservers();
     void removeBackgroundStateObservers();
+#endif
+
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    Ref<LegacyCustomProtocolManagerProxy> protectedCustomProtocolManagerProxy() { return m_customProtocolManagerProxy; }
 #endif
 
     std::unique_ptr<DownloadProxyMap> m_downloadProxyMap;

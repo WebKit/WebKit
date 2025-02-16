@@ -1,0 +1,13 @@
+
+
+PASS navigator.credentials.create() frame just returns null.
+FAIL navigator.credentials.create() same-origin iframe just returns null. promise_test: Unhandled rejection with value: object "NotAllowedError: The document is not focused."
+FAIL navigator.credentials.create() cross-origin iframe results in null. assert_equals: expected null but got object "[object Object]"
+PASS navigator.credentials.create() ignores mediations.
+PASS navigator.credentials.create() ignores mediations in same-origin iframe.
+FAIL navigator.credentials.create() ignores mediations in cross-origin iframe. assert_equals: expected null but got object "[object Object]"
+PASS navigator.credentials.create() rejects if called with an aborted controller.
+PASS navigator.credentials.create() rejects if called with an aborted controller in same-origin iframe.
+PASS navigator.credentials.create() rejects if called with an aborted controller in cross-origin iframe.
+PASS Adding mediations together with abort signal respects the abort signal.
+

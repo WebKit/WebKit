@@ -36,7 +36,7 @@ function test(x)
         throw "Error: bad result: " + result;
 }
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(0);
 
 test(2000000000);

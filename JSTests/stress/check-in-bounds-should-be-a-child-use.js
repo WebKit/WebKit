@@ -10,7 +10,7 @@ function func(arg) {
     }
 }
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     const a = func(arr);
     const b = func(1337);
 }

@@ -72,7 +72,7 @@ namespace WebCore::WebGPU {
 
 static auto invalidEntryPointName()
 {
-    return CString("");
+    return CString(""_s);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DeviceImpl);
@@ -632,7 +632,7 @@ void DeviceImpl::createRenderPipelineAsync(const RenderPipelineDescriptor& descr
 
 RefPtr<CommandEncoder> DeviceImpl::createCommandEncoder(const std::optional<CommandEncoderDescriptor>& descriptor)
 {
-    CString label = descriptor ? descriptor->label.utf8() : CString("");
+    CString label = descriptor ? descriptor->label.utf8() : CString(""_s);
 
     WGPUCommandEncoderDescriptor backingDescriptor {
         nullptr,

@@ -27,7 +27,9 @@
 #include "CSSCalcTree.h"
 
 #include "CSSCalcTree+Serialization.h"
+#include "CSSSerializationContext.h"
 #include "CSSUnits.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -55,6 +57,7 @@ WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Negate);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Pow);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Product);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Progress);
+WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Random);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(Rem);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundDown);
 WTF_MAKE_STRUCT_TZONE_ALLOCATED_IMPL(RoundNearest);
@@ -290,10 +293,10 @@ std::optional<Type> toType(const Max& root)
 std::optional<Type> toType(const Clamp& root)
 {
     auto type = getValidatedTypeFor(root, root.val);
-    if (std::holds_alternative<Child>(root.min))
-        type = mergeTypesFor(root, type, getValidatedTypeFor(root, std::get<Child>(root.min)));
-    if (std::holds_alternative<Child>(root.max))
-        type = mergeTypesFor(root, type, getValidatedTypeFor(root, std::get<Child>(root.max)));
+    if (WTF::holdsAlternative<Child>(root.min))
+        type = mergeTypesFor(root, type, getValidatedTypeFor(root, std::get<Child>(root.min.value)));
+    if (WTF::holdsAlternative<Child>(root.max))
+        type = mergeTypesFor(root, type, getValidatedTypeFor(root, std::get<Child>(root.max.value)));
     return transformTypeFor(root, type);
 }
 
@@ -415,6 +418,15 @@ std::optional<Type> toType(const Sign& root)
     return transformTypeFor(root, getValidatedTypeFor(root, root.a));
 }
 
+std::optional<Type> toType(const Random& root)
+{
+    auto type = getValidatedTypeFor(root, root.min);
+    type = mergeTypesFor(root, type, getValidatedTypeFor(root, root.max));
+    if (root.step)
+        type = mergeTypesFor(root, type, getValidatedTypeFor(root, *root.step));
+    return transformTypeFor(root, type);
+}
+
 std::optional<Type> toType(const Progress& root)
 {
     auto type = getValidatedTypeFor(root, root.value);
@@ -437,7 +449,7 @@ std::optional<Type> toType(const ContainerProgress&)
 
 TextStream& operator<<(TextStream& ts, Tree tree)
 {
-    return ts << "CSSCalc::Tree [ " << serializationForCSS(tree) << " ]";
+    return ts << "CSSCalc::Tree [ " << serializationForCSS(tree, { .range = CSS::All, .serializationContext = CSS::defaultSerializationContext() }) << " ]";
 }
 
 } // namespace CSSCalc

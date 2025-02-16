@@ -62,7 +62,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true, tail_call: true, exceptions: true })
     const { f1 } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
       let result = f1(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
       if (result !== 655)
         throw new Error(result);

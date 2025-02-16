@@ -1,3 +1,1394 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstFormat="rgba32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="r32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rg32float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="bgra8unorm-srgb";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgb10a2unorm";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba16float";dstPremultiplied=false
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=true
+PASS :from_canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstFormat="rgba32float";dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                               1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                               3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                            1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                            3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                               1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                               3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                            1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                            3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="none";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=false
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                               1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                               3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                            1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                            3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                               1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                               3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                         99 99 99 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 0.600000,0.600000,0.600000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000     0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     153,153,153,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                         0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   153,-102,153,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                            1,3,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                            3,5,0
+      act. texel bytes (little-endian) ==      0x:                     ff ff ff ff                      ff ff ff 99
+                           act. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,1.00000,1.00000,0.600000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000  0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                  255,255,255,153
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                      0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                              0,255,255,0                   255,0,255,-102
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:390:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_ImageData:alpha="premultiply";orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 00 ff ff                     00 00 00 ff
+                           act. colors == R,G,B,A: 0.00000,0.00000,1.00000,1.00000 0.00000,0.00000,0.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,1.00000,1.00000,1.00000 1.00000,0.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,0,255,255                       0,0,0,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                 255,255,255,255                     255,0,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                            -255,-255,0,0                      -255,0,0,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_2D_Canvas:orientation="none";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="none";srcFlipYInCopy=false;dstPremultiplied=false
+FAIL :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=true assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+FAIL :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=true;dstPremultiplied=false assert_unreached:
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 0,3,0 and 1,3,0 inclusive:
+                                coords ==   X,Y,Z:                           0,3,0                           1,3,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - EXPECTATION FAILED: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    Texture level had unexpected contents:
+     between 2,4,0 and 3,5,0 inclusive:
+                                coords ==   X,Y,Z:                           2,5,0                           3,5,0
+      act. texel bytes (little-endian) ==      0x:                     00 ff 00 ff                     00 00 ff ff
+                           act. colors == R,G,B,A: 0.00000,1.00000,0.00000,1.00000 0.00000,0.00000,1.00000,1.00000
+                           exp. colors == R,G,B,A: 1.00000,0.00000,0.00000,1.00000 0.00000,1.00000,0.00000,1.00000
+            act. normal-ULPs-from-zero == R,G,B,A:                     0,255,0,255                     0,0,255,255
+            exp. normal-ULPs-from-zero == R,G,B,A:                     255,0,0,255                     0,255,0,255
+             tolerance ± 1 normal-ULPs
+       diff (act - exp) in normal-ULPs ==                             -255,255,0,0                    0,-255,255,0
+    eventualAsyncExpectation@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:215:33
+    eventualExpectOK@http://127.0.0.1:8000/webgpu/common/framework/fixture.js:357:34
+    expectTexelViewComparisonIsOkInTexture@http://127.0.0.1:8000/webgpu/webgpu/gpu_test.js:1481:28
+    doTestAndCheckResult@http://127.0.0.1:8000/webgpu/webgpu/util/copy_to_texture.js:184:48
+    @http://127.0.0.1:8000/webgpu/webgpu/web_platform/copyToTexture/ImageBitmap.spec.js:529:25
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":10},"dstOrigin":{"x":0,"y":0,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":4,"height":4},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":2,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+  - INFO: subcase: copySubRectInfo={"srcOrigin":{"x":10,"y":2},"dstOrigin":{"x":2,"y":2,"z":0},"srcSize":{"width":16,"height":16},"dstSize":{"width":16,"height":16},"copyExtent":{"width":4,"height":4,"depthOrArrayLayers":1}}
+    OK
+ Reached unreachable code
+PASS :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=true
+PASS :copy_subrect_from_2D_Canvas:orientation="flipY";colorSpaceConversion="default";srcFlipYInCopy=false;dstPremultiplied=false
 

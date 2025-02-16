@@ -7,7 +7,7 @@ noInline(foo);
 var things = [{valueOf: function() { return 6; }}];
 var results = [2];
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(things[i % things.length], 10);
     var expected = results[i % results.length];
     if (result != expected)

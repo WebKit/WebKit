@@ -20,7 +20,7 @@ function sink (p, q) {
 }
 noInline(sink);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var f = sink.call(newContext, true, false);// Substitute this
     var result = f(42);
     if (result != 42)

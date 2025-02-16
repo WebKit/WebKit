@@ -7,7 +7,7 @@ noInline(foo);
 var a = new Uint32Array(1);
 a[0] = -1;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(a);
     if (result != 4294967296)
         throw "Error: bad result: " + result;

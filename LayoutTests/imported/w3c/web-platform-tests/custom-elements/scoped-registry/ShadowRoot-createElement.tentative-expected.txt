@@ -1,6 +1,6 @@
 
-PASS ShadowRoot.createElement() for autonomous custom element
-PASS ShadowRoot.createElementNS() for autonomous custom element
-FAIL ShadowRoot.createElement() for customized built-in element assert_true: expected true got false
-FAIL ShadowRoot.createElementNS() for customized built-in element assert_true: expected true got false
+FAIL ShadowRoot.createElement() for autonomous custom element shadow.createElement is not a function. (In 'shadow.createElement('test-element')', 'shadow.createElement' is undefined)
+FAIL ShadowRoot.createElementNS() for autonomous custom element shadow.createElementNS is not a function. (In 'shadow.createElementNS(html, 'test-element')', 'shadow.createElementNS' is undefined)
+FAIL ShadowRoot.createElement() for customized built-in element shadow.createElement is not a function. (In 'shadow.createElement('p', {is: 'test-element'})', 'shadow.createElement' is undefined)
+FAIL ShadowRoot.createElementNS() for customized built-in element shadow.createElementNS is not a function. (In 'shadow.createElementNS(html, 'p', {is: 'test-element'})', 'shadow.createElementNS' is undefined)
 

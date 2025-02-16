@@ -68,16 +68,7 @@ WebCodecsAudioData::WebCodecsAudioData(ScriptExecutionContext& context, WebCodec
 {
 }
 
-WebCodecsAudioData::~WebCodecsAudioData()
-{
-    if (m_isDetached)
-        return;
-    if (auto* context = scriptExecutionContext()) {
-        context->postTask([](auto& context) {
-            context.addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "A AudioData was destroyed without having been closed explicitly"_s);
-        });
-    }
-}
+WebCodecsAudioData::~WebCodecsAudioData() = default;
 
 std::optional<AudioSampleFormat> WebCodecsAudioData::format() const
 {

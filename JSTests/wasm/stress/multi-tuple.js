@@ -32,7 +32,7 @@ async function test() {
     });
     const { fn1 } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(fn1(), undefined);
     }
 }

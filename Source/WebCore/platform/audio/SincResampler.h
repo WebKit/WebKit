@@ -59,7 +59,7 @@ private:
     void initializeKernel();
     void updateRegions(bool isSecondLoad);
 
-    float convolve(const float* inputP, const float* k1, const float* k2, float kernelInterpolationFactor);
+    float convolve(std::span<const float> inputP, std::span<const float> k1, std::span<const float> k2, float kernelInterpolationFactor);
     
     double m_scaleFactor;
 

@@ -25,7 +25,9 @@
 
 namespace WebCore {
     
-class FEDropShadow : public FilterEffect {
+class FEDropShadow final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEDropShadow);
 public:
     WEBCORE_EXPORT static Ref<FEDropShadow> create(float stdX, float stdY, float dx, float dy, const Color& shadowColor, float shadowOpacity, DestinationColorSpace = DestinationColorSpace::SRGB());
 

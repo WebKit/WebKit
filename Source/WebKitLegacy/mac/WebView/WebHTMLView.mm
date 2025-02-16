@@ -1355,7 +1355,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     // Put HTML on the pasteboard.
     if ([types containsObject:WebArchivePboardType]) {
-        if (auto coreArchive = WebCore::LegacyWebArchive::createFromSelection(core([self _frame]))) {
+        if (auto coreArchive = WebCore::LegacyWebArchive::createFromSelection(core([self _frame]), false)) {
             if (RetainPtr<CFDataRef> data = coreArchive ? coreArchive->rawDataRepresentation() : 0)
                 [pasteboard setData:(__bridge NSData *)data.get() forType:WebArchivePboardType];
         }

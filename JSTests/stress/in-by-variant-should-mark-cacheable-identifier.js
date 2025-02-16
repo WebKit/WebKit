@@ -10,15 +10,15 @@ let handler = {
 };
 let targetObject = {};
 let proxy = new Proxy(targetObject, handler);
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
   foo(proxy);
 }
 targetObject.hello = undefined;
 gc();
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
   foo(proxy);
 }
 delete targetObject?.hello;
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
   foo(proxy);
 }

@@ -82,6 +82,14 @@ bool WebProcessCache::canCacheProcess(WebProcessProxy& process) const
         return false;
     }
 
+    if (RefPtr websiteDataStore = process.websiteDataStore()) {
+        // Network process might wait for this web process to exit before clearing data.
+        if (websiteDataStore->isRemovingData()) {
+            WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because its website data store is removing data", process.processID());
+            return false;
+        }
+    }
+
     if (MemoryPressureHandler::singleton().isUnderMemoryPressure()) {
         WEBPROCESSCACHE_RELEASE_LOG("canCacheProcess: Not caching process because we are under memory pressure", process.processID());
         return false;
@@ -171,11 +179,10 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, 
     if (it->value->process().lockdownMode() != lockdownMode)
         return nullptr;
 
-    if (!it->value->process().hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration))
+    if (!Ref { it->value->process() }->hasSameGPUAndNetworkProcessPreferencesAs(pageConfiguration))
         return nullptr;
 
-    auto process = it->value->takeProcess();
-    m_processesPerSite.remove(it);
+    Ref process = m_processesPerSite.take(it)->takeProcess();
     WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d)", process->processID(), size(), capacity(), process->wasTerminated());
 
     ASSERT(!process->pageCount());
@@ -239,7 +246,7 @@ void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
 {
     Vector<WebCore::Site> keysToRemove;
     for (auto& pair : m_processesPerSite) {
-        auto* dataStore = pair.value->process().websiteDataStore();
+        RefPtr dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
             WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processID());
             keysToRemove.append(pair.key);
@@ -310,9 +317,9 @@ WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process)
 #endif
 {
     RELEASE_ASSERT(!m_process->pageCount());
-    auto* dataStore = m_process->websiteDataStore();
+    RefPtr dataStore = m_process->websiteDataStore();
     RELEASE_ASSERT_WITH_MESSAGE(dataStore && !dataStore->processes().contains(*m_process), "Only processes with pages should be registered with the data store");
-    m_process->setIsInProcessCache(true);
+    protectedProcess()->setIsInProcessCache(true);
     m_evictionTimer.startOneShot(cachedProcessLifetime);
 }
 
@@ -325,21 +332,23 @@ WebProcessCache::CachedProcess::~CachedProcess()
     ASSERT(!m_process->provisionalPageCount());
     ASSERT(!m_process->suspendedPageCount());
 
+    RefPtr process = m_process;
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
     if (isSuspended())
-        m_process->platformResumeProcess();
+        process->platformResumeProcess();
 #endif
-    m_process->setIsInProcessCache(false, WebProcessProxy::WillShutDown::Yes);
-    m_process->shutDown();
+    process->setIsInProcessCache(false, WebProcessProxy::WillShutDown::Yes);
+    process->shutDown();
 }
 
 Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
 {
     ASSERT(m_process);
     m_evictionTimer.stop();
+    RefPtr process = m_process;
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
     if (isSuspended())
-        m_process->platformResumeProcess();
+        process->platformResumeProcess();
     else
         m_suspensionTimer.stop();
 
@@ -350,9 +359,9 @@ Ref<WebProcessProxy> WebProcessCache::CachedProcess::takeProcess()
     //
     // To avoid this, let the background activity live until the next runloop turn.
     if (m_backgroundActivity)
-        RunLoop::current().dispatch([backgroundActivity = WTFMove(m_backgroundActivity)]() { });
+        RunLoop::protectedCurrent()->dispatch([backgroundActivity = WTFMove(m_backgroundActivity)]() { });
 #endif
-    m_process->setIsInProcessCache(false);
+    process->setIsInProcessCache(false);
     return m_process.releaseNonNull();
 }
 
@@ -360,7 +369,7 @@ void WebProcessCache::CachedProcess::evictionTimerFired()
 {
     ASSERT(m_process);
     auto process = m_process.copyRef();
-    process->processPool().checkedWebProcessCache()->removeProcess(*process, ShouldShutDownProcess::Yes);
+    process->protectedProcessPool()->checkedWebProcessCache()->removeProcess(*process, ShouldShutDownProcess::Yes);
 }
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
@@ -371,7 +380,7 @@ void WebProcessCache::CachedProcess::startSuspensionTimer()
     // Allow the cached process to run for a while before dropping all assertions. This is useful
     // if the cached process will be reused fairly quickly after it goes into the cache, which
     // occurs in some benchmarks like PLT5.
-    m_backgroundActivity = m_process->throttler().backgroundActivity("Cached process near-suspended"_s);
+    m_backgroundActivity = m_process->protectedThrottler()->backgroundActivity("Cached process near-suspended"_s);
     m_suspensionTimer.startOneShot(cachedProcessSuspensionDelay);
 }
 
@@ -379,7 +388,7 @@ void WebProcessCache::CachedProcess::suspensionTimerFired()
 {
     ASSERT(m_process);
     m_backgroundActivity = nullptr;
-    m_process->platformSuspendProcess();
+    protectedProcess()->platformSuspendProcess();
 }
 #endif
 

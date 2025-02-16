@@ -35,7 +35,7 @@ let postlogue = `
 
 const wabtModule = await WabtModule();
 let s = prologue;
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     s += wat;
 }
 s += postlogue;

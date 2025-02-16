@@ -40,6 +40,7 @@
 #import "CoreIPCNSValue.h"
 #import "CoreIPCNull.h"
 #import "CoreIPCNumber.h"
+#import "CoreIPCPKSecureElementPass.h"
 #import "CoreIPCPassKit.h"
 #import "CoreIPCPersonNameComponents.h"
 #import "CoreIPCPresentationIntent.h"

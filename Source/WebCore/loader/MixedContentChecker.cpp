@@ -175,7 +175,7 @@ static bool destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination d
     return destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset;
 }
 
-bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Mode mode, FetchOptions::Destination destination, Initiator initiator)
+bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Destination destination, Initiator initiator)
 {
     RefPtr document = frame.document();
     if (!document || !isUpgradeMixedContentEnabled(*document) || isUpgradable != IsUpgradable::Yes)
@@ -194,9 +194,6 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
 
     // 4.1 The request's URL is not upgraded in the following cases.
     if (!canModifyRequest(url, destination, initiator, shouldUpgradeIPAddressAndLocalhostForTesting))
-        return false;
-    // or CORS is excluded
-    if (mode == FetchOptions::Mode::Cors && !(document->quirks().needsRelaxedCorsMixedContentCheckQuirk() && destinationIsImageAudioOrVideo(destination)))
         return false;
 
     logConsoleWarningForUpgrade(frame, /* blocked */ false, url, shouldUpgradeIPAddressAndLocalhostForTesting);

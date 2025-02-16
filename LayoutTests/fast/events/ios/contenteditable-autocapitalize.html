@@ -17,10 +17,7 @@
                 editable.autocapitalize = autocapitalizeType;
 
                 await UIHelper.activateElementAndWaitForInputSession(editable);
-                await UIHelper.typeCharacter("t");
-                await UIHelper.ensurePresentationUpdate();
-                await UIHelper.typeCharacter("o");
-                await UIHelper.ensurePresentationUpdate();
+                await UIHelper.typeCharacters("to");
 
                 if (expectedTextContent === editable.textContent)
                     testPassed(`With autocapitalize: ${autocapitalizeType}, the output is: "${editable.textContent}"`);

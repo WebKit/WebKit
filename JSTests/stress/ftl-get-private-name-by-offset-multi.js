@@ -76,7 +76,7 @@ function test(o) {
 test(new C(0), 0);
 test(new C(0), 0);
 test(new C(0), 0);
-for (var i = 0; !isFinalTier(test) && i < 10000; ++i) {
+for (var i = 0; !isFinalTier(test) && i < testLoopCount; ++i) {
   test(new C(i));
   optimizeNextInvocation(test);
 }

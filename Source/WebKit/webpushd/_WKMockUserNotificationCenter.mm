@@ -40,7 +40,7 @@ static _WKMockUserNotificationCenter *centersByBundleIdentifier(NSString *bundle
     static NeverDestroyed<RetainPtr<NSMutableDictionary>> centers = adoptNS([NSMutableDictionary new]);
 
     if (!centers->get()[bundleIdentifier])
-        centers->get()[bundleIdentifier] = [[_WKMockUserNotificationCenter alloc] _internalInitWithBundleIdentifier:bundleIdentifier];
+        centers->get()[bundleIdentifier] = adoptNS([[_WKMockUserNotificationCenter alloc] _internalInitWithBundleIdentifier:bundleIdentifier]).autorelease();
 
     return centers->get()[bundleIdentifier];
 }

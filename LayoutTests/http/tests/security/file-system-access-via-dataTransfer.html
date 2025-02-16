@@ -15,31 +15,44 @@ function runTest() {
     window.jsTestIsAsync = true;
 
     let path = location.pathname.split("/");
-    let targetFileName = internals.createTemporaryFile(`${path[path.length - 1]}`, "");
+    let filename = path[path.length - 1];
+    let targetFileName = internals.createTemporaryFile(`${filename}`, "");
+    let targetDirectory = targetFileName.substring(0, targetFileName.length - filename);
 
     let input = document.createElement("input");
     input.type = "file";
 
     let file = new File([], targetFileName, {"type":"text/plain"});
+    let directory = new File([], targetDirectory, {"type":"text/plain"});
 
     dataTransfer = new DataTransfer();
     dataTransfer.items.add(file)
+    dataTransfer.items.add(directory)
     input.files = dataTransfer.files;
+
+    let resultCount = 0;
 
     var functionOnSuccess = function (file)
     {
-        testFailed("Should not receive file");
-        finishJSTest()
+        testFailed("Received file");
+        if (resultCount == 2)
+            finishJSTest()
+        resultCount++;
     }
 
     var functionOnError = function (value)
     {
         testPassed("Should not receive file");
-        finishJSTest()
+        if (resultCount == 2)
+            finishJSTest()
+        resultCount++;
     }
 
     input.webkitEntries.forEach((entry) => {
         entry.file(functionOnSuccess, functionOnError)
+        entry.getParent(functionOnSuccess, functionOnError)
+        if (entry.isDirectory)
+            entry.createReader().readEntries(functionOnSuccess, functionOnError)
     });
 }
 

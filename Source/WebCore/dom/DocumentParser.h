@@ -32,6 +32,7 @@ namespace WebCore {
 
 class Document;
 class DocumentWriter;
+class HTMLDocumentParser;
 class SegmentedString;
 class ScriptableDocumentParser;
 class WeakPtrImplWithEventTargetData;
@@ -41,6 +42,7 @@ public:
     virtual ~DocumentParser();
 
     virtual ScriptableDocumentParser* asScriptableDocumentParser() { return nullptr; }
+    virtual HTMLDocumentParser* asHTMLDocumentParser() { return nullptr; }
 
     // http://www.whatwg.org/specs/web-apps/current-work/#insertion-point
     virtual bool hasInsertionPoint() { return true; }

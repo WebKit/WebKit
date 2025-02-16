@@ -26,9 +26,3 @@
 #pragma once
 
 #include "WebPreferencesDefaultValues.h"
-
-namespace WebKit {
-
-void setAllowsDeprecatedSynchronousXMLHttpRequestDuringUnload(bool allowsRequest);
-
-} // namespace WebKit

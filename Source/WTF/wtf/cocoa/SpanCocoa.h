@@ -50,7 +50,7 @@ template<typename> class Function;
 #ifdef __cplusplus
 extern "C" {
 #endif
-WTF_EXPORT_PRIVATE bool dispatch_data_apply_span(dispatch_data_t, const Function<bool(std::span<const uint8_t>)>& applier);
+WTF_EXPORT_PRIVATE bool dispatch_data_apply_span(dispatch_data_t, NOESCAPE const Function<bool(std::span<const uint8_t>)>& applier);
 #ifdef __cplusplus
 } // extern "C
 #endif

@@ -26,7 +26,7 @@ SecondaryCommandPool::~SecondaryCommandPool()
     ASSERT(mCollectedBuffersOverflow.empty());
 }
 
-angle::Result SecondaryCommandPool::init(Context *context,
+angle::Result SecondaryCommandPool::init(ErrorContext *context,
                                          uint32_t queueFamilyIndex,
                                          ProtectionType protectionType)
 {
@@ -56,7 +56,8 @@ void SecondaryCommandPool::destroy(VkDevice device)
     mCommandPool.destroy(device);
 }
 
-angle::Result SecondaryCommandPool::allocate(Context *context, VulkanSecondaryCommandBuffer *buffer)
+angle::Result SecondaryCommandPool::allocate(ErrorContext *context,
+                                             VulkanSecondaryCommandBuffer *buffer)
 {
     ASSERT(valid());
     ASSERT(!buffer->valid());

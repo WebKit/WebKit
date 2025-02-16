@@ -29,6 +29,7 @@
 
 #include "NullPlaybackSessionInterface.h"
 #include "VideoFullscreenCaptions.h"
+#include "VideoPresentationLayerProvider.h"
 #include "VideoPresentationModel.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -38,6 +39,7 @@ class NullVideoPresentationInterface final
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
     , public VideoFullscreenCaptions
+    , public VideoPresentationLayerProvider
     , public RefCounted<NullVideoPresentationInterface>
     , public CanMakeCheckedPtr<NullVideoPresentationInterface> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(NullVideoPresentationInterface);
@@ -53,8 +55,9 @@ public:
     PlaybackSessionModel* playbackSessionModel() const { return m_playbackSessionInterface->playbackSessionModel(); }
 
     void setSpatialVideoMetadata(const std::optional<SpatialVideoMetadata>&) { }
+    void setIsImmersiveVideo(bool) { }
     void setVideoPresentationModel(VideoPresentationModel* model) { m_videoPresentationModel = model; }
-    void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) { }
+    void setupFullscreen(const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) { }
     void enterFullscreen() { }
     bool exitFullscreen(const FloatRect& finalRect) { return false; }
     void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode) { }

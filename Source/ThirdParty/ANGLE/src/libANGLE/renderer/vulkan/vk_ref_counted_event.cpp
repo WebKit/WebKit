@@ -17,33 +17,6 @@ namespace vk
 {
 namespace
 {
-// Predefined VkPipelineStageFlags for RefCountedEvent
-constexpr angle::PackedEnumMap<EventStage, VkPipelineStageFlags>
-    kEventStageAndPipelineStageFlagsMap = {
-        {EventStage::Transfer, VK_PIPELINE_STAGE_TRANSFER_BIT},
-        {EventStage::VertexShader, VK_PIPELINE_STAGE_VERTEX_SHADER_BIT},
-        {EventStage::FragmentShader, VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
-        {EventStage::ComputeShader, VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT},
-        {EventStage::AllShaders, kAllShadersPipelineStageFlags},
-        {EventStage::PreFragmentShaders, kPreFragmentStageFlags},
-        {EventStage::FragmentShadingRate,
-         VK_PIPELINE_STAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR},
-        {EventStage::ColorAttachmentOutput, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT},
-        {EventStage::ColorAttachmentOutputAndFragmentShader,
-         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
-        {EventStage::ColorAttachmentOutputAndFragmentShaderAndTransfer,
-         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT |
-             VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT},
-        {EventStage::ColorAttachmentOutputAndAllShaders,
-         VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | kAllShadersPipelineStageFlags},
-        {EventStage::AllFragmentTest, kAllDepthStencilPipelineStageFlags},
-        {EventStage::AllFragmentTestAndFragmentShader,
-         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | kAllDepthStencilPipelineStageFlags},
-        {EventStage::AllFragmentTestAndAllShaders,
-         kAllShadersPipelineStageFlags | kAllDepthStencilPipelineStageFlags},
-        {EventStage::TransferAndComputeShader,
-         VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT | VK_PIPELINE_STAGE_TRANSFER_BIT}};
-
 void DestroyRefCountedEvents(VkDevice device, RefCountedEventCollector &events)
 {
     while (!events.empty())
@@ -53,17 +26,6 @@ void DestroyRefCountedEvents(VkDevice device, RefCountedEventCollector &events)
     }
 }
 }  // namespace
-
-void InitializeEventAndPipelineStagesMap(
-    angle::PackedEnumMap<EventStage, VkPipelineStageFlags> *map,
-    VkPipelineStageFlags supportedVulkanPipelineStageMask)
-{
-    *map = kEventStageAndPipelineStageFlagsMap;
-    for (VkPipelineStageFlags &flag : *map)
-    {
-        flag &= supportedVulkanPipelineStageMask;
-    }
-}
 
 bool RefCountedEvent::init(Context *context, EventStage eventStage)
 {
@@ -132,17 +94,13 @@ template <typename RecyclerT>
 void RefCountedEvent::releaseImpl(Renderer *renderer, RecyclerT *recycler)
 {
     ASSERT(mHandle != nullptr);
-    // This should never called from async submission thread since the refcount is not atomic. It is
-    // expected only called under context share lock.
-    ASSERT(std::this_thread::get_id() != renderer->getCommandProcessorThreadId());
+    // This should never be called from async clean up thread since the refcount is not atomic. It
+    // is expected only called under context share lock.
+    ASSERT(std::this_thread::get_id() != renderer->getCleanUpThreadId());
 
     const bool isLastReference = mHandle->getAndReleaseRef() == 1;
     if (isLastReference)
     {
-        // When async submission is enabled, recycler will be null when release call comes from
-        // CommandProcessor. But in that case it will not be the last reference since garbage
-        // collector should have one reference count and will never release that reference count
-        // until GPU finished.
         ASSERT(recycler != nullptr);
         recycler->recycle(std::move(*this));
         ASSERT(mHandle == nullptr);
@@ -159,6 +117,100 @@ void RefCountedEvent::destroy(VkDevice device)
     ASSERT(!mHandle->isReferenced());
     mHandle->get().event.destroy(device);
     SafeDelete(mHandle);
+}
+
+VkPipelineStageFlags RefCountedEvent::getPipelineStageMask(Renderer *renderer) const
+{
+    return renderer->getPipelineStageMask(getEventStage());
+}
+
+// RefCountedEventArray implementation.
+void RefCountedEventArray::release(Renderer *renderer)
+{
+    for (EventStage eventStage : mBitMask)
+    {
+        ASSERT(mEvents[eventStage].valid());
+        mEvents[eventStage].release(renderer);
+    }
+    mBitMask.reset();
+}
+
+void RefCountedEventArray::release(Context *context)
+{
+    for (EventStage eventStage : mBitMask)
+    {
+        ASSERT(mEvents[eventStage].valid());
+        mEvents[eventStage].release(context);
+    }
+    mBitMask.reset();
+}
+
+void RefCountedEventArray::releaseToEventCollector(RefCountedEventCollector *eventCollector)
+{
+    for (EventStage eventStage : mBitMask)
+    {
+        eventCollector->emplace_back(std::move(mEvents[eventStage]));
+    }
+    mBitMask.reset();
+}
+
+bool RefCountedEventArray::initEventAtStage(Context *context, EventStage eventStage)
+{
+    if (mBitMask[eventStage])
+    {
+        return true;
+    }
+
+    // Create the event if we have not yet so. Otherwise just use the already created event.
+    if (!mEvents[eventStage].init(context, eventStage))
+    {
+        return false;
+    }
+    mBitMask.set(eventStage);
+    return true;
+}
+
+template <typename CommandBufferT>
+void RefCountedEventArray::flushSetEvents(Renderer *renderer, CommandBufferT *commandBuffer) const
+{
+    for (EventStage eventStage : mBitMask)
+    {
+        VkPipelineStageFlags pipelineStageFlags = renderer->getPipelineStageMask(eventStage);
+        commandBuffer->setEvent(mEvents[eventStage].getEvent().getHandle(), pipelineStageFlags);
+    }
+}
+
+template void RefCountedEventArray::flushSetEvents<VulkanSecondaryCommandBuffer>(
+    Renderer *renderer,
+    VulkanSecondaryCommandBuffer *commandBuffer) const;
+template void RefCountedEventArray::flushSetEvents<priv::SecondaryCommandBuffer>(
+    Renderer *renderer,
+    priv::SecondaryCommandBuffer *commandBuffer) const;
+template void RefCountedEventArray::flushSetEvents<priv::CommandBuffer>(
+    Renderer *renderer,
+    priv::CommandBuffer *commandBuffer) const;
+
+// EventArray implementation.
+void EventArray::init(Renderer *renderer, const RefCountedEventArray &refCountedEventArray)
+{
+    mBitMask = refCountedEventArray.getBitMask();
+    for (EventStage eventStage : mBitMask)
+    {
+        ASSERT(refCountedEventArray.getEvent(eventStage).valid());
+        mEvents[eventStage] = refCountedEventArray.getEvent(eventStage).getEvent().getHandle();
+        mPipelineStageFlags[eventStage] = renderer->getPipelineStageMask(eventStage);
+    }
+}
+
+void EventArray::flushSetEvents(PrimaryCommandBuffer *primary)
+{
+    for (EventStage eventStage : mBitMask)
+    {
+        ASSERT(mEvents[eventStage] != VK_NULL_HANDLE);
+        primary->setEvent(mEvents[eventStage], mPipelineStageFlags[eventStage]);
+        mEvents[eventStage] = VK_NULL_HANDLE;
+    }
+    mBitMask.reset();
 }
 
 // RefCountedEventsGarbage implementation.
@@ -223,7 +275,7 @@ void RefCountedEventRecycler::destroy(VkDevice device)
     }
 }
 
-void RefCountedEventRecycler::resetEvents(Context *context,
+void RefCountedEventRecycler::resetEvents(ErrorContext *context,
                                           const QueueSerial queueSerial,
                                           PrimaryCommandBuffer *commandbuffer)
 {
@@ -241,7 +293,7 @@ void RefCountedEventRecycler::resetEvents(Context *context,
         ASSERT(!events.empty());
         for (const RefCountedEvent &refCountedEvent : events)
         {
-            VkPipelineStageFlags stageMask = renderer->getEventPipelineStageMask(refCountedEvent);
+            VkPipelineStageFlags stageMask = refCountedEvent.getPipelineStageMask(renderer);
             commandbuffer->resetEvent(refCountedEvent.getEvent().getHandle(), stageMask);
         }
         mResettingQueue.emplace(queueSerial, std::move(events));
@@ -249,8 +301,9 @@ void RefCountedEventRecycler::resetEvents(Context *context,
     }
 }
 
-void RefCountedEventRecycler::cleanupResettingEvents(Renderer *renderer)
+size_t RefCountedEventRecycler::cleanupResettingEvents(Renderer *renderer)
 {
+    size_t eventsReleased = 0;
     std::lock_guard<angle::SimpleMutex> lock(mMutex);
     while (!mResettingQueue.empty())
     {
@@ -258,12 +311,14 @@ void RefCountedEventRecycler::cleanupResettingEvents(Renderer *renderer)
         if (released)
         {
             mResettingQueue.pop();
+            ++eventsReleased;
         }
         else
         {
             break;
         }
     }
+    return eventsReleased;
 }
 
 bool RefCountedEventRecycler::fetchEventsToReuse(RefCountedEventCollector *eventsToReuseOut)
@@ -387,27 +442,25 @@ void EventBarrierArray::addAdditionalStageAccess(const RefCountedEvent &waitEven
     UNREACHABLE();
 }
 
-void EventBarrierArray::addMemoryEvent(Renderer *renderer,
-                                       const RefCountedEvent &waitEvent,
-                                       VkPipelineStageFlags dstStageMask,
-                                       VkAccessFlags dstAccess)
+void EventBarrierArray::addEventMemoryBarrier(Renderer *renderer,
+                                              const RefCountedEvent &waitEvent,
+                                              VkAccessFlags srcAccess,
+                                              VkPipelineStageFlags dstStageMask,
+                                              VkAccessFlags dstAccess)
 {
     ASSERT(waitEvent.valid());
-    VkPipelineStageFlags stageFlags = renderer->getEventPipelineStageMask(waitEvent);
-    // This should come down as WAW without layout change, dstStageMask should be the same as
-    // event's stageMask. Otherwise you should get into addImageEvent.
-    ASSERT(stageFlags == dstStageMask);
-    mBarriers.emplace_back(stageFlags, dstStageMask, dstAccess, dstAccess,
+    VkPipelineStageFlags srcStageFlags = waitEvent.getPipelineStageMask(renderer);
+    mBarriers.emplace_back(srcStageFlags, dstStageMask, srcAccess, dstAccess,
                            waitEvent.getEvent().getHandle());
 }
 
-void EventBarrierArray::addImageEvent(Renderer *renderer,
-                                      const RefCountedEvent &waitEvent,
-                                      VkPipelineStageFlags dstStageMask,
-                                      const VkImageMemoryBarrier &imageMemoryBarrier)
+void EventBarrierArray::addEventImageBarrier(Renderer *renderer,
+                                             const RefCountedEvent &waitEvent,
+                                             VkPipelineStageFlags dstStageMask,
+                                             const VkImageMemoryBarrier &imageMemoryBarrier)
 {
     ASSERT(waitEvent.valid());
-    VkPipelineStageFlags srcStageFlags = renderer->getEventPipelineStageMask(waitEvent);
+    VkPipelineStageFlags srcStageFlags = waitEvent.getPipelineStageMask(renderer);
     mBarriers.emplace_back(srcStageFlags, dstStageMask, waitEvent.getEvent().getHandle(),
                            imageMemoryBarrier);
 }

@@ -82,7 +82,7 @@ function shouldThrow(func, message) {
     }
     noInline(test);
 
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test(object, property);
 
     shouldThrow(function () { test(object, propertyKey); }, "Error: propertyKey.toString is called.");
@@ -120,11 +120,11 @@ function shouldThrow(func, message) {
     });
 
     var array = [1, 2, 3];
-    for (var i = 0; i < 100000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test(array, array.length, 0);
 
     var array = [1, false, 3];
-    for (var i = 0; i < 100000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test(array, array.length, 1);
 
     test("hello", "hello".length, 2);

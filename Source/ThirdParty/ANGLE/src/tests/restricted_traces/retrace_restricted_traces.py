@@ -521,7 +521,7 @@ def get_min_reqs(args, traces):
             recurse_reqs = recurse_run([], extensions, 0)
             # Handle extensions which de facto imply others
             for extension in implied_extension_filter:
-                if extension[0] in recurse_reqs:
+                if extension[0] in recurse_reqs and extension[1] in recurse_reqs:
                     recurse_reqs.remove(extension[1])
 
             json_data['RequiredExtensions'] = recurse_reqs

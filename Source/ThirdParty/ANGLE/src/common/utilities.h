@@ -211,7 +211,6 @@ struct UniformTypeIndex
 };
 const UniformTypeInfo &GetUniformTypeInfo(GLenum uniformType);
 UniformTypeIndex GetUniformTypeIndex(GLenum uniformType);
-const UniformTypeInfo &GetUniformTypeInfoFromIndex(UniformTypeIndex index);
 
 const char *GetGenericErrorMessage(GLenum error);
 

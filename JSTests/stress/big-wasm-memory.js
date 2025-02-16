@@ -22,7 +22,7 @@ function test() {
 
     var okArray = new Uint8Array(0x1ffdc02);
 
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         foo(okArray);
 
     let maxSize = 0x10000;

@@ -35,7 +35,9 @@ enum class ChannelSelectorType : uint8_t {
     CHANNEL_A = 4
 };
 
-class FEDisplacementMap : public FilterEffect {
+class FEDisplacementMap final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEDisplacementMap);
 public:
     WEBCORE_EXPORT static Ref<FEDisplacementMap> create(ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, float scale, DestinationColorSpace = DestinationColorSpace::SRGB());
 

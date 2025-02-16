@@ -217,13 +217,13 @@ void RenderMathMLOperator::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderMathMLOperator::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+void RenderMathMLOperator::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     layoutFloatingChildren();

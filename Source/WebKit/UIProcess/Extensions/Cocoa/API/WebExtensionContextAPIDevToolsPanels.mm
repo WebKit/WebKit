@@ -45,14 +45,14 @@ void WebExtensionContext::devToolsPanelsCreate(WebPageProxyIdentifier webPagePro
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
         RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
-        completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector not found"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector not found"));
         return;
     }
 
     extension->createTab(title, { baseURL(), iconPath }, { baseURL(), pagePath }, [completionHandler = WTFMove(completionHandler)](Expected<Inspector::ExtensionTabID, Inspector::ExtensionError>&& result) mutable {
         if (!result) {
             RELEASE_LOG_ERROR(Extensions, "Inspector could not create panel (%{public}@)", (NSString *)extensionErrorToString(result.error()));
-            completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector could not create the panel"));
+            completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not create the panel"));
             return;
         }
 

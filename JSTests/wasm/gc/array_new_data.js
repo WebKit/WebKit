@@ -1,5 +1,4 @@
 //@ $skipModes << :wasm_aggressive_inline if $memoryLimited
-//@ runWebAssemblySuite("--useWasmGC=true")
 
 // This tests in the :wasm_aggressive_inline test configuration will use more than the
 // 600M that $memoryLimited devices are capped at due JSCTEST_memoryLimit. Skip it

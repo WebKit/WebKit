@@ -6,6 +6,8 @@ PASS cookieStore.getAll with name in options
 PASS cookieStore.getAll with name in both positional arguments and options
 PASS cookieStore.getAll with absolute url in options
 PASS cookieStore.getAll with relative url in options
-FAIL cookieStore.getAll with invalid url path in options assert_unreached: Should have rejected: undefined Reached unreachable code
+PASS cookieStore.getAll with same-origin url path in options
 PASS cookieStore.getAll with invalid url host in options
+PASS cookieStore.getAll with absolute url with fragment in options
+PASS cookieStore.getAll with absolute different url in options
 

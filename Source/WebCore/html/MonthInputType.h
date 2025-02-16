@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_MONTH)
-
 #include "BaseDateAndTimeInputType.h"
 #include <wtf/TZoneMalloc.h>
 
@@ -72,5 +70,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(MonthInputType, Type::Month)
-
-#endif // ENABLE(INPUT_TYPE_MONTH)

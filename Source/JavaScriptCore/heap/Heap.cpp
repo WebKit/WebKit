@@ -91,6 +91,7 @@
 #include <wtf/RAMSize.h>
 #include <wtf/Scope.h>
 #include <wtf/SimpleStats.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/Threading.h>
 
 #if USE(BMALLOC_MEMORY_FOOTPRINT_API)
@@ -173,7 +174,7 @@ size_t proportionalHeapSize(size_t heapSize, size_t ramSize)
 
 void recordType(TypeCountSet& set, JSCell* cell)
 {
-    const char* typeName = "[unknown]";
+    auto typeName = "[unknown]"_s;
     const ClassInfo* info = cell->classInfo();
     if (info && info->className)
         typeName = info->className;
@@ -306,8 +307,8 @@ Heap::Heap(VM& vm, HeapType heapType)
     , m_maxHeapSize(m_minBytesPerCycle)
     , m_objectSpace(this)
     , m_machineThreads(makeUnique<MachineThreads>())
-    , m_collectorSlotVisitor(makeUnique<SlotVisitor>(*this, "C"))
-    , m_mutatorSlotVisitor(makeUnique<SlotVisitor>(*this, "M"))
+    , m_collectorSlotVisitor(makeUnique<SlotVisitor>(*this, "C"_s))
+    , m_mutatorSlotVisitor(makeUnique<SlotVisitor>(*this, "M"_s))
     , m_mutatorMarkStack(makeUnique<MarkStackArray>())
     , m_raceMarkStack(makeUnique<MarkStackArray>())
     , m_constraintSet(makeUnique<MarkingConstraintSet>(*this))
@@ -390,12 +391,12 @@ Heap::Heap(VM& vm, HeapType heapType)
     , primitiveGigacageAllocator(makeUnique<GigacageAlignedMemoryAllocator>(Gigacage::Primitive))
 
     // Subspaces
-    , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary", *this, auxiliaryHeapCellType, primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
-    , auxiliarySpace("Auxiliary", *this, auxiliaryHeapCellType, fastMallocAllocator.get()) // Hash:0x96255ba1
-    , immutableButterflyAuxiliarySpace("ImmutableButterfly JSCellWithIndexingHeader", *this, immutableButterflyHeapCellType, fastMallocAllocator.get()) // Hash:0xaadcb3c1
-    , cellSpace("JSCell", *this, cellHeapCellType, fastMallocAllocator.get()) // Hash:0xadfb5a79
-    , variableSizedCellSpace("Variable Sized JSCell", *this, cellHeapCellType, fastMallocAllocator.get()) // Hash:0xbcd769cc
-    , destructibleObjectSpace("JSDestructibleObject", *this, destructibleObjectHeapCellType, fastMallocAllocator.get()) // Hash:0x4f5ed7a9
+    , primitiveGigacageAuxiliarySpace("Primitive Gigacage Auxiliary"_s, *this, auxiliaryHeapCellType, primitiveGigacageAllocator.get()) // Hash:0x3e7cd762
+    , auxiliarySpace("Auxiliary"_s, *this, auxiliaryHeapCellType, fastMallocAllocator.get()) // Hash:0x96255ba1
+    , immutableButterflyAuxiliarySpace("ImmutableButterfly JSCellWithIndexingHeader"_s, *this, immutableButterflyHeapCellType, fastMallocAllocator.get()) // Hash:0xaadcb3c1
+    , cellSpace("JSCell"_s, *this, cellHeapCellType, fastMallocAllocator.get()) // Hash:0xadfb5a79
+    , variableSizedCellSpace("Variable Sized JSCell"_s, *this, cellHeapCellType, fastMallocAllocator.get()) // Hash:0xbcd769cc
+    , destructibleObjectSpace("JSDestructibleObject"_s, *this, destructibleObjectHeapCellType, fastMallocAllocator.get()) // Hash:0x4f5ed7a9
     FOR_EACH_JSC_COMMON_ISO_SUBSPACE(INIT_SERVER_ISO_SUBSPACE)
     FOR_EACH_JSC_STRUCTURE_ISO_SUBSPACE(INIT_SERVER_STRUCTURE_ISO_SUBSPACE)
     , codeBlockSpaceAndSet ISO_SUBSPACE_INIT(*this, destructibleCellHeapCellType, CodeBlock) // Hash:0x2b743c6a
@@ -806,7 +807,7 @@ void Heap::completeAllJITPlans()
 }
 
 template<typename Visitor>
-void Heap::iterateExecutingAndCompilingCodeBlocks(Visitor& visitor, const Function<void(CodeBlock*)>& func)
+void Heap::iterateExecutingAndCompilingCodeBlocks(Visitor& visitor, NOESCAPE const Function<void(CodeBlock*)>& func)
 {
     m_codeBlocks->iterateCurrentlyExecuting(func);
 #if ENABLE(JIT)
@@ -1420,7 +1421,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         RELEASE_ASSERT(!m_requests.isEmpty());
         m_currentRequest = m_requests.first();
     }
-        
+
     dataLogIf(Options::logGC(), "[GC<", RawPointer(this), ">: START ", gcConductorShortName(conn), " ", capacity() / 1024, "kb ");
 
     m_beforeGC = MonotonicTime::now();
@@ -1443,10 +1444,19 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         m_verifier->startGC();
         m_verifier->gatherLiveCells(HeapVerifier::Phase::BeforeMarking);
     }
-        
+
+    ASSERT(m_collectionScope);
+    bool isFullGC = m_collectionScope.value() == CollectionScope::Full;
+    if (UNLIKELY(Options::useGCSignpost())) {
+        StringPrintStream stream;
+        stream.print("GC:(", RawPointer(this), "),mode:(", (isFullGC ? "Full" : "Eden"), "),version:(", m_gcVersion, "),conn:(", gcConductorShortName(conn), "),capacity(", capacity() / 1024, "kb)");
+        m_signpostMessage = stream.toCString();
+        WTFBeginSignpost(this, JSCGarbageCollector, "%" PUBLIC_LOG_STRING, m_signpostMessage.data() ? m_signpostMessage.data() : "(nullptr)");
+    }
+
     prepareForMarking();
         
-    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
+    if (isFullGC) {
         m_opaqueRoots.clear();
         m_collectorSlotVisitor->clearMarkStacks();
         m_mutatorMarkStack->clear();
@@ -1526,12 +1536,14 @@ NEVER_INLINE bool Heap::runFixpointPhase(GCConductor conn)
                 visitMap.add(visitor.codeName(), visitor.bytesVisited() / 1024);
             });
         
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         auto perVisitorDump = sortedMapDump(
             visitMap,
             [] (const char* a, const char* b) -> bool {
                 return strcmp(a, b) < 0;
             },
             ":"_s, " "_s);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         
         dataLog("v=", bytesVisited() / 1024, "kb (", perVisitorDump, ") o=", m_opaqueRoots.size(), " b=", m_barriersExecuted, " ");
     }
@@ -1739,6 +1751,10 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     ParkingLot::unparkAll(&m_worldState);
 
     dataLogLnIf(Options::logGC(), "GC END!");
+    if (UNLIKELY(Options::useGCSignpost())) {
+        WTFEndSignpost(this, JSCGarbageCollector, "%" PUBLIC_LOG_STRING, m_signpostMessage.data() ? m_signpostMessage.data() : "(nullptr)");
+        m_signpostMessage = { };
+    }
 
     setNeedFinalize();
 
@@ -2325,6 +2341,7 @@ bool Heap::suspendCompilerThreads()
 
 void Heap::willStartCollection()
 {
+    ++m_gcVersion;
     if (UNLIKELY(Options::verifyGC())) {
         m_verifierSlotVisitor = makeUnique<VerifierSlotVisitor>(*this);
         ASSERT(!m_isMarkingForGCVerifier);
@@ -2340,7 +2357,7 @@ void Heap::willStartCollection()
         m_collectionScope = CollectionScope::Eden;
         dataLogIf(Options::logGC(), "EdenCollection, ");
     }
-    if (m_collectionScope && m_collectionScope.value() == CollectionScope::Full) {
+    if (m_collectionScope.value() == CollectionScope::Full) {
         m_sizeBeforeLastFullCollect = m_sizeAfterLastCollect + totalBytesAllocatedThisCycle();
         m_extraMemorySize = 0;
         m_deprecatedExtraMemorySize = 0;

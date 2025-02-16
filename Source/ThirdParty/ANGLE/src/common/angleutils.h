@@ -107,6 +107,7 @@ struct PerfMonitorTriplet
     FN(renderPasses)                               \
     FN(writeDescriptorSets)                        \
     FN(flushedOutsideRenderPassCommandBuffers)     \
+    FN(swapchainCreate)                            \
     FN(swapchainResolveInSubpass)                  \
     FN(swapchainResolveOutsideSubpass)             \
     FN(resolveImageCommands)                       \
@@ -400,9 +401,6 @@ inline bool IsLittleEndian()
 #define GL_RGB10_A2_SSCALED_ANGLEX 0x6AEC
 #define GL_RGB10_A2_USCALED_ANGLEX 0x6AED
 
-// EXT_texture_type_2_10_10_10_REV
-#define GL_RGB10_UNORM_ANGLEX 0x6AEE
-
 // These are fake formats for OES_vertex_type_10_10_10_2
 #define GL_A2_RGB10_UNORM_ANGLEX 0x6AEF
 #define GL_A2_RGB10_SNORM_ANGLEX 0x6AF0
@@ -416,14 +414,14 @@ inline bool IsLittleEndian()
 #define GL_X2_RGB10_SNORM_ANGLEX 0x6AF8
 
 #define ANGLE_CHECK_GL_ALLOC(context, result) \
-    ANGLE_CHECK(context, result, "Failed to allocate host memory", GL_OUT_OF_MEMORY)
+    ANGLE_CHECK(context, result, "Failed to allocate host memory.", GL_OUT_OF_MEMORY)
 
 #define ANGLE_CHECK_GL_MATH(context, result) \
     ANGLE_CHECK(context, result, "Integer overflow.", GL_INVALID_OPERATION)
 
 #define ANGLE_GL_UNREACHABLE(context) \
     UNREACHABLE();                    \
-    ANGLE_CHECK(context, false, "Unreachable Code.", GL_INVALID_OPERATION)
+    ANGLE_CHECK(context, false, "Unreachable code.", GL_INVALID_OPERATION)
 
 #if defined(ANGLE_WITH_LSAN)
 #    define ANGLE_SCOPED_DISABLE_LSAN() __lsan::ScopedDisabler lsanDisabler

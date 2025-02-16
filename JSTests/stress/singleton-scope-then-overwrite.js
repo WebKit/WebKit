@@ -4,7 +4,7 @@ function foo(a) {
         return x + a;
     };
     noInline(f);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = f(i);
         if (result != a + 1 + i)
             throw "Error: bad result: " + result;

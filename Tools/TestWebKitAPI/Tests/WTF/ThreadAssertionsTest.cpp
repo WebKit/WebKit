@@ -83,7 +83,7 @@ TEST(WTF_ThreadAssertions, TestMainRunLoopNamedAssertion)
     WTF::initializeMainThread();
 
     bool done = false;
-    RunLoop::main().dispatch([&done] {
+    RunLoop::protectedMain()->dispatch([&done] {
         // Use following to manually ensure compile will fail:
         // testMainRunLoopFunction();
         assertIsMainRunLoop();

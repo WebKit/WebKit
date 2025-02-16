@@ -47,9 +47,6 @@ private:
     std::optional<CurveToQuadraticSmoothSegment> parseCurveToQuadraticSmoothSegment(FloatPoint) final;
     std::optional<ArcToSegment> parseArcToSegment(FloatPoint) final;
 
-#if COMPILER(MSVC)
-#pragma warning(disable: 4701)
-#endif
     template<typename DataType>
     DataType readType()
     {

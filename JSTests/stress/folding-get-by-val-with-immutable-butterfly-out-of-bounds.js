@@ -46,7 +46,7 @@ function test5()
 }
 noInline(test5);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test0(), undefined);
     shouldBe(test1(), undefined);
     shouldBe(test2(), undefined);
@@ -56,7 +56,7 @@ for (var i = 0; i < 1e5; ++i) {
 }
 // Breaking sane chains.
 Array.prototype[5] = 42;
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test0(), 42);
     shouldBe(test1(), 42);
     shouldBe(test2(), 42);

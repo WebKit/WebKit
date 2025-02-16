@@ -12,6 +12,6 @@ function foo(cond) {
         o[ident()] = 20;
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     foo(true);
 }

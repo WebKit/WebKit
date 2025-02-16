@@ -75,8 +75,8 @@ public:
     void remove(CodeBlock*);
 
 private:
-    HashSet<CodeBlock*> m_codeBlocks;
-    HashSet<CodeBlock*> m_currentlyExecuting;
+    UncheckedKeyHashSet<CodeBlock*> m_codeBlocks;
+    UncheckedKeyHashSet<CodeBlock*> m_currentlyExecuting;
     Lock m_lock;
 };
 

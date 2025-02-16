@@ -14,7 +14,7 @@
 #include "common/FixedVector.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Framebuffer.h"
-#include "libANGLE/context_private_call_autogen.h"
+#include "libANGLE/context_private_call.inl.h"
 #include "libANGLE/renderer/ContextImpl.h"
 #include "libANGLE/renderer/TextureImpl.h"
 
@@ -534,14 +534,32 @@ void PixelLocalStorage::begin(Context *context, GLsizei n, const GLenum loadops[
         plane.markActive(true);
     }
 
+    // Disable blend and enable the full color mask on the draw buffers reserved for PLS.
+    const Caps &caps           = context->getCaps();
+    GLint firstPLSDrawBuffer   = FirstOverriddenDrawBuffer(caps, n);
+    PrivateState *privateState = context->getMutablePrivateState();
+    if (firstPLSDrawBuffer == 0)
+    {
+        privateState->setBlend(false);
+        privateState->setColorMask(true, true, true, true);
+    }
+    else
+    {
+        ASSERT(context->getExtensions().drawBuffersIndexedAny());
+        for (GLint i = firstPLSDrawBuffer; i < caps.maxDrawBuffers; ++i)
+        {
+            privateState->setBlendIndexed(false, i);
+            privateState->setColorMaskIndexed(true, true, true, true, i);
+        }
+    }
+
     onBegin(context, n, loadops, plsExtents);
 }
 
-void PixelLocalStorage::end(Context *context, const GLenum storeops[])
+void PixelLocalStorage::end(Context *context, GLsizei n, const GLenum storeops[])
 {
-    onEnd(context, storeops);
+    onEnd(context, n, storeops);
 
-    GLsizei n = context->getState().getPixelLocalStorageActivePlanes();
     for (GLsizei i = 0; i < n; ++i)
     {
         mPlanes[i].markActive(false);
@@ -561,9 +579,9 @@ void PixelLocalStorage::interrupt(Context *context)
         mActivePlanesAtInterrupt = context->getState().getPixelLocalStorageActivePlanes();
         ASSERT(0 <= mActivePlanesAtInterrupt &&
                mActivePlanesAtInterrupt <= IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES);
-        if (mActivePlanesAtInterrupt >= 1)
+        if (mActivePlanesAtInterrupt != 0)
         {
-            context->endPixelLocalStorageWithStoreOpsStore();
+            context->endPixelLocalStorageImplicit();
         }
     }
     ++mInterruptCount;
@@ -763,10 +781,8 @@ class PixelLocalStorageImageLoadStore : public PixelLocalStorage
         context->memoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     }
 
-    void onEnd(Context *context, const GLenum storeops[]) override
+    void onEnd(Context *context, GLsizei n, const GLenum storeops[]) override
     {
-        GLsizei n = context->getState().getPixelLocalStorageActivePlanes();
-
         // Restore the image bindings. Since glBindImageTexture and any commands that modify
         // textures are banned while PLS is active, these will all still be alive and valid.
         ASSERT(mSavedImageBindings.size() == static_cast<size_t>(n));
@@ -854,7 +870,6 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
 
     void onBegin(Context *context, GLsizei n, const GLenum loadops[], Extents plsExtents) override
     {
-        const State &state                              = context->getState();
         const Caps &caps                                = context->getCaps();
         Framebuffer *framebuffer                        = context->getState().getDrawFramebuffer();
         const DrawBuffersVector<GLenum> &appDrawBuffers = framebuffer->getDrawBufferStates();
@@ -873,33 +888,7 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
         std::fill(plsDrawBuffers.begin() + numAppDrawBuffers,
                   plsDrawBuffers.begin() + firstPLSDrawBuffer, GL_NONE);
 
-        mBlendsToReEnable.reset();
-        mColorMasksToRestore.reset();
         bool needsClear = false;
-
-        bool hasIndexedBlendAndColorMask = context->getExtensions().drawBuffersIndexedAny();
-        if (!hasIndexedBlendAndColorMask)
-        {
-            // We don't have indexed blend and color mask control. Disable them globally. (This also
-            // means the app can't have its own draw buffers while PLS is active.)
-            ASSERT(caps.maxColorAttachmentsWithActivePixelLocalStorage == 0);
-            if (state.isBlendEnabled())
-            {
-                ContextPrivateDisable(context->getMutablePrivateState(),
-                                      context->getMutablePrivateStateCache(), GL_BLEND);
-                mBlendsToReEnable.set(0);
-            }
-            std::array<bool, 4> &mask = mSavedColorMasks[0];
-            state.getBlendStateExt().getColorMaskIndexed(0, &mask[0], &mask[1], &mask[2], &mask[3]);
-            if (!(mask[0] && mask[1] && mask[2] && mask[3]))
-            {
-                ContextPrivateColorMask(context->getMutablePrivateState(),
-                                        context->getMutablePrivateStateCache(), GL_TRUE, GL_TRUE,
-                                        GL_TRUE, GL_TRUE);
-                mColorMasksToRestore.set(0);
-            }
-        }
-
         for (GLsizei i = 0; i < n; ++i)
         {
             GLuint drawBufferIdx                = GetDrawBufferIdx(caps, i);
@@ -913,28 +902,6 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
             ASSERT(!framebuffer->getAttachment(context, colorAttachment));
             plane.attachToDrawFramebuffer(context, colorAttachment);
             plsDrawBuffers[drawBufferIdx] = colorAttachment;
-
-            if (hasIndexedBlendAndColorMask)
-            {
-                // Ensure blend and color mask are disabled for this draw buffer.
-                if (state.isBlendEnabledIndexed(drawBufferIdx))
-                {
-                    ContextPrivateDisablei(context->getMutablePrivateState(),
-                                           context->getMutablePrivateStateCache(), GL_BLEND,
-                                           drawBufferIdx);
-                    mBlendsToReEnable.set(drawBufferIdx);
-                }
-                std::array<bool, 4> &mask = mSavedColorMasks[drawBufferIdx];
-                state.getBlendStateExt().getColorMaskIndexed(drawBufferIdx, &mask[0], &mask[1],
-                                                             &mask[2], &mask[3]);
-                if (!(mask[0] && mask[1] && mask[2] && mask[3]))
-                {
-                    ContextPrivateColorMaski(context->getMutablePrivateState(),
-                                             context->getMutablePrivateStateCache(), drawBufferIdx,
-                                             GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-                    mColorMasksToRestore.set(drawBufferIdx);
-                }
-            }
 
             needsClear = needsClear || (loadop != GL_LOAD_OP_LOAD_ANGLE);
         }
@@ -967,9 +934,8 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
         }
     }
 
-    void onEnd(Context *context, const GLenum storeops[]) override
+    void onEnd(Context *context, GLsizei n, const GLenum storeops[]) override
     {
-        GLsizei n        = context->getState().getPixelLocalStorageActivePlanes();
         const Caps &caps = context->getCaps();
 
         // Invalidate the non-preserved PLS attachments.
@@ -993,25 +959,6 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
                                            invalidateList.data());
         }
 
-        bool hasIndexedBlendAndColorMask = context->getExtensions().drawBuffersIndexedAny();
-        if (!hasIndexedBlendAndColorMask)
-        {
-            // Restore global blend and color mask. Validation should have ensured these didn't
-            // change while pixel local storage was active.
-            if (mBlendsToReEnable[0])
-            {
-                ContextPrivateEnable(context->getMutablePrivateState(),
-                                     context->getMutablePrivateStateCache(), GL_BLEND);
-            }
-            if (mColorMasksToRestore[0])
-            {
-                const std::array<bool, 4> &mask = mSavedColorMasks[0];
-                ContextPrivateColorMask(context->getMutablePrivateState(),
-                                        context->getMutablePrivateStateCache(), mask[0], mask[1],
-                                        mask[2], mask[3]);
-            }
-        }
-
         for (GLsizei i = 0; i < n; ++i)
         {
             // Reset color attachments where PLS was attached. Validation should have already
@@ -1021,25 +968,6 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
             GLenum colorAttachment = GL_COLOR_ATTACHMENT0 + drawBufferIdx;
             context->framebufferTexture2D(GL_DRAW_FRAMEBUFFER, colorAttachment, TextureTarget::_2D,
                                           TextureID(), 0);
-
-            if (hasIndexedBlendAndColorMask)
-            {
-                // Restore this draw buffer's blend and color mask. Validation should have ensured
-                // these did not change while pixel local storage was active.
-                if (mBlendsToReEnable[drawBufferIdx])
-                {
-                    ContextPrivateEnablei(context->getMutablePrivateState(),
-                                          context->getMutablePrivateStateCache(), GL_BLEND,
-                                          drawBufferIdx);
-                }
-                if (mColorMasksToRestore[drawBufferIdx])
-                {
-                    const std::array<bool, 4> &mask = mSavedColorMasks[drawBufferIdx];
-                    ContextPrivateColorMaski(context->getMutablePrivateState(),
-                                             context->getMutablePrivateStateCache(), drawBufferIdx,
-                                             mask[0], mask[1], mask[2], mask[3]);
-                }
-            }
         }
 
         // Restore the draw buffer state from before PLS was enabled.
@@ -1060,9 +988,6 @@ class PixelLocalStorageFramebufferFetch : public PixelLocalStorage
     }
 
     DrawBuffersVector<GLenum> mSavedDrawBuffers;
-    DrawBufferMask mBlendsToReEnable;
-    DrawBufferMask mColorMasksToRestore;
-    DrawBuffersArray<std::array<bool, 4>> mSavedColorMasks;
 };
 
 }  // namespace

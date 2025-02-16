@@ -30,7 +30,7 @@ function test(value, expected) {
         throw "Error: bad type code for " + value + ": " + result + " (expected " + expected + ")";
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(void 0, 0);
     test({}, 1);
     test(function() { return 42; }, 2);

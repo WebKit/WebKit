@@ -29,11 +29,16 @@
 #if ENABLE(XSLT)
 #include "XSLTExtensions.h"
 
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+IGNORE_WARNINGS_BEGIN("undef")
 #include <libxml/xpathInternals.h>
 
-#include <libxslt/xsltutils.h>
 #include <libxslt/extensions.h>
 #include <libxslt/extra.h>
+#include <libxslt/xsltutils.h>
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
 
 namespace WebCore {
 
@@ -84,8 +89,11 @@ static void exsltNodeSetFunction(xmlXPathParserContextPtr ctxt, int nargs)
             "WebCore::exsltNodeSetFunction: Failed to create a node set object.\n");
         tctxt->state = XSLT_STATE_STOPPED;
     }
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
     if (strval != NULL)
         xmlFree(strval);
+IGNORE_WARNINGS_END
 
     valuePush(ctxt, obj);
 }

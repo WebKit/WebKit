@@ -11,7 +11,7 @@ function makeWeirdObject() {
     return result;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = makeWeirdObject();
     foo({f:2000000000}, {f:2000000000}, {f:o});
     if (o.f != 4000000000)

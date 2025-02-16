@@ -72,7 +72,7 @@ void DrawingAreaProxyWC::sizeDidChange()
     discardBackingStore();
     m_currentBackingStoreStateID++;
     if (m_webPageProxy)
-        send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size, m_webPageProxy->deviceScaleFactor()));
+        send(Messages::DrawingArea::UpdateGeometryWC(m_currentBackingStoreStateID, m_size, m_webPageProxy->deviceScaleFactor(), m_webPageProxy->intrinsicDeviceScaleFactor()));
 }
 
 void DrawingAreaProxyWC::update(uint64_t backingStoreStateID, UpdateInfo&& updateInfo)

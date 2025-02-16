@@ -42,7 +42,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioNodeOutput);
 
 AudioNodeOutput::AudioNodeOutput(AudioNode* node, unsigned numberOfChannels)
-    : m_node(node)
+    : m_node(node, EnableWeakPtrThreadingAssertions::No) // WebAudio code uses locking when accessing the context.
     , m_numberOfChannels(numberOfChannels)
     , m_desiredNumberOfChannels(numberOfChannels)
 {

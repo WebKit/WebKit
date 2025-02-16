@@ -252,7 +252,7 @@ void AuthenticatorManager::enableNativeSupport()
 
 void AuthenticatorManager::clearStateAsync()
 {
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
+    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
         if (!weakThis)
             return;
         weakThis->clearState();
@@ -315,7 +315,7 @@ void AuthenticatorManager::respondReceived(Respond&& respond)
 
 void AuthenticatorManager::downgrade(Authenticator* id, Ref<Authenticator>&& downgradedAuthenticator)
 {
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, id] {
+    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }, id] {
         if (!weakThis)
             return;
         auto removed = weakThis->m_authenticators.remove(id);
@@ -578,7 +578,7 @@ void AuthenticatorManager::dispatchPanelClientCall(Function<void(const API::WebA
 
     // Call delegates in the next run loop to prevent clients' reentrance that would potentially modify the state
     // of the current run loop in unexpected ways.
-    RunLoop::main().dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
+    RunLoop::protectedMain()->dispatch([weakPanel = WTFMove(weakPanel), call = WTFMove(call)] () {
         if (!weakPanel)
             return;
         call(*weakPanel);

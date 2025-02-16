@@ -41,10 +41,11 @@ private:
     DatagramSink();
 
     void write(ScriptExecutionContext&, JSC::JSValue, DOMPromiseDeferred<void>&&) final;
-    void close() final { }
+    void close() final { m_isClosed = true; }
     void error(String&&) final { }
 
     ThreadSafeWeakPtr<WebTransport> m_transport;
+    bool m_isClosed { false };
 };
 
 }

@@ -83,7 +83,7 @@ bool RuntimeMethod::getOwnPropertySlot(JSObject* object, JSGlobalObject* exec, P
 
 GCClient::IsoSubspace* RuntimeMethod::subspaceForImpl(VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->runtimeMethodSpace();
+    return &downcast<JSVMClientData>(vm.clientData)->runtimeMethodSpace();
 }
 
 JSC_DEFINE_HOST_FUNCTION(callRuntimeMethod, (JSGlobalObject* globalObject, CallFrame* callFrame))

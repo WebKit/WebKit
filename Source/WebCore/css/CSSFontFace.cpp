@@ -151,7 +151,7 @@ void CSSFontFace::setFamilies(CSSValueList& family)
     ASSERT(family.length());
 
     RefPtr oldFamily = std::exchange(m_families, &family);
-    mutableProperties().setProperty(CSSPropertyFontFamily, &family);
+    mutableProperties().setProperty(CSSPropertyFontFamily, family);
 
     iterateClients(m_clients, [&](CSSFontFaceClient& client) {
         client.fontPropertyChanged(*this, oldFamily.get());
@@ -185,7 +185,7 @@ static FontSelectionRange calculateWeightRange(CSSValue& value)
 
 void CSSFontFace::setWeight(CSSValue& weight)
 {
-    mutableProperties().setProperty(CSSPropertyFontWeight, &weight);
+    mutableProperties().setProperty(CSSPropertyFontWeight, weight);
 
     auto range = calculateWeightRange(weight);
     if (m_fontSelectionCapabilities.weight == range)
@@ -220,7 +220,7 @@ static FontSelectionRange calculateWidthRange(CSSValue& value)
 
 void CSSFontFace::setWidth(CSSValue& style)
 {
-    mutableProperties().setProperty(CSSPropertyFontWidth, &style);
+    mutableProperties().setProperty(CSSPropertyFontWidth, style);
 
     auto range = calculateWidthRange(style);
     if (m_fontSelectionCapabilities.width == range)
@@ -259,7 +259,7 @@ static FontSelectionRange calculateItalicRange(CSSValue& value)
 
 void CSSFontFace::setStyle(CSSValue& style)
 {
-    mutableProperties().setProperty(CSSPropertyFontStyle, &style);
+    mutableProperties().setProperty(CSSPropertyFontStyle, style);
 
     auto range = calculateItalicRange(style);
     if (m_fontSelectionCapabilities.slope == range)
@@ -274,7 +274,7 @@ void CSSFontFace::setStyle(CSSValue& style)
 
 void CSSFontFace::setUnicodeRange(CSSValueList& list)
 {
-    mutableProperties().setProperty(CSSPropertyUnicodeRange, &list);
+    mutableProperties().setProperty(CSSPropertyUnicodeRange, list);
 
     auto ranges = WTF::map(list, [](auto& rangeValue) {
         auto& range = downcast<CSSUnicodeRangeValue>(rangeValue);
@@ -296,7 +296,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
     // Can only call this with a primitive value of normal, or a value list containing font feature values.
     ASSERT(is<CSSPrimitiveValue>(featureSettings) || is<CSSValueList>(featureSettings));
 
-    mutableProperties().setProperty(CSSPropertyFontFeatureSettings, &featureSettings);
+    mutableProperties().setProperty(CSSPropertyFontFeatureSettings, featureSettings);
 
     FontFeatureSettings settings;
 
@@ -319,7 +319,7 @@ void CSSFontFace::setFeatureSettings(CSSValue& featureSettings)
 
 void CSSFontFace::setSizeAdjust(CSSValue& value)
 {
-    mutableProperties().setProperty(CSSPropertySizeAdjust, &value);
+    mutableProperties().setProperty(CSSPropertySizeAdjust, value);
 
     auto& sizeAdjustValue = downcast<CSSPrimitiveValue>(value);
     auto sizeAdjust = sizeAdjustValue.resolveAsPercentageDeprecated<float>() / 100;
@@ -336,7 +336,7 @@ void CSSFontFace::setSizeAdjust(CSSValue& value)
 
 void CSSFontFace::setDisplay(CSSValue& loadingBehaviorValue)
 {
-    mutableProperties().setProperty(CSSPropertyFontDisplay, &loadingBehaviorValue);
+    mutableProperties().setProperty(CSSPropertyFontDisplay, loadingBehaviorValue);
 
     auto loadingBehavior = fromCSSValue<FontLoadingBehavior>(loadingBehaviorValue);
 

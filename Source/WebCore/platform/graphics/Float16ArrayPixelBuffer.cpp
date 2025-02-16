@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Float16ArrayPixelBuffer.h"
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
 
 #include <JavaScriptCore/TypedArrayInlines.h>
 
@@ -124,4 +124,4 @@ std::span<const uint8_t> Float16ArrayPixelBuffer::span() const
 
 } // namespace WebCore
 
-#endif // HAVE(HDR_SUPPORT)
+#endif // ENABLE(PIXEL_FORMAT_RGBA16F)

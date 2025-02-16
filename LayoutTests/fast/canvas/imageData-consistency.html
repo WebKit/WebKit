@@ -34,7 +34,7 @@ function get() {
     shouldBe("actual.width", "getData.width");
     shouldBe("actual.height", "getData.height");
     for (let i = 0; i < actual.data.length; ++i)
-        shouldBe(`actual.data[${i}]`, `getData.data[${i}]`);
+        shouldBe(`actual.data[${i}]`, `getData.data[${i}]`, true);
 }
 
 function put() {

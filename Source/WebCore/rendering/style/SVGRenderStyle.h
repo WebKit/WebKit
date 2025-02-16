@@ -45,6 +45,8 @@ public:
     ~SVGRenderStyle();
 
     bool inheritedEqual(const SVGRenderStyle&) const;
+    bool nonInheritedEqual(const SVGRenderStyle&) const;
+
     void inheritFrom(const SVGRenderStyle&);
     void copyNonInheritedFrom(const SVGRenderStyle&);
 

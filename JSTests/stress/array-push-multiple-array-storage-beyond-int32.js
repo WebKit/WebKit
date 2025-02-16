@@ -10,7 +10,7 @@ function test(array, val1, val2)
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = ["Cocoa"];
     ensureArrayStorage(array);
     array.length = 2;

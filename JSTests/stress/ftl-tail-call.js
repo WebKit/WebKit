@@ -12,7 +12,7 @@ function bar(a, b, c) {
 
 noInline(bar);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar({f: 4}, {g: 5}, {h: 6});
     if (result != 4 + 5 * 2 + 6 * 3)
         throw "Error: bad result: " + result;

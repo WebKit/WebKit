@@ -64,8 +64,8 @@
 # ================================================================================
 # bmalloc
 
-/Source/bmalloc @Constellation
-/Tools/TestWebKitAPI/Tests/WTF/bmalloc @Constellation
+/Source/bmalloc @WebKit/jsc-reviewers
+/Tools/TestWebKitAPI/Tests/WTF/bmalloc @WebKit/jsc-reviewers
 
 # ================================================================================
 # JavaScriptCore

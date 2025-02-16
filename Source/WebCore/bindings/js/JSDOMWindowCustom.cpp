@@ -493,7 +493,7 @@ public:
 private:
     JSGlobalObject& m_globalObject;
     CallFrame& m_callFrame;
-    RefPtr<LocalFrame> m_frame;
+    WeakPtr<LocalFrame> m_frame;
 };
 
 inline void DialogHandler::dialogCreated(DOMWindow& dialog)
@@ -503,6 +503,7 @@ inline void DialogHandler::dialogCreated(DOMWindow& dialog)
         return;
     VM& vm = m_globalObject.vm();
     m_frame = localDOMWindow->frame();
+    RefPtr frame = m_frame.get();
 
     // FIXME: This looks like a leak between the normal world and an isolated
     //        world if dialogArguments comes from an isolated world.
@@ -514,6 +515,9 @@ inline void DialogHandler::dialogCreated(DOMWindow& dialog)
 inline JSValue DialogHandler::returnValue() const
 {
     VM& vm = m_globalObject.vm();
+    RefPtr frame = m_frame.get();
+    if (!frame)
+        return jsUndefined();
     auto* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(vm));
     if (!globalObject)
         return jsUndefined();

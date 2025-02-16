@@ -1,7 +1,7 @@
 
-FAIL View timeline with range as <name> <percent> pair. assert_equals: Effect at the midpoint of the active range: cover 0% to cover 100% expected "0.5" but got "0.486667"
-FAIL View timeline with range and inferred name or offset. assert_equals: Effect at the midpoint of the active range: entry to exit expected "0.5" but got "0.486667"
-FAIL View timeline with range as <name> <px> pair. assert_equals: Effect at the midpoint of the active range: cover 20% to cover 100% expected "0.5" but got "0.45"
-FAIL View timeline with range as <name> <percent+px> pair. assert_equals: Effect at the start of the active phase: contain undefined% to contain undefined% expected "0.3" but got "0.7"
-FAIL View timeline with range as strings. assert_equals: Effect at the midpoint of the active range:  to  expected "0.5" but got "0.473333"
+PASS View timeline with range as <name> <percent> pair.
+PASS View timeline with range and inferred name or offset.
+PASS View timeline with range as <name> <px> pair.
+PASS View timeline with range as <name> <percent+px> pair.
+PASS View timeline with range as strings.
 

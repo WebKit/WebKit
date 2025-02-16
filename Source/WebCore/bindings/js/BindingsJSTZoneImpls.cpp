@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,10 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CachedScriptSourceProvider);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DOMPromiseDeferredBase);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptBufferSourceProvider);
+#if ENABLE(WEBASSEMBLY)
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAssemblyCachedScriptSourceProvider);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebAssemblyScriptBufferSourceProvider);
+#endif
 
 #define TZONE_TEMPLATE_PARAMS
 #define TZONE_TYPE DOMPromiseProxy<IDLUndefined>

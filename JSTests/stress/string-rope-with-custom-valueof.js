@@ -39,7 +39,7 @@ random = { valueOf: function() {
     }
 } };
 
-for (i = 0; i < 100000; i++) {
+for (i = 0; i < testLoopCount; i++) {
     if (catNumber(number) !== "testthings1")
         throw "bad number";
     if (catBool(bool) !== "testthingstrue")
@@ -51,7 +51,7 @@ for (i = 0; i < 100000; i++) {
 }
 
 // Try passing new types to each of the other functions.
-for (i = 0; i < 100000; i++) {
+for (i = 0; i < testLoopCount; i++) {
     if (catUndefined(number) !== "testthings1")
         throw "bad number";
     if (catNumber(bool) !== "testthingstrue")

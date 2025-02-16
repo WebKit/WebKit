@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "DateTimeFieldElement.h"
 #include "TypeAhead.h"
 
@@ -68,5 +66,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

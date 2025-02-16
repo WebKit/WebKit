@@ -1,7 +1,8 @@
 import pytest
 
-from webdriver.bidi.error import MoveTargetOutOfBoundsException
+from webdriver.bidi.error import MoveTargetOutOfBoundsException, NoSuchFrameException
 from webdriver.bidi.modules.input import Actions, get_element_origin
+from webdriver.bidi.modules.script import ContextTarget
 
 from tests.support.asserts import assert_move_to_coordinates
 from tests.support.helpers import filter_dict
@@ -15,6 +16,45 @@ from . import (
 )
 
 pytestmark = pytest.mark.asyncio
+
+CONTEXT_LOAD_EVENT = "browsingContext.load"
+
+
+async def test_pointer_down_closes_browsing_context(
+    bidi_session, configuration, get_element, new_tab, inline, subscribe_events,
+    wait_for_event
+):
+    url = inline("""<input onpointerdown="window.close()">close</input>""")
+
+    # Opening a new context via `window.open` is required for script to be able
+    # to close it.
+    await subscribe_events(events=[CONTEXT_LOAD_EVENT])
+    on_load = wait_for_event(CONTEXT_LOAD_EVENT)
+
+    await bidi_session.script.evaluate(
+        expression=f"window.open('{url}')",
+        target=ContextTarget(new_tab["context"]),
+        await_promise=True
+    )
+    # Wait for the new context to be created and get it.
+    new_context = await on_load
+
+    element = await get_element("input", context=new_context)
+    origin = get_element_origin(element)
+
+    actions = Actions()
+    (
+        actions.add_pointer()
+        .pointer_move(0, 0, origin=origin)
+        .pointer_down(button=0)
+        .pause(250 * configuration["timeout_multiplier"])
+        .pointer_up(button=0)
+    )
+
+    with pytest.raises(NoSuchFrameException):
+        await bidi_session.input.perform_actions(
+            actions=actions, context=new_context["context"]
+        )
 
 
 async def test_click_at_coordinates(bidi_session, top_context, load_static_test_page):
@@ -54,34 +94,26 @@ async def test_click_at_coordinates(bidi_session, top_context, load_static_test_
     assert expected == filtered_events[1:]
 
 
-@pytest.mark.parametrize("origin", ["pointer", "viewport"])
-async def test_params_actions_origin_outside_viewport(bidi_session, top_context, origin):
-    actions = Actions()
-    actions.add_pointer().pointer_move(x=-50, y=-50, origin=origin)
-
-    with pytest.raises(MoveTargetOutOfBoundsException):
-        await bidi_session.input.perform_actions(
-            actions=actions, context=top_context["context"]
+@pytest.mark.parametrize("origin", ["element", "pointer", "viewport"])
+async def test_params_actions_origin_outside_viewport(
+    bidi_session, top_context, get_actions_origin_page, get_element, origin
+):
+    if origin == "element":
+        url = get_actions_origin_page(
+            """width: 100px; height: 50px; background: green;
+            position: relative; left: -200px; top: -100px;"""
+        )
+        await bidi_session.browsing_context.navigate(
+            context=top_context["context"],
+            url=url,
+            wait="complete",
         )
 
-
-async def test_params_actions_origin_element_outside_viewport(
-    bidi_session, top_context, get_actions_origin_page, get_element
-):
-    url = get_actions_origin_page(
-        """width: 100px; height: 50px; background: green;
-           position: relative; left: -200px; top: -100px;"""
-    )
-    await bidi_session.browsing_context.navigate(
-        context=top_context["context"],
-        url=url,
-        wait="complete",
-    )
-
-    elem = await get_element("#inner")
+        element = await get_element("#inner")
+        origin = get_element_origin(element)
 
     actions = Actions()
-    actions.add_pointer().pointer_move(x=0, y=0, origin=get_element_origin(elem))
+    actions.add_pointer().pointer_move(x=-100, y=-100, origin=origin)
 
     with pytest.raises(MoveTargetOutOfBoundsException):
         await bidi_session.input.perform_actions(
@@ -316,3 +348,62 @@ async def test_move_to_position_in_viewport(
 
     events = await get_events(bidi_session, top_context["context"])
     assert len(events) == event_count
+
+
+@pytest.mark.parametrize("origin", ["viewport", "pointer", "element"])
+async def test_move_to_origin_position_within_frame(
+    bidi_session, get_element, iframe, inline, top_context, origin
+):
+    url = inline(
+        iframe(
+            """
+        <textarea style="width: 100px; height: 40px"></textarea>
+        <script>
+            "use strict;"
+
+            var allEvents = { events: [] };
+            window.addEventListener("mousemove", e => {
+                allEvents.events.push([
+                    e.clientX,
+                    e.clientY,
+                ]);
+            });
+        </script>
+    """
+        )
+    )
+
+    await bidi_session.browsing_context.navigate(
+        context=top_context["context"],
+        url=url,
+        wait="complete",
+    )
+
+    contexts = await bidi_session.browsing_context.get_tree(root=top_context["context"])
+    iframe = contexts[0]["children"][0]
+
+    elem = await get_element("textarea", context=iframe)
+    elem_center_point = await get_inview_center_bidi(
+        bidi_session, context=iframe, element=elem
+    )
+
+    offset = [10, 5]
+
+    if origin == "element":
+        origin = get_element_origin(elem)
+        target_point = [
+            elem_center_point["x"] + offset[0],
+            elem_center_point["y"] + offset[1],
+        ]
+    else:
+        target_point = offset
+
+    actions = Actions()
+    actions.add_pointer().pointer_move(x=offset[0], y=offset[1], origin=origin)
+
+    await bidi_session.input.perform_actions(actions=actions, context=iframe["context"])
+
+    events = await get_events(bidi_session, iframe["context"])
+
+    assert len(events) == 1
+    assert events[0] == target_point

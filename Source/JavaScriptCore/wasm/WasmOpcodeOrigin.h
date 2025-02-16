@@ -37,10 +37,12 @@ namespace JSC { namespace Wasm {
 class OpcodeOrigin {
     WTF_FORBID_HEAP_ALLOCATION;
 
-    OpcodeOrigin() = default;
-
 public:
     void dump(PrintStream&) const;
+
+    OpcodeOrigin() = default;
+
+    friend bool operator==(const OpcodeOrigin&, const OpcodeOrigin&) = default;
 
 #if USE(JSVALUE64)
     OpcodeOrigin(OpType opcode, size_t offset)

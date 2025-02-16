@@ -106,7 +106,7 @@ ExceptionOr<Ref<WebKitMediaKeySession>> WebKitMediaKeys::createSession(Document&
     session->generateKeyRequest(type, WTFMove(initData));
 
     // 6. Return the new object to the caller.
-    return WTFMove(session);
+    return session;
 }
 
 bool WebKitMediaKeys::isTypeSupported(const String& keySystem, const String& mimeType)

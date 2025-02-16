@@ -58,15 +58,15 @@ public:
     // Calls useful for debugging the ClobberSet.
     // Do not call for non debugging purpose. Otherwise, you must handle DOMState hierarchy carefully.
     
-    HashSet<AbstractHeap> direct() const;
-    HashSet<AbstractHeap> super() const;
+    UncheckedKeyHashSet<AbstractHeap> direct() const;
+    UncheckedKeyHashSet<AbstractHeap> super() const;
     
     void dump(PrintStream&) const;
     
 private:
     bool contains(AbstractHeap) const;
 
-    HashSet<AbstractHeap> setOf(bool direct) const;
+    UncheckedKeyHashSet<AbstractHeap> setOf(bool direct) const;
     
     // Maps heap to:
     // true --> it's a direct clobber

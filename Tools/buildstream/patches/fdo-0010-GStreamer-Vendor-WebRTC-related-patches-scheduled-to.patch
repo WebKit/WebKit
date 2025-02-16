@@ -1,11 +1,11 @@
-From 40b6603e282bb15805078260cd31a65150e3141c Mon Sep 17 00:00:00 2001
+From 081b40f5180bd3a5f988cd8eab4b2ca5510df403 Mon Sep 17 00:00:00 2001
 From: Philippe Normand <philn@igalia.com>
-Date: Mon, 11 Nov 2024 10:29:47 +0000
-Subject: [PATCH 1/2] GStreamer: Vendor WebRTC-related patches scheduled to
- ship in 1.26
+Date: Mon, 20 Jan 2025 12:43:57 +0000
+Subject: [PATCH] GStreamer: Vendor WebRTC-relates patches scheduled to ship in
+ 1.26
 
 ---
- ...-and-associate-transceivers-earlier-.patch | 912 ++++++++++++++++++
+ ...-and-associate-transceivers-earlier-.patch | 887 ++++++++++++++++++
  ...-reverse-direction-from-remote-media.patch |  87 ++
  ...t-output-stream-on-recv-transceivers.patch | 120 +++
  ...-matching-pads-to-unassociated-trans.patch |  46 +
@@ -13,7 +13,7 @@ Subject: [PATCH 1/2] GStreamer: Vendor WebRTC-related patches scheduled to
  ...SRC-attributes-getting-CAPS-for-a-PT.patch | 144 +++
  ...allback-to-pad-default-handling-for-.patch | 192 ++++
  ...le-forward-unknown-ssrc-on-rtpfunnel.patch |  30 +
- 8 files changed, 1806 insertions(+)
+ 8 files changed, 1781 insertions(+)
  create mode 100644 patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch
  create mode 100644 patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
  create mode 100644 patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
@@ -25,14 +25,14 @@ Subject: [PATCH 1/2] GStreamer: Vendor WebRTC-related patches scheduled to
 
 diff --git a/patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch b/patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch
 new file mode 100644
-index 0000000..ed87b7f
+index 0000000..ed452ab
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch
-@@ -0,0 +1,661 @@
-+From 8edcb3957601ba1237d3f60bbfc0f115a614aa75 Mon Sep 17 00:00:00 2001
+@@ -0,0 +1,639 @@
++From e194b6bb173a95dcfb84c328fff426e60e6ab8f9 Mon Sep 17 00:00:00 2001
 +From: Carlos Bentzen <cadubentzen@igalia.com>
 +Date: Wed, 10 Jul 2024 10:34:19 +0200
-+Subject: [PATCH 1/9] webrtcbin: create and associate transceivers earlier in
++Subject: [PATCH 1/8] webrtcbin: create and associate transceivers earlier in
 + negotation
 +
 +According to https://w3c.github.io/webrtc-pc/#set-the-session-description
@@ -55,14 +55,14 @@ index 0000000..ed87b7f
 +
 +Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7156>
 +---
-+ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c | 495 ++++++++++--------
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c | 477 +++++++++++-------
 + .../gst-plugins-bad/ext/webrtc/webrtcsdp.c    |  11 +
 + .../gst-plugins-bad/ext/webrtc/webrtcsdp.h    |   2 +
 + .../tests/check/elements/webrtcbin.c          | 120 ++++-
-+ 4 files changed, 388 insertions(+), 240 deletions(-)
++ 4 files changed, 388 insertions(+), 222 deletions(-)
 +
 +diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+index f170f512bf..b4196e3435 100644
++index dce4820a6d..225d246576 100644
 +--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 ++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 +@@ -748,6 +748,13 @@ transceiver_match_for_mid (GstWebRTCRTPTransceiver * trans, const gchar * mid)
@@ -200,8 +200,8 @@ index 0000000..ed87b7f
 +-          }
 +-          rtp_trans = NULL;
 +-        }
-+       }
-+ 
++-      }
++-
 +-      if (rtp_trans) {
 +-        answer_dir = rtp_trans->direction;
 +-        g_assert (answer_caps != NULL);
@@ -211,8 +211,8 @@ index 0000000..ed87b7f
 +-        answer_dir = GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY;
 +-        GST_WARNING_OBJECT (webrtc, "did not find compatible transceiver for "
 +-            "offer caps %" GST_PTR_FORMAT ", will only receive", offer_caps);
-+-      }
-+-
++       }
++ 
 +-      if (!rtp_trans) {
 +-        GstCaps *trans_caps;
 +-        GstWebRTCKind kind = GST_WEBRTC_KIND_UNKNOWN;
@@ -284,32 +284,7 @@ index 0000000..ed87b7f
 +     }
 +   }
 + 
-+@@ -6079,24 +6006,6 @@ _update_data_channel_from_sdp_media (GstWebRTCBin * webrtc,
-+   transport_receive_bin_set_receive_state (receive, RECEIVE_STATE_PASS);
-+ }
-+ 
-+-static gboolean
-+-_find_compatible_unassociated_transceiver (GstWebRTCRTPTransceiver * p1,
-+-    gconstpointer data)
-+-{
-+-  GstWebRTCKind kind = GPOINTER_TO_INT (data);
-+-
-+-  if (p1->mid)
-+-    return FALSE;
-+-  if (p1->mline != -1)
-+-    return FALSE;
-+-  if (p1->stopped)
-+-    return FALSE;
-+-  if (p1->kind != GST_WEBRTC_KIND_UNKNOWN && p1->kind != kind)
-+-    return FALSE;
-+-
-+-  return TRUE;
-+-}
-+-
-+ static void
-+ _connect_rtpfunnel (GstWebRTCBin * webrtc, guint session_id)
-+ {
-+@@ -6179,7 +6088,6 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
++@@ -6185,7 +6112,6 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
 +   for (i = 0; i < gst_sdp_message_medias_len (sdp->sdp); i++) {
 +     const GstSDPMedia *media = gst_sdp_message_get_media (sdp->sdp, i);
 +     TransportStream *stream;
@@ -317,7 +292,7 @@ index 0000000..ed87b7f
 +     guint transport_idx;
 + 
 +     /* skip rejected media */
-+@@ -6191,8 +6099,6 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
++@@ -6197,8 +6123,6 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
 +     else
 +       transport_idx = i;
 + 
@@ -326,7 +301,7 @@ index 0000000..ed87b7f
 +     stream = _get_or_create_transport_stream (webrtc, transport_idx,
 +         _message_media_is_datachannel (sdp->sdp, transport_idx));
 +     if (!bundled) {
-+@@ -6203,60 +6109,28 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
++@@ -6209,60 +6133,28 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
 +       ensure_rtx_hdr_ext (stream);
 +     }
 + 
@@ -341,10 +316,7 @@ index 0000000..ed87b7f
 +-      if (g_strcmp0 (gst_sdp_media_get_media (media), "audio") == 0 ||
 +-          g_strcmp0 (gst_sdp_media_get_media (media), "video") == 0) {
 +-        GstWebRTCKind kind = GST_WEBRTC_KIND_UNKNOWN;
-++    if (g_strcmp0 (gst_sdp_media_get_media (media), "audio") == 0 ||
-++        g_strcmp0 (gst_sdp_media_get_media (media), "video") == 0) {
-++      GstWebRTCRTPTransceiver *trans;
-+ 
++-
 +-        /* No existing transceiver, find an unused one */
 +-        if (!trans) {
 +-          if (g_strcmp0 (gst_sdp_media_get_media (media), "audio") == 0)
@@ -374,7 +346,10 @@ index 0000000..ed87b7f
 +-              gst_webrtc_bin_signals[ON_NEW_TRANSCEIVER_SIGNAL], 0, trans);
 +-          PC_LOCK (webrtc);
 +-        }
-+-
+++    if (g_strcmp0 (gst_sdp_media_get_media (media), "audio") == 0 ||
+++        g_strcmp0 (gst_sdp_media_get_media (media), "video") == 0) {
+++      GstWebRTCRTPTransceiver *trans;
++ 
 +-        _update_transceiver_from_sdp_media (webrtc, sdp->sdp, i, stream,
 +-            trans, bundled, bundle_idx, error);
 +-        if (error && *error)
@@ -407,7 +382,7 @@ index 0000000..ed87b7f
 +     }
 +   }
 + 
-+@@ -6406,6 +6280,210 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
++@@ -6412,6 +6304,210 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
 +   return NULL;
 + }
 + 
@@ -618,7 +593,7 @@ index 0000000..ed87b7f
 + 
 + /* http://w3c.github.io/webrtc-pc/#set-description */
 + static GstStructure *
-+@@ -6568,21 +6646,8 @@ _set_description_task (GstWebRTCBin * webrtc, struct set_description *sd)
++@@ -6574,21 +6670,8 @@ _set_description_task (GstWebRTCBin * webrtc, struct set_description *sd)
 +     }
 +   }
 + 
@@ -642,7 +617,7 @@ index 0000000..ed87b7f
 + 
 +   if (webrtc->signaling_state != new_signaling_state) {
 +     webrtc->signaling_state = new_signaling_state;
-+@@ -6642,6 +6707,12 @@ _set_description_task (GstWebRTCBin * webrtc, struct set_description *sd)
++@@ -6648,6 +6731,12 @@ _set_description_task (GstWebRTCBin * webrtc, struct set_description *sd)
 +         continue;
 +       }
 + 
@@ -695,14 +670,14 @@ index 0000000..ed87b7f
 +
 diff --git a/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch b/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
 new file mode 100644
-index 0000000..b65e003
+index 0000000..cd00e5a
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
 @@ -0,0 +1,87 @@
-+From 8615a8ac712bc173c0c3585392683053b7b8ee94 Mon Sep 17 00:00:00 2001
++From 2e69c18ecb12a66ce92f7e3c591343916856c1b1 Mon Sep 17 00:00:00 2001
 +From: Carlos Bentzen <cadubentzen@igalia.com>
 +Date: Fri, 2 Aug 2024 11:19:56 +0200
-+Subject: [PATCH 2/9] webrtcbin: reverse direction from remote media
++Subject: [PATCH 2/8] webrtcbin: reverse direction from remote media
 +
 +This had been overlooked from the spec. We need to reverse
 +the remote media direction when setting the transceiver direction.
@@ -713,10 +688,10 @@ index 0000000..b65e003
 + 1 file changed, 26 insertions(+), 3 deletions(-)
 +
 +diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+index b4196e3435..5ad6550d88 100644
++index 225d246576..bc5ebb1909 100644
 +--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 ++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+@@ -6280,6 +6280,22 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
++@@ -6304,6 +6304,22 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
 +   return NULL;
 + }
 + 
@@ -739,7 +714,7 @@ index 0000000..b65e003
 + /* https://w3c.github.io/webrtc-pc/#set-description (steps in 4.6.10.) */
 + static gboolean
 + _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
-+@@ -6328,12 +6344,14 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++@@ -6352,12 +6368,14 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
 +     const gchar *mid;
 +     guint transport_idx;
 +     TransportStream *stream;
@@ -754,7 +729,7 @@ index 0000000..b65e003
 + 
 +     /* XXX: not strictly required but a lot of functionality requires a mid */
 +     if (!mid) {
-+@@ -6390,8 +6408,6 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++@@ -6414,8 +6432,6 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
 +          * that were added to the PeerConnection by addTrack and are not associated with any "m=" section
 +          * and are not stopped, find the first (according to the canonical order described in Section 5.2.1)
 +          * such RtpTransceiver. */
@@ -763,7 +738,7 @@ index 0000000..b65e003
 +         if (direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV
 +             || direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY) {
 +           int j;
-+@@ -6464,11 +6480,18 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++@@ -6488,11 +6504,18 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
 +       trans->mid = g_strdup (mid);
 +       g_object_notify (G_OBJECT (trans), "mid");
 + 
@@ -788,14 +763,14 @@ index 0000000..b65e003
 +
 diff --git a/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch b/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
 new file mode 100644
-index 0000000..22ee11b
+index 0000000..c7c5a9a
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
-@@ -0,0 +1,37 @@
-+From cd27befcb7a75a1cca00027a195c1f40aa8f0c26 Mon Sep 17 00:00:00 2001
+@@ -0,0 +1,40 @@
++From 5bd0033bc9683610a74f668e67672fc524628fb2 Mon Sep 17 00:00:00 2001
 +From: Carlos Bentzen <cadubentzen@igalia.com>
 +Date: Fri, 2 Aug 2024 11:21:13 +0200
-+Subject: [PATCH 3/9] webrtcbin: connect output stream on recv transceivers
++Subject: [PATCH 3/8] webrtcbin: connect output stream on recv transceivers
 +
 +With MR 7156, transceivers and transports are created earlier,
 +but for sendrecv media we could get `not-linked` errors due to
@@ -813,10 +788,10 @@ index 0000000..22ee11b
 + 2 files changed, 68 insertions(+)
 +
 +diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+index 5ad6550d88..ec8fc47490 100644
++index bc5ebb1909..02652c0362 100644
 +--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 ++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+@@ -6500,6 +6500,12 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++@@ -6524,6 +6524,12 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
 +         webrtc_transceiver_set_transport (wtrans, stream);
 +       }
 +     }
@@ -834,14 +809,14 @@ index 0000000..22ee11b
 +
 diff --git a/patches/gstreamer/gst-plugins-bad-0004-webrtc-Fixes-for-matching-pads-to-unassociated-trans.patch b/patches/gstreamer/gst-plugins-bad-0004-webrtc-Fixes-for-matching-pads-to-unassociated-trans.patch
 new file mode 100644
-index 0000000..51a5c6d
+index 0000000..118d506
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0004-webrtc-Fixes-for-matching-pads-to-unassociated-trans.patch
 @@ -0,0 +1,46 @@
-+From aaf06f221975d4ef771e81438da7179b4b3bdd00 Mon Sep 17 00:00:00 2001
++From 11d381a3d77848e62189df20ba4e7fe8c9dadd45 Mon Sep 17 00:00:00 2001
 +From: Jan Schmidt <jan@centricular.com>
 +Date: Wed, 24 Jul 2024 20:59:51 +1000
-+Subject: [PATCH 4/9] webrtc: Fixes for matching pads to unassociated
++Subject: [PATCH 4/8] webrtc: Fixes for matching pads to unassociated
 + transceivers
 +
 +Fix an inverted condition when checking if sink pad caps match
@@ -857,10 +832,10 @@ index 0000000..51a5c6d
 + 1 file changed, 3 insertions(+), 3 deletions(-)
 +
 +diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+index ec8fc47490..6a9484a2bc 100644
++index 02652c0362..6fa560b554 100644
 +--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 ++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+@@ -8355,9 +8355,9 @@ gst_webrtc_bin_request_new_pad (GstElement * element, GstPadTemplate * templ,
++@@ -8379,9 +8379,9 @@ gst_webrtc_bin_request_new_pad (GstElement * element, GstPadTemplate * templ,
 +       GstWebRTCBinPad *pad2;
 +       gboolean has_matching_caps;
 + 
@@ -872,7 +847,7 @@ index 0000000..51a5c6d
 +         continue;
 + 
 +       /* Ignore stopped transmitters */
-+@@ -8379,7 +8379,7 @@ gst_webrtc_bin_request_new_pad (GstElement * element, GstPadTemplate * templ,
++@@ -8403,7 +8403,7 @@ gst_webrtc_bin_request_new_pad (GstElement * element, GstPadTemplate * templ,
 + 
 +       GST_OBJECT_LOCK (tmptrans);
 +       has_matching_caps = (caps && tmptrans->codec_preferences &&
@@ -886,14 +861,14 @@ index 0000000..51a5c6d
 +
 diff --git a/patches/gstreamer/gst-plugins-bad-0005-webrtcbin-Fix-renegotiation-checks.patch b/patches/gstreamer/gst-plugins-bad-0005-webrtcbin-Fix-renegotiation-checks.patch
 new file mode 100644
-index 0000000..0d9748e
+index 0000000..d044f8d
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0005-webrtcbin-Fix-renegotiation-checks.patch
 @@ -0,0 +1,137 @@
-+From 22e49d68ab4095379df2f0e3fa09ee61f3fb5624 Mon Sep 17 00:00:00 2001
++From 8be67d014ff50275ad0dd0a70f81bb93b24033c6 Mon Sep 17 00:00:00 2001
 +From: Jan Schmidt <jan@centricular.com>
 +Date: Thu, 1 Aug 2024 13:42:52 +1000
-+Subject: [PATCH 5/9] webrtcbin: Fix renegotiation checks
++Subject: [PATCH 5/8] webrtcbin: Fix renegotiation checks
 +
 +When checking for renegotiation against a local offer,
 +reverse the remote direction in the corresponding answer
@@ -919,7 +894,7 @@ index 0000000..0d9748e
 + 2 files changed, 151 insertions(+), 32 deletions(-)
 +
 +diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+index 6a9484a2bc..d8cf348f99 100644
++index 6fa560b554..6fb42da6f4 100644
 +--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 ++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 +@@ -1772,6 +1772,22 @@ done:
@@ -1001,7 +976,7 @@ index 0000000..0d9748e
 +               gst_webrtc_rtp_transceiver_direction_to_string (remote_dir));
 +           return TRUE;
 +         }
-+@@ -6280,22 +6302,6 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
++@@ -6304,22 +6326,6 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
 +   return NULL;
 + }
 + 
@@ -1029,14 +1004,14 @@ index 0000000..0d9748e
 +
 diff --git a/patches/gstreamer/gst-plugins-bad-0006-webrtc-add-all-SSRC-attributes-getting-CAPS-for-a-PT.patch b/patches/gstreamer/gst-plugins-bad-0006-webrtc-add-all-SSRC-attributes-getting-CAPS-for-a-PT.patch
 new file mode 100644
-index 0000000..b28949e
+index 0000000..90cd128
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0006-webrtc-add-all-SSRC-attributes-getting-CAPS-for-a-PT.patch
 @@ -0,0 +1,144 @@
-+From e2db93c386bb133ca7e4d3641007771de573695b Mon Sep 17 00:00:00 2001
++From 41fa9831893c9ee434840b4d1bf1150ab124f762 Mon Sep 17 00:00:00 2001
 +From: =?UTF-8?q?Fran=C3=A7ois=20Laignel?= <francois@centricular.com>
 +Date: Thu, 7 Mar 2024 17:36:33 +0100
-+Subject: [PATCH 6/9] webrtc: add all SSRC attributes getting CAPS for a PT
++Subject: [PATCH 6/8] webrtc: add all SSRC attributes getting CAPS for a PT
 +
 +The transport stream only returned the CAPS for the first matching PT entry
 +from the `ptmap`. Other SSRC with the same PT where not included. For a stream
@@ -1059,7 +1034,7 @@ index 0000000..b28949e
 + 3 files changed, 57 insertions(+), 6 deletions(-)
 +
 +diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+index d8cf348f99..2b920313d6 100644
++index 6fb42da6f4..8ac9850a62 100644
 +--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 ++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 +@@ -5080,6 +5080,8 @@ _set_internal_rtpbin_element_props_from_stream (GstWebRTCBin * webrtc,
@@ -1071,7 +1046,7 @@ index 0000000..b28949e
 +   }
 + 
 +   GST_DEBUG_OBJECT (stream, "setting payload map on %" GST_PTR_FORMAT " : %"
-+@@ -7562,8 +7564,7 @@ on_rtpbin_request_pt_map (GstElement * rtpbin, guint session_id, guint pt,
++@@ -7586,8 +7588,7 @@ on_rtpbin_request_pt_map (GstElement * rtpbin, guint session_id, guint pt,
 +   if (!stream)
 +     goto unknown_session;
 + 
@@ -1179,14 +1154,14 @@ index 0000000..b28949e
 +
 diff --git a/patches/gstreamer/gst-plugins-bad-0007-rtpfunnel-also-fallback-to-pad-default-handling-for-.patch b/patches/gstreamer/gst-plugins-bad-0007-rtpfunnel-also-fallback-to-pad-default-handling-for-.patch
 new file mode 100644
-index 0000000..695e961
+index 0000000..0a69883
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0007-rtpfunnel-also-fallback-to-pad-default-handling-for-.patch
 @@ -0,0 +1,192 @@
-+From 49ff577a13a5b0e62ad7d06efedc3a91071e80fb Mon Sep 17 00:00:00 2001
++From c94115afb25784e5552df9a40d05fa038e72f3e4 Mon Sep 17 00:00:00 2001
 +From: Matthew Waters <matthew@centricular.com>
 +Date: Fri, 23 Aug 2024 20:01:32 +1000
-+Subject: [PATCH 7/9] rtpfunnel: also fallback to pad default handling for
++Subject: [PATCH 7/8] rtpfunnel: also fallback to pad default handling for
 + unknown ssrcs
 +
 +If two (or more) rtpfunnel elements are cascaded, then only one will
@@ -1205,7 +1180,7 @@ index 0000000..695e961
 + 3 files changed, 58 insertions(+), 6 deletions(-)
 +
 +diff --git a/subprojects/gst-plugins-good/docs/gst_plugins_cache.json b/subprojects/gst-plugins-good/docs/gst_plugins_cache.json
-+index d270728a03..d02d1436d5 100644
++index 4629e86836..d05e5c054b 100644
 +--- a/subprojects/gst-plugins-good/docs/gst_plugins_cache.json
 ++++ b/subprojects/gst-plugins-good/docs/gst_plugins_cache.json
 +@@ -18376,6 +18376,18 @@
@@ -1228,7 +1203,7 @@ index 0000000..695e961
 +                 },
 +                 "rank": "none"
 +diff --git a/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c b/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c
-+index d403015e14..0e33d05b24 100644
++index 8de1ae8918..ee819676ec 100644
 +--- a/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c
 ++++ b/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c
 +@@ -109,9 +109,11 @@ enum
@@ -1251,7 +1226,7 @@ index 0000000..695e961
 + };
 + 
 + #define RTP_CAPS "application/x-rtp"
-+@@ -529,9 +532,10 @@ gst_rtp_funnel_src_event (GstPad * pad, GstObject * parent, GstEvent * event)
++@@ -536,9 +539,10 @@ gst_rtp_funnel_src_event (GstPad * pad, GstObject * parent, GstEvent * event)
 +     GstPad *fpad;
 +     guint ssrc;
 +     if (s && gst_structure_get_uint (s, "ssrc", &ssrc)) {
@@ -1263,7 +1238,7 @@ index 0000000..695e961
 +       fpad = g_hash_table_lookup (funnel->ssrc_to_pad, GUINT_TO_POINTER (ssrc));
 +       if (fpad)
 +         gst_object_ref (fpad);
-+@@ -542,8 +546,10 @@ gst_rtp_funnel_src_event (GstPad * pad, GstObject * parent, GstEvent * event)
++@@ -549,8 +553,10 @@ gst_rtp_funnel_src_event (GstPad * pad, GstObject * parent, GstEvent * event)
 +             event, fpad);
 +         ret = gst_pad_push_event (fpad, event);
 +         gst_object_unref (fpad);
@@ -1275,7 +1250,7 @@ index 0000000..695e961
 +       }
 +     }
 +   }
-+@@ -600,6 +606,11 @@ gst_rtp_funnel_set_property (GObject * object, guint prop_id,
++@@ -607,6 +613,11 @@ gst_rtp_funnel_set_property (GObject * object, guint prop_id,
 +     case PROP_COMMON_TS_OFFSET:
 +       funnel->common_ts_offset = g_value_get_int (value);
 +       break;
@@ -1287,7 +1262,7 @@ index 0000000..695e961
 +     default:
 +       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 +       break;
-+@@ -616,6 +627,11 @@ gst_rtp_funnel_get_property (GObject * object, guint prop_id, GValue * value,
++@@ -623,6 +634,11 @@ gst_rtp_funnel_get_property (GObject * object, guint prop_id, GValue * value,
 +     case PROP_COMMON_TS_OFFSET:
 +       g_value_set_int (value, funnel->common_ts_offset);
 +       break;
@@ -1299,7 +1274,7 @@ index 0000000..695e961
 +     default:
 +       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 +       break;
-+@@ -706,6 +722,19 @@ gst_rtp_funnel_class_init (GstRtpFunnelClass * klass)
++@@ -717,6 +733,19 @@ gst_rtp_funnel_class_init (GstRtpFunnelClass * klass)
 +           -1, G_MAXINT32, DEFAULT_COMMON_TS_OFFSET,
 +           G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
 + 
@@ -1319,14 +1294,14 @@ index 0000000..695e961
 +   GST_DEBUG_CATEGORY_INIT (gst_rtp_funnel_debug,
 +       "gstrtpfunnel", 0, "funnel element");
 + }
-+@@ -723,4 +752,5 @@ gst_rtp_funnel_init (GstRtpFunnel * funnel)
++@@ -734,4 +763,5 @@ gst_rtp_funnel_init (GstRtpFunnel * funnel)
 +   funnel->srccaps = gst_caps_new_empty_simple (RTP_CAPS);
 +   funnel->ssrc_to_pad = g_hash_table_new (NULL, NULL);
 +   funnel->current_pad = NULL;
 ++  funnel->forward_unknown_ssrcs = DEFAULT_FORWARD_UNKNOWN_SSRC;
 + }
 +diff --git a/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c b/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c
-+index 676127ca18..1bb6be2a3d 100644
++index a7da56ad00..e755ea8500 100644
 +--- a/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c
 ++++ b/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c
 +@@ -55,7 +55,7 @@ GST_START_TEST (rtpfunnel_ssrc_demuxing)
@@ -1377,14 +1352,14 @@ index 0000000..695e961
 +
 diff --git a/patches/gstreamer/gst-plugins-bad-0008-webrtcbin-enable-forward-unknown-ssrc-on-rtpfunnel.patch b/patches/gstreamer/gst-plugins-bad-0008-webrtcbin-enable-forward-unknown-ssrc-on-rtpfunnel.patch
 new file mode 100644
-index 0000000..9b76b3b
+index 0000000..c48a6ee
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0008-webrtcbin-enable-forward-unknown-ssrc-on-rtpfunnel.patch
 @@ -0,0 +1,30 @@
-+From aae237495054cd49d7183f43d694736b9d71d64c Mon Sep 17 00:00:00 2001
++From 90484041b738b81efeea7df13a00af82b7153f52 Mon Sep 17 00:00:00 2001
 +From: Matthew Waters <matthew@centricular.com>
 +Date: Mon, 26 Aug 2024 14:46:59 +1000
-+Subject: [PATCH 8/9] webrtcbin: enable forward-unknown-ssrc on rtpfunnel
++Subject: [PATCH 8/8] webrtcbin: enable forward-unknown-ssrc on rtpfunnel
 +
 +See also: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7405
 +
@@ -1394,10 +1369,10 @@ index 0000000..9b76b3b
 + 1 file changed, 4 insertions(+)
 +
 +diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+index 2b920313d6..7d25858318 100644
++index 8ac9850a62..c911ee5c47 100644
 +--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
 ++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
-+@@ -6044,6 +6044,10 @@ _connect_rtpfunnel (GstWebRTCBin * webrtc, guint session_id)
++@@ -6066,6 +6066,10 @@ _connect_rtpfunnel (GstWebRTCBin * webrtc, guint session_id, GError ** error)
 +     goto done;
 + 
 +   webrtc->rtpfunnel = gst_element_factory_make ("rtpfunnel", NULL);
@@ -1412,5 +1387,5 @@ index 0000000..9b76b3b
 +2.47.0
 +
 -- 
-2.47.0
+2.48.0
 

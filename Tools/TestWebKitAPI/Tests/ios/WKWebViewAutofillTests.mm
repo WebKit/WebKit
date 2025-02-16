@@ -194,6 +194,22 @@ TEST(WKWebViewAutoFillTests, StandaloneUsernameField)
     EXPECT_FALSE([webView acceptsAutoFillLoginCredentials]);
 }
 
+TEST(WKWebViewAutoFillTests, StandaloneUsernameWebauthnField)
+{
+    auto webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView synchronouslyLoadHTMLString:@"<input id='username' autocomplete='username webauthn'>"];
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"username.focus()"];
+    EXPECT_TRUE([webView acceptsAutoFillLoginCredentials]);
+
+    auto credentialSuggestion = [UITextAutofillSuggestion autofillSuggestionWithUsername:@"frederik" password:@"famos"];
+    [[webView _autofillInputView] insertTextSuggestion:credentialSuggestion];
+
+    EXPECT_WK_STREQ("frederik", [webView stringByEvaluatingJavaScript:@"username.value"]);
+
+    [webView evaluateJavaScriptAndWaitForInputSessionToChange:@"document.activeElement.blur()"];
+    EXPECT_FALSE([webView acceptsAutoFillLoginCredentials]);
+}
+
 TEST(WKWebViewAutoFillTests, StandaloneTextField)
 {
     auto webView = adoptNS([[AutoFillTestView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);

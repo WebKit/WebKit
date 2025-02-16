@@ -53,7 +53,7 @@
 namespace WebKit {
 namespace NetworkCache {
 
-void traverseDirectory(const String& path, const Function<void (const String&, DirectoryEntryType)>& function)
+void traverseDirectory(const String& path, NOESCAPE const Function<void (const String&, DirectoryEntryType)>& function)
 {
     auto entries = FileSystem::listDirectory(path);
     for (auto& entry : entries) {

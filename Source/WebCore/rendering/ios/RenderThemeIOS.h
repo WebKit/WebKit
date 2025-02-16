@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -112,16 +112,15 @@ private:
 
     bool paintProgressBar(const RenderObject&, const PaintInfo&, const IntRect&) override;
 
-#if ENABLE(DATALIST_ELEMENT)
     IntSize sliderTickSize() const override;
     int sliderTickOffsetFromTrackCenter() const override;
-#endif
 
     void adjustSearchFieldStyle(RenderStyle&, const Element*) const override;
+    bool paintSearchField(const RenderObject&, const PaintInfo&, const FloatRect&) override;
     void paintSearchFieldDecorations(const RenderBox&, const PaintInfo&, const IntRect&) override;
 
     Color checkboxRadioBorderColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
-    Color checkboxRadioBackgroundColor(bool useAlternateDesign, const RenderStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
+    Color checkboxRadioBackgroundColor(const RenderStyle&, OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
     RefPtr<Gradient> checkboxRadioBackgroundGradient(const FloatRect&, OptionSet<ControlStyle::State>);
     Color checkboxRadioIndicatorColor(OptionSet<ControlStyle::State>, OptionSet<StyleColorOptions>);
 
@@ -133,17 +132,11 @@ private:
     bool supportsMeter(StyleAppearance) const final;
     bool paintMeter(const RenderObject&, const PaintInfo&, const IntRect&) final;
 
-#if ENABLE(DATALIST_ELEMENT)
     bool paintListButton(const RenderObject&, const PaintInfo&, const FloatRect&) final;
 
     void paintSliderTicks(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-#endif
-
-#if ENABLE(INPUT_TYPE_COLOR)
-    String colorInputStyleSheet() const final;
 
     void paintColorWellDecorations(const RenderObject&, const PaintInfo&, const FloatRect&) final;
-#endif
 
     void adjustSearchFieldDecorationPartStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldDecorationPart(const RenderObject&, const PaintInfo&, const IntRect&) final;
@@ -154,7 +147,7 @@ private:
     void adjustSearchFieldResultsButtonStyle(RenderStyle&, const Element*) const final;
     bool paintSearchFieldResultsButton(const RenderBox&, const PaintInfo&, const IntRect&) final;
 
-    bool supportsFocusRing(const RenderStyle&) const final;
+    bool supportsFocusRing(const RenderObject&, const RenderStyle&) const final;
 
     bool supportsBoxShadow(const RenderStyle&) const final;
 

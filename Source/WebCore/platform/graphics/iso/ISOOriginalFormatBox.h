@@ -34,7 +34,7 @@ public:
     ISOOriginalFormatBox();
     ~ISOOriginalFormatBox();
 
-    static FourCC boxTypeName() { return "frma"; }
+    static FourCC boxTypeName() { return std::span { "frma" }; }
 
     FourCC dataFormat() const { return m_dataFormat; }
 

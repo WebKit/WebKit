@@ -68,8 +68,8 @@ void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paint
 {
     ASSERT(endY > startY);
 
-    const auto& srcPixelBuffer = *paintingData.srcPixelBuffer;
-    auto& dstPixelBuffer = *paintingData.dstPixelBuffer;
+    Ref srcPixelBuffer = *paintingData.srcPixelBuffer;
+    Ref dstPixelBuffer = *paintingData.dstPixelBuffer;
 
     const int radiusX = paintingData.radiusX;
     const int radiusY = paintingData.radiusY;
@@ -100,7 +100,7 @@ void FEMorphologySoftwareApplier::applyPlatformGeneric(const PaintingData& paint
             if (x > radiusX)
                 extrema.remove(0);
 
-            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer.bytes().subspan(pixelArrayIndex(x, y, width)));
+            unsigned& destPixel = reinterpretCastSpanStartTo<unsigned>(dstPixelBuffer->bytes().subspan(pixelArrayIndex(x, y, width)));
             destPixel = makePixelValueFromColorComponents(kernelExtremum(extrema, paintingData.type)).value;
         }
     }
@@ -147,9 +147,9 @@ void FEMorphologySoftwareApplier::applyPlatform(const PaintingData& paintingData
 
 bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
@@ -159,11 +159,11 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageV
 
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
 
-    auto radius = filter.resolvedSize({ m_effect.radiusX(), m_effect.radiusY() });
+    auto radius = filter.resolvedSize({ m_effect->radiusX(), m_effect->radiusY() });
     auto absoluteRadius = flooredIntSize(filter.scaledByFilterScale(radius));
 
     if (isDegenerate(absoluteRadius)) {
-        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+        input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
@@ -171,18 +171,18 @@ bool FEMorphologySoftwareApplier::apply(const Filter& filter, const FilterImageV
     int radiusY = std::min(effectDrawingRect.height() - 1, absoluteRadius.height());
 
     if (isDegenerate({ radiusX, radiusY })) {
-        input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+        input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
         return true;
     }
 
-    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect.operatingColorSpace());
+    RefPtr sourcePixelBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectDrawingRect, m_effect->operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
     PaintingData paintingData;
-    paintingData.type = m_effect.morphologyOperator();
-    paintingData.srcPixelBuffer = &*sourcePixelBuffer;
-    paintingData.dstPixelBuffer = destinationPixelBuffer;
+    paintingData.type = m_effect->morphologyOperator();
+    paintingData.srcPixelBuffer = WTFMove(sourcePixelBuffer);
+    paintingData.dstPixelBuffer = WTFMove(destinationPixelBuffer);
     paintingData.width = effectDrawingRect.width();
     paintingData.height = effectDrawingRect.height();
     paintingData.radiusX = radiusX;

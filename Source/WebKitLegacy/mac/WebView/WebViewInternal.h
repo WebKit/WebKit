@@ -76,6 +76,7 @@ class RenderBox;
 class TextIndicator;
 struct DictationAlternative;
 struct DictionaryPopupInfo;
+template<typename> class ExceptionOr;
 
 #if HAVE(TRANSLATION_UI_SERVICES) && ENABLE(CONTEXT_MENUS)
 struct TranslationContextMenuInfo;
@@ -326,7 +327,7 @@ WebLayoutMilestones kitLayoutMilestones(OptionSet<WebCore::LayoutMilestone>);
 
 #if ENABLE(FULLSCREEN_API) && !PLATFORM(IOS_FAMILY) && defined(__cplusplus)
 - (BOOL)_supportsFullScreenForElement:(NakedPtr<WebCore::Element>)element withKeyboard:(BOOL)withKeyboard;
-- (void)_enterFullScreenForElement:(NakedPtr<WebCore::Element>)element;
+- (void)_enterFullScreenForElement:(NakedPtr<WebCore::Element>)element completionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)completionHandler;
 - (void)_exitFullScreenForElement:(NakedPtr<WebCore::Element>)element;
 #endif
 

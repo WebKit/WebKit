@@ -35,18 +35,18 @@ class IntSize;
 struct PixelBufferConversionView {
     PixelBufferFormat format;
     unsigned bytesPerRow;
-    uint8_t* rows;
+    std::span<uint8_t> rows;
 };
 
 struct ConstPixelBufferConversionView {
     PixelBufferFormat format;
     unsigned bytesPerRow;
-    const uint8_t* rows;
+    std::span<const uint8_t> rows;
 };
 
-void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize&);
+WEBCORE_EXPORT void convertImagePixels(const ConstPixelBufferConversionView& source, const PixelBufferConversionView& destination, const IntSize&);
 
-WEBCORE_EXPORT void copyRows(unsigned sourceBytesPerRow, const uint8_t* source, unsigned destinationBytesPerRow, uint8_t* destination, unsigned rows, unsigned copyBytesPerRow);
+WEBCORE_EXPORT void copyRowsInternal(unsigned sourceBytesPerRow, std::span<const uint8_t> source, unsigned destinationBytesPerRow, std::span<uint8_t> destination, unsigned rows, unsigned copyBytesPerRow);
 
 inline void copyRows(unsigned sourceBytesPerRow, std::span<const uint8_t> source, unsigned destinationBytesPerRow, std::span<uint8_t> destination, unsigned rows, unsigned copyBytesPerRow)
 {
@@ -66,7 +66,7 @@ inline void copyRows(unsigned sourceBytesPerRow, std::span<const uint8_t> source
         ASSERT_NOT_REACHED();
         return;
     }
-    copyRows(sourceBytesPerRow, source.data(), destinationBytesPerRow, destination.data(), rows, copyBytesPerRow);
+    copyRowsInternal(sourceBytesPerRow, source, destinationBytesPerRow, destination, rows, copyBytesPerRow);
 }
 
 }

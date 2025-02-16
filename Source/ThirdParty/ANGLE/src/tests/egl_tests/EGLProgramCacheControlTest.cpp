@@ -178,6 +178,8 @@ TEST_P(EGLProgramCacheControlTest, NegativeAPI)
 // Tests a basic use case.
 TEST_P(EGLProgramCacheControlTest, SaveAndReload)
 {
+    ANGLE_SKIP_TEST_IF(getEGLWindow()->isFeatureEnabled(Feature::DisableProgramCaching));
+
     ANGLE_SKIP_TEST_IF(!extensionAvailable() || !programBinaryAvailable());
 
     constexpr char kVS[] = "attribute vec4 position; void main() { gl_Position = position; }";

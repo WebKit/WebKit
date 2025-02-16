@@ -46,6 +46,7 @@
 #endif
 
 #define DOWNLOAD_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - Download::" fmt, this, ##__VA_ARGS__)
+#define DOWNLOAD_RELEASE_LOG_WITH_THIS(thisPtr, fmt, ...) RELEASE_LOG(Network, "%p - Download::" fmt, thisPtr, ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -102,15 +103,16 @@ void Download::cancel(CompletionHandler<void(std::span<const uint8_t>)>&& comple
     // completionHandler will inform the API that the cancellation succeeded.
     m_ignoreDidFailCallback = ignoreDidFailCallback;
 
-    auto completionHandlerWrapper = [this, weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (std::span<const uint8_t> resumeData) mutable {
+    auto completionHandlerWrapper = [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (std::span<const uint8_t> resumeData) mutable {
         completionHandler(resumeData);
-        if (!weakThis || m_ignoreDidFailCallback == IgnoreDidFailCallback::No)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || protectedThis->m_ignoreDidFailCallback == IgnoreDidFailCallback::No)
             return;
-        DOWNLOAD_RELEASE_LOG("didCancel: (id = %" PRIu64 ")", downloadID().toUInt64());
-        if (auto extension = std::exchange(m_sandboxExtension, nullptr))
+        DOWNLOAD_RELEASE_LOG_WITH_THIS(protectedThis.get(), "didCancel: (id = %" PRIu64 ")", protectedThis->downloadID().toUInt64());
+        if (auto extension = std::exchange(protectedThis->m_sandboxExtension, nullptr))
             extension->revoke();
-        if (CheckedPtr downloadManager = m_downloadManager)
-            downloadManager->downloadFinished(*this);
+        if (CheckedPtr downloadManager = protectedThis->m_downloadManager)
+            downloadManager->downloadFinished(*protectedThis);
     };
 
     if (m_download) {
@@ -156,19 +158,20 @@ void Download::didFinish()
 {
     DOWNLOAD_RELEASE_LOG("didFinish: (id = %" PRIu64 ")", downloadID().toUInt64());
 
-    platformDidFinish([weakThis = WeakPtr { *this }, this] {
+    platformDidFinish([weakThis = WeakPtr { *this }] {
         RELEASE_ASSERT(isMainRunLoop());
-        if (!weakThis)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        send(Messages::DownloadProxy::DidFinish());
+        protectedThis->send(Messages::DownloadProxy::DidFinish());
 
-        if (m_sandboxExtension) {
-            m_sandboxExtension->revoke();
-            m_sandboxExtension = nullptr;
+        if (protectedThis->m_sandboxExtension) {
+            protectedThis->m_sandboxExtension->revoke();
+            protectedThis->m_sandboxExtension = nullptr;
         }
 
-        if (CheckedPtr downloadManager = m_downloadManager)
-            downloadManager->downloadFinished(*this);
+        if (CheckedPtr downloadManager = protectedThis->m_downloadManager)
+            downloadManager->downloadFinished(*protectedThis);
     });
 }
 

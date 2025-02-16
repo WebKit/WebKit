@@ -68,7 +68,7 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document& document)
     }
     if (m_resourceType == CachedResource::Type::Script || m_resourceType == CachedResource::Type::ImageResource)
         options.referrerPolicy = m_referrerPolicy;
-    options.fetchPriorityHint = m_fetchPriorityHint;
+    options.fetchPriority = m_fetchPriority;
     auto request = createPotentialAccessControlRequest(completeURL(document), WTFMove(options), document, crossOriginMode);
     request.setInitiatorType(m_initiatorType);
 

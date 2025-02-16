@@ -45,11 +45,11 @@ Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(Quad slices, bool
     return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slices), fill));
 }
 
-String CSSBorderImageSliceValue::customCSSText() const
+String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
 {
     if (m_fill)
-        return makeString(m_slices.cssText(), " fill"_s);
-    return m_slices.cssText();
+        return makeString(m_slices.cssText(context), " fill"_s);
+    return m_slices.cssText(context);
 }
 
 bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const

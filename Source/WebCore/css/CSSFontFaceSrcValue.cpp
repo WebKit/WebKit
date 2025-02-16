@@ -27,6 +27,7 @@
 #include "CSSFontFaceSrcValue.h"
 
 #include "CSSMarkup.h"
+#include "CSSSerializationContext.h"
 #include "CachedFont.h"
 #include "CachedFontLoadRequest.h"
 #include "CachedResourceLoader.h"
@@ -63,7 +64,7 @@ void CSSFontFaceSrcLocalValue::setSVGFontFaceElement(SVGFontFaceElement& element
     m_element = &element;
 }
 
-String CSSFontFaceSrcLocalValue::customCSSText() const
+String CSSFontFaceSrcLocalValue::customCSSText(const CSS::SerializationContext&) const
 {
     return makeString("local("_s, serializeString(m_fontFaceName), ')');
 }
@@ -119,23 +120,9 @@ std::unique_ptr<FontLoadRequest> CSSFontFaceSrcResourceValue::fontLoadRequest(Sc
     return request;
 }
 
-bool CSSFontFaceSrcResourceValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSFontFaceSrcResourceValue::customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const
 {
     return m_cachedFont && handler(*m_cachedFont);
-}
-
-void CSSFontFaceSrcResourceValue::customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
-{
-    auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
-    if (!replacementURLString.isNull())
-        m_replacementURLString = replacementURLString;
-    m_shouldUseResolvedURLInCSSText = true;
-}
-
-void CSSFontFaceSrcResourceValue::customClearReplacementURLForSubresources()
-{
-    m_replacementURLString = { };
-    m_shouldUseResolvedURLInCSSText = false;
 }
 
 bool CSSFontFaceSrcResourceValue::customMayDependOnBaseURL() const
@@ -143,17 +130,16 @@ bool CSSFontFaceSrcResourceValue::customMayDependOnBaseURL() const
     return WebCore::mayDependOnBaseURL(m_location);
 }
 
-String CSSFontFaceSrcResourceValue::customCSSText() const
+String CSSFontFaceSrcResourceValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
-    if (!m_replacementURLString.isEmpty())
-        builder.append(serializeURL(m_replacementURLString));
-    else {
-        if (m_shouldUseResolvedURLInCSSText)
-            builder.append(serializeURL(m_location.resolvedURL.string()));
-        else
-            builder.append(serializeURL(m_location.specifiedURLString));
-    }
+    if (auto replacementURLString = context.replacementURLStrings.get(m_location.resolvedURL.string()); !replacementURLString.isEmpty())
+        builder.append(serializeURL(replacementURLString));
+    else if (context.shouldUseResolvedURLInCSSText)
+        builder.append(serializeURL(m_location.resolvedURL.string()));
+    else
+        builder.append(serializeURL(m_location.specifiedURLString));
+
     if (!m_format.isEmpty())
         builder.append(" format("_s, serializeString(m_format), ')');
     if (!m_technologies.isEmpty()) {

@@ -108,10 +108,10 @@ PASS UA stylesheet rule for unicode-bidi, for <wbr>
 PASS UA stylesheet rule for unicode-bidi, for <bdo>
 PASS UA stylesheet rule for unicode-bidi, for <input type=hidden>
 PASS UA stylesheet rule for unicode-bidi, for <input type=text>
-FAIL UA stylesheet rule for unicode-bidi, for <input type=search> assert_equals: with dir=auto expected "plaintext" but got "isolate"
-FAIL UA stylesheet rule for unicode-bidi, for <input type=tel> assert_equals: with dir=auto expected "plaintext" but got "isolate"
-FAIL UA stylesheet rule for unicode-bidi, for <input type=url> assert_equals: with dir=auto expected "plaintext" but got "isolate"
-FAIL UA stylesheet rule for unicode-bidi, for <input type=email> assert_equals: with dir=auto expected "plaintext" but got "isolate"
+PASS UA stylesheet rule for unicode-bidi, for <input type=search>
+PASS UA stylesheet rule for unicode-bidi, for <input type=tel>
+PASS UA stylesheet rule for unicode-bidi, for <input type=url>
+PASS UA stylesheet rule for unicode-bidi, for <input type=email>
 PASS UA stylesheet rule for unicode-bidi, for <input type=password>
 PASS UA stylesheet rule for unicode-bidi, for <input type=date>
 PASS UA stylesheet rule for unicode-bidi, for <input type=time>

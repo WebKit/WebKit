@@ -48,7 +48,7 @@ noInline(C.prototype.getField);
 noDFG(C.prototype.setField);
 noFTL(C.prototype.setField);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let c = new C(i);
     assert.equals(c.getField(), 'test');
     c.setField('foo' + i);

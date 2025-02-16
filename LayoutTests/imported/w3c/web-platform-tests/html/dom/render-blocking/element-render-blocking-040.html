@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<head>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="support/utils.js"></script>
+<title>Frames starts after href element is parsed, and not on the open stack of elements before the end</title>
+
+<link rel=expect href="#second" blocking="render">
+<script>
+async_test((t) => {
+  requestAnimationFrame(() => {
+    t.step(() => assert_true(!!document.getElementById("first"), "first"));
+    t.step(() => assert_true(!!document.getElementById("second"), "second"));
+    t.step(() => assert_true(!!document.getElementById("third"), "third"));
+    t.step(() => assert_false(!!document.getElementById("last")));
+    t.done();
+  });
+}, "blocking defers until needed element is parsed");
+</script>
+</head>
+<body>
+  <div id="first"></div>
+  <script>
+          generateParserDelay();
+  </script>
+  <div id="second">
+    <script>
+            generateParserDelay();
+    </script>
+    <div id="third"></div>
+  </div>
+  <script>
+          generateParserDelay();
+  </script>
+  <div id="fourth"></div>
+  <script>
+          generateParserDelay();
+  </script>
+  <div id="last"></div>
+</body>

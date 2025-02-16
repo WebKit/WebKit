@@ -13,7 +13,7 @@ function shouldBe(actual, expected)
     var int32Array = [0, 1, 2, 3, 4, , 6, 7, 8, 9, 10, 11, 12];
 
     var value = -1;
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(indexOfInt32(int32Array, 5), value);
         shouldBe(indexOfInt32(int32Array, 6), 6);
         if (i === 1e4) {

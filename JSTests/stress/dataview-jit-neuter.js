@@ -64,7 +64,7 @@ function test2() {
     ta[0] = adjustForEndianess(0xa070fa01);
     let dv = new DataView(ab);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(load(dv, 0) === 0x01);
     }
 

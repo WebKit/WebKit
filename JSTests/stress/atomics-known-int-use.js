@@ -9,7 +9,7 @@ noInline(foo);
 
 var array = new Int32Array(new SharedArrayBuffer(4));
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     array[0] = 13;
     var result = foo(array, {f: 0});
     if (result != 13)

@@ -1,7 +1,7 @@
 
-PASS innerHTML on a shadow root should use scoped custom element registry
-PASS innerHTML on a disconnected element should use the associated scoped custom element registry
-PASS innerHTML on a connected shadow root should use its scoped custom element
-PASS innerHTML on an inserted element should use the scoped custom element of the ancestor shadow root
-PASS innerHTML should not upgrade a custom element inside a template element
+FAIL innerHTML on a shadow root should use scoped custom element registry shadowRoot.createElement is not a function. (In 'shadowRoot.createElement('some-element')', 'shadowRoot.createElement' is undefined)
+FAIL innerHTML on a disconnected element should use the associated scoped custom element registry shadowRoot.createElement is not a function. (In 'shadowRoot.createElement('some-element')', 'shadowRoot.createElement' is undefined)
+FAIL innerHTML on a connected shadow root should use its scoped custom element assert_true: expected true got false
+FAIL innerHTML on an inserted element should use the scoped custom element of the ancestor shadow root shadowRoot1.createElement is not a function. (In 'shadowRoot1.createElement('some-element')', 'shadowRoot1.createElement' is undefined)
+FAIL innerHTML should not upgrade a custom element inside a template element assert_equals: expected "SomeElement" but got "SomeElement1"
 

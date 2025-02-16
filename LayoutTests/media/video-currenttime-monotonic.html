@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src=media-file.js></script>
+        <script src=video-test.js></script>
+        <script>
+            async function start()
+            {
+                findMediaElement();
+
+                var previousTime = 0;
+                var intervalId;
+                function checkCurrentTime() {
+                    if (video.currentTime < previousTime) {
+                        video.pause();
+                        failTest("time went backward");
+                    }
+                    if (video.currentTime > video.duration) {
+                        video.pause();
+                        failTest("time went past duration");
+                    }
+                    previousTime = video.currentTime;
+                }
+                video.addEventListener('playing', function() {
+                    intervalId = setInterval(checkCurrentTime, 5);
+                });
+                video.addEventListener('pause', function() {
+                    clearInterval(checkCurrentTime);
+                });
+                video.src = findMediaFile('video', 'content/test');
+                await video.play();
+                await sleepFor(300);
+                video.currentTime = video.duration - 0.3;
+                await waitFor(video, "seeked");
+                testExpected('video.currentTime', video.duration - 0.3, '>=');
+                await waitFor(video, 'ended');
+                testExpected(video.currentTime, video.duration);
+                previousTime = 0;
+                await video.play();
+                await sleepFor(300);
+                testExpected('video.currentTime', 0.5, '<=');
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test currentTime always monotonically increase.</p>
+        <video controls></video>
+    </body>
+</html>

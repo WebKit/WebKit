@@ -118,7 +118,7 @@ void WebExtensionContext::cookiesGet(std::optional<PAL::SessionID> sessionID, co
 {
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
-        completionHandler(toWebExtensionError(@"cookies.get()", nil, @"cookie store not found"));
+        completionHandler(toWebExtensionError(@"cookies.get()", nullString(), @"cookie store not found"));
         return;
     }
 
@@ -150,7 +150,7 @@ void WebExtensionContext::cookiesGetAll(std::optional<PAL::SessionID> sessionID,
 {
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
-        completionHandler(toWebExtensionError(@"cookies.getAll()", nil, @"cookie store not found"));
+        completionHandler(toWebExtensionError(@"cookies.getAll()", nullString(), @"cookie store not found"));
         return;
     }
 
@@ -163,7 +163,7 @@ void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, co
 {
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
-        completionHandler(toWebExtensionError(@"cookies.set()", nil, @"cookie store not found"));
+        completionHandler(toWebExtensionError(@"cookies.set()", nullString(), @"cookie store not found"));
         return;
     }
 
@@ -171,7 +171,7 @@ void WebExtensionContext::cookiesSet(std::optional<PAL::SessionID> sessionID, co
 
     requestPermissionToAccessURLs({ url }, nullptr, [this, protectedThis = Ref { *this }, dataStore, url, cookieParameters, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!hasPermission(url)) {
-            completionHandler(toWebExtensionError(@"cookies.set()", nil, @"host permissions are missing or not granted"));
+            completionHandler(toWebExtensionError(@"cookies.set()", nullString(), @"host permissions are missing or not granted"));
             return;
         }
 
@@ -185,13 +185,13 @@ void WebExtensionContext::cookiesRemove(std::optional<PAL::SessionID> sessionID,
 {
     RefPtr dataStore = websiteDataStore(sessionID);
     if (!dataStore) {
-        completionHandler(toWebExtensionError(@"cookies.remove()", nil, @"cookie store not found"));
+        completionHandler(toWebExtensionError(@"cookies.remove()", nullString(), @"cookie store not found"));
         return;
     }
 
     requestPermissionToAccessURLs({ url }, nullptr, [this, protectedThis = Ref { *this }, dataStore, name, url, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!hasPermission(url)) {
-            completionHandler(toWebExtensionError(@"cookies.remove()", nil, @"host permissions are missing or not granted"));
+            completionHandler(toWebExtensionError(@"cookies.remove()", nullString(), @"host permissions are missing or not granted"));
             return;
         }
 

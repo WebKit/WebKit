@@ -27,7 +27,7 @@ let test2 = test(2);
 let test3 = test(3);
 let test4 = test(4);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test0.put(i + 0);
     shouldBe(test0.get(), i + 0);
     test1.put(i + 1);

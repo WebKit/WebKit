@@ -41,7 +41,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
 ] interface Document : Node {
     [CallWith=CurrentDocument] constructor();
 
-    [CallWith=CurrentDocument, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] static Document parseHTMLUnsafe((TrustedHTML or DOMString) html);
+    [CallWith=CurrentDocument] static Document parseHTMLUnsafe((TrustedHTML or DOMString) html);
 
     [SameObject, ImplementedAs=fragmentDirectiveForBindings, EnabledBySetting=ScrollToTextFragmentFeatureDetectionEnabled] readonly attribute FragmentDirective fragmentDirective;
     [SameObject] readonly attribute DOMImplementation implementation;
@@ -56,7 +56,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     readonly attribute DocumentType? doctype;
     [DOMJIT=Getter] readonly attribute Element? documentElement;
 
-    [NewObject, ImplementedAs=createElementForBindings] Element createElement([AtomString] DOMString localName);
+    [NewObject, ImplementedAs=createElementForBindings] Element createElement([AtomString] DOMString localName, optional ElementCreationOptions options = { });
     [NewObject] Element createElementNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName);
     HTMLCollection getElementsByTagName([AtomString] DOMString qualifiedName);
     HTMLCollection getElementsByTagNameNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);
@@ -68,7 +68,7 @@ typedef (HTMLScriptElement or SVGScriptElement) HTMLOrSVGScriptElement;
     [NewObject] Comment createComment(DOMString data);
     [NewObject] ProcessingInstruction createProcessingInstruction(DOMString target, DOMString data);
 
-    [CEReactions=Needed, NewObject] Node importNode(Node node, optional boolean deep = false);
+    [CEReactions=Needed, NewObject] Node importNode(Node node, optional (boolean or ImportNodeOptions) options);
     [CEReactions=Needed] Node adoptNode(Node node);
 
     [NewObject] Attr createAttribute([AtomString] DOMString localName);

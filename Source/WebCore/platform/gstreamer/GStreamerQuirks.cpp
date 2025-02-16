@@ -31,6 +31,7 @@
 #include "GStreamerQuirkAmLogic.h"
 #include "GStreamerQuirkBcmNexus.h"
 #include "GStreamerQuirkBroadcom.h"
+#include "GStreamerQuirkOpenMAX.h"
 #include "GStreamerQuirkRealtek.h"
 #include "GStreamerQuirkRialto.h"
 #include "GStreamerQuirkWesteros.h"
@@ -77,9 +78,9 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
     const char* quirksList = g_getenv("WEBKIT_GST_QUIRKS");
     GST_DEBUG("Attempting to parse requested quirks: %s", GST_STR_NULL(quirksList));
     if (quirksList) {
-        StringView quirks { span(quirksList) };
+        StringView quirks { unsafeSpan(quirksList) };
         if (WTF::equalLettersIgnoringASCIICase(quirks, "help"_s)) {
-            WTFLogAlways("Supported quirks for WEBKIT_GST_QUIRKS are: amlogic, broadcom, bcmnexus, realtek, westeros");
+            gst_printerrln("Supported quirks for WEBKIT_GST_QUIRKS are: amlogic, broadcom, bcmnexus, openmax, realtek, westeros");
             return;
         }
 
@@ -91,6 +92,8 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
                 quirk = WTF::makeUnique<GStreamerQuirkBroadcom>();
             else if (WTF::equalLettersIgnoringASCIICase(identifier, "bcmnexus"_s))
                 quirk = WTF::makeUnique<GStreamerQuirkBcmNexus>();
+            else if (WTF::equalLettersIgnoringASCIICase(identifier, "openmax"_s))
+                quirk = WTF::makeUnique<GStreamerQuirkOpenMAX>();
             else if (WTF::equalLettersIgnoringASCIICase(identifier, "realtek"_s))
                 quirk = WTF::makeUnique<GStreamerQuirkRealtek>();
             else if (WTF::equalLettersIgnoringASCIICase(identifier, "rialto"_s))
@@ -115,7 +118,7 @@ GStreamerQuirksManager::GStreamerQuirksManager(bool isForTesting, bool loadQuirk
     if (!holePunchQuirk)
         return;
 
-    StringView identifier { span(holePunchQuirk) };
+    StringView identifier { unsafeSpan(holePunchQuirk) };
     if (WTF::equalLettersIgnoringASCIICase(identifier, "help"_s)) {
         WTFLogAlways("Supported quirks for WEBKIT_GST_HOLE_PUNCH_QUIRK are: fake, westeros, bcmnexus");
         return;
@@ -336,6 +339,14 @@ void GStreamerQuirksManager::setupBufferingPercentageCorrection(MediaPlayerPriva
             quirk->setupBufferingPercentageCorrection(playerPrivate, currentState, newState, WTFMove(element));
             return;
         }
+    }
+}
+
+void GStreamerQuirksManager::processWebAudioSilentBuffer(GstBuffer* buffer) const
+{
+    for (const auto& quirk : m_quirks) {
+        if (quirk->processWebAudioSilentBuffer(buffer))
+            break;
     }
 }
 

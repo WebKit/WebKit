@@ -234,7 +234,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
             childIsValid = role == AccessibilityRole::Row || role == AccessibilityRole::Column || role == AccessibilityRole::TableHeaderContainer || role == AccessibilityRole::Caption;
         }
         if (!childIsValid || descendant->isIgnored()) {
-            descendant = descendant->nextInPreOrder(updateChildrenIfNeeded, /* stayWithin */ *this);
+            descendant = descendant->nextInPreOrder(updateChildrenIfNeeded, /* stayWithin */ this);
             continue;
         }
 
@@ -250,7 +250,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
 }
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
-AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject& stayWithin)
+AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
 {
     if (updateChildrenIfNeeded)
         updateChildrenIfNecessary();
@@ -259,23 +259,56 @@ AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreOb
     if (!children.isEmpty()) {
         auto role = roleValue();
         if (role != AccessibilityRole::Column && role != AccessibilityRole::TableHeaderContainer) {
-            // Table columns and header containers add cells despite not being their "true" parent (which are the rows). Don't allow a pre-order traversal of these
-            // object types to return cells to avoid an infinite loop.
+            // Table columns and header containers add cells despite not being their "true" parent (which are the rows).
+            // Don't allow a pre-order traversal of these object types to return cells to avoid an infinite loop.
             return children[0].ptr();
         }
     }
 
-    if (&stayWithin == this)
+    if (stayWithin == this)
         return nullptr;
 
     RefPtr current = this;
     RefPtr next = nextSiblingIncludingIgnored(updateChildrenIfNeeded);
     for (; !next; next = current->nextSiblingIncludingIgnored(updateChildrenIfNeeded)) {
         current = current->parentObject();
-        if (!current || &stayWithin == current)
+        if (!current || stayWithin == current)
             return nullptr;
     }
     return next.get();
+}
+
+AXCoreObject* AXCoreObject::previousInPreOrder(bool updateChildrenIfNeeded, AXCoreObject* stayWithin)
+{
+    if (updateChildrenIfNeeded)
+        updateChildrenIfNecessary();
+
+    if (stayWithin == this)
+        return nullptr;
+
+    if (RefPtr sibling = previousSiblingIncludingIgnored(updateChildrenIfNeeded)) {
+        const auto& children = sibling->childrenIncludingIgnored(updateChildrenIfNeeded);
+        if (children.size())
+            return sibling->deepestLastChildIncludingIgnored(updateChildrenIfNeeded);
+        return sibling.get();
+    }
+    return parentObject();
+}
+
+AXCoreObject* AXCoreObject::deepestLastChildIncludingIgnored(bool updateChildrenIfNeeded)
+{
+    const auto& children = childrenIncludingIgnored(updateChildrenIfNeeded);
+    if (children.isEmpty())
+        return nullptr;
+
+    Ref deepestChild = children[children.size() - 1];
+    while (true) {
+        const auto& descendants = deepestChild->childrenIncludingIgnored(updateChildrenIfNeeded);
+        if (descendants.isEmpty())
+            break;
+        deepestChild = descendants[descendants.size() - 1];
+    }
+    return deepestChild.ptr();
 }
 
 AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNeeded) const
@@ -290,6 +323,20 @@ AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNee
         return nullptr;
 
     return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].ptr() : nullptr;
+}
+
+AXCoreObject* AXCoreObject::previousSiblingIncludingIgnored(bool updateChildrenIfNeeded)
+{
+    RefPtr parent = parentObject();
+    if (!parent)
+        return nullptr;
+
+    const auto& siblings = parent->childrenIncludingIgnored(updateChildrenIfNeeded);
+    size_t indexOfThis = siblings.find(Ref { *this });
+    if (indexOfThis == notFound)
+        return nullptr;
+
+    return indexOfThis >= 1 ? siblings[indexOfThis - 1].ptr() : nullptr;
 }
 
 AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent) const
@@ -309,10 +356,10 @@ AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AX
     return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].ptr() : nullptr;
 }
 
-AXCoreObject* AXCoreObject::nextUnignoredSiblingOrParent() const
+AXCoreObject* AXCoreObject::nextSiblingIncludingIgnoredOrParent() const
 {
-    RefPtr parent = parentObjectUnignored();
-    if (auto* nextSibling = nextUnignoredSibling(/* updateChildrenIfNeeded */ true, parent.get()))
+    RefPtr parent = parentObject();
+    if (auto* nextSibling = nextSiblingIncludingIgnored(/* updateChildrenIfNeeded */ true))
         return nextSibling;
     return parent.get();
 }
@@ -779,6 +826,20 @@ bool AXCoreObject::isTableCellInSameColGroup(AXCoreObject* tableCell)
     return columnRange.first <= otherColumnRange.first + otherColumnRange.second;
 }
 
+bool AXCoreObject::isReplacedElement() const
+{
+    switch (roleValue()) {
+    case AccessibilityRole::Audio:
+    case AccessibilityRole::Image:
+    case AccessibilityRole::Meter:
+    case AccessibilityRole::ProgressIndicator:
+    case AccessibilityRole::Video:
+        return true;
+    default:
+        return isWidget() || hasAttachmentTag();
+    }
+}
+
 String AXCoreObject::ariaLandmarkRoleDescription() const
 {
     switch (roleValue()) {
@@ -852,7 +913,7 @@ bool AXCoreObject::supportsPressAction() const
             unsigned matches = 0;
             unsigned candidatesChecked = 0;
             RefPtr candidate = clickableAncestor;
-            while ((candidate = candidate->nextInPreOrder(/* updateChildren */ true, /* stayWithin */ *clickableAncestor))) {
+            while ((candidate = candidate->nextInPreOrder(/* updateChildren */ true, /* stayWithin */ clickableAncestor.get()))) {
                 if (candidate->isStaticText() || candidate->isControl() || candidate->isImage() || candidate->isHeading() || candidate->isLink()) {
                     if (!candidate->isIgnored())
                         ++matches;

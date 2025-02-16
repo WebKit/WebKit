@@ -225,13 +225,13 @@ public:
         m_maps.clear();
     }
 
-    const BoyerMooreBitmap::Map::WordType* tryReuseBoyerMooreBitmap(const BoyerMooreBitmap::Map& map) const
+    const std::span<BoyerMooreBitmap::Map::WordType> tryReuseBoyerMooreBitmap(const BoyerMooreBitmap::Map& map) const
     {
         for (auto& stored : m_maps) {
             if (stored.get() == map)
                 return stored->storage();
         }
-        return nullptr;
+        return { };
     }
 
 private:

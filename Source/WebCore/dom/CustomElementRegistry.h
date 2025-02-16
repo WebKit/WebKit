@@ -69,6 +69,8 @@ public:
 
     static CustomElementRegistry* registryForElement(const Element& element)
     {
+        if (element.usesNullCustomElementRegistry())
+            return nullptr;
         if (UNLIKELY(element.usesScopedCustomElementRegistryMap()))
             return scopedCustomElementRegistryMap().get(element);
         return element.treeScope().customElementRegistry();
@@ -76,6 +78,10 @@ public:
 
     static CustomElementRegistry* registryForNodeOrTreeScope(const Node& node, const TreeScope& treeScope)
     {
+        if (node.usesNullCustomElementRegistry()) {
+            ASSERT(is<Element>(node));
+            return nullptr;
+        }
         if (auto* element = dynamicDowncast<Element>(node); UNLIKELY(element && element->usesScopedCustomElementRegistryMap()))
             return scopedCustomElementRegistryMap().get(*element);
         return treeScope.customElementRegistry();
@@ -99,6 +105,7 @@ public:
     JSC::JSValue get(const AtomString&);
     String getName(JSC::JSValue);
     void upgrade(Node& root);
+    void initialize(Node& root);
 
     MemoryCompactRobinHoodHashMap<AtomString, Ref<DeferredPromise>>& promiseMap() { return m_promiseMap; }
     bool isShadowDisabled(const AtomString& name) const { return m_disabledShadowSet.contains(name); }

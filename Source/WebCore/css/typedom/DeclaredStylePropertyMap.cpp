@@ -27,6 +27,7 @@
 #include "DeclaredStylePropertyMap.h"
 
 #include "CSSCustomPropertyValue.h"
+#include "CSSSerializationContext.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSUnparsedValue.h"
@@ -114,7 +115,7 @@ bool DeclaredStylePropertyMap::setProperty(CSSPropertyID propertyID, Ref<CSSValu
 
     CSSStyleSheet::RuleMutationScope mutationScope(m_ownerRule.get());
     bool didFailParsing = false;
-    styleRule->mutableProperties().setProperty(propertyID, value->cssText(), IsImportant::No, &didFailParsing);
+    styleRule->mutableProperties().setProperty(propertyID, value->cssText(CSS::defaultSerializationContext()), IsImportant::No, &didFailParsing);
     return !didFailParsing;
 }
 

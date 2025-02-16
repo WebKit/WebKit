@@ -963,7 +963,7 @@ WI.TreeOutline = class TreeOutline extends WI.Object
         let offsetFromContainer = calculateOffsetFromContainer(this._virtualizedTopSpacer.parentNode ? this._virtualizedTopSpacer : this.element, this._virtualizedScrollContainer);
         let numberVisible = Math.ceil(Math.max(0, this._virtualizedScrollContainer.offsetHeight - offsetFromContainer) / this._virtualizedTreeItemHeight);
         let extraRows = Math.max(numberVisible * 5, 50);
-        let firstItem = Math.floor((this._virtualizedScrollContainer.scrollTop - offsetFromContainer) / this._virtualizedTreeItemHeight) - extraRows;
+        let firstItem = Math.max(0, Math.floor((this._virtualizedScrollContainer.scrollTop - offsetFromContainer) / this._virtualizedTreeItemHeight) - extraRows);
         let lastItem = firstItem + numberVisible + (extraRows * 2);
 
         let shouldScroll = false;

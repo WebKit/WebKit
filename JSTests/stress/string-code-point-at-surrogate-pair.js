@@ -17,7 +17,7 @@ var expected = [
     0x91CE,
     0x5BB6,
 ];
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testSurrogatePair(testString, expected);
 
 var testString = "A\uD842";
@@ -25,7 +25,7 @@ var expected = [
     0x0041,
     0xD842,
 ];
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testSurrogatePair(testString, expected);
 
 var testString = "A\uD842A";
@@ -34,7 +34,7 @@ var expected = [
     0xD842,
     0x0041,
 ];
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testSurrogatePair(testString, expected);
 
 var testString = "A\uD842\uDFB7";
@@ -43,7 +43,7 @@ var expected = [
     0x20BB7,
     0xDFB7,
 ];
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testSurrogatePair(testString, expected);
 
 var testString = "\uD842A\uDFB7";
@@ -52,7 +52,7 @@ var expected = [
     0x0041,
     0xDFB7,
 ];
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testSurrogatePair(testString, expected);
 
 var testString = "\uDFB7\uD842A";
@@ -61,5 +61,5 @@ var expected = [
     0xD842,
     0x0041,
 ];
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testSurrogatePair(testString, expected);

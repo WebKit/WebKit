@@ -12,7 +12,7 @@ Bar.prototype = new Foo();
 
 new Foo().thingy = 42;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(new Bar(), Foo);
     if (!result)
         throw "Error: bad result in loop: " + result;

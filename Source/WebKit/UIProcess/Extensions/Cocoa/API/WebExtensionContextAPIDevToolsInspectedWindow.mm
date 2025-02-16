@@ -47,7 +47,7 @@ void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier web
     RefPtr extension = inspectorExtension(webPageProxyIdentifier);
     if (!extension) {
         RELEASE_LOG_ERROR(Extensions, "Inspector extension not found for page %llu", webPageProxyIdentifier.toUInt64());
-        completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector not found"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector not found"));
         return;
     }
 
@@ -55,20 +55,20 @@ void WebExtensionContext::devToolsInspectedWindowEval(WebPageProxyIdentifier web
 
     RefPtr tab = getTab(webPageProxyIdentifier, std::nullopt, IncludeExtensionViews::Yes);
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
         return;
     }
 
     requestPermissionToAccessURLs({ tab->url() }, tab, [extension, tab, scriptSource, frameURL, completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
         if (!tab->extensionHasPermission()) {
-            completionHandler(toWebExtensionError(apiName, nil, @"this extension does not have access to this tab"));
+            completionHandler(toWebExtensionError(apiName, nullString(), @"this extension does not have access to this tab"));
             return;
         }
 
         extension->evaluateScript(scriptSource, frameURL, std::nullopt, std::nullopt, [completionHandler = WTFMove(completionHandler)](Inspector::ExtensionEvaluationResult&& result) mutable {
             if (!result) {
                 RELEASE_LOG_ERROR(Extensions, "Inspector could not evaluate script (%{public}@)", (NSString *)extensionErrorToString(result.error()));
-                completionHandler(toWebExtensionError(apiName, nil, @"Web Inspector could not evaluate script"));
+                completionHandler(toWebExtensionError(apiName, nullString(), @"Web Inspector could not evaluate script"));
                 return;
             }
 

@@ -27,11 +27,13 @@
 
 #include "APIConversions.h"
 #include "Buffer.h"
+#include "CommandBuffer.h"
 #include "CommandEncoder.h"
 #include "CommandsMixin.h"
 #include "ComputePassEncoder.h"
 #include "Device.h"
 #include "IsValidToUseWith.h"
+#include "Logging.h"
 #include "QuerySet.h"
 #include "Queue.h"
 #include "RenderPassEncoder.h"
@@ -51,20 +53,29 @@ using WTFRangeSizeT = WTF::Range<size_t>;
 
 __attribute__((used)) static const auto stdDynamicExtent = std::dynamic_extent;
 
-// FIXME: importing WTF::Range does not work
-namespace WTF {
-template<typename PassedType>
-class Range;
-}
-using RefComputePassEncoder = Ref<WebGPU::ComputePassEncoder>;
-inline unsigned long roundUpToMultipleOfNonPowerOfTwoCheckedUInt32UnsignedLong(Checked<uint32_t> x, unsigned long y) { return WTF::roundUpToMultipleOfNonPowerOfTwo<unsigned long int, Checked<uint32_t>>(x, y); }
-inline uint32_t roundUpToMultipleOfNonPowerOfTwoUInt32UInt32(uint32_t a, uint32_t b) { return WTF::roundUpToMultipleOfNonPowerOfTwo<uint32_t, Checked<uint32_t>>(a, b); }
-
 // FIXME: rdar://140819194
 constexpr unsigned long int WGPU_COPY_STRIDE_UNDEFINED_ = WGPU_COPY_STRIDE_UNDEFINED;
 
 // FIXME: rdar://140819448
 constexpr auto MTLBlitOptionNone_ = MTLBlitOptionNone;
+
+// FIXME: importing WTF::Range does not work
+namespace WTF {
+template<typename PassedType>
+class Range;
+}
+
+namespace WebGPU_Internal {
+
+inline void logString(const char * input)
+{
+    if (input)
+        RELEASE_LOG(WebGPUSwift, "%s", input);
+}
+
+using RefComputePassEncoder = Ref<WebGPU::ComputePassEncoder>;
+inline unsigned long roundUpToMultipleOfNonPowerOfTwoCheckedUInt32UnsignedLong(Checked<uint32_t> x, unsigned long y) { return WTF::roundUpToMultipleOfNonPowerOfTwo<unsigned long int, Checked<uint32_t>>(x, y); }
+inline uint32_t roundUpToMultipleOfNonPowerOfTwoUInt32UInt32(uint32_t a, uint32_t b) { return WTF::roundUpToMultipleOfNonPowerOfTwo<uint32_t, Checked<uint32_t>>(a, b); }
 
 inline Checked<size_t> checkedDifferenceSizeT(size_t left, size_t right)
 {
@@ -72,8 +83,25 @@ inline Checked<size_t> checkedDifferenceSizeT(size_t left, size_t right)
 }
 
 using RefRenderPassEncoder = Ref<WebGPU::RenderPassEncoder>;
+using RefCommandBuffer = Ref<WebGPU::CommandBuffer>;
 using SliceSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
+
 inline bool isValidToUseWithTextureViewCommandEncoder(const WebGPU::TextureView& texture, const WebGPU::CommandEncoder& commandEncoder)
+{
+    return WebGPU::isValidToUseWith(texture, commandEncoder);
+}
+
+inline bool isValidToUseWithQuerySetCommandEncoder(const WebGPU::QuerySet& querySet, const WebGPU::CommandEncoder& commandEncoder)
+{
+    return WebGPU::isValidToUseWith(querySet, commandEncoder);
+}
+
+inline bool isValidToUseWithBufferCommandEncoder(const WebGPU::Buffer& buffer, const WebGPU::CommandEncoder& commandEncoder)
+{
+    return WebGPU::isValidToUseWith(buffer, commandEncoder);
+}
+
+inline bool isValidToUseWithTextureCommandEncoder(const WebGPU::Texture& texture, const WebGPU::CommandEncoder& commandEncoder)
 {
     return WebGPU::isValidToUseWith(texture, commandEncoder);
 }
@@ -81,6 +109,24 @@ inline bool isValidToUseWithTextureViewCommandEncoder(const WebGPU::TextureView&
 inline double clampDouble(const double& v, const double& lo, const double& hi)
 {
     return std::clamp(v, lo, hi);
+}
+
+// FIXME: rdar://138415945
+inline bool areBuffersEqual(const WebGPU::Buffer& a, const WebGPU::Buffer& b)
+{
+    return &a == &b;
+}
+
+inline NSString * convertWTFStringToNSString(const String& input)
+{
+    return nsStringNilIfEmpty(input);
+}
+
+inline ThreadSafeWeakPtr<WebGPU::CommandBuffer> commandBufferThreadSafeWeakPtr(const WebGPU::CommandBuffer* input)
+{
+    return ThreadSafeWeakPtr(input);
+}
+
 }
 
 #ifndef __swift__

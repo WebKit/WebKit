@@ -9,7 +9,7 @@ function get(o, p) {
     return 42;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     get({ f: 42 }, i % 2);
     get({ o: 10, f: 42 }, i % 2);
 }
@@ -20,7 +20,7 @@ function foo() {
 }
 noInline(foo);
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo();
     if (result !== 42)
         throw new Error("Result should be 42 but was " + result);

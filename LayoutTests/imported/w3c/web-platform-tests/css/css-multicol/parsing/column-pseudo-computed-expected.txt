@@ -1,0 +1,6 @@
+
+FAIL ::column font-size applied assert_equals: expected "40px" but got ""
+FAIL ::column scroll-snap-align assert_equals: expected "start" but got ""
+FAIL ::column scroll-snap-stop assert_equals: expected "always" but got ""
+FAIL ::column scroll-snap-margin assert_equals: expected "2px" but got ""
+

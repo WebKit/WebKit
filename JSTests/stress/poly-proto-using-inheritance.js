@@ -44,7 +44,7 @@ function validate(item) {
 }
 
 let start = Date.now();
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     instances.forEach((x) => validate(x));
 }
 if (false)

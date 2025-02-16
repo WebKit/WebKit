@@ -324,19 +324,6 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /* performTwoStepDrop */
     };
     WKBundlePageSetEditorClient(m_page, &editorClient.base);
-
-#if ENABLE(FULLSCREEN_API)
-    WKBundlePageFullScreenClientV1 fullScreenClient = {
-        { 1, this },
-        supportsFullScreen,
-        enterFullScreenForElement,
-        exitFullScreenForElement,
-        beganEnterFullScreen,
-        beganExitFullScreen,
-        closeFullScreen,
-    };
-    WKBundlePageSetFullScreenClient(m_page, &fullScreenClient.base);
-#endif
 }
 
 InjectedBundlePage::~InjectedBundlePage()
@@ -829,6 +816,8 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
         return;
 
     auto context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
+    if (!context)
+        return;
 
     if (WKBundleScriptWorldNormalWorld() != world) {
         setGlobalObjectProperty(context, "__worldID", TestRunner::worldIDForWorld(world));
@@ -1497,143 +1486,6 @@ void InjectedBundlePage::didChangeSelection(WKStringRef notificationName)
     injectedBundle.outputText(makeString("EDITING DELEGATE: webViewDidChangeSelection:"_s, notificationName, '\n'));
 }
 
-#if ENABLE(FULLSCREEN_API)
-bool InjectedBundlePage::supportsFullScreen(WKBundlePageRef pageRef, WKFullScreenKeyboardRequestType requestType)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return true;
-    if (testRunner->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("supportsFullScreen() == true\n"_s);
-    return true;
-}
-
-void InjectedBundlePage::enterFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
-{
-    ASSERT(bundlePageMap().contains(pageRef));
-    if (auto* injectedBundlePage = bundlePageMap().get(pageRef))
-        injectedBundlePage->enterFullScreenForElement(elementRef);
-}
-
-void InjectedBundlePage::enterFullScreenForElement(WKBundleNodeHandleRef elementRef)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-
-    if (testRunner->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("enterFullScreenForElement()\n"_s);
-
-    if (m_fullscreenState == EnteringFullscreen)
-        return;
-    m_fullscreenState = EnteringFullscreen;
-
-    if (!testRunner->hasCustomFullScreenBehavior()) {
-        WKBundlePageWillEnterFullScreen(m_page);
-        if (m_fullscreenState != EnteringFullscreen)
-            return;
-
-        WKBundlePageDidEnterFullScreen(m_page);
-        if (m_fullscreenState != EnteringFullscreen)
-            return;
-
-    } else
-        testRunner->callEnterFullscreenForElementCallback();
-
-    m_fullscreenState = InFullscreen;
-}
-
-void InjectedBundlePage::exitFullScreenForElement(WKBundlePageRef pageRef, WKBundleNodeHandleRef elementRef)
-{
-    ASSERT(bundlePageMap().contains(pageRef));
-    if (auto* injectedBundlePage = bundlePageMap().get(pageRef))
-        injectedBundlePage->exitFullScreenForElement(elementRef);
-}
-
-void InjectedBundlePage::exitFullScreenForElement(WKBundleNodeHandleRef elementRef)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-
-    if (testRunner->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("exitFullScreenForElement()\n"_s);
-
-    if (m_fullscreenState == ExitingFullscreen)
-        return;
-    m_fullscreenState = ExitingFullscreen;
-
-    if (!testRunner->hasCustomFullScreenBehavior()) {
-        WKBundlePageWillExitFullScreen(m_page);
-        if (m_fullscreenState != ExitingFullscreen)
-            return;
-
-        WKBundlePageDidExitFullScreen(m_page);
-        if (m_fullscreenState != ExitingFullscreen)
-            return;
-    } else
-        testRunner->callExitFullscreenForElementCallback();
-
-    m_fullscreenState = NotInFullscreen;
-}
-
-void InjectedBundlePage::beganEnterFullScreen(WKBundlePageRef, WKRect initialRect, WKRect finalRect)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-
-    if (!testRunner->shouldDumpFullScreenCallbacks())
-        return;
-
-    injectedBundle.outputText(makeString("beganEnterFullScreen() - initialRect.size: {"_s,
-        initialRect.size.width, ", "_s,
-        initialRect.size.height,
-        "}, finalRect.size: {"_s,
-        finalRect.size.width, ", "_s,
-        finalRect.size.height,
-        "}\n"_s));
-}
-
-void InjectedBundlePage::beganExitFullScreen(WKBundlePageRef, WKRect initialRect, WKRect finalRect)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-    if (!testRunner->shouldDumpFullScreenCallbacks())
-        return;
-
-    injectedBundle.outputText(makeString("beganExitFullScreen() - initialRect.size: {"_s,
-        initialRect.size.width, ", "_s,
-        initialRect.size.height,
-        "}, finalRect.size: {"_s,
-        finalRect.size.width, ", "_s,
-        finalRect.size.height,
-        "}\n"_s));
-}
-
-void InjectedBundlePage::closeFullScreen(WKBundlePageRef pageRef)
-{
-    auto& injectedBundle = InjectedBundle::singleton();
-    RefPtr testRunner = injectedBundle.testRunner();
-    if (!testRunner)
-        return;
-
-    if (testRunner->shouldDumpFullScreenCallbacks())
-        injectedBundle.outputText("closeFullScreen()\n"_s);
-
-    if (!testRunner->hasCustomFullScreenBehavior()) {
-        WKBundlePageWillExitFullScreen(pageRef);
-        WKBundlePageDidExitFullScreen(pageRef);
-    }
-}
-#endif
-
 String InjectedBundlePage::dumpHistory()
 {
     return makeString(
@@ -1667,7 +1519,7 @@ static void dumpAfterWaitAttributeIsRemoved(WKBundlePageRef page)
     if (hasTestWaitAttribute(page)) {
         WKRetain(page);
         // Use a 1ms interval between tries to allow lower priority run loop sources with zero delays to run.
-        RunLoop::current().dispatchAfter(1_ms, [page] {
+        RunLoop::protectedCurrent()->dispatchAfter(1_ms, [page] {
             WKBundlePageCallAfterTasksAndTimers(page, [] (void* typelessPage) {
                 auto page = static_cast<WKBundlePageRef>(typelessPage);
                 dumpAfterWaitAttributeIsRemoved(page);

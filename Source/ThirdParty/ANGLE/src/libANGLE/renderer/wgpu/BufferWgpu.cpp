@@ -190,6 +190,7 @@ angle::Result BufferWgpu::getIndexRange(const gl::Context *context,
     // Copy the source buffer to staging and flush the commands
     contextWgpu->ensureCommandEncoderCreated();
     wgpu::CommandEncoder &commandEncoder = contextWgpu->getCurrentCommandEncoder();
+    ASSERT(offset == rx::roundDownPow2(offset, webgpu::kBufferCopyToBufferAlignment));
     commandEncoder.CopyBufferToBuffer(mBuffer.getBuffer(), offset, stagingBuffer.getBuffer(), 0,
                                       stagingBufferSize);
 

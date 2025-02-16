@@ -66,7 +66,7 @@ static void callOnDelegateThreadAndWait(Callable&& work)
     if (shouldCallOnNetworkThread() || isMainThread())
         work();
     else {
-        WorkQueue::main().dispatchSync([work = std::forward<Callable>(work)]() mutable {
+        WorkQueue::protectedMain()->dispatchSync([work = std::forward<Callable>(work)]() mutable {
             work();
         });
     }

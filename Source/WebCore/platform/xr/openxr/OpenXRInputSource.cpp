@@ -111,15 +111,15 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
             const auto& actions = m_buttonActions.get(button.type);
             if (button.press) {
                 ASSERT(actions.press != XR_NULL_HANDLE);
-                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.press, makeString(m_subactionPathName, span(button.press)), bindings), m_instance);
+                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.press, makeString(m_subactionPathName, unsafeSpan(button.press)), bindings), m_instance);
             }
             if (button.touch) {
                 ASSERT(actions.touch != XR_NULL_HANDLE);
-                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.touch, makeString(m_subactionPathName, span(button.touch)), bindings), m_instance);
+                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.touch, makeString(m_subactionPathName, unsafeSpan(button.touch)), bindings), m_instance);
             }
             if (button.value) {
                 ASSERT(actions.value != XR_NULL_HANDLE);
-                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.value, makeString(m_subactionPathName, span(button.value)), bindings), m_instance);
+                RETURN_RESULT_IF_FAILED(createBinding(profile.path, actions.value, makeString(m_subactionPathName, unsafeSpan(button.value)), bindings), m_instance);
             }
         }
 
@@ -127,7 +127,7 @@ XrResult OpenXRInputSource::suggestBindings(SuggestedBindings& bindings) const
         for (const auto& axis : profile.axes) {
             auto action = m_axisActions.get(axis.type);
             ASSERT(action != XR_NULL_HANDLE);
-            RETURN_RESULT_IF_FAILED(createBinding(profile.path, action, makeString(m_subactionPathName, span(axis.path)), bindings), m_instance);
+            RETURN_RESULT_IF_FAILED(createBinding(profile.path, action, makeString(m_subactionPathName, unsafeSpan(axis.path)), bindings), m_instance);
         }
     }
 

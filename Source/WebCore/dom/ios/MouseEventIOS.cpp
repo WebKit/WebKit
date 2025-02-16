@@ -25,7 +25,6 @@
 
 #import "config.h"
 #import "MouseEvent.h"
-#import "PlatformMouseEvent.h"
 
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(IOS_FAMILY)
 

@@ -141,6 +141,8 @@ public:
     virtual Ref<ComputePassEncoder> invalidComputePassEncoder() = 0;
     virtual void pauseAllErrorReporting(bool pause) = 0;
 
+    virtual bool isRemoteDeviceProxy() const { return false; }
+
 protected:
     Device(Ref<SupportedFeatures>&& features, Ref<SupportedLimits>&& limits)
         : m_features(WTFMove(features))

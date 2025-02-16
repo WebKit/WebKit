@@ -626,4 +626,9 @@ TextStream& operator<<(TextStream& stream, const MediaTime& time)
     return stream << time.toJSONString();
 }
 
+MediaTime MediaTime::isolatedCopy() const
+{
+    return *this;
+}
+
 }

@@ -71,8 +71,6 @@
 #include <mach/thread_switch.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #if OS(QNX)
 #define SA_RESTART 0
 #endif
@@ -180,8 +178,10 @@ void Thread::initializePlatformThreading()
         g_wtfConfig.sigThreadSuspendResume = SIGUSR1;
         if (const char* string = getenv("JSC_SIGNAL_FOR_GC")) {
             int32_t value = 0;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             if (sscanf(string, "%d", &value) == 1)
                 g_wtfConfig.sigThreadSuspendResume = value;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
     }
     g_wtfConfig.isThreadSuspendResumeSignalConfigured = true;
@@ -380,8 +380,10 @@ void Thread::setThreadTimeConstraints(MonotonicTime period, MonotonicTime nomina
     policy.computation = nominalComputation.toMachAbsoluteTime();
     policy.constraint = constraint.toMachAbsoluteTime();
     policy.preemptible = isPremptable;
-    if (auto error = thread_policy_set(machThread(), THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&policy, THREAD_TIME_CONSTRAINT_POLICY_COUNT))
+    if (auto error = thread_policy_set(machThread(), THREAD_TIME_CONSTRAINT_POLICY, (thread_policy_t)&policy, THREAD_TIME_CONSTRAINT_POLICY_COUNT)) {
+        UNUSED_VARIABLE(error);
         LOG_ERROR("Thread %p failed to set time constraints with error %d", this, error);
+    }
 #else
     ASSERT_NOT_REACHED();
 #endif
@@ -570,7 +572,7 @@ void Thread::initializeTLSKey()
 Thread& Thread::initializeTLS(Ref<Thread>&& thread)
 {
     // We leak the ref to keep the Thread alive while it is held in TLS. destructTLS will deref it later at thread destruction time.
-    auto& threadInTLS = thread.leakRef();
+    SUPPRESS_UNCOUNTED_LOCAL auto& threadInTLS = thread.leakRef();
 #if !HAVE(FAST_TLS)
     ASSERT(s_key != InvalidThreadSpecificKey);
     threadSpecificSet(s_key, &threadInTLS);
@@ -701,7 +703,5 @@ void Thread::yield()
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(PTHREADS)

@@ -54,7 +54,7 @@ public:
 
     DECLARE_INFO;
 
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     template<typename CellType, SubspaceAccess>
     static void subspaceFor(VM&) { RELEASE_ASSERT_NOT_REACHED(); }
 

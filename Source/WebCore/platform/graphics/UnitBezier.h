@@ -26,9 +26,8 @@
 #ifndef UnitBezier_h
 #define UnitBezier_h
 
+#include <array>
 #include <math.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -180,10 +179,8 @@ namespace WebCore {
         double startGradient;
         double endGradient;
 
-        double splineSamples[CUBIC_BEZIER_SPLINE_SAMPLES];
+        std::array<double, CUBIC_BEZIER_SPLINE_SAMPLES> splineSamples;
     };
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

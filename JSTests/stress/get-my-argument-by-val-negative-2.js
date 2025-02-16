@@ -14,7 +14,7 @@ function main() {
     };  
     noInline(func);
 
-    for (let v30 = 0; v30 < 10000; v30++) {
+    for (let v30 = 0; v30 < testLoopCount; v30++) {
         func(3);
     }   
 

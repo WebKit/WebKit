@@ -160,7 +160,7 @@ public:
     void setSlowPathHandler(AccessType, Ref<InlineCacheHandler>);
 
 private:
-    HashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
+    UncheckedKeyHashSet<Hash::Key, Hash, Hash::KeyTraits> m_stubs;
     UncheckedKeyHashMap<StatelessCacheKey, Ref<PolymorphicAccessJITStubRoutine>> m_statelessStubs;
     UncheckedKeyHashMap<DOMJITCacheKey, MacroAssemblerCodeRef<JITStubRoutinePtrTag>> m_domJITCodes;
     std::array<RefPtr<InlineCacheHandler>, numberOfAccessTypes> m_fallbackHandlers { };

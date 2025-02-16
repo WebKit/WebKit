@@ -168,7 +168,7 @@ void SWServerJobQueue::scriptContextFailedToStart(const ServiceWorkerJobDataIden
     }
 
     ASSERT(registration->preInstallationWorker());
-    registration->preInstallationWorker()->terminate();
+    registration->protectedPreInstallationWorker()->terminate();
     registration->setPreInstallationWorker(nullptr);
 
     // Invoke Reject Job Promise with job and TypeError.
@@ -239,7 +239,7 @@ void SWServerJobQueue::didResolveRegistrationPromise()
 
     // Queue a task to fire the InstallEvent.
     ASSERT(registration->installingWorker());
-    server->fireInstallEvent(*registration->installingWorker());
+    server->fireInstallEvent(*registration->protectedInstallingWorker());
 }
 
 // https://w3c.github.io/ServiceWorker/#install
@@ -422,7 +422,7 @@ void SWServerJobQueue::finishCurrentJob()
         runNextJob();
 }
 
-void SWServerJobQueue::removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>& matches)
+void SWServerJobQueue::removeAllJobsMatching(NOESCAPE const Function<bool(ServiceWorkerJobData&)>& matches)
 {
     bool isFirst = true;
     bool didRemoveFirstJob = false;

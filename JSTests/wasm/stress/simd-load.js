@@ -58,7 +58,7 @@ async function test() {
             u8[i] = data[i]
     }
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         deBruijin()
         assert.eq(load_simple(), 0xD8)
         assert.eq(load_simple2(), 0xAB)

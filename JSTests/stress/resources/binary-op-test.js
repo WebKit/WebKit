@@ -101,7 +101,7 @@ function runTest(test) {
     try {
         if (verbose)
             print(test.name);
-        for (var i = 0; i < 10000; i++) {
+        for (var i = 0; i < testLoopCount; i++) {
             var result = test.func(test.x, test.y);
             if (isIdentical(result, test.expectedResult))
                 continue;

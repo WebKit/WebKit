@@ -29,7 +29,7 @@ function foo(o) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {};
     foo(o);
     if (o.a != 0)

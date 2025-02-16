@@ -1,0 +1,6 @@
+
+PASS There should be 3 @page rules.
+PASS Rule #0
+PASS Rule #1
+PASS Rule #2
+

@@ -63,7 +63,7 @@ void SessionHost::sendWebInspectorEvent(const String& event)
     if (!m_clientID)
         return;
 
-    send(m_clientID.value(), event.utf8().span());
+    send(m_clientID.value(), byteCast<uint8_t>(event.utf8().span()));
 }
 
 #if PLATFORM(WIN)

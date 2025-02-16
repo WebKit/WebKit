@@ -286,7 +286,6 @@ WebProcess/WebCoreSupport/wpe/WebEditorClientWPE.cpp
 
 WebProcess/WebPage/AcceleratedSurface.cpp
 
-WebProcess/WebPage/CoordinatedGraphics/CoordinatedGraphicsScene.cpp
 WebProcess/WebPage/CoordinatedGraphics/CoordinatedSceneState.cpp
 WebProcess/WebPage/CoordinatedGraphics/CompositingRunLoop.cpp
 WebProcess/WebPage/CoordinatedGraphics/DrawingAreaCoordinatedGraphics.cpp
@@ -298,6 +297,8 @@ WebProcess/WebPage/dmabuf/AcceleratedSurfaceDMABuf.cpp @no-unify
 WebProcess/WebPage/glib/WebPageGLib.cpp
 
 WebProcess/WebPage/libwpe/AcceleratedSurfaceLibWPE.cpp @no-unify
+
+WebProcess/WebPage/soup/WebCookieCacheSoup.cpp
 
 WebProcess/WebPage/wpe/WebPageWPE.cpp
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,13 +26,12 @@
 #pragma once
 
 #include "CSSCalcType.h"
-#include "CSSNone.h"
 #include "CSSPrimitiveNumericRange.h"
 #include "CSSUnits.h"
 #include "CSSValueKeywords.h"
-#include "CalculationTree.h"
 #include <variant>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomString.h>
 
@@ -84,9 +83,13 @@ struct Log;
 struct Exp;
 struct Abs;
 struct Sign;
+struct Random;
 struct Progress;
+
 struct MediaProgress;
 struct ContainerProgress;
+
+// CSS Anchor Positioning functions.
 struct Anchor;
 struct AnchorSize;
 
@@ -206,6 +209,7 @@ using Node = std::variant<
     IndirectNode<Exp>,
     IndirectNode<Abs>,
     IndirectNode<Sign>,
+    IndirectNode<Random>,
     IndirectNode<Progress>,
     IndirectNode<MediaProgress>,
     IndirectNode<ContainerProgress>,
@@ -213,28 +217,80 @@ using Node = std::variant<
     IndirectNode<AnchorSize>
 >;
 
-using Child = Node;
-using ChildOrNone = std::variant<Child, CSS::NoneRaw>;
-using Children = Vector<Child>;
+struct Child {
+    Node value;
+
+    template<typename T>
+        requires std::constructible_from<Node, T>
+    Child(T&&);
+
+    FORWARD_VARIANT_FUNCTIONS(Child, value)
+
+    bool operator==(const Child&) const = default;
+};
+
+struct ChildOrNone {
+    std::variant<Child, CSS::Keyword::None> value;
+
+    ChildOrNone(Child&&);
+    ChildOrNone(CSS::Keyword::None);
+
+    FORWARD_VARIANT_FUNCTIONS(ChildOrNone, value)
+
+    bool operator==(const ChildOrNone&) const = default;
+};
+
+struct Children {
+    using iterator = typename Vector<Child>::iterator;
+    using reverse_iterator = typename Vector<Child>::reverse_iterator;
+    using const_iterator = typename Vector<Child>::const_iterator;
+    using const_reverse_iterator = typename Vector<Child>::const_reverse_iterator;
+    using value_type = typename Vector<Child>::value_type;
+
+    Vector<Child> value;
+
+    Children(Children&&);
+    Children(Vector<Child>&&);
+    Children& operator=(Children&&);
+    Children& operator=(Vector<Child>&&);
+
+    iterator begin();
+    iterator end();
+    reverse_iterator rbegin();
+    reverse_iterator rend();
+
+    const_iterator begin() const;
+    const_iterator end() const;
+    const_reverse_iterator rbegin() const;
+    const_reverse_iterator rend() const;
+
+    bool isEmpty() const;
+    size_t size() const;
+
+    Child& operator[](size_t i);
+    const Child& operator[](size_t i) const;
+
+    bool operator==(const Children&) const = default;
+};
 
 enum class Stage : bool { Specified, Computed };
 
 struct Tree {
     Child root;
     Type type;
-    Calculation::Category category;
     Stage stage;
-    CSS::Range range;
 
     // `requiresConversionData` is used both to both indicate whether eager evaluation of the tree (at parse time) is possible or not and to trigger a warning in `CSSCalcValue::doubleValueDeprecated` that the evaluation results will be incorrect.
     bool requiresConversionData = false;
+
+    // `unique` is used to indicate if the calculation tree disqualifies styles it used by for style sharing.
+    bool unique = false;
 
     bool operator==(const Tree&) const = default;
 };
 
 struct Sum {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Sum);
-    using Base = Calculation::Sum;
 
     Children children;
 
@@ -243,7 +299,6 @@ struct Sum {
 
 struct Product {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Product);
-    using Base = Calculation::Product;
 
     Children children;
 
@@ -252,7 +307,6 @@ struct Product {
 
 struct Negate {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Negate);
-    using Base = Calculation::Negate;
 
     Child a;
 
@@ -261,7 +315,6 @@ struct Negate {
 
 struct Invert {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Invert);
-    using Base = Calculation::Invert;
 
     Child a;
 
@@ -273,7 +326,6 @@ struct Invert {
 // Comparison Functions - https://drafts.csswg.org/css-values-4/#comp-func
 struct Min {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Min);
-    using Base = Calculation::Min;
     static constexpr auto id = CSSValueMin;
 
     // <min()>   = min( <calc-sum># )
@@ -290,7 +342,6 @@ struct Min {
 
 struct Max {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Max);
-    using Base = Calculation::Max;
     static constexpr auto id = CSSValueMax;
 
     // <max()>   = max( <calc-sum># )
@@ -307,7 +358,6 @@ struct Max {
 
 struct Clamp {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Clamp);
-    using Base = Calculation::Clamp;
     static constexpr auto id = CSSValueClamp;
 
     // <clamp()> = clamp( [ <calc-sum> | none ], <calc-sum>, [ <calc-sum> | none ] )
@@ -327,7 +377,6 @@ struct Clamp {
 // Stepped Value Functions - https://drafts.csswg.org/css-values-4/#round-func
 struct RoundNearest {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundNearest);
-    using Base = Calculation::RoundNearest;
     static constexpr auto id = CSSValueNearest;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
@@ -353,7 +402,6 @@ struct RoundNearest {
 
 struct RoundUp {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundUp);
-    using Base = Calculation::RoundUp;
     static constexpr auto id = CSSValueUp;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
@@ -379,7 +427,6 @@ struct RoundUp {
 
 struct RoundDown {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundDown);
-    using Base = Calculation::RoundDown;
     static constexpr auto id = CSSValueDown;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
@@ -405,7 +452,6 @@ struct RoundDown {
 
 struct RoundToZero {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(RoundToZero);
-    using Base = Calculation::RoundToZero;
     static constexpr auto id = CSSValueToZero;
 
     // <round()> = round( <rounding-strategy>?, <calc-sum>, <calc-sum> )
@@ -431,7 +477,6 @@ struct RoundToZero {
 
 struct Mod {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Mod);
-    using Base = Calculation::Mod;
     static constexpr auto id = CSSValueMod;
 
     // <mod()>   = mod( <calc-sum>, <calc-sum> )
@@ -450,7 +495,6 @@ struct Mod {
 
 struct Rem {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Rem);
-    using Base = Calculation::Rem;
     static constexpr auto id = CSSValueRem;
 
     // <rem()>   = rem( <calc-sum>, <calc-sum> )
@@ -470,7 +514,6 @@ struct Rem {
 // Trigonometric Functions - https://drafts.csswg.org/css-values-4/#trig-funcs
 struct Sin {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Sin);
-    using Base = Calculation::Sin;
     static constexpr auto id = CSSValueSin;
 
     // <sin()>   = sin( <calc-sum> )
@@ -486,7 +529,6 @@ struct Sin {
 
 struct Cos {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Cos);
-    using Base = Calculation::Cos;
     static constexpr auto id = CSSValueCos;
 
     // <cos()>   = cos( <calc-sum> )
@@ -502,7 +544,6 @@ struct Cos {
 
 struct Tan {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Tan);
-    using Base = Calculation::Tan;
     static constexpr auto id = CSSValueTan;
 
     // <tan()>   = tan( <calc-sum> )
@@ -518,7 +559,6 @@ struct Tan {
 
 struct Asin {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Asin);
-    using Base = Calculation::Asin;
     static constexpr auto id = CSSValueAsin;
 
     // <asin()>  = asin( <calc-sum> )
@@ -534,7 +574,6 @@ struct Asin {
 
 struct Acos {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Acos);
-    using Base = Calculation::Acos;
     static constexpr auto id = CSSValueAcos;
 
     // <acos()>  = acos( <calc-sum> )
@@ -550,7 +589,6 @@ struct Acos {
 
 struct Atan {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Atan);
-    using Base = Calculation::Atan;
     static constexpr auto id = CSSValueAtan;
 
     // <atan()>  = atan( <calc-sum> )
@@ -566,7 +604,6 @@ struct Atan {
 
 struct Atan2 {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Atan2);
-    using Base = Calculation::Atan2;
     static constexpr auto id = CSSValueAtan2;
 
     // <atan2()> = atan2( <calc-sum>, <calc-sum> )
@@ -585,7 +622,6 @@ struct Atan2 {
 // Exponential Functions - https://drafts.csswg.org/css-values-4/#exponent-funcs
 struct Pow {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Pow);
-    using Base = Calculation::Pow;
     static constexpr auto id = CSSValuePow;
 
     // <pow()>   = pow( <calc-sum>, <calc-sum> )
@@ -603,7 +639,6 @@ struct Pow {
 
 struct Sqrt {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Sqrt);
-    using Base = Calculation::Sqrt;
     static constexpr auto id = CSSValueSqrt;
 
     // <sqrt()>  = sqrt( <calc-sum> )
@@ -619,7 +654,6 @@ struct Sqrt {
 
 struct Hypot {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Hypot);
-    using Base = Calculation::Hypot;
     static constexpr auto id = CSSValueHypot;
 
     // <hypot()> = hypot( <calc-sum># )
@@ -636,7 +670,6 @@ struct Hypot {
 
 struct Log {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Log);
-    using Base = Calculation::Log;
     static constexpr auto id = CSSValueLog;
 
     // <log()>   = log( <calc-sum>, <calc-sum>? )
@@ -654,7 +687,6 @@ struct Log {
 
 struct Exp {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Exp);
-    using Base = Calculation::Exp;
     static constexpr auto id = CSSValueExp;
 
     // <exp()>   = exp( <calc-sum> )
@@ -671,7 +703,6 @@ struct Exp {
 // Sign-Related Functions - https://drafts.csswg.org/css-values-4/#sign-funcs
 struct Abs {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Abs);
-    using Base = Calculation::Abs;
     static constexpr auto id = CSSValueAbs;
 
     // <abs()>   = abs( <calc-sum> )
@@ -687,7 +718,6 @@ struct Abs {
 
 struct Sign {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Sign);
-    using Base = Calculation::Sign;
     static constexpr auto id = CSSValueSign;
 
     // <sign()>  = sign( <calc-sum> )
@@ -701,10 +731,37 @@ struct Sign {
     bool operator==(const Sign&) const = default;
 };
 
+// Random Function - https://drafts.csswg.org/css-values-5/#random
+struct Random {
+    WTF_MAKE_STRUCT_TZONE_ALLOCATED(Random);
+    static constexpr auto id = CSSValueRandom;
+
+    // <random-caching-options> = <dashed-ident> || per-element
+    struct CachingOptions {
+        AtomString identifier;
+        bool perElement { false };
+
+        bool operator==(const CachingOptions&) const = default;
+    };
+
+    // <random()> = random( <random-caching-options>? , <calc-sum>, <calc-sum>, [by <calc-sum>]? )
+    //     - INPUT: "same" <number>, <dimension>, or <percentage>
+    //     - OUTPUT: same type
+    static constexpr auto input = AllowedTypes::Any;
+    static constexpr auto merge = MergePolicy::Same;
+    static constexpr auto output = OutputTransform::None;
+
+    CachingOptions cachingOptions;
+    Child min;
+    Child max;
+    std::optional<Child> step;
+
+    bool operator==(const Random&) const = default;
+};
+
 // Progress-Related Functions - https://drafts.csswg.org/css-values-5/#progress
 struct Progress {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Progress);
-    using Base = Calculation::Progress;
     static constexpr auto id = CSSValueProgress;
 
     // <progress()> = progress( <calc-sum>, <calc-sum>, <calc-sum> )
@@ -758,18 +815,30 @@ struct ContainerProgress {
     bool operator==(const ContainerProgress&) const = default;
 };
 
+// Anchor Positioning Related Functions - https://drafts.csswg.org/css-anchor-position-1/
+
+struct AnchorSide {
+    // <anchor-side> = inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center
+    std::variant<CSSValueID, Child> value;
+
+    AnchorSide(CSSValueID);
+    AnchorSide(Child&&);
+
+    FORWARD_VARIANT_FUNCTIONS(AnchorSide, value)
+
+    bool operator==(const AnchorSide&) const = default;
+};
+
 struct Anchor {
     WTF_MAKE_STRUCT_TZONE_ALLOCATED(Anchor);
     static constexpr auto id = CSSValueAnchor;
 
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
-    // <anchor-side> = inside | outside | top | left | right | bottom | start | end | self-start | self-end | <percentage> | center
-    using Side = std::variant<CSSValueID, Child>;
 
     // Can't use Style::ScopedName here, since the scope ordinal is not available at
     // parsing time.
     AtomString elementName;
-    Side side;
+    AnchorSide side;
     std::optional<Child> fallback;
 
     bool operator==(const Anchor&) const = default;
@@ -792,41 +861,6 @@ struct AnchorSize {
     bool operator==(const AnchorSize&) const = default;
 };
 
-// MARK: Size assertions
-
-static_assert(sizeof(Child) <= 24, "Child should stay small");
-
-// MARK: Reverse mappings
-
-template<typename CalculationOp> struct ReverseMapping;
-template<> struct ReverseMapping<Calculation::Sum> { using Op = Sum; };
-template<> struct ReverseMapping<Calculation::Product> { using Op = Product; };
-template<> struct ReverseMapping<Calculation::Negate> { using Op = Negate; };
-template<> struct ReverseMapping<Calculation::Invert> { using Op = Invert; };
-template<> struct ReverseMapping<Calculation::Min> { using Op = Min; };
-template<> struct ReverseMapping<Calculation::Max> { using Op = Max; };
-template<> struct ReverseMapping<Calculation::Clamp> { using Op = Clamp; };
-template<> struct ReverseMapping<Calculation::RoundNearest> { using Op = RoundNearest; };
-template<> struct ReverseMapping<Calculation::RoundUp> { using Op = RoundUp; };
-template<> struct ReverseMapping<Calculation::RoundDown> { using Op = RoundDown; };
-template<> struct ReverseMapping<Calculation::RoundToZero> { using Op = RoundToZero; };
-template<> struct ReverseMapping<Calculation::Mod> { using Op = Mod; };
-template<> struct ReverseMapping<Calculation::Rem> { using Op = Rem; };
-template<> struct ReverseMapping<Calculation::Sin> { using Op = Sin; };
-template<> struct ReverseMapping<Calculation::Cos> { using Op = Cos; };
-template<> struct ReverseMapping<Calculation::Tan> { using Op = Tan; };
-template<> struct ReverseMapping<Calculation::Asin> { using Op = Asin; };
-template<> struct ReverseMapping<Calculation::Acos> { using Op = Acos; };
-template<> struct ReverseMapping<Calculation::Atan> { using Op = Atan; };
-template<> struct ReverseMapping<Calculation::Atan2> { using Op = Atan2; };
-template<> struct ReverseMapping<Calculation::Pow> { using Op = Pow; };
-template<> struct ReverseMapping<Calculation::Sqrt> { using Op = Sqrt; };
-template<> struct ReverseMapping<Calculation::Hypot> { using Op = Hypot; };
-template<> struct ReverseMapping<Calculation::Log> { using Op = Log; };
-template<> struct ReverseMapping<Calculation::Exp> { using Op = Exp; };
-template<> struct ReverseMapping<Calculation::Abs> { using Op = Abs; };
-template<> struct ReverseMapping<Calculation::Sign> { using Op = Sign; };
-template<> struct ReverseMapping<Calculation::Progress> { using Op = Progress; };
 
 // MARK: TextStream
 
@@ -928,6 +962,7 @@ std::optional<Type> toType(const Log&);
 std::optional<Type> toType(const Exp&);
 std::optional<Type> toType(const Abs&);
 std::optional<Type> toType(const Sign&);
+std::optional<Type> toType(const Random&);
 std::optional<Type> toType(const Progress&);
 std::optional<Type> toType(const MediaProgress&);
 std::optional<Type> toType(const ContainerProgress&);
@@ -1200,6 +1235,18 @@ template<size_t I> const auto& get(const Sign& root)
     return root.a;
 }
 
+template<size_t I> const auto& get(const Random& root)
+{
+    if constexpr (!I)
+        return root.cachingOptions;
+    else if constexpr (I == 1)
+        return root.min;
+    else if constexpr (I == 2)
+        return root.max;
+    else if constexpr (I == 3)
+        return root.step;
+}
+
 template<size_t I> const auto& get(const Progress& root)
 {
     if constexpr (!I)
@@ -1231,6 +1278,127 @@ template<size_t I> const auto& get(const ContainerProgress& root)
     else if constexpr (I == 3)
         return root.end;
 }
+
+// MARK: Child Definition
+
+template<typename T>
+    requires std::constructible_from<Node, T>
+Child::Child(T&& value)
+    : value(std::forward<T>(value))
+{
+}
+
+// MARK: ChildOrNone Definition
+
+inline ChildOrNone::ChildOrNone(Child&& child)
+    : value(WTFMove(child))
+{
+}
+
+inline ChildOrNone::ChildOrNone(CSS::Keyword::None none)
+    : value(none)
+{
+}
+
+// MARK: Children Definition
+
+inline Children::Children(Children&& other)
+    : value(WTFMove(other.value))
+{
+}
+
+inline Children::Children(Vector<Child>&& other)
+    : value(WTFMove(other))
+{
+}
+
+inline Children& Children::operator=(Children&& other)
+{
+    value = WTFMove(other.value);
+    return *this;
+}
+
+inline Children& Children::operator=(Vector<Child>&& other)
+{
+    value = WTFMove(other);
+    return *this;
+}
+
+inline Children::iterator Children::begin()
+{
+    return value.begin();
+}
+
+inline Children::iterator Children::end()
+{
+    return value.end();
+}
+
+inline Children::reverse_iterator Children::rbegin()
+{
+    return value.rbegin();
+}
+
+inline Children::reverse_iterator Children::rend()
+{
+    return value.rend();
+}
+
+inline Children::const_iterator Children::begin() const
+{
+    return value.begin();
+}
+
+inline Children::const_iterator Children::end() const
+{
+    return value.end();
+}
+
+inline Children::const_reverse_iterator Children::rbegin() const
+{
+    return value.rbegin();
+}
+
+inline Children::const_reverse_iterator Children::rend() const
+{
+    return value.rend();
+}
+
+inline bool Children::isEmpty() const
+{
+    return value.isEmpty();
+}
+
+inline size_t Children::size() const
+{
+    return value.size();
+}
+
+inline Child& Children::operator[](size_t i)
+{
+    return value[i];
+}
+
+inline const Child& Children::operator[](size_t i) const
+{
+    return value[i];
+}
+
+// AnchorSize
+
+inline AnchorSide::AnchorSide(CSSValueID valueID)
+    : value(valueID)
+{
+}
+
+inline AnchorSide::AnchorSide(Child&& child)
+    : value(WTFMove(child))
+{
+}
+
+// MARK: Size assertions
+
+static_assert(sizeof(Child) <= 24, "Child should stay small");
 
 } // namespace CSSCalc
 } // namespace WebCore
@@ -1275,6 +1443,7 @@ OP_TUPLE_LIKE_CONFORMANCE(Sign, 1);
 OP_TUPLE_LIKE_CONFORMANCE(Progress, 3);
 OP_TUPLE_LIKE_CONFORMANCE(MediaProgress, 3);
 OP_TUPLE_LIKE_CONFORMANCE(ContainerProgress, 4);
+OP_TUPLE_LIKE_CONFORMANCE(Random, 4);
 // FIXME (webkit.org/b/280798): make Anchor and AnchorSize tuple-like
 OP_TUPLE_LIKE_CONFORMANCE(Anchor, 0);
 OP_TUPLE_LIKE_CONFORMANCE(AnchorSize, 0);

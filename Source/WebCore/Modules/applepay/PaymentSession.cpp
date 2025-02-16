@@ -58,9 +58,14 @@ ExceptionOr<void> PaymentSession::canCreateSession(Document& document)
     if (!isSecure(*document.loader()))
         return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from an insecure document."_s };
 
-    auto& topDocument = document.topDocument();
-    if (&document != &topDocument) {
-        for (RefPtr ancestorDocument = document.parentDocument(); ancestorDocument != &topDocument; ancestorDocument = ancestorDocument->parentDocument()) {
+    RefPtr mainFrameDocument = document.protectedMainFrameDocument();
+    if (!mainFrameDocument) {
+        LOG_ONCE(SiteIsolation, "Unable to properly calculate PaymentSession::canCreateSession() without access to the main frame document ");
+        return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from a site isolated iframe"_s };
+    }
+
+    if (!document.isTopDocument()) {
+        for (RefPtr ancestorDocument = document.parentDocument(); ancestorDocument != mainFrameDocument.get(); ancestorDocument = ancestorDocument->parentDocument()) {
             if (!isSecure(*ancestorDocument->loader()))
                 return Exception { ExceptionCode::InvalidAccessError, "Trying to start an Apple Pay session from a document with an insecure parent frame."_s };
         }

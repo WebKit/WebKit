@@ -34,7 +34,7 @@ function foo(a, b, c) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(1.5, 2.5, 3.5);
     if (result != 42)
         throw "Error: bad result: " + result;

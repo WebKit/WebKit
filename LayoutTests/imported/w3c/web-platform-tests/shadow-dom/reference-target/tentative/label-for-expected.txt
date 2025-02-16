@@ -1,0 +1,7 @@
+Input 1 Input 2 A F Input 4
+
+FAIL Label for attribute targets a custom element using shadowrootreferencetarget assert_equals: expected "Input 1" but got ""
+FAIL Label for attribute targets a custom element using shadowrootreferencetarget inside multiple layers of shadow roots assert_equals: expected "Input 2" but got ""
+FAIL Multiple labels targeting a custom element using shadowrootreferencetarget inside multiple layers of shadow roots assert_equals: expected "A B C D E F" but got "C D"
+FAIL Setting .htmlFor property to target a custom element using shadowrootreferencetarget assert_equals: expected "Input 4" but got ""
+

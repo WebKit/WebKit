@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,11 @@
 #include "DigitalCredentialsCoordinator.h"
 
 #if ENABLE(WEB_AUTHN)
-#include "DigitalCredentialsCoordinatorProxyMessages.h"
-#include "FrameInfoData.h"
-#include "WebFrame.h"
 #include "WebPage.h"
-#include <WebCore/DigitalCredentialRequestOptions.h>
-#include <WebCore/LocalFrame.h>
-#include <wtf/Logger.h>
+#include <WebCore/DigitalCredentialsRequestData.h>
+#include <WebCore/DigitalCredentialsResponseData.h>
+#include <WebCore/ExceptionData.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -51,27 +49,20 @@ RefPtr<WebPage> DigitalCredentialsCoordinator::protectedPage() const
     return m_page.get();
 }
 
-void DigitalCredentialsCoordinator::requestDigitalCredential(const LocalFrame& frame, const DigitalCredentialRequestOptions& options, DigitalCredentialRequestCompletionHandler&& handler)
+void DigitalCredentialsCoordinator::showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData& request, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& completionHandler)
 {
-    RefPtr webFrame = WebFrame::fromCoreFrame(frame);
-    RefPtr page = m_page.get();
-    if (!webFrame || !page) {
-        LOG_ERROR("Unable to get frame or page");
-        handler(ExceptionData { ExceptionCode::InvalidStateError, "Unable to get frame or page"_s });
-        return;
-    }
-    page->sendWithAsyncReply(Messages::DigitalCredentialsCoordinatorProxy::RequestDigitalCredential(webFrame->frameID(), webFrame->info(), options), WTFMove(handler));
+    if (RefPtr page = protectedPage())
+        page->showDigitalCredentialsPicker(request, WTFMove(completionHandler));
+    else
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::InvalidStateError, "The page is not available."_s }));
 }
 
-void DigitalCredentialsCoordinator::cancel(CompletionHandler<void()>&& handler)
+void DigitalCredentialsCoordinator::dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&& completionHandler)
 {
-    RefPtr page = m_page.get();
-    if (!page) {
-        handler();
-        return;
-    }
-
-    page->sendWithAsyncReply(Messages::DigitalCredentialsCoordinatorProxy::Cancel(), WTFMove(handler));
+    if (RefPtr page = protectedPage())
+        page->dismissDigitalCredentialsPicker(WTFMove(completionHandler));
+    else
+        completionHandler(false);
 }
 
 } // namespace WebKit

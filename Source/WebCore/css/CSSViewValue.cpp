@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-String CSSViewValue::customCSSText() const
+String CSSViewValue::customCSSText(const CSS::SerializationContext& context) const
 {
     auto hasAxis = m_axis && m_axis->valueID() != CSSValueBlock;
     auto hasEndInset = m_endInset && m_endInset != m_startInset;
@@ -42,11 +42,11 @@ String CSSViewValue::customCSSText() const
 
     return makeString(
         "view("_s,
-        hasAxis ? m_axis->cssText() : ""_s,
+        hasAxis ? m_axis->cssText(context) : ""_s,
         hasAxis && hasStartInset ? " "_s : ""_s,
-        hasStartInset ? m_startInset->cssText() : ""_s,
+        hasStartInset ? m_startInset->cssText(context) : ""_s,
         hasStartInset && hasEndInset ? " "_s : ""_s,
-        hasEndInset ? m_endInset->cssText() : ""_s,
+        hasEndInset ? m_endInset->cssText(context) : ""_s,
         ")"_s
     );
 }

@@ -217,6 +217,8 @@ void HTMLTextFormControlElement::setSelectionDirection(const String& direction)
 
 void HTMLTextFormControlElement::select(SelectionRevealMode revealMode, const AXTextStateChangeIntent& intent)
 {
+    FocusOptions focusOptions { .preventScroll = true };
+    focus(focusOptions);
     if (setSelectionRange(0, std::numeric_limits<unsigned>::max(), SelectionHasNoDirection, revealMode, intent))
         scheduleSelectEvent();
 }
@@ -326,22 +328,23 @@ bool HTMLTextFormControlElement::setSelectionRange(unsigned start, unsigned end,
         if (!isConnected())
             return cacheSelection(start, end, direction);
 
+#if PLATFORM(COCOA)
+        bool cacheSelectionIfNotFocusedOrSelected = WTF::linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SetSelectionRangeCachesSelectionIfNotFocusedOrSelected);
+#else
+        bool cacheSelectionIfNotFocusedOrSelected = true;
+#endif
+        // Cache selection if neither selection or focus is on the input.
+        if (cacheSelectionIfNotFocusedOrSelected && frame && enclosingTextFormControl(frame->selection().selection().start()) != this)
+            return cacheSelection(start, end, direction);
+
         // FIXME: Removing this synchronous layout requires fixing setSelectionWithoutUpdatingAppearance not needing up-to-date style.
         protectedDocument()->updateLayoutIgnorePendingStylesheets();
 
-        if (!isTextField())
-            return false;
-
-        // Double-check our connected state after the layout update.
-        if (!isConnected())
-            return cacheSelection(start, end, direction);
-
-        // Double-check the state of innerTextElement after the layout.
-        innerText = innerTextElement();
-        auto* rendererTextControl = renderer();
-
-        if (innerText && rendererTextControl && (rendererTextControl->style().visibility() == Visibility::Hidden || !innerText->renderBox() || !innerText->renderBox()->height()))
-            return cacheSelection(start, end, direction);
+        // Cache selection if renderer is invisible.
+        if (CheckedPtr renderer = this->renderer()) {
+            if (renderer->style().visibility() == Visibility::Hidden || !innerText->renderBox() || !innerText->renderBox()->height())
+                return cacheSelection(start, end, direction);
+        }
     }
 
     auto previousSelectionStart = m_cachedSelectionStart;
@@ -489,7 +492,7 @@ TextFieldSelectionDirection HTMLTextFormControlElement::computeSelectionDirectio
         return SelectionHasNoDirection;
 
     const VisibleSelection& selection = frame->selection().selection();
-    return selection.isDirectional() ? (selection.isBaseFirst() ? SelectionHasForwardDirection : SelectionHasBackwardDirection) : SelectionHasNoDirection;
+    return selection.directionality() == Directionality::Strong ? (selection.isBaseFirst() ? SelectionHasForwardDirection : SelectionHasBackwardDirection) : SelectionHasNoDirection;
 }
 
 static void setContainerAndOffsetForRange(Node& node, unsigned offset, RefPtr<Node>& containerNode, unsigned& offsetInContainer)
@@ -809,7 +812,7 @@ String HTMLTextFormControlElement::valueWithHardLineBreaks() const
 
     auto skipToNextSoftLineBreakPosition = [&] {
         while (currentLineBox) {
-            auto lastRun = currentLineBox->lastLeafBox();
+            auto lastRun = currentLineBox->lineRightmostLeafBox();
             ASSERT(lastRun);
             // Skip last line.
             currentLineBox.traverseNext();

@@ -30,6 +30,7 @@
 #include "IPCEvent.h"
 #include "ImageBufferSet.h"
 #include "PrepareBackingStoreBuffersData.h"
+#include "RemoteImageBufferSetConfiguration.h"
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "StreamConnectionWorkQueue.h"
@@ -70,7 +71,7 @@ private:
     void didReceiveStreamMessage(IPC::StreamServerConnection&, IPC::Decoder&) final;
 
     // Messages
-    void updateConfiguration(const WebCore::FloatSize&, WebCore::RenderingMode, WebCore::RenderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat);
+    void updateConfiguration(const RemoteImageBufferSetConfiguration&);
     void endPrepareForDisplay(RenderingUpdateID);
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -80,19 +81,18 @@ private:
 
     bool isOpaque() const
     {
-        return m_pixelFormat == WebCore::ImageBufferPixelFormat::RGB10 || m_pixelFormat == WebCore::ImageBufferPixelFormat::BGRX8;
+#if ENABLE(PIXEL_FORMAT_RGB10)
+        if (m_configuration.pixelFormat == WebCore::ImageBufferPixelFormat::RGB10)
+            return true;
+#endif
+        return m_configuration.pixelFormat == WebCore::ImageBufferPixelFormat::BGRX8;
     }
 
     const RemoteImageBufferSetIdentifier m_identifier;
     const WebCore::RenderingResourceIdentifier m_displayListIdentifier;
     RefPtr<RemoteRenderingBackend> m_backend;
 
-    WebCore::FloatSize m_logicalSize;
-    WebCore::RenderingMode m_renderingMode;
-    WebCore::RenderingPurpose m_renderingPurpose;
-    float m_resolutionScale { 1.0f };
-    WebCore::DestinationColorSpace m_colorSpace { WebCore::DestinationColorSpace::SRGB() };
-    WebCore::ImageBufferPixelFormat m_pixelFormat;
+    RemoteImageBufferSetConfiguration m_configuration;
     bool m_displayListCreated { false };
 
     std::optional<WebCore::IntRect> m_previouslyPaintedRect;

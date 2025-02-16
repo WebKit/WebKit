@@ -134,7 +134,7 @@ function foo(o, p, q)
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({f:42}, foos[i % foos.length], {f:0});
     if (result != 84)
         throw "Error: bad result in loop: " + result;

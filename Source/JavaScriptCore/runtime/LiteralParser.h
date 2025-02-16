@@ -289,7 +289,7 @@ private:
     Lexer m_lexer;
     const ParserMode m_mode;
     String m_parseErrorMessage;
-    HashSet<JSObject*> m_visitedUnderscoreProto;
+    UncheckedKeyHashSet<JSObject*> m_visitedUnderscoreProto;
     MarkedArgumentBuffer m_objectStack;
     Vector<ParserState, 16, UnsafeVectorOverflow> m_stateStack;
     Vector<Identifier, 16, UnsafeVectorOverflow> m_identifierStack;

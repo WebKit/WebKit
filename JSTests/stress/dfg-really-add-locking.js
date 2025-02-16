@@ -5,7 +5,7 @@ for (var i = 0; i < 10; ++i) {
     runString(`
         var g;
         (function () {
-            for (var i = 0; i < 100000; ++i) {
+            for (var i = 0; i < testLoopCount; ++i) {
                 var o = {};
                 o.a = 0;
                 o.b = 1;

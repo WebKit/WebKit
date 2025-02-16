@@ -68,7 +68,7 @@ public:
     RefPtr<MediaPlayerPrivateInterface> player() const final;
     void setPlayer(MediaPlayerPrivateInterface*) final;
 
-    AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
+    AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
     void markEndOfStream(EndOfStreamStatus) final;
 

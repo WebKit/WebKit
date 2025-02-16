@@ -30,6 +30,7 @@
 
 #import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/text/StringCommon.h>
 
 @interface WebMainThreadInvoker : NSProxy
 {
@@ -46,7 +47,7 @@ static bool returnTypeIsObject(NSInvocation *invocation)
 {
     // Could use either _C_ID or NSObjCObjectType, but it seems that neither is
     // both available and non-deprecated on all versions of Mac OS X we support.
-    return strchr([[invocation methodSignature] methodReturnType], '@');
+    return contains(unsafeSpan([[invocation methodSignature] methodReturnType]), '@');
 }
 
 @implementation WebMainThreadInvoker

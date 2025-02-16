@@ -26,7 +26,7 @@ function test()
             var result = f(1);
             if (result != 1)
                 testFailed("Wrong result, expected 1, got " + result);
-        } catch (e) {
+        } catch {
         }
     }
 }
@@ -34,5 +34,9 @@ function test()
 init();
 
 test();
+
+try {
+    (function () { }()); // Ensure that failNextNewCodeBlock is cleared regardless of how `new Function` caches the functions.
+} catch { }
 
 testPassed("Didn't crash when calling a virtual JavaScript function that doesn't have a CodeBlock.");

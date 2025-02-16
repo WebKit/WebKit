@@ -39,8 +39,7 @@ messages -> WebExtensionController {
     // Test APIs
     [Validator=inTestingMode] TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
     [Validator=inTestingMode] TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber)
-    [Validator=inTestingMode] TestMessage(String message, String sourceURL, unsigned lineNumber)
-    [Validator=inTestingMode] TestYielded(String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestLogMessage(String message, String sourceURL, unsigned lineNumber)
     [Validator=inTestingMode] TestSentMessage(String message, String argument, String sourceURL, unsigned lineNumber)
     [Validator=inTestingMode] TestFinished(bool result, String message, String sourceURL, unsigned lineNumber)
 }

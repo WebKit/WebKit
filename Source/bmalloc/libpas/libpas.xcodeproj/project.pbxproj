@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -554,6 +554,10 @@
 		2B6055E42805368B00C8BDAC /* BmallocTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B6055E32805368B00C8BDAC /* BmallocTests.cpp */; };
 		2BDF4F4529E8B36F0056BF50 /* pas_report_crash.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BDF4F4429E8B36F0056BF50 /* pas_report_crash.h */; };
 		2BDF4F4729E8B3AD0056BF50 /* (null) in Sources */ = {isa = PBXBuildFile; };
+		2BE4B7CB2D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE4B7C72D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.h */; };
+		2BE4B7CC2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE4B7C92D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.h */; };
+		2BE4B7CD2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BE4B7CA2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.c */; };
+		2BE4B7CE2D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.c in Sources */ = {isa = PBXBuildFile; fileRef = 2BE4B7C82D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.c */; };
 		2BF3F5B529A0051F005361FD /* EnumerationTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BF3F5B429A0051F005361FD /* EnumerationTests.cpp */; };
 		2C11E88E2728A783002162D0 /* bmalloc_type.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C11E88C2728A783002162D0 /* bmalloc_type.h */; };
 		2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 2C11E88D2728A783002162D0 /* pas_simple_type.c */; };
@@ -590,6 +594,7 @@
 		2CB9B15B278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */; };
 		2CB9B15D278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */; };
 		2CE2AE35275A953E00D02BBC /* BitfitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */; };
+		31AEEEDB2D385BF40079F562 /* pas_compiler_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 31AEEEDA2D385BF40079F562 /* pas_compiler_utils.h */; };
 		E3096D4C2A82357800BC4CA0 /* pas_allocation_result.c in Sources */ = {isa = PBXBuildFile; fileRef = E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */; };
 		E3AA9B8328C724D8005DF9D6 /* pas_darwin_spi.h in Headers */ = {isa = PBXBuildFile; fileRef = E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */; };
 /* End PBXBuildFile section */
@@ -1262,6 +1267,10 @@
 		2B6055E32805368B00C8BDAC /* BmallocTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BmallocTests.cpp; sourceTree = "<group>"; };
 		2BDF4F4429E8B36F0056BF50 /* pas_report_crash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_report_crash.h; sourceTree = "<group>"; };
 		2BDF4F4829E8B5510056BF50 /* pas_report_crash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_report_crash.c; sourceTree = "<group>"; };
+		2BE4B7C72D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pas_small_medium_bootstrap_free_heap.h; sourceTree = "<group>"; };
+		2BE4B7C82D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pas_small_medium_bootstrap_free_heap.c; sourceTree = "<group>"; };
+		2BE4B7C92D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pas_small_medium_bootstrap_heap_page_provider.h; sourceTree = "<group>"; };
+		2BE4B7CA2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pas_small_medium_bootstrap_heap_page_provider.c; sourceTree = "<group>"; };
 		2BF3F5B429A0051F005361FD /* EnumerationTests.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumerationTests.cpp; sourceTree = "<group>"; };
 		2C11E88C2728A783002162D0 /* bmalloc_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bmalloc_type.h; sourceTree = "<group>"; };
 		2C11E88D2728A783002162D0 /* pas_simple_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_simple_type.c; sourceTree = "<group>"; };
@@ -1303,6 +1312,7 @@
 		2CB9B157278F85EE003A8C1B /* pas_lenient_compact_ptr_inlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_lenient_compact_ptr_inlines.h; sourceTree = "<group>"; };
 		2CB9B15C278F861B003A8C1B /* LotsOfHeapsAndThreads.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LotsOfHeapsAndThreads.cpp; sourceTree = "<group>"; };
 		2CE2AE34275A953E00D02BBC /* BitfitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BitfitTests.cpp; sourceTree = "<group>"; };
+		31AEEEDA2D385BF40079F562 /* pas_compiler_utils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pas_compiler_utils.h; sourceTree = "<group>"; };
 		E3096D4B2A82357800BC4CA0 /* pas_allocation_result.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pas_allocation_result.c; sourceTree = "<group>"; };
 		E3AA9B8228C724D8005DF9D6 /* pas_darwin_spi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pas_darwin_spi.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1596,6 +1606,7 @@
 				0F6D567823CD705900F40DBB /* pas_compact_tagged_unsigned_ptr.h */,
 				2C473168277D4CCC00B62C49 /* pas_compact_thread_local_cache_layout_node.h */,
 				0F6D564F23CBD19B00F40DBB /* pas_compact_unsigned_ptr.h */,
+				31AEEEDA2D385BF40079F562 /* pas_compiler_utils.h */,
 				0FC4EC35234A91E300B710A3 /* pas_compute_summary_object_callbacks.c */,
 				0FC4EC30234A91E200B710A3 /* pas_compute_summary_object_callbacks.h */,
 				0FC681A22103917B003C6A13 /* pas_config.h */,
@@ -1908,6 +1919,10 @@
 				0FC641842130DFB60040CE5E /* pas_slow_path_mode.h */,
 				0F47D40E2140DB05008C41F0 /* pas_slow_path_mode_prefix.h */,
 				0F6D547823C573E100F40DBB /* pas_small_large_map_entry.h */,
+				2BE4B7C82D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.c */,
+				2BE4B7C72D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.h */,
+				2BE4B7CA2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.c */,
+				2BE4B7C92D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.h */,
 				0FC6821721253627003C6A13 /* pas_snprintf.h */,
 				0FC4EC32234A91E200B710A3 /* pas_status_reporter.c */,
 				0FC4EC34234A91E200B710A3 /* pas_status_reporter.h */,
@@ -2162,6 +2177,7 @@
 				0F6D564B23CAA1BA00F40DBB /* pas_compact_tagged_ptr.h in Headers */,
 				0F6D567923CD705900F40DBB /* pas_compact_tagged_unsigned_ptr.h in Headers */,
 				0F6D566223CBD19D00F40DBB /* pas_compact_unsigned_ptr.h in Headers */,
+				31AEEEDB2D385BF40079F562 /* pas_compiler_utils.h in Headers */,
 				0FC4EC39234A91E300B710A3 /* pas_compute_summary_object_callbacks.h in Headers */,
 				0FE7EE0A22960142004F4166 /* pas_config.h in Headers */,
 				0F85EFDA22E2BEC7003A362B /* pas_config_prefix.h in Headers */,
@@ -2375,6 +2391,8 @@
 				0FE7EE2D22960142004F4166 /* pas_slow_path_mode.h in Headers */,
 				0FE7EE2C22960142004F4166 /* pas_slow_path_mode_prefix.h in Headers */,
 				0F6D548023C573E100F40DBB /* pas_small_large_map_entry.h in Headers */,
+				2BE4B7CB2D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.h in Headers */,
+				2BE4B7CC2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.h in Headers */,
 				0FE7EE3222960142004F4166 /* pas_snprintf.h in Headers */,
 				0FC4EC3D234A91E300B710A3 /* pas_status_reporter.h in Headers */,
 				0FE7EE3322960142004F4166 /* pas_stream.h in Headers */,
@@ -2836,6 +2854,8 @@
 				0F6D564623CAA1BA00F40DBB /* pas_simple_free_heap_helpers.c in Sources */,
 				0FF08F3E22A5DC6900386575 /* pas_simple_large_free_heap.c in Sources */,
 				2C11E88F2728A783002162D0 /* pas_simple_type.c in Sources */,
+				2BE4B7CE2D2D845E0099B3C5 /* pas_small_medium_bootstrap_free_heap.c in Sources */,
+				2BE4B7CD2D2D845E0099B3C5 /* pas_small_medium_bootstrap_heap_page_provider.c in Sources */,
 				0FC4EC3B234A91E300B710A3 /* pas_status_reporter.c in Sources */,
 				0FE7EDD322960142004F4166 /* pas_stream.c in Sources */,
 				0FC4EC37234A91E300B710A3 /* pas_string_stream.c in Sources */,
@@ -2963,6 +2983,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -2981,6 +3002,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3001,6 +3026,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -3021,6 +3047,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3041,6 +3071,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -3061,6 +3092,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3081,6 +3116,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -3101,6 +3137,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3154,6 +3194,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3169,6 +3210,10 @@
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx.internal;
 			};
@@ -3183,6 +3228,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -3198,6 +3244,10 @@
 				CLANG_ENABLE_MODULES = NO;
 				CLANG_ENABLE_MODULE_DEBUGGING = NO;
 				CODE_SIGN_STYLE = Automatic;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx.internal;
 			};
@@ -3220,6 +3270,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
@@ -3255,6 +3306,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -3285,6 +3340,7 @@
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(inherited)",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
@@ -3305,6 +3361,10 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"OS_UNFAIR_LOCK_INLINE=1",
+					"$(inherited)",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3357,6 +3417,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_SRCROOT=\"\\\"$(SRCROOT)\\\"\"",
 					"DEBUG=1",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(EXTRA_DEFINES)",
 				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -3416,6 +3477,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"_SRCROOT=\"\\\"$(SRCROOT)\\\"\"",
+					"OS_UNFAIR_LOCK_INLINE=1",
 					"$(EXTRA_DEFINES)",
 				);
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;

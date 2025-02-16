@@ -27,32 +27,70 @@
 #include "WebTransportReceiveStreamSource.h"
 
 #include "JSWebTransportReceiveStream.h"
+#include "WebTransport.h"
+#include "WebTransportSession.h"
 
 namespace WebCore {
 
-void WebTransportReceiveStreamSource::doCancel()
+WebTransportReceiveStreamSource::WebTransportReceiveStreamSource()
 {
-    m_isCancelled = true;
 }
 
-void WebTransportReceiveStreamSource::receiveIncomingStream(JSC::JSGlobalObject& globalObject, Ref<WebTransportReceiveStream>&& stream)
+WebTransportReceiveStreamSource::WebTransportReceiveStreamSource(WebTransport& transport, WebTransportStreamIdentifier identifier)
+    : m_transport(transport)
+    , m_identifier(identifier)
 {
-    if (m_isCancelled)
-        return;
+}
+
+bool WebTransportReceiveStreamSource::receiveIncomingStream(JSC::JSGlobalObject& globalObject, Ref<WebTransportReceiveStream>& stream)
+{
+    if (m_isCancelled || m_identifier)
+        return false;
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
     Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
     auto value = toJS(&globalObject, &jsDOMGlobalObject, stream.get());
-    if (!controller().enqueue(value))
+    if (!controller().enqueue(value)) {
         doCancel();
+        return false;
+    }
+    return true;
 }
 
-void WebTransportReceiveStreamSource::receiveBytes(std::span<const uint8_t> bytes, bool)
+void WebTransportReceiveStreamSource::receiveBytes(std::span<const uint8_t> bytes, bool withFin, std::optional<WebCore::Exception>&& exception)
+{
+    if (m_isCancelled || m_isClosed || !m_identifier)
+        return;
+    if (exception) {
+        controller().error(*exception);
+        clean();
+        return;
+    }
+    auto arrayBuffer = ArrayBuffer::tryCreateUninitialized(bytes.size(), 1);
+    if (arrayBuffer)
+        memcpySpan(arrayBuffer->mutableSpan(), bytes);
+    if (!controller().enqueue(WTFMove(arrayBuffer)))
+        doCancel();
+    if (withFin) {
+        m_isClosed = true;
+        controller().close();
+        clean();
+    }
+}
+
+void WebTransportReceiveStreamSource::doCancel()
 {
     if (m_isCancelled)
         return;
-    auto arrayBuffer = ArrayBuffer::tryCreate(bytes);
-    if (!controller().enqueue(WTFMove(arrayBuffer)))
-        doCancel();
+    m_isCancelled = true;
+    if (!m_identifier)
+        return;
+    RefPtr transport = m_transport.get();
+    if (!transport)
+        return;
+    RefPtr session = transport->session();
+    if (!session)
+        return;
+    // FIXME: Use error code from WebTransportError
+    session->cancelReceiveStream(*m_identifier, std::nullopt);
 }
-
 }

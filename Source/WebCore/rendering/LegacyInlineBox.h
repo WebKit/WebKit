@@ -44,8 +44,6 @@ public:
     void assertNotDeleted() const;
 
     virtual void deleteLine() = 0;
-    virtual void extractLine() = 0;
-    virtual void attachLine() = 0;
 
     virtual bool isLineBreak() const { return renderer().isRenderLineBreak(); }
 

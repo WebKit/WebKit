@@ -46,6 +46,7 @@
 #include "EventHandler.h"
 #include "EventLoop.h"
 #include "EventNames.h"
+#include "FixedContainerEdges.h"
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "FragmentDirectiveParser.h"
@@ -77,7 +78,9 @@
 #include "Logging.h"
 #include "MemoryCache.h"
 #include "NullGraphicsContext.h"
+#include "OverflowEvent.h"
 #include "Page.h"
+#include "PageColorSampler.h"
 #include "PageOverlayController.h"
 #include "PerformanceLoggingClient.h"
 #include "ProgressTracker.h"
@@ -251,7 +254,7 @@ void LocalFrameView::reset()
     m_isOverlapped = false;
     m_contentIsOpaque = false;
     m_updateEmbeddedObjectsTimer.stop();
-    m_wasScrolledByUser = false;
+    m_lastUserScrollType = std::nullopt;
     m_delayedScrollEventTimer.stop();
     m_shouldScrollToFocusedElement = false;
     m_delayedScrollToFocusedElementTimer.stop();
@@ -663,7 +666,7 @@ void LocalFrameView::applyPaginationToViewport()
         if (!columnGapLength.isNormal()) {
             auto* renderBox = dynamicDowncast<RenderBox>(documentOrBodyRenderer);
             if (auto* containerForPaginationGap = renderBox ? renderBox : documentOrBodyRenderer->containingBlock())
-                pagination.gap = valueForLength(columnGapLength.length(), containerForPaginationGap->availableLogicalWidth()).toUnsigned();
+                pagination.gap = valueForLength(columnGapLength.length(), containerForPaginationGap->contentBoxLogicalWidth()).toUnsigned();
         }
     }
     setPagination(pagination);
@@ -1039,14 +1042,14 @@ LayoutPoint LocalFrameView::scrollPositionRespectingCustomFixedPosition() const
     return scrollPositionForFixedPosition();
 }
 
-void LocalFrameView::topContentInsetDidChange(float newTopContentInset)
+void LocalFrameView::obscuredContentInsetsDidChange(const FloatBoxExtent& newObscuredContentInsets)
 {
     RenderView* renderView = this->renderView();
     if (!renderView)
         return;
 
     if (platformWidget())
-        platformSetTopContentInset(newTopContentInset);
+        platformSetContentInsets(newObscuredContentInsets);
     
     renderView->setNeedsLayout();
     layoutContext().layout();
@@ -1059,7 +1062,7 @@ void LocalFrameView::topContentInsetDidChange(float newTopContentInset)
         renderView->compositor().frameViewDidChangeSize();
 
     if (TiledBacking* tiledBacking = this->tiledBacking())
-        tiledBacking->setTopContentInset(newTopContentInset);
+        tiledBacking->setObscuredContentInsets(newObscuredContentInsets);
 
     setCurrentScrollType(oldScrollType);
 }
@@ -1263,6 +1266,9 @@ void LocalFrameView::didLayout(SingleThreadWeakPtr<RenderElement> layoutRoot, bo
 
     handleDeferredScrollbarsUpdate();
     handleDeferredPositionScrollbarLayers();
+
+    if (document->hasListenerType(Document::ListenerType::OverflowChanged))
+        updateOverflowStatus(layoutWidth() < contentsWidth(), layoutHeight() < contentsHeight());
 
     if (CheckedPtr markers = document->markersIfExists())
         markers->invalidateRectsForAllMarkers();
@@ -1864,46 +1870,118 @@ LayoutPoint LocalFrameView::scrollPositionForFixedPosition(const LayoutRect& vis
     return LayoutPoint(position.x() * dragFactorX / frameScaleFactor, position.y() * dragFactorY / frameScaleFactor);
 }
 
-float LocalFrameView::yPositionForInsetClipLayer(const FloatPoint& scrollPosition, float topContentInset)
+FixedContainerEdges LocalFrameView::fixedContainerEdges() const
 {
-    if (!topContentInset)
-        return 0;
+    RefPtr page = m_frame->page();
+    if (!page)
+        return { };
 
-    // The insetClipLayer should not move for negative scroll values.
-    float scrollY = std::max<float>(0, scrollPosition.y());
+    if (!m_viewportConstrainedObjects)
+        return { };
 
-    if (scrollY >= topContentInset)
-        return 0;
+    RefPtr document = m_frame->document();
+    if (!document)
+        return { };
 
-    return topContentInset - scrollY;
+    auto fixedRect = rectForFixedPositionLayout();
+    auto hasFixedContainer = [&](LayoutUnit x, LayoutUnit y) {
+        using enum HitTestRequest::Type;
+        HitTestResult result { { x, y } };
+        if (!document->hitTest({ HitTestSource::User, { ReadOnly, DisallowUserAgentShadowContent, IgnoreClipping } }, result))
+            return false;
+
+        RefPtr hitNode = result.innerNonSharedNode();
+        if (!hitNode)
+            return false;
+
+        CheckedPtr renderer = hitNode->renderer();
+        if (!renderer)
+            return false;
+
+        for (CheckedPtr layer = renderer->enclosingLayer(); layer; layer = layer->parent()) {
+            CheckedRef renderer = layer->renderer();
+            if (renderer->isFixedPositioned() || renderer->isStickilyPositioned())
+                return true;
+        }
+
+        return false;
+    };
+
+    RectEdges<bool> fixedEdges;
+    RectEdges<Color> sampledColors;
+
+    static constexpr auto sampleRectThickness = 2;
+    static constexpr auto sampleRectMargin = 2;
+    fixedRect.contract({ sampleRectMargin });
+
+    if (hasFixedContainer((fixedRect.x() + fixedRect.maxX()) / 2, fixedRect.y())) {
+        fixedEdges.setTop(true);
+        sampledColors.setTop(PageColorSampler::predominantColor(*page, { fixedRect.minXMinYCorner(), LayoutPoint { fixedRect.maxX(), fixedRect.y() + sampleRectThickness } }));
+    }
+
+    if (hasFixedContainer(fixedRect.x(), (fixedRect.y() + fixedRect.maxY()) / 2)) {
+        fixedEdges.setLeft(true);
+        sampledColors.setLeft(PageColorSampler::predominantColor(*page, { fixedRect.minXMinYCorner(), LayoutPoint { fixedRect.x() + sampleRectThickness, fixedRect.maxY() } }));
+    }
+
+    if (hasFixedContainer(fixedRect.maxX(), (fixedRect.y() + fixedRect.maxY()) / 2)) {
+        fixedEdges.setRight(true);
+        sampledColors.setRight(PageColorSampler::predominantColor(*page, { LayoutPoint { fixedRect.maxX() - sampleRectThickness, fixedRect.y() }, fixedRect.maxXMaxYCorner() }));
+    }
+
+    if (hasFixedContainer((fixedRect.x() + fixedRect.maxX()) / 2, fixedRect.maxY())) {
+        fixedEdges.setBottom(true);
+        sampledColors.setBottom(PageColorSampler::predominantColor(*page, { LayoutPoint { fixedRect.x(), fixedRect.maxY() - sampleRectThickness }, fixedRect.maxXMaxYCorner() }));
+    }
+
+    return { WTFMove(sampledColors), WTFMove(fixedEdges) };
 }
 
-float LocalFrameView::yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topContentInset)
+FloatPoint LocalFrameView::positionForInsetClipLayer(const FloatPoint& scrollPosition, const FloatBoxExtent& obscuredContentInset)
 {
-    if (!topContentInset)
+    auto computeOffset = [](float scrollAmount, float insetAmount) {
+        if (!insetAmount)
+            return 0.f;
+
+        // The insetClipLayer should not move for negative scroll values.
+        auto clampedScrollPosition = std::max<float>(0, scrollAmount);
+        if (clampedScrollPosition >= insetAmount)
+            return 0.f;
+
+        return insetAmount - clampedScrollPosition;
+    };
+    return { computeOffset(scrollPosition.x(), obscuredContentInset.left()), computeOffset(scrollPosition.y(), obscuredContentInset.top()) };
+}
+
+float LocalFrameView::yPositionForHeaderLayer(const FloatPoint& scrollPosition, float topInset)
+{
+    if (!topInset)
         return 0;
 
     float scrollY = std::max<float>(0, scrollPosition.y());
 
-    if (scrollY >= topContentInset)
-        return topContentInset;
+    if (scrollY >= topInset)
+        return topInset;
 
     return scrollY;
 }
 
-float LocalFrameView::yPositionForFooterLayer(const FloatPoint& scrollPosition, float topContentInset, float totalContentsHeight, float footerHeight)
+float LocalFrameView::yPositionForFooterLayer(const FloatPoint& scrollPosition, float topInset, float totalContentsHeight, float footerHeight)
 {
-    return yPositionForHeaderLayer(scrollPosition, topContentInset) + totalContentsHeight - footerHeight;
+    return yPositionForHeaderLayer(scrollPosition, topInset) + totalContentsHeight - footerHeight;
 }
 
-FloatPoint LocalFrameView::positionForRootContentLayer(const FloatPoint& scrollPosition, const FloatPoint& scrollOrigin, float topContentInset, float headerHeight)
+FloatPoint LocalFrameView::positionForRootContentLayer(const FloatPoint& scrollPosition, const FloatPoint& scrollOrigin, const FloatBoxExtent& obscuredContentInsets, float headerHeight)
 {
-    return FloatPoint(0, yPositionForHeaderLayer(scrollPosition, topContentInset) + headerHeight) - toFloatSize(scrollOrigin);
+    return {
+        (scrollPosition.x() >= obscuredContentInsets.left() ? obscuredContentInsets.left() : std::max<float>(0, scrollPosition.x())) - scrollOrigin.x(),
+        yPositionForHeaderLayer(scrollPosition, obscuredContentInsets.top()) + headerHeight - scrollOrigin.y()
+    };
 }
 
 FloatPoint LocalFrameView::positionForRootContentLayer() const
 {
-    return positionForRootContentLayer(scrollPosition(), scrollOrigin(), topContentInset(), headerHeight());
+    return positionForRootContentLayer(scrollPosition(), scrollOrigin(), obscuredContentInsets(), headerHeight());
 }
 
 #if PLATFORM(IOS_FAMILY)
@@ -2585,7 +2663,7 @@ void LocalFrameView::scrollRectToVisibleInChildView(const LayoutRect& absoluteRe
     // If scrollbars aren't explicitly forbidden, permit scrolling.
     if (m_frame->scrollingMode() == ScrollbarMode::AlwaysOff) {
         // If scrollbars are forbidden, user initiated scrolls should obviously be ignored.
-        if (wasScrolledByUser())
+        if (m_lastUserScrollType == UserScrollType::Explicit)
             return;
         // Forbid autoscrolls when scrollbars are off, but permits other programmatic scrolls, like navigation to an anchor.
         if (m_frame->eventHandler().autoscrollInProgress())
@@ -2777,7 +2855,7 @@ void LocalFrameView::scrollPositionChanged(const ScrollPosition& oldPosition, co
     }
 }
 
-void LocalFrameView::applyRecursivelyWithVisibleRect(const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>& apply)
+void LocalFrameView::applyRecursivelyWithVisibleRect(NOESCAPE const Function<void(LocalFrameView& frameView, const IntRect& visibleRect)>& apply)
 {
     IntRect windowClipRect = this->windowClipRect();
     auto visibleRect = windowToContents(windowClipRect);
@@ -3204,7 +3282,7 @@ static bool shouldEnableSpeculativeTilingDuringLoading(const LocalFrameView& vie
 void LocalFrameView::enableSpeculativeTilingIfNeeded()
 {
     ASSERT(!m_speculativeTilingEnabled);
-    if (m_wasScrolledByUser) {
+    if (wasScrolledByUser()) {
         m_speculativeTilingEnabled = true;
         return;
     }
@@ -3239,7 +3317,7 @@ void LocalFrameView::show()
         // Turn off speculative tiling for a brief moment after a LocalFrameView appears on screen.
         // Note that adjustTiledBackingCoverage() kicks the (500ms) timer to re-enable it.
         m_speculativeTilingEnabled = false;
-        m_wasScrolledByUser = false;
+        m_lastUserScrollType = std::nullopt;
         adjustTiledBackingCoverage();
     }
 }
@@ -3834,7 +3912,7 @@ void LocalFrameView::scheduleResizeEventIfNeeded()
 #endif
 
     RefPtr document = m_frame->document();
-    if (document->quirks().shouldSilenceWindowResizeEvents()) {
+    if (document->quirks().shouldSilenceWindowResizeEventsDuringApplicationSnapshotting()) {
         document->addConsoleMessage(MessageSource::Other, MessageLevel::Info, "Window resize events silenced due to: http://webkit.org/b/258597"_s);
         FRAMEVIEW_RELEASE_LOG(Events, "scheduleResizeEventIfNeeded: Not firing resize events because they are temporarily disabled for this page");
         return;
@@ -4077,6 +4155,34 @@ RenderElement* LocalFrameView::viewportRenderer() const
 
     ASSERT_NOT_REACHED();
     return nullptr;
+}
+
+void LocalFrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow)
+{
+    auto* viewportRenderer = this->viewportRenderer();
+    if (!viewportRenderer)
+        return;
+
+    if (m_overflowStatusDirty) {
+        m_horizontalOverflow = horizontalOverflow;
+        m_verticalOverflow = verticalOverflow;
+        m_overflowStatusDirty = false;
+        return;
+    }
+
+    bool horizontalOverflowChanged = (m_horizontalOverflow != horizontalOverflow);
+    bool verticalOverflowChanged = (m_verticalOverflow != verticalOverflow);
+
+    if (horizontalOverflowChanged || verticalOverflowChanged) {
+        m_horizontalOverflow = horizontalOverflow;
+        m_verticalOverflow = verticalOverflow;
+
+        Ref<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
+            verticalOverflowChanged, verticalOverflow);
+        overflowEvent->setTarget(RefPtr { viewportRenderer->element() });
+
+        m_frame->document()->enqueueOverflowEvent(WTFMove(overflowEvent));
+    }
 }
 
 const Pagination& LocalFrameView::pagination() const
@@ -4574,25 +4680,25 @@ void LocalFrameView::traverseForPaintInvalidation(NullGraphicsContext::PaintInva
 
 bool LocalFrameView::wasScrolledByUser() const
 {
-    return m_wasScrolledByUser;
+    return m_lastUserScrollType.has_value();
 }
 
-void LocalFrameView::setWasScrolledByUser(bool wasScrolledByUser)
+void LocalFrameView::setLastUserScrollType(std::optional<UserScrollType> userScrollType)
 {
-    LOG(Scrolling, "LocalFrameView::setWasScrolledByUser at %d", wasScrolledByUser);
+    LOG(Scrolling, "LocalFrameView::setLastUserScrollType at %d", userScrollType ? enumToUnderlyingType(*userScrollType) : -1);
 
     cancelScheduledScrolls();
     if (currentScrollType() == ScrollType::Programmatic)
         return;
 
     RefPtr document = m_frame->document();
-    if (wasScrolledByUser && document)
+    if (userScrollType && document)
         document->setGotoAnchorNeededAfterStylesheetsLoad(false);
 
     m_maintainScrollPositionAnchor = nullptr;
-    if (m_wasScrolledByUser == wasScrolledByUser)
+    if (m_lastUserScrollType == userScrollType)
         return;
-    m_wasScrolledByUser = wasScrolledByUser;
+    m_lastUserScrollType = userScrollType;
     adjustTiledBackingCoverage();
 }
 
@@ -5706,7 +5812,7 @@ void LocalFrameView::willRemoveWidgetFromRenderTree(Widget& widget)
     m_widgetsInRenderTree.remove(widget);
 }
 
-static Vector<Ref<Widget>> collectAndProtectWidgets(const HashSet<SingleThreadWeakRef<Widget>>& set)
+static Vector<Ref<Widget>> collectAndProtectWidgets(const UncheckedKeyHashSet<SingleThreadWeakRef<Widget>>& set)
 {
     return WTF::map(set, [](auto& widget) -> Ref<Widget> {
         return widget.get();

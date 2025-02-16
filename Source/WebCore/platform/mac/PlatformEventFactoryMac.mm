@@ -30,6 +30,7 @@
 
 #import "KeyEventCocoa.h"
 #import "Logging.h"
+#import "MouseEventTypes.h"
 #import "PlatformScreen.h"
 #import "Scrollbar.h"
 #import "WindowsKeyboardCodes.h"

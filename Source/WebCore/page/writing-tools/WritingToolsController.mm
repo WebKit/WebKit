@@ -307,7 +307,7 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
 
     auto adjustedProcessedRangeBeforeReplacement = resolveCharacterRange(sessionRange, { adjustedProcessedRangeLocation, processedRange.length });
 
-    HashSet<WTF::UUID> transparentContentMarkerIdentifiers;
+    UncheckedKeyHashSet<WTF::UUID> transparentContentMarkerIdentifiers;
 
     document->markers().forEach(adjustedProcessedRangeBeforeReplacement, { DocumentMarkerType::TransparentContent }, [&](auto&, auto marker) {
         auto& data = std::get<DocumentMarker::TransparentContentData>(marker.data());
@@ -508,6 +508,73 @@ void WritingToolsController::compositionSessionDidFinishReplacement(const WTF::U
     m_page->chrome().client().addDestinationTextAnimationForActiveWritingToolsSession(sourceAnimationUUID, destinationAnimationUUID, updatedRange, replacementText);
 }
 
+// FIXME: Merge this method with `compositionSessionDidReceiveTextWithReplacementRange` once the other composition types
+// use the new intelligence effects system.
+void WritingToolsController::smartReplySessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context&, bool finished)
+{
+    ASSERT_UNUSED(finished, finished); // Each smart reply is always generated all at once; subsequent questionnaire revisions are separate.
+    ASSERT_UNUSED(range, !range.location && !range.length); // Smart replies always begin from the beginning of the session range.
+
+    RefPtr document = this->document();
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    CheckedPtr state = currentState<WritingTools::Session::Type::Composition>();
+    if (!state) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto previousEndingContextRange = state->reappliedCommands.last()->endingContextRange();
+    state->reappliedCommands.append(WritingToolsCompositionCommand::create(Ref { *document }, previousEndingContextRange));
+
+    Ref currentCommand = state->reappliedCommands.takeLast();
+
+    // The prior replacement command must be undone in such a way as to not have it be added to the undo stack.
+    currentCommand->ensureComposition().unapply(EditCommandComposition::AddToUndoStack::No);
+
+    // Now that the prior replacement command is undone, remove and replace it with a fresh command, with the same range.
+    // The same range is used since it represents the end of the previous command, and is only updated again when `finished` is `true`,
+    // at which point this will not be invoked again.
+
+    auto currentContextRange = currentCommand->endingContextRange();
+    state->reappliedCommands.append(WritingToolsCompositionCommand::create(Ref { *document }, currentContextRange));
+
+    // The current session context range is always the range associated with the most recently applied command.
+    auto sessionRange = state->reappliedCommands.last()->endingContextRange();
+    auto sessionRangeCharacterCount = characterCount(sessionRange);
+
+    auto adjustedCharacterRange = CharacterRange { 0, sessionRangeCharacterCount };
+    auto resolvedRange = resolveCharacterRange(sessionRange, adjustedCharacterRange);
+
+    HashSet<WTF::UUID> transparentContentMarkerIdentifiers;
+
+    document->markers().forEach(resolvedRange, { DocumentMarkerType::TransparentContent }, [&](auto&, auto& marker) {
+        auto& data = std::get<DocumentMarker::TransparentContentData>(marker.data());
+        transparentContentMarkerIdentifiers.add(data.uuid);
+
+        return false;
+    });
+
+    for (auto& transparentContentMarkerIdentifier : transparentContentMarkerIdentifiers)
+        IntelligenceTextEffectsSupport::updateTextVisibility(*document, sessionRange, adjustedCharacterRange, true, transparentContentMarkerIdentifier);
+
+    replaceContentsOfRangeInSession(*state, resolvedRange, attributedText, WritingToolsCompositionCommand::State::Complete);
+
+    auto selectionRange = state->reappliedCommands.last()->endingSelection().firstRange();
+    if (!selectionRange) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    for (auto& transparentContentMarkerIdentifier : transparentContentMarkerIdentifiers)
+        IntelligenceTextEffectsSupport::updateTextVisibility(*document, *selectionRange, { 0, WebCore::characterCount(*selectionRange) }, false, transparentContentMarkerIdentifier);
+
+    document->selection().clear();
+}
+
 void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRangeAsync(const WTF::UUID& sourceAnimationUUID, const WTF::UUID& destinationAnimationUUID, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished, TextAnimationRunMode runMode)
 {
     RefPtr document = this->document();
@@ -618,6 +685,11 @@ void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRang
 void WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session& session, const AttributedString& attributedText, const CharacterRange& range, const WritingTools::Context& context, bool finished)
 {
     RELEASE_LOG(WritingTools, "WritingToolsController::compositionSessionDidReceiveTextWithReplacementRange [range: %llu, %llu; finished: %d]", range.location, range.length, finished);
+
+    if (session.compositionType == WritingTools::Session::CompositionType::SmartReply) {
+        smartReplySessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
+        return;
+    }
 
     RefPtr document = this->document();
     if (!document) {
@@ -811,6 +883,14 @@ void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::T
 
 void WritingToolsController::willEndWritingToolsSession(const WritingTools::Session& session, bool accepted)
 {
+    // FIXME: Remove this branch once all composition types use the new effects system.
+    if (session.type == WritingTools::Session::Type::Composition && session.compositionType == WritingTools::Session::CompositionType::SmartReply) {
+        if (!accepted)
+            writingToolsSessionDidReceiveAction<WritingTools::Session::Type::Composition>(WritingTools::Action::ShowOriginal);
+
+        return;
+    }
+
     switch (session.type) {
     case WritingTools::Session::Type::Proofreading:
         willEndWritingToolsSession<WritingTools::Session::Type::Proofreading>(accepted);
@@ -873,6 +953,12 @@ void WritingToolsController::didEndWritingToolsSession(const WritingTools::Sessi
     }
 
     document->editor().setSuppressEditingForWritingTools(false);
+
+    // FIXME: Remove this branch once all composition types use the new effects system.
+    if (session.type == WritingTools::Session::Type::Composition && session.compositionType == WritingTools::Session::CompositionType::SmartReply) {
+        m_state = { };
+        return;
+    }
 
     switch (session.type) {
     case WritingTools::Session::Type::Proofreading:
@@ -1051,6 +1137,12 @@ void WritingToolsController::restartCompositionForSession()
     CheckedPtr state = currentState<WritingTools::Session::Type::Composition>();
     if (!state) {
         ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (state->session.compositionType == WritingTools::SessionCompositionType::SmartReply) {
+        // The restart side effects happen in the beginning of `didReceiveText` instead.
+        // This is so that the replacement queue can operate correctly since it is async.
         return;
     }
 

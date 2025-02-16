@@ -87,7 +87,7 @@ public:
     void clickAtPositionAndWaitUntilOptionMenuShown(int x, int y)
     {
         m_menu = nullptr;
-        RunLoop::main().dispatch([this, x, y] { clickMouseButton(x, y); });
+        RunLoop::protectedMain()->dispatch([this, x, y] { clickMouseButton(x, y); });
         g_main_loop_run(m_mainLoop);
     }
 

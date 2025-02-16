@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "DeferredDecommit.h"
 
 #if !BUSE(LIBPAS)
@@ -45,3 +47,4 @@ inline DeferredDecommit::DeferredDecommit(IsoDirectoryBaseBase* directory, IsoPa
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

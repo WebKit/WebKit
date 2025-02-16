@@ -50,15 +50,15 @@ public:
     bool equals(const CSSFilterImageValue&) const;
     bool equalInputImages(const CSSFilterImageValue&) const;
 
-    String customCSSText() const;
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    String customCSSText(const CSS::SerializationContext&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
 private:
     explicit CSSFilterImageValue(Ref<CSSValue>&& imageValueOrNone, CSS::FilterProperty&&);
 
-    Ref<CSSValue> m_imageValueOrNone;
+    const Ref<CSSValue> m_imageValueOrNone;
     CSS::FilterProperty m_filter;
 };
 

@@ -540,7 +540,7 @@ void WebPaymentCoordinatorProxy::platformBeginApplePaySetup(const PaymentSetupCo
     }
 
     auto completion = makeBlockPtr([reply = WTFMove(reply)]() mutable {
-        RunLoop::main().dispatch([reply = WTFMove(reply)]() mutable {
+        RunLoop::protectedMain()->dispatch([reply = WTFMove(reply)]() mutable {
             reply(true);
         });
     });

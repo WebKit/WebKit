@@ -85,6 +85,7 @@ static void releaseNoncriticalMemory(MaintainMemoryCache maintainMemoryCache)
     SelectorQueryCache::singleton().clear();
 
     for (auto& document : Document::allDocuments()) {
+        document->asyncNodeDeletionQueue().deleteNodesNow();
         if (CheckedPtr renderView = document->renderView()) {
             LayoutIntegration::LineLayout::releaseCaches(*renderView);
             Layout::TextBreakingPositionCache::singleton().clear();
@@ -257,7 +258,7 @@ void logMemoryStatistics(LogMemoryStatisticsReason reason)
     RELEASE_LOG(MemoryPressure, "Live JavaScript objects at time of %" PUBLIC_LOG_STRING ":", description.characters());
     auto typeCounts = vm.heap.objectTypeCounts();
     for (auto& it : *typeCounts)
-        RELEASE_LOG(MemoryPressure, "  %" PUBLIC_LOG_STRING ": %d", it.key, it.value);
+        RELEASE_LOG(MemoryPressure, "  %" PUBLIC_LOG_STRING ": %d", it.key.characters(), it.value);
 }
 #endif
 

@@ -1122,7 +1122,12 @@
 
 ; Needed for [CAContext remoteContextWithOptions]
 #if HAVE(SANDBOX_STATE_FLAGS) && PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 140000
-(with-filter (require-not (lockdown-mode))
+(with-filter
+    (require-all
+        (require-not (lockdown-mode))
+        (require-any
+            (require-not (state-flag "UnifiedPDFEnabled"))
+            (require-not (state-flag "BlockIOKitInWebContentSandbox"))))
     (allow mach-lookup
         (require-all
             (extension "com.apple.webkit.extension.mach")

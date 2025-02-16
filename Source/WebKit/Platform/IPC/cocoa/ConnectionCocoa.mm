@@ -269,7 +269,7 @@ bool Connection::platformCanSendOutgoingMessages() const
 template<typename descriptorType>
 static descriptorType& popDescriptorAndAdvance(std::span<uint8_t>& data)
 {
-    return consumeAndCastTo<descriptorType>(data);
+    return consumeAndReinterpretCastTo<descriptorType>(data);
 }
 
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
@@ -297,7 +297,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
         return false;
 
     auto messageSpan = message->span();
-    auto& header = consumeAndCastTo<mach_msg_header_t>(messageSpan);
+    auto& header = consumeAndReinterpretCastTo<mach_msg_header_t>(messageSpan);
     header.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
     header.msgh_size = safeMessageSize;
     header.msgh_remote_port = m_sendPort;
@@ -308,7 +308,7 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     if (isComplex) {
         header.msgh_bits |= MACH_MSGH_BITS_COMPLEX;
 
-        auto& body = consumeAndCastTo<mach_msg_body_t>(messageSpan);
+        auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(messageSpan);
         body.msgh_descriptor_count = numberOfPortDescriptors + messageBodyIsOOL;
 
         for (auto& attachment : attachments) {
@@ -398,7 +398,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         return Decoder::create(remaining.first(bodySize), { });
     }
 
-    auto& body = consumeAndCastTo<mach_msg_body_t>(remaining);
+    auto& body = consumeAndReinterpretCastTo<mach_msg_body_t>(remaining);
     mach_msg_size_t numberOfPortDescriptors = body.msgh_descriptor_count;
     ASSERT(numberOfPortDescriptors);
     if (UNLIKELY(!numberOfPortDescriptors))
@@ -420,7 +420,7 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
     Vector<Attachment> attachments(numberOfAttachments);
 
     for (mach_msg_size_t i = 0; i < numberOfAttachments; ++i) {
-        auto& descriptor = consumeAndCastTo<mach_msg_port_descriptor_t>(remaining);
+        auto& descriptor = consumeAndReinterpretCastTo<mach_msg_port_descriptor_t>(remaining);
         ASSERT(descriptor.type == MACH_MSG_PORT_DESCRIPTOR);
         if (descriptor.type != MACH_MSG_PORT_DESCRIPTOR)
             return nullptr;

@@ -212,7 +212,7 @@ struct LayerProperties {
 #endif
     WebCore::ContentsFormat contentsFormat { WebCore::ContentsFormat::RGBA8 };
 #if HAVE(CORE_MATERIAL)
-    WebCore::AppleVisualEffect appleVisualEffect { WebCore::AppleVisualEffect::None };
+    WebCore::AppleVisualEffectData appleVisualEffectData;
 #endif
 };
 

@@ -37,4 +37,5 @@ urlmap_file = "wpe@WPE_API_MAJOR_VERSION@-urlmap.js"
 content_files = [
     "environment-variables.md",
     "profiling.md",
+    "remote-inspector.md",
 ]

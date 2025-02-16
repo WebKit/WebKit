@@ -14,7 +14,7 @@ function shouldThrow(func, errorMessage) {
 }
 noInline(shouldThrow);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldThrow(() => {
         new (class extends Array { static get [Symbol.species]() { return makeMasquerader(); } })(1, 2, 3).flat().constructor
     }, `TypeError: Species construction did not get a valid constructor`);

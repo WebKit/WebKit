@@ -54,7 +54,7 @@ struct ToPosition {
 
     bool operator==(const ToPosition&) const = default;
 };
-DEFINE_TYPE_WRAPPER(ToPosition, offset);
+DEFINE_TYPE_WRAPPER_GET(ToPosition, offset);
 DEFINE_TYPE_MAPPING(CSS::ToPosition, ToPosition)
 
 // <by-coordinate-pair> = by <coordinate-pair>
@@ -65,7 +65,7 @@ struct ByCoordinatePair {
 
     bool operator==(const ByCoordinatePair&) const = default;
 };
-DEFINE_TYPE_WRAPPER(ByCoordinatePair, offset);
+DEFINE_TYPE_WRAPPER_GET(ByCoordinatePair, offset);
 DEFINE_TYPE_MAPPING(CSS::ByCoordinatePair, ByCoordinatePair)
 
 // <relative-control-point> = [<coordinate-pair> [from [start | end | origin]]?]
@@ -131,7 +131,7 @@ struct MoveCommand {
 
     bool operator==(const MoveCommand&) const = default;
 };
-DEFINE_TYPE_WRAPPER(MoveCommand, toBy);
+DEFINE_TYPE_WRAPPER_GET(MoveCommand, toBy);
 DEFINE_TYPE_MAPPING(CSS::MoveCommand, MoveCommand)
 
 // MARK: - Line Command
@@ -147,7 +147,7 @@ struct LineCommand {
 
     bool operator==(const LineCommand&) const = default;
 };
-DEFINE_TYPE_WRAPPER(LineCommand, toBy);
+DEFINE_TYPE_WRAPPER_GET(LineCommand, toBy);
 DEFINE_TYPE_MAPPING(CSS::LineCommand, LineCommand)
 
 // MARK: - HLine Command
@@ -175,9 +175,9 @@ struct HLineCommand {
 
     bool operator==(const HLineCommand&) const = default;
 };
-DEFINE_TYPE_WRAPPER(HLineCommand::By, offset);
-DEFINE_TYPE_WRAPPER(HLineCommand::To, offset);
-DEFINE_TYPE_WRAPPER(HLineCommand, toBy);
+DEFINE_TYPE_WRAPPER_GET(HLineCommand::By, offset);
+DEFINE_TYPE_WRAPPER_GET(HLineCommand::To, offset);
+DEFINE_TYPE_WRAPPER_GET(HLineCommand, toBy);
 DEFINE_TYPE_MAPPING(CSS::HLineCommand::To, HLineCommand::To)
 DEFINE_TYPE_MAPPING(CSS::HLineCommand::By, HLineCommand::By)
 DEFINE_TYPE_MAPPING(CSS::HLineCommand, HLineCommand)
@@ -207,9 +207,9 @@ struct VLineCommand {
 
     bool operator==(const VLineCommand&) const = default;
 };
-DEFINE_TYPE_WRAPPER(VLineCommand::By, offset);
-DEFINE_TYPE_WRAPPER(VLineCommand::To, offset);
-DEFINE_TYPE_WRAPPER(VLineCommand, toBy);
+DEFINE_TYPE_WRAPPER_GET(VLineCommand::By, offset);
+DEFINE_TYPE_WRAPPER_GET(VLineCommand::To, offset);
+DEFINE_TYPE_WRAPPER_GET(VLineCommand, toBy);
 DEFINE_TYPE_MAPPING(CSS::VLineCommand::To, VLineCommand::To)
 DEFINE_TYPE_MAPPING(CSS::VLineCommand::By, VLineCommand::By)
 DEFINE_TYPE_MAPPING(CSS::VLineCommand, VLineCommand)
@@ -262,7 +262,7 @@ template<size_t I> const auto& get(const CurveCommand::By& value)
     if constexpr (I == 2)
         return value.controlPoint2;
 }
-DEFINE_TYPE_WRAPPER(CurveCommand, toBy);
+DEFINE_TYPE_WRAPPER_GET(CurveCommand, toBy);
 
 DEFINE_TYPE_MAPPING(CSS::CurveCommand, CurveCommand)
 DEFINE_TYPE_MAPPING(CSS::CurveCommand::To, CurveCommand::To)
@@ -310,7 +310,7 @@ template<size_t I> const auto& get(const SmoothCommand::By& value)
     if constexpr (I == 1)
         return value.controlPoint;
 }
-DEFINE_TYPE_WRAPPER(SmoothCommand, toBy);
+DEFINE_TYPE_WRAPPER_GET(SmoothCommand, toBy);
 
 DEFINE_TYPE_MAPPING(CSS::SmoothCommand, SmoothCommand)
 DEFINE_TYPE_MAPPING(CSS::SmoothCommand::To, SmoothCommand::To)
@@ -415,23 +415,23 @@ std::optional<Shape> makeShapeFromPath(const Path&);
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(ToPosition, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(ByCoordinatePair, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(RelativeControlPoint, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(AbsoluteControlPoint, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(MoveCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(LineCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(HLineCommand::To, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(HLineCommand::By, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(HLineCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(VLineCommand::To, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(VLineCommand::By, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(VLineCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(CurveCommand::To, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(CurveCommand::By, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(CurveCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(SmoothCommand::To, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(SmoothCommand::By, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(SmoothCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(ArcCommand, 5)
-STYLE_TUPLE_LIKE_CONFORMANCE(Shape, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ToPosition, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ByCoordinatePair, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::RelativeControlPoint, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::AbsoluteControlPoint, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::MoveCommand, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::LineCommand, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::HLineCommand::To, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::HLineCommand::By, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::HLineCommand, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::VLineCommand::To, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::VLineCommand::By, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::VLineCommand, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::CurveCommand::To, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::CurveCommand::By, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::CurveCommand, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::SmoothCommand::To, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::SmoothCommand::By, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::SmoothCommand, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ArcCommand, 5)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Shape, 3)

@@ -25,10 +25,13 @@
 
 WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WI.Object
 {
-    constructor(snapshotDiffObjectId, snapshot1, snapshot2, totalSize, totalObjectCount, categories)
+    constructor(target, snapshotDiffObjectId, snapshot1, snapshot2, totalSize, totalObjectCount, categories)
     {
+        console.assert(target instanceof WI.Target, target);
+
         super();
 
+        this._target = target;
         this._proxyObjectId = snapshotDiffObjectId;
 
         console.assert(snapshot1 instanceof WI.HeapSnapshotProxy);
@@ -43,19 +46,20 @@ WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WI.Object
 
     // Static
 
-    static deserialize(objectId, serializedSnapshotDiff)
+    static deserialize(target, objectId, serializedSnapshotDiff)
     {
         let {snapshot1: serializedSnapshot1, snapshot2: serializedSnapshot2, totalSize, totalObjectCount, categories} = serializedSnapshotDiff;
         // FIXME: The objectId for these snapshots is the snapshotDiff's objectId. Currently these
         // snapshots are only used for static data so the proxing doesn't matter. However,
         // should we serialize the objectId with the snapshot so we have the right objectId?
-        let snapshot1 = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot1);
-        let snapshot2 = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot2);
-        return new WI.HeapSnapshotDiffProxy(objectId, snapshot1, snapshot2, totalSize, totalObjectCount, categories);
+        let snapshot1 = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot1);
+        let snapshot2 = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot2);
+        return new WI.HeapSnapshotDiffProxy(target, objectId, snapshot1, snapshot2, totalSize, totalObjectCount, categories);
     }
 
     // Public
 
+    get target() { return this._target; }
     get snapshot1() { return this._snapshot1; }
     get snapshot2() { return this._snapshot2; }
     get totalSize() { return this._totalSize; }
@@ -84,7 +88,7 @@ WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WI.Object
     {
         console.assert(!this.invalid);
         WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "instancesWithClassName", className, (serializedNodes) => {
-            callback(serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
+            callback(serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._target, this._proxyObjectId)));
         });
     }
 
@@ -101,7 +105,7 @@ WI.HeapSnapshotDiffProxy = class HeapSnapshotDiffProxy extends WI.Object
     {
         console.assert(!this.invalid);
         WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "nodeWithIdentifier", nodeIdentifier, (serializedNode) => {
-            callback(WI.HeapSnapshotNodeProxy.deserialize(this._proxyObjectId, serializedNode));
+            callback(WI.HeapSnapshotNodeProxy.deserialize(this._target, this._proxyObjectId, serializedNode));
         });
     }
 };

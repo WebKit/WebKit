@@ -12,6 +12,7 @@ angle_unittests_sources = [
   "../common/FastVector_unittest.cpp",
   "../common/FixedQueue_unittest.cpp",
   "../common/FixedVector_unittest.cpp",
+  "../common/MemoryBuffer_unittest.cpp",
   "../common/Optional_unittest.cpp",
   "../common/PoolAlloc_unittest.cpp",
   "../common/SimpleMutex_unittest.cpp",
@@ -22,11 +23,11 @@ angle_unittests_sources = [
   "../common/hash_utils_unittest.cpp",
   "../common/mathutil_unittest.cpp",
   "../common/matrix_utils_unittest.cpp",
+  "../common/span_unittest.cpp",
   "../common/string_utils_unittest.cpp",
   "../common/system_utils_unittest.cpp",
   "../common/utilities_unittest.cpp",
   "../common/vector_utils_unittest.cpp",
-  "../compiler/translator/span_unittest.cpp",
   "../feature_support_util/feature_support_util_unittest.cpp",
   "../gpu_info_util/SystemInfo_unittest.cpp",
   "../image_util/AstcDecompressorTestUtils.h",
@@ -36,6 +37,7 @@ angle_unittests_sources = [
   "../libANGLE/BlobCache_unittest.cpp",
   "../libANGLE/Config_unittest.cpp",
   "../libANGLE/ContextMutex_unittest.cpp",
+  "../libANGLE/Decompress_unittest.cpp",
   "../libANGLE/Fence_unittest.cpp",
   "../libANGLE/GlobalMutex_unittest.cpp",
   "../libANGLE/HandleAllocator_unittest.cpp",
@@ -171,7 +173,10 @@ angle_unittests_hlsl_sources = [
 angle_unittests_gl_sources =
     [ "../libANGLE/renderer/gl/DisplayGL_unittest.cpp" ]
 
-angle_unittests_msl_sources = [ "../tests/compiler_tests/MSLOutput_test.cpp" ]
+angle_unittests_msl_sources = [
+  "../common/apple/ObjCPtr_test.mm",
+  "../tests/compiler_tests/MSLOutput_test.cpp",
+]
 
 angle_unittests_wgsl_sources = [ "../tests/compiler_tests/WGSLOutput_test.cpp" ]
 

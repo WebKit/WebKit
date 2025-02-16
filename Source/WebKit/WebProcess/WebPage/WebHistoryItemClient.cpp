@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebHistoryItemClient.h"
 
+#include "MessageSenderInlines.h"
 #include "SessionState.h"
 #include "SessionStateConversion.h"
 #include "WebPage.h"
@@ -52,6 +53,13 @@ void WebHistoryItemClient::historyItemChanged(const WebCore::HistoryItem& item)
     if (m_shouldIgnoreChanges)
         return;
     m_page->send(Messages::WebPageProxy::BackForwardUpdateItem(toFrameState(item)));
+}
+
+void WebHistoryItemClient::clearChildren(const WebCore::HistoryItem& item) const
+{
+    if (m_shouldIgnoreChanges)
+        return;
+    m_page->send(Messages::WebPageProxy::BackForwardClearChildren(item.itemID(), item.frameItemID()));
 }
 
 }

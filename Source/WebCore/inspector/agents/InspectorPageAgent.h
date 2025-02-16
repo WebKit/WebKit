@@ -172,7 +172,7 @@ private:
     std::unique_ptr<Inspector::PageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::PageBackendDispatcher> m_backendDispatcher;
 
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
     InspectorClient* m_client { nullptr };
     WeakRef<InspectorOverlay> m_overlay;
 

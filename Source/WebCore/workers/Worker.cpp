@@ -285,7 +285,7 @@ void Worker::postTaskToWorkerGlobalScope(Function<void(ScriptExecutionContext&)>
     m_contextProxy.postTaskToWorkerGlobalScope(WTFMove(task));
 }
 
-void Worker::forEachWorker(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
+void Worker::forEachWorker(NOESCAPE const Function<Function<void(ScriptExecutionContext&)>()>& callback)
 {
     Locker locker { allWorkersLock };
     for (auto& contextIdentifier : allWorkerContexts())

@@ -30,7 +30,6 @@ messages -> ModelProcessModelPlayerProxy {
     # WebCore::ModelPlayer
     LoadModel(Ref<WebCore::Model> url, WebCore::LayoutSize layoutSize)
     SizeDidChange(WebCore::LayoutSize layoutSize)
-    SetBackgroundColor(WebCore::Color color)
     SetEntityTransform(WebCore::TransformationMatrix transform)
     SetAutoplay(bool autoplay)
     SetLoop(bool loop)
@@ -39,6 +38,7 @@ messages -> ModelProcessModelPlayerProxy {
     SetCurrentTime(Seconds currentTime) -> () Async
     SetEnvironmentMap(Ref<WebCore::SharedBuffer> data)
     SetHasPortal(bool hasPortal)
+    SetStageMode(enum:bool WebCore::StageModeOperation stagemodeOp)
 }
 
 #endif

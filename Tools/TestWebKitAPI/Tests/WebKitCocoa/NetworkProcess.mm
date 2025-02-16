@@ -40,8 +40,14 @@
 #import <WebKit/_WKDataTask.h>
 #import <WebKit/_WKDataTaskDelegate.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
+#import <mach/mach_init.h>
+#import <mach/mach_port.h>
+#import <mach/task.h>
+#import <mach/task_info.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/UUID.h>
 #import <wtf/Vector.h>
 #import <wtf/text/MakeString.h>
@@ -68,7 +74,7 @@ TEST(WebKit, HTTPReferer)
         HTTPServer server([&] (Connection connection) {
             connection.receiveHTTPRequest([connection, expectedReferer, &done] (Vector<char>&& request) {
                 if (expectedReferer) {
-                    auto expectedHeaderField = makeString("Referer: "_s, span(expectedReferer), "\r\n"_s);
+                    auto expectedHeaderField = makeString("Referer: "_s, unsafeSpan(expectedReferer), "\r\n"_s);
                     EXPECT_TRUE(strnstr(request.data(), expectedHeaderField.utf8().data(), request.size()));
                 } else
                     EXPECT_FALSE(strnstr(request.data(), "Referer:"_s, request.size()));
@@ -180,6 +186,56 @@ TEST(NetworkProcess, TerminateWhenNoDefaultWebsiteDataStore)
     EXPECT_TRUE(errno == ESRCH);
     EXPECT_FALSE([WKWebsiteDataStore _defaultNetworkProcessExists]);
 }
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+
+static bool isTaskSuspended(pid_t pid)
+{
+    mach_port_t task = MACH_PORT_NULL;
+    if (task_name_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
+        return false;
+
+    auto scope = makeScopeExit([task]() {
+        mach_port_deallocate(mach_task_self(), task);
+    });
+
+    mach_task_basic_info_data_t basicInfo;
+    mach_msg_type_number_t basicInfoCount = MACH_TASK_BASIC_INFO_COUNT;
+    if (task_info(task, MACH_TASK_BASIC_INFO, (task_info_t)&basicInfo, &basicInfoCount) != KERN_SUCCESS)
+        return false;
+
+    return basicInfo.suspend_count;
+}
+
+TEST(NetworkProcess, TerminateWhenNetworkProcessIsSuspended)
+{
+    pid_t networkProcessIdentifier = 0;
+    @autoreleasepool {
+        auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+        auto nonPersistentStore = [WKWebsiteDataStore nonPersistentDataStore];
+
+        bool networkProcessLaunched = TestWebKitAPI::Util::waitFor([&]() {
+            networkProcessIdentifier = [nonPersistentStore _networkProcessIdentifier];
+            return !!networkProcessIdentifier;
+        });
+        ASSERT_TRUE(networkProcessLaunched);
+
+        [nonPersistentStore _forceNetworkProcessToTaskSuspendForTesting];
+
+        bool isNetworkProcessTaskSuspended = TestWebKitAPI::Util::waitFor([&]() {
+            return isTaskSuspended(networkProcessIdentifier);
+        });
+        ASSERT_TRUE(isNetworkProcessTaskSuspended);
+    }
+
+    bool networkProcessExited = TestWebKitAPI::Util::waitFor([&]() {
+        return kill(networkProcessIdentifier, 0) == -1 && errno == ESRCH;
+    });
+    ASSERT_TRUE(networkProcessExited);
+    ASSERT_FALSE([WKWebsiteDataStore _defaultNetworkProcessExists]);
+}
+
+#endif
 
 TEST(NetworkProcess, DoNotLaunchOnDataStoreDestruction)
 {

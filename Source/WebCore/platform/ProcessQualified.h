@@ -84,7 +84,36 @@ public:
 
     static ProcessQualified generate() { return { T::generate(), Process::identifier() }; }
 
+    // MonotonicObjectIdentifier support
+    static ProcessQualified generateMonotonic() { return { T(), Process::identifier() }; }
+    ProcessQualified next() const { return { m_object.next(), m_processIdentifier }; }
+    ProcessQualified& increment() { m_object.increment(); return *this; }
+
     String toString() const { return makeString(m_processIdentifier.toUInt64(), '-', m_object.toUInt64()); }
+    String loggingString() const { return toString(); }
+
+    // Comparison operators for callers that have already verified that
+    // the objects originate from the same process.
+    bool lessThanSameProcess(const ProcessQualified& other)
+    {
+        ASSERT(processIdentifier() == other.processIdentifier());
+        return object() < other.object();
+    }
+    bool lessThanOrEqualSameProcess(const ProcessQualified& other)
+    {
+        ASSERT(processIdentifier() == other.processIdentifier());
+        return object() <= other.object();
+    }
+    bool greaterThanSameProcess(const ProcessQualified& other)
+    {
+        ASSERT(processIdentifier() == other.processIdentifier());
+        return object() > other.object();
+    }
+    bool greaterThanOrEqualSameProcess(const ProcessQualified& other)
+    {
+        ASSERT(processIdentifier() == other.processIdentifier());
+        return object() >= other.object();
+    }
 
     struct MarkableTraits {
         static bool isEmptyValue(const ProcessQualified& identifier) { return T::MarkableTraits::isEmptyValue(identifier.object()); }
@@ -97,28 +126,13 @@ private:
 };
 
 template<typename T>
-bool operator>(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
-{
-    return a.object() > b.object();
-}
-
+bool operator>(const ProcessQualified<T>&, const ProcessQualified<T>&) = delete;
 template<typename T>
-bool operator>=(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
-{
-    return a.object() >= b.object();
-}
-
+bool operator>=(const ProcessQualified<T>&, const ProcessQualified<T>&) = delete;
 template<typename T>
-bool operator<(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
-{
-    return a.object() < b.object();
-}
-
+bool operator<(const ProcessQualified<T>&, const ProcessQualified<T>&) = delete;
 template<typename T>
-bool operator<=(const ProcessQualified<T>& a, const ProcessQualified<T>& b)
-{
-    return a.object() <= b.object();
-}
+bool operator<=(const ProcessQualified<T>&, const ProcessQualified<T>&) = delete;
 
 template <typename T>
 inline TextStream& operator<<(TextStream& ts, const ProcessQualified<T>& processQualified)

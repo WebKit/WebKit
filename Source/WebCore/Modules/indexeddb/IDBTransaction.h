@@ -200,7 +200,7 @@ private:
     void clearObjectStoreOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier);
     void didClearObjectStoreOnServer(IDBRequest&, const IDBResultData&);
 
-    void putOrAddOnServer(IDBClient::TransactionOperation&, RefPtr<IDBKey>, RefPtr<SerializedScriptValue>, const IndexedDB::ObjectStoreOverwriteMode&);
+    void putOrAddOnServer(IDBClient::TransactionOperation&, const IDBObjectStoreInfo&, RefPtr<IDBKey>, RefPtr<SerializedScriptValue>, const IndexedDB::ObjectStoreOverwriteMode&);
     void didPutOrAddOnServer(IDBRequest&, const IDBResultData&);
 
     void getRecordOnServer(IDBClient::TransactionOperation&, const IDBGetRecordData&);

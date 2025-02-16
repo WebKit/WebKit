@@ -115,7 +115,7 @@ public:
 
     WEBCORE_EXPORT void terminateWorker(ServiceWorkerIdentifier, Seconds timeout, Function<void()>&&);
 
-    void forEachServiceWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
+    void forEachServiceWorker(NOESCAPE const Function<Function<void(ScriptExecutionContext&)>()>&);
 
     WEBCORE_EXPORT bool postTaskToServiceWorker(ServiceWorkerIdentifier, Function<void(ServiceWorkerGlobalScope&)>&&);
 

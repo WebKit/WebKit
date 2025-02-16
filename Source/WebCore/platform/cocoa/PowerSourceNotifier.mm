@@ -49,7 +49,7 @@ PowerSourceNotifier::PowerSourceNotifier(PowerSourceNotifierCallback&& callback)
 
     // If the current value of systemHasAC() is uncached, force a notification.
     if (!cachedSystemHasAC()) {
-        RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
+        RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }] {
             if (weakThis)
                 weakThis->notifyPowerSourceChanged();
         });

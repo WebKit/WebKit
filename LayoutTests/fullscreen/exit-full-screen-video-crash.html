@@ -1,7 +1,9 @@
 <script>
   onload = async () => {
-    if (window.testRunner)
+    if (window.testRunner) {
       testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+    }
     internals.withUserGesture(() => {});
     let video0 = document.createElement('video');
     video0.src = 'data:video/mp4;';
@@ -13,5 +15,6 @@
     $vm.print(await div0.requestFullscreen());
     video0.webkitSetPresentationMode('inline');
     document.body.innerHTML = 'PASS if no crash';
+    if (window.testRunner) { testRunner.notifyDone() }
   };
 </script>

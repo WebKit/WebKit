@@ -116,12 +116,10 @@ TEST(WKWebExtensionAPIPermissions, Basics)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     // Grant "permissions" in the manifest.
-    for (NSString *permission in extension.get().requestedPermissions)
+    for (NSString *permission in manager.get().extension.requestedPermissions)
         [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:permission];
 
     // Grant extension access to webkit.org.
@@ -131,7 +129,7 @@ TEST(WKWebExtensionAPIPermissions, Basics)
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIPermissions, AcceptPermissionsRequest)
@@ -145,15 +143,12 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsRequest)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  await browser.test.assertTrue(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
-        @"}",
-
-        @"browser.test.yield('Ready')",
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
+        @"})"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
@@ -182,12 +177,6 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsRequest)
 
     manager.get().controllerDelegate = requestDelegate.get();
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
-
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
@@ -201,15 +190,12 @@ TEST(WKWebExtensionAPIPermissions, DenyPermissionsRequest)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  await browser.test.assertFalse(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
-        @"}",
-
-        @"browser.test.yield('Ready')",
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
+        @"})"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
@@ -229,12 +215,6 @@ TEST(WKWebExtensionAPIPermissions, DenyPermissionsRequest)
 
     manager.get().controllerDelegate = requestDelegate.get();
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
-
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
@@ -248,15 +228,12 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsDenyMatchPatternsRequest)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  await browser.test.assertFalse(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
-        @"}",
-
-        @"browser.test.yield('Ready')",
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'permissions': ['declarativeNetRequest'], 'origins': ['*://*.apple.com/*']}))",
+        @"})"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
@@ -277,12 +254,6 @@ TEST(WKWebExtensionAPIPermissions, AcceptPermissionsDenyMatchPatternsRequest)
 
     manager.get().controllerDelegate = requestDelegate.get();
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
-
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
@@ -296,15 +267,12 @@ TEST(WKWebExtensionAPIPermissions, RequestPermissionsOnly)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  await browser.test.assertTrue(await browser.permissions.request({'permissions': ['declarativeNetRequest']}))",
-        @"}",
-
-        @"browser.test.yield('Ready')",
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'permissions': ['declarativeNetRequest']}))",
+        @"})"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
@@ -327,12 +295,6 @@ TEST(WKWebExtensionAPIPermissions, RequestPermissionsOnly)
 
     manager.get().controllerDelegate = requestDelegate.get();
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
-
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
@@ -346,15 +308,12 @@ TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnly)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  await browser.test.assertTrue(await browser.permissions.request({'origins': ['*://*.apple.com/*']}))",
-        @"}",
-
-        @"browser.test.yield('Ready')",
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertTrue(await browser.permissions.request({'origins': ['*://*.apple.com/*']}))",
+        @"})"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
@@ -377,16 +336,15 @@ TEST(WKWebExtensionAPIPermissions, RequestMatchPatternsOnly)
 
     manager.get().controllerDelegate = requestDelegate.get();
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
-
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
+// rdar://142487203
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 140000
+TEST(WKWebExtensionAPIPermissions, DISABLED_GrantOnlySomePermissions)
+#else
 TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
+#endif
 {
     auto *manifest = @{
         @"manifest_version": @3,
@@ -396,15 +354,12 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  await browser.test.assertFalse(await browser.permissions.request({'permissions': ['alarms', 'declarativeNetRequest']}))",
-        @"}",
-
-        @"browser.test.yield('Ready')",
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'permissions': ['alarms', 'declarativeNetRequest']}))",
+        @"})"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
@@ -427,12 +382,6 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomePermissions)
 
     manager.get().controllerDelegate = requestDelegate.get();
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
-
     TestWebKitAPI::Util::run(&requestComplete);
 }
 
@@ -446,15 +395,12 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomeMatchPatterns)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  await browser.test.assertFalse(await browser.permissions.request({'origins': ['*://*.apple.com/*', '*://*.example.com/*']}))",
-        @"}",
-
-        @"browser.test.yield('Ready')",
+        @"browser.test.runWithUserGesture(async () => {",
+        @"  browser.test.assertFalse(await browser.permissions.request({'origins': ['*://*.apple.com/*', '*://*.example.com/*']}))",
+        @"})"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     configuration.get().webExtensionController = manager.get().controller;
@@ -474,12 +420,6 @@ TEST(WKWebExtensionAPIPermissions, GrantOnlySomeMatchPatterns)
     };
 
     manager.get().controllerDelegate = requestDelegate.get();
-
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("runTest()"_s, manager.get().context._backgroundWebView);
 
     TestWebKitAPI::Util::run(&requestComplete);
 }
@@ -518,13 +458,12 @@ TEST(WKWebExtensionAPIPermissions, ValidMatchPatterns)
     [WKWebExtensionMatchPattern registerCustomURLScheme:@"test-extension"];
     [WKWebExtensionMatchPattern registerCustomURLScheme:@"other-extension"];
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     WKWebExtensionMatchPattern *matchPatternApple = [WKWebExtensionMatchPattern matchPatternWithString:@"*://*.example.com/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPatternApple];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIPermissions, ClipboardWrite)
@@ -548,17 +487,14 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWrite)
     auto *backgroundScript = Util::constructScript(@[
         @"await navigator.clipboard.writeText('Test Clipboard Write')",
 
-        @"browser.test.yield('Clipboard Written')",
+        @"browser.test.sendMessage('Clipboard Written')",
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionClipboardWrite];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Clipboard Written");
+    [manager runUntilTestMessage:@"Clipboard Written"];
 
 #if TARGET_OS_IPHONE
     auto *clipboardContent = UIPasteboard.generalPasteboard.string;
@@ -603,10 +539,9 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithoutPermission)
     auto *clipboardContentBefore = [NSPasteboard.generalPasteboard stringForType:NSPasteboardTypeString];
 #endif
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
-    [manager loadAndRun];
+    [manager run];
 
 #if TARGET_OS_IPHONE
     auto *clipboardContentAfter = UIPasteboard.generalPasteboard.string;
@@ -636,29 +571,26 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"window.runTest = async () => {",
-        @"  try {",
-        @"    await navigator.clipboard.writeText('Initial Attempt Without Permission')",
-        @"  } catch (error) {",
-        @"    browser.test.assertTrue(error instanceof DOMException, 'Expect a DOMException for insufficient permissions')",
-        @"  }",
-
-        @"  const permissionGranted = await browser.permissions.request({ permissions: [ 'clipboardWrite' ] })",
-
-        @"  if (permissionGranted) {",
-        @"    await navigator.clipboard.writeText('Test Clipboard Write After Permission')",
-
-        @"    browser.test.yield('Clipboard Written')",
-        @"  } else {",
-        @"    browser.test.notifyFail('Permission was not granted')",
-        @"  }",
+        @"try {",
+        @"  await navigator.clipboard.writeText('Initial Attempt Without Permission')",
+        @"} catch (error) {",
+        @"  browser.test.assertTrue(error instanceof DOMException, 'Expect a DOMException for insufficient permissions')",
         @"}",
 
-        @"browser.test.yield('Ready')",
+        @"const permissionGranted = await browser.test.runWithUserGesture(() => {",
+        @"  return browser.permissions.request({ permissions: [ 'clipboardWrite' ] })",
+        @"})",
+
+        @"if (permissionGranted) {",
+        @"  await navigator.clipboard.writeText('Test Clipboard Write After Permission')",
+
+        @"  browser.test.sendMessage('Clipboard Written')",
+        @"} else {",
+        @"  browser.test.notifyFail('Permission was not granted')",
+        @"}"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     auto requestDelegate = adoptNS([[TestWebExtensionsDelegate alloc] init]);
 
@@ -671,15 +603,7 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
 
     manager.get().controllerDelegate = requestDelegate.get();
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Ready");
-
-    Util::runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
-
-    [manager run];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Clipboard Written");
+    [manager runUntilTestMessage:@"Clipboard Written"];
 
 #if TARGET_OS_IPHONE
     auto *clipboardContent = UIPasteboard.generalPasteboard.string;
@@ -730,13 +654,12 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithPermissions)
         @"}"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
 
     auto *urlRequest = server.request();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutPermissions)
@@ -774,8 +697,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutPermissions)
         @"}",
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
 
     __block size_t promptCount = 0;
 
@@ -788,7 +710,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutPermissions)
         completionHandler(requestedURLs, nil);
     };
 
-    [manager loadAndRun];
+    [manager run];
 
     EXPECT_EQ(promptCount, 1ul);
 }
@@ -821,8 +743,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutGrantingPermission)
         @"performFetch()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
 
     __block size_t promptCount = 0;
 
@@ -835,7 +756,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutGrantingPermission)
         completionHandler(NSSet.set, nil);
     };
 
-    [manager loadAndRun];
+    [manager run];
 
     EXPECT_EQ(promptCount, 2ul);
 }
@@ -872,13 +793,12 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithPermissions)
         @"xhr.send()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
 
     auto *urlRequest = server.request();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutPermissions)
@@ -928,8 +848,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutPermissions)
         @"xhr.send()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
 
     __block size_t promptCount = 0;
 
@@ -942,7 +861,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutPermissions)
         completionHandler(requestedURLs, nil);
     };
 
-    [manager loadAndRun];
+    [manager run];
 
     EXPECT_EQ(promptCount, 1ul);
 }
@@ -981,8 +900,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutGrantingPermission)
         @"performXHR()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(corsManifest, @{ @"background.js": backgroundScript });
 
     __block size_t promptCount = 0;
 
@@ -996,7 +914,7 @@ TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutGrantingPermission)
         completionHandler(NSSet.set, nil);
     };
 
-    [manager loadAndRun];
+    [manager run];
 
     EXPECT_EQ(promptCount, 2ul);
 }

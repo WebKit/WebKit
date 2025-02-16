@@ -46,13 +46,11 @@ std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformButton(ButtonP
     return nullptr;
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformColorWell(ColorWellPart&)
 {
     notImplemented();
     return nullptr;
 }
-#endif
 
 std::unique_ptr<PlatformControl> ControlFactoryIOS::createPlatformInnerSpinButton(InnerSpinButtonPart&)
 {

@@ -18,7 +18,7 @@ noInline(test);
 let lengthCalls = 0;
 currentArgCount = 2;
 let array = { 0: 1, 1: 2, get length() { lengthCalls++; return currentArgCount } }
-for (let i = 0; i < 1e5; i++)
+for (let i = 0; i < testLoopCount; i++)
     test(array);
 
 

@@ -54,7 +54,7 @@ class ProgramExecutable;
 class SourceCode;
 class VM;
 
-using TDZEnvironment = HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
+using TDZEnvironment = UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash>;
 
 namespace CodeCacheInternal {
 static constexpr bool verbose = false;

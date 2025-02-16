@@ -59,6 +59,7 @@
 #import <WebCore/CSSRuleList.h>
 #import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/Comment.h>
+#import <WebCore/CustomElementRegistry.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentFullscreen.h>
 #import <WebCore/DocumentInlines.h>
@@ -68,6 +69,7 @@
 #import <WebCore/HTMLHeadElement.h>
 #import <WebCore/HTMLScriptElement.h>
 #import <WebCore/HitTestSource.h>
+#import <WebCore/ImportNodeOptions.h>
 #import <WebCore/JSExecState.h>
 #import <WebCore/LocalDOMWindow.h>
 #import <WebCore/NativeNodeFilter.h>
@@ -508,7 +510,7 @@
     WebCore::JSMainThreadNullState state;
     if (!importedNode)
         raiseTypeErrorException();
-    return kit(raiseOnDOMError(IMPL->importNode(*core(importedNode), deep)).ptr());
+    return kit(raiseOnDOMError(IMPL->importNode(*core(importedNode), static_cast<bool>(deep))).ptr());
 }
 
 - (DOMElement *)createElementNS:(NSString *)namespaceURI qualifiedName:(NSString *)qualifiedName

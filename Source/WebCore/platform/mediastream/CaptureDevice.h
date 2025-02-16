@@ -32,7 +32,15 @@ namespace WebCore {
 
 class CaptureDevice {
 public:
-    enum class DeviceType : uint8_t { Unknown, Microphone, Speaker, Camera, Screen, Window, SystemAudio };
+    enum class DeviceType : uint8_t {
+        Unknown     = 1 << 0,
+        Microphone  = 1 << 1,
+        Speaker     = 1 << 2,
+        Camera      = 1 << 3,
+        Screen      = 1 << 4,
+        Window      = 1 << 5,
+        SystemAudio = 1 << 6,
+    };
     static bool isScreenShareType(DeviceType type) { return type == DeviceType::Screen || type == DeviceType::Window || type == DeviceType::SystemAudio; }
 
     CaptureDevice(const String& persistentId, DeviceType type, const String& label, const String& groupId = emptyString(), bool isEnabled = false, bool isDefault = false, bool isMock = false, bool isEphemeral = false)

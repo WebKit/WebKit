@@ -31,11 +31,6 @@
 #include <MediaAccessibility/MediaAccessibility.h>
 #include <wtf/SoftLinking.h>
 
-#if COMPILER(MSVC)
-// See https://msdn.microsoft.com/en-us/library/35bhkfb6.aspx
-#pragma warning(disable: 4273)
-#endif
-
 SOFT_LINK_FRAMEWORK_FOR_SOURCE(WebCore, MediaAccessibility)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE(WebCore, MediaAccessibility, MACaptionAppearanceGetDisplayType, MACaptionAppearanceDisplayType, (MACaptionAppearanceDomain domain), (domain))

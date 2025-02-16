@@ -17,7 +17,7 @@ Object.defineProperty(Array.prototype, 42, {
     set(value) {
     }
 });
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [1, 2, 3, 4, 5];
     shouldBe(array[42], 30);
     testInt32(array, 42, 42);

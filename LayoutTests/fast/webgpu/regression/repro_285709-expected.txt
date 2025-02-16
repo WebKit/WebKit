@@ -1,0 +1,1 @@
+WebGPU is only supported on Apple4 hardware or later or Mac2 hardware.

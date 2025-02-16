@@ -185,7 +185,7 @@ namespace WTF {
  *        }, [] (MyOtherPromise::RejectValueType val) {
  *            return MyOtherPromise::createAndReject(val);
  *        }) // The type returned by then() is of the last PromiseType returned in the chain.
- *        ->whenSettled(RunLoop::main(), [] (const MyOtherPromise::Result&) -> void {
+ *        ->whenSettled(RunLoop::protectedMain(), [] (const MyOtherPromise::Result&) -> void {
  *            // do something else
  *        });
  *
@@ -247,7 +247,7 @@ namespace WTF {
  *
  * And usage would be:
  *  auto photoProducer = PhotoProducer::create(PhotoSettings { });
- *  photoProducer->takePhoto()->whenSettled(RunLoop::main(), [] (PhotoProducer::PhotoPromise::Result&& result) mutable {
+ *  photoProducer->takePhoto()->whenSettled(RunLoop::protectedMain(), [] (PhotoProducer::PhotoPromise::Result&& result) mutable {
  *      static_assert(std::is_same_v<decltype(result.value()), std::pair<Vector<uint8_t>, String>&>);
  *      if (result)
  *          EXPECT_EQ(result.value().second, "image/jpeg"_s);
@@ -750,19 +750,19 @@ private:
                 }
                 return;
             }
-            m_targetQueue->dispatch([this, protectedThis = Ref { *this }, promise = Ref { promise }] () mutable {
-                if (m_disconnected) {
-                    PROMISE_LOG("ThenCallback disconnected from ", promise.get(), " aborting [callback:", (const void*)this, " callSite:", m_logSiteIdentifier, "]");
+            m_targetQueue->dispatch([protectedThis = Ref { *this }, promise = Ref { promise }] () mutable {
+                if (protectedThis->m_disconnected) {
+                    PROMISE_LOG("ThenCallback disconnected from ", promise.get(), " aborting [callback:", (const void*)protectedThis.ptr(), " callSite:", protectedThis->m_logSiteIdentifier, "]");
                     return;
                 }
                 if (promise->hasRunnable()) {
                     ASSERT(IsExclusive);
-                    processResult(promise, promise->takeResultRunnable()());
+                    protectedThis->processResult(promise, promise->takeResultRunnable()());
                 } else {
                     if constexpr (IsExclusive)
-                        processResult(promise, promise->takeResult());
+                        protectedThis->processResult(promise, promise->takeResult());
                     else
-                        processResult(promise, promise->result());
+                        protectedThis->processResult(promise, promise->result());
                 }
             });
         }

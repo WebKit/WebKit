@@ -90,7 +90,7 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
 TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivateBase* owner, unsigned index, GstStream* stream)
     : m_notifier(MainThreadNotifier<MainThreadNotification>::create())
     , m_index(index)
-    , m_gstStreamId(AtomString::fromLatin1(gst_stream_get_stream_id(stream)))
+    , m_gstStreamId(AtomString(unsafeSpan8(gst_stream_get_stream_id(stream))))
     , m_id(parseStreamId(m_gstStreamId).value_or(index))
     , m_stream(stream)
     , m_type(type)
@@ -115,7 +115,7 @@ void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
 
     m_pad = WTFMove(pad);
     m_bestUpstreamPad = findBestUpstreamPad(m_pad);
-    m_gstStreamId = AtomString::fromLatin1(gst_pad_get_stream_id(m_pad.get()));
+    m_gstStreamId = AtomString(unsafeSpan8(gst_pad_get_stream_id(m_pad.get())));
 
     if (m_shouldUsePadStreamId)
         m_id = parseStreamId(m_gstStreamId).value_or(m_index);
@@ -227,7 +227,7 @@ bool TrackPrivateBaseGStreamer::getLanguageCode(GstTagList* tags, AtomString& va
 {
     String language;
     if (getTag(tags, GST_TAG_LANGUAGE_CODE, language)) {
-        AtomString convertedLanguage = AtomString::fromLatin1(gst_tag_get_language_code_iso_639_1(language.utf8().data()));
+        AtomString convertedLanguage = AtomString(unsafeSpan8(gst_tag_get_language_code_iso_639_1(language.utf8().data())));
         GST_DEBUG("Converted track %d's language code to %s.", m_index, convertedLanguage.string().utf8().data());
         if (convertedLanguage != value) {
             value = WTFMove(convertedLanguage);
@@ -287,7 +287,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
     if (!m_pad)
         return;
 
-    auto gstStreamId = AtomString::fromLatin1(gst_pad_get_stream_id(m_pad.get()));
+    auto gstStreamId = AtomString(unsafeSpan8(gst_pad_get_stream_id(m_pad.get())));
     auto streamId = parseStreamId(gstStreamId);
     if (!streamId)
         return;
@@ -373,7 +373,7 @@ bool TrackPrivateBaseGStreamer::updateTrackIDFromTags(const GRefPtr<GstTagList>&
     if (!gst_tag_list_get_string(tags.get(), "container-specific-track-id", &trackIDString.outPtr()))
         return false;
 
-    auto trackID = WTF::parseInteger<TrackID>(StringView { span(trackIDString.get()) });
+    auto trackID = WTF::parseInteger<TrackID>(StringView { unsafeSpan(trackIDString.get()) });
     if (trackID && *trackID != m_trackID.value_or(0)) {
         m_trackID = *trackID;
         ASSERT(m_trackID);

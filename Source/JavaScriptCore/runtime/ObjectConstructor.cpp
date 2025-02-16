@@ -221,7 +221,6 @@ JSValue objectConstructorGetOwnPropertyDescriptors(JSGlobalObject* globalObject,
 
         PutPropertySlot slot(descriptors);
         descriptors->putOwnDataPropertyMayBeIndex(globalObject, propertyName, fromDescriptor, slot);
-        scope.assertNoExceptionExceptTermination();
         RETURN_IF_EXCEPTION(scope, { });
     }
 
@@ -1276,7 +1275,11 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
         if (structure->canCacheOwnPropertyNames()) {
             auto* cachedButterfly = structure->cachedPropertyNamesIgnoringSentinel(kind);
             if (cachedButterfly == StructureRareData::cachedPropertyNamesSentinel()) {
-                auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                auto* newButterfly = JSImmutableButterfly::tryCreate(vm, CopyOnWriteArrayWithContiguous, numProperties);
+                if (UNLIKELY(!newButterfly)) {
+                    throwOutOfMemoryError(globalObject, scope);
+                    return { };
+                }
                 copyPropertiesToBuffer(newButterfly->toButterfly()->contiguous().data(), newButterfly);
 
                 structure->setCachedPropertyNames(vm, kind, newButterfly);
@@ -1288,9 +1291,11 @@ JSArray* ownPropertyKeys(JSGlobalObject* globalObject, JSObject* object, Propert
                 structure->setCachedPropertyNames(vm, kind, StructureRareData::cachedPropertyNamesSentinel());
         }
 
-        // FIXME: We should probably be calling tryCreate here:
-        // https://bugs.webkit.org/show_bug.cgi?id=221984
-        JSArray* keys = JSArray::create(vm, globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous), numProperties);
+        JSArray* keys = JSArray::tryCreate(vm, globalObject->originalArrayStructureForIndexingType(ArrayWithContiguous), numProperties);
+        if (UNLIKELY(!keys)) {
+            throwOutOfMemoryError(globalObject, scope);
+            return { };
+        }
         copyPropertiesToBuffer(keys->butterfly()->contiguous().data(), keys);
 
         return keys;

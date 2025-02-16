@@ -90,9 +90,9 @@ bool containsColorSchemeDependentColor(const ColorMix& unresolved)
         || containsColorSchemeDependentColor(unresolved.mixComponents2.color);
 }
 
-void Serialize<ColorMix>::operator()(StringBuilder& builder, const ColorMix& value)
+void Serialize<ColorMix>::operator()(StringBuilder& builder, const SerializationContext& context, const ColorMix& value)
 {
-    serializationForCSSColorMix(builder, value);
+    serializationForCSSColorMix(builder, context, value);
 }
 
 void ComputedStyleDependenciesCollector<ColorMix>::operator()(ComputedStyleDependencies& dependencies, const ColorMix& value)
@@ -103,7 +103,7 @@ void ComputedStyleDependenciesCollector<ColorMix>::operator()(ComputedStyleDepen
     collectComputedStyleDependencies(dependencies, value.mixComponents2.percentage);
 }
 
-IterationStatus CSSValueChildrenVisitor<ColorMix>::operator()(const Function<IterationStatus(CSSValue&)>& func, const ColorMix& value)
+IterationStatus CSSValueChildrenVisitor<ColorMix>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const ColorMix& value)
 {
     if (visitCSSValueChildren(func, value.mixComponents1.color) == IterationStatus::Done)
         return IterationStatus::Done;

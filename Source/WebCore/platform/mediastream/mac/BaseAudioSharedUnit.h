@@ -101,7 +101,7 @@ public:
 protected:
     BaseAudioSharedUnit();
 
-    void forEachClient(const Function<void(CoreAudioCaptureSource&)>&) const;
+    void forEachClient(NOESCAPE const Function<void(CoreAudioCaptureSource&)>&) const;
     void captureFailed();
     void continueStartProducingData();
 

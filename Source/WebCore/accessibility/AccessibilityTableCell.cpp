@@ -33,6 +33,7 @@
 #include "AccessibilityTable.h"
 #include "AccessibilityTableRow.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTableCellElement.h"
 #include "RenderObject.h"
 #include "RenderTableCell.h"
 
@@ -399,13 +400,18 @@ unsigned AccessibilityTableCell::rowSpan() const
 {
     // According to the ARIA spec, "If aria-rowspan is used on an element for which the host language
     // provides an equivalent attribute, user agents must ignore the value of aria-rowspan."
-    if (auto rowSpan = parseHTMLInteger(getAttribute(rowspanAttr)); rowSpan && *rowSpan >= 1) {
-        // https://html.spec.whatwg.org/multipage/tables.html
-        // If rowspan is greater than 65534, let it be 65534 instead.
-        return std::min(std::max(*rowSpan, 1), 65534);
+    if (auto rowSpan = parseHTMLInteger(getAttribute(rowspanAttr))) {
+        if (*rowSpan < 0)
+            return 1;
+        return std::min(static_cast<unsigned>(*rowSpan), HTMLTableCellElement::maxRowspan);
     }
-    if (auto ariaRowSpan = parseHTMLInteger(getAttribute(aria_rowspanAttr)); ariaRowSpan && *ariaRowSpan >= 1)
-        return std::min(std::max(*ariaRowSpan, 1), 65534);
+
+    if (auto ariaRowSpan = parseHTMLInteger(getAttribute(aria_rowspanAttr))) {
+        if (*ariaRowSpan < 0)
+            return 1;
+        return std::min(static_cast<unsigned>(*ariaRowSpan), HTMLTableCellElement::maxRowspan);
+    }
+
     return 1;
 }
 

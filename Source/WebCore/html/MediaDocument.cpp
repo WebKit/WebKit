@@ -114,10 +114,6 @@ void MediaDocumentParser::createDocumentStructure()
     if (RefPtr loader = document->loader())
         videoElement->setAttributeWithoutSynchronization(typeAttr, AtomString { loader->responseMIMEType() });
 
-#if !ENABLE(MODERN_MEDIA_CONTROLS)
-    videoElement->setAttribute(styleAttr, "max-width: 100%; max-height: 100%;"_s);
-#endif // !ENABLE(MODERN_MEDIA_CONTROLS)
-
     body->appendChild(videoElement);
     document->setHasVisuallyNonEmptyCustomContent();
 
@@ -160,63 +156,6 @@ static inline HTMLVideoElement* descendantVideoElement(ContainerNode& node)
         return video;
 
     return descendantsOfType<HTMLVideoElement>(node).first();
-}
-
-#if !ENABLE(MODERN_MEDIA_CONTROLS)
-static inline HTMLVideoElement* ancestorVideoElement(Node* node)
-{
-    for (; node; node = node->parentOrShadowHostNode()) {
-        if (auto* video = dynamicDowncast<HTMLVideoElement>(node))
-            return video;
-    }
-    return nullptr;
-}
-#endif
-
-void MediaDocument::defaultEventHandler(Event& event)
-{
-#if !ENABLE(MODERN_MEDIA_CONTROLS)
-    // Match the default Quicktime plugin behavior to allow
-    // clicking and double-clicking to pause and play the media.
-    auto* targetNode = dynamicDowncast<Node>(*event.target());
-    if (!targetNode)
-        return;
-
-    if (RefPtr video = ancestorVideoElement(targetNode)) {
-        if (isAnyClick(event)) {
-            if (!video->canPlay()) {
-                video->pause();
-                event.setDefaultHandled();
-            }
-        } else if (event.type() == eventNames().dblclickEvent) {
-            if (video->canPlay()) {
-                video->play();
-                event.setDefaultHandled();
-            }
-        }
-    }
-
-    auto* targetContainer = dynamicDowncast<ContainerNode>(*targetNode);
-    if (!targetContainer)
-        return;
-
-    if (auto* keyboardEvent = dynamicDowncast<KeyboardEvent>(event); keyboardEvent && event.type() == eventNames().keydownEvent) {
-        RefPtr video = descendantVideoElement(*targetContainer);
-        if (!video)
-            return;
-
-        if (keyboardEvent->keyIdentifier() == "U+0020"_s) { // space
-            if (video->paused()) {
-                if (video->canPlay())
-                    video->play();
-            } else
-                video->pause();
-            keyboardEvent->setDefaultHandled();
-        }
-    }
-#else // !ENABLE(MODERN_MEDIA_CONTROLS)
-    UNUSED_PARAM(event);
-#endif
 }
 
 void MediaDocument::replaceMediaElementTimerFired()

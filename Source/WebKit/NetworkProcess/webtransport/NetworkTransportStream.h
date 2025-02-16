@@ -37,12 +37,15 @@
 #endif
 
 namespace WebCore {
+class Exception;
 struct WebTransportStreamIdentifierType;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportStreamErrorCode = uint64_t;
 }
 
 namespace WebKit {
 enum class NetworkTransportStreamType : uint8_t { Bidirectional, OutgoingUnidirectional, IncomingUnidirectional };
+enum class NetworkTransportStreamState : uint8_t { Ready, ReadClosed, WriteClosed };
 
 class NetworkTransportSession;
 
@@ -53,8 +56,10 @@ public:
 
     WebCore::WebTransportStreamIdentifier identifier() const { return m_identifier; }
 
-    void sendBytes(std::span<const uint8_t>, bool withFin);
-
+    void sendBytes(std::span<const uint8_t>, bool, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
+    void cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>);
+    void cancelSend(std::optional<WebCore::WebTransportStreamErrorCode>);
+    void cancel(std::optional<WebCore::WebTransportStreamErrorCode>);
 protected:
 #if PLATFORM(COCOA)
     NetworkTransportStream(NetworkTransportSession&, nw_connection_t, NetworkTransportStreamType);
@@ -64,6 +69,7 @@ protected:
 
 private:
     void receiveLoop();
+    void setErrorCodeForStream(std::optional<WebCore::WebTransportStreamErrorCode>);
 
     const WebCore::WebTransportStreamIdentifier m_identifier;
     WeakPtr<NetworkTransportSession> m_session;
@@ -71,6 +77,7 @@ private:
     const RetainPtr<nw_connection_t> m_connection;
 #endif
     const NetworkTransportStreamType m_streamType;
+    NetworkTransportStreamState m_streamState;
 };
 
 }

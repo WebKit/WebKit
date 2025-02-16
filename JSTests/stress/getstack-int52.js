@@ -14,7 +14,7 @@ function main() {
     let arr = new Array(1000);
     arr.fill(1.1);
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         opt(arr, 0, 1000);
     }
 

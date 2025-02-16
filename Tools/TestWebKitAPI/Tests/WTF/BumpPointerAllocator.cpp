@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2019 Sony Interactive Entertainment Inc.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +25,14 @@
 
 #include "config.h"
 #include <wtf/BumpPointerAllocator.h>
+#include <wtf/StdLibExtras.h>
 
 namespace TestWebKitAPI {
 
 TEST(WTF_BumpPointerAllocator, AllocationWithOnlySmallerPoolsAvailable)
 {
     WTF::BumpPointerAllocator allocator;
-    WTF::BumpPointerPool* pool = allocator.startAllocator();
+    WTF::BumpPointerPool* pool = allocator.startAllocator(4 * MB);
 
     pool = pool->ensureCapacity(0x2000);
     void* a = pool->alloc(0x2000);

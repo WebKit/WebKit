@@ -286,7 +286,7 @@ static bool canCachePage(Page& page)
     if (RefPtr provisionalDocumentLoader = localMainFrame->loader().provisionalDocumentLoader()) {
         if (provisionalDocumentLoader->responseClearSiteDataValues().contains(ClearSiteDataValue::Cache)) {
             if (RefPtr topDocument = localMainFrame->document()) {
-                if (topDocument->securityOrigin().isSameOriginAs(SecurityOrigin::create(provisionalDocumentLoader->response().url()))) {
+                if (topDocument->protectedSecurityOrigin()->isSameOriginAs(SecurityOrigin::create(provisionalDocumentLoader->response().url()))) {
                     PCLOG("   -`Clear-Site-Data: cache` HTTP header is present"_s);
                     isCacheable = false;
                 }
@@ -626,7 +626,7 @@ void BackForwardCache::prune(PruningReason pruningReason)
     }
 }
 
-void BackForwardCache::clearEntriesForOrigins(const HashSet<RefPtr<SecurityOrigin>>& origins)
+void BackForwardCache::clearEntriesForOrigins(const UncheckedKeyHashSet<RefPtr<SecurityOrigin>>& origins)
 {
     m_cachedPageMap.removeIf([&](auto& pair) -> bool {
         if (auto* cachedPage = std::get_if<UniqueRef<CachedPage>>(&pair.value)) {

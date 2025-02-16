@@ -5,7 +5,7 @@ let oneGiga = 1024 * 1024 * 1024;
 
 function test(array, actualLength, string)
 {
-    for (var i = 0; i < 1000000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var index = actualLength + 10;
         var value = 42;
         array[index] = value;

@@ -23,8 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "AllIsoHeaps.h"
 
+#if !BUSE(TZONE)
 #if !BUSE(LIBPAS)
 
 namespace bmalloc {
@@ -51,3 +53,4 @@ IsoHeapImplBase* AllIsoHeaps::head()
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

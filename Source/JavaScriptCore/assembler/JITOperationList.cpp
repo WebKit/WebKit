@@ -124,6 +124,7 @@ LLINT_DECLARE_ROUTINE_VALIDATE(normal_osr_exit_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(fuzzer_return_early_from_loop_hint);
 LLINT_DECLARE_ROUTINE_VALIDATE(js_to_wasm_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_wasm_wrapper_entry);
+LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_wasm_ipint_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(wasm_to_js_wrapper_entry);
 LLINT_DECLARE_ROUTINE_VALIDATE(ipint_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(ipint_entry);
@@ -186,6 +187,7 @@ static LLIntOperations llintOperations()
             LLINT_ROUTINE(fuzzer_return_early_from_loop_hint)
             LLINT_ROUTINE(js_to_wasm_wrapper_entry)
             LLINT_ROUTINE(wasm_to_wasm_wrapper_entry)
+            LLINT_ROUTINE(wasm_to_wasm_ipint_wrapper_entry)
             LLINT_ROUTINE(wasm_to_js_wrapper_entry)
             LLINT_ROUTINE(ipint_trampoline)
             LLINT_ROUTINE(ipint_entry)

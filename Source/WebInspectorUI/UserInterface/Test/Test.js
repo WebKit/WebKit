@@ -28,7 +28,6 @@ WI.loaded = function()
     // Register observers for events from the InspectorBackend.
     // The initialization order should match the same in Main.js.
     InspectorBackend.registerAnimationDispatcher(WI.AnimationObserver);
-    InspectorBackend.registerApplicationCacheDispatcher(WI.ApplicationCacheObserver);
     InspectorBackend.registerBrowserDispatcher(WI.BrowserObserver);
     InspectorBackend.registerCPUProfilerDispatcher(WI.CPUProfilerObserver);
     InspectorBackend.registerCSSDispatcher(WI.CSSObserver);
@@ -36,7 +35,6 @@ WI.loaded = function()
     InspectorBackend.registerConsoleDispatcher(WI.ConsoleObserver);
     InspectorBackend.registerDOMDispatcher(WI.DOMObserver);
     InspectorBackend.registerDOMStorageDispatcher(WI.DOMStorageObserver);
-    InspectorBackend.registerDatabaseDispatcher(WI.DatabaseObserver);
     InspectorBackend.registerDebuggerDispatcher(WI.DebuggerObserver);
     InspectorBackend.registerHeapDispatcher(WI.HeapObserver);
     InspectorBackend.registerInspectorDispatcher(WI.InspectorObserver);
@@ -56,7 +54,6 @@ WI.loaded = function()
         WI.targetManager = new WI.TargetManager,
         WI.networkManager = new WI.NetworkManager,
         WI.domStorageManager = new WI.DOMStorageManager,
-        WI.databaseManager = new WI.DatabaseManager,
         WI.indexedDBManager = new WI.IndexedDBManager,
         WI.domManager = new WI.DOMManager,
         WI.cssManager = new WI.CSSManager,
@@ -64,7 +61,6 @@ WI.loaded = function()
         WI.runtimeManager = new WI.RuntimeManager,
         WI.heapManager = new WI.HeapManager,
         WI.memoryManager = new WI.MemoryManager,
-        WI.applicationCacheManager = new WI.ApplicationCacheManager,
         WI.timelineManager = new WI.TimelineManager,
         WI.auditManager = new WI.AuditManager,
         WI.debuggerManager = new WI.DebuggerManager,
@@ -96,9 +92,7 @@ WI.contentLoaded = function()
 {
     // Things that would normally get called by the UI, that we still want to do in tests.
     WI.animationManager.enable();
-    WI.applicationCacheManager.enable();
     WI.canvasManager.enable();
-    WI.databaseManager.enable();
     WI.domStorageManager.enable();
     WI.heapManager.enable();
     WI.indexedDBManager.enable();
@@ -190,7 +184,6 @@ WI.updateFindString = () => {};
     }
     makeAgentGetter("Animation");
     makeAgentGetter("Audit");
-    makeAgentGetter("ApplicationCache");
     makeAgentGetter("CPUProfiler");
     makeAgentGetter("CSS");
     makeAgentGetter("Canvas");
@@ -198,7 +191,6 @@ WI.updateFindString = () => {};
     makeAgentGetter("DOM");
     makeAgentGetter("DOMDebugger");
     makeAgentGetter("DOMStorage");
-    makeAgentGetter("Database");
     makeAgentGetter("Debugger");
     makeAgentGetter("Heap");
     makeAgentGetter("IndexedDB");

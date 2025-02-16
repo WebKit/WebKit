@@ -125,13 +125,13 @@ static void connectionRemoved(xpc_connection_t connection)
 int PCMDaemonMain(int argc, const char** argv)
 {
     auto arguments = unsafeMakeSpan(argv, argc);
-    if (arguments.size() < 5 || strcmp(arguments[1], "--machServiceName") || strcmp(arguments[3], "--storageLocation")) {
+    if (arguments.size() < 5 || !equalSpans(unsafeSpan(arguments[1]), "--machServiceName"_span) || !equalSpans(unsafeSpan(arguments[3]), "--storageLocation"_span)) {
         NSLog(@"Usage: %s --machServiceName <name> --storageLocation <location> [--startActivity]", arguments[0]);
         return -1;
     }
     const char* machServiceName = arguments[2];
     const char* storageLocation = arguments[4];
-    bool startActivity = arguments.size() > 5 && !strcmp(arguments[5], "--startActivity");
+    bool startActivity = arguments.size() > 5 && equalSpans(unsafeSpan(arguments[5]), "--startActivity"_span);
 
     @autoreleasepool {
 #if ENABLE(CFPREFS_DIRECT_MODE)

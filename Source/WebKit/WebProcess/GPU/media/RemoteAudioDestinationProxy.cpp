@@ -72,7 +72,7 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 {
 #if PLATFORM(MAC)
     // On macOS, we are seeing page load time improvements when eagerly creating the Audio destination in the GPU process. See rdar://124071843.
-    RunLoop::current().dispatch([protectedThis = Ref { *this }]() {
+    RunLoop::protectedCurrent()->dispatch([protectedThis = Ref { *this }]() {
         protectedThis->connection();
     });
 #endif
@@ -162,7 +162,9 @@ IPC::Connection* RemoteAudioDestinationProxy::connection()
             frameCountHandle = m_frameCount->createHandle(WebCore::SharedMemory::Protection::ReadWrite);
         }
         RELEASE_ASSERT(frameCountHandle.has_value());
-        gpuProcessConnection->connection().send(Messages::RemoteAudioDestinationManager::CreateAudioDestination(*m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), 0);
+        gpuProcessConnection->connection().sendWithAsyncReply(Messages::RemoteAudioDestinationManager::CreateAudioDestination(*m_destinationID, m_inputDeviceId, m_numberOfInputChannels, m_outputBus->numberOfChannels(), sampleRate(), m_remoteSampleRate, m_renderSemaphore, WTFMove(*frameCountHandle)), [protectedThis = Ref { *this }](size_t latency) {
+            protectedThis->m_audioUnitLatency = latency;
+        }, 0);
 
 #if PLATFORM(COCOA)
         m_currentFrame = 0;
@@ -199,15 +201,16 @@ void RemoteAudioDestinationProxy::startRendering(CompletionHandler<void(bool)>&&
 {
     RefPtr connection = this->connection();
     if (!connection) {
-        RunLoop::current().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::protectedCurrent()->dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
             protectedThis->setIsPlaying(false);
             completionHandler(false);
         });
         return;
     }
 
-    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying) mutable {
+    connection->sendWithAsyncReply(Messages::RemoteAudioDestinationManager::StartAudioDestination(*m_destinationID), [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](bool isPlaying, size_t latency) mutable {
         protectedThis->setIsPlaying(isPlaying);
+        protectedThis->m_audioUnitLatency = latency;
         completionHandler(isPlaying);
     });
 }
@@ -216,7 +219,7 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
 {
     auto* connection = existingConnection();
     if (!connection) {
-        RunLoop::current().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::protectedCurrent()->dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
             protectedThis->setIsPlaying(false);
             completionHandler(true);
         });
@@ -227,6 +230,15 @@ void RemoteAudioDestinationProxy::stopRendering(CompletionHandler<void(bool)>&& 
         protectedThis->setIsPlaying(isPlaying);
         completionHandler(!isPlaying);
     });
+}
+
+MediaTime RemoteAudioDestinationProxy::outputLatency() const
+{
+    return (MediaTime { static_cast<int64_t>(m_audioUnitLatency), static_cast<uint32_t>(sampleRate()) }
+#if USE(AUDIO_SESSION)
+            + MediaTime { static_cast<int64_t>(AudioSession::protectedSharedSession()->outputLatency()), static_cast<uint32_t>(AudioSession::protectedSharedSession()->sampleRate()) }
+#endif
+            );
 }
 
 void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)

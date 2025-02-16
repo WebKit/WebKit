@@ -78,17 +78,38 @@
 #include "StyleResolveForDocument.h"
 #include "StyleRule.h"
 #include "StyleSheetContents.h"
+#include "TimingFunction.h"
 #include "UserAgentParts.h"
 #include "UserAgentStyle.h"
 #include "VisibilityAdjustment.h"
 #include "VisitedLinkState.h"
 #include "WebAnimationTypes.h"
 #include "WebKitFontFamilyNames.h"
+#include <wtf/HashFunctions.h>
+#include <wtf/HashTraits.h>
 #include <wtf/Seconds.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomStringHash.h>
+
+namespace WTF {
+
+struct StyleRuleKeyframeKeyHash {
+    static unsigned hash(const WebCore::StyleRuleKeyframe::Key& p) { return pairIntHash(p.rangeName, p.offset); }
+    static bool equal(const WebCore::StyleRuleKeyframe::Key& a, const WebCore::StyleRuleKeyframe::Key& b) { return a == b; }
+    static const bool safeToCompareToEmptyOrDeleted = true;
+};
+template<> struct HashTraits<WebCore::StyleRuleKeyframe::Key> : GenericHashTraits<WebCore::StyleRuleKeyframe::Key> {
+    static WebCore::StyleRuleKeyframe::Key emptyValue() { return { WebCore::CSSValueNormal, -1 }; }
+    static bool isEmptyValue(const WebCore::StyleRuleKeyframe::Key& value) { return value.offset == -1; }
+
+    static void constructDeletedValue(WebCore::StyleRuleKeyframe::Key& slot) { slot.offset = -2; }
+    static bool isDeletedValue(const WebCore::StyleRuleKeyframe::Key& slot) { return slot.offset == -2; }
+};
+template<> struct DefaultHash<WebCore::StyleRuleKeyframe::Key> : StyleRuleKeyframeKeyHash { };
+
+}
 
 namespace WebCore {
 namespace Style {
@@ -395,7 +416,7 @@ bool Resolver::isAnimationNameValid(const String& name)
         || userAgentKeyframes().find(AtomString(name)) != userAgentKeyframes().end();
 }
 
-Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName) const
+Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& animationName, const TimingFunction* defaultTimingFunction) const
 {
     if (animationName.isEmpty())
         return { };
@@ -418,15 +439,17 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
         return Animation::initialCompositeOperation();
     };
 
-    auto timingFunctionForKeyframe = [](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
+    auto timingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
         if (auto timingFunctionCSSValue = keyframe->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction)) {
             if (auto timingFunction = createTimingFunctionDeprecated(*timingFunctionCSSValue))
                 return timingFunction;
         }
+        if (defaultTimingFunction)
+            return defaultTimingFunction;
         return &CubicBezierTimingFunction::defaultTimingFunction();
     };
 
-    HashSet<RefPtr<const TimingFunction>> timingFunctions;
+    UncheckedKeyHashSet<RefPtr<const TimingFunction>> timingFunctions;
     auto uniqueTimingFunctionForKeyframe = [&](Ref<StyleRuleKeyframe> keyframe) -> RefPtr<const TimingFunction> {
         auto timingFunction = timingFunctionForKeyframe(keyframe);
         for (auto existingTimingFunction : timingFunctions) {
@@ -440,9 +463,9 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     auto* keyframesRule = it->value.get();
     auto* keyframes = &keyframesRule->keyframes();
 
-    using KeyframeUniqueKey = std::tuple<double, RefPtr<const TimingFunction>, CompositeOperation>;
+    using KeyframeUniqueKey = std::tuple<StyleRuleKeyframe::Key, RefPtr<const TimingFunction>, CompositeOperation>;
     auto hasDuplicateKeys = [&]() -> bool {
-        HashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
+        UncheckedKeyHashSet<KeyframeUniqueKey> uniqueKeyframeKeys;
         for (auto& keyframe : *keyframes) {
             auto compositeOperation = compositeOperationForKeyframe(keyframe);
             auto timingFunction = uniqueTimingFunctionForKeyframe(keyframe);
@@ -457,23 +480,28 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     if (!hasDuplicateKeys)
         return *keyframes;
 
-    // FIXME: If HashMaps could have Ref<> as value types, we wouldn't need
-    // to copy the UncheckedKeyHashMap into a Vector.
-    // Merge keyframes with a similar offset and timing function.
+    // Merge keyframes with a similar offset and timing function ensuring that merged keyframes
+    // move to the end of the list if the offset is a timeline range.
     Vector<Ref<StyleRuleKeyframe>> deduplicatedKeyframes;
-    UncheckedKeyHashMap<KeyframeUniqueKey, RefPtr<StyleRuleKeyframe>> keyframesMap;
+    UncheckedKeyHashMap<KeyframeUniqueKey, Ref<StyleRuleKeyframe>> keyframesMap;
     for (auto& originalKeyframe : *keyframes) {
         auto compositeOperation = compositeOperationForKeyframe(originalKeyframe);
         auto timingFunction = uniqueTimingFunctionForKeyframe(originalKeyframe);
         for (auto key : originalKeyframe->keys()) {
             KeyframeUniqueKey uniqueKey { key, timingFunction, compositeOperation };
-            if (auto keyframe = keyframesMap.get(uniqueKey))
-                keyframe->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
-            else {
+            if (RefPtr existingStyleRuleKeyframe = keyframesMap.get(uniqueKey)) {
+                existingStyleRuleKeyframe->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
+                if (existingStyleRuleKeyframe->keys()[0].rangeName == CSSValueNormal)
+                    continue;
+                deduplicatedKeyframes.removeFirstMatching([&](const auto& styleRuleKeyframe) {
+                    return styleRuleKeyframe.ptr() == existingStyleRuleKeyframe;
+                });
+                deduplicatedKeyframes.append(*existingStyleRuleKeyframe);
+            } else {
                 auto styleRuleKeyframe = StyleRuleKeyframe::create(MutableStyleProperties::create());
-                styleRuleKeyframe.ptr()->setKey(key);
-                styleRuleKeyframe.ptr()->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
-                keyframesMap.set(uniqueKey, styleRuleKeyframe.ptr());
+                styleRuleKeyframe->setKey(key);
+                styleRuleKeyframe->mutableProperties().mergeAndOverrideOnConflict(originalKeyframe->properties());
+                keyframesMap.set(uniqueKey, styleRuleKeyframe);
                 deduplicatedKeyframes.append(styleRuleKeyframe);
             }
         }
@@ -482,21 +510,20 @@ Vector<Ref<StyleRuleKeyframe>> Resolver::keyframeRulesForName(const AtomString& 
     return deduplicatedKeyframes;
 }
 
-void Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list)
+void Resolver::keyframeStylesForAnimation(Element& element, const RenderStyle& elementStyle, const ResolutionContext& context, BlendingKeyframes& list, const TimingFunction* defaultTimingFunction)
 {
     list.clear();
 
-    auto keyframeRules = keyframeRulesForName(list.animationName());
+    auto keyframeRules = keyframeRulesForName(list.animationName(), defaultTimingFunction);
     if (keyframeRules.isEmpty())
         return;
 
     // Construct and populate the style for each keyframe.
     for (auto& keyframeRule : keyframeRules) {
         // Add this keyframe style to all the indicated key times
-        for (auto key : keyframeRule->keys()) {
-            BlendingKeyframe blendingKeyframe(0, nullptr);
+        for (auto& key : keyframeRule->keys()) {
+            BlendingKeyframe blendingKeyframe({ SingleTimelineRange::timelineName(key.rangeName), key.offset }, { nullptr });
             blendingKeyframe.setStyle(styleForKeyframe(element, elementStyle, context, keyframeRule.get(), blendingKeyframe));
-            blendingKeyframe.setOffset(key);
             if (auto timingFunctionCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationTimingFunction))
                 blendingKeyframe.setTimingFunction(createTimingFunctionDeprecated(*timingFunctionCSSValue));
             if (auto compositeOperationCSSValue = keyframeRule->properties().getPropertyCSSValue(CSSPropertyAnimationComposition)) {

@@ -31,7 +31,7 @@
 #include "config.h"
 #include "BlobURL.h"
 
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"
 #include <wtf/URL.h>
@@ -58,7 +58,7 @@ static const Document* blobOwner(const SecurityOrigin& blobOrigin)
         return nullptr;
 
     for (auto& document : Document::allDocuments()) {
-        if (document->securityOrigin().isSameOriginAs(blobOrigin))
+        if (document->protectedSecurityOrigin()->isSameOriginAs(blobOrigin))
             return document.ptr();
     }
     return nullptr;

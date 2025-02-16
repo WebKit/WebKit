@@ -15,16 +15,16 @@ let object1 = {
 let object2 = {
     cocoa: 44
 };
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(object1), true);
     shouldBe(test1(object2), false);
 }
 object2.hello = 44;
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(object1), true);
     shouldBe(test1(object2), true);
 }
 
 // OSRExits.
-for (let i = 0; i < 1e5; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     shouldBe(test1({}), false);

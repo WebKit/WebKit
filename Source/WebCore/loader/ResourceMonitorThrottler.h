@@ -33,13 +33,15 @@
 
 namespace WebCore {
 
-class ResourceMonitorThrottler final {
+class ResourceMonitorThrottler final : public RefCounted<ResourceMonitorThrottler> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WEBCORE_EXPORT ResourceMonitorThrottler();
-    WEBCORE_EXPORT ResourceMonitorThrottler(size_t count, Seconds duration, size_t maxHosts);
+    WEBCORE_EXPORT static Ref<ResourceMonitorThrottler> create();
+    WEBCORE_EXPORT static Ref<ResourceMonitorThrottler> create(size_t count, Seconds duration, size_t maxHosts);
 
     WEBCORE_EXPORT bool tryAccess(const String& host, ApproximateTime = ApproximateTime::now());
+
+    WEBCORE_EXPORT void setCountPerDuration(size_t, Seconds);
 
 private:
     struct Config {
@@ -63,6 +65,8 @@ private:
         PriorityQueue<ApproximateTime> m_accessTimes;
         ApproximateTime m_newestAccessTime { -ApproximateTime::infinity() };
     };
+
+    ResourceMonitorThrottler(size_t count, Seconds duration, size_t maxHosts);
 
     AccessThrottler& throttlerForHost(const String& host);
     void removeExpiredThrottler();

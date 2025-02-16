@@ -428,13 +428,12 @@ static String x509Serialize(X509* x509)
     if (!PEM_write_bio_X509(bio.get(), x509))
         return { };
 
-    Vector<char> buffer;
-    buffer.reserveCapacity(4096);
-    int length = BIO_read(bio.get(), buffer.data(), 4096);
-    if (!length)
+    uint8_t* data { nullptr };
+    auto length = BIO_get_mem_data(bio.get(), &data);
+    if (length <= 0)
         return { };
 
-    return buffer.subspan(0, length);
+    return String::fromUTF8(unsafeMakeSpan(data, length));
 }
 
 static String privateKeySerialize(EVP_PKEY* privateKey)
@@ -446,13 +445,12 @@ static String privateKeySerialize(EVP_PKEY* privateKey)
     if (!PEM_write_bio_PrivateKey(bio.get(), privateKey, nullptr, nullptr, 0, nullptr, nullptr))
         return { };
 
-    Vector<char> buffer;
-    buffer.reserveCapacity(4096);
-    int length = BIO_read(bio.get(), buffer.data(), 4096);
-    if (!length)
+    uint8_t* data { nullptr };
+    auto length = BIO_get_mem_data(bio.get(), &data);
+    if (length <= 0)
         return { };
 
-    return buffer.subspan(0, length);
+    return String::fromUTF8(unsafeMakeSpan(data, length));
 }
 
 std::optional<Ref<RTCCertificate>> generateCertificate(Ref<SecurityOrigin>&& origin, const PeerConnectionBackend::CertificateInformation& info)
@@ -715,7 +713,7 @@ void setSsrcAudioLevelVadOn(GstStructure* structure)
 {
     unsigned totalFields = gst_structure_n_fields(structure);
     for (unsigned i = 0; i < totalFields; i++) {
-        String fieldName = WTF::span(gst_structure_nth_field_name(structure, i));
+        String fieldName = unsafeSpan(gst_structure_nth_field_name(structure, i));
         if (!fieldName.startsWith("extmap-"_s))
             continue;
 
@@ -758,6 +756,24 @@ Seconds StatsTimestampConverter::convertFromMonotonicTime(Seconds value) const
     auto monotonicOffset = value - m_initialMonotonicTime;
     auto newTimestamp = m_epoch.secondsSinceEpoch() + monotonicOffset;
     return Performance::reduceTimeResolution(newTimestamp.secondsSinceEpoch());
+}
+
+void forEachTransceiver(const GRefPtr<GstElement>& webrtcBin, Function<bool(GRefPtr<GstWebRTCRTPTransceiver>&&)>&& function)
+{
+    GRefPtr<GArray> transceivers;
+    g_signal_emit_by_name(webrtcBin.get(), "get-transceivers", &transceivers.outPtr());
+
+    if (!transceivers || !transceivers->len)
+        return;
+
+    for (unsigned index = 0; index < transceivers->len; index++) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
+        GRefPtr current = g_array_index(transceivers.get(), GstWebRTCRTPTransceiver*, index);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
+
+        if (function(WTFMove(current)))
+            break;
+    }
 }
 
 #undef GST_CAT_DEFAULT

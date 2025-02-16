@@ -9,7 +9,7 @@ function test(array)
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [i, i, i];
     var result = test(array);
     shouldBe(array !== result, true);
@@ -24,7 +24,7 @@ function test2(array, i)
 }
 noInline(test2);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [i, i, i];
     var result = test2(array, 2);
     shouldBe(array !== result, true);

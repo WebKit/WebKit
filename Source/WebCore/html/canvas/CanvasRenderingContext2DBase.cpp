@@ -41,6 +41,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+LengthDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
+#include "CSSSerializationContext.h"
 #include "CSSStyleImageValue.h"
 #include "CSSTokenizer.h"
 #include "CachedImage.h"
@@ -2437,12 +2438,16 @@ AffineTransform CanvasRenderingContext2DBase::baseTransform() const
 void CanvasRenderingContext2DBase::prepareForDisplay()
 {
     if (auto buffer = canvasBase().buffer())
-        buffer->flushDrawingContextAsync();
+        buffer->prepareForDisplay();
 }
 
 bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 {
+#if USE(SKIA)
+    return isAccelerated();
+#else
     return false;
+#endif
 }
 
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageData& existingImageData) const
@@ -2500,12 +2505,12 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
     ConstPixelBufferConversionView source {
         .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace },
         .bytesPerRow = bytesPerRow,
-        .rows = imageData.data().asUint8ClampedArray()->data(),
+        .rows = imageData.data().asUint8ClampedArray()->span(),
     };
     PixelBufferConversionView destination {
         .format = cachedFormat,
         .bytesPerRow = bytesPerRow,
-        .rows = cachedBuffer->data().data(),
+        .rows = cachedBuffer->data().mutableSpan(),
     };
     convertImagePixels(source, destination, size);
     m_cachedContents.emplace<CachedContentsImageData>(*this, *cachedBuffer);
@@ -2538,12 +2543,12 @@ RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(co
     ConstPixelBufferConversionView source {
         .format = pixelBuffer->format(),
         .bytesPerRow = bytesPerRow,
-        .rows = data->data(),
+        .rows = data->span(),
     };
     PixelBufferConversionView destination {
         .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, pixelBuffer->format().colorSpace },
         .bytesPerRow = bytesPerRow,
-        .rows = data->data(),
+        .rows = data->mutableSpan(),
     };
     convertImagePixels(source, destination, size);
     return ImageData::create(size, WTFMove(data), m_settings.colorSpace);
@@ -2571,6 +2576,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
     }
 
     IntRect imageDataRect { sx, sy, sw, sh };
+    auto overridingStorageFormat = settings ? std::optional(settings->storageFormat) : std::optional<ImageDataStorageFormat>();
 
     if (scriptContext && scriptContext->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
         RefPtr buffer = canvasBase().createImageForNoiseInjection();
@@ -2582,13 +2588,15 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
         if (!pixelBuffer)
             return Exception { ExceptionCode::InvalidStateError };
 
-        return { { ImageData::create(pixelBuffer.releaseNonNull()) } };
+        return { { ImageData::create(pixelBuffer.releaseNonNull(), overridingStorageFormat) } };
     }
 
     auto computedColorSpace = ImageData::computeColorSpace(settings, m_settings.colorSpace);
 
-    if (auto imageData = makeImageDataIfContentsCached(imageDataRect, computedColorSpace))
-        return imageData.releaseNonNull();
+    if (!overridingStorageFormat || *overridingStorageFormat == ImageDataStorageFormat::Uint8) {
+        if (auto imageData = makeImageDataIfContentsCached(imageDataRect, computedColorSpace))
+            return imageData.releaseNonNull();
+    }
 
     RefPtr<ImageBuffer> buffer = canvasBase().makeRenderingResultsAvailable();
     if (!buffer)
@@ -2604,7 +2612,7 @@ ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::getImageData(int sx, i
 
     ASSERT(pixelBuffer->format().colorSpace == toDestinationColorSpace(computedColorSpace));
 
-    return { { ImageData::create(pixelBuffer.releaseNonNull()) } };
+    return { { ImageData::create(pixelBuffer.releaseNonNull(), overridingStorageFormat) } };
 }
 
 void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy)
@@ -3015,7 +3023,16 @@ FloatPoint CanvasRenderingContext2DBase::textOffset(float width, TextDirection d
 ImageBufferPixelFormat CanvasRenderingContext2DBase::pixelFormat() const
 {
     // FIXME: Take m_settings.alpha into account here and add PixelFormat::BGRX8.
-    return ImageBufferPixelFormat::BGRA8;
+    switch (m_settings.pixelFormat) {
+    case CanvasRenderingContext2DSettings::PixelFormat::Uint8:
+        return ImageBufferPixelFormat::BGRA8;
+    case CanvasRenderingContext2DSettings::PixelFormat::Float16:
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        return ImageBufferPixelFormat::RGBA16F;
+#else
+        return ImageBufferPixelFormat::BGRA8;
+#endif
+    }
 }
 
 DestinationColorSpace CanvasRenderingContext2DBase::colorSpace() const
@@ -3051,6 +3068,71 @@ std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContex
     return std::nullopt;
 }
 
+// FIXME: The HTML spec currently doesn't define how <length> units should be resolved, so we only
+// allow units where the resolution is straightforward. See https://github.com/whatwg/html/issues/10893.
+static bool unitAllowedForSpacing(CSS::LengthUnit lenghtUnit)
+{
+    using enum CSS::LengthUnit;
+
+    switch (lenghtUnit) {
+    case Px:
+    case Cm:
+    case Mm:
+    case Q:
+    case In:
+    case Pt:
+    case Pc:
+    case Em:
+    case QuirkyEm:
+    case Ex:
+    case Cap:
+    case Ch:
+    case Ic:
+    case Rcap:
+    case Rch:
+    case Rem:
+    case Rex:
+    case Ric:
+        return true;
+
+    case Lh:
+    case Rlh:
+    case Vw:
+    case Vh:
+    case Vmin:
+    case Vmax:
+    case Vb:
+    case Vi:
+    case Svw:
+    case Svh:
+    case Svmin:
+    case Svmax:
+    case Svb:
+    case Svi:
+    case Lvw:
+    case Lvh:
+    case Lvmin:
+    case Lvmax:
+    case Lvb:
+    case Lvi:
+    case Dvw:
+    case Dvh:
+    case Dvmin:
+    case Dvmax:
+    case Dvb:
+    case Dvi:
+    case Cqw:
+    case Cqh:
+    case Cqi:
+    case Cqb:
+    case Cqmin:
+    case Cqmax:
+        return false;
+    }
+
+    RELEASE_ASSERT_NOT_REACHED();
+}
+
 void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
 {
     if (state().letterSpacing == letterSpacing)
@@ -3066,13 +3148,13 @@ void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
     auto rawLength = parsedValue->raw();
     if (!rawLength)
         return;
-
-    // FIXME: Ensure rawLength->unit is supported by `Style::computeUnzoomedNonCalcLengthDouble`.
+    if (!unitAllowedForSpacing(rawLength->unit))
+        return;
 
     auto& fontCascade = fontProxy()->fontCascade();
     double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyLetterSpacing, &fontCascade);
 
-    modifiableState().letterSpacing = CSS::serializationForCSS(*rawLength);
+    modifiableState().letterSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
     modifiableState().font.setLetterSpacing(Length(pixels, LengthType::Fixed));
 }
 
@@ -3091,13 +3173,13 @@ void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
     auto rawLength = parsedValue->raw();
     if (!rawLength)
         return;
-
-    // FIXME: Ensure rawLength->unit is supported by `Style::computeUnzoomedNonCalcLengthDouble`.
+    if (!unitAllowedForSpacing(rawLength->unit))
+        return;
 
     auto& fontCascade = fontProxy()->fontCascade();
     double pixels = Style::computeUnzoomedNonCalcLengthDouble(rawLength->value, rawLength->unit, CSSPropertyWordSpacing, &fontCascade);
 
-    modifiableState().wordSpacing = CSS::serializationForCSS(*rawLength);
+    modifiableState().wordSpacing = CSS::serializationForCSS(CSS::defaultSerializationContext(), *rawLength);
     modifiableState().font.setWordSpacing(Length(pixels, LengthType::Fixed));
 }
 

@@ -10,6 +10,6 @@ noInline(test);
 
 let o = [10, {}];
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     assert(test(o) === true);
 }

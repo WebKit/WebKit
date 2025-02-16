@@ -931,7 +931,7 @@ bool ValidateReadnPixelsKHR(const Context *context,
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -2315,7 +2315,7 @@ bool ValidateFramebufferMemorylessPixelLocalStorageANGLE(const Context *context,
                                                          GLint plane,
                                                          GLenum internalformat)
 {
-    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive))
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
     {
         return false;
     }
@@ -2340,7 +2340,7 @@ bool ValidateFramebufferTexturePixelLocalStorageANGLE(const Context *context,
                                                       GLint level,
                                                       GLint layer)
 {
-    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Inactive))
+    if (!ValidatePLSCommon(context, entryPoint, plane, PLSExpectedStatus::Any))
     {
         return false;
     }
@@ -3257,6 +3257,27 @@ bool ValidatePrimitiveBoundingBoxOES(const PrivateState &state,
     return true;
 }
 
+// GL_OES_texture_storage_multisample_2d_array
+bool ValidateTexStorage3DMultisampleOES(const Context *context,
+                                        angle::EntryPoint entryPoint,
+                                        TextureType target,
+                                        GLsizei samples,
+                                        GLenum internalformat,
+                                        GLsizei width,
+                                        GLsizei height,
+                                        GLsizei depth,
+                                        GLboolean fixedsamplelocations)
+{
+    if (!context->getExtensions().textureStorageMultisample2dArrayOES)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
+        return false;
+    }
+
+    return ValidateTexStorage3DMultisampleBase(context, entryPoint, target, samples, internalformat,
+                                               width, height, depth);
+}
+
 // GL_EXT_separate_shader_objects
 bool ValidateActiveShaderProgramEXT(const Context *context,
                                     angle::EntryPoint entryPoint,
@@ -3992,7 +4013,7 @@ bool ValidateGetObjectLabelEXT(const Context *context,
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -4075,11 +4096,34 @@ bool ValidateEGLImageTargetTexStorageEXT(const Context *context,
         return false;
     }
 
-    // attrib list validation
-    if (attrib_list != nullptr && attrib_list[0] != GL_NONE)
+    if (attrib_list != nullptr)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kAttributeListNotNull);
-        return false;
+        for (const GLint *attrib = attrib_list; attrib[0] != GL_NONE; attrib += 2)
+        {
+            switch (attrib[0])
+            {
+                case GL_SURFACE_COMPRESSION_EXT:
+                    switch (attrib[1])
+                    {
+                        case GL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT:
+                            if (imageObject->isFixedRatedCompression(context))
+                            {
+                                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kAttributeNotMatch);
+                                return false;
+                            }
+                            break;
+                        case GL_SURFACE_COMPRESSION_FIXED_RATE_DEFAULT_EXT:
+                            break;
+                        default:
+                            ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kAttributeNotValid);
+                            return false;
+                    }
+                    break;
+                default:
+                    ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kAttributeNotValid);
+                    return false;
+            }
+        }
     }
 
     GLsizei levelCount    = imageObject->getLevelCount();

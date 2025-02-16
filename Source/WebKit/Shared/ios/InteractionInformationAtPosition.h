@@ -82,9 +82,7 @@ struct InteractionInformationAtPosition {
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink { false };
 #endif
-#if ENABLE(DATALIST_ELEMENT)
     bool preventTextInteraction { false };
-#endif
     bool elementContainsImageOverlay { false };
     bool isImageOverlayText { false };
 #if ENABLE(SPATIAL_IMAGE_DETECTION)

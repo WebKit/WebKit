@@ -26,16 +26,34 @@ class MemoryBuffer final : NonCopyable
     MemoryBuffer(MemoryBuffer &&other);
     MemoryBuffer &operator=(MemoryBuffer &&other);
 
-    // On success, size will be equal to capacity.
-    [[nodiscard]] bool resize(size_t size);
+    // Destroy underlying memory
+    void destroy();
+
+    // Updates mSize to newSize. Updates mCapacity iff newSize > mCapacity
+    [[nodiscard]] bool resize(size_t newSize);
+
+    // Resets mSize to 0. Reserves memory and updates mCapacity iff newSize > mCapacity
+    [[nodiscard]] bool clearAndReserve(size_t newSize);
+
+    // Updates mCapacity iff newSize > mCapacity
+    [[nodiscard]] bool reserve(size_t newSize);
+
+    // Appends content from "other" MemoryBuffer
+    [[nodiscard]] bool append(const MemoryBuffer &other);
+    // Appends content from "[buffer, buffer + bufferSize)"
+    [[nodiscard]] bool appendRaw(const uint8_t *buffer, const size_t bufferSize);
+
     // Sets size bound by capacity.
     void setSize(size_t size)
     {
         ASSERT(size <= mCapacity);
         mSize = size;
     }
-    void setSizeToCapacity() { mSize = mCapacity; }
+    void setSizeToCapacity() { setSize(mCapacity); }
+
+    // Invalidate current content
     void clear() { (void)resize(0); }
+
     size_t size() const { return mSize; }
     size_t capacity() const { return mCapacity; }
     bool empty() const { return mSize == 0; }
@@ -49,21 +67,41 @@ class MemoryBuffer final : NonCopyable
 
     uint8_t &operator[](size_t pos)
     {
-        ASSERT(pos < mSize);
+        ASSERT(mData && pos < mSize);
         return mData[pos];
     }
     const uint8_t &operator[](size_t pos) const
     {
-        ASSERT(pos < mSize);
+        ASSERT(mData && pos < mSize);
         return mData[pos];
     }
 
     void fill(uint8_t datum);
 
+    // Only used by unit tests
+    // Validate total bytes allocated during a resize
+    void assertTotalAllocatedBytes(size_t totalAllocatedBytes) const
+    {
+#if defined(ANGLE_ENABLE_ASSERTS)
+        ASSERT(totalAllocatedBytes == mTotalAllocatedBytes);
+#endif  // ANGLE_ENABLE_ASSERTS
+    }
+    // Validate total bytes copied during a resize
+    void assertTotalCopiedBytes(size_t totalCopiedBytes) const
+    {
+#if defined(ANGLE_ENABLE_ASSERTS)
+        ASSERT(totalCopiedBytes == mTotalCopiedBytes);
+#endif  // ANGLE_ENABLE_ASSERTS
+    }
+
   private:
     size_t mSize     = 0;
     size_t mCapacity = 0;
     uint8_t *mData   = nullptr;
+#if defined(ANGLE_ENABLE_ASSERTS)
+    size_t mTotalAllocatedBytes = 0;
+    size_t mTotalCopiedBytes    = 0;
+#endif  // ANGLE_ENABLE_ASSERTS
 };
 
 class ScratchBuffer final : NonCopyable
@@ -89,6 +127,8 @@ class ScratchBuffer final : NonCopyable
     void tick();
 
     void clear();
+
+    MemoryBuffer *getMemoryBuffer() { return &mScratchMemory; }
 
   private:
     bool getImpl(size_t requestedSize, MemoryBuffer **memoryBufferOut, Optional<uint8_t> initValue);

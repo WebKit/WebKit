@@ -167,7 +167,7 @@ var check = function (classForCheck) {
   testCase(result.res, 'ok', 'Error in setting id ');
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
   check(B);
   check(C);
   check(D);

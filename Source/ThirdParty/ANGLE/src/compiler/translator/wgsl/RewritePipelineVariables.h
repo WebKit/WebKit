@@ -99,8 +99,8 @@ struct RewritePipelineVarOutput
 
     // Every time the translator goes to output a TVariable/TSymbol it checks these functions to see
     // if it should generate a struct access instead.
-    bool IsInputVar(TSymbolUniqueId angleInputVar);
-    bool IsOutputVar(TSymbolUniqueId angleOutputVar);
+    bool IsInputVar(TSymbolUniqueId angleInputVar) const;
+    bool IsOutputVar(TSymbolUniqueId angleOutputVar) const;
 
     bool OutputStructs(TInfoSinkBase &output);
     bool OutputMainFunction(TInfoSinkBase &output);

@@ -10,6 +10,7 @@
 #include "include/core/SkTextureCompressionType.h"
 #include "include/gpu/graphite/TextureInfo.h"
 #include "include/gpu/graphite/mtl/MtlGraphiteTypes.h"
+#include "include/gpu/graphite/mtl/MtlGraphiteTypesUtils.h"
 #include "src/gpu/SwizzlePriv.h"
 #include "src/gpu/graphite/CommandBuffer.h"
 #include "src/gpu/graphite/ComputePipelineDesc.h"
@@ -291,6 +292,9 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         }
     }
 
+    // NOTE: MTLPixelFormat's naming convention orders channels from least significant to most,
+    // matching the data address ordering of a little endian system.
+
     // Format: RGBA8Unorm
     {
         info = &fFormatTable[GetFormatIndex(MTLPixelFormatRGBA8Unorm)];
@@ -302,12 +306,14 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kRGBA_8888_SkColorType;
+            ctInfo.fTransferColorType = kRGBA_8888_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
         // Format: RGBA8Unorm, Surface: kRGB_888x
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kRGB_888x_SkColorType;
+            ctInfo.fTransferColorType = kRGB_888x_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle::RGB1();
         }
@@ -324,12 +330,14 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kR8_unorm_SkColorType;
+            ctInfo.fTransferColorType = kR8_unorm_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
         // Format: R8Unorm, Surface: kAlpha_8
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kAlpha_8_SkColorType;
+            ctInfo.fTransferColorType = kAlpha_8_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle("000r");
             ctInfo.fWriteSwizzle = skgpu::Swizzle("a000");
@@ -338,6 +346,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kGray_8_SkColorType;
+            ctInfo.fTransferColorType = kGray_8_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle("rrr1");
         }
@@ -354,6 +363,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kAlpha_8_SkColorType;
+            ctInfo.fTransferColorType = kAlpha_8_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
     }
@@ -369,6 +379,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kBGRA_8888_SkColorType;
+            ctInfo.fTransferColorType = kBGRA_8888_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
     }
@@ -383,10 +394,11 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
                 info->fColorTypeInfos =
                         std::make_unique<ColorTypeInfo[]>(info->fColorTypeInfoCount);
                 int ctIdx = 0;
-                // Format: B5G6R5Unorm, Surface: kBGR_565
+                // Format: B5G6R5Unorm, Surface: kRGB_565; misnamed SkColorType is really BGR data
                 {
                     auto& ctInfo = info->fColorTypeInfos[ctIdx++];
                     ctInfo.fColorType = kRGB_565_SkColorType;
+                    ctInfo.fTransferColorType = kRGB_565_SkColorType;
                     ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag |
                                     ColorTypeInfo::kRenderable_Flag;
                 }
@@ -400,10 +412,11 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
                 info->fColorTypeInfos =
                         std::make_unique<ColorTypeInfo[]>(info->fColorTypeInfoCount);
                 int ctIdx = 0;
-                // Format: ABGR4Unorm, Surface: kABGR_4444
+                // Format: ABGR4Unorm, Surface: kARGB_4444; misnamed SkColorType is really ABGR data
                 {
                     auto& ctInfo = info->fColorTypeInfos[ctIdx++];
                     ctInfo.fColorType = kARGB_4444_SkColorType;
+                    ctInfo.fTransferColorType = kARGB_4444_SkColorType;
                     ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag |
                                     ColorTypeInfo::kRenderable_Flag;
                 }
@@ -422,6 +435,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kSRGBA_8888_SkColorType;
+            ctInfo.fTransferColorType = kSRGBA_8888_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
     }
@@ -441,12 +455,14 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kRGBA_1010102_SkColorType;
+            ctInfo.fTransferColorType = kRGBA_1010102_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
         // Format: RGB10A2Unorm, Surface: kRGB_101010x
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kRGB_101010x_SkColorType;
+            ctInfo.fTransferColorType = kRGB_101010x_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle::RGB1();
         }
@@ -463,18 +479,21 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kRGBA_F16_SkColorType;
+            ctInfo.fTransferColorType = kRGBA_F16_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
         // Format: RGBA16Float, Surface: RGBA_F16Norm
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kRGBA_F16Norm_SkColorType;
+            ctInfo.fTransferColorType = kRGBA_F16Norm_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
         // Format: RGBA16Float, Surface: RGB_F16F16F16x
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
-            ctInfo.fColorType = kRGBA_F16_SkColorType;
+            ctInfo.fColorType = kRGB_F16F16F16x_SkColorType;
+            ctInfo.fTransferColorType = kRGB_F16F16F16x_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle::RGB1();
         }
@@ -491,6 +510,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kA16_float_SkColorType;
+            ctInfo.fTransferColorType = kA16_float_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle("000r");
             ctInfo.fWriteSwizzle = skgpu::Swizzle("a000");
@@ -508,6 +528,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kR8G8_unorm_SkColorType;
+            ctInfo.fTransferColorType = kR8G8_unorm_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
     }
@@ -527,6 +548,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kR16G16B16A16_unorm_SkColorType;
+            ctInfo.fTransferColorType = kR16G16B16A16_unorm_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
     }
@@ -542,6 +564,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kR16G16_float_SkColorType;
+            ctInfo.fTransferColorType = kR16G16_float_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
     }
@@ -561,6 +584,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kA16_unorm_SkColorType;
+            ctInfo.fTransferColorType = kA16_unorm_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
             ctInfo.fReadSwizzle = skgpu::Swizzle("000r");
             ctInfo.fWriteSwizzle = skgpu::Swizzle("a000");
@@ -582,6 +606,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
         {
             auto& ctInfo = info->fColorTypeInfos[ctIdx++];
             ctInfo.fColorType = kR16G16_unorm_SkColorType;
+            ctInfo.fTransferColorType = kR16G16_unorm_SkColorType;
             ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag | ColorTypeInfo::kRenderable_Flag;
         }
     }
@@ -599,6 +624,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
                 {
                     auto& ctInfo = info->fColorTypeInfos[ctIdx++];
                     ctInfo.fColorType = kRGB_888x_SkColorType;
+                    ctInfo.fTransferColorType = kRGB_888x_SkColorType;
                     ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
                 }
             }
@@ -618,6 +644,7 @@ void MtlCaps::initFormatTable(const id<MTLDevice> device) {
             {
                 auto& ctInfo = info->fColorTypeInfos[ctIdx++];
                 ctInfo.fColorType = kRGBA_8888_SkColorType;
+                ctInfo.fTransferColorType = kRGBA_8888_SkColorType;
                 ctInfo.fFlags = ColorTypeInfo::kUploadData_Flag;
             }
         }
@@ -924,7 +951,7 @@ UniqueKey MtlCaps::makeGraphicsPipelineKey(const GraphicsPipelineDesc& pipelineD
         UniqueKey::Builder builder(&pipelineKey, get_domain(),
                                    kMtlGraphicsPipelineKeyData32Count, "MtlGraphicsPipeline");
         // add GraphicsPipelineDesc key
-        builder[0] = pipelineDesc.renderStepID();
+        builder[0] = static_cast<uint32_t>(pipelineDesc.renderStepID());
         builder[1] = pipelineDesc.paintParamsID().asUInt();
 
         // add RenderPassDesc key
@@ -945,7 +972,7 @@ bool MtlCaps::extractGraphicsDescs(const UniqueKey& key,
                                    const RendererProvider* rendererProvider) const {
     struct UnpackedKeyData {
         // From the GraphicsPipelineDesc
-        uint32_t fRenderStepID = 0;
+        RenderStep::RenderStepID fRenderStepID = RenderStep::RenderStepID::kInvalid;
         UniquePaintParamsID fPaintParamsID;
 
         // From the RenderPassDesc
@@ -963,7 +990,8 @@ bool MtlCaps::extractGraphicsDescs(const UniqueKey& key,
 
     const uint32_t* rawKeyData = key.data();
 
-    keyData.fRenderStepID = rawKeyData[0];
+    SkASSERT(RenderStep::IsValidRenderStepID(rawKeyData[0]));
+    keyData.fRenderStepID = static_cast<RenderStep::RenderStepID>(rawKeyData[0]);
     keyData.fPaintParamsID = rawKeyData[1] ? UniquePaintParamsID(rawKeyData[1])
                                            : UniquePaintParamsID::InvalidID();
 
@@ -1010,8 +1038,32 @@ bool MtlCaps::extractGraphicsDescs(const UniqueKey& key,
     UniquePaintParamsID paintID = renderStep->performsShading() ? keyData.fPaintParamsID
                                                                 : UniquePaintParamsID::InvalidID();
 
-    *pipelineDesc = GraphicsPipelineDesc(renderStep, paintID);
+    *pipelineDesc = GraphicsPipelineDesc(renderStep->renderStepID(), paintID);
 
+    return true;
+}
+
+// c.f. MtlTextureInfoData::serialize
+bool MtlCaps::deserializeTextureInfo(SkStream* stream,
+                                     BackendApi backendApi,
+                                     Mipmapped mipmapped,
+                                     Protected isProtected,
+                                     uint32_t sampleCount,
+                                     TextureInfo* out) const {
+    SkASSERT(backendApi == BackendApi::kMetal);
+    SkASSERT(isProtected == Protected::kNo);
+
+    MtlTextureSpec spec;
+    if (!MtlTextureSpec::Deserialize(stream, &spec)) {
+        return false;
+    }
+
+    *out = TextureInfos::MakeMetal(MtlTextureInfo(sampleCount,
+                                                  mipmapped,
+                                                  spec.fFormat,
+                                                  spec.fUsage,
+                                                  spec.fStorageMode,
+                                                  spec.fFramebufferOnly));
     return true;
 }
 
@@ -1152,7 +1204,7 @@ std::pair<SkColorType, bool /*isRGBFormat*/> MtlCaps::supportedWritePixelsColorT
     for (int i = 0; i < info.fColorTypeInfoCount; ++i) {
         const auto& ctInfo = info.fColorTypeInfos[i];
         if (ctInfo.fColorType == dstColorType) {
-            return {dstColorType, false};
+            return {ctInfo.fTransferColorType, false};
         }
     }
     return {kUnknown_SkColorType, false};
@@ -1177,7 +1229,7 @@ std::pair<SkColorType, bool /*isRGBFormat*/> MtlCaps::supportedReadPixelsColorTy
     for (int i = 0; i < info.fColorTypeInfoCount; ++i) {
         const auto& ctInfo = info.fColorTypeInfos[i];
         if (ctInfo.fColorType == srcColorType) {
-            return {srcColorType, false};
+            return {ctInfo.fTransferColorType, false};
         }
     }
     return {kUnknown_SkColorType, false};
@@ -1186,7 +1238,6 @@ std::pair<SkColorType, bool /*isRGBFormat*/> MtlCaps::supportedReadPixelsColorTy
 void MtlCaps::buildKeyForTexture(SkISize dimensions,
                                  const TextureInfo& info,
                                  ResourceType type,
-                                 Shareable shareable,
                                  GraphiteResourceKey* key) const {
     const MtlTextureSpec mtlSpec = TextureInfos::GetMtlTextureSpec(info);
 
@@ -1218,7 +1269,7 @@ void MtlCaps::buildKeyForTexture(SkISize dimensions,
     // We need two uint32_ts for dimensions, 2 for format, and 1 for the rest of the key;
     static int kNum32DataCnt = 2 + 2 + 1;
 
-    GraphiteResourceKey::Builder builder(key, type, kNum32DataCnt, shareable);
+    GraphiteResourceKey::Builder builder(key, type, kNum32DataCnt);
 
     builder[0] = dimensions.width();
     builder[1] = dimensions.height();

@@ -57,7 +57,7 @@ CoreIPCLocale::CoreIPCLocale(String&& identifier)
 
 RetainPtr<id> CoreIPCLocale::toID() const
 {
-    return [[NSLocale alloc] initWithLocaleIdentifier:(NSString *)m_identifier];
+    return adoptNS([[NSLocale alloc] initWithLocaleIdentifier:(NSString *)m_identifier]);
 }
 
 std::optional<String> CoreIPCLocale::canonicalLocaleStringReplacement(const String& identifier)

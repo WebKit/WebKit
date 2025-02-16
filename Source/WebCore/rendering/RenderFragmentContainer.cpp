@@ -119,13 +119,13 @@ VisiblePosition RenderFragmentContainer::positionForPoint(const LayoutPoint& poi
 LayoutUnit RenderFragmentContainer::pageLogicalWidth() const
 {
     ASSERT(isValid());
-    return m_fragmentedFlow->isHorizontalWritingMode() ? contentWidth() : contentHeight();
+    return m_fragmentedFlow->isHorizontalWritingMode() ? contentBoxWidth() : contentBoxHeight();
 }
 
 LayoutUnit RenderFragmentContainer::pageLogicalHeight() const
 {
     ASSERT(isValid());
-    return m_fragmentedFlow->isHorizontalWritingMode() ? contentHeight() : contentWidth();
+    return m_fragmentedFlow->isHorizontalWritingMode() ? contentBoxHeight() : contentBoxWidth();
 }
 
 LayoutUnit RenderFragmentContainer::logicalHeightOfAllFragmentedFlowContent() const

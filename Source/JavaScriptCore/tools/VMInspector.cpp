@@ -405,7 +405,7 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     auto valueAsString = [&] (JSValue v) -> CString {
         if (!v.isCell() || VMInspector::isValidCell(&vm.heap, reinterpret_cast<JSCell*>(JSValue::encode(v))))
             return toCString(v);
-        return "";
+        return ""_s;
     };
 
     CallFrame* topCallFrame = vm.topCallFrame;
@@ -502,14 +502,14 @@ SUPPRESS_ASAN void VMInspector::dumpRegisters(CallFrame* callFrame)
     
     dataLogF("% 4d  CallerFrame      : %10p  %p \n", registerNumber++, it++, callFrame->callerFrame());
     if constexpr (isARM64E())
-        dataLogF("% 4d  ReturnPC         : %10p  %p (pac signed %p) \n", registerNumber++, it++, callFrame->returnPCForInspection(), callFrame->rawReturnPCForInspection());
+        dataLogF("% 4d  ReturnPC         : %10p  %p (pac signed %p) \n", registerNumber++, it++, callFrame->returnPCForInspection(), callFrame->rawReturnPC());
     else
         dataLogF("% 4d  ReturnPC         : %10p  %p \n", registerNumber++, it++, callFrame->returnPCForInspection());
     dataLogF("% 4d  CodeBlock        : %10p  0x%llx ", registerNumber++, it++, (long long)codeBlock);
     dataLogLn(codeBlock);
     long long calleeBits = (long long)callFrame->callee().rawPtr();
-    auto calleeString = valueAsString(it->jsValue()).data();
-    dataLogF("% 4d  Callee           : %10p  0x%llx %s\n", registerNumber++, it++, calleeBits, calleeString);
+    auto calleeString = valueAsString(it->jsValue());
+    dataLogF("% 4d  Callee           : %10p  0x%llx %s\n", registerNumber++, it++, calleeBits, calleeString.data());
     
     StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
         if (visitor->callFrame() == callFrame) {

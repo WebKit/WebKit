@@ -25,6 +25,7 @@ body {
 <div contenteditable="true">This is an editable area: <a href="https://webkit.org">WebKit</a> <a href="https://webkit.org/downloads">downloads</a>.</div>
 <script>
 addEventListener("load", async () => {
+    document.querySelector("input").focus();
     document.querySelector("input").setSelectionRange(4, 7);
 
     if (!window.testRunner)

@@ -22,7 +22,9 @@ from selenium import webdriver
 
 @pytest.fixture
 def driver(options):
-    driver = webdriver.Remote(options=options)
+    with pytest.warns(None) as record:
+        driver = webdriver.Remote(options=options)
+    assert len(record) == 0
     yield driver
     driver.quit()
 

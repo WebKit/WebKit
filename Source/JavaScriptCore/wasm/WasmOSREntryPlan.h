@@ -44,7 +44,7 @@ public:
     using Base = Plan;
 
     bool hasWork() const final { return !m_completed; }
-    void work(CompilationEffort) final;
+    void work() final;
     bool multiThreaded() const final { return false; }
 
     // Note: CompletionTask should not hold a reference to the Plan otherwise there will be a reference cycle.

@@ -28,7 +28,7 @@ webkit_platform_headers: "StreamConnectionEncoder.h"
 
 header: <wtf/text/CString.h>
 [CustomHeader, WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::CString {
-   std::span<const uint8_t> span()
+   std::span<const char> span()
 }
 
 [AdditionalEncoder=StreamConnectionEncoder] class WTF::MediaTime {
@@ -151,6 +151,7 @@ template: struct WebKit::RemoteAudioDestinationIdentifierType
 template: struct WebKit::RemoteImageBufferSetIdentifierType
 template: struct WebKit::TapIdentifierType
 template: struct WebKit::TextCheckerRequestType
+template: struct WebKit::TransactionIDType
 template: struct WebKit::UserContentControllerIdentifierType
 template: struct WebKit::WebExtensionContextIdentifierType
 template: struct WebKit::WebExtensionFrameIdentifierType
@@ -173,6 +174,7 @@ template: enum class WebCore::DOMCacheIdentifierType
 template: enum class WebCore::BroadcastChannelIdentifierType
 template: enum class WebCore::FileSystemHandleIdentifierType
 template: enum class WebCore::FileSystemSyncAccessHandleIdentifierType
+template: enum class WebCore::FileSystemWritableFileStreamIdentifierType
 template: enum class WebCore::IDBDatabaseConnectionIdentifierType
 template: enum class WebCore::IDBIndexIdentifierType
 template: enum class WebCore::IDBObjectStoreIdentifierType

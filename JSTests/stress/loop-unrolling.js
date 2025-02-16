@@ -74,7 +74,7 @@ noInline(func7);
 
 function test(func) {
     let expected;
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let a = [0, 0, 0, 0];
         let res = func(a);
         if (i == 0)

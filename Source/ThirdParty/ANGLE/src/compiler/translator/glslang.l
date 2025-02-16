@@ -25,7 +25,7 @@ WHICH GENERATES THE GLSL ES LEXER (glslang_lex_autogen.cpp).
 //   Lexer for the OpenGL shading language.
 
 // Ignore errors in auto-generated code.
-#if defined(__GNUC__)
+#if defined(__GNUC__) || defined(__clang__)
 #pragma GCC diagnostic ignored "-Wswitch-enum"
 #pragma GCC diagnostic ignored "-Wunused-function"
 #pragma GCC diagnostic ignored "-Wunused-variable"
@@ -234,9 +234,9 @@ O           [0-7]
 "samplerCubeShadow"    { return ES3_keyword(context, SAMPLERCUBESHADOW); }
 "sampler2DArrayShadow" { return ES3_keyword(context, SAMPLER2DARRAYSHADOW); }
 "__samplerExternal2DY2YEXT"   { return ES3_extension(context, TExtension::EXT_YUV_target, SAMPLEREXTERNAL2DY2YEXT); }
-"sampler2DMSArray"     { return ES3_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, SAMPLER2DMSARRAY); }
-"isampler2DMSArray"    { return ES3_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, ISAMPLER2DMSARRAY); }
-"usampler2DMSArray"    { return ES3_reserved_ES3_1_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, USAMPLER2DMSARRAY); }
+"sampler2DMSArray"     { return ES3_reserved_ES3_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, SAMPLER2DMSARRAY); }
+"isampler2DMSArray"    { return ES3_reserved_ES3_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, ISAMPLER2DMSARRAY); }
+"usampler2DMSArray"    { return ES3_reserved_ES3_extension_ES3_2_keyword(context, TExtension::OES_texture_storage_multisample_2d_array, USAMPLER2DMSARRAY); }
 "samplerCubeArray"     { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, SAMPLERCUBEARRAYOES, SAMPLERCUBEARRAYEXT); }
 "samplerBuffer"        { return ES3_and_3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_buffer, TExtension::EXT_texture_buffer, SAMPLERBUFFER, SAMPLERBUFFER); }
 "samplerCubeArrayShadow"    { return ES3_1_reserved_ES3_1_extension_ES3_2_keyword_2(context, TExtension::OES_texture_cube_map_array, TExtension::EXT_texture_cube_map_array, SAMPLERCUBEARRAYSHADOWOES, SAMPLERCUBEARRAYSHADOWEXT); }

@@ -22,6 +22,7 @@
 #include "config.h"
 #include "CSSFontFaceRule.h"
 
+#include "CSSSerializationContext.h"
 #include "MutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
 #include "StyleProperties.h"
@@ -52,17 +53,12 @@ CSSStyleDeclaration& CSSFontFaceRule::style()
 
 String CSSFontFaceRule::cssText() const
 {
-    return cssTextInternal(m_fontFaceRule->properties().asText());
+    return cssTextInternal(m_fontFaceRule->properties().asText(CSS::defaultSerializationContext()));
 }
 
-String CSSFontFaceRule::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&) const
+String CSSFontFaceRule::cssText(const CSS::SerializationContext& context) const
 {
-    auto mutableStyleProperties = m_fontFaceRule->properties().mutableCopy();
-    mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);
-    auto declarations = mutableStyleProperties->asText();
-    mutableStyleProperties->clearReplacementURLForSubresources();
-
-    return cssTextInternal(declarations);
+    return cssTextInternal(m_fontFaceRule->properties().asText(context));
 }
 
 String CSSFontFaceRule::cssTextInternal(const String& declarations) const

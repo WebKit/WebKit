@@ -755,7 +755,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
     InlineIterator::LineLogicalOrderCache orderCache;
 
     RefPtr<Node> startNode;
-    auto startBox = mode == UseLogicalOrdering ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(lineBox, orderCache) : lineBox->firstLeafBox();
+    auto startBox = mode == UseLogicalOrdering ? InlineIterator::firstLeafOnLineInLogicalOrderWithNode(lineBox, orderCache) : lineBox->lineLeftmostLeafBox();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever follows instead.
     while (true) {
@@ -769,7 +769,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c, LineEndpoi
         if (mode == UseLogicalOrdering)
             startBox = InlineIterator::nextLeafOnLineInLogicalOrder(startBox, orderCache);
         else
-            startBox.traverseNextOnLine();
+            startBox.traverseLineRightwardOnLine();
     }
 
     RefPtr startTextNode = dynamicDowncast<Text>(*startNode);
@@ -828,7 +828,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
     InlineIterator::LineLogicalOrderCache orderCache;
 
     RefPtr<Node> endNode;
-    auto endBox = mode == UseLogicalOrdering ? InlineIterator::lastLeafOnLineInLogicalOrder(lineBox, orderCache) : lineBox->lastLeafBox();
+    auto endBox = mode == UseLogicalOrdering ? InlineIterator::lastLeafOnLineInLogicalOrder(lineBox, orderCache) : lineBox->lineRightmostLeafBox();
     // Generated content (e.g. list markers and CSS :before and :after pseudoelements) have no corresponding DOM element,
     // and so cannot be represented by a VisiblePosition. Use whatever precedes instead.
     while (true) {
@@ -842,7 +842,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c, LineEndpoint
         if (mode == UseLogicalOrdering)
             endBox = InlineIterator::previousLeafOnLineInLogicalOrder(endBox, orderCache);
         else
-            endBox.traversePreviousOnLine();
+            endBox.traverseLineLeftwardOnLine();
     }
 
     Position pos;
@@ -977,7 +977,7 @@ VisiblePosition previousLinePosition(const VisiblePosition& visiblePosition, Lay
         lineBox = box->lineBox()->previous();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!lineBox || !lineBox->logicalHeight() || !lineBox->firstLeafBox())
+        if (!lineBox || !lineBox->logicalHeight() || !lineBox->lineLeftmostLeafBox())
             lineBox = { };
     }
 
@@ -1032,7 +1032,7 @@ VisiblePosition nextLinePosition(const VisiblePosition& visiblePosition, LayoutU
         lineBox = box->lineBox()->next();
         // We want to skip zero height boxes.
         // This could happen in case it is a LegacyRootInlineBox with trailing floats.
-        if (!lineBox || !lineBox->logicalHeight() || !lineBox->firstLeafBox())
+        if (!lineBox || !lineBox->logicalHeight() || !lineBox->lineLeftmostLeafBox())
             lineBox = { };
     }
 

@@ -64,12 +64,6 @@ WebPageTesting::~WebPageTesting()
     WebProcess::singleton().removeMessageReceiver(Messages::WebPageTesting::messageReceiverName(), m_pageIdentifier);
 }
 
-void WebPageTesting::setDefersLoading(bool defersLoading)
-{
-    if (RefPtr page = m_page ? m_page->corePage() : nullptr)
-        page->setDefersLoading(defersLoading);
-}
-
 void WebPageTesting::isLayerTreeFrozen(CompletionHandler<void(bool)>&& completionHandler)
 {
     completionHandler(m_page && !!m_page->layerTreeFreezeReasons());
@@ -125,10 +119,10 @@ void WebPageTesting::clearWheelEventTestMonitor()
     page->clearWheelEventTestMonitor();
 }
 
-void WebPageTesting::setTopContentInset(float contentInset, CompletionHandler<void()>&& completionHandler)
+void WebPageTesting::setObscuredContentInsets(float top, float right, float bottom, float left, CompletionHandler<void()>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->setTopContentInset(contentInset);
+        page->setObscuredContentInsets({ top, right, bottom, left });
     completionHandler();
 }
 

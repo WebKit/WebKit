@@ -87,6 +87,14 @@ public:
     virtual int correctBufferingPercentage(MediaPlayerPrivateGStreamer*, int originalBufferingPercentage, GstBufferingMode) const { return originalBufferingPercentage; }
     virtual void resetBufferingPercentage(MediaPlayerPrivateGStreamer*, int) const { };
     virtual void setupBufferingPercentageCorrection(MediaPlayerPrivateGStreamer*, GstState, GstState, GRefPtr<GstElement>&&) const { }
+
+    // Subclass must return true if it wants to override the default behaviour of sibling platforms.
+    virtual bool processWebAudioSilentBuffer(GstBuffer* buffer) const
+    {
+        GST_BUFFER_FLAG_SET(buffer, GST_BUFFER_FLAG_GAP);
+        GST_BUFFER_FLAG_SET(buffer, GST_BUFFER_FLAG_DROPPABLE);
+        return false;
+    }
 };
 
 class GStreamerHolePunchQuirk : public GStreamerQuirkBase {
@@ -139,6 +147,7 @@ public:
     void resetBufferingPercentage(MediaPlayerPrivateGStreamer*, int bufferingPercentage) const;
     void setupBufferingPercentageCorrection(MediaPlayerPrivateGStreamer*, GstState currentState, GstState newState, GRefPtr<GstElement>&&) const;
 
+    void processWebAudioSilentBuffer(GstBuffer*) const;
 private:
     GStreamerQuirksManager(bool, bool);
 

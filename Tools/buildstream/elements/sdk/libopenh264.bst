@@ -7,10 +7,10 @@ depends:
 - freedesktop-sdk.bst:bootstrap-import.bst
 
 sources:
-- kind: git
+- kind: git_repo
   url: github_com:cisco/openh264.git
   track: master
-  ref: 2e637867315ffeda3cd8970825ec86acc3fc4a30
+  ref: v2.5.0-8-g423eb2c3e47009f4e631b5e413123a003fdff1ed
 variables:
   meson-local: >-
     -Dtests=disabled

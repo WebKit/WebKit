@@ -59,3 +59,8 @@ WKFrameNavigationType WKNavigationActionGetNavigationType(WKNavigationActionRef 
 {
     return WebKit::toAPI(WebKit::toImpl(action)->navigationType());
 }
+
+WK_EXPORT bool WKNavigationActionHasUnconsumedUserGesture(WKNavigationActionRef action)
+{
+    return WebKit::toImpl(action)->isProcessingUnconsumedUserGesture();
+}

@@ -15,14 +15,14 @@ function arrayEq(a, b) {
     let o = {0:1, 1:2, 2:3, length:3};
 
     // Test it works with proxies by default
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (!arrayEq(Array.prototype.concat.call(o,o), [o,o]))
             throw "failed normally with an object"
     }
 
     // Test it works with spreadable true
     o[Symbol.isConcatSpreadable] = true;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let result = Array.prototype.concat.call(o,o)
         if (!arrayEq(result, [1,2,3,1,2,3]))
             throw "failed with spread got: " + result;
@@ -31,7 +31,7 @@ function arrayEq(a, b) {
     // Test it works with many things
     o[Symbol.isConcatSpreadable] = true;
     let other = {}
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let result = Array.prototype.concat.call(o,o,true,[1,2],other)
         if (!arrayEq(result, [1,2,3,1,2,3,true,1,2,other]))
             throw "failed with spread got: " + result;
@@ -39,7 +39,7 @@ function arrayEq(a, b) {
 
     // Test it works with strings
     String.prototype[Symbol.isConcatSpreadable] = true;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let result = Array.prototype.concat.call("hi","hi")
         // This is what the spec says is the correct answer... D:
         if (!arrayEq(result, ["h", "i", "hi"]))

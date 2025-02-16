@@ -1,5 +1,3 @@
-//@ runWebAssemblySuite("--useWasmGC=true")
-
 import * as assert from "../assert.js";
 import { instantiate } from "./wast-wrapper.js";
 

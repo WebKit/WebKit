@@ -7,7 +7,7 @@ var obj = {
     }}}}}}};
 
 function doTest(x) {
-    for (let i=1; i<10000; i++) {
+    for (let i=1; i<testLoopCount; i++) {
         var s = JSON.stringify(x);
     }
 }

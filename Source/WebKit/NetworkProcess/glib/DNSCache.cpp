@@ -50,17 +50,9 @@ DNSCache::DNSCacheMap& DNSCache::mapForType(Type type)
     case Type::Default:
         return m_dnsMap;
     case Type::IPv4Only:
-#if GLIB_CHECK_VERSION(2, 59, 0)
         return m_ipv4Map;
-#else
-        return m_dnsMap;
-#endif
     case Type::IPv6Only:
-#if GLIB_CHECK_VERSION(2, 59, 0)
         return m_ipv6Map;
-#else
-        return m_dnsMap;
-#endif
     }
 
     RELEASE_ASSERT_NOT_REACHED();
@@ -126,20 +118,16 @@ void DNSCache::removeExpiredResponsesFired()
 {
     Locker locker { m_lock };
     removeExpiredResponsesInMap(m_dnsMap);
-#if GLIB_CHECK_VERSION(2, 59, 0)
     removeExpiredResponsesInMap(m_ipv4Map);
     removeExpiredResponsesInMap(m_ipv6Map);
-#endif
 }
 
 void DNSCache::clear()
 {
     Locker locker { m_lock };
     m_dnsMap.clear();
-#if GLIB_CHECK_VERSION(2, 59, 0)
     m_ipv4Map.clear();
     m_ipv6Map.clear();
-#endif
 }
 
 } // namespace WebKit

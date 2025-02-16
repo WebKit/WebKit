@@ -102,7 +102,7 @@ void WebInspectorClient::frontendCountChanged(unsigned count)
 Inspector::FrontendChannel* WebInspectorClient::openLocalFrontend(InspectorController* controller)
 {
     if (RefPtr page = m_page.get())
-        page->inspector()->openLocalInspectorFrontend(controller->isUnderTest());
+        page->inspector()->openLocalInspectorFrontend();
     return nullptr;
 }
 

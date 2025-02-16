@@ -35,15 +35,18 @@ void WebTransportBidirectionalStreamSource::doCancel()
     m_isCancelled = true;
 }
 
-void WebTransportBidirectionalStreamSource::receiveIncomingStream(JSC::JSGlobalObject& globalObject, Ref<WebTransportBidirectionalStream>&& stream)
+bool WebTransportBidirectionalStreamSource::receiveIncomingStream(JSC::JSGlobalObject& globalObject, Ref<WebTransportBidirectionalStream>& stream)
 {
     if (m_isCancelled)
-        return;
+        return false;
     auto& jsDOMGlobalObject = *JSC::jsCast<JSDOMGlobalObject*>(&globalObject);
     Locker<JSC::JSLock> locker(jsDOMGlobalObject.vm().apiLock());
     auto value = toJS(&globalObject, &jsDOMGlobalObject, stream.get());
-    if (!controller().enqueue(value))
+    if (!controller().enqueue(value)) {
         doCancel();
+        return false;
+    }
+    return true;
 }
 
 }

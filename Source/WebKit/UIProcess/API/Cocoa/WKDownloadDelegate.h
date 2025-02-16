@@ -46,7 +46,7 @@ typedef NS_ENUM(NSInteger, WKDownloadRedirectPolicy) {
 typedef NS_ENUM(NSInteger, WKDownloadPlaceholderPolicy) {
     WKDownloadPlaceholderPolicyDisable,
     WKDownloadPlaceholderPolicyEnable,
-} NS_SWIFT_NAME(WKDownload.PlaceholderPolicy) WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(WKDownload.PlaceholderPolicy) WK_API_AVAILABLE(ios(18.2), visionos(2.2));
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -121,7 +121,7 @@ WK_SWIFT_UI_ACTOR
  against. This is useful if the client maintains it's own placeholder file. If this delegate
  is not implemented, the placeholder feature will be disabled.
  */
-- (void)download:(WKDownload *)download decidePlaceholderPolicy:(WK_SWIFT_UI_ACTOR void (^)(WKDownloadPlaceholderPolicy, NSURL * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(placeholderPolicy(forDownload:)) WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)download:(WKDownload *)download decidePlaceholderPolicy:(WK_SWIFT_UI_ACTOR void (^)(WKDownloadPlaceholderPolicy, NSURL * _Nullable))completionHandler WK_SWIFT_ASYNC_NAME(placeholderPolicy(forDownload:)) WK_API_AVAILABLE(ios(18.2), visionos(2.2));
 
 /* @abstract Called when the download receives a placeholder URL
  @param download The download for which we received a placeholder URL
@@ -131,7 +131,7 @@ WK_SWIFT_UI_ACTOR
  before receiving the final URL of the download. The placeholder URL will normally refer to a file in the
  Downloads directory.
  */
-- (void)download:(WKDownload *)download didReceivePlaceholderURL:(NSURL *)url completionHandler:(WK_SWIFT_UI_ACTOR void (^)(void))completionHandler WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)download:(WKDownload *)download didReceivePlaceholderURL:(NSURL *)url completionHandler:(WK_SWIFT_UI_ACTOR void (^)(void))completionHandler WK_API_AVAILABLE(ios(18.2), visionos(2.2));
 
 /* @abstract Called when the download receives a final URL
  @param download The download for which we received a final URL
@@ -139,7 +139,7 @@ WK_SWIFT_UI_ACTOR
  @discussion This function is called after didReceivePlaceholderURL was called and after the download finished.
  The final URL will normally refer to a file in the Downloads directory
  */
-- (void)download:(WKDownload *)download didReceiveFinalURL:(NSURL *)url WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)download:(WKDownload *)download didReceiveFinalURL:(NSURL *)url WK_API_AVAILABLE(ios(18.2), visionos(2.2));
 
 @end
 

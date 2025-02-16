@@ -4,9 +4,9 @@ function foo(x){
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     o = foo(i);
 
-if (o.a != 99999 || o[0] != 1)
+if (o.a != (testLoopCount - 1) || o[0] != 1)
     throw "Error"
 

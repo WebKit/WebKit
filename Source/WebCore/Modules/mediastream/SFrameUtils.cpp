@@ -53,7 +53,7 @@ static inline bool isIDRNALU(uint8_t data)
     return (data & 0x1F) == 5;
 }
 
-static inline void findNalus(std::span<const uint8_t> frameData, size_t offset, const Function<bool(size_t)>& callback)
+static inline void findNalus(std::span<const uint8_t> frameData, size_t offset, NOESCAPE const Function<bool(size_t)>& callback)
 {
     for (size_t i = 4 + offset; i < frameData.size(); ++i) {
         if (frameData[i - 4] == 0 && frameData[i - 3] == 0 && frameData[i - 2] == 0 && frameData[i - 1] == 1) {
@@ -145,7 +145,7 @@ IGNORE_GCC_WARNINGS_END
     return buffer;
 }
 
-static inline void findEscapeRbspPatterns(const Vector<uint8_t>& frame, size_t offset, const Function<void(size_t, bool)>& callback)
+static inline void findEscapeRbspPatterns(const Vector<uint8_t>& frame, size_t offset, NOESCAPE const Function<void(size_t, bool)>& callback)
 {
     size_t numConsecutiveZeros = 0;
     auto data = frame.span();

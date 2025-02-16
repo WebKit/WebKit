@@ -33,6 +33,7 @@
 #include "EventNames.h"
 #include "EventTarget.h"
 #include "HitTestResult.h"
+#include "MouseEventTypes.h"
 #include "Page.h"
 #include "PointerEvent.h"
 #include "Quirks.h"

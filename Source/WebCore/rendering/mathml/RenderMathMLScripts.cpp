@@ -165,7 +165,7 @@ std::optional<RenderMathMLScripts::ReferenceChildren> RenderMathMLScripts::valid
 
 LayoutUnit RenderMathMLScripts::spaceAfterScript()
 {
-    const Ref primaryFont = style().fontCascade().primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData())
         return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::SpaceAfterScript));
     return LayoutUnit(style().fontCascade().size() / 5);
@@ -244,7 +244,7 @@ void RenderMathMLScripts::computePreferredLogicalWidths()
 auto RenderMathMLScripts::verticalParameters() const -> VerticalParameters
 {
     VerticalParameters parameters;
-    const Ref primaryFont = style().fontCascade().primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         parameters.subscriptShiftDown = mathData->getMathConstant(primaryFont, OpenTypeMathData::SubscriptShiftDown);
         parameters.superscriptShiftUp = mathData->getMathConstant(primaryFont, OpenTypeMathData::SuperscriptShiftUp);
@@ -360,13 +360,13 @@ RenderMathMLScripts::VerticalMetrics RenderMathMLScripts::verticalMetrics(const 
     return metrics;
 }
 
-void RenderMathMLScripts::layoutBlock(bool relayoutChildren, LayoutUnit)
+void RenderMathMLScripts::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     auto possibleReference = validateAndGetReferenceChildren();

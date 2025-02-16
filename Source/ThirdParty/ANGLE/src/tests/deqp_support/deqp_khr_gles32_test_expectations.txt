@@ -55,7 +55,7 @@
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule4 = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_point_mode.points_verification = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_tessLevel = SKIP
-42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.vertex.vertex_spacing = SKIP
+385924891 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.vertex.vertex_spacing* = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_invariance.invariance_rule7 = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_in = SKIP
 42264094 VULKAN PIXEL6 : KHR-GLES32.core.tessellation_shader.tessellation_shader_triangles_tessellation.inner_tessellation_level_rounding = SKIP
@@ -112,6 +112,8 @@
 
 // Samsung Galaxy S22 (Xclipse)
 267953710 GALAXYS22 VULKAN : KHR-GLES32.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = SKIP
+386749841 GALAXYS22 VULKAN : KHR-GLES32.core.geometry_shader.primitive_counter.* = FAIL
+391002353 GALAXYS22 VULKAN : KHR-GLES32.core.texture_buffer.texture_buffer_max_size = SKIP
 
 // Samsung Galaxy S23
 42266598 GALAXYS23 VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment = SKIP
@@ -121,6 +123,3 @@
 328156792 PINEAPPLE VULKAN : KHR-GLES32.core.tessellation_shader.single.* = SKIP
 328156792 PINEAPPLE VULKAN : KHR-GLES32.core.texture_cube_map_array.* = SKIP
 328156792 PINEAPPLE VULKAN : KHR-GLES32.shaders.function.global_variable_aliasing_fragment* = SKIP
-
-// Test bug where tessellation shader support is not queried
-370792795 PIXEL6 VULKAN : KHR-GLES32.core.tessellation_shader.* = SKIP

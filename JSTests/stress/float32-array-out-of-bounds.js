@@ -16,7 +16,7 @@ function test(array, expected) {
 for (var i = 0; i < 1000; ++i)
     test(shortArray, void 0);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(longArray, 0);
 
 test(shortArray, void 0);

@@ -103,7 +103,7 @@ LayoutUnit RenderTextControlMultiLine::baselinePosition(FontBaseline baselineTyp
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }
 
-void RenderTextControlMultiLine::layoutExcludedChildren(bool relayoutChildren)
+void RenderTextControlMultiLine::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     RenderTextControl::layoutExcludedChildren(relayoutChildren);
     HTMLElement* placeholder = textFormControlElement().placeholderElement();
@@ -111,7 +111,7 @@ void RenderTextControlMultiLine::layoutExcludedChildren(bool relayoutChildren)
     if (!placeholderRenderer)
         return;
     if (CheckedPtr placeholderBox = dynamicDowncast<RenderBox>(placeholderRenderer)) {
-        placeholderBox->mutableStyle().setLogicalWidth(Length(contentLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth(), LengthType::Fixed));
+        placeholderBox->mutableStyle().setLogicalWidth(Length(contentBoxLogicalWidth() - placeholderBox->borderAndPaddingLogicalWidth(), LengthType::Fixed));
         placeholderBox->layoutIfNeeded();
         placeholderBox->setX(borderLeft() + paddingLeft());
         placeholderBox->setY(borderTop() + paddingTop());

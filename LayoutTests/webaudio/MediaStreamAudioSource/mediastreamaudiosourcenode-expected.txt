@@ -1,5 +1,17 @@
-#PID UNRESPONSIVE - WebKitTestRunner (pid 5731)
-FAIL: Timed out waiting for notifyDone to be called
 
-#EOF
-#EOF
+PASS # AUDIT TASK RUNNER STARTED.
+PASS Executing "test"
+PASS Audit report
+PASS > [test] Basic tests for MediaStreamAudioSourceNode API
+PASS   {audio:true} generated stream correctly
+PASS   mediaStreamSource.numberOfInputs is equal to 0.
+PASS   mediaStreamSource.numberOfOutputs is equal to 1.
+PASS   mediaStreamSource.mediaStream instanceof MediaStream is true.
+PASS   mediaStreamSource.mediaStream is same object is true.
+PASS   mediaStreamSource.connect(0, 0, 0) threw TypeError: "Argument 1 ('destination') to AudioNode.connect must be an instance of AudioNode".
+PASS   mediaStreamSource.connect(context.destination, 5, 0) threw IndexSizeError: "Output index exceeds number of outputs".
+PASS   mediaStreamSource.connect(context.destination, 0, 5) threw IndexSizeError: "Input index exceeds number of inputs".
+PASS   mediaStreamSource.connect(context.destination, 0, 0) did not throw an exception.
+PASS < [test] All assertions passed. (total 9 assertions)
+PASS # AUDIT TASK RUNNER FINISHED: 1 tasks ran successfully.
+

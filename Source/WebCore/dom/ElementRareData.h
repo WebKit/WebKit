@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CalculationRandomKeyMap.h"
 #include "CustomElementDefaultARIA.h"
 #include "CustomElementReactionQueue.h"
 #include "CustomStateSet.h"
@@ -164,6 +165,9 @@ public:
     OptionSet<VisibilityAdjustment> visibilityAdjustment() const { return m_visibilityAdjustment; }
     void setVisibilityAdjustment(OptionSet<VisibilityAdjustment> adjustment) { m_visibilityAdjustment = adjustment; }
 
+    Ref<Calculation::RandomKeyMap> ensureRandomKeyMap(const std::optional<Style::PseudoElementIdentifier>&);
+    bool hasRandomKeyMap() const;
+
 #if DUMP_NODE_STATISTICS
     OptionSet<UseType> useTypes() const
     {
@@ -274,6 +278,8 @@ private:
     RefPtr<CustomStateSet> m_customStateSet;
 
     OptionSet<VisibilityAdjustment> m_visibilityAdjustment;
+
+    HashMap<std::optional<Style::PseudoElementIdentifier>, Ref<Calculation::RandomKeyMap>> m_randomKeyMaps;
 };
 
 inline ElementRareData::ElementRareData()
@@ -340,6 +346,18 @@ inline AtomString ElementRareData::viewTransitionCapturedName(const std::optiona
 inline void ElementRareData::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
 {
     m_viewTransitionCapturedName.set(pseudoElementIdentifier, captureName);
+}
+
+inline Ref<Calculation::RandomKeyMap> ElementRareData::ensureRandomKeyMap(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier)
+{
+    return m_randomKeyMaps.ensure(pseudoElementIdentifier, [] -> Ref<Calculation::RandomKeyMap> {
+        return Calculation::RandomKeyMap::create();
+    }).iterator->value;
+}
+
+inline bool ElementRareData::hasRandomKeyMap() const
+{
+    return !m_randomKeyMaps.isEmpty();
 }
 
 inline ElementRareData* Element::elementRareData() const

@@ -384,9 +384,9 @@ bool containsColorSchemeDependentColor(const Color& value)
     return WTF::switchOn(value, [&](const auto& color) { return WebCore::CSS::containsColorSchemeDependentColor(color); });
 }
 
-void Serialize<Color>::operator()(StringBuilder& builder, const Color& value)
+void Serialize<Color>::operator()(StringBuilder& builder, const SerializationContext& context, const Color& value)
 {
-    WTF::switchOn(value, [&](const auto& color) { serializationForCSS(builder, color); });
+    WTF::switchOn(value, [&](const auto& color) { serializationForCSS(builder, context, color); });
 }
 
 void ComputedStyleDependenciesCollector<Color>::operator()(ComputedStyleDependencies&dependencies, const Color& value)
@@ -394,7 +394,7 @@ void ComputedStyleDependenciesCollector<Color>::operator()(ComputedStyleDependen
     WTF::switchOn(value, [&](const auto& color) { collectComputedStyleDependencies(dependencies, color); });
 }
 
-IterationStatus CSSValueChildrenVisitor<Color>::operator()(const Function<IterationStatus(CSSValue&)>& func, const Color& value)
+IterationStatus CSSValueChildrenVisitor<Color>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const Color& value)
 {
     return WTF::switchOn(value, [&](const auto& color) { return visitCSSValueChildren(func, color); });
 }

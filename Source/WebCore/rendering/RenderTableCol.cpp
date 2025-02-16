@@ -72,10 +72,7 @@ void RenderTableCol::styleDidChange(StyleDifference diff, const RenderStyle* old
     // If border was changed, notify table.
     if (!oldStyle)
         return;
-    if (!oldStyle->borderIsEquivalentForPainting(style())) {
-        table->invalidateCollapsedBorders();
-        return;
-    }
+    table->invalidateCollapsedBordersAfterStyleChangeIfNeeded(*oldStyle, style());
     if (oldStyle->width() != style().width()) {
         table->recalcSectionsIfNeeded();
         for (auto& section : childrenOfType<RenderTableSection>(*table)) {

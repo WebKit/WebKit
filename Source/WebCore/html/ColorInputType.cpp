@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -30,13 +30,9 @@
  */
 
 #include "config.h"
-
-#if ENABLE(INPUT_TYPE_COLOR)
-
 #include "ColorInputType.h"
 
 #include "AXObjectCache.h"
-#include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "Chrome.h"
 #include "Color.h"
@@ -50,6 +46,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLOptionElement.h"
 #include "InputTypeNames.h"
+#include "RenderTheme.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
 #include "ScriptDisallowedScope.h"
@@ -225,6 +222,8 @@ void ColorInputType::createShadowSubtree()
     wrapperElement->setUserAgentPart(UserAgentParts::webkitColorSwatchWrapper());
     colorSwatch->setUserAgentPart(UserAgentParts::webkitColorSwatch());
 
+    RenderTheme::singleton().createColorWellSwatchSubtree(colorSwatch.get());
+
     updateColorSwatch();
 }
 
@@ -335,12 +334,11 @@ void ColorInputType::endColorChooser()
 
 void ColorInputType::updateColorSwatch()
 {
-    RefPtr<HTMLElement> colorSwatch = shadowColorSwatch();
+    RefPtr colorSwatch = shadowColorSwatch();
     if (!colorSwatch)
         return;
 
-    ASSERT(element());
-    colorSwatch->setInlineStyleProperty(CSSPropertyBackgroundColor, element()->value());
+    RenderTheme::singleton().setColorWellSwatchBackground(*colorSwatch, valueAsColor());
 }
 
 HTMLElement* ColorInputType::shadowColorSwatch() const
@@ -374,7 +372,6 @@ bool ColorInputType::supportsAlpha() const
 Vector<Color> ColorInputType::suggestedColors() const
 {
     Vector<Color> suggestions;
-#if ENABLE(DATALIST_ELEMENT)
     ASSERT(element());
     if (auto dataList = element()->dataList()) {
         for (auto& option : dataList->suggestions()) {
@@ -382,7 +379,6 @@ Vector<Color> ColorInputType::suggestedColors() const
                 suggestions.append(*color);
         }
     }
-#endif
     return suggestions;
 }
 
@@ -394,5 +390,3 @@ void ColorInputType::selectColor(StringView string)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(INPUT_TYPE_COLOR)

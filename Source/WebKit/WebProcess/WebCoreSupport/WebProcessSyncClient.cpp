@@ -55,17 +55,13 @@ bool WebProcessSyncClient::siteIsolationEnabled()
 
 void WebProcessSyncClient::broadcastProcessSyncDataToOtherProcesses(const WebCore::ProcessSyncData& data)
 {
-    if (!siteIsolationEnabled())
-        return;
-
+    ASSERT(siteIsolationEnabled());
     protectedPage()->send(Messages::WebPageProxy::BroadcastProcessSyncData(data));
 }
 
 void WebProcessSyncClient::broadcastTopDocumentSyncDataToOtherProcesses(WebCore::DocumentSyncData& data)
 {
-    if (!siteIsolationEnabled())
-        return;
-
+    ASSERT(siteIsolationEnabled());
     protectedPage()->send(Messages::WebPageProxy::BroadcastTopDocumentSyncData(data));
 }
 

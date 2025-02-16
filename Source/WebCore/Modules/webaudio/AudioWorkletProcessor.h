@@ -74,7 +74,7 @@ private:
     explicit AudioWorkletProcessor(AudioWorkletGlobalScope&, const AudioWorkletProcessorConstructionData&);
     void buildJSArguments(JSC::VM&, JSC::JSGlobalObject&, JSC::MarkedArgumentBuffer&, const Vector<RefPtr<AudioBus>>& inputs, Vector<Ref<AudioBus>>& outputs, const MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>>& paramValuesMap);
 
-    AudioWorkletGlobalScope& m_globalScope;
+    Ref<AudioWorkletGlobalScope> m_globalScope;
     String m_name;
     Ref<MessagePort> m_port;
     JSValueInWrappedObject m_jsInputs;

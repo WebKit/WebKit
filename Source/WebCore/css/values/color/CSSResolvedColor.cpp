@@ -31,7 +31,7 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<ResolvedColor>::operator()(StringBuilder& builder, const ResolvedColor& value)
+void Serialize<ResolvedColor>::operator()(StringBuilder& builder, const SerializationContext&, const ResolvedColor& value)
 {
     builder.append(WebCore::serializationForCSS(value.value));
 }

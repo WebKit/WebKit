@@ -25,25 +25,36 @@
 
 #pragma once
 
+#include "Color.h"
 #include "LayerHostingContextIdentifier.h"
+#include "LayoutSize.h"
 #include "PlatformLayerIdentifier.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
+enum class ModelContextDisablePortal : bool { No, Yes };
+
 class ModelContext final : public RefCounted<ModelContext> {
 public:
-    WEBCORE_EXPORT static Ref<ModelContext> create(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&);
+    WEBCORE_EXPORT static Ref<ModelContext> create(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, ModelContextDisablePortal, std::optional<Color>);
     WEBCORE_EXPORT ~ModelContext();
 
     PlatformLayerIdentifier modelLayerIdentifier() const { return m_modelLayerIdentifier; }
     LayerHostingContextIdentifier modelContentsLayerHostingContextIdentifier() const { return m_modelContentsLayerHostingContextIdentifier; }
+    LayoutSize modelLayoutSize() const { return m_modelLayoutSize; }
+    ModelContextDisablePortal disablePortal() const { return m_disablePortal; }
+    std::optional<Color> backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(std::optional<Color> backgroundColor) { m_backgroundColor = backgroundColor; }
 
 private:
-    explicit ModelContext(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&);
+    explicit ModelContext(const PlatformLayerIdentifier&, const LayerHostingContextIdentifier&, const LayoutSize&, ModelContextDisablePortal, std::optional<Color>);
 
     PlatformLayerIdentifier m_modelLayerIdentifier;
     LayerHostingContextIdentifier m_modelContentsLayerHostingContextIdentifier;
+    LayoutSize m_modelLayoutSize;
+    ModelContextDisablePortal m_disablePortal;
+    std::optional<Color> m_backgroundColor;
 };
 
 } // namespace WebCore

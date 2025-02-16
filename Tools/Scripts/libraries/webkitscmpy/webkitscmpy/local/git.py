@@ -1141,7 +1141,7 @@ class Git(Scm):
                     if local_bp.hash != local_head.hash:
                         log.info(" You have unsaved changes on the local branch.")
                         if prompt and Terminal.choose(
-                            "Local changes on {} will not be saved. Would you like to override the local version of this branch with the version from '{}'?".format(argument, path),
+                            "Local changes on {} will not be saved. Would you like to override the local version of this branch with the version from '{}'?".format(argument, remote_path),
                             default='No'
                         ) == 'No':
                             sys.stderr.write("Checkout aborted.\n")

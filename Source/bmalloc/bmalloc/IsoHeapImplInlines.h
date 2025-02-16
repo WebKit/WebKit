@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "IsoHeapImpl.h"
 #include "IsoTLSDeallocatorEntry.h"
 #include "IsoSharedHeapInlines.h"
@@ -329,3 +331,4 @@ void* IsoHeapImpl<Config>::allocateFromShared(const LockHolder&, bool abortOnFai
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

@@ -77,7 +77,8 @@ egl::ConfigSet DisplayVkAndroid::generateConfigs()
         // DisplayVk should have already queried and cached supported surface formats.
         for (GLenum glFormat : kDesiredColorFormats)
         {
-            VkFormat vkFormat = mRenderer->getFormat(glFormat).getActualRenderableImageVkFormat();
+            VkFormat vkFormat =
+                mRenderer->getFormat(glFormat).getActualRenderableImageVkFormat(mRenderer);
             ASSERT(vkFormat != VK_FORMAT_UNDEFINED);
             if (isConfigFormatSupported(vkFormat))
             {

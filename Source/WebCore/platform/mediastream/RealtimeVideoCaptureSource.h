@@ -85,7 +85,7 @@ private:
         double requestedFrameRate { 0 };
         double requestedZoom { 0 };
     };
-    bool supportsCaptureSize(std::optional<int>, std::optional<int>, const Function<bool(const IntSize&)>&&);
+    bool supportsCaptureSize(std::optional<int>, std::optional<int>, NOESCAPE const Function<bool(const IntSize&)>&);
 
     enum class TryPreservingSize { No, Yes };
     std::optional<CaptureSizeFrameRateAndZoom> bestSupportedSizeFrameRateAndZoom(const VideoPresetConstraints&, TryPreservingSize = TryPreservingSize::Yes);

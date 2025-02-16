@@ -31,7 +31,7 @@ let wat = `
 async function test() {
     const instance = await instantiate(wat, {});
     const { fib } = instance.exports
-    for (let c = 0; c < 10000; ++c) {
+    for (let c = 0; c < wasmTestLoopCount; ++c) {
         let a = 0;
         let b = 1;
         for (let i = 1; i < 47; ++i) {

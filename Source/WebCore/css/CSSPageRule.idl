@@ -23,8 +23,7 @@
 [
     Exposed=Window
 ] interface CSSPageRule : CSSGroupingRule {
-    // FIXME: `selectorText` should not be nullable.
-    attribute DOMString? selectorText;
+    attribute DOMString selectorText;
     // FIXME: Add [SameObject] below after https://webkit.org/b/163414
     [PutForwards=cssText] readonly attribute CSSStyleDeclaration style;
 };

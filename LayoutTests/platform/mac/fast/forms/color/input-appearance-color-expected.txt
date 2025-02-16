@@ -113,3 +113,41 @@ layer at (0,0) size 800x600
         RenderBlock {INPUT} at (0,0) size 100x30 [bgcolor=#FFFFFF] [border: none (2px inset #808080) none (2px inset #808080)]
           RenderFlexibleBox {DIV} at (3,1) size 94x28
             RenderBlock {DIV} at (2,4) size 90x19 [bgcolor=#FF0000]
+layer at (13,72) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (57,72) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (13,172) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (61,172) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (109,172) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (157,172) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (205,172) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (253,172) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (13,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (61,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (109,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (157,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (205,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (253,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (301,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (349,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (397,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (445,255) size 34x12
+  RenderBlock {DIV} at (0,0) size 34x12
+layer at (13,337) size 90x19
+  RenderBlock {DIV} at (0,0) size 90x19

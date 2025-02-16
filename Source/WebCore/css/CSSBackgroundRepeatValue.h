@@ -35,7 +35,7 @@ class CSSBackgroundRepeatValue final : public CSSValue {
 public:
     static Ref<CSSBackgroundRepeatValue> create(CSSValueID repeatXValue, CSSValueID repeatYValue);
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBackgroundRepeatValue&) const;
 
     CSSValueID xValue() const { return m_xValue; }

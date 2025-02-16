@@ -53,11 +53,11 @@ CSSValueID CSSGridAutoRepeatValue::autoRepeatID() const
     return m_isAutoFit ? CSSValueAutoFit : CSSValueAutoFill;
 }
 
-String CSSGridAutoRepeatValue::customCSSText() const
+String CSSGridAutoRepeatValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder result;
     result.append("repeat("_s, nameLiteral(autoRepeatID()), ", "_s);
-    serializeItems(result);
+    serializeItems(result, context);
     result.append(')');
     return result.toString();
 }

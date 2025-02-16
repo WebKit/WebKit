@@ -76,12 +76,29 @@ public:
     bool isOnLine() const final;
     void addOnlineStateChangeListener(WTF::Function<void(bool)>&&) final;
 
+    static WebCore::ResourceError blockedErrorFromRequest(const WebCore::ResourceRequest&);
+    static WebCore::ResourceError pluginWillHandleLoadErrorFromResponse(const WebCore::ResourceResponse&);
+
 private:
     virtual ~WebResourceLoadScheduler();
 
     void scheduleLoad(WebCore::ResourceLoader*);
     void scheduleServePendingRequests();
     void requestTimerFired();
+
+    WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError blockedByContentBlockerError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&) const final;
+#if ENABLE(CONTENT_FILTERING)
+    WebCore::ResourceError blockedByContentFilterError(const WebCore::ResourceRequest&) const final;
+#endif
+    WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&) const final;
+    WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&) const final;
+    WebCore::ResourceError httpsUpgradeRedirectLoopError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError httpNavigationWithHTTPSOnlyError(const WebCore::ResourceRequest&) const final;
+    WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&) const final;
 
     bool isSuspendingPendingRequests() const { return !!m_suspendPendingRequestsCount; }
     void isResourceLoadFinished(WebCore::CachedResource&, CompletionHandler<void(bool)>&&) final;

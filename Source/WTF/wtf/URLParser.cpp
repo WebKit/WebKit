@@ -320,6 +320,11 @@ static constexpr std::array<uint8_t, 256> characterClassTable {
     QueryEncode, // 0xFF
 };
 
+bool isForbiddenHostCodePoint(UChar character)
+{
+    return character <= 0x7F && characterClassTable[character] & ForbiddenHost;
+}
+
 template<typename CharacterType> ALWAYS_INLINE static bool isC0Control(CharacterType character) { return character <= 0x1F; }
 template<typename CharacterType> ALWAYS_INLINE static bool isC0ControlOrSpace(CharacterType character) { return character <= 0x20; }
 template<typename CharacterType> ALWAYS_INLINE static bool isTabOrNewline(CharacterType character) { return character <= 0xD && character >= 0x9 && character != 0xB && character != 0xC; }
@@ -336,7 +341,7 @@ template<typename CharacterType>
 ALWAYS_INLINE bool URLParser::isForbiddenHostCodePoint(CharacterType character)
 {
     ASSERT(!m_urlIsSpecial);
-    return character <= 0x7F && characterClassTable[character] & ForbiddenHost;
+    return WTF::isForbiddenHostCodePoint(character);
 }
 
 template<typename CharacterType>
@@ -1377,7 +1382,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
             if (*c == '/' || *c == '\\') {
                 ++c;
                 copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
-                appendToASCIIBuffer("://"_span);
+                appendToASCIIBuffer("://"_span8);
                 if (m_urlIsSpecial)
                     state = State::SpecialAuthorityIgnoreSlashes;
                 else {
@@ -1410,7 +1415,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                 }
             } else {
                 syntaxViolation(c);
-                appendToASCIIBuffer("//"_span);
+                appendToASCIIBuffer("//"_span8);
             }
             state = State::SpecialAuthorityIgnoreSlashes;
             break;
@@ -1522,7 +1527,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                     appendToASCIIBuffer('?');
                     ++c;
                 } else {
-                    appendToASCIIBuffer("///?"_span);
+                    appendToASCIIBuffer("///?"_span8);
                     ++c;
                     m_url.m_userStart = currentPosition(c) - 2;
                     m_url.m_userEnd = m_url.m_userStart;
@@ -1544,7 +1549,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                     copyURLPartsUntil(base, URLPart::QueryEnd, c, nonUTF8QueryEncoding);
                     appendToASCIIBuffer('#');
                 } else {
-                    appendToASCIIBuffer("///#"_span);
+                    appendToASCIIBuffer("///#"_span8);
                     m_url.m_userStart = currentPosition(c) - 2;
                     m_url.m_userEnd = m_url.m_userStart;
                     m_url.m_passwordEnd = m_url.m_userStart;
@@ -1566,14 +1571,14 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                     if (base.isValid() && base.protocolIsFile()) {
                         if (base.host().isEmpty()) {
                             copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
-                            appendToASCIIBuffer(":///"_span);
+                            appendToASCIIBuffer(":///"_span8);
                         } else {
                             copyURLPartsUntil(base, URLPart::PortEnd, c, nonUTF8QueryEncoding);
                             appendToASCIIBuffer('/');
                             copiedHost = true;
                         }
                     } else
-                        appendToASCIIBuffer("///"_span);
+                        appendToASCIIBuffer("///"_span8);
                     if (!copiedHost) {
                         m_url.m_userStart = currentPosition(c) - 1;
                         m_url.m_userEnd = m_url.m_userStart;
@@ -1596,7 +1601,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                     syntaxViolation(c);
                 if (base.isValid() && base.protocolIsFile()) {
                     copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
-                    appendToASCIIBuffer(":/"_span);
+                    appendToASCIIBuffer(":/"_span8);
                 }
                 appendToASCIIBuffer('/');
                 advance(c);
@@ -1614,7 +1619,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                 if (base.isValid() && base.protocolIsFile()) {
                     if (base.host().isEmpty()) {
                         copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
-                        appendToASCIIBuffer(":///"_span);
+                        appendToASCIIBuffer(":///"_span8);
                     } else {
                         copyURLPartsUntil(base, URLPart::PortEnd, c, nonUTF8QueryEncoding);
                         appendToASCIIBuffer('/');
@@ -1622,7 +1627,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                     }
                 } else {
                     syntaxViolation(c);
-                    appendToASCIIBuffer("//"_span);
+                    appendToASCIIBuffer("//"_span8);
                 }
                 if (!copiedHost) {
                     m_url.m_userStart = currentPosition(c) - 1;
@@ -1657,7 +1662,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                         ASSERT(windowsQuirk || parsedDataView(currentPosition(c) - 1) == '/');
                         if (UNLIKELY(*c == '?')) {
                             syntaxViolation(c);
-                            appendToASCIIBuffer("/?"_span);
+                            appendToASCIIBuffer("/?"_span8);
                             ++c;
                             if (nonUTF8QueryEncoding) {
                                 queryBegin = c;
@@ -1670,7 +1675,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
                         }
                         if (UNLIKELY(*c == '#')) {
                             syntaxViolation(c);
-                            appendToASCIIBuffer("/#"_span);
+                            appendToASCIIBuffer("/#"_span8);
                             ++c;
                             m_url.m_pathAfterLastSlash = currentPosition(c) - 1;
                             m_url.m_pathEnd = m_url.m_pathAfterLastSlash;
@@ -1910,7 +1915,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
             break;
         }
         syntaxViolation(c);
-        appendToASCIIBuffer("///"_span);
+        appendToASCIIBuffer("///"_span8);
         m_url.m_userStart = currentPosition(c) - 1;
         m_url.m_userEnd = m_url.m_userStart;
         m_url.m_passwordEnd = m_url.m_userStart;
@@ -1928,7 +1933,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
             if (base.isValid() && base.protocolIsFile()) {
                 if (base.host().isEmpty()) {
                     copyURLPartsUntil(base, URLPart::SchemeEnd, c, nonUTF8QueryEncoding);
-                    appendToASCIIBuffer(":/"_span);
+                    appendToASCIIBuffer(":/"_span8);
                 } else {
                     copyURLPartsUntil(base, URLPart::PortEnd, c, nonUTF8QueryEncoding);
                     appendToASCIIBuffer('/');
@@ -1937,7 +1942,7 @@ void URLParser::parse(std::span<const CharacterType> input, const URL& base, con
             }
             if (!copiedHost) {
                 m_url.m_userStart = currentPosition(c) + 1;
-                appendToASCIIBuffer("//"_span);
+                appendToASCIIBuffer("//"_span8);
                 m_url.m_userEnd = m_url.m_userStart;
                 m_url.m_passwordEnd = m_url.m_userStart;
                 m_url.m_hostEnd = m_url.m_userStart;
@@ -2154,7 +2159,7 @@ void URLParser::serializeIPv6(URLParser::IPv6Address address)
             if (piece)
                 appendToASCIIBuffer(':');
             else
-                appendToASCIIBuffer("::"_span);
+                appendToASCIIBuffer("::"_span8);
             while (piece < 8 && !address[piece])
                 piece++;
             if (piece == 8)
@@ -2475,6 +2480,7 @@ std::optional<URLParser::IPv6Address> URLParser::parseIPv6Host(CodePointIterator
     return address;
 }
 
+// FIXME: This function should take span<const char8_t>, since it requires UTF-8.
 template<typename CharacterType>
 URLParser::LCharBuffer URLParser::percentDecode(std::span<const LChar> input, const CodePointIterator<CharacterType>& iteratorForSyntaxViolationPosition)
 {
@@ -2891,7 +2897,7 @@ std::optional<String> URLParser::formURLDecode(StringView input)
     auto utf8 = input.utf8(StrictConversion);
     if (utf8.isNull())
         return std::nullopt;
-    auto percentDecoded = percentDecode(utf8.span());
+    auto percentDecoded = percentDecode(byteCast<LChar>(utf8.span()));
     return String::fromUTF8ReplacingInvalidSequences(percentDecoded.span());
 }
 

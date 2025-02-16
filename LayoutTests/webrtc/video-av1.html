@@ -122,6 +122,17 @@ promise_test((test) => {
     return checkVideoBlack(false, canvas2, video);
 }, "Track is enabled, video should not be black 2");
 
+promise_test((test) => {
+    return track.applyConstraints({ width:640, height:480 });
+}, "Track resolution increases");
+
+promise_test((test) => {
+    return waitForVideoSize(video, 640, 480, "increase of resolution should be fine");
+}, "Verify video element size changes");
+
+promise_test((test) => {
+    return testFrameDecodedIncreased(receivingConnection);
+}, "Verfiy video decoding continues");
         </script>
     </body>
 </html>

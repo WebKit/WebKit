@@ -168,8 +168,10 @@ class PullRequest(Command):
             return 1
         log.info('Amending commit...' if will_amend else 'Creating commit...')
         env = os.environ
-        env['COMMIT_MESSAGE_TITLE'] = getattr(args, '_title', None) or ''
-        env['COMMIT_MESSAGE_BUG'] = bug_urls
+        if getattr(args, '_title', None):
+            env['COMMIT_MESSAGE_TITLE'] = getattr(args, '_title')
+        if bug_urls:
+            env['COMMIT_MESSAGE_BUG'] = bug_urls
         if run(
             [repository.executable(), 'commit', '--date=now'] + (['--amend'] if will_amend else []),
             cwd=repository.root_path,

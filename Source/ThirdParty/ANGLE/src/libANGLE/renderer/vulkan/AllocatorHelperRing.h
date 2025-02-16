@@ -43,7 +43,8 @@ class SharedCommandBlockAllocator
     SharedCommandMemoryAllocator *getAllocator() { return mAllocator; }
 
   private:
-    // Using a ring buffer allocator for less memory overhead (observed with enabled async queue)
+    // Using a ring buffer allocator for less memory overhead (observed with the async queue
+    // ex-feature)
     SharedCommandMemoryAllocator *mAllocator;
     angle::SharedRingBufferAllocatorCheckPoint *mAllocSharedCP;
     angle::RingBufferAllocatorCheckPoint mAllocReleaseCP;
@@ -143,7 +144,8 @@ class SharedCommandBlockPool final : angle::RingBufferAllocateListener
     virtual void onRingBufferNewFragment() override;
     virtual void onRingBufferFragmentEnd() override;
 
-    // Using a ring buffer allocator for less memory overhead (observed with enabled async queue)
+    // Using a ring buffer allocator for less memory overhead (observed with the async queue
+    // ex-feature)
     RingBufferAllocator mAllocator;
     uint8_t *mLastCommandBlock;
     uint32_t mFinishedCommandSize;

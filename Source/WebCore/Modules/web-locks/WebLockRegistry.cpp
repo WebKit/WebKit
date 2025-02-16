@@ -73,7 +73,7 @@ public:
     void releaseLock(WebLockIdentifier, const String& name);
     void abortLockRequest(WebLockIdentifier, const String& name, CompletionHandler<void(bool)>&&);
     void snapshot(CompletionHandler<void(WebLockManagerSnapshot&&)>&&);
-    void clientsAreGoingAway(const Function<bool(const LockInfo&)>& matchClient);
+    void clientsAreGoingAway(NOESCAPE const Function<bool(const LockInfo&)>& matchClient);
 
 private:
     PerOriginRegistry(LocalWebLockRegistry&, PAL::SessionID, const ClientOrigin&);
@@ -277,7 +277,7 @@ void LocalWebLockRegistry::clientIsGoingAway(PAL::SessionID sessionID, const Cli
 }
 
 // https://wicg.github.io/web-locks/#agent-integration
-void LocalWebLockRegistry::PerOriginRegistry::clientsAreGoingAway(const Function<bool(const LockInfo&)>& matchClient)
+void LocalWebLockRegistry::PerOriginRegistry::clientsAreGoingAway(NOESCAPE const Function<bool(const LockInfo&)>& matchClient)
 {
     // FIXME: This is inefficient. We could optimize this by keeping track of which locks map to which clients.
     HashSet<String> namesOfQueuesToProcess;

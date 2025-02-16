@@ -52,8 +52,7 @@
 #include <libxslt/xsltutils.h>
 #include <wtf/Assertions.h>
 #include <wtf/CheckedArithmetic.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <wtf/MallocSpan.h>
 
 namespace WebCore {
 
@@ -112,7 +111,10 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
         xsltTransformContextPtr context = (xsltTransformContextPtr)ctxt;
         xmlChar* base = xmlNodeGetBase(context->document->doc, context->node);
         URL url(URL({ }, String::fromLatin1(byteCast<char>(base))), String::fromLatin1(byteCast<char>(uri)));
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
         xmlFree(base);
+IGNORE_WARNINGS_END
         ResourceError error;
         ResourceResponse response;
 
@@ -168,12 +170,13 @@ static inline void setXSLTLoadCallBack(xsltDocLoaderFunc func, XSLTProcessor* pr
     globalCachedResourceLoader() = cachedResourceLoader;
 }
 
-static int writeToStringBuilder(void* context, const char* buffer, int length)
+static int writeToStringBuilder(void* context, const char* rawBuffer, int length)
 {
     auto& builder = *static_cast<StringBuilder*>(context);
     if (!length)
         return 0;
-    auto checkedString = WTF::Unicode::checkUTF8({ byteCast<char8_t>(buffer), static_cast<size_t>(length) });
+    auto buffer = byteCast<char8_t>(unsafeMakeSpan(rawBuffer, length));
+    auto checkedString = WTF::Unicode::checkUTF8(buffer);
     if (checkedString.characters.empty())
         return -1;
     builder.append(checkedString);
@@ -204,13 +207,13 @@ static bool saveResultToString(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, Str
     return true;
 }
 
-static const char** xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& parameters)
+static MallocSpan<const char*> xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& parameters)
 {
     if (parameters.isEmpty())
-        return 0;
+        return { };
 
     auto size = (((Checked<size_t>(parameters.size()) * 2U) + 1U) * sizeof(char*)).value();
-    auto** parameterArray = static_cast<const char**>(fastMalloc(size));
+    auto parameterArray = MallocSpan<const char*>::malloc(size);
 
     size_t index = 0;
     for (auto& parameter : parameters) {
@@ -226,17 +229,14 @@ static const char** xsltParamArrayFromParameterMap(XSLTProcessor::ParameterMap& 
     return parameterArray;
 }
 
-static void freeXsltParamArray(const char** params)
+static void freeXsltParamsInArray(std::span<const char*> params)
 {
-    const char** temp = params;
-    if (!params)
+    if (!params.data())
         return;
 
-    while (*temp) {
-        fastFree((void*)*(temp++));
-        fastFree((void*)*(temp++));
-    }
-    fastFree(params);
+    ASSERT(!params.back());
+    for (auto* param : params.first(params.size() - 1))
+        fastFree(const_cast<char*>(param));
 }
 
 static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStylesheet, Node* stylesheetRootNode)
@@ -336,13 +336,13 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
         // <http://bugs.webkit.org/show_bug.cgi?id=16077>: XSLT processor <xsl:sort> algorithm only compares by code point.
         xsltSetCtxtSortFunc(transformContext, xsltUnicodeSortFunction);
 
-        const char** params = xsltParamArrayFromParameterMap(m_parameters);
-        xsltQuoteUserParams(transformContext, params);
+        auto params = xsltParamArrayFromParameterMap(m_parameters);
+        xsltQuoteUserParams(transformContext, params.mutableSpan().data());
         xmlDocPtr resultDoc = xsltApplyStylesheetUser(sheet, sourceDoc, nullptr, nullptr, nullptr, transformContext);
 
         xsltFreeTransformContext(transformContext);
         xsltFreeSecurityPrefs(securityPrefs);
-        freeXsltParamArray(params);
+        freeXsltParamsInArray(params.mutableSpan());
 
         if (shouldFreeSourceDoc)
             xmlFreeDoc(sourceDoc);
@@ -364,7 +364,5 @@ bool XSLTProcessor::transformToString(Node& sourceNode, String& mimeType, String
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(XSLT)

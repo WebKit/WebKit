@@ -30,7 +30,7 @@ var obj = {
 
 noInline(obj.bubbleSort);
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     obj.arr = [1, 2, 4, 6, 3, 7, 0];
     testCase(obj.bubbleSort()().length, 7, "Error: this is not lexically binded inside of the arrow function #1");
 

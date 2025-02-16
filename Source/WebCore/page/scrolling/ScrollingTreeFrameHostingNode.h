@@ -58,7 +58,7 @@ private:
     WEBCORE_EXPORT void dumpProperties(WTF::TextStream&, OptionSet<ScrollingStateTreeAsTextBehavior>) const override;
 
     std::optional<LayerHostingContextIdentifier> m_hostingContext;
-    HashSet<RefPtr<ScrollingTreeNode>> m_hostedChildren;
+    UncheckedKeyHashSet<RefPtr<ScrollingTreeNode>> m_hostedChildren;
 };
 
 } // namespace WebCore

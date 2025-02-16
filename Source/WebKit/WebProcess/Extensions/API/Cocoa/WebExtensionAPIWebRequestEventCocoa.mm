@@ -43,7 +43,7 @@
 
 namespace WebKit {
 
-void WebExtensionAPIWebRequestEvent::invokeListenersWithArgument(NSDictionary *argument, WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, const ResourceLoadInfo& resourceLoadInfo)
+void WebExtensionAPIWebRequestEvent::enumerateListeners(WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, const ResourceLoadInfo& resourceLoadInfo, NOESCAPE const Function<void(WebExtensionCallbackHandler&, const Vector<String>&)>& function)
 {
     if (m_listeners.isEmpty())
         return;
@@ -55,15 +55,22 @@ void WebExtensionAPIWebRequestEvent::invokeListenersWithArgument(NSDictionary *a
     auto listenersCopy = m_listeners;
 
     for (auto& listener : listenersCopy) {
-        auto *filter = listener.second.get();
+        auto* filter = listener.filter.get();
         if (filter && ![filter matchesRequestForResourceOfType:resourceType URL:resourceURL tabID:toWebAPI(tabIdentifier) windowID:toWebAPI(windowIdentifier)])
             continue;
 
-        listener.first->call(argument);
+        function(*listener.callback, listener.extraInfo);
     }
 }
 
-void WebExtensionAPIWebRequestEvent::addListener(WebCore::FrameIdentifier frameIdentifier, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString)
+void WebExtensionAPIWebRequestEvent::invokeListenersWithArgument(NSDictionary *argument, WebExtensionTabIdentifier tabIdentifier, WebExtensionWindowIdentifier windowIdentifier, const ResourceLoadInfo& resourceLoadInfo)
+{
+    enumerateListeners(tabIdentifier, windowIdentifier, resourceLoadInfo, [argument = RetainPtr { argument }](auto& listener, auto&) {
+        listener.call(argument.get());
+    });
+}
+
+void WebExtensionAPIWebRequestEvent::addListener(WebCore::FrameIdentifier frameIdentifier, RefPtr<WebExtensionCallbackHandler> listener, NSDictionary *filter, NSArray *extraInfoArray, NSString **outExceptionString)
 {
     _WKWebExtensionWebRequestFilter *parsedFilter;
     if (filter) {
@@ -72,8 +79,14 @@ void WebExtensionAPIWebRequestEvent::addListener(WebCore::FrameIdentifier frameI
             return;
     }
 
+    auto extraInfo = makeVector<String>(extraInfoArray);
+    extraInfo.removeAllMatching([&](auto& item) {
+        return item != "requestBody"_s && item != "requestHeaders"_s && item != "responseHeaders"_s;
+    });
+    extraInfo.shrinkToFit();
+
     m_frameIdentifier = frameIdentifier;
-    m_listeners.append({ listener, parsedFilter });
+    m_listeners.append({ listener, parsedFilter, WTFMove(extraInfo) });
 
     WebProcess::singleton().send(Messages::WebExtensionContext::AddListener(*m_frameIdentifier, m_type, contentWorldType()), extensionContext().identifier());
 }
@@ -81,7 +94,7 @@ void WebExtensionAPIWebRequestEvent::addListener(WebCore::FrameIdentifier frameI
 void WebExtensionAPIWebRequestEvent::removeListener(WebCore::FrameIdentifier frameIdentifier, RefPtr<WebExtensionCallbackHandler> listener)
 {
     auto removedCount = m_listeners.removeAllMatching([&](auto& entry) {
-        return entry.first->callbackFunction() == listener->callbackFunction();
+        return entry.callback->callbackFunction() == listener->callbackFunction();
     });
 
     if (!removedCount)
@@ -95,7 +108,7 @@ void WebExtensionAPIWebRequestEvent::removeListener(WebCore::FrameIdentifier fra
 bool WebExtensionAPIWebRequestEvent::hasListener(RefPtr<WebExtensionCallbackHandler> listener)
 {
     return m_listeners.containsIf([&](auto& entry) {
-        return entry.first->callbackFunction() == listener->callbackFunction();
+        return entry.callback->callbackFunction() == listener->callbackFunction();
     });
 }
 

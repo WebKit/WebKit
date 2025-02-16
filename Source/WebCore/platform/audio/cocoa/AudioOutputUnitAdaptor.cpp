@@ -71,6 +71,15 @@ OSStatus AudioOutputUnitAdaptor::inputProc(void* userData, AudioUnitRenderAction
     return adaptor->m_audioUnitRenderer.render(sampleTime, hostTime, numberOfFrames, ioData);
 }
 
+size_t AudioOutputUnitAdaptor::outputLatency() const
+{
+    Float64 latency = 0;
+    UInt32 size = sizeof(latency);
+    if (PAL::AudioUnitGetProperty(m_outputUnit, kAudioUnitProperty_Latency, kAudioUnitScope_Global, 0, &latency, &size) == noErr)
+        return latency;
+    return 0;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

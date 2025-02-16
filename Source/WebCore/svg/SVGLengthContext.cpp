@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2004, 2005, 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
- * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
  *
@@ -25,6 +25,7 @@
 #include "SVGLengthContext.h"
 
 #include "CSSUnits.h"
+#include "FontCascade.h"
 #include "FontMetrics.h"
 #include "LegacyRenderSVGRoot.h"
 #include "LengthFunctions.h"
@@ -138,6 +139,8 @@ ExceptionOr<float> SVGLengthContext::convertValueToUserUnits(float value, SVGLen
         return convertValueFromEXSToUserUnits(value);
     case SVGLengthType::Lh:
         return convertValueFromLhToUserUnits(value);
+    case SVGLengthType::Ch:
+        return convertValueFromChToUserUnits(value);
     case SVGLengthType::Centimeters:
         return value * CSS::pixelsPerCm;
     case SVGLengthType::Millimeters:
@@ -169,6 +172,8 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnits(float value, SVGL
         return convertValueFromUserUnitsToEXS(value);
     case SVGLengthType::Lh:
         return convertValueFromUserUnitsToLh(value);
+    case SVGLengthType::Ch:
+        return convertValueFromUserUnitsToCh(value);
     case SVGLengthType::Pixels:
         return value;
     case SVGLengthType::Centimeters:
@@ -193,7 +198,10 @@ ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToPercentage(float
     if (!viewportSize)
         return Exception { ExceptionCode::NotSupportedError };
 
-    return value / dimensionForLengthMode(lengthMode, *viewportSize) * 100;
+    if (auto divisor = dimensionForLengthMode(lengthMode, *viewportSize))
+        return value / divisor * 100;
+
+    return value;
 }
 
 ExceptionOr<float> SVGLengthContext::convertValueFromPercentageToUserUnits(float value, SVGLengthMode lengthMode) const
@@ -294,6 +302,28 @@ ExceptionOr<float> SVGLengthContext::convertValueFromLhToUserUnits(float value) 
         return Exception { ExceptionCode::NotSupportedError };
 
     return value * adjustForAbsoluteZoom(style->computedLineHeight(), *style);
+}
+
+ExceptionOr<float> SVGLengthContext::convertValueFromUserUnitsToCh(float value) const
+{
+    auto* style = renderStyleForLengthResolving(protectedContext().get());
+    if (!style)
+        return Exception { ExceptionCode::NotSupportedError };
+
+    float zeroWidth = style->fontCascade().zeroWidth();
+    if (!zeroWidth)
+        return 0;
+
+    return value / zeroWidth;
+}
+
+ExceptionOr<float> SVGLengthContext::convertValueFromChToUserUnits(float value) const
+{
+    auto* style = renderStyleForLengthResolving(protectedContext().get());
+    if (!style)
+        return Exception { ExceptionCode::NotSupportedError };
+
+    return value * style->fontCascade().zeroWidth();
 }
 
 std::optional<FloatSize> SVGLengthContext::viewportSize() const

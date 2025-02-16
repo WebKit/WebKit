@@ -21,7 +21,7 @@
 namespace rx
 {
 
-class CLPlatformVk : public CLPlatformImpl, public vk::Context, public vk::GlobalOps
+class CLPlatformVk : public CLPlatformImpl, public vk::ErrorContext, public vk::GlobalOps
 {
   public:
     using Ptr = std::unique_ptr<CLPlatformVk>;
@@ -50,7 +50,7 @@ class CLPlatformVk : public CLPlatformImpl, public vk::Context, public vk::Globa
 
     angle::Result initBackendRenderer();
 
-    // vk::Context
+    // vk::ErrorContext
     void handleError(VkResult result,
                      const char *file,
                      const char *function,

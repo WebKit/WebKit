@@ -143,6 +143,9 @@ This is an example on how to build and run WPE for development on the RPi:
 
 1. Build the image that will be flashed on the board:
 
+# NOTE: If you are using the **WebKit Container SDK** remember to unset the *LD_LIBRARY_PATH*
+# before building, if you don't it can cause problems with the yocto setup.
+
 ```
 user@workstation $ Tools/Scripts/cross-toolchain-helper --cross-target=rpi3-32bits-mesa --build-image
 ```
@@ -197,6 +200,9 @@ user@workstation $ sudo resize2fs /dev/mmcblk0p2
 user@workstation $ ssh root@192.168.X.Y
 root@raspberrypi3:~# git clone https://github.com/WebKit/WebKit.git --depth 1
 ````
+
+# NOTE: In the raspberrypi3 the clone can be too much, in that situation you need
+# to clone in the machine building the image and copy to the device after that.
 
 ### Build WPE for the target board
 

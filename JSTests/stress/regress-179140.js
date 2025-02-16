@@ -7,7 +7,7 @@ function testWithoutFTL()
 
     noFTL(f);
 
-    for(i=1e6;i--;)
+    for(i=testLoopCount;i--;)
         f([])
 
     try {
@@ -23,7 +23,7 @@ function testWithFTL()
     g=() => 0
     f=(a) => g.apply(0,a)
 
-    for(i=1e6;i--;)
+    for(i=testLoopCount;i--;)
         f([])
 
     try {

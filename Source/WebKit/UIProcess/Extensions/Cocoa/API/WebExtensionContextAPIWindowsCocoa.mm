@@ -48,7 +48,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
     static NSString * const apiName = @"windows.create()";
 
     if (!canOpenNewWindow()) {
-        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
         return;
     }
 
@@ -87,7 +87,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
             if (tabParameters.identifier) {
                 RefPtr tab = getTab(tabParameters.identifier.value());
                 if (!tab) {
-                    completionHandler(toWebExtensionError(apiName, nil, @"tab '%llu' was not found", tabParameters.identifier.value().toUInt64()));
+                    completionHandler(toWebExtensionError(apiName, nullString(), @"tab '%llu' was not found", tabParameters.identifier.value().toUInt64()));
                     return;
                 }
 
@@ -102,13 +102,14 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
 
     RefPtr extensionController = this->extensionController();
     if (!extensionController) {
-        completionHandler(toWebExtensionError(apiName, nil, @"No extensionController"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"the extension is not loaded"));
         return;
     }
+
     [extensionController->delegate() webExtensionController:extensionController->wrapper() openNewWindowUsingConfiguration:configuration forExtensionContext:wrapper() completionHandler:makeBlockPtr([this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](id<WKWebExtensionWindow> newWindow, NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for open new window: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
             return;
         }
 
@@ -118,7 +119,7 @@ void WebExtensionContext::windowsCreate(const WebExtensionWindowParameters& crea
         }
 
         RefPtr window = getOrCreateWindow(newWindow);
-        completionHandler(window->extensionHasAccess() ? std::optional(window->parameters()) : std::nullopt);
+        completionHandler(window->extensionHasAccess() ? std::optional(window->parameters(WebExtensionWindow::PopulateTabs::Yes)) : std::nullopt);
     }).get()];
 }
 
@@ -128,12 +129,12 @@ void WebExtensionContext::windowsGet(WebPageProxyIdentifier, WebExtensionWindowI
 
     RefPtr window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nil, @"window not found"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
         return;
     }
 
     if (!window->matches(filter)) {
-        completionHandler(toWebExtensionError(apiName, nil, @"window does not match requested 'windowTypes'"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"window does not match requested 'windowTypes'"));
         return;
     }
 
@@ -154,12 +155,12 @@ void WebExtensionContext::windowsGetLastFocused(OptionSet<WindowTypeFilter> filt
 
     RefPtr window = frontmostWindow();
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nil, @"window not found"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
         return;
     }
 
     if (!window->matches(filter)) {
-        completionHandler(toWebExtensionError(apiName, nil, @"window does not match requested 'windowTypes'"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"window does not match requested 'windowTypes'"));
         return;
     }
 
@@ -207,7 +208,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
 
     RefPtr window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nil, @"window not found"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"window not found"));
         return;
     }
 
@@ -237,7 +238,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
 
         CGRect currentFrame = window.frame();
         if (CGRectIsNull(currentFrame)) {
-            stepCompletionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
+            stepCompletionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
         }
 
@@ -255,7 +256,7 @@ void WebExtensionContext::windowsUpdate(WebExtensionWindowIdentifier windowIdent
         // coordinates with the origin in the top-left corner.
         CGRect screenFrame = window.screenFrame();
         if (CGRectIsEmpty(screenFrame)) {
-            stepCompletionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
+            stepCompletionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'top', 'left', 'width', and 'height'"));
             return;
         }
 
@@ -321,7 +322,7 @@ void WebExtensionContext::windowsRemove(WebExtensionWindowIdentifier windowIdent
 {
     RefPtr window = getWindow(windowIdentifier);
     if (!window) {
-        completionHandler(toWebExtensionError(@"windows.remove()", nil, @"window not found"));
+        completionHandler(toWebExtensionError(@"windows.remove()", nullString(), @"window not found"));
         return;
     }
 

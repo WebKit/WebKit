@@ -140,14 +140,13 @@ TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedContexts)
         @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:storageManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(storageManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedAndUntrustedContexts)
@@ -182,14 +181,13 @@ TEST(WKWebExtensionAPIStorage, SetAccessLevelTrustedAndUntrustedContexts)
         @"setTimeout(() => browser.runtime.sendMessage('Ready'), 1000)"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:storageManifest resources:@{ @"background.js": backgroundScript, @"content.js": contentScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(storageManifest, @{ @"background.js": backgroundScript, @"content.js": contentScript });
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIStorage, Set)
@@ -604,14 +602,13 @@ TEST(WKWebExtensionAPIStorage, StorageFromSubframe)
         @"content.js": contentScript
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, resources);
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequestSubframe.URL];
 
     [manager.get().defaultTab.webView loadRequest:urlRequestMain];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 } // namespace TestWebKitAPI

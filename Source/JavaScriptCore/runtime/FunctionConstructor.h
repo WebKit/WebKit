@@ -21,6 +21,7 @@
 #pragma once
 
 #include "InternalFunction.h"
+#include "ParserModes.h"
 
 namespace WTF {
 class TextPosition;
@@ -52,12 +53,8 @@ private:
 };
 STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(FunctionConstructor, InternalFunction);
 
-enum class FunctionConstructionMode {
-    Function,
-    Generator,
-    Async,
-    AsyncGenerator,
-};
+
+ASCIILiteral functionConstructorPrefix(FunctionConstructionMode);
 
 JSObject* constructFunction(JSGlobalObject*, const ArgList&, const Identifier& functionName, const SourceOrigin&, const String& sourceURL, SourceTaintedOrigin, const WTF::TextPosition&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());
 JSObject* constructFunction(JSGlobalObject*, CallFrame*, const ArgList&, FunctionConstructionMode = FunctionConstructionMode::Function, JSValue newTarget = JSValue());

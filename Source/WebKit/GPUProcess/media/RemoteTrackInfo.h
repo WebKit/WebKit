@@ -64,6 +64,7 @@ struct RemoteAudioInfo {
         audioInfo->codecString = codecString;
         audioInfo->trackID = trackID;
         audioInfo->rate = rate;
+        audioInfo->channels = channels;
         audioInfo->framesPerPacket = framesPerPacket;
         audioInfo->bitDepth = bitDepth;
         audioInfo->cookieData = cookieData;

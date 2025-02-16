@@ -74,7 +74,7 @@ static bool isCharsetSpecifyingNode(const HTMLMetaElement& element)
     if (!element.hasAttributes())
         return false;
     Vector<std::pair<StringView, StringView>> attributes;
-    for (auto& attribute : element.attributesIterator()) {
+    for (auto& attribute : element.attributes()) {
         if (attribute.name().hasPrefix())
             continue;
         attributes.append({ StringView { attribute.name().localName() }, StringView { attribute.value() } });

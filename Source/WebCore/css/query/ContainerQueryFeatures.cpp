@@ -91,7 +91,7 @@ struct WidthFeatureSchema : public SizeFeatureSchema, public ContainerProgressPr
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentWidth(), conversionData);
+        return evaluateLengthFeature(feature, renderer.contentBoxWidth(), conversionData);
     }
 
 
@@ -115,7 +115,7 @@ struct WidthFeatureSchema : public SizeFeatureSchema, public ContainerProgressPr
 
     double valueInCanonicalUnits(const RenderBox& renderer) const override
     {
-        return renderer.contentWidth();
+        return renderer.contentBoxWidth();
     }
 
     double valueInCanonicalUnits(const RenderView& view, const RenderStyle&) const override
@@ -134,7 +134,7 @@ struct HeightFeatureSchema : public SizeFeatureSchema, public ContainerProgressP
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentHeight(), conversionData);
+        return evaluateLengthFeature(feature, renderer.contentBoxHeight(), conversionData);
     }
 
     // ContainerProgressProviding conformance
@@ -157,7 +157,7 @@ struct HeightFeatureSchema : public SizeFeatureSchema, public ContainerProgressP
 
     double valueInCanonicalUnits(const RenderBox& renderer) const override
     {
-        return renderer.contentHeight();
+        return renderer.contentBoxHeight();
     }
 
     double valueInCanonicalUnits(const RenderView& view, const RenderStyle&) const override
@@ -176,7 +176,7 @@ struct InlineSizeFeatureSchema : public SizeFeatureSchema, public ContainerProgr
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentLogicalWidth(), conversionData);
+        return evaluateLengthFeature(feature, renderer.contentBoxLogicalWidth(), conversionData);
     }
 
     // ContainerProgressProviding conformance
@@ -199,7 +199,7 @@ struct InlineSizeFeatureSchema : public SizeFeatureSchema, public ContainerProgr
 
     double valueInCanonicalUnits(const RenderBox& renderer) const override
     {
-        return renderer.contentLogicalWidth();
+        return renderer.contentBoxLogicalWidth();
     }
 
     double valueInCanonicalUnits(const RenderView& view, const RenderStyle& style) const override
@@ -218,7 +218,7 @@ struct BlockSizeFeatureSchema : public SizeFeatureSchema, public ContainerProgre
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateLengthFeature(feature, renderer.contentLogicalHeight(), conversionData);
+        return evaluateLengthFeature(feature, renderer.contentBoxLogicalHeight(), conversionData);
     }
 
     // ContainerProgressProviding conformance
@@ -241,7 +241,7 @@ struct BlockSizeFeatureSchema : public SizeFeatureSchema, public ContainerProgre
 
     double valueInCanonicalUnits(const RenderBox& renderer) const override
     {
-        return renderer.contentLogicalHeight();
+        return renderer.contentBoxLogicalHeight();
     }
 
     double valueInCanonicalUnits(const RenderView& view, const RenderStyle& style) const override
@@ -260,7 +260,7 @@ struct AspectRatioFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        return evaluateRatioFeature(feature, renderer.contentSize(), conversionData);
+        return evaluateRatioFeature(feature, renderer.contentBoxSize(), conversionData);
     }
 };
 
@@ -274,7 +274,7 @@ struct OrientationFeatureSchema : public SizeFeatureSchema {
 
     EvaluationResult evaluate(const MQ::Feature& feature, const RenderBox& renderer, const CSSToLengthConversionData& conversionData) const override
     {
-        bool isPortrait = renderer.contentHeight() >= renderer.contentWidth();
+        bool isPortrait = renderer.contentBoxHeight() >= renderer.contentBoxWidth();
         return evaluateIdentifierFeature(feature, isPortrait ? CSSValuePortrait : CSSValueLandscape, conversionData);
     }
 };

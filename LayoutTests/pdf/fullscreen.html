@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline';">
+    <script src="../resources/ui-helper.js"></script>
 </head>
 <body>
 
@@ -9,7 +10,8 @@
         testRunner.waitUntilDone();
     }
 
-    window.addEventListener("load", () => {
+    window.addEventListener("load", async () => {
+        await UIHelper.waitForPDFFadeIn();
         if (window.testRunner)
             testRunner.notifyDone();
     })

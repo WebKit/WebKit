@@ -228,7 +228,7 @@ private:
     Ref<SourceBufferPrivate> m_private;
     Ref<SourceBufferClientImpl> m_client;
 
-    MediaSource* m_source;
+    WeakPtr<MediaSource> m_source;
     AppendMode m_mode { AppendMode::Segments };
 
     WTF::Observer<WebCoreOpaqueRoot()> m_opaqueRootProvider;

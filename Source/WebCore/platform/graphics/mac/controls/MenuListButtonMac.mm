@@ -43,14 +43,15 @@ MenuListButtonMac::MenuListButtonMac(MenuListButtonPart& owningPart, ControlFact
 {
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static void interpolateGradient(const CGFloat* inData, CGFloat* outData, std::span<const float, 4> dark, std::span<const float, 4> light)
+static void interpolateGradient(const CGFloat* rawInData, CGFloat* rawOutData, std::span<const float, 4> dark, std::span<const float, 4> light)
 {
+    auto inData = unsafeMakeSpan(rawInData, 1);
+    auto outData = unsafeMakeSpan(rawOutData, 4);
+
     float a = inData[0];
     for (size_t i = 0; i < 4; ++i)
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void topGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
 {
@@ -184,10 +185,10 @@ void MenuListButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& b
     if (bounds.width() < arrowWidth + arrowPaddingBefore * style.zoomFactor)
         return;
 
-    bool isRightToLeft = style.states.contains(ControlStyle::State::RightToLeft);
+    bool isInlineFlipped = style.states.contains(ControlStyle::State::InlineFlippedWritingMode);
 
     float leftEdge;
-    if (isRightToLeft)
+    if (isInlineFlipped)
         leftEdge = logicalBounds.x() + arrowPaddingAfter * style.zoomFactor;
     else
         leftEdge = logicalBounds.maxX() - arrowPaddingAfter * style.zoomFactor - arrowWidth;

@@ -34,6 +34,7 @@
 #include "PixelBuffer.h"
 #include "PlatformDisplay.h"
 #include "SharedBuffer.h"
+#include "SkiaSpanExtras.h"
 #include <skia/core/SkData.h>
 
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
@@ -105,7 +106,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
             return false;
 
         m_pixelData = WTFMove(data);
-        m_imagePixelData = m_pixelData->data();
+        m_imagePixelData = span(m_pixelData.get());
 
         // SkSurfaces backed by textures have RGBA format.
         m_imageSourceFormat = DataFormat::RGBA8;
@@ -115,7 +116,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
             return false;
 
         m_skImage = WTFMove(platformImage);
-        m_imagePixelData = pixmap.addr();
+        m_imagePixelData = span(pixmap);
 
         // Raster SkSurfaces have BGRA format.
         m_imageSourceFormat = DataFormat::BGRA8;

@@ -130,7 +130,8 @@ static void parseCookieAttributes(const String& attribute, bool& hasMaxAge, Cook
             result.expires = std::nullopt;
         }
     } else if (equalLettersIgnoringASCIICase(attributeName, "expires"_s) && !hasMaxAge) {
-        if (auto expiryTime = parseExpiresMS(attributeValue.utf8().span())) {
+        // FIXME: This code passes a UTF-8 buffer to a function that expects to parse Latin1.
+        if (auto expiryTime = parseExpiresMS(byteCast<LChar>(attributeValue.utf8().span()))) {
             result.expires = expiryTime.value();
             result.session = false;
         } else if (!hasMaxAge) {

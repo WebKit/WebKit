@@ -52,8 +52,10 @@ bool KeyframeEffectStack::addEffect(KeyframeEffect& effect)
 {
     // To qualify for membership in an effect stack, an effect must have a target, an animation, a timeline and be relevant.
     // This method will be called in WebAnimation and KeyframeEffect as those properties change.
-    if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->timeline() || !effect.animation()->isRelevant())
+    if (!effect.targetStyleable() || !effect.animation() || !effect.animation()->isRelevant())
         return false;
+
+    ASSERT(!m_effects.contains(&effect));
 
     m_effects.append(effect);
     m_isSorted = false;
@@ -80,7 +82,7 @@ void KeyframeEffectStack::removeEffect(KeyframeEffect& effect)
         startAcceleratedAnimationsIfPossible();
 }
 
-bool KeyframeEffectStack::hasMatchingEffect(const Function<bool(const KeyframeEffect&)>& function) const
+bool KeyframeEffectStack::hasMatchingEffect(NOESCAPE const Function<bool(const KeyframeEffect&)>& function) const
 {
     for (auto& effect : m_effects) {
         if (function(*effect))
@@ -151,7 +153,7 @@ void KeyframeEffectStack::setCSSAnimationList(RefPtr<const AnimationList>&& cssA
     m_isSorted = false;
 }
 
-OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
+OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle& targetStyle, UncheckedKeyHashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext& resolutionContext)
 {
     OptionSet<AnimationImpact> impact;
 
@@ -184,8 +186,8 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
 
         // If one of the effect's resolved property changed it could affect whether that effect's animation is removed.
         if (keyframeRecomputationReason && *keyframeRecomputationReason == KeyframeEffect::RecomputationReason::LogicalPropertyChange) {
-            ASSERT(animation->timeline());
-            animation->timeline()->animationTimingDidChange(*animation);
+            if (RefPtr timeline = animation->timeline())
+                timeline->animationTimingDidChange(*animation);
         }
 
         affectedProperties.formUnion(effect->animatedProperties());
@@ -234,7 +236,7 @@ bool KeyframeEffectStack::allowsAcceleration() const
     // stack is unable to be accelerated, or if we have more than one effect animating
     // an accelerated property with an implicit keyframe.
 
-    HashSet<AnimatableCSSProperty> allAcceleratedProperties;
+    UncheckedKeyHashSet<AnimatableCSSProperty> allAcceleratedProperties;
 
     for (auto& effect : m_effects) {
         if (effect->preventsAcceleration())
@@ -274,9 +276,9 @@ void KeyframeEffectStack::lastStyleChangeEventStyleDidChange(const RenderStyle* 
         effect->lastStyleChangeEventStyleDidChange(previousStyle, currentStyle);
 }
 
-void KeyframeEffectStack::cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>& overriddenProperties, const Document& document)
+void KeyframeEffectStack::cascadeDidOverrideProperties(const UncheckedKeyHashSet<AnimatableCSSProperty>& overriddenProperties, const Document& document)
 {
-    HashSet<AnimatableCSSProperty> acceleratedPropertiesOverriddenByCascade;
+    UncheckedKeyHashSet<AnimatableCSSProperty> acceleratedPropertiesOverriddenByCascade;
     for (auto animatedProperty : overriddenProperties) {
         if (CSSPropertyAnimation::animationOfPropertyIsAccelerated(animatedProperty, document.settings()))
             acceleratedPropertiesOverriddenByCascade.add(animatedProperty);

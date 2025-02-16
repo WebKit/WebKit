@@ -43,7 +43,7 @@ public:
     enum class HardwareBuffer : bool { No, Yes };
     enum class TreatNoOutputAsError : bool { No, Yes };
     struct Config {
-        std::span<const uint8_t> description;
+        Vector<uint8_t> description;
         uint64_t width { 0 };
         uint64_t height { 0 };
         std::optional<PlatformVideoColorSpace> colorSpace;

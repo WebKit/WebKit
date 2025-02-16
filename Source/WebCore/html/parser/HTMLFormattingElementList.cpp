@@ -30,8 +30,6 @@
 #include <stdio.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 // Biblically, Noah's Ark only had room for two of each animal, but in the
@@ -114,8 +112,10 @@ void HTMLFormattingElementList::removeUpdatingBookmark(Element& element, Bookmar
         m_entries.remove(index);
         // Removing an element from the list can change the position of the bookmarked
         // item. Update the address pointed by the bookmark, when needed.
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (bookmarkIndex > index)
             bookmark.m_mark--;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 }
 
@@ -229,5 +229,3 @@ void HTMLFormattingElementList::show()
 #endif
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

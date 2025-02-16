@@ -25,12 +25,10 @@
 
 #pragma once
 
-#ifndef UIScriptContext_h
-#define UIScriptContext_h
-
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/Ref.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -74,13 +72,12 @@ typedef enum  {
     CallbackTypeNonPersistent = firstNonPersistentCallbackID
 } CallbackType;
 
-class UIScriptContext {
-    WTF_MAKE_FAST_ALLOCATED;
-    WTF_MAKE_NONCOPYABLE(UIScriptContext);
+class UIScriptContext : public RefCounted<UIScriptContext>, public CanMakeWeakPtr<UIScriptContext> {
 public:
     using UIScriptControllerFactory = Ref<UIScriptController> (*)(UIScriptContext&);
 
-    UIScriptContext(UIScriptContextDelegate&, UIScriptControllerFactory);
+    static Ref<UIScriptContext> create(UIScriptContextDelegate& delegate, UIScriptControllerFactory factory) { return adoptRef(*new UIScriptContext(delegate, WTFMove(factory))); }
+
     ~UIScriptContext();
 
     void runUIScript(const String& script, unsigned scriptCallbackID);
@@ -103,7 +100,9 @@ public:
     JSGlobalContextRef jsContext() const { return m_context.get(); }
 
 private:
-    JSRetainPtr<JSGlobalContextRef> m_context;
+    UIScriptContext(UIScriptContextDelegate&, UIScriptControllerFactory);
+
+    const JSRetainPtr<JSGlobalContextRef> m_context;
     
     bool hasOutstandingAsyncTasks() const { return !m_callbacks.isEmpty(); }
     bool currentParentCallbackIsPendingCompletion() const { return m_uiScriptResultsPendingCompletion.contains(m_currentScriptCallbackID); }
@@ -125,5 +124,3 @@ private:
 };
 
 }
-
-#endif // UIScriptContext_h

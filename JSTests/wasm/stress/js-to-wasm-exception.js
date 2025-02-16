@@ -43,11 +43,11 @@ async function test() {
     const bin = builder.WebAssembly().get();
     const {instance} = await WebAssembly.instantiate(bin, { context: { callback } });
 
-    for (let i = 0; i < 100000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
         assert.instanceof(jsToWasm(instance.exports.foo, 1, 2, 3), Error);
     flag = true;
     assert.instanceof(jsToWasm(instance.exports.foo, 1, 2, 3), Error);
-    for (let i = 0; i < 100000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
         assert.instanceof(jsToWasm(instance.exports.foo, 1, 2, 3), Error);
 }
 

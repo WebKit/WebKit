@@ -69,6 +69,14 @@
 
 #endif
 
+#if defined(PAS_BMALLOC) && PAS_BMALLOC
+#if defined(__has_include)
+#if __has_include(<WebKitAdditions/pas_utils_additions.c>) && !PAS_ENABLE_TESTING
+#include <WebKitAdditions/pas_utils_additions.c>
+#endif // __has_include(<WebKitAdditions/pas_utils_additions.c>) && !PAS_ENABLE_TESTING
+#endif // defined(__has_include)
+#endif // defined(PAS_BMALLOC) && PAS_BMALLOC
+
 #if PAS_X86_64 || PAS_ARM64
 
 #if PAS_OS(DARWIN) && PAS_VA_OPT_SUPPORTED

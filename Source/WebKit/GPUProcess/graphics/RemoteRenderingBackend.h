@@ -143,7 +143,7 @@ private:
     void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
     void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
 #if PLATFORM(COCOA)
-    void didDrawCompositedToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier, WebCore::SnapshotIdentifier);
+    void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier, WebCore::SnapshotIdentifier);
 #endif
     void destroyGetPixelBufferSharedMemory();
     void cacheNativeImage(WebCore::ShareableBitmap::Handle&&, WebCore::RenderingResourceIdentifier);

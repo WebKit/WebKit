@@ -34,6 +34,12 @@ use FindBin;
 use lib $FindBin::Bin;
 use webkitdirs;
 
+if (isLinux()) {
+    my $scriptsDir = relativeScriptsDir();
+    exec "$scriptsDir/../glib/run-webkit-app.py", @ARGV;
+    exit;
+}
+
 printHelpAndExitForRunAndDebugWebKitAppIfNeeded();
 
 setConfiguration();

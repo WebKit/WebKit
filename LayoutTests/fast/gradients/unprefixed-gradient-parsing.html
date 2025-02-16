@@ -30,7 +30,7 @@ function testGradientComputedValue(css)
 
 debug('<p>linear-gradient</p>');
 
-shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(black 0%)")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(black 0%)")', '"linear-gradient(black 0%)"');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(top)")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(to top)")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10deg)")', '""');
@@ -42,7 +42,7 @@ shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10px 20%
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(to left left)")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(to left center)")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(to left 10deg, black 0%, white)")', '""');
-shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(black)")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(black)")', '"linear-gradient(black)"');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10deg, black 0%, 25%, 50%, white)")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10deg, black 0%, 50%)")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10deg, 50%, white)")', '""');
@@ -50,7 +50,7 @@ shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10deg, 0
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10deg, white, black, 80%)")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: linear-gradient(10deg, black, , white)")', '""');
 
-shouldBe('testGradientComputedValue("background-image: linear-gradient(black 0%)")', '"none"');
+shouldBe('testGradientComputedValue("background-image: linear-gradient(black 0%)")', '"linear-gradient(rgb(0, 0, 0) 0%)"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(top)")', '"none"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(to top)")', '"none"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(10deg)")', '"none"');
@@ -62,7 +62,7 @@ shouldBe('testGradientComputedValue("background-image: linear-gradient(10px 20%,
 shouldBe('testGradientComputedValue("background-image: linear-gradient(to left left)")', '"none"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(to left center)")', '"none"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(to left 10deg, black 0%, white)")', '"none"');
-shouldBe('testGradientComputedValue("background-image: linear-gradient(black)")', '"none"');
+shouldBe('testGradientComputedValue("background-image: linear-gradient(black)")', '"linear-gradient(rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(10deg, black 0%, 25%, 50%, white)")', '"none"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(10deg, black 0%, 50%)")', '"none"');
 shouldBe('testGradientComputedValue("background-image: linear-gradient(10deg, 50%, white)")', '"none"');

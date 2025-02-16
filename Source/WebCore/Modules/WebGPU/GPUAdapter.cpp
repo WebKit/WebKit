@@ -69,14 +69,21 @@ static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
 {
     static constexpr std::pair<ComparableASCIILiteral, GPUFeatureName> mappings[] = {
         { "bgra8unorm-storage"_s, GPUFeatureName::Bgra8unormStorage },
+        { "clip-distances"_s, GPUFeatureName::ClipDistances },
         { "depth-clip-control"_s, GPUFeatureName::DepthClipControl },
         { "depth32float-stencil8"_s, GPUFeatureName::Depth32floatStencil8 },
+        { "dual-source-blending"_s, GPUFeatureName::DualSourceBlending },
+        { "float16-renderable"_s, GPUFeatureName::Float16Renderable },
+        { "float32-blendable"_s, GPUFeatureName::Float32Blendable },
         { "float32-filterable"_s, GPUFeatureName::Float32Filterable },
+        { "float32-renderable"_s, GPUFeatureName::Float32Renderable },
         { "indirect-first-instance"_s, GPUFeatureName::IndirectFirstInstance },
         { "rg11b10ufloat-renderable"_s, GPUFeatureName::Rg11b10ufloatRenderable },
         { "shader-f16"_s, GPUFeatureName::ShaderF16 },
         { "texture-compression-astc"_s, GPUFeatureName::TextureCompressionAstc },
+        { "texture-compression-astc-sliced-3d"_s, GPUFeatureName::TextureCompressionAstcSliced3d },
         { "texture-compression-bc"_s, GPUFeatureName::TextureCompressionBc },
+        { "texture-compression-bc-sliced-3d"_s, GPUFeatureName::TextureCompressionBcSliced3d },
         { "texture-compression-etc2"_s, GPUFeatureName::TextureCompressionEtc2 },
         { "timestamp-query"_s, GPUFeatureName::TimestampQuery },
     };

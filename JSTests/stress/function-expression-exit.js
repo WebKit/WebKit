@@ -5,7 +5,7 @@ function foo(x) {
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(42)();
     if (result != 42)
         throw "Error: bad result in loop: " + result;

@@ -1109,7 +1109,7 @@ void testStoreAfterClobberExitsSideways()
             proc.pinRegister(reg);
         });
 
-    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
+    proc.setWasmBoundsCheckGenerator([=](CCallHelpers& jit, WasmBoundsCheckValue*, GPRReg pinnedGPR) {
         CHECK_EQ(pinnedGPR, pinnedSizeGPR);
 
         jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);
@@ -1299,7 +1299,7 @@ void testStoreAfterClobberExitsSidewaysSuccessor()
             proc.pinRegister(reg);
         });
 
-    proc.setWasmBoundsCheckGenerator([=] (CCallHelpers& jit, GPRReg pinnedGPR) {
+    proc.setWasmBoundsCheckGenerator([=](CCallHelpers& jit, WasmBoundsCheckValue*, GPRReg pinnedGPR) {
         CHECK_EQ(pinnedGPR, pinnedSizeGPR);
 
         jit.move(CCallHelpers::TrustedImm32(42), GPRInfo::returnValueGPR);

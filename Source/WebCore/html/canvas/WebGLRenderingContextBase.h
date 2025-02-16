@@ -66,8 +66,6 @@
 
 #include "GCGLSpan.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 class WebGLRenderingContextBase;
 }
@@ -781,9 +779,9 @@ protected:
     bool m_areOESTextureHalfFloatFormatsAndTypesAdded { false };
     bool m_areEXTsRGBFormatsAndTypesAdded { false };
 
-    HashSet<GCGLenum> m_supportedTexImageSourceInternalFormats;
-    HashSet<GCGLenum> m_supportedTexImageSourceFormats;
-    HashSet<GCGLenum> m_supportedTexImageSourceTypes;
+    UncheckedKeyHashSet<GCGLenum> m_supportedTexImageSourceInternalFormats;
+    UncheckedKeyHashSet<GCGLenum> m_supportedTexImageSourceFormats;
+    UncheckedKeyHashSet<GCGLenum> m_supportedTexImageSourceTypes;
 
     // Helpers for getParameter and other similar functions.
     bool getBooleanParameter(GCGLenum);
@@ -1101,7 +1099,5 @@ WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContextBase>*);
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_CANVASRENDERINGCONTEXT(WebCore::WebGLRenderingContextBase, isWebGL())
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

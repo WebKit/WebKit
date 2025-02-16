@@ -49,12 +49,20 @@ Ref<CStringBuffer> CStringBuffer::createUninitialized(size_t length)
     return buffer;
 }
 
+CString::CString(ASCIILiteral string)
+{
+    if (!string)
+        return;
+
+    init(string.span());
+}
+
 CString::CString(const char* string)
 {
     if (!string)
         return;
 
-    init(WTF::span(string));
+    init(unsafeSpan(string));
 }
 
 CString::CString(std::span<const char> string)
@@ -130,16 +138,7 @@ bool operator==(const CString& a, const CString& b)
         return false;
     if (a.length() != b.length())
         return false;
-    return equal(a.span().data(), b.span());
-}
-
-bool operator==(const CString& a, const char* b)
-{
-    if (a.isNull() != !b)
-        return false;
-    if (!b)
-        return true;
-    return !strcmp(a.data(), b);
+    return equal(byteCast<LChar>(a.span()).data(), byteCast<LChar>(b.span()));
 }
 
 unsigned CString::hash() const
@@ -158,7 +157,9 @@ bool operator<(const CString& a, const CString& b)
         return !b.isNull();
     if (b.isNull())
         return false;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return strcmp(a.data(), b.data()) < 0;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 bool CStringHash::equal(const CString& a, const CString& b)

@@ -42,12 +42,12 @@ Color toStyleColor(const CSS::ResolvedColor& unresolved, ColorResolutionState&)
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const ResolvedColor& absoluteColor)
+void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext&, const ResolvedColor& absoluteColor)
 {
     builder.append(serializationForCSS(absoluteColor.color));
 }
 
-String serializationForCSS(const ResolvedColor& absoluteColor)
+String serializationForCSS(const CSS::SerializationContext&, const ResolvedColor& absoluteColor)
 {
     return serializationForCSS(absoluteColor.color);
 }
@@ -56,8 +56,7 @@ String serializationForCSS(const ResolvedColor& absoluteColor)
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const ResolvedColor& absoluteColor)
 {
-    ts << "absoluteColor(" << absoluteColor.color.debugDescription() << ")";
-    return ts;
+    return ts << "absoluteColor(" << absoluteColor.color.debugDescription() << ")";
 }
 
 } // namespace Style

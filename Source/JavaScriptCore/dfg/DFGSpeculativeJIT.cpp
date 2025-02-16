@@ -125,12 +125,14 @@ SpeculativeJIT::~SpeculativeJIT() = default;
 static void emitStackOverflowCheck(JITCompiler& jit, MacroAssembler::JumpList& stackOverflow)
 {
     int frameTopOffset = virtualRegisterForLocal(jit.graph().requiredRegisterCountForExecutionAndExit() - 1).offset() * sizeof(Register);
-    unsigned maxFrameSize = -frameTopOffset;
 
     jit.addPtr(MacroAssembler::TrustedImm32(frameTopOffset), GPRInfo::callFrameRegister, GPRInfo::regT1);
+#if !CPU(ADDRESS64)
+    unsigned maxFrameSize = -frameTopOffset;
     if (UNLIKELY(maxFrameSize > Options::reservedZoneSize()))
         stackOverflow.append(jit.branchPtr(MacroAssembler::Above, GPRInfo::regT1, GPRInfo::callFrameRegister));
-    stackOverflow.append(jit.branchPtr(MacroAssembler::Above, MacroAssembler::AbsoluteAddress(jit.vm().addressOfSoftStackLimit()), GPRInfo::regT1));
+#endif
+    stackOverflow.append(jit.branchPtr(MacroAssembler::GreaterThan, MacroAssembler::AbsoluteAddress(jit.vm().addressOfSoftStackLimit()), GPRInfo::regT1));
 }
 
 void SpeculativeJIT::compile()
@@ -4815,6 +4817,7 @@ void SpeculativeJIT::compileInstanceOfCustom(Node* node)
 {
     // We could do something smarter here but this case is currently super rare and unless
     // Symbol.hasInstance becomes popular will likely remain that way.
+    SuppressRegisterAllocationValidation suppressScope(*this);
 
     JSValueOperand value(this, node->child1());
     SpeculateCellOperand constructor(this, node->child2());
@@ -6334,7 +6337,7 @@ void SpeculativeJIT::compileArithRounding(Node* node)
             case ArithTrunc: {
                 FPRTemporary rounded(this);
                 FPRReg resultFPR = rounded.fpr();
-                roundTowardZeroDouble(valueFPR, resultFPR);
+                truncDouble(valueFPR, resultFPR);
                 setResult(resultFPR);
                 return;
             }
@@ -6757,6 +6760,19 @@ void SpeculativeJIT::compileArithPow(Node* node)
     callOperationWithoutExceptionCheck(operationMathPow, resultFpr, xOperandfpr, yOperandfpr);
     skipFallback.link(this);
     doubleResult(resultFpr, node);
+}
+
+void SpeculativeJIT::compilePurifyNaN(Node* node)
+{
+    SpeculateDoubleOperand value(this, node->child1());
+    FPRTemporary result(this);
+
+    FPRReg valueFPR = value.fpr();
+    FPRReg resultFPR = result.fpr();
+
+    moveDouble(valueFPR, resultFPR);
+    purifyNaN(resultFPR);
+    doubleResult(resultFPR, node);
 }
 
 // Returns true if the compare is fused with a subsequent branch.
@@ -9563,6 +9579,7 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
 
     case StringUse: {
         ASSERT(node->arrayMode().type() == Array::Contiguous);
+#if USE(JSVALUE32_64)
         SpeculateCellOperand searchElement(this, searchElementEdge);
 
         GPRReg searchElementGPR = searchElement.gpr();
@@ -9574,7 +9591,118 @@ void SpeculativeJIT::compileArrayIndexOf(Node* node)
         callOperation(operationArrayIndexOfString, lengthGPR, LinkableConstant::globalObject(*this, node), storageGPR, searchElementGPR, indexGPR);
 
         strictInt32Result(lengthGPR, node);
+
         return;
+#else
+        SpeculateCellOperand searchElement(this, searchElementEdge);
+        GPRReg searchElementGPR = searchElement.gpr();
+        speculateString(searchElementEdge, searchElementGPR);
+
+        zeroExtend32ToWord(lengthGPR, lengthGPR);
+        zeroExtend32ToWord(indexGPR, indexGPR);
+
+        GPRTemporary tempLengthForCompare(this);
+        GPRTemporary tempLeft(this);
+        GPRTemporary tempRight(this);
+        GPRTemporary tempLeftChar(this);
+        GPRTemporary tempRightChar(this);
+
+        GPRReg compareLengthGPR = tempLengthForCompare.gpr();
+        GPRReg leftStringGPR = tempLeft.gpr();
+        GPRReg rightStringGPR = tempRight.gpr();
+        GPRReg leftCharGPR = tempLeftChar.gpr();
+        GPRReg rightCharGPR = tempRightChar.gpr();
+
+        JumpList slowCase;
+        loadPtr(Address(searchElementGPR, JSString::offsetOfValue()), rightStringGPR);
+        slowCase.append(branchIfRopeStringImpl(rightStringGPR));
+        slowCase.append(branchTest32(
+            Zero,
+            Address(rightStringGPR, StringImpl::flagsOffset()),
+            TrustedImm32(StringImpl::flagIs8Bit())
+        ));
+
+        auto emitLoop = [&](auto emitCompare) {
+#if ENABLE(DFG_REGISTER_ALLOCATION_VALIDATION)
+            clearRegisterAllocationOffsets();
+#endif
+            Label loop = label();
+
+            Jump notFound = branch32(Equal, indexGPR, lengthGPR);
+
+            JumpList found = emitCompare();
+
+            add32(TrustedImm32(1), indexGPR);
+            jump().linkTo(loop, this);
+
+            notFound.link(this);
+            move(TrustedImm32(-1), indexGPR);
+
+            found.link(this);
+        };
+
+        auto emitCompare = [&]() -> JumpList {
+            JumpList trueCase;
+            JumpList falseCase;
+
+            loadPtr(BaseIndex(storageGPR, indexGPR, TimesEight), leftStringGPR);
+            falseCase.append(branchIfNotCell(leftStringGPR));
+            falseCase.append(branchIfNotString(leftStringGPR));
+
+            loadPtr(BaseIndex(storageGPR, indexGPR, TimesEight, PayloadOffset), leftStringGPR);
+
+            loadPtr(Address(leftStringGPR, JSString::offsetOfValue()), leftStringGPR);
+
+            slowCase.append(branchIfRopeStringImpl(leftStringGPR));
+
+            load32(Address(leftStringGPR, StringImpl::lengthMemoryOffset()), compareLengthGPR);
+            loadPtr(Address(searchElementGPR, JSString::offsetOfValue()), rightStringGPR);
+            falseCase.append(branch32(
+                NotEqual,
+                Address(rightStringGPR, StringImpl::lengthMemoryOffset()),
+                compareLengthGPR
+            ));
+
+            trueCase.append(branchTest32(Zero, compareLengthGPR));
+
+            slowCase.append(branchTest32(
+                Zero,
+                Address(leftStringGPR, StringImpl::flagsOffset()),
+                TrustedImm32(StringImpl::flagIs8Bit())
+            ));
+
+            loadPtr(Address(leftStringGPR, StringImpl::dataOffset()), leftStringGPR);
+            loadPtr(Address(rightStringGPR, StringImpl::dataOffset()), rightStringGPR);
+
+            sub32(TrustedImm32(1), compareLengthGPR);
+
+            Label compareLoop = label();
+
+            load8(BaseIndex(leftStringGPR, compareLengthGPR, TimesOne), leftCharGPR);
+            load8(BaseIndex(rightStringGPR, compareLengthGPR, TimesOne), rightCharGPR);
+            falseCase.append(branch32(NotEqual, leftCharGPR, rightCharGPR));
+
+            sub32(TrustedImm32(1), compareLengthGPR);
+            trueCase.append(branch32(LessThan, compareLengthGPR, TrustedImm32(0)));
+            jump(compareLoop);
+
+            falseCase.link(this);
+
+            return trueCase;
+        };
+
+        emitLoop(emitCompare);
+
+        addSlowPathGenerator(slowPathCall(
+            slowCase, this, operationArrayIndexOfString,
+            indexGPR, LinkableConstant::globalObject(*this, node),
+            storageGPR, searchElementGPR, indexGPR
+        ));
+
+        strictInt32Result(indexGPR, node);
+
+        return;
+#endif
     }
 
     case ObjectUse:
@@ -13444,7 +13572,8 @@ void SpeculativeJIT::compileIsEmptyStorage(Node* node)
     unblessedBooleanResult(resultGPR, node);
 }
 
-void SpeculativeJIT::compileMapStorage(Node* node)
+template<typename Operation>
+void SpeculativeJIT::compileMapStorageImpl(Node* node, Operation mapOperation, Operation setOperation)
 {
     SpeculateCellOperand map(this, node->child1());
     GPRReg mapGPR = map.gpr();
@@ -13459,8 +13588,18 @@ void SpeculativeJIT::compileMapStorage(Node* node)
     flushRegisters();
     JSValueRegsFlushedCallResult result(this);
     JSValueRegs resultRegs = result.regs();
-    callOperation(node->child1().useKind() == MapObjectUse ? operationMapStorage : operationSetStorage, resultRegs, LinkableConstant::globalObject(*this, node), mapGPR);
+    callOperation(node->child1().useKind() == MapObjectUse ? mapOperation : setOperation, resultRegs, LinkableConstant::globalObject(*this, node), mapGPR);
     cellResult(resultRegs.payloadGPR(), node);
+}
+
+void SpeculativeJIT::compileMapStorage(Node* node)
+{
+    compileMapStorageImpl(node, operationMapStorage, operationSetStorage);
+}
+
+void SpeculativeJIT::compileMapStorageOrSentinel(Node* node)
+{
+    compileMapStorageImpl(node, operationMapStorageOrSentinel, operationSetStorageOrSentinel);
 }
 
 void SpeculativeJIT::compileMapIteratorNext(Node* node)
@@ -14697,6 +14836,7 @@ void SpeculativeJIT::compileNewObject(Node* node)
 template<typename JSClass, typename Operation>
 void SpeculativeJIT::compileNewInternalFieldObjectImpl(Node* node, Operation operation)
 {
+    SuppressRegisterAllocationValidation suppressScope(*this);
     GPRTemporary result(this);
     GPRTemporary scratch1(this);
     GPRTemporary scratch2(this);

@@ -1,0 +1,147 @@
+From 072f7041b5044cbe29c9bec78cf78a2e45cc33a7 Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Wed, 5 Feb 2025 09:23:09 +0000
+Subject: [PATCH] GStreamer: Vendor an oggdemux patch scheduled for 1.24.13
+
+---
+ ...-0009-oggdemux-Fix-racy-decode-error.patch | 128 ++++++++++++++++++
+ 1 file changed, 128 insertions(+)
+ create mode 100644 patches/gstreamer/gst-plugins-base-0009-oggdemux-Fix-racy-decode-error.patch
+
+diff --git a/patches/gstreamer/gst-plugins-base-0009-oggdemux-Fix-racy-decode-error.patch b/patches/gstreamer/gst-plugins-base-0009-oggdemux-Fix-racy-decode-error.patch
+new file mode 100644
+index 0000000..2a4b713
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-base-0009-oggdemux-Fix-racy-decode-error.patch
+@@ -0,0 +1,128 @@
++From dfb287339abe6ede03ec8abac2a12dd665ad4707 Mon Sep 17 00:00:00 2001
++From: Philippe Normand <philn@igalia.com>
++Date: Thu, 11 Apr 2019 11:24:34 +0100
++Subject: [PATCH] oggdemux: Fix racy decode error
++
++Sometimes the seek to the end of file to determine the duration would trigger a
++reset of the source pads, that would confuse the decoder downstream and trigger
++an error. So the proposed fix is to not reset pads when the segment event being
++processed is the consequence of a seek performed to determine the duration.
++
++Fixes #4212
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/937>
++---
++ .../testsuites/validate.testslist             |  8 -----
++ .../testsuites/validate_known_issues.py       | 33 -------------------
++ .../gst-plugins-base/ext/ogg/gstoggdemux.c    |  2 +-
++ 3 files changed, 1 insertion(+), 42 deletions(-)
++
++diff --git a/subprojects/gst-integration-testsuites/testsuites/validate.testslist b/subprojects/gst-integration-testsuites/testsuites/validate.testslist
++index 7f826b76ca..929de93cce 100644
++--- a/subprojects/gst-integration-testsuites/testsuites/validate.testslist
+++++ b/subprojects/gst-integration-testsuites/testsuites/validate.testslist
++@@ -755,7 +755,6 @@ validate.pushfile.media_check.qtdemux-test-frag-basic_zero_dur_no_mehd_mp4
++ ~validate.rtsp2.playback.fast_forward.cm5000_hevc_1080i_colorbars_ts
++ ~validate.rtsp2.playback.fast_forward.mp3_h264_0_mp4
++ ~validate.rtsp2.playback.fast_forward.mp3_h264_1_mp4
++-~validate.rtsp2.playback.fast_forward.opus_1_ogg
++ ~validate.rtsp2.playback.fast_forward.raw_h264_0_mp4
++ ~validate.rtsp2.playback.fast_forward.raw_h264_1_mp4
++ ~validate.rtsp2.playback.fast_forward.rawaudioS32LE_prores_mov
++@@ -765,8 +764,6 @@ validate.pushfile.media_check.qtdemux-test-frag-basic_zero_dur_no_mehd_mp4
++ ~validate.rtsp2.playback.fast_forward.samples_multimedia_cx_testsuite_iv31_avi
++ ~validate.rtsp2.playback.fast_forward.test5_mkv
++ ~validate.rtsp2.playback.fast_forward.tron_en_ge_aac_h264_ts
++-~validate.rtsp2.playback.fast_forward.vorbis_theora_0_ogg
++-~validate.rtsp2.playback.fast_forward.vorbis_theora_1_ogg
++ ~validate.rtsp2.playback.fast_forward.vorbis_vp8_0_webm
++ ~validate.rtsp2.playback.fast_forward.vorbis_vp8_1_webm
++ ~validate.rtsp2.playback.play_15s.1080p_xavc_audio_conforming_accuracy_mxf
++@@ -810,7 +807,6 @@ validate.pushfile.media_check.qtdemux-test-frag-basic_zero_dur_no_mehd_mp4
++ ~validate.rtsp2.playback.reverse_playback.mp3_h264_0_mp4
++ ~validate.rtsp2.playback.reverse_playback.mp3_h264_1_mp4
++ ~validate.rtsp2.playback.reverse_playback.numerated_frames_blue_ogv
++-~validate.rtsp2.playback.reverse_playback.opus_1_ogg
++ ~validate.rtsp2.playback.reverse_playback.raw_h264_0_mp4
++ ~validate.rtsp2.playback.reverse_playback.raw_h264_1_mp4
++ ~validate.rtsp2.playback.reverse_playback.raw_video_avi
++@@ -818,8 +814,6 @@ validate.pushfile.media_check.qtdemux-test-frag-basic_zero_dur_no_mehd_mp4
++ ~validate.rtsp2.playback.reverse_playback.rawaudioS32LE_prores_mov
++ ~validate.rtsp2.playback.reverse_playback.samples_multimedia_cx_flac_Yesterday_flac
++ ~validate.rtsp2.playback.reverse_playback.samples_multimedia_cx_testsuite_iv31_avi
++-~validate.rtsp2.playback.reverse_playback.vorbis_theora_0_ogg
++-~validate.rtsp2.playback.reverse_playback.vorbis_theora_1_ogg
++ ~validate.rtsp2.playback.seek_backward.GH1_00094_1920x1280_MTS
++ ~validate.rtsp2.playback.seek_backward.bowlerhatdancer_sleepytom_SGP_mjpeg_avi
++ ~validate.rtsp2.playback.seek_backward.cm5000_hevc_1080i_colorbars_ts
++@@ -895,10 +889,8 @@ validate.pushfile.media_check.qtdemux-test-frag-basic_zero_dur_no_mehd_mp4
++ ~validate.rtsp2.playback.seek_with_stop.cm5000_hevc_1080i_colorbars_ts
++ ~validate.rtsp2.playback.seek_with_stop.mp3_h264_0_mp4
++ ~validate.rtsp2.playback.seek_with_stop.mp3_h264_1_mp4
++-~validate.rtsp2.playback.seek_with_stop.numerated_frames_blue_ogv
++ ~validate.rtsp2.playback.seek_with_stop.op1a-mpeg2-wave_hd_mxf
++ ~validate.rtsp2.playback.seek_with_stop.op2b-mpeg2-wave_hd_mxf
++-~validate.rtsp2.playback.seek_with_stop.opus_1_ogg
++ ~validate.rtsp2.playback.seek_with_stop.raw_h264_0_mp4
++ ~validate.rtsp2.playback.seek_with_stop.raw_h264_1_mp4
++ ~validate.rtsp2.playback.seek_with_stop.raw_video_avi
++diff --git a/subprojects/gst-integration-testsuites/testsuites/validate_known_issues.py b/subprojects/gst-integration-testsuites/testsuites/validate_known_issues.py
++index fa634f21ca..a89489e3e1 100644
++--- a/subprojects/gst-integration-testsuites/testsuites/validate_known_issues.py
+++++ b/subprojects/gst-integration-testsuites/testsuites/validate_known_issues.py
++@@ -49,39 +49,6 @@ KNOWN_ISSUES = {
++             },
++         ]
++     },
++-    "https://gitlab.freedesktop.org/gstreamer/gst-plugins-base/issues/311": {
++-        "tests": [
++-            "validate.http.*.ogg$",
++-            "validate.http.*.ogv$",
++-            "validate.rtsp.*.ogg$",
++-            "validate.rtsp.*.ogv$",
++-        ],
++-        "issues": [
++-            {
++-                "detected-on": "playbin",
++-                "summary": "We got an ERROR message on the bus",
++-                "details": ".*No valid frames decoded before end of stream.*",
++-                "level": "critical",
++-                "sometimes": True,
++-            },
++-            {
++-                "level": "critical",
++-                "summary": "We got an ERROR message on the bus",
++-                "details": ".*Got error: Could not decode stream.*",
++-                "sometimes": True,
++-            },
++-            {
++-                "level": "critical",
++-                "summary": "The program stopped before some actions were executed",
++-                "sometimes": True,
++-            },
++-            {
++-                "summary": "The program stopped before some actions were executed",
++-                "issue-id": "scenario::not-ended",
++-                "sometimes": True,
++-            },
++-        ]
++-    },
++     "https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/issues/563": {
++         "tests": [
++             "validate.rtsp.playback.seek_backward.bowlerhatdancer_sleepytom_SGP_mjpeg_avi",
++diff --git a/subprojects/gst-plugins-base/ext/ogg/gstoggdemux.c b/subprojects/gst-plugins-base/ext/ogg/gstoggdemux.c
++index 4e6b370aa6..d97e6975dd 100644
++--- a/subprojects/gst-plugins-base/ext/ogg/gstoggdemux.c
+++++ b/subprojects/gst-plugins-base/ext/ogg/gstoggdemux.c
++@@ -2487,7 +2487,7 @@ gst_ogg_demux_sink_event (GstPad * pad, GstObject * parent, GstEvent * event)
++                  ogg sync object as we already reset the chain */
++               GST_DEBUG_OBJECT (ogg, "No chain, just resetting ogg sync");
++               ogg_sync_reset (&ogg->sync);
++-            } else {
+++            } else if (ogg->push_state != PUSH_DURATION) {
++               /* reset pad push mode seeking state */
++               for (i = 0; i < chain->streams->len; i++) {
++                 GstOggPad *pad = g_array_index (chain->streams, GstOggPad *, i);
++-- 
++2.48.1
++
+-- 
+2.48.1
+

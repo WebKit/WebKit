@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSCalcValue.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"

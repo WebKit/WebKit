@@ -336,18 +336,12 @@ String CaptionUserPreferencesMediaAF::captionsWindowCSS() const
     CGFloat opacity = MACaptionAppearanceGetWindowOpacity(kMACaptionAppearanceDomainUser, &behavior);
     if (!important)
         important = behaviorShouldNotBeOverriden(behavior);
-    String windowStyle = colorPropertyCSS(CSSPropertyBackgroundColor, windowColor.colorWithAlpha(opacity), important);
-
-    if (!opacity)
-        return windowStyle;
-
-    return makeString(windowStyle, nameLiteral(CSSPropertyPadding), ": .4em !important;"_s);
+    return colorPropertyCSS(CSSPropertyBackgroundColor, windowColor.colorWithAlpha(opacity), important);
 }
 
 String CaptionUserPreferencesMediaAF::captionsBackgroundCSS() const
 {
-    // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-past-nodes
-    // and webkit-media-text-track-future-nodes.
+    // This must match the ::cue background color of WebCore/Modules/modern-media-controls/controls/text-tracks.css
     constexpr auto defaultBackgroundColor = Color::black.colorWithAlphaByte(204);
 
     MACaptionAppearanceBehavior behavior;
@@ -370,7 +364,7 @@ Color CaptionUserPreferencesMediaAF::captionsTextColor(bool& important) const
     RetainPtr color = adoptCF(MACaptionAppearanceCopyForegroundColor(kMACaptionAppearanceDomainUser, &behavior)).get();
     Color textColor(roundAndClampToSRGBALossy(color.get()));
     if (!textColor.isValid()) {
-        // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
+        // This must match the ::cue text color of WebCore/Modules/modern-media-controls/controls/text-tracks.css
         textColor = Color::white;
     }
     important = behaviorShouldNotBeOverriden(behavior);
@@ -403,6 +397,7 @@ String CaptionUserPreferencesMediaAF::windowRoundedCornerRadiusCSS() const
 
     StringBuilder builder;
     appendCSS(builder, CSSPropertyBorderRadius, behaviorShouldNotBeOverriden(behavior), radius, "px"_s);
+    appendCSS(builder, CSSPropertyPadding, behaviorShouldNotBeOverriden(behavior), radius / 4, "px"_s);
     return builder.toString();
 }
 
@@ -854,12 +849,12 @@ Vector<RefPtr<AudioTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu
     return tracksForMenu;
 }
 
-Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList, HashSet<TextTrack::Kind> kinds)
+Vector<RefPtr<TextTrack>> CaptionUserPreferencesMediaAF::sortedTrackListForMenu(TextTrackList* trackList, UncheckedKeyHashSet<TextTrack::Kind> kinds)
 {
     ASSERT(trackList);
 
     Vector<RefPtr<TextTrack>> tracksForMenu;
-    HashSet<String> languagesIncluded;
+    UncheckedKeyHashSet<String> languagesIncluded;
     CaptionDisplayMode displayMode = captionDisplayMode();
     bool prefersAccessibilityTracks = userPrefersCaptions();
     bool filterTrackList = shouldFilterTrackMenu();

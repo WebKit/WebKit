@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Element#requestFullscreen() followed by moving the element into an iframe Test timed out
+PASS Element#requestFullscreen() followed by moving the element into an iframe
 

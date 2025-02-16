@@ -115,7 +115,7 @@ public:
 
     virtual RenderFragmentContainer* mapFromFlowToFragment(TransformState&) const;
 
-    void logicalWidthChangedInFragmentsForBlock(const RenderBlock&, bool&);
+    void logicalWidthChangedInFragmentsForBlock(const RenderBlock&, RelayoutChildren&);
 
     LayoutUnit contentLogicalWidthOfFirstFragment() const;
     LayoutUnit contentLogicalHeightOfFirstFragment() const;

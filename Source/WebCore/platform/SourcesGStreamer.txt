@@ -46,15 +46,16 @@ platform/audio/gstreamer/AudioFileReaderGStreamer.cpp
 platform/audio/gstreamer/AudioSourceProviderGStreamer.cpp
 platform/audio/gstreamer/FFTFrameGStreamer.cpp
 platform/audio/gstreamer/PlatformRawAudioDataGStreamer.cpp
-platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp @no-unify
+platform/audio/gstreamer/WebKitWebAudioSourceGStreamer.cpp
 
 platform/graphics/gstreamer/AudioTrackPrivateGStreamer.cpp
-platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/GLVideoSinkGStreamer.cpp
 platform/graphics/gstreamer/GRefPtrGStreamer.cpp
 platform/graphics/gstreamer/GStreamerAudioMixer.cpp
 platform/graphics/gstreamer/GStreamerCommon.cpp
 platform/graphics/gstreamer/GStreamerRegistryScanner.cpp
 platform/graphics/gstreamer/GStreamerSinksWorkarounds.cpp
+platform/graphics/gstreamer/GStreamerVideoFrameConverter.cpp
 platform/graphics/gstreamer/GStreamerVideoSinkCommon.cpp
 platform/graphics/gstreamer/GstAllocatorFastMalloc.cpp
 platform/graphics/gstreamer/ImageDecoderGStreamer.cpp
@@ -65,25 +66,25 @@ platform/graphics/gstreamer/MediaEngineConfigurationFactoryGStreamer.cpp
 platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
 platform/graphics/gstreamer/MediaSampleGStreamer.cpp
 platform/graphics/gstreamer/PlatformDisplayGStreamer.cpp
-platform/graphics/gstreamer/TextCombinerGStreamer.cpp @no-unify
-platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp @no-unify
-platform/graphics/gstreamer/TextSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/TextCombinerGStreamer.cpp
+platform/graphics/gstreamer/TextCombinerPadGStreamer.cpp
+platform/graphics/gstreamer/TextSinkGStreamer.cpp
 platform/graphics/gstreamer/TrackPrivateBaseGStreamer.cpp
 platform/graphics/gstreamer/VideoDecoderGStreamer.cpp
 platform/graphics/gstreamer/VideoEncoderGStreamer.cpp
 platform/graphics/gstreamer/VideoFrameGStreamer.cpp
 platform/graphics/gstreamer/VideoFrameMetadataGStreamer.cpp
-platform/graphics/gstreamer/VideoSinkGStreamer.cpp @no-unify
+platform/graphics/gstreamer/VideoSinkGStreamer.cpp
 platform/graphics/gstreamer/VideoTrackPrivateGStreamer.cpp
-platform/graphics/gstreamer/WebKitAudioSinkGStreamer.cpp @no-unify
-platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp @no-unify
+platform/graphics/gstreamer/WebKitAudioSinkGStreamer.cpp
+platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp
 
 platform/graphics/gstreamer/eme/CDMFactoryGStreamer.cpp
 platform/graphics/gstreamer/eme/CDMProxyThunder.cpp
 platform/graphics/gstreamer/eme/CDMThunder.cpp
 platform/graphics/gstreamer/eme/GStreamerEMEUtilities.cpp
 platform/graphics/gstreamer/eme/WebKitCommonEncryptionDecryptorGStreamer.cpp
-platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp @no-unify
+platform/graphics/gstreamer/eme/WebKitThunderDecryptorGStreamer.cpp
 
 platform/graphics/gstreamer/mse/AppendPipeline.cpp
 platform/graphics/gstreamer/mse/GStreamerMediaDescription.cpp
@@ -93,7 +94,7 @@ platform/graphics/gstreamer/mse/MediaSourcePrivateGStreamer.cpp
 platform/graphics/gstreamer/mse/MediaSourceTrackGStreamer.cpp
 platform/graphics/gstreamer/mse/SourceBufferPrivateGStreamer.cpp
 platform/graphics/gstreamer/mse/TrackQueue.cpp
-platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp @no-unify
+platform/graphics/gstreamer/mse/WebKitMediaSourceGStreamer.cpp
 
 platform/gstreamer/GStreamerCodecUtilities.cpp
 platform/gstreamer/GStreamerElementHarness.cpp
@@ -104,13 +105,14 @@ platform/gstreamer/GStreamerQuirkAmLogic.cpp
 platform/gstreamer/GStreamerQuirkBcmNexus.cpp
 platform/gstreamer/GStreamerQuirkBroadcom.cpp
 platform/gstreamer/GStreamerQuirkBroadcomBase.cpp
+platform/gstreamer/GStreamerQuirkOpenMAX.cpp
 platform/gstreamer/GStreamerQuirkRealtek.cpp
 platform/gstreamer/GStreamerQuirkRialto.cpp
 platform/gstreamer/GStreamerQuirkWesteros.cpp
 platform/gstreamer/GStreamerQuirks.cpp
 platform/gstreamer/PlatformSpeechSynthesizerGStreamer.cpp
-platform/gstreamer/VideoEncoderPrivateGStreamer.cpp @no-unify
-platform/gstreamer/WebKitFliteSourceGStreamer.cpp @no-unify
+platform/gstreamer/VideoEncoderPrivateGStreamer.cpp
+platform/gstreamer/WebKitFliteSourceGStreamer.cpp
 
 platform/mediarecorder/MediaRecorderPrivateGStreamer.cpp
 
@@ -132,9 +134,9 @@ platform/mediastream/gstreamer/GStreamerCapturer.cpp
 platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp
 platform/mediastream/gstreamer/GStreamerDisplayCaptureDeviceManager.cpp
 platform/mediastream/gstreamer/GStreamerIncomingTrackProcessor.cpp
-platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp @no-unify
-platform/mediastream/gstreamer/GStreamerMockDevice.cpp @no-unify
-platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp
+platform/mediastream/gstreamer/GStreamerMockDevice.cpp
+platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp
 platform/mediastream/gstreamer/GStreamerRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp

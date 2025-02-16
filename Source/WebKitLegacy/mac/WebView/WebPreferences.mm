@@ -423,7 +423,6 @@ public:
         @(static_cast<unsigned>(AudioSession::CategoryType::None)), WebKitAudioSessionCategoryOverride,
         @NO, WebKitAlwaysRequestGeolocationPermissionPreferenceKey,
         @(static_cast<int>(InterpolationQuality::Low)), WebKitInterpolationQualityPreferenceKey,
-        @NO, WebKitNetworkDataUsageTrackingEnabledPreferenceKey,
         @"", WebKitNetworkInterfaceNamePreferenceKey,
 #endif
         nil];
@@ -1059,16 +1058,6 @@ public:
 @end
 
 @implementation WebPreferences (WebPrivate)
-
-- (BOOL)isDNSPrefetchingEnabled
-{
-    return [self _boolValueForKey:WebKitDNSPrefetchingEnabledPreferenceKey];
-}
-
-- (void)setDNSPrefetchingEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitDNSPrefetchingEnabledPreferenceKey];
-}
 
 - (BOOL)developerExtrasEnabled
 {
@@ -1961,16 +1950,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setUnsignedIntValue:override forKey:WebKitAudioSessionCategoryOverride];
 }
 
-- (BOOL)networkDataUsageTrackingEnabled
-{
-    return [self _boolValueForKey:WebKitNetworkDataUsageTrackingEnabledPreferenceKey];
-}
-
-- (void)setNetworkDataUsageTrackingEnabled:(BOOL)trackingEnabled
-{
-    [self _setBoolValue:trackingEnabled forKey:WebKitNetworkDataUsageTrackingEnabledPreferenceKey];
-}
-
 - (NSString *)networkInterfaceName
 {
     return [self _stringValueForKey:WebKitNetworkInterfaceNamePreferenceKey];
@@ -2383,16 +2362,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitMediaDevicesEnabledPreferenceKey];
 }
 
-- (BOOL)mediaStreamEnabled
-{
-    return [self _boolValueForKey:WebKitMediaStreamEnabledPreferenceKey];
-}
-
-- (void)setMediaStreamEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitMediaStreamEnabledPreferenceKey];
-}
-
 - (BOOL)peerConnectionEnabled
 {
     return [self _boolValueForKey:WebKitPeerConnectionEnabledPreferenceKey];
@@ -2735,7 +2704,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:enabled forKey:WebKitSiteSpecificQuirksModeEnabledPreferenceKey];
 }
 
-
 @end
 
 @implementation WebPreferences (WebInternal)
@@ -2857,6 +2825,16 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitContactPickerAPIEnabledPreferenceKey];
 }
 
+- (BOOL)digitalCredentialsEnabled
+{
+    return [self _boolValueForKey:WebKitDigitalCredentialsEnabledPreferenceKey];
+}
+
+- (void)setDigitalCredentialsEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitDigitalCredentialsEnabledPreferenceKey];
+}
+
 - (BOOL)visualViewportAPIEnabled
 {
     return [self _boolValueForKey:WebKitVisualViewportAPIEnabledPreferenceKey];
@@ -2927,16 +2905,6 @@ static RetainPtr<NSString>& classIBCreatorID()
     [self _setBoolValue:flag forKey:WebKitCoreMathMLEnabledPreferenceKey];
 }
 
-- (BOOL)linkPreloadResponsiveImagesEnabled
-{
-    return [self _boolValueForKey:WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey];
-}
-
-- (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitLinkPreloadResponsiveImagesEnabledPreferenceKey];
-}
-
 - (BOOL)remotePlaybackEnabled
 {
     return [self _boolValueForKey:WebKitRemotePlaybackEnabledPreferenceKey];
@@ -3003,6 +2971,33 @@ static RetainPtr<NSString>& classIBCreatorID()
 
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
+
+- (BOOL)mediaStreamEnabled
+{
+    return YES;
+}
+
+- (void)setMediaStreamEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)isDNSPrefetchingEnabled
+{
+    return NO;
+}
+
+- (void)setDNSPrefetchingEnabled:(BOOL)flag
+{
+}
+
+- (BOOL)linkPreloadResponsiveImagesEnabled
+{
+    return YES;
+}
+
+- (void)setLinkPreloadResponsiveImagesEnabled:(BOOL)flag
+{
+}
 
 - (BOOL)constantPropertiesEnabled
 {
@@ -3342,5 +3337,15 @@ static RetainPtr<NSString>& classIBCreatorID()
 {
 }
 
+#if PLATFORM(IOS_FAMILY)
+- (BOOL)networkDataUsageTrackingEnabled
+{
+    return NO;
+}
+
+- (void)setNetworkDataUsageTrackingEnabled:(BOOL)trackingEnabled
+{
+}
+#endif // PLATFORM(IOS_FAMILY)
 
 @end

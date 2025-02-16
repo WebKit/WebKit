@@ -28,8 +28,6 @@
 #if ENABLE(WEBGL)
 #include "WebGL2RenderingContext.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 class ScopedInspectorShaderProgramHighlight {
@@ -55,7 +53,7 @@ private:
     void hideHighlight();
 
     struct {
-        GCGLfloat color[4] { 0, 0, 0, 0 };
+        std::array<GCGLfloat, 4> color = { };
         GCGLenum equationRGB { GraphicsContextGL::NONE };
         GCGLenum equationAlpha { GraphicsContextGL::NONE };
         GCGLenum srcRGB { GraphicsContextGL::ONE };
@@ -354,7 +352,5 @@ private:
 };
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

@@ -54,7 +54,7 @@ class WebAudioSourceProviderAVFObjC;
 class CoreAudioCaptureSource : public RealtimeMediaSource, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<CoreAudioCaptureSource, WTF::DestructionThread::MainRunLoop> {
 public:
     WEBCORE_EXPORT static CaptureSourceOrError create(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
-    static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>);
+    static CaptureSourceOrError createForTesting(String&& deviceID, AtomString&& label, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>, std::optional<bool>);
 
     WEBCORE_EXPORT static AudioCaptureFactory& factory();
 
@@ -109,7 +109,8 @@ private:
 
     bool m_canResumeAfterInterruption { true };
     bool m_isReadyToStart { false };
-    
+
+    std::optional<bool> m_echoCancellationCapability;
     BaseAudioSharedUnit* m_overrideUnit { nullptr };
 };
 
@@ -120,6 +121,7 @@ public:
     virtual const CAAudioStreamDescription& format() = 0;
     virtual void captureUnitIsStarting() = 0;
     virtual void captureUnitHasStopped() = 0;
+    virtual void canRenderAudioChanged() = 0;
     // Background thread.
     virtual OSStatus produceSpeakerSamples(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) = 0;
 };

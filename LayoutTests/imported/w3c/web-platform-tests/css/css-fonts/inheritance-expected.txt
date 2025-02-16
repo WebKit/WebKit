@@ -1,7 +1,7 @@
 
 FAIL Property font-family inherits assert_not_equals: got disallowed value "\"Not Initial!\""
 PASS Property font-feature-settings has initial value normal
-FAIL Property font-feature-settings inherits assert_not_equals: got disallowed value "\"smcp\", \"swsh\" 2"
+PASS Property font-feature-settings inherits
 PASS Property font-kerning has initial value auto
 PASS Property font-kerning inherits
 FAIL Property font-language-override has initial value normal assert_true: font-language-override doesn't seem to be supported in the computed style expected true got false

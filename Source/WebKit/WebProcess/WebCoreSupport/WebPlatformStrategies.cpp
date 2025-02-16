@@ -110,12 +110,21 @@ PushStrategy* WebPlatformStrategies::createPushStrategy()
 }
 #endif
 
-static std::optional<PageIdentifier> pageIdentifier(const PasteboardContext* context)
+static std::optional<WebPageProxyIdentifier> pageIdentifier(const PasteboardContext* context)
 {
-    if (!is<PagePasteboardContext>(context))
+    auto* pageContext = dynamicDowncast<PagePasteboardContext>(context);
+    if (!pageContext)
         return std::nullopt;
 
-    return downcast<PagePasteboardContext>(*context).pageID();
+    auto pageID = pageContext->pageID();
+    if (!pageID)
+        return std::nullopt;
+
+    RefPtr webPage = WebProcess::singleton().webPage(*pageID);
+    if (!webPage)
+        return std::nullopt;
+
+    return webPage->webPageProxyIdentifier();
 }
 
 #if PLATFORM(COCOA)

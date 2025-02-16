@@ -321,6 +321,7 @@ private:
     MonotonicTime m_processStart;
     ProcessThrottler m_throttler;
 #if USE(RUNNINGBOARD)
+    bool m_startedTerminationWatchdog { false };
 #if PLATFORM(MAC)
     RefPtr<ProcessThrottler::ForegroundActivity> m_lifetimeActivity;
     RefPtr<ProcessAssertion> m_boostedJetsamAssertion;

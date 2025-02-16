@@ -24,7 +24,7 @@ function newInt8Array() { return new OtherInt8Array(4); }
 noInline(newInt8Array);
 
 (function() {
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         shouldBe(newArray().constructor, OtherArray);
         shouldBe(newString().constructor, OtherString);
         shouldBe(newObject().constructor, OtherObject);

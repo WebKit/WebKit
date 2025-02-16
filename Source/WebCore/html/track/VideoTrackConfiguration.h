@@ -69,6 +69,9 @@ public:
     std::optional<SpatialVideoMetadata> spatialVideoMetadata() const { return m_state.spatialVideoMetadata; }
     void setSpatialVideoMetadata(const SpatialVideoMetadata& metadata) { m_state.spatialVideoMetadata = metadata; }
 
+    bool isImmersiveVideo() const { return m_state.isImmersiveVideo; }
+    void setIsImmersiveVideo(bool value) { m_state.isImmersiveVideo = value; }
+
     Ref<JSON::Object> toJSON() const;
 
 private:

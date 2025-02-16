@@ -38,7 +38,7 @@ struct SpeechRecognitionRequestInfo {
     bool interimResults { false };
     uint64_t maxAlternatives { 1 };
     ClientOrigin clientOrigin;
-    FrameIdentifier frameIdentifier;
+    FrameIdentifier mainFrameIdentifier;
 };
 
 } // namespace WebCore

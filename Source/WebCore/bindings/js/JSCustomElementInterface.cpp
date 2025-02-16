@@ -282,7 +282,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     }
 }
 
-void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, const auto& addArguments)
+void JSCustomElementInterface::invokeCallback(Element& element, JSObject* callback, NOESCAPE const auto& addArguments)
 {
     if (!canInvokeCallback())
         return;

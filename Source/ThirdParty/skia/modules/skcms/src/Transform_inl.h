@@ -904,24 +904,19 @@ STAGE(load_1010102, NoCtx) {
 }
 
 STAGE(load_101010x_XR, NoCtx) {
-    static constexpr float min = -0.752941f;
-    static constexpr float max = 1.25098f;
-    static constexpr float range = max - min;
     U32 rgba = load<U32>(src + 4*i);
-    r = cast<F>((rgba >>  0) & 0x3ff) * (1/1023.0f) * range + min;
-    g = cast<F>((rgba >> 10) & 0x3ff) * (1/1023.0f) * range + min;
-    b = cast<F>((rgba >> 20) & 0x3ff) * (1/1023.0f) * range + min;
+    r = cast<F>(((rgba >>  0) & 0x3ff) - 384) / 510.0f;
+    g = cast<F>(((rgba >> 10) & 0x3ff) - 384) / 510.0f;
+    b = cast<F>(((rgba >> 20) & 0x3ff) - 384) / 510.0f;
 }
 
 STAGE(load_10101010_XR, NoCtx) {
-    static constexpr float min = -0.752941f;
-    static constexpr float max = 1.25098f;
-    static constexpr float range = max - min;
     U64 rgba = load<U64>(src + 8 * i);
-    r = cast<F>((rgba >>  (0+6)) & 0x3ff) * (1/1023.0f) * range + min;
-    g = cast<F>((rgba >> (16+6)) & 0x3ff) * (1/1023.0f) * range + min;
-    b = cast<F>((rgba >> (32+6)) & 0x3ff) * (1/1023.0f) * range + min;
-    a = cast<F>((rgba >> (48+6)) & 0x3ff) * (1/1023.0f) * range + min;
+    // Each channel is 16 bits, where the 6 low bits are padding.
+    r = cast<F>(((rgba >> ( 0+6)) & 0x3ff) - 384) / 510.0f;
+    g = cast<F>(((rgba >> (16+6)) & 0x3ff) - 384) / 510.0f;
+    b = cast<F>(((rgba >> (32+6)) & 0x3ff) - 384) / 510.0f;
+    a = cast<F>(((rgba >> (48+6)) & 0x3ff) - 384) / 510.0f;
 }
 
 STAGE(load_161616LE, NoCtx) {
@@ -1310,12 +1305,17 @@ FINAL_STAGE(store_8888, NoCtx) {
 }
 
 FINAL_STAGE(store_101010x_XR, NoCtx) {
-    static constexpr float min = -0.752941f;
-    static constexpr float max = 1.25098f;
-    static constexpr float range = max - min;
-    store(dst + 4*i, cast<U32>(to_fixed(((r - min) / range) * 1023)) <<  0
-                   | cast<U32>(to_fixed(((g - min) / range) * 1023)) << 10
-                   | cast<U32>(to_fixed(((b - min) / range) * 1023)) << 20);
+    store(dst + 4*i, cast<U32>(to_fixed((r * 510) + 384)) <<  0
+                   | cast<U32>(to_fixed((g * 510) + 384)) << 10
+                   | cast<U32>(to_fixed((b * 510) + 384)) << 20);
+}
+
+FINAL_STAGE(store_10101010_XR, NoCtx) {
+    // Each channel is 16 bits, where the 6 low bits are padding.
+    store(dst + 8*i, cast<U64>(to_fixed((r * 510) + 384)) << ( 0+6)
+                   | cast<U64>(to_fixed((g * 510) + 384)) << (16+6)
+                   | cast<U64>(to_fixed((b * 510) + 384)) << (32+6)
+                   | cast<U64>(to_fixed((a * 510) + 384)) << (48+6));
 }
 
 FINAL_STAGE(store_1010102, NoCtx) {

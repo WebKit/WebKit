@@ -156,7 +156,12 @@ void WebInspectorUIProxy::connect()
 
     Ref legacyMainFrameProcess = inspectedPage->legacyMainFrameProcess();
     legacyMainFrameProcess->send(Messages::WebInspectorInterruptDispatcher::NotifyNeedDebuggerBreak(), 0);
-    legacyMainFrameProcess->send(Messages::WebInspector::Show(), m_inspectedPage->webPageIDInMainFrameProcess());
+    legacyMainFrameProcess->sendWithAsyncReply(
+        Messages::WebInspector::Show(),
+        [this, protectedThis = Ref { *this }] {
+            openLocalInspectorFrontend();
+        },
+        m_inspectedPage->webPageIDInMainFrameProcess());
 }
 
 void WebInspectorUIProxy::show()
@@ -265,7 +270,7 @@ void WebInspectorUIProxy::showConsole()
     if (!inspectedPage)
         return;
 
-    createFrontendPage();
+    show();
 
     inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::ShowConsole(), inspectedPage->webPageIDInMainFrameProcess());
 }
@@ -276,7 +281,7 @@ void WebInspectorUIProxy::showResources()
     if (!inspectedPage)
         return;
 
-    createFrontendPage();
+    show();
 
     inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::ShowResources(), inspectedPage->webPageIDInMainFrameProcess());
 }
@@ -287,7 +292,7 @@ void WebInspectorUIProxy::showMainResourceForFrame(WebCore::FrameIdentifier fram
     if (!inspectedPage)
         return;
 
-    createFrontendPage();
+    show();
 
     inspectedPage->sendToProcessContainingFrame(frameID, Messages::WebInspector::ShowMainResourceForFrame(frameID));
 }
@@ -392,6 +397,8 @@ void WebInspectorUIProxy::togglePageProfiling()
     if (!m_inspectedPage)
         return;
 
+    show();
+
     RefPtr inspectedPage = m_inspectedPage.get();
     if (m_isProfilingPage)
         inspectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebInspector::StopPageProfiling(), inspectedPage->webPageIDInMainFrameProcess());
@@ -453,7 +460,16 @@ void WebInspectorUIProxy::createFrontendPage()
 #endif
 }
 
-void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underTest)
+void WebInspectorUIProxy::requestOpenLocalInspectorFrontend()
+{
+    // Prevent a compromised malicious web page from opening Web Inspector at will.
+    if (!m_underTest && inspectionLevel() < 2)
+        return;
+
+    openLocalInspectorFrontend();
+}
+
+void WebInspectorUIProxy::openLocalInspectorFrontend()
 {
     RefPtr inspectedPage = m_inspectedPage.get();
     if (!inspectedPage)
@@ -467,7 +483,6 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
         return;
     }
 
-    m_underTest = underTest;
     createFrontendPage();
 
     RefPtr inspectorPage = m_inspectorPage.get();
@@ -482,7 +497,10 @@ void WebInspectorUIProxy::openLocalInspectorFrontend(bool canAttach, bool underT
     inspectedPage->inspectorController().connectFrontend(*this);
 
     if (!m_underTest) {
-        m_canAttach = platformCanAttach(canAttach);
+        // FIXME <https://webkit.org/b/283435>: Remove the webProcessCanAttach argument from platformCanAttach.
+        // The value canAttach in the web process is no longer used or respected.
+        const bool webProcessCanAttach = false;
+        m_canAttach = platformCanAttach(webProcessCanAttach);
         m_isAttached = shouldOpenAttached();
         m_attachmentSide = static_cast<AttachmentSide>(protectedInspectorPagePreferences()->inspectorAttachmentSide());
 
@@ -607,7 +625,6 @@ void WebInspectorUIProxy::closeFrontendPageAndWindow()
 
     m_isAttached = false;
     m_canAttach = false;
-    m_underTest = false;
 
     platformCloseFrontendPageAndWindow();
 }
@@ -627,7 +644,7 @@ void WebInspectorUIProxy::frontendLoaded()
     if (!inspectedPage)
         return;
 
-    if (RefPtr automationSession = inspectedPage->protectedConfiguration()->processPool().automationSession())
+    if (RefPtr automationSession = inspectedPage->configuration().processPool().automationSession())
         automationSession->inspectorFrontendLoaded(*inspectedPage);
 
 #if ENABLE(INSPECTOR_EXTENSIONS)

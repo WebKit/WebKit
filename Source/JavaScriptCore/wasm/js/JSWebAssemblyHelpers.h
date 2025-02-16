@@ -33,6 +33,7 @@
 #include "JSCJSValue.h"
 #include "JSDataView.h"
 #include "JSSourceCode.h"
+#include "JSWebAssemblyException.h"
 #include "JSWebAssemblyRuntimeError.h"
 #include "WasmFormat.h"
 #include "WasmTypeDefinition.h"
@@ -214,7 +215,7 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
         if (Wasm::isExternref(type)) {
             if (!type.isNullable() && value.isNull())
                 return throwVMTypeError(globalObject, scope, "Non-null Externref cannot be null"_s);
-        } else if (Wasm::isFuncref(type) || (!Options::useWasmGC() && isRefWithTypeIndex(type))) {
+        } else if (Wasm::isFuncref(type)) {
             if (type.isNullable() && value.isNull())
                 break;
 
@@ -224,8 +225,9 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
 
             if (!isSubtype(wasmFunction->type(), type))
                 return throwVMTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
-        } else {
-            ASSERT(Options::useWasmGC());
+        } else if (Wasm::isExnref(type))
+            RELEASE_ASSERT_NOT_REACHED();
+        else {
             value = Wasm::internalizeExternref(value);
             if (!Wasm::TypeInformation::castReference(value, type.isNullable(), type.index)) {
                 // FIXME: provide a better error message here

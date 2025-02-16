@@ -26,8 +26,11 @@
 #pragma once
 
 #include "HTMLElement.h"
+#include "ToggleEventTask.h"
 
 namespace WebCore {
+
+class ToggleEventTask;
 
 class HTMLDialogElement final : public HTMLElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLDialogElement);
@@ -43,6 +46,7 @@ public:
     ExceptionOr<void> show();
     ExceptionOr<void> showModal();
     void close(const String&);
+    void requestClose(const String&);
 
     bool isModal() const { return m_isModal; };
 
@@ -52,6 +56,8 @@ public:
 
     bool isValidCommandType(const CommandType) final;
     bool handleCommandInternal(const HTMLFormControlElement& invoker, const CommandType&) final;
+
+    void queueDialogToggleEventTask(ToggleState oldState, ToggleState newState);
 
 private:
     HTMLDialogElement(const QualifiedName&, Document&);
@@ -63,6 +69,8 @@ private:
     String m_returnValue;
     bool m_isModal { false };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_previouslyFocusedElement;
+
+    RefPtr<ToggleEventTask> m_toggleEventTask;
 };
 
 } // namespace WebCore

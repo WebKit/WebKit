@@ -128,8 +128,8 @@ public:
 
     Vector<String> blobURLs() const;
     Vector<URLKeepingBlobAlive> blobHandles() const { return crossThreadCopy(m_internals.blobHandles); }
-    void writeBlobsToDiskForIndexedDB(CompletionHandler<void(IDBValue&&)>&&);
-    IDBValue writeBlobsToDiskForIndexedDBSynchronously();
+    void writeBlobsToDiskForIndexedDB(bool isEphemeral, CompletionHandler<void(IDBValue&&)>&&);
+    IDBValue writeBlobsToDiskForIndexedDBSynchronously(bool isEphemeral);
     static Ref<SerializedScriptValue> createFromWireBytes(Vector<uint8_t>&& data)
     {
         return adoptRef(*new SerializedScriptValue(WTFMove(data)));

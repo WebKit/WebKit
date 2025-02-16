@@ -26,7 +26,6 @@
 // https://www.w3.org/TR/CSP3/#reporting
 
 [
-    EnabledBySetting=ReportingEnabled,
     Exposed=Window
 ] interface CSPViolationReportBody : ReportBody {
     readonly attribute USVString documentURL;

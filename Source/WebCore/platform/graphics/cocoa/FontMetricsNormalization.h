@@ -28,8 +28,6 @@
 
 #pragma once
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 // These values were calculated by performing a linear regression on the CSS weights/widths/slopes and Core Text weights/widths/slopes of San Francisco.
@@ -39,21 +37,22 @@ inline float normalizeGXWeight(float value)
     return 523.7 * value - 109.3;
 }
 
-// These values were experimentally gathered from the various named weights of San Francisco.
-static struct {
+struct KeyFrameValue {
     float ctWeight;
     float cssWeight;
-} keyframes[] = {
-    { -0.8, 30 },
-    { -0.4, 274 },
-    { 0, 400 },
-    { 0.23, 510 },
-    { 0.3, 590 },
-    { 0.4, 700 },
-    { 0.56, 860 },
-    { 0.62, 1000 },
 };
-static_assert(std::size(keyframes) > 0);
+
+// These values were experimentally gathered from the various named weights of San Francisco.
+static constexpr std::array keyframes {
+    KeyFrameValue { -0.8, 30 },
+    KeyFrameValue { -0.4, 274 },
+    KeyFrameValue { 0, 400 },
+    KeyFrameValue { 0.23, 510 },
+    KeyFrameValue { 0.3, 590 },
+    KeyFrameValue { 0.4, 700 },
+    KeyFrameValue { 0.56, 860 },
+    KeyFrameValue { 0.62, 1000 },
+};
 
 inline float normalizeCTWeight(float value)
 {
@@ -119,5 +118,3 @@ inline float normalizeVariationWidth(float value)
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

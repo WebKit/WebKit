@@ -77,7 +77,7 @@ bool ScrollingTreeOverflowScrollingNodeMac::commitStateBeforeChildren(const Scro
 WheelEventHandlingResult ScrollingTreeOverflowScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting)
 {
 #if ENABLE(SCROLLING_THREAD)
-    if (hasSynchronousScrollingReasons() && eventTargeting != EventTargeting::NodeOnly)
+    if (hasNonRepaintSynchronousScrollingReasons() && eventTargeting != EventTargeting::NodeOnly)
         return { { WheelEventProcessingSteps::SynchronousScrolling, WheelEventProcessingSteps::NonBlockingDOMEventDispatch }, false };
 #endif
 

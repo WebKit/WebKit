@@ -48,7 +48,6 @@ UIScriptContext::UIScriptContext(UIScriptContextDelegate& delegate, UIScriptCont
 UIScriptContext::~UIScriptContext()
 {
     m_controller->waitForOutstandingCallbacks();
-    m_controller->contextDestroyed();
 }
 
 void UIScriptContext::runUIScript(const String& script, unsigned scriptCallbackID)
@@ -91,8 +90,11 @@ unsigned UIScriptContext::prepareForAsyncTask(JSValueRef callback, CallbackType 
 
 void UIScriptContext::asyncTaskComplete(unsigned callbackID, std::initializer_list<JSValueRef> arguments)
 {
+    if (!decltype(m_callbacks)::isValidKey(callbackID))
+        return;
     Task task = m_callbacks.take(callbackID);
-    ASSERT(task.callback);
+    if (!task.callback)
+        return;
 
     JSValueRef exception = nullptr;
     JSObjectRef callbackObject = JSValueToObject(m_context.get(), task.callback, &exception);

@@ -69,8 +69,8 @@ bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (state->hasChangedProperty(ScrollingStateNode::Property::BehaviorForFixedElements))
         m_behaviorForFixed = state->scrollBehaviorForFixedElements();
 
-    if (state->hasChangedProperty(ScrollingStateNode::Property::TopContentInset))
-        m_topContentInset = state->topContentInset();
+    if (state->hasChangedProperty(ScrollingStateNode::Property::ObscuredContentInsets))
+        m_obscuredContentInsets = state->obscuredContentInsets();
 
     if (state->hasChangedProperty(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport))
         m_visualViewportIsSmallerThanLayoutViewport = state->visualViewportIsSmallerThanLayoutViewport();
@@ -137,7 +137,8 @@ FloatRect ScrollingTreeFrameScrollingNode::layoutViewportRespectingRubberBanding
 
 FloatSize ScrollingTreeFrameScrollingNode::viewToContentsOffset(const FloatPoint& scrollPosition) const
 {
-    return toFloatSize(scrollPosition) - FloatSize(0, headerHeight() + topContentInset());
+    auto obscuredContentInsets = this->obscuredContentInsets();
+    return toFloatSize(scrollPosition) - FloatSize(obscuredContentInsets.left(), headerHeight() + obscuredContentInsets.top());
 }
 
 void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
@@ -154,8 +155,15 @@ void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<S
 
     if (m_frameScaleFactor != 1)
         ts.dumpProperty("frame scale factor", m_frameScaleFactor);
-    if (m_topContentInset)
-        ts.dumpProperty("top content inset", m_topContentInset);
+
+    if (m_obscuredContentInsets.top())
+        ts.dumpProperty("top content inset", m_obscuredContentInsets.top());
+    if (m_obscuredContentInsets.bottom())
+        ts.dumpProperty("bottom content inset", m_obscuredContentInsets.bottom());
+    if (m_obscuredContentInsets.left())
+        ts.dumpProperty("left content inset", m_obscuredContentInsets.left());
+    if (m_obscuredContentInsets.right())
+        ts.dumpProperty("right content inset", m_obscuredContentInsets.right());
 
     if (m_headerHeight)
         ts.dumpProperty("header height", m_headerHeight);

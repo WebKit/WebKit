@@ -69,8 +69,10 @@ public:
     inline float logicalBottom() const;
     inline float logicalHeight() const;
     inline float logicalWidth() const;
+    inline float logicalLeft() const;
+    inline float logicalRight() const;
 
-    // Return visual left/right coords in inline direction (they are still considered logical values as there's no flip for writing mode).
+    // Return line-relative left/right coords (they are still considered logical values as there's no flip for writing mode).
     inline float logicalLeftIgnoringInlineDirection() const;
     inline float logicalRightIgnoringInlineDirection() const;
 
@@ -81,9 +83,11 @@ public:
     unsigned leftmostCaretOffset() const { return isLeftToRightDirection() ? minimumCaretOffset() : maximumCaretOffset(); }
     unsigned rightmostCaretOffset() const { return isLeftToRightDirection() ? maximumCaretOffset() : minimumCaretOffset(); }
 
+    // isLeftToRightDirection() here is not the same as writingMode().isBidiLTR().
     unsigned char bidiLevel() const;
     TextDirection direction() const { return bidiLevel() % 2 ? TextDirection::RTL : TextDirection::LTR; }
     bool isLeftToRightDirection() const { return direction() == TextDirection::LTR; }
+    bool isInlineFlipped() const { return !(isLeftToRightDirection() == writingMode().isLogicalLeftLineLeft()); }
 
     RenderObject::HighlightState selectionState() const;
 
@@ -96,10 +100,17 @@ public:
     const LegacyInlineBox* legacyInlineBox() const;
     const InlineDisplay::Box* inlineBox() const;
 
-    LeafBoxIterator nextOnLine() const;
-    LeafBoxIterator previousOnLine() const;
-    LeafBoxIterator nextOnLineIgnoringLineBreak() const;
-    LeafBoxIterator previousOnLineIgnoringLineBreak() const;
+    // Text-relative left/right
+    LeafBoxIterator nextLineRightwardOnLine() const;
+    LeafBoxIterator nextLineLeftwardOnLine() const;
+    LeafBoxIterator nextLineRightwardOnLineIgnoringLineBreak() const;
+    LeafBoxIterator nextLineLeftwardOnLineIgnoringLineBreak() const;
+
+    // Coordinate-relative left/right
+    inline LeafBoxIterator nextLogicalRightwardOnLine() const;
+    inline LeafBoxIterator nextLogicalLeftwardOnLine() const;
+    inline LeafBoxIterator nextLogicalRightwardOnLineIgnoringLineBreak() const;
+    inline LeafBoxIterator nextLogicalLeftwardOnLineIgnoringLineBreak() const;
 
     InlineBoxIterator parentInlineBox() const;
 
@@ -135,10 +146,10 @@ public:
     const Box& operator*() const { return m_box; }
     const Box* operator->() const { return &m_box; }
 
-    BoxIterator& traverseNextOnLine();
-    BoxIterator& traverseNextOnLineSkippingChildren();
+    BoxIterator& traverseLineRightwardOnLine();
+    BoxIterator& traverseLineRightwardOnLineSkippingChildren();
 
-    BoxIterator& operator++() { return traverseNextOnLine(); }
+    BoxIterator& operator++() { return traverseLineRightwardOnLine(); }
 
     bool atEnd() const;
 
@@ -152,12 +163,19 @@ public:
     LeafBoxIterator(Box::PathVariant&&);
     LeafBoxIterator(const Box&);
 
-    LeafBoxIterator& traverseNextOnLine();
-    LeafBoxIterator& traversePreviousOnLine();
-    LeafBoxIterator& traverseNextOnLineIgnoringLineBreak();
-    LeafBoxIterator& traversePreviousOnLineIgnoringLineBreak();
+    // Text-relative left/right
+    LeafBoxIterator& traverseLineRightwardOnLine();
+    LeafBoxIterator& traverseLineLeftwardOnLine();
+    LeafBoxIterator& traverseLineRightwardOnLineIgnoringLineBreak();
+    LeafBoxIterator& traverseLineLeftwardOnLineIgnoringLineBreak();
 
-    LeafBoxIterator& operator++() { return traverseNextOnLine(); }
+    // Coordinate-relative left/right
+    inline LeafBoxIterator& traverseLogicalRightwardOnLine();
+    inline LeafBoxIterator& traverseLogicalLeftwardOnLine();
+    inline LeafBoxIterator& traverseLogicalRightwardOnLineIgnoringLineBreak();
+    inline LeafBoxIterator& traverseLogicalLeftwardOnLineIgnoringLineBreak();
+
+    LeafBoxIterator& operator++() { return traverseLineRightwardOnLine(); }
 };
 
 template<class IteratorType>

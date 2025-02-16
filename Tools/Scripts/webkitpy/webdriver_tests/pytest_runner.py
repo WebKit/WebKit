@@ -204,6 +204,8 @@ def run(path, args, timeout, env, expectations, ignore_param=None):
 
             if result == ExitCode.INTERNAL_ERROR:
                 harness_recorder.outcome = ('ERROR', None)
+            elif result == ExitCode.USAGE_ERROR:
+                harness_recorder.outcome = ('ERROR', f'Error invoking pytest.main: Arguments: {cmd}')
         except Exception as e:
             harness_recorder.outcome = ('ERROR', str(e))
 

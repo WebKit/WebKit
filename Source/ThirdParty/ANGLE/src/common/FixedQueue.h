@@ -91,19 +91,20 @@ FixedQueue<T>::~FixedQueue()
 template <class T>
 ANGLE_INLINE typename FixedQueue<T>::size_type FixedQueue<T>::size() const
 {
+    ASSERT(mSize <= mMaxSize);
     return mSize;
 }
 
 template <class T>
 ANGLE_INLINE bool FixedQueue<T>::empty() const
 {
-    return mSize == 0;
+    return size() == 0;
 }
 
 template <class T>
 ANGLE_INLINE bool FixedQueue<T>::full() const
 {
-    return mSize >= mMaxSize;
+    return size() == mMaxSize;
 }
 
 template <class T>
@@ -115,7 +116,7 @@ ANGLE_INLINE typename FixedQueue<T>::size_type FixedQueue<T>::capacity() const
 template <class T>
 ANGLE_INLINE void FixedQueue<T>::updateCapacity(size_t newCapacity)
 {
-    ASSERT(newCapacity >= mSize);
+    ASSERT(newCapacity >= size());
     Storage newData(newCapacity);
     for (size_type i = mFrontIndex; i < mEndIndex; i++)
     {
@@ -130,21 +131,21 @@ ANGLE_INLINE void FixedQueue<T>::updateCapacity(size_t newCapacity)
 template <class T>
 ANGLE_INLINE typename FixedQueue<T>::reference FixedQueue<T>::front()
 {
-    ASSERT(mSize > 0);
+    ASSERT(!empty());
     return mData[mFrontIndex % mMaxSize];
 }
 
 template <class T>
 ANGLE_INLINE typename FixedQueue<T>::const_reference FixedQueue<T>::front() const
 {
-    ASSERT(mSize > 0);
+    ASSERT(!empty());
     return mData[mFrontIndex % mMaxSize];
 }
 
 template <class T>
 void FixedQueue<T>::push(const value_type &value)
 {
-    ASSERT(mSize < mMaxSize);
+    ASSERT(!full());
     mData[mEndIndex % mMaxSize] = value;
     mEndIndex++;
     // We must increment size last, after we wrote data. That way if another thread is doing
@@ -156,7 +157,7 @@ void FixedQueue<T>::push(const value_type &value)
 template <class T>
 void FixedQueue<T>::push(value_type &&value)
 {
-    ASSERT(mSize < mMaxSize);
+    ASSERT(!full());
     mData[mEndIndex % mMaxSize] = std::move(value);
     mEndIndex++;
     // We must increment size last, after we wrote data. That way if another thread is doing
@@ -168,21 +169,21 @@ void FixedQueue<T>::push(value_type &&value)
 template <class T>
 ANGLE_INLINE typename FixedQueue<T>::reference FixedQueue<T>::back()
 {
-    ASSERT(mSize > 0);
+    ASSERT(!empty());
     return mData[(mEndIndex + (mMaxSize - 1)) % mMaxSize];
 }
 
 template <class T>
 ANGLE_INLINE typename FixedQueue<T>::const_reference FixedQueue<T>::back() const
 {
-    ASSERT(mSize > 0);
+    ASSERT(!empty());
     return mData[(mEndIndex + (mMaxSize - 1)) % mMaxSize];
 }
 
 template <class T>
 void FixedQueue<T>::pop()
 {
-    ASSERT(mSize > 0);
+    ASSERT(!empty());
     mData[mFrontIndex % mMaxSize] = value_type();
     mFrontIndex++;
     // We must decrement size last, after we wrote data. That way if another thread is doing
@@ -194,7 +195,7 @@ template <class T>
 void FixedQueue<T>::clear()
 {
     // Size will change in the "pop()" and also by "push()" calls from other thread.
-    const size_type localSize = mSize;
+    const size_type localSize = size();
     for (size_type i = 0; i < localSize; i++)
     {
         pop();

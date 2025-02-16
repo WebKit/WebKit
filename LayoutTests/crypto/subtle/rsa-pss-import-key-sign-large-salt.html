@@ -21,11 +21,6 @@ crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSA-PSS", hash: "sha-1"}, ext
     key = result;
     return shouldReject('crypto.subtle.sign({ name: "RSA-PSS", saltLength: 21 }, key, text)');
 }).then(function(result) {
-    return crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSA-PSS", hash: "sha-224"}, extractable, ["sign"]);
-}).then(function(result) {
-    key = result;
-    return shouldReject('crypto.subtle.sign({ name: "RSA-PSS", saltLength: 29 }, key, text)');
-}).then(function(result) {
     return crypto.subtle.importKey("pkcs8", pkcs8Key, {name: "RSA-PSS", hash: "sha-256"}, extractable, ["sign"]);
 }).then(function(result) {
     key = result;

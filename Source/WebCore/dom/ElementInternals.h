@@ -68,9 +68,9 @@ public:
     const AtomString& attributeWithoutSynchronization(const QualifiedName&) const;
     void setAttributeWithoutSynchronization(const QualifiedName&, const AtomString& value);
 
-    RefPtr<Element> getElementAttribute(const QualifiedName&) const;
+    RefPtr<Element> getElementAttributeForBindings(const QualifiedName&) const;
     void setElementAttribute(const QualifiedName&, Element*);
-    std::optional<Vector<Ref<Element>>> getElementsArrayAttribute(const QualifiedName&) const;
+    std::optional<Vector<Ref<Element>>> getElementsArrayAttributeForBindings(const QualifiedName&) const;
     void setElementsArrayAttribute(const QualifiedName&, std::optional<Vector<Ref<Element>>>&&);
 
     CustomStateSet& states();

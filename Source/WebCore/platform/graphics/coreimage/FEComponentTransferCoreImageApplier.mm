@@ -61,9 +61,9 @@ bool FEComponentTransferCoreImageApplier::supportsCoreImageRendering(const FECom
 bool FEComponentTransferCoreImageApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     ASSERT(inputs.size() == 1);
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
-    auto inputImage = input.ciImage();
+    auto inputImage = input->ciImage();
     if (!inputImage)
         return false;
 
@@ -75,10 +75,10 @@ bool FEComponentTransferCoreImageApplier::apply(const Filter&, const FilterImage
             [componentTransferFilter setValue:[CIVector vectorWithX:function.intercept Y:function.slope Z:0 W:0] forKey:key];
     };
 
-    setCoefficients(@"inputRedCoefficients", m_effect.redFunction());
-    setCoefficients(@"inputGreenCoefficients", m_effect.greenFunction());
-    setCoefficients(@"inputBlueCoefficients", m_effect.blueFunction());
-    setCoefficients(@"inputAlphaCoefficients", m_effect.alphaFunction());
+    setCoefficients(@"inputRedCoefficients", m_effect->redFunction());
+    setCoefficients(@"inputGreenCoefficients", m_effect->greenFunction());
+    setCoefficients(@"inputBlueCoefficients", m_effect->blueFunction());
+    setCoefficients(@"inputAlphaCoefficients", m_effect->alphaFunction());
 
     result.setCIImage(componentTransferFilter.outputImage);
     return true;

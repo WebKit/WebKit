@@ -1,20 +1,20 @@
 
 PASS animation-timeline: view() without timeline range name
 PASS animation-timeline: view(50px) without timeline range name
-FAIL animation-timeline: view(auto 50px) without timeline range name assert_equals: At 0% expected "0" but got "0.416667"
+PASS animation-timeline: view(auto 50px) without timeline range name
 PASS animation-timeline: view(inline) without timeline range name
 PASS animation-timeline: view(x) without timeline range name
 PASS animation-timeline: view(y) without timeline range name
 PASS animation-timeline: view(x 50px) without timeline range name
 PASS animation-timeline: view(50px), view(inline 50px) without timeline range name
 PASS animation-timeline: view(inline) changes to view(inline 50px), withouttimeline range name
-FAIL animation-timeline: view() assert_equals: At entry 0% expected "0" but got "1"
-FAIL animation-timeline: view(50px) assert_equals: At entry 0% expected "0" but got "1"
-FAIL animation-timeline: view(auto 50px) assert_equals: At entry 0% expected "0" but got "1"
-FAIL animation-timeline: view(inline) assert_equals: At exit 50% expected "0.5" but got "1"
-FAIL animation-timeline: view(x) assert_equals: At exit 50% expected "0.5" but got "1"
-FAIL animation-timeline: view(y) assert_equals: At exit 50% expected "0.5" but got "1"
-FAIL animation-timeline: view(x 50px) assert_equals: At exit 50% expected "0.5" but got "1"
-FAIL animation-timeline: view(), view(inline) assert_equals: At exit 0% inline expected "10px" but got "16px"
-FAIL animation-timeline: view(inline) changes to view(inline 50px) assert_equals: At exit 50% expected "0.5" but got "1"
+PASS animation-timeline: view()
+PASS animation-timeline: view(50px)
+PASS animation-timeline: view(auto 50px)
+PASS animation-timeline: view(inline)
+PASS animation-timeline: view(x)
+PASS animation-timeline: view(y)
+PASS animation-timeline: view(x 50px)
+PASS animation-timeline: view(), view(inline)
+PASS animation-timeline: view(inline) changes to view(inline 50px)
 

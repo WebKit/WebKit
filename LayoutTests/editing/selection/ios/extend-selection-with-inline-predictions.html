@@ -29,14 +29,7 @@ addEventListener("load", async () => {
     description("This test verifies that selecting backwards after typing with inline predictions does not cause a crash. This test requires WebKitTestRunner.");
 
     await UIHelper.activateElementAndWaitForInputSession(document.getElementById("target"));
-
-    for (let character of [..."i want to c"]) {
-        await UIHelper.callFunctionAndWaitForEvent(async () => {
-            await UIHelper.typeCharacter(character);
-            await UIHelper.ensurePresentationUpdate();
-        }, document.body, "keyup");
-    }
-
+    await UIHelper.typeCharacters("i want to c", "keyup", document.body);
     await UIHelper.setInlinePrediction("elebrate");
     await UIHelper.ensurePresentationUpdate();
 

@@ -39,14 +39,14 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(DocumentSharedObjectPool);
 struct DocumentSharedObjectPool::ShareableElementDataHash {
     static unsigned hash(const Ref<ShareableElementData>& data)
     {
-        return computeHash(data->span());
+        return computeHash(data->attributes());
     }
     static bool equal(const Ref<ShareableElementData>& a, const Ref<ShareableElementData>& b)
     {
         // We need to disable type checking because std::has_unique_object_representations_v<Attribute>
         // return false. Attribute contains pointers but memcmp() is safe because those pointers were
         // atomized.
-        return equalSpans<WTF::IgnoreTypeChecks::Yes>(a->span(), b->span());
+        return equalSpans<WTF::IgnoreTypeChecks::Yes>(a->attributes(), b->attributes());
     }
     static constexpr bool safeToCompareToEmptyOrDeleted = false;
 };
@@ -62,7 +62,7 @@ struct AttributeSpanTranslator {
         // We need to disable type checking because std::has_unique_object_representations_v<Attribute>
         // return false. Attribute contains pointers but memcmp() is safe because those pointers were
         // atomized.
-        return equalSpans<WTF::IgnoreTypeChecks::Yes>(a->span(), b);
+        return equalSpans<WTF::IgnoreTypeChecks::Yes>(a->attributes(), b);
     }
 
     static void translate(Ref<ShareableElementData>& location, std::span<const Attribute> attributes, unsigned /*hash*/)

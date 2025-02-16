@@ -460,7 +460,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
 
         float x = data.x;
         float y = data.y;
-        auto previousBoxOnLine = textBox->previousOnLine();
+        auto previousBoxOnLine = textBox->nextLineLeftwardOnLine();
 
         bool hasXOrY = !SVGTextLayoutAttributes::isEmptyValue(x) || !SVGTextLayoutAttributes::isEmptyValue(y);
 

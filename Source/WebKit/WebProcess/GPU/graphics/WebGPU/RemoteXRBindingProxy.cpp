@@ -75,7 +75,7 @@ RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getSubImage(WebCore::W
 RefPtr<WebCore::WebGPU::XRSubImage> RemoteXRBindingProxy::getViewSubImage(WebCore::WebGPU::XRProjectionLayer& projectionLayer)
 {
     auto identifier = WebGPUIdentifier::generate();
-    auto sendResult = send(Messages::RemoteXRBinding::GetViewSubImage(static_cast<RemoteXRProjectionLayerProxy&>(projectionLayer).backing(), identifier));
+    auto sendResult = send(Messages::RemoteXRBinding::GetViewSubImage(downcast<RemoteXRProjectionLayerProxy>(projectionLayer).backing(), identifier));
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 

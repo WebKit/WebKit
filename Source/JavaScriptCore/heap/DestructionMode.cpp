@@ -41,6 +41,9 @@ void printInternal(PrintStream& out, DestructionMode mode)
     case DoesNotNeedDestruction:
         out.print("DoesNotNeedDestruction");
         return;
+    case MayNeedDestruction:
+        out.print("MayNeedDestruction");
+        return;
     }
     
     RELEASE_ASSERT_NOT_REACHED();

@@ -45,9 +45,9 @@ angle::Result CLPlatformVk::initBackendRenderer()
     featureOverrides.enabled.push_back("hasBlobCacheThatEvictsOldItemsFirst");
     featureOverrides.disabled.push_back("verifyPipelineCacheInBlobCache");
 
-    ANGLE_TRY(mRenderer->initialize(this, this, angle::vk::ICD::Default, 0, 0, kUseDebugLayers,
-                                    getWSIExtension(), getWSILayer(), getWindowSystem(),
-                                    featureOverrides));
+    ANGLE_TRY(mRenderer->initialize(this, this, angle::vk::ICD::Default, 0, 0, nullptr, nullptr,
+                                    static_cast<VkDriverId>(0), kUseDebugLayers, getWSIExtension(),
+                                    getWSILayer(), getWindowSystem(), featureOverrides));
 
     return angle::Result::Continue;
 }
@@ -194,7 +194,7 @@ const std::string &CLPlatformVk::GetVersionString()
 }
 
 CLPlatformVk::CLPlatformVk(const cl::Platform &platform)
-    : CLPlatformImpl(platform), vk::Context(new vk::Renderer()), mBlobCache(1024 * 1024)
+    : CLPlatformImpl(platform), vk::ErrorContext(new vk::Renderer()), mBlobCache(1024 * 1024)
 {}
 
 void CLPlatformVk::handleError(VkResult result,

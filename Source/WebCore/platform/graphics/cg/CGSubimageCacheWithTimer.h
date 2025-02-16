@@ -94,7 +94,7 @@ private:
     static constexpr Seconds cacheEntryLifetime { 500_ms };
     static constexpr int maxCacheSize = 300;
 
-    typedef HashSet<CacheEntry, CacheHash, CacheEntryTraits> CacheHashSet;
+    typedef UncheckedKeyHashSet<CacheEntry, CacheHash, CacheEntryTraits> CacheHashSet;
 
     CGSubimageCacheWithTimer();
     void pruneCacheTimerFired();

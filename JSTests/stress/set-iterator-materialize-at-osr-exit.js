@@ -17,7 +17,7 @@ function shouldBe(actual, expected)
 noInline(test);
 
 var set = new Set([0]);
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(set, false), true);
 
  var iterator = test(set, true);

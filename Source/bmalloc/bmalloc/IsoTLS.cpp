@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "IsoTLS.h"
+
+#if !BUSE(TZONE)
 
 #include "Environment.h"
 #include "IsoTLSEntryInlines.h"
@@ -177,3 +180,4 @@ void IsoTLS::forEachEntry(const Func& func)
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

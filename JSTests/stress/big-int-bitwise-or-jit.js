@@ -10,7 +10,7 @@ function bigIntBitOr(a, b) {
 }
 noInline(bigIntBitOr);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntBitOr(0b101n, 0b1010n);
     assert.sameValue(r, 0b1111n, 0b101n + " | " + 0b1010n + " = " + r);
 }

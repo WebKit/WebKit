@@ -51,7 +51,7 @@ private:
     Ref<Text> protectedNode() const { return m_node.get(); }
     
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(NodeSet&) override;
 #endif
     
     Ref<Text> m_node;

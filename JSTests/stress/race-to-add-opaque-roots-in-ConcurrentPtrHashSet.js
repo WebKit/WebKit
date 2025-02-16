@@ -3,5 +3,5 @@
 //@ slow!
 
 let array = [];
-for (let i = 0; i < 100000; i++)
+for (let i = 0; i < testLoopCount; i++)
     array[i] = new DataView(new ArrayBuffer());

@@ -63,7 +63,7 @@ TEST(MonospaceFontsTest, EnsureMonospaceFontInvariants)
                     if (!WidthIterator::characterCanUseSimplifiedTextMeasuring(character, whitespaceIsCollapsed))
                         continue;
                     auto glyphData = fontCascade.glyphDataForCharacter(character, false);
-                    if (!glyphData.isValid() || glyphData.font != &fontCascade.primaryFont())
+                    if (!glyphData.isValid() || glyphData.font != fontCascade.primaryFont().ptr())
                         continue;
                     fontCascade.fonts()->widthCache().clear();
                     float width = fontCascade.widthForSimpleTextWithFixedPitch(content, whitespaceIsCollapsed);

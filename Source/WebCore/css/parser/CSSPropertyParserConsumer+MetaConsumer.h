@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,15 +45,14 @@ namespace CSSPropertyParserHelpers {
 // MARK: - Meta Consumers
 
 /// The result of a meta consume.
-/// To be used with a list of `CSS` types (e.g. `ConsumeResult<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::None>`), which will yield a
-/// result type of either a std::variant of those types (e.g.`std::variant<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::None>`) or the type
+/// To be used with a list of `CSS` types (e.g. `ConsumeResult<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::Keyword::None>`), which will yield a
+/// result type of either a std::variant of those types (e.g.`std::variant<CSS::Angle<Range>, CSS::Percentage<Range>, CSS::Keyword::None>`) or the type
 /// itself if only a single type was specified.
 template<typename... Ts>
 struct MetaConsumeResult {
     using TypeList = brigand::list<Ts...>;
     using type = VariantOrSingle<TypeList>;
 };
-
 
 template<CSSParserTokenType tokenType, typename Consumer, typename = void>
 struct MetaConsumerDispatcher {
@@ -116,10 +115,16 @@ struct MetaConsumerDispatcher<IdentToken, Consumer, typename std::void_t<typenam
 // to the MetaConsumerDispatcher to actually call right `consume` function.
 
 // Empty case, used to indicate no more types remain to try.
-template<CSSParserTokenType tokenType, typename ResultType, typename... Ts>
+template<typename... Ts>
 struct MetaConsumerUnroller {
-    template<typename... Args>
-    static std::nullopt_t consume(Args&&...)
+    template<CSSParserTokenType, typename ResultType>
+    static std::nullopt_t consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
+    {
+        return std::nullopt;
+    }
+
+    template<CSSParserTokenType, typename ResultType, typename F>
+    static std::nullopt_t consume(CSSParserTokenRange&, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions, NOESCAPE F&&)
     {
         return std::nullopt;
     }
@@ -128,54 +133,86 @@ struct MetaConsumerUnroller {
 // Actionable case, checks if the `Consumer` defined for type `T` supports the
 // current token, trying to consume if it does, and in either case, falling
 // back to recursively trying the same on the remainder of the type list `Ts...`.
-template<CSSParserTokenType tokenType, typename ResultType, typename T, typename... Ts>
-struct MetaConsumerUnroller<tokenType, ResultType, T, Ts...> {
-    template<typename... Args>
-    static std::optional<ResultType> consume(Args&&... args)
+template<typename T, typename... Ts>
+struct MetaConsumerUnroller<T, Ts...> {
+    template<CSSParserTokenType tokenType, typename ResultType>
+    static std::optional<ResultType> consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
     {
         using Consumer = MetaConsumerDispatcher<tokenType, ConsumerDefinition<T>>;
         if constexpr (Consumer::supported) {
-            if (auto result = Consumer::consume(args...))
+            if (auto result = Consumer::consume(range, context, symbolsAllowed, options))
                 return { T { *result } };
         }
-        return MetaConsumerUnroller<tokenType, ResultType, Ts...>::consume(args...);
+        return MetaConsumerUnroller<Ts...>::template consume<tokenType, ResultType>(range, context, symbolsAllowed, options);
+    }
+
+    template<CSSParserTokenType tokenType, typename ResultType, typename F>
+    static std::optional<ResultType> consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options, NOESCAPE F&& functor)
+    {
+        using Consumer = MetaConsumerDispatcher<tokenType, ConsumerDefinition<T>>;
+        if constexpr (Consumer::supported) {
+            if (auto result = Consumer::consume(range, context, symbolsAllowed, options))
+                return std::make_optional(functor(T { *result }));
+        }
+        return MetaConsumerUnroller<Ts...>::template consume<tokenType, ResultType>(range, context, symbolsAllowed, options, std::forward<F>(functor));
     }
 };
 
 // The `MetaConsumer` is the main driver of token consumption, dispatching
 // to a `MetaConsumerUnroller` based on token type. Caller use this directly.
 // An example use that attempts to consumer either a <number> or <percentage>
-// looks like:
+// looks like (argument list elided for brevity):
 //
 //    auto result = MetaConsumer<CSS::Percentage<R>, CSS::Number<R>>::consume(range, ...);
 //
-// (Argument list elided for brevity)
-template<typename... Ts>
+// If a caller wants to avoid the overhead of switching on the returned variant
+// result, an alternative overload of `consume` is provided which takes an additional
+// `functor` argument which gets called with the result:
+//
+//    auto result = MetaConsumer<CSS::Percentage<R>, CSS::Number<R>>::consume(range, ...,
+//        [](CSS::Percentage<R> percentage) { ... },
+//        [](CSS::Number<R> number) { ... }
+//    );
+template<typename T, typename... Ts>
 struct MetaConsumer {
-    using ResultType = typename MetaConsumeResult<Ts...>::type;
+    using Unroller = MetaConsumerUnroller<T, Ts...>;
 
-    template<typename... Args>
-    static std::optional<ResultType> consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options, Args&&... args)
+    template<typename... F>
+    static decltype(auto) consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options, F&&... f)
     {
+        auto visitor = WTF::makeVisitor(std::forward<F>(f)...);
+        using ResultType = decltype(visitor(std::declval<T>()));
+
         switch (range.peek().type()) {
         case FunctionToken:
-            return MetaConsumerUnroller<FunctionToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return Unroller::template consume<FunctionToken, ResultType>(range, context, WTFMove(symbolsAllowed), options, visitor);
 
         case NumberToken:
-            return MetaConsumerUnroller<NumberToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return Unroller::template consume<NumberToken, ResultType>(range, context, WTFMove(symbolsAllowed), options, visitor);
 
         case PercentageToken:
-            return MetaConsumerUnroller<PercentageToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return Unroller::template consume<PercentageToken, ResultType>(range, context, WTFMove(symbolsAllowed), options, visitor);
 
         case DimensionToken:
-            return MetaConsumerUnroller<DimensionToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return Unroller::template consume<DimensionToken, ResultType>(range, context, WTFMove(symbolsAllowed), options, visitor);
 
         case IdentToken:
-            return MetaConsumerUnroller<IdentToken, ResultType, Ts...>::consume(range, context, WTFMove(symbolsAllowed), options, std::forward<Args>(args)...);
+            return Unroller::template consume<IdentToken, ResultType>(range, context, WTFMove(symbolsAllowed), options, visitor);
 
         default:
-            return { };
+            return std::optional<ResultType> { };
         }
+    }
+
+    static decltype(auto) consume(CSSParserTokenRange& range, const CSSParserContext& context, CSSCalcSymbolsAllowed symbolsAllowed, CSSPropertyParserOptions options)
+    {
+        using ResultType = typename MetaConsumeResult<T, Ts...>::type;
+
+        return consume(range, context, WTFMove(symbolsAllowed), options,
+            [](auto&& value) {
+                return ResultType { WTFMove(value) };
+            }
+        );
     }
 };
 

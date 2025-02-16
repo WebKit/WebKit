@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 
@@ -49,5 +47,3 @@ public:
 };
 
 }
-
-#endif // ENABLE(DATALIST_ELEMENT)

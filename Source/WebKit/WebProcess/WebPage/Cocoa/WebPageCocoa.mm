@@ -33,6 +33,7 @@
 #import "MessageSenderInlines.h"
 #import "PDFPlugin.h"
 #import "PluginView.h"
+#import "PrintInfo.h"
 #import "TextAnimationController.h"
 #import "UserMediaCaptureManager.h"
 #import "WKAccessibilityWebPageObjectBase.h"
@@ -72,6 +73,7 @@
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/NetworkExtensionContentFilter.h>
 #import <WebCore/NodeRenderStyle.h>
+#import <WebCore/NotImplemented.h>
 #import <WebCore/NowPlayingInfo.h>
 #import <WebCore/PaymentCoordinator.h>
 #import <WebCore/PlatformMediaSessionManager.h>
@@ -102,6 +104,8 @@
 #if USE(EXTENSIONKIT)
 #import "WKProcessExtension.h"
 #endif
+
+#import "PDFKitSoftLink.h"
 
 #define WEBPAGE_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [webPageID=%" PRIu64 "] WebPage::" fmt, this, m_identifier.toUInt64(), ##__VA_ARGS__)
 
@@ -147,8 +151,10 @@ void WebPage::platformInitialize(const WebPageCreationParameters& parameters)
     setInsertionPointColor(parameters.insertionPointColor);
     setHardwareKeyboardState(parameters.hardwareKeyboardState);
 #endif
-    WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
-    WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());
+    if (!WebProcess::singleton().isLockdownModeEnabled()) {
+        WebCore::setAdditionalSupportedImageTypes(parameters.additionalSupportedImageTypes);
+        WebCore::setImageSourceAllowableTypes(WebCore::allowableImageTypes());
+    }
 }
 
 #if HAVE(SANDBOX_STATE_FLAGS)
@@ -222,7 +228,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
         return;
     // Find the frame the point is over.
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(localMainFrame->view()->windowToContents(roundedIntPoint(floatPoint)), hitType);
+    auto result = localMainFrame->eventHandler().hitTestResultAtPoint(localMainFrame->protectedView()->windowToContents(roundedIntPoint(floatPoint)), hitType);
 
     RefPtr frame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document().frame() : m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
@@ -267,7 +273,7 @@ DictionaryPopupInfo WebPage::dictionaryPopupInfoForRange(LocalFrame& frame, cons
 
     DictionaryPopupInfo dictionaryPopupInfo;
 
-    IntRect rangeRect = frame.view()->contentsToWindow(quads[0].enclosingBoundingBox());
+    IntRect rangeRect = frame.protectedView()->contentsToWindow(quads[0].enclosingBoundingBox());
 
     const RenderStyle* style = range.startContainer().renderStyle();
     float scaledAscent = style ? style->metricsOfPrimaryFont().intAscent() * pageScaleFactor() : 0;
@@ -470,7 +476,7 @@ void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::Fram
         return completionHandler({ }, 0);
     }
 
-    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken.span());
+    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken.span(), frameID);
 
     // Get our remote token data and send back to the RemoteFrame.
 #if PLATFORM(MAC)
@@ -480,10 +486,13 @@ void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::Fram
 #endif
 }
 
-void WebPage::resolveAccessibilityHitTestForTesting(const WebCore::IntPoint& point, CompletionHandler<void(String)>&& completionHandler)
+void WebPage::resolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier frameID, const WebCore::IntPoint& point, CompletionHandler<void(String)>&& completionHandler)
 {
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
+    if (!webFrame)
+        return completionHandler("NULL"_s);
 #if PLATFORM(MAC)
-    if (id coreObject = [m_mockAccessibilityElement accessibilityRootObjectWrapper]) {
+    if (id coreObject = [m_mockAccessibilityElement accessibilityRootObjectWrapper:webFrame->coreLocalFrame()]) {
         if (id hitTestResult = [coreObject accessibilityHitTest:point]) {
             ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             completionHandler([hitTestResult accessibilityAttributeValue:@"AXInfoStringForTesting"]);
@@ -493,7 +502,7 @@ void WebPage::resolveAccessibilityHitTestForTesting(const WebCore::IntPoint& poi
     }
 #endif
     UNUSED_PARAM(point);
-    completionHandler(makeString("NULL"_s));
+    completionHandler("NULL"_s);
 }
 
 #if ENABLE(APPLE_PAY)
@@ -571,17 +580,45 @@ void WebPage::getProcessDisplayName(CompletionHandler<void(String&&)>&& completi
 #endif
 }
 
+static bool rendererIsTransparentOrFullyClipped(const RenderObject& renderer)
+{
+    CheckedPtr enclosingLayer = renderer.enclosingLayer();
+    if (enclosingLayer && enclosingLayer->isTransparentRespectingParentFrames())
+        return true;
+
+    return renderer.hasEmptyVisibleRectRespectingParentFrames();
+}
+
 bool WebPage::isTransparentOrFullyClipped(const Node& node) const
 {
     CheckedPtr renderer = node.renderer();
     if (!renderer)
         return false;
+    return rendererIsTransparentOrFullyClipped(*renderer);
+}
 
-    auto* enclosingLayer = renderer->enclosingLayer();
-    if (enclosingLayer && enclosingLayer->isTransparentRespectingParentFrames())
-        return true;
+static bool selectionIsTransparentOrFullyClipped(const VisibleSelection& selection)
+{
+    RefPtr startContainer = selection.start().containerNode();
+    if (!startContainer)
+        return false;
 
-    return renderer->hasNonEmptyVisibleRectRespectingParentFrames();
+    RefPtr endContainer = selection.end().containerNode();
+    if (!endContainer)
+        return false;
+
+    CheckedPtr startRenderer = startContainer->renderer();
+    if (!startRenderer)
+        return false;
+
+    CheckedPtr endRenderer = endContainer->renderer();
+    if (!endRenderer)
+        return false;
+
+    if (!rendererIsTransparentOrFullyClipped(*startRenderer))
+        return false;
+
+    return startRenderer == endRenderer || rendererIsTransparentOrFullyClipped(*endRenderer);
 }
 
 void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState& result) const
@@ -667,10 +704,8 @@ void WebPage::getPlatformEditorStateCommon(const LocalFrame& frame, EditorState&
 #if PLATFORM(IOS_FAMILY)
         result.visualData->editableRootBounds = rootViewInteractionBounds(Ref { *editableRootOrFormControl });
 #endif
-    } else if (result.selectionIsRange) {
-        if (RefPtr ancestorContainer = commonInclusiveAncestor(selection.start(), selection.end()))
-            postLayoutData.selectionIsTransparentOrFullyClipped = isTransparentOrFullyClipped(*ancestorContainer);
-    }
+    } else if (result.selectionIsRange)
+        postLayoutData.selectionIsTransparentOrFullyClipped = selectionIsTransparentOrFullyClipped(selection);
 
 #if PLATFORM(IOS_FAMILY)
     bool honorOverflowScrolling = m_page->settings().selectionHonorsOverflowScrolling();
@@ -964,9 +999,10 @@ void WebPage::didEndWritingToolsSession(const WebCore::WritingTools::Session& se
     corePage()->didEndWritingToolsSession(session, accepted);
 }
 
-void WebPage::compositionSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished)
+void WebPage::compositionSessionDidReceiveTextWithReplacementRange(const WebCore::WritingTools::Session& session, const WebCore::AttributedString& attributedText, const WebCore::CharacterRange& range, const WebCore::WritingTools::Context& context, bool finished, CompletionHandler<void()>&& completionHandler)
 {
     corePage()->compositionSessionDidReceiveTextWithReplacementRange(session, attributedText, range, context, finished);
+    completionHandler();
 }
 
 void WebPage::writingToolsSessionDidReceiveAction(const WritingTools::Session& session, WebCore::WritingTools::Action action)
@@ -1167,6 +1203,130 @@ void WebPage::decodeImageData(Ref<WebCore::SharedBuffer>&& buffer, std::optional
 {
     completionHandler(decodeImageWithSize(buffer->span(), preferredSize));
 }
+
+#if HAVE(PDFKIT)
+
+void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier frameID, const PrintInfo& printInfo, Vector<IntRect>& resultPageRects)
+{
+    ASSERT(resultPageRects.isEmpty());
+    RefPtr frame = WebProcess::singleton().webFrame(frameID);
+    RefPtr coreFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RetainPtr<PDFDocument> pdfDocument = coreFrame ? pdfDocumentForPrintingFrame(coreFrame.get()) : 0;
+    if ([pdfDocument allowsPrinting]) {
+        NSUInteger pageCount = [pdfDocument pageCount];
+        IntRect pageRect(0, 0, ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
+        for (NSUInteger i = 1; i <= pageCount; ++i) {
+            resultPageRects.append(pageRect);
+            pageRect.move(0, pageRect.height());
+        }
+    }
+}
+
+static inline CGFloat roundCGFloat(CGFloat f)
+{
+    if (sizeof(CGFloat) == sizeof(float))
+        return roundf(static_cast<float>(f));
+    return static_cast<CGFloat>(round(f));
+}
+
+static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRef context, CGFloat pageSetupScaleFactor, CGSize paperSize)
+{
+    CGContextSaveGState(context);
+
+    CGContextScaleCTM(context, pageSetupScaleFactor, pageSetupScaleFactor);
+
+    PDFPage *pdfPage = [pdfDocument pageAtIndex:pageIndex];
+    NSRect cropBox = [pdfPage boundsForBox:kPDFDisplayBoxCropBox];
+    if (NSIsEmptyRect(cropBox))
+        cropBox = [pdfPage boundsForBox:kPDFDisplayBoxMediaBox];
+    else
+        cropBox = NSIntersectionRect(cropBox, [pdfPage boundsForBox:kPDFDisplayBoxMediaBox]);
+
+    // Always auto-rotate PDF content regardless of the paper orientation.
+    NSInteger rotation = [pdfPage rotation];
+    if (rotation == 90 || rotation == 270)
+        std::swap(cropBox.size.width, cropBox.size.height);
+
+    bool shouldRotate = (paperSize.width < paperSize.height) != (cropBox.size.width < cropBox.size.height);
+    if (shouldRotate)
+        std::swap(cropBox.size.width, cropBox.size.height);
+
+    // Center.
+    CGFloat widthDifference = paperSize.width / pageSetupScaleFactor - cropBox.size.width;
+    CGFloat heightDifference = paperSize.height / pageSetupScaleFactor - cropBox.size.height;
+    if (widthDifference || heightDifference)
+        CGContextTranslateCTM(context, roundCGFloat(widthDifference / 2), roundCGFloat(heightDifference / 2));
+
+    if (shouldRotate) {
+        CGContextRotateCTM(context, static_cast<CGFloat>(piOverTwoDouble));
+        CGContextTranslateCTM(context, 0, -cropBox.size.width);
+    }
+
+    [pdfPage drawWithBox:kPDFDisplayBoxCropBox toContext:context];
+
+    CGAffineTransform transform = CGContextGetCTM(context);
+
+    for (PDFAnnotation *annotation in [pdfPage annotations]) {
+        if (![[annotation valueForAnnotationKey:get_PDFKit_PDFAnnotationKeySubtype()] isEqualToString:get_PDFKit_PDFAnnotationSubtypeLink()])
+            continue;
+
+        NSURL *url = annotation.URL;
+        if (!url)
+            continue;
+
+        CGRect transformedRect = CGRectApplyAffineTransform(annotation.bounds, transform);
+        CGPDFContextSetURLForRect(context, (CFURLRef)url, transformedRect);
+    }
+
+    CGContextRestoreGState(context);
+}
+
+void WebPage::drawPDFDocument(CGContextRef context, PDFDocument *pdfDocument, const PrintInfo& printInfo, const WebCore::IntRect& rect)
+{
+    NSUInteger pageCount = [pdfDocument pageCount];
+    IntSize paperSize(ceilf(printInfo.availablePaperWidth), ceilf(printInfo.availablePaperHeight));
+    IntRect pageRect(IntPoint(), paperSize);
+    for (NSUInteger i = 0; i < pageCount; ++i) {
+        if (pageRect.intersects(rect)) {
+            CGContextSaveGState(context);
+
+            CGContextTranslateCTM(context, pageRect.x() - rect.x(), pageRect.y() - rect.y());
+            drawPDFPage(pdfDocument, i, context, printInfo.pageSetupScaleFactor, paperSize);
+
+            CGContextRestoreGState(context);
+        }
+        pageRect.move(0, pageRect.height());
+    }
+}
+
+void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef context, PDFDocument *pdfDocument, const PrintInfo& printInfo, uint32_t first, uint32_t count)
+{
+    NSUInteger pageCount = [pdfDocument pageCount];
+    for (uint32_t page = first; page < first + count; ++page) {
+        if (page >= pageCount)
+            break;
+
+        RetainPtr pageInfo = adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+
+        CGPDFContextBeginPage(context, pageInfo.get());
+        drawPDFPage(pdfDocument, page, context, printInfo.pageSetupScaleFactor, CGSizeMake(printInfo.availablePaperWidth, printInfo.availablePaperHeight));
+        CGPDFContextEndPage(context);
+    }
+}
+
+#else
+
+void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier, const PrintInfo&, Vector<IntRect>&)
+{
+    notImplemented();
+}
+
+void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t, uint32_t)
+{
+    notImplemented();
+}
+
+#endif
 
 } // namespace WebKit
 

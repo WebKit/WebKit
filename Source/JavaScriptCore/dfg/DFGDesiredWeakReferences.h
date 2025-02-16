@@ -61,8 +61,8 @@ public:
 
 private:
     CodeBlock* m_codeBlock;
-    HashSet<JSCell*> m_cells;
-    HashSet<StructureID> m_structures;
+    UncheckedKeyHashSet<JSCell*> m_cells;
+    UncheckedKeyHashSet<StructureID> m_structures;
     FixedVector<WriteBarrier<JSCell>> m_finalizedCells;
     FixedVector<StructureID> m_finalizedStructures;
 };

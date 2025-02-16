@@ -193,7 +193,7 @@ void IncreaseSelectionListLevelCommand::doApply()
         case Type::InheritedListType:
             newParent = startListChild->parentElement();
             if (newParent)
-                newParent = newParent->cloneElementWithoutChildren(document());
+                newParent = newParent->cloneElementWithoutChildren(document(), nullptr);
             break;
         case Type::OrderedList:
             newParent = HTMLOListElement::create(document());

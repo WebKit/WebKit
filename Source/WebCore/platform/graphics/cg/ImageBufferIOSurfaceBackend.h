@@ -81,7 +81,8 @@ protected:
 
     unsigned bytesPerRow() const override;
 
-    void invalidateCachedNativeImage();
+    // Returns true if this invalidation requires a flush to complete
+    bool invalidateCachedNativeImage();
     void prepareForExternalRead();
     void prepareForExternalWrite();
 

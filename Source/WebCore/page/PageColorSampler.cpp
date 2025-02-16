@@ -26,6 +26,8 @@
 #include "config.h"
 #include "PageColorSampler.h"
 
+#include "ColorHash.h"
+#include "ColorSerialization.h"
 #include "ContentfulPaintChecker.h"
 #include "Document.h"
 #include "Element.h"
@@ -51,6 +53,7 @@
 #include "Settings.h"
 #include "Styleable.h"
 #include "WebAnimation.h"
+#include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
@@ -272,6 +275,96 @@ std::optional<Color> PageColorSampler::sampleTop(Page& page)
         return averageColor(std::span(samples).subspan<0, numSamples - 1>());
     else
         return averageColor(std::span(samples));
+}
+
+Color PageColorSampler::predominantColor(Page& page, const LayoutRect& absoluteRect)
+{
+    RefPtr frame = page.localMainFrame();
+    if (!frame)
+        return { };
+
+    RefPtr view = frame->view();
+    if (!view)
+        return { };
+
+    RefPtr document = frame->document();
+    if (!document)
+        return { };
+
+    auto colorSpace = DestinationColorSpace::SRGB();
+    auto snapshot = snapshotFrameRect(*frame, snappedIntRect(absoluteRect), {
+        { SnapshotFlags::ExcludeSelectionHighlighting, SnapshotFlags::PaintEverythingExcludingSelection },
+        ImageBufferPixelFormat::BGRA8,
+        colorSpace
+    });
+
+    if (!snapshot)
+        return { };
+
+    auto pixelBuffer = snapshot->getPixelBuffer({ AlphaPremultiplication::Unpremultiplied, PixelFormat::BGRA8, colorSpace }, { { }, snapshot->truncatedLogicalSize() });
+    if (!pixelBuffer)
+        return { };
+
+    static constexpr auto sampleCount = 17;
+    static constexpr auto minimumSampleCountForPredominantColor = 0.5 * sampleCount;
+    static constexpr auto bytesPerPixel = 4;
+
+    auto numberOfBytes = pixelBuffer->bytes().size();
+    auto numberOfPixels = numberOfBytes / bytesPerPixel;
+    if (numberOfPixels <= sampleCount)
+        return { };
+
+    auto byteSamplingInterval = bytesPerPixel * (numberOfPixels / (sampleCount - 1));
+    auto pixels = pixelBuffer->bytes();
+    HashCountedSet<Color> colorDistribution;
+    for (uint64_t i = 0; i < numberOfBytes; i += byteSamplingInterval) {
+        if (auto color = Color { SRGBA<uint8_t> { pixels[i + 2], pixels[i + 1], pixels[i], pixels[i + 3] } }; color.isValid())
+            colorDistribution.add(WTFMove(color));
+    }
+
+    for (auto& [color, count] : colorDistribution) {
+        if (count > minimumSampleCountForPredominantColor)
+            return color;
+    }
+
+    auto colorsAreSimilar = [](const Color& a, const Color& b) {
+        static constexpr auto maxDistanceSquaredForSimilarColors = 36;
+        auto [redA, greenA, blueA, alphaA] = a.toResolvedColorComponentsInColorSpace(DestinationColorSpace::SRGB());
+        auto [redB, greenB, blueB, alphaB] = b.toResolvedColorComponentsInColorSpace(DestinationColorSpace::SRGB());
+        auto distance = pow(255 * (redA - redB), 2) + pow(255 * (greenA - greenB), 2) + pow(255 * (blueA - blueB), 2);
+        return distance <= maxDistanceSquaredForSimilarColors;
+    };
+
+    Vector<std::pair<Color, unsigned>> colorsByDescendingFrequency;
+    colorsByDescendingFrequency.reserveInitialCapacity(colorDistribution.size());
+    for (auto& [color, count] : colorDistribution)
+        colorsByDescendingFrequency.append({ color, count });
+
+    std::stable_sort(colorsByDescendingFrequency.begin(), colorsByDescendingFrequency.end(), [](auto& a, auto& b) {
+        return a.second > b.second;
+    });
+
+    std::optional<Color> mostFrequentColor;
+    unsigned mostFrequentColorCount = 0;
+
+    // FIXME: This doesn't account for the case where a predominant color is not similar to the color with the highest frequency.
+    for (auto& [color, count] : colorsByDescendingFrequency) {
+        if (!mostFrequentColor) {
+            mostFrequentColor = color;
+            mostFrequentColorCount = count;
+            continue;
+        }
+
+        if (!colorsAreSimilar(*mostFrequentColor, color))
+            continue;
+
+        mostFrequentColorCount += count;
+
+        if (mostFrequentColorCount > minimumSampleCountForPredominantColor)
+            return WTFMove(*mostFrequentColor);
+    }
+
+    return page.pageExtendedBackgroundColor();
 }
 
 } // namespace WebCore

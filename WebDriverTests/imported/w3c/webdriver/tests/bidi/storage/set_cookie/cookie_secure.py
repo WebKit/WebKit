@@ -1,5 +1,5 @@
 import pytest
-from .. import assert_cookie_is_set, create_cookie
+from .. import assert_cookie_is_set, assert_partition_key, create_cookie
 
 pytestmark = pytest.mark.asyncio
 
@@ -12,13 +12,11 @@ pytestmark = pytest.mark.asyncio
         None
     ]
 )
-async def test_cookie_secure(bidi_session, test_page, domain_value, secure):
-    set_cookie_result = await bidi_session.storage.set_cookie(
+async def test_cookie_secure(bidi_session, set_cookie, test_page, domain_value, secure):
+    set_cookie_result = await set_cookie(
         cookie=create_cookie(domain=domain_value(), secure=secure))
 
-    assert set_cookie_result == {
-        'partitionKey': {},
-    }
+    await assert_partition_key(bidi_session, actual=set_cookie_result["partitionKey"])
 
     # `secure` defaults to `false`.
     expected_secure = secure if secure is not None else False

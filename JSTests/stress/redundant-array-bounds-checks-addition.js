@@ -14,7 +14,7 @@ function arraycmp(a, b) {
     return true;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     var offset = i & 3;
     for (var j = 0; j < offset; ++j)

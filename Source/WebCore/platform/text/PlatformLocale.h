@@ -68,7 +68,6 @@ public:
     // Returns the default writing direction for the specified locale.
     virtual WritingDirection defaultWritingDirection() const;
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     // Returns date format in Unicode TR35 LDML[1] containing day of month,
     // month, and year, e.g. "dd/mm/yyyy"
     // [1] LDML http://unicode.org/reports/tr35/#Date_Format_Patterns
@@ -121,9 +120,7 @@ public:
     virtual const Vector<String>& monthLabels() = 0;
 
     String localizedDecimalSeparator();
-#endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     enum FormatType { FormatTypeUnspecified, FormatTypeShort, FormatTypeMedium };
 
     // Serializes the specified date into a formatted date string to
@@ -131,7 +128,6 @@ public:
     // localized dates the function should return an empty string.
     // FormatType can be used to specify if you want the short format. 
     virtual String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified);
-#endif
 
     WEBCORE_EXPORT virtual ~Locale();
 

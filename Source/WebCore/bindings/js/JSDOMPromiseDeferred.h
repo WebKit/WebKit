@@ -125,7 +125,7 @@ public:
     }
 
     template<class IDLType>
-    void resolveCallbackValueWithNewlyCreated(const Function<typename IDLType::InnerParameterType(ScriptExecutionContext&)>& createValue)
+    void resolveCallbackValueWithNewlyCreated(NOESCAPE const Function<typename IDLType::InnerParameterType(ScriptExecutionContext&)>& createValue)
     {
         if (shouldIgnoreRequestToFulfill())
             return;
@@ -274,6 +274,12 @@ public:
     void reject(ErrorType&&... error)
     {
         m_promise->reject(std::forward<ErrorType>(error)...);
+    }
+
+    template<typename Callback>
+    void rejectWithCallback(Callback callback, RejectAsHandled rejectAsHandled = RejectAsHandled::No)
+    {
+        m_promise->rejectWithCallback(callback, rejectAsHandled);
     }
 
     template<typename IDLType>

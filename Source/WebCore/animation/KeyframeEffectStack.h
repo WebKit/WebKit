@@ -66,7 +66,7 @@ public:
     bool containsProperty(CSSPropertyID) const;
     bool isCurrentlyAffectingProperty(CSSPropertyID) const;
     bool requiresPseudoElement() const;
-    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, HashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
+    OptionSet<AnimationImpact> applyKeyframeEffects(RenderStyle& targetStyle, UncheckedKeyHashSet<AnimatableCSSProperty>& affectedProperties, const RenderStyle* previousLastStyleChangeEventStyle, const Style::ResolutionContext&);
     bool hasEffectWithImplicitKeyframes() const;
 
     void effectAbilityToBeAcceleratedDidChange(const KeyframeEffect&);
@@ -78,9 +78,9 @@ public:
     void addInvalidCSSAnimationName(const String&);
 
     void lastStyleChangeEventStyleDidChange(const RenderStyle* previousStyle, const RenderStyle* currentStyle);
-    void cascadeDidOverrideProperties(const HashSet<AnimatableCSSProperty>&, const Document&);
+    void cascadeDidOverrideProperties(const UncheckedKeyHashSet<AnimatableCSSProperty>&, const Document&);
 
-    const HashSet<AnimatableCSSProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
+    const UncheckedKeyHashSet<AnimatableCSSProperty>& acceleratedPropertiesOverriddenByCascade() const { return m_acceleratedPropertiesOverriddenByCascade; }
 
     void applyPendingAcceleratedActions() const;
 
@@ -91,7 +91,7 @@ public:
 
 private:
     void ensureEffectsAreSorted();
-    bool hasMatchingEffect(const Function<bool(const KeyframeEffect&)>&) const;
+    bool hasMatchingEffect(NOESCAPE const Function<bool(const KeyframeEffect&)>&) const;
     void startAcceleratedAnimationsIfPossible();
     void stopAcceleratedAnimations();
 
@@ -99,8 +99,8 @@ private:
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     WeakListHashSet<AcceleratedEffect> m_acceleratedEffects;
 #endif
-    HashSet<String> m_invalidCSSAnimationNames;
-    HashSet<AnimatableCSSProperty> m_acceleratedPropertiesOverriddenByCascade;
+    UncheckedKeyHashSet<String> m_invalidCSSAnimationNames;
+    UncheckedKeyHashSet<AnimatableCSSProperty> m_acceleratedPropertiesOverriddenByCascade;
     RefPtr<const AnimationList> m_cssAnimationList;
     bool m_isSorted { true };
 };

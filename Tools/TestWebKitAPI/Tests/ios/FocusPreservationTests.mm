@@ -89,7 +89,13 @@ TEST(FocusPreservationTests, UserCanDismissInputViewRegardlessOfFocusPreservatio
     [webView dismissFormAccessoryView];
     [webView waitForNextPresentationUpdate];
 
-    EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"document.activeElement == document.querySelector('input')"] boolValue]);
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: https://bugs.webkit.org/show_bug.cgi?id=281518 Test is broken on iPad
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+        EXPECT_FALSE([[webView objectByEvaluatingJavaScript:@"document.activeElement == document.querySelector('input')"] boolValue]);
+    else
+        EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"document.activeElement == document.querySelector('input')"] boolValue]);
+ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 // FIXME: Re-enable this test once rdar://60644908 is resolved

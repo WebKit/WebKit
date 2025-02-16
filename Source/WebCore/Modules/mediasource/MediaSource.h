@@ -67,8 +67,7 @@ class VideoTrackPrivate;
 enum class MediaSourceReadyState { Closed, Open, Ended };
 
 class MediaSource
-    : public RefCounted<MediaSource>
-    , public CanMakeWeakPtr<MediaSource>
+    : public RefCountedAndCanMakeWeakPtr<MediaSource>
     , public ActiveDOMObject
     , public EventTarget
     , public URLRegistrable
@@ -79,8 +78,8 @@ class MediaSource
 {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(MediaSource);
 public:
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
+    void ref() const final { RefCountedAndCanMakeWeakPtr::ref(); }
+    void deref() const final { RefCountedAndCanMakeWeakPtr::deref(); }
 
     USING_CAN_MAKE_WEAKPTR(CanMakeWeakPtr<MediaSource>);
 

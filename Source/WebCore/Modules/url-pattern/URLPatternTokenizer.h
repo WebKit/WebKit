@@ -54,7 +54,7 @@ private:
     Vector<Token> m_tokenList;
     size_t m_index { 0 };
     size_t m_nextIndex { 0 };
-    UChar m_codepoint;
+    char32_t m_codepoint;
 
     void getNextCodePoint();
     void seekNextCodePoint(size_t index);

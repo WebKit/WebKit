@@ -20,7 +20,7 @@ WindowSurfaceVkHeadless::WindowSurfaceVkHeadless(const egl::SurfaceState &surfac
 
 WindowSurfaceVkHeadless::~WindowSurfaceVkHeadless() {}
 
-angle::Result WindowSurfaceVkHeadless::createSurfaceVk(vk::Context *context,
+angle::Result WindowSurfaceVkHeadless::createSurfaceVk(vk::ErrorContext *context,
                                                        gl::Extents *extentsOut)
 {
     vk::Renderer *renderer = context->getRenderer();
@@ -35,7 +35,7 @@ angle::Result WindowSurfaceVkHeadless::createSurfaceVk(vk::Context *context,
     return getCurrentWindowSize(context, extentsOut);
 }
 
-angle::Result WindowSurfaceVkHeadless::getCurrentWindowSize(vk::Context *context,
+angle::Result WindowSurfaceVkHeadless::getCurrentWindowSize(vk::ErrorContext *context,
                                                             gl::Extents *extentsOut)
 {
     const VkPhysicalDevice &physicalDevice = context->getRenderer()->getPhysicalDevice();

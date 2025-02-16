@@ -64,6 +64,8 @@ static PlatformGrant grantCapability(const PlatformCapability& capability, const
 struct PlatformExtensionCapabilityGrants {
     PlatformGrant gpuProcessGrant;
     PlatformGrant webProcessGrant;
+
+    PlatformExtensionCapabilityGrants isolatedCopy() const & { return { gpuProcessGrant, webProcessGrant }; }
 };
 
 enum class ExtensionCapabilityGrantError: uint8_t {
@@ -176,7 +178,7 @@ void ExtensionCapabilityGranter::grant(const ExtensionCapability& capability)
         capability,
         needsGPUProcessGrant ? gpuProcess.get() : nullptr,
         needsWebProcessGrant ? webProcess.get() : nullptr
-    )->whenSettled(RunLoop::main(), [
+    )->whenSettled(RunLoop::protectedMain(), [
         this,
         weakThis = WeakPtr { *this },
         environmentIdentifier,
@@ -275,7 +277,7 @@ void ExtensionCapabilityGranter::setMediaCapabilityActive(MediaCapability& capab
             return ExtensionCapabilityActivationPromise::createAndResolve();
 #endif
         return ExtensionCapabilityActivationPromise::createAndReject(ExtensionCapabilityGrantError::PlatformError);
-    })->whenSettled(RunLoop::main(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
+    })->whenSettled(RunLoop::protectedMain(), [weakCapability = WeakPtr { capability }, isActive](auto&& result) {
         auto capability = weakCapability.get();
         if (!capability)
             return;

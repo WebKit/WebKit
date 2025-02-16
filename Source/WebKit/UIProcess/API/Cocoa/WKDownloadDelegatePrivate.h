@@ -37,7 +37,7 @@
 typedef NS_ENUM(NSInteger, _WKPlaceholderPolicy) {
     _WKPlaceholderPolicyDisable,
     _WKPlaceholderPolicyEnable,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -54,21 +54,21 @@ WK_SWIFT_UI_ACTOR
  placeholder feature, it can choose to provide a custom URL to publish progress against.
  This is useful if the client maintains it's own placeholder file.
  */
-- (void)_download:(WKDownload *)download decidePlaceholderPolicy:(void (^)(_WKPlaceholderPolicy, NSURL *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_download:(WKDownload *)download decidePlaceholderPolicy:(void (^)(_WKPlaceholderPolicy, NSURL *))completionHandler WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 /* @abstract Called when the download receives a placeholder URL
  @param download The download for which we received a placeholder URL
  @param completionHandler The completion handler that should be called by the client in response to this call. 
  @discussion The placeholder URL will normally refer to a file in the Downloads directory
  */
-- (void)_download:(WKDownload *)download didReceivePlaceholderURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_download:(WKDownload *)download didReceivePlaceholderURL:(NSURL *)url completionHandler:(void (^)(void))completionHandler WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 /* @abstract Called when the download receives a final URL
  @param download The download for which we received a final URL
  @param url The URL of the final download location
  @discussion The final URL will normally refer to a file in the Downloads directory
  */
-- (void)_download:(WKDownload *)download didReceiveFinalURL:(NSURL *)url WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_download:(WKDownload *)download didReceiveFinalURL:(NSURL *)url WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 @end
 

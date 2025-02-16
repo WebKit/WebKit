@@ -1,8 +1,8 @@
 /*
  * Copyright (C) 2002 Lars Knoll (knoll@kde.org)
  *           (C) 2002 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
- * Copyright (C) 2015 Google Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2017 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -221,10 +221,6 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
     float maxNonPercent = 0;
     bool scaleColumnsForSelf = intrinsics == TableIntrinsics::ForLayout;
 
-    // We substitute 0 percent by (epsilon / percentScaleFactor) percent in two places below to avoid division by zero.
-    // FIXME: Handle the 0% cases properly.
-    const float epsilon = 1 / 128.0f;
-
     float remainingPercent = 100;
     for (size_t i = 0; i < m_layoutStruct.size(); ++i) {
         minWidth += m_layoutStruct[i].effectiveMinLogicalWidth;
@@ -232,7 +228,12 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
         if (scaleColumnsForSelf) {
             if (m_layoutStruct[i].effectiveLogicalWidth.isPercent()) {
                 float percent = std::min(m_layoutStruct[i].effectiveLogicalWidth.percent(), remainingPercent);
-                float logicalWidth = m_layoutStruct[i].effectiveMaxLogicalWidth * 100 / std::max(percent, epsilon);
+                // When percent columns meet or exceed 100% and there are remaining
+                // columns, the other browsers (FF, Edge) use an artificially high max
+                // width, so we do too. Instead of division by zero, logicalWidth and
+                // maxNonPercent are set to tableMaxWidth.
+                // Issue: https://github.com/w3c/csswg-drafts/issues/1501
+                float logicalWidth = (percent > 0) ? m_layoutStruct[i].effectiveMaxLogicalWidth * 100 / percent : tableMaxWidth;
                 maxPercent = std::max(logicalWidth,  maxPercent);
                 remainingPercent -= percent;
             } else
@@ -241,9 +242,9 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
     }
 
     if (scaleColumnsForSelf) {
-        maxNonPercent = maxNonPercent * 100 / std::max(remainingPercent, epsilon);
-        m_scaledWidthFromPercentColumns = LayoutUnit(std::min<float>(maxNonPercent, tableMaxWidth));
-        m_scaledWidthFromPercentColumns = std::max(m_scaledWidthFromPercentColumns, LayoutUnit(std::min<float>(maxPercent, tableMaxWidth)));
+        if (maxNonPercent > 0)
+            maxNonPercent = (remainingPercent > 0) ? maxNonPercent * 100 / remainingPercent : tableMaxWidth;
+        m_scaledWidthFromPercentColumns = std::min(LayoutUnit(tableMaxWidth), LayoutUnit(std::max(maxPercent, maxNonPercent)));
         if (m_scaledWidthFromPercentColumns > maxWidth && shouldScaleColumnsForParent(*m_table))
             maxWidth = m_scaledWidthFromPercentColumns;
     }

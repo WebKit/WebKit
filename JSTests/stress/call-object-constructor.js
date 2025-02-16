@@ -8,7 +8,7 @@ function assert(condition) {
         throw new Error("assertion failed");
 }
 
-for (i = 0; i < 100000; i++) {
+for (i = 0; i < testLoopCount; i++) {
     assert(!test(null));
     assert(!test(undefined));
     assert(!test(1));

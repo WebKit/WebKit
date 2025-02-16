@@ -234,6 +234,7 @@ class TracePerfTest : public ANGLERenderTest
     int mWindowHeight                                                   = 0;
     GLuint mDrawFramebufferBinding                                      = 0;
     GLuint mReadFramebufferBinding                                      = 0;
+    EGLContext mEglContext                                              = 0;
     uint32_t mCurrentFrame                                              = 0;
     uint32_t mCurrentIteration                                          = 0;
     uint32_t mCurrentOffscreenGridIteration                             = 0;
@@ -1255,6 +1256,11 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
             skipTest("TODO: http://anglebug.com/42264520 Intel Linux crashing on teardown");
         }
 
+        if (isIntelLinuxNative)
+        {
+            skipTest("TODO: http://anglebug.com/392938092 flaky crash");
+        }
+
         if (isIntelWinANGLE)
         {
             skipTest("TODO: http://anglebug.com/42264526 Intel Windows timing out periodically");
@@ -1443,9 +1449,11 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
     if (traceNameIs("real_racing3"))
     {
         addExtensionPrerequisite("GL_EXT_shader_framebuffer_fetch");
-        if (isNVIDIALinuxANGLE)
+        if (isNVIDIAWinANGLE || isNVIDIALinuxANGLE)
         {
-            skipTest("http://anglebug.com/377923479 SYNC-HAZARD-WRITE-AFTER-WRITE on 535.183.01");
+            skipTest(
+                "http://anglebug.com/377923479 SYNC-HAZARD-WRITE-AFTER-WRITE on Linux 535.183.01 "
+                "Windows 31.0.15.4601");
         }
     }
 
@@ -1873,9 +1881,11 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
 
     if (traceNameIs("dota_underlords"))
     {
-        if (isNVIDIALinuxANGLE)
+        if (isNVIDIALinuxANGLE || isNVIDIAWinANGLE)
         {
-            skipTest("https://anglebug.com/369533074 Flaky on Linux Nvidia");
+            skipTest(
+                "https://anglebug.com/369533074 Flaky on Nvidia Linux 535.183.1.0 Windows "
+                "31.0.15.4601");
         }
     }
 
@@ -1892,6 +1902,22 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         if (isIntelWinANGLE)
         {
             skipTest("https://issuetracker.google.com/378900717 Nondeterministic on Windows Intel");
+        }
+    }
+
+    if (traceNameIs("balatro"))
+    {
+        if (isNVIDIALinuxANGLE || isNVIDIAWinANGLE)
+        {
+            skipTest("https://anglebug.com/382960265 Renders incorrectly on Nvidia");
+        }
+    }
+
+    if (traceNameIs("monopoly_go"))
+    {
+        if (isNVIDIALinuxANGLE || isIntelWinANGLE)
+        {
+            skipTest("https://anglebug.com/385226328 crashes in UpdateClientBufferData()");
         }
     }
 
@@ -2067,6 +2093,8 @@ void TracePerfTest::initializeBenchmark()
         renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mWindowWidth, mWindowHeight);
         bindRenderbuffer(GL_RENDERBUFFER, 0);
 
+        mEglContext = eglGetCurrentContext();
+
         genFramebuffers(mMaxOffscreenBufferCount, mOffscreenFramebuffers.data());
         glGenTextures(mMaxOffscreenBufferCount, mOffscreenTextures.data());
         for (int i = 0; i < mMaxOffscreenBufferCount; i++)
@@ -2174,6 +2202,7 @@ void TracePerfTest::drawBenchmark()
 
     bool gles1           = mParams->traceInfo.contextClientMajorVersion == 1;
     auto bindFramebuffer = gles1 ? glBindFramebufferOES : glBindFramebuffer;
+    int offscreenBufferIndex = mTotalFrameCount % mMaxOffscreenBufferCount;
 
     if (mParams->surfaceType == SurfaceType::Offscreen)
     {
@@ -2183,7 +2212,7 @@ void TracePerfTest::drawBenchmark()
         // glFlush call we issued at end of frame will get skipped. To overcome this (and also
         // matches what onscreen double buffering behavior as well), we use two offscreen FBOs and
         // ping pong between them for each frame.
-        GLuint buffer = mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount];
+        GLuint buffer = mOffscreenFramebuffers[offscreenBufferIndex];
 
         if (gles1 && mOffscreenFrameCount == kFramesPerSwap - 1)
         {
@@ -2191,7 +2220,7 @@ void TracePerfTest::drawBenchmark()
         }
         bindFramebuffer(GL_FRAMEBUFFER, buffer);
 
-        GLsync sync = mOffscreenSyncs[mTotalFrameCount % mMaxOffscreenBufferCount];
+        GLsync sync = mOffscreenSyncs[offscreenBufferIndex];
         if (sync)
         {
             constexpr GLuint64 kTimeout = 2'000'000'000;  // 2 seconds
@@ -2226,8 +2255,15 @@ void TracePerfTest::drawBenchmark()
         }
         else
         {
-            GLuint offscreenBuffer =
-                mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount];
+            GLuint offscreenBuffer = mOffscreenFramebuffers[offscreenBufferIndex];
+
+            EGLContext currentEglContext = eglGetCurrentContext();
+            if (currentEglContext != mEglContext)
+            {
+                eglMakeCurrent(eglGetCurrentDisplay(), eglGetCurrentSurface(EGL_DRAW),
+                               eglGetCurrentSurface(EGL_READ), mEglContext);
+            }
+
             GLint currentDrawFBO, currentReadFBO;
             if (gles1)
             {
@@ -2259,7 +2295,7 @@ void TracePerfTest::drawBenchmark()
 
             if (!gles1)  // gles1: no glBlitFramebuffer, a single frame is rendered to buffer 0
             {
-                mOffscreenSyncs[mTotalFrameCount % mMaxOffscreenBufferCount] =
+                mOffscreenSyncs[offscreenBufferIndex] =
                     glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
                 glBlitFramebuffer(0, 0, mWindowWidth, mWindowHeight, windowX, windowY,
@@ -2302,9 +2338,13 @@ void TracePerfTest::drawBenchmark()
                 bindFramebuffer(GL_DRAW_FRAMEBUFFER, currentDrawFBO);
                 bindFramebuffer(GL_READ_FRAMEBUFFER, currentReadFBO);
             }
-        }
 
-        mTotalFrameCount++;
+            if (currentEglContext != mEglContext)
+            {
+                eglMakeCurrent(eglGetCurrentDisplay(), eglGetCurrentSurface(EGL_DRAW),
+                               eglGetCurrentSurface(EGL_READ), currentEglContext);
+            }
+        }
     }
     else
     {
@@ -2314,6 +2354,8 @@ void TracePerfTest::drawBenchmark()
     }
 
     endInternalTraceEvent(frameName);
+
+    mTotalFrameCount++;
 
     if (mCurrentFrame == mEndFrame)
     {
@@ -2824,8 +2866,31 @@ void TracePerfTest::saveScreenshot(const std::string &screenshotName)
 
     glFinish();
 
+    // Backup the current pixel pack state
+    GLint originalPackRowLength;
+    GLint originalPackSkipRows;
+    GLint originalPackSkipPixels;
+    GLint originalPackAlignment;
+
+    glGetIntegerv(GL_PACK_ROW_LENGTH, &originalPackRowLength);
+    glGetIntegerv(GL_PACK_SKIP_ROWS, &originalPackSkipRows);
+    glGetIntegerv(GL_PACK_SKIP_PIXELS, &originalPackSkipPixels);
+    glGetIntegerv(GL_PACK_ALIGNMENT, &originalPackAlignment);
+
+    // Set default pixel pack parameters (per ES 3.2 Table 16.1)
+    glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_PACK_SKIP_ROWS, 0);
+    glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+
     glReadPixels(0, 0, mTestParams.windowWidth, mTestParams.windowHeight, GL_RGBA, GL_UNSIGNED_BYTE,
                  pixelData.data());
+
+    // Restore the original pixel pack state
+    glPixelStorei(GL_PACK_ROW_LENGTH, originalPackRowLength);
+    glPixelStorei(GL_PACK_SKIP_ROWS, originalPackSkipRows);
+    glPixelStorei(GL_PACK_SKIP_PIXELS, originalPackSkipPixels);
+    glPixelStorei(GL_PACK_ALIGNMENT, originalPackAlignment);
 
     // Convert to RGB and flip y.
     std::vector<uint8_t> rgbData(pixelCount * 3);

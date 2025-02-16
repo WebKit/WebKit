@@ -8,7 +8,7 @@ function parseFloatDouble(value) {
 }
 noInline(parseFloatDouble);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(Object.is(parseFloatDouble(0.0), 0), true);
     shouldBe(Object.is(parseFloatDouble(-0.0), 0), true); // Not -0 since -0.0.toString() is "0".
     shouldBe(Object.is(parseFloatDouble(-1.0), -1.0), true);

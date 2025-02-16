@@ -166,7 +166,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
     mach_port_t resourceUsageMachThread = mach_thread_self();
     mach_port_t mainThreadMachThread = threads[0].sendRight.sendRight();
 
-    HashSet<mach_port_t> knownWebKitThreads;
+    UncheckedKeyHashSet<mach_port_t> knownWebKitThreads;
     {
         Locker locker { Thread::allThreadsLock() };
         for (auto* thread : Thread::allThreads()) {

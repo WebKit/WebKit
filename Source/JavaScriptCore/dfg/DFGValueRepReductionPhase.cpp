@@ -55,7 +55,7 @@ public:
 private:
     bool convertValueRepsToDouble()
     {
-        HashSet<Node*> candidates;
+        UncheckedKeyHashSet<Node*> candidates;
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {
                 switch (node->op()) {
@@ -67,17 +67,17 @@ private:
 
 #if CPU(ARM64)
                 case DoubleRep: {
-                    if (node->child1().useKind() != RealNumberUse)
-                        break;
-
                     switch (node->child1()->op()) {
                     case GetClosureVar:
                     case GetGlobalVar:
                     case GetGlobalLexicalVariable:
                     case MultiGetByOffset:
                     case GetByOffset: {
-                        if (node->child1()->origin.exitOK)
-                            candidates.add(node->child1().node());
+                        if (node->child1().useKind() == RealNumberUse || node->child1().useKind() == NumberUse) {
+                            if (node->child1()->origin.exitOK)
+                                candidates.add(node->child1().node());
+                            break;
+                        }
                         break;
                     }
                     default:
@@ -153,7 +153,7 @@ private:
         // - Any Phi-1 that forwards into another Phi-2, where Phi-2 is a candidate,
         //   makes Phi-1 a candidate too.
         do {
-            HashSet<Node*> eligiblePhis;
+            UncheckedKeyHashSet<Node*> eligiblePhis;
             for (Node* candidate : candidates) {
                 if (candidate->op() == Phi) {
                     phiChildren.forAllIncomingValues(candidate, [&] (Node* incoming) {
@@ -177,7 +177,7 @@ private:
         } while (true);
 
         do {
-            HashSet<Node*> toRemove;
+            UncheckedKeyHashSet<Node*> toRemove;
 
             auto isEscaped = [&] (Node* node) {
                 return !candidates.contains(node) || toRemove.contains(node);
@@ -263,12 +263,19 @@ private:
 
                 for (Node* user : getUsersOf(candidate)) {
                     switch (user->op()) {
-                    case DoubleRep:
-                        if (user->child1().useKind() != RealNumberUse) {
+                    case DoubleRep: {
+                        switch (user->child1().useKind()) {
+                        case RealNumberUse:
+                        case NumberUse:
+                            break;
+                        default: {
                             ok = false;
                             dumpEscape("DoubleRep escape: ", user);
+                            break;
+                        }
                         }
                         break;
+                    }
 
                     case PutHint:
                     case MovHint:
@@ -317,7 +324,7 @@ private:
             return false;
 
         NodeOrigin originForConstant = m_graph.block(0)->at(0)->origin;
-        HashSet<Node*> doubleRepRealCheckLocations;
+        UncheckedKeyHashSet<Node*> doubleRepRealCheckLocations;
 
         for (Node* candidate : candidates) {
             dataLogLnIf(verbose, "Optimized: ", candidate);
@@ -338,7 +345,7 @@ private:
                     }
                     case ValueRep: {
                         // We don't care about the incoming value being an impure NaN because users of
-                        // this Phi are either OSR exit or DoubleRep(RealNumberUse:@phi)
+                        // this Phi are either OSR exit, DoubleRep(RealNumberUse:@phi), or PurifyNaN(@phi).
                         ASSERT(incomingValue->child1().useKind() == DoubleRepUse);
                         newChild = incomingValue->child1().node();
                         break;
@@ -394,9 +401,11 @@ private:
             for (Node* user : getUsersOf(candidate)) {
                 switch (user->op()) {
                 case DoubleRep: {
-                    ASSERT(user->child1().useKind() == RealNumberUse);
-                    user->convertToIdentityOn(resultNode);
-                    doubleRepRealCheckLocations.add(user);
+                    if (user->child1().useKind() == RealNumberUse) {
+                        user->convertToIdentityOn(resultNode);
+                        doubleRepRealCheckLocations.add(user);
+                    } else
+                        user->convertToPurifyNaN(resultNode);
                     break;
                 }
                     

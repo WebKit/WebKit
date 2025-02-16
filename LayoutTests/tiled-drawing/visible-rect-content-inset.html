@@ -11,7 +11,7 @@
             testRunner.waitUntilDone();
             testRunner.dumpAsText();
             internals.disableTileSizeUpdateDelay();
-            await testRunner.setTopContentInset(100);
+            await testRunner.setObscuredContentInsets(100, 0, 0, 0);
 
             document.getElementById('layers').innerText = internals.layerTreeAsText(document,
                 internals.LAYER_TREE_INCLUDES_VISIBLE_RECTS | internals.LAYER_TREE_INCLUDES_TILE_CACHES);

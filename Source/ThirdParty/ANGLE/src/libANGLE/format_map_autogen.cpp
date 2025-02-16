@@ -436,7 +436,7 @@ GLenum GetSizedFormatInternal(GLenum format, GLenum type)
                 case GL_UNSIGNED_INT_10F_11F_11F_REV:
                     return GL_R11F_G11F_B10F;
                 case GL_UNSIGNED_INT_2_10_10_10_REV:
-                    return GL_RGB10_UNORM_ANGLEX;
+                    return GL_RGB10_EXT;
                 case GL_UNSIGNED_INT_5_9_9_9_REV:
                     return GL_RGB9_E5;
                 case GL_UNSIGNED_SHORT:

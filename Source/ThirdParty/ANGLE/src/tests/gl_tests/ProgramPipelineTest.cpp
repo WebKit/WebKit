@@ -1593,6 +1593,89 @@ TEST_P(ProgramPipelineXFBTest31, VaryingIOBlockSeparableProgramWithXFB)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that XFB GL_SEPARATE_ATTRIBS behaves correctly with PPO.
+TEST_P(ProgramPipelineXFBTest31, SeparableProgramWithXFBSeparateMode)
+{
+    // Only the Vulkan backend supports PPOs
+    ANGLE_SKIP_TEST_IF(!IsVulkan());
+
+    const GLchar *vertString = R"(#version 310 es
+precision highp float;
+in vec4 inputAttribute;
+uniform vec4 u_color;
+out vec4 texCoord;
+out vec4 unused1;
+void main()
+{
+    gl_Position = inputAttribute;
+    texCoord = u_color;
+})";
+
+    GLShader vertShader(GL_VERTEX_SHADER);
+    mVertProg = glCreateProgram();
+
+    // Compile and attach a separable vertex shader
+    glShaderSource(vertShader, 1, &vertString, nullptr);
+    glCompileShader(vertShader);
+    glProgramParameteri(mVertProg, GL_PROGRAM_SEPARABLE, GL_TRUE);
+    glAttachShader(mVertProg, vertShader);
+    EXPECT_GL_NO_ERROR();
+
+    // Select the varyings for XFB with GL_SEPARATE_ATTRIBS mode
+    std::vector<const char *> tfVaryings = {"unused1", "texCoord"};
+    glTransformFeedbackVaryings(mVertProg, static_cast<GLsizei>(tfVaryings.size()),
+                                tfVaryings.data(), GL_SEPARATE_ATTRIBS);
+    glLinkProgram(mVertProg);
+    ASSERT_GL_NO_ERROR();
+
+    GLint uniformLoc = glGetUniformLocation(mVertProg, "u_color");
+    ASSERT_NE(uniformLoc, -1);
+    glProgramUniform4f(mVertProg, uniformLoc, 1, 2, 3, 4);
+    ASSERT_GL_NO_ERROR();
+
+    // Generate a program pipeline and attach the program to respective stage
+    glGenProgramPipelines(1, &mPipeline);
+    glUseProgramStages(mPipeline, GL_VERTEX_SHADER_BIT, mVertProg);
+    glBindProgramPipeline(mPipeline);
+    ASSERT_GL_NO_ERROR();
+
+    GLuint transformFeedbackBuffer[2] = {0};
+    // Allocate space for vec4
+    static const size_t transformFeedbackBufferSize = 16;
+    glGenBuffers(2, &transformFeedbackBuffer[0]);
+
+    // Bind buffers to the transform feedback binding points
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 0, transformFeedbackBuffer[0]);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, transformFeedbackBufferSize, NULL, GL_STATIC_DRAW);
+
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, transformFeedbackBuffer[1]);
+    glBufferData(GL_TRANSFORM_FEEDBACK_BUFFER, transformFeedbackBufferSize, NULL, GL_STATIC_DRAW);
+
+    // Process one point with transform feedback
+    glBeginTransformFeedback(GL_POINTS);
+    glDrawArrays(GL_POINTS, 0, 1);
+    glEndTransformFeedback();
+    ASSERT_GL_NO_ERROR();
+
+    // Second XFB buffer
+    glBindBufferBase(GL_TRANSFORM_FEEDBACK_BUFFER, 1, transformFeedbackBuffer[1]);
+    void *mappedBuffer = glMapBufferRange(GL_TRANSFORM_FEEDBACK_BUFFER, 0,
+                                          transformFeedbackBufferSize, GL_MAP_READ_BIT);
+    ASSERT_NE(nullptr, mappedBuffer);
+
+    float *mappedFloats = static_cast<float *>(mappedBuffer);
+    // Expect vec4(1, 2, 3, 4)
+    EXPECT_EQ(1, mappedFloats[0]);
+    EXPECT_EQ(2, mappedFloats[1]);
+    EXPECT_EQ(3, mappedFloats[2]);
+    EXPECT_EQ(4, mappedFloats[3]);
+
+    glUnmapBuffer(GL_TRANSFORM_FEEDBACK_BUFFER);
+    glDeleteBuffers(2, transformFeedbackBuffer);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test modifying a shader and re-linking it updates the PPO too
 TEST_P(ProgramPipelineTest31, ModifyAndRelinkShader)
 {

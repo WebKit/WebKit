@@ -34,4 +34,12 @@ SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, Network, PAL_EXPORT)
 
 SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, Network, nw_webtransport_options_add_connect_request_header, void, (nw_protocol_options_t options, const char* name, const char* value), (options, name, value), PAL_EXPORT)
 
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, Network, nw_webtransport_metadata_get_session_error_code, uint32_t, (nw_protocol_metadata_t metadata), (metadata), PAL_EXPORT)
+
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, Network, nw_webtransport_metadata_set_session_error_code, void, (nw_protocol_metadata_t metadata, uint32_t session_error_code), (metadata, session_error_code), PAL_EXPORT)
+
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, Network, nw_webtransport_metadata_get_session_error_message, const char*, (nw_protocol_metadata_t metadata), (metadata), PAL_EXPORT)
+
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, Network, nw_webtransport_metadata_set_session_error_message, void, (nw_protocol_metadata_t metadata, const char* session_error_message), (metadata, session_error_message), PAL_EXPORT)
+
 #endif // HAVE(AVAUDIOAPPLICATION)

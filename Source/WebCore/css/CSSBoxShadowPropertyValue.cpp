@@ -46,9 +46,9 @@ CSSBoxShadowPropertyValue::CSSBoxShadowPropertyValue(CSS::BoxShadowProperty&& sh
 {
 }
 
-String CSSBoxShadowPropertyValue::customCSSText() const
+String CSSBoxShadowPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(m_shadow);
+    return CSS::serializationForCSS(context, m_shadow);
 }
 
 bool CSSBoxShadowPropertyValue::equals(const CSSBoxShadowPropertyValue& other) const
@@ -56,7 +56,7 @@ bool CSSBoxShadowPropertyValue::equals(const CSSBoxShadowPropertyValue& other) c
     return m_shadow == other.m_shadow;
 }
 
-IterationStatus CSSBoxShadowPropertyValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSBoxShadowPropertyValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_shadow);
 }

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebDateTimeChooser.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -74,5 +72,3 @@ void WebDateTimeChooser::showChooser(const WebCore::DateTimeChooserParameters& p
 }
 
 } // namespace WebKit
-
-#endif

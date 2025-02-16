@@ -84,7 +84,7 @@ bool BBQPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
     return false;
 }
 
-void BBQPlan::work(CompilationEffort)
+void BBQPlan::work()
 {
     ASSERT(m_calleeGroup->runnable());
     CompilationContext context;
@@ -109,7 +109,8 @@ void BBQPlan::work(CompilationEffort)
     Vector<CodeLocationLabel<WasmEntryPtrTag>> loopEntrypointLocations;
     computeExceptionHandlerAndLoopEntrypointLocations(exceptionHandlerLocations, loopEntrypointLocations, function.get(), context, linkBuffer);
 
-    computePCToCodeOriginMap(context, linkBuffer);
+    if (context.pcToCodeOriginMapBuilder)
+        context.pcToCodeOriginMap = Box<PCToCodeOriginMap>::create(WTFMove(*context.pcToCodeOriginMapBuilder), linkBuffer);
 
     bool alreadyDumped = dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
     function->entrypoint.compilation = makeUnique<Compilation>(

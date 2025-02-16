@@ -19,6 +19,7 @@
 #include "common/mathutil.h"
 #include "image_util/imageformats.h"
 #include "image_util/loadimage.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/Format.h"
 #include "libANGLE/renderer/metal/BufferMtl.h"
@@ -516,7 +517,7 @@ angle::Result UploadPackedDepthStencilTextureContentsWithStagingBuffer(
             stagingStencilBufferFormatId = angle::FormatID::S8_UINT;
             break;
         default:
-            ANGLE_MTL_UNREACHABLE(contextMtl);
+            ANGLE_GL_UNREACHABLE(contextMtl);
     }
 
     const angle::Format &angleStagingDepthFormat = angle::Format::Get(stagingDepthBufferFormatId);
@@ -969,7 +970,7 @@ angle::Result TextureMtl::ensureNativeStorageCreated(const gl::Context *context)
     // Create actual texture object:
     GLuint mips        = mState.getMipmapMaxLevel() - mState.getEffectiveBaseLevel() + 1;
     gl::ImageDesc desc = mState.getBaseLevelDesc();
-    ANGLE_MTL_CHECK(contextMtl, desc.format.valid(), GL_INVALID_OPERATION);
+    ANGLE_CHECK(contextMtl, desc.format.valid(), gl::err::kInternalError, GL_INVALID_OPERATION);
     angle::FormatID angleFormatId =
         angle::Format::InternalFormatToID(desc.format.info->sizedInternalFormat);
     mFormat = contextMtl->getPixelFormat(angleFormatId);
@@ -1379,7 +1380,7 @@ angle::Result TextureMtl::getRenderTarget(ContextMtl *context,
     if (implicitSamples > 1 && !rtt.getImplicitMSTexture())
     {
         // This format must supports implicit resolve
-        ANGLE_MTL_CHECK(context, mFormat.getCaps().resolve, GL_INVALID_VALUE);
+        ANGLE_CHECK(context, mFormat.getCaps().resolve, gl::err::kInternalError, GL_INVALID_VALUE);
         mtl::TextureRef &msTexture = mImplicitMSTextures[imageIndex][renderToTextureIndex];
         if (!msTexture)
         {
@@ -1701,7 +1702,8 @@ angle::Result TextureMtl::generateMipmapCPU(const gl::Context *context)
     ContextMtl *contextMtl           = mtl::GetImpl(context);
     const angle::Format &angleFormat = mFormat.actualAngleFormat();
     // This format must have mip generation function.
-    ANGLE_MTL_TRY(contextMtl, angleFormat.mipGenerationFunction);
+    ANGLE_CHECK(contextMtl, angleFormat.mipGenerationFunction, gl::err::kInternalError,
+                GL_INVALID_OPERATION);
 
     for (uint32_t slice = 0; slice < mSlices; ++slice)
     {
@@ -1835,7 +1837,7 @@ angle::Result TextureMtl::getAttachmentRenderTarget(const gl::Context *context,
     ANGLE_TRY(ensureNativeStorageCreated(context));
 
     ContextMtl *contextMtl = mtl::GetImpl(context);
-    ANGLE_MTL_TRY(contextMtl, mNativeTextureStorage);
+    ANGLE_CHECK(contextMtl, mNativeTextureStorage, gl::err::kInternalError, GL_INVALID_OPERATION);
 
     RenderTargetMtl *rtt;
     ANGLE_TRY(getRenderTarget(contextMtl, imageIndex, samples, &rtt));
@@ -2304,8 +2306,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
                               "The current kernel can handle up to 65536 blocks per dimension.");
 
                 // Current command buffer implementation does not support 64-bit offsets.
-                ANGLE_MTL_CHECK(contextMtl, offset <= std::numeric_limits<uint32_t>::max(),
-                                GL_INVALID_OPERATION);
+                ANGLE_CHECK_GL_MATH(contextMtl, offset <= std::numeric_limits<uint32_t>::max());
 
                 mtl::BufferRef stagingBuffer;
                 ANGLE_TRY(
@@ -2332,9 +2333,7 @@ angle::Result TextureMtl::setPerSliceSubImage(const gl::Context *context,
             else if (pixelsAngleFormat.id == angle::FormatID::D32_FLOAT)
             {
                 // Current command buffer implementation does not support 64-bit offsets.
-                ANGLE_MTL_CHECK(contextMtl, offset <= std::numeric_limits<uint32_t>::max(),
-                                GL_INVALID_OPERATION);
-
+                ANGLE_CHECK_GL_MATH(contextMtl, offset <= std::numeric_limits<uint32_t>::max());
                 mtl::BufferRef stagingBuffer;
                 ANGLE_TRY(
                     mtl::Buffer::MakeBuffer(contextMtl, pixelsDepthPitch, nullptr, &stagingBuffer));
@@ -2384,9 +2383,8 @@ angle::Result TextureMtl::convertAndSetPerSliceSubImage(const gl::Context *conte
 
     if (unpackBuffer)
     {
-        ANGLE_MTL_CHECK(contextMtl,
-                        reinterpret_cast<uintptr_t>(pixels) <= std::numeric_limits<uint32_t>::max(),
-                        GL_INVALID_OPERATION);
+        ANGLE_CHECK_GL_MATH(contextMtl, reinterpret_cast<uintptr_t>(pixels) <=
+                                            std::numeric_limits<uint32_t>::max());
 
         uint32_t offset = static_cast<uint32_t>(reinterpret_cast<uintptr_t>(pixels));
 

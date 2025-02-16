@@ -41,23 +41,23 @@ bool FEImageSoftwareApplier::apply(const Filter& filter, const FilterImageVector
     if (!resultImage)
         return false;
 
-    auto& sourceImage = m_effect.sourceImage();
+    auto& sourceImage = m_effect->sourceImage();
     auto primitiveSubregion = result.primitiveSubregion();
     auto& context = resultImage->context();
 
-    if (auto nativeImage = sourceImage.nativeImageIfExists()) {
+    if (RefPtr nativeImage = sourceImage.nativeImageIfExists()) {
         auto imageRect = primitiveSubregion;
-        auto srcRect = m_effect.sourceImageRect();
-        m_effect.preserveAspectRatio().transformRect(imageRect, srcRect);
+        auto srcRect = m_effect->sourceImageRect();
+        m_effect->preserveAspectRatio().transformRect(imageRect, srcRect);
         imageRect.scale(filter.filterScale());
         imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
         context.drawNativeImage(*nativeImage, imageRect, srcRect);
         return true;
     }
 
-    if (auto imageBuffer = sourceImage.imageBufferIfExists()) {
+    if (RefPtr imageBuffer = sourceImage.imageBufferIfExists()) {
         auto imageRect = primitiveSubregion;
-        imageRect.moveBy(m_effect.sourceImageRect().location());
+        imageRect.moveBy(m_effect->sourceImageRect().location());
         imageRect.scale(filter.filterScale());
         imageRect = IntRect(imageRect) - result.absoluteImageRect().location();
         context.drawImageBuffer(*imageBuffer, imageRect.location());

@@ -30,6 +30,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSSelector.h"
 #include "CSSSelectorParser.h"
+#include "CSSSerializationContext.h"
 #include "CSSValuePool.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComputedStyleExtractor.h"
@@ -141,12 +142,12 @@ String CSSComputedStyleDeclaration::getPropertyValue(CSSPropertyID propertyID) c
         }
     };
     if (isShorthand(propertyID) && canUseShorthandSerializerForPropertyValue())
-        return serializeShorthandValue({ m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier }, propertyID);
+        return serializeShorthandValue(CSS::defaultSerializationContext(), { m_element.ptr(), m_allowVisitedStyle, m_pseudoElementIdentifier }, propertyID);
 
     auto value = getPropertyCSSValue(propertyID);
     if (!value)
         return emptyString(); // FIXME: Should this be null instead, as it is in StyleProperties::getPropertyValue?
-    return value->cssText();
+    return value->cssText(CSS::defaultSerializationContext());
 }
 
 unsigned CSSComputedStyleDeclaration::length() const

@@ -8,9 +8,9 @@ function test(string) {
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test("Hello"), "World");
 
 RegExp.prototype[Symbol.replace] = function () { return "Changed"; };
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test("Hello"), "Changed");

@@ -40,7 +40,7 @@ class Queue {
     }
   }
 }
-for (let i = 0; i < 1e5; i++) {
+for (let i = 0; i < testLoopCount; i++) {
   const queue = new Queue(new Set(["foo", "bar", "baz"]));
   if (queue.dequeue() !== "foo") {
     throw new Error("Expected foo");

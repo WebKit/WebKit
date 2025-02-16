@@ -103,24 +103,24 @@ static std::optional<std::tuple<SVGFilterEffectsGraph, FilterEffectGeometryMap>>
     SVGFilterEffectsGraph graph(SourceGraphic::create(colorSpace), SourceAlpha::create(colorSpace));
     FilterEffectGeometryMap effectGeometryMap;
 
-    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
-        auto inputs = graph.getNamedNodes(effectElement.filterEffectInputsNames());
+    for (Ref effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
+        auto inputs = graph.getNamedNodes(effectElement->filterEffectInputsNames());
         if (!inputs)
             return std::nullopt;
 
-        auto effect = effectElement.filterEffect(*inputs, destinationContext);
+        auto effect = effectElement->filterEffect(*inputs, destinationContext);
         if (!effect)
             return std::nullopt;
 
-        if (auto flags = effectElement.effectGeometryFlags()) {
-            auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(&effectElement, filter.primitiveUnits(), filter.targetBoundingBox());
+        if (auto flags = effectElement->effectGeometryFlags()) {
+            auto effectBoundaries = SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(effectElement.ptr(), filter.primitiveUnits(), filter.targetBoundingBox());
             effectGeometryMap.add(*effect, FilterEffectGeometry(effectBoundaries, flags));
         }
 
-        if (effectElement.colorInterpolation() == ColorInterpolation::LinearRGB)
+        if (effectElement->colorInterpolation() == ColorInterpolation::LinearRGB)
             effect->setOperatingColorSpace(DestinationColorSpace::LinearSRGB());
 
-        graph.addNamedNode(AtomString { effectElement.result() }, { *effect });
+        graph.addNamedNode(AtomString { effectElement->result() }, { *effect });
         graph.setNodeInputs(*effect, WTFMove(*inputs));
     }
 
@@ -170,10 +170,10 @@ static std::optional<SVGFilterPrimitivesGraph> buildFilterPrimitivesGraph(SVGFil
 
     SVGFilterPrimitivesGraph graph;
 
-    for (auto& effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
+    for (Ref effectElement : childrenOfType<SVGFilterPrimitiveStandardAttributes>(filterElement)) {
         // We should not be strict about not finding the input primitives here because SourceGraphic and SourceAlpha do not have primitives.
-        auto inputs = graph.getNamedNodes(effectElement.filterEffectInputsNames()).value_or(SVGFilterPrimitivesGraph::NodeVector());
-        graph.addNamedNode(AtomString { effectElement.result() }, { effectElement });
+        auto inputs = graph.getNamedNodes(effectElement->filterEffectInputsNames()).value_or(SVGFilterPrimitivesGraph::NodeVector());
+        graph.addNamedNode(AtomString { effectElement->result() }, effectElement.copyRef());
         graph.setNodeInputs(effectElement, WTFMove(inputs));
     }
 
@@ -257,7 +257,7 @@ FilterEffectVector SVGFilter::effectsOfType(FilterFunction::Type filterType) con
     return effects;
 }
 
-FilterResults& SVGFilter::ensureResults(const FilterResultsCreator& resultsCreator)
+FilterResults& SVGFilter::ensureResults(NOESCAPE const FilterResultsCreator& resultsCreator)
 {
     if (!m_results)
         m_results = resultsCreator();
@@ -300,8 +300,8 @@ RefPtr<FilterImage> SVGFilter::apply(FilterImage* sourceImage, FilterResults& re
         auto& geometry = term.geometry;
 
         if (effect->filterType() == FilterEffect::Type::SourceGraphic) {
-            if (auto result = results.effectResult(effect)) {
-                stack.append({ *result });
+            if (RefPtr result = results.effectResult(effect)) {
+                stack.append(result.releaseNonNull());
                 continue;
             }
 

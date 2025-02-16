@@ -163,6 +163,12 @@ std::optional<Color> BitmapImageDescriptor::singlePixelSolidColor() const
     return primaryNativeImageMetadata(m_singlePixelSolidColor, std::optional<Color>(), CachedFlag::SinglePixelSolidColor, &NativeImage::singlePixelSolidColor);
 }
 
+Headroom BitmapImageDescriptor::headroom() const
+{
+    // FIXME: Headroom should be a metadata of the image. We should not have to decode the primary frame to get it.
+    return primaryNativeImageMetadata(m_headroom, Headroom::None, CachedFlag::Headroom, &NativeImage::headroom);
+}
+
 String BitmapImageDescriptor::uti() const
 {
 #if USE(CG)

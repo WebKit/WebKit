@@ -12,8 +12,8 @@
 #include "include/core/SkPaint.h"
 #include "include/core/SkRect.h"
 #include "src/gpu/graphite/DrawOrder.h"
-#include "src/gpu/graphite/geom/AnalyticClip.h"
 #include "src/gpu/graphite/geom/Geometry.h"
+#include "src/gpu/graphite/geom/NonMSAAClip.h"
 #include "src/gpu/graphite/geom/Rect.h"
 #include "src/gpu/graphite/geom/Transform_graphite.h"
 
@@ -68,12 +68,12 @@ public:
     Clip(const Rect& drawBounds,
          const Rect& shapeBounds,
          const SkIRect& scissor,
-         const CircularRRectClip& analyticClip,
+         const NonMSAAClip& nonMSAAClip,
          const SkShader* shader)
             : fDrawBounds(drawBounds)
             , fTransformedShapeBounds(shapeBounds)
             , fScissor(scissor)
-            , fAnalyticClip(analyticClip)
+            , fNonMSAAClip(nonMSAAClip)
             , fShader(shader) {}
 
     // Tight bounds of the draw, including any padding/outset for stroking and expansion due to
@@ -90,13 +90,15 @@ public:
     // to drawBounds(). For an inverse fill, this is a subset of drawBounds().
     const Rect& transformedShapeBounds() const { return fTransformedShapeBounds; }
 
-    // If set, the shape's bounds are further used to clip the draw.
-    const CircularRRectClip& analyticClip() const { return fAnalyticClip; }
+    // If set, the shape's bounds and/or an atlas mask are further used to clip the draw.
+    const NonMSAAClip& nonMSAAClip() const { return fNonMSAAClip; }
 
     // If set, the clip shader's output alpha is further used to clip the draw.
     const SkShader* shader() const { return fShader; }
 
     bool isClippedOut() const { return fDrawBounds.isEmptyNegativeOrNaN(); }
+
+    bool needsCoverage() const { return SkToBool(fShader) || !fNonMSAAClip.isEmpty(); }
 
 private:
     // DrawList assumes the DrawBounds are correct for a given shape, transform, and style. They
@@ -104,7 +106,7 @@ private:
     Rect              fDrawBounds;
     Rect              fTransformedShapeBounds;
     SkIRect           fScissor;
-    CircularRRectClip fAnalyticClip;
+    NonMSAAClip       fNonMSAAClip;
     const SkShader*   fShader;
 };
 

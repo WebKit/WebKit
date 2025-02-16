@@ -65,6 +65,7 @@
 #include "OpacityCaretAnimator.h"
 #include "Page.h"
 #include "PseudoClassChangeInvalidation.h"
+#include "Quirks.h"
 #include "Range.h"
 #include "RenderLayer.h"
 #include "RenderLayerScrollableArea.h"
@@ -207,7 +208,7 @@ FrameSelection::FrameSelection(Document* document)
 #endif
 {
     if (shouldAlwaysUseDirectionalSelection(m_document.get()))
-        m_selection.setIsDirectional(true);
+        m_selection.setDirectionality(Directionality::Strong);
 
     bool activeAndFocused = isFocusedAndActive();
 
@@ -235,32 +236,30 @@ Element* FrameSelection::rootEditableElementOrDocumentElement() const
 
 void FrameSelection::moveTo(const VisiblePosition& position, UserTriggered userTriggered, CursorAlignOnScroll align)
 {
-    setSelection(VisibleSelection(position.deepEquivalent(), position.deepEquivalent(), position.affinity(), m_selection.isDirectional()),
+    setSelection(VisibleSelection(position.deepEquivalent(), position.deepEquivalent(), position.affinity(), m_selection.directionality()),
         defaultSetSelectionOptions(userTriggered), AXTextStateChangeIntent(), align);
 }
 
 void FrameSelection::moveTo(const VisiblePosition& base, const VisiblePosition& extent, UserTriggered userTriggered)
 {
-    const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), Directionality::Strong), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::moveTo(const Position& position, Affinity affinity, UserTriggered userTriggered)
 {
-    setSelection(VisibleSelection(position, affinity, m_selection.isDirectional()), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(position, affinity, m_selection.directionality()), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::moveTo(const Position& base, const Position& extent, Affinity affinity, UserTriggered userTriggered)
 {
-    const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(base, extent, affinity, Directionality::Strong), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::moveWithoutValidationTo(const Position& base, const Position& extent, bool selectionHasDirection, OptionSet<SetSelectionOption> options, const AXTextStateChangeIntent& intent)
 {
     VisibleSelection newSelection;
     newSelection.setWithoutValidation(base, extent);
-    newSelection.setIsDirectional(selectionHasDirection);
+    newSelection.setDirectionality(selectionHasDirection ? Directionality::Strong : Directionality::None);
     AXTextStateChangeIntent newIntent = intent.type == AXTextStateChangeTypeUnknown ? AXTextStateChangeIntent(AXTextStateChangeTypeSelectionMove, AXTextSelection { AXTextSelectionDirectionDiscontiguous, AXTextSelectionGranularityUnknown, false }) : intent;
     setSelection(newSelection, options, newIntent, CursorAlignOnScroll::IfNeeded, TextGranularity::CharacterGranularity);
 }
@@ -284,6 +283,8 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
 
 static void adjustEndpointsAtBidiBoundary(VisiblePosition& visibleBase, VisiblePosition& visibleExtent)
 {
+    // FIXME: Consider unifying with the logic in `adjustVisibleExtentPreservingVisualContiguity`, so that we
+    // expand the selection to the nearest range that maintains logical and visual contiguity.
     RenderedPosition base(visibleBase);
     RenderedPosition extent(visibleExtent);
 
@@ -323,7 +324,7 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
     EndPointsAdjustmentMode endpointsAdjustmentMode)
 {
     VisibleSelection newSelection = passedNewSelection;
-    bool isDirectional = shouldAlwaysUseDirectionalSelection(m_document.get()) || newSelection.isDirectional();
+    auto directionality = shouldAlwaysUseDirectionalSelection(m_document.get()) ? Directionality::Strong : newSelection.directionality();
 
     VisiblePosition base = m_originalBase.isNotNull() ? m_originalBase : newSelection.visibleBase();
     VisiblePosition newBase = base;
@@ -342,7 +343,7 @@ void FrameSelection::setSelectionByMouseIfDifferent(const VisibleSelection& pass
         m_originalBase = { };
     }
 
-    newSelection.setIsDirectional(isDirectional); // Adjusting base and extent will make newSelection always directional
+    newSelection.setDirectionality(directionality);
     if (m_selection == newSelection || !shouldChangeSelection(newSelection))
         return;
     
@@ -362,7 +363,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
     auto document = protectedDocument();
     VisibleSelection newSelection = newSelectionPossiblyWithoutDirection;
     if (shouldAlwaysUseDirectionalSelection(document.get()))
-        newSelection.setIsDirectional(true);
+        newSelection.setDirectionality(Directionality::Strong);
 
     // <http://bugs.webkit.org/show_bug.cgi?id=23464>: Infinite recursion at FrameSelection::setSelection
     // if document->frame() == m_document->frame() we can get into an infinite loop
@@ -397,8 +398,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
             setNodeFlags(m_selection, false);
             m_selection = newSelection;
             setNodeFlags(m_selection, true);
-            if (!options.contains(SetSelectionOption::MaintainLiveRange))
-                disassociateLiveRange();
+            updateOrDisassociateLiveRange(options.contains(SetSelectionOption::MaintainLiveRange));
             return false;
         }
 
@@ -421,8 +421,7 @@ bool FrameSelection::setSelectionWithoutUpdatingAppearance(const VisibleSelectio
         setNodeFlags(m_selection, false);
         m_selection = newSelection;
         setNodeFlags(m_selection, true);
-        if (!options.contains(SetSelectionOption::MaintainLiveRange))
-            disassociateLiveRange();
+        updateOrDisassociateLiveRange(options.contains(SetSelectionOption::MaintainLiveRange));
     }
 
     // Selection offsets should increase when LF is inserted before the caret in InsertLineBreakCommand. See <https://webkit.org/b/56061>.
@@ -807,7 +806,7 @@ void FrameSelection::textWasReplaced(CharacterData& node, unsigned offset, unsig
             newSelection.setWithoutValidation(anchor, focus);
         else if (base != extent)
             newSelection.setWithoutValidation(base, extent);
-        else if (m_selection.isDirectional() && !m_selection.isBaseFirst())
+        else if (m_selection.directionality() == Directionality::Strong && !m_selection.isBaseFirst())
             newSelection.setWithoutValidation(end, start);
         else
             newSelection.setWithoutValidation(start, end);
@@ -852,9 +851,9 @@ void FrameSelection::willBeModified(Alteration alter, SelectionDirection directi
 
     bool baseIsStart = true;
 
-    if (m_selection.isDirectional()) {
+    if (m_selection.directionality() == Directionality::Strong) {
         // Make base and extent match start and end so we extend the user-visible selection.
-        // This only matters for cases where base and extend point to different positions than
+        // This only matters for cases where base and extent point to different positions than
         // start and end (e.g. after a double-click to select a word).
         if (m_selection.isBaseFirst())
             baseIsStart = true;
@@ -1590,14 +1589,15 @@ bool FrameSelection::modify(Alteration alter, SelectionDirection direction, Text
     // Note: the Start position type is arbitrary because it is unused, it would be
     // the requested position type if there were no xPosForVerticalArrowNavigation set.
     LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(PositionType::Start);
-    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == Alteration::Extend);
+
+    m_selection.setDirectionality((shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == Alteration::Extend)
+        ? Directionality::Strong : Directionality::None);
 
     switch (alter) {
     case Alteration::Move:
         moveTo(position, userTriggered);
         break;
     case Alteration::Extend:
-
         if (!m_selection.isCaret()
             && (granularity == TextGranularity::WordGranularity || granularity == TextGranularity::ParagraphGranularity || granularity == TextGranularity::LineGranularity)
             && m_document && !m_document->editor().behavior().shouldExtendSelectionByWordOrLineAcrossCaret()) {
@@ -1723,8 +1723,8 @@ bool FrameSelection::modify(Alteration alter, unsigned verticalDistance, Vertica
     if (userTriggered == UserTriggered::Yes)
         m_granularity = TextGranularity::CharacterGranularity;
 
-    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == Alteration::Extend);
-
+    m_selection.setDirectionality((shouldAlwaysUseDirectionalSelection(m_document.get()) || alter == Alteration::Extend)
+        ? Directionality::Strong : Directionality::None);
     return true;
 }
 
@@ -1804,26 +1804,22 @@ void FrameSelection::setEnd(const VisiblePosition& position, UserTriggered trigg
 
 void FrameSelection::setBase(const VisiblePosition& position, UserTriggered userTriggered)
 {
-    const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(position.deepEquivalent(), m_selection.extent(), position.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(position.deepEquivalent(), m_selection.extent(), position.affinity(), Directionality::Strong), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::setExtent(const VisiblePosition& position, UserTriggered userTriggered)
 {
-    const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(m_selection.base(), position.deepEquivalent(), position.affinity(), selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(m_selection.base(), position.deepEquivalent(), position.affinity(), Directionality::Strong), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::setBase(const Position& position, Affinity affinity, UserTriggered userTriggered)
 {
-    const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(position, m_selection.extent(), affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(position, m_selection.extent(), affinity, Directionality::Strong), defaultSetSelectionOptions(userTriggered));
 }
 
 void FrameSelection::setExtent(const Position& position, Affinity affinity, UserTriggered userTriggered)
 {
-    const bool selectionHasDirection = true;
-    setSelection(VisibleSelection(m_selection.base(), position, affinity, selectionHasDirection), defaultSetSelectionOptions(userTriggered));
+    setSelection(VisibleSelection(m_selection.base(), position, affinity, Directionality::Strong), defaultSetSelectionOptions(userTriggered));
 }
 
 void CaretBase::clearCaretRect()
@@ -2466,10 +2462,6 @@ void FrameSelection::updateCaretVisibility(ShouldUpdateAppearance doAppearanceUp
     if (caretVisibility() == visibility)
         return;
 
-    // FIXME: We shouldn't trigger a synchronous layout here.
-    if (doAppearanceUpdate == ShouldUpdateAppearance::Yes && m_document)
-        updateSelectionAppearanceNow();
-
 #if ENABLE(TEXT_CARET)
     caretAnimator().setVisible(false);
 
@@ -2477,7 +2469,7 @@ void FrameSelection::updateCaretVisibility(ShouldUpdateAppearance doAppearanceUp
 #endif
 
     if (doAppearanceUpdate == ShouldUpdateAppearance::Yes)
-        updateAppearance();
+        m_pendingSelectionUpdate = true;
 }
 
 // Helper function that tells whether a particular node is an element that has an entire
@@ -2687,7 +2679,7 @@ void FrameSelection::revealSelection(SelectionRevealMode revealMode, const Scrol
     // FIXME: This code only handles scrolling the startContainer's layer, but
     // the selection rect could intersect more than just that.
     // See <rdar://problem/4799899>.
-    m_document->frame()->view()->setWasScrolledByUser(true);
+    m_document->frame()->view()->setLastUserScrollType(LocalFrameView::UserScrollType::Implicit);
     LocalFrameView::scrollRectToVisible(rect, *start.deprecatedNode()->renderer(), insideFixed, { revealMode, alignment, alignment, ShouldAllowCrossOriginScrolling::Yes, scrollBehavior });
     updateAppearance();
 
@@ -3101,6 +3093,25 @@ void FrameSelection::updateFromAssociatedLiveRange()
         auto end = makeContainerOffsetPosition(m_associatedLiveRange->protectedEndContainer(), m_associatedLiveRange->endOffset());
         setSelection({ start, end }, defaultSetSelectionOptions() | SetSelectionOption::MaintainLiveRange);
     }
+}
+
+void FrameSelection::updateOrDisassociateLiveRange(bool shouldMaintainLiveRange)
+{
+    if (RefPtr associatedDocument = document()) {
+        if (associatedDocument->quirks().shouldReuseLiveRangeForSelectionUpdate()) {
+            auto range = m_selection.range();
+            if (!containsEndpoints(m_document, range)) {
+                // The selection was cleared or is now within a shadow tree.
+                disassociateLiveRange();
+            } else {
+                if (m_associatedLiveRange)
+                    m_associatedLiveRange->updateFromSelection(*range);
+            }
+            return;
+        }
+    }
+    if (!shouldMaintainLiveRange)
+        disassociateLiveRange();
 }
 
 }

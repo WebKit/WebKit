@@ -32,6 +32,7 @@
 #include "WPEDisplayDRMPrivate.h"
 #include "WPEExtensions.h"
 #include "WPEScreenDRMPrivate.h"
+#include "WPESettings.h"
 #include "WPEToplevelDRM.h"
 #include "WPEViewDRM.h"
 #include <fcntl.h>
@@ -305,7 +306,24 @@ static gboolean wpeDisplayDRMSetup(WPEDisplayDRM* displayDRM, const char* device
     displayDRM->priv->drmRenderNode = renderNodePath.get();
     displayDRM->priv->device = device;
     displayDRM->priv->connector = WTFMove(connector);
+
+    double scale;
+    if (const char* scaleString = getenv("WPE_DRM_SCALE"))
+        scale = g_ascii_strtod(scaleString, nullptr);
+    else {
+        auto* settings = wpe_display_get_settings(WPE_DISPLAY(displayDRM));
+        scale = wpe_settings_get_double(settings, WPE_SETTING_DRM_SCALE, nullptr);
+    }
+
+    int x = crtc->x();
+    int y = crtc->y();
+    int width = crtc->width();
+    int height = crtc->height();
     displayDRM->priv->screen = wpeScreenDRMCreate(WTFMove(crtc), *displayDRM->priv->connector);
+    wpe_screen_set_position(displayDRM->priv->screen.get(), x / scale, y / scale);
+    wpe_screen_set_size(displayDRM->priv->screen.get(), width / scale, height / scale);
+    wpe_screen_set_scale(displayDRM->priv->screen.get(), scale);
+
     displayDRM->priv->primaryPlane = WTFMove(primaryPlane);
     displayDRM->priv->seat = WTFMove(seat);
     if (cursorPlane)

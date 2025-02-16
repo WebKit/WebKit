@@ -10,7 +10,7 @@ function bar(a, b, ...rest) {
 noInline(bar);
 
 let array = new Array(10);
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let result = bar(...array);
     if (result !== array.length - bar.length - foo.length - 1)
         throw new Error(i + " " + result);

@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT :fullscreen pseudo-class Test timed out
+PASS :fullscreen pseudo-class
 

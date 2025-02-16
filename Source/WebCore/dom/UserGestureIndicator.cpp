@@ -30,6 +30,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "Logging.h"
 #include "Page.h"
 #include "ResourceLoadObserver.h"
 #include "SecurityOrigin.h"
@@ -123,8 +124,13 @@ UserGestureIndicator::UserGestureIndicator(std::optional<IsProcessingUserGesture
     if (isProcessingUserGesture && document && currentToken()->processingUserGesture()) {
         bool oldHadUserInteraction = document->hasHadUserInteraction();
         document->updateLastHandledUserGestureTimestamp(currentToken()->startTime());
-        if (processInteractionStyle == ProcessInteractionStyle::Immediate)
-            ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(document->topDocument());
+        if (processInteractionStyle == ProcessInteractionStyle::Immediate) {
+            RefPtr mainFrameDocument = document->protectedMainFrameDocument();
+            if (mainFrameDocument)
+                ResourceLoadObserver::shared().logUserInteractionWithReducedTimeResolution(*mainFrameDocument);
+            else
+                LOG_ONCE(SiteIsolation, "Unable to properly construct UserGestureIndicator::UserGestureIndicator() without access to the main frame document ");
+        }
         if (RefPtr page = document->protectedPage())
             page->setUserDidInteractWithPage(true);
         if (RefPtr frame = document->frame(); frame && !oldHadUserInteraction) {

@@ -28,6 +28,7 @@
 #include "FrameRateAligner.h"
 #include "ReducedResolutionSeconds.h"
 #include "ScrollAxis.h"
+#include "Styleable.h"
 #include "TimelineScope.h"
 #include "Timer.h"
 #include <wtf/CancellableTask.h>
@@ -40,11 +41,9 @@
 namespace WebCore {
 
 class AnimationTimeline;
-class CSSTransition;
+class CSSAnimation;
 class Document;
-class Element;
 class ScrollTimeline;
-class ViewTimeline;
 class WeakPtrImplWithEventTargetData;
 class WebAnimation;
 
@@ -54,9 +53,9 @@ class AcceleratedEffectStackUpdater;
 
 struct ViewTimelineInsets;
 struct TimelineMapAttachOperation {
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> element;
+    WeakStyleable element;
     AtomString name;
-    Ref<WebAnimation> animation;
+    Ref<CSSAnimation> animation;
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
@@ -80,13 +79,16 @@ public:
     WEBCORE_EXPORT void resumeAnimations();
     bool animationsAreSuspended() const { return m_isSuspended; }
 
-    void registerNamedScrollTimeline(const AtomString&, const Element&, ScrollAxis);
-    void registerNamedViewTimeline(const AtomString&, const Element&, ScrollAxis, ViewTimelineInsets&&);
-    void unregisterNamedTimeline(const AtomString&, const Element&);
-    void setTimelineForName(const AtomString&, const Element&, WebAnimation&);
-    void updateNamedTimelineMapForTimelineScope(const TimelineScope&, const Element&);
+    void registerNamedScrollTimeline(const AtomString&, const Styleable&, ScrollAxis);
+    void registerNamedViewTimeline(const AtomString&, const Styleable&, ScrollAxis, ViewTimelineInsets&&);
+    void unregisterNamedTimeline(const AtomString&, const Styleable&);
+    void setTimelineForName(const AtomString&, const Styleable&, CSSAnimation&);
+    void updateNamedTimelineMapForTimelineScope(const TimelineScope&, const Styleable&);
     void updateTimelineForTimelineScope(const Ref<ScrollTimeline>&, const AtomString&);
-    void unregisterNamedTimelinesAssociatedWithElement(const Element&);
+    void unregisterNamedTimelinesAssociatedWithElement(const Styleable&);
+    void removePendingOperationsForCSSAnimation(const CSSAnimation&);
+    void documentDidResolveStyle();
+    void styleableWasRemoved(const Styleable&);
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     AcceleratedEffectStackUpdater* existingAcceleratedEffectStackUpdater() const { return m_acceleratedEffectStackUpdater.get(); }
@@ -100,13 +102,22 @@ private:
     void maybeClearCachedCurrentTime();
 
     Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&);
-    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> relatedTimelineScopeElements(const AtomString&);
-    void attachPendingOperations();
+    Vector<WeakStyleable> relatedTimelineScopeElements(const AtomString&);
     bool isPendingTimelineAttachment(const WebAnimation&) const;
+    void updateCSSAnimationsAssociatedWithNamedTimeline(const AtomString&);
+
+    enum class AllowsDeferral : bool { No, Yes };
+    void setTimelineForName(const AtomString&, const Styleable&, CSSAnimation&, AllowsDeferral);
+    ScrollTimeline* determineTimelineForElement(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Vector<WeakStyleable>&);
+    ScrollTimeline* determineTreeOrder(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Vector<WeakStyleable>&);
+    ScrollTimeline& inactiveNamedTimeline(const AtomString&);
+
+    Ref<Document> protectedDocument() const { return m_document.get(); }
 
     Vector<TimelineMapAttachOperation> m_pendingAttachOperations;
-    Vector<std::pair<TimelineScope, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_timelineScopeEntries;
+    Vector<std::pair<TimelineScope, WeakStyleable>> m_timelineScopeEntries;
     UncheckedKeyHashMap<AtomString, Vector<Ref<ScrollTimeline>>> m_nameToTimelineMap;
+    HashSet<Ref<ScrollTimeline>> m_removedTimelines;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     std::unique_ptr<AcceleratedEffectStackUpdater> m_acceleratedEffectStackUpdater;
@@ -115,7 +126,7 @@ private:
     UncheckedKeyHashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
     WeakHashSet<AnimationTimeline> m_timelines;
     TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
-    Document& m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     FrameRateAligner m_frameRateAligner;
     Markable<Seconds, Seconds::MarkableTraits> m_cachedCurrentTime;
     bool m_isSuspended { false };

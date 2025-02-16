@@ -118,7 +118,7 @@ private:
     bool getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
     enum class CoverageType { PrimaryTiles, SecondaryTiles };
-    IntRect ensureTilesForRect(const FloatRect&, HashSet<TileIndex>& tilesNeedingDisplay, CoverageType);
+    IntRect ensureTilesForRect(const FloatRect&, UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay, CoverageType);
 
     struct TileCohortInfo {
         TileCohort cohort;

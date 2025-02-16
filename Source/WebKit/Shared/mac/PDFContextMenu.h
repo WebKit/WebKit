@@ -27,6 +27,8 @@
 
 #if ENABLE(PDF_PLUGIN) && PLATFORM(MAC)
 
+#include <WebCore/ContextMenuItem.h>
+
 namespace WebKit {
 enum class ContextMenuItemEnablement : bool { Disabled, Enabled };
 
@@ -37,6 +39,7 @@ struct PDFContextMenuItem {
     String title;
     int state;
     int tag;
+    WebCore::ContextMenuAction action;
     ContextMenuItemEnablement enabled;
     ContextMenuItemHasAction hasAction;
     ContextMenuItemIsSeparator separator;

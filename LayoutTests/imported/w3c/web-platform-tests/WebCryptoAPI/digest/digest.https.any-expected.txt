@@ -79,4 +79,8 @@ PASS AES-GCM with long
 PASS RSA-OAEP with long
 PASS PBKDF2 with long
 PASS AES-KW with long
+PASS empty algorithm object with empty
+PASS empty algorithm object with short
+PASS empty algorithm object with medium
+PASS empty algorithm object with long
 

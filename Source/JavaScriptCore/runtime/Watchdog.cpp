@@ -36,18 +36,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Watchdog);
 
 Watchdog::Watchdog(VM* vm)
     : m_vm(vm)
-    , m_timeLimit(noTimeLimit)
-    , m_cpuDeadline(noTimeLimit)
-    , m_deadline(MonotonicTime::infinity())
-    , m_callback(nullptr)
-    , m_callbackData1(nullptr)
-    , m_callbackData2(nullptr)
-    , m_timerQueue(WorkQueue::create("jsc.watchdog.queue"_s, WorkQueue::QOS::Utility))
 {
 }
 
-void Watchdog::setTimeLimit(Seconds limit,
-    ShouldTerminateCallback callback, void* data1, void* data2)
+void Watchdog::setTimeLimit(Seconds limit, ShouldTerminateCallback callback, void* data1, void* data2)
 {
     ASSERT(m_vm->currentThreadIsHoldingAPILock());
 
@@ -155,11 +147,10 @@ void Watchdog::startTimer(Seconds timeLimit)
     // For the same reason, the timer may also outlive the VM that the Watchdog operates on.
     // So, we always need to null check m_vm before using it. The VM will notify the Watchdog
     // via willDestroyVM() before it goes away.
-    RefPtr<Watchdog> protectedThis = this;
-    m_timerQueue->dispatchAfter(timeLimit, [this, protectedThis] {
-        Locker locker { m_lock };
-        if (m_vm)
-            m_vm->notifyNeedWatchdogCheck();
+    VMTraps::queue().dispatchAfter(timeLimit, [protectedThis = Ref { *this }] {
+        Locker locker { protectedThis->m_lock };
+        if (protectedThis->m_vm)
+            protectedThis->m_vm->notifyNeedWatchdogCheck();
     });
 }
 

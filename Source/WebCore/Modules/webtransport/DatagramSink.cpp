@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DatagramSink.h"
 
+#include "Exception.h"
 #include "WebTransport.h"
 #include "WebTransportSession.h"
 #include <wtf/CompletionHandler.h>
@@ -47,6 +48,9 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
     if (!context.globalObject())
         return promise.settle(Exception { ExceptionCode::InvalidStateError });
 
+    if (m_isClosed)
+        return promise.settle(Exception { ExceptionCode::InvalidStateError });
+
     auto& globalObject = *JSC::jsCast<JSDOMGlobalObject*>(context.globalObject());
     auto scope = DECLARE_THROW_SCOPE(globalObject.vm());
 
@@ -63,8 +67,13 @@ void DatagramSink::write(ScriptExecutionContext& context, JSC::JSValue value, DO
         return promise.settle(Exception { ExceptionCode::InvalidStateError });
 
     WTF::switchOn(bufferSource.releaseReturnValue(), [&](auto&& arrayBufferOrView) {
-        context.enqueueTaskWhenSettled(session->sendDatagram(arrayBufferOrView->span()), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&&) mutable {
-            promise.resolve();
+        context.enqueueTaskWhenSettled(session->sendDatagram(arrayBufferOrView->span()), WebCore::TaskSource::Networking, [promise = WTFMove(promise)] (auto&& exception) mutable {
+            if (!exception)
+                promise.settle(Exception { ExceptionCode::NetworkError });
+            else if (*exception)
+                promise.settle(WTFMove(**exception));
+            else
+                promise.resolve();
         });
     });
 }

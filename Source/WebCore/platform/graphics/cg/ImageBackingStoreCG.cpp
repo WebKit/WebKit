@@ -43,7 +43,7 @@ PlatformImagePtr ImageBackingStore::image() const
     size_t bytesPerRow = bytesPerPixel * width;
 
     auto colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(m_pixels.get(), m_pixelsPtr, height * bytesPerRow, dataProviderReleaseCallback));
+    auto dataProvider = adoptCF(CGDataProviderCreateWithData(m_pixels.get(), m_pixelsSpan.data(), height * bytesPerRow, dataProviderReleaseCallback));
 
     if (!dataProvider)
         return nullptr;

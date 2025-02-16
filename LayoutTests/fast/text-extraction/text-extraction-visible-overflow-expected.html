@@ -1,0 +1,75 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true useFlexibleViewport=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html, body {
+    margin: 0;
+    font-family: monospace;
+    font-size: 16px;
+    width: 100%;
+}
+
+body {
+    position: relative;
+}
+
+.container {
+    margin: 20px;
+    border: 1px solid red;
+    width: calc(100% - 40px);
+    height: 300px;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 300px;
+    font-size: 24px;
+    -webkit-text-size-adjust: none;
+}
+
+.image-wrapper {
+    text-align: center;
+}
+
+img {
+    height: 44px;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script>
+addEventListener("load", async () => {
+    window.internals?.setUsesOverlayScrollbars(true);
+    window.testRunner?.waitUntilDone();
+
+    document.body.textContent = await UIHelper.requestTextExtraction({
+        clipToBounds: true,
+        includeRects: true
+    });
+
+    window.testRunner?.notifyDone();
+});
+</script>
+</head>
+<body>
+    <div class="container">One</div>
+    <div class="image-wrapper"><img alt="Image one" src="../images/resources/dice.png"></div>
+    <div class="container">Two</div>
+    <div class="image-wrapper"><img alt="Image two" src="../images/resources/dice.png"></div>
+    <div class="container">Three</div>
+    <div class="image-wrapper"><img alt="Image three" src="../images/resources/dice.png"></div>
+    <div class="container">Four</div>
+    <div class="image-wrapper"><img alt="Image four" src="../images/resources/dice.png"></div>
+    <div class="container">Five</div>
+    <div class="image-wrapper"><img alt="Image five" src="../images/resources/dice.png"></div>
+    <div class="container">Six</div>
+    <div class="image-wrapper"><img alt="Image six" src="../images/resources/dice.png"></div>
+    <div class="container">Seven</div>
+    <div class="image-wrapper"><img alt="Image seven" src="../images/resources/dice.png"></div>
+    <div class="container">Eight</div>
+    <div class="image-wrapper"><img alt="Image eight" src="../images/resources/dice.png"></div>
+    <div class="container">Nine</div>
+    <div class="image-wrapper"><img alt="Image nine" src="../images/resources/dice.png"></div>
+    <div class="container">Ten</div>
+    <div class="image-wrapper"><img alt="Image ten" src="../images/resources/dice.png"></div>
+</body>
+</html>

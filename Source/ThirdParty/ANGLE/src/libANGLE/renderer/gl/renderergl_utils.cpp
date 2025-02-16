@@ -1788,7 +1788,9 @@ void GenerateCaps(const FunctionsGL *functions,
     // Note that OES_texture_storage_multisample_2d_array support could be extended down to GL 3.2
     // if we emulated texStorage* API on top of texImage*.
     extensions->textureStorageMultisample2dArrayOES =
-        functions->isAtLeastGL(gl::Version(4, 2)) || functions->isAtLeastGLES(gl::Version(3, 2));
+        functions->isAtLeastGL(gl::Version(4, 3)) ||
+        functions->hasGLExtension("GL_ARB_texture_storage_multisample") ||
+        functions->hasGLESExtension("GL_OES_texture_storage_multisample_2d_array");
 
     extensions->multiviewMultisampleANGLE = extensions->textureStorageMultisample2dArrayOES &&
                                             (extensions->multiviewOVR || extensions->multiview2OVR);

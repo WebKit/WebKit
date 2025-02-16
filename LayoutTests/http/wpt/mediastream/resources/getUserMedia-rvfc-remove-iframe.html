@@ -1,0 +1,23 @@
+<html>
+<body onload="start()">
+<video id="video" autoplay playsinline></video>
+<script>
+async function start()
+{
+    const localStream = await navigator.mediaDevices.getUserMedia({video: { width: 640, height: 480 } });
+    video.srcObject = localStream;
+    await video.play();
+
+    video.requestVideoFrameCallback(() => { });
+    video.requestVideoFrameCallback(() => {
+        self.parent.window.removeFrame();
+    });
+    video.requestVideoFrameCallback(() => { });
+    video.requestVideoFrameCallback(() => { });
+    video.requestVideoFrameCallback(() => { });
+    video.requestVideoFrameCallback(() => { });
+    video.requestVideoFrameCallback(() => { });
+}
+</script>
+</body>
+</html>

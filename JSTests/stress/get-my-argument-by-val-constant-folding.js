@@ -1,5 +1,5 @@
 function test() {
-  for (var i = 0; i < 1000000; ++i) {
+  for (var i = 0; i < testLoopCount; ++i) {
     try {
       (function () {
         return arguments[-9];

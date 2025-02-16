@@ -122,10 +122,17 @@ extern ASCIILiteral errorAsString(Error);
 #define CONNECTION_STRINGIFY(line) #line
 #define CONNECTION_STRINGIFY_MACRO(line) CONNECTION_STRINGIFY(line)
 
+#if ENABLE(IPC_TESTING_API)
+#define CRASH_IF_TESTING
+#else
+#define CRASH_IF_TESTING if (IPC::Connection::shouldCrashOnMessageCheckFailure()) { CRASH(); }
+#endif
+
 #define MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, connection, message) do { \
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING ": " message, WTF_PRETTY_FUNCTION); \
         (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        CRASH_IF_TESTING \
         return; \
     } \
 } while (0)
@@ -137,6 +144,7 @@ extern ASCIILiteral errorAsString(Error);
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         (connection)->markCurrentlyDispatchedMessageAsInvalid(); \
+        CRASH_IF_TESTING \
         return; \
     } \
 } while (0)
@@ -145,6 +153,7 @@ extern ASCIILiteral errorAsString(Error);
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         (connection).markCurrentlyDispatchedMessageAsInvalid(); \
+        CRASH_IF_TESTING \
         { completion; } \
         return; \
     } \
@@ -154,6 +163,7 @@ extern ASCIILiteral errorAsString(Error);
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         (connection).markCurrentlyDispatchedMessageAsInvalid(); \
+        CRASH_IF_TESTING \
         { completion; } \
         co_return { }; \
     } \
@@ -163,6 +173,7 @@ extern ASCIILiteral errorAsString(Error);
     if (UNLIKELY(!(assertion))) { \
         RELEASE_LOG_FAULT(IPC, __FILE__ " " CONNECTION_STRINGIFY_MACRO(__LINE__) ": Invalid message dispatched %" PUBLIC_LOG_STRING, WTF_PRETTY_FUNCTION); \
         (connection).markCurrentlyDispatchedMessageAsInvalid(); \
+        CRASH_IF_TESTING \
         return (returnValue); \
     } \
 } while (0)
@@ -499,6 +510,9 @@ public:
 #if ENABLE(CORE_IPC_SIGNPOSTS)
     static void* generateSignpostIdentifier();
 #endif
+
+    static bool shouldCrashOnMessageCheckFailure();
+    static void setShouldCrashOnMessageCheckFailure(bool);
 
 private:
     Connection(Identifier&&, bool isServer, Thread::QOS = Thread::QOS::Default);

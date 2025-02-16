@@ -26,7 +26,7 @@
     DispatchedTo=UI
 ]
 messages -> WebInspectorUIProxy {
-    OpenLocalInspectorFrontend(bool canAttach, bool underTest)
+    RequestOpenLocalInspectorFrontend()
     SetFrontendConnection(IPC::ConnectionHandle connectionHandle)
 
     SendMessageToBackend(String message)

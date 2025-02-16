@@ -63,7 +63,7 @@ History::History(LocalDOMWindow& window)
 
 static bool isDocumentFullyActive(LocalFrame* frame)
 {
-    return frame && frame->document()->isFullyActive();
+    return frame && frame->protectedDocument()->isFullyActive();
 }
 
 static Exception documentNotFullyActive()
@@ -186,7 +186,7 @@ ExceptionOr<void> History::go(Document& document, int distance)
 
     ASSERT(isMainThread());
 
-    if (!document.canNavigate(frame.get()))
+    if (document.canNavigate(frame.get()) != CanNavigateState::Able)
         return { };
 
     frame->protectedNavigationScheduler()->scheduleHistoryNavigation(distance);

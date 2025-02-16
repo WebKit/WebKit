@@ -139,12 +139,12 @@ static void timed_wait(pthread_cond_t* cond, pthread_mutex_t* mutex,
         (uint64_t)(1000. * 1000. * 1000.));
     
     if (verbose) {
-        printf("Doing timed wait with target wake up at %.2lf.\n",
+        pas_log("Doing timed wait with target wake up at %.2lf.\n",
                absolute_timeout_in_milliseconds);
     }
     pthread_cond_timedwait(cond, mutex, &time_to_wake_up);
     if (verbose)
-        printf("Woke up from timed wait at %.2lf.\n", get_time_in_milliseconds());
+        pas_log("Woke up from timed wait at %.2lf.\n", get_time_in_milliseconds());
 }
 
 static bool handle_expendable_memory(pas_expendable_memory_scavenge_kind kind)
@@ -219,7 +219,7 @@ static void* scavenger_thread_main(void* arg)
         should_go_again = false;
         
         if (verbose)
-            printf("Scavenger is running.\n");
+            pas_log("Scavenger is running.\n");
 
 #if PAS_LOCAL_ALLOCATOR_MEASURE_REFILL_EFFICIENCY
         pas_local_allocator_refill_efficiency_lock_lock();
@@ -239,7 +239,7 @@ static void* scavenger_thread_main(void* arg)
         thread_local_cache_decommit_action = pas_thread_local_cache_decommit_no_action;
         if ((pas_scavenger_tick_count % PAS_THREAD_LOCAL_CACHE_DECOMMIT_PERIOD_COUNT) == 0) {
             if (verbose)
-                printf("Attempt to decommit unused TLC\n");
+                pas_log("Attempt to decommit unused TLC\n");
             thread_local_cache_decommit_action = pas_thread_local_cache_decommit_if_possible_action;
         }
         should_go_again |=
@@ -307,7 +307,7 @@ static void* scavenger_thread_main(void* arg)
         time_in_milliseconds = get_time_in_milliseconds();
         
         if (verbose)
-            printf("Finished a round of scavenging at %.2lf.\n", time_in_milliseconds);
+            pas_log("Finished a round of scavenging at %.2lf.\n", time_in_milliseconds);
         
         /* By default we need to sleep for a short while and then try again. */
         absolute_timeout_in_milliseconds_for_period_sleep =
@@ -315,7 +315,7 @@ static void* scavenger_thread_main(void* arg)
 
         if (should_go_again) {
             if (verbose)
-                printf("Waiting for a period.\n");
+                pas_log("Waiting for a period.\n");
 
             /* This field is accessed a lot by other threads, so don't write to it if we don't
                have to. */
@@ -326,14 +326,14 @@ static void* scavenger_thread_main(void* arg)
             
             if (pas_scavenger_current_state == pas_scavenger_state_polling) {
                 if (verbose)
-                    printf("Will consider deep sleep.\n");
+                    pas_log("Will consider deep sleep.\n");
                 
                 /* do one more round of polling but this time indicating that it's the last
                    chance. */
                 pas_scavenger_current_state = pas_scavenger_state_deep_sleep;
             } else {
                 if (verbose)
-                    printf("Considering deep sleep.\n");
+                    pas_log("Considering deep sleep.\n");
                 
                 PAS_ASSERT(pas_scavenger_current_state == pas_scavenger_state_deep_sleep);
                 
@@ -378,7 +378,7 @@ static void* scavenger_thread_main(void* arg)
                 shut_down_callback();
             
             if (verbose)
-                printf("Killing the scavenger.\n");
+                pas_log("Killing the scavenger.\n");
             return NULL;
         }
     }
@@ -430,7 +430,7 @@ void pas_scavenger_notify_eligibility_if_needed(void)
         return;
     
     if (verbose)
-        printf("It's not polling so need to do something.\n");
+        pas_log("It's not polling so need to do something.\n");
     
     data = ensure_data_instance(pas_lock_is_not_held);
     pthread_mutex_lock(&data->lock);

@@ -212,7 +212,7 @@ void RTCDataChannel::didReceiveRawData(std::span<const uint8_t> data)
 {
     switch (m_binaryType) {
     case BinaryType::Blob:
-        scheduleDispatchEvent(MessageEvent::create(Blob::create(scriptExecutionContext(), Vector(data), emptyString()), { }));
+        scheduleDispatchEvent(MessageEvent::create(Blob::create(protectedScriptExecutionContext().get(), Vector(data), emptyString()), { }));
         return;
     case BinaryType::Arraybuffer:
         scheduleDispatchEvent(MessageEvent::create(ArrayBuffer::create(data)));

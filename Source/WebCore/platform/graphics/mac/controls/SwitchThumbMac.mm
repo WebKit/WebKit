@@ -69,7 +69,7 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     GraphicsContextStateSaver stateSaver(context);
 
     auto isOn = owningPart().isOn();
-    auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
+    auto isInlineFlipped = style.states.contains(ControlStyle::State::InlineFlippedWritingMode);
     auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
     auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
     auto isPressed = style.states.contains(ControlStyle::State::Pressed);
@@ -99,7 +99,7 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
         context.scale(style.zoomFactor);
     }
 
-    auto drawingThumbIsLogicallyLeft = (!isRTL && !isOn) || (isRTL && isOn);
+    auto drawingThumbIsLogicallyLeft = (!isInlineFlipped && !isOn) || (isInlineFlipped && isOn);
     auto drawingThumbLogicalXAxis = inflatedTrackRect.width() - inflatedThumbRect.width();
     auto drawingThumbLogicalXAxisProgress = drawingThumbLogicalXAxis * progress;
     auto drawingThumbLogicalX = drawingThumbIsLogicallyLeft ? drawingThumbLogicalXAxis - drawingThumbLogicalXAxisProgress : drawingThumbLogicalXAxisProgress;
@@ -107,7 +107,7 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
-    auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isRTL, coreUISize);
+    auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isInlineFlipped, coreUISize);
     if (!maskImage)
         return;
 
@@ -127,7 +127,7 @@ void SwitchThumbMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
             (__bridge NSString *)kCUIWidgetKey: (__bridge NSString *)kCUIWidgetSwitchKnob,
             (__bridge NSString *)kCUIStateKey: (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : isPressed ? kCUIStatePressed : kCUIStateActive),
             (__bridge NSString *)kCUISizeKey: SwitchMacUtilities::coreUISizeForControlSize(controlSize),
-            (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight),
+            (__bridge NSString *)kCUIUserInterfaceLayoutDirectionKey: (__bridge NSString *)(isInlineFlipped ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight),
             (__bridge NSString *)kCUIScaleKey: @(deviceScaleFactor),
         }];
     }

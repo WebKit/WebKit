@@ -61,7 +61,7 @@ public:
 
     JSC::JSValue resolveContext(JSC::JSGlobalObject*);
 
-    HashSet<Element*> clientNodes() const;
+    UncheckedKeyHashSet<Element*> clientNodes() const;
 
     void canvasChanged();
 

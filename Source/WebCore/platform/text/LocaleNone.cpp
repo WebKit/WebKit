@@ -35,7 +35,6 @@ public:
 
 private:
     void initializeLocaleData() final;
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     String dateFormat() override;
     String monthFormat() override;
     String shortMonthFormat() override;
@@ -52,7 +51,6 @@ private:
     Vector<String> m_timeAMPMLabels;
     Vector<String> m_shortMonthLabels;
     Vector<String> m_monthLabels;
-#endif
 };
 
 std::unique_ptr<Locale> Locale::create(const AtomString&)
@@ -66,7 +64,6 @@ void LocaleNone::initializeLocaleData()
 {
 }
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 const Vector<String>& LocaleNone::monthLabels()
 {
     if (!m_monthLabels.isEmpty())
@@ -135,7 +132,5 @@ const Vector<String>& LocaleNone::timeAMPMLabels()
     m_timeAMPMLabels.appendList({ "AM"_s, "PM"_s });
     return m_timeAMPMLabels;
 }
-
-#endif
 
 } // namespace WebCore

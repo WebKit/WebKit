@@ -33,6 +33,7 @@
 #include "AttachmentAssociatedElement.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSPropertyNames.h"
+#include "CSSSerializationContext.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "CachedResourceLoader.h"
@@ -321,7 +322,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
         auto start = selection.start();
         if (start.isNull() || event->target() != enclosingTextFormControl(start)) {
             if (auto range = target->selection())
-                return { *range, Affinity::Downstream, selection.isDirectional() };
+                return { *range, Affinity::Downstream, selection.directionality() };
         }
     }
     return selection;
@@ -539,7 +540,7 @@ bool Editor::canCopy() const
     if (imageElementFromImageDocument(document()))
         return true;
     const VisibleSelection& selection = document().selection().selection();
-    return selection.isRange() && (!selection.isInPasswordField() || selection.isInAutoFilledAndViewableField());
+    return (selection.isRange() || !isEditablePosition(selection.start())) && (!selection.isInPasswordField() || selection.isInAutoFilledAndViewableField());
 }
 
 bool Editor::canDelete() const
@@ -987,7 +988,15 @@ RefPtr<Element> Editor::findEventTargetFrom(const VisibleSelection& selection) c
 
 RefPtr<Element> Editor::findEventTargetFromSelection() const
 {
-    return findEventTargetFrom(document().selection().selection());
+    // https://www.w3.org/TR/clipboard-apis/#fire-a-clipboard-event says:
+    // If the context is editable, then
+    // Set target to be the element that contains the start of the visible selection or cursor in document order, or the body element if there is no visible selection or cursor.
+    const VisibleSelection& selection = document().selection().selection();
+    if (selection.isRange() || isEditablePosition(selection.start()))
+        return findEventTargetFrom(selection);
+    // Else, if the context is not editable, then
+    // Set target to the focused node, or the body element if no node has focus.
+    return document().activeElement();
 }
 
 void Editor::applyStyle(StyleProperties* style, EditAction editingAction)
@@ -1051,7 +1060,7 @@ void Editor::applyParagraphStyle(StyleProperties* style, EditAction editingActio
     if (document->selection().isNone())
         return;
 
-    ApplyStyleCommand::create(WTFMove(document), EditingStyle::create(style).ptr(), editingAction, ApplyStyleCommand::PropertyLevel::ForceBlock)->apply();
+    ApplyStyleCommand::create(WTFMove(document), EditingStyle::create(style).ptr(), editingAction, ApplyStylePropertyLevel::ForceBlock)->apply();
 
     if (client())
         client()->didApplyStyle();
@@ -1603,7 +1612,7 @@ void Editor::performCutOrCopy(EditorActionSpecifier action)
             writeSelectionToPasteboard(*Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document->pageID())));
 #else
             // FIXME: Delete after <http://webkit.org/b/177618> lands.
-            Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document->pageID()))->writeSelection(*selection, canSmartCopyOrDelete(), *document->frame(), IncludeImageAltTextForDataTransfer);
+            Pasteboard::createForCopyAndPaste(PagePasteboardContext::create(document->pageID()))->writeSelection(selection, canSmartCopyOrDelete(), *document->frame(), IncludeImageAltTextForDataTransfer);
 #endif
         }
     }
@@ -3134,13 +3143,12 @@ void Editor::markAndReplaceFor(const SpellCheckRequest& request, const Vector<Te
     auto textCheckingOptions = request.data().checkingTypes();
     TextCheckingParagraph paragraph(request.checkingRange(), request.automaticReplacementRange(), request.paragraphRange());
 
-    // FIXME: Mark this const once MSVC bug is fixed: <https://developercommunity.visualstudio.com/content/problem/316713/msvc-cant-compile-webkits-optionsetcontainsany.html>.
-    bool shouldPerformReplacement = textCheckingOptions.containsAny({ TextCheckingType::Quote, TextCheckingType::Dash, TextCheckingType::Replacement });
-    bool shouldMarkSpelling = textCheckingOptions.contains(TextCheckingType::Spelling);
-    bool shouldMarkGrammar = textCheckingOptions.contains(TextCheckingType::Grammar);
-    bool shouldMarkLink = textCheckingOptions.contains(TextCheckingType::Link);
-    bool shouldShowCorrectionPanel = textCheckingOptions.contains(TextCheckingType::ShowCorrectionPanel);
-    bool shouldCheckForCorrection = shouldShowCorrectionPanel || textCheckingOptions.contains(TextCheckingType::Correction);
+    const bool shouldPerformReplacement = textCheckingOptions.containsAny({ TextCheckingType::Quote, TextCheckingType::Dash, TextCheckingType::Replacement });
+    const bool shouldMarkSpelling = textCheckingOptions.contains(TextCheckingType::Spelling);
+    const bool shouldMarkGrammar = textCheckingOptions.contains(TextCheckingType::Grammar);
+    const bool shouldMarkLink = textCheckingOptions.contains(TextCheckingType::Link);
+    const bool shouldShowCorrectionPanel = textCheckingOptions.contains(TextCheckingType::ShowCorrectionPanel);
+    const bool shouldCheckForCorrection = shouldShowCorrectionPanel || textCheckingOptions.contains(TextCheckingType::Correction);
 #if !USE(AUTOCORRECTION_PANEL)
     ASSERT(!shouldShowCorrectionPanel);
 #endif
@@ -4797,7 +4805,7 @@ const RenderStyle* Editor::styleForSelectionStart(RefPtr<Node>& nodeToRemove)
 
     auto styleElement = HTMLSpanElement::create(document);
 
-    auto styleText = makeAtomString(typingStyle->style()->asText(), " display: inline"_s);
+    auto styleText = makeAtomString(typingStyle->style()->asText(CSS::defaultSerializationContext()), " display: inline"_s);
     styleElement->setAttribute(HTMLNames::styleAttr, styleText);
 
     styleElement->appendChild(document->createEditingTextNode(String { emptyString() }));
@@ -4827,7 +4835,7 @@ RefPtr<Font> Editor::fontForSelection(bool& hasMultipleFonts)
             if (!style)
                 return nullptr;
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-            font = const_cast<Font*>(&style->fontCascade().primaryFont());
+            font = const_cast<Font*>(style->fontCascade().primaryFont().ptr());
         }
 
         if (nodeToRemove)
@@ -4853,10 +4861,10 @@ RefPtr<Font> Editor::fontForSelection(bool& hasMultipleFonts)
         auto renderer = node.renderer();
         if (!renderer)
             continue;
-        auto& primaryFont = renderer->style().fontCascade().primaryFont();
+        Ref primaryFont = renderer->style().fontCascade().primaryFont();
         if (!font)
-            font = const_cast<Font*>(&primaryFont);
-        else if (font != &primaryFont) {
+            font = const_cast<Font*>(primaryFont.ptr());
+        else if (font != primaryFont.ptr()) {
             hasMultipleFonts = true;
             break;
         }

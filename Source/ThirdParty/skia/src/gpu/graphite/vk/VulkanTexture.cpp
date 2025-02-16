@@ -12,8 +12,10 @@
 #include "include/gpu/vk/VulkanMutableTextureState.h"
 #include "src/core/SkMipmap.h"
 #include "src/gpu/graphite/Log.h"
+#include "src/gpu/graphite/Sampler.h"
 #include "src/gpu/graphite/vk/VulkanCaps.h"
 #include "src/gpu/graphite/vk/VulkanCommandBuffer.h"
+#include "src/gpu/graphite/vk/VulkanDescriptorSet.h"
 #include "src/gpu/graphite/vk/VulkanGraphiteTypesPriv.h"
 #include "src/gpu/graphite/vk/VulkanGraphiteUtilsPriv.h"
 #include "src/gpu/graphite/vk/VulkanResourceProvider.h"
@@ -151,7 +153,6 @@ bool VulkanTexture::MakeVkImage(const VulkanSharedContext* sharedContext,
 sk_sp<Texture> VulkanTexture::Make(const VulkanSharedContext* sharedContext,
                                    SkISize dimensions,
                                    const TextureInfo& info,
-                                   skgpu::Budgeted budgeted,
                                    sk_sp<VulkanYcbcrConversion> ycbcrConversion) {
     CreatedImageInfo imageInfo;
     if (!MakeVkImage(sharedContext, dimensions, info, &imageInfo)) {
@@ -165,7 +166,6 @@ sk_sp<Texture> VulkanTexture::Make(const VulkanSharedContext* sharedContext,
                                             imageInfo.fImage,
                                             imageInfo.fMemoryAlloc,
                                             Ownership::kOwned,
-                                            budgeted,
                                             std::move(ycbcrConversion)));
 }
 
@@ -183,9 +183,10 @@ sk_sp<Texture> VulkanTexture::MakeWrapped(const VulkanSharedContext* sharedConte
                                             image,
                                             alloc,
                                             Ownership::kWrapped,
-                                            skgpu::Budgeted::kNo,
                                             std::move(ycbcrConversion)));
 }
+
+VulkanTexture::~VulkanTexture() {}
 
 VkImageAspectFlags vk_format_to_aspect_flags(VkFormat format) {
     switch (format) {
@@ -312,9 +313,8 @@ VulkanTexture::VulkanTexture(const VulkanSharedContext* sharedContext,
                              VkImage image,
                              const VulkanAlloc& alloc,
                              Ownership ownership,
-                             skgpu::Budgeted budgeted,
                              sk_sp<VulkanYcbcrConversion> ycbcrConversion)
-        : Texture(sharedContext, dimensions, info, std::move(mutableState), ownership, budgeted)
+        : Texture(sharedContext, dimensions, info, std::move(mutableState), ownership)
         , fImage(image)
         , fMemoryAlloc(alloc)
         , fYcbcrConversion(std::move(ycbcrConversion)) {}
@@ -425,6 +425,38 @@ const VulkanImageView* VulkanTexture::getImageView(VulkanImageView::Usage usage)
 bool VulkanTexture::supportsInputAttachmentUsage() const {
     return (TextureInfos::GetVkUsageFlags(this->textureInfo()) &
             VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT);
+}
+
+size_t VulkanTexture::onUpdateGpuMemorySize() {
+    if (!this->textureInfo().isMemoryless()) {
+        return this->gpuMemorySize();
+    }
+
+    auto sharedContext = static_cast<const VulkanSharedContext*>(this->sharedContext());
+    VkDeviceSize committedMemory;
+    VULKAN_CALL(sharedContext->interface(),
+                GetDeviceMemoryCommitment(sharedContext->device(),
+                                          fMemoryAlloc.fMemory,
+                                          &committedMemory));
+    return committedMemory;
+}
+
+sk_sp<VulkanDescriptorSet> VulkanTexture::getCachedSingleTextureDescriptorSet(
+        const Sampler* sampler) const {
+    SkASSERT(sampler);
+    for (auto& cachedSet : fCachedSingleTextureDescSets) {
+        if (cachedSet.first->uniqueID() == sampler->uniqueID()) {
+            return cachedSet.second;
+        }
+    }
+    return nullptr;
+}
+
+void VulkanTexture::addCachedSingleTextureDescriptorSet(sk_sp<VulkanDescriptorSet> set,
+                                                        sk_sp<const Sampler> sampler) const {
+    SkASSERT(set);
+    SkASSERT(sampler);
+    fCachedSingleTextureDescSets.push_back(std::make_pair(std::move(sampler), std::move(set)));
 }
 
 } // namespace skgpu::graphite

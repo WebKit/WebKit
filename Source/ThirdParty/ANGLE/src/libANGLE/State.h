@@ -475,6 +475,11 @@ class PrivateState : angle::NonCopyable
     // GL_ANGLE_shader_pixel_local_storage
     void setPixelLocalStorageActivePlanes(GLsizei n);
     GLsizei getPixelLocalStorageActivePlanes() const { return mPixelLocalStorageActivePlanes; }
+    // While pixel local storage is active, some draw buffers may be reserved for internal use by
+    // PLS and blocked from the client. All draw buffers at or beyond 'firstActivePLSDrawBuffer' are
+    // overridden.
+    bool hasActivelyOverriddenPLSDrawBuffers(GLint *firstActivePLSDrawBuffer) const;
+    bool isActivelyOverriddenPLSDrawBuffer(GLint drawbuffer) const;
 
     // GL_ANGLE_variable_rasterization_rate_metal
     void setVariableRasterizationRateEnabled(bool enabled);
@@ -833,7 +838,10 @@ class State : angle::NonCopyable
 
     // Texture binding & active texture unit manipulation
     void setSamplerTexture(const Context *context, TextureType type, Texture *texture);
-    Texture *getTargetTexture(TextureType type) const;
+    Texture *getTargetTexture(TextureType type) const
+    {
+        return getSamplerTexture(getActiveSampler(), type);
+    }
 
     Texture *getSamplerTexture(unsigned int sampler, TextureType type) const
     {

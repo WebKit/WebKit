@@ -27,8 +27,6 @@
 #include "config.h"
 #include "DateTimeFieldElements.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "HTMLNames.h"
@@ -367,5 +365,3 @@ void DateTimeYearFieldElement::setValueAsDate(const DateComponents& date)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

@@ -27,5 +27,7 @@ inline GLint GetUniformElementComponents(UniformTypeIndex index)
     return kElementComponents[index.value];
 }
 
+extern const std::array<UniformTypeInfo, 77> kUniformInfoTable;
+
 }  // namespace gl
 #endif  // COMMON_UNIFORM_TYPE_INFO_AUTOGEN_H_

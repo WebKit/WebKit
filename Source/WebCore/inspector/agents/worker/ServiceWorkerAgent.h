@@ -48,7 +48,7 @@ public:
     Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::ServiceWorker::Configuration>> getInitializationInfo();
 
 private:
-    ServiceWorkerGlobalScope& m_serviceWorkerGlobalScope;
+    WeakRef<ServiceWorkerGlobalScope, WeakPtrImplWithEventTargetData> m_serviceWorkerGlobalScope;
     RefPtr<Inspector::ServiceWorkerBackendDispatcher> m_backendDispatcher;
 };
 

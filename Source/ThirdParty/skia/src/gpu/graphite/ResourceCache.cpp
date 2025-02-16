@@ -8,6 +8,7 @@
 #include "src/gpu/graphite/ResourceCache.h"
 
 #include "include/private/base/SingleOwner.h"
+#include "src/base/SkNoDestructor.h"
 #include "src/base/SkRandom.h"
 #include "src/core/SkTMultiMap.h"
 #include "src/core/SkTraceEvent.h"
@@ -23,6 +24,34 @@ namespace skgpu::graphite {
 
 #define ASSERT_SINGLE_OWNER SKGPU_ASSERT_SINGLE_OWNER(fSingleOwner)
 
+namespace {
+
+static constexpr uint32_t kMaxUseToken = 0xFFFFFFFF;
+
+// Singleton Resource subclass that provides a fixed address used to track the end of the return
+// queue and when the resource cache is shutdown.
+class Sentinel : public Resource {
+public:
+    static Resource* Get() {
+        static SkNoDestructor<Sentinel> kSentinel{};
+        return kSentinel.get();
+    }
+
+private:
+    template <typename T>
+    friend class ::SkNoDestructor;
+
+    // We can pass in a null shared context here because the only instance that is ever created is
+    // wrapped in SkNoDestructor, and we never actually use it as a Resource.
+    Sentinel() : Resource(/*sharedContext=*/nullptr, Ownership::kOwned, /*gpuMemorySize=*/0) {}
+
+    const char* getResourceType() const override { return "Sentinel"; }
+
+    void freeGpuData() override {}
+};
+
+}  // anonymous namespace
+
 sk_sp<ResourceCache> ResourceCache::Make(SingleOwner* singleOwner,
                                          uint32_t recorderID,
                                          size_t maxBytes) {
@@ -37,30 +66,29 @@ ResourceCache::ResourceCache(SingleOwner* singleOwner, uint32_t recorderID, size
     }
     // TODO: Maybe when things start using ResourceCache, then like Ganesh the compiler won't
     // complain about not using fSingleOwner in Release builds and we can delete this.
-#ifndef SK_DEBUG
+#if !defined(SK_DEBUG)
     (void)fSingleOwner;
 #endif
 }
 
 ResourceCache::~ResourceCache() {
     // The ResourceCache must have been shutdown by the ResourceProvider before it is destroyed.
-    SkASSERT(fIsShutdown);
+    SkASSERT(fReturnQueue.load(std::memory_order_acquire) == Sentinel::Get());
 }
 
 void ResourceCache::shutdown() {
     ASSERT_SINGLE_OWNER
 
-    SkASSERT(!fIsShutdown);
+    // At this point no more changes will happen to fReturnQueue or the resources within that
+    // linked list. We do need to finish processing them for a graceful shutdown.
+    this->processReturnedResources(Sentinel::Get());
 
-    {
-        SkAutoMutexExclusive locked(fReturnMutex);
-        fIsShutdown = true;
-    }
     if (fProxyCache) {
         fProxyCache->purgeAll();
+        // NOTE: any resources that would become purgeable or reusable from purging the proxy cache
+        // are not added to the return queue and remain in the nonpurgeable array. Below their
+        // cache ref will be removed, causing them to be deleted immediately.
     }
-
-    this->processReturnedResources();
 
     while (!fNonpurgeableResources.empty()) {
         Resource* back = *(fNonpurgeableResources.end() - 1);
@@ -79,16 +107,25 @@ void ResourceCache::shutdown() {
     TRACE_EVENT_INSTANT0("skia.gpu.cache", TRACE_FUNC, TRACE_EVENT_SCOPE_THREAD);
 }
 
-void ResourceCache::insertResource(Resource* resource) {
+void ResourceCache::insertResource(Resource* resource,
+                                   const GraphiteResourceKey& key,
+                                   Budgeted budgeted,
+                                   Shareable shareable) {
     ASSERT_SINGLE_OWNER
     SkASSERT(resource);
+    SkASSERT(key.isValid());
+    SkASSERT(shareable == Shareable::kNo || budgeted == Budgeted::kYes);
+
     SkASSERT(!this->isInCache(resource));
     SkASSERT(!resource->wasDestroyed());
     SkASSERT(!resource->isPurgeable());
-    SkASSERT(resource->key().isValid());
+    SkASSERT(!resource->key().isValid());
     // All resources in the cache are owned. If we track wrapped resources in the cache we'll need
     // to update this check.
     SkASSERT(resource->ownership() == Ownership::kOwned);
+
+    // Make sure we have the most accurate memory size for "memoryless" resources.
+    resource->updateGpuMemorySize();
 
     // The reason to call processReturnedResources here is to get an accurate accounting of our
     // memory usage as some resources can go from unbudgeted to budgeted when they return. So we
@@ -100,23 +137,23 @@ void ResourceCache::insertResource(Resource* resource) {
         this->processReturnedResources();
     }
 
-    resource->registerWithCache(sk_ref_sp(this));
-    resource->refCache();
+    resource->registerWithCache(sk_ref_sp(this), key, budgeted, shareable);
 
-    // We must set the timestamp before adding to the array in case the timestamp wraps and we wind
-    // up iterating over all the resources that already have timestamps.
-    this->setResourceTimestamp(resource, this->getNextTimestamp());
+    // We must set the use token before adding to the array in case the token wraps and we wind
+    // up iterating over all the resources that already have use tokens.
+    this->setResourceUseToken(resource, this->getNextUseToken());
     resource->updateAccessTime();
 
     this->addToNonpurgeableArray(resource);
 
     SkDEBUGCODE(fCount++;)
 
-    if (resource->key().shareable() == Shareable::kYes) {
-        fResourceMap.insert(resource->key(), resource);
+    if (resource->shareable() != Shareable::kNo) {
+        // Scratch and shareable resources are always available for reuse
+        this->addToResourceMap(resource);
     }
 
-    if (resource->budgeted() == skgpu::Budgeted::kYes) {
+    if (resource->budgeted() == Budgeted::kYes) {
         fBudgetedBytes += resource->gpuMemorySize();
     }
 
@@ -124,35 +161,51 @@ void ResourceCache::insertResource(Resource* resource) {
 }
 
 Resource* ResourceCache::findAndRefResource(const GraphiteResourceKey& key,
-                                            skgpu::Budgeted budgeted) {
+                                            Budgeted budgeted,
+                                            Shareable shareable,
+                                            const ScratchResourceSet* unavailable) {
     ASSERT_SINGLE_OWNER
 
     SkASSERT(key.isValid());
+    SkASSERT(shareable == Shareable::kNo || budgeted == Budgeted::kYes);
+    SkASSERT(shareable != Shareable::kScratch || SkToBool(unavailable));
 
-    Resource* resource = fResourceMap.find(key);
+    auto shareablePredicate = [shareable, unavailable](Resource* r) {
+        // If the resource is in fResourceMap then it's available, so a non-shareable state means
+        // it really has no outstanding uses and can be converted to any other shareable state.
+        // Otherwise, if it's available, it can only be reused with the same mode. Additionally,
+        // for kScratch resources, they cannot already be in the `unavailable` set passed in.
+        return (r->shareable() == Shareable::kNo || r->shareable() == shareable) &&
+               (shareable != Shareable::kScratch || !unavailable->contains(r));
+    };
+
+    Resource* resource = fResourceMap.find(key, shareablePredicate);
     if (!resource) {
         // The main reason to call processReturnedResources in this call is to see if there are any
         // resources that we could match with the key. However, there is overhead into calling it.
         // So we only call it if we first failed to find a matching resource.
         if (this->processReturnedResources()) {
-            resource = fResourceMap.find(key);
+            resource = fResourceMap.find(key, shareablePredicate);
         }
     }
     if (resource) {
         // All resources we pull out of the cache for use should be budgeted
-        SkASSERT(resource->budgeted() == skgpu::Budgeted::kYes);
-        if (key.shareable() == Shareable::kNo) {
-            // If a resource is not shareable (i.e. scratch resource) then we remove it from the map
-            // so that it isn't found again.
-            fResourceMap.remove(key, resource);
-            if (budgeted == skgpu::Budgeted::kNo) {
-                resource->makeUnbudgeted();
+        SkASSERT(resource->budgeted() == Budgeted::kYes);
+        SkASSERT(resource->key() == key);
+
+        if (shareable == Shareable::kNo) {
+            // If the returned resource is no longer shareable then we remove it from the map so
+            // that it isn't found again.
+            SkASSERT(resource->shareable() == Shareable::kNo);
+            this->removeFromResourceMap(resource);
+            if (budgeted == Budgeted::kNo) {
+                resource->setBudgeted(Budgeted::kNo);
                 fBudgetedBytes -= resource->gpuMemorySize();
             }
-            SkDEBUGCODE(resource->fNonShareableInCache = false;)
         } else {
-            // Shareable resources should never be requested as non budgeted
-            SkASSERT(budgeted == skgpu::Budgeted::kYes);
+            // Shareable and scratch resources should never be requested as non-budgeted
+            SkASSERT(budgeted == Budgeted::kYes);
+            resource->setShareable(shareable);
         }
         this->refAndMakeResourceMRU(resource);
         this->validate();
@@ -184,176 +237,259 @@ void ResourceCache::refAndMakeResourceMRU(Resource* resource) {
     }
     resource->initialUsageRef();
 
-    this->setResourceTimestamp(resource, this->getNextTimestamp());
+    this->setResourceUseToken(resource, this->getNextUseToken());
     this->validate();
 }
 
-bool ResourceCache::returnResource(Resource* resource, LastRemovedRef removedRef) {
-    // We should never be trying to return a LastRemovedRef of kCache.
-    SkASSERT(removedRef != LastRemovedRef::kCache);
-    SkAutoMutexExclusive locked(fReturnMutex);
-    if (fIsShutdown) {
+void ResourceCache::forceProcessReturnedResources() {
+    ASSERT_SINGLE_OWNER
+    this->processReturnedResources();
+}
+
+bool ResourceCache::returnResource(Resource* resource) {
+    SkASSERT(resource && resource->cache() == this);
+    // We only allow one instance of a Resource to be in the return queue at a time but it should
+    // have already added a return queue ref.
+    SkASSERT(!resource->inReturnQueue() && resource->hasReturnQueueRef());
+
+    // Check once with a relaxed load to try and minimize the amount of wasted preparation work if
+    // the cache is already shutdown.
+    Resource* oldHeadPtr = fReturnQueue.load(std::memory_order_relaxed);
+    if (oldHeadPtr == Sentinel::Get()) {
         return false;
     }
 
-    SkASSERT(resource);
-
-    // When a non-shareable resource's CB and Usage refs are both zero, give it a chance prepare
+    // When a non-shareable resource's CB and Usage refs are both zero, give it a chance to prepare
     // itself to be reused. On Dawn/WebGPU we use this to remap kXferCpuToGpu buffers asynchronously
     // so that they are already mapped before they come out of the cache again.
     if (resource->shouldDeleteASAP() == Resource::DeleteASAP::kNo &&
-        resource->key().shareable() == Shareable::kNo &&
-        removedRef == LastRemovedRef::kUsage) {
-        resource->prepareForReturnToCache([resource] { resource->initialUsageRef(); });
-        // Check if resource was re-ref'ed. In that case exit without adding to the queue.
-        if (resource->hasUsageRef()) {
+        resource->shareable() == Shareable::kNo) {
+        // If we get here, we know the usage ref count is 0, so the only way for that to increase
+        // again is if the Resource triggers the initial usage ref in the callback.
+        SkDEBUGCODE(bool takeRefActuallyCalled = false;)
+        bool takeRefCalled = resource->prepareForReturnToCache([&] {
+                // This adds a usage ref AND removes the return queue ref. When returnResource()
+                // returns true, the cache takes responsibility for releasing the return queue ref.
+                // If we returned false from returnResource() when the resource invokes the takeRef
+                // function, there's a gap between when the resource can be used on another thread
+                // and when this thread removes the return queue ref. If the resource's new usage
+                // ref is removed on the other thread before this thread were to remove the return
+                // queue ref, it would end up skipping the return.
+                //
+                // By immediately unreffing the return queue ref before the resource can be exposed
+                // to another thread, the resource will always be able to be re-returned when the
+                // async work completes.
+                //
+                // Since prepareForReturnToCache() can only be used with resources that require
+                // purgeability for reusability, and it is non-shareable, the only ref that can
+                // change off thread is the resource's cache ref if the cache is simultaneously
+                // shutdown.
+                //
+                // Adding the usage ref first ensures the resource won't be disposed of early. When
+                // the resource is prepared, it will come through returnResource() again but should
+                // return false from prepareForReturnToCache() so that cache shutdown is detected.
+                // This can add unnecessary preparation work for resources that won't ever be used,
+                // but keeps the preparation logic relatively simple w/o needing a mutex.
+                resource->initialUsageRef();
+                resource->unrefReturnQueue();
+
+                SkDEBUGCODE(takeRefActuallyCalled = true;
+            )});
+
+        SkASSERT(takeRefCalled == takeRefActuallyCalled);
+        if (takeRefCalled) {
+            // Return 'true' here because we've removed the return queue ref already and don't
+            // want Resource to try and do that again. But since we added an initial ref, this
+            // resource will be re-returned once the async prepare-for-return work has finished.
             return true;
         }
     }
 
-    // We only allow one instance of a Resource to be in the return queue at a time. We do this so
-    // that the ReturnQueue stays small and quick to process.
-    //
-    // Because we take CacheRefs to all Resources added to the ReturnQueue, we would be safe if we
-    // decided to have multiple instances of a Resource. Even if an earlier returned instance of a
-    // Resource triggers that Resource to get purged from the cache, the Resource itself wouldn't
-    // get deleted until we drop all the CacheRefs in this ReturnQueue.
-    if (*resource->accessReturnIndex() >= 0) {
-        // If the resource is already in the return queue we promote the LastRemovedRef to be
-        // kUsage if that is what is returned here.
-        if (removedRef == LastRemovedRef::kUsage) {
-            SkASSERT(*resource->accessReturnIndex() < (int)fReturnQueue.size());
-            fReturnQueue[*resource->accessReturnIndex()].second = removedRef;
+    // Set the newly returned resource to be the head of the list, with its next pointer holding
+    // the old head. If the head has changed between the assignment of the next pointer, we repeat
+    // because it means there was a simultaneous return or the cache was shutdown.
+    do {
+        oldHeadPtr = fReturnQueue.load(std::memory_order_acquire);
+        if (oldHeadPtr == Sentinel::Get()) {
+            // Once the cache is shutdown, it can never be re-opened and we don't want to actually
+            // return this resource.
+            resource->setNextInReturnQueue(nullptr);
+            return false;
+        } else {
+            // If oldHeadPtr is null, this resource will be the tail of the return queue as it grows
+            // so set it's next pointer to the sentinel so that nullity can be used to test for
+            // being in the queue or not.
+            resource->setNextInReturnQueue(oldHeadPtr ? oldHeadPtr : Sentinel::Get());
         }
-        return true;
-    }
-#ifdef SK_DEBUG
-    for (auto& nextResource : fReturnQueue) {
-        SkASSERT(nextResource.first != resource);
-    }
-#endif
+    } while(!fReturnQueue.compare_exchange_weak(oldHeadPtr, resource,
+                                                std::memory_order_release,
+                                                std::memory_order_relaxed));
 
-    fReturnQueue.push_back(std::make_pair(resource, removedRef));
-    *resource->accessReturnIndex() = fReturnQueue.size() - 1;
-    resource->refCache();
+    // Once we've got here, it means that `resource` has been atomically included in the return
+    // queue. At this point, fReturnQueue's head value may or may not be `resource`, depending on if
+    // another thread has added another resource or processed the return queue, but in either event,
+    // `resource` will be visible to that thread.
     return true;
 }
 
-bool ResourceCache::processReturnedResources() {
+bool ResourceCache::processReturnedResources(Resource* queueHead) {
+    SkASSERT(queueHead == nullptr || queueHead == Sentinel::Get());
     // We need to move the returned Resources off of the ReturnQueue before we start processing them
-    // so that we can drop the fReturnMutex. When we process a Resource we may need to grab its
-    // UnrefMutex. This could cause a deadlock if on another thread the Resource has the UnrefMutex
-    // and is waiting on the ReturnMutex to be free.
-    ReturnQueue tempQueue;
-    {
-        SkAutoMutexExclusive locked(fReturnMutex);
-        // TODO: Instead of doing a copy of the vector, we may be able to improve the performance
-        // here by storing some form of linked list, then just move the pointer the first element
-        // and reset the ReturnQueue's top element to nullptr.
-        tempQueue = fReturnQueue;
-        fReturnQueue.clear();
-        for (auto& nextResource : tempQueue) {
-            auto [resource, ref] = nextResource;
-            SkASSERT(*resource->accessReturnIndex() >= 0);
-            *resource->accessReturnIndex() = -1;
-        }
+    // so that we can manipulate the resources without blocking subsequent returns on other threads.
+    Resource* oldQueue = fReturnQueue.exchange(queueHead, std::memory_order_acq_rel);
+
+    // Can't un-shutdown the cache
+    SkASSERT(oldQueue != Sentinel::Get() || queueHead == Sentinel::Get());
+
+    int returnCount = 0;
+    // Stop if we encounter null or the sentinel address (either the list is empty, the cache is
+    // shutdown, or we reached the tail returned resource that had next set to the sentinel).
+    while (oldQueue && oldQueue != Sentinel::Get()) {
+        returnCount++;
+        oldQueue = this->processReturnedResource(oldQueue);
     }
 
-    if (tempQueue.empty()) {
-        return false;
-    }
-
-    // Trace after the lock has been released so we can simply record the tempQueue size.
-    TRACE_EVENT1("skia.gpu.cache", TRACE_FUNC, "count", tempQueue.size());
-
-    for (auto& nextResource : tempQueue) {
-        auto [resource, ref] = nextResource;
-        // We need this check here to handle the following scenario. A Resource is sitting in the
-        // ReturnQueue (say from kUsage last ref) and the Resource still has a command buffer ref
-        // out in the wild. When the ResourceCache calls processReturnedResources it locks the
-        // ReturnMutex. Immediately after this, the command buffer ref is released on another
-        // thread. The Resource cannot be added to the ReturnQueue since the lock is held. Back in
-        // the ResourceCache (we'll drop the ReturnMutex) and when we try to return the Resource we
-        // will see that it is purgeable. If we are overbudget it is possible that the Resource gets
-        // purged from the ResourceCache at this time setting its cache index to -1. The unrefCache
-        // call will actually block here on the Resource's UnrefMutex which is held from the command
-        // buffer ref. Eventually the command bufer ref thread will get to run again and with the
-        // ReturnMutex lock dropped it will get added to the ReturnQueue. At this point the first
-        // unrefCache call will continue on the main ResourceCache thread. When we call
-        // processReturnedResources the next time, we don't want this Resource added back into the
-        // cache, thus we have the check here. The Resource will then get deleted when we call
-        // unrefCache below to remove the cache ref added from the ReturnQueue.
-        if (*resource->accessCacheIndex() != -1) {
-            this->returnResourceToCache(resource, ref);
-        }
-        // Remove cache ref held by ReturnQueue
-        resource->unrefCache();
-    }
-    return true;
+    TRACE_EVENT_INSTANT1("skia.gpu.cache", TRACE_FUNC, TRACE_EVENT_SCOPE_THREAD,
+                         "count", returnCount);
+    return returnCount > 0;
 }
 
-void ResourceCache::returnResourceToCache(Resource* resource, LastRemovedRef removedRef) {
+Resource* ResourceCache::processReturnedResource(Resource* resource) {
     // A resource should not have been destroyed when placed into the return queue. Also before
     // purging any resources from the cache itself, it should always empty the queue first. When the
     // cache releases/abandons all of its resources, it first invalidates the return queue so no new
     // resources can be added. Thus we should not end up in a situation where a resource gets
     // destroyed after it was added to the return queue.
     SkASSERT(!resource->wasDestroyed());
-
     SkASSERT(this->isInCache(resource));
-    if (removedRef == LastRemovedRef::kUsage) {
-        if (resource->key().shareable() == Shareable::kYes) {
-            // Shareable resources should still be in the cache
-            SkASSERT(fResourceMap.find(resource->key()));
-        } else {
-            SkDEBUGCODE(resource->fNonShareableInCache = true;)
-            resource->setLabel("Scratch");
-            fResourceMap.insert(resource->key(), resource);
-            if (resource->budgeted() == skgpu::Budgeted::kNo) {
-                resource->makeBudgeted();
+
+    const auto [isReusable, isPurgeable, next] = resource->unrefReturnQueue();
+
+    if (resource->shareable() != Shareable::kNo) {
+        // Shareable resources should still be discoverable in the resource map
+        SkASSERT(fResourceMap.has(resource, resource->key()));
+        SkASSERT(resource->isAvailableForReuse());
+
+        // Reset the resource's sharing mode so that any shareable request can use it (e.g. now that
+        // no more usages that required it to be scratch/shareable are held, the underlying resource
+        // can be used in a non-shareable manner the next time it's fetched from the cache). We can
+        // only change the shareable state when there are no outstanding usage refs. Because this
+        // resource was shareable, it remained in fResourceMap and could have a new usage ref before
+        // a prior return event was processed from the return queue. However, when a shareable ref
+        // has no usage refs, this is the only thread that can add an initial usage ref so it is
+        // safe to adjust its shareable type
+        if (isReusable) {
+            resource->setShareable(Shareable::kNo);
+        }
+    } else if (isReusable) {
+        // Non-shareable resources are removed from the resource map when they are given out by the
+        // cache. A resource is returned for either becoming reusable (needs to be added to the
+        // resource map) or becoming purgeable (needs to be moved to the purgeable queue). Becoming
+        // purgeable always implies becoming reusable, so as long as a previous return hasn't put it
+        // into the resource map already, we do that now.
+        if (!resource->isAvailableForReuse()) {
+            SkASSERT(!fResourceMap.has(resource, resource->key()));
+            this->addToResourceMap(resource);
+
+            if (resource->budgeted() == Budgeted::kNo) {
+                resource->setBudgeted(Budgeted::kYes);
                 fBudgetedBytes += resource->gpuMemorySize();
             }
         }
+
+        SkASSERT(fResourceMap.has(resource, resource->key()));
+        SkASSERT(resource->isAvailableForReuse());
+        // Since the resource should be non-shareable available as scratch, there are no outstanding
+        // refs that would make this assert not thread safe.
+        SkASSERT(resource->isUsableAsScratch());
+    } else {
+        // This was a stale entry in the return queue, which can arise when a Resource becomes
+        // reusable while it has outstanding command buffer refs. If the timing is right, the
+        // command buffer ref can be removed so the resource is purgeable (and goes back into the
+        // queue to be processed from non-purgeable to purgeable), but immediately after, the cache
+        // thread can add a usage ref. By the next time the return queue is processed, the resource
+        // is neither purgeable nor reusable.
+        SkASSERT(!fResourceMap.has(resource, resource->key()));
+        SkASSERT(!resource->isAvailableForReuse());
+        // At an instanteous moment, this resource should not be considered usable as scratch, but
+        // we cannot assert !isUsableAsScratch() because the other threads that are holding the
+        // extra refs described above can just as easily drop them between this assert and the last
+        // call to unrefReturnQueue() that put us into this branch.
     }
 
-    // If we weren't using multiple threads, it is ok to assume a resource that isn't purgeable must
-    // be in the non purgeable array. However, since resources can be unreffed from multiple
-    // threads, it is possible that a resource became purgeable while we are in the middle of
-    // returning resources. For example, a resource could have 1 usage and 1 command buffer ref. We
-    // then unref the usage which puts the resource in the return queue. Then the ResourceCache
-    // thread locks the ReturnQueue as it returns the Resource. At this same time another thread
-    // unrefs the command buffer usage but can't add the Resource to the ReturnQueue as it is
-    // locked (but the command buffer ref has been reduced to zero). When we are processing the
-    // Resource (from the kUsage ref) to return it to the cache it will look like it is purgeable
-    // since all refs are zero. Thus we will move the Resource from the non purgeable to purgeable
-    // queue. Then later when we return the command buffer ref, the Resource will have already been
-    // moved to purgeable queue and we don't need to do it again.
-    if (!resource->isPurgeable() || this->inPurgeableQueue(resource)) {
+    // Update GPU budget now that the budget policy is up to date. Some GPU resources may have their
+    // actual memory amount change over time so update periodically.
+    if (resource->budgeted() == Budgeted::kYes) {
+        size_t oldSize = resource->gpuMemorySize();
+        resource->updateGpuMemorySize();
+        if (oldSize != resource->gpuMemorySize()) {
+            fBudgetedBytes -= oldSize;
+            fBudgetedBytes += resource->gpuMemorySize();
+        }
+    }
+
+    // If the resource was not purgeable at the time the return queue ref was released, the
+    // resource should still be in the non-purgeable array from when it was originally given
+    // out. Another thread may have already removed the last refs keeping it non-purgeable by
+    // the time this thread reachs this line but that will only have re-added it to the return
+    // queue. The cache stores the resource based on its purgeability at the time of releasing
+    // the return queue ref. Any subsequent return due to becoming purgeable will complete
+    // moving the resource from the non-purgeable array to the purgeable queue.
+    SkASSERT(this->inNonpurgeableArray(resource));
+    if (!isPurgeable) {
         this->validate();
-        return;
+        return next;
     }
 
-    this->setResourceTimestamp(resource, this->getNextTimestamp());
+    // Since the resource is purgeable, there are no external refs that can add new refs to make
+    // it non-purgeable at this point. Only the current cache thread has that ability so we can
+    // safely continue moving the resource from non-purgeable to purgeable without worrying about
+    // another state change.
+    this->setResourceUseToken(resource, this->getNextUseToken());
 
     this->removeFromNonpurgeableArray(resource);
 
     if (resource->shouldDeleteASAP() == Resource::DeleteASAP::kYes) {
         this->purgeResource(resource);
     } else {
+        // We don't purge this resource immediately even if we are overbudget. This allows later
+        // purgeAsNeeded() calls to prioritize deleting less-recently-used Resources first.
         resource->updateAccessTime();
         fPurgeableQueue.insert(resource);
         fPurgeableBytes += resource->gpuMemorySize();
     }
     this->validate();
+
+    return next;
+}
+
+void ResourceCache::addToResourceMap(Resource* resource) {
+    SkASSERT(this->isInCache(resource));
+    SkASSERT(!resource->isAvailableForReuse());
+    SkASSERT(!fResourceMap.has(resource, resource->key()));
+    fResourceMap.insert(resource->key(), resource);
+    resource->setAvailableForReuse(true);
+}
+
+void ResourceCache::removeFromResourceMap(Resource* resource) {
+    SkASSERT(this->isInCache(resource));
+    SkASSERT(resource->isAvailableForReuse());
+    SkASSERT(fResourceMap.has(resource, resource->key()));
+    fResourceMap.remove(resource->key(), resource);
+    resource->setAvailableForReuse(false);
 }
 
 void ResourceCache::addToNonpurgeableArray(Resource* resource) {
+    SkASSERT(!this->inNonpurgeableArray(resource));
+
     int index = fNonpurgeableResources.size();
     *fNonpurgeableResources.append() = resource;
     *resource->accessCacheIndex() = index;
 }
 
 void ResourceCache::removeFromNonpurgeableArray(Resource* resource) {
+    SkASSERT(this->inNonpurgeableArray(resource));
+
     int* index = resource->accessCacheIndex();
     // Fill the hole we will create in the array with the tail object, adjust its index, and
     // then pop the array
@@ -366,6 +502,8 @@ void ResourceCache::removeFromNonpurgeableArray(Resource* resource) {
 }
 
 void ResourceCache::removeFromPurgeableQueue(Resource* resource) {
+    SkASSERT(this->inPurgeableQueue(resource));
+
     fPurgeableQueue.remove(resource);
     fPurgeableBytes -= resource->gpuMemorySize();
     // SkTDPQueue will set the index back to -1 in debug builds, but we are using the index as a
@@ -374,14 +512,34 @@ void ResourceCache::removeFromPurgeableQueue(Resource* resource) {
     *resource->accessCacheIndex() = -1;
 }
 
-bool ResourceCache::inPurgeableQueue(Resource* resource) const {
-    SkASSERT(this->isInCache(resource));
+bool ResourceCache::inPurgeableQueue(const Resource* resource) const {
     int index = *resource->accessCacheIndex();
-    if (index < fPurgeableQueue.count() && fPurgeableQueue.at(index) == resource) {
+    return index >= 0 && index < fPurgeableQueue.count() &&
+           fPurgeableQueue.at(index) == resource;
+}
+
+#if defined(SK_DEBUG)
+
+bool ResourceCache::inNonpurgeableArray(const Resource* resource) const {
+    int index = *resource->accessCacheIndex();
+    return index >= 0 && index < fNonpurgeableResources.size() &&
+           fNonpurgeableResources[index] == resource;
+}
+
+bool ResourceCache::isInCache(const Resource* resource) const {
+    if (this->inPurgeableQueue(resource) || this->inNonpurgeableArray(resource)) {
+        SkASSERT(resource->cache() == this);
+        SkASSERT(resource->hasCacheRef());
         return true;
     }
+    // Resource index should have been set to -1 if the resource is not in the cache
+    SkASSERT(*resource->accessCacheIndex() == -1);
+    // Don't assert that the resource has no cache ref, as the ResourceCache asserts this is false
+    // before it removes its cache ref in the event that that was the last resource keeping it alive
     return false;
 }
+
+#endif // SK_DEBUG
 
 void ResourceCache::purgeResource(Resource* resource) {
     SkASSERT(resource->isPurgeable());
@@ -389,14 +547,14 @@ void ResourceCache::purgeResource(Resource* resource) {
     TRACE_EVENT_INSTANT1("skia.gpu.cache", TRACE_FUNC, TRACE_EVENT_SCOPE_THREAD,
                          "size", resource->gpuMemorySize());
 
-    fResourceMap.remove(resource->key(), resource);
+    this->removeFromResourceMap(resource);
 
     if (resource->shouldDeleteASAP() == Resource::DeleteASAP::kNo) {
         SkASSERT(this->inPurgeableQueue(resource));
         this->removeFromPurgeableQueue(resource);
-    } else {
-        SkASSERT(!this->isInCache(resource));
     }
+
+    SkASSERT(!this->isInCache(resource));
 
     fBudgetedBytes -= resource->gpuMemorySize();
     resource->unrefCache();
@@ -414,10 +572,10 @@ void ResourceCache::purgeAsNeeded() {
     while (this->overbudget() && fPurgeableQueue.count()) {
         Resource* resource = fPurgeableQueue.peek();
         SkASSERT(!resource->wasDestroyed());
-        SkASSERT(fResourceMap.find(resource->key()));
+        SkASSERT(fResourceMap.has(resource, resource->key()));
 
-        if (resource->timestamp() == kMaxTimestamp) {
-            // If we hit a resource that is at kMaxTimestamp, then we've hit the part of the
+        if (resource->lastUseToken() == kMaxUseToken) {
+            // If we hit a resource that is at kMaxUseToken, then we've hit the part of the
             // purgeable queue with all zero sized resources. We don't want to actually remove those
             // so we just break here.
             SkASSERT(resource->gpuMemorySize() == 0);
@@ -484,17 +642,16 @@ void ResourceCache::purgeResources(const StdSteadyClock::time_point* purgeTime) 
     this->purgeAsNeeded();
 }
 
-uint32_t ResourceCache::getNextTimestamp() {
+uint32_t ResourceCache::getNextUseToken() {
     // If we wrap then all the existing resources will appear older than any resources that get
-    // a timestamp after the wrap. We wrap one value early when we reach kMaxTimestamp so that we
-    // can continue to use kMaxTimestamp as a special case for zero sized resources.
-    if (fTimestamp == kMaxTimestamp) {
-        fTimestamp = 0;
+    // a token after the wrap. We wrap one value early when we reach kMaxUseToken so that we
+    // can continue to use kMaxUseToken as a special case for zero sized resources.
+    if (fUseToken == kMaxUseToken) {
+        fUseToken = 0;
         int count = this->getResourceCount();
         if (count) {
-            // Reset all the timestamps. We sort the resources by timestamp and then assign
-            // sequential timestamps beginning with 0. This is O(n*lg(n)) but it should be extremely
-            // rare.
+            // Reset all the tokens. We sort the resources by their use token and then assign
+            // sequential tokens beginning with 0. This is O(n*lg(n)) but it should be very rare.
             SkTDArray<Resource*> sortedPurgeableResources;
             sortedPurgeableResources.reserve(fPurgeableQueue.count());
 
@@ -503,34 +660,33 @@ uint32_t ResourceCache::getNextTimestamp() {
                 fPurgeableQueue.pop();
             }
 
-            SkTQSort(fNonpurgeableResources.begin(), fNonpurgeableResources.end(),
-                     CompareTimestamp);
+            SkTQSort(fNonpurgeableResources.begin(), fNonpurgeableResources.end(), CompareUseToken);
 
             // Pick resources out of the purgeable and non-purgeable arrays based on lowest
-            // timestamp and assign new timestamps.
+            // use token and assign new tokens.
             int currP = 0;
             int currNP = 0;
             while (currP < sortedPurgeableResources.size() &&
                    currNP < fNonpurgeableResources.size()) {
-                uint32_t tsP = sortedPurgeableResources[currP]->timestamp();
-                uint32_t tsNP = fNonpurgeableResources[currNP]->timestamp();
+                uint32_t tsP = sortedPurgeableResources[currP]->lastUseToken();
+                uint32_t tsNP = fNonpurgeableResources[currNP]->lastUseToken();
                 SkASSERT(tsP != tsNP);
                 if (tsP < tsNP) {
-                    this->setResourceTimestamp(sortedPurgeableResources[currP++], fTimestamp++);
+                    this->setResourceUseToken(sortedPurgeableResources[currP++], fUseToken++);
                 } else {
                     // Correct the index in the nonpurgeable array stored on the resource post-sort.
                     *fNonpurgeableResources[currNP]->accessCacheIndex() = currNP;
-                    this->setResourceTimestamp(fNonpurgeableResources[currNP++], fTimestamp++);
+                    this->setResourceUseToken(fNonpurgeableResources[currNP++], fUseToken++);
                 }
             }
 
             // The above loop ended when we hit the end of one array. Finish the other one.
             while (currP < sortedPurgeableResources.size()) {
-                this->setResourceTimestamp(sortedPurgeableResources[currP++], fTimestamp++);
+                this->setResourceUseToken(sortedPurgeableResources[currP++], fUseToken++);
             }
             while (currNP < fNonpurgeableResources.size()) {
                 *fNonpurgeableResources[currNP]->accessCacheIndex() = currNP;
-                this->setResourceTimestamp(fNonpurgeableResources[currNP++], fTimestamp++);
+                this->setResourceUseToken(fNonpurgeableResources[currNP++], fUseToken++);
             }
 
             // Rebuild the queue.
@@ -541,19 +697,19 @@ uint32_t ResourceCache::getNextTimestamp() {
             this->validate();
             SkASSERT(count == this->getResourceCount());
 
-            // count should be the next timestamp we return.
-            SkASSERT(fTimestamp == SkToU32(count));
+            // count should be the next use token we return.
+            SkASSERT(fUseToken == SkToU32(count));
         }
     }
-    return fTimestamp++;
+    return fUseToken++;
 }
 
-void ResourceCache::setResourceTimestamp(Resource* resource, uint32_t timestamp) {
-    // We always set the timestamp for zero sized resources to be kMaxTimestamp
+void ResourceCache::setResourceUseToken(Resource* resource, uint32_t token) {
+    // We always set the use token for zero-sized resources to be kMaxUseToken
     if (resource->gpuMemorySize() == 0) {
-        timestamp = kMaxTimestamp;
+        token = kMaxUseToken;
     }
-    resource->setTimestamp(timestamp);
+    resource->setLastUseToken(token);
 }
 
 void ResourceCache::dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) const {
@@ -565,10 +721,10 @@ void ResourceCache::dumpMemoryStatistics(SkTraceMemoryDump* traceMemoryDump) con
     // state to the memory dump, which is accurate without draining the return queue.
 
     for (int i = 0; i < fNonpurgeableResources.size(); ++i) {
-        fNonpurgeableResources[i]->dumpMemoryStatistics(traceMemoryDump);
+        fNonpurgeableResources[i]->dumpMemoryStatistics(traceMemoryDump, false);
     }
     for (int i = 0; i < fPurgeableQueue.count(); ++i) {
-        fPurgeableQueue.at(i)->dumpMemoryStatistics(traceMemoryDump);
+        fPurgeableQueue.at(i)->dumpMemoryStatistics(traceMemoryDump, true);
     }
 }
 
@@ -580,23 +736,7 @@ void ResourceCache::setMaxBudget(size_t bytes) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const GraphiteResourceKey& ResourceCache::MapTraits::GetKey(const Resource& r) {
-    return r.key();
-}
-
-uint32_t ResourceCache::MapTraits::Hash(const GraphiteResourceKey& key) {
-    return key.hash();
-}
-
-bool ResourceCache::CompareTimestamp(Resource* const& a, Resource* const& b) {
-    return a->timestamp() < b->timestamp();
-}
-
-int* ResourceCache::AccessResourceIndex(Resource* const& res) {
-    return res->accessCacheIndex();
-}
-
-#ifdef SK_DEBUG
+#if defined(SK_DEBUG)
 void ResourceCache::validate() const {
     // Reduce the frequency of validations for large resource counts.
     static SkRandom gRandom;
@@ -623,41 +763,35 @@ void ResourceCache::validate() const {
             const GraphiteResourceKey& key = resource->key();
             SkASSERT(key.isValid());
 
-            // We should always have at least 1 cache ref
-            SkASSERT(resource->hasCacheRef());
-
             // All resources in the cache are owned. If we track wrapped resources in the cache
             // we'll need to update this check.
             SkASSERT(resource->ownership() == Ownership::kOwned);
 
-            // We track scratch (non-shareable, no usage refs, has been returned to cache) and
-            // shareable resources here as those should be the only things in the fResourceMap. A
-            // non-shareable resources that does meet the scratch criteria will not be able to be
-            // given back out from a cache requests. After processing all the resources we assert
-            // that the fScratch + fShareable equals the count in the fResourceMap.
-            if (resource->isUsableAsScratch()) {
-                SkASSERT(key.shareable() == Shareable::kNo);
-                SkASSERT(!resource->hasUsageRef());
-                ++fScratch;
+            if (resource->shareable() == Shareable::kYes) {
+                SkASSERT(resource->isAvailableForReuse());
                 SkASSERT(fResourceMap->has(resource, key));
-                SkASSERT(resource->budgeted() == skgpu::Budgeted::kYes);
-            } else if (key.shareable() == Shareable::kNo) {
-                SkASSERT(!fResourceMap->has(resource, key));
-            } else {
-                SkASSERT(key.shareable() == Shareable::kYes);
+                SkASSERT(resource->budgeted() == Budgeted::kYes);
                 ++fShareable;
+            } else if (resource->isAvailableForReuse()) {
+                // We track scratch resources (either non-shareable with no refs that are returned,
+                // or explicitly scratch shared) separately from fully shareable.
+                SkASSERT(resource->isUsableAsScratch());
                 SkASSERT(fResourceMap->has(resource, key));
-                SkASSERT(resource->budgeted() == skgpu::Budgeted::kYes);
+                ++fScratch;
+            } else {
+                // This should be a non-shareable resource that isn't available for reuse.
+                SkASSERT(resource->shareable() == Shareable::kNo);
+                SkASSERT(!fResourceMap->has(resource, key));
             }
 
-            if (resource->budgeted() == skgpu::Budgeted::kYes) {
+            if (resource->budgeted() == Budgeted::kYes) {
                 fBudgetedBytes += resource->gpuMemorySize();
             }
 
             if (resource->gpuMemorySize() == 0) {
-                SkASSERT(resource->timestamp() == kMaxTimestamp);
+                SkASSERT(resource->lastUseToken() == kMaxUseToken);
             } else {
-                SkASSERT(resource->timestamp() < kMaxTimestamp);
+                SkASSERT(resource->lastUseToken() < kMaxUseToken);
             }
 
             int index = *resource->accessCacheIndex();
@@ -671,8 +805,10 @@ void ResourceCache::validate() const {
     {
         int count = 0;
         fResourceMap.foreach([&](const Resource& resource) {
-            SkASSERT(resource.isUsableAsScratch() || resource.key().shareable() == Shareable::kYes);
-            SkASSERT(resource.budgeted() == skgpu::Budgeted::kYes);
+            SkASSERT(resource.isUsableAsScratch() || resource.shareable() == Shareable::kYes);
+            SkASSERT(resource.budgeted() == Budgeted::kYes);
+            SkASSERT(resource.isAvailableForReuse());
+            SkASSERT(this->isInCache(&resource));
             count++;
         });
         SkASSERT(count == fResourceMap.count());
@@ -691,6 +827,7 @@ void ResourceCache::validate() const {
     // purgeable or is in ReturnQueue.
     Stats stats(this);
     for (int i = 0; i < fNonpurgeableResources.size(); ++i) {
+        SkASSERT(this->isInCache(fNonpurgeableResources[i]));
         SkASSERT(*fNonpurgeableResources[i]->accessCacheIndex() == i);
         SkASSERT(!fNonpurgeableResources[i]->wasDestroyed());
         SkASSERT(!this->inPurgeableQueue(fNonpurgeableResources[i]));
@@ -703,10 +840,11 @@ void ResourceCache::validate() const {
         }
         if (firstPurgeableIsSizeZero) {
             // If the first purgeable item (i.e. least recently used) is sized zero, then all other
-            // purgeable resources must also be sized zero since they should all have a timestamp of
-            // kMaxTimestamp.
+            // purgeable resources must also be sized zero since they should all have a use token of
+            // kMaxUseToken.
             SkASSERT(fPurgeableQueue.at(i)->gpuMemorySize() == 0);
         }
+        SkASSERT(this->isInCache(fPurgeableQueue.at(i)));
         SkASSERT(fPurgeableQueue.at(i)->isPurgeable());
         SkASSERT(*fPurgeableQueue.at(i)->accessCacheIndex() == i);
         SkASSERT(!fPurgeableQueue.at(i)->wasDestroyed());
@@ -716,21 +854,6 @@ void ResourceCache::validate() const {
     SkASSERT((stats.fScratch + stats.fShareable) == fResourceMap.count());
     SkASSERT(stats.fBudgetedBytes == fBudgetedBytes);
     SkASSERT(stats.fPurgeableBytes == fPurgeableBytes);
-}
-
-bool ResourceCache::isInCache(const Resource* resource) const {
-    int index = *resource->accessCacheIndex();
-    if (index < 0) {
-        return false;
-    }
-    if (index < fPurgeableQueue.count() && fPurgeableQueue.at(index) == resource) {
-        return true;
-    }
-    if (index < fNonpurgeableResources.size() && fNonpurgeableResources[index] == resource) {
-        return true;
-    }
-    SkDEBUGFAIL("Resource index should be -1 or the resource should be in the cache.");
-    return false;
 }
 
 #endif // SK_DEBUG

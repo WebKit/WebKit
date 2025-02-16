@@ -210,7 +210,7 @@ void Navigator::showShareData(ExceptionOr<ShareDataWithParsedURL&> readData, Ref
     m_hasPendingShare = true;
 
     if (frame->page()->isControlledByAutomation()) {
-        RunLoop::main().dispatch([promise = WTFMove(promise), weakThis = WeakPtr { *this }] {
+        RunLoop::protectedMain()->dispatch([promise = WTFMove(promise), weakThis = WeakPtr { *this }] {
             if (weakThis)
                 weakThis->m_hasPendingShare = false;
             promise->resolve();

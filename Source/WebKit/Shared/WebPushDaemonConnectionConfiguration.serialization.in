@@ -27,4 +27,5 @@ webkit_platform_headers: "ArgumentCoders.h" "WebPushDaemonConnectionConfiguratio
     String bundleIdentifierOverride;
     String pushPartitionString;
     std::optional<WTF::UUID> dataStoreIdentifier;
+    bool declarativeWebPushEnabled;
 };

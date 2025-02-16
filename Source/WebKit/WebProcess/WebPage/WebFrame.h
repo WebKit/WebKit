@@ -103,6 +103,7 @@ public:
     RefPtr<WebCore::LocalFrame> protectedCoreLocalFrame() const;
     WebCore::RemoteFrame* coreRemoteFrame() const;
     WebCore::Frame* coreFrame() const;
+    RefPtr<WebCore::Frame> protectedCoreFrame() const;
 
     void createProvisionalFrame(ProvisionalFrameCreationParameters&&);
     void commitProvisionalFrame();
@@ -205,7 +206,7 @@ public:
     RefPtr<WebImage> createSelectionSnapshot() const;
 
 #if PLATFORM(IOS_FAMILY)
-    TransactionID firstLayerTreeTransactionIDAfterDidCommitLoad() const { return m_firstLayerTreeTransactionIDAfterDidCommitLoad; }
+    std::optional<TransactionID> firstLayerTreeTransactionIDAfterDidCommitLoad() const { return m_firstLayerTreeTransactionIDAfterDidCommitLoad; }
     void setFirstLayerTreeTransactionIDAfterDidCommitLoad(TransactionID transactionID) { m_firstLayerTreeTransactionIDAfterDidCommitLoad = transactionID; }
 #endif
 
@@ -261,7 +262,7 @@ private:
     bool m_wasRemovedInAnotherProcess { false };
 
 #if PLATFORM(IOS_FAMILY)
-    TransactionID m_firstLayerTreeTransactionIDAfterDidCommitLoad;
+    std::optional<TransactionID> m_firstLayerTreeTransactionIDAfterDidCommitLoad;
 #endif
     std::optional<NavigatingToAppBoundDomain> m_isNavigatingToAppBoundDomain;
     Markable<WebCore::LayerHostingContextIdentifier> m_layerHostingContextIdentifier;

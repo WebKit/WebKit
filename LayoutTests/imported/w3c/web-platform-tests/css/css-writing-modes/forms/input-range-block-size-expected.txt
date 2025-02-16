@@ -1,0 +1,8 @@
+
+
+PASS writing-mode: horizontal-tb
+PASS writing-mode: vertical-lr
+PASS writing-mode: vertical-rl
+PASS writing-mode: sideways-lr
+PASS writing-mode: sideways-rl
+

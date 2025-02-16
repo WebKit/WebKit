@@ -103,6 +103,14 @@
             <param><ptype>EGLFrameTokenANGLE</ptype> <name>frametoken</name></param>
         </command>
         <command>
+            <proto><ptype>void</ptype> <name>eglLockVulkanQueueANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+        </command>
+        <command>
+            <proto><ptype>void</ptype> <name>eglUnlockVulkanQueueANGLE</name></proto>
+            <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
+        </command>
+        <command>
             <proto><ptype>EGLBoolean</ptype> <name>eglPrepareSwapBuffersANGLE</name></proto>
             <param><ptype>EGLDisplay</ptype> <name>dpy</name></param>
             <param><ptype>EGLSurface</ptype> <name>surface</name></param>
@@ -331,6 +339,8 @@
                 <enum name="EGL_VULKAN_QUEUE_ANGLE"/>
                 <enum name="EGL_VULKAN_QUEUE_FAMILIY_INDEX_ANGLE"/>
                 <enum name="EGL_VULKAN_GET_INSTANCE_PROC_ADDR"/>
+                <command name="eglLockVulkanQueueANGLE"/>
+                <command name="eglUnlockVulkanQueueANGLE"/>
             </require>
         </extension>
         <extension name="EGL_ANGLE_direct_composition" supported="egl">
@@ -472,6 +482,13 @@
                 <enum name="EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE"/>
             </require>
         </extension>
+        <extension name="EGL_ANGLE_platform_angle_vulkan_device_uuid" supported="egl">
+            <require>
+                <enum name="EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE"/>
+                <enum name="EGL_PLATFORM_ANGLE_VULKAN_DRIVER_UUID_ANGLE"/>
+                <enum name="EGL_PLATFORM_ANGLE_VULKAN_DRIVER_ID_ANGLE"/>
+            </require>
+        </extension>
         <extension name="EGL_ANGLE_robust_resource_initialization" supported="egl">
             <require>
                 <enum name="EGL_ROBUST_RESOURCE_INITIALIZATION_ANGLE"/>
@@ -527,6 +544,11 @@
         <extension name="EGL_ANGLE_no_error" supported="egl">
             <require>
                 <command name="eglSetValidationEnabledANGLE"/>
+            </require>
+        </extension>
+        <extension name="EGL_ANGLE_memory_usage_report" supported="egl">
+            <require>
+                <enum name="EGL_CONTEXT_MEMORY_USAGE_ANGLE"/>
             </require>
         </extension>
     </extensions>
@@ -588,6 +610,7 @@
     <enums namespace="EGL" start="0x3460" end="0x346F" vendor="ANGLE">
         <enum value="0x3460" name="EGL_FEATURE_NAME_ANGLE"/>
         <enum value="0x3461" name="EGL_FEATURE_CATEGORY_ANGLE"/>
+        <enum value="0x3462" name="EGL_CONTEXT_MEMORY_USAGE_ANGLE"/>
         <enum value="0x3464" name="EGL_FEATURE_STATUS_ANGLE"/>
         <enum value="0x3465" name="EGL_FEATURE_COUNT_ANGLE"/>
         <enum value="0x3466" name="EGL_FEATURE_OVERRIDES_ENABLED_ANGLE"/>
@@ -656,6 +679,11 @@
         <enum value="0x34DD" name="EGL_METAL_TEXTURE_ARRAY_SLICE_ANGLE"/>
         <enum value="0x34DE" name="EGL_SYNC_GLOBAL_FENCE_ANGLE"/>
         <enum value="0x34DF" name="EGL_PLATFORM_ANGLE_TYPE_WEBGPU_ANGLE"/>
+    </enums>
+    <enums namespace="EGL" start="0x34F0" end="0x34FF" vendor="ANGLE">
+        <enum value="0x34F0" name="EGL_PLATFORM_ANGLE_VULKAN_DEVICE_UUID_ANGLE"/>
+        <enum value="0x34F1" name="EGL_PLATFORM_ANGLE_VULKAN_DRIVER_UUID_ANGLE"/>
+        <enum value="0x34F2" name="EGL_PLATFORM_ANGLE_VULKAN_DRIVER_ID_ANGLE"/>
     </enums>
     <enums namespace="EGL" vendor="ANGLE">
         <enum value="0x0001" name="EGL_LOW_POWER_ANGLE"/>

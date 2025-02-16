@@ -76,14 +76,16 @@ public:
 
     // Block size must be at least as large as the system page size.
     static constexpr size_t blockSize = std::max(16 * KB, CeilingOnPageSize);
+    static_assert(hasOneBitSet(blockSize)); // blockSize must be a power of two.
     static_assert((WeakBlock::blockSize * 16) == 16 * KB);
 
-    static constexpr size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
+    static constexpr size_t blockMask = ~(blockSize - 1);
 
     static constexpr size_t atomsPerBlock = blockSize / atomSize;
 
-    using AtomNumberType = std::conditional<atomsPerBlock < UINT16_MAX, uint16_t, uint32_t>::type;
-    static_assert(std::numeric_limits<AtomNumberType>::max() >= atomsPerBlock);
+    using AtomNumberType = uint16_t;
+    using MarkCountBiasType = std::make_signed_t<AtomNumberType>;
+    static_assert(std::numeric_limits<MarkCountBiasType>::max() >= atomsPerBlock);
 
     static constexpr size_t maxNumberOfLowerTierPreciseCells = 8;
     static_assert(maxNumberOfLowerTierPreciseCells <= 256);
@@ -126,6 +128,7 @@ public:
         void* cellAlign(void*);
             
         bool isEmpty();
+        void setIsDestructible(bool);
 
         void lastChanceToFinalize();
 
@@ -279,7 +282,7 @@ public:
         // that this count is racy. It will accurately detect whether or not exactly zero things were
         // marked, but if N things got marked, then this may report anything in the range [1, N] (or
         // before unbiased, it would be [1 + m_markCountBias, N + m_markCountBias].)
-        int16_t m_biasedMarkCount;
+        MarkCountBiasType m_biasedMarkCount;
     
         // We bias the mark count so that if m_biasedMarkCount >= 0 then the block should be retired.
         // We go to all this trouble to make marking a bit faster: this way, marking knows when to
@@ -300,7 +303,7 @@ public:
         // All of this also means that you can detect if any objects are marked by doing:
         //
         //     m_biasedMarkCount != m_markCountBias
-        int16_t m_markCountBias;
+        MarkCountBiasType m_markCountBias;
 
         HeapVersion m_markingVersion;
         HeapVersion m_newlyAllocatedVersion;
@@ -547,7 +550,7 @@ inline CellAttributes MarkedBlock::attributes() const
 
 inline bool MarkedBlock::Handle::needsDestruction() const
 {
-    return m_attributes.destruction == NeedsDestruction;
+    return m_attributes.destruction != DoesNotNeedDestruction;
 }
 
 inline DestructionMode MarkedBlock::Handle::destruction() const
@@ -689,7 +692,8 @@ inline bool MarkedBlock::hasAnyMarked() const
 inline void MarkedBlock::noteMarked()
 {
     // This is racy by design. We don't want to pay the price of an atomic increment!
-    int16_t biasedMarkCount = header().m_biasedMarkCount;
+    // FIXME: We could probably make this relaxed atomics on Apple ARM64E since it's mostly free for those chips.
+    MarkCountBiasType biasedMarkCount = header().m_biasedMarkCount;
     ++biasedMarkCount;
     header().m_biasedMarkCount = biasedMarkCount;
     if (UNLIKELY(!biasedMarkCount))

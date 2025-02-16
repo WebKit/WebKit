@@ -7,7 +7,7 @@ noInline(foo);
 
 var expected = foo(false, true).f;
 
-for (var i = 0; i < 1000000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     foo(true, true);
 }
 

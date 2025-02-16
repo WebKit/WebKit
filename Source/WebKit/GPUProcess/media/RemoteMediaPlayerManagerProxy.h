@@ -81,7 +81,7 @@ public:
     void clear();
 
 #if !RELEASE_LOG_DISABLED
-    Logger& logger();
+    Logger& logger() { return m_logger; }
 #endif
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
@@ -94,7 +94,7 @@ public:
     std::optional<WebCore::ShareableBitmap::Handle> bitmapImageForCurrentTime(WebCore::MediaPlayerIdentifier);
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-    WebCore::PlatformVideoTarget videoTargetForMediaElementIdentifier(WebCore::HTMLMediaElementIdentifier);
+    WebCore::PlatformVideoTarget takeVideoTargetForMediaElementIdentifier(WebCore::HTMLMediaElementIdentifier, WebCore::MediaPlayerIdentifier);
     void handleVideoReceiverEndpointMessage(const VideoReceiverEndpointMessage&);
 #endif
 
@@ -120,6 +120,12 @@ private:
     void supportsTypeAndCodecs(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const WebCore::MediaEngineSupportParameters&&, CompletionHandler<void(WebCore::MediaPlayer::SupportsType)>&&);
     void supportsKeySystem(WebCore::MediaPlayerEnums::MediaEngineIdentifier, const String&&, const String&&, CompletionHandler<void(bool)>&&);
 
+#if !RELEASE_LOG_DISABLED
+    ASCIILiteral logClassName() const { return "RemoteMediaPlayerManagerProxy"; }
+    WTFLogChannel& logChannel() const;
+    uint64_t logIdentifier() const { return m_logIdentifier; }
+#endif
+
     HashMap<WebCore::MediaPlayerIdentifier, Ref<RemoteMediaPlayerProxy>> m_proxies;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_gpuConnectionToWebProcess;
 
@@ -137,7 +143,8 @@ private:
 #endif
 
 #if !RELEASE_LOG_DISABLED
-    RefPtr<Logger> m_logger;
+    uint64_t m_logIdentifier { 0 };
+    Ref<Logger> m_logger;
 #endif
 };
 

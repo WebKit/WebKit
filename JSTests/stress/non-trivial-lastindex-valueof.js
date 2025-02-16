@@ -10,8 +10,8 @@ function v0(v1,v2,v3,v4,v5) {
     return v8;
 }
 
-for (let v19 = 0; v19 < 10000; v19++) {
+for (let v19 = 0; v19 < testLoopCount; v19++) {
   v0();
 }
 
-if (v8 !== 10000) throw new Error("expected v8 to be incremented 10000 times");
+if (v8 !== testLoopCount) throw new Error(`expected v8 to be incremented ${testLoopCount} times`);

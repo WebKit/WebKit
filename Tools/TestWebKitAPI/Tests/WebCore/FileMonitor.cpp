@@ -60,7 +60,7 @@ public:
         auto handle = result.second;
         ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
 
-        int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().span());
+        int rc = FileSystem::writeToFile(handle, byteCast<uint8_t>(FileMonitorTestData.utf8().span()));
         ASSERT_NE(rc, -1);
         
         FileSystem::closeFile(handle);
@@ -348,7 +348,7 @@ TEST_F(FileMonitorTest, DetectDeleteButNotSubsequentChange)
         auto handle = FileSystem::openFile(tempFilePath(), FileSystem::FileOpenMode::Truncate);
         ASSERT_NE(handle, FileSystem::invalidPlatformFileHandle);
 
-        int rc = FileSystem::writeToFile(handle, FileMonitorTestData.utf8().span());
+        int rc = FileSystem::writeToFile(handle, byteCast<uint8_t>(FileMonitorTestData.utf8().span()));
         ASSERT_NE(rc, -1);
 
         auto firstCommand = createCommand(tempFilePath(), FileMonitorRevisedData);

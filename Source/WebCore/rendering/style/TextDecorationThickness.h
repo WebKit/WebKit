@@ -33,6 +33,8 @@ namespace WebCore {
 
 class TextDecorationThickness {
 public:
+    TextDecorationThickness() = default;
+
     static TextDecorationThickness createWithAuto()
     {
         return TextDecorationThickness(Type::Auto);
@@ -116,8 +118,8 @@ private:
     {
     }
 
-    Type m_type;
-    Length m_length;
+    Type m_type { };
+    Length m_length { };
 };
 
 inline TextStream& operator<<(TextStream& ts, const TextDecorationThickness& thickness)

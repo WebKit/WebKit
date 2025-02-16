@@ -360,7 +360,7 @@ void PrintContext::outputLinkedDestinations(GraphicsContext& graphicsContext, Do
     }
 }
 
-String PrintContext::pageProperty(LocalFrame* frame, const char* propertyName, int pageNumber)
+String PrintContext::pageProperty(LocalFrame* frame, const String& propertyName, int pageNumber)
 {
     ASSERT(frame);
     ASSERT(frame->document());
@@ -374,21 +374,21 @@ String PrintContext::pageProperty(LocalFrame* frame, const char* propertyName, i
     auto style = document->styleScope().resolver().styleForPage(pageNumber);
 
     // Implement formatters for properties we care about.
-    if (!strcmp(propertyName, "margin-left")) {
+    if (propertyName == "margin-left"_s) {
         if (style->marginLeft().isAuto())
             return autoAtom();
         return String::number(style->marginLeft().value());
     }
-    if (!strcmp(propertyName, "line-height"))
+    if (propertyName == "line-height"_s)
         return String::number(style->lineHeight().value());
-    if (!strcmp(propertyName, "font-size"))
+    if (propertyName == "font-size"_s)
         return String::number(style->fontDescription().computedSize());
-    if (!strcmp(propertyName, "font-family"))
+    if (propertyName == "font-family"_s)
         return style->fontDescription().firstFamily();
-    if (!strcmp(propertyName, "size"))
+    if (propertyName == "size"_s)
         return makeString(style->pageSize().width.value(), ' ', style->pageSize().height.value());
 
-    return makeString("pageProperty() unimplemented for: "_s, span(propertyName));
+    return makeString("pageProperty() unimplemented for: "_s, propertyName);
 }
 
 bool PrintContext::isPageBoxVisible(LocalFrame* frame, int pageNumber)

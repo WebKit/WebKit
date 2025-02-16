@@ -41,6 +41,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wtf/EnumTraits.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
@@ -51,8 +52,6 @@
 #if USE(GLIB)
 #include <glib.h>
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -266,19 +265,21 @@ static const char* temporaryFileDirectory()
 std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, StringView suffix)
 {
     PlatformFileHandle handle = invalidPlatformFileHandle;
-    // Suffix is not supported because that's incompatible with mkstemp.
+    // Suffix is not supported because that's incompatible with mkostemp, mkostemps would be needed for that.
     // This is OK for now since the code using it is built on macOS only.
     ASSERT_UNUSED(suffix, suffix.isEmpty());
 
-    char buffer[PATH_MAX];
-    if (snprintf(buffer, PATH_MAX, "%s/%sXXXXXX", temporaryFileDirectory(), prefix.utf8().data()) >= PATH_MAX)
-        goto end;
+    const char* directory = temporaryFileDirectory();
+    CString prefixUTF8 = prefix.utf8();
+    size_t length = strlen(directory) + 1 + prefixUTF8.length() + 1 + 6 + 1;
+    auto buffer = MallocSpan<char>::malloc(length);
+    snprintf(buffer.mutableSpan().data(), length, "%s/%s-XXXXXX", directory, prefixUTF8.data());
 
-    handle = mkostemp(buffer, O_CLOEXEC);
+    handle = mkostemp(buffer.mutableSpan().data(), O_CLOEXEC);
     if (handle < 0)
         goto end;
 
-    return { String::fromUTF8(buffer), handle };
+    return { String::fromUTF8(buffer.span().data()), handle };
 
 end:
     handle = invalidPlatformFileHandle;
@@ -378,5 +379,3 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 } // namespace FileSystemImpl
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

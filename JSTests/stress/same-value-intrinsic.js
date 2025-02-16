@@ -11,7 +11,7 @@ const obj = {};
 const arr = [];
 const sym = Symbol();
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     shouldBe(sameValue(null, null), true);
     shouldBe(sameValue(null, undefined), false);
     shouldBe(sameValue(true, true), true);

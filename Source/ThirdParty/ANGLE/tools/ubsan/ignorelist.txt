@@ -8,3 +8,7 @@ src:*/usr/*
 [alignment]
 src:*third_party/zlib*
 
+# https://crbug.com/385062729
+[pointer-overflow]
+fun:*angle*PoolAllocator*allocate*
+

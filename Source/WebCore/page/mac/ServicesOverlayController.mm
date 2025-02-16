@@ -43,6 +43,7 @@
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
 #import "Logging.h"
+#import "MouseEventTypes.h"
 #import "Page.h"
 #import "PageOverlayController.h"
 #import "Settings.h"
@@ -372,7 +373,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
-    HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
+    UncheckedKeyHashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
     auto& mainFrameView = *localMainFrame->view();
 
@@ -383,7 +384,7 @@ void ServicesOverlayController::buildPhoneNumberHighlights()
         // Convert to the main document's coordinate space.
         // FIXME: It's a little crazy to call contentsToWindow and then windowToContents in order to get the right coordinate space.
         // We should consider adding conversion functions to ScrollView for contentsToDocument(). Right now, contentsToRootView() is
-        // not equivalent to what we need when you have a topContentInset or a header banner.
+        // not equivalent to what we need when you have a content inset or a header banner.
         auto* viewForRange = range.start.document().view();
         if (!viewForRange)
             continue;
@@ -410,7 +411,7 @@ void ServicesOverlayController::buildSelectionHighlight()
     if (!PAL::isDataDetectorsFrameworkAvailable())
         return;
 
-    HashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
+    UncheckedKeyHashSet<RefPtr<DataDetectorHighlight>> newPotentialHighlights;
 
     Ref page = m_page.get();
     if (auto selectionRange = page->selection().firstRange()) {
@@ -440,11 +441,11 @@ void ServicesOverlayController::buildSelectionHighlight()
     replaceHighlightsOfTypePreservingEquivalentHighlights(newPotentialHighlights, DataDetectorHighlight::Type::Selection);
 }
 
-void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighlights(HashSet<RefPtr<DataDetectorHighlight>>& newPotentialHighlights, DataDetectorHighlight::Type type)
+void ServicesOverlayController::replaceHighlightsOfTypePreservingEquivalentHighlights(UncheckedKeyHashSet<RefPtr<DataDetectorHighlight>>& newPotentialHighlights, DataDetectorHighlight::Type type)
 {
     // If any old Highlights are equivalent (by Range) to a new Highlight, reuse the old
     // one so that any metadata is retained.
-    HashSet<RefPtr<DataDetectorHighlight>> reusedPotentialHighlights;
+    UncheckedKeyHashSet<RefPtr<DataDetectorHighlight>> reusedPotentialHighlights;
 
     for (auto& oldHighlight : m_potentialHighlights) {
         if (oldHighlight->type() != type)

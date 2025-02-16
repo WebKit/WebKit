@@ -17,6 +17,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-discrete.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-relative-absolute.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-interpolation-single.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-none-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-none-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-none-ref.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/property/d-none.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/getComputedStyle.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/marker-path-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/property/marker-path-ref.svg

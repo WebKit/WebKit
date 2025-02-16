@@ -8,6 +8,8 @@
         <script src="/common/get-host-info.sub.js"></script>
         <script src="/resources/testharness.js"></script>
         <script src="/resources/testharnessreport.js"></script>
+        <script src="/resources/testdriver.js"></script>
+        <script src="/resources/testdriver-vendor.js"></script>
         <script>
             const hostInfo = get_host_info();
             const iframeDetails = [
@@ -103,10 +105,11 @@
                         const options = {
                             digital: {
                                 // Results in TypeError when allowed, NotAllowedError when disallowed
-                                providers: [],
+                                requests: [{ data: {}, protocol: "openid4vp" }],
                             },
                             mediation: "required",
                         };
+                        await test_driver.bless("User activation");
                         const { data } = await new Promise((resolve) => {
                             window.addEventListener("message", resolve, {
                                 once: true,
@@ -117,11 +120,15 @@
                             );
                         });
                         const { name, message } = data;
-                        assert_equals(
-                            name,
-                            expectIsAllowed ? "TypeError" : "NotAllowedError",
-                            `${iframe.outerHTML} - ${message}`
-                        );
+                        const fullMessage = `${iframe.outerHTML} - ${message}`;
+                        if (expectIsAllowed) {
+                            assert_true(
+                                name == "TypeError" || name == "NotAllowedError",
+                                fullMessage
+                            );
+                        } else {
+                            assert_equals(name, "NotAllowedError", fullMessage);
+                        }
                         iframe.remove();
                     }, `Policy to use: ${details.policy}, is cross-origin: ${details.crossOrigin}, is allowed by policy: ${details.expectIsAllowed}`);
                 }

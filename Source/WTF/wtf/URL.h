@@ -27,7 +27,7 @@
 
 #include <wtf/text/WTFString.h>
 
-#if USE(GLIB) && HAVE(GURI)
+#if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
 #endif
 
@@ -237,7 +237,7 @@ public:
     WTF_EXPORT_PRIVATE operator NSURL *() const;
 #endif
 
-#if USE(GLIB) && HAVE(GURI)
+#if USE(GLIB)
     WTF_EXPORT_PRIVATE URL(GUri*);
     WTF_EXPORT_PRIVATE GRefPtr<GUri> createGUri() const;
 #endif
@@ -304,8 +304,8 @@ WTF_EXPORT_PRIVATE Vector<KeyValuePair<String, String>> queryParameters(const UR
 WTF_EXPORT_PRIVATE bool isEqualIgnoringQueryAndFragments(const URL&, const URL&);
 
 // Returns the parameters that were removed (including duplicates), in the order that they appear in the URL.
-WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, const HashSet<String>&);
-WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, Function<bool(const String&)>&&);
+WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, const UncheckedKeyHashSet<String>&);
+WTF_EXPORT_PRIVATE Vector<String> removeQueryParameters(URL&, NOESCAPE const Function<bool(const String&)>&);
 
 WTF_EXPORT_PRIVATE const URL& aboutBlankURL();
 WTF_EXPORT_PRIVATE const URL& aboutSrcDocURL();

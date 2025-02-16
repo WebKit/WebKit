@@ -177,8 +177,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
 
         WI.settings.clearNetworkOnNavigate.addEventListener(WI.Setting.Event.Changed, this._handleClearNetworkOnNavigateChanged, this);
         WI.settings.resourceCachingDisabled.addEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
-        if (WI.MediaInstrument.supported())
-            WI.settings.groupMediaRequestsByDOMNode.addEventListener(WI.Setting.Event.Changed, this._handleGroupMediaRequestsByDOMNodeChanged, this);
+        WI.settings.groupMediaRequestsByDOMNode.addEventListener(WI.Setting.Event.Changed, this._handleGroupMediaRequestsByDOMNodeChanged, this);
 
         this._needsInitialPopulate = true;
 
@@ -315,10 +314,6 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         this._hidePopover();
         this._hideDetailView();
 
-        // COMPATIBILITY (iOS 10.3): Network.setResourceCachingDisabled did not exist.
-        if (InspectorBackend.hasCommand("Network.setResourceCachingDisabled"))
-            WI.settings.resourceCachingDisabled.removeEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
-
         WI.Target.removeEventListener(WI.Target.Event.ResourceAdded, this._handleResourceAdded, this);
         WI.Frame.removeEventListener(WI.Frame.Event.MainResourceDidChange, this._mainResourceDidChange, this);
         WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, this._handleResourceAdded, this);
@@ -329,8 +324,8 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         WI.Resource.removeEventListener(WI.Resource.Event.TransferSizeDidChange, this._resourceTransferSizeDidChange, this);
         WI.networkManager.removeEventListener(WI.NetworkManager.Event.MainFrameDidChange, this._mainFrameDidChange, this);
 
-        if (WI.MediaInstrument.supported())
-            WI.settings.groupMediaRequestsByDOMNode.removeEventListener(WI.Setting.Event.Changed, this._handleGroupMediaRequestsByDOMNodeChanged, this);
+        WI.settings.resourceCachingDisabled.removeEventListener(WI.Setting.Event.Changed, this._resourceCachingDisabledSettingChanged, this);
+        WI.settings.groupMediaRequestsByDOMNode.removeEventListener(WI.Setting.Event.Changed, this._handleGroupMediaRequestsByDOMNodeChanged, this);
 
         super.closed();
     }
@@ -2387,7 +2382,7 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
         let active = false;
         if (!WI.settings.clearNetworkOnNavigate.value)
             active = true;
-        else if (WI.MediaInstrument.supported() && WI.settings.groupMediaRequestsByDOMNode.value)
+        else if (WI.settings.groupMediaRequestsByDOMNode.value)
             active = true;
         this._otherFiltersNavigationItem.element.classList.toggle("active", active);
     }
@@ -2415,13 +2410,11 @@ WI.NetworkTableContentView = class NetworkTableContentView extends WI.ContentVie
             WI.settings.clearNetworkOnNavigate.value = !WI.settings.clearNetworkOnNavigate.value;
         }, !WI.settings.clearNetworkOnNavigate.value);
 
-        if (WI.MediaInstrument.supported()) {
-            contextMenu.appendSeparator();
+        contextMenu.appendSeparator();
 
-            contextMenu.appendCheckboxItem(WI.UIString("Group Media Requests"), () => {
-                WI.settings.groupMediaRequestsByDOMNode.value = !WI.settings.groupMediaRequestsByDOMNode.value;
-            }, !!WI.settings.groupMediaRequestsByDOMNode.value);
-        }
+        contextMenu.appendCheckboxItem(WI.UIString("Group Media Requests"), () => {
+            WI.settings.groupMediaRequestsByDOMNode.value = !WI.settings.groupMediaRequestsByDOMNode.value;
+        }, !!WI.settings.groupMediaRequestsByDOMNode.value);
     }
 
     _handleGroupMediaRequestsByDOMNodeChanged(event)

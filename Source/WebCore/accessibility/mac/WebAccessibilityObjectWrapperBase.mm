@@ -59,6 +59,7 @@
 #import "TextIterator.h"
 #import "VisibleUnits.h"
 #import <Accessibility/Accessibility.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <pal/cocoa/AccessibilitySoftLink.h>
 
@@ -233,11 +234,6 @@ using namespace WebCore;
 
 #ifndef NSAccessibilityVisitedLinkSearchKey
 #define NSAccessibilityVisitedLinkSearchKey @"AXVisitedLinkSearchKey"
-#endif
-
-// Search
-#ifndef NSAccessibilityImmediateDescendantsOnly
-#define NSAccessibilityImmediateDescendantsOnly @"AXImmediateDescendantsOnly"
 #endif
 
 static NSArray *convertMathPairsToNSArray(const AccessibilityObject::AccessibilityMathMultiscriptPairs& pairs, NSString *subscriptKey, NSString *superscriptKey)
@@ -522,7 +518,7 @@ static void convertPathToScreenSpaceFunction(PathConversionInfo& conversion, con
 
 - (CGRect)convertRectToSpace:(const WebCore::FloatRect&)rect space:(AccessibilityConversionSpace)space
 {
-    RefPtr backingObject = dynamicDowncast<AccessibilityObject>(self.baseUpdateBackingStore);
+    RefPtr<AXCoreObject> backingObject = self.baseUpdateBackingStore;
     if (!backingObject)
         return CGRectZero;
 
@@ -796,7 +792,7 @@ static NSDictionary *dictionaryRemovingNonSupportedTypes(NSDictionary *dictionar
         ASSERT(notificationName);
         userInfo = dictionaryRemovingNonSupportedTypes(userInfo);
         NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:notificationName, @"notificationName", userInfo, @"userInfo", nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"AXDRTNotification" object:self userInfo:info];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NSAccessibilityDRTNotificationNotification object:self userInfo:info];
     }
 }
 
@@ -898,20 +894,21 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCore
     AccessibilitySearchCriteria criteria;
     criteria.anchorObject = &object;
 
-    WebAccessibilityObjectWrapperBase *startElement = [parameter objectForKey:@"AXStartElement"];
-    id startRange = [parameter objectForKey:@"AXStartRange"];
-    NSString *direction = [parameter objectForKey:@"AXDirection"];
-    NSNumber *immediateDescendantsOnly = [parameter objectForKey:NSAccessibilityImmediateDescendantsOnly];
-    NSNumber *resultsLimit = [parameter objectForKey:@"AXResultsLimit"];
-    NSString *searchText = [parameter objectForKey:@"AXSearchText"];
-    NSNumber *visibleOnly = [parameter objectForKey:@"AXVisibleOnly"];
-    id searchKey = [parameter objectForKey:@"AXSearchKey"];
+    WebAccessibilityObjectWrapperBase *startElement = [parameter objectForKey:NSAccessibilitySearchCurrentElementKey];
+    id startRange = [parameter objectForKey:NSAccessibilitySearchCurrentRangeKey];
+    NSString *direction = [parameter objectForKey:NSAccessibilitySearchDirectionKey];
+    NSNumber *immediateDescendantsOnly = [parameter objectForKey:NSAccessibilityImmediateDescendantsOnlyKey];
+    NSNumber *resultsLimit = [parameter objectForKey:NSAccessibilitySearchResultsLimitKey];
+    NSString *searchText = [parameter objectForKey:NSAccessibilitySearchTextKey];
+    NSNumber *visibleOnly = [parameter objectForKey:NSAccessibilityVisibleOnlyKey];
+    id searchKey = [parameter objectForKey:NSAccessibilitySearchIdentifiersKey];
 
     if ([startElement isKindOfClass:[WebAccessibilityObjectWrapperBase class]])
         criteria.startObject = startElement.axBackingObject;
 
-    if ([startRange isKindOfClass:[NSValue class]] && !strcmp([(NSValue *)startRange objCType], @encode(NSRange)))
+    if ([startRange isKindOfClass:[NSValue class]] && nsValueHasObjCType<NSRange>((NSValue *)startRange))
         criteria.startRange = [(NSValue *)startRange rangeValue];
+
 #if PLATFORM(MAC)
     else if (startRange && CFGetTypeID((__bridge CFTypeRef)startRange) == AXTextMarkerRangeGetTypeID()) {
         AXTextMarkerRange markerRange { (AXTextMarkerRangeRef)startRange };
@@ -924,7 +921,7 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCore
 #endif
 
     if ([direction isKindOfClass:[NSString class]])
-        criteria.searchDirection = [direction isEqualToString:@"AXDirectionNext"] ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous;
+        criteria.searchDirection = [direction isEqualToString:NSAccessibilitySearchDirectionNext] ? AccessibilitySearchDirection::Next : AccessibilitySearchDirection::Previous;
 
     if ([immediateDescendantsOnly isKindOfClass:[NSNumber class]])
         criteria.immediateDescendantsOnly = [immediateDescendantsOnly boolValue];

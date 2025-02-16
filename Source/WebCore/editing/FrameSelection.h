@@ -286,6 +286,7 @@ public:
     void associateLiveRange(Range&);
     void disassociateLiveRange();
     void updateFromAssociatedLiveRange();
+    void updateOrDisassociateLiveRange(bool shouldMaintainLiveRange);
 
     CaretAnimator& caretAnimator() { return m_caretAnimator.get(); }
 

@@ -117,7 +117,7 @@ TEST(WTF_StringCommon, CopyElements64To8)
     for (unsigned i = 0; i < 4096; ++i)
         source.append(i);
 
-    WTF::copyElements(destination.data(), source.data(), 4096);
+    WTF::copyElements(destination.mutableSpan(), source.span());
     for (unsigned i = 0; i < 4096; ++i)
         EXPECT_EQ(destination[i], static_cast<uint8_t>(i));
 }
@@ -138,7 +138,7 @@ TEST(WTF_StringCommon, CopyElements64To16)
     for (unsigned i = 0; i < 4096; ++i)
         source.append(i);
 
-    WTF::copyElements(destination.data(), source.data(), 4096 + 4 + 4096);
+    WTF::copyElements(destination.mutableSpan(), source.span());
     for (unsigned i = 0; i < 4096; ++i)
         EXPECT_EQ(destination[i], static_cast<uint16_t>(i));
     EXPECT_EQ(destination[4096 + 0], 0xffffU);
@@ -165,7 +165,7 @@ TEST(WTF_StringCommon, CopyElements64To32)
     for (unsigned i = 0; i < 4096; ++i)
         source.append(i);
 
-    WTF::copyElements(destination.data(), source.data(), 4096 + 4 + 4096);
+    WTF::copyElements(destination.mutableSpan(), source.span());
     for (unsigned i = 0; i < 4096; ++i)
         EXPECT_EQ(destination[i], static_cast<uint32_t>(i));
     EXPECT_EQ(destination[4096 + 0], 0xffffffffU);
@@ -192,7 +192,7 @@ TEST(WTF_StringCommon, CopyElements32To16)
     for (unsigned i = 0; i < 4096; ++i)
         source.append(i);
 
-    WTF::copyElements(destination.data(), source.data(), 4096 + 4 + 4096);
+    WTF::copyElements(destination.mutableSpan(), source.span());
     for (unsigned i = 0; i < 4096; ++i)
         EXPECT_EQ(destination[i], static_cast<uint16_t>(i));
     EXPECT_EQ(destination[4096 + 0], 0xffffU);

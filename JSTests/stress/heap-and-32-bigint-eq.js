@@ -4,7 +4,7 @@ function shouldBe(actual, expected) {
 }
 
 if (typeof createBigInt32 !== 'undefined') {
-    for (var i = -100000; i < 100000; ++i) {
+    for (var i = -100000; i < testLoopCount; ++i) {
         var bigInt32 = createBigInt32(String(i));
         var heapBigInt = createHeapBigInt(String(i));
         shouldBe(bigInt32 == heapBigInt, true);

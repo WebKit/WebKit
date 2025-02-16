@@ -10,6 +10,7 @@ if (window.testRunner)
 <script>
 var textarea = document.getElementById("textarea");
 textarea.setSelectionRange(0, 0);
+textarea.focus();
 document.execCommand("SelectAll");
 document.execCommand("Copy");
 var div = document.getElementById("div");

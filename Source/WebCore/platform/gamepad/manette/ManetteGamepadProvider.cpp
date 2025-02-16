@@ -89,7 +89,7 @@ void ManetteGamepadProvider::startMonitoringGamepads(GamepadProviderClient& clie
     // devices that were already connected, so we suppress notifying clients of these.
     m_initialGamepadsConnectedTimer.startOneShot(connectionDelayInterval);
 
-    RunLoop::current().dispatch([this] {
+    RunLoop::protectedCurrent()->dispatch([this] {
         ManetteDevice* device;
         GUniquePtr<ManetteMonitorIter> iter(manette_monitor_iterate(m_monitor.get()));
         while (manette_monitor_iter_next(iter.get(), &device))

@@ -44,6 +44,7 @@
 #import <UIKit/UIKeyboardPreferencesController.h>
 #import <UIKit/UIKeyboard_Private.h>
 #import <UIKit/UIPress_Private.h>
+#import <UIKit/UIRemoteView.h>
 #import <UIKit/UIResponder_Private.h>
 #import <UIKit/UIScreen_Private.h>
 #import <UIKit/UIScrollEvent_Private.h>
@@ -288,7 +289,7 @@ typedef NS_ENUM(NSInteger, _UIDataOwner) {
 @end
 
 @protocol UITextInputSuggestionDelegate <UITextInputDelegate>
-- (void)setSuggestions:(NSArray <UITextSuggestion*> *)suggestions;
+- (void)setSuggestions:(NSArray<UITextSuggestion *> *)suggestions;
 @end
 
 @interface UIScrollView (SPI)

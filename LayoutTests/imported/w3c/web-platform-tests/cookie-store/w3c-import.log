@@ -34,11 +34,14 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_getAll_arguments.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_getAll_multiple.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_getAll_set_basic.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_getAll_set_creation_url.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_arguments.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_delete_basic.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_set_across_frames.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_set_across_origins.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_set_basic.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_set_creation_url.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_set_creation_url.sub.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_get_set_ordering.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_in_detached_frame.https.html
 /LayoutTests/imported/w3c/web-platform-tests/cookie-store/cookieStore_opaque_origin.https.html

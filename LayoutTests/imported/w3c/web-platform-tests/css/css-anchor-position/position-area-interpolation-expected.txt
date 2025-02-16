@@ -1,44 +1,44 @@
 
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (1) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (1) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [span-all left] at (-0.3) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [span-all left] at (0) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [span-all left] at (0.3) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [span-all left] at (1) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (-0.3) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0.3) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (1) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [span-all left] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [span-all left] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [span-all left] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [span-all left] at (1) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [span-all left] at (-0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [span-all left] at (0) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [span-all left] at (0.3) should be [none] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [span-all left] at (1) should be [span-all left] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (-0.3) should be [none]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0) should be [none]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0.3) should be [none]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (1) should be [span-all left]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (-0.3) should be [none]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0) should be [none]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0.3) should be [none]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (1) should be [span-all left]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left]
+PASS CSS Transitions: property <position-area> from [none] to [span-all left] at (-0.3) should be [span-all left]
+PASS CSS Transitions: property <position-area> from [none] to [span-all left] at (0) should be [span-all left]
+PASS CSS Transitions: property <position-area> from [none] to [span-all left] at (0.3) should be [span-all left]
+PASS CSS Transitions: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left]
+PASS CSS Transitions: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left]
+PASS CSS Transitions: property <position-area> from [none] to [span-all left] at (1) should be [span-all left]
+PASS CSS Transitions: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (-0.3) should be [span-all left]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0) should be [span-all left]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0.3) should be [span-all left]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (1) should be [span-all left]
+PASS CSS Transitions with transition: all: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left]
+PASS CSS Animations: property <position-area> from [none] to [span-all left] at (-0.3) should be [none]
+PASS CSS Animations: property <position-area> from [none] to [span-all left] at (0) should be [none]
+PASS CSS Animations: property <position-area> from [none] to [span-all left] at (0.3) should be [none]
+PASS CSS Animations: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left]
+PASS CSS Animations: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left]
+PASS CSS Animations: property <position-area> from [none] to [span-all left] at (1) should be [span-all left]
+PASS CSS Animations: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left]
+PASS Web Animations: property <position-area> from [none] to [span-all left] at (-0.3) should be [none]
+PASS Web Animations: property <position-area> from [none] to [span-all left] at (0) should be [none]
+PASS Web Animations: property <position-area> from [none] to [span-all left] at (0.3) should be [none]
+PASS Web Animations: property <position-area> from [none] to [span-all left] at (0.5) should be [span-all left]
+PASS Web Animations: property <position-area> from [none] to [span-all left] at (0.6) should be [span-all left]
+PASS Web Animations: property <position-area> from [none] to [span-all left] at (1) should be [span-all left]
+PASS Web Animations: property <position-area> from [none] to [span-all left] at (1.5) should be [span-all left]
 

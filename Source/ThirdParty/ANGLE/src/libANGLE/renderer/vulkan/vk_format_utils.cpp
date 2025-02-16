@@ -572,6 +572,77 @@ angle::FormatID GetTranscodeBCFormatID(angle::FormatID formatID)
                                  static_cast<uint32_t>(angle::FormatID::EAC_R11G11_SNORM_BLOCK)];
 }
 
+VkFormat AdjustASTCFormatForHDR(const vk::Renderer *renderer, VkFormat vkFormat)
+{
+    ASSERT(renderer != nullptr);
+    const bool hdrEnabled = renderer->getFeatures().supportsTextureCompressionAstcHdr.enabled;
+
+    if (hdrEnabled == false)
+    {
+        return vkFormat;
+    }
+
+    // When KHR_texture_compression_astc_hdr is enabled,
+    // VK_FORMAT_ASTC_nxm_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_nxm_SFLOAT_BLOCK
+    auto transformFormat = [](VkFormat vkFormat) -> VkFormat {
+        if (vkFormat >= VK_FORMAT_ASTC_4x4_UNORM_BLOCK &&
+            vkFormat <= VK_FORMAT_ASTC_12x12_UNORM_BLOCK && (vkFormat & 1) == 1)
+        {
+            return static_cast<VkFormat>(((vkFormat - VK_FORMAT_ASTC_4x4_UNORM_BLOCK) >> 1) +
+                                         VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK);
+        }
+        return vkFormat;
+    };
+
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_4x4_UNORM_BLOCK) == VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_4x4_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_4x4_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_5x4_UNORM_BLOCK) == VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_5x4_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_5x4_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_5x5_UNORM_BLOCK) == VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_5x5_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_5x5_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_6x5_UNORM_BLOCK) == VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_6x5_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_6x5_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_6x6_UNORM_BLOCK) == VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_6x6_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_6x6_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_8x5_UNORM_BLOCK) == VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_8x5_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_8x5_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_8x6_UNORM_BLOCK) == VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_8x6_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_8x6_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_8x8_UNORM_BLOCK) == VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_8x8_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_8x8_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_10x5_UNORM_BLOCK) == VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_10x5_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_10x5_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_10x6_UNORM_BLOCK) == VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_10x6_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_10x6_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_10x8_UNORM_BLOCK) == VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_10x8_UNORM_BLOCK should be converted to VK_FORMAT_ASTC_10x8_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_10x10_UNORM_BLOCK) == VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_10x10_UNORM_BLOCK should be converted to"
+        "VK_FORMAT_ASTC_10x10_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_12x10_UNORM_BLOCK) == VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_12x10_UNORM_BLOCK should be converted to"
+        "VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK");
+    static_assert(
+        transformFormat(VK_FORMAT_ASTC_12x12_UNORM_BLOCK) == VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK,
+        "VK_FORMAT_ASTC_12x12_UNORM_BLOCK should be converted to"
+        "VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK");
+
+    return transformFormat(vkFormat);
+}
+
 GLenum GetSwizzleStateComponent(const gl::SwizzleState &swizzleState, GLenum component)
 {
     switch (component)

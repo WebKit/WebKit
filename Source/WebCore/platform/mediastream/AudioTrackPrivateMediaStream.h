@@ -55,6 +55,7 @@ public:
     void setAudioOutputDevice(const String&);
 
     MediaStreamTrackPrivate& streamTrack() { return m_streamTrack.get(); }
+    Ref<MediaStreamTrackPrivate> protectedStreamTrack() { return m_streamTrack; }
 
     void clear();
 

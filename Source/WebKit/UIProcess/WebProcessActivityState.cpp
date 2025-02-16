@@ -191,6 +191,46 @@ void WebProcessActivityState::updateWebProcessSuspensionDelay()
     m_wasRecentlyVisibleActivity->setTimeout(timeout);
 }
 
+void WebProcessActivityState::takeAccessibilityActivityWhenInWindow()
+{
+    if (m_takeAccessibilityActivityWhenInWindow)
+        return;
+
+    m_takeAccessibilityActivityWhenInWindow = true;
+
+    bool isCurrentlyInWindow = WTF::switchOn(m_page, [](WeakRef<WebPageProxy> page) -> bool {
+        return page->isInWindow();
+    }, [](WeakRef<RemotePageProxy> remotePage) -> bool {
+        if (RefPtr page = remotePage->page())
+            return page->isInWindow();
+        return false;
+    });
+
+    if (isCurrentlyInWindow)
+        takeAccessibilityActivity();
+}
+
+void WebProcessActivityState::takeAccessibilityActivity()
+{
+    m_accessibilityActivity = process().throttler().backgroundActivity("Remote AX element"_s);
+}
+
+bool WebProcessActivityState::hasAccessibilityActivityForTesting() const
+{
+    return !!m_accessibilityActivity;
+}
+
+void WebProcessActivityState::viewDidEnterWindow()
+{
+    if (m_takeAccessibilityActivityWhenInWindow)
+        takeAccessibilityActivity();
+}
+
+void WebProcessActivityState::viewDidLeaveWindow()
+{
+    m_accessibilityActivity = nullptr;
+}
+
 #endif
 
 WebProcessProxy& WebProcessActivityState::process() const

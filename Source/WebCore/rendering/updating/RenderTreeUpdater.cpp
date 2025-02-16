@@ -631,7 +631,7 @@ void RenderTreeUpdater::updateTextRenderer(Text& text, const Style::TextUpdate* 
     if (existingRenderer) {
         if (needsRenderer) {
             if (textUpdate)
-                existingRenderer->setTextWithOffset(text.data(), textUpdate->offset, textUpdate->length);
+                existingRenderer->setTextWithOffset(text.data(), textUpdate->offset);
             return;
         }
         tearDownTextRenderer(text, root, m_builder);

@@ -349,7 +349,7 @@ static LayoutUnit computeMargin(const RenderInline* renderer, const Length& marg
     if (margin.isFixed())
         return LayoutUnit(margin.value());
     if (margin.isPercentOrCalculated())
-        return minimumValueForLength(margin, std::max<LayoutUnit>(0, renderer->containingBlock()->availableLogicalWidth()));
+        return minimumValueForLength(margin, std::max<LayoutUnit>(0, renderer->containingBlock()->contentBoxLogicalWidth()));
     return 0;
 }
 
@@ -453,15 +453,15 @@ LayoutUnit RenderInline::innerPaddingBoxWidth() const
     auto lastInlineBoxPaddingBoxRight = LayoutUnit { };
 
     if (LayoutIntegration::LineLayout::containing(*this)) {
-        if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
+        if (auto inlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this)) {
             if (writingMode().isBidiLTR()) {
                 firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderStart();
-                for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+                for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
                 ASSERT(inlineBox);
                 lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderEnd();
             } else {
                 lastInlineBoxPaddingBoxRight = inlineBox->logicalRightIgnoringInlineDirection() - borderStart();
-                for (; inlineBox->nextInlineBox(); inlineBox.traverseNextInlineBox()) { }
+                for (; inlineBox->nextInlineBoxLineRightward(); inlineBox.traverseInlineBoxLineRightward()) { }
                 ASSERT(inlineBox);
                 firstInlineBoxPaddingBoxLeft = inlineBox->logicalLeftIgnoringInlineDirection() + borderEnd();
             }
@@ -505,7 +505,7 @@ IntRect RenderInline::linesBoundingBox() const
             // FIXME: Always build the bounding box like this. LineLayouyt::enclosingBorderBoxRectFor does not include
             // any post-layout box adjustments.
             FloatRect result;
-            for (auto box = InlineIterator::firstInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
+            for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward()) {
                 auto rect = box->visualRectIgnoringBlockDirection();
                 result.unite(rect);
             }
@@ -550,7 +550,7 @@ LayoutRect RenderInline::linesVisualOverflowBoundingBox() const
             ASSERT(needsLayout());
             return { };
         }
-        return layout->visualOverflowBoundingBoxRectFor(*this);
+        return layout->inkOverflowBoundingBoxRectFor(*this);
     }
 
     if (!firstLegacyInlineBox() || !lastLegacyInlineBox())
@@ -813,19 +813,9 @@ void RenderInline::updateHitTestResult(HitTestResult& result, const LayoutPoint&
     }
 }
 
-void RenderInline::dirtyLegacyLineBoxes(bool fullLayout)
+void RenderInline::deleteLegacyLineBoxes()
 {
-    if (fullLayout) {
-        m_legacyLineBoxes.deleteLineBoxes();
-        return;
-    }
-
-    m_legacyLineBoxes.dirtyLineBoxes();
-}
-
-void RenderInline::deleteLegacyLines()
-{
-    m_legacyLineBoxes.deleteLineBoxTree();
+    m_legacyLineBoxes.deleteLineBoxes();
 }
 
 std::unique_ptr<LegacyInlineFlowBox> RenderInline::createInlineFlowBox()
@@ -860,7 +850,7 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
 
     ASSERT(isInFlowPositioned());
     if (!isInFlowPositioned())
-        return LayoutSize();
+        return { };
 
     // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
     // box from the rest of the content, but only in the cases where we know we're positioned
@@ -874,11 +864,16 @@ LayoutSize RenderInline::offsetForInFlowPositionedInline(const RenderBox* child)
         if (!layoutBox()) {
             // Repaint may be issued on subtrees during content mutation with newly inserted renderers.
             ASSERT(needsLayout());
-            return LayoutSize();
+            return { };
         }
-        if (auto inlineBox = InlineIterator::firstInlineBoxFor(*this)) {
+        if (auto inlineBox = InlineIterator::lineLeftmostInlineBoxFor(*this)) {
             inlinePosition = LayoutUnit::fromFloatRound(inlineBox->logicalLeftIgnoringInlineDirection());
             blockPosition = inlineBox->logicalTop();
+        } else if (auto* blockContainer = containingBlock()) {
+            // This must be a block with no in-flow content e.g. <div><span><abs pos box></span></div> where we don't construct any display box at all.
+            auto contentBoxLocation = blockContainer->contentBoxLocation();
+            inlinePosition = contentBoxLocation.x();
+            blockPosition = contentBoxLocation.y();
         }
     }
 
@@ -949,13 +944,13 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
 
     auto& styleToUse = style();
     // Only paint the focus ring by hand if the theme isn't able to draw it.
-    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !theme().supportsFocusRing(styleToUse)) {
+    if (styleToUse.outlineStyleIsAuto() == OutlineIsAuto::On && !theme().supportsFocusRing(*this, styleToUse)) {
         Vector<LayoutRect> focusRingRects;
         addFocusRingRects(focusRingRects, paintOffset, paintInfo.paintContainer);
         paintFocusRing(paintInfo, styleToUse, focusRingRects);
     }
 
-    if (hasOutlineAnnotation() && styleToUse.outlineStyleIsAuto() == OutlineIsAuto::Off && !theme().supportsFocusRing(styleToUse))
+    if (hasOutlineAnnotation() && styleToUse.outlineStyleIsAuto() == OutlineIsAuto::Off && !theme().supportsFocusRing(*this, styleToUse))
         addPDFURLRect(paintInfo, paintOffset);
 
     GraphicsContext& graphicsContext = paintInfo.context();
@@ -974,7 +969,7 @@ void RenderInline::paintOutline(PaintInfo& paintInfo, const LayoutPoint& paintOf
     auto& containingBlock = *this->containingBlock();
     auto isFlipped = containingBlock.writingMode().isBlockFlipped();
     Vector<LayoutRect> rects;
-    for (auto box = InlineIterator::firstInlineBoxFor(*this); box; box.traverseNextInlineBox()) {
+    for (auto box = InlineIterator::lineLeftmostInlineBoxFor(*this); box; box.traverseInlineBoxLineRightward()) {
         auto lineBox = box->lineBox();
         auto logicalTop = std::max(lineBox->contentLogicalTop(), box->logicalTop());
         auto logicalBottom = std::min(lineBox->contentLogicalBottom(), box->logicalBottom());

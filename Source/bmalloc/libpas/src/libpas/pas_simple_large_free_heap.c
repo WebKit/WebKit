@@ -423,7 +423,7 @@ static void fix_free_list_if_necessary(pas_simple_large_free_heap* heap,
     new_capacity = PAS_MAX(heap->free_list_size << 1, PAS_BOOTSTRAP_FREE_LIST_MINIMUM_SIZE);
     
     if (verbose && verbosity >= 2)
-        printf("Allocating new free list with new_capacity = %zu:\n", new_capacity);
+        pas_log("Allocating new free list with new_capacity = %zu:\n", new_capacity);
     new_free_list = (void*)try_allocate_without_fixing(
         heap,
         new_capacity * sizeof(pas_large_free),
@@ -458,7 +458,7 @@ static void fix_free_list_if_necessary(pas_simple_large_free_heap* heap,
     }
 
     if (verbose && verbosity >= 2) {
-        printf("Fixed:\n");
+        pas_log("Fixed:\n");
         dump_free_list(heap);
     }
 }
@@ -475,7 +475,7 @@ pas_allocation_result pas_simple_large_free_heap_try_allocate(pas_simple_large_f
     fix_free_list_if_necessary(heap, config);
     
     if (verbose) {
-        printf("After allocating %p for size %zu:\n", (void*)result.begin, size);
+        pas_log("After allocating %p for size %zu:\n", (void*)result.begin, size);
         dump_free_list(heap);
     }
 
@@ -495,7 +495,7 @@ void pas_simple_large_free_heap_deallocate(pas_simple_large_free_heap* heap,
     fix_free_list_if_necessary(heap, config);
 
     if (verbose) {
-        printf("After deallocating %p for size %zu:\n", (void*)begin, end - begin);
+        pas_log("After deallocating %p for size %zu:\n", (void*)begin, end - begin);
         dump_free_list(heap);
     }
 }

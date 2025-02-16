@@ -41,7 +41,7 @@ function shouldBe(actual, expected)
         shouldBe(test1(flag, 0, 1, 2, 3).length, 5);
     }
     noInline(test);
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test(false);
 
     test(true);

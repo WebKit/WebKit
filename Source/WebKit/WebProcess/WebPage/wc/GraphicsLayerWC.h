@@ -134,7 +134,6 @@ private:
     WebCore::Color m_debugBorderColor;
     OptionSet<WCLayerChange> m_uncommittedChanges;
     float m_debugBorderWidth { 0 };
-    bool m_isFlushing { false };
 };
 
 } // namespace WebKit

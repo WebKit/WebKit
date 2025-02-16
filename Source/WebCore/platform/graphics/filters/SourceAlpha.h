@@ -24,7 +24,9 @@
 
 namespace WebCore {
 
-class SourceAlpha : public FilterEffect {
+class SourceAlpha final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SourceAlpha);
 public:
     WEBCORE_EXPORT static Ref<SourceAlpha> create(const DestinationColorSpace& = DestinationColorSpace::SRGB());
 

@@ -173,9 +173,9 @@ public:
 #endif
 };
 
-HashSet<Thread*>& Thread::allThreads()
+UncheckedKeyHashSet<Thread*>& Thread::allThreads()
 {
-    static LazyNeverDestroyed<HashSet<Thread*>> allThreads;
+    static LazyNeverDestroyed<UncheckedKeyHashSet<Thread*>> allThreads;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         allThreads.construct();
@@ -251,9 +251,11 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
 
         Thread::initializeCurrentThreadInternal(context->name);
         function = WTFMove(context->entryPoint);
-        context->thread->initializeInThread();
 
-        Thread::initializeTLS(WTFMove(context->thread));
+        Ref thread = WTFMove(context->thread);
+        thread->initializeInThread();
+
+        Thread::initializeTLS(WTFMove(thread));
 
 #if !HAVE(STACK_BOUNDS_FOR_NEW_THREAD)
         // Ack completion of initialization to the creating thread.
@@ -387,9 +389,9 @@ unsigned Thread::numberOfThreadGroups()
 
 bool Thread::exchangeIsCompilationThread(bool newValue)
 {
-    auto& thread = Thread::current();
-    bool oldValue = thread.m_isCompilationThread;
-    thread.m_isCompilationThread = newValue;
+    Ref thread = Thread::current();
+    bool oldValue = thread->m_isCompilationThread;
+    thread->m_isCompilationThread = newValue;
     return oldValue;
 }
 

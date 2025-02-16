@@ -22,7 +22,10 @@
 
 #include "AudioSampleFormat.h"
 #include "NotImplemented.h"
+#include "WebCodecsAudioDataAlgorithms.h"
 #include <wtf/RefPtr.h>
+
+#if ENABLE(WEB_CODECS)
 
 namespace WebCore {
 
@@ -39,4 +42,29 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t>, AudioSampleFormat, size_t,
 }
 #endif
 
+void PlatformRawAudioData::copyToInterleaved(PlaneData source, std::span<uint8_t> destination, AudioSampleFormat format, unsigned long copyElementCount)
+{
+    ASSERT(!(copyElementCount % numberOfChannels()));
+
+    auto copyElements = [numberOfChannels = numberOfChannels()]<typename T>(std::span<T> destination, const auto& source, size_t frames)
+    {
+        RELEASE_ASSERT(destination.size() >= frames * numberOfChannels);
+        RELEASE_ASSERT(source[0].size() >= frames); // All planes have the exact same size.
+        size_t index = 0;
+        for (size_t frame = 0; frame < frames; frame++) {
+            for (size_t channel = 0; channel < source.size(); channel++)
+                destination[index++] = convertAudioSample<T>(source[channel][frame]);
+        }
+    };
+
+    size_t numberOfFrames = copyElementCount / numberOfChannels();
+    WTF::switchOn(audioElementSpan(format, destination), [&source, &numberOfFrames, &copyElements](auto dst) {
+        switchOn(source, [&](auto& src) {
+            copyElements(dst, src, numberOfFrames);
+        });
+    });
+}
+
 } // namespace WebCore
+
+#endif // ENABLE(WEB_CODECS)

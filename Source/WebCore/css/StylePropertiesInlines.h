@@ -94,9 +94,9 @@ inline unsigned StyleProperties::size() const
     return propertyCount();
 }
 
-inline String serializeLonghandValue(CSSPropertyID property, const CSSValue* value)
+inline String serializeLonghandValue(const CSS::SerializationContext& context, CSSPropertyID property, const CSSValue* value)
 {
-    return value ? serializeLonghandValue(property, *value) : String();
+    return value ? serializeLonghandValue(context, property, *value) : String();
 }
 
 inline CSSValueID longhandValueID(CSSPropertyID property, const CSSValue& value)

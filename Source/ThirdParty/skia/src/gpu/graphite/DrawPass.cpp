@@ -509,7 +509,8 @@ std::unique_ptr<DrawPass> DrawPass::Make(Recorder* recorder,
             const bool performsShading = draw.fPaintParams.has_value() && step->performsShading();
 
             GraphicsPipelineCache::Index pipelineIndex = pipelineCache.insert(
-                    {step, performsShading ? shaderID : UniquePaintParamsID::InvalidID()});
+                    { step->renderStepID(),
+                      performsShading ? shaderID : UniquePaintParamsID::InvalidID() });
 
             gatherer.resetWithNewLayout(uniformLayout);
             step->writeUniformsAndTextures(draw.fDrawParams, &gatherer);
@@ -568,7 +569,7 @@ std::unique_ptr<DrawPass> DrawPass::Make(Recorder* recorder,
     // TODO(b/372953722): Remove this forced binding command behavior once dst copies are always
     // bound separately from the rest of the textures.
     const bool rebindTexturesOnPipelineChange =
-            recorder->priv().caps()->getDstReadRequirement() == DstReadRequirement::kTextureCopy;
+            recorder->priv().caps()->getDstReadStrategy() == DstReadStrategy::kTextureCopy;
 
     for (const SortKey& key : keys) {
         const DrawList::Draw& draw = key.draw();

@@ -16,11 +16,11 @@ function checkFloatArray(arr) {
 
 
 var intArray = new Uint32Array(1024);
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     checkIntArray(intArray);
 
 var floatArray = new Float64Array(1024);
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     checkFloatArray(floatArray);
 
 

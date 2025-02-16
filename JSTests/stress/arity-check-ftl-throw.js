@@ -21,7 +21,7 @@ noInline(g);
 noInline(f);
 
 // Ensure that f and g get optimized.
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     // Recurse once to ensure profiling along all control flow paths.
     f(1);
 }

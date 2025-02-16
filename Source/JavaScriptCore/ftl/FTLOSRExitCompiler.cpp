@@ -295,7 +295,7 @@ static void compileStub(VM& vm, unsigned exitID, JITCode* jitCode, OSRExit& exit
     // needing another object if the later is needed for the
     // allocation of the former.
 
-    HashSet<ExitTimeObjectMaterialization*> toMaterialize;
+    UncheckedKeyHashSet<ExitTimeObjectMaterialization*> toMaterialize;
     for (ExitTimeObjectMaterialization* materialization : exit.m_descriptor->m_materializations)
         toMaterialize.add(materialization);
 

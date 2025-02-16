@@ -94,6 +94,15 @@ void SharedWorkerObjectConnection::postErrorToWorkerObject(SharedWorkerObjectIde
     ActiveDOMObject::queueTaskToDispatchEvent(*workerObject, TaskSource::DOMManipulation, WTFMove(event));
 }
 
+void SharedWorkerObjectConnection::reportNetworkUsageToWorkerObject(SharedWorkerObjectIdentifier sharedWorkerObjectIdentifier, size_t bytesTransferredOverNetworkDelta)
+{
+    ASSERT(isMainThread());
+    auto* workerObject = SharedWorker::fromIdentifier(sharedWorkerObjectIdentifier);
+    CONNECTION_RELEASE_LOG("sendNetworkUsageToWorkerObject: sharedWorkerObjectIdentifier=%" PUBLIC_LOG_STRING ", worker=%p, bytesTransferredOverNetworkDelta=%zu", sharedWorkerObjectIdentifier.toString().utf8().data(), workerObject, bytesTransferredOverNetworkDelta);
+    if (workerObject)
+        workerObject->reportNetworkUsage(bytesTransferredOverNetworkDelta);
+}
+
 #undef CONNECTION_RELEASE_LOG
 #undef CONNECTION_RELEASE_LOG_ERROR
 

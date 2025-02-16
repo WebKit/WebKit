@@ -1,0 +1,26 @@
+This is a test of writingsideways in vertical text
+with multiline text and alongwordthat'slong andanotherword.
+Bug 286961 : 81,60,20,2
+Click at 5, 5 for left above first line : 41,20,23,2
+Click at 5, 275 for right above first line : 41,20,23,2
+Click at 25, 5 for left of first line : 41,20,23,2
+Click at 25, 275 for right of first line : 81,60,20,2
+Click at 45, 5 for left of second line : 81,60,20,2
+Click at 45, 275 for right of second line : 81,175,20,2
+Click at 65, 5 for left of third line : 81,175,20,2
+Click at 65, 275 for right of third line : 81,175,20,2
+Click at 85, 5 for left of fourth line : 101,80,20,2
+Click at 85, 275 for right of fourth line : 140,120,20,2
+Click at 105, 5 for left of fifth line : 140,120,20,2
+Click at 105, 275 for right of fifth line : 160,140,20,2
+Click at 125, 5 for left of sixth line : 160,140,20,2
+Click at 125, 275 for right of sixth line : 160,199,20,2
+Click at 145, 5 for left of seventh line : 160,140,20,2
+Click at 145, 275 for right of seventh line : 160,199,20,2
+Click at 170, 5 for left below last line : 160,199,20,2
+Click at 170, 275 for right below last line : 160,199,20,2
+Click at 25, 30 for inside first root inline fragment : 41,20,23,2
+Click at 125, 30 for inside middle fragment of root inline fragment : 248,-8,0,0
+Click at 45, 30 for inside middle fragment of non-root inline fragment : 248,-8,0,0
+Click at 65, 30 for inside last fragment of non-root inline fragment : 248,-8,0,0
+Click at 85, 220 for inside unfragmented non-root inline : 101,249,20,2

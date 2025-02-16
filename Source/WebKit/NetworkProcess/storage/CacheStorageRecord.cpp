@@ -60,7 +60,8 @@ void CacheStorageRecordInformation::updateVaryHeaders(const WebCore::ResourceReq
         m_varyHeaders = { };
 }
 
-CacheStorageRecordInformation CacheStorageRecordInformation::isolatedCopy() && {
+CacheStorageRecordInformation CacheStorageRecordInformation::isolatedCopy() &&
+{
     return {
         crossThreadCopy(WTFMove(m_key)),
         m_insertionTime,
@@ -70,6 +71,20 @@ CacheStorageRecordInformation CacheStorageRecordInformation::isolatedCopy() && {
         crossThreadCopy(WTFMove(m_url)),
         m_hasVaryStar,
         crossThreadCopy(WTFMove(m_varyHeaders))
+    };
+}
+
+CacheStorageRecordInformation CacheStorageRecordInformation::isolatedCopy() const &
+{
+    return {
+        crossThreadCopy(m_key),
+        m_insertionTime,
+        m_identifier,
+        m_updateResponseCounter,
+        m_size,
+        crossThreadCopy(m_url),
+        m_hasVaryStar,
+        crossThreadCopy(m_varyHeaders)
     };
 }
 

@@ -11,7 +11,7 @@ noInline(foo);
 
 let buffer = new ArrayBuffer(8);
 let view = new DataView(buffer);
-for (let i = 0; i < 1000000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let i = 0; i < 8; ++i) {
         view.setInt8(i, Math.random() * 255);
     }

@@ -171,6 +171,8 @@ public:
 
     virtual RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const { return nullptr; }
 
+    virtual void prepareForDisplay() { }
+
     const Parameters& parameters() const { return m_parameters; }
 
     WEBCORE_EXPORT virtual String debugDescription() const = 0;
@@ -185,8 +187,8 @@ protected:
     const DestinationColorSpace& colorSpace() const { return m_parameters.colorSpace; }
     ImageBufferPixelFormat pixelFormat() const { return m_parameters.pixelFormat; }
 
-    WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, const uint8_t* data, PixelBuffer& destination);
-    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, uint8_t* destination);
+    WEBCORE_EXPORT void getPixelBuffer(const IntRect& srcRect, std::span<const uint8_t> data, PixelBuffer& destination);
+    WEBCORE_EXPORT void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat, std::span<uint8_t> destination);
 
     Parameters m_parameters;
 };

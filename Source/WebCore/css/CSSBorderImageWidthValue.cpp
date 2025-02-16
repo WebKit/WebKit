@@ -44,14 +44,14 @@ Ref<CSSBorderImageWidthValue> CSSBorderImageWidthValue::create(Quad widths, bool
     return adoptRef(*new CSSBorderImageWidthValue(WTFMove(widths), overridesBorderWidths));
 }
 
-String CSSBorderImageWidthValue::customCSSText() const
+String CSSBorderImageWidthValue::customCSSText(const CSS::SerializationContext& context) const
 {
     // The border-image-width longhand can't set m_overridesBorderWidths to true, so serialize as empty string.
     // This can only be created by the -webkit-border-image shorthand, which will not serialize as empty string in this case.
     // This is an unconventional relationship between a longhand and a shorthand, which we may want to revise.
     if (m_overridesBorderWidths)
         return String();
-    return m_widths.cssText();
+    return m_widths.cssText(context);
 }
 
 bool CSSBorderImageWidthValue::equals(const CSSBorderImageWidthValue& other) const

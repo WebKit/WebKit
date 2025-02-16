@@ -26,8 +26,6 @@
 #include "GStreamerCommon.h"
 #include <wtf/OptionSet.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-
 namespace WebCore {
 
 GST_DEBUG_CATEGORY_STATIC(webkit_westeros_quirks_debug);
@@ -55,7 +53,8 @@ GStreamerQuirkWesteros::GStreamerQuirkWesteros()
 
 void GStreamerQuirkWesteros::configureElement(GstElement* element, const OptionSet<ElementRuntimeCharacteristics>& characteristics)
 {
-    if (g_str_has_prefix(GST_ELEMENT_NAME(element), "uridecodebin3")) {
+    auto view = StringView::fromLatin1(GST_ELEMENT_NAME(element));
+    if (view.startsWith("uridecodebin3"_s)) {
         GRefPtr<GstCaps> defaultCaps;
         g_object_get(element, "caps", &defaultCaps.outPtr(), nullptr);
         defaultCaps = adoptGRef(gst_caps_merge(gst_caps_ref(m_sinkCaps.get()), defaultCaps.leakRef()));
@@ -75,7 +74,8 @@ void GStreamerQuirkWesteros::configureElement(GstElement* element, const OptionS
 
 std::optional<bool> GStreamerQuirkWesteros::isHardwareAccelerated(GstElementFactory* factory)
 {
-    if (g_str_has_prefix(GST_OBJECT_NAME(factory), "westeros"))
+    auto view = StringView::fromLatin1(GST_OBJECT_NAME(factory));
+    if (view.startsWith("westeros"_s))
         return true;
 
     return std::nullopt;
@@ -84,7 +84,5 @@ std::optional<bool> GStreamerQuirkWesteros::isHardwareAccelerated(GstElementFact
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(GSTREAMER)

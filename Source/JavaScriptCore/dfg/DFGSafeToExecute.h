@@ -304,6 +304,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case CheckVarargs:
     case ValueRep:
     case DoubleRep:
+    case PurifyNaN:
     case Int52Rep:
     case BooleanToNumber:
     case FiatInt52:
@@ -321,6 +322,7 @@ bool safeToExecute(AbstractStateType& state, Graph& graph, Node* node, bool igno
     case MapGet:
     case LoadMapValue:
     case MapStorage:
+    case MapStorageOrSentinel:
     case MapIterationNext:
     case MapIterationEntry:
     case MapIterationEntryKey:

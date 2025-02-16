@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "BInline.h"
 #include "IsoDeallocator.h"
 #include "IsoPage.h"
@@ -85,3 +87,4 @@ BNO_INLINE void IsoDeallocator<Config>::scavenge()
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

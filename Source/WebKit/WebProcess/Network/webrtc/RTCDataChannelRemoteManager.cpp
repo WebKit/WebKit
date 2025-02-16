@@ -226,7 +226,7 @@ void RTCDataChannelRemoteManager::RemoteSourceConnection::didChangeReadyState(We
 void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveStringData(WebCore::RTCDataChannelIdentifier identifier, const String& string)
 {
     auto text = string.utf8();
-    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, false, text.span() }, 0);
+    m_connection->send(Messages::RTCDataChannelRemoteManagerProxy::ReceiveData { identifier, false, byteCast<uint8_t>(text.span()) }, 0);
 }
 
 void RTCDataChannelRemoteManager::RemoteSourceConnection::didReceiveRawData(WebCore::RTCDataChannelIdentifier identifier, std::span<const uint8_t> data)

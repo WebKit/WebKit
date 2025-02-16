@@ -423,22 +423,6 @@
             "issue": "http://anglebug.com/42265353"
         },
         {
-            "name": "async_command_queue",
-            "category": "Features",
-            "description": [
-                "Use CommandQueue worker thread to dispatch work to GPU."
-            ],
-            "issue": "http://anglebug.com/42262955"
-        },
-        {
-            "name": "slow_async_command_queue_for_testing",
-            "category": "Workarounds",
-            "description": [
-                "Artificially slow down async command queue for threading testing"
-            ],
-            "issue": "https://anglebug.com/40644850"
-        },
-        {
             "name": "supports_shader_float16",
             "category": "Features",
             "description": [
@@ -1626,6 +1610,14 @@
             "issue": "https://issuetracker.google.com/336844257"
         },
         {
+            "name": "use_vkEvent_for_buffer_barrier",
+            "category": "Features",
+            "description": [
+                "Uses VkEvent instead of VkCmdPipelineBarrier for buffer barriers"
+            ],
+            "issue": "https://issues.angleproject.org/360274928"
+        },
+        {
             "name": "supports_synchronization2",
             "category": "Features",
             "description": [
@@ -1850,6 +1842,52 @@
                 "Enable use of sliced_3d"
             ],
             "issue": "https://anglebug.com/378507964"
+        },
+        {
+            "name": "supports_texture_compression_astc_hdr",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_texture_compression_astc_hdr extension"
+            ],
+            "issue": "https://anglebug.com/379186304"
+        },
+        {
+            "name": "supports_image_compression_control_swapchain",
+            "category": "Features",
+            "description": [
+                "VkDevice supports VK_EXT_image_compression_control_swapchain"
+            ],
+            "issue": "https://anglebug.com/375496226"
+        },
+        {
+            "name": "supports_angle_rgbx_internal_format",
+            "category": "Features",
+            "description": [
+                "Enable support for ANGLE_rgbx_internal_format extension"
+            ],
+            "issue": "https://anglebug.com/386749841"
+        },
+        {
+            "name": "supports_apple_clip_distance",
+            "category": "Features",
+            "description": [
+                "Enable support for GL_APPLE_clip_distance extension"
+            ],
+            "issue": "https://anglebug.com/386749841"
+        },
+        {
+            "name": "supports_uniform_buffer_standard_layout",
+            "category": "Features",
+            "description": [
+                "VkDevice supports the VK_KHR_uniform_buffer_standard_layout and has UniformBufferStandardLayout feature"
+            ]
+        },
+        {
+            "name": "uses_native_builtin_cl_kernel",
+            "category": "Features",
+            "description": [
+                "Enable the use of native builtin kernel in place of the libclc version"
+            ]
         }
     ]
 }

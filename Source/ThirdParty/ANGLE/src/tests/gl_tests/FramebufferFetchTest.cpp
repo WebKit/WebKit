@@ -682,7 +682,9 @@ class FramebufferFetchES31 : public ANGLETest<>
     static constexpr GLuint kMaxColorBuffer = 4u;
     static constexpr GLuint kViewportWidth  = 16u;
     static constexpr GLuint kViewportHeight = 16u;
-
+    static constexpr GLenum kDSFormat[6]    = {GL_DEPTH_COMPONENT16, GL_DEPTH_COMPONENT24,
+                                               GL_DEPTH24_STENCIL8,  GL_DEPTH_COMPONENT32F,
+                                               GL_DEPTH32F_STENCIL8, GL_STENCIL_INDEX8};
     FramebufferFetchES31()
     {
         setWindowWidth(16);
@@ -1818,6 +1820,356 @@ class FramebufferFetchES31 : public ANGLETest<>
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
+    void framebufferFetchDepthStencilDetachSeparately(GLenum depthStencilFormat)
+    {
+        ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+        const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+layout(location=0) out highp vec4 color;
+
+highp float gl_LastFragDepthARM;
+highp int gl_LastFragStencilARM;
+
+void main()
+{
+    color = vec4(float(gl_LastFragStencilARM)/255.0, gl_LastFragDepthARM, 0, 1);
+})";
+
+        GLRenderbuffer color[4], depthStencil;
+        GLFramebuffer fbo;
+
+        stateReset();
+        // Create FBO with depth/stencil
+        createFboWithDepthStencilAndMRT(1, 1, 0, depthStencilFormat, &fbo, color, &depthStencil);
+        ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Passthrough(), kFS);
+        ASSERT_GL_NO_ERROR();
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+        glClearDepthf(0.8f);
+        glClearStencil(0x3C);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        glUseProgram(program);
+        glStencilFunc(GL_LESS, 40, 0xFF);
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.4f);
+        EXPECT_PIXEL_RECT_EQ(0, 0, 1, 1, GLColor(60, 204, 0, 255));
+
+        // CASE 1: Detach stencil, depth is still attached
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GL_NO_ERROR();
+        glUseProgram(program);
+        glStencilFunc(GL_LESS, 30, 0xFF);
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.3f);
+        ASSERT_GL_NO_ERROR();
+        GLColor actual0;
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &actual0.R);
+        EXPECT_EQ(178, actual0.G);
+
+        // CASE 2: Detach depth and attach old stencil
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                  depthStencil);
+        EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        ASSERT_GL_NO_ERROR();
+        glUseProgram(program);
+        glStencilFunc(GL_LESS, 20, 0xFF);
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.2f);
+        ASSERT_GL_NO_ERROR();
+        GLColor actual1;
+        glReadPixels(0, 0, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &actual1.R);
+        EXPECT_EQ(40, actual1.R);
+
+        // CASE 3: Attach old depth
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                                  depthStencil);
+        glUseProgram(program);
+        glStencilFunc(GL_LESS, 10, 0xFF);
+        drawQuad(program, essl31_shaders::PositionAttrib(), 0.1f);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_RECT_EQ(0, 0, 1, 1, GLColor(20, 166, 0, 255));
+    }
+
+    const char *getFragShaderName(GLenum depthStencilFormat)
+    {
+        static const char kFS1[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp float gl_LastFragDepthARM;
+highp int gl_LastFragStencilARM;
+
+layout(location=0) out highp vec4 fragColor0;
+layout(location=1) out highp vec4 fragColor1;
+layout(location=2) out highp vec4 fragColor2;
+layout(location=3) out highp vec4 fragColor3;
+
+void main()
+{
+    fragColor0 = fragColor1 = fragColor2 = fragColor3 = vec4(gl_LastFragDepthARM,
+    float(gl_LastFragStencilARM)/255.0, gl_FragCoord.z, 1.0);
+})";
+
+        static const char kFS2[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp float gl_LastFragDepthARM;
+
+layout(location=0) out highp vec4 fragColor0;
+layout(location=1) out highp vec4 fragColor1;
+layout(location=2) out highp vec4 fragColor2;
+layout(location=3) out highp vec4 fragColor3;
+
+void main()
+{
+    fragColor0 = fragColor1 = fragColor2 = fragColor3 = vec4(gl_LastFragDepthARM, 0.0,
+    gl_FragCoord.z, 1.0);
+})";
+
+        static const char kFS3[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp int gl_LastFragStencilARM;
+
+layout(location=0) out highp vec4 fragColor0;
+layout(location=1) out highp vec4 fragColor1;
+layout(location=2) out highp vec4 fragColor2;
+layout(location=3) out highp vec4 fragColor3;
+
+void main()
+{
+    fragColor0 = fragColor1 = fragColor2 = fragColor3 = vec4(0.0,
+    float(gl_LastFragStencilARM)/255.0, gl_FragCoord.z, 1.0);
+})";
+
+        bool depth   = depthFormatBitCount(depthStencilFormat) > 0;
+        bool stencil = stencilFormatBitCount(depthStencilFormat) > 0;
+
+        if (depth && stencil)
+        {
+            return kFS1;
+        }
+        else if (depth)
+        {
+            return kFS2;
+        }
+        else
+        {
+            return kFS3;
+        }
+    }
+
+    void stateReset()
+    {
+        glDisable(GL_BLEND);
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_STENCIL_TEST);
+        glDisable(GL_FETCH_PER_SAMPLE_ARM);
+
+        glBlendFunc(GL_ONE, GL_ZERO);
+        glDepthFunc(GL_LEQUAL);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        glStencilFunc(GL_ALWAYS, 0, 0xFFFFu);
+
+        glClearDepthf(1.f);
+        glClearStencil(0);
+        glClearColor(0.f, 0.f, 0.f, 0.f);
+    }
+
+    void createFboWithDepthStencilAndMRT(int width,
+                                         int height,
+                                         int samples,
+                                         GLenum depthStencilFormat,
+                                         GLFramebuffer *fbo,
+                                         GLRenderbuffer *color,
+                                         GLRenderbuffer *depthStencil)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+        ASSERT_GL_NO_ERROR();
+        for (GLuint i = 0; i < kMaxColorBuffer; ++i)
+        {
+            glBindRenderbuffer(GL_RENDERBUFFER, color[i]);
+            glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA8, width, height);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_RENDERBUFFER,
+                                      color[i]);
+            ASSERT_GL_NO_ERROR();
+        }
+        glBindRenderbuffer(GL_RENDERBUFFER, *depthStencil);
+        glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, depthStencilFormat, width,
+                                         height);
+        if (depthFormatBitCount(depthStencilFormat) > 0)
+        {
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                                      *depthStencil);
+        }
+        if (stencilFormatBitCount(depthStencilFormat) > 0)
+        {
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                      *depthStencil);
+        }
+        ASSERT_GL_NO_ERROR();
+        GLenum drawBuffers[kMaxColorBuffer] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,
+                                               GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+        glDrawBuffers(kMaxColorBuffer, drawBuffers);
+        glViewport(0, 0, width, height);
+        ASSERT_GL_NO_ERROR();
+    }
+    GLColor filterDepthStencilColor(GLColor color, GLenum depthStencilFormat)
+    {
+        if (depthFormatBitCount(depthStencilFormat) == 0)
+        {
+            color.R = 0;
+        }
+        if (stencilFormatBitCount(depthStencilFormat) == 0)
+        {
+            color.G = 0;
+        }
+        return color;
+    }
+
+    int depthFormatBitCount(GLenum format)
+    {
+        switch (format)
+        {
+            case GL_DEPTH_COMPONENT16:
+                return 16;
+
+            case GL_DEPTH_COMPONENT24:
+            case GL_DEPTH24_STENCIL8:
+                return 24;
+
+            case GL_DEPTH32F_STENCIL8:
+            case GL_DEPTH_COMPONENT32F:
+                return 32;
+
+            default:
+                return 0;
+        }
+    }
+
+    int stencilFormatBitCount(GLenum format)
+    {
+        switch (format)
+        {
+            case GL_DEPTH24_STENCIL8:
+            case GL_DEPTH32F_STENCIL8:
+            case GL_STENCIL_INDEX8:
+                return 8;
+
+            default:
+                return 0;
+        }
+    }
+
+    int maxSamplesSupported(GLenum format)
+    {
+        GLint samples = 0;
+        glGetInternalformativ(GL_RENDERBUFFER, format, GL_SAMPLES, 1, &samples);
+        return samples;
+    }
+
+    bool sampleCountSupported(GLenum target, GLenum format, int sampleCount)
+    {
+        GLint numSupportedSampleCounts = 0;
+        GLint supportedSampleCounts[8] = {0};
+        glGetInternalformativ(target, format, GL_NUM_SAMPLE_COUNTS, 1, &numSupportedSampleCounts);
+        glGetInternalformativ(target, format, GL_SAMPLES, numSupportedSampleCounts,
+                              supportedSampleCounts);
+        for (int i = 0; i < numSupportedSampleCounts; ++i)
+        {
+            if (supportedSampleCounts[i] == sampleCount || sampleCount == 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void bindResolveFboAndVerify(GLRenderbuffer *resolve,
+                                 GLFramebuffer *resolveFbo,
+                                 GLsizei width,
+                                 GLsizei height,
+                                 bool isBlit,
+                                 bool isDiscard,
+                                 GLFramebuffer *fbo,
+                                 GLenum depthStencilFormat)
+    {
+        if (!isBlit)
+        {
+            glBindRenderbuffer(GL_RENDERBUFFER, *resolve);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+            glBindFramebuffer(GL_FRAMEBUFFER, *resolveFbo);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                                      *resolve);
+            ASSERT_GL_NO_ERROR();
+        }
+        else
+        {
+            for (GLuint index = 0; index < kMaxColorBuffer; ++index)
+            {
+                glReadBuffer(GL_COLOR_ATTACHMENT0 + index);
+                glBindFramebuffer(GL_DRAW_FRAMEBUFFER, *resolveFbo);
+                glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT,
+                                  GL_NEAREST);
+                glBindFramebuffer(GL_READ_FRAMEBUFFER, *resolveFbo);
+                ASSERT_GL_NO_ERROR();
+                if (!isDiscard)
+                {
+                    EXPECT_PIXEL_RECT_EQ(
+                        0, 0, width, height,
+                        filterDepthStencilColor(GLColor(255, 70, 191, 255), depthStencilFormat));
+                }
+                else
+                {
+                    for (GLsizei x = 0; x < width; ++x)
+                    {
+                        for (GLsizei y = 0; y < height; ++y)
+                        {
+                            if ((x + y) % 2 != 0)
+                            {
+                                EXPECT_PIXEL_COLOR_EQ(x, y, GLColor::blue);
+                            }
+                            else
+                            {
+                                EXPECT_PIXEL_COLOR_EQ(x, y, GLColor::white);
+                            }
+                        }
+                    }
+                }
+                glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+            }
+        }
+    }
+
+    void clearAndDrawQuad(GLuint program, bool isDiscard)
+    {
+        glClearDepthf(1.f);
+        glClearStencil(70);
+        glClearColor(1.f, 1.f, 1.f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        ASSERT_GL_NO_ERROR();
+
+        if (!isDiscard)
+        {
+            glUseProgram(program);
+            drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
+            ASSERT_GL_NO_ERROR();
+        }
+        else
+        {
+            glUseProgram(program);
+            GLint colorLocation = glGetUniformLocation(program, "color");
+            glUniform4fv(colorLocation, 1, GLColor::blue.toNormalizedVector().data());
+            drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
+            ASSERT_GL_NO_ERROR();
+        }
+    }
+
     void createFramebufferWithDepthStencil(GLRenderbuffer *color,
                                            GLRenderbuffer *depthStencil,
                                            GLFramebuffer *fbo);
@@ -2501,13 +2853,12 @@ void main (void)
     ASSERT_GL_NO_ERROR();
 }
 
-// Test recovering a supposedly closed render pass that used framebuffer fetch..
+// Test recovering a supposedly closed render pass that used framebuffer fetch.
 TEST_P(FramebufferFetchES31, ReopenRenderPass)
 {
-    const bool is_coherent = IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch");
-    ANGLE_SKIP_TEST_IF(!is_coherent &&
+    const bool isCoherent = IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch");
+    ANGLE_SKIP_TEST_IF(!isCoherent &&
                        !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
-    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_variables"));
 
     // Create two framebuffers
     GLRenderbuffer color[2];
@@ -2527,13 +2878,14 @@ TEST_P(FramebufferFetchES31, ReopenRenderPass)
     // Use a framebuffer fetch program.
     std::ostringstream fs;
     fs << "#version 310 es\n";
-    if (is_coherent)
+    if (isCoherent)
     {
         fs << "#extension GL_EXT_shader_framebuffer_fetch : require\n";
     }
     else
     {
         fs << "#extension GL_EXT_shader_framebuffer_fetch_non_coherent : require\n";
+        fs << "layout(noncoherent) ";
     }
     fs << R"(inout highp vec4 color;
 void main (void)
@@ -2561,6 +2913,166 @@ void main (void)
     // Verify the results
     EXPECT_PIXEL_NEAR(0, 0, 191, 159, 255, 255, 1);
     EXPECT_PIXEL_COLOR_EQ(kViewportWidth - 1, kViewportHeight - 1, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test opening a render pass with a scissored clear
+TEST_P(FramebufferFetchES31, StartWithScissoredClear)
+{
+    const bool isCoherent = IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch");
+    ANGLE_SKIP_TEST_IF(!isCoherent &&
+                       !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    std::ostringstream fs;
+    fs << "#version 310 es\n";
+    if (isCoherent)
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch : require\n";
+    }
+    else
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch_non_coherent : require\n";
+        fs << "layout(noncoherent) ";
+    }
+    fs << R"(inout highp vec4 color;
+void main (void)
+{
+    color += vec4(0.25, 0.125, 0.5, 0.0);
+})";
+
+    ANGLE_GL_PROGRAM(ff, kVS, fs.str().c_str());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+
+    // Draw once for the program to be processed, so the draw after clear would not have executable
+    // related dirty bits.
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(ff);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Clear value (0.5, 0.5, 0.5, 1.0f) + shader's addition (0.25, 0.125, 0.5, 0.0)
+    EXPECT_PIXEL_NEAR(0, 0, 191, 159, 255, 255, 1);
+
+    // Start rendering with a scissored clear, then do a draw call
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kViewportWidth / 2, kViewportHeight / 2);
+
+    glClearColor(0.125f, 0.75f, 0.25f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    if (!isCoherent)
+    {
+        glFramebufferFetchBarrierEXT();
+    }
+
+    // Don't use drawQuad, as it reinstalls the program, adding additional dirty bits.
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Verify the results
+    // Clear value (0.125, 0.75, 0.25, 1.0f) + shader's addition (0.25, 0.125, 0.5, 0.0)
+    EXPECT_PIXEL_NEAR(0, 0, 96, 223, 191, 255, 1);
+    // The rest of the image should be left untouched due to scissor
+    EXPECT_PIXEL_NEAR(kViewportWidth - 1, kViewportHeight - 1, 191, 159, 255, 255, 1);
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test opening a render pass with a masked clear
+TEST_P(FramebufferFetchES31, StartWithMaskedClear)
+{
+    const bool isCoherent = IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch");
+    ANGLE_SKIP_TEST_IF(!isCoherent &&
+                       !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    std::ostringstream fs;
+    fs << "#version 310 es\n";
+    if (isCoherent)
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch : require\n";
+    }
+    else
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch_non_coherent : require\n";
+        fs << "layout(noncoherent) ";
+    }
+    fs << R"(inout highp vec4 color;
+void main (void)
+{
+    color += vec4(0.25, 0.125, 0.5, 0.0);
+})";
+
+    ANGLE_GL_PROGRAM(ff, kVS, fs.str().c_str());
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    GLRenderbuffer color;
+    glBindRenderbuffer(GL_RENDERBUFFER, color);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color);
+
+    // Draw once for the program to be processed, so the draw after clear would not have executable
+    // related dirty bits.
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(ff);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Clear value (0.5, 0.5, 0.5, 1.0f) + shader's addition (0.25, 0.125, 0.5, 0.0)
+    EXPECT_PIXEL_NEAR(0, 0, 191, 159, 255, 255, 1);
+
+    // Start rendering with a scissored clear, then do a draw call
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kViewportWidth / 2, kViewportHeight / 2);
+
+    glClearColor(0.125f, 0.75f, 0.25f, 1.0f);
+    glColorMask(GL_TRUE, GL_FALSE, GL_FALSE, GL_TRUE);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+    if (!isCoherent)
+    {
+        glFramebufferFetchBarrierEXT();
+    }
+
+    // Don't use drawQuad, as it reinstalls the program, adding additional dirty bits.
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Verify the results
+    // Clear value (0.125, 0.75, 0.25, 1.0f) + shader's addition (0.25, 0.125, 0.5, 0.0)
+    EXPECT_PIXEL_NEAR(0, 0, 96, 191, 255, 255, 1);
+    // The rest of the image should be left untouched due to scissor
+    EXPECT_PIXEL_NEAR(kViewportWidth - 1, kViewportHeight - 1, 191, 159, 255, 255, 1);
     ASSERT_GL_NO_ERROR();
 }
 
@@ -4361,8 +4873,8 @@ void main()
     color = vec4(correct, gl_LastFragDepthARM, 0, 1);
 })";
 
-    ANGLE_GL_PROGRAM(mProgram, essl31_shaders::vs::Passthrough(), kFS);
-    glUseProgram(mProgram);
+    ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Passthrough(), kFS);
+    glUseProgram(program);
     EXPECT_GL_NO_ERROR();
 
     GLFramebuffer fbo;
@@ -4373,9 +4885,998 @@ void main()
     glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, getWindowWidth(), getWindowHeight());
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     EXPECT_GL_NO_ERROR();
 
-    drawQuad(mProgram, essl31_shaders::PositionAttrib(), 0.0f);
+    drawQuad(program, essl31_shaders::PositionAttrib(), 0.0f);
+
+    // Values are undefined
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to DrawWithoutDepthAndStencil, but with a draw call before that does have D/S attachment.
+TEST_P(FramebufferFetchES31, DrawWithAndWithoutDepthAndStencil)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color = vec4(correct, gl_LastFragDepthARM, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Issue a draw call that correctly renders to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Remove the depth attachment, and issue another draw call to the other half.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // The bottom half has undefined values, but the top half can be verified.
+    EXPECT_PIXEL_NEAR(0, 0, 255, 153, 0, 255, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight / 2 - 1, 255, 153, 0, 255, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to DrawWithoutDepthAndStencil, but with a draw call after that does have D/S attachment.
+TEST_P(FramebufferFetchES31, DrawWithoutAndWithDepthAndStencil)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color = vec4(correct, gl_LastFragDepthARM, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Issue a draw call with undefined render to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Add a depth attachment, and issue another draw call to the other half.
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // The top half has undefined values, but the bottom half can be verified.
+    EXPECT_PIXEL_NEAR(0, kHeight / 2, 255, 153, 0, 255, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight - 1, 255, 153, 0, 255, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to DrawWithAndWithoutDepthAndStencil, but with a framebuffer change instead of attachment
+// change.
+TEST_P(FramebufferFetchES31, DrawWithAndWithoutDepthAndStencilNewFBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color = vec4(correct, gl_LastFragDepthARM, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo2;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Issue a draw call that correctly renders to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Switch framebuffers to the one that doesn't have a depth/stencil attachment.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // The bottom half has undefined values, but the top half can be verified.
+    EXPECT_PIXEL_NEAR(0, 0, 255, 153, 0, 255, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight / 2 - 1, 255, 153, 0, 255, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to DrawWithoutAndWithDepthAndStencil, but with a framebuffer change instead of attachment
+// change.
+TEST_P(FramebufferFetchES31, DrawWithoutAndWithDepthAndStencilNewFBO)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color = vec4(correct, gl_LastFragDepthARM, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo2;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    // Issue a draw call with undefined render to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Switch framebuffers to the one that does have a depth/stencil attachment.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo2);
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // The top half has undefined values, but the bottom half can be verified.
+    EXPECT_PIXEL_NEAR(0, kHeight / 2, 255, 153, 0, 255, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight - 1, 255, 153, 0, 255, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to DrawWithAndWithoutDepthAndStencil, but framebuffer is MSAA
+TEST_P(FramebufferFetchES31, DrawWithAndWithoutDepthAndStencilMSAA)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color = vec4(correct, gl_LastFragDepthARM, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Issue a draw call that correctly renders to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Remove the depth attachment, and issue another draw call to the other half.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    GLFramebuffer resolveFbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFbo);
+    EXPECT_GL_NO_ERROR();
+
+    GLRenderbuffer resolve;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolve);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolve);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+
+    // The bottom half has undefined values, but the top half can be verified.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFbo);
+    EXPECT_PIXEL_NEAR(0, 0, 255, 153, 0, 255, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight / 2 - 1, 255, 153, 0, 255, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Test that depth and stencil framebuffer fetch work simultaneously and
+// verify whether detaching the depth attachment and stencil attachment separately
+// works correctly when the renderbuffer internalformat is set to GL_DEPTH24_STENCIL8.
+TEST_P(FramebufferFetchES31, DepthStencilDetachSeparatelyD24S8_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    framebufferFetchDepthStencilDetachSeparately(GL_DEPTH24_STENCIL8);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that depth and stencil framebuffer fetch work simultaneously and
+// verify whether detaching the depth attachment and stencil attachment separately
+// works correctly when the renderbuffer internalformat is set to GL_DEPTH32F_STENCIL8.
+TEST_P(FramebufferFetchES31, DepthStencilDetachSeparatelyD32FS8_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    framebufferFetchDepthStencilDetachSeparately(GL_DEPTH32F_STENCIL8);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test that framebuffer fetch works as expected when GL_FETCH_PER_SAMPLE_ARM is disabled.
+TEST_P(FramebufferFetchES31, DrawFetchPerFragmentAndWriteOut_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    for (auto depthStencilFormat : kDSFormat)
+    {
+        GLFramebuffer fbo, resolveFbo;
+        GLRenderbuffer color[kMaxColorBuffer], depthStencil, resolve;
+
+        bindResolveFboAndVerify(&resolve, &resolveFbo, kViewportWidth, kViewportHeight, false,
+                                false, &fbo, depthStencilFormat);
+
+        stateReset();
+        createFboWithDepthStencilAndMRT(kViewportWidth, kViewportHeight, 0, depthStencilFormat,
+                                        &fbo, color, &depthStencil);
+        ASSERT_GL_NO_ERROR();
+
+        ANGLE_GL_PROGRAM(programDS, essl31_shaders::vs::Passthrough(),
+                         getFragShaderName(depthStencilFormat));
+        ASSERT_GL_NO_ERROR();
+
+        glDisable(GL_FETCH_PER_SAMPLE_ARM);
+
+        clearAndDrawQuad(programDS, false);
+
+        bindResolveFboAndVerify(&resolve, &resolveFbo, kViewportWidth, kViewportHeight, true, false,
+                                &fbo, depthStencilFormat);
+    }
+}
+
+// Test that the discard functionality works as expected during framebuffer fetch when
+// GL_FETCH_PER_SAMPLE_ARM is disabled.
+TEST_P(FramebufferFetchES31, DrawFetchPerFragmentAndWriteOutWithDiscard_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+    const char colorDiscard[] = R"(#version 310 es
+precision highp float;
+
+uniform vec4 color;
+layout(location=0) out highp vec4 fragColor0;
+layout(location=1) out highp vec4 fragColor1;
+layout(location=2) out highp vec4 fragColor2;
+layout(location=3) out highp vec4 fragColor3;
+
+void main()
+{
+    ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+
+    if (0 == ((fragCoord.x + fragCoord.y) % 2)) discard;
+
+    fragColor0 = fragColor1 = fragColor2 = fragColor3 = color;
+})";
+
+    GLFramebuffer fbo, resolveFbo;
+    GLRenderbuffer color[kMaxColorBuffer], depthStencil, resolve;
+
+    bindResolveFboAndVerify(&resolve, &resolveFbo, 2, 2, false, true, &fbo, GL_DEPTH_COMPONENT24);
+
+    stateReset();
+    createFboWithDepthStencilAndMRT(2, 2, 0, GL_DEPTH_COMPONENT24, &fbo, color, &depthStencil);
+    ASSERT_GL_NO_ERROR();
+
+    ANGLE_GL_PROGRAM(programColorDiscard, essl31_shaders::vs::Passthrough(), colorDiscard);
+    ASSERT_GL_NO_ERROR();
+
+    glDisable(GL_FETCH_PER_SAMPLE_ARM);
+
+    clearAndDrawQuad(programColorDiscard, true);
+
+    bindResolveFboAndVerify(&resolve, &resolveFbo, 2, 2, true, true, &fbo, GL_DEPTH_COMPONENT24);
+}
+
+// Test that framebuffer fetch works as expected under the conditions of multisample and with
+// GL_FETCH_PER_SAMPLE_ARM disabled.
+TEST_P(FramebufferFetchES31, DrawFetchPerFragmentAndWriteOutWithMultisample_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    for (auto depthStencilFormat : kDSFormat)
+    {
+        for (int samples = 2; samples <= maxSamplesSupported(depthStencilFormat); samples *= 2)
+        {
+            if (!sampleCountSupported(GL_RENDERBUFFER, depthStencilFormat, samples))
+            {
+                continue;
+            }
+
+            GLFramebuffer fbo, resolveFbo;
+            GLRenderbuffer color[kMaxColorBuffer], depthStencil, resolve;
+
+            bindResolveFboAndVerify(&resolve, &resolveFbo, kViewportWidth, kViewportHeight, false,
+                                    false, &fbo, depthStencilFormat);
+
+            stateReset();
+            createFboWithDepthStencilAndMRT(kViewportWidth, kViewportHeight, samples,
+                                            depthStencilFormat, &fbo, color, &depthStencil);
+            ASSERT_GL_NO_ERROR();
+
+            ANGLE_GL_PROGRAM(programDS, essl31_shaders::vs::Passthrough(),
+                             getFragShaderName(depthStencilFormat));
+            ASSERT_GL_NO_ERROR();
+
+            glDisable(GL_FETCH_PER_SAMPLE_ARM);
+
+            clearAndDrawQuad(programDS, false);
+
+            bindResolveFboAndVerify(&resolve, &resolveFbo, kViewportWidth, kViewportHeight, true,
+                                    false, &fbo, depthStencilFormat);
+        }
+    }
+}
+
+// Test that framebuffer fetch works as expected under the conditions of multisample and with
+// GL_FETCH_PER_SAMPLE_ARM enabled.
+TEST_P(FramebufferFetchES31, DrawFetchPerSampleAndWriteOutWithMultisample_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    for (auto depthStencilFormat : kDSFormat)
+    {
+        for (int samples = 2; samples <= maxSamplesSupported(depthStencilFormat); samples *= 2)
+        {
+            if (!sampleCountSupported(GL_RENDERBUFFER, depthStencilFormat, samples))
+            {
+                continue;
+            }
+
+            GLFramebuffer fbo, resolveFbo;
+            GLRenderbuffer color[kMaxColorBuffer], depthStencil, resolve;
+
+            bindResolveFboAndVerify(&resolve, &resolveFbo, kViewportWidth, kViewportHeight, false,
+                                    false, &fbo, depthStencilFormat);
+
+            stateReset();
+            createFboWithDepthStencilAndMRT(kViewportWidth, kViewportHeight, samples,
+                                            depthStencilFormat, &fbo, color, &depthStencil);
+            ASSERT_GL_NO_ERROR();
+
+            ANGLE_GL_PROGRAM(programDS, essl31_shaders::vs::Passthrough(),
+                             getFragShaderName(depthStencilFormat));
+            ASSERT_GL_NO_ERROR();
+
+            glEnable(GL_FETCH_PER_SAMPLE_ARM);
+
+            clearAndDrawQuad(programDS, false);
+
+            bindResolveFboAndVerify(&resolve, &resolveFbo, kViewportWidth, kViewportHeight, true,
+                                    false, &fbo, depthStencilFormat);
+        }
+    }
+}
+
+// Test that the discard functionality works as expected during framebuffer fetch with multisample
+// when GL_FETCH_PER_SAMPLE_ARM is disabled.
+TEST_P(FramebufferFetchES31, DrawFetchPerFragmentAndWriteOutWithDiscardAndMultisample_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+    const char colorDiscard[] = R"(#version 310 es
+precision highp float;
+
+uniform vec4 color;
+layout(location=0) out highp vec4 fragColor0;
+layout(location=1) out highp vec4 fragColor1;
+layout(location=2) out highp vec4 fragColor2;
+layout(location=3) out highp vec4 fragColor3;
+
+void main()
+{
+    ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+
+    if (0 == ((fragCoord.x + fragCoord.y) % 2)) discard;
+
+    fragColor0 = fragColor1 = fragColor2 = fragColor3 = color;
+})";
+
+    for (int samples = 2; samples <= maxSamplesSupported(GL_DEPTH_COMPONENT16); samples *= 2)
+    {
+        if (!sampleCountSupported(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, samples))
+        {
+            continue;
+        }
+
+        GLFramebuffer fbo, resolveFbo;
+        GLRenderbuffer color[kMaxColorBuffer], depthStencil, resolve;
+
+        bindResolveFboAndVerify(&resolve, &resolveFbo, 2, 2, false, true, &fbo,
+                                GL_DEPTH_COMPONENT24);
+
+        stateReset();
+        createFboWithDepthStencilAndMRT(2, 2, samples, GL_DEPTH_COMPONENT24, &fbo, color,
+                                        &depthStencil);
+        ASSERT_GL_NO_ERROR();
+
+        ANGLE_GL_PROGRAM(programColorDiscard, essl31_shaders::vs::Passthrough(), colorDiscard);
+        ASSERT_GL_NO_ERROR();
+
+        glDisable(GL_FETCH_PER_SAMPLE_ARM);
+
+        clearAndDrawQuad(programColorDiscard, true);
+
+        bindResolveFboAndVerify(&resolve, &resolveFbo, 2, 2, true, true, &fbo,
+                                GL_DEPTH_COMPONENT24);
+    }
+}
+
+// Test that the discard functionality works as expected during framebuffer fetch with multisample
+// when GL_FETCH_PER_SAMPLE_ARM is enabled.
+TEST_P(FramebufferFetchES31, DrawFetchPerSampleAndWriteOutWithDiscardAndMultisample_ARM)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+    const char colorDiscard[] = R"(#version 310 es
+precision highp float;
+
+uniform vec4 color;
+layout(location=0) out highp vec4 fragColor0;
+layout(location=1) out highp vec4 fragColor1;
+layout(location=2) out highp vec4 fragColor2;
+layout(location=3) out highp vec4 fragColor3;
+
+void main()
+{
+    ivec2 fragCoord = ivec2(gl_FragCoord.xy);
+
+    if (0 == ((fragCoord.x + fragCoord.y) % 2)) discard;
+
+    fragColor0 = fragColor1 = fragColor2 = fragColor3 = color;
+})";
+
+    for (int samples = 2; samples <= maxSamplesSupported(GL_DEPTH_COMPONENT16); samples *= 2)
+    {
+        if (!sampleCountSupported(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, samples))
+        {
+            continue;
+        }
+
+        GLFramebuffer fbo, resolveFbo;
+        GLRenderbuffer color[kMaxColorBuffer], depthStencil, resolve;
+
+        bindResolveFboAndVerify(&resolve, &resolveFbo, 2, 2, false, true, &fbo,
+                                GL_DEPTH_COMPONENT24);
+
+        stateReset();
+        createFboWithDepthStencilAndMRT(2, 2, samples, GL_DEPTH_COMPONENT24, &fbo, color,
+                                        &depthStencil);
+        ASSERT_GL_NO_ERROR();
+
+        ANGLE_GL_PROGRAM(programColorDiscard, essl31_shaders::vs::Passthrough(), colorDiscard);
+        ASSERT_GL_NO_ERROR();
+
+        glEnable(GL_FETCH_PER_SAMPLE_ARM);
+
+        clearAndDrawQuad(programColorDiscard, true);
+
+        bindResolveFboAndVerify(&resolve, &resolveFbo, 2, 2, true, true, &fbo,
+                                GL_DEPTH_COMPONENT24);
+    }
+}
+
+// Similar to DrawWithoutAndWithDepthAndStencil, but framebuffer is MSAA
+TEST_P(FramebufferFetchES31, DrawWithoutAndWithDepthAndStencilMSAA)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp out vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color = vec4(correct, gl_LastFragDepthARM, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Issue a draw call with undefined render to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Add a depth attachment, and issue another draw call to the other half.
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    GLFramebuffer resolveFbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFbo);
+    EXPECT_GL_NO_ERROR();
+
+    GLRenderbuffer resolve;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolve);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolve);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+
+    // The top half has undefined values, but the bottom half can be verified.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFbo);
+    EXPECT_PIXEL_NEAR(0, kHeight / 2, 255, 153, 0, 255, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight - 1, 255, 153, 0, 255, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to DrawWithAndWithoutDepthAndStencilMSAA, but color framebuffer fetch is simultaneously
+// used.
+TEST_P(FramebufferFetchES31, DrawWithAndWithoutDepthAndStencilAndColorMSAA)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp inout vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color.xy = vec2(correct, gl_LastFragDepthARM);
+    color.zw += vec2(0.25, 0.5);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Issue a draw call that correctly renders to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Remove the depth attachment, and issue another draw call to the other half.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    GLFramebuffer resolveFbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFbo);
+    EXPECT_GL_NO_ERROR();
+
+    GLRenderbuffer resolve;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolve);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolve);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+
+    // The bottom half has undefined values, but the top half can be verified.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFbo);
+    EXPECT_PIXEL_NEAR(0, 0, 255, 153, 63, 127, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight / 2 - 1, 255, 153, 63, 127, 1);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Similar to DrawWithoutAndWithDepthAndStencilMSAA, but color framebuffer fetch is simultaneously
+// used.
+TEST_P(FramebufferFetchES31, DrawWithoutAndWithDepthAndStencilAndColorMSAA)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch_depth_stencil"));
+
+    constexpr char kVS[] = R"(#version 310 es
+void main()
+{
+    vec2 pos = vec2(0.0);
+    switch (gl_VertexID) {
+        case 0: pos = vec2(-1.0, -1.0); break;
+        case 1: pos = vec2(3.0, -1.0); break;
+        case 2: pos = vec2(-1.0, 3.0); break;
+    };
+    gl_Position = vec4(pos, 0.0, 1.0);
+})";
+
+    const char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+#extension GL_ARM_shader_framebuffer_fetch_depth_stencil : require
+
+highp inout vec4 color;
+
+void main()
+{
+    bool correct = gl_LastFragStencilARM == 0x3C;
+    color.xy = vec2(correct, gl_LastFragDepthARM);
+    color.zw += vec2(0.25, 0.5);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glUseProgram(program);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    EXPECT_GL_NO_ERROR();
+
+    constexpr GLint kWidth  = 37;
+    constexpr GLint kHeight = 52;
+
+    GLRenderbuffer renderbuffer;
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, renderbuffer);
+
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glViewport(0, 0, kWidth, kHeight);
+
+    glClearColor(0, 0, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Issue a draw call with undefined render to half of the framebuffer.
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(0, 0, kWidth, kHeight / 2);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    // Add a depth attachment, and issue another draw call to the other half.
+    GLRenderbuffer depthStencil;
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencil);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                              depthStencil);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glScissor(0, kHeight / 2, kWidth, kHeight - kHeight / 2);
+    glClearDepthf(0.6);
+    glClearStencil(0x3C);
+    glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+
+    GLFramebuffer resolveFbo;
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFbo);
+    EXPECT_GL_NO_ERROR();
+
+    GLRenderbuffer resolve;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolve);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kWidth, kHeight);
+    glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolve);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_DRAW_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
+
+    glBlitFramebuffer(0, 0, kWidth, kHeight, 0, 0, kWidth, kHeight, GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+
+    // The top half has undefined values, but the bottom half can be verified.
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFbo);
+    EXPECT_PIXEL_NEAR(0, kHeight / 2, 255, 153, 63, 127, 1);
+    EXPECT_PIXEL_NEAR(kWidth - 1, kHeight - 1, 255, 153, 63, 127, 1);
     EXPECT_GL_NO_ERROR();
 }
 
@@ -5085,6 +6586,209 @@ void main (void)
 
     // Verify results
     EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(145, 100, 201, 109), 3);
+}
+
+// Test that declaring inout variables but only ever writing to them works.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariable)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void main (void)
+{
+    color = vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 1, 0, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
+}
+
+// Test that declaring inout variables but only ever writing to them works.  This test writes to
+// different channels of the variable separately.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableSplit)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void main (void)
+{
+    color.xz = vec2(1, 0);
+    color.wy = vec2(1, 1);
+    return;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::yellow);
+}
+
+// Verify that partial writes to an |inout| variable don't make ANGLE consider it as an |out|
+// variable.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariablePartial)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void main (void)
+{
+    color.x = 1.;
+    color.wy = vec2(1, 0);
+    return;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::magenta);
+}
+
+// Verify that conditional writes to an |inout| variable don't make ANGLE consider it as an |out|
+// variable.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableConditional)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void main (void)
+{
+    if (gl_FragCoord.x < 8.)
+    {
+        color.yz = vec2(1, 0);
+    }
+    color.x = 1.;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 8, getWindowHeight(), GLColor::yellow);
+    EXPECT_PIXEL_RECT_EQ(8, 0, getWindowWidth() - 8, getWindowHeight(), GLColor::magenta);
+}
+
+// Verify that early out from main stops write-only |inout| variables from turning into |out|
+// variables.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableEarlyReturn)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void main (void)
+{
+    if (gl_FragCoord.x < 8.)
+    {
+        return;
+    }
+    color.x = 1.;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 8, getWindowHeight(), GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(8, 0, getWindowWidth() - 8, getWindowHeight(), GLColor::magenta);
+}
+
+// Verify that discard in the shader stops write-only |inout| variables from turning into |out|
+// variables.
+TEST_P(FramebufferFetchES31, WriteOnlyInOutVariableDiscard)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main (void)
+{
+    gl_Position = position;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_shader_framebuffer_fetch : require
+
+layout(location = 0) inout highp vec4 color;
+
+void f()
+{
+    if (gl_FragCoord.x < 8.)
+    {
+        discard;
+    }
+}
+
+void main (void)
+{
+    f();
+    color.x = 1.;
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+    glClearColor(0, 0, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    drawQuad(program, "position", 0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 8, getWindowHeight(), GLColor::blue);
+    EXPECT_PIXEL_RECT_EQ(8, 0, getWindowWidth() - 8, getWindowHeight(), GLColor::magenta);
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);

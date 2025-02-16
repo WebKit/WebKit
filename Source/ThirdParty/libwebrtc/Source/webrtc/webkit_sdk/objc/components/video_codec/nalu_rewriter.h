@@ -47,7 +47,13 @@ bool H264AnnexBBufferToCMSampleBuffer(const uint8_t* annexb_buffer,
                                       CMMemoryPoolRef memory_pool);
 
 uint8_t ComputeH264ReorderSizeFromAnnexB(const uint8_t* annexb_buffer, size_t annexb_buffer_size);
-uint8_t ComputeH264ReorderSizeFromAVC(const uint8_t* avcdata, size_t avcdata_size);
+
+struct H264Information {
+    uint16_t width { 0 };
+    uint16_t height { 0 };
+    uint8_t reorderSize { 0 };
+};
+std::optional<H264Information> ComputeH264InfoFromAVC(const uint8_t* avcdata, size_t avcdata_size);
 
 #ifdef RTC_ENABLE_H265
 // Converts a sample buffer emitted from the VideoToolbox encoder into a buffer

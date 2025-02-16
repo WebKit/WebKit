@@ -314,7 +314,7 @@ DXGI_FORMAT GetTypedColorFormatForClearing(DXGI_FORMAT dxgiFormat)
         case DXGI_FORMAT_R24_UNORM_X8_TYPELESS:
         case DXGI_FORMAT_X24_TYPELESS_G8_UINT:
             UNREACHABLE();
-            [[fallthrough]];
+            return dxgiFormat;
         default:
             return dxgiFormat;
     }

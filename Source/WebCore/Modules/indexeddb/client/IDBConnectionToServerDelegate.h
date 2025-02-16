@@ -29,6 +29,7 @@
 #include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
+#include "IndexKey.h"
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -86,7 +87,7 @@ public:
     virtual void createIndex(const IDBRequestData&, const IDBIndexInfo&) = 0;
     virtual void deleteIndex(const IDBRequestData&, IDBObjectStoreIdentifier, const String& indexName) = 0;
     virtual void renameIndex(const IDBRequestData&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName) = 0;
-    virtual void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
+    virtual void putOrAdd(const IDBRequestData&, const IDBKeyData&, const IDBValue&, const IndexIDToIndexKeyMap&, const IndexedDB::ObjectStoreOverwriteMode) = 0;
     virtual void getRecord(const IDBRequestData&, const IDBGetRecordData&) = 0;
     virtual void getAllRecords(const IDBRequestData&, const IDBGetAllRecordsData&) = 0;
     virtual void getCount(const IDBRequestData&, const IDBKeyRangeData&) = 0;

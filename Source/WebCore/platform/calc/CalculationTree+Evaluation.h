@@ -24,14 +24,14 @@
 
 #pragma once
 
-#include "CalculationTree.h"
-
 namespace WebCore {
 namespace Calculation {
 
+struct Tree;
+
 // MARK: Evaluation.
 
-NumericValue evaluate(const Tree&, NumericValue percentResolutionLength);
+double evaluate(const Tree&, double percentResolutionLength);
 
 } // namespace Calculation
 } // namespace WebCore

@@ -12,7 +12,7 @@ function branchTest(a) {
 }
 noInline(branchTest);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(branchTest(10n), 10n);
     assert(branchTest(1n), 1n);
     assert(branchTest(0n), false);

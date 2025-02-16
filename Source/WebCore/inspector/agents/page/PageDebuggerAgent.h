@@ -65,10 +65,6 @@ public:
     void mainFrameStartedLoading();
     void mainFrameStoppedLoading();
     void mainFrameNavigated();
-    void didRequestAnimationFrame(int callbackId, Document&);
-    void willFireAnimationFrame(int callbackId);
-    void didCancelAnimationFrame(int callbackId);
-    void didFireAnimationFrame(int callbackId);
 
 private:
     void internalEnable();
@@ -81,7 +77,7 @@ private:
 
     Inspector::InjectedScript injectedScriptForEval(Inspector::Protocol::ErrorString&, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&&);
 
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
     Vector<UniqueRef<UserGestureEmulationScope>> m_breakpointActionUserGestureEmulationScopeStack;
 };
 

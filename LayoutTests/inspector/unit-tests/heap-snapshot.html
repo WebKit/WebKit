@@ -139,8 +139,8 @@ function test()
                 InspectorTest.expectThat(!error, "Should not have an error creating a snapshot.");
                 testSnapshot = WI.TestHeapSnapshot.fromPayload(JSON.parse(snapshotStringData));
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                    snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
                     InspectorTest.assert(testSnapshot, "Created TestHeapSnapshot");
                     InspectorTest.assert(snapshot, "Created HeapSnapshotProxy");
                     InspectorTest.expectThat(snapshot.totalSize === testSnapshot.totalSize, "Snapshots totalSize should match.");

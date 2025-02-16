@@ -40,9 +40,9 @@ struct Contrast {
 };
 using ContrastFunction = FunctionNotation<CSSValueContrast, Contrast>;
 
-DEFINE_TYPE_WRAPPER(Contrast, value);
+DEFINE_TYPE_WRAPPER_GET(Contrast, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Contrast, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Contrast, 1)

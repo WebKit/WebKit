@@ -97,14 +97,14 @@ RenderedPosition::RenderedPosition(const Position& position, Affinity affinity)
 InlineIterator::LeafBoxIterator RenderedPosition::previousLeafOnLine() const
 {
     if (!m_previousLeafOnLine)
-        m_previousLeafOnLine = m_box->previousOnLineIgnoringLineBreak();
+        m_previousLeafOnLine = m_box->nextLineLeftwardOnLineIgnoringLineBreak();
     return *m_previousLeafOnLine;
 }
 
 InlineIterator::LeafBoxIterator RenderedPosition::nextLeafOnLine() const
 {
     if (!m_nextLeafOnLine)
-        m_nextLeafOnLine = m_box->nextOnLineIgnoringLineBreak();
+        m_nextLeafOnLine = m_box->nextLineRightwardOnLineIgnoringLineBreak();
     return *m_nextLeafOnLine;
 }
 
@@ -134,7 +134,7 @@ RenderedPosition RenderedPosition::leftBoundaryOfBidiRun(unsigned char bidiLevel
 
     auto box = m_box;
     do {
-        auto prev = box->previousOnLineIgnoringLineBreak();
+        auto prev = box->nextLineLeftwardOnLineIgnoringLineBreak();
         if (!prev || prev->bidiLevel() < bidiLevelOfRun)
             return RenderedPosition(&box->renderer(), box, box->leftmostCaretOffset());
         box = prev;
@@ -151,7 +151,7 @@ RenderedPosition RenderedPosition::rightBoundaryOfBidiRun(unsigned char bidiLeve
 
     auto box = m_box;
     do {
-        auto next = box->nextOnLineIgnoringLineBreak();
+        auto next = box->nextLineRightwardOnLineIgnoringLineBreak();
         if (!next || next->bidiLevel() < bidiLevelOfRun)
             return RenderedPosition(&box->renderer(), box, box->rightmostCaretOffset());
         box = next;

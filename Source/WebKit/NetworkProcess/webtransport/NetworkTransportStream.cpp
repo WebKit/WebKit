@@ -26,6 +26,8 @@
 #include "config.h"
 #include "NetworkTransportStream.h"
 
+#include <WebCore/Exception.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -36,10 +38,24 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkTransportStream);
 NetworkTransportStream::NetworkTransportStream()
     : m_identifier(WebCore::WebTransportStreamIdentifier::generate())
     , m_streamType(NetworkTransportStreamType::Bidirectional)
+    , m_streamState(NetworkTransportStreamState::Ready)
 {
 }
 
-void NetworkTransportStream::sendBytes(std::span<const uint8_t>, bool)
+void NetworkTransportStream::sendBytes(std::span<const uint8_t>, bool, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&& completionHandler)
+{
+    completionHandler(std::nullopt);
+}
+
+void NetworkTransportStream::cancelReceive(std::optional<WebCore::WebTransportStreamErrorCode>)
+{
+}
+
+void NetworkTransportStream::cancelSend(std::optional<WebCore::WebTransportStreamErrorCode>)
+{
+}
+
+void NetworkTransportStream::cancel(std::optional<WebCore::WebTransportStreamErrorCode>)
 {
 }
 #endif

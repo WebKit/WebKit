@@ -157,8 +157,26 @@ egl::Error HardwareBufferImageSiblingVkAndroid::ValidateHardwareBuffer(
 {
     struct ANativeWindowBuffer *windowBuffer =
         angle::android::ClientBufferToANativeWindowBuffer(buffer);
-    struct AHardwareBuffer *hardwareBuffer =
-        angle::android::ANativeWindowBufferToAHardwareBuffer(windowBuffer);
+    struct AHardwareBuffer *hardwareBuffer = nullptr;
+    if (windowBuffer != nullptr)
+    {
+        if (!angle::android::IsValidNativeWindowBuffer(windowBuffer))
+        {
+            return egl::EglBadParameter()
+                   << "The given buffer is not a valid native window buffer.";
+        }
+        hardwareBuffer = angle::android::ANativeWindowBufferToAHardwareBuffer(windowBuffer);
+        if (hardwareBuffer == nullptr)
+        {
+            return egl::EglBadParameter()
+                   << "Failed to obtain hardware buffer through given window buffer.";
+        }
+    }
+    else
+    {
+        return egl::EglBadParameter()
+               << "Failed to obtain Window buffer through given client buffer handler.";
+    }
 
     VkAndroidHardwareBufferFormatPropertiesANDROID bufferFormatProperties = {};
     bufferFormatProperties.sType =
@@ -423,19 +441,21 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
     }
 
     const gl::TextureType textureType = AhbDescUsageToTextureType(ahbDescription, layerCount);
+    const angle::FormatID actualRenderableFormatID = vkFormat->getActualRenderableImageFormatID();
 
     VkImageFormatListCreateInfoKHR imageFormatListInfoStorage;
     vk::ImageHelper::ImageListFormats imageListFormatsStorage;
+
     const void *imageCreateInfoPNext = vk::ImageHelper::DeriveCreateInfoPNext(
-        displayVk, vkFormat->getActualRenderableImageFormatID(), &externalMemoryImageCreateInfo,
+        displayVk, usage, actualRenderableFormatID, &externalMemoryImageCreateInfo,
         &imageFormatListInfoStorage, &imageListFormatsStorage, &imageCreateFlags);
 
-    ANGLE_TRY(
-        mImage->initExternal(displayVk, textureType, vkExtents, vkFormat->getIntendedFormatID(),
-                             vkFormat->getActualRenderableImageFormatID(), 1, usage,
-                             imageCreateFlags, vk::ImageLayout::ExternalPreInitialized,
-                             imageCreateInfoPNext, gl::LevelIndex(0), mLevelCount, layerCount,
-                             robustInitEnabled, hasProtectedContent(), conversionDesc, nullptr));
+    ANGLE_TRY(mImage->initExternal(displayVk, textureType, vkExtents,
+                                   vkFormat->getIntendedFormatID(), actualRenderableFormatID, 1,
+                                   usage, imageCreateFlags, vk::ImageLayout::ExternalPreInitialized,
+                                   imageCreateInfoPNext, gl::LevelIndex(0), mLevelCount, layerCount,
+                                   robustInitEnabled, hasProtectedContent(), conversionDesc,
+                                   nullptr));
 
     VkImportAndroidHardwareBufferInfoANDROID importHardwareBufferInfo = {};
     importHardwareBufferInfo.sType  = VK_STRUCTURE_TYPE_IMPORT_ANDROID_HARDWARE_BUFFER_INFO_ANDROID;
@@ -474,15 +494,14 @@ angle::Result HardwareBufferImageSiblingVkAndroid::initImpl(DisplayVk *displayVk
         constexpr uint32_t kColorRenderableRequiredBits = VK_FORMAT_FEATURE_COLOR_ATTACHMENT_BIT;
         constexpr uint32_t kDepthStencilRenderableRequiredBits =
             VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT;
-        mRenderable =
-            renderer->hasImageFormatFeatureBits(vkFormat->getActualRenderableImageFormatID(),
-                                                kColorRenderableRequiredBits) ||
-            renderer->hasImageFormatFeatureBits(vkFormat->getActualRenderableImageFormatID(),
-                                                kDepthStencilRenderableRequiredBits);
+        mRenderable = renderer->hasImageFormatFeatureBits(actualRenderableFormatID,
+                                                          kColorRenderableRequiredBits) ||
+                      renderer->hasImageFormatFeatureBits(actualRenderableFormatID,
+                                                          kDepthStencilRenderableRequiredBits);
         constexpr uint32_t kTextureableRequiredBits =
             VK_FORMAT_FEATURE_SAMPLED_IMAGE_BIT | VK_FORMAT_FEATURE_SAMPLED_IMAGE_FILTER_LINEAR_BIT;
-        mTextureable = renderer->hasImageFormatFeatureBits(
-            vkFormat->getActualRenderableImageFormatID(), kTextureableRequiredBits);
+        mTextureable =
+            renderer->hasImageFormatFeatureBits(actualRenderableFormatID, kTextureableRequiredBits);
     }
 
     return angle::Result::Continue;

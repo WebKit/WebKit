@@ -62,6 +62,8 @@ public:
     }
     bool isZapped() const { return !*std::bit_cast<const uint32_t*>(this); }
 
+    void notifyNeedsDestruction() const;
+
     // isPendingDestruction returns true iff the cell is no longer alive but has not yet
     // been swept and therefore its destructor (if it has one) has not yet run.
     bool isPendingDestruction();

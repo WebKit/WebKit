@@ -40,6 +40,7 @@ media/modern-media-controls/media-documents/media-document-video-ipad-sizing.htm
 
 webkit.org/b/194221 fast/forms/datalist/datalist-textinput-suggestions-order.html [ Failure ]
 webkit.org/b/194221 fast/forms/datalist/datalist-show-hide.html [ Skip ]
+webkit.org/b/194221 fast/forms/datalist/datalist-hide-using-escape-key.html [ Skip ]
 
 webkit.org/b/193970 compositing/ios/overflow-scroll-update-overlap.html [ ImageOnlyFailure ]
 

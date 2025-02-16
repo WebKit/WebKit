@@ -30,8 +30,6 @@
 
 #include "InspectorInstrumentation.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 bool ScopedInspectorShaderProgramHighlight::shouldApply(WebGLRenderingContextBase& context)
@@ -94,7 +92,5 @@ void ScopedInspectorShaderProgramHighlight::hideHighlight()
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

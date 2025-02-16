@@ -55,7 +55,7 @@ function addRandomProperties(input) {
 noInline(addRandomProperties);
 
 function runTests() {
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         for (let [input, output, ...args] of tests) {
             addRandomProperties(input);
             assert(args.length === 1 || args.length === 2);

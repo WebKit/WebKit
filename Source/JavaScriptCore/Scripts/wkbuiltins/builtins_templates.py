@@ -107,7 +107,7 @@ ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
 {\\
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \\
+    JSVMClientData* clientData = downcast<JSVMClientData>(vm.clientData); \\
     return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, nullptr, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \\
 }
 ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
@@ -119,7 +119,7 @@ ${macroPrefix}_FOREACH_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \\
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \\
 {\\
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \\
+    JSVMClientData* clientData = downcast<JSVMClientData>(vm.clientData); \\
     return clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Executable()->link(vm, nullptr, clientData->builtinFunctions().${objectNameLC}Builtins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \\
 }
 ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)
@@ -132,7 +132,7 @@ public:
     explicit ${objectName}BuiltinsWrapper(JSC::VM& vm)
         : m_vm(vm)
         ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying({ s_##name, static_cast<size_t>(length) }), { }, JSC::SourceTaintedOrigin::Untainted))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying(unsafeMakeSpan(s_##name, static_cast<size_t>(length))), { }, JSC::SourceTaintedOrigin::Untainted))
         ${macroPrefix}_FOREACH_${objectMacro}_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef INITIALIZE_BUILTIN_SOURCE_MEMBERS
     {

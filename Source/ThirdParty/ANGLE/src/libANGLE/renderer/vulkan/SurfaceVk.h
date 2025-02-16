@@ -14,7 +14,6 @@
 #include "common/SimpleMutex.h"
 #include "common/vulkan/vk_headers.h"
 #include "libANGLE/renderer/SurfaceImpl.h"
-#include "libANGLE/renderer/vulkan/CommandProcessor.h"
 #include "libANGLE/renderer/vulkan/RenderTargetVk.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 
@@ -347,8 +346,9 @@ class WindowSurfaceVk : public SurfaceVk
 
     bool isSharedPresentModeDesired() const
     {
-        return (mDesiredSwapchainPresentMode == vk::PresentMode::SharedDemandRefreshKHR ||
-                mDesiredSwapchainPresentMode == vk::PresentMode::SharedContinuousRefreshKHR);
+        vk::PresentMode desiredSwapchainPresentMode = getDesiredSwapchainPresentMode();
+        return (desiredSwapchainPresentMode == vk::PresentMode::SharedDemandRefreshKHR ||
+                desiredSwapchainPresentMode == vk::PresentMode::SharedContinuousRefreshKHR);
     }
 
     egl::Error lockSurface(const egl::Display *display,
@@ -370,11 +370,40 @@ class WindowSurfaceVk : public SurfaceVk
 
     void setTimestampsEnabled(bool enabled) override;
 
+    EGLint getCompressionRate(const egl::Display *display) const override;
+
   protected:
     angle::Result swapImpl(const gl::Context *context,
                            const EGLint *rects,
                            EGLint n_rects,
                            const void *pNextChain);
+
+    EGLNativeWindowType mNativeWindowType;
+    VkSurfaceKHR mSurface;
+    VkSurfaceCapabilitiesKHR mSurfaceCaps;
+    VkBool32 mSupportsProtectedSwapchain;
+
+  private:
+    virtual angle::Result createSurfaceVk(vk::ErrorContext *context, gl::Extents *extentsOut) = 0;
+    virtual angle::Result getCurrentWindowSize(vk::ErrorContext *context,
+                                               gl::Extents *extentsOut)                       = 0;
+
+    vk::PresentMode getDesiredSwapchainPresentMode() const;
+    void setDesiredSwapchainPresentMode(vk::PresentMode presentMode);
+    void setDesiredSwapInterval(EGLint interval);
+
+    angle::Result initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut);
+    angle::Result recreateSwapchain(ContextVk *contextVk, const gl::Extents &extents);
+    angle::Result createSwapChain(vk::ErrorContext *context, const gl::Extents &extents);
+    angle::Result collectOldSwapchain(ContextVk *contextVk, VkSwapchainKHR swapchain);
+    angle::Result queryAndAdjustSurfaceCaps(ContextVk *contextVk,
+                                            VkSurfaceCapabilitiesKHR *surfaceCaps);
+    angle::Result checkForOutOfDateSwapchain(ContextVk *contextVk, bool forceRecreate);
+    angle::Result resizeSwapchainImages(vk::ErrorContext *context, uint32_t imageCount);
+    void releaseSwapchainImages(ContextVk *contextVk);
+    void destroySwapChainImages(DisplayVk *displayVk);
+    angle::Result prepareForAcquireNextSwapchainImage(const gl::Context *context,
+                                                      bool forceSwapchainRecreate);
     // Called when a swapchain image whose acquisition was deferred must be acquired.  This method
     // will recreate the swapchain (if needed due to present returning OUT_OF_DATE, swap interval
     // changing, surface size changing etc, by calling prepareForAcquireNextSwapchainImage()) and
@@ -387,42 +416,17 @@ class WindowSurfaceVk : public SurfaceVk
     // not check for surface property changes for the purposes of swapchain recreation (because
     // that's already done by prepareForAcquireNextSwapchainImage.
     angle::Result doDeferredAcquireNextImageWithUsableSwapchain(const gl::Context *context);
-
-    EGLNativeWindowType mNativeWindowType;
-    VkSurfaceKHR mSurface;
-    VkSurfaceCapabilitiesKHR mSurfaceCaps;
-    VkBool32 mSupportsProtectedSwapchain;
-
-  private:
-    virtual angle::Result createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)      = 0;
-    virtual angle::Result getCurrentWindowSize(vk::Context *context, gl::Extents *extentsOut) = 0;
-
-    void setSwapInterval(DisplayVk *displayVk, EGLint interval);
-
-    angle::Result initializeImpl(DisplayVk *displayVk, bool *anyMatchesOut);
-    angle::Result recreateSwapchain(ContextVk *contextVk, const gl::Extents &extents);
-    angle::Result createSwapChain(vk::Context *context, const gl::Extents &extents);
-    angle::Result collectOldSwapchain(ContextVk *contextVk, VkSwapchainKHR swapchain);
-    angle::Result queryAndAdjustSurfaceCaps(ContextVk *contextVk,
-                                            VkSurfaceCapabilitiesKHR *surfaceCaps);
-    angle::Result checkForOutOfDateSwapchain(ContextVk *contextVk, bool forceRecreate);
-    angle::Result resizeSwapchainImages(vk::Context *context, uint32_t imageCount);
-    void releaseSwapchainImages(ContextVk *contextVk);
-    void destroySwapChainImages(DisplayVk *displayVk);
-    angle::Result prepareForAcquireNextSwapchainImage(const gl::Context *context,
-                                                      bool forceSwapchainRecreate);
-    // This method calls vkAcquireNextImageKHR() to acquire the next swapchain image.  It is called
-    // when the swapchain is initially created and when present() finds the swapchain out of date.
-    // Otherwise, it is scheduled to be called later by deferAcquireNextImage().
-    VkResult acquireNextSwapchainImage(vk::Context *context);
+    // This method calls vkAcquireNextImageKHR() to acquire the next swapchain image or to process
+    // unlocked ANI result.  It is scheduled to be called later by deferAcquireNextImage().
+    VkResult acquireNextSwapchainImage(vk::ErrorContext *context);
     // Process the result of vkAcquireNextImageKHR.
-    VkResult postProcessUnlockedAcquire(vk::Context *context);
+    VkResult postProcessUnlockedAcquire(vk::ErrorContext *context);
     // This method is called when a swapchain image is presented.  It schedules
     // acquireNextSwapchainImage() to be called later.
     void deferAcquireNextImage();
     bool skipAcquireNextSwapchainImageForSharedPresentMode() const;
 
-    angle::Result computePresentOutOfDate(vk::Context *context,
+    angle::Result computePresentOutOfDate(vk::ErrorContext *context,
                                           VkResult result,
                                           bool *presentOutOfDate);
     angle::Result prePresentSubmit(ContextVk *contextVk, const vk::Semaphore &presentSemaphore);
@@ -432,17 +436,17 @@ class WindowSurfaceVk : public SurfaceVk
                           const void *pNextChain,
                           bool *presentOutOfDate);
 
-    angle::Result cleanUpPresentHistory(vk::Context *context);
-    angle::Result cleanUpOldSwapchains(vk::Context *context);
+    angle::Result cleanUpPresentHistory(vk::ErrorContext *context);
+    angle::Result cleanUpOldSwapchains(vk::ErrorContext *context);
 
     // Throttle the CPU such that application's logic and command buffer recording doesn't get more
     // than two frame ahead of the frame being rendered (and three frames ahead of the one being
     // presented).  This is a failsafe, as the application should ensure command buffer recording is
     // not ahead of the frame being rendered by *one* frame.
-    angle::Result throttleCPU(vk::Context *context, const QueueSerial &currentSubmitSerial);
+    angle::Result throttleCPU(vk::ErrorContext *context, const QueueSerial &currentSubmitSerial);
 
     // Finish all GPU operations on the surface
-    angle::Result finish(vk::Context *context);
+    angle::Result finish(vk::ErrorContext *context);
 
     void updateOverlay(ContextVk *contextVk) const;
     bool overlayHasEnabledWidget(ContextVk *contextVk) const;
@@ -461,15 +465,16 @@ class WindowSurfaceVk : public SurfaceVk
 
     VkSwapchainKHR mSwapchain;      // Current swapchain (same as last created or NULL)
     VkSwapchainKHR mLastSwapchain;  // Last created non retired swapchain (or NULL if retired)
-    vk::SwapchainStatus mSwapchainStatus;
     // Cached information used to recreate swapchains.
-    vk::PresentMode mSwapchainPresentMode;         // Current swapchain mode
-    vk::PresentMode mDesiredSwapchainPresentMode;  // Desired mode set through setSwapInterval()
+    vk::PresentMode mSwapchainPresentMode;                      // Current swapchain mode
+    std::atomic<vk::PresentMode> mDesiredSwapchainPresentMode;  // Desired swapchain mode
     uint32_t mMinImageCount;
     VkSurfaceTransformFlagBitsKHR mPreTransform;
     VkSurfaceTransformFlagBitsKHR mEmulatedPreTransform;
     VkCompositeAlphaFlagBitsKHR mCompositeAlpha;
     VkColorSpaceKHR mSurfaceColorSpace;
+    VkImageCompressionFlagBitsEXT mCompressionFlags;
+    VkImageCompressionFixedRateFlagsEXT mFixedRateFlags;
 
     // Present modes that are compatible with the current mode.  If mDesiredSwapchainPresentMode is
     // in this list, mode switch can happen without the need to recreate the swapchain.

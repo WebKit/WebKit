@@ -27,11 +27,6 @@
 #include "SelectorPseudoTypeMap.h"
 #include <wtf/TZoneMallocInlines.h>
 
-#if COMPILER(MSVC)
-// See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
-#pragma warning(disable: 4701)
-#endif
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MutableCSSSelector);

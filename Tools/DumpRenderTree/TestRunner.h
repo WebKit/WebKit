@@ -396,7 +396,7 @@ public:
 
     void generateTestReport(JSStringRef message, JSStringRef group);
 
-    void setTopContentInset(double);
+    void setObscuredContentInsets(double top, double right, double bottom, double left);
 
     void setPageScaleFactor(double scaleFactor, long x, long y);
     static JSValueRef alwaysResolvePromise(JSContextRef);
@@ -496,8 +496,7 @@ private:
         String scriptString;
     };
 
-    std::unique_ptr<WTR::UIScriptContext> m_UIScriptContext;
-    UIScriptInvocationData* m_pendingUIScriptInvocationData { nullptr };
+    RefPtr<WTR::UIScriptContext> m_UIScriptContext;
 
     std::vector<std::string> m_openPanelFiles;
 #if PLATFORM(IOS_FAMILY)

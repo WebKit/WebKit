@@ -87,7 +87,7 @@ public:
 
     WEBCORE_EXPORT void empty();
 
-    WEBCORE_EXPORT HashSet<SecurityOriginData> originsWithCache();
+    WEBCORE_EXPORT UncheckedKeyHashSet<SecurityOriginData> originsWithCache();
     WEBCORE_EXPORT void deleteAllEntries();
 
     // FIXME: This should be consolidated with deleteAllEntries().

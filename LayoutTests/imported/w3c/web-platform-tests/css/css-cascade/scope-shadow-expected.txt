@@ -5,4 +5,7 @@ FAIL :scope matches host via the scoping root assert_equals: expected "1" but go
 FAIL :scope within :is() matches host via the scoping root assert_equals: expected "1" but got "auto"
 FAIL Implicit @scope as direct child of shadow root assert_equals: expected "1" but got "auto"
 FAIL Implicit @scope in construted stylesheet assert_equals: expected "1" but got "auto"
+FAIL Matching :host via &, :scope (subject) assert_equals: expected "1" but got "auto"
+FAIL Matching :host via &, :scope (non-subject) assert_equals: expected "1" but got "auto"
+FAIL Matching :host via &, :scope (non-subject, >) assert_equals: expected "1" but got "auto"
 

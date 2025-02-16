@@ -1678,4 +1678,16 @@ ASCIILiteral errorAsString(Error error)
     return ""_s;
 }
 
+static bool s_shouldCrashOnMessageCheckFailure { false };
+
+bool Connection::shouldCrashOnMessageCheckFailure()
+{
+    return s_shouldCrashOnMessageCheckFailure;
+}
+
+void Connection::setShouldCrashOnMessageCheckFailure(bool shouldCrash)
+{
+    s_shouldCrashOnMessageCheckFailure = shouldCrash;
+}
+
 } // namespace IPC

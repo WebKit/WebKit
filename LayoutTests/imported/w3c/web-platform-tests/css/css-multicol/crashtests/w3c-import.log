@@ -118,6 +118,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-in-clipped-overflow.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-caption-inline-block-remove-child.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/table-cell-writing-mode-root.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/text-box-trim-end-and-widows.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/text-in-inline-interrupted-by-float.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/trailing-parent-padding-between-spanners.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/crashtests/vertical-rl-column-rules-wide-columns.html

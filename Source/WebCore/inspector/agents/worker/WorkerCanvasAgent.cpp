@@ -39,7 +39,7 @@ WorkerCanvasAgent::WorkerCanvasAgent(WorkerAgentContext& context)
     : InspectorCanvasAgent(context)
     , m_globalScope(context.globalScope)
 {
-    ASSERT(context.globalScope.isContextThread());
+    ASSERT(context.globalScope->isContextThread());
 }
 
 WorkerCanvasAgent::~WorkerCanvasAgent() = default;

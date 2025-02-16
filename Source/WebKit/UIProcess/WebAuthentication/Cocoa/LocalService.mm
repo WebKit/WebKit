@@ -38,7 +38,6 @@
 #define LOCAL_SERVICE_ADDITIONS
 #endif
 
-#import "AppAttestInternalSoftLink.h"
 #import "LocalAuthenticationSoftLink.h"
 
 namespace WebKit {
@@ -66,15 +65,6 @@ LOCAL_SERVICE_ADDITIONS
         LOG_ERROR("Couldn't find local authenticators: %@", error);
         return false;
     }
-
-#if HAVE(APPLE_ATTESTATION)
-    if (!AppAttest_WebAuthentication_IsSupported()) {
-        LOG_ERROR("Device is unable to support Apple attestation features.");
-        return false;
-    }
-#else
-    return false;
-#endif
 
     return true;
 }

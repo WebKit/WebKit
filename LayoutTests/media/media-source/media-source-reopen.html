@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>media-source-reopen</title>
+        <script src="../video-test.js"></script>
+        <script>
+var loader;
+var source;
+var audiosb;
+var videosb;
+var audiodata;
+var videodata;
+
+async function startTest()
+{
+    findMediaElement();
+    video.disableRemotePlayback = true;
+    video.muted = true;
+    
+    const MediaSource = self.ManagedMediaSource || self.MediaSource;
+
+    source = new MediaSource();
+    run('video.src = URL.createObjectURL(source)');
+    await waitFor(source, 'sourceopen');
+    waitFor(video, 'error').then(failTest);
+
+    run('audiosb = source.addSourceBuffer("audio/mp4; codecs=mp4a.40.2")');
+    run('videosb = source.addSourceBuffer("video/mp4; codecs=avc1.4d401e")');
+
+    let audioResponse = await fetch('content/test-48kHz.m4a');
+    let audiodata = await audioResponse.arrayBuffer();
+    let videoResponse = await fetch('content/test-fragmented-video.mp4');
+    let videodata = await videoResponse.arrayBuffer();
+
+    run('audiosb.appendWindowEnd = 0.4');
+    run('videosb.appendWindowEnd = 0.5');
+
+    audiosb.appendBuffer(audiodata);
+    videosb.appendBuffer(videodata);
+    await Promise.all([waitFor(audiosb, 'update', true), waitFor(videosb, 'update', true)]);
+
+    testExpected('video.buffered.end(video.buffered.length-1) == Math.min(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1))', true);
+    run('source.endOfStream()');
+    testExpected('source.readyState', "ended");
+    testExpected('video.buffered.end(video.buffered.length-1) == Math.max(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1))', true);
+    testExpected('video.duration == Math.max(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1))', true);
+    await waitFor(source, 'sourceended');
+
+    audiosb.appendBuffer(audiodata);
+    testExpected('source.readyState', "open");
+    testExpected('video.buffered.end(video.buffered.length-1) == Math.min(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1))', true);
+    await waitFor(audiosb, 'update');
+    run('source.endOfStream()');
+
+    await video.play();
+    waitForEventAndEnd('ended');
+}
+        </script>
+    </head>
+    <body onload="startTest()">
+        <video controls></video>
+    </body>
+</html>

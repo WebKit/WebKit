@@ -53,15 +53,17 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include "CoreVideoSoftLink.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCVPXVideoDecoder);
 
 static WorkQueue& vpxDecoderQueueSingleton()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("VPx VideoDecoder Queue"_s));
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<WorkQueue>> queue;
+    std::call_once(onceKey, [] {
+        queue.construct(WorkQueue::create("VPx VideoDecoder Queue"_s));
+    });
     return queue.get();
 }
 

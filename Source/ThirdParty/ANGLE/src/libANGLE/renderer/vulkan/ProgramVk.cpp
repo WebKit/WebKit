@@ -48,7 +48,7 @@ class Std140BlockLayoutEncoderFactory : public gl::CustomBlockLayoutEncoderFacto
     sh::BlockLayoutEncoder *makeEncoder() override { return new sh::Std140BlockEncoder(); }
 };
 
-class LinkTaskVk final : public vk::Context, public LinkTask
+class LinkTaskVk final : public vk::ErrorContext, public LinkTask
 {
   public:
     LinkTaskVk(vk::Renderer *renderer,
@@ -58,7 +58,7 @@ class LinkTaskVk final : public vk::Context, public LinkTask
                bool isGLES1,
                vk::PipelineRobustness pipelineRobustness,
                vk::PipelineProtectedAccess pipelineProtectedAccess)
-        : vk::Context(renderer),
+        : vk::ErrorContext(renderer),
           mState(state),
           mExecutable(&mState.getExecutable()),
           mIsGLES1(isGLES1),

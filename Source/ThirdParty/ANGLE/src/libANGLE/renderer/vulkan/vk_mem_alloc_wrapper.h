@@ -59,12 +59,6 @@ VkResult InitAllocator(VkPhysicalDevice physicalDevice,
 
 void DestroyAllocator(VmaAllocator allocator);
 
-VkResult CreatePool(VmaAllocator allocator,
-                    uint32_t memoryTypeIndex,
-                    VkDeviceSize blockSize,
-                    VmaPool *pPool);
-void DestroyPool(VmaAllocator allocator, VmaPool pool);
-
 void FreeMemory(VmaAllocator allocator, VmaAllocation allocation);
 
 VkResult CreateBuffer(VmaAllocator allocator,

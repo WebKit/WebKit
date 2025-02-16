@@ -41,11 +41,11 @@ constexpr IOSurface::Format convertToIOSurfaceFormat(ContentsFormat contentsForm
     switch (contentsFormat) {
     case ContentsFormat::RGBA8:
         return IOSurface::Format::BGRA;
-#if HAVE(IOSURFACE_RGB10)
+#if ENABLE(PIXEL_FORMAT_RGB10)
     case ContentsFormat::RGBA10:
         return IOSurface::Format::RGB10;
 #endif
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case ContentsFormat::RGBA16F:
         return IOSurface::Format::RGBA16F;
 #endif
@@ -58,11 +58,11 @@ constexpr NSString *contentsFormatString(ContentsFormat contentsFormat)
     switch (contentsFormat) {
     case ContentsFormat::RGBA8:
         return nil;
-#if HAVE(IOSURFACE_RGB10)
+#if ENABLE(PIXEL_FORMAT_RGB10)
     case ContentsFormat::RGBA10:
         return kCAContentsFormatRGBA10XR;
 #endif
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case ContentsFormat::RGBA16F:
         return kCAContentsFormatRGBA16Float;
 #endif

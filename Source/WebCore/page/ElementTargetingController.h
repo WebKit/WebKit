@@ -95,8 +95,8 @@ private:
 
     void recomputeAdjustedElementsIfNeeded();
 
-    void topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, HashSet<ElementIdentifier>& processingIDs, HashSet<ElementIdentifier>& unprocessedIDs, const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
-    Vector<ElementIdentifier> topologicallySortElements(const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
+    void topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, UncheckedKeyHashSet<ElementIdentifier>& processingIDs, UncheckedKeyHashSet<ElementIdentifier>& unprocessedIDs, const UncheckedKeyHashMap<ElementIdentifier, UncheckedKeyHashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
+    Vector<ElementIdentifier> topologicallySortElements(const UncheckedKeyHashMap<ElementIdentifier, UncheckedKeyHashSet<ElementIdentifier>>& elementIDToOccludedElementIDs);
 
     WeakPtr<Page> m_page;
     DeferrableOneShotTimer m_recentAdjustmentClientRectsCleanUpTimer;

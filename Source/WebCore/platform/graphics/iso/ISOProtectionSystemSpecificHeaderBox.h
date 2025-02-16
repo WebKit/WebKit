@@ -38,7 +38,7 @@ public:
     ISOProtectionSystemSpecificHeaderBox();
     ~ISOProtectionSystemSpecificHeaderBox();
 
-    static FourCC boxTypeName() { return "pssh"; }
+    static FourCC boxTypeName() { return std::span { "pssh" }; }
 
     static std::optional<Vector<uint8_t>> peekSystemID(JSC::DataView&, unsigned offset);
 

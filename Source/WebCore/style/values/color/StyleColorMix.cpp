@@ -113,15 +113,15 @@ bool containsCurrentColor(const ColorMix& colorMix)
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const ColorMix& colorMix)
+void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix& colorMix)
 {
-    CSS::serializationForCSSColorMix(builder, colorMix);
+    CSS::serializationForCSSColorMix(builder, context, colorMix);
 }
 
-String serializationForCSS(const ColorMix& colorMix)
+String serializationForCSS(const CSS::SerializationContext& context, const ColorMix& colorMix)
 {
     StringBuilder builder;
-    serializationForCSS(builder, colorMix);
+    serializationForCSS(builder, context, colorMix);
     return builder.toString();
 }
 

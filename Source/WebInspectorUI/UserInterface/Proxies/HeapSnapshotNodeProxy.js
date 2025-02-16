@@ -25,8 +25,11 @@
 
 WI.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
 {
-    constructor(snapshotObjectId, {id, className, size, retainedSize, internal, isObjectType, gcRoot, dead, dominatorNodeIdentifier, hasChildren})
+    constructor(target, snapshotObjectId, {id, className, size, retainedSize, internal, isObjectType, gcRoot, dead, dominatorNodeIdentifier, hasChildren})
     {
+        console.assert(target instanceof WI.Target, target);
+
+        this._target = target;
         this._proxyObjectId = snapshotObjectId;
 
         this.id = id;
@@ -43,10 +46,14 @@ WI.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
 
     // Static
 
-    static deserialize(objectId, serializedNode)
+    static deserialize(target, objectId, serializedNode)
     {
-        return new WI.HeapSnapshotNodeProxy(objectId, serializedNode);
+        return new WI.HeapSnapshotNodeProxy(target, objectId, serializedNode);
     }
+
+    // Public
+
+    get target() { return this._target; }
 
     // Proxied
 
@@ -57,7 +64,7 @@ WI.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
             let path = serializedPath.map((component) => {
                 isNode = !isNode;
                 if (isNode)
-                    return WI.HeapSnapshotNodeProxy.deserialize(this._proxyObjectId, component);
+                    return WI.HeapSnapshotNodeProxy.deserialize(this._target, this._proxyObjectId, component);
                 return WI.HeapSnapshotEdgeProxy.deserialize(this._proxyObjectId, component);
             });
 
@@ -75,14 +82,14 @@ WI.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
     dominatedNodes(callback)
     {
         WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "dominatedNodes", this.id, (serializedNodes) => {
-            callback(serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
+            callback(serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._target, this._proxyObjectId)));
         });
     }
 
     retainedNodes(callback)
     {
         WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "retainedNodes", this.id, ({retainedNodes: serializedNodes, edges: serializedEdges}) => {
-            let deserializedNodes = serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId));
+            let deserializedNodes = serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._target, this._proxyObjectId));
             let deserializedEdges = serializedEdges.map(WI.HeapSnapshotEdgeProxy.deserialize.bind(null, this._proxyObjectId));
             callback(deserializedNodes, deserializedEdges);
         });
@@ -91,7 +98,7 @@ WI.HeapSnapshotNodeProxy = class HeapSnapshotNodeProxy
     retainers(callback)
     {
         WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "retainers", this.id, ({retainers: serializedNodes, edges: serializedEdges}) => {
-            let deserializedNodes = serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId));
+            let deserializedNodes = serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._target, this._proxyObjectId));
             let deserializedEdges = serializedEdges.map(WI.HeapSnapshotEdgeProxy.deserialize.bind(null, this._proxyObjectId));
             callback(deserializedNodes, deserializedEdges);
         });

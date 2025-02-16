@@ -9,7 +9,7 @@ function logicalAnd(a, b) {
 }
 noInline(logicalAnd);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(logicalAnd(1n, 10n), 10n);
     assert(logicalAnd(1n, 1n), 1n);
     assert(logicalAnd(1n, 0n), 0n);

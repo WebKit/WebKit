@@ -110,8 +110,9 @@ public:
     // Do we really need InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero?
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=212958
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero | StructureIsImmortal | OverridesPut;
+    static constexpr uint8_t numberOfLowerTierPreciseCells = 0;
 
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 
     // We specialize the string subspace to get the fastest possible sweep. This wouldn't be
@@ -322,6 +323,8 @@ class JSRopeString final : public JSString {
     friend class RegExpObject;
     friend class RegExpSubstringGlobalAtomCache;
 public:
+    static constexpr DestructionMode needsDestruction = MayNeedDestruction;
+    static constexpr uint8_t numberOfLowerTierPreciseCells = 0;
     static void destroy(JSCell*);
 
     template<typename, SubspaceAccess>

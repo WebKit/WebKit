@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
 #import "WKBrowserEngineDefinitions.h"
@@ -70,4 +70,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

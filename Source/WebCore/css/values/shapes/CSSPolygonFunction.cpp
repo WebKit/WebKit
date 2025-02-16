@@ -31,18 +31,18 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Polygon>::operator()(StringBuilder& builder, const Polygon& value)
+void Serialize<Polygon>::operator()(StringBuilder& builder, const SerializationContext& context, const Polygon& value)
 {
     // <polygon()> = polygon( <'fill-rule'>? [ round <length> ]? , [<length-percentage> <length-percentage>]# )
 
     // FIXME: Add support the "round" clause.
 
     if (value.fillRule && std::holds_alternative<CSS::Keyword::Evenodd>(*value.fillRule)) {
-        serializationForCSS(builder, *value.fillRule);
+        serializationForCSS(builder, context, *value.fillRule);
         builder.append(", "_s);
     }
 
-    serializationForCSS(builder, value.vertices);
+    serializationForCSS(builder, context, value.vertices);
 }
 
 } // namespace CSS

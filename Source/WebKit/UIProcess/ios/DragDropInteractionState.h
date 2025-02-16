@@ -48,7 +48,8 @@ namespace WebKit {
 struct DragSourceState {
     OptionSet<WebCore::DragSourceAction> action;
     CGRect dragPreviewFrameInRootViewCoordinates { CGRectZero };
-    RetainPtr<UIImage> image;
+    using DragPreviewContentType = std::variant<RetainPtr<UIImage>, RetainPtr<UIView>>;
+    DragPreviewContentType dragPreviewContent;
     std::optional<WebCore::TextIndicatorData> indicatorData;
     std::optional<WebCore::Path> visiblePath;
     String linkTitle;
@@ -70,7 +71,7 @@ public:
     // These helper methods are unique to UIDragInteraction.
     void prepareForDragSession(id <UIDragSession>, dispatch_block_t completionHandler);
     void dragSessionWillBegin();
-    void stageDragItem(const WebCore::DragItem&, UIImage *);
+    void stageDragItem(const WebCore::DragItem&, DragSourceState::DragPreviewContentType);
     bool hasStagedDragSource() const;
     const DragSourceState& stagedDragSource() const { return m_stagedDragSource.value(); }
     enum class DidBecomeActive : bool { No, Yes };

@@ -32,7 +32,7 @@ function get2If(condition) {
 }
 noInline(get2If);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(get1(), 1);
     shouldBe(get2(), 2);
     shouldBe(get1(), 1);

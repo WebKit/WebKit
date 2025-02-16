@@ -2,7 +2,7 @@
 
 function foo() {}
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
   class C extends foo {
     constructor() {
       super();

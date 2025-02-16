@@ -314,6 +314,7 @@ extern NSString * const kCAFilterColorSaturate;
 extern NSString * const kCAFilterGaussianBlur;
 extern NSString * const kCAFilterPlusD;
 extern NSString * const kCAFilterPlusL;
+extern NSString * const kCAFilterVibrantColorMatrix;
 
 extern NSString * const kCAFilterNormalBlendMode;
 extern NSString * const kCAFilterMultiplyBlendMode;
@@ -331,6 +332,8 @@ extern NSString * const kCAFilterHueBlendMode;
 extern NSString * const kCAFilterSaturationBlendMode;
 extern NSString * const kCAFilterColorBlendMode;
 extern NSString * const kCAFilterLuminosityBlendMode;
+
+extern NSString * const kCAFilterInputColorMatrix;
 
 extern NSString * const kCAContextCIFilterBehavior;
 extern NSString * const kCAContextDisplayName;

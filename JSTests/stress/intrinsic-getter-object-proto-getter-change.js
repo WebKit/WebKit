@@ -9,7 +9,7 @@ function getter() { return {}.__proto__ }
 noDFG(getter)
 
 function test() {
-    for (var i = 0; i < 1e5; i++)
+    for (var i = 0; i < testLoopCount; i++)
         shouldBe(getter(), Object.prototype)
 
     var expectedPrototype = {};

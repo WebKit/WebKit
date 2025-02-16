@@ -29,11 +29,11 @@
 ] interface CommandEvent : Event {
     constructor([AtomString] DOMString type, optional CommandEventInit eventInitDict);
 
-    readonly attribute Element? invoker;
+    readonly attribute Element? source;
     readonly attribute DOMString command;
 };
 
 dictionary CommandEventInit : EventInit {
-    Element? invoker = null;
+    Element? source = null;
     DOMString command = "";
 };

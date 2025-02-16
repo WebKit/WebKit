@@ -30,27 +30,13 @@
 #import "Device.h"
 #import <cmath>
 #import <wtf/TZoneMallocInlines.h>
-
-@implementation SamplerIdentifier
-- (instancetype)initWithFirst:(uint64_t)first second:(uint64_t)second
-{
-    if (!(self = [super init]))
-        return nil;
-
-    _first = first;
-    _second = second;
-    return self;
-}
-- (instancetype)copyWithZone:(NSZone *)zone
-{
-    return self;
-}
-@end
+#import <wtf/text/Base64.h>
 
 namespace WebGPU {
 
-NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *Sampler::cachedSamplerStates = nil;
-NSMutableOrderedSet<SamplerIdentifier*> *Sampler::lastAccessedKeys = nil;
+__attribute__((no_destroy)) std::unique_ptr<Sampler::CachedSamplerStateContainer> Sampler::cachedSamplerStates = nullptr;
+__attribute__((no_destroy)) std::unique_ptr<Sampler::RetainedSamplerStateContainer> Sampler::retainedSamplerStates = nullptr;
+__attribute__((no_destroy)) std::unique_ptr<Sampler::CachedKeyContainer> Sampler::lastAccessedKeys = nullptr;
 Lock Sampler::samplerStateLock;
 
 static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
@@ -184,17 +170,13 @@ static uint32_t miscHash(MTLSamplerDescriptor* descriptor)
     return h.miscHash;
 }
 
-static uint64_t floatToUint64(float f)
+static Sampler::UniqueSamplerIdentifier computeDescriptorHash(MTLSamplerDescriptor* descriptor)
 {
-    return static_cast<uint64_t>(*reinterpret_cast<uint32_t*>(&f));
-}
-
-static std::pair<uint64_t, uint64_t> computeDescriptorHash(MTLSamplerDescriptor* descriptor)
-{
-    std::pair<uint64_t, uint64_t> hash;
-    hash.first = miscHash(descriptor) | (floatToUint64(descriptor.lodMinClamp) << 32);
-    hash.second = floatToUint64(descriptor.lodMaxClamp) | (floatToUint64(descriptor.maxAnisotropy) << 32);
-    return hash;
+    auto floatToUint32 = ^(float f) {
+        return *reinterpret_cast<uint32_t*>(&f);
+    };
+    std::array<uint32_t, 4> uintData = { miscHash(descriptor), floatToUint32(descriptor.lodMinClamp), floatToUint32(descriptor.lodMaxClamp), floatToUint32(descriptor.maxAnisotropy) };
+    return base64EncodeToString(unsafeMakeSpan(static_cast<uint8_t*>(static_cast<void*>(&uintData[0])), sizeof(uintData)));
 }
 
 static MTLSamplerDescriptor *createMetalDescriptorFromDescriptor(const WGPUSamplerDescriptor &descriptor)
@@ -232,15 +214,13 @@ Ref<Sampler> Device::createSampler(const WGPUSamplerDescriptor& descriptor)
         return Sampler::createInvalid(*this);
     }
 
-    MTLSamplerDescriptor * samplerDescriptor = createMetalDescriptorFromDescriptor(descriptor);
-    auto newDescriptorHash = computeDescriptorHash(samplerDescriptor);
-
-    return Sampler::create([[SamplerIdentifier alloc] initWithFirst:newDescriptorHash.first second:newDescriptorHash.second], descriptor, *this);
+    MTLSamplerDescriptor* samplerDescriptor = createMetalDescriptorFromDescriptor(descriptor);
+    return Sampler::create(computeDescriptorHash(samplerDescriptor), descriptor, *this);
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Sampler);
 
-Sampler::Sampler(SamplerIdentifier* samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
+Sampler::Sampler(UniqueSamplerIdentifier&& samplerIdentifier, const WGPUSamplerDescriptor& descriptor, Device& device)
     : m_samplerIdentifier(samplerIdentifier)
     , m_descriptor(descriptor)
     , m_device(device)
@@ -255,10 +235,14 @@ Sampler::Sampler(Device& device)
 
 Sampler::~Sampler()
 {
-    if (m_samplerIdentifier) {
-        Locker locker { samplerStateLock };
-        [cachedSamplerStates removeObjectForKey:m_samplerIdentifier];
-        [lastAccessedKeys removeObject:m_samplerIdentifier];
+    if (!m_samplerIdentifier)
+        return;
+
+    Locker locker { samplerStateLock };
+    if (auto it = retainedSamplerStates->find(*m_samplerIdentifier); it != retainedSamplerStates->end()) {
+        it->value.apiSamplerList.remove(this);
+        if (!it->value.apiSamplerList.size())
+            retainedSamplerStates->remove(it);
     }
 }
 
@@ -277,36 +261,60 @@ id<MTLSamplerState> Sampler::samplerState() const
     if (!m_samplerIdentifier)
         return nil;
 
+    if (m_cachedSamplerState)
+        return m_cachedSamplerState;
+
     Locker locker { samplerStateLock };
     if (!cachedSamplerStates) {
-        cachedSamplerStates = [NSMutableDictionary dictionary];
-        lastAccessedKeys = [NSMutableOrderedSet orderedSet];
+        cachedSamplerStates = WTF::makeUnique<CachedSamplerStateContainer>();
+        retainedSamplerStates = WTF::makeUnique<RetainedSamplerStateContainer>();
+        lastAccessedKeys = WTF::makeUnique<CachedKeyContainer>();
     }
 
-    id<MTLSamplerState> samplerState = [cachedSamplerStates objectForKey:m_samplerIdentifier];
-    if (samplerState)
-        return samplerState;
+    id<MTLSamplerState> samplerState = nil;
+    auto samplerIdentifier = *m_samplerIdentifier;
+    if (auto it = retainedSamplerStates->find(samplerIdentifier); it != retainedSamplerStates->end()) {
+        samplerState = it->value.samplerState.get();
+        it->value.apiSamplerList.add(this);
+        lastAccessedKeys->appendOrMoveToLast(samplerIdentifier);
+        if ((m_cachedSamplerState = samplerState))
+            return samplerState;
+    }
 
     id<MTLDevice> device = m_device->device();
     if (!device)
         return nil;
-    if (cachedSamplerStates.count >= device.maxArgumentBufferSamplerCount) {
-        if (!lastAccessedKeys.count)
+    auto maxArgumentBufferSamplerCount = std::min<NSUInteger>(2048, device.maxArgumentBufferSamplerCount);
+    if (cachedSamplerStates->size() >= maxArgumentBufferSamplerCount / 2) {
+        cachedSamplerStates->removeIf([&] (auto& pair) {
+            if (!pair.value.get().get()) {
+                lastAccessedKeys->remove(pair.key);
+                return true;
+            }
+            return false;
+        });
+    }
+    if (cachedSamplerStates->size() >= maxArgumentBufferSamplerCount) {
+        if (!lastAccessedKeys->size())
             return nil;
-
-        SamplerIdentifier* key = [lastAccessedKeys objectAtIndex:0];
-        if (key)
-            [cachedSamplerStates removeObjectForKey:key];
-        [lastAccessedKeys removeObjectAtIndex:0];
-        ASSERT(cachedSamplerStates.count < device.maxArgumentBufferSamplerCount);
+        auto& firstKey = *lastAccessedKeys->begin();
+        cachedSamplerStates->remove(firstKey);
+        retainedSamplerStates->remove(firstKey);
+        lastAccessedKeys->removeFirst();
     }
 
     samplerState = [device newSamplerStateWithDescriptor:createMetalDescriptorFromDescriptor(m_descriptor)];
     if (!samplerState)
         return nil;
 
-    [cachedSamplerStates setObject:samplerState forKey:m_samplerIdentifier];
-    [lastAccessedKeys addObject:m_samplerIdentifier];
+    cachedSamplerStates->set(samplerIdentifier, samplerState);
+    auto addResult = retainedSamplerStates->add(samplerIdentifier, SamplerStateWithReferences {
+        .samplerState = samplerState,
+        .apiSamplerList = { }
+    });
+    addResult.iterator->value.apiSamplerList.add(this);
+    lastAccessedKeys->appendOrMoveToLast(samplerIdentifier);
+
     m_cachedSamplerState = samplerState;
 
     return samplerState;

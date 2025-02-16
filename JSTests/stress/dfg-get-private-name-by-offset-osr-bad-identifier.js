@@ -44,7 +44,7 @@ function factoryClass() {
 
 let C = factoryClass();
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let c = new C();
     assert.equals(c.getField(), 'test');
     c.setField('foo' + i);
@@ -54,7 +54,7 @@ for (let i = 0; i < 10000; i++) {
 let C2 = factoryClass(); // invalidate first version of setField due to Scope invalidation point
 
 // Triggers new version without folding get_from_scope
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let c = new C();
     assert.equals(c.getField(), 'test');
     c.setField('foo' + i);

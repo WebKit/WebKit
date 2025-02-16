@@ -101,7 +101,7 @@ private:
     bool preserveCurrentTargetForAxis(ScrollEventAxis, ElementIdentifier);
 
     Vector<SnapOffset<LayoutUnit>> currentlySnappedOffsetsForAxis(ScrollEventAxis) const;
-    HashSet<ElementIdentifier> currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const;
+    UncheckedKeyHashSet<ElementIdentifier> currentlySnappedBoxes(const Vector<SnapOffset<LayoutUnit>>& horizontalOffsets, const Vector<SnapOffset<LayoutUnit>>& verticalOffsets) const;
 
     bool setNearestScrollSnapIndexForAxisAndOffsetInternal(ScrollEventAxis, ScrollOffset, const ScrollExtents&, float pageScale);
     void updateCurrentlySnappedBoxes();
@@ -122,7 +122,7 @@ private:
     
     std::optional<unsigned> m_activeSnapIndexX;
     std::optional<unsigned> m_activeSnapIndexY;
-    HashSet<ElementIdentifier> m_currentlySnappedBoxes;
+    UncheckedKeyHashSet<ElementIdentifier> m_currentlySnappedBoxes;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ScrollSnapAnimatorState&);

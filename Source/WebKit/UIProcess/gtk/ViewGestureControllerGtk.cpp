@@ -655,7 +655,7 @@ void ViewGestureController::removeSwipeSnapshot()
 
 bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
 {
-    if (!canSwipeInDirection(direction))
+    if (!canSwipeInDirection(direction, DeferToConflictingGestures::No))
         return false;
 
     double deltaX = swipeTouchpadBaseWidth / gtkScrollDeltaMultiplier * 0.75;

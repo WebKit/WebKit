@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_WEEK)
-
 #include "BaseDateAndTimeInputType.h"
 #include <wtf/TZoneMalloc.h>
 
@@ -68,5 +66,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(WeekInputType, Type::Week)
-
-#endif // ENABLE(INPUT_TYPE_WEEK)

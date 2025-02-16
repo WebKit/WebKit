@@ -436,7 +436,7 @@ private:
 };
 
 struct SymbolTableIndexHashTraits : HashTraits<SymbolTableEntry> {
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 };
 
 class SymbolTable final : public JSCell {
@@ -466,7 +466,7 @@ public:
         return symbolTable;
     }
     
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 
     inline static Structure* createStructure(VM&, JSGlobalObject*, JSValue);

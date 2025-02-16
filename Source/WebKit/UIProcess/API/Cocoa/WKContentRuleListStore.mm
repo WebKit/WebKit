@@ -169,10 +169,17 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 #endif
 }
 
-- (void)_corruptContentRuleListForIdentifier:(NSString *)identifier usingCurrentVersion:(BOOL)usingCurrentVersion
+- (void)_corruptContentRuleListHeaderForIdentifier:(NSString *)identifier usingCurrentVersion:(BOOL)usingCurrentVersion
 {
 #if ENABLE(CONTENT_EXTENSIONS)
-    _contentRuleListStore->corruptContentRuleList(identifier, usingCurrentVersion);
+    _contentRuleListStore->corruptContentRuleListHeader(identifier, usingCurrentVersion);
+#endif
+}
+
+- (void)_invalidateContentRuleListHeaderForIdentifier:(NSString *)identifier
+{
+#if ENABLE(CONTENT_EXTENSIONS)
+    _contentRuleListStore->invalidateContentRuleListHeader(identifier);
 #endif
 }
 

@@ -1032,7 +1032,7 @@ const explore = (function() {
 })();
 
 const var_1_ = new Float64Array(1048576);
-for (var var_2_ = 0; var_2_ < 10000; (() => {
+for (var var_2_ = 0; var_2_ < testLoopCount; (() => {
     this.g ??= createGlobalObject();
     try {
       $vm.haveABadTime();

@@ -132,7 +132,7 @@ static NSArray<WKWebExtensionMatchPattern *> *toMatchPatterns(NSArray<NSString *
         WKWebExtensionMatchPattern *pattern = [[WKWebExtensionMatchPattern alloc] initWithString:rawPattern error:&error];
         if (!pattern) {
             if (outErrorMessage)
-                *outErrorMessage = toErrorString(nil, urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.localizedDescription);
+                *outErrorMessage = toErrorString(nullString(), urlsKey, @"'%@' is an invalid match pattern. %@", rawPattern, error.localizedDescription);
             return nil;
         }
 
@@ -165,7 +165,7 @@ static NSNumber *toResourceType(NSString *typeString, NSString **outErrorMessage
 
     NSNumber *typeAsNumber = validTypes[typeString];
     if (!typeAsNumber) {
-        *outErrorMessage = toErrorString(nil, typesKey, @"'%@' is an unknown resource type", typeString);
+        *outErrorMessage = toErrorString(nullString(), typesKey, @"'%@' is an unknown resource type", typeString);
         return nil;
     }
 

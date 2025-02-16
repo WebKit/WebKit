@@ -47,9 +47,8 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include "BitmapTexture.h"
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
 #include "CoordinatedPlatformLayerBufferRGB.h"
-#include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
+#include "GraphicsLayerContentsDisplayDelegateCoordinated.h"
 #include "TextureMapperFlags.h"
-#include "TextureMapperPlatformLayerProxy.h"
 WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
@@ -101,25 +100,24 @@ ImageBufferSkiaAcceleratedBackend::ImageBufferSkiaAcceleratedBackend(const Param
 
 #if USE(COORDINATED_GRAPHICS)
     // Use a content layer for canvas.
-    if (parameters.purpose == RenderingPurpose::Canvas) {
-        auto proxy = TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::Canvas);
-        proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) {
-            auto image = createNativeImageReference();
-            if (!image)
-                return;
-
-            proxy.pushNextBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), GLFence::create()));
-        });
-        m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateTextureMapper::create(WTFMove(proxy));
-    }
+    if (parameters.purpose == RenderingPurpose::Canvas)
+        m_layerContentsDisplayDelegate = GraphicsLayerContentsDisplayDelegateCoordinated::create();
 #endif
 }
 
-ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend()
+ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend() = default;
+
+void ImageBufferSkiaAcceleratedBackend::prepareForDisplay()
 {
 #if USE(COORDINATED_GRAPHICS)
-    if (m_layerContentsDisplayDelegate)
-        static_cast<GraphicsLayerContentsDisplayDelegateTextureMapper*>(m_layerContentsDisplayDelegate.get())->proxy().setSwapBuffersFunction(nullptr);
+    if (!m_layerContentsDisplayDelegate)
+        return;
+
+    auto image = createNativeImageReference();
+    if (!image)
+        return;
+
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferNativeImage::create(image.releaseNonNull(), GLFence::create()));
 #endif
 }
 
@@ -229,6 +227,11 @@ void ImageBufferSkiaAcceleratedBackend::getPixelBuffer(const IntRect& srcRect, P
     m_surface->readPixels(dstPixmap, sourceRectClipped.x(), sourceRectClipped.y());
 }
 
+static std::span<uint8_t> mutableSpan(SkData* data)
+{
+    return unsafeMakeSpan(static_cast<uint8_t*>(data->writable_data()), data->size());
+}
+
 void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     UNUSED_PARAM(destFormat);
@@ -279,8 +282,7 @@ void ImageBufferSkiaAcceleratedBackend::putPixelBuffer(const PixelBuffer& pixelB
 
     // Fall back to converting, but only the part covered by sourceRectClipped/srcPixmap.
     auto data = SkData::MakeUninitialized(srcPixmap.computeByteSize());
-    ImageBufferBackend::putPixelBuffer(pixelBuffer, sourceRectClipped, IntPoint::zero(), destFormat,
-        static_cast<uint8_t*>(data->writable_data()));
+    ImageBufferBackend::putPixelBuffer(pixelBuffer, sourceRectClipped, IntPoint::zero(), destFormat, mutableSpan(data.get()));
     auto convertedSrcInfo = SkImageInfo::Make(srcPixmap.dimensions(), SkColorType::kBGRA_8888_SkColorType,
         SkAlphaType::kPremul_SkAlphaType, colorSpace().platformColorSpace());
     SkPixmap convertedSrcPixmap(convertedSrcInfo, data->writable_data(), convertedSrcInfo.minRowBytes64());

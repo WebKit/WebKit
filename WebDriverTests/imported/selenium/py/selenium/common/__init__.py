@@ -15,6 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 
+from .exceptions import DetachedShadowRootException
 from .exceptions import ElementClickInterceptedException
 from .exceptions import ElementNotInteractableException
 from .exceptions import ElementNotSelectableException
@@ -83,4 +84,5 @@ __all__ = [
     "InvalidSessionIdException",
     "SessionNotCreatedException",
     "UnknownMethodException",
+    "DetachedShadowRootException",
 ]

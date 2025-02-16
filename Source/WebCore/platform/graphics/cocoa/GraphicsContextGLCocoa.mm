@@ -43,6 +43,7 @@
 #import <pal/spi/cocoa/MetalSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/RuntimeApplicationChecks.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/darwin/WeakLinking.h>
 #import <wtf/text/CString.h>
 
@@ -104,8 +105,8 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     }
 
 #if ASSERT_ENABLED
-    const char* clientExtensions = EGL_QueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS);
-    ASSERT(clientExtensions);
+    auto clientExtensions = unsafeSpan8(EGL_QueryString(EGL_NO_DISPLAY, EGL_EXTENSIONS));
+    ASSERT(clientExtensions.data());
 #endif
 
     Vector<EGLAttrib> displayAttributes;
@@ -123,7 +124,7 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     }
 #if PLATFORM(MAC)
     else if (attrs.windowGPUID) {
-        ASSERT(strstr(clientExtensions, "EGL_ANGLE_platform_angle_device_id"));
+        ASSERT(WTF::contains(clientExtensions, "EGL_ANGLE_platform_angle_device_id"_span));
         // If the power preference is default, use the GPU the context window is on.
         // If the power preference is low power, and we know which GPU the context window is on,
         // most likely the lowest power is the GPU that drives the context window, as that GPU
@@ -135,7 +136,7 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
         displayAttributes.append(static_cast<EGLAttrib>(attrs.windowGPUID));
     }
 #endif
-    ASSERT(strstr(clientExtensions, "EGL_ANGLE_feature_control"));
+    ASSERT(WTF::contains(clientExtensions, "EGL_ANGLE_feature_control"_span));
     displayAttributes.append(EGL_FEATURE_OVERRIDES_DISABLED_ANGLE);
     displayAttributes.append(reinterpret_cast<EGLAttrib>(disabledANGLEMetalFeatures));
     displayAttributes.append(EGL_NONE);
@@ -150,8 +151,8 @@ static EGLDisplay initializeEGLDisplay(const GraphicsContextGLAttributes& attrs)
     LOG(WebGL, "ANGLE initialised Major: %d Minor: %d", majorVersion, minorVersion);
 
 #if ASSERT_ENABLED && ENABLE(WEBXR)
-    const char* displayExtensions = EGL_QueryString(display, EGL_EXTENSIONS);
-    ASSERT(strstr(displayExtensions, "EGL_ANGLE_metal_shared_event_sync"));
+    auto displayExtensions = unsafeSpan8(EGL_QueryString(display, EGL_EXTENSIONS));
+    ASSERT(WTF::contains(displayExtensions, "EGL_ANGLE_metal_shared_event_sync"_span));
 #endif
 
     return display;
@@ -174,12 +175,13 @@ GraphicsContextGLCocoa::GraphicsContextGLCocoa(GraphicsContextGLAttributes&& cre
 
 GraphicsContextGLCocoa::~GraphicsContextGLCocoa()
 {
-    freeDrawingBuffers();
+    if (makeContextCurrent())
+        freeDrawingBuffers();
 }
 
 IOSurface* GraphicsContextGLCocoa::displayBufferSurface()
 {
-    return displayBuffer().surface.get();
+    return displayBuffer().surface();
 }
 
 std::tuple<GCGLenum, GCGLenum> GraphicsContextGLCocoa::externalImageTextureBindingPoint()
@@ -258,8 +260,8 @@ bool GraphicsContextGLCocoa::platformInitializeContext()
     eglContextAttributes.append(EGL_FALSE);
 
 #if HAVE(TASK_IDENTITY_TOKEN)
-    auto displayExtensions = EGL_QueryString(m_displayObj, EGL_EXTENSIONS);
-    bool supportsOwnershipIdentity = strstr(displayExtensions, "EGL_ANGLE_metal_create_context_ownership_identity");
+    auto displayExtensions = unsafeSpan8(EGL_QueryString(m_displayObj, EGL_EXTENSIONS));
+    bool supportsOwnershipIdentity = WTF::contains(displayExtensions, "EGL_ANGLE_metal_create_context_ownership_identity"_span);
     if (m_resourceOwner && supportsOwnershipIdentity) {
         eglContextAttributes.append(EGL_CONTEXT_METAL_OWNERSHIP_IDENTITY_ANGLE);
         eglContextAttributes.append(m_resourceOwner.taskIdToken());
@@ -389,17 +391,17 @@ void GraphicsContextGLCocoa::setDrawingBufferColorSpace(const DestinationColorSp
         forceContextLost();
 }
 
-GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::drawingBuffer()
+IOSurfacePbuffer& GraphicsContextGLCocoa::drawingBuffer()
 {
     return surfaceBuffer(SurfaceBuffer::DrawingBuffer);
 }
 
-GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
+IOSurfacePbuffer& GraphicsContextGLCocoa::displayBuffer()
 {
     return surfaceBuffer(SurfaceBuffer::DisplayBuffer);
 }
 
-GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(SurfaceBuffer buffer)
+IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(SurfaceBuffer buffer)
 {
     if (buffer == SurfaceBuffer::DisplayBuffer)
         return m_drawingBuffers[(m_currentDrawingBufferIndex + maxReusedDrawingBuffers - 1u) % maxReusedDrawingBuffers];
@@ -409,14 +411,14 @@ GraphicsContextGLCocoa::IOSurfacePbuffer& GraphicsContextGLCocoa::surfaceBuffer(
 bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
 {
     ASSERT(!getInternalFramebufferSize().isEmpty());
-    if (drawingBuffer())
-        EGL_ReleaseTexImage(m_displayObj, drawingBuffer().pbuffer, EGL_BACK_BUFFER);
+    if (auto& buffer = drawingBuffer())
+        EGL_ReleaseTexImage(m_displayObj, buffer.pbuffer(), EGL_BACK_BUFFER);
 
     m_currentDrawingBufferIndex++;
     auto& buffer = drawingBuffer();
 
-    if (buffer && (buffer.surface->isInUse() || m_failNextStatusCheck)) {
-        EGL_DestroySurface(m_displayObj, buffer.pbuffer);
+    if (buffer && (buffer.isInUse() || m_failNextStatusCheck)) {
+        EGL_DestroySurface(m_displayObj, buffer.pbuffer());
         buffer = { };
     }
     if (m_failNextStatusCheck) {
@@ -447,14 +449,14 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
         EGLSurface pbuffer = EGL_CreatePbufferFromClientBuffer(m_displayObj, EGL_IOSURFACE_ANGLE, surface->surface(), m_configObj, surfaceAttributes);
         if (!pbuffer)
             return false;
-        buffer = { WTFMove(surface), pbuffer };
+        buffer = IOSurfacePbuffer { WTFMove(surface), pbuffer };
     }
 
     auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
     ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, m_texture);
-    if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER)) {
-        EGL_DestroySurface(m_displayObj, buffer.pbuffer);
+    if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer(), EGL_BACK_BUFFER)) {
+        EGL_DestroySurface(m_displayObj, buffer.pbuffer());
         buffer = { };
         return false;
     }
@@ -463,11 +465,12 @@ bool GraphicsContextGLCocoa::bindNextDrawingBuffer()
 
 void GraphicsContextGLCocoa::freeDrawingBuffers()
 {
-    if (drawingBuffer())
-        EGL_ReleaseTexImage(m_displayObj, drawingBuffer().pbuffer, EGL_BACK_BUFFER);
+    // Note: due to a ANGLE bug in ReleaseTexImage, the current context should be the context owning the pbuffer and the texture.
+    if (auto& buffer = drawingBuffer())
+        EGL_ReleaseTexImage(m_displayObj, buffer.pbuffer(), EGL_BACK_BUFFER);
     for (auto& buffer : m_drawingBuffers) {
         if (buffer) {
-            EGL_DestroySurface(m_displayObj, buffer.pbuffer);
+            EGL_DestroySurface(m_displayObj, buffer.pbuffer());
             buffer = { };
         }
     }
@@ -749,7 +752,7 @@ GraphicsContextGLCV* GraphicsContextGLCocoa::cvContext()
 RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 {
     auto& buffer = displayBuffer();
-    if (!buffer || buffer.surface->size() != getInternalFramebufferSize())
+    if (!buffer || buffer.size() != getInternalFramebufferSize())
         return nullptr;
     // Note: We are using GL to read the IOSurface. At the time of writing, there are no convinient
     // functions to convert the IOSurface pixel data to ImageData. The image data ends up being
@@ -760,7 +763,7 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
     auto [textureTarget, textureBinding] = drawingBufferTextureBindingPoint();
     ScopedRestoreTextureBinding restoreBinding(textureBinding, textureTarget, textureTarget != TEXTURE_RECTANGLE_ARB);
     GL_BindTexture(textureTarget, texture);
-    if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER))
+    if (!EGL_BindTexImage(m_displayObj, buffer.pbuffer(), EGL_BACK_BUFFER))
         return nullptr;
     GL_TexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     ScopedFramebuffer fbo;
@@ -770,7 +773,7 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 
     auto result = readPixelsForPaintResults();
 
-    EGLBoolean releaseOk = EGL_ReleaseTexImage(m_displayObj, buffer.pbuffer, EGL_BACK_BUFFER);
+    EGLBoolean releaseOk = EGL_ReleaseTexImage(m_displayObj, buffer.pbuffer(), EGL_BACK_BUFFER);
     ASSERT_UNUSED(releaseOk, releaseOk);
     return result;
 }
@@ -779,17 +782,18 @@ RefPtr<PixelBuffer> GraphicsContextGLCocoa::readCompositedResults()
 
 RefPtr<VideoFrame> GraphicsContextGLCocoa::surfaceBufferToVideoFrame(SurfaceBuffer buffer)
 {
-    if (!makeContextCurrent())
-        return nullptr;
     if (buffer == SurfaceBuffer::DrawingBuffer) {
+        if (!makeContextCurrent())
+            return nullptr;
         prepareTexture();
         waitUntilWorkScheduled();
     }
+
     auto& source = surfaceBuffer(buffer);
-    if (!source || source.surface->size() != getInternalFramebufferSize())
+    if (!source || source.size() != getInternalFramebufferSize())
         return nullptr;
     // We will mirror and rotate the buffer explicitly. Thus the source being used is always a new one.
-    auto pixelBuffer = createCVPixelBuffer(source.surface->surface());
+    auto pixelBuffer = createCVPixelBuffer(source.surface()->surface());
     if (!pixelBuffer)
         return nullptr;
     // Mirror and rotate the pixel buffer explicitly, as WebRTC encoders cannot mirror.
@@ -821,25 +825,25 @@ void GraphicsContextGLCocoa::invalidateKnownTextureContent(GCGLuint texture)
         m_cv->invalidateKnownTextureContent(texture);
 }
 
-void GraphicsContextGLCocoa::withBufferAsNativeImage(SurfaceBuffer buffer, Function<void(NativeImage&)> func)
+RefPtr<NativeImage> GraphicsContextGLCocoa::bufferAsNativeImage(SurfaceBuffer buffer)
 {
     RetainPtr<CGContextRef> cgContext;
     RefPtr<NativeImage> image;
     if (contextAttributes().premultipliedAlpha) {
         // Use the IOSurface backed image directly
-        if (!makeContextCurrent())
-            return;
         if (buffer == SurfaceBuffer::DrawingBuffer) {
+            if (!makeContextCurrent())
+                return nullptr;
             prepareTexture();
             waitUntilWorkScheduled();
         }
         IOSurfacePbuffer& source = surfaceBuffer(buffer);
-        if (!source || source.surface->size() != getInternalFramebufferSize())
-            return;
-        cgContext = source.surface->createPlatformContext();
-        if (cgContext)
-            image = NativeImage::create(source.surface->createImage(cgContext.get()));
+        if (!source || source.size() != getInternalFramebufferSize())
+            return nullptr;
+        image = source.copyNativeImage();
     } else {
+        if (!makeContextCurrent())
+            return nullptr;
         // Since IOSurface-backed images only support premultiplied alpha, read
         // the image into a PixelBuffer which can be used to create a CGImage
         // that does the conversion.
@@ -851,15 +855,14 @@ void GraphicsContextGLCocoa::withBufferAsNativeImage(SurfaceBuffer buffer, Funct
         else
             pixelBuffer = readCompositedResults();
         if (!pixelBuffer)
-            return;
+            return nullptr;
         image = createNativeImageFromPixelBuffer(contextAttributes(), pixelBuffer.releaseNonNull());
     }
-
     if (!image)
-        return;
+        return nullptr;
 
     CGImageSetCachingFlags(image->platformImage().get(), kCGImageCachingTransient);
-    func(*image);
+    return image;
 }
 
 void GraphicsContextGLCocoa::insertFinishedSignalOrInvoke(Function<void()> signal)
@@ -899,6 +902,12 @@ bool GraphicsContextGLCocoa::copyTextureFromVideoFrame(VideoFrame& videoFrame, P
     return contextCV->copyVideoSampleToTexture(*videoFrameCV, texture, level, internalFormat, format, type, WebCore::GraphicsContextGL::FlipY(flipY));
 }
 #endif
+
+void GraphicsContextGLCocoa::prepareForDrawingBufferWrite()
+{
+    auto& buffer = drawingBuffer();
+    buffer.prepareForWrite();
+}
 
 }
 

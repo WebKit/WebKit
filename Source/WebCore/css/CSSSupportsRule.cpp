@@ -56,11 +56,11 @@ String CSSSupportsRule::cssText() const
     return builder.toString();
 }
 
-String CSSSupportsRule::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+String CSSSupportsRule::cssText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     builder.append("@supports "_s, conditionText());
-    appendCSSTextWithReplacementURLsForItems(builder, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
+    appendCSSTextWithReplacementURLsForItems(builder, context);
     return builder.toString();
 }
 

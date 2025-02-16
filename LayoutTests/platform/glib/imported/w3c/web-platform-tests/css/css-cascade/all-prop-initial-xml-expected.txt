@@ -124,6 +124,7 @@ PASS d
 PASS direction
 PASS display
 PASS dominant-baseline
+PASS dynamic-range-limit
 PASS empty-cells
 PASS field-sizing
 PASS fill
@@ -247,6 +248,8 @@ PASS outline-offset
 PASS outline-style
 PASS outline-width
 PASS overflow-anchor
+PASS overflow-block
+PASS overflow-inline
 PASS overflow-wrap
 PASS overflow-x
 PASS overflow-y
@@ -268,6 +271,7 @@ PASS perspective-origin
 PASS pointer-events
 PASS position
 PASS position-anchor
+PASS position-area
 PASS position-try-order
 PASS print-color-adjust
 PASS quotes

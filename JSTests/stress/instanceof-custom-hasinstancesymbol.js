@@ -11,7 +11,7 @@ noInline(instanceOf);
 
 function body() {
     var result = 0;
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         if (instanceOf(x, Constructor))
             result++;
     }

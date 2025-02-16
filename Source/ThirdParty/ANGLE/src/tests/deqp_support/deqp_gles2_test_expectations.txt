@@ -117,6 +117,9 @@
 42260115 D3D11 : dEQP-GLES2.functional.shaders.invariance.highp.loop_2 = FAIL
 42260115 D3D11 : dEQP-GLES2.functional.shaders.invariance.mediump.loop_2 = FAIL
 
+// D3D11's depth component 32 does not have enough precision
+364069034 D3D11 : dEQP-GLES2.functional.fbo.completeness.renderable.texture.depth.depth_component32 = FAIL
+
 // OpenGL desktop back-end failures
 42260603 OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.color0.srgb8_alpha8 = FAIL
 42260603 OPENGL : dEQP-GLES2.functional.fbo.completeness.renderable.texture.stencil.srgb8_alpha8 = FAIL
@@ -339,6 +342,8 @@
 42265203 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.31 = FAIL
 42265203 LINUX NVIDIA GTX1660 VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.94 = FAIL
 
+388052193 LINUX UBSAN : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.* = SKIP
+
 42265173 UBSAN : dEQP-GLES2.functional.shaders.random.* = SKIP
 
 // Samsung Galaxy S23
@@ -359,7 +364,7 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.fbo.render*stencil* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.fragment_ops.interaction.basic_shader.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.rasterization.primitives.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.fragdata.valid_dynamic_index = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.* = SKIP
+b/338287961 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.all_features.fragment.39 = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.basic_expression.combined.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.basic_expression.fragment.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.shaders.random.comparison_ops.fragment.* = SKIP
@@ -420,7 +425,6 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES2.functional.uniform_api.value.assigned.
 356399840 WGPU : dEQP-GLES2.functional.negative_api.texture.generatemipmap_npot_wdt_hgt = FAIL
 356399840 WGPU : dEQP-GLES2.functional.polygon_offset.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.rasterization.* = FAIL
-356399840 WGPU : dEQP-GLES2.functional.read_pixels.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.shaders.* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.state_query.shader.uniform_value_* = FAIL
 356399840 WGPU : dEQP-GLES2.functional.texture.* = FAIL

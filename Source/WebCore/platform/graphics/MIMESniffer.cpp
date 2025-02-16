@@ -27,8 +27,7 @@
 #include "MIMESniffer.h"
 
 #include <array>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
@@ -37,7 +36,7 @@ namespace MIMESniffer {
 template<std::size_t N>
 constexpr auto span8(const char(&p)[N])
 {
-    return std::span<const uint8_t, N - 1>(byteCast<uint8_t>(&p[0]), N - 1);
+    return unsafeMakeSpan<const uint8_t, N - 1>(byteCast<uint8_t>(static_cast<const char*>(p)), N - 1);
 }
 
 static bool hasSignatureForMP4(std::span<const uint8_t> sequence)
@@ -163,6 +162,12 @@ static bool hasSignatureForWebM(std::span<const uint8_t> sequence)
                 break;
             //  7. If matched is true, abort these steps and return true.
             if (sequence[iter] == 0x77 && sequence[iter + 1] == 0x65 && sequence[iter + 2] == 0x62 && sequence[iter + 3] == 0x6d)
+                return true;
+
+            // case for matroska, treat it as webm.
+            if (iter + 8 >= length)
+                break;
+            if (sequence[iter] == 'm' && sequence[iter + 1] == 'a' && sequence[iter + 2] == 't' && sequence[iter + 3] == 'r' && sequence[iter + 4] == 'o' && sequence[iter + 5] == 's' && sequence[iter + 6] == 'k' && sequence[iter + 7] == 'a')
                 return true;
         }
         //  2. Increment iter by 1.
@@ -347,5 +352,3 @@ String getMIMETypeFromContent(std::span<const uint8_t> sequence)
 } // namespace MIMESniffer
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

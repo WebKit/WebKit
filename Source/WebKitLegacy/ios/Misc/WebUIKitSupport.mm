@@ -39,6 +39,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/WebBackgroundTaskController.h>
 #import <WebCore/WebCoreThreadSystemInterface.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/spi/darwin/dyldSPI.h>
 
 using namespace WebCore;
@@ -135,13 +136,11 @@ CGPathRef WebKitCreatePathWithShrinkWrappedRects(NSArray* cgRects, CGFloat radiu
     Vector<FloatRect> rects;
     rects.reserveInitialCapacity([cgRects count]);
 
-    const char* cgRectEncodedString = @encode(CGRect);
-
     for (NSValue *rectValue in cgRects) {
         CGRect cgRect;
         [rectValue getValue:&cgRect];
 
-        if (strcmp(cgRectEncodedString, rectValue.objCType))
+        if (!nsValueHasObjCType<CGRect>(rectValue))
             return nullptr;
         rects.append(cgRect);
     }

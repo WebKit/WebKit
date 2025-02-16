@@ -360,8 +360,42 @@ bool ValidateTexImageFormatCombination(const Context *context,
     {
         if (!ValidES3FormatCombination(format, type, internalFormat))
         {
-            ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
-            return false;
+            bool extensionFormatsAllowed = false;
+            switch (internalFormat)
+            {
+                case GL_LUMINANCE4_ALPHA4_OES:
+                    if (context->getExtensions().requiredInternalformatOES &&
+                        type == GL_UNSIGNED_BYTE && format == GL_LUMINANCE_ALPHA)
+                    {
+                        extensionFormatsAllowed = true;
+                    }
+                    break;
+                case GL_DEPTH_COMPONENT32_OES:
+                    if ((context->getExtensions().requiredInternalformatOES &&
+                         context->getExtensions().depth32OES) &&
+                        type == GL_UNSIGNED_INT && format == GL_DEPTH_COMPONENT)
+                    {
+                        extensionFormatsAllowed = true;
+                    }
+                    break;
+                case GL_RGB10_EXT:
+                case GL_RGB8_OES:
+                case GL_RGB565_OES:
+                    if (context->getExtensions().requiredInternalformatOES &&
+                        context->getExtensions().textureType2101010REVEXT &&
+                        type == GL_UNSIGNED_INT_2_10_10_10_REV_EXT && format == GL_RGB)
+                    {
+                        extensionFormatsAllowed = true;
+                    }
+                    break;
+                default:
+                    break;
+            }
+            if (!extensionFormatsAllowed)
+            {
+                ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kInvalidFormatCombination);
+                return false;
+            }
         }
     }
 
@@ -2399,12 +2433,6 @@ bool ValidateClearBufferiv(const Context *context,
     switch (buffer)
     {
         case GL_COLOR:
-            if (!ValidateDrawBufferIndexIfActivePLS(context->getPrivateState(),
-                                                    context->getMutableErrorSetForValidation(),
-                                                    entryPoint, drawbuffer, "drawbuffer"))
-            {
-                return false;
-            }
             if (drawbuffer < 0 || drawbuffer >= context->getCaps().maxDrawBuffers)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -2460,12 +2488,6 @@ bool ValidateClearBufferuiv(const Context *context,
     switch (buffer)
     {
         case GL_COLOR:
-            if (!ValidateDrawBufferIndexIfActivePLS(context->getPrivateState(),
-                                                    context->getMutableErrorSetForValidation(),
-                                                    entryPoint, drawbuffer, "drawbuffer"))
-            {
-                return false;
-            }
             if (drawbuffer < 0 || drawbuffer >= context->getCaps().maxDrawBuffers)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -2513,12 +2535,6 @@ bool ValidateClearBufferfv(const Context *context,
     switch (buffer)
     {
         case GL_COLOR:
-            if (!ValidateDrawBufferIndexIfActivePLS(context->getPrivateState(),
-                                                    context->getMutableErrorSetForValidation(),
-                                                    entryPoint, drawbuffer, "drawbuffer"))
-            {
-                return false;
-            }
             if (drawbuffer < 0 || drawbuffer >= context->getCaps().maxDrawBuffers)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -3735,7 +3751,7 @@ bool ValidateGetSynciv(const Context *context,
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -4268,7 +4284,7 @@ bool ValidateGetTransformFeedbackVarying(const Context *context,
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -5147,12 +5163,9 @@ bool ValidateGetTexLevelParameterfvANGLE(const Context *context,
                                          GLenum pname,
                                          const GLfloat *params)
 {
-    if (!context->getExtensions().textureMultisampleANGLE &&
-        !context->getExtensions().getTexLevelParameterANGLE)
+    if (!context->getExtensions().getTexLevelParameterANGLE)
     {
-        ANGLE_VALIDATION_ERROR(
-            GL_INVALID_OPERATION,
-            kMultisampleTextureExtensionOrGetTexLevelParameterExtensionOrES31Required);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
 
@@ -5166,12 +5179,9 @@ bool ValidateGetTexLevelParameterivANGLE(const Context *context,
                                          GLenum pname,
                                          const GLint *params)
 {
-    if (!context->getExtensions().textureMultisampleANGLE &&
-        !context->getExtensions().getTexLevelParameterANGLE)
+    if (!context->getExtensions().getTexLevelParameterANGLE)
     {
-        ANGLE_VALIDATION_ERROR(
-            GL_INVALID_OPERATION,
-            kMultisampleTextureExtensionOrGetTexLevelParameterExtensionOrES31Required);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kExtensionNotEnabled);
         return false;
     }
 
@@ -5207,37 +5217,5 @@ bool ValidateSampleMaskiANGLE(const PrivateState &state,
     }
 
     return ValidateSampleMaskiBase(state, errors, entryPoint, maskNumber, mask);
-}
-
-bool ValidateDrawBufferIndexIfActivePLS(const PrivateState &state,
-                                        ErrorSet *errors,
-                                        angle::EntryPoint entryPoint,
-                                        GLuint drawBufferIdx,
-                                        const char *argumentName)
-{
-    int numPLSPlanes = state.getPixelLocalStorageActivePlanes();
-    if (numPLSPlanes != 0)
-    {
-        // INVALID_OPERATION is generated ... if any of the following are true:
-        //
-        //   <drawBufferIdx> >= MAX_COLOR_ATTACHMENTS_WITH_ACTIVE_PIXEL_LOCAL_STORAGE_ANGLE
-        //   <drawBufferIdx> >= (MAX_COMBINED_DRAW_BUFFERS_AND_PIXEL_LOCAL_STORAGE_PLANES_ANGLE -
-        //                       ACTIVE_PIXEL_LOCAL_STORAGE_PLANES_ANGLE)
-        //
-        if (drawBufferIdx >= state.getCaps().maxColorAttachmentsWithActivePixelLocalStorage)
-        {
-            errors->validationErrorF(entryPoint, GL_INVALID_OPERATION,
-                                     kPLSDrawBufferExceedsAttachmentLimit, argumentName);
-            return false;
-        }
-        if (drawBufferIdx >=
-            state.getCaps().maxCombinedDrawBuffersAndPixelLocalStoragePlanes - numPLSPlanes)
-        {
-            errors->validationErrorF(entryPoint, GL_INVALID_OPERATION,
-                                     kPLSDrawBufferExceedsCombinedAttachmentLimit, argumentName);
-            return false;
-        }
-    }
-    return true;
 }
 }  // namespace gl

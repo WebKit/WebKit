@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,10 +23,13 @@
 #if PLATFORM(MAC)
 
 #import "BitmapImage.h"
+#import "CSSPropertyNames.h"
 #import "CSSValueKeywords.h"
 #import "CSSValueList.h"
 #import "Color.h"
+#import "ColorBlending.h"
 #import "ColorMac.h"
+#import "ColorSerialization.h"
 #import "Document.h"
 #import "ElementInlines.h"
 #import "FileList.h"
@@ -147,9 +150,7 @@ bool RenderThemeMac::canPaint(const PaintInfo& paintInfo, const Settings&, Style
 #endif
     case StyleAppearance::Button:
     case StyleAppearance::Checkbox:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
@@ -195,9 +196,7 @@ bool RenderThemeMac::canCreateControlPartForRenderer(const RenderObject& rendere
 #if ENABLE(APPLE_PAY)
         || type == StyleAppearance::ApplePayButton
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
         || type == StyleAppearance::ColorWell
-#endif
         || type == StyleAppearance::DefaultButton
 #if ENABLE(SERVICE_CONTROLS)
         || type == StyleAppearance::ImageControlsButton
@@ -903,15 +902,11 @@ static void setFontFromControlSize(RenderStyle& style, NSControlSize controlSize
     style.setFontDescription(WTFMove(fontDescription));
 }
 
-#if ENABLE(DATALIST_ELEMENT)
-
 void RenderThemeMac::adjustListButtonStyle(RenderStyle& style, const Element*) const
 {
     // Add a margin to place the button at end of the input field.
     style.setMarginEnd(Length(-4, LengthType::Fixed));
 }
-
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 void RenderThemeMac::adjustImageControlsButtonStyle(RenderStyle& style, const Element*) const
@@ -934,6 +929,27 @@ FloatSize RenderThemeMac::meterSizeForBounds(const RenderMeter& renderMeter, con
 bool RenderThemeMac::supportsMeter(StyleAppearance appearance) const
 {
     return appearance == StyleAppearance::Meter;
+}
+
+void RenderThemeMac::createColorWellSwatchSubtree(HTMLElement& swatch)
+{
+    Ref document = swatch.document();
+    Ref div = HTMLDivElement::create(document);
+    swatch.appendChild(ContainerNode::ChildChange::Source::Parser, div);
+    div->setInlineStyleProperty(CSSPropertyHeight, "100%"_s);
+    div->setInlineStyleProperty(CSSPropertyWidth, "100%"_s);
+    div->setInlineStyleProperty(CSSPropertyClipPath, "polygon(0 0, 100% 0, 0 100%)"_s);
+}
+
+void RenderThemeMac::setColorWellSwatchBackground(HTMLElement& swatch, Color color)
+{
+    Ref swatchChild = *downcast<HTMLElement>(swatch.protectedFirstChild());
+
+    auto backgroundColor = color.isOpaque() ? color : blendSourceOver(Color::white, color);
+    auto foregroundColor = color.isOpaque() ? Color::transparentBlack : blendSourceOver(Color::black, color);
+
+    swatch.setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForHTML(backgroundColor));
+    swatchChild->setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForHTML(foregroundColor));
 }
 
 IntRect RenderThemeMac::progressBarRectForBounds(const RenderProgress& renderProgress, const IntRect& bounds) const
@@ -1165,7 +1181,6 @@ void RenderThemeMac::adjustSearchFieldResultsButtonStyle(RenderStyle& style, con
     style.setBoxShadow(nullptr);
 }
 
-#if ENABLE(DATALIST_ELEMENT)
 IntSize RenderThemeMac::sliderTickSize() const
 {
     return IntSize(1, 3);
@@ -1175,7 +1190,6 @@ int RenderThemeMac::sliderTickOffsetFromTrackCenter() const
 {
     return -9;
 }
-#endif
 
 // FIXME (<rdar://problem/80870479>): Ideally, this constant should be obtained from AppKit using -[NSSliderCell knobThickness].
 // However, the method currently returns an incorrect value, both with and without a control view associated with the cell.

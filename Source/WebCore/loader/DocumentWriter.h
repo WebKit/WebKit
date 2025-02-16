@@ -62,6 +62,8 @@ public:
     const String& mimeType() const { return m_mimeType; }
     void setMIMEType(const String& type) { m_mimeType = type; }
 
+    Ref<TextResourceDecoder> protectedDecoder();
+
     // Exposed for DocumentParser::appendBytes.
     TextResourceDecoder& decoder();
     void reportDataReceived();

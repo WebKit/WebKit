@@ -40,6 +40,7 @@ public:
 
     class Keyframe {
     public:
+        bool hasResolvedOffset() const { return !std::isnan(offset()); }
         virtual double offset() const = 0;
         virtual std::optional<CompositeOperation> compositeOperation() const = 0;
         virtual bool animatesProperty(Property) const = 0;

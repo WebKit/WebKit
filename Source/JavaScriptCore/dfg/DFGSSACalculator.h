@@ -166,14 +166,13 @@ public:
     
     Variable* variable(unsigned index) { return &m_variables[index]; }
     
-    // The PhiInsertionFunctor takes a Variable and a BasicBlock and either inserts a Phi and
+    // The functor takes a Variable and a BasicBlock and either inserts a Phi and
     // returns the Node for that Phi, or it decides that it's not worth it to insert a Phi at that
     // block because of some additional pruning condition (typically liveness) and returns
     // nullptr. If a non-null Node* is returned, a new Def is created, so that
     // nonLocalReachingDef() will find it later. Note that it is generally always sound to not
     // prune any Phis (that is, to always have the functor insert a Phi and never return nullptr).
-    template<typename PhiInsertionFunctor>
-    void computePhis(const PhiInsertionFunctor& functor)
+    void computePhis(const Invocable<Node*(Variable*, BasicBlock*)> auto& functor)
     {
         DFG_ASSERT(m_graph, nullptr, m_graph.m_ssaDominators);
         

@@ -54,11 +54,12 @@ public:
 
     virtual constexpr MediaPlayerType mediaPlayerType() const = 0;
 
+    using LoadOptions = MediaPlayer::LoadOptions;
     virtual void load(const String&) { }
-    virtual void load(const URL& url, const ContentType&, const String&) { load(url.string()); }
+    virtual void load(const URL& url, const LoadOptions&) { load(url.string()); }
 
 #if ENABLE(MEDIA_SOURCE)
-    virtual void load(const URL&, const ContentType&, MediaSourcePrivateClient&) = 0;
+    virtual void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) = 0;
 #endif
 #if ENABLE(MEDIA_STREAM)
     virtual void load(MediaStreamPrivate&) = 0;
@@ -154,6 +155,8 @@ public:
     // This excludes video potentially playing but having stalled.
     virtual bool paused() const = 0;
 
+    virtual void setVolumeLocked(bool) { }
+
     virtual void setVolume(float) { }
     virtual void setVolumeDouble(double volume) { return setVolume(volume); }
 #if PLATFORM(IOS_FAMILY) || USE(GSTREAMER)
@@ -235,19 +238,14 @@ public:
     // engine uses rational numbers to represent media time.
     virtual MediaTime mediaTimeForTimeValue(const MediaTime& timeValue) const { return timeValue; }
 
-    // Overide this if it is safe for HTMLMediaElement to cache movie time and report
-    // 'currentTime' as [cached time + elapsed wall time]. Returns the maximum wall time
-    // it is OK to calculate movie time before refreshing the cached time.
-    virtual double maximumDurationToCacheMediaTime() const { return 0; }
-
     virtual unsigned decodedFrameCount() const { return 0; }
     virtual unsigned droppedFrameCount() const { return 0; }
     virtual unsigned audioDecodedByteCount() const { return 0; }
     virtual unsigned videoDecodedByteCount() const { return 0; }
 
-    HashSet<SecurityOriginData> originsInMediaCache(const String&) { return { }; }
+    UncheckedKeyHashSet<SecurityOriginData> originsInMediaCache(const String&) { return { }; }
     void clearMediaCache(const String&, WallTime) { }
-    void clearMediaCacheForOrigins(const String&, const HashSet<SecurityOriginData>&) { }
+    void clearMediaCacheForOrigins(const String&, const UncheckedKeyHashSet<SecurityOriginData>&) { }
 
     virtual void setPrivateBrowsingMode(bool) { }
 

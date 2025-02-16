@@ -64,7 +64,7 @@ FloatRect SwitchTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     return SwitchMacUtilities::rectForBounds(bounds);
 }
 
-static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuffer> trackMaskImage, FloatSize trackRectSize, float deviceScaleFactor, const ControlStyle& style, bool isOn, bool isRTL, bool isVertical, bool isEnabled, bool isPressed, bool isInActiveWindow, bool needsOnOffLabels, NSString *coreUISize)
+static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuffer> trackMaskImage, FloatSize trackRectSize, float deviceScaleFactor, const ControlStyle& style, bool isOn, bool isInlineFlipped, bool isVertical, bool isEnabled, bool isPressed, bool isInActiveWindow, bool needsOnOffLabels, NSString *coreUISize)
 {
     LocalDefaultSystemAppearance localAppearance(style.states.contains(ControlStyle::State::DarkAppearance), style.accentColor);
 
@@ -80,7 +80,7 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
     auto coreUIValue = @(isOn ? 1 : 0);
     auto coreUIState = (__bridge NSString *)(!isEnabled ? kCUIStateDisabled : isPressed ? kCUIStatePressed : kCUIStateActive);
     auto coreUIPresentation = (__bridge NSString *)(isInActiveWindow ? kCUIPresentationStateActiveKey : kCUIPresentationStateInactive);
-    auto coreUIDirection = (__bridge NSString *)(isRTL ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight);
+    auto coreUIDirection = (__bridge NSString *)(isInlineFlipped ? kCUIUserInterfaceLayoutDirectionRightToLeft : kCUIUserInterfaceLayoutDirectionLeftToRight);
 
     CGContextStateSaver stateSaver(cgContext);
 
@@ -108,12 +108,12 @@ static RefPtr<ImageBuffer> trackImage(GraphicsContext& context, RefPtr<ImageBuff
         // This ensures the on label continues to appear upright.
         if (isVertical && isOn) {
             auto isRegularSize = coreUISize == (__bridge NSString *)kCUISizeRegular;
-            if (isRTL) {
+            if (isInlineFlipped) {
                 auto thumbLogicalLeftAxis = trackRectSize.width() - trackRectSize.height();
                 auto y = -thumbLogicalLeftAxis;
                 trackImage->context().translate(thumbLogicalLeftAxis, y);
             }
-            if (!isRTL && isRegularSize)
+            if (!isInlineFlipped && isRegularSize)
                 trackImage->context().translate(0.0f, 1.f);
             SwitchMacUtilities::rotateContextForVerticalWritingMode(trackImage->context(), drawingTrackRect);
         }
@@ -140,7 +140,7 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
     GraphicsContextStateSaver stateSaver(context);
 
     auto isOn = owningPart().isOn();
-    auto isRTL = style.states.contains(ControlStyle::State::RightToLeft);
+    auto isInlineFlipped = style.states.contains(ControlStyle::State::InlineFlippedWritingMode);
     auto isVertical = style.states.contains(ControlStyle::State::VerticalWritingMode);
     auto isEnabled = style.states.contains(ControlStyle::State::Enabled);
     auto isPressed = style.states.contains(ControlStyle::State::Pressed);
@@ -167,12 +167,12 @@ void SwitchTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto coreUISize = SwitchMacUtilities::coreUISizeForControlSize(controlSize);
 
-    auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isRTL, coreUISize);
+    auto maskImage = SwitchMacUtilities::trackMaskImage(context, inflatedTrackRect.size(), deviceScaleFactor, isInlineFlipped, coreUISize);
     if (!maskImage)
         return;
 
     auto createTrackImage = [&](bool isOn) {
-        return trackImage(context, maskImage, inflatedTrackRect.size(), deviceScaleFactor, style, isOn, isRTL, isVertical, isEnabled, isPressed, isInActiveWindow, needsOnOffLabels, coreUISize);
+        return trackImage(context, maskImage, inflatedTrackRect.size(), deviceScaleFactor, style, isOn, isInlineFlipped, isVertical, isEnabled, isPressed, isInActiveWindow, needsOnOffLabels, coreUISize);
     };
 
     RefPtr<ImageBuffer> trackImage;

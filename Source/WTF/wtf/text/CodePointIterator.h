@@ -42,11 +42,13 @@ public:
     {
     }
     
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     ALWAYS_INLINE CodePointIterator(const CodePointIterator& begin, const CodePointIterator& end)
         : CodePointIterator({ begin.m_data.data(), end.m_data.data() })
     {
         ASSERT(end.m_data.data() >= begin.m_data.data());
     }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     
     ALWAYS_INLINE char32_t operator*() const;
     ALWAYS_INLINE CodePointIterator& operator++();

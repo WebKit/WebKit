@@ -236,8 +236,12 @@ private:
     void removeCodedFramesInternal(const MediaTime& start, const MediaTime& end, const MediaTime& currentMediaTime);
     bool evictFrames(uint64_t newDataSize, const MediaTime& currentTime);
     bool hasTooManySamples() const;
-    void iterateTrackBuffers(Function<void(TrackBuffer&)>&&);
-    void iterateTrackBuffers(Function<void(const TrackBuffer&)>&&) const;
+    void iterateTrackBuffers(NOESCAPE const Function<void(TrackBuffer&)>&);
+    void iterateTrackBuffers(NOESCAPE const Function<void(const TrackBuffer&)>&) const;
+
+    using OperationPromise = NativePromise<void, PlatformMediaError, WTF::PromiseOption::Default | WTF::PromiseOption::NonExclusive>;
+    Ref<OperationPromise> protectedCurrentSourceBufferOperation() const;
+    Ref<MediaPromise> protectedCurrentAppendProcessing() const;
 
     bool m_hasAudio { false };
     bool m_hasVideo { false };
@@ -248,7 +252,6 @@ private:
     StdUnorderedMap<TrackID, UniqueRef<TrackBuffer>> m_trackBufferMap;
     SourceBufferAppendMode m_appendMode { SourceBufferAppendMode::Segments };
 
-    using OperationPromise = NativePromise<void, PlatformMediaError, WTF::PromiseOption::Default | WTF::PromiseOption::NonExclusive>;
     Ref<OperationPromise> m_currentSourceBufferOperation { OperationPromise::createAndResolve() };
 
     bool m_shouldGenerateTimestamps { false };

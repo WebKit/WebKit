@@ -234,7 +234,7 @@ bool JSValue::putToPrimitiveByIndex(JSGlobalObject* globalObject, unsigned prope
         PutPropertySlot slot(*this, shouldThrow);
         return putToPrimitive(globalObject, Identifier::from(vm, propertyName), value, slot);
     }
-    
+
     JSObject* prototype = synthesizePrototype(globalObject);
     EXCEPTION_ASSERT(!!scope.exception() == !prototype);
     if (UNLIKELY(!prototype))
@@ -244,7 +244,7 @@ bool JSValue::putToPrimitiveByIndex(JSGlobalObject* globalObject, unsigned prope
     RETURN_IF_EXCEPTION(scope, false);
     if (success)
         return putResult;
-    
+
     return typeError(globalObject, scope, shouldThrow, ReadonlyPropertyWriteError);
 }
 
@@ -270,14 +270,14 @@ void JSValue::dumpInContextAssumingStructure(
 #if USE(JSVALUE64)
         out.printf("Double: %lld, %lf", (long long)reinterpretDoubleToInt64(asDouble()), asDouble());
 #else
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         union {
             double asDouble;
             uint32_t asTwoInt32s[2];
         } u;
         u.asDouble = asDouble();
         out.printf("Double: %08x:%08x, %lf", u.asTwoInt32s[1], u.asTwoInt32s[0], asDouble());
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
     } else if (isCell()) {
         if (structure->classInfoForCells()->isSubClassOf(JSString::info())) {
@@ -383,7 +383,7 @@ JSString* JSValue::toStringSlowCase(JSGlobalObject* globalObject, bool returnEmp
             return jsEmptyString(vm);
         return nullptr;
     };
-    
+
     ASSERT(!isString());
     if (isInt32())
         return int32ToString(vm, asInt32(), 10);

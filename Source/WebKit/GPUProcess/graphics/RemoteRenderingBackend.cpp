@@ -55,6 +55,7 @@
 #include "SwapBuffersDisplayRequirement.h"
 #include "WebPageProxy.h"
 #include <WebCore/HTMLCanvasElement.h>
+#include <WebCore/ImageBufferDisplayListBackend.h>
 #include <WebCore/NullImageBufferBackend.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/CheckedArithmetic.h>
@@ -97,7 +98,7 @@ bool isSmallLayerBacking(const ImageBufferParameters& parameters)
 {
     const unsigned maxSmallLayerBackingArea = 64u * 64u; // 4096 == 16kb backing store which equals 1 page on AS.
     auto checkedArea = ImageBuffer::calculateBackendSize(parameters.logicalSize, parameters.resolutionScale).area<RecordOverflow>();
-    return (parameters.purpose == RenderingPurpose::LayerBacking || parameters.purpose == RenderingPurpose::BitmapOnlyLayerBacking)
+    return (parameters.purpose == RenderingPurpose::LayerBacking)
         && !checkedArea.hasOverflowed() && checkedArea <= maxSmallLayerBackingArea
         && (parameters.pixelFormat == ImageBufferPixelFormat::BGRA8 || parameters.pixelFormat == ImageBufferPixelFormat::BGRX8);
 }
@@ -124,15 +125,15 @@ RemoteRenderingBackend::~RemoteRenderingBackend() = default;
 
 void RemoteRenderingBackend::startListeningForIPC()
 {
-    dispatch([this] {
-        workQueueInitialize();
+    dispatch([protectedThis = Ref { *this }] {
+        protectedThis->workQueueInitialize();
     });
 }
 
 void RemoteRenderingBackend::stopListeningForIPC()
 {
-    protectedWorkQueue()->stopAndWaitForCompletion([this] {
-        workQueueUninitialize();
+    protectedWorkQueue()->stopAndWaitForCompletion([protectedThis = Ref { *this }] {
+        protectedThis->workQueueUninitialize();
     });
 }
 
@@ -259,7 +260,7 @@ void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier ident
 }
 
 #if PLATFORM(COCOA)
-void RemoteRenderingBackend::didDrawCompositedToPDF(PageIdentifier pageID, RenderingResourceIdentifier imageBufferIdentifier, SnapshotIdentifier snapshotIdentifier)
+void RemoteRenderingBackend::didDrawRemoteToPDF(PageIdentifier pageID, RenderingResourceIdentifier imageBufferIdentifier, SnapshotIdentifier snapshotIdentifier)
 {
     assertIsCurrent(workQueue());
     auto imageBuffer = this->imageBuffer(imageBufferIdentifier);
@@ -269,10 +270,13 @@ void RemoteRenderingBackend::didDrawCompositedToPDF(PageIdentifier pageID, Rende
     }
 
     ASSERT(imageBufferIdentifier == imageBuffer->renderingResourceIdentifier());
-    auto data = imageBuffer->sinkIntoPDFDocument();
 
-    callOnMainRunLoop([pageID, data = WTFMove(data), snapshotIdentifier]() mutable {
-        GPUProcess::singleton().didDrawCompositedToPDF(pageID, WTFMove(data), snapshotIdentifier);
+    callOnMainRunLoop([protectedThis = Ref { *this }, pageID, imageBuffer = WTFMove(imageBuffer), snapshotIdentifier]() mutable {
+        auto data = imageBuffer->sinkIntoPDFDocument();
+        GPUProcess::singleton().didDrawRemoteToPDF(pageID, WTFMove(data), snapshotIdentifier);
+
+        // Ensure destruction happens on creation thread.
+        protectedThis->protectedWorkQueue()->dispatch([imageBuffer = WTFMove(imageBuffer)] () mutable { });
     });
 }
 #endif
@@ -304,6 +308,7 @@ static RefPtr<ImageBuffer> allocateImageBufferInternal(const FloatSize& logicalS
         break;
 
     case RenderingMode::DisplayList:
+        imageBuffer = ImageBuffer::create<ImageBufferDisplayListBackend, ImageBufferType>(logicalSize, resolutionScale, colorSpace, pixelFormat, purpose, creationContext, imageBufferIdentifier);
         break;
     }
 
@@ -327,7 +332,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackend::allocateImageBuffer(const FloatSize&
     RefPtr<ImageBuffer> imageBuffer;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && (purpose == RenderingPurpose::LayerBacking || purpose == RenderingPurpose::DOM))
+    if (m_gpuConnectionToWebProcess->isDynamicContentScalingEnabled() && creationContext.dynamicContentScalingResourceCache)
         imageBuffer = allocateImageBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(logicalSize, renderingMode, purpose, resolutionScale, colorSpace, pixelFormat, creationContext, imageBufferIdentifier);
 #endif
 

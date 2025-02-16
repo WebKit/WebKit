@@ -364,6 +364,11 @@ bool Renderbuffer::isRenderable(const Context *context,
                                                  context->getExtensions());
 }
 
+bool Renderbuffer::isEGLImageSource() const
+{
+    return !getSiblingSourcesOf().empty();
+}
+
 InitState Renderbuffer::initState(GLenum /*binding*/, const gl::ImageIndex & /*imageIndex*/) const
 {
     if (isEGLImageTarget())

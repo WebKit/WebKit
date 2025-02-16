@@ -52,7 +52,7 @@ public func Buffer_getMappedRange_thunk(_ buffer: WebGPU.Buffer, offset: Int, si
 
 internal func computeRangeSize(size: Int, offset: Int) -> Int
 {
-    let result = checkedDifferenceSizeT(size, offset)
+    let result = WebGPU_Internal.checkedDifferenceSizeT(size, offset)
     if result.hasOverflowed() {
         return 0
     }

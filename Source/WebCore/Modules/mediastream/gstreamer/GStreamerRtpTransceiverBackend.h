@@ -43,7 +43,6 @@ public:
 
     void tearDown();
 
-private:
     RTCRtpTransceiverDirection direction() const final;
     std::optional<RTCRtpTransceiverDirection> currentDirection() const final;
     void setDirection(RTCRtpTransceiverDirection) final;
@@ -52,6 +51,7 @@ private:
     bool stopped() const final;
     ExceptionOr<void> setCodecPreferences(const Vector<RTCRtpCodecCapability>&) final;
 
+private:
     GRefPtr<GstWebRTCRTPTransceiver> m_rtcTransceiver;
     bool m_isStopped { false };
 };

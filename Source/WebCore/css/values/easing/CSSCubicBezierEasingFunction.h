@@ -43,9 +43,9 @@ struct CubicBezierEasingParameters {
 };
 using CubicBezierEasingFunction = FunctionNotation<CSSValueCubicBezier, CubicBezierEasingParameters>;
 
-DEFINE_TYPE_WRAPPER(CubicBezierEasingParameters, value);
+DEFINE_TYPE_WRAPPER_GET(CubicBezierEasingParameters, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(CubicBezierEasingParameters, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::CubicBezierEasingParameters, 1)

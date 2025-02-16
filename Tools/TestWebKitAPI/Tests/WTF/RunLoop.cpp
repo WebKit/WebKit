@@ -43,7 +43,7 @@ TEST(WTF_RunLoop, Deadlock)
 
     struct DispatchFromDestructorTester {
         ~DispatchFromDestructorTester() {
-            RunLoop::main().dispatch([] {
+            RunLoop::protectedMain()->dispatch([] {
                 if (!(--count))
                     testFinished = true;
             });
@@ -52,7 +52,7 @@ TEST(WTF_RunLoop, Deadlock)
 
     for (int i = 0; i < count; ++i) {
         auto capture = std::make_shared<DispatchFromDestructorTester>();
-        RunLoop::main().dispatch([capture] { });
+        RunLoop::protectedMain()->dispatch([capture] { });
     }
 
     Util::run(&testFinished);
@@ -65,15 +65,15 @@ TEST(WTF_RunLoop, NestedInOrder)
     bool done = false;
     bool didExecuteOuter = false;
 
-    RunLoop::main().dispatch([&done, &didExecuteOuter] {
-        RunLoop::main().dispatch([&done, &didExecuteOuter] {
+    RunLoop::protectedMain()->dispatch([&done, &didExecuteOuter] {
+        RunLoop::protectedMain()->dispatch([&done, &didExecuteOuter] {
             EXPECT_TRUE(didExecuteOuter);
             done = true;
         });
 
         Util::run(&done);
     });
-    RunLoop::main().dispatch([&didExecuteOuter] {
+    RunLoop::protectedMain()->dispatch([&didExecuteOuter] {
         didExecuteOuter = true;
     });
 
@@ -86,16 +86,16 @@ TEST(WTF_RunLoop, DispatchCrossThreadWhileNested)
 
     bool done = false;
 
-    RunLoop::main().dispatch([&done] {
+    RunLoop::protectedMain()->dispatch([&done] {
         Thread::create("DispatchCrossThread"_s, [&done] {
-            RunLoop::main().dispatch([&done] {
+            RunLoop::protectedMain()->dispatch([&done] {
                 done = true;
             });
         });
 
         Util::run(&done);
     });
-    RunLoop::main().dispatch([] { });
+    RunLoop::protectedMain()->dispatch([] { });
 
     Util::run(&done);
 }
@@ -204,7 +204,7 @@ TEST(WTF_RunLoop, ManyTimes)
                 RunLoop::current().stop();
                 return;
             }
-            RunLoop::current().dispatch([this] {
+            RunLoop::protectedCurrent()->dispatch([this] {
                 run();
             });
         }
@@ -215,7 +215,7 @@ TEST(WTF_RunLoop, ManyTimes)
 
     Thread::create("RunLoopManyTimes"_s, [] {
         Counter counter;
-        RunLoop::current().dispatch([&counter] {
+        RunLoop::protectedCurrent()->dispatch([&counter] {
             counter.run();
         });
         RunLoop::run();

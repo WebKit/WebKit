@@ -46,7 +46,7 @@ async function test() {
     const instance = await instantiate(wat, {});
     const { test, add } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         let values = new Array(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0).map((_) => prng());
         assert.eq(add(...values), values.reduce((p, c) => p + c, 0));
     }

@@ -144,7 +144,7 @@ StyledMarkedText::Style StyledMarkedText::computeStyleForUnmarkedMarkedText(cons
 {
     StyledMarkedText::Style style;
     style.textDecorationStyles = TextDecorationPainter::stylesForRenderer(renderer, lineStyle.textDecorationsInEffect(), isFirstLine, paintInfo.paintBehavior);
-    style.textStyles = computeTextPaintStyle(renderer.frame(), lineStyle, paintInfo);
+    style.textStyles = computeTextPaintStyle(renderer, lineStyle, paintInfo);
     style.textShadow = ShadowData::clone(paintInfo.forceTextColor() ? nullptr : lineStyle.textShadow());
     return style;
 }

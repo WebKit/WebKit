@@ -29,6 +29,6 @@ function v9() {
 }
 noInline(v9);
 
-for (let v27 = 0; v27 < 100000; v27++) {
+for (let v27 = 0; v27 < testLoopCount; v27++) {
     assert(v9() === true);
 }

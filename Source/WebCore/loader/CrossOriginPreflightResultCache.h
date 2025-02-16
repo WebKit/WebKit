@@ -47,7 +47,7 @@ class CrossOriginPreflightResultCacheItem {
 public:
     static Expected<UniqueRef<CrossOriginPreflightResultCacheItem>, String> create(StoredCredentialsPolicy, const ResourceResponse&);
 
-    CrossOriginPreflightResultCacheItem(MonotonicTime, StoredCredentialsPolicy, HashSet<String>&&, HashSet<String, ASCIICaseInsensitiveHash>&&);
+    CrossOriginPreflightResultCacheItem(MonotonicTime, StoredCredentialsPolicy, UncheckedKeyHashSet<String>&&, UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash>&&);
 
     std::optional<String> validateMethodAndHeaders(const String& method, const HTTPHeaderMap&) const;
     bool allowsRequest(StoredCredentialsPolicy, const String& method, const HTTPHeaderMap&) const;
@@ -61,8 +61,8 @@ private:
     // it fires.
     MonotonicTime m_absoluteExpiryTime;
     StoredCredentialsPolicy m_storedCredentialsPolicy;
-    HashSet<String> m_methods;
-    HashSet<String, ASCIICaseInsensitiveHash> m_headers;
+    UncheckedKeyHashSet<String> m_methods;
+    UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> m_headers;
 };
 
 class CrossOriginPreflightResultCache {
@@ -80,7 +80,7 @@ private:
     HashMap<std::tuple<PAL::SessionID, ClientOrigin, URL>, std::unique_ptr<CrossOriginPreflightResultCacheItem>> m_preflightHashMap;
 };
 
-inline CrossOriginPreflightResultCacheItem::CrossOriginPreflightResultCacheItem(MonotonicTime absoluteExpiryTime, StoredCredentialsPolicy  storedCredentialsPolicy, HashSet<String>&& methods, HashSet<String, ASCIICaseInsensitiveHash>&& headers)
+inline CrossOriginPreflightResultCacheItem::CrossOriginPreflightResultCacheItem(MonotonicTime absoluteExpiryTime, StoredCredentialsPolicy  storedCredentialsPolicy, UncheckedKeyHashSet<String>&& methods, UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash>&& headers)
     : m_absoluteExpiryTime(absoluteExpiryTime)
     , m_storedCredentialsPolicy(storedCredentialsPolicy)
     , m_methods(WTFMove(methods))

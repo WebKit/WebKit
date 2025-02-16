@@ -49,6 +49,8 @@ public:
     bool isActive() const;
     bool isFullscreen() const;
     bool isMinimized() const;
+    bool isSuspended() const;
+
     GdkMonitor* monitor() const;
     bool isInMonitor() const;
 

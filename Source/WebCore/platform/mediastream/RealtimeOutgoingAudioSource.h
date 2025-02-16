@@ -133,7 +133,7 @@ private:
     bool m_enabled { true };
 
     mutable Lock m_sinksLock;
-    HashSet<webrtc::AudioTrackSinkInterface*> m_sinks WTF_GUARDED_BY_LOCK(m_sinksLock);
+    UncheckedKeyHashSet<webrtc::AudioTrackSinkInterface*> m_sinks WTF_GUARDED_BY_LOCK(m_sinksLock);
 
 #if !RELEASE_LOG_DISABLED
     size_t m_chunksSent { 0 };

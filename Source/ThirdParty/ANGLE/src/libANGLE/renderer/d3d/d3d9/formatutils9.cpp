@@ -166,6 +166,7 @@ static D3D9FormatMap BuildD3D9FormatMap()
     // then changing the format and loading function appropriately.
     InsertD3D9FormatInfo(&map, GL_LUMINANCE8_EXT,                   D3DFMT_L8,            D3DFMT_UNKNOWN,        LoadToNative<GLubyte, 1>                  );
     InsertD3D9FormatInfo(&map, GL_LUMINANCE8_ALPHA8_EXT,            D3DFMT_A8L8,          D3DFMT_UNKNOWN,        LoadToNative<GLubyte, 2>                  );
+    InsertD3D9FormatInfo(&map, GL_LUMINANCE4_ALPHA4_OES,            D3DFMT_A4L4,          D3DFMT_UNKNOWN,        LoadToNative<GLubyte, 1>                  );
     // clang-format on
 
     return map;

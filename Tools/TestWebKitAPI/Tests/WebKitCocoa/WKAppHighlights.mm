@@ -26,6 +26,7 @@
 
 #if ENABLE(APP_HIGHLIGHTS)
 
+#import "InstanceMethodSwizzler.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -100,13 +101,22 @@ TEST(AppHighlights, AppHighlightCreateAndRestore)
     }, 2, @"Expected Highlights to be populated.");
 }
 
-// FIXME when rdar://141462057 is resolved.
-#if PLATFORM(IOS)
-TEST(AppHighlights, DISABLED_AppHighlightCreateAndRestoreAndScroll)
-#else
 TEST(AppHighlights, AppHighlightCreateAndRestoreAndScroll)
-#endif
 {
+#if PLATFORM(IOS_FAMILY)
+    // Force UIKit to use a `CADisplayLink` rather than its own update cycle for `UIAnimation`s.
+    // UIKit's own update cycle does not work in TestWebKitAPIApp, as it is started in
+    // UIApplicationMain(), and TestWebKitAPIApp is not a real UIApplication. Without this,
+    // scroll view animations would not be completed.
+    InstanceMethodSwizzler isEmbeddedScreenSwizzler {
+        UIScreen.class,
+        @selector(_isEmbeddedScreen),
+        imp_implementationWithBlock(^BOOL {
+            return NO;
+        })
+    };
+#endif // PLATFORM(IOS_FAMILY)
+
     auto highlight = createAppHighlightWithHTML(@"<div style='height: 10000px'></div>Test", @"document.execCommand('SelectAll')", @"Test");
     auto webViewRestore = createWebViewForAppHighlightsWithHTML(@"<div style='height: 10000px'></div>Test");
 

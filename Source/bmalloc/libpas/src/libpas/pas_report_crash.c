@@ -37,17 +37,17 @@
 #ifdef __APPLE__
 static crash_reporter_memory_reader_t memory_reader;
 
-static kern_return_t memory_reader_adapter(task_t task, vm_address_t address, vm_size_t size, void **local_memory)
+static kern_return_t memory_reader_adapter(task_t task, vm_address_t address, vm_size_t size, void** local_memory)
 {
     if (!local_memory)
         return KERN_FAILURE;
 
-    void *ptr = memory_reader(task, address, size);
+    void* ptr = memory_reader(task, address, size);
     *local_memory = ptr;
     return ptr ? KERN_SUCCESS : KERN_FAILURE;
 }
 
-static memory_reader_t * setup_memory_reader(crash_reporter_memory_reader_t crm_reader)
+static memory_reader_t* setup_memory_reader(crash_reporter_memory_reader_t crm_reader)
 {
     memory_reader = crm_reader;
     return memory_reader_adapter;
@@ -58,7 +58,7 @@ static PAS_ALWAYS_INLINE bool PAS_WARN_UNUSED_RETURN pas_fault_address_is_in_bou
     return (fault_address >= bottom) && (fault_address < top);
 }
 
-static PAS_ALWAYS_INLINE kern_return_t PAS_WARN_UNUSED_RETURN pas_update_report_crash_fields(pas_report_crash_pgm_report *report, const char *error_type, const char *confidence, vm_address_t fault_address, size_t allocation_size)
+static PAS_ALWAYS_INLINE kern_return_t PAS_WARN_UNUSED_RETURN pas_update_report_crash_fields(pas_report_crash_pgm_report* report, const char* error_type, const char* confidence, vm_address_t fault_address, size_t allocation_size)
 {
     report->error_type = error_type;
     report->confidence = confidence;
@@ -67,16 +67,18 @@ static PAS_ALWAYS_INLINE kern_return_t PAS_WARN_UNUSED_RETURN pas_update_report_
     return KERN_SUCCESS;
 }
 
-// This function will be called when a process crashes containing the JavaScriptCore framework.
-// The goal is to determine if the crash was caused by a PGM allocation, and if so whether the crash
-// was a UAF or OOB crash. These details will forwarded back to the Crash Reporter API, which will
-// add the information to the local crash log.
-kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, mach_vm_address_t pas_dead_root, unsigned version, task_t task, pas_report_crash_pgm_report *report, crash_reporter_memory_reader_t crm_reader)
+/*
+ * This function will be called when a process crashes containing the JavaScriptCore framework.
+ * The goal is to determine if the crash was caused by a PGM allocation, and if so whether the crash
+ * was a UAF or OOB crash. These details will forwarded back to the Crash Reporter API, which will
+ * add the information to the local crash log.
+ */
+kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, mach_vm_address_t pas_dead_root, unsigned version, task_t task, pas_report_crash_pgm_report* report, crash_reporter_memory_reader_t crm_reader)
 {
     if (version != pas_crash_report_version)
         return KERN_FAILURE;
 
-    memory_reader_t *reader = setup_memory_reader(crm_reader);
+    memory_reader_t* reader = setup_memory_reader(crm_reader);
 
     pas_root* read_pas_dead_root = NULL;
     pas_ptr_hash_map* hash_map = NULL;
@@ -85,93 +87,98 @@ kern_return_t pas_report_crash_extract_pgm_failure(vm_address_t fault_address, m
 
     size_t table_size = 0;
 
-    kern_return_t kr = reader(task, pas_dead_root, sizeof(pas_root), (void **) &read_pas_dead_root);
+    kern_return_t kr = reader(task, pas_dead_root, sizeof(pas_root), (void**)&read_pas_dead_root);
     if (kr != KERN_SUCCESS)
         return KERN_FAILURE;
 
-    kr = reader(task, (vm_address_t) read_pas_dead_root->pas_pgm_hash_map_instance, sizeof(pas_ptr_hash_map), (void **) &hash_map);
+    kr = reader(task, (vm_address_t)read_pas_dead_root->pas_pgm_hash_map_instance, sizeof(pas_ptr_hash_map), (void**)&hash_map);
     if (kr != KERN_SUCCESS)
         return KERN_FAILURE;
 
     table_size = hash_map->table_size;
 
     for (size_t i = 0; i < table_size; i++) {
-        kr = reader(task, (vm_address_t) (hash_map->table + i), sizeof(pas_ptr_hash_map_entry), (void **) &hash_map_entry);
+        kr = reader(task, (vm_address_t)(hash_map->table + i), sizeof(pas_ptr_hash_map_entry), (void**)&hash_map_entry);
         if (kr != KERN_SUCCESS)
             return KERN_FAILURE;
 
-        // Skip entry if not there
+        /* Skip entry if not there */
         if (hash_map_entry->key == (void*)UINTPTR_MAX)
             continue;
 
-        kr = reader(task, (vm_address_t) hash_map_entry->value, sizeof(pas_pgm_storage), (void **) &pgm_metadata);
+        kr = reader(task, (vm_address_t)hash_map_entry->value, sizeof(pas_pgm_storage), (void**)&pgm_metadata);
         if (kr != KERN_SUCCESS)
             return KERN_FAILURE;
 
-        addr64_t key = (addr64_t) hash_map_entry->key;
+        addr64_t key = (addr64_t)hash_map_entry->key;
+        addr64_t lower_guard = (addr64_t)pgm_metadata->start_of_allocated_pages;
+        size_t lower_guard_size = pgm_metadata->start_of_data_pages - pgm_metadata->start_of_allocated_pages;
+        addr64_t upper_guard = (addr64_t)(pgm_metadata->start_of_data_pages + pgm_metadata->size_of_data_pages);
+        size_t upper_guard_size = pgm_metadata->size_of_allocated_pages - lower_guard_size - pgm_metadata->size_of_data_pages;
 
         if (pgm_metadata->right_align) {
+            /* [ lower_guard ][ remaining ][ allocated ][ upper_guard ] */
             report->alignment = "address right-aligned";
 
-            // Right-aligned "Lower PGM OOB" checking
-            addr64_t bottom = (addr64_t) (key - pgm_metadata->mem_to_waste - pgm_metadata->page_size);
-            addr64_t top = (addr64_t) (key - pgm_metadata->mem_to_waste);
+            /* Right-aligned "Lower PGM OOB" checking */
+            addr64_t bottom = (addr64_t)lower_guard;
+            addr64_t top = (addr64_t)(lower_guard + lower_guard_size);
 
-            if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
+            if (pas_fault_address_is_in_bounds(fault_address, lower_guard, top))
                 return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "long-range UAF" : "long-range OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
 
 
-            // Right-aligned "UAF + OOB" checking towards lower guard page
-            bottom = (addr64_t) (key - pgm_metadata->mem_to_waste);
-            top = (addr64_t) key;
+            /* Right-aligned "UAF + OOB" checking towards lower guard page */
+            bottom = (addr64_t)pgm_metadata->start_of_data_pages;
+            top = (addr64_t)key;
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
                 return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
 
-            // Right-aligned "Upper PGM OOB" checking
-            bottom = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages);
-            top = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages + pgm_metadata->page_size);
+            /* Right-aligned "Upper PGM OOB" checking */
+            bottom = (addr64_t)upper_guard;
+            top = (addr64_t)(upper_guard + upper_guard_size);
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
                 return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "high", fault_address, pgm_metadata->allocation_size_requested);
 
         } else {
+            /* [ lower_guard ][ allocated ][ remaining ][ upper_guard ] */
             report->alignment = "address left-aligned";
 
-            // Left-aligned "Lower PGM OOB" checking
-            addr64_t bottom = key - pgm_metadata->page_size;
+            /* Left-aligned "Lower PGM OOB" checking */
+            addr64_t bottom = lower_guard;
             addr64_t top = key;
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
                 return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "high", fault_address, pgm_metadata->allocation_size_requested);
 
-            // Left-aligned "UAF + OOB" checking towards upper guard page
-            bottom = (addr64_t) (key + pgm_metadata->size_of_data_pages - pgm_metadata->mem_to_waste);
-            top = (addr64_t) (key + pgm_metadata->size_of_data_pages);
+            /* Left-aligned "UAF + OOB" checking towards upper guard page */
+            bottom = (addr64_t)(key + pgm_metadata->allocation_size_requested);
+            top = (addr64_t)upper_guard;
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
                 return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
 
-            // Left-aligned "Upper PGM OOB" checking
-            bottom = (addr64_t) (key + pgm_metadata->size_of_data_pages);
-            top = (addr64_t) (key + pgm_metadata->size_of_data_pages + pgm_metadata->page_size);
+            /* Left-aligned "Upper PGM OOB" checking */
+            bottom = upper_guard;
+            top = upper_guard + upper_guard_size;
 
             if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
                 return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "long-range UAF" : "long-range OOB", "low", fault_address, pgm_metadata->allocation_size_requested);
 
         }
 
-        // Left-aligned "UAF" checking calculations are same as right-aligned checking
-        // "UAF" check
-        addr64_t bottom = (addr64_t) key;
-        addr64_t top = (addr64_t) (key - pgm_metadata->mem_to_waste + pgm_metadata->size_of_data_pages);
+        /* Left-aligned "UAF" checking calculations are same as right-aligned checking "UAF" check */
+        addr64_t bottom = (addr64_t)key;
+        addr64_t top = (addr64_t)(key + pgm_metadata->allocation_size_requested);
 
         if (pas_fault_address_is_in_bounds(fault_address, bottom, top))
             return pas_update_report_crash_fields(report, pgm_metadata->free_status ? "UAF" : "undefined", "low", fault_address, pgm_metadata->allocation_size_requested);
 
     }
 
-    return KERN_FAILURE;
+    return KERN_NOT_FOUND;
 }
 #endif /* __APPLE__ */
 

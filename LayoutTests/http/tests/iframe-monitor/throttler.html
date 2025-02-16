@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="./resources/monitor-setup.js"></script>
+</head>
+<body>
+<script>
+
+description("Test throttler prevents unloaded.");
+window.jsTestIsAsync = true;
+
+onload = async () => {
+    if (!await setup()) {
+        return;
+    }
+
+    // Make sure iframe load is done after rule is set correctly.
+    const stage = document.querySelector('#stage');
+    const base = 'http://localhost:8080/iframe-monitor/resources';
+
+    for (let no = 1; no <= 5; no++) {
+        stage.innerHTML = `
+            <iframe name="frame${no}" src="http://localhost:8080/iframe-monitor/resources/--eligible--/iframe.html"></iframe>
+        `;
+
+        await waitUntilUnload(`frame${no}`);
+        shouldNotBe(`document.querySelector('iframe[name=frame${no}]').srcdoc`, '""');
+    }
+
+    // Then load another one which will send a message after the fetch.
+    // Throttler should prevent this iframe unloaded.
+    stage.innerHTML = `
+        <iframe name="frame6" src="http://localhost:8080/iframe-monitor/resources/--eligible--/iframe3.html"></iframe>
+    `;
+
+    window.addEventListener('message', async (event) => {
+        await pause(100);
+        result = event.data;
+
+        shouldBeTrue('result');
+        shouldBe(`document.querySelector('iframe[name=frame6]').srcdoc`, '""');
+        finishJSTest();
+    });
+}
+</script>
+
+<div id="stage"></div>
+</body>
+</html>

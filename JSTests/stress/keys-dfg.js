@@ -19,9 +19,9 @@ function test()
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(JSON.stringify(test()), `["a","b"]`);
 object.d = 42;
 shouldBe(JSON.stringify(test()), `["a","b","d"]`);
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(JSON.stringify(test()), `["a","b","d"]`);

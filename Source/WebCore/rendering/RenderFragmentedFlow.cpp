@@ -314,7 +314,7 @@ LayoutUnit RenderFragmentedFlow::pageLogicalTopForOffset(LayoutUnit offset) cons
 LayoutUnit RenderFragmentedFlow::pageLogicalWidthForOffset(LayoutUnit offset) const
 {
     RenderFragmentContainer* fragment = fragmentAtBlockOffset(0, offset, true);
-    return fragment ? fragment->pageLogicalWidth() : contentLogicalWidth();
+    return fragment ? fragment->pageLogicalWidth() : contentBoxLogicalWidth();
 }
 
 LayoutUnit RenderFragmentedFlow::pageLogicalHeightForOffset(LayoutUnit offset) const
@@ -416,7 +416,7 @@ void RenderFragmentedFlow::removeLineFragmentInfo(const RenderBlockFlow& blockFl
     ASSERT_WITH_SECURITY_IMPLICATION(checkLinesConsistency(blockFlow));
 }
 
-void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBlock& block, bool& relayoutChildren)
+void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBlock& block, RelayoutChildren& relayoutChildren)
 {
     if (!hasValidFragmentInfo())
         return;
@@ -431,13 +431,13 @@ void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBl
 
     // If there will be a relayout anyway skip the next steps because they only verify
     // the state of the ranges.
-    if (relayoutChildren)
+    if (relayoutChildren == RelayoutChildren::Yes)
         return;
 
     // Not necessary for the flow thread, since we already computed the correct info for it.
     // If the fragments have changed invalidate the children.
     if (&block == this) {
-        relayoutChildren = m_pageLogicalSizeChanged;
+        relayoutChildren = m_pageLogicalSizeChanged ? RelayoutChildren::Yes : RelayoutChildren::No;
         return;
     }
 
@@ -453,14 +453,14 @@ void RenderFragmentedFlow::logicalWidthChangedInFragmentsForBlock(const RenderBl
         // We have no information computed for this fragment so we need to do it.
         std::unique_ptr<RenderBoxFragmentInfo> oldInfo = fragment.takeRenderBoxFragmentInfo(&block);
         if (!oldInfo) {
-            relayoutChildren = rangeInvalidated;
+            relayoutChildren = rangeInvalidated ? RelayoutChildren::Yes : RelayoutChildren::No;
             return;
         }
 
         LayoutUnit oldLogicalWidth = oldInfo->logicalWidth();
         auto* newInfo = block.renderBoxFragmentInfo(&fragment);
         if (!newInfo || newInfo->logicalWidth() != oldLogicalWidth) {
-            relayoutChildren = true;
+            relayoutChildren = RelayoutChildren::Yes;
             return;
         }
 
@@ -474,7 +474,7 @@ LayoutUnit RenderFragmentedFlow::contentLogicalWidthOfFirstFragment() const
     RenderFragmentContainer* firstValidFragmentInFlow = firstFragment();
     if (!firstValidFragmentInFlow)
         return 0;
-    return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentWidth() : firstValidFragmentInFlow->contentHeight();
+    return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentBoxWidth() : firstValidFragmentInFlow->contentBoxHeight();
 }
 
 LayoutUnit RenderFragmentedFlow::contentLogicalHeightOfFirstFragment() const
@@ -482,7 +482,7 @@ LayoutUnit RenderFragmentedFlow::contentLogicalHeightOfFirstFragment() const
     RenderFragmentContainer* firstValidFragmentInFlow = firstFragment();
     if (!firstValidFragmentInFlow)
         return 0;
-    return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentHeight() : firstValidFragmentInFlow->contentWidth();
+    return isHorizontalWritingMode() ? firstValidFragmentInFlow->contentBoxHeight() : firstValidFragmentInFlow->contentBoxWidth();
 }
 
 LayoutUnit RenderFragmentedFlow::contentLogicalLeftOfFirstFragment() const
@@ -635,13 +635,13 @@ bool RenderFragmentedFlow::fragmentInRange(const RenderFragmentContainer* target
 bool RenderFragmentedFlow::objectShouldFragmentInFlowFragment(const RenderObject* object, const RenderFragmentContainer* fragment) const
 {
     ASSERT(object);
-    ASSERT(fragment);
+    ASSERT(fragment || isSkippedContent());
     
     RenderFragmentedFlow* fragmentedFlow = object->enclosingFragmentedFlow();
     if (fragmentedFlow != this)
         return false;
 
-    if (!m_fragmentList.contains(*fragment))
+    if (!fragment || !m_fragmentList.contains(*fragment))
         return false;
     
     RenderFragmentContainer* enclosingBoxStartFragment = nullptr;
@@ -797,8 +797,8 @@ bool RenderFragmentedFlow::addForcedFragmentBreak(const RenderBlock* block, Layo
 
 void RenderFragmentedFlow::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
 {
-    ASSERT(!m_fragmentsInvalidated);
-    
+    ASSERT(!m_fragmentsInvalidated || isSkippedContent());
+
     for (auto& fragment : m_fragmentList)
         fragment.collectLayerFragments(layerFragments, layerBoundingBox, dirtyRect);
 }

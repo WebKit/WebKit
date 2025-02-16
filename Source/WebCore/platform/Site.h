@@ -42,7 +42,7 @@ public:
 
     const String& protocol() const { return m_protocol; }
     const RegistrableDomain& domain() const { return m_domain; }
-    String string() const;
+    WEBCORE_EXPORT String toString() const;
     bool isEmpty() const { return m_domain.isEmpty(); }
     WEBCORE_EXPORT bool matches(const URL&) const;
 
@@ -65,6 +65,8 @@ private:
     String m_protocol;
     RegistrableDomain m_domain;
 };
+
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Site&);
 
 } // namespace WebCore
 

@@ -1,0 +1,10 @@
+Test that we can seek within a file containing a single keyframe (which starts with two frames having the same timestamp).
+
+
+EVENT(canplay)
+EVENT(seeking)
+EVENT(seeked)
+EVENT(seeking)
+EVENT(seeked)
+END OF TEST
+

@@ -242,7 +242,7 @@ zoom: 1
 -webkit-user-select: text
 background-position-x: 0%
 background-position-y: 0%
-border-spacing: 0px 0px
+border-spacing: 0px
 overflow: visible
 -webkit-mask-position-x: 0%
 -webkit-mask-position-y: 0%

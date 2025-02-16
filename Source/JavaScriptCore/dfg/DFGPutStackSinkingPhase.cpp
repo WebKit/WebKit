@@ -361,7 +361,7 @@ public:
             indexToOperand.append(operand);
         }
         
-        HashSet<Node*> putStacksToSink;
+        UncheckedKeyHashSet<Node*> putStacksToSink;
         
         for (BasicBlock* block : m_graph.blocksInNaturalOrder()) {
             for (Node* node : *block) {

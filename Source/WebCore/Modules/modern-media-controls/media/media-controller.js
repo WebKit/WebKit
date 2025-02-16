@@ -510,6 +510,9 @@ class MediaController
     {
         if (this.layoutTraits.controlsNeverAvailable())
             return false;
+        
+        if (this.controls instanceof IOSInlineMediaControls && this.media.webkitPresentationMode === "picture-in-picture")
+            return false;
 
         // Otherwise, for controls to be available, the controls attribute must be present on the media element
         // or the MediaControlsHost must indicate that controls are forced.

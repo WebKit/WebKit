@@ -35,6 +35,7 @@
 #import "LayoutTreeBuilder.h"
 #import "LocalFrame.h"
 #import "Logging.h"
+#import "PlatformMediaSessionManager.h"
 #import "RenderObject.h"
 #import "SVGDocument.h"
 #import "SVGElementTypeHelpers.h"
@@ -126,4 +127,15 @@ void Page::removeSchedulePair(Ref<SchedulePair>&& pair)
     }
 }
 
-} // namespace
+const String& Page::presentingApplicationBundleIdentifier() const
+{
+    return m_presentingApplicationBundleIdentifier;
+}
+
+void Page::setPresentingApplicationBundleIdentifier(String&& bundleIdentifier)
+{
+    m_presentingApplicationBundleIdentifier = WTFMove(bundleIdentifier);
+    PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary();
+}
+
+} // namespace WebCore

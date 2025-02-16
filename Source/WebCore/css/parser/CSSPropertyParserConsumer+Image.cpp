@@ -303,8 +303,8 @@ template<SupportsColorHints supportsColorHints, typename Stop, typename Consumer
     if (previousStopWasColorHint)
         return std::nullopt;
 
-    // Must have two or more stops to be valid.
-    if (stops.size() < 2)
+    // Must have at least one stop to be valid.
+    if (stops.isEmpty())
         return std::nullopt;
 
     stops.shrinkToFit();
@@ -1145,18 +1145,14 @@ static RefPtr<CSSPrimitiveValue> consumeImageSetResolutionOrTypeFunction(CSSPars
         .unitlessZero = UnitlessZeroQuirk::Allow
     };
 
-    auto result = MetaConsumer<CSS::Resolution<>, ImageSetTypeFunction>::consume(range, context, { }, options);
-    if (!result)
-        return { };
-
-    return WTF::switchOn(*result,
+    return MetaConsumer<CSS::Resolution<>, ImageSetTypeFunction>::consume(range, context, { }, options,
         [&](const ImageSetTypeFunction& typeFunction) -> RefPtr<CSSPrimitiveValue> {
             return CSSPrimitiveValue::create(typeFunction.value);
         },
         [&](const CSS::Resolution<>& resolution) -> RefPtr<CSSPrimitiveValue> {
             return CSSPrimitiveValueResolverBase::resolve(resolution, options);
         }
-    );
+    ).value_or(nullptr);
 }
 
 // https://w3c.github.io/csswg-drafts/css-images-4/#image-set-notation

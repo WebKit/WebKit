@@ -44,6 +44,7 @@ public:
     void setText(String&&);
 
     WEBCORE_EXPORT HTMLFormElement* form() const;
+    WEBCORE_EXPORT HTMLFormElement* formForBindings() const;
 
     WEBCORE_EXPORT int index() const;
 

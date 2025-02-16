@@ -36,6 +36,7 @@
 #if ENABLE(OFFSCREEN_CANVAS)
 
 #include "CSSFontSelector.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "InspectorInstrumentation.h"
 #include "RenderStyle.h"

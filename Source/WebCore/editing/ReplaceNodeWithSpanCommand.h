@@ -56,7 +56,7 @@ private:
     Ref<HTMLElement> protectedElementToReplace() const { return m_elementToReplace; }
     
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(NodeSet&) override;
 #endif
 
     Ref<HTMLElement> m_elementToReplace;

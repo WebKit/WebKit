@@ -115,6 +115,8 @@ public:
 
     WEBCORE_EXPORT RealtimeMediaSource& source();
     const RealtimeMediaSource& source() const;
+    Ref<RealtimeMediaSource> protectedSource();
+    Ref<const RealtimeMediaSource> protectedSource() const;
     RealtimeMediaSource& sourceForProcessor();
     bool hasSource(const RealtimeMediaSource*) const;
 
@@ -179,7 +181,7 @@ private:
 
     void updateReadyState();
 
-    void forEachObserver(const Function<void(MediaStreamTrackPrivateObserver&)>&);
+    void forEachObserver(NOESCAPE const Function<void(MediaStreamTrackPrivateObserver&)>&);
 
 #if !RELEASE_LOG_DISABLED
     ASCIILiteral logClassName() const final { return "MediaStreamTrackPrivate"_s; }

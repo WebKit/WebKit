@@ -30,7 +30,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true, exceptions: true })
     const { test, test_with_call, test_with_call_indirect } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         let a = 0x7E0000AD00EDDE00n
         let b = 0x1234567890123456n
         let c = 0x7AADDAADDEEDFEEDn

@@ -86,9 +86,9 @@ PASS Interfaces for COMMAND: createElement
 PASS Interfaces for data: useNS
 PASS Interfaces for data: useParser
 PASS Interfaces for DATA: createElement
-FAIL Interfaces for datalist: useNS assert_class_string: Element datalist should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for datalist: useParser assert_class_string: Element datalist should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
-FAIL Interfaces for DATALIST: createElement assert_class_string: Element DATALIST should have HTMLDataListElement as its primary interface. expected "[object HTMLDataListElement]" but got "[object HTMLUnknownElement]"
+PASS Interfaces for datalist: useNS
+PASS Interfaces for datalist: useParser
+PASS Interfaces for DATALIST: createElement
 PASS Interfaces for dd: useNS
 PASS Interfaces for dd: useParser
 PASS Interfaces for DD: createElement

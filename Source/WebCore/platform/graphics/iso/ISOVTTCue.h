@@ -51,7 +51,7 @@ public:
     ISOWebVTTCue& operator=(const ISOWebVTTCue&) = default;
     ISOWebVTTCue& operator=(ISOWebVTTCue&&) = default;
 
-    static FourCC boxTypeName() { return "vttc"; }
+    static FourCC boxTypeName() { return std::span { "vttc" }; }
 
     const MediaTime& presentationTime() const { return m_presentationTime; }
     const MediaTime& duration() const { return m_duration; }

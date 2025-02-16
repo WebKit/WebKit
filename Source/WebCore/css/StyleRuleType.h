@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2019-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@ namespace WebCore {
 // https://w3c.github.io/csswg-drafts/cssom-1/#the-cssrule-interface
 
 enum class StyleRuleType : uint8_t {
-    Unknown = 0,
     Style = 1,
     Charset = 2,
     Import = 3,

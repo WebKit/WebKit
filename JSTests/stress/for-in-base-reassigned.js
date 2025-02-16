@@ -10,7 +10,7 @@ function foo(o_) {
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({0:0, 1:1, a:2, b:3});
     if (result != 9)
         throw "Error: bad result: " + result;

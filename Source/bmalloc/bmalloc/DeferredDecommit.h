@@ -25,6 +25,7 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
 #if !BUSE(LIBPAS)
 
 namespace bmalloc {
@@ -44,3 +45,4 @@ struct DeferredDecommit {
 } // namespace bmalloc
     
 #endif
+#endif // !BUSE(TZONE)

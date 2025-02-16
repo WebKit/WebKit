@@ -281,21 +281,6 @@ void GPUProcess::initializeGPUProcess(GPUProcessCreationParameters&& parameters,
 
 void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences)
 {
-#if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
-    if (updatePreference(m_preferences.webMParserEnabled, preferences.webMParserEnabled))
-        DeprecatedGlobalSettings::setWebMParserEnabled(*m_preferences.webMParserEnabled);
-#endif
-
-#if ENABLE(OPUS)
-    if (updatePreference(m_preferences.opusDecoderEnabled, preferences.opusDecoderEnabled))
-        PlatformMediaSessionManager::setOpusDecoderEnabled(*m_preferences.opusDecoderEnabled);
-#endif
-
-#if ENABLE(VORBIS)
-    if (updatePreference(m_preferences.vorbisDecoderEnabled, preferences.vorbisDecoderEnabled))
-        PlatformMediaSessionManager::setVorbisDecoderEnabled(*m_preferences.vorbisDecoderEnabled);
-#endif
-    
 #if USE(MODERN_AVCONTENTKEYSESSION)
     if (updatePreference(m_preferences.shouldUseModernAVContentKeySession, preferences.shouldUseModernAVContentKeySession))
         MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(*m_preferences.shouldUseModernAVContentKeySession);
@@ -382,9 +367,9 @@ void GPUProcess::updateSandboxAccess(const Vector<SandboxExtension::Handle>& ext
 }
 
 #if PLATFORM(COCOA)
-void GPUProcess::didDrawCompositedToPDF(PageIdentifier pageID, RefPtr<SharedBuffer>&& data, SnapshotIdentifier snapshotIdentifier)
+void GPUProcess::didDrawRemoteToPDF(PageIdentifier pageID, RefPtr<SharedBuffer>&& data, SnapshotIdentifier snapshotIdentifier)
 {
-    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::DidDrawCompositedToPDF(pageID, WTFMove(data), snapshotIdentifier), 0);
+    protectedParentProcessConnection()->send(Messages::GPUProcessProxy::DidDrawRemoteToPDF(pageID, WTFMove(data), snapshotIdentifier), 0);
 }
 #endif
 

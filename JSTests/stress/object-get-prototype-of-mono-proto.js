@@ -28,7 +28,7 @@ var polyProtoObject = makePolyProtoObject();
 var prototype = Reflect.getPrototypeOf(polyProtoObject);
 var object1 = { __proto__: prototype, hello: 44 };
 var object2 = { hello: 45 };
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(target(object1)[1], prototype);
     shouldBe(target(object2)[1], Object.prototype);
 }

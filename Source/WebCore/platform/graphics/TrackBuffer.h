@@ -55,7 +55,7 @@ public:
     
     bool updateMinimumUpcomingPresentationTime();
     
-    bool reenqueueMediaForTime(const MediaTime&, const MediaTime& timeFudgeFactor);
+    bool reenqueueMediaForTime(const MediaTime&, const MediaTime& timeFudgeFactor, bool isEnded = false);
     MediaTime findSeekTimeForTargetTime(const MediaTime& targetTime, const MediaTime& negativeThreshold, const MediaTime& positiveThreshold);
     int64_t removeCodedFrames(const MediaTime& start, const MediaTime& end, const MediaTime& currentTime);
     PlatformTimeRanges removeSamples(const DecodeOrderSampleMap::MapType&, ASCIILiteral);

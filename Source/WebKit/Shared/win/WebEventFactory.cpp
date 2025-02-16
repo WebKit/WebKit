@@ -395,9 +395,9 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     POINT positionPoint = point(lParam);
     POINT globalPositionPoint = positionPoint;
     ::ClientToScreen(hWnd, &globalPositionPoint);
-    IntPoint globalPosition(globalPositionPoint);
+    FloatPoint globalPosition(globalPositionPoint);
     globalPosition.scale(1 / deviceScaleFactor);
-    IntPoint position = positionPoint;
+    FloatPoint position = positionPoint;
     position.scale(1 / deviceScaleFactor);
 
     double timestamp = ::GetTickCount() * 0.001; // ::GetTickCount returns milliseconds (Chrome uses GetMessageTime() / 1000.0)
@@ -406,16 +406,16 @@ WebMouseEvent WebEventFactory::createWebMouseEvent(HWND hWnd, UINT message, WPAR
     auto modifiers = modifiersForEvent(wParam);
     auto buttons = buttonsForEvent(wParam);
 
-    return WebMouseEvent( { type, modifiers, WallTime::now() }, button, buttons, position, globalPosition, 0, 0, 0, clickCount, didActivateWebView);
+    return WebMouseEvent( { type, modifiers, WallTime::now() }, button, buttons, flooredIntPoint(position), flooredIntPoint(globalPosition), 0, 0, 0, clickCount, didActivateWebView);
 }
 
 WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, float deviceScaleFactor)
 {
     POINT positionPoint = point(lParam);
-    IntPoint globalPosition = positionPoint;
+    FloatPoint globalPosition = positionPoint;
     ::ScreenToClient(hWnd, &positionPoint);
     globalPosition.scale(1 / deviceScaleFactor);
-    IntPoint position = positionPoint;
+    FloatPoint position = positionPoint;
     position.scale(1 / deviceScaleFactor);
 
     WebWheelEvent::Granularity granularity = WebWheelEvent::ScrollByPixelWheelEvent;
@@ -453,7 +453,7 @@ WebWheelEvent WebEventFactory::createWebWheelEvent(HWND hWnd, UINT message, WPAR
         }
     }
 
-    return WebWheelEvent( { WebEventType::Wheel, modifiers, WallTime::now() }, position, globalPosition, FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity);
+    return WebWheelEvent( { WebEventType::Wheel, modifiers, WallTime::now() }, flooredIntPoint(position), flooredIntPoint(globalPosition), FloatSize(deltaX, deltaY), FloatSize(wheelTicksX, wheelTicksY), granularity);
 }
 
 static WindowsKeyNames& windowsKeyNames()

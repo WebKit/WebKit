@@ -38,7 +38,7 @@ namespace WTF {
 OSLogPrintStream::OSLogPrintStream(os_log_t log, os_log_type_t logType)
     : m_log(log)
     , m_logType(logType)
-    , m_string("initial string... lol")
+    , m_string("initial string... lol"_s)
 {
 }
 

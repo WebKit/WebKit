@@ -33,7 +33,7 @@ function foo(c, ...args) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     const c = false;
     const args = [{}, 20, [], 45];
     let r = foo(c, ...args);

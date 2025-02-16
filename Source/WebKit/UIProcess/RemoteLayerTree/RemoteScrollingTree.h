@@ -85,7 +85,7 @@ protected:
     void receivedWheelEventWithPhases(WebCore::PlatformWheelEventPhase phase, WebCore::PlatformWheelEventPhase momentumPhase) override;
     void deferWheelEventTestCompletionForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
     void removeWheelEventTestCompletionDeferralForReason(WebCore::ScrollingNodeID, WebCore::WheelEventTestMonitor::DeferReason) override;
-    void propagateSynchronousScrollingReasons(const HashSet<WebCore::ScrollingNodeID>&) WTF_REQUIRES_LOCK(m_treeLock) override;
+    void propagateSynchronousScrollingReasons(const UncheckedKeyHashSet<WebCore::ScrollingNodeID>&) WTF_REQUIRES_LOCK(m_treeLock) override;
 
     // This gets nulled out via invalidate(), since the scrolling thread can hold a ref to the ScrollingTree after the RemoteScrollingCoordinatorProxy has gone away.
     WeakPtr<RemoteScrollingCoordinatorProxy> m_scrollingCoordinatorProxy;

@@ -22,6 +22,6 @@ function makeFoo() {
 }
 
 let foos = [makeFoo(), makeFoo()];
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     test(!!(i%2), foos[((Math.random() * 100) | 0) % foos.length]);
 }

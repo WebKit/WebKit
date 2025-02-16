@@ -10,7 +10,7 @@ noInline(test);
 
 let v1 = { length: 42 };
 let v2 = { length: 42, test: 42 };
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     shouldBe(test(v1, i), undefined);
     shouldBe(test(v2, i), undefined);
 }

@@ -65,7 +65,7 @@ function performVerticalScrollingPasteTest()
     }
 }
 
-function performJumpAtTheEdgeTest(useCtrlKeyModifier)
+function performJumpAtTheEdgeTest(insertLineBreak)
 {
     var textArea = document.getElementById("input");
     textArea.focus();
@@ -74,7 +74,8 @@ function performJumpAtTheEdgeTest(useCtrlKeyModifier)
         var jumpDetected = false;
         for (var i = 0; i < 120; ++i) {
             previousScrollTop = document.scrollingElement.scrollTop;
-            eventSender.keyDown("\r", useCtrlKeyModifier ? ["ctrlKey"] : []);
+            const modifierKeys = insertLineBreak && !testRunner.isMac ? ["ctrlKey"] : [];
+            eventSender.keyDown("\r", modifierKeys);
             currentScrollTop = document.scrollingElement.scrollTop;
             // Smooth scrolls are allowed.
             if (Math.abs(previousScrollTop - currentScrollTop) > 24) {

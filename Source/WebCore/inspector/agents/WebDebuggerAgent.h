@@ -54,6 +54,10 @@ public:
     void didFailPostMessage(int postMessageIdentifier);
     void willDispatchPostMessage(int postMessageIdentifier);
     void didDispatchPostMessage(int postMessageIdentifier);
+    void didRequestAnimationFrame(int callbackId, JSC::JSGlobalObject&);
+    void willFireAnimationFrame(int callbackId);
+    void didCancelAnimationFrame(int callbackId);
+    void didFireAnimationFrame(int callbackId);
 
 protected:
     WebDebuggerAgent(WebAgentContext&);

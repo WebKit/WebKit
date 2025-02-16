@@ -276,14 +276,14 @@ void WEBPImageDecoder::applyPostProcessing(size_t frameIndex, WebPIDecoder* deco
         const int canvasY = top + y;
         for (int x = 0; x < decodedWidth; x++) {
             const int canvasX = left + x;
-            auto* address = buffer.backingStore()->pixelAt(canvasX, canvasY);
+            auto& destinationPixel = buffer.backingStore()->pixelAt(canvasX, canvasY);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-            uint8_t* pixel = decoderBuffer.u.RGBA.rgba + (y * frameRect.width() + x) * sizeof(uint32_t);
+            uint8_t* sourcePixels = decoderBuffer.u.RGBA.rgba + (y * frameRect.width() + x) * sizeof(uint32_t);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-            if (blend && (pixel[3] < 255))
-                buffer.backingStore()->blendPixel(address, pixel[0], pixel[1], pixel[2], pixel[3]);
+            if (blend && (sourcePixels[3] < 255))
+                buffer.backingStore()->blendPixel(destinationPixel, sourcePixels[0], sourcePixels[1], sourcePixels[2], sourcePixels[3]);
             else
-                buffer.backingStore()->setPixel(address, pixel[0], pixel[1], pixel[2], pixel[3]);
+                buffer.backingStore()->setPixel(destinationPixel, sourcePixels[0], sourcePixels[1], sourcePixels[2], sourcePixels[3]);
         }
     }
 }

@@ -15,7 +15,7 @@ function shouldBe(actual, expected)
     for (var i = 0; i < 100; ++i)
         array.push(i);
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(indexOf(array, 42), 42);
 }());
 
@@ -30,6 +30,6 @@ function shouldBe(actual, expected)
     for (var i = 0; i < 100; ++i)
         array.push(i + 0.5);
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(indexOf(array, 42 + 0.5), 42);
 }());

@@ -32,9 +32,9 @@
       'linux-test': 'angle_reclient_release_openclcts_bot',
       'linux-tsan-test': 'angle_tsan_bot',
       'linux-ubsan-test': 'angle_ubsan_bot',
-      'mac-dbg-compile': 'angle_reclient_debug_bot',
-      'mac-exp-test': 'angle_reclient_release_bot',
-      'mac-test': 'angle_reclient_release_bot',
+      'mac-dbg-compile': 'angle_reclient_x64_debug_bot',
+      'mac-exp-test': 'angle_reclient_x64_release_bot',
+      'mac-test': 'angle_reclient_x64_release_bot',
       'win-asan-test': 'angle_asan_bot',
       'win-dbg-compile': 'angle_reclient_debug_bot',
       'win-exp-test': 'angle_reclient_release_bot',
@@ -74,6 +74,8 @@
     'angle_reclient_perf_bot': ['angle', 'reclient', 'perf'],
     'angle_reclient_release_bot': ['angle', 'capture', 'opencl', 'reclient', 'release'],
     'angle_reclient_release_openclcts_bot': ['angle', 'capture', 'opencl', 'openclcts', 'reclient', 'release'],
+    'angle_reclient_x64_debug_bot': ['angle', 'opencl', 'reclient', 'x64', 'debug'],
+    'angle_reclient_x64_release_bot': ['angle', 'capture', 'opencl', 'reclient', 'x64', 'release'],
     'angle_reclient_x86_debug_bot': ['angle', 'opencl', 'reclient', 'x86', 'debug'],
     'angle_reclient_x86_release_bot': ['angle', 'opencl', 'reclient', 'x86', 'release'],
     'angle_tsan_bot': ['angle', 'opencl', 'openclcts', 'reclient', 'tsan', 'release'],
@@ -139,6 +141,9 @@
     },
     'winuwp': {
       'gn_args': 'target_os="winuwp"',
+    },
+    'x64': {
+      'gn_args': 'target_cpu="x64"',
     },
     'x86': {
       'gn_args': 'target_cpu="x86"',

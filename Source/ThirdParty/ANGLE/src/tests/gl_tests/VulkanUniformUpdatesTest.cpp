@@ -563,9 +563,15 @@ TEST_P(VulkanUniformUpdatesTest, MultipleProgramsShareDescriptors)
     rx::ContextVk *contextVk = hackANGLE();
     contextVk->setDefaultUniformBlocksMinSizeForTesting(512);
 
-    static constexpr size_t kNumPrograms    = 2;
-    static constexpr size_t kDrawIterations = 4;
-    static constexpr GLint kPosLoc          = 0;
+    constexpr size_t kNumPrograms                       = 2;
+    constexpr size_t kDrawIterations                    = 4;
+    constexpr GLint kPosLoc                             = 0;
+    const std::array<Vector3, kDrawIterations> uniforms = {
+        Vector3(0.1f, 0.2f, 0.3f), Vector3(0.4f, 0.5f, 0.6f), Vector3(0.7f, 0.8f, 0.9f),
+        Vector3(0.1f, 0.5f, 0.9f)};
+    const std::array<GLColor, kDrawIterations> expectedColors = {
+        GLColor(25, 51, 76, 255), GLColor(102, 127, 153, 255), GLColor(178, 204, 229, 255),
+        GLColor(25, 127, 229, 255)};
 
     std::array<GLuint, kNumPrograms> programs = {};
 
@@ -592,18 +598,15 @@ TEST_P(VulkanUniformUpdatesTest, MultipleProgramsShareDescriptors)
 
     ASSERT_GL_NO_ERROR();
 
-    RNG rng;
-
     for (size_t drawIteration = 0; drawIteration < kDrawIterations; ++drawIteration)
     {
         for (GLuint program : programs)
         {
-            Vector3 randVec = RandomVec3(rng.randomInt(), 0.0f, 1.0f);
-
             glUseProgram(program);
-            glUniform4f(0, randVec.x(), randVec.y(), randVec.z(), 1.0f);
+            glUniform4f(0, uniforms[drawIteration].x(), uniforms[drawIteration].y(),
+                        uniforms[drawIteration].z(), 1.0f);
             glDrawArrays(GL_TRIANGLES, 0, 6);
-            EXPECT_PIXEL_COLOR_NEAR(0, 0, GLColor(randVec), 5);
+            EXPECT_PIXEL_COLOR_NEAR(0, 0, expectedColors[drawIteration], 5);
         }
     }
 

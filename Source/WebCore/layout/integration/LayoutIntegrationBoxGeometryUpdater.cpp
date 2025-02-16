@@ -181,12 +181,12 @@ void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListMar
 
 static inline LayoutUnit contentLogicalWidthForRenderer(const RenderBox& renderer)
 {
-    return renderer.parent()->writingMode().isHorizontal() ? renderer.contentWidth() : renderer.contentHeight();
+    return renderer.parent()->writingMode().isHorizontal() ? renderer.contentBoxWidth() : renderer.contentBoxHeight();
 }
 
 static inline LayoutUnit contentLogicalHeightForRenderer(const RenderBox& renderer)
 {
-    return renderer.parent()->writingMode().isHorizontal() ? renderer.contentHeight() : renderer.contentWidth();
+    return renderer.parent()->writingMode().isHorizontal() ? renderer.contentBoxHeight() : renderer.contentBoxWidth();
 }
 
 Layout::BoxGeometry::HorizontalEdges BoxGeometryUpdater::horizontalLogicalMargin(const RenderBoxModelObject& renderer, std::optional<LayoutUnit> availableWidth, WritingMode writingMode, bool retainMarginStart, bool retainMarginEnd)
@@ -417,7 +417,7 @@ void BoxGeometryUpdater::setFormattingContextRootGeometry(LayoutUnit availableWi
     }
 
     auto& rootGeometry = layoutState().ensureGeometryForBox(rootLayoutBox());
-    rootGeometry.setContentBoxWidth(writingMode.isHorizontal() ? rootRenderer.contentWidth() : rootRenderer.contentHeight());
+    rootGeometry.setContentBoxWidth(writingMode.isHorizontal() ? rootRenderer.contentBoxWidth() : rootRenderer.contentBoxHeight());
     rootGeometry.setPadding(padding);
     rootGeometry.setBorder(border);
     rootGeometry.setSpaceForScrollbar(scrollbarLogicalSize(rootRenderer));
@@ -446,7 +446,7 @@ Layout::ConstraintsForInlineContent BoxGeometryUpdater::formattingContextConstra
     auto scrollbarSize = scrollbarLogicalSize(rootRenderer);
     auto shouldPlaceVerticalScrollbarOnLeft = rootRenderer.shouldPlaceVerticalScrollbarOnLeft();
 
-    auto contentBoxWidth = writingMode.isHorizontal() ? rootRenderer.contentWidth() : rootRenderer.contentHeight();
+    auto contentBoxWidth = writingMode.isHorizontal() ? rootRenderer.contentBoxWidth() : rootRenderer.contentBoxHeight();
     auto contentBoxLeft = border.horizontal.start + padding.horizontal.start;
     auto contentBoxTop = border.vertical.before + padding.vertical.before;
     if (writingMode.isInlineLeftToRight())
@@ -471,7 +471,7 @@ void BoxGeometryUpdater::updateBoxGeometryAfterIntegrationLayout(const Layout::E
     }
 
     auto& boxGeometry = layoutState().ensureGeometryForBox(layoutBox);
-    boxGeometry.setContentBoxSize(renderBox->contentLogicalSize());
+    boxGeometry.setContentBoxSize(renderBox->contentBoxLogicalSize());
     boxGeometry.setSpaceForScrollbar(scrollbarLogicalSize(*renderBox));
 
     auto integrationAdjustments = [&] {

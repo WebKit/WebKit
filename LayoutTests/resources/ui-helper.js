@@ -1022,6 +1022,27 @@ window.UIHelper = class UIHelper {
         return true;
     }
 
+    static async selectionBounds()
+    {
+        const rects = await this.getUISelectionViewRects();
+        if (!rects?.length)
+            return null;
+
+        let minTop = Infinity;
+        let minLeft = Infinity;
+        let maxTop = -Infinity;
+        let maxLeft = -Infinity;
+
+        for (const rect of rects) {
+            minTop = Math.min(minTop, rect.top);
+            minLeft = Math.min(minLeft, rect.left);
+            maxTop = Math.max(maxTop, rect.top + rect.height);
+            maxLeft = Math.max(maxLeft, rect.left + rect.width);
+        }
+
+        return { left: minLeft, top: minTop, width: maxLeft - minLeft, height: maxTop - minTop };
+    }
+
     static getSelectionStartGrabberViewRect()
     {
         if (!this.isWebKit2() || !this.isIOSFamily())
@@ -1254,6 +1275,15 @@ window.UIHelper = class UIHelper {
             testRunner.runUIScript(`(() => {
                 uiController.uiScriptComplete(uiController.isShowingDataListSuggestions);
             })()`, result => resolve(result === "true"));
+        });
+    }
+
+    static waitForDataListSuggestionsToChangeVisibility(visible)
+    {
+        return new Promise(async resolve => {
+            while (visible != await this.isShowingDataListSuggestions())
+                continue;
+            resolve();
         });
     }
 
@@ -2165,6 +2195,30 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static fixedContainerEdgeColors()
+    {
+        if (!this.isWebKit2())
+            return { };
+
+        const script = "JSON.stringify(uiController.fixedContainerEdgeColors)";
+        return new Promise(resolve => testRunner.runUIScript(script, colors => {
+            resolve(JSON.parse(colors));
+        }));
+    }
+
+    static async waitForFixedContainerEdgeColors(expectedColors)
+    {
+        while (true) {
+            await this.renderingUpdate();
+            const colors = await this.fixedContainerEdgeColors();
+            for (const edge of ["top", "left", "right", "bottom"]) {
+                if (colors[edge] !== expectedColors[edge])
+                    continue;
+            }
+            break;
+        }
+    }
+
     static addChromeInputField()
     {
         return new Promise(resolve => testRunner.addChromeInputField(resolve));
@@ -2266,6 +2320,16 @@ window.UIHelper = class UIHelper {
         return new Promise(resolve => {
             testRunner.runUIScript("uiController.keyboardUpdateForChangedSelectionCount", resolve);
         });
+    }
+
+    static async typeCharacters(stringToType, waitForEvent = "input", eventTarget = null) {
+        for (let character of [...stringToType]) {
+            await UIHelper.callFunctionAndWaitForEvent(async () => {
+                if (window.testRunner)
+                    await UIHelper.typeCharacter(character);
+                await UIHelper.ensurePresentationUpdate();
+            }, eventTarget || document.activeElement, waitForEvent);
+        }
     }
 }
 

@@ -106,7 +106,7 @@ void WebInspectorClient::showPaintRect(const FloatRect&)
 void WebInspectorClient::didSetSearchingForNode(bool enabled)
 {
     NSString *notificationName = enabled ? WebInspectorDidStartSearchingForNode : WebInspectorDidStopSearchingForNode;
-    RunLoop::main().dispatch([notificationName = retainPtr(notificationName), inspector = retainPtr([m_inspectedWebView.get() inspector])] {
+    RunLoop::protectedMain()->dispatch([notificationName = retainPtr(notificationName), inspector = retainPtr([m_inspectedWebView.get() inspector])] {
         [[NSNotificationCenter defaultCenter] postNotificationName:notificationName.get() object:inspector.get()];
     });
 }

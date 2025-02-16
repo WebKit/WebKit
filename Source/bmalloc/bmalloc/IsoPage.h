@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "Bits.h"
 #include "DeferredTrigger.h"
 #include "FreeList.h"
@@ -131,3 +133,4 @@ private:
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

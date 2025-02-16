@@ -507,8 +507,8 @@ void GenerateAndAllocateRegisters::prepareForGeneration()
         UnifiedTmpLiveness liveness(m_code);
         for (BasicBlock* block : m_code) {
             auto assertLivenessAreEqual = [&] (auto a, auto b) {
-                HashSet<Tmp> livenessA;
-                HashSet<Tmp> livenessB;
+                UncheckedKeyHashSet<Tmp> livenessA;
+                UncheckedKeyHashSet<Tmp> livenessB;
                 for (Tmp tmp : a) {
                     if (tmp.isReg() && isDisallowedRegister(tmp.reg()))
                         continue;

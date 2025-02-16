@@ -1,0 +1,8 @@
+Setting selection through APIs does not focus unless selection is inside the text control.
+
+
+
+PASS setSelectionRange does not focus unless selection is inside the text control.
+PASS selectionStart/selectionEnd does not focus unless selection is inside the text control.
+PASS setRangeText does not focus unless selection is inside the text control.
+

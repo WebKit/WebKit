@@ -26,9 +26,9 @@ function foo() {
 function get() {
     return bar;
 }
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     foo();
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(get(), 4);
 
 shouldBe(bar, 4);

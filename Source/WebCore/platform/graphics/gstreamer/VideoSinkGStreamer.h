@@ -17,8 +17,7 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef VideoSinkGStreamer_h
-#define VideoSinkGStreamer_h
+#pragma once
 
 #if ENABLE(VIDEO) && USE(GSTREAMER)
 
@@ -43,15 +42,7 @@ struct _WebKitVideoSink {
 };
 
 struct _WebKitVideoSinkClass {
-    GstVideoSinkClass parent_class;
-
-    // Future padding
-    void (* _webkit_reserved1)(void);
-    void (* _webkit_reserved2)(void);
-    void (* _webkit_reserved3)(void);
-    void (* _webkit_reserved4)(void);
-    void (* _webkit_reserved5)(void);
-    void (* _webkit_reserved6)(void);
+    GstVideoSinkClass parentClass;
 };
 
 GType webkit_video_sink_get_type() G_GNUC_CONST;
@@ -59,4 +50,3 @@ GType webkit_video_sink_get_type() G_GNUC_CONST;
 GstElement* webkitVideoSinkNew();
 
 #endif // USE(GSTREAMER)
-#endif

@@ -31,10 +31,10 @@ namespace mtl
 
 LibraryCache::LibraryCache() : mCache(kMaxCachedLibraries) {}
 
-AutoObjCPtr<id<MTLLibrary>> LibraryCache::get(const std::shared_ptr<const std::string> &source,
-                                              const std::map<std::string, std::string> &macros,
-                                              bool disableFastMath,
-                                              bool usesInvariance)
+angle::ObjCPtr<id<MTLLibrary>> LibraryCache::get(const std::shared_ptr<const std::string> &source,
+                                                 const std::map<std::string, std::string> &macros,
+                                                 bool disableFastMath,
+                                                 bool usesInvariance)
 {
     ASSERT(source != nullptr);
     LibraryCache::LibraryCacheEntry &entry =
@@ -100,13 +100,13 @@ egl::BlobCache::Key GenerateBlobCacheKeyForShaderLibrary(
 
 }  // namespace
 
-AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
+angle::ObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
     DisplayMtl *displayMtl,
     const std::shared_ptr<const std::string> &source,
     const std::map<std::string, std::string> &macros,
     bool disableFastMath,
     bool usesInvariance,
-    AutoObjCPtr<NSError *> *errorOut)
+    angle::ObjCPtr<NSError> *errorOut)
 {
     id<MTLDevice> metalDevice          = displayMtl->getMetalDevice();
     const angle::FeaturesMtl &features = displayMtl->getFeatures();
@@ -150,7 +150,7 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         std::string metallib_filename =
             CompileShaderLibraryToFile(*source, macros, disableFastMath, usesInvariance);
         angle::MemoryBuffer memory_buffer = ReadMetallibFromFile(metallib_filename);
-        AutoObjCPtr<NSError *> error;
+        angle::ObjCPtr<NSError> error;
         entry.library = CreateShaderLibraryFromBinary(metalDevice, memory_buffer.data(),
                                                       memory_buffer.size(), &error);
         auto cache_key =
@@ -167,7 +167,7 @@ AutoObjCPtr<id<MTLLibrary>> LibraryCache::getOrCompileShaderLibrary(
         angle::ScratchBuffer scratch_buffer;
         if (displayMtl->getBlobCache()->get(nullptr, &scratch_buffer, cache_key, &value))
         {
-            AutoObjCPtr<NSError *> error;
+            angle::ObjCPtr<NSError> error;
             entry.library =
                 CreateShaderLibraryFromBinary(metalDevice, value.data(), value.size(), &error);
         }

@@ -31,6 +31,8 @@ layer at (18,10) size 764x144
   RenderBlock (relative positioned) {DIV} at (10,0) size 764x144
 layer at (38,30) size 100x100
   RenderImage {IMG} at (20,20) size 100x100
+layer at (18,164) size 764x144
+  RenderBlock (relative positioned) {DIV} at (10,154) size 764x144
 layer at (38,184) size 100x100
   RenderImage {IMG} at (20,20) size 100x100
 

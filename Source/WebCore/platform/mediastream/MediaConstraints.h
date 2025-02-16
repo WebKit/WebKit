@@ -215,7 +215,7 @@ public:
         return true;
     }
 
-    ValueType find(const Function<bool(ValueType)>& function) const
+    ValueType find(NOESCAPE const Function<bool(ValueType)>& function) const
     {
         if (m_min && function(m_min.value()))
             return m_min.value();
@@ -554,7 +554,7 @@ public:
     double fitnessDistance(const String&) const;
     double fitnessDistance(const Vector<String>&) const;
 
-    const String& find(const Function<bool(const String&)>&) const;
+    const String& find(NOESCAPE const Function<bool(const String&)>&) const;
 
     bool isEmpty() const { return m_exact.isEmpty() && m_ideal.isEmpty(); }
     bool isMandatory() const { return !m_exact.isEmpty(); }
@@ -614,7 +614,7 @@ public:
     }
 
     WEBCORE_EXPORT void forEach(Function<void(MediaConstraintType, const MediaConstraint&)>&&) const;
-    void filter(const Function<bool(MediaConstraintType, const MediaConstraint&)>&) const;
+    void filter(NOESCAPE const Function<bool(MediaConstraintType, const MediaConstraint&)>&) const;
     bool isEmpty() const;
     WEBCORE_EXPORT bool isValid() const;
     WEBCORE_EXPORT size_t size() const;
@@ -686,7 +686,7 @@ private:
 struct MediaConstraints {
     void setDefaultAudioConstraints();
     void setDefaultVideoConstraints();
-    bool isConstraintSet(const Function<bool(const MediaTrackConstraintSetMap&)>&);
+    bool isConstraintSet(NOESCAPE const Function<bool(const MediaTrackConstraintSetMap&)>&);
 
     MediaTrackConstraintSetMap mandatoryConstraints;
     Vector<MediaTrackConstraintSetMap> advancedConstraints;

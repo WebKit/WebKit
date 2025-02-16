@@ -17,5 +17,5 @@ function testing(object) {
 }
 noInline(testing);
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testing(obj);

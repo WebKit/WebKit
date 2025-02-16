@@ -66,8 +66,12 @@ WI.Instrument = class Instrument
         if (initiatedByBackend)
             return;
 
-        let target = WI.assumingMainTarget();
-        target.TimelineAgent.start();
+        for (let target of WI.targets) {
+            if (target.type === WI.TargetType.Worker && !WI.settings.experimentalEnableWorkerTimelineRecording.value)
+                continue;
+            if (target.hasDomain("Timeline"))
+                target.TimelineAgent.start();
+        }
     }
 
     static stopLegacyTimelineAgent(initiatedByBackend)
@@ -82,8 +86,12 @@ WI.Instrument = class Instrument
         if (initiatedByBackend)
             return;
 
-        let target = WI.assumingMainTarget();
-        target.TimelineAgent.stop();
+        for (let target of WI.targets) {
+            if (target.type === WI.TargetType.Worker && !WI.settings.experimentalEnableWorkerTimelineRecording.value)
+                continue;
+            if (target.hasDomain("Timeline"))
+                target.TimelineAgent.stop();
+        }
     }
 
     // Protected

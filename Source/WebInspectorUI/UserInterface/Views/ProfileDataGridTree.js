@@ -59,6 +59,8 @@ WI.ProfileDataGridTree = class ProfileDataGridTree extends WI.Object
 
     // Public
 
+    get target() { return this._callingContextTree.target; }
+
     get callingContextTree() { return this._callingContextTree; }
 
     get focusNodes()

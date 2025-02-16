@@ -18,7 +18,7 @@ function foo(o, i) {
 noInline(foo);
 
 var o = make();
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var index = i % o.length;
     var result = foo(o, index);
     if (result != index + 1)

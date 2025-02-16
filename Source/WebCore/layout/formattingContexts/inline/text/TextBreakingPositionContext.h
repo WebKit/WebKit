@@ -33,8 +33,33 @@
 namespace WebCore {
 namespace Layout {
 
+enum class WhiteSpaceCollapseBehavior : uint8_t {
+    CollapseAll,
+    CollapseWhitespaceSequence,
+    Preserve
+};
+
+static WhiteSpaceCollapseBehavior BehaviorForWhiteSpaceCollapse(WhiteSpaceCollapse collapse)
+{
+    switch (collapse) {
+    case WhiteSpaceCollapse::Collapse:
+        return WhiteSpaceCollapseBehavior::CollapseAll;
+    case WhiteSpaceCollapse::PreserveBreaks:
+        return WhiteSpaceCollapseBehavior::CollapseWhitespaceSequence;
+    case WhiteSpaceCollapse::Preserve:
+    case WhiteSpaceCollapse::BreakSpaces:
+        // TODO: WhiteSpaceCollapse::PreserveSpaces should also be handled this way.
+        // WhiteSpaceCollapse::Preserve and WhiteSpaceCollapse::BreakSpaces
+        // have the same text breaking positions so we don't need to recalculate
+        // breaking points when switching between these behaviors.
+        return WhiteSpaceCollapseBehavior::Preserve;
+    }
+    ASSERT_NOT_REACHED();
+    return WhiteSpaceCollapseBehavior::CollapseAll;
+}
+
 struct TextBreakingPositionContext {
-    WhiteSpace whitespace { WhiteSpace::Normal };
+    WhiteSpaceCollapseBehavior whitespaceCollapseBehavior { WhiteSpaceCollapseBehavior::CollapseAll };
     OverflowWrap overflowWrap { OverflowWrap::Normal };
     LineBreak lineBreak { LineBreak::Normal };
     WordBreak wordBreak { WordBreak::Normal };
@@ -50,7 +75,7 @@ struct TextBreakingPositionContext {
 };
 
 inline TextBreakingPositionContext::TextBreakingPositionContext(const RenderStyle& style)
-    : whitespace(style.whiteSpace())
+    : whitespaceCollapseBehavior(BehaviorForWhiteSpaceCollapse(style.whiteSpaceCollapse()))
     , overflowWrap(style.overflowWrap())
     , lineBreak(style.lineBreak())
     , wordBreak(style.wordBreak())

@@ -175,13 +175,13 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
+void RenderMathMLMenclose::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     layoutFloatingChildren();

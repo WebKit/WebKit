@@ -14,9 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/absolute-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/absolute-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/absolute.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/relative-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/relative-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/relative.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/zero-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/zero-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/bearing/zero.svg

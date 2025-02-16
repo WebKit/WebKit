@@ -116,8 +116,3 @@ TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndices)
 {
     runMultipleIndicesTestWithDatabase(@"IndexUpgradeWithMultipleIndices");
 }
-
-TEST(IndexedDB, IndexUpgradeToV2WithMultipleIndicesHaveSameID)
-{
-    runMultipleIndicesTestWithDatabase(@"IndexUpgradeWithMultipleIndicesHaveSameID");
-}

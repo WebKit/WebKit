@@ -213,7 +213,7 @@ def usage
     puts "                            \"ruby\" to use ruby scripts for systems without a unix shell."
     puts "--remote                    Specify a remote host on which to run tests from command line argument."
     puts "--remote-config-file        Specify a remote host on which to run tests from JSON file."
-    puts "--report-execution-time     Print execution time for each test."
+    puts "--report-execution-time     Print execution time for each test in ms."
     puts "--child-processes    (-c)   Specify the number of child processes."
     puts "--max-timeout               Specify a cap for the effective timeout"
     puts "--filter                    Only run tests whose name matches the given regular expression."
@@ -1141,7 +1141,8 @@ BASE_MODES = [
         "NoCJIT",
         "ftl-no-cjit",
         [
-            "--validateBytecode=true", "--validateGraphAtEachPhase=true"
+            "--validateBytecode=true", "--validateGraphAtEachPhase=true", "--libpasForcePGMWithRate=#{10 + rand(10)}",
+
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS +
@@ -1153,6 +1154,7 @@ BASE_MODES = [
         [
             "--useDataICInFTL=true",
             "--allowNonSPTagging=false",
+            "--libpasForcePGMWithRate=#{10 + rand(10)}",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS
@@ -1255,6 +1257,7 @@ BASE_MODES = [
             "--validateGraph=true",
             "--validateBCE=true",
             "--airForceIRCAllocator=true",
+            "--libpasForcePGMWithRate=#{10 + rand(10)}",
         ] +
         FTL_OPTIONS +
         NO_CJIT_OPTIONS +
@@ -1354,6 +1357,7 @@ BASE_MODES = [
             "--useZombieMode=true",
             "--allowDoubleShape=false",
             "--alwaysHaveABadTime=true",
+            "--libpasForcePGMWithRate=#{10 + rand(10)}",
         ]
     ],
     [
@@ -1506,6 +1510,9 @@ BASE_MODES.each { |mode|
     cfgKinds.each { |cfgKind|
         methodName = "#{name}#{cfgKind.extension}".to_sym
         define_method(methodName) { |*args|
+            if not kind.nil? and $skipModes.include?(kind.to_sym)
+                return
+            end
             cfg = nil
             if cfgKind.expectCfg
                 # If we're defining a method that expects a cfg
@@ -1648,8 +1655,8 @@ def defaultNoEagerRun(*optionalTestSpecificOptions)
     defaultRunCfg({}, { :skipEager => true }, *optionalTestSpecificOptions)
 end
 
-def defaultNoSamplingProfilerRun
-    defaultRunCfg({}, { :ignoreQuickMode => true })
+def defaultNoSamplingProfilerRun(*optionalTestSpecificOptions)
+    defaultRunCfg({}, { :ignoreQuickMode => true }, *optionalTestSpecificOptions)
 end
 
 def runProfiler
@@ -2039,7 +2046,7 @@ def runWebAssemblyFunctionReferenceSpecTest(mode)
 end
 
 def runWebAssemblyGCSpecTest(mode)
-    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil, "--useWasmGC=true")
+    runWebAssemblySpecTestBase(mode, "gc-spec-harness", nil)
 end
 
 def runWebAssemblyThreadsSpecTest(mode)
@@ -2342,12 +2349,12 @@ def runNoisyTestWithEnv(kind, *additionalEnv)
     runDefaultCfg(cfg)
 end
 
-def defaultRunNoisyTest
+def defaultRunNoisyTest(*optionalTestSpecificOptions)
     cfg = {
         :outputHandler => noisyOutputHandler,
         :errorHandler => noisyErrorHandler,
     }
-    defaultRunCfg(cfg, {})
+    defaultRunCfg(cfg, {}, *optionalTestSpecificOptions)
 end
 
 def skip

@@ -50,7 +50,7 @@ public:
     constexpr MediaPlayerType mediaPlayerType() const final { return MediaPlayerType::GStreamerMSE; }
 
     void load(const String&) override;
-    void load(const URL&, const ContentType&, MediaSourcePrivateClient&) override;
+    void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 
     void updateDownloadBufferingFlag() override { };
 

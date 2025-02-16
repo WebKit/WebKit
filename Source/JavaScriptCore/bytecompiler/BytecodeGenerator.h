@@ -1148,7 +1148,7 @@ namespace JSC {
         using NumberMap = UncheckedKeyHashMap<double, JSValue>;
         using IdentifierStringMap = UncheckedKeyHashMap<UniquedStringImpl*, JSString*, IdentifierRepHash>;
         using IdentifierBigIntMap = UncheckedKeyHashMap<BigIntMapEntry, JSValue>;
-        using TemplateObjectDescriptorSet = HashSet<Ref<TemplateObjectDescriptor>>;
+        using TemplateObjectDescriptorSet = UncheckedKeyHashSet<Ref<TemplateObjectDescriptor>>;
         using TemplateDescriptorMap = UncheckedKeyHashMap<uint64_t, JSTemplateObjectDescriptor*, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
         // Helper for emitCall() and emitConstruct(). This works because the set of
@@ -1316,7 +1316,7 @@ namespace JSC {
 
         // Some of these objects keep pointers to one another. They are arranged
         // to ensure a sane destruction order that avoids references to freed memory.
-        HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_functions;
+        UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> m_functions;
         RegisterID m_ignoredResultRegister;
         RegisterID m_thisRegister;
         RegisterID m_calleeRegister;

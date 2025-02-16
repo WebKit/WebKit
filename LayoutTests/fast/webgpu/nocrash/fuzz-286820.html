@@ -1,0 +1,511 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+/**
+ * @template {any} T
+ * @param {GPUDevice} device
+ * @param {string} label
+
+/**
+* @returns {Promise<string>}
+*/
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+/**
+ * @param {string} payload
+ * @returns {string}
+ */
+function toBlobUrl(payload) {
+  let blob = new Blob([payload], {type: 'text/javascript'});
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter();
+// START
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage',
+  ],
+  requiredLimits: {
+    maxSamplersPerShaderStage: 16,
+  },
+});
+let querySet0 = device0.createQuerySet({type: 'occlusion', count: 783});
+let texture0 = device0.createTexture({
+  size: {width: 410, height: 1, depthOrArrayLayers: 21},
+  mipLevelCount: 2,
+  dimension: '3d',
+  format: 'bgra8unorm-srgb',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: ['bgra8unorm-srgb'],
+});
+try {
+device0.pushErrorScope('internal');
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture0,
+  mipLevel: 1,
+  origin: {x: 10, y: 0, z: 2},
+  aspect: 'all',
+}, new Uint8Array(140).fill(52), /* required buffer size: 140 */
+{offset: 140}, {width: 25, height: 0, depthOrArrayLayers: 1});
+} catch {}
+let offscreenCanvas0 = new OffscreenCanvas(143, 17);
+let veryExplicitBindGroupLayout0 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 90,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform', hasDynamicOffset: false },
+    },
+  ],
+});
+let sampler0 = device0.createSampler({addressModeV: 'mirror-repeat', addressModeW: 'mirror-repeat', lodMinClamp: 12.33});
+let veryExplicitBindGroupLayout1 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 90,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform', hasDynamicOffset: false },
+    },
+  ],
+});
+let texture1 = device0.createTexture({
+  size: {width: 56, height: 5, depthOrArrayLayers: 12},
+  dimension: '3d',
+  format: 'r16sint',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let gpuCanvasContext0 = offscreenCanvas0.getContext('webgpu');
+let textureView0 = texture1.createView({});
+let texture2 = device0.createTexture({
+  size: {width: 1640, height: 1, depthOrArrayLayers: 1},
+  mipLevelCount: 5,
+  format: 'rgba16sint',
+  usage: GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView1 = texture0.createView({mipLevelCount: 1});
+let promise0 = device0.queue.onSubmittedWorkDone();
+let textureView2 = texture2.createView({dimension: '2d-array', format: 'rgba16sint', mipLevelCount: 1});
+let veryExplicitBindGroupLayout2 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 90,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform', hasDynamicOffset: false },
+    },
+  ],
+});
+let buffer0 = device0.createBuffer({
+  size: 12720,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDEX | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX,
+});
+try {
+buffer0.unmap();
+} catch {}
+let textureView3 = texture0.createView({format: 'bgra8unorm-srgb', mipLevelCount: 1});
+let sampler2 = device0.createSampler({
+  maxAnisotropy: 1,
+});
+let videoFrame0 = new VideoFrame(offscreenCanvas0, {timestamp: 0});
+let pipelineLayout0 = device0.createPipelineLayout({bindGroupLayouts: [veryExplicitBindGroupLayout1]});
+let buffer1 = device0.createBuffer({
+  size: 2604,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDIRECT | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX,
+});
+let textureView4 = texture0.createView({mipLevelCount: 1});
+try {
+device0.queue.writeTexture({
+  texture: texture0,
+  mipLevel: 0,
+  origin: {x: 100, y: 0, z: 1},
+  aspect: 'all',
+}, new Uint8Array(73).fill(62), /* required buffer size: 73 */
+{offset: 73}, {width: 31, height: 0, depthOrArrayLayers: 1});
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+let pipelineLayout1 = device0.createPipelineLayout({bindGroupLayouts: [veryExplicitBindGroupLayout2, veryExplicitBindGroupLayout1]});
+let buffer2 = device0.createBuffer({size: 3387, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+let commandEncoder0 = device0.createCommandEncoder();
+let texture3 = device0.createTexture({
+  size: {width: 2, height: 2, depthOrArrayLayers: 1},
+  format: 'rgba16sint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+  viewFormats: [],
+});
+let texture4 = device0.createTexture({
+  size: {width: 2},
+  dimension: '1d',
+  format: 'rgba16sint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+});
+let computePassEncoder0 = commandEncoder0.beginComputePass({});
+let externalTexture0 = device0.importExternalTexture({source: videoFrame0});
+try {
+buffer2.unmap();
+} catch {}
+let texture5 = device0.createTexture({
+  size: {width: 224, height: 20, depthOrArrayLayers: 42},
+  mipLevelCount: 2,
+  format: 'rgba16sint',
+  usage: GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let sampler4 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'mirror-repeat',
+  lodMaxClamp: 72.14,
+});
+let textureView6 = texture3.createView({dimension: '2d-array'});
+let veryExplicitBindGroupLayout3 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 90,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform', hasDynamicOffset: false },
+    },
+  ],
+});
+let pipelineLayout2 = device0.createPipelineLayout({bindGroupLayouts: [veryExplicitBindGroupLayout0]});
+let buffer3 = device0.createBuffer({
+  label: '\u3900\u6925',
+  size: 597,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDIRECT | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.UNIFORM,
+});
+try {
+device0.lost.then(({reason, message}) => { console.log('device0 lost!'); console.log(message, reason); });
+} catch {}
+try {
+computePassEncoder0.pushDebugGroup('\ud040');
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  colorSpace: 'display-p3',
+  alphaMode: 'opaque',
+});
+} catch {}
+let textureView7 = texture3.createView({label: '\u75ed\u16af', format: 'rgba16sint'});
+let buffer4 = device0.createBuffer({
+  size: 17893,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX,
+});
+let textureView8 = texture3.createView({dimension: '2d-array'});
+
+let texture6 = device0.createTexture({
+  size: {width: 112, height: 10, depthOrArrayLayers: 122},
+  format: 'rgba16sint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView9 = texture0.createView({mipLevelCount: 1, baseArrayLayer: 0});
+let sampler5 = device0.createSampler({
+});
+try {
+device0.lost.then(r => { console.log('device0 lost!'); console.log(r.message, r.reason); });
+} catch {}
+try {
+computePassEncoder0.popDebugGroup();
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'bgra8unorm',
+  usage: GPUTextureUsage.COPY_SRC,
+  origin: {x: 13, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(110).fill(177), /* required buffer size: 110 */
+{offset: 110}, {width: 88, height: 1, depthOrArrayLayers: 0});
+} catch {}
+let promise1 = device0.queue.onSubmittedWorkDone();
+await gc();
+
+
+// START
+
+shaderModule4 = device0.createShaderModule({
+  code: `
+requires unrestricted_pointer_parameters;
+
+override override6: bool;
+
+var<workgroup> vw10: array<VertexOutput5, 9>;
+
+var<workgroup> vw13: array<atomic<i32>, 1>;
+
+override override5: bool;
+
+fn unconst_f32(v: f32) -> f32 { return v; }
+
+override override4: u32 = 304;
+
+@group(0) @binding(3) var tex4: texture_2d_array<f32>;
+
+var<workgroup> vw17: atomic<u32>;
+
+struct FragmentOutput3 {
+  @location(1) @interpolate(flat) f0: vec2u,
+  @location(3) @interpolate(flat) f1: vec2i,
+  @location(0) f2: vec4u,
+}
+
+fn unconst_bool(v: bool) -> bool { return v; }
+
+var<workgroup> vw11: VertexOutput6;
+
+var<workgroup> vw23: array<VertexOutput5, 1>;
+
+override override7: f16;
+
+var<workgroup> vw15: mat3x3f;
+
+var<private> vp6 = modf(vec2h(7501.5, 8880.6));
+
+var<workgroup> vw21: array<VertexOutput6, 1>;
+
+var<workgroup> vw14: mat4x2h;
+
+var<workgroup> vw19: atomic<u32>;
+
+var<workgroup> vw20: FragmentOutput3;
+
+fn unconst_u32(v: u32) -> u32 { return v; }
+
+var<workgroup> vw18: VertexOutput6;
+
+struct VertexOutput5 {
+  @builtin(position) f18: vec4f,
+}
+
+var<workgroup> vw22: FragmentOutput3;
+
+var<workgroup> vw9: array<atomic<u32>, 1>;
+
+var<private> vp7: f32 = f32(0.5703);
+
+fn unconst_f16(v: f16) -> f16 { return v; }
+
+fn unconst_i32(v: i32) -> i32 { return v; }
+
+struct VertexOutput6 {
+  @builtin(position) f19: vec4f,
+}
+
+/* used global variables: tex4 */
+fn fn1() -> array<array<array<VertexOutput5, 1>, 1>, 1> {
+  var out: array<array<array<VertexOutput5, 1>, 1>, 1>;
+  vp6 = modf(vp6.whole);
+  let ptr53: ptr<private, f32> = &vp7;
+  vp6.fract *= acosh(vec4h(unconst_f16(32233.0), unconst_f16(-7286.8), unconst_f16(3956.5), unconst_f16(-12495.1))).ga;
+  var vf229: f32 = radians(unconst_f32(0.3399));
+  vf229 *= f32(pack4xU8(vec4u(unconst_u32(124), unconst_u32(347), unconst_u32(216), unconst_u32(201))));
+  vp7 = distance(vec2f(unconst_f32(0.09558), unconst_f32(0.1859)), vec2f(unconst_f32(0.05671), unconst_f32(0.3030)));
+  var vf230: vec4u = firstLeadingBit(vec4u(unconst_u32(44), unconst_u32(97), unconst_u32(100), unconst_u32(324)));
+  loop {
+  let ptr54: ptr<private, vec2h> = &vp6.fract;
+  out[unconst_u32(149)][unconst_u32(72)][unconst_u32(439)] = VertexOutput5(vec4f(distance(vec4f(unconst_f32(0.1932), unconst_f32(0.2220), unconst_f32(0.1603), unconst_f32(0.01119)), vec4f(unconst_f32(0.02731), unconst_f32(0.3143), unconst_f32(-0.09525), unconst_f32(0.06028)))));
+  vp6 = modf(vec2h(f16((unconst_bool(true) || unconst_bool(false)))));
+  let ptr55 = &vp6;
+  for (var it10=bitcast<u32>(unpack2x16snorm(unconst_u32(186)).x); it10<bitcast<u32>(vp6.fract); it10++) {
+  out[unconst_u32(169)][unconst_u32(239)][bitcast<u32>((unconst_f16(20337.3) / vec2h( !vec4<bool>(unconst_bool(true), unconst_bool(false), unconst_bool(false), unconst_bool(false)).ba)))].f18 += textureLoad(tex4, vec2i(unconst_i32(146), unconst_i32(65)), unconst_i32(87), unconst_i32(75));
+  switch bitcast<i32>(asin(unconst_f32(0.1607))) { 
+  default {
+  var vf231: u32 = countLeadingZeros(unconst_u32(116));
+  let vf232: vec3h = sinh(vec3h(unconst_f16(13180.0), unconst_f16(7047.2), unconst_f16(3455.9)));
+  let vf233: vec4h = mix(sinh(vec3h(unconst_f16(4136.3), unconst_f16(11064.5), unconst_f16(4772.9))).brgr, vec4h(unconst_f16(20499.1), unconst_f16(29366.2), unconst_f16(3115.0), unconst_f16(19935.6)), unconst_f16(642.7));
+  let vf234: bool = any(vec3<bool>(bool(select(unconst_u32(1), bitcast<u32>(asinh(vec3f(unconst_f32(0.2432), unconst_f32(-0.2404), unconst_f32(-0.4295))).y), unconst_bool(true)))));
+  let ptr56: ptr<function, u32> = &vf231;
+  let vf235: vec4f = reflect(vec4f(unconst_f32(0.1966), unconst_f32(0.1288), unconst_f32(0.2270), unconst_f32(-0.03969)), vec4f(unconst_f32(0.1720), unconst_f32(0.06189), unconst_f32(0.1258), unconst_f32(0.1722)));
+  return out;
+}
+  }
+  out[unconst_u32(353)][u32(determinant(mat2x2f(unconst_f32(0.07349), unconst_f32(0.2193), unconst_f32(0.1876), unconst_f32(0.04078))))][unconst_u32(86)] = VertexOutput5(bitcast<vec4f>(insertBits(vec3i(unconst_i32(331), unconst_i32(41), unconst_i32(-49)), vec3i(unconst_i32(78), unconst_i32(6), unconst_i32(245)), unconst_u32(102), unconst_u32(137)).xyzx));
+  break;
+  _ = tex4;
+}
+  var vf236: u32 = textureNumLevels(tex4);
+  vp7 -= vec2f(textureDimensions(tex4))[0];
+  var vf237: vec4f = textureLoad(tex4, vec2i(unconst_i32(109), unconst_i32(116)), unconst_i32(350), unconst_i32(76));
+  var vf238: vec2u = textureDimensions(tex4, unconst_i32(495));
+  if bool((*ptr55).fract[1]) {
+  vp7 += bitcast<vec2f>(textureDimensions(tex4, unconst_i32(12)))[0];
+  var vf239: vec4u = (unconst_u32(73) / vec4u(unconst_u32(49), unconst_u32(247), unconst_u32(81), unconst_u32(176)));
+  break;
+
+}
+  break;
+
+}
+  switch i32(textureLoad(tex4, vec2i(unconst_i32(7), unconst_i32(9)), unconst_i32(125), i32(dot4U8Packed(u32(override7), unconst_u32(220))))[0]) { 
+  default {
+  var vf249: u32 = textureNumLevels(tex4);
+  switch i32(reflect(vec4f(unconst_f32(-0.3063), unconst_f32(0.4999), unconst_f32(0.06712), unconst_f32(0.01522)), vec4f(unconst_f32(0.4219), unconst_f32(0.2877), unconst_f32(0.03608), unconst_f32(0.2910))).r) { 
+  default {
+  let vf250: vec4h = round(vec4h(unconst_f16(4631.8), unconst_f16(7730.3), unconst_f16(16514.3), unconst_f16(1812.4)));
+  vp7 = vec3f(reflect(vec3h(unconst_f16(-13252.5), unconst_f16(2191.2), unconst_f16(5690.4)), vec3h(f16(textureNumLayers(tex4)))))[2];
+  var vf251: u32 = textureNumLayers(tex4);
+}
+  }
+  vp7 += f32(any((vec3u(unconst_u32(27), unconst_u32(384), unconst_u32(58)) == vec3u(unconst_u32(177), unconst_u32(380), unconst_u32(199)))));
+  let vf254: f16 = override7;
+  _ = tex4;
+}
+  }
+  var vf256: vec3f = smoothstep(vec3f(unconst_f32(0.07061), unconst_f32(0.08498), unconst_f32(0.2182)), vec3f(unconst_f32(0.2279), unconst_f32(0.1442), unconst_f32(0.4651)), vec3f(unconst_f32(0.05421), unconst_f32(0.02490), unconst_f32(0.00865)));
+  var vf257: u32 = vf230[unconst_u32(904)];
+  return out;
+}
+
+/* zero global variables used */
+fn fn0(a0: array<mat3x4f, 1>) -> vec2<bool> {
+  var out: vec2<bool>;
+  let ptr51: ptr<private, vec2h> = &vp6.fract;
+  out = vec2<bool>(bool(a0[unconst_u32(643)][unconst_u32(231)][unconst_u32(41)]));
+  vp6 = modf(vec2h(faceForward(vec3f(unconst_f32(0.09514), unconst_f32(0.00235), unconst_f32(-0.3417)), vec3f(unconst_f32(0.1255), unconst_f32(0.3828), unconst_f32(0.05958)), vec3f(vp6.fract.ggr)).bb));
+  var vf211: f32 = atan2(unconst_f32(0.06746), unconst_f32(0.06730));
+  out = vec2<bool>(bool(atan2(unconst_f32(0.1669), unconst_f32(0.1461))));
+  vf211 *= a0[unconst_u32(218)][unconst_i32(2)][2];
+  let vf212: vec4h = log(vec4h(unconst_f16(20133.7), unconst_f16(33839.5), unconst_f16(1382.9), unconst_f16(7235.9)));
+  let vf213: bool = override6;
+  vp7 = f32(override4);
+  switch i32(vf212[unconst_u32(366)]) { 
+  default {
+  let vf214: vec2f = fma(vec2f(unconst_f32(-0.1238), unconst_f32(0.09988)), unpack2x16float(unconst_u32(117)), vec2f(unconst_f32(0.3082), unconst_f32(-0.2220)));
+  var vf215: vec4<bool> = (vec4f(unconst_f32(0.1457), unconst_f32(-0.04335), unconst_f32(0.03321), unconst_f32(0.1219)) < vec4f(unconst_f32(0.6749), unconst_f32(0.2585), unconst_f32(-0.00363), unconst_f32(0.08758)));
+}
+  }
+  while bool((*ptr51).g) {
+  vp6 = modf(vec2h(pow(unconst_f16(15594.9), unconst_f16(14394.6))));
+  vp7 = f32(sqrt(vec4h(unconst_f16(17349.5), unconst_f16(3151.2), unconst_f16(1314.6), unconst_f16(687.7)))[3]);
+  vp7 += vec2f((vec2<bool>(unconst_bool(true), unconst_bool(false)) & vec2<bool>(unconst_bool(false), unconst_bool(false)))).r;
+}
+  let vf219: vec4h = log(vec4h(unconst_f16(17590.4), unconst_f16(14611.3), unconst_f16(8183.6), unconst_f16(8252.6)));
+  var vf220: vec4<bool> = (vec4h(unconst_f16(32658.6), unconst_f16(4119.9), unconst_f16(84.69), unconst_f16(534.0)) < vec4h(unconst_f16(-24388.9), unconst_f16(3534.3), unconst_f16(12666.8), unconst_f16(18481.4)));
+  vf220 = vec4<bool>(bool(tan(unconst_f32(0.2474))));
+  out = vec2<bool>(a0[0][unconst_i32(0)].zy);
+  var vf221: vec4h = vf212;
+  vf211 = f32(override7);
+  let vf222: vec4<bool> = (vec4h(unconst_f16(29.34), unconst_f16(5834.2), unconst_f16(4550.6), unconst_f16(2914.2)) < vec4h(unconst_f16(12503.9), unconst_f16(10325.0), unconst_f16(10770.4), unconst_f16(34869.1)));
+  for (var it9=vec4u(vf220).a; it9<u32((*ptr51)[unconst_u32(231)]); it9++) {
+  var vf223: vec2f = (vec2f(unconst_f32(0.01491), unconst_f32(0.02969)) - unconst_f32(0.2655));
+  var vf226: vec3f = sinh(vec3f(unconst_f32(0.1986), unconst_f32(0.00570), unconst_f32(-0.5947)));
+}
+  let vf227: f16 = override7;
+  var vf228: bool = vf222[unconst_u32(67)];
+  vf211 = bitcast<f32>(vp6.whole);
+  return out;
+}
+
+
+/* zero global variables used */
+@compute @workgroup_size(1, 1, 1)
+fn compute5() {
+  let ptr66: ptr<workgroup, vec4f> = &vw21[countLeadingZeros(vec3u(unconst_u32(5), unconst_u32(503), unconst_u32(113))).b].f19;
+  vw14 = mat4x2h(vec2h((*&vw11).f19.gr), vec2h((*&vw11).f19.zz), vec2h((*&vw11).f19.zy), vec2h((*&vw11).f19.wy));
+  var vf305 = fn0(array<mat3x4f, 1>(mat3x4f(vec4f(vw14[unconst_u32(49)].grgr), vec4f(vw14[unconst_u32(49)].yyyx), vec4f(vw14[unconst_u32(49)].rgrr))));
+  vw15 = mat3x3f(f32(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), f32(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), bitcast<f32>(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), f32(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), bitcast<f32>(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), bitcast<f32>(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), f32(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), bitcast<f32>(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))), f32(pack4xU8(vec4u(unconst_u32(606), unconst_u32(1), unconst_u32(24), unconst_u32(68)))));
+  fn0(array<mat3x4f, 1>(mat3x4f(vec4f((vec3u(unconst_u32(293), unconst_u32(23), unconst_u32(68)) - vec3u(bitcast<u32>(dot4I8Packed(unconst_u32(559), unconst_u32(17))))).brrr), vec4f((vec3u(unconst_u32(293), unconst_u32(23), unconst_u32(68)) - vec3u(bitcast<u32>(dot4I8Packed(unconst_u32(559), unconst_u32(17))))).xyxy), vec4f((vec3u(unconst_u32(293), unconst_u32(23), unconst_u32(68)) - vec3u(bitcast<u32>(dot4I8Packed(unconst_u32(559), unconst_u32(17))))).brrb))));
+  let ptr67: ptr<workgroup, vec2i> = &(*&vw22).f1;
+}`,
+});
+
+let pipeline16 = device0.createComputePipeline({label: 'p', layout: 'auto', compute: {module: shaderModule4, constants: {override7: 1, override6: 1}}});
+
+let commandEncoder262 = device0.createCommandEncoder({});
+
+let computePassEncoder203 = commandEncoder262.beginComputePass({});
+let sampler204 = device0.createSampler({addressModeU: 'clamp-to-edge', addressModeV: 'mirror-repeat', lodMinClamp: 56.63, lodMaxClamp: 74.21});
+
+try {
+computePassEncoder203.setPipeline(pipeline16);
+} catch {}
+
+
+try {
+computePassEncoder203.dispatchWorkgroups(1);
+} catch {}
+
+
+try {
+computePassEncoder203.end();
+} catch {}
+
+
+
+
+
+let commandBuffer11 = commandEncoder262.finish();
+
+
+try {
+device0.queue.submit([commandBuffer11]);
+} catch {}
+await device0.queue.onSubmittedWorkDone();
+// END
+// await device0.queue.onSubmittedWorkDone();
+
+}
+onload = async () => {
+  try {
+  let workers = [
+  ];
+  let promises = [ window0() ];
+  } catch (e) {
+    if (e instanceof GPUPipelineError) {
+      if (e.name === 'OperationError') {
+      }
+    }
+  }
+};
+</script>

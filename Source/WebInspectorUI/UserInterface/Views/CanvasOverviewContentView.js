@@ -45,22 +45,20 @@ WI.CanvasOverviewContentView = class CanvasOverviewContentView extends WI.Collec
 
         this.element.classList.add("canvas-overview");
 
-        if (WI.CanvasManager.supportsRecordingAutoCapture()) {
-            this._recordingAutoCaptureFrameCountInputElement = document.createElement("input");
-            this._recordingAutoCaptureFrameCountInputElement.type = "number";
-            this._recordingAutoCaptureFrameCountInputElement.min = 0;
-            this._recordingAutoCaptureFrameCountInputElement.addEventListener("input", this._handleRecordingAutoCaptureInput.bind(this));
-            this._recordingAutoCaptureFrameCountInputElementValue = WI.settings.canvasRecordingAutoCaptureFrameCount.value;
+        this._recordingAutoCaptureFrameCountInputElement = document.createElement("input");
+        this._recordingAutoCaptureFrameCountInputElement.type = "number";
+        this._recordingAutoCaptureFrameCountInputElement.min = 0;
+        this._recordingAutoCaptureFrameCountInputElement.addEventListener("input", this._handleRecordingAutoCaptureInput.bind(this));
+        this._recordingAutoCaptureFrameCountInputElementValue = WI.settings.canvasRecordingAutoCaptureFrameCount.value;
 
-            const label = null;
-            this._recordingAutoCaptureNavigationItem = new WI.CheckboxNavigationItem("canvas-recording-auto-capture", label, !!WI.settings.canvasRecordingAutoCaptureEnabled.value);
-            this._recordingAutoCaptureNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
-            this._recordingAutoCaptureNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleRecordingAutoCaptureCheckedDidChange, this);
+        const label = null;
+        this._recordingAutoCaptureNavigationItem = new WI.CheckboxNavigationItem("canvas-recording-auto-capture", label, !!WI.settings.canvasRecordingAutoCaptureEnabled.value);
+        this._recordingAutoCaptureNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
+        this._recordingAutoCaptureNavigationItem.addEventListener(WI.CheckboxNavigationItem.Event.CheckedDidChange, this._handleRecordingAutoCaptureCheckedDidChange, this);
 
-            let frameCount = this._updateRecordingAutoCaptureInputElementSize();
-            this._setRecordingAutoCaptureFrameCount(frameCount);
-            this._updateRecordingAutoCaptureCheckboxLabel(frameCount);
-        }
+        let frameCount = this._updateRecordingAutoCaptureInputElementSize();
+        this._setRecordingAutoCaptureFrameCount(frameCount);
+        this._updateRecordingAutoCaptureCheckboxLabel(frameCount);
 
         importNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._handleImportButtonNavigationItemClicked, this);
 

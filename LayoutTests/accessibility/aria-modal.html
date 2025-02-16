@@ -14,19 +14,20 @@
 
 <div id="dialogParent" role="group">
     <div role="dialog" aria-modal="true" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1">
-        <h3 id="myDialog">Just an example.</h3>
+        <h3 tabindex="0" id="heading">Just an example.</h3>
         <button id="ok" onclick="toggleDialog('hide');" class="close-button">OK</button>
         <button onclick="toggleDialog('hide');" class="close-button">Cancel</button>
     </div>
 </div>
 
 <script>
+    document.getElementById("heading").focus();
     description("This tests that aria-modal on dialog makes other elements inert.");
 
     if (window.accessibilityController) {
         window.jsTestIsAsync = true;
 
-        // Background should be unaccessible after loading, since the
+        // Background should be inaccessible after loading, since the
         // dialog is displayed and aria-modal=true.
         debug("Dialog is displaying");
         shouldBeFalse("backgroundAccessible()");
@@ -40,7 +41,7 @@
             debug("Dialog is not displaying");
             shouldBeTrue("backgroundAccessible()");
 
-            // Click the display button, dialog shows and background becomes unaccessible.
+            // Click the display button, dialog shows and background becomes inaccessible.
             document.getElementById("displayButton").click();
             await waitFor(() => {
                 return !backgroundAccessible();
@@ -143,6 +144,7 @@
         if (sh == "show") {
             // show the dialog
             dialog.style.display = 'block';
+            document.getElementById("heading").focus();
             dialog.setAttribute("aria-modal", "true");
         } else {
             dialog.style.display = 'none';

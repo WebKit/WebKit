@@ -44,20 +44,20 @@ static bool hasDefaultValueForCircleRadius(Circle::RadialSize radius)
     );
 }
 
-void Serialize<Circle>::operator()(StringBuilder& builder, const Circle& value)
+void Serialize<Circle>::operator()(StringBuilder& builder, const SerializationContext& context, const Circle& value)
 {
     // <circle()> = circle( <radial-size>? [ at <position> ]? )
 
     auto lengthBefore = builder.length();
 
     if (!hasDefaultValueForCircleRadius(value.radius))
-        serializationForCSS(builder, value.radius);
+        serializationForCSS(builder, context, value.radius);
 
     if (value.position) {
         // FIXME: To match other serialization of Percentage, this should not serialize if equal to the default value of 50% 50%, but this does not match the tests.
         bool wroteSomething = builder.length() != lengthBefore;
         builder.append(wroteSomething ? " at "_s : "at "_s);
-        serializationForCSS(builder, *value.position);
+        serializationForCSS(builder, context, *value.position);
     }
 }
 

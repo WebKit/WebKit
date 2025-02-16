@@ -51,7 +51,11 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ArchiveResource.h>
+#import <WebCore/CSSPropertyNames.h>
 #import <WebCore/Chrome.h>
+#import <WebCore/Color.h>
+#import <WebCore/ColorCocoa.h>
+#import <WebCore/ColorSerialization.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/Document.h>
 #import <WebCore/EventNames.h>
@@ -128,6 +132,10 @@ PDFPluginBase::PDFPluginBase(HTMLPlugInElement& element)
     , m_incrementalPDFLoadingEnabled(element.document().settings().incrementalPDFLoadingEnabled())
 #endif
 {
+    if (isFullFramePlugin()) {
+        Ref document = element.document();
+        RefPtr { document->bodyOrFrameset() }->setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForHTML(pluginBackgroundColor()));
+    }
 }
 
 PDFPluginBase::~PDFPluginBase()
@@ -229,7 +237,11 @@ bool PDFPluginBase::isFullFramePlugin() const
 
 bool PDFPluginBase::handlesPageScaleFactor() const
 {
+#if PLATFORM(IOS_FAMILY)
+    return false;
+#else
     return m_frame && m_frame->isMainFrame() && isFullFramePlugin();
+#endif
 }
 
 bool PDFPluginBase::isLocked() const
@@ -267,6 +279,26 @@ uint64_t PDFPluginBase::streamedBytes() const
     return m_streamedBytes;
 }
 
+#if !LOG_DISABLED
+
+// Thread safety analysis gets really confused by conditional locking, so
+// it is difficult to prove that any previous stack frame did in fact secure
+// the data lock without having to pass around Locker instances across dataSpanForRange()
+// and its callers. Instead, this method opts out of thread safety analysis
+// and ensures the lock is held when reading m_streamedBytes, else we assert.
+uint64_t PDFPluginBase::streamedBytesForDebugLogging() const WTF_IGNORES_THREAD_SAFETY_ANALYSIS
+{
+    if (m_streamedDataLock.tryLock()) {
+        Locker locker { AdoptLock, m_streamedDataLock };
+        return m_streamedBytes;
+    }
+
+    m_streamedDataLock.assertIsOwner();
+    return m_streamedBytes;
+}
+
+#endif
+
 bool PDFPluginBase::haveStreamedDataForRange(uint64_t offset, size_t count) const
 {
     if (!m_data)
@@ -293,7 +325,7 @@ size_t PDFPluginBase::copyDataAtPosition(std::span<uint8_t> buffer, uint64_t sou
     return buffer.size();
 }
 
-std::span<const uint8_t> PDFPluginBase::dataSpanForRange(uint64_t sourcePosition, size_t count, CheckValidRanges checkValidRanges) const
+void PDFPluginBase::dataSpanForRange(uint64_t sourcePosition, size_t count, CheckValidRanges checkValidRanges, CompletionHandler<void(std::span<const uint8_t>)>&& completionHandler) const
 {
     Locker locker { m_streamedDataLock };
 
@@ -315,9 +347,9 @@ std::span<const uint8_t> PDFPluginBase::dataSpanForRange(uint64_t sourcePosition
     };
 
     if (!haveValidData(checkValidRanges))
-        return { };
+        return completionHandler({ });
 
-    return span(m_data.get()).subspan(sourcePosition, count);
+    completionHandler(span(m_data.get()).subspan(sourcePosition, count));
 }
 
 bool PDFPluginBase::getByteRanges(CFMutableArrayRef dataBuffersArray, std::span<const CFRange> ranges) const
@@ -1327,20 +1359,19 @@ static void verboseLog(PDFIncrementalLoader* incrementalLoader, uint64_t streame
 void PDFPluginBase::incrementalLoaderLog(const String& message)
 {
 #if HAVE(INCREMENTAL_PDF_APIS)
-    if (!isMainRunLoop()) {
-        callOnMainRunLoop([this, protectedThis = Ref { *this }, message = message.isolatedCopy()] {
-            incrementalLoaderLog(message);
-        });
-        return;
-    }
-
-    auto streamedBytes = this->streamedBytes();
-    LOG_WITH_STREAM(IncrementalPDF, stream << message);
-    verboseLog(m_incrementalLoader.get(), streamedBytes, m_documentFinishedLoading);
-    LOG_WITH_STREAM(IncrementalPDFVerbose, stream << message);
+    ensureOnMainRunLoop([this, protectedThis = Ref { *this }, message = message.isolatedCopy(), byteCount = streamedBytesForDebugLogging()] {
+        incrementalLoaderLogWithBytes(message, byteCount);
+    });
 #else
     UNUSED_PARAM(message);
 #endif
+}
+
+void PDFPluginBase::incrementalLoaderLogWithBytes(const String& message, uint64_t streamedBytes)
+{
+    LOG_WITH_STREAM(IncrementalPDF, stream << message);
+    verboseLog(m_incrementalLoader.get(), streamedBytes, m_documentFinishedLoading);
+    LOG_WITH_STREAM(IncrementalPDFVerbose, stream << message);
 }
 
 #endif // !LOG_DISABLED
@@ -1458,6 +1489,12 @@ String PDFPluginBase::annotationStyle() const
     ".password-form + input.annotation[type='password'] {"
     "    margin-top: 16px;"
     "}"_s;
+}
+
+Color PDFPluginBase::pluginBackgroundColor()
+{
+    static NeverDestroyed color = roundAndClampToSRGBALossy([CocoaColor grayColor].CGColor);
+    return color.get();
 }
 
 } // namespace WebKit

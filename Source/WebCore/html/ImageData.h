@@ -41,9 +41,9 @@ namespace WebCore {
 
 class ImageData : public RefCounted<ImageData> {
 public:
-    WEBCORE_EXPORT static Ref<ImageData> create(Ref<ByteArrayPixelBuffer>&&);
-    WEBCORE_EXPORT static RefPtr<ImageData> create(RefPtr<ByteArrayPixelBuffer>&&);
-    WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, PredefinedColorSpace);
+    WEBCORE_EXPORT static Ref<ImageData> create(Ref<ByteArrayPixelBuffer>&&, std::optional<ImageDataStorageFormat> = { });
+    WEBCORE_EXPORT static RefPtr<ImageData> create(RefPtr<ByteArrayPixelBuffer>&&, std::optional<ImageDataStorageFormat> = { });
+    WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, PredefinedColorSpace, ImageDataStorageFormat = ImageDataStorageFormat::Uint8);
     WEBCORE_EXPORT static RefPtr<ImageData> create(const IntSize&, ImageDataArray&&, PredefinedColorSpace);
 
     WEBCORE_EXPORT static ExceptionOr<Ref<ImageData>> create(unsigned sw, unsigned sh, PredefinedColorSpace defaultColorSpace, std::optional<ImageDataSettings> = std::nullopt, std::span<const uint8_t> = { });
@@ -66,6 +66,7 @@ public:
 
 private:
     explicit ImageData(const IntSize&, ImageDataArray&&, PredefinedColorSpace);
+    explicit ImageData(const IntSize&, ImageDataArray&&, PredefinedColorSpace, std::optional<ImageDataStorageFormat>);
 
     IntSize m_size;
     ImageDataArray m_data;

@@ -29,6 +29,8 @@
 
 namespace JSC { namespace Wasm {
 
+#if ENABLE(WEBASSEMBLY_OMGJIT)
 WTF_MAKE_TZONE_ALLOCATED_IMPL(OSREntryData);
+#endif
 
 } } // namespace JSC::Wasm

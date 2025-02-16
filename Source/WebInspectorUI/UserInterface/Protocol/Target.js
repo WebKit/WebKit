@@ -130,7 +130,6 @@ WI.Target = class Target extends WI.Object
     // Agents
 
     get AnimationAgent() { return this._agents.Animation; }
-    get ApplicationCacheAgent() { return this._agents.ApplicationCache; }
     get AuditAgent() { return this._agents.Audit; }
     get BrowserAgent() { return this._agents.Browser; }
     get CPUProfilerAgent() { return this._agents.CPUProfiler; }
@@ -140,7 +139,6 @@ WI.Target = class Target extends WI.Object
     get DOMAgent() { return this._agents.DOM; }
     get DOMDebuggerAgent() { return this._agents.DOMDebugger; }
     get DOMStorageAgent() { return this._agents.DOMStorage; }
-    get DatabaseAgent() { return this._agents.Database; }
     get DebuggerAgent() { return this._agents.Debugger; }
     get HeapAgent() { return this._agents.Heap; }
     get IndexedDBAgent() { return this._agents.IndexedDB; }

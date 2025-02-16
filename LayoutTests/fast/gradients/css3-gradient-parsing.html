@@ -33,7 +33,7 @@ function testGradientComputedValue(css, queryProp)
 
 debug('<p>-webkit-linear-gradient</p>');
 
-shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0%", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0%", "background-image")', '"-webkit-linear-gradient(top, black 0%)"');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(top)", "background-image")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(10deg)", "background-image")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(top center, black 0%)", "background-image")', '""');
@@ -41,7 +41,7 @@ shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(left left)", "background-image")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(left center)", "background-image")', '""');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image")', '""');
-shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black)", "background-image")', '""');
+shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black)", "background-image")', '"-webkit-linear-gradient(top, black)"');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, black, white)"');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0, white)", "background-image")', '"-webkit-linear-gradient(top, black 0px, white)"');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
@@ -52,7 +52,7 @@ shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(top, black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, black 0%, white)"');
 shouldBe('testGradientSpecifiedValue("background-image: -webkit-linear-gradient(10deg, black 0%, white)", "background-image")', '"-webkit-linear-gradient(10deg, black 0%, white)"');
 
-shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0%", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0%", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 0%)"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(top)", "background-image")', '"none"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(10deg)", "background-image")', '"none"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(top center, black 0%)", "background-image")', '"none"');
@@ -60,7 +60,7 @@ shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(1
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(left left)", "background-image")', '"none"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(left center)", "background-image")', '"none"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(left 10deg, black 0%)", "background-image")', '"none"');
-shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black)", "background-image")', '"none"');
+shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0))"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0), rgb(255, 255, 255))"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 0px, rgb(255, 255, 255))"');
 shouldBe('testGradientComputedValue("background-image: -webkit-linear-gradient(black 0%, white)", "background-image")', '"-webkit-linear-gradient(top, rgb(0, 0, 0) 0%, rgb(255, 255, 255))"');

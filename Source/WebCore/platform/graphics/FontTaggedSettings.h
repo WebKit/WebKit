@@ -33,8 +33,6 @@
 #include <wtf/Hasher.h>
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 class TextStream;
 }
@@ -43,7 +41,11 @@ namespace WebCore {
 
 using FontTag = std::array<char, 4>;
 
-inline FontTag fontFeatureTag(const char characters[4]) { return {{ characters[0], characters[1], characters[2], characters[3] }}; }
+inline FontTag fontFeatureTag(std::span<const char, 5> nullTerminatedString)
+{
+    ASSERT(nullTerminatedString[4] == '\0');
+    return { nullTerminatedString[0], nullTerminatedString[1], nullTerminatedString[2], nullTerminatedString[3] };
+}
 
 inline void add(Hasher& hasher, std::array<char, 4> array)
 {
@@ -146,5 +148,3 @@ TextStream& operator<<(TextStream&, const FontTaggedSettings<int>&);
 TextStream& operator<<(TextStream&, const FontTaggedSettings<float>&);
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

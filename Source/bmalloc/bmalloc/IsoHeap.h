@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "CompactAllocationMode.h"
 #include "IsoConfig.h"
 #include "Mutex.h"
@@ -253,3 +255,5 @@ void isoType::freeAfterDestruction(void* p) \
 using __makeBisoMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api
+
+#endif // !BUSE(TZONE)

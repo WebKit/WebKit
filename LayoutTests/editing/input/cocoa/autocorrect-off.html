@@ -29,11 +29,7 @@
         if (window.testRunner)
             await UIHelper.activateElementAndWaitForInputSession(element);
 
-        for (let character of [...stringToType]) {
-            await UIHelper.callFunctionAndWaitForEvent(() => {
-                return window.testRunner ? UIHelper.typeCharacter(character) : Promise.resolve();
-            }, element, "input");
-        }
+        await UIHelper.typeCharacters(stringToType);
 
         element.blur();
 

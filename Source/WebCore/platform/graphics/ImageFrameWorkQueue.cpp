@@ -89,13 +89,13 @@ void ImageFrameWorkQueue::start()
             callOnMainThread([protectedThis, protectedWorkQueue, protectedSource, request, nativeImage = WTFMove(nativeImage)] () mutable {
                 // The WorkQueue may have been recreated before the frame was decoded.
                 if (protectedWorkQueue.ptr() != protectedThis->m_workQueue || protectedSource.ptr() != protectedThis->m_source.get()) {
-                    LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. WorkQueue was recreated at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8(), request.index);
+                    LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. WorkQueue was recreated at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8().data(), request.index);
                     return;
                 }
 
                 // The DecodeQueue may have been cleared before the frame was decoded.
                 if (protectedThis->decodeQueue().isEmpty() || protectedThis->decodeQueue().first() != request) {
-                    LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. DecodeQueue was cleared at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8(), request.index);
+                    LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. DecodeQueue was cleared at index = %d.", __FUNCTION__, protectedThis.ptr(), protectedSource->sourceUTF8().data(), request.index);
                     return;
                 }
 
@@ -126,7 +126,7 @@ void ImageFrameWorkQueue::stop()
     Ref source = protectedSource();
 
     for (auto& request : m_decodeQueue) {
-        LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. Decoding was cancelled for frame at index = %d.", __FUNCTION__, this, source->sourceUTF8(), request.index);
+        LOG(Images, "ImageFrameWorkQueue::%s - %p - url: %s. Decoding was cancelled for frame at index = %d.", __FUNCTION__, this, source->sourceUTF8().data(), request.index);
         source->destroyNativeImageAtIndex(request.index);
     }
 

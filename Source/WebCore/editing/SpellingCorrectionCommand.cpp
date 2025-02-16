@@ -72,7 +72,7 @@ private:
     }
 
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override
+    void getNodesInCommand(NodeSet&) override
     {
     }
 #endif

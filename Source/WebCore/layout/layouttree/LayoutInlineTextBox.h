@@ -39,9 +39,10 @@ class InlineTextBox : public Box {
 public:
     enum class ContentCharacteristic : uint8_t {
         CanUseSimplifiedContentMeasuring         = 1 << 0,
-        CanUseSimpledFontCodepath                = 1 << 1,
-        HasPositionDependentContentWidth         = 1 << 2,
-        HasStrongDirectionalityContent           = 1 << 3,
+        CanUseSimpleFontCodepath                 = 1 << 1,
+        ShouldUseSimpleGlyphOverflowCodePath     = 1 << 2,
+        HasPositionDependentContentWidth         = 1 << 3,
+        HasStrongDirectionalityContent           = 1 << 4
     };
     InlineTextBox(String, bool isCombined, OptionSet<ContentCharacteristic>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
     virtual ~InlineTextBox() = default;
@@ -50,7 +51,8 @@ public:
     bool isCombined() const { return m_isCombined; }
     // FIXME: This should not be a box's property.
     bool canUseSimplifiedContentMeasuring() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimplifiedContentMeasuring); }
-    bool canUseSimpleFontCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimpledFontCodepath); }
+    bool canUseSimpleFontCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::CanUseSimpleFontCodepath); }
+    bool shouldUseSimpleGlyphOverflowCodePath() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::ShouldUseSimpleGlyphOverflowCodePath); }
     bool hasPositionDependentContentWidth() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasPositionDependentContentWidth); }
     bool hasStrongDirectionalityContent() const { return m_contentCharacteristicSet.contains(ContentCharacteristic::HasStrongDirectionalityContent); }
 

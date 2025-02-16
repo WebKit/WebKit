@@ -248,6 +248,15 @@ bool ScrollingEffectsController::handleWheelEvent(const PlatformWheelEvent& whee
     return handled;
 }
 
+void ScrollingEffectsController::clampDeltaForAllowedAxes(const PlatformWheelEvent& wheelEvent, FloatSize& delta)
+{
+    if (!m_client.allowsHorizontalStretching(wheelEvent))
+        delta.setWidth(0);
+
+    if (!m_client.allowsVerticalStretching(wheelEvent))
+        delta.setHeight(0);
+}
+
 bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWheelEvent& wheelEvent, FloatSize& delta, bool isHorizontallyStretched, bool isVerticallyStretched)
 {
     auto affectedSide = affectedSideOnDominantAxis(delta);
@@ -291,11 +300,7 @@ bool ScrollingEffectsController::modifyScrollDeltaForStretching(const PlatformWh
                 m_unappliedOverscrollDelta.expand(delta.width(), 0);
         }
 
-        if (!m_client.allowsHorizontalStretching(wheelEvent))
-            delta.setWidth(0);
-
-        if (!m_client.allowsVerticalStretching(wheelEvent))
-            delta.setHeight(0);
+        clampDeltaForAllowedAxes(wheelEvent, delta);
 
         return !delta.isZero();
     }
@@ -347,6 +352,8 @@ bool ScrollingEffectsController::applyScrollDeltaWithStretching(const PlatformWh
         ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.width())),
         ceilf(elasticDeltaForReboundDelta(m_stretchScrollForce.height()))
     };
+
+    clampDeltaForAllowedAxes(wheelEvent, dampedDelta);
 
     LOG_WITH_STREAM(ScrollAnimations, stream << "ScrollingEffectsController::applyScrollDeltaWithStretching() - stretchScrollForce " << m_stretchScrollForce << " move delta " << delta << " dampedDelta " << dampedDelta);
 

@@ -43,6 +43,7 @@
 #include "JSWebAssemblyHelpers.h"
 #include "JSWebAssemblyInstance.h"
 #include "JSWebAssemblyModule.h"
+#include "JSWebAssemblyTag.h"
 #include "ObjectConstructor.h"
 #include "Options.h"
 #include "StrongInlines.h"
@@ -70,6 +71,7 @@ FOR_EACH_WEBASSEMBLY_CONSTRUCTOR_TYPE(DEFINE_CALLBACK_FOR_CONSTRUCTOR)
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyCompileFunc);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyInstantiateFunc);
 static JSC_DECLARE_HOST_FUNCTION(webAssemblyValidateFunc);
+static JSC_DECLARE_HOST_FUNCTION(webAssemblyGetterJSTag);
 
 }
 
@@ -118,6 +120,7 @@ void JSWebAssembly::finishCreation(VM& vm, JSGlobalObject* globalObject)
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("compileStreaming"_s, webAssemblyCompileStreamingCodeGenerator, static_cast<unsigned>(0));
     if (globalObject->globalObjectMethodTable()->instantiateStreaming)
         JSC_BUILTIN_FUNCTION_WITHOUT_TRANSITION("instantiateStreaming"_s, webAssemblyInstantiateStreamingCodeGenerator, static_cast<unsigned>(0));
+    JSC_NATIVE_GETTER_WITHOUT_TRANSITION("JSTag"_s, webAssemblyGetterJSTag, PropertyAttribute::ReadOnly);
 }
 
 JSWebAssembly::JSWebAssembly(VM& vm, Structure* structure)
@@ -337,6 +340,13 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyInstantiateStreamingInternal, (JSGlobalObjec
     ASSERT(globalObject->globalObjectMethodTable()->instantiateStreaming);
     // FIXME: <http://webkit.org/b/184888> if there's an importObject and it contains a Memory, then we can compile the module with the right memory type (fast or not) by looking at the memory's type.
     return JSValue::encode(globalObject->globalObjectMethodTable()->instantiateStreaming(globalObject, callFrame->argument(0), importObject));
+}
+
+JSC_DEFINE_HOST_FUNCTION(webAssemblyGetterJSTag, (JSGlobalObject* globalObject, CallFrame*))
+{
+    // https://webassembly.github.io/exception-handling/js-api/#dom-webassembly-jstag
+    VM& vm = globalObject->vm();
+    return JSValue::encode(JSWebAssemblyTag::create(vm, globalObject, globalObject->webAssemblyTagStructure(), Wasm::Tag::jsExceptionTag()));
 }
 
 } // namespace JSC

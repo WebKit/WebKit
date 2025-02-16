@@ -1,0 +1,31 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- New test added while implementing AccessibilityThreadTextApisEnabled. Keep it when the feature is enabled by default. -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="p" style="display: inline-block;">Hello world</p><input id="input" type="text" value="" style="display: inline-block;"/>
+
+<script>
+let output = "This test ensures we can get the index of a text marker that points to an object with no runs/text.\n\n";
+
+if (window.accessibilityController) {
+    var pObject = accessibilityController.accessibleElementById("p");
+    const range1 = pObject.textMarkerRangeForElement(pObject);
+    var endMarker = pObject.endTextMarkerForTextMarkerRange(range1);
+    output += expect("pObject.indexForTextMarker(endMarker)", "11");
+    
+    var inputObject = accessibilityController.accessibleElementById("input");
+    const range2 = inputObject.textMarkerRangeForElement(inputObject);
+    var inputStart = inputObject.endTextMarkerForTextMarkerRange(range2);
+    output += expect("inputObject.indexForTextMarker(inputStart)", "11");
+    
+    debug(output);
+}
+</script>
+</body>
+</html>
+

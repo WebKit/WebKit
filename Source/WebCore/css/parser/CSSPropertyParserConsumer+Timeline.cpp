@@ -152,7 +152,7 @@ RefPtr<CSSValue> consumeViewTimelineInset(CSSParserTokenRange& range, const CSSP
     });
 }
 
-static bool isAnimationRangeKeyword(CSSValueID id)
+bool isAnimationRangeKeyword(CSSValueID id)
 {
     return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing>(id);
 }

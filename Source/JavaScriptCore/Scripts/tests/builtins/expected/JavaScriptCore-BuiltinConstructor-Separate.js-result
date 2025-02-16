@@ -118,13 +118,13 @@ JSC_FOREACH_BUILTINCONSTRUCTOR_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 namespace JSC {
 
-const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_builtinConstructorOfCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_builtinConstructorOfCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_builtinConstructorOfCodeLength = 294;
-static const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_builtinConstructorOfCode =
+constinit const JSC::ConstructAbility s_builtinConstructorOfCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_builtinConstructorOfCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_builtinConstructorOfCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_builtinConstructorOfCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_builtinConstructorOfCodeLength = 294;
+static constinit const JSC::Intrinsic s_builtinConstructorOfCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_builtinConstructorOfCode =
     "(function ()\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -139,13 +139,13 @@ const char* const s_builtinConstructorOfCode =
     "})\n" \
 ;
 
-const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_builtinConstructorFromCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_builtinConstructorFromCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_builtinConstructorFromCodeLength = 2046;
-static const JSC::Intrinsic s_builtinConstructorFromCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_builtinConstructorFromCode =
+constinit const JSC::ConstructAbility s_builtinConstructorFromCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_builtinConstructorFromCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_builtinConstructorFromCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_builtinConstructorFromCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_builtinConstructorFromCodeLength = 2046;
+static constinit const JSC::Intrinsic s_builtinConstructorFromCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_builtinConstructorFromCode =
     "(function (items )\n" \
     "{\n" \
     "    \"use strict\";\n" \

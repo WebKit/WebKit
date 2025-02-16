@@ -14,7 +14,7 @@ var replacedPrototype = {
 };
 
 var array = [];
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     array.push(new DerivedPromise(function (resolve, reject) {
         resolve(i);
     }));

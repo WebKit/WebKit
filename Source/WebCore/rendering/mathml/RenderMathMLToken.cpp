@@ -571,13 +571,13 @@ std::optional<LayoutUnit> RenderMathMLToken::firstLineBaseline() const
     return RenderMathMLBlock::firstLineBaseline();
 }
 
-void RenderMathMLToken::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+void RenderMathMLToken::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     layoutFloatingChildren();

@@ -25,32 +25,28 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
+#include "CSSPrimitiveNumericTypes.h"
+#include "CSSValue.h"
 
 namespace WebCore {
 
 // This class is currently only used for oblique. If we use it for more styles in the future we'll need to store the keyword.
 class CSSFontStyleWithAngleValue final : public CSSValue {
 public:
-    static Ref<CSSFontStyleWithAngleValue> create(Ref<CSSPrimitiveValue>&& obliqueAngle);
+    using ObliqueAngle = CSS::Angle<CSS::Range{-90, 90}>;
 
-    const CSSPrimitiveValue& obliqueAngle() const { return m_obliqueAngle; }
-    Ref<CSSPrimitiveValue> protectedObliqueAngle() const { return m_obliqueAngle; }
+    static Ref<CSSFontStyleWithAngleValue> create(ObliqueAngle&&);
 
-    String customCSSText() const;
+    const ObliqueAngle& obliqueAngle() const { return m_obliqueAngle; }
+
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSFontStyleWithAngleValue&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        if (func(m_obliqueAngle.get()) == IterationStatus::Done)
-            return IterationStatus::Done;
-        return IterationStatus::Continue;
-    }
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
-    CSSFontStyleWithAngleValue(Ref<CSSPrimitiveValue>&& obliqueAngle);
+    CSSFontStyleWithAngleValue(ObliqueAngle&&);
 
-    Ref<CSSPrimitiveValue> m_obliqueAngle;
+    ObliqueAngle m_obliqueAngle;
 };
 
 }

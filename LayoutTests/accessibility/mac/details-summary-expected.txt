@@ -6,12 +6,12 @@ PASS: summary1.role === 'AXRole: AXDisclosureTriangle'
 PASS: summary1.subrole === 'AXSubrole: AXSummary'
 PASS: summary1.title === 'AXTitle: Some open info'
 PASS: details1.isAttributeSettable('AXExpanded') === true
-Got AXExpandedChanged notification for details1
+Got AXExpandedChanged notification for details1 (count 1)
 PASS: details1.isExpanded === false
 PASS: summary1.isExpanded === false
 PASS: details1.isExpanded === false
 PASS: summary1.isExpanded === false
-Got AXExpandedChanged notification for details1
+Got AXExpandedChanged notification for details1 (count 2)
 PASS: details1.isExpanded === true
 PASS: summary1.isExpanded === true
 PASS: details1.isExpanded === true

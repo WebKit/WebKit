@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSPositionTryRule.h"
 
+#include "CSSSerializationContext.h"
 #include "PropertySetCSSStyleDeclaration.h"
 
 namespace WebCore {
@@ -73,7 +74,7 @@ String CSSPositionTryRule::cssText() const
 
     auto propertiesRef = m_positionTryRule->protectedProperties();
 
-    if (auto declarations = propertiesRef->asText(); !declarations.isEmpty())
+    if (auto declarations = propertiesRef->asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
         builder.append(' ', declarations, ' ');
     else
         builder.append(' ');

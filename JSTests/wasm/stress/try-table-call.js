@@ -30,7 +30,7 @@ var instance = new WebAssembly.Instance(wasm_module);
 
 const { catch_call } = instance.exports
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     assert.eq(catch_call(0), 5)
     assert.eq(catch_call(1), 0)
 }

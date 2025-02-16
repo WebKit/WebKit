@@ -258,10 +258,10 @@ String InternalAudioDecoderCocoa::initialize(const String& codecName, const Audi
         if (codec == kAudioFormatOpus && config.numberOfChannels > 2)
             return "Opus with more than 2 channels isn't supported"_s;
 
-        if (codec == kAudioFormatFLAC && config.description.empty())
+        if (codec == kAudioFormatFLAC && config.description.isEmpty())
             return "Decoder config description for flac codec is mandatory"_s;
 
-        if (codec == 'vorb' && config.description.empty())
+        if (codec == 'vorb' && config.description.isEmpty())
             return "Decoder config description for vorbis codec is mandatory"_s;
 
         mIsAAC = codec == kAudioFormatMPEG4AAC || codec == kAudioFormatMPEG4AAC_HE || codec == kAudioFormatMPEG4AAC_LD || codec == kAudioFormatMPEG4AAC_HE_V2 || codec == kAudioFormatMPEG4AAC_ELD;
@@ -370,7 +370,7 @@ Ref<GenericPromise> InternalAudioDecoderCocoa::flush()
         LOG(Media, "Decoder closed, nothing to flush");
         return GenericPromise::createAndResolve();
     }
-    return converter()->flush()->whenSettled(queueSingleton(), [protectedThis = Ref { *this }] {
+    return converter()->drain()->whenSettled(queueSingleton(), [protectedThis = Ref { *this }] {
         protectedThis->processedDecodedOutputs();
         return GenericPromise::createAndResolve();
     });

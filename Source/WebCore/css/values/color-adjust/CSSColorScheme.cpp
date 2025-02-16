@@ -34,17 +34,17 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<ColorScheme>::operator()(StringBuilder& builder, const ColorScheme& value)
+void Serialize<ColorScheme>::operator()(StringBuilder& builder, const SerializationContext& context, const ColorScheme& value)
 {
     if (value.isNormal()) {
-        serializationForCSS(builder, Keyword::Normal { });
+        serializationForCSS(builder, context, Keyword::Normal { });
         return;
     }
 
-    serializationForCSS(builder, value.schemes);
+    serializationForCSS(builder, context, value.schemes);
     if (value.only) {
         builder.append(' ');
-        serializationForCSS(builder, *value.only);
+        serializationForCSS(builder, context, *value.only);
     }
 }
 

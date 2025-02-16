@@ -301,6 +301,8 @@ void checkDisassembly(Compilation& compilation, const Func& func, const CString&
     CRASH();
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 inline void checkUsesInstruction(Compilation& compilation, const char* text, bool regex = false)
 {
     checkDisassembly(
@@ -322,6 +324,8 @@ inline void checkDoesNotUseInstruction(Compilation& compilation, const char* tex
         },
         toCString("Did not expected to find ", text, " but it's there!"));
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 template<typename Type>
 struct B3Operand {
@@ -812,6 +816,12 @@ void testFloorFloorArg(float);
 void testCeilFloorArg(float);
 void testFloorArgWithUselessDoubleConversion(float);
 void testFloorArgWithEffectfulDoubleConversion(float);
+void testFTruncArg(double);
+void testFTruncImm(double);
+void testFTruncMem(double);
+void testFTruncArg(float);
+void testFTruncImm(float);
+void testFTruncMem(float);
 double correctSqrt(double value);
 void testSqrtArg(double);
 void testSqrtImm(double);
@@ -821,6 +831,7 @@ void testSqrtImm(float);
 void testSqrtMem(float);
 void testSqrtArgWithUselessDoubleConversion(float);
 void testSqrtArgWithEffectfulDoubleConversion(float);
+void testPurifyNaN();
 void testCompareTwoFloatToDouble(float, float);
 void testCompareOneFloatToDouble(float, double);
 void testCompareFloatToDoubleThroughPhi(float, float);
@@ -1129,6 +1140,8 @@ void testMulNegSignExtend32();
 void testMulNegZeroExtend32();
 void testMulArgDouble(double);
 void testMulArgsDouble(double, double);
+void testMulNegArgsDouble();
+void testMulNegArgsFloat();
 void testCallSimpleDouble(double, double);
 void testCallSimpleFloat(float, float);
 void testCallFunctionWithHellaDoubleArguments();
@@ -1311,6 +1324,7 @@ void testTernarySubInstructionSelection(B3::Opcode valueModifier, Type valueType
 void testNegDouble(double);
 void testNegFloat(float);
 void testNegFloatWithUselessDoubleConversion(float);
+void testImpureNaN();
 
 void addArgTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
 void addBitTests(const TestConfig*, Deque<RefPtr<SharedTask<void()>>>&);
@@ -1373,5 +1387,8 @@ void testConstFloatMove();
 
 void testSShrCompare32(int32_t);
 void testSShrCompare64(int64_t);
+
+void testInt52RoundTripUnary(int32_t);
+void testInt52RoundTripBinary();
 
 #endif // ENABLE(B3_JIT)

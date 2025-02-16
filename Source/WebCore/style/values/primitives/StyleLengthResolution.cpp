@@ -210,7 +210,7 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
         while ((element = Style::ContainerQueryEvaluator::selectContainer(physicalAxis, nullString(), *element, mode))) {
             auto* containerRenderer = dynamicDowncast<RenderBox>(element->renderer());
             if (containerRenderer && containerRenderer->hasEligibleContainmentForSizeQuery()) {
-                auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentWidth() : containerRenderer->contentHeight();
+                auto widthOrHeight = physicalAxis == CQ::Axis::Width ? containerRenderer->contentBoxWidth() : containerRenderer->contentBoxHeight();
                 return widthOrHeight * value / 100;
             }
             // For pseudo-elements the element itself can be the container. Avoid looping forever.
@@ -383,9 +383,13 @@ double computeNonCalcLengthDouble(double value, CSS::LengthUnit lengthUnit, cons
     }
 
     case Cqmax:
+        if (value < 0)
+            return std::min(computeNonCalcLengthDouble(value, Cqb, conversionData), computeNonCalcLengthDouble(value, Cqi, conversionData));
         return std::max(computeNonCalcLengthDouble(value, Cqb, conversionData), computeNonCalcLengthDouble(value, Cqi, conversionData));
 
     case Cqmin:
+        if (value < 0)
+            return std::max(computeNonCalcLengthDouble(value, Cqb, conversionData), computeNonCalcLengthDouble(value, Cqi, conversionData));
         return std::min(computeNonCalcLengthDouble(value, Cqb, conversionData), computeNonCalcLengthDouble(value, Cqi, conversionData));
     }
 

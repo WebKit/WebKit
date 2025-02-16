@@ -40,9 +40,9 @@ struct Sepia {
 };
 using SepiaFunction = FunctionNotation<CSSValueSepia, Sepia>;
 
-DEFINE_TYPE_WRAPPER(Sepia, value);
+DEFINE_TYPE_WRAPPER_GET(Sepia, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Sepia, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Sepia, 1)

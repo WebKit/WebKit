@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: Cannot request fullscreen because the associated document has changed.
+
+PASS Element#requestFullscreen() followed by moving the element into an iframe
+

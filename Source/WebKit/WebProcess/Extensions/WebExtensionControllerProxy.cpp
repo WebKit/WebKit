@@ -32,6 +32,7 @@
 #include "WebExtensionControllerMessages.h"
 #include "WebExtensionControllerProxyMessages.h"
 #include "WebFrame.h"
+#include "WebProcess.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -40,9 +41,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-static HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerProxy>>& webExtensionControllerProxies()
+static HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>& webExtensionControllerProxies()
 {
-    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakRef<WebExtensionControllerProxy>>> controllers;
+    static MainThreadNeverDestroyed<HashMap<WebExtensionControllerIdentifier, WeakPtr<WebExtensionControllerProxy>>> controllers;
     return controllers;
 }
 
@@ -50,7 +51,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WebExtensionControllerProxy);
 
 RefPtr<WebExtensionControllerProxy> WebExtensionControllerProxy::get(WebExtensionControllerIdentifier identifier)
 {
-    return webExtensionControllerProxies().get(identifier);
+    return webExtensionControllerProxies().get(identifier).get();
 }
 
 Ref<WebExtensionControllerProxy> WebExtensionControllerProxy::getOrCreate(const WebExtensionControllerParameters& parameters, WebPage* newPage)
@@ -91,6 +92,7 @@ WebExtensionControllerProxy::WebExtensionControllerProxy(const WebExtensionContr
 
 WebExtensionControllerProxy::~WebExtensionControllerProxy()
 {
+    webExtensionControllerProxies().remove(m_identifier);
     WebProcess::singleton().removeMessageReceiver(*this);
 }
 

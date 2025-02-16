@@ -323,6 +323,52 @@ promise_test(async t => {
   await checkImplements();
   const callbacks = {};
   const decoder = createVideoDecoder(t, callbacks);
+  const config = structuredClone(CONFIG);
+  config.codedWidth *= 2;
+  config.codedHeight *= 2;
+  decoder.configure(config);
+  decoder.decode(CHUNKS[0]);
+
+  let outputs = 0;
+  callbacks.output = frame => {
+    outputs++;
+    assert_equals(frame.timestamp, CHUNKS[0].timestamp, 'timestamp');
+    assert_equals(frame.duration, CHUNKS[0].duration, 'duration');
+    assert_equals(frame.codedWidth, CONFIG.codedWidth);
+    assert_equals(frame.codedHeight, CONFIG.codedHeight);
+    frame.close();
+  };
+
+  await decoder.flush();
+  assert_equals(outputs, 1, 'outputs');
+}, 'Decode a key frame with different coded size');
+
+promise_test(async t => {
+  await checkImplements();
+  const callbacks = {};
+  const decoder = createVideoDecoder(t, callbacks);
+  const config = structuredClone(CONFIG);
+  delete config.codedWidth;
+  delete config.codedHeight;
+  decoder.configure(config);
+  decoder.decode(CHUNKS[0]);
+
+  let outputs = 0;
+  callbacks.output = frame => {
+    outputs++;
+    assert_equals(frame.timestamp, CHUNKS[0].timestamp, 'timestamp');
+    assert_equals(frame.duration, CHUNKS[0].duration, 'duration');
+    frame.close();
+  };
+
+  await decoder.flush();
+  assert_equals(outputs, 1, 'outputs');
+}, 'Decode a key frame without coded size');
+
+promise_test(async t => {
+  await checkImplements();
+  const callbacks = {};
+  const decoder = createVideoDecoder(t, callbacks);
   decoder.configure(CONFIG);
 
   // Ensure type value is verified.

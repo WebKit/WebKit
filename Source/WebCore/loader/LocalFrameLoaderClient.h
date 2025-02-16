@@ -102,6 +102,7 @@ enum class LockBackForwardList : bool;
 enum class UsedLegacyTLS : bool;
 enum class WasPrivateRelayed : bool;
 enum class FromDownloadAttribute : bool { No , Yes };
+enum class IsSameDocumentNavigation : bool { No, Yes };
 
 struct BackForwardItemIdentifierType;
 struct StringWithDirection;
@@ -217,7 +218,9 @@ public:
     virtual void updateGlobalHistory() = 0;
     virtual void updateGlobalHistoryRedirectLinks() = 0;
 
-    virtual bool shouldGoToHistoryItem(HistoryItem&) const = 0;
+    virtual bool shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const = 0;
+    virtual bool supportsAsyncShouldGoToHistoryItem() const = 0;
+    virtual void shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(bool)>&&) const = 0;
 
     // This frame has displayed inactive content (such as an image) from an
     // insecure source.  Inactive content cannot spread to other frames.
@@ -227,21 +230,6 @@ public:
     // script) from an insecure source.  Note that the insecure content can
     // spread to other frames in the same origin.
     virtual void didRunInsecureContent(SecurityOrigin&) = 0;
-
-    virtual ResourceError cancelledError(const ResourceRequest&) const = 0;
-    virtual ResourceError blockedError(const ResourceRequest&) const = 0;
-    virtual ResourceError blockedByContentBlockerError(const ResourceRequest&) const = 0;
-    virtual ResourceError cannotShowURLError(const ResourceRequest&) const = 0;
-    virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&) const = 0;
-#if ENABLE(CONTENT_FILTERING)
-    virtual ResourceError blockedByContentFilterError(const ResourceRequest&) const = 0;
-#endif
-
-    virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&) const = 0;
-    virtual ResourceError fileDoesNotExistError(const ResourceResponse&) const = 0;
-    virtual ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest&) const = 0;
-    virtual ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest&) const = 0;
-    virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&) const = 0;
 
     virtual bool shouldFallBack(const ResourceError&) const = 0;
 
@@ -332,6 +320,7 @@ public:
 #endif
 
     virtual void completePageTransitionIfNeeded() { }
+    virtual void setDocumentVisualUpdatesAllowed(bool) { }
 
     // FIXME (bug 116233): We need to get rid of EmptyFrameLoaderClient completely, then this will no longer be needed.
     virtual bool isEmptyFrameLoaderClient() const { return false; }

@@ -51,6 +51,10 @@
 #import "WKSeparatedImageView.h"
 #endif
 
+#if HAVE(MATERIAL_HOSTING)
+#import "WKMaterialHostingSupport.h"
+#endif
+
 namespace WebKit {
 using namespace WebCore;
 
@@ -80,6 +84,12 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 #if HAVE(CORE_MATERIAL)
     case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
         return makeWithView(adoptNS([[WKMaterialView alloc] init]));
+#endif
+
+#if HAVE(MATERIAL_HOSTING)
+    case PlatformCALayer::LayerType::LayerTypeMaterialHostingLayer: {
+        return makeWithView([[WKMaterialHostingView alloc] init]);
+    }
 #endif
 
     case PlatformCALayer::LayerType::LayerTypeTransformLayer:

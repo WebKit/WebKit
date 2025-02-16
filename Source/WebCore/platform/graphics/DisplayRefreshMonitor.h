@@ -96,8 +96,8 @@ private:
     std::optional<FramesPerSecond> maximumClientPreferredFramesPerSecond() const;
     void computeMaxPreferredFramesPerSecond();
 
-    HashSet<CheckedPtr<DisplayRefreshMonitorClient>> m_clients;
-    HashSet<CheckedPtr<DisplayRefreshMonitorClient>>* m_clientsToBeNotified { nullptr };
+    UncheckedKeyHashSet<CheckedPtr<DisplayRefreshMonitorClient>> m_clients;
+    UncheckedKeyHashSet<CheckedPtr<DisplayRefreshMonitorClient>>* m_clientsToBeNotified { nullptr };
 
     PlatformDisplayID m_displayID { 0 };
     std::optional<FramesPerSecond> m_maxClientPreferredFramesPerSecond;

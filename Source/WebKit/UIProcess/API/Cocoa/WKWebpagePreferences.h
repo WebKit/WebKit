@@ -56,7 +56,7 @@ typedef NS_ENUM(NSInteger, WKWebpagePreferencesUpgradeToHTTPSPolicy) {
     WKWebpagePreferencesUpgradeToHTTPSPolicyAutomaticFallbackToHTTP,
     WKWebpagePreferencesUpgradeToHTTPSPolicyUserMediatedFallbackToHTTP,
     WKWebpagePreferencesUpgradeToHTTPSPolicyErrorOnFailure
-} NS_SWIFT_NAME(WKWebpagePreferences.UpgradeToHTTPSPolicy) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} NS_SWIFT_NAME(WKWebpagePreferences.UpgradeToHTTPSPolicy) WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 /*! A WKWebpagePreferences object is a collection of properties that
  determine the preferences to use when loading and rendering a page.
@@ -101,6 +101,6 @@ WK_CLASS_AVAILABLE(macos(10.15), ios(13.0))
  system configuration. The upgradeKnownHostsToHTTPS property on WKWebViewConfiguration
  supercedes this policy for known hosts.
  */
-@property (nonatomic) WKWebpagePreferencesUpgradeToHTTPSPolicy preferredHTTPSNavigationPolicy WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+@property (nonatomic) WKWebpagePreferencesUpgradeToHTTPSPolicy preferredHTTPSNavigationPolicy WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 @end

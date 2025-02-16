@@ -1,0 +1,20 @@
+<meta charset=utf-8>
+<style>
+.container {
+  display: flex;
+}
+.flex-item {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+span {
+  padding-right: 0.1px;
+}
+</style> 
+PASS if no assert in debug.
+<div class=container><div class=flex-item><span>​</span></div></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

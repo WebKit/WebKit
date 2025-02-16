@@ -78,6 +78,8 @@ public:
     // Done, close any open tags, etc.
     void finished();
 
+    bool isOnStackOfOpenElements(Element&) const;
+
 private:
     class ExternalCharacterTokenBuffer;
 

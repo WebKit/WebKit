@@ -52,7 +52,7 @@ function foo(o, a) {
 }
 
 noInline(foo);
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (i % 3 == 0) {
         assert(foo(o1) === 60);
     } else if (i % 3 === 1) {

@@ -15,6 +15,11 @@ const functions = {
             clearInterval(intervalId);
         });
     },
+    triggerAnimationFrame() {
+        requestAnimationFrame(function animationFrame() {
+            console.log("animation frame fired");
+        });
+    },
     triggerXHRRequest() {
         loadResourceXHR("dataXHR.json");
     },

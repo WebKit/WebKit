@@ -26,7 +26,7 @@ async function test() {
     const instance = await instantiate(wat, { }, { simd: true, log: false })
     const { bad } = instance.exports
 
-    for (let i = 0; i < 100000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
       assert.eq(bad(), -1n)
     }
 }

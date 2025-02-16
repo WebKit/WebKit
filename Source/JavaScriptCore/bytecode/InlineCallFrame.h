@@ -272,7 +272,7 @@ inline CodeBlock* baselineCodeBlockForOriginAndBaselineCodeBlock(const CodeOrigi
 
 // These function is defined here and not in CodeOrigin because it needs access to the directCaller field in InlineCallFrame
 template <typename Function>
-inline void CodeOrigin::walkUpInlineStack(const Function& function) const
+inline void CodeOrigin::walkUpInlineStack(NOESCAPE const Function& function) const
 {
     CodeOrigin codeOrigin = *this;
     while (true) {

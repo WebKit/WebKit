@@ -181,7 +181,7 @@ const vk::ImageHelper &RenderTargetVk::getResolveImageForRenderPass() const
     return *mResolveImage;
 }
 
-angle::Result RenderTargetVk::getImageViewImpl(vk::Context *context,
+angle::Result RenderTargetVk::getImageViewImpl(vk::ErrorContext *context,
                                                const vk::ImageHelper &image,
                                                vk::ImageViewHelper *imageViews,
                                                const vk::ImageView **imageViewOut) const
@@ -199,14 +199,14 @@ angle::Result RenderTargetVk::getImageViewImpl(vk::Context *context,
                                              imageViewOut);
 }
 
-angle::Result RenderTargetVk::getImageView(vk::Context *context,
+angle::Result RenderTargetVk::getImageView(vk::ErrorContext *context,
                                            const vk::ImageView **imageViewOut) const
 {
     ASSERT(mImage);
     return getImageViewImpl(context, *mImage, mImageViews, imageViewOut);
 }
 
-angle::Result RenderTargetVk::getImageViewWithColorspace(vk::Context *context,
+angle::Result RenderTargetVk::getImageViewWithColorspace(vk::ErrorContext *context,
                                                          gl::SrgbWriteControlMode mode,
                                                          const vk::ImageView **imageViewOut) const
 {
@@ -215,14 +215,14 @@ angle::Result RenderTargetVk::getImageViewWithColorspace(vk::Context *context,
     return getImageViewImpl(context, *mImage, mImageViews, imageViewOut);
 }
 
-angle::Result RenderTargetVk::getResolveImageView(vk::Context *context,
+angle::Result RenderTargetVk::getResolveImageView(vk::ErrorContext *context,
                                                   const vk::ImageView **imageViewOut) const
 {
     ASSERT(mResolveImage);
     return getImageViewImpl(context, *mResolveImage, mResolveImageViews, imageViewOut);
 }
 
-angle::Result RenderTargetVk::getDepthOrStencilImageView(vk::Context *context,
+angle::Result RenderTargetVk::getDepthOrStencilImageView(vk::ErrorContext *context,
                                                          VkImageAspectFlagBits aspect,
                                                          const vk::ImageView **imageViewOut) const
 {
@@ -231,7 +231,7 @@ angle::Result RenderTargetVk::getDepthOrStencilImageView(vk::Context *context,
 }
 
 angle::Result RenderTargetVk::getDepthOrStencilImageViewForCopy(
-    vk::Context *context,
+    vk::ErrorContext *context,
     VkImageAspectFlagBits aspect,
     const vk::ImageView **imageViewOut) const
 {
@@ -241,7 +241,7 @@ angle::Result RenderTargetVk::getDepthOrStencilImageViewForCopy(
 }
 
 angle::Result RenderTargetVk::getResolveDepthOrStencilImageView(
-    vk::Context *context,
+    vk::ErrorContext *context,
     VkImageAspectFlagBits aspect,
     const vk::ImageView **imageViewOut) const
 {
@@ -251,7 +251,7 @@ angle::Result RenderTargetVk::getResolveDepthOrStencilImageView(
 }
 
 angle::Result RenderTargetVk::getDepthOrStencilImageViewImpl(
-    vk::Context *context,
+    vk::ErrorContext *context,
     const vk::ImageHelper &image,
     vk::ImageViewHelper *imageViews,
     VkImageAspectFlagBits aspect,
@@ -291,7 +291,7 @@ vk::ImageHelper *RenderTargetVk::getOwnerOfData() const
     return isResolveImageOwnerOfData() ? mResolveImage : mImage;
 }
 
-angle::Result RenderTargetVk::getCopyImageView(vk::Context *context,
+angle::Result RenderTargetVk::getCopyImageView(vk::ErrorContext *context,
                                                const vk::ImageView **imageViewOut) const
 {
     const vk::ImageViewHelper *imageViews =

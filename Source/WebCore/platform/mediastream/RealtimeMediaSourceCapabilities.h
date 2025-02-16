@@ -82,9 +82,10 @@ public:
     {
     }
     
-    enum class EchoCancellation : bool {
-        ReadOnly = 0,
-        ReadWrite = 1,
+    enum class EchoCancellation : uint8_t {
+        Off = 0,
+        On = 1,
+        OnOrOff,
     };
     enum class BackgroundBlur : uint8_t {
         Off,
@@ -204,7 +205,7 @@ private:
     DoubleCapabilityRange m_volume;
     LongCapabilityRange m_sampleRate;
     LongCapabilityRange m_sampleSize;
-    EchoCancellation m_echoCancellation { EchoCancellation::ReadOnly };
+    EchoCancellation m_echoCancellation { EchoCancellation::On };
     String m_deviceId;
     String m_groupId;
     DoubleCapabilityRange m_focusDistance;

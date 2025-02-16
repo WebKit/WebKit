@@ -26,7 +26,7 @@
 #include "config.h"
 #include "WebDateTimePickerMac.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && USE(APPKIT)
+#if USE(APPKIT)
 
 #import "AppKitSPI.h"
 #import "WebPageProxy.h"
@@ -318,4 +318,4 @@ void WebDateTimePickerMac::didChooseDate(StringView date)
 
 @end
 
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES) && USE(APPKIT)
+#endif // USE(APPKIT)

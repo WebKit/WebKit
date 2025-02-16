@@ -67,7 +67,7 @@ void RenderMathMLMath::centerChildren(LayoutUnit contentWidth)
     }
 }
 
-void RenderMathMLMath::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight)
+void RenderMathMLMath::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit pageLogicalHeight)
 {
     ASSERT(needsLayout());
 
@@ -78,7 +78,7 @@ void RenderMathMLMath::layoutBlock(bool relayoutChildren, LayoutUnit pageLogical
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     layoutFloatingChildren();

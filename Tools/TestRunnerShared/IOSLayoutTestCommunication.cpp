@@ -33,6 +33,7 @@
 #include <unistd.h>
 #include <wtf/Assertions.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 static int stdinSocket;
 static int stdoutSocket;
@@ -49,10 +50,10 @@ static int connectToServer(sockaddr_in& serverAddress)
 
 void setUpIOSLayoutTestCommunication()
 {
-    char* portFromEnvironment = getenv("PORT");
-    if (!portFromEnvironment)
+    auto portFromEnvironment = unsafeSpan(getenv("PORT"));
+    if (!portFromEnvironment.data())
         return;
-    int port = atoi(portFromEnvironment);
+    int port = parseInteger<int>(portFromEnvironment).value_or(0);
     RELEASE_ASSERT(port > 0);
     isUsingTCP = true;
 

@@ -361,7 +361,7 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
                 return completionHandler(nullptr);
 
             // FIXME: Move this to WebPageProxy once rdar://134317255 and rdar://134317400 are resolved.
-            if (openerInfo != webView->_configuration->_pageConfiguration->openerInfo())
+            if (openerInfo != Ref { *webView->_configuration->_pageConfiguration }->openerInfo())
                 [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
 
             completionHandler(webView->_page.get());
@@ -376,7 +376,7 @@ void UIDelegate::UIClient::createNewPage(WebKit::WebPageProxy&, Ref<API::PageCon
         return completionHandler(nullptr);
 
     // FIXME: Move this to WebPageProxy once rdar://134317255 and rdar://134317400 are resolved.
-    if (openerInfo != webView.get()->_configuration->_pageConfiguration->openerInfo())
+    if (openerInfo != Ref { *webView.get()->_configuration->_pageConfiguration }->openerInfo())
         [NSException raise:NSInternalInconsistencyException format:@"Returned WKWebView was not created with the given configuration."];
     completionHandler(webView->_page.get());
 }
@@ -547,7 +547,7 @@ void UIDelegate::UIClient::decidePolicyForGeolocationPermissionRequest(WebKit::W
         return;
 
     if (uiDelegate->m_delegateMethods.webViewRequestGeolocationPermissionForOriginDecisionHandler) {
-        auto securityOrigin = WebCore::SecurityOrigin::createFromString(page.pageLoadState().activeURL());
+        auto securityOrigin = WebCore::SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL());
         auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestGeolocationPermissionForOrigin:initiatedByFrame:decisionHandler:));
         auto decisionHandler = makeBlockPtr([completionHandler = std::exchange(completionHandler, nullptr), securityOrigin = securityOrigin->data(), checker = WTFMove(checker), page = WeakPtr { page }] (WKPermissionDecision decision) mutable {
             if (checker->completionHandlerHasBeenCalled())
@@ -1233,7 +1233,7 @@ void UIDelegate::UIClient::willCloseLocalInspector(WebPageProxy&, WebInspectorUI
 #if ENABLE(DEVICE_ORIENTATION)
 void UIDelegate::UIClient::shouldAllowDeviceOrientationAndMotionAccess(WebKit::WebPageProxy& page, WebFrameProxy& webFrameProxy, FrameInfoData&& frameInfo, CompletionHandler<void(bool)>&& completionHandler)
 {
-    Ref securityOrigin = WebCore::SecurityOrigin::createFromString(page.pageLoadState().activeURL());
+    Ref securityOrigin = WebCore::SecurityOrigin::createFromString(page.protectedPageLoadState()->activeURL());
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate || !uiDelegate->m_delegate.get() || !uiDelegate->m_delegateMethods.webViewRequestDeviceOrientationAndMotionPermissionForOriginDecisionHandler) {
         alertForPermission(page, MediaPermissionReason::DeviceOrientation, securityOrigin->data(), WTFMove(completionHandler));
@@ -1279,7 +1279,7 @@ void UIDelegate::UIClient::didChangeFontAttributes(const WebCore::FontAttributes
     [privateUIDelegate _webView:uiDelegate->m_webView.get().get() didChangeFontAttributes:fontAttributes.createDictionary().get()];
 }
 
-void UIDelegate::UIClient::callDisplayCapturePermissionDelegate(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
+void UIDelegate::UIClient::callDisplayCapturePermissionDelegate(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, UserMediaPermissionRequestProxy& request)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     auto delegate = (id<WKUIDelegatePrivate>)uiDelegate->m_delegate.get();
@@ -1308,9 +1308,8 @@ void UIDelegate::UIClient::callDisplayCapturePermissionDelegate(WebPageProxy& pa
     });
 
     std::optional<WebCore::FrameIdentifier> mainFrameID;
-    if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
+    if (RefPtr mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
         mainFrameID = mainFrame->frameID();
-    FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID, std::nullopt, frame.process().processID(), frame.isFocused() };
     RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
 
     BOOL requestSystemAudio = !!request.requiresDisplayCaptureWithAudio();
@@ -1339,7 +1338,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
             return;
         }
 
-        callDisplayCapturePermissionDelegate(page, frame, userMediaOrigin, topLevelOrigin, request);
+        callDisplayCapturePermissionDelegate(page, frame, FrameInfoData { request.frameInfo() }, userMediaOrigin, topLevelOrigin, request);
         return;
     }
 
@@ -1380,10 +1379,9 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
         });
 
         std::optional<WebCore::FrameIdentifier> mainFrameID;
-        if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
+        if (RefPtr mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
             mainFrameID = mainFrame->frameID();
-        FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID, std::nullopt, frame.process().processID(), frame.isFocused() };
-        RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
+        RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(FrameInfoData { request.frameInfo() }, frame.page()));
 
         WKMediaCaptureType type = WKMediaCaptureTypeCamera;
         if (request.requiresAudioCapture())
@@ -1426,7 +1424,7 @@ void UIDelegate::UIClient::decidePolicyForUserMediaPermissionRequest(WebPageProx
 #endif
 }
 
-void UIDelegate::UIClient::decidePolicyForScreenCaptureUnmuting(WebPageProxy& page, WebFrameProxy& frame, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, CompletionHandler<void(bool isAllowed)>&& completionHandler)
+void UIDelegate::UIClient::decidePolicyForScreenCaptureUnmuting(WebPageProxy& page, WebFrameProxy& frame, FrameInfoData&& frameInfo, API::SecurityOrigin& userMediaOrigin, API::SecurityOrigin& topLevelOrigin, CompletionHandler<void(bool isAllowed)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate) {
@@ -1457,9 +1455,8 @@ void UIDelegate::UIClient::decidePolicyForScreenCaptureUnmuting(WebPageProxy& pa
     });
 
     std::optional<WebCore::FrameIdentifier> mainFrameID;
-    if (auto* mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
+    if (RefPtr mainFrame = frame.page() ? frame.page()->mainFrame() : nullptr)
         mainFrameID = mainFrame->frameID();
-    FrameInfoData frameInfo { frame.isMainFrame(), FrameType::Local, { }, userMediaOrigin.securityOrigin(), { }, frame.frameID(), mainFrameID, std::nullopt, frame.process().processID(), frame.isFocused() };
     RetainPtr<WKFrameInfo> frameInfoWrapper = wrapper(API::FrameInfo::create(WTFMove(frameInfo), frame.page()));
 
     [delegate _webView:uiDelegate->m_webView.get().get() decidePolicyForScreenCaptureUnmutingForOrigin:wrapper(topLevelOrigin) initiatedByFrame:frameInfoWrapper.get() decisionHandler:decisionHandler.get()];
@@ -1877,18 +1874,18 @@ void UIDelegate::UIClient::runWebAuthenticationPanel(WebPageProxy& page, API::We
     }).get()];
 }
 
-void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(WTF::String&& username, CompletionHandler<void(bool)>&& completionHandler)
+void UIDelegate::UIClient::requestWebAuthenticationConditonalMediationRegistration(const WTF::String& username, CompletionHandler<void(std::optional<bool>)>&& completionHandler)
 {
     RefPtr uiDelegate = m_uiDelegate.get();
     if (!uiDelegate)
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
 
     if (!uiDelegate->m_delegateMethods.webViewRequestWebAuthenticationConditionalMediationRegistrationForUserCompletionHandler)
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
 
     auto delegate = uiDelegate->m_delegate.get();
     if (!delegate)
-        return completionHandler(false);
+        return completionHandler(std::nullopt);
 
     auto checker = CompletionHandlerCallChecker::create(delegate.get(), @selector(_webView:requestWebAuthenticationConditionalMediationRegistrationForUser:completionHandler:));
     [(id<WKUIDelegatePrivate>)delegate _webView:uiDelegate->m_webView.get().get() requestWebAuthenticationConditionalMediationRegistrationForUser:username completionHandler:makeBlockPtr([completionHandler = WTFMove(completionHandler), checker = WTFMove(checker)] (BOOL result) mutable {

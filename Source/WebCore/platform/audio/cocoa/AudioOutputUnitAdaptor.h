@@ -46,6 +46,8 @@ public:
     WEBCORE_EXPORT OSStatus start();
     WEBCORE_EXPORT OSStatus stop();
 
+    WEBCORE_EXPORT size_t outputLatency() const;
+
 private:
     static OSStatus inputProc(void* userData, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 busNumber, UInt32 numberOfFrames, AudioBufferList* ioData);
 

@@ -94,7 +94,7 @@ private:
     void wasBlockedByDisabledFTP() final;
 
     Parameters m_parameters;
-    Ref<NetworkProcess> m_networkProcess;
+    const Ref<NetworkProcess> m_networkProcess;
     WebCore::ResourceResponse m_response;
     CompletionCallback m_completionCallback;
     RefPtr<NetworkDataTask> m_task;

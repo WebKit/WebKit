@@ -1,5 +1,3 @@
-//@ runWebAssemblySuite("--useWasmGC=true")
-
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);
   let view = new Uint8Array(buffer);

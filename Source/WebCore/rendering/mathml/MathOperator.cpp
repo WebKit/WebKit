@@ -130,7 +130,7 @@ LayoutUnit MathOperator::stretchSize() const
 bool MathOperator::getGlyph(const RenderStyle& style, char32_t character, GlyphData& glyph) const
 {
     glyph = style.fontCascade().glyphDataForCharacter(character, style.writingMode().isBidiRTL());
-    return glyph.font && glyph.font == &style.fontCascade().primaryFont();
+    return glyph.font && glyph.font == style.fontCascade().primaryFont().ptr();
 }
 
 void MathOperator::setSizeVariant(const GlyphData& sizeVariant)
@@ -152,7 +152,7 @@ static GlyphData glyphDataForCodePointOrFallbackGlyph(const RenderStyle& style, 
     
     if (fallbackGlyph) {
         fallback.glyph = fallbackGlyph;
-        fallback.font = &style.fontCascade().primaryFont();
+        fallback.font = style.fontCascade().primaryFont().ptr();
     }
     
     return fallback;

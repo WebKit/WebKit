@@ -19,7 +19,7 @@ let program = `
                 return 42;
             }
         };
-        for (let i = 0; i < 1000000; ++i) {
+        for (let i = 0; i < testLoopCount; ++i) {
             shouldBe(foo(o, "x"), 42);
         }
     }
@@ -34,7 +34,7 @@ let program = `
             f: 4,
             g: 4,
         };
-        for (let i = 0; i < 1000000; ++i) {
+        for (let i = 0; i < testLoopCount; ++i) {
             foo(o, "a");
             foo(o, "b");
             foo(o, "c");

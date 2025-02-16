@@ -53,7 +53,7 @@ class WebDriverWPE(WebDriver):
         return args
 
     def browser_env(self):
-        return self._port.setup_environ_for_minibrowser()
+        return self._port.setup_environ_for_webdriver()
 
     def capabilities(self):
         return {'wpe:browserOptions': {

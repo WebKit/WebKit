@@ -28,8 +28,6 @@
 
 #if ENABLE(PDF_PLUGIN)
 
-#import "PDFLayerControllerSPI.h"
-#import "PDFPlugin.h"
 #import <WebCore/AddEventListenerOptions.h>
 #import <WebCore/EnterKeyHint.h>
 #import <WebCore/Event.h>

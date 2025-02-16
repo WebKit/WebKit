@@ -35,6 +35,11 @@ FormAssociatedElement::FormAssociatedElement(HTMLFormElement* form)
 {
 }
 
+HTMLFormElement* FormAssociatedElement::formForBindings() const
+{
+    return form();
+}
+
 void FormAssociatedElement::setFormInternal(RefPtr<HTMLFormElement>&& newForm)
 {
     ASSERT(m_form.get() != newForm);

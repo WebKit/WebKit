@@ -894,7 +894,7 @@
                 { "name": "value", "type": "string", "description": "One of the following: the path to the extension, the path to the extension's archive, or the base 64 encoded data of the extension's archive." }
             ],
             "returns": [
-                { "name": "extensionId", "type": "string", "description": "The unique identifier of the extension." }
+                { "name": "extension", "type": "string", "description": "The unique identifier of the extension." }
             ],
             "async": true
         },

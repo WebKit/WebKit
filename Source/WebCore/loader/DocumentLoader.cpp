@@ -850,7 +850,7 @@ bool DocumentLoader::tryLoadingSubstituteData()
 #if USE(COCOA_EVENT_LOOP)
         RunLoop::dispatch(*m_frame->page()->scheduledRunLoopPairs(), WTFMove(loadData));
 #else
-        RunLoop::current().dispatch(WTFMove(loadData));
+        RunLoop::protectedCurrent()->dispatch(WTFMove(loadData));
 #endif
     }
 
@@ -1138,15 +1138,14 @@ void DocumentLoader::continueAfterContentPolicy(PolicyAction policy)
         // m_mainResource can be null, e.g. when loading a substitute resource from application cache.
         if (!m_mainResource) {
             DOCUMENTLOADER_RELEASE_LOG("continueAfterContentPolicy: cannot show URL");
-            mainReceivedError(protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request));
+            mainReceivedError(platformStrategies()->loaderStrategy()->cannotShowURLError(m_request));
             return;
         }
 
         if (ResourceLoader* mainResourceLoader = this->mainResourceLoader())
             InspectorInstrumentation::continueWithPolicyDownload(*m_frame, *mainResourceLoader->identifier(), *this, m_response);
 
-        bool shouldIgnoreSandboxFlags = m_frame->isMainFrame() && m_frame->document() && m_frame->protectedDocument()->quirks().shouldAllowDownloadsInSpiteOfCSP();
-        if (!m_frame->effectiveSandboxFlags().contains(SandboxFlag::Downloads) || shouldIgnoreSandboxFlags) {
+        if (!m_frame->effectiveSandboxFlags().contains(SandboxFlag::Downloads)) {
             // When starting the request, we didn't know that it would result in download and not navigation. Now we know that main document URL didn't change.
             // Download may use this knowledge for purposes unrelated to cookies, notably for setting file quarantine data.
             protectedFrameLoader()->setOriginalURLForDownloadRequest(m_request);
@@ -1240,7 +1239,7 @@ ResourceError DocumentLoader::interruptedForPolicyChangeError() const
         return error;
     }
 
-    auto error = protectedFrameLoader()->protectedClient()->interruptedForPolicyChangeError(request());
+    auto error = platformStrategies()->loaderStrategy()->interruptedForPolicyChangeError(request());
     error.setType(ResourceError::Type::Cancellation);
     return error;
 }
@@ -1253,7 +1252,7 @@ void DocumentLoader::stopLoadingForPolicyChange(LoadWillContinueInAnotherProcess
 // https://w3c.github.io/ServiceWorker/#control-and-use-window-client
 static inline bool shouldUseActiveServiceWorkerFromParent(const Document& document, const Document& parent)
 {
-    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.protectedSecurityOrigin()->isSameOriginDomain(document.securityOrigin());
+    return !document.url().protocolIsInHTTPFamily() && !document.securityOrigin().isOpaque() && parent.protectedSecurityOrigin()->isSameOriginDomain(document.protectedSecurityOrigin());
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)
@@ -1491,6 +1490,9 @@ void DocumentLoader::applyPoliciesToSettings()
         m_frame->settings().setAppBadgeEnabled(enabled);
 #endif
     }
+
+    if (m_inlineMediaPlaybackPolicy != InlineMediaPlaybackPolicy::Default)
+        m_frame->settings().setInlineMediaPlaybackRequiresPlaysInlineAttribute(m_inlineMediaPlaybackPolicy == InlineMediaPlaybackPolicy::RequiresPlaysInlineAttribute);
 }
 
 ColorSchemePreference DocumentLoader::colorSchemePreference() const
@@ -2146,7 +2148,7 @@ void DocumentLoader::startLoadingMainResource()
     Ref<DocumentLoader> protectedThis(*this);
 
     if (shouldCancelLoadingAboutURL(m_request.url())) {
-        cancelMainResourceLoad(protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request));
+        cancelMainResourceLoad(platformStrategies()->loaderStrategy()->cannotShowURLError(m_request));
         return;
     }
 
@@ -2296,12 +2298,12 @@ void DocumentLoader::loadMainResource(ResourceRequest&& request)
 
         if (!m_request.url().isValid()) {
             DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, URL is invalid");
-            cancelMainResourceLoad(protectedFrameLoader()->protectedClient()->cannotShowURLError(m_request));
+            cancelMainResourceLoad(platformStrategies()->loaderStrategy()->cannotShowURLError(m_request));
             return;
         }
 
         if (advancedPrivacyProtections().contains(AdvancedPrivacyProtections::HTTPSOnly)) {
-            if (auto httpNavigationWithHTTPSOnlyError = protectedFrameLoader()->protectedClient()->httpNavigationWithHTTPSOnlyError(m_request); mainResourceOrError.error().domain() == httpNavigationWithHTTPSOnlyError.domain()
+            if (auto httpNavigationWithHTTPSOnlyError = platformStrategies()->loaderStrategy()->httpNavigationWithHTTPSOnlyError(m_request); mainResourceOrError.error().domain() == httpNavigationWithHTTPSOnlyError.domain()
                 && mainResourceOrError.error().errorCode() == httpNavigationWithHTTPSOnlyError.errorCode()) {
                 DOCUMENTLOADER_RELEASE_LOG("loadMainResource: Unable to load main resource, URL has HTTP scheme with HTTPSOnly enabled");
                 cancelMainResourceLoad(mainResourceOrError.error());
@@ -2515,7 +2517,8 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
 // https://www.w3.org/TR/css-view-transitions-2/#navigation-can-trigger-a-cross-document-view-transition
 bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& oldDocument, bool fromBackForwardCache)
 {
-    // FIXME: Consider adding implementation-defined navigation experience step.
+    if (loadStartedDuringSwipeAnimation())
+        return false;
 
     if (std::holds_alternative<Document::SkipTransition>(oldDocument.resolveViewTransitionRule()))
         return false;
@@ -2524,7 +2527,7 @@ bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& o
         return false;
 
     Ref newOrigin = SecurityOrigin::create(documentURL());
-    if (!newOrigin->isSameOriginAs(oldDocument.securityOrigin()))
+    if (!newOrigin->isSameOriginAs(oldDocument.protectedSecurityOrigin()))
         return false;
 
     if (const auto* metrics = response().deprecatedNetworkLoadMetricsOrNull(); metrics && !fromBackForwardCache) {
@@ -2535,7 +2538,8 @@ bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& o
     if (*m_triggeringAction.navigationAPIType() == NavigationNavigationType::Traverse)
         return true;
 
-    // FIXME: If isBrowserUINavigation is true, then return false.
+    if (isRequestFromClientOrUserInput())
+        return false;
 
     return true;
 }

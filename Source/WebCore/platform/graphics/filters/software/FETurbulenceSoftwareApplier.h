@@ -95,7 +95,7 @@ private:
     struct ApplyParameters {
         IntRect filterRegion;
         FloatSize filterScale;
-        PixelBuffer* pixelBuffer;
+        RefPtr<PixelBuffer> pixelBuffer;
         PaintingData* paintingData;
         StitchData stitchData;
         int startY;

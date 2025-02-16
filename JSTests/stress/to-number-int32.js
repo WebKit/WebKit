@@ -24,7 +24,7 @@ function check(array, casted)
 }
 noInline(check);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(array, casted);
     check(array, casted);
 }

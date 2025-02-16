@@ -372,6 +372,32 @@ TEST(WKScrollViewTests, OverscrollBehaviorAndOverflowHiddenOnRootShouldNotPreven
     EXPECT_FALSE([webView synchronouslyHandleScrollEventWithPhase:WKBEScrollViewScrollUpdatePhaseEnded location:CGPointMake(100, 100) delta:CGVectorMake(0, 0)]);
 }
 
+TEST(WKScrollViewTests, WheelEventDispatchedToSubframe)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 200, 200)]);
+    [webView synchronouslyLoadHTMLString:@(R"(
+    <!DOCTYPE html>
+    <html>
+    <body style='margin: 0; padding: 0;'>
+        <iframe id='subframe' style='width: 200px; height: 400px;'></iframe>
+    </body>
+    <script>
+        window.addEventListener('load', () => {
+            window.subframeHit = 0;
+            let subframe = document.getElementById('subframe');
+            subframe.srcdoc = `\<script\> document.addEventListener('wheel', (e) => { parent.window.subframeHit = 1; }); \</script\>`;
+        });
+    </script>
+    </html>
+    )")];
+#if !USE(BROWSERENGINEKIT)
+    [webView synchronouslyHandleScrollEventWithPhase:UIScrollPhaseMayBegin location:CGPointMake(100, 100) delta:CGVectorMake(0, 10)];
+#else
+    [webView synchronouslyHandleScrollEventWithPhase:WKBEScrollViewScrollUpdatePhaseBegan location:CGPointMake(100, 100) delta:CGVectorMake(0, 10)];
+#endif
+    EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"window.subframeHit"] intValue]);
+}
+
 #endif // HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 
 TEST(WKScrollViewTests, IndicatorStyleSetByClient)

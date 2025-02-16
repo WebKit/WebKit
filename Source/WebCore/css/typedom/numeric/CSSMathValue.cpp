@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathValue.h"
 
+#include "CSSCalcTree.h"
 #include "CSSCalcValue.h"
 #include "CSSPrimitiveValue.h"
 #include "Length.h"
@@ -43,12 +44,10 @@ RefPtr<CSSValue> CSSMathValue::toCSSValue() const
     if (!category)
         return nullptr;
 
-    return CSSPrimitiveValue::create(CSSCalcValue::create(CSSCalc::Tree {
+    return CSSPrimitiveValue::create(CSSCalcValue::create(*category, CSS::All, CSSCalc::Tree {
         .root = WTFMove(*node),
         .type = type,
-        .category = *category,
         .stage = CSSCalc::Stage::Specified,
-        .range = CSS::All
     }));
 }
 

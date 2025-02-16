@@ -39,6 +39,8 @@ public:
 
     void teardown() override;
 
+    void dispatchBitrateRequest(uint32_t bitrate) final;
+
 protected:
     explicit RealtimeOutgoingVideoSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&, const String& mediaStreamId, MediaStreamTrack&);
     explicit RealtimeOutgoingVideoSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&);

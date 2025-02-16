@@ -26,9 +26,11 @@
 import Foundation
 internal import WebKit_Internal
 
-extension WebPage_v0 {
+extension WebPage {
     @MainActor
-    @_spi(Private)
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public struct FrameInfo: Sendable {
         init(_ wrapped: WKFrameInfo) {
             self.wrapped = wrapped

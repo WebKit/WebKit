@@ -68,7 +68,7 @@ void SplitElementCommand::executeApply()
     
 void SplitElementCommand::doApply()
 {
-    m_element1 = protectedElement2()->cloneElementWithoutChildren(protectedDocument());
+    m_element1 = protectedElement2()->cloneElementWithoutChildren(protectedDocument(), nullptr);
     
     executeApply();
 }
@@ -106,7 +106,7 @@ void SplitElementCommand::doReapply()
 }
 
 #ifndef NDEBUG
-void SplitElementCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
+void SplitElementCommand::getNodesInCommand(NodeSet& nodes)
 {
     addNodeAndDescendants(protectedElement1().get(), nodes);
     addNodeAndDescendants(protectedElement2().ptr(), nodes);

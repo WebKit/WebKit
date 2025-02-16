@@ -32,4 +32,10 @@ egl::Error ImageImpl::exportVkImage(void *vkImage, void *vkImageCreateInfo)
     return egl::EglBadAccess();
 }
 
+bool ImageImpl::isFixedRatedCompression(const gl::Context *context)
+{
+    UNIMPLEMENTED();
+    return false;
+}
+
 }  // namespace rx

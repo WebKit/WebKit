@@ -28,8 +28,6 @@
 #include <unicode/utf16.h>
 #include <wtf/text/TextBreakIterator.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 class ComposedCharacterClusterTextIterator {
@@ -37,7 +35,7 @@ public:
     // The passed in UChar pointer starts at 'currentIndex'. The iterator operates on the range [currentIndex, lastIndex].
     ComposedCharacterClusterTextIterator(std::span<const UChar> characters, unsigned currentIndex, unsigned lastIndex)
         : m_iterator(characters, { }, TextBreakIterator::CaretMode { }, nullAtom())
-        , m_characters(characters.data())
+        , m_characters(characters)
         , m_originalIndex(currentIndex)
         , m_currentIndex(currentIndex)
         , m_lastIndex(lastIndex)
@@ -72,23 +70,21 @@ public:
         m_currentIndex = index;
     }
 
-    const UChar* remainingCharacters() const
+    std::span<const UChar> remainingCharacters() const
     {
         auto relativeIndex = m_currentIndex - m_originalIndex;
-        return m_characters + relativeIndex;
+        return m_characters.subspan(relativeIndex);
     }
 
     unsigned currentIndex() const { return m_currentIndex; }
-    const UChar* characters() const { return m_characters; }
+    std::span<const UChar> characters() const { return m_characters; }
 
 private:
     CachedTextBreakIterator m_iterator;
-    const UChar* const m_characters;
+    std::span<const UChar> m_characters;
     const unsigned m_originalIndex { 0 };
     unsigned m_currentIndex { 0 };
     const unsigned m_lastIndex { 0 };
 };
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

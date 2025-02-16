@@ -267,8 +267,10 @@ MacroAssemblerCodeRef<JITThunkPtrTag> createJSToWasmJITShared()
         jit.load32(CCallHelpers::Address(GPRInfo::regWS1, JSEntrypointCallee::offsetOfFrameSize()), GPRInfo::regWS1);
         jit.subPtr(CCallHelpers::stackPointerRegister, GPRInfo::regWS1, GPRInfo::regWS1);
 
+#if !CPU(ADDRESS64)
         stackOverflow.append(jit.branchPtr(CCallHelpers::Above, GPRInfo::regWS1, GPRInfo::callFrameRegister));
-        stackOverflow.append(jit.branchPtr(CCallHelpers::Below, GPRInfo::regWS1, CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfSoftStackLimit())));
+#endif
+        stackOverflow.append(jit.branchPtr(CCallHelpers::LessThanOrEqual, GPRInfo::regWS1, CCallHelpers::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfSoftStackLimit())));
 
         jit.move(GPRInfo::regWS1, CCallHelpers::stackPointerRegister);
 
@@ -492,7 +494,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
 
     const Wasm::WasmCallingConvention& wasmCC = Wasm::wasmCallingConvention();
     Wasm::CallInformation wasmCallInfo = wasmCC.callInformationFor(*this);
-    if (wasmCallInfo.argumentsOrResultsIncludeV128)
+    if (UNLIKELY(argumentsOrResultsIncludeV128() || argumentsOrResultsIncludeExnref()))
         return nullptr;
     Wasm::CallInformation jsCallInfo = Wasm::jsCallingConvention().callInformationFor(*this, Wasm::CallRole::Callee);
     RegisterAtOffsetList savedResultRegisters = wasmCallInfo.computeResultsOffsetList();
@@ -504,7 +506,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
     totalFrameSize = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(totalFrameSize);
 
 #if USE(JSVALUE32_64)
-    if (wasmCallInfo.argumentsIncludeI64)
+    if (argumentsOrResultsIncludeI64())
         return nullptr;
 #endif
 
@@ -528,9 +530,10 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
     if (totalFrameSize >= trampolineReservedStackSize()) {
         JIT_COMMENT(jit, "stack overflow check");
         jit.loadPtr(MacroAssembler::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfSoftStackLimit()), stackLimitGPR);
-
+#if !CPU(ADDRESS64)
         slowPath.append(jit.branchPtr(CCallHelpers::Above, MacroAssembler::stackPointerRegister, GPRInfo::callFrameRegister));
-        slowPath.append(jit.branchPtr(CCallHelpers::Below, MacroAssembler::stackPointerRegister, stackLimitGPR));
+#endif
+        slowPath.append(jit.branchPtr(CCallHelpers::LessThanOrEqual, MacroAssembler::stackPointerRegister, stackLimitGPR));
     }
     // Don't store the Wasm::Callee until after our stack check.
     jit.storeWasmCalleeCallee(scratchJSR.payloadGPR());

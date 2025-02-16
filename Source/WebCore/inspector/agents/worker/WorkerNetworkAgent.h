@@ -49,7 +49,7 @@ private:
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&);
     bool shouldForceBufferingNetworkResourceData() const { return true; }
 
-    WorkerOrWorkletGlobalScope& m_globalScope;
+    WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;
 };
 
 } // namespace WebCore

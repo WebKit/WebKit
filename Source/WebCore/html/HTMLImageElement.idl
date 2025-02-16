@@ -57,7 +57,7 @@
 
     [CEReactions=NotNeeded, Reflect] attribute [LegacyNullToEmptyString] DOMString border;
 
-    [CEReactions=NotNeeded, EnabledBySetting=FetchPriorityEnabled, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
+    [CEReactions=NotNeeded, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
 
     // Non-standard
     [Conditional=ATTACHMENT_ELEMENT, EnabledByDeprecatedGlobalSetting=AttachmentElementEnabled] readonly attribute DOMString attachmentIdentifier;

@@ -48,13 +48,12 @@ TEST(WKWebExtensionAPINamespace, NoWebNavigationObjectWithoutPermission)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     // Deny the permission, since TestWebKitAPI auto grants all requested permissions.
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPINamespace, WebNavigationObjectWithPermission)
@@ -96,13 +95,12 @@ TEST(WKWebExtensionAPINamespace, NoNotificationsObjectWithoutPermission)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     // Deny the permission, since TestWebKitAPI auto grants all requested permissions.
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusDeniedExplicitly forPermission:@"notifications"];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPINamespace, NotificationsObjectWithPermission)
@@ -145,8 +143,7 @@ TEST(WKWebExtensionAPINamespace, NotificationsUnsupported)
         @"browser.test.notifyPass()"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::parseExtension(manifest, @{ @"background.js": backgroundScript });
 
     manager.get().context.unsupportedAPIs = [NSSet setWithObject:@"browser.notifications"];
 

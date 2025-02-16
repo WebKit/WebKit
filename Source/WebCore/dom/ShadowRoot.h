@@ -101,7 +101,8 @@ public:
     RefPtr<Element> protectedHost() const { return m_host.get(); }
     void setHost(WeakPtr<Element, WeakPtrImplWithEventTargetData>&& host) { m_host = WTFMove(host); }
 
-    CustomElementRegistry* registryForBindings() const { return m_hasScopedCustomElementRegistry ? customElementRegistry() : nullptr; }
+    bool hasScopedCustomElementRegistry() const { return m_hasScopedCustomElementRegistry; }
+    CustomElementRegistry* registryForBindings() const;
 
     ExceptionOr<void> setHTMLUnsafe(std::variant<RefPtr<TrustedHTML>, String>&&);
     String getHTML(GetHTMLOptions&&) const;
@@ -109,7 +110,7 @@ public:
     String innerHTML() const;
     ExceptionOr<void> setInnerHTML(std::variant<RefPtr<TrustedHTML>, String>&&);
 
-    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
 
     Element* activeElement() const;
 

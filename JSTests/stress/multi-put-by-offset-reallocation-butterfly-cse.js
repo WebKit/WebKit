@@ -78,7 +78,7 @@ for (var i = 0; i < 8; ++i)
     noInline(foos[i]);
 noInline(bar);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {};
     var p = {a:1, b:2, c:3, d:4, e:5, f:6};
     o[0] = 0;

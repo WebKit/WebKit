@@ -20,21 +20,21 @@ var obj = {
 
 noInline(obj.method);
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < testLoopCount; i++) {
     testCase(obj.method()() === obj, true, "Error: this is not lexically binded inside of the arrow function #3");
 }
 
 var fake = {steal: obj.method()};
 noInline(fake.steal);
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < testLoopCount; i++) {
     testCase(fake.steal() === obj, true, "Error: this is not lexically binded inside of the arrow function #4");
 }
 
 var real = {borrow: obj.method};
 noInline(real.borrow);
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < testLoopCount; i++) {
     testCase(real.borrow()() === real, true, "Error: this is not lexically binded inside of the arrow function #5");
 }
 
@@ -52,7 +52,7 @@ var functionConstructorWithEval = function () {
 
 var arrowWithEval = new functionConstructorWithEval();
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < testLoopCount; i++) {
     testCase(arrowWithEval.func() === 'new-value', true, "Error: this is not lexically binded inside of the arrow function #6");
 }
 
@@ -84,7 +84,7 @@ function fooDefault() {
 
 var fooDefaultObject = new fooDefault();
 
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < testLoopCount; i++) {
     testCase(fooObject.arr() === 123, true, "Error: this is not lexically binded inside of the arrow function #7");
     testCase(fooObject._id === '12345', true, "Error: this is not lexically binded inside of the arrow function #8");
     testCase(fooDefaultObject.arr() === 123, true, "Error: this is not lexically binded inside of the arrow function #7");

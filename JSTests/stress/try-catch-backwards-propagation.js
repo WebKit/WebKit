@@ -152,7 +152,7 @@ function opt() {
     return c;
 }
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     foo1(i);
     foo2(i);
     foo3(i);

@@ -1239,7 +1239,7 @@ WI.Resource = class Resource extends WI.SourceCode
             if (this.requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
                 command.push("--data " + escapeStringPosix(this.requestData));
             else
-                command.push("--data-binary " + escapeStringPosix(this.requestData));
+                command.push("--data-raw " + escapeStringPosix(this.requestData));
         }
 
         return command.join(" \\\n");

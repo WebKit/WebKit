@@ -97,8 +97,8 @@ void ResourceRequestBase::setAsIsolatedCopy(const ResourceRequest& other)
         ASSERT(encodingCount <= 3);
         setResponseContentDispositionEncodingFallbackArray(encoding1, encoding2, encoding3);
     }
-    if (other.m_httpBody)
-        setHTTPBody(other.m_httpBody->isolatedCopy());
+    if (RefPtr httpBody = other.m_httpBody)
+        setHTTPBody(httpBody->isolatedCopy());
     setAllowCookies(other.m_requestData.m_allowCookies);
     setIsAppInitiated(other.isAppInitiated());
     setPrivacyProxyFailClosedForUnreachableNonMainHosts(other.privacyProxyFailClosedForUnreachableNonMainHosts());

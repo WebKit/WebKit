@@ -40,8 +40,12 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreGraphics, CGContextSetOwnerIdentity, void
 #define CGContextSetOwnerIdentity PAL::softLink_CoreGraphics_CGContextSetOwnerIdentity
 #endif
 
-#if USE(CG) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CoreGraphics, CGWindowListCreateImage, CGImageRef, (CGRect screenBounds, CGWindowListOption listOption, CGWindowID windowID, CGWindowImageOption imageOption), (screenBounds, listOption, windowID, imageOption))
+#endif
+
+#if HAVE(IOSURFACE)
+SOFT_LINK_FUNCTION_MAY_FAIL_FOR_HEADER(PAL, CoreGraphics, CGIOSurfaceContextInvalidateSurface, void, (CGContextRef context), (context))
 #endif
 
 #endif

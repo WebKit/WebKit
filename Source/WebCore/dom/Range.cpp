@@ -448,7 +448,7 @@ ExceptionOr<RefPtr<DocumentFragment>> Range::processContents(ActionType action)
                 return result.releaseException();
         }
 
-        HashSet<Ref<Element>> elementSet;
+        UncheckedKeyHashSet<Ref<Element>> elementSet;
         for (Ref element : customElementsReactionHoldingTank.takeElements())
             elementSet.add(element.get());
         if (!elementSet.isEmpty()) {
@@ -1187,7 +1187,7 @@ void Range::visitNodesConcurrently(JSC::AbstractSlotVisitor& visitor) const
 void showTree(const WebCore::Range* range)
 {
     if (range) {
-        range->startContainer().showTreeAndMark(&range->startContainer(), "S", &range->endContainer(), "E");
+        range->startContainer().showTreeAndMark(&range->startContainer(), "S"_s, &range->endContainer(), "E"_s);
         fprintf(stderr, "start offset: %d, end offset: %d\n", range->startOffset(), range->endOffset());
     }
 }

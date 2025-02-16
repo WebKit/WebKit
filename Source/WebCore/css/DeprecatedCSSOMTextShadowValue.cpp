@@ -26,6 +26,7 @@
 #include "DeprecatedCSSOMTextShadowValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSSerializationContext.h"
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ DeprecatedCSSOMTextShadowValue::DeprecatedCSSOMTextShadowValue(CSS::TextShadow&&
 
 String DeprecatedCSSOMTextShadowValue::cssText() const
 {
-    return CSS::serializationForCSS(m_shadow);
+    return CSS::serializationForCSS(CSS::defaultSerializationContext(), m_shadow);
 }
 
 } // namespace WebCore

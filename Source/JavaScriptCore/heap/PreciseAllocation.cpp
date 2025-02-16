@@ -144,7 +144,9 @@ PreciseAllocation* PreciseAllocation::tryReallocate(size_t size, Subspace* subsp
     PreciseAllocation* newAllocation = std::bit_cast<PreciseAllocation*>(newBasePointer);
     if (oldAdjustment != newAdjustment) {
         void* basePointerAfterRealloc = std::bit_cast<void*>(std::bit_cast<uintptr_t>(newSpace) + oldAdjustment);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memmove(newBasePointer, basePointerAfterRealloc, oldCellSize + PreciseAllocation::headerSize());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     newAllocation->m_cellSize = size;
@@ -270,7 +272,7 @@ void PreciseAllocation::sweep()
     m_weakSet.sweep();
     
     if (m_hasValidCell && !isLive()) {
-        if (m_attributes.destruction == NeedsDestruction)
+        if (m_attributes.destruction != DoesNotNeedDestruction)
             m_subspace->destroy(vm(), static_cast<JSCell*>(cell()));
         // We should clear IsoCellSet's bit before actually destroying PreciseAllocation
         // since PreciseAllocation's destruction can be delayed until its WeakSet is cleared.

@@ -73,6 +73,7 @@ RemoteAudioSessionConfiguration RemoteAudioSessionProxy::configuration()
         session->numberOfOutputChannels(),
         session->maximumNumberOfOutputChannels(),
         session->preferredBufferSize(),
+        session->outputLatency(),
         session->isMuted(),
         m_active,
         m_sceneIdentifier,

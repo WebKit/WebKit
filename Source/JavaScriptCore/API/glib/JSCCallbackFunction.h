@@ -53,7 +53,7 @@ public:
     };
 
     static JSCCallbackFunction* create(VM&, JSGlobalObject*, const String& name, Type, JSCClass*, GRefPtr<GClosure>&&, GType, std::optional<Vector<GType>>&&);
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 
     static Structure* createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)

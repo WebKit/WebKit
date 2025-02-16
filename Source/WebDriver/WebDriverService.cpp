@@ -44,6 +44,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdio>
+#include <limits>
 #include <optional>
 #include <wtf/JSONValues.h>
 #include <wtf/StdLibExtras.h>
@@ -97,13 +98,13 @@ int WebDriverService::run(int argc, char** argv)
     if (const char* targetEnvVar = getenv("WEBDRIVER_TARGET_ADDR"))
         targetString = String::fromLatin1(targetEnvVar);
     for (int i = 1 ; i < argc; ++i) {
-        const char* arg = argv[i];
-        if (!strcmp(arg, "-h") || !strcmp(arg, "--help")) {
+        auto arg = unsafeSpan(argv[i]);
+        if (equalSpans(arg, "-h"_span) || equalSpans(arg, "--help"_span)) {
             printUsageStatement(argv[0]);
             return EXIT_SUCCESS;
         }
 
-        if (!strcmp(arg, "-p") && portString.isNull()) {
+        if (equalSpans(arg, "-p"_span) && portString.isNull()) {
             if (++i == argc) {
                 printUsageStatement(argv[0]);
                 return EXIT_FAILURE;
@@ -112,27 +113,27 @@ int WebDriverService::run(int argc, char** argv)
             continue;
         }
 
-        static const unsigned portStrLength = strlen("--port=");
-        if (!strncmp(arg, "--port=", portStrLength) && portString.isNull()) {
-            portString = String::fromLatin1(arg + portStrLength);
+        static constexpr auto portArgument = "--port="_span;
+        if (spanHasPrefix(arg, portArgument) && portString.isNull()) {
+            portString = arg.subspan(portArgument.size());
             continue;
         }
 
-        static const unsigned hostStrLength = strlen("--host=");
-        if (!strncmp(arg, "--host=", hostStrLength) && !host) {
-            host = String::fromLatin1(arg + hostStrLength);
+        static constexpr auto hostArgument = "--host="_span;
+        if (spanHasPrefix(arg, hostArgument) && !host) {
+            host = arg.subspan(hostArgument.size());
             continue;
         }
 
 #if ENABLE(WEBDRIVER_BIDI)
-        static const unsigned bidiPortStrLength = strlen("--bidi-port=");
-        if (!strncmp(arg, "--bidi-port=", bidiPortStrLength) && bidiPortString.isNull()) {
-            bidiPortString = String::fromLatin1(arg + bidiPortStrLength);
+        static constexpr auto bidiPortArgument = "--bidi-port="_span;
+        if (spanHasPrefix(arg, bidiPortArgument) && bidiPortString.isNull()) {
+            bidiPortString = arg.subspan(bidiPortArgument.size());
             continue;
         }
 #endif
 
-        if (!strcmp(arg, "-t") && targetString.isNull()) {
+        if (equalSpans(arg, "-t"_span) && targetString.isNull()) {
             if (++i == argc) {
                 printUsageStatement(argv[0]);
                 return EXIT_FAILURE;
@@ -141,9 +142,9 @@ int WebDriverService::run(int argc, char** argv)
             continue;
         }
 
-        static const unsigned targetStrLength = strlen("--target=");
-        if (!strncmp(arg, "--target=", targetStrLength) && targetString.isNull()) {
-            targetString = String::fromLatin1(arg + targetStrLength);
+        static constexpr auto targetArgument = "--target="_span;
+        if (spanHasPrefix(arg, targetArgument) && targetString.isNull()) {
+            targetString = arg.subspan(targetArgument.size());
             continue;
         }
     }
@@ -170,21 +171,27 @@ int WebDriverService::run(int argc, char** argv)
 #if ENABLE(WEBDRIVER_BIDI)
     auto bidiPort = parseInteger<uint16_t>(bidiPortString);
     if (!bidiPort) {
-        fprintf(stderr, "Invalid WebSocket port %s provided. Defaulting to 4445.\n", bidiPortString.utf8().data());
-        bidiPort = { 4445 };
+        const int16_t bidiPortIncrement = *port == std::numeric_limits<uint16_t>::max() ? -1 : 1;
+        bidiPort = { *port + bidiPortIncrement };
+        fprintf(stderr, "Invalid WebSocket BiDi port %s provided. Defaulting to %d.\n", bidiPortString.utf8().data(), *bidiPort);
     }
 #endif
 
     WTF::initializeMainThread();
 
+    const char* hostStr = host && host->utf8().data() ? host->utf8().data() : "local";
 #if ENABLE(WEBDRIVER_BIDI)
-    if (!m_bidiServer.listen(host ? *host : nullString(), *bidiPort))
+    if (!m_bidiServer.listen(host ? *host : nullString(), *bidiPort)) {
+        fprintf(stderr, "FATAL: Unable to listen for WebSocket BiDi server at host %s and port %d.\n", hostStr, *bidiPort);
         return EXIT_FAILURE;
-    RELEASE_LOG(WebDriverBiDi, "Started WebSocket server with host %s and port %d", (host ? host->utf8().data() : ""), *bidiPort);
+    }
+    RELEASE_LOG(WebDriverBiDi, "Started WebSocket BiDi server with host %s and port %d", hostStr, *bidiPort);
 #endif // ENABLE(WEBDRIVER_BIDI)
-    if (!m_server.listen(host, *port))
+    if (!m_server.listen(host, *port)) {
+        fprintf(stderr, "FATAL: Unable to listen for HTTP server at host %s and port %d.\n", hostStr, *port);
         return EXIT_FAILURE;
-    RELEASE_LOG(WebDriverClassic, "Started HTTP server with host %s and port %d", (host ? host->utf8().data() : ""), *port);
+    }
+    RELEASE_LOG(WebDriverClassic, "Started HTTP server with host %s and port %d", hostStr, *port);
 
     RunLoop::run();
 
@@ -2700,7 +2707,7 @@ void WebDriverService::bidiSessionSubscribe(unsigned id, RefPtr<JSON::Object>&&p
     auto eventNames = parameters->getArray("events"_s);
 
     if (!eventNames) {
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt));
+        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, "Missing 'events' parameter"_s, id));
         return;
     }
 
@@ -2722,7 +2729,7 @@ void WebDriverService::bidiSessionUnsubscribe(unsigned id, RefPtr<JSON::Object>&
     auto eventNames = parameters->getArray("events"_s);
 
     if (!eventNames) {
-        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt));
+        completionHandler(WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode::InvalidArgument, std::nullopt, "Missing 'events' parameter"_s, id));
         return;
     }
 

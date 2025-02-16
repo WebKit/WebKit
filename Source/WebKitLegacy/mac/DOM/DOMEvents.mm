@@ -30,6 +30,7 @@
 #import "DOMKeyboardEvent.h"
 #import "DOMMouseEvent.h"
 #import "DOMMutationEvent.h"
+#import "DOMOverflowEvent.h"
 #import "DOMProgressEvent.h"
 #import "DOMTextEvent.h"
 #import "DOMWheelEvent.h"
@@ -47,6 +48,8 @@ Class kitClass(WebCore::Event* impl)
         return [DOMMouseEvent class];
     case WebCore::EventInterfaceType::MutationEvent:
         return [DOMMutationEvent class];
+    case WebCore::EventInterfaceType::OverflowEvent:
+        return [DOMOverflowEvent class];
     case WebCore::EventInterfaceType::ProgressEvent:
     case WebCore::EventInterfaceType::XMLHttpRequestProgressEvent:
         return [DOMProgressEvent class];

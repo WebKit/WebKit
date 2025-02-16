@@ -57,7 +57,7 @@ class InlineDamage;
 
 namespace LayoutIntegration {
 
-struct InlineContent;
+class InlineContent;
 struct LineAdjustment;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(LayoutIntegration_LineLayout);
@@ -99,7 +99,7 @@ public:
     void shiftLinesBy(LayoutUnit blockShift);
 
     void collectOverflow();
-    LayoutRect visualOverflowBoundingBoxRectFor(const RenderInline&) const;
+    LayoutRect inkOverflowBoundingBoxRectFor(const RenderInline&) const;
     Vector<FloatRect> collectInlineBoxRects(const RenderInline&) const;
 
     LayoutUnit contentLogicalHeight() const;
@@ -109,7 +109,7 @@ public:
 
     bool isPaginated() const;
     size_t lineCount() const;
-    bool hasVisualOverflow() const;
+    bool hasInkOverflow() const;
     LayoutUnit firstLinePhysicalBaseline() const;
     LayoutUnit lastLinePhysicalBaseline() const;
     LayoutUnit lastLineLogicalBaseline() const;
@@ -146,7 +146,7 @@ private:
     void preparePlacedFloats();
     FloatRect constructContent(const Layout::InlineLayoutState&, Layout::InlineLayoutResult&&);
     Vector<LineAdjustment> adjustContentForPagination(const Layout::BlockLayoutState&, bool isPartialLayout);
-    void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&);
+    void updateRenderTreePositions(const Vector<LineAdjustment>&, const Layout::InlineLayoutState&, bool didDiscardContent);
 
     InlineContent& ensureInlineContent();
 

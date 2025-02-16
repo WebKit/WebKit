@@ -1,0 +1,4 @@
+
+No crash OK
+END OF TEST
+

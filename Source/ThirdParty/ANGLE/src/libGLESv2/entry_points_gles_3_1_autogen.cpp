@@ -15,6 +15,7 @@
 #include "libANGLE/Context.h"
 #include "libANGLE/Context.inl.h"
 #include "libANGLE/capture/capture_gles_3_1_autogen.h"
+#include "libANGLE/context_private_call.inl.h"
 #include "libANGLE/context_private_call_autogen.h"
 #include "libANGLE/entry_points_utils.h"
 #include "libANGLE/validationES31.h"
@@ -25,6 +26,7 @@ using namespace gl;
 extern "C" {
 void GL_APIENTRY GL_ActiveShaderProgram(GLuint pipeline, GLuint program)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLActiveShaderProgram, "context = %d, pipeline = %u, program = %u", CID(context),
           pipeline, program);
@@ -62,6 +64,7 @@ void GL_APIENTRY GL_BindImageTexture(GLuint unit,
                                      GLenum access,
                                      GLenum format)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLBindImageTexture,
           "context = %d, unit = %u, texture = %u, level = %d, layered = %s, layer = %d, access = "
@@ -97,6 +100,7 @@ void GL_APIENTRY GL_BindImageTexture(GLuint unit,
 
 void GL_APIENTRY GL_BindProgramPipeline(GLuint pipeline)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLBindProgramPipeline, "context = %d, pipeline = %u", CID(context), pipeline);
 
@@ -129,6 +133,7 @@ void GL_APIENTRY GL_BindVertexBuffer(GLuint bindingindex,
                                      GLintptr offset,
                                      GLsizei stride)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLBindVertexBuffer,
           "context = %d, bindingindex = %u, buffer = %u, offset = %llu, stride = %d", CID(context),
@@ -161,6 +166,7 @@ void GL_APIENTRY GL_BindVertexBuffer(GLuint bindingindex,
 
 GLuint GL_APIENTRY GL_CreateShaderProgramv(GLenum type, GLsizei count, const GLchar *const *strings)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLCreateShaderProgramv,
           "context = %d, type = %s, count = %d, strings = 0x%016" PRIxPTR "", CID(context),
@@ -201,6 +207,7 @@ GLuint GL_APIENTRY GL_CreateShaderProgramv(GLenum type, GLsizei count, const GLc
 
 void GL_APIENTRY GL_DeleteProgramPipelines(GLsizei n, const GLuint *pipelines)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDeleteProgramPipelines, "context = %d, n = %d, pipelines = 0x%016" PRIxPTR "",
           CID(context), n, (uintptr_t)pipelines);
@@ -228,6 +235,7 @@ void GL_APIENTRY GL_DeleteProgramPipelines(GLsizei n, const GLuint *pipelines)
 
 void GL_APIENTRY GL_DispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GLuint num_groups_z)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDispatchCompute,
           "context = %d, num_groups_x = %u, num_groups_y = %u, num_groups_z = %u", CID(context),
@@ -259,6 +267,7 @@ void GL_APIENTRY GL_DispatchCompute(GLuint num_groups_x, GLuint num_groups_y, GL
 
 void GL_APIENTRY GL_DispatchComputeIndirect(GLintptr indirect)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDispatchComputeIndirect, "context = %d, indirect = %llu", CID(context),
           static_cast<unsigned long long>(indirect));
@@ -284,6 +293,7 @@ void GL_APIENTRY GL_DispatchComputeIndirect(GLintptr indirect)
 
 void GL_APIENTRY GL_DrawArraysIndirect(GLenum mode, const void *indirect)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDrawArraysIndirect, "context = %d, mode = %s, indirect = 0x%016" PRIxPTR "",
           CID(context), GLenumToString(GLESEnum::PrimitiveType, mode), (uintptr_t)indirect);
@@ -311,6 +321,7 @@ void GL_APIENTRY GL_DrawArraysIndirect(GLenum mode, const void *indirect)
 
 void GL_APIENTRY GL_DrawElementsIndirect(GLenum mode, GLenum type, const void *indirect)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLDrawElementsIndirect,
           "context = %d, mode = %s, type = %s, indirect = 0x%016" PRIxPTR "", CID(context),
@@ -342,6 +353,7 @@ void GL_APIENTRY GL_DrawElementsIndirect(GLenum mode, GLenum type, const void *i
 
 void GL_APIENTRY GL_FramebufferParameteri(GLenum target, GLenum pname, GLint param)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLFramebufferParameteri, "context = %d, target = %s, pname = %s, param = %d",
           CID(context), GLenumToString(GLESEnum::FramebufferTarget, target),
@@ -352,11 +364,8 @@ void GL_APIENTRY GL_FramebufferParameteri(GLenum target, GLenum pname, GLint par
         SCOPED_SHARE_CONTEXT_LOCK(context);
         bool isCallValid =
             (context->skipValidation() ||
-             (ValidatePixelLocalStorageInactive(context->getPrivateState(),
-                                                context->getMutableErrorSetForValidation(),
-                                                angle::EntryPoint::GLFramebufferParameteri) &&
-              ValidateFramebufferParameteri(context, angle::EntryPoint::GLFramebufferParameteri,
-                                            target, pname, param)));
+             ValidateFramebufferParameteri(context, angle::EntryPoint::GLFramebufferParameteri,
+                                           target, pname, param));
         if (isCallValid)
         {
             context->framebufferParameteri(target, pname, param);
@@ -372,6 +381,7 @@ void GL_APIENTRY GL_FramebufferParameteri(GLenum target, GLenum pname, GLint par
 
 void GL_APIENTRY GL_GenProgramPipelines(GLsizei n, GLuint *pipelines)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGenProgramPipelines, "context = %d, n = %d, pipelines = 0x%016" PRIxPTR "",
           CID(context), n, (uintptr_t)pipelines);
@@ -399,6 +409,7 @@ void GL_APIENTRY GL_GenProgramPipelines(GLsizei n, GLuint *pipelines)
 
 void GL_APIENTRY GL_GetBooleani_v(GLenum target, GLuint index, GLboolean *data)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetBooleani_v,
           "context = %d, target = %s, index = %u, data = 0x%016" PRIxPTR "", CID(context),
@@ -425,6 +436,7 @@ void GL_APIENTRY GL_GetBooleani_v(GLenum target, GLuint index, GLboolean *data)
 
 void GL_APIENTRY GL_GetFramebufferParameteriv(GLenum target, GLenum pname, GLint *params)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetFramebufferParameteriv,
           "context = %d, target = %s, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
@@ -453,6 +465,7 @@ void GL_APIENTRY GL_GetFramebufferParameteriv(GLenum target, GLenum pname, GLint
 
 void GL_APIENTRY GL_GetMultisamplefv(GLenum pname, GLuint index, GLfloat *val)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetMultisamplefv,
           "context = %d, pname = %s, index = %u, val = 0x%016" PRIxPTR "", CID(context),
@@ -482,6 +495,7 @@ void GL_APIENTRY GL_GetProgramInterfaceiv(GLuint program,
                                           GLenum pname,
                                           GLint *params)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramInterfaceiv,
           "context = %d, program = %u, programInterface = %s, pname = %s, params = 0x%016" PRIxPTR
@@ -516,6 +530,7 @@ void GL_APIENTRY GL_GetProgramPipelineInfoLog(GLuint pipeline,
                                               GLsizei *length,
                                               GLchar *infoLog)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramPipelineInfoLog,
           "context = %d, pipeline = %u, bufSize = %d, length = 0x%016" PRIxPTR
@@ -546,6 +561,7 @@ void GL_APIENTRY GL_GetProgramPipelineInfoLog(GLuint pipeline,
 
 void GL_APIENTRY GL_GetProgramPipelineiv(GLuint pipeline, GLenum pname, GLint *params)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramPipelineiv,
           "context = %d, pipeline = %u, pname = %s, params = 0x%016" PRIxPTR "", CID(context),
@@ -576,6 +592,7 @@ GLuint GL_APIENTRY GL_GetProgramResourceIndex(GLuint program,
                                               GLenum programInterface,
                                               const GLchar *name)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramResourceIndex,
           "context = %d, program = %u, programInterface = %s, name = 0x%016" PRIxPTR "",
@@ -616,6 +633,7 @@ GLint GL_APIENTRY GL_GetProgramResourceLocation(GLuint program,
                                                 GLenum programInterface,
                                                 const GLchar *name)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramResourceLocation,
           "context = %d, program = %u, programInterface = %s, name = 0x%016" PRIxPTR "",
@@ -661,6 +679,7 @@ void GL_APIENTRY GL_GetProgramResourceName(GLuint program,
                                            GLsizei *length,
                                            GLchar *name)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramResourceName,
           "context = %d, program = %u, programInterface = %s, index = %u, bufSize = %d, length = "
@@ -700,6 +719,7 @@ void GL_APIENTRY GL_GetProgramResourceiv(GLuint program,
                                          GLsizei *length,
                                          GLint *params)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetProgramResourceiv,
           "context = %d, program = %u, programInterface = %s, index = %u, propCount = %d, props = "
@@ -735,6 +755,7 @@ void GL_APIENTRY GL_GetTexLevelParameterfv(GLenum target,
                                            GLenum pname,
                                            GLfloat *params)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetTexLevelParameterfv,
           "context = %d, target = %s, level = %d, pname = %s, params = 0x%016" PRIxPTR "",
@@ -765,6 +786,7 @@ void GL_APIENTRY GL_GetTexLevelParameterfv(GLenum target,
 
 void GL_APIENTRY GL_GetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GLint *params)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLGetTexLevelParameteriv,
           "context = %d, target = %s, level = %d, pname = %s, params = 0x%016" PRIxPTR "",
@@ -795,6 +817,7 @@ void GL_APIENTRY GL_GetTexLevelParameteriv(GLenum target, GLint level, GLenum pn
 
 GLboolean GL_APIENTRY GL_IsProgramPipeline(GLuint pipeline)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLIsProgramPipeline, "context = %d, pipeline = %u", CID(context), pipeline);
 
@@ -828,6 +851,7 @@ GLboolean GL_APIENTRY GL_IsProgramPipeline(GLuint pipeline)
 
 void GL_APIENTRY GL_MemoryBarrier(GLbitfield barriers)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLMemoryBarrier, "context = %d, barriers = %s", CID(context),
           GLbitfieldToString(GLESEnum::MemoryBarrierMask, barriers).c_str());
@@ -856,6 +880,7 @@ void GL_APIENTRY GL_MemoryBarrier(GLbitfield barriers)
 
 void GL_APIENTRY GL_MemoryBarrierByRegion(GLbitfield barriers)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLMemoryBarrierByRegion, "context = %d, barriers = %s", CID(context),
           GLbitfieldToString(GLESEnum::MemoryBarrierMask, barriers).c_str());
@@ -885,6 +910,7 @@ void GL_APIENTRY GL_MemoryBarrierByRegion(GLbitfield barriers)
 
 void GL_APIENTRY GL_ProgramUniform1f(GLuint program, GLint location, GLfloat v0)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform1f, "context = %d, program = %u, location = %d, v0 = %f",
           CID(context), program, location, v0);
@@ -919,6 +945,7 @@ void GL_APIENTRY GL_ProgramUniform1fv(GLuint program,
                                       GLsizei count,
                                       const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform1fv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -952,6 +979,7 @@ void GL_APIENTRY GL_ProgramUniform1fv(GLuint program,
 
 void GL_APIENTRY GL_ProgramUniform1i(GLuint program, GLint location, GLint v0)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform1i, "context = %d, program = %u, location = %d, v0 = %d",
           CID(context), program, location, v0);
@@ -986,6 +1014,7 @@ void GL_APIENTRY GL_ProgramUniform1iv(GLuint program,
                                       GLsizei count,
                                       const GLint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform1iv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1019,6 +1048,7 @@ void GL_APIENTRY GL_ProgramUniform1iv(GLuint program,
 
 void GL_APIENTRY GL_ProgramUniform1ui(GLuint program, GLint location, GLuint v0)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform1ui, "context = %d, program = %u, location = %d, v0 = %u",
           CID(context), program, location, v0);
@@ -1054,6 +1084,7 @@ void GL_APIENTRY GL_ProgramUniform1uiv(GLuint program,
                                        GLsizei count,
                                        const GLuint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform1uiv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1087,6 +1118,7 @@ void GL_APIENTRY GL_ProgramUniform1uiv(GLuint program,
 
 void GL_APIENTRY GL_ProgramUniform2f(GLuint program, GLint location, GLfloat v0, GLfloat v1)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform2f,
           "context = %d, program = %u, location = %d, v0 = %f, v1 = %f", CID(context), program,
@@ -1123,6 +1155,7 @@ void GL_APIENTRY GL_ProgramUniform2fv(GLuint program,
                                       GLsizei count,
                                       const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform2fv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1156,6 +1189,7 @@ void GL_APIENTRY GL_ProgramUniform2fv(GLuint program,
 
 void GL_APIENTRY GL_ProgramUniform2i(GLuint program, GLint location, GLint v0, GLint v1)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform2i,
           "context = %d, program = %u, location = %d, v0 = %d, v1 = %d", CID(context), program,
@@ -1192,6 +1226,7 @@ void GL_APIENTRY GL_ProgramUniform2iv(GLuint program,
                                       GLsizei count,
                                       const GLint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform2iv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1225,6 +1260,7 @@ void GL_APIENTRY GL_ProgramUniform2iv(GLuint program,
 
 void GL_APIENTRY GL_ProgramUniform2ui(GLuint program, GLint location, GLuint v0, GLuint v1)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform2ui,
           "context = %d, program = %u, location = %d, v0 = %u, v1 = %u", CID(context), program,
@@ -1261,6 +1297,7 @@ void GL_APIENTRY GL_ProgramUniform2uiv(GLuint program,
                                        GLsizei count,
                                        const GLuint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform2uiv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1295,6 +1332,7 @@ void GL_APIENTRY GL_ProgramUniform2uiv(GLuint program,
 void GL_APIENTRY
 GL_ProgramUniform3f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform3f,
           "context = %d, program = %u, location = %d, v0 = %f, v1 = %f, v2 = %f", CID(context),
@@ -1331,6 +1369,7 @@ void GL_APIENTRY GL_ProgramUniform3fv(GLuint program,
                                       GLsizei count,
                                       const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform3fv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1364,6 +1403,7 @@ void GL_APIENTRY GL_ProgramUniform3fv(GLuint program,
 
 void GL_APIENTRY GL_ProgramUniform3i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform3i,
           "context = %d, program = %u, location = %d, v0 = %d, v1 = %d, v2 = %d", CID(context),
@@ -1400,6 +1440,7 @@ void GL_APIENTRY GL_ProgramUniform3iv(GLuint program,
                                       GLsizei count,
                                       const GLint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform3iv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1434,6 +1475,7 @@ void GL_APIENTRY GL_ProgramUniform3iv(GLuint program,
 void GL_APIENTRY
 GL_ProgramUniform3ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform3ui,
           "context = %d, program = %u, location = %d, v0 = %u, v1 = %u, v2 = %u", CID(context),
@@ -1470,6 +1512,7 @@ void GL_APIENTRY GL_ProgramUniform3uiv(GLuint program,
                                        GLsizei count,
                                        const GLuint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform3uiv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1504,6 +1547,7 @@ void GL_APIENTRY GL_ProgramUniform3uiv(GLuint program,
 void GL_APIENTRY
 GL_ProgramUniform4f(GLuint program, GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform4f,
           "context = %d, program = %u, location = %d, v0 = %f, v1 = %f, v2 = %f, v3 = %f",
@@ -1540,6 +1584,7 @@ void GL_APIENTRY GL_ProgramUniform4fv(GLuint program,
                                       GLsizei count,
                                       const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform4fv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1574,6 +1619,7 @@ void GL_APIENTRY GL_ProgramUniform4fv(GLuint program,
 void GL_APIENTRY
 GL_ProgramUniform4i(GLuint program, GLint location, GLint v0, GLint v1, GLint v2, GLint v3)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform4i,
           "context = %d, program = %u, location = %d, v0 = %d, v1 = %d, v2 = %d, v3 = %d",
@@ -1610,6 +1656,7 @@ void GL_APIENTRY GL_ProgramUniform4iv(GLuint program,
                                       GLsizei count,
                                       const GLint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform4iv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1644,6 +1691,7 @@ void GL_APIENTRY GL_ProgramUniform4iv(GLuint program,
 void GL_APIENTRY
 GL_ProgramUniform4ui(GLuint program, GLint location, GLuint v0, GLuint v1, GLuint v2, GLuint v3)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform4ui,
           "context = %d, program = %u, location = %d, v0 = %u, v1 = %u, v2 = %u, v3 = %u",
@@ -1680,6 +1728,7 @@ void GL_APIENTRY GL_ProgramUniform4uiv(GLuint program,
                                        GLsizei count,
                                        const GLuint *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniform4uiv,
           "context = %d, program = %u, location = %d, count = %d, value = 0x%016" PRIxPTR "",
@@ -1717,6 +1766,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix2fv(GLuint program,
                                             GLboolean transpose,
                                             const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix2fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -1757,6 +1807,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix2x3fv(GLuint program,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix2x3fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -1797,6 +1848,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix2x4fv(GLuint program,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix2x4fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -1837,6 +1889,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix3fv(GLuint program,
                                             GLboolean transpose,
                                             const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix3fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -1877,6 +1930,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix3x2fv(GLuint program,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix3x2fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -1917,6 +1971,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix3x4fv(GLuint program,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix3x4fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -1957,6 +2012,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix4fv(GLuint program,
                                             GLboolean transpose,
                                             const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix4fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -1997,6 +2053,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix4x2fv(GLuint program,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix4x2fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -2037,6 +2094,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix4x3fv(GLuint program,
                                               GLboolean transpose,
                                               const GLfloat *value)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLProgramUniformMatrix4x3fv,
           "context = %d, program = %u, location = %d, count = %d, transpose = %s, value = "
@@ -2073,6 +2131,7 @@ void GL_APIENTRY GL_ProgramUniformMatrix4x3fv(GLuint program,
 
 void GL_APIENTRY GL_SampleMaski(GLuint maskNumber, GLbitfield mask)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLSampleMaski, "context = %d, maskNumber = %u, mask = %s", CID(context),
           maskNumber, GLbitfieldToString(GLESEnum::AllEnums, mask).c_str());
@@ -2108,6 +2167,7 @@ void GL_APIENTRY GL_TexStorage2DMultisample(GLenum target,
                                             GLsizei height,
                                             GLboolean fixedsamplelocations)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLTexStorage2DMultisample,
           "context = %d, target = %s, samples = %d, internalformat = %s, width = %d, height = %d, "
@@ -2145,6 +2205,7 @@ void GL_APIENTRY GL_TexStorage2DMultisample(GLenum target,
 
 void GL_APIENTRY GL_UseProgramStages(GLuint pipeline, GLbitfield stages, GLuint program)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLUseProgramStages, "context = %d, pipeline = %u, stages = %s, program = %u",
           CID(context), pipeline, GLbitfieldToString(GLESEnum::UseProgramStageMask, stages).c_str(),
@@ -2178,6 +2239,7 @@ void GL_APIENTRY GL_UseProgramStages(GLuint pipeline, GLbitfield stages, GLuint 
 
 void GL_APIENTRY GL_ValidateProgramPipeline(GLuint pipeline)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLValidateProgramPipeline, "context = %d, pipeline = %u", CID(context),
           pipeline);
@@ -2208,6 +2270,7 @@ void GL_APIENTRY GL_ValidateProgramPipeline(GLuint pipeline)
 
 void GL_APIENTRY GL_VertexAttribBinding(GLuint attribindex, GLuint bindingindex)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLVertexAttribBinding, "context = %d, attribindex = %u, bindingindex = %u",
           CID(context), attribindex, bindingindex);
@@ -2238,6 +2301,7 @@ void GL_APIENTRY GL_VertexAttribFormat(GLuint attribindex,
                                        GLboolean normalized,
                                        GLuint relativeoffset)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLVertexAttribFormat,
           "context = %d, attribindex = %u, size = %d, type = %s, normalized = %s, relativeoffset = "
@@ -2272,6 +2336,7 @@ void GL_APIENTRY GL_VertexAttribIFormat(GLuint attribindex,
                                         GLenum type,
                                         GLuint relativeoffset)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLVertexAttribIFormat,
           "context = %d, attribindex = %u, size = %d, type = %s, relativeoffset = %u", CID(context),
@@ -2301,6 +2366,7 @@ void GL_APIENTRY GL_VertexAttribIFormat(GLuint attribindex,
 
 void GL_APIENTRY GL_VertexBindingDivisor(GLuint bindingindex, GLuint divisor)
 {
+    ASSERT(!egl::Display::GetCurrentThreadUnlockedTailCall()->any());
     Context *context = GetValidGlobalContext();
     EVENT(context, GLVertexBindingDivisor, "context = %d, bindingindex = %u, divisor = %u",
           CID(context), bindingindex, divisor);

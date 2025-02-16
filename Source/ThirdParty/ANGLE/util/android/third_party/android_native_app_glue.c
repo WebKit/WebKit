@@ -404,22 +404,22 @@ static void onWindowFocusChanged(ANativeActivity* activity, int focused) {
 }
 
 static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window) {
-    LOGI("NativeWindowCreated: %p -- %p", activity, window);
+    LOGV("NativeWindowCreated: %p -- %p", activity, window);
     android_app_set_window(ToApp(activity), window);
 }
 
 static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* window) {
-    LOGI("NativeWindowDestroyed: %p -- %p", activity, window);
+    LOGV("NativeWindowDestroyed: %p -- %p", activity, window);
     android_app_set_window(ToApp(activity), NULL);
 }
 
 static void onNativeWindowRedrawNeeded(ANativeActivity* activity, ANativeWindow* window) {
-    LOGI("NativeWindowRedrawNeeded: %p -- %p", activity, window);
+    LOGV("NativeWindowRedrawNeeded: %p -- %p", activity, window);
     android_app_write_cmd(ToApp(activity), APP_CMD_WINDOW_REDRAW_NEEDED);
 }
 
 static void onNativeWindowResized(ANativeActivity* activity, ANativeWindow* window) {
-    LOGI("NativeWindowResized: %p -- %p", activity, window);
+    LOGV("NativeWindowResized: %p -- %p", activity, window);
     android_app_write_cmd(ToApp(activity), APP_CMD_WINDOW_RESIZED);
 }
 

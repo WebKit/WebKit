@@ -10,7 +10,7 @@ function test(array, val1, val2, val3)
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     shouldBe(test(array, 1.1, 2.2, 3.3), 3);
     shouldBe(array[0], 1.1);
@@ -18,7 +18,7 @@ for (var i = 0; i < 1e5; ++i) {
     shouldBe(array[2], 3.3);
 }
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     shouldBe(test(array, 1.1, 2.2, 4), 3);
     shouldBe(array[0], 1.1);

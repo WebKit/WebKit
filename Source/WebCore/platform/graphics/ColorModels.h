@@ -229,6 +229,8 @@ template<> struct LabModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
+    // `achromaticEpsilon` is based on the value from color-js and derived from "reference extent" / 100000.
+    static constexpr auto achromaticEpsilon = 250.0 / 100000.0;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, LabModel<typename ColorType::ComponentType>> : ColorType {
@@ -281,6 +283,8 @@ template<> struct OKLabModel<float> {
     } };
     static constexpr bool isInvertible = false;
     static constexpr auto coordinateSystem = ColorSpaceCoordinateSystem::RectangularOrthogonal;
+    // `achromaticEpsilon` is based on the value from color-js and derived from "reference extent" / 100000.
+    static constexpr auto achromaticEpsilon = 0.8 / 100000.0;
 };
 
 template<typename ColorType> struct ExposedColorType<ColorType, OKLabModel<typename ColorType::ComponentType>> : ColorType {

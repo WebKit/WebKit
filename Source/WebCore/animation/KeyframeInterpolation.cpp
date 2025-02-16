@@ -45,9 +45,9 @@ const KeyframeInterpolation::KeyframeInterval KeyframeInterpolation::interpolati
 
     for (size_t i = 0; i < numberOfKeyframes(); ++i) {
         auto& keyframe = keyframeAtIndex(i);
-        auto offset = keyframe.offset();
-        if (!keyframe.animatesProperty(property))
+        if (!keyframe.hasResolvedOffset() || !keyframe.animatesProperty(property))
             continue;
+        auto offset = keyframe.offset();
         if (!offset)
             numberOfKeyframesWithZeroOffset++;
         if (offset == 1)

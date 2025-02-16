@@ -4,6 +4,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009-2023 Google, Inc.
  * Copyright (C) Research In Motion Limited 2011. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -145,7 +146,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalWidth(ShouldComputePreferr
         return m_containerSize.width();
 
     if (isEmbeddedThroughFrameContainingSVGDocument())
-        return containingBlock()->availableLogicalWidth();
+        return containingBlock()->contentBoxLogicalWidth();
 
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
     return RenderReplaced::computeReplacedLogicalWidth(shouldComputePreferred);
@@ -206,11 +207,8 @@ void LegacyRenderSVGRoot::layout()
     }
 
     clearOverflow();
-    if (!shouldApplyViewportClip()) {
-        FloatRect contentRepaintRect = repaintRectInLocalCoordinates();
-        contentRepaintRect = m_localToBorderBoxTransform.mapRect(contentRepaintRect);
-        addVisualOverflow(enclosingLayoutRect(contentRepaintRect));
-    }
+    if (!shouldApplyViewportClip())
+        addVisualOverflow(computeContentsInkOverflow());
 
     updateLayerTransform();
     m_hasBoxDecorations = isDocumentElementRenderer() ? hasVisibleBoxDecorationStyle() : hasVisibleBoxDecorations();
@@ -219,6 +217,18 @@ void LegacyRenderSVGRoot::layout()
     repainter.repaintAfterLayout();
 
     clearNeedsLayout();
+}
+
+LayoutRect LegacyRenderSVGRoot::computeContentsInkOverflow() const
+{
+    FloatRect contentRepaintRect = repaintRectInLocalCoordinates();
+    contentRepaintRect = m_localToBorderBoxTransform.mapRect(contentRepaintRect);
+    // Condition the visual overflow rect to avoid being clipped/culled
+    // out if it is huge. This may sacrifice overflow, but usually only
+    // overflow that would never be seen anyway.
+    // To condition, we intersect with something that we oftentimes
+    // consider to be "infinity".
+    return intersection(enclosingLayoutRect(contentRepaintRect), LayoutRect::infiniteRect());
 }
 
 bool LegacyRenderSVGRoot::shouldApplyViewportClip() const
@@ -233,7 +243,7 @@ void LegacyRenderSVGRoot::paintReplaced(PaintInfo& paintInfo, const LayoutPoint&
 {
     // An empty viewport disables rendering.
     bool clipViewport = shouldApplyViewportClip();
-    if (clipViewport && contentSize().isEmpty())
+    if (clipViewport && contentBoxSize().isEmpty())
         return;
 
     // Don't paint, if the context explicitly disabled it.
@@ -358,7 +368,7 @@ void LegacyRenderSVGRoot::buildLocalToBorderBoxTransform()
     float scale = style().usedZoom();
     FloatPoint translate = svgSVGElement().currentTranslateValue();
     LayoutSize borderAndPadding(borderLeft() + paddingLeft(), borderTop() + paddingTop());
-    m_localToBorderBoxTransform = svgSVGElement().viewBoxToViewTransform(contentWidth() / scale, contentHeight() / scale);
+    m_localToBorderBoxTransform = svgSVGElement().viewBoxToViewTransform(contentBoxWidth() / scale, contentBoxHeight() / scale);
     if (borderAndPadding.isZero() && scale == 1 && translate == FloatPoint::zero())
         return;
     m_localToBorderBoxTransform = AffineTransform(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y()) * m_localToBorderBoxTransform;

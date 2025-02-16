@@ -1,0 +1,85 @@
+initial state
+
+getComputedStyle(swatch).backgroundColor is rgb(0, 0, 0)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: false, colorSpace: limited-srgb, value: papayawhip
+
+getComputedStyle(swatch).backgroundColor is rgb(255, 239, 213)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: limited-srgb, value: papayawhip
+
+getComputedStyle(swatch).backgroundColor is color(srgb 1 0.937255 0.835294)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: false, colorSpace: display-p3, value: papayawhip
+
+getComputedStyle(swatch).backgroundColor is color(display-p3 0.989244 0.939427 0.846367)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: display-p3, value: papayawhip
+
+getComputedStyle(swatch).backgroundColor is color(display-p3 0.989244 0.939427 0.846367)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: false, colorSpace: limited-srgb, value: #44444444
+
+getComputedStyle(swatch).backgroundColor is rgb(68, 68, 68)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: limited-srgb, value: #44444444
+
+getComputedStyle(swatch).backgroundColor is rgb(205, 205, 205)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgb(18, 18, 18);"></div>
+
+alpha: false, colorSpace: display-p3, value: #44444444
+
+getComputedStyle(swatch).backgroundColor is color(display-p3 0.266667 0.266667 0.266667)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: display-p3, value: #44444444
+
+getComputedStyle(swatch).backgroundColor is rgb(205, 205, 205)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgb(18, 18, 18);"></div>
+
+alpha: false, colorSpace: limited-srgb, value: color(display-p3 2 none .5 / .7)
+
+getComputedStyle(swatch).backgroundColor is rgb(255, 0, 104)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: limited-srgb, value: color(display-p3 2 none .5 / .7)
+
+getComputedStyle(swatch).backgroundColor is rgb(255, 76, 149)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgb(179, 0, 73);"></div>
+
+alpha: false, colorSpace: display-p3, value: color(display-p3 2 none .5 / .7)
+
+getComputedStyle(swatch).backgroundColor is color(display-p3 2 0 0.5)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: display-p3, value: color(display-p3 2 none .5 / .7)
+
+getComputedStyle(swatch).backgroundColor is rgb(255, 76, 149)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgb(179, 0, 73);"></div>
+
+alpha: false, colorSpace: limited-srgb, value: rgba(40,40,40,.6)
+
+getComputedStyle(swatch).backgroundColor is rgb(40, 40, 40)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: limited-srgb, value: rgba(40,40,40,.6)
+
+getComputedStyle(swatch).backgroundColor is rgb(126, 126, 126)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgb(24, 24, 24);"></div>
+
+alpha: false, colorSpace: display-p3, value: rgba(40,40,40,.6)
+
+getComputedStyle(swatch).backgroundColor is color(display-p3 0.156863 0.156863 0.156863)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgba(0, 0, 0, 0);"></div>
+
+alpha: true, colorSpace: display-p3, value: rgba(40,40,40,.6)
+
+getComputedStyle(swatch).backgroundColor is rgb(126, 126, 126)
+swatch.innerHTML is <div style="height: 100%; width: 100%; clip-path: polygon(0px 0px, 100% 0px, 0px 100%); background-color: rgb(24, 24, 24);"></div>
+

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -98,16 +98,17 @@ private:
         return reinterpret_cast<char*>(reinterpret_cast<intptr_t>(allocation.base()) + allocation.size()) - size;
     }
 
-    BumpPointerPool(const PageAllocation& allocation)
+    BumpPointerPool(const PageAllocation& allocation, size_t remainingCapacity)
         : m_current(allocation.base())
         , m_start(allocation.base())
         , m_next(nullptr)
         , m_previous(nullptr)
         , m_allocation(allocation)
+        , m_remainingCapacity(remainingCapacity)
     {
     }
 
-    static BumpPointerPool* create(size_t minimumCapacity = 0)
+    static BumpPointerPool* create(size_t remainingCapacity, size_t minimumCapacity = 0)
     {
         // Add size of BumpPointerPool object, check for overflow.
         minimumCapacity += sizeof(BumpPointerPool);
@@ -123,9 +124,12 @@ private:
                 return nullptr;
         }
 
+        if (poolSize > remainingCapacity)
+            return nullptr;
+
         PageAllocation allocation = PageAllocation::allocate(poolSize);
         if (!!allocation)
-            return new (allocation) BumpPointerPool(allocation);
+            return new (allocation) BumpPointerPool(allocation, remainingCapacity - poolSize);
         return nullptr;
     }
 
@@ -156,7 +160,9 @@ private:
         while (true) {
             if (!pool) {
                 // We've run to the end; allocate a new pool.
-                pool = BumpPointerPool::create(size);
+                pool = BumpPointerPool::create(previousPool->m_remainingCapacity, size);
+                if (UNLIKELY(!pool))
+                    return nullptr;
                 previousPool->m_next = pool;
                 pool->m_previous = previousPool;
                 return pool;
@@ -201,6 +207,7 @@ private:
     BumpPointerPool* m_next;
     BumpPointerPool* m_previous;
     PageAllocation m_allocation;
+    size_t m_remainingCapacity;
 
     friend class BumpPointerAllocator;
 };
@@ -234,10 +241,10 @@ public:
             m_head->destroy();
     }
 
-    BumpPointerPool* startAllocator()
+    BumpPointerPool* startAllocator(size_t maxCapacity)
     {
         if (!m_head)
-            m_head = BumpPointerPool::create();
+            m_head = BumpPointerPool::create(maxCapacity);
         return m_head;
     }
 

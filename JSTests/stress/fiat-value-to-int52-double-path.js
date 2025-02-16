@@ -12,7 +12,7 @@ function bar() {
 noInline(foo);
 noInline(bar);
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo();
     if (result != 43)
         throw "Error: bad result: " + result;

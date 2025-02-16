@@ -205,13 +205,24 @@
     if (!presenter)
         return [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
 
-    presenter->checkedClient()->presenterDidAuthorizePayment(*presenter, WebCore::Payment(payment));
+    RefPtr client = presenter->protectedClient();
+    if (!client)
+        return [self completePaymentSession:PKPaymentAuthorizationStatusFailure errors:@[ ]];
+
+    client->presenterDidAuthorizePayment(*presenter, WebCore::Payment(payment));
 }
 
 - (void)_didFinish
 {
-    if (auto presenter = _presenter.get())
-        presenter->checkedClient()->presenterDidFinish(*presenter, { std::exchange(_sessionError, nil) });
+    RefPtr presenter = _presenter.get();
+    if (!presenter)
+        return;
+
+    RefPtr client = presenter->protectedClient();
+    if (!client)
+        return;
+
+    client->presenterDidFinish(*presenter, { std::exchange(_sessionError, nil) });
 }
 
 - (void)_didRequestMerchantSession:(WebKit::DidRequestMerchantSessionCompletion::BlockType)completion
@@ -223,7 +234,7 @@
         if (error)
             LOG_ERROR("PKCanMakePaymentsWithMerchantIdentifierAndDomain error %@", error);
 
-        RunLoop::main().dispatch([self, protectedSelf = retainPtr(self), merchantURL = retainPtr(merchantURL)] {
+        RunLoop::protectedMain()->dispatch([self, protectedSelf = retainPtr(self), merchantURL = retainPtr(merchantURL)] {
             ASSERT(_didRequestMerchantSessionCompletion);
 
             auto presenter = _presenter.get();
@@ -232,7 +243,13 @@
                 return;
             }
 
-            presenter->checkedClient()->presenterWillValidateMerchant(*presenter, merchantURL.get());
+            RefPtr client = presenter->protectedClient();
+            if (!client) {
+                _didRequestMerchantSessionCompletion(nil, nil);
+                return;
+            }
+
+            client->presenterWillValidateMerchant(*presenter, merchantURL.get());
         });
     }];
 }
@@ -246,7 +263,11 @@
     if (!presenter)
         return [self completePaymentMethodSelection:nil];
 
-    presenter->checkedClient()->presenterDidSelectPaymentMethod(*presenter, WebCore::PaymentMethod(paymentMethod));
+    RefPtr client = presenter->protectedClient();
+    if (!client)
+        return [self completePaymentMethodSelection:nil];
+
+    client->presenterDidSelectPaymentMethod(*presenter, WebCore::PaymentMethod(paymentMethod));
 }
 
 - (void)_didSelectShippingContact:(PKContact *)contact completion:(WebKit::DidSelectShippingContactCompletion::BlockType)completion
@@ -258,7 +279,11 @@
     if (!presenter)
         return [self completeShippingContactSelection:nil];
 
-    presenter->checkedClient()->presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
+    RefPtr client = presenter->protectedClient();
+    if (!client)
+        return [self completeShippingContactSelection:nil];
+
+    client->presenterDidSelectShippingContact(*presenter, WebCore::PaymentContact(contact));
 }
 
 #if HAVE(PASSKIT_SHIPPING_METHOD_DATE_COMPONENTS_RANGE)
@@ -317,7 +342,11 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     if (!presenter)
         return [self completeShippingMethodSelection:nil];
 
-    presenter->checkedClient()->presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod, true));
+    RefPtr client = presenter->protectedClient();
+    if (!client)
+        return [self completeShippingMethodSelection:nil];
+
+    client->presenterDidSelectShippingMethod(*presenter, toShippingMethod(shippingMethod, true));
 }
 
 #if HAVE(PASSKIT_COUPON_CODE)
@@ -331,7 +360,11 @@ static WebCore::ApplePayShippingMethod toShippingMethod(PKShippingMethod *shippi
     if (!presenter)
         return [self completeCouponCodeChange:nil];
 
-    presenter->checkedClient()->presenterDidChangeCouponCode(*presenter, couponCode);
+    RefPtr client = presenter->protectedClient();
+    if (!client)
+        return [self completeCouponCodeChange:nil];
+
+    client->presenterDidChangeCouponCode(*presenter, couponCode);
 }
 
 #endif // HAVE(PASSKIT_COUPON_CODE)

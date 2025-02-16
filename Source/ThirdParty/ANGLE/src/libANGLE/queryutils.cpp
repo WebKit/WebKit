@@ -4107,6 +4107,18 @@ bool GetQueryParameterInfo(const State &glState,
         }
     }
 
+    if (glState.getClientVersion() >= Version(3, 2) ||
+        extensions.textureStorageMultisample2dArrayOES)
+    {
+        switch (pname)
+        {
+            case GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY:
+                *type      = GL_INT;
+                *numParams = 1;
+                return true;
+        }
+    }
+
     if (glState.getClientVersion() < Version(3, 1))
     {
         return false;
@@ -4156,7 +4168,6 @@ bool GetQueryParameterInfo(const State &glState,
         case GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS:
         case GL_SHADER_STORAGE_BUFFER_BINDING:
         case GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT:
-        case GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY:
         case GL_PROGRAM_PIPELINE_BINDING:
             *type      = GL_INT;
             *numParams = 1;
@@ -4631,6 +4642,13 @@ void QueryContextAttrib(const gl::Context *context, EGLint attribute, EGLint *va
         case EGL_PROTECTED_CONTENT_EXT:
             *value = context->getState().hasProtectedContent();
             break;
+        case EGL_CONTEXT_MEMORY_USAGE_ANGLE:
+        {
+            uint64_t memory = context->getMemoryUsage();
+            value[0]        = static_cast<GLint>(memory & 0xffffffff);
+            value[1]        = static_cast<GLint>(memory >> 32);
+        }
+        break;
         default:
             UNREACHABLE();
             break;
@@ -4691,7 +4709,14 @@ egl::Error QuerySurfaceAttrib(const Display *display,
             *value = surface->getPixelAspectRatio();
             break;
         case EGL_RENDER_BUFFER:
-            *value = surface->getRenderBuffer();
+            if (surface->getType() == EGL_WINDOW_BIT)
+            {
+                *value = surface->getRequestedRenderBuffer();
+            }
+            else
+            {
+                *value = surface->getRenderBuffer();
+            }
             break;
         case EGL_SWAP_BEHAVIOR:
             *value = surface->getSwapBehavior();
@@ -4763,6 +4788,9 @@ egl::Error QuerySurfaceAttrib(const Display *display,
             break;
         case EGL_PROTECTED_CONTENT_EXT:
             *value = surface->hasProtectedContent();
+            break;
+        case EGL_SURFACE_COMPRESSION_EXT:
+            *value = surface->getCompressionRate(display);
             break;
         default:
             UNREACHABLE();
@@ -4842,7 +4870,8 @@ egl::Error SetSurfaceAttrib(Surface *surface, EGLint attribute, EGLint value)
         case EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID:
             return surface->setAutoRefreshEnabled(value != EGL_FALSE);
         case EGL_RENDER_BUFFER:
-            return surface->setRenderBuffer(value);
+            surface->setRequestedRenderBuffer(value);
+            break;
         default:
             UNREACHABLE();
             break;

@@ -28,4 +28,5 @@ if sys.platform.startswith('linux'):
     import flatpakutils
     flatpakutils.run_in_sandbox_if_available(sys.argv)
 
-run_webkit_app.main(sys.argv[1:])
+if __name__ == '__main__':
+    sys.exit(run_webkit_app.main(sys.argv[1:]))

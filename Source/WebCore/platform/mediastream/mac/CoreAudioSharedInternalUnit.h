@@ -50,6 +50,7 @@ private:
     OSStatus defaultInputDevice(uint32_t*) final;
     OSStatus defaultOutputDevice(uint32_t*) final;
     bool setVoiceActivityDetection(bool) final;
+    bool canRenderAudio() const final { return m_shouldUseVPIO; }
 
     CoreAudioSharedUnit::StoredAudioUnit m_audioUnit;
     bool m_shouldUseVPIO { false };

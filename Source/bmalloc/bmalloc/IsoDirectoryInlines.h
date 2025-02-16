@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "IsoDirectory.h"
 
 #if !BUSE(LIBPAS)
@@ -158,3 +160,4 @@ void IsoDirectory<Config, passedNumPages>::forEachCommittedPage(const LockHolder
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

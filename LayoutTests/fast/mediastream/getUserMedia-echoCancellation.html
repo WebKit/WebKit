@@ -8,4 +8,33 @@ promise_test(async () => {
     const stream2 = await navigator.mediaDevices.getUserMedia({ audio: true });
     assert_true(stream2.getAudioTracks()[0].getSettings().echoCancellation);
 }, "echoCancellation should be on by default if not explictly disabled");
+
+promise_test(async () => {
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: { exact : false } } });
+    assert_false(stream1.getAudioTracks()[0].getSettings().echoCancellation);
+}, "echoCancellation should be off with exact false echoCancellation");
+
+promise_test(async () => {
+    const stream0 = await navigator.mediaDevices.getUserMedia({ audio: true });
+    assert_true(stream0.getAudioTracks()[0].getSettings().echoCancellation);
+    assert_array_equals(stream0.getAudioTracks()[0].getCapabilities().echoCancellation, [true, false]);
+
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    let deviceWithOnlyEchoCancellation, deviceWithoutEchoCancellation;
+    for (const device of devices) {
+        if (device.label === "Mock audio device 2")
+             deviceWithoutEchoCancellation = device;
+        else if (device.label === "Mock audio device 3")
+             deviceWithOnlyEchoCancellation = device;
+    }
+
+    const stream1 = await navigator.mediaDevices.getUserMedia({ audio: { deviceId : deviceWithOnlyEchoCancellation.deviceId } });
+    assert_true(stream1.getAudioTracks()[0].getSettings().echoCancellation);
+    assert_array_equals(stream1.getAudioTracks()[0].getCapabilities().echoCancellation, [true]);
+
+    const stream2 = await navigator.mediaDevices.getUserMedia({ audio: { deviceId : deviceWithoutEchoCancellation.deviceId } });
+    assert_false(stream2.getAudioTracks()[0].getSettings().echoCancellation);
+    assert_array_equals(stream2.getAudioTracks()[0].getCapabilities().echoCancellation, [false]);
+}, "Check capabilities with devices with only echo cancellation or without echo cancellation");
+
 </script>

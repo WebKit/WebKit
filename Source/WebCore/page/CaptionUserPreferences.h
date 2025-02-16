@@ -95,7 +95,7 @@ public:
 
     virtual String displayNameForTrack(TextTrack*) const;
     MediaSelectionOption mediaSelectionOptionForTrack(TextTrack*) const;
-    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>);
+    virtual Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, UncheckedKeyHashSet<TextTrack::Kind>);
 
     virtual String displayNameForTrack(AudioTrack*) const;
     MediaSelectionOption mediaSelectionOptionForTrack(AudioTrack*) const;

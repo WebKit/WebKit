@@ -5,13 +5,10 @@ endif ()
 include(GNUInstallDirs)
 include(GLibMacros)
 include(InspectorGResources.cmake)
+include(ModernMediaControlsGResources.cmake)
 
 if (ENABLE_PDFJS)
     include(PdfJSGResources.cmake)
-endif ()
-
-if (ENABLE_MODERN_MEDIA_CONTROLS)
-    include(ModernMediaControlsGResources.cmake)
 endif ()
 
 if (USE_SKIA)
@@ -111,8 +108,8 @@ if (USE_GBM)
 endif ()
 
 list(APPEND WebKit_SERIALIZATION_IN_FILES
-    Shared/glib/DMABufRendererBufferMode.serialization.in
     Shared/glib/InputMethodState.serialization.in
+    Shared/glib/RendererBufferTransportMode.serialization.in
     Shared/glib/SystemSettings.serialization.in
     Shared/glib/UserMessage.serialization.in
 
@@ -120,12 +117,15 @@ list(APPEND WebKit_SERIALIZATION_IN_FILES
 )
 
 list(APPEND WebKit_DERIVED_SOURCES
+    ${WebKit_DERIVED_SOURCES_DIR}/ModernMediaControlsGResourceBundle.c
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitResourcesGResourceBundle.c
     ${WebKit_DERIVED_SOURCES_DIR}/WebKitDirectoryInputStreamData.cpp
 
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitEnumTypes.cpp
     ${DERIVED_SOURCES_WPE_API_DIR}/WebKitWebProcessEnumTypes.cpp
 )
+
+WEBKIT_BUILD_MODERN_MEDIA_CONTROLS_GRESOURCES(${WebKit_DERIVED_SOURCES_DIR})
 
 if (ENABLE_PDFJS)
     list(APPEND WebKit_DERIVED_SOURCES
@@ -134,14 +134,6 @@ if (ENABLE_PDFJS)
     )
 
     WEBKIT_BUILD_PDFJS_GRESOURCES(${WebKit_DERIVED_SOURCES_DIR})
-endif ()
-
-if (ENABLE_MODERN_MEDIA_CONTROLS)
-  list(APPEND WebKit_DERIVED_SOURCES
-      ${WebKit_DERIVED_SOURCES_DIR}/ModernMediaControlsGResourceBundle.c
-  )
-
-  WEBKIT_BUILD_MODERN_MEDIA_CONTROLS_GRESOURCES(${WebKit_DERIVED_SOURCES_DIR})
 endif ()
 
 set(WebKit_DirectoryInputStream_DATA
@@ -417,6 +409,7 @@ list(APPEND WebKit_PRIVATE_INCLUDE_DIRECTORIES
     "${WEBKIT_DIR}/WebProcess/WebPage/dmabuf"
     "${WEBKIT_DIR}/WebProcess/WebPage/glib"
     "${WEBKIT_DIR}/WebProcess/WebPage/libwpe"
+    "${WEBKIT_DIR}/WebProcess/WebPage/soup"
     "${WEBKIT_DIR}/WebProcess/WebPage/wpe"
     "${WEBKIT_DIR}/WebProcess/glib"
     "${WEBKIT_DIR}/WebProcess/soup"
@@ -763,6 +756,7 @@ GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in
     CONTENT_TEMPLATES
         glib/environment-variables.md
         glib/profiling.md
+        glib/remote-inspector.md
 )
 
 if (ENABLE_2022_GLIB_API)

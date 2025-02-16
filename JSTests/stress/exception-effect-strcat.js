@@ -11,7 +11,7 @@ for (var i = 0; i < 30; ++i)
 var effects = 0;
 var b = {toString: function() { effects++; return bStr; }};
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     effects = 0;
     var result = foo("a", b);
     if (result.length != "a".length + bStr.length)

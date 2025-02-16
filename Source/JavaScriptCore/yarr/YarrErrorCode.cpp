@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2017 Yusuke Suzuki <utatane.tea@gmail.com>.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -38,6 +39,8 @@ ASCIILiteral errorMessage(ErrorCode error)
     // The order of this array must match the ErrorCode enum.
     static const ASCIILiteral errorMessages[] = {
         { },                                                                          // NoError
+
+        // The following are hard errors.
         REGEXP_ERROR_PREFIX "regular expression too large"_s,                         // PatternTooLarge
         REGEXP_ERROR_PREFIX "numbers out of order in {} quantifier"_s,                // QuantifierOutOfOrder
         REGEXP_ERROR_PREFIX "nothing to repeat"_s,                                    // QuantifierWithoutAtom
@@ -63,12 +66,14 @@ ASCIILiteral errorMessage(ErrorCode error)
         REGEXP_ERROR_PREFIX "invalid octal escape for Unicode pattern"_s,             // InvalidOctalEscape
         REGEXP_ERROR_PREFIX "invalid \\c escape for Unicode pattern"_s,               // InvalidControlLetterEscape
         REGEXP_ERROR_PREFIX "invalid property expression"_s,                          // InvalidUnicodePropertyExpression
-        REGEXP_ERROR_PREFIX "too many nested disjunctions"_s,                         // TooManyDisjunctions
         REGEXP_ERROR_PREFIX "pattern exceeds string length limits"_s,                 // OffsetTooLarge
         REGEXP_ERROR_PREFIX "invalid flags"_s,                                        // InvalidRegularExpressionFlags
         REGEXP_ERROR_PREFIX "invalid operation in class set"_s,                       // InvalidClassSetOperation
         REGEXP_ERROR_PREFIX "negated class set may contain strings"_s,                // NegatedClassSetMayContainStrings
-        REGEXP_ERROR_PREFIX "invalid class set character"_s                           // InvalidClassSetCharacter
+        REGEXP_ERROR_PREFIX "invalid class set character"_s,                          // InvalidClassSetCharacter
+
+        // The following are NOT hard errors.
+        REGEXP_ERROR_PREFIX "too many nested disjunctions"_s,                         // TooManyDisjunctions
     };
 
     return errorMessages[static_cast<unsigned>(error)];

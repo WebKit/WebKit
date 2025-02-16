@@ -25,6 +25,15 @@
 #include <wtf/DebugHeap.h>
 #include <wtf/StdLibExtras.h>
 
+#if !USE(SYSTEM_MALLOC)
+#include <bmalloc/BPlatform.h>
+// Enable USE(LIBPAS)
+// FIXME: Replaces uses of `#if !USE(SYSTEM_MALLOC) \n #if BUSE(LIBPAS)` with `#if USE(LIBPAS)`
+#if BUSE(LIBPAS)
+#define USE_LIBPAS 1
+#endif
+#endif
+
 namespace WTF {
 
 // There are several malloc-related macros to annotate class / struct. If these annotations are attached,
@@ -204,7 +213,8 @@ WTF_EXPORT_PRIVATE void fastEnableMiniMode();
 
 WTF_EXPORT_PRIVATE void fastDisableScavenger();
 
-WTF_EXPORT_PRIVATE void forceEnablePGM();
+// allocate with guard pages at a rate of 1/guardMallocRate
+WTF_EXPORT_PRIVATE void forceEnablePGM(uint16_t guardMallocRate);
 
 class ForbidMallocUseForCurrentThreadScope {
 public:
@@ -681,10 +691,10 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 // Note: WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR must be declared in every subclass.
 #define WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR_IMPL(T) \
 void operator delete(T* object, std::destroying_delete_t, size_t size) { \
-    ASSERT(sizeof(T) == size); \
+    ASSERT_UNUSED(size, sizeof(T) == size); \
     object->T::~T(); \
     if (UNLIKELY(object->checkedPtrCountWithoutThreadCheck())) { \
-        memset(static_cast<void*>(object), 0, size); \
+        zeroBytes(object); \
         return; \
     } \
     T::operator delete(object); \

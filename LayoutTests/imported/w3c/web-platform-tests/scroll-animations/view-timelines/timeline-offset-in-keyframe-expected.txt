@@ -1,7 +1,7 @@
 
-FAIL Timeline offsets in programmatic keyframes promise_test: Unhandled rejection with value: object "TypeError: The provided value is non-finite"
-FAIL String offsets in programmatic keyframes assert_approx_equals: [{"offset":"0.5","opacity":0.5}] expected 0.5 +/- 0.000001 but got 0.3999999313354545
+PASS Timeline offsets in programmatic keyframes
+PASS String offsets in programmatic keyframes
 PASS Invalid timeline offset in programmatic keyframe throws
-FAIL Timeline offsets in programmatic keyframes adjust for change in timeline promise_test: Unhandled rejection with value: object "TypeError: The provided value is non-finite"
-FAIL Timeline offsets in programmatic keyframes resolved when updating the animation effect assert_approx_equals: Progress at contain 50% before effect change expected 0.5 +/- 0.000001 but got 0.3999999313354545
+PASS Timeline offsets in programmatic keyframes adjust for change in timeline
+PASS Timeline offsets in programmatic keyframes resolved when updating the animation effect
 

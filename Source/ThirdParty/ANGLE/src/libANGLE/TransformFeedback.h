@@ -104,7 +104,7 @@ class TransformFeedback final : public RefCountObject<TransformFeedbackID>, publ
 
     angle::Result detachBuffer(const Context *context, BufferID bufferID);
 
-    rx::TransformFeedbackImpl *getImplementation() const;
+    rx::TransformFeedbackImpl *getImplementation() const { return mImplementation; }
 
     void onBindingChanged(const Context *context, bool bound);
 

@@ -99,7 +99,7 @@ String NavigatorBase::platform() const
     static std::once_flag onceKey;
     std::call_once(onceKey, [] {
         struct utsname osname;
-        platformName.construct(uname(&osname) >= 0 ? makeString(span(osname.sysname), " "_s, span(osname.machine)) : emptyString());
+        platformName.construct(uname(&osname) >= 0 ? makeString(unsafeSpan(osname.sysname), " "_s, unsafeSpan(osname.machine)) : emptyString());
     });
     return platformName->isolatedCopy();
 #elif PLATFORM(IOS_FAMILY)

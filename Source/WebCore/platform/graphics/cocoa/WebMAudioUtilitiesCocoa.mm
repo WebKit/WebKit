@@ -41,12 +41,13 @@
 #import <wtf/FlipBytes.h>
 #import <wtf/Seconds.h>
 #import <wtf/StdLibExtras.h>
+#import <wtf/text/ParsingUtilities.h>
+
 #if ENABLE(OPUS)
 #import <libwebrtc/opus_defines.h>
 #endif
-#import <pal/cf/AudioToolboxSoftLink.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#import <pal/cf/AudioToolboxSoftLink.h>
 
 namespace WebCore {
 
@@ -110,7 +111,7 @@ constexpr Seconds opusConfigToFrameDuration(uint8_t config)
     // Section 3.1. The TOC Byte
     // Table 2: TOC Byte Configuration Parameters
     // Column 4: Frame Sizes
-    constexpr Seconds frameSizeArray[] = {
+    constexpr std::array frameSizeArray {
         10_ms,
         20_ms,
         40_ms,
@@ -290,7 +291,7 @@ std::optional<OpusCookieContents> parseOpusPrivateData(std::span<const uint8_t> 
     //
     //     This is an 8-octet (64-bit) field that allows codec
     //     identification and is human readable.
-    if (strncmp("OpusHead", byteCast<char>(codecPrivateData.data()), 8))
+    if (!spanHasPrefix(codecPrivateData, "OpusHead"_span8))
         return { };
 
     OpusCookieContents cookie;
@@ -302,13 +303,13 @@ std::optional<OpusCookieContents> parseOpusPrivateData(std::span<const uint8_t> 
     cookie.channelCount = codecPrivateData[9];
 
     // 4. Pre-skip (16 bits, unsigned, little endian):
-    cookie.preSkip = flipBytesIfLittleEndian(*reinterpret_cast<const uint16_t*>(codecPrivateData.data() + 10), true);
+    cookie.preSkip = flipBytesIfLittleEndian(reinterpretCastSpanStartTo<const uint16_t>(codecPrivateData.subspan(10)), true);
 
     // 5. Input Sample Rate (32 bits, unsigned, little endian):
-    cookie.sampleRate = flipBytesIfLittleEndian(*reinterpret_cast<const uint32_t*>(codecPrivateData.data() + 12), true);
+    cookie.sampleRate = flipBytesIfLittleEndian(reinterpretCastSpanStartTo<const uint32_t>(codecPrivateData.subspan(12)), true);
 
     // 6. Output Gain (16 bits, signed, little endian):
-    cookie.outputGain = flipBytesIfLittleEndian(*reinterpret_cast<const int16_t*>(codecPrivateData.data() + 16), true);
+    cookie.outputGain = flipBytesIfLittleEndian(reinterpretCastSpanStartTo<const int16_t>(codecPrivateData.subspan(16)), true);
 
     // 7. Channel Mapping Family (8 bits, unsigned):
     cookie.mappingFamily = codecPrivateData[18];
@@ -367,9 +368,6 @@ static Vector<uint8_t> cookieFromOpusCookieContents(const OpusCookieContents& co
 bool isOpusDecoderAvailable()
 {
 #if ENABLE(OPUS)
-    if (!PlatformMediaSessionManager::opusDecoderEnabled())
-        return false;
-
     return registerOpusDecoderIfNeeded();
 #else
     return false;
@@ -409,30 +407,24 @@ RefPtr<AudioInfo> createOpusAudioInfo(const OpusCookieContents& cookieContents)
 #endif
 }
 
-template<std::size_t N>
-constexpr auto span8(const char(&p)[N])
-{
-    return std::span<const uint8_t, N - 1>(byteCast<uint8_t>(&p[0]), N - 1);
-}
-
 Vector<uint8_t> createOpusPrivateData(const AudioStreamBasicDescription& description, uint16_t preSkip)
 {
     Vector<uint8_t> magicCookie;
     magicCookie.reserveInitialCapacity(19);
-    magicCookie.append(span8("OpusHead"));
+    magicCookie.append("OpusHead"_span);
     // Set Opus version.
     magicCookie.append(1);
     // Set channel count.
     ASSERT(description.mChannelsPerFrame <= 2);
     magicCookie.append(description.mChannelsPerFrame);
     // Set pre-skip
-    magicCookie.append(std::span { reinterpret_cast<uint8_t*>(&preSkip), sizeof(uint16_t) });
+    magicCookie.append(asByteSpan(preSkip));
     // Set original input sample rate in Hz.
     uint32_t sampleRate = description.mSampleRate;
-    magicCookie.append(std::span { reinterpret_cast<uint8_t*>(&sampleRate), sizeof(uint32_t) });
+    magicCookie.append(asByteSpan(sampleRate));
     // Set output gain in dB.
     uint16_t gain = 0;
-    magicCookie.append(std::span { reinterpret_cast<uint8_t*>(&gain), sizeof(uint16_t) });
+    magicCookie.append(asByteSpan(gain));
     magicCookie.append(0);
     return magicCookie;
 }
@@ -470,32 +462,28 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(std::span<const uint8_t> cod
 #else
     // Despite the "This MUST be '2'" comment in the IETF document, packet count is not always equal to
     // 2 in real-word files, so ignore that field.
-    const uint16_t idHeaderSize = codecPrivateData[1];
-    const uint16_t commentHeaderSize = codecPrivateData[2];
-    const uint16_t calculatedHeaderSize = 1 + idHeaderSize + commentHeaderSize;
-    if (1 + idHeaderSize + commentHeaderSize > codecPrivateData.size()) {
+    skip(codecPrivateData, 1);
+    uint16_t idHeaderSize = consume(codecPrivateData);
+    uint16_t commentHeaderSize = consume(codecPrivateData);
+    uint16_t calculatedHeaderSize = idHeaderSize + commentHeaderSize;
+    if (calculatedHeaderSize > codecPrivateData.size()) {
         RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private data too small (%zu) for header sizes (%d)", codecPrivateData.size(), calculatedHeaderSize);
         return { };
     }
 
-    const unsigned char* idHeader = &codecPrivateData[3];
-    const unsigned char* commentHeader = idHeader + idHeaderSize;
-    const unsigned char* codecSetupHeader = commentHeader + commentHeaderSize;
-    const uint16_t codecSetupHeaderSize = codecPrivateData.size() - idHeaderSize - commentHeaderSize - 2 - 1;
+    auto idHeader = consumeSpan(codecPrivateData, idHeaderSize);
+    auto commentHeader = consumeSpan(codecPrivateData, commentHeaderSize);
+    auto codecSetupHeader = codecPrivateData;
+    uint16_t codecSetupHeaderSize = codecSetupHeader.size();
 
-    if ((idHeaderSize + commentHeaderSize + codecSetupHeaderSize + 3) > codecPrivateData.size()) {
-        RELEASE_LOG_ERROR(Media, "cookieFromVorbisCodecPrivate: codec private header size is invalid - id = %d, comment = %d, header = %d, chunk size = %zu", idHeaderSize, commentHeaderSize, codecSetupHeaderSize, codecPrivateData.size());
-        return { };
-    }
+    cookieData.append(asByteSpan(idHeaderSize));
+    cookieData.append(idHeader);
 
-    cookieData.append(std::span { reinterpret_cast_ptr<const uint8_t*>(&idHeaderSize), sizeof(idHeaderSize) });
-    cookieData.append(std::span { idHeader, idHeaderSize });
+    cookieData.append(asByteSpan(commentHeaderSize));
+    cookieData.append(commentHeader);
 
-    cookieData.append(std::span { reinterpret_cast_ptr<const uint8_t*>(&commentHeaderSize), sizeof(commentHeaderSize) });
-    cookieData.append(std::span { commentHeader, commentHeaderSize });
-
-    cookieData.append(std::span { reinterpret_cast_ptr<const uint8_t*>(&codecSetupHeaderSize), sizeof(codecSetupHeaderSize) });
-    cookieData.append(std::span { codecSetupHeader, codecSetupHeaderSize });
+    cookieData.append(asByteSpan(codecSetupHeaderSize));
+    cookieData.append(codecSetupHeader);
 
     return cookieData;
 #endif
@@ -505,9 +493,6 @@ static Vector<uint8_t> cookieFromVorbisCodecPrivate(std::span<const uint8_t> cod
 bool isVorbisDecoderAvailable()
 {
 #if ENABLE(VORBIS)
-    if (!PlatformMediaSessionManager::vorbisDecoderEnabled())
-        return false;
-
     return registerVorbisDecoderIfNeeded();
 #else
     return false;
@@ -548,7 +533,5 @@ RefPtr<AudioInfo> createVorbisAudioInfo(std::span<const uint8_t> privateData)
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(COCOA)

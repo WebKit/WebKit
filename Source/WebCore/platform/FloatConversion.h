@@ -49,6 +49,13 @@ namespace WebCore {
     {
         return static_cast<CGFloat>(number);
     }
+
+    template<typename T> constexpr float narrowPrecisionToFloatFromCGFloat(T);
+
+    template<> constexpr float narrowPrecisionToFloatFromCGFloat(CGFloat number)
+    {
+        return static_cast<CGFloat>(number);
+    }
 #endif
 
 } // namespace WebCore

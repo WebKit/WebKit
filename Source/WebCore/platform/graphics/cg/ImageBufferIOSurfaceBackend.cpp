@@ -35,6 +35,7 @@
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include <CoreGraphics/CoreGraphics.h>
+#include <pal/cg/CoreGraphicsSoftLink.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -74,7 +75,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
     if (backendSize.isEmpty())
         return nullptr;
 
-    auto surface = IOSurface::create(creationContext.surfacePool, backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, convertToIOSurfaceFormat(parameters.pixelFormat));
+    auto surface = IOSurface::create(RefPtr { creationContext.surfacePool }.get(), backendSize, parameters.colorSpace, IOSurface::Name::ImageBuffer, convertToIOSurfaceFormat(parameters.pixelFormat));
     if (!surface)
         return nullptr;
 
@@ -84,7 +85,7 @@ std::unique_ptr<ImageBufferIOSurfaceBackend> ImageBufferIOSurfaceBackend::create
 
     CGContextClearRect(cgContext.get(), FloatRect(FloatPoint::zero(), backendSize));
 
-    return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), creationContext.displayID, creationContext.surfacePool } };
+    return std::unique_ptr<ImageBufferIOSurfaceBackend> { new ImageBufferIOSurfaceBackend { parameters, WTFMove(surface), WTFMove(cgContext), creationContext.displayID, creationContext.surfacePool.get() } };
 }
 
 ImageBufferIOSurfaceBackend::ImageBufferIOSurfaceBackend(const Parameters& parameters, std::unique_ptr<IOSurface> surface, RetainPtr<CGContextRef> platformContext, PlatformDisplayID displayID, IOSurfacePool* ioSurfacePool)
@@ -151,14 +152,20 @@ void ImageBufferIOSurfaceBackend::transferToNewContext(const ImageBufferCreation
         m_surface->setOwnershipIdentity(creationContext.resourceOwner);
 }
 
-void ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
+bool ImageBufferIOSurfaceBackend::invalidateCachedNativeImage()
 {
     // Force QuartzCore to invalidate its cached CGImageRef for this IOSurface.
     // This is necessary in cases where we know (a priori) that the IOSurface has been
     // modified, but QuartzCore may have a cached CGImageRef that does not reflect the
     // current state of the IOSurface.
     // See https://webkit.org/b/157966 and https://webkit.org/b/228682 for more context.
+    if (PAL::canLoad_CoreGraphics_CGIOSurfaceContextInvalidateSurface()) {
+        PAL::softLink_CoreGraphics_CGIOSurfaceContextInvalidateSurface(ensurePlatformContext());
+        return false;
+    }
+
     CGContextFillRect(ensurePlatformContext(), CGRect { });
+    return true;
 }
 
 RefPtr<NativeImage> ImageBufferIOSurfaceBackend::copyNativeImage()
@@ -184,14 +191,14 @@ void ImageBufferIOSurfaceBackend::getPixelBuffer(const IntRect& srcRect, PixelBu
 {
     const_cast<ImageBufferIOSurfaceBackend*>(this)->prepareForExternalRead();
     if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadOnly>())
-        ImageBufferBackend::getPixelBuffer(srcRect, static_cast<const uint8_t*>(lock->surfaceBaseAddress()), destination);
+        ImageBufferBackend::getPixelBuffer(srcRect, lock->surfaceSpan(), destination);
 }
 
 void ImageBufferIOSurfaceBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     prepareForExternalWrite();
     if (auto lock = m_surface->lock<IOSurface::AccessMode::ReadWrite>())
-        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, static_cast<uint8_t*>(lock->surfaceBaseAddress()));
+        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, lock->surfaceSpan());
 }
 
 bool ImageBufferIOSurfaceBackend::canMapBackingStore() const
@@ -272,9 +279,8 @@ void ImageBufferIOSurfaceBackend::prepareForExternalWrite()
     bool needFlush = false;
     // Ensure that there are no future draws from the surface that would use the surface context image cache.
     if (m_mayHaveOutstandingBackingStoreReferences) {
-        invalidateCachedNativeImage();
+        needFlush = invalidateCachedNativeImage();
         m_mayHaveOutstandingBackingStoreReferences = false;
-        needFlush = true;
     }
 
     // Ensure that there are no pending draws to this surface. This is ensured by flushing the context

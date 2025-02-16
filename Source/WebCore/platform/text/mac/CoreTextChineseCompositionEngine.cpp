@@ -30,8 +30,6 @@
 #include <unicode/uscript.h>
 #include <wtf/unicode/CharacterNames.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 static ChineseCompositionRules::ChineseCharacterClass characterToCharacterClass(UTF32Char character)
 {
     if (character == zeroWidthSpace)
@@ -145,17 +143,17 @@ CompositionRules::CharacterSpacingType ChineseCompositionRules::characterSpacing
 {
     using namespace CompositionRules;
 
-    static const CompositionRules::CharacterSpacingType chineseSpacingTable[NumClasses][NumClasses] = {
-                    /* Opening,    Closing,    Whitespace, FullWidth,   HalfWidth,   HalfWidthOpen, HalfWidthClose,   Centered    Other */
-/* Opening */       {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
-/* Closing */       {  _1_2_eq_re, _1_4_af_re, _______,    _1_4_af_re,  _1_4_af_re,  _1_4_af_re,    _1_4_af_re,       _1_2_eq_re, _1_4_af_re }, // NOLINT
-/* Whitespace */    {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
-/* FullWidth */     {  _1_4_be_re, _______,    _______,    _______,     _1_8_be,     _1_8_be,       _______,          _______,    _______    }, // NOLINT
-/* HalfWidth */     {  _1_4_be_re, _______,    _______,    _1_8_be,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
-/* HalfWidthOpen */ {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
-/* HalfWidthClose */{  _1_4_be_re, _______,    _______,    _1_8_be,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
-/* Centered */      {  _1_2_eq_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
-/* Other */         {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
+    static constexpr std::array chineseSpacingTable {
+                                /* Opening,    Closing,    Whitespace, FullWidth,   HalfWidth,   HalfWidthOpen, HalfWidthClose,   Centered    Other */
+/* Opening */        std::array {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
+/* Closing */        std::array {  _1_2_eq_re, _1_4_af_re, _______,    _1_4_af_re,  _1_4_af_re,  _1_4_af_re,    _1_4_af_re,       _1_2_eq_re, _1_4_af_re }, // NOLINT
+/* Whitespace */     std::array {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
+/* FullWidth */      std::array {  _1_4_be_re, _______,    _______,    _______,     _1_8_be,     _1_8_be,       _______,          _______,    _______    }, // NOLINT
+/* HalfWidth */      std::array {  _1_4_be_re, _______,    _______,    _1_8_be,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
+/* HalfWidthOpen */  std::array {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
+/* HalfWidthClose */ std::array {  _1_4_be_re, _______,    _______,    _1_8_be,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
+/* Centered */       std::array {  _1_2_eq_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
+/* Other */          std::array {  _1_4_be_re, _______,    _______,    _______,     _______,     _______,       _______,          _______,    _______    }, // NOLINT
     };
     auto beforeGeneralCategoryMask = U_GET_GC_MASK(beforeCharacter);
     auto afterGeneralCategoryMask = U_GET_GC_MASK(afterCharacter);
@@ -182,5 +180,3 @@ CompositionRules::CharacterSpacingType ChineseCompositionRules::characterSpacing
 
     return chineseSpacingTable[beforeClass][afterClass];
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

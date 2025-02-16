@@ -51,6 +51,6 @@ shouldBe(test(), testObjInitial);
 Object.defineProperty(proto, "a", { value: 101, writable: false });
 
 // Run a bunch of times to tier up.
-for (var i = 0; i < 10000; i++)
+for (var i = 0; i < testLoopCount; i++)
     shouldBe(test(), testObjAfterReadOnlyProperty);
 

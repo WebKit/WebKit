@@ -73,7 +73,6 @@ platform/graphics/gbm/DMABufBuffer.cpp
 platform/graphics/gbm/DRMDeviceManager.cpp
 platform/graphics/gbm/DRMDeviceNode.cpp
 platform/graphics/gbm/GraphicsContextGLTextureMapperGBM.cpp @no-unify
-platform/graphics/gbm/GraphicsLayerContentsDisplayDelegateGBM.cpp @no-unify
 platform/graphics/gbm/PlatformDisplayGBM.cpp @no-unify
 
 platform/graphics/gtk/ColorGtk.cpp

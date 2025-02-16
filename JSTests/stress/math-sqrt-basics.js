@@ -5,7 +5,7 @@ function sqrtOnInteger(radicand) {
 noInline(sqrtOnInteger);
 
 function testSquareRoot16() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = sqrtOnInteger(16);
         if (result !== 4)
             throw "sqrtOnInteger(16) = " + result + ", expected 4";
@@ -28,7 +28,7 @@ function sqrtOnDouble(radicand) {
 noInline(sqrtOnDouble);
 
 function testSquareRootDouble() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = sqrtOnInteger(Math.LN2);
         if (result !== 0.8325546111576977)
             throw "sqrtOnInteger(Math.LN2) = " + result + ", expected 0.8325546111576977";

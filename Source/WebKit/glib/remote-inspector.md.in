@@ -1,0 +1,64 @@
+Title: Remote Web Inspector
+Slug: remote-inspector
+
+# Remote Web Inspector
+
+The remote Web Inspector enables debugging of web pages from a different
+device. This may be particularly useful in environments where it may not be
+feasible to use the Web Inspector in the same screen, or when input devices
+(keyboard, mouse) are not available.
+
+#if WPE
+
+Note WPE WebKit only supports using the Web Inspector remotely, as embedded
+devices often lack input devices, have smaller screens, use custom windowing
+systems, or may even be headless (no screen at all).
+
+#endif
+
+## Server
+
+To run an application with the remote inspector server enabled:
+
+- When running the application, set the environment variable
+  `WEBKIT_INSPECTOR_SERVER` or `WEBKIT_INSPECTOR_HTTP_SERVER` to configure
+  on which address and port the server will open its listening socket.
+- The application **must** enable
+  [property@WebKitSettings:enable-developer-extras]. This determines whether
+  the Web Inspector may be used at all.
+
+As an example, the `MiniBrowser` program included in the WebKit source code
+distribution may be used as a server for remote inspection:
+
+```sh
+export WEBKIT_INSPECTOR_SERVER=192.168.0.50:5000
+MiniBrowser --enable-developer-extras=true https://wpewebkit.org
+```
+
+
+## Client
+
+::: important
+
+    The Web Inspector uses current Web APIs as supported by WebKit; browser
+    support varies. For the best experience it is recommended to use a
+    WebKit-based browser with a version matching (or newer than) the one
+    running the server.
+
+    Chromium and derivatives tend to work well when using the HTTP inspector
+    server, too.
+
+Browsers based on [WebKitGTK](https://webkitgtk.org) may be used as clients
+for the remote Web Inspector service. The client is started by opening an
+URI with the `inspector://` scheme, plus the address and port where the
+server is listening, e.g.:
+
+```sh
+MiniBrowser inspector://192.168.0.50:5000
+```
+
+The Web Inspector is an application written using Web technologies itself,
+and it may be loaded on non-WebKit browsers. If enabled, the [inspector
+server](#server) will listen for HTTP incoming requests, and
+`inspector://` may be replaced by the `http://` scheme.
+

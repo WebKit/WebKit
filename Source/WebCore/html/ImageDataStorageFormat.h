@@ -41,7 +41,7 @@ constexpr PixelFormat toPixelFormat(ImageDataStorageFormat storageFormat)
     case ImageDataStorageFormat::Uint8:
         break;
     case ImageDataStorageFormat::Float16:
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
         return PixelFormat::RGBA16F;
 #else
         break;

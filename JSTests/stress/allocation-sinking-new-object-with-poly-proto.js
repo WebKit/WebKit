@@ -34,7 +34,7 @@ function baz(b) {
 }
 noInline(baz);
 
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let b = i % 10 === 0;
     let r = bar(b);
     if (b) {
@@ -43,7 +43,7 @@ for (let i = 0; i < 100000; ++i) {
     }
 }
 
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let b = i % 10 === 0;
     let r = baz(b);
     if (b) {

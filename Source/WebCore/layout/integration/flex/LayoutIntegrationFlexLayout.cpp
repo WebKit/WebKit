@@ -117,7 +117,7 @@ static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const 
 void FlexLayout::updateFormattingContexGeometries()
 {
     auto boxGeometryUpdater = BoxGeometryUpdater { layoutState(), flexBox() };
-    boxGeometryUpdater.setFormattingContextRootGeometry(flexBoxRenderer().containingBlock()->availableLogicalWidth());
+    boxGeometryUpdater.setFormattingContextRootGeometry(flexBoxRenderer().containingBlock()->contentBoxLogicalWidth());
     boxGeometryUpdater.setFormattingContextContentGeometry(layoutState().geometryForBox(flexBox()).contentBoxWidth(), { });
 }
 

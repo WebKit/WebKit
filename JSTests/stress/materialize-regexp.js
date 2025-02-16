@@ -14,7 +14,7 @@ function test(flag)
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     if (i & 0x1) {
         var regexp = test(true);
         shouldBe(regexp instanceof RegExp, true);

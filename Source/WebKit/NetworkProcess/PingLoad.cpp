@@ -81,19 +81,20 @@ void PingLoad::initialize(NetworkProcess& networkProcess)
     // Set a very generous timeout, just in case.
     m_timeoutTimer.startOneShot(60000_s);
 
-    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [this, weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
-        if (!weakThis)
+    m_networkLoadChecker->check(ResourceRequest { m_parameters.request }, nullptr, [weakThis = WeakPtr { *this }, networkProcess = Ref { networkProcess }] (auto&& result) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
         WTF::switchOn(result,
-            [this] (ResourceError& error) {
-                this->didFinish(error);
+            [&protectedThis] (ResourceError& error) {
+                protectedThis->didFinish(error);
             },
             [] (NetworkLoadChecker::RedirectionTriplet& triplet) {
                 // We should never send a synthetic redirect for PingLoads.
                 ASSERT_NOT_REACHED();
             },
-            [&] (ResourceRequest& request) {
-                this->loadRequest(networkProcess, WTFMove(request));
+            [&protectedThis, &networkProcess] (ResourceRequest& request) {
+                protectedThis->loadRequest(networkProcess, WTFMove(request));
             }
         );
     });
@@ -133,15 +134,15 @@ void PingLoad::loadRequest(NetworkProcess& networkProcess, ResourceRequest&& req
 
 void PingLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse, ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
-    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTFMove(request), WTFMove(redirectResponse), nullptr, [this, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
+    m_networkLoadChecker->checkRedirection(ResourceRequest { }, WTFMove(request), WTFMove(redirectResponse), nullptr, [protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)] (auto&& result) mutable {
         if (!result.has_value()) {
-            this->didFinish(result.error());
+            protectedThis->didFinish(result.error());
             completionHandler({ });
             return;
         }
         auto request = WTFMove(result->redirectRequest);
         if (!request.url().protocolIsInHTTPFamily()) {
-            this->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
+            protectedThis->didFinish(ResourceError { String { }, 0, request.url(), "Redirection to URL with a scheme that is not HTTP(S)"_s, ResourceError::Type::AccessControl });
             completionHandler({ });
             return;
         }

@@ -52,7 +52,7 @@ ALWAYS_INLINE Ref<AtomStringImpl> JSONAtomStringCache::make(std::span<const Char
         auto result = AtomStringImpl::add(characters);
         slot.m_impl = result;
         slot.m_length = characters.size();
-        WTF::copyElements(slot.m_buffer, characters.data(), characters.size());
+        WTF::copyElements(std::span<UChar> { slot.m_buffer }, characters);
         return result.releaseNonNull();
     }
 

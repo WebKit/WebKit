@@ -1,0 +1,11 @@
+Verifies that adding an iframe while changing the document title does not increase history.length
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS event.data is 'onload'
+PASS history.length is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

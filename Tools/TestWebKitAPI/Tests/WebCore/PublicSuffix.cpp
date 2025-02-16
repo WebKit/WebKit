@@ -56,7 +56,6 @@ TEST_F(PublicSuffix, IsPublicSuffix)
     EXPECT_TRUE(publicSuffixStore.isPublicSuffix("co.uk"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix("bl.uk"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix("test.co.uk"_s));
-    EXPECT_TRUE(publicSuffixStore.isPublicSuffix("xn--zf0ao64a.tw"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix("r4---asdf.test.com"_s));
     EXPECT_FALSE(publicSuffixStore.isPublicSuffix(utf16String(bidirectionalDomain)));
     EXPECT_TRUE(publicSuffixStore.isPublicSuffix(utf16String(u"\u6803\u6728.jp")));
@@ -167,8 +166,6 @@ TEST_F(PublicSuffix, TopPrivatelyControlledDomain)
     EXPECT_EQ(String("test.co.uk"_s), publicSuffixStore.topPrivatelyControlledDomain("subdomain.test.co.uk"_s));
     EXPECT_EQ(String("bl.uk"_s), publicSuffixStore.topPrivatelyControlledDomain("bl.uk"_s));
     EXPECT_EQ(String("bl.uk"_s), publicSuffixStore.topPrivatelyControlledDomain("subdomain.bl.uk"_s));
-    EXPECT_EQ(String("test.xn--zf0ao64a.tw"_s), publicSuffixStore.topPrivatelyControlledDomain("test.xn--zf0ao64a.tw"_s));
-    EXPECT_EQ(String("test.xn--zf0ao64a.tw"_s), publicSuffixStore.topPrivatelyControlledDomain("www.test.xn--zf0ao64a.tw"_s));
     EXPECT_EQ(String("127.0.0.1"_s), publicSuffixStore.topPrivatelyControlledDomain("127.0.0.1"_s));
     EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain("1"_s));
     EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomain("com"_s));
@@ -200,8 +197,6 @@ TEST_F(PublicSuffix, topPrivatelyControlledDomainWithoutPublicSuffix)
     EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.test.co.uk"_s));
     EXPECT_EQ(String("bl"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("bl.uk"_s));
     EXPECT_EQ(String("bl"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("subdomain.bl.uk"_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("test.xn--zf0ao64a.tw"_s));
-    EXPECT_EQ(String("test"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("www.test.xn--zf0ao64a.tw"_s));
     EXPECT_EQ(String("127.0.0.1"_s), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("127.0.0.1"_s));
     EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("1"_s));
     EXPECT_EQ(String(), publicSuffixStore.topPrivatelyControlledDomainWithoutPublicSuffix("com"_s));

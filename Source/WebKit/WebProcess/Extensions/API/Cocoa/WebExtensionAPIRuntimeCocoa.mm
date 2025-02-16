@@ -304,13 +304,13 @@ void WebExtensionAPIRuntime::sendMessage(WebPageProxyIdentifier webPageProxyIden
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
     if (messageJSON.length > webExtensionMaxMessageLength) {
-        *outExceptionString = toErrorString(nil, @"message", @"it exceeded the maximum allowed length");
+        *outExceptionString = toErrorString(nullString(), @"message", @"it exceeded the maximum allowed length");
         return;
     }
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        *outExceptionString = toErrorString(nullString(), nullString(), @"an unexpected error occured");
         return;
     }
 
@@ -342,7 +342,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIRuntime::connect(WebPageProxyIdentifi
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        *outExceptionString = toErrorString(nullString(), nullString(), @"an unexpected error occured");
         return nullptr;
     }
 
@@ -411,13 +411,13 @@ void WebExtensionAPIWebPageRuntime::sendMessage(WebPage& page, WebFrame& frame, 
     // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/runtime/sendMessage
 
     if (messageJSON.length > webExtensionMaxMessageLength) {
-        *outExceptionString = toErrorString(nil, @"message", @"it exceeded the maximum allowed length");
+        *outExceptionString = toErrorString(nullString(), @"message", @"it exceeded the maximum allowed length");
         return;
     }
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        *outExceptionString = toErrorString(nullString(), nullString(), @"an unexpected error occured");
         return;
     }
 
@@ -461,7 +461,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPIWebPageRuntime::connect(WebPage& page
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        *outExceptionString = toErrorString(nullString(), nullString(), @"an unexpected error occured");
         return nullptr;
     }
 

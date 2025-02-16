@@ -92,7 +92,7 @@ public:
         return m_data[index];
     }
 
-    void forEach(const WTF::Function<void(T)>& apply) const
+    void forEach(NOESCAPE const WTF::Function<void(T)>& apply) const
     {
         unsigned i = m_current;
         for (unsigned visited = 0; visited < size; ++visited) {
@@ -276,7 +276,7 @@ static void showText(CGContextRef context, float x, float y, CGColorRef color, c
     auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CString cstr = text.ascii();
     auto cstrSpan = cstr.span();
-    auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, cstrSpan.data(), cstrSpan.size(), kCFStringEncodingASCII, false, kCFAllocatorNull));
+    auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, byteCast<UInt8>(cstrSpan.data()), cstrSpan.size(), kCFStringEncodingASCII, false, kCFAllocatorNull));
     auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
     auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
     CGContextSetTextPosition(context, x, y);

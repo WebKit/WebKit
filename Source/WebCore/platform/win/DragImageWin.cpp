@@ -221,7 +221,7 @@ DragImageRef createDragImageForColor(const Color&, const FloatRect&, float, Path
 }
 
 #if USE(SKIA)
-DragImageRef createDragImageFromImage(Image*, ImageOrientation)
+DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient*, float)
 {
     return nullptr;
 }

@@ -321,7 +321,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         Checked<size_t, AssertNoOverflow> bufferPos = 0;
         for (auto range : substringRanges) {
             size_t srcLen = range.distance();
-            StringImpl::copyCharacters(buffer.subspan(bufferPos.value()).data(), sourceData.subspan(range.begin(), srcLen));
+            StringImpl::copyCharacters(buffer.subspan(bufferPos.value()), sourceData.subspan(range.begin(), srcLen));
             bufferPos += srcLen;
         }
 
@@ -340,7 +340,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
     Checked<size_t, AssertNoOverflow> bufferPos = 0;
     for (auto& range : substringRanges) {
         size_t srcLen = range.distance();
-        StringImpl::copyCharacters(buffer.subspan(bufferPos.value()).data(), sourceData.subspan(range.begin(), srcLen));
+        StringImpl::copyCharacters(buffer.subspan(bufferPos.value()), sourceData.subspan(range.begin(), srcLen));
         bufferPos += srcLen;
     }
 
@@ -1389,10 +1389,19 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
         if (LIKELY(limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && result.size() < MIN_SPARSE_ARRAY_INDEX)) {
             auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, result.size());
             unsigned start = 0;
+            auto view = thisString->view(globalObject);
+            RETURN_IF_EXCEPTION(scope, { });
             for (unsigned i = 0, size = result.size(); i < size; ++i) {
                 unsigned end = result[i];
-                auto* string = jsSubstring(globalObject, thisString, start, end - start);
-                RETURN_IF_EXCEPTION(scope, { });
+                JSString* string = nullptr;
+                if (size < 100) {
+                    auto subView = view->substring(start, end - start);
+                    auto identifier = subView.is8Bit() ? Identifier::fromString(vm, subView.span8()) : Identifier::fromString(vm, subView.span16());
+                    string = jsString(vm, identifier.string());
+                } else {
+                    string = jsSubstring(globalObject, thisString, start, end - start);
+                    RETURN_IF_EXCEPTION(scope, { });
+                }
                 newButterfly->setIndex(vm, i, string);
                 start = end + separatorLength;
             }
@@ -2227,7 +2236,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncAt, (JSGlobalObject* globalObject, CallF
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    if (!checkObjectCoercible(thisValue))
+    if (UNLIKELY(!checkObjectCoercible(thisValue)))
         return throwVMTypeError(globalObject, scope);
     auto* thisString = thisValue.toString(globalObject);
     RETURN_IF_EXCEPTION(scope, { });
@@ -2236,7 +2245,7 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncAt, (JSGlobalObject* globalObject, CallF
     RETURN_IF_EXCEPTION(scope, { });
     uint32_t length = view->length();
     JSValue argument0 = callFrame->argument(0);
-    if (argument0.isInt32()) {
+    if (LIKELY(argument0.isInt32())) {
         int32_t i = argument0.asInt32();
         int64_t k = i < 0 ? static_cast<int64_t>(length) + i : i;
         if (k < length && k >= 0)

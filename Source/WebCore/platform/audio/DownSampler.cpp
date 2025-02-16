@@ -110,16 +110,16 @@ void DownSampler::process(std::span<const float> source, std::span<float> destin
     if (!isInputBufferGood)
         return;
 
-    auto inputP = m_inputBuffer.span().subspan(source.size());
+    auto inputBuffer = m_inputBuffer.span();
+    auto inputP = inputBuffer.subspan(source.size());
     memcpySpan(inputP, source);
 
     // Copy the odd sample-frames from source, delayed by one sample-frame (destination sample-rate)
     // to match shifting forward in time in m_reducedKernel.
     auto oddSamplesP = m_tempBuffer.span().first(destFramesToProcess);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    auto inputPMinusOne = inputBuffer.subspan(inputP.data() - inputBuffer.data() - 1);
     for (size_t i = 0; i < oddSamplesP.size(); ++i)
-        oddSamplesP[i] = *((inputP.data() - 1) + i * 2);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        oddSamplesP[i] = inputPMinusOne[i * 2];
 
     // Actually process oddSamplesP with m_reducedKernel for efficiency.
     // The theoretical kernel is double this size with 0 values for even terms (except center).
@@ -129,11 +129,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     // This amounts to a delay-line of length halfSize (at the source sample-rate),
     // scaled by 0.5.
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // Sum into the destination.
+    auto inputPMinusHalfSize = inputBuffer.subspan(inputP.data() - inputBuffer.data() - halfSize);
     for (size_t i = 0; i < destFramesToProcess; ++i)
-        destination[i] += 0.5 * *((inputP.data() - halfSize) + i * 2);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        destination[i] += 0.5 * inputPMinusHalfSize[i * 2];
 
     // Copy 2nd half of input buffer to 1st half.
     memcpySpan(m_inputBuffer.span(), inputP);

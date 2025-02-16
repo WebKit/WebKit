@@ -53,6 +53,7 @@ def test_should_get_coordinates_of_an_invisible_element(driver, pages):
     _check_location(element.location, x=0, y=0)
 
 
+@pytest.mark.xfail_safari
 def test_should_scroll_page_and_get_coordinates_of_an_element_that_is_out_of_view_port(driver, pages):
     pages.load("coordinates_tests/page_with_element_out_of_view.html")
     element = driver.find_element(By.ID, "box")
@@ -89,6 +90,7 @@ def test_should_get_coordinates_of_an_element_in_anested_frame(driver, pages):
     _check_location(element.location, x=10, y=10)
 
 
+@pytest.mark.xfail_safari
 def test_should_get_coordinates_of_an_element_with_fixed_position(driver, pages):
     pages.load("coordinates_tests/page_with_fixed_element.html")
     element = driver.find_element(By.ID, "fixed")
@@ -109,12 +111,6 @@ def test_should_correctly_identify_that_an_element_has_width_and_height(driver, 
 
 
 def _check_location(location, **kwargs):
-    try:
-        # python 2.x
-        expected = kwargs.viewitems()
-        actual = location.viewitems()
-    except AttributeError:
-        # python 3.x
-        expected = kwargs.items()
-        actual = location.items()
+    expected = kwargs.items()
+    actual = location.items()
     assert expected <= actual

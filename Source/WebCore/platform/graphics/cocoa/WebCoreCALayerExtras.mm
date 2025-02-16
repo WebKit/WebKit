@@ -155,8 +155,9 @@ void collectDescendantLayersAtPoint(Vector<LayerAndPoint, 16>& layersAtPoint, CA
     if (parent.mask && ![parent _web_maskContainsPoint:point])
         return;
 
-    for (CALayer *layer in [parent sublayers]) {
-        CALayer *layerWithResolvedAnimations = layer;
+    RetainPtr sublayers = adoptNS([[parent sublayers] copy]);
+    for (CALayer* layer : sublayers.get()) {
+        RetainPtr layerWithResolvedAnimations = layer;
 
         if ([[layer animationKeys] count])
             layerWithResolvedAnimations = [layer presentationLayer];

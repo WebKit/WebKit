@@ -63,9 +63,9 @@ bool containsColorSchemeDependentColor(const ColorLayers& value)
     });
 }
 
-void Serialize<ColorLayers>::operator()(StringBuilder& builder, const ColorLayers& value)
+void Serialize<ColorLayers>::operator()(StringBuilder& builder, const SerializationContext& context, const ColorLayers& value)
 {
-    serializationForCSSColorLayers(builder, value);
+    serializationForCSSColorLayers(builder, context, value);
 }
 
 void ComputedStyleDependenciesCollector<ColorLayers>::operator()(ComputedStyleDependencies& dependencies, const ColorLayers& value)
@@ -73,7 +73,7 @@ void ComputedStyleDependenciesCollector<ColorLayers>::operator()(ComputedStyleDe
     collectComputedStyleDependenciesOnRangeLike(dependencies, value.colors);
 }
 
-IterationStatus CSSValueChildrenVisitor<ColorLayers>::operator()(const Function<IterationStatus(CSSValue&)>& func, const ColorLayers& value)
+IterationStatus CSSValueChildrenVisitor<ColorLayers>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const ColorLayers& value)
 {
     return visitCSSValueChildrenOnRangeLike(func, value.colors);
 }

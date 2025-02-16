@@ -2,7 +2,7 @@
     "domain": "ScriptProfiler",
     "description": "Profiler domain exposes JavaScript evaluation timing and profiling.",
     "debuggableTypes": ["itml", "javascript", "page", "web-page"],
-    "targetTypes": ["itml", "javascript", "page"],
+    "targetTypes": ["itml", "javascript", "page", "worker"],
     "types": [
         {
             "id": "EventType",

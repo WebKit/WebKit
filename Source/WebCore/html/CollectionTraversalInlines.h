@@ -98,7 +98,10 @@ inline auto CollectionTraversal<CollectionTraversalType::ChildrenOnly>::begin(co
 template <typename CollectionClass>
 inline auto CollectionTraversal<CollectionTraversalType::ChildrenOnly>::last(const CollectionClass& collection, ContainerNode& rootNode) -> Iterator
 {
-    auto it = childrenOfType<Element>(rootNode).begin();
+    auto* lastElement = childrenOfType<Element>(rootNode).last();
+    if (!lastElement)
+        return childrenOfType<Element>(rootNode).begin();
+    auto it = childrenOfType<Element>(rootNode).beginAt(*lastElement);
     while (it && !collection.elementMatches(*it))
         --it;
     // Drop iterator assertions because HTMLCollections / NodeList use a fine-grained invalidation scheme.

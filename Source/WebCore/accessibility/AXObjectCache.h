@@ -73,6 +73,7 @@ class Scrollbar;
 class ScrollView;
 class VisiblePosition;
 class Widget;
+enum class AXStreamOptions : uint8_t;
 
 struct CharacterOffset {
     RefPtr<Node> node;
@@ -284,13 +285,11 @@ class AXObjectCache final : public CanMakeWeakPtr<AXObjectCache>, public CanMake
     friend class AXTextMarker;
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXObjectCache&);
 public:
-    explicit AXObjectCache(Document&);
+    explicit AXObjectCache(Page&, Document*);
     ~AXObjectCache();
 
-    // Returns the root object for the entire document.
-    WEBCORE_EXPORT AXCoreObject* rootObject();
     // Returns the root object for a specific frame.
-    WEBCORE_EXPORT AccessibilityObject* rootObjectForFrame(LocalFrame*);
+    WEBCORE_EXPORT AXCoreObject* rootObjectForFrame(LocalFrame&);
 
     // Creation/retrieval of AX objects associated with a DOM or RenderTree object.
     inline AccessibilityObject* getOrCreate(RenderObject* renderer)
@@ -358,7 +357,6 @@ public:
     void onDragElementChanged(Element* oldElement, Element* newElement);
     void onEventListenerAdded(Node&, const AtomString& eventType);
     void onEventListenerRemoved(Node&, const AtomString& eventType);
-    void onExpandedChanged(HTMLDetailsElement&);
     void onFocusChange(Element* oldElement, Element* newElement);
     void onInertOrVisibilityChange(RenderElement&);
     void onPopoverToggle(const HTMLElement&);
@@ -450,6 +448,7 @@ public:
     WEBCORE_EXPORT static bool accessibilityEnhancedUserInterfaceEnabled();
 #if ENABLE(AX_THREAD_TEXT_APIS)
     static bool useAXThreadTextApis() { return gAccessibilityThreadTextApisEnabled && !isMainThread(); }
+    static bool shouldCreateAXThreadCompatibleMarkers() { return gAccessibilityThreadTextApisEnabled && isIsolatedTreeEnabled(); }
 #endif
 
     static bool forceInitialFrameCaching() { return gForceInitialFrameCaching; }
@@ -474,8 +473,8 @@ public:
 #endif
 
     // Text marker utilities.
-    std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&);
-    TextMarkerData textMarkerDataForCharacterOffset(const CharacterOffset&);
+    std::optional<TextMarkerData> textMarkerDataForVisiblePosition(const VisiblePosition&, TextMarkerOrigin = TextMarkerOrigin::Unknown);
+    TextMarkerData textMarkerDataForCharacterOffset(const CharacterOffset&, TextMarkerOrigin = TextMarkerOrigin::Unknown);
     TextMarkerData textMarkerDataForNextCharacterOffset(const CharacterOffset&);
     AXTextMarker nextTextMarker(const AXTextMarker&);
     TextMarkerData textMarkerDataForPreviousCharacterOffset(const CharacterOffset&);
@@ -555,8 +554,8 @@ public:
 
     AXComputedObjectAttributeCache* computedObjectAttributeCache() { return m_computedObjectAttributeCache.get(); }
 
-    Document& document() const { return const_cast<Document&>(m_document.get()); }
-    Ref<Document> protectedDocument() const;
+    Document* document() const { return m_document.get(); }
+    RefPtr<Document> protectedDocument() const;
     constexpr const std::optional<PageIdentifier>& pageID() const { return m_pageID; }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -593,7 +592,7 @@ public:
 
     static ASCIILiteral notificationPlatformName(AXNotification);
 
-    AXTreeData treeData();
+    AXTreeData treeData(std::optional<OptionSet<AXStreamOptions>> = std::nullopt);
 
     enum class UpdateRelations : bool { No, Yes };
     // Returns the IDs of the objects that relate to the given object with the specified relationship.
@@ -694,8 +693,6 @@ private:
 
     void liveRegionChangedNotificationPostTimerFired();
 
-    void focusCurrentModal();
-    
     void performCacheUpdateTimerFired() { performDeferredCacheUpdate(ForceLayout::No); }
 
     void postTextStateChangeNotification(AccessibilityObject*, const AXTextStateChangeIntent&, const VisibleSelection&);
@@ -744,8 +741,7 @@ private:
     // aria-modal or modal <dialog> related
     bool isModalElement(Element&) const;
     void findModalNodes();
-    enum class WillRecomputeFocus : bool { No, Yes };
-    void updateCurrentModalNode(WillRecomputeFocus = WillRecomputeFocus::No);
+    void updateCurrentModalNode();
     bool isNodeVisible(Node*) const;
     bool modalElementHasAccessibleContent(Element&);
 
@@ -779,15 +775,23 @@ private:
     Ref<AccessibilityRenderObject> createObjectFromRenderer(RenderObject&);
     Ref<AccessibilityNodeObject> createFromNode(Node&);
 
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
     OptionSet<ActivityState> m_pageActivityState;
     UncheckedKeyHashMap<AXID, Ref<AccessibilityObject>> m_objects;
 
-    // The pointers in these mapping HashMaps should never be dereferenced.
-    UncheckedKeyHashMap<SingleThreadWeakRef<RenderObject>, AXID> m_renderObjectMapping;
-    UncheckedKeyHashMap<SingleThreadWeakRef<Widget>, AXID> m_widgetObjectMapping;
-    UncheckedKeyHashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, AXID> m_nodeObjectMapping;
+    WeakHashMap<RenderObject, AXID, SingleThreadWeakPtrImpl> m_renderObjectMapping;
+    WeakHashMap<Widget, AXID, SingleThreadWeakPtrImpl> m_widgetObjectMapping;
+
+    // FIXME: The type for m_nodeObjectMapping really should be:
+    // UncheckedKeyHashMap<WeakRef<Node, WeakPtrImplWithEventTargetData>, AXID>
+    // As this guarantees that we've called AXObjectCache::remove(Node&) for every node we store.
+    // However, in rare circumstances, we can add a node to this map, then later the document associated
+    // with the node loses its m_frame via detachFromFrame(). Then the node gets destroyed, but we can't
+    // clean it up from this map, since existingAXObjectCache fails due to the nullptr m_frame.
+    // This scenario seems extremely rare, and may only happen when the webpage is about to be destroyed anyways,
+    // so, go with WeakHashMap now until we find a completely safe solution based on document / frame lifecycles.
+    WeakHashMap<Node, Markable<AXID>, WeakPtrImplWithEventTargetData> m_nodeObjectMapping;
 
     std::unique_ptr<AXComputedObjectAttributeCache> m_computedObjectAttributeCache;
 
@@ -947,7 +951,10 @@ bool hasAccNameAttribute(Element&);
 bool isNodeFocused(Node&);
 
 bool isRenderHidden(const RenderStyle*);
+// Checks both CSS display properties, and CSS visibility properties.
 bool isRenderHidden(const RenderStyle&);
+// Only checks CSS visibility properties.
+bool isVisibilityHidden(const RenderStyle&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, AXNotification);
 

@@ -55,7 +55,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 
 @interface WKWebViewConfiguration (WKPrivate)
 
-@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView WK_API_DEPRECATED("Please migrate away from using _relatedWebView and talk to the WebKit team if there are difficulties doing so", macos(10.10, WK_MAC_TBA), ios(8.0, WK_IOS_TBA));
+@property (nonatomic, weak, setter=_setRelatedWebView:) WKWebView *_relatedWebView WK_API_DEPRECATED("Please migrate away from using _relatedWebView and talk to the WebKit team if there are difficulties doing so", macos(10.10, 15.2), ios(8.0, 18.2));
 @property (nonatomic, weak, setter=_setWebViewToCloneSessionStorageFrom:) WKWebView *_webViewToCloneSessionStorageFrom;
 @property (nonatomic, copy, setter=_setGroupIdentifier:) NSString *_groupIdentifier;
 
@@ -95,6 +95,7 @@ typedef NS_ENUM(NSUInteger, _WKContentSecurityPolicyModeForExtension) {
 @property (nonatomic, setter=_setIncompleteImageBorderEnabled:) BOOL _incompleteImageBorderEnabled WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic, setter=_setDrawsBackground:) BOOL _drawsBackground WK_API_AVAILABLE(macos(10.14), ios(12.0));
 @property (nonatomic, setter=_setShouldDeferAsynchronousScriptsUntilAfterDocumentLoad:) BOOL _shouldDeferAsynchronousScriptsUntilAfterDocumentLoad WK_API_AVAILABLE(macos(10.14), ios(12.0));
+@property (nonatomic, setter=_setShowsSystemScreenTimeBlockingView:) BOOL _showsSystemScreenTimeBlockingView WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
 
 @property (nonatomic, readonly) WKWebsiteDataStore *_websiteDataStoreIfExists WK_API_AVAILABLE(macos(10.15.4), ios(13.4));
 @property (nonatomic, copy, setter=_setCORSDisablingPatterns:) NSArray<NSString *> *_corsDisablingPatterns WK_API_AVAILABLE(macos(10.15.4), ios(13.4));

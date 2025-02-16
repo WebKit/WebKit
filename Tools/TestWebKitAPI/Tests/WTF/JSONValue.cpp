@@ -738,7 +738,7 @@ TEST(JSONValue, MemoryCost)
 
     {
         Ref<JSON::Value> valueA = JSON::Value::create(makeString("t"_s));
-        Ref<JSON::Value> valueB = JSON::Value::create(makeString(span("😀")));
+        Ref<JSON::Value> valueB = JSON::Value::create(makeString(unsafeSpan("😀")));
         EXPECT_LT(valueA->memoryCost(), valueB->memoryCost());
     }
 

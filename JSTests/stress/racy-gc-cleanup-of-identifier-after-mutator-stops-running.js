@@ -3,7 +3,7 @@
 
 function foo() {
     gc();
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         const o = { f: 42 };
         o[Symbol.split.description];
     }

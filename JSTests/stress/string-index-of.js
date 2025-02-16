@@ -30,7 +30,7 @@ function test5(string, index) {
 }
 
 var string = ".............................................okokHellookok................................";
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test0(string), 49);
     shouldBe(test1(string), 47);
 

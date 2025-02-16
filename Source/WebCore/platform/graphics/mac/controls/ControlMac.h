@@ -68,9 +68,7 @@ protected:
 
     void drawCell(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *, bool drawCell = true);
 
-#if ENABLE(DATALIST_ELEMENT)
     void drawListButton(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&);
-#endif
 
 private:
     void drawCellInternal(GraphicsContext&, const FloatRect&, float deviceScaleFactor, const ControlStyle&, NSCell *);

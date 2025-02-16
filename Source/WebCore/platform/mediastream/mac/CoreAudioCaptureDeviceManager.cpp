@@ -102,7 +102,12 @@ static bool deviceHasOutputStreams(AudioObjectID deviceID)
     return deviceHasStreams(deviceID, address);
 }
 
-static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filterTapEnabledDevices)
+static bool isVirtualDeviceFromLabel(const String& label)
+{
+    return label.contains("WebexMediaAudioDevice"_s) || label.contains("Microsoft Teams Audio"_s);
+}
+
+static bool isValidMicrophoneDevice(const CoreAudioCaptureDevice& device, bool filterTapEnabledDevices)
 {
     if (filterTapEnabledDevices) {
         // Ignore output devices that have input only for echo cancellation.
@@ -150,8 +155,19 @@ static bool isValidCaptureDevice(const CoreAudioCaptureDevice& device, bool filt
         return false;
     }
 
-    if (device.label().contains("WebexMediaAudioDevice"_s)) {
-        RELEASE_LOG(WebRTC, "Ignoring webex audio device");
+    // FIXME: We might want to use properties like whether a device can be selected as default once we move device enumeration to GPUProcess.
+    if (isVirtualDeviceFromLabel(device.label())) {
+        RELEASE_LOG(WebRTC, "Ignoring virtual microphone device '%s'", device.label().utf8().data());
+        return false;
+    }
+
+    return true;
+}
+
+static bool isValidSpeakerDevice(const CoreAudioCaptureDevice& device)
+{
+    if (isVirtualDeviceFromLabel(device.label())) {
+        RELEASE_LOG(WebRTC, "Ignoring virtual speaker device");
         return false;
     }
 
@@ -266,7 +282,7 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList(bool filterT
             continue;
 
         auto microphoneDevice = CoreAudioCaptureDevice::create(deviceID, CaptureDevice::DeviceType::Microphone, { });
-        if (microphoneDevice && isValidCaptureDevice(microphoneDevice.value(), filterTapEnabledDevices))
+        if (microphoneDevice && isValidMicrophoneDevice(microphoneDevice.value(), filterTapEnabledDevices))
             audioDevices.append(WTFMove(microphoneDevice.value()));
     }
 
@@ -298,7 +314,8 @@ static inline Vector<CoreAudioCaptureDevice> computeAudioDeviceList(bool filterT
                     }
                 }
             }
-            audioDevices.append(WTFMove(device.value()));
+            if (isValidSpeakerDevice(*device))
+                audioDevices.append(WTFMove(*device));
         }
     }
     return audioDevices;

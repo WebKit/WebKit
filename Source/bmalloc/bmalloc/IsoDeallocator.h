@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "FixedVector.h"
 #include "IsoPage.h"
 #include "Mutex.h"
@@ -55,3 +57,4 @@ private:
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

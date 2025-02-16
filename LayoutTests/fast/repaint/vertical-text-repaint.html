@@ -94,9 +94,9 @@ setTimeout(function() {
     shouldNotBe("internals.repaintRectsAsText().indexOf('25 25')", "-1");
     shouldNotBe("internals.repaintRectsAsText().indexOf('25 155')", "-1");
     shouldNotBe("internals.repaintRectsAsText().indexOf('25 285')", "-1");
-    shouldNotBe("internals.repaintRectsAsText().indexOf('155 25')", "-1");
-    shouldNotBe("internals.repaintRectsAsText().indexOf('155 155')", "-1");
-    shouldNotBe("internals.repaintRectsAsText().indexOf('155 285')", "-1");
+    shouldNotBe("internals.repaintRectsAsText().indexOf('225 25')", "-1");
+    shouldNotBe("internals.repaintRectsAsText().indexOf('225 155')", "-1");
+    shouldNotBe("internals.repaintRectsAsText().indexOf('225 285')", "-1");
     internals.stopTrackingRepaints();
   }
   finishJSTest();

@@ -35,7 +35,7 @@ public:
 
     const Rect& rect() const { return m_rect; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSRectValue&) const;
 
 private:

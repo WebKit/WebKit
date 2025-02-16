@@ -40,7 +40,7 @@ public:
     using RefType = Ref<WeakPtrImpl>;
     using KeyTraits = HashTraits<KeyType>;
     using ValueTraits = HashTraits<ValueType>;
-    using WeakHashImplMap = UncheckedKeyHashMap<RefType, ValueType>;
+    using WeakHashImplMap = HashMap<RefType, ValueType>;
 
     struct PeekKeyValuePairTraits : KeyValuePairHashTraits<HashTraits<KeyType&>, HashTraits<ValueType&>> {
         static constexpr bool hasIsEmptyValueFunction = true;
@@ -253,6 +253,15 @@ public:
         return m_map.take(*keyImpl);
     }
 
+    std::optional<ValueType> takeOptional(const KeyType& key)
+    {
+        amortizedCleanupIfNeeded();
+        auto* keyImpl = keyImplIfExists(key);
+        if (!keyImpl)
+            return std::nullopt;
+        return m_map.takeOptional(*keyImpl);
+    }
+
     typename ValueTraits::PeekType get(const KeyType& key) const
     {
         increaseOperationCountSinceLastCleanup();
@@ -260,6 +269,15 @@ public:
         if (!keyImpl)
             return ValueTraits::peek(ValueTraits::emptyValue());
         return m_map.get(*keyImpl);
+    }
+
+    std::optional<ValueType> getOptional(const KeyType& key) const
+    {
+        increaseOperationCountSinceLastCleanup();
+        auto* keyImpl = keyImplIfExists(key);
+        if (!keyImpl)
+            return std::nullopt;
+        return m_map.getOptional(*keyImpl);
     }
 
     bool remove(iterator it)

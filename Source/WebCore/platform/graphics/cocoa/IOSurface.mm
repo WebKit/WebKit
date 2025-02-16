@@ -69,8 +69,6 @@ static auto surfaceNameToNSString(IOSurface::Name name)
         return @"WebKit ImageBufferShareableMapped";
     case IOSurface::Name::LayerBacking:
         return @"WebKit LayerBacking";
-    case IOSurface::Name::BitmapOnlyLayerBacking:
-        return @"WebKit LayerBacking (bitmap only)";
     case IOSurface::Name::MediaPainting:
         return @"WebKit MediaPainting";
     case IOSurface::Name::Snapshot:
@@ -226,7 +224,7 @@ static NSDictionary *optionsFor32BitSurface(IntSize size, unsigned pixelFormat, 
     return optionsForSurface(size, 32, pixelFormat, name);
 }
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
 static NSDictionary *optionsFor64BitSurface(IntSize size, unsigned pixelFormat, IOSurface::Name name)
 {
     return optionsForSurface(size, 64, pixelFormat, name);
@@ -249,14 +247,6 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
     case Format::BGRA:
         options = optionsFor32BitSurface(size, 'BGRA', name);
         break;
-#if HAVE(IOSURFACE_RGB10)
-    case Format::RGB10:
-        options = optionsFor32BitSurface(size, 'w30r', name);
-        break;
-    case Format::RGB10A8:
-        options = optionsForBiplanarSurface(size, 'b3a8', 4, 1, name);
-        break;
-#endif
     case Format::YUV422:
         options = optionsForBiplanarSurface(size, '422f', 1, 1, name);
         break;
@@ -264,7 +254,17 @@ IOSurface::IOSurface(IntSize size, const DestinationColorSpace& colorSpace, IOSu
     case Format::RGBA:
         options = optionsFor32BitSurface(size, 'RGBA', name);
         break;
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case Format::RGB10:
+        options = optionsFor32BitSurface(size, 'w30r', name);
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case Format::RGB10A8:
+        options = optionsForBiplanarSurface(size, 'b3a8', 4, 1, name);
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case Format::RGBA16F:
         options = optionsFor64BitSurface(size, 'RGhA', name);
         break;
@@ -284,22 +284,19 @@ static std::optional<IOSurface::Format> formatFromSurface(IOSurfaceRef surface)
     unsigned pixelFormat = IOSurfaceGetPixelFormat(surface);
     if (pixelFormat == 'BGRA')
         return IOSurface::Format::BGRA;
-
-#if HAVE(IOSURFACE_RGB10)
+    if (pixelFormat == '422f')
+        return IOSurface::Format::YUV422;
+    if (pixelFormat == 'RGBA')
+        return IOSurface::Format::RGBA;
+#if ENABLE(PIXEL_FORMAT_RGB10)
     if (pixelFormat == 'w30r')
         return IOSurface::Format::RGB10;
-
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
     if (pixelFormat == 'b3a8')
         return IOSurface::Format::RGB10A8;
 #endif
-
-    if (pixelFormat == '422f')
-        return IOSurface::Format::YUV422;
-
-    if (pixelFormat == 'RGBA')
-        return IOSurface::Format::RGBA;
-
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (pixelFormat == 'RGhA')
         return IOSurface::Format::RGBA16F;
 #endif
@@ -445,15 +442,6 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
         break;
     case Format::BGRA:
         break;
-#if HAVE(IOSURFACE_RGB10)
-    case Format::RGB10:
-    case Format::RGB10A8:
-        // A half-float format will be used if CG needs to read back the IOSurface contents,
-        // but for an IOSurface-to-IOSurface copy, there should be no conversion.
-        bitsPerComponent = 16;
-        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
-        break;
-#endif
     case Format::YUV422:
         ASSERT_NOT_REACHED();
         break;
@@ -462,7 +450,23 @@ IOSurface::BitmapConfiguration IOSurface::bitmapConfiguration() const
         break;
     case Format::RGBA:
         break;
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case Format::RGB10:
+        // A half-float format will be used if CG needs to read back the IOSurface contents,
+        // but for an IOSurface-to-IOSurface copy, there should be no conversion.
+        bitsPerComponent = 16;
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case Format::RGB10A8:
+        // A half-float format will be used if CG needs to read back the IOSurface contents,
+        // but for an IOSurface-to-IOSurface copy, there should be no conversion.
+        bitsPerComponent = 16;
+        bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case Format::RGBA16F:
         bitsPerComponent = 16;
         bitmapInfo = static_cast<CGBitmapInfo>(kCGImageAlphaPremultipliedLast) | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host) | static_cast<CGBitmapInfo>(kCGBitmapFloatComponents);
@@ -580,8 +584,12 @@ bool IOSurface::isInUse() const
 
 bool IOSurface::allowConversionFromFormatToFormat(Format sourceFormat, Format destFormat)
 {
-#if HAVE(IOSURFACE_RGB10)
-    if ((sourceFormat == Format::RGB10 || sourceFormat == Format::RGB10A8) && destFormat == Format::YUV422)
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    if (sourceFormat == Format::RGB10 && destFormat == Format::YUV422)
+        return false;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    if (sourceFormat == Format::RGB10A8 && destFormat == Format::YUV422)
         return false;
 #endif
 
@@ -705,9 +713,6 @@ IOSurface::Name IOSurface::nameForRenderingPurpose(RenderingPurpose purpose)
     case RenderingPurpose::LayerBacking:
         return Name::LayerBacking;
 
-    case RenderingPurpose::BitmapOnlyLayerBacking:
-        return Name::BitmapOnlyLayerBacking;
-
     case RenderingPurpose::Snapshot:
         return Name::Snapshot;
 
@@ -736,21 +741,23 @@ TextStream& operator<<(TextStream& ts, IOSurface::Format format)
     case IOSurface::Format::YUV422:
         ts << "YUV422";
         break;
-#if HAVE(IOSURFACE_RGB10)
-    case IOSurface::Format::RGB10:
-        ts << "RGB10";
-        break;
-    case IOSurface::Format::RGB10A8:
-        ts << "RGB10A8";
-        break;
-#endif
     case IOSurface::Format::RGBX:
         ts << "RGBX";
         break;
     case IOSurface::Format::RGBA:
         ts << "RGBA";
         break;
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    case IOSurface::Format::RGB10:
+        ts << "RGB10";
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
+    case IOSurface::Format::RGB10A8:
+        ts << "RGB10A8";
+        break;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case IOSurface::Format::RGBA16F:
         ts << "RGBA16F";
         break;

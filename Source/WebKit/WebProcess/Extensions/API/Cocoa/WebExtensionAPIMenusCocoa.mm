@@ -143,7 +143,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         else if ([type isEqualToString:separatorKey])
             parameters.type = WebExtensionMenuItemType::Separator;
         else {
-            *outExceptionString = toErrorString(nil, typeKey, @"it must specify either 'normal', 'checkbox', 'radio', or 'separator'");
+            *outExceptionString = toErrorString(nullString(), typeKey, @"it must specify either 'normal', 'checkbox', 'radio', or 'separator'");
             return false;
         }
     }
@@ -178,12 +178,12 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
             }
 
             if ([context isEqualToString:@"action"] && !extensionContext().supportsManifestVersion(3)) {
-                *outExceptionString = toErrorString(nil, contextsKey, @"'%@' is not a valid context", context);
+                *outExceptionString = toErrorString(nullString(), contextsKey, @"'%@' is not a valid context", context);
                 return false;
             }
 
             if (([context isEqualToString:@"browser_action"] || [context isEqualToString:@"page_action"]) && extensionContext().supportsManifestVersion(3)) {
-                *outExceptionString = toErrorString(nil, contextsKey, @"'%@' is not a valid context", context);
+                *outExceptionString = toErrorString(nullString(), contextsKey, @"'%@' is not a valid context", context);
                 return false;
             }
 
@@ -195,7 +195,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
         for (NSString *patternString in documentPatterns) {
             auto pattern = WebExtensionMatchPattern::getOrCreate(patternString);
             if (!pattern || !pattern->isSupported()) {
-                *outExceptionString = toErrorString(nil, documentURLPatternsKey, @"'%@' is not a valid pattern", patternString);
+                *outExceptionString = toErrorString(nullString(), documentURLPatternsKey, @"'%@' is not a valid pattern", patternString);
                 return false;
             }
         }
@@ -209,7 +209,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
             // Any valid pattern is allowed, not just supported schemes.
             if (!pattern || !pattern->isValid()) {
-                *outExceptionString = toErrorString(nil, targetURLPatternsKey, @"'%@' is not a valid pattern", patternString);
+                *outExceptionString = toErrorString(nullString(), targetURLPatternsKey, @"'%@' is not a valid pattern", patternString);
                 return false;
             }
         }
@@ -219,7 +219,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     if (NSString *identifier = objectForKey<NSString>(properties, idKey, false)) {
         if (!identifier.length) {
-            *outExceptionString = toErrorString(nil, idKey, @"it must not be empty");
+            *outExceptionString = toErrorString(nullString(), idKey, @"it must not be empty");
             return false;
         }
 
@@ -229,7 +229,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     if (NSString *parentIdentifier = objectForKey<NSString>(properties, parentIdKey, false)) {
         if (!parentIdentifier.length) {
-            *outExceptionString = toErrorString(nil, parentIdKey, @"it must not be empty");
+            *outExceptionString = toErrorString(nullString(), parentIdKey, @"it must not be empty");
             return false;
         }
 
@@ -239,7 +239,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     if (NSString *title = properties[titleKey]) {
         if (!title.length && parameters.type != WebExtensionMenuItemType::Separator) {
-            *outExceptionString = toErrorString(nil, titleKey, @"it must not be empty");
+            *outExceptionString = toErrorString(nullString(), titleKey, @"it must not be empty");
             return false;
         }
 
@@ -248,7 +248,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     if (JSValue *clickCallback = properties[onclickKey]) {
         if (!clickCallback._isFunction) {
-            *outExceptionString = toErrorString(nil, onclickKey, @"it must be a function");
+            *outExceptionString = toErrorString(nullString(), onclickKey, @"it must be a function");
             return false;
         }
 
@@ -293,7 +293,7 @@ bool WebExtensionAPIMenus::parseCreateAndUpdateProperties(ForUpdate forUpdate, N
 
     if (NSString *command = properties[commandKey]) {
         if (!command.length) {
-            *outExceptionString = toErrorString(nil, commandKey, @"it must not be empty");
+            *outExceptionString = toErrorString(nullString(), commandKey, @"it must not be empty");
             return false;
         }
 

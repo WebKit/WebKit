@@ -33,7 +33,7 @@ function foo(o, p, q)
     return x + y;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     foo(new Cons1(), true, false);
     foo(new Cons2(), false, true);
     foo(new Cons3(), false, true);
@@ -46,7 +46,7 @@ function bar(o, p)
 
 noInline(bar);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     bar(new Cons1(), false);
 
 var result = bar(new Cons1(), true);

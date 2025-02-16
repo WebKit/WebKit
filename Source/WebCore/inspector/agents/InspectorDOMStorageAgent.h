@@ -78,7 +78,7 @@ private:
     std::unique_ptr<Inspector::DOMStorageFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMStorageBackendDispatcher> m_backendDispatcher;
 
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
 };
 
 } // namespace WebCore

@@ -1,6 +1,6 @@
 
-FAIL Send and receive messages using a same origin iframe. promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
-FAIL Send and receive messages using a sandboxed same origin iframe. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Send and receive messages using a blob iframe. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL Send and receive messages using an iframe srcdoc. promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL Send and receive messages using a same origin iframe. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Send and receive messages using a sandboxed same origin iframe. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Send and receive messages using a blob iframe. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
+FAIL Send and receive messages using an iframe srcdoc. promise_test: Unhandled rejection with value: object "DataCloneError: The object can not be cloned."
 

@@ -59,7 +59,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true, tail_call: true, exceptions: true })
     const { call_same_size, call_same_size_with_stack, call_bigger_with_stack, call_smaller_with_stack } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(call_same_size(), 1337 + 42)
         assert.eq(call_same_size_with_stack(), 9 + 2)
         assert.eq(call_bigger_with_stack(), 90 + 2)

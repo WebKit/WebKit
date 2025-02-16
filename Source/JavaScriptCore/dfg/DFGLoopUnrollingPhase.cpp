@@ -1,5 +1,5 @@
 /*
- * Cloneright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,14 @@ public:
         uint32_t loopSize() { return loop->size(); }
         BasicBlock* loopBody(uint32_t i) { return loop->at(i).node(); }
         BasicBlock* header() const { return loop->header().node(); }
-        Node* condition() const { return tail->terminal()->child1().node(); }
+
+        Node* condition() const
+        {
+            if (tail && tail->terminal()->isBranch())
+                return tail->terminal()->child1().node();
+            return nullptr;
+        }
+
         bool isInductionVariable(Node* node) { return node->operand() == inductionVariable->operand(); }
         void dump(PrintStream& out) const;
 
@@ -69,6 +76,8 @@ public:
         Node* update { nullptr };
         CheckedInt32 updateValue { INT_MIN };
         CheckedUint32 iterationCount { 0 };
+
+        std::optional<bool> inverseCondition { };
     };
 
     LoopUnrollingPhase(Graph& graph)
@@ -79,8 +88,6 @@ public:
 
     bool run()
     {
-        bool changed = false;
-
         if (UNLIKELY(Options::verboseLoopUnrolling())) {
             dataLogLn("Graph before Loop Unrolling Phase:");
             m_graph.dump();
@@ -88,37 +95,42 @@ public:
 
         uint32_t unrolledCount = 0;
         while (true) {
-            const NaturalLoop* loop = selectDeepestNestedLoop();
-            if (!loop || unrolledCount >= Options::maxLoopUnrollingCount())
-                break;
-            if (!tryUnroll(loop))
+            auto loops = populateCandidateLoops();
+            if (loops.isEmpty() || unrolledCount >= Options::maxLoopUnrollingCount())
                 break;
 
-            ++unrolledCount;
-            changed = true;
+            bool unrolled = false;
+            for (auto [loop, depth] : loops) {
+                if (!loop)
+                    break;
+                if (tryUnroll(loop)) {
+                    unrolled = true;
+                    ++unrolledCount;
+                    break;
+                }
+            }
+            if (!unrolled)
+                break;
         }
 
         dataLogLnIf(Options::verboseLoopUnrolling(), "Successfully unrolled ", unrolledCount, " loops.");
-        return changed;
+        return !!unrolledCount;
     }
 
-    const NaturalLoop* selectDeepestNestedLoop()
+    Vector<std::tuple<const NaturalLoop*, int32_t>, 16> populateCandidateLoops()
     {
         m_graph.ensureCPSNaturalLoops();
 
-        const NaturalLoop* target = nullptr;
-        int32_t maxDepth = INT_MIN;
         uint32_t loopCount = m_graph.m_cpsNaturalLoops->numLoops();
-        IndexMap<const NaturalLoop*, int32_t> depthCache(loopCount, INT_MIN);
-
+        Vector<std::tuple<const NaturalLoop*, int32_t>, 16> loops(loopCount, std::tuple { nullptr, INT_MIN });
         for (uint32_t loopIndex = loopCount; loopIndex--;) {
             const NaturalLoop& loop = m_graph.m_cpsNaturalLoops->loop(loopIndex);
-            ASSERT(loop.index() == loopIndex && depthCache[loopIndex] == INT_MIN);
+            ASSERT(loop.index() == loopIndex && std::get<1>(loops[loopIndex]) == INT_MIN);
 
             int32_t depth = 0;
             const NaturalLoop* current = &loop;
             while (current) {
-                int32_t cachedDepth = depthCache[current->index()];
+                int32_t cachedDepth = std::get<1>(loops[current->index()]);
                 if (cachedDepth != INT_MIN) {
                     depth += cachedDepth;
                     break;
@@ -126,14 +138,12 @@ public:
                 ++depth;
                 current = m_graph.m_cpsNaturalLoops->innerMostOuterLoop(*current);
             }
-            depthCache[loopIndex] = depth;
-
-            if (depth > maxDepth) {
-                maxDepth = depth;
-                target = &loop;
-            }
+            loops[loopIndex] = std::tuple { &loop, depth };
         }
-        return target;
+        std::sort(loops.begin(), loops.end(), [&](const auto& lhs, const auto& rhs) {
+            return std::get<1>(lhs) > std::get<1>(rhs);
+        });
+        return loops;
     }
 
     bool tryUnroll(const NaturalLoop* loop)
@@ -268,18 +278,42 @@ public:
             data.next = successor;
         }
         data.tail = tail;
+
+        // PreHeader
+        //  |
+        // Header <----------
+        //  |               |
+        // Body             |
+        //  |    True/False |
+        // Tail -------------
+        //  | False/True
+        // Next
+        //
+        // Determine if the condition should be inverted based on whether the "not taken" branch points into the loop.
+        Node* terminal = tail->terminal();
+        ASSERT(terminal->op() == Branch);
+        if (data.loop->contains(terminal->branchData()->notTaken.block)) {
+            // If tail's branch is both jumping into the loop, then it is not a tail.
+            // This happens when we already unrolled this loop before.
+            if (data.loop->contains(terminal->branchData()->taken.block))
+                return false;
+            data.inverseCondition = true;
+        } else
+            data.inverseCondition = false;
+
         return true;
     }
 
     bool isSupportedConditionOp(NodeType op);
     bool isSupportedUpdateOp(NodeType op);
 
-    ComparisonFunction comparisonFunction(Node* condition);
+    ComparisonFunction comparisonFunction(Node* condition, bool inverseCondition);
     UpdateFunction updateFunction(Node* update);
 
     bool identifyInductionVariable(LoopData& data)
     {
         Node* condition = data.condition();
+        ASSERT(condition);
         auto isConditionValid = [&]() ALWAYS_INLINE_LAMBDA {
             if (!isSupportedConditionOp(condition->op()))
                 return false;
@@ -353,7 +387,7 @@ public:
         // Compute the number of iterations in the loop.
         {
             CheckedUint32 iterationCount = 0;
-            auto compare = comparisonFunction(condition);
+            auto compare = comparisonFunction(condition, data.inverseCondition.value());
             auto update = updateFunction(data.update);
             for (CheckedInt32 i = data.initialValue; compare(i, data.operand);) {
                 if (iterationCount > Options::maxLoopUnrollingIterationCount()) {
@@ -366,6 +400,14 @@ public:
                     return false;
                 }
                 ++iterationCount;
+                if (iterationCount.hasOverflowed()) {
+                    dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since the iteration count overflowed after the update");
+                    return false;
+                }
+            }
+            if (!iterationCount) {
+                dataLogLnIf(Options::verboseLoopUnrolling(), "Skipping loop with header ", *data.header(), " since the iteration count is zero");
+                return false;
             }
             data.iterationCount = iterationCount;
         }
@@ -423,9 +465,7 @@ public:
         BasicBlock* const header = data.header();
         BasicBlock* const tail = data.tail;
 
-        const NodeOrigin tailTerminalOrigin = tail->terminal()->origin;
-        const CodeOrigin tailTerminalOriginSemantic = tailTerminalOrigin.semantic;
-        dataLogLnIf(Options::verboseLoopUnrolling(), "tailTerminalOriginSemantic ", tailTerminalOriginSemantic);
+        dataLogLnIf(Options::verboseLoopUnrolling(), "tailTerminalOriginSemantic ", tail->terminal()->origin.semantic);
 
         // Mapping from the origin to the clones.
         UncheckedKeyHashMap<BasicBlock*, BasicBlock*> blockClones;
@@ -441,11 +481,29 @@ public:
             }
         };
 
+        auto convertTailBranchToNextJump = [&](BasicBlock* tail, BasicBlock* next) {
+            // Why don't we use Jump instead of Branch? The reason is tail's original terminal was Branch.
+            // If we change this from Branch to Jump, we need to preserve how variables are used (via GetLocal, MovHint, SetLocal)
+            // not to confuse these variables liveness, it involves what blocks are used for successors of this tail block.
+            // Here, we can simplify the problem by using Branch and using the original "header" successors as never-taken branch.
+            // FTL's subsequent pass will optimize this and convert this Branch to Jump and/or eliminate this Branch and merge
+            // multiple blocks easily since its condition is constant boolean True. But we do not need to do the complicated analysis
+            // here. So let's just use Branch.
+            ASSERT(tail->terminal()->isBranch());
+            auto* constant = m_graph.addNode(SpecBoolean, JSConstant, tail->terminal()->origin, OpInfo(m_graph.freezeStrong(jsBoolean(true))));
+            tail->insertBeforeTerminal(constant);
+            auto* terminal = tail->terminal();
+            terminal->child1() = Edge(constant, KnownBooleanUse);
+            terminal->branchData()->taken = BranchTarget(next);
+            terminal->branchData()->notTaken = BranchTarget(header);
+        };
+
 #if ASSERT_ENABLED
         m_graph.initializeNodeOwners(); // This is only used for the debug assertion in cloneNodeImpl.
 #endif
 
         BasicBlock* next = data.next;
+        ASSERT(!data.iterationCount.hasOverflowed() && data.iterationCount);
         for (uint32_t cloneCount = data.iterationCount - 1; cloneCount--;) {
             blockClones.clear();
             nodeClones.clear();
@@ -470,13 +528,8 @@ public:
                 }
 
                 // 3. Clone nodes.
-                for (uint32_t i = 0; i < body->size(); ++i) {
-                    Node* bodyNode = body->at(i);
-                    // Ignore the branch nodes at the end of the tail since we can directly jump to next (See step 5).
-                    if (body == tail && bodyNode->origin.semantic == tailTerminalOriginSemantic)
-                        continue;
-                    cloneNode(nodeClones, clone, bodyNode);
-                }
+                for (Node* node : *body)
+                    cloneNode(nodeClones, clone, node);
 
                 // 4. Clone variables and tail and head.
                 clone->variablesAtTail = body->variablesAtTail;
@@ -485,9 +538,10 @@ public:
                 replaceOperands(clone->variablesAtHead);
 
                 // 5. Clone successors. (predecessors will be fixed in resetReachability below)
-                if (body == tail)
-                    clone->appendNode(m_graph, SpecNone, Jump, tailTerminalOrigin, OpInfo(next));
-                else {
+                if (body == tail) {
+                    ASSERT(tail->terminal()->isBranch());
+                    convertTailBranchToNextJump(clone, next);
+                } else {
                     for (uint32_t i = 0; i < body->numSuccessors(); ++i) {
                         auto& successor = clone->successor(i);
                         ASSERT(successor == body->successor(i));
@@ -501,13 +555,7 @@ public:
         }
 
         // 6. Replace the original loop tail branch with a jump to the last header clone.
-        {
-            for (Node* node : *tail) {
-                if (node->origin.semantic == tailTerminalOriginSemantic)
-                    node->removeWithoutChecks();
-            }
-            tail->appendNode(m_graph, SpecNone, Jump, tailTerminalOrigin, OpInfo(next));
-        }
+        convertTailBranchToNextJump(tail, next);
 
         // Done clone.
         if (!m_blockInsertionSet.execute()) {
@@ -544,9 +592,14 @@ void LoopUnrollingPhase::LoopData::dump(PrintStream& out) const
     out.print(", ");
 
     out.print("tail=");
-    if (tail)
-        out.print(*tail);
-    else
+    if (tail) {
+        out.print(*tail, " with branch condition=");
+        Node* condition = this->condition();
+        if (condition)
+            out.print(condition, "<", condition->op(), ">");
+        else
+            out.print("<null>");
+    } else
         out.print("<null>");
     out.print(", ");
 
@@ -569,14 +622,16 @@ void LoopUnrollingPhase::LoopData::dump(PrintStream& out) const
 
     out.print("update=");
     if (update)
-        out.print("D@", update->index());
+        out.print(update, "<", update->op(), ">");
     else
         out.print("<null>");
     out.print(", ");
 
     out.print("updateValue=", updateValue, ", ");
 
-    out.print("iterationCount=", iterationCount);
+    out.print("iterationCount=", iterationCount, ", ");
+
+    out.print("inverseCondition=", inverseCondition);
 }
 
 bool LoopUnrollingPhase::isNodeCloneable(HashSet<Node*>& cloneableCache, Node* node)
@@ -590,6 +645,7 @@ bool LoopUnrollingPhase::isNodeCloneable(HashSet<Node*>& cloneableCache, Node* n
         break;
     case ValueRep:
     case DoubleRep:
+    case PurifyNaN:
     case JSConstant:
     case LoopHint:
     case PhantomLocal:
@@ -713,6 +769,7 @@ Node* LoopUnrollingPhase::cloneNodeImpl(UncheckedKeyHashMap<Node*, Node*>& nodeC
     }
     case ValueRep:
     case DoubleRep:
+    case PurifyNaN:
     case ExitOK:
     case LoopHint:
     case GetButterfly:
@@ -795,20 +852,27 @@ bool LoopUnrollingPhase::isSupportedUpdateOp(NodeType op)
     }
 }
 
-LoopUnrollingPhase::ComparisonFunction LoopUnrollingPhase::comparisonFunction(Node* condition)
+LoopUnrollingPhase::ComparisonFunction LoopUnrollingPhase::comparisonFunction(Node* condition, bool inverseCondition)
 {
+    static const ComparisonFunction less = [](auto a, auto b) { return a < b; };
+    static const ComparisonFunction lessEq = [](auto a, auto b) { return a <= b; };
+    static const ComparisonFunction greater = [](auto a, auto b) { return a > b; };
+    static const ComparisonFunction greaterEq = [](auto a, auto b) { return a >= b; };
+    static const ComparisonFunction equal = [](auto a, auto b) { return a == b; };
+    static const ComparisonFunction notEqual = [](auto a, auto b) { return a != b; };
+
     switch (condition->op()) {
     case CompareLess:
-        return [](auto a, auto b) { return a < b; };
+        return inverseCondition ? greaterEq : less;
     case CompareLessEq:
-        return [](auto a, auto b) { return a <= b; };
+        return inverseCondition ? greater : lessEq;
     case CompareGreater:
-        return [](auto a, auto b) { return a > b; };
+        return inverseCondition ? lessEq : greater;
     case CompareGreaterEq:
-        return [](auto a, auto b) { return a >= b; };
+        return inverseCondition ? less : greaterEq;
     case CompareEq:
     case CompareStrictEq:
-        return [](auto a, auto b) { return a == b; };
+        return inverseCondition ? notEqual : equal;
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return [](auto, auto) { return false; };

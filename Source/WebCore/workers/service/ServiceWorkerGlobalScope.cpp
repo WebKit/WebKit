@@ -125,7 +125,7 @@ void ServiceWorkerGlobalScope::notifyServiceWorkerPageOfCreationIfNecessary()
 
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(serviceWorkerPage->mainFrame())) {
         // FIXME: We currently do not support non-normal worlds in service workers.
-        Ref normalWorld = static_cast<JSVMClientData*>(vm().clientData)->normalWorld();
+        Ref normalWorld = downcast<JSVMClientData>(vm().clientData)->normalWorldSingleton();
         localMainFrame->loader().client().dispatchServiceWorkerGlobalObjectAvailable(normalWorld);
     }
 }

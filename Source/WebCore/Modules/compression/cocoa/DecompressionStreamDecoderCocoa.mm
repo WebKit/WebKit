@@ -24,8 +24,20 @@
 
 #include "config.h"
 #include "DecompressionStreamDecoder.h"
+#include <compression.h>
 
 namespace WebCore {
+
+// The decompression algorithm is broken up into 2 steps.
+// 1. Decompression of Data
+// 2. Flush Remaining Data
+//
+// When src_size is empty we can normally exit performing compression, but during the flush
+// step we may have data buffered and will need to continue to keep flushing out the rest.
+bool DecompressionStreamDecoder::didInflateFinishAppleCompressionFramework(int result)
+{
+    return !m_compressionStream.getPlatformStream().src_size && (!m_didFinish || (m_didFinish && result == COMPRESSION_STATUS_END));
+}
 
 ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCompressionFramework(std::span<const uint8_t> input)
 {
@@ -66,7 +78,7 @@ ExceptionOr<Ref<JSC::ArrayBuffer>> DecompressionStreamDecoder::decompressAppleCo
             || (m_didFinish && m_compressionStream.getPlatformStream().src_size))
             return Exception { ExceptionCode::TypeError, "Extra bytes past the end."_s };
 
-        if (!m_compressionStream.getPlatformStream().src_size) {
+        if (didInflateFinishAppleCompressionFramework(result)) {
             shouldDecompress = false;
             output.shrink(allocateSize - m_compressionStream.getPlatformStream().dst_size);
         } else {

@@ -26,6 +26,7 @@
 #include "DeprecatedCSSOMFilterFunctionValue.h"
 
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSSerializationContext.h"
 
 namespace WebCore {
 
@@ -42,7 +43,7 @@ DeprecatedCSSOMFilterFunctionValue::DeprecatedCSSOMFilterFunctionValue(CSS::Filt
 
 String DeprecatedCSSOMFilterFunctionValue::cssText() const
 {
-    return CSS::serializationForCSS(m_filter);
+    return CSS::serializationForCSS(CSS::defaultSerializationContext(), m_filter);
 }
 
 } // namespace WebCore

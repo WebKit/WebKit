@@ -49,6 +49,7 @@ struct WGPURenderBundleImpl {
 
 namespace WebGPU {
 
+class BindGroup;
 class Buffer;
 class CommandEncoder;
 class Device;
@@ -63,9 +64,9 @@ class RenderBundle : public WGPURenderBundleImpl, public RefCounted<RenderBundle
 public:
     using MinVertexCountsContainer = HashMap<uint64_t, IndexBufferAndIndexData, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     using ResourcesContainer = NSMapTable<id<MTLResource>, ResourceUsageAndRenderStage*>;
-    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, uint64_t commandCount, bool makeSubmitInvalid, Device& device)
+    static Ref<RenderBundle> create(NSArray<RenderBundleICBWithResources*> *resources, RefPtr<WebGPU::RenderBundleEncoder> encoder, const WGPURenderBundleEncoderDescriptor& descriptor, uint64_t commandCount, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&& bindGroups, Device& device)
     {
-        return adoptRef(*new RenderBundle(resources, encoder, descriptor, commandCount, makeSubmitInvalid, device));
+        return adoptRef(*new RenderBundle(resources, encoder, descriptor, commandCount, makeSubmitInvalid, WTFMove(bindGroups), device));
     }
     static Ref<RenderBundle> createInvalid(Device& device, NSString* errorString)
     {
@@ -89,9 +90,10 @@ public:
     NSString* lastError() const;
     bool requiresCommandReplay() const;
     bool makeSubmitInvalid() const;
+    bool rebindSamplersIfNeeded() const;
 
 private:
-    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, bool makeSubmitInvalid, Device&);
+    RenderBundle(NSArray<RenderBundleICBWithResources*> *, RefPtr<RenderBundleEncoder>, const WGPURenderBundleEncoderDescriptor&, uint64_t, bool makeSubmitInvalid, HashSet<RefPtr<const BindGroup>>&&, Device&);
     RenderBundle(Device&, NSString*);
 
     const Ref<Device> m_device;
@@ -99,6 +101,7 @@ private:
     NSArray<RenderBundleICBWithResources*> *m_renderBundlesResources;
     WGPURenderBundleEncoderDescriptor m_descriptor;
     Vector<WGPUTextureFormat> m_descriptorColorFormats;
+    HashSet<RefPtr<const BindGroup>> m_bindGroups;
 
     NSString* m_lastErrorString { nil };
     uint64_t m_commandCount { 0 };

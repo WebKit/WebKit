@@ -14,7 +14,7 @@ noInline(assert);
     noInline(sub);
 
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let arr = [];
         arr.length = 2;
         arr[1] = 10.5;
@@ -37,7 +37,7 @@ noInline(assert);
     }
     noInline(mul);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let arr = [];
         arr.length = 2;
         arr[1] = 10.5;
@@ -60,7 +60,7 @@ noInline(assert);
     }
     noInline(add);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let arr = [];
         arr.length = 2;
         arr[1] = 10.5;

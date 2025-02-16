@@ -61,8 +61,8 @@ private:
     // 2) tier up finishes for foo and is added to Heap::m_wasmCalleesPendingDestruction
     // 3) foo isn't added to m_wasmCalleesDiscovered
     // 4) foo gets derefed and destroyed.
-    HashSet<const Wasm::Callee*> m_wasmCalleesPendingDestructionCopy;
-    HashSet<const Wasm::Callee*> m_wasmCalleesDiscovered;
+    UncheckedKeyHashSet<const Wasm::Callee*> m_wasmCalleesPendingDestructionCopy;
+    UncheckedKeyHashSet<const Wasm::Callee*> m_wasmCalleesDiscovered;
     TinyBloomFilter<uintptr_t> m_boxedWasmCalleeFilter;
     HeapCell** m_roots;
     size_t m_size;

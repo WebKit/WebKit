@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.zoneddatetime
 description: IANA legacy names must be supported
-features: [Temporal]
+features: [Temporal, canonical-tz]
 ---*/
 
 const legacyNames = [

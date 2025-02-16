@@ -51,6 +51,8 @@ public:
 
     ScriptFetcher* fetcher() const { return m_fetcher.get(); }
 
+    friend bool operator==(const SourceOrigin&, const SourceOrigin&) = default;
+
 private:
     URL m_url;
     RefPtr<ScriptFetcher> m_fetcher;

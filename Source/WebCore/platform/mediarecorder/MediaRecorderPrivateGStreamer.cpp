@@ -134,8 +134,12 @@ MediaRecorderPrivateBackend::MediaRecorderPrivateBackend(MediaStreamPrivate& str
         }
     } else {
         containerType = selectedTracks.videoTrack ? "video/mp4"_s : "audio/mp4"_s;
-        if (codecs.isEmpty() && selectedTracks.audioTrack && !selectedTracks.videoTrack)
-            codecs.append("mp4a"_s);
+        if (codecs.isEmpty()) {
+            if (selectedTracks.videoTrack)
+                codecs.append("avc1.4d002a"_s);
+            if (selectedTracks.audioTrack)
+                codecs.append("mp4a"_s);
+        }
     }
 
     StringBuilder builder;
@@ -173,9 +177,9 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
     GST_DEBUG_OBJECT(m_transcoder.get(), "Stop requested, pushing EOS event");
 
     auto scopeExit = makeScopeExit([this, completionHandler = WTFMove(completionHandler)]() mutable {
+        GST_DEBUG_OBJECT(m_transcoder.get(), "Tearing down pipeline");
         unregisterPipeline(m_pipeline);
         m_pipeline.clear();
-        GST_DEBUG_OBJECT(m_transcoder.get(), "Stopping");
         m_transcoder.clear();
         completionHandler();
     });
@@ -185,7 +189,13 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
         m_eos = true;
         return;
     }
-    webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_src.get()));
+
+    GST_DEBUG_OBJECT(m_transcoder.get(), "Emitting EOS event(s)");
+    if (!webkitMediaStreamSrcSignalEndOfStream(WEBKIT_MEDIA_STREAM_SRC(m_src.get()))) {
+        GST_DEBUG_OBJECT(m_transcoder.get(), "EOS event(s) un-successfully sent, not expecting them on the sink");
+        m_eos = true;
+        return;
+    }
 
     bool isEOS = false;
     while (!isEOS) {
@@ -197,6 +207,7 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
         });
         isEOS = m_eos;
     }
+    GST_DEBUG_OBJECT(m_transcoder.get(), "EOS event received on sink");
 }
 
 void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallback&& completionHandler)
@@ -461,7 +472,7 @@ bool MediaRecorderPrivateBackend::preparePipeline()
             return;
         }
 
-        String elementClass = WTF::span(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        String elementClass = unsafeSpan(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
         auto classifiers = elementClass.split('/');
         if (classifiers.contains("Audio"_s) && classifiers.contains("Codec"_s) && classifiers.contains("Encoder"_s))
             recorder->configureAudioEncoder(element);
@@ -490,7 +501,7 @@ void MediaRecorderPrivateBackend::processSample(GRefPtr<GstSample>&& sample)
     Locker locker { m_dataLock };
 
     GST_LOG_OBJECT(m_transcoder.get(), "Queueing %zu bytes of encoded data, caps: %" GST_PTR_FORMAT, buffer.size(), gst_sample_get_caps(sample.get()));
-    m_data.append(buffer.span());
+    m_data.append(buffer.span<uint8_t>());
 }
 
 void MediaRecorderPrivateBackend::notifyPosition(GstClockTime position)

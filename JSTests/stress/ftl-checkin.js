@@ -6,7 +6,7 @@ function foo(x){
 noInline(foo);
 
 var r;
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var z = { 'y' : i, 's' : i + 1 };
     z.s = 10;
     r = foo(z);

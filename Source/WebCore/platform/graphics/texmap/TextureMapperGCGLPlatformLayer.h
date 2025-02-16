@@ -24,7 +24,6 @@
 #include "GraphicsContextGLTextureMapperANGLE.h"
 #include "PlatformLayer.h"
 #include "TextureMapperPlatformLayer.h"
-#include "TextureMapperPlatformLayerProxyProvider.h"
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {

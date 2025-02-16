@@ -18,7 +18,7 @@ function baz()
 
 noInline(baz);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = baz();
     if (result.ftl) {
         if (result.result != 4)

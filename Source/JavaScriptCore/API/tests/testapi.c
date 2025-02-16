@@ -1578,12 +1578,15 @@ int main(int argc, char* argv[])
     configureJSCForTesting();
 
 #if !OS(WINDOWS)
-    char resolvedPath[PATH_MAX];
-    if (!realpath(argv[0], resolvedPath))
-        fprintf(stdout, "Could not get the absolute pathname for: %s\n", argv[0]);
-    char* newCWD = dirname(resolvedPath);
-    if (chdir(newCWD))
-        fprintf(stdout, "Could not chdir to: %s\n", newCWD);
+    char *resolvedPath = realpath(argv[0], NULL);
+    if (!resolvedPath)
+        fprintf(stderr, "Could not get the absolute pathname for: %s\n", argv[0]);
+    else {
+        char *newCWD = dirname(resolvedPath);
+        if (chdir(newCWD))
+            fprintf(stderr, "Could not chdir to: %s\n", newCWD);
+        free(resolvedPath);
+    }
 #endif
 
     const char* filter = argc > 1 ? argv[1] : NULL;

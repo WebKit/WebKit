@@ -918,12 +918,20 @@ class webkit_ipc_cpp_impl(object):
                 self.pre_call_stmts += [f"if (UNLIKELY(!{a.name})) {{", f"    ASSERT_IS_TESTING_IPC();", f"    return;", f"}}"]
             if self.is_delete:
                 self.pre_call_stmts += [
+                    f"if (UNLIKELY(!m_objectNames.isValidKey({a.name}))) {{",
+                    f"    ASSERT_IS_TESTING_IPC();",
+                    f"    return;",
+                    f"}}",
                     f"if (UNLIKELY(!{a.name}))",
                     f"    return;",
                     f"{a.name} = m_objectNames.take({a.name});"
                 ]
             else:
                 self.pre_call_stmts += [
+                    f"if (UNLIKELY(!m_objectNames.isValidKey({a.name}))) {{",
+                    f"    ASSERT_IS_TESTING_IPC();",
+                    f"    return;",
+                    f"}}",
                     f"if ({a.name})",
                     f"    {a.name} = m_objectNames.get({a.name});"
                 ]
@@ -967,6 +975,10 @@ class webkit_ipc_cpp_impl(object):
             self.args.args += [cpp_arg(webkit_ipc_get_message_forwarder_type(ipc_return_type), "name")]
             return_value_expr = cpp_expr(return_type, f"auto result")
             self.return_value_expr = return_value_expr
+            self.pre_call_stmts += [f"if (UNLIKELY(!m_objectNames.isValidKey(name))) {{"]
+            self.pre_call_stmts += [f"    ASSERT_IS_TESTING_IPC();"]
+            self.pre_call_stmts += [f"    return;"]
+            self.pre_call_stmts += [f"}}"]
             self.post_call_stmts += [f"if (result)", f"    m_objectNames.add(name, result);"]
             return
         if return_type.is_void():

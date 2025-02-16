@@ -120,6 +120,8 @@ WI.RenderingFrameTimelineView = class RenderingFrameTimelineView extends WI.Time
         this.representedObject.removeEventListener(WI.Timeline.Event.RecordAdded, this._renderingFrameTimelineRecordAdded, this);
 
         this._dataGrid.closed();
+
+        super.closed();
     }
 
     get selectionPathComponents()

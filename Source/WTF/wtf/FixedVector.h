@@ -29,10 +29,11 @@
 
 namespace WTF {
 
-template<typename T>
+template<typename T, typename Malloc>
 class FixedVector {
 public:
-    using Storage = EmbeddedFixedVector<T>;
+    using Storage = EmbeddedFixedVector<T, Malloc>;
+    using Self = FixedVector<T, Malloc>;
     using value_type = typename Storage::value_type;
     using pointer = typename Storage::pointer;
     using reference = typename Storage::reference;
@@ -124,13 +125,13 @@ public:
     template<typename... Args>
     static FixedVector createWithSizeAndConstructorArguments(size_t size, Args&&... args)
     {
-        return FixedVector<T> { size ? Storage::createWithSizeAndConstructorArguments(size, std::forward<Args>(args)...).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
+        return Self { size ? Storage::createWithSizeAndConstructorArguments(size, std::forward<Args>(args)...).moveToUniquePtr() : std::unique_ptr<Storage> { nullptr } };
     }
 
     template<std::invocable<size_t> Generator>
     static FixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
     {
-        return FixedVector<T> { Storage::createWithSizeFromGenerator(size, std::forward<Generator>(generator)) };
+        return Self { Storage::createWithSizeFromGenerator(size, std::forward<Generator>(generator)) };
     }
 
     size_t size() const { return m_storage ? m_storage->size() : 0; }
@@ -168,7 +169,7 @@ public:
         m_storage->fill(val);
     }
 
-    bool operator==(const FixedVector<T>& other) const
+    bool operator==(const Self& other) const
     {
         if (!m_storage) {
             if (!other.m_storage)
@@ -184,7 +185,7 @@ public:
     template<typename U> size_t find(const U&) const;
     template<typename MatchFunction> size_t findIf(const MatchFunction&) const;
 
-    void swap(FixedVector<T>& other)
+    void swap(Self& other)
     {
         using std::swap;
         swap(m_storage, other.m_storage);
@@ -218,16 +219,16 @@ private:
 };
 static_assert(sizeof(FixedVector<int>) == sizeof(int*));
 
-template<typename T>
+template<typename T, typename Malloc>
 template<typename U>
-bool FixedVector<T>::contains(const U& value) const
+bool FixedVector<T, Malloc>::contains(const U& value) const
 {
     return find(value) != notFound;
 }
 
-template<typename T>
+template<typename T, typename Malloc>
 template<typename MatchFunction>
-size_t FixedVector<T>::findIf(const MatchFunction& matches) const
+size_t FixedVector<T, Malloc>::findIf(const MatchFunction& matches) const
 {
     for (size_t i = 0; i < size(); ++i) {
         if (matches(at(i)))
@@ -236,25 +237,25 @@ size_t FixedVector<T>::findIf(const MatchFunction& matches) const
     return notFound;
 }
 
-template<typename T>
+template<typename T, typename Malloc>
 template<typename U>
-size_t FixedVector<T>::find(const U& value) const
+size_t FixedVector<T, Malloc>::find(const U& value) const
 {
     return findIf([&](auto& item) {
         return item == value;
     });
 }
 
-template<typename T>
-inline void swap(FixedVector<T>& a, FixedVector<T>& b)
+template<typename T, typename Malloc>
+inline void swap(FixedVector<T, Malloc>& a, FixedVector<T, Malloc>& b)
 {
     a.swap(b);
 }
 
-template<typename T, typename MapFunction, typename ReturnType = typename std::invoke_result<MapFunction, const T&>::type>
-FixedVector<ReturnType> map(const FixedVector<T>& source, MapFunction&& mapFunction)
+template<typename T, typename MapFunction, typename Malloc, typename ReturnType = typename std::invoke_result<MapFunction, const T&>::type>
+FixedVector<ReturnType, Malloc> map(const FixedVector<T, Malloc>& source, MapFunction&& mapFunction)
 {
-    FixedVector<ReturnType> result(source.size());
+    FixedVector<ReturnType, Malloc> result(source.size());
 
     size_t resultIndex = 0;
     for (const auto& item : source) {

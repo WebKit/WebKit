@@ -211,6 +211,134 @@ TEST(WKWebExtension, DisplayStringParsingWithLocalization)
     EXPECT_NS_EQUAL(extension.errors, @[ ]);
 }
 
+TEST(WKWebExtension, MultipleIconSizes)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+
+        @"icons": @{
+            @"16": @"icon-16.png",
+            @"32": @"icon-32.png",
+            @"64": @"icon-64.png"
+        },
+
+        @"action": @{
+            @"default_icon": @{
+                @"16": @"action-icon-16.png",
+                @"32": @"action-icon-32.png",
+                @"64": @"action-icon-64.png"
+            }
+        }
+    };
+
+    auto screenScale = 1.0;
+#if PLATFORM(IOS_FAMILY)
+    screenScale = UIScreen.mainScreen.scale;
+#else
+    screenScale = NSScreen.mainScreen.backingScaleFactor;
+#endif
+
+    auto requestedSize = CGSizeMake(16, 16);
+    SEL selector16, selector32, selector64;
+
+    if ((requestedSize.width * screenScale) <= 16) {
+        selector16 = @selector(blackColor);
+        selector32 = @selector(whiteColor);
+        selector64 = @selector(whiteColor);
+    } else if ((requestedSize.width * screenScale) <= 32) {
+        selector16 = @selector(whiteColor);
+        selector32 = @selector(blackColor);
+        selector64 = @selector(whiteColor);
+    } else {
+        selector16 = @selector(whiteColor);
+        selector32 = @selector(whiteColor);
+        selector64 = @selector(blackColor);
+    }
+
+    auto *icon16 = Util::makePNGData(CGSizeMake(16, 16), selector16);
+    auto *icon32 = Util::makePNGData(CGSizeMake(32, 32), selector32);
+    auto *icon64 = Util::makePNGData(CGSizeMake(64, 64), selector64);
+
+    auto *resources = @{
+        @"icon-16.png": icon16,
+        @"icon-32.png": icon32,
+        @"icon-64.png": icon64,
+        @"action-icon-16.png": icon16,
+        @"action-icon-32.png": icon32,
+        @"action-icon-64.png": icon64,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
+
+    auto *icon = [testExtension iconForSize:requestedSize];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, requestedSize));
+#if PLATFORM(IOS_FAMILY)
+    EXPECT_EQ(icon.scale, screenScale);
+#endif
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor blackColor]));
+
+    auto *actionIcon = [testExtension actionIconForSize:requestedSize];
+    EXPECT_NOT_NULL(actionIcon);
+    EXPECT_TRUE(CGSizeEqualToSize(actionIcon.size, requestedSize));
+#if PLATFORM(IOS_FAMILY)
+    EXPECT_EQ(actionIcon.scale, screenScale);
+#endif
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(actionIcon), [CocoaColor blackColor]));
+}
+
+TEST(WKWebExtension, IconErrorsOnce)
+{
+    auto *testManifestDictionary = @{
+        @"manifest_version": @3,
+
+        @"name": @"Test",
+        @"version": @"1.0",
+        @"description": @"Test",
+
+        @"icons": @{
+            @"16": @"icon-16.png",
+            @"32": @"icon-32.png",
+            @"64": @"missing-icon.png"
+        },
+
+        @"action": @{
+            @"default_icon": @{
+                @"16": @"action-icon-16.png",
+                @"32": @"action-icon-32.png",
+                @"64": @"missing-action-icon.png"
+            }
+        }
+    };
+
+    auto *icon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(blackColor));
+    auto *icon32 = Util::makePNGData(CGSizeMake(32, 32), @selector(whiteColor));
+
+    auto *resources = @{
+        @"icon-16.png": icon16,
+        @"icon-32.png": icon32,
+        @"action-icon-16.png": icon16,
+        @"action-icon-32.png": icon32,
+    };
+
+    auto testExtension = [[WKWebExtension alloc] _initWithManifestDictionary:testManifestDictionary resources:resources];
+    EXPECT_EQ(testExtension.errors.count, 0u);
+
+    // Request the icons multiple times to trigger access to the image resources.
+    for (auto i = 0; i < 3; ++i) {
+        EXPECT_NULL([testExtension iconForSize:CGSizeMake(64, 64)]);
+        EXPECT_NULL([testExtension actionIconForSize:CGSizeMake(64, 64)]);
+    }
+
+    // A total of 4 errors are expected: one per missing resource, and one per icon type (normal and action).
+    EXPECT_EQ(testExtension.errors.count, 4u);
+}
+
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 TEST(WKWebExtension, MultipleIconVariants)
 {
@@ -2030,9 +2158,32 @@ TEST(WKWebExtension, LoadFromDirectory)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithResourceBaseURL:extensionURL error:nullptr]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager loadAndRun];
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
+TEST(WKWebExtension, LoadFromDirectoryWithoutTrailingSlash)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *extensionURLAbsoluteString = [NSBundle.test_resourcesBundle URLForResource:@"web-extension" withExtension:@""].absoluteString;
+    auto *extensionURLAbsoluteStringWithoutTrailingSlash = [extensionURLAbsoluteString substringToIndex:extensionURLAbsoluteString.length - 1];
+    auto *extensionURL = [NSURL URLWithString:extensionURLAbsoluteStringWithoutTrailingSlash];
+    EXPECT_NOT_NULL(extensionURL);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithResourceBaseURL:extensionURL error:nullptr]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
@@ -2053,9 +2204,8 @@ TEST(WKWebExtension, LoadFromZipArchiveWithoutParentDirectory)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithResourceBaseURL:extensionURL error:nullptr]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
@@ -2076,9 +2226,8 @@ TEST(WKWebExtension, LoadFromZipArchiveWithParentDirectory)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithResourceBaseURL:extensionURL error:nullptr]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
@@ -2099,9 +2248,8 @@ TEST(WKWebExtension, LoadFromChromeExtensionArchive)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithResourceBaseURL:extensionURL error:nullptr]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
@@ -2125,9 +2273,8 @@ TEST(WKWebExtension, LoadFromMacAppExtensionBundle)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithAppExtensionBundle:extensionBundle error:nullptr]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
@@ -2151,9 +2298,8 @@ TEST(WKWebExtension, LoadFromiOSAppExtensionBundle)
     auto extension = adoptNS([[WKWebExtension alloc] _initWithAppExtensionBundle:extensionBundle error:nullptr]);
     auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];

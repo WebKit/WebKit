@@ -163,6 +163,8 @@ public:
     bool mousePressed() const { return m_mousePressed; }
     Node* mousePressNode() const { return m_mousePressNode.get(); }
 
+    WEBCORE_EXPORT ScrollableArea* focusedScrollableArea() const;
+
     WEBCORE_EXPORT void setCapturingMouseEventsElement(RefPtr<Element>&&);
     void pointerCaptureElementDidChange(Element*);
 
@@ -230,7 +232,7 @@ public:
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS) || ENABLE(IOS_GESTURE_EVENTS) || ENABLE(MAC_GESTURE_EVENTS)
-    using EventTargetSet = HashSet<RefPtr<EventTarget>>;
+    using EventTargetSet = UncheckedKeyHashSet<RefPtr<EventTarget>>;
 #endif
 
 #if ENABLE(IOS_TOUCH_EVENTS)
@@ -321,6 +323,8 @@ public:
 
     WEBCORE_EXPORT static NSEvent *currentNSEvent();
     static NSEvent *correspondingPressureEvent();
+
+    WEBCORE_EXPORT static IntSize autoscrollAdjustmentFactorForScreenBoundaries(const FloatPoint& screenPoint, const FloatRect& screenRect);
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -450,7 +454,7 @@ private:
     enum class FireMouseOverOut : bool { No, Yes };
     void updateMouseEventTargetNode(const AtomString& eventType, Node*, const PlatformMouseEvent&, FireMouseOverOut);
 
-    ScrollableArea* enclosingScrollableArea(Node*);
+    ScrollableArea* enclosingScrollableArea(Node*) const;
     void notifyScrollableAreasOfMouseEvents(const AtomString& eventType, Element* lastElementUnderMouse, Element* elementUnderMouse);
 
     MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const PlatformMouseEvent&);

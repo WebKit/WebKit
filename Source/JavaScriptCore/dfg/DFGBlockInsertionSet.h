@@ -33,15 +33,15 @@
 
 namespace JSC { namespace DFG {
 
-typedef WTF::Insertion<RefPtr<BasicBlock>> BlockInsertion;
+typedef WTF::Insertion<std::unique_ptr<BasicBlock>> BlockInsertion;
 
 class BlockInsertionSet {
 public:
     BlockInsertionSet(Graph&);
     ~BlockInsertionSet();
     
-    void insert(const BlockInsertion&);
-    void insert(size_t index, Ref<BasicBlock>&&);
+    void insert(BlockInsertion&&);
+    void insert(size_t index, std::unique_ptr<BasicBlock>&&);
     BasicBlock* insert(size_t index, float executionCount);
     BasicBlock* insertBefore(BasicBlock* before, float executionCount);
 

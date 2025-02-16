@@ -8,7 +8,7 @@ noInline(func);
 
 function test(f)
 {
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         if (f(0) != 1)
             throw "Wrong expected value";
 

@@ -155,3 +155,21 @@ class TestClassify(testing.PathTestCase):
             captured.stderr.getvalue(),
             'Provided commit does not match a known class in this repository\n',
         )
+
+    def test_path_no_repository(self):
+        classifier = CommitClassifier([CommitClassifier.CommitClass(
+            name='Tools',
+            paths=['Tests', 'metadata'],
+        )])
+        self.assertIsNone(
+            classifier.classify(Commit(
+            revision=10,
+            hash='898d20c0b1efc7b717173804676349f079df3b7e',
+            identifier='6@main',
+            timestamp=int(time.time()),
+            author=Contributor.Encoder().default(Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')),
+            message='Commit title\n'
+                    'https://bugs.example.com/show_bug.cgi?id=1\n\n'
+                    'Reviewed by NOBODY (OOPS!)\n\n'
+                    'cherry-pick: 2.3@branch-b (790725a6d79e)\n',
+        )))

@@ -26,6 +26,7 @@
 #import "_WKWebExtensionSQLiteDatabase.h"
 #import <sqlite3.h>
 #import <tuple>
+#import <wtf/ObjCRuntimeExtras.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -161,9 +162,7 @@ public:
         if (!value)
             return sqlite3_bind_null(statement, index);
 
-        const char* objCType = [value objCType];
-
-        if (!strcmp(objCType, @encode(double)) || !strcmp(objCType, @encode(float)))
+        if (nsValueHasObjCType<double>(value) || nsValueHasObjCType<float>(value))
             return sqlite3_bind_double(statement, index, value.doubleValue);
 
         return sqlite3_bind_int64(statement, index, value.longLongValue);

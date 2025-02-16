@@ -1201,8 +1201,6 @@
         <extension name="GL_ANGLE_texture_multisample" supported='gles2'>
             <require>
                 <command name="glTexStorage2DMultisampleANGLE"/>
-                <command name="glGetTexLevelParameterivANGLE"/>
-                <command name="glGetTexLevelParameterfvANGLE"/>
                 <command name="glGetMultisamplefvANGLE"/>
                 <command name="glSampleMaskiANGLE"/>
                 <enum name="GL_TEXTURE_2D_MULTISAMPLE_ANGLE"/>

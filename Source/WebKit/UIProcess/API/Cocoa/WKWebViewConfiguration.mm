@@ -730,6 +730,16 @@ static NSString *defaultApplicationNameForUserAgent()
     _pageConfiguration->setAllowUniversalAccessFromFileURLs(allowUniversalAccessFromFileURLs);
 }
 
+- (BOOL)_showsSystemScreenTimeBlockingView
+{
+    return _pageConfiguration->showsSystemScreenTimeBlockingView();
+}
+
+- (void)_setShowsSystemScreenTimeBlockingView:(BOOL)shows
+{
+    _pageConfiguration->setShowsSystemScreenTimeBlockingView(shows);
+}
+
 - (BOOL)_allowTopNavigationToDataURLs
 {
     return _pageConfiguration->allowTopNavigationToDataURLs();

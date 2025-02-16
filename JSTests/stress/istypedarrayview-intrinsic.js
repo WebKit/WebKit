@@ -16,7 +16,7 @@ typedArrays.forEach(function() {
         let bar = makeFn(true);
         let view = new Int8Array(10);
 
-        for (i = 0; i < 100000; i++) {
+        for (i = 0; i < testLoopCount; i++) {
             if (!foo(view))
                 throw new Error(i);
             if (!bar(view))
@@ -36,7 +36,7 @@ typedArrays.forEach(constructor1 => {
             let view1 = new ${constructor1.name}(10);
             let view2 = new ${constructor2.name}(10);
 
-            for (i = 0; i < 100000; i++) {
+            for (i = 0; i < testLoopCount; i++) {
                 let view = i % 2 === 0 ? view1 : view2;
                 if (!foo(view))
                     throw new Error(i);
@@ -52,7 +52,7 @@ typedArrays.forEach(constructor1 => {
 let test = function() {
     let foo = makeFn();
     let bar = makeFn(true);
-    for (i = 0; i < 100000; i++) {
+    for (i = 0; i < testLoopCount; i++) {
         if (foo(true))
             throw new Error(i);
         if (bar(true))
@@ -65,7 +65,7 @@ test = function() {
     let bar = makeFn(true);
     let view = new Int8Array(10);
     let obj = new DataView(new ArrayBuffer(10));
-    for (i = 0; i < 100000; i++) {
+    for (i = 0; i < testLoopCount; i++) {
         if (i % 2 === 0) {
             if (!foo(view))
                 throw new Error(i);

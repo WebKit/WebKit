@@ -34,6 +34,7 @@
 #include <sys/time.h>
 #include <vector>
 #include <wtf/MonotonicTime.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if PLATFORM(PLAYSTATION)
 #include <memory-extra/showmap.h>
@@ -91,7 +92,7 @@ int main(int argc, char* argv[])
 
     size_t iterations = 20;
     if (argc >= 3) {
-        int iters = atoi(argv[2]);
+        int iters = parseInteger<int>(unsafeSpan(argv[2])).value_or(0);
         if (iters < 0) {
             printf("Iterations argument must be >= 0");
             exit(1);

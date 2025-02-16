@@ -369,10 +369,10 @@ const Vector<InvalidationRuleSet>* ScopeRuleSets::hasPseudoClassInvalidationRule
     return ensureInvalidationRuleSets(key, m_hasPseudoClassInvalidationRuleSets, m_features.hasPseudoClassRules);
 }
 
-const HashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQueries() const
+const UncheckedKeyHashSet<AtomString>& ScopeRuleSets::customPropertyNamesInStyleContainerQueries() const
 {
     if (!m_customPropertyNamesInStyleContainerQueries) {
-        HashSet<AtomString> propertyNames;
+        UncheckedKeyHashSet<AtomString> propertyNames;
 
         auto collectPropertyNames = [&](auto* ruleSet) {
             if (!ruleSet)
@@ -412,7 +412,7 @@ SelectorsForStyleAttribute ScopeRuleSets::selectorsForStyleAttribute() const
     return *m_cachedSelectorsForStyleAttribute;
 }
 
-bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(const WTF::Function<bool(RuleSet&)>& predicate)
+bool ScopeRuleSets::hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bool(RuleSet&)>& predicate)
 {
     if (m_authorStyle && predicate(*m_authorStyle))
         return true;

@@ -98,7 +98,6 @@ private:
 
     Ref<FragmentedSharedBuffer> takeData();
 
-    MediaTime nextVideoFrameTime(const MediaTime&);
     MediaTime lastMuxedSampleTime() const;
 
     void generateMIMEType();
@@ -108,7 +107,7 @@ private:
     RefPtr<AudioSampleBufferConverter> audioConverter() const;
     void enqueueCompressedAudioSampleBuffers();
 
-    void appendVideoFrame(const MediaTime&, Ref<VideoFrame>&&);
+    void appendVideoFrame(MediaTime, Ref<VideoFrame>&&);
     Ref<GenericPromise> encodePendingVideoFrames();
     void processVideoEncoderActiveConfiguration(const VideoEncoder::Config&, const VideoEncoderActiveConfiguration&);
     void enqueueCompressedVideoFrame(VideoEncoder::EncodedFrame&&);
@@ -132,6 +131,7 @@ private:
     bool m_writerIsStarted WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     bool m_writerIsClosed WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     MediaTime m_lastMuxedSampleStartTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    bool m_lastMuxedSampleIsVideo WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     MediaTime m_lastMuxedAudioSampleEndTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     bool m_hasMuxedAudioFrameSinceEndSegment WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     bool m_hasMuxedVideoFrameSinceEndSegment WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
@@ -172,12 +172,11 @@ private:
     Deque<UniqueRef<MediaSamplesBlock>> m_encodedVideoFrames WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     Deque<UniqueRef<MediaSamplesBlock>> m_interleavedFrames WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     bool m_firstVideoFrameProcessed WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    std::optional<MonotonicTime> m_currentVideoSegmentStartTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    uint64_t m_previousSegmentVideoDurationUs WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { 0 };
+    MediaTime m_lastRawVideoFrameReceived WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { MediaTime::negativeInfiniteTime() };
     MediaTime m_lastEnqueuedRawVideoFrame WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { MediaTime::negativeInfiniteTime() };
     MediaTime m_lastVideoKeyframeTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    MediaTime m_lastReceivedCompressedVideoFrame WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { MediaTime::negativeInfiniteTime() };
-    MediaTime m_currentVideoDuration WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    std::optional<MediaTime> m_firstVideoFrameTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    std::optional<MonotonicTime> m_resumeWallTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::optional<CGAffineTransform> m_videoTransform;
     RefPtr<GenericNonExclusivePromise> m_videoEncoderCreationPromise;
 

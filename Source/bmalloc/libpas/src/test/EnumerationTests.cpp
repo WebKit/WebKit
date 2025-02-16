@@ -230,13 +230,13 @@ void testPGMEnumerationBasic() {
     pas_heap_lock_lock();
 
     size_t alloc_size = 16384;
-    pas_allocation_result result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    pas_allocation_result result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
     CHECK(result.begin);
 
-    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
     CHECK(result.begin);
 
-    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
     CHECK(result.begin);
 
     pas_heap_lock_unlock();
@@ -261,13 +261,13 @@ void testPGMEnumerationAddAndFree() {
     pas_heap_lock_lock();
 
     size_t alloc_size = 16384;
-    pas_allocation_result result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    pas_allocation_result result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
     CHECK(result.begin);
 
-    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
     CHECK(result.begin);
 
-    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
+    result = pas_probabilistic_guard_malloc_allocate(&heap->large_heap, alloc_size, 1, pas_non_compact_allocation_mode, &iso_heap_config, &transaction);
     CHECK(result.begin);
 
     pas_probabilistic_guard_malloc_deallocate((void*) result.begin);

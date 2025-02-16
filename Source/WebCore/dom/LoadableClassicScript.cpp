@@ -39,8 +39,8 @@
 
 namespace WebCore {
 
-LoadableNonModuleScriptBase::LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriorityHint,  const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
-    : LoadableScript(nonce, policy, fetchPriorityHint, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
+LoadableNonModuleScriptBase::LoadableNonModuleScriptBase(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority,  const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+    : LoadableScript(nonce, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
     , m_integrity(integrity)
     , m_isAsync(isAsync)
 {
@@ -157,13 +157,13 @@ bool LoadableNonModuleScriptBase::load(Document& document, const URL& sourceURL)
     return true;
 }
 
-Ref<LoadableClassicScript> LoadableClassicScript::create(const AtomString& nonce, const AtomString& integrityMetadata, ReferrerPolicy policy, RequestPriority fetchPriorityHint, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+Ref<LoadableClassicScript> LoadableClassicScript::create(const AtomString& nonce, const AtomString& integrityMetadata, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
 {
-    return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, fetchPriorityHint, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync));
+    return adoptRef(*new LoadableClassicScript(nonce, integrityMetadata, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync));
 }
 
-LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriorityHint, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
-    : LoadableNonModuleScriptBase(nonce, integrity, policy, fetchPriorityHint, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync)
+LoadableClassicScript::LoadableClassicScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree, bool isAsync)
+    : LoadableNonModuleScriptBase(nonce, integrity, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree, isAsync)
 {
 }
 

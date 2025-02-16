@@ -27,16 +27,15 @@
 messages -> DrawingArea {
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     UpdateGeometry(WebCore::IntSize size) -> ()
-    SetDeviceScaleFactor(float deviceScaleFactor)
     ForceUpdate()
     DidDiscardBackingStore()
 #endif
 
+    SetDeviceScaleFactor(float deviceScaleFactor) -> ()
     DisplayDidRefresh()
 
 #if PLATFORM(COCOA)
     UpdateGeometry(WebCore::IntSize viewSize, bool flushSynchronously, MachSendRight fencePort) -> ()
-    SetDeviceScaleFactor(float deviceScaleFactor) -> ()
     SetColorSpace(struct std::optional<WebCore::DestinationColorSpace> colorSpace)
     SetViewExposedRect(std::optional<WebCore::FloatRect> viewExposedRect)
 
@@ -49,7 +48,7 @@ messages -> DrawingArea {
 #endif
 
 #if USE(GRAPHICS_LAYER_WC)
-    UpdateGeometryWC(uint64_t backingStoreStateID, WebCore::IntSize viewSize, float deviceScaleFactor)
+    UpdateGeometryWC(uint64_t backingStoreStateID, WebCore::IntSize viewSize, float deviceScaleFactor, float intrinsicDeviceScaleFactor)
 #endif
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)

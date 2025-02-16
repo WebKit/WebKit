@@ -1,0 +1,11 @@
+supportsFullScreen() == true
+enterFullScreenForElement()
+beganEnterFullScreen() - initialRect.size: {800, 600}, finalRect.size: {300, 150}
+
+FIXME: Size after entering should be 600x800 like it is with site isolation off.
+The size currently comes from screenRectOfContents.
+Also, there should be exitFullScreenForElement and beganExitFullScreen callbacks like there are with site isolation off.
+
+Size after entering fullscreen: 150x300
+Size after exiting fullscreen: 150x300
+

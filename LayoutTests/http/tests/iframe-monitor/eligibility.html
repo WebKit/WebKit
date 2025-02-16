@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="./resources/monitor-setup.js"></script>
+</head>
+<body>
+<script>
+
+description("Test resource monitor.");
+window.jsTestIsAsync = true;
+
+onload = async () => {
+    if (!await setup()) {
+        return;
+    }
+
+    // Make sure iframe load is done after rule is set correctly.
+    const stage = document.querySelector('#stage');
+    const base = 'http://localhost:8080/iframe-monitor/resources';
+
+    stage.innerHTML = `
+        <!-- these frames are not elegible for resource monitoring -->
+        <iframe name="frame1" src="${base}/iframe-not-eligible.html"></iframe>
+        <iframe name="frame2" src="${base}/iframe-not-eligible2.html"></iframe>
+
+        <!-- these frames are elegible for resource monitoring -->
+        <iframe name="frame3" src="${base}/--eligible--/iframe.html"></iframe>
+        <iframe name="frame4" src="${base}/--eligible--/iframe2.html"></iframe>
+    `;
+
+    await waitUntilUnload('frame3');
+
+    shouldBe(`document.querySelector('iframe[name=frame1]').srcdoc`, '""');
+    shouldBe(`document.querySelector('iframe[name=frame2]').srcdoc`, '""');
+    shouldNotBe(`document.querySelector('iframe[name=frame3]').srcdoc`, '""');
+    shouldBe(`document.querySelector('iframe[name=frame4]').srcdoc`, '""');
+
+    finishJSTest();
+}
+</script>
+
+<div id="stage"></div>
+</body>
+</html>

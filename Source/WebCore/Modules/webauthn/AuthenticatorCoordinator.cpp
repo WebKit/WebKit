@@ -33,7 +33,7 @@
 #include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinatorClient.h"
 #include "AuthenticatorResponseData.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "FrameDestructionObserverInlines.h"
 #include "JSBasicCredential.h"
 #include "JSCredentialCreationOptions.h"
@@ -98,9 +98,9 @@ static ScopeAndCrossOriginParent scopeAndCrossOriginParent(const Document& docum
     auto url = document.url();
     std::optional<SecurityOriginData> crossOriginParent;
     for (RefPtr parentDocument = document.parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
-        if (!origin->isSameOriginDomain(parentDocument->securityOrigin()) && !areRegistrableDomainsEqual(url, parentDocument->url()))
+        if (!origin->isSameOriginDomain(parentDocument->protectedSecurityOrigin()) && !areRegistrableDomainsEqual(url, parentDocument->url()))
             isSameSite = false;
-        if (!crossOriginParent && !origin->isSameOriginAs(parentDocument->securityOrigin()))
+        if (!crossOriginParent && !origin->isSameOriginAs(parentDocument->protectedSecurityOrigin()))
             crossOriginParent = parentDocument->securityOrigin().data();
     }
 

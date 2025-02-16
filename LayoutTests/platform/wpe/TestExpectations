@@ -80,7 +80,6 @@ imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-002.html [ 
 
 imported/w3c/web-platform-tests/html/browsers/windows/browsing-context-names/choose-_blank-003.html [ Pass ]
 
-imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-opacity.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties-blur.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties.html [ Pass ]
@@ -98,7 +97,6 @@ imported/w3c/web-platform-tests/html/semantics/forms/form-submission-0/url-encod
 
 imported/w3c/web-platform-tests/mathml/relations/css-styling/mathvariant-auto.html [ Pass ]
 
-
 # PointerEvents not enabled globally, but enabled for WPE (EXPERIMENTAL_FEATURES)
 pointerevents/pointer-id-crash.html [ Pass ]
 pointerevents/mouse [ Pass ]
@@ -108,8 +106,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.ht
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-control.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/resize-generated-content.html [ Pass ]
-
-imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/alignment/masonry-align-content-004.html [ Pass ]
 
 # Skip as many tests are flaky.
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
@@ -247,6 +243,7 @@ fast/mediastream/mediastreamtrack-video-zoom.html [ Failure ]
 [ Release ] fast/mediastream/resize-trim.html [ Failure ]
 [ Debug ] fast/mediastream/resize-trim.html [ Failure Crash ]
 fast/mediastream/video-created-while-interrupted.html [ Pass Crash ]
+webrtc/getDisplayMedia-pc.html [ Failure ]
 
 # Media Queries
 webkit.org/b/226521 [ Release ] imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/source-media-outside-doc.html [ Pass Failure ]
@@ -552,6 +549,8 @@ webkit.org/b/181767 fast/hidpi/filters-hue-rotate.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigator-clipboard-basics.https.html [ Failure ]
 
+webkit.org/b/285785 printing/background-clip-text.html [ ImageOnlyFailure ]
+
 # WPT css-fonts failures/passes unique to WPE
 
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
@@ -582,7 +581,6 @@ webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/text-b
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/text-baseline-vrl-004.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vlr-023.xht [ ImageOnlyFailure ]
 webkit.org/b/209275 imported/w3c/web-platform-tests/css/css-writing-modes/vertical-alignment-vrl-022.xht [ ImageOnlyFailure ]
-webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-writing-modes/forms/text-input-vertical-overflow-no-scroll.html [ Failure ]
 
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002.html [ Pass ]
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-punctuation-001.html [ ImageOnlyFailure ]
@@ -676,9 +674,6 @@ Bug(WPE) fast/dom/Geolocation [ Skip ]
 
 Bug(WPE) fast/dom/HTMLAnchorElement [ Skip ]
 
-# Causes OOM in the EWS bots
-webkit.org/b/283558 fast/css-custom-paint/out-of-memory-while-adding-worklet-module.html [ Skip ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # 4. TESTS CRASHING
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -710,6 +705,10 @@ webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-wh
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-document.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-root.html [ Crash ]
 webkit.org/b/244186 imported/w3c/web-platform-tests/dom/events/non-cancelable-when-passive/passive-touchstart-event-listener-on-window.html [ Crash ]
+
+webkit.org/b/286859 webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Crash ]
+
+webkit.org/b/286930 media/modern-media-controls/scrubber-support/scrubber-support-seek-back.html [ Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 5. FLAKY TESTS
@@ -796,7 +795,6 @@ webkit.org/b/257624 fast/mediastream/MediaStream-video-element-track-stop.html [
 webkit.org/b/257624 fast/scrolling/scrolling-inside-scrolled-overflowarea.html [ Pass Timeout ]
 webkit.org/b/257624 fast/scrolling/sync-scroll-overscroll-behavior-element.html [ Failure Pass ]
 webkit.org/b/257624 fast/scrolling/sync-scroll-overscroll-behavior-unscrollable-element.html [ Failure Pass ]
-webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/css/css-backgrounds/background-position/subpixel-position-center.tentative.html [ ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/html/infrastructure/urls/resolving-urls/query-encoding/windows-1251.html?include=loading [ Failure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/media-source/mediasource-play.html [ Failure Pass ]
@@ -810,7 +808,11 @@ webkit.org/b/257624 webaudio/suspend-context-while-interrupted.html [ Pass Timeo
 webkit.org/b/257624 webgl/1.0.x/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
 webkit.org/b/257624 webgl/2.0.y/conformance/rendering/texture-switch-performance.html [ Failure Pass ]
 webkit.org/b/257624 webrtc/canvas-to-peer-connection-2d.html [ Failure Pass Timeout ]
-webkit.org/b/257624 webrtc/video-h264.html [ Crash Pass Timeout ]
+
+# Fails on WPE EWS, likely when checking the video pixels. Unable to reproduce this failure locally.
+webrtc/video-h264.html [ Failure ]
+
+webkit.org/b/285752 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Pass Crash ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 6. SLOW TESTS
@@ -1067,13 +1069,9 @@ webkit.org/b/188964 fast/block/positioning/hittest-on-relative-positioned-childr
 webkit.org/b/188966 fast/images/image-map-outline-in-positioned-container.html [ ImageOnlyFailure ]
 webkit.org/b/188966 fast/images/image-map-outline-with-scale-transform.html [ ImageOnlyFailure ]
 
-fast/images/object-image-hide-show.html [ ImageOnlyFailure ]
-
 webkit.org/b/188967 fast/selectors/read-only-read-write-input-basics.html [ Failure ]
 
 webkit.org/b/188970 fast/hidpi/hidpi-3x-device-pixel-ratio.html [ Failure ]
-
-webkit.org/b/188971 fast/css3-text/css3-text-decoration/repaint/underline-outside-of-layout-rect.html [ ImageOnlyFailure ]
 
 webkit.org/b/188975 fast/css/user-drag-none.html [ Failure ]
 
@@ -1087,10 +1085,6 @@ webkit.org/b/195275 imported/w3c/web-platform-tests/css/css-text/hanging-punctua
 webkit.org/b/202736 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Failure ]
 
 webkit.org/b/190626 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element/datalistoptions.html [ Failure ]
-
-# Trusted Types aren't implemented yet
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-eval.html [ Failure ]
-webkit.org/b/266630 imported/w3c/web-platform-tests/trusted-types/WorkerGlobalScope-importScripts.html [ Failure ]
 
 # The GPU process should not be used in layout tests yet
 webkit.org/b/280604 webgl/webgl-worker.html [ Skip ]
@@ -1230,8 +1224,6 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orienta
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/214471 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/attr-all-types.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-images/object-fit-contain-png-001o.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-fit-contain-png-002i.html [ ImageOnlyFailure ]
 
 # text-transform: full-width
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-002.xht [ ImageOnlyFailure ]
@@ -1373,28 +1365,14 @@ webgl/2.0.y/conformance/reading/read-pixels-test.html [ Pass Timeout ]
 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ ImageOnlyFailure ]
 imported/mozilla/svg/tspan-rotate-07.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-animations/flip-running-animation-via-variable.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-backgrounds/background-image-cover-zoomed-1.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-iframe-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-invalidation-002.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-highlight-api/painting/custom-highlight-painting-invalidation-007.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-lists/content-property/marker-text-matches-georgian.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/first-line-change-inline-color.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-pseudo/first-line-change-inline-color-nested.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-pseudo/selection-background-painting-order.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-vertical-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/letter-spacing/letter-spacing-control-chars-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/white-space-zero-fontsize-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-above-001.xht [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/accent-color-invalidation-currentcolor.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-bottom-left-radius-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-bottom-right-radius-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-end-end-radius-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-end-start-radius-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-start-end-radius-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-start-start-radius-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-top-left-radius-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-border-top-right-radius-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/outline-027.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vrl-010.xht [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-writing-modes/line-box-height-vrl-012.xht [ Pass ImageOnlyFailure ]
@@ -1424,8 +1402,6 @@ webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
 
 webrtc/vp8-then-h264.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
-
 imported/w3c/web-platform-tests/css/filter-effects/backdrop-filter-plus-filter.html [ ImageOnlyFailure ]
 
 fast/canvas/font-family-system-ui-canvas.html [ Skip ]
@@ -1441,7 +1417,6 @@ webkit.org/b/264680 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 webkit.org/b/264680 imported/w3c/web-platform-tests/webcodecs/videoFrame-construction.crossOriginSource.sub.html [ Failure Pass ]
 webkit.org/b/264680 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_ErrorEvent_filename.htm [ Failure Pass ]
 webkit.org/b/264680 media/track/video-track-configuration-mp4-default-colorspace.html [ Failure Pass ]
-
 
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-objectboundingbox-content-clip-transform.svg [ Failure ]
 imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-objectboundingbox-content-clip.svg [ Failure ]
@@ -1480,12 +1455,12 @@ webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgb8ui-rgb_in
 webkit.org/b/266577 webgl/2.0.0/conformance2/textures/video/tex-3d-rgba8-rgba-unsigned_byte.html [ Failure Timeout Crash ]
 
 webkit.org/b/266671 http/wpt/webcodecs/videoFrame-rect.html [ Failure ]
+http/wpt/webcodecs/videoFrame-video-element.html [ Failure ]
+
+webkit.org/b/285298 imported/w3c/web-platform-tests/webcodecs/videoFrame-canvasImageSource.html [ Failure ]
 
 # [WPE] Missing implementation of TestController::setHidden()
 webkit.org/b/268470 fast/mediastream/device-change-event-2.html [ Timeout ]
-
-
-webrtc/captureCanvas-webrtc-with-video-scaling-adaptation.html [ Failure Timeout ]
 
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletprocessor-promises.https.html [ Pass Crash ]
 webkit.org/b/268917 [ Debug ] imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audioworklet-interface/audioworkletglobalscope-sample-rate.https.html [ Pass Crash ]
@@ -1536,9 +1511,6 @@ imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-pa
 
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-visibility-mixed-descendants.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html [ Skip ]
-
-# No support for compositing clip-path?
-webkit.org/b/282148 compositing/masks/clip-path-on-tiled-toggle.html [ Failure ]
 
 webkit.org/b/272224 imported/w3c/web-platform-tests/selection/textcontrols/selectionchange.html [ Failure ]
 
@@ -1602,3 +1574,148 @@ webkit.org/b/282970 imported/w3c/web-platform-tests/scroll-to-text-fragment/drag
 fast/text/hyphenate-avoid-orphaned-word.html [ Failure ]
 
 webkit.org/b/216538 webrtc/captureCanvas-webrtc-software-h264-baseline.html [ Timeout Crash Failure ]
+
+# Failures that happen with WEBKIT_SKIA_ENABLE_CPU_RENDERING=1 (which is enabled on the bots)
+webkit.org/b/287572 compositing/clipping/border-radius-async-overflow-stacking.html [ ImageOnlyFailure ]
+webkit.org/b/287572 compositing/overlap-blending/reflection-opacity-huge.html [ ImageOnlyFailure ]
+webkit.org/b/287572 css3/background/background-repeat-space-border.html [ ImageOnlyFailure ]
+webkit.org/b/287572 css3/background/background-repeat-space-padding.html [ ImageOnlyFailure ]
+webkit.org/b/287572 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
+webkit.org/b/287572 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/backgrounds/opaque-background-bleed-avoidance.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/canvas/canvas-bg.html [ Crash ]
+webkit.org/b/287572 fast/css/cascade/box-shadow-and-webkit-box-shadow-cascade-order.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/css/sticky/sticky-overflowing.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/filter-image/clipped-filter.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/images/large-image-webkit-canvas.html [ Crash ]
+webkit.org/b/287572 fast/inline/out-of-flow-with-static-position-in-ifc.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/lists/list-marker-before-float-nested-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/lists/list-marker-before-float-rtl.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/multicol/border-radius-overflow-columns.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/multicol/client-rects.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/multicol/multicol-with-child-renderLayer-for-input.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/text/empty-shadow.html [ ImageOnlyFailure ]
+webkit.org/b/287572 fast/text/multiple-text-shadow-overflow-layout-rect.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/mozilla/svg/filters-and-group-opacity-01.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/mozilla/svg/markers-and-group-opacity-01.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-parent.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-canvas-sibling.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-parent.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-iframe-sibling.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/mix-blend-mode/mix-blend-mode-plus-lighter-basic.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/compositing/root-element-background-image-transparency-003.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-backgrounds/background-repeat/background-repeat-round-roundup.xht [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-backgrounds/border-top-right-radius-004.xht [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties-border-radius.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-images/image-orientation/image-orientation-background-properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-borderBox-1e.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-ellipse-closest-farthest-corner.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-xywh-003.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-scrollbars/textarea-scrollbar-width-none.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-transforms/transform-background-005.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/css-transforms/transform-percent-008.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/filter-effects/root-element-with-opacity-filter-001.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-001.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/motion/offset-path-shape-circle-008.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/css/selectors/focus-within-004.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-from-blob.tentative.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/fill-and-stroke-styles/conic-gradient-rotation.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-flipped.html [ Crash ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap.html [ Crash ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imageBitmapRendering-transferFromImageBitmap-webgl.html [ Crash ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/html/canvas/element/manual/imagebitmap/imagebitmap-replication-exif-orientation.html [ Crash ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/svg/geometry/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/svg/geometry/reftests/percentage.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/svg/painting/reftests/percentage-attribute.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/svg/painting/reftests/percentage.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/svg/text/reftests/opacity.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/2_cues_overlapping_partially_move_down.html [ Timeout ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/2_cues_overlapping_partially_move_up.html [ Timeout ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u002E_LF_u05D0.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/bidi/u0041_first.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/cue_selector_single_colon.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/background_box.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_background_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_background_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_color.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_namespace.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_outline_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_outline_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_text-decoration_line-through.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_timestamp_future.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_timestamp_past.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_with_class.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/bold_object/bold_with_class_object_specific_selector.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_background_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_background_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_color.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_outline_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_outline_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_text-decoration_line-through.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_timestamp_future.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_timestamp_past.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_with_class.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/class_object/class_with_class_object_specific_selector.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/cue_func_selector_single_colon.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_background_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_background_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_color.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_namespace.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_outline_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_outline_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_text-decoration_line-through.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_timestamp_future.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_timestamp_past.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_with_class.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/italic_object/italic_with_class_object_specific_selector.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_allowed_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_root_selector.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/type_selector_root.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_background_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_background_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_color.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_namespace.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_outline_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_outline_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_text-decoration_line-through.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_timestamp_future.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_timestamp_past.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_with_class.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/underline_object/underline_with_class_object_specific_selector.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_background_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_background_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_color.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_outline_properties.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_outline_shorthand.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_text-decoration_line-through.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_timestamp_future.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_timestamp_past.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_voice_attribute.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_with_class.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/voice_object/voice_with_class_object_specific_selector.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/white-space_pre-line_wrapped.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/text-decoration_line-through.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/text-decoration_overline.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/text-decoration_overline_underline_line-through.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/text-decoration_underline.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_normal_wrapped.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_nowrap_wrapped.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_pre.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_pre-line_wrapped.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/bold_object_default_font-style.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/italic_object_default_font-style.html [ ImageOnlyFailure ]
+webkit.org/b/287572 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/default_styles/underline_object_default_font-style.html [ ImageOnlyFailure ]
+webkit.org/b/287572 scrollbars/scrollbar-parts-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/animations/animateMotion-accumulate-2a.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/animations/animateMotion-accumulate-2b.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/canvas/canvas-global-alpha-svg.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/clip-path/clip-opacity.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/clip-path/clip-opacity-translate.svg [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/compositing/outermost-svg-directly-composited-transformed-group-child.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/compositing/outermost-svg-with-border.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/compositing/outermost-svg-with-border-overflow-visible.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/compositing/outermost-svg-with-border-padding-margin.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/compositing/svg-poster-circle.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/filters/filter-on-root-tile-boundary.html [ ImageOnlyFailure ]
+webkit.org/b/287572 svg/W3C-SVG-1.2-Tiny/struct-use-recursion-01-t.svg [ ImageOnlyFailure ]

@@ -68,24 +68,6 @@ void DestroyAllocator(VmaAllocator allocator)
     vmaDestroyAllocator(allocator);
 }
 
-VkResult CreatePool(VmaAllocator allocator,
-                    uint32_t memoryTypeIndex,
-                    VkDeviceSize blockSize,
-                    VmaPool *pPool)
-{
-    VmaPoolCreateInfo poolCreateInfo = {};
-    poolCreateInfo.memoryTypeIndex   = memoryTypeIndex;
-    poolCreateInfo.flags             = VMA_POOL_CREATE_IGNORE_BUFFER_IMAGE_GRANULARITY_BIT;
-    poolCreateInfo.blockSize         = blockSize;
-    poolCreateInfo.maxBlockCount     = -1;  // unlimited
-    return vmaCreatePool(allocator, &poolCreateInfo, pPool);
-}
-
-void DestroyPool(VmaAllocator allocator, VmaPool pool)
-{
-    vmaDestroyPool(allocator, pool);
-}
-
 void FreeMemory(VmaAllocator allocator, VmaAllocation allocation)
 {
     vmaFreeMemory(allocator, allocation);

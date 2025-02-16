@@ -29,7 +29,7 @@ for (let i = 0; i < 1; i++) {
     foo(1);
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     baz();
 }
 

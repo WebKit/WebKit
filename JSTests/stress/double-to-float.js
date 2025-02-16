@@ -15,7 +15,7 @@ noInline(upsilonReferencingItsPhi);
 
 let expectedNotTaken = Math.fround(Math.LN2);
 let expectedTaken = Math.fround(Math.fround(Math.LN2) + Math.PI);
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let branchNotTakenResult = upsilonReferencingItsPhi(3, Math.LN2);
     if (branchNotTakenResult !== expectedNotTaken)
         throw "Failed upsilonReferencingItsPhi(3, Math.LN2) at i = " + i + " result = " + branchNotTakenResult;
@@ -38,7 +38,7 @@ function upsilonReferencingItsPhiAllFloat(index, input)
 }
 noInline(upsilonReferencingItsPhiAllFloat);
 
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let branchNotTakenResult = upsilonReferencingItsPhiAllFloat(3, Math.LN2);
     if (branchNotTakenResult !== expectedNotTaken)
         throw "Failed upsilonReferencingItsPhiAllFloat(3, Math.LN2) at i = " + i + " result = " + branchNotTakenResult;
@@ -64,7 +64,7 @@ noInline(upsilonReferencingItsPhiWithoutConversion);
 
 let expectedNotTakenWithoutConversion = Math.LN2;
 let expectedTakenWithoutConversion = Math.fround(Math.LN2) + Math.PI;
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let branchNotTakenResult = upsilonReferencingItsPhiWithoutConversion(3, Math.LN2);
     if (branchNotTakenResult !== expectedNotTakenWithoutConversion)
         throw "Failed upsilonReferencingItsPhiWithoutConversion(3, Math.LN2) at i = " + i + " result = " + branchNotTakenResult;
@@ -99,7 +99,7 @@ function conversionPropagages(flags, a, b)
 noInline(conversionPropagages);
 
 let conversionPropagageExpectedResult = Math.fround(Math.fround(Math.LN2) + Math.fround(Math.PI));
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let result = conversionPropagages(0xf, Math.LN2, Math.PI);
     if (result !== conversionPropagageExpectedResult)
         throw "Failed conversionPropagages(0xf, Math.LN2, Math.PI)";
@@ -124,7 +124,7 @@ function chainedUpsilonBothConvert(condition1, condition2, a, b)
 noInline(chainedUpsilonBothConvert);
 
 let expectedChainedUpsilonBothConvert = Math.fround(Math.fround(Math.PI) + Math.fround(1));
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (chainedUpsilonBothConvert(1, 0, Math.PI, Math.LN2) !== expectedChainedUpsilonBothConvert)
         throw "Failed chainedUpsilonBothConvert(1, 0, Math.PI, Math.LN2)";
 }
@@ -151,7 +151,7 @@ function chainedUpsilonFirstConvert(condition1, condition2, a, b)
 noInline(chainedUpsilonFirstConvert);
 
 let expectedChainedUpsilonFirstConvert = Math.fround(Math.PI) - Math.fround(1/3);
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (chainedUpsilonFirstConvert(1, 0, Math.PI, Math.LN2) !== expectedChainedUpsilonFirstConvert)
         throw "Failed chainedUpsilonFirstConvert(1, 0, Math.PI, Math.LN2)";
 }

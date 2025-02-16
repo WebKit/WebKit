@@ -11,7 +11,7 @@ function shouldThrow(func, message) {
         throw new Error("bad error: " + String(error));
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldThrow(function () {
         new Array.prototype.forEach(function () { });
     }, "TypeError: function is not a constructor (evaluating 'new Array.prototype.forEach(function () { })')");

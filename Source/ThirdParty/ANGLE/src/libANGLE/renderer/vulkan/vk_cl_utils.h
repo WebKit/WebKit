@@ -15,13 +15,14 @@
 #include "libANGLE/CLBitField.h"
 #include "libANGLE/cl_types.h"
 
-#include "libANGLE/renderer/vulkan/vk_utils.h"
+#include "vulkan/vulkan_core.h"
 
 namespace rx
 {
 namespace cl_vk
 {
-VkExtent3D GetExtentFromDescriptor(cl::ImageDescriptor desc);
+VkExtent3D GetExtent(const cl::Extents &extent);
+VkOffset3D GetOffset(const cl::Offset &offset);
 VkImageType GetImageType(cl::MemObjectType memObjectType);
 VkImageViewType GetImageViewType(cl::MemObjectType memObjectType);
 VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags);

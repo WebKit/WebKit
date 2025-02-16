@@ -44,6 +44,7 @@
 #include "Performance.h"
 #include "PlatformMediaSessionManager.h"
 #include "Quirks.h"
+#include <wtf/MediaTime.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -89,7 +90,8 @@ static bool shouldDocumentAllowWebAudioToAutoPlay(const Document& document)
 {
     if (document.isCapturing())
         return true;
-    if (document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && document.topDocument().hasHadUserInteraction())
+    RefPtr mainDocument = document.protectedMainFrameDocument();
+    if (document.quirks().shouldAutoplayWebAudioForArbitraryUserGesture() && mainDocument && mainDocument->hasHadUserInteraction())
         return true;
     RefPtr window = document.domWindow();
     return window && window->hasTransientActivation();
@@ -149,7 +151,8 @@ AudioContext::AudioContext(Document& document, const AudioContextOptions& contex
 void AudioContext::constructCommon()
 {
     ASSERT(document());
-    if (document()->topDocument().requiresUserGestureForAudioPlayback())
+    RefPtr mainFrameDocument = document()->mainFrameDocument();
+    if (!mainFrameDocument || mainFrameDocument->requiresUserGestureForAudioPlayback())
         addBehaviorRestriction(RequireUserGestureForAudioStartRestriction);
     else
         m_restrictions = NoRestrictions;
@@ -185,6 +188,18 @@ double AudioContext::baseLatency()
     lazyInitialize();
 
     return static_cast<double>(destination().framesPerBuffer()) / sampleRate();
+}
+
+double AudioContext::outputLatency()
+{
+    lazyInitialize();
+
+    if (!isPlaying())
+        return 0;
+    if (noiseInjectionPolicies())
+        return 512 / sampleRate(); // A fixed, but reasonable value for most platforms.
+
+    return destination().outputLatency().toDouble();
 }
 
 AudioTimestamp AudioContext::getOutputTimestamp()
@@ -307,9 +322,9 @@ void AudioContext::startRendering()
         return;
 
     lazyInitialize();
-    destination().startRendering([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().startRendering([protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         if (!exception)
-            setState(State::Running);
+            protectedThis->setState(State::Running);
     });
 }
 
@@ -385,8 +400,8 @@ void AudioContext::mayResumePlayback(bool shouldResume)
 
     lazyInitialize();
 
-    destination().resume([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
-        setState(exception ? State::Suspended : State::Running);
+    destination().resume([protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+        protectedThis->setState(exception ? State::Suspended : State::Running);
     });
 }
 
@@ -447,12 +462,12 @@ void AudioContext::suspendPlayback()
 
     lazyInitialize();
 
-    destination().suspend([this, protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
+    destination().suspend([protectedThis = Ref { *this }, pendingActivity = makePendingActivity(*this)](std::optional<Exception>&& exception) {
         if (exception)
             return;
 
-        bool interrupted = m_mediaSession->state() == PlatformMediaSession::State::Interrupted;
-        setState(interrupted ? State::Interrupted : State::Suspended);
+        bool interrupted = protectedThis->m_mediaSession->state() == PlatformMediaSession::State::Interrupted;
+        protectedThis->setState(interrupted ? State::Interrupted : State::Suspended);
     });
 }
 

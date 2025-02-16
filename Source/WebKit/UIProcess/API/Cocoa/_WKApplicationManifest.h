@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, _WKApplicationManifestDirection) {
     _WKApplicationManifestDirectionAuto,
     _WKApplicationManifestDirectionLTR,
     _WKApplicationManifestDirectionRTL,
-} WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+} WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
 typedef NS_ENUM(NSInteger, _WKApplicationManifestDisplayMode) {
     _WKApplicationManifestDisplayModeBrowser,

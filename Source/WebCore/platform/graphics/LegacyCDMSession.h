@@ -88,6 +88,8 @@ public:
     virtual void releaseKeys() = 0;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) = 0;
     virtual RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const = 0;
+
+    virtual bool isRemoteLegacyCDMSession() const { return false; }
 };
 
 }

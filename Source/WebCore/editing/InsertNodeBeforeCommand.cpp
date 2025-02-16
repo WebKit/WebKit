@@ -66,7 +66,7 @@ void InsertNodeBeforeCommand::doUnapply()
 }
 
 #ifndef NDEBUG
-void InsertNodeBeforeCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
+void InsertNodeBeforeCommand::getNodesInCommand(NodeSet& nodes)
 {
     addNodeAndDescendants(m_insertChild.ptr(), nodes);
     addNodeAndDescendants(m_refChild.ptr(), nodes);

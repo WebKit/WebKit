@@ -29,10 +29,10 @@
 #if PLATFORM(MAC)
 
 #import "ContentsFormat.h"
+#import "FloatPoint.h"
 #import "FloatRect.h"
 #import "HostWindow.h"
 #import "LocalFrameView.h"
-#import "PlatformCALayerClient.h"
 #import "ScreenProperties.h"
 #import "ThermalMitigationNotifier.h"
 #import <ColorSync/ColorSync.h>
@@ -364,21 +364,22 @@ DestinationColorSpace screenColorSpace(Widget* widget)
     return DestinationColorSpace { screen(widget).colorSpace.CGColorSpace };
 }
 
-ContentsFormat screenContentsFormat(Widget* widget, PlatformCALayerClient* client)
+OptionSet<ContentsFormat> screenContentsFormats(Widget* widget)
 {
-#if HAVE(HDR_SUPPORT)
-    if (client && client->hdrForImagesEnabled() && screenSupportsHighDynamicRange(widget))
-        return ContentsFormat::RGBA16F;
+    OptionSet<ContentsFormat> contentsFormats = { ContentsFormat::RGBA8 };
+
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (screenSupportsHighDynamicRange(widget))
+        contentsFormats.add(ContentsFormat::RGBA16F);
 #endif
 
-#if HAVE(IOSURFACE_RGB10)
+#if ENABLE(PIXEL_FORMAT_RGB10)
     if (screenSupportsExtendedColor(widget))
-        return ContentsFormat::RGBA10;
+        contentsFormats.add(ContentsFormat::RGBA10);
 #endif
 
     UNUSED_PARAM(widget);
-    UNUSED_PARAM(client);
-    return ContentsFormat::RGBA8;
+    return contentsFormats;
 }
 
 bool screenSupportsExtendedColor(Widget* widget)
@@ -433,6 +434,13 @@ FloatRect toUserSpaceForPrimaryScreen(const NSRect& rect)
     FloatRect userRect = rect;
     userRect.setY(NSMaxY(screenRectForDisplay(primaryScreenDisplayID())) - (userRect.y() + userRect.height())); // flip
     return userRect;
+}
+
+FloatPoint toUserSpaceForPrimaryScreen(const NSPoint& point)
+{
+    FloatPoint userPoint = point;
+    userPoint.setY(NSMaxY(screenRectForDisplay(primaryScreenDisplayID())) - userPoint.y()); // flip
+    return userPoint;
 }
 
 NSRect toDeviceSpace(const FloatRect& rect, NSWindow *source)

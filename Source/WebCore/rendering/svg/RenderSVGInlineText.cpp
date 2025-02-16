@@ -85,14 +85,23 @@ RenderSVGInlineText::RenderSVGInlineText(Text& textNode, const String& string)
 
 RenderSVGInlineText::~RenderSVGInlineText() = default;
 
+void RenderSVGInlineText::willBeDestroyed()
+{
+    removeAndDestroyLegacyTextBoxes();
+    RenderText::willBeDestroyed();
+}
+
 String RenderSVGInlineText::originalText() const
 {
     return textNode().data();
 }
 
-void RenderSVGInlineText::setRenderedText(const String& text)
+void RenderSVGInlineText::setTextInternal(const String& newText, bool force)
 {
-    RenderText::setRenderedText(text);
+    RenderText::setTextInternal(newText, force);
+    m_legacyLineBoxes.dirtyForTextChange(*this);
+    if (!force)
+        setRenderedText(newText);
     if (auto* textAncestor = RenderSVGText::locateRenderSVGTextAncestor(*this))
         textAncestor->subtreeTextDidChange(this);
 }
@@ -179,7 +188,7 @@ static int offsetForPositionInFragment(const InlineIterator::SVGTextBox& textBox
 
 VisiblePosition RenderSVGInlineText::positionForPoint(const LayoutPoint& point, HitTestSource, const RenderFragmentContainer*)
 {
-    if (!InlineIterator::firstTextBoxFor(*this) || text().isEmpty())
+    if (!InlineIterator::lineLeftmostTextBoxFor(*this) || text().isEmpty())
         return createVisiblePosition(0, Affinity::Downstream);
 
     float baseline = m_scaledFont.metricsOfPrimaryFont().ascent();
@@ -268,6 +277,22 @@ bool RenderSVGInlineText::computeNewScaledFontForStyle(const RenderObject& rende
     scaledFont = FontCascade(WTFMove(fontDescription));
     scaledFont.update(renderer.document().protectedFontSelector().ptr());
     return true;
+}
+
+void RenderSVGInlineText::deleteLegacyLineBoxes()
+{
+    m_legacyLineBoxes.deleteAll();
+}
+
+void RenderSVGInlineText::removeAndDestroyLegacyTextBoxes()
+{
+    if (!renderTreeBeingDestroyed())
+        m_legacyLineBoxes.removeAllFromParent(*this);
+#if !ASSERT_WITH_SECURITY_IMPLICATION_DISABLED
+    else
+        m_legacyLineBoxes.invalidateParentChildLists();
+#endif
+    deleteLegacyLineBoxes();
 }
 
 }

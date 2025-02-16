@@ -17,7 +17,7 @@ function shouldBe(actual, expected)
 noInline(test);
 
  var array = [0];
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(array, false), true);
 
  var iterator = test(array, true);

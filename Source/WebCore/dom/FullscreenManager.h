@@ -40,7 +40,6 @@
 
 namespace WebCore {
 
-class DeferredPromise;
 class RenderStyle;
 
 class FullscreenManager final : public CanMakeWeakPtr<FullscreenManager>, public CanMakeCheckedPtr<FullscreenManager> {
@@ -63,26 +62,24 @@ public:
     WEBCORE_EXPORT Element* fullscreenElement() const;
     RefPtr<Element> protectedFullscreenElement() const { return fullscreenElement(); }
     WEBCORE_EXPORT bool isFullscreenEnabled() const;
-    WEBCORE_EXPORT void exitFullscreen(RefPtr<DeferredPromise>&&);
+    WEBCORE_EXPORT void exitFullscreen(CompletionHandler<void(ExceptionOr<void>)>&&);
 
     // Mozilla versions.
-    bool isFullscreen() const { return m_fullscreenElement.get(); }
-    bool isFullscreenKeyboardInputAllowed() const { return m_fullscreenElement.get() && m_areKeysEnabledInFullscreen; }
-    Element* currentFullscreenElement() const { return m_fullscreenElement.get(); }
-    RefPtr<Element> protectedCurrentFullscreenElement() const { return currentFullscreenElement(); }
+    bool isFullscreen() const { return fullscreenElement(); }
+    bool isFullscreenKeyboardInputAllowed() const { return fullscreenElement() && m_areKeysEnabledInFullscreen; }
     WEBCORE_EXPORT void cancelFullscreen();
 
     enum FullscreenCheckType {
         EnforceIFrameAllowFullscreenRequirement,
         ExemptIFrameAllowFullscreenRequirement,
     };
-    WEBCORE_EXPORT void requestFullscreenForElement(Ref<Element>&&, RefPtr<DeferredPromise>&&, FullscreenCheckType, CompletionHandler<void(bool)>&& = [](bool) { }, HTMLMediaElementEnums::VideoFullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard);
-    WEBCORE_EXPORT bool willEnterFullscreen(Element&, HTMLMediaElementEnums::VideoFullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    WEBCORE_EXPORT void requestFullscreenForElement(Ref<Element>&&, FullscreenCheckType, CompletionHandler<void(ExceptionOr<void>)>&&, HTMLMediaElementEnums::VideoFullscreenMode = HTMLMediaElementEnums::VideoFullscreenModeStandard);
+    WEBCORE_EXPORT void willEnterFullscreen(Element&, HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(ExceptionOr<void>)>&&);
     WEBCORE_EXPORT bool didEnterFullscreen();
     WEBCORE_EXPORT bool willExitFullscreen();
     WEBCORE_EXPORT bool didExitFullscreen();
 
-    void notifyAboutFullscreenChangeOrError();
+    void dispatchPendingEvents();
 
     enum class ExitMode : bool { Resize, NoResize };
     void finishExitFullscreen(Document&, ExitMode);
@@ -101,7 +98,7 @@ protected:
     enum class EventType : bool { Change, Error };
     void dispatchFullscreenChangeOrErrorEvent(Deque<GCReachableRef<Node>>&, EventType, bool shouldNotifyMediaElement);
     void dispatchEventForNode(Node&, EventType);
-    void addDocumentToFullscreenChangeEventQueue(Document&);
+    void queueFullscreenChangeEventForDocument(Document&);
 
 private:
 #if !RELEASE_LOG_DISABLED
@@ -111,24 +108,40 @@ private:
     WTFLogChannel& logChannel() const;
 #endif
 
-    Document& topDocument() { return m_topDocument ? *m_topDocument : document().topDocument(); }
-    Ref<Document> protectedTopDocument();
+    Document* mainFrameDocument();
+    RefPtr<Document> protectedMainFrameDocument();
+
+    RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
+
+    void addElementToChangeEventQueue(Node& target) { m_fullscreenChangeEventTargetQueue.append(GCReachableRef(target)); }
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_topDocument;
 
-    RefPtr<Element> fullscreenOrPendingElement() const { return m_fullscreenElement ? m_fullscreenElement : m_pendingFullscreenElement; }
+    class FullscreenPromise {
+    public:
+        ~FullscreenPromise();
+        FullscreenPromise& operator=(CompletionHandler<void(ExceptionOr<void>)>&&);
 
-    RefPtr<DeferredPromise> m_pendingPromise;
+        void clear();
+        void resolve();
+        void rejectOrResolve(ExceptionOr<void>);
+        void reject(Exception);
+        operator bool() const;
+    private:
+        CompletionHandler<void(ExceptionOr<void>)> m_promise;
+    };
+    FullscreenPromise m_pendingPromise;
 
-    bool m_pendingExitFullscreen { false };
     RefPtr<Element> m_pendingFullscreenElement;
     RefPtr<Element> m_fullscreenElement;
+
     Deque<GCReachableRef<Node>> m_fullscreenChangeEventTargetQueue;
     Deque<GCReachableRef<Node>> m_fullscreenErrorEventTargetQueue;
 
     bool m_areKeysEnabledInFullscreen { false };
     bool m_isAnimatingFullscreen { false };
+    bool m_pendingExitFullscreen { false };
 
 #if !RELEASE_LOG_DISABLED
     const uint64_t m_logIdentifier;

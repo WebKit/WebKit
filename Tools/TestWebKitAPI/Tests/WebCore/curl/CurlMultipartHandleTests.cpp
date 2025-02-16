@@ -32,17 +32,13 @@
 #include <WebCore/CurlResponse.h>
 #include <WebCore/SharedBuffer.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringCommon.h>
 
 namespace TestWebKitAPI {
 
 namespace Curl {
 
 using namespace WebCore;
-
-static std::span<const uint8_t> span(const ASCIILiteral& data)
-{
-    return data.span8();
-}
 
 static CurlResponse createCurlResponse(std::optional<String> contentType = "multipart/x-mixed-replace"_s, std::optional<String> boundary = "boundary"_s)
 {
@@ -146,14 +142,14 @@ TEST(CurlMultipartHandleTests, SimpleMessage)
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--\r\n This is the epilogue."_s;
+        "\r\n--boundary--\r\n This is the epilogue."_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -177,14 +173,14 @@ TEST(CurlMultipartHandleTests, NoHeader)
     auto data =
         "--boundary\r\n\r\n\r\n"
         "ABCDEF"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 0);
 
     handle->completeHeaderProcessing();
@@ -199,14 +195,14 @@ TEST(CurlMultipartHandleTests, NoBody)
     auto data =
         "--boundary\r\nContent-type: text/plain\r\n\r\n"
         "\r\n--boundary  \r\nContent-type: text/html\r\n\r\n"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -232,14 +228,14 @@ TEST(CurlMultipartHandleTests, TransportPadding)
         "ABCDEF"
         "\r\n--boundary  \r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--\r\n This is the epilogue."_s;
+        "\r\n--boundary--\r\n This is the epilogue."_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -264,14 +260,14 @@ TEST(CurlMultipartHandleTests, NoEndOfBoundary)
         "--boundary\r\nContent-type: text/plain\r\n\r\n"
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
-        "<html></html>"_s;
+        "<html></html>"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -298,14 +294,14 @@ TEST(CurlMultipartHandleTests, NoEndOfBoundaryAfterCompleted)
         "--boundary\r\nContent-type: text/plain\r\n\r\n"
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
-        "<html></html>"_s;
+        "<html></html>"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
 
@@ -332,14 +328,14 @@ TEST(CurlMultipartHandleTests, NoCloseDelimiter)
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary\r\n"_s;
+        "\r\n--boundary\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -367,14 +363,14 @@ TEST(CurlMultipartHandleTests, NoCloseDelimiterAfterCompleted)
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary\r\n"_s;
+        "\r\n--boundary\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
 
@@ -401,14 +397,14 @@ TEST(CurlMultipartHandleTests, CloseDelimiter)
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -434,14 +430,14 @@ TEST(CurlMultipartHandleTests, CloseDelimiterAfterCompleted)
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
 
@@ -463,23 +459,23 @@ TEST(CurlMultipartHandleTests, CloseDelimiterAfterCompleted)
 
 TEST(CurlMultipartHandleTests, DivideFirstDelimiter)
 {
-    auto data = "--bound"_s;
+    auto data = "--bound"_span8;
 
     auto nextData = "ary\r\nContent-type: text/plain\r\n\r\n"
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 0);
 
-    handle->didReceiveMessage(span(nextData));
+    handle->didReceiveMessage(nextData);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -502,18 +498,18 @@ TEST(CurlMultipartHandleTests, DivideSecondDelimiter)
 {
     auto data = "--boundary\r\nContent-type: text/plain\r\n\r\n"
         "ABCDEF"
-        "\r\n--b"_s;
+        "\r\n--b"_span8;
 
     auto nextData = "oundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -521,7 +517,7 @@ TEST(CurlMultipartHandleTests, DivideSecondDelimiter)
     handle->completeHeaderProcessing();
     EXPECT_EQ(client.headers().size(), 0);
 
-    handle->didReceiveMessage(span(nextData));
+    handle->didReceiveMessage(nextData);
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
@@ -541,16 +537,16 @@ TEST(CurlMultipartHandleTests, DivideLastDelimiter)
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundar"_s;
+        "\r\n--boundar"_span8;
 
-    auto nextData = "y--\r\n"_s;
+    auto nextData = "y--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -566,7 +562,7 @@ TEST(CurlMultipartHandleTests, DivideLastDelimiter)
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<h", 2));
     EXPECT_TRUE(!client.complete());
 
-    handle->didReceiveMessage(span(nextData));
+    handle->didReceiveMessage(nextData);
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
 
     handle->didCompleteMessage();
@@ -579,16 +575,16 @@ TEST(CurlMultipartHandleTests, DivideCloseDelimiter)
         "ABCDEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary"_s;
+        "\r\n--boundary"_span8;
 
-    auto nextData = "--\r\n"_s;
+    auto nextData = "--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -604,7 +600,7 @@ TEST(CurlMultipartHandleTests, DivideCloseDelimiter)
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<h", 2));
     EXPECT_TRUE(!client.complete());
 
-    handle->didReceiveMessage(span(nextData));
+    handle->didReceiveMessage(nextData);
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
 
     handle->didCompleteMessage();
@@ -615,19 +611,19 @@ TEST(CurlMultipartHandleTests, DivideTransportPadding)
 {
     auto data = "--boundary  \r\nContent-type: text/plain\r\n\r\n"
         "ABCDEF"
-        "\r\n--boundary      "_s;
+        "\r\n--boundary      "_span8;
 
     auto nextData =
         "  \r\nContent-type: text/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--        \r\n"_s;
+        "\r\n--boundary--        \r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -636,7 +632,7 @@ TEST(CurlMultipartHandleTests, DivideTransportPadding)
     EXPECT_EQ(client.headers().size(), 0);
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
 
-    handle->didReceiveMessage(span(nextData));
+    handle->didReceiveMessage(nextData);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
@@ -653,18 +649,18 @@ TEST(CurlMultipartHandleTests, DivideHeader)
 {
     auto data = "--boundary\r\nContent-type: text/plain\r\n\r\n"
         "ABCDEF"
-        "\r\n--boundary\r\nContent-type: t"_s;
+        "\r\n--boundary\r\nContent-type: t"_span8;
 
     auto nextData = "ext/html\r\n\r\n"
         "<html></html>"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -673,7 +669,7 @@ TEST(CurlMultipartHandleTests, DivideHeader)
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
     EXPECT_EQ(client.headers().size(), 0);
 
-    handle->didReceiveMessage(span(nextData));
+    handle->didReceiveMessage(nextData);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
     client.clear();
@@ -689,21 +685,21 @@ TEST(CurlMultipartHandleTests, DivideHeader)
 TEST(CurlMultipartHandleTests, DivideBody)
 {
     auto data = "--boundary\r\nContent-type: text/plain\r\n\r\n"
-        "ABC"_s;
+        "ABC"_span8;
 
     auto secondData = "DEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
-        "<h"_s;
+        "<h"_span8;
 
     auto lastData = "tml></html>"
-        "\r\n--boundary--\r\n"_s;
+        "\r\n--boundary--\r\n"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     client.clear();
@@ -711,7 +707,7 @@ TEST(CurlMultipartHandleTests, DivideBody)
     handle->completeHeaderProcessing();
     EXPECT_EQ(client.data().size(), 0);
 
-    handle->didReceiveMessage(span(secondData));
+    handle->didReceiveMessage(secondData);
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "ABCDEF", 6));
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/html\r\n"_s);
@@ -720,7 +716,7 @@ TEST(CurlMultipartHandleTests, DivideBody)
     handle->completeHeaderProcessing();
     EXPECT_EQ(client.data().size(), 0);
 
-    handle->didReceiveMessage(span(lastData));
+    handle->didReceiveMessage(lastData);
     EXPECT_TRUE(!memcmp(static_cast<const void*>(client.data().data()), "<html></html>", 13));
     EXPECT_TRUE(!client.complete());
 
@@ -731,30 +727,30 @@ TEST(CurlMultipartHandleTests, DivideBody)
 TEST(CurlMultipartHandleTests, CompleteWhileHeaderProcessing)
 {
     auto data = "--boundary\r\nContent-type: text/plain\r\n\r\n"
-        "ABC"_s;
+        "ABC"_span8;
 
     auto secondData = "DEF"
         "\r\n--boundary\r\nContent-type: text/html\r\n\r\n"
-        "<h"_s;
+        "<h"_span8;
 
-    auto lastData = "tml></html>"_s;
+    auto lastData = "tml></html>"_span8;
 
     MultipartHandleClient client;
 
     auto curlResponse = createCurlResponse();
     auto handle = CurlMultipartHandle::createIfNeeded(client, curlResponse);
 
-    handle->didReceiveMessage(span(data));
+    handle->didReceiveMessage(data);
     EXPECT_EQ(client.headers().size(), 1);
     EXPECT_TRUE(client.headers().at(0) == "Content-type: text/plain\r\n"_s);
     EXPECT_EQ(client.data().size(), 0);
     client.clear();
 
-    handle->didReceiveMessage(span(secondData));
+    handle->didReceiveMessage(secondData);
     EXPECT_EQ(client.headers().size(), 0);
     EXPECT_EQ(client.data().size(), 0);
 
-    handle->didReceiveMessage(span(lastData));
+    handle->didReceiveMessage(lastData);
     EXPECT_EQ(client.headers().size(), 0);
     EXPECT_EQ(client.data().size(), 0);
 
@@ -778,18 +774,18 @@ TEST(CurlMultipartHandleTests, CompleteWhileHeaderProcessing)
 TEST(CurlMultipartHandleTests, MaxHeaderSize)
 {
     Vector<uint8_t> data;
-    data.append("--boundary\r\n"_span);
+    data.append("--boundary\r\n"_span8);
 
     for (auto i = 0; i < 300 * 1024 - 4; i++)
         data.append('a');
 
-    data.append("\r\n\r\n"_span);
-    data.append("\r\n--boundary\r\n"_span);
+    data.append("\r\n\r\n"_span8);
+    data.append("\r\n--boundary\r\n"_span8);
 
     for (auto i = 0; i < 300 * 1024 - 3; i++)
         data.append('a');
 
-    data.append("\r\n\r\n"_span);
+    data.append("\r\n\r\n"_span8);
 
     MultipartHandleClient client;
 

@@ -4,7 +4,7 @@
  *           (C) 1998 Waldo Bastian (bastian@kde.org)
  *           (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2014-2019 Google Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -133,6 +133,20 @@ RenderTableSection* RenderTable::topSection() const
     return m_foot.get();
 }
 
+RenderTableSection* RenderTable::bottomSection() const
+{
+    recalcSectionsIfNeeded();
+    if (m_foot)
+        return m_foot.get();
+    for (CheckedPtr child = lastChild(); child; child = child->previousSibling()) {
+        if (child.get() == m_head.get())
+            continue;
+        if (auto* tableSection = dynamicDowncast<RenderTableSection>(*child))
+            return tableSection;
+    }
+    return m_head.get();
+}
+
 void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
@@ -143,7 +157,6 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     // In the collapsed border model, there is no cell spacing.
     m_hSpacing = collapseBorders() ? 0 : style().horizontalBorderSpacing();
     m_vSpacing = collapseBorders() ? 0 : style().verticalBorderSpacing();
-    m_columnPos[0] = m_hSpacing;
 
     if (!m_tableLayout || style().isFixedTableLayout() != oldFixedTableLayout) {
         // According to the CSS2 spec, you only use fixed table layout if an explicit width is specified on the table. Auto width implies auto table layout.
@@ -166,9 +179,8 @@ void RenderTable::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
         }
     }
 
-    // If border was changed, invalidate collapsed borders cache.
-    if (oldStyle && !oldStyle->borderIsEquivalentForPainting(style()))
-        invalidateCollapsedBorders();
+    if (oldStyle)
+        invalidateCollapsedBordersAfterStyleChangeIfNeeded(*oldStyle, style());
 }
 
 static inline void resetSectionPointerIfNotBefore(SingleThreadWeakPtr<RenderTableSection>& section, RenderObject* before)
@@ -605,7 +617,7 @@ void RenderTable::layout()
 
         // table can be containing block of positioned elements.
         bool dimensionChanged = oldLogicalWidth != logicalWidth() || oldLogicalHeight != logicalHeight();
-        layoutPositionedObjects(dimensionChanged);
+        layoutPositionedObjects(dimensionChanged ? RelayoutChildren::Yes : RelayoutChildren::No);
 
         updateLayerTransform();
 
@@ -645,10 +657,22 @@ void RenderTable::layout()
     // FIXME: This value isn't the intrinsic content logical height, but we need
     // to update the value as its used by flexbox layout. crbug.com/367324
     if (shouldCacheIntrinsicContentLogicalHeightForFlexItem)
-        cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
+        cacheIntrinsicContentLogicalHeightForFlexItem(contentBoxLogicalHeight());
 
     m_columnLogicalWidthChanged = false;
     clearNeedsLayout();
+}
+
+void RenderTable::invalidateCollapsedBordersAfterStyleChangeIfNeeded(const RenderStyle& oldStyle, const RenderStyle& newStyle, RenderTableCell* cellWithStyleChange)
+{
+    auto shouldInvalidate = [&] {
+        if (oldStyle.writingMode() != newStyle.writingMode())
+            return true;
+        return !oldStyle.borderIsEquivalentForPainting(newStyle);
+    };
+
+    if (shouldInvalidate())
+        invalidateCollapsedBorders(cellWithStyleChange);
 }
 
 void RenderTable::invalidateCollapsedBorders(RenderTableCell* cellWithStyleChange)
@@ -1467,18 +1491,6 @@ RenderTableSection* RenderTable::sectionBelow(const RenderTableSection* section,
     }
     if (!nextSection && m_foot && (skipEmptySections == DoNotSkipEmptySections || m_foot->numRows()))
         return m_foot.get();
-    return nullptr;
-}
-
-RenderTableSection* RenderTable::bottomSection() const
-{
-    recalcSectionsIfNeeded();
-    if (m_foot)
-        return m_foot.get();
-    for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
-        if (auto* tableSection = dynamicDowncast<RenderTableSection>(*child))
-            return tableSection;
-    }
     return nullptr;
 }
 

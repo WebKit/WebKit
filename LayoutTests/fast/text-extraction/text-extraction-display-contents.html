@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ textExtractionEnabled=true useFlexibleViewport=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html, body {
+    font-family: system-ui;
+}
+
+div.display-contents {
+    display: contents;
+}
+
+div.display-none {
+    display: none;
+}
+
+div.transparent {
+    opacity: 0;
+}
+</style>
+<script src="../../resources/ui-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<script>
+addEventListener("load", async () => {
+    jsTestIsAsync = true;
+
+    document.body.textContent = await UIHelper.requestTextExtraction();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <h1>Heading</h1>
+    <div class="display-contents">
+        <h2>Subheading</h2>
+        <p>Some plain text <a href="https://www.apple.com">and a link</a>.</p>
+    </div>
+    <div class="display-none">
+        <h2>1. Fail (this text should not be extracted)</h2>
+    </div>
+    <div class="transparent">
+        <h2>2. Fail (this text should not be extracted)</h2>
+    </div>
+</body>
+</html>

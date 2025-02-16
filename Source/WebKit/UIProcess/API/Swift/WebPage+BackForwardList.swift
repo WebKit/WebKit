@@ -25,28 +25,48 @@
 
 import Foundation
 
-extension WebPage_v0 {
+extension WebPage {
+    /// An observable representation of a webpage's navigations.
+    ///
+    /// This type can be used to facilitate navigating to prior or subsequent loaded resources
+    /// and for observing when new entries get added or removed.
     @MainActor
-    @_spi(Private)
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public struct BackForwardList: Equatable, Sendable {
-        @MainActor
+        /// A representation of a resource that a webpage previously visited.
+        ///
+        /// Two items with equal titles, urls, and initial urls may not necessarily be equal to one another.
         public struct Item: Equatable, Identifiable, Sendable {
             public struct ID: Hashable, Sendable {
                 private let value = UUID()
             }
 
+            @MainActor
             init(_ wrapped: WKBackForwardListItem) {
                 self.wrapped = wrapped
+
+                self.title = wrapped.title
+                self.url = wrapped.url
+                self.initialURL = wrapped.initialURL
             }
 
-            nonisolated public let id: ID = ID()
+            /// The unique identifier for the item.
+            public let id: ID = ID()
 
-            public var title: String? { wrapped.title }
+            /// The title of the page this item represents.
+            ///
+            /// If the resource this item represents does not have a title specified, this value will be `nil`.
+            public let title: String?
 
-            public var url: URL { wrapped.url }
+            /// The url of the page this item represents, after having resolved all redirects.
+            public let url: URL
 
-            public var initialURL: URL { wrapped.initialURL }
+            /// The source URL that originally asked to load the resource
+            public let initialURL: URL
 
+            @MainActor
             let wrapped: WKBackForwardListItem
         }
 
@@ -54,20 +74,34 @@ extension WebPage_v0 {
             self.wrapped = wrapped
         }
 
+        /// The array of items that precede the current item.
+        ///
+        /// The items are in the order in which the web view originally visited them.
         public var backList: [Item] {
             wrapped?.backList.map(Item.init(_:)) ?? []
         }
 
+        /// The current item.
+        ///
+        /// When the webpage has not loaded any resources, this value will be `nil`.
         public var currentItem: Item? {
             wrapped?.currentItem.map(Item.init(_:))
         }
 
+        /// The array of items that follow the current item.
+        ///
+        /// The items are in the order in which the web view originally visited them.
         public var forwardList: [Item] {
             wrapped?.forwardList.map(Item.init(_:)) ?? []
         }
 
         private var wrapped: WKBackForwardList? = nil
 
+        /// Accesses the item at the relative offset from the current item.
+        ///
+        /// - Parameter index: The offset of the desired item from the current item. Specify `0` for the current item,
+        /// `-1` for the immediately preceding item, `1` for the immediately following item, and so on.
+        /// - Returns: The item at the specified offset from the current item, or `nil` if the index exceeds the limits of the list.
         public subscript(_ index: Int) -> Item? {
             wrapped?.item(at: index).map(Item.init(_:))
         }

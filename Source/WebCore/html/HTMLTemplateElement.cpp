@@ -110,23 +110,23 @@ void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
     m_declarativeShadowRoot = shadowRoot;
 }
 
-Ref<Node> HTMLTemplateElement::cloneNodeInternal(TreeScope& treeScope, CloningOperation type)
+Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
 {
     RefPtr<Node> clone;
     switch (type) {
     case CloningOperation::OnlySelf:
-        return cloneElementWithoutChildren(treeScope);
+        return cloneElementWithoutChildren(document, registry);
     case CloningOperation::SelfWithTemplateContent:
-        clone = cloneElementWithoutChildren(treeScope);
+        clone = cloneElementWithoutChildren(document, registry);
         break;
     case CloningOperation::Everything:
-        clone = cloneElementWithChildren(treeScope);
+        clone = cloneElementWithChildren(document, registry);
         break;
     }
     if (m_content) {
         auto& templateElement = downcast<HTMLTemplateElement>(*clone);
         Ref fragment = templateElement.content();
-        content().cloneChildNodes(fragment->document(), fragment);
+        content().cloneChildNodes(fragment->document(), nullptr, fragment);
     }
     return clone.releaseNonNull();
 }
@@ -138,43 +138,6 @@ void HTMLTemplateElement::didMoveToNewDocument(Document& oldDocument, Document& 
         return;
     ASSERT_WITH_SECURITY_IMPLICATION(&document() == &newDocument);
     m_content->setTreeScopeRecursively(newDocument.ensureTemplateDocument());
-}
-
-void HTMLTemplateElement::attachAsDeclarativeShadowRootIfNeeded(Element& host)
-{
-    if (m_declarativeShadowRoot) {
-        ASSERT(host.shadowRoot());
-        return;
-    }
-
-    auto modeString = shadowRootMode();
-    if (modeString.isEmpty())
-        return;
-
-    ASSERT(modeString == "closed"_s || modeString == "open"_s);
-    auto mode = modeString == "closed"_s ? ShadowRootMode::Closed : ShadowRootMode::Open;
-
-    auto delegatesFocus = hasAttributeWithoutSynchronization(HTMLNames::shadowrootdelegatesfocusAttr) ? ShadowRootDelegatesFocus::Yes : ShadowRootDelegatesFocus::No;
-    auto clonable = hasAttributeWithoutSynchronization(HTMLNames::shadowrootclonableAttr) ? ShadowRootClonable::Yes : ShadowRootClonable::No;
-    auto serializable = hasAttributeWithoutSynchronization(HTMLNames::shadowrootserializableAttr) ? ShadowRootSerializable::Yes : ShadowRootSerializable::No;
-
-    auto exceptionOrShadowRoot = host.attachDeclarativeShadow(mode, delegatesFocus, clonable, serializable);
-    if (exceptionOrShadowRoot.hasException())
-        return;
-
-    auto importedContent = document().importNode(content(), /* deep */ true).releaseReturnValue();
-    for (RefPtr<Node> node = NodeTraversal::next(importedContent), next; node; node = next) {
-        next = NodeTraversal::next(*node);
-        if (auto* templateElement = dynamicDowncast<HTMLTemplateElement>(*node)) {
-            if (RefPtr parentElement = node->parentElement())
-                templateElement->attachAsDeclarativeShadowRootIfNeeded(*parentElement);
-        }
-    }
-
-    Ref shadowRoot = exceptionOrShadowRoot.releaseReturnValue();
-    shadowRoot->appendChild(WTFMove(importedContent));
-
-    remove();
 }
 
 } // namespace WebCore

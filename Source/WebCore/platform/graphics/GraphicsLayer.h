@@ -450,8 +450,8 @@ public:
 #endif
 
 #if HAVE(CORE_MATERIAL)
-    AppleVisualEffect appleVisualEffect() const { return m_appleVisualEffect; }
-    virtual void setAppleVisualEffect(AppleVisualEffect effect) { m_appleVisualEffect = effect; }
+    AppleVisualEffectData appleVisualEffectData() const { return m_appleVisualEffectData; }
+    virtual void setAppleVisualEffectData(AppleVisualEffectData effectData) { m_appleVisualEffectData = effectData; }
 #endif
 
     bool needsBackdrop() const;
@@ -499,8 +499,6 @@ public:
     virtual void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) = 0;
 
     virtual void setContentsNeedsDisplay() { };
-
-    virtual void markDamageRectsUnreliable() { };
 
     // The tile phase is relative to the GraphicsLayer bounds.
     virtual void setContentsTilePhase(const FloatSize& p) { m_contentsTilePhase = p; }
@@ -615,7 +613,7 @@ public:
     virtual void setShowRepaintCounter(bool show) { m_showRepaintCounter = show; }
     bool isShowingRepaintCounter() const { return m_showRepaintCounter; }
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
     virtual void setHDRForImagesEnabled(bool b) { m_hdrForImagesEnabled = b; }
     bool hdrForImagesEnabled() const { return m_hdrForImagesEnabled; }
 #endif
@@ -719,7 +717,7 @@ public:
     const std::optional<FloatRect>& animationExtent() const { return m_animationExtent; }
     void setAnimationExtent(std::optional<FloatRect> animationExtent) { m_animationExtent = animationExtent; }
 
-    static void traverse(GraphicsLayer&, const Function<void(GraphicsLayer&)>&);
+    static void traverse(GraphicsLayer&, NOESCAPE const Function<void(GraphicsLayer&)>&);
 
     virtual void markFrontBufferVolatileForTesting() { }
 
@@ -812,7 +810,7 @@ protected:
     CustomAppearance m_customAppearance { CustomAppearance::None };
 
 #if HAVE(CORE_MATERIAL)
-    AppleVisualEffect m_appleVisualEffect { AppleVisualEffect::None };
+    AppleVisualEffectData m_appleVisualEffectData;
 #endif
 
     OptionSet<GraphicsLayerPaintingPhase> m_paintingPhase { GraphicsLayerPaintingPhase::Foreground, GraphicsLayerPaintingPhase::Background };
@@ -848,7 +846,7 @@ protected:
     bool m_isDescendentOfSeparatedPortal : 1;
 #endif
 #endif
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
     bool m_hdrForImagesEnabled : 1;
 #endif
 

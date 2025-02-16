@@ -104,6 +104,7 @@ private:
     double framerate() const;
     uint64_t bitrate() const;
     std::optional<SpatialVideoMetadata> spatialVideoMetadata() const;
+    bool isImmersiveVideo() const;
     uint32_t sampleRate() const;
     uint32_t numberOfChannels() const;
 

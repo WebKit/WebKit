@@ -61,6 +61,8 @@ class ImageImpl : angle::NonCopyable
 
     virtual egl::Error exportVkImage(void *vkImage, void *vkImageCreateInfo);
 
+    virtual bool isFixedRatedCompression(const gl::Context *context);
+
   protected:
     const egl::ImageState &mState;
 };

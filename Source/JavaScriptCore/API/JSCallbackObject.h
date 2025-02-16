@@ -145,7 +145,7 @@ public:
     }
     static JSCallbackObject<Parent>* create(VM&, JSClassRef, Structure*);
 
-    static const bool needsDestruction;
+    static const DestructionMode needsDestruction;
     static void destroy(JSCell* cell)
     {
         static_cast<JSCallbackObject*>(cell)->JSCallbackObject::~JSCallbackObject();

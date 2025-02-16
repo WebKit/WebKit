@@ -292,11 +292,6 @@ void PlatformCALayerRemote::ensureBackingStore()
     updateBackingStore();
 }
 
-bool PlatformCALayerRemote::containsBitmapOnly() const
-{
-    return owner() && owner()->platformCALayerContainsBitmapOnly(this);
-}
-
 DestinationColorSpace PlatformCALayerRemote::displayColorSpace() const
 {
     if (auto displayColorSpace = contentsFormatExtendedColorSpace(contentsFormat()))
@@ -311,13 +306,18 @@ DestinationColorSpace PlatformCALayerRemote::displayColorSpace() const
 }
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-RemoteLayerBackingStore::IncludeDisplayList PlatformCALayerRemote::shouldIncludeDisplayListInBackingStore() const
+bool PlatformCALayerRemote::allowsDynamicContentScaling() const
+{
+    return owner() && owner()->platformCALayerAllowsDynamicContentScaling(this);
+}
+
+IncludeDynamicContentScalingDisplayList PlatformCALayerRemote::shouldIncludeDisplayListInBackingStore() const
 {
     if (m_context && !m_context->useDynamicContentScalingDisplayListsForDOMRendering())
-        return RemoteLayerBackingStore::IncludeDisplayList::No;
-    if (containsBitmapOnly())
-        return RemoteLayerBackingStore::IncludeDisplayList::No;
-    return RemoteLayerBackingStore::IncludeDisplayList::Yes;
+        return IncludeDynamicContentScalingDisplayList::No;
+    if (!allowsDynamicContentScaling())
+        return IncludeDynamicContentScalingDisplayList::No;
+    return IncludeDynamicContentScalingDisplayList::Yes;
 }
 #endif
 
@@ -1120,17 +1120,17 @@ void PlatformCALayerRemote::setIsDescendentOfSeparatedPortal(bool value)
 
 #if HAVE(CORE_MATERIAL)
 
-WebCore::AppleVisualEffect PlatformCALayerRemote::appleVisualEffect() const
+WebCore::AppleVisualEffectData PlatformCALayerRemote::appleVisualEffectData() const
 {
-    return m_properties.appleVisualEffect;
+    return m_properties.appleVisualEffectData;
 }
 
-void PlatformCALayerRemote::setAppleVisualEffect(WebCore::AppleVisualEffect effect)
+void PlatformCALayerRemote::setAppleVisualEffectData(WebCore::AppleVisualEffectData effectData)
 {
-    if (m_properties.appleVisualEffect == effect)
+    if (m_properties.appleVisualEffectData == effectData)
         return;
 
-    m_properties.appleVisualEffect = effect;
+    m_properties.appleVisualEffectData = effectData;
     m_properties.notePropertiesChanged(LayerChange::AppleVisualEffectChanged);
 }
 

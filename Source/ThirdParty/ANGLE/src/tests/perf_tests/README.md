@@ -111,6 +111,7 @@ Trace tests take command line arguments that pick the run configuration:
 * `--save-screenshots`: Save screenshots. Only implemented in `TracePerfTest`.
 * `--screenshot-frame <frame>`: Which frame to capture a screenshot of. Defaults to first frame (1). Using `-1` will capture every frame rendered, including those after Reset for multiple loops. Only implemented in `TracePerfTest`.
 * `--include-inactive-resources` : Include all resources captured at trace-time during replay. Only resources which are active during trace execution are replayed by default.
+* `--fps-limit <limit>` : Limit replay framerate to specified value.
 
 For example, for an endless run with no warmup on swiftshader, run:
 

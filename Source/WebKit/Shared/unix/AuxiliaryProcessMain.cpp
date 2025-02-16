@@ -58,14 +58,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (argc < argIndex + 2)
         return false;
 
-    if (auto processIdentifier = parseInteger<uint64_t>(span(argv[argIndex++]))) {
+    if (auto processIdentifier = parseInteger<uint64_t>(unsafeSpan(argv[argIndex++]))) {
         if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*processIdentifier))
             return false;
         m_parameters.processIdentifier = ObjectIdentifier<WebCore::ProcessIdentifierType>(*processIdentifier);
     } else
         return false;
 
-    if (auto connectionIdentifier = parseInteger<int>(span(argv[argIndex++])))
+    if (auto connectionIdentifier = parseInteger<int>(unsafeSpan(argv[argIndex++])))
         m_parameters.connectionIdentifier = IPC::Connection::Identifier { { *connectionIdentifier, UnixFileDescriptor::Adopt } };
     else
         return false;
@@ -76,7 +76,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #if USE(GLIB) && OS(LINUX)
     // Parse pidSocket if available
     if (argc > argIndex) {
-        auto pidSocket = parseInteger<int>(span(argv[argIndex]));
+        auto pidSocket = parseInteger<int>(unsafeSpan(argv[argIndex]));
         if (pidSocket && *pidSocket >= 0) {
             IPC::sendPIDToPeer(*pidSocket);
             RELEASE_ASSERT(!close(*pidSocket));

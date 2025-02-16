@@ -41,6 +41,7 @@ struct PlatformVideoTrackConfiguration : PlatformTrackConfiguration {
     double framerate { 0 };
     uint64_t bitrate { 0 };
     std::optional<SpatialVideoMetadata> spatialVideoMetadata;
+    bool isImmersiveVideo { false };
 
     friend bool operator==(const PlatformVideoTrackConfiguration&, const PlatformVideoTrackConfiguration&) = default;
 };

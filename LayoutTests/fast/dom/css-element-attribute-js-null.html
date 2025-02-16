@@ -9,7 +9,8 @@
         @media screen {
             .bar { color: blue; }
         }
-        </style>
+        @page { }
+    </style>
     <script>
         function printOut(msg) {
             var console = document.getElementById("console");
@@ -50,10 +51,10 @@
             var rules = document.styleSheets[1].cssRules;
 
             var rule = rules[0];
-            var mediaRule = rules[1];            
+            var mediaRule = rules[1];
+            var pageRule = rules[2];
             var style = rule.style;
             var mediaList = mediaRule.media;
-
 
             var listing = [
                 {
@@ -65,10 +66,17 @@
                     ]
                 },
                 {
+                    type: 'CSSPageRule',
+                    elementToUse: pageRule,
+                    attributes: [
+                        {name: 'selectorText', expectedNull: 'null'}
+                    ]
+                },
+                {
                     type: 'CSSStyleRule',
                     elementToUse: rule,
                     attributes: [
-                         {name: 'selectorText', expectedNull: 'null'}
+                        {name: 'selectorText', expectedNull: 'null'}
                     ]
                 },
                 {
@@ -86,15 +94,8 @@
                         {name: 'mediaText', expectedNull: ''}
                     ]
                 }
-                // ,{
-                //     type: 'PageRule',
-                //     elementToUse: mediaList,
-                //     attributes: [
-                //         {name: 'cssText', expectedNull: ''}
-                //     ]
-                // }
             ];
-            
+
             for (element in listing) {
                 var type = listing[element].type;
                 var elementToUse = listing[element].elementToUse;

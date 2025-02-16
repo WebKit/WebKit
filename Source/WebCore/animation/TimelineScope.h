@@ -31,17 +31,12 @@
 namespace WebCore {
 
 struct TimelineScope {
-    bool operator==(const TimelineScope& other) const
-    {
-        if (type == Type::Ident)
-            return other.type == Type::Ident && scopeNames != other.scopeNames;
-        return type == other.type;
-    }
-
     enum class Type : uint8_t { None, All, Ident };
 
     Type type { Type::None };
     Vector<AtomString> scopeNames;
+
+    bool operator==(const TimelineScope& other) const = default;
 };
 
 inline TextStream& operator<<(TextStream& ts, const TimelineScope& timelineScope)

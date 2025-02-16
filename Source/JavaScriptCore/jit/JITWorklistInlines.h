@@ -32,7 +32,7 @@ namespace JSC {
 #if ENABLE(JIT)
 
 template<typename Visitor>
-void JITWorklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, const Function<void(CodeBlock*)>& func)
+void JITWorklist::iterateCodeBlocksForGC(Visitor& visitor, VM& vm, NOESCAPE const Function<void(CodeBlock*)>& func)
 {
     if (!vm.numberOfActiveJITPlans())
         return;

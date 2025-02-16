@@ -61,13 +61,14 @@ class Dominators;
 class NaturalLoops;
 class Value;
 class Variable;
+class WasmBoundsCheckValue;
 
 namespace Air {
 class Code;
 class StackSlot;
 } // namespace Air
 
-typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, GPRReg);
+typedef void WasmBoundsCheckGeneratorFunction(CCallHelpers&, WasmBoundsCheckValue*, GPRReg);
 typedef SharedTask<WasmBoundsCheckGeneratorFunction> WasmBoundsCheckGenerator;
 
 // This represents B3's view of a piece of code. Note that this object must exist in a 1:1
@@ -316,7 +317,7 @@ private:
     std::unique_ptr<NaturalLoops> m_naturalLoops;
     std::unique_ptr<BackwardsCFG> m_backwardsCFG;
     std::unique_ptr<BackwardsDominators> m_backwardsDominators;
-    HashSet<ValueKey> m_fastConstants;
+    UncheckedKeyHashSet<ValueKey> m_fastConstants;
     const char* m_lastPhaseName;
     std::unique_ptr<OpaqueByproducts> m_byproducts;
     std::unique_ptr<Air::Code> m_code;

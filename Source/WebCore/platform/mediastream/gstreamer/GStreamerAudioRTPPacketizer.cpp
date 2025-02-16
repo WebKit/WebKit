@@ -125,13 +125,8 @@ RefPtr<GStreamerAudioRTPPacketizer> GStreamerAudioRTPPacketizer::create(RefPtr<U
     }
 
     auto payloadType = gstStructureGet<int>(codecParameters, "payload"_s);
-    if (payloadType)
-        g_object_set(payloader.get(), "pt", *payloadType, nullptr);
-    else {
+    if (!payloadType)
         payloadType = gstStructureGet<int>(encodingParameters.get(), "payload"_s);
-        if (payloadType)
-            g_object_set(payloader.get(), "pt", *payloadType, nullptr);
-    }
 
     auto rtpCaps = adoptGRef(gst_caps_new_empty());
 
@@ -140,11 +135,11 @@ RefPtr<GStreamerAudioRTPPacketizer> GStreamerAudioRTPPacketizer::create(RefPtr<U
     setSsrcAudioLevelVadOn(structure.get());
 
     gst_caps_append_structure(rtpCaps.get(), structure.release());
-    return adoptRef(*new GStreamerAudioRTPPacketizer(WTFMove(inputCaps), WTFMove(encoder), WTFMove(payloader), WTFMove(encodingParameters), WTFMove(rtpCaps)));
+    return adoptRef(*new GStreamerAudioRTPPacketizer(WTFMove(inputCaps), WTFMove(encoder), WTFMove(payloader), WTFMove(encodingParameters), WTFMove(rtpCaps), WTFMove(payloadType)));
 }
 
-GStreamerAudioRTPPacketizer::GStreamerAudioRTPPacketizer(GRefPtr<GstCaps>&& inputCaps, GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, GRefPtr<GstCaps>&& rtpCaps)
-    : GStreamerRTPPacketizer(WTFMove(encoder), WTFMove(payloader), WTFMove(encodingParameters))
+GStreamerAudioRTPPacketizer::GStreamerAudioRTPPacketizer(GRefPtr<GstCaps>&& inputCaps, GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, GRefPtr<GstCaps>&& rtpCaps, std::optional<int>&& payloadType)
+    : GStreamerRTPPacketizer(WTFMove(encoder), WTFMove(payloader), WTFMove(encodingParameters), WTFMove(payloadType))
 {
     g_object_set(m_capsFilter.get(), "caps", rtpCaps.get(), nullptr);
     GST_DEBUG_OBJECT(m_bin.get(), "RTP caps: %" GST_PTR_FORMAT, rtpCaps.get());

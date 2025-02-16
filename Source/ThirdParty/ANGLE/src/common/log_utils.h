@@ -262,10 +262,13 @@ std::ostream &FmtHex(std::ostream &os, T value)
 
 // A macro asserting a condition and outputting failures to the debug log
 #if defined(ANGLE_ENABLE_ASSERTS)
-#    define ASSERT(expression)                                                                \
-        (expression ? static_cast<void>(0)                                                    \
-                    : (FATAL() << "\t! Assert failed in " << __FUNCTION__ << " (" << __FILE__ \
-                               << ":" << __LINE__ << "): " << #expression))
+bool AreAssertionsEnabled();
+#    define ASSERT(expression)                                                               \
+        (expression ? static_cast<void>(0)                                                   \
+            : (!AreAssertionsEnabled()                                                       \
+                ? static_cast<void>(0)                                                       \
+                : (FATAL() << "\t! Assert failed in " << __FUNCTION__ << " (" << __FILE__    \
+                    << ":" << __LINE__ << "): " << #expression)))
 #else
 #    define ASSERT(condition) ANGLE_EAT_STREAM_PARAMETERS << !(condition)
 #endif  // defined(ANGLE_ENABLE_ASSERTS)
@@ -299,11 +302,19 @@ std::ostream &FmtHex(std::ostream &os, T value)
         } while (0)
 
 // A macro for code which is not expected to be reached under valid assumptions
-#    define UNREACHABLE()  \
-        do                 \
-        {                  \
-            ASSERT(false); \
-        } while (0)
+#    if defined(__clang__) && __has_builtin(__builtin_unreachable)
+#        define UNREACHABLE()            \
+            do                           \
+            {                            \
+                __builtin_unreachable(); \
+            } while (0)
+#    else
+#        define UNREACHABLE()  \
+            do                 \
+            {                  \
+                ASSERT(false); \
+            } while (0)
+#    endif  // defined(__clang__) && __has_builtin(__builtin_unreachable)
 #endif  // defined(ANGLE_TRACE_ENABLED) || defined(ANGLE_ENABLE_ASSERTS)
 
 #if defined(ANGLE_PLATFORM_WINDOWS)

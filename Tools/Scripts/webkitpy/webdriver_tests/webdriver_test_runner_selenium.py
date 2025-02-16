@@ -23,15 +23,12 @@
 import logging
 import os
 
-from webkitcorepy import AutoInstall, Package, Version
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.webdriver_tests.webdriver_selenium_executor import WebDriverSeleniumExecutor
 from webkitpy.webdriver_tests.webdriver_test_result import WebDriverTestResult
 
 _log = logging.getLogger(__name__)
 
-# Package required by Selenium for BiDi tests
-AutoInstall.register(Package('websocket', Version(1, 8, 0), pypi_name='websocket-client'))
 
 class WebDriverTestRunnerSelenium(object):
 
@@ -49,7 +46,7 @@ class WebDriverTestRunnerSelenium(object):
 
         skipped = [os.path.join(self._tests_dir, test) for test in self._expectations.skipped_tests()]
         relative_tests_dir = os.path.join('imported', 'selenium', 'py', 'test')
-        executor = WebDriverSeleniumExecutor(self._driver, self._env)
+        executor = WebDriverSeleniumExecutor(self._port, self._driver, self._env)
         # Collected tests are relative to test directory.
         base_dir = os.path.join(self._tests_dir, os.path.dirname(relative_tests_dir))
         collected_tests = {}
@@ -81,7 +78,7 @@ class WebDriverTestRunnerSelenium(object):
         if self._driver.selenium_name() is None:
             return
 
-        executor = WebDriverSeleniumExecutor(self._driver, self._env)
+        executor = WebDriverSeleniumExecutor(self._port, self._driver, self._env)
         timeout = self._port.get_option('timeout')
         for test in tests:
             test_name = os.path.relpath(test.split('::')[0], self._tests_dir)

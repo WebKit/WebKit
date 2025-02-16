@@ -31,8 +31,6 @@
 #include "config.h"
 #include "DateTimeLocalInputType.h"
 
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "Decimal.h"
@@ -143,5 +141,3 @@ void DateTimeLocalInputType::setupLayoutParameters(DateTimeEditElement::LayoutPa
 }
 
 } // namespace WebCore
-
-#endif

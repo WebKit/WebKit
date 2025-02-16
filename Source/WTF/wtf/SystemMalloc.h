@@ -51,7 +51,9 @@ struct SystemMalloc {
         auto* result = ::malloc(size);
         if (!result)
             CRASH();
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memset(result, 0, size);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return result;
     }
 
@@ -60,7 +62,9 @@ struct SystemMalloc {
         auto* result = ::malloc(size);
         if (!result)
             return nullptr;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memset(result, 0, size);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return result;
     }
 

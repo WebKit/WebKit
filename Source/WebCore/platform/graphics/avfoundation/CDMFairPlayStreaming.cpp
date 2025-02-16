@@ -70,10 +70,10 @@ static WTFLogChannel& logChannel() { return LogEME; }
 const Vector<FourCC>& CDMPrivateFairPlayStreaming::validFairPlayStreamingSchemes()
 {
     static NeverDestroyed<Vector<FourCC>> validSchemes = Vector<FourCC>({
-        "cbcs",
-        "cbc2",
-        "cbc1",
-        "cenc",
+        std::span { "cbcs" },
+        std::span { "cbc2" },
+        std::span { "cbc1" },
+        std::span { "cenc" }
     });
 
     return validSchemes;

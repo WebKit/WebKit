@@ -122,6 +122,7 @@ void GenerateCaps(const wgpu::Limits &limitsWgpu,
     glExtensions->textureUsageANGLE           = true;
     glExtensions->translatedShaderSourceANGLE = true;
     glExtensions->vertexArrayObjectOES        = true;
+    glExtensions->elementIndexUintOES         = true;
 
     glExtensions->textureStorageEXT = true;
     glExtensions->rgb8Rgba8OES      = true;
@@ -417,8 +418,7 @@ wgpu::PrimitiveTopology GetPrimitiveTopology(gl::PrimitiveMode mode)
         case gl::PrimitiveMode::Lines:
             return wgpu::PrimitiveTopology::LineList;
         case gl::PrimitiveMode::LineLoop:
-            UNIMPLEMENTED();
-            return wgpu::PrimitiveTopology::LineList;  // Emulated
+            return wgpu::PrimitiveTopology::LineStrip;  // Emulated
         case gl::PrimitiveMode::LineStrip:
             return wgpu::PrimitiveTopology::LineStrip;
         case gl::PrimitiveMode::Triangles:
@@ -523,8 +523,13 @@ wgpu::TextureDimension getWgpuTextureDimension(gl::TextureType glTextureType)
     return dimension;
 }
 
-wgpu::CompareFunction getCompareFunc(const GLenum glCompareFunc)
+wgpu::CompareFunction GetCompareFunc(const GLenum glCompareFunc, bool testEnabled)
 {
+    if (!testEnabled)
+    {
+        return wgpu::CompareFunction::Always;
+    }
+
     switch (glCompareFunc)
     {
         case GL_NEVER:

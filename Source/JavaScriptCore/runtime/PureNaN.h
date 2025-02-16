@@ -73,6 +73,8 @@ namespace JSC {
 // never happen, but it's healthy to be paranoid.
 static constexpr uint64_t PNaNAsBits { 0x7ff8000000000000ll };
 static constexpr double PNaN { std::bit_cast<double>(PNaNAsBits) };
+static constexpr uint64_t ImpureNaNAsBits { 0xffff000000000000ULL };
+static constexpr double ImpureNaN { std::bit_cast<double>(ImpureNaNAsBits) };
 
 inline constexpr bool isImpureNaN(double value)
 {

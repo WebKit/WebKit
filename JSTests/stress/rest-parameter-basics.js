@@ -65,7 +65,7 @@ function strictModeLikeArgumentsObject(a, ...args) {
 }
 noInline(strictModeLikeArgumentsObject);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let a1 = foo(10, 20);
     assert(a1 instanceof Array);
     assert(a1.length === 1);

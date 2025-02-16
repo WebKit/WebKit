@@ -3,8 +3,6 @@ UIProcess/API/C/WKContext.cpp
 UIProcess/API/C/WKPage.cpp
 UIProcess/API/Cocoa/WKProcessPool.mm
 UIProcess/API/Cocoa/WKWebViewTesting.mm
-UIProcess/RemoteLayerTree/RemoteLayerTreeHost.mm
-UIProcess/WebPageProxy.cpp
 UIProcess/mac/DisplayCaptureSessionManager.mm
 UIProcess/mac/WebViewImpl.mm
 WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp
@@ -16,7 +14,5 @@ WebProcess/WebCoreSupport/WebLocalFrameLoaderClient.cpp
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteScrollingCoordinator.mm
-WebProcess/WebPage/WebPage.cpp
 WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm
-WebProcess/WebPage/mac/WKAccessibilityWebPageObjectMac.mm
 WebProcess/WebPage/mac/WebPageMac.mm

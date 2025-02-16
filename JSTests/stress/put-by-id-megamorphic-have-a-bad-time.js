@@ -16,7 +16,7 @@
     }
     noInline(test);
 
-    for (var i = 0; i < 1000000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var instance = array[i % array.length];
         test(instance, i);
         if (instance.f !== i)
@@ -27,7 +27,7 @@
     Object.defineProperty(Object.prototype, 'f', {
         get() { return 44; }
     });
-    for (var i = 0; i < 1000000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var instance = array[i % array.length];
         test(instance, i);
         if (instance.f !== i)

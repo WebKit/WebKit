@@ -190,7 +190,7 @@ pas_generic_large_free_heap_try_allocate(
         return pas_allocation_result_create_success_with_zero_mode(0, pas_zero_mode_is_all_zero);
     
     if (PAS_GENERIC_LARGE_FREE_HEAP_VERBOSE >= 2)
-        printf("Allocating size = %zu\n", size);
+        pas_log("Allocating size = %zu\n", size);
     
     pas_alignment_validate(alignment);
     pas_heap_lock_assert_held();
@@ -221,7 +221,7 @@ pas_generic_large_free_heap_try_allocate(
         bool found_candidate;
         
         if (PAS_GENERIC_LARGE_FREE_HEAP_VERBOSE >= 2) {
-            printf("Could not allocate %zu bytes with alignment %zu/%zu. Free list status:\n",
+            pas_log("Could not allocate %zu bytes with alignment %zu/%zu. Free list status:\n",
                    size, alignment.alignment, alignment.alignment_begin);
             generic_heap_config->dump(heap);
         }
@@ -229,7 +229,7 @@ pas_generic_large_free_heap_try_allocate(
         page_allocation = config->aligned_allocator(size, alignment, config->aligned_allocator_arg);
         if (!page_allocation.result) {
             if (PAS_GENERIC_LARGE_FREE_HEAP_VERBOSE >= 2)
-                printf("Returning failure.\n");
+                pas_log("Returning failure.\n");
             return pas_allocation_result_create_failure();
         }
         
@@ -246,7 +246,7 @@ pas_generic_large_free_heap_try_allocate(
            assume that this is too unlikely to matter. */
         
         if (PAS_GENERIC_LARGE_FREE_HEAP_VERBOSE >= 2) {
-            printf("Just before candidate search after allocating from the source...\n");
+            pas_log("Just before candidate search after allocating from the source...\n");
             generic_heap_config->dump(heap);
         }
         
@@ -423,7 +423,7 @@ pas_generic_large_free_heap_try_allocate(
     PAS_ASSERT(result.did_succeed);
     
     if (PAS_GENERIC_LARGE_FREE_HEAP_VERBOSE >= 2) {
-        printf("After allocating %p for size %zu:\n", (void*)result.begin, size);
+        pas_log("After allocating %p for size %zu:\n", (void*)result.begin, size);
         generic_heap_config->dump(heap);
     }
 

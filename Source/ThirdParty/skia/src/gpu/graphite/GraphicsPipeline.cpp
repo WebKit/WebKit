@@ -19,7 +19,6 @@ GraphicsPipeline::GraphicsPipeline(const SharedContext* sharedContext,
                                    const PipelineInfo& pipelineInfo)
         : Resource(sharedContext,
                    Ownership::kOwned,
-                   skgpu::Budgeted::kYes,
                    /*gpuMemorySize=*/0)
         , fPipelineInfo(pipelineInfo) {}
 
@@ -39,7 +38,7 @@ GraphicsPipeline::PipelineInfo::PipelineInfo(
             SkEnumBitMask<PipelineCreationFlags> pipelineCreationFlags,
             uint32_t uniqueKeyHash,
             uint32_t compilationID)
-        : fDstReadReq(shaderInfo.dstReadRequirement())
+        : fDstReadStrategy(shaderInfo.dstReadStrategy())
         , fNumFragTexturesAndSamplers(shaderInfo.numFragmentTexturesAndSamplers())
         , fHasPaintUniforms(shaderInfo.hasPaintUniforms())
         , fHasStepUniforms(shaderInfo.hasStepUniforms())

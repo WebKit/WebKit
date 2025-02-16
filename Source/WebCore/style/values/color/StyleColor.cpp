@@ -301,14 +301,14 @@ bool containsCurrentColor(const Color& value)
 
 // MARK: - Serialization
 
-String serializationForCSS(const Color& value)
+String serializationForCSS(const CSS::SerializationContext& context, const Color& value)
 {
-    return WTF::switchOn(value, [](const auto& kind) { return WebCore::Style::serializationForCSS(kind); });
+    return WTF::switchOn(value, [&](const auto& kind) { return WebCore::Style::serializationForCSS(context, kind); });
 }
 
-void serializationForCSS(StringBuilder& builder, const Color& value)
+void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const Color& value)
 {
-    return WTF::switchOn(value, [&](const auto& kind) { WebCore::Style::serializationForCSS(builder, kind); });
+    return WTF::switchOn(value, [&](const auto& kind) { WebCore::Style::serializationForCSS(builder, context, kind); });
 }
 
 // MARK: - TextStream.

@@ -256,7 +256,7 @@ static IDBError createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
     String tableStatement = database.tableSQL("Records"_s);
     if (tableStatement.isEmpty()) {
         if (!database.executeCommand(v3RecordsTableSchema()))
-            return IDBError { ExceptionCode::UnknownError, makeString("Error creating Records table ("_s, database.lastError(), ") - "_s, span(database.lastErrorMsg())) };
+            return IDBError { ExceptionCode::UnknownError, makeString("Error creating Records table ("_s, database.lastError(), ") - "_s, unsafeSpan(database.lastErrorMsg())) };
 
         return IDBError { };
     }
@@ -276,16 +276,16 @@ static IDBError createOrMigrateRecordsTableIfNecessary(SQLiteDatabase& database)
 
     // Create a temporary table with the correct schema and migrate all existing content over.
     if (!database.executeCommand(v3RecordsTableSchemaTemp()))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error creating temporary Records table ("_s, database.lastError(), ") - "_s, span(database.lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error creating temporary Records table ("_s, database.lastError(), ") - "_s, unsafeSpan(database.lastErrorMsg())) };
 
     if (!database.executeCommand("INSERT INTO _Temp_Records (objectStoreID, key, value) SELECT objectStoreID, CAST(key AS TEXT), value FROM Records"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error migrating Records table ("_s, database.lastError(), ") - "_s, span(database.lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error migrating Records table ("_s, database.lastError(), ") - "_s, unsafeSpan(database.lastErrorMsg())) };
 
     if (!database.executeCommand("DROP TABLE Records"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping Records table ("_s, database.lastError(), ") - "_s, span(database.lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping Records table ("_s, database.lastError(), ") - "_s, unsafeSpan(database.lastErrorMsg())) };
 
     if (!database.executeCommand("ALTER TABLE _Temp_Records RENAME TO Records"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error renaming temporary Records table ("_s, database.lastError(), ") - "_s, span(database.lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error renaming temporary Records table ("_s, database.lastError(), ") - "_s, unsafeSpan(database.lastErrorMsg())) };
 
     transaction.commit();
 
@@ -300,7 +300,7 @@ IDBError SQLiteIDBBackingStore::ensureValidBlobTables()
     String recordsTableStatement = m_sqliteDB->tableSQL("BlobRecords"_s);
     if (recordsTableStatement.isEmpty()) {
         if (!m_sqliteDB->executeCommand(blobRecordsTableSchema()))
-            return IDBError { ExceptionCode::UnknownError, makeString("Error creating BlobRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+            return IDBError { ExceptionCode::UnknownError, makeString("Error creating BlobRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
         recordsTableStatement = blobRecordsTableSchema();
     }
@@ -310,7 +310,7 @@ IDBError SQLiteIDBBackingStore::ensureValidBlobTables()
     String filesTableStatement = m_sqliteDB->tableSQL("BlobFiles"_s);
     if (filesTableStatement.isEmpty()) {
         if (!m_sqliteDB->executeCommand(blobFilesTableSchema()))
-            return IDBError { ExceptionCode::UnknownError, makeString("Error creating BlobFiles table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+            return IDBError { ExceptionCode::UnknownError, makeString("Error creating BlobFiles table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
         filesTableStatement = blobFilesTableSchema();
     }
@@ -331,7 +331,7 @@ IDBError SQLiteIDBBackingStore::ensureValidRecordsTable()
     // Whether the updated records table already existed or if it was just created and the data migrated over,
     // make sure the uniqueness index exists.
     if (!m_sqliteDB->executeCommand("CREATE UNIQUE INDEX IF NOT EXISTS RecordsIndex ON Records (objectStoreID, key);"_s))
-        error = IDBError { ExceptionCode::UnknownError, makeString("Error creating RecordsIndex on Records table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        error = IDBError { ExceptionCode::UnknownError, makeString("Error creating RecordsIndex on Records table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     return error;
 }
@@ -344,7 +344,7 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
     String tableStatement = m_sqliteDB->tableSQL("IndexRecords"_s);
     if (tableStatement.isEmpty()) {
         if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchema()))
-            return IDBError { ExceptionCode::UnknownError, makeString("Error creating IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+            return IDBError { ExceptionCode::UnknownError, makeString("Error creating IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
         return IDBError { };
     }
@@ -360,16 +360,16 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsTable()
 
     // Create a temporary table with the correct schema and migrate all existing content over.
     if (!m_sqliteDB->executeCommand(v3IndexRecordsTableSchemaTemp()))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error creating temporary IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error creating temporary IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     if (!m_sqliteDB->executeCommand("INSERT INTO _Temp_IndexRecords SELECT IndexRecords.indexID, IndexRecords.objectStoreID, IndexRecords.key, IndexRecords.value, Records.rowid FROM IndexRecords INNER JOIN Records ON Records.key = IndexRecords.value AND Records.objectStoreID = IndexRecords.objectStoreID"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error migrating IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error migrating IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     if (!m_sqliteDB->executeCommand("DROP TABLE IndexRecords"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     if (!m_sqliteDB->executeCommand("ALTER TABLE _Temp_IndexRecords RENAME TO IndexRecords"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error renaming temporary IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error renaming temporary IndexRecords table ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     transaction.commit();
 
@@ -386,10 +386,10 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsIndex()
         return IDBError { };
     
     if (!m_sqliteDB->executeCommand("DROP INDEX IF EXISTS IndexRecordsIndex"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping IndexRecordsIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping IndexRecordsIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     if (!m_sqliteDB->executeCommand(IndexRecordsIndexSchema))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error creating IndexRecordsIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error creating IndexRecordsIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     return IDBError { };
 }
@@ -404,10 +404,10 @@ IDBError SQLiteIDBBackingStore::ensureValidIndexRecordsRecordIndex()
         return IDBError { };
     
     if (!m_sqliteDB->executeCommand("DROP INDEX IF EXISTS IndexRecordsRecordIndex"_s))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping IndexRecordsRecordIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error dropping IndexRecordsRecordIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     if (!m_sqliteDB->executeCommand(v1IndexRecordsRecordIndexSchema))
-        return IDBError { ExceptionCode::UnknownError, makeString("Error creating IndexRecordsRecordIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, span(m_sqliteDB->lastErrorMsg())) };
+        return IDBError { ExceptionCode::UnknownError, makeString("Error creating IndexRecordsRecordIndex index ("_s, m_sqliteDB->lastError(), ") - "_s, unsafeSpan(m_sqliteDB->lastErrorMsg())) };
 
     return IDBError { };
 }
@@ -653,127 +653,6 @@ bool SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate(const HashMap<st
     return true;
 }
 
-bool SQLiteIDBBackingStore::removeExistingIndex(IDBIndexIdentifier indexID)
-{
-    SQLiteTransaction transaction(*m_sqliteDB);
-    transaction.begin();
-
-    {
-        auto sql = cachedStatement(SQL::RemoveIndexInfo, "DELETE FROM IndexInfo WHERE id = ?;"_s);
-        if (!sql
-            || sql->bindInt64(1, indexID.toRawValue()) != SQLITE_OK
-            || sql->step() != SQLITE_DONE) {
-            LOG_ERROR("Unable to remove existing index from IndexInfo table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return false;
-        }
-    }
-
-    {
-        auto sql = cachedStatement(SQL::DeleteIndexRecords, "DELETE FROM IndexRecords WHERE indexID = ?;"_s);
-        if (!sql
-            || sql->bindInt64(1, indexID.toRawValue()) != SQLITE_OK
-            || sql->step() != SQLITE_DONE) {
-            LOG_ERROR("Unable to remove existing index from IndexRecords table (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return false;
-        }
-    }
-
-    transaction.commit();
-    return true;
-}
-
-bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo, const IDBIndexInfo& info)
-{
-    SQLiteTransaction transaction(*m_sqliteDB);
-    transaction.begin();
-
-    auto keyPathBlob = serializeIDBKeyPath(info.keyPath());
-    if (!keyPathBlob) {
-        LOG_ERROR("Unable to serialize IDBKeyPath to save in database");
-        return false;
-    }
-
-    {
-        auto sql = cachedStatement(SQL::CreateIndexInfo, "INSERT INTO IndexInfo VALUES (?, ?, ?, ?, ?, ?);"_s);
-        if (!sql
-            || sql->bindInt64(1, info.identifier().toRawValue()) != SQLITE_OK
-            || sql->bindText(2, info.name()) != SQLITE_OK
-            || sql->bindInt64(3, info.objectStoreIdentifier().toRawValue()) != SQLITE_OK
-            || sql->bindBlob(4, keyPathBlob->span()) != SQLITE_OK
-            || sql->bindInt(5, info.unique()) != SQLITE_OK
-            || sql->bindInt(6, info.multiEntry()) != SQLITE_OK
-            || sql->step() != SQLITE_DONE) {
-            LOG_ERROR("Could not add index '%s' to IndexInfo table (%i) - %s", info.name().utf8().data(), m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return false;
-        }
-    }
-
-    {
-        auto sql = cachedStatement(SQL::GetObjectStoreRecords, "SELECT key, value, recordID FROM Records WHERE objectStoreID = ?;"_s);
-        if (!sql
-            || sql->bindInt64(1, info.objectStoreIdentifier().toRawValue()) != SQLITE_OK) {
-            LOG_ERROR("Unable to prepare statement or bind values (%i) - %s", m_sqliteDB->lastError(), m_sqliteDB->lastErrorMsg());
-            return false;
-        }
-
-        int result = sql->step();
-        while (result == SQLITE_ROW) {
-            auto keyBufferSpan = sql->columnBlobAsSpan(0);
-            IDBKeyData keyData;
-            if (!deserializeIDBKeyData(keyBufferSpan, keyData)) {
-                LOG_ERROR("Unable to deserialize key data from database while getting all records");
-                return false;
-            }
-
-            auto value = ThreadSafeDataBuffer::create(sql->columnBlob(1));
-
-            uint64_t recordID = sql->columnInt64(2);
-            IDBError error = updateOneIndexForAddRecord(objectStoreInfo, info, keyData, value, recordID);
-            if (!error.isNull())
-                return false;
-
-            result = sql->step();
-        }
-
-        if (result != SQLITE_DONE) {
-            LOG_ERROR("Error fetching object records from Records table on disk");
-            return false;
-        }
-    }
-
-    transaction.commit();
-    return true;
-}
-
-bool SQLiteIDBBackingStore::handleDuplicateIndexIDs(const HashMap<IDBIndexIdentifier, Vector<IDBIndexInfo>>& indexInfoMap, IDBDatabaseInfo& databaseInfo)
-{
-    for (auto& iter : indexInfoMap) {
-        if (iter.value.size() == 1)
-            continue;
-
-        if (!removeExistingIndex(iter.key))
-            return false;
-
-        for (auto info : iter.value) {
-            auto objectStoreInfo = databaseInfo.infoForExistingObjectStore(info.objectStoreIdentifier());
-            ASSERT(objectStoreInfo);
-            objectStoreInfo->deleteIndex(info.identifier());
-
-            // A new index with the same name may already be added.
-            if (objectStoreInfo->hasIndex(info.name()))
-                continue;
-
-            info.setIdentifier(databaseInfo.generateNextIndexID());
-            if (!addExistingIndex(*objectStoreInfo, info))
-                return false;
-
-            objectStoreInfo->addExistingIndex(info);
-        }
-    }
-
-    return true;
-}
-
 std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseInfo()
 {
     ASSERT(m_sqliteDB);
@@ -842,7 +721,7 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
     uint64_t maxIndexID = 0;
     HashMap<std::pair<IDBObjectStoreIdentifier, IDBIndexIdentifier>, IDBIndexIdentifier> indexIDMap;
-    HashMap<IDBIndexIdentifier, Vector<IDBIndexInfo>> indexInfoMap;
+    HashSet<IDBIndexIdentifier> existingIndexIDs;
     {
         auto sql = m_sqliteDB->prepareStatement("SELECT id, name, objectStoreID, keyPath, isUnique, multiEntry FROM IndexInfo;"_s);
         if (!sql) {
@@ -881,15 +760,16 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
                 indexID = IDBIndexIdentifier { maxIndexID };
             }
 
-            auto indexInfo = IDBIndexInfo { indexID, objectStoreID, indexName, WTFMove(indexKeyPath.value()), unique, multiEntry };
             if (!shouldUpdateIndexID) {
-                auto& indexInfos = indexInfoMap.ensure(indexID, []() -> Vector<IDBIndexInfo> {
-                    return { };
-                }).iterator->value;
-                indexInfos.append(indexInfo);
+                auto addResult = existingIndexIDs.add(indexID);
+                if (!addResult.isNewEntry) {
+                    RELEASE_LOG_ERROR(IndexedDB, "%p - SQLiteIDBBackingStore::extractExistingDatabaseInfo(): Index with the same index ID already exists", this);
+                    return nullptr;
+                }
             }
 
-            objectStore->addExistingIndex(indexInfo);
+            auto indexInfo = IDBIndexInfo { indexID, objectStoreID, indexName, WTFMove(indexKeyPath.value()), unique, multiEntry };
+            objectStore->addExistingIndex(WTFMove(indexInfo));
             maxIndexID = maxIndexID < indexID.toRawValue() ? indexID.toRawValue() : maxIndexID;
 
             result = sql->step();
@@ -904,9 +784,6 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
 
     if (shouldUpdateIndexID) {
         if (!migrateIndexInfoTableForIDUpdate(indexIDMap) || !migrateIndexRecordsTableForIDUpdate(indexIDMap))
-            return nullptr;
-    } else {
-        if (!handleDuplicateIndexIDs(indexInfoMap, *databaseInfo))
             return nullptr;
     }
 

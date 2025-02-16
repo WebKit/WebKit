@@ -5,7 +5,7 @@ function foo() {
 noInline(foo);
 
 let expected = 2147483648 * 2147483648;
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let result = foo();
     if (result != expected)
         throw "FAIL";

@@ -32,28 +32,10 @@ sub GenerateStrings($)
     my %strings = %$stringsRef;
 
     my @result = ();
-
-    push(@result, <<END);
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4307)
-#endif
-
-END
-
     for my $name (sort keys %strings) {
         my $value = $strings{$name};
         push(@result, "static constexpr StringImpl::StaticStringImpl ${name}Data(\"${value}\");\n");
     }
-
-    push(@result, <<END);
-
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-
-END
-
     return join "", @result;
 }
 

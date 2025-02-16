@@ -34,15 +34,20 @@ void TextureFixedRateCompressionTest::invalidTestHelper(const GLint *attribs)
     glTexStorageAttribs2DEXT(GL_TEXTURE_2D, 1, GL_RGBA8, 16, 16, attribs);
     ASSERT_GL_NO_ERROR();
 
+    /* Query compression rate */
+    GLint compressRate = GL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT;
+    glGetTexParameteriv(GL_TEXTURE_2D, GL_SURFACE_COMPRESSION_EXT, &compressRate);
+    ASSERT_GL_NO_ERROR();
+
     glBindImageTexture(0, tex, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA8);
     if (nullptr == attribs)
     {
         /* Default attrib which is non-compressed formats will return GL_NO_ERROR. */
         ASSERT_GL_NO_ERROR();
     }
-    else if (attribs[1] == GL_SURFACE_COMPRESSION_FIXED_RATE_DEFAULT_EXT ||
-             (attribs[1] >= GL_SURFACE_COMPRESSION_FIXED_RATE_1BPC_EXT &&
-              attribs[1] <= GL_SURFACE_COMPRESSION_FIXED_RATE_12BPC_EXT))
+    else if (compressRate == GL_SURFACE_COMPRESSION_FIXED_RATE_DEFAULT_EXT ||
+             (compressRate >= GL_SURFACE_COMPRESSION_FIXED_RATE_1BPC_EXT &&
+              compressRate <= GL_SURFACE_COMPRESSION_FIXED_RATE_12BPC_EXT))
     {
         /* Compressed texture is not supported in glBindImageTexture. */
         ASSERT_GL_ERROR(GL_INVALID_VALUE);

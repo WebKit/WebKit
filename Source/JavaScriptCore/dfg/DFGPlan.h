@@ -72,7 +72,7 @@ public:
 
     bool isKnownToBeLiveAfterGC() final;
     bool isKnownToBeLiveDuringGC(AbstractSlotVisitor&) final;
-    bool iterateCodeBlocksForGC(AbstractSlotVisitor&, const Function<void(CodeBlock*)>&) final;
+    bool iterateCodeBlocksForGC(AbstractSlotVisitor&, NOESCAPE const Function<void(CodeBlock*)>&) final;
     bool checkLivenessAndVisitChildren(AbstractSlotVisitor&) final;
 
 

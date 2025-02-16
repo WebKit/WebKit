@@ -49,6 +49,7 @@
 #include "CSSPrimitiveNumericTypes+CSSValueCreation.h"
 #include "CSSPropertyParserConsumer+Align.h"
 #include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPropertyParserConsumer+AppleVisualEffect.h"
 #include "CSSPropertyParserConsumer+Background.h"
 #include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Conditional.h"
@@ -91,6 +92,7 @@
 #include "TimingFunction.h"
 #include "TransformOperationsBuilder.h"
 #include <memory>
+#include <wtf/IndexedRange.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
@@ -201,7 +203,7 @@ void CSSPropertyParser::addProperty(CSSPropertyID property, CSSPropertyID curren
     ASSERT(isExposed(property, &m_context.propertySettings) || setFromShorthand || isInternal(property));
 
     if (value && !value->isImplicitInitialValue())
-        m_parsedProperties->append(CSSProperty(property, WTFMove(value), important ? IsImportant::Yes : IsImportant::No, setFromShorthand, shorthandIndex, implicit));
+        m_parsedProperties->append(CSSProperty(property, value.releaseNonNull(), important ? IsImportant::Yes : IsImportant::No, setFromShorthand, shorthandIndex, implicit));
     else {
         ASSERT(setFromShorthand);
         m_parsedProperties->append(CSSProperty(property, Ref { CSSPrimitiveValue::implicitInitialValue() }, important ? IsImportant::Yes : IsImportant::No, setFromShorthand, shorthandIndex, true));
@@ -601,8 +603,8 @@ static bool propertyAllowedInPositionTryRule(CSSPropertyID property)
         || property == CSSPropertyAlignSelf
         || property == CSSPropertyJustifySelf
         || property == CSSPropertyPlaceSelf
-        || property == CSSPropertyPositionAnchor;
-    // FIXME (webkit.org/b/281289): allow position-area when it's implemented
+        || property == CSSPropertyPositionAnchor
+        || property == CSSPropertyPositionArea;
 }
 
 bool CSSPropertyParser::parsePositionTryDescriptor(CSSPropertyID property, bool important)
@@ -769,10 +771,8 @@ bool CSSPropertyParser::consumeFont(bool important)
 
     m_range = range;
     auto shorthand = fontShorthand();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    for (unsigned i = 0; i < shorthand.length(); ++i)
-        addProperty(shorthand.properties()[i], CSSPropertyFont, i < std::size(values) ? WTFMove(values[i]) : nullptr, important, true);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    for (auto [i, longhand] : indexedRange(shorthand.properties()))
+        addProperty(longhand, CSSPropertyFont, i < values.size() ? WTFMove(values[i]) : nullptr, important, true);
 
     return true;
 }
@@ -976,6 +976,7 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyAccentColor:
     case CSSPropertyAlignSelf:
     case CSSPropertyAnimationDuration:
+    case CSSPropertyAnimationTimeline:
     case CSSPropertyAspectRatio:
     case CSSPropertyBackgroundSize:
     case CSSPropertyBlockSize:
@@ -1057,6 +1058,8 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
     case CSSPropertyAlignContent:
     case CSSPropertyAlignItems:
     case CSSPropertyAnimationDirection:
+    case CSSPropertyAnimationRangeEnd:
+    case CSSPropertyAnimationRangeStart:
     case CSSPropertyBackgroundBlendMode:
     case CSSPropertyColumnGap:
     case CSSPropertyContainerType:
@@ -1098,7 +1101,6 @@ static constexpr InitialValue initialValueForLonghand(CSSPropertyID longhand)
         return InitialNumericValue { 0, CSSUnitType::CSS_S };
     case CSSPropertyAnimationFillMode:
     case CSSPropertyAnimationName:
-    case CSSPropertyAnimationTimeline:
     case CSSPropertyAppearance:
     case CSSPropertyBackgroundImage:
     case CSSPropertyBlockEllipsis:
@@ -1525,7 +1527,7 @@ bool CSSPropertyParser::consumeShorthandGreedily(const StylePropertyShorthand& s
 {
     ASSERT(shorthand.length() <= 6); // Existing shorthands have at most 6 longhands.
     std::array<RefPtr<CSSValue>, 6> longhands;
-    auto shorthandProperties = shorthand.propertiesSpan();
+    auto shorthandProperties = shorthand.properties();
     do {
         bool foundLonghand = false;
         for (size_t i = 0; !foundLonghand && i < shorthand.length(); ++i) {
@@ -1667,7 +1669,7 @@ bool CSSPropertyParser::consumeBorderShorthand(CSSPropertyID widthProperty, CSSP
 bool CSSPropertyParser::consume2ValueShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
     ASSERT(shorthand.length() == 2);
-    auto longhands = shorthand.propertiesSpan();
+    auto longhands = shorthand.properties();
     RefPtr start = parseSingleValue(longhands[0], shorthand.id());
     if (!start)
         return false;
@@ -1685,7 +1687,7 @@ bool CSSPropertyParser::consume2ValueShorthand(const StylePropertyShorthand& sho
 bool CSSPropertyParser::consume4ValueShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
     ASSERT(shorthand.length() == 4);
-    auto longhands = shorthand.propertiesSpan();
+    auto longhands = shorthand.properties();
     RefPtr top = parseSingleValue(longhands[0], shorthand.id());
     if (!top)
         return false;
@@ -1880,10 +1882,12 @@ static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property
         return CSSPropertyParsing::consumeSingleAnimationPlayState(range);
     case CSSPropertyAnimationComposition:
         return CSSPropertyParsing::consumeSingleAnimationComposition(range);
+    case CSSPropertyAnimationTimeline:
+    case CSSPropertyAnimationRangeStart:
+    case CSSPropertyAnimationRangeEnd:
+        return nullptr; // reset-only longhands
     case CSSPropertyTransitionProperty:
         return consumeSingleTransitionPropertyOrNone(range, context);
-    case CSSPropertyAnimationTimeline:
-        return consumeAnimationTimeline(range, context);
     case CSSPropertyAnimationTimingFunction:
     case CSSPropertyTransitionTimingFunction:
         return consumeEasingFunction(range, context);
@@ -1897,13 +1901,25 @@ static RefPtr<CSSValue> consumeAnimationValueForShorthand(CSSPropertyID property
 
 bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
-    auto shorthandProperties = shorthand.propertiesSpan();
-    const unsigned longhandCount = shorthand.length();
-    std::array<CSSValueListBuilder, 8> longhands;
-    ASSERT(longhandCount <= 8);
+    auto shorthandProperties = shorthand.properties();
+    const size_t longhandCount = shorthand.length();
+    const size_t maxLonghandCount = 11;
+    std::array<CSSValueListBuilder, maxLonghandCount> longhands;
+    ASSERT(longhandCount <= maxLonghandCount);
+
+    auto isResetOnlyLonghand = [](CSSPropertyID longhand) {
+        switch (longhand) {
+        case CSSPropertyAnimationTimeline:
+        case CSSPropertyAnimationRangeStart:
+        case CSSPropertyAnimationRangeEnd:
+            return true;
+        default:
+            return false;
+        }
+    };
 
     do {
-        std::array<bool, 8> parsedLonghand = { };
+        std::array<bool, maxLonghandCount> parsedLonghand = { };
         do {
             bool foundProperty = false;
             for (size_t i = 0; i < longhandCount; ++i) {
@@ -1922,7 +1938,7 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
         } while (!m_range.atEnd() && m_range.peek().type() != CommaToken);
 
         for (size_t i = 0; i < longhandCount; ++i) {
-            if (!parsedLonghand[i])
+            if (!parsedLonghand[i] && !isResetOnlyLonghand(shorthandProperties[i]))
                 longhands[i].append(Ref { CSSPrimitiveValue::implicitInitialValue() });
             parsedLonghand[i] = false;
         }
@@ -1933,8 +1949,13 @@ bool CSSPropertyParser::consumeAnimationShorthand(const StylePropertyShorthand& 
             return false;
     }
 
-    for (size_t i = 0; i < longhandCount; ++i)
-        addProperty(shorthandProperties[i], shorthand.id(), CSSValueList::createCommaSeparated(WTFMove(longhands[i])), important);
+    for (size_t i = 0; i < longhandCount; ++i) {
+        auto& list = longhands[i];
+        if (list.isEmpty()) // reset-only property
+            addProperty(shorthandProperties[i], shorthand.id(), nullptr, important);
+        else
+            addProperty(shorthandProperties[i], shorthand.id(), CSSValueList::createCommaSeparated(WTFMove(list)), important);
+    }
 
     return m_range.atEnd();
 }
@@ -2030,7 +2051,7 @@ static RefPtr<CSSValue> consumeBackgroundComponent(CSSPropertyID property, CSSPa
 // the x properties in the shorthand array.
 bool CSSPropertyParser::consumeBackgroundShorthand(const StylePropertyShorthand& shorthand, bool important)
 {
-    auto shorthandProperties = shorthand.propertiesSpan();
+    auto shorthandProperties = shorthand.properties();
     unsigned longhandCount = shorthand.length();
 
     // mask resets mask-border properties outside of this method.
@@ -2187,7 +2208,7 @@ bool CSSPropertyParser::consumeGridItemPositionShorthand(CSSPropertyID shorthand
     }
     if (!m_range.atEnd())
         return false;
-    auto longhands = shorthand.propertiesSpan();
+    auto longhands = shorthand.properties();
     addProperty(longhands[0], shorthandId, startValue.releaseNonNull(), important);
     addProperty(longhands[1], shorthandId, endValue.releaseNonNull(), important);
     return true;
@@ -2432,7 +2453,7 @@ bool CSSPropertyParser::consumeAlignShorthand(const StylePropertyShorthand& shor
     //   <'gap'>           https://drafts.csswg.org/css-align/#propdef-gap
 
     ASSERT(shorthand.length() == 2);
-    auto longhands = shorthand.propertiesSpan();
+    auto longhands = shorthand.properties();
 
     auto rangeCopy = m_range;
 
@@ -2716,6 +2737,8 @@ bool CSSPropertyParser::consumeListStyleShorthand(bool important)
 
 bool CSSPropertyParser::consumeLineClampShorthand(bool important)
 {
+    ASSERT(m_context.propertySettings.cssLineClampEnabled);
+
     if (m_range.peek().id() == CSSValueNone) {
         // Sets max-lines to none, continue to auto, and block-ellipsis to none.
         addProperty(CSSPropertyMaxLines, CSSPropertyLineClamp, CSSPrimitiveValue::create(CSSValueNone), important);

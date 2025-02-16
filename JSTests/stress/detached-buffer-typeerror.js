@@ -38,7 +38,7 @@ noInline(storeU8);
 const buffer = new ArrayBuffer(1);
 const view = new DataView(buffer);
 
-for (let i = 0; i < 1e5; i++) {
+for (let i = 0; i < testLoopCount; i++) {
   storeU8(view, 0, 0xff);
   shouldBe(loadU8(view, 0), 0xff);
   shouldBe(viewLength(view), 1);

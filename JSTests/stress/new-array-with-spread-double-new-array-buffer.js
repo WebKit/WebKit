@@ -10,7 +10,7 @@ function test()
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var [a, b, c] = test();
     shouldBe(a, 1.2);
     shouldBe(b, 2.3);

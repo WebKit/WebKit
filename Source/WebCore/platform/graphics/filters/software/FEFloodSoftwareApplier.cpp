@@ -39,7 +39,7 @@ bool FEFloodSoftwareApplier::apply(const Filter&, const FilterImageVector&, Filt
     if (!resultImage)
         return false;
 
-    auto color = m_effect.floodColor().colorWithAlphaMultipliedBy(m_effect.floodOpacity());
+    auto color = m_effect->floodColor().colorWithAlphaMultipliedBy(m_effect->floodOpacity());
     resultImage->context().fillRect(FloatRect(FloatPoint(), result.absoluteImageRect().size()), color);
 
     return true;

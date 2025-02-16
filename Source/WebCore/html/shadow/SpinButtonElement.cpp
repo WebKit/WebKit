@@ -39,7 +39,6 @@
 #include "ScriptDisallowedScope.h"
 #include "ScrollbarTheme.h"
 #include "UserAgentParts.h"
-#include "WheelEvent.h"
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -156,22 +155,6 @@ void SpinButtonElement::willOpenPopup()
 {
     releaseCapture();
     m_upDownState = Indeterminate;
-}
-
-void SpinButtonElement::forwardEvent(Event& event)
-{
-    auto* wheelEvent = dynamicDowncast<WheelEvent>(event);
-    if (!wheelEvent)
-        return;
-
-    if (!m_spinButtonOwner)
-        return;
-
-    if (!m_spinButtonOwner->shouldSpinButtonRespondToWheelEvents())
-        return;
-
-    doStepAction(wheelEvent->wheelDeltaY());
-    wheelEvent->setDefaultHandled();
 }
 
 bool SpinButtonElement::willRespondToMouseMoveEvents() const

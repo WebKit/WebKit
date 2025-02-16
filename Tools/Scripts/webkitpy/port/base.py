@@ -1215,6 +1215,9 @@ class Port(object):
         args.append("--%s" % self.get_option('platform'))
         return self._executive.run_command([miniBrowser] + args, stdout=None, cwd=self.webkit_base(), return_stderr=False, decode_output=False, ignore_errors=True)
 
+    def run_webdriver(self, args):
+        raise NotImplementedError('Port.run_webdriver')
+
     @decorators.Memoize()
     def _path_to_image_diff(self):
         """Returns the full path to the image_diff binary, or None if it is not available.

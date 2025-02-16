@@ -47,8 +47,10 @@ void DataTask::setClient(Ref<DataTaskClient>&& client)
 
 void DataTask::cancel()
 {
-    if (m_networkProcess && m_sessionID && m_identifier)
-        m_networkProcess->cancelDataTask(*m_identifier, *m_sessionID);
+    if (m_sessionID && m_identifier) {
+        if (RefPtr networkProcess = m_networkProcess.get())
+            networkProcess->cancelDataTask(*m_identifier, *m_sessionID);
+    }
     m_activity = nullptr;
 }
 
@@ -62,12 +64,12 @@ DataTask::DataTask(std::optional<WebKit::DataTaskIdentifier> identifier, WeakPtr
     : m_identifier(identifier)
     , m_page(WTFMove(page))
     , m_originalURL(WTFMove(originalURL))
-    , m_networkProcess(m_page ? WeakPtr { m_page->websiteDataStore().networkProcess() } : nullptr)
-    , m_sessionID(m_page ? std::optional<PAL::SessionID> { m_page->sessionID() } : std::nullopt)
+    , m_networkProcess(m_page ? WeakPtr { protectedPage()->protectedWebsiteDataStore()->networkProcess() } : nullptr)
+    , m_sessionID(m_page ? std::optional<PAL::SessionID> { protectedPage()->sessionID() } : std::nullopt)
     , m_client(DataTaskClient::create())
 {
     if (RefPtr networkProcess = m_networkProcess.get())
-        m_activity = shouldRunAtForegroundPriority ? networkProcess->throttler().foregroundActivity("WKDataTask"_s) : networkProcess->throttler().backgroundActivity("WKDataTask"_s);
+        m_activity = shouldRunAtForegroundPriority ? networkProcess->protectedThrottler()->foregroundActivity("WKDataTask"_s) : networkProcess->protectedThrottler()->backgroundActivity("WKDataTask"_s);
 }
 
 void DataTask::didCompleteWithError(WebCore::ResourceError&& error)

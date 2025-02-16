@@ -27,8 +27,6 @@
 #include "config.h"
 #include "DateTimeNumericFieldElement.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "EventNames.h"
 #include "FontCascade.h"
 #include "HTMLNames.h"
@@ -199,5 +197,3 @@ void DateTimeNumericFieldElement::handleBlurEvent(Event& event)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

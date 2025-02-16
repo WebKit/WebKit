@@ -34,7 +34,7 @@ function foo(a) {
 }
 noInline(foo);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     foo(i);
     assert(!didEffects);
 }

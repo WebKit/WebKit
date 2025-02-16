@@ -78,7 +78,7 @@ struct ProgramArgumentBufferEncoderMtl
 {
     void reset(ContextMtl *contextMtl);
 
-    mtl::AutoObjCPtr<id<MTLArgumentEncoder>> metalArgBufferEncoder;
+    angle::ObjCPtr<id<MTLArgumentEncoder>> metalArgBufferEncoder;
     mtl::BufferPool bufferPool;
 };
 
@@ -90,7 +90,7 @@ struct ProgramShaderObjVariantMtl
 {
     void reset(ContextMtl *contextMtl);
 
-    mtl::AutoObjCPtr<id<MTLFunction>> metalShader;
+    angle::ObjCPtr<id<MTLFunction>> metalShader;
     // UBO's argument buffer encoder. Used when number of UBOs used exceeds number of allowed
     // discrete slots, and thus needs to encode all into one argument buffer.
     ProgramArgumentBufferEncoderMtl uboArgBufferEncoder;

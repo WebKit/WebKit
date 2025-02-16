@@ -46,22 +46,6 @@ DeprecatedGlobalSettings& DeprecatedGlobalSettings::shared()
     return deprecatedGlobalSettings;
 }
 
-#if ENABLE(VORBIS)
-void DeprecatedGlobalSettings::setVorbisDecoderEnabled(bool isEnabled)
-{
-    shared().m_vorbisDecoderEnabled = isEnabled;
-    PlatformMediaSessionManager::setVorbisDecoderEnabled(isEnabled);
-}
-#endif
-
-#if ENABLE(OPUS)
-void DeprecatedGlobalSettings::setOpusDecoderEnabled(bool isEnabled)
-{
-    shared().m_opusDecoderEnabled = isEnabled;
-    PlatformMediaSessionManager::setOpusDecoderEnabled(isEnabled);
-}
-#endif
-
 #if USE(AVFOUNDATION)
 void DeprecatedGlobalSettings::setAVFoundationEnabled(bool enabled)
 {
@@ -117,11 +101,6 @@ void DeprecatedGlobalSettings::setAudioSessionCategoryOverride(unsigned sessionC
 unsigned DeprecatedGlobalSettings::audioSessionCategoryOverride()
 {
     return static_cast<unsigned>(AudioSession::sharedSession().categoryOverride());
-}
-
-void DeprecatedGlobalSettings::setNetworkDataUsageTrackingEnabled(bool trackingEnabled)
-{
-    shared().m_networkDataUsageTrackingEnabled = trackingEnabled;
 }
 
 void DeprecatedGlobalSettings::setNetworkInterfaceName(const String& networkInterfaceName)

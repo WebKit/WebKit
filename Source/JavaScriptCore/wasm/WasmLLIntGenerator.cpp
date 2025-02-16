@@ -52,6 +52,7 @@ public:
 
     static constexpr bool shouldFuseBranchCompare = false;
     static constexpr bool tierSupportsSIMD = false;
+    static constexpr bool validateFunctionBodySize = true;
 
     struct ControlLoop  {
         Ref<Label> m_body;
@@ -778,6 +779,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
+        case TypeKind::Nullexn:
         case TypeKind::Nullref:
         case TypeKind::Nullfuncref:
         case TypeKind::Nullexternref:
@@ -822,6 +824,7 @@ auto LLIntGenerator::callInformationForCaller(const FunctionSignature& signature
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
+        case TypeKind::Nullexn:
         case TypeKind::Nullref:
         case TypeKind::Nullfuncref:
         case TypeKind::Nullexternref:
@@ -896,6 +899,7 @@ auto LLIntGenerator::callInformationForCallee(const FunctionSignature& signature
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
+        case TypeKind::Nullexn:
         case TypeKind::Nullref:
         case TypeKind::Nullfuncref:
         case TypeKind::Nullexternref:
@@ -966,6 +970,7 @@ auto LLIntGenerator::addArguments(const TypeDefinition& signature) -> PartialRes
         case TypeKind::Arrayref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
+        case TypeKind::Nullexn:
         case TypeKind::Nullref:
         case TypeKind::Nullfuncref:
         case TypeKind::Nullexternref:

@@ -870,6 +870,9 @@ void CSSSelector::replaceNestingParentByPseudoClassScope()
             // Replace by :scope
             selector.setMatch(Match::PseudoClass);
             selector.setPseudoClass(PseudoClass::Scope);
+            // Top-level nesting parent selector acts like :scope with zero specificity.
+            // https://github.com/w3c/csswg-drafts/issues/10196#issuecomment-2161119978
+            selector.setImplicit();
         }
         return false;
     };

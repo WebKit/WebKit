@@ -40,9 +40,9 @@ struct Brightness {
 };
 using BrightnessFunction = FunctionNotation<CSSValueBrightness, Brightness>;
 
-DEFINE_TYPE_WRAPPER(Brightness, value);
+DEFINE_TYPE_WRAPPER_GET(Brightness, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Brightness, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Brightness, 1)

@@ -9,7 +9,7 @@ function logicalNot(a) {
 }
 noInline(logicalNot);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(logicalNot(10n), false, 10n);
     assert(logicalNot(1n), false, 1n);
     assert(logicalNot(0n), true, 0n);

@@ -39,9 +39,6 @@ public:
     // DOMDebuggerBackendDispatcherHandler
     Inspector::Protocol::ErrorStringOr<void> setDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType, RefPtr<JSON::Object>&& options);
     Inspector::Protocol::ErrorStringOr<void> removeDOMBreakpoint(Inspector::Protocol::DOM::NodeId, Inspector::Protocol::DOMDebugger::DOMBreakpointType);
-
-private:
-    bool setAnimationFrameBreakpoint(Inspector::Protocol::ErrorString&, RefPtr<JSC::Breakpoint>&&);
 };
 
 } // namespace WebCore

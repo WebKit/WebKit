@@ -56,20 +56,20 @@ XMLErrors::XMLErrors(Document& document)
 {
 }
 
-void XMLErrors::handleError(ErrorType type, const char* message, int lineNumber, int columnNumber)
+void XMLErrors::handleError(Type type, const char* message, int lineNumber, int columnNumber)
 {
     handleError(type, message, TextPosition(OrdinalNumber::fromOneBasedInt(lineNumber), OrdinalNumber::fromOneBasedInt(columnNumber)));
 }
 
-void XMLErrors::handleError(ErrorType type, const char* message, TextPosition position)
+void XMLErrors::handleError(Type type, const char* message, TextPosition position)
 {
-    if (type == fatal || (m_errorCount < maxErrors && (!m_lastErrorPosition || (m_lastErrorPosition->m_line != position.m_line && m_lastErrorPosition->m_column != position.m_column)))) {
+    if (type == Type::Fatal || (m_errorCount < maxErrors && (!m_lastErrorPosition || (m_lastErrorPosition->m_line != position.m_line && m_lastErrorPosition->m_column != position.m_column)))) {
         switch (type) {
-        case warning:
+        case Type::Warning:
             appendErrorMessage("warning"_s, position, message);
             break;
-        case fatal:
-        case nonFatal:
+        case Type::Fatal:
+        case Type::NonFatal:
             appendErrorMessage("error"_s, position, message);
         }
 
@@ -81,7 +81,7 @@ void XMLErrors::handleError(ErrorType type, const char* message, TextPosition po
 void XMLErrors::appendErrorMessage(ASCIILiteral typeString, TextPosition position, const char* message)
 {
     // <typeString> on line <lineNumber> at column <columnNumber>: <message>
-    m_errorMessages.append(typeString, " on line "_s, position.m_line.oneBasedInt(), " at column "_s, position.m_column.oneBasedInt(), ": "_s, span(message));
+    m_errorMessages.append(typeString, " on line "_s, position.m_line.oneBasedInt(), " at column "_s, position.m_column.oneBasedInt(), ": "_s, unsafeSpan(message));
 }
 
 static inline Ref<Element> createXHTMLParserErrorHeader(Document& document, String&& errorMessages)

@@ -83,4 +83,4 @@ template<> struct Blending<Path> {
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(Path, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Path, 2)

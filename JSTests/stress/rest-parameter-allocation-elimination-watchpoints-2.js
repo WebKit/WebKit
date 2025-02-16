@@ -9,11 +9,11 @@ function foo(...args) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     // Warm it up on in bound accesses.
     assert(foo(i) === i);
 }
 
 Array.prototype[0] = 50;
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     assert(foo() === 50);

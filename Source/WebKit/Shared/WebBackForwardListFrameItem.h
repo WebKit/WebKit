@@ -55,17 +55,19 @@ public:
     WebBackForwardListFrameItem* parent() const { return m_parent.get(); }
     RefPtr<WebBackForwardListFrameItem> protectedParent() const { return m_parent.get(); }
     void setParent(WebBackForwardListFrameItem* parent) { m_parent = parent; }
-    bool hasAncestorFrame(WebCore::FrameIdentifier);
+    bool sharesAncestor(WebBackForwardListFrameItem&) const;
 
     WebBackForwardListFrameItem& rootFrame();
     WebBackForwardListFrameItem& mainFrame();
     Ref<WebBackForwardListFrameItem> protectedMainFrame();
     WebBackForwardListFrameItem* childItemForFrameID(WebCore::FrameIdentifier);
+    RefPtr<WebBackForwardListFrameItem> protectedChildItemForFrameID(WebCore::FrameIdentifier);
 
     WebBackForwardListItem* backForwardListItem() const;
     RefPtr<WebBackForwardListItem> protectedBackForwardListItem() const;
 
     void setChild(Ref<FrameState>&&);
+    void clearChildren() { m_children.clear(); }
 
     void setWasRestoredFromSession();
 

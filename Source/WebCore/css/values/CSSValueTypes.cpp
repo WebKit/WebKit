@@ -28,7 +28,7 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<CustomIdentifier>::operator()(StringBuilder& builder, const CustomIdentifier& value)
+void Serialize<CustomIdentifier>::operator()(StringBuilder& builder, const SerializationContext&, const CustomIdentifier& value)
 {
     builder.append(value.value);
 }

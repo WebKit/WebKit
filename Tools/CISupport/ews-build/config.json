@@ -191,6 +191,12 @@
     { "name": "ews251", "platform": "mac-ventura"},
     { "name": "ews252", "platform": "mac-ventura"},
     { "name": "ews253", "platform": "*", "max_builds": 3 },
+    { "name": "ews254", "platform": "ios-simulator-18" },
+    { "name": "ews255", "platform": "ios-simulator-18" },
+    { "name": "ews256", "platform": "ios-simulator-18" },
+    { "name": "ews257", "platform": "ios-simulator-18" },
+    { "name": "ews258", "platform": "ios-simulator-18" },
+    { "name": "ews259", "platform": "ios-simulator-18" },
     { "name": "webkit-cq-01", "platform": "mac-ventura" },
     { "name": "webkit-cq-02", "platform": "mac-ventura" },
     { "name": "webkit-cq-03", "platform": "mac-ventura" },
@@ -436,7 +442,7 @@
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
       "triggered_by": ["ios-18-sim-build-ews"],
-      "workernames": ["ews110", "ews111", "ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183"]
+      "workernames": ["ews110", "ews111", "ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183", "ews254", "ews255", "ews256", "ews257", "ews258", "ews259"]
     },
     {
       "name": "API-Tests-macOS-EWS", "shortname": "api-mac", "icon": "testOnly",

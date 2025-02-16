@@ -296,8 +296,10 @@ macro checkStackOverflow(callee, scratch)
     lshiftp 4, scratch
     subp cfr, scratch, scratch
 
+if not ADDRESS64
     bpa scratch, cfr, .stackOverflow
-    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], scratch, .stackHeightOK
+end
+    bplteq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], scratch, .stackHeightOK
 
 .stackOverflow:
     ipintException(StackOverflow)
@@ -375,7 +377,10 @@ macro operationCall(fn)
 end
 
 macro operationCallMayThrow(fn)
-    storei PC, CallSiteIndex[cfr]
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], t0
+    negq t0
+    addq PC, t0
+    storei t0, CallSiteIndex[cfr]
 
     move wasmInstance, a0
     push PC, MC

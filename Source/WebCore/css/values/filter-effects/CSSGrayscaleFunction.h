@@ -40,9 +40,9 @@ struct Grayscale {
 };
 using GrayscaleFunction = FunctionNotation<CSSValueGrayscale, Grayscale>;
 
-DEFINE_TYPE_WRAPPER(Grayscale, value);
+DEFINE_TYPE_WRAPPER_GET(Grayscale, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Grayscale, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Grayscale, 1)

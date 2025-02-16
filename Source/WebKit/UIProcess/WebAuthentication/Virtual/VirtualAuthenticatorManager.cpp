@@ -29,9 +29,12 @@
 #if ENABLE(WEB_AUTHN)
 
 #include <VirtualService.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VirtualAuthenticatorManager);
 
 struct VirtualCredential;
 

@@ -39,7 +39,7 @@ public:
     const String attributeName() const { return m_attributeName; }
     const CSSValue* fallback() const { return m_fallback.get(); }
     bool equals(const CSSAttrValue& other) const;
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
 private:
     explicit CSSAttrValue(String&& attributeName, RefPtr<CSSValue>&& fallback)

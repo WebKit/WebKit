@@ -149,7 +149,7 @@ JSC::JSValue InspectorCanvas::resolveContext(JSC::JSGlobalObject* exec)
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-HashSet<Element*> InspectorCanvas::clientNodes() const
+UncheckedKeyHashSet<Element*> InspectorCanvas::clientNodes() const
 {
     return m_context->canvasBase().cssCanvasClients();
 }

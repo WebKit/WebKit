@@ -44,23 +44,17 @@ Structure* JSWebAssemblyStruct::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(WebAssemblyGCObjectType, StructureFlags), info());
 }
 
-JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const Wasm::TypeDefinition>&& type, RefPtr<const Wasm::RTT> rtt)
-    : Base(vm, structure, rtt)
+JSWebAssemblyStruct::JSWebAssemblyStruct(VM& vm, Structure* structure, Ref<const Wasm::TypeDefinition>&& type, RefPtr<const Wasm::RTT>&& rtt)
+    : Base(vm, structure, WTFMove(rtt))
     , m_type(WTFMove(type))
     , m_payload(structType()->instancePayloadSize(), 0)
 {
 }
 
-JSWebAssemblyStruct* JSWebAssemblyStruct::tryCreate(JSGlobalObject* globalObject, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex, RefPtr<const Wasm::RTT> rtt)
+JSWebAssemblyStruct* JSWebAssemblyStruct::create(VM& vm, Structure* structure, JSWebAssemblyInstance* instance, uint32_t typeIndex, RefPtr<const Wasm::RTT>&& rtt)
 {
-    VM& vm = globalObject->vm();
-
-    Ref<const Wasm::TypeDefinition> type = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
-
-    void* buffer = tryAllocateCell<JSWebAssemblyStruct>(vm);
-    if (UNLIKELY(!buffer))
-        return nullptr;
-    auto* structValue = new (NotNull, buffer) JSWebAssemblyStruct(vm, structure, Ref { type }, rtt);
+    Ref type = instance->module().moduleInformation().typeSignatures[typeIndex]->expand();
+    auto* structValue = new (NotNull, allocateCell<JSWebAssemblyStruct>(vm)) JSWebAssemblyStruct(vm, structure, WTFMove(type), WTFMove(rtt));
     structValue->finishCreation(vm);
     return structValue;
 }
@@ -161,6 +155,7 @@ void JSWebAssemblyStruct::set(uint32_t fieldIndex, uint64_t argument)
     case TypeKind::Exn:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:

@@ -35,7 +35,6 @@ namespace WebKit {
 
 struct RemoteMediaPlayerConfiguration {
     String engineDescription;
-    double maximumDurationToCacheMediaTime;
     bool supportsScanning { false };
     bool supportsFullscreen { false };
     bool supportsPictureInPicture { false };

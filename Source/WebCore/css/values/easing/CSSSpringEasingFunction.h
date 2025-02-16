@@ -63,4 +63,4 @@ template<size_t I> const auto& get(const SpringEasingParameters& value)
 } // namespace CSS
 } // namespace WebCore
 
-CSS_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(SpringEasingParameters, 4)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::SpringEasingParameters, 4)

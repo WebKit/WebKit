@@ -363,12 +363,12 @@ bool EventLoop::hasTasksForFullyActiveDocument() const
     });
 }
 
-void EventLoop::forEachAssociatedContext(const Function<void(ScriptExecutionContext&)>& apply)
+void EventLoop::forEachAssociatedContext(NOESCAPE const Function<void(ScriptExecutionContext&)>& apply)
 {
     m_associatedContexts.forEach(apply);
 }
 
-bool EventLoop::findMatchingAssociatedContext(const Function<bool(ScriptExecutionContext&)>& predicate)
+bool EventLoop::findMatchingAssociatedContext(NOESCAPE const Function<bool(ScriptExecutionContext&)>& predicate)
 {
     for (Ref context : m_associatedContexts) {
         if (predicate(context.get()))
@@ -416,8 +416,8 @@ void EventLoopTaskGroup::markAsReadyToStop()
     if (RefPtr eventLoop = m_eventLoop.get())
         eventLoop->stopAssociatedGroupsIfNecessary();
 
-    for (auto& timer : m_timers)
-        timer.stop();
+    for (Ref timer : m_timers)
+        timer->stop();
 
     if (wasSuspended && !isStoppedPermanently()) {
         // We we get marked as ready to stop while suspended (happens when a CachedPage gets destroyed) then the
@@ -434,8 +434,8 @@ void EventLoopTaskGroup::suspend()
     m_state = State::Suspended;
     // We don't remove suspended tasks to preserve the ordering.
     // EventLoop::run checks whether each task's group is suspended or not.
-    for (auto& timer : m_timers)
-        timer.suspend();
+    for (Ref timer : m_timers)
+        timer->suspend();
     if (RefPtr eventLoop = m_eventLoop.get())
         m_eventLoop->invalidateNextTimerFireTimeCache();
 }
@@ -449,8 +449,8 @@ void EventLoopTaskGroup::resume()
         eventLoop->resumeGroup(*this);
         eventLoop->invalidateNextTimerFireTimeCache();
     }
-    for (auto& timer : m_timers)
-        timer.resume();
+    for (Ref timer : m_timers)
+        timer->resume();
 }
 
 RefPtr<EventLoop> EventLoopTaskGroup::protectedEventLoop() const
@@ -575,20 +575,22 @@ void EventLoopTaskGroup::setTimerHasReachedMaxNestingLevel(EventLoopTimerHandle 
 
 void EventLoopTaskGroup::adjustTimerNextFireTime(EventLoopTimerHandle handle, Seconds delta)
 {
-    if (!handle.m_timer)
+    RefPtr timer = handle.m_timer;
+    if (!timer)
         return;
-    ASSERT(m_timers.contains(*handle.m_timer));
-    handle.m_timer->adjustNextFireTime(delta);
+    ASSERT(m_timers.contains(*timer));
+    timer->adjustNextFireTime(delta);
     if (RefPtr eventLoop = m_eventLoop.get())
         eventLoop->invalidateNextTimerFireTimeCache();
 }
 
 void EventLoopTaskGroup::adjustTimerRepeatInterval(EventLoopTimerHandle handle, Seconds delta)
 {
-    if (!handle.m_timer)
+    RefPtr timer = handle.m_timer;
+    if (!timer)
         return;
-    ASSERT(m_timers.contains(*handle.m_timer));
-    handle.m_timer->adjustRepeatInterval(delta);
+    ASSERT(m_timers.contains(*timer));
+    timer->adjustRepeatInterval(delta);
     if (RefPtr eventLoop = m_eventLoop.get())
         eventLoop->invalidateNextTimerFireTimeCache();
 }

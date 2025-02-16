@@ -22,7 +22,7 @@ PersistentCommandPool::~PersistentCommandPool()
     ASSERT(!mCommandPool.valid() && mFreeBuffers.empty());
 }
 
-angle::Result PersistentCommandPool::init(Context *context,
+angle::Result PersistentCommandPool::init(ErrorContext *context,
                                           ProtectionType protectionType,
                                           uint32_t queueFamilyIndex)
 {
@@ -69,7 +69,7 @@ void PersistentCommandPool::destroy(VkDevice device)
     mCommandPool.destroy(device);
 }
 
-angle::Result PersistentCommandPool::allocate(Context *context,
+angle::Result PersistentCommandPool::allocate(ErrorContext *context,
                                               PrimaryCommandBuffer *commandBufferOut)
 {
     if (mFreeBuffers.empty())
@@ -84,7 +84,7 @@ angle::Result PersistentCommandPool::allocate(Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result PersistentCommandPool::collect(Context *context, PrimaryCommandBuffer &&buffer)
+angle::Result PersistentCommandPool::collect(ErrorContext *context, PrimaryCommandBuffer &&buffer)
 {
     // VK_COMMAND_BUFFER_RESET_RELEASE_RESOURCES_BIT NOT set, The CommandBuffer
     // can still hold the memory resource
@@ -94,7 +94,7 @@ angle::Result PersistentCommandPool::collect(Context *context, PrimaryCommandBuf
     return angle::Result::Continue;
 }
 
-angle::Result PersistentCommandPool::allocateCommandBuffer(Context *context)
+angle::Result PersistentCommandPool::allocateCommandBuffer(ErrorContext *context)
 {
     PrimaryCommandBuffer commandBuffer;
     {

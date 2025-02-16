@@ -136,7 +136,10 @@ public:
     
     virtual void contentRuleListNotification(WebKit::WebPageProxy&, WTF::URL&&, WebCore::ContentRuleListResults&&) { };
 
-    virtual bool willGoToBackForwardListItem(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem&, bool inBackForwardCache) { return false; }
+    virtual void shouldGoToBackForwardListItem(WebKit::WebPageProxy&, WebKit::WebBackForwardListItem&, bool inBackForwardCache, CompletionHandler<void(bool)>&& completionHandler)
+    {
+        completionHandler(true);
+    }
 
     virtual void didBeginNavigationGesture(WebKit::WebPageProxy&) { }
     virtual void willEndNavigationGesture(WebKit::WebPageProxy&, bool willNavigate, WebKit::WebBackForwardListItem&) { }

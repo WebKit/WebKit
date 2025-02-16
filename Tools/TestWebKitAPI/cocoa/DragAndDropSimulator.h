@@ -112,6 +112,7 @@ typedef NSDictionary<NSNumber *, NSValue *> *ProgressToCGPointValueMap;
 @property (nonatomic, strong) NSArray *externalItemProviders;
 @property (nonatomic, readonly) UIDropProposal *lastKnownDropProposal;
 
+@property (nonatomic, copy) void(^dragProgressMidPointReachedBlock)(void);
 @property (nonatomic, copy) BOOL(^showCustomActionSheetBlock)(_WKActivatedElementInfo *);
 @property (nonatomic, copy) NSArray *(^convertItemProvidersBlock)(NSItemProvider *, NSArray *, NSDictionary *);
 @property (nonatomic, copy) NSArray *(^overridePerformDropBlock)(id <UIDropSession>);

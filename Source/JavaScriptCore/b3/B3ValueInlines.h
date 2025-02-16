@@ -67,10 +67,12 @@ namespace JSC { namespace B3 {
     case Identity: \
     case Opaque: \
     case Neg: \
+    case PurifyNaN: \
     case Clz: \
     case Abs: \
     case Ceil: \
     case Floor: \
+    case FTrunc: \
     case Sqrt: \
     case SExt8: \
     case SExt16: \

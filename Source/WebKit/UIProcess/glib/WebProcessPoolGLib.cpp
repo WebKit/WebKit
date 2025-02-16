@@ -115,21 +115,21 @@ void WebProcessPool::platformInitializeWebProcess(const WebProcessProxy& process
 #endif
 
 #if PLATFORM(GTK)
-    parameters.dmaBufRendererBufferMode = AcceleratedBackingStoreDMABuf::rendererBufferMode();
+    parameters.rendererBufferTransportMode = AcceleratedBackingStoreDMABuf::rendererBufferTransportMode();
 #elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
     if (usingWPEPlatformAPI) {
 #if USE(GBM)
         if (!parameters.renderDeviceFile.isEmpty())
-            parameters.dmaBufRendererBufferMode.add(DMABufRendererBufferMode::Hardware);
+            parameters.rendererBufferTransportMode.add(RendererBufferTransportMode::Hardware);
 #endif
-        parameters.dmaBufRendererBufferMode.add(DMABufRendererBufferMode::SharedMemory);
+        parameters.rendererBufferTransportMode.add(RendererBufferTransportMode::SharedMemory);
     }
 #endif
 
 #if PLATFORM(WPE)
     parameters.isServiceWorkerProcess = process.isRunningServiceWorkers();
 
-    if (!parameters.isServiceWorkerProcess && parameters.dmaBufRendererBufferMode.isEmpty()) {
+    if (!parameters.isServiceWorkerProcess && parameters.rendererBufferTransportMode.isEmpty()) {
         parameters.hostClientFileDescriptor = UnixFileDescriptor { wpe_renderer_host_create_client(), UnixFileDescriptor::Adopt };
         parameters.implementationLibraryName = FileSystem::fileSystemRepresentation(String::fromLatin1(wpe_loader_get_loaded_implementation_library_name()));
     }
@@ -210,7 +210,7 @@ void WebProcessPool::setSandboxEnabled(bool enabled)
         return;
     }
 
-#if !USE(SYSTEM_MALLOC)
+#if !USE(SYSTEM_MALLOC) && defined(RUNNING_ON_VALGRIND)
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     if (RUNNING_ON_VALGRIND)
         return;

@@ -2,11 +2,11 @@
  * Copyright (C) 2007, 2008 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
- * Copyright (C) 2009 Google, Inc.  All rights reserved.
+ * Copyright (C) 2009-2016 Google, Inc.  All rights reserved.
  * Copyright (C) 2009 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
  * Copyright (C) 2018 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -164,6 +164,9 @@ void SVGRenderSupport::computeContainerBoundingBoxes(const RenderElement& contai
 
         // Don't include elements in the union that do not render.
         if (auto* shape = dynamicDowncast<LegacyRenderSVGShape>(current.ptr()); shape && shape->isRenderingDisabled())
+            continue;
+
+        if (auto* text = dynamicDowncast<RenderSVGText>(current.ptr()); (text && !text->isObjectBoundingBoxValid()))
             continue;
 
         const AffineTransform& transform = current->localToParentTransform();

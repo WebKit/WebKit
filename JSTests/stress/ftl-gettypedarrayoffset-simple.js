@@ -4,7 +4,7 @@ function foo(x){
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var b = new Uint8Array(42, 0);
     if (foo(b) != 0) 
         throw "error"

@@ -29,7 +29,6 @@
 @class WKWebExtensionContext;
 @class WKWebView;
 @protocol WKWebExtensionTab;
-@protocol WKWebExtension;
 
 #if TARGET_OS_IPHONE
 @class UIImage;
@@ -45,8 +44,7 @@ WK_HEADER_AUDIT_BEGIN(nullability, sendability)
  @abstract A `_WKWebExtensionSidebar` object encapsulates the properties for a specific web extension sidebar.
  @discussion When this property is `nil`, it indicates that the action is the default action and not associated with a specific tab.
  */
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
-NS_SWIFT_NAME(WKWebExtension.Sidebar)
+WK_CLASS_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2))
 @interface _WKWebExtensionSidebar : NSObject
 
 - (instancetype)init NS_UNAVAILABLE;

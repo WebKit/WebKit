@@ -313,7 +313,7 @@ bool PathSkia::contains(const FloatPoint& point, WindRule windRule) const
     return m_platformPath.contains(x, y);
 }
 
-bool PathSkia::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
+bool PathSkia::strokeContains(const FloatPoint& point, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     if (isEmpty() || !std::isfinite(point.x()) || !std::isfinite(point.y()))
         return false;
@@ -339,7 +339,7 @@ FloatRect PathSkia::boundingRect() const
     return m_platformPath.computeTightBounds();
 }
 
-FloatRect PathSkia::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
+FloatRect PathSkia::strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     if (isEmpty())
         return { };

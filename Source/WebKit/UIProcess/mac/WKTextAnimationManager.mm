@@ -31,6 +31,7 @@
 
 #import "ImageOptions.h"
 #import "WKTextAnimationType.h"
+#import "WebPageProxy.h"
 #import "WebViewImpl.h"
 #import <WebCore/TextAnimationTypes.h>
 #import <pal/cocoa/WritingToolsUISoftLink.h>

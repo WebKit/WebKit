@@ -1290,6 +1290,9 @@ RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::misspellingTextMark
 
 RefPtr<AccessibilityTextMarkerRange> AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
+    if (!element)
+        return nullptr;
+
     id textMarkerRange = [element->platformUIElement() textMarkerRange];
     return AccessibilityTextMarkerRange::create(textMarkerRange);
 }

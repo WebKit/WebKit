@@ -67,7 +67,7 @@ private:
         struct DynamicContext {
             const MQ::MediaQueryList& queries;
             Vector<size_t> affectedRulePositions { };
-            HashSet<Ref<const StyleRule>> affectedRules { };
+            UncheckedKeyHashSet<Ref<const StyleRule>> affectedRules { };
         };
         Vector<DynamicContext> dynamicContextStack { };
 

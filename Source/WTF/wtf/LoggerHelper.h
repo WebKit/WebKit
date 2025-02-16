@@ -35,6 +35,7 @@ public:
     virtual ~LoggerHelper() = default;
 
     virtual const Logger& logger() const = 0;
+    Ref<const Logger> protectedLogger() const { return logger(); }
     virtual ASCIILiteral logClassName() const = 0;
     virtual WTFLogChannel& logChannel() const = 0;
     virtual uint64_t logIdentifier() const = 0;
@@ -42,6 +43,7 @@ public:
 #if !RELEASE_LOG_DISABLED
 
 #define LOGIDENTIFIER WTF::Logger::LogSiteIdentifier(logClassName(), __func__, logIdentifier())
+#define LOGIDENTIFIER_WITH_THIS(thisPtr) WTF::Logger::LogSiteIdentifier(thisPtr->logClassName(), __func__, thisPtr->logIdentifier())
 
 #if VERBOSE_RELEASE_LOG
 #define ALWAYS_LOG(...)     Ref { logger() }->logAlwaysVerbose(logChannel(), __FILE__, __func__, __LINE__, __VA_ARGS__)
@@ -55,6 +57,9 @@ public:
 #define WARNING_LOG(...)    Ref { logger() }->warning(logChannel(), __VA_ARGS__)
 #define INFO_LOG(...)       Ref { logger() }->info(logChannel(), __VA_ARGS__)
 #define DEBUG_LOG(...)      Ref { logger() }->debug(logChannel(), __VA_ARGS__)
+
+#define ALWAYS_LOG_WITH_THIS(thisPtr, ...)     Ref { thisPtr->logger() }->logAlways(thisPtr->logChannel(), __VA_ARGS__)
+#define ERROR_LOG_WITH_THIS(thisPtr, ...)      Ref { thisPtr->logger() }->error(thisPtr->logChannel(), __VA_ARGS__)
 #endif
 
 #define WILL_LOG(_level_)   Ref { logger() }->willLog(logChannel(), _level_)

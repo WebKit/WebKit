@@ -65,7 +65,7 @@ WebCodecsAudioDecoder::~WebCodecsAudioDecoder() = default;
 
 static AudioDecoder::Config createAudioDecoderConfig(const WebCodecsAudioDecoderConfig& config)
 {
-    std::span<const uint8_t> description;
+    Vector<uint8_t> description;
     if (config.description) {
         auto data = std::visit([](auto& buffer) {
             return buffer ? buffer->span() : std::span<const uint8_t> { };
@@ -74,14 +74,25 @@ static AudioDecoder::Config createAudioDecoderConfig(const WebCodecsAudioDecoder
             description = data;
     }
 
-    return { description, config.sampleRate, config.numberOfChannels };
+    return {
+        .description = WTFMove(description),
+        .sampleRate = config.sampleRate,
+        .numberOfChannels = config.numberOfChannels
+    };
 }
 
 static bool isValidDecoderConfig(const WebCodecsAudioDecoderConfig& config)
 {
+    // https://w3c.github.io/webcodecs/#valid-audiodecoderconfig
+    // 1. If codec is empty after stripping leading and trailing ASCII whitespace, return false.
     if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
         return false;
 
+    // 2. If description is [detached], return false.
+    if (config.description && std::visit([](auto& view) { return view->isDetached(); }, *config.description))
+        return false;
+
+    // FIXME: Not yet per spec https://github.com/w3c/webcodecs/issues/878
     if (!config.numberOfChannels || !config.sampleRate)
         return false;
 
@@ -114,7 +125,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
     m_isKeyChunkRequired = true;
 
     bool isSupportedCodec = AudioDecoder::isCodecSupported(config.codec);
-    queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
+    queueControlMessageAndProcess({ *this, [this, codec = config.codec, config = createAudioDecoderConfig(config), isSupportedCodec, identifier = scriptExecutionContext()->identifier()]() mutable {
         blockControlMessageQueue();
 
         if (!isSupportedCodec) {
@@ -124,7 +135,7 @@ ExceptionOr<void> WebCodecsAudioDecoder::configure(ScriptExecutionContext&, WebC
             return WebCodecsControlMessageOutcome::Processed;
         }
 
-        Ref createDecoderPromise = AudioDecoder::create(config.codec, createAudioDecoderConfig(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
+        Ref createDecoderPromise = AudioDecoder::create(codec, config, [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
             postTaskToCodec<WebCodecsAudioDecoder>(identifier, weakThis, [result = WTFMove(result), decoderCount] (auto& decoder) mutable {
                 if (decoder.state() != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
                     return;

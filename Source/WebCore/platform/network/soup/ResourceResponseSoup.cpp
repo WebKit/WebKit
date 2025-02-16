@@ -120,7 +120,7 @@ static String sanitizeFilename(const String& filename)
         ASSERT(U_SUCCESS(errorCode));
     }
 
-    HashSet<uint16_t> illegalCharactersInFilename;
+    UncheckedKeyHashSet<uint16_t> illegalCharactersInFilename;
     for (unsigned i = 0; i < result.length(); ++i) {
         auto character = result[i];
         if (uset_contains(illegalCharacterSet, character))

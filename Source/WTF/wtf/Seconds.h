@@ -32,6 +32,8 @@
 namespace WTF {
 
 class ApproximateTime;
+class ContinuousApproximateTime;
+class ContinuousTime;
 class MonotonicTime;
 class PrintStream;
 class TextStream;
@@ -190,11 +192,15 @@ public:
     WTF_EXPORT_PRIVATE WallTime operator+(WallTime) const;
     WTF_EXPORT_PRIVATE MonotonicTime operator+(MonotonicTime) const;
     WTF_EXPORT_PRIVATE ApproximateTime operator+(ApproximateTime) const;
+    WTF_EXPORT_PRIVATE ContinuousTime operator+(ContinuousTime) const;
+    WTF_EXPORT_PRIVATE ContinuousApproximateTime operator+(ContinuousApproximateTime) const;
     WTF_EXPORT_PRIVATE TimeWithDynamicClockType operator+(const TimeWithDynamicClockType&) const;
     
     WTF_EXPORT_PRIVATE WallTime operator-(WallTime) const;
     WTF_EXPORT_PRIVATE MonotonicTime operator-(MonotonicTime) const;
     WTF_EXPORT_PRIVATE ApproximateTime operator-(ApproximateTime) const;
+    WTF_EXPORT_PRIVATE ContinuousTime operator-(ContinuousTime) const;
+    WTF_EXPORT_PRIVATE ContinuousApproximateTime operator-(ContinuousApproximateTime) const;
     WTF_EXPORT_PRIVATE TimeWithDynamicClockType operator-(const TimeWithDynamicClockType&) const;
     
     friend constexpr bool operator==(Seconds, Seconds) = default;

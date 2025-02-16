@@ -32,8 +32,11 @@ namespace Style {
 // Forward declaration of PrimitiveNumeric to needed to create a hard constraint for the Numeric concept below.
 template<CSS::Numeric> struct PrimitiveNumeric;
 
-// Concept for use in generic contexts to filter on numeric Style types.
+// Concept for use in generic contexts to filter on all numeric Style types.
 template<typename T> concept Numeric = std::derived_from<T, PrimitiveNumeric<typename T::CSS>>;
+
+// Concept for use in generic contexts to filter on non-composite numeric Style types.
+template<typename T> concept NonCompositeNumeric = Numeric<T> && CSS::NonCompositeNumeric<typename T::CSS>;
 
 // Concept for use in generic contexts to filter on dimension-percentage numeric Style types.
 template<typename T> concept DimensionPercentageNumeric = Numeric<T> && VariantLike<T> && CSS::DimensionPercentageNumeric<typename T::CSS>;

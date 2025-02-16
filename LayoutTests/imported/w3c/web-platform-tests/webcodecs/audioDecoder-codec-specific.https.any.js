@@ -28,7 +28,12 @@ const ADTS_AAC_DATA = {
     {offset: 1513, size: 166}, {offset: 1679, size: 216},
     {offset: 1895, size: 183}
   ],
-  duration: 24000
+  duration: 24000,
+  output: {
+    chunk_frames: [2048, 3072],
+    frames: 10240,
+    fuzz: 0
+  }
 };
 
 const MP3_DATA = {
@@ -45,7 +50,12 @@ const MP3_DATA = {
     {offset: 2061, size: 288}, {offset: 2349, size: 288},
     {offset: 2637, size: 288}, {offset: 2925, size: 288}
   ],
-  duration: 24000
+  duration: 24000,
+  output: {
+    chunk_frames: [2304, 3456],
+    frames: 11520,
+    fuzz: 529
+  }
 };
 
 const MP4_AAC_DATA = {
@@ -68,7 +78,12 @@ const MP4_AAC_DATA = {
     {offset: 1667, size: 209},
     {offset: 1876, size: 176},
   ],
-  duration: 21333
+  duration: 21333,
+  output: {
+    chunk_frames: [2048, 3072],
+    frames: 10240,
+    fuzz: 0
+  }
 };
 
 const OPUS_DATA = {
@@ -86,7 +101,12 @@ const OPUS_DATA = {
     {offset: 2079, size: 289}, {offset: 2368, size: 286},
     {offset: 2654, size: 296}, {offset: 2950, size: 294}
   ],
-  duration: 20000
+  duration: 20000,
+  output: {
+    chunk_frames: [1608, 2256], // 960 frames in each packet less codec delay.
+    frames: 9288,
+    fuzz: 0
+  }
 };
 
 const FLAC_DATA = {
@@ -102,7 +122,12 @@ const FLAC_DATA = {
     { offset: 10564, size: 2038 },
     { offset: 12602, size: 521 },
   ],
-  duration: 20000
+  duration: 20000,
+  output: {
+    chunk_frames: [9216, 10240],
+    frames: 10240,
+    fuzz: 0
+  }
 };
 
 function pcm(codec, dataOffset) {
@@ -117,7 +142,12 @@ function pcm(codec, dataOffset) {
     // Chunk are arbitrary and will be generated lazily
     chunks: [],
     offset: dataOffset,
-    duration: 0
+    duration: 0,
+    output: {
+      chunk_frames: [0, 0],
+      frames: 0,
+      fuzz: 0
+    }
   }
 }
 
@@ -150,7 +180,12 @@ const VORBIS_DATA = {
     {offset: 4127, size: 37}, {offset: 4164, size: 107},
     {offset: 4271, size: 172}
   ],
-  duration: 21333
+  duration: 21333,
+  output: {
+    chunk_frames: [128, 704],
+    frames: 4800,
+    fuzz: 0
+  }
 };
 
 // Allows mutating `callbacks` after constructing the AudioDecoder, wraps calls
@@ -182,6 +217,7 @@ function view(buffer, {offset, size}) {
 let CONFIG = null;
 let CHUNK_DATA = null;
 let CHUNKS = null;
+let OUTPUT = null;
 promise_setup(async () => {
   const data = {
     '?adts_aac': ADTS_AAC_DATA,
@@ -218,6 +254,7 @@ promise_setup(async () => {
   const buf = await response.arrayBuffer();
 
   CONFIG = {...data.config};
+  OUTPUT = {...data.output};
   if (data.config.description) {
     // The description for decoding vorbis is expected to be in Xiph extradata format.
     // https://w3c.github.io/webcodecs/vorbis_codec_registration.html#audiodecoderconfig-description
@@ -258,12 +295,17 @@ promise_setup(async () => {
       case "pcm-f32": bytesPerSample = 4; break;
       default: bytesPerSample = 1; break;
     }
+    let numberOfFrames = 0;
     while (offset < buf.byteLength) {
       let size = Math.min(buf.byteLength - offset, PACKET_LENGTH);
       assert_equals(size % bytesPerSample, 0);
       CHUNK_DATA.push(view(buf, {offset, size}));
+      numberOfFrames += size / bytesPerSample;
       offset += size;
     }
+    OUTPUT.frames = numberOfFrames;
+    OUTPUT.chunk_frames[0] = (PACKET_LENGTH * 2) / bytesPerSample;
+    OUTPUT.chunk_frames[1] = (PACKET_LENGTH * 3) / bytesPerSample;
     data.duration = 1000 * 1000 * PACKET_LENGTH / data.config.sampleRate / bytesPerSample;
   } else {
     CHUNK_DATA = data.chunks.map((chunk, i) => view(buf, chunk));
@@ -337,7 +379,7 @@ promise_test(async t => {
 
   let outputs = 0;
   callbacks.output = frame => {
-    outputs++;
+    outputs += frame.numberOfFrames;
     frame.close();
   };
 
@@ -347,7 +389,7 @@ promise_test(async t => {
   });
 
   await decoder.flush();
-  assert_equals(outputs, CONFIG.codec === 'vorbis' ? CHUNKS.length - 1 : CHUNKS.length, 'outputs');
+  assert_approx_equals(outputs, OUTPUT.frames, OUTPUT.fuzz, "number of decoded frames matches");
 }, 'Test decoding');
 
 promise_test(async t => {
@@ -356,7 +398,7 @@ promise_test(async t => {
 
   let outputs = 0;
   callbacks.output = frame => {
-    outputs++;
+    outputs += frame.numberOfFrames;
     frame.close();
   };
 
@@ -367,7 +409,7 @@ promise_test(async t => {
       {type: 'key', timestamp: CHUNKS[0].duration - 42, data: CHUNK_DATA[1]}));
 
   await decoder.flush();
-  assert_equals(outputs, CONFIG.codec === 'vorbis' ? 1 : 2, 'outputs');
+  assert_approx_equals(outputs, OUTPUT.chunk_frames[0], OUTPUT.fuzz, "number of decoded frames matches");
 }, 'Test decoding a with negative timestamp');
 
 promise_test(async t => {
@@ -376,7 +418,7 @@ promise_test(async t => {
 
   let outputs = 0;
   callbacks.output = frame => {
-    outputs++;
+    outputs += frame.numberOfFrames;
     frame.close();
   };
 
@@ -385,11 +427,11 @@ promise_test(async t => {
   decoder.decode(CHUNKS[1]);
 
   await decoder.flush();
-  assert_equals(outputs, CONFIG.codec === 'vorbis' ? 1 : 2, 'outputs');
+  assert_approx_equals(outputs, OUTPUT.chunk_frames[0], OUTPUT.fuzz, "number of decoded frames matches");
 
   decoder.decode(CHUNKS[2]);
   await decoder.flush();
-  assert_equals(outputs, CONFIG.codec === 'vorbis' ? 2 : 3, 'outputs');
+  assert_approx_equals(outputs, OUTPUT.chunk_frames[1], OUTPUT.fuzz, "number of decoded frames matches");
 }, 'Test decoding after flush');
 
 promise_test(async t => {
@@ -421,6 +463,7 @@ promise_test(async t => {
 
 promise_test(async t => {
   const callbacks = {};
+  callbacks.output = frame => { frame.close(); };
   const decoder = createAudioDecoder(t, callbacks);
 
   // No decodes yet.

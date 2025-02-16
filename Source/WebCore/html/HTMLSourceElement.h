@@ -63,7 +63,7 @@ private:
 
     bool isURLAttribute(const Attribute&) const final;
     bool attributeContainsURL(const Attribute&) const final;
-    Attribute replaceURLsInAttributeValue(const Attribute&, const UncheckedKeyHashMap<String, String>&) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const override;
     void addCandidateSubresourceURLs(ListHashSet<URL>&) const override;
 
     // ActiveDOMObject.
@@ -81,7 +81,7 @@ private:
     AttachmentAssociatedElementType attachmentAssociatedElementType() const final { return AttachmentAssociatedElementType::Source; }
 #endif
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) final;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) final;
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;

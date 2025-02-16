@@ -30,6 +30,7 @@
 
 #import <CoreGraphics/CGPDFDocument.h>
 #import <JavaScriptCore/RegularExpression.h>
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/OptionSet.h>
 #import <wtf/text/ASCIILiteral.h>
@@ -100,8 +101,7 @@ static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocume
             continue;
 
         // A JavaScript action must have an action type of "JavaScript".
-        const char* actionType = nullptr;
-        if (!CGPDFDictionaryGetName(javaScriptAction, "S", &actionType) || strcmp(actionType, "JavaScript"))
+        if (CGPDFDictionaryGetNameString(javaScriptAction, "S"_s) != "JavaScript"_s)
             continue;
 
         auto scriptFromBytes = [](std::span<const uint8_t> bytes) {

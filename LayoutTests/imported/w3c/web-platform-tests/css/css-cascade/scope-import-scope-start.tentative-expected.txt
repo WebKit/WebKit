@@ -1,0 +1,6 @@
+Inside
+Outside
+
+FAIL Scope-imported rule applies within scope assert_equals: expected "1" but got ""
+PASS Scope-imported rule does not apply outside of scope
+

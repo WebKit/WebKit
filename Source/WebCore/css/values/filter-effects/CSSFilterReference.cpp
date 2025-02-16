@@ -30,7 +30,7 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<FilterReference>::operator()(StringBuilder& builder, const FilterReference& value)
+void Serialize<FilterReference>::operator()(StringBuilder& builder, const SerializationContext&, const FilterReference& value)
 {
     builder.append(serializeURL(value.url));
 }

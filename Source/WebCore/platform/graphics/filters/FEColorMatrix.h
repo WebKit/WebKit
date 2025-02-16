@@ -35,7 +35,9 @@ enum class ColorMatrixType : uint8_t {
     FECOLORMATRIX_TYPE_LUMINANCETOALPHA = 4
 };
 
-class FEColorMatrix : public FilterEffect {
+class FEColorMatrix final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEColorMatrix);
 public:
     WEBCORE_EXPORT static Ref<FEColorMatrix> create(ColorMatrixType, Vector<float>&&, DestinationColorSpace = DestinationColorSpace::SRGB());
 
@@ -47,8 +49,8 @@ public:
     const Vector<float>& values() const { return m_values; }
     bool setValues(const Vector<float>&);
 
-    static void calculateSaturateComponents(std::span<float> components, float value);
-    static void calculateHueRotateComponents(std::span<float> components, float value);
+    static void calculateSaturateComponents(std::span<float, 9> components, float value);
+    static void calculateHueRotateComponents(std::span<float, 9> components, float value);
     static Vector<float> normalizedFloats(const Vector<float>& values);
 
 private:

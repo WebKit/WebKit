@@ -876,6 +876,11 @@ PlatformParameters ES2_WEBGPU()
     return PlatformParameters(2, 0, egl_platform::WEBGPU());
 }
 
+PlatformParameters ES3_WEBGPU()
+{
+    return PlatformParameters(3, 0, egl_platform::WEBGPU());
+}
+
 PlatformParameters ES1_Zink()
 {
     return PlatformParameters(1, 0, GLESDriverType::ZinkEGL);

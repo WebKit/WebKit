@@ -134,7 +134,7 @@ private:
     void remove(const void* run);
 
     UncheckedKeyHashMap<const void*, Ref<GlyphDisplayListCacheEntry>> m_entriesForLayoutRun;
-    HashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
+    UncheckedKeyHashSet<SingleThreadWeakRef<GlyphDisplayListCacheEntry>> m_entries;
     bool m_forceUseGlyphDisplayListForTesting { false };
 };
 

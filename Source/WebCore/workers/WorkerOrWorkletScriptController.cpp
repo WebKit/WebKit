@@ -30,6 +30,7 @@
 #include "CommonVM.h"
 #include "DedicatedWorkerGlobalScope.h"
 #include "EventLoop.h"
+#include "InspectorInstrumentation.h"
 #include "JSAudioWorkletGlobalScope.h"
 #include "JSDOMBinding.h"
 #include "JSDedicatedWorkerGlobalScope.h"
@@ -57,12 +58,15 @@
 #include <JavaScriptCore/JSGlobalProxyInlines.h>
 #include <JavaScriptCore/JSInternalPromise.h>
 #include <JavaScriptCore/JSLock.h>
+#include <JavaScriptCore/JSModuleRecord.h>
 #include <JavaScriptCore/JSNativeStdFunction.h>
 #include <JavaScriptCore/JSScriptFetchParameters.h>
 #include <JavaScriptCore/JSScriptFetcher.h>
 #include <JavaScriptCore/ScriptCallStack.h>
 #include <JavaScriptCore/StrongInlines.h>
+#include <JavaScriptCore/SyntheticModuleRecord.h>
 #include <JavaScriptCore/VMTrapsInlines.h>
+#include <JavaScriptCore/WebAssemblyModuleRecord.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -243,7 +247,14 @@ void WorkerOrWorkletScriptController::evaluate(const ScriptSourceCode& sourceCod
     VM& vm = globalObject.vm();
     JSLockHolder lock { vm };
 
-    JSExecState::profiledEvaluate(&globalObject, JSC::ProfilingReason::Other, sourceCode.jsSourceCode(), m_globalScopeWrapper->globalThis(), returnedException);
+    const SourceCode& jsSourceCode = sourceCode.jsSourceCode();
+    const URL& sourceURL = jsSourceCode.provider()->sourceOrigin().url();
+
+    InspectorInstrumentation::willEvaluateScript(*m_globalScope, sourceURL.string(), sourceCode.startLine(), sourceCode.startColumn());
+
+    JSExecState::profiledEvaluate(&globalObject, JSC::ProfilingReason::Other, jsSourceCode, m_globalScopeWrapper->globalThis(), returnedException);
+
+    InspectorInstrumentation::didEvaluateScript(*m_globalScope);
 
     if ((returnedException && vm.isTerminationException(returnedException)) || isTerminatingExecution()) {
         forbidExecution();
@@ -274,12 +285,31 @@ static Identifier jsValueToModuleKey(JSGlobalObject* lexicalGlobalObject, JSValu
     return asString(value)->toIdentifier(lexicalGlobalObject);
 }
 
-JSC::JSValue WorkerOrWorkletScriptController::evaluateModule(JSC::AbstractModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
+JSC::JSValue WorkerOrWorkletScriptController::evaluateModule(const URL& sourceURL, JSC::AbstractModuleRecord& moduleRecord, JSC::JSValue awaitedValue, JSC::JSValue resumeMode)
 {
     auto& globalObject = *m_globalScopeWrapper.get();
     VM& vm = globalObject.vm();
     JSLockHolder lock { vm };
-    return moduleRecord.evaluate(&globalObject, awaitedValue, resumeMode);
+
+#if ENABLE(WEBASSEMBLY)
+    const bool isWasmModule = moduleRecord.inherits<WebAssemblyModuleRecord>();
+#else
+    constexpr bool isWasmModule = false;
+#endif
+    if (isWasmModule) {
+        // FIXME: Provide better inspector support for Wasm scripts.
+        InspectorInstrumentation::willEvaluateScript(*m_globalScope, sourceURL.string(), 1, 1);
+    } else if (moduleRecord.inherits<JSC::SyntheticModuleRecord>())
+        InspectorInstrumentation::willEvaluateScript(*m_globalScope, sourceURL.string(), 1, 1);
+    else {
+        auto* jsModuleRecord = jsCast<JSModuleRecord*>(&moduleRecord);
+        const auto& jsSourceCode = jsModuleRecord->sourceCode();
+        InspectorInstrumentation::willEvaluateScript(*m_globalScope, sourceURL.string(), jsSourceCode.firstLine().oneBasedInt(), jsSourceCode.startColumn().oneBasedInt());
+    }
+    auto returnValue = moduleRecord.evaluate(&globalObject, awaitedValue, resumeMode);
+    InspectorInstrumentation::didEvaluateScript(*m_globalScope);
+
+    return returnValue;
 }
 
 bool WorkerOrWorkletScriptController::loadModuleSynchronously(WorkerScriptFetcher& scriptFetcher, const ScriptSourceCode& sourceCode)

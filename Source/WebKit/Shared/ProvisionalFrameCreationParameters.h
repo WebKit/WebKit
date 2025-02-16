@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/FrameIdentifier.h>
 #include <WebCore/LayerHostingContextIdentifier.h>
 
 namespace WebCore {
@@ -36,6 +37,7 @@ using SandboxFlags = OptionSet<SandboxFlag>;
 namespace WebKit {
 
 struct ProvisionalFrameCreationParameters {
+    WebCore::FrameIdentifier frameID;
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
     WebCore::SandboxFlags effectiveSandboxFlags;
     WebCore::ScrollbarMode scrollingMode;

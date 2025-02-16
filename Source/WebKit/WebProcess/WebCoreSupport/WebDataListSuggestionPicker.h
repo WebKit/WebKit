@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include <WebCore/DataListSuggestionPicker.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RefCounted.h>
@@ -69,5 +67,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

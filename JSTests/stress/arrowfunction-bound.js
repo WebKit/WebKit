@@ -13,6 +13,6 @@ noInline(d.y);
 
 var e = { x : "baz" };
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
   testCase(d.y().bind(e, "ley")(), "barley", "Error: function bind shouldn't change lexical binding of the arrow function");
 }

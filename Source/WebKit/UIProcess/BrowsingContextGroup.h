@@ -43,19 +43,22 @@ class WebPageProxy;
 class WebPreferences;
 class WebProcessProxy;
 
+enum class InjectBrowsingContextIntoProcess : bool { No, Yes };
+
 class BrowsingContextGroup : public RefCountedAndCanMakeWeakPtr<BrowsingContextGroup> {
 public:
     static Ref<BrowsingContextGroup> create() { return adoptRef(*new BrowsingContextGroup()); }
     ~BrowsingContextGroup();
 
-    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, WebProcessProxy&, const WebPreferences&);
-    Ref<FrameProcess> ensureProcessForConnection(IPC::Connection&, WebPageProxy&, const WebPreferences&);
+    Ref<FrameProcess> ensureProcessForSite(const WebCore::Site&, WebProcessProxy&, const WebPreferences&, InjectBrowsingContextIntoProcess = InjectBrowsingContextIntoProcess::Yes);
     FrameProcess* processForSite(const WebCore::Site&);
     void addFrameProcess(FrameProcess&);
+    void addFrameProcessAndInjectPageContextIf(FrameProcess&, Function<bool(WebPageProxy&)>);
     void removeFrameProcess(FrameProcess&);
     void processDidTerminate(WebPageProxy&, WebProcessProxy&);
 
     void addPage(WebPageProxy&);
+    void addRemotePage(WebPageProxy&, Ref<RemotePageProxy>&&);
     void removePage(WebPageProxy&);
     void forEachRemotePage(const WebPageProxy&, Function<void(RemotePageProxy&)>&&);
 

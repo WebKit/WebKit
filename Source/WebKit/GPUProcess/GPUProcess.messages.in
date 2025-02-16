@@ -22,7 +22,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-[ExceptionForEnabledBy]
+[
+    DispatchedFrom=UI,
+    DispatchedTo=GPU,
+    ExceptionForEnabledBy
+]
 messages -> GPUProcess : AuxiliaryProcess {
     InitializeGPUProcess(struct WebKit::GPUProcessCreationParameters processCreationParameters) -> ()
 
@@ -97,6 +101,9 @@ messages -> GPUProcess : AuxiliaryProcess {
 #endif
 #if HAVE(AUDIT_TOKEN)
     SetPresentingApplicationAuditToken(WebCore::ProcessIdentifier processIdentifier, WebCore::PageIdentifier pageIdentifier, std::optional<WebKit::CoreIPCAuditToken> auditToken);
+#endif
+#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+    RequestSharedSimulationConnection(struct WebKit::CoreIPCAuditToken modelProcessAuditToken) -> (std::optional<IPC::SharedFileHandle> sharedSimulationConnection)
 #endif
 }
 

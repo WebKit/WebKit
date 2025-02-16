@@ -51,6 +51,7 @@ _log = logging.getLogger(__name__)
 
 class GtkPort(GLibPort):
     port_name = "gtk"
+    webdriver_name = "WebKitWebDriver"
     supports_localhost_aliases = True
 
     def _port_flag_for_scripts(self):

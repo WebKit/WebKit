@@ -43,7 +43,7 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
     // it can hold.  (<rdar://problem/6806478>)
     size_t length = CFStringGetLength(string);
     if (!length)
-        return &OpaqueJSString::create(""_span).leakRef();
+        return &OpaqueJSString::create(""_span8).leakRef();
 
     Vector<LChar, 1024> lcharBuffer(length);
     CFIndex usedBufferLength;

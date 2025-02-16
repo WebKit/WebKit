@@ -9,7 +9,7 @@ function bar(o) {
 noInline(foo);
 noInline(bar);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     bar({f:42});
 
 var result = bar({g:24, f:43});

@@ -18,7 +18,7 @@ function test(size) {
         throw "Error: array is in wierd state: " + result;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(0);
     test(1);
     test(42);

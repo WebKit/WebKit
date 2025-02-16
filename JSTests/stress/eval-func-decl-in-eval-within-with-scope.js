@@ -29,13 +29,13 @@ function foo(withScope, firstAssertValue,  secondAssertValue) {
 
 function boo(withScope, firstAssertValue,  secondAssertValue) {
     with (withScope) {
-        eval(" for(var i = 0; i < 10000; i++ ){ if (i > 0) { function f() { }; } } ");
+        eval(" for(var i = 0; i < testLoopCount; i++ ){ if (i > 0) { function f() { }; } } ");
         assert(typeof f, firstAssertValue);
     }
     assert(typeof f, secondAssertValue);
 }
 { 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         foo({}, 'function', 'function');
         assertThrow(() => f, "ReferenceError: Can't find variable: f");
     }
@@ -43,26 +43,26 @@ function boo(withScope, firstAssertValue,  secondAssertValue) {
     boo({}, 'function', 'function');
 }
 {
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         foo({f : 10}, 'number', 'function');
         assertThrow(() => f, "ReferenceError: Can't find variable: f");
     }
     boo({f : 10}, 'number', 'function');
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         foo({f : {}}, 'object', 'function');
         assertThrow(() => f, "ReferenceError: Can't find variable: f");
     }
     boo({f : {}}, 'object', 'function');
 }
 {
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         foo(12345, 'function', 'function');
         assertThrow(() => f, "ReferenceError: Can't find variable: f");
     }
     boo(12345, 'function', 'function');
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         let val  = 12345;
         val.f = 10;
         foo(val, 'function', 'function');
@@ -74,13 +74,13 @@ function boo(withScope, firstAssertValue,  secondAssertValue) {
 }
 {
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         foo('12345', 'function', 'function');
         assertThrow(() => f, "ReferenceError: Can't find variable: f");
     }
     boo('12345', 'function', 'function');
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         let val  = '12345';
         val.f = 10;
         foo(val, 'function', 'function');
@@ -91,14 +91,14 @@ function boo(withScope, firstAssertValue,  secondAssertValue) {
     boo(z, 'function', 'function');
 }
 {
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         foo(function () {}, 'function', 'function');
         assertThrow(() => f, "ReferenceError: Can't find variable: f");
     }
 
     boo(function () {}, 'function', 'function');
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         let val2 = function () {};
         val2.f = 10;
         foo(val2, 'number', 'function');

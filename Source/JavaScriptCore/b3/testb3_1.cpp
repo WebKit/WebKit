@@ -161,6 +161,7 @@ void run(const TestConfig* config)
     RUN_UNARY(testNegDouble, floatingPointOperands<double>());
     RUN_UNARY(testNegFloat, floatingPointOperands<float>());
     RUN_UNARY(testNegFloatWithUselessDoubleConversion, floatingPointOperands<float>());
+    RUN(testImpureNaN());
 
     addBitTests(config, tasks);
 
@@ -278,6 +279,13 @@ void run(const TestConfig* config)
     RUN_UNARY(testFloorArgWithUselessDoubleConversion, floatingPointOperands<float>());
     RUN_UNARY(testFloorArgWithEffectfulDoubleConversion, floatingPointOperands<float>());
 
+    RUN_UNARY(testFTruncArg, floatingPointOperands<double>());
+    RUN_UNARY(testFTruncImm, floatingPointOperands<double>());
+    RUN_UNARY(testFTruncMem, floatingPointOperands<double>());
+    RUN_UNARY(testFTruncArg, floatingPointOperands<float>());
+    RUN_UNARY(testFTruncImm, floatingPointOperands<float>());
+    RUN_UNARY(testFTruncMem, floatingPointOperands<float>());
+
     RUN_UNARY(testSqrtArg, floatingPointOperands<double>());
     RUN_UNARY(testSqrtImm, floatingPointOperands<double>());
     RUN_UNARY(testSqrtMem, floatingPointOperands<double>());
@@ -286,6 +294,8 @@ void run(const TestConfig* config)
     RUN_UNARY(testSqrtMem, floatingPointOperands<float>());
     RUN_UNARY(testSqrtArgWithUselessDoubleConversion, floatingPointOperands<float>());
     RUN_UNARY(testSqrtArgWithEffectfulDoubleConversion, floatingPointOperands<float>());
+
+    RUN(testPurifyNaN());
 
     RUN_BINARY(testCompareTwoFloatToDouble, floatingPointOperands<float>(), floatingPointOperands<float>());
     RUN_BINARY(testCompareOneFloatToDouble, floatingPointOperands<float>(), floatingPointOperands<double>());
@@ -345,6 +355,8 @@ void run(const TestConfig* config)
     RUN_UNARY(testIToF32Imm, int32Operands());
     RUN(testIToDReducedToIToF64Arg());
     RUN(testIToDReducedToIToF32Arg());
+    RUN_UNARY(testInt52RoundTripUnary, int32Operands());
+    RUN(testInt52RoundTripBinary());
 
 #if !CPU(ARM)
     RUN_UNARY(testCheckAddRemoveCheckWithSExt8, int8Operands());

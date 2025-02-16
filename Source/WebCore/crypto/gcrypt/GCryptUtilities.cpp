@@ -36,8 +36,9 @@ std::optional<ASCIILiteral> hashAlgorithmName(CryptoAlgorithmIdentifier identifi
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
         return "sha1"_s;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return "sha224"_s;
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        return "sha256"_s;
     case CryptoAlgorithmIdentifier::SHA_256:
         return "sha256"_s;
     case CryptoAlgorithmIdentifier::SHA_384:
@@ -54,8 +55,9 @@ std::optional<int> hmacAlgorithm(CryptoAlgorithmIdentifier identifier)
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
         return GCRY_MAC_HMAC_SHA1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return GCRY_MAC_HMAC_SHA224;
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        return GCRY_MAC_HMAC_SHA256;
     case CryptoAlgorithmIdentifier::SHA_256:
         return GCRY_MAC_HMAC_SHA256;
     case CryptoAlgorithmIdentifier::SHA_384:
@@ -72,8 +74,9 @@ std::optional<int> digestAlgorithm(CryptoAlgorithmIdentifier identifier)
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
         return GCRY_MD_SHA1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return GCRY_MD_SHA224;
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        return GCRY_MD_SHA256;
     case CryptoAlgorithmIdentifier::SHA_256:
         return GCRY_MD_SHA256;
     case CryptoAlgorithmIdentifier::SHA_384:
@@ -90,8 +93,9 @@ std::optional<PAL::CryptoDigest::Algorithm> hashCryptoDigestAlgorithm(CryptoAlgo
     switch (identifier) {
     case CryptoAlgorithmIdentifier::SHA_1:
         return PAL::CryptoDigest::Algorithm::SHA_1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return PAL::CryptoDigest::Algorithm::SHA_224;
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        return PAL::CryptoDigest::Algorithm::SHA_256;
     case CryptoAlgorithmIdentifier::SHA_256:
         return PAL::CryptoDigest::Algorithm::SHA_256;
     case CryptoAlgorithmIdentifier::SHA_384:

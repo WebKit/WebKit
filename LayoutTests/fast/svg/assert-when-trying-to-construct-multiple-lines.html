@@ -1,0 +1,16 @@
+<style>
+altGlyph {
+  padding-inline-start: 10px;
+}
+text {
+  white-space: preserve;
+}
+</style>
+PASS if no crash or assert.
+<svg><text>
+<altGlyph>X</altGlyph>
+Y</altGlyph></svg>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

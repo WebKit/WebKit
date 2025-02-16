@@ -48,14 +48,14 @@ bool CSSAttrValue::equals(const CSSAttrValue& other) const
     return m_attributeName == other.m_attributeName;
 }
 
-String CSSAttrValue::customCSSText() const
+String CSSAttrValue::customCSSText(const CSS::SerializationContext& context) const
 {
     RefPtr fallback = dynamicDowncast<CSSPrimitiveValue>(m_fallback);
     return makeString(
         "attr("_s,
         m_attributeName.impl(),
         fallback && !fallback->stringValue().isEmpty() ? ", "_s : ""_s,
-        fallback && !fallback->stringValue().isEmpty() ? fallback->cssText() : ""_s,
+        fallback && !fallback->stringValue().isEmpty() ? fallback->cssText(context) : ""_s,
         ')'
     );
 }

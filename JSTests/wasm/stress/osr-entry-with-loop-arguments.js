@@ -21,9 +21,9 @@ let wat = `
 async function test() {
     let instance = await instantiate(wat);
 
-    let result = instance.exports.test(1000000);
-    if (result !== 1000000)
-        throw new Error("Expected 100000, but got: " + result);
+    let result = instance.exports.test(wasmTestLoopCount);
+    if (result !== wasmTestLoopCount)
+        throw new Error(`Expected ${wasmTestLoopCount}, but got: ${result}`);
 }
 
 await assert.asyncTest(test());

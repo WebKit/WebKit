@@ -47,7 +47,6 @@ namespace WebCore {
 
 class SourceBufferParserAVFObjC final
     : public SourceBufferParser
-    , public CanMakeWeakPtr<SourceBufferParserAVFObjC>
     , private LoggerHelper {
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);

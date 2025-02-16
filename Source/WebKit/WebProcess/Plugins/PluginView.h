@@ -99,7 +99,6 @@ public:
     double pageScaleFactor() const;
     void pluginScaleFactorDidChange();
 #if PLATFORM(IOS_FAMILY)
-    void pluginDidInstallPDFDocument(double initialScaleFactor);
     std::pair<URL, WebCore::FloatRect> linkURLAndBoundsAtPoint(WebCore::FloatPoint pointInRootView) const;
     std::optional<WebCore::FloatRect> highlightRectForTapAtPoint(WebCore::FloatPoint pointInRootView) const;
     void handleSyntheticClick(WebCore::PlatformMouseEvent&&);
@@ -113,7 +112,7 @@ public:
 
     bool populateEditorStateIfNeeded(EditorState&) const;
 
-    void topContentInsetDidChange();
+    void obscuredContentInsetsDidChange();
 
     void webPageDestroyed();
 
@@ -159,6 +158,10 @@ public:
     void openWithPreview(CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)>&&);
 
     void focusPluginElement();
+
+    bool pluginHandlesPageScaleFactor() const;
+
+    WebCore::FloatRect absoluteBoundingRectForSmartMagnificationAtPoint(WebCore::FloatPoint) const;
 
 private:
     PluginView(WebCore::HTMLPlugInElement&, const URL&, const String& contentType, bool shouldUseManualLoader, WebPage&);

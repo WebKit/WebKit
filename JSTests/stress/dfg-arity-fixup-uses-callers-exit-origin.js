@@ -38,7 +38,7 @@ for (let v14 = 0; v14 < 1000; v14++) {
                 function v56(v57,v58,v59,v60,v61) {
                     const v62 = v36(v35,v37);
                 }
-                for (let v64 = 0; v64 >= 100000; v64++) {
+                for (let v64 = 0; v64 >= testLoopCount; v64++) {
                 }
                 const v65 = 10000;
                 const v66 = v38[4];

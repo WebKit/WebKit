@@ -159,7 +159,7 @@ inline bool Document::hasMutationObserversOfType(MutationObserverOptionType type
 
 inline ClientOrigin Document::clientOrigin() const { return { topOrigin().data(), securityOrigin().data() }; }
 
-inline bool Document::isSameOriginAsTopDocument() const { return securityOrigin().isSameOriginAs(topOrigin()); }
+inline bool Document::isSameOriginAsTopDocument() const { return protectedSecurityOrigin()->isSameOriginAs(topOrigin()); }
 
 inline bool Document::shouldMaskURLForBindings(const URL& urlToMask) const
 {
@@ -180,6 +180,11 @@ inline const URL& Document::maskedURLForBindingsIfNeeded(const URL& url) const
 inline ScriptExecutionContext* Node::scriptExecutionContext() const
 {
     return &document().contextDocument();
+}
+
+inline RefPtr<ScriptExecutionContext> Node::protectedScriptExecutionContext() const
+{
+    return scriptExecutionContext();
 }
 
 inline bool Document::hasBrowsingContext() const

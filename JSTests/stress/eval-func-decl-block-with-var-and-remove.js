@@ -30,7 +30,7 @@ function foo() {
     assertThrow(() => f, "ReferenceError: Can't find variable: f", "#1");
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     foo();
     assertThrow(() => f, "ReferenceError: Can't find variable: f");
 }
@@ -46,7 +46,7 @@ function boo() {
     assertThrow(() => f, "ReferenceError: Can't find variable: f");
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     boo();
     assertThrow(() => f, "ReferenceError: Can't find variable: f");
 }
@@ -62,7 +62,7 @@ function joo() {
     assertThrow(() => h, "ReferenceError: Can't find variable: h");
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     joo();
     assertThrow(() => h, "ReferenceError: Can't find variable: h");
 }
@@ -78,7 +78,7 @@ function koo() {
     assert(typeof k, "function", "#12");
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     koo();
     assertThrow(() => k, "ReferenceError: Can't find variable: k");
 }

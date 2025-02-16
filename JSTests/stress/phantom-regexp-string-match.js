@@ -14,7 +14,7 @@ function test(string, flag)
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     if (i & 1) {
         var result = test("Cocoa", true);
         shouldBe(result instanceof RegExp, true);

@@ -26,7 +26,9 @@
 
 namespace WebCore {
     
-class FETile : public FilterEffect {
+class FETile final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FETile);
 public:
     WEBCORE_EXPORT static Ref<FETile> create(DestinationColorSpace = DestinationColorSpace::SRGB());
 

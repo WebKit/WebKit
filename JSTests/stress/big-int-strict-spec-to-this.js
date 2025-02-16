@@ -11,11 +11,11 @@ function foo() {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(foo.apply(10n) === "bigint");
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(foo.apply(300) === "number");
 }
 

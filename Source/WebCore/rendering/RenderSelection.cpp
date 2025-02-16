@@ -143,7 +143,7 @@ void RenderSelection::clear()
 
 void RenderSelection::repaint() const
 {
-    HashSet<CheckedPtr<RenderBlock>> processedBlocks;
+    UncheckedKeyHashSet<CheckedPtr<RenderBlock>> processedBlocks;
     RenderObject* end = nullptr;
     if (m_renderRange.end())
         end = rendererAfterOffset(*m_renderRange.end(), m_renderRange.endOffset());

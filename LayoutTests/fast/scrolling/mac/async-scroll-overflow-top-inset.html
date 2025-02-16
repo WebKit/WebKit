@@ -102,7 +102,7 @@
         window.addEventListener('load', async () => {
             
             if (window.testRunner)
-                await testRunner.setTopContentInset(topContentInset);
+                await testRunner.setObscuredContentInsets(topContentInset, 0, 0, 0);
         
             scroller = document.querySelector('.scroller');
             scroller.addEventListener('scroll', () => {

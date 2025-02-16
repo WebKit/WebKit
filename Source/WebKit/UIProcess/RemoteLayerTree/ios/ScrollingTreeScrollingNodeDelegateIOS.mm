@@ -479,9 +479,12 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(std
 
 WKBaseScrollView *ScrollingTreeScrollingNodeDelegateIOS::scrollView() const
 {
-    auto scrollView = dynamic_objc_cast<WKBaseScrollView>(scrollLayer().delegate);
-    ASSERT(scrollView);
-    return scrollView;
+    if (auto* delegate = scrollLayer().delegate) {
+        auto scrollView = dynamic_objc_cast<WKBaseScrollView>(delegate);
+        ASSERT(scrollView);
+        return scrollView;
+    }
+    return nullptr;
 }
 
 UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::findActingScrollParent(UIScrollView *scrollView)

@@ -44,7 +44,7 @@ class RegExp final : public JSCell {
 public:
     using Base = JSCell;
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     template<typename CellType, SubspaceAccess mode>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
@@ -68,7 +68,7 @@ public:
     const String& pattern() const { return m_patternString; }
 
     bool isValid() const { return !Yarr::hasError(m_constructionErrorCode); }
-    const char* errorMessage() const { return Yarr::errorMessage(m_constructionErrorCode); }
+    ASCIILiteral errorMessage() const { return Yarr::errorMessage(m_constructionErrorCode); }
     JSObject* errorToThrow(JSGlobalObject* globalObject) { return Yarr::errorToThrow(globalObject, m_constructionErrorCode); }
     void reset()
     {

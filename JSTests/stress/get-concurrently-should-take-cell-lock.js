@@ -64,7 +64,7 @@ async function main() {
 
     container.abc = array;
 
-    for (let i = 0; i < 0x10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         opt();
     }
 

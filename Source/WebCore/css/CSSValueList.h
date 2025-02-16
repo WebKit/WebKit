@@ -23,6 +23,7 @@
 #include "CSSValue.h"
 #include <array>
 #include <unicode/umachine.h>
+#include <wtf/MallocSpan.h>
 
 namespace WebCore {
 
@@ -56,8 +57,8 @@ public:
     bool hasValue(CSSValue&) const;
     bool hasValue(CSSValueID) const;
 
-    void serializeItems(StringBuilder&) const;
-    String serializeItems() const;
+    void serializeItems(StringBuilder&, const CSS::SerializationContext&) const;
+    String serializeItems(const CSS::SerializationContext&) const;
 
     bool itemsEqual(const CSSValueContainingVector&) const;
     bool containsSingleEqualItem(const CSSValue&) const;
@@ -65,9 +66,7 @@ public:
     using CSSValue::separator;
     using CSSValue::separatorCSSText;
 
-    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-    void customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
-    void customClearReplacementURLForSubresources();
+    bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;
 
     CSSValueListBuilder copyValues() const;
 
@@ -77,7 +76,7 @@ public:
     RefPtr<const CSSValue> protectedItem(unsigned index) const { return item(index); }
     const CSSValue* itemWithoutBoundsCheck(unsigned index) const { return &(*this)[index]; }
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 protected:
     friend bool CSSValue::addHash(Hasher&) const;
@@ -95,7 +94,7 @@ protected:
 private:
     unsigned m_size { 0 };
     std::array<const CSSValue*, 4> m_inlineStorage;
-    const CSSValue** m_additionalStorage;
+    MallocSpan<const CSSValue*> m_additionalStorage;
 };
 
 class CSSValueList final : public CSSValueContainingVector {
@@ -116,7 +115,7 @@ public:
     static Ref<CSSValueList> createSlashSeparated(Ref<CSSValue>); // FIXME: Upgrade callers to not use a list at all.
     static Ref<CSSValueList> createSlashSeparated(Ref<CSSValue>, Ref<CSSValue>);
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSValueList&) const;
 
 private:
@@ -134,8 +133,6 @@ inline CSSValueContainingVector::~CSSValueContainingVector()
 {
     for (auto& value : *this)
         value.deref();
-    if (m_size > m_inlineStorage.size())
-        fastFree(m_additionalStorage);
 }
 
 inline const CSSValue& CSSValueContainingVector::operator[](unsigned index) const
@@ -145,10 +142,8 @@ inline const CSSValue& CSSValueContainingVector::operator[](unsigned index) cons
         ASSERT(index < m_size);
         return *m_inlineStorage[index];
     }
-    RELEASE_ASSERT(index < m_size);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    ASSERT(index < m_size);
     return *m_additionalStorage[index - maxInlineSize];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void add(Hasher&, const CSSValueContainingVector&);

@@ -62,6 +62,7 @@ struct ViewportAttributes {
 };
 
 struct ViewportArguments {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     enum class Type : uint8_t {
         // These are ordered in increasing importance.
@@ -83,6 +84,11 @@ struct ViewportArguments {
         : type(type)
     {
     }
+
+    ViewportArguments(ViewportArguments&&) = default;
+    ViewportArguments(const ViewportArguments&) = default;
+    ViewportArguments& operator=(ViewportArguments&&) = default;
+    ViewportArguments& operator=(const ViewportArguments&) = default;
 
     ViewportArguments(Type type, float width, float height, float zoom, float minZoom, float maxZoom, float userZoom, float orientation, float shrinkToFit, ViewportFit viewportFit, bool widthWasExplicit)
         : type(type)

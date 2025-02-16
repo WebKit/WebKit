@@ -203,9 +203,7 @@ inline Ref<SpaceSplitStringData> SpaceSplitStringData::create(const AtomString& 
     TokenAtomStringInitializer tokenInitializer(keyString, tokenArray);
     tokenizeSpaceSplitString(tokenInitializer, keyString);
     ASSERT(static_cast<unsigned>(tokenInitializer.nextMemoryBucket() - tokenArray.data()) == tokenCount);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) == reinterpret_cast<const char*>(spaceSplitStringData) + sizeToAllocate);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    ASSERT(reinterpret_cast<const char*>(tokenInitializer.nextMemoryBucket()) - reinterpret_cast<const char*>(spaceSplitStringData) == sizeToAllocate);
 
     return adoptRef(*spaceSplitStringData);
 }

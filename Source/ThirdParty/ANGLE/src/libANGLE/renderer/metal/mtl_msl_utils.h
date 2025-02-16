@@ -38,7 +38,7 @@ struct TranslatedShaderInfo
     // Translated Metal source code
     std::shared_ptr<const std::string> metalShaderSource;
     // Metal library compiled from source code above. Used by ProgramMtl.
-    AutoObjCPtr<id<MTLLibrary>> metalLibrary;
+    angle::ObjCPtr<id<MTLLibrary>> metalLibrary;
     std::array<SamplerBinding, kMaxGLSamplerBindings> actualSamplerBindings;
     std::array<int, kMaxShaderImages> actualImageBindings;
     std::array<uint32_t, kMaxGLUBOBindings> actualUBOBindings;

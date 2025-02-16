@@ -16,7 +16,7 @@ noInline(test);
 var set = new Set([1, 2, 3]);
 var iterator = set.values();
 var setIteratorPrototype = iterator.__proto__;
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var flag = i % 10000 === 0;
     var result = test(set, flag);
     if (flag) {

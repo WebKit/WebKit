@@ -35,7 +35,7 @@ namespace WebCore {
 namespace CSS {
 
 template<typename AbsoluteColorType>
-void serializationForCSSAbsoluteColor(StringBuilder& builder, const AbsoluteColorType& absoluteColor)
+void serializationForCSSAbsoluteColor(StringBuilder& builder, const SerializationContext& context, const AbsoluteColorType& absoluteColor)
 {
     using Descriptor = typename AbsoluteColorType::Descriptor;
     using ColorType = typename Descriptor::ColorType;
@@ -47,15 +47,15 @@ void serializationForCSSAbsoluteColor(StringBuilder& builder, const AbsoluteColo
 
     auto [c1, c2, c3, alpha] = absoluteColor.components;
 
-    serializationForCSS(builder, c1);
+    serializationForCSS(builder, context, c1);
     builder.append(' ');
-    serializationForCSS(builder, c2);
+    serializationForCSS(builder, context, c2);
     builder.append(' ');
-    serializationForCSS(builder, c3);
+    serializationForCSS(builder, context, c3);
 
     if (alpha) {
         builder.append(" / "_s);
-        serializationForCSS(builder, *alpha);
+        serializationForCSS(builder, context, *alpha);
     }
 
     builder.append(')');

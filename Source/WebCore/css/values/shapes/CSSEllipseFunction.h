@@ -54,9 +54,9 @@ template<size_t I> const auto& get(const Ellipse& value)
         return value.position;
 }
 
-template<> struct Serialize<Ellipse> { void operator()(StringBuilder&, const Ellipse&); };
+template<> struct Serialize<Ellipse> { void operator()(StringBuilder&, const SerializationContext&, const Ellipse&); };
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Ellipse, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Ellipse, 2)

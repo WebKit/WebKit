@@ -50,7 +50,7 @@ public:
 
     template<typename U>
     RectEdges(U&& top, U&& right, U&& bottom, U&& left)
-        : m_sides({ { std::forward<T>(top), std::forward<T>(right), std::forward<T>(bottom), std::forward<T>(left) } })
+        : m_sides({ { std::forward<U>(top), std::forward<U>(right), std::forward<U>(bottom), std::forward<U>(left) } })
     {
     }
 

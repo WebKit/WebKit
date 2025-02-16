@@ -143,6 +143,8 @@
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection(), completion)
 
 #define WEBPROCESSPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(this), processID(), ##__VA_ARGS__)
+#define WEBPROCESSPROXY_RELEASE_LOG_WITH_THIS(channel, thisPtr, fmt, ...) RELEASE_LOG(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(WTF::getPtr(thisPtr)), thisPtr->processID(), ##__VA_ARGS__)
+
 #define WEBPROCESSPROXY_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [PID=%i] WebProcessProxy::" fmt, static_cast<const void*>(this), processID(), ##__VA_ARGS__)
 
 namespace WebKit {
@@ -240,7 +242,7 @@ Vector<WeakPtr<RemotePageProxy>> WebProcessProxy::remotePages() const
     return WTF::copyToVector(m_remotePages);
 }
 
-void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, const Function<void(WebPageProxy&)>& callback)
+void WebProcessProxy::forWebPagesWithOrigin(PAL::SessionID sessionID, const SecurityOriginData& origin, NOESCAPE const Function<void(WebPageProxy&)>& callback)
 {
     for (Ref page : globalPages()) {
         if (page->sessionID() != sessionID || SecurityOriginData::fromURLWithoutStrictOpaqueness(URL { page->currentURL() }) != origin)
@@ -485,7 +487,7 @@ void WebProcessProxy::initializeWebProcess(WebProcessCreationParameters&& parame
 void WebProcessProxy::initializePreferencesForGPUAndNetworkProcesses(const WebPageProxy& page)
 {
     if (!m_sharedPreferencesForWebProcess.version) {
-        updateSharedPreferencesForWebProcess(page.preferences().store());
+        updateSharedPreferences(page.preferences().store());
         ASSERT(m_sharedPreferencesForWebProcess.version);
     } else {
 #if ASSERT_ENABLED
@@ -784,6 +786,13 @@ void WebProcessProxy::setThirdPartyCookieBlockingMode(ThirdPartyCookieBlockingMo
 {
     sendWithAsyncReply(Messages::WebProcess::SetThirdPartyCookieBlockingMode(thirdPartyCookieBlockingMode), WTFMove(completionHandler));
 }
+
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+void WebProcessProxy::setOptInCookiePartitioningEnabled(bool enabled)
+{
+    send(Messages::WebProcess::SetOptInCookiePartitioningEnabled(enabled), 0);
+}
+#endif
 
 Ref<WebPageProxy> WebProcessProxy::createWebPage(PageClient& pageClient, Ref<API::PageConfiguration>&& pageConfiguration)
 {
@@ -2170,6 +2179,13 @@ void WebProcessProxy::activePagesDomainsForTesting(CompletionHandler<void(Vector
     sendWithAsyncReply(Messages::WebProcess::GetActivePagesOriginsForTesting(), WTFMove(completionHandler));
 }
 
+#if ENABLE(NOTIFY_BLOCKING)
+void WebProcessProxy::getNotifyStateForTesting(const String& name, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::WebProcess::GetNotifyStateForTesting(name), WTFMove(completionHandler));
+}
+#endif
+
 void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
 {
     RELEASE_ASSERT(!isInProcessCache());
@@ -2288,11 +2304,52 @@ void WebProcessProxy::enableMediaPlaybackIfNecessary()
 #endif
 }
 
-std::optional<SharedPreferencesForWebProcess> WebProcessProxy::updateSharedPreferencesForWebProcess(const WebPreferencesStore& preferencesStore)
+void WebProcessProxy::sharedPreferencesDidChange()
+{
+    enableMediaPlaybackIfNecessary();
+
+    auto currentVersion = m_sharedPreferencesForWebProcess.version;
+    if (m_sharedPreferencesVersionInNetworkProcess != currentVersion) {
+        RefPtr networkProcess = m_websiteDataStore ? m_websiteDataStore->networkProcessIfExists() : nullptr;
+        if (networkProcess) {
+            auto sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
+            networkProcess->sharedPreferencesForWebProcessDidChange(*this, WTFMove(sharedPreferencesForWebProcess), [weakThis = WeakPtr { this }, syncedVersion = currentVersion]() {
+                if (RefPtr process = weakThis.get())
+                    process->didSyncSharedPreferencesForWebProcessWithNetworkProcess(syncedVersion);
+            });
+        }
+    }
+
+#if ENABLE(GPU_PROCESS)
+    if (m_sharedPreferencesVersionInGPUProcess != currentVersion) {
+        if (RefPtr gpuProcess = processPool().gpuProcess()) {
+            auto sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
+            gpuProcess->sharedPreferencesForWebProcessDidChange(*this, WTFMove(sharedPreferencesForWebProcess), [weakThis = WeakPtr { this }, syncedVersion = currentVersion]() {
+                if (RefPtr process = weakThis.get())
+                    process->didSyncSharedPreferencesForWebProcessWithGPUProcess(syncedVersion);
+            });
+        }
+    }
+#endif
+
+#if ENABLE(MODEL_PROCESS)
+    if (m_sharedPreferencesVersionInModelProcess != currentVersion) {
+        if (RefPtr modelProcess = processPool().modelProcess()) {
+            auto sharedPreferencesForWebProcess = m_sharedPreferencesForWebProcess;
+            modelProcess->sharedPreferencesForWebProcessDidChange(*this, WTFMove(sharedPreferencesForWebProcess), [weakThis = WeakPtr { this }, syncedVersion = currentVersion]() {
+                if (RefPtr process = weakThis.get())
+                    process->didSyncSharedPreferencesForWebProcessWithModelProcess(syncedVersion);
+            });
+        }
+    }
+#endif
+}
+
+std::optional<SharedPreferencesForWebProcess> WebProcessProxy::updateSharedPreferences(const WebPreferencesStore& preferencesStore)
 {
     if (WebKit::updateSharedPreferencesForWebProcess(m_sharedPreferencesForWebProcess, preferencesStore)) {
         ++m_sharedPreferencesForWebProcess.version;
-        enableMediaPlaybackIfNecessary();
+        sharedPreferencesDidChange();
 
         return m_sharedPreferencesForWebProcess;
     }
@@ -2391,14 +2448,14 @@ void WebProcessProxy::createSpeechRecognitionServer(SpeechRecognitionServerIdent
     ASSERT(!m_speechRecognitionServerMap.contains(identifier));
     MESSAGE_CHECK(!m_speechRecognitionServerMap.contains(identifier));
 
-    auto permissionChecker = [weakPage = WeakPtr { targetPage }](auto& request, SpeechRecognitionPermissionRequestCallback&& completionHandler) mutable {
+    auto permissionChecker = [weakPage = WeakPtr { targetPage }](auto& request, FrameInfoData&& frameInfo, SpeechRecognitionPermissionRequestCallback&& completionHandler) mutable {
         RefPtr page = weakPage.get();
         if (!page) {
             completionHandler(WebCore::SpeechRecognitionError { SpeechRecognitionErrorType::NotAllowed, "Page no longer exists"_s });
             return;
         }
 
-        page->requestSpeechRecognitionPermission(request, WTFMove(completionHandler));
+        page->requestSpeechRecognitionPermission(request, WTFMove(frameInfo), WTFMove(completionHandler));
     };
     auto checkIfMockCaptureDevicesEnabled = [weakPage = WeakPtr { targetPage }]() {
         return weakPage && weakPage->protectedPreferences()->mockCaptureDevicesEnabled();
@@ -2501,17 +2558,16 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 
 void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, const WebPreferencesStore& store, const Site& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
-    updateSharedPreferencesForWebProcess(store);
+    updateSharedPreferences(store);
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
     markProcessAsRecentlyUsed();
     auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;
-    sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, site, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, workerType, completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, site, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData }, [weakThis = WeakPtr { *this }, workerType, completionHandler = WTFMove(completionHandler)]() mutable {
 #if RELEASE_LOG_DISABLED
-        UNUSED_PARAM(this);
         UNUSED_PARAM(workerType);
 #endif
-        if (weakThis)
-            WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Finished (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
+        if (RefPtr protectedThis = weakThis.get())
+            WEBPROCESSPROXY_RELEASE_LOG_WITH_THIS(Loading, protectedThis, "establishRemoteWorkerContext: Finished (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
         completionHandler();
     }, 0);
 }
@@ -2532,65 +2588,41 @@ void WebProcessProxy::updateRemoteWorkerPreferencesStore(const WebPreferencesSto
         send(Messages::WebSharedWorkerContextManagerConnection::UpdatePreferencesStore { store }, 0);
 }
 
-void WebProcessProxy::updateServiceWorkerProcessAssertion()
+void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType workerType)
 {
-    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateServiceWorkerProcessAssertion");
-
-    if (!m_serviceWorkerInformation->hasBackgroundProcessing) {
-        m_serviceWorkerInformation->activity = nullptr;
+    auto& workerInformation = workerType == RemoteWorkerType::SharedWorker ? m_sharedWorkerInformation : m_serviceWorkerInformation;
+    ASSERT(workerInformation);
+    if (!workerInformation)
         return;
-    }
 
-    bool shouldTakeForegroundActivity = WTF::anyOf(m_serviceWorkerInformation->clientProcesses, [&](auto& process) {
+    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateRemoteWorkerProcessAssertion: workerType=%" PUBLIC_LOG_STRING, workerType == RemoteWorkerType::SharedWorker ? "shared" : "service");
+
+    bool shouldTakeForegroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_foregroundToken;
     });
     if (shouldTakeForegroundActivity) {
-        if (!ProcessThrottler::isValidForegroundActivity(m_serviceWorkerInformation->activity.get()))
-            m_serviceWorkerInformation->activity = protectedThrottler()->foregroundActivity("Service Worker for foreground view(s)"_s);
+        if (!ProcessThrottler::isValidForegroundActivity(workerInformation->activity.get()))
+            workerInformation->activity = protectedThrottler()->foregroundActivity("Worker for foreground view(s)"_s);
         return;
     }
 
-    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "Service Worker for background processing");
-    if (!ProcessThrottler::isValidBackgroundActivity(m_serviceWorkerInformation->activity.get()))
-        m_serviceWorkerInformation->activity = protectedThrottler()->backgroundActivity("Service Worker for background processing"_s);
-}
-
-void WebProcessProxy::updateSharedWorkerProcessAssertion()
-{
-    WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "updateSharedWorkerProcessAssertion");
-
-    bool shouldTakeForegroundActivity = WTF::anyOf(m_sharedWorkerInformation->clientProcesses, [&](auto& process) {
-        return &process != this && !!process.m_foregroundToken;
-    });
-    if (shouldTakeForegroundActivity) {
-        if (!ProcessThrottler::isValidForegroundActivity(m_sharedWorkerInformation->activity.get()))
-            m_sharedWorkerInformation->activity = protectedThrottler()->foregroundActivity("Shared Worker for foreground view(s)"_s);
-        return;
-    }
-
-    bool shouldTakeBackgroundActivity = WTF::anyOf(m_sharedWorkerInformation->clientProcesses, [&](auto& process) {
+    bool shouldTakeBackgroundActivity = WTF::anyOf(workerInformation->clientProcesses, [&](auto& process) {
         return &process != this && !!process.m_backgroundToken;
     });
     if (shouldTakeBackgroundActivity) {
-        if (!ProcessThrottler::isValidBackgroundActivity(m_sharedWorkerInformation->activity.get()))
-            m_sharedWorkerInformation->activity = protectedThrottler()->backgroundActivity("Shared Worker for background view(s)"_s);
+        if (!ProcessThrottler::isValidBackgroundActivity(workerInformation->activity.get()))
+            workerInformation->activity = protectedThrottler()->backgroundActivity("Worker for background view(s)"_s);
         return;
     }
 
-    m_sharedWorkerInformation->activity = nullptr;
-}
-
-void WebProcessProxy::updateRemoteWorkerProcessAssertion(RemoteWorkerType workerType)
-{
-    ASSERT(workerType == RemoteWorkerType::SharedWorker ? !!m_sharedWorkerInformation : !!m_serviceWorkerInformation);
-    switch (workerType) {
-    case RemoteWorkerType::ServiceWorker:
-        updateServiceWorkerProcessAssertion();
-        break;
-    case RemoteWorkerType::SharedWorker:
-        updateSharedWorkerProcessAssertion();
-        break;
+    if (workerType == RemoteWorkerType::ServiceWorker && m_hasServiceWorkerBackgroundProcessing) {
+        WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "Service Worker for background processing");
+        if (!ProcessThrottler::isValidBackgroundActivity(workerInformation->activity.get()))
+            workerInformation->activity = protectedThrottler()->backgroundActivity("Service Worker for background processing"_s);
+        return;
     }
+
+    workerInformation->activity = nullptr;
 }
 
 void WebProcessProxy::registerRemoteWorkerClientProcess(RemoteWorkerType workerType, WebProcessProxy& proxy)
@@ -2631,7 +2663,7 @@ void WebProcessProxy::startServiceWorkerBackgroundProcessing()
         return;
 
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "startServiceWorkerBackgroundProcessing");
-    m_serviceWorkerInformation->hasBackgroundProcessing = true;
+    m_hasServiceWorkerBackgroundProcessing = true;
     updateRemoteWorkerProcessAssertion(RemoteWorkerType::ServiceWorker);
 }
 
@@ -2641,7 +2673,7 @@ void WebProcessProxy::endServiceWorkerBackgroundProcessing()
         return;
 
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "endServiceWorkerBackgroundProcessing");
-    m_serviceWorkerInformation->hasBackgroundProcessing = false;
+    m_hasServiceWorkerBackgroundProcessing = false;
     updateRemoteWorkerProcessAssertion(RemoteWorkerType::ServiceWorker);
 }
 
@@ -2994,10 +3026,10 @@ void WebProcessProxy::registerServiceWorkerClients(CompletionHandler<void()>&& c
 HashMap<WebCore::PageIdentifier, CoreIPCAuditToken> WebProcessProxy::presentingApplicationAuditTokens() const
 {
     HashMap<WebCore::PageIdentifier, CoreIPCAuditToken> presentingApplicationAuditTokens;
-    WTF::forEach(pages(), [&] (auto& page) {
+    for (auto& page : pages()) {
         if (page->presentingApplicationAuditToken())
             presentingApplicationAuditTokens.add(page->webPageIDInMainFrameProcess(), page->presentingApplicationAuditToken().value());
-    });
+    }
     return presentingApplicationAuditTokens;
 }
 #endif
@@ -3059,17 +3091,24 @@ void WebProcessProxy::requestResourceMonitorRuleLists()
         m_resourceMonitorRuleListRequestedBySomePage = true;
 
         if (RefPtr ruleList = processPool->cachedResourceMonitorRuleList())
-            setResourceMonitorRuleListsIfRequired(ruleList.get());
+            setResourceMonitorRuleListsIfRequired(WTFMove(ruleList));
     }
 }
 
-void WebProcessProxy::setResourceMonitorRuleListsIfRequired(WebCompiledContentRuleList* ruleList)
+void WebProcessProxy::setResourceMonitorRuleListsIfRequired(RefPtr<WebCompiledContentRuleList> ruleList)
 {
-    if (!m_resourceMonitorRuleListRequestedBySomePage || m_resourceMonitorRuleList == ruleList)
+    if (!m_resourceMonitorRuleListRequestedBySomePage || m_resourceMonitorRuleList == ruleList.get())
         return;
 
-    m_resourceMonitorRuleList = ruleList;
-    send(Messages::WebProcess::SetResourceMonitorContentRuleList(ruleList->data()), 0);
+    m_resourceMonitorRuleList = ruleList.get();
+    if (ruleList)
+        send(Messages::WebProcess::SetResourceMonitorContentRuleList(ruleList->data()), 0);
+}
+
+void WebProcessProxy::setResourceMonitorRuleLists(RefPtr<WebCompiledContentRuleList> ruleList, CompletionHandler<void()>&& completionHandler)
+{
+    m_resourceMonitorRuleList = ruleList.get();
+    sendWithAsyncReply(Messages::WebProcess::SetResourceMonitorContentRuleListAsync(ruleList->data()), WTFMove(completionHandler));
 }
 #endif
 

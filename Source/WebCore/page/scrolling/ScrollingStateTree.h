@@ -111,7 +111,7 @@ private:
     void willRemoveNode(ScrollingStateNode&);
     
     bool isValid() const;
-    void traverse(const ScrollingStateNode&, const Function<void(const ScrollingStateNode&)>&) const;
+    void traverse(const ScrollingStateNode&, NOESCAPE const Function<void(const ScrollingStateNode&)>&) const;
 
     ThreadSafeWeakPtr<AsyncScrollingCoordinator> m_scrollingCoordinator;
     Markable<FrameIdentifier> m_rootFrameIdentifier;

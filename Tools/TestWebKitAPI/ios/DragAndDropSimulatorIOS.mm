@@ -658,6 +658,11 @@ IGNORE_WARNINGS_END
         return;
     }
 
+    if (_currentProgress >= 0.5 && _dragProgressMidPointReachedBlock) {
+        _dragProgressMidPointReachedBlock();
+        _dragProgressMidPointReachedBlock = nil;
+    }
+
     _lastKnownDragCaretRect = [_webView _dragCaretRect];
     _currentProgress += progressIncrementStep;
     CGPoint locationInWindow = self._currentLocation;

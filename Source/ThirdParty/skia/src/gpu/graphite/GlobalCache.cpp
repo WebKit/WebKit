@@ -7,11 +7,19 @@
 
 #include "src/gpu/graphite/GlobalCache.h"
 
+#include "include/private/base/SkTArray.h"
 #include "src/core/SkTraceEvent.h"
 #include "src/gpu/graphite/ComputePipeline.h"
 #include "src/gpu/graphite/ContextUtils.h"
 #include "src/gpu/graphite/GraphicsPipeline.h"
+#include "src/gpu/graphite/GraphicsPipelineDesc.h"
+#include "src/gpu/graphite/RenderPassDesc.h"
 #include "src/gpu/graphite/Resource.h"
+#include "src/gpu/graphite/SharedContext.h"
+
+#if defined(SK_ENABLE_PRECOMPILE)
+#include "src/gpu/graphite/precompile/SerializationUtils.h"
+#endif
 
 namespace {
 
@@ -22,13 +30,25 @@ uint32_t next_compilation_id() {
     return nextId.fetch_add(1, std::memory_order_relaxed);
 }
 
+#if defined(GPU_TEST_UTILS)
+// TODO(b/391403921): get rid of this special case once we've got color space transform shader
+// specialization more under control
+constexpr int kGlobalGraphicsPipelineCacheSizeLimit = 1 << 13;
+constexpr int kGlobalComputePipelineCacheSizeLimit = 256;
+
+#else
+// TODO: find a good value for these limits
+constexpr int kGlobalGraphicsPipelineCacheSizeLimit = 256;
+constexpr int kGlobalComputePipelineCacheSizeLimit = 256;
+#endif
+
 } // anonymous namespce
 
 namespace skgpu::graphite {
 
 GlobalCache::GlobalCache()
-        : fGraphicsPipelineCache(256)  // TODO: find a good value for these limits
-        , fComputePipelineCache(256) {}
+        : fGraphicsPipelineCache(kGlobalGraphicsPipelineCacheSizeLimit)
+        , fComputePipelineCache(kGlobalComputePipelineCacheSizeLimit) {}
 
 GlobalCache::~GlobalCache() {
     // These should have been cleared out earlier by deleteResources().
@@ -36,6 +56,40 @@ GlobalCache::~GlobalCache() {
     SkASSERT(fGraphicsPipelineCache.count() == 0);
     SkASSERT(fComputePipelineCache.count() == 0);
     SkASSERT(fStaticResource.empty());
+}
+
+void GlobalCache::setPipelineCallback(PipelineCallback callback, PipelineCallbackContext context) {
+    SkAutoSpinlock lock{fSpinLock};
+
+    fPipelineCallback = callback;
+    fPipelineCallbackContext = context;
+}
+
+void GlobalCache::invokePipelineCallback(SharedContext* sharedContext,
+                                         const GraphicsPipelineDesc& pipelineDesc,
+                                         const RenderPassDesc& renderPassDesc) {
+#if defined(SK_ENABLE_PRECOMPILE)
+    PipelineCallback tmpCB = nullptr;
+    PipelineCallbackContext tmpContext = nullptr;
+
+    {
+        // We want to get a consistent callback/context pair but not invoke the callback
+        // w/in our lock.
+        SkAutoSpinlock lock{fSpinLock};
+
+        tmpCB = fPipelineCallback;
+        tmpContext = fPipelineCallbackContext;
+    }
+
+    if (tmpCB) {
+        sk_sp<SkData> data = PipelineDescToData(sharedContext->shaderCodeDictionary(),
+                                                pipelineDesc,
+                                                renderPassDesc);
+        if (data) {
+            tmpCB(tmpContext, std::move(data));
+        }
+    }
+#endif
 }
 
 void GlobalCache::deleteResources() {
@@ -77,6 +131,7 @@ sk_sp<GraphicsPipeline> GlobalCache::findGraphicsPipeline(
         ++fStats.fGraphicsCacheHits;
 #endif
 
+        (*entry)->updateAccessTime();
         (*entry)->markUsed();
 
 #if defined(SK_PIPELINE_LIFETIME_LOGGING)
@@ -153,6 +208,7 @@ sk_sp<GraphicsPipeline> GlobalCache::addGraphicsPipeline(const UniqueKey& key,
         // Precompile Pipelines are only marked as used when they get a cache hit in
         // findGraphicsPipeline
         if (!(*entry)->fromPrecompile()) {
+            (*entry)->updateAccessTime();
             (*entry)->markUsed();
         }
 
@@ -195,6 +251,31 @@ sk_sp<GraphicsPipeline> GlobalCache::addGraphicsPipeline(const UniqueKey& key,
 #endif
     }
     return *entry;
+}
+
+
+void GlobalCache::purgePipelinesNotUsedSince(StdSteadyClock::time_point purgeTime) {
+    SkAutoSpinlock lock{fSpinLock};
+
+    skia_private::TArray<skgpu::UniqueKey> toRemove;
+
+    // This is probably fine for now but is looping from most-recently-used to least-recently-used.
+    // It seems like a reverse loop with an early out could be more efficient.
+    fGraphicsPipelineCache.foreach([&toRemove, purgeTime](const UniqueKey* key,
+                                                          const sk_sp<GraphicsPipeline>* pipeline) {
+        if ((*pipeline)->lastAccessTime() < purgeTime) {
+            toRemove.push_back(*key);
+        }
+    });
+
+    for (const skgpu::UniqueKey& k : toRemove) {
+#if defined(GPU_TEST_UTILS)
+        ++fStats.fGraphicsPurges;
+#endif
+        fGraphicsPipelineCache.remove(k);
+    }
+
+    // TODO: add purging of Compute Pipelines (b/389073204)
 }
 
 #if defined(GPU_TEST_UTILS)

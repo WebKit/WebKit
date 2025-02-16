@@ -8,5 +8,5 @@ var target = createBuiltin(`(function (array)
     return array;
 })`);
 noInline(target);
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     target([42]);

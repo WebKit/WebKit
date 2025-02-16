@@ -16,11 +16,12 @@ function test()
 
                 const importedTitle = "Imported Snapshot";
                 let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-                workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                    let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                workerProxy.createSnapshot(WI.mainTarget.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WI.HeapSnapshotProxy.deserialize(WI.mainTarget, objectId, serializedSnapshot);
                     snapshot.snapshotStringData = snapshotStringData;
                     workerProxy.createImportedSnapshot(snapshotStringData, importedTitle, ({objectId, snapshot: serializedSnapshot}) => {
-                        let importedSnapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                        const target = null;
+                        let importedSnapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
                         importedSnapshot.snapshotStringData = snapshotStringData;
 
                         InspectorTest.expectFalse(snapshot.imported, "Normal snapshot is not imported.");

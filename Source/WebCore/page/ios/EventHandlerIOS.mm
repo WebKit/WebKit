@@ -42,6 +42,7 @@
 #import "KeyboardEvent.h"
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
+#import "MouseEventTypes.h"
 #import "MouseEventWithHitTestResults.h"
 #import "Page.h"
 #import "Pasteboard.h"
@@ -412,14 +413,18 @@ bool EventHandler::passSubframeEventToSubframe(MouseEventWithHitTestResults& eve
     return false;
 }
 
-bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent&, Widget& widget, OptionSet<WheelEventProcessingSteps>)
+bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& wheelEvent, Widget& widget, OptionSet<WheelEventProcessingSteps> processingSteps)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
 
     NSView* nodeView = widget.platformWidget();
     if (!nodeView) {
-        // WK2 code path. No wheel events on iOS anyway.
-        return false;
+        // WebKit2 code path.
+        RefPtr frameView = dynamicDowncast<LocalFrameView>(widget);
+        if (!frameView)
+            return false;
+        auto [result, _] = frameView->frame().eventHandler().handleWheelEvent(wheelEvent, processingSteps);
+        return result.wasHandled();
     }
 
     if (currentEvent().type != WebEventScrollWheel || m_sendingEventToSubview)

@@ -86,6 +86,10 @@ WI.ConsoleSnippetTreeElement = class ConsoleSnippetTreeElement extends WI.Script
 
         contextMenu.appendSeparator();
 
+        contextMenu.appendItem(WI.UIString("Delete Console Snippet"), () => {
+            WI.consoleManager.removeSnippet(this.representedObject);
+        });
+
         super.populateContextMenu(contextMenu, event);
     }
 

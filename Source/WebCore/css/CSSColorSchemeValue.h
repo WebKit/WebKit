@@ -35,9 +35,9 @@ class CSSColorSchemeValue final : public CSSValue {
 public:
     static Ref<CSSColorSchemeValue> create(CSS::ColorScheme);
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSColorSchemeValue&) const;
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
     const CSS::ColorScheme& colorScheme() const { return m_colorScheme; }
 

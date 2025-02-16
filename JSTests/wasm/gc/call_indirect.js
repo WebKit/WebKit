@@ -1,5 +1,3 @@
-//@ runWebAssemblySuite("--useWasmGC=true")
-
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
 
@@ -16,7 +14,7 @@ function testCallIndirect() {
         (func (type 1) (i32.add (local.get 0) (i32.const 1)))
       )
     `);
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
       assert.eq(m.exports.main(), 43);
   }
 
@@ -30,7 +28,7 @@ function testCallIndirect() {
         (func (type 0) (i32.add (local.get 0) (i32.const 1)))
       )
     `);
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
       assert.eq(m.exports.main(), 43);
   }
 
@@ -45,7 +43,7 @@ function testCallIndirect() {
         (func (type 1) (i32.add (local.get 0) (i32.const 1)))
       )
     `);
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
       assert.eq(m.exports.main(), 43);
   }
 
@@ -68,7 +66,7 @@ function testCallIndirect() {
         (func (type 4) (i32.add (local.get 0) (i32.const 1)) drop)
       )
     `);
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
       m.exports.main();
   }
 
@@ -89,7 +87,7 @@ function testCallIndirect() {
         (func (type 2) (i32.add (local.get 0) (i32.const 1)) drop)
       )
     `);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < wasmTestLoopCount; i++) {
       assert.throws(
           () => { m.exports.type3() },
           WebAssembly.RuntimeError,
@@ -134,7 +132,7 @@ function testCallIndirect() {
         (func (type 1) (i32.add (local.get 0) (i32.const 1)) drop)
       )
     `);
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
       m.exports.main();
   }
 

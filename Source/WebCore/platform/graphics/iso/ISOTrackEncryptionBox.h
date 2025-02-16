@@ -34,7 +34,7 @@ public:
     ISOTrackEncryptionBox();
     ~ISOTrackEncryptionBox();
 
-    static FourCC boxTypeName() { return "tenc"; }
+    static FourCC boxTypeName() { return std::span { "tenc" }; }
 
     std::optional<int8_t> defaultCryptByteBlock() const { return m_defaultCryptByteBlock; }
     std::optional<int8_t> defaultSkipByteBlock() const { return m_defaultSkipByteBlock; }

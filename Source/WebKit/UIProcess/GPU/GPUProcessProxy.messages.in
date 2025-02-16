@@ -22,7 +22,11 @@
 
 #if ENABLE(GPU_PROCESS)
 
-[ExceptionForEnabledBy]
+[
+    DispatchedFrom=GPU,
+    DispatchedTo=UI,
+    ExceptionForEnabledBy
+]
 messages -> GPUProcessProxy {
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
@@ -49,7 +53,7 @@ messages -> GPUProcessProxy {
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
 
 #if PLATFORM(COCOA)
-    DidDrawCompositedToPDF(WebCore::PageIdentifier pageID, RefPtr<WebCore::SharedBuffer> data, WebCore::SnapshotIdentifier snapshotIdentifier)
+    DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, RefPtr<WebCore::SharedBuffer> data, WebCore::SnapshotIdentifier snapshotIdentifier)
 #endif
 }
 

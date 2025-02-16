@@ -8,6 +8,6 @@ class B extends A {
 }
 
 let arr = [];
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
   arr.push(new B(undefined));
 }

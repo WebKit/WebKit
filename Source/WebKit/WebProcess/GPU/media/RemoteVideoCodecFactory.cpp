@@ -56,11 +56,11 @@ private:
 class RemoteVideoDecoder : public WebCore::VideoDecoder {
     WTF_MAKE_TZONE_ALLOCATED(RemoteVideoDecoder);
 public:
-    static Ref<WebCore::VideoDecoder> create(LibWebRTCCodecs::Decoder& decoder, Ref<RemoteVideoDecoderCallbacks>&& callbacks, uint16_t width, uint16_t height) { return adoptRef(*new RemoteVideoDecoder(decoder, WTFMove(callbacks), width, height)); }
+    static Ref<WebCore::VideoDecoder> create(LibWebRTCCodecs::Decoder& decoder, Ref<RemoteVideoDecoderCallbacks>&& callbacks) { return adoptRef(*new RemoteVideoDecoder(decoder, WTFMove(callbacks))); }
     ~RemoteVideoDecoder();
 
 private:
-    RemoteVideoDecoder(LibWebRTCCodecs::Decoder&, Ref<RemoteVideoDecoderCallbacks>&&, uint16_t width, uint16_t height);
+    RemoteVideoDecoder(LibWebRTCCodecs::Decoder&, Ref<RemoteVideoDecoderCallbacks>&&);
 
     Ref<DecodePromise> decode(EncodedFrame&&) final;
     Ref<GenericPromise> flush() final;
@@ -69,9 +69,6 @@ private:
 
     LibWebRTCCodecs::Decoder& m_internalDecoder;
     Ref<RemoteVideoDecoderCallbacks> m_callbacks;
-
-    uint16_t m_width { 0 };
-    uint16_t m_height { 0 };
 };
 
 class RemoteVideoEncoderCallbacks : public ThreadSafeRefCounted<RemoteVideoEncoderCallbacks> {
@@ -157,7 +154,7 @@ void RemoteVideoCodecFactory::createDecoder(const String& codec, const WebCore::
             WebProcess::singleton().libWebRTCCodecs().setDecoderFormatDescription(*internalDecoder, description.span(), width, height);
 
         auto callbacks = RemoteVideoDecoderCallbacks::create(WTFMove(outputCallback));
-        createCallback(RemoteVideoDecoder::create(*internalDecoder, callbacks.copyRef(), width, height));
+        createCallback(RemoteVideoDecoder::create(*internalDecoder, callbacks.copyRef()));
     });
 }
 
@@ -191,11 +188,9 @@ void RemoteVideoCodecFactory::createEncoder(const String& codec, const WebCore::
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteVideoDecoder);
 
-RemoteVideoDecoder::RemoteVideoDecoder(LibWebRTCCodecs::Decoder& decoder, Ref<RemoteVideoDecoderCallbacks>&& callbacks, uint16_t width, uint16_t height)
+RemoteVideoDecoder::RemoteVideoDecoder(LibWebRTCCodecs::Decoder& decoder, Ref<RemoteVideoDecoderCallbacks>&& callbacks)
     : m_internalDecoder(decoder)
     , m_callbacks(WTFMove(callbacks))
-    , m_width(width)
-    , m_height(height)
 {
     WebProcess::singleton().libWebRTCCodecs().registerDecodedVideoFrameCallback(m_internalDecoder, [callbacks = m_callbacks](RefPtr<WebCore::VideoFrame>&& videoFrame, auto timestamp) {
         callbacks->notifyDecodingResult(WTFMove(videoFrame), timestamp);
@@ -213,7 +208,7 @@ Ref<RemoteVideoDecoder::DecodePromise> RemoteVideoDecoder::decode(EncodedFrame&&
         m_callbacks->addDuration(frame.timestamp, *frame.duration);
 
     Ref codecs = WebProcess::singleton().libWebRTCCodecs();
-    return codecs->decodeFrame(m_internalDecoder, frame.timestamp, frame.data, m_width, m_height);
+    return codecs->decodeFrame(m_internalDecoder, frame.timestamp, frame.data);
 }
 
 Ref<GenericPromise> RemoteVideoDecoder::flush()

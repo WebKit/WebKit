@@ -30,6 +30,7 @@ namespace WebCore {
 enum class ViolationReportType : uint8_t {
     COEPInheritenceViolation, // https://html.spec.whatwg.org/multipage/origin.html#queue-a-cross-origin-embedder-policy-inheritance-violation
     CORPViolation, // https://fetch.spec.whatwg.org/#queue-a-cross-origin-embedder-policy-corp-violation-report
+    CSPHashReport,
     ContentSecurityPolicy,
     CrossOriginOpenerPolicy,
     Deprecation, // https://wicg.github.io/deprecation-reporting/

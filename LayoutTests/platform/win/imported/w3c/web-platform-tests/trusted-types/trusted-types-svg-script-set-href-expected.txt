@@ -1,0 +1,26 @@
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://web-platform.test:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://web-platform.test:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://web-platform.test:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+
+PASS Assign string to SVGScriptElement.href.baseVal.
+PASS Assign TrustedScriptURL to SVGScriptElement.href.baseVal.
+PASS Assign string to non-attached SVGScriptElement.href via setAttribute.
+PASS Assign TrustedScriptURL to non-attached SVGScriptElement.href via setAttribute.
+PASS Assign string to attached SVGScriptElement.href via setAttribute.
+PASS Assign TrustedScriptURL to attached SVGScriptElement.href via setAttribute.
+PASS Assign string to SVGScriptElement.className.baseVal.
+PASS Assign TrustedScriptURL to SVGScriptElement.className.baseVal.
+PASS Assign string to SVGUseElement.href.baseVal.
+PASS Assign TrustedScriptURL to SVGUseElement.href.baseVal.
+PASS Setup default policy
+PASS Assign string to SVGScriptElement.href.baseVal  w/ default policy.
+PASS Assign string to non-attached SVGScriptElement.href via setAttribute w/ default policy.
+PASS Assign string to attached SVGScriptElement.href via setAttribute w/ default policy.
+PASS Assign string to SVGScriptElement.className.baseVal w/ default policy.
+PASS Assign TrustedScriptURL to SVGScriptElement.className.baseVal w/ default policy.
+PASS Assign string to SVGUseElement.href.baseVal w/ default policy.
+PASS Assign TrustedScriptURL to SVGUseElement.href.baseVal w/ default policy.
+

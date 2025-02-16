@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,50 +24,66 @@
 
 #pragma once
 
-#include "CalculationValue.h"
 #include "StylePrimitiveNumericConcepts.h"
+#include <wtf/Forward.h>
+#include <wtf/Ref.h>
 
 namespace WebCore {
+
+namespace Calculation {
+struct Child;
+}
+
+class CalculationValue;
+
 namespace Style {
 
+// Non-generic base type to allow code sharing and out-of-line definitions.
+struct UnevaluatedCalculationBase {
+    explicit UnevaluatedCalculationBase(Ref<CalculationValue>&&);
+    explicit UnevaluatedCalculationBase(Calculation::Child&&, Calculation::Category, CSS::Range);
+
+    WEBCORE_EXPORT UnevaluatedCalculationBase(const UnevaluatedCalculationBase&);
+    WEBCORE_EXPORT UnevaluatedCalculationBase(UnevaluatedCalculationBase&&);
+    UnevaluatedCalculationBase& operator=(const UnevaluatedCalculationBase&);
+    UnevaluatedCalculationBase& operator=(UnevaluatedCalculationBase&&);
+
+    WEBCORE_EXPORT ~UnevaluatedCalculationBase();
+
+    Ref<CalculationValue> protectedCalculation() const;
+
+    bool equal(const UnevaluatedCalculationBase&) const;
+
+private:
+    Ref<CalculationValue> calc;
+};
+
 // Wrapper for `Ref<CalculationValue>` that includes range and category as part of the type.
-template<CSS::Numeric CSSType> struct UnevaluatedCalculation {
+template<CSS::Numeric CSSType> struct UnevaluatedCalculation : UnevaluatedCalculationBase {
+    using UnevaluatedCalculationBase::UnevaluatedCalculationBase;
+    using UnevaluatedCalculationBase::operator=;
+
     using CSS = CSSType;
     static constexpr auto range = CSS::range;
     static constexpr auto category = CSS::category;
 
-    explicit UnevaluatedCalculation(Ref<CalculationValue> root)
-        : value { WTFMove(root) }
+    explicit UnevaluatedCalculation(Calculation::Child&& child)
+        : UnevaluatedCalculationBase(WTFMove(child), category, range)
     {
     }
 
-    explicit UnevaluatedCalculation(Calculation::Child root)
-        : UnevaluatedCalculation {
-            CalculationValue::create(
-                Calculation::Tree {
-                    .root = WTFMove(root),
-                    .category = category,
-                    .range = { range.min, range.max },
-                }
-            )
-        }
+    bool operator==(const UnevaluatedCalculation& other) const
     {
+        return UnevaluatedCalculationBase::equal(static_cast<const UnevaluatedCalculationBase&>(other));
     }
-
-    Ref<CalculationValue> protectedCalculation() const
-    {
-        return value;
-    }
-
-    bool operator==(const UnevaluatedCalculation&) const = default;
-
-private:
-    Ref<CalculationValue> value;
 };
 
 } // namespace Style
 } // namespace WebCore
 
-template<WebCore::Style::Calc T> struct WTF::IsSmartPtr<T> {
+namespace WTF {
+template<WebCore::Style::Calc T> struct IsSmartPtr<T> {
     static constexpr bool value = true;
 };
+
+} // namespace WTF

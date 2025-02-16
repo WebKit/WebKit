@@ -173,6 +173,7 @@ public:
     static String mediaVideoCodecWatchTimeKey();
     static String mediaAudioCodecWatchTimeKey();
     static String mediaBufferingWatchTimeKey();
+    static String mediaTextTrackWatchTimeKey();
 
     static String secondsKey();
     static String sourceTypeKey();

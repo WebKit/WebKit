@@ -916,53 +916,52 @@
         mach_make_memory_entry_64
         vm_copy))
         
-(allow mach-kernel-endpoint
-    (apply-message-filter
-        (deny mach-message-send (with telemetry))
+(deny syscall-mig (with telemetry))
 #if PLATFORM(WATCHOS)
-        (allow mach-message-send
-            (kernel-mig-routine-in-use-watchos))
+(allow syscall-mig
+    (kernel-mig-routine-in-use-watchos))
 #endif
 #if ASAN_ENABLED
-        (allow mach-message-send
-            (kernel-mig-routine
-                mach_vm_region_recurse
-                task_set_exc_guard_behavior))
+(allow syscall-mig
+    (kernel-mig-routine
+        mach_vm_region_recurse
+        task_set_exc_guard_behavior))
 #endif
-        (allow mach-message-send
-            (kernel-mig-routine
-                _mach_make_memory_entry
-                host_get_clock_service
-                host_get_io_master
-                host_get_special_port
-                host_info
-                host_request_notification
-                io_connect_method
-                io_registry_entry_from_path
-                io_registry_entry_get_property_bin_buf
-                io_server_version
-                io_service_open_extended
-                mach_exception_raise
-                mach_port_extract_right
-                mach_port_get_context_from_user
-                mach_port_get_refs
-                mach_port_is_connection_for_service
-                mach_port_request_notification
-                mach_port_set_attributes
-                mach_vm_copy
-                mach_vm_map_external
-                (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
-                mach_vm_remap_external
-                semaphore_create
-                semaphore_destroy
-                task_get_special_port_from_user
-                task_info_from_user
-                task_restartable_ranges_register
-                task_restartable_ranges_synchronize
-                task_set_special_port
-                thread_policy
-                thread_resume
-                thread_suspend))))
+(allow syscall-mig
+    (kernel-mig-routine
+        _mach_make_memory_entry
+        host_get_clock_service
+        host_get_io_master
+        host_get_special_port
+        host_info
+        host_request_notification
+        io_connect_method
+        io_registry_entry_from_path
+        io_registry_entry_get_property_bin_buf
+        io_server_version
+        io_service_open_extended
+        mach_exception_raise
+        mach_memory_entry_ownership
+        mach_port_extract_right
+        mach_port_get_context_from_user
+        mach_port_get_refs
+        mach_port_is_connection_for_service
+        mach_port_request_notification
+        mach_port_set_attributes
+        mach_vm_copy
+        mach_vm_map_external
+        (when (defined? 'mach_vm_range_create) mach_vm_range_create) ;; <rdar://105161083>
+        mach_vm_remap_external
+        semaphore_create
+        semaphore_destroy
+        task_get_special_port_from_user
+        task_info_from_user
+        task_restartable_ranges_register
+        task_restartable_ranges_synchronize
+        task_set_special_port
+        thread_policy
+        thread_resume
+        thread_suspend))
 
 #if ENABLE(SYSTEM_CONTENT_PATH_SANDBOX_RULES)
 #include <WebKitAdditions/SystemContentSandbox-ios.defs>

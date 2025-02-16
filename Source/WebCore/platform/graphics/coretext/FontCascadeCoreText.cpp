@@ -37,8 +37,6 @@
 
 #include <pal/spi/cf/CoreTextSPI.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 FontCascade::FontCascade(const FontPlatformData& fontData, FontSmoothingMode fontSmoothingMode)
@@ -399,8 +397,8 @@ void FontCascade::drawGlyphs(GraphicsContext& context, const Font& font, std::sp
 
 bool FontCascade::primaryFontIsSystemFont() const
 {
-    const auto& fontData = primaryFont();
-    return isSystemFont(fontData.getCTFont());
+    Ref fontData = primaryFont();
+    return isSystemFont(fontData->getCTFont());
 }
 
 RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView stringView) const
@@ -427,7 +425,7 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
         auto& fontRanges = fallbackRangesAt(i);
         if (fontRanges.isGenericFontFamily() && isPrivateUseAreaCharacter(baseCharacter))
             continue;
-        const Font* font = fontRanges.fontForCharacter(baseCharacter);
+        RefPtr font = fontRanges.fontForCharacter(baseCharacter);
         if (!font)
             continue;
 #if PLATFORM(IOS_FAMILY)
@@ -439,27 +437,30 @@ RefPtr<const Font> FontCascade::fontForCombiningCharacterSequence(StringView str
                 if (!font->hasVerticalGlyphs())
                     font = &font->brokenIdeographFont();
             } else if (m_fontDescription.nonCJKGlyphOrientation() == NonCJKGlyphOrientation::Mixed) {
-                const Font& verticalRightFont = font->verticalRightOrientationFont();
-                Glyph verticalRightGlyph = verticalRightFont.glyphForCharacter(baseCharacter);
+                Ref verticalRightFont = font->verticalRightOrientationFont();
+                Glyph verticalRightGlyph = verticalRightFont->glyphForCharacter(baseCharacter);
                 if (verticalRightGlyph == baseCharacterGlyphData.glyph)
-                    font = &verticalRightFont;
+                    font = verticalRightFont.ptr();
             } else {
-                const Font& uprightFont = font->uprightOrientationFont();
-                Glyph uprightGlyph = uprightFont.glyphForCharacter(baseCharacter);
+                Ref uprightFont = font->uprightOrientationFont();
+                Glyph uprightGlyph = uprightFont->glyphForCharacter(baseCharacter);
                 if (uprightGlyph != baseCharacterGlyphData.glyph)
-                    font = &uprightFont;
+                    font = uprightFont.ptr();
             }
         }
 
-        if (font == baseCharacterGlyphData.font)
+        if (font == baseCharacterGlyphData.font.get())
             triedBaseCharacterFont = true;
 
         if (font->canRenderCombiningCharacterSequence(stringView))
             return font;
     }
 
-    if (!triedBaseCharacterFont && baseCharacterGlyphData.font && baseCharacterGlyphData.font->canRenderCombiningCharacterSequence(stringView))
-        return baseCharacterGlyphData.font.get();
+    if (!triedBaseCharacterFont) {
+        RefPtr font = baseCharacterGlyphData.font.get();
+        if (font && font->canRenderCombiningCharacterSequence(stringView))
+            return font;
+    }
 
     return Font::createSystemFallbackFontPlaceholder();
 }
@@ -524,5 +525,3 @@ bool FontCascade::canUseGlyphDisplayList(const RenderStyle& style)
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

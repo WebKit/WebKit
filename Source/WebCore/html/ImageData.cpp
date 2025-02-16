@@ -53,20 +53,20 @@ static ImageDataStorageFormat computeStorageFormat(std::optional<ImageDataSettin
     return settings ? settings->storageFormat : defaultStorageFormat;
 }
 
-Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer)
+Ref<ImageData> ImageData::create(Ref<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
 {
     auto colorSpace = toPredefinedColorSpace(pixelBuffer->format().colorSpace);
-    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace));
+    return adoptRef(*new ImageData(pixelBuffer->size(), pixelBuffer->takeData(), *colorSpace, overridingStorageFormat));
 }
 
-RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer)
+RefPtr<ImageData> ImageData::create(RefPtr<ByteArrayPixelBuffer>&& pixelBuffer, std::optional<ImageDataStorageFormat> overridingStorageFormat)
 {
     if (!pixelBuffer)
         return nullptr;
-    return create(pixelBuffer.releaseNonNull());
+    return create(pixelBuffer.releaseNonNull(), overridingStorageFormat);
 }
 
-RefPtr<ImageData> ImageData::create(const IntSize& size, PredefinedColorSpace colorSpace)
+RefPtr<ImageData> ImageData::create(const IntSize& size, PredefinedColorSpace colorSpace, ImageDataStorageFormat imageDataStorageFormat)
 {
     auto dataSize = computeDataSize(size, ImageDataStorageFormat::Uint8);
     if (dataSize.hasOverflowed())
@@ -74,7 +74,7 @@ RefPtr<ImageData> ImageData::create(const IntSize& size, PredefinedColorSpace co
     auto array = ImageDataArray::tryCreate(dataSize, ImageDataStorageFormat::Uint8);
     if (!array)
         return nullptr;
-    return adoptRef(*new ImageData(size, WTFMove(*array), colorSpace));
+    return adoptRef(*new ImageData(size, WTFMove(*array), colorSpace, imageDataStorageFormat));
 }
 
 RefPtr<ImageData> ImageData::create(const IntSize& size, ImageDataArray&& array, PredefinedColorSpace colorSpace)
@@ -141,6 +141,13 @@ ExceptionOr<Ref<ImageData>> ImageData::create(ImageDataArray&& array, unsigned s
 ImageData::ImageData(const IntSize& size, ImageDataArray&& data, PredefinedColorSpace colorSpace)
     : m_size(size)
     , m_data(WTFMove(data))
+    , m_colorSpace(colorSpace)
+{
+}
+
+ImageData::ImageData(const IntSize& size, ImageDataArray&& data, PredefinedColorSpace colorSpace, std::optional<ImageDataStorageFormat> overridingStorageFormat)
+    : m_size(size)
+    , m_data(WTFMove(data), overridingStorageFormat)
     , m_colorSpace(colorSpace)
 {
 }

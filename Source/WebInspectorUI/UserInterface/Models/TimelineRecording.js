@@ -50,10 +50,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._exportDataSampleStackTraces = null;
         this._exportDataSampleDurations = null;
 
-        this._topDownCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.TopDown);
-        this._bottomUpCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.BottomUp);
-        this._topFunctionsTopDownCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.TopFunctionsTopDown);
-        this._topFunctionsBottomUpCallingContextTree = new WI.CallingContextTree(WI.CallingContextTree.Type.TopFunctionsBottomUp);
+        this._callingContextTreesForTarget = new Map;
 
         for (let type of WI.TimelineManager.availableTimelineTypes()) {
             let timeline = WI.Timeline.create(type);
@@ -76,6 +73,8 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
 
     static async import(identifier, json, displayName)
     {
+        const target = WI.assumingMainTarget();
+
         let {startTime, endTime, discontinuities, instrumentTypes, records, markers, memoryPressureEvents, sampleStackTraces, sampleDurations} = json;
         let importedDisplayName = WI.UIString("Imported - %s").format(displayName);
         let instruments = instrumentTypes.map((type) => WI.Instrument.createForTimelineType(type));
@@ -87,7 +86,9 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         recording._endTime = endTime;
         recording._discontinuities = discontinuities;
 
-        recording.initializeCallingContextTrees(sampleStackTraces, sampleDurations);
+        recording.updateCallingContextTrees(target, sampleStackTraces, sampleDurations);
+
+        let topDownCallingContextTree = recording.callingContextTree(target, WI.CallingContextTree.Type.TopDown);
 
         for (let recordJSON of records) {
             let record = await WI.TimelineRecord.fromJSON(recordJSON);
@@ -95,7 +96,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
                 recording.addRecord(record);
 
                 if (record instanceof WI.ScriptTimelineRecord)
-                    record.profilePayload = recording._topDownCallingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
+                    record.profilePayload = topDownCallingContextTree.toCPUProfilePayload(record.startTime, record.endTime);
             }
         }
 
@@ -154,10 +155,16 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
     get startTime() { return this._startTime; }
     get endTime() { return this._endTime; }
 
-    get topDownCallingContextTree() { return this._topDownCallingContextTree; }
-    get bottomUpCallingContextTree() { return this._bottomUpCallingContextTree; }
-    get topFunctionsTopDownCallingContextTree() { return this._topFunctionsTopDownCallingContextTree; }
-    get topFunctionsBottomUpCallingContextTree() { return this._topFunctionsBottomUpCallingContextTree; }
+    get targets()
+    {
+        return Array.from(this._callingContextTreesForTarget.keys());
+    }
+
+    callingContextTree(target, type)
+    {
+        // Note that `updateCallingContextTrees` must have already been called with `target` beforehand.
+        return this._callingContextTreesForTarget.get(target)[type];
+    }
 
     start(initiatedByBackend)
     {
@@ -249,10 +256,7 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         this._exportDataSampleStackTraces = [];
         this._exportDataSampleDurations = [];
 
-        this._topDownCallingContextTree.reset();
-        this._bottomUpCallingContextTree.reset();
-        this._topFunctionsTopDownCallingContextTree.reset();
-        this._topFunctionsBottomUpCallingContextTree.reset();
+        this._callingContextTreesForTarget.clear();
 
         for (var timeline of this._timelines.values())
             timeline.reset(suppressEvents);
@@ -427,17 +431,32 @@ WI.TimelineRecording = class TimelineRecording extends WI.Object
         }
     }
 
-    initializeCallingContextTrees(stackTraces, sampleDurations)
+    updateCallingContextTrees(target, stackTraces, sampleDurations)
     {
-        this._exportDataSampleStackTraces.pushAll(stackTraces);
-        this._exportDataSampleDurations.pushAll(sampleDurations);
+        // FIXME: <https://webkit.org/b/287738> support exporting and importing data from worker targets
+        if (target === WI.mainTarget) {
+            this._exportDataSampleStackTraces.pushAll(stackTraces);
+            this._exportDataSampleDurations.pushAll(sampleDurations);
+        }
+
+        let targetAdded = false;
+
+        let callingContextTrees = this._callingContextTreesForTarget.getOrInitialize(target, () => {
+            targetAdded = true;
+
+            let callingContextTrees = {};
+            for (const type of Object.values(WI.CallingContextTree.Type))
+                callingContextTrees[type] = new WI.CallingContextTree(target, type);
+            return callingContextTrees;
+        });
 
         for (let i = 0; i < stackTraces.length; i++) {
-            this._topDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-            this._bottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-            this._topFunctionsTopDownCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
-            this._topFunctionsBottomUpCallingContextTree.updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
+            for (const type of Object.values(WI.CallingContextTree.Type))
+                callingContextTrees[type].updateTreeWithStackTrace(stackTraces[i], sampleDurations[i]);
         }
+
+        if (targetAdded)
+            this.dispatchEventToListeners(WI.TimelineRecording.Event.TargetAdded);
     }
 
     get exportMode()
@@ -511,6 +530,7 @@ WI.TimelineRecording.Event = {
     SourceCodeTimelineAdded: "timeline-recording-source-code-timeline-added",
     InstrumentAdded: "timeline-recording-instrument-added",
     InstrumentRemoved: "timeline-recording-instrument-removed",
+    TargetAdded: "timeline-recording-target-added",
     TimesUpdated: "timeline-recording-times-updated",
     MarkerAdded: "timeline-recording-marker-added",
 };

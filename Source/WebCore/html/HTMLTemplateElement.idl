@@ -38,4 +38,5 @@
     [CEReactions=NotNeeded, Reflect=shadowrootdelegatesfocus] attribute boolean shadowRootDelegatesFocus;
     [CEReactions=NotNeeded, Reflect=shadowrootclonable] attribute boolean shadowRootClonable;
     [EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled, CEReactions=NotNeeded, Reflect=shadowrootserializable] attribute boolean shadowRootSerializable;
+    [EnabledBySetting=ScopedCustomElementRegistryEnabled, CEReactions=NotNeeded, Reflect=shadowrootcustomelements] attribute boolean shadowRootCustomElements;
 };

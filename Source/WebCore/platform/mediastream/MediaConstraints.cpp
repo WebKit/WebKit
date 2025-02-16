@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-const String& StringConstraint::find(const Function<bool(const String&)>& filter) const
+const String& StringConstraint::find(NOESCAPE const Function<bool(const String&)>& filter) const
 {
     for (auto& constraint : m_exact) {
         if (filter(constraint))
@@ -127,7 +127,7 @@ void MediaTrackConstraintSetMap::forEach(Function<void(MediaConstraintType, cons
     });
 }
 
-void MediaTrackConstraintSetMap::filter(const Function<bool(MediaConstraintType, const MediaConstraint&)>& callback) const
+void MediaTrackConstraintSetMap::filter(NOESCAPE const Function<bool(MediaConstraintType, const MediaConstraint&)>& callback) const
 {
     if (m_width && !m_width->isEmpty() && callback(MediaConstraintType::Width, *m_width))
         return;
@@ -638,7 +638,7 @@ static inline void addDefaultVideoConstraints(MediaTrackConstraintSetMap& videoC
     }
 }
 
-bool MediaConstraints::isConstraintSet(const Function<bool(const MediaTrackConstraintSetMap&)>& callback)
+bool MediaConstraints::isConstraintSet(NOESCAPE const Function<bool(const MediaTrackConstraintSetMap&)>& callback)
 {
     if (callback(mandatoryConstraints))
         return true;

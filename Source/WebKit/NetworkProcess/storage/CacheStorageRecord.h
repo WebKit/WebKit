@@ -37,15 +37,16 @@ public:
     CacheStorageRecordInformation(NetworkCache::Key&&, double insertionTime, uint64_t identifier, uint64_t updateResponseCounter, uint64_t size, URL&&, bool hasVaryStar, HashMap<String, String>&& varyHeaders);
     void updateVaryHeaders(const WebCore::ResourceRequest&, const WebCore::ResourceResponse::CrossThreadData&);
     CacheStorageRecordInformation isolatedCopy() &&;
+    CacheStorageRecordInformation isolatedCopy() const &;
 
-    NetworkCache::Key key() const { return m_key; }
+    const NetworkCache::Key& key() const { return m_key; }
     double insertionTime() const { return m_insertionTime; }
     uint64_t identifier() const { return m_identifier; }
     uint64_t updateResponseCounter() const { return m_updateResponseCounter; }
     uint64_t size() const { return m_size; }
-    URL url() const { return m_url; }
+    const URL& url() const { return m_url; }
     bool hasVaryStar() const { return m_hasVaryStar; }
-    HashMap<String, String> varyHeaders() const { return m_varyHeaders; }
+    const HashMap<String, String>& varyHeaders() const { return m_varyHeaders; }
 
     void setKey(NetworkCache::Key&& key) { m_key = WTFMove(key); }
     void setSize(uint64_t size) { m_size = size; }
@@ -90,7 +91,7 @@ struct CacheStorageRecord {
             crossThreadCopy(WTFMove(info)),
             requestHeadersGuard,
             crossThreadCopy(WTFMove(request)),
-            options,
+            crossThreadCopy(WTFMove(options)),
             crossThreadCopy(WTFMove(referrer)),
             responseHeadersGuard,
             crossThreadCopy(WTFMove(responseData)),

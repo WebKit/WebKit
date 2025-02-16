@@ -444,7 +444,7 @@ ALWAYS_INLINE void SelectorDataList::executeSingleAttributeExactSelectorData(con
 
         bool isHTML = documentIsHTML && element->isHTMLElement();
         const auto& localNameToMatch = isHTML ? localNameLowercase : localName;
-        for (const Attribute& attribute : element->attributesIterator()) {
+        for (auto& attribute : element->attributes()) {
             if (!attribute.matches(prefix, localNameToMatch, namespaceURI))
                 continue;
 

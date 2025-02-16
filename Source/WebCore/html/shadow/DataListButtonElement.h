@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "HTMLDivElement.h"
 
 namespace WebCore {
@@ -56,5 +54,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATALIST_ELEMENT)

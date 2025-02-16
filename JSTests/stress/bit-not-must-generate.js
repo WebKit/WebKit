@@ -18,9 +18,9 @@ let o = {
     }
 };
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(foo(o), 4);
 }
 
-assert(b, 200000)
+assert(b, testLoopCount * 2)
 

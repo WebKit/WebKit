@@ -22,7 +22,7 @@ function arraycmp(a, b) {
     return true;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(1, 2, 3, 4, 5, 6);
     if (result != 3)
         throw "Error: bad result in loop: " + result;

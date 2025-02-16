@@ -56,8 +56,10 @@ Ref<ScrollTimeline> ScrollTimeline::create(Document& document, ScrollTimelineOpt
     // 3. Set the axis property of timeline to the corresponding value from options.
     timeline->setAxis(options.axis);
 
-    if (timeline->m_source)
+    if (auto source = timeline->m_source.element()) {
+        source->protectedDocument()->updateLayoutIgnorePendingStylesheets();
         timeline->cacheCurrentTime();
+    }
 
     return timeline;
 }
@@ -70,6 +72,13 @@ Ref<ScrollTimeline> ScrollTimeline::create(const AtomString& name, ScrollAxis ax
 Ref<ScrollTimeline> ScrollTimeline::create(Scroller scroller, ScrollAxis axis)
 {
     return adoptRef(*new ScrollTimeline(scroller, axis));
+}
+
+Ref<ScrollTimeline> ScrollTimeline::createInactiveStyleOriginatedTimeline(const AtomString& name)
+{
+    auto timeline = adoptRef(*new ScrollTimeline(name, ScrollAxis::Block));
+    timeline->m_isInactiveStyleOriginatedTimeline = true;
+    return timeline;
 }
 
 // https://drafts.csswg.org/web-animations-2/#timelines
@@ -98,12 +107,13 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
 
 Element* ScrollTimeline::source() const
 {
-    if (!m_source)
+    auto source = m_source.styleable();
+    if (!source)
         return nullptr;
 
     switch (m_scroller) {
     case Scroller::Nearest: {
-        if (CheckedPtr subjectRenderer = m_source->renderer()) {
+        if (CheckedPtr subjectRenderer = source->renderer()) {
             if (CheckedPtr nearestScrollableContainer = subjectRenderer->enclosingScrollableContainer()) {
                 if (RefPtr nearestSource = nearestScrollableContainer->element()) {
                     auto document = nearestSource->protectedDocument();
@@ -114,47 +124,60 @@ Element* ScrollTimeline::source() const
                     // quirks mode, but the scrolling element in that case is the <body> element, so we must
                     // make sure to return Document::scrollingElement() in case the document element is
                     // returned by enclosingScrollableContainer() but it was not explicitly set as the source.
-                    return m_source.get() == documentElement ? nearestSource.get() : document->scrollingElement();
+                    return &source->element == documentElement ? nearestSource.get() : document->scrollingElement();
                 }
             }
         }
         return nullptr;
     }
     case Scroller::Root:
-        return m_source->protectedDocument()->scrollingElement();
+        return source->element.protectedDocument()->scrollingElement();
     case Scroller::Self:
-        return m_source.get();
+        return &source->element;
     }
 
     ASSERT_NOT_REACHED();
     return nullptr;
 }
 
-void ScrollTimeline::setSource(const Element* source)
+void ScrollTimeline::setSource(Element* source)
 {
-    if (source == m_source)
+    if (source)
+        setSource(Styleable::fromElement(*source));
+    else {
+        removeTimelineFromDocument(m_source.element().get());
+        m_source = WeakStyleable();
+    }
+}
+
+void ScrollTimeline::setSource(const Styleable& styleable)
+{
+    if (m_source == styleable)
         return;
 
-    RefPtr previousSource = m_source.get();
-    m_source = source;
-    RefPtr newSource = m_source.get();
+    auto previousSource = m_source.element();
+    m_source = styleable;
 
-    if (previousSource && newSource && &previousSource->document() == &newSource->document())
+    if (previousSource && &previousSource->document() == &styleable.element.document())
         return;
 
-    if (previousSource) {
-        if (CheckedPtr timelinesController = previousSource->protectedDocument()->timelinesController())
+    removeTimelineFromDocument(previousSource.get());
+
+    styleable.element.protectedDocument()->ensureTimelinesController().addTimeline(*this);
+}
+
+void ScrollTimeline::removeTimelineFromDocument(Element* element)
+{
+    if (element) {
+        if (CheckedPtr timelinesController = element->protectedDocument()->timelinesController())
             timelinesController->removeTimeline(*this);
     }
-
-    if (newSource)
-        newSource->protectedDocument()->ensureTimelinesController().addTimeline(*this);
 }
 
 AnimationTimelinesController* ScrollTimeline::controller() const
 {
-    if (m_source)
-        return &m_source->document().ensureTimelinesController();
+    if (auto stylable = m_source.styleable())
+        return &stylable->element.document().ensureTimelinesController();
     return nullptr;
 }
 
@@ -237,7 +260,8 @@ void ScrollTimeline::cacheCurrentTime()
 AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ScrollTimeline::documentWillUpdateAnimationsAndSendEvents()
 {
     cacheCurrentTime();
-    if (m_source && m_source->isConnected())
+    auto source = m_source.styleable();
+    if (source && source->element.isConnected())
         return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
     return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 }
@@ -325,10 +349,11 @@ void ScrollTimeline::animationTimingDidChange(WebAnimation& animation)
 {
     AnimationTimeline::animationTimingDidChange(animation);
 
-    if (!m_source || !animation.pending() || animation.isEffectInvalidationSuspended())
+    auto source = m_source.styleable();
+    if (!source || !animation.pending() || animation.isEffectInvalidationSuspended())
         return;
 
-    if (RefPtr page = m_source->protectedDocument()->page())
+    if (RefPtr page = source->element.protectedDocument()->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::Animations);
 }
 

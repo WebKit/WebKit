@@ -102,8 +102,6 @@
 #include <wtf/TZoneMalloc.h>
 #endif
 
-#include <wtf/DisallowCType.h>
-
 #ifdef __clang__
 // Finish working around the less strict coding standards of the gtest framework.
 #pragma clang diagnostic pop

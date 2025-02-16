@@ -1,0 +1,23 @@
+
+PASS unexpected contents for selector ['']
+PASS unexpected contents for selector [':left']
+PASS unexpected contents for selector [':right']
+PASS unexpected contents for selector [':first']
+PASS unexpected contents for selector ['hello']
+PASS unexpected contents for selector ['world:right']
+PASS unexpected contents for selector ['auto_page']
+PASS unexpected contents for selector ['square_page']
+PASS unexpected contents for selector ['letter_page']
+PASS unexpected contents for selector ['page_width_height']
+PASS unexpected contents for selector ['page_size_orientation']
+PASS unexpected contents for selector ['page_orientation_size']
+PASS unexpected contents for selector ['page_jis_size_orientation']
+PASS unexpected contents for selector ['page_orientation_jis_size']
+PASS unexpected contents for selector ['err_empty_size']
+PASS unexpected contents for selector ['err_unknow_page_size']
+PASS unexpected contents for selector ['err_length_and_page_size']
+PASS unexpected contents for selector ['err_length_and_orientation']
+PASS unexpected contents for selector ['err_orientations']
+PASS unexpected contents for selector ['err_too_many_params']
+PASS CSS Paged Media: parsing @page declarations
+

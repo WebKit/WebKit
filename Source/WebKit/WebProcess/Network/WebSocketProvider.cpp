@@ -36,6 +36,7 @@
 #include "WebSocketChannelManager.h"
 #include "WebTransportSession.h"
 #include <WebCore/DocumentInlines.h>
+#include <WebCore/WebTransportSessionClient.h>
 #include <WebCore/WorkerGlobalScope.h>
 
 namespace WebKit {
@@ -46,7 +47,7 @@ RefPtr<ThreadableWebSocketChannel> WebSocketProvider::createWebSocketChannel(Doc
     return WebKit::WebSocketChannel::create(m_webPageProxyID, document, client);
 }
 
-Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTransportSession(ScriptExecutionContext& context, const URL& url)
+Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTransportSession(ScriptExecutionContext& context, WebTransportSessionClient& client, const URL& url)
 {
     if (RefPtr scope = dynamicDowncast<WorkerGlobalScope>(context)) {
         ASSERT(!RunLoop::isMain());
@@ -58,9 +59,10 @@ Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTranspo
             producer = WTFMove(producer),
             webPageProxyID = m_webPageProxyID,
             origin = crossThreadCopy(scope->clientOrigin()),
+            client = ThreadSafeWeakPtr { client },
             url = crossThreadCopy(url)
         ] mutable {
-            WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), url, webPageProxyID, origin)->whenSettled(RunLoop::protectedMain(), [producer = WTFMove(producer)] (auto&& result) mutable {
+            WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), WTFMove(client), url, webPageProxyID, origin)->whenSettled(RunLoop::protectedMain(), [producer = WTFMove(producer)] (auto&& result) mutable {
                 if (!result)
                     producer.reject();
                 else
@@ -72,7 +74,7 @@ Ref<WebCore::WebTransportSessionPromise> WebSocketProvider::initializeWebTranspo
 
     Ref document = downcast<Document>(context);
     ASSERT(RunLoop::isMain());
-    return WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), url, m_webPageProxyID, document->clientOrigin());
+    return WebKit::WebTransportSession::initialize(WebProcess::singleton().ensureNetworkProcessConnection().connection(), client, url, m_webPageProxyID, document->clientOrigin());
 }
 
 } // namespace WebKit

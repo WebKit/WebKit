@@ -852,6 +852,9 @@ WI.DataGrid = class DataGrid extends WI.View
         this._fillerRowElement.insertBefore(fillerCellElement, referenceElement);
 
         this.setColumnVisible(columnIdentifier, !column.hidden);
+
+        for (let child of this.children)
+            child.refresh();
     }
 
     removeColumn(columnIdentifier)
@@ -972,7 +975,7 @@ WI.DataGrid = class DataGrid extends WI.View
         console.assert(column, "Missing column info for identifier: " + columnIdentifier);
         console.assert(typeof visible === "boolean", "New visible state should be explicit boolean", typeof visible);
 
-        if (!column || visible === !column.hidden)
+        if (!column || ("hidden" in column && visible === !column.hidden))
             return;
 
         column.element.style.width = visible ? column.width : 0;
@@ -1698,7 +1701,9 @@ WI.DataGrid = class DataGrid extends WI.View
         if (this._columnChooserEnabled) {
             let didAddSeparator = false;
 
-            for (let [identifier, columnInfo] of this.columns) {
+            for (let identifier of this.orderedColumns) {
+                let columnInfo = this.columns.get(identifier);
+
                 if (columnInfo.locked)
                     continue;
 

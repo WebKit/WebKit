@@ -21,7 +21,7 @@ const wasm = new Uint8Array([
 ]);
 
 WebAssembly.instantiate(wasm).then(e => {
-    for (let i = 0; i < 10000; i ++) {
+    for (let i = 0; i < wasmTestLoopCount; i ++) {
         e.exports.foo();
     }
 });

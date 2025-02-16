@@ -27,7 +27,7 @@ class ContextVk;
 
 namespace vk
 {
-class Context;
+class ErrorContext;
 class RenderPassDesc;
 class SecondaryCommandPool;
 
@@ -831,7 +831,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     // buffer.
     static constexpr bool ExecutesInline() { return true; }
 
-    static angle::Result InitializeCommandPool(Context *context,
+    static angle::Result InitializeCommandPool(ErrorContext *context,
                                                SecondaryCommandPool *pool,
                                                uint32_t queueFamilyIndex,
                                                ProtectionType protectionType)
@@ -1119,7 +1119,7 @@ class SecondaryCommandBuffer final : angle::NonCopyable
     std::string dumpCommands(const char *separator) const;
 
     // Initialize the SecondaryCommandBuffer by setting the allocator it will use
-    angle::Result initialize(vk::Context *context,
+    angle::Result initialize(vk::ErrorContext *context,
                              vk::SecondaryCommandPool *pool,
                              bool isRenderPassCommandBuffer,
                              SecondaryCommandMemoryAllocator *allocator)
@@ -1137,11 +1137,12 @@ class SecondaryCommandBuffer final : angle::NonCopyable
         mCommandAllocator.detachAllocator(destination);
     }
 
-    angle::Result begin(Context *context, const VkCommandBufferInheritanceInfo &inheritanceInfo)
+    angle::Result begin(ErrorContext *context,
+                        const VkCommandBufferInheritanceInfo &inheritanceInfo)
     {
         return angle::Result::Continue;
     }
-    angle::Result end(Context *context) { return angle::Result::Continue; }
+    angle::Result end(ErrorContext *context) { return angle::Result::Continue; }
 
     void open() { mIsOpen = true; }
     void close() { mIsOpen = false; }

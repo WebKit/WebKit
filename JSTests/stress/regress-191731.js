@@ -12,7 +12,7 @@ function foo(arr, regexp, str) {
 let arr = [1.1, 2.2, 3.3];
 let regexp = /a/y;
 
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     foo(arr, regexp, "abcd");
 
 regexp.lastIndex = {

@@ -51,6 +51,7 @@ enum class CoreIPCNSURLCredentialType : uint8_t {
     Password,
     ServerTrust,
     KerberosTicket,
+    ClientCertificate,
     XMobileMeAuthToken,
     OAuth2
 };

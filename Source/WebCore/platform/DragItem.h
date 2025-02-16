@@ -31,6 +31,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 #include "PasteboardWriterData.h"
+#include "PlatformLayerIdentifier.h"
 #include "PromisedAttachmentInfo.h"
 
 namespace WebCore {
@@ -51,6 +52,10 @@ struct DragItem final {
     bool containsSelection { false };
 
     PromisedAttachmentInfo promisedAttachmentInfo;
+
+#if ENABLE(MODEL_PROCESS)
+    Markable<PlatformLayerIdentifier> modelLayerID;
+#endif
 
     PasteboardWriterData data { };
 };

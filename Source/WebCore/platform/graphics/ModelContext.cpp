@@ -28,14 +28,17 @@
 
 namespace WebCore {
 
-Ref<ModelContext> ModelContext::create(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier)
+Ref<ModelContext> ModelContext::create(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier, const LayoutSize& size, ModelContextDisablePortal disablePortal, std::optional<Color> backgroundColor)
 {
-    return adoptRef(*new ModelContext(modelLayerIdentifier, modelContentsLayerHostingContextIdentifier));
+    return adoptRef(*new ModelContext(modelLayerIdentifier, modelContentsLayerHostingContextIdentifier, size, disablePortal, backgroundColor));
 }
 
-ModelContext::ModelContext(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier)
+ModelContext::ModelContext(const PlatformLayerIdentifier& modelLayerIdentifier, const LayerHostingContextIdentifier& modelContentsLayerHostingContextIdentifier, const LayoutSize& size, ModelContextDisablePortal disablePortal, std::optional<Color> backgroundColor)
     : m_modelLayerIdentifier(modelLayerIdentifier)
     , m_modelContentsLayerHostingContextIdentifier(modelContentsLayerHostingContextIdentifier)
+    , m_modelLayoutSize(size)
+    , m_disablePortal(disablePortal)
+    , m_backgroundColor(backgroundColor)
 {
 }
 

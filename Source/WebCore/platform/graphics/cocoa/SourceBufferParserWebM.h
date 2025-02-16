@@ -119,8 +119,10 @@ public:
         Unsupported,
         VP8,
         VP9,
+        H264,
         Vorbis,
         Opus,
+        PCM,
     };
 
     using ConsumeFrameDataResult = std::variant<MediaTime, webm::Status>;
@@ -156,11 +158,13 @@ public:
         WebMParser& parser() const { return m_parser; }
 
         using ConsumeFrameDataResult = WebMParser::ConsumeFrameDataResult;
-        virtual ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&)
+        virtual ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&, std::optional<bool>)
         {
             ASSERT_NOT_REACHED();
             return webm::Status(webm::Status::kInvalidElementId);
         }
+
+        virtual void consumeAdditionalBlockData(const webm::BlockAdditions&) { }
 
         virtual void resetCompletedFramesState()
         {
@@ -223,7 +227,8 @@ public:
 
     private:
         ASCIILiteral logClassName() const { return "VideoTrackData"_s; }
-        ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
+        ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&, std::optional<bool>) final;
+        void consumeAdditionalBlockData(const webm::BlockAdditions&) final;
         void resetCompletedFramesState() final;
         void processPendingMediaSamples(const MediaTime&);
         WTF::Deque<MediaSamplesBlock::MediaSampleItem> m_pendingMediaSamples;
@@ -247,7 +252,7 @@ public:
         ~AudioTrackData();
 
     private:
-        ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&) final;
+        ConsumeFrameDataResult consumeFrameData(webm::Reader&, const webm::FrameMetadata&, uint64_t*, const MediaTime&, std::optional<bool>) final;
         void resetCompletedFramesState() final;
         ASCIILiteral logClassName() const { return "AudioTrackData"_s; }
 
@@ -264,6 +269,7 @@ public:
 
     void formatDescriptionChangedForTrackData(TrackData&);
 
+    void allowLimitedMatroska() { m_allowLimitedMatroska = true; }
 private:
     TrackData* trackDataForTrackNumber(uint64_t);
     static bool isSupportedVideoCodec(StringView);
@@ -314,7 +320,7 @@ private:
     uint64_t m_logIdentifier { 0 };
     uint64_t m_nextChildIdentifier { 0 };
     Callback& m_callback;
-    bool m_createByteRangeSamples { false };
+    bool m_allowLimitedMatroska { false };
 };
 
 class SourceBufferParserWebM
@@ -323,7 +329,7 @@ class SourceBufferParserWebM
     , private LoggerHelper {
     WTF_MAKE_TZONE_ALLOCATED(SourceBufferParserWebM);
 public:
-    static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
+    static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&, bool supportsLimitedMatroska = false);
     static std::span<const ASCIILiteral> supportedMIMETypes();
     WEBCORE_EXPORT static RefPtr<SourceBufferParserWebM> create();
 
@@ -347,6 +353,8 @@ public:
     void setMinimumAudioSampleDuration(float);
 
     WEBCORE_EXPORT void setLogger(const Logger&, uint64_t identifier) final;
+
+    void allowLimitedMatroska() { m_parser.allowLimitedMatroska(); };
 
 private:
     SourceBufferParserWebM();

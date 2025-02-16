@@ -68,6 +68,7 @@ list(APPEND WebCore_SOURCES
 
     platform/graphics/win/DIBPixelData.cpp
     platform/graphics/win/DisplayRefreshMonitorWin.cpp
+    platform/graphics/win/FloatPointWin.cpp
     platform/graphics/win/FloatRectWin.cpp
     platform/graphics/win/FullScreenController.cpp
     platform/graphics/win/FullScreenWindow.cpp

@@ -14,7 +14,7 @@ new Foo().thingy = 42;
 
 class Baz { }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(new Bar(), Baz);
     if (result)
         throw "Error: bad result in loop: " + result;

@@ -47,7 +47,7 @@ public:
     ~StreamConnectionWorkQueue();
     void addStreamConnection(StreamServerConnection&);
     void removeStreamConnection(StreamServerConnection&);
-    void stopAndWaitForCompletion(WTF::Function<void()>&& cleanupFunction = nullptr);
+    void stopAndWaitForCompletion(NOESCAPE WTF::Function<void()>&& cleanupFunction = nullptr);
     void wakeUp();
     Semaphore& wakeUpSemaphore() { return m_wakeUpSemaphore; }
 

@@ -15,7 +15,7 @@ function test()
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     let [r1, r2] = test();
     shouldBe(r1, undefined);
     shouldBe(r2, 42);

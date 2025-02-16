@@ -165,6 +165,12 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     bool callCanClobberInstance(FunctionSpaceIndex functionIndexSpace) const { return m_clobberingTailCalls.test(functionIndexSpace); }
     void addClobberingTailCall(FunctionSpaceIndex functionIndexSpace) { m_clobberingTailCalls.concurrentTestAndSet(functionIndexSpace); }
 
+    void setTotalFunctionSize(size_t totalFunctionSize)
+    {
+        m_totalFunctionSize = totalFunctionSize;
+    }
+    size_t totalFunctionSize() const { return m_totalFunctionSize; }
+
     // FIXME: These should probably be FixedVectors.
     Vector<Import> imports;
     Vector<TypeIndex> importFunctionTypeIndices;
@@ -198,6 +204,7 @@ struct ModuleInformation final : public ThreadSafeRefCounted<ModuleInformation> 
     BitVector m_declaredExceptions;
     mutable FixedBitVector m_referencedFunctions;
     mutable FixedBitVector m_clobberingTailCalls;
+    size_t m_totalFunctionSize { 0 };
 };
 
     

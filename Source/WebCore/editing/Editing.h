@@ -167,6 +167,7 @@ enum class SelectionExtentMovement : uint8_t {
     Right,
 };
 void adjustVisibleExtentPreservingVisualContiguity(const VisiblePosition& base, VisiblePosition& extent, SelectionExtentMovement);
+WEBCORE_EXPORT bool crossesBidiTextBoundaryInSameLine(const VisiblePosition&, const VisiblePosition& other);
 
 // -------------------------------------------------------------------------
 // HTMLElement

@@ -31,6 +31,7 @@
 #include "DocumentInlines.h"
 #include "ElementRareData.h"
 #include "ElementTraversal.h"
+#include "HTMLElementFactory.h"
 #include "JSCustomElementInterface.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindow.h"
@@ -167,13 +168,13 @@ String CustomElementRegistry::getName(JSC::JSValue constructorValue)
     return elementInterface->name().localName();
 }
 
-static void upgradeElementsInShadowIncludingDescendants(ContainerNode& root)
+static void upgradeElementsInShadowIncludingDescendants(CustomElementRegistry& registry, ContainerNode& root)
 {
     for (Ref element : descendantsOfType<Element>(root)) {
-        if (element->isCustomElementUpgradeCandidate())
+        if (element->isCustomElementUpgradeCandidate() && CustomElementRegistry::registryForElement(element) == &registry)
             CustomElementReactionQueue::tryToUpgradeElement(element);
         if (RefPtr shadowRoot = element->shadowRoot())
-            upgradeElementsInShadowIncludingDescendants(*shadowRoot);
+            upgradeElementsInShadowIncludingDescendants(registry, *shadowRoot);
     }
 }
 
@@ -187,13 +188,40 @@ void CustomElementRegistry::upgrade(Node& root)
     if (element && element->isCustomElementUpgradeCandidate())
         CustomElementReactionQueue::tryToUpgradeElement(*element);
 
-    upgradeElementsInShadowIncludingDescendants(*containerNode);
+    upgradeElementsInShadowIncludingDescendants(*this, *containerNode);
+}
+
+void CustomElementRegistry::initialize(Node& root)
+{
+    auto* containerRoot = dynamicDowncast<ContainerNode>(root);
+    if (!containerRoot) {
+        ASSERT(!root.usesNullCustomElementRegistry()); // Flag is only set on ShadowRoot and Element.
+        return;
+    }
+
+    if (auto* shadowRoot = dynamicDowncast<ShadowRoot>(root); shadowRoot && shadowRoot->usesNullCustomElementRegistry()) {
+        ASSERT(shadowRoot->hasScopedCustomElementRegistry());
+        shadowRoot->clearUsesNullCustomElementRegistry();
+        shadowRoot->setCustomElementRegistry(*this);
+    }
+
+    RefPtr registryOfTreeScope = root.isInTreeScope() ? root.treeScope().customElementRegistry() : nullptr;
+    for (Ref element : descendantsOfType<Element>(*containerRoot)) {
+        if (element->usesNullCustomElementRegistry()) {
+            element->clearUsesNullCustomElementRegistry();
+            if (this != registryOfTreeScope)
+                addToScopedCustomElementRegistryMap(element, *this);
+        }
+    }
 }
 
 void CustomElementRegistry::addToScopedCustomElementRegistryMap(Element& element, CustomElementRegistry& registry)
 {
-    ASSERT(!element.usesScopedCustomElementRegistryMap());
+    ASSERT(!element.usesScopedCustomElementRegistryMap() || scopedCustomElementRegistryMap().get(element) == &registry);
+    if (element.usesScopedCustomElementRegistryMap())
+        return;
     element.setUsesScopedCustomElementRegistryMap();
+    registry.didAssociateWithDocument(element.document());
     auto result = scopedCustomElementRegistryMap().add(element, registry);
     ASSERT_UNUSED(result, result.isNewEntry);
 }

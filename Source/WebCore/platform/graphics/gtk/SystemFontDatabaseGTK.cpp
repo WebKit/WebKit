@@ -53,7 +53,7 @@ auto SystemFontDatabase::platformSystemFontShorthandInfo(FontShorthand) -> Syste
     if (!pango_font_description_get_size_is_absolute(pangoDescription))
         size = size * (fontDPI() / 72.0);
 
-    SystemFontShorthandInfo result { AtomString::fromLatin1(pango_font_description_get_family(pangoDescription)), static_cast<float>(size), normalWeightValue() };
+    SystemFontShorthandInfo result { AtomString(unsafeSpan8(pango_font_description_get_family(pangoDescription))), static_cast<float>(size), normalWeightValue() };
     pango_font_description_free(pangoDescription);
     return result;
 }

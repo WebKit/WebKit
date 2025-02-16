@@ -2,7 +2,7 @@
     var count = 11;
 
     var array;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         array = /foo/.exec("foo");
         if (array[0] != "foo")
             throw "Error: bad result: " + array[0];

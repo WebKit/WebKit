@@ -117,6 +117,8 @@ int FileHandle::write(std::span<const uint8_t> data)
     return FileSystem::writeToFile(m_fileHandle, data);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 bool FileHandle::printf(const char* format, ...)
 {
     va_list args;
@@ -134,6 +136,8 @@ bool FileHandle::printf(const char* format, ...)
 
     return write(byteCast<uint8_t>(buffer.mutableSpan()).first(stringLength)) >= 0;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void FileHandle::close()
 {

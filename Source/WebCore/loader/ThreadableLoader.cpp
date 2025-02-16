@@ -100,7 +100,7 @@ ThreadableLoaderOptions ThreadableLoaderOptions::isolatedCopy() const
     copy.maxRedirectCount = this->maxRedirectCount;
     copy.preflightPolicy = this->preflightPolicy;
     copy.navigationPreloadIdentifier = this->navigationPreloadIdentifier;
-    copy.fetchPriorityHint = this->fetchPriorityHint;
+    copy.fetchPriority = this->fetchPriority;
     copy.shouldEnableContentExtensionsCheck = this->shouldEnableContentExtensionsCheck;
 
     // ThreadableLoaderOptions

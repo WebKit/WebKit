@@ -16,13 +16,8 @@ async function runTest()
     await UIHelper.activateElementAndWaitForInputSession(input);
     await UIHelper.toggleCapsLock();
 
-    await UIHelper.callFunctionAndWaitForEvent(async () => {
-        await UIHelper.keyDown("a");
-    }, input, "keyup");
-
-    await UIHelper.callFunctionAndWaitForEvent(async () => {
-        await UIHelper.keyDown("\b");
-    }, input, "keyup");
+    await UIHelper.typeCharacters("a", "keyup");
+    await UIHelper.typeCharacters("\b", "keyup");
 
     await UIHelper.ensureStablePresentationUpdate();
     internals.startTrackingRepaints();

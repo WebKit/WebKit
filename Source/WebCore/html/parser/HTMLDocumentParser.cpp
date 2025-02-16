@@ -144,8 +144,6 @@ void HTMLDocumentParser::prepareToStopParsing()
     if (m_scriptRunner) {
         document()->setReadyState(Document::ReadyState::Interactive);
 
-        // FIXME: Bug 279167 - This should be called after every element is popped
-        // from the stack of open elements, not just the last.
         if (!isDetached())
             document()->processInternalResourceLinks();
     }
@@ -641,6 +639,11 @@ void HTMLDocumentParser::resumeScheduledTasks()
 {
     if (RefPtr parserScheduler = m_parserScheduler)
         parserScheduler->resume();
+}
+
+bool HTMLDocumentParser::isOnStackOfOpenElements(Element& element) const
+{
+    return m_treeBuilder->isOnStackOfOpenElements(element);
 }
 
 }

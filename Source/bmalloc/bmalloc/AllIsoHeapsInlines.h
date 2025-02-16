@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
+#if !BUSE(TZONE)
+
 #include "AllIsoHeaps.h"
 #include "IsoHeapImpl.h"
 
@@ -42,3 +46,4 @@ void AllIsoHeaps::forEach(const Func& func)
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

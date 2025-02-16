@@ -26,7 +26,7 @@ namespace angle
 struct FeatureSetBase;
 struct Format;
 struct ImageLoadContext;
-enum class FormatID;
+enum class FormatID : uint8_t;
 }  // namespace angle
 
 namespace gl
@@ -372,12 +372,16 @@ uint32_t LineLoopRestartIndexCountHelper(GLsizei indexCount, const uint8_t *srcP
         {
             if (curIndex > loopStartIndex)
             {
-                numIndices += 2;
+                if (curIndex > (loopStartIndex + 1))
+                {
+                    numIndices += 1;
+                }
+                numIndices += 1;
             }
             loopStartIndex = curIndex + 1;
         }
     }
-    if (indexCount > loopStartIndex)
+    if (indexCount > (loopStartIndex + 1))
     {
         numIndices++;
     }
@@ -423,17 +427,20 @@ void CopyLineLoopIndicesWithRestart(GLsizei indexCount, const uint8_t *srcPtr, u
         {
             if (curIndex > loopStartIndex)
             {
-                // Emit an extra vertex only if the loop is not empty.
-                *(outIndices++) = inIndices[loopStartIndex];
+                if (curIndex > (loopStartIndex + 1))
+                {
+                    // Emit an extra vertex only if the loop has more than one vertex.
+                    *(outIndices++) = inIndices[loopStartIndex];
+                }
                 // Then restart the strip.
                 *(outIndices++) = outRestartIndex;
             }
             loopStartIndex = curIndex + 1;
         }
     }
-    if (indexCount > loopStartIndex)
+    if (indexCount > (loopStartIndex + 1))
     {
-        // Close the last loop if not empty.
+        // Close the last loop if it has more than one vertex.
         *(outIndices++) = inIndices[loopStartIndex];
     }
 }

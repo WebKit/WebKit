@@ -17,7 +17,7 @@ let a = [];
 a[Symbol.iterator] = function* () {
     b[0] = 1;
 };
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     b[0] = 42;
     foo(a, b);
 }

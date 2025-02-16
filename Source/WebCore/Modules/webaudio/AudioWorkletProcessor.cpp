@@ -258,7 +258,7 @@ bool AudioWorkletProcessor::process(const Vector<RefPtr<AudioBus>>& inputs, Vect
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
     ASSERT(wrapper());
-    auto* globalObject = jsDynamicCast<JSDOMGlobalObject*>(m_globalScope.globalObject());
+    auto* globalObject = jsDynamicCast<JSDOMGlobalObject*>(m_globalScope->globalObject());
     if (UNLIKELY(!globalObject))
         return false;
 

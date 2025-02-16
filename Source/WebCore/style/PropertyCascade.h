@@ -54,7 +54,7 @@ public:
     static constexpr OptionSet<PropertyType> normalProperties() { return { PropertyType::NonInherited,  PropertyType::Inherited }; }
     static constexpr OptionSet<PropertyType> startingStyleProperties() { return normalProperties() | PropertyType::StartingStyle; }
 
-    PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableCSSProperty>* = nullptr);
+    PropertyCascade(const MatchResult&, CascadeLevel, OptionSet<PropertyType> includedProperties, const UncheckedKeyHashSet<AnimatableCSSProperty>* = nullptr);
     PropertyCascade(const PropertyCascade&, CascadeLevel, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
 
     ~PropertyCascade();
@@ -84,7 +84,7 @@ public:
     std::span<const CSSPropertyID> logicalGroupPropertyIDs() const;
     const UncheckedKeyHashMap<AtomString, Property>& customProperties() const { return m_customProperties; }
 
-    const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const;
+    const UncheckedKeyHashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const;
 
     PropertyBitSet& propertyIsPresent() { return m_propertyIsPresent; }
     const PropertyBitSet& propertyIsPresent() const { return m_propertyIsPresent; }
@@ -113,10 +113,10 @@ private:
     const std::optional<CascadeLayerPriority> m_maximumCascadeLayerPriorityForRollback;
 
     struct AnimationLayer {
-        AnimationLayer(const HashSet<AnimatableCSSProperty>&);
+        AnimationLayer(const UncheckedKeyHashSet<AnimatableCSSProperty>&);
 
-        const HashSet<AnimatableCSSProperty>& properties;
-        HashSet<AnimatableCSSProperty> overriddenProperties;
+        const UncheckedKeyHashSet<AnimatableCSSProperty>& properties;
+        UncheckedKeyHashSet<AnimatableCSSProperty> overriddenProperties;
         bool hasCustomProperties { false };
         bool hasFontSize { false };
         bool hasLineHeight { false };

@@ -1,5 +1,7 @@
 button
 
-FAIL Removing the open attribute from an open modal dialog should run the closing algorithm. assert_false: The dialog should not match :modal after closing. expected false got true
-FAIL Removing the open attribute from an open non-modal dialog should fire a close event. assert_true: The close event should be fired when removing the open attribute. expected true got false
+FAIL Removing the open attribute from an open modal dialog should run the closing algorithm. assert_equals: Previously focused element should be focused after waiting for a task. expected Element node <button>button</button> but got Element node <button>button in dialog</button>
+FAIL Removing the open attribute from an open non-modal dialog should fire a close event. assert_equals: Previously focused element should be focused after waiting for a task. expected Element node <button>button</button> but got Element node <body><button>button</button>
+<dialog>
+  <button>button i...
 

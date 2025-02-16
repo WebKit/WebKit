@@ -76,6 +76,7 @@ mac/DOM/DOMMouseEvent.mm
 mac/DOM/DOMMutationEvent.mm
 mac/DOM/DOMNode.mm
 mac/DOM/DOMObject.mm
+mac/DOM/DOMOverflowEvent.mm
 mac/DOM/DOMProcessingInstruction.mm
 mac/DOM/DOMProgressEvent.mm
 mac/DOM/DOMText.mm

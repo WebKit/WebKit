@@ -39,8 +39,6 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 String serializeForNumberType(const Decimal& number)
@@ -243,17 +241,17 @@ std::optional<double> parseValidHTMLFloatingPointNumber(StringView input)
 template <typename CharacterType>
 static double parseHTMLFloatingPointNumberValueInternal(std::span<const CharacterType> data, size_t length, double fallbackValue)
 {
-    auto position = data.data();
+    auto position = data;
     size_t leadingSpacesLength = 0;
     while (leadingSpacesLength < length && isASCIIWhitespace(position[leadingSpacesLength]))
         ++leadingSpacesLength;
 
-    position += leadingSpacesLength;
-    if (leadingSpacesLength == length || (*position != '+' && *position != '-' && *position != '.' && !isASCIIDigit(*position)))
+    skip(position, leadingSpacesLength);
+    if (leadingSpacesLength == length || (position[0] != '+' && position[0] != '-' && position[0] != '.' && !isASCIIDigit(position[0])))
         return fallbackValue;
 
     size_t parsedLength;
-    double number = parseDouble(std::span { position, length - leadingSpacesLength }, parsedLength);
+    double number = parseDouble(position.first(length - leadingSpacesLength), parsedLength);
 
     // The following expression converts -0 to +0.
     return number ? number : 0;
@@ -298,11 +296,11 @@ static Vector<double> parseHTMLListOfOfFloatingPointNumberValuesInternal(std::sp
         // This skips past leading garbage.
         skipUntil<isHTMLSpaceOrDelimiterOrNumberStart>(data);
 
-        auto* numberStart = data.data();
+        auto numberStart = data;
         skipUntil<isHTMLSpaceOrDelimiter>(data);
 
         size_t parsedLength = 0;
-        double number = parseDouble(std::span { numberStart, data.data() }, parsedLength);
+        double number = parseDouble(numberStart.first(data.data() - numberStart.data()), parsedLength);
         numbers.append(parsedLength > 0 && std::isfinite(number) ? number : 0);
 
         // This skips past the delimiter.
@@ -362,10 +360,10 @@ static bool parseHTTPRefreshInternal(std::span<const CharacterType> data, double
 
     unsigned time = 0;
 
-    auto* numberStart = data.data();
+    auto numberStart = data;
     skipWhile<isASCIIDigit>(data);
 
-    StringView timeString(std::span(numberStart, data.data()));
+    StringView timeString(numberStart.first(data.data() - numberStart.data()));
     if (timeString.isEmpty()) {
         if (data.empty() || data[0] != '.')
             return false;
@@ -472,16 +470,16 @@ static std::optional<HTMLDimensionParsingResult> parseHTMLDimensionNumber(std::s
     if (data.empty())
         return std::nullopt;
 
-    auto* start = data.data();
+    auto start = data;
     skipWhile<isASCIIDigit>(data);
-    if (start == data.data())
+    if (start.data() == data.data())
         return std::nullopt;
 
     if (skipExactly(data, '.'))
         skipWhile<isASCIIDigit>(data);
 
     size_t parsedLength = 0;
-    double number = parseDouble(std::span { start, data.data() }, parsedLength);
+    double number = parseDouble(start.first(data.data() - start.data()), parsedLength);
     if (!(parsedLength && std::isfinite(number)))
         return std::nullopt;
 
@@ -525,5 +523,3 @@ std::optional<HTMLDimension> parseHTMLMultiLength(StringView multiLengthString)
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

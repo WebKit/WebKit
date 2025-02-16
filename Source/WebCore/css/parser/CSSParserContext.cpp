@@ -111,6 +111,7 @@ CSSParserContext::CSSParserContext(const Document& document, const URL& sheetBas
     , cssProgressFunctionEnabled { document.settings().cssProgressFunctionEnabled() }
     , cssMediaProgressFunctionEnabled { document.settings().cssMediaProgressFunctionEnabled() }
     , cssContainerProgressFunctionEnabled { document.settings().cssContainerProgressFunctionEnabled() }
+    , cssRandomFunctionEnabled { document.settings().cssRandomFunctionEnabled() }
     , propertySettings { CSSPropertySettings { document.settings() } }
 {
 }
@@ -149,7 +150,8 @@ void add(Hasher& hasher, const CSSParserContext& context)
         | context.cssProgressFunctionEnabled                << 25
         | context.cssMediaProgressFunctionEnabled           << 26
         | context.cssContainerProgressFunctionEnabled       << 27
-        | (uint32_t)context.mode                            << 28; // This is multiple bits, so keep it last.
+        | context.cssRandomFunctionEnabled                  << 28
+        | (uint32_t)context.mode                            << 29; // This is multiple bits, so keep it last.
     add(hasher, context.baseURL, context.charset, context.propertySettings, bits);
 }
 

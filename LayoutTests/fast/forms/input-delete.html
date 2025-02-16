@@ -7,6 +7,7 @@ function test() {
         testRunner.dumpAsText();
     }
     document.getElementById('tf').setSelectionRange(5, 11);
+    document.getElementById('tf').focus();
     deleteCommand();
     if (document.getElementById('tf').value == "Test Failed") {
         document.getElementById('res').innerHTML = "Failed";

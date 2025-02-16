@@ -96,7 +96,7 @@ public:
     {
         auto count = CFBitVectorGetCount(bitVector);
         for (CFIndex i = 0; i < count; ++i) {
-            if (bool isSet = CFBitVectorGetBitAtIndex(bitVector, i))
+            if (CFBitVectorGetBitAtIndex(bitVector, i))
                 quickSet(i);
         }
     }

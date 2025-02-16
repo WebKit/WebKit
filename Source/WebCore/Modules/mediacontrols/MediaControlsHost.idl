@@ -29,7 +29,7 @@ enum DeviceType {
     "tvout"
 };
 
-[Conditional=MODERN_MEDIA_CONTROLS] enum SourceType {
+[Conditional=VIDEO] enum SourceType {
     "file",
     "hls",
     "media-source",
@@ -78,12 +78,12 @@ enum DeviceType {
 
     DOMString generateUUID();
 
-    [Conditional=MODERN_MEDIA_CONTROLS] readonly attribute SourceType? sourceType;
+    readonly attribute SourceType? sourceType;
 
-    [Conditional=MODERN_MEDIA_CONTROLS] readonly attribute DOMString shadowRootCSSText;
-    [Conditional=MODERN_MEDIA_CONTROLS] DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
-    [Conditional=MODERN_MEDIA_CONTROLS] DOMString formattedStringForDuration(unrestricted double durationInSeconds);
-    [Conditional=MODERN_MEDIA_CONTROLS&MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
+    readonly attribute DOMString shadowRootCSSText;
+    DOMString base64StringForIconNameAndType(DOMString iconName, DOMString iconType);
+    DOMString formattedStringForDuration(unrestricted double durationInSeconds);
+    [Conditional=MEDIA_CONTROLS_CONTEXT_MENUS, EnabledBySetting=MediaControlsContextMenusEnabled] boolean showMediaControlsContextMenu(HTMLElement target, JSON options, VoidCallback callback);
 
     [Conditional=MEDIA_SESSION] undefined ensureMediaSessionObserver();
 };

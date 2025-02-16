@@ -12,7 +12,7 @@ noInline(test);
 
 var values = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ];
 shouldBe(values.length, 12);
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     shouldBe(test(array, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11]), 12);
     for (var j = 0; j < values.length; ++j)

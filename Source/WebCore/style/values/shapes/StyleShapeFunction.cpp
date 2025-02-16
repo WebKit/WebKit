@@ -40,33 +40,6 @@
 namespace WebCore {
 namespace Style {
 
-// MARK: - Offset Point Evaluation
-
-static FloatPoint evaluate(const ByCoordinatePair& value, const FloatSize& boxSize)
-{
-    return evaluate(value.offset, boxSize);
-}
-
-static FloatPoint evaluate(const ToPosition& value, const FloatSize& boxSize)
-{
-    return evaluate(value.offset, boxSize);
-}
-
-static FloatPoint evaluate(const std::variant<ToPosition, ByCoordinatePair>& value, const FloatSize& boxSize)
-{
-    return WTF::switchOn(value, [&](const auto& value) -> FloatPoint { return evaluate(value, boxSize); });
-}
-
-static float evaluate(const std::variant<HLineCommand::To, HLineCommand::By>& value, float width)
-{
-    return WTF::switchOn(value, [&](const auto& value) -> float { return evaluate(value.offset, width); });
-}
-
-static float evaluate(const std::variant<VLineCommand::To, VLineCommand::By>& value, float height)
-{
-    return WTF::switchOn(value, [&](const auto& value) -> float { return evaluate(value.offset, height); });
-}
-
 // MARK: - Control Point Evaluation
 
 template<typename ControlPoint> static ControlPointAnchor evaluateControlPointAnchoring(const ControlPoint& value, ControlPointAnchor defaultValue)
@@ -354,9 +327,9 @@ private:
     {
         switch (mode) {
         case AbsoluteCoordinates:
-            return typename Command::To { .offset = { LengthPercentage<> { Length<> { offset } } } };
+            return typename Command::To { .offset = { LengthPercentage<>::Dimension { offset } } };
         case RelativeCoordinates:
-            return typename Command::By { .offset = LengthPercentage<> { Length<> { offset } } };
+            return typename Command::By { .offset = LengthPercentage<>::Dimension { offset } };
         }
         RELEASE_ASSERT_NOT_REACHED();
     }
@@ -534,7 +507,7 @@ private:
         m_commands.append(
             ArcCommand {
                 .toBy = fromOffsetPoint(offsetPoint, mode),
-                .size = { Length<> { r1 }, Length<> { r2 } },
+                .size = { LengthPercentage<>::Dimension { r1 }, LengthPercentage<>::Dimension { r2 } },
                 .arcSweep = sweepFlag ? ArcSweep { CSS::Keyword::Cw { } } : ArcSweep { CSS::Keyword::Ccw { } },
                 .arcSize = largeArcFlag ? ArcSize { CSS::Keyword::Large { } } : ArcSize { CSS::Keyword::Small { } },
                 .rotation = { angle },
@@ -685,7 +658,7 @@ std::optional<Shape> makeShapeFromPath(const Path& path)
 
     return Shape {
         .fillRule = path.fillRule,
-        .startingPoint = converter.initialMove().value_or(Position { LengthPercentage<> { Length<> { 0 } }, LengthPercentage<> { Length<> { 0 } } }),
+        .startingPoint = converter.initialMove().value_or(Position { LengthPercentage<>::Dimension { 0 }, LengthPercentage<>::Dimension { 0 } }),
         .commands = { WTFMove(shapeCommands) }
     };
 }

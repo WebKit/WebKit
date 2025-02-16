@@ -17,7 +17,7 @@ let object2 = new Foo();
 object2.length = 100;
 object2.fill(1);
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let sum = test(object);
     if (sum !== 5)
         throw new Error(sum);

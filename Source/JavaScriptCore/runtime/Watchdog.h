@@ -30,7 +30,6 @@
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
-#include <wtf/WorkQueue.h>
 
 namespace JSC {
 
@@ -38,7 +37,7 @@ class CallFrame;
 class JSGlobalObject;
 class VM;
 
-class Watchdog : public WTF::ThreadSafeRefCounted<Watchdog> {
+class Watchdog : public ThreadSafeRefCounted<Watchdog> {
     WTF_MAKE_TZONE_ALLOCATED(Watchdog);
 public:
     class Scope;
@@ -66,20 +65,15 @@ private:
     bool m_hasEnteredVM { false };
 
     Lock m_lock; // Guards access to m_vm.
-    VM* m_vm;
+    VM* m_vm { nullptr };
 
-    Seconds m_timeLimit;
+    Seconds m_timeLimit { noTimeLimit };
+    Seconds m_cpuDeadline { noTimeLimit };
+    MonotonicTime m_deadline { MonotonicTime::infinity() };
 
-    Seconds m_cpuDeadline;
-    MonotonicTime m_deadline;
-
-    ShouldTerminateCallback m_callback;
-    void* m_callbackData1;
-    void* m_callbackData2;
-
-    Ref<WorkQueue> m_timerQueue;
-
-    friend class LLIntOffsetsExtractor;
+    ShouldTerminateCallback m_callback { nullptr };
+    void* m_callbackData1 { nullptr };
+    void* m_callbackData2 { nullptr };
 };
 
 } // namespace JSC

@@ -28,6 +28,7 @@
 
 #include "CSSCustomPropertyValue.h"
 #include "CSSParser.h"
+#include "CSSSerializationContext.h"
 #include "CSSValuePool.h"
 #include "ImmutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
@@ -85,12 +86,12 @@ Ref<MutableStyleProperties> MutableStyleProperties::createEmpty()
 
 Ref<ImmutableStyleProperties> MutableStyleProperties::immutableCopy() const
 {
-    return ImmutableStyleProperties::create(m_propertyVector.data(), m_propertyVector.size(), cssParserMode());
+    return ImmutableStyleProperties::create(m_propertyVector.span(), cssParserMode());
 }
 
 Ref<ImmutableStyleProperties> MutableStyleProperties::immutableDeduplicatedCopy() const
 {
-    return ImmutableStyleProperties::createDeduplicating(m_propertyVector.data(), m_propertyVector.size(), cssParserMode());
+    return ImmutableStyleProperties::createDeduplicating(m_propertyVector.span(), cssParserMode());
 }
 
 inline bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID propertyID, String* returnText)
@@ -98,7 +99,7 @@ inline bool MutableStyleProperties::removeShorthandProperty(CSSPropertyID proper
     // FIXME: Use serializeShorthandValue here to return the value of the removed shorthand as we do when removing a longhand.
     if (returnText)
         *returnText = String();
-    return removeProperties(shorthandForProperty(propertyID).propertiesSpan());
+    return removeProperties(shorthandForProperty(propertyID).properties());
 }
 
 bool MutableStyleProperties::removePropertyAtIndex(int index, String* returnText)
@@ -111,7 +112,7 @@ bool MutableStyleProperties::removePropertyAtIndex(int index, String* returnText
 
     if (returnText) {
         auto property = propertyAt(index);
-        *returnText = WebCore::serializeLonghandValue(property.id(), *property.value());
+        *returnText = WebCore::serializeLonghandValue(CSS::defaultSerializationContext(), property.id(), *property.value());
     }
 
     // A more efficient removal strategy would involve marking entries as empty
@@ -176,14 +177,14 @@ bool MutableStyleProperties::setCustomProperty(const String& propertyName, const
     return CSSParser::parseCustomPropertyValue(*this, AtomString { propertyName }, value, important, parserContext) == CSSParser::ParseResult::Changed;
 }
 
-void MutableStyleProperties::setProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, IsImportant important)
+void MutableStyleProperties::setProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important)
 {
     if (isLonghand(propertyID)) {
         setProperty(CSSProperty(propertyID, WTFMove(value), important));
         return;
     }
     auto shorthand = shorthandForProperty(propertyID);
-    removeProperties(shorthand.propertiesSpan());
+    removeProperties(shorthand.properties());
     for (auto longhand : shorthand)
         m_propertyVector.append(CSSProperty(longhand, value.copyRef(), important));
 }
@@ -289,7 +290,7 @@ bool MutableStyleProperties::removeProperties(std::span<const CSSPropertyID> pro
         return false;
 
     // FIXME: This is always used with static sets and in that case constructing the hash repeatedly is pretty pointless.
-    HashSet<CSSPropertyID> toRemove;
+    UncheckedKeyHashSet<CSSPropertyID> toRemove;
     toRemove.add(properties.begin(), properties.end());
 
     return m_propertyVector.removeAllMatching([&toRemove](const CSSProperty& property) {

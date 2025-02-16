@@ -35,7 +35,7 @@ test(function() {
         return [...a];
     }
     noInline(bar);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(shallowEq(bar(arr), arr));
     }
 });
@@ -58,7 +58,7 @@ test(function() {
         return [...a];
     }
     noInline(bar);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let t = bar(arr);
         assert(count === 3);
         count = 0;
@@ -82,7 +82,7 @@ test(function() {
         return [...a];
     }
     noInline(bar);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let t = bar(arr);
         assert(count === 3);
         count = 0;
@@ -98,7 +98,7 @@ test(function() {
         return [...a];
     }
     noInline(bar);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(shallowEq(bar(arr), arr));
     }
 });
@@ -112,7 +112,7 @@ test(function() {
         return [...a];
     }
     noInline(bar);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let t = bar(arr);
         assert(callCount === 1);
         assert(shallowEq(t, arr));
@@ -140,7 +140,7 @@ test(function() {
         return [...a];
     }
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let arr = [1,,3];
         let callCount = 0;
         Object.defineProperty(arr, 1, { get: function() { ++callCount; iterProto.next = hackedNext; return 2; } });

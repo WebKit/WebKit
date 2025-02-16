@@ -236,7 +236,7 @@ public:
     }
 
 private:
-    HashSet<WatchpointSetType> m_sets;
+    UncheckedKeyHashSet<WatchpointSetType> m_sets;
     bool m_reallyAdded;
 };
 

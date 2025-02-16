@@ -118,7 +118,7 @@ public:
     enum CopyParsedBlockTag { CopyParsedBlock };
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     template<typename, SubspaceAccess>
     static void subspaceFor(VM&)
@@ -980,7 +980,7 @@ private:
 
 #if ASSERT_ENABLED
     Lock m_cachedIdentifierUidsLock;
-    HashSet<UniquedStringImpl*> m_cachedIdentifierUids;
+    UncheckedKeyHashSet<UniquedStringImpl*> m_cachedIdentifierUids;
     uint32_t m_magic;
 #endif
 };

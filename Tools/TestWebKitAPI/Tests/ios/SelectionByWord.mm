@@ -73,11 +73,10 @@ TEST(SelectionTests, SelectWordForReplacementWithDictationAlternative)
     EXPECT_WK_STREQ("foo bar", [webView selectedText]);
 }
 
-@interface SelectionChangeListener : NSObject<
+@interface SelectionChangeListener : NSObject
 #if USE(BROWSERENGINEKIT)
-    BETextInputDelegate,
+    <BETextInputDelegate>
 #endif
-    UITextInputDelegate>
 @property (nonatomic) dispatch_block_t selectionWillChangeHandler;
 @property (nonatomic) dispatch_block_t selectionDidChangeHandler;
 @end
@@ -168,12 +167,12 @@ TEST(SelectionTests, SelectWordForReplacementWithDictationAlternative)
 
 TEST(SelectionTests, SelectedTextAfterSelectingWordForReplacement)
 {
-    auto listener = adoptNS([[SelectionChangeListener alloc] init]);
-    auto webView = adoptNS([[TestWKWebView alloc] init]);
+    RetainPtr listener = adoptNS([[SelectionChangeListener alloc] init]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] init]);
     [webView synchronouslyLoadHTMLString:@"<body contenteditable><p>Hello</p></body><script>document.body.focus()</script>"];
 
     auto contentView = [webView textInputContentView];
-    [contentView setInputDelegate:listener.get()];
+    [contentView setInputDelegate:static_cast<id<UITextInputDelegate>>(listener.get())];
 
 #if USE(BROWSERENGINEKIT)
     [webView asyncTextInput].asyncInputDelegate = listener.get();

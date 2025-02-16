@@ -76,7 +76,11 @@ Ref<HTMLStyleElement> PluginDocumentParser::createStyleElement(Document& documen
 {
     auto styleElement = HTMLStyleElement::create(document);
 
-    constexpr auto styleSheetContents = "html, body, embed { width: 100%; height: 100%; }\nbody { margin: 0; overflow: hidden; }\n"_s;
+    constexpr auto styleSheetContents = R"CONTENTS(
+        html, body, embed { width: 100%; height: 100%; }
+        body { margin: 0; overflow: hidden; }
+        html.plugin-fits-content body { overflow: revert; }
+    )CONTENTS"_s;
 #if PLATFORM(IOS_FAMILY)
     constexpr auto bodyBackgroundColorStyle = "body { background-color: rgb(217, 224, 233) }"_s;
 #else

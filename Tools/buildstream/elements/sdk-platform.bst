@@ -5,6 +5,7 @@ depends:
 - qt5.bst
 - test-infra.bst
 - filtered.bst
+- filtered-openh264.bst
 
 # replaced (patched) elements:
 - sdk/adwaita-icon-theme.bst

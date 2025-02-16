@@ -35,6 +35,8 @@ enum class FillLightMode : uint8_t;
 enum class RedEyeReduction : uint8_t;
 
 struct PhotoCapabilities {
+    PhotoCapabilities isolatedCopy() const { return *this; }
+
     std::optional<RedEyeReduction> redEyeReduction;
     std::optional<MediaSettingsRange> imageHeight;
     std::optional<MediaSettingsRange> imageWidth;

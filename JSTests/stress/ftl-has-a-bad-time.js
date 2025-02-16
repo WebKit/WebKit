@@ -13,6 +13,6 @@ var array = new Array();
 Array.prototype.__defineSetter__("0", function() { });
 
 // Finally, get foo() to compile in the FTL. But don't allocate anymore arrays.
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     foo(false);
 

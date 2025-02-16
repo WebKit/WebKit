@@ -22,7 +22,7 @@ function testIndexedProperties(o) {
 }
 
 var o = [42];
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testIndexedProperties(o);
     checkResult("testIndexedProperties", result, "function k() { }", undefined);
 }
@@ -38,7 +38,7 @@ function testIndexedProperties2(o) {
 }
 
 var o = [42];
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testIndexedProperties2(o);
     checkResult("testIndexedProperties2", result, "boo", undefined);
 }
@@ -56,7 +56,7 @@ function testIndexedProperties3(o) {
 }
 
 var o = [42];
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testIndexedProperties3(o);
     checkResult("testIndexedProperties3", result, "function k() { }", undefined);
 }
@@ -75,7 +75,7 @@ function testIndexedProperties4(o) {
 }
 
 var o = [42];
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testIndexedProperties4(o);
     checkResult("testIndexedProperties4", result, "boo", undefined);
 }
@@ -92,7 +92,7 @@ function testStructureProperties(o) {
 }
 
 var o = {a: 42};
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testStructureProperties(o);
     checkResult("testStructureProperties", result, "function k() { }", undefined);
 }
@@ -108,7 +108,7 @@ function testStructureProperties2(o) {
 }
 
 var o = {a: 42};
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testStructureProperties2(o);
     checkResult("testStructureProperties2", result, 0x1234, undefined);
 }
@@ -126,7 +126,7 @@ function testStructureProperties3(o) {
 }
 
 var o = {a: 42};
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testStructureProperties3(o);
     checkResult("testStructureProperties3", result, "function k() { }", undefined);
 }
@@ -145,7 +145,7 @@ function testStructureProperties4(o) {
 }
 
 var o = {a: 42};
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = testStructureProperties4(o);
     checkResult("testStructureProperties4", result, 0x1234, undefined);
 }

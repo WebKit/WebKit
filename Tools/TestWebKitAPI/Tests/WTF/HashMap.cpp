@@ -1287,4 +1287,31 @@ TEST(WTF_HashMap, GetOptional)
 
 }
 
+TEST(WTF_HashMap, KeysValuesRangesAllAnyNoneOf)
+{
+    IntHashMap map;
+    map.add(1, 1);
+    map.add(2, 2);
+    map.add(3, 3);
+
+    EXPECT_TRUE(std::ranges::all_of(map.keys(), [] (int el) {
+        return el < 4;
+    }));
+    EXPECT_TRUE(std::ranges::none_of(map.keys(), [] (int el) {
+        return el > 4;
+    }));
+    EXPECT_TRUE(std::ranges::any_of(map.keys(), [] (int el) {
+        return el < 2;
+    }));
+    EXPECT_TRUE(std::ranges::all_of(map.values(), [] (int el) {
+        return el < 4;
+    }));
+    EXPECT_TRUE(std::ranges::none_of(map.values(), [] (int el) {
+        return el > 4;
+    }));
+    EXPECT_TRUE(std::ranges::any_of(map.values(), [] (int el) {
+        return el < 2;
+    }));
+}
+
 } // namespace TestWebKitAPI

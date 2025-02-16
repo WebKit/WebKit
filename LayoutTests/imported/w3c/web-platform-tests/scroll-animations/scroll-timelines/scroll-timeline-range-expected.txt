@@ -1,8 +1,8 @@
 
 PASS Scroll timeline with percentage range [JavaScript API]
 PASS Scroll timeline with px range [JavaScript API]
-FAIL Scroll timeline with calculated range [JavaScript API] assert_approx_equals: expected a number but got a "object"
-FAIL Scroll timeline with EM range [JavaScript API] assert_approx_equals: expected a number but got a "object"
+PASS Scroll timeline with calculated range [JavaScript API]
+PASS Scroll timeline with EM range [JavaScript API]
 PASS Scroll timeline with percentage range [CSS]
 PASS Scroll timeline with px range [CSS]
 PASS Scroll timeline with calculated range [CSS]

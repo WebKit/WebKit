@@ -37,3 +37,8 @@ void LegacyHistoryItemClient::historyItemChanged(const WebCore::HistoryItem&)
 {
     WKNotifyHistoryItemChanged();
 }
+
+void LegacyHistoryItemClient::clearChildren(const WebCore::HistoryItem&) const
+{
+    WKNotifyHistoryItemChanged();
+}

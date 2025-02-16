@@ -1,0 +1,40 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ModelElementEnabled=true ModelProcessEnabled=true ] -->
+<meta charset="utf-8">
+<title>&lt;model> stagemode attribute</title>
+<script src="../resources/testharness.js"></script>
+<script src="../resources/testharnessreport.js"></script>
+<script src="resources/model-element-test-utils.js"></script>
+<script src="resources/model-utils.js"></script>
+<body>
+<script>
+'use strict';
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/cube.usdz");
+    await model.ready;
+
+    assert_equals(model.stageMode, "");
+    model.stageMode = "orbit";
+    assert_equals(model.stageMode, "orbit");
+
+    source.src = "resources/heart.usdz";
+    await model.ready;
+    assert_equals(model.stageMode, "orbit");
+}, `Setting stage mode persists after changing source on the same model element`);
+
+promise_test(async t => {
+    const [model, source] = createModelAndSource(t, "resources/cube.usdz");
+    await model.ready;
+
+    assert_equals(model.stageMode, "");
+    model.stageMode = "orbit";
+    assert_equals(model.stageMode, "orbit");
+    model.stageMode = "none";
+    assert_equals(model.stageMode, "none");
+    model.stageMode = "Hello world!";
+    assert_equals(model.stageMode, "Hello world!");
+
+}, `Checking <model> stage mode value after updating`);
+
+</script>
+</body>

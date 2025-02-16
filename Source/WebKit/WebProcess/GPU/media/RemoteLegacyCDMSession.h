@@ -68,6 +68,7 @@ private:
     void releaseKeys() final;
     bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, uint32_t& systemCode) final;
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const final;
+    bool isRemoteLegacyCDMSession() const final { return true; }
 
     // Messages
     void sendMessage(RefPtr<WebCore::SharedBuffer>&& message, const String& destinationURL);
@@ -81,5 +82,9 @@ private:
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::RemoteLegacyCDMSession)
+    static bool isType(const WebCore::LegacyCDMSession& session) { return session.isRemoteLegacyCDMSession(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

@@ -36,7 +36,7 @@ function factoryClass() {
 
 let C = factoryClass();
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let c = new C();
     assert.sameValue(c.access(), 'test');
     assert.throws(TypeError, () => {

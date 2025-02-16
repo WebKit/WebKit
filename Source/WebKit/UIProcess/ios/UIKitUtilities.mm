@@ -30,6 +30,8 @@
 
 #import "UIKitSPI.h"
 #import <WebCore/FloatPoint.h>
+#import <wtf/BlockPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if HAVE(UI_SCROLL_VIEW_TRANSFERS_SCROLLING_TO_PARENT)
 
@@ -286,6 +288,24 @@ static UIAxis axesForDelta(WebCore::FloatSize delta)
 }
 
 @end
+
+#if USE(UICONTEXTMENU)
+
+@implementation UIContextMenuInteraction (WebKitInternal)
+
+- (BOOL)_wk_isMenuVisible
+{
+    bool contextMenuIsVisible = false;
+    [self updateVisibleMenuWithBlock:makeBlockPtr([&contextMenuIsVisible](UIMenu *menu) {
+        contextMenuIsVisible = true;
+        return menu;
+    }).get()];
+    return contextMenuIsVisible;
+}
+
+@end
+
+#endif // USE(UICONTEXTMENU)
 
 namespace WebKit {
 

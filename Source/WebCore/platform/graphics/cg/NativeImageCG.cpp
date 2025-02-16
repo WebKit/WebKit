@@ -35,8 +35,6 @@
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 IntSize PlatformImageNativeImageBackend::size() const
@@ -57,7 +55,7 @@ DestinationColorSpace PlatformImageNativeImageBackend::colorSpace() const
 
 Headroom PlatformImageNativeImageBackend::headroom() const
 {
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
     return CGImageGetContentHeadroom(m_platformImage.get());
 #else
     return Headroom::None;
@@ -94,8 +92,8 @@ std::optional<Color> NativeImage::singlePixelSolidColor() const
     if (size() != IntSize(1, 1))
         return std::nullopt;
 
-    unsigned char pixel[4]; // RGBA
-    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel, 1, 1, 8, sizeof(pixel), sRGBColorSpaceRef(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
+    std::array<uint8_t, 4> pixel; // RGBA
+    auto bitmapContext = adoptCF(CGBitmapContextCreate(pixel.data(), 1, 1, 8, pixel.size(), sRGBColorSpaceRef(), static_cast<uint32_t>(kCGImageAlphaPremultipliedLast) | static_cast<uint32_t>(kCGBitmapByteOrder32Big)));
 
     if (!bitmapContext)
         return std::nullopt;
@@ -165,7 +163,5 @@ void NativeImage::clearSubimages()
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

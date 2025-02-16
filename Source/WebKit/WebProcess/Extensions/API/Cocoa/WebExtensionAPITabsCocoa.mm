@@ -212,7 +212,7 @@ bool WebExtensionAPITabs::parseTabCreateOptions(NSDictionary *options, WebExtens
         parameters.windowIdentifier = toWebExtensionWindowIdentifier(windowId.doubleValue);
 
         if (!parameters.windowIdentifier || !isValid(parameters.windowIdentifier.value())) {
-            *outExceptionString = toErrorString(nil, windowIdKey, @"'%@' is not a window identifier", windowId);
+            *outExceptionString = toErrorString(nullString(), windowIdKey, @"'%@' is not a window identifier", windowId);
             return false;
         }
     }
@@ -248,7 +248,7 @@ bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtens
         parameters.url = URL { extensionContext().baseURL(), url };
 
         if (!parameters.url.value().isValid()) {
-            *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
+            *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid URL", url);
             return false;
         }
     }
@@ -257,7 +257,7 @@ bool WebExtensionAPITabs::parseTabUpdateOptions(NSDictionary *options, WebExtens
         parameters.parentTabIdentifier = toWebExtensionTabIdentifier(openerTabId.doubleValue);
 
         if (!parameters.parentTabIdentifier || !isValid(parameters.parentTabIdentifier.value())) {
-            *outExceptionString = toErrorString(nil, openerTabIdKey, @"'%@' is not a tab identifier", openerTabId);
+            *outExceptionString = toErrorString(nullString(), openerTabIdKey, @"'%@' is not a tab identifier", openerTabId);
             return false;
         }
     }
@@ -326,7 +326,7 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
         parameters.windowIdentifier = toWebExtensionWindowIdentifier(windowId.doubleValue);
 
         if (!parameters.windowIdentifier || !isValid(parameters.windowIdentifier.value())) {
-            *outExceptionString = toErrorString(nil, windowIdKey, @"'%@' is not a window identifier", windowId);
+            *outExceptionString = toErrorString(nullString(), windowIdKey, @"'%@' is not a window identifier", windowId);
             return false;
         }
 
@@ -350,7 +350,7 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
         else if ([status isEqualToString:completeKey])
             parameters.loading = false;
         else {
-            *outExceptionString = toErrorString(nil, statusKey, @"it must specify either 'loading' or 'complete'");
+            *outExceptionString = toErrorString(nullString(), statusKey, @"it must specify either 'loading' or 'complete'");
             return false;
         }
     }
@@ -364,7 +364,7 @@ bool WebExtensionAPITabs::parseTabQueryOptions(NSDictionary *options, WebExtensi
         for (auto& patternString : parameters.urlPatterns.value()) {
             auto pattern = WebExtensionMatchPattern::getOrCreate(patternString);
             if (!pattern || !pattern->isSupported()) {
-                *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid pattern", (NSString *)patternString);
+                *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid pattern", (NSString *)patternString);
                 return false;
             }
         }
@@ -430,14 +430,14 @@ bool WebExtensionAPITabs::parseCaptureVisibleTabOptions(NSDictionary *options, W
         else if ([format isEqualToString:jpegValue])
             imageFormat = WebExtensionTab::ImageFormat::JPEG;
         else {
-            *outExceptionString = toErrorString(nil, formatKey, @"it must specify either 'png' or 'jpeg'");
+            *outExceptionString = toErrorString(nullString(), formatKey, @"it must specify either 'png' or 'jpeg'");
             return false;
         }
     }
 
     if (NSNumber *quality = objectForKey<NSNumber>(options, qualityKey)) {
         if (quality.integerValue < 0 || quality.integerValue > 100) {
-            *outExceptionString = toErrorString(nil, qualityKey, @"it must specify a value between 0 and 100");
+            *outExceptionString = toErrorString(nullString(), qualityKey, @"it must specify a value between 0 and 100");
             return false;
         }
 
@@ -458,14 +458,14 @@ bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, WebExte
         return false;
 
     if (options[frameIdKey] && options[documentIdKey]) {
-        *outExceptionString = toErrorString(nil, sourceKey, @"it cannot specify both 'frameId' and 'documentId'");
+        *outExceptionString = toErrorString(nullString(), sourceKey, @"it cannot specify both 'frameId' and 'documentId'");
         return false;
     }
 
     if (NSNumber *frameIdentifier = options[frameIdKey]) {
         auto identifier = toWebExtensionFrameIdentifier(frameIdentifier.doubleValue);
         if (!isValid(identifier)) {
-            *outExceptionString = toErrorString(nil, frameIdKey, @"'%@' is not a frame identifier", frameIdentifier);
+            *outExceptionString = toErrorString(nullString(), frameIdKey, @"'%@' is not a frame identifier", frameIdentifier);
             return false;
         }
 
@@ -475,7 +475,7 @@ bool WebExtensionAPITabs::parseSendMessageOptions(NSDictionary *options, WebExte
     if (NSString *documentIdentifier = options[documentIdKey]) {
         auto parsedUUID = WTF::UUID::parse(String(documentIdentifier));
         if (!parsedUUID) {
-            *outExceptionString = toErrorString(nil, documentIdKey, @"'%@' is not a document identifier", documentIdentifier);
+            *outExceptionString = toErrorString(nullString(), documentIdKey, @"'%@' is not a document identifier", documentIdentifier);
             return false;
         }
 
@@ -518,28 +518,28 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
         return false;
 
     if (options[fileKey] && options[codeKey]) {
-        *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'file' and 'code'");
+        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'file' and 'code'");
         return false;
     }
 
     if (!options[fileKey] && !options[codeKey]) {
-        *outExceptionString = toErrorString(nil, @"details", @"it must specify either 'file' or 'code'");
+        *outExceptionString = toErrorString(nullString(), @"details", @"it must specify either 'file' or 'code'");
         return false;
     }
 
     bool allFrames = boolForKey(options, allFramesKey, false);
     if (allFrames && options[frameIdKey]) {
-        *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'allFrames' and 'frameId'");
+        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'allFrames' and 'frameId'");
         return false;
     }
 
     if (options[frameIdKey] && options[documentIdKey]) {
-        *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'frameId' and 'documentId'");
+        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'frameId' and 'documentId'");
         return false;
     }
 
     if (allFrames && options[documentIdKey]) {
-        *outExceptionString = toErrorString(nil, @"details", @"it cannot specify both 'allFrames' and 'documentId'");
+        *outExceptionString = toErrorString(nullString(), @"details", @"it cannot specify both 'allFrames' and 'documentId'");
         return false;
     }
 
@@ -552,7 +552,7 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
     if (NSString *documentIdentifer = options[documentIdKey]) {
         auto parsedUUID = WTF::UUID::parse(String(documentIdentifer));
         if (!parsedUUID) {
-            *outExceptionString = toErrorString(nil, documentIdKey, @"'%@' is not a valid document identifier", documentIdentifer);
+            *outExceptionString = toErrorString(nullString(), documentIdKey, @"'%@' is not a valid document identifier", documentIdentifer);
             return false;
         }
 
@@ -562,7 +562,7 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
     if (NSNumber *frameID = options[frameIdKey]) {
         auto frameIdentifier = toWebExtensionFrameIdentifier(frameID.doubleValue);
         if (!isValid(frameIdentifier)) {
-            *outExceptionString = toErrorString(nil, frameIdKey, @"'%@' is not a frame identifier", frameID);
+            *outExceptionString = toErrorString(nullString(), frameIdKey, @"'%@' is not a frame identifier", frameID);
             return false;
         }
 
@@ -576,7 +576,7 @@ bool WebExtensionAPITabs::parseScriptOptions(NSDictionary *options, WebExtension
         else if ([origin isEqualToString:authorValue])
             parameters.styleLevel = WebCore::UserStyleLevel::Author;
         else {
-            *outExceptionString = toErrorString(nil, cssOriginKey, @"it must specify either 'author' or 'user'");
+            *outExceptionString = toErrorString(nullString(), cssOriginKey, @"it must specify either 'author' or 'user'");
             return false;
         }
     }
@@ -588,11 +588,11 @@ bool isValid(std::optional<WebExtensionTabIdentifier> identifier, NSString **out
 {
     if (UNLIKELY(!isValid(identifier))) {
         if (isNone(identifier))
-            *outExceptionString = toErrorString(nil, @"tabId", @"'tabs.TAB_ID_NONE' is not allowed");
+            *outExceptionString = toErrorString(nullString(), @"tabId", @"'tabs.TAB_ID_NONE' is not allowed");
         else if (identifier)
-            *outExceptionString = toErrorString(nil, @"tabId", @"'%llu' is not a tab identifier", identifier.value().toUInt64());
+            *outExceptionString = toErrorString(nullString(), @"tabId", @"'%llu' is not a tab identifier", identifier.value().toUInt64());
         else
-            *outExceptionString = toErrorString(nil, @"tabId", @"it is not a tab identifier");
+            *outExceptionString = toErrorString(nullString(), @"tabId", @"it is not a tab identifier");
         return false;
     }
 
@@ -766,7 +766,7 @@ void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandl
     if (NSNumber *tabID = dynamic_objc_cast<NSNumber>(tabIDs)) {
         auto tabIdentifer = toWebExtensionTabIdentifier(tabID.doubleValue);
         if (!isValid(tabIdentifer)) {
-            *outExceptionString = toErrorString(nil, @"tabIDs", @"'%@' is not a tab identifier", tabID);
+            *outExceptionString = toErrorString(nullString(), @"tabIDs", @"'%@' is not a tab identifier", tabID);
             return;
         }
 
@@ -777,7 +777,7 @@ void WebExtensionAPITabs::remove(NSObject *tabIDs, Ref<WebExtensionCallbackHandl
         for (NSNumber *tabID in tabIDArray) {
             auto tabIdentifer = toWebExtensionTabIdentifier(tabID.doubleValue);
             if (!isValid(tabIdentifer)) {
-                *outExceptionString = toErrorString(nil, @"tabIDs", @"'%@' is not a tab identifier", tabID);
+                *outExceptionString = toErrorString(nullString(), @"tabIDs", @"'%@' is not a tab identifier", tabID);
                 return;
             }
 
@@ -976,13 +976,13 @@ void WebExtensionAPITabs::sendMessage(WebFrame& frame, double tabID, NSString *m
         return;
 
     if (messageJSON.length > webExtensionMaxMessageLength) {
-        *outExceptionString = toErrorString(nil, @"message", @"it exceeded the maximum allowed length");
+        *outExceptionString = toErrorString(nullString(), @"message", @"it exceeded the maximum allowed length");
         return;
     }
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        *outExceptionString = toErrorString(@"runtime.sendMessage()", nil, @"an unexpected error occured");
+        *outExceptionString = toErrorString(@"runtime.sendMessage()", nullString(), @"an unexpected error occured");
         return;
     }
 
@@ -1020,7 +1020,7 @@ RefPtr<WebExtensionAPIPort> WebExtensionAPITabs::connect(WebFrame& frame, JSCont
 
     auto documentIdentifier = toDocumentIdentifier(frame);
     if (!documentIdentifier) {
-        *outExceptionString = toErrorString(nil, nil, @"an unexpected error occured");
+        *outExceptionString = toErrorString(nullString(), nullString(), @"an unexpected error occured");
         return nullptr;
     }
 

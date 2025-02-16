@@ -54,7 +54,7 @@ Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& m
 
 ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(Ref<const CSSFunctionValue> cssFunctionValue)
 {
-    auto makeMatrix = [&](const Function<Ref<CSSTransformComponent>(Vector<double>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSTransformComponent>> {
+    auto makeMatrix = [&](NOESCAPE const Function<Ref<CSSTransformComponent>(Vector<double>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSTransformComponent>> {
         Vector<double> components;
         for (auto& componentCSSValue : cssFunctionValue.get()) {
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);

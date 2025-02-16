@@ -49,6 +49,9 @@ inline String toAPIString(WebExtensionDataType dataType)
     case WebExtensionDataType::Sync:
         return "sync"_s;
     }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 } // namespace WebKit

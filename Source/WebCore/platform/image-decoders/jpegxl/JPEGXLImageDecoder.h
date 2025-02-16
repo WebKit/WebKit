@@ -90,7 +90,7 @@ private:
 
     void clearColorTransform();
     void prepareColorTransform();
-    void maybePerformColorSpaceConversion(void* inputBuffer, void* outputBuffer, unsigned numberOfPixels);
+    void maybePerformColorSpaceConversion(std::span<uint8_t> inputBuffer, std::span<uint8_t> outputBuffer, unsigned numberOfPixels);
 #if USE(LCMS)
     LCMSProfilePtr tryDecodeICCColorProfile();
 #elif USE(CG)

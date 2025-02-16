@@ -45,6 +45,10 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
+#if HAVE(MATERIAL_HOSTING)
+#import "WKMaterialHostingSupport.h"
+#endif
+
 namespace WTF {
 
 static std::optional<RetainPtr<UIView>> makeVectorElement(const RetainPtr<UIView>*, UIView *arrayElement)
@@ -386,6 +390,46 @@ static Class scrollViewScrollIndicatorClass()
 + (Class)layerClass
 {
     return PAL::getMTMaterialLayerClass();
+}
+
+@end
+
+#endif
+
+#if HAVE(MATERIAL_HOSTING)
+
+@implementation WKMaterialHostingView {
+    RetainPtr<UIView> _hostingView;
+    RetainPtr<UIView> _contentView;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (!self)
+        return nil;
+
+    _contentView = adoptNS([[UIView alloc] init]);
+    _hostingView = adoptNS([WKMaterialHostingSupport createHostingView:_contentView.get()]);
+
+    [self addSubview:_hostingView.get()];
+
+    return self;
+}
+
+- (UIView *)contentView
+{
+    return _contentView.get();
+}
+
+- (void)updateHostingSize:(WebCore::FloatSize)size
+{
+    [_hostingView setFrame:CGRectMake(0, 0, size.width(), size.height())];
+}
+
+- (void)updateCornerRadius:(CGFloat)cornerRadius
+{
+    [WKMaterialHostingSupport updateHostingView:_hostingView.get() contentView:_contentView.get() cornerRadius:cornerRadius];
 }
 
 @end

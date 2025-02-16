@@ -191,7 +191,7 @@ void decode(const URL& url, const ScheduleContext& scheduleContext, ShouldValida
 #if USE(COCOA_EVENT_LOOP)
         RunLoop::dispatch(scheduledPairs, WTFMove(callCompletionHandler));
 #else
-        RunLoop::main().dispatch(WTFMove(callCompletionHandler));
+        RunLoop::protectedMain()->dispatch(WTFMove(callCompletionHandler));
 #endif
     });
 }

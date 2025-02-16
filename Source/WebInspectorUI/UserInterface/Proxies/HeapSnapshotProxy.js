@@ -25,10 +25,13 @@
 
 WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
 {
-    constructor(snapshotObjectId, identifier, title, totalSize, totalObjectCount, liveSize, categories, imported)
+    constructor(target, snapshotObjectId, identifier, title, totalSize, totalObjectCount, liveSize, categories)
     {
+        console.assert(target instanceof WI.Target, target);
+
         super();
 
+        this._target = target;
         this._proxyObjectId = snapshotObjectId;
 
         this._identifier = identifier;
@@ -37,7 +40,6 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
         this._totalObjectCount = totalObjectCount;
         this._liveSize = liveSize;
         this._categories = Map.fromObject(categories);
-        this._imported = imported;
         this._snapshotStringData = null;
 
         console.assert(!this.invalid);
@@ -49,10 +51,10 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
 
     // Static
 
-    static deserialize(objectId, serializedSnapshot)
+    static deserialize(target, objectId, serializedSnapshot)
     {
-        let {identifier, title, totalSize, totalObjectCount, liveSize, categories, imported} = serializedSnapshot;
-        return new WI.HeapSnapshotProxy(objectId, identifier, title, totalSize, totalObjectCount, liveSize, categories, imported);
+        let {identifier, title, totalSize, totalObjectCount, liveSize, categories} = serializedSnapshot;
+        return new WI.HeapSnapshotProxy(target, objectId, identifier, title, totalSize, totalObjectCount, liveSize, categories);
     }
 
     static invalidateSnapshotProxies()
@@ -68,6 +70,7 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
 
     // Public
 
+    get target() { return this._target; }
     get proxyObjectId() { return this._proxyObjectId; }
     get identifier() { return this._identifier; }
     get title() { return this._title; }
@@ -75,7 +78,7 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
     get totalObjectCount() { return this._totalObjectCount; }
     get liveSize() { return this._liveSize; }
     get categories() { return this._categories; }
-    get imported() { return this._imported; }
+    get imported() { return !this._target; }
     get invalid() { return this._proxyObjectId === 0; }
 
     get snapshotStringData()
@@ -109,7 +112,7 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
     {
         console.assert(!this.invalid);
         WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "instancesWithClassName", className, (serializedNodes) => {
-            callback(serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._proxyObjectId)));
+            callback(serializedNodes.map(WI.HeapSnapshotNodeProxy.deserialize.bind(null, this._target, this._proxyObjectId)));
         });
     }
 
@@ -127,7 +130,7 @@ WI.HeapSnapshotProxy = class HeapSnapshotProxy extends WI.Object
     {
         console.assert(!this.invalid);
         WI.HeapSnapshotWorkerProxy.singleton().callMethod(this._proxyObjectId, "nodeWithIdentifier", nodeIdentifier, (serializedNode) => {
-            callback(WI.HeapSnapshotNodeProxy.deserialize(this._proxyObjectId, serializedNode));
+            callback(WI.HeapSnapshotNodeProxy.deserialize(this._target, this._proxyObjectId, serializedNode));
         });
     }
 

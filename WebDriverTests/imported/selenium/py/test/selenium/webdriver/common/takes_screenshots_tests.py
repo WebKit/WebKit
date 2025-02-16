@@ -16,8 +16,8 @@
 # under the License.
 
 import base64
-import imghdr
 
+import filetype
 import pytest
 
 from selenium.webdriver.common.by import By
@@ -26,13 +26,15 @@ from selenium.webdriver.common.by import By
 def test_get_screenshot_as_base64(driver, pages):
     pages.load("simpleTest.html")
     result = base64.b64decode(driver.get_screenshot_as_base64())
-    assert imghdr.what("", result) == "png"
+    kind = filetype.guess(result)
+    assert kind is not None and kind.mime == "image/png"
 
 
 def test_get_screenshot_as_png(driver, pages):
     pages.load("simpleTest.html")
     result = driver.get_screenshot_as_png()
-    assert imghdr.what("", result) == "png"
+    kind = filetype.guess(result)
+    assert kind is not None and kind.mime == "image/png"
 
 
 @pytest.mark.xfail_firefox
@@ -41,4 +43,5 @@ def test_get_element_screenshot(driver, pages):
     pages.load("simpleTest.html")
     element = driver.find_element(By.ID, "multiline")
     result = base64.b64decode(element.screenshot_as_base64)
-    assert imghdr.what("", result) == "png"
+    kind = filetype.guess(result)
+    assert kind is not None and kind.mime == "image/png"

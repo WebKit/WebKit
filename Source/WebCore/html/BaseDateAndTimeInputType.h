@@ -31,8 +31,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "DateTimeChooser.h"
 #include "DateTimeChooserClient.h"
 #include "DateTimeEditElement.h"
@@ -157,5 +155,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif

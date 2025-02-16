@@ -1,4 +1,4 @@
-for (var i = 0; i <= 1e6; ++i) {
+for (var i = 0; i <= testLoopCount; ++i) {
     if (String.fromCharCode(0xff) != '\u00ff')
         throw new Error("out");
 }

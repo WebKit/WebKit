@@ -10,7 +10,7 @@
     <p id="p-before-modal">Page content before modal</p>
 
     <div id="modal" aria-modal="true" role="dialog" style="display: none">
-        <p id="p-inside-modal">Page content inside modal</p>
+        <p tabindex="0" id="p-inside-modal">Page content inside modal</p>
         <button id="close-button">Close modal button</button>
     </div>
     <div id="new-modal-container"></div>
@@ -43,6 +43,7 @@
         // for a modal that has been moved?
         document.getElementById("new-modal-container").appendChild(document.getElementById("modal"))
         document.getElementById("modal").removeAttribute("style");
+        document.getElementById("p-inside-modal").focus();
         setTimeout(async function() {
             await waitFor(() => { return !backgroundIsAccessible() && modalContentIsAccessible() });
             testOutput += "PASS: Background is inaccessible, modal content is accessible.\n";

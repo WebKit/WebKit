@@ -31,101 +31,84 @@
 
 #if ENABLE(XSLT)
 
+#include <algorithm>
+#include <array>
 #include <libxslt/templates.h>
 #include <libxslt/xsltutils.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/Collator.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 // Based on default implementation from libxslt 1.1.22 and xsltICUSort.c example.
-void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, int nbsorts)
+void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr* rawSorts, int nbsorts)
 {
-#ifdef XSLT_REFACTORED
-    xsltStyleItemSortPtr comp;
-#else
-    const xsltStylePreComp* comp;
-#endif
-    xmlXPathObjectPtr *resultsTab[XSLT_MAX_SORT];
-    xmlXPathObjectPtr *results = NULL, *res;
-    xmlNodeSetPtr list = NULL;
-    int len = 0;
-    int i, j, incr;
-    int tst;
-    int depth;
-    xmlNodePtr node;
-    xmlXPathObjectPtr tmp;    
-    int number[XSLT_MAX_SORT], desc[XSLT_MAX_SORT];
-
-    if ((ctxt == NULL) || (sorts == NULL) || (nbsorts <= 0) ||
-        (nbsorts >= XSLT_MAX_SORT))
-        return;
-    if (sorts[0] == NULL)
-        return;
-    comp = static_cast<xsltStylePreComp*>(sorts[0]->psvi);
-    if (comp == NULL)
+    if (!ctxt || !rawSorts || nbsorts <= 0 || nbsorts >= XSLT_MAX_SORT)
         return;
 
-    list = ctxt->nodeList;
-    if ((list == NULL) || (list->nodeNr <= 1))
+    auto sorts = unsafeMakeSpan(rawSorts, nbsorts);
+    if (!sorts[0])
+        return;
+
+    auto comp = static_cast<xsltStylePreComp*>(sorts[0]->psvi);
+    if (!comp)
+        return;
+
+    auto list = ctxt->nodeList;
+    if (!list || list->nodeNr <= 1)
         return; /* nothing to do */
 
-    for (j = 0; j < nbsorts; j++) {
+    std::array<int, XSLT_MAX_SORT> desc;
+    std::array<int, XSLT_MAX_SORT> number;
+    for (size_t j = 0; j < sorts.size(); ++j) {
         comp = static_cast<xsltStylePreComp*>(sorts[j]->psvi);
-        if ((comp->stype == NULL) && (comp->has_stype != 0)) {
-            xmlChar* stype =
-                xsltEvalAttrValueTemplate(ctxt, sorts[j], (const xmlChar *) "data-type", XSLT_NAMESPACE);
+        if (!comp->stype && comp->has_stype) {
+            auto* stype = xsltEvalAttrValueTemplate(ctxt, sorts[j], reinterpret_cast<const xmlChar*>("data-type"), XSLT_NAMESPACE);
             number[j] = 0;
             if (stype) {
                 if (xmlStrEqual(stype, reinterpret_cast<const xmlChar*>("text"))) {
                     // number[j] already zero.
                 } else if (xmlStrEqual(stype, reinterpret_cast<const xmlChar*>("number")))
                     number[j] = 1;
-                else {
-                    xsltTransformError(ctxt, NULL, sorts[j],
-                          "xsltDoSortFunction: no support for data-type = %s\n",
-                          stype);
-                }
+                else
+                    xsltTransformError(ctxt, nullptr, sorts[j], "xsltDoSortFunction: no support for data-type = %s\n", stype);
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
                 xmlFree(stype);
+IGNORE_WARNINGS_END
             }
-        } else {
+        } else
             number[j] = comp->number;
-        }
-        if ((comp->order == NULL) && (comp->has_order != 0)) {
-            xmlChar* order = xsltEvalAttrValueTemplate(ctxt, sorts[j],
-                                                       reinterpret_cast<const xmlChar*>("order"),
-                                                       XSLT_NAMESPACE);
+        if (!comp->order && comp->has_order) {
+            auto* order = xsltEvalAttrValueTemplate(ctxt, sorts[j], reinterpret_cast<const xmlChar*>("order"), XSLT_NAMESPACE);
             desc[j] = 0;
             if (order) {
                 if (xmlStrEqual(order, reinterpret_cast<const xmlChar*>("ascending"))) {
                     // desc[j] already zero.
                 } else if (xmlStrEqual(order, reinterpret_cast<const xmlChar*>("descending")))
                     desc[j] = 1;
-                else {
-                    xsltTransformError(ctxt, NULL, sorts[j],
-                             "xsltDoSortFunction: invalid value %s for order\n",
-                             order);
-                }
+                else
+                    xsltTransformError(ctxt, nullptr, sorts[j], "xsltDoSortFunction: invalid value %s for order\n", order);
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
                 xmlFree(order);
+IGNORE_WARNINGS_END
             }
-        } else {
+        } else
             desc[j] = comp->descending;
-        }
     }
 
-    len = list->nodeNr;
+    auto len = list->nodeNr;
+    auto listNodes = unsafeMakeSpan(list->nodeTab, len);
 
-    resultsTab[0] = xsltComputeSortResult(ctxt, sorts[0]);
-    for (i = 1;i < XSLT_MAX_SORT;i++)
-        resultsTab[i] = NULL;
+    std::array<std::span<xmlXPathObjectPtr>, XSLT_MAX_SORT> resultsTab = { };
+    resultsTab[0] = unsafeMakeSpan(xsltComputeSortResult(ctxt, sorts[0]), len);
 
-    results = resultsTab[0];
+    auto results = resultsTab[0];
+    if (!results.data())
+        return;
 
     comp = static_cast<xsltStylePreComp*>(sorts[0]->psvi);
-    if (results == NULL)
-        return;
 
     // We are passing a language identifier to a function that expects a locale identifier.
     // The implementation of Collator should be lenient, and accept both "en-US" and "en_US", for example.
@@ -133,15 +116,18 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
     // possible with language alone.
     Collator collator(comp->has_lang ? byteCast<char>(comp->lang) : "en", comp->lower_first);
 
+    int depth = 0;
+    int tst = 0;
+    std::span<xmlXPathObjectPtr> res;
     /* Shell's sort of node-set */
-    for (incr = len / 2; incr > 0; incr /= 2) {
-        for (i = incr; i < len; i++) {
-            j = i - incr;
-            if (results[i] == NULL)
+    for (int incr = len / 2; incr > 0; incr /= 2) {
+        for (int i = incr; i < len; i++) {
+            int j = i - incr;
+            if (!results[i])
                 continue;
             
             while (j >= 0) {
-                if (results[j] == NULL)
+                if (!results[j])
                     tst = 1;
                 else {
                     if (number[0]) {
@@ -172,24 +158,23 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                      */
                     depth = 1;
                     while (depth < nbsorts) {
-                        if (sorts[depth] == NULL)
+                        if (!sorts[depth])
                             break;
                         comp = static_cast<xsltStylePreComp*>(sorts[depth]->psvi);
-                        if (comp == NULL)
+                        if (!comp)
                             break;
 
                         /*
                          * Compute the result of the next level for the
                          * full set, this might be optimized ... or not
                          */
-                        if (resultsTab[depth] == NULL) 
-                            resultsTab[depth] = xsltComputeSortResult(ctxt,
-                                                        sorts[depth]);
+                        if (!resultsTab[depth].data())
+                            resultsTab[depth] = unsafeMakeSpan(xsltComputeSortResult(ctxt, sorts[depth]), len);
                         res = resultsTab[depth];
-                        if (res == NULL) 
+                        if (!res.data())
                             break;
-                        if (res[j] == NULL) {
-                            if (res[j+incr] != NULL)
+                        if (!res[j]) {
+                            if (res[j + incr])
                                 tst = 1;
                         } else {
                             if (number[depth]) {
@@ -230,17 +215,17 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
                     tst = results[j]->index > results[j + incr]->index;
                 }
                 if (tst > 0) {
-                    tmp = results[j];
+                    auto tmp = results[j];
                     results[j] = results[j + incr];
                     results[j + incr] = tmp;
-                    node = list->nodeTab[j];
-                    list->nodeTab[j] = list->nodeTab[j + incr];
-                    list->nodeTab[j + incr] = node;
+                    auto node = listNodes[j];
+                    listNodes[j] = listNodes[j + incr];
+                    listNodes[j + incr] = node;
                     depth = 1;
                     while (depth < nbsorts) {
-                        if (sorts[depth] == NULL)
+                        if (!sorts[depth])
                             break;
-                        if (resultsTab[depth] == NULL)
+                        if (!resultsTab[depth].data())
                             break;
                         res = resultsTab[depth];
                         tmp = res[j];
@@ -255,17 +240,18 @@ void xsltUnicodeSortFunction(xsltTransformContextPtr ctxt, xmlNodePtr *sorts, in
         }
     }
 
-    for (j = 0; j < nbsorts; j++) {
-        if (resultsTab[j] != NULL) {
-            for (i = 0;i < len;i++)
+    for (size_t j = 0; j < sorts.size(); ++j) {
+        if (resultsTab[j].data()) {
+            for (int i = 0; i < len; ++i)
                 xmlXPathFreeObject(resultsTab[j][i]);
-            xmlFree(resultsTab[j]);
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+            xmlFree(resultsTab[j].data());
+IGNORE_WARNINGS_END
         }
     }
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

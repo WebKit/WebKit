@@ -283,7 +283,7 @@ bool OriginStorageManager::StorageBucket::isActive() const
         || (m_localStorageManager && m_localStorageManager->isActive())
         || (m_sessionStorageManager && m_sessionStorageManager->isActive())
         || (m_idbStorageManager && m_idbStorageManager->isActive())
-        || (m_cacheStorageManager &&  m_cacheStorageManager->isActive());
+        || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->isActive());
 }
 
 bool OriginStorageManager::StorageBucket::hasDataInMemory() const
@@ -291,7 +291,7 @@ bool OriginStorageManager::StorageBucket::hasDataInMemory() const
     return (m_localStorageManager && m_localStorageManager->hasDataInMemory())
         || (m_sessionStorageManager && m_sessionStorageManager->hasDataInMemory())
         || (m_idbStorageManager && m_idbStorageManager->hasDataInMemory())
-        || (m_cacheStorageManager && m_cacheStorageManager->hasDataInMemory());
+        || (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->hasDataInMemory());
 }
 
 bool OriginStorageManager::StorageBucket::isEmpty()
@@ -342,7 +342,7 @@ OptionSet<WebsiteDataType> OriginStorageManager::StorageBucket::fetchDataTypesIn
     }
 
     if (types.contains(WebsiteDataType::DOMCache)) {
-        if (m_cacheStorageManager && m_cacheStorageManager->hasDataInMemory())
+        if (m_cacheStorageManager && RefPtr { m_cacheStorageManager }->hasDataInMemory())
             result.add(WebsiteDataType::DOMCache);
     }
 
@@ -637,7 +637,7 @@ Ref<OriginQuotaManager> OriginStorageManager::createQuotaManager(OriginQuotaMana
         auto cacheStoragePath = resolvedPath(WebsiteDataType::DOMCache);
         auto fileSystemStoragePath = resolvedPath(WebsiteDataType::FileSystem);
         uint64_t fileSystemStorageSize = valueOrDefault(FileSystem::directorySize(fileSystemStoragePath));
-        if (auto* fileSystemStorageManager = existingFileSystemStorageManager()) {
+        if (RefPtr fileSystemStorageManager = existingFileSystemStorageManager()) {
             CheckedUint64 totalFileSystemStorageSize = fileSystemStorageSize;
             totalFileSystemStorageSize += fileSystemStorageManager->allocatedUnusedCapacity();
             if (!totalFileSystemStorageSize.hasOverflowed())
@@ -805,7 +805,8 @@ WebCore::StorageEstimate OriginStorageManager::estimate()
 {
     ASSERT(!RunLoop::isMain());
 
-    return WebCore::StorageEstimate { quotaManager().usage(), quotaManager().reportedQuota() };
+    Ref quotaManager = this->quotaManager();
+    return WebCore::StorageEstimate { quotaManager->usage(), quotaManager->reportedQuota() };
 }
 
 OriginStorageManager::DataTypeSizeMap OriginStorageManager::fetchDataTypesInList(OptionSet<WebsiteDataType> types, bool shouldComputeSize)

@@ -112,6 +112,8 @@ WI.OverviewTimelineView = class OverviewTimelineView extends WI.TimelineView
         this._recording.removeEventListener(WI.TimelineRecording.Event.SourceCodeTimelineAdded, this._sourceCodeTimelineAdded, this);
         this._recording.removeEventListener(WI.TimelineRecording.Event.MarkerAdded, this._markerAdded, this);
         this._recording.removeEventListener(WI.TimelineRecording.Event.Reset, this._recordingReset, this);
+
+        super.closed();
     }
 
     get navigationItems()

@@ -14,10 +14,10 @@ function shouldBe(actual, expected) {
     };
 
     var slicedArr;
-    for (var i = 0; i < 1e6; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         slicedArr = [].slice.call(sourceObj);
     }
 
     shouldBe(slicedArr.length, 3);
-    shouldBe(lengthLookups, 1e6);
+    shouldBe(lengthLookups, testLoopCount);
 })();

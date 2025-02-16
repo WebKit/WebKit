@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,6 +33,7 @@
 namespace WebKit {
 
 class MockAuthenticatorManager final : public AuthenticatorManager {
+    WTF_MAKE_TZONE_ALLOCATED(MockAuthenticatorManager);
 public:
     static Ref<MockAuthenticatorManager> create(WebCore::MockWebAuthenticationConfiguration&&);
 

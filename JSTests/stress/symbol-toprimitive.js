@@ -2,7 +2,7 @@
 let foo = { }
 foo[Symbol.toPrimitive] = function() { return {} };
 
-for (i = 0; i < 100000; i++) {
+for (i = 0; i < testLoopCount; i++) {
     let failed = true;
     try {
         foo >= 1;

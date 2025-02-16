@@ -13,6 +13,7 @@ from scratch, and restoring the needed files with Git. Example commands:
       Source/ThirdParty/libsysprof-capture/README.WebKit \
       Source/ThirdParty/libsysprof-capture/CMakeLists.txt \
       Source/ThirdParty/libsysprof-capture/include/config.h
+  git rm -r Source/ThirdParty/libsysprof-capture/tests
   git add -A Source/ThirdParty/libsysprof-capture
 
 The sysprof-version.h file has to be generated to be included in this

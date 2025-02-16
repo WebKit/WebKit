@@ -60,12 +60,12 @@ CSSCursorImageValue::CSSCursorImageValue(Ref<CSSValue>&& imageValue, RefPtr<CSSV
 
 CSSCursorImageValue::~CSSCursorImageValue() = default;
 
-String CSSCursorImageValue::customCSSText() const
+String CSSCursorImageValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    auto text = m_imageValue->cssText();
+    auto text = m_imageValue->cssText(context);
     if (!m_hotSpot)
         return text;
-    return makeString(text, ' ', m_hotSpot->first().cssText(), ' ', m_hotSpot->second().cssText());
+    return makeString(text, ' ', m_hotSpot->first().cssText(context), ' ', m_hotSpot->second().cssText(context));
 }
 
 bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const

@@ -21,7 +21,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true, tail_call: true, exceptions: true })
     const { start } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         start()
     }
 }

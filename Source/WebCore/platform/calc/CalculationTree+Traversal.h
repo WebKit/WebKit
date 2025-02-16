@@ -65,6 +65,10 @@ template<typename F, typename Op> void forAllChildren(const Op& root, const F& f
         {
             functor(root);
         }
+        void operator()(const Random::CachingOptions& root)
+        {
+            functor(root);
+        }
     };
     auto caller = Caller { functor };
     WTF::apply([&](const auto& ...x) { (..., caller(x)); }, root);

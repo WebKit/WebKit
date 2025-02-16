@@ -108,24 +108,25 @@ void WebPaymentCoordinatorProxy::showPaymentUI(WebCore::PageIdentifier destinati
         return URL { linkIconURLString };
     });
 
-    platformShowPaymentUI(webPageProxyID, originatingURL, linkIconURLs, paymentRequest, [this, weakThis = WeakPtr { *this }](bool result) {
-        if (!weakThis)
+    platformShowPaymentUI(webPageProxyID, originatingURL, linkIconURLs, paymentRequest, [weakThis = WeakPtr { *this }](bool result) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        if (m_state == State::Idle) {
+        if (protectedThis->m_state == State::Idle) {
             ASSERT(!activePaymentCoordinatorProxy());
-            ASSERT(!m_destinationID);
-            ASSERT(m_merchantValidationState == MerchantValidationState::Idle);
+            ASSERT(!protectedThis->m_destinationID);
+            ASSERT(protectedThis->m_merchantValidationState == MerchantValidationState::Idle);
             return;
         }
 
-        ASSERT(m_state == State::Activating);
+        ASSERT(protectedThis->m_state == State::Activating);
         if (!result) {
-            didReachFinalState();
+            protectedThis->didReachFinalState();
             return;
         }
 
-        m_state = State::Active;
+        protectedThis->m_state = State::Active;
     });
 
     completionHandler(true);

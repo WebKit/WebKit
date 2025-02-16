@@ -79,9 +79,9 @@ template<typename D> constexpr bool containsCurrentColor(const AbsoluteColor<D>&
 }
 
 template<typename D> struct Serialize<AbsoluteColor<D>> {
-    void operator()(StringBuilder& builder, const AbsoluteColor<D>& value)
+    void operator()(StringBuilder& builder, const SerializationContext& context, const AbsoluteColor<D>& value)
     {
-        serializationForCSSAbsoluteColor(builder, value);
+        serializationForCSSAbsoluteColor(builder, context, value);
     }
 };
 
@@ -96,7 +96,7 @@ template<typename D> struct ComputedStyleDependenciesCollector<AbsoluteColor<D>>
 };
 
 template<typename D> struct CSSValueChildrenVisitor<AbsoluteColor<D>> {
-    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const AbsoluteColor<D>& value)
+    IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const AbsoluteColor<D>& value)
     {
         if (visitCSSValueChildren(func, std::get<0>(value.components)) == IterationStatus::Done)
             return IterationStatus::Done;

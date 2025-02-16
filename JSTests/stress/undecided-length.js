@@ -10,7 +10,7 @@ function test1(array)
     return array.length;
 }
 noInline(test1);
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test1(array), 0);
 
 var array = [];
@@ -21,5 +21,5 @@ function test2(array)
     return array.length;
 }
 noInline(test2);
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test2(array), 0);

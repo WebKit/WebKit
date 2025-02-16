@@ -292,7 +292,7 @@ MediaTime MediaSourcePrivate::currentTime() const
 {
     if (RefPtr player = this->player())
         return player->currentOrPendingSeekTime();
-    return MediaTime::invalidTime();
+    return MediaTime::zeroTime();
 }
 
 bool MediaSourcePrivate::timeIsProgressing() const

@@ -43,7 +43,7 @@ public:
     virtual ~RenderMathMLRow();
 
 protected:
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     std::optional<LayoutUnit> firstLineBaseline() const override;
 
     void stretchVerticalOperatorsAndLayoutChildren();

@@ -47,7 +47,9 @@ std::unique_ptr<AcceleratedSurfaceLibWPE> AcceleratedSurfaceLibWPE::create(WebPa
 AcceleratedSurfaceLibWPE::AcceleratedSurfaceLibWPE(WebPage& webPage, Function<void()>&& frameCompleteHandler)
     : AcceleratedSurface(webPage, WTFMove(frameCompleteHandler))
     , m_hostFD(webPage.hostFileDescriptor())
+    , m_initialSize(webPage.size())
 {
+    m_initialSize.scale(webPage.deviceScaleFactor());
 }
 
 AcceleratedSurfaceLibWPE::~AcceleratedSurfaceLibWPE()
@@ -80,7 +82,7 @@ void AcceleratedSurfaceLibWPE::initialize()
     };
     wpe_renderer_backend_egl_target_set_client(m_backend, &s_client, this);
     wpe_renderer_backend_egl_target_initialize(m_backend, downcast<PlatformDisplayLibWPE>(PlatformDisplay::sharedDisplay()).backend(),
-        std::max(1, m_size.width()), std::max(1, m_size.height()));
+        std::max(1, m_initialSize.width()), std::max(1, m_initialSize.height()));
 }
 
 uint64_t AcceleratedSurfaceLibWPE::window() const
@@ -100,10 +102,14 @@ uint64_t AcceleratedSurfaceLibWPE::surfaceID() const
     return m_webPage->identifier().toUInt64();
 }
 
-void AcceleratedSurfaceLibWPE::clientResize(const IntSize& size)
+bool AcceleratedSurfaceLibWPE::resize(const IntSize& size)
 {
+    if (!AcceleratedSurface::resize(size))
+        return false;
+
     ASSERT(m_backend);
-    wpe_renderer_backend_egl_target_resize(m_backend, std::max(1, m_size.width()), std::max(1, m_size.height()));
+    wpe_renderer_backend_egl_target_resize(m_backend, std::max(1, size.width()), std::max(1, size.height()));
+    return true;
 }
 
 void AcceleratedSurfaceLibWPE::willRenderFrame()

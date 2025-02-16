@@ -294,6 +294,7 @@ def test_alert_should_not_allow_additional_commands_if_dismissed(driver, pages):
 @pytest.mark.xfail_remote(reason="https://bugzilla.mozilla.org/show_bug.cgi?id=1279211")
 @pytest.mark.xfail_chrome
 @pytest.mark.xfail_edge
+@pytest.mark.xfail_safari
 def test_unexpected_alert_present_exception_contains_alert_text(driver, pages):
     pages.load("alerts.html")
     driver.find_element(by=By.ID, value="alert").click()

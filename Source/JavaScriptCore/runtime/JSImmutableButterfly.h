@@ -29,6 +29,7 @@
 #include "IndexingHeader.h"
 #include "JSCJSValueInlines.h"
 #include "JSCell.h"
+#include "ResourceExhaustion.h"
 #include "Structure.h"
 #include "VirtualRegister.h"
 
@@ -64,10 +65,15 @@ public:
         return result;
     }
 
+    static JSImmutableButterfly* tryCreate(VM& vm, IndexingType indexingType, unsigned length)
+    {
+        return tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(indexingType) - NumberOfIndexingShapes].get(), length);
+    }
+
     static JSImmutableButterfly* create(VM& vm, IndexingType indexingType, unsigned length)
     {
-        auto* array = tryCreate(vm, vm.immutableButterflyStructures[arrayIndexFromIndexingType(indexingType) - NumberOfIndexingShapes].get(), length);
-        RELEASE_ASSERT(array);
+        auto* array = tryCreate(vm, indexingType, length);
+        RELEASE_ASSERT_RESOURCE_AVAILABLE(array, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
         return array;
     }
 

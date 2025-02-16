@@ -149,7 +149,7 @@ bool InspectorNodeFinder::matchesElement(const Element& element)
     if (!element.hasAttributes())
         return false;
 
-    for (const Attribute& attribute : element.attributesIterator()) {
+    for (auto& attribute : element.attributes()) {
         if (matchesAttribute(attribute))
             return true;
     }

@@ -41,7 +41,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FECompositeSoftwareArithmeticApplier);
 FECompositeSoftwareArithmeticApplier::FECompositeSoftwareArithmeticApplier(const FEComposite& effect)
     : Base(effect)
 {
-    ASSERT(m_effect.operation() == CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC);
+    ASSERT(m_effect->operation() == CompositeOperationType::FECOMPOSITE_OPERATOR_ARITHMETIC);
 }
 
 uint8_t FECompositeSoftwareArithmeticApplier::clampByte(int c)
@@ -133,20 +133,20 @@ inline void FECompositeSoftwareArithmeticApplier::applyPlatform(std::span<unsign
 
 bool FECompositeSoftwareArithmeticApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
-    auto& input2 = inputs[1].get();
+    Ref input = inputs[0];
+    Ref input2 = inputs[1];
 
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     IntRect effectADrawingRect = result.absoluteImageRectRelativeTo(input);
-    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect.operatingColorSpace());
+    auto sourcePixelBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect->operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
     IntRect effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
-    input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
+    input2->copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
     auto sourcePixelBytes = sourcePixelBuffer->bytes();
     auto destinationPixelBytes = destinationPixelBuffer->bytes();
@@ -154,7 +154,7 @@ bool FECompositeSoftwareArithmeticApplier::apply(const Filter&, const FilterImag
     auto length = sourcePixelBuffer->bytes().size();
     ASSERT(length == destinationPixelBuffer->bytes().size());
 
-    applyPlatform(sourcePixelBytes, destinationPixelBytes, length, m_effect.k1(), m_effect.k2(), m_effect.k3(), m_effect.k4());
+    applyPlatform(sourcePixelBytes, destinationPixelBytes, length, m_effect->k1(), m_effect->k2(), m_effect->k3(), m_effect->k4());
     return true;
 }
 

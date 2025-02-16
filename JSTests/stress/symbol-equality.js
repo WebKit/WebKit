@@ -27,7 +27,7 @@ var list = [
 list.forEach(function (set) {
     var pair =  set[0];
     var result = set[1];
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(equal(pair[0], pair[1]), result);
         shouldBe(strictEqual(pair[0], pair[1]), result);
     }

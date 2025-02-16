@@ -240,6 +240,7 @@ def test_is_element_displayed(driver, pages):
 
 
 @pytest.mark.xfail_chrome
+@pytest.mark.xfail_safari
 def test_move_window_position(driver, pages):
     pages.load("blank.html")
     loc = driver.get_window_position()
@@ -257,6 +258,7 @@ def test_move_window_position(driver, pages):
     assert loc["y"] == new_y
 
 
+@pytest.mark.xfail_edge(reason="Window does not resize")
 def test_change_window_size(driver, pages):
     pages.load("blank.html")
     size = driver.get_window_size()

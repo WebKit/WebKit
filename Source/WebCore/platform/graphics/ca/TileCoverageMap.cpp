@@ -42,8 +42,10 @@ TileCoverageMap::TileCoverageMap(const TileController& controller)
     , m_visibleViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_layoutViewportIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
     , m_coverageRectIndicatorLayer(controller.rootLayer().createCompatibleLayer(PlatformCALayer::LayerType::LayerTypeLayer, nullptr))
-    , m_position(FloatPoint(0, controller.topContentInset()))
 {
+    auto obscuredContentInsets = controller.obscuredContentInsets();
+    m_position = { obscuredContentInsets.left(), obscuredContentInsets.top() };
+
     m_layer.get().setOpacity(0.75);
     m_layer.get().setAnchorPoint(FloatPoint3D());
     m_layer.get().setBorderColor(Color::black);
@@ -101,7 +103,7 @@ void TileCoverageMap::update()
     float scale = 1;
     if (!containerBounds.isEmpty()) {
         widthScale = std::min<float>(visibleRect.width() / containerBounds.width(), 0.1);
-        float visibleHeight = visibleRect.height() - std::min(m_controller.topContentInset(), visibleRect.y());
+        float visibleHeight = visibleRect.height() - std::min(m_controller.obscuredContentInsets().top(), visibleRect.y());
         scale = std::min(widthScale, visibleHeight / containerBounds.height());
     }
 

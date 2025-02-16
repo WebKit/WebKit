@@ -28,8 +28,6 @@
 
 #include "WebPageProxy.h"
 
-#if ENABLE(DATALIST_ELEMENT)
-
 namespace WebKit {
 
 WebDataListSuggestionsDropdown::WebDataListSuggestionsDropdown(WebPageProxy& page)
@@ -48,5 +46,3 @@ void WebDataListSuggestionsDropdown::close()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATALIST_ELEMENT)

@@ -565,7 +565,7 @@ void ViewportConfiguration::updateConfiguration()
     if (canOverrideConfigurationParameters()) {
         if (!viewportArgumentsOverridesWidth)
             m_configuration.width = m_minimumLayoutSize.width();
-        else if (layoutSizeIsExplicitlyScaled())
+        else if (layoutSizeIsExplicitlyScaled() && m_viewportArguments.width > 0)
             m_configuration.width /= effectiveLayoutScale;
     }
 

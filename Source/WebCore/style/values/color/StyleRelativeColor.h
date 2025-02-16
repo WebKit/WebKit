@@ -29,6 +29,7 @@
 #include "CSSRelativeColor.h"
 #include "CSSRelativeColorResolver.h"
 #include "CSSRelativeColorSerialization.h"
+#include "CSSSerializationContext.h"
 #include "Color.h"
 #include "ColorSerialization.h"
 #include "StyleColor.h"
@@ -100,22 +101,21 @@ template<typename D> bool containsCurrentColor(const RelativeColor<D>& relative)
     return WebCore::Style::containsCurrentColor(relative.origin);
 }
 
-template<typename D> void serializationForCSS(StringBuilder& builder, const RelativeColor<D>& relative)
+template<typename D> void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const RelativeColor<D>& relative)
 {
-    CSS::serializationForCSSRelativeColor(builder, relative);
+    CSS::serializationForCSSRelativeColor(builder, context, relative);
 }
 
-template<typename D> String serializationForCSS(const RelativeColor<D>& relative)
+template<typename D> String serializationForCSS(const CSS::SerializationContext& context, const RelativeColor<D>& relative)
 {
     StringBuilder builder;
-    serializationForCSS(builder, relative);
+    serializationForCSS(builder, context, relative);
     return builder.toString();
 }
 
 template<typename D> WTF::TextStream& operator<<(WTF::TextStream& ts, const RelativeColor<D>& relative)
 {
-    ts << "relativeColor(" << serializationForCSS(relative) << ")";
-    return ts;
+    return ts << "relativeColor(" << serializationForCSS(CSS::defaultSerializationContext(), relative) << ")";
 }
 
 } // namespace Style

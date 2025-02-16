@@ -14,6 +14,9 @@
 
 #include <libANGLE/renderer/vulkan/CLDeviceVk.h>
 
+#include "clspv/Compiler.h"
+#include "spirv-tools/libspirv.h"
+
 namespace rx
 {
 struct ClspvPrintfBufferStorage
@@ -38,6 +41,18 @@ angle::Result ClspvProcessPrintfBuffer(unsigned char *buffer,
 // Populate a list of options that can be supported by clspv based on the features supported by the
 // vulkan renderer.
 std::string ClspvGetCompilerOptions(const CLDeviceVk *device);
+
+ClspvError ClspvCompileSource(const size_t programCount,
+                              const size_t *programSizes,
+                              const char **programs,
+                              const char *options,
+                              char **outputBinary,
+                              size_t *outputBinarySize,
+                              char **outputLog);
+
+spv_target_env ClspvGetSpirvVersion(const vk::Renderer *renderer);
+
+bool ClspvValidate(vk::Renderer *rendererVk, const angle::spirv::Blob &blob);
 
 }  // namespace rx
 

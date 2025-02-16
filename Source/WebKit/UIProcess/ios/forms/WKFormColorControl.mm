@@ -26,7 +26,7 @@
 #import "config.h"
 #import "WKFormColorControl.h"
 
-#if ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import "FocusedElementInformation.h"
 #import "UIKitSPI.h"
@@ -72,7 +72,6 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-#if ENABLE(DATALIST_ELEMENT)
 - (NSArray<UIColor *> *)focusedElementSuggestedColors
 {
     auto& colors = _view.focusedElementInformation.suggestedColors;
@@ -84,16 +83,13 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         return cocoaColor(color);
     }).autorelease();
 }
-#endif
 
 - (void)updateColorPickerState
 {
     [_colorPickerViewController setSelectedColor:cocoaColor(_view.focusedElementInformation.colorValue).get()];
     [_colorPickerViewController setSupportsAlpha:_view.focusedElementInformation.supportsAlpha == WebKit::ColorControlSupportsAlpha::Yes && _view.page->preferences().inputTypeColorEnhancementsEnabled()];
-#if ENABLE(DATALIST_ELEMENT)
     if ([_colorPickerViewController respondsToSelector:@selector(_setSuggestedColors:)])
         [_colorPickerViewController _setSuggestedColors:[self focusedElementSuggestedColors]];
-#endif
 }
 
 - (void)configurePresentation
@@ -180,4 +176,4 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 @end
 
-#endif // ENABLE(INPUT_TYPE_COLOR) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

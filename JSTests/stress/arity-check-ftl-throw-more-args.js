@@ -9,7 +9,7 @@ var g = new Function(script, "return recursionCount ? g(recursionCount - 1) : 0;
 noInline(g);
 
 // Ensure that f and g get optimized.
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     // Recurse once to ensure profiling along all control flow paths.
     g(1);
 }

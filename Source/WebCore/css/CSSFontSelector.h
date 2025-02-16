@@ -126,7 +126,7 @@ private:
     WeakPtr<ScriptExecutionContext> m_context;
     RefPtr<FontFaceSet> m_fontFaceSet;
     Ref<CSSFontFaceSet> m_cssFontFaceSet;
-    HashSet<FontSelectorClient*> m_clients;
+    UncheckedKeyHashSet<FontSelectorClient*> m_clients;
 
     struct PaletteMapHash : DefaultHash<std::pair<AtomString, AtomString>> {
         static unsigned hash(const std::pair<AtomString, AtomString>& key)
@@ -142,8 +142,8 @@ private:
     UncheckedKeyHashMap<std::pair<AtomString, AtomString>, FontPaletteValues, PaletteMapHash> m_paletteMap;
     UncheckedKeyHashMap<String, Ref<FontFeatureValues>> m_featureValues;
 
-    HashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
-    HashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
+    UncheckedKeyHashSet<RefPtr<CSSFontFace>> m_cssConnectionsPossiblyToRemove;
+    UncheckedKeyHashSet<RefPtr<StyleRuleFontFace>> m_cssConnectionsEncounteredDuringBuild;
 
     CSSFontFaceSet::FontModifiedObserver m_fontModifiedObserver;
 

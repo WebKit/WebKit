@@ -7,14 +7,12 @@ PASS: pdfEmbedElement.childrenCount === 1
 PASS: pdfAxObject.stringAttributeValue('AXSubrole') === 'AXPDFPluginSubrole'
 PASS: pdfAxObject.childrenCount === 1
 PASS: pdfAxObject.parentElement().domIdentifier === 'pdfEmbed'
-PASS: pdfLayerController.stringAttributeValue('AXRole') === 'AXGroup'
-PASS: pdfLayerController.stringAttributeValue('AXDescription') === 'document'
+PASS: pdfPageObject.role === 'AXRole: AXPage'
 PASS: pdfTextNode.stringAttributeValue('AXRole') === 'AXStaticText'
-PASS: pdfTextNode.stringAttributeValue('AXValue').trimEnd() === 'Welcome to the website for the WebKit Open Source Project!'
+PASS: pdfTextNode.stringValue.split(' ')[1] === 'Welcome'
 PASS: hitTestResult.stringAttributeValue('AXRole') === 'AXGroup'
-PASS: hitTestResult.stringAttributeValue('AXDescription') === 'document'
 PASS: pdfTextNode.stringAttributeValue('AXRole') === 'AXStaticText'
-PASS: pdfTextNode.stringAttributeValue('AXValue').trimEnd() === 'Welcome to the website for the WebKit Open Source Project!'
+PASS: pdfTextNode.stringValue.split(' ')[1] === 'Welcome'
 PASS: searchResultElement.stringAttributeValue('AXSubrole') === 'AXPDFPluginSubrole'
 
 PASS successfullyParsed is true

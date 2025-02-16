@@ -46,8 +46,7 @@ class RemoteAudioSession final
     : public WebCore::AudioSession
     , public WebCore::AudioSessionInterruptionObserver
     , public GPUProcessConnection::Client
-    , IPC::MessageReceiver
-    , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteAudioSession> {
+    , IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioSession);
 public:
     static Ref<RemoteAudioSession> create();
@@ -80,6 +79,7 @@ private:
     size_t bufferSize() const final { return configuration().bufferSize; }
     size_t numberOfOutputChannels() const final { return configuration().numberOfOutputChannels; }
     size_t maximumNumberOfOutputChannels() const final { return configuration().maximumNumberOfOutputChannels; }
+    size_t outputLatency() const final { return configuration().outputLatency; }
 
     bool tryToSetActiveInternal(bool) final;
 

@@ -24,7 +24,7 @@ function belowOrEqual(a, b) {
 noInline(belowOrEqual);
 
 (function aboveTest() {
-    for (let i = 0; i < 1e5; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         shouldBe(above(0, 20), false);
         shouldBe(above(0, 0), false);
         shouldBe(above(0, -0), false);
@@ -40,7 +40,7 @@ noInline(belowOrEqual);
 }());
 
 (function aboveOrEqualTest() {
-    for (let i = 0; i < 1e5; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         shouldBe(aboveOrEqual(0, 20), false);
         shouldBe(aboveOrEqual(0, 0), true);
         shouldBe(aboveOrEqual(0, -0), true);
@@ -56,7 +56,7 @@ noInline(belowOrEqual);
 }());
 
 (function belowTest() {
-    for (let i = 0; i < 1e5; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         shouldBe(below(0, 20), true);
         shouldBe(below(0, 0), false);
         shouldBe(below(0, -0), false);
@@ -72,7 +72,7 @@ noInline(belowOrEqual);
 }());
 
 (function belowOrEqualTest() {
-    for (let i = 0; i < 1e5; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         shouldBe(belowOrEqual(0, 20), true);
         shouldBe(belowOrEqual(0, 0), true);
         shouldBe(belowOrEqual(0, -0), true);

@@ -167,8 +167,8 @@ static Vector<uint8_t> combineSegmentsData(const FragmentedSharedBuffer::DataSeg
 
 Ref<SharedBuffer> FragmentedSharedBuffer::makeContiguous() const
 {
-    if (m_contiguous)
-        return Ref { *static_cast<SharedBuffer*>(const_cast<FragmentedSharedBuffer*>(this)) };
+    if (RefPtr sharedBuffer = dynamicDowncast<SharedBuffer>(*const_cast<FragmentedSharedBuffer*>(this)))
+        return sharedBuffer.releaseNonNull();
     if (!m_segments.size())
         return SharedBuffer::create();
     if (m_segments.size() == 1)
@@ -330,14 +330,14 @@ Ref<FragmentedSharedBuffer> FragmentedSharedBuffer::copy() const
     return clone;
 }
 
-void FragmentedSharedBuffer::forEachSegment(const Function<void(std::span<const uint8_t>)>& apply) const
+void FragmentedSharedBuffer::forEachSegment(NOESCAPE const Function<void(std::span<const uint8_t>)>& apply) const
 {
     auto segments = m_segments;
     for (auto& segment : segments)
         segment.segment->iterate(apply);
 }
 
-void DataSegment::iterate(const Function<void(std::span<const uint8_t>)>& apply) const
+void DataSegment::iterate(NOESCAPE const Function<void(std::span<const uint8_t>)>& apply) const
 {
 #if USE(FOUNDATION)
     if (auto* data = std::get_if<RetainPtr<CFDataRef>>(&m_immutableData))
@@ -346,7 +346,7 @@ void DataSegment::iterate(const Function<void(std::span<const uint8_t>)>& apply)
     apply(span());
 }
 
-void FragmentedSharedBuffer::forEachSegmentAsSharedBuffer(const Function<void(Ref<SharedBuffer>&&)>& apply) const
+void FragmentedSharedBuffer::forEachSegmentAsSharedBuffer(NOESCAPE const Function<void(Ref<SharedBuffer>&&)>& apply) const
 {
     auto protectedThis = Ref { *this };
     for (auto& segment : m_segments)
@@ -632,7 +632,7 @@ std::span<const uint8_t> DataSegment::span() const
         [](const GRefPtr<GBytes>& data) -> std::span<const uint8_t> { return WTF::span(data); },
 #endif
 #if USE(GSTREAMER)
-        [](const RefPtr<GstMappedOwnedBuffer>& data) -> std::span<const uint8_t> { return data->span(); },
+        [](const RefPtr<GstMappedOwnedBuffer>& data) -> std::span<const uint8_t> { return data->span<uint8_t>(); },
 #endif
 #if USE(SKIA)
         [](const sk_sp<SkData>& data) -> std::span<const uint8_t> { return WebCore::span(data); },
@@ -680,7 +680,8 @@ void SharedBufferBuilder::initialize(Ref<FragmentedSharedBuffer>&& buffer)
 
 RefPtr<ArrayBuffer> SharedBufferBuilder::tryCreateArrayBuffer() const
 {
-    return m_buffer ? m_buffer->tryCreateArrayBuffer() : ArrayBuffer::tryCreate();
+    RefPtr buffer = m_buffer;
+    return buffer ? buffer->tryCreateArrayBuffer() : ArrayBuffer::tryCreate();
 }
 
 Ref<FragmentedSharedBuffer> SharedBufferBuilder::take()

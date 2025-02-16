@@ -8,7 +8,7 @@ function foo(p) {
 noInline(foo);
 noOSRExitFuzzing(foo);
 
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     foo("baz");
 }
 

@@ -5,7 +5,7 @@ let floatView = new Float32Array(buffer);
 
 function foo() {
     let tmp = floatView[0];
-    for (let i = 0; i < 10000; ++i) { }
+    for (let i = 0; i < testLoopCount; ++i) { }
     if (tmp) {}
 }
 

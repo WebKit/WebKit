@@ -4,8 +4,6 @@ webkit.org/b/268789 [ Debug ] imported/w3c/web-platform-tests/css/css-break/tabl
 
 # With CryptoKit, these tests start to work properly, but cryptoKit enablement is macOS 14.5 or higher so we need to mark them fail for 13.X  and < 14.5 bots
 # Instead of skipping them, we let them run atleast so that we have logs for the test cases in those logs that do actually work correctly.
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.html [ Failure ]
-imported/w3c/web-platform-tests/WebCryptoAPI/import_export/ec_importKey.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_bits_curve25519.https.any.worker.html [ Failure ]
 imported/w3c/web-platform-tests/WebCryptoAPI/sign_verify/eddsa_small_order_points.https.any.html [ Failure ]
@@ -42,3 +40,6 @@ fast/webgpu/nocrash/fuzz-281614.html [ Skip ]
 # These fail with a shader validation error on Ventura, but not on later OSes.
 fast/webgpu/nocrash/fuzz-283071.html [ Skip ]
 fast/webgpu/nocrash/fuzz-283157.html [ Skip ]
+
+# webkit.org/b/285755 [EWS] macOS-Ventura-Release-WK2-Intel-Tests-EWS bots stuck in login page due to window server crashes
+[ x86_64 ] fast/webgpu [ Skip ]

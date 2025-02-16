@@ -33,6 +33,7 @@
 #include "NinePieceImage.h"
 #include "OffsetRotation.h"
 #include "PathOperation.h"
+#include "PositionArea.h"
 #include "PositionTryFallback.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
@@ -44,6 +45,9 @@
 #include "ShapeValue.h"
 #include "StyleColor.h"
 #include "StyleContentAlignmentData.h"
+#include "StylePrimitiveNumericTypes.h"
+#include "StyleScrollMargin.h"
+#include "StyleScrollPadding.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextEdge.h"
@@ -66,6 +70,8 @@ class TextStream;
 }
 
 namespace WebCore {
+
+using namespace CSS::Literals;
 
 class AnimationList;
 class ContentData;
@@ -144,9 +150,11 @@ public:
     DataRef<StyleGridData> grid;
     DataRef<StyleGridItemData> gridItem;
 
+    // Only meaningful when `hasClip` is true.
     LengthBox clip;
-    LengthBox scrollMargin { 0, 0, 0, 0 };
-    LengthBox scrollPadding { Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto), Length(LengthType::Auto) };
+
+    Style::ScrollMargin scrollMargin { 0_css_px };
+    Style::ScrollPadding scrollPadding { CSS::Keyword::Auto { } };
 
     CounterDirectiveMap counterDirectives;
 
@@ -169,7 +177,7 @@ public:
     Style::Color textDecorationColor;
 
     DataRef<StyleCustomPropertyData> customProperties;
-    HashSet<AtomString> customPaintWatchedProperties;
+    UncheckedKeyHashSet<AtomString> customPaintWatchedProperties;
 
     RefPtr<RotateTransformOperation> rotate;
     RefPtr<ScaleTransformOperation> scale;
@@ -212,6 +220,7 @@ public:
 
     Vector<Style::ScopedName> anchorNames;
     std::optional<Style::ScopedName> positionAnchor;
+    std::optional<PositionArea> positionArea;
     Vector<PositionTryFallback> positionTryFallbacks;
 
     std::optional<Length> blockStepSize;

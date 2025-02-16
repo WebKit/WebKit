@@ -21,7 +21,7 @@ var result = 0;
 
 noInline(foo)
 
-for (i = 0; i < 100000; i++)
+for (i = 0; i < testLoopCount; i++)
     result = result | foo(argA, argB, 4)
 
 if (result != 0xffdd)

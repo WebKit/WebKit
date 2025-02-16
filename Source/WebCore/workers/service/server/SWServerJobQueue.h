@@ -77,7 +77,7 @@ private:
 
     void install(SWServerRegistration&, ServiceWorkerIdentifier);
 
-    void removeAllJobsMatching(const Function<bool(ServiceWorkerJobData&)>&);
+    void removeAllJobsMatching(NOESCAPE const Function<bool(ServiceWorkerJobData&)>&);
     void scriptAndImportedScriptsFetchFinished(const ServiceWorkerJobData&, SWServerRegistration&);
 
     Ref<SWServer> protectedServer() const { return m_server.get(); }

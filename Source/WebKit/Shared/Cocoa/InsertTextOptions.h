@@ -28,6 +28,10 @@
 #include "ArgumentCoders.h"
 #include "EditingRange.h"
 
+namespace WebCore {
+enum class TextDirection : bool;
+}
+
 namespace WebKit {
 
 struct InsertTextOptions {
@@ -36,6 +40,7 @@ struct InsertTextOptions {
     bool processingUserGesture { false };
     bool shouldSimulateKeyboardInput { false };
     EditingRangeIsRelativeTo editingRangeIsRelativeTo { EditingRangeIsRelativeTo::EditableRoot };
+    std::optional<WebCore::TextDirection> directionFromCurrentInputMode;
 };
 
 } // namespace WebKit

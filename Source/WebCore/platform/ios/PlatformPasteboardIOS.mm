@@ -98,7 +98,7 @@ PasteboardBuffer PlatformPasteboard::bufferForType(const String& type) const
     return pasteboardBuffer;
 }
 
-void PlatformPasteboard::performAsDataOwner(DataOwnerType type, Function<void()>&& actions)
+void PlatformPasteboard::performAsDataOwner(DataOwnerType type, NOESCAPE Function<void()>&& actions)
 {
     auto dataOwner = _UIDataOwnerUndefined;
     switch (type) {

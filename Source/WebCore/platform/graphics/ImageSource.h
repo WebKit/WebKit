@@ -80,6 +80,7 @@ public:
     virtual unsigned frameCount() const { return 1; }
     virtual DestinationColorSpace colorSpace() const = 0;
     virtual std::optional<Color> singlePixelSolidColor() const = 0;
+    virtual Headroom headroom() const = 0;
 
     bool hasSolidColor() const;
 
@@ -101,7 +102,6 @@ public:
     // ImageFrame Metadata
     virtual Seconds frameDurationAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return 0_s; }
     virtual ImageOrientation frameOrientationAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return ImageOrientation::Orientation::None; }
-    virtual Headroom frameHeadroomAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return Headroom::None; }
     virtual DecodingStatus frameDecodingStatusAtIndex(unsigned) const { RELEASE_ASSERT_NOT_REACHED(); return DecodingStatus::Invalid; }
 
     // Testing support

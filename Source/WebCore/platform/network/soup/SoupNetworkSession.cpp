@@ -94,7 +94,7 @@ private:
         return base64EncodeToString(digest->computeHash());
     }
 
-    HashSet<String> m_certificates;
+    UncheckedKeyHashSet<String> m_certificates;
 };
 
 SoupNetworkSession::SoupNetworkSession(PAL::SessionID sessionID)

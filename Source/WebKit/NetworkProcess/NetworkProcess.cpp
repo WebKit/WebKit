@@ -203,11 +203,18 @@ DownloadManager& NetworkProcess::downloadManager()
     return m_downloadManager;
 }
 
+CheckedRef<DownloadManager> NetworkProcess::checkedDownloadManager()
+{
+    return downloadManager();
+}
+
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess& connection)
 {
     ASSERT(m_webProcessConnections.contains(connection.webProcessIdentifier()));
     m_webProcessConnections.remove(connection.webProcessIdentifier());
     m_allowedFirstPartiesForCookies.remove(connection.webProcessIdentifier());
+    if (auto completionHandler = m_webProcessConnectionCloseHandlers.take(connection.webProcessIdentifier()))
+        completionHandler();
 }
 
 bool NetworkProcess::shouldTerminate()
@@ -237,14 +244,14 @@ void NetworkProcess::didClose(IPC::Connection&)
 {
     ASSERT(RunLoop::isMain());
 
-    auto callbackAggregator = CallbackAggregator::create([this] {
+    auto callbackAggregator = CallbackAggregator::create([protectedThis = Ref { *this }] {
         ASSERT(RunLoop::isMain());
-        m_didSyncCookiesForClose = true;
-        stopRunLoopIfNecessary();
+        protectedThis->m_didSyncCookiesForClose = true;
+        protectedThis->stopRunLoopIfNecessary();
     });
 
-    forEachNetworkSession([&](auto& session) {
-        platformFlushCookies(session.sessionID(), [callbackAggregator] { });
+    forEachNetworkSession([protectedThis = Ref { *this }, callbackAggregator = WTFMove(callbackAggregator)](auto& session) {
+        protectedThis->platformFlushCookies(session.sessionID(), [callbackAggregator] { });
         session.protectedStorageManager()->syncLocalStorage([callbackAggregator] { });
         session.notifyAdAttributionKitOfSessionTermination();
     });
@@ -384,6 +391,9 @@ void NetworkProcess::createNetworkConnectionToWebProcess(ProcessIdentifier ident
         connection->connection().setIgnoreInvalidMessageForTesting();
 #endif
 
+    for (auto pageID : parameters.pagesWithRelaxedThirdPartyCookieBlocking)
+        m_pagesWithRelaxedThirdPartyCookieBlocking.add(pageID);
+
     if (auto* session = networkSession(sessionID)) {
         Vector<WebCore::RegistrableDomain> allowedSites;
         auto iter = m_allowedFirstPartiesForCookies.find(identifier);
@@ -427,55 +437,49 @@ void NetworkProcess::addAllowedFirstPartyForCookies(WebCore::ProcessIdentifier p
     completionHandler();
 }
 
-void NetworkProcess::webProcessWillLoadWebArchive(WebCore::ProcessIdentifier processIdentifier)
+auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty) -> AllowCookieAccess
 {
-    m_allowedFirstPartiesForCookies.ensure(processIdentifier, [] {
-        return std::make_pair(LoadedWebArchive::Yes, HashSet<RegistrableDomain> { });
-    }).iterator->value.first = LoadedWebArchive::Yes;
+    auto allowCookieAccess = allowsFirstPartyForCookies(processIdentifier, RegistrableDomain { firstParty });
+    if (allowCookieAccess == NetworkProcess::AllowCookieAccess::Terminate) {
+        // FIXME: This should probably not be necessary. If about:blank is the first party for cookies,
+        // we should set it to be the inherited origin then remove this exception.
+        if (firstParty.isAboutBlank())
+            return AllowCookieAccess::Disallow;
+
+        if (firstParty.isNull())
+            return AllowCookieAccess::Disallow; // FIXME: This shouldn't be allowed.
+    }
+
+    return allowCookieAccess;
 }
 
-bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const URL& firstParty)
-{
-    // FIXME: This should probably not be necessary. If about:blank is the first party for cookies,
-    // we should set it to be the inherited origin then remove this exception.
-    if (firstParty.isAboutBlank())
-        return true;
-
-    if (firstParty.isNull())
-        return true; // FIXME: This shouldn't be allowed.
-
-    return allowsFirstPartyForCookies(processIdentifier, RegistrableDomain { firstParty });
-}
-
-bool NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain)
+auto NetworkProcess::allowsFirstPartyForCookies(WebCore::ProcessIdentifier processIdentifier, const RegistrableDomain& firstPartyDomain) -> AllowCookieAccess
 {
     // FIXME: This shouldn't be needed but it is hit sometimes at least with PDFs.
-    if (firstPartyDomain.isEmpty())
-        return true;
-
+    auto terminateOrDisallow = firstPartyDomain.isEmpty() ? AllowCookieAccess::Disallow : AllowCookieAccess::Terminate;
     if (!decltype(m_allowedFirstPartiesForCookies)::isValidKey(processIdentifier)) {
         ASSERT_NOT_REACHED();
-        return false;
+        return terminateOrDisallow;
     }
 
     auto iterator = m_allowedFirstPartiesForCookies.find(processIdentifier);
     if (iterator == m_allowedFirstPartiesForCookies.end()) {
         ASSERT_NOT_REACHED();
-        return false;
+        return terminateOrDisallow;
     }
 
     if (iterator->value.first == LoadedWebArchive::Yes)
-        return true;
+        return AllowCookieAccess::Allow;
 
     auto& set = iterator->value.second;
     if (!std::remove_reference_t<decltype(set)>::isValidValue(firstPartyDomain)) {
         ASSERT_NOT_REACHED();
-        return false;
+        return terminateOrDisallow;
     }
 
     auto result = set.contains(firstPartyDomain);
-    ASSERT(result);
-    return result;
+    ASSERT(result || terminateOrDisallow == AllowCookieAccess::Disallow);
+    return result ? AllowCookieAccess::Allow : terminateOrDisallow;
 }
 
 void NetworkProcess::addStorageSession(PAL::SessionID sessionID, const WebsiteDataStoreParameters& parameters)
@@ -538,6 +542,10 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
 
     addStorageSession(sessionID, parameters);
 
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    parameters.networkSessionParameters.webPushDaemonConnectionConfiguration.declarativeWebPushEnabled = parameters.networkSessionParameters.isDeclarativeWebPushEnabled;
+#endif
+
     auto& session = m_networkSessions.ensure(sessionID, [&]() {
         return NetworkSession::create(*this, parameters.networkSessionParameters);
     }).iterator->value;
@@ -546,7 +554,7 @@ void NetworkProcess::addWebsiteDataStore(WebsiteDataStoreParameters&& parameters
         session->protectedStorageManager()->suspend([] { });
 }
 
-void NetworkProcess::forEachNetworkSession(const Function<void(NetworkSession&)>& functor)
+void NetworkProcess::forEachNetworkSession(NOESCAPE const Function<void(NetworkSession&)>& functor)
 {
     for (auto& session : m_networkSessions.values())
         functor(*session);
@@ -580,7 +588,7 @@ WebCore::NetworkStorageSession* NetworkProcess::storageSession(PAL::SessionID se
     return m_networkStorageSessions.get(sessionID);
 }
 
-void NetworkProcess::forEachNetworkStorageSession(const Function<void(WebCore::NetworkStorageSession&)>& functor)
+void NetworkProcess::forEachNetworkStorageSession(NOESCAPE const Function<void(WebCore::NetworkStorageSession&)>& functor)
 {
     for (auto& storageSession : m_networkStorageSessions.values())
         functor(*storageSession);
@@ -1641,14 +1649,55 @@ void NetworkProcess::fetchWebsiteData(PAL::SessionID sessionID, OptionSet<Websit
     }
 }
 
-void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
+void NetworkProcess::performDeleteWebsiteDataTask(TaskIdentifier taskIdentifier)
+{
+    auto task = m_deleteWebsiteDataTasks.take(taskIdentifier);
+    if (!task.sessionID)
+        return;
+
+    deleteWebsiteDataImpl(*task.sessionID, task.websiteDataTypes, task.modifiedSince, WTFMove(task.completionHandler));
+}
+
+void NetworkProcess::deleteWebsiteData(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, const HashSet<WebCore::ProcessIdentifier>& activeWebProcesses, CompletionHandler<void()>&& completionHandler)
+{
+    auto taskIdentifier = TaskIdentifier::generate();
+    bool willWait = false;
+    m_deleteWebsiteDataTasks.add(taskIdentifier, DeleteWebsiteDataTask { sessionID, websiteDataTypes, modifiedSince, WTFMove(completionHandler) });
+
+    RELEASE_LOG(Storage, "NetworkProcess::deleteWebsiteData scheduled task (%" PRIu64 ") to delete data modified since %f for session %" PRIu64, taskIdentifier.toUInt64(), modifiedSince.secondsSinceEpoch().value(), sessionID.toUInt64());
+    auto deleteTaskAggregator = WTF::CallbackAggregator::create([weakThis = WeakPtr { *this }, taskIdentifier]() mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->performDeleteWebsiteDataTask(taskIdentifier);
+    });
+    for (auto& [identifier, connection] : m_webProcessConnections) {
+        if (connection->sessionID() != sessionID || activeWebProcesses.contains(identifier))
+            continue;
+
+#if OS(DARWIN)
+        Ref ipcConnection = connection->connection();
+        RELEASE_LOG(Storage, "NetworkProcess::deleteWebsiteData task (%" PRIu64 ") will start after process %" PRIu64 " (pid=%d) exits", taskIdentifier.toUInt64(), identifier.toUInt64(), ipcConnection->remoteProcessID());
+#endif
+        m_webProcessConnectionCloseHandlers.add(identifier, [deleteTaskAggregator] { });
+        willWait = true;
+    }
+
+    if (!willWait)
+        return;
+
+    // Schedule a timer in case web processes do not exit on time.
+    RunLoop::protectedCurrent()->dispatchAfter(3_s, [protectedThis = Ref { *this }, taskIdentifier]() mutable {
+        protectedThis->performDeleteWebsiteDataTask(taskIdentifier);
+    });
+}
+
+void NetworkProcess::deleteWebsiteDataImpl(PAL::SessionID sessionID, OptionSet<WebsiteDataType> websiteDataTypes, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
 {
     auto clearTasksHandler = WTF::CallbackAggregator::create([completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler();
-        RELEASE_LOG(Storage, "NetworkProcess::deleteWebsiteData finished deleting modified data");
+        RELEASE_LOG(Storage, "NetworkProcess::deleteWebsiteDataImpl finishes deleting modified data");
     });
 
-    RELEASE_LOG(Storage, "NetworkProcess::deleteWebsiteData started to delete data modified since %f for session %" PRIu64, modifiedSince.secondsSinceEpoch().value(), sessionID.toUInt64());
+    RELEASE_LOG(Storage, "NetworkProcess::deleteWebsiteDataImpl starts deleting data modified since %f for session %" PRIu64, modifiedSince.secondsSinceEpoch().value(), sessionID.toUInt64());
     auto* session = networkSession(sessionID);
 
 #if PLATFORM(COCOA) || USE(SOUP)
@@ -1967,6 +2016,10 @@ void NetworkProcess::deleteAndRestrictWebsiteDataForRegistrableDomains(PAL::Sess
                     session->ensureProtectedSWServer()->clear(securityOrigin, [callbackAggregator] { });
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+                    if (session->isDeclarativeWebPushEnabled())
+                        continue;
+#endif
                     session->protectedNotificationManager()->removePushSubscriptionsForOrigin(SecurityOriginData { securityOrigin }, [callbackAggregator](auto&&) { });
 #endif
                 }
@@ -2292,9 +2345,8 @@ void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime e
     m_isSuspended = true;
     lowMemoryHandler(Critical::Yes);
 
-    RefPtr<CallbackAggregator> callbackAggregator = CallbackAggregator::create([this, completionHandler = WTFMove(completionHandler)]() mutable {
-        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend() Process is ready to suspend", this);
-        UNUSED_VARIABLE(this);
+    RefPtr callbackAggregator = CallbackAggregator::create([weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+        RELEASE_LOG(ProcessSuspension, "%p - NetworkProcess::prepareToSuspend() Process is ready to suspend", weakThis.get());
         completionHandler();
     });
     
@@ -3042,6 +3094,8 @@ void NetworkProcess::removeWebPageNetworkParameters(PAL::SessionID sessionID, We
 
     if (auto* resourceLoadStatistics = session->resourceLoadStatistics())
         resourceLoadStatistics->clearFrameLoadRecordsForStorageAccess(pageID);
+
+    m_pagesWithRelaxedThirdPartyCookieBlocking.remove(pageID);
 }
 
 void NetworkProcess::countNonDefaultSessionSets(PAL::SessionID sessionID, CompletionHandler<void(size_t)>&& completionHandler)
@@ -3154,5 +3208,24 @@ void NetworkProcess::restoreSessionStorage(PAL::SessionID sessionID, WebPageProx
 
     session->protectedStorageManager()->restoreSessionStorageForWebPage(pageID, WTFMove(sessionStorageMap), WTFMove(completionHandler));
 }
+
+void NetworkProcess::setShouldRelaxThirdPartyCookieBlockingForPage(WebPageProxyIdentifier pageID)
+{
+    m_pagesWithRelaxedThirdPartyCookieBlocking.add(pageID);
+}
+
+ShouldRelaxThirdPartyCookieBlocking NetworkProcess::shouldRelaxThirdPartyCookieBlockingForPage(std::optional<WebPageProxyIdentifier> pageID) const
+{
+    return pageID && m_pagesWithRelaxedThirdPartyCookieBlocking.contains(*pageID) ? ShouldRelaxThirdPartyCookieBlocking::Yes : ShouldRelaxThirdPartyCookieBlocking::No;
+}
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void NetworkProcess::resetResourceMonitorThrottlerForTesting(PAL::SessionID sessionID, CompletionHandler<void()>&& completionHandler)
+{
+    if (CheckedPtr session = networkSession(sessionID))
+        session->resetResourceMonitorThrottlerForTesting();
+    completionHandler();
+}
+#endif
 
 } // namespace WebKit

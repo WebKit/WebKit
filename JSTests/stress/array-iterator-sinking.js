@@ -11,5 +11,5 @@ function shouldBe(actual, expected) {
 noInline(test);
 
  var array = [1, 2, 3];
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(array), 1);

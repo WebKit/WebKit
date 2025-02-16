@@ -26,7 +26,7 @@ var array = [1, 2, 3, 4];
 array.__proto__ = object;
 ensureArrayStorage(array);
 didFTLCompile = false;
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test1(array), true);
 shouldBe(didFTLCompile, true);
 
@@ -54,7 +54,7 @@ var array2 = [1, 2];
 array2.__proto__ = object;
 ensureArrayStorage(array2);
 didFTLCompile = false;
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test2(array2), false);
 shouldBe(didFTLCompile, true);
 shouldBe(test2(array2), false);

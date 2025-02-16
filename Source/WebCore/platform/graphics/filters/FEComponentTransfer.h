@@ -59,7 +59,9 @@ namespace WebCore {
 
 using ComponentTransferFunctions = EnumeratedArray<ComponentTransferChannel, ComponentTransferFunction, ComponentTransferChannel::Alpha>;
 
-class FEComponentTransfer : public FilterEffect {
+class FEComponentTransfer final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEComponentTransfer);
 public:
     WEBCORE_EXPORT static Ref<FEComponentTransfer> create(const ComponentTransferFunction& redFunc, const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc, DestinationColorSpace = DestinationColorSpace::SRGB());
     static Ref<FEComponentTransfer> create(ComponentTransferFunctions&&);

@@ -138,6 +138,9 @@ int main(int argc, char** argv)
     // Get rid of runtime warnings about deprecated properties and signals, since they break the tests.
     g_setenv("G_ENABLE_DIAGNOSTIC", "0", TRUE);
     g_setenv("TZ", "America/Los_Angeles", TRUE);
+#if PLATFORM(WPE)
+    g_setenv("WPE_PLATFORMS_PATH", WPE_MOCK_PLATFORM_DIR, TRUE);
+#endif
     g_test_bug_base("https://bugs.webkit.org/");
 
     registerGResource();

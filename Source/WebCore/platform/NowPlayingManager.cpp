@@ -130,39 +130,39 @@ void NowPlayingManager::setNowPlayingInfoPrivate(const NowPlayingInfo& nowPlayin
 
 void NowPlayingManager::setSupportsSeeking(bool supports)
 {
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->setSupportsSeeking(supports);
+    if (RefPtr commandListener = m_remoteCommandListener)
+        commandListener->setSupportsSeeking(supports);
 }
 
 void NowPlayingManager::addSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->addSupportedCommand(command);
+    if (RefPtr commandListener = m_remoteCommandListener)
+        commandListener->addSupportedCommand(command);
 }
 
 void NowPlayingManager::removeSupportedCommand(PlatformMediaSession::RemoteControlCommandType command)
 {
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->removeSupportedCommand(command);
+    if (RefPtr commandListener = m_remoteCommandListener)
+        commandListener->removeSupportedCommand(command);
 }
 
 RemoteCommandListener::RemoteCommandsSet NowPlayingManager::supportedCommands() const
 {
-    if (!m_remoteCommandListener)
-        return { };
-    return m_remoteCommandListener->supportedCommands();
+    if (RefPtr commandListener = m_remoteCommandListener)
+        return commandListener->supportedCommands();
+    return { };
 }
 
 void NowPlayingManager::setSupportedRemoteCommands(const RemoteCommandListener::RemoteCommandsSet& commands)
 {
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->setSupportedCommands(commands);
+    if (RefPtr commandListener = m_remoteCommandListener)
+        commandListener->setSupportedCommands(commands);
 }
 
 void NowPlayingManager::updateSupportedCommands()
 {
-    if (m_remoteCommandListener)
-        m_remoteCommandListener->updateSupportedCommands();
+    if (RefPtr commandListener = m_remoteCommandListener)
+        commandListener->updateSupportedCommands();
 }
 
 void NowPlayingManager::ensureRemoteCommandListenerCreated()

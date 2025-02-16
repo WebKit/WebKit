@@ -946,8 +946,7 @@ TEST(WKWebExtensionContext, LoadNonExistentImage)
         @"}",
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, @{ @"background.js": backgroundScript });
 
     EXPECT_NS_EQUAL(manager.get().context.errors, @[ ]);
 

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "UIScriptControllerCocoa.h"
 
+#import "CocoaColorSerialization.h"
 #import "LayoutTestSpellChecker.h"
 #import "PlatformWebView.h"
 #import "StringFunctions.h"
@@ -385,6 +386,23 @@ void UIScriptControllerCocoa::resetVisibilityAdjustments(JSValueRef callback)
     [webView() _resetVisibilityAdjustmentsForTargetedElements:nil completionHandler:[callbackID, this](BOOL success) {
         m_context->asyncTaskComplete(callbackID, { JSValueMakeBoolean(m_context->jsContext(), success) });
     }];
+}
+
+JSObjectRef UIScriptControllerCocoa::fixedContainerEdgeColors() const
+{
+    auto nsColorOrNSNull = [](WebCore::CocoaColor *color) -> id {
+        if (color)
+            return (NSString *)WebCoreTestSupport::serializationForCSS(color);
+        return NSNull.null;
+    };
+
+    RetainPtr jsValue = [JSValue valueWithObject:@{
+        @"top": nsColorOrNSNull(webView()._sampledTopFixedPositionContentColor),
+        @"left": nsColorOrNSNull(webView()._sampledLeftFixedPositionContentColor),
+        @"bottom": nsColorOrNSNull(webView()._sampledBottomFixedPositionContentColor),
+        @"right": nsColorOrNSNull(webView()._sampledRightFixedPositionContentColor)
+    } inContext:[JSContext contextWithJSGlobalContextRef:m_context->jsContext()]];
+    return JSValueToObject(m_context->jsContext(), [jsValue JSValueRef], nullptr);
 }
 
 } // namespace WTR

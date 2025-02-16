@@ -176,7 +176,7 @@ DOMNode *kit(Node* value)
 - (DOMNamedNodeMap *)attributes
 {
     JSMainThreadNullState state;
-    return kit(unwrap(*self).attributes());
+    return kit(unwrap(*self).attributesMap());
 }
 
 - (NSString *)baseURI

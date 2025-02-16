@@ -92,7 +92,7 @@ class ObjcFallbackObjectImp final : public JSDestructibleObject {
 public:
     using Base = JSDestructibleObject;
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | OverridesGetCallData | OverridesPut;
-    static constexpr bool needsDestruction = true;
+    static constexpr JSC::DestructionMode needsDestruction = JSC::NeedsDestruction;
 
     template<typename CellType, JSC::SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(JSC::VM& vm)

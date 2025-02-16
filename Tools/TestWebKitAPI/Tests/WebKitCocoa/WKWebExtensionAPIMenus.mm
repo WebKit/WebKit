@@ -223,15 +223,15 @@ TEST(WKWebExtensionAPIMenus, ActionMenus)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')"
+        @"browser.test.sendMessage('Menus Created')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     // Reset activeTab, WKWebExtensionAPIMenus.ActionMenusWithActiveTab tests that.
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusUnknown forPermission:WKWebExtensionPermissionActiveTab];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
@@ -295,12 +295,12 @@ TEST(WKWebExtensionAPIMenus, ActionMenusWithActiveTab)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')"
+        @"browser.test.sendMessage('Menus Created')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     EXPECT_FALSE([manager.get().context hasActiveUserGestureInTab:manager.get().defaultTab]);
 
@@ -368,12 +368,12 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenus)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -470,12 +470,12 @@ TEST(WKWebExtensionAPIMenus, ActionSubmenusUpdate)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -550,12 +550,12 @@ TEST(WKWebExtensionAPIMenus, TabMenus)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
     [manager runForTimeInterval:1];
@@ -612,7 +612,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemProperties)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto *smallIcon = Util::makePNGData(CGSizeMake(16, 16), @selector(greenColor));
@@ -624,9 +624,9 @@ TEST(WKWebExtensionAPIMenus, MenuItemProperties)
         @"icon-20.png": largerIcon,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(menuItems.count, 1lu);
@@ -701,7 +701,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemPropertiesUpdate)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto *smallIcon = Util::makePNGData(CGSizeMake(16, 16), @selector(greenColor));
@@ -713,9 +713,9 @@ TEST(WKWebExtensionAPIMenus, MenuItemPropertiesUpdate)
         @"icon-20.png": largerIcon,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(menuItems.count, 1lu);
@@ -767,7 +767,7 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithIconVariants)
         @"  contexts: [ 'action' ]",
         @"}))",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
@@ -779,9 +779,9 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithIconVariants)
         @"icon-light-16.png": lightIcon16,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -831,16 +831,16 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithImageDataVariants)
         @"  contexts: [ 'action' ]",
         @"}))",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto *resources = @{
         @"background.js": backgroundScript,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -933,16 +933,16 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithMixedValidAndInvalidIconVariants)
         @"  contexts: [ 'action' ]",
         @"}))",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto *resources = @{
         @"background.js": backgroundScript,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -992,16 +992,16 @@ TEST(WKWebExtensionAPIMenus, MenuItemWithAnySizeVariantAndSVGDataURL)
         @"  contexts: [ 'all' ]",
         @"}))",
 
-        @"browser.test.yield('Menus Created')"
+        @"browser.test.sendMessage('Menus Created')"
     ]);
 
     auto *resources = @{
         @"background.js": backgroundScript,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -1044,7 +1044,7 @@ TEST(WKWebExtensionAPIMenus, UpdateMenuItemWithIconVariants)
         @"  ]",
         @"}))",
 
-        @"browser.test.yield('Menus Updated')",
+        @"browser.test.sendMessage('Menus Updated')",
     ]);
 
     auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
@@ -1056,9 +1056,9 @@ TEST(WKWebExtensionAPIMenus, UpdateMenuItemWithIconVariants)
         @"icon-light-16.png": lightIcon16,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Updated");
+    [manager runUntilTestMessage:@"Menus Updated"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -1102,7 +1102,7 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithNull)
         @"  title: 'Menu Item without Icon Variants'",
         @"}))",
 
-        @"browser.test.yield('Menus Updated')",
+        @"browser.test.sendMessage('Menus Updated')",
     ]);
 
     auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
@@ -1114,9 +1114,9 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithNull)
         @"icon-light-16.png": lightIcon16,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Updated");
+    [manager runUntilTestMessage:@"Menus Updated"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -1149,7 +1149,7 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
         @"  title: 'Menu Item without Icon Variants'",
         @"}))",
 
-        @"browser.test.yield('Menus Updated')",
+        @"browser.test.sendMessage('Menus Updated')",
     ]);
 
     auto *darkIcon16 = Util::makePNGData(CGSizeMake(16, 16), @selector(whiteColor));
@@ -1161,9 +1161,9 @@ TEST(WKWebExtensionAPIMenus, ClearMenuItemIconVariantsWithEmpty)
         @"icon-light-16.png": lightIcon16,
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, resources);
+    auto manager = Util::loadExtension(menusManifest, resources);
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Updated");
+    [manager runUntilTestMessage:@"Menus Updated"];
 
     auto *action = [manager.get().context actionForTab:manager.get().defaultTab];
     auto *menuItems = action.menuItems;
@@ -1209,15 +1209,15 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
         @"  }",
 
         @"  if (++clickCount === 2)",
-        @"    browser.test.yield('Menus Clicked')",
+        @"    browser.test.sendMessage('Menus Clicked')",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(menuItems.count, 1lu);
@@ -1242,9 +1242,7 @@ TEST(WKWebExtensionAPIMenus, ToggleCheckboxMenuItems)
     performMenuItemAction(checkbox1);
     performMenuItemAction(checkbox2);
 
-    [manager run];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Clicked");
+    [manager runUntilTestMessage:@"Menus Clicked"];
 
     auto *updatedMenuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(updatedMenuItems.count, 1lu);
@@ -1323,15 +1321,15 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
         @"  }",
 
         @"  if (++clickCount === 2)",
-        @"    browser.test.yield('Menus Clicked')",
+        @"    browser.test.sendMessage('Menus Clicked')",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(menuItems.count, 1lu);
@@ -1361,9 +1359,7 @@ TEST(WKWebExtensionAPIMenus, RadioItemGrouping)
     performMenuItemAction(radio1Group1);
     performMenuItemAction(radio2Group2);
 
-    [manager run];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Clicked");
+    [manager runUntilTestMessage:@"Menus Clicked"];
 
     auto *updatedMenuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(updatedMenuItems.count, 1lu);
@@ -1409,12 +1405,12 @@ TEST(WKWebExtensionAPIMenus, OnClick)
 
         @"    browser.test.notifyPass()",
         @"  }",
-        @"}, () => browser.test.yield('Menu Item Created'))"
+        @"}, () => browser.test.sendMessage('Menu Item Created'))"
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menu Item Created");
+    [manager runUntilTestMessage:@"Menu Item Created"];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(menuItems.count, 1lu);
@@ -1445,12 +1441,12 @@ TEST(WKWebExtensionAPIMenus, OnClickAfterUpdate)
         @"  }",
         @"})",
 
-        @"browser.test.yield('Menu Item Created')"
+        @"browser.test.sendMessage('Menu Item Created')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menu Item Created");
+    [manager runUntilTestMessage:@"Menu Item Created"];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(menuItems.count, 1lu);
@@ -1504,7 +1500,7 @@ TEST(WKWebExtensionAPIMenus, MacContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -1537,9 +1533,9 @@ TEST(WKWebExtensionAPIMenus, MacContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
@@ -1599,7 +1595,7 @@ TEST(WKWebExtensionAPIMenus, MacActiveTabContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -1623,9 +1619,9 @@ TEST(WKWebExtensionAPIMenus, MacActiveTabContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
@@ -1695,7 +1691,7 @@ TEST(WKWebExtensionAPIMenus, MacURLPatternContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -1721,9 +1717,9 @@ TEST(WKWebExtensionAPIMenus, MacURLPatternContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<a href='http://example.com/test' style='font-size: 100px'>Large Example Link</p>"_s } },
@@ -1780,7 +1776,7 @@ TEST(WKWebExtensionAPIMenus, MacSelectionContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -1805,9 +1801,9 @@ TEST(WKWebExtensionAPIMenus, MacSelectionContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<p style='font-size: 100px'>Selection Example Text</p>"_s } },
@@ -1866,7 +1862,7 @@ TEST(WKWebExtensionAPIMenus, MacLinkContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -1890,9 +1886,9 @@ TEST(WKWebExtensionAPIMenus, MacLinkContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<a href='http://example.com/test' style='font-size: 100px'>Large Example Link</p>"_s } },
@@ -1950,7 +1946,7 @@ TEST(WKWebExtensionAPIMenus, MacImageContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -1974,9 +1970,9 @@ TEST(WKWebExtensionAPIMenus, MacImageContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<img src='http://example.com/example.png' style='width: 400px; height: 400px'>"_s } },
@@ -2034,7 +2030,7 @@ TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -2058,9 +2054,9 @@ TEST(WKWebExtensionAPIMenus, MacVideoContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<video src='http://example.com/example.mp4' style='width: 400px; height: 400px' controls></video>"_s } },
@@ -2118,7 +2114,7 @@ TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -2142,9 +2138,9 @@ TEST(WKWebExtensionAPIMenus, MacAudioContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<audio src='http://example.com/example.mp3' style='width: 400px; height: 400px' controls></audio>"_s } },
@@ -2198,7 +2194,7 @@ TEST(WKWebExtensionAPIMenus, MacEditableContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -2222,9 +2218,9 @@ TEST(WKWebExtensionAPIMenus, MacEditableContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<textarea style='font-size: 100px; width: 400px; height: 400px'>Editable Text Area</textarea>"_s } },
@@ -2280,7 +2276,7 @@ TEST(WKWebExtensionAPIMenus, MacFrameContextMenuItems)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Menus Created')",
+        @"browser.test.sendMessage('Menus Created')",
     ]);
 
     auto delegate = adoptNS([[TestUIDelegate alloc] init]);
@@ -2304,9 +2300,9 @@ TEST(WKWebExtensionAPIMenus, MacFrameContextMenuItems)
         completionHandler(nil);
     };
 
-    auto manager = Util::loadAndRunExtension(menusManifest, @{ @"background.js": backgroundScript });
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menus Created");
+    [manager runUntilTestMessage:@"Menus Created"];
 
     TestWebKitAPI::HTTPServer server({
         { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, "<iframe src='frame.html' style='width: 400px; height: 400px'>"_s } },
@@ -2356,11 +2352,10 @@ TEST(WKWebExtensionAPIMenus, ClickedMenuItemAndPermissionsRequest)
         @"      browser.test.notifyFail('Permissions request failed')",
         @"    }",
         @"  }",
-        @"}, () => browser.test.yield('Menu Item Created'))"
+        @"}, () => browser.test.sendMessage('Menu Item Created'))"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:menusManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(menusManifest, @{ @"background.js": backgroundScript });
 
     manager.get().internalDelegate.promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, 1lu);
@@ -2368,9 +2363,7 @@ TEST(WKWebExtensionAPIMenus, ClickedMenuItemAndPermissionsRequest)
         callback(requestedPermissions, nil);
     };
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Menu Item Created");
+    [manager runUntilTestMessage:@"Menu Item Created"];
 
     auto *menuItems = [manager.get().context menuItemsForTab:manager.get().defaultTab];
     EXPECT_EQ(menuItems.count, 1lu);

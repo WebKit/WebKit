@@ -42,7 +42,6 @@
 
     [Conditional=WEB_RTC, CallWith=CurrentGlobalObject] undefined gatherRTCLogs(RTCLogsCallback? callback);
 
-    DOMString databaseId(Database database);
     DOMString storageId(Storage storage);
 };
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,9 @@
 #include "CSSColorLayers.h"
 #include "CSSColorMix.h"
 #include "CSSContrastColor.h"
+#include "CSSDynamicRangeLimit.h"
+#include "CSSDynamicRangeLimitMix.h"
+#include "CSSDynamicRangeLimitValue.h"
 #include "CSSHexColor.h"
 #include "CSSKeywordColor.h"
 #include "CSSLightDarkColor.h"
@@ -48,8 +51,8 @@
 #include "CSSPropertyParserConsumer+AngleDefinitions.h"
 #include "CSSPropertyParserConsumer+ColorInterpolationMethod.h"
 #include "CSSPropertyParserConsumer+Ident.h"
+#include "CSSPropertyParserConsumer+KeywordDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
-#include "CSSPropertyParserConsumer+NoneDefinitions.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+NumberDefinitions.h"
 #include "CSSPropertyParserConsumer+PercentageDefinitions.h"
@@ -380,7 +383,7 @@ static std::optional<CSS::Color> consumeRGBFunction(CSSParserTokenRange& range, 
 
                 return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(red));
             },
-            [](CSS::None) -> std::optional<CSS::Color> {
+            [](CSS::Keyword::None) -> std::optional<CSS::Color> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
                 // know we were using the legacy syntax yet, so we need to check for it now.
                 return { };
@@ -429,7 +432,7 @@ static std::optional<CSS::Color> consumeHSLFunction(CSSParserTokenRange& range, 
 
                 return consumeAbsoluteFunctionParameters<Descriptor>(args, state, WTFMove(hue));
             },
-            [](CSS::None) -> std::optional<CSS::Color> {
+            [](CSS::Keyword::None) -> std::optional<CSS::Color> {
                 // `none` is invalid for the legacy syntax, but the initial parameter consumer didn't
                 // know we were using the legacy syntax yet, so we need to check for it now.
                 return { };
@@ -629,7 +632,7 @@ static std::optional<CSS::Color> consumeColorMixFunction(CSSParserTokenRange& ra
 
 static std::optional<CSS::Color> consumeContrastColorFunction(CSSParserTokenRange& range, ColorParserState& state)
 {
-    // contrast-color() = contrast-color( <color> max? )
+    // contrast-color() = contrast-color( <color> )
     // https://drafts.csswg.org/css-color-5/#funcdef-contrast-color
 
     ASSERT(range.peek().functionId() == CSSValueContrastColor);
@@ -643,15 +646,12 @@ static std::optional<CSS::Color> consumeContrastColorFunction(CSSParserTokenRang
     if (!color)
         return std::nullopt;
 
-    bool max = consumeIdentRaw<CSSValueMax>(args).has_value();
-
     if (!args.atEnd())
         return std::nullopt;
 
     return CSS::Color {
         CSS::ContrastColor {
-            .color = WTFMove(*color),
-            .max = max
+            .color = WTFMove(*color)
         }
     };
 }
@@ -872,6 +872,97 @@ Color parseColorRawSlow(const String& string, const CSSParserContext& context, c
         return { };
 
     return result;
+}
+
+// MARK: - <dynamic-range-limit-mix()> (unresolved)
+
+static std::optional<CSS::DynamicRangeLimitMixComponent> consumeUnresolvedDynamicRangeLimitMixComponent(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // <dynamic-range-limit-mix-component> = <'dynamic-range-limit'> && <percentage [0,100]>
+
+    auto rangeCopy = range;
+
+    auto percentage = MetaConsumer<CSS::DynamicRangeLimitMixPercentage>::consume(rangeCopy, context, { }, { });
+    auto limit = consumeUnresolvedDynamicRangeLimit(rangeCopy, context);
+    if (!limit)
+        return std::nullopt;
+
+    if (!percentage) {
+        percentage = MetaConsumer<CSS::DynamicRangeLimitMixPercentage>::consume(rangeCopy, context, { }, { });
+        if (!percentage)
+            return { };
+    }
+
+    range = rangeCopy;
+
+    return CSS::DynamicRangeLimitMixComponent {
+        WTFMove(*limit),
+        WTFMove(*percentage)
+    };
+}
+
+static std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimitMix(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // dynamic-range-limit-mix() = dynamic-range-limit-mix( [ <'dynamic-range-limit'> && <percentage [0,100]> ]#)
+
+    ASSERT(range.peek().functionId() == CSSValueDynamicRangeLimitMix);
+
+    auto rangeCopy = range;
+    auto args = consumeFunction(rangeCopy);
+
+    CSS::DynamicRangeLimitMixFunction result;
+
+    do {
+        auto component = consumeUnresolvedDynamicRangeLimitMixComponent(args, context);
+        if (!component)
+            return { };
+        result->parameters.value.append(WTFMove(*component));
+    } while (consumeCommaIncludingWhitespace(args));
+
+    if (!args.atEnd())
+        return { };
+
+    range = rangeCopy;
+    return result;
+}
+
+// MARK: - <'dynamic-range-limit'> (unresolved)
+
+std::optional<CSS::DynamicRangeLimit> consumeUnresolvedDynamicRangeLimit(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // <'dynamic-range-limit'> = standard | high | constrained-high | <dynamic-range-limit-mix()>
+    // https://drafts.csswg.org/css-color-hdr/#propdef-dynamic-range-limit
+
+    switch (range.peek().id()) {
+    case CSSValueStandard:
+        range.consumeIncludingWhitespace();
+        return CSS::DynamicRangeLimit { CSS::Keyword::Standard { } };
+    case CSSValueConstrainedHigh:
+        range.consumeIncludingWhitespace();
+        return CSS::DynamicRangeLimit { CSS::Keyword::ConstrainedHigh { } };
+    case CSSValueHigh:
+        range.consumeIncludingWhitespace();
+        return CSS::DynamicRangeLimit { CSS::Keyword::High { } };
+    default:
+        break;
+    }
+
+    if (range.peek().functionId() == CSSValueDynamicRangeLimitMix) {
+        if (auto mix = consumeUnresolvedDynamicRangeLimitMix(range, context))
+            return CSS::DynamicRangeLimit { WTFMove(*mix) };
+    }
+
+    return { };
+}
+
+// MARK: -  <'dynamic-range-limit'> (CSSValue)
+
+RefPtr<CSSValue> consumeDynamicRangeLimit(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    auto dynamicRangeLimit = consumeUnresolvedDynamicRangeLimit(range, context);
+    if (!dynamicRangeLimit)
+        return { };
+    return CSSDynamicRangeLimitValue::create(WTFMove(*dynamicRangeLimit));
 }
 
 } // namespace CSSPropertyParserHelpers

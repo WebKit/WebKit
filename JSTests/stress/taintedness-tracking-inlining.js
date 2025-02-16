@@ -8,7 +8,7 @@ function foo() {
 }
 noInline(foo);
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let state = foo();
     if (state !== "KnownTainted")
         throw new Error(state);

@@ -79,13 +79,13 @@ void RenderMathMLSpace::getSpaceHeightAndDepth(LayoutUnit& height, LayoutUnit& d
     }
 }
 
-void RenderMathMLSpace::layoutBlock(bool relayoutChildren, LayoutUnit)
+void RenderMathMLSpace::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     layoutFloatingChildren();

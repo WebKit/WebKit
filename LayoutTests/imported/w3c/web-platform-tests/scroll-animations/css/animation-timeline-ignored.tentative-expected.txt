@@ -1,7 +1,7 @@
 
-FAIL Changing animation-timeline changes the timeline (sanity check) assert_equals: expected "140px" but got "0px"
-FAIL animation-timeline ignored after setting timeline with JS (ScrollTimeline from JS) assert_equals: expected "180px" but got "0px"
-FAIL animation-timeline ignored after setting timeline with JS (ScrollTimeline from CSS) assert_equals: expected "140px" but got "0px"
+PASS Changing animation-timeline changes the timeline (sanity check)
+PASS animation-timeline ignored after setting timeline with JS (ScrollTimeline from JS)
+PASS animation-timeline ignored after setting timeline with JS (ScrollTimeline from CSS)
 PASS animation-timeline ignored after setting timeline with JS (document timeline)
-FAIL animation-timeline ignored after setting timeline with JS (null) assert_equals: expected "120px" but got "0px"
+PASS animation-timeline ignored after setting timeline with JS (null)
 

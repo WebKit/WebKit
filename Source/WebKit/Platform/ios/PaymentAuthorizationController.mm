@@ -49,7 +49,11 @@
     if (!(self = [super _initWithRequest:request presenter:presenter]))
         return nil;
 
-    _presentingWindow = presenter.checkedClient()->presentingWindowForPaymentAuthorization(presenter);
+    RefPtr client = presenter.protectedClient();
+    if (!client)
+        return nil;
+
+    _presentingWindow = client->presentingWindowForPaymentAuthorization(presenter);
     return self;
 }
 

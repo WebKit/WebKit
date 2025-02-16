@@ -149,7 +149,7 @@ RefPtr<FilterImage> FilterEffect::apply(const Filter& filter, const FilterImageV
 {
     ASSERT(inputs.size() == numberOfImageInputs());
 
-    if (auto result = results.effectResult(*this))
+    if (RefPtr result = results.effectResult(*this))
         return result;
 
     auto primitiveSubregion = calculatePrimitiveSubregion(filter, inputPrimitiveSubregions(inputs), geometry);

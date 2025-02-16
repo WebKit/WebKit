@@ -302,6 +302,16 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
         GetFeatureName(Feature::SupportsFragmentShadingRate),
     };
 
+    // Features that could be different on some vendors
+    const std::set<std::string> featuresThatCouldBeDifferent = {
+        // Depends-on Feature::SupportsDepthStencilResolve
+        GetFeatureName(Feature::EnableMultisampledRenderToTexture),
+        // Depends-on Feature::SupportsFragmentShadingRate
+        GetFeatureName(Feature::SupportsFoveatedRendering),
+        // Depends-on Feature::EnableMultisampledRenderToTexture
+        GetFeatureName(Feature::PreferDynamicRendering),
+    };
+
     std::vector<std::string> featureNameStorage;
     std::vector<bool> shouldBe;
 
@@ -347,6 +357,12 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
     // Check that all features have the correct status (even the ones we toggled).
     for (size_t i = 0; i < features.size(); i++)
     {
+        if (featuresThatCouldBeDifferent.count(featureNameStorage[i]) > 0)
+        {
+            // On some vendors these features could be different
+            continue;
+        }
+
         EXPECT_STREQ(FeatureStatusToString(shouldBe[i]),
                      eglQueryStringiANGLE(mDisplay, EGL_FEATURE_STATUS_ANGLE, i))
             << featureNameStorage[i];

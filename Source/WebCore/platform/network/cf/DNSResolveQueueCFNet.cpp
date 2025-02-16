@@ -39,6 +39,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
 #include <wtf/cf/VectorCF.h>
+#include <wtf/posix/SocketPOSIX.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -100,10 +101,10 @@ static std::optional<IPAddress> extractIPAddress(const struct sockaddr* address)
 {
     if (!address)
         return std::nullopt;
-    if (address->sa_family == AF_INET)
-        return IPAddress { reinterpret_cast<const struct sockaddr_in*>(address)->sin_addr };
-    if (address->sa_family == AF_INET6)
-        return IPAddress { reinterpret_cast<const struct sockaddr_in6*>(address)->sin6_addr };
+    if (auto* addressV4 = dynamicCastToIPV4SocketAddress(*address))
+        return IPAddress { addressV4->sin_addr };
+    if (auto* addressV6 = dynamicCastToIPV6SocketAddress(*address))
+        return IPAddress { addressV6->sin6_addr };
     ASSERT_NOT_REACHED();
     return std::nullopt;
 }

@@ -80,6 +80,21 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         if (!box.isVisible() || !hasDamage(box))
             return;
 
+        auto canSkipInlineBoxPainting = [&]() {
+            if (m_paintInfo.phase != PaintPhase::Foreground)
+                return false;
+
+            // The root inline box only has to paint a background for ::first-line style.
+            bool isFirstLineBox = !box.lineIndex();
+            if (box.isRootInlineBox() && (!isFirstLineBox || &box.style() == &box.layoutBox().style()))
+                return true;
+
+            return false;
+        }();
+
+        if (canSkipInlineBoxPainting)
+            return;
+
         auto inlineBoxPaintInfo = PaintInfo { m_paintInfo };
         inlineBoxPaintInfo.phase = m_paintInfo.phase == PaintPhase::ChildOutlines ? PaintPhase::Outline : m_paintInfo.phase;
         inlineBoxPaintInfo.outlineObjects = &m_outlineObjects;

@@ -397,6 +397,8 @@ interface UIScriptController {
 
     undefined setWebViewEditable(boolean editable);
 
+    readonly attribute object fixedContainerEdgeColors;
+
     // Only affects macOS.
     undefined setWebViewAllowsMagnification(boolean allowsMagnification);
 

@@ -33,17 +33,18 @@
 #import <WebKit/WKNavigationActionPrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/_WKUserInitiatedAction.h>
+#import <wtf/text/MakeString.h>
 
 namespace TestWebKitAPI {
 
 #if PLATFORM(MAC)
-TEST(VerifyUserGesture, WindowOpenMouseEvent)
+static void testWindowOpenMouseEvent(const String& event, bool expectOpenedWindow)
 {
-    auto openerHTML = "<script>"
-    "addEventListener('mouseup', () => {"
+    auto openerHTML = makeString("<script>"
+    "addEventListener('"_s, event, "', () => {"
     "    window.open('https://domain2.com/opened');"
     "})"
-    "</script>"_s;
+    "</script>"_s);
     HTTPServer server({
         { "/opener"_s, { openerHTML } },
         { "/opened"_s, { ""_s } }
@@ -58,10 +59,10 @@ TEST(VerifyUserGesture, WindowOpenMouseEvent)
     [openerWebView setNavigationDelegate:navigationDelegate.get()];
     [openerWebView setUIDelegate:uiDelegate.get()];
 
-    __block BOOL consumed = NO;
+    __block BOOL consumedOrNoUserInitiatedAction = NO;
     __block RetainPtr<TestWKWebView> openedWebView;
     uiDelegate.get().createWebViewWithConfiguration = ^(WKWebViewConfiguration *configuration, WKNavigationAction *navigationAction, WKWindowFeatures *) {
-        consumed = navigationAction._userInitiatedAction.consumed;
+        consumedOrNoUserInitiatedAction = !navigationAction._userInitiatedAction || navigationAction._userInitiatedAction.consumed;
         openedWebView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration]);
         return openedWebView.get();
     };
@@ -71,14 +72,39 @@ TEST(VerifyUserGesture, WindowOpenMouseEvent)
     [openerWebView evaluateJavaScript:@"window.open('https://domain2.com/opened');" completionHandler:nil];
     while (!openedWebView)
         Util::spinRunLoop();
-    EXPECT_TRUE(consumed);
+    EXPECT_TRUE(consumedOrNoUserInitiatedAction);
 
     openedWebView = nullptr;
-    [openerWebView mouseDownAtPoint:CGPointMake(50, 50) simulatePressure:NO];
-    [openerWebView mouseUpAtPoint:CGPointMake(50, 50)];
+    auto point = CGPointMake(50, 50);
+    if (expectOpenedWindow) {
+        [openerWebView mouseDownAtPoint:point simulatePressure:NO];
+        [openerWebView mouseUpAtPoint:point];
+    } else
+        [openerWebView mouseMoveToPoint:point withFlags:0];
+    [openerWebView waitForPendingMouseEvents];
     while (!openedWebView)
         Util::spinRunLoop();
-    EXPECT_FALSE(consumed);
+    EXPECT_EQ(consumedOrNoUserInitiatedAction, expectOpenedWindow ? NO : YES);
+}
+
+TEST(VerifyUserGesture, WindowOpenMouseDown)
+{
+    testWindowOpenMouseEvent("mousedown"_s, true);
+}
+
+TEST(VerifyUserGesture, WindowOpenMouseUp)
+{
+    testWindowOpenMouseEvent("mouseup"_s, true);
+}
+
+TEST(VerifyUserGesture, WindowOpenMouseMove)
+{
+    testWindowOpenMouseEvent("mousemove"_s, false);
+}
+
+TEST(VerifyUserGesture, WindowOpenMouseOver)
+{
+    testWindowOpenMouseEvent("mouseover"_s, false);
 }
 
 TEST(VerifyUserGesture, WindowOpenKeyEvent)

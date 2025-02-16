@@ -3,7 +3,7 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(Number.isNaN(Date.UTC()), true);
     shouldBe(Date.UTC(2018), 1514764800000);
     shouldBe(Date.UTC(2018, 1), 1517443200000);

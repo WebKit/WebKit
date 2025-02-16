@@ -30,15 +30,15 @@
 
 namespace WebCore {
 
-String CSSFontStyleRangeValue::customCSSText() const
+String CSSFontStyleRangeValue::customCSSText(const CSS::SerializationContext& context) const
 {
     if (!obliqueValues)
-        return fontStyleValue->cssText();
+        return fontStyleValue->cssText(context);
 
     StringBuilder builder;
-    builder.append(fontStyleValue->cssText());
+    builder.append(fontStyleValue->cssText(context));
     builder.append(' ');
-    builder.append(obliqueValues->cssText());
+    builder.append(obliqueValues->cssText(context));
     return builder.toString();
 }
 

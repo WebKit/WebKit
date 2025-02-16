@@ -31,7 +31,7 @@ function test4(a) {
 }
 noInline(test4);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(42), true);
     shouldBe(test1(true), false);
     shouldBe(test2(42), true);

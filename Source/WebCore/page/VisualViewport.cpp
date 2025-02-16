@@ -174,7 +174,7 @@ void VisualViewport::update()
         m_offsetLeft = offsetLeft;
         m_offsetTop = offsetTop;
     }
-    if (m_width != width || m_height != height || m_scale != scale) {
+    if (m_width != width || m_height != height) {
         if (document)
             document->setNeedsVisualViewportResize();
         m_width = width;

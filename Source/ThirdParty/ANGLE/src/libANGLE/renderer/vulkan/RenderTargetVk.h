@@ -92,25 +92,26 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     vk::ImageHelper &getImageForWrite() const;
 
     // For cube maps we use single-level single-layer 2D array views.
-    angle::Result getImageView(vk::Context *context, const vk::ImageView **imageViewOut) const;
-    angle::Result getImageViewWithColorspace(vk::Context *context,
+    angle::Result getImageView(vk::ErrorContext *context, const vk::ImageView **imageViewOut) const;
+    angle::Result getImageViewWithColorspace(vk::ErrorContext *context,
                                              gl::SrgbWriteControlMode srgbWriteContrlMode,
                                              const vk::ImageView **imageViewOut) const;
-    angle::Result getResolveImageView(vk::Context *context,
+    angle::Result getResolveImageView(vk::ErrorContext *context,
                                       const vk::ImageView **imageViewOut) const;
-    angle::Result getDepthOrStencilImageView(vk::Context *context,
+    angle::Result getDepthOrStencilImageView(vk::ErrorContext *context,
                                              VkImageAspectFlagBits aspect,
                                              const vk::ImageView **imageViewOut) const;
-    angle::Result getDepthOrStencilImageViewForCopy(vk::Context *context,
+    angle::Result getDepthOrStencilImageViewForCopy(vk::ErrorContext *context,
                                                     VkImageAspectFlagBits aspect,
                                                     const vk::ImageView **imageViewOut) const;
-    angle::Result getResolveDepthOrStencilImageView(vk::Context *context,
+    angle::Result getResolveDepthOrStencilImageView(vk::ErrorContext *context,
                                                     VkImageAspectFlagBits aspect,
                                                     const vk::ImageView **imageViewOut) const;
 
     // For 3D textures, the 2D view created for render target is invalid to read from.  The
     // following will return a view to the whole image (for all types, including 3D and 2DArray).
-    angle::Result getCopyImageView(vk::Context *context, const vk::ImageView **imageViewOut) const;
+    angle::Result getCopyImageView(vk::ErrorContext *context,
+                                   const vk::ImageView **imageViewOut) const;
 
     angle::FormatID getImageActualFormatID() const;
     const angle::Format &getImageActualFormat() const;
@@ -208,11 +209,11 @@ class RenderTargetVk final : public FramebufferAttachmentRenderTarget
     void invalidateImageAndViews();
     void reset();
 
-    angle::Result getImageViewImpl(vk::Context *context,
+    angle::Result getImageViewImpl(vk::ErrorContext *context,
                                    const vk::ImageHelper &image,
                                    vk::ImageViewHelper *imageViews,
                                    const vk::ImageView **imageViewOut) const;
-    angle::Result getDepthOrStencilImageViewImpl(vk::Context *context,
+    angle::Result getDepthOrStencilImageViewImpl(vk::ErrorContext *context,
                                                  const vk::ImageHelper &image,
                                                  vk::ImageViewHelper *imageViews,
                                                  VkImageAspectFlagBits aspect,

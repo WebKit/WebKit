@@ -16,10 +16,13 @@
 # under the License.
 
 import functools
-import typing
 from base64 import urlsafe_b64decode
 from base64 import urlsafe_b64encode
 from enum import Enum
+from typing import Any
+from typing import Dict
+from typing import Optional
+from typing import Union
 
 
 class Protocol(str, Enum):
@@ -65,7 +68,7 @@ class VirtualAuthenticatorOptions:
         self.is_user_consenting: bool = is_user_consenting
         self.is_user_verified: bool = is_user_verified
 
-    def to_dict(self) -> typing.Dict[str, typing.Union[str, bool]]:
+    def to_dict(self) -> Dict[str, Union[str, bool]]:
         return {
             "protocol": self.protocol,
             "transport": self.transport,
@@ -82,7 +85,7 @@ class Credential:
         credential_id: bytes,
         is_resident_credential: bool,
         rp_id: str,
-        user_handle: typing.Optional[bytes],
+        user_handle: Optional[bytes],
         private_key: bytes,
         sign_count: int,
     ):
@@ -91,11 +94,11 @@ class Credential:
 
         :Args:
             - credential_id (bytes): Unique base64 encoded string.
-            is_resident_credential (bool): Whether the credential is client-side discoverable.
-            rp_id (str): Relying party identifier.
-            user_handle (bytes): userHandle associated to the credential. Must be Base64 encoded string. Can be None.
-            private_key (bytes): Base64 encoded PKCS#8 private key.
-            sign_count (int): intital value for a signature counter.
+            - is_resident_credential (bool): Whether the credential is client-side discoverable.
+            - rp_id (str): Relying party identifier.
+            - user_handle (bytes): userHandle associated to the credential. Must be Base64 encoded string. Can be None.
+            - private_key (bytes): Base64 encoded PKCS#8 private key.
+            - sign_count (int): intital value for a signature counter.
         """
         self._id = credential_id
         self._is_resident_credential = is_resident_credential
@@ -117,7 +120,7 @@ class Credential:
         return self._rp_id
 
     @property
-    def user_handle(self) -> typing.Optional[str]:
+    def user_handle(self) -> Optional[str]:
         if self._user_handle:
             return urlsafe_b64encode(self._user_handle).decode()
         return None
@@ -147,7 +150,7 @@ class Credential:
 
     @classmethod
     def create_resident_credential(
-        cls, id: bytes, rp_id: str, user_handle: typing.Optional[bytes], private_key: bytes, sign_count: int
+        cls, id: bytes, rp_id: str, user_handle: Optional[bytes], private_key: bytes, sign_count: int
     ) -> "Credential":
         """Creates a resident (i.e. stateful) credential.
 
@@ -163,7 +166,7 @@ class Credential:
         """
         return cls(id, True, rp_id, user_handle, private_key, sign_count)
 
-    def to_dict(self) -> typing.Dict[str, typing.Any]:
+    def to_dict(self) -> Dict[str, Any]:
         credential_data = {
             "credentialId": self.id,
             "isResidentCredential": self._is_resident_credential,
@@ -178,7 +181,7 @@ class Credential:
         return credential_data
 
     @classmethod
-    def from_dict(cls, data: typing.Dict[str, typing.Any]) -> "Credential":
+    def from_dict(cls, data: Dict[str, Any]) -> "Credential":
         _id = urlsafe_b64decode(f"{data['credentialId']}==")
         is_resident_credential = bool(data["isResidentCredential"])
         rp_id = data.get("rpId", None)

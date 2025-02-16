@@ -22,7 +22,7 @@
     Plugin,
     Exposed=Window
 ] interface HTMLObjectElement : HTMLElement {
-    readonly attribute HTMLFormElement form;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement form;
     [CEReactions=NotNeeded, Reflect] attribute DOMString code;
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString archive;

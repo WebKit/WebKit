@@ -45,6 +45,7 @@ class DOMException;
 class DOMPromise;
 class DatagramSource;
 class DeferredPromise;
+class Exception;
 class JSDOMGlobalObject;
 class ReadableStream;
 class ReadableStreamSource;
@@ -96,10 +97,10 @@ private:
     // ActiveDOMObject.
     bool virtualHasPendingActivity() const final;
 
-    void receiveDatagram(std::span<const uint8_t>) final;
+    void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
     void receiveIncomingUnidirectionalStream(WebTransportStreamIdentifier) final;
     void receiveBidirectionalStream(WebTransportBidirectionalStreamConstructionParameters&&) final;
-    void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin) final;
+    void streamReceiveBytes(WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<Exception>&&) final;
     void networkProcessCrashed() final;
 
     ListHashSet<Ref<WritableStream>> m_sendStreams;

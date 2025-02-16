@@ -29,7 +29,6 @@
 
 #include <wtf/Platform.h>
 
-#include <wtf/DisallowCType.h>
 #include <wtf/ExportMacros.h>
 
 #ifdef __cplusplus

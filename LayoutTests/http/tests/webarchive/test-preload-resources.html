@@ -9,6 +9,9 @@
 <link rel="alternate stylesheet" type="text/css" href="resources/test-preload-resources.css?6" title="gray">
 
 <script>
+if (window.internals)
+    internals.clearMemoryCache();
+
 if (window.testRunner)
     testRunner.dumpDOMAsWebArchive();
 </script>

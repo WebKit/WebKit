@@ -41,6 +41,7 @@ static constexpr unsigned MasqueradesAsUndefined = 1; // WebCore uses Masquerade
 static constexpr unsigned ImplementsDefaultHasInstance = 1 << 1;
 static constexpr unsigned OverridesGetCallData = 1 << 2; // Need this flag if you implement [[Callable]] interface, which means overriding getCallData. The object may not be callable since getCallData can say it is not callable.
 static constexpr unsigned OverridesGetOwnPropertySlot = 1 << 3;
+static constexpr unsigned OverridesGetPrototype = 1 << 4;
 static constexpr unsigned HasStaticPropertyTable = 1 << 5;
 static constexpr unsigned TypeInfoPerCellBit = 1 << 7; // Unlike other inline flags, this will only be set on the cell itself and will not be set on the Structure.
 
@@ -57,12 +58,10 @@ static constexpr unsigned GetOwnPropertySlotIsImpureForPropertyAbsence = 1 << 15
 static constexpr unsigned InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero = 1 << 16;
 static constexpr unsigned StructureIsImmortal = 1 << 17;
 static constexpr unsigned OverridesPut = 1 << 18;
-static constexpr unsigned OverridesGetPrototype = 1 << 19;
 static constexpr unsigned GetOwnPropertySlotMayBeWrongAboutDontEnum = 1 << 20;
 static constexpr unsigned OverridesIsExtensible = 1 << 21;
 
 static constexpr unsigned numberOfInlineBits = 8;
-static constexpr unsigned OverridesGetPrototypeOutOfLine = OverridesGetPrototype >> numberOfInlineBits;
 
 class TypeInfo {
 public:
@@ -103,7 +102,7 @@ public:
     bool overridesGetOwnSpecialPropertyNames() const { return isSetOnFlags2<OverridesGetOwnSpecialPropertyNames>(); }
     bool overridesAnyFormOfGetOwnPropertyNames() const { return overridesGetOwnPropertyNames() || overridesGetOwnSpecialPropertyNames(); }
     bool overridesPut() const { return isSetOnFlags2<OverridesPut>(); }
-    bool overridesGetPrototype() const { return isSetOnFlags2<OverridesGetPrototype>(); }
+    bool overridesGetPrototype() const { return isSetOnFlags1<OverridesGetPrototype>(); }
     bool overridesIsExtensible() const { return isSetOnFlags2<OverridesIsExtensible>(); }
     bool prohibitsPropertyCaching() const { return isSetOnFlags2<ProhibitsPropertyCaching>(); }
     bool getOwnPropertySlotIsImpure() const { return isSetOnFlags2<GetOwnPropertySlotIsImpure>(); }

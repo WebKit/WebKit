@@ -37,6 +37,7 @@
 #include <WebCore/NavigationRequester.h>
 #include <WebCore/ResourceLoaderIdentifier.h>
 #include <WebCore/SecurityContext.h>
+#include <WebCore/SharedWorkerIdentifier.h>
 #include <wtf/Seconds.h>
 
 namespace IPC {
@@ -84,6 +85,7 @@ public:
         , std::optional<WebCore::ServiceWorkerRegistrationIdentifier>
         , OptionSet<WebCore::HTTPHeadersToKeepFromCleaning>
         , std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier
+        , std::optional<WebCore::SharedWorkerIdentifier>
 #if ENABLE(CONTENT_EXTENSIONS)
         , URL&& mainDocumentURL
         , std::optional<UserContentControllerIdentifier>
@@ -134,6 +136,7 @@ public:
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
+    std::optional<WebCore::SharedWorkerIdentifier> workerIdentifier;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;

@@ -102,13 +102,11 @@ static RetainPtr<UIImage> uiImageForImage(Image* image)
 
 static bool shouldUseDragImageToCreatePreviewForDragSource(const DragSourceState& source)
 {
-    if (!source.image)
+    if (!std::get_if<RetainPtr<UIImage>>(&source.dragPreviewContent))
         return false;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (source.action.contains(DragSourceAction::Color))
         return true;
-#endif
 
 #if ENABLE(MODEL_ELEMENT)
     if (source.action.contains(DragSourceAction::Model))
@@ -123,10 +121,8 @@ static bool shouldUseVisiblePathToCreatePreviewForDragSource(const DragSourceSta
     if (!source.visiblePath)
         return false;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (source.action.contains(DragSourceAction::Color))
         return true;
-#endif
 
     return false;
 }
@@ -152,10 +148,8 @@ static bool canUpdatePreviewForActiveDragSource(const DragSourceState& source)
     if (!source.possiblyNeedsDragPreviewUpdate)
         return false;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (source.action.contains(DragSourceAction::Color))
         return true;
-#endif
 
     if (source.action.contains(DragSourceAction::Link) && !source.action.contains(DragSourceAction::Image))
         return true;
@@ -290,7 +284,8 @@ UITargetedDragPreview *DragDropInteractionState::previewForLifting(UIDragItem *i
 UITargetedDragPreview *DragDropInteractionState::previewForCancelling(UIDragItem *item, UIView *contentView, UIView *previewContainer)
 {
     auto preview = createDragPreviewInternal(item, contentView, previewContainer, AddPreviewViewToContainer::Yes, std::nullopt);
-    m_previewViewsForDragCancel.append([preview view]);
+    if ([preview view].superview == previewContainer)
+        m_previewViewsForDragCancel.append([preview view]);
     return preview.autorelease();
 }
 
@@ -300,6 +295,13 @@ RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInte
     if (!foundSource)
         return nil;
 
+    auto& source = foundSource.value();
+
+#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+    if (auto* modelView = std::get_if<RetainPtr<UIView>>(&source.dragPreviewContent))
+        return adoptNS([[UITargetedDragPreview alloc] initWithView:(*modelView).get()]);
+#endif
+
     if (indicator) {
         // If the context menu preview was created using the snapshot mechanism,
         // the drag preview should be created likewise, so that the size and position
@@ -308,14 +310,15 @@ RetainPtr<UITargetedDragPreview> DragDropInteractionState::createDragPreviewInte
         return createTargetedDragPreview(textIndicatorImage.get(), contentView, previewContainer, indicator->textBoundingRectInRootViewCoordinates, indicator->textRectsInBoundingRectCoordinates, cocoaColor(indicator->estimatedBackgroundColor).get(), nil, addPreviewViewToContainer).autorelease();
     }
 
-    auto& source = foundSource.value();
     if (shouldUseDragImageToCreatePreviewForDragSource(source)) {
+        auto* image = std::get_if<RetainPtr<UIImage>>(&source.dragPreviewContent);
+        ASSERT(image);
         if (shouldUseVisiblePathToCreatePreviewForDragSource(source)) {
             auto path = source.visiblePath.value();
             UIBezierPath *visiblePath = [UIBezierPath bezierPathWithCGPath:path.platformPath()];
-            return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, visiblePath, addPreviewViewToContainer).autorelease();
+            return createTargetedDragPreview(image->get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, visiblePath, addPreviewViewToContainer).autorelease();
         }
-        return createTargetedDragPreview(source.image.get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, nil, addPreviewViewToContainer).autorelease();
+        return createTargetedDragPreview(image->get(), contentView, previewContainer, source.dragPreviewFrameInRootViewCoordinates, { }, nil, nil, addPreviewViewToContainer).autorelease();
     }
 
     if (shouldUseTextIndicatorToCreatePreviewForDragSource(source)) {
@@ -344,7 +347,7 @@ void DragDropInteractionState::dropSessionDidEnterOrUpdate(id <UIDropSession> se
     m_lastGlobalPosition = dragData.globalPosition();
 }
 
-void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *dragImage)
+void DragDropInteractionState::stageDragItem(const DragItem& item, DragSourceState::DragPreviewContentType dragPreviewContent)
 {
     static NSInteger currentDragSourceItemIdentifier = 0;
 
@@ -352,7 +355,7 @@ void DragDropInteractionState::stageDragItem(const DragItem& item, UIImage *drag
     m_stagedDragSource = {{
         item.sourceAction,
         item.dragPreviewFrameInRootViewCoordinates,
-        dragImage,
+        dragPreviewContent,
         item.image.indicatorData(),
         item.image.visiblePath(),
         item.title.isEmpty() ? nil : (NSString *)item.title,
@@ -417,15 +420,15 @@ void DragDropInteractionState::updatePreviewsForActiveDragSources()
                 return preview.autorelease();
             };
         }
-#if ENABLE(INPUT_TYPE_COLOR)
         else if (source.action.contains(DragSourceAction::Color)) {
-            dragItem.previewProvider = [image = source.image] () -> UIDragPreview * {
-                auto imageView = adoptNS([[UIImageView alloc] initWithImage:image.get()]);
-                auto parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:[imageView bounds]] ]]);
-                return adoptNS([[UIDragPreview alloc] initWithView:imageView.get() parameters:parameters.get()]).autorelease();
-            };
+            if (auto* draggedImage = std::get_if<RetainPtr<UIImage>>(&source.dragPreviewContent)) {
+                dragItem.previewProvider = [image = *draggedImage] {
+                    RetainPtr imageView = adoptNS([[UIImageView alloc] initWithImage:image.get()]);
+                    RetainPtr parameters = adoptNS([[UIDragPreviewParameters alloc] initWithTextLineRects:@[ [NSValue valueWithCGRect:[imageView bounds]] ]]);
+                    return adoptNS([[UIDragPreview alloc] initWithView:imageView.get() parameters:parameters.get()]).autorelease();
+                };
+            }
         }
-#endif
 
         source.possiblyNeedsDragPreviewUpdate = false;
     }

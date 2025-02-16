@@ -1,0 +1,47 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<script>
+  globalThis.testRunner?.waitUntilDone();
+  const log = console.debug;
+
+  onload = async () => {
+    let adapter = await navigator.gpu.requestAdapter({});
+    let device = await adapter.requestDevice({});
+    let code = `
+@group(12) @binding(345678) var<storage, read_write> buf0: array<u32>;
+
+@compute @workgroup_size(1)
+fn c() {
+  buf0[12345] = 6;
+}
+`;
+    let module = device.createShaderModule({code});
+    let bindGroupLayout0 = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 1, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 2, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 3, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 4, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 5, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 6, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+        {binding: 7, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+      ],
+    });
+    let bindGroupLayout1 = device.createBindGroupLayout({
+      entries: [
+        {binding: 0, buffer: {type: 'storage'}, visibility: GPUShaderStage.COMPUTE},
+      ],
+    });
+    let pipelineLayout = device.createPipelineLayout({bindGroupLayouts: [bindGroupLayout0, bindGroupLayout1]});
+    let computePipeline1 = device.createComputePipeline({
+      layout: pipelineLayout,
+      compute: {module},
+    });
+    let commandEncoder = device.createCommandEncoder();
+    let computePassEncoder = commandEncoder.beginComputePass({});
+    computePassEncoder.setPipeline(computePipeline1);
+    computePassEncoder.dispatchWorkgroups(1);
+    await device.queue.onSubmittedWorkDone();
+    globalThis.testRunner?.notifyDone();
+  };
+</script>

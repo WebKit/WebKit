@@ -15,7 +15,7 @@ noInline(shouldBe);
     noInline(test2);
     noInline(testInvert);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         shouldBe(test1(undefined), false);
         shouldBe(test1({}), true);
         shouldBe(test2([]), true);
@@ -37,7 +37,7 @@ noInline(shouldBe);
     noInline(test2);
     noInline(testInvert);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         shouldBe(test1(1), true);
         shouldBe(test2(0), false);
         shouldBe(test2(2147483647), true);
@@ -54,7 +54,7 @@ noInline(shouldBe);
     noInline(test2);
     noInline(testInvert);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         shouldBe(test1(0.5), true);
         shouldBe(test1(-Infinity), true);
         shouldBe(test2(-0), false);
@@ -73,7 +73,7 @@ noInline(shouldBe);
     noInline(testInvert);
     noInline(testTypeCheck);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         // needsTypeCheck: false
         shouldBe(test1(true), true);
         shouldBe(test2(false), false);
@@ -113,7 +113,7 @@ noInline(shouldBe);
         [makeMasquerader(), false],
     ];
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         for (const [value, expected] of testCases) {
             shouldBe(test1(value), expected);
             shouldBe(test2(value), expected);
@@ -131,7 +131,7 @@ noInline(shouldBe);
     noInline(test2);
     noInline(testInvert);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         shouldBe(test1("\0"), true);
         shouldBe(test2(""), false);
         shouldBe(testInvert("" + "" + ""), true);
@@ -148,7 +148,7 @@ noInline(shouldBe);
     noInline(test2);
     noInline(testInvert);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         shouldBe(test1("" + "" + ""), false);
         shouldBe(test1(null), false);
         shouldBe(test2("foo"), true);

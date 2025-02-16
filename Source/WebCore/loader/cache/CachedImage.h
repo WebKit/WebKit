@@ -97,6 +97,11 @@ public:
     LayoutSize unclampedImageSizeForRenderer(const RenderElement* renderer, float multiplier, SizeType = UsedSize) const;
     void computeIntrinsicDimensions(Length& intrinsicWidth, Length& intrinsicHeight, FloatSize& intrinsicRatio);
 
+    Headroom headroom() const;
+#if ENABLE(HDR_FOR_IMAGES)
+    bool drawsHDRContent() const { return headroom() > Headroom::None; }
+#endif
+
     bool isManuallyCached() const { return m_isManuallyCached; }
     RevalidationDecision makeRevalidationDecision(CachePolicy) const override;
     void load(CachedResourceLoader&) override;
@@ -121,8 +126,6 @@ private:
     CachedImage(CachedImage&, const ResourceRequest&, PAL::SessionID);
 
     void setBodyDataFrom(const CachedResource&) final;
-
-    bool isPDFResource() const;
 
     void createImage();
     void clearImage();

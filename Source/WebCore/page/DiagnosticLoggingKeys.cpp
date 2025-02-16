@@ -776,6 +776,11 @@ String DiagnosticLoggingKeys::mediaBufferingWatchTimeKey()
     return "watchtimeBuffering"_s;
 }
 
+String DiagnosticLoggingKeys::mediaTextTrackWatchTimeKey()
+{
+    return "watchtimeTextTrack"_s;
+}
+
 String DiagnosticLoggingKeys::secondsKey()
 {
     return "seconds"_s;

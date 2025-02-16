@@ -35,11 +35,11 @@ public:
         return adoptRef(*new CSSFontValue);
     }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSFontValue&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
     RefPtr<CSSValue> style;
     RefPtr<CSSPrimitiveValue> variant;

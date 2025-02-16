@@ -31,6 +31,7 @@
 
 #import "RemoteLayerTreeNode.h"
 #import "RemoteLayerTreeViews.h"
+#import "UIKitUtilities.h"
 #import "WKContentViewInteraction.h"
 #import <WebCore/TileController.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -295,6 +296,11 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HideEditMenuScope);
 {
     if (_hideEditMenuScope)
         return;
+
+#if USE(UICONTEXTMENU)
+    if (self.contextMenuInteraction._wk_isMenuVisible)
+        return;
+#endif
 
     _hideEditMenuScope = WTF::makeUnique<WebKit::HideEditMenuScope>(self, WebKit::DeactivateSelection::Yes);
 }

@@ -18,7 +18,7 @@ function foo(arr, regexp, str){
 }
 
 let regexp = /a/g;
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     foo(arr, regexp, "aaaa");
 
 let r = foo(arr, regexp, "aaaaaaaa");

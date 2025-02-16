@@ -49,6 +49,7 @@
 #include "WebExtensionMenuItem.h"
 #include "WebExtensionMessagePort.h"
 #include "WebExtensionPortChannelIdentifier.h"
+#include "WebExtensionStorageSQLiteStore.h"
 #include "WebExtensionTab.h"
 #include "WebExtensionTabIdentifier.h"
 #include "WebExtensionUtilities.h"
@@ -107,7 +108,6 @@ OBJC_CLASS WKWebViewConfiguration;
 OBJC_CLASS _WKWebExtensionContextDelegate;
 OBJC_CLASS _WKWebExtensionDeclarativeNetRequestSQLiteStore;
 OBJC_CLASS _WKWebExtensionRegisteredScriptsSQLiteStore;
-OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
 OBJC_PROTOCOL(WKWebExtensionTab);
 OBJC_PROTOCOL(WKWebExtensionWindow);
 
@@ -187,7 +187,7 @@ public:
     using EventListenerTypeFrameMap = HashMap<WebExtensionEventListenerTypeWorldPair, WeakFrameCountedSet>;
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType>;
     using ContentWorldTypeSet = HashSet<WebExtensionContentWorldType>;
-    using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
+    using VoidFunctionVector = Vector<Function<void()>>;
 
     using WindowIdentifierMap = HashMap<WebExtensionWindowIdentifier, Ref<WebExtensionWindow>>;
     using WindowIdentifierVector = Vector<WebExtensionWindowIdentifier>;
@@ -303,7 +303,7 @@ public:
 
     void invalidateStorage();
 
-    _WKWebExtensionStorageSQLiteStore *storageForType(WebExtensionDataType);
+    Ref<WebExtensionStorageSQLiteStore> storageForType(WebExtensionDataType);
 
     bool load(WebExtensionController&, String storageDirectory, NSError ** = nullptr);
     bool unload(NSError ** = nullptr);
@@ -506,7 +506,7 @@ public:
     WebExtensionMenuItem* menuItem(const String& identifier) const;
     void performMenuItem(WebExtensionMenuItem&, const WebExtensionMenuItemContextParameters&, UserTriggered = UserTriggered::No);
 
-    CocoaMenuItem *singleMenuItemOrExtensionItemWithSubmenu(const WebExtensionMenuItemContextParameters&) const;
+    CocoaMenuItem *singleMenuItemOrExtensionItemWithSubmenu(const WebExtensionMenuItemContextParameters&, const bool allowTopLevelImages) const;
 
 #if PLATFORM(MAC)
     void addItemsToContextMenu(WebPageProxy&, const ContextMenuContextData&, NSMenu *);
@@ -568,7 +568,7 @@ public:
     void addExtensionTabPage(WebPageProxy&, WebExtensionTab&);
     void addPopupPage(WebPageProxy&, WebExtensionAction&);
 
-    void enumerateExtensionPages(Function<void(WebPageProxy&, bool& stop)>&&);
+    void enumerateExtensionPages(NOESCAPE Function<void(WebPageProxy&, bool& stop)>&&);
 
     WKWebView *relatedWebView();
     NSString *processDisplayName();
@@ -582,8 +582,8 @@ public:
 
     void loadBackgroundContent(CompletionHandler<void(NSError *)>&&);
 
-    void wakeUpBackgroundContentIfNecessary(CompletionHandler<void()>&&);
-    void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&&, CompletionHandler<void()>&&);
+    void wakeUpBackgroundContentIfNecessary(Function<void()>&&);
+    void wakeUpBackgroundContentIfNecessaryToFireEvents(EventListenerTypeSet&&, Function<void()>&&);
 
     HashSet<Ref<WebProcessProxy>> processes(WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
     {
@@ -738,9 +738,9 @@ private:
     bool isSessionStorageAllowedInContentScripts() const { return m_isSessionStorageAllowedInContentScripts; }
     size_t quotaForStorageType(WebExtensionDataType);
 
-    _WKWebExtensionStorageSQLiteStore *localStorageStore();
-    _WKWebExtensionStorageSQLiteStore *sessionStorageStore();
-    _WKWebExtensionStorageSQLiteStore *syncStorageStore();
+    Ref<WebExtensionStorageSQLiteStore> localStorageStore();
+    Ref<WebExtensionStorageSQLiteStore> sessionStorageStore();
+    Ref<WebExtensionStorageSQLiteStore> syncStorageStore();
 
     void fetchCookies(WebsiteDataStore&, const URL&, const WebExtensionCookieFilterParameters&, CompletionHandler<void(Expected<Vector<WebExtensionCookieParameters>, WebExtensionError>&&)>&&);
 
@@ -894,7 +894,7 @@ private:
     void storageRemove(WebPageProxyIdentifier, WebExtensionDataType, const Vector<String>& keys, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void storageClear(WebPageProxyIdentifier, WebExtensionDataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
     void storageSetAccessLevel(WebPageProxyIdentifier, WebExtensionDataType, WebExtensionStorageAccessLevel, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
-    void fireStorageChangedEventIfNeeded(NSDictionary *oldKeysAndValues, NSDictionary *newKeysAndValues, WebExtensionDataType);
+    void fireStorageChangedEventIfNeeded(HashMap<String, String> oldKeysAndValues, HashMap<String, String> newKeysAndValues, WebExtensionDataType);
 
     // Tabs APIs
     void tabsCreate(std::optional<WebPageProxyIdentifier>, const WebExtensionTabParameters&, CompletionHandler<void(Expected<std::optional<WebExtensionTabParameters>, WebExtensionError>&&)>&&);
@@ -991,7 +991,7 @@ private:
     bool m_requestedOptionalAccessToAllHosts { false };
     bool m_hasAccessToPrivateData { false };
 
-    VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
+    VoidFunctionVector m_actionsToPerformAfterBackgroundContentLoads;
     EventListenerTypeCountedSet m_backgroundContentEventListeners;
     EventListenerTypeFrameMap m_eventListenerFrames;
 
@@ -1074,11 +1074,9 @@ private:
 
     bool m_isSessionStorageAllowedInContentScripts { false };
 
-#if PLATFORM(COCOA)
-    RetainPtr<_WKWebExtensionStorageSQLiteStore> m_localStorageStore;
-    RetainPtr<_WKWebExtensionStorageSQLiteStore> m_sessionStorageStore;
-    RetainPtr<_WKWebExtensionStorageSQLiteStore> m_syncStorageStore;
-#endif
+    RefPtr<WebExtensionStorageSQLiteStore> m_localStorageStore;
+    RefPtr<WebExtensionStorageSQLiteStore> m_sessionStorageStore;
+    RefPtr<WebExtensionStorageSQLiteStore> m_syncStorageStore;
 };
 
 template<typename T>

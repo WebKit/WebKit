@@ -1,4 +1,4 @@
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let returnCalled = false;
     let iterable = {
         next() {

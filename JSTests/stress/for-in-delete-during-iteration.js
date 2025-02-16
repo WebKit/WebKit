@@ -11,7 +11,7 @@
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = foo();
         if (result !== "1235")
             throw new Error("bad result got: " + result);
@@ -36,7 +36,7 @@
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = foo();
         if (result !== "xz")
             throw new Error("bad result: " + result);
@@ -63,7 +63,7 @@
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() !== "o.zo.yo.x")
             throw new Error("bad result");
     }

@@ -49,7 +49,7 @@ function defaultValue() {
     log.push("default-value");
 }
 
-for (var i = 0; i < 1e5; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     log = [];
 
     ([_, target()[targetKey()] = defaultValue()] = source());

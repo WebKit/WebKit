@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledBySetting=ReportingEnabled,
     LegacyNoInterfaceObject
 ] interface COEPInheritenceViolationReportBody : ReportBody {
     readonly attribute DOMString disposition;

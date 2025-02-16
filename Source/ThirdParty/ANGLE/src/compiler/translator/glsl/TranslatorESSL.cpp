@@ -72,14 +72,15 @@ bool TranslatorESSL::translate(TIntermBlock *root,
     int shaderVer = getShaderVersion();  // Frontend shader version.
     if (shaderVer == 300)
     {
-        // Although all these extensions are defined for ESSL 3.00,
+        // Although ANGLE supports all these extensions with ESSL 3.00,
         // some drivers may support the required functionality only
         // with ESSL 3.10.
         const bool hasExtensionsThatMayRequireES31 =
             getResources().EXT_clip_cull_distance || getResources().ANGLE_clip_cull_distance ||
             getResources().NV_shader_noperspective_interpolation ||
             getResources().OES_shader_multisample_interpolation ||
-            getResources().ANGLE_texture_multisample;
+            getResources().ANGLE_texture_multisample ||
+            getResources().OES_texture_storage_multisample_2d_array;
 
         // When PLS is implemented with shader images,
         // ESSL 3.10 output is required.

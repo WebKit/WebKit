@@ -27,7 +27,7 @@ function test(object) {
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(typeof test(b), "object");
     shouldBe(typeof test({ arguments: { } }), "object");
     shouldBe(typeof test({ arguments: { }, hello: 42 }), "object");

@@ -14,7 +14,7 @@ function test() {
     }
     noInline(foo);
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         const size = 800;
         let arr = new Array(size);
         for (let i = 0; i < size; i++)

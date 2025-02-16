@@ -32,20 +32,26 @@
 #import <wtf/FileSystem.h>
 #import "QuickLookThumbnailingSoftLink.h"
 
-@implementation WKQLThumbnailQueueManager 
+@implementation WKQLThumbnailQueueManager {
+    RetainPtr<NSOperationQueue> _queue;
+}
 
 - (instancetype)init
 {
     self = [super init];
     if (self)
-        _queue = [[NSOperationQueue alloc] init];
+        _queue = adoptNS([[NSOperationQueue alloc] init]);
     return self;
 }
 
 - (void)dealloc
 {
-    [_queue release];
     [super dealloc];
+}
+
+- (NSOperationQueue *)queue
+{
+    return _queue.get();
 }
 
 + (WKQLThumbnailQueueManager *)sharedInstance

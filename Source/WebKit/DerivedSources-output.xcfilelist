@@ -12,8 +12,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AutomationProtocolObjects.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/AuxiliaryProcessMessages.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessageReceiver.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DigitalCredentialsCoordinatorProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DownloadProxyMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/DrawingAreaMessageReceiver.cpp
@@ -134,6 +132,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogMessagesImplementations.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStream.messages.in
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MaterialAdditions.swift
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaSourcePrivateRemoteMessageReceiverMessageReceiver.cpp
@@ -613,4 +612,3 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.mac.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.relocatable.mac.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebKit.webpushd.sb
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/com.apple.WebProcess.sb
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/module.private.modulemap

@@ -1,4 +1,3 @@
-Storage/InProcessIDBServer.cpp
 Storage/StorageAreaImpl.cpp
 Storage/StorageAreaSync.cpp
 Storage/StorageNamespaceImpl.cpp
@@ -104,6 +103,7 @@ mac/DOM/DOMNamedNodeMap.mm
 mac/DOM/DOMNode.mm
 mac/DOM/DOMNodeIterator.mm
 mac/DOM/DOMNodeList.mm
+mac/DOM/DOMOverflowEvent.mm
 mac/DOM/DOMProcessingInstruction.mm
 mac/DOM/DOMRGBColor.mm
 mac/DOM/DOMRange.mm
@@ -124,7 +124,6 @@ mac/DOM/WebDOMOperations.mm
 mac/History/WebBackForwardList.mm
 mac/History/WebHistoryItem.mm
 mac/Misc/WebCoreStatistics.mm
-mac/Misc/WebDownload.mm
 mac/Misc/WebElementDictionary.mm
 mac/Misc/WebNSPasteboardExtras.mm
 mac/Misc/WebSharingServicePickerController.mm

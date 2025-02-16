@@ -166,7 +166,7 @@ void AudioSampleDataSource::pushSamplesInternal(const AudioBufferList& bufferLis
     if (m_isInNeedOfMoreData) {
         m_isInNeedOfMoreData = false;
         DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-        RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, sampleCount, this, protectedThis = Ref { *this }] {
+        RunLoop::protectedMain()->dispatch([logIdentifier = LOGIDENTIFIER, sampleCount, this, protectedThis = Ref { *this }] {
             ALWAYS_LOG(logIdentifier, "needed more data, pushing ", sampleCount, " samples");
         });
     }
@@ -230,7 +230,7 @@ bool AudioSampleDataSource::pullSamples(AudioBufferList& buffer, size_t sampleCo
         if (!m_isInNeedOfMoreData) {
             m_isInNeedOfMoreData = true;
             DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
-            RunLoop::main().dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame = startFrame, endFrame = endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = Ref { *this }] {
+            RunLoop::protectedMain()->dispatch([logIdentifier = LOGIDENTIFIER, timeStamp, startFrame = startFrame, endFrame = endFrame, sampleCount, outputSampleOffset = m_outputSampleOffset, this, protectedThis = Ref { *this }] {
                 ERROR_LOG(logIdentifier, "need more data, sample ", timeStamp, " with offset ", outputSampleOffset, ", trying to get ", sampleCount, " samples, but not completely in range [", startFrame, " .. ", endFrame, "]");
             });
         }

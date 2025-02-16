@@ -8,15 +8,15 @@ function greaterThanOrEqualTest(a, b) {
 }
 noInline(greaterThanOrEqualTest);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(greaterThanOrEqualTest(3n, 4) === false);
 }
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(greaterThanOrEqualTest(3n, 4n) === false);
 }
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(greaterThanOrEqualTest(3n, "4") === false);
 }
 

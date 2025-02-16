@@ -24,10 +24,13 @@
  */
 
 #import <WebCore/FloatPoint.h>
+#import <WebCore/FrameIdentifier.h>
+#import <WebCore/LocalFrame.h>
 #import <WebCore/PageIdentifier.h>
 #import <wtf/Lock.h>
 #import <wtf/NakedPtr.h>
 #import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebKit {
 class WebPage;
@@ -38,7 +41,7 @@ class AXCoreObject;
 }
 
 @interface WKAccessibilityWebPageObjectBase : NSObject {
-    NakedPtr<WebKit::WebPage> m_page;
+    WeakPtr<WebKit::WebPage> m_page;
     Markable<WebCore::PageIdentifier> m_pageID;
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     Lock m_cacheLock;
@@ -56,6 +59,7 @@ class AXCoreObject;
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     RetainPtr<id> m_parent;
     bool m_hasMainFramePlugin;
+    std::optional<WebCore::FrameIdentifier> m_frameID;
 }
 
 - (void)setWebPage:(NakedPtr<WebKit::WebPage>)page;
@@ -68,9 +72,11 @@ class AXCoreObject;
 - (void)setRemoteParent:(id)parent;
 - (void)setRemoteFrameOffset:(WebCore::IntPoint)offset;
 - (void)setHasMainFramePlugin:(bool)hasPlugin;
+- (void)setFrameIdentifier:(const WebCore::FrameIdentifier&)frameID;
 
-- (id)accessibilityRootObjectWrapper;
+- (id)accessibilityRootObjectWrapper:(WebCore::LocalFrame*)frame;
 - (id)accessibilityFocusedUIElement;
 - (WebCore::IntPoint)accessibilityRemoteFrameOffset;
+- (WebCore::LocalFrame *)focusedLocalFrame;
 
 @end

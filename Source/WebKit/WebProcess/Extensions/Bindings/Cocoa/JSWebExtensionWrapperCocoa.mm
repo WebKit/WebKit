@@ -368,7 +368,7 @@ JSValueRef toJSValueRefOrJSNull(JSContextRef context, id object)
 NSArray *toNSArray(JSContextRef context, JSValueRef value, Class containingObjectsOfClass)
 {
     ASSERT(containingObjectsOfClass);
-    return toNSObject(context, value, containingObjectsOfClass);
+    return dynamic_objc_cast<NSArray>(toNSObject(context, value, containingObjectsOfClass));
 }
 
 JSContext *toJSContext(JSContextRef context)

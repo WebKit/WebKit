@@ -34,7 +34,7 @@ function test32()
 }
 noInline(test32);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test2(), '-10000000000000000000000000000000');
     shouldBe(test4(), '-2000000000000000');
     shouldBe(test8(), '-20000000000');

@@ -88,14 +88,14 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self))]).autorelease();
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), { }, { }, { }, false)]).autorelease();
 }
 
 - (WebArchive *)webArchiveByFilteringSubframes:(WebArchiveSubframeFilter)webArchiveSubframeFilter
 {
     auto webArchive = adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(*core(self), [webArchiveSubframeFilter](LocalFrame& subframe) -> bool {
         return webArchiveSubframeFilter(kit(&subframe));
-    })]);
+    }, { }, { }, false)]);
 
     return webArchive.autorelease();
 }
@@ -187,7 +187,7 @@ using namespace JSC;
 
 - (WebArchive *)webArchive
 {
-    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(makeSimpleRange(*core(self)))]).autorelease();
+    return adoptNS([[WebArchive alloc] _initWithCoreLegacyWebArchive:LegacyWebArchive::create(makeSimpleRange(*core(self)), false)]).autorelease();
 }
 
 - (NSString *)markupString

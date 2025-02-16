@@ -28,13 +28,10 @@ namespace WebCore {
 
 
 LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback)
-#if GLIB_CHECK_VERSION(2, 69, 1)
     : m_callback(WTFMove(callback))
     , m_powerProfileMonitor(adoptGRef(g_power_profile_monitor_dup_default()))
     , m_lowPowerModeEnabled(g_power_profile_monitor_get_power_saver_enabled(m_powerProfileMonitor.get()))
-#endif
 {
-#if GLIB_CHECK_VERSION(2, 69, 1)
     g_signal_connect_swapped(m_powerProfileMonitor.get(), "notify::power-saver-enabled", G_CALLBACK(+[] (LowPowerModeNotifier* self, GParamSpec*, GPowerProfileMonitor* monitor) {
         bool powerSaverEnabled = g_power_profile_monitor_get_power_saver_enabled(monitor);
         if (self->m_lowPowerModeEnabled != powerSaverEnabled) {
@@ -42,16 +39,11 @@ LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback
             self->m_callback(self->m_lowPowerModeEnabled);
         }
     }), this);
-#else
-    UNUSED_PARAM(callback);
-#endif
 }
 
 LowPowerModeNotifier::~LowPowerModeNotifier()
 {
-#if GLIB_CHECK_VERSION(2, 69, 1)
     g_signal_handlers_disconnect_by_data(m_powerProfileMonitor.get(), this);
-#endif
 }
 
 bool LowPowerModeNotifier::isLowPowerModeEnabled() const

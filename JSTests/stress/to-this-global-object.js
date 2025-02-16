@@ -14,7 +14,7 @@ f = 42;
 let get = eval;
 let global = get("this");
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     let result = test.call(global);
     if (result !== 42)
         throw new Error("bad this value: " + result);

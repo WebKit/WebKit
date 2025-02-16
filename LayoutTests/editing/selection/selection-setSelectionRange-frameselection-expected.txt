@@ -1,0 +1,5 @@
+
+
+PASS setSelectionRange() should not update FrameSelection if the target element is not focused.
+PASS setRangeText() should not update FrameSelection if the target element is not focused.
+

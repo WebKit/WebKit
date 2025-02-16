@@ -34,7 +34,7 @@ namespace Style {
 
 class IdChangeInvalidation {
 public:
-    IdChangeInvalidation(Element&, const AtomString& oldId, const AtomString& newId);
+    IdChangeInvalidation(Ref<Element>&&, const AtomString& oldId, const AtomString& newId);
     ~IdChangeInvalidation();
 
 private:
@@ -42,16 +42,16 @@ private:
     void invalidateStyleWithRuleSets();
 
     const bool m_isEnabled;
-    Element& m_element;
+    Ref<Element> m_element;
 
     AtomString m_newId;
 
     Invalidator::MatchElementRuleSets m_matchElementRuleSets;
 };
 
-inline IdChangeInvalidation::IdChangeInvalidation(Element& element, const AtomString& oldId, const AtomString& newId)
-    : m_isEnabled(element.needsStyleInvalidation())
-    , m_element(element)
+inline IdChangeInvalidation::IdChangeInvalidation(Ref<Element>&& element, const AtomString& oldId, const AtomString& newId)
+    : m_isEnabled(element->needsStyleInvalidation())
+    , m_element(WTFMove(element))
 {
     if (!m_isEnabled)
         return;

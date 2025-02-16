@@ -128,11 +128,13 @@ AcceleratedSurfaceDMABuf::RenderTarget::~RenderTarget()
     WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::DidDestroyBuffer(m_id), m_surfaceID);
 }
 
+#if ENABLE(DAMAGE_TRACKING)
 void AcceleratedSurfaceDMABuf::RenderTarget::addDamage(const WebCore::Damage& damage)
 {
     if (!m_damage.isInvalid())
         m_damage.add(damage);
 }
+#endif
 
 std::unique_ptr<WebCore::GLFence> AcceleratedSurfaceDMABuf::RenderTarget::createRenderingFence(bool useExplicitSync) const
 {
@@ -403,7 +405,7 @@ AcceleratedSurfaceDMABuf::SwapChain::SwapChain(uint64_t surfaceID)
     auto& display = WebCore::PlatformDisplay::sharedDisplay();
     switch (display.type()) {
     case WebCore::PlatformDisplay::Type::Surfaceless:
-        if (display.eglExtensions().MESA_image_dma_buf_export && WebProcess::singleton().dmaBufRendererBufferMode().contains(DMABufRendererBufferMode::Hardware))
+        if (display.eglExtensions().MESA_image_dma_buf_export && WebProcess::singleton().rendererBufferTransportMode().contains(RendererBufferTransportMode::Hardware))
             m_type = Type::Texture;
         else
             m_type = Type::SharedMemory;
@@ -560,6 +562,7 @@ void AcceleratedSurfaceDMABuf::SwapChain::releaseUnusedBuffers()
     m_freeTargets.clear();
 }
 
+#if ENABLE(DAMAGE_TRACKING)
 void AcceleratedSurfaceDMABuf::SwapChain::addDamage(const WebCore::Damage& damage)
 {
     for (auto& renderTarget : m_freeTargets)
@@ -567,6 +570,7 @@ void AcceleratedSurfaceDMABuf::SwapChain::addDamage(const WebCore::Damage& damag
     for (auto& renderTarget : m_lockedTargets)
         renderTarget->addDamage(damage);
 }
+#endif
 
 #if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
 void AcceleratedSurfaceDMABuf::preferredBufferFormatsDidChange()
@@ -649,9 +653,13 @@ uint64_t AcceleratedSurfaceDMABuf::surfaceID() const
     return m_id;
 }
 
-void AcceleratedSurfaceDMABuf::clientResize(const WebCore::IntSize& size)
+bool AcceleratedSurfaceDMABuf::resize(const WebCore::IntSize& size)
 {
-    m_swapChain.resize(size);
+    if (!AcceleratedSurface::resize(size))
+        return false;
+
+    m_swapChain.resize(m_size);
+    return true;
 }
 
 void AcceleratedSurfaceDMABuf::willRenderFrame()
@@ -685,16 +693,30 @@ void AcceleratedSurfaceDMABuf::didRenderFrame()
         glFlush();
 
     m_target->didRenderFrame();
-    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), m_frameDamage.region(), WTFMove(renderingFence)), m_id);
+
+    const auto& damageRegion = [this]() -> WebCore::Region {
+#if ENABLE(DAMAGE_TRACKING)
+        return m_frameDamage.region();
+#else
+        return Region { };
+#endif
+    }();
+
+    WebProcess::singleton().parentProcessConnection()->send(Messages::AcceleratedBackingStoreDMABuf::Frame(m_target->id(), damageRegion, WTFMove(renderingFence)), m_id);
+
+#if ENABLE(DAMAGE_TRACKING)
     m_frameDamage = WebCore::Damage();
+#endif
 }
 
+#if ENABLE(DAMAGE_TRACKING)
 const WebCore::Damage& AcceleratedSurfaceDMABuf::addDamage(const WebCore::Damage& damage)
 {
     m_frameDamage = damage;
     m_swapChain.addDamage(damage);
     return m_target ? m_target->damage() : WebCore::Damage::invalid();
 }
+#endif
 
 void AcceleratedSurfaceDMABuf::releaseBuffer(uint64_t targetID, UnixFileDescriptor&& releaseFence)
 {

@@ -16,7 +16,7 @@ function storeToStackAlreadyMaterialized(e) {
 }
 noInline(storeToStackAlreadyMaterialized);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let e = makeError();
     storeToStack(e);
     assert(e.stack === "foo");

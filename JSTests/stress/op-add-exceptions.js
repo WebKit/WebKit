@@ -36,7 +36,7 @@ for (let i = 0; i < 1000; i++) {
     foo({}, i);
 }
 foo(oException, oException);
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     foo(i, {});
     foo({}, i);
 }
@@ -72,7 +72,7 @@ for (let i = 0; i < 1000; i++) {
     bar({}, i);
 }
 bar(oException, oException);
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     bar(i, {});
     bar({}, i);
 }

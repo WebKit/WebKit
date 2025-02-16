@@ -30,7 +30,9 @@
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/MathExtras.h>
+#include <wtf/Mmap.h>
 #include <wtf/PageBlock.h>
 #include <wtf/SafeStrerror.h>
 #include <wtf/text/CString.h>
@@ -50,8 +52,6 @@
 #if PLATFORM(COCOA)
 #include <wtf/spi/cocoa/MachVMSPI.h>
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -83,18 +83,16 @@ void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable,
     int fd = -1;
 #endif
 
-    void* result = mmap(nullptr, bytes, protection, flags, fd, 0);
-    if (result == MAP_FAILED)
-        result = nullptr;
+    auto result = MallocSpan<uint8_t, Mmap>::mmap(bytes, protection, flags, fd);
     if (result && includesGuardPages) {
         // We use mmap to remap the guardpages rather than using mprotect as
         // mprotect results in multiple references to the code region. This
         // breaks the madvise based mechanism we use to return physical memory
         // to the OS.
-        mmap(result, pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
-        mmap(static_cast<char*>(result) + bytes - pageSize(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
+        mmap(result.mutableSpan().data(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
+        mmap(result.mutableSpan().last(pageSize()).data(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
     }
-    return result;
+    return result.leakSpan().data();
 }
 
 void* OSAllocator::tryReserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
@@ -188,23 +186,21 @@ void* OSAllocator::tryReserveUncommittedAligned(size_t bytes, size_t alignment, 
 
     // Add the alignment so we can ensure enough mapped memory to get an aligned start.
     size_t mappedSize = bytes + alignment;
-    char* mapped = reinterpret_cast<char*>(tryReserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
-    if (!mapped)
+    auto* rawMapped = reinterpret_cast<uint8_t*>(tryReserveUncommitted(mappedSize, usage, writable, executable, jitCageEnabled, includesGuardPages));
+    if (!rawMapped)
         return nullptr;
-    char* mappedEnd = mapped + mappedSize;
+    auto mappedSpan = unsafeMakeSpan(rawMapped, mappedSize);
 
-    char* aligned = reinterpret_cast<char*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(mapped)));
-    char* alignedEnd = aligned + bytes;
+    auto* rawAligned = reinterpret_cast<uint8_t*>(roundUpToMultipleOf(alignment, reinterpret_cast<uintptr_t>(mappedSpan.data())));
+    auto alignedSpan = mappedSpan.subspan(rawAligned - mappedSpan.data(), bytes);
 
-    RELEASE_ASSERT(alignedEnd <= mappedEnd);
+    if (size_t leftExtra = alignedSpan.data() - mappedSpan.data())
+        releaseDecommitted(mappedSpan.data(), leftExtra);
 
-    if (size_t leftExtra = aligned - mapped)
-        releaseDecommitted(mapped, leftExtra);
+    if (size_t rightExtra = std::to_address(mappedSpan.end()) - std::to_address(alignedSpan.end()))
+        releaseDecommitted(std::to_address(alignedSpan.end()), rightExtra);
 
-    if (size_t rightExtra = mappedEnd - alignedEnd)
-        releaseDecommitted(alignedEnd, rightExtra);
-
-    return aligned;
+    return alignedSpan.data();
 #endif // HAVE(MAP_ALIGNED)
 #endif // PLATFORM(MAC) || USE(APPLE_INTERNAL_SDK)
 }
@@ -292,5 +288,3 @@ void OSAllocator::protect(void* address, size_t bytes, bool readable, bool writa
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -68,6 +68,8 @@ public:
     uint32_t maxComputeWorkgroupSizeY() const;
     uint32_t maxComputeWorkgroupSizeZ() const;
     uint32_t maxComputeWorkgroupsPerDimension() const;
+    uint32_t maxStorageBuffersInFragmentStage() const;
+    uint32_t maxStorageTexturesInFragmentStage() const;
 
     WebGPU::SupportedLimits& backing() { return m_backing; }
     const WebGPU::SupportedLimits& backing() const { return m_backing; }

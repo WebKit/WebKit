@@ -36,7 +36,7 @@ for (var i = 0; i < 2; ++i)
     test(true);
 
 // Warm up bar and cause inlining, but make sure that foo() doesn't get DFG'd.
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(false);
 
 // And finally test the switch statement.

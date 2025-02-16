@@ -7,7 +7,7 @@ function logNaN(antilogarithm) {
 noInline(logNaN);
 
 function testLogNaN() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logNaN(NaN);
         if (!isNaN(result))
             throw "logNaN(NaN) = " + result + ", expected NaN";
@@ -23,7 +23,7 @@ function logZero(antilogarithm) {
 noInline(logZero);
 
 function testLogZero() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logZero(0);
         if (result !== -Infinity)
             throw "logZero(0) = " + result + ", expected -Infinity";
@@ -39,7 +39,7 @@ function logOne(antilogarithm) {
 noInline(logOne);
 
 function testLogOne() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logOne(1);
         if (result !== 0)
             throw "logOne(1) = " + result + ", expected 0";
@@ -55,7 +55,7 @@ function logMinusOne(antilogarithm) {
 noInline(logMinusOne);
 
 function testLogMinusOne() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logMinusOne(-1);
         if (!isNaN(result))
             throw "logMinusOne(-1) = " + result + ", expected NaN";
@@ -71,7 +71,7 @@ function logInfinity(antilogarithm) {
 noInline(logInfinity);
 
 function testLogInfinity() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logInfinity(Infinity);
         if (result !== Infinity)
             throw "logInfinity(Infinity) = " + result + ", expected Infinity";
@@ -87,7 +87,7 @@ function logMinusInfinity(antilogarithm) {
 noInline(logMinusInfinity);
 
 function testLogMinusInfinity() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logMinusInfinity(-Infinity);
         if (!isNaN(result))
             throw "logMinusInfinity(-Infinity) = " + result + ", expected NaN";
@@ -103,7 +103,7 @@ function logInteger(antilogarithm) {
 noInline(logInteger);
 
 function testLogInteger() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logInteger(42);
         if (result !== 3.7376696182833684)
             throw "logInteger(42) = " + result + ", expected 3.7376696182833684";
@@ -119,7 +119,7 @@ function logDouble(antilogarithm) {
 noInline(logDouble);
 
 function testLogDouble() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = logDouble(Math.PI);
         if (result !== 1.1447298858494002)
             throw "logDouble(Math.PI) = " + result + ", expected 1.1447298858494002";

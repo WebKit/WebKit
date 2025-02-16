@@ -10,7 +10,7 @@ function make2() {
 
 noInline(make2);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     make1();
     make2();
 }
@@ -21,7 +21,7 @@ function foo(o) {
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     foo(make1());
     foo(make2());
 }

@@ -622,6 +622,16 @@ unsigned AccessibilityTable::computeCellSlots()
                     colSpan,
                     rowSpan - 1
                 });
+            } else if (!rowSpan) {
+                // Zero is a special value for rowspan that means it spans all remaining rows.
+                // Pass the max rowspan value for DownwardGrowingCell::remainingRowsToSpan, allowing
+                // this cell to span for as long as the table extends.
+                downwardGrowingCells.append({
+                    *currentCell,
+                    xCurrent,
+                    colSpan,
+                    HTMLTableCellElement::maxRowspan - yCurrent
+                });
             }
 
             // Step 15.

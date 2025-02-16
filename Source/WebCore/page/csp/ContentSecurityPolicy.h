@@ -33,6 +33,7 @@
 #include "SecurityOriginHash.h"
 #include <functional>
 #include <wtf/CheckedPtr.h>
+#include <wtf/FixedVector.h>
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -86,6 +87,9 @@ enum class AllowTrustedTypePolicy : uint8_t {
     DisallowedName,
     DisallowedDuplicateName,
 };
+
+using HashAlgorithmSet = uint8_t;
+using HashAlgorithmSetCollection = FixedVector<std::pair<HashAlgorithmSet, FixedVector<String>>>;
 
 class ContentSecurityPolicy final : public CanMakeThreadSafeCheckedPtr<ContentSecurityPolicy> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentSecurityPolicy, WEBCORE_EXPORT);
@@ -213,9 +217,9 @@ public:
     WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(ResourceRequest&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
     WEBCORE_EXPORT void upgradeInsecureRequestIfNeeded(URL&, InsecureRequestType, AlwaysUpgradeRequest = AlwaysUpgradeRequest::No) const;
 
-    HashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
+    UncheckedKeyHashSet<SecurityOriginData> takeNavigationRequestsToUpgrade();
     void inheritInsecureNavigationRequestsToUpgradeFromOpener(const ContentSecurityPolicy&);
-    void setInsecureNavigationRequestsToUpgrade(HashSet<SecurityOriginData>&&);
+    void setInsecureNavigationRequestsToUpgrade(UncheckedKeyHashSet<SecurityOriginData>&&);
 
     void setClient(ContentSecurityPolicyClient* client) { m_client = client; }
     void updateSourceSelf(const SecurityOrigin&);
@@ -230,6 +234,7 @@ public:
     const String& webAssemblyErrorMessage() const { return m_lastPolicyWebAssemblyDisabledErrorMessage; }
 
     ContentSecurityPolicyModeForExtension contentSecurityPolicyModeForExtension() const { return m_contentSecurityPolicyModeForExtension; }
+    const HashAlgorithmSetCollection& hashesToReport();
 
 private:
     void logToConsole(const String& message, const String& contextURL = String(), const OrdinalNumber& contextLine = OrdinalNumber::beforeFirst(), const OrdinalNumber& contextColumn = OrdinalNumber::beforeFirst(), JSC::JSGlobalObject* = nullptr) const;
@@ -253,7 +258,7 @@ private:
     bool allPoliciesWithDispositionAllow(Disposition, ViolatedDirectiveCallback&&, Predicate&&, Args&&...) const;
 
     template<typename Predicate, typename... Args>
-    bool allPoliciesAllow(ViolatedDirectiveCallback&&, Predicate&&, Args&&...) const WARN_UNUSED_RETURN;
+    bool allPoliciesAllow(NOESCAPE const ViolatedDirectiveCallback&, Predicate&&, Args&&...) const WARN_UNUSED_RETURN;
     bool shouldPerformEarlyCSPCheck() const;
     
     using ResourcePredicate = const ContentSecurityPolicyDirective *(ContentSecurityPolicyDirectiveList::*)(const URL &, bool) const;
@@ -286,10 +291,11 @@ private:
     int m_httpStatusCode { 0 };
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineScripts;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsForInlineStylesheets;
-    HashSet<SecurityOriginData> m_insecureNavigationRequestsToUpgrade;
+    UncheckedKeyHashSet<SecurityOriginData> m_insecureNavigationRequestsToUpgrade;
     mutable std::optional<ContentSecurityPolicyResponseHeaders> m_cachedResponseHeaders;
     bool m_isHeaderDelivered { false };
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
+    HashAlgorithmSetCollection m_hashesToReport;
 };
 
 } // namespace WebCore

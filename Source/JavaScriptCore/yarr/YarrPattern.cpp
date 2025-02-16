@@ -1523,7 +1523,7 @@ public:
     
     // deep copy the argument disjunction.  If filterStartsWithBOL is true,
     // skip alternatives with m_startsWithBOL set true.
-    PatternDisjunction* copyDisjunction(PatternDisjunction* disjunction, bool filterStartsWithBOL = false)
+    PatternDisjunction* copyDisjunction(PatternDisjunction* disjunction, bool filterStartsWithBOL)
     {
         if (UNLIKELY(!isSafeToRecurse())) {
             m_error = ErrorCode::PatternTooLarge;
@@ -1540,9 +1540,11 @@ public:
                 }
                 PatternAlternative* newAlternative = newDisjunction->addNewAlternative(alternative->m_firstSubpatternId, alternative->matchDirection());
                 newAlternative->m_lastSubpatternId = alternative->m_lastSubpatternId;
-                newAlternative->m_terms = WTF::map(alternative->m_terms, [&](auto& term) {
-                    return copyTerm(term, filterStartsWithBOL);
-                });
+                newAlternative->m_terms.reserveCapacity(alternative->m_terms.size());
+                for (auto& term : alternative->m_terms) {
+                    if (auto copied = copyTerm(term, filterStartsWithBOL))
+                        newAlternative->m_terms.append(WTFMove(*copied));
+                }
             }
         }
         
@@ -1559,7 +1561,7 @@ public:
         return copiedDisjunction;
     }
     
-    PatternTerm copyTerm(PatternTerm& term, bool filterStartsWithBOL = false)
+    std::optional<PatternTerm> copyTerm(PatternTerm& term, bool filterStartsWithBOL)
     {
         if (UNLIKELY(!isSafeToRecurse())) {
             m_error = ErrorCode::PatternTooLarge;
@@ -1569,10 +1571,13 @@ public:
         if ((term.type != PatternTerm::Type::ParenthesesSubpattern) && (term.type != PatternTerm::Type::ParentheticalAssertion))
             return PatternTerm(term);
         
-        PatternTerm termCopy = term;
-        termCopy.parentheses.disjunction = copyDisjunction(termCopy.parentheses.disjunction, filterStartsWithBOL);
-        m_pattern.m_hasCopiedParenSubexpressions = true;
-        return termCopy;
+        if (auto* newDisjunction = copyDisjunction(term.parentheses.disjunction, filterStartsWithBOL)) {
+            PatternTerm termCopy = term;
+            termCopy.parentheses.disjunction = newDisjunction;
+            m_pattern.m_hasCopiedParenSubexpressions = true;
+            return termCopy;
+        }
+        return std::nullopt;
     }
     
     void quantifyAtom(unsigned min, unsigned max, bool greedy)
@@ -1616,7 +1621,7 @@ public:
         else {
             if (term.matchDirection() == Forward) {
                 term.quantify(min, min, QuantifierType::FixedCount);
-                m_alternative->m_terms.append(copyTerm(term));
+                m_alternative->m_terms.append(*copyTerm(term, /* filterStartsWithBOL */ false));
                 // NOTE: this term is interesting from an analysis perspective, in that it can be ignored.....
                 m_alternative->lastTerm().quantify((max == quantifyInfinite) ? max : max - min, greedy ? QuantifierType::Greedy : QuantifierType::NonGreedy);
                 if (m_alternative->lastTerm().type == PatternTerm::Type::ParenthesesSubpattern)
@@ -1625,7 +1630,7 @@ public:
                 term.quantify((max == quantifyInfinite) ? max : max - min, greedy ? QuantifierType::Greedy : QuantifierType::NonGreedy);
                 if (term.type == PatternTerm::Type::ParenthesesSubpattern)
                     term.parentheses.isCopy = true;
-                m_alternative->m_terms.append(copyTerm(term));
+                m_alternative->m_terms.append(*copyTerm(term, /* filterStartsWithBOL */ false));
                 m_alternative->lastTerm().quantify(min, min, QuantifierType::FixedCount);
                 if (m_alternative->lastTerm().type == PatternTerm::Type::ParenthesesSubpattern)
                     m_alternative->lastTerm().parentheses.isCopy = false;
@@ -1851,7 +1856,7 @@ public:
         if (!m_pattern.m_containsBOL || m_pattern.multiline())
             return;
         
-        PatternDisjunction* loopDisjunction = copyDisjunction(disjunction, true);
+        PatternDisjunction* loopDisjunction = copyDisjunction(disjunction, /* filterStartsWithBOL */ true);
 
         // Set alternatives in disjunction to "onceThrough"
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt)

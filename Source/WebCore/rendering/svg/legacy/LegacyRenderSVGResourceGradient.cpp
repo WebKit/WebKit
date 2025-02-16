@@ -3,7 +3,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2022-2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,65 +56,6 @@ void LegacyRenderSVGResourceGradient::removeClientFromCache(RenderElement& clien
     markClientForInvalidation(client, markForInvalidation ? RepaintInvalidation : ParentOnlyInvalidation);
 }
 
-#if USE(CG)
-static inline bool createMaskAndSwapContextForTextGradient(GraphicsContext*& context, GraphicsContext*& savedContext, RefPtr<ImageBuffer>& imageBuffer, RenderElement& renderer)
-{
-    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
-    ASSERT(textRootBlock);
-
-    AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
-    // FIXME: This needs to be bounding box and should not use repaint rect.
-    // https://bugs.webkit.org/show_bug.cgi?id=278551
-    FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
-
-    // Ignore 2D rotation, as it doesn't affect the size of the mask.
-    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
-
-    // Determine scale factor for the clipper. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
-    ImageBuffer::sizeNeedsClamping(repaintRect.size(), scale);
-
-    auto maskImage = context->createScaledImageBuffer(repaintRect, scale);
-    if (!maskImage)
-        return false;
-
-    GraphicsContext& maskImageContext = maskImage->context();
-    ASSERT(maskImage);
-    savedContext = context;
-    context = &maskImageContext;
-    imageBuffer = WTFMove(maskImage);
-    return true;
-}
-
-static inline AffineTransform clipToTextMask(GraphicsContext& context, RefPtr<ImageBuffer>& imageBuffer, FloatRect& targetRect, RenderElement& renderer, bool boundingBoxMode, const AffineTransform& gradientTransform)
-{
-    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
-    ASSERT(textRootBlock);
-
-    AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
-
-    // FIXME: This needs to be bounding box and should not use repaint rect.
-    // https://bugs.webkit.org/show_bug.cgi?id=278551
-    targetRect = textRootBlock->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
-    
-    // Ignore 2D rotation, as it doesn't affect the size of the mask.
-    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
-
-    // Determine scale factor for the clipper. The size of intermediate ImageBuffers shouldn't be bigger than kMaxFilterSize.
-    ImageBuffer::sizeNeedsClamping(targetRect.size(), scale);
-
-    SVGRenderingContext::clipToImageBuffer(context, targetRect, scale, imageBuffer, false);
-
-    AffineTransform matrix;
-    if (boundingBoxMode) {
-        FloatRect maskBoundingBox = textRootBlock->objectBoundingBox();
-        matrix.translate(maskBoundingBox.location());
-        matrix.scale(maskBoundingBox.size());
-    }
-    matrix *= gradientTransform;
-    return matrix;
-}
-#endif
-
 GradientData::Inputs LegacyRenderSVGResourceGradient::computeInputs(RenderElement& renderer, OptionSet<RenderSVGResourceMode> resourceMode)
 {
     std::optional<FloatRect> objectBoundingBox;
@@ -128,11 +69,8 @@ GradientData::Inputs LegacyRenderSVGResourceGradient::computeInputs(RenderElemen
     return { objectBoundingBox, textPaintingScale };
 }
 
-auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+GradientData* LegacyRenderSVGResourceGradient::gradientDataForRenderer(RenderElement& renderer, const RenderStyle& style, OptionSet<RenderSVGResourceMode> resourceMode)
 {
-    ASSERT(context);
-    ASSERT(!resourceMode.isEmpty());
-
     // Be sure to synchronize all SVG properties on the gradientElement _before_ processing any further.
     // Otherwhise the call to collectGradientAttributes() in createTileImage(), may cause the SVG DOM property
     // synchronization to kick in, which causes removeAllClientsFromCache() to be called, which in turn deletes our
@@ -140,7 +78,7 @@ auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
     if (m_shouldCollectGradientAttributes) {
         gradientElement().synchronizeAllAttributes();
         if (!collectGradientAttributes())
-            return { };
+            return nullptr;
 
         m_shouldCollectGradientAttributes = false;
     }
@@ -149,9 +87,7 @@ auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
     // then the given effect (e.g. a gradient or a filter) will be ignored.
     auto inputs = computeInputs(renderer, resourceMode);
     if (inputs.objectBoundingBox && inputs.objectBoundingBox->isEmpty())
-        return { };
-
-    bool isPaintingText = resourceMode.contains(RenderSVGResourceMode::ApplyToText);
+        return nullptr;
 
     auto& gradientData = *m_gradientMap.ensure(&renderer, [&]() {
         return makeUnique<GradientData>();
@@ -166,7 +102,7 @@ auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
         // box applied to the gradient space transform now, so the gradient shader can use it.
         if (gradientData.inputs.objectBoundingBox
 #if USE(CG)
-            && !isPaintingText
+            && !resourceMode.contains(RenderSVGResourceMode::ApplyToText)
 #endif
         ) {
             gradientData.userspaceTransform.translate(gradientData.inputs.objectBoundingBox->location());
@@ -181,32 +117,217 @@ auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, con
             gradientData.userspaceTransform.scale(gradientData.inputs.textPaintingScale);
     }
 
-    // Draw gradient
-    context->save();
+    return &gradientData;
+}
 
-    if (isPaintingText) {
-#if USE(CG)
-        if (!createMaskAndSwapContextForTextGradient(context, m_savedContext, m_imageBuffer, renderer)) {
-            context->restore();
-            return { };
-        }
-#endif
-        context->setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
-    }
+static inline void applyGradientResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
+{
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToText))
+        context.setTextDrawingMode(resourceMode.contains(RenderSVGResourceMode::ApplyToFill) ? TextDrawingMode::Fill : TextDrawingMode::Stroke);
 
     auto& svgStyle = style.svgStyle();
     auto userspaceTransform = gradientData.userspaceTransform;
 
     if (resourceMode.contains(RenderSVGResourceMode::ApplyToFill)) {
-        context->setAlpha(svgStyle.fillOpacity());
-        context->setFillGradient(*gradientData.gradient, userspaceTransform);
-        context->setFillRule(svgStyle.fillRule());
+        context.setAlpha(svgStyle.fillOpacity());
+        context.setFillGradient(*gradientData.gradient, userspaceTransform);
+        context.setFillRule(svgStyle.fillRule());
     } else if (resourceMode.contains(RenderSVGResourceMode::ApplyToStroke)) {
         if (svgStyle.vectorEffect() == VectorEffect::NonScalingStroke)
-            userspaceTransform = transformOnNonScalingStroke(&renderer, gradientData.userspaceTransform);
-        context->setAlpha(svgStyle.strokeOpacity());
-        context->setStrokeGradient(*gradientData.gradient, userspaceTransform);
-        SVGRenderSupport::applyStrokeStyleToContext(*context, style, renderer);
+            userspaceTransform = LegacyRenderSVGResourceContainer::transformOnNonScalingStroke(&renderer, gradientData.userspaceTransform);
+        context.setAlpha(svgStyle.strokeOpacity());
+        context.setStrokeGradient(*gradientData.gradient, userspaceTransform);
+        SVGRenderSupport::applyStrokeStyleToContext(context, style, renderer);
+    }
+}
+
+class PathOrShapeGradientApplier : public GradientApplier {
+    WTF_MAKE_TZONE_ALLOCATED(PathOrShapeGradientApplier);
+    WTF_MAKE_NONCOPYABLE(PathOrShapeGradientApplier);
+public:
+    PathOrShapeGradientApplier() = default;
+
+private:
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
+    void postApplyResource(RenderElement&, GraphicsContext*&, const GradientData&, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PathOrShapeGradientApplier);
+
+bool PathOrShapeGradientApplier::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
+{
+    context->save();
+    applyGradientResource(renderer, style, *context, gradientData, resourceMode);
+    return true;
+}
+
+void PathOrShapeGradientApplier::postApplyResource(RenderElement&, GraphicsContext*& context, const GradientData&, SVGUnitTypes::SVGUnitType, const AffineTransform&, OptionSet<RenderSVGResourceMode> resourceMode, const Path* path, const RenderElement* shape)
+{
+    LegacyRenderSVGResource::fillAndStrokePathOrShape(*context, resourceMode, path, shape);
+    context->restore();
+}
+
+#if USE(CG)
+class TextGradientClipper : public GradientApplier {
+    WTF_MAKE_TZONE_ALLOCATED(TextGradientClipper);
+    WTF_MAKE_NONCOPYABLE(TextGradientClipper);
+public:
+    TextGradientClipper() = default;
+
+private:
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
+    void postApplyResource(RenderElement&, GraphicsContext*&, const GradientData&, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
+
+    GraphicsContext* m_savedContext { nullptr };
+    RefPtr<ImageBuffer> m_imageBuffer;
+};
+
+static inline std::tuple<FloatRect, FloatSize> calculateGradientGeometry(RenderElement& renderer)
+{
+    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
+    ASSERT(textRootBlock);
+
+    // FIXME: This needs to be bounding box and should not use repaint rect.
+    // https://bugs.webkit.org/show_bug.cgi?id=278551
+    FloatRect repaintRect = textRootBlock->repaintRectInLocalCoordinates(RepaintRectCalculation::Accurate);
+
+    AffineTransform absoluteTransform = SVGRenderingContext::calculateTransformationToOutermostCoordinateSystem(*textRootBlock);
+
+    // Ignore 2D rotation, as it doesn't affect the size of the target.
+    FloatSize scale(absoluteTransform.xScale(), absoluteTransform.yScale());
+
+    return { repaintRect, scale };
+}
+
+static inline AffineTransform calculateGradientUserspaceTransform(RenderElement& renderer, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform)
+{
+    if (gradientUnits != SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+        return gradientTransform;
+
+    auto* textRootBlock = RenderSVGText::locateRenderSVGTextAncestor(renderer);
+    ASSERT(textRootBlock);
+
+    auto boundingBox = textRootBlock->objectBoundingBox();
+
+    AffineTransform userspaceTransform;
+    userspaceTransform.translate(boundingBox.location());
+    userspaceTransform.scale(boundingBox.size());
+    userspaceTransform *= gradientTransform;
+
+    return userspaceTransform;
+}
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextGradientClipper);
+
+bool TextGradientClipper::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, const GradientData& gradientData, OptionSet<RenderSVGResourceMode> resourceMode)
+{
+    ASSERT(resourceMode.contains(RenderSVGResourceMode::ApplyToText));
+
+    auto [targetRect, scale] = calculateGradientGeometry(renderer);
+    ImageBuffer::sizeNeedsClamping(targetRect.size(), scale);
+
+    m_imageBuffer = context->createScaledImageBuffer(targetRect, scale);
+    if (!m_imageBuffer)
+        return false;
+
+    m_savedContext = context;
+    context = &m_imageBuffer->context();
+
+    applyGradientResource(renderer, style, *context, gradientData, resourceMode);
+    return true;
+}
+
+void TextGradientClipper::postApplyResource(RenderElement& renderer, GraphicsContext*& context, const GradientData& gradientData, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*)
+{
+    if (!m_savedContext)
+        return;
+
+    auto [targetRect, scale] = calculateGradientGeometry(renderer);
+    ImageBuffer::sizeNeedsClamping(targetRect.size(), scale);
+
+    Ref gradient = *gradientData.gradient;
+    auto userspaceTransform = calculateGradientUserspaceTransform(renderer, gradientUnits, gradientTransform);
+
+    // Restore on-screen drawing context
+    context = std::exchange(m_savedContext, nullptr);
+
+    GraphicsContextStateSaver stateSaver(*context);
+
+    SVGRenderingContext::clipToImageBuffer(*context, targetRect, scale, m_imageBuffer, false);
+
+    context->setFillGradient(WTFMove(gradient), userspaceTransform);
+    context->fillRect(targetRect);
+
+    m_imageBuffer = nullptr;
+}
+
+class TextGradientCompositor : public GradientApplier {
+    WTF_MAKE_TZONE_ALLOCATED(TextGradientCompositor);
+    WTF_MAKE_NONCOPYABLE(TextGradientCompositor);
+public:
+    TextGradientCompositor() = default;
+
+private:
+    bool applyResource(RenderElement&, const RenderStyle&, GraphicsContext*&, const GradientData&, OptionSet<RenderSVGResourceMode>) final;
+    void postApplyResource(RenderElement&, GraphicsContext*&, const GradientData&, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*) final;
+};
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(TextGradientCompositor);
+
+bool TextGradientCompositor::applyResource(RenderElement&, const RenderStyle&, GraphicsContext*& context, const GradientData&, OptionSet<RenderSVGResourceMode>)
+{
+    context->save();
+
+    context->beginTransparencyLayer(1);
+    return true;
+}
+
+void TextGradientCompositor::postApplyResource(RenderElement& renderer, GraphicsContext*& context, const GradientData& gradientData, SVGUnitTypes::SVGUnitType gradientUnits, const AffineTransform& gradientTransform, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement*)
+{
+    context->setCompositeOperation(CompositeOperator::SourceIn);
+    context->beginTransparencyLayer(1);
+    context->setCompositeOperation(CompositeOperator::SourceOver);
+
+    [[maybe_unused]] auto [targetRect, scale] = calculateGradientGeometry(renderer);
+
+    Ref gradient = *gradientData.gradient;
+    auto userspaceTransform = calculateGradientUserspaceTransform(renderer, gradientUnits, gradientTransform);
+
+    context->setFillGradient(WTFMove(gradient), userspaceTransform);
+    context->fillRect(targetRect);
+
+    context->endTransparencyLayer();
+    context->endTransparencyLayer();
+
+    context->restore();
+}
+#endif
+
+auto LegacyRenderSVGResourceGradient::applyResource(RenderElement& renderer, const RenderStyle& style, GraphicsContext*& context, OptionSet<RenderSVGResourceMode> resourceMode) -> OptionSet<ApplyResult>
+{
+    ASSERT(context);
+    ASSERT(!resourceMode.isEmpty());
+
+    auto gradientData = gradientDataForRenderer(renderer, style, resourceMode);
+    if (!gradientData)
+        return { };
+
+#if USE(CG)
+    if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
+        // PDF does not support some CompositeOperation
+        if (context->renderingMode() == RenderingMode::PDFDocument)
+            m_gradientApplier = makeUnique<TextGradientClipper>();
+        else
+            m_gradientApplier = makeUnique<TextGradientCompositor>();
+    }
+#endif
+
+    if (!m_gradientApplier)
+        m_gradientApplier = makeUnique<PathOrShapeGradientApplier>();
+
+    if (!m_gradientApplier->applyResource(renderer, style, context, *gradientData, resourceMode)) {
+        m_gradientApplier = nullptr;
+        return { };
     }
 
     return { ApplyResult::ResourceApplied };
@@ -217,33 +338,14 @@ void LegacyRenderSVGResourceGradient::postApplyResource(RenderElement& renderer,
     ASSERT(context);
     ASSERT(!resourceMode.isEmpty());
 
-    if (resourceMode.contains(RenderSVGResourceMode::ApplyToText)) {
-#if USE(CG)
-        // CG requires special handling for gradient on text
-        if (m_savedContext) {
-            auto gradientData = m_gradientMap.find(&renderer);
-            if (gradientData != m_gradientMap.end()) {
-                Ref gradient = *gradientData->value->gradient;
+    if (!m_gradientApplier)
+        return;
 
-                // Restore on-screen drawing context
-                context = std::exchange(m_savedContext, nullptr);
+    auto gradientData = m_gradientMap.find(&renderer);
+    if (gradientData != m_gradientMap.end())
+        m_gradientApplier->postApplyResource(renderer, context, *gradientData->value, gradientUnits(), gradientTransform(), resourceMode, path, shape);
 
-                FloatRect targetRect;
-                AffineTransform userspaceTransform = clipToTextMask(*context, m_imageBuffer, targetRect, renderer, gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX, gradientTransform());
-
-                context->setFillGradient(WTFMove(gradient), userspaceTransform);
-                context->fillRect(targetRect);
-
-                m_imageBuffer = nullptr;
-            }
-        }
-#else
-        UNUSED_PARAM(renderer);
-#endif
-    } else
-        fillAndStrokePathOrShape(*context, resourceMode, path, shape);
-
-    context->restore();
+    m_gradientApplier = nullptr;
 }
 
 GradientColorStops LegacyRenderSVGResourceGradient::stopsByApplyingColorFilter(const GradientColorStops& stops, const RenderStyle& style)
@@ -270,4 +372,4 @@ GradientSpreadMethod LegacyRenderSVGResourceGradient::platformSpreadMethodFromSV
     return GradientSpreadMethod::Pad;
 }
 
-}
+} // namespace WebCore

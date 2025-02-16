@@ -26,6 +26,7 @@
 #include "FilterEffectApplier.h"
 #include "FilterFunction.h"
 #include "FilterImageVector.h"
+#include <wtf/CheckedPtr.h>
 
 namespace WTF {
 class TextStream;
@@ -37,9 +38,10 @@ class Filter;
 class FilterEffectGeometry;
 class FilterResults;
 
-class FilterEffect : public FilterFunction {
+class FilterEffect : public FilterFunction, public CanMakeThreadSafeCheckedPtr<FilterEffect> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FilterEffect);
     using FilterFunction::apply;
-
 public:
     virtual bool operator==(const FilterEffect&) const;
 

@@ -82,7 +82,7 @@ void AudioSessionCocoa::setEligibleForSmartRouting(bool isEligible, ForceUpdate 
         return;
 
     m_isEligibleForSmartRouting = isEligible;
-    m_workQueue->dispatch([this, isEligible] {
+    m_workQueue->dispatch([isEligible] {
         setEligibleForSmartRoutingInternal(isEligible);
     });
 }

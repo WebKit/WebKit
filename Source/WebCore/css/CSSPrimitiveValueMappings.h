@@ -61,6 +61,10 @@
 #include "AppleVisualEffect.h"
 #endif
 
+#if USE(APPLE_INTERNAL_SDK)
+#include <WebKitAdditions/CSSValueKeywordsAdditions.h>
+#endif
+
 namespace WebCore {
 
 template<typename TargetType> TargetType fromCSSValue(const CSSValue& value)
@@ -382,16 +386,12 @@ constexpr CSSValueID toCSSValueID(StyleAppearance e)
     case StyleAppearance::ApplePayButton:
         return CSSValueApplePayButton;
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
 #endif
     case StyleAppearance::InnerSpinButton:
-#if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
-#endif
     case StyleAppearance::SearchFieldDecoration:
     case StyleAppearance::SearchFieldResultsDecoration:
     case StyleAppearance::SearchFieldResultsButton:
@@ -2018,6 +2018,10 @@ constexpr CSSValueID toCSSValueID(AppleVisualEffect effect)
         return CSSValueAppleSystemBlurMaterialThick;
     case AppleVisualEffect::BlurChromeMaterial:
         return CSSValueAppleSystemBlurMaterialChrome;
+#if HAVE(MATERIAL_HOSTING)
+    case AppleVisualEffect::HostedBlurMaterial:
+        return CSSValueAppleSystemHostedBlurMaterial;
+#endif
     case AppleVisualEffect::VibrancyLabel:
         return CSSValueAppleSystemVibrancyLabel;
     case AppleVisualEffect::VibrancySecondaryLabel:
@@ -2054,6 +2058,10 @@ template<> constexpr AppleVisualEffect fromCSSValueID(CSSValueID valueID)
         return AppleVisualEffect::BlurThickMaterial;
     case CSSValueAppleSystemBlurMaterialChrome:
         return AppleVisualEffect::BlurChromeMaterial;
+#if HAVE(MATERIAL_HOSTING)
+    case CSSValueAppleSystemHostedBlurMaterial:
+        return AppleVisualEffect::HostedBlurMaterial;
+#endif
     case CSSValueAppleSystemVibrancyLabel:
         return AppleVisualEffect::VibrancyLabel;
     case CSSValueAppleSystemVibrancySecondaryLabel:

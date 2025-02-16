@@ -213,7 +213,7 @@ Ref<Blob> XMLHttpRequest::createResponseBlob()
     Vector<uint8_t> data;
     if (m_binaryResponseBuilder)
         data = m_binaryResponseBuilder.take()->extractData();
-    return Blob::create(scriptExecutionContext(), WTFMove(data), responseMIMEType(FinalMIMEType::Yes)); // responseMIMEType defaults to text/xml which may be incorrect.
+    return Blob::create(protectedScriptExecutionContext().get(), WTFMove(data), responseMIMEType(FinalMIMEType::Yes)); // responseMIMEType defaults to text/xml which may be incorrect.
 }
 
 RefPtr<ArrayBuffer> XMLHttpRequest::createResponseArrayBuffer()

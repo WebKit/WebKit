@@ -174,6 +174,9 @@ class MemoryAllocationTracker : angle::NonCopyable
                                                 VkMemoryPropertyFlags allocatedFlags,
                                                 void *handle);
 
+    // Issue warning in case of exceeding maximum allowed allocation size.
+    void onExceedingMaxMemoryAllocationSize(VkDeviceSize size);
+
     // Pending memory allocation information is used for logging in case of an unsuccessful
     // allocation. It is cleared in onMemoryAlloc().
     VkDeviceSize getPendingMemoryAllocationSize() const;

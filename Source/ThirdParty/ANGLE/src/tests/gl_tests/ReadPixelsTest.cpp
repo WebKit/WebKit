@@ -1552,6 +1552,68 @@ TEST_P(ReadPixelsErrorTest, ColorBufferSnorm16)
                                    {GL_BYTE, GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT});
 }
 
+// texture internal format is GL_RGBA32F
+class ReadPixelsFloat32TypePBOTest : public ReadPixelsPBOTest
+{
+  protected:
+    ReadPixelsFloat32TypePBOTest() : ReadPixelsPBOTest() {}
+
+    void testSetUp() override
+    {
+        glGenBuffers(1, &mPBO);
+        glGenFramebuffers(1, &mFBO);
+
+        // buffer size sufficient enough for glReadPixels when data != 0
+        reset(4 * 4 * 1 * 4 + 16, 4, 1);
+    }
+
+    void reset(GLuint bufferSize, GLuint fboWidth, GLuint fboHeight) override
+    {
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+        glBufferData(GL_PIXEL_PACK_BUFFER, bufferSize, nullptr, GL_STATIC_DRAW);
+        glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+
+        glDeleteTextures(1, &mTexture);
+        glGenTextures(1, &mTexture);
+        glBindTexture(GL_TEXTURE_2D, mTexture);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA32F, fboWidth, fboHeight);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTexture, 0);
+
+        mFBOWidth  = fboWidth;
+        mFBOHeight = fboHeight;
+
+        mPBOBufferSize = bufferSize;
+
+        ASSERT_GL_NO_ERROR();
+    }
+};
+
+// Test basic usage of PBOs.
+TEST_P(ReadPixelsFloat32TypePBOTest, Basic)
+{
+    glClearColor(0.5f, 0.2f, 0.3f, 0.4f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_GL_NO_ERROR();
+
+    glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
+    glReadPixels(0, 0, mFBOWidth, mFBOHeight, GL_RGBA, GL_FLOAT, reinterpret_cast<void *>(2));
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    glReadPixels(0, 0, mFBOWidth, mFBOHeight, GL_RGBA, GL_FLOAT, 0);
+    EXPECT_GL_NO_ERROR();
+
+    void *mappedPtr = glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, mPBOBufferSize, GL_MAP_READ_BIT);
+    GLColor32F *dataColor = static_cast<GLColor32F *>(mappedPtr);
+    EXPECT_GL_NO_ERROR();
+
+    EXPECT_EQ(GLColor32F(0.5f, 0.2f, 0.3f, 0.4f), dataColor[0]);
+
+    glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+    EXPECT_GL_NO_ERROR();
+}
+
 // a test class to be used for error checking of glReadPixels with WebGLCompatibility
 class ReadPixelsWebGLErrorTest : public ReadPixelsTest
 {
@@ -1615,6 +1677,9 @@ ANGLE_INSTANTIATE_TEST_ES2(ReadPixelsPBONVTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBOTest);
 ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsPBOTest);
+
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsFloat32TypePBOTest);
+ANGLE_INSTANTIATE_TEST_ES3(ReadPixelsFloat32TypePBOTest);
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ReadPixelsPBODrawTest);
 ANGLE_INSTANTIATE_TEST_ES3_AND(ReadPixelsPBODrawTest,

@@ -30,7 +30,6 @@
 #import "XPCServiceEntryPoint.h"
 #import <JavaScriptCore/JSCConfig.h>
 #import <WebCore/ProcessIdentifier.h>
-#import <WebCore/WebCoreHeapSupport.h>
 #import <signal.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
@@ -40,14 +39,10 @@
 
 namespace WebKit {
 
-DECLARE_TZONE_HEAPREF_SPECIFICATION_BOUNDS(XPCService);
-
 XPCServiceInitializerDelegate::XPCServiceInitializerDelegate(OSObjectPtr<xpc_connection_t> connection, xpc_object_t initializerMessage)
     : m_connection(WTFMove(connection))
     , m_initializerMessage(initializerMessage)
 {
-    PREINITIALIZE_TZONE_HEAPREFS(XPCService);
-    WebCore::initializeHeapRefs();
 }
 
 XPCServiceInitializerDelegate::~XPCServiceInitializerDelegate() = default;
@@ -84,19 +79,19 @@ bool XPCServiceInitializerDelegate::getConnectionIdentifier(IPC::Connection::Ide
 
 bool XPCServiceInitializerDelegate::getClientIdentifier(String& clientIdentifier)
 {
-    clientIdentifier = String::fromUTF8(xpc_dictionary_get_string(m_initializerMessage, "client-identifier"));
+    clientIdentifier = xpc_dictionary_get_wtfstring(m_initializerMessage, "client-identifier"_s);
     return !clientIdentifier.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getClientBundleIdentifier(String& clientBundleIdentifier)
 {
-    clientBundleIdentifier = String::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "client-bundle-identifier"));
+    clientBundleIdentifier = xpc_dictionary_get_wtfstring(m_initializerMessage, "client-bundle-identifier"_s);
     return !clientBundleIdentifier.isEmpty();
 }
 
 bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehaviors& behaviors)
 {
-    auto behaviorData = xpc_dictionary_get_data_span(m_initializerMessage, "client-sdk-aligned-behaviors");
+    auto behaviorData = xpc_dictionary_get_data_span(m_initializerMessage, "client-sdk-aligned-behaviors"_s);
     if (behaviorData.empty())
         return false;
     memcpySpan(behaviors.storageBytes(), behaviorData);
@@ -105,7 +100,7 @@ bool XPCServiceInitializerDelegate::getClientSDKAlignedBehaviors(SDKAlignedBehav
 
 bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::ProcessIdentifier>& identifier)
 {
-    auto parsedIdentifier = parseInteger<uint64_t>(StringView::fromLatin1(xpc_dictionary_get_string(m_initializerMessage, "process-identifier")));
+    auto parsedIdentifier = parseInteger<uint64_t>(xpc_dictionary_get_wtfstring(m_initializerMessage, "process-identifier"_s));
     if (!parsedIdentifier)
         return false;
     if (!ObjectIdentifier<WebCore::ProcessIdentifierType>::isValidIdentifier(*parsedIdentifier))
@@ -117,7 +112,7 @@ bool XPCServiceInitializerDelegate::getProcessIdentifier(std::optional<WebCore::
 
 bool XPCServiceInitializerDelegate::getClientProcessName(String& clientProcessName)
 {
-    clientProcessName = String::fromUTF8(xpc_dictionary_get_string(m_initializerMessage, "ui-process-name"));
+    clientProcessName = xpc_dictionary_get_wtfstring(m_initializerMessage, "ui-process-name"_s);
     return !clientProcessName.isEmpty();
 }
 
@@ -125,32 +120,32 @@ bool XPCServiceInitializerDelegate::getExtraInitializationData(HashMap<String, S
 {
     xpc_object_t extraDataInitializationDataObject = xpc_dictionary_get_value(m_initializerMessage, "extra-initialization-data");
 
-    auto inspectorProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "inspector-process"));
+    auto inspectorProcess = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "inspector-process"_s);
     if (!inspectorProcess.isEmpty())
         extraInitializationData.add("inspector-process"_s, inspectorProcess);
 
-    auto serviceWorkerProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "service-worker-process"));
+    auto serviceWorkerProcess = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "service-worker-process"_s);
     if (!serviceWorkerProcess.isEmpty())
         extraInitializationData.add("service-worker-process"_s, WTFMove(serviceWorkerProcess));
-    auto registrableDomain = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "registrable-domain"));
+    auto registrableDomain = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "registrable-domain"_s);
     if (!registrableDomain.isEmpty())
         extraInitializationData.add("registrable-domain"_s, WTFMove(registrableDomain));
 
-    auto isPrewarmedProcess = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "is-prewarmed"));
+    auto isPrewarmedProcess = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "is-prewarmed"_s);
     if (!isPrewarmedProcess.isEmpty())
         extraInitializationData.add("is-prewarmed"_s, isPrewarmedProcess);
 
-    auto isLockdownModeEnabled = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "enable-lockdown-mode"));
+    auto isLockdownModeEnabled = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "enable-lockdown-mode"_s);
     if (!isLockdownModeEnabled.isEmpty())
         extraInitializationData.add("enable-lockdown-mode"_s, isLockdownModeEnabled);
 
     if (!isClientSandboxed()) {
-        auto userDirectorySuffix = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "user-directory-suffix"));
+        auto userDirectorySuffix = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "user-directory-suffix"_s);
         if (!userDirectorySuffix.isEmpty())
             extraInitializationData.add("user-directory-suffix"_s, userDirectorySuffix);
     }
 
-    auto alwaysRunsAtBackgroundPriority = String::fromLatin1(xpc_dictionary_get_string(extraDataInitializationDataObject, "always-runs-at-background-priority"));
+    auto alwaysRunsAtBackgroundPriority = xpc_dictionary_get_wtfstring(extraDataInitializationDataObject, "always-runs-at-background-priority"_s);
     if (!alwaysRunsAtBackgroundPriority.isEmpty())
         extraInitializationData.add("always-runs-at-background-priority"_s, alwaysRunsAtBackgroundPriority);
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+    const asyncNodeDeletionLimit = 100000;
+    const startingNodeCount = window.internals.numberOfLiveNodes();
+    let rootDiv = document.createElement("div");
+    for (let i = 0; i < asyncNodeDeletionLimit + 1; ++i)
+        rootDiv.appendChild(document.createElement('div'));
+    rootDiv.innerHTML = "";
+    gc();
+    shouldBeTrue("window.internals.numberOfLiveNodes() < startingNodeCount + asyncNodeDeletionLimit");
+
+    let nodeWithManyChildren = document.createElement("div");
+    for (let i = 0; i < asyncNodeDeletionLimit + 1; ++i)
+        nodeWithManyChildren.appendChild(document.createElement("p"));
+    let hostNode = document.createElement("div");
+    shadowRoot = hostNode.attachShadow({mode: 'closed'});
+    shadowRoot.appendChild(nodeWithManyChildren);
+    rootDiv.appendChild(hostNode);
+    rootDiv.innerHTML = "";
+    shadowRoot = null;
+    hostNode = null;
+    rootDiv = null;
+    nodeWithManyChildren = null;
+    gc();
+    shouldBeTrue("window.internals.numberOfLiveNodes() < startingNodeCount + asyncNodeDeletionLimit");
+
+var successfullyParsed = true;
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

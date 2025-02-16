@@ -106,7 +106,7 @@ private:
 
     void load(const String&) override;
 #if ENABLE(MEDIA_SOURCE)
-    void load(const URL&, const ContentType&, MediaSourcePrivateClient&) override;
+    void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #endif
     void load(MediaStreamPrivate&) override;
     void cancelLoad() override;
@@ -246,6 +246,8 @@ private:
     LayerHostingContextID hostingContextID() const final;
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
     void requestHostingContextID(LayerHostingContextIDCallback&&) final;
+
+    RefPtr<MediaStreamPrivate> protectedMediaStreamPrivate() const;
 
     ThreadSafeWeakPtr<MediaPlayer> m_player;
     RefPtr<MediaStreamPrivate> m_mediaStreamPrivate;

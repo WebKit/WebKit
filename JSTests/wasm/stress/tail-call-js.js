@@ -59,7 +59,7 @@ async function test() {
     } }, { simd: true, tail_call: true, exceptions: true })
     const { call_same_size, call_same_size_with_stack, call_bigger_with_stack, call_smaller_with_stack } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(call_same_size(), 1337n + 42n)
         assert.eq(call_same_size_with_stack(), 9n + 2n)
         assert.eq(call_same_size_with_stack(1.5, 2.5, 3.0, 4.0, 5.0, 6.0, 7.5, 8.5, 9.5, 10.5), 9n + 2n)

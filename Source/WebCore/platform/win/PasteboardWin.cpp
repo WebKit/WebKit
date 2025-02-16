@@ -505,16 +505,19 @@ void Pasteboard::writeRangeToDataObject(const SimpleRange& selectedRange, LocalF
         m_writableDataObject->SetData(smartPasteFormat(), &medium, TRUE);
 }
 
-void Pasteboard::writeSelection(const SimpleRange& selectedRange, bool canSmartCopyOrDelete, LocalFrame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
+void Pasteboard::writeSelection(const std::optional<SimpleRange>& selectedRange, bool canSmartCopyOrDelete, LocalFrame& frame, ShouldSerializeSelectedTextForDataTransfer shouldSerializeSelectedTextForDataTransfer)
 {
     clear();
+
+    if (!selectedRange)
+        return;
 
     // Put CF_HTML format on the pasteboard 
     if (::OpenClipboard(m_owner)) {
         Vector<char> data;
         // FIXME: Use ResolveURLs::YesExcludingURLsForPrivacy.
         markupToCFHTML(serializePreservingVisualAppearance(frame.selection().selection()),
-            selectedRange.start.container->document().url().string(), data);
+            selectedRange->start.container->document().url().string(), data);
         HGLOBAL cbData = createGlobalData(data);
         if (!::SetClipboardData(HTMLClipboardFormat, cbData))
             ::GlobalFree(cbData);
@@ -540,7 +543,7 @@ void Pasteboard::writeSelection(const SimpleRange& selectedRange, bool canSmartC
         }
     }
 
-    writeRangeToDataObject(selectedRange, frame);
+    writeRangeToDataObject(*selectedRange, frame);
 }
 
 void Pasteboard::writePlainTextToDataObject(const String& text, SmartReplaceOption)

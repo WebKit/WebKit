@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "IsoHeapImpl.h"
+
+#if !BUSE(TZONE)
 
 #include "AllIsoHeaps.h"
 #include "PerProcess.h"
@@ -98,3 +101,4 @@ void IsoHeapImplBase::finishScavenging(Vector<DeferredDecommit>& deferredDecommi
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

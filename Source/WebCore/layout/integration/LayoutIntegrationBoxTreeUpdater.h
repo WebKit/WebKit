@@ -47,7 +47,7 @@ class InitialContainingBlock;
 namespace LayoutIntegration {
 
 #if ENABLE(TREE_DEBUGGING)
-struct InlineContent;
+class InlineContent;
 #endif
 
 class BoxTreeUpdater {

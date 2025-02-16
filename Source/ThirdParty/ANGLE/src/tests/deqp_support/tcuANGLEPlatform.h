@@ -28,6 +28,14 @@ namespace tcu
 class Platform;
 }  // namespace tcu
 
-tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation);
+enum class dEQPDriverOption
+{
+    ANGLE,
+    NATIVE,
+};
+
+tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc,
+                                   uint32_t preRotation,
+                                   dEQPDriverOption driverOption);
 
 #endif  // TCU_ANGLE_PLATFORM_H_

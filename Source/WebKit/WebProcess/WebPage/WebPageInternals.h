@@ -26,7 +26,6 @@
 #pragma once
 
 #include "IdentifierTypes.h"
-#include "InjectedBundlePageFullScreenClient.h"
 #include "WebPage.h"
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/VisibleSelection.h>
@@ -42,7 +41,7 @@ struct WebPage::Internals {
 #if PLATFORM(IOS_FAMILY)
     WebCore::VisibleSelection storedSelectionForAccessibility { WebCore::VisibleSelection() };
     FocusedElementInformationIdentifier lastFocusedElementInformationIdentifier;
-    TransactionID lastTransactionIDWithScaleChange;
+    std::optional<TransactionID> lastTransactionIDWithScaleChange;
     std::optional<std::pair<TransactionID, double>> lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage;
 #endif
 #if ENABLE(APP_HIGHLIGHTS)
@@ -50,9 +49,6 @@ struct WebPage::Internals {
     WebCore::HighlightRequestOriginatedInApp highlightRequestOriginatedInApp { WebCore::HighlightRequestOriginatedInApp::No };
 #endif
     std::optional<WebsitePoliciesData> pendingWebsitePolicies;
-#if ENABLE(FULLSCREEN_API)
-    InjectedBundlePageFullScreenClient fullScreenClient;
-#endif
     WebCore::ScrollPinningBehavior scrollPinningBehavior { WebCore::ScrollPinningBehavior::DoNotPin };
     mutable EditorStateIdentifier lastEditorStateIdentifier;
     HashMap<WebCore::RegistrableDomain, HashSet<WebCore::RegistrableDomain>> domainsWithPageLevelStorageAccess;

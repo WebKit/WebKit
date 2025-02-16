@@ -138,21 +138,22 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
         if (result.hasException())
             return promise.reject(result.releaseException());
 
+        auto streamIdentifier = result.returnValue();
         RefPtr context = protectedThis->scriptExecutionContext();
         if (!context) {
-            closeWritable(FileSystemWriteCloseReason::Aborted);
+            closeWritable(streamIdentifier, FileSystemWriteCloseReason::Aborted);
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Context has stopped"_s });
         }
 
         auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(context->globalObject());
         if (!globalObject) {
-            closeWritable(FileSystemWriteCloseReason::Aborted);
+            closeWritable(streamIdentifier, FileSystemWriteCloseReason::Aborted);
             return promise.reject(Exception { ExceptionCode::InvalidStateError, "Global object is invalid"_s });
         }
 
-        auto sink = FileSystemWritableFileStreamSink::create(*this);
+        auto sink = FileSystemWritableFileStreamSink::create(streamIdentifier, *this);
         if (sink.hasException()) {
-            closeWritable(FileSystemWriteCloseReason::Aborted);
+            closeWritable(streamIdentifier, FileSystemWriteCloseReason::Aborted);
             return promise.reject(sink.releaseException());
         }
 
@@ -167,18 +168,18 @@ void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, 
     });
 }
 
-void FileSystemFileHandle::closeWritable(FileSystemWriteCloseReason reason)
+void FileSystemFileHandle::closeWritable(FileSystemWritableFileStreamIdentifier streamIdentifier, FileSystemWriteCloseReason reason)
 {
     if (!isClosed())
-        connection().closeWritable(identifier(), reason, [](auto) { });
+        connection().closeWritable(identifier(), streamIdentifier, reason, [](auto) { });
 }
 
-void FileSystemFileHandle::executeCommandForWritable(FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, DOMPromiseDeferred<void>&& promise)
+void FileSystemFileHandle::executeCommandForWritable(FileSystemWritableFileStreamIdentifier streamIdentifier, FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, DOMPromiseDeferred<void>&& promise)
 {
     if (isClosed())
         return promise.reject(Exception { ExceptionCode::InvalidStateError, "Handle is closed"_s });
 
-    connection().executeCommandForWritable(identifier(), type, position, size, dataBytes, hasDataError, [promise = WTFMove(promise)](auto result) mutable {
+    connection().executeCommandForWritable(identifier(), streamIdentifier, type, position, size, dataBytes, hasDataError, [promise = WTFMove(promise)](auto result) mutable {
         // Writable should be closed when stream is closed or errored, and stream will be errored after a failed write.
         promise.settle(WTFMove(result));
     });

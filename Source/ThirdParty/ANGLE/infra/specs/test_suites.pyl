@@ -38,6 +38,15 @@
       },
     },
 
+    'angle_cl_bruteforce_gtests': {
+      'angle_oclcts_bruteforce': {
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'use_isolated_scripts_api': True,
+      },
+    },
+
     'angle_cl_buffers_gtests': {
       'angle_oclcts_buffers': {
         'linux_args': [
@@ -56,8 +65,53 @@
       },
     },
 
+    'angle_cl_copy_images_gtests': {
+      'angle_oclcts_cl_copy_images': {
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'use_isolated_scripts_api': True,
+      },
+    },
+
     'angle_cl_events_gtests': {
       'angle_oclcts_events': {
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'use_isolated_scripts_api': True,
+      },
+    },
+
+    'angle_cl_fill_images_gtests': {
+      'angle_oclcts_cl_fill_images': {
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'use_isolated_scripts_api': True,
+      },
+    },
+
+    'angle_cl_images_get_info_gtests': {
+      'angle_oclcts_cl_get_info': {
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'use_isolated_scripts_api': True,
+      },
+    },
+
+    'angle_cl_multiples_gtests': {
+      'angle_oclcts_multiples': {
+        'linux_args': [
+          '--no-xvfb',
+        ],
+        'use_isolated_scripts_api': True,
+      },
+    },
+
+    'angle_cl_non_uniform_work_group_gtests': {
+      'angle_oclcts_non_uniform_work_group': {
         'linux_args': [
           '--no-xvfb',
         ],
@@ -1577,9 +1631,15 @@
       'angle_white_box_gtests',
       'angle_cl_api_gtests',
       'angle_cl_basic_gtests',
+      'angle_cl_bruteforce_gtests',
       'angle_cl_buffers_gtests',
       'angle_cl_compiler_gtests',
+      'angle_cl_copy_images_gtests',
       'angle_cl_events_gtests',
+      'angle_cl_fill_images_gtests',
+      'angle_cl_images_get_info_gtests',
+      'angle_cl_multiples_gtests',
+      'angle_cl_non_uniform_work_group_gtests',
       'angle_cl_profiling_gtests',
     ],
 

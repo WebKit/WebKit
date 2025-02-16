@@ -104,9 +104,9 @@ RefPtr<StyleImage> CSSGradientValue::createStyleImage(const Style::BuilderState&
     return styleImage;
 }
 
-String CSSGradientValue::customCSSText() const
+String CSSGradientValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(m_gradient);
+    return CSS::serializationForCSS(context, m_gradient);
 }
 
 bool CSSGradientValue::equals(const CSSGradientValue& other) const
@@ -114,7 +114,7 @@ bool CSSGradientValue::equals(const CSSGradientValue& other) const
     return m_gradient == other.m_gradient;
 }
 
-IterationStatus CSSGradientValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSGradientValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_gradient);
 }

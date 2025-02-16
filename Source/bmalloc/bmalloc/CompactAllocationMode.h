@@ -29,7 +29,9 @@
 #include "BInline.h"
 
 #if BUSE(LIBPAS)
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "pas_allocation_mode.h"
+BALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 namespace bmalloc {

@@ -63,9 +63,7 @@ public:
     {
         RELEASE_ASSERT(spatialLayerIndex < MaxSpatialLayers);
         RELEASE_ASSERT(temporalLayerIndex < MaxTemporalLayers);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         m_bitRates[spatialLayerIndex][temporalLayerIndex].emplace(bitRate);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     std::optional<uint32_t> getBitRate(unsigned spatialLayerIndex, unsigned temporalLayerIndex) const
@@ -74,9 +72,7 @@ public:
             return std::nullopt;
         if (UNLIKELY(temporalLayerIndex >= MaxTemporalLayers))
             return std::nullopt;
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         return m_bitRates[spatialLayerIndex][temporalLayerIndex];
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     WebCore::VideoEncoderScalabilityMode scalabilityMode() const { return m_scalabilityMode; }
@@ -87,7 +83,7 @@ private:
     { }
 
     WebCore::VideoEncoderScalabilityMode m_scalabilityMode;
-    std::optional<uint32_t> m_bitRates[MaxSpatialLayers][MaxTemporalLayers];
+    std::array<std::array<std::optional<uint32_t>, MaxSpatialLayers>, MaxTemporalLayers> m_bitRates;
 };
 
 bool videoEncoderSupportsCodec(WebKitVideoEncoder*, const String&);

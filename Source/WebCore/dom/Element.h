@@ -148,6 +148,14 @@ enum class ContentRelevancy : uint8_t {
     Selected = 1 << 3,
 };
 
+namespace Calculation {
+class RandomKeyMap;
+}
+
+namespace CSS {
+struct SerializationContext;
+}
+
 namespace Style {
 class Resolver;
 enum class Change : uint8_t;
@@ -180,9 +188,9 @@ public:
     WEBCORE_EXPORT void setIntegralAttribute(const QualifiedName& attributeName, int value);
     WEBCORE_EXPORT unsigned getUnsignedIntegralAttribute(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setUnsignedIntegralAttribute(const QualifiedName& attributeName, unsigned value);
-    WEBCORE_EXPORT RefPtr<Element> getElementAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT RefPtr<Element> getElementAttributeForBindings(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementAttribute(const QualifiedName& attributeName, Element* value);
-    WEBCORE_EXPORT std::optional<Vector<Ref<Element>>> getElementsArrayAttribute(const QualifiedName& attributeName) const;
+    WEBCORE_EXPORT std::optional<Vector<Ref<Element>>> getElementsArrayAttributeForBindings(const QualifiedName& attributeName) const;
     WEBCORE_EXPORT void setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<Ref<Element>>>&& value);
     static bool isElementReflectionAttribute(const Settings&, const QualifiedName&);
     static bool isElementsArrayReflectionAttribute(const QualifiedName&);
@@ -217,6 +225,8 @@ public:
     WEBCORE_EXPORT const AtomString& getAttributeNS(const AtomString& namespaceURI, const AtomString& localName) const;
     AtomString getAttributeForBindings(const AtomString& qualifiedName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
     inline AtomString getAttributeNSForBindings(const AtomString& namespaceURI, const AtomString& localName, ResolveURLs = ResolveURLs::NoExcludingURLsForPrivacy) const;
+    RefPtr<Element> elementForAttributeInternal(const QualifiedName& attributeName) const;
+    std::optional<Vector<Ref<Element>>> elementsArrayForAttributeInternal(const QualifiedName& attributeName) const;
 
     WEBCORE_EXPORT ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const AtomString& value);
     ExceptionOr<void> setAttribute(const AtomString& qualifiedName, const TrustedTypeOrString& value);
@@ -239,7 +249,7 @@ public:
 
     // Internal methods that assume the existence of attribute storage, one should use hasAttributes()
     // before calling them.
-    inline AttributeIteratorAccessor attributesIterator() const;
+    inline std::span<const Attribute> attributes() const;
     inline unsigned attributeCount() const;
     inline const Attribute& attributeAt(unsigned index) const;
     inline const Attribute* findAttributeByName(const QualifiedName&) const;
@@ -344,15 +354,15 @@ public:
 
     String nodeName() const override;
 
-    Ref<Element> cloneElementWithChildren(TreeScope&);
-    Ref<Element> cloneElementWithoutChildren(TreeScope&);
+    Ref<Element> cloneElementWithChildren(Document&, CustomElementRegistry*);
+    Ref<Element> cloneElementWithoutChildren(Document&, CustomElementRegistry*);
 
     void normalizeAttributes();
 
     WEBCORE_EXPORT void setBooleanAttribute(const QualifiedName& name, bool);
 
     // For exposing to DOM only.
-    WEBCORE_EXPORT NamedNodeMap& attributes() const;
+    WEBCORE_EXPORT NamedNodeMap& attributesMap() const;
 
     enum class AttributeModificationReason : uint8_t { Directly, ByCloning, Parser };
     // This function is called whenever an attribute is added, changed or removed.
@@ -400,8 +410,9 @@ public:
     inline ShadowRoot* shadowRoot() const; // Defined in ElementRareData.h
     RefPtr<ShadowRoot> shadowRootForBindings(JSC::JSGlobalObject&) const;
 
-    WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&);
-    ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, ShadowRootDelegatesFocus, ShadowRootClonable, ShadowRootSerializable);
+    enum class CustomElementRegistryKind : bool { Window, Null };
+    WEBCORE_EXPORT ExceptionOr<ShadowRoot&> attachShadow(const ShadowRootInit&, CustomElementRegistryKind = CustomElementRegistryKind::Window);
+    ExceptionOr<ShadowRoot&> attachDeclarativeShadow(ShadowRootMode, ShadowRootDelegatesFocus, ShadowRootClonable, ShadowRootSerializable, CustomElementRegistryKind);
 
     WEBCORE_EXPORT ShadowRoot* userAgentShadowRoot() const;
     RefPtr<ShadowRoot> protectedUserAgentShadowRoot() const;
@@ -415,6 +426,7 @@ public:
     void setIsCustomElementUpgradeCandidate();
     void enqueueToUpgrade(JSCustomElementInterface&);
     CustomElementReactionQueue* reactionQueue() const;
+    CustomElementRegistry* customElementRegistry() const;
 
     CustomElementDefaultARIA& customElementDefaultARIA();
     CheckedRef<CustomElementDefaultARIA> checkedCustomElementDefaultARIA();
@@ -507,7 +519,7 @@ public:
     virtual bool attributeContainsURL(const Attribute& attribute) const { return isURLAttribute(attribute); }
     String resolveURLStringIfNeeded(const String& urlString, ResolveURLs = ResolveURLs::Yes, const URL& base = URL()) const;
     virtual String completeURLsInAttributeValue(const URL& base, const Attribute&, ResolveURLs = ResolveURLs::Yes) const;
-    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const UncheckedKeyHashMap<String, String>&) const;
+    virtual Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const;
     virtual bool isHTMLContentAttribute(const Attribute&) const { return false; }
 
     WEBCORE_EXPORT URL getURLAttribute(const QualifiedName&) const;
@@ -765,6 +777,7 @@ public:
     void invalidateStyleForAnimation();
     void invalidateStyleForSubtreeInternal();
     void invalidateForQueryContainerSizeChange();
+    void invalidateForAnchorRectChange();
     void invalidateForResumingQueryContainerResolution();
     void invalidateForResumingAnchorPositionedElementResolution();
 
@@ -831,6 +844,9 @@ public:
 
     AtomString viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
     void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, AtomString);
+
+    Ref<Calculation::RandomKeyMap> randomKeyMap(const std::optional<Style::PseudoElementIdentifier>&) const;
+    bool hasRandomKeyMap() const;
 
 protected:
     Element(const QualifiedName&, Document&, OptionSet<TypeFlag>);
@@ -923,9 +939,9 @@ private:
     void disconnectFromResizeObserversSlow(ResizeObserverData&);
 
     // The cloneNode function is private so that non-virtual cloneElementWith/WithoutChildren are used instead.
-    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
-    void cloneShadowTreeIfPossible(Element& newHost);
-    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&);
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) override;
+    void cloneShadowTreeIfPossible(Element& newHost, CustomElementRegistry*);
+    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*);
 
     inline void removeShadowRoot(); // Defined in ElementRareData.h.
     void removeShadowRootSlow(ShadowRoot&);

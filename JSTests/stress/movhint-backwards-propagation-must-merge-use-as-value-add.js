@@ -7,7 +7,7 @@ function foo(v, a, b) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let r = foo(true, 4, 4);
     if (r !== 8)
         throw new Error("Bad!");

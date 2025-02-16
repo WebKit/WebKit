@@ -5360,11 +5360,13 @@ class TestRunAPITestsWithoutChange(BuildStepMixinAdditions, unittest.TestCase):
         self.setProperty('buildername', 'API-Tests-macOS-EWS')
         self.setProperty('buildnumber', '11525')
         self.setProperty('workername', 'ews155')
+        self.setProperty('first_run_failures', ['suite.test1', 'suite.test2', 'suite.test3'])
+        self.setProperty('second_run_failures', ['suite.test3', 'suite.test4', 'suite.test5'])
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['/bin/sh', '-c', f'python3 Tools/Scripts/run-api-tests --no-build --release --verbose --json-output={self.jsonFileName} > logs.txt 2>&1 ; grep "Ran " logs.txt'],
+                        command=['/bin/sh', '-c', f'python3 Tools/Scripts/run-api-tests --no-build --release --verbose --json-output={self.jsonFileName} suite.test1 suite.test2 suite.test3 suite.test4 suite.test5 > logs.txt 2>&1 ; grep "Ran " logs.txt'],
                         logfiles={'json': self.jsonFileName},
                         timeout=3 * 60 * 60
                         )
@@ -5392,11 +5394,13 @@ All tests successfully passed!
         self.setProperty('buildername', 'API-Tests-iOS-EWS')
         self.setProperty('buildnumber', '123')
         self.setProperty('workername', 'ews156')
+        self.setProperty('first_run_failures', ['suite.test-one-failure1'])
+        self.setProperty('second_run_failures', ['suite.test-one-failure2'])
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['/bin/sh', '-c', f'python3 Tools/Scripts/run-api-tests --no-build --debug --verbose --json-output={self.jsonFileName} > logs.txt 2>&1 ; grep "Ran " logs.txt'],
+                        command=['/bin/sh', '-c', f'python3 Tools/Scripts/run-api-tests --no-build --debug --verbose --json-output={self.jsonFileName} suite.test-one-failure1 suite.test-one-failure2 > logs.txt 2>&1 ; grep "Ran " logs.txt'],
                         logfiles={'json': self.jsonFileName},
                         timeout=3 * 60 * 60
                         )
@@ -8031,7 +8035,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
     def test_skipped_patch(self):
         self.setupStep(AddReviewerToCommitMessage())
         self.setProperty('patch_id', '1234')
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped because there are no valid reviewers')
         return self.runStep()
 
     def test_success(self):
@@ -8127,7 +8131,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('github.base.ref', 'main')
         self.setProperty('github.head.ref', 'eng/pull-request-branch')
         self.setProperty('valid_reviewers', [])
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped because there are no valid reviewers')
         return self.runStep()
 
     def test_skip_cherry_pick(self):
@@ -8138,7 +8142,7 @@ class TestAddReviewerToCommitMessage(BuildStepMixinAdditions, unittest.TestCase)
         self.setProperty('valid_reviewers', ['WebKit Reviewer', 'Other Reviewer'])
         self.setProperty('owners', ['webkit-commit-queue'])
         self.setProperty('classification', ['Cherry-pick'])
-        self.expectOutcome(result=SKIPPED, state_string='finished (skipped)')
+        self.expectOutcome(result=SKIPPED, state_string='Skipped because commit is a cherry-pick')
         return self.runStep()
 
 
@@ -9259,7 +9263,10 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         return self.tearDownBuildStep()
 
     def configureStep(self, use_expectations, was_filtered=False):
-        self.setupStep(FindUnexpectedStaticAnalyzerResults(use_expectations=use_expectations, was_filtered=was_filtered))
+        if use_expectations:
+            self.setupStep(FindUnexpectedStaticAnalyzerResults(was_filtered=was_filtered))
+        else:
+            self.setupStep(FindUnexpectedStaticAnalyzerResultsWithoutChange(was_filtered=was_filtered))
         self.setProperty('builddir', 'wkdir')
         self.setProperty('buildnumber', 1234)
         self.setProperty('architecture', 'arm64')

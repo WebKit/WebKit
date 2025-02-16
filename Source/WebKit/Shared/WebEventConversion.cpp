@@ -30,6 +30,7 @@
 #include "WebMouseEvent.h"
 #include "WebTouchEvent.h"
 #include "WebWheelEvent.h"
+#include <WebCore/PlatformMouseEvent.h>
 
 #if ENABLE(MAC_GESTURE_EVENTS)
 #include "WebGestureEvent.h"
@@ -377,6 +378,7 @@ public:
         m_isPotentialTap = webEvent.isPotentialTap();
         m_position = webEvent.position();
         m_globalPosition = webEvent.position();
+        m_authorizationToken = webEvent.authorizationToken();
 #else
         // PlatformTouchEvent
         for (size_t i = 0; i < webEvent.touchPoints().size(); ++i)

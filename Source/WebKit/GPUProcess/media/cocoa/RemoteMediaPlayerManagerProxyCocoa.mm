@@ -31,16 +31,23 @@
 #include "VideoReceiverEndpointMessage.h"
 #include <WebCore/MediaPlayerPrivate.h>
 #include <WebCore/VideoTargetFactory.h>
+#include <wtf/LoggerHelper.h>
 
 namespace WebKit {
 
 #if ENABLE(LINEAR_MEDIA_PLAYER)
-PlatformVideoTarget RemoteMediaPlayerManagerProxy::videoTargetForMediaElementIdentifier(WebCore::HTMLMediaElementIdentifier mediaElementIdentifier)
+PlatformVideoTarget RemoteMediaPlayerManagerProxy::takeVideoTargetForMediaElementIdentifier(WebCore::HTMLMediaElementIdentifier mediaElementIdentifier, WebCore::MediaPlayerIdentifier playerIdentifier)
 {
     auto cachedEntry = m_videoReceiverEndpointCache.find(mediaElementIdentifier);
     if (cachedEntry == m_videoReceiverEndpointCache.end())
         return nullptr;
 
+    if (cachedEntry->value.playerIdentifier != playerIdentifier) {
+        ALWAYS_LOG(LOGIDENTIFIER, "moving target from player ", cachedEntry->value.playerIdentifier->loggingString(), " to player ", playerIdentifier.loggingString());
+        if (RefPtr mediaPlayer = this->mediaPlayer(cachedEntry->value.playerIdentifier))
+            mediaPlayer->setVideoTarget(nullptr);
+        cachedEntry->value.playerIdentifier = playerIdentifier;
+    }
     return cachedEntry->value.videoTarget;
 }
 
@@ -48,6 +55,7 @@ void RemoteMediaPlayerManagerProxy::handleVideoReceiverEndpointMessage(const Vid
 {
     auto cachedEntry = m_videoReceiverEndpointCache.find(endpointMessage.mediaElementIdentifier());
     if (cachedEntry == m_videoReceiverEndpointCache.end()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "New entry");
         // If no entry for the specified mediaElementIdentifier exists, add a new entry to
         // the cache, and set the new t on the specified MediaPlayer.
         auto videoTarget = WebCore::VideoTargetFactory::createTargetFromEndpoint(endpointMessage.endpoint());
@@ -67,6 +75,20 @@ void RemoteMediaPlayerManagerProxy::handleVideoReceiverEndpointMessage(const Vid
     if (cachedPlayerIdentifier == endpointMessage.playerIdentifier()
         && cachedEndpoint.get() == endpointMessage.endpoint().get())
         return;
+
+    // If the endpoint has been cleared, remove the entry from the cache entirely.
+    if (!endpointMessage.endpoint()) {
+        if (RefPtr mediaPlayer = this->mediaPlayer(cachedEntry->value.playerIdentifier)) {
+            ALWAYS_LOG(LOGIDENTIFIER, "Cache cleared; removing target from player ", cachedEntry->value.playerIdentifier->loggingString());
+            mediaPlayer->setVideoTarget(nullptr);
+        } else
+            ALWAYS_LOG(LOGIDENTIFIER, "Cache cleared; no current player target");
+
+        m_videoReceiverEndpointCache.remove(cachedEntry);
+        return;
+    }
+
+    ALWAYS_LOG(LOGIDENTIFIER, "Update entry");
 
     RefPtr cachedPlayer = mediaPlayer(cachedPlayerIdentifier);
     auto cachedTarget = cachedEntry->value.videoTarget;
@@ -89,12 +111,6 @@ void RemoteMediaPlayerManagerProxy::handleVideoReceiverEndpointMessage(const Vid
     // Then set the new target, which may have changed, on the specified MediaPlayer.
     if (RefPtr mediaPlayer = this->mediaPlayer(endpointMessage.playerIdentifier()))
         mediaPlayer->setVideoTarget(cachedTarget);
-
-    // If the endpoint has been cleared, remove the entry from the cache entirely.
-    if (!endpointMessage.endpoint()) {
-        m_videoReceiverEndpointCache.remove(cachedEntry);
-        return;
-    }
 
     // Otherwise, update the cache entry with updated values.
     cachedEntry->value.playerIdentifier = endpointMessage.playerIdentifier();

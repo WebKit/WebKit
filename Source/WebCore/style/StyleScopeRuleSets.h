@@ -78,7 +78,7 @@ public:
     const Vector<InvalidationRuleSet>* pseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
     const Vector<InvalidationRuleSet>* hasPseudoClassInvalidationRuleSets(const PseudoClassInvalidationKey&) const;
 
-    const HashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
+    const UncheckedKeyHashSet<AtomString>& customPropertyNamesInStyleContainerQueries() const;
 
     SelectorsForStyleAttribute selectorsForStyleAttribute() const;
 
@@ -107,7 +107,7 @@ public:
 
     bool& isInvalidatingStyleWithRuleSets() { return m_isInvalidatingStyleWithRuleSets; }
 
-    bool hasMatchingUserOrAuthorStyle(const WTF::Function<bool(RuleSet&)>&);
+    bool hasMatchingUserOrAuthorStyle(NOESCAPE const WTF::Function<bool(RuleSet&)>&);
 
 private:
     void collectFeatures() const;
@@ -130,7 +130,7 @@ private:
     mutable UncheckedKeyHashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_pseudoClassInvalidationRuleSets;
     mutable UncheckedKeyHashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<InvalidationRuleSet>>> m_hasPseudoClassInvalidationRuleSets;
 
-    mutable std::optional<HashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
+    mutable std::optional<UncheckedKeyHashSet<AtomString>> m_customPropertyNamesInStyleContainerQueries;
 
     mutable std::optional<SelectorsForStyleAttribute> m_cachedSelectorsForStyleAttribute;
 

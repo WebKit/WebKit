@@ -158,8 +158,8 @@ void LocalFrameViewLayoutContext::layout(bool canDeferUpdateLayerPositions)
     if (view().hasOneRef())
         return;
 
-    Style::Scope::QueryContainerUpdateContext queryContainerUpdateContext;
-    while (document() && document()->styleScope().updateQueryContainerState(queryContainerUpdateContext)) {
+    Style::Scope::LayoutDependencyUpdateContext layoutDependencyUpdateContext;
+    while (document() && document()->styleScope().invalidateForLayoutDependencies(layoutDependencyUpdateContext)) {
         document()->updateStyleIfNeeded();
 
         if (!needsLayout())
@@ -705,8 +705,7 @@ bool LocalFrameViewLayoutContext::pushLayoutState(RenderBox& renderer, const Lay
             , pageHeight
             , pageHeightChanged
             , layoutState ? layoutState->lineClamp() : std::nullopt
-            , layoutState ? layoutState->legacyLineClamp() : std::nullopt
-            , layoutState ? layoutState->textBoxTrim() : RenderLayoutState::TextBoxTrim()));
+            , layoutState ? layoutState->legacyLineClamp() : std::nullopt));
         return true;
     }
     return false;

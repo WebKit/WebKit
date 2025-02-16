@@ -37,8 +37,6 @@
 #include "FEComponentTransferSkiaApplier.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 Ref<FEComponentTransfer> FEComponentTransfer::create(const ComponentTransferFunction& redFunction, const ComponentTransferFunction& greenFunction, const ComponentTransferFunction& blueFunction, const ComponentTransferFunction& alphaFunction, DestinationColorSpace colorSpace)
@@ -240,7 +238,7 @@ FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const C
         values[i] = i;
 
     using TransferType = Function<void(const ComponentTransferFunction&)>;
-    TransferType callEffect[] = {
+    std::array<TransferType, 6> callEffect {
         // FECOMPONENTTRANSFER_TYPE_UNKNOWN
         [&](const ComponentTransferFunction&)
         {
@@ -309,5 +307,3 @@ FEComponentTransfer::LookupTable FEComponentTransfer::computeLookupTable(const C
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

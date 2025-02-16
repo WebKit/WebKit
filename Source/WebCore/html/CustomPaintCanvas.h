@@ -71,14 +71,12 @@ public:
 
     const CSSParserContext& cssParserContext() const final;
 
-    using RefCounted::ref;
-    using RefCounted::deref;
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
     CustomPaintCanvas(ScriptExecutionContext&, unsigned width, unsigned height);
 
-    void refCanvasBase() const final { ref(); }
-    void derefCanvasBase() const final { deref(); }
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return ContextDestructionObserver::scriptExecutionContext(); }
 
     std::unique_ptr<PaintRenderingContext2D> m_context;

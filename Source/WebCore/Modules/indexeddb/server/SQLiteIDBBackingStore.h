@@ -138,10 +138,6 @@ private:
     bool migrateIndexInfoTableForIDUpdate(const HashMap<std::pair<IDBObjectStoreIdentifier, IDBIndexIdentifier>, IDBIndexIdentifier>& indexIDMap);
     bool migrateIndexRecordsTableForIDUpdate(const HashMap<std::pair<IDBObjectStoreIdentifier, IDBIndexIdentifier>, IDBIndexIdentifier>& indexIDMap);
 
-    bool removeExistingIndex(IDBIndexIdentifier);
-    bool addExistingIndex(IDBObjectStoreInfo&, const IDBIndexInfo&);
-    bool handleDuplicateIndexIDs(const HashMap<IDBIndexIdentifier, Vector<IDBIndexInfo>>&, IDBDatabaseInfo&);
-
     enum class SQL : size_t {
         CreateObjectStoreInfo,
         CreateObjectStoreKeyGenerator,

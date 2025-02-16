@@ -187,10 +187,10 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 #pragma mark -
 #pragma mark Exposed Interface
 
-- (void)enterFullScreen:(NSScreen *)screen
+- (void)enterFullScreen:(NSScreen *)screen completionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)completionHandler
 {
     if (_isFullScreen)
-        return;
+        return completionHandler({ });
     _isFullScreen = YES;
     
     [self _updateMenuAndDockForFullScreen];   
@@ -239,7 +239,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _savedScale = [_webView _viewScaleFactor];
     [_webView _scaleWebView:1 atOrigin:NSMakePoint(0, 0)];
-    [self _manager]->willEnterFullscreen(*_element);
+    [self _manager]->willEnterFullscreen(*_element, WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard, WTFMove(completionHandler));
     [self _manager]->setAnimatingFullscreen(true);
     [self _document]->updateLayout();
 

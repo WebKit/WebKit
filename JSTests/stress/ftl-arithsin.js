@@ -5,9 +5,10 @@ function foo(x) {
 noInline(foo);
 
 var j = 0;
-for (var i = 0; i < 100000; ++i)
+let expected = foo(testLoopCount - 1);
+for (var i = 0; i < testLoopCount; ++i)
     j = foo(i);
 
-if (0.860248280789742 != j){
+if (expected != j) {
     throw "Error"
 }

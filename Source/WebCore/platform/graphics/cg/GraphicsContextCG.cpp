@@ -50,8 +50,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
@@ -376,7 +374,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     auto oldBlendMode = blendMode();
     setCGBlendMode(context, options.compositeOperator(), options.blendMode());
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
     auto oldHeadroom = CGContextGetEDRTargetHeadroom(context);
     if (auto headroom = options.headroom(); headroom > 1)
         CGContextSetEDRTargetHeadroom(context, headroom);
@@ -408,7 +406,7 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
         CGContextSetShouldAntialias(context, wasAntialiased);
 #endif
         setCGBlendMode(context, oldCompositeOperator, oldBlendMode);
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
         CGContextSetEDRTargetHeadroom(context, oldHeadroom);
 #endif
     }
@@ -599,13 +597,14 @@ void GraphicsContextCG::drawEllipse(const FloatRect& rect)
 
 void GraphicsContextCG::applyStrokePattern()
 {
-    if (!strokePattern())
+    RefPtr strokePattern = this->strokePattern();
+    if (!strokePattern)
         return;
 
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
-    auto platformPattern = strokePattern()->createPlatformPattern(userToBaseCTM);
+    auto platformPattern = strokePattern->createPlatformPattern(userToBaseCTM);
     if (!platformPattern)
         return;
 
@@ -618,13 +617,14 @@ void GraphicsContextCG::applyStrokePattern()
 
 void GraphicsContextCG::applyFillPattern()
 {
-    if (!fillPattern())
+    RefPtr fillPattern = this->fillPattern();
+    if (!fillPattern)
         return;
 
     CGContextRef cgContext = platformContext();
     AffineTransform userToBaseCTM = AffineTransform(getUserToBaseCTM(cgContext));
 
-    auto platformPattern = fillPattern()->createPlatformPattern(userToBaseCTM);
+    auto platformPattern = fillPattern->createPlatformPattern(userToBaseCTM);
     if (!platformPattern)
         return;
 
@@ -694,7 +694,7 @@ void GraphicsContextCG::fillPath(const Path& path)
 
     CGContextRef context = platformContext();
 
-    if (auto fillGradient = this->fillGradient()) {
+    if (RefPtr fillGradient = this->fillGradient()) {
         if (hasDropShadow()) {
             FloatRect rect = path.fastBoundingRect();
             FloatSize layerSize = getCTM().mapSize(rect.size());
@@ -743,7 +743,7 @@ void GraphicsContextCG::strokePath(const Path& path)
 
     CGContextRef context = platformContext();
 
-    if (auto strokeGradient = this->strokeGradient()) {
+    if (RefPtr strokeGradient = this->strokeGradient()) {
         if (hasDropShadow()) {
             FloatRect rect = path.fastBoundingRect();
             float lineWidth = strokeThickness();
@@ -803,7 +803,7 @@ void GraphicsContextCG::fillRect(const FloatRect& rect, RequiresClipToRect requi
 {
     CGContextRef context = platformContext();
 
-    if (auto* fillGradient = this->fillGradient()) {
+    if (RefPtr fillGradient = this->fillGradient()) {
         fillRect(rect, *fillGradient, fillGradientSpaceTransform(), requiresClipToRect);
         return;
     }
@@ -1142,11 +1142,10 @@ void GraphicsContextCG::setCGStyle(const std::optional<GraphicsStyle>& style, bo
         },
         [&] (const GraphicsColorMatrix& colorMatrix) {
 #if HAVE(CGSTYLE_COLORMATRIX_BLUR)
-            CGColorMatrixStyle colorMatrixStyle = { 1, { 0 } };
-            for (size_t i = 0; i < colorMatrix.values.size(); ++i)
-                colorMatrixStyle.matrix[i] = colorMatrix.values[i];
-
-            auto style = adoptCF(CGStyleCreateColorMatrix(&colorMatrixStyle));
+            CGColorMatrixStyle cgColorMatrix = { 1, { 0 } };
+            for (auto [dst, src] : zippedRange(cgColorMatrix.matrix, colorMatrix.values))
+                dst = src;
+            auto style = adoptCF(CGStyleCreateColorMatrix(&cgColorMatrix));
             CGContextSetStyle(context, style.get());
 #else
             ASSERT_NOT_REACHED();
@@ -1231,7 +1230,7 @@ void GraphicsContextCG::strokeRect(const FloatRect& rect, float lineWidth)
 {
     CGContextRef context = platformContext();
 
-    if (auto strokeGradient = this->strokeGradient()) {
+    if (RefPtr strokeGradient = this->strokeGradient()) {
         if (hasDropShadow()) {
             const float doubleLineWidth = lineWidth * 2;
             float adjustedWidth = ceilf(rect.width() + doubleLineWidth);
@@ -1383,81 +1382,16 @@ FloatRect GraphicsContextCG::roundToDevicePixels(const FloatRect& rect) const
     return cgRoundToDevicePixelsNonIdentity(deviceMatrix, rect);
 }
 
-void GraphicsContextCG::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void GraphicsContextCG::drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle strokeStyle)
 {
-    if (!widths.size())
+    auto [rects, color] = computeRectsAndStrokeColorForLinesForText(origin, thickness, lineSegments, isPrinting, doubleLines, strokeStyle);
+    if (rects.isEmpty())
         return;
-
-    Color localStrokeColor(strokeColor());
-
-    FloatRect bounds = computeLineBoundsAndAntialiasingModeForText(FloatRect(point, FloatSize(widths.last(), thickness)), printing, localStrokeColor);
-    if (bounds.isEmpty())
-        return;
-
-    bool fillColorIsNotEqualToStrokeColor = fillColor() != localStrokeColor;
-
-    Vector<CGRect, 4> dashBounds;
-    ASSERT(!(widths.size() % 2));
-    dashBounds.reserveInitialCapacity(dashBounds.size() / 2);
-
-    float dashWidth = 0;
-    switch (strokeStyle) {
-    case StrokeStyle::DottedStroke:
-        dashWidth = bounds.height();
-        break;
-    case StrokeStyle::DashedStroke:
-        dashWidth = 2 * bounds.height();
-        break;
-    case StrokeStyle::SolidStroke:
-    default:
-        break;
-    }
-
-    for (size_t i = 0; i < widths.size(); i += 2) {
-        auto left = widths[i];
-        auto width = widths[i+1] - widths[i];
-        if (!dashWidth)
-            dashBounds.append(CGRectMake(bounds.x() + left, bounds.y(), width, bounds.height()));
-        else {
-            auto doubleWidth = 2 * dashWidth;
-            auto quotient = static_cast<int>(left / doubleWidth);
-            auto startOffset = left - quotient * doubleWidth;
-            auto effectiveLeft = left + startOffset;
-            auto startParticle = static_cast<int>(std::floor(effectiveLeft / doubleWidth));
-            auto endParticle = static_cast<int>(std::ceil((left + width) / doubleWidth));
-
-            for (auto j = startParticle; j < endParticle; ++j) {
-                auto actualDashWidth = dashWidth;
-                auto dashStart = bounds.x() + j * doubleWidth;
-
-                if (j == startParticle && startOffset > 0 && startOffset < dashWidth) {
-                    actualDashWidth -= startOffset;
-                    dashStart += startOffset;
-                }
-
-                if (j == endParticle - 1) {
-                    auto remainingWidth = left + width - (j * doubleWidth);
-                    if (remainingWidth < dashWidth)
-                        actualDashWidth = remainingWidth;
-                }
-
-                dashBounds.append(CGRectMake(dashStart, bounds.y(), actualDashWidth, bounds.height()));
-            }
-        }
-    }
-
-    if (doubleLines) {
-        // The space between double underlines is equal to the height of the underline
-        for (size_t i = 0; i < widths.size(); i += 2)
-            dashBounds.append(CGRectMake(bounds.x() + widths[i], bounds.y() + 2 * bounds.height(), widths[i+1] - widths[i], bounds.height()));
-    }
-
-    if (fillColorIsNotEqualToStrokeColor)
-        setCGFillColor(platformContext(), localStrokeColor);
-
-    CGContextFillRects(platformContext(), dashBounds.data(), dashBounds.size());
-
-    if (fillColorIsNotEqualToStrokeColor)
+    bool changeFillColor = fillColor() != color;
+    if (changeFillColor)
+        setCGFillColor(platformContext(), color);
+    CGContextFillRects(platformContext(), rects.data(), rects.size());
+    if (changeFillColor)
         setCGFillColor(platformContext(), fillColor());
 }
 
@@ -1587,7 +1521,5 @@ bool GraphicsContextCG::consumeHasDrawn()
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

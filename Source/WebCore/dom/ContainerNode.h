@@ -77,8 +77,9 @@ public:
 
     void takeAllChildrenFrom(ContainerNode*);
 
-    void cloneChildNodes(TreeScope&, ContainerNode& clone);
+    void cloneChildNodes(Document&, CustomElementRegistry*, ContainerNode& clone);
 
+    enum class CanDelayNodeDeletion : uint8_t { No, Yes, Unknown };
     struct ChildChange {
         enum class Type : uint8_t { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced };
         enum class Source : uint8_t { Parser, API, Clone };
@@ -161,7 +162,13 @@ private:
     void executePreparedChildrenRemoval();
     enum class DeferChildrenChanged : bool { No, Yes };
     enum class DidRemoveElements : bool { No, Yes };
-    DidRemoveElements removeAllChildrenWithScriptAssertion(ChildChange::Source, NodeVector& children, DeferChildrenChanged = DeferChildrenChanged::No);
+    struct RemoveAllChildrenResult {
+        unsigned subTreeSize;
+        DidRemoveElements didRemoveElements;
+        CanDelayNodeDeletion canBeDelayed;
+    };
+    RemoveAllChildrenResult removeAllChildrenWithScriptAssertionMaybeAsync(ChildChange::Source, NodeVector& children, DeferChildrenChanged = DeferChildrenChanged::No);
+    RemoveAllChildrenResult removeAllChildrenWithScriptAssertion(ChildChange::Source, NodeVector& children, DeferChildrenChanged = DeferChildrenChanged::No);
     bool removeNodeWithScriptAssertion(Node&, ChildChange::Source);
     ExceptionOr<void> removeSelfOrChildNodesForInsertion(Node&, NodeVector&);
 

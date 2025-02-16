@@ -491,7 +491,7 @@ void TestRunner::makeWindowObject(JSContextRef context)
 
 void TestRunner::showWebInspector()
 {
-    WKBundlePageShowInspectorForTest(page());
+    postMessage("ShowWebInspector");
 }
 
 void TestRunner::closeWebInspector()
@@ -600,8 +600,6 @@ enum {
     TextDidChangeInTextFieldCallbackID,
     TextFieldDidBeginEditingCallbackID,
     TextFieldDidEndEditingCallbackID,
-    EnterFullscreenForElementCallbackID,
-    ExitFullscreenForElementCallbackID,
     FirstUIScriptCallbackID = 100
 };
 
@@ -711,26 +709,6 @@ void TestRunner::setOnlyAcceptFirstPartyCookies(bool accept)
 void TestRunner::removeAllCookies(JSContextRef context, JSValueRef callback)
 {
     postMessageWithAsyncReply(context, "RemoveAllCookies", callback);
-}
-
-void TestRunner::setEnterFullscreenForElementCallback(JSContextRef context, JSValueRef callback)
-{
-    cacheTestRunnerCallback(context, EnterFullscreenForElementCallbackID, callback);
-}
-
-void TestRunner::callEnterFullscreenForElementCallback()
-{
-    callTestRunnerCallback(EnterFullscreenForElementCallbackID);
-}
-
-void TestRunner::setExitFullscreenForElementCallback(JSContextRef context, JSValueRef callback)
-{
-    cacheTestRunnerCallback(context, ExitFullscreenForElementCallbackID, callback);
-}
-
-void TestRunner::callExitFullscreenForElementCallback()
-{
-    callTestRunnerCallback(ExitFullscreenForElementCallbackID);
 }
 
 double TestRunner::preciseTime()
@@ -944,6 +922,11 @@ void TestRunner::queueLoadHTMLString(JSStringRef content, JSStringRef baseURL, J
 void TestRunner::stopLoading()
 {
     postPageMessage("StopLoading");
+}
+
+void TestRunner::dumpFullScreenCallbacks()
+{
+    postPageMessage("DumpFullScreenCallbacks");
 }
 
 void TestRunner::queueReload()
@@ -2107,6 +2090,26 @@ void TestRunner::flushConsoleLogs(JSContextRef context, JSValueRef callback)
     postMessageWithAsyncReply(context, "FlushConsoleLogs", callback);
 }
 
+void TestRunner::updatePresentation(JSContextRef context, JSValueRef callback)
+{
+    postMessageWithAsyncReply(context, "UpdatePresentation", callback);
+}
+
+void TestRunner::waitBeforeFinishingFullscreenExit()
+{
+    postPageMessage("WaitBeforeFinishingFullscreenExit");
+}
+
+void TestRunner::finishFullscreenExit()
+{
+    postPageMessage("FinishFullscreenExit");
+}
+
+void TestRunner::requestExitFullscreenFromUIProcess()
+{
+    postPageMessage("RequestExitFullscreenFromUIProcess");
+}
+
 void TestRunner::setPageScaleFactor(JSContextRef context, double scaleFactor, long x, long y, JSValueRef callback)
 {
     postMessageWithAsyncReply(context, "SetPageScaleFactor", createWKDictionary({
@@ -2137,9 +2140,19 @@ bool TestRunner::shouldDumpBackForwardListsForAllWindows() const
     return postSynchronousPageMessageReturningBoolean("ShouldDumpBackForwardListsForAllWindows");
 }
 
-void TestRunner::setTopContentInset(JSContextRef context, double contentInset, JSValueRef callback)
+void TestRunner::setObscuredContentInsets(JSContextRef context, double top, double right, double bottom, double left, JSValueRef callback)
 {
-    postMessageWithAsyncReply(context, "SetTopContentInset", adoptWK(WKDoubleCreate(contentInset)), callback);
+    auto insetValues = adoptWK(WKMutableArrayCreate());
+    WKArrayAppendItem(insetValues.get(), adoptWK(WKDoubleCreate(top)).get());
+    WKArrayAppendItem(insetValues.get(), adoptWK(WKDoubleCreate(right)).get());
+    WKArrayAppendItem(insetValues.get(), adoptWK(WKDoubleCreate(bottom)).get());
+    WKArrayAppendItem(insetValues.get(), adoptWK(WKDoubleCreate(left)).get());
+    postMessageWithAsyncReply(context, "SetObscuredContentInsets", insetValues, callback);
+}
+
+void TestRunner::setResourceMonitorList(JSContextRef context, JSStringRef rulesText, JSValueRef callback)
+{
+    postMessageWithAsyncReply(context, "SetResourceMonitorList", toWK(rulesText), callback);
 }
 
 ALLOW_DEPRECATED_DECLARATIONS_END

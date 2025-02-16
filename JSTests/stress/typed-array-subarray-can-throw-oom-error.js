@@ -40,7 +40,7 @@ for (let i=0; i<100; i++) {
   new Promise(bar);
 }
 
-for (let i=0; i<10000; i++) {
+for (let i=0; i<testLoopCount; i++) {
     let result = canThrow(() => {
         new Uint32Array(1000).subarray();
     }, `RangeError: Out of memory`);

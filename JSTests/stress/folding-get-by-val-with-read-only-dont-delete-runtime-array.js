@@ -28,7 +28,7 @@ function test5()
 }
 noInline(test5);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(), 15);
     shouldBe(test2(), 15);
     shouldBe(test5(), 15);

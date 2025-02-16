@@ -45,11 +45,9 @@ angle::Result VertexArrayWgpu::syncState(const gl::Context *context,
                 break;
 
             case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER:
+            case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER_DATA:
                 ANGLE_TRY(syncDirtyElementArrayBuffer(contextWgpu));
                 contextWgpu->invalidateIndexBuffer();
-                break;
-
-            case gl::VertexArray::DIRTY_BIT_ELEMENT_ARRAY_BUFFER_DATA:
                 break;
 
 #define ANGLE_VERTEX_DIRTY_ATTRIB_FUNC(INDEX)                                     \
@@ -95,6 +93,7 @@ angle::Result VertexArrayWgpu::syncState(const gl::Context *context,
 
 angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
                                                 const gl::AttributesMask &activeAttributesMask,
+                                                gl::PrimitiveMode mode,
                                                 GLint first,
                                                 GLsizei count,
                                                 GLsizei instanceCount,
@@ -102,7 +101,8 @@ angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
                                                 const void *indices,
                                                 GLint baseVertex,
                                                 bool primitiveRestartEnabled,
-                                                const void **adjustedIndicesPtr)
+                                                const void **adjustedIndicesPtr,
+                                                uint32_t *indexCountOut)
 {
     *adjustedIndicesPtr = indices;
 
@@ -112,6 +112,19 @@ angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
     bool indexedDrawCallWithNoIndexBuffer =
         drawElementsTypeOrInvalid != gl::DrawElementsType::InvalidEnum &&
         !mState.getElementArrayBuffer();
+
+    IndexDataNeedsStreaming indexDataNeedsStreaming = IndexDataNeedsStreaming::No;
+    // Index data will always need streaming for line loop mode regardless of what type of draw call
+    // it is.
+    if (indexedDrawCallWithNoIndexBuffer || mode == gl::PrimitiveMode::LineLoop)
+    {
+        indexDataNeedsStreaming = IndexDataNeedsStreaming::Yes;
+    }
+    if (mode == gl::PrimitiveMode::LineLoop)
+    {
+        count          = count + 1;
+        *indexCountOut = count;
+    }
 
     if (!clientAttributesToSync.any() && !indexedDrawCallWithNoIndexBuffer)
     {
@@ -137,11 +150,18 @@ angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
     size_t stagingBufferSize = 0;
 
     std::optional<size_t> indexDataSize;
-    if (indexedDrawCallWithNoIndexBuffer)
+    std::optional<size_t> unitSize;
+    gl::Buffer *elementArrayBuffer = mState.getElementArrayBuffer();
+    if (indexDataNeedsStreaming == IndexDataNeedsStreaming::Yes)
     {
-        indexDataSize = gl::GetDrawElementsTypeSize(drawElementsTypeOrInvalid) * count;
-        stagingBufferSize +=
-            rx::roundUpPow2(indexDataSize.value(), webgpu::kBufferCopyToBufferAlignment);
+        unitSize      = static_cast<size_t>(gl::GetDrawElementsTypeSize(drawElementsTypeOrInvalid));
+        indexDataSize = unitSize.value() * count;
+        // Staging buffer is only used for a new index buffer if there is no element array buffer.
+        if (!elementArrayBuffer)
+        {
+            stagingBufferSize +=
+                rx::roundUpPow2(indexDataSize.value(), webgpu::kBufferCopyToBufferAlignment);
+        }
     }
 
     const std::vector<gl::VertexAttribute> &attribs = mState.getVertexAttributes();
@@ -172,7 +192,9 @@ angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
     struct BufferCopy
     {
         uint64_t sourceOffset;
+        webgpu::BufferHelper *src;
         webgpu::BufferHelper *dest;
+        uint64_t destOffset;
         uint64_t size;
     };
     std::vector<BufferCopy> stagingUploads;
@@ -180,44 +202,73 @@ angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
     uint8_t *stagingData              = stagingBuffer.getMapWritePointer(0, stagingBufferSize);
     size_t currentStagingDataPosition = 0;
 
-    auto ensureStreamingBufferCreated = [device](webgpu::BufferHelper &buffer, size_t size,
-                                                 wgpu::BufferUsage usage, bool *outNewBuffer) {
-        if (buffer.valid() && buffer.requestedSize() >= size)
-        {
-            ASSERT(buffer.getBuffer().GetUsage() == usage);
-            *outNewBuffer = false;
-            return angle::Result::Continue;
-        }
-
-        ANGLE_TRY(buffer.initBuffer(device, size, usage, webgpu::MapAtCreation::No));
-        *outNewBuffer = true;
-        return angle::Result::Continue;
-    };
-
-    if (indexedDrawCallWithNoIndexBuffer)
+    std::optional<webgpu::BufferHelper *> sourceBuffer;
+    if (indexDataNeedsStreaming == IndexDataNeedsStreaming::Yes)
     {
-        ASSERT(indexDataSize.has_value());
-        memcpy(stagingData + currentStagingDataPosition, indices, indexDataSize.value());
-
-        size_t copySize =
-            rx::roundUpPow2(indexDataSize.value(), webgpu::kBufferCopyToBufferAlignment);
-
-        bool newBuffer = false;
-        ANGLE_TRY(ensureStreamingBufferCreated(
-            mStreamingIndexBuffer, copySize, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index,
-            &newBuffer));
-        if (newBuffer)
-        {
-            contextWgpu->invalidateIndexBuffer();
-        }
-
-        stagingUploads.push_back({currentStagingDataPosition, &mStreamingIndexBuffer, copySize});
-
-        currentStagingDataPosition += copySize;
-
         // Indices are streamed to the start of the buffer. Tell the draw call command to use 0 for
         // firstIndex.
         *adjustedIndicesPtr = 0;
+        ASSERT(indexDataSize.has_value());
+        ASSERT(unitSize.has_value());
+
+        size_t copySize =
+            rx::roundUpPow2(indexDataSize.value(), webgpu::kBufferCopyToBufferAlignment);
+        ANGLE_TRY(ensureBufferCreated(context, mStreamingIndexBuffer, copySize, 0,
+                                      wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index,
+                                      BufferType::IndexBuffer));
+        if (drawElementsTypeOrInvalid != gl::DrawElementsType::InvalidEnum && !elementArrayBuffer)
+        {
+            // Make sure to add the first index to the end of the buffer if we're emulating a line
+            // loop.
+            if (mode == gl::PrimitiveMode::LineLoop)
+            {
+                size_t lastPosition = unitSize.value() * (count - 1);
+                memcpy(stagingData + currentStagingDataPosition, indices,
+                       indexDataSize.value() - unitSize.value());
+                memcpy(stagingData + currentStagingDataPosition + lastPosition, indices,
+                       unitSize.value());
+            }
+            else
+            {
+                memcpy(stagingData + currentStagingDataPosition, indices, indexDataSize.value());
+            }
+            stagingUploads.push_back(
+                {currentStagingDataPosition, &stagingBuffer, &mStreamingIndexBuffer, 0, copySize});
+            currentStagingDataPosition += copySize;
+        }
+        // Use the element array buffer as the source for the new streaming index buffer. This
+        // condition is only hit when an indexed draw call has an element array buffer and is trying
+        // to draw line loops.
+        else if (drawElementsTypeOrInvalid != gl::DrawElementsType::InvalidEnum &&
+                 elementArrayBuffer)
+        {
+            // When using an element array buffer, 'indices' is an offset to the first element.
+            intptr_t offset                    = reinterpret_cast<intptr_t>(indices);
+            BufferWgpu *elementArrayBufferWgpu = GetImplAs<BufferWgpu>(elementArrayBuffer);
+            sourceBuffer                       = &elementArrayBufferWgpu->getBuffer();
+            size_t sourceOffset                = 0;
+            if (sourceBuffer.value()->getMappedState().has_value())
+            {
+                sourceOffset =
+                    rx::roundDownPow2(offset + sourceBuffer.value()->getMappedState()->offset,
+                                      webgpu::kBufferCopyToBufferAlignment);
+            }
+            else
+            {
+                sourceOffset = rx::roundDownPow2(static_cast<size_t>(offset),
+                                                 webgpu::kBufferCopyToBufferAlignment);
+            }
+            size_t firstCopySize = rx::roundUpPow2(indexDataSize.value() - unitSize.value(),
+                                                   webgpu::kBufferCopyToBufferAlignment);
+            size_t lastOffset    = firstCopySize;
+            stagingUploads.push_back(
+                {sourceOffset, sourceBuffer.value(), &mStreamingIndexBuffer, 0, firstCopySize});
+            stagingUploads.push_back(
+                {sourceOffset, sourceBuffer.value(), &mStreamingIndexBuffer, lastOffset,
+                 rx::roundUpPow2(unitSize.value(), webgpu::kBufferCopyToBufferAlignment)});
+        }
+        // TODO(anglebug.com/383356846): add support for primitive restarts and line loop draw
+        // arrays.
     }
 
     for (size_t attribIndex : clientAttributesToSync)
@@ -260,17 +311,16 @@ angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
         size_t copySize =
             rx::roundUpPow2(streamedVertexCount * typeSize, webgpu::kBufferCopyToBufferAlignment);
 
-        bool newBuffer = false;
-        ANGLE_TRY(ensureStreamingBufferCreated(
-            mStreamingArrayBuffers[attribIndex], copySize,
-            wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex, &newBuffer));
-        if (newBuffer)
-        {
-            contextWgpu->invalidateVertexBuffer(attribIndex);
-        }
+        // Pad the streaming buffer with empty data at the beginning to put the vertex data at the
+        // same index location. The stride is tightly packed.
+        size_t destCopyOffset = firstIndex * typeSize;
 
-        stagingUploads.push_back(
-            {currentStagingDataPosition, &mStreamingArrayBuffers[attribIndex], copySize});
+        ANGLE_TRY(ensureBufferCreated(
+            context, mStreamingArrayBuffers[attribIndex], destCopyOffset + copySize, attribIndex,
+            wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex, BufferType::ArrayBuffer));
+
+        stagingUploads.push_back({currentStagingDataPosition, &stagingBuffer,
+                                  &mStreamingArrayBuffers[attribIndex], destCopyOffset, copySize});
 
         currentStagingDataPosition += copySize;
     }
@@ -283,8 +333,8 @@ angle::Result VertexArrayWgpu::syncClientArrays(const gl::Context *context,
 
     for (const BufferCopy &copy : stagingUploads)
     {
-        commandEncoder.CopyBufferToBuffer(stagingBuffer.getBuffer(), copy.sourceOffset,
-                                          copy.dest->getBuffer(), 0, copy.size);
+        commandEncoder.CopyBufferToBuffer(copy.src->getBuffer(), copy.sourceOffset,
+                                          copy.dest->getBuffer(), copy.destOffset, copy.size);
     }
 
     return angle::Result::Continue;
@@ -340,6 +390,37 @@ angle::Result VertexArrayWgpu::syncDirtyElementArrayBuffer(ContextWgpu *contextW
         mCurrentIndexBuffer = &mStreamingIndexBuffer;
     }
 
+    return angle::Result::Continue;
+}
+
+angle::Result VertexArrayWgpu::ensureBufferCreated(const gl::Context *context,
+                                                   webgpu::BufferHelper &buffer,
+                                                   size_t size,
+                                                   size_t attribIndex,
+                                                   wgpu::BufferUsage usage,
+                                                   BufferType bufferType)
+{
+    ContextWgpu *contextWgpu = webgpu::GetImpl(context);
+    if (!buffer.valid() || buffer.requestedSize() < size || buffer.getBuffer().GetUsage() != usage)
+    {
+        wgpu::Device device = webgpu::GetDevice(context);
+        ANGLE_TRY(buffer.initBuffer(device, size, usage, webgpu::MapAtCreation::No));
+
+        if (bufferType == BufferType::IndexBuffer)
+        {
+            contextWgpu->invalidateIndexBuffer();
+        }
+        else
+        {
+            ASSERT(bufferType == BufferType::ArrayBuffer);
+            contextWgpu->invalidateVertexBuffer(attribIndex);
+        }
+    }
+
+    if (bufferType == BufferType::IndexBuffer)
+    {
+        mCurrentIndexBuffer = &buffer;
+    }
     return angle::Result::Continue;
 }
 

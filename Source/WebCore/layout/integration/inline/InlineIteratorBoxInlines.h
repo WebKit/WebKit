@@ -38,6 +38,9 @@ inline float Box::logicalRightIgnoringInlineDirection() const { return logicalRe
 inline float Box::logicalTop() const { return logicalRectIgnoringInlineDirection().y(); }
 inline float Box::logicalWidth() const { return logicalRectIgnoringInlineDirection().width(); }
 
+inline float Box::logicalLeft() const { return isHorizontal() ? visualRect().x() : visualRect().y(); }
+inline float Box::logicalRight() const { return logicalLeft() + logicalWidth(); }
+
 inline bool Box::isHorizontal() const
 {
     return WTF::switchOn(m_pathVariant, [](auto& path) {
@@ -49,6 +52,59 @@ inline FloatRect Box::logicalRectIgnoringInlineDirection() const
 {
     auto rect = this->visualRectIgnoringBlockDirection();
     return isHorizontal() ? rect : rect.transposedRect();
+}
+
+// Coordinate-relative left/right
+inline LeafBoxIterator Box::nextLogicalRightwardOnLine() const
+{
+    return writingMode().isLogicalLeftLineLeft()
+        ? nextLineRightwardOnLine() : nextLineLeftwardOnLine();
+}
+
+inline LeafBoxIterator Box::nextLogicalLeftwardOnLine() const
+{
+    return writingMode().isLogicalLeftLineLeft()
+        ? nextLineLeftwardOnLine() : nextLineRightwardOnLine();
+}
+
+inline LeafBoxIterator Box::nextLogicalRightwardOnLineIgnoringLineBreak() const
+{
+    return writingMode().isLogicalLeftLineLeft()
+        ? nextLineRightwardOnLineIgnoringLineBreak() : nextLineLeftwardOnLineIgnoringLineBreak();
+}
+
+inline LeafBoxIterator Box::nextLogicalLeftwardOnLineIgnoringLineBreak() const
+{
+    return writingMode().isLogicalLeftLineLeft()
+        ? nextLineLeftwardOnLineIgnoringLineBreak() : nextLineRightwardOnLineIgnoringLineBreak();
+}
+
+inline LeafBoxIterator& LeafBoxIterator::traverseLogicalRightwardOnLine()
+{
+    return m_box.writingMode().isLogicalLeftLineLeft()
+        ? traverseLineRightwardOnLine()
+        : traverseLineLeftwardOnLine();
+}
+
+inline LeafBoxIterator& LeafBoxIterator::traverseLogicalLeftwardOnLine()
+{
+    return m_box.writingMode().isLogicalLeftLineLeft()
+        ? traverseLineLeftwardOnLine()
+        : traverseLineRightwardOnLine();
+}
+
+inline LeafBoxIterator& LeafBoxIterator::traverseLogicalRightwardOnLineIgnoringLineBreak()
+{
+    return m_box.writingMode().isLogicalLeftLineLeft()
+        ? traverseLineRightwardOnLineIgnoringLineBreak()
+        : traverseLineLeftwardOnLineIgnoringLineBreak();
+}
+
+inline LeafBoxIterator& LeafBoxIterator::traverseLogicalLeftwardOnLineIgnoringLineBreak()
+{
+    return m_box.writingMode().isLogicalLeftLineLeft()
+        ? traverseLineLeftwardOnLineIgnoringLineBreak()
+        : traverseLineRightwardOnLineIgnoringLineBreak();
 }
 
 }

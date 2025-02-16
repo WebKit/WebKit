@@ -1,81 +1,60 @@
 ---
 test/annexB/language/function-code/block-decl-func-skip-arguments.js:
   default: 'Test262Error: Expected SameValue(«"function arguments() {}"», «"[object Arguments]"») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/for-await-iterator-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/for-await-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/iterator-result-poisoned-wrapper.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/next-result-poisoned-wrapper.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/yield-iterator-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/next/yield-next-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/iterator-result-rejected-promise-close.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-null.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but got a Object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but got a Object'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-result-poisoned-wrapper.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: iterator closed properly Expected SameValue(«0», «1») to be true'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-get-return-undefined.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-poisoned-return.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a CatchError to be thrown asynchronously but thrown value was not an object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a CatchError to be thrown asynchronously but thrown value was not an object'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-not-object.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined-return-object.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-test/built-ins/AsyncFromSyncIteratorPrototype/throw/throw-undefined.js:
-  default: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-  strict mode: 'Test262:AsyncTestFailure:Test262Error: Test262Error: Promise should be rejected Expected a TypeError to be thrown asynchronously but thrown value was not an object'
-test/built-ins/Date/prototype/setHours/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-test/built-ins/Date/prototype/setMilliseconds/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-test/built-ins/Date/prototype/setMinutes/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-test/built-ins/Date/prototype/setSeconds/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-test/built-ins/Date/prototype/setUTCHours/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-test/built-ins/Date/prototype/setUTCMilliseconds/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-test/built-ins/Date/prototype/setUTCMinutes/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-test/built-ins/Date/prototype/setUTCSeconds/date-value-read-before-tonumber-when-date-is-invalid.js:
-  default: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
-  strict mode: 'Test262Error: time updated in valueOf Expected SameValue(«NaN», «0») to be true'
 test/built-ins/Function/internals/Construct/derived-return-val-realm.js:
   default: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a TypeError but got a different error constructor with the same name'
 test/built-ins/Function/internals/Construct/derived-this-uninitialized-realm.js:
   default: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
   strict mode: 'Test262Error: Expected a ReferenceError but got a different error constructor with the same name'
+test/built-ins/Function/prototype/arguments/prop-desc.js:
+  default: 'Test262Error: Function.prototype.arguments property getter/setter are the same function Expected SameValue(«function get arguments() {'
+  strict mode: 'Test262Error: Function.prototype.arguments property getter/setter are the same function Expected SameValue(«function get arguments() {'
+test/built-ins/Function/prototype/caller-arguments/accessor-properties.js:
+  default: 'Test262Error: Function.prototype.arguments and Function.prototype.caller accessor functions should match (%ThrowTypeError%) Expected SameValue(«function get caller() {'
+  strict mode: 'Test262Error: Function.prototype.arguments and Function.prototype.caller accessor functions should match (%ThrowTypeError%) Expected SameValue(«function get caller() {'
+test/built-ins/Function/prototype/caller/prop-desc.js:
+  default: 'Test262Error: Caller property getter/setter are the same function Expected SameValue(«function get caller() {'
+  strict mode: 'Test262Error: Caller property getter/setter are the same function Expected SameValue(«function get caller() {'
 test/built-ins/Function/prototype/toString/built-in-function-object.js:
-  default: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
-  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function $*() {\n    [native code]\n}" (%RegExp%.$*)'
+  default: 'Test262Error: Conforms to NativeFunction Syntax: "function get $*() {\n    [native code]\n}" (%RegExp%.$*)'
+  strict mode: 'Test262Error: Conforms to NativeFunction Syntax: "function get $*() {\n    [native code]\n}" (%RegExp%.$*)'
+test/built-ins/Iterator/concat/fresh-iterator-result.js:
+  default: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«[object Object]», «[object Object]») to be true'
+test/built-ins/Iterator/concat/next-method-returns-throwing-value.js:
+  default: 'Test262Error: '
+  strict mode: 'Test262Error: '
+test/built-ins/Iterator/prototype/drop/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/every/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/filter/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/find/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/flatMap/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/forEach/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/map/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/reduce/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/some/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
+test/built-ins/Iterator/prototype/take/argument-validation-failure-closes-underlying.js:
+  default: 'Test262Error: Expected SameValue(«false», «true») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«false», «true») to be true'
 test/built-ins/Object/entries/order-after-define-property-with-function.js:
   default: 'Test262Error: Actual [a, name] and expected [name, a] should have the same contents. '
   strict mode: 'Test262Error: Actual [a, name] and expected [name, a] should have the same contents. '
@@ -154,6 +133,9 @@ test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string.
 test/built-ins/Temporal/Duration/compare/relativeto-string-limits.js:
   default: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/compare/throws-when-target-zoned-date-time-outside-valid-limits.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
 test/built-ins/Temporal/Duration/from/argument-duration-max.js:
   default: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
   strict mode: 'Test262Error: operation succeeds with property bag with max minutes Expected SameValue(«9007199254740994», «9007199254740992») to be true'
@@ -230,8 +212,8 @@ test/built-ins/Temporal/Duration/prototype/round/relativeTo-required-properties.
   default: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: Expected a TypeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/round/relativeto-string-limits.js:
-  default: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
 test/built-ins/Temporal/Duration/prototype/round/round-and-balance-calendar-units-with-increment-disallowed.js:
   default: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot round a duration of years, months, or weeks without a relativeTo option'
@@ -310,12 +292,24 @@ test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-va
 test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-7.js:
   default: 'Test262Error: seconds=0, milliseconds=950 Expected SameValue(«0.9500000000000001», «0.95») to be true'
   strict mode: 'Test262Error: seconds=0, milliseconds=950 Expected SameValue(«0.9500000000000001», «0.95») to be true'
+test/built-ins/Temporal/Duration/prototype/total/relativeto-plaindatetime.js:
+  default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
+  strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-offset-string.js:
   default: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-string-limits.js:
-  default: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
-  strict mode: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
+  default: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: "+275760-09-13T00:00Z[UTC]" is outside the representable range for a relativeTo parameter after conversion to DateTime Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/prototype/total/throws-if-date-time-invalid-with-plaindate-relative.js:
+  default: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+  strict mode: 'Test262Error: Expected a RangeError to be thrown but no exception was thrown at all'
+test/built-ins/Temporal/Duration/prototype/total/throws-if-date-time-invalid-with-zoneddatetime-relative.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n - 1n, \"UTC\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n - 1n, \"UTC\")')"
+test/built-ins/Temporal/Duration/prototype/total/throws-if-target-nanoseconds-outside-valid-limits.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
 test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(63072000_000_000_000n /* = 1972-01-01T00Z */, \"UTC\")')"
@@ -1051,6 +1045,9 @@ test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-leng
 test/built-ins/TypedArray/prototype/includes/index-compared-against-initial-length.js:
   default: 'Test262Error: Expected SameValue(«true», «false») to be true'
   strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true'
+test/built-ins/TypedArray/prototype/includes/search-undefined-after-shrinking-buffer-index-is-oob.js:
+  default: 'Test262Error: Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
+  strict mode: 'Test262Error: Expected SameValue(«true», «false») to be true (Testing with Float64Array.)'
 test/built-ins/TypedArray/prototype/set/array-arg-value-conversion-resizes-array-buffer.js:
   default: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
   strict mode: 'Test262Error: Actual [shrink, shrink, shrink] and expected [shrink, shrink, shrink, grow, grow] should have the same contents. '
@@ -1114,12 +1111,18 @@ test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-not-overlappi
 test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatRange/to-datetime-formattable-with-different-arg-kinds.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-not-overlapping-options.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(2024, 9)')"
 test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-zoneddatetime-not-supported.js:
   default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
   strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(0n, timeZone)')"
+test/intl402/DateTimeFormat/prototype/formatRangeToParts/to-datetime-formattable-with-different-arg-kinds.js:
+  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
+  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.PlainYearMonth(1970, 1)')"
 test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
   default: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
   strict mode: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
@@ -1357,6 +1360,3 @@ test/language/statements/with/get-mutable-binding-binding-deleted-in-get-unscopa
   default: "ReferenceError: Can't find variable: binding"
 test/language/statements/with/set-mutable-binding-idref-compound-assign-with-proxy-env.js:
   default: 'Test262Error: Actual [has:p, get:Symbol(Symbol.unscopables), get:p, has:p, set:p, getOwnPropertyDescriptor:p, defineProperty:p] and expected [has:p, get:Symbol(Symbol.unscopables), has:p, get:p, has:p, set:p, getOwnPropertyDescriptor:p, defineProperty:p] should have the same contents. '
-test/staging/built-ins/Object/seal/seal-variable-length-typed-arrays.js:
-  default: 'TypeError: Attempting to store non-configurable property on a typed array at index: 0'
-  strict mode: 'TypeError: Attempting to store non-configurable property on a typed array at index: 0'

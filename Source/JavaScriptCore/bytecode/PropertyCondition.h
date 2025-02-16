@@ -51,13 +51,17 @@ public:
     PropertyCondition()
         : m_header(nullptr, Presence)
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memset(&u, 0, sizeof(u));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     
     PropertyCondition(WTF::HashTableDeletedValueType)
         : m_header(nullptr, Absence)
     {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memset(&u, 0, sizeof(u));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     static PropertyCondition presenceWithoutBarrier(UniquedStringImpl* uid, PropertyOffset offset, unsigned attributes)

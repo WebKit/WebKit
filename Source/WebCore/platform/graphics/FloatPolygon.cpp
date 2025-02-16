@@ -52,13 +52,6 @@ static inline bool areCoincidentPoints(const FloatPoint& p0, const FloatPoint& p
     return p0.x() == p1.x() && p0.y() == p1.y();
 }
 
-static inline bool isPointOnLineSegment(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)
-{
-    return point.x() >= std::min(vertex1.x(), vertex2.x())
-        && point.x() <= std::max(vertex1.x(), vertex2.x())
-        && areCollinearPoints(vertex1, vertex2, point);
-}
-
 static inline unsigned nextVertexIndex(unsigned vertexIndex, unsigned nVertices, bool clockwise)
 {
     return ((clockwise) ? vertexIndex + 1 : vertexIndex - 1 + nVertices) % nVertices;
@@ -82,9 +75,8 @@ static unsigned findNextEdgeVertexIndex(const FloatPolygon& polygon, unsigned ve
     return vertexIndex2;
 }
 
-FloatPolygon::FloatPolygon(Vector<FloatPoint>&& vertices, WindRule fillRule)
+FloatPolygon::FloatPolygon(Vector<FloatPoint>&& vertices)
     : m_vertices(WTFMove(vertices))
-    , m_fillRule(fillRule)
     , m_empty(m_vertices.size() < 3)
     , m_edges(m_vertices.size())
 {
@@ -143,54 +135,6 @@ Vector<std::reference_wrapper<const FloatPolygonEdge>> FloatPolygon::overlapping
     return overlappingEdgeIntervals.map([](auto& interval) -> std::reference_wrapper<const FloatPolygonEdge> {
         return *interval.data();
     });
-}
-
-static inline float leftSide(const FloatPoint& vertex1, const FloatPoint& vertex2, const FloatPoint& point)
-{
-    return ((point.x() - vertex1.x()) * (vertex2.y() - vertex1.y())) - ((vertex2.x() - vertex1.x()) * (point.y() - vertex1.y()));
-}
-
-bool FloatPolygon::containsEvenOdd(const FloatPoint& point) const
-{
-    unsigned crossingCount = 0;
-    for (unsigned i = 0; i < numberOfEdges(); ++i) {
-        const FloatPoint& vertex1 = edgeAt(i).vertex1();
-        const FloatPoint& vertex2 = edgeAt(i).vertex2();
-        if (isPointOnLineSegment(vertex1, vertex2, point))
-            return true;
-        if ((vertex1.y() <= point.y() && vertex2.y() > point.y()) || (vertex1.y() > point.y() && vertex2.y() <= point.y())) {
-            float vt = (point.y()  - vertex1.y()) / (vertex2.y() - vertex1.y());
-            if (point.x() < vertex1.x() + vt * (vertex2.x() - vertex1.x()))
-                ++crossingCount;
-        }
-    }
-    return crossingCount & 1;
-}
-
-bool FloatPolygon::containsNonZero(const FloatPoint& point) const
-{
-    int windingNumber = 0;
-    for (unsigned i = 0; i < numberOfEdges(); ++i) {
-        const FloatPoint& vertex1 = edgeAt(i).vertex1();
-        const FloatPoint& vertex2 = edgeAt(i).vertex2();
-        if (isPointOnLineSegment(vertex1, vertex2, point))
-            return true;
-        if (vertex2.y() < point.y()) {
-            if ((vertex1.y() > point.y()) && (leftSide(vertex1, vertex2, point) > 0))
-                ++windingNumber;
-        } else if (vertex2.y() > point.y()) {
-            if ((vertex1.y() <= point.y()) && (leftSide(vertex1, vertex2, point) < 0))
-                --windingNumber;
-        }
-    }
-    return windingNumber;
-}
-
-bool FloatPolygon::contains(const FloatPoint& point) const
-{
-    if (!m_boundingBox.contains(point))
-        return false;
-    return fillRule() == WindRule::NonZero ? containsNonZero(point) : containsEvenOdd(point);
 }
 
 bool VertexPair::intersection(const VertexPair& other, FloatPoint& point) const

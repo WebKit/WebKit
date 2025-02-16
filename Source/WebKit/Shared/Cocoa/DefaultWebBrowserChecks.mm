@@ -146,10 +146,11 @@ void determineTrackingPreventionState()
 
     bool appWasLinkedOnOrAfter = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SessionCleanupByDefault);
 
-    itpQueue() = WorkQueue::create("com.apple.WebKit.itpCheckQueue"_s);
-    itpQueue()->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = applicationBundleIdentifier().isolatedCopy()] {
+    Ref queue = WorkQueue::create("com.apple.WebKit.itpCheckQueue"_s);
+    itpQueue() = queue.copyRef();
+    queue->dispatch([appWasLinkedOnOrAfter, bundleIdentifier = applicationBundleIdentifier().isolatedCopy()] {
         currentTrackingPreventionState = determineTrackingPreventionStateInternal(appWasLinkedOnOrAfter, bundleIdentifier) ? TrackingPreventionState::Enabled : TrackingPreventionState::Disabled;
-        RunLoop::main().dispatch([] {
+        RunLoop::protectedMain()->dispatch([] {
             itpQueue() = nullptr;
         });
     });
@@ -160,8 +161,8 @@ bool doesAppHaveTrackingPreventionEnabled()
     ASSERT(!isInWebKitChildProcess());
     ASSERT(RunLoop::isMain());
     // If we're still computing the ITP state on the background thread, then synchronize with it.
-    if (itpQueue())
-        itpQueue()->dispatchSync([] { });
+    if (RefPtr queue = itpQueue())
+        queue->dispatchSync([] { });
     ASSERT(currentTrackingPreventionState != TrackingPreventionState::Uninitialized);
     return currentTrackingPreventionState == TrackingPreventionState::Enabled;
 }

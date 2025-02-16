@@ -39,13 +39,13 @@ std::optional<DestinationColorSpace> contentsFormatExtendedColorSpace(ContentsFo
     switch (contentsFormat) {
     case ContentsFormat::RGBA8:
         return std::nullopt;
-#if HAVE(IOSURFACE_RGB10)
+#if ENABLE(PIXEL_FORMAT_RGB10) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_SRGB)
     case ContentsFormat::RGBA10:
-        return DestinationColorSpace { extendedSRGBColorSpaceRef() };
+        return DestinationColorSpace::ExtendedSRGB();
 #endif
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F) && ENABLE(DESTINATION_COLOR_SPACE_EXTENDED_REC_2020)
     case ContentsFormat::RGBA16F:
-        return DestinationColorSpace { extendedITUR_2020ColorSpaceRef() };
+        return DestinationColorSpace::ExtendedRec2020();
 #endif
     }
 
@@ -59,12 +59,12 @@ TextStream& operator<<(TextStream& ts, ContentsFormat contentsFormat)
     case ContentsFormat::RGBA8:
         ts << "RGBA8";
         break;
-#if HAVE(IOSURFACE_RGB10)
+#if ENABLE(PIXEL_FORMAT_RGB10)
     case ContentsFormat::RGBA10:
         ts << "RGBA10";
         break;
 #endif
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case ContentsFormat::RGBA16F:
         ts << "RGBA16F";
         break;

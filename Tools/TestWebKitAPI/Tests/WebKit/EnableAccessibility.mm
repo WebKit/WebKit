@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestWKWebView.h"
 #import <WebKit/WKProcessPoolPrivate.h>
+#import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
 
 #import <pal/spi/cocoa/NSAccessibilitySPI.h>
@@ -123,3 +124,32 @@ TEST(WebKit, AccessibilityHasFrontboardServiceAccess)
 #endif // PLATFORM(IOS_FAMILY)
 
 #endif
+
+#if PLATFORM(MAC) && USE(RUNNINGBOARD)
+
+TEST(WebKit, AccessibilityChildrenPreventsProcessSuspensionOnFrontmostTab)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    [webView synchronouslyLoadTestPageNamed:@"simple"];
+
+    // Page should acquire the remote AX element activity when -accessibilityChildren runs to keep itself running as long as it's attached to a window.
+    RetainPtr<NSArray> children = [webView accessibilityChildren];
+    EXPECT_GT([children count], (NSUInteger)0);
+    EXPECT_TRUE([webView _hasAccessibilityActivityForTesting]);
+
+    // Page should drop the AX activity after being removed from the window. Test in a Util::waitFor
+    // since it takes a run loop turn for the window removal to propagate.
+    [webView removeFromTestWindow];
+    EXPECT_TRUE(TestWebKitAPI::Util::waitFor([&] {
+        return ![webView _hasAccessibilityActivityForTesting];
+    }));
+
+    // Page should re-acquire the AX activity after being added back to the window.
+    [webView addToTestWindow];
+    EXPECT_TRUE([webView _hasAccessibilityActivityForTesting]);
+}
+
+#endif
+

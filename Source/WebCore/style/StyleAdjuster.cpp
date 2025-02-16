@@ -42,6 +42,7 @@
 #include "HTMLDialogElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLLabelElement.h"
 #include "HTMLMarqueeElement.h"
 #include "HTMLNames.h"
 #include "HTMLSlotElement.h"
@@ -715,6 +716,13 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     if (m_parentBoxStyle.justifyItems().positionType() == ItemPositionType::Legacy && style.justifyItems().position() == ItemPosition::Legacy)
         style.setJustifyItems(m_parentBoxStyle.justifyItems());
 
+#if HAVE(CORE_MATERIAL)
+    if (appleVisualEffectNeedsBackdrop(style.appleVisualEffect()))
+        style.setUsedAppleVisualEffectForSubtree(style.appleVisualEffect());
+    else
+        style.setUsedAppleVisualEffectForSubtree(m_parentStyle.usedAppleVisualEffectForSubtree());
+#endif
+
     style.setUsedTouchActions(computeUsedTouchActions(style, m_parentStyle.usedTouchActions()));
 
     // Counterparts in Element::addToTopLayer/removeFromTopLayer & SharingResolver::canShareStyleWithElement need to match!
@@ -974,6 +982,16 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             style.setUserSelect(UserSelect::None);
     }
 
+#if PLATFORM(MAC)
+    if (m_document->quirks().needsZomatoEmailLoginLabelQuirk()) {
+        static MainThreadNeverDestroyed<const AtomString> class1("eNjKGZ"_s);
+        if (is<HTMLLabelElement>(*m_element)
+            && m_element->hasClassName(class1)
+            && style.backgroundColor() == Color { WebCore::Color::white })
+            style.setBackgroundColor({ WebCore::Color::transparentBlack });
+    }
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     if (m_document->quirks().needsGoogleMapsScrollingQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("PUtLdf"_s);
@@ -1006,6 +1024,27 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     }
 #endif
 #endif
+
+    if (m_document->quirks().needsHotelsAnimationQuirk(*m_element, style)) {
+        // We need to reset animation styles that are mistakenly overridden:
+        //     animation-delay: 0s, 0.06s;
+        //     animation-duration: 0.18s, 0.06s;
+        //     animation-fill-mode: none, forwards;
+        //     animation-name: menu-grow-left, menu-fade-in;
+        auto menuGrowLeftAnimation = Animation::create();
+        menuGrowLeftAnimation->setDuration(.18);
+        menuGrowLeftAnimation->setName({ "menu-grow-left"_s });
+
+        auto menuFadeInAnimation = Animation::create();
+        menuFadeInAnimation->setDelay(.06);
+        menuFadeInAnimation->setDuration(.06);
+        menuFadeInAnimation->setFillMode(AnimationFillMode::Forwards);
+        menuFadeInAnimation->setName({ "menu-fade-in"_s });
+
+        auto& animations = style.ensureAnimations();
+        animations.append(WTFMove(menuGrowLeftAnimation));
+        animations.append(WTFMove(menuFadeInAnimation));
+    }
 }
 
 void Adjuster::propagateToDocumentElementAndInitialContainingBlock(Update& update, const Document& document)

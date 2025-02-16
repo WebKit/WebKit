@@ -15,115 +15,6 @@ if (ANDROID)
 endif ()
 
 #
-# SKIA_ROOT_DIR may point to a checkout from the upstream Skia repository,
-# where a static build has been done under "out/Static" as follows:
-#
-#   CC=clang CXX=clang++ \
-#       Source/ThirdParty/skia/ext-skia-configure ../path/to/skia
-#   ninja -C ../path/to/skia/out/Static
-#
-# The support for honoring SKIA_ROOT_DIR has been useful during development
-# to ensure that behaviour and performance of the integrated build matches
-# Skia built with its own GN-based build system.
-#
-# FIXME: This should be removed once it is no longer useful.
-#
-if (DEVELOPER_MODE AND (SKIA_ROOT_DIR OR NOT "$ENV{SKIA_ROOT_DIR}" STREQUAL ""))
-    if (NOT SKIA_ROOT_DIR)
-        set(SKIA_ROOT_DIR "$ENV{SKIA_ROOT_DIR")
-    endif ()
-
-    find_path(SKIA_INCLUDE_DIR
-        NAMES include/private/base/SkFeatures.h
-        HINTS ${SKIA_INCLUDE_DIR} ${SKIA_ROOT_DIR}
-        NO_DEFAULT_PATH
-        REQUIRED
-    )
-    find_library(SKIA_LIBRARY
-        NAMES skia libskia
-        HINTS ${SKIA_LIBRARY_PATH} ${SKIA_ROOT_DIR}/out ${SKIA_ROOT_DIR}/out/Static
-        NO_DEFAULT_PATH
-        REQUIRED
-    )
-    find_path(SKIA_NINJA_RULES
-        NAMES skia.ninja
-        HINTS ${SKIA_LIBRARY_PATH} ${SKIA_ROOT_DIR}
-        PATH_SUFFIXES out/obj out/Static/obj
-        NO_DEFAULT_PATH
-        REQUIRED
-    )
-
-    # Parse the top-level Skia build rules, to get the macros used for
-    # building it because they need to be passed when building WebKit
-    # sources. This is needed because *public* Skia headers use these
-    # macros but the build system does *not* generate a configuration
-    # file (like a pkg-config module) that could be readily used.
-    file(STRINGS "${SKIA_NINJA_RULES}/skia.ninja"
-        SKIA_NINJA_RULES_LINES
-        REGEX "^defines[ \t]="
-        NO_HEX_CONVERSION
-    )
-    foreach (line ${SKIA_NINJA_RULES_LINES})
-        string(REGEX MATCH "^defines[ \t]+=[ \t]+(.*)$" _dummy "${line}")
-        separate_arguments(args NATIVE_COMMAND "${CMAKE_MATCH_1}")
-        foreach (arg IN LISTS args)
-            # Avoid bubbling DEBUG/NDEBUG/_DEBUG/_NDEBUG to the rest of WebKit.
-            if (arg MATCHES "^-D_?N?DEBUG(=.*)?$")
-                continue ()
-            endif ()
-
-            # Remove the SKIA_IMPLEMENTATION macro from the list.
-            if (arg MATCHES "^-DSKIA_IMPLEMENTATION(=.*)?$")
-                continue ()
-            endif ()
-
-            if (arg MATCHES "^-D(.*)$")
-                list(APPEND SKIA_COMPILE_DEFINITIONS "${CMAKE_MATCH_1}")
-            endif ()
-        endforeach ()
-    endforeach ()
-
-    add_library(Skia UNKNOWN IMPORTED GLOBAL)
-    set_target_properties(Skia PROPERTIES
-        IMPORTED_LOCATION "${SKIA_LIBRARY}"
-        INTERFACE_INCLUDE_DIRECTORIES "${Skia_FRAMEWORK_HEADERS_DIR};${SKIA_INCLUDE_DIR}"
-        INTERFACE_COMPILE_DEFINITIONS "${SKIA_COMPILE_DEFINITIONS}"
-    )
-
-    if (NOT WIN32)
-        target_link_libraries(Skia INTERFACE
-            Epoxy::Epoxy
-            Fontconfig::Fontconfig
-            Freetype::Freetype
-            JPEG::JPEG
-            PNG::PNG
-            WebP::mux
-        )
-    endif ()
-
-    add_custom_target(Skia_headers_symlink
-        COMMAND ${CMAKE_COMMAND} -E create_symlink
-            "${SKIA_INCLUDE_DIR}/include"
-            "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
-        BYPRODUCTS
-            "${Skia_FRAMEWORK_HEADERS_DIR}/skia"
-        COMMENT "Link Skia headers"
-        VERBATIM
-    )
-    add_dependencies(Skia Skia_headers_symlink)
-
-    message(STATUS "Using external Skia: ${SKIA_LIBRARY}")
-    message(WARNING
-        "Make sure the external Skia build has been built with "
-        "skia_use_egl=true + skia_use_epoxy_egl=true. Expect malfunctions "
-        "otherwise at runtime!"
-    )
-
-    add_library(Skia::Skia ALIAS Skia)
-    return ()
-endif ()
-
-#
 # The target definition lists sources which always get built.
 # The rest may be added later as-needed with target_sources().
 #
@@ -143,6 +34,7 @@ add_library(Skia STATIC
     src/base/SkQuads.cpp
     src/base/SkSafeMath.cpp
     src/base/SkSemaphore.cpp
+    src/base/SkSharedMutex.cpp
     src/base/SkSpinlock.cpp
     src/base/SkTDArray.cpp
     src/base/SkTSearch.cpp
@@ -269,6 +161,7 @@ add_library(Skia STATIC
     src/core/SkMaskBlurFilter.cpp
     src/core/SkMaskCache.cpp
     src/core/SkMaskFilter.cpp
+    src/core/SkMaskFilterBase.cpp
     src/core/SkMaskGamma.cpp
     src/core/SkMasks.cpp
     src/core/SkMatrix.cpp

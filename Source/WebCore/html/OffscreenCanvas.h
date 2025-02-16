@@ -162,9 +162,6 @@ private:
     void refEventTarget() final { RefCounted::ref(); }
     void derefEventTarget() final { RefCounted::deref(); }
 
-    void refCanvasBase() const final { RefCounted::ref(); }
-    void derefCanvasBase() const final { RefCounted::deref(); }
-
     void setSize(const IntSize&) final;
 
     void createImageBuffer() const final;

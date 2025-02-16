@@ -4,7 +4,7 @@ function assert(a) {
 }
 
 let a = 0b11n;
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     a &= 0b01n;
 }
 

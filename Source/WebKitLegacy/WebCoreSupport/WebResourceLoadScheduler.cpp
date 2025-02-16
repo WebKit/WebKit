@@ -417,4 +417,3 @@ void WebResourceLoadScheduler::addOnlineStateChangeListener(WTF::Function<void(b
 void WebResourceLoadScheduler::preconnectTo(FrameLoader&, const URL&, StoredCredentialsPolicy, ShouldPreconnectAsFirstParty, PreconnectCompletionHandler&&)
 {
 }
-

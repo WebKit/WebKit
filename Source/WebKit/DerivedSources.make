@@ -164,7 +164,6 @@ MESSAGE_RECEIVERS = \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \
 	UIProcess/GPU/GPUProcessProxy \
 	UIProcess/WebAuthentication/WebAuthenticatorCoordinatorProxy \
-	UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy \
 	UIProcess/WebPasteboardProxy \
 	UIProcess/UserContent/WebUserContentControllerProxy \
 	UIProcess/Inspector/WebInspectorUIProxy \
@@ -645,6 +644,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/DrawingAreaInfo.serialization.in \
 	Shared/EditingRange.serialization.in \
 	Shared/EditorState.serialization.in \
+	Shared/KeyEventInterpretationContext.serialization.in \
 	Shared/Extensions/WebExtensionActionClickBehavior.serialization.in \
 	Shared/Extensions/WebExtensionAlarmParameters.serialization.in \
 	Shared/Extensions/WebExtensionCommandParameters.serialization.in \
@@ -767,6 +767,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/cf/CoreIPCSecCertificate.serialization.in \
 	Shared/cf/CoreIPCSecKeychainItem.serialization.in \
 	Shared/cf/CoreIPCSecTrust.serialization.in \
+	Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in \
 	Shared/mac/PDFContextMenuItem.serialization.in \
 	Shared/mac/SecItemRequestData.serialization.in \
 	Shared/mac/SecItemResponseData.serialization.in \
@@ -969,13 +970,9 @@ JSWebExtensionAPIUnified.mm: $(BINDINGS_SCRIPTS) $(EXTENSION_INTERFACES:%=JS%.mm
 
 all : JSWebExtensionAPIUnified.mm $(EXTENSION_INTERFACES:%=JS%.h) $(EXTENSION_INTERFACES:%=JS%.mm)
 
-module.private.modulemap : $(WK_MODULEMAP_PRIVATE_FILE)
-	unifdef $(addprefix -D, $(FEATURE_AND_PLATFORM_DEFINES)) $(addprefix -U, $(FEATURE_AND_PLATFORM_UNDEFINES)) -o $@ $< || [ $$? -eq 1 ]
-
-all : module.private.modulemap
-
 ifeq ($(USE_INTERNAL_SDK),YES)
 WEBKIT_ADDITIONS_SWIFT_FILES = \
+	MaterialAdditions.swift \
 	WKSeparatedImageView.swift \
 #
 

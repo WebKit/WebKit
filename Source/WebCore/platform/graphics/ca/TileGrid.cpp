@@ -498,7 +498,7 @@ void TileGrid::revalidateTiles(OptionSet<ValidationPolicyFlag> validationPolicy)
     }
 
     // Ensure primary tile coverage tiles.
-    HashSet<TileIndex> tilesNeedingDisplay;
+    UncheckedKeyHashSet<TileIndex> tilesNeedingDisplay;
     m_primaryTileCoverageRect = ensureTilesForRect(coverageRect, tilesNeedingDisplay, CoverageType::PrimaryTiles);
 
     // Ensure secondary tiles (requested via prepopulateRect).
@@ -572,7 +572,7 @@ void TileGrid::cohortRemovalTimerFired()
     m_controller->updateTileCoverageMap();
 }
 
-IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, HashSet<TileIndex>& tilesNeedingDisplay, CoverageType newTileType)
+IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay, CoverageType newTileType)
 {
     if (!m_controller->isInWindow())
         return IntRect();
@@ -598,7 +598,7 @@ IntRect TileGrid::ensureTilesForRect(const FloatRect& rect, HashSet<TileIndex>& 
             IntRect tileRect = rectForTileIndex(tileIndex);
 
             UncheckedKeyHashMap<TileIndex, TileInfo>::iterator it;
-            constexpr size_t kMaxTileCountPerGrid = 8 * 1024;
+            constexpr size_t kMaxTileCountPerGrid = 6 * 1024;
             if (UNLIKELY(m_tiles.size() >= kMaxTileCountPerGrid)) {
                 it = m_tiles.find(tileIndex);
                 if (it == m_tiles.end())

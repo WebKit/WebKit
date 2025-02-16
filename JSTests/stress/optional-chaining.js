@@ -82,7 +82,7 @@ function testBasicFailureCases() {
 }
 noInline(testBasicFailureCases);
 
-for (let i = 0; i < 1e5; i++)
+for (let i = 0; i < testLoopCount; i++)
     testBasicSuccessCases();
 
 for (let i = 0; i < 100; i++)

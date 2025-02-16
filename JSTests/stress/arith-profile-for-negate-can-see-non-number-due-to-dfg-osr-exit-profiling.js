@@ -18,14 +18,14 @@ function f3(arg) {
     let r = -(arg ? f1() : f2());
 }
 
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     try {
         f3(!!(i % 2));
     } catch (e) {}
 } 
 
 flag = true;
-for (let i = 0; i < 100000; ++i) try {
+for (let i = 0; i < testLoopCount; ++i) try {
     runNearStackLimit(() => {
         return f3(!!(i % 2));
     });

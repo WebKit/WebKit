@@ -15,7 +15,7 @@ function bar(x)
 }
 noInline(bar);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(40, 2);
     if (result !== 42)
         throw Error("Wrong result for foo, expected 42, got " + result);

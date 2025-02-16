@@ -145,7 +145,7 @@ static bool writeSizeFile(const String& sizeDirectoryPath, uint64_t size)
 
     auto sizeFilePath = FileSystem::pathByAppendingComponent(sizeDirectoryPath, sizeFileName);
     auto value = String::number(size).utf8();
-    return FileSystem::overwriteEntireFile(sizeFilePath, value.span()) != -1;
+    return FileSystem::overwriteEntireFile(sizeFilePath, byteCast<uint8_t>(value.span())) != -1;
 }
 
 static String saltFilePath(const String& saltDirectory)
@@ -367,16 +367,17 @@ void CacheStorageManager::allCaches(uint64_t updateCounter, WebCore::DOMCacheEng
 
 void CacheStorageManager::initializeCacheSize(CacheStorageCache& cache)
 {
-    cache.getSize([this, weakThis = WeakPtr { *this }, cacheIdentifier = cache.identifier()](auto size) mutable {
-        if (!weakThis)
+    cache.getSize([weakThis = WeakPtr { *this }, cacheIdentifier = cache.identifier()](auto size) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        if (!m_pendingSize.second.remove(cacheIdentifier))
+        if (!protectedThis->m_pendingSize.second.remove(cacheIdentifier))
             return;
 
-        m_pendingSize.first += size;
-        if (m_pendingSize.second.isEmpty())
-            finishInitializingSize();
+        protectedThis->m_pendingSize.first += size;
+        if (protectedThis->m_pendingSize.second.isEmpty())
+            protectedThis->finishInitializingSize();
     });
 }
 

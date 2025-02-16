@@ -131,6 +131,17 @@ const _throws = (func, type, message, ...args) => {
     _fail(`Expected to throw a ${type.name} with message "${message}"`);
 };
 
+const _throwsExactly = (func, error, ...args) => {
+    try {
+        func(...args);
+    } catch (e) {
+        if (e === error)
+            return e;
+        _fail(`Expected to throw a ${String(error)} , got ${String(e)}`);
+    }
+    _fail(`Expected to throw a ${String(error)}`);
+};
+
 export async function throwsAsync(promise, type, message) {
     try {
         await promise;
@@ -161,6 +172,7 @@ const _instanceof = (obj, type, msg) => {
 // Use underscore names to avoid clashing with builtin names.
 export {
     _throws as throws,
+    _throwsExactly as throwsExactly,
     _instanceof as instanceof,
 };
 

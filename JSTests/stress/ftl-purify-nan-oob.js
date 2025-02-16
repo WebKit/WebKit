@@ -11,7 +11,7 @@ noInline(test);
 var bytes = new BigUint64Array([0xfffe000000000000n]);
 var array = new Float64Array(bytes.buffer);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(isPureNaN(test(array, 0)), true);
     test(array, 1)
 }

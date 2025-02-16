@@ -38,10 +38,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if COMPILER(MSVC)
-#pragma warning(disable: 4800)
-#endif
-
 struct sqlite3;
 
 namespace WebCore {

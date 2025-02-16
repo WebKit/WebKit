@@ -85,7 +85,6 @@ class WebPaymentCoordinatorProxy final
     , public PaymentAuthorizationPresenter::Client
     , public RefCounted<WebPaymentCoordinatorProxy> {
     WTF_MAKE_TZONE_ALLOCATED(WebPaymentCoordinatorProxy);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebPaymentCoordinatorProxy);
 public:
     USING_CAN_MAKE_WEAKPTR(MessageReceiver);
 

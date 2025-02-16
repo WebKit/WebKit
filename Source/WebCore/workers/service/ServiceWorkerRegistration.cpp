@@ -322,6 +322,7 @@ void ServiceWorkerRegistration::showNotification(ScriptExecutionContext& context
             }
 
             declarativePushEvent->setUpdatedNotification(notification.ptr());
+            promise->resolve();
             return;
         }
 #endif

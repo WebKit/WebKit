@@ -24,10 +24,7 @@
  */
 
 WI.ContentViewCookieType = {
-    ApplicationCache: "application-cache",
     CookieStorage: "cookie-storage",
-    Database: "database",
-    DatabaseTable: "database-table",
     DOMStorage: "dom-storage",
     Resource: "resource", // includes Frame too.
     Timelines: "timelines"
@@ -63,8 +60,6 @@ WI.loaded = function()
     // Register observers for events from the InspectorBackend.
     if (InspectorBackend.registerAnimationDispatcher)
         InspectorBackend.registerAnimationDispatcher(WI.AnimationObserver);
-    if (InspectorBackend.registerApplicationCacheDispatcher)
-        InspectorBackend.registerApplicationCacheDispatcher(WI.ApplicationCacheObserver);
     if (InspectorBackend.registerBrowserDispatcher)
         InspectorBackend.registerBrowserDispatcher(WI.BrowserObserver);
     if (InspectorBackend.registerCPUProfilerDispatcher)
@@ -79,8 +74,6 @@ WI.loaded = function()
         InspectorBackend.registerDOMDispatcher(WI.DOMObserver);
     if (InspectorBackend.registerDOMStorageDispatcher)
         InspectorBackend.registerDOMStorageDispatcher(WI.DOMStorageObserver);
-    if (InspectorBackend.registerDatabaseDispatcher)
-        InspectorBackend.registerDatabaseDispatcher(WI.DatabaseObserver);
     if (InspectorBackend.registerDebuggerDispatcher)
         InspectorBackend.registerDebuggerDispatcher(WI.DebuggerObserver);
     if (InspectorBackend.registerHeapDispatcher)
@@ -120,7 +113,6 @@ WI.loaded = function()
         WI.targetManager = new WI.TargetManager,
         WI.networkManager = new WI.NetworkManager,
         WI.domStorageManager = new WI.DOMStorageManager,
-        WI.databaseManager = new WI.DatabaseManager,
         WI.indexedDBManager = new WI.IndexedDBManager,
         WI.domManager = new WI.DOMManager,
         WI.cssManager = new WI.CSSManager,
@@ -128,7 +120,6 @@ WI.loaded = function()
         WI.runtimeManager = new WI.RuntimeManager,
         WI.heapManager = new WI.HeapManager,
         WI.memoryManager = new WI.MemoryManager,
-        WI.applicationCacheManager = new WI.ApplicationCacheManager,
         WI.timelineManager = new WI.TimelineManager,
         WI.auditManager = new WI.AuditManager,
         WI.debuggerManager = new WI.DebuggerManager,
@@ -147,7 +138,6 @@ WI.loaded = function()
     WI.domManager.addEventListener(WI.DOMManager.Event.InspectModeStateChanged, WI._inspectModeStateChanged, WI);
     WI.domManager.addEventListener(WI.DOMManager.Event.DOMNodeWasInspected, WI._domNodeWasInspected, WI);
     WI.domStorageManager.addEventListener(WI.DOMStorageManager.Event.DOMStorageObjectWasInspected, WI._domStorageWasInspected, WI);
-    WI.databaseManager.addEventListener(WI.DatabaseManager.Event.DatabaseWasInspected, WI._databaseWasInspected, WI);
     WI.networkManager.addEventListener(WI.NetworkManager.Event.MainFrameDidChange, WI._mainFrameDidChange, WI);
     WI.networkManager.addEventListener(WI.NetworkManager.Event.FrameWasAdded, WI._frameWasAdded, WI);
     WI.browserManager.enable();
@@ -416,15 +406,12 @@ WI.contentLoaded = function()
     WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode, WI);
     inspectedPageControlNavigationItems.push(WI._inspectModeTabBarButton);
 
-    // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-    if (InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
-        const deviceSettingsTooltip = WI.UIString("Device Settings");
-        WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, InspectorFrontendHost.isRemote ? "Images/Device.svg" : "Images/Computer.svg");
-        WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked, WI);
-        inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
+    const deviceSettingsTooltip = WI.UIString("Device Settings");
+    WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, InspectorFrontendHost.isRemote ? "Images/Device.svg" : "Images/Computer.svg");
+    WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked, WI);
+    inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
 
-        WI._deviceSettingsPopover = null;
-    }
+    WI._deviceSettingsPopover = null;
 
     if (InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) {
         let reloadToolTip;
@@ -1412,9 +1399,7 @@ WI.tabContentViewClassForRepresentedObject = function(representedObject)
         return WI.SourcesTabContentView;
 
     if (representedObject instanceof WI.DOMStorageObject || representedObject instanceof WI.CookieStorageObject ||
-        representedObject instanceof WI.DatabaseTableObject || representedObject instanceof WI.DatabaseObject ||
-        representedObject instanceof WI.ApplicationCacheFrame || representedObject instanceof WI.IndexedDatabaseObjectStore ||
-        representedObject instanceof WI.IndexedDatabase || representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
+        representedObject instanceof WI.IndexedDatabaseObjectStore || representedObject instanceof WI.IndexedDatabase || representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
         return WI.StorageTabContentView;
 
     if (representedObject instanceof WI.AuditTestCase || representedObject instanceof WI.AuditTestGroup
@@ -2094,11 +2079,6 @@ WI._domStorageWasInspected = function(event)
     WI.showRepresentedObject(event.data.domStorage, null, {ignoreSearchTab: true});
 };
 
-WI._databaseWasInspected = function(event)
-{
-    WI.showStorageTab({initiatorHint: WI.TabBrowser.TabNavigationInitiator.Inspect});
-    WI.showRepresentedObject(event.data.database, null, {ignoreSearchTab: true});
-};
 
 WI._domNodeWasInspected = function(event)
 {

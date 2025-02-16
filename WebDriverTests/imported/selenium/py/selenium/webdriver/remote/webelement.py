@@ -226,7 +226,7 @@ class WebElement(BaseWebElement):
                 remote_files = []
                 for file in local_files:
                     remote_files.append(self._upload(file))
-                value = "\n".join(remote_files)
+                value = tuple("\n".join(remote_files))
 
         self._execute(
             Command.SEND_KEYS_TO_ELEMENT, {"text": "".join(keys_to_typing(value)), "value": keys_to_typing(value)}
@@ -397,45 +397,59 @@ class WebElement(BaseWebElement):
     def find_element(self, by=By.ID, value=None) -> WebElement:
         """Find an element given a By strategy and locator.
 
-        :Usage:
-            ::
+        Parameters:
+        ----------
+        by : selenium.webdriver.common.by.By
+            The locating strategy to use. Default is `By.ID`. Supported values include:
+            - By.ID: Locate by element ID.
+            - By.NAME: Locate by the `name` attribute.
+            - By.XPATH: Locate by an XPath expression.
+            - By.CSS_SELECTOR: Locate by a CSS selector.
+            - By.CLASS_NAME: Locate by the `class` attribute.
+            - By.TAG_NAME: Locate by the tag name (e.g., "input", "button").
+            - By.LINK_TEXT: Locate a link element by its exact text.
+            - By.PARTIAL_LINK_TEXT: Locate a link element by partial text match.
+            - RelativeBy: Locate elements relative to a specified root element.
 
-                element = element.find_element(By.ID, 'foo')
+        Example:
+        --------
+        element = driver.find_element(By.ID, 'foo')
 
-        :rtype: WebElement
+        Returns:
+        -------
+        WebElement
+            The first matching `WebElement` found on the page.
         """
-        if by == By.ID:
-            by = By.CSS_SELECTOR
-            value = f'[id="{value}"]'
-        elif by == By.CLASS_NAME:
-            by = By.CSS_SELECTOR
-            value = f".{value}"
-        elif by == By.NAME:
-            by = By.CSS_SELECTOR
-            value = f'[name="{value}"]'
-
+        by, value = self._parent.locator_converter.convert(by, value)
         return self._execute(Command.FIND_CHILD_ELEMENT, {"using": by, "value": value})["value"]
 
     def find_elements(self, by=By.ID, value=None) -> List[WebElement]:
         """Find elements given a By strategy and locator.
 
-        :Usage:
-            ::
+        Parameters:
+        ----------
+        by : selenium.webdriver.common.by.By
+            The locating strategy to use. Default is `By.ID`. Supported values include:
+            - By.ID: Locate by element ID.
+            - By.NAME: Locate by the `name` attribute.
+            - By.XPATH: Locate by an XPath expression.
+            - By.CSS_SELECTOR: Locate by a CSS selector.
+            - By.CLASS_NAME: Locate by the `class` attribute.
+            - By.TAG_NAME: Locate by the tag name (e.g., "input", "button").
+            - By.LINK_TEXT: Locate a link element by its exact text.
+            - By.PARTIAL_LINK_TEXT: Locate a link element by partial text match.
+            - RelativeBy: Locate elements relative to a specified root element.
 
-                element = element.find_elements(By.CLASS_NAME, 'foo')
+        Example:
+        --------
+        element = driver.find_element(By.ID, 'foo')
 
-        :rtype: list of WebElement
+        Returns:
+        -------
+        WebElement
+            list of `WebElements` matching locator strategy found on the page.
         """
-        if by == By.ID:
-            by = By.CSS_SELECTOR
-            value = f'[id="{value}"]'
-        elif by == By.CLASS_NAME:
-            by = By.CSS_SELECTOR
-            value = f".{value}"
-        elif by == By.NAME:
-            by = By.CSS_SELECTOR
-            value = f'[name="{value}"]'
-
+        by, value = self._parent.locator_converter.convert(by, value)
         return self._execute(Command.FIND_CHILD_ELEMENTS, {"using": by, "value": value})["value"]
 
     def __hash__(self) -> int:

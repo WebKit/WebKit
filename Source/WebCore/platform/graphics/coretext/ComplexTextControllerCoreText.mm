@@ -33,9 +33,31 @@
 #import <wtf/SoftLinking.h>
 #import <wtf/WeakPtr.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
+
+static std::span<const CFIndex> CTRunGetStringIndicesPtrSpan(CTRunRef ctRun)
+{
+    auto* coreTextIndicesPtr = CTRunGetStringIndicesPtr(ctRun);
+    if (!coreTextIndicesPtr)
+        return { };
+    return unsafeMakeSpan(coreTextIndicesPtr, CTRunGetGlyphCount(ctRun));
+}
+
+static std::span<const CGGlyph> CTRunGetGlyphsSpan(CTRunRef ctRun)
+{
+    auto* glyphsPtr = CTRunGetGlyphsPtr(ctRun);
+    if (!glyphsPtr)
+        return { };
+    return unsafeMakeSpan(glyphsPtr, CTRunGetGlyphCount(ctRun));
+}
+
+static std::span<const CGSize> CTRunGetAdvancesSpan(CTRunRef ctRun)
+{
+    auto* baseAdvances = CTRunGetAdvancesPtr(ctRun);
+    if (!baseAdvances)
+        return { };
+    return unsafeMakeSpan(baseAdvances, CTRunGetGlyphCount(ctRun));
+}
 
 ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font& font, std::span<const UChar> characters, unsigned stringLocation, unsigned indexBegin, unsigned indexEnd)
     : m_initialAdvance(CTRunGetInitialAdvance(ctRun))
@@ -48,27 +70,21 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
     , m_isLTR(!(CTRunGetStatus(ctRun) & kCTRunStatusRightToLeft))
     , m_textAutospaceSize(TextAutospace::textAutospaceSize(font))
 {
-    const CFIndex* coreTextIndicesPtr = CTRunGetStringIndicesPtr(ctRun);
+    auto coreTextIndicesSpan = CTRunGetStringIndicesPtrSpan(ctRun);
     Vector<CFIndex> coreTextIndices;
-    if (!coreTextIndicesPtr) {
+    if (!coreTextIndicesSpan.data()) {
         coreTextIndices.grow(m_glyphCount);
         CTRunGetStringIndices(ctRun, CFRangeMake(0, 0), coreTextIndices.data());
-        coreTextIndicesPtr = coreTextIndices.data();
+        coreTextIndicesSpan = coreTextIndices.span();
     }
-    m_coreTextIndices = CoreTextIndicesVector(m_glyphCount, [&](size_t i) {
-        return coreTextIndicesPtr[i];
-    });
+    m_coreTextIndices = coreTextIndicesSpan;
 
-    const CGGlyph* glyphsPtr = CTRunGetGlyphsPtr(ctRun);
-    Vector<CGGlyph> glyphs;
-    if (!glyphsPtr) {
-        glyphs.grow(m_glyphCount);
-        CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), glyphs.data());
-        glyphsPtr = glyphs.data();
+    if (auto glyphsSpan = CTRunGetGlyphsSpan(ctRun); glyphsSpan.data())
+        m_glyphs = glyphsSpan;
+    else {
+        m_glyphs.grow(m_glyphCount);
+        CTRunGetGlyphs(ctRun, CFRangeMake(0, 0), m_glyphs.data());
     }
-    m_glyphs = GlyphVector(m_glyphCount, [&](size_t i) {
-        return glyphsPtr[i];
-    });
 
     if (CTRunGetStatus(ctRun) & kCTRunStatusHasOrigins) {
         Vector<CGSize> baseAdvances(m_glyphCount);
@@ -81,16 +97,16 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(CTRunRef ctRun, const Font
             m_glyphOrigins.append(glyphOrigins[i]);
         }
     } else {
-        const CGSize* baseAdvances = CTRunGetAdvancesPtr(ctRun);
-        Vector<CGSize> baseAdvancesVector;
-        if (!baseAdvances) {
+        if (auto baseAdvancesSpan = CTRunGetAdvancesSpan(ctRun); baseAdvancesSpan.data())
+            m_baseAdvances = baseAdvancesSpan;
+        else {
+            Vector<CGSize> baseAdvancesVector;
             baseAdvancesVector.grow(m_glyphCount);
             CTRunGetAdvances(ctRun, CFRangeMake(0, 0), baseAdvancesVector.data());
-            baseAdvances = baseAdvancesVector.data();
+            m_baseAdvances = BaseAdvancesVector(m_glyphCount, [&](size_t i) {
+                return baseAdvancesVector[i];
+            });
         }
-        m_baseAdvances = BaseAdvancesVector(m_glyphCount, [&](size_t i) {
-            return baseAdvances[i];
-        });
     }
 
     LOG_WITH_STREAM(TextShaping,
@@ -132,7 +148,7 @@ static const UniChar* provideStringAndAttributes(CFIndex stringIndex, CFIndex* c
 
     *charCount = info->cp.size() - stringIndex;
     *attributes = info->attributes;
-    return reinterpret_cast<const UniChar*>(info->cp.data() + stringIndex);
+    return reinterpret_cast<const UniChar*>(info->cp.subspan(stringIndex).data());
 }
 
 enum class CoreTextTypesetterEmbeddingLevel : short { LTR = 0, RTL = 1 };
@@ -260,11 +276,11 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
                     FontPlatformData runFontPlatformData(runCTFont, CTFontGetSize(runCTFont));
                     runFont = FontCache::forCurrentThread().fontForPlatformData(runFontPlatformData).ptr();
                 }
-                if (m_fallbackFonts && runFont != &m_font.primaryFont())
+                if (m_fallbackFonts && runFont != m_font.primaryFont().ptr())
                     m_fallbackFonts->add(*runFont);
             }
         }
-        if (m_fallbackFonts && runFont != &m_font.primaryFont())
+        if (m_fallbackFonts && runFont != m_font.primaryFont().ptr())
             m_fallbackFonts->add(*font);
 
         LOG_WITH_STREAM(TextShaping, stream << "Run " << r << ":");
@@ -274,5 +290,3 @@ void ComplexTextController::collectComplexTextRunsForCharacters(std::span<const 
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

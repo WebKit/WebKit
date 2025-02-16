@@ -33,7 +33,7 @@ template_autogen_h = """// GENERATED FILE - DO NOT EDIT.
 namespace angle
 {{
 
-enum class FormatID
+enum class FormatID : uint8_t
 {{
 {angle_format_enum}
 }};

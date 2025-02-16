@@ -33,7 +33,7 @@ function runTest(func)
 {
     reset();
 
-    for (var i = 0; i < 0x10000; i++)
+    for (var i = 0; i < testLoopCount; i++)
         func();
 
     flag = 1;

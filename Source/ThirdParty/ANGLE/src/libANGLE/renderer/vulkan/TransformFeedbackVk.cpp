@@ -44,16 +44,14 @@ TransformFeedbackVk::~TransformFeedbackVk() {}
 void TransformFeedbackVk::onDestroy(const gl::Context *context)
 {
     ContextVk *contextVk   = vk::GetImpl(context);
-    vk::Renderer *renderer = contextVk->getRenderer();
-
-    releaseCounterBuffers(renderer);
+    releaseCounterBuffers(contextVk);
 }
 
-void TransformFeedbackVk::releaseCounterBuffers(vk::Renderer *renderer)
+void TransformFeedbackVk::releaseCounterBuffers(vk::Context *context)
 {
     for (vk::BufferHelper &bufferHelper : mCounterBufferHelpers)
     {
-        bufferHelper.release(renderer);
+        bufferHelper.release(context);
     }
     for (VkBuffer &buffer : mCounterBufferHandles)
     {
@@ -153,7 +151,7 @@ angle::Result TransformFeedbackVk::end(const gl::Context *context)
 
     contextVk->onEndTransformFeedback();
 
-    releaseCounterBuffers(contextVk->getRenderer());
+    releaseCounterBuffers(contextVk);
 
     return angle::Result::Continue;
 }
@@ -266,7 +264,6 @@ void TransformFeedbackVk::updateTransformFeedbackDescriptorDesc(
     vk::DescriptorSetDescBuilder *builder) const
 {
     size_t xfbBufferCount = executable.getTransformFeedbackBufferCount();
-
     for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
     {
         if (mBufferHelpers[bufferIndex] && activeUnpaused)
@@ -291,14 +288,9 @@ void TransformFeedbackVk::onNewDescriptorSet(const gl::ProgramExecutable &execut
     size_t xfbBufferCount = executable.getTransformFeedbackBufferCount();
     for (uint32_t bufferIndex = 0; bufferIndex < xfbBufferCount; ++bufferIndex)
     {
-        const gl::OffsetBindingPointer<gl::Buffer> &binding = mState.getIndexedBuffer(bufferIndex);
-        if (binding.get())
+        if (mBufferHelpers[bufferIndex])
         {
-            BufferVk *bufferVk = vk::GetImpl(binding.get());
-            if (bufferVk->getBuffer().valid())
-            {
-                bufferVk->getBuffer().getBufferBlock()->onNewDescriptorSet(sharedCacheKey);
-            }
+            mBufferHelpers[bufferIndex]->onNewDescriptorSet(sharedCacheKey);
         }
     }
 }

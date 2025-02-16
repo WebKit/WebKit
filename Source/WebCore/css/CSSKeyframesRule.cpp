@@ -79,11 +79,27 @@ void StyleRuleKeyframes::wrapperRemoveKeyframe(unsigned index)
 
 std::optional<size_t> StyleRuleKeyframes::findKeyframeIndex(const String& key) const
 {
-    auto keys = CSSParser::parseKeyframeKeyList(key);
+    auto keys = CSSParser::parseKeyframeKeyList(key, strictCSSParserContext());
     if (keys.isEmpty())
         return std::nullopt;
+
+    auto convertedKeys = keys.map([](auto& pair) -> StyleRuleKeyframe::Key {
+        return { pair.first, pair.second };
+    });
+
+    // FIXME: using Vector::operator==() here fails on Intel, so we provide our own logic.
+    auto keysAreEqual = [](const Vector<StyleRuleKeyframe::Key>& a, const Vector<StyleRuleKeyframe::Key>& b) {
+        if (a.size() != b.size())
+            return false;
+        for (auto i = a.size(); i--;) {
+            if (!(a[i] == b[i]))
+                return false;
+        }
+        return true;
+    };
+
     for (auto i = m_keyframes.size(); i--; ) {
-        if (m_keyframes[i]->keys() == keys)
+        if (keysAreEqual(m_keyframes[i]->keys(), convertedKeys))
             return i;
     }
     return std::nullopt;

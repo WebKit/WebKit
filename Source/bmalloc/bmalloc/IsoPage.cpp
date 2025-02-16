@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "IsoPage.h"
+
+#if !BUSE(TZONE)
 
 #include "PerProcess.h"
 #include "VMAllocate.h"
@@ -40,3 +43,4 @@ void* IsoPageBase::allocatePageMemory()
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

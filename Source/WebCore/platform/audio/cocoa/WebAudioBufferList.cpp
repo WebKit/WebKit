@@ -50,7 +50,9 @@ WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
     bufferListSize += CheckedSize { sizeof(AudioBuffer) } * std::max(1U, bufferCount);
     m_listBufferSize = bufferListSize;
     m_canonicalList = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memset(m_canonicalList.get(), 0, m_listBufferSize);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     m_canonicalList->mNumberBuffers = bufferCount;
     auto canonicalListBuffers = span(*m_canonicalList);
     for (uint32_t buffer = 0; buffer < bufferCount; ++buffer)
@@ -138,14 +140,14 @@ RetainPtr<CMBlockBufferRef> WebAudioBufferList::setSampleCountWithBlockBuffer(si
     }
     RetainPtr block = adoptCF(blockBuffer);
 
-    char* data = { };
-    if (auto error = PAL::CMBlockBufferGetDataPointer(blockBuffer, 0, nullptr, nullptr, &data)) {
-        RELEASE_LOG_ERROR(Media, "WebAudioBufferList::setSampleCountWithBlockBuffer CMBlockBufferGetDataPointer failed with: %d", static_cast<int>(error));
+    auto data = PAL::CMBlockBufferGetDataSpan(blockBuffer);
+    if (!data.data()) {
+        RELEASE_LOG_ERROR(Media, "WebAudioBufferList::setSampleCountWithBlockBuffer CMBlockBufferGetDataSpan failed.");
         return { };
     }
     m_blockBuffer = WTFMove(block);
 
-    initializeList(unsafeMakeSpan(reinterpret_cast<uint8_t*>(data), bufferSizes->second), bufferSizes->first);
+    initializeList(data.first(bufferSizes->second), bufferSizes->first);
 
     return m_blockBuffer;
 }
@@ -179,7 +181,9 @@ void WebAudioBufferList::reset()
 {
     if (!m_list)
         m_list = std::unique_ptr<AudioBufferList>(static_cast<AudioBufferList*>(::operator new (m_listBufferSize)));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memcpy(m_list.get(), m_canonicalList.get(), m_listBufferSize);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 IteratorRange<AudioBuffer*> WebAudioBufferList::buffers() const

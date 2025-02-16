@@ -10,7 +10,7 @@
             result += o[p];
         return result;
     };
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() !== "43")
             throw new Error("bad result");
     }
@@ -29,7 +29,7 @@
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() !== "43")
             throw new Error("bad result");
     }
@@ -49,7 +49,7 @@
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() !== "433")
             throw new Error("bad result");
     }

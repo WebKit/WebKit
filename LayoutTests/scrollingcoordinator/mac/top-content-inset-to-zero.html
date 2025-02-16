@@ -9,11 +9,11 @@
         {
             requestAnimationFrame(async () => {
                 if (window.testRunner)
-                    await testRunner.setTopContentInset(50);
+                    await testRunner.setObscuredContentInsets(50, 0, 0, 0);
 
                 requestAnimationFrame(async () => {
                     if (window.testRunner)
-                        await testRunner.setTopContentInset(0);
+                        await testRunner.setObscuredContentInsets(0, 0, 0, 0);
 
                     if (window.testRunner)
                         testRunner.notifyDone();

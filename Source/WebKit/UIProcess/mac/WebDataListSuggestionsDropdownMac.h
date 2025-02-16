@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT) && USE(APPKIT)
+#if USE(APPKIT)
 
 #import "WebDataListSuggestionsDropdown.h"
 #import <wtf/RetainPtr.h>
@@ -56,4 +56,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(DATALIST_ELEMENT) && USE(APPKIT)
+#endif // USE(APPKIT)

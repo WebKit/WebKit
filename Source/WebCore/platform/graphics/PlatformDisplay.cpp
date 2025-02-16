@@ -78,9 +78,9 @@ PlatformDisplay* PlatformDisplay::sharedDisplayIfExists()
 }
 #endif
 
-static HashSet<PlatformDisplay*>& eglDisplays()
+static UncheckedKeyHashSet<PlatformDisplay*>& eglDisplays()
 {
-    static NeverDestroyed<HashSet<PlatformDisplay*>> displays;
+    static NeverDestroyed<UncheckedKeyHashSet<PlatformDisplay*>> displays;
     return displays;
 }
 

@@ -22,7 +22,7 @@ function preDec(x) {
 }
 noInline(preDec);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     var r = postInc(3012n);
     assert.sameValue(r, 3012n, "3012n++ = " + r);
 

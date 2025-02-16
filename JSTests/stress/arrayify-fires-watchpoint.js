@@ -20,7 +20,7 @@ function makeObjectArray(value) {
 
 var p = {f:42};
 p[0] = 5;
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(makeObjectArray(4), p, 88);
     test(makeObjectArray(4.5), p, 88.5);
 }

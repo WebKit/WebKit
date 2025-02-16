@@ -44,6 +44,8 @@ class Document;
 class Element;
 class VisiblePosition;
 
+using NodeSet = UncheckedKeyHashSet<Ref<Node>>;
+
 class TextManipulationController final : public CanMakeWeakPtr<TextManipulationController>, public CanMakeCheckedPtr<TextManipulationController> {
     WTF_MAKE_TZONE_ALLOCATED(TextManipulationController);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextManipulationController);
@@ -100,8 +102,8 @@ private:
     };
     using NodeEntry = std::pair<Ref<Node>, Ref<Node>>;
     Vector<Ref<Node>> getPath(Node*, Node*);
-    void updateInsertions(Vector<NodeEntry>&, const Vector<Ref<Node>>&, Node*, HashSet<Ref<Node>>&, Vector<NodeInsertion>&);
-    std::optional<ManipulationFailure::Type> replace(const ManipulationItemData&, const Vector<TextManipulationToken>&, HashSet<Ref<Node>>& containersWithoutVisualOverflowBeforeReplacement);
+    void updateInsertions(Vector<NodeEntry>&, const Vector<Ref<Node>>&, Node*, NodeSet&, Vector<NodeInsertion>&);
+    std::optional<ManipulationFailure::Type> replace(const ManipulationItemData&, const Vector<TextManipulationToken>&, NodeSet& containersWithoutVisualOverflowBeforeReplacement);
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     WeakHashSet<Node, WeakPtrImplWithEventTargetData> m_manipulatedNodes;

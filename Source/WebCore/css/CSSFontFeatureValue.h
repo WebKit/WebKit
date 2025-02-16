@@ -41,11 +41,11 @@ public:
     const FontTag& tag() const { return m_tag; }
     const CSSPrimitiveValue& value() const { return m_value; }
     Ref<CSSPrimitiveValue> protectedValue() const { return m_value; }
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSFontFeatureValue&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
         if (func(m_value.get()) == IterationStatus::Done)
             return IterationStatus::Done;

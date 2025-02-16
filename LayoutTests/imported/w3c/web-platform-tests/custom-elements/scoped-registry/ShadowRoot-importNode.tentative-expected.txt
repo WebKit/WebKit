@@ -1,5 +1,5 @@
 
-PASS ShadowRoot.importNode: an upgrade candidate from document
-PASS ShadowRoot.importNode: a custom element from another shadow tree
-PASS ShadowRoot.importNode: a template content from document
+FAIL ShadowRoot.importNode: an upgrade candidate from document shadowRoot.createElement is not a function. (In 'shadowRoot.createElement('some-element')', 'shadowRoot.createElement' is undefined)
+FAIL ShadowRoot.importNode: a custom element from another shadow tree shadowRoot1.createElement is not a function. (In 'shadowRoot1.createElement('some-element')', 'shadowRoot1.createElement' is undefined)
+FAIL ShadowRoot.importNode: a template content from document shadowRoot.importNode is not a function. (In 'shadowRoot.importNode(template.content, /* deep */ true)', 'shadowRoot.importNode' is undefined)
 

@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "WebDataListSuggestionsDropdown.h"
 
 typedef struct _GtkTreePath GtkTreePath;
@@ -62,5 +60,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATALIST_ELEMENT)

@@ -20,6 +20,12 @@ namespace spirv
 {
 namespace
 {
+ANGLE_NOINLINE void ShaderNotRepresentible()
+{
+    ERR() << "Complex shader not representible in SPIR-V";
+    ANGLE_CRASH();
+}
+
 uint32_t MakeLengthOp(size_t length, spv::Op op)
 {
     ASSERT(length <= 0xFFFFu);
@@ -30,8 +36,7 @@ uint32_t MakeLengthOp(size_t length, spv::Op op)
     // would gracefully fail compilation, so this is more of a safety net.
     if (ANGLE_UNLIKELY(length > 0xFFFFu))
     {
-        ERR() << "Complex shader not representible in SPIR-V";
-        ANGLE_CRASH();
+        ShaderNotRepresentible();
     }
 
     return static_cast<uint32_t>(length) << 16 | op;

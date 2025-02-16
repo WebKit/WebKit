@@ -31,12 +31,13 @@
 #import <UIKit/UIKit.h>
 #else
 #import <AppKit/AppKit.h>
-#import <WebKit/_WKTextPreview.h>
 #endif
+
+#import <WebKit/_WKTextPreview.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class WKIntelligenceTextEffectCoordinator;
+@protocol WKIntelligenceTextEffectCoordinating;
 
 @class WTTextSuggestion;
 
@@ -44,33 +45,33 @@ NS_SWIFT_UI_ACTOR
 @protocol WKIntelligenceTextEffectCoordinatorDelegate <NSObject>
 
 #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
-- (UIView *)viewForIntelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator;
+- (UIView *)viewForIntelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator;
 #else
-- (NSView *)viewForIntelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator;
+- (NSView *)viewForIntelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator;
 #endif
 
 #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
-- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(UITargetedPreview *))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(UITargetedPreview *))completion;
 #else
-- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(NSArray<_WKTextPreview *> *))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator textPreviewsForRange:(NSRange)range completion:(void (^)(NSArray<_WKTextPreview *> *))completion;
 #endif
 
-- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator rectsForProofreadingSuggestionsInRange:(NSRange)range completion:(void (^)(NSArray<NSValue *> *))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator contentPreviewForRange:(NSRange)range completion:(void (^)(_WKTextPreview *))completion;
 
-- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator updateTextVisibilityForRange:(NSRange)range visible:(BOOL)visible identifier:(NSUUID *)identifier completion:(void (^)(void))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator rectsForProofreadingSuggestionsInRange:(NSRange)range completion:(void (^)(NSArray<NSValue *> *))completion;
 
-- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator decorateReplacementsForRange:(NSRange)range completion:(void (^)(void))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator updateTextVisibilityForRange:(NSRange)range visible:(BOOL)visible identifier:(NSUUID *)identifier completion:(void (^)(void))completion;
 
-- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator setSelectionForRange:(NSRange)range completion:(void (^)(void))completion;
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator decorateReplacementsForRange:(NSRange)range completion:(void (^)(void))completion;
+
+- (void)intelligenceTextEffectCoordinator:(id<WKIntelligenceTextEffectCoordinating>)coordinator setSelectionForRange:(NSRange)range completion:(void (^)(void))completion;
 
 @end
 
 NS_SWIFT_UI_ACTOR
-@interface WKIntelligenceTextEffectCoordinator : NSObject
+@protocol WKIntelligenceTextEffectCoordinating
 
 @property (nonatomic, readonly) BOOL hasActiveEffects;
-
-+ (NSInteger)characterDeltaForReceivedSuggestions:(NSArray<WTTextSuggestion *> *)suggestions;
 
 - (instancetype)initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)delegate;
 

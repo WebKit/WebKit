@@ -212,7 +212,7 @@ void RemoteInspector::pushListingsSoon()
 
     m_pushScheduled = true;
 
-    RunLoop::current().dispatch([this] {
+    RunLoop::protectedCurrent()->dispatch([this] {
         Locker locker { m_mutex };
         if (m_pushScheduled)
             pushListingsNow();

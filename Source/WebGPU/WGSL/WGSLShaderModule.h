@@ -145,6 +145,9 @@ public:
     bool usesMin() const { return m_usesMin; }
     void setUsesMin() { m_usesMin = true; }
 
+    bool usesFtoi() const { return m_usesFtoi; }
+    void setUsesFtoi() { m_usesFtoi = true; }
+
     template<typename T>
     std::enable_if_t<std::is_base_of_v<AST::Node, T>, void> replace(T* current, T&& replacement)
     {
@@ -311,6 +314,7 @@ private:
     bool m_usesExtractBits { false };
     bool m_usesPackedVec3 { false };
     bool m_usesMin { false };
+    bool m_usesFtoi { false };
     OptionSet<Extension> m_enabledExtensions;
     OptionSet<LanguageFeature> m_requiredFeatures;
     Configuration m_configuration;

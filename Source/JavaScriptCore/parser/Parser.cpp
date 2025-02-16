@@ -338,7 +338,7 @@ Expected<typename Parser<LexerType>::ParseInnerResult, String> Parser<LexerType>
 #if ASSERT_ENABLED
     if (m_parsingBuiltin && isProgramParseMode(parseMode)) {
         VariableEnvironment& lexicalVariables = scope->lexicalVariables();
-        const HashSet<UniquedStringImpl*>& closedVariableCandidates = scope->closedVariableCandidates();
+        auto& closedVariableCandidates = scope->closedVariableCandidates();
         for (UniquedStringImpl* candidate : closedVariableCandidates) {
             // FIXME: We allow async to leak because it appearing as a closed variable is a side effect of trying to parse async arrow functions.
             if (!lexicalVariables.contains(candidate) && !varDeclarations.contains(candidate) && !candidate->isSymbol() && candidate != m_vm.propertyNames->async.impl()) {
@@ -3318,6 +3318,7 @@ template <class TreeBuilder> TreeSourceElements Parser<LexerType>::parseClassFie
                 // This is very intentional: we need to fail for `foo = 1, 2` but support reparsing `foo = (1, 2)`, which is tricky because open paren
                 // is skipped (meaning start offset points to `1`) by parsePrimaryExpression().
                 initializer = parseExpression(context);
+                failIfFalse(initializer, "Cannot parse expression statement");
             }
 
             DefineFieldNode::Type type = DefineFieldNode::Type::Name;
@@ -3646,7 +3647,7 @@ template <class TreeBuilder> typename TreeBuilder::ImportSpecifier Parser<LexerT
 template <typename LexerType>
 template <class TreeBuilder> typename TreeBuilder::ImportAttributesList Parser<LexerType>::parseImportAttributes(TreeBuilder& context)
 {
-    HashSet<UniquedStringImpl*> keys;
+    UncheckedKeyHashSet<UniquedStringImpl*> keys;
     auto attributesList = context.createImportAttributesList();
     consumeOrFail(OPENBRACE, "Expected opening '{' at the start of import attribute");
     while (!match(CLOSEBRACE)) {

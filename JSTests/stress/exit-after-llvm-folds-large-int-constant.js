@@ -7,7 +7,7 @@ function foo(o, io) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({f:{f:42}}, {f:92160});
     if (result != 92202)
         throw "Error: bad result: " + result;

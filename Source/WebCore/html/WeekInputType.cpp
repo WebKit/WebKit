@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#if ENABLE(INPUT_TYPE_WEEK)
 #include "WeekInputType.h"
 
 #include "DateComponents.h"
@@ -104,5 +103,3 @@ void WeekInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
 }
 
 } // namespace WebCore
-
-#endif

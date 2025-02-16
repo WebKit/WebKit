@@ -47,9 +47,7 @@ public:
     double thumbPosition() const { return m_thumbPosition; }
     void setThumbPosition(double thumbPosition) { m_thumbPosition = thumbPosition; }
 
-#if ENABLE(DATALIST_ELEMENT)
     void drawTicks(GraphicsContext&, const FloatRect&, const ControlStyle&) const;
-#endif
 
 private:
     SliderTrackPart(StyleAppearance, const IntSize& thumbSize, const IntRect& trackBounds, Vector<double>&& tickRatios, double thumbPosition);

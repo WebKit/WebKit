@@ -50,7 +50,7 @@ for (let i = 0; i < 400; ++i) {
 }
 
 // Step over DFG *WITHOUT* OSR Exit.
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (targetFTL.multiply(otherObject) !== 2)
         throw "Failed targetFTL.multiply(otherObject)";
 }

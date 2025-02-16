@@ -25,7 +25,6 @@
 #include "config.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 
-#include "CSSCalcValue.h"
 #include "RenderStyleInlines.h"
 #include "StyleLengthResolution.h"
 
@@ -60,11 +59,6 @@ float canonicalizeAndClampLength(double value, CSS::LengthUnit unit, const CSSTo
 }
 
 // MARK: ToCSS utilities
-
-Ref<CSSCalcValue> makeCalc(Ref<CalculationValue> calculation, const RenderStyle& style)
-{
-    return CSSCalcValue::create(WTFMove(calculation), style);
-}
 
 float adjustForZoom(float value, const RenderStyle& style)
 {

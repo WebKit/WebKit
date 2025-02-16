@@ -15,7 +15,7 @@ function shouldBe(actual, expected) {
 
 var array1 = new BigInt64Array(4);
 var array2 = new BigUint64Array(4);
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(array1), 32);
     shouldBe(test2(array2), 32);
 }

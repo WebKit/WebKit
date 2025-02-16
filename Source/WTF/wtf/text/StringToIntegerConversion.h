@@ -31,24 +31,26 @@
 
 namespace WTF {
 
-// The parseInteger function template allows leading and trailing spaces as defined by isUnicodeCompatibleASCIIWhitespace, and, after the leading spaces, allows a single leading "+".
+// The parseInteger function template may allow leading and trailing spaces as defined by isUnicodeCompatibleASCIIWhitespace, and, after the leading spaces, allows a single leading "+".
 // The parseIntegerAllowingTrailingJunk function template is like parseInteger, but allows any characters after the integer.
 
 // FIXME: Should we add a version that does not allow "+"?
 // FIXME: Should we add a version that allows other definitions of spaces, like isASCIIWhitespace or isASCIIWhitespaceWithoutFF?
-// FIXME: Should we add a version that does not allow leading and trailing spaces?
 
-template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView, uint8_t base = 10);
+enum class ParseIntegerWhitespacePolicy : bool { Disallow, Allow };
+
+template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView, uint8_t base = 10, ParseIntegerWhitespacePolicy = ParseIntegerWhitespacePolicy::Allow);
 template<typename IntegralType> std::optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView, uint8_t base = 10);
 
-enum class TrailingJunkPolicy { Disallow, Allow };
+enum class TrailingJunkPolicy : bool { Disallow, Allow };
 
-template<typename IntegralType, typename CharacterType> std::optional<IntegralType> parseInteger(std::span<const CharacterType> data, uint8_t base, TrailingJunkPolicy policy)
+template<typename IntegralType, typename CharacterType> std::optional<IntegralType> parseInteger(std::span<const CharacterType> data, uint8_t base, TrailingJunkPolicy policy, ParseIntegerWhitespacePolicy whitespacePolicy = ParseIntegerWhitespacePolicy::Allow)
 {
     if (!data.data())
         return std::nullopt;
 
-    skipWhile<isUnicodeCompatibleASCIIWhitespace>(data);
+    if (whitespacePolicy == ParseIntegerWhitespacePolicy::Allow)
+        skipWhile<isUnicodeCompatibleASCIIWhitespace>(data);
 
     bool isNegative = false;
     if (std::is_signed_v<IntegralType> && skipExactly(data, '-'))
@@ -80,7 +82,8 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
         return std::nullopt;
 
     if (policy == TrailingJunkPolicy::Disallow) {
-        skipWhile<isUnicodeCompatibleASCIIWhitespace>(data);
+        if (whitespacePolicy == ParseIntegerWhitespacePolicy::Allow)
+            skipWhile<isUnicodeCompatibleASCIIWhitespace>(data);
         if (!data.empty())
             return std::nullopt;
     }
@@ -88,11 +91,11 @@ template<typename IntegralType, typename CharacterType> std::optional<IntegralTy
     return value.value();
 }
 
-template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView string, uint8_t base)
+template<typename IntegralType> std::optional<IntegralType> parseInteger(StringView string, uint8_t base, ParseIntegerWhitespacePolicy whitespacePolicy)
 {
     if (string.is8Bit())
-        return parseInteger<IntegralType>(string.span8(), base, TrailingJunkPolicy::Disallow);
-    return parseInteger<IntegralType>(string.span16(), base, TrailingJunkPolicy::Disallow);
+        return parseInteger<IntegralType>(string.span8(), base, TrailingJunkPolicy::Disallow, whitespacePolicy);
+    return parseInteger<IntegralType>(string.span16(), base, TrailingJunkPolicy::Disallow, whitespacePolicy);
 }
 
 template<typename IntegralType> std::optional<IntegralType> parseIntegerAllowingTrailingJunk(StringView string, uint8_t base)

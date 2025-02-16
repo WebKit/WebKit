@@ -72,7 +72,7 @@ HashMap<BackForwardItemIdentifier, WeakRef<WebBackForwardListItem>>& WebBackForw
     return items;
 }
 
-WebBackForwardListItem* WebBackForwardListItem::itemForID(const BackForwardItemIdentifier& identifier)
+WebBackForwardListItem* WebBackForwardListItem::itemForID(BackForwardItemIdentifier identifier)
 {
     return allItems().get(identifier);
 }
@@ -251,6 +251,11 @@ Ref<WebBackForwardListFrameItem> WebBackForwardListItem::protectedNavigatedFrame
 }
 
 WebBackForwardListFrameItem& WebBackForwardListItem::mainFrameItem() const
+{
+    return m_mainFrameItem;
+}
+
+Ref<WebBackForwardListFrameItem> WebBackForwardListItem::protectedMainFrameItem() const
 {
     return m_mainFrameItem;
 }

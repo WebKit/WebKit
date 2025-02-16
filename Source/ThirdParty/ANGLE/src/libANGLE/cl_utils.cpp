@@ -194,6 +194,53 @@ bool IsBufferType(cl::MemObjectType type)
     return type == cl::MemObjectType::Buffer;
 }
 
+bool IsArrayType(cl::MemObjectType type)
+{
+    return (type == cl::MemObjectType::Image1D_Array || type == cl::MemObjectType::Image2D_Array);
+}
+
+bool Is3DImage(cl::MemObjectType type)
+{
+    return (type == cl::MemObjectType::Image3D);
+}
+
+bool Is2DImage(cl::MemObjectType type)
+{
+    return (type == cl::MemObjectType::Image2D || type == cl::MemObjectType::Image2D_Array);
+}
+
+bool Is1DImage(cl::MemObjectType type)
+{
+    return (type >= cl::MemObjectType::Image1D && type <= cl::MemObjectType::Image1D_Buffer);
+}
+
+cl::Extents GetExtentFromDescriptor(cl::ImageDescriptor desc)
+{
+    cl::Extents extent{};
+
+    extent.width  = desc.width;
+    extent.height = desc.height;
+    extent.depth  = desc.depth;
+
+    // user can supply random values for height and depth for formats that dont need them
+    switch (desc.type)
+    {
+        case cl::MemObjectType::Image1D:
+        case cl::MemObjectType::Image1D_Array:
+        case cl::MemObjectType::Image1D_Buffer:
+            extent.height = 1;
+            extent.depth  = 1;
+            break;
+        case cl::MemObjectType::Image2D:
+        case cl::MemObjectType::Image2D_Array:
+            extent.depth = 1;
+            break;
+        default:
+            break;
+    }
+    return extent;
+}
+
 thread_local cl_int gClErrorTls;
 
 }  // namespace cl

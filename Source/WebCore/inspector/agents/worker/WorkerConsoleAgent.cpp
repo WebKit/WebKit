@@ -38,7 +38,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(WorkerConsoleAgent);
 WorkerConsoleAgent::WorkerConsoleAgent(WorkerAgentContext& context)
     : WebConsoleAgent(context)
 {
-    ASSERT(context.globalScope.isContextThread());
+    ASSERT(context.globalScope->isContextThread());
 }
 
 WorkerConsoleAgent::~WorkerConsoleAgent() = default;

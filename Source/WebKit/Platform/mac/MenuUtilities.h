@@ -26,15 +26,24 @@
 #ifndef MenuUtilities_h
 #define MenuUtilities_h
 
+#import <WebCore/ContextMenuItem.h>
 #import <WebCore/IntRect.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebKit {
 
-#if ENABLE(TELEPHONE_NUMBER_DETECTION) && PLATFORM(MAC)
+#if PLATFORM(MAC)
+
+#if ENABLE(TELEPHONE_NUMBER_DETECTION)
 NSMenuItem *menuItemForTelephoneNumber(const String& telephoneNumber);
 RetainPtr<NSMenu> menuForTelephoneNumber(const String& telephoneNumber, NSView *webView, const WebCore::IntRect&);
 NSString *menuItemTitleForTelephoneNumberGroup();
+#endif
+
+#if ENABLE(CONTEXT_MENU_IMAGES_FOR_INTERNAL_CLIENTS)
+NSString *symbolNameForAction(const WebCore::ContextMenuAction, bool);
+#endif
+
 #endif
 
 } // namespace WebKit

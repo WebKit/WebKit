@@ -18,7 +18,7 @@ function __v3(__v4, ...__v1) {
 }
 [93847];
 __v5(__v0);
-for (let __v1 = 0; __v1 < 10000; __v1++) {
+for (let __v1 = 0; __v1 < testLoopCount; __v1++) {
     let __v4 = 'Memory corruption'.normalize('NFC');
     __v0('I am not global'.keys === 7);
     ['__v6', '__v2', '__v1', '__v3', '__v4', '__v5'];

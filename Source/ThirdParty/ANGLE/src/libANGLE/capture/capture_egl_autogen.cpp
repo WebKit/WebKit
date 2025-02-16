@@ -1064,6 +1064,28 @@ CallCapture CaptureReleaseDeviceANGLE(egl::Thread *thread,
     return CallCapture(angle::EntryPoint::EGLReleaseDeviceANGLE, std::move(paramBuffer));
 }
 
+CallCapture CaptureLockVulkanQueueANGLE(egl::Thread *thread,
+                                        bool isCallValid,
+                                        egl::Display *dpyPacked)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
+
+    return CallCapture(angle::EntryPoint::EGLLockVulkanQueueANGLE, std::move(paramBuffer));
+}
+
+CallCapture CaptureUnlockVulkanQueueANGLE(egl::Thread *thread,
+                                          bool isCallValid,
+                                          egl::Display *dpyPacked)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
+
+    return CallCapture(angle::EntryPoint::EGLUnlockVulkanQueueANGLE, std::move(paramBuffer));
+}
+
 CallCapture CaptureAcquireExternalContextANGLE(egl::Thread *thread,
                                                bool isCallValid,
                                                egl::Display *dpyPacked,
@@ -1641,6 +1663,33 @@ CallCapture CaptureGetPlatformDisplayEXT(egl::Thread *thread,
     paramBuffer.addReturnValue(std::move(returnValueCapture));
 
     return CallCapture(angle::EntryPoint::EGLGetPlatformDisplayEXT, std::move(paramBuffer));
+}
+
+CallCapture CaptureQuerySupportedCompressionRatesEXT(egl::Thread *thread,
+                                                     bool isCallValid,
+                                                     egl::Display *dpyPacked,
+                                                     egl::Config *configPacked,
+                                                     const EGLAttrib *attrib_list,
+                                                     EGLint *rates,
+                                                     EGLint rate_size,
+                                                     EGLint *num_rates,
+                                                     EGLBoolean returnValue)
+{
+    ParamBuffer paramBuffer;
+
+    paramBuffer.addValueParam("dpyPacked", ParamType::Tegl_DisplayPointer, dpyPacked);
+    paramBuffer.addValueParam("configPacked", ParamType::Tegl_ConfigPointer, configPacked);
+    paramBuffer.addValueParam("attrib_list", ParamType::TEGLAttribConstPointer, attrib_list);
+    paramBuffer.addValueParam("rates", ParamType::TEGLintPointer, rates);
+    paramBuffer.addValueParam("rate_size", ParamType::TEGLint, rate_size);
+    paramBuffer.addValueParam("num_rates", ParamType::TEGLintPointer, num_rates);
+
+    ParamCapture returnValueCapture("returnValue", ParamType::TEGLBoolean);
+    InitParamValue(ParamType::TEGLBoolean, returnValue, &returnValueCapture.value);
+    paramBuffer.addReturnValue(std::move(returnValueCapture));
+
+    return CallCapture(angle::EntryPoint::EGLQuerySupportedCompressionRatesEXT,
+                       std::move(paramBuffer));
 }
 
 CallCapture CaptureDebugMessageControlKHR(egl::Thread *thread,

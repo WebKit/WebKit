@@ -84,9 +84,9 @@ void JITDisassembler::reportToProfiler(Profiler::Compilation* compilation, LinkB
     compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), out.toCString()));
     
     reportInstructions(compilation, linkBuffer, "    ", m_labelForBytecodeIndexInMainPath, firstSlowLabel());
-    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Main Path)\n"));
+    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Main Path)\n"_s));
     reportInstructions(compilation, linkBuffer, "    (S) ", m_labelForBytecodeIndexInSlowPath, m_endOfSlowPath);
-    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Slow Path)\n"));
+    compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), "    (End Of Slow Path)\n"_s));
     out.reset();
     dumpDisassembly(out, linkBuffer, m_endOfSlowPath, m_endOfCode);
     compilation->addDescription(Profiler::CompiledBytecode(Profiler::OriginStack(), out.toCString()));

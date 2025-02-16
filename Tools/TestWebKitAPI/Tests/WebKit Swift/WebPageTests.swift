@@ -23,11 +23,13 @@
 
 #if ENABLE_SWIFTUI && canImport(Testing) && compiler(>=6.0)
 
+import SwiftUI
 import Observation
 import Testing
 @_spi(Private) @_spi(Testing) import WebKit
+@_spi(Private) import _WebKit_SwiftUI
 
-extension WebPage_v0.NavigationEvent.Kind: @retroactive Equatable {
+extension WebPage.NavigationEvent.Kind: @retroactive Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case (.startedProvisionalNavigation, .startedProvisionalNavigation):
@@ -48,7 +50,7 @@ extension WebPage_v0.NavigationEvent.Kind: @retroactive Equatable {
     }
 }
 
-extension WebPage_v0.NavigationEvent: @retroactive Equatable {
+extension WebPage.NavigationEvent: @retroactive Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.kind == rhs.kind && lhs.navigationID == rhs.navigationID
     }
@@ -59,26 +61,26 @@ extension WebPage_v0.NavigationEvent: @retroactive Equatable {
 @MainActor
 fileprivate class TestNavigationDecider: NavigationDeciding {
     init() {
-        (self.navigationActionStream, self.navigationActionContinuation) = AsyncStream.makeStream(of: WebPage_v0.NavigationAction.self)
-        (self.navigationResponseStream, self.navigationResponseContinuation) = AsyncStream.makeStream(of: WebPage_v0.NavigationResponse.self)
+        (self.navigationActionStream, self.navigationActionContinuation) = AsyncStream.makeStream(of: WebPage.NavigationAction.self)
+        (self.navigationResponseStream, self.navigationResponseContinuation) = AsyncStream.makeStream(of: WebPage.NavigationResponse.self)
     }
 
-    let navigationActionStream: AsyncStream<WebPage_v0.NavigationAction>
-    private let navigationActionContinuation: AsyncStream<WebPage_v0.NavigationAction>.Continuation
+    let navigationActionStream: AsyncStream<WebPage.NavigationAction>
+    private let navigationActionContinuation: AsyncStream<WebPage.NavigationAction>.Continuation
 
-    let navigationResponseStream: AsyncStream<WebPage_v0.NavigationResponse>
-    private let navigationResponseContinuation: AsyncStream<WebPage_v0.NavigationResponse>.Continuation
+    let navigationResponseStream: AsyncStream<WebPage.NavigationResponse>
+    private let navigationResponseContinuation: AsyncStream<WebPage.NavigationResponse>.Continuation
 
-    var preferencesMutation: (inout WebPage_v0.NavigationPreferences) -> Void = { _ in }
+    var preferencesMutation: (inout WebPage.NavigationPreferences) -> Void = { _ in }
 
-    func decidePolicy(for action: WebPage_v0.NavigationAction, preferences: inout WebPage_v0.NavigationPreferences) async -> WKNavigationActionPolicy {
+    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {
         preferencesMutation(&preferences)
 
         navigationActionContinuation.yield(action)
         return .allow
     }
 
-    func decidePolicy(for response: WebPage_v0.NavigationResponse) async -> WKNavigationResponsePolicy {
+    func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy {
         navigationResponseContinuation.yield(response)
         return .allow
     }
@@ -89,120 +91,8 @@ fileprivate class TestNavigationDecider: NavigationDeciding {
 @MainActor
 struct WebPageTests {
     @Test
-    func basicNavigation() async throws {
-        let page = WebPage_v0()
-
-        let html = """
-        <html>
-        <div>Hello</div>
-        </html>
-        """
-
-        let expectedEventKinds: [WebPage_v0.NavigationEvent.Kind] = [.startedProvisionalNavigation, .committed, .finished]
-
-        // The existence of the loop is to test and ensure navigations are idempotent.
-        for _ in 0..<2 {
-            page.load(htmlString: html, baseURL: .aboutBlank)
-
-            var actualEventKinds: [WebPage_v0.NavigationEvent.Kind] = []
-
-            loop:
-            for try await event in page.navigations {
-                actualEventKinds.append(event.kind)
-
-                switch event.kind {
-                case .startedProvisionalNavigation, .receivedServerRedirect, .committed:
-                    break
-
-                case .finished, .failedProvisionalNavigation(_), .failed(_):
-                    break loop
-
-                @unknown default:
-                    fatalError()
-                }
-            }
-
-            #expect(actualEventKinds == expectedEventKinds)
-        }
-    }
-
-    @Test
-    func sequenceOfNavigations() async throws {
-        let page = WebPage_v0()
-
-        let html = """
-        <html>
-        <div>Hello</div>
-        </html>
-        """
-
-        page.load(htmlString: html, baseURL: .aboutBlank)
-        let navigationIDB = page.load(htmlString: html, baseURL: .aboutBlank)!
-
-        let expectedEvents: [WebPage_v0.NavigationEvent] = [
-            .init(kind: .startedProvisionalNavigation, navigationID: navigationIDB),
-            .init(kind: .committed, navigationID: navigationIDB),
-            .init(kind: .finished, navigationID: navigationIDB),
-        ]
-
-        var actualNavigations: [WebPage_v0.NavigationEvent] = []
-
-        loop:
-        for try await event in page.navigations {
-            actualNavigations.append(event)
-
-            if event.navigationID != navigationIDB {
-                continue
-            }
-
-            switch event.kind {
-            case .startedProvisionalNavigation, .receivedServerRedirect, .committed:
-                continue
-
-            case .finished, .failedProvisionalNavigation(_), .failed(_):
-                break loop
-
-            @unknown default:
-                fatalError()
-            }
-        }
-
-        #expect(actualNavigations == expectedEvents)
-    }
-
-    @Test
-    func navigationWithFailedProvisionalNavigationEvent() async throws {
-        let page = WebPage_v0()
-
-        let request = URLRequest(url: URL(string: "about:foo")!)
-        page.load(request)
-
-        let expectedEventKinds: [WebPage_v0.NavigationEvent.Kind] = [.startedProvisionalNavigation, .failedProvisionalNavigation(underlyingError: WKError(.unknown))]
-
-        var actualEventKinds: [WebPage_v0.NavigationEvent.Kind] = []
-
-        loop:
-        for await event in page.navigations {
-            actualEventKinds.append(event.kind)
-
-            switch event.kind {
-            case .startedProvisionalNavigation, .receivedServerRedirect, .committed:
-                break
-
-            case .finished, .failedProvisionalNavigation(_), .failed(_):
-                break loop
-
-            @unknown default:
-                fatalError()
-            }
-        }
-
-        #expect(actualEventKinds == expectedEventKinds)
-    }
-
-    @Test
     func observableProperties() async throws {
-        let page = WebPage_v0()
+        let page = WebPage()
 
         let html = """
         <html>
@@ -227,12 +117,12 @@ struct WebPageTests {
     @Test
     func decidePolicyForNavigationActionFragment() async throws {
         let decider = TestNavigationDecider()
-        let page = WebPage_v0(navigationDecider: decider)
+        let page = WebPage(navigationDecider: decider)
 
         let html = "<script>window.location.href='#fragment';</script>"
 
         let baseURL = URL(string: "http://webkit.org")!
-        page.load(htmlString: html, baseURL: baseURL)
+        page.load(html: html, baseURL: baseURL)
 
         let actions = await Array(decider.navigationActionStream.prefix(2))
 
@@ -241,55 +131,25 @@ struct WebPageTests {
     }
 
     @Test
-    func navigationPreferencesMutationDuringNavigation() async throws {
-        let decider = TestNavigationDecider()
-        let page = WebPage_v0(navigationDecider: decider)
-
-        let html = "<script>var foo = 'bar'</script>"
-
-        decider.preferencesMutation = {
-            $0.allowsContentJavaScript = false
-        }
-
-        let id = page.load(htmlString: html, baseURL: .aboutBlank)!
-
-        let actions = await Array(decider.navigationActionStream.prefix(1))
-        #expect(actions[0].request.url == .aboutBlank)
-
-        for await event in page.navigations where event.navigationID == id {
-            if case .finished = event.kind {
-                break
-            }
-        }
-
-        do {
-            _ = try await page.callAsyncJavaScript("return foo;", contentWorld: .page)
-            Issue.record()
-        } catch {
-            #expect(error.localizedDescription == "A JavaScript exception occurred")
-        }
-    }
-
-    @Test
     func javaScriptEvaluation() async throws {
-        let page = WebPage_v0()
+        let page = WebPage()
 
         let arguments = [
             "a": 1,
             "b": 2,
         ]
 
-        let result = try await page.callAsyncJavaScript("return a + b;", arguments: arguments) as! Int
+        let result = try await page.callJavaScript("return a + b;", arguments: arguments) as! Int
         #expect(result == 3)
 
-        let nilResult = try await page.callAsyncJavaScript("console.log('hi')")
+        let nilResult = try await page.callJavaScript("console.log('hi')")
         #expect(nilResult == nil)
     }
 
     @Test
     func decidePolicyForNavigationResponse() async throws {
         let decider = TestNavigationDecider()
-        let page = WebPage_v0(navigationDecider: decider)
+        let page = WebPage(navigationDecider: decider)
 
         let simpleURL = Bundle.testResources.url(forResource: "simple", withExtension: "html")!
         let request = URLRequest(url: simpleURL)

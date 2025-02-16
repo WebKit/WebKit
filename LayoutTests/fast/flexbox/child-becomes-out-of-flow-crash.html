@@ -1,0 +1,17 @@
+PASS if no crash.
+<div style="display: flex;" id=flex_container>
+  <div id=flex_item></div>
+</div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+
+document.body.offsetHeight;
+flex_item.style.position = "absolute";
+document.body.offsetHeight;
+flex_item.remove();
+for (let i = 0; i < 100; ++i) {
+  document.body.offsetHeight;
+  flex_container.appendChild(document.createElement("div"));
+}
+</script>

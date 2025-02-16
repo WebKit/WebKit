@@ -64,7 +64,7 @@ Ref<FormData> FormData::create(std::span<const uint8_t> data)
 
 Ref<FormData> FormData::create(const CString& string)
 {
-    return create(string.span());
+    return create(byteCast<uint8_t>(string.span()));
 }
 
 Ref<FormData> FormData::create(Vector<uint8_t>&& vector)
@@ -133,7 +133,7 @@ unsigned FormData::imageOrMediaFilesCount() const
     return imageOrMediaFilesCount;
 }
 
-uint64_t FormDataElement::lengthInBytes(const Function<uint64_t(const URL&)>& blobSize) const
+uint64_t FormDataElement::lengthInBytes(NOESCAPE const Function<uint64_t(const URL&)>& blobSize) const
 {
     return WTF::switchOn(data,
         [] (const Vector<uint8_t>& bytes) {

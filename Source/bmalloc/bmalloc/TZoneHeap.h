@@ -36,12 +36,6 @@
 #include "Algorithm.h"
 #include "BInline.h"
 
-#if BCOMPILER(CLANG)
-#define BUSE_TZONE_PREINITIALIZATION 1
-#else
-#define BUSE_TZONE_PREINITIALIZATION 0
-#endif
-
 #define BUSE_TZONE_SPEC_NAME_ARG 0
 #if BUSE_TZONE_SPEC_NAME_ARG
 #define TZONE_SPEC_NAME_ARG(x)  , x
@@ -56,13 +50,10 @@ namespace api {
 enum class TZoneMallocFallback : uint8_t {
     Undecided,
     ForceDebugMalloc,
-    ForceSpecifiedFallBack,
     DoNotFallBack
 };
 
 extern BEXPORT TZoneMallocFallback tzoneMallocFallback;
-
-enum class TZoneAllocationFallback : uint8_t { FastFallback, IsoFallback };
 
 using HeapRef = void*;
 
@@ -135,16 +126,12 @@ BEXPORT void determineTZoneMallocFallback();
 
 BEXPORT void* tzoneAllocateCompact(HeapRef);
 BEXPORT void* tzoneAllocateNonCompact(HeapRef);
+BEXPORT void* tzoneAllocateCompactSlow(size_t requestedSize, const TZoneSpecification&);
+BEXPORT void* tzoneAllocateNonCompactSlow(size_t requestedSize, const TZoneSpecification&);
 
-BEXPORT void* tzoneAllocateNonCompactWithFastFallbackSlow(size_t requestedSize, const TZoneSpecification&);
-BEXPORT void* tzoneAllocateCompactWithFastFallbackSlow(size_t requestedSize, const TZoneSpecification&);
-BEXPORT void* tzoneAllocateNonCompactWithIsoFallbackSlow(size_t requestedSize, const TZoneSpecification&);
-BEXPORT void* tzoneAllocateCompactWithIsoFallbackSlow(size_t requestedSize, const TZoneSpecification&);
+BEXPORT void tzoneFree(void*);
 
-extern BEXPORT void (*tzoneFreeWithFastFallback)(void*);
-extern BEXPORT void (*tzoneFreeWithIsoFallback)(void*);
-
-#define MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _fallbackMode, _exportMacro) \
+#define MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _exportMacro) \
 public: \
     using HeapRef = ::bmalloc::api::HeapRef; \
     using SizeAndAlignment = ::bmalloc::api::SizeAndAlignment; \
@@ -170,54 +157,54 @@ public: \
     { \
         if (BUNLIKELY(!s_heapRef || size != sizeof(_type))) \
             BMUST_TAIL_CALL return operatorNewSlow(size); \
-        BASSERT(::bmalloc::api::tzoneMallocFallback >= TZoneMallocFallback::ForceSpecifiedFallBack); \
+        BASSERT(::bmalloc::api::tzoneMallocFallback > TZoneMallocFallback::ForceDebugMalloc); \
         return ::bmalloc::api::tzoneAllocate ## _compactMode(s_heapRef); \
     } \
     \
     BINLINE void operator delete(void* p) \
     { \
-        ::bmalloc::api::tzoneFreeWith ## _fallbackMode(p); \
+        ::bmalloc::api::tzoneFree(p); \
     } \
     \
     BINLINE static void freeAfterDestruction(void* p) \
     { \
-        ::bmalloc::api::tzoneFreeWith ## _fallbackMode(p); \
+        ::bmalloc::api::tzoneFree(p); \
     } \
     \
     using WTFIsFastAllocated = int;
 
-#define MAKE_BTZONE_MALLOCED_COMMON_NON_TEMPLATE(_type, _compactMode, _fallbackMode, _exportMacro) \
+#define MAKE_BTZONE_MALLOCED_COMMON_NON_TEMPLATE(_type, _compactMode, _exportMacro) \
 private: \
     static _exportMacro BNO_INLINE void* operatorNewSlow(size_t);
 
-#define MAKE_BTZONE_MALLOCED_COMMON_TEMPLATE(_type, _compactMode, _fallbackMode, _exportMacro) \
+#define MAKE_BTZONE_MALLOCED_COMMON_TEMPLATE(_type, _compactMode, _exportMacro) \
 private: \
     static _exportMacro BNO_INLINE void* operatorNewSlow(size_t size) \
     { \
-        static const TZoneSpecification s_heapSpec TZONE_SPEC_ATTRIBUTE = { &s_heapRef, sizeof(_type), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
-        return ::bmalloc::api::tzoneAllocate ## _compactMode ## With ## _fallbackMode ## Slow(size, s_heapSpec); \
+        static const TZoneSpecification s_heapSpec = { &s_heapRef, sizeof(_type), SizeAndAlignment::encode<_type>() TZONE_SPEC_NAME_ARG(#_type) }; \
+        return ::bmalloc::api::tzoneAllocate ## _compactMode ## Slow(size, s_heapSpec); \
     }
 
-#define MAKE_BTZONE_MALLOCED(_type, _compactMode, _fallbackMode, _exportMacro) \
-    MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _fallbackMode, _exportMacro) \
-    MAKE_BTZONE_MALLOCED_COMMON_NON_TEMPLATE(_type, _compactMode, _fallbackMode, _exportMacro) \
+#define MAKE_BTZONE_MALLOCED(_type, _compactMode, _exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON_NON_TEMPLATE(_type, _compactMode, _exportMacro) \
 private: \
     using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
-#define MAKE_STRUCT_BTZONE_MALLOCED(_type, _compactMode, _fallbackMode, _exportMacro) \
-    MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _fallbackMode, _exportMacro) \
-    MAKE_BTZONE_MALLOCED_COMMON_NON_TEMPLATE(_type, _compactMode, _fallbackMode, _exportMacro) \
+#define MAKE_STRUCT_BTZONE_MALLOCED(_type, _compactMode, _exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON_NON_TEMPLATE(_type, _compactMode, _exportMacro) \
 public: \
     using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
-#define MAKE_BTZONE_MALLOCED_TEMPLATE(_type, _compactMode, _fallbackMode, _exportMacro) \
-    MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _fallbackMode, _exportMacro) \
-    MAKE_BTZONE_MALLOCED_COMMON_TEMPLATE(_type, _compactMode, _fallbackMode, _exportMacro) \
+#define MAKE_BTZONE_MALLOCED_TEMPLATE(_type, _compactMode, _exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON(_type, _compactMode, _exportMacro) \
+    MAKE_BTZONE_MALLOCED_COMMON_TEMPLATE(_type, _compactMode, _exportMacro) \
 private: \
     using __makeTZoneMallocedMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 
-#define MAKE_BTZONE_MALLOCED_TEMPLATE_IMPL(_templateParameters, _type, _fallbackMode) \
+#define MAKE_BTZONE_MALLOCED_TEMPLATE_IMPL(_templateParameters, _type) \
     _templateParameters ::bmalloc::api::HeapRef _type::s_heapRef
 
 // The following requires these 3 macros to be defined:
@@ -226,40 +213,8 @@ private: \
     TZONE_TEMPLATE_PARAMS \
     ::bmalloc::api::HeapRef TZONE_TYPE::s_heapRef
 
-#if BUSE_TZONE_PREINITIALIZATION
-
-BEXPORT void tzonePreInitializeHeapRefs(const TZoneSpecification* start, const TZoneSpecification* end);
-
-#define TZONE_SPEC_ATTRIBUTE __attribute__((used, section("__DATA_CONST,__tzone_spec")))
-
-// The following is for pre-initializing HeapRefs.
-// Use these at each framework/process initialization.
-#define DECLARE_TZONE_HEAPREF_SPECIFICATION_BOUNDS(_regionName) \
-    extern const TZoneSpecification startOf ## _regionName ## TZoneSpecifications __asm("section$start$__DATA_CONST$__tzone_spec"); \
-    extern const TZoneSpecification endOf ## _regionName ## TZoneSpecifications __asm("section$end$__DATA_CONST$__tzone_spec")
-
-#define PREINITIALIZE_TZONE_HEAPREFS(_regionName) \
-    ::bmalloc::api::tzonePreInitializeHeapRefs(&startOf ## _regionName ## TZoneSpecifications, &endOf ## _regionName ## TZoneSpecifications)
-
-#else // BUSE_TZONE_PREINITIALIZATION
-
-#define TZONE_SPEC_ATTRIBUTE
-#define DECLARE_TZONE_HEAPREF_SPECIFICATION_BOUNDS(_regionName) \
-    using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
-#define PREINITIALIZE_TZONE_HEAPREFS(_regionName) \
-    using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
-
-#endif // BUSE_TZONE_PREINITIALIZATION
-
 } } // namespace bmalloc::api
 
 using TZoneSpecification = ::bmalloc::api::TZoneSpecification;
-
-#else
-
-#define DECLARE_TZONE_HEAPREF_SPECIFICATION_BOUNDS(_regionName) \
-    using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
-#define PREINITIALIZE_TZONE_HEAPREFS(_regionName) \
-    using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 
 #endif // BUSE(TZONE)

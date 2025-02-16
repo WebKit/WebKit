@@ -50,19 +50,12 @@ public:
 
     PluginUnavailabilityReason pluginUnavailabilityReason() const { return m_pluginUnavailabilityReason; };
     WEBCORE_EXPORT void setPluginUnavailabilityReason(PluginUnavailabilityReason);
-    WEBCORE_EXPORT void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);
 
     bool isPluginUnavailable() const { return m_isPluginUnavailable; }
-
-    WEBCORE_EXPORT void setUnavailablePluginIndicatorIsHidden(bool);
 
     void handleUnavailablePluginIndicatorEvent(Event*);
 
     bool requiresAcceleratedCompositing() const override;
-
-    LayoutRect unavailablePluginIndicatorBounds(const LayoutPoint& accumulatedOffset) const;
-
-    const String& pluginReplacementTextIfUnavailable() const { return m_unavailablePluginReplacementText; }
 
     ScrollableArea* scrollableArea() const;
     bool usesAsyncScrolling() const;
@@ -85,8 +78,6 @@ private:
 
     ASCIILiteral renderName() const final { return "RenderEmbeddedObject"_s; }
 
-    bool showsUnavailablePluginIndicator() const { return isPluginUnavailable() && m_isUnavailablePluginIndicatorState != UnavailablePluginIndicatorState::Hidden; }
-
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) final;
 
     bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1, Element** stopElement = nullptr, RenderBox* startBox = nullptr, const IntPoint& wheelEventAbsolutePoint = IntPoint()) final;
@@ -101,8 +92,6 @@ private:
     bool canHaveChildren() const override { return m_hasShadowContent; }
 
     bool m_isPluginUnavailable;
-    enum class UnavailablePluginIndicatorState { Uninitialized, Hidden, Visible };
-    UnavailablePluginIndicatorState m_isUnavailablePluginIndicatorState { UnavailablePluginIndicatorState::Uninitialized };
     PluginUnavailabilityReason m_pluginUnavailabilityReason;
     String m_unavailablePluginReplacementText;
     bool m_unavailablePluginIndicatorIsPressed;

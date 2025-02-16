@@ -149,13 +149,13 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
                 return;
             }
 
-            client->requestPermission(context, [this, protectedThis = WTFMove(protectedThis), keyData = keyDataResult.releaseReturnValue(), promise = WTFMove(promise)](auto permission) mutable {
+            client->requestPermission(context, [protectedThis = WTFMove(protectedThis), keyData = keyDataResult.releaseReturnValue(), promise = WTFMove(promise)](auto permission) mutable {
                 if (permission != NotificationPermission::Granted) {
                     promise.reject(Exception { ExceptionCode::NotAllowedError, "User denied push permission"_s });
                     return;
                 }
 
-                m_pushSubscriptionOwner.subscribeToPushService(WTFMove(keyData), WTFMove(promise));
+                protectedThis->m_pushSubscriptionOwner.subscribeToPushService(WTFMove(keyData), WTFMove(promise));
             });
             return;
         }
@@ -167,8 +167,8 @@ void PushManager::subscribe(ScriptExecutionContext& context, std::optional<PushS
 
 void PushManager::getSubscription(ScriptExecutionContext& context, DOMPromiseDeferred<IDLNullable<IDLInterface<PushSubscription>>>&& promise)
 {
-    context.eventLoop().queueTask(TaskSource::Networking, [this, protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
-        m_pushSubscriptionOwner.getPushSubscription(WTFMove(promise));
+    context.eventLoop().queueTask(TaskSource::Networking, [protectedThis = Ref { *this }, promise = WTFMove(promise)]() mutable {
+        protectedThis->m_pushSubscriptionOwner.getPushSubscription(WTFMove(promise));
     });
 }
 

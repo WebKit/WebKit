@@ -17,7 +17,7 @@ function testing2(object) {
 }
 noInline(testing2);
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testing({
         0: 0,
         1: 1,
@@ -32,7 +32,7 @@ testing({
     2: "String"
 });
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     testing2({
         0: 0,
         get 1() {

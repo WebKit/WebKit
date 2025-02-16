@@ -109,8 +109,8 @@ public:
             // towards believing that all nodes need barriers. "Needing a barrier" is like
             // saying that the node is in a past epoch. "Not needing a barrier" is like saying
             // that the node is in the current epoch.
-            m_stateAtHead = makeUnique<BlockMap<HashSet<Node*>>>(m_graph);
-            m_stateAtTail = makeUnique<BlockMap<HashSet<Node*>>>(m_graph);
+            m_stateAtHead = makeUnique<BlockMap<UncheckedKeyHashSet<Node*>>>(m_graph);
+            m_stateAtTail = makeUnique<BlockMap<UncheckedKeyHashSet<Node*>>>(m_graph);
             
             BlockList postOrder = m_graph.blocksInPostOrder();
             
@@ -665,8 +665,8 @@ private:
     // Things we only use in Global mode.
     std::unique_ptr<InPlaceAbstractState> m_state;
     std::unique_ptr<AbstractInterpreter<InPlaceAbstractState>> m_interpreter;
-    std::unique_ptr<BlockMap<HashSet<Node*>>> m_stateAtHead;
-    std::unique_ptr<BlockMap<HashSet<Node*>>> m_stateAtTail;
+    std::unique_ptr<BlockMap<UncheckedKeyHashSet<Node*>>> m_stateAtHead;
+    std::unique_ptr<BlockMap<UncheckedKeyHashSet<Node*>>> m_stateAtTail;
     bool m_isConverged;
 };
 

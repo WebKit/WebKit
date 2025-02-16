@@ -79,7 +79,7 @@ void SliderTrackAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
     FloatRoundedRect::Radii corners;
     if (isHorizontal) {
         float offset = rangeRect.width() * sliderTrackPart.thumbPosition();
-        if (style.states.contains(ControlStyle::State::RightToLeft)) {
+        if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode)) {
             rangeRect.move(rangeRect.width() - offset, 0);
             rangeRect.setWidth(offset);
             corners.setTopRight(corner);
@@ -108,9 +108,7 @@ void SliderTrackAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
     graphicsContext.setFillColor(accentColor(style));
     graphicsContext.fillPath(path);
 
-#if ENABLE(DATALIST_ELEMENT)
     sliderTrackPart.drawTicks(graphicsContext, borderRect.rect(), style);
-#endif
 
     if (style.states.contains(ControlStyle::State::Focused)) {
         // Sliders support accent-color, so we want to color their focus rings too

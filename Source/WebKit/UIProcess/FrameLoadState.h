@@ -86,7 +86,7 @@ public:
     IsMainFrame isMainFrame() const { return m_isMainFrame; }
 
 private:
-    void forEachObserver(const Function<void(FrameLoadStateObserver&)>&);
+    void forEachObserver(NOESCAPE const Function<void(FrameLoadStateObserver&)>&);
 
     const IsMainFrame m_isMainFrame;
     State m_state { State::Finished };

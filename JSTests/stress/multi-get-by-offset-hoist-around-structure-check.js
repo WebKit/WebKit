@@ -13,11 +13,11 @@ var f = {};
 f.f = 43;
 f.g = 44;
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     o.f = i;
 o.f = 42;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var p;
     if (i & 1)
         p = o;

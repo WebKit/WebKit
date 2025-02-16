@@ -511,14 +511,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             auto* it = SIMD::findInterleaved(start, vectorMatch, scalarMatch);
             cursor = start.subspan(it - start.data());
         }
-        m_parsingBuffer.setPosition(cursor.data());
+        m_parsingBuffer.setPosition(cursor);
 
         if (!cursor.empty()) {
             if (UNLIKELY(cursor[0] == '\0'))
                 return didFail(HTMLFastPathResult::FailedContainsNull, String());
 
             if (cursor[0] == '&' || cursor[0] == '\r') {
-                m_parsingBuffer.setPosition(start.data());
+                m_parsingBuffer.setPosition(start);
                 return scanEscapedText();
             }
         }
@@ -565,7 +565,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (m_parsingBuffer.atEnd() || !isCharAfterTagNameOrAttribute(*m_parsingBuffer)) {
             // Try parsing a case-insensitive tagName.
             m_charBuffer.shrink(0);
-            m_parsingBuffer.setPosition(start.data());
+            m_parsingBuffer.setPosition(start);
             while (m_parsingBuffer.hasCharactersRemaining()) {
                 auto c = *m_parsingBuffer;
                 if (isASCIIUpper(c))
@@ -599,7 +599,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (UNLIKELY(isValidAttributeNameChar(*m_parsingBuffer))) {
             // At this point name does not contain lowercase. It may contain upper-case,
             // which requires mapping. Assume it does.
-            m_parsingBuffer.setPosition(start.data());
+            m_parsingBuffer.setPosition(start);
             m_charBuffer.shrink(0);
             // isValidAttributeNameChar() returns false if end of input is reached.
             do {
@@ -682,12 +682,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             length = cursor.data() - start.data();
             if (UNLIKELY(cursor[0] != quoteChar)) {
                 if (LIKELY(cursor[0] == '&' || cursor[0] == '\r')) {
-                    m_parsingBuffer.setPosition(quoteStart.data());
+                    m_parsingBuffer.setPosition(quoteStart);
                     return scanEscapedAttributeValue();
                 }
                 return didFail(HTMLFastPathResult::FailedParsingQuotedAttributeValue, emptyAtom());
             }
-            m_parsingBuffer.setPosition(cursor.subspan(1).data());
+            m_parsingBuffer.setPosition(cursor.subspan(1));
         } else {
             skipWhile<isValidUnquotedAttributeValueChar>(m_parsingBuffer);
             length = m_parsingBuffer.position() - start.data();

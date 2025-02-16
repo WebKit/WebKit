@@ -66,14 +66,14 @@ public:
     std::span<const uint8_t> WARN_UNUSED_RETURN getSerializedFormat();
 
     SandboxExtensionImpl(SandboxExtensionImpl&& other)
-        : m_token(std::exchange(other.m_token, nullptr))
+        : m_token(std::exchange(other.m_token, CString()))
         , m_handle(std::exchange(other.m_handle, 0)) { }
 private:
     char* sandboxExtensionForType(const char* path, SandboxExtensionType, std::optional<audit_token_t>, OptionSet<SandboxExtensionFlags>);
 
     SandboxExtensionImpl(const char* path, SandboxExtensionType, std::optional<audit_token_t>, OptionSet<SandboxExtensionFlags>);
 
-    char* m_token { nullptr };
+    CString m_token;
     int64_t m_handle { 0 };
 };
 #endif

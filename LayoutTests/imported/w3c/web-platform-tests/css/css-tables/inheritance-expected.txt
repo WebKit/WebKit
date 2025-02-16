@@ -1,7 +1,7 @@
 
 PASS Property border-collapse has initial value separate
 PASS Property border-collapse inherits
-PASS Property border-spacing has initial value 0px 0px
+PASS Property border-spacing has initial value 0px
 PASS Property border-spacing inherits
 PASS Property caption-side has initial value top
 PASS Property caption-side inherits

@@ -34,7 +34,7 @@ function test22(array) {
 }
 noInline(test22);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test11(array1, -1n)
     shouldBe(test12(array1), -3n);
     test11(array1, -2n);

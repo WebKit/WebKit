@@ -13,7 +13,7 @@
 var x, y, middleTermScrollOffset;
 var iframe, iframeDocument, draggable;
 
-async function setUpTest()
+function setUpTest()
 {
     if (!window.eventSender) {
         log('Please run within DumpRenderTree');
@@ -22,10 +22,10 @@ async function setUpTest()
 
     window.internals.settings.setAutoscrollForDragAndDropEnabled(true);
     testRunner.waitUntilDone();
-    await testIt();
+    testIt();
 }
 
-async function testIt()
+function testIt()
 {
     eventSender.dragMode = false;
 
@@ -39,27 +39,27 @@ async function testIt()
     x = iframe.offsetLeft + draggable.offsetLeft + 7;
     y = iframe.offsetTop + draggable.offsetTop + 7;
 
-    await eventSender.asyncMouseMoveTo(x, y);
-    await eventSender.asyncMouseDown();
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
 
     // Move mouse to the bottom autoscroll border belt.
     y = iframe.offsetTop + iframe.offsetHeight - 10;
-    await eventSender.asyncMouseMoveTo(x, y);
+    eventSender.mouseMoveTo(x, y);
 }
 
-async function recordScroll(e)
+function recordScroll(e)
 {
     iframeDocument.removeEventListener("scroll", recordScroll);
-    await autoscrollTestPart1();
+    autoscrollTestPart1();
 }
 
-async function recordScroll2(e)
+function recordScroll2(e)
 {
     iframeDocument.removeEventListener("scroll", recordScroll2);
-    await autoscrollTestPart2();
+    autoscrollTestPart2();
 }
 
-async function autoscrollTestPart1()
+function autoscrollTestPart1()
 {
     if (iframe.contentDocument.body.scrollTop == 0) {
         testFailed("Autoscroll should have scrolled the iframe downwards, but did not");
@@ -68,7 +68,7 @@ async function autoscrollTestPart1()
     }
 
     testPassed("Autoscroll should have scrolled the iframe downwards, and did.");
-    await eventSender.asyncMouseUp();
+    eventSender.mouseUp();
     iframeDocument.addEventListener("scroll", recordScroll2);
 
     middleTermScrollOffset = iframe.contentDocument.body.scrollTop;
@@ -78,22 +78,22 @@ async function autoscrollTestPart1()
     y = iframe.offsetTop + draggable.offsetTop + 7 - iframe.contentDocument.body.scrollTop ;
 
     // Move mouse to the upper autoscroll border belt.
-    await eventSender.asyncMouseMoveTo(x, y);
-    await eventSender.asyncMouseDown();
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
 
     y = iframe.offsetTop + 10;
-    await eventSender.asyncMouseMoveTo(x, y);
+    eventSender.mouseMoveTo(x, y);
 }
 
-async function autoscrollTestPart2()
+function autoscrollTestPart2()
 {
     shouldBeTrue("iframe.contentDocument.body.scrollTop < middleTermScrollOffset")
-    await finishTest();
+    finishTest();
 }
 
-async function finishTest()
+function finishTest()
 {
-    await eventSender.asyncMouseUp();
+    eventSender.mouseUp();
     testRunner.notifyDone();
 }
 

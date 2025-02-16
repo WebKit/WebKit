@@ -380,11 +380,11 @@ JS_BINDING_IDLS := \
     $(WebCore)/Modules/highlight/HighlightRegistry.idl \
     $(WebCore)/Modules/highlight/Highlight.idl \
     $(WebCore)/Modules/identity/DigitalCredential.idl \
+    $(WebCore)/Modules/identity/DigitalCredentialRequest.idl \
     $(WebCore)/Modules/identity/DigitalCredentialRequestOptions.idl \
-    $(WebCore)/Modules/identity/OpenID4VPRequest.idl \
     $(WebCore)/Modules/identity/IdentityCredentialProtocol.idl \
-    $(WebCore)/Modules/identity/IdentityRequestProvider.idl \
-    $(WebCore)/Modules/identity/Navigator+Identity.idl \
+    $(WebCore)/Modules/identity/MobileDocumentRequest.idl \
+    $(WebCore)/Modules/identity/OpenID4VPRequest.idl \
     $(WebCore)/Modules/indexeddb/IDBCursor.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorDirection.idl \
     $(WebCore)/Modules/indexeddb/IDBCursorWithValue.idl \
@@ -1002,7 +1002,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/css/CSSStyleRule.idl \
     $(WebCore)/css/CSSStyleSheet.idl \
     $(WebCore)/css/CSSSupportsRule.idl \
-    $(WebCore)/css/CSSUnknownRule.idl \
     $(WebCore)/css/CSSViewTransitionRule.idl \
     $(WebCore)/css/DocumentOrShadowRoot+CSSOM.idl \
     $(WebCore)/css/DOMCSSCustomPropertyDescriptor.idl \
@@ -1144,6 +1143,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/Element+PointerLock.idl \
     $(WebCore)/dom/Element.idl \
     $(WebCore)/dom/ElementContentEditable.idl \
+    $(WebCore)/dom/ElementCreationOptions.idl \
     $(WebCore)/dom/ElementInternals.idl \
     $(WebCore)/dom/ErrorEvent.idl \
     $(WebCore)/dom/Event.idl \
@@ -1164,6 +1164,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/IdleDeadline.idl \
     $(WebCore)/dom/IdleRequestCallback.idl \
     $(WebCore)/dom/IdleRequestOptions.idl \
+    $(WebCore)/dom/ImportNodeOptions.idl \
     $(WebCore)/dom/InnerHTML.idl \
     $(WebCore)/dom/InputEvent.idl \
     $(WebCore)/dom/KeyboardEvent.idl \
@@ -1185,6 +1186,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/dom/NodeList.idl \
     $(WebCore)/dom/NonDocumentTypeChildNode.idl \
     $(WebCore)/dom/NonElementParentNode.idl \
+    $(WebCore)/dom/OverflowEvent.idl \
     $(WebCore)/dom/Observable.idl \
     $(WebCore)/dom/ObservableInspector.idl \
     $(WebCore)/dom/ObservableInspectorAbortCallback.idl \
@@ -1347,7 +1349,6 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/ImageData.idl \
     $(WebCore)/html/ImageDataSettings.idl \
     $(WebCore)/html/ImageDataStorageFormat.idl \
-    $(WebCore)/html/InvokerElement.idl \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaEncryptedEvent.idl \
     $(WebCore)/html/MediaError.idl \
@@ -1474,6 +1475,7 @@ JS_BINDING_IDLS := \
     $(WebCore)/html/canvas/WebGLUniformLocation.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObject.idl \
     $(WebCore)/html/canvas/WebGLVertexArrayObjectOES.idl \
+    $(WebCore)/html/closewatcher/CloseWatcher.idl \
     $(WebCore)/html/track/AudioTrack.idl \
     $(WebCore)/html/track/AudioTrackConfiguration.idl \
     $(WebCore)/html/track/AudioTrackList.idl \
@@ -1761,6 +1763,12 @@ JS_BINDING_IDLS := \
     $(WebCore)/workers/service/ExtendableEventInit.idl \
     $(WebCore)/workers/service/ExtendableMessageEvent.idl \
     $(WebCore)/workers/service/FetchEvent.idl \
+    $(WebCore)/workers/service/InstallEvent.idl \
+    $(WebCore)/workers/service/RouterCondition.idl \
+    $(WebCore)/workers/service/RouterRule.idl \
+    $(WebCore)/workers/service/RouterSourceDict.idl \
+    $(WebCore)/workers/service/RouterSourceEnum.idl \
+    $(WebCore)/workers/service/RunningStatus.idl \
     $(WebCore)/workers/service/NavigationPreloadManager.idl \
     $(WebCore)/workers/service/NavigationPreloadState.idl \
     $(WebCore)/workers/service/ServiceWorker.idl \
@@ -1933,9 +1941,18 @@ all : \
 
 # CSS property names and value keywords
 
+POSSIBLE_ADDITIONAL_CSS_VALUE_KEYWORDS = \
+    $(foreach \
+        CSS_VALUE_KEYWORDS, \
+        $(ADDITIONAL_CSS_VALUE_KEYWORDS), \
+        $(firstword $(realpath $(foreach \
+            ADDITIONS_PATH, \
+            $(ADDITIONS_PATHS), \
+            $(ADDITIONS_PATH)/$(CSS_VALUE_KEYWORDS)))))
+
 WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSProperties.json
 WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
-WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCSSValueKeywords.in
+WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCSSValueKeywords.in $(POSSIBLE_ADDITIONAL_CSS_VALUE_KEYWORDS)
 
 CSS_PROPERTY_NAME_FILES = \
     CSSPropertyNames.cpp \
@@ -2032,6 +2049,7 @@ HTTP_HEADER_NAMES_FILES = \
     HTTPHeaderNames.cpp \
     HTTPHeaderNames.gperf \
     HTTPHeaderNames.h \
+    HTTPHeaderNames.serialization.in \
 #
 HTTP_HEADER_NAMES_FILES_PATTERNS = $(call to-pattern, $(HTTP_HEADER_NAMES_FILES))
 
@@ -2111,8 +2129,6 @@ USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/html.css \
     $(WebCore)/css/htmlSwitchControl.css \
     $(WebCore)/css/mathml.css \
-    $(WebCore)/css/mediaControls.css \
-    $(WebCore)/css/plugIns.css \
     $(WebCore)/css/popover.css \
     $(WebCore)/css/quirks.css \
     $(WebCore)/css/svg.css \
@@ -2243,21 +2259,6 @@ all : $(USER_AGENT_SCRIPTS_FILES)
 
 $(USER_AGENT_SCRIPTS_FILES_PATTERNS) : $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py $(USER_AGENT_SCRIPTS)
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/make-js-file-arrays.py -n WebCore --fail-if-non-ascii $(USER_AGENT_SCRIPTS_FILES) $(USER_AGENT_SCRIPTS)
-
-# --------
-
-# plug-ins resources
-
-PLUG_INS_RESOURCES = $(WebCore)/Resources/plugIns.js
-
-# order matters -- make-css-file-arrays.pl takes the header and then the source file path
-PLUG_INS_RESOURCES_FILES = PlugInsResources.h PlugInsResourcesData.cpp
-PLUG_INS_RESOURCES_FILES_PATTERNS = $(call to-pattern, $(PLUG_INS_RESOURCES_FILES))
-
-all : $(PLUG_INS_RESOURCES_FILES)
-
-$(PLUG_INS_RESOURCES_FILES_PATTERNS) : $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(PLUG_INS_RESOURCES) $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
-	$(PERL) $< --defines "$(FEATURE_AND_PLATFORM_DEFINES)" $(PLUG_INS_RESOURCES_FILES) $(PLUG_INS_RESOURCES)
 
 # --------
 

@@ -357,7 +357,7 @@ static void maybeCopyNodeAttributesToFragment(const Node& node, DocumentFragment
     if (oldElement->localName() != newElement->localName())
         return;
 
-    for (auto& attribute : oldElement->attributesIterator()) {
+    for (auto& attribute : oldElement->attributes()) {
         if (newElement->hasAttribute(attribute.name()))
             continue;
         newElement->setAttribute(attribute.name(), attribute.value());

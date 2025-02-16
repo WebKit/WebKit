@@ -148,6 +148,8 @@ public:
     static FontSizeAdjust initialFontSizeAdjust() { return { FontSizeAdjust::Metric::ExHeight }; }
     static TextSpacingTrim initialTextSpacingTrim() { return { }; }
     static TextAutospace initialTextAutospace() { return { }; }
+    static FontFeatureSettings initialFeatureSettings() { return { }; }
+    static FontVariationSettings initialVariationSettings() { return { }; }
 
 private:
     Ref<RefCountedFixedVector<AtomString>> m_families;

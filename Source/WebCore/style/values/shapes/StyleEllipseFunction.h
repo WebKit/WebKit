@@ -68,4 +68,4 @@ template<> struct Blending<Ellipse> {
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(Ellipse, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Ellipse, 2)

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ul id="list">
+  <li id="listitem">Once upon a time</li>
+</ul>
+
+<script>
+    let output = "This tests that fetching the string for the line range corresponding to a text marker fetches the whole string, and it doesn't get truncated due to the list marker adding extra characters\n\n";
+
+if (window.accessibilityController) {
+    const list = accessibilityController.accessibleElementById("list");
+    const listitem = accessibilityController.accessibleElementById("listitem");
+    const listItemText = listitem.childAtIndex(1);  // List item marker is child 0
+    const fullRange = list.textMarkerRangeForElement(listItemText);
+    const marker = list.endTextMarkerForTextMarkerRange(fullRange);
+    const range = list.lineTextMarkerRangeForTextMarker(marker);
+    var rangeStr = (list.stringForTextMarkerRange(range) + "").trim();
+    output += `stringForTextMarkerRange: ${rangeStr}\n`;
+
+    var attrRangeStr = (list.attributedStringForTextMarkerRange(range) + "").trim();
+    // Filter out lines with AX attributes because they're not identical on all systems
+    attrRangeStr = attrRangeStr.split("\n").filter(line => line.indexOf("AX") == -1).join(" ");
+    output += `attributedStringForTextMarkerRange: ${attrRangeStr}\n`;
+
+    debug(output);
+    document.getElementById("list").hidden = true;
+}
+</script>
+</body>
+</html>

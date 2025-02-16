@@ -1,0 +1,6 @@
+You should not be able of select this text.
+PASS selection.toString() is ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

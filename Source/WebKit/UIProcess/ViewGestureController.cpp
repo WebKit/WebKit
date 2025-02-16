@@ -112,8 +112,9 @@ void ViewGestureController::disconnectFromProcess()
     if (!m_isConnectedToProcess)
         return;
 
-    Ref { *m_mainFrameProcess }->removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), *m_webPageIDInMainFrameProcess);
-    m_mainFrameProcess = nullptr;
+    if (RefPtr mainFrameProcess = std::exchange(m_mainFrameProcess, nullptr).get())
+        mainFrameProcess->removeMessageReceiver(Messages::ViewGestureController::messageReceiverName(), *m_webPageIDInMainFrameProcess);
+
     m_webPageIDInMainFrameProcess = std::nullopt;
     m_isConnectedToProcess = false;
 }
@@ -176,7 +177,7 @@ void ViewGestureController::setAlternateBackForwardListSourcePage(WebPageProxy* 
     m_alternateBackForwardListSourcePage = page;
 }
 
-bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
+bool ViewGestureController::canSwipeInDirection(SwipeDirection direction, DeferToConflictingGestures deferToConflictingGestures) const
 {
     if (!m_swipeGestureEnabled)
         return false;
@@ -190,6 +191,9 @@ bool ViewGestureController::canSwipeInDirection(SwipeDirection direction) const
     if (fullScreenManager && fullScreenManager->isFullScreen())
         return false;
 #endif
+
+    if (deferToConflictingGestures == DeferToConflictingGestures::Yes && !page->canStartNavigationSwipeAtLastInteractionLocation())
+        return false;
 
     RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
     Ref<WebBackForwardList> backForwardList = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage->backForwardList() : page->backForwardList();
@@ -482,7 +486,7 @@ bool ViewGestureController::PendingSwipeTracker::scrollEventCanBecomeSwipe(Platf
         return false;
 
     potentialSwipeDirection = tryingToSwipeBack ? SwipeDirection::Back : SwipeDirection::Forward;
-    return protectedViewGestureController()->canSwipeInDirection(potentialSwipeDirection);
+    return protectedViewGestureController()->canSwipeInDirection(potentialSwipeDirection, DeferToConflictingGestures::No);
 }
 
 bool ViewGestureController::PendingSwipeTracker::handleEvent(PlatformScrollEvent event)
@@ -577,9 +581,10 @@ void ViewGestureController::startSwipeGesture(PlatformScrollEvent event, SwipeDi
 
     page->recordAutomaticNavigationSnapshot();
 
+    Ref backForwardList = page->backForwardList();
     RefPtr targetItem = (direction == SwipeDirection::Back)
-        ? page->protectedBackForwardList()->goBackItemSkippingItemsWithoutUserGesture()
-        : page->protectedBackForwardList()->goForwardItemSkippingItemsWithoutUserGesture();
+        ? backForwardList->goBackItemSkippingItemsWithoutUserGesture()
+        : backForwardList->goForwardItemSkippingItemsWithoutUserGesture();
     if (!targetItem)
         return;
 
@@ -594,7 +599,7 @@ bool ViewGestureController::isPhysicallySwipingLeft(SwipeDirection direction) co
     return isLTR != isSwipingForward;
 }
 
-bool ViewGestureController::shouldUseSnapshotForSize(ViewSnapshot& snapshot, FloatSize swipeLayerSize, float topContentInset)
+bool ViewGestureController::shouldUseSnapshotForSize(ViewSnapshot& snapshot, FloatSize swipeLayerSize, FloatBoxExtent obscuredContentInsets)
 {
     RefPtr page = m_webPageProxy.get();
     if (!page)
@@ -604,7 +609,7 @@ bool ViewGestureController::shouldUseSnapshotForSize(ViewSnapshot& snapshot, Flo
     if (snapshot.deviceScaleFactor() != deviceScaleFactor)
         return false;
 
-    FloatSize unobscuredSwipeLayerSizeInDeviceCoordinates = swipeLayerSize - FloatSize(0, topContentInset);
+    FloatSize unobscuredSwipeLayerSizeInDeviceCoordinates = swipeLayerSize - FloatSize(obscuredContentInsets.left(), obscuredContentInsets.top());
     unobscuredSwipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
     if (snapshot.size() != unobscuredSwipeLayerSizeInDeviceCoordinates)
         return false;
@@ -653,7 +658,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
     m_didStartProvisionalLoad = false;
     m_pendingNavigation = page->goToBackForwardItem(targetItem);
 
-    RefPtr currentItem = page->protectedBackForwardList()->currentItem();
+    RefPtr currentItem = Ref { page->backForwardList() }->currentItem();
     // The main frame will not be navigated so hide the snapshot right away.
     if (currentItem && currentItem->itemIsClone(targetItem)) {
         removeSwipeSnapshot();
@@ -671,7 +676,7 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
         m_snapshotRemovalTracker.setRenderTreeSizeThreshold(renderTreeSizeThreshold);
     }
 
-    m_snapshotRemovalTracker.start(desiredEvents, [this] { this->forceRepaintIfNeeded(); });
+    m_snapshotRemovalTracker.start(desiredEvents, [this, protectedThis = Ref { *this }] { forceRepaintIfNeeded(); });
 
     // FIXME: Like on iOS, we should ensure that even if one of the timeouts fires,
     // we never show the old page content, instead showing the snapshot background color.

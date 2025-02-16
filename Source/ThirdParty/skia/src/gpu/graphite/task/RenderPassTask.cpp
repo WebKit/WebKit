@@ -23,14 +23,13 @@ sk_sp<RenderPassTask> RenderPassTask::Make(DrawPassList passes,
                                            const RenderPassDesc& desc,
                                            sk_sp<TextureProxy> target,
                                            sk_sp<TextureProxy> dstCopy,
-                                           SkIRect dstCopyBounds) {
+                                           SkIRect dstReadBounds) {
     // For now we have one DrawPass per RenderPassTask
     SkASSERT(passes.size() == 1);
-    // We should only have dst copy bounds if we have a dst copy texture, and the texture should be
-    // big enough to cover the copy bounds that will be sampled.
-    SkASSERT(dstCopyBounds.isEmpty() == !dstCopy);
-    SkASSERT(!dstCopy || (dstCopy->dimensions().width() >= dstCopyBounds.width() &&
-                          dstCopy->dimensions().height() >= dstCopyBounds.height()));
+    // If we have a dst copy texture, ensure it is big enough to cover the copy bounds that
+    // will be sampled.
+    SkASSERT(!dstCopy || (dstCopy->dimensions().width() >= dstReadBounds.width() &&
+                          dstCopy->dimensions().height() >= dstReadBounds.height()));
     if (!target) {
         return nullptr;
     }
@@ -50,19 +49,19 @@ sk_sp<RenderPassTask> RenderPassTask::Make(DrawPassList passes,
                                                     desc,
                                                     std::move(target),
                                                     std::move(dstCopy),
-                                                    dstCopyBounds));
+                                                    dstReadBounds));
 }
 
 RenderPassTask::RenderPassTask(DrawPassList passes,
                                const RenderPassDesc& desc,
                                sk_sp<TextureProxy> target,
                                sk_sp<TextureProxy> dstCopy,
-                               SkIRect dstCopyBounds)
+                               SkIRect dstReadBounds)
         : fDrawPasses(std::move(passes))
         , fRenderPassDesc(desc)
         , fTarget(std::move(target))
         , fDstCopy(std::move(dstCopy))
-        , fDstCopyBounds(dstCopyBounds) {}
+        , fDstReadBounds(dstReadBounds) {}
 
 RenderPassTask::~RenderPassTask() = default;
 
@@ -70,7 +69,22 @@ Task::Status RenderPassTask::prepareResources(ResourceProvider* resourceProvider
                                               ScratchResourceManager* scratchManager,
                                               const RuntimeEffectDictionary* runtimeDict) {
     SkASSERT(fTarget);
-    if (!TextureProxy::InstantiateIfNotLazy(scratchManager, fTarget.get())) {
+
+    bool instantiated;
+    if (scratchManager->pendingReadCount(fTarget.get()) == 0) {
+        // TODO(b/389908339, b/338976898): If there are no pending reads on a scratch texture
+        // instantiation request, it means that the scratch Device was caught by a
+        // Recorder::flushTrackedDevices() event but hasn't actually been restored to its parent. In
+        // this case, the eventual read of the surface will be in another Recording and it can't be
+        // allocated as a true scratch resource.
+        //
+        // Without pending reads, DrawTask does not track its lifecycle to return the scratch
+        // resource, so we need to match that and instantiate with a regular non-shareable resource.
+        instantiated = TextureProxy::InstantiateIfNotLazy(resourceProvider, fTarget.get());
+    } else {
+        instantiated = TextureProxy::InstantiateIfNotLazy(scratchManager, fTarget.get());
+    }
+    if (!instantiated) {
         SKGPU_LOG_W("Failed to instantiate RenderPassTask target. Will not create renderpass!");
         SKGPU_LOG_W("Dimensions are (%d, %d).",
                     fTarget->dimensions().width(), fTarget->dimensions().height());
@@ -167,7 +181,7 @@ Task::Status RenderPassTask::addCommands(Context* context,
                                      std::move(resolveAttachment),
                                      std::move(depthStencilAttachment),
                                      fDstCopy ? fDstCopy->texture() : nullptr,
-                                     fDstCopyBounds,
+                                     fDstReadBounds,
                                      fTarget->dimensions(),
                                      fDrawPasses)) {
         return Status::kSuccess;

@@ -131,15 +131,15 @@ bool DatasetDOMStringMap::isSupportedPropertyName(const String& propertyName) co
     if (!element->hasAttributes())
         return false;
 
-    auto attributeIteratorAccessor = element->attributesIterator();
-    if (attributeIteratorAccessor.attributeCount() == 1) {
+    auto attributes = element->attributes();
+    if (attributes.size() == 1) {
         // Avoid creating AtomString when there is only one attribute.
-        const auto& attribute = *attributeIteratorAccessor.begin();
+        auto& attribute = attributes[0];
         if (convertAttributeNameToPropertyName(attribute.localName()) == propertyName)
             return true;
     } else {
         auto attributeName = convertPropertyNameToAttributeName(propertyName);
-        for (const Attribute& attribute : attributeIteratorAccessor) {
+        for (auto& attribute : attributes) {
             if (attribute.localName() == attributeName)
                 return true;
         }
@@ -156,7 +156,7 @@ Vector<String> DatasetDOMStringMap::supportedPropertyNames() const
     if (!element->hasAttributes())
         return names;
 
-    for (auto& attribute : element->attributesIterator()) {
+    for (auto& attribute : element->attributes()) {
         if (isValidAttributeName(attribute.localName()))
             names.append(convertAttributeNameToPropertyName(attribute.localName()));
     }
@@ -168,16 +168,16 @@ const AtomString* DatasetDOMStringMap::item(const String& propertyName) const
 {
     Ref element = m_element.get();
     if (element->hasAttributes()) {
-        AttributeIteratorAccessor attributeIteratorAccessor = element->attributesIterator();
+        auto attributes = element->attributes();
 
-        if (attributeIteratorAccessor.attributeCount() == 1) {
+        if (attributes.size() == 1) {
             // Avoid creating AtomString when there is only one attribute.
-            const Attribute& attribute = *attributeIteratorAccessor.begin();
+            auto& attribute = attributes[0];
             if (convertAttributeNameToPropertyName(attribute.localName()) == propertyName)
                 return &attribute.value();
         } else {
             AtomString attributeName = convertPropertyNameToAttributeName(propertyName);
-            for (const Attribute& attribute : attributeIteratorAccessor) {
+            for (auto& attribute : attributes) {
                 if (attribute.localName() == attributeName)
                     return &attribute.value();
             }

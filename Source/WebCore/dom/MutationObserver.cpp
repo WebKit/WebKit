@@ -193,8 +193,8 @@ void MutationObserver::deliver()
     // Calling takeTransientRegistrations() can modify m_registrations, so it's necessary
     // to make a copy of the transient registrations before operating on them.
     Vector<WeakPtr<MutationObserverRegistration>, 1> transientRegistrations;
-    Vector<HashSet<GCReachableRef<Node>>, 1> nodesToKeepAlive;
-    HashSet<GCReachableRef<Node>> pendingTargets;
+    Vector<UncheckedKeyHashSet<GCReachableRef<Node>>, 1> nodesToKeepAlive;
+    UncheckedKeyHashSet<GCReachableRef<Node>> pendingTargets;
     pendingTargets.swap(m_pendingTargets);
     for (auto& registration : m_registrations) {
         if (registration.hasTransientRegistrations())

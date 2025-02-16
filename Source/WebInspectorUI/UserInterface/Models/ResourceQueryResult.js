@@ -27,7 +27,7 @@ WI.ResourceQueryResult = class ResourceQueryResult extends WI.QueryResult
 {
     constructor(resource, searchString, matches, cookie)
     {
-        console.assert(resource instanceof WI.Resource, resource);
+        console.assert(resource instanceof WI.SourceCode, resource);
         super(resource, matches);
 
         this._searchString = searchString;

@@ -29,6 +29,7 @@
 #if ENABLE(WEB_AUDIO)
 
 #include "AudioUtilities.h"
+#include <wtf/MediaTime.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/WTFSemaphore.h>
 #include <wtf/WeakPtr.h>
@@ -51,6 +52,11 @@ public:
         return m_workBus->length();
     }
 
+    MediaTime outputLatency() const
+    {
+        return protectedDestination()->outputLatency();
+    }
+
 private:
     using AdapterKey = std::tuple<unsigned, float>;
     using AdapterMap = UncheckedKeyHashMap<AdapterKey, ThreadSafeWeakPtr<SharedAudioDestinationAdapter>>;
@@ -63,7 +69,7 @@ private:
 
     void configureRenderThread(CompletionHandler<void(bool)>&&);
 
-    Ref<AudioDestination> protectedDestination() { return m_destination; }
+    Ref<AudioDestination> protectedDestination() const { return m_destination; }
     Ref<AudioBus> protectedWorkBus() { return m_workBus; }
 
     unsigned m_numberOfOutputChannels;
@@ -259,6 +265,11 @@ unsigned SharedAudioDestination::framesPerBuffer() const
     return m_outputAdapter->framesPerBuffer();
 }
 
+MediaTime SharedAudioDestination::outputLatency() const
+{
+    return protectedOutputAdapter()->outputLatency();
+}
+
 void SharedAudioDestination::setIsPlaying(bool isPlaying)
 {
     ASSERT(isMainThread());
@@ -295,7 +306,7 @@ void SharedAudioDestination::sharedRender(AudioBus* sourceBus, AudioBus* destina
     }
 }
 
-Ref<SharedAudioDestinationAdapter> SharedAudioDestination::protectedOutputAdapter()
+Ref<SharedAudioDestinationAdapter> SharedAudioDestination::protectedOutputAdapter() const
 {
     return m_outputAdapter;
 }

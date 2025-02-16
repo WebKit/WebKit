@@ -131,7 +131,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float fraction)
 #endif
 }
 
-DragImageRef createDragImageFromImage(Image* image, ImageOrientation)
+DragImageRef createDragImageFromImage(Image* image, ImageOrientation, GraphicsClient*, float)
 {
     return image->currentNativeImage()->platformImage();
 }

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebDataListSuggestionsDropdownGtk.h"
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "WebPageProxy.h"
 #include <WebCore/DataListSuggestionInformation.h>
 #include <WebCore/GUniquePtrGtk.h>
@@ -254,5 +252,3 @@ void WebDataListSuggestionsDropdownGtk::close()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATALIST_ELEMENT)

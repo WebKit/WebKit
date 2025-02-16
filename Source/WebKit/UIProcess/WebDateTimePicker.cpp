@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebDateTimePicker.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "WebPageProxy.h"
 
 namespace WebKit {
@@ -48,5 +46,3 @@ void WebDateTimePicker::endPicker()
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

@@ -55,9 +55,7 @@ struct WebKit::InteractionInformationAtPosition {
 #if ENABLE(DATA_DETECTION)
     bool isDataDetectorLink;
 #endif
-#if ENABLE(DATALIST_ELEMENT)
     bool preventTextInteraction;
-#endif
     bool elementContainsImageOverlay;
     bool isImageOverlayText;
 #if ENABLE(SPATIAL_IMAGE_DETECTION)

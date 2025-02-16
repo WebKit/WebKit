@@ -28,7 +28,7 @@ let obj = {
     }
 };
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let _i = 0; _i < 100; _i++) {
     }
     theFunc(obj, 897989);

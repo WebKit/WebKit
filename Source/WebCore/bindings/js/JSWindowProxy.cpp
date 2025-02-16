@@ -182,7 +182,7 @@ WindowProxy* JSWindowProxy::toWrapped(VM&, JSValue value)
 
 JSC::GCClient::IsoSubspace* JSWindowProxy::subspaceForImpl(JSC::VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->windowProxySpace();
+    return &downcast<JSVMClientData>(vm.clientData)->windowProxySpace();
 }
 
 Ref<DOMWrapperWorld> JSWindowProxy::protectedWorld()

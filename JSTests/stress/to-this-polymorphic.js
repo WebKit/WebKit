@@ -9,7 +9,7 @@ String.prototype.g = foo;
 Number.prototype.f = 78;
 Number.prototype.g = foo;
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {f:foo};
     var result = o.f();
     if (result != foo)

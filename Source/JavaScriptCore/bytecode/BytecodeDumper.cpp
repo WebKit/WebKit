@@ -439,7 +439,7 @@ CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
         // isRefType(type) is false (likewise for externref)
         if (isRefType(type) || type.isFuncref() || type.isExternref()) {
             if (JSValue::decode(constant) == jsNull())
-                return "null";
+                return "null"_s;
             return toCString(RawHex(constant));
         }
 

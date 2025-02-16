@@ -65,7 +65,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 static String fromStdFileSystemPath(const std::filesystem::path& path)
 {
 #if HAVE(MISSING_U8STRING)
-    return String::fromUTF8(span8(path.u8string().c_str()));
+    return String::fromUTF8(unsafeSpan8(path.u8string().c_str()));
 #else
     return String::fromUTF8(span(path.u8string()));
 #endif
@@ -473,7 +473,7 @@ void finalizeMappedFileData(MappedFileData& mappedFileData, size_t bytesSize)
 #endif
 }
 
-MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(std::span<const uint8_t>)>&)>&& apply, PlatformFileHandle* outputHandle)
+MappedFileData mapToFile(const String& path, size_t bytesSize, NOESCAPE const Function<void(const Function<bool(std::span<const uint8_t>)>&)>& apply, PlatformFileHandle* outputHandle)
 {
     auto mappedFile = createMappedFileData(path, bytesSize, outputHandle);
     if (!mappedFile)

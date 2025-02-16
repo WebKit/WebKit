@@ -65,7 +65,6 @@ private:
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
-    void deviceOrPageScaleFactorChanged() override;
     bool enterAcceleratedCompositingModeIfNeeded() override;
     void backgroundColorDidChange() override;
 #endif
@@ -90,7 +89,7 @@ private:
     // IPC message handlers.
     void updateGeometry(const WebCore::IntSize&, CompletionHandler<void()>&&) override;
     void displayDidRefresh() override;
-    void setDeviceScaleFactor(float) override;
+    void setDeviceScaleFactor(float, CompletionHandler<void()>&&) override;
     void forceUpdate() override;
     void didDiscardBackingStore() override;
 

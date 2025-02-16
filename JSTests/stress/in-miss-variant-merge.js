@@ -15,7 +15,7 @@ var object2 = { hello: 42 };
 for (var i = 0; i < 10; ++i) {
     shouldBe(test(object1), false);
 }
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test(object1), false);
     shouldBe(test(object2), false);
 }

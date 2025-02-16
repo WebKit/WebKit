@@ -474,8 +474,8 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
     VkImageFormatListCreateInfoKHR imageFormatListCreateInfo;
     vk::ImageHelper::ImageListFormats imageListFormatsStorage;
     const void *imageCreateInfoPNext = vk::ImageHelper::DeriveCreateInfoPNext(
-        displayVk, actualImageFormatID, &externalMemoryImageCreateInfo, &imageFormatListCreateInfo,
-        &imageListFormatsStorage, &createFlags);
+        displayVk, usageFlags, actualImageFormatID, &externalMemoryImageCreateInfo,
+        &imageFormatListCreateInfo, &imageListFormatsStorage, &createFlags);
 
     if (mutableFormat == MutableFormat::NotAllowed)
     {
@@ -547,7 +547,7 @@ angle::Result DmaBufImageSiblingVkLinux::initWithFormat(DisplayVk *displayVk,
         // Build an appropriate conversion desc. This is not an android-style external format,
         // but requires Ycbcr sampler conversion.
         conversionDesc.update(renderer, 0, model, range, xChromaOffset, yChromaOffset,
-                              VK_FILTER_NEAREST, components, intendedFormatID,
+                              vk::kDefaultYCbCrChromaFilter, components, intendedFormatID,
                               linearFilterSupported);
     }
 

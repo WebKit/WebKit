@@ -42,7 +42,7 @@ namespace NetworkCache {
 Data Data::mapToFile(const String& path) const
 {
     FileSystem::PlatformFileHandle handle;
-    auto applyData = [&](const Function<bool(std::span<const uint8_t>)>& applier) {
+    auto applyData = [&](NOESCAPE const Function<bool(std::span<const uint8_t>)>& applier) {
         apply(applier);
     };
     auto mappedFile = FileSystem::mapToFile(path, size(), WTFMove(applyData), &handle);

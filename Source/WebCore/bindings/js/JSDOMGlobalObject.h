@@ -47,7 +47,7 @@ class DOMWrapperWorld;
 class ScriptExecutionContext;
 
 using JSDOMStructureMap = UncheckedKeyHashMap<const JSC::ClassInfo*, JSC::WriteBarrier<JSC::Structure>>;
-using DOMGuardedObjectSet = HashSet<DOMGuardedObject*>;
+using DOMGuardedObjectSet = UncheckedKeyHashSet<DOMGuardedObject*>;
 
 class WEBCORE_EXPORT JSDOMGlobalObject : public JSC::JSGlobalObject {
 public:

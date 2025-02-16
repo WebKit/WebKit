@@ -62,7 +62,7 @@ auto SharedBufferReference::serializableBuffer() const -> std::optional<Serializ
         return std::nullopt;
     if (!m_size)
         return SerializableBuffer { 0, std::nullopt };
-    auto sharedMemoryBuffer = m_memory ? m_memory : SharedMemory::copyBuffer(*m_buffer.copyRef());
+    auto sharedMemoryBuffer = m_memory ? m_memory : SharedMemory::copyBuffer(Ref { *m_buffer });
     return SerializableBuffer { m_size, sharedMemoryBuffer->createHandle(SharedMemory::Protection::ReadOnly) };
 }
 #endif
@@ -92,7 +92,7 @@ std::span<const uint8_t> SharedBufferReference::span() const
         return { };
 
     if (!m_buffer->isContiguous())
-        m_buffer = m_buffer->makeContiguous();
+        m_buffer = RefPtr { m_buffer }->makeContiguous();
 
     return downcast<SharedBuffer>(m_buffer.get())->span().first(m_size);
 }

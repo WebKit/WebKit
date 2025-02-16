@@ -53,6 +53,9 @@ struct LinkRelAttribute {
     bool isApplicationManifest : 1 { false };
 #endif
     bool isInternalResourceLink : 1 { false };
+#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+    bool isSpatialBackdrop : 1 { false };
+#endif
 
     LinkRelAttribute() = default;
     LinkRelAttribute(Document&, StringView);

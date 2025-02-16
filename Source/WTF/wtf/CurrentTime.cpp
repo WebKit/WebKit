@@ -33,6 +33,8 @@
 
 #include "config.h"
 #include <wtf/ApproximateTime.h>
+#include <wtf/ContinuousApproximateTime.h>
+#include <wtf/ContinuousTime.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/WallTime.h>
@@ -269,6 +271,30 @@ uint64_t ApproximateTime::toMachApproximateTime() const
     auto& info = machTimebaseInfo();
     return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
 }
+
+ContinuousTime ContinuousTime::fromMachContinuousTime(uint64_t machContinuousTime)
+{
+    auto& info = machTimebaseInfo();
+    return fromRawSeconds((machContinuousTime * info.numer) / (1.0e9 * info.denom));
+}
+
+uint64_t ContinuousTime::toMachContinuousTime() const
+{
+    auto& info = machTimebaseInfo();
+    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
+}
+
+ContinuousApproximateTime ContinuousApproximateTime::fromMachContinuousApproximateTime(uint64_t machContinuousApproximateTime)
+{
+    auto& info = machTimebaseInfo();
+    return fromRawSeconds((machContinuousApproximateTime * info.numer) / (1.0e9 * info.denom));
+}
+
+uint64_t ContinuousApproximateTime::toMachContinuousApproximateTime() const
+{
+    auto& info = machTimebaseInfo();
+    return static_cast<uint64_t>((m_value * 1.0e9 * info.denom) / info.numer);
+}
 #endif
 
 MonotonicTime MonotonicTime::now()
@@ -311,6 +337,42 @@ ApproximateTime ApproximateTime::now()
     return fromRawSeconds(static_cast<double>(system_time() / 1.0e6));
 #else
     return ApproximateTime::fromRawSeconds(MonotonicTime::now().secondsSinceEpoch().value());
+#endif
+}
+
+ContinuousTime ContinuousTime::now()
+{
+#if OS(DARWIN)
+    return fromMachContinuousTime(mach_continuous_time());
+#elif OS(LINUX) || OS(OPENBSD)
+    struct timespec ts { };
+    clock_gettime(CLOCK_BOOTTIME, &ts);
+    return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+#else
+    static double lastTime = 0;
+    double currentTimeNow = currentTime();
+    if (currentTimeNow < lastTime)
+        return lastTime;
+    lastTime = currentTimeNow;
+    return fromRawSeconds(currentTimeNow);
+#endif
+}
+
+ContinuousApproximateTime ContinuousApproximateTime::now()
+{
+#if OS(DARWIN)
+    return fromMachContinuousApproximateTime(mach_continuous_approximate_time());
+#elif OS(LINUX) || OS(OPENBSD)
+    struct timespec ts { };
+    clock_gettime(CLOCK_BOOTTIME, &ts);
+    return fromRawSeconds(static_cast<double>(ts.tv_sec) + ts.tv_nsec / 1.0e9);
+#else
+    static double lastTime = 0;
+    double currentTimeNow = currentTime();
+    if (currentTimeNow < lastTime)
+        return lastTime;
+    lastTime = currentTimeNow;
+    return fromRawSeconds(currentTimeNow);
 #endif
 }
 

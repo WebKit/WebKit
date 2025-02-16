@@ -55,14 +55,14 @@ struct Symbol {
 
 template<typename T> struct IsSymbol : public std::integral_constant<bool, std::is_same_v<T, Symbol>> { };
 
-template<> struct Serialize<SymbolRaw> { void operator()(StringBuilder&, const SymbolRaw&); };
-template<> struct Serialize<Symbol> { void operator()(StringBuilder&, const Symbol&); };
+template<> struct Serialize<SymbolRaw> { void operator()(StringBuilder&, const SerializationContext&, const SymbolRaw&); };
+template<> struct Serialize<Symbol> { void operator()(StringBuilder&, const SerializationContext&, const Symbol&); };
 
 template<> struct ComputedStyleDependenciesCollector<SymbolRaw> { constexpr void operator()(ComputedStyleDependencies&, const SymbolRaw&) { } };
 template<> struct ComputedStyleDependenciesCollector<Symbol> { constexpr void operator()(ComputedStyleDependencies&, const Symbol&) { } };
 
-template<> struct CSSValueChildrenVisitor<SymbolRaw> { constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const SymbolRaw&) { return IterationStatus::Continue; } };
-template<> struct CSSValueChildrenVisitor<Symbol> { constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const Symbol&) { return IterationStatus::Continue; } };
+template<> struct CSSValueChildrenVisitor<SymbolRaw> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const SymbolRaw&) { return IterationStatus::Continue; } };
+template<> struct CSSValueChildrenVisitor<Symbol> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const Symbol&) { return IterationStatus::Continue; } };
 
 } // namespace CSS
 } // namespace WebCore

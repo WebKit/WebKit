@@ -3,7 +3,6 @@ Short Name: EGL-Registry
 Version: N/A
 URL: https://github.com/KhronosGroup/EGL-Registry
 SOURCE CODE: git clone -b EGL-Registry https://github.com/KhronosGroup/EGL-Registry
-Date: N/A
 Revision: DEPS
 Security Critical: no
 Shipped: yes

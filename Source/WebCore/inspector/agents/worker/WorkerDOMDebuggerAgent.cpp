@@ -47,10 +47,4 @@ Inspector::Protocol::ErrorStringOr<void> WorkerDOMDebuggerAgent::removeDOMBreakp
     return makeUnexpected("Not supported"_s);
 }
 
-bool WorkerDOMDebuggerAgent::setAnimationFrameBreakpoint(Inspector::Protocol::ErrorString& errorString, RefPtr<JSC::Breakpoint>&&)
-{
-    errorString = "Not supported"_s;
-    return false;
-}
-
 } // namespace WebCore

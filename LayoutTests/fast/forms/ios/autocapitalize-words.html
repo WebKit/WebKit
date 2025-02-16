@@ -23,8 +23,7 @@ description("This test verifies that typing in editable areas with autocapitaliz
 async function typeStringInElement(element, string)
 {
     await UIHelper.activateElementAndWaitForInputSession(element);
-    for (const character of [...string])
-        await UIHelper.callFunctionAndWaitForEvent(() => UIHelper.typeCharacter(character), element, "input");
+    await UIHelper.typeCharacters(string);
     element.blur();
     await UIHelper.waitForKeyboardToHide();
 }

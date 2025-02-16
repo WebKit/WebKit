@@ -41,18 +41,23 @@ public:
     using DataVariant = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String>;
     struct WriteParams {
         WriteCommandType type;
-        std::optional<uint64_t> size;
-        std::optional<uint64_t> position;
+        std::optional<uint64_t> size { };
+        std::optional<uint64_t> position { };
         std::optional<DataVariant> data;
     };
 
     using ChunkType = std::variant<RefPtr<JSC::ArrayBufferView>, RefPtr<JSC::ArrayBuffer>, RefPtr<Blob>, String, WriteParams>;
-    void write(ChunkType&&, DOMPromiseDeferred<void>&&);
-    void seek(uint64_t position, DOMPromiseDeferred<void>&&);
-    void truncate(uint64_t size, DOMPromiseDeferred<void>&&);
+    void write(JSC::JSGlobalObject&, const ChunkType&, DOMPromiseDeferred<void>&&);
+    void seek(JSC::JSGlobalObject&, uint64_t position, DOMPromiseDeferred<void>&&);
+    void truncate(JSC::JSGlobalObject&, uint64_t size, DOMPromiseDeferred<void>&&);
+    WritableStream::Type type() const final { return WritableStream::Type::FileSystem; }
 
 private:
     explicit FileSystemWritableFileStream(Ref<InternalWritableStream>&&);
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FileSystemWritableFileStream)
+    static bool isType(const WebCore::WritableStream& stream) { return stream.type() == WebCore::WritableStream::Type::FileSystem; }
+SPECIALIZE_TYPE_TRAITS_END()

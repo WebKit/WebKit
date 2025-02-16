@@ -34,13 +34,12 @@ class CSSValueList;
 enum class IsImportant : bool { No, Yes };
 
 struct StylePropertyMetadata {
-    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, IsImportant important, bool implicit, bool inherited)
+    StylePropertyMetadata(CSSPropertyID propertyID, bool isSetFromShorthand, int indexInShorthandsVector, IsImportant important, bool implicit)
         : m_propertyID(propertyID)
         , m_isSetFromShorthand(isSetFromShorthand)
         , m_indexInShorthandsVector(indexInShorthandsVector)
         , m_important(important == IsImportant::Yes)
         , m_implicit(implicit)
-        , m_inherited(inherited)
     {
         ASSERT(propertyID != CSSPropertyInvalid);
         ASSERT_WITH_MESSAGE(propertyID < firstShorthandProperty, "unexpected property: %d", propertyID);
@@ -55,13 +54,13 @@ struct StylePropertyMetadata {
     unsigned m_indexInShorthandsVector : 2; // If this property was set as part of an ambiguous shorthand, gives the index in the shorthands vector.
     unsigned m_important : 1;
     unsigned m_implicit : 1; // Whether or not the property was set implicitly as the result of a shorthand.
-    unsigned m_inherited : 1;
+    // 1 bit available
 };
 
 class CSSProperty {
 public:
-    CSSProperty(CSSPropertyID propertyID, RefPtr<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
-        : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit, isInheritedProperty(propertyID))
+    CSSProperty(CSSPropertyID propertyID, Ref<CSSValue>&& value, IsImportant important = IsImportant::No, bool isSetFromShorthand = false, int indexInShorthandsVector = 0, bool implicit = false)
+        : m_metadata(propertyID, isSetFromShorthand, indexInShorthandsVector, important, implicit)
         , m_value(WTFMove(value))
     {
     }
@@ -71,8 +70,8 @@ public:
     CSSPropertyID shorthandID() const { return m_metadata.shorthandID(); };
     bool isImportant() const { return m_metadata.m_important; }
 
-    CSSValue* value() const { return m_value.get(); }
-    RefPtr<CSSValue> protectedValue() const { return m_value; }
+    CSSValue* value() const { return m_value.ptr(); }
+    Ref<CSSValue> protectedValue() const { return m_value; }
 
     static CSSPropertyID resolveDirectionAwareProperty(CSSPropertyID, WritingMode);
     static CSSPropertyID unresolvePhysicalProperty(CSSPropertyID, WritingMode);
@@ -86,15 +85,25 @@ public:
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
 
-    // FIXME: Generate from logical property groups.
+    // Logical Property Group Predicates.
+    // NOTE: These return true if the CSSPropertyID is member of the named logical
+    // property group or is the shorthand of a member of the logical property group.
 
-    // Check if a property is an inset property, as defined in:
-    // https://drafts.csswg.org/css-logical-1/#inset-properties
+    static bool isBorderColorProperty(CSSPropertyID);
+    static bool isBorderRadiusProperty(CSSPropertyID);
+    static bool isBorderStyleProperty(CSSPropertyID);
+    static bool isBorderWidthProperty(CSSPropertyID);
+    static bool isContainIntrinsicSizeProperty(CSSPropertyID);
     static bool isInsetProperty(CSSPropertyID);
-
-    // Check if a property is a margin property, as defined in:
-    // https://drafts.csswg.org/css-box-4/#margin-properties
     static bool isMarginProperty(CSSPropertyID);
+    static bool isMaxSizeProperty(CSSPropertyID);
+    static bool isMinSizeProperty(CSSPropertyID);
+    static bool isOverflowProperty(CSSPropertyID);
+    static bool isOverscrollBehaviorProperty(CSSPropertyID);
+    static bool isPaddingProperty(CSSPropertyID);
+    static bool isScrollMarginProperty(CSSPropertyID);
+    static bool isScrollPaddingProperty(CSSPropertyID);
+    static bool isSizeProperty(CSSPropertyID);
 
     // Check if a property is a sizing property, as defined in:
     // https://drafts.csswg.org/css-sizing-3/#sizing-property
@@ -115,19 +124,12 @@ public:
     {
         if (!(m_metadata == other.m_metadata))
             return false;
-
-        if (!m_value && !other.m_value)
-            return true;
-
-        if (!m_value || !other.m_value)
-            return false;
-        
-        return m_value->equals(*other.m_value);
+        return m_value->equals(other.m_value);
     }
 
 private:
     StylePropertyMetadata m_metadata;
-    RefPtr<CSSValue> m_value;
+    Ref<CSSValue> m_value;
 };
 
 typedef Vector<CSSProperty, 256> ParsedPropertyVector;

@@ -37,12 +37,12 @@ import argparse
 import contextlib
 import copy
 import csv
-import fcntl
 import fnmatch
 import json
 import logging
 import os
 import pathlib
+import posixpath
 import re
 import statistics
 import subprocess
@@ -52,7 +52,6 @@ import time
 
 from collections import defaultdict, namedtuple
 from datetime import datetime
-from psutil import process_iter
 
 PY_UTILS = str(pathlib.Path(__file__).resolve().parents[1] / 'py_utils')
 if PY_UTILS not in sys.path:
@@ -75,46 +74,20 @@ class _global(object):
 
 
 def init():
-    _global.current_user = run_adb_command('shell am get-current-user').stdout.strip()
+    _global.current_user = run_adb_shell_command('am get-current-user').strip()
     _global.storage_dir = '/data/user/' + _global.current_user + '/com.android.angle.test/files'
     _global.cache_dir = '/data/user_de/' + _global.current_user + '/com.android.angle.test/cache'
     logging.debug('Running with user %s, storage %s, cache %s', _global.current_user,
                   _global.storage_dir, _global.cache_dir)
 
 
-def run_command(args):
-    logging.debug('Running %s' % args)
-
-    start_time = time.time()
+def run_async_adb_shell_command(cmd):
+    logging.debug('Kicking off subprocess %s' % (cmd))
 
     try:
-        process = subprocess.Popen(
-            args,
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True)
-    except subprocess.CalledProcessError as e:
-        raise RuntimeError("command '{}' return with error (code {}): {}".format(
-            e.cmd, e.returncode, e.output))
-
-    stdout, stderr = process.communicate()
-
-    time_elapsed = time.time() - start_time
-
-    return Result(stdout, stderr, time_elapsed)
-
-
-def run_async_command(args):
-    logging.debug('Kicking off subprocess %s' % (args))
-
-    try:
-        async_process = subprocess.Popen(
-            args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            shell=True,
-            universal_newlines=True)
+        async_process = subprocess.Popen([android_helper.FindAdb(), 'shell', cmd],
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
         raise RuntimeError("command '{}' return with error (code {}): {}".format(
             e.cmd, e.returncode, e.output))
@@ -125,7 +98,11 @@ def run_async_command(args):
 
 
 def run_adb_command(args):
-    return run_command('adb ' + args)
+    return android_helper._AdbRun(args).decode()
+
+
+def run_adb_shell_command(cmd):
+    return android_helper._AdbShell(cmd).decode()
 
 
 def run_async_adb_command(args):
@@ -133,18 +110,17 @@ def run_async_adb_command(args):
 
 
 def cleanup():
-    run_adb_command('shell rm -f ' + _global.storage_dir + '/out.txt ' + _global.storage_dir +
-                    '/gpumem.txt')
+    run_adb_shell_command('rm -f ' + _global.storage_dir + '/out.txt ' + _global.storage_dir +
+                          '/gpumem.txt')
 
 
 def clear_blob_cache():
-    run_adb_command('shell run-as com.android.angle.test rm -rf ' + _global.cache_dir)
+    run_adb_shell_command('run-as com.android.angle.test rm -rf ' + _global.cache_dir)
 
 
 def select_device(device_arg):
     # The output from 'adb devices' always includes a header and a new line at the end.
-    result_dev = run_command('adb devices')
-    result_dev_out = result_dev.stdout.strip()
+    result_dev_out = run_adb_command(['devices']).strip()
 
     result_header_end = result_dev_out.find('\n')
     result_dev_out = '' if result_header_end == -1 else result_dev_out[result_header_end:]
@@ -209,6 +185,34 @@ def get_trace_width(mode):
     return width
 
 
+def pull_screenshot(args, screenshot_device_dir, renderer):
+    # We don't know the name of the screenshots, since they could have a KeyFrame
+    # Rather than look that up and piece together a file name, we can pull the single screenshot in a generic fashion
+    files = run_adb_shell_command('ls -1 %s' % screenshot_device_dir).split('\n')
+
+    # There might not be a screenshot if the test was skipped
+    files = list(filter(None, (f.strip() for f in files)))  # Remove empty strings and whitespace
+    if files:
+        assert len(files) == 1, 'Multiple files(%s) in %s, expected 1: %s' % (
+            len(files), screenshot_device_dir, files)
+
+        # Grab the single screenshot
+        src_file = files[0]
+
+        # Rename the file to reflect renderer, since we force everything through the platform using "native"
+        dst_file = src_file.replace("native", renderer)
+
+        # Use CWD if no location provided
+        screenshot_dst = args.screenshot_dir if args.screenshot_dir != '' else '.'
+
+        logging.info('Pulling screenshot %s to %s' % (dst_file, screenshot_dst))
+        run_adb_command([
+            'pull',
+            posixpath.join(screenshot_device_dir, src_file),
+            posixpath.join(screenshot_dst, dst_file)
+        ])
+
+
 # This function changes to the target directory, then 'yield' passes execution to the inner part of
 # the 'with' block that invoked it. The 'finally' block is executed at the end of the 'with' block,
 # including when exceptions are raised.
@@ -227,15 +231,19 @@ def run_from_dir(dir):
         os.chdir(cwd)
 
 
-def run_trace(trace, args):
+def run_trace(trace, args, screenshot_device_dir):
     mode = get_mode(args)
 
     # Kick off a subprocess that collects peak gpu memory periodically
     # Note the 0.25 below is the delay (in seconds) between memory checks
     if args.memory:
-        run_adb_command('push gpumem.sh /data/local/tmp')
-        memory_command = 'shell sh /data/local/tmp/gpumem.sh 0.25 ' + _global.storage_dir
-        memory_process = run_async_adb_command(memory_command)
+        run_adb_command([
+            'push',
+            os.path.join(angle_path_util.ANGLE_ROOT_DIR, 'src', 'tests', 'restricted_traces',
+                         'gpumem.sh'), '/data/local/tmp'
+        ])
+        memory_command = 'sh /data/local/tmp/gpumem.sh 0.25 ' + _global.storage_dir
+        memory_process = run_async_adb_shell_command(memory_command)
 
     flags = [
         '--gtest_filter=TraceTest.' + trace, '--use-gl=native', '--verbose', '--verbose-logging'
@@ -248,6 +256,12 @@ def run_trace(trace, args):
         flags += ['--fixed-test-time-with-warmup', args.fixedtime]
     if args.minimizegpuwork:
         flags.append('--minimize-gpu-work')
+    if screenshot_device_dir != None:
+        flags += ['--screenshot-dir', screenshot_device_dir]
+    if args.screenshot_frame != '':
+        flags += ['--screenshot-frame', args.screenshot_frame]
+    if args.fps_limit != '':
+        flags += ['--fps-limit', args.fps_limit]
 
     # Build a command that can be run directly over ADB, for example:
     r'''
@@ -259,8 +273,8 @@ adb shell am instrument -w \
     -e org.chromium.native_test.NativeTestInstrumentationTestRunner.NativeTestActivity com.android.angle.test.AngleUnitTestActivity \
     com.android.angle.test/org.chromium.build.gtest_apk.NativeTestInstrumentationTestRunner
     '''
-    adb_command = r'''
-shell am instrument -w \
+    shell_command = r'''
+am instrument -w \
     -e org.chromium.native_test.NativeTestInstrumentationTestRunner.StdoutFile {storage}/out.txt \
     -e org.chromium.native_test.NativeTest.CommandLineFlags "{flags}" \
     -e org.chromium.native_test.NativeTestInstrumentationTestRunner.ShardNanoTimeout "1000000000000000000" \
@@ -268,26 +282,28 @@ shell am instrument -w \
     com.android.angle.test.AngleUnitTestActivity \
     com.android.angle.test/org.chromium.build.gtest_apk.NativeTestInstrumentationTestRunner
     '''.format(
-        flags=r'\ '.join(flags),
+        flags=r' '.join(flags),
         storage=_global.storage_dir).strip()  # Note: space escaped due to subprocess shell=True
 
-    result = run_adb_command(adb_command)
+    start_time = time.time()
+    result = run_adb_shell_command(shell_command)
+    time_elapsed = time.time() - start_time
 
     if args.memory:
         logging.debug('Killing gpumem subprocess')
         memory_process.kill()
 
-    return result.time
+    return time_elapsed
 
 
 def get_test_time():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat ' + _global.storage_dir +
-                             '/out.txt | grep -v Error | grep -v Frame')
+    result = run_adb_shell_command('cat ' + _global.storage_dir +
+                                   '/out.txt | grep -v Error | grep -v Frame')
 
     measured_time = None
 
-    for line in result.stdout.splitlines():
+    for line in result.splitlines():
         logging.debug('Checking line: %s' % line)
 
         # Look for this line and grab the second to last entry:
@@ -314,7 +330,7 @@ def get_test_time():
 
 def get_gpu_memory(trace_duration):
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat ' + _global.storage_dir + '/gpumem.txt | awk "NF"')
+    result = run_adb_shell_command('cat ' + _global.storage_dir + '/gpumem.txt | awk "NF"')
 
     # The gpumem script grabs snapshots of memory per process
     # Output looks like this, repeated once per sleep_duration of the test:
@@ -335,7 +351,7 @@ def get_gpu_memory(trace_duration):
     test_process = ''
     gpu_mem = []
     gpu_mem_sustained = []
-    for line in result.stdout.splitlines():
+    for line in result.splitlines():
         logging.debug('Checking line: %s' % line)
 
         if "time_elapsed" in line:
@@ -382,11 +398,11 @@ def get_gpu_memory(trace_duration):
 
 def get_proc_memory():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat ' + _global.storage_dir + '/out.txt')
+    result = run_adb_shell_command('cat ' + _global.storage_dir + '/out.txt')
     memory_median = ''
     memory_max = ''
 
-    for line in result.stdout.splitlines():
+    for line in result.splitlines():
         # Look for "memory_max" in the line and grab the second to last entry:
         logging.debug('Checking line: %s' % line)
 
@@ -403,10 +419,10 @@ def get_proc_memory():
 
 def get_gpu_time():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat ' + _global.storage_dir + '/out.txt')
+    result = run_adb_shell_command('cat ' + _global.storage_dir + '/out.txt')
     gpu_time = '0'
 
-    for line in result.stdout.splitlines():
+    for line in result.splitlines():
         # Look for "gpu_time" in the line and grab the second to last entry:
         logging.debug('Checking line: %s' % line)
 
@@ -419,10 +435,10 @@ def get_gpu_time():
 
 def get_cpu_time():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat ' + _global.storage_dir + '/out.txt')
+    result = run_adb_shell_command('cat ' + _global.storage_dir + '/out.txt')
     cpu_time = '0'
 
-    for line in result.stdout.splitlines():
+    for line in result.splitlines():
         # Look for "cpu_time" in the line and grab the second to last entry:
         logging.debug('Checking line: %s' % line)
 
@@ -435,12 +451,12 @@ def get_cpu_time():
 
 def get_frame_count():
     # Pull the results from the device and parse
-    result = run_adb_command('shell cat ' + _global.storage_dir +
-                             '/out.txt | grep -v Error | grep -v Frame')
+    result = run_adb_shell_command('cat ' + _global.storage_dir +
+                                   '/out.txt | grep -v Error | grep -v Frame')
 
     frame_count = 0
 
-    for line in result.stdout.splitlines():
+    for line in result.splitlines():
         logging.debug('Checking line: %s' % line)
         if "trial_steps" in line:
             frame_count = line.split()[-2]
@@ -467,8 +483,8 @@ class GPUPowerStats():
         return big + mid + little
 
     def get_power_data(self):
-        energy_value_result = run_adb_command(
-            'shell cat /sys/bus/iio/devices/iio:device*/energy_value')
+        energy_value_result = run_adb_shell_command(
+            'cat /sys/bus/iio/devices/iio:device*/energy_value')
         # Output like this (ordering doesn't matter)
         #
         # t=251741617
@@ -500,7 +516,7 @@ class GPUPowerStats():
         for m in id_map.values():
             self.power[m] = 0  # Set to 0 to check for missing values and dupes below
 
-        for line in energy_value_result.stdout.splitlines():
+        for line in energy_value_result.splitlines():
             for mid, m in id_map.items():
                 if re.search(mid, line):
                     value = int(line.split()[1])
@@ -569,7 +585,7 @@ def collect_power(done_event, test_fixedtime, results):
 
 
 def get_thermal_info():
-    out = run_adb_command('shell dumpsys android.hardware.thermal.IThermal/default').stdout
+    out = run_adb_shell_command('dumpsys android.hardware.thermal.IThermal/default')
     result = []
     for line in out.splitlines():
         if 'ThrottlingStatus:' in line:
@@ -598,7 +614,7 @@ def set_vendor_thermal_control(disabled=None):
                     waiting = True
                     break
 
-    run_adb_command('shell setprop persist.vendor.disable.thermal.control %d' % disabled)
+    run_adb_shell_command('setprop persist.vendor.disable.thermal.control %d' % disabled)
 
 
 def sleep_until_temps_below(limit_temp):
@@ -618,7 +634,7 @@ def sleep_until_temps_below_thermalservice(limit_temp):
     waiting = True
     while waiting:
         waiting = False
-        lines = run_adb_command('shell dumpsys thermalservice').stdout.splitlines()
+        lines = run_adb_shell_command('dumpsys thermalservice').splitlines()
         assert 'HAL Ready: true' in lines
         for l in lines[lines.index('Current temperatures from HAL:') + 1:]:
             if 'Temperature{' not in l:
@@ -635,7 +651,7 @@ def sleep_until_temps_below_thermalservice(limit_temp):
 
 def sleep_until_battery_level(min_battery_level):
     while True:
-        level = int(run_adb_command('shell dumpsys battery get level').stdout.strip())
+        level = int(run_adb_shell_command('dumpsys battery get level').strip())
         if level >= min_battery_level:
             break
         logging.info('Waiting for device battery level to reach %d. Current level: %d',
@@ -657,6 +673,15 @@ def drop_high_low_and_average(values):
     print(average, variance)
 
     return float(average), float(variance)
+
+
+def get_angle_version():
+    angle_version = android_helper._Run('git rev-parse HEAD'.split(' ')).decode().strip()
+    origin_main_version = android_helper._Run(
+        'git rev-parse origin/main'.split(' ')).decode().strip()
+    if origin_main_version != angle_version:
+        angle_version += ' (origin/main %s)' % origin_main_version
+    return angle_version
 
 
 def safe_divide(x, y):
@@ -710,6 +735,7 @@ def main():
         action='store_true',
         default=False)
     parser.add_argument('--output-tag', help='Tag for output files.', required=True)
+    parser.add_argument('--angle-version', help='Specify ANGLE version string.', default='')
     parser.add_argument(
         '--loop-count', help='How many times to loop through the traces', default=5)
     parser.add_argument(
@@ -734,6 +760,23 @@ def main():
         'but you can point to any APK that contains ANGLE. Specify \'system\' to use libraries ' +
         'already on the device',
         default=DEFAULT_ANGLE_PACKAGE)
+    parser.add_argument(
+        '--build-dir',
+        help='Where to find the APK on the host, i.e. out/Android. If unset, it is assumed you ' +
+        'are running from the build dir already, or are using the wrapper script ' +
+        'out/<config>/restricted_trace_perf.',
+        default='')
+    parser.add_argument(
+        '--screenshot-dir',
+        help='Host (local) directory to store screenshots of keyframes, which is frame 1 unless ' +
+        'the trace JSON file contains \'KeyFrames\'.',
+        default='')
+    parser.add_argument(
+        '--screenshot-frame',
+        help='Specify a specific frame to screenshot. Uses --screenshot-dir if provied.',
+        default='')
+    parser.add_argument(
+        '--fps-limit', help='Limit replay framerate to specified value', default='')
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -746,18 +789,13 @@ def main():
         help='Whether to run the trace in offscreen mode',
         action='store_true',
         default=False)
-    parser.add_argument(
-        '--build-dir',
-        help='Where to find the APK on the host, i.e. out/Android. If unset, it is assumed you ' +
-        'are running from the build dir already, or are using the wrapper script ' +
-        'out/<config>/restricted_trace_perf.',
-        default='')
 
     args = parser.parse_args()
 
     angle_test_util.SetupLogging(args.log.upper())
 
-    run_adb_command('root')
+    with run_from_dir(args.build_dir):
+        android_helper.Initialize("angle_trace_tests")  # includes adb root
 
     # Determine some starting parameters
     init()
@@ -770,9 +808,9 @@ def main():
         if args.custom_throttling_temp:
             set_vendor_thermal_control(disabled=0)
         # Clean up settings, including in case of exceptions (including Ctrl-C)
-        run_adb_command('shell settings delete global angle_debug_package')
-        run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
-        run_adb_command('shell settings delete global angle_gl_driver_selection_values')
+        run_adb_shell_command('settings delete global angle_debug_package')
+        run_adb_shell_command('settings delete global angle_gl_driver_selection_pkgs')
+        run_adb_shell_command('settings delete global angle_gl_driver_selection_values')
 
     return 0
 
@@ -871,11 +909,8 @@ def run_traces(args):
     summary_file = open("summary." + args.output_tag + ".csv", 'w', newline='')
     summary_writer = csv.writer(summary_file)
 
-    android_version = run_adb_command('shell getprop ro.build.fingerprint').stdout.strip()
-    angle_version = run_command('git rev-parse HEAD').stdout.strip()
-    origin_main_version = run_command('git rev-parse origin/main').stdout.strip()
-    if origin_main_version != angle_version:
-        angle_version += ' (origin/main %s)' % origin_main_version
+    android_version = run_adb_shell_command('getprop ro.build.fingerprint').strip()
+    angle_version = args.angle_version or get_angle_version()
     # test_time = run_command('date \"+%Y%m%d\"').stdout.read().strip()
 
     summary_writer.writerow([
@@ -933,7 +968,6 @@ def run_traces(args):
         ])
 
     with run_from_dir(args.build_dir):
-        android_helper.Initialize("angle_trace_tests")
         android_helper.PrepareTestSuite("angle_trace_tests")
 
     for trace in fnmatch.filter(traces, args.filter):
@@ -963,38 +997,38 @@ def run_traces(args):
 
                 if renderer == "native":
                     # Force the settings to native
-                    run_adb_command(
-                        'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
+                    run_adb_shell_command(
+                        'settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
                     )
-                    run_adb_command(
-                        'shell settings put global angle_gl_driver_selection_values native')
+                    run_adb_shell_command(
+                        'settings put global angle_gl_driver_selection_values native')
                 elif renderer == "vulkan":
                     # Force the settings to ANGLE
-                    run_adb_command(
-                        'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
+                    run_adb_shell_command(
+                        'settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
                     )
-                    run_adb_command(
-                        'shell settings put global angle_gl_driver_selection_values angle')
+                    run_adb_shell_command(
+                        'settings put global angle_gl_driver_selection_values angle')
                 elif renderer == "default":
                     logging.info(
                         'Deleting Android settings for forcing selection of GLES driver, ' +
                         'allowing system to load the default')
-                    run_adb_command('shell settings delete global angle_debug_package')
-                    run_adb_command('shell settings delete global angle_gl_driver_all_angle')
-                    run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
-                    run_adb_command(
-                        'shell settings delete global angle_gl_driver_selection_values')
+                    run_adb_shell_command('settings delete global angle_debug_package')
+                    run_adb_shell_command('settings delete global angle_gl_driver_all_angle')
+                    run_adb_shell_command('settings delete global angle_gl_driver_selection_pkgs')
+                    run_adb_shell_command(
+                        'settings delete global angle_gl_driver_selection_values')
                 else:
                     logging.error('Unsupported renderer {}'.format(renderer))
                     exit()
 
                 if args.angle_package == 'system':
                     # Clear the debug package so ANGLE will be loaded from /system/lib64
-                    run_adb_command('shell settings delete global angle_debug_package')
+                    run_adb_shell_command('settings delete global angle_debug_package')
                 else:
                     # Otherwise, load ANGLE from the specified APK
-                    run_adb_command('shell settings put global angle_debug_package ' +
-                                    args.angle_package)
+                    run_adb_shell_command('settings put global angle_debug_package ' +
+                                          args.angle_package)
 
                 # Remove any previous perf results
                 cleanup()
@@ -1006,7 +1040,7 @@ def run_traces(args):
                 if args.power:
                     assert args.fixedtime, '--power requires --fixedtime'
                     done_event = threading.Event()
-                    run_adb_command('logcat -c')  # needed for wait_for_test_warmup
+                    run_adb_command(['logcat', '-c'])  # needed for wait_for_test_warmup
                     power_results = {}  # output arg
                     power_thread = threading.Thread(
                         target=collect_power,
@@ -1014,8 +1048,18 @@ def run_traces(args):
                     power_thread.daemon = True
                     power_thread.start()
 
-                logging.debug('Running %s' % test)
-                test_time = run_trace(test, args)
+                # We scope the run_trace call so we can use a temp dir for screenshots that gets deleted
+                with contextlib.ExitStack() as stack:
+                    screenshot_device_dir = None
+                    if args.screenshot_dir != '' or args.screenshot_frame != '':
+                        temp_dir = stack.enter_context(android_helper._TempDeviceDir())
+                        screenshot_device_dir = temp_dir
+
+                    logging.debug('Running %s' % test)
+                    test_time = run_trace(test, args, screenshot_device_dir)
+
+                    if screenshot_device_dir:
+                        pull_screenshot(args, screenshot_device_dir, renderer)
 
                 gpu_power, cpu_power = 0, 0
                 if args.power:

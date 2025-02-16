@@ -10,8 +10,8 @@ function args()
 }
 noInline(args);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(args(0, 1, 2), 1);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(args(0), undefined);

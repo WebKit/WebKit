@@ -65,7 +65,7 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std:
 
 ExceptionOr<Ref<CSSScale>> CSSScale::create(Ref<const CSSFunctionValue> cssFunctionValue)
 {
-    auto makeScale = [&](const Function<ExceptionOr<Ref<CSSScale>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSScale>> {
+    auto makeScale = [&](NOESCAPE const Function<ExceptionOr<Ref<CSSScale>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSScale>> {
         Vector<RefPtr<CSSNumericValue>> components;
         for (auto& componentCSSValue : cssFunctionValue.get()) {
             auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);

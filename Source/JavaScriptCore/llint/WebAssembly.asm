@@ -387,8 +387,10 @@ if TRACING
      )
 end
 
+if not ADDRESS64
     bpa ws1, cfr, .stackOverflow
-    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
+end
+    bplteq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)
@@ -484,8 +486,10 @@ if not JSVALUE64
     subp 8, ws1 # align stack pointer
 end
 
+if not ADDRESS64
     bpa ws1, cfr, .stackOverflow
-    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
+end
+    bplteq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], ws1, .stackHeightOK
 
 .stackOverflow:
     throwException(StackOverflow)
@@ -720,8 +724,10 @@ end
     loadi Wasm::JSEntrypointCallee::m_frameSize[ws1], wa0
     subp sp, wa0, wa0
 
+if not ADDRESS64
     bpa wa0, cfr, .stackOverflow
-    bpbeq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], wa0, .stackHeightOK
+end
+    bplteq JSWebAssemblyInstance::m_softStackLimit[wasmInstance], wa0, .stackHeightOK
 
 .stackHeightOK:
     move wa0, sp
@@ -931,6 +937,37 @@ end
     jmp ws0, WasmEntryPtrTag
 end)
 
+op(wasm_to_wasm_ipint_wrapper_entry, macro()
+    # We have only pushed PC (intel) or pushed nothing(others), and we
+    # are still in the caller frame.
+    loadp (Callee - CallerFrameAndPCSize)[sp], ws0
+
+if JSVALUE64
+    andp ~(constexpr JSValue::NativeCalleeTag), ws0
+end
+    leap WTFConfig + constexpr WTF::offsetOfWTFConfigLowestAccessibleAddress, ws1
+    loadp [ws1], ws1
+    addp ws1, ws0
+
+    loadp JSC::Wasm::IPIntCallee::m_entrypoint[ws0], ws0
+
+    # Load the instance
+    loadp (CodeBlock - CallerFrameAndPCSize)[sp], wasmInstance
+
+    # Memory
+    if ARM64 or ARM64E
+        loadpairq JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase, boundsCheckingSize
+    elsif X86_64
+        loadp JSWebAssemblyInstance::m_cachedMemory[wasmInstance], memoryBase
+        loadp JSWebAssemblyInstance::m_cachedBoundsCheckingSize[wasmInstance], boundsCheckingSize
+    end
+    if not ARMv7
+        cagedPrimitiveMayBeNull(memoryBase, ws1)
+    end
+
+    jmp ws0, WasmEntryPtrTag
+end)
+
 # This is the interpreted analogue to WasmToJS.cpp:wasmToJS
 op(wasm_to_js_wrapper_entry, macro()
     # We have only pushed PC (intel) or pushed nothing(others), and we
@@ -1005,19 +1042,18 @@ end
 
     bineq r0, 0, .safe
     move wasmInstance, r0
-    move (constexpr Wasm::ExceptionType::TypeErrorInvalidV128Use), r1
+    move (constexpr Wasm::ExceptionType::TypeErrorInvalidValueUse), r1
     cCall2(_operationWasmToJSException)
     jumpToException()
     break
 
 .safe:
     loadp WasmCallableFunctionScratch[cfr], t2
-    loadp JSC::Wasm::WasmOrJSImportableFunction::importFunction[t2], t0
+    loadp JSC::Wasm::WasmOrJSImportableFunctionCallLinkInfo::importFunction[t2], t0
 if not JSVALUE64
     move (constexpr JSValue::CellTag), t1
 end
-
-    leap JSC::Wasm::WasmOrJSImportableFunction::callLinkInfo[t2], t2
+    loadp JSC::Wasm::WasmOrJSImportableFunctionCallLinkInfo::callLinkInfo[t2], t2
 
     # calleeGPR = t0
     # callLinkInfoGPR = t2

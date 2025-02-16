@@ -92,8 +92,8 @@ public:
 
     bool mayDependOnBaseURL() const;
 
-    bool traverseRules(const Function<bool(const StyleRuleBase&)>& handler) const;
-    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
+    bool traverseRules(NOESCAPE const Function<bool(const StyleRuleBase&)>& handler) const;
+    bool traverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const;
 
     void setIsUserStyleSheet(bool b) { m_isUserStyleSheet = b; }
     bool isUserStyleSheet() const { return m_isUserStyleSheet; }

@@ -257,7 +257,7 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> create8BitIfPossible(std::span<const UChar>);
 
     // Not using create() naming to encourage developers to call create(ASCIILiteral) when they have a string literal.
-    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(WTF::span8(characters)); }
+    ALWAYS_INLINE static Ref<StringImpl> createFromCString(const char* characters) { return create(unsafeSpan8(characters)); }
 
     static Ref<StringImpl> createSubstringSharingImpl(StringImpl&, unsigned offset, unsigned length);
 
@@ -409,19 +409,19 @@ public:
 
     // FIXME: Do these functions really belong in StringImpl?
     template<typename CharacterType>
-    ALWAYS_INLINE static void copyCharacters(CharacterType* destination, std::span<const CharacterType> source)
+    ALWAYS_INLINE static void copyCharacters(std::span<CharacterType> destination, std::span<const CharacterType> source)
     {
-        return copyElements(destination, source.data(), source.size());
+        return copyElements(destination, source);
     }
 
-    ALWAYS_INLINE static void copyCharacters(UChar* destination, std::span<const LChar> source)
+    ALWAYS_INLINE static void copyCharacters(std::span<UChar> destination, std::span<const LChar> source)
     {
         static_assert(sizeof(UChar) == sizeof(uint16_t));
         static_assert(sizeof(LChar) == sizeof(uint8_t));
-        return copyElements(std::bit_cast<uint16_t*>(destination), source.data(), source.size());
+        return copyElements(spanReinterpretCast<uint16_t>(destination), source);
     }
 
-    ALWAYS_INLINE static void copyCharacters(LChar* destination, std::span<const UChar> source)
+    ALWAYS_INLINE static void copyCharacters(std::span<LChar> destination, std::span<const UChar> source)
     {
         static_assert(sizeof(UChar) == sizeof(uint16_t));
         static_assert(sizeof(LChar) == sizeof(uint8_t));
@@ -429,7 +429,7 @@ public:
         for (auto character : source)
             ASSERT(isLatin1(character));
 #endif
-        return copyElements(std::bit_cast<uint8_t*>(destination), std::bit_cast<const uint16_t*>(source.data()), source.size());
+        return copyElements(destination, spanReinterpretCast<const uint16_t>(source));
     }
 
     // Some string features, like reference counting and the atomicity flag, are not
@@ -937,9 +937,9 @@ inline StringImpl::StringImpl(MallocSpan<LChar, Malloc> characters)
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data8 = characters.leakSpan().data();
     else {
-        auto* data8 = static_cast<LChar*>(StringImplMalloc::malloc(characters.sizeInBytes()));
-        copyCharacters(data8, characters.span());
-        m_data8 = data8;
+        auto buffer = MallocSpan<LChar, StringImplMalloc>::malloc(characters.sizeInBytes());
+        copyCharacters(buffer.mutableSpan(), characters.span());
+        m_data8 = buffer.leakSpan().data();
     }
 
     ASSERT(m_data8);
@@ -973,9 +973,9 @@ inline StringImpl::StringImpl(MallocSpan<UChar, Malloc> characters)
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
         m_data16 = characters.leakSpan().data();
     else {
-        auto* data16 = static_cast<UChar*>(StringImplMalloc::malloc(characters.sizeInBytes()));
-        copyCharacters(data16, characters.span());
-        m_data16 = data16;
+        auto buffer = MallocSpan<UChar, StringImplMalloc>::malloc(characters.sizeInBytes());
+        copyCharacters(buffer.mutableSpan(), characters.span());
+        m_data16 = buffer.leakSpan().data();
     }
 
     ASSERT(m_data16);
@@ -1310,7 +1310,7 @@ template<typename CharacterType, typename Predicate> ALWAYS_INLINE Ref<StringImp
         return *this;
 
     StringBuffer<CharacterType> data(m_length);
-    auto* to = data.characters();
+    auto to = data.span();
     unsigned outc = from - characters.data();
 
     copyCharacters(to, characters.first(outc));
@@ -1365,7 +1365,7 @@ inline Ref<StringImpl> StringImpl::createByReplacingInCharacters(std::span<const
     ASSERT(indexOfFirstTargetCharacter < characters.size());
     std::span<UChar> data;
     auto newImpl = createUninitializedInternalNonEmpty(characters.size(), data);
-    copyCharacters(data.data(), characters.first(indexOfFirstTargetCharacter));
+    copyCharacters(data, characters.first(indexOfFirstTargetCharacter));
     for (size_t i = indexOfFirstTargetCharacter; i != characters.size(); ++i) {
         UChar character = characters[i];
         data[i] = character == target ? replacement : character;

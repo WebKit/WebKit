@@ -269,20 +269,25 @@ std::string ShaderNode::invokeAndAssign(const ShaderInfo& shaderInfo,
 
 UniquePaintParamsID ShaderCodeDictionary::findOrCreate(PaintParamsKeyBuilder* builder) {
     AutoLockBuilderAsKey keyView{builder};
-    if (!keyView->isValid()) {
+
+    return this->findOrCreate(*keyView);
+}
+
+UniquePaintParamsID ShaderCodeDictionary::findOrCreate(const PaintParamsKey& ppk) {
+    if (!ppk.isValid()) {
         return UniquePaintParamsID::InvalidID();
     }
 
     SkAutoSpinlock lock{fSpinLock};
 
-    UniquePaintParamsID* existingEntry = fPaintKeyToID.find(*keyView);
+    UniquePaintParamsID* existingEntry = fPaintKeyToID.find(ppk);
     if (existingEntry) {
-        SkASSERT(fIDToPaintKey[(*existingEntry).asUInt()] == *keyView);
+        SkASSERT(fIDToPaintKey[(*existingEntry).asUInt()] == ppk);
         return *existingEntry;
     }
 
     // Detach from the builder and copy into the arena
-    PaintParamsKey key = keyView->clone(&fArena);
+    PaintParamsKey key = ppk.clone(&fArena);
     UniquePaintParamsID newID{SkTo<uint32_t>(fIDToPaintKey.size())};
 
     fPaintKeyToID.set(key, newID);
@@ -487,7 +492,11 @@ public:
         // linear srgb is the last child node.)
         const ShaderNode* toLinearSrgbNode = fNode->child(fNode->numChildren() - 2);
         SkASSERT(toLinearSrgbNode->codeSnippetId() ==
-                        (int) BuiltInCodeSnippetID::kColorSpaceXformColorFilter);
+                         (int)BuiltInCodeSnippetID::kColorSpaceXformColorFilter ||
+                 toLinearSrgbNode->codeSnippetId() ==
+                         (int)BuiltInCodeSnippetID::kColorSpaceXformPremul ||
+                 toLinearSrgbNode->codeSnippetId() ==
+                         (int)BuiltInCodeSnippetID::kColorSpaceXformSRGB);
 
         ShaderSnippet::Args args = ShaderSnippet::kDefaultArgs;
         args.fPriorStageOutput = SkSL::String::printf("(%s).rgb1", color.c_str());
@@ -504,7 +513,11 @@ public:
         // linear srgb is the last child node.
         const ShaderNode* fromLinearSrgbNode = fNode->child(fNode->numChildren() - 1);
         SkASSERT(fromLinearSrgbNode->codeSnippetId() ==
-                        (int) BuiltInCodeSnippetID::kColorSpaceXformColorFilter);
+                         (int)BuiltInCodeSnippetID::kColorSpaceXformColorFilter ||
+                 fromLinearSrgbNode->codeSnippetId() ==
+                         (int)BuiltInCodeSnippetID::kColorSpaceXformPremul ||
+                 fromLinearSrgbNode->codeSnippetId() ==
+                         (int)BuiltInCodeSnippetID::kColorSpaceXformSRGB);
 
         ShaderSnippet::Args args = ShaderSnippet::kDefaultArgs;
         args.fPriorStageOutput = SkSL::String::printf("(%s).rgb1", color.c_str());
@@ -1124,38 +1137,57 @@ ShaderCodeDictionary::ShaderCodeDictionary(Layout layout)
             /*name=*/"ColorSpaceTransform",
             /*staticFn=*/"sk_color_space_transform",
             SnippetRequirementFlags::kPriorStageOutput,
-            /*uniforms=*/{ { "flags",          SkSLType::kInt },
-                           { "srcKind",        SkSLType::kInt },
-                           { "gamutTransform", SkSLType::kHalf3x3 },
-                           { "dstKind",        SkSLType::kInt },
-                           { "csXformCoeffs",  SkSLType::kHalf4x4 } }
+            /*uniforms=*/{ { "gamut",       SkSLType::kHalf3x3 },
+                           { "srcGABC",     SkSLType::kHalf4 },
+                           { "srcDEF_args", SkSLType::kHalf4 },
+                           { "dstGABC",     SkSLType::kHalf4 },
+                           { "dstDEF_args", SkSLType::kHalf4 } }
     };
-    fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kPremulAlphaColorFilter] = {
-            /*name=*/"PremulAlpha",
-            /*staticFn=*/"sk_premul_alpha",
+
+    fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kColorSpaceXformPremul] = {
+            /*name=*/"ColorSpaceTransformPremul",
+            /*staticFn=*/"sk_color_space_transform_premul",
             SnippetRequirementFlags::kPriorStageOutput,
-            /*uniforms=*/{}
+            /*uniforms=*/{ { "args", SkSLType::kHalf2 } }
+    };
+    fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kColorSpaceXformSRGB] = {
+            /*name=*/"ColorSpaceTransformSRGB",
+            /*staticFn=*/"sk_color_space_transform_srgb",
+            SnippetRequirementFlags::kPriorStageOutput,
+            /*uniforms=*/{ { "gamut",       SkSLType::kHalf3x3 },
+                           { "srcGABC",     SkSLType::kHalf4 },
+                           { "srcDEF_args", SkSLType::kHalf4 },
+                           { "dstGABC",     SkSLType::kHalf4 },
+                           { "dstDEF_args", SkSLType::kHalf4 } }
     };
 
     fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kPrimitiveColor] = {
             /*name=*/"PrimitiveColor",
-            /*staticFn=*/"sk_color_space_transform",
+            /*staticFn=*/"sk_passthrough",
             SnippetRequirementFlags::kPrimitiveColor,
-            /*uniforms=*/{ { "csXformFlags",          SkSLType::kInt },
-                           { "csXformSrcKind",        SkSLType::kInt },
-                           { "csXformGamutTransform", SkSLType::kHalf3x3 },
-                           { "csXformDstKind",        SkSLType::kInt },
-                           { "csXformCoeffs",         SkSLType::kHalf4x4 } },
-            /*texturesAndSamplers=*/{}
+            /*uniforms=*/{}
     };
 
-    fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kCircularRRectClip] = {
-            /*name=*/"CircularRRectClip",
-            /*staticFn=*/"sk_circular_rrect_clip",
-            SnippetRequirementFlags::kNone,
+    fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kAnalyticClip] = {
+            /*name=*/"AnalyticClip",
+            /*staticFn=*/"sk_analytic_clip",
+            SnippetRequirementFlags::kLocalCoords,
             /*uniforms=*/{ { "rect",           SkSLType::kFloat4 },
                            { "radiusPlusHalf", SkSLType::kFloat2 },
                            { "edgeSelect",     SkSLType::kHalf4 } }
+    };
+
+    fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kAnalyticAndAtlasClip] = {
+            /*name=*/"AnalyticAndAtlasClip",
+            /*staticFn=*/"sk_analytic_and_atlas_clip",
+            SnippetRequirementFlags::kLocalCoords,
+            /*uniforms=*/{ { "rect",           SkSLType::kFloat4 },
+                           { "radiusPlusHalf", SkSLType::kFloat2 },
+                           { "edgeSelect",     SkSLType::kHalf4 },
+                           { "texCoordOffset", SkSLType::kHalf2 },
+                           { "maskBounds",     SkSLType::kHalf4 },
+                           { "invAtlasSize",   SkSLType::kFloat2 } },
+            /*texturesAndSamplers=*/{"atlasSampler"}
     };
 
     fBuiltInCodeSnippets[(int) BuiltInCodeSnippetID::kCompose] = {
@@ -1251,20 +1283,6 @@ static_assert((int)SkBlendMode::kHue        == (int)BuiltInCodeSnippetID::kFixed
 static_assert((int)SkBlendMode::kSaturation == (int)BuiltInCodeSnippetID::kFixedBlend_Saturation - kFixedBlendIDOffset);
 static_assert((int)SkBlendMode::kColor      == (int)BuiltInCodeSnippetID::kFixedBlend_Color      - kFixedBlendIDOffset);
 static_assert((int)SkBlendMode::kLuminosity == (int)BuiltInCodeSnippetID::kFixedBlend_Luminosity - kFixedBlendIDOffset);
-
-// Verify enum constants match values expected by static module SkSL functions
-static_assert(0 == static_cast<int>(skcms_TFType_Invalid),   "ColorSpaceTransform code depends on skcms_TFType");
-static_assert(1 == static_cast<int>(skcms_TFType_sRGBish),   "ColorSpaceTransform code depends on skcms_TFType");
-static_assert(2 == static_cast<int>(skcms_TFType_PQish),     "ColorSpaceTransform code depends on skcms_TFType");
-static_assert(3 == static_cast<int>(skcms_TFType_HLGish),    "ColorSpaceTransform code depends on skcms_TFType");
-static_assert(4 == static_cast<int>(skcms_TFType_HLGinvish), "ColorSpaceTransform code depends on skcms_TFType");
-
-// TODO: We can meaningfully check these when we can use C++20 features.
-// static_assert(0x1  == SkColorSpaceXformSteps::Flags{.unpremul = true}.mask(),        "ColorSpaceTransform code depends on SkColorSpaceXformSteps::Flags");
-// static_assert(0x2  == SkColorSpaceXformSteps::Flags{.linearize = true}.mask(),       "ColorSpaceTransform code depends on SkColorSpaceXformSteps::Flags");
-// static_assert(0x4  == SkColorSpaceXformSteps::Flags{.gamut_transform = true}.mask(), "ColorSpaceTransform code depends on SkColorSpaceXformSteps::Flags");
-// static_assert(0x8  == SkColorSpaceXformSteps::Flags{.encode = true}.mask(),          "ColorSpaceTransform code depends on SkColorSpaceXformSteps::Flags");
-// static_assert(0x10 == SkColorSpaceXformSteps::Flags{.premul = true}.mask(),          "ColorSpaceTransform code depends on SkColorSpaceXformSteps::Flags");
 
 static_assert(0 == static_cast<int>(SkTileMode::kClamp),  "ImageShader code depends on SkTileMode");
 static_assert(1 == static_cast<int>(SkTileMode::kRepeat), "ImageShader code depends on SkTileMode");

@@ -63,7 +63,7 @@ public:
             functor(node);
             return;
         }
-        HashSet<Node*> seen;
+        UncheckedKeyHashSet<Node*> seen;
         Vector<Node*> worklist;
         seen.add(node);
         worklist.append(node);

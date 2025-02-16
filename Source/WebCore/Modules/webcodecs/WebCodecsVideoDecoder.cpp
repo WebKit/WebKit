@@ -83,32 +83,42 @@ static bool isSupportedDecoderCodec(const String& codec, const Settings::Values&
 
 static bool isValidDecoderConfig(const WebCodecsVideoDecoderConfig& config)
 {
+    // https://w3c.github.io/webcodecs/#valid-videodecoderconfig
+    // 1. If codec is empty after stripping leading and trailing ASCII whitespace, return false.
     if (StringView(config.codec).trim(isASCIIWhitespace<UChar>).isEmpty())
         return false;
 
-    if (config.description && std::visit([](auto& view) { return view->isDetached(); }, *config.description))
-        return false;
-
+    // 2. If one of codedWidth or codedHeight is provided but the other isn’t, return false.
     if (!!config.codedWidth != !!config.codedHeight)
         return false;
+
+    // 3. If codedWidth = 0 or codedHeight = 0, return false.
     if (config.codedWidth && !*config.codedWidth)
         return false;
     if (config.codedHeight && !*config.codedHeight)
         return false;
 
+    // 4. If one of displayAspectWidth or displayAspectHeight is provided but the other isn’t, return false.
     if (!!config.displayAspectWidth != !!config.displayAspectHeight)
         return false;
+
+    // 5. If displayAspectWidth = 0 or displayAspectHeight = 0, return false.
     if (config.displayAspectWidth && !*config.displayAspectWidth)
         return false;
     if (config.displayAspectHeight && !*config.displayAspectHeight)
         return false;
 
+    // 6. If description is [detached], return false.
+    if (config.description && std::visit([](auto& view) { return view->isDetached(); }, *config.description))
+        return false;
+
+    // 7. Return true.
     return true;
 }
 
 static VideoDecoder::Config createVideoDecoderConfig(const WebCodecsVideoDecoderConfig& config)
 {
-    std::span<const uint8_t> description;
+    Vector<uint8_t> description;
     if (config.description) {
         auto data = std::visit([](auto& buffer) {
             return buffer ? buffer->span() : std::span<const uint8_t> { };
@@ -138,7 +148,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
     m_isKeyChunkRequired = true;
 
     bool isSupportedCodec = isSupportedDecoderCodec(config.codec, context.settingsValues());
-    queueControlMessageAndProcess({ *this, [this, config = WTFMove(config), isSupportedCodec]() mutable {
+    queueControlMessageAndProcess({ *this, [this, codec = config.codec, config = createVideoDecoderConfig(config), isSupportedCodec]() mutable {
         RefPtr context = scriptExecutionContext();
 
         auto identifier = context->identifier();
@@ -151,7 +161,7 @@ ExceptionOr<void> WebCodecsVideoDecoder::configure(ScriptExecutionContext& conte
             return WebCodecsControlMessageOutcome::Processed;
         }
 
-        Ref createDecoderPromise = VideoDecoder::create(config.codec, createVideoDecoderConfig(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
+        Ref createDecoderPromise = VideoDecoder::create(codec, WTFMove(config), [identifier, weakThis = ThreadSafeWeakPtr { *this }, decoderCount = ++m_decoderCount] (auto&& result) {
             postTaskToCodec<WebCodecsVideoDecoder>(identifier, weakThis, [result = WTFMove(result), decoderCount] (auto& decoder) mutable {
                 if (decoder.state() != WebCodecsCodecState::Configured || decoder.m_decoderCount != decoderCount)
                     return;

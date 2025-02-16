@@ -42,7 +42,7 @@ MockPreviewLoaderClient& MockPreviewLoaderClient::singleton()
 void MockPreviewLoaderClient::didRequestPassword(Function<void(const String&)>&& completionHandler)
 {
     ASSERT(isMainThread());
-    RunLoop::current().dispatch([completionHandler = WTFMove(completionHandler), password = m_password] {
+    RunLoop::protectedCurrent()->dispatch([completionHandler = WTFMove(completionHandler), password = m_password] {
         completionHandler(password);
     });
 }

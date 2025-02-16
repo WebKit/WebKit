@@ -16,6 +16,6 @@ for (let i = 0; i < 1000; ++i) {
 
 transferArrayBuffer(array.buffer)
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     assert(foo(array) === 0);
 }

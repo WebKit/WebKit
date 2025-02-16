@@ -34,7 +34,7 @@ function main() {
     const a = createObject();
     new Opt(a);
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         new Opt(createObject());
     }
 

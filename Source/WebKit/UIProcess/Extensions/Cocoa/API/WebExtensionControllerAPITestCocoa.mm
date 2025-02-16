@@ -77,32 +77,18 @@ void WebExtensionController::testEqual(bool result, String expectedValue, String
     RELEASE_LOG_ERROR(Extensions, "Test equality failed: %{public}@: %{public}@ !== %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)expectedValue, (NSString *)actualValue, (NSString *)sourceURL, lineNumber);
 }
 
-void WebExtensionController::testMessage(String message, String sourceURL, unsigned lineNumber)
+void WebExtensionController::testLogMessage(String message, String sourceURL, unsigned lineNumber)
 {
     auto delegate = this->delegate();
-    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestMessage:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() recordTestMessage:message andSourceURL:sourceURL lineNumber:lineNumber];
+    if ([delegate respondsToSelector:@selector(_webExtensionController:logTestMessage:andSourceURL:lineNumber:)]) {
+        [delegate _webExtensionController:wrapper() logTestMessage:message andSourceURL:sourceURL lineNumber:lineNumber];
         return;
     }
 
     if (message.isEmpty())
         message = "(no message)"_s;
 
-    RELEASE_LOG_INFO(Extensions, "Test message: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
-}
-
-void WebExtensionController::testYielded(String message, String sourceURL, unsigned lineNumber)
-{
-    auto delegate = this->delegate();
-    if ([delegate respondsToSelector:@selector(_webExtensionController:recordTestYieldedWithMessage:andSourceURL:lineNumber:)]) {
-        [delegate _webExtensionController:wrapper() recordTestYieldedWithMessage:message andSourceURL:sourceURL lineNumber:lineNumber];
-        return;
-    }
-
-    if (message.isEmpty())
-        message = "(no message)"_s;
-
-    RELEASE_LOG_INFO(Extensions, "Test yielded: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
+    RELEASE_LOG_INFO(Extensions, "Test log: %{public}@ (%{public}@:%{public}u)", (NSString *)message, (NSString *)sourceURL, lineNumber);
 }
 
 void WebExtensionController::testSentMessage(String message, String argument, String sourceURL, unsigned lineNumber)

@@ -31,6 +31,7 @@ enum class WebKit::ContextMenuItemIsSeparator : bool;
     String title;
     int state;
     int tag;
+    WebCore::ContextMenuAction action;
     WebKit::ContextMenuItemEnablement enabled;
     WebKit::ContextMenuItemHasAction hasAction;
     WebKit::ContextMenuItemIsSeparator separator;

@@ -3,13 +3,10 @@
 ./bytecode/ObjectPropertyConditionSet.cpp
 ./bytecompiler/NodesCodegen.cpp
 ./debugger/Debugger.cpp
-./dfg/DFGArgumentsEliminationPhase.cpp
 ./dfg/DFGDesiredWatchpoints.h
 ./dfg/DFGLazyJSValue.cpp
 ./dfg/DFGObjectAllocationSinkingPhase.cpp
 ./dfg/DFGOperations.cpp
-./dfg/DFGPhantomInsertionPhase.cpp
-./dfg/DFGValidate.cpp
 ./ftl/FTLCompile.cpp
 ./ftl/FTLOSRExitHandle.cpp
 ./ftl/FTLPatchpointExceptionHandle.cpp
@@ -19,7 +16,6 @@
 ./runtime/CachedTypes.cpp
 ./runtime/SamplingProfiler.cpp
 ./runtime/WaiterListManager.h
-./runtime/Watchdog.cpp
 ./wasm/WasmCallee.cpp
 ./wasm/WasmOperations.cpp
 ./wasm/WasmTable.cpp

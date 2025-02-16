@@ -28,6 +28,7 @@ headers: "ModelProcessCreationParameters.h" "AuxiliaryProcessCreationParameters.
     WebKit::AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
     ProcessID parentPID;
     String applicationVisibleName;
+    bool restrictiveRenderingMode;
 };
 
 #endif

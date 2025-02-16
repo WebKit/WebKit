@@ -4,6 +4,7 @@
 /*---
 esid: sec-initializedatetimeformat
 description: Time zone identifiers are case-normalized
+features: [canonical-tz]
 ---*/
 
 const timeZoneIdentifiers = [
@@ -601,7 +602,6 @@ const timeZoneIdentifiers = [
   "US/Michigan",
   "US/Mountain",
   "US/Pacific",
-  "US/Pacific-New",
   "US/Samoa",
   "UTC",
   "Universal",

@@ -176,7 +176,7 @@ id<MTLCounterSampleBuffer> Device::timestampsBuffer(id<MTLCommandBuffer> command
         return nil;
     }
 
-    [m_sampleCounterBuffers setObject:buffer forKey:commandBuffer];
+    trackTimestampsBuffer(commandBuffer, buffer);
 
     return buffer;
 #else
@@ -188,34 +188,39 @@ id<MTLCounterSampleBuffer> Device::timestampsBuffer(id<MTLCommandBuffer> command
 
 void Device::resolveTimestampsForBuffer(id<MTLCommandBuffer> commandBuffer)
 {
-    id<MTLCounterSampleBuffer> sampleBuffer = [m_sampleCounterBuffers objectForKey:commandBuffer];
-    if (!sampleBuffer)
+    if (!enableEncoderTimestamps())
+        return;
+
+    NSMutableArray<id<MTLCounterSampleBuffer>>* sampleBufferArray = [m_sampleCounterBuffers objectForKey:commandBuffer];
+    if (!sampleBufferArray)
         return;
 
     [m_sampleCounterBuffers removeObjectForKey:commandBuffer];
-    id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
-    auto timestampCount = sampleBuffer.sampleCount;
-    id<MTLBuffer> counterDataBuffer = safeCreateBuffer(sizeof(MTLCounterResultTimestamp) * timestampCount);
-    [blitCommandEncoder resolveCounters:sampleBuffer inRange:NSMakeRange(0, timestampCount) destinationBuffer:counterDataBuffer destinationOffset:0];
-    [blitCommandEncoder endEncoding];
-    NSMutableArray<id<MTLBuffer>>* resolvedBuffers = [m_resolvedSampleCounterBuffers objectForKey:commandBuffer];
-    if (!resolvedBuffers) {
-        resolvedBuffers = [NSMutableArray arrayWithObject:counterDataBuffer];
-        [m_resolvedSampleCounterBuffers setObject:resolvedBuffers forKey:commandBuffer];
-    } else
-        [resolvedBuffers addObject:counterDataBuffer];
+    for (id<MTLCounterSampleBuffer> sampleBuffer in sampleBufferArray) {
+        id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
+        auto timestampCount = sampleBuffer.sampleCount;
+        id<MTLBuffer> counterDataBuffer = safeCreateBuffer(sizeof(MTLCounterResultTimestamp) * timestampCount);
+        [blitCommandEncoder resolveCounters:sampleBuffer inRange:NSMakeRange(0, timestampCount) destinationBuffer:counterDataBuffer destinationOffset:0];
+        [blitCommandEncoder endEncoding];
+        NSMutableArray<id<MTLBuffer>>* resolvedBuffers = [m_resolvedSampleCounterBuffers objectForKey:commandBuffer];
+        if (!resolvedBuffers) {
+            resolvedBuffers = [NSMutableArray arrayWithObject:counterDataBuffer];
+            [m_resolvedSampleCounterBuffers setObject:resolvedBuffers forKey:commandBuffer];
+        } else
+            [resolvedBuffers addObject:counterDataBuffer];
 
-    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> completedCommandBuffer) {
-        for (id<MTLBuffer> buffer in resolvedBuffers) {
-            auto timestamps = unsafeMakeSpan(static_cast<MTLCounterResultTimestamp*>(buffer.contents), buffer.length);
-            WTFLogAlways("Timestamps for buffer %@", buffer.label);
-            for (size_t i = 0, timestampCount = buffer.length / sizeof(MTLCounterResultTimestamp); (i + 1) < timestampCount; i += 2) {
-                auto timeDifference = timestamps[i + 1].timestamp - timestamps[i].timestamp;
-                WTFLogAlways("\tencoder time %f", timeDifference / 100000.0f);
+        [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> completedCommandBuffer) {
+            for (id<MTLBuffer> buffer in resolvedBuffers) {
+                auto timestamps = unsafeMakeSpan(static_cast<MTLCounterResultTimestamp*>(buffer.contents), buffer.length);
+                WTFLogAlways("Timestamps for buffer %@", buffer.label); // NOLINT
+                for (size_t i = 0, timestampCount = buffer.length / sizeof(MTLCounterResultTimestamp); (i + 1) < timestampCount; i += 2) {
+                    auto timeDifference = timestamps[i + 1].timestamp - timestamps[i].timestamp;
+                    WTFLogAlways("\tencoder time %f", timeDifference / 100000.0f); // NOLINT
+                }
             }
-        }
-        [m_resolvedSampleCounterBuffers removeObjectForKey:completedCommandBuffer];
-    }];
+            [m_resolvedSampleCounterBuffers removeObjectForKey:completedCommandBuffer];
+        }];
+    }
 }
 
 bool Device::shouldStopCaptureAfterSubmit()
@@ -276,6 +281,23 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     , m_instance(adapter.weakInstance())
     , m_maxVerticesPerDrawCall(computeMaxCountForDevice(device))
 {
+#if ENABLE(WEBGPU_SWIFT)
+    NSError *error = nil;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        id<MTLLibrary> library = [device newLibraryWithSource:@"[[vertex]] float4 vsNop() { return (float4)0; }" options:options error:&error];
+        if (error)
+            WTFLogAlways("%@", error); // NOLINT
+        m_nopVertexFunction = [library newFunctionWithName:@"vsNop"];
+    });
+    RELEASE_ASSERT(m_nopVertexFunction);
+    RELEASE_ASSERT(!error);
+#endif
+
 #if PLATFORM(MAC)
     auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {
         RefPtr<Device> protectedThis = weakThis.get();
@@ -725,16 +747,20 @@ id<MTLRenderPipelineState> Device::indexBufferClampPipeline(MTLIndexType indexTy
     using namespace metal;
     [[vertex]] void vsUshortIndexClamp(device const ushort* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* data [[buffer(2)]], uint indexId [[vertex_id]])
     {
-        ushort vertexIndex = data[primitiveRestart] + indexBuffer[indexId];
-        if (vertexIndex + indexedOutput.baseVertex >= data[vertexCount] + data[primitiveRestart]) {
+        ushort indexBufferValue = indexBuffer[indexId];
+        ushort vertexIndex = data[primitiveRestart] + indexBufferValue;
+        bool negativeCondition = indexedOutput.baseVertex + data[primitiveRestart] < indexedOutput.baseVertex;
+        if (negativeCondition || (vertexIndex + indexedOutput.baseVertex >= data[vertexCount] + data[primitiveRestart])) {
             indexedOutput.indexCount = 0u;
             *(&indexedOutput.baseInstance + 1) = 1;
         }
     }
     [[vertex]] void vsUintIndexClamp(device const uint* indexBuffer [[buffer(0)]], device MTLDrawIndexedPrimitivesIndirectArguments& indexedOutput [[buffer(1)]], const constant uint* data [[buffer(2)]], uint indexId [[vertex_id]])
     {
-        uint vertexIndex = data[primitiveRestart] + indexBuffer[indexId];
-        if (vertexIndex + indexedOutput.baseVertex >= data[vertexCount] + data[primitiveRestart]) {
+        uint indexBufferValue = indexBuffer[indexId];
+        uint vertexIndex = data[primitiveRestart] + indexBufferValue;
+        bool negativeCondition = indexedOutput.baseVertex + data[primitiveRestart] < indexedOutput.baseVertex;
+        if (negativeCondition || (vertexIndex + indexedOutput.baseVertex >= data[vertexCount] + data[primitiveRestart])) {
             indexedOutput.indexCount = 0u;
             *(&indexedOutput.baseInstance + 1) = 1;
         }
@@ -866,9 +892,10 @@ id<MTLRenderPipelineState> Device::indirectBufferClampPipeline(NSUInteger raster
             || input.vertexCount + input.vertexStart > minCounts[0]
             || input.vertexStart >= minCounts[0];
         bool instanceCondition = input.baseInstance + input.instanceCount > minCounts[1] || input.baseInstance >= minCounts[1];
-        bool condition = vertexCondition || instanceCondition;
-        output.vertexCount = metal::select(input.vertexCount, 0u, condition);
-        output.instanceCount = input.instanceCount;
+        auto minVertexCountMinusVertexStart = minCounts[0] > input.vertexStart ? (minCounts[0] - input.vertexStart) : 0u;
+        output.vertexCount = metal::select(input.vertexCount, minVertexCountMinusVertexStart, vertexCondition);
+        auto minInstanceCountMinusInstanceStart = minCounts[1] > input.baseInstance ? (minCounts[1] - input.baseInstance) : 0u;
+        output.instanceCount = metal::select(input.instanceCount, minInstanceCountMinusInstanceStart, instanceCondition);
         output.vertexStart = input.vertexStart;
         output.baseInstance = input.baseInstance;
         if (lostCondition)
@@ -993,8 +1020,10 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
     {
         device const IndexDataUint& data = *indexData;
         uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0;
-        uint32_t vertexIndex = data.indexBuffer[indexId + data.firstIndex] + k;
-        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
+        uint32_t indexBufferValue = data.indexBuffer[indexId + data.firstIndex];
+        uint32_t vertexIndex = indexBufferValue + k;
+        bool negativeCondition = data.baseVertex + k < data.baseVertex;
+        if (negativeCondition || (data.baseVertex + vertexIndex >= data.minVertexCount + k)) {
             *icb_container->outOfBoundsRead = 1;
             render_command cmd(icb_container->commandBuffer, data.renderCommand);
             cmd.draw_indexed_primitives(data.primitiveType,
@@ -1012,8 +1041,10 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
     {
         device const IndexDataUshort& data = *indexData;
         uint32_t k = (data.primitiveType == primitive_type::triangle_strip || data.primitiveType == primitive_type::line_strip) ? 1 : 0;
-        ushort vertexIndex = data.indexBuffer[indexId + data.firstIndex] + k;
-        if (data.baseVertex + vertexIndex >= data.minVertexCount + k) {
+        ushort indexBufferValue = data.indexBuffer[indexId + data.firstIndex];
+        ushort vertexIndex = indexBufferValue + k;
+        bool negativeCondition = data.baseVertex + k < data.baseVertex;
+        if (negativeCondition || (data.baseVertex + vertexIndex >= data.minVertexCount + k)) {
             *icb_container->outOfBoundsRead = 1;
             render_command cmd(icb_container->commandBuffer, data.renderCommand);
             cmd.draw_indexed_primitives(data.primitiveType,
@@ -1050,6 +1081,16 @@ id<MTLSharedEvent> Device::resolveTimestampsSharedEvent()
         m_resolveTimestampsSharedEvent = [m_device newSharedEvent];
 
     return m_resolveTimestampsSharedEvent;
+}
+
+void Device::trackTimestampsBuffer(id<MTLCommandBuffer> commandBuffer, id<MTLCounterSampleBuffer> counterSampleBuffer)
+{
+    NSMutableArray<id<MTLCounterSampleBuffer>>* sampleBufferArray = [m_sampleCounterBuffers objectForKey:commandBuffer];
+    if (!sampleBufferArray) {
+        sampleBufferArray = [NSMutableArray array];
+        [m_sampleCounterBuffers setObject:sampleBufferArray forKey:commandBuffer];
+    }
+    [sampleBufferArray addObject:counterSampleBuffer];
 }
 
 } // namespace WebGPU

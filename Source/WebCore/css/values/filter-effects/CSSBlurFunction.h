@@ -40,9 +40,9 @@ struct Blur {
 };
 using BlurFunction = FunctionNotation<CSSValueBlur, Blur>;
 
-DEFINE_TYPE_WRAPPER(Blur, value);
+DEFINE_TYPE_WRAPPER_GET(Blur, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Blur, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Blur, 1)

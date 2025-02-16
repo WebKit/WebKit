@@ -36,6 +36,10 @@
 
 namespace WebCore {
 
+namespace CSS {
+struct SerializationContext;
+}
+
 class Element;
 const int UninitializedDescriptor = -1;
 const float DefaultDensityValue = 1.0;
@@ -108,6 +112,6 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
 
 Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(StringView attribute);
 void getURLsFromSrcsetAttribute(const Element&, StringView attribute, ListHashSet<URL>&);
-String replaceURLsInSrcsetAttribute(const Element&, StringView attribute, const UncheckedKeyHashMap<String, String>& replacementURLStrings);
+String replaceURLsInSrcsetAttribute(const Element&, StringView attribute, const CSS::SerializationContext&);
 
 } // namespace WebCore

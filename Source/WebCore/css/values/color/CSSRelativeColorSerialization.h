@@ -37,34 +37,34 @@ namespace CSS {
 
 // https://drafts.csswg.org/css-color-5/#serial-relative-color
 template<typename RelativeColorType>
-void serializationForCSSRelativeColor(StringBuilder& builder, const RelativeColorType& relativeColor)
+void serializationForCSSRelativeColor(StringBuilder& builder, const CSS::SerializationContext& context, const RelativeColorType& relativeColor)
 {
     using Descriptor = typename RelativeColorType::Descriptor;
     using ColorType = typename Descriptor::ColorType;
 
     if constexpr (Descriptor::usesColorFunctionForSerialization) {
         builder.append("color(from "_s);
-        serializationForCSS(builder, relativeColor.origin);
+        serializationForCSS(builder, context, relativeColor.origin);
         builder.append(' ');
         builder.append(serialization(ColorSpaceFor<ColorType>));
     } else {
         builder.append(Descriptor::serializationFunctionName);
         builder.append("(from "_s);
-        serializationForCSS(builder, relativeColor.origin);
+        serializationForCSS(builder, context, relativeColor.origin);
     }
 
     auto [c1, c2, c3, alpha] = relativeColor.components;
 
     builder.append(' ');
-    serializationForCSS(builder, c1);
+    serializationForCSS(builder, context, c1);
     builder.append(' ');
-    serializationForCSS(builder, c2);
+    serializationForCSS(builder, context, c2);
     builder.append(' ');
-    serializationForCSS(builder, c3);
+    serializationForCSS(builder, context, c3);
 
     if (alpha) {
         builder.append(" / "_s);
-        serializationForCSS(builder, *alpha);
+        serializationForCSS(builder, context, *alpha);
     }
 
     builder.append(')');

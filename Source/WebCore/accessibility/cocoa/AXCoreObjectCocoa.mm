@@ -101,9 +101,9 @@ void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFont
         [fontAttributes setValue:bridge_cast(postScriptName.get()) forKey:NSAccessibilityFontNameKey];
     auto traits = CTFontGetSymbolicTraits(font);
     if (traits & kCTFontTraitBold)
-        [fontAttributes setValue:@YES forKey:@"AXFontBold"];
+        [fontAttributes setValue:@YES forKey:NSAccessibilityFontBoldAttribute];
     if (traits & kCTFontTraitItalic)
-        [fontAttributes setValue:@YES forKey:@"AXFontItalic"];
+        [fontAttributes setValue:@YES forKey:NSAccessibilityFontItalicAttribute];
 
     [attributedString addAttribute:NSAccessibilityFontTextAttribute value:fontAttributes.get() range:range];
 #endif // PLATFORM(MAC)
@@ -146,7 +146,7 @@ void attributedStringSetNeedsSpellCheck(NSMutableAttributedString *string, const
         return;
 
     // Inform the AT that we want it to spell-check for us by setting AXDidSpellCheck to @NO.
-    attributedStringSetNumber(string, AXDidSpellCheckAttribute, @NO, NSMakeRange(0, string.length));
+    attributedStringSetNumber(string, NSAccessibilityDidSpellCheckAttribute, @NO, NSMakeRange(0, string.length));
 }
 
 void attributedStringSetElement(NSMutableAttributedString *string, NSString *attribute, const AXCoreObject& object, const NSRange& range)
@@ -157,7 +157,7 @@ void attributedStringSetElement(NSMutableAttributedString *string, NSString *att
     id wrapper = object.wrapper();
     if ([attribute isEqualToString:NSAccessibilityAttachmentTextAttribute] && object.isAttachment()) {
         if (id attachmentView = [wrapper attachmentView])
-            wrapper = [wrapper attachmentView];
+            wrapper = attachmentView;
     }
 
     if (RetainPtr axElement = adoptCF(NSAccessibilityCreateAXUIElementRef(wrapper)))
@@ -207,20 +207,20 @@ RetainPtr<NSMutableAttributedString> AXCoreObject::createAttributedString(String
     bool didSetHeadingLevel = false;
     for (RefPtr ancestor = this; ancestor; ancestor = ancestor->parentObject()) {
         if (ancestor->hasMarkTag())
-            attributedStringSetNumber(string.get(), @"AXHighlight", @YES, range);
+            attributedStringSetNumber(string.get(), NSAccessibilityHighlightAttribute, @YES, range);
 
         switch (ancestor->roleValue()) {
         case AccessibilityRole::Insertion:
-            attributedStringSetNumber(string.get(), @"AXIsSuggestedInsertion", @YES, range);
+            attributedStringSetNumber(string.get(), NSAccessibilityIsSuggestedInsertionAttribute, @YES, range);
             break;
         case AccessibilityRole::Deletion:
-            attributedStringSetNumber(string.get(), @"AXIsSuggestedDeletion", @YES, range);
+            attributedStringSetNumber(string.get(), NSAccessibilityIsSuggestedDeletionAttribute, @YES, range);
             break;
         case AccessibilityRole::Suggestion:
-            attributedStringSetNumber(string.get(), @"AXIsSuggestion", @YES, range);
+            attributedStringSetNumber(string.get(), NSAccessibilityIsSuggestionAttribute, @YES, range);
             break;
         case AccessibilityRole::Mark:
-            attributedStringSetNumber(string.get(), @"AXHighlight", @YES, range);
+            attributedStringSetNumber(string.get(), NSAccessibilityHighlightAttribute, @YES, range);
             break;
         default:
             break;
@@ -232,7 +232,7 @@ RetainPtr<NSMutableAttributedString> AXCoreObject::createAttributedString(String
         if (!didSetHeadingLevel) {
             if (unsigned level = ancestor->headingLevel()) {
                 didSetHeadingLevel = true;
-                [string.get() addAttribute:@"AXHeadingLevel" value:@(level) range:range];
+                [string.get() addAttribute:NSAccessibilityHeadingLevelAttribute value:@(level) range:range];
             }
         }
     }

@@ -342,7 +342,8 @@ struct _WebKitFeatureList {
 
     ~_WebKitFeatureList()
     {
-        forEach(items, webkit_feature_unref);
+        for (auto* item : items)
+            webkit_feature_unref(item);
     }
 
     Vector<WebKitFeature*> items;

@@ -228,7 +228,7 @@ inline void AtomHTMLToken::initializeAttributes(const HTMLToken::AttributeList& 
     if (!size)
         return;
 
-    HashSet<AtomString> addedAttributes;
+    UncheckedKeyHashSet<AtomString> addedAttributes;
     addedAttributes.reserveInitialCapacity(size);
     m_attributes = WTF::compactMap(attributes, [&](auto& attribute) -> std::optional<Attribute> {
         if (attribute.name.isEmpty())

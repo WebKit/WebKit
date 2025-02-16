@@ -108,8 +108,7 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyTable, (JSGlobalObject* globalObj
     if (!wasmTable)
         return throwVMRangeError(globalObject, throwScope, "couldn't create Table"_s);
 
-    JSWebAssemblyTable* jsWebAssemblyTable = JSWebAssemblyTable::tryCreate(globalObject, vm, webAssemblyTableStructure, wasmTable.releaseNonNull());
-    RETURN_IF_EXCEPTION(throwScope, encodedJSValue());
+    JSWebAssemblyTable* jsWebAssemblyTable = JSWebAssemblyTable::create(vm, webAssemblyTableStructure, wasmTable.releaseNonNull());
 
     JSValue defaultValue = callFrame->argumentCount() < 2
         ? defaultValueForReferenceType(jsWebAssemblyTable->table()->wasmType())

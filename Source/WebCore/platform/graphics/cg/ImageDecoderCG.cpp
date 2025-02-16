@@ -50,8 +50,6 @@
 #include "PhotosFormatSoftLink.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderCG);
@@ -626,15 +624,15 @@ String ImageDecoderCG::decodeUTI(CGImageSourceRef imageSource, const SharedBuffe
         return uti;
     }
 
-    static constexpr auto ftypSignature = FourCC("ftyp");
-    static constexpr auto avifBrand = FourCC("avif");
-    static constexpr auto avisBrand = FourCC("avis");
+    static const FourCC ftypSignature = std::span { "ftyp" };
+    static const FourCC avifBrand = std::span { "avif" };
+    static const FourCC avisBrand = std::span { "avis" };
 
     auto boxUnsigned = [span = data.span()](unsigned index) -> unsigned {
         constexpr bool isLittleEndian = false;
-        const unsigned* boxBytes = reinterpret_cast<const unsigned*>(span.data());
+        auto value = reinterpretCastSpanStartTo<const unsigned>(span.subspan(index * sizeof(unsigned)));
         // Numbers in the file are BigEndian.
-        return flipBytesIfLittleEndian(boxBytes[index], isLittleEndian);
+        return flipBytesIfLittleEndian(value, isLittleEndian);
     };
 
     auto checkAVIFBrand = [](unsigned brand) -> std::optional<String> {
@@ -738,7 +736,5 @@ bool ImageDecoderCG::shouldUseQuickLookForFullscreen() const
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

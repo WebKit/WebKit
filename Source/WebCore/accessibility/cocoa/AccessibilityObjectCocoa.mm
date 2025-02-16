@@ -184,7 +184,7 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(cons
 
 RetainPtr<CTFontRef> fontFrom(const RenderStyle& style)
 {
-    return style.fontCascade().primaryFont().getCTFont();
+    return style.fontCascade().primaryFont()->getCTFont();
 }
 
 Color textColorFrom(const RenderStyle& style)

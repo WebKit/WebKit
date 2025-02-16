@@ -8,6 +8,7 @@
 
 #include "angle_gl.h"
 #include "common/mathutil.h"
+#include "common/span.h"
 #include "compiler/translator/Diagnostics.h"
 #include "compiler/translator/Symbol.h"
 #include "compiler/translator/SymbolTable.h"
@@ -286,7 +287,7 @@ class ValidateTypeSizeLimitationsTraverser : public TIntermTraverser
             variableOut->precision = GLVariablePrecision(type);
         }
 
-        const TSpan<const unsigned int> &arraySizes = type.getArraySizes();
+        const angle::Span<const unsigned int> &arraySizes = type.getArraySizes();
         if (!arraySizes.empty())
         {
             variableOut->arraySizes.assign(arraySizes.begin(), arraySizes.end());

@@ -43,11 +43,11 @@ Ref<CSSReflectValue> CSSReflectValue::create(CSSValueID direction, Ref<CSSPrimit
     return adoptRef(*new CSSReflectValue(direction, WTFMove(offset), WTFMove(mask)));
 }
 
-String CSSReflectValue::customCSSText() const
+String CSSReflectValue::customCSSText(const CSS::SerializationContext& context) const
 {
     if (m_mask)
-        return makeString(nameLiteral(m_direction), ' ', m_offset->cssText(), ' ', m_mask->cssText());
-    return makeString(nameLiteral(m_direction), ' ', m_offset->cssText());
+        return makeString(nameLiteral(m_direction), ' ', m_offset->cssText(context), ' ', m_mask->cssText(context));
+    return makeString(nameLiteral(m_direction), ' ', m_offset->cssText(context));
 }
 
 bool CSSReflectValue::equals(const CSSReflectValue& other) const

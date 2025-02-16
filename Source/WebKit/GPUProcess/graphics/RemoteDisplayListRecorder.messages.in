@@ -53,7 +53,6 @@ messages -> RemoteDisplayListRecorder Stream {
     ResetClip()
     DrawGlyphs(WebCore::DisplayList::DrawGlyphs item)
     DrawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier)
-    DrawDisplayListItems(Vector<WebCore::DisplayList::Item> items, WebCore::FloatPoint destination)
     DrawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, WebCore::FloatRect sourceImageRect, Ref<WebCore::Filter> filter)
     DrawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::FloatRect destinationRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
     DrawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, WebCore::FloatRect destRect, WebCore::FloatRect srcRect, struct WebCore::ImagePaintingOptions options)
@@ -109,6 +108,7 @@ messages -> RemoteDisplayListRecorder Stream {
 
     BeginPage(WebCore::IntSize pageSize)
     EndPage()
+    SetURLForRect(URL link, WebCore::FloatRect destRect)
 
 #if PLATFORM(COCOA) && ENABLE(VIDEO)
     DrawVideoFrame(struct WebKit::SharedVideoFrame frame, WebCore::FloatRect rect, struct WebCore::ImageOrientation orientation, bool shouldDiscardAlpha) NotStreamEncodable

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) Research In Motion Limited 2009-2010. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -83,8 +84,7 @@ public:
     static void markForLayoutAndParentResourceInvalidation(RenderObject&, bool needsLayout = true);
     static void markForLayoutAndParentResourceInvalidationIfNeeded(RenderObject&, bool needsLayout, SingleThreadWeakHashSet<RenderObject>* visitedRenderers);
 
-protected:
-    void fillAndStrokePathOrShape(GraphicsContext&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement* shape) const;
+    static void fillAndStrokePathOrShape(GraphicsContext&, OptionSet<RenderSVGResourceMode>, const Path*, const RenderElement* shape);
 };
 
 constexpr bool resourceWasApplied(OptionSet<LegacyRenderSVGResource::ApplyResult> result)

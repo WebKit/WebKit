@@ -37,75 +37,95 @@
 
 namespace WebCore {
 
-static FileSystemWritableFileStream::WriteParams writeParamsFromChunk(FileSystemWritableFileStream::ChunkType&& chunk)
+static ExceptionOr<FileSystemWritableFileStream::WriteParams> writeParamsFromChunk(FileSystemWritableFileStream::ChunkType&& chunk)
 {
-    FileSystemWritableFileStream::WriteParams result;
-    result.type = FileSystemWritableFileStream::WriteCommandType::Write;
-    WTF::switchOn(WTFMove(chunk), [&](FileSystemWritableFileStream::WriteParams&& params) {
-        result = WTFMove(params);
-    }, [&](RefPtr<JSC::ArrayBufferView>&& data) {
-        result.data = WTFMove(data);
-    }, [&](RefPtr<JSC::ArrayBuffer>&& data) {
-        result.data = WTFMove(data);
-    }, [&](RefPtr<Blob>&& data) {
-        result.data = WTFMove(data);
-    }, [&](String&& data) {
-        result.data = WTFMove(data);
+    return WTF::switchOn(WTFMove(chunk), [](FileSystemWritableFileStream::WriteParams&& params) -> ExceptionOr<FileSystemWritableFileStream::WriteParams> {
+        switch (params.type) {
+        case FileSystemWriteCommandType::Write:
+            if (!params.data)
+                return Exception { ExceptionCode::TypeError, "Data is missing"_s };
+            return params;
+        case FileSystemWriteCommandType::Seek:
+            // FIXME: Reconsider exception type when https://github.com/whatwg/fs/issues/168 is closed.
+            if (!params.position)
+                return Exception { ExceptionCode::SyntaxError, "Position is missing."_s };
+            return params;
+        case FileSystemWriteCommandType::Truncate:
+            // FIXME: Reconsider exception type when https://github.com/whatwg/fs/issues/168 is closed.
+            if (!params.size)
+                return Exception { ExceptionCode::SyntaxError, "Size is missing."_s };
+            return params;
+        }
+        return params;
+    }, [](auto&& data) -> ExceptionOr<FileSystemWritableFileStream::WriteParams> {
+        return FileSystemWritableFileStream::WriteParams {
+            .type = FileSystemWritableFileStream::WriteCommandType::Write,
+            .data = WTFMove(data)
+        };
     });
-
-    return result;
 }
 
-static void fetchDataBytesForWrite(const FileSystemWritableFileStream::DataVariant& data, CompletionHandler<void(bool, std::span<const uint8_t>)>&& completionHandler)
+static void fetchDataBytesForWrite(const FileSystemWritableFileStream::DataVariant& data, CompletionHandler<void(ExceptionOr<std::span<const uint8_t>>&&)>&& completionHandler)
 {
     WTF::switchOn(data, [&](const RefPtr<JSC::ArrayBufferView>& bufferView) {
         if (!bufferView || bufferView->isDetached())
-            return completionHandler(false, { });
+            return completionHandler(Exception { ExceptionCode::TypeError });
 
         RefPtr buffer = bufferView->possiblySharedBuffer();
         if (!buffer)
-            return completionHandler(false, { });
+            return completionHandler(Exception { ExceptionCode::TypeError });
 
-        completionHandler(true, buffer->span());
+        completionHandler(buffer->span());
     }, [&](const RefPtr<JSC::ArrayBuffer>& buffer) {
         if (!buffer || buffer->isDetached())
-            return completionHandler(false, { });
+            return completionHandler(Exception { ExceptionCode::TypeError });
 
-        completionHandler(true, buffer->span());
+        completionHandler(buffer->span());
     }, [&](const RefPtr<Blob>& blob) {
         if (!blob)
-            return completionHandler(false, { });
+            return completionHandler(Exception { ExceptionCode::TypeError });
 
         // FIXME: For optimization, we may just send blob URL to backend and let it fetch data instead of fetching data here.
         blob->getArrayBuffer([completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
             if (result.hasException())
-                return completionHandler(false, { });
+                return completionHandler(result.releaseException());
 
             Ref buffer = result.releaseReturnValue();
             if (buffer->isDetached())
-                return completionHandler(false, { });
+                return completionHandler(Exception { ExceptionCode::TypeError });
 
-            completionHandler(true, buffer->span());
+            completionHandler(buffer->span());
         });
     }, [&](const String& string) {
-        completionHandler(true, string.utf8().span());
+        completionHandler(byteCast<uint8_t>(string.utf8().span()));
     });
 }
 
-ExceptionOr<Ref<FileSystemWritableFileStreamSink>> FileSystemWritableFileStreamSink::create(FileSystemFileHandle& source)
+ExceptionOr<Ref<FileSystemWritableFileStreamSink>> FileSystemWritableFileStreamSink::create(FileSystemWritableFileStreamIdentifier identifier, FileSystemFileHandle& source)
 {
-    return adoptRef(*new FileSystemWritableFileStreamSink(source));
+    return adoptRef(*new FileSystemWritableFileStreamSink(identifier, source));
 }
 
-FileSystemWritableFileStreamSink::FileSystemWritableFileStreamSink(FileSystemFileHandle& source)
-    : m_source(source)
+FileSystemWritableFileStreamSink::FileSystemWritableFileStreamSink(FileSystemWritableFileStreamIdentifier identifier, FileSystemFileHandle& source)
+    : m_identifier(identifier)
+    , m_source(source)
 {
 }
 
 FileSystemWritableFileStreamSink::~FileSystemWritableFileStreamSink()
 {
     if (!m_isClosed)
-        protectedSource()->closeWritable(FileSystemWriteCloseReason::Completed);
+        protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Completed);
+}
+
+static ExceptionOr<FileSystemWritableFileStream::ChunkType> convertFileSystemWritableChunk(ScriptExecutionContext& context, JSC::JSValue value)
+{
+    auto scope = DECLARE_THROW_SCOPE(context.vm());
+    auto chunkResult = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer, IDLInterface<Blob>, IDLUSVString, IDLDictionary<FileSystemWritableFileStream::WriteParams>>>(*context.globalObject(), value);
+    if (UNLIKELY(chunkResult.hasException(scope)))
+        return Exception { ExceptionCode::ExistingExceptionError };
+
+    return chunkResult.releaseReturnValue();
 }
 
 // https://fs.spec.whatwg.org/#write-a-chunk
@@ -113,26 +133,37 @@ void FileSystemWritableFileStreamSink::write(ScriptExecutionContext& context, JS
 {
     ASSERT(!m_isClosed);
 
-    auto scope = DECLARE_THROW_SCOPE(context.vm());
-    auto chunkResult = convert<IDLUnion<IDLArrayBufferView, IDLArrayBuffer, IDLInterface<Blob>, IDLUSVString, IDLDictionary<FileSystemWritableFileStream::WriteParams>>>(*context.globalObject(), value);
-    if (UNLIKELY(chunkResult.hasException(scope))) {
-        scope.clearException();
-        return protectedSource()->executeCommandForWritable(FileSystemWriteCommandType::Write, std::nullopt, std::nullopt, { }, true, WTFMove(promise));
+    auto chunkResultOrException = convertFileSystemWritableChunk(context, value);
+    if (chunkResultOrException.hasException()) {
+        promise.reject(chunkResultOrException.releaseException());
+        protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Aborted);
+        return;
     }
 
-    auto writeParams = writeParamsFromChunk(chunkResult.releaseReturnValue());
+    auto writeParamsOrException = writeParamsFromChunk(chunkResultOrException.releaseReturnValue());
+    if (writeParamsOrException.hasException()) {
+        promise.reject(writeParamsOrException.releaseException());
+        protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Aborted);
+        return;
+    }
+
+    auto writeParams = writeParamsOrException.releaseReturnValue();
     switch (writeParams.type) {
     case FileSystemWriteCommandType::Seek:
     case FileSystemWriteCommandType::Truncate:
-        return protectedSource()->executeCommandForWritable(writeParams.type, writeParams.position, writeParams.size, { }, false, WTFMove(promise));
-    case FileSystemWriteCommandType::Write: {
+        return protectedSource()->executeCommandForWritable(m_identifier, writeParams.type, writeParams.position, writeParams.size, { }, false, WTFMove(promise));
+    case FileSystemWriteCommandType::Write:
         if (!writeParams.data)
-            return protectedSource()->executeCommandForWritable(writeParams.type, writeParams.position, writeParams.size, { }, true, WTFMove(promise));
+            return protectedSource()->executeCommandForWritable(m_identifier, writeParams.type, writeParams.position, writeParams.size, { }, true, WTFMove(promise));
 
-        fetchDataBytesForWrite(*writeParams.data, [this, protectedThis = Ref { *this }, promise = WTFMove(promise), type = writeParams.type, size = writeParams.size, position = writeParams.position](bool fetched, auto dataBytes) mutable {
-            protectedSource()->executeCommandForWritable(type, position, size, dataBytes, !fetched, WTFMove(promise));
+        fetchDataBytesForWrite(*writeParams.data, [source = protectedSource(), identifier = m_identifier, promise = WTFMove(promise), type = writeParams.type, size = writeParams.size, position = writeParams.position](auto result) mutable {
+            if (result.hasException()) {
+                promise.reject(result.releaseException());
+                source->closeWritable(identifier, FileSystemWriteCloseReason::Aborted);
+                return;
+            }
+            source->executeCommandForWritable(identifier, type, position, size, result.returnValue(), false, WTFMove(promise));
         });
-    }
     }
 }
 
@@ -141,7 +172,7 @@ void FileSystemWritableFileStreamSink::close()
     ASSERT(!m_isClosed);
 
     m_isClosed = true;
-    protectedSource()->closeWritable(FileSystemWriteCloseReason::Completed);
+    protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Completed);
 }
 
 void FileSystemWritableFileStreamSink::error(String&&)
@@ -149,7 +180,7 @@ void FileSystemWritableFileStreamSink::error(String&&)
     ASSERT(!m_isClosed);
 
     m_isClosed = true;
-    protectedSource()->closeWritable(FileSystemWriteCloseReason::Aborted);
+    protectedSource()->closeWritable(m_identifier, FileSystemWriteCloseReason::Aborted);
 }
 
 } // namespace WebCore

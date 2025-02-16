@@ -45,7 +45,6 @@
 #include "MouseEvent.h"
 #include "OriginAccessPatterns.h"
 #include "PingLoader.h"
-#include "PlatformMouseEvent.h"
 #include "PlatformStrategies.h"
 #include "PrivateClickMeasurement.h"
 #include "RegistrableDomain.h"
@@ -216,16 +215,9 @@ void HTMLAnchorElement::attributeChanged(const QualifiedName& name, const AtomSt
 {
     HTMLElement::attributeChanged(name, oldValue, newValue, attributeModificationReason);
 
-    if (name == hrefAttr) {
+    if (name == hrefAttr)
         setIsLink(!newValue.isNull() && !shouldProhibitLinks(this));
-        if (isLink()) {
-            auto parsedURL = newValue.string().trim(isASCIIWhitespace);
-            if (document().isDNSPrefetchEnabled() && document().frame()) {
-                if (protocolIsInHTTPFamily(parsedURL) || parsedURL.startsWith("//"_s))
-                    document().frame()->loader().client().prefetchDNS(document().completeURL(parsedURL).host().toString());
-            }
-        }
-    } else if (name == relAttr) {
+    else if (name == relAttr) {
         // Update HTMLAnchorElement::relList() if more rel attributes values are supported.
         static MainThreadNeverDestroyed<const AtomString> noReferrer("noreferrer"_s);
         static MainThreadNeverDestroyed<const AtomString> noOpener("noopener"_s);
@@ -609,7 +601,7 @@ void HTMLAnchorElement::handleClick(Event& event)
     // Preconnect to the link's target for improved page load time.
     if (completedURL.protocolIsInHTTPFamily() && document->settings().linkPreconnectEnabled() && ((frame->isMainFrame() && isSelfTargetFrameName(effectiveTarget)) || isBlankTargetFrameName(effectiveTarget))) {
         auto storageCredentialsPolicy = frame->page() && frame->page()->canUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
-        platformStrategies()->loaderStrategy()->preconnectTo(frame->loader(), completedURL, storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::Yes, nullptr);
+        platformStrategies()->loaderStrategy()->preconnectTo(frame->loader(), completedURL, storageCredentialsPolicy, LoaderStrategy::ShouldPreconnectAsFirstParty::Yes, [] (ResourceError) { });
     }
 }
 

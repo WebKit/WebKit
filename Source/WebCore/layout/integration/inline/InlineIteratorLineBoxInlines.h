@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "InlineIteratorBox.h"
 #include "InlineIteratorLineBox.h"
 #include "RenderBoxModelObjectInlines.h"
 
@@ -41,6 +42,20 @@ inline float contentStartInBlockDirection(const LineBox& lineBox)
     if (!lineBox.formattingContextRoot().writingMode().isBlockFlipped())
         return std::max(lineBox.contentLogicalTop(), previousLineBoxContentBottomOrBorderAndPadding(lineBox));
     return std::min(lineBox.contentLogicalBottom(), lineBox.contentLogicalBottomAdjustedForFollowingLineBox());
+}
+
+inline LeafBoxIterator LineBox::logicalLeftmostLeafBox() const
+{
+    return formattingContextRoot().writingMode().isLogicalLeftLineLeft()
+        ? lineLeftmostLeafBox()
+        : lineRightmostLeafBox();
+}
+
+inline LeafBoxIterator LineBox::logicalRightmostLeafBox() const
+{
+    return formattingContextRoot().writingMode().isLogicalLeftLineLeft()
+        ? lineRightmostLeafBox()
+        : lineLeftmostLeafBox();
 }
 
 }

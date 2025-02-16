@@ -258,7 +258,7 @@ macro doVMEntry(makeCall)
         move t5, vm
         jmp _llint_throw_stack_overflow_error_from_vm_entry
     else
-        bpb t3, VM::m_softStackLimit[vm], _llint_throw_stack_overflow_error_from_vm_entry
+        bplteq t3, VM::m_softStackLimit[vm], _llint_throw_stack_overflow_error_from_vm_entry
     end
 
 .stackHeightOK:
@@ -728,9 +728,9 @@ macro functionArityCheck(opcodeName, doneLabel)
     subp cfr, t3, t5
     loadp CodeBlock::m_vm[t1], t0
     if C_LOOP
-        bpbeq VM::m_cloopStackLimit[t0], t5, .stackHeightOK
+        bplteq VM::m_cloopStackLimit[t0], t5, .stackHeightOK
     else
-        bpbeq VM::m_softStackLimit[t0], t5, .stackHeightOK
+        bplteq VM::m_softStackLimit[t0], t5, .stackHeightOK
     end
 
     prepareStateForCCall()

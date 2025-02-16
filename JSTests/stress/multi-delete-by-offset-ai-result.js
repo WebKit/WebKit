@@ -7,7 +7,7 @@ noInline(foo);
 
 let o = {};
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
   Object.defineProperty(o, 'x', {});
   foo({});
   foo({x:1});

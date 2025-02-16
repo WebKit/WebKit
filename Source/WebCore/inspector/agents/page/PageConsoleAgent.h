@@ -49,7 +49,7 @@ public:
     Inspector::Protocol::ErrorStringOr<void> setLoggingChannelLevel(Inspector::Protocol::Console::ChannelSource, Inspector::Protocol::Console::ChannelLevel);
 
 private:
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
 };
 
 } // namespace WebCore

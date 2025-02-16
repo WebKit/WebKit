@@ -10,7 +10,7 @@ function test(a, b, c) {
         throw "Error: expected " + c + " but got: " + result;
 }
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(true, 42, 42);
 
 // Now try some unexpected things, in descending order of possible badness.

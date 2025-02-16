@@ -44,7 +44,7 @@ class Frame;
 class WEBCORE_EXPORT JSWindowProxy final : public JSC::JSGlobalProxy {
 public:
     using Base = JSC::JSGlobalProxy;
-    static constexpr bool needsDestruction = true;
+    static constexpr JSC::DestructionMode needsDestruction = JSC::NeedsDestruction;
     static void destroy(JSCell*);
 
     template<typename CellType, JSC::SubspaceAccess> static JSC::GCClient::IsoSubspace* subspaceFor(JSC::VM& vm) { return subspaceForImpl(vm); }

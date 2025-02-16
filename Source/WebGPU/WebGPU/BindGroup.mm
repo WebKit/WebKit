@@ -1349,10 +1349,10 @@ static bool WARN_UNUSED_RETURN setArgumentBuffer(id<MTLArgumentEncoder> encoder,
     return true;
 }
 
-void BindGroup::rebindSamplersIfNeeded() const
+bool BindGroup::rebindSamplersIfNeeded() const
 {
     if (!m_bindGroupLayout)
-        return;
+        return true;
 
     for (auto& [samplerRefPtr, shaderStageArray] : m_samplers) {
         auto sampler = samplerRefPtr;
@@ -1362,6 +1362,8 @@ void BindGroup::rebindSamplersIfNeeded() const
 
         WTFLogAlways("Rebinding of samplers required, if this occurs frequently the application is using too many unique samplers");
         id<MTLSamplerState> samplerState = sampler->samplerState();
+        if (!samplerState)
+            return false;
         if (shaderStageArray[ShaderStage::Vertex].has_value() && setArgumentBuffer(m_bindGroupLayout->vertexArgumentEncoder(), vertexArgumentBuffer()))
             [m_bindGroupLayout->vertexArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Vertex]];
 
@@ -1371,6 +1373,7 @@ void BindGroup::rebindSamplersIfNeeded() const
         if (shaderStageArray[ShaderStage::Compute].has_value() && setArgumentBuffer(m_bindGroupLayout->computeArgumentEncoder(), computeArgumentBuffer()))
             [m_bindGroupLayout->computeArgumentEncoder() setSamplerState:samplerState atIndex:*shaderStageArray[ShaderStage::Compute]];
     }
+    return true;
 }
 
 bool BindGroup::updateExternalTextures(ExternalTexture& externalTexture)

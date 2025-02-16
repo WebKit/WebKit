@@ -245,7 +245,7 @@ IGNORE_GCC_WARNINGS_END
         return property;
     };
 
-    HashSet<AnimatableCSSProperty> propertiesToMatch;
+    UncheckedKeyHashSet<AnimatableCSSProperty> propertiesToMatch;
     for (auto property : keyframeEffect->animatedProperties())
         propertiesToMatch.add(resolvedProperty(property));
 
@@ -422,7 +422,7 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
 
     auto acceleratedAnimationsPendingRunningStateChange = std::exchange(m_acceleratedAnimationsPendingRunningStateChange, { });
 
-    HashSet<KeyframeEffectStack*> keyframeEffectStacksToUpdate;
+    UncheckedKeyHashSet<KeyframeEffectStack*> keyframeEffectStacksToUpdate;
 
     bool hasForcedLayout = false;
     for (auto& animation : acceleratedAnimationsPendingRunningStateChange) {

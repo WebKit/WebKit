@@ -52,40 +52,36 @@ const VisibleSelection& VisibleSelection::emptySelection()
     return selection.get();
 }
 
-VisibleSelection::VisibleSelection()
-    : m_anchorIsFirst(true)
-    , m_isDirectional(false)
-{
-}
+VisibleSelection::VisibleSelection() = default;
 
-VisibleSelection::VisibleSelection(const Position& anchor, const Position& focus, Affinity affinity, bool isDirectional)
+VisibleSelection::VisibleSelection(const Position& anchor, const Position& focus, Affinity affinity, Directionality directionality)
     : m_anchor(anchor)
     , m_focus(focus)
     , m_affinity(affinity)
-    , m_isDirectional(isDirectional)
+    , m_directionality(directionality)
 {
     validate();
 }
 
-VisibleSelection::VisibleSelection(const Position& position, Affinity affinity, bool isDirectional)
-    : VisibleSelection(position, position, affinity, isDirectional)
+VisibleSelection::VisibleSelection(const Position& position, Affinity affinity, Directionality directionality)
+    : VisibleSelection(position, position, affinity, directionality)
 {
 }
 
-VisibleSelection::VisibleSelection(const VisiblePosition& position, bool isDirectional)
-    : VisibleSelection(position.deepEquivalent(), position.affinity(), isDirectional)
+VisibleSelection::VisibleSelection(const VisiblePosition& position, Directionality directionality)
+    : VisibleSelection(position.deepEquivalent(), position.affinity(), directionality)
 {
     // FIXME: Wasteful that this re-canonicalizes, but risky to change since the VisiblePosition object could be from before a mutation and its position may no longer be canonical.
 }
 
-VisibleSelection::VisibleSelection(const VisiblePosition& anchor, const VisiblePosition& focus, bool isDirectional)
-    : VisibleSelection(anchor.deepEquivalent(), focus.deepEquivalent(), anchor.affinity(), isDirectional)
+VisibleSelection::VisibleSelection(const VisiblePosition& anchor, const VisiblePosition& focus, Directionality directionality)
+    : VisibleSelection(anchor.deepEquivalent(), focus.deepEquivalent(), anchor.affinity(), directionality)
 {
     // FIXME: Wasteful that this re-canonicalizes, but risky to change since the VisiblePosition objects could be from before a mutation and their positions may no longer be canonical.
 }
 
-VisibleSelection::VisibleSelection(const SimpleRange& range, Affinity affinity, bool isDirectional)
-    : VisibleSelection(makeDeprecatedLegacyPosition(range.start), makeDeprecatedLegacyPosition(range.end), affinity, isDirectional)
+VisibleSelection::VisibleSelection(const SimpleRange& range, Affinity affinity, Directionality directionality)
+    : VisibleSelection(makeDeprecatedLegacyPosition(range.start), makeDeprecatedLegacyPosition(range.end), affinity, directionality)
 {
 }
 
@@ -727,14 +723,14 @@ void VisibleSelection::debugPosition() const
     fprintf(stderr, "VisibleSelection ===============\n");
 
     if (!m_start.anchorNode())
-        fputs("pos:   null", stderr);
+        SAFE_FPRINTF(stderr, "pos:   null");
     else if (m_start == m_end) {
-        fprintf(stderr, "pos:   %s ", m_start.anchorNode()->nodeName().utf8().data());
+        SAFE_FPRINTF(stderr, "pos:   %s ", m_start.anchorNode()->nodeName().utf8());
         m_start.showAnchorTypeAndOffset();
     } else {
-        fprintf(stderr, "start: %s ", m_start.anchorNode()->nodeName().utf8().data());
+        SAFE_FPRINTF(stderr, "start: %s ", m_start.anchorNode()->nodeName().utf8());
         m_start.showAnchorTypeAndOffset();
-        fprintf(stderr, "end:   %s ", m_end.anchorNode()->nodeName().utf8().data());
+        SAFE_FPRINTF(stderr, "end:   %s ", m_end.anchorNode()->nodeName().utf8());
         m_end.showAnchorTypeAndOffset();
     }
 
@@ -751,10 +747,10 @@ String VisibleSelection::debugDescription() const
 void VisibleSelection::showTreeForThis() const
 {
     if (RefPtr startAnchorNode = start().anchorNode()) {
-        startAnchorNode->showTreeAndMark(startAnchorNode.get(), "S", end().protectedAnchorNode().get(), "E");
-        fputs("start: ", stderr);
+        startAnchorNode->showTreeAndMark(startAnchorNode.get(), "S"_s, end().protectedAnchorNode().get(), "E"_s);
+        SAFE_FPRINTF(stderr, "start: ");
         start().showAnchorTypeAndOffset();
-        fputs("end: ", stderr);
+        SAFE_FPRINTF(stderr, "end: ");
         end().showAnchorTypeAndOffset();
     }
 }

@@ -89,14 +89,13 @@ private:
     ~SpaceSplitStringData() = default;
     static void destroy(SpaceSplitStringData*);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    std::span<AtomString> tokenArray() { return unsafeMakeSpan(reinterpret_cast<AtomString*>(this + 1), m_size); }
-    std::span<const AtomString> tokenArray() const { return unsafeMakeSpan(reinterpret_cast<const AtomString*>(this + 1), m_size); }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    std::span<AtomString> tokenArray() { return unsafeMakeSpan(m_tokens, m_size); }
+    std::span<const AtomString> tokenArray() const { return unsafeMakeSpan(m_tokens, m_size); }
 
     AtomString m_keyString;
     unsigned m_refCount;
     unsigned m_size;
+    AtomString m_tokens[0];
 };
 
 class SpaceSplitString {

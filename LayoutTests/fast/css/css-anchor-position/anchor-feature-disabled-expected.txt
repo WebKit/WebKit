@@ -1,0 +1,6 @@
+
+PASS e.style['align-self'] = "anchor-center" should not set the property value
+PASS e.style['align-items'] = "anchor-center" should not set the property value
+PASS e.style['justify-self'] = "anchor-center" should not set the property value
+PASS e.style['justify-items'] = "anchor-center" should not set the property value
+

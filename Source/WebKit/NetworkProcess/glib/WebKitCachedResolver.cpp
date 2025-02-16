@@ -67,9 +67,7 @@ static Vector<GRefPtr<GInetAddress>> addressListGListToVector(GList* addressList
 
 struct LookupAsyncData {
     CString hostname;
-#if GLIB_CHECK_VERSION(2, 59, 0)
     DNSCache::Type dnsCacheType { DNSCache::Type::Default };
-#endif
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(LookupAsyncData)
 
@@ -119,7 +117,6 @@ static GList* webkitCachedResolverLookupByNameFinish(GResolver* resolver, GAsync
     return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
 }
 
-#if GLIB_CHECK_VERSION(2, 59, 0)
 static inline DNSCache::Type dnsCacheType(GResolverNameLookupFlags flags)
 {
     // A cache is kept for each type of response to avoid the overcomplication of combining or filtering results.
@@ -180,7 +177,6 @@ static GList* webkitCachedResolverLookupByNameWithFlagsFinish(GResolver* resolve
 
     return static_cast<GList*>(g_task_propagate_pointer(G_TASK(result), error));
 }
-#endif // GLIB_CHECK_VERSION(2, 59, 0)
 
 static char* webkitCachedResolverLookupByAddress(GResolver* resolver, GInetAddress* address, GCancellable* cancellable, GError** error)
 {
@@ -223,11 +219,9 @@ static void webkit_cached_resolver_class_init(WebKitCachedResolverClass* klass)
     resolverClass->lookup_by_name = webkitCachedResolverLookupByName;
     resolverClass->lookup_by_name_async = webkitCachedResolverLookupByNameAsync;
     resolverClass->lookup_by_name_finish = webkitCachedResolverLookupByNameFinish;
-#if GLIB_CHECK_VERSION(2, 59, 0)
     resolverClass->lookup_by_name_with_flags = webkitCachedResolverLookupByNameWithFlags;
     resolverClass->lookup_by_name_with_flags_async = webkitCachedResolverLookupByNameWithFlagsAsync;
     resolverClass->lookup_by_name_with_flags_finish = webkitCachedResolverLookupByNameWithFlagsFinish;
-#endif
     resolverClass->lookup_by_address = webkitCachedResolverLookupByAddress;
     resolverClass->lookup_by_address_async = webkitCachedResolverLookupByAddressAsync;
     resolverClass->lookup_by_address_finish = webkitCachedResolverLookupByAddressFinish;

@@ -83,7 +83,7 @@ static void PNGAPI decodingWarning(png_structp png, png_const_charp warningMsg)
     // Mozilla did this, so we will too.
     // Convert a tRNS warning to be an error (see
     // http://bugzilla.mozilla.org/show_bug.cgi?id=251381 )
-    if (!strncmp(warningMsg, "Missing PLTE before tRNS", 24))
+    if (spanHasPrefix(unsafeSpan(warningMsg), "Missing PLTE before tRNS"_span))
         png_error(png, warningMsg);
 }
 
@@ -505,26 +505,26 @@ void PNGImageDecoder::rowAvailable(unsigned char* rowBuffer, unsigned rowIndex, 
     }
 
     // Write the decoded row pixels to the frame buffer.
-    auto* destRow = buffer.backingStore()->pixelAt(0, rowIndex);
-    auto* address = destRow;
+    auto destinationRow = buffer.backingStore()->pixelsStartingAt(0, rowIndex);
+    auto address = destinationRow;
     int width = size().width();
     unsigned char nonTrivialAlphaMask = 0;
 
     png_bytep pixel = row;
     if (hasAlpha) {
-        for (int x = 0; x < width; ++x, pixel += 4, ++address) {
+        for (int x = 0; x < width; ++x, pixel += 4, address = address.subspan(1)) {
             unsigned alpha = pixel[3];
-            buffer.backingStore()->setPixel(address, pixel[0], pixel[1], pixel[2], alpha);
+            buffer.backingStore()->setPixel(address[0], pixel[0], pixel[1], pixel[2], alpha);
             nonTrivialAlphaMask |= (255 - alpha);
         }
     } else {
-        for (int x = 0; x < width; ++x, pixel += 3, ++address)
-            *address = 0xFF000000 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
+        for (int x = 0; x < width; ++x, pixel += 3, address = address.subspan(1))
+            address[0] = 0xFF000000 | pixel[0] << 16 | pixel[1] << 8 | pixel[2];
     }
 
 #if USE(LCMS)
     if (m_iccTransform)
-        cmsDoTransform(m_iccTransform.get(), destRow, destRow, width);
+        cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), width);
 #endif
 
     if (nonTrivialAlphaMask && !buffer.hasAlpha())
@@ -565,7 +565,7 @@ void PNGImageDecoder::decode(bool onlySize, unsigned haltAtFrame, bool allDataRe
 
 void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
 {
-    if (chunk->size == 8 && spanHasPrefix(span(chunk->name), "acTL"_span)) {
+    if (chunk->size == 8 && spanHasPrefix(unsafeSpan(chunk->name), "acTL"_span)) {
         if (m_hasInfo || m_isAnimated)
             return;
 
@@ -585,7 +585,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             return;
 
         m_frameBufferCache.resize(m_frameCount);
-    } else if (chunk->size == 26 && spanHasPrefix(span(chunk->name), "fcTL"_span)) {
+    } else if (chunk->size == 26 && spanHasPrefix(unsafeSpan(chunk->name), "fcTL"_span)) {
         if (m_hasInfo && !m_isAnimated)
             return;
 
@@ -652,7 +652,7 @@ void PNGImageDecoder::readChunks(png_unknown_chunkp chunk)
             fallbackNotAnimated();
             return;
         }
-    } else if (chunk->size >= 4 && spanHasPrefix(span(chunk->name), "fdAT"_span)) {
+    } else if (chunk->size >= 4 && spanHasPrefix(unsafeSpan(chunk->name), "fdAT"_span)) {
         if (!m_frameInfo || !m_isAnimated)
             return;
 
@@ -819,19 +819,20 @@ void PNGImageDecoder::frameComplete()
         unsigned colorChannels = hasAlpha ? 4 : 3;
         for (int y = rect.y(); y < rect.maxY(); ++y, row += colorChannels * size().width()) {
             png_bytep pixel = row;
-            auto* destRow = buffer.backingStore()->pixelAt(rect.x(), y);
-            auto* address = destRow;
+            auto destinationRow = buffer.backingStore()->pixelsStartingAt(rect.x(), y);
+            auto address = destinationRow;
             for (int x = rect.x(); x < rect.maxX(); ++x, pixel += colorChannels) {
                 unsigned alpha = hasAlpha ? pixel[3] : 255;
                 nonTrivialAlpha |= alpha < 255;
                 if (!m_blend)
-                    buffer.backingStore()->setPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
+                    buffer.backingStore()->setPixel(address[0], pixel[0], pixel[1], pixel[2], alpha);
                 else
-                    buffer.backingStore()->blendPixel(address++, pixel[0], pixel[1], pixel[2], alpha);
+                    buffer.backingStore()->blendPixel(address[0], pixel[0], pixel[1], pixel[2], alpha);
+                address = address.subspan(1);
             }
 #if USE(LCMS)
             if (m_iccTransform)
-                cmsDoTransform(m_iccTransform.get(), destRow, destRow, rect.maxX());
+                cmsDoTransform(m_iccTransform.get(), destinationRow.data(), destinationRow.data(), rect.maxX());
 #endif
         }
 

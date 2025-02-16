@@ -65,15 +65,11 @@ public:
     static Ref<HTMLInputElement> create(const QualifiedName&, Document&, HTMLFormElement*, bool createdByParser);
     virtual ~HTMLInputElement();
 
-#if ENABLE(INPUT_TYPE_COLOR)
     WEBCORE_EXPORT bool alpha();
-#endif
     bool checked() const { return m_isChecked; }
     WEBCORE_EXPORT void setChecked(bool, WasSetByJavaScript = WasSetByJavaScript::Yes);
-#if ENABLE(INPUT_TYPE_COLOR)
     String colorSpace();
     void setColorSpace(const AtomString&);
-#endif
     WEBCORE_EXPORT FileList* files();
     WEBCORE_EXPORT void setFiles(RefPtr<FileList>&&, WasSetByJavaScript = WasSetByJavaScript::No);
     FileList* filesForBindings() { return files(); }
@@ -82,9 +78,7 @@ public:
     WEBCORE_EXPORT void setHeight(unsigned);
     bool indeterminate() const { return m_isIndeterminate; }
     WEBCORE_EXPORT void setIndeterminate(bool);
-#if ENABLE(DATALIST_ELEMENT)
     WEBCORE_EXPORT RefPtr<HTMLElement> list() const;
-#endif
     unsigned size() const { return m_size; }
     WEBCORE_EXPORT ExceptionOr<void> setSize(unsigned);
     WEBCORE_EXPORT const AtomString& defaultValue() const;
@@ -139,10 +133,8 @@ public:
     bool getAllowedValueStep(Decimal*) const;
     StepRange createStepRange(AnyStepHandling) const;
 
-#if ENABLE(DATALIST_ELEMENT)
     std::optional<Decimal> findClosestTickMarkValue(const Decimal&);
     std::optional<double> listOptionValueAsDouble(const HTMLOptionElement&);
-#endif
 
     bool isPresentingAttachedView() const;
 
@@ -157,9 +149,7 @@ public:
     bool isCheckbox() const;
     bool isSwitch() const;
     bool isRangeControl() const;
-#if ENABLE(INPUT_TYPE_COLOR)
     WEBCORE_EXPORT bool isColorControl() const;
-#endif
     // FIXME: It's highly likely that any call site calling this function should instead
     // be using a different one. Many input elements behave like text fields, and in addition
     // any unknown input type is treated as text. Consider, for example, isTextField or
@@ -198,9 +188,7 @@ public:
     HTMLElement* sliderTrackElement() const;
     HTMLElement* placeholderElement() const final;
     WEBCORE_EXPORT HTMLElement* autoFillButtonElement() const;
-#if ENABLE(DATALIST_ELEMENT)
     WEBCORE_EXPORT HTMLElement* dataListButtonElement() const;
-#endif
 
     bool matchesCheckedPseudoClass() const;
     bool matchesIndeterminatePseudoClass() const final;
@@ -299,11 +287,10 @@ public:
 
     bool willRespondToMouseClickEventsWithEditability(Editability) const final;
 
-#if ENABLE(DATALIST_ELEMENT)
     WEBCORE_EXPORT bool isFocusingWithDataListDropdown() const;
+    bool hasDataList() const;
     RefPtr<HTMLDataListElement> dataList() const;
     void dataListMayHaveChanged();
-#endif
 
     Vector<Ref<HTMLInputElement>> radioButtonGroup() const;
     RefPtr<HTMLInputElement> checkedRadioButtonForGroup() const;
@@ -375,7 +362,7 @@ private:
 
     void defaultEventHandler(Event&) final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) override;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) override;
 
     enum AutoCompleteSetting : uint8_t { Uninitialized, On, Off };
     static constexpr int defaultSize = 20;
@@ -431,9 +418,7 @@ private:
     bool isOutOfRange() const final;
 
     void resumeFromDocumentSuspension() final;
-#if ENABLE(INPUT_TYPE_COLOR)
     void prepareForDocumentSuspension() final;
-#endif
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const final;
 
@@ -469,9 +454,7 @@ private:
     void disabledStateChanged() final;
     void readOnlyStateChanged() final;
 
-#if ENABLE(DATALIST_ELEMENT)
     void resetListAttributeTargetObserver();
-#endif
     void maxLengthAttributeChanged(const AtomString& newValue);
     void minLengthAttributeChanged(const AtomString& newValue);
     void updateValueIfNeeded();
@@ -503,9 +486,7 @@ private:
     unsigned m_autoFillButtonType : 3 { enumToUnderlyingType(AutoFillButtonType::None) }; // AutoFillButtonType
     unsigned m_lastAutoFillButtonType : 3 { enumToUnderlyingType(AutoFillButtonType::None) }; // AutoFillButtonType
     bool m_isAutoFillAvailable : 1 { false };
-#if ENABLE(DATALIST_ELEMENT)
     bool m_hasNonEmptyList : 1 { false };
-#endif
     bool m_stateRestored : 1 { false };
     bool m_parsingInProgress : 1;
     bool m_valueAttributeWasUpdatedAfterParsing : 1 { false };
@@ -523,9 +504,7 @@ private:
     // that it lives as long as its owning element lives. If we move the loader into
     // the ImageInput object we may delete the loader while this element lives on.
     std::unique_ptr<HTMLImageLoader> m_imageLoader;
-#if ENABLE(DATALIST_ELEMENT)
     std::unique_ptr<ListAttributeTargetObserver> m_listAttributeTargetObserver;
-#endif
 };
 
 }

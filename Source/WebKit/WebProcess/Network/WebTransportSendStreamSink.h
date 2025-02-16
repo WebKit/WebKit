@@ -45,11 +45,13 @@ private:
     WebTransportSendStreamSink(WebTransportSession&, WebCore::WebTransportStreamIdentifier);
 
     void write(WebCore::ScriptExecutionContext&, JSC::JSValue, WebCore::DOMPromiseDeferred<void>&&) final;
-    void close() final { }
-    void error(String&&) final { }
+    void close() final;
+    void error(String&&) final;
 
     ThreadSafeWeakPtr<WebTransportSession> m_session;
     const WebCore::WebTransportStreamIdentifier m_identifier;
+    bool m_isClosed { false };
+    bool m_isCancelled { false };
 };
 
 }

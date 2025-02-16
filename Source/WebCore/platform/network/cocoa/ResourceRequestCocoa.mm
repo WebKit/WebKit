@@ -346,7 +346,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 void ResourceRequest::doUpdatePlatformHTTPBody()
 {
     if (isNull()) {
-        ASSERT(!m_nsRequest);
+        m_nsRequest = nil;
         return;
     }
 

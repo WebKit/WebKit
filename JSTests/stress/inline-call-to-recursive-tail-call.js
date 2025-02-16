@@ -84,7 +84,7 @@ function test(result, expected, name) {
         throw "Wrong result for " + name + ": " + result + " instead of " + expected;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(factorial(20), 2432902008176640000, "factorial");
     test(factorial2(20), 2432902008176640000, "factorial2");
     test(factorial3(20), 2432902008176640000, "factorial3");

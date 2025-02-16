@@ -41,7 +41,7 @@ DEFINE_VISIT_CHILDREN(JSDOMBuiltinConstructorBase);
 
 JSC::GCClient::IsoSubspace* JSDOMBuiltinConstructorBase::subspaceForImpl(JSC::VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->domBuiltinConstructorSpace();
+    return &downcast<JSVMClientData>(vm.clientData)->domBuiltinConstructorSpace();
 }
 
 } // namespace WebCore

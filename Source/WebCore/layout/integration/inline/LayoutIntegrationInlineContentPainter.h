@@ -49,7 +49,7 @@ class ElementBox;
 
 namespace LayoutIntegration {
 
-struct InlineContent;
+class InlineContent;
 
 class InlineContentPainter {
 public:

@@ -42,7 +42,7 @@ namespace Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PropertyCascade);
 
-PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, OptionSet<PropertyType> includedProperties, const HashSet<AnimatableCSSProperty>* animatedProperties)
+PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel maximumCascadeLevel, OptionSet<PropertyType> includedProperties, const UncheckedKeyHashSet<AnimatableCSSProperty>* animatedProperties)
     : m_matchResult(matchResult)
     , m_includedProperties(includedProperties)
     , m_maximumCascadeLevel(maximumCascadeLevel)
@@ -53,7 +53,7 @@ PropertyCascade::PropertyCascade(const MatchResult& matchResult, CascadeLevel ma
 
 PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel maximumCascadeLevel, std::optional<ScopeOrdinal> rollbackScope, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback)
     : m_matchResult(parent.m_matchResult)
-    , m_includedProperties(parent.m_includedProperties)
+    , m_includedProperties(normalProperties()) // Include all properties to the rollback cascade, lower prority layers may not get included otherwise.
     , m_maximumCascadeLevel(maximumCascadeLevel)
     , m_rollbackScope(rollbackScope)
     , m_maximumCascadeLayerPriorityForRollback(maximumCascadeLayerPriorityForRollback)
@@ -64,7 +64,7 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, CascadeLevel max
 
 PropertyCascade::~PropertyCascade() = default;
 
-PropertyCascade::AnimationLayer::AnimationLayer(const HashSet<AnimatableCSSProperty>& properties)
+PropertyCascade::AnimationLayer::AnimationLayer(const UncheckedKeyHashSet<AnimatableCSSProperty>& properties)
     : properties(properties)
 {
     hasCustomProperties = std::find_if(properties.begin(), properties.end(), [](auto& property) {
@@ -248,11 +248,12 @@ bool PropertyCascade::addMatch(const MatchedProperties& matchedProperties, Casca
                 return false;
             }
 
-            if (m_includedProperties.contains(PropertyType::Inherited) && current.isInherited())
+            bool currentIsInherited = CSSProperty::isInheritedProperty(current.id());
+            if (m_includedProperties.contains(PropertyType::Inherited) && currentIsInherited)
                 return true;
             if (m_includedProperties.contains(PropertyType::ExplicitlyInherited) && isValueID(*current.value(), CSSValueInherit))
                 return true;
-            if (m_includedProperties.contains(PropertyType::NonInherited) && !current.isInherited())
+            if (m_includedProperties.contains(PropertyType::NonInherited) && !currentIsInherited)
                 return true;
 
             // Apply all logical group properties if we have applied any. They may override the ones we already applied.
@@ -403,7 +404,7 @@ void PropertyCascade::sortLogicalGroupPropertyIDs()
     });
 }
 
-const HashSet<AnimatableCSSProperty> PropertyCascade::overriddenAnimatedProperties() const
+const UncheckedKeyHashSet<AnimatableCSSProperty> PropertyCascade::overriddenAnimatedProperties() const
 {
     if (m_animationLayer)
         return m_animationLayer->overriddenProperties;

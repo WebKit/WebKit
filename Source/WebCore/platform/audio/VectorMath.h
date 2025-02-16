@@ -52,6 +52,9 @@ void add(std::span<const int> inputVector1, std::span<const int> inputVector2, s
 void add(std::span<const float> inputVector1, std::span<const float> inputVector2, std::span<float> outputVector);
 void add(std::span<const double> inputVector1, std::span<const double> inputVector2, std::span<double> outputVector);
 
+// result = sum(inputVector1[n] * inputVector2[n], 0 <= n < inputVector1.size());
+float dotProduct(std::span<const float> inputVector1, std::span<const float> inputVector2);
+
 // Finds the maximum magnitude of a float vector.
 float maximumMagnitude(std::span<const float> inputVector);
 

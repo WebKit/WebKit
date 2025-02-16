@@ -19,7 +19,7 @@ noInline(foo);
 
 var o = make();
 var real = new Int8Array(o.buffer);
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var index = i % o.length;
     var value = i % 7;
     foo(o, index, value);

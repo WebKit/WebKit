@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="/js-test-resources/js-test.js"></script>
+    <script src="./resources/monitor-setup.js"></script>
+</head>
+<body>
+<script>
+description("Test unloaded HTML supports dark mode correctly.");
+window.jsTestIsAsync = true;
+
+var setupDone = false;
+var iframeElem;
+var pElem;
+
+onload = async () => {
+    setupDone = await setup();
+    shouldBeTrue(`setupDone`);
+
+    if (setupDone) {
+        // Make sure iframe load is done after rule is set correctly.
+        const stage = document.querySelector('#stage');
+
+        stage.innerHTML = `
+            <style>
+                header { color-scheme: light dark; }
+                footer { color-scheme: dark; }
+            </style>
+            <header>
+                <iframe name="frame1" src="./resources/--eligible--/iframe.html"></iframe>
+            </header>
+            <main>
+                <iframe name="frame2" src="./resources/--eligible--/iframe.html"></iframe>
+            </main>
+            <footer>
+                <iframe name="frame3" src="./resources/--eligible--/iframe.html"></iframe>
+            </footer>
+        `;
+
+        const black = `'rgb(0, 0, 0)'`;
+        const white = `'rgb(255, 255, 255)'`;
+
+        debug("In header, scheme is light and dark.")
+        await test('frame1', black, white);
+
+        debug("In main, scheme is normal.")
+        await test('frame2', black, black);
+
+        debug("In footer, scheme is dark only.")
+        await test('frame3', white, white);
+
+        finishJSTest();
+    }
+}
+
+async function test(frameName, lightModeExpected, darkModeExpected) {
+    iframeElem = await waitUntilUnload(frameName);
+
+    shouldNotBe(`iframeElem.srcdoc`, '""');
+
+    pElem = iframeElem.contentDocument.querySelector('p');
+
+    internals.settings.setUseDarkAppearance(false);
+    test_prop('pElem', 'color', lightModeExpected);
+
+    internals.settings.setUseDarkAppearance(true);
+    test_prop('pElem', 'color', darkModeExpected);
+}
+
+function test_prop(elemName, prop, expected) {
+    shouldBe(`window.getComputedStyle(${elemName}).getPropertyValue('${prop}')`, expected);
+}
+
+</script>
+<div id="stage"></div>
+</body>
+</html>

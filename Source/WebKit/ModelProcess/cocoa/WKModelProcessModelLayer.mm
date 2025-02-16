@@ -5,21 +5,22 @@
 #import "config.h"
 
 #if ENABLE(MODEL_PROCESS)
+
 #import "WKModelProcessModelLayer.h"
 
 #import "ModelProcessModelPlayerProxy.h"
 #import <wtf/RefPtr.h>
 
 @implementation WKModelProcessModelLayer {
-    RefPtr<WebKit::ModelProcessModelPlayerProxy> _player;
+    WeakPtr<WebKit::ModelProcessModelPlayerProxy> _player;
 }
 
-- (void)setPlayer:(RefPtr<WebKit::ModelProcessModelPlayerProxy>)player
+- (void)setPlayer:(WeakPtr<WebKit::ModelProcessModelPlayerProxy>)player
 {
-    _player = WTFMove(player);
+    _player = player;
 }
 
-- (RefPtr<WebKit::ModelProcessModelPlayerProxy>)player
+- (WeakPtr<WebKit::ModelProcessModelPlayerProxy>)player
 {
     return _player;
 }
@@ -28,19 +29,18 @@
 {
     [super setOpacity:opacity];
 
-    if (_player)
-        _player->updateOpacity();
+    if (RefPtr strongPlayer = _player.get())
+        strongPlayer->updateOpacity();
 }
 
 - (void)layoutSublayers
 {
     [super layoutSublayers];
 
-    if (_player)
-        _player->updateTransform();
+    if (RefPtr strongPlayer = _player.get())
+        strongPlayer->updateTransform();
 }
 
 @end
-
 
 #endif // MODEL_PROCESS

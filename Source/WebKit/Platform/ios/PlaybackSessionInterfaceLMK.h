@@ -61,6 +61,7 @@ public:
     void volumeChanged(double) final;
     void supportsLinearMediaPlayerChanged(bool) final;
     void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&) final;
+    void isImmersiveVideoChanged(bool) final;
     void startObservingNowPlayingMetadata() final;
     void stopObservingNowPlayingMetadata() final;
 #if !RELEASE_LOG_DISABLED

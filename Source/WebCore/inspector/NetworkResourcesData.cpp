@@ -100,7 +100,7 @@ void NetworkResourcesData::ResourceData::appendData(const SharedBuffer& data)
     m_dataBuffer.append(data);
 }
 
-unsigned NetworkResourcesData::ResourceData::decodeDataToContent()
+void NetworkResourcesData::ResourceData::decodeDataToContent()
 {
     ASSERT(!hasContent());
 
@@ -113,8 +113,6 @@ unsigned NetworkResourcesData::ResourceData::decodeDataToContent()
         m_base64Encoded = true;
         m_content = base64EncodeToString(buffer->span());
     }
-
-    return m_content.sizeInBytes() - buffer->size();
 }
 
 NetworkResourcesData::NetworkResourcesData()
@@ -203,7 +201,7 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
         // We can not be sure that we didn't try to save this request data while it was loading, so remove it, if any.
         if (resourceData->hasContent() || resourceData->hasData())
             m_contentSize -= resourceData->removeContent();
-        m_requestIdsDeque.append(requestId);
+        m_requestIdsDeque.appendOrMoveToLast(requestId);
         resourceData->setContent(content, base64Encoded);
         m_contentSize += dataLength;
     }
@@ -239,7 +237,7 @@ NetworkResourcesData::ResourceData const* NetworkResourcesData::maybeAddResource
         return resourceData;
 
     if (ensureFreeSpace(data.size()) && !resourceData->isContentEvicted()) {
-        m_requestIdsDeque.append(requestId);
+        m_requestIdsDeque.appendOrMoveToLast(requestId);
         resourceData->appendData(data);
         m_contentSize += data.size();
     }
@@ -256,10 +254,18 @@ void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
     if (!resourceData->hasData())
         return;
 
-    m_contentSize += resourceData->decodeDataToContent();
-    size_t dataLength = resourceData->content().sizeInBytes();
-    if (dataLength > m_maximumSingleResourceContentSize)
-        m_contentSize -= resourceData->evictContent();
+    auto byteCount = resourceData->dataLength();
+    m_contentSize -= byteCount;
+
+    resourceData->decodeDataToContent();
+    byteCount = resourceData->content().sizeInBytes();
+    if (byteCount > m_maximumSingleResourceContentSize) {
+        resourceData->evictContent();
+        return;
+    }
+
+    if (ensureFreeSpace(byteCount) && !resourceData->isContentEvicted())
+        m_contentSize += byteCount;
 }
 
 void NetworkResourcesData::addCachedResource(const String& requestId, CachedResource* cachedResource)
@@ -316,19 +322,23 @@ Vector<String> NetworkResourcesData::removeCachedResource(CachedResource* cached
 
 void NetworkResourcesData::clear(std::optional<String> preservedLoaderId)
 {
-    m_requestIdsDeque.clear();
-    m_contentSize = 0;
-
-    if (!preservedLoaderId)
+    if (!preservedLoaderId) {
         m_requestIdToResourceDataMap.clear();
-    else {
-        Vector<String> keysToRemove;
-        for (auto& [key, value] : m_requestIdToResourceDataMap) {
-            if (value->loaderId() != *preservedLoaderId)
-                keysToRemove.append(key);
+        m_requestIdsDeque.clear();
+        m_contentSize = 0;
+        return;
+    }
+
+    for (auto&& requestId : std::exchange(m_requestIdsDeque, { })) {
+        auto resourceData = resourceDataForRequestId(requestId);
+        if (!resourceData)
+            continue;
+        if (resourceData->loaderId() == *preservedLoaderId)
+            m_requestIdsDeque.add(requestId);
+        else {
+            m_contentSize -= resourceData->evictContent();
+            m_requestIdToResourceDataMap.remove(requestId);
         }
-        for (auto& keyToRemove : keysToRemove)
-            m_requestIdToResourceDataMap.remove(keyToRemove);
     }
 }
 
@@ -360,6 +370,7 @@ bool NetworkResourcesData::ensureFreeSpace(size_t size)
     if (size > m_maximumResourcesContentSize)
         return false;
 
+    ASSERT(m_maximumResourcesContentSize >= m_contentSize);
     while (size > m_maximumResourcesContentSize - m_contentSize) {
         String requestId = m_requestIdsDeque.takeFirst();
         ResourceData* resourceData = resourceDataForRequestId(requestId);

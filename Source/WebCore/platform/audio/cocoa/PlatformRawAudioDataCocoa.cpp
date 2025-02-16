@@ -121,19 +121,17 @@ RefPtr<PlatformRawAudioData> PlatformRawAudioData::create(std::span<const uint8_
         return nullptr;
     }
     WebAudioBufferList inputList = inputDescription;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    uint8_t* data = const_cast<uint8_t*>(sourceData.data());
+    auto data = spanConstCast<uint8_t>(sourceData);
     for (auto& buffer : inputList.buffers()) {
-        buffer.mData = data;
+        buffer.mData = data.data();
         buffer.mNumberChannels = inputDescription.numberOfInterleavedChannels();
         buffer.mDataByteSize = sizePlane;
-        data += sizePlane;
+        if (data.size() < sizePlane) {
+            RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create nonsensical format data");
+            return nullptr;
+        }
+        skip(data, sizePlane);
     }
-    if (data > sourceData.data() + sourceData.size()) {
-        RELEASE_LOG_ERROR(MediaStream, "PlatformRawAudioData::create nonsensical format data");
-        return nullptr;
-    }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     RetainPtr sample = createSampleBuffer(inputDescription, PAL::CMTimeMake(timestamp, 1000000), numberOfFrames, inputList);
     if (!sample) {
@@ -271,24 +269,7 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
         // Copy of all channels of the source into the destination buffer and deinterleave.
         // Ideally we would use an AudioToolbox's AudioConverter but it performs incorrect rounding during sample conversion in a way that makes us fail the W3C's AudioData tests.
         ASSERT(!planeIndex);
-        ASSERT(!(copyElementCount % numberOfChannels()));
-
-        auto copyElements = [numberOfChannels = numberOfChannels()]<typename T>(std::span<T> destination, auto& source, size_t frames) {
-            RELEASE_ASSERT(destination.size() >= frames * numberOfChannels);
-            RELEASE_ASSERT(source[0].size() >= frames); // All planes have the exact same size.
-            size_t index = 0;
-            for (size_t frame = 0; frame < frames; frame++) {
-                for (size_t channel = 0; channel < source.size(); channel++)
-                    destination[index++] = convertAudioSample<T>(source[channel][frame]);
-            }
-        };
-
-        switchOn(audioElementSpan(destinationFormat, destination), [&](auto dst) {
-            switchOn(source, [&](auto& src) {
-                size_t numberOfFrames = copyElementCount / numberOfChannels();
-                copyElements(dst, src, numberOfFrames);
-            });
-        });
+        copyToInterleaved(source, destination, destinationFormat, copyElementCount);
         return;
     }
 

@@ -89,6 +89,7 @@ public:
     const String& webAssemblyDisabledErrorMessage() const { return m_webAssemblyDisabledErrorMessage; }
     bool isReportOnly() const { return m_reportOnly; }
     bool shouldReportSample(const String&) const;
+    HashAlgorithmSet reportHash() const;
     const Vector<String>& reportToTokens() const { return m_reportToTokens; }
     const Vector<String>& reportURIs() const { return m_reportURIs; }
 
@@ -112,6 +113,8 @@ private:
     void applySandboxPolicy(ParsedDirective&&);
     void setUpgradeInsecureRequests(ParsedDirective&&);
     void setBlockAllMixedContentEnabled(ParsedDirective&&);
+
+    const ContentSecurityPolicySourceListDirective* hashReportDirectiveForScript() const;
 
     template <class CSPDirectiveType>
     void setCSPDirective(ParsedDirective&&, std::unique_ptr<CSPDirectiveType>&);

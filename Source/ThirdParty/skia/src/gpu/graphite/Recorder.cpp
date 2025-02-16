@@ -26,6 +26,7 @@
 #include "src/gpu/graphite/AtlasProvider.h"
 #include "src/gpu/graphite/BufferManager.h"
 #include "src/gpu/graphite/Caps.h"
+#include "src/gpu/graphite/ClipAtlasManager.h"
 #include "src/gpu/graphite/CommandBuffer.h"
 #include "src/gpu/graphite/ContextPriv.h"
 #include "src/gpu/graphite/Device.h"
@@ -117,8 +118,7 @@ Recorder::Recorder(sk_sp<SharedContext> sharedContext,
         fOwnedResourceProvider = fSharedContext->makeResourceProvider(
                 this->singleOwner(),
                 fUniqueID,
-                options.fGpuBudgetInBytes,
-                /* avoidBufferAlloc= */ false);
+                options.fGpuBudgetInBytes);
         fResourceProvider = fOwnedResourceProvider.get();
     }
     fUploadBufferManager = std::make_unique<UploadBufferManager>(fResourceProvider,
@@ -218,6 +218,10 @@ std::unique_ptr<Recording> Recorder::snap() {
         recording = nullptr;
         fAtlasProvider->invalidateAtlases();
     }
+
+    // Process the return queue at least once to keep it from growing too large, as otherwise
+    // it's only processed during an explicit cleanup or a cache miss.
+    fResourceProvider->forceProcessReturnedResources();
 
     // Remaining cleanup that must always happen regardless of success or failure
     fRuntimeEffectDict->reset();

@@ -44,6 +44,7 @@ namespace WebGPU {
 
 class Buffer;
 class CommandBuffer;
+class CommandEncoder;
 class Device;
 class Texture;
 class TextureView;
@@ -68,6 +69,7 @@ public:
     void submit(Vector<Ref<WebGPU::CommandBuffer>>&& commands);
     void writeBuffer(Buffer&, uint64_t bufferOffset, std::span<uint8_t> data);
     void writeBuffer(id<MTLBuffer>, uint64_t bufferOffset, std::span<uint8_t> data);
+    void clearBuffer(id<MTLBuffer>, NSUInteger offset = 0, NSUInteger size = NSUIntegerMax);
     void writeTexture(const WGPUImageCopyTexture& destination, std::span<uint8_t> data, const WGPUTextureDataLayout&, const WGPUExtent3D& writeSize, bool skipValidation = false);
     void setLabel(String&&);
 
@@ -93,6 +95,11 @@ public:
 
     // This can be called on a background thread.
     void scheduleWork(Instance::WorkItem&&);
+    uint64_t WARN_UNUSED_RETURN retainCounterSampleBuffer(CommandEncoder&);
+    void releaseCounterSampleBuffer(uint64_t);
+    void retainTimestampsForOneUpdate(NSMutableSet<id<MTLCounterSampleBuffer>> *);
+    void waitForAllCommitedWorkToComplete();
+    void synchronizeResourceAndWait(id<MTLBuffer>);
 private:
     Queue(id<MTLCommandQueue>, Adapter&, Device&);
     Queue(Adapter&, Device&);
@@ -120,7 +127,10 @@ private:
     HashMap<uint64_t, OnSubmittedWorkScheduledCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkScheduledCallbacks;
     using OnSubmittedWorkDoneCallbacks = Vector<WTF::Function<void(WGPUQueueWorkDoneStatus)>>;
     HashMap<uint64_t, OnSubmittedWorkDoneCallbacks, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>> m_onSubmittedWorkDoneCallbacks;
+    NSMutableDictionary<NSNumber*, NSMutableSet<id<MTLCounterSampleBuffer>>*>* m_retainedCounterSampleBuffers;
     NSMutableOrderedSet<id<MTLCommandBuffer>> *m_createdNotCommittedBuffers { nil };
+    NSMutableOrderedSet<id<MTLCommandBuffer>> *m_committedNotCompletedBuffers WTF_GUARDED_BY_LOCK(m_committedNotCompletedBuffersLock) { nil };
+    Lock m_committedNotCompletedBuffersLock;
     NSMapTable<id<MTLCommandBuffer>, id<MTLCommandEncoder>> *m_openCommandEncoders;
     const ThreadSafeWeakPtr<Instance> m_instance;
 } SWIFT_SHARED_REFERENCE(refQueue, derefQueue);

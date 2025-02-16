@@ -425,7 +425,7 @@ public:
         // selecting a target, in case conditions have changed. Other code paths avoid this by targeting
         // without leaving a time window. If we fail the check just silently drop the form submission.
         Ref requestingDocument = submission->state().sourceDocument();
-        if (!requestingDocument->canNavigate(&frame))
+        if (requestingDocument->canNavigate(&frame) != CanNavigateState::Able)
             return;
         FrameLoadRequest frameLoadRequest { requestingDocument.copyRef(), requestingDocument->protectedSecurityOrigin(), { }, { }, initiatedByMainFrame() };
         frameLoadRequest.setLockHistory(lockHistory());

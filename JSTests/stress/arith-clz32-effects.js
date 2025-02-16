@@ -10,7 +10,7 @@ noInline(foo);
 var o = {f: 42};
 o.g = 43; // Bust the transition watchpoint of {f}.
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({f: 42}, "42");
     if (result != 84)
         throw "Error: bad result in loop: " + result;

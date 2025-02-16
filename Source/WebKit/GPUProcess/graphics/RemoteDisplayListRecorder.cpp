@@ -336,11 +336,6 @@ void RemoteDisplayListRecorder::drawDecomposedGlyphs(RenderingResourceIdentifier
     handleItem(DisplayList::DrawDecomposedGlyphs(fontIdentifier, decomposedGlyphsIdentifier), *font, *decomposedGlyphs);
 }
 
-void RemoteDisplayListRecorder::drawDisplayListItems(Vector<WebCore::DisplayList::Item>&& items, const FloatPoint& destination)
-{
-    handleItem(DisplayList::DrawDisplayListItems(WTFMove(items), destination), resourceCache().resourceHeap(), protectedControlFactory());
-}
-
 void RemoteDisplayListRecorder::drawImageBuffer(RenderingResourceIdentifier imageBufferIdentifier, const FloatRect& destinationRect, const FloatRect& srcRect, ImagePaintingOptions options)
 {
     RefPtr sourceImage = imageBuffer(imageBufferIdentifier);
@@ -642,6 +637,11 @@ void RemoteDisplayListRecorder::beginPage(const IntSize& pageSize)
 void RemoteDisplayListRecorder::endPage()
 {
     handleItem(DisplayList::EndPage());
+}
+
+void RemoteDisplayListRecorder::setURLForRect(const URL& link, const FloatRect& destRect)
+{
+    handleItem(DisplayList::SetURLForRect(link, destRect));
 }
 
 std::optional<SharedPreferencesForWebProcess> RemoteDisplayListRecorder::sharedPreferencesForWebProcess() const

@@ -140,7 +140,7 @@ bool JSDOMWindowProperties::defineOwnProperty(JSObject*, JSGlobalObject* lexical
 
 JSC::GCClient::IsoSubspace* JSDOMWindowProperties::subspaceForImpl(JSC::VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->domWindowPropertiesSpace();
+    return &downcast<JSVMClientData>(vm.clientData)->domWindowPropertiesSpace();
 }
 
 } // namespace WebCore

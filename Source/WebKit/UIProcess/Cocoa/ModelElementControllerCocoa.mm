@@ -229,7 +229,14 @@ void ModelElementController::modelElementLoadRemotePreview(String uuid, URL file
     });
 
     RELEASE_ASSERT(isMainRunLoop());
-    [preview preparePreviewOfFileAtURL:[[NSURL alloc] initFileURLWithPath:fileURL.fileSystemPath()] completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }, uuid = WTFMove(uuid), handler = WTFMove(handler)] (NSError *loadError) mutable {
+    [preview preparePreviewOfFileAtURL:adoptNS([[NSURL alloc] initFileURLWithPath:fileURL.fileSystemPath()]).get() completionHandler:makeBlockPtr([
+        weakThis = WeakPtr { *this },
+#if PLATFORM(MAC)
+        preview, // FIXME: Remove when rdar://143993062 is fixed.
+#endif
+        uuid = WTFMove(uuid),
+        handler = WTFMove(handler)
+    ] (NSError *loadError) mutable {
         if (loadError) {
             LOG(ModelElement, "Unable to load file for uuid %s: %@.", uuid.utf8().data(), loadError.localizedDescription);
 

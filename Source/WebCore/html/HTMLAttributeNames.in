@@ -110,7 +110,6 @@ colspan
 command
 commandfor
 compact
-composite
 content
 contenteditable
 controls
@@ -392,6 +391,7 @@ scrolling
 select
 selected
 shadowrootclonable
+shadowrootcustomelements
 shadowrootdelegatesfocus
 shadowrootmode
 shadowrootserializable
@@ -405,6 +405,7 @@ src
 srcdoc
 srclang
 srcset
+stagemode
 standby
 start
 step

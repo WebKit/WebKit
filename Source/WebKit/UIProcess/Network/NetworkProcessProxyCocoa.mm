@@ -62,11 +62,11 @@ bool NetworkProcessProxy::XPCEventHandler::handleXPCEvent(xpc_object_t event) co
     if (!event || xpc_get_type(event) == XPC_TYPE_ERROR)
         return false;
 
-    auto* messageName = xpc_dictionary_get_string(event, XPCEndpoint::xpcMessageNameKey);
-    if (!messageName || !*messageName)
+    auto messageName = xpc_dictionary_get_wtfstring(event, XPCEndpoint::xpcMessageNameKey);
+    if (messageName.isEmpty())
         return false;
 
-    if (LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName == messageName) {
+    if (messageName == LaunchServicesDatabaseXPCConstants::xpcLaunchServicesDatabaseXPCEndpointMessageName) {
         networkProcess->m_endpointMessage = event;
         for (auto& processPool : WebProcessPool::allProcessPools()) {
             for (Ref process : processPool->processes())

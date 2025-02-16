@@ -39,7 +39,6 @@ function test() {
         testRunner.dumpAsText();
         
     cssRule = document.styleSheets[0].cssRules[0];
-    shouldBe("cssRule.UNKNOWN_RULE", 0);
     shouldBe("cssRule.STYLE_RULE", 1);
     shouldBe("cssRule.CHARSET_RULE", 2);
     shouldBe("cssRule.IMPORT_RULE", 3);
@@ -47,7 +46,6 @@ function test() {
     shouldBe("cssRule.FONT_FACE_RULE", 5);
     shouldBe("cssRule.PAGE_RULE", 6);
 
-    shouldBe("window.CSSRule.UNKNOWN_RULE", 0);
     shouldBe("window.CSSRule.STYLE_RULE", 1);
     shouldBe("window.CSSRule.CHARSET_RULE", 2);
     shouldBe("window.CSSRule.IMPORT_RULE", 3);

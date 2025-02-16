@@ -52,8 +52,6 @@
 SOFT_LINK_PRIVATE_FRAMEWORK_OPTIONAL(LinkPresentation)
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 IntSize dragImageSize(RetainPtr<NSImage> image)
@@ -94,7 +92,7 @@ RetainPtr<NSImage> dissolveDragImageToFraction(RetainPtr<NSImage> image, float d
     return dissolvedImage;
 }
 
-RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orientation)
+RetainPtr<NSImage> createDragImageFromImage(Image* image, ImageOrientation orientation, GraphicsClient*, float)
 {
     if (auto* bitmapImage = dynamicDowncast<BitmapImage>(*image)) {
         if (orientation == ImageOrientation::Orientation::FromImage)
@@ -218,11 +216,11 @@ LinkImageLayout::LinkImageLayout(URL& url, const String& titleString)
     CGFloat maximumUsedTextWidth = 0;
 
     auto buildLines = [this, maximumAvailableWidth, &maximumUsedTextWidth, &currentY] (NSString *text, NSColor *color, NSFont *font, CFIndex maximumLines, CTLineBreakMode lineBreakMode) {
-        CTParagraphStyleSetting paragraphStyleSettings[1];
-        paragraphStyleSettings[0].spec = kCTParagraphStyleSpecifierLineBreakMode;
-        paragraphStyleSettings[0].valueSize = sizeof(CTLineBreakMode);
-        paragraphStyleSettings[0].value = &lineBreakMode;
-        RetainPtr<CTParagraphStyleRef> paragraphStyle = adoptCF(CTParagraphStyleCreate(paragraphStyleSettings, 1));
+        CTParagraphStyleSetting paragraphStyleSettings;
+        paragraphStyleSettings.spec = kCTParagraphStyleSpecifierLineBreakMode;
+        paragraphStyleSettings.valueSize = sizeof(CTLineBreakMode);
+        paragraphStyleSettings.value = &lineBreakMode;
+        RetainPtr<CTParagraphStyleRef> paragraphStyle = adoptCF(CTParagraphStyleCreate(&paragraphStyleSettings, 1));
 
         NSDictionary *textAttributes = @{
             (id)kCTFontAttributeName: font,
@@ -336,7 +334,5 @@ DragImageRef createDragImageForColor(const Color& color, const FloatRect&, float
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DRAG_SUPPORT) && PLATFORM(MAC)

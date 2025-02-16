@@ -97,7 +97,7 @@ JSC_DEFINE_HOST_FUNCTION(stringFromCharCode, (JSGlobalObject* globalObject, Call
         if (UNLIKELY(!isLatin1(character))) {
             std::span<UChar> buf16Bit;
             auto impl16Bit = StringImpl::createUninitialized(length, buf16Bit);
-            StringImpl::copyCharacters(buf16Bit.data(), buf8Bit.first(i));
+            StringImpl::copyCharacters(buf16Bit, buf8Bit.first(i));
             buf16Bit[i] = character;
             ++i;
             for (; i < length; ++i) {

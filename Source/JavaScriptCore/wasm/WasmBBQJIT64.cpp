@@ -126,6 +126,7 @@ uint32_t BBQJIT::sizeOfType(TypeKind type)
     case TypeKind::Arrayref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
@@ -178,7 +179,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addTableGet(unsigned tableIndex, Value 
     };
     result = topValue(returnType);
     emitCCall(&operationGetWasmTableElement, arguments, result);
-    Location resultLocation = allocate(result);
+    Location resultLocation = loadIfNecessary(result);
 
     LOG_INSTRUCTION("TableGet", tableIndex, index, RESULT(result));
 
@@ -236,6 +237,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::getGlobal(uint32_t index, Value& result
         case TypeKind::I31ref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
+        case TypeKind::Nullexn:
         case TypeKind::Nullref:
         case TypeKind::Nullfuncref:
         case TypeKind::Nullexternref:
@@ -318,6 +320,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::setGlobal(uint32_t index, Value value)
         case TypeKind::I31ref:
         case TypeKind::Eqref:
         case TypeKind::Anyref:
+        case TypeKind::Nullexn:
         case TypeKind::Nullref:
         case TypeKind::Nullfuncref:
         case TypeKind::Nullexternref:
@@ -1610,6 +1613,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNew(uint32_t typeIndex, Express
     } else {
         ASSERT(!initValue.isConst());
         Location valueLocation = loadIfNecessary(initValue);
+        consume(initValue);
 
         Value lane0, lane1;
         {
@@ -1651,7 +1655,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, Ar
     Value allocationResult = Value::fromTemp(TypeKind::Arrayref, currentControlData().enclosedHeight() + currentControlData().implicitSlots() + m_parser->expressionStack().size() + args.size());
     emitCCall(operationWasmArrayNewEmpty, arguments, allocationResult);
 
-    Location allocationResultLocation = allocate(allocationResult);
+    Location allocationResultLocation = loadIfNecessary(allocationResult);
     emitThrowOnNullReference(ExceptionType::BadArrayNew, allocationResultLocation);
 
     for (uint32_t i = 0; i < args.size(); ++i) {
@@ -1664,14 +1668,18 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayNewFixed(uint32_t typeIndex, Ar
     }
 
     result = topValue(TypeKind::Arrayref);
-    Location resultLocation = allocate(result);
-    emitMove(allocationResult, resultLocation);
+    Location resultLocation;
 
     // If args.isEmpty() then allocationResult.asTemp() == result.asTemp() so we will consume our result.
     if (args.size()) {
         consume(allocationResult);
+        resultLocation = allocate(result);
+        emitMove(allocationResult.type(), allocationResultLocation, resultLocation);
         if (isRefType(getArrayElementType(typeIndex).unpacked()))
             emitWriteBarrier(resultLocation.asGPR());
+    } else {
+        RELEASE_ASSERT(result.asTemp() == allocationResult.asTemp());
+        resultLocation = allocationResultLocation;
     }
 
     LOG_INSTRUCTION("ArrayNewFixed", typeIndex, args.size(), RESULT(result));
@@ -1685,6 +1693,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayGet(ExtGCOpType arrayGetKind, u
 
     if (arrayref.isConst()) {
         ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
+        consume(index);
         emitThrowException(ExceptionType::NullArrayGet);
         result = Value::fromRef(resultType.kind, JSValue::encode(jsNull()));
         return { };
@@ -1941,6 +1950,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArraySet(uint32_t typeIndex, Express
 {
     if (arrayref.isConst()) {
         ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
+
+        LOG_INSTRUCTION("ArraySet", typeIndex, arrayref, index, value);
+        consume(value);
         emitThrowException(ExceptionType::NullArraySet);
         return { };
     }
@@ -1994,6 +2006,12 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayFill(uint32_t typeIndex, Expres
 {
     if (arrayref.isConst()) {
         ASSERT(arrayref.asI64() == JSValue::encode(jsNull()));
+
+        LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
+
+        consume(offset);
+        consume(value);
+        consume(size);
         emitThrowException(ExceptionType::NullArrayFill);
         return { };
     }
@@ -2014,6 +2032,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayFill(uint32_t typeIndex, Expres
     } else {
         ASSERT(!value.isConst());
         Location valueLocation = loadIfNecessary(value);
+        consume(value);
 
         Value lane0, lane1;
         {
@@ -2035,7 +2054,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addArrayFill(uint32_t typeIndex, Expres
         };
         emitCCall(operationWasmArrayFillVector, arguments, shouldThrow);
     }
-    Location shouldThrowLocation = allocate(shouldThrow);
+    Location shouldThrowLocation = loadIfNecessary(shouldThrow);
 
     LOG_INSTRUCTION("ArrayFill", typeIndex, arrayref, offset, value, size);
 
@@ -2135,7 +2154,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNewDefault(uint32_t typeIndex,
     emitCCall(operationWasmStructNewEmpty, arguments, result);
 
     const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
-    Location structLocation = allocate(result);
+    Location structLocation = loadIfNecessary(result);
     emitThrowOnNullReference(ExceptionType::BadStructNew, structLocation);
     m_jit.loadPtr(MacroAssembler::Address(structLocation.asGPR(), JSWebAssemblyStruct::offsetOfPayload()), wasmScratchGPR);
     for (StructFieldCount i = 0; i < structType.fieldCount(); ++i) {
@@ -2166,7 +2185,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNew(uint32_t typeIndex, Argume
     emitCCall(operationWasmStructNewEmpty, arguments, allocationResult);
 
     const auto& structType = *m_info.typeSignatures[typeIndex]->expand().template as<StructType>();
-    Location structLocation = allocate(allocationResult);
+    Location structLocation = loadIfNecessary(allocationResult);
     emitThrowOnNullReference(ExceptionType::BadStructNew, structLocation);
     m_jit.loadPtr(MacroAssembler::Address(structLocation.asGPR(), JSWebAssemblyStruct::offsetOfPayload()), wasmScratchGPR);
     bool hasRefTypeField = false;
@@ -2180,11 +2199,16 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructNew(uint32_t typeIndex, Argume
         emitWriteBarrier(structLocation.asGPR());
 
     result = topValue(TypeKind::Structref);
-    Location resultLocation = allocate(result);
-    emitMove(allocationResult, resultLocation);
+    Location resultLocation;
     // If args.isEmpty() then allocationResult.asTemp() == result.asTemp() so we will consume our result.
-    if (args.size())
+    if (args.size()) {
         consume(allocationResult);
+        resultLocation = allocate(result);
+        emitMove(allocationResult.type(), structLocation, resultLocation);
+    } else {
+        RELEASE_ASSERT(result.asTemp() == allocationResult.asTemp());
+        resultLocation = structLocation;
+    }
 
     LOG_INSTRUCTION("StructNew", typeIndex, args, RESULT(result));
 
@@ -2269,8 +2293,10 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addStructSet(Value structValue, const S
     if (structValue.isConst()) {
         // This is the only constant struct currently possible.
         ASSERT(JSValue::decode(structValue.asRef()).isNull());
-        emitThrowException(ExceptionType::NullStructSet);
+
         LOG_INSTRUCTION("StructSet", structValue, fieldIndex, value, "Exception");
+        consume(value);
+        emitThrowException(ExceptionType::NullStructSet);
         return { };
     }
 
@@ -2295,7 +2321,8 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addRefCast(ExpressionType reference, bo
     };
     result = topValue(TypeKind::Ref);
     emitCCall(operationWasmRefCast, arguments, result);
-    Location resultLocation = allocate(result);
+    Location resultLocation = loadIfNecessary(result);
+
     throwExceptionIf(ExceptionType::CastFailure, m_jit.branchTest64(MacroAssembler::Zero, resultLocation.asGPR()));
 
     LOG_INSTRUCTION("RefCast", reference, allowNull, heapType, RESULT(result));
@@ -2894,7 +2921,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Trunc(Value operand, Value& resul
         "F32Trunc", TypeKind::F32,
         BLOCK(Value::fromF32(Math::truncFloat(operand.asF32()))),
         BLOCK(
-            m_jit.roundTowardZeroFloat(operandLocation.asFPR(), resultLocation.asFPR());
+            m_jit.truncFloat(operandLocation.asFPR(), resultLocation.asFPR());
         )
     )
 }
@@ -2905,7 +2932,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Trunc(Value operand, Value& resul
         "F64Trunc", TypeKind::F64,
         BLOCK(Value::fromF64(Math::truncDouble(operand.asF64()))),
         BLOCK(
-            m_jit.roundTowardZeroDouble(operandLocation.asFPR(), resultLocation.asFPR());
+            m_jit.truncDouble(operandLocation.asFPR(), resultLocation.asFPR());
         )
     )
 }
@@ -2993,6 +3020,7 @@ void BBQJIT::emitCatchImpl(ControlData& dataCatch, const TypeDefinition& excepti
             case TypeKind::Externref:
             case TypeKind::Eqref:
             case TypeKind::Anyref:
+            case TypeKind::Nullexn:
             case TypeKind::Nullref:
             case TypeKind::Nullfuncref:
             case TypeKind::Nullexternref:
@@ -3081,6 +3109,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
                 case TypeKind::Externref:
                 case TypeKind::Eqref:
                 case TypeKind::Anyref:
+                case TypeKind::Nullexn:
                 case TypeKind::Nullref:
                 case TypeKind::Nullfuncref:
                 case TypeKind::Nullexternref:
@@ -3576,7 +3605,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addBranchNull(ControlData& data, Expres
     if (!shouldNegate)
         consume(reference);
 
-    LOG_INSTRUCTION("BrOnNull/NonNull", reference);
+    LOG_INSTRUCTION(shouldNegate ? "BrOnNonNull" : "BrOnNull", reference);
 
     if (reference.isConst()) {
         // If we didn't exit early, the branch must be always-taken.
@@ -4869,6 +4898,7 @@ void BBQJIT::emitStoreConst(Value constant, Location loc)
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
@@ -4913,6 +4943,7 @@ void BBQJIT::emitMoveConst(Value constant, Location loc)
     case TypeKind::Externref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
@@ -4958,6 +4989,7 @@ void BBQJIT::emitStore(TypeKind type, Location src, Location dst)
     case TypeKind::Structref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
@@ -4998,6 +5030,7 @@ void BBQJIT::emitMoveMemory(TypeKind type, Location src, Location dst)
     case TypeKind::Arrayref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
@@ -5032,6 +5065,7 @@ void BBQJIT::emitMoveRegister(TypeKind type, Location src, Location dst)
     case TypeKind::Structref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
@@ -5077,6 +5111,7 @@ void BBQJIT::emitLoad(TypeKind type, Location src, Location dst)
     case TypeKind::Structref:
     case TypeKind::Eqref:
     case TypeKind::Anyref:
+    case TypeKind::Nullexn:
     case TypeKind::Nullref:
     case TypeKind::Nullfuncref:
     case TypeKind::Nullexternref:
@@ -5122,6 +5157,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
             emitMoveConst(callee, calleeLocation = Location::fromGPR(otherScratch.gpr(0)));
         } else
             calleeLocation = loadIfNecessary(callee);
+        consume(callee);
         emitThrowOnNullReference(ExceptionType::NullReference, calleeLocation);
 
         calleePtr = calleeLocation.asGPR();

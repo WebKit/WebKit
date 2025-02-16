@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+</head>
+<body>
+
+<div id="container" role="group" aria-label="foo" style="visibility: hidden">
+    <div style="visibility: visible">
+        <button id="button">Press</button>
+    </div>
+</div>
+
+<script>
+var output = "This test ensures we don't ignore visibility:visible elements that have a visibility:hidden ancestor.\n\n";
+
+if (window.accessibilityController) {
+    var button = accessibilityController.accessibleElementById("button");
+    output += expect("button.role.toLowerCase().includes('button')", "true");
+    output += expect("button.isIgnored", "false");
+    debug(output);
+}
+</script>
+</body>
+</html>
+

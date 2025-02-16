@@ -2,11 +2,11 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      Generators declared with GeneratorMethod syntax do not require a
-      `yield` expression.
-  features: [generators]
-  es6id: 14.4
+description: >
+    Generators declared with GeneratorMethod syntax do not require a
+    `yield` expression.
+features: [generators]
+es6id: 14.4
 ---*/
 
 var result;

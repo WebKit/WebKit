@@ -33,6 +33,7 @@
 
 namespace WebCore {
 class CoordinatedPlatformLayer;
+class CoordinatedPlatformLayerBufferProxy;
 class NativeImage;
 
 class GraphicsLayerCoordinated final : public GraphicsLayer {
@@ -95,6 +96,10 @@ private:
 
     void deviceOrPageScaleFactorChanged() override;
 
+    float rootRelativeScaleFactor() const { return m_rootRelativeScaleFactor; }
+    void setShouldUpdateRootRelativeScaleFactor(bool value) override { m_shouldUpdateRootRelativeScaleFactor = value; }
+    void updateRootRelativeScale();
+
     bool setFilters(const FilterOperations&) override;
     void setMaskLayer(RefPtr<GraphicsLayer>&&) override;
     void setReplicatedByLayer(RefPtr<GraphicsLayer>&&) override;
@@ -111,9 +116,6 @@ private:
 
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
-#if ENABLE(DAMAGE_TRACKING)
-    void markDamageRectsUnreliable() override;
-#endif
 
     FloatSize pixelAlignmentOffset() const override { return m_pixelAlignmentOffset; }
 
@@ -178,7 +180,6 @@ private:
     void updateAnimations();
     void updateVisibleRect(const FloatRect&);
     void updateIndicators();
-    void updateContents(bool affectedByTransformAnimation);
     bool isRunningTransformAnimation() const;
     bool filtersCanBeComposited(const FilterOperations&) const;
 
@@ -190,6 +191,9 @@ private:
     void commitLayerChanges(CommitState&, float pageScaleFactor, const FloatPoint&, bool affectedByTransformAnimation);
     bool needsCommit(CommitState&) const;
     void recursiveCommitChanges(CommitState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
+
+    bool updateBackingStoresIfNeeded();
+    bool updateBackingStoreIfNeeded();
 
     Ref<CoordinatedPlatformLayer> m_platformLayer;
     OptionSet<Change> m_pendingChanges;
@@ -210,14 +214,14 @@ private:
         TransformationMatrix cachedCombined;
     } m_layerTransform;
     bool m_needsUpdateLayerTransform { false };
-    RefPtr<TextureMapperPlatformLayerProxy> m_contentsLayer;
-    RefPtr<NativeImage> m_pendingContentsImage;
+    bool m_shouldUpdateRootRelativeScaleFactor : 1 { false };
+    float m_rootRelativeScaleFactor { 1.0f };
+    RefPtr<CoordinatedPlatformLayerBufferProxy> m_contentsBufferProxy;
+    RefPtr<GraphicsLayerContentsDisplayDelegate> m_contentsDisplayDelegate;
+    RefPtr<NativeImage> m_contentsImage;
     Color m_contentsColor;
     RefPtr<CoordinatedPlatformLayer> m_backdropLayer;
     TextureMapperAnimations m_animations;
-#if ENABLE(DAMAGE_TRACKING)
-    bool m_damagedRectsAreUnreliable { false };
-#endif
 };
 
 } // namespace WebCore

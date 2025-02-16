@@ -51,6 +51,11 @@ public:
     void closeIfPossible();
 
     InternalWritableStream& internalWritableStream();
+    enum class Type : bool {
+        Default,
+        FileSystem
+    };
+    virtual Type type() const { return Type::Default; }
 
 protected:
     static ExceptionOr<Ref<WritableStream>> create(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);

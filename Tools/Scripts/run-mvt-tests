@@ -30,317 +30,355 @@ if os.path.isdir(os.path.join(scripts_dir, 'webkitpy')):
 
 import argparse
 import json
-import subprocess
-import time
-
-import subprocess
-from subprocess import CalledProcessError
-
-from selenium import webdriver
+import logging
+import psutil
+import traceback
+import urllib3
+from random import randint
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.wpewebkit.options import Options
+from selenium.common.exceptions import TimeoutException
+
 
 top_level_directory = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
+_log = logging.getLogger(__name__)
+LOG_MESSAGE = 25
 TEST_SUITES = [
-    "codec-support-test",
-    "dash-html5-test",
-    "dash-shaka-test",
-    "dash-dashjs-test",
-    "hls-shaka-test",
-    "hls-hlsjs-test",
-    "hss-html5-test",
-    "hss-dashjs-test",
-    "progressive-html5-test",
+        "codec-support-test",
+        "dash-html5-test",
+        "dash-shaka-test",
+        "dash-dashjs-test",
+        "hls-shaka-test",
+        "hls-hlsjs-test",
+        "hss-html5-test",
+        "hss-dashjs-test",
+        "progressive-html5-test",
 ]
 
-COG_PLATFORMS = [
-    "drm",
-    "fdo",
-    "gtk4",
-    "headless",
-    "wl",
-]
-
-DEFAULT_BROWSER = "/usr/bin/cog"
-DEFAULT_WEBDRIVER = "/usr/bin/WPEWebDriver"
-DEFAULT_WEBDRIVER_ADDRESS = "0.0.0.0"
-DEFAULT_WEBDRIVER_PORT = "8088"
-DEFAULT_MVT_INSTANCE_ADDRESS = "https://mvt.rdkcentral.com"
-DEFAULT_PLATFORM = "headless"
-DEFAULT_TEST_SUITE = "dash-shaka-test"
-DEFAULT_CONFIGURATION = "release"
-
-def fatal(*args):
-    print()
-    print("Fatal:", end=' ')
-    print(*args)
-    sys.exit(1)
-
-def parse_args():
-    """Parse command line arguments"""
-
+def parse_args(argument_list):
     parser = argparse.ArgumentParser(
         description="Run MVT suite with WebDriver.",
         epilog="""
-            This script connects to a running WPEWebDriver and fires up a MVT
+            This script uses WebDriver to automatically run the MVT
             test suite, collecting the results in a JSON file.
-
-            It also expects a running MVT instance in the environment
-            variable $MVT_INSTANCE_ADDRESS.
-
             For more info, check https://github.com/rdkcentral/mvt
             """,
     )
+    configuration = parser.add_mutually_exclusive_group(required=True)
+    configuration.add_argument('--debug', action='store_const', const='Debug', dest='configuration', help='Use a Debug build')
+    configuration.add_argument('--release', action='store_const', const='Release', dest='configuration', help='Use a Release build')
+    platform = parser.add_mutually_exclusive_group(required=True)
+    platform.add_argument('--gtk', action='store_const', dest='platform', const='gtk', help='Use the GTK port')
+    platform.add_argument('--wpe', action='store_const', dest='platform', const='wpe', help='Use the WPE port')
+    parser.add_argument("--mvt-instance-address", default="https://mvt.rdkcentral.com", help="MVT instance address to use")
+    parser.add_argument("--suite", default=None, choices=TEST_SUITES, help="Suite to run. Default: run all")
+    parser.add_argument('--update-expectations', action='store_true', help='Reset the test expectations with the new results')
+    parser.add_argument("--headless", action='store_true', help="Enable headless mode if available")
+    parser.add_argument("--browser-name", choices=['MiniBrowser', 'cog'], default='MiniBrowser', help="Select the browser to use (via run-minibrowser). Default: MiniBrowser")
+    parser.add_argument('--log-level', dest='log_level', choices=['minimal', 'info', 'debug'], default='info')
+    parser.add_argument('--', dest='extra_browser_args', help='Pass extra arguments to the browser (run-minibrowser) after two dashes (--)')
 
-    parser.add_argument("--browser", help="Path to Cog browser (i.e: /usr/bin/cog)")
-    parser.add_argument("--webdriver", help="Path to WPEWebDriver (i.e: /usr/bin/WPEWebDriver)")
-    parser.add_argument("--webdriver-address", default="{}:{}".format(DEFAULT_WEBDRIVER_ADDRESS, DEFAULT_WEBDRIVER_PORT), help="Address of the remote WebDriver (i.e: 127.0.0.1)")
-    parser.add_argument("--mvt-instance-address", default=DEFAULT_MVT_INSTANCE_ADDRESS, help="MVT instance address to use".format(DEFAULT_MVT_INSTANCE_ADDRESS))
-    parser.add_argument("--platform", default=DEFAULT_PLATFORM, choices=COG_PLATFORMS, help="Cog platform to use. Default: '{}'".format(DEFAULT_PLATFORM))
-    parser.add_argument("--suite", default=DEFAULT_TEST_SUITE, choices=TEST_SUITES, help="Suite to run. Default: '{}'".format(DEFAULT_TEST_SUITE))
-    parser.add_argument("--configuration", default=DEFAULT_CONFIGURATION, help="In case of using a WebKit build, choose 'release' or 'debug'. Default: '{}'".format(DEFAULT_CONFIGURATION))
-
-    args = parser.parse_args()
-
-    # Append 'port' in 'address' if missing.
-    if args.webdriver_address.find(":") < 0:
-        args.webdriver_address += ":" + DEFAULT_WEBDRIVER_PORT
-    # Store 'port' as separated argument for convenience.
-    args.port = args.webdriver_address.split(":")[1]
+    # argparse gets confused when parsing several arguments with dashes after '--'
+    # so manually parse that into a list before invoking argparse
+    extra_browser_args = []
+    if '--' in argument_list:
+        dashes_ind = argument_list.index('--')
+        extra_browser_args = argument_list[dashes_ind+1:]
+        argument_list = argument_list[:dashes_ind]
+    args = parser.parse_args(argument_list)
+    args.extra_browser_args = extra_browser_args
 
     return args
 
 
-def capabilities(browser_path, platform):
-    """Browser configuration passed to webdriver.
+class MVTWebDriverRunner():
 
-    Browser path is usually /usr/bin/cog on the RPi, but it might be a
-    sandbox path like /app/webkit/..../cog when running the test suite
-    on the destkop."""
+    def __init__(self, platform, configuration, extra_browser_args, mvt_instance_address, browser_name):
+        self.started = False
+        self.mvt_instance_address = mvt_instance_address
+        if platform == "gtk":
+            from selenium.webdriver import WebKitGTKOptions as WebKitOptions
+            from selenium.webdriver.webkitgtk.service import Service
+            from selenium.webdriver import WebKitGTK as WebKitDriver
+        elif platform == "wpe":
+            from selenium.webdriver import WPEWebKitOptions as WebKitOptions
+            from selenium.webdriver.wpewebkit.service import Service
+            from selenium.webdriver import WPEWebKit as WebKitDriver
+        else:
+            raise NotImplementedError(f"Unknown platform {platform}")
+        options = WebKitOptions()
+        options.binary_location = os.path.join(top_level_directory, "Tools/Scripts/run-minibrowser")
+        assert(isinstance(extra_browser_args, list))
+        run_minibrowser_args = [f"--{configuration}", f"--{platform}", "--automation"] + extra_browser_args
+        _log.debug(f'Passing the following extra arguments to run-minibrowser: "{run_minibrowser_args}"')
+        for run_minibrowser_arg in run_minibrowser_args:
+            options.add_argument(run_minibrowser_arg)
+        if browser_name:
+            options.set_capability('browserName', browser_name)
+        self._run_webdriver_script_path = os.path.join(top_level_directory, "Tools/Scripts/run-webdriver")
+        service = Service(executable_path=self._run_webdriver_script_path,
+                          service_args=[f"--{configuration}", f"--{platform}"])
+        self.driver = WebKitDriver(options=options, service=service)
+        self.driver.maximize_window()
+        self.started = True
 
-    if platform not in COG_PLATFORMS:
-        raise ValueError(f"Platform must be one of {COG_PLATFORMS}")
+    def _suite_has_started(self, driver):
+        return driver.execute_script('return !(typeof globalRunner === "undefined" || globalRunner === null);')
 
-    return {
-        "wpe:browserOptions": {
-            "binary": browser_path,
-            "args": ["--automation", f"--platform={platform}"],
-        }
-    }
+    def _suite_has_finished(self, driver):
+        return driver.execute_script("return globalRunner.currentTestIdx == globalRunner.testList.length;")
 
+    def run_suite(self, suite):
+        test_url = f"{self.mvt_instance_address}/?test_type={suite}&command=run"
+        _log.info(f'Running MVT suite "{suite}" at {test_url}')
+        self.driver.get(test_url)
+        WebDriverWait(self.driver, 20).until(self._suite_has_started)
+        WebDriverWait(self.driver, 3600).until(self._suite_has_finished)
+        return self.driver.execute_script("return getMvtTestResults()")
 
-def options(browser_path, platform):
-    if platform not in COG_PLATFORMS:
-        raise ValueError(f"Platform must be one of {COG_PLATFORMS}")
-
-    options = Options()
-    options.binary_location = browser_path
-    options.add_argument("--automation")
-    options.add_argument(f"--platform={platform}")
-
-    options.set_capability("browserName", os.path.basename(browser_path))
-
-    return options
-
-
-def suite_has_started(driver):
-    """Condition to check whether the MVT suite was properly loaded."""
-    return driver.execute_script(
-        'return !(typeof globalRunner === "undefined" || globalRunner === null);'
-    )
-
-
-def suite_has_finished(driver):
-    """Condition to check whether the MVT suite has finished running."""
-    return driver.execute_script(
-        "return globalRunner.currentTestIdx == globalRunner.testList.length;"
-    )
-
-
-def analyze_results(filename):
-    total, failed, passed = 0, 0, 0
-    with open(filename, 'r') as fd:
-        data = json.load(fd)
-
-    if 'tests' in data:
-        total = len(data['tests'])
-        for item in data['tests']:
-            if 'status' in item:
-                if item['status'] == 'passed':
-                    passed += 1
-        failed = total - passed
-
-    return total, failed, passed
+    def __del__(self):
+        if self.started:
+            self.driver.quit()
 
 
-def print_tests_failed(filename):
-    with open(filename, 'r') as fd:
-        data = json.load(fd)
+class MVTResultsExpectationsParser():
 
-    if 'tests' in data:
-        for test in data['tests']:
-            if 'status' in test and test['status'] == "failed":
-                print(test['log'])
-
-
-# Helper class to launch WPEWebDriver.
-class WPEWebDriver:
-    def __init__(self, args):
-        self.address = args.webdriver_address
-        self.configuration = args.configuration
-        self.port = args.port
-        self.binary = args.webdriver
-        if not (self.binary):
-            binary = os.path.join(top_level_directory, "WebKitBuild/WPE/{}/bin/WPEWebDriver".format(self.configuration.capitalize()))
-            if os.path.exists(binary):
-                self.binary = binary
-            elif os.path.exists(DEFAULT_WEBDRIVER):
-                self.binary = DEFAULT_WEBDRIVER
+    def __init__(self, platform, configuration, should_update_expectations):
+        self._expectations_file_path = os.path.join(top_level_directory, f"Tools/{platform}/MVT_TestExpectations_{configuration}.json")
+        self._expectations_data_dict = {}
+        self._results_this_run = {}
+        self.should_update_expectations = should_update_expectations
+        if os.path.isfile(self._expectations_file_path):
+            if self.should_update_expectations:
+                _log.info(f'Using the results of this run to update the expectations file at "{self._expectations_file_path}"')
             else:
-                fatal("Could not find path to WPEWebDriver")
-        if not os.path.exists(self.binary):
-                fatal("Path to WPEWebDriver binary doesn't exist: {}", self.binary)
-
-    def start(self):
-        if self._isRunning():
-            fatal("Cannot start {}: Address already in use: {}".format(os.path.basename(self.binary), self.address))
-
-        if self._isFlatpakSDK():
-            env = {
-                "WEBKIT_EXEC_PATH": "/app/webkit/WebKitBuild/{}/bin".format(self.configuration.capitalize()),
-                "WEBKIT_INJECTED_BUNDLE_PATH": "/app/webkit/WebKitBuild/{}/lib".format(self.configuration.capitalize()),
-                "WEBKIT_INSPECTOR_RESOURCES_PATH": "/app/webkit/WebKitBuild/{}/share".format(self.configuration.capitalize()),
-                "COG_MODULEDIR": "/app/webkit/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(self.configuration.capitalize()),
-            }
-            cmd = [os.path.join(top_level_directory, "Tools/Scripts/webkit-flatpak"),'--wpe','--{}'.format(self.configuration),'-c','/bin/bash','-c']
-            self._run(cmd, env)
-        elif self._isJHBuild():
-            env = {
-                "WEBKIT_EXEC_PATH": "{}/WebKitBuild/{}/bin".format(top_level_directory, configuration),
-                "WEBKIT_INJECTED_BUNDLE_PATH": "{}/WebKitBuild/{}/lib".format(top_level_directory, configuration),
-                "WEBKIT_INSPECTOR_RESOURCES_PATH": "{}/WebKitBuild/{}/share".format(top_level_directory, configuration),
-                "COG_MODULEDIR": "{}/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(top_level_directory, configuration),
-            }
-            cmd = [os.path.join(top_level_directory, "Tools/jhbuild/jhbuild-wrapper"),'--wpe','--{}'.format(self.configuration),'run','/bin/bash','-c']
-            self._run(cmd, env)
+                _log.info(f'Comparing the results of this run with the expectations file at "{self._expectations_file_path}"')
+            with open(self._expectations_file_path, 'r') as fd:
+                self._expectations_data_dict = json.load(fd)
         else:
-            # TODO: Run with system libraries.
-            sys.stderr.writeln("Run on system libraries")
-            pass
+            _log.warning(f'Expectations file "{self._expectations_file_path}" not found.')
+            _log.info('Pass the flag "--update-expectations" to create it with the results of this run')
 
-    def stop(self):
-        try:
-            command = "pkill {}".format(os.path.basename(self.binary))
-            subprocess.run(command.split(" "))
-        except CalledProcessError:
+    def _is_unexpected_failure(self, test_suite, test_name, test_result):
+        if test_result == 'passed':
             return False
-        return True
-
-    def _isRunning(self):
-        try:
-            command = "pgrep {}".format(os.path.basename(self.binary))
-            subprocess.check_call(command.split(" "), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except CalledProcessError:
-            return False
-        return True
-
-    def _isFlatpakSDK(self):
-        return not os.getenv("WEBKIT_JHBUILD") or os.getenv("WEBKIT_JHBUILD") == 0
-
-    def _isJHBuild(self):
-        return os.getenv("WEBKIT_JHBUILD") and os.getenv("WEBKIT_JHBUILD") == 1
-
-    def _run(self, cmd, env):
-        def dict_flat(d):
-            return " ".join([f"{key}={value}" for key, value in d.items()])
-        try:
-            env = {
-                "WEBKIT_EXEC_PATH": "/app/webkit/WebKitBuild/{}/bin".format(self.configuration.capitalize()),
-                "WEBKIT_INJECTED_BUNDLE_PATH": "/app/webkit/WebKitBuild/{}/lib".format(self.configuration.capitalize()),
-                "WEBKIT_INSPECTOR_RESOURCES_PATH": "/app/webkit/WebKitBuild/{}/share".format(self.configuration.capitalize()),
-                "COG_MODULEDIR": "/app/webkit/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(self.configuration.capitalize()),
-            }
-            subcommand = "{} {} --host=all --port={}".format(dict_flat(env), self.binary, self.port)
-            cmd.append(subcommand)
-            subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except CalledProcessError:
-            sys.exit(1)
-        time.sleep(2)
+        if test_suite not in self._expectations_data_dict:
+            return True
+        if test_name not in self._expectations_data_dict[test_suite]:
+            return True
+        return test_result not in self._expectations_data_dict[test_suite][test_name]
 
 
-def main():
-    """Script entry point."""
+    def _store_test_result_this_run(self, test_suite, test_name, test_result):
+        # We only keep a list of exepcted failures, tests passing are not annotated
+        if test_result == 'passed':
+            return
+        if test_suite not in self._results_this_run:
+            self._results_this_run[test_suite] = {}
+        # If we already had a result append the new one to the list of expected ones
+        # Some tests are flaky and can have several possible results
+        self._results_this_run[test_suite][test_name] = []
+        if test_suite in self._expectations_data_dict:
+            if test_name in self._expectations_data_dict[test_suite]:
+                self._results_this_run[test_suite][test_name] = self._expectations_data_dict[test_suite][test_name]
+        self._results_this_run[test_suite][test_name].append(test_result)
+        # Remove duplicates
+        self._results_this_run[test_suite][test_name] = list(set(self._results_this_run[test_suite][test_name]))
 
-    args = parse_args()
-
-    # 1. Start WPEWebDriver.
-    print("Start WPEWebDriver:", end=' ')
-    wpeWebDriver = WPEWebDriver(args)
-    wpeWebDriver.start()
-    print("OK")
-
-    # 2. Locate Cog browser and connect to WebDriver address.
-    if not args.browser:
-        browser = os.path.join(top_level_directory, "WebKitBuild/WPE/{}/Tools/cog-prefix/src/cog-build/launcher/cog".format(args.configuration.capitalize()))
-        if os.path.exists(browser):
-            args.browser = browser
-        elif os.path.exists(DEFAULT_BROWSER):
-            args.browser = DEFAULT_BROWSER
+    # This function keeps lists and other objects in-line, pretty-printing only the dicts
+    # For the typical json object used on the MVT expectations this looks better and more compact
+    # that can be achieved by only using json.dumps()
+    def _json_compact_printer(self, obj, indent=4, ilevel=0):
+        if isinstance(obj, dict):
+            dict_str = '{\n'
+            ilevel += 1
+            sorted_keys = sorted(obj.keys())
+            for key in sorted_keys:
+                value_repr = v=self._json_compact_printer(obj[key], indent, ilevel)
+                ending = '\n' if key == sorted_keys[-1] else ',\n'
+                dict_str  += '{i}{k} : {v}{e}'.format(i=' '*indent*ilevel, k=json.dumps(key), v=value_repr, e=ending)
+            dict_str += '{i}}}'.format(i=' '*indent*(ilevel-1))
+            return dict_str
         else:
-            fatal("Could not find path to Cog browser")
-    if not os.path.exists(args.browser):
-        fatal("Path to Cog browser doesn't exist: {}", args.browser)
-    print("Connecting to remote driver:", end=' ')
-    driver = webdriver.Remote(
-        command_executor=args.webdriver_address,
-        options=options(args.browser, args.platform),
-    )
-    print("OK")
+            return json.dumps(obj)
 
-    print(f"Using MVT server: {args.mvt_instance_address}")
+    def analyze_results(self, data):
+        unexpected_failed = 0
+        expected_failed = 0
+        total_tests = 0
+        for test_entry in data['tests']:
+            total_tests += 1
+            test_suite = test_entry['suites_chain']
+            test_name = test_entry['name']
+            test_result = test_entry['status']
+            if self.should_update_expectations:
+                self._store_test_result_this_run(test_suite, test_name, test_result)
+            if self._is_unexpected_failure(test_suite, test_name, test_result):
+                unexpected_failed += 1
+                _log.warning(f'[UNEXPECTED_FAIL] Test "{test_name}" from "{test_suite}" has unexpected result: {test_result}')
+                _log.info(test_entry['log'])
+            elif test_result != 'passed':
+                _log.info(f'[FAIL][EXPECTED] {test_name}')
+                expected_failed += 1
+            else:
+                _log.info(f'[PASS] {test_name}')
+        return total_tests, unexpected_failed, expected_failed
 
-    # 3. Load the test suite with parameter `command=run`
-    print("Loading MVT:", end=' ')
-    driver.get(f"{args.mvt_instance_address}/?test_type={args.suite}&command=run")
-    print("OK")
-    print("Waiting for globalRunner instantiation:", end=' ')
-    WebDriverWait(driver, 20).until(suite_has_started)
-    print("OK")
+    def maybe_update_expectations(self):
+        if self.should_update_expectations and self._results_this_run:
+            with open(self._expectations_file_path, 'w') as fd:
+                fd.write(self._json_compact_printer(self._results_this_run))
+                fd.write('\n')
+            _log.info(f'Expectations file updated at "{self._expectations_file_path}"')
 
-    # 4. Wait for test to finish
-    print("Waiting for test run to finish:", end=' ')
-    WebDriverWait(driver, 3600).until(suite_has_finished)
-    print("OK")
 
-    # 5. Fetch with getMvtTestResults()
-    print("Fetching the test results:", end=' ')
-    results = driver.execute_script("return getMvtTestResults()")
-    print("OK")
+def run_mvt_test_suite(args):
+    _log.info(f'Starting WebDriver MVT runner with browser "{args.browser_name}" and platform "{args.platform}" configuration "{args.configuration}"')
+    mvtwebdriver_runner = MVTWebDriverRunner(args.platform, args.configuration.lower(), args.extra_browser_args, args.mvt_instance_address, args.browser_name)
+    mvtresultsexpectations_parser = MVTResultsExpectationsParser(args.platform, args.configuration, args.update_expectations)
 
-    # 6. Kill WebDriver.
-    print("Stop WPEWebDriver:", end=' ')
-    wpeWebDriver.stop()
-    print("OK")
+    # Run the test suite(s)
+    test_results = {}
+    suites = TEST_SUITES if args.suite is None else [args.suite]
+    num_suites = len(suites)
+    for suite in suites:
+        json_results = mvtwebdriver_runner.run_suite(suite)
+        tests_run, unexpected_failures, expected_failures = mvtresultsexpectations_parser.analyze_results(json_results)
+        test_results[suite] = [tests_run, unexpected_failures, expected_failures]
+        exit_code = unexpected_failures
+        tests_pass = tests_run - unexpected_failures - expected_failures
+        suite_summary_header_str = f"[Suite {suite}] Ran {tests_run} tests of which:"
+        _log.info('-' * len(suite_summary_header_str))
+        _log.info(suite_summary_header_str)
+        _log.info(f"    - {tests_pass} tests passed.")
+        if expected_failures > 0:
+            _log.info(f"    - {expected_failures} tests were expected failures.")
+        if unexpected_failures > 0:
+            _log.info(f"    - {unexpected_failures} tests were unexpected failures.")
+        _log.info('-' * len(suite_summary_header_str) + '\n')
 
-    # 7. Parse JSON test results
-    print("Saving the test results:", end=' ')
-    with open("results.json", "w", encoding="utf-8") as handle:
-        json.dump(results, handle, indent=True)
-    print("OK")
-    print("")
+    # Print global summary if more than one suite was run
+    if num_suites > 1:
+        _log.info('###########')
+        _log.info('# SUMMARY #')
+        _log.info('###########')
+        total_tests_run = 0
+        total_unexpected_failures = 0
+        total_expected_failures = 0
+        for suite in test_results:
+            total_tests_run += test_results[suite][0]
+            total_unexpected_failures += test_results[suite][1]
+            total_expected_failures += test_results[suite][2]
+        total_tests_pass = total_tests_run - total_unexpected_failures - total_expected_failures
+        suites_str = ", ".join(suites)
+        _log.info(f"Executed {num_suites} MVT test suites: {suites_str}")
+        _log.info(f"Ran {total_tests_run} tests in total of which:")
+        _log.info(f"    - {total_tests_pass} tests passed.")
+        if total_expected_failures > 0:
+            _log.info(f"    - {total_expected_failures} tests were expected failures.")
+        if total_unexpected_failures > 0:
+            _log.info(f"    - {total_unexpected_failures} tests were unexpected failures.")
+        exit_code = total_unexpected_failures
 
-    # 8. Analyze results.
-    total, failed, passed = analyze_results('results.json')
-    print("Ran {} tests of which {} failed".format(total, failed))
-    print("")
+    mvtresultsexpectations_parser.maybe_update_expectations()
+    return exit_code
 
-    # 9. Print tests that failed.
-    if failed > 0:
-        print_tests_failed('results.json')
 
-    sys.exit(failed)
+def configure_logging(selected_log_level='info'):
+    class LogHandler(logging.StreamHandler):
+        def __init__(self, stream):
+             super().__init__(stream)
+
+        def format(self, record):
+            if record.levelno > LOG_MESSAGE:
+                return '%s: %s' % (record.levelname, record.getMessage())
+            return record.getMessage()
+
+    logging.addLevelName(LOG_MESSAGE, 'MESSAGE')
+    if selected_log_level == 'debug':
+        log_level = logging.DEBUG
+    elif selected_log_level == 'info':
+        log_level = logging.INFO
+    elif selected_log_level == 'quiet':
+        log_level = logging.NOTSET
+    elif selected_log_level == 'minimal':
+        log_level = logging.getLevelName(LOG_MESSAGE)
+
+    handler = LogHandler(sys.stdout)
+    logger = logging.getLogger()
+    logger.addHandler(handler)
+    logger.setLevel(log_level)
+    return handler
+
+
+# This monkey-patches urllib3.request to ensure that it runs always with
+# a timeout. Otherwise sometimes selenium hangs indefinitively.
+def set_urllib3_request_default_timeout(timeout):
+    original_request = urllib3.request.RequestMethods.request
+    def patched_request(self, method, url, *args, **kwargs):
+        # Only set timeout if not already specified
+        if 'timeout' not in kwargs:
+            kwargs['timeout'] = timeout
+        return original_request(self, method, url, *args, **kwargs)
+    urllib3.request.RequestMethods.request = patched_request
+
+
+# This helps to ensure that we always clean any webdriver/browser subprocess
+# that was executed during testing when exiting.
+def cleanup_all_processes_mypgid():
+    my_pid = os.getpid()
+    my_gpid = os.getpgid(my_pid)
+    pids = []
+    for proc in psutil.process_iter():
+        try:
+            if os.getpgid(proc.pid) == my_gpid and proc.pid != my_pid:
+                os.kill(proc.pid, 9)
+        except (psutil.NoSuchProcess, psutil.AccessDenied, ProcessLookupError, PermissionError):
+            continue
+
+def main(argument_list):
+    args = parse_args(argument_list)
+    configure_logging(args.log_level)
+
+    # Configure the browser type
+    if args.platform == 'wpe':
+        os.environ['WPE_BROWSER'] = args.browser_name
+    elif args.platform == 'gtk':
+        if args.browser_name != 'MiniBrowser':
+            _log.warning('Only browser MiniBrowser is available for platform gtk. Using MiniBrowser')
+            args.browser_name = 'MiniBrowser'
+    else:
+        raise NotImplementedError(f'Unknown platform {args.platform}')
+
+    # Enable headless mode if requested
+    if args.headless:
+        if args.platform == 'gtk':
+            _log.warning('Headless mode not available for WebKitGTK. Try to run this script with "xvfb-run"')
+        elif args.platform == 'wpe':
+            if args.browser_name == 'MiniBrowser':
+                args.extra_browser_args.append("--headless")
+            elif args.browser_name == 'cog':
+                os.environ['COG_PLATFORM_NAME'] = 'headless'
+            else:
+                raise NotImplementedError(f'Unknown wpe browser: {browser_name}')
+
+    # Create new process group with this process as leader
+    os.setpgrp()
+    # Set a default timeout for all the urllib3 requests (avoid hangs)
+    set_urllib3_request_default_timeout(30)
+    exit_code = -1
+    try:
+        exit_code = run_mvt_test_suite(args)
+    except urllib3.exceptions.ReadTimeoutError as e:
+        _log.error(f'The connection with WebDriver timed out. Check if the browser works fine. Retry by passing --headless. {e}')
+    except TimeoutException as e:
+        _log.error(f'The MVT test suite timed out. Check if the remote URL has the expected content. {e}')
+    except:
+        traceback.print_exc()
+    finally:
+        cleanup_all_processes_mypgid()
+        return exit_code
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main(sys.argv[1:]))

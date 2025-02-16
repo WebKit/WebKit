@@ -51,7 +51,7 @@ enum class ShouldLogWarning { No, Yes };
 enum class IsUpgradable : bool { No, Yes, };
 
 bool frameAndAncestorsCanRunInsecureContent(LocalFrame&, SecurityOrigin&, const URL&, ShouldLogWarning = ShouldLogWarning::Yes);
-bool shouldUpgradeInsecureContent(LocalFrame&, IsUpgradable, const URL&, FetchOptions::Mode, FetchOptions::Destination, Initiator);
+bool shouldUpgradeInsecureContent(LocalFrame&, IsUpgradable, const URL&, FetchOptions::Destination, Initiator);
 bool shouldBlockRequestForDisplayableContent(LocalFrame&, const URL&, ContentType, IsUpgradable = IsUpgradable::No);
 bool shouldBlockRequestForRunnableContent(LocalFrame&, SecurityOrigin&, const URL&, ShouldLogWarning = ShouldLogWarning::Yes);
 void checkFormForMixedContent(LocalFrame&, const URL&);

@@ -28,6 +28,7 @@
 #include "WebContentMode.h"
 #include "WebsiteAutoplayPolicy.h"
 #include "WebsiteAutoplayQuirk.h"
+#include "WebsiteInlineMediaPlaybackPolicy.h"
 #include "WebsiteLegacyOverflowScrollingTouchPolicy.h"
 #include "WebsiteMediaSourcePolicy.h"
 #include "WebsiteMetaViewportPolicy.h"
@@ -86,6 +87,7 @@ public:
     bool allowPrivacyProxy { true };
     bool allowSiteSpecificQuirksToOverrideContentMode { false };
     WebsitePushAndNotificationsEnabledPolicy pushAndNotificationsEnabledPolicy { WebsitePushAndNotificationsEnabledPolicy::UseGlobalPolicy };
+    WebsiteInlineMediaPlaybackPolicy inlineMediaPlaybackPolicy { WebsiteInlineMediaPlaybackPolicy::Default };
 };
 
 } // namespace WebKit

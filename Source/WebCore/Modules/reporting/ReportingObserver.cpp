@@ -76,7 +76,8 @@ ReportingObserver::ReportingObserver(ScriptExecutionContext& scriptExecutionCont
     : ActiveDOMObject(&scriptExecutionContext)
     , m_reportingScope(reportingScopeForContext(scriptExecutionContext))
     , m_callback(WTFMove(callback))
-    , m_options(WTFMove(options))
+    , m_types(options.types.value_or(Vector<AtomString>()))
+    , m_buffered(options.buffered)
 {
 }
 
@@ -98,10 +99,10 @@ void ReportingObserver::observe()
     // https://www.w3.org/TR/reporting-1/#dom-reportingobserver-observe
     m_reportingScope->registerReportingObserver(*this);
 
-    if (!m_options.buffered)
+    if (!m_buffered)
         return;
 
-    m_options.buffered = false;
+    m_buffered = false;
 
     // For each report in global’s report buffer, queue a task to execute § 4.3 Add report to observer with report and the context object.
     m_reportingScope->appendQueuedReportsForRelevantType(*this);
@@ -121,7 +122,7 @@ void ReportingObserver::appendQueuedReportIfCorrectType(const Ref<Report>& repor
         return;
     
     // Step 4.3.2
-    if (m_options.types && !m_options.types->contains(report->type()))
+    if (m_types.size() && !m_types.contains(report->type()))
         return;
     
     // Step 4.3.3:

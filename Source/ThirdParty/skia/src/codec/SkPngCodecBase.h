@@ -13,6 +13,8 @@
 #include <optional>
 
 #include "include/codec/SkCodec.h"
+#include "include/codec/SkEncodedOrigin.h"
+#include "include/core/SkImageInfo.h"
 #include "include/core/SkRefCnt.h"
 #include "include/private/SkEncodedInfo.h"
 #include "include/private/base/SkDebug.h"
@@ -23,7 +25,6 @@ class SkSampler;
 class SkStream;
 class SkSwizzler;
 enum class SkEncodedImageFormat;
-struct SkImageInfo;
 template <typename T> class SkSpan;
 
 // This class implements functionality shared between `SkPngCodec` and
@@ -35,7 +36,7 @@ public:
     static bool isCompatibleColorProfileAndType(const SkEncodedInfo::ICCProfile* profile,
                                                 SkEncodedInfo::Color color);
 protected:
-    SkPngCodecBase(SkEncodedInfo&&, std::unique_ptr<SkStream>);
+    SkPngCodecBase(SkEncodedInfo&&, std::unique_ptr<SkStream>, SkEncodedOrigin origin);
 
     // Initialize most fields needed by `applyXformRow`.
     //
@@ -98,12 +99,14 @@ private:
     std::unique_ptr<SkSwizzler> fSwizzler;
     skia_private::AutoTMalloc<uint8_t> fStorage;
     int fXformWidth = -1;
-    sk_sp<SkColorPalette> fColorTable;  // May be unpremul.
+    sk_sp<SkColorPalette> fColorTable;
 
     size_t fEncodedRowBytes = 0;  // Size of encoded/source row in bytes.
 #if defined(SK_DEBUG)
     size_t fDstRowBytes = 0;      // Size of destination row in bytes.
 #endif
+
+    std::optional<SkImageInfo> fDstInfoOfPreviousColorTableCreation;
 };
 
 #endif  // SkPngCodecBase_DEFINED

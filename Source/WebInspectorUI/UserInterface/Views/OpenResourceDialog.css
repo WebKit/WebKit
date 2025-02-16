@@ -101,7 +101,7 @@
     display: block;
 }
 
-.open-resource-dialog > .tree-outline {
+.open-resource-dialog > .scroll-container {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -110,22 +110,22 @@
     border-bottom-right-radius: 4px;
 }
 
-.open-resource-dialog.has-results > .tree-outline {
+.open-resource-dialog.has-results .scroll-container {
     border-top: solid 1px var(--border-color);
 }
 
-.open-resource-dialog > .tree-outline .item {
+.open-resource-dialog .tree-outline .item {
     flex: none;
     padding-inline-start: 10px;
     border: none;
 }
 
-.open-resource-dialog > .tree-outline.large .item {
+.open-resource-dialog .tree-outline.large .item {
     height: 44px;
     line-height: 42px;
 }
 
-.open-resource-dialog > .tree-outline.large .item .icon {
+.open-resource-dialog .tree-outline.large .item .icon {
     width: 32px;
     height: 32px;
     margin-top: 6px;
@@ -150,19 +150,19 @@
     vertical-align: 1px;
 }
 
-.open-resource-dialog > .tree-outline .item.selected {
+.open-resource-dialog .tree-outline .item.selected {
     color: white;
     background-color: hsl(209, 100%, 49%);
 }
 
-.open-resource-dialog > .tree-outline .item.selected .highlighted {
+.open-resource-dialog .tree-outline .item.selected .highlighted {
     background-color: var(--selected-background-color-highlight);
 
     border-bottom: none;
     text-decoration: underline;
 }
 
-.open-resource-dialog > .tree-outline .item.selected .subtitle {
+.open-resource-dialog .tree-outline .item.selected .subtitle {
     color: hsla(0, 0%, 100%, 0.9);
 }
 
@@ -180,7 +180,7 @@
         color: var(--text-color-secondary);
     }
 
-    .open-resource-dialog > .tree-outline .item.selected {
+    .open-resource-dialog .tree-outline .item.selected {
         background-color: var(--selected-background-color);
         color: white;
     }

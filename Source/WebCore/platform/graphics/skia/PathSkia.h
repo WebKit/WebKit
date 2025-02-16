@@ -71,9 +71,9 @@ public:
     bool transform(const AffineTransform&) final;
 
     bool contains(const FloatPoint&, WindRule) const;
-    bool strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
+    bool strokeContains(const FloatPoint&, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
-    FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
+    FloatRect strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
 private:
     PathSkia() = default;

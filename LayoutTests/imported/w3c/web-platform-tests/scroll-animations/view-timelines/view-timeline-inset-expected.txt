@@ -1,14 +1,9 @@
 
-FAIL View timeline with px based inset. assert_equals: Effect at the midpoint of the active range: 0px 0px expected "0.5" but got "0.486667"
-FAIL View timeline with percent based inset. assert_equals: Effect at the midpoint of the active range: 0% 0% expected "0.5" but got "0.486667"
-FAIL view timeline with inset auto. promise_test: Unhandled rejection with value: object "TypeError: Type error"
-FAIL view timeline with font relative inset. assert_equals: Effect at the start of the active phase: 1em 2em expected "0.3" but got "0.329333"
-FAIL view timeline with viewport relative insets. assert_equals: Effect at the start of the active phase: 10vw 20vw expected "0.3" but got "0.5"
-FAIL view timeline inset as string assert_equals: Effect at the midpoint of the active range: 10px expected "0.5" but got "0.485714"
-FAIL view timeline with invalid inset assert_throws_js: function "() => {
-    new ViewTimeline({
-      subject: target,
-      inset: [ CSS.rad(1) ]
-    });
-  }" did not throw
+PASS View timeline with px based inset.
+PASS View timeline with percent based inset.
+PASS view timeline with inset auto.
+PASS view timeline with font relative inset.
+PASS view timeline with viewport relative insets.
+PASS view timeline inset as string
+PASS view timeline with invalid inset
 

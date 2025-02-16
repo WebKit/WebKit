@@ -10,7 +10,7 @@ function bigIntMul(x, y) {
 }
 noInline(bigIntMul);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntMul(3n, 10n);
     assert.sameValue(r, 30n, 3n + " * " + 10n + " = " + r);
 }

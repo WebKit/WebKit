@@ -37,7 +37,7 @@ async function buildWat(types) {
 
 
     let calleeInst = new WebAssembly.Instance(module, { env: { callee: throwError } } );
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         try {
             calleeInst.exports.caller();
         } catch (e) {
@@ -54,7 +54,7 @@ async function buildWat(types) {
     }
 
     calleeInst = new WebAssembly.Instance(module, { env: { callee: throwErrorInIterator } } );
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         try {
             calleeInst.exports.caller();
         } catch (e) {
@@ -70,7 +70,7 @@ async function buildWat(types) {
     }
 
     calleeInst = new WebAssembly.Instance(module, { env: { callee: tooManyValues } } );
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         try {
             calleeInst.exports.caller();
         } catch (e) {
@@ -86,7 +86,7 @@ async function buildWat(types) {
     }
 
     calleeInst = new WebAssembly.Instance(module, { env: { callee: tooFewValues } } );
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         try {
             calleeInst.exports.caller();
         } catch (e) {

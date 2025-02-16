@@ -29,60 +29,11 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include <WebCore/CoordinatedPlatformLayerBufferDMABuf.h>
 #include <WebCore/DMABufBuffer.h>
-#include <WebCore/GraphicsLayerContentsDisplayDelegateTextureMapper.h>
+#include <WebCore/GraphicsLayerContentsDisplayDelegateCoordinated.h>
 #include <WebCore/TextureMapperFlags.h>
-#include <WebCore/TextureMapperPlatformLayerProxy.h>
 
 namespace WebKit {
 using namespace WebCore;
-
-class RemoteGraphicsLayerContentsDisplayDelegateGBM final : public GraphicsLayerContentsDisplayDelegateTextureMapper {
-public:
-    static Ref<RemoteGraphicsLayerContentsDisplayDelegateGBM> create(bool isOpaque)
-    {
-        return adoptRef(*new RemoteGraphicsLayerContentsDisplayDelegateGBM(isOpaque));
-    }
-
-    virtual ~RemoteGraphicsLayerContentsDisplayDelegateGBM()
-    {
-        m_proxy->setSwapBuffersFunction(nullptr);
-    }
-
-    void setDisplayBuffer(Ref<DMABufBuffer>&& displayBuffer, UnixFileDescriptor&& fenceFD)
-    {
-        std::swap(m_drawingBuffer, m_displayBuffer);
-        m_displayBuffer = WTFMove(displayBuffer);
-        m_fenceFD = WTFMove(fenceFD);
-    }
-
-    void setDisplayBuffer(uint64_t bufferID, UnixFileDescriptor&& fenceFD)
-    {
-        if (m_drawingBuffer && m_drawingBuffer->id() == bufferID)
-            std::swap(m_drawingBuffer, m_displayBuffer);
-        m_fenceFD = WTFMove(fenceFD);
-    }
-
-private:
-    explicit RemoteGraphicsLayerContentsDisplayDelegateGBM(bool isOpaque)
-        : GraphicsLayerContentsDisplayDelegateTextureMapper(TextureMapperPlatformLayerProxy::create(TextureMapperPlatformLayerProxy::ContentType::WebGL))
-        , m_isOpaque(isOpaque)
-    {
-        m_proxy->setSwapBuffersFunction([this](TextureMapperPlatformLayerProxy& proxy) mutable {
-            if (!m_displayBuffer)
-                return;
-
-            OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
-            if (!m_isOpaque)
-                flags.add(TextureMapperFlags::ShouldBlend);
-            proxy.pushNextBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer }, flags, WTFMove(m_fenceFD)));
-        });
-    }
-
-    bool m_isOpaque { false };
-    RefPtr<DMABufBuffer> m_drawingBuffer;
-    RefPtr<DMABufBuffer> m_displayBuffer;
-    UnixFileDescriptor m_fenceFD;
-};
 
 class RemoteGraphicsContextGLProxyGBM final : public RemoteGraphicsContextGLProxy {
     WTF_MAKE_FAST_ALLOCATED;
@@ -94,7 +45,7 @@ private:
     friend class RemoteGraphicsContextGLProxy;
     explicit RemoteGraphicsContextGLProxyGBM(const GraphicsContextGLAttributes& attributes)
         : RemoteGraphicsContextGLProxy(attributes)
-        , m_layerContentsDisplayDelegate(RemoteGraphicsLayerContentsDisplayDelegateGBM::create(!attributes.alpha))
+        , m_layerContentsDisplayDelegate(GraphicsLayerContentsDisplayDelegateCoordinated::create())
     {
     }
 
@@ -102,7 +53,9 @@ private:
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return m_layerContentsDisplayDelegate.copyRef(); }
     void prepareForDisplay() final;
 
-    Ref<RemoteGraphicsLayerContentsDisplayDelegateGBM> m_layerContentsDisplayDelegate;
+    Ref<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+    RefPtr<DMABufBuffer> m_drawingBuffer;
+    RefPtr<DMABufBuffer> m_displayBuffer;
 };
 
 void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
@@ -117,10 +70,20 @@ void RemoteGraphicsContextGLProxyGBM::prepareForDisplay()
     }
 
     auto [bufferID, bufferAttributes, fenceFD] = sendResult.takeReply();
+
+    if (bufferAttributes || (m_drawingBuffer && m_drawingBuffer->id() == bufferID))
+        std::swap(m_drawingBuffer, m_displayBuffer);
+
     if (bufferAttributes)
-        m_layerContentsDisplayDelegate->setDisplayBuffer(DMABufBuffer::create(bufferID, WTFMove(*bufferAttributes)), WTFMove(fenceFD));
-    else
-        m_layerContentsDisplayDelegate->setDisplayBuffer(bufferID, WTFMove(fenceFD));
+        m_displayBuffer = DMABufBuffer::create(bufferID, WTFMove(*bufferAttributes));
+
+    if (!m_displayBuffer)
+        return;
+
+    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
+    if (contextAttributes().alpha)
+        flags.add(TextureMapperFlags::ShouldBlend);
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer }, flags, WTFMove(fenceFD)));
 }
 
 Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(const GraphicsContextGLAttributes& attributes)

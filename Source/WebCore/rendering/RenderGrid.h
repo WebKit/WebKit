@@ -46,6 +46,8 @@ struct ContentAlignmentData {
 
 enum class GridAxisPosition : uint8_t { GridAxisStart, GridAxisEnd, GridAxisCenter };
 
+enum class SubgridDidChange : bool { No, Yes };
+
 class GridItemSizeCache {
 public:
     void setSizeForGridItem(const RenderBox& gridItem, LayoutUnit size);
@@ -66,12 +68,11 @@ public:
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
-    bool avoidsFloats() const override { return true; }
     bool canDropAnonymousBlockChild() const override { return false; }
 
-    void dirtyGrid(bool subgridChanged = false);
+    void dirtyGrid(SubgridDidChange descendantSubgridsNeedItemPlacement = SubgridDidChange::No);
     Vector<LayoutUnit> trackSizesForComputedStyle(GridTrackSizingDirection) const;
 
     const Vector<LayoutUnit>& columnPositions() const { return m_columnPositions; }
@@ -97,8 +98,8 @@ public:
     // the grid is a standard grid or a masonry one. While masonry is an extension of grid,
     // keeping the logic in the same function was leading to a messy amount of if statements being added to handle
     // specific masonry cases.
-    void layoutGrid(bool);
-    void layoutMasonry(bool);
+    void layoutGrid(RelayoutChildren);
+    void layoutMasonry(RelayoutChildren);
 
     // Computes the span relative to this RenderGrid, even if the RenderBox is a grid item
     // of a descendant subgrid.
@@ -165,7 +166,7 @@ private:
     bool selfAlignmentChangedToStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
     bool selfAlignmentChangedFromStretch(GridAxis, const RenderStyle& oldStyle, const RenderStyle& newStyle, const RenderBox&) const;
 
-    bool subgridDidChange(const RenderStyle& oldStyle) const;
+    SubgridDidChange subgridDidChange(const RenderStyle& oldStyle) const;
     bool explicitGridDidResize(const RenderStyle&) const;
     bool namedGridLinesDefinitionDidChange(const RenderStyle&) const;
     bool implicitGridLinesDefinitionDidChange(const RenderStyle&) const;
@@ -199,7 +200,7 @@ private:
     bool canPerformSimplifiedLayout() const final;
     void prepareGridItemForPositionedLayout(RenderBox&);
     bool hasStaticPositionForGridItem(const RenderBox&, GridTrackSizingDirection) const;
-    void layoutPositionedObject(RenderBox&, bool relayoutChildren, bool fixedPositionObjectsOnly) override;
+    void layoutPositionedObject(RenderBox&, RelayoutChildren, bool fixedPositionObjectsOnly) override;
 
     void computeTrackSizesForDefiniteSize(GridTrackSizingDirection, LayoutUnit availableSpace, GridLayoutState&);
     void computeTrackSizesForIndefiniteSize(GridTrackSizingAlgorithm&, GridTrackSizingDirection, GridLayoutState&, LayoutUnit* minIntrinsicSize = nullptr, LayoutUnit* maxIntrinsicSize = nullptr) const;
@@ -266,7 +267,6 @@ private:
     LayoutUnit translateRTLCoordinate(LayoutUnit) const;
 
     bool shouldResetLogicalHeightBeforeLayout() const override { return true; }
-    bool establishesIndependentFormattingContext() const override;
 
     bool aspectRatioPrefersInline(const RenderBox& gridItem, bool blockFlowIsColumnAxis);
 

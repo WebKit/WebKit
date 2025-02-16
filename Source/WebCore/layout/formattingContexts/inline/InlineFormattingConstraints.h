@@ -26,6 +26,7 @@
 #pragma once
 
 #include "FormattingConstraints.h"
+#include "LayoutSize.h"
 
 namespace WebCore {
 namespace Layout {

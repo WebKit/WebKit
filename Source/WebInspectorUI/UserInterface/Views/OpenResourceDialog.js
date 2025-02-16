@@ -55,7 +55,12 @@ WI.OpenResourceDialog = class OpenResourceDialog extends WI.Dialog
         this._treeOutline.addEventListener(WI.TreeOutline.Event.SelectionDidChange, this._treeSelectionDidChange, this);
         this._treeOutline.element.addEventListener("focus", () => { this._inputElement.focus(); });
 
-        this.element.appendChild(this._treeOutline.element);
+        let scrollContainer = this.element.appendChild(document.createElement("div"));
+        scrollContainer.className = "scroll-container";
+        scrollContainer.appendChild(this._treeOutline.element);
+
+        const treeItemHeight = 44;
+        this._treeOutline.registerScrollVirtualizer(scrollContainer, treeItemHeight);
 
         this._updateFilterThrottler = new Throttler(() => {
             this._updateFilter();

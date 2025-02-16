@@ -51,7 +51,7 @@ TextureImpl::~TextureImpl() = default;
 
 RefPtr<TextureView> TextureImpl::createView(const std::optional<TextureViewDescriptor>& descriptor)
 {
-    CString label = descriptor ? descriptor->label.utf8() : CString("");
+    CString label = descriptor ? descriptor->label.utf8() : CString(""_s);
 
     Ref convertToBackingContext = m_convertToBackingContext;
 

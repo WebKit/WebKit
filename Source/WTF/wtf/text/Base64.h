@@ -114,7 +114,7 @@ inline String base64EncodeToStringReturnNullIfOverflow(std::span<const uint8_t> 
 
 inline String base64EncodeToStringReturnNullIfOverflow(const CString& input, OptionSet<Base64EncodeOption> options)
 {
-    return base64EncodeToStringReturnNullIfOverflow(input.span(), options);
+    return base64EncodeToStringReturnNullIfOverflow(std::as_bytes(input.span()), options);
 }
 
 inline std::optional<Vector<uint8_t>> base64Decode(std::span<const uint8_t> input, OptionSet<Base64DecodeOption> options)

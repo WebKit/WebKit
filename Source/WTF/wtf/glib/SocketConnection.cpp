@@ -126,8 +126,10 @@ bool SocketConnection::readMessage()
     memcpy(&flags, messageData, sizeof(MessageFlags));
     messageData += sizeof(MessageFlags);
     auto messageSize = sizeof(uint32_t) + sizeof(MessageFlags) + bodySize;
-    if (m_readBuffer.size() < messageSize)
+    if (m_readBuffer.size() < messageSize) {
+        m_readBuffer.reserveCapacity(messageSize);
         return false;
+    }
 
     Checked<size_t> messageNameLength = strlen(messageData);
     messageNameLength++;
@@ -143,20 +145,7 @@ bool SocketConnection::readMessage()
         if (!it->value.first.isNull()) {
             GUniquePtr<GVariantType> variantType(g_variant_type_new(it->value.first.data()));
             size_t parametersSize = bodySize.value() - messageNameLength.value();
-            // g_variant_new_from_data() requires the memory to be properly aligned for the type being loaded,
-            // but it's not possible to know the alignment because g_variant_type_info_query() is not public API.
-            // Since GLib 2.60 g_variant_new_from_data() already checks the alignment and reallocates the buffer
-            // in aligned memory only if needed. For older versions we can simply ensure the memory is 8 aligned.
-#if GLIB_CHECK_VERSION(2, 60, 0)
             parameters = g_variant_new_from_data(variantType.get(), messageData, parametersSize, FALSE, nullptr, nullptr);
-#else
-            auto* alignedMemory = fastAlignedMalloc(8, parametersSize);
-            memcpy(alignedMemory, messageData, parametersSize);
-            GRefPtr<GBytes> bytes = g_bytes_new_with_free_func(alignedMemory, parametersSize, [](gpointer data) {
-                fastAlignedFree(data);
-            }, alignedMemory);
-            parameters = g_variant_new_from_bytes(variantType.get(), bytes.get(), FALSE);
-#endif
             if (messageIsByteSwapped(flags))
                 parameters = adoptGRef(g_variant_byteswap(parameters.get()));
         }
@@ -258,7 +247,7 @@ void SocketConnection::waitForSocketWritability()
     m_writeMonitor.start(g_socket_connection_get_socket(m_connection.get()), G_IO_OUT, RunLoop::current(), [this, protectedThis = Ref { *this }] (GIOCondition condition) -> gboolean {
         if (condition & G_IO_OUT) {
             // We can't stop the monitor from this lambda, because stop destroys the lambda.
-            RunLoop::current().dispatch([this, protectedThis] {
+            RunLoop::protectedCurrent()->dispatch([this, protectedThis] {
                 m_writeMonitor.stop();
                 write();
             });

@@ -98,8 +98,6 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool& sawException)
 {
     std::span<LChar> characters;
@@ -161,11 +159,8 @@ upConvertTo16Bit:
     auto destination16 = characters16;
 
     // Zero extend and copy already processed 8 bit data
-    LChar* ptr8 = characters.data();
-    LChar* endPtr8 = destination.data();
-
-    while (ptr8 < endPtr8)
-        consume(destination16) = *ptr8++;
+    for (auto character : characters.first(destination.data() - characters.data()))
+        consume(destination16) = character;
 
     // Handle the character that triggered the 16 bit path
     consume(destination16) = latin1ConversionTable[consume(source)];
@@ -204,8 +199,6 @@ useLookupTable16:
     
     return result16;
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static Vector<uint8_t> encodeComplexWindowsLatin1(StringView string, UnencodableHandling handling)
 {

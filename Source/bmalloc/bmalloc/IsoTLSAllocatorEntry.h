@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "IsoAllocator.h"
 #include "IsoTLSEntry.h"
 
@@ -53,3 +55,4 @@ private:
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

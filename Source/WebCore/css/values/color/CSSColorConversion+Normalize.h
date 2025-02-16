@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -78,7 +79,7 @@ CSS::Number<> normalizeAndClampNumericComponents(CSS::AngleRaw<> angle)
 }
 
 template<typename Descriptor, unsigned Index>
-auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const CSS::None& none) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
+auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const CSS::Keyword::None& none) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
     return none;
 }
@@ -139,7 +140,7 @@ CSS::Number<> normalizeNumericComponents(CSS::AngleRaw<> angle)
 }
 
 template<typename Descriptor, unsigned Index>
-auto normalizeNumericComponentsIntoCanonicalRepresentation(const CSS::None& none) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
+auto normalizeNumericComponentsIntoCanonicalRepresentation(const CSS::Keyword::None& none) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
     return none;
 }

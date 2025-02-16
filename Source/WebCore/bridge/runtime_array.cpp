@@ -161,7 +161,7 @@ bool RuntimeArray::deletePropertyByIndex(JSCell*, JSGlobalObject*, unsigned)
 
 JSC::GCClient::IsoSubspace* RuntimeArray::subspaceForImpl(JSC::VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->runtimeArraySpace();
+    return &downcast<JSVMClientData>(vm.clientData)->runtimeArraySpace();
 }
 
 }

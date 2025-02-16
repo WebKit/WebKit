@@ -276,7 +276,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingWorks)
     std::array<size_t, 18> messageCounts { 600, 300, 200, 150, 120, 100, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
     for (size_t i = 0; i < messageCounts.size(); ++i) {
         SCOPED_TRACE(i);
-        RunLoop::current().dispatch([&otherRunLoopTasksRun] {
+        RunLoop::protectedCurrent()->dispatch([&otherRunLoopTasksRun] {
             otherRunLoopTasksRun++;
         });
         Util::spinRunLoop();
@@ -333,7 +333,7 @@ TEST_P(ConnectionTestABBA, IncomingMessageThrottlingNestedRunLoopDispatches)
     std::array<size_t, 16> messageCounts { 600, 498, 150, 218, 85, 75, 66, 60, 60, 66, 75, 85, 100, 120, 37, 1 };
     for (size_t i = 0; i < messageCounts.size(); ++i) {
         SCOPED_TRACE(i);
-        RunLoop::current().dispatch([&otherRunLoopTasksRun] {
+        RunLoop::protectedCurrent()->dispatch([&otherRunLoopTasksRun] {
             otherRunLoopTasksRun++;
         });
         Util::spinRunLoop();

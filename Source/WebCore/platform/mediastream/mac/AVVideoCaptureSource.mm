@@ -249,10 +249,10 @@ AVVideoCaptureSource::AVVideoCaptureSource(AVCaptureDevice* avDevice, const Capt
     , m_objcObserver(adoptNS([[WebCoreAVVideoCaptureSourceObserver alloc] initWithCaptureSource:this]))
     , m_device(avDevice)
     , m_zoomScaleFactor(cameraZoomScaleFactor([avDevice deviceType]))
-    , m_verifyCapturingTimer(*this, &AVVideoCaptureSource::verifyIsCapturing)
     , m_defaultTorchMode((int64_t)[m_device torchMode])
 {
     [m_device addObserver:m_objcObserver.get() forKeyPath:@"suspended" options:NSKeyValueObservingOptionNew context:(void *)nil];
+    [m_device addObserver:m_objcObserver.get() forKeyPath:@"portraitEffectActive" options:NSKeyValueObservingOptionNew context:(void *)nil];
 }
 
 AVVideoCaptureSource::~AVVideoCaptureSource()
@@ -261,6 +261,7 @@ AVVideoCaptureSource::~AVVideoCaptureSource()
 
     [m_objcObserver disconnect];
     [m_device removeObserver:m_objcObserver.get() forKeyPath:@"suspended"];
+    [m_device removeObserver:m_objcObserver.get() forKeyPath:@"portraitEffectActive"];
 
     if (!m_session)
         return;
@@ -277,21 +278,24 @@ void AVVideoCaptureSource::verifyIsCapturing()
         return;
     }
 
-    RELEASE_LOG_ERROR(WebRTC, "AVVideoCaptureSource::verifyIsCapturing - no frame received in %d seconds, failing", static_cast<int>(m_verifyCapturingTimer.repeatInterval().value()));
+    RELEASE_LOG_ERROR(WebRTC, "AVVideoCaptureSource::verifyIsCapturing - no frame received in %d seconds, failing", static_cast<int>(verifyCaptureInterval.seconds()));
     captureFailed();
 }
 
 void AVVideoCaptureSource::updateVerifyCapturingTimer()
 {
     if (!m_isRunning || m_interrupted) {
-        m_verifyCapturingTimer.stop();
+        if (m_verifyCapturingTimer)
+            m_verifyCapturingTimer->stop();
         return;
     }
 
-    if (m_verifyCapturingTimer.isActive())
+    if (m_verifyCapturingTimer && m_verifyCapturingTimer->isActive())
         return;
 
-    m_verifyCapturingTimer.startRepeating(verifyCaptureInterval);
+    if (!m_verifyCapturingTimer)
+        m_verifyCapturingTimer = makeUnique<Timer>(*this, &AVVideoCaptureSource::verifyIsCapturing);
+    m_verifyCapturingTimer->startRepeating(verifyCaptureInterval);
     m_framesCount = 0;
     m_lastFramesCount = 0;
 }
@@ -431,6 +435,16 @@ void AVVideoCaptureSource::settingsDidChange(OptionSet<RealtimeMediaSourceSettin
     });
 }
 
+void AVVideoCaptureSource::configurationChanged()
+{
+    m_currentSettings = { };
+    m_capabilities = { };
+
+    forEachObserver([](auto& observer) {
+        observer.sourceConfigurationChanged();
+    });
+}
+
 static bool isZoomSupported(const Vector<VideoPreset>& presets)
 {
     return anyOf(presets, [](auto& preset) {
@@ -476,7 +490,7 @@ const RealtimeMediaSourceSettings& AVVideoCaptureSource::settings()
     settings.setWidth(size.width());
     settings.setHeight(size.height());
     settings.setDeviceId(hashedId());
-    settings.setGroupId(captureDevice().groupId());
+    settings.setGroupId(hashedGroupId());
     settings.setBackgroundBlur(!!device().portraitEffectActive);
 
     RealtimeMediaSourceSupportedConstraints supportedConstraints;
@@ -525,6 +539,7 @@ const RealtimeMediaSourceCapabilities& AVVideoCaptureSource::capabilities()
 
     RealtimeMediaSourceCapabilities capabilities(settings().supportedConstraints());
     capabilities.setDeviceId(hashedId());
+    capabilities.setGroupId(hashedGroupId());
 
     AVCaptureDevice *videoDevice = device();
     if ([videoDevice position] == AVCaptureDevicePositionFront)
@@ -1252,7 +1267,7 @@ void AVVideoCaptureSource::captureOutputDidFinishProcessingPhoto(RetainPtr<AVCap
 {
     if (error) {
         rejectPendingPhotoRequest("AVCapturePhotoOutput failed"_s);
-        RunLoop::main().dispatch([this, protectedThis = Ref { *this }, logIdentifier = LOGIDENTIFIER, error = WTFMove(error) ] {
+        RunLoop::protectedMain()->dispatch([this, protectedThis = Ref { *this }, logIdentifier = LOGIDENTIFIER, error = WTFMove(error)] {
             ASSERT(isMainThread());
             ALWAYS_LOG_IF(loggerPtr(), logIdentifier, "failed: ", [error code], ", ", error.get());
         });
@@ -1481,6 +1496,8 @@ void AVVideoCaptureSource::deviceDisconnected(RetainPtr<NSNotification> notifica
         source->captureSessionIsRunningDidChange([newValue boolValue]);
     if ([keyPath isEqualToString:@"suspended"])
         source->captureDeviceSuspendedDidChange();
+    if ([keyPath isEqualToString:@"portraitEffectActive"])
+        source->configurationChanged();
 }
 
 - (void)deviceConnectedDidChange:(NSNotification*)notification

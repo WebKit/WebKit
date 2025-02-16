@@ -37,7 +37,7 @@ public:
         return adoptRef(*new CSSOffsetRotateValue(WTFMove(modifier), WTFMove(angle)));
     }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     CSSPrimitiveValue* modifier() const { return m_modifier.get(); }
     CSSPrimitiveValue* angle() const { return m_angle.get(); }
@@ -46,7 +46,7 @@ public:
 
     bool equals(const CSSOffsetRotateValue&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
         if (m_modifier) {
             if (func(*m_modifier) == IterationStatus::Done)

@@ -25,6 +25,7 @@
 
 #import "WebPDFDocumentExtras.h"
 
+#import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
 
@@ -94,8 +95,7 @@ NSArray *allScriptsInPDFDocument(CGPDFDocumentRef pdfDocument)
             continue;
 
         // A JavaScript action must have an action type of "JavaScript".
-        const char* actionType;
-        if (!CGPDFDictionaryGetName(javaScriptAction, "S", &actionType) || strcmp(actionType, "JavaScript"))
+        if (CGPDFDictionaryGetNameString(javaScriptAction, "S"_s) != "JavaScript"_s)
             continue;
 
         const UInt8* bytes = nullptr;

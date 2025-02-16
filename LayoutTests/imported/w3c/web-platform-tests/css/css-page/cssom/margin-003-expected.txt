@@ -1,0 +1,4 @@
+
+FAIL Insert rules The string did not match the expected pattern.
+FAIL Delete rules assert_equals: expected 4 but got 0
+

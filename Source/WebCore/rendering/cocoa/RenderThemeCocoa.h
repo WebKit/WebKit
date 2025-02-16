@@ -62,7 +62,7 @@ private:
     void adjustApplePayButtonStyle(RenderStyle&, const Element*) const override;
 #endif
 
-#if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#if ENABLE(VIDEO)
     String mediaControlsStyleSheet() override;
     Vector<String, 2> mediaControlsScripts() override;
     String mediaControlsBase64StringForIconNameAndType(const String&, const String&) override;
@@ -72,7 +72,7 @@ private:
     String m_mediaControlsScript;
     String m_mediaControlsStyleSheet;
     RetainPtr<NSDateComponentsFormatter> m_durationFormatter;
-#endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#endif // ENABLE(VIDEO)
 };
 
 }

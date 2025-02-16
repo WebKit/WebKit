@@ -120,7 +120,7 @@ bool SVGFEMorphologyElement::isIdentity() const
 IntOutsets SVGFEMorphologyElement::outsets(const FloatRect& targetBoundingBox, SVGUnitTypes::SVGUnitType primitiveUnits) const
 {
     auto radius = SVGFilter::calculateResolvedSize({ radiusX(), radiusY() }, targetBoundingBox, primitiveUnits);
-    return { radius.height(), radius.width(), radius.height(), radius.width() };
+    return { static_cast<int>(radius.height()), static_cast<int>(radius.width()), static_cast<int>(radius.height()), static_cast<int>(radius.width()) };
 }
 
 RefPtr<FilterEffect> SVGFEMorphologyElement::createFilterEffect(const FilterEffectVector&, const GraphicsContext&) const

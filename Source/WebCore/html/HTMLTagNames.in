@@ -33,7 +33,7 @@ code interfaceName=HTMLElement
 col interfaceName=HTMLTableColElement
 colgroup interfaceName=HTMLTableColElement
 data
-datalist interfaceName=HTMLDataListElement, conditional=DATALIST_ELEMENT, settingsConditional=dataListElementEnabled
+datalist interfaceName=HTMLDataListElement, settingsConditional=dataListElementEnabled
 dd interfaceName=HTMLElement
 del interfaceName=HTMLModElement
 details

@@ -31,9 +31,9 @@ public:
         : RectBase(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left))
     { }
 
-    String cssText() const
+    String cssText(const CSS::SerializationContext& context) const
     {
-        return generateCSSString(top().cssText(), right().cssText(), bottom().cssText(), left().cssText());
+        return generateCSSString(top().cssText(context), right().cssText(context), bottom().cssText(context), left().cssText(context));
     }
 
 private:

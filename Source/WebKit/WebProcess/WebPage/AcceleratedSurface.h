@@ -53,8 +53,7 @@ public:
 
     virtual uint64_t window() const { ASSERT_NOT_REACHED(); return 0; }
     virtual uint64_t surfaceID() const { ASSERT_NOT_REACHED(); return 0; }
-    virtual bool hostResize(const WebCore::IntSize&);
-    virtual void clientResize(const WebCore::IntSize&) { };
+    virtual bool resize(const WebCore::IntSize&);
     virtual bool shouldPaintMirrored() const { return false; }
 
     virtual void didCreateGLContext() { }
@@ -77,7 +76,6 @@ public:
     virtual void visibilityDidChange(bool) { }
     virtual bool backgroundColorDidChange();
 
-    const WebCore::IntSize& size() const { return m_size; }
     void clearIfNeeded();
 
 protected:

@@ -87,7 +87,7 @@ public:
 
     String captionsStyleSheetOverride() const override;
     Vector<RefPtr<AudioTrack>> sortedTrackListForMenu(AudioTrackList*) override;
-    Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, HashSet<TextTrack::Kind>) override;
+    Vector<RefPtr<TextTrack>> sortedTrackListForMenu(TextTrackList*, UncheckedKeyHashSet<TextTrack::Kind>) override;
     String displayNameForTrack(AudioTrack*) const override;
     String displayNameForTrack(TextTrack*) const override;
 

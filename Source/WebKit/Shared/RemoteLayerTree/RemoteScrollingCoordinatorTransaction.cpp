@@ -180,8 +180,8 @@ static void dump(TextStream& ts, const ScrollingStateFrameScrollingNode& node, b
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::FooterHeight))
         ts.dumpProperty("footer-height", node.footerHeight());
 
-    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::TopContentInset))
-        ts.dumpProperty("top-content-inset", node.topContentInset());
+    if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::ObscuredContentInsets))
+        ts.dumpProperty("content-insets", node.obscuredContentInsets());
 
     if (!changedPropertiesOnly || node.hasChangedProperty(ScrollingStateNode::Property::FrameScaleFactor))
         ts.dumpProperty("frame-scale-factor", node.frameScaleFactor());

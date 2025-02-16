@@ -49,7 +49,6 @@
 #include <WebCore/CachedResource.h>
 #include <WebCore/ContentSecurityPolicy.h>
 #include <WebCore/DataURLDecoder.h>
-#include <WebCore/DeprecatedGlobalSettings.h>
 #include <WebCore/DiagnosticLoggingClient.h>
 #include <WebCore/DiagnosticLoggingKeys.h>
 #include <WebCore/Document.h>
@@ -179,7 +178,9 @@ static Seconds maximumBufferingTime(CachedResource* resource)
     case CachedResource::Type::RawResource:
     case CachedResource::Type::SVGDocumentResource:
     case CachedResource::Type::LinkPrefetch:
+#if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
+#endif
 #if ENABLE(XSLT)
     case CachedResource::Type::XSLStyleSheet:
 #endif
@@ -272,6 +273,9 @@ bool WebLoaderStrategy::tryLoadingUsingURLSchemeHandler(ResourceLoader& resource
     RefPtr<WebPage> webPage;
     RefPtr<WebFrame> webFrame;
 
+    if (!resourceLoader.frameLoader())
+        return false;
+
     if (auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(resourceLoader.frameLoader()->client())) {
         webFrame = &webFrameLoaderClient->webFrame();
         webPage = webFrame->page();
@@ -354,7 +358,6 @@ static void addParametersShared(const LocalFrame* frame, NetworkResourceLoadPara
 
     if (auto* page = frame->page()) {
         parameters.pageHasResourceLoadClient = page->hasResourceLoadClient();
-        parameters.shouldRelaxThirdPartyCookieBlocking = page->shouldRelaxThirdPartyCookieBlocking();
         page->logMediaDiagnosticMessage(parameters.request.httpBody());
 
 #if ENABLE(WK_WEB_EXTENSIONS) && PLATFORM(COCOA)
@@ -392,7 +395,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
             && resourceLoader.frameLoader()->notifier().isInitialRequestIdentifier(identifier)
             ? MainFrameMainResource::Yes : MainFrameMainResource::No;
         if (!page->allowsLoadFromURL(request.url(), mainFrameMainResource)) {
-            RunLoop::main().dispatch([resourceLoader = Ref { resourceLoader }, error = blockedError(request)] {
+            RunLoop::protectedMain()->dispatch([resourceLoader = Ref { resourceLoader }, error = blockedError(request)] {
                 resourceLoader->didFail(error);
             });
             return;
@@ -430,6 +433,7 @@ void WebLoaderStrategy::scheduleLoadFromNetworkProcess(ResourceLoader& resourceL
 
     loadParameters.serviceWorkersMode = resourceLoader.options().loadedFromOpaqueSource == LoadedFromOpaqueSource::No ? resourceLoader.options().serviceWorkersMode : ServiceWorkersMode::None;
     loadParameters.serviceWorkerRegistrationIdentifier = resourceLoader.options().serviceWorkerRegistrationIdentifier;
+    loadParameters.workerIdentifier = resourceLoader.options().workerIdentifier;
     loadParameters.httpHeadersToKeep = resourceLoader.options().httpHeadersToKeep;
     if (resourceLoader.options().navigationPreloadIdentifier)
         loadParameters.navigationPreloadIdentifier = resourceLoader.options().navigationPreloadIdentifier;
@@ -885,21 +889,15 @@ void WebLoaderStrategy::didFinishPingLoad(WebCore::ResourceLoaderIdentifier ping
 
 void WebLoaderStrategy::preconnectTo(FrameLoader& frameLoader, const URL& url, StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
 {
-    auto* webFrameLoaderClient = toWebLocalFrameLoaderClient(frameLoader.client());
-    if (!webFrameLoaderClient) {
-        if (completionHandler)
-            completionHandler(internalError(url));
-        return;
-    }
-    auto& webFrame = webFrameLoaderClient->webFrame();
-    auto* webPage = webFrame.page();
-    if (!webPage) {
-        if (completionHandler)
-            completionHandler(internalError(url));
-        return;
-    }
+    RefPtr webFrame = WebProcess::singleton().webFrame(frameLoader.frameID());
+    if (!webFrame)
+        return completionHandler(internalError(url));
 
-    preconnectTo(ResourceRequest { url }, *webPage, webFrame, storedCredentialsPolicy, shouldPreconnectAsFirstParty, WTFMove(completionHandler));
+    RefPtr webPage = webFrame->page();
+    if (!webPage)
+        return completionHandler(internalError(url));
+
+    preconnectTo(ResourceRequest { url }, *webPage, *webFrame, storedCredentialsPolicy, shouldPreconnectAsFirstParty, WTFMove(completionHandler));
 }
 
 void WebLoaderStrategy::preconnectTo(WebCore::ResourceRequest&& request, WebPage& webPage, WebFrame& webFrame, WebCore::StoredCredentialsPolicy storedCredentialsPolicy, ShouldPreconnectAsFirstParty shouldPreconnectAsFirstParty, PreconnectCompletionHandler&& completionHandler)
@@ -1031,7 +1029,7 @@ NetworkLoadMetrics WebLoaderStrategy::networkMetricsFromResourceLoadIdentifier(W
 
 bool WebLoaderStrategy::shouldPerformSecurityChecks() const
 {
-    return DeprecatedGlobalSettings::restrictedHTTPResponseAccess();
+    return true;
 }
 
 bool WebLoaderStrategy::havePerformedSecurityChecks(const ResourceResponse& response) const
@@ -1070,6 +1068,63 @@ void WebLoaderStrategy::prioritizeResourceLoads(const Vector<WebCore::Subresourc
 
     auto& connection = WebProcess::singleton().ensureNetworkProcessConnection().connection();
     connection.send(Messages::NetworkConnectionToWebProcess::PrioritizeResourceLoads(identifiers), 0);
+}
+
+ResourceError WebLoaderStrategy::cancelledError(const ResourceRequest& request) const
+{
+    return WebKit::cancelledError(request);
+}
+
+ResourceError WebLoaderStrategy::blockedError(const ResourceRequest& request) const
+{
+    return WebKit::blockedError(request);
+}
+
+ResourceError WebLoaderStrategy::blockedByContentBlockerError(const ResourceRequest& request) const
+{
+    return WebKit::blockedByContentBlockerError(request);
+}
+
+ResourceError WebLoaderStrategy::cannotShowURLError(const ResourceRequest& request) const
+{
+    return WebKit::cannotShowURLError(request);
+}
+
+ResourceError WebLoaderStrategy::interruptedForPolicyChangeError(const ResourceRequest& request) const
+{
+    return WebKit::interruptedForPolicyChangeError(request);
+}
+
+#if ENABLE(CONTENT_FILTERING)
+ResourceError WebLoaderStrategy::blockedByContentFilterError(const ResourceRequest& request) const
+{
+    return WebKit::blockedByContentFilterError(request);
+}
+#endif
+
+ResourceError WebLoaderStrategy::cannotShowMIMETypeError(const ResourceResponse& response) const
+{
+    return WebKit::cannotShowMIMETypeError(response);
+}
+
+ResourceError WebLoaderStrategy::fileDoesNotExistError(const ResourceResponse& response) const
+{
+    return WebKit::fileDoesNotExistError(response);
+}
+
+ResourceError WebLoaderStrategy::httpsUpgradeRedirectLoopError(const ResourceRequest& request) const
+{
+    return WebKit::httpsUpgradeRedirectLoopError(request);
+}
+
+ResourceError WebLoaderStrategy::httpNavigationWithHTTPSOnlyError(const ResourceRequest& request) const
+{
+    return WebKit::httpNavigationWithHTTPSOnlyError(request);
+}
+
+ResourceError WebLoaderStrategy::pluginWillHandleLoadError(const ResourceResponse& response) const
+{
+    return WebKit::pluginWillHandleLoadError(response);
 }
 
 } // namespace WebKit

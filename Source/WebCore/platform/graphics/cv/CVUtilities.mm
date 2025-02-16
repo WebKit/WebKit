@@ -32,9 +32,8 @@
 #import "RealtimeVideoUtilities.h"
 #import <wtf/StdLibExtras.h>
 #import <wtf/cf/TypeCastsCF.h>
-#import "CoreVideoSoftLink.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#import "CoreVideoSoftLink.h"
 
 namespace WebCore {
 
@@ -189,15 +188,15 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, 
     status = CVPixelBufferLockBaseAddress(pixelBuffer, 0);
     ASSERT(status == noErr);
 
-    auto* yPlane = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 0));
+    auto yPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer, 0);
     size_t yStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 0);
     for (unsigned i = 0; i < height; ++i)
-        memset(&yPlane[i * yStride], 0, width);
+        zeroSpan(yPlane.subspan(i * yStride, width));
 
-    auto* uvPlane = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1));
+    auto uvPlane = CVPixelBufferGetSpanOfPlane(pixelBuffer, 1);
     size_t uvStride = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, 1);
     for (unsigned i = 0; i < height / 2; ++i)
-        memset(&uvPlane[i * uvStride], 128, width);
+        memsetSpan(uvPlane.subspan(i * uvStride, width), 128);
 
     status = CVPixelBufferUnlockBaseAddress(pixelBuffer, 0);
     ASSERT(!status);
@@ -205,5 +204,3 @@ RetainPtr<CVPixelBufferRef> createBlackPixelBuffer(size_t width, size_t height, 
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

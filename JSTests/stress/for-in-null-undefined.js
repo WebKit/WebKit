@@ -12,7 +12,7 @@ function forIn(object)
 }
 noInline(forIn);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(forIn(null), 0);
     shouldBe(forIn(undefined), 0);
 }

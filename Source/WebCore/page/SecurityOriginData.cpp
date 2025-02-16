@@ -63,8 +63,8 @@ SecurityOriginData SecurityOriginData::fromFrame(LocalFrame* frame)
 {
     if (!frame)
         return SecurityOriginData { };
-    
-    auto* document = frame->document();
+
+    RefPtr document = frame->document();
     if (!document)
         return SecurityOriginData { };
 

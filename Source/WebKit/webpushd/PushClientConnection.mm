@@ -146,7 +146,7 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
     audit_token_t peerAuditToken;
     xpc_connection_get_audit_token(connection, &peerAuditToken);
     if (bool peerHasPushInjectEntitlement = WTF::hasEntitlement(peerAuditToken, "com.apple.private.webkit.webpush.inject"_s))
-        return adoptRef(new PushClientConnection(connection, WTFMove(configuration.bundleIdentifierOverride), peerHasPushInjectEntitlement, WTFMove(configuration.pushPartitionString), WTFMove(configuration.dataStoreIdentifier)));
+        return adoptRef(new PushClientConnection(connection, WTFMove(configuration.bundleIdentifierOverride), peerHasPushInjectEntitlement, WTFMove(configuration.pushPartitionString), WTFMove(configuration.dataStoreIdentifier), configuration.declarativeWebPushEnabled));
 
 #if USE(EXTENSIONKIT)
     pid_t pid = xpc_connection_get_pid(connection);
@@ -199,15 +199,16 @@ RefPtr<PushClientConnection> PushClientConnection::create(xpc_connection_t conne
         return nullptr;
     }
 
-    return adoptRef(new PushClientConnection(connection, WTFMove(hostAppCodeSigningIdentifier), hostAppHasPushInjectEntitlement, WTFMove(pushPartition), WTFMove(configuration.dataStoreIdentifier)));
+    return adoptRef(new PushClientConnection(connection, WTFMove(hostAppCodeSigningIdentifier), hostAppHasPushInjectEntitlement, WTFMove(pushPartition), WTFMove(configuration.dataStoreIdentifier), configuration.declarativeWebPushEnabled));
 }
 
-PushClientConnection::PushClientConnection(xpc_connection_t connection, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier)
+PushClientConnection::PushClientConnection(xpc_connection_t connection, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier, bool declarativeWebPushEnabled)
     : m_xpcConnection(connection)
     , m_hostAppCodeSigningIdentifier(WTFMove(hostAppCodeSigningIdentifier))
     , m_hostAppHasPushInjectEntitlement(hostAppHasPushInjectEntitlement)
     , m_pushPartitionString(pushPartitionString)
     , m_dataStoreIdentifier(WTFMove(dataStoreIdentifier))
+    , m_declarativeWebPushEnabled(declarativeWebPushEnabled)
 {
 }
 

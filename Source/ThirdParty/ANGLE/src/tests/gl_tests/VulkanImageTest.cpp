@@ -582,7 +582,7 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageWhenDeviceOOM)
         EXPECT_GL_NO_ERROR();
 
         // This process only needs to continue until the allocation is no longer on the device.
-        if (getPerfCounters().deviceMemoryImageAllocationFallbacks == expectedAllocationFallbacks)
+        if (getPerfCounters().deviceMemoryImageAllocationFallbacks >= expectedAllocationFallbacks)
         {
             break;
         }
@@ -671,7 +671,7 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeing2DArrayGarbageWhenDeviceOOM
         EXPECT_GL_NO_ERROR();
 
         // This process only needs to continue until the allocation is no longer on the device.
-        if (getPerfCounters().deviceMemoryImageAllocationFallbacks == expectedAllocationFallbacks)
+        if (getPerfCounters().deviceMemoryImageAllocationFallbacks >= expectedAllocationFallbacks)
         {
             break;
         }
@@ -761,7 +761,7 @@ TEST_P(VulkanMemoryTest, AllocateVMAImageAfterFreeingFinished2DGarbageWhenDevice
         EXPECT_GL_NO_ERROR();
 
         // This process only needs to continue until the allocation is no longer on the device.
-        if (getPerfCounters().deviceMemoryImageAllocationFallbacks == expectedAllocationFallbacks)
+        if (getPerfCounters().deviceMemoryImageAllocationFallbacks >= expectedAllocationFallbacks)
         {
             break;
         }
@@ -878,7 +878,7 @@ TEST_P(VulkanMemoryTest, AllocateBufferAfterFreeing2DGarbageWhenDeviceOOM)
         EXPECT_GL_NO_ERROR();
 
         // This process only needs to continue until the allocation is no longer on the device.
-        if (getPerfCounters().deviceMemoryImageAllocationFallbacks == expectedAllocationFallbacks)
+        if (getPerfCounters().deviceMemoryImageAllocationFallbacks >= expectedAllocationFallbacks)
         {
             break;
         }

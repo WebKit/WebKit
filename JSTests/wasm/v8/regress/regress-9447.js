@@ -37,6 +37,6 @@ var fun2 = (function GenerateFun2() {
 
 // Both exported functions should throw, no matter how often they get wrapped.
 assertThrows(fun1, TypeError,
-             /an exported wasm function cannot contain a v128 parameter or return value/);
+             /an exported wasm function cannot contain an invalid parameter or return value/);
 assertThrows(fun2, TypeError,
-             /an exported wasm function cannot contain a v128 parameter or return value/);
+             /an exported wasm function cannot contain an invalid parameter or return value/);

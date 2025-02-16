@@ -27,7 +27,7 @@ function test(o, value, expectedCount) {
         throw new Error("Bad counter value: " + counter);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(new Cons1(), i, counter);
     test(new Cons2(), i, counter + 1);
 }

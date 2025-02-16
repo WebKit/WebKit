@@ -239,7 +239,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                           bool texelFetchStaticUse,
                                           bool samplerExternal2DY2YEXT) const;
 
-    angle::Result getBufferView(vk::Context *context,
+    angle::Result getBufferView(vk::ErrorContext *context,
                                 const vk::Format *imageUniformFormat,
                                 const gl::SamplerBinding *samplerBinding,
                                 bool isImage,
@@ -247,7 +247,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
 
     // A special view used for texture copies that shouldn't perform swizzle.
     const vk::ImageView &getCopyImageView() const;
-    angle::Result getStorageImageView(vk::Context *context,
+    angle::Result getStorageImageView(vk::ErrorContext *context,
                                       const gl::ImageUnit &binding,
                                       const vk::ImageView **imageViewOut);
 
@@ -324,7 +324,7 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
     {
         return mState.getBuffer();
     }
-    vk::BufferHelper *getPossiblyEmulatedTextureBuffer(vk::Context *context) const;
+    vk::BufferHelper *getPossiblyEmulatedTextureBuffer(vk::ErrorContext *context) const;
 
     bool isSRGBOverrideEnabled() const
     {
@@ -557,15 +557,13 @@ class TextureVk : public TextureImpl, public angle::ObserverInterface
                                               gl::LevelIndex level,
                                               GLuint layerIndex,
                                               GLuint layerCount);
-    angle::Result getLevelLayerImageView(vk::Context *context,
+    angle::Result getLevelLayerImageView(vk::ErrorContext *context,
                                          gl::LevelIndex levelGL,
                                          size_t layer,
                                          const vk::ImageView **imageViewOut);
 
     // Flush image's staged updates for all levels and layers.
     angle::Result flushImageStagedUpdates(ContextVk *contextVk);
-
-    angle::Result performImageQueueTransferIfNecessary(ContextVk *contextVk);
 
     // For various reasons, the underlying image may need to be respecified.  For example because
     // base/max level changed, usage/create flags have changed, the format needs modification to

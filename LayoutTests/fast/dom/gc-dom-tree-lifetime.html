@@ -72,6 +72,8 @@ testCases.forEach(function (test) {
     divZ = null;
     gc();
     if (window.internals) {
+        // DOM nodes can be destructed asynchronously during idle time. Force delete the nodes.
+        internals.executeOpportunisticallyScheduledTasks();
         // If all the Node objects in testHtml are successfully destructed,
         // at least 9 <div>s objects will be removed.
         // (Actually, since testHtml rendering requires more than 9 Node objects.)

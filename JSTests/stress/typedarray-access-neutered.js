@@ -11,7 +11,7 @@ function testNoException(thunk, count) {
         checkNoException(thunk, count);
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     testNoException((array) => array[0], i);
     testNoException((array) => delete array[0], i);
     testNoException((array) => Object.getOwnPropertyDescriptor(array, 0), i);

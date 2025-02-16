@@ -63,11 +63,6 @@ bool ValidateBlendEquationSeparatei(const PrivateState &state,
                                     GLenum modeRGB,
                                     GLenum modeAlpha)
 {
-    if (!ValidateDrawBufferIndexIfActivePLS(state, errors, entryPoint, buf, "buf"))
-    {
-        return false;
-    }
-
     if (buf >= static_cast<GLuint>(state.getCaps().maxDrawBuffers))
     {
         errors->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -89,11 +84,6 @@ bool ValidateBlendEquationi(const PrivateState &state,
                             GLuint buf,
                             GLenum mode)
 {
-    if (!ValidateDrawBufferIndexIfActivePLS(state, errors, entryPoint, buf, "buf"))
-    {
-        return false;
-    }
-
     if (buf >= static_cast<GLuint>(state.getCaps().maxDrawBuffers))
     {
         errors->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -118,11 +108,6 @@ bool ValidateBlendFuncSeparatei(const PrivateState &state,
                                 GLenum srcAlpha,
                                 GLenum dstAlpha)
 {
-    if (!ValidateDrawBufferIndexIfActivePLS(state, errors, entryPoint, buf, "buf"))
-    {
-        return false;
-    }
-
     if (buf >= static_cast<GLuint>(state.getCaps().maxDrawBuffers))
     {
         errors->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -145,11 +130,6 @@ bool ValidateBlendFunci(const PrivateState &state,
                         GLenum src,
                         GLenum dst)
 {
-    if (!ValidateDrawBufferIndexIfActivePLS(state, errors, entryPoint, buf, "buf"))
-    {
-        return false;
-    }
-
     if (buf >= static_cast<GLuint>(state.getCaps().maxDrawBuffers))
     {
         errors->validationError(entryPoint, GL_INVALID_VALUE, kExceedsMaxDrawBuffers);
@@ -174,11 +154,6 @@ bool ValidateColorMaski(const PrivateState &state,
                         GLboolean b,
                         GLboolean a)
 {
-    if (!ValidateDrawBufferIndexIfActivePLS(state, errors, entryPoint, buf, "buf"))
-    {
-        return false;
-    }
-
     if (buf >= static_cast<GLuint>(state.getCaps().maxDrawBuffers))
     {
         errors->validationError(entryPoint, GL_INVALID_VALUE, kIndexExceedsMaxDrawBuffer);
@@ -261,11 +236,6 @@ bool ValidateDisablei(const PrivateState &state,
         if (IsIndexedCapBannedWithActivePLS(target))
         {
             errors->validationErrorF(entryPoint, GL_INVALID_OPERATION, kPLSCapNotAllowed, target);
-            return false;
-        }
-        if (target == GL_BLEND &&
-            !ValidateDrawBufferIndexIfActivePLS(state, errors, entryPoint, index, "index"))
-        {
             return false;
         }
     }
@@ -352,11 +322,6 @@ bool ValidateEnablei(const PrivateState &state,
         if (IsIndexedCapBannedWithActivePLS(target))
         {
             errors->validationErrorF(entryPoint, GL_INVALID_OPERATION, kPLSCapNotAllowed, target);
-            return false;
-        }
-        if (target == GL_BLEND &&
-            !ValidateDrawBufferIndexIfActivePLS(state, errors, entryPoint, index, "index"))
-        {
             return false;
         }
     }
@@ -748,7 +713,7 @@ bool ValidateReadnPixels(const Context *context,
 
     if (bufSize < 0)
     {
-        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufferSize);
+        ANGLE_VALIDATION_ERROR(GL_INVALID_VALUE, kNegativeBufSize);
         return false;
     }
 
@@ -855,7 +820,13 @@ bool ValidateTexStorage3DMultisample(const Context *context,
                                      GLsizei depth,
                                      GLboolean fixedsamplelocations)
 {
-    return true;
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+    return ValidateTexStorage3DMultisampleBase(context, entryPoint, targetPacked, samples,
+                                               internalformat, width, height, depth);
 }
 
 }  // namespace gl

@@ -438,9 +438,9 @@ int32_t LibWebRTCCodecs::decodeWebRTCFrame(Decoder& decoder, int64_t timeStamp, 
     return promise ? WEBRTC_VIDEO_CODEC_OK : WEBRTC_VIDEO_CODEC_ERROR;
 }
 
-Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data, uint16_t width, uint16_t height)
+Ref<LibWebRTCCodecs::FramePromise> LibWebRTCCodecs::decodeFrame(Decoder& decoder, int64_t timeStamp, std::span<const uint8_t> data)
 {
-    auto promise = decodeFrameInternal(decoder, timeStamp, data, width, height);
+    auto promise = decodeFrameInternal(decoder, timeStamp, data, 0, 0);
     return promise ? promise.releaseNonNull() : FramePromise::createAndReject("Decoding task did not complete"_s);
 }
 

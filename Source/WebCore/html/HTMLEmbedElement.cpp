@@ -130,7 +130,7 @@ void HTMLEmbedElement::parametersForPlugin(Vector<AtomString>& paramNames, Vecto
     if (!hasAttributes())
         return;
 
-    for (const Attribute& attribute : attributesIterator()) {
+    for (auto& attribute : attributes()) {
         paramNames.append(attribute.localName());
         paramValues.append(attribute.value());
     }

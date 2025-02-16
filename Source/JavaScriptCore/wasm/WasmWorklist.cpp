@@ -105,7 +105,7 @@ private:
         ASSERT(plan);
 
         bool wasMultiThreaded = plan->multiThreaded();
-        plan->work(Plan::Partial);
+        plan->work();
 
         ASSERT(!plan->hasWork() || plan->multiThreaded());
         if (plan->hasWork() && !wasMultiThreaded && plan->multiThreaded()) {

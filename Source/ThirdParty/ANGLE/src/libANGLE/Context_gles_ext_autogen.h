@@ -332,6 +332,7 @@
     void *mapBuffer(BufferBinding targetPacked, GLenum access);                                    \
     /* GL_OES_packed_depth_stencil */                                                              \
     /* GL_OES_primitive_bounding_box */                                                            \
+    /* GL_OES_required_internalformat */                                                           \
     /* GL_OES_rgb8_rgba8 */                                                                        \
     /* GL_OES_sample_shading */                                                                    \
     /* GL_OES_sample_variables */                                                                  \

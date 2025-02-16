@@ -144,42 +144,6 @@ uint64_t InjectedBundlePageUIClient::didExceedDatabaseQuota(WebPage* page, API::
     return m_client.didExceedDatabaseQuota(toAPI(page), toAPI(origin), toAPI(databaseName.impl()), toAPI(databaseDisplayName.impl()), currentQuotaBytes, currentOriginUsageBytes, currentDatabaseUsageBytes, expectedUsageBytes, m_client.base.clientInfo);
 }
 
-String InjectedBundlePageUIClient::plugInStartLabelTitle(const String& mimeType) const
-{
-    if (!m_client.createPlugInStartLabelTitle)
-        return String();
-
-    RefPtr<API::String> title = adoptRef(toImpl(m_client.createPlugInStartLabelTitle(toAPI(mimeType.impl()), m_client.base.clientInfo)));
-    return title ? title->string() : String();
-}
-
-String InjectedBundlePageUIClient::plugInStartLabelSubtitle(const String& mimeType) const
-{
-    if (!m_client.createPlugInStartLabelSubtitle)
-        return String();
-
-    RefPtr<API::String> subtitle = adoptRef(toImpl(m_client.createPlugInStartLabelSubtitle(toAPI(mimeType.impl()), m_client.base.clientInfo)));
-    return subtitle ? subtitle->string() : String();
-}
-
-String InjectedBundlePageUIClient::plugInExtraStyleSheet() const
-{
-    if (!m_client.createPlugInExtraStyleSheet)
-        return String();
-
-    RefPtr<API::String> styleSheet = adoptRef(toImpl(m_client.createPlugInExtraStyleSheet(m_client.base.clientInfo)));
-    return styleSheet ? styleSheet->string() : String();
-}
-
-String InjectedBundlePageUIClient::plugInExtraScript() const
-{
-    if (!m_client.createPlugInExtraScript)
-        return String();
-
-    RefPtr<API::String> script = adoptRef(toImpl(m_client.createPlugInExtraScript(m_client.base.clientInfo)));
-    return script ? script->string() : String();
-}
-
 void InjectedBundlePageUIClient::didClickAutoFillButton(WebPage& page, InjectedBundleNodeHandle& nodeHandle, RefPtr<API::Object>& userData)
 {
     if (!m_client.didClickAutoFillButton)

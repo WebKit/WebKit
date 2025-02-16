@@ -23,4 +23,4 @@ try {
 
 let arr1 = new Uint8Array(9);
 arr1[0] = 0;
-for (let i = 0; i < 1000000; ++i) {}
+for (let i = 0; i < testLoopCount; ++i) {}

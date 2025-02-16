@@ -38,7 +38,7 @@ class C {
 noInline(C.prototype.access);
 
 let c = new C();
-for (; i < 10000; i++) {
+for (; i < testLoopCount; i++) {
     c.access('foo' + i);
     assert.sameValue(c.field, 'foo' + i);
 }

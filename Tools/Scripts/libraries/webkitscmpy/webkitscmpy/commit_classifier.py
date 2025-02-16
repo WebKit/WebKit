@@ -37,7 +37,7 @@ class CommitClassifier(object):
             try:
                 from rapidfuzz import fuzz
             except ModuleNotFoundError:
-                return re.compile(string)
+                return lambda x: re.compile(string).match(x)
 
             ratio = cls.DEFAULT_FUZZ_RATIO if not ratio else ratio
             return lambda x: fuzz.partial_ratio(string, x) >= ratio
@@ -109,7 +109,7 @@ class CommitClassifier(object):
         header = commit.message.splitlines()[0]
         trailers = commit.trailers
         paths_for = CallByNeed(
-            callback=lambda: repository.files_changed(commit.hash or str(commit)),
+            callback=lambda: repository.files_changed(commit.hash or str(commit)) if repository else [],
             type=list,
         )
 

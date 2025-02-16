@@ -4,7 +4,7 @@ PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar"}]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/ba"}]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/"}]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/baz"}]
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["https://example.com/foo/bar"] assert_equals: test() result expected true but got false
+PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: ["https://example.com/foo/bar"]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: ["https://example.com/foo/bar/baz"]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar"}]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar/baz"}]
@@ -18,9 +18,9 @@ PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: 
 PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}]
 PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}]
 PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?otherquery#otherhash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}]
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar"] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?otherquery#otherhash"] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?query#hash"] assert_equals: test() result expected true but got false
+PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar"]
+PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?otherquery#otherhash"]
+PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?query#hash"]
 PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar/baz"]
 PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://other.com/foo/bar"]
 PASS Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["http://other.com/foo/bar"]
@@ -122,13 +122,13 @@ PASS Pattern: [{"hostname":"(café)"}] Inputs: undefined
 PASS Pattern: [{"pathname":"(café)"}] Inputs: undefined
 PASS Pattern: [{"search":"(café)"}] Inputs: undefined
 PASS Pattern: [{"hash":"(café)"}] Inputs: undefined
-FAIL Pattern: [{"protocol":":café"}] Inputs: [{"protocol":"foo"}] Invalid input to canonicalize a URL protocol string.
-FAIL Pattern: [{"username":":café"}] Inputs: [{"username":"foo"}] assert_equals: compiled pattern property 'username' expected ":café" but got "{:caf}é"
-FAIL Pattern: [{"password":":café"}] Inputs: [{"password":"foo"}] assert_equals: compiled pattern property 'password' expected ":café" but got "{:caf}é"
-FAIL Pattern: [{"hostname":":café"}] Inputs: [{"hostname":"foo"}] assert_equals: compiled pattern property 'hostname' expected ":café" but got "{:caf}é"
-FAIL Pattern: [{"pathname":"/:café"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/:café" but got "/:caf%C3%A9"
-FAIL Pattern: [{"search":":café"}] Inputs: [{"search":"foo"}] assert_equals: compiled pattern property 'search' expected ":café" but got ":caf%C3%A9"
-FAIL Pattern: [{"hash":":café"}] Inputs: [{"hash":"foo"}] assert_equals: compiled pattern property 'hash' expected ":café" but got ":caf%C3%A9"
+PASS Pattern: [{"protocol":":café"}] Inputs: [{"protocol":"foo"}]
+PASS Pattern: [{"username":":café"}] Inputs: [{"username":"foo"}]
+PASS Pattern: [{"password":":café"}] Inputs: [{"password":"foo"}]
+PASS Pattern: [{"hostname":":café"}] Inputs: [{"hostname":"foo"}]
+PASS Pattern: [{"pathname":"/:café"}] Inputs: [{"pathname":"/foo"}]
+PASS Pattern: [{"search":":café"}] Inputs: [{"search":"foo"}]
+PASS Pattern: [{"hash":":café"}] Inputs: [{"hash":"foo"}]
 PASS Pattern: [{"protocol":":℘"}] Inputs: [{"protocol":"foo"}]
 PASS Pattern: [{"username":":℘"}] Inputs: [{"username":"foo"}]
 PASS Pattern: [{"password":":℘"}] Inputs: [{"password":"foo"}]
@@ -146,129 +146,137 @@ PASS Pattern: [{"hash":":㐀"}] Inputs: [{"hash":"foo"}]
 PASS Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"café"}]
 PASS Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"cafe"}]
 PASS Pattern: [{"protocol":"foo-bar"}] Inputs: [{"protocol":"foo-bar"}]
-FAIL Pattern: [{"username":"caf%C3%A9"}] Inputs: [{"username":"café"}] assert_equals: compiled pattern property 'username' expected "caf%C3%A9" but got "café"
-FAIL Pattern: [{"username":"café"}] Inputs: [{"username":"café"}] assert_equals: compiled pattern property 'username' expected "caf%C3%A9" but got "café"
-FAIL Pattern: [{"username":"caf%c3%a9"}] Inputs: [{"username":"café"}] assert_equals: compiled pattern property 'username' expected "caf%c3%a9" but got "café"
-FAIL Pattern: [{"password":"caf%C3%A9"}] Inputs: [{"password":"café"}] assert_equals: compiled pattern property 'password' expected "caf%C3%A9" but got "café"
-FAIL Pattern: [{"password":"café"}] Inputs: [{"password":"café"}] assert_equals: compiled pattern property 'password' expected "caf%C3%A9" but got "café"
-FAIL Pattern: [{"password":"caf%c3%a9"}] Inputs: [{"password":"café"}] assert_equals: compiled pattern property 'password' expected "caf%c3%a9" but got "café"
-FAIL Pattern: [{"hostname":"xn--caf-dma.com"}] Inputs: [{"hostname":"café.com"}] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"hostname":"café.com"}] Inputs: [{"hostname":"café.com"}] assert_equals: compiled pattern property 'hostname' expected "xn--caf-dma.com" but got "café.com"
+PASS Pattern: [{"username":"caf%C3%A9"}] Inputs: [{"username":"café"}]
+PASS Pattern: [{"username":"café"}] Inputs: [{"username":"café"}]
+PASS Pattern: [{"username":"caf%c3%a9"}] Inputs: [{"username":"café"}]
+PASS Pattern: [{"password":"caf%C3%A9"}] Inputs: [{"password":"café"}]
+PASS Pattern: [{"password":"café"}] Inputs: [{"password":"café"}]
+PASS Pattern: [{"password":"caf%c3%a9"}] Inputs: [{"password":"café"}]
+PASS Pattern: [{"hostname":"xn--caf-dma.com"}] Inputs: [{"hostname":"café.com"}]
+PASS Pattern: [{"hostname":"café.com"}] Inputs: [{"hostname":"café.com"}]
+PASS Pattern: ["http://🚲.com/"] Inputs: ["http://🚲.com/"]
+PASS Pattern: ["http://\ud83d \udeb2"] Inputs: undefined
+PASS Pattern: [{"hostname":"\ud83d \udeb2"}] Inputs: undefined
+PASS Pattern: [{"pathname":"\ud83d \udeb2"}] Inputs: []
+PASS Pattern: [{"pathname":":\ud83d \udeb2"}] Inputs: undefined
+PASS Pattern: [{"pathname":":a󠄀b"}] Inputs: []
+PASS Pattern: [{"pathname":"test/:a𐑐b"}] Inputs: [{"pathname":"test/foo"}]
+PASS Pattern: [{"pathname":":🚲"}] Inputs: undefined
 PASS Pattern: [{"port":""}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"protocol":"http","port":"80"}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"protocol":"http","port":"80{20}?"}] Inputs: [{"protocol":"http","port":"80"}]
-FAIL Pattern: [{"protocol":"http","port":"80 "}] Inputs: [{"protocol":"http","port":"80"}] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"protocol":"http","port":"80 "}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"port":"80"}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"protocol":"http{s}?","port":"80"}] Inputs: [{"protocol":"http","port":"80"}]
 PASS Pattern: [{"port":"80"}] Inputs: [{"port":"80"}]
-FAIL Pattern: [{"port":"(.*)"}] Inputs: [{"port":"invalid80"}] assert_equals: test() result expected false but got true
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/./bar"}] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"pathname":"/foo/baz"}] Inputs: [{"pathname":"/foo/bar/../baz"}] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"pathname":"/caf%C3%A9"}] Inputs: [{"pathname":"/café"}] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"pathname":"/café"}] Inputs: [{"pathname":"/café"}] assert_equals: test() result expected true but got false
+PASS Pattern: [{"port":"(.*)"}] Inputs: [{"port":"invalid80"}]
+PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/./bar"}]
+PASS Pattern: [{"pathname":"/foo/baz"}] Inputs: [{"pathname":"/foo/bar/../baz"}]
+PASS Pattern: [{"pathname":"/caf%C3%A9"}] Inputs: [{"pathname":"/café"}]
+PASS Pattern: [{"pathname":"/café"}] Inputs: [{"pathname":"/café"}]
 PASS Pattern: [{"pathname":"/caf%c3%a9"}] Inputs: [{"pathname":"/café"}]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar"}]
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] assert_equals: test() result expected true but got false
+PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}]
 PASS Pattern: [{"pathname":"/foo/../bar"}] Inputs: [{"pathname":"/bar"}]
-FAIL Pattern: [{"pathname":"./foo/bar","baseURL":"https://example.com"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "./foo/bar"
-FAIL Pattern: [{"pathname":"","baseURL":"https://example.com"}] Inputs: [{"pathname":"/","baseURL":"https://example.com"}] assert_equals: compiled pattern property 'pathname' expected "/" but got ""
+PASS Pattern: [{"pathname":"./foo/bar","baseURL":"https://example.com"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}]
+PASS Pattern: [{"pathname":"","baseURL":"https://example.com"}] Inputs: [{"pathname":"/","baseURL":"https://example.com"}]
 PASS Pattern: [{"pathname":"{/bar}","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}]
 PASS Pattern: [{"pathname":"\\/bar","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}]
-FAIL Pattern: [{"pathname":"b","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./b","baseURL":"https://example.com/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/b" but got "b"
+PASS Pattern: [{"pathname":"b","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./b","baseURL":"https://example.com/foo/"}]
 PASS Pattern: [{"pathname":"foo/bar"}] Inputs: ["https://example.com/foo/bar"]
-FAIL Pattern: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo/bar"] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "foo/bar"
-FAIL Pattern: [{"pathname":":name.html","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo.html"] assert_equals: compiled pattern property 'pathname' expected "/:name.html" but got ":name.html"
+PASS Pattern: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo/bar"]
+PASS Pattern: [{"pathname":":name.html","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo.html"]
 PASS Pattern: [{"search":"q=caf%C3%A9"}] Inputs: [{"search":"q=café"}]
 PASS Pattern: [{"search":"q=café"}] Inputs: [{"search":"q=café"}]
 PASS Pattern: [{"search":"q=caf%c3%a9"}] Inputs: [{"search":"q=café"}]
 PASS Pattern: [{"hash":"caf%C3%A9"}] Inputs: [{"hash":"café"}]
 PASS Pattern: [{"hash":"café"}] Inputs: [{"hash":"café"}]
 PASS Pattern: [{"hash":"caf%c3%a9"}] Inputs: [{"hash":"café"}]
-FAIL Pattern: [{"protocol":"about","pathname":"(blank|sourcedoc)"}] Inputs: ["about:blank"] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"protocol":"data","pathname":":number([0-9]+)"}] Inputs: ["data:8675309"] assert_equals: test() result expected true but got false
+PASS Pattern: [{"protocol":"about","pathname":"(blank|sourcedoc)"}] Inputs: ["about:blank"]
+PASS Pattern: [{"protocol":"data","pathname":":number([0-9]+)"}] Inputs: ["data:8675309"]
 PASS Pattern: [{"pathname":"/(\\m)"}] Inputs: undefined
 PASS Pattern: [{"pathname":"/foo!"}] Inputs: [{"pathname":"/foo!"}]
 PASS Pattern: [{"pathname":"/foo\\:"}] Inputs: [{"pathname":"/foo:"}]
-FAIL Pattern: [{"pathname":"/foo\\{"}] Inputs: [{"pathname":"/foo{"}] assert_equals: test() result expected true but got false
+PASS Pattern: [{"pathname":"/foo\\{"}] Inputs: [{"pathname":"/foo{"}]
 PASS Pattern: [{"pathname":"/foo\\("}] Inputs: [{"pathname":"/foo("}]
-FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var x = 1;" but got "var%20x%20=%201;"
+PASS Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}]
 PASS Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}]
-FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"baseURL":"javascript:var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var x = 1;" but got "var%20x%20=%201;"
-FAIL Pattern: [{"protocol":"(data|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var x = 1;" but got "var%20x%20=%201;"
+PASS Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"baseURL":"javascript:var x = 1;"}]
+PASS Pattern: [{"protocol":"(data|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}]
 PASS Pattern: [{"protocol":"(https|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}]
-FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"pathname":"var x = 1;"}] assert_equals: test() result expected true but got false
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["./foo/bar","https://example.com"] assert_equals: test() result expected true but got false
+PASS Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"pathname":"var x = 1;"}]
+PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: ["./foo/bar","https://example.com"]
 PASS Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar"},"https://example.com"]
 PASS Pattern: ["https://example.com:8080/foo?bar#baz"] Inputs: [{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}]
-FAIL Pattern: ["/foo?bar#baz","https://example.com:8080"] Inputs: [{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}] Type error
+PASS Pattern: ["/foo?bar#baz","https://example.com:8080"] Inputs: [{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}]
 PASS Pattern: ["/foo"] Inputs: undefined
 PASS Pattern: ["example.com/foo"] Inputs: undefined
-FAIL Pattern: ["http{s}?://{*.}?example.com/:product/:endpoint"] Inputs: ["https://sub.example.com/foo/bar"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://example.com?foo"] Inputs: ["https://example.com/?foo"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://example.com#foo"] Inputs: ["https://example.com/#foo"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://example.com:8080?foo"] Inputs: ["https://example.com:8080/?foo"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://example.com:8080#foo"] Inputs: ["https://example.com:8080/#foo"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://example.com/?foo"] Inputs: ["https://example.com/?foo"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://example.com/#foo"] Inputs: ["https://example.com/#foo"] assert_equals: test() result expected true but got false
+PASS Pattern: ["http{s}?://{*.}?example.com/:product/:endpoint"] Inputs: ["https://sub.example.com/foo/bar"]
+PASS Pattern: ["https://example.com?foo"] Inputs: ["https://example.com/?foo"]
+PASS Pattern: ["https://example.com#foo"] Inputs: ["https://example.com/#foo"]
+PASS Pattern: ["https://example.com:8080?foo"] Inputs: ["https://example.com:8080/?foo"]
+PASS Pattern: ["https://example.com:8080#foo"] Inputs: ["https://example.com:8080/#foo"]
+PASS Pattern: ["https://example.com/?foo"] Inputs: ["https://example.com/?foo"]
+PASS Pattern: ["https://example.com/#foo"] Inputs: ["https://example.com/#foo"]
 PASS Pattern: ["https://example.com/*?foo"] Inputs: ["https://example.com/?foo"]
-FAIL Pattern: ["https://example.com/*\\?foo"] Inputs: ["https://example.com/?foo"] assert_equals: test() result expected true but got false
+PASS Pattern: ["https://example.com/*\\?foo"] Inputs: ["https://example.com/?foo"]
 PASS Pattern: ["https://example.com/:name?foo"] Inputs: ["https://example.com/bar?foo"]
-FAIL Pattern: ["https://example.com/:name\\?foo"] Inputs: ["https://example.com/bar?foo"] assert_equals: test() result expected true but got false
+PASS Pattern: ["https://example.com/:name\\?foo"] Inputs: ["https://example.com/bar?foo"]
 PASS Pattern: ["https://example.com/(bar)?foo"] Inputs: ["https://example.com/bar?foo"]
-FAIL Pattern: ["https://example.com/(bar)\\?foo"] Inputs: ["https://example.com/bar?foo"] assert_equals: test() result expected true but got false
+PASS Pattern: ["https://example.com/(bar)\\?foo"] Inputs: ["https://example.com/bar?foo"]
 PASS Pattern: ["https://example.com/{bar}?foo"] Inputs: ["https://example.com/bar?foo"]
-FAIL Pattern: ["https://example.com/{bar}\\?foo"] Inputs: ["https://example.com/bar?foo"] assert_equals: test() result expected true but got false
+PASS Pattern: ["https://example.com/{bar}\\?foo"] Inputs: ["https://example.com/bar?foo"]
 PASS Pattern: ["https://example.com/"] Inputs: ["https://example.com:8080/"]
 PASS Pattern: ["data:foobar"] Inputs: ["data:foobar"]
-FAIL Pattern: ["data\\:foobar"] Inputs: ["data:foobar"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://{sub.}?example.com/foo"] Inputs: ["https://example.com/foo"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://{sub.}?example{.com/}foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: ["data\\:foobar"] Inputs: ["data:foobar"]
+PASS Pattern: ["https://{sub.}?example.com/foo"] Inputs: ["https://example.com/foo"]
+PASS Pattern: ["https://{sub.}?example{.com/}foo"] Inputs: ["https://example.com/foo"]
 PASS Pattern: ["{https://}example.com/foo"] Inputs: ["https://example.com/foo"]
-FAIL Pattern: ["https://(sub.)?example.com/foo"] Inputs: ["https://example.com/foo"] assert_equals: test() result expected true but got false
+PASS Pattern: ["https://(sub.)?example.com/foo"] Inputs: ["https://example.com/foo"]
 PASS Pattern: ["https://(sub.)?example(.com/)foo"] Inputs: ["https://example.com/foo"]
 PASS Pattern: ["(https://)example.com/foo"] Inputs: ["https://example.com/foo"]
 PASS Pattern: ["https://{sub{.}}example.com/foo"] Inputs: ["https://example.com/foo"]
-FAIL Pattern: ["https://(sub(?:.))?example.com/foo"] Inputs: ["https://example.com/foo"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["file:///foo/bar"] Inputs: ["file:///foo/bar"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["data:"] Inputs: ["data:"] assert_equals: test() result expected true but got false
+PASS Pattern: ["https://(sub(?:.))?example.com/foo"] Inputs: ["https://example.com/foo"]
+PASS Pattern: ["file:///foo/bar"] Inputs: ["file:///foo/bar"]
+PASS Pattern: ["data:"] Inputs: ["data:"]
 PASS Pattern: ["foo://bar"] Inputs: ["foo://bad_url_browser_interop"]
 PASS Pattern: ["(café)://foo"] Inputs: undefined
 PASS Pattern: ["https://example.com/foo?bar#baz"] Inputs: [{"protocol":"https:","search":"?bar","hash":"#baz","baseURL":"http://example.com/foo"}]
-FAIL Pattern: [{"protocol":"http{s}?:","search":"?bar","hash":"#baz"}] Inputs: ["http://example.com/foo?bar#baz"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["?bar#baz","https://example.com/foo"] Inputs: ["?bar#baz","https://example.com/foo"] Type error
-FAIL Pattern: ["?bar","https://example.com/foo#baz"] Inputs: ["?bar","https://example.com/foo#snafu"] Type error
-FAIL Pattern: ["#baz","https://example.com/foo?bar"] Inputs: ["#baz","https://example.com/foo?bar"] Type error
-FAIL Pattern: ["#baz","https://example.com/foo"] Inputs: ["#baz","https://example.com/foo"] Type error
-FAIL Pattern: [{"pathname":"*"}] Inputs: ["foo","data:data-urls-cannot-be-base-urls"] assert_equals: test() result expected false but got true
+PASS Pattern: [{"protocol":"http{s}?:","search":"?bar","hash":"#baz"}] Inputs: ["http://example.com/foo?bar#baz"]
+PASS Pattern: ["?bar#baz","https://example.com/foo"] Inputs: ["?bar#baz","https://example.com/foo"]
+PASS Pattern: ["?bar","https://example.com/foo#baz"] Inputs: ["?bar","https://example.com/foo#snafu"]
+PASS Pattern: ["#baz","https://example.com/foo?bar"] Inputs: ["#baz","https://example.com/foo?bar"]
+PASS Pattern: ["#baz","https://example.com/foo"] Inputs: ["#baz","https://example.com/foo"]
+PASS Pattern: [{"pathname":"*"}] Inputs: ["foo","data:data-urls-cannot-be-base-urls"]
 PASS Pattern: [{"pathname":"*"}] Inputs: ["foo","not|a|valid|url"]
-FAIL Pattern: ["https://foo\\:bar@example.com"] Inputs: ["https://foo:bar@example.com"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://foo@example.com"] Inputs: ["https://foo@example.com"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://\\:bar@example.com"] Inputs: ["https://:bar@example.com"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://:user::pass@example.com"] Inputs: ["https://foo:bar@example.com"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https\\:foo\\:bar@example.com"] Inputs: ["https:foo:bar@example.com"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["data\\:foo\\:bar@example.com"] Inputs: ["data:foo:bar@example.com"] assert_equals: test() result expected true but got false
-FAIL Pattern: ["https://foo{\\:}bar@example.com"] Inputs: ["https://foo:bar@example.com"] assert_equals: compiled pattern property 'username' expected "foo%3Abar" but got "foo\\:bar"
-FAIL Pattern: ["data{\\:}channel.html","https://example.com"] Inputs: ["https://example.com/data:channel.html"] Type error
-FAIL Pattern: ["http://[\\:\\:1]/"] Inputs: ["http://[::1]/"] Invalid input to canonicalize a URL host string.
-FAIL Pattern: ["http://[\\:\\:1]:8080/"] Inputs: ["http://[::1]:8080/"] Invalid input to canonicalize a URL host string.
-FAIL Pattern: ["http://[\\:\\:a]/"] Inputs: ["http://[::a]/"] Invalid input to canonicalize a URL host string.
-FAIL Pattern: ["http://[:address]/"] Inputs: ["http://[::1]/"] Invalid input to canonicalize a URL host string.
-FAIL Pattern: ["http://[\\:\\:AB\\::num]/"] Inputs: ["http://[::ab:1]/"] Invalid input to canonicalize a URL host string.
-FAIL Pattern: [{"hostname":"[\\:\\:AB\\::num]"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
+PASS Pattern: ["https://foo\\:bar@example.com"] Inputs: ["https://foo:bar@example.com"]
+PASS Pattern: ["https://foo@example.com"] Inputs: ["https://foo@example.com"]
+PASS Pattern: ["https://\\:bar@example.com"] Inputs: ["https://:bar@example.com"]
+PASS Pattern: ["https://:user::pass@example.com"] Inputs: ["https://foo:bar@example.com"]
+PASS Pattern: ["https\\:foo\\:bar@example.com"] Inputs: ["https:foo:bar@example.com"]
+PASS Pattern: ["data\\:foo\\:bar@example.com"] Inputs: ["data:foo:bar@example.com"]
+PASS Pattern: ["https://foo{\\:}bar@example.com"] Inputs: ["https://foo:bar@example.com"]
+PASS Pattern: ["data{\\:}channel.html","https://example.com"] Inputs: ["https://example.com/data:channel.html"]
+PASS Pattern: ["http://[\\:\\:1]/"] Inputs: ["http://[::1]/"]
+PASS Pattern: ["http://[\\:\\:1]:8080/"] Inputs: ["http://[::1]:8080/"]
+PASS Pattern: ["http://[\\:\\:a]/"] Inputs: ["http://[::a]/"]
+PASS Pattern: ["http://[:address]/"] Inputs: ["http://[::1]/"]
+PASS Pattern: ["http://[\\:\\:AB\\::num]/"] Inputs: ["http://[::ab:1]/"]
+PASS Pattern: [{"hostname":"[\\:\\:AB\\::num]"}] Inputs: [{"hostname":"[::ab:1]"}]
 PASS Pattern: [{"hostname":"[\\:\\:xY\\::num]"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"{[\\:\\:ab\\::num]}"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
+PASS Pattern: [{"hostname":"{[\\:\\:ab\\::num]}"}] Inputs: [{"hostname":"[::ab:1]"}]
 PASS Pattern: [{"hostname":"{[\\:\\:fé\\::num]}"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"{[\\:\\::num\\:1]}"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
+PASS Pattern: [{"hostname":"{[\\:\\::num\\:1]}"}] Inputs: [{"hostname":"[::ab:1]"}]
 PASS Pattern: [{"hostname":"{[\\:\\::num\\:fé]}"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"[*\\:1]"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
-FAIL Pattern: [{"hostname":"*\\:1]"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"[*\\:1]"}] Inputs: [{"hostname":"[::ab:1]"}]
+PASS Pattern: [{"hostname":"*\\:1]"}] Inputs: undefined
 PASS Pattern: ["https://foo{{@}}example.com"] Inputs: ["https://foo@example.com"]
-FAIL Pattern: ["https://foo{@example.com"] Inputs: ["https://foo@example.com"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: ["data\\:text/javascript,let x = 100/:tens?5;"] Inputs: ["data:text/javascript,let x = 100/5;"] assert_equals: compiled pattern property 'pathname' expected "text/javascript,let x = 100/:tens?5;" but got "text/javascript,let%20x%20=%20100/:tens?5;"
+PASS Pattern: ["https://foo{@example.com"] Inputs: ["https://foo@example.com"]
+PASS Pattern: ["data\\:text/javascript,let x = 100/:tens?5;"] Inputs: ["data:text/javascript,let x = 100/5;"]
 PASS Pattern: [{"pathname":"/:id/:id"}] Inputs: undefined
 PASS Pattern: [{"pathname":"/foo","baseURL":""}] Inputs: undefined
 PASS Pattern: ["/foo",""] Inputs: undefined
-FAIL Pattern: [{"pathname":"/foo"},"https://example.com"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"pathname":"/foo"},"https://example.com"] Inputs: undefined
 PASS Pattern: [{"pathname":":name*"}] Inputs: [{"pathname":"foobar"}]
 PASS Pattern: [{"pathname":":name+"}] Inputs: [{"pathname":"foobar"}]
 PASS Pattern: [{"pathname":":name"}] Inputs: [{"pathname":"foobar"}]
@@ -276,26 +284,26 @@ PASS Pattern: [{"protocol":":name*"}] Inputs: [{"protocol":"foobar"}]
 PASS Pattern: [{"protocol":":name+"}] Inputs: [{"protocol":"foobar"}]
 PASS Pattern: [{"protocol":":name"}] Inputs: [{"protocol":"foobar"}]
 PASS Pattern: [{"hostname":"bad hostname"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"bad#hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad#hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad%hostname"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"bad/hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad\\:hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad/hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad\\:hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad<hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad>hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad?hostname"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"bad@hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad@hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad[hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad]hostname"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"bad\\\\hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad\\\\hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad^hostname"}] Inputs: undefined
 PASS Pattern: [{"hostname":"bad|hostname"}] Inputs: undefined
-FAIL Pattern: [{"hostname":"bad\nhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad\rhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad\thostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{}] Inputs: ["https://example.com/"] assert_object_equals: exec() result for protocol property "0" expected "https" got ""
-FAIL Pattern: [] Inputs: ["https://example.com/"] Not implemented.
-FAIL Pattern: [] Inputs: [{}] Not implemented.
-FAIL Pattern: [] Inputs: [] Not implemented.
+PASS Pattern: [{"hostname":"bad\nhostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad\rhostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad\thostname"}] Inputs: undefined
+PASS Pattern: [{}] Inputs: ["https://example.com/"]
+PASS Pattern: [] Inputs: ["https://example.com/"]
+PASS Pattern: [] Inputs: [{}]
+PASS Pattern: [] Inputs: []
 PASS Pattern: [{"pathname":"(foo)(.*)"}] Inputs: [{"pathname":"foobarbaz"}]
 PASS Pattern: [{"pathname":"{(foo)bar}(.*)"}] Inputs: [{"pathname":"foobarbaz"}]
 PASS Pattern: [{"pathname":"(foo)?(.*)"}] Inputs: [{"pathname":"foobarbaz"}]
@@ -331,11 +339,11 @@ PASS Pattern: [{"pathname":"/:foo\\bar"}] Inputs: [{"pathname":"/bazbar"}]
 PASS Pattern: [{"pathname":"/foo/bar"},{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}]
 PASS Pattern: [{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}]
 PASS Pattern: ["https://example.com:8080/foo?bar#baz",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}]
-FAIL Pattern: ["/foo?bar#baz","https://example.com:8080",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}] Type error
+PASS Pattern: ["/foo?bar#baz","https://example.com:8080",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}]
 PASS Pattern: ["/foo?bar#baz",{"ignoreCase":true},"https://example.com:8080"] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}]
 PASS Pattern: [{"search":"foo","baseURL":"https://example.com/a/+/b"}] Inputs: [{"search":"foo","baseURL":"https://example.com/a/+/b"}]
 PASS Pattern: [{"hash":"foo","baseURL":"https://example.com/?q=*&v=?&hmm={}&umm=()"}] Inputs: [{"hash":"foo","baseURL":"https://example.com/?q=*&v=?&hmm={}&umm=()"}]
-FAIL Pattern: ["#foo","https://example.com/?q=*&v=?&hmm={}&umm=()"] Inputs: ["https://example.com/?q=*&v=?&hmm={}&umm=()#foo"] Type error
+PASS Pattern: ["#foo","https://example.com/?q=*&v=?&hmm={}&umm=()"] Inputs: ["https://example.com/?q=*&v=?&hmm={}&umm=()#foo"]
 PASS Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/a"}]
 PASS Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/z"}]
 PASS Pattern: [{"pathname":"/([\\d&&[0-1]])"}] Inputs: [{"pathname":"/0"}]

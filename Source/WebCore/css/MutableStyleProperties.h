@@ -65,7 +65,7 @@ public:
     // These expand shorthand properties into multiple properties.
     bool setProperty(CSSPropertyID, const String& value, CSSParserContext, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
     bool setProperty(CSSPropertyID, const String& value, IsImportant = IsImportant::No, bool* didFailParsing = nullptr);
-    void setProperty(CSSPropertyID, RefPtr<CSSValue>&&, IsImportant = IsImportant::No);
+    void setProperty(CSSPropertyID, Ref<CSSValue>&&, IsImportant = IsImportant::No);
 
     // These do not. FIXME: This is too messy, we can do better.
     bool setProperty(CSSPropertyID, CSSValueID identifier, IsImportant = IsImportant::No);

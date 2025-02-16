@@ -35,31 +35,31 @@ namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(EmbeddedFixedVector);
 
-template<typename T>
-class EmbeddedFixedVector final : public TrailingArray<EmbeddedFixedVector<T>, T> {
+template<typename T, typename Malloc = EmbeddedFixedVectorMalloc>
+class EmbeddedFixedVector final : public TrailingArray<EmbeddedFixedVector<T, Malloc>, T> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(EmbeddedFixedVector);
     WTF_MAKE_NONCOPYABLE(EmbeddedFixedVector);
     WTF_MAKE_NONMOVABLE(EmbeddedFixedVector);
 public:
-    using Base = TrailingArray<EmbeddedFixedVector<T>, T>;
+    using Base = TrailingArray<EmbeddedFixedVector<T, Malloc>, T>;
 
     static UniqueRef<EmbeddedFixedVector> create(unsigned size)
     {
-        return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size) };
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size) };
     }
 
     template<typename InputIterator>
     static UniqueRef<EmbeddedFixedVector> create(InputIterator first, InputIterator last)
     {
         unsigned size = Checked<uint32_t> { std::distance(first, last) };
-        return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, first, last) };
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, first, last) };
     }
 
     template<size_t inlineCapacity, typename OverflowHandler>
     static UniqueRef<EmbeddedFixedVector> createFromVector(const Vector<T, inlineCapacity, OverflowHandler>& other)
     {
         unsigned size = Checked<uint32_t> { other.size() }.value();
-        return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, other.begin(), other.end()) };
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, other.begin(), other.end()) };
     }
 
     template<size_t inlineCapacity, typename OverflowHandler>
@@ -67,20 +67,20 @@ public:
     {
         Vector<T, inlineCapacity, OverflowHandler> container = WTFMove(other);
         unsigned size = Checked<uint32_t> { container.size() }.value();
-        return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::move_iterator { container.begin() }, std::move_iterator { container.end() }) };
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::move_iterator { container.begin() }, std::move_iterator { container.end() }) };
     }
 
     template<typename... Args>
     static UniqueRef<EmbeddedFixedVector> createWithSizeAndConstructorArguments(unsigned size, Args&&... args)
     {
-        return UniqueRef { *new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<Args>(args)...) };
+        return UniqueRef { *new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(size, std::forward<Args>(args)...) };
     }
 
     template<std::invocable<size_t> Generator>
     static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, NOESCAPE Generator&& generator)
     {
 
-        auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::Failable { }, size, std::forward<Generator>(generator)) };
+        auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, Malloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::Failable { }, size, std::forward<Generator>(generator)) };
         if (result->size() != size)
             return nullptr;
         return result;

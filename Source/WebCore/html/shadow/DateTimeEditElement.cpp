@@ -27,8 +27,6 @@
 #include "config.h"
 #include "DateTimeEditElement.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "DateComponents.h"
 #include "DateTimeFieldElements.h"
 #include "DateTimeFieldsState.h"
@@ -427,5 +425,3 @@ bool DateTimeEditElement::editableFieldsHaveValues() const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

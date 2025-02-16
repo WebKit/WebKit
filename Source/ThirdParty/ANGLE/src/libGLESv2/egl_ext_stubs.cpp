@@ -675,6 +675,22 @@ EGLBoolean SwapBuffersWithDamageKHR(Thread *thread,
     return EGL_TRUE;
 }
 
+void LockVulkanQueueANGLE(Thread *thread, egl::Display *display)
+{
+    ANGLE_EGL_TRY_PREPARE_FOR_CALL(thread, display->prepareForCall(), "eglLockVulkanQueueANGLE",
+                                   GetDisplayIfValid(display));
+    display->lockVulkanQueue();
+    thread->setSuccess();
+}
+
+void UnlockVulkanQueueANGLE(Thread *thread, egl::Display *display)
+{
+    ANGLE_EGL_TRY_PREPARE_FOR_CALL(thread, display->prepareForCall(), "eglUnlockVulkanQueueANGLE",
+                                   GetDisplayIfValid(display));
+    display->unlockVulkanQueue();
+    thread->setSuccess();
+}
+
 EGLBoolean PrepareSwapBuffersANGLE(Thread *thread, Display *display, SurfaceID surfaceID)
 {
     Surface *eglSurface = display->getSurface(surfaceID);
@@ -1084,6 +1100,28 @@ void SetValidationEnabledANGLE(Thread *thread, EGLBoolean validationState)
 {
     SetEGLValidationEnabled(validationState != EGL_FALSE);
     thread->setSuccess();
+}
+
+EGLBoolean QuerySupportedCompressionRatesEXT(Thread *thread,
+                                             egl::Display *display,
+                                             egl::Config *configPacked,
+                                             const EGLAttrib *attrib_list,
+                                             EGLint *rates,
+                                             EGLint rate_size,
+                                             EGLint *num_rates)
+{
+    ANGLE_EGL_TRY_PREPARE_FOR_CALL_RETURN(thread, display->prepareForCall(),
+                                          "eglQuerySupportedCompressionRatesEXT",
+                                          GetDisplayIfValid(display), EGL_FALSE);
+
+    const AttributeMap &attributes = PackParam<const AttributeMap &>((const EGLint *)attrib_list);
+    ANGLE_EGL_TRY_RETURN(thread,
+                         display->querySupportedCompressionRates(configPacked, attributes, rates,
+                                                                 rate_size, num_rates),
+                         "eglQuerySupportedCompressionRatesEXT", GetDisplayIfValid(display),
+                         EGL_FALSE);
+    thread->setSuccess();
+    return EGL_TRUE;
 }
 
 }  // namespace egl

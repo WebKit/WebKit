@@ -54,9 +54,9 @@ template<size_t I> const auto& get(const Circle& value)
         return value.position;
 }
 
-template<> struct Serialize<Circle> { void operator()(StringBuilder&, const Circle&); };
+template<> struct Serialize<Circle> { void operator()(StringBuilder&, const SerializationContext&, const Circle&); };
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Circle, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Circle, 2)

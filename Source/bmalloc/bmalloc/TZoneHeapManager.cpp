@@ -50,15 +50,17 @@ static bool (*hasDisableTZoneEntitlement)();
 
 TZoneHeapManager* tzoneHeapManager;
 TZoneMallocFallback tzoneMallocFallback;
-TZoneHeapManager::State TZoneHeapManager::m_state;
+TZoneHeapManager::State TZoneHeapManager::s_state;
 
 static constexpr unsigned defaultBucketsForSmallSizes = 5;
 static constexpr unsigned defaultBucketsForLargeSizes = 3;
 static constexpr unsigned defaultMaxSmallSize = 128;
 
-unsigned bucketsForSmallSizes { defaultBucketsForSmallSizes };
-unsigned bucketsForLargeSizes { defaultBucketsForLargeSizes };
-unsigned maxSmallSize { defaultMaxSmallSize };
+static unsigned bucketsForSmallSizes { defaultBucketsForSmallSizes };
+static unsigned bucketsForLargeSizes { defaultBucketsForLargeSizes };
+static unsigned maxSmallSize { defaultMaxSmallSize };
+
+static bool requirePerBootPrimodialSeed;
 
 static constexpr bool verbose = false;
 
@@ -102,7 +104,7 @@ TZoneHeapManager::TZoneHeapManager()
 {
     determineTZoneMallocFallback();
 
-    // Ensures that the default value for m_state is State::Uninitialized.
+    // Ensures that the default value for s_state is State::Uninitialized.
     static_assert(!static_cast<unsigned>(TZoneHeapManager::State::Uninitialized));
 
 #if TZONE_VERBOSE_DEBUG
@@ -124,31 +126,14 @@ void determineTZoneMallocFallback()
         if (tzoneMallocFallback != TZoneMallocFallback::Undecided)
             return;
 
-        tzoneFreeWithFastFallback = tzoneFreeFast;
-        tzoneFreeWithIsoFallback = tzoneFreeFast;
-
-        if (Environment::get()->isDebugHeapEnabled())
+        if (Environment::get()->isDebugHeapEnabled()) {
             tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
-        else {
-            const char* env = getenv("bmalloc_IsoHeap");
-            if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0")))
-                tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
-        }
-
-        if (tzoneMallocFallback == TZoneMallocFallback::ForceDebugMalloc) {
-            tzoneFreeWithFastFallback = tzoneFreeWithDebugMalloc;
-            tzoneFreeWithIsoFallback = tzoneFreeWithDebugMalloc;
             return;
         }
 
-        const char* tzoneEnv = getenv("bmalloc_TZoneHeap");
-        if (tzoneEnv && (!strcasecmp(tzoneEnv, "false") || !strcasecmp(tzoneEnv, "no") || !strcmp(tzoneEnv, "0"))) {
-            tzoneMallocFallback = TZoneMallocFallback::ForceSpecifiedFallBack;
-            return;
-        }
-
-        if (hasDisableTZoneEntitlement && hasDisableTZoneEntitlement()) {
-            tzoneMallocFallback = TZoneMallocFallback::ForceSpecifiedFallBack;
+        const char* env = getenv("bmalloc_TZoneHeap");
+        if (env && (!strcasecmp(env, "false") || !strcasecmp(env, "no") || !strcmp(env, "0"))) {
+            tzoneMallocFallback = TZoneMallocFallback::ForceDebugMalloc;
             return;
         }
 
@@ -156,9 +141,15 @@ void determineTZoneMallocFallback()
     }
 }
 
+void TZoneHeapManager::requirePerBootSeed()
+{
+    RELEASE_BASSERT(s_state < State::Seeded);
+    requirePerBootPrimodialSeed = true;
+}
+
 void TZoneHeapManager::setBucketParams(unsigned smallSizeCount, unsigned largeSizeCount, unsigned smallSizeLimit)
 {
-    RELEASE_BASSERT(m_state < State::StartedRegisteringTypes);
+    RELEASE_BASSERT(s_state < State::StartedRegisteringTypes);
 
     bucketsForSmallSizes = smallSizeCount;
     if (largeSizeCount)
@@ -172,7 +163,7 @@ void TZoneHeapManager::setBucketParams(unsigned smallSizeCount, unsigned largeSi
 
 void TZoneHeapManager::init()
 {
-    RELEASE_BASSERT(m_state == State::Uninitialized);
+    RELEASE_BASSERT(s_state == State::Uninitialized);
 
     if constexpr (verbose)
         TZONE_LOG_DEBUG("TZoneHeapManager initialization ");
@@ -228,8 +219,10 @@ void TZoneHeapManager::init()
 
     auto sysctlResult = sysctl(mib, 2, &timeValue, &size, nullptr, 0);
     if (sysctlResult) {
-        TZONE_LOG_DEBUG("kern.boottime is required for TZoneHeap initialization: %d\n", sysctlResult);
-        RELEASE_BASSERT(!sysctlResult);
+        TZONE_LOG_DEBUG("kern.boottime is required for TZoneHeap initialization: %d errno %d\n", sysctlResult, errno);
+        RELEASE_BASSERT(!sysctlResult || !requirePerBootPrimodialSeed);
+        // Some clients of JSC may not have access to kern.boottime. In those cases, use a fallback.
+        gettimeofday(&timeValue, NULL);
     }
     primordialSeed = timeValue.tv_sec * 1000 * 1000 + timeValue.tv_usec;
 
@@ -271,7 +264,7 @@ void TZoneHeapManager::init()
         TZONE_LOG_DEBUG("\n");
     }
 
-    unsigned char seed[CC_SHA1_DIGEST_LENGTH];
+    alignas(8) unsigned char seed[CC_SHA1_DIGEST_LENGTH];
     (void)CC_SHA256(&rawSeed, rawSeedLength, seed);
 #else // OS(DARWIN) => !OS(DARWIN)
     if constexpr (verbose)
@@ -303,7 +296,7 @@ void TZoneHeapManager::init()
         TZONE_LOG_DEBUG(" }\n");
     }
 
-    m_state = State::Seeded;
+    s_state = State::Seeded;
 
     if (verbose)
         atexit(dumpRegisteredTypesAtExit);
@@ -311,7 +304,7 @@ void TZoneHeapManager::init()
 
 bool TZoneHeapManager::isReady()
 {
-    return m_state >= State::Seeded;
+    return s_state >= State::Seeded;
 }
 
 #if TZONE_VERBOSE_DEBUG
@@ -369,7 +362,7 @@ static void setNextTypeName(char* typeName, size_t length)
 void TZoneHeapManager::dumpRegisteredTypes()
 {
 #if TZONE_VERBOSE_DEBUG
-    if (verbose && m_state >= State::Seeded) {
+    if (verbose && s_state >= State::Seeded) {
         if (!m_typeSizes.size())
             return;
 
@@ -505,16 +498,11 @@ BALLOW_UNSAFE_BUFFER_USAGE_END
 
 TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClass(LockHolder& lock, SizeAndAlignment::Value sizeAndAlignment)
 {
-    RELEASE_BASSERT(m_state >= State::Seeded);
+    RELEASE_BASSERT(s_state >= State::Seeded);
     BASSERT(!m_heapRefsBySizeAndAlignment.contains(sizeAndAlignment));
-    m_state = State::StartedRegisteringTypes;
+    s_state = State::StartedRegisteringTypes;
 
     auto bucketCount = bucketCountForSizeClass(sizeAndAlignment);
-    if (tzoneMallocFallback == TZoneMallocFallback::ForceSpecifiedFallBack) {
-        // The only way we can get here is if the TZoneAllocationFallback type is Iso.
-        // heapRefForTZoneType would already have handled the Fast case.
-        bucketCount = 1;
-    }
 
 #if TZONE_VERBOSE_DEBUG
     if constexpr (verbose) {
@@ -553,14 +541,6 @@ TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClas
     return buckets;
 }
 
-pas_heap_ref* TZoneHeapManager::heapRefForIsoFallback(const TZoneSpecification& spec)
-{
-    LockHolder lock(mutex());
-    m_isoTypeDescriptors.append(BMALLOC_TYPE_INITIALIZER(SizeAndAlignment::decodeSize(spec.sizeAndAlignment), SizeAndAlignment::decodeAlignment(spec.sizeAndAlignment), "TZoneIsoHeap"));
-    m_isoHeapRefs.append(BMALLOC_HEAP_REF_INITIALIZER(&m_isoTypeDescriptors.last()));
-    return &m_isoHeapRefs.last();
-}
-
 BINLINE pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(const TZoneSpecification& spec, LockHolder& lock)
 {
     TZoneTypeBuckets* bucketsForSize = nullptr;
@@ -589,7 +569,7 @@ BINLINE pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(const TZoneSpecifica
 
 pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(const TZoneSpecification& spec)
 {
-    RELEASE_BASSERT(m_state >= State::Seeded);
+    RELEASE_BASSERT(s_state >= State::Seeded);
     RELEASE_BASSERT(tzoneMallocFallback != TZoneMallocFallback::Undecided);
 
     LockHolder lock(mutex());
@@ -631,21 +611,6 @@ pas_heap_ref* TZoneHeapManager::TZoneHeapManager::heapRefForTZoneTypeDifferentSi
 
     return result;
 }
-
-#if BUSE_TZONE_PREINITIALIZATION
-
-void TZoneHeapManager::preInitializeHeapRefs(const TZoneSpecification* start, const TZoneSpecification* end)
-{
-    LockHolder lock(mutex());
-    for (auto* curr = start; curr < end; curr++) {
-        HeapRef& heapRef = *curr->addressOfHeapRef;
-        if (heapRef)
-            continue;
-        heapRef = heapRefForTZoneType(*curr, lock);
-    }
-}
-
-#endif // BUSE_TZONE_PREINITIALIZATION
 
 } } // namespace bmalloc::api
 

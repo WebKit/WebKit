@@ -126,7 +126,7 @@ Frame* FrameTree::scopedChild(unsigned index, TreeScope* scope) const
     return nullptr;
 }
 
-inline Frame* FrameTree::scopedChild(const Function<bool(const FrameTree&)>& isMatch, TreeScope* scope) const
+inline Frame* FrameTree::scopedChild(NOESCAPE const Function<bool(const FrameTree&)>& isMatch, TreeScope* scope) const
 {
     if (!scope)
         return nullptr;
@@ -624,7 +624,7 @@ static void printFrames(const WebCore::Frame& frame, const WebCore::Frame* targe
         printIndent(indent);
         printf("  document=%p (needs style recalc %d)\n", localFrame->document(), localFrame->document() ? localFrame->document()->childNeedsStyleRecalc() : false);
         printIndent(indent);
-        printf("  uri=%s\n", localFrame->document()->documentURI().utf8().data());
+        SAFE_PRINTF("  uri=%s\n", localFrame->document()->documentURI().utf8());
     }
     for (auto* child = frame.tree().firstChild(); child; child = child->tree().nextSibling())
         printFrames(*child, targetFrame, indent + 1);

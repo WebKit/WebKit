@@ -203,9 +203,8 @@ void RemoteGraphicsContextGL::ensureExtensionEnabled(String&& extension)
 void RemoteGraphicsContextGL::drawSurfaceBufferToImageBuffer(WebCore::GraphicsContextGL::SurfaceBuffer buffer, WebCore::RenderingResourceIdentifier imageBufferIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     assertIsCurrent(workQueue());
-    protectedContext()->withBufferAsNativeImage(buffer, [&](NativeImage& image) {
-        paintNativeImageToImageBuffer(image, imageBufferIdentifier);
-    });
+    if (RefPtr image = protectedContext()->bufferAsNativeImage(buffer))
+        paintNativeImageToImageBuffer(*image, imageBufferIdentifier);
     completionHandler();
 }
 
@@ -230,7 +229,7 @@ void RemoteGraphicsContextGL::paintNativeImageToImageBuffer(NativeImage& image, 
     bool isFinished = false;
 
     Ref renderingBackend = m_renderingBackend;
-    renderingBackend->dispatch([&]() mutable {
+    renderingBackend->dispatch([renderingBackend, &image, imageBufferIdentifier, &lock, &conditionVariable, &isFinished]() mutable {
         if (auto imageBuffer = renderingBackend->imageBuffer(imageBufferIdentifier)) {
             // Here we do not try to play back pending commands for imageBuffer. Currently this call is only made for empty
             // image buffers and there's no good way to add display lists.

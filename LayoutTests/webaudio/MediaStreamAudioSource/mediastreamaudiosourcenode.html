@@ -11,6 +11,9 @@
   </head>
   <body>
     <script id="layout-test-code">
+     if (window.testRunner)
+         testRunner.setUserMediaPermission(true);
+
       let audit = Audit.createTaskRunner();
 
       audit.define(
@@ -18,21 +21,10 @@
             label: 'test',
             description: 'Basic tests for MediaStreamAudioSourceNode API'
           },
-          (task, should) => {
-            should(
-                () => {navigator.webkitGetUserMedia(
-                    {audio: true},
-                    (stream) => {
-                      gotStream(stream, should);
-                      task.done();
-                    },
-                    () => {
-                      should(false, 'Stream generation')
-                          .message('succeeded', 'failed');
-                      task.done();
-                    })},
-                'getUserMedia()')
-                .notThrow();
+          async (task, should) => {
+            const stream = await navigator.mediaDevices.getUserMedia({audio: true});
+            gotStream(stream, should);
+            task.done();
           });
 
       audit.run();

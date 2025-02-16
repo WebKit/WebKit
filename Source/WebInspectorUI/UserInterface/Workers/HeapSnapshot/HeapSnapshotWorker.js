@@ -47,13 +47,13 @@ HeapSnapshotWorker = class HeapSnapshotWorker
         this._snapshots = [];
     }
 
-    createSnapshot(snapshotString, title, imported)
+    createSnapshot(targetId, snapshotString, title, imported)
     {
         let objectId = this._nextObjectId++;
-        let snapshot = new HeapSnapshot(objectId, snapshotString, title, imported);
+        let snapshot = new HeapSnapshot(targetId, objectId, snapshotString, title);
         this._objects.set(objectId, snapshot);
 
-        if (!imported) {
+        if (!snapshot.imported) {
             this._snapshots.push(snapshot);
 
             if (this._snapshots.length > 1) {

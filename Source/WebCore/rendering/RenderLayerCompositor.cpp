@@ -766,7 +766,15 @@ bool RenderLayerCompositor::shouldDumpPropertyForLayer(const GraphicsLayer* laye
     return true;
 }
 
-#if HAVE(HDR_SUPPORT)
+bool RenderLayerCompositor::backdropRootIsOpaque(const GraphicsLayer* layer) const
+{
+    if (layer != rootGraphicsLayer())
+        return false;
+
+    return !viewHasTransparentBackground();
+}
+
+#if ENABLE(HDR_FOR_IMAGES)
 bool RenderLayerCompositor::hdrForImagesEnabled() const
 {
     return m_renderView.settings().hdrForImagesEnabled();
@@ -2381,7 +2389,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
                 updateRootContentLayerClipping();
 
                 if (auto* tiledBacking = layer.backing()->tiledBacking())
-                    tiledBacking->setTopContentInset(frameView.topContentInset());
+                    tiledBacking->setObscuredContentInsets(frameView.obscuredContentInsets());
             }
 
             layer.setNeedsCompositingGeometryUpdate();
@@ -2434,7 +2442,7 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
     // If a fixed position layer gained/lost a backing or the reason not compositing it changed,
     // the scrolling coordinator needs to recalculate whether it can do fast scrolling.
     if (layer.renderer().isFixedPositioned()) {
-        if (layer.viewportConstrainedNotCompositedReason() != queryData.nonCompositedForPositionReason) {
+        if (layer.viewportConstrainedNotCompositedReason() != queryData.nonCompositedForPositionReason  && !queryData.reevaluateAfterLayout) {
             layer.setViewportConstrainedNotCompositedReason(queryData.nonCompositedForPositionReason);
             layerChanged = true;
         }
@@ -2831,8 +2839,8 @@ FloatPoint RenderLayerCompositor::positionForClipLayer() const
 {
     auto& frameView = m_renderView.frameView();
 
-    return FloatPoint(frameView.insetForLeftScrollbarSpace(),
-        LocalFrameView::yPositionForInsetClipLayer(frameView.scrollPosition(), frameView.topContentInset()));
+    auto clipLayerPosition = LocalFrameView::positionForInsetClipLayer(frameView.scrollPosition(), frameView.obscuredContentInsets());
+    return FloatPoint(frameView.insetForLeftScrollbarSpace() + clipLayerPosition.x(), clipLayerPosition.y());
 }
 
 void RenderLayerCompositor::frameViewDidScroll()
@@ -3258,7 +3266,7 @@ static FullScreenDescendant isDescendantOfFullScreenLayer(const RenderLayer& lay
         return FullScreenDescendant::NotApplicable;
 
     auto* fullScreenElement = manager->fullscreenElement();
-    if (!manager->isFullscreen() || !fullScreenElement)
+    if (!fullScreenElement)
         return FullScreenDescendant::NotApplicable;
 
     auto* fullScreenRenderer = dynamicDowncast<RenderLayerModelObject>(fullScreenElement->renderer());
@@ -4629,7 +4637,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForBottomOverhangArea(bool want
     }
 
     m_layerForBottomOverhangArea->setPosition(FloatPoint(0, m_rootContentsLayer->size().height() + m_renderView.frameView().headerHeight()
-        + m_renderView.frameView().footerHeight() + m_renderView.frameView().topContentInset()));
+        + m_renderView.frameView().footerHeight() + m_renderView.frameView().obscuredContentInsets().top()));
     return m_layerForBottomOverhangArea.get();
 }
 
@@ -4657,7 +4665,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForHeader(bool wantsLayer)
     }
 
     m_layerForHeader->setPosition(FloatPoint(0,
-        LocalFrameView::yPositionForHeaderLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().topContentInset())));
+        LocalFrameView::yPositionForHeaderLayer(m_renderView.frameView().scrollPosition(), m_renderView.frameView().obscuredContentInsets().top())));
     m_layerForHeader->setAnchorPoint(FloatPoint3D());
     m_layerForHeader->setSize(FloatSize(m_renderView.frameView().visibleWidth(), m_renderView.frameView().headerHeight()));
 
@@ -4694,7 +4702,7 @@ GraphicsLayer* RenderLayerCompositor::updateLayerForFooter(bool wantsLayer)
 
     float totalContentHeight = m_rootContentsLayer->size().height() + m_renderView.frameView().headerHeight() + m_renderView.frameView().footerHeight();
     m_layerForFooter->setPosition(FloatPoint(0, LocalFrameView::yPositionForFooterLayer(m_renderView.frameView().scrollPosition(),
-        m_renderView.frameView().topContentInset(), totalContentHeight, m_renderView.frameView().footerHeight())));
+        m_renderView.frameView().obscuredContentInsets().top(), totalContentHeight, m_renderView.frameView().footerHeight())));
     m_layerForFooter->setAnchorPoint(FloatPoint3D());
     m_layerForFooter->setSize(FloatSize(m_renderView.frameView().visibleWidth(), m_renderView.frameView().footerHeight()));
 
@@ -4837,12 +4845,12 @@ void RenderLayerCompositor::updateSizeAndPositionForOverhangAreaLayer()
     if (!m_layerForOverhangAreas)
         return;
 
-    float topContentInset = m_renderView.frameView().topContentInset();
+    auto obscuredContentInsets = m_renderView.frameView().obscuredContentInsets();
     IntSize overhangAreaSize = m_renderView.frameView().frameRect().size();
-    overhangAreaSize.contract(0, topContentInset);
+    overhangAreaSize.contract(obscuredContentInsets.left(), obscuredContentInsets.top());
     overhangAreaSize.clampNegativeToZero();
     m_layerForOverhangAreas->setSize(overhangAreaSize);
-    m_layerForOverhangAreas->setPosition({ 0, topContentInset });
+    m_layerForOverhangAreas->setPosition({ obscuredContentInsets.left(), obscuredContentInsets.top() });
 }
 #endif
 
@@ -4992,7 +5000,7 @@ void RenderLayerCompositor::ensureRootLayer()
             }
 #endif
             // FIXME: m_scrollContainerLayer and m_clipLayer have similar roles here, but m_clipLayer has some special positioning to
-            // account for clipping and top content inset (see LocalFrameView::yPositionForInsetClipLayer()).
+            // account for clipping and top content inset (see LocalFrameView::positionForInsetClipLayer()).
             if (!m_scrollContainerLayer) {
                 m_clipLayer = GraphicsLayer::create(graphicsLayerFactory(), *this);
                 m_clipLayer->setName(MAKE_STATIC_STRING_IMPL("frame clipping"));
@@ -5842,7 +5850,7 @@ void RenderLayerCompositor::updateSynchronousScrollingNodes()
     ASSERT(scrollingCoordinator);
 
     auto rootScrollingNodeID = m_renderView.frameView().scrollingNodeID();
-    HashSet<ScrollingNodeID> nodesToClear;
+    UncheckedKeyHashSet<ScrollingNodeID> nodesToClear;
     nodesToClear.reserveInitialCapacity(m_scrollingNodeToLayerMap.size());
     for (auto key : m_scrollingNodeToLayerMap.keys())
         nodesToClear.add(key);

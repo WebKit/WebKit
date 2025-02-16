@@ -110,6 +110,7 @@ class IOSSimulatorPort(IOSPort):
 class IPhoneSimulatorPort(IOSSimulatorPort):
     port_name = 'iphone-simulator'
 
+    # DEFAULT_DEVICE_TYPES should match webkitdirs.pm.
     DEVICE_TYPE = DeviceType(hardware_family='iPhone')
     DEFAULT_DEVICE_TYPES = [
         DeviceType(hardware_family='iPhone', hardware_type='12'),
@@ -123,6 +124,7 @@ class IPhoneSimulatorPort(IOSSimulatorPort):
 class IPadSimulatorPort(IOSSimulatorPort):
     port_name = 'ipad-simulator'
 
+    # DEFAULT_DEVICE_TYPES should match webkitdirs.pm.
     DEVICE_TYPE = DeviceType(hardware_family='iPad')
     DEFAULT_DEVICE_TYPES = [DeviceType(hardware_family='iPad', hardware_type='(9th generation)')]
 

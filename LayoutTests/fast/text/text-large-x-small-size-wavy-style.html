@@ -1,0 +1,20 @@
+<style>
+    .container {
+        position: absolute;
+        left: 10000000px;
+    }
+    p {
+        text-decoration-style: wavy;
+        text-decoration-line: underline;
+        font-size: 1px;
+    }
+</style>
+<body>
+    <div class="container">
+        <p>Passes if it does not crash.</p>
+    </div>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+    </script>
+</body>

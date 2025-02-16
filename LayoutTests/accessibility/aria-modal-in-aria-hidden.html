@@ -12,7 +12,7 @@
 
 <div id="container">
     <div role="dialog" aria-modal="false" id="box">
-        <h3 id="myDialog">Just an example.</h3>
+        <h3 id="heading" tabindex="0">Just an example.</h3>
     </div>
 </div>
 
@@ -23,6 +23,7 @@ if (window.accessibilityController) {
     window.jsTestIsAsync = true;
     output += expect("accessibilityController.accessibleElementById('bgContent').isIgnored", "false")
 
+    document.getElementById("heading").focus();
     document.getElementById("box").setAttribute("aria-modal", "true");
     setTimeout(async function() {
         output += await expectAsync("!accessibilityController.accessibleElementById('bgContent')", "true");

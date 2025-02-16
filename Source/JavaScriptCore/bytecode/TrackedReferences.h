@@ -46,7 +46,7 @@ public:
     void dump(PrintStream&) const;
     
 private:
-    HashSet<JSCell*> m_references;
+    UncheckedKeyHashSet<JSCell*> m_references;
 };
 
 } // namespace JSC

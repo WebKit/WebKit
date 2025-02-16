@@ -1,0 +1,29 @@
+<!DOCTYPE html><!-- webkit-test-runner [ MutationEventsEnabled=false ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests disabling mutation events.');
+
+let mutationEvents = [];
+window.addEventListener('DOMCharacterDataModified', (event) => mutationEvents.push(event.type), {capture: true});
+window.addEventListener('DOMNodeInserted', (event) => mutationEvents.push(event.type), {capture: true});
+window.addEventListener('DOMNodeInsertedIntoDocument', (event) => mutationEvents.push(event.type), {capture: true});
+window.addEventListener('DOMNodeRemoved', (event) => mutationEvents.push(event.type), {capture: true});
+window.addEventListener('DOMNodeRemovedFromDocument', (event) => mutationEvents.push(event.type), {capture: true});
+window.addEventListener('DOMSubtreeModified', (event) => mutationEvents.push(event.type), {capture: true});
+
+const element = document.createElement('div');
+document.body.appendChild(element);
+document.body.removeChild(element);
+shouldBe('mutationEvents', '[]');
+
+const text = document.body.appendChild(document.createTextNode('hello'));
+mutationEvents = [];
+text.replaceData(0, 5, 'world');
+shouldBe('mutationEvents', '[]');
+
+</script>
+</body>
+</html>

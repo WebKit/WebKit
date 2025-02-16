@@ -41,7 +41,7 @@ namespace ContentExtensions {
 namespace {
 
 template<typename VectorType, typename Iterable, typename Function>
-static inline void iterateIntersections(const VectorType& singularTransitionsFirsts, const Iterable& iterableTransitionList, const Function& intersectionHandler)
+static inline void iterateIntersections(const VectorType& singularTransitionsFirsts, const Iterable& iterableTransitionList, NOESCAPE const Function& intersectionHandler)
 {
     ASSERT(!singularTransitionsFirsts.isEmpty());
     auto otherIterator = iterableTransitionList.begin();
@@ -147,7 +147,7 @@ public:
 
     // The function passed as argument MUST not modify the partition.
     template<typename Function>
-    void refineGeneration(const Function& function)
+    void refineGeneration(NOESCAPE const Function& function)
     {
         for (unsigned setIndex : m_setsMarkedInCurrentGeneration) {
             SetDescriptor& setDescriptor = m_sets[setIndex];
@@ -181,7 +181,7 @@ public:
 
     // Call Function() on every node of a given subset.
     template<typename Function>
-    void iterateSet(unsigned setIndex, const Function& function)
+    void iterateSet(unsigned setIndex, NOESCAPE const Function& function)
     {
         SetDescriptor& setDescriptor = m_sets[setIndex];
         for (unsigned i = setDescriptor.start; i < setDescriptor.end(); ++i)

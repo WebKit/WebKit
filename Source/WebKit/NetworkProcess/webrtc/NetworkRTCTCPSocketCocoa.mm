@@ -232,7 +232,9 @@ void NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
 
     Function<void(String&&)> callback = [completionHandler = WTFMove(completionHandler), rtcProvider = Ref { rtcProvider }] (auto&& name) mutable {
         rtcProvider->callOnRTCNetworkThread([completionHandler = WTFMove(completionHandler), name = WTFMove(name).isolatedCopy()] () mutable {
-            completionHandler(WTFMove(name));
+            ASSERT(completionHandler);
+            if (completionHandler)
+                completionHandler(WTFMove(name));
         });
     };
 
@@ -247,8 +249,7 @@ void NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
 
             auto* name = nw_interface_get_name(interface.get());
             callback(name ? String::fromUTF8(name) : String { });
-            nw_connection_cancel(nwConnection.get());
-            nwConnection = { };
+            nw_connection_cancel(std::exchange(nwConnection, { }).get());
         };
 
         switch (state) {
@@ -263,8 +264,7 @@ void NetworkRTCTCPSocketCocoa::getInterfaceName(NetworkRTCProvider& rtcProvider,
                 return;
 
             callback({ });
-            nw_connection_cancel(nwConnection.get());
-            nwConnection = { };
+            nw_connection_cancel(std::exchange(nwConnection, { }).get());
             return;
         case nw_connection_state_cancelled:
             if (!nwConnection)

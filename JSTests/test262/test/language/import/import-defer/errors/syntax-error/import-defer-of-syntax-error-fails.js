@@ -19,4 +19,4 @@ negative:
 
 $DONOTEVALUATE();
 
-import defer * as ns "./syntax-error_FIXTURE.js";
+import defer * as ns from "./syntax-error_FIXTURE.js";

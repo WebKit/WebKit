@@ -189,6 +189,9 @@
         "subtests": {
             "/webkit/WebKitWebView/cut-copy-paste/editable": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/263417"}}
+            },
+            "/webkit/WebKitWebView/cut-copy-paste/non-editable": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/285908"}}
             }
         }
     },
@@ -223,6 +226,12 @@
             },
             "ComplexTextControllerTest.TotalWidthWithJustification": {
                 "expected": {"gtk": {"status": ["FAIL", "PASS"], "bug":"webkit.org/b/284628"}}
+            },
+            "ImageBufferTests.ImageBufferSubTypeCreateCreatesSubtypes": {
+                "expected": {"all": {"status": ["CRASH"], "bug":"webkit.org/b/286456"}}
+            },
+            "ImageBufferTests.ImageBufferSubPixelDrawing": {
+                "expected": {"all": {"status": ["CRASH"], "bug":"webkit.org/b/286456"}}
             }
         }
     },
@@ -396,7 +405,7 @@
                              "wpe": {"status": ["PASS", "FAIL"], "bug": "webkit.org/b/281986"}}
             },
             "/webkit/WebKitPolicyClient/new-window-policy": {
-                "expected": {"wpe": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/281812"}}
+                "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/281812"}}
             }
         }
     },
@@ -436,6 +445,12 @@
         "subtests": {
             "/webkit/WebKitWebView/client-side-certificate": {
                 "expected": {"all": {"status": ["FAIL", "PASS"], "bug": "webkit.org/b/264507"}}
+            },
+            "/webkit/WebKitWebView/web-socket-tls-errors": {
+                "expected": {"all": {"status": ["TIMEOUT", "CRASH"], "bug": "webkit.org/b/286063"}}
+            },
+            "/webkit/WebKitWebView/web-socket-client-side-certificate": {
+                "expected": {"all": {"status": ["TIMEOUT", "CRASH"], "bug": "webkit.org/b/286063"}}
             }
         }
     },
@@ -470,6 +485,9 @@
         "subtests": {
             "/webkit/WebKitWebsiteData/storage": {
                 "expected": {"gtk": {"status": ["TIMEOUT", "PASS"], "bug": "webkit.org/b/284812"}}
+            },
+            "/webkit/WebKitWebsiteData/service-worker-registrations": {
+                "expected": {"all" : { "status": ["PASS", "FAIL"], "bug": "webkit.org/b/287621"}}
             }
         }
     },

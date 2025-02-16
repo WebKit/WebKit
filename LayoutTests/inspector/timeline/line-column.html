@@ -56,7 +56,7 @@ function test()
         
         if (key === "children" && this.startTime)
             return value.filter(e => eventAllowlist.has(e.type));
-        if (key === "startTime" || key === "endTime" || key === "scriptId" || key === "frameId")
+        if (key === "startTime" || key === "endTime" || key === "scriptId")
             return "<filtered>";
         if ((key === "lineNumber" || key === "columnNumber") && !functionNameLength && !urlLength)
             return "<filtered>";

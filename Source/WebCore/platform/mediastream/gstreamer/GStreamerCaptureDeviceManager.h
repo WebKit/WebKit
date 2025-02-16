@@ -30,6 +30,7 @@
 #include "GStreamerVideoCapturer.h"
 #include "RealtimeMediaSourceCenter.h"
 #include "RealtimeMediaSourceFactory.h"
+#include <wtf/Forward.h>
 
 #include <wtf/Noncopyable.h>
 
@@ -46,8 +47,9 @@ public:
     ~GStreamerCaptureDeviceManager();
     std::optional<GStreamerCaptureDevice> gstreamerDeviceWithUID(const String&);
 
+    const Vector<CaptureDevice>& speakerDevices();
     const Vector<CaptureDevice>& captureDevices() final;
-    virtual CaptureDevice::DeviceType deviceType() = 0;
+    virtual const OptionSet<CaptureDevice::DeviceType> deviceTypes() const = 0;
 
     // RealtimeMediaSourceCenterObserver interface.
     void devicesChanged() final;
@@ -70,28 +72,37 @@ private:
     Vector<CaptureDevice> m_devices;
     Vector<RefPtr<GStreamerCapturer>> m_capturers;
     bool m_isTearingDown { false };
+    Vector<CaptureDevice> m_speakerDevices;
 };
 
 class GStreamerAudioCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
     friend class NeverDestroyed<GStreamerAudioCaptureDeviceManager>;
 public:
     static GStreamerAudioCaptureDeviceManager& singleton();
-    CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Microphone; }
+    const OptionSet<CaptureDevice::DeviceType> deviceTypes() const final { return { CaptureDevice::DeviceType::Microphone, CaptureDevice::DeviceType::Speaker }; }
 
     // ref() and deref() do nothing because this object is a singleton.
     void ref() const final { }
     void deref() const final { }
+
+private:
+    GStreamerAudioCaptureDeviceManager() = default;
 };
 
 class GStreamerVideoCaptureDeviceManager final : public GStreamerCaptureDeviceManager {
     friend class NeverDestroyed<GStreamerVideoCaptureDeviceManager>;
 public:
     static GStreamerVideoCaptureDeviceManager& singleton();
-    CaptureDevice::DeviceType deviceType() final { return CaptureDevice::DeviceType::Camera; }
+    const OptionSet<CaptureDevice::DeviceType> deviceTypes() const final { return { CaptureDevice::DeviceType::Camera }; }
 
     // ref() and deref() do nothing because this object is a singleton.
     void ref() const final { }
     void deref() const final { }
+
+    static VideoCaptureFactory& videoFactory();
+
+private:
+    GStreamerVideoCaptureDeviceManager() = default;
 };
 
 class GStreamerDisplayCaptureDeviceManager final : public DisplayCaptureManager {

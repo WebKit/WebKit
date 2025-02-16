@@ -53,8 +53,6 @@ Vector<ASCIILiteral> serializedIdentifiers();
 struct ArgumentDescription {
     ASCIILiteral name;
     ASCIILiteral type;
-    ASCIILiteral enumName;
-    bool isOptional;
 };
 
 std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageName);

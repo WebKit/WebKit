@@ -17,7 +17,7 @@ function foo(o, p) {
 noInline(foo);
 
 // Warm up foo() with polymorphic objects and non-object types.
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o;
     var isObject = i & 1;
     if (isObject) {

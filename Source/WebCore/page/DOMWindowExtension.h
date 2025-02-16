@@ -60,7 +60,7 @@ private:
 
     WeakPtr<LocalDOMWindow, WeakPtrImplWithEventTargetData> m_window;
     Ref<DOMWrapperWorld> m_world;
-    RefPtr<LocalFrame> m_disconnectedFrame;
+    WeakPtr<LocalFrame> m_disconnectedFrame;
     bool m_wasDetached;
 };
 

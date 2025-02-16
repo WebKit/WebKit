@@ -32,8 +32,6 @@
 #include "PixelBufferConversion.h"
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadSafeImageBufferFlusher);
@@ -98,7 +96,7 @@ void ImageBufferBackend::convertToLuminanceMask()
     putPixelBuffer(*pixelBuffer, sourceRect, IntPoint::zero(), AlphaPremultiplication::Premultiplied);
 }
 
-void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, const uint8_t* sourceData, PixelBuffer& destinationPixelBuffer)
+void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, std::span<const uint8_t> sourceData, PixelBuffer& destinationPixelBuffer)
 {
     IntRect backendRect { { }, size() };
     auto sourceRectClipped = intersection(backendRect, sourceRect);
@@ -117,19 +115,23 @@ void ImageBufferBackend::getPixelBuffer(const IntRect& sourceRect, const uint8_t
     ConstPixelBufferConversionView source {
         { AlphaPremultiplication::Premultiplied, convertToPixelFormat(pixelFormat()), colorSpace() },
         sourceBytesPerRow,
-        sourceData + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4
+        sourceData.subspan(sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4)
     };
     unsigned destinationBytesPerRow = static_cast<unsigned>(4u * sourceRect.width());
+    size_t offset = destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4;
+    if (offset > destinationPixelBuffer.bytes().size())
+        return;
+
     PixelBufferConversionView destination {
         destinationPixelBuffer.format(),
         destinationBytesPerRow,
-        destinationPixelBuffer.bytes().data() + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4
+        destinationPixelBuffer.bytes().subspan(offset)
     };
 
     convertImagePixels(source, destination, destinationRect.size());
 }
 
-void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, uint8_t* destinationData)
+void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, const IntRect& sourceRect, const IntPoint& destinationPoint, AlphaPremultiplication destinationAlphaFormat, std::span<uint8_t> destinationData)
 {
     IntRect backendRect { { }, size() };
     auto sourceRectClipped = intersection({ IntPoint::zero(), sourcePixelBuffer.size() }, sourceRect);
@@ -149,13 +151,13 @@ void ImageBufferBackend::putPixelBuffer(const PixelBuffer& sourcePixelBuffer, co
     ConstPixelBufferConversionView source {
         sourcePixelBuffer.format(),
         sourceBytesPerRow,
-        sourcePixelBuffer.bytes().data() + sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4
+        sourcePixelBuffer.bytes().subspan(sourceRectClipped.y() * sourceBytesPerRow + sourceRectClipped.x() * 4)
     };
     unsigned destinationBytesPerRow = bytesPerRow();
     PixelBufferConversionView destination {
         { destinationAlphaFormat, convertToPixelFormat(pixelFormat()), colorSpace() },
         destinationBytesPerRow,
-        destinationData + destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4
+        destinationData.subspan(destinationRect.y() * destinationBytesPerRow + destinationRect.x() * 4)
     };
 
     convertImagePixels(source, destination, destinationRect.size());
@@ -202,5 +204,3 @@ TextStream& operator<<(TextStream& ts, const ImageBufferBackend& imageBufferBack
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

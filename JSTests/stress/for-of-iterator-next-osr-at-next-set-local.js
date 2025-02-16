@@ -19,7 +19,7 @@ function test(shouldVendNull) {
 }
 noInline(test);
 
-for (let i = 0; i < 1e5; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     test();
 
 shouldVendNull = true;

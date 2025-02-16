@@ -74,10 +74,8 @@ static bool pas_hash_map_entry_callback(pas_enumerator* enumerator, pas_ptr_hash
 {
     PAS_ASSERT_WITH_DETAIL(!arg);
 
-    pas_pgm_storage* allocation = ((pas_pgm_storage*)entry->value);
-    size_t mem_to_alloc = (2 * allocation->page_size) + allocation->allocation_size_requested + allocation->mem_to_waste;
-    
-    pas_enumerator_record(enumerator, (void*)((char*)entry->key - allocation->mem_to_waste - pas_page_malloc_alignment()), mem_to_alloc, pas_enumerator_object_record);
+    pas_pgm_storage* allocation = (pas_pgm_storage*)entry->value;
+    pas_enumerator_record(enumerator, (void*)allocation->start_of_allocated_pages, allocation->size_of_allocated_pages, pas_enumerator_object_record);
     pas_enumerator_record(enumerator, (void*)entry->value, sizeof(pas_pgm_storage), pas_enumerator_meta_record);
 
     return true;

@@ -40,6 +40,7 @@ WK_EXPORT WKURLRequestRef WKNavigationActionCopyRequest(WKNavigationActionRef ac
 WK_EXPORT bool WKNavigationActionGetShouldOpenExternalSchemes(WKNavigationActionRef action);
 WK_EXPORT WKFrameInfoRef WKNavigationActionCopyTargetFrameInfo(WKNavigationActionRef action);
 WK_EXPORT WKFrameNavigationType WKNavigationActionGetNavigationType(WKNavigationActionRef action);
+WK_EXPORT bool WKNavigationActionHasUnconsumedUserGesture(WKNavigationActionRef action);
 
 #ifdef __cplusplus
 }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathProduct.h"
 
+#include "CSSCalcTree.h"
 #include "CSSMathInvert.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"

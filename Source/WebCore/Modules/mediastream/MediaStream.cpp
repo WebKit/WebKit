@@ -353,7 +353,7 @@ void MediaStream::updateActiveState()
     setIsActive(active);
 }
 
-MediaStreamTrackVector MediaStream::filteredTracks(const Function<bool(const MediaStreamTrack&)>& filter) const
+MediaStreamTrackVector MediaStream::filteredTracks(NOESCAPE const Function<bool(const MediaStreamTrack&)>& filter) const
 {
     MediaStreamTrackVector tracks;
     for (auto& track : m_trackMap.values()) {

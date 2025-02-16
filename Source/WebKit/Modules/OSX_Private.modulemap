@@ -294,11 +294,6 @@ framework module WebKit_Private [system] {
     export *
   }
 
-  explicit module WKBundlePageFullScreenClient {
-    header "WKBundlePageFullScreenClient.h"
-    export *
-  }
-
   explicit module WKBundlePageLoaderClient {
     header "WKBundlePageLoaderClient.h"
     export *
@@ -826,6 +821,11 @@ framework module WebKit_Private [system] {
 
   explicit module WKPageFormClient {
     header "WKPageFormClient.h"
+    export *
+  }
+
+  explicit module WKPageFullScreenClient {
+    header "WKPageFullScreenClient.h"
     export *
   }
 

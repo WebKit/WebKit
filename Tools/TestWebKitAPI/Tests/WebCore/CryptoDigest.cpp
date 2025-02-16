@@ -50,7 +50,7 @@ static void expect(PAL::CryptoDigest::Algorithm algorithm, const CString& input,
     auto cryptoDigest = PAL::CryptoDigest::create(algorithm);
 
     for (int i = 0; i < repeat; ++i)
-        cryptoDigest->addBytes(input.span());
+        cryptoDigest->addBytes(byteCast<uint8_t>(input.span()));
 
     CString actual = toHex(cryptoDigest->computeHash());
 
@@ -61,11 +61,6 @@ static void expect(PAL::CryptoDigest::Algorithm algorithm, const CString& input,
 static void expectSHA1(const CString& input, int repeat, const CString& expected)
 {
     expect(PAL::CryptoDigest::Algorithm::SHA_1, input, repeat, expected);
-}
-
-static void expectSHA224(const CString& input, int repeat, const CString& expected)
-{
-    expect(PAL::CryptoDigest::Algorithm::SHA_224, input, repeat, expected);
 }
 
 static void expectSHA256(const CString& input, int repeat, const CString& expected)
@@ -90,14 +85,6 @@ TEST(CryptoDigest, SHA1Computation)
     expectSHA1("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", 1, "84983E441C3BD26EBAAE4AA1F95129E5E54670F1");
     expectSHA1("a", 1000000, "34AA973CD4C4DAA4F61EEB2BDBAD27316534016F");
     expectSHA1("0123456701234567012345670123456701234567012345670123456701234567", 10, "DEA356A2CDDD90C7A7ECEDC5EBB563934F460452");
-}
-
-TEST(CryptoDigest, SHA224Computation)
-{
-    // Examples taken from sample code in RFC 3874.
-    expectSHA224("abc", 1, "23097D223405D8228642A477BDA255B32AADBCE4BDA0B3F7E36C9DA7");
-    expectSHA224("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", 1, "75388B16512776CC5DBA5DA1FD890150B0C6455CB4F58B1952522525");
-    expectSHA224("a", 1000000, "20794655980C91D8BBB4C1EA97618A4BF03F42581948B2EE4EE7AD67");
 }
 
 TEST(CryptoDigest, SHA256Computation)

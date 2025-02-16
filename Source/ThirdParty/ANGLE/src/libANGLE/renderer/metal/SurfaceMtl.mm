@@ -11,6 +11,7 @@
 
 #include "common/platform.h"
 #include "libANGLE/Display.h"
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/Surface.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 #include "libANGLE/renderer/metal/DisplayMtl.h"
@@ -467,11 +468,11 @@ egl::Error WindowSurfaceMtl::initialize(const egl::Display *display)
     {
         if ([mLayer isKindOfClass:CAMetalLayer.class])
         {
-            mMetalLayer.retainAssign(static_cast<CAMetalLayer *>(mLayer));
+            mMetalLayer = static_cast<CAMetalLayer *>(mLayer);
         }
         else
         {
-            mMetalLayer             = [[[CAMetalLayer alloc] init] ANGLE_MTL_AUTORELEASE];
+            mMetalLayer             = angle::adoptObjCPtr([[CAMetalLayer alloc] init]);
             mMetalLayer.get().frame = mLayer.frame;
         }
 
@@ -661,8 +662,7 @@ angle::Result WindowSurfaceMtl::obtainNextDrawable(const gl::Context *context)
     ANGLE_MTL_OBJC_SCOPE
     {
         ContextMtl *contextMtl = mtl::GetImpl(context);
-
-        ANGLE_MTL_TRY(contextMtl, mMetalLayer);
+        ANGLE_CHECK(contextMtl, mMetalLayer, gl::err::kInternalError, GL_INVALID_OPERATION);
 
         // Check if layer was resized
         if (checkIfLayerResized(context))
@@ -670,14 +670,14 @@ angle::Result WindowSurfaceMtl::obtainNextDrawable(const gl::Context *context)
             contextMtl->onBackbufferResized(context, this);
         }
 
-        mCurrentDrawable.retainAssign([mMetalLayer nextDrawable]);
+        mCurrentDrawable = [mMetalLayer nextDrawable];
         if (!mCurrentDrawable)
         {
             // The GPU might be taking too long finishing its rendering to the previous frame.
             // Try again, indefinitely wait until the previous frame render finishes.
             // TODO: this may wait forever here
             mMetalLayer.get().allowsNextDrawableTimeout = NO;
-            mCurrentDrawable.retainAssign([mMetalLayer nextDrawable]);
+            mCurrentDrawable                            = [mMetalLayer nextDrawable];
             mMetalLayer.get().allowsNextDrawableTimeout = YES;
         }
 

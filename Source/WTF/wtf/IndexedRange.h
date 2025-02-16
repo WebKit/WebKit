@@ -35,13 +35,13 @@ public:
     template<typename Collection>
     static BoundsCheckedIterator begin(Collection&& collection)
     {
-        return BoundsCheckedIterator(std::forward<Collection>(collection), collection.begin());
+        return BoundsCheckedIterator(std::forward<Collection>(collection), std::begin(collection));
     }
 
     template<typename Collection>
     static BoundsCheckedIterator end(Collection&& collection)
     {
-        return BoundsCheckedIterator(std::forward<Collection>(collection), collection.end());
+        return BoundsCheckedIterator(std::forward<Collection>(collection), std::end(collection));
     }
 
     BoundsCheckedIterator& operator++()
@@ -69,7 +69,7 @@ private:
     template<typename Collection>
     BoundsCheckedIterator(Collection&& collection, Iterator&& iterator)
         : m_iterator(WTFMove(iterator))
-        , m_end(collection.end())
+        , m_end(std::end(collection))
     {
     }
 
@@ -79,12 +79,12 @@ private:
 
 template<typename Collection> auto boundsCheckedBegin(Collection&& collection)
 {
-    return BoundsCheckedIterator<decltype(collection.begin())>::begin(std::forward<Collection>(collection));
+    return BoundsCheckedIterator<decltype(std::begin(collection))>::begin(std::forward<Collection>(collection));
 }
 
 template<typename Collection> auto boundsCheckedEnd(Collection&& collection)
 {
-    return BoundsCheckedIterator<decltype(collection.end())>::end(std::forward<Collection>(collection));
+    return BoundsCheckedIterator<decltype(std::end(collection))>::end(std::forward<Collection>(collection));
 }
 
 template<typename Iterator> class IndexedRangeIterator {

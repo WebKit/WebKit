@@ -50,6 +50,7 @@
 #include "InspectorInstrumentation.h"
 #include "IntRect.h"
 #include "JSCanvasRenderingContext2D.h"
+#include "JSDOMRectReadOnly.h"
 #include "JSExecState.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSImageBitmap.h"
@@ -240,16 +241,16 @@ void PageConsoleClient::countReset(JSC::JSGlobalObject* lexicalGlobalObject, con
     InspectorInstrumentation::consoleCountReset(protectedPage(), lexicalGlobalObject, label);
 }
 
-void PageConsoleClient::profile(JSC::JSGlobalObject* lexicalGlobalObject, const String& title)
+void PageConsoleClient::profile(JSC::JSGlobalObject*, const String& title)
 {
     // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
-    InspectorInstrumentation::startProfiling(protectedPage(), lexicalGlobalObject, title);
+    InspectorInstrumentation::startProfiling(protectedPage(), title);
 }
 
-void PageConsoleClient::profileEnd(JSC::JSGlobalObject* lexicalGlobalObject, const String& title)
+void PageConsoleClient::profileEnd(JSC::JSGlobalObject*, const String& title)
 {
     // FIXME: <https://webkit.org/b/153499> Web Inspector: console.profile should use the new Sampling Profiler
-    InspectorInstrumentation::stopProfiling(protectedPage(), lexicalGlobalObject, title);
+    InspectorInstrumentation::stopProfiling(protectedPage(), title);
 }
 
 void PageConsoleClient::takeHeapSnapshot(JSC::JSGlobalObject*, const String& title)
@@ -408,6 +409,14 @@ void PageConsoleClient::screenshot(JSC::JSGlobalObject* lexicalGlobalObject, Ref
             if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
                 if (auto result = InspectorCanvas::getContentAsDataURL(*context))
                     dataURL = result.value();
+            }
+        } else if (auto* rect = JSDOMRectReadOnly::toWrapped(vm, possibleTarget)) {
+            target = possibleTarget;
+            if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
+                if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame())) {
+                    if (auto snapshot = WebCore::snapshotFrameRect(*localMainFrame, enclosingIntRect(rect->toFloatRect()), { { }, ImageBufferPixelFormat::BGRA8, DestinationColorSpace::SRGB() }))
+                        dataURL = snapshot->toDataURL("image/png"_s, std::nullopt, PreserveResolution::Yes);
+                }
             }
         } else {
             String base64;

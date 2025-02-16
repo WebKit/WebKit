@@ -8,7 +8,7 @@ function lookupWithKey(key) {
 }
 noInline(lookupWithKey);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     [
         // integers
         -0x80000001,  // out of int32_t
@@ -90,7 +90,7 @@ var toStringThrowsError = {
     }
 };
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var error = null;
     try {
         lookupWithKey2(toStringThrowsError);

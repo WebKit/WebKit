@@ -299,9 +299,7 @@ bool GStreamerInternalVideoEncoder::encode(VideoEncoder::RawFrame&& rawFrame, bo
     }
 
     auto& gstVideoFrame = downcast<VideoFrameGStreamer>(rawFrame.frame.get());
-
-    // FIXME: The WebRTC encoder doesn't support GL memories ingesting yet, so until then we do a conversion here.
-    return m_harness->pushSample(gstVideoFrame.downloadSample());
+    return m_harness->pushSample(gstVideoFrame.sample());
 }
 
 void GStreamerInternalVideoEncoder::setRates(uint64_t bitRate, double frameRate)

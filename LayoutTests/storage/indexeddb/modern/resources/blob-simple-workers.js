@@ -68,6 +68,11 @@ function* testSteps()
     
     idbRequest(objectStore.add(data));
     event = yield;
+    if (event.type == 'error') {
+        testFailed("Failed to add blob with error: " + event.target.error.message);
+        finishJSTest();
+        return;
+    }
     
     debug("Added blob to database once");
 

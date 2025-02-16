@@ -26,9 +26,9 @@
 import Foundation
 internal import WebKit_Private
 
-#if os(macOS)
-internal import WebKit_Private._WKContextMenuElementInfo
-internal import WebKit_Private._WKHitTestResult
+#if os(macOS) && !targetEnvironment(macCatalyst)
+@_spiOnly import WebKit_Private._WKContextMenuElementInfo
+@_spiOnly import WebKit_Private._WKHitTestResult
 #endif
 
 private struct DefaultDialogPresenting: DialogPresenting {
@@ -40,10 +40,10 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegate {
         self.dialogPresenter = dialogPresenter ?? DefaultDialogPresenting()
     }
 
-    weak var owner: WebPage_v0? = nil
+    weak var owner: WebPage? = nil
 
-#if os(macOS)
-    var menuBuilder: ((WebPage_v0.ElementInfo) -> NSMenu)? = nil
+#if os(macOS) && !targetEnvironment(macCatalyst)
+    var menuBuilder: ((WebPage.ElementInfo) -> NSMenu)? = nil
 #endif
 
     private let dialogPresenter: any DialogPresenting
@@ -108,7 +108,7 @@ final class WKUIDelegateAdapter: NSObject, WKUIDelegate {
             return menu
         }
 
-        let info = WebPage_v0.ElementInfo(linkURL: element.hitTestResult.absoluteLinkURL)
+        let info = WebPage.ElementInfo(linkURL: element.hitTestResult.absoluteLinkURL)
         return menuBuilder(info)
     }
 #endif

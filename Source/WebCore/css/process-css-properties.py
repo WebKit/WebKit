@@ -825,6 +825,11 @@ class StyleProperties:
 
         self._perform_fixups()
 
+        self.shorthand_by_longhand = {}
+        for shorthand in self.all_shorthands:
+            for longhand in shorthand.codegen_properties.longhands:
+                self.shorthand_by_longhand[longhand] = shorthand
+
     def __str__(self):
         return "StyleProperties"
 
@@ -886,7 +891,7 @@ class StyleProperties:
     def all_non_shorthands(self):
         return (property for property in self.all if not property.codegen_properties.longhands)
 
-    # Returns a generator for the set of properties that are direction-aware (aka flow-sensative). Sorted first by property group name and then by property name.
+    # Returns a generator for the set of properties that are direction-aware (aka flow-sensitive). Sorted first by property group name and then by property name.
     @property
     def all_direction_aware_properties(self):
         for group_name, property_group in sorted(self.logical_property_groups.items(), key=lambda x: x[0]):
@@ -2465,9 +2470,7 @@ class GenerateCSSPropertyNames:
         )
 
         to.write_block("""\
-            // Using std::numeric_limits<uint16_t>::max() here would be cleaner,
-            // but is not possible due to missing constexpr support in MSVC 2013.
-            static_assert(numCSSProperties + 1 <= 65535, "CSSPropertyID should fit into uint16_t.");
+            static_assert(numCSSProperties + 1 <= std::numeric_limits<uint16_t>::max(), "CSSPropertyID should fit into uint16_t.");
             """)
 
         all_computed_property_ids = (f"{property.id}," for property in self.properties_and_descriptors.style_properties.all_computed)
@@ -2869,6 +2872,21 @@ class GenerateCSSPropertyNames:
                 signature="bool CSSProperty::isDirectionAwareProperty(CSSPropertyID id)",
                 iterable=self.properties_and_descriptors.style_properties.all_direction_aware_properties
             )
+
+            for group_name, property_group in sorted(self.generation_context.properties_and_descriptors.style_properties.logical_property_groups.items(), key=lambda x: x[0]):
+                properties = set()
+                for kind in ["logical", "physical"]:
+                    for property in property_group[kind].values():
+                        properties.add(property)
+                        if property in self.generation_context.properties_and_descriptors.style_properties.shorthand_by_longhand:
+                            properties.add(self.generation_context.properties_and_descriptors.style_properties.shorthand_by_longhand[property])
+
+                group_id = PropertyName.convert_name_to_id(group_name)
+                self.generation_context.generate_property_id_switch_function_bool(
+                    to=writer,
+                    signature=f"bool CSSProperty::is{group_id}Property(CSSPropertyID id)",
+                    iterable=sorted(properties, key=lambda x: x.name)
+                )
 
             self.generation_context.generate_property_id_switch_function_bool(
                 to=writer,
@@ -3365,7 +3383,8 @@ class GenerateStyleBuilderGenerated:
 
     def _generate_font_property_inherit_value_setter(self, to, property):
         to.write(f"auto fontDescription = builderState.fontDescription();")
-        to.write(f"fontDescription.{property.codegen_properties.setter}(builderState.parentFontDescription().{property.codegen_properties.getter}());")
+        to.write(f"auto inheritedValue = builderState.parentFontDescription().{property.codegen_properties.getter}();")
+        to.write(f"fontDescription.{property.codegen_properties.setter}(WTFMove(inheritedValue));")
         to.write(f"builderState.setFontDescription(WTFMove(fontDescription));")
 
     def _generate_font_property_value_setter(self, to, property, value):
@@ -3758,7 +3777,7 @@ class GenerateStylePropertyShorthandFunctions:
                             to.write(f"{longhand.id},")
 
                 to.write(f"}};")
-                to.write(f"return StylePropertyShorthand({property.id}, {property.id_without_prefix_with_lowercase_first_letter}Properties);")
+                to.write(f"return StylePropertyShorthand({property.id}, std::span {{ {property.id_without_prefix_with_lowercase_first_letter}Properties }});")
             to.write(f"}}")
             to.newline()
 
@@ -3938,8 +3957,10 @@ class GenerateCSSPropertyParsing:
                     "CSSParserIdioms.h",
                     "CSSPropertyParser.h",
                     "CSSPropertyParserConsumer+Align.h",
+                    "CSSPropertyParserConsumer+Anchor.h",
                     "CSSPropertyParserConsumer+Angle.h",
                     "CSSPropertyParserConsumer+Animations.h",
+                    "CSSPropertyParserConsumer+AppleVisualEffect.h",
                     "CSSPropertyParserConsumer+Attr.h",
                     "CSSPropertyParserConsumer+Background.h",
                     "CSSPropertyParserConsumer+Box.h",

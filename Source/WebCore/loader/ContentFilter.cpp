@@ -359,7 +359,7 @@ void ContentFilter::handleProvisionalLoadFailure(const ResourceError& error)
 void ContentFilter::deliverStoredResourceData()
 {
     for (auto& buffer : m_buffers)
-        deliverResourceData(*buffer.buffer, buffer.encodedDataLength);
+        deliverResourceData(Ref { *buffer.buffer }, buffer.encodedDataLength);
     m_buffers.clear();
 }
 

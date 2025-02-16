@@ -72,7 +72,7 @@ static const int kBufferTypeCount = static_cast<int>(BufferType::kLast) + 1;
 /**
  * Data layout requirements on host-shareable buffer contents.
  */
-enum class Layout {
+enum class Layout : uint8_t {
     kInvalid = 0,
     kStd140,
     kStd430,
@@ -96,7 +96,7 @@ static constexpr const char* LayoutString(Layout layout) {
  * This is only a hint and the actual memory type will be determined based on the resource type and
  * backend capabilities.
  */
-enum class AccessPattern : int {
+enum class AccessPattern : uint8_t {
     // GPU-only memory does not need to support reads/writes from the CPU. GPU-private memory will
     // be preferred if the backend supports an efficient private memory type.
     kGpuOnly,
@@ -123,7 +123,7 @@ enum class Discardable : bool {
     kYes = true
 };
 
-enum class Ownership {
+enum class Ownership : uint8_t {
     kOwned,
     kWrapped,
 };
@@ -135,19 +135,10 @@ using ResourceType = uint32_t;
  * Can the resource be held by multiple users at the same time?
  * For example, stencil buffers, pipelines, etc.
  */
-enum class Shareable : bool {
-    kNo = false,
-    kYes = true,
-};
-
-/**
- * This enum is used to notify the ResourceCache which type of ref just dropped to zero on a
- * Resource.
- */
-enum class LastRemovedRef {
-    kUsage,
-    kCommandBuffer,
-    kCache,
+enum class Shareable : uint8_t {
+    kNo,      // The resource is visible in the ResourceCache once all its usage refs are dropped
+    kScratch, // The resource is visible to other Recorders, but acts like kNo within a Recording
+    kYes,     // The resource is always visible in the ResourceCache
 };
 
 /*
@@ -235,6 +226,11 @@ struct SamplerDesc {
         SkFilterMode filter = static_cast<SkFilterMode>((fDesc >> 4) & 0b01);
         SkMipmapMode mipmap = static_cast<SkMipmapMode>((fDesc >> 5) & 0b11);
         return SkSamplingOptions(filter, mipmap);
+    }
+
+    ImmutableSamplerInfo immutableSamplerInfo() const {
+        return {this->desc() >> kImmutableSamplerInfoShift,
+                ((uint64_t) this->externalFormatMSBs() << 32) | (uint64_t) this->format()};
     }
 
     SkSpan<const uint32_t> asSpan() const {

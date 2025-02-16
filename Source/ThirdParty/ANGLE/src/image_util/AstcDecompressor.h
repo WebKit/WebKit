@@ -9,6 +9,8 @@
 #ifndef IMAGE_UTIL_ASTC_CPU_DECOMPRESSOR_H_
 #define IMAGE_UTIL_ASTC_CPU_DECOMPRESSOR_H_
 
+#include <stdint.h>
+
 #include <memory>
 #include <string>
 

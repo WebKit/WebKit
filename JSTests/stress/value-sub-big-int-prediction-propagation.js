@@ -9,7 +9,7 @@ function bigIntPropagation(a, b) {
 }
 noInline(bigIntPropagation);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let out = bigIntPropagation(0xffffffffffffffffffffffffffffffn, 0x1n);
     assert(out, 0xfffffffffffffffffffffffffffffen)
 }

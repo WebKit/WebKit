@@ -9,4 +9,5 @@ FAIL CookieListItem - cookieStore.set adds / to path if it does not end with / a
 FAIL CookieListItem - cookieStore.set with sameSite set to strict assert_equals: expected (object) null but got (string) "localhost"
 FAIL CookieListItem - cookieStore.set with sameSite set to lax assert_equals: expected (object) null but got (string) "localhost"
 FAIL CookieListItem - cookieStore.set with sameSite set to none assert_equals: expected (object) null but got (string) "localhost"
+PASS CookieListItem - secure defaults to true
 

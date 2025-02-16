@@ -47,10 +47,6 @@ public:
     bool dragBegin() const { return m_dragBegin && *m_dragBegin; }
 
 private:
-    // FIXME: These ought to be either configurable or derived from system
-    //        properties, such as screen size and pixel density.
-    static constexpr uint32_t dragActivationThresholdPx { 8 };
-
     WPEGesture m_gesture { WPE_GESTURE_NONE };
     std::optional<uint32_t> m_sequenceId;
     std::optional<Position> m_position;

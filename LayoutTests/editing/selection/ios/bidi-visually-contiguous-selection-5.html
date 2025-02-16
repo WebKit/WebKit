@@ -1,0 +1,38 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true VisuallyContiguousBidiTextSelectionEnabled=true ] -->
+<html>
+<head>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<style>
+body, html {
+    font-size: 20px;
+    font-family: system-ui;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the selection does not unnecessarily expand to the entire paragraph when selecting bidi text surrounded by bidi embedding characters.");
+
+    bounds = document.getElementById("target").getBoundingClientRect();
+
+    await UIHelper.longPressAtPoint(bounds.left + 20, bounds.top + (bounds.height / 2));
+    selectionRects = await UIHelper.waitForSelectionToAppear();
+    await UIHelper.ensurePresentationUpdate();
+
+    shouldBe("selectionRects.length", "1");
+    shouldBeLessThanOrEqual("selectionRects[0].width", "bounds.width - 1");
+    shouldBeEqualToString("getSelection().toString()", "iPhone");
+
+    document.querySelector("p[dir='rtl']").remove();
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <p dir="rtl"><span id="target">&#x202b;أُرسلت من الـ iPhone&#x202c;</span></p>
+</body>
+</html>

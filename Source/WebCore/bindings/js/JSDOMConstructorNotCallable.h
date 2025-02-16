@@ -36,7 +36,7 @@ public:
     using Base = JSDOMObject;
 
     static constexpr unsigned StructureFlags = Base::StructureFlags;
-    static constexpr bool needsDestruction = false;
+    static constexpr JSC::DestructionMode needsDestruction = JSC::DoesNotNeedDestruction;
     static JSDOMConstructorNotCallable* create(JSC::VM&, JSC::Structure*, JSDOMGlobalObject&);
     static JSC::Structure* createStructure(JSC::VM&, JSC::JSGlobalObject&, JSC::JSValue prototype);
 
@@ -50,7 +50,7 @@ public:
         static_assert(sizeof(CellType) == sizeof(JSDOMConstructorNotCallable));
         STATIC_ASSERT_ISO_SUBSPACE_SHARABLE(CellType, JSDOMConstructorNotCallable);
         static_assert(CellType::destroy == JSC::JSCell::destroy, "JSDOMConstructorNotCallable<JSClass> is not destructible actually");
-        return &static_cast<JSVMClientData*>(vm.clientData)->domNamespaceObjectSpace();
+        return &downcast<JSVMClientData>(vm.clientData)->domNamespaceObjectSpace();
     }
 
 private:

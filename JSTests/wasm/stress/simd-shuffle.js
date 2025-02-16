@@ -183,7 +183,7 @@ import * as assert from "../assert.js"
         i64x2dup_wrong,
     } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(shuffle_identity1(0x7f), [0x7f7f7f7f7f7f7f7fn, 0x7f7f7f7f7f7f7f7fn])
         assert.eq(shuffle_identity2(0x5e), [0x5e5e5e5e5e5e5e5en, 0x5e5e5e5e5e5e5e5en])
 

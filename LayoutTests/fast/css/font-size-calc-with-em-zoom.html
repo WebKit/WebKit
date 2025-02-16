@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div id="container">
+</div>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script>
+  let container = document.getElementById('container')
+  const test_font_size = (specified_font_size, zoom, expected_font_size) => {
+      test(() => {
+        try {
+          document.body.style.zoom = zoom;
+
+          let target = document.createElement("div");
+          target.className = 'target';
+          target.appendChild(new Text("test"));
+          container.appendChild(target)
+
+          target.style['font-size'] = specified_font_size;
+          const computed_font_size = window.getComputedStyle(target)['font-size']
+          assert_equals(computed_font_size, expected_font_size);
+        } finally {
+          document.body.style.zoom = 1;
+        }
+      }, `'font-size: ${specified_font_size}' at zoom level ${zoom}`)
+  }
+
+  test_font_size("calc(16px)", 1, '16px');
+  test_font_size("calc(1em)", 1, '16px');
+  test_font_size("calc(1rem)", 1, '16px');
+
+  test_font_size("calc(16px)", 2, '16px');
+  test_font_size("calc(1em)", 2, '16px');
+  test_font_size("calc(1rem)", 2, '16px');
+
+  container.remove();
+</script>
+</body>
+</html>

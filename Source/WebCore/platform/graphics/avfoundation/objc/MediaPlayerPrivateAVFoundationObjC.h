@@ -28,10 +28,10 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivateAVFoundation.h"
+#include "SharedBuffer.h"
 #include "VideoFrameMetadata.h"
 #include <CoreMedia/CMTime.h>
-#include <wtf/CompletionHandler.h>
-#include <wtf/Function.h>
+#include <wtf/Forward.h>
 #include <wtf/MainThreadDispatcher.h>
 #include <wtf/Observer.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -74,7 +74,6 @@ class MediaPlaybackTarget;
 class MediaSelectionGroupAVFObjC;
 class PixelBufferConformerCV;
 class QueuedVideoOutput;
-class SharedBuffer;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateAVFObjC;
 class WebCoreAVFResourceLoader;
@@ -171,6 +170,7 @@ private:
     void platformPlay() final;
     void platformPause() final;
     bool platformPaused() const final;
+    void setVolumeLocked(bool) final;
     void setVolume(float) final;
     void setMuted(bool) final;
     void paint(GraphicsContext&, const FloatRect&) final;
@@ -262,7 +262,7 @@ private:
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const FloatRect&);
 
     using UpdateCompletion = CompletionHandler<void()>;
-    void updateLastImage(UpdateCompletion&&);
+    void updateLastImage(NOESCAPE UpdateCompletion&&);
 
     void createVideoOutput();
     void destroyVideoOutput();
@@ -299,7 +299,7 @@ private:
 #endif
 
     void setCurrentTextTrack(InbandTextTrackPrivateAVF*) final;
-    InbandTextTrackPrivateAVF* currentTextTrack() const final { return m_currentTextTrack; }
+    InbandTextTrackPrivateAVF* currentTextTrack() const final { return m_currentTextTrack.get().get(); }
 
     void updateAudioTracks();
     void updateVideoTracks();
@@ -388,6 +388,12 @@ private:
     bool supportsLinearMediaPlayer() const final { return true; }
 #endif
 
+    RefPtr<SharedBuffer> protectedKeyID() const { return m_keyID; }
+
+#if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
+    RefPtr<CDMInstanceFairPlayStreamingAVFObjC> protectedCDMInstance() const;
+#endif
+
     RetainPtr<AVURLAsset> m_avAsset;
     RetainPtr<AVPlayer> m_avPlayer;
     RetainPtr<AVPlayerItem> m_avPlayerItem;
@@ -430,7 +436,7 @@ private:
     RefPtr<MediaSelectionGroupAVFObjC> m_audibleGroup;
     RefPtr<MediaSelectionGroupAVFObjC> m_visualGroup;
 
-    InbandTextTrackPrivateAVF* m_currentTextTrack { nullptr };
+    ThreadSafeWeakPtr<InbandTextTrackPrivateAVF> m_currentTextTrack;
 
 #if ENABLE(DATACUE_VALUE)
     RefPtr<InbandMetadataTextTrackPrivateAVF> m_metadataTrack;
@@ -494,6 +500,7 @@ private:
     mutable std::optional<bool> m_cachedAssetIsPlayable;
     mutable std::optional<bool> m_cachedTracksArePlayable;
     mutable std::optional<bool> m_cachedAssetIsHLS;
+    bool m_volumeLocked { false };
     bool m_muted { false };
     bool m_shouldObserveTimeControlStatus { false };
     mutable std::optional<bool> m_tracksArePlayable;

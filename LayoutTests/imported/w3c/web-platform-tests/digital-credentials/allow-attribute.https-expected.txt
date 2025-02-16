@@ -1,8 +1,9 @@
 
+
 PASS Policy to use: null, is cross-origin: false, is allowed by policy: true
 PASS Policy to use: null, is cross-origin: true, is allowed by policy: false
 PASS Policy to use: digital-credentials-get, is cross-origin: false, is allowed by policy: true
-PASS Policy to use: digital-credentials-get, is cross-origin: true, is allowed by policy: true
+FAIL Policy to use: digital-credentials-get, is cross-origin: true, is allowed by policy: true assert_true: <iframe allow="digital-credentials-get" src="https://127.0.0.1:9443/digital-credentials/support/iframe.html" data-expect-is-allowed="true"></iframe> - Not implemented. expected true got false
 PASS Policy to use: digital-credentials-get *, is cross-origin: false, is allowed by policy: true
 PASS Policy to use: digital-credentials-get *, is cross-origin: true, is allowed by policy: true
 PASS Policy to use: digital-credentials-get 'none', is cross-origin: false, is allowed by policy: false

@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
-
 #include "BaseDateAndTimeInputType.h"
 #include <wtf/TZoneMalloc.h>
 
@@ -69,5 +67,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(DateTimeLocalInputType, Type::DateTimeLocal)
-
-#endif

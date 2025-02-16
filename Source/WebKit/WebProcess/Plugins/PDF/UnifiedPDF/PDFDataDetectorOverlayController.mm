@@ -247,10 +247,8 @@ void PDFDataDetectorOverlayController::updateDataDetectorHighlightsIfNeeded(PDFD
 
 void PDFDataDetectorOverlayController::updatePlatformHighlightData(PDFDocumentLayout::PageIndex pageIndex)
 {
-    WTF::forEach(m_pdfDataDetectorItemsWithHighlightsMap.get(pageIndex), [&](auto& dataDetectorItemWithHighlight) {
-        auto& [dataDetectorItem, coreHighlight] = dataDetectorItemWithHighlight;
+    for (auto& [dataDetectorItem, coreHighlight] : m_pdfDataDetectorItemsWithHighlightsMap.get(pageIndex))
         coreHighlight->setHighlight(createPlatformDataDetectorHighlight(Ref { dataDetectorItem }).get());
-    });
 }
 
 void PDFDataDetectorOverlayController::hideActiveHighlightOverlay()
@@ -289,9 +287,8 @@ void PDFDataDetectorOverlayController::didInvalidateHighlightOverlayRects(std::o
         return m_pdfDataDetectorItemsWithHighlightsMap.keys();
     }();
 
-    WTF::forEach(pageIndices, [this](auto pageIndex) {
+    for (auto pageIndex : pageIndices)
         updatePlatformHighlightData(pageIndex);
-    });
 }
 
 #pragma mark - PageOverlayClient

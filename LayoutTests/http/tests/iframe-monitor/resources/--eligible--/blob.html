@@ -1,0 +1,16 @@
+Using significant resources and eligible for resource monitoring.
+Resource is created as Blob and shouldn't treat as network usage.
+
+<script>
+    const size = 20 * 1024;
+    const body = new Uint8Array(size);
+    body.fill(42);
+
+    const blob = new Blob(body, { type: "application/octet-stream" });
+    const url = URL.createObjectURL(blob);
+
+    fetch(url).then(async (response) => {
+        const body = await response.blob();
+        parent.postMessage(true, "*");
+    });
+</script>

@@ -79,6 +79,8 @@ public:
 #endif
     virtual void endFrame() = 0;
 
+    virtual bool isRemoteXRProjectionLayerProxy() const { return false; }
+
 protected:
     XRProjectionLayer() = default;
 

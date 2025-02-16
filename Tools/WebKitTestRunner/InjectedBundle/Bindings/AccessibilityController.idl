@@ -48,6 +48,8 @@ interface AccessibilityController {
     undefined logScrollingStartEvents();
     undefined logAccessibilityEvents();
     undefined resetToConsistentState();
+    
+    undefined printTrees();
 
     undefined overrideClient(DOMString clientType);
 };

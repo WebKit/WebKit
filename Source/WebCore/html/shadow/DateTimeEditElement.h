@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "DateComponents.h"
 #include "DateTimeFieldElement.h"
 
@@ -124,5 +122,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

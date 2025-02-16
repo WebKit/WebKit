@@ -104,7 +104,7 @@ void CommonData::installVMTrapBreakpoints(CodeBlock* owner)
 #if !defined(NDEBUG)
     // We need to be able to handle more than one invalidation point at the same pc
     // but we want to make sure we don't forget to remove a pc from the map.
-    HashSet<void*> newReplacements;
+    UncheckedKeyHashSet<void*> newReplacements;
 #endif
     for (auto& jumpReplacement : m_jumpReplacements) {
         jumpReplacement.installVMTrapBreakpoint();

@@ -309,7 +309,7 @@ ExceptionOr<void> WebSocket::connect(const String& url, const Vector<String>& pr
         }
     }
 
-    RunLoop::main().dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy()]() {
+    RunLoop::protectedMain()->dispatch([targetURL = m_url.isolatedCopy(), mainFrameURL = context.url().isolatedCopy()]() {
         ResourceLoadObserver::shared().logWebSocketLoading(targetURL, mainFrameURL);
     });
 
@@ -559,7 +559,7 @@ void WebSocket::didReceiveMessage(String&& message)
         if (UNLIKELY(InspectorInstrumentation::hasFrontends())) {
             if (auto* inspector = m_channel->channelInspector()) {
                 auto utf8Message = message.utf8();
-                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(utf8Message.span(), WebSocketFrame::OpCode::OpCodeText));
+                inspector->didReceiveWebSocketFrame(WebSocketChannelInspector::createFrame(byteCast<uint8_t>(utf8Message.span()), WebSocketFrame::OpCode::OpCodeText));
             }
         }
         ASSERT(scriptExecutionContext());
@@ -582,7 +582,7 @@ void WebSocket::didReceiveBinaryData(Vector<uint8_t>&& binaryData)
         switch (m_binaryType) {
         case BinaryType::Blob:
             // FIXME: We just received the data from NetworkProcess, and are sending it back. This is inefficient.
-            dispatchEvent(MessageEvent::create(Blob::create(scriptExecutionContext(), WTFMove(binaryData), emptyString()), SecurityOrigin::create(m_url)->toString()));
+            dispatchEvent(MessageEvent::create(Blob::create(protectedScriptExecutionContext().get(), WTFMove(binaryData), emptyString()), SecurityOrigin::create(m_url)->toString()));
             break;
         case BinaryType::Arraybuffer:
             dispatchEvent(MessageEvent::create(ArrayBuffer::create(binaryData), SecurityOrigin::create(m_url)->toString()));

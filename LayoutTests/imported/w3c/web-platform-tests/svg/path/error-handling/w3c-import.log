@@ -15,5 +15,6 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/error-handling/bounding.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/path/error-handling/render-until-error-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/error-handling/render-until-error-ref.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/path/error-handling/render-until-error.svg

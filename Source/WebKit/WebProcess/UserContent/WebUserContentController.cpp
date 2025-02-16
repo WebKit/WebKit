@@ -66,7 +66,7 @@ typedef HashMap<ContentWorldIdentifier, std::pair<Ref<InjectedBundleScriptWorld>
 
 static WorldMap& worldMap()
 {
-    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { pageContentWorldIdentifier(), std::make_pair(Ref { InjectedBundleScriptWorld::normalWorld() }, 1) } });
+    static NeverDestroyed<WorldMap> map(std::initializer_list<WorldMap::KeyValuePairType> { { pageContentWorldIdentifier(), std::make_pair(Ref { InjectedBundleScriptWorld::normalWorldSingleton() }, 1) } });
 
     return map;
 }

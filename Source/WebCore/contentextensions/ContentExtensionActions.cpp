@@ -740,7 +740,7 @@ void RedirectAction::URLTransformAction::QueryTransform::applyToURL(URL& url) co
     if (!url.hasQuery())
         return;
 
-    HashSet<String> keysToRemove;
+    UncheckedKeyHashSet<String> keysToRemove;
     for (auto& key : removeParams)
         keysToRemove.add(key);
 

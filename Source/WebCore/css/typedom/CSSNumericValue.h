@@ -25,13 +25,18 @@
 
 #pragma once
 
-#include "CSSCalcTree.h"
 #include "CSSNumericType.h"
 #include "CSSStyleValue.h"
 #include <variant>
 #include <wtf/HashMap.h>
 
 namespace WebCore {
+
+namespace CSSCalc {
+struct Child;
+struct ChildOrNone;
+struct Tree;
+}
 
 class CSSNumericValue;
 class CSSUnitValue;

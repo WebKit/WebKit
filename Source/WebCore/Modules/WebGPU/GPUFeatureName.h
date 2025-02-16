@@ -34,14 +34,21 @@ enum class GPUFeatureName : uint8_t {
     DepthClipControl,
     Depth32floatStencil8,
     TextureCompressionBc,
+    TextureCompressionBcSliced3d,
     TextureCompressionEtc2,
     TextureCompressionAstc,
+    TextureCompressionAstcSliced3d,
     TimestampQuery,
     IndirectFirstInstance,
     ShaderF16,
     Rg11b10ufloatRenderable,
     Bgra8unormStorage,
     Float32Filterable,
+    Float32Blendable,
+    ClipDistances,
+    DualSourceBlending,
+    Float16Renderable,
+    Float32Renderable,
 };
 
 inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
@@ -53,10 +60,14 @@ inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return WebGPU::FeatureName::Depth32floatStencil8;
     case GPUFeatureName::TextureCompressionBc:
         return WebGPU::FeatureName::TextureCompressionBc;
+    case GPUFeatureName::TextureCompressionBcSliced3d:
+        return WebGPU::FeatureName::TextureCompressionBcSliced3d;
     case GPUFeatureName::TextureCompressionEtc2:
         return WebGPU::FeatureName::TextureCompressionEtc2;
     case GPUFeatureName::TextureCompressionAstc:
         return WebGPU::FeatureName::TextureCompressionAstc;
+    case GPUFeatureName::TextureCompressionAstcSliced3d:
+        return WebGPU::FeatureName::TextureCompressionAstcSliced3d;
     case GPUFeatureName::TimestampQuery:
         return WebGPU::FeatureName::TimestampQuery;
     case GPUFeatureName::IndirectFirstInstance:
@@ -69,6 +80,16 @@ inline WebGPU::FeatureName convertToBacking(GPUFeatureName featureName)
         return WebGPU::FeatureName::Rg11b10ufloatRenderable;
     case GPUFeatureName::Float32Filterable:
         return WebGPU::FeatureName::Float32Filterable;
+    case GPUFeatureName::Float32Blendable:
+        return WebGPU::FeatureName::Float32Blendable;
+    case GPUFeatureName::Float16Renderable:
+        return WebGPU::FeatureName::Float16Renderable;
+    case GPUFeatureName::Float32Renderable:
+        return WebGPU::FeatureName::Float32Renderable;
+    case GPUFeatureName::DualSourceBlending:
+        return WebGPU::FeatureName::DualSourceBlending;
+    case GPUFeatureName::ClipDistances:
+        return WebGPU::FeatureName::ClipDistances;
     }
     RELEASE_ASSERT_NOT_REACHED();
 }

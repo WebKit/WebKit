@@ -3,7 +3,7 @@
 function bar(ranges) {
     for (const [z] of ranges) {
         let ys = [];
-        for (y = 0; y <= 100000; y++) {
+        for (y = 0; y <= testLoopCount; y++) {
             ys[y] = false;
         }
     }

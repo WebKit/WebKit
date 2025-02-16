@@ -80,6 +80,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
     , m_pageScaleFactor(item.m_pageScaleFactor)
     , m_children(item.m_children.map([](auto& child) { return child->copy(); }))
     , m_lastVisitWasFailure(item.m_lastVisitWasFailure)
+    , m_isTargetItem(item.m_isTargetItem)
     , m_itemSequenceNumber(item.m_itemSequenceNumber)
     , m_documentSequenceNumber(item.m_documentSequenceNumber)
     , m_formData(item.m_formData ? RefPtr<FormData> { item.m_formData->copy() } : nullptr)
@@ -112,6 +113,7 @@ void HistoryItem::reset()
     m_displayTitle = String();
 
     m_lastVisitWasFailure = false;
+    m_isTargetItem = false;
 
     m_itemSequenceNumber = generateSequenceNumber();
 
@@ -222,6 +224,12 @@ void HistoryItem::setTarget(const AtomString& target)
     notifyChanged();
 }
 
+void HistoryItem::setFrameID(std::optional<FrameIdentifier> frameID)
+{
+    m_frameID = frameID;
+    notifyChanged();
+}
+
 const IntPoint& HistoryItem::scrollPosition() const
 {
     return m_scrollPosition;
@@ -307,6 +315,7 @@ void HistoryItem::setChildItem(Ref<HistoryItem>&& child)
     unsigned size = m_children.size();
     for (unsigned i = 0; i < size; ++i)  {
         if (m_children[i]->target() == child->target()) {
+            child->setIsTargetItem(m_children[i]->isTargetItem());
             m_children[i] = WTFMove(child);
             return;
         }
@@ -351,7 +360,7 @@ const Vector<Ref<HistoryItem>>& HistoryItem::children() const
 void HistoryItem::clearChildren()
 {
     m_children.clear();
-    notifyChanged();
+    m_client->clearChildren(*this);
 }
 
 // We do same-document navigation if going to a different item and if either of the following is true:
@@ -447,12 +456,11 @@ int HistoryItem::showTree() const
 
 int HistoryItem::showTreeWithIndent(unsigned indentLevel) const
 {
-    Vector<char> prefix;
+    StringBuilder prefix;
     for (unsigned i = 0; i < indentLevel; ++i)
-        prefix.append("  "_span);
-    prefix.append('\0');
+        prefix.append("  "_s);
 
-    fprintf(stderr, "%s+-%s (%p)\n", prefix.data(), m_urlString.utf8().data(), this);
+    SAFE_FPRINTF(stderr, "%s+-%s (%p)\n", prefix.toString().utf8(), m_urlString.utf8(), this);
     
     int totalSubItems = 0;
     for (unsigned i = 0; i < m_children.size(); ++i)

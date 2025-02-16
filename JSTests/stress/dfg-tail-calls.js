@@ -4,7 +4,7 @@
 
     function caller() { "use strict"; return callee(); }
 
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         caller();
 
     function loop(n) { "use strict"; if (n > 0) return loop(n - 1); }
@@ -17,7 +17,7 @@
     function callee() { if (callee.caller != inlinedTailCall) throw new Error(); }
     function caller() { "use strict"; return callee(); }
 
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         caller();
 
     function loop(n) { "use strict"; if (n > 0) return loop(n - 1); }
@@ -31,7 +31,7 @@
     noInline(callee);
     function caller() { "use strict"; return callee(); }
 
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         emulator();
 
     function pad(n) { "use strict"; return loop(n); }
@@ -46,7 +46,7 @@
     function callee() { if (callee.caller != emulator) throw new Error(); }
     function caller() { "use strict"; return callee(); }
 
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         emulator();
 
     function pad(n) { "use strict"; return loop(n); }

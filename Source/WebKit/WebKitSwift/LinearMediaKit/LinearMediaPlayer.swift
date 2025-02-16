@@ -127,6 +127,7 @@ enum LinearMediaPlayerErrors: Error {
 #endif
         }
     }
+    var isImmersiveVideo = false
     var enteredFromInline: Bool {
         get { swiftOnlyData.enteredFromInline }
     }
@@ -189,7 +190,7 @@ enum LinearMediaPlayerErrors: Error {
             self.enterFullscreenCompletionHandler = nil
         }
 
-        maybeCreateSpatialEntity();
+        maybeCreateSpatialOrImmersiveEntity();
 
         switch presentationState {
         case .inline, .enteringFullscreen, .exitingFullscreen:
@@ -241,9 +242,13 @@ extension WKSLinearMediaPlayer {
         }
     }
 
-    private func maybeCreateSpatialEntity() {
+    private func maybeCreateSpatialOrImmersiveEntity() {
 #if canImport(LinearMediaKit, _version: 211.60.3)
-        if swiftOnlyData.enteredFromInline || swiftOnlyData.peculiarEntity != nil { return }
+        if swiftOnlyData.enteredFromInline || swiftOnlyData.peculiarEntity != nil || contentType == .immersive { return }
+        if isImmersiveVideo {
+            contentType = .immersive
+            return
+        }
         guard let metadata = swiftOnlyData.spatialVideoMetadata else { return }
         swiftOnlyData.peculiarEntity = ContentType.makeSpatialEntity(videoMetadata: metadata.metadata, extruded: true)
         swiftOnlyData.peculiarEntity?.screenMode = spatialImmersive ? .immersive : .portal;
@@ -255,7 +260,11 @@ extension WKSLinearMediaPlayer {
 #endif
     }
 
-    private func maybeClearSpatialEntity() {
+    private func maybeClearSpatialOrImmersiveEntity() {
+        if isImmersiveVideo && contentType == .immersive {
+            contentType = .none
+            return
+        }
 #if canImport(LinearMediaKit, _version: 211.60.3)
         if swiftOnlyData.peculiarEntity == nil { return }
         swiftOnlyData.videoReceiverEndpointObserver = nil;
@@ -678,7 +687,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
     public func didCompleteExitFullscreen(result: Result<Void, any Error>) {
         let completionHandler = exitFullscreenCompletionHandler
         exitFullscreenCompletionHandler = nil
-        maybeClearSpatialEntity()
+        maybeClearSpatialOrImmersiveEntity()
         swiftOnlyData.enteredFromInline = false
 
         switch result {
@@ -695,7 +704,7 @@ extension WKSLinearMediaPlayer: @retroactive Playable {
         Logger.linearMediaPlayer.log("\(#function)")
 
 #if canImport(LinearMediaKit, _version: 211.60.3)
-        // This gets called from maybeCreateSpatialEntity through the KVO when setting
+        // This gets called from maybeCreateSpatialOrImmersiveEntity through the KVO when setting
         // peculiarEntity. As such, we can't check if the peculiarEntity is set or not.
         // We will return nil here on the first call and will get call back again once
         // peculiarEntity is set.

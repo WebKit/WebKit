@@ -35,8 +35,9 @@ const EVP_MD* digestAlgorithm(CryptoAlgorithmIdentifier hashFunction)
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
         return EVP_sha1();
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return EVP_sha224();
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        return EVP_sha256();
     case CryptoAlgorithmIdentifier::SHA_256:
         return EVP_sha256();
     case CryptoAlgorithmIdentifier::SHA_384:

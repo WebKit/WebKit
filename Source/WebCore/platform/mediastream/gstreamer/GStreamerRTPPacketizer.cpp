@@ -34,10 +34,11 @@ namespace WebCore {
 GST_DEBUG_CATEGORY(webkit_webrtc_rtp_packetizer_debug);
 #define GST_CAT_DEFAULT webkit_webrtc_rtp_packetizer_debug
 
-GStreamerRTPPacketizer::GStreamerRTPPacketizer(GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters)
+GStreamerRTPPacketizer::GStreamerRTPPacketizer(GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, std::optional<int>&& payloadType)
     : m_encoder(WTFMove(encoder))
     , m_payloader(WTFMove(payloader))
     , m_encodingParameters(WTFMove(encodingParameters))
+    , m_payloadType(WTFMove(payloadType))
 {
     static std::once_flag debugRegisteredFlag;
     std::call_once(debugRegisteredFlag, [] {
@@ -60,6 +61,9 @@ GStreamerRTPPacketizer::GStreamerRTPPacketizer(GRefPtr<GstElement>&& encoder, GR
 
     m_stats.reset(gst_structure_new_empty("stats"));
 
+    if (m_payloadType)
+        setPayloadType(*m_payloadType);
+
     if (m_encodingParameters)
         applyEncodingParameters(m_encodingParameters.get());
 }
@@ -68,10 +72,16 @@ GStreamerRTPPacketizer::~GStreamerRTPPacketizer() = default;
 
 void GStreamerRTPPacketizer::configureExtensions()
 {
+    if (!webkitGstCheckVersion(1, 24, 0)) {
+        GST_WARNING_OBJECT(m_bin.get(), "GStreamer 1.24 is required for configuring extensions on the RTP payloaders. Simulcast will not work.");
+        return;
+    }
+
     m_lastExtensionId = 0;
 
     GValue extensions = G_VALUE_INIT;
     g_object_get_property(G_OBJECT(m_payloader.get()), "extensions", &extensions);
+    RELEASE_ASSERT(GST_VALUE_HOLDS_ARRAY(&extensions));
     m_lastExtensionId = gst_value_array_get_size(&extensions) + 1;
     g_value_unset(&extensions);
 
@@ -107,6 +117,11 @@ void GStreamerRTPPacketizer::configureExtensions()
 
 void GStreamerRTPPacketizer::ensureMidExtension(const String& mid)
 {
+    if (!webkitGstCheckVersion(1, 24, 0)) {
+        GST_WARNING_OBJECT(m_bin.get(), "GStreamer 1.24 is required for ensuring mid extension on the RTP payloaders.");
+        return;
+    }
+
     m_mid = mid;
     if (m_midExtension) {
         g_object_set(m_midExtension.get(), "mid", mid.utf8().data(), nullptr);
@@ -116,6 +131,7 @@ void GStreamerRTPPacketizer::ensureMidExtension(const String& mid)
 
     GValue extensions = G_VALUE_INIT;
     g_object_get_property(G_OBJECT(m_payloader.get()), "extensions", &extensions);
+    RELEASE_ASSERT(GST_VALUE_HOLDS_ARRAY(&extensions));
     auto totalExtensions = gst_value_array_get_size(&extensions);
     auto midURI = StringView::fromLatin1(GST_RTP_HDREXT_BASE "sdes:mid");
     for (unsigned i = 0; i < totalExtensions; i++) {
@@ -165,11 +181,59 @@ String GStreamerRTPPacketizer::rtpStreamId() const
     return emptyString();
 }
 
-int GStreamerRTPPacketizer::payloadType() const
+void GStreamerRTPPacketizer::setPayloadType(int pt)
 {
-    int payloadType;
-    g_object_get(m_payloader.get(), "pt", &payloadType, nullptr);
-    return payloadType;
+    auto ptSpec = g_object_class_find_property(G_OBJECT_GET_CLASS(G_OBJECT(m_payloader.get())), "pt");
+
+    GValue value = G_VALUE_INIT;
+    g_object_get_property(G_OBJECT(m_payloader.get()), "pt", &value);
+
+    if (G_VALUE_TYPE(&value) != G_TYPE_INT && G_VALUE_TYPE(&value) != G_TYPE_UINT) {
+        GST_ERROR_OBJECT(m_payloader.get(), "pt property is not integer or unsigned");
+        return;
+    }
+
+    if (G_VALUE_TYPE(&value) == G_TYPE_INT) {
+        auto intSpec = G_PARAM_SPEC_INT(ptSpec);
+        if (pt > intSpec->maximum || pt < intSpec->minimum) {
+            GST_ERROR_OBJECT(m_payloader.get(), "pt %d outside of valid range [%d, %d]", pt, intSpec->minimum, intSpec->maximum);
+            return;
+        }
+        g_object_set(m_payloader.get(), "pt", pt, nullptr);
+        return;
+    }
+
+    if (G_VALUE_TYPE(&value) == G_TYPE_UINT) {
+        auto uintSpec = G_PARAM_SPEC_UINT(ptSpec);
+        unsigned ptValue = static_cast<unsigned>(pt);
+        if (ptValue > uintSpec->maximum || ptValue < uintSpec->minimum) {
+            GST_ERROR_OBJECT(m_payloader.get(), "pt %u outside of valid range [%u, %u]", ptValue, uintSpec->minimum, uintSpec->maximum);
+            return;
+        }
+        g_object_set(m_payloader.get(), "pt", ptValue, nullptr);
+    }
+}
+
+std::optional<int> GStreamerRTPPacketizer::payloadType() const
+{
+    if (LIKELY(m_payloadType))
+        return m_payloadType;
+
+    GValue value = G_VALUE_INIT;
+    g_object_get_property(G_OBJECT(m_payloader.get()), "pt", &value);
+
+    if (G_VALUE_TYPE(&value) != G_TYPE_INT && G_VALUE_TYPE(&value) != G_TYPE_UINT) {
+        GST_ERROR_OBJECT(m_payloader.get(), "pt property is not integer or unsigned");
+        return std::nullopt;
+    }
+
+    if (G_VALUE_TYPE(&value) == G_TYPE_INT)
+        return g_value_get_int(&value);
+
+    if (G_VALUE_TYPE(&value) == G_TYPE_UINT)
+        return g_value_get_uint(&value);
+
+    return std::nullopt;
 }
 
 unsigned GStreamerRTPPacketizer::currentSequenceNumberOffset() const
@@ -286,6 +350,9 @@ void GStreamerRTPPacketizer::applyEncodingParameters(const GstStructure* encodin
         return;
 
     auto peer = adoptGRef(gst_pad_get_peer(srcPad.get()));
+    if (!peer)
+        return;
+
     gst_pad_send_event(peer.get(), gst_event_new_flush_start());
     gst_pad_send_event(peer.get(), gst_event_new_flush_stop(FALSE));
 }

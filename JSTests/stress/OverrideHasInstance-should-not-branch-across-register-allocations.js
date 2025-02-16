@@ -8,7 +8,7 @@ var test = function() {
     Math.cos("0" instanceof arguments)
 }
 
-for (var k = 0; k < 10000; ++k) {
+for (var k = 0; k < testLoopCount; ++k) {
     try {
         test();
     } catch (e) {

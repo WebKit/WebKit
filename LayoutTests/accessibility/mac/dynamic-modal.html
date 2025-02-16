@@ -5,17 +5,16 @@
 <script src="../../resources/js-test.js"></script>
 </head>
 <style>
-  *[role="dialog"] { border: 1px solid black; padding: 1em; margin: 1em; }
-  :focus { outline: 3px solid #ccf; outline-offset: 3px; }
+*[role="dialog"] { border: 1px solid black; padding: 1em; margin: 1em; }
+:focus { outline: 3px solid #ccf; outline-offset: 3px; }
 </style>
 <body>
 
-  <p>
+<p>
     <button id="show" autofocus>Show</button>
-  </p>
+</p>
 
-  <div id="wrapper">
-  </div>
+<div id="wrapper"></div>
 
 <script>
 document.getElementById("show").addEventListener("click", () => {
@@ -30,7 +29,7 @@ document.getElementById("show").addEventListener("click", () => {
     }, 0);
 });
 
-var testOutput = "This tests nested aria-modal dialogs\n\n";
+var output = "This tests nested aria-modal dialogs\n\n";
 
 if (window.accessibilityController) {
     window.jsTestIsAsync = true;
@@ -40,32 +39,17 @@ if (window.accessibilityController) {
             focus = accessibilityController.focusedElement;
             return focus && focus.domIdentifier;
         });
+        output += `Initial focus: ${focus.domIdentifier}\n`;
+        output += `Show button reachable: ${accessibilityController.accessibleElementById("show") != null}\n`;
 
-        focus = accessibilityController.focusedElement;
-        testOutput += `Initial focus: ${focus.domIdentifier}\n`;
-
-        show = accessibilityController.accessibleElementById("show");
-        testOutput += `Show button reachable: ${show != null}\n`;
-
-        testOutput += "\nClicking on show button\n\n";
+        output += "\nClicking on show button\n\n";
         document.getElementById("show").click();
 
-        await waitFor(() => {
-            focus = accessibilityController.focusedElement;
-            return focus.domIdentifier != "ok";
-        });
+        output += await expectAsync("accessibilityController.focusedElement?.domIdentifier === 'dialog_ok'", "true");
+        // The show button should be inaccessible.
+        output += await expectAsync("!!accessibilityController.accessibleElementById('show')", "false");
 
-        focus = accessibilityController.focusedElement;
-        testOutput += `New focus: ${focus.domIdentifier}\n`;
-
-        await waitFor(() => {
-            return !accessibilityController.accessibleElementById("show");
-        });
-
-        show = accessibilityController.accessibleElementById("show");
-        testOutput += `Show button reachable: ${show != null}\n`;
-
-        debug(testOutput);
+        debug(output);
         finishJSTest();
     });
 }

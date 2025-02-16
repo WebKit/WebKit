@@ -34,7 +34,7 @@ RefPtr<WebCore::ThreadableWebSocketChannel> LegacySocketProvider::createWebSocke
     return WebCore::WebSocketChannel::create(document, client, *this);
 }
 
-Ref<WebCore::WebTransportSessionPromise> LegacySocketProvider::initializeWebTransportSession(WebCore::ScriptExecutionContext&, const URL&)
+Ref<WebCore::WebTransportSessionPromise> LegacySocketProvider::initializeWebTransportSession(WebCore::ScriptExecutionContext&, WebCore::WebTransportSessionClient&, const URL&)
 {
     return WebCore::WebTransportSessionPromise::createAndReject();
 }

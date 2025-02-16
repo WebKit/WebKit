@@ -12,7 +12,7 @@ var source = {
     a: 0, b: 1, c: 2, d: 3, e: 4
 };
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var dest = { };
     test(source, dest);
     shouldBe(JSON.stringify(dest), `{"a":42,"b":43,"c":44,"d":45,"e":46}`);

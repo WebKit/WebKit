@@ -26,14 +26,15 @@
 #import "config.h"
 #import "WKAccessibilityWebPageObjectBase.h"
 
-#import "WebFrame.h"
-#import "WebPage.h"
 #import "WKArray.h"
 #import "WKNumber.h"
 #import "WKRetainPtr.h"
 #import "WKSharedAPICast.h"
 #import "WKString.h"
 #import "WKStringCF.h"
+#import "WebFrame.h"
+#import "WebPage.h"
+#import "WebProcess.h"
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/Document.h>
 #import <WebCore/FrameTree.h>
@@ -59,17 +60,19 @@ namespace ax = WebCore::Accessibility;
     if (!page)
         return nullptr;
 
-    if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(page->mainFrame())) {
-        if (auto* document = localMainFrame->document())
-            return document->axObjectCache();
-    } else if (auto* remoteMainFrame = dynamicDowncast<WebCore::RemoteFrame>(page->mainFrame())) {
-        auto& tree = remoteMainFrame->tree();
-        auto* firstFrame = dynamicDowncast<WebCore::LocalFrame>(tree.firstChild());
-        auto* document = firstFrame ? firstFrame->document() : nullptr;
-        return document ? document->axObjectCache() : nullptr;
-    }
+    return page->axObjectCache();
+}
 
-    return nullptr;
+- (void)enableAccessibilityForAllProcesses
+{
+    // Immediately enable accessibility in the current web process, otherwise this
+    // will happen asynchronously and could break certain flows (e.g., attribute
+    // requests).
+    if (!WebCore::AXObjectCache::accessibilityEnabled())
+        WebCore::AXObjectCache::enableAccessibility();
+
+    if (m_page)
+        m_page->enableAccessibilityForAllProcesses();
 }
 
 - (id)accessibilityPluginObject
@@ -87,7 +90,13 @@ namespace ax = WebCore::Accessibility;
     return retrieveBlock();
 }
 
+// Called directly by Accessibility framework.
 - (id)accessibilityRootObjectWrapper
+{
+    return [self accessibilityRootObjectWrapper:[self focusedLocalFrame]];
+}
+
+- (id)accessibilityRootObjectWrapper:(WebCore::LocalFrame*)frame
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (!isMainRunLoop()) {
@@ -96,15 +105,15 @@ namespace ax = WebCore::Accessibility;
     }
 #endif
 
-    return ax::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self)] () -> RetainPtr<id> {
+    return ax::retrieveAutoreleasedValueFromMainThread<id>([protectedSelf = retainPtr(self), frame = RefPtr { frame }] () -> RetainPtr<id> {
         if (!WebCore::AXObjectCache::accessibilityEnabled())
-            WebCore::AXObjectCache::enableAccessibility();
+            [protectedSelf enableAccessibilityForAllProcesses];
 
         if (protectedSelf.get()->m_hasMainFramePlugin)
             return protectedSelf.get().accessibilityPluginObject;
 
         if (auto cache = protectedSelf.get().axObjectCache) {
-            if (auto* root = cache->rootObject())
+            if (auto* root = frame ? cache->rootObjectForFrame(*frame) : nullptr)
                 return root->wrapper();
         }
 
@@ -116,7 +125,7 @@ namespace ax = WebCore::Accessibility;
 {
     ASSERT(isMainRunLoop());
 
-    m_page = page;
+    m_page = page.get();
 
     if (page) {
         m_pageID = page->identifier();
@@ -190,9 +199,39 @@ namespace ax = WebCore::Accessibility;
     m_parent = parent;
 }
 
+- (void)setFrameIdentifier:(const WebCore::FrameIdentifier&)frameID
+{
+    m_frameID = frameID;
+}
+
 - (id)accessibilityFocusedUIElement
 {
-    return [[self accessibilityRootObjectWrapper] accessibilityFocusedUIElement];
+    return [[self accessibilityRootObjectWrapper:[self focusedLocalFrame]] accessibilityFocusedUIElement];
+}
+
+- (WebCore::LocalFrame *)focusedLocalFrame
+{
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!isMainRunLoop())
+        return nullptr;
+#endif
+    if (!m_page)
+        return nullptr;
+
+    if (!m_frameID)
+        return dynamicDowncast<WebCore::LocalFrame>(m_page->mainFrame());
+
+    auto* page = m_page->corePage();
+    ASSERT(page);
+    ASSERT(page->settings().siteIsolationEnabled());
+
+    // FIXME: This needs to be made thread safe when the isolated accessibility tree is on.
+    for (auto& rootFrame : page->rootFrames()) {
+        if (rootFrame->frameID() == m_frameID)
+            return rootFrame.ptr();
+    }
+
+    return nullptr;
 }
 
 @end

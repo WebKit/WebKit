@@ -30,18 +30,17 @@
 #include "LegacyRootInlineBox.h"
 #include "RenderBlock.h"
 #include "RenderStyleInlines.h"
+#include "RenderSVGInlineText.h"
 #include "RenderView.h"
 #include "VisiblePosition.h"
 
 namespace WebCore {
 
 RenderTextLineBoxes::RenderTextLineBoxes()
-    : m_first(nullptr)
-    , m_last(nullptr)
 {
 }
 
-LegacyInlineTextBox* RenderTextLineBoxes::createAndAppendLineBox(RenderText& renderText)
+LegacyInlineTextBox* RenderTextLineBoxes::createAndAppendLineBox(RenderSVGInlineText& renderText)
 {
     auto textBox = renderText.createTextBox();
     if (!m_first) {
@@ -53,41 +52,6 @@ LegacyInlineTextBox* RenderTextLineBoxes::createAndAppendLineBox(RenderText& ren
         m_last = textBox.get();
     }
     return textBox.release();
-}
-
-void RenderTextLineBoxes::extract(LegacyInlineTextBox& box)
-{
-    checkConsistency();
-
-    m_last = box.prevTextBox();
-    if (&box == m_first)
-        m_first = nullptr;
-    if (box.prevTextBox())
-        box.prevTextBox()->setNextTextBox(nullptr);
-    box.setPreviousTextBox(nullptr);
-    for (auto* current = &box; current; current = current->nextTextBox())
-        current->setExtracted();
-
-    checkConsistency();
-}
-
-void RenderTextLineBoxes::attach(LegacyInlineTextBox& box)
-{
-    checkConsistency();
-
-    if (m_last) {
-        m_last->setNextTextBox(&box);
-        box.setPreviousTextBox(m_last);
-    } else
-        m_first = &box;
-    LegacyInlineTextBox* last = nullptr;
-    for (auto* current = &box; current; current = current->nextTextBox()) {
-        current->setExtracted(false);
-        last = current;
-    }
-    m_last = last;
-
-    checkConsistency();
 }
 
 void RenderTextLineBoxes::remove(LegacyInlineTextBox& box)
@@ -106,7 +70,7 @@ void RenderTextLineBoxes::remove(LegacyInlineTextBox& box)
     checkConsistency();
 }
 
-void RenderTextLineBoxes::removeAllFromParent(RenderText& renderer)
+void RenderTextLineBoxes::removeAllFromParent(RenderSVGInlineText& renderer)
 {
     if (!m_first) {
         if (renderer.parent())
@@ -130,37 +94,13 @@ void RenderTextLineBoxes::deleteAll()
     m_last = nullptr;
 }
 
-LegacyInlineTextBox* RenderTextLineBoxes::findNext(int offset, int& position) const
-{
-    if (!m_first)
-        return nullptr;
-    // FIXME: This looks buggy. The function is only used for debugging purposes.
-    auto current = m_first;
-    int currentOffset = current->len();
-    while (offset > currentOffset && current->nextTextBox()) {
-        current = current->nextTextBox();
-        currentOffset = current->start() + current->len();
-    }
-    // we are now in the correct text run
-    position = (offset > currentOffset ? current->len() : current->len() - (currentOffset - offset));
-    return current;
-}
-
-void RenderTextLineBoxes::dirtyAll()
+void RenderTextLineBoxes::dirtyForTextChange(RenderSVGInlineText& renderer)
 {
     for (auto* box = m_first; box; box = box->nextTextBox())
         box->dirtyLineBoxes();
-}
 
-bool RenderTextLineBoxes::dirtyForTextChange(RenderText& renderer)
-{
-    dirtyAll();
-
-    if (!m_first && renderer.parent()) {
+    if (!m_first && renderer.parent())
         renderer.parent()->dirtyLineFromChangedChild();
-        return true;
-    }
-    return m_first;
 }
 
 inline void RenderTextLineBoxes::checkConsistency() const

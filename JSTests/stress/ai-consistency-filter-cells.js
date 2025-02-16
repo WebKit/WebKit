@@ -22,7 +22,7 @@ let record = {key: "hello"};
 let record2 = {key: true};
 let key = "key";
 let attribute = {type: "type"};
-for (; i < 100000; i++) {
+for (; i < testLoopCount; i++) {
     if (i % 2 === 0)
         foo.call(thisValue, record, key, attribute);
     else

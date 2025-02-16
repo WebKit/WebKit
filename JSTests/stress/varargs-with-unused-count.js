@@ -19,5 +19,5 @@ function baz(a, b, c, d) {
 
 noInline(baz);
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     baz(1, 2, 3, 4);

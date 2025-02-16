@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DeprecatedCSSOMValue.h"
 
+#include "CSSSerializationContext.h"
 #include "DeprecatedCSSOMBoxShadowValue.h"
 #include "DeprecatedCSSOMFilterFunctionValue.h"
 #include "DeprecatedCSSOMPrimitiveValue.h"
@@ -101,6 +102,11 @@ String DeprecatedCSSOMValue::cssText() const
     }
     ASSERT_NOT_REACHED();
     return emptyString();
+}
+
+String DeprecatedCSSOMComplexValue::cssText() const
+{
+    return protectedValue()->cssText(CSS::defaultSerializationContext());
 }
 
 unsigned short DeprecatedCSSOMComplexValue::cssValueType() const

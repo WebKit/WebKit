@@ -690,11 +690,9 @@ ANGLE_INSTANTIATE_TEST(EGLBlobCacheTest,
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
                            .disable(Feature::SyncMonolithicPipelinesToBlobCache),
                        ES3_VULKAN()
-                           .enable(Feature::AsyncCommandQueue)
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
                            .disable(Feature::SyncMonolithicPipelinesToBlobCache),
                        ES2_VULKAN_SWIFTSHADER()
-                           .enable(Feature::AsyncCommandQueue)
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
                            .disable(Feature::SyncMonolithicPipelinesToBlobCache),
                        ES2_VULKAN_SWIFTSHADER()
@@ -703,11 +701,6 @@ ANGLE_INSTANTIATE_TEST(EGLBlobCacheTest,
                            .disable(Feature::SyncMonolithicPipelinesToBlobCache),
                        ES3_VULKAN()
                            .enable(Feature::EnableParallelCompileAndLink)
-                           .enable(Feature::DisablePipelineCacheLoadForTesting)
-                           .disable(Feature::SyncMonolithicPipelinesToBlobCache),
-                       ES2_VULKAN_SWIFTSHADER()
-                           .enable(Feature::EnableParallelCompileAndLink)
-                           .enable(Feature::AsyncCommandQueue)
                            .enable(Feature::DisablePipelineCacheLoadForTesting)
                            .disable(Feature::SyncMonolithicPipelinesToBlobCache));
 

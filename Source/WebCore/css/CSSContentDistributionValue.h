@@ -39,7 +39,7 @@ public:
     CSSValueID position() const { return m_position; }
     CSSValueID overflow() const { return m_overflow; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSContentDistributionValue&) const;
 
 private:

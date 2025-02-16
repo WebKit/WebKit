@@ -1,0 +1,11 @@
+
+PASS already-aborted AbortSignal then requestClose() fires no events
+PASS abortController.abort() then requestClose() fires no events
+PASS requestClose() then abortController.abort() fires only one close event
+PASS already-aborted AbortSignal then Esc key fires no events
+PASS abortController.abort() then close via Esc key fires no events
+FAIL Esc key then abortController.abort() fires only one close event assert_equals: expected 1 but got 0
+PASS abortController.abort()ing a free CloseWatcher allows a new one to be created without a user activation
+PASS abortController.abort() inside oncancel
+PASS abortController.abort() inside onclose is benign
+

@@ -85,7 +85,7 @@ void WebExtensionAPIAlarms::createAlarm(NSString *name, NSDictionary *alarmInfo,
     auto *periodNumber = objectForKey<NSNumber>(alarmInfo, periodInMinutesKey);
 
     if (whenNumber && delayNumber) {
-        *outExceptionString = toErrorString(nil, @"info", @"it cannot specify both 'delayInMinutes' and 'when'");
+        *outExceptionString = toErrorString(nullString(), @"info", @"it cannot specify both 'delayInMinutes' and 'when'");
         return;
     }
 

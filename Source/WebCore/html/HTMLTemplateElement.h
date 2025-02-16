@@ -52,12 +52,11 @@ public:
     void setShadowRootMode(const AtomString&);
 
     void setDeclarativeShadowRoot(ShadowRoot&);
-    void attachAsDeclarativeShadowRootIfNeeded(Element&);
 
 private:
     HTMLTemplateElement(const QualifiedName&, Document&);
 
-    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) final;
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation, CustomElementRegistry*) final;
     void didMoveToNewDocument(Document& oldDocument, Document& newDocument) final;
 
     mutable RefPtr<TemplateContentDocumentFragment> m_content;

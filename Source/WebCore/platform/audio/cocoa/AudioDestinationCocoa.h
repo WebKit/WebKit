@@ -60,6 +60,7 @@ private:
 
     void startRendering(CompletionHandler<void(bool)>&&) override;
     void stopRendering(CompletionHandler<void(bool)>&&) override;
+    MediaTime outputLatency() const final;
 
     AudioOutputUnitAdaptor m_audioOutputUnitAdaptor;
 

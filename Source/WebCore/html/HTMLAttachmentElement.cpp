@@ -95,7 +95,9 @@ static CString compactStackTrace(StackTrace& stackTrace)
     stackTrace.forEachFrame([&stack](int, void*, const char* fullName) {
         constexpr size_t maxWorkLen = 1023;
         constexpr bool is8Bit = true;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         StringView name { fullName ? fullName : "?", fullName ? unsigned(std::min(strlen(fullName), maxWorkLen)) : 1u, is8Bit };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         for (const auto& prefix : { "auto void "_s, "auto "_s }) {
             if (name.startsWith(prefix)) {
@@ -848,7 +850,7 @@ void HTMLAttachmentElement::updateAssociatedElementWithData(const String& conten
         return;
 
     auto associatedElementType = associatedElement->attachmentAssociatedElementType();
-    associatedElement->asHTMLElement().setAttributeWithoutSynchronization((associatedElementType == AttachmentAssociatedElementType::Source) ? HTMLNames::srcsetAttr : HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), buffer->extractData(), mimeType)) });
+    associatedElement->asHTMLElement().setAttributeWithoutSynchronization((associatedElementType == AttachmentAssociatedElementType::Source) ? HTMLNames::srcsetAttr : HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(document(), Blob::create(protectedDocument().ptr(), buffer->extractData(), mimeType)) });
 }
 
 void HTMLAttachmentElement::updateImage()
@@ -858,13 +860,13 @@ void HTMLAttachmentElement::updateImage()
 
     if (!m_thumbnailForWideLayout.isEmpty()) {
         dispatchEvent(Event::create(eventNames().loadeddataEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), Vector<uint8_t>(m_thumbnailForWideLayout), "image/png"_s)) });
+        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(protectedDocument().ptr(), Vector<uint8_t>(m_thumbnailForWideLayout), "image/png"_s)) });
         return;
     }
 
     if (!m_iconForWideLayout.isEmpty()) {
         dispatchEvent(Event::create(eventNames().loadeddataEvent, Event::CanBubble::No, Event::IsCancelable::No));
-        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(&document(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_s)) });
+        m_imageElement->setSrc(AtomString { DOMURL::createObjectURL(document(), Blob::create(protectedDocument().ptr(), Vector<uint8_t>(m_iconForWideLayout), "image/png"_s)) });
         return;
     }
 

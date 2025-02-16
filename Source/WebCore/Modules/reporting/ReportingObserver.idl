@@ -28,7 +28,6 @@
 typedef sequence<Report> ReportList;
 
 [
-    EnabledBySetting=ReportingEnabled,
     Exposed=(Window,Worker),
     ActiveDOMObject,
     JSCustomMarkFunction

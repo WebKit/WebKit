@@ -126,9 +126,7 @@ source_set("glmark2_headers") {
   if (is_win) {
     sources += [
       "src/src/gl-state-wgl.h",
-      "src/src/include/dirent.h",
       "src/src/include/getopt.h",
-      "src/src/include/sys/time.h",
     ]
   }
   public_configs = [ ":glmark2_headers_config" ]
@@ -163,6 +161,8 @@ template("glmark2_libmatrix") {
     }
     public_deps = [ ":glmark2_headers" ]
     public_configs = [ ":glmark2_libmatrix_config" ]
+    configs += [ "//build/config/compiler:exceptions" ]
+    configs -= [ "//build/config/compiler:no_exceptions" ]
   }
 }
 
@@ -279,6 +279,7 @@ template("glmark2_common") {
       "src/src/model.h",
       "src/src/native-state.h",
       "src/src/options.cpp",
+      "src/src/results-file.cpp",
       "src/src/scene-buffer.cpp",
       "src/src/scene-build.cpp",
       "src/src/scene-bump.cpp",
@@ -313,6 +314,9 @@ template("glmark2_common") {
       "${angle_libpng_dir}:libpng",
       "${angle_root}/third_party:jpeg",
     ]
+
+    configs += [ "//build/config/compiler:exceptions" ]
+    configs -= [ "//build/config/compiler:no_exceptions" ]
   }
 }
 
@@ -346,7 +350,10 @@ template("glmark2_exe") {
     ]
     data = [ "src/data/" ]
 
-    defines += [ "GLMARK_VERSION=\"${glmark2_version}\"" ]
+    defines += [
+      "GLMARK_VERSION=\"${glmark2_version}\"",
+      "GLMARK2_EXECUTABLE=\"${target_name}\"",
+    ]
 
     if (is_win) {
       defines += [ "GLMARK2_USE_WIN32" ]

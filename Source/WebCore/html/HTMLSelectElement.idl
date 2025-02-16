@@ -25,7 +25,7 @@
 ] interface HTMLSelectElement : HTMLElement {
     [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
-    readonly attribute HTMLFormElement? form;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement? form;
     [CEReactions=NotNeeded, Reflect] attribute boolean multiple;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute boolean required;

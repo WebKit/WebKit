@@ -181,10 +181,12 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
         SeekCompleted,
     };
 
+    bool supportsLimitedMatroska() const { return m_loadOptions.supportsLimitedMatroska; }
+
 private:
     // MediaPlayerPrivateInterface
     void load(const String& url) override;
-    void load(const URL&, const ContentType&, MediaSourcePrivateClient&) override;
+    void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
 #if ENABLE(MEDIA_STREAM)
     void load(MediaStreamPrivate&) override;
 #endif
@@ -253,6 +255,8 @@ private:
 
     void updateDisplayLayer();
     RefPtr<VideoMediaSampleRenderer> layerOrVideoRenderer() const;
+
+    RefPtr<MediaSourcePrivateAVFObjC> protectedMediaSourcePrivate() const;
 
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by
     // javascript running in the page, the video will, by necessity, always be CORS correct and
@@ -406,7 +410,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
-    Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
+    const Ref<EffectiveRateChangedListener> m_effectiveRateChangedListener;
     uint64_t m_sampleCount { 0 };
     RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };
@@ -417,6 +421,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     bool m_needsPlaceholderImage { false };
     bool m_preferDecompressionSession { false };
     bool m_canFallbackToDecompressionSession { false };
+    LoadOptions m_loadOptions;
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;

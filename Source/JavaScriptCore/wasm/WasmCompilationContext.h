@@ -38,9 +38,11 @@
 #include "WasmJS.h"
 #include "WasmMemory.h"
 #include "WasmModuleInformation.h"
+#include "WasmOpcodeOrigin.h"
 #include "WasmTierUpCount.h"
 #include <wtf/Box.h>
 #include <wtf/Expected.h>
+#include <wtf/SegmentedVector.h>
 
 namespace JSC {
 
@@ -60,6 +62,14 @@ class MemoryInformation;
 class OptimizingJITCallee;
 class TierUpCount;
 
+class OMGOrigin {
+public:
+    friend bool operator==(const OMGOrigin&, const OMGOrigin&) = default;
+
+    CallSiteIndex m_callSiteIndex { };
+    OpcodeOrigin m_opcodeOrigin { };
+};
+
 struct CompilationContext {
     std::unique_ptr<CCallHelpers> jsEntrypointJIT;
     std::unique_ptr<CCallHelpers> wasmEntrypointJIT;
@@ -69,9 +79,8 @@ struct CompilationContext {
     Box<PCToCodeOriginMap> pcToCodeOriginMap;
     Box<PCToCodeOriginMapBuilder> pcToCodeOriginMapBuilder;
     Vector<CCallHelpers::Label> catchEntrypoints;
+    SegmentedVector<OMGOrigin> origins;
 };
-
-void computePCToCodeOriginMap(CompilationContext&, LinkBuffer&);
 
 } // namespace Wasm
 

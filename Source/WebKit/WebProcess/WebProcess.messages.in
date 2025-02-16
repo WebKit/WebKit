@@ -58,6 +58,9 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     UserPreferredLanguagesChanged(Vector<String> languages)
     FullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled)
     UpdateStorageAccessUserAgentStringQuirks(HashMap<WebCore::RegistrableDomain, String> userAgentStringQuirks)
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    SetOptInCookiePartitioningEnabled(bool enabled);
+#endif
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
     SetHasMouseDevice(bool hasMouseDevice)
@@ -226,12 +229,14 @@ messages -> WebProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     ReleaseMemory() -> ()
 
 #if ENABLE(NOTIFY_BLOCKING)
-    PostNotification(String message, std::optional<uint64_t> state)
-    PostObserverNotification(String message)
+    [DeferSendingIfSuspendedWithCoalescingKeys=(message)] PostNotification(String message, std::optional<uint64_t> state)
+    [DeferSendingIfSuspended] PostObserverNotification(String message)
+    GetNotifyStateForTesting(String notificationName) -> (std::optional<uint64_t> state)
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
     [DeferSendingIfSuspended] SetResourceMonitorContentRuleList(WebKit::WebCompiledContentRuleListData ruleListData)
+    SetResourceMonitorContentRuleListAsync(WebKit::WebCompiledContentRuleListData ruleListData) -> ()
 #endif
 
 #if PLATFORM(COCOA)

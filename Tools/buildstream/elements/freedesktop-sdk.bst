@@ -13,7 +13,7 @@ sources:
 - kind: patch
   path: patches/fdo-0004-gst-plugins-ugly-Enable-x264-encoder.patch
 - kind: patch
-  path: patches/fdo-0005-GStreamer-Bump-to-1.24.9.patch
+  path: patches/fdo-0005-GStreamer-Bump-to-1.24.12.patch
 - kind: patch
   path: patches/fdo-0006-gst-plugins-bad-Enable-soundtouch.patch
 - kind: patch
@@ -21,9 +21,9 @@ sources:
 - kind: patch
   path: patches/fdo-0010-GStreamer-Vendor-WebRTC-related-patches-scheduled-to.patch
 - kind: patch
-  path: patches/fdo-0011-GStreamer-Vendor-rtpfunnel-patch-scheduled-to-ship-i.patch
+  path: patches/fdo-0013-ffmpeg-Bump-to-version-7.0.2.patch
 - kind: patch
-  path: patches/fdo-0012-GStreamer-Vendor-GstPad-patch-scheduled-to-ship-in-1.patch
+  path: patches/fdo-0014-GStreamer-Vendor-an-oggdemux-patch-scheduled-for-1.2.patch
 config:
   options:
     target_arch: '%{arch}'
@@ -31,3 +31,4 @@ config:
   overrides:
     components/dav1d.bst: sdk/dav1d.bst
     components/pango.bst: sdk/pango.bst
+    components/noopenh264.bst: sdk/libopenh264.bst

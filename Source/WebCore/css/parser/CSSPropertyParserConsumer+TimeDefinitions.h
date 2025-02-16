@@ -36,7 +36,7 @@ struct TimeValidator {
         return CSS::UnitTraits<CSS::TimeUnit>::validate(unitType);
     }
 
-    template<auto R> static bool isValid(CSS::TimeRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::TimeRaw<R, V> raw, CSSPropertyParserOptions)
     {
         return isValidDimensionValue(raw, [&] {
             auto canonicalValue = CSS::canonicalize(raw);
@@ -45,9 +45,9 @@ struct TimeValidator {
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::Time<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Time<R>>;
-    using DimensionToken = DimensionConsumer<CSS::Time<R>, TimeValidator>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Time<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Time<R, V>>;
+    using DimensionToken = DimensionConsumer<CSS::Time<R, V>, TimeValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

@@ -42,8 +42,6 @@
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 SOFTLINK_AVKIT_FRAMEWORK()
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVPlayerController)
 SOFT_LINK_CLASS_OPTIONAL(AVKit, AVTimeRange)
@@ -130,19 +128,14 @@ static double WebAVPlayerControllerLiveStreamSeekableTimeRangeMinimumDuration = 
     if (!propertyNameFromKeyPath.length)
         return target;
 
-    unsigned count;
-    objc_property_t *properties = class_copyPropertyList([_playerController class], &count);
-
-    for (unsigned i = 0; i < count; i++) {
-        objc_property_t property = properties[i];
+    auto properties = class_copyPropertyListSpan([_playerController class]);
+    for (auto& property : properties.span()) {
         NSString *propertyName = [NSString stringWithUTF8String:property_getName(property)];
         if ([propertyNameFromKeyPath isEqualToString:propertyName]) {
             target = _playerController.get();
             break;
         }
     }
-
-    free(properties);
     return target;
 }
 
@@ -1306,8 +1299,6 @@ Class webAVPlayerControllerClass()
 #endif
 
 @end
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(COCOA) && HAVE(AVKIT)
 

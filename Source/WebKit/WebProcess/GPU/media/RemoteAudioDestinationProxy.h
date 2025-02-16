@@ -64,6 +64,7 @@ public:
 private:
     void startRendering(CompletionHandler<void(bool)>&&) override;
     void stopRendering(CompletionHandler<void(bool)>&&) override;
+    MediaTime outputLatency() const final;
 
     void startRenderingThread();
     void stopRenderingThread();
@@ -93,6 +94,7 @@ private:
     String m_inputDeviceId;
     unsigned m_numberOfInputChannels;
     float m_remoteSampleRate;
+    size_t m_audioUnitLatency;
 
     RefPtr<Thread> m_renderThread;
     RefPtr<WebCore::SharedMemory> m_frameCount;

@@ -21,7 +21,7 @@ overlaps scrollbar
                 (GraphicsLayer
                   (offsetFromRenderer width=15 height=15)
                   (anchor 0.00 0.00)
-                  (bounds 380.00 630.00)
+                  (bounds 430.00 630.00)
                 )
               )
             )

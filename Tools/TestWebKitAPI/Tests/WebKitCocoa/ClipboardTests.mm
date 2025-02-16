@@ -139,7 +139,12 @@ static RetainPtr<NSString> readMarkupFromPasteboard()
     return adoptNS([[NSString alloc] initWithData:rawData encoding:NSUTF8StringEncoding]);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(ClipboardTests, DISABLED_ReadMultipleItems)
+#else
 TEST(ClipboardTests, ReadMultipleItems)
+#endif
 {
     auto webView = createWebViewForClipboardTests();
     writeMultipleObjectsToPlatformPasteboard();

@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+<script>
+promise_test(async () => {
+    if (!window.testRunner)
+        return;
+
+    const promise = new Promise(resolve => window.ongamepadconnected = resolve);
+
+    testRunner.setMockGamepadDetails(0, "Test Joystick", "", 2, 2, false);
+    testRunner.connectMockGamepad(0);
+    testRunner.setMockGamepadAxisValue(0, 0, 3);
+    testRunner.setMockGamepadAxisValue(0, 1, -1.0);
+
+    await promise;
+    assert_true(internals.isProcessingUserGesture());
+}, "gamepadconnected should allow to play audio");
+</script>
+</body>
+</html>

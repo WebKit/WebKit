@@ -27,6 +27,7 @@
 #include "CSSParserEnum.h"
 #include "CSSParserImpl.h"
 #include "CSSRuleList.h"
+#include "CSSSerializationContext.h"
 #include "CSSStyleSheet.h"
 #include "DeclaredStylePropertyMap.h"
 #include "MutableStyleProperties.h"
@@ -148,7 +149,7 @@ Vector<Ref<StyleRuleBase>> CSSStyleRule::nestedRules() const
 // https://w3c.github.io/csswg-drafts/cssom-1/#serialize-a-css-rule
 String CSSStyleRule::cssText() const
 {
-    auto declarationsString = m_styleRule->properties().asText();
+    auto declarationsString = m_styleRule->properties().asText(CSS::defaultSerializationContext());
     StringBuilder declarations;
     StringBuilder rules;
     declarations.append(declarationsString);
@@ -159,30 +160,30 @@ String CSSStyleRule::cssText() const
 
 void CSSStyleRule::cssTextForRules(StringBuilder& rules) const
 {
-    for (unsigned index = 0; index < length(); index++)
-        rules.append("\n  "_s, item(index)->cssText());
+    for (unsigned index = 0; index < length(); ++index) {
+        auto ruleText = item(index)->cssText();
+        if (!ruleText.isEmpty())
+            rules.append("\n  "_s, WTFMove(ruleText));
+    }
 }
 
-String CSSStyleRule::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+String CSSStyleRule::cssText(const CSS::SerializationContext& context) const
 {
     StringBuilder declarations;
     StringBuilder rules;
 
-    auto mutableStyleProperties = m_styleRule->properties().mutableCopy();
-    mutableStyleProperties->setReplacementURLForSubresources(replacementURLStrings);
-    auto declarationsString = mutableStyleProperties->asText();
-    mutableStyleProperties->clearReplacementURLForSubresources();
-
+    auto declarationsString = m_styleRule->properties().asText(context);
     declarations.append(declarationsString);
-    cssTextForRulesWithReplacementURLs(rules, replacementURLStrings, replacementURLStringsForCSSStyleSheet);
+
+    cssTextForRulesWithReplacementURLs(rules, context);
 
     return cssTextInternal(declarations, rules);
 }
 
-void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet) const
+void CSSStyleRule::cssTextForRulesWithReplacementURLs(StringBuilder& rules, const CSS::SerializationContext& context) const
 {
     for (unsigned index = 0; index < length(); index++)
-        rules.append("\n  "_s, item(index)->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet));
+        rules.append("\n  "_s, item(index)->cssText(context));
 }
 
 String CSSStyleRule::cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const
@@ -317,7 +318,7 @@ CSSRuleList& CSSStyleRule::cssRules() const
     return *m_ruleListCSSOMWrapper;
 }
 
-void CSSStyleRule::getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
+void CSSStyleRule::getChildStyleSheets(UncheckedKeyHashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
 {
     for (unsigned index = 0; index < length(); ++index)
         item(index)->getChildStyleSheets(childStyleSheets);

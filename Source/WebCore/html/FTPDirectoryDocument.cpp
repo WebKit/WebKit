@@ -254,7 +254,7 @@ void FTPDirectoryDocumentParser::parseAndAppendOneLine(const String& inputLine)
     ListResult result;
     CString latin1Input = inputLine.latin1();
 
-    FTPEntryType typeResult = parseOneFTPLine(latin1Input.data(), m_listState, result);
+    FTPEntryType typeResult = parseOneFTPLine(byteCast<LChar>(latin1Input.mutableSpan()), m_listState, result);
 
     // FTPMiscEntry is a comment or usage statistic which we don't care about, and junk is invalid data - bail in these 2 cases
     if (typeResult == FTPMiscEntry || typeResult == FTPJunkEntry)

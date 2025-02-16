@@ -32,8 +32,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Observer.h>
-#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
@@ -101,7 +102,7 @@ public:
     virtual void sampleRateDidChange(const AudioSession&) { }
 };
 
-class WEBCORE_EXPORT AudioSession : public ThreadSafeRefCounted<AudioSession> {
+class WEBCORE_EXPORT AudioSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSession> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(AudioSession, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(AudioSession);
 public:
@@ -138,6 +139,8 @@ public:
 
     virtual size_t preferredBufferSize() const;
     virtual void setPreferredBufferSize(size_t);
+
+    virtual size_t outputLatency() const { return 0; }
 
     virtual void addConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&);
     virtual void removeConfigurationChangeObserver(AudioSessionConfigurationChangeObserver&);

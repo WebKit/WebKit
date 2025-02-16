@@ -153,7 +153,7 @@ private:
 
     void updateReportedPosition();
 
-    void forEachObserver(const Function<void(MediaSessionObserver&)>&);
+    void forEachObserver(NOESCAPE const Function<void(MediaSessionObserver&)>&);
     void notifyMetadataObservers(const RefPtr<MediaMetadata>&);
     void notifyPositionStateObservers();
     void notifyPlaybackStateObservers();

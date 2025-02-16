@@ -12,7 +12,7 @@ function foo(array) {
 noInline(foo);
 
 var array = [1, 2, 3, 4];
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(array);
     if (result != 4)
         throw "Error: bad result in loop: " + result;

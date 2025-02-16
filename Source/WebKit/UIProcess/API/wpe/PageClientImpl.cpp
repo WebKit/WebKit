@@ -34,8 +34,11 @@
 #include "TouchGestureController.h"
 #include "WPEWebViewLegacy.h"
 #include "WPEWebViewPlatform.h"
+#include "WebColorPicker.h"
 #include "WebContextMenuProxy.h"
 #include "WebContextMenuProxyWPE.h"
+#include "WebDataListSuggestionsDropdown.h"
+#include "WebDateTimePicker.h"
 #include "WebKitPopupMenu.h"
 #include <WebCore/ActivityState.h>
 #include <WebCore/Cursor.h>
@@ -196,6 +199,11 @@ WebCore::IntPoint PageClientImpl::screenToRootView(const WebCore::IntPoint& poin
     return point;
 }
 
+WebCore::IntPoint PageClientImpl::rootViewToScreen(const WebCore::IntPoint& point)
+{
+    return point;
+}
+
 WebCore::IntRect PageClientImpl::rootViewToScreen(const WebCore::IntRect& rect)
 {
     return rect;
@@ -290,6 +298,21 @@ Ref<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy& pa
     return WebContextMenuProxyWPE::create(page, WTFMove(context), userData);
 }
 #endif
+
+RefPtr<WebColorPicker> PageClientImpl::createColorPicker(WebPageProxy&, const WebCore::Color& intialColor, const WebCore::IntRect&, ColorControlSupportsAlpha supportsAlpha, Vector<WebCore::Color>&&)
+{
+    return nullptr;
+}
+
+RefPtr<WebDataListSuggestionsDropdown> PageClientImpl::createDataListSuggestionsDropdown(WebPageProxy&)
+{
+    return nullptr;
+}
+
+RefPtr<WebDateTimePicker> PageClientImpl::createDateTimePicker(WebPageProxy& page)
+{
+    return nullptr;
+}
 
 void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
@@ -390,7 +413,15 @@ WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirecti
 #if ENABLE(FULLSCREEN_API)
 WebFullScreenManagerProxyClient& PageClientImpl::fullScreenManagerProxyClient()
 {
+    if (m_fullscreenClientForTesting)
+        return *m_fullscreenClientForTesting;
+
     return *this;
+}
+
+void PageClientImpl::setFullScreenClientForTesting(std::unique_ptr<WebFullScreenManagerProxyClient>&& client)
+{
+    m_fullscreenClientForTesting = WTFMove(client);
 }
 
 void PageClientImpl::closeFullScreenManager()
@@ -403,12 +434,12 @@ bool PageClientImpl::isFullScreen()
     return m_view.isFullScreen();
 }
 
-void PageClientImpl::enterFullScreen()
+void PageClientImpl::enterFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
     if (isFullScreen())
-        return;
+        return completionHandler(false);
 
-    m_view.willEnterFullScreen();
+    m_view.willEnterFullScreen(WTFMove(completionHandler));
 #if ENABLE(WPE_PLATFORM)
     if (m_view.wpeView()) {
         static_cast<WKWPE::ViewPlatform&>(m_view).enterFullScreen();

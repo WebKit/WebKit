@@ -35,10 +35,17 @@
 #include <WebCore/PageIdentifier.h>
 #include <memory>
 #include <pal/SessionID.h>
+#include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMalloc.h>
 
 #if HAVE(VISIBILITY_PROPAGATION_VIEW)
 #include "LayerHostingContext.h"
+#endif
+
+#if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
+namespace IPC {
+class SharedFileHandle;
+}
 #endif
 
 namespace WebKit {
@@ -108,11 +115,23 @@ private:
     void didCreateContextForVisibilityPropagation(WebPageProxyIdentifier, WebCore::PageIdentifier, LayerHostingContextID);
 #endif
 
+#if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
+    void requestSharedSimulationConnection(WebCore::ProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&&);
+#endif
+
+#if PLATFORM(COCOA)
+    void updateModelProcessCreationParameters(ModelProcessCreationParameters&);
+#endif
+
     ModelProcessCreationParameters processCreationParameters();
 
     RefPtr<ProcessThrottler::Activity> m_activityFromWebProcesses;
 
     HashSet<PAL::SessionID> m_sessionIDs;
+
+#if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
+    bool m_didInitializeSharedSimulationConnection { false };
+#endif
 };
 
 } // namespace WebKit

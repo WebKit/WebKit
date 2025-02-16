@@ -50,18 +50,15 @@ using namespace WebCore;
 GST_DEBUG_CATEGORY_STATIC(webkit_media_src_debug);
 #define GST_CAT_DEFAULT webkit_media_src_debug
 
-#define webkit_media_src_parent_class parent_class
-#define WEBKIT_MEDIA_SRC_CATEGORY_INIT GST_DEBUG_CATEGORY_INIT(webkit_media_src_debug, "webkitmediasrc", 0, "websrc element");
-
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src_%s", GST_PAD_SRC,
+static GstStaticPadTemplate mseSrcTemplate = GST_STATIC_PAD_TEMPLATE("src_%s", GST_PAD_SRC,
     GST_PAD_SOMETIMES, GST_STATIC_CAPS_ANY);
 
 enum {
-    PROP_0,
-    PROP_N_AUDIO,
-    PROP_N_VIDEO,
-    PROP_N_TEXT,
-    PROP_LAST
+    WEBKIT_MEDIA_SRC_PROP_0,
+    WEBKIT_MEDIA_SRC_PROP_N_AUDIO,
+    WEBKIT_MEDIA_SRC_PROP_N_VIDEO,
+    WEBKIT_MEDIA_SRC_PROP_N_TEXT,
+    WEBKIT_MEDIA_SRC_PROP_LAST
 };
 
 struct Stream;
@@ -103,8 +100,6 @@ static void webKitMediaSrcGetProperty(GObject*, unsigned propId, GValue*, GParam
 static void webKitMediaSrcStreamFlush(Stream*, bool isSeekingFlush);
 static gboolean webKitMediaSrcSendEvent(GstElement*, GstEvent*);
 static RefPtr<MediaPlayerPrivateGStreamerMSE> webKitMediaSrcPlayer(WebKitMediaSrc*);
-
-#define webkit_media_src_parent_class parent_class
 
 struct WebKitMediaSrcPadPrivate {
     ThreadSafeWeakPtr<Stream> stream;
@@ -154,7 +149,7 @@ static void webkit_media_src_pad_class_init(WebKitMediaSrcPadClass*)
 
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitMediaSrc, webkit_media_src, GST_TYPE_ELEMENT,
     G_IMPLEMENT_INTERFACE(GST_TYPE_URI_HANDLER, webKitMediaSrcUriHandlerInit);
-    GST_DEBUG_CATEGORY_INIT(webkit_media_src_debug, "webkitmediasrc", 0, "WebKit MSE source element"));
+    GST_DEBUG_CATEGORY_INIT(webkit_media_src_debug, "webkitmsesrc", 0, "WebKit MSE source element"));
 
 struct Stream : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Stream> {
     Stream(WebKitMediaSrc* source, GRefPtr<GstPad>&& pad, Ref<MediaSourceTrackGStreamer>&& track, GRefPtr<GstStream>&& streamInfo)
@@ -216,7 +211,7 @@ static void dumpPipeline([[maybe_unused]] ASCIILiteral description, [[maybe_unus
 {
 #ifndef GST_DISABLE_GST_DEBUG
     auto pipeline = findPipeline(GRefPtr<GstElement>(GST_ELEMENT(stream->source)));
-    auto fileName = makeString(span(GST_OBJECT_NAME(pipeline.get())), '-', stream->track->id(), '-', description);
+    auto fileName = makeString(unsafeSpan(GST_OBJECT_NAME(pipeline.get())), '-', stream->track->id(), '-', description);
     GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN_CAST(pipeline.get()), GST_DEBUG_GRAPH_SHOW_ALL, fileName.utf8().data());
 #endif
 }
@@ -262,7 +257,7 @@ static gboolean webKitMediaSrcQuery(GstElement* element, GstQuery* query)
     }
 #endif
 
-    gboolean result = GST_ELEMENT_CLASS(parent_class)->query(element, query);
+    gboolean result = GST_ELEMENT_CLASS(webkit_media_src_parent_class)->query(element, query);
 
     if (GST_QUERY_TYPE(query) != GST_QUERY_SCHEDULING)
         return result;
@@ -283,7 +278,7 @@ static void webkit_media_src_class_init(WebKitMediaSrcClass* klass)
     oklass->constructed = webKitMediaSrcConstructed;
     oklass->get_property = webKitMediaSrcGetProperty;
 
-    gst_element_class_add_static_pad_template_with_gtype(eklass, &srcTemplate, webkit_media_src_pad_get_type());
+    gst_element_class_add_static_pad_template_with_gtype(eklass, &mseSrcTemplate, webkit_media_src_pad_get_type());
 
     gst_element_class_set_static_metadata(eklass, "WebKit MediaSource source element", "Source/Network", "Feeds samples coming from WebKit MediaSource object", "Igalia <aboya@igalia.com>");
 
@@ -296,22 +291,22 @@ static void webkit_media_src_class_init(WebKitMediaSrcClass* klass)
         eklass->query = GST_DEBUG_FUNCPTR(webKitMediaSrcQuery);
 
     g_object_class_install_property(oklass,
-        PROP_N_AUDIO,
+        WEBKIT_MEDIA_SRC_PROP_N_AUDIO,
         g_param_spec_int("n-audio", nullptr, nullptr,
-        0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
+            0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
     g_object_class_install_property(oklass,
-        PROP_N_VIDEO,
+        WEBKIT_MEDIA_SRC_PROP_N_VIDEO,
         g_param_spec_int("n-video", nullptr, nullptr,
-        0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
+            0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
     g_object_class_install_property(oklass,
-        PROP_N_TEXT,
+        WEBKIT_MEDIA_SRC_PROP_N_TEXT,
         g_param_spec_int("n-text", nullptr, nullptr,
-        0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
+            0, G_MAXINT, 0, GParamFlags(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 }
 
 static void webKitMediaSrcConstructed(GObject* object)
 {
-    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+    G_OBJECT_CLASS(webkit_media_src_parent_class)->constructed(object);
 
     ASSERT(isMainThread());
     GST_OBJECT_FLAG_SET(object, GST_ELEMENT_FLAG_SOURCE);
@@ -784,13 +779,13 @@ static void webKitMediaSrcGetProperty(GObject* object, unsigned propId, GValue* 
     WebKitMediaSrc* source = WEBKIT_MEDIA_SRC(object);
 
     switch (propId) {
-    case PROP_N_AUDIO:
+    case WEBKIT_MEDIA_SRC_PROP_N_AUDIO:
         g_value_set_int(value, countStreamsOfType(source, WebCore::TrackPrivateBaseGStreamer::TrackType::Audio));
         break;
-    case PROP_N_VIDEO:
+    case WEBKIT_MEDIA_SRC_PROP_N_VIDEO:
         g_value_set_int(value, countStreamsOfType(source, WebCore::TrackPrivateBaseGStreamer::TrackType::Video));
         break;
-    case PROP_N_TEXT:
+    case WEBKIT_MEDIA_SRC_PROP_N_TEXT:
         g_value_set_int(value, countStreamsOfType(source, WebCore::TrackPrivateBaseGStreamer::TrackType::Text));
         break;
     default:

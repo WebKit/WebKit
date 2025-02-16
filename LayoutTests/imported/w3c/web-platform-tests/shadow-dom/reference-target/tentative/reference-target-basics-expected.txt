@@ -1,0 +1,6 @@
+
+FAIL ShadowRoot.referenceTarget defaults to empty string when shadow is created declaratively assert_equals: expected (string) "" but got (undefined) undefined
+FAIL <template> shadowrootreferencetarget sets referenceTarget on shadow root assert_equals: expected (string) "targetID" but got (undefined) undefined
+FAIL ShadowRoot.referenceTarget defaults to empty string when shadow is created imperatively assert_equals: expected (string) "" but got (undefined) undefined
+FAIL ShadowRootInitDict can be used to set referenceTarget on shadow root assert_equals: expected (string) "targetID" but got (undefined) undefined
+

@@ -69,9 +69,13 @@ void GStreamerWebRTCLogSink::start()
 #else
     if (!m_isGstDebugActive)
         gst_debug_remove_log_function(gst_debug_log_default);
-    gst_debug_add_log_function(static_cast<GstLogFunction>(+[](GstDebugCategory*, GstDebugLevel level, const char*, const char*, int, GObject*, GstDebugMessage* message, gpointer userData) G_GNUC_NO_INSTRUMENT {
+    gst_debug_add_log_function(static_cast<GstLogFunction>(+[](GstDebugCategory*, GstDebugLevel level, const char*, const char*, int, GObject*, GstDebugMessage* debugMessage, gpointer userData) G_GNUC_NO_INSTRUMENT {
+        const char* message = gst_debug_message_get(debugMessage);
+        if (!message)
+            return;
+
         auto self = reinterpret_cast<GStreamerWebRTCLogSink*>(userData);
-        self->m_callback(toWebRTCLogLevel(level), String::fromUTF8(gst_debug_message_get(message)));
+        self->m_callback(toWebRTCLogLevel(level), String::fromUTF8(message));
     }), this, nullptr);
 
     // Do not include webrtcstats in the list, because stats are logged using a different code path by the endpoint.

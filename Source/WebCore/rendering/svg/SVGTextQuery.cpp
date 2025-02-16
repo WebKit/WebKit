@@ -56,7 +56,7 @@ static inline InlineIterator::InlineBoxIterator inlineBoxForRenderer(RenderObjec
     }
 
     if (CheckedPtr renderInline = dynamicDowncast<RenderInline>(*renderer))
-        return InlineIterator::firstInlineBoxFor(*renderInline);
+        return InlineIterator::lineLeftmostInlineBoxFor(*renderInline);
 
     ASSERT_NOT_REACHED();
     return { };
@@ -77,16 +77,16 @@ void SVGTextQuery::collectTextBoxesInInlineBox(InlineIterator::InlineBoxIterator
         if (auto* flowBox = dynamicDowncast<InlineIterator::InlineBox>(*box)) {
             // Skip generated content.
             if (!flowBox->renderer().element())
-                box.traverseNextOnLineSkippingChildren();
+                box.traverseLineRightwardOnLineSkippingChildren();
             else
-                box.traverseNextOnLine();
+                box.traverseLineRightwardOnLine();
             continue;
         }
 
         if (auto* inlineTextBox = dynamicDowncast<InlineIterator::SVGTextBoxIterator>(box))
             m_textBoxes.append(*inlineTextBox);
 
-        box.traverseNextOnLine();
+        box.traverseLineRightwardOnLine();
     }
 }
 

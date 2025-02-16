@@ -46,48 +46,9 @@ static String adapterName(WGPUAdapter adapter)
 static Ref<SupportedFeatures> supportedFeatures(const Vector<WGPUFeatureName>& features)
 {
     Vector<String> result;
-    for (auto feature : features) {
-        switch (feature) {
-        case WGPUFeatureName_Undefined:
-            continue;
-        case WGPUFeatureName_DepthClipControl:
-            result.append("depth-clip-control"_s);
-            break;
-        case WGPUFeatureName_Depth32FloatStencil8:
-            result.append("depth32float-stencil8"_s);
-            break;
-        case WGPUFeatureName_TimestampQuery:
-            result.append("timestamp-query"_s);
-            break;
-        case WGPUFeatureName_TextureCompressionBC:
-            result.append("texture-compression-bc"_s);
-            break;
-        case WGPUFeatureName_TextureCompressionETC2:
-            result.append("texture-compression-etc2"_s);
-            break;
-        case WGPUFeatureName_TextureCompressionASTC:
-            result.append("texture-compression-astc"_s);
-            break;
-        case WGPUFeatureName_IndirectFirstInstance:
-            result.append("indirect-first-instance"_s);
-            break;
-        case WGPUFeatureName_ShaderF16:
-            result.append("shader-f16"_s);
-            break;
-        case WGPUFeatureName_RG11B10UfloatRenderable:
-            result.append("rg11b10ufloat-renderable"_s);
-            break;
-        case WGPUFeatureName_BGRA8UnormStorage:
-            result.append("bgra8unorm-storage"_s);
-            break;
-        case WGPUFeatureName_Float32Filterable:
-            result.append("float32-filterable"_s);
-            break;
-        case WGPUFeatureName_Force32:
-            ASSERT_NOT_REACHED();
-            continue;
-        }
-    }
+    for (auto feature : features)
+        result.append(wgpuAdapterFeatureName(feature));
+
     return SupportedFeatures::create(WTFMove(result));
 }
 
@@ -138,7 +99,9 @@ static Ref<SupportedLimits> supportedLimits(WGPUAdapter adapter)
         limits.limits.maxComputeWorkgroupSizeX,
         limits.limits.maxComputeWorkgroupSizeY,
         limits.limits.maxComputeWorkgroupSizeZ,
-        limits.limits.maxComputeWorkgroupsPerDimension);
+        limits.limits.maxComputeWorkgroupsPerDimension,
+        limits.limits.maxStorageBuffersInFragmentStage,
+        limits.limits.maxStorageTexturesInFragmentStage);
 }
 
 static bool isFallbackAdapter(WGPUAdapter adapter)
@@ -264,6 +227,8 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         SET_MAX_VALUE(maxComputeWorkgroupSizeY)
         SET_MAX_VALUE(maxComputeWorkgroupSizeZ)
         SET_MAX_VALUE(maxComputeWorkgroupsPerDimension)
+        SET_MAX_VALUE(maxStorageBuffersInFragmentStage)
+        SET_MAX_VALUE(maxStorageTexturesInFragmentStage)
         else {
             callback(nullptr);
             return;
@@ -320,7 +285,9 @@ void AdapterImpl::requestDevice(const DeviceDescriptor& descriptor, CompletionHa
         limits.maxComputeWorkgroupSizeX,
         limits.maxComputeWorkgroupSizeY,
         limits.maxComputeWorkgroupSizeZ,
-        limits.maxComputeWorkgroupsPerDimension);
+        limits.maxComputeWorkgroupsPerDimension,
+        limits.maxStorageBuffersInFragmentStage,
+        limits.maxStorageTexturesInFragmentStage);
 
     auto requestedFeatures = supportedFeatures(features);
     auto blockPtr = makeBlockPtr([protectedThis = Ref { *this }, convertToBackingContext = m_convertToBackingContext.copyRef(), callback = WTFMove(callback), requestedLimits, requestedFeatures](WGPURequestDeviceStatus status, WGPUDevice device, const char*) mutable {

@@ -60,7 +60,6 @@ public:
 
     Locale::WritingDirection defaultWritingDirection() const override;
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     String formatDateTime(const DateComponents&, FormatType = FormatTypeUnspecified) override;
 
     String dateFormat() override;
@@ -75,7 +74,6 @@ public:
     const Vector<String>& standAloneMonthLabels() override;
     const Vector<String>& shortStandAloneMonthLabels() override;
     const Vector<String>& timeAMPMLabels() override;
-#endif
 
     static RetainPtr<CFStringRef> canonicalLanguageIdentifierFromString(const AtomString&);
     static void releaseMemory();
@@ -86,7 +84,6 @@ private:
 
     RetainPtr<NSLocale> m_locale;
     RetainPtr<NSCalendar> m_gregorianCalendar;
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     Vector<String> m_monthLabels;
     RetainPtr<NSDateFormatter> timeFormatter();
     RetainPtr<NSDateFormatter> shortTimeFormatter();
@@ -104,7 +101,6 @@ private:
     Vector<String> m_standAloneMonthLabels;
     Vector<String> m_shortStandAloneMonthLabels;
     Vector<String> m_timeAMPMLabels;
-#endif
     bool m_didInitializeNumberData;
 };
 

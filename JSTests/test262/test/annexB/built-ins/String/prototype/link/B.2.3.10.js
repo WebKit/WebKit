@@ -5,12 +5,12 @@
 // http://mathias.html5.org/tests/javascript/string/
 
 /*---
- description: >
-     String.prototype.link returns a string of HTML describing a single HTML
-     link element. The element's content is the `this` value of the function
-     invocation, coerced to a string. If specified, the first argument will be
-     coerced to a string, escaped, and set as the element's `href` attribute.
- es6id: B.2.3.10
+description: >
+    String.prototype.link returns a string of HTML describing a single HTML
+    link element. The element's content is the `this` value of the function
+    invocation, coerced to a string. If specified, the first argument will be
+    coerced to a string, escaped, and set as the element's `href` attribute.
+es6id: B.2.3.10
 ---*/
 
 assert.sameValue('_'.link('b'), '<a href="b">_</a>');

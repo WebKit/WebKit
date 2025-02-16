@@ -6,5 +6,5 @@ PASS Animation with ranges [0%, 50%]
 PASS Animation with ranges [10%, 50%]
 PASS Animation with ranges [150px, 75em]
 PASS Animation with ranges [calc(1% + 135px), calc(70em + 50px)]
-FAIL Animation with ranges [calc(1% + 135px), calc(70em + 50px)] (scoped) assert_equals: expected "0" but got "100"
+PASS Animation with ranges [calc(1% + 135px), calc(70em + 50px)] (scoped)
 

@@ -36,7 +36,7 @@ public:
     using Base = JSCell;
 
     static constexpr unsigned StructureFlags = Base::StructureFlags | StructureIsImmortal;
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     DECLARE_EXPORT_INFO;
 

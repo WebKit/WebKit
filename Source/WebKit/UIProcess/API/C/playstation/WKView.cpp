@@ -110,7 +110,8 @@ void WKViewSetVisible(WKViewRef view, bool visible)
 void WKViewWillEnterFullScreen(WKViewRef view)
 {
 #if ENABLE(FULLSCREEN_API)
-    WebKit::toImpl(view)->willEnterFullScreen();
+    // FIXME: Replace this and WKViewSetViewClient's enterFullScreen with a listener object.
+    WebKit::toImpl(view)->willEnterFullScreen([] (bool) { });
 #endif
 }
 
@@ -168,11 +169,14 @@ void WKViewSetViewClient(WKViewRef view, const WKViewClientBase* client)
             m_client.setViewNeedsDisplay(WebKit::toAPI(&view), WebKit::toAPI(region.bounds()), m_client.base.clientInfo);
         }
 
-        void enterFullScreen(WebKit::PlayStationWebView& view)
+        void enterFullScreen(WebKit::PlayStationWebView& view, CompletionHandler<void(bool)>&& completionHandler)
         {
             if (!m_client.enterFullScreen)
-                return;
+                return completionHandler(false);
             m_client.enterFullScreen(WebKit::toAPI(&view), m_client.base.clientInfo);
+
+            // FIXME: Replace this and WKViewWillEnterFullScreen with a listener object.
+            completionHandler(false);
         }
         
         void exitFullScreen(WebKit::PlayStationWebView& view)

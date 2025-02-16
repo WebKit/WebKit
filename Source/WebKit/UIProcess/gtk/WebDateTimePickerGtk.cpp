@@ -27,8 +27,6 @@
 #include "config.h"
 #include "WebDateTimePickerGtk.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "WebKitWebViewBasePrivate.h"
 #include <gtk/gtk.h>
 #include <wtf/SetForScope.h>
@@ -188,5 +186,3 @@ void WebDateTimePickerGtk::update(WebCore::DateTimeChooserParameters&& params)
 }
 
 } // namespace WebKit
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

@@ -38,13 +38,13 @@ namespace WTF {
     DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SegmentedVector);
 
     // An iterator for SegmentedVector. It supports only the pre ++ operator
-    template <typename T, size_t SegmentSize = 8> class SegmentedVector;
-    template <typename T, size_t SegmentSize = 8> class SegmentedVectorIterator {
+    template <typename T, size_t SegmentSize = 8, typename Malloc = SegmentedVectorMalloc> class SegmentedVector;
+    template <typename T, size_t SegmentSize = 8, typename Malloc = SegmentedVectorMalloc> class SegmentedVectorIterator {
         WTF_MAKE_FAST_ALLOCATED;
     private:
-        friend class SegmentedVector<T, SegmentSize>;
+        friend class SegmentedVector<T, SegmentSize, Malloc>;
     public:
-        typedef SegmentedVectorIterator<T, SegmentSize> Iterator;
+        typedef SegmentedVectorIterator<T, SegmentSize, Malloc> Iterator;
 
         using iterator_category = std::forward_iterator_tag;
         using value_type = T;
@@ -69,7 +69,7 @@ namespace WTF {
             return m_index == other.m_index && &m_vector == &other.m_vector;
         }
 
-        SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize>& other)
+        SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize, Malloc>& other)
         {
             m_vector = other.m_vector;
             m_index = other.m_index;
@@ -77,7 +77,7 @@ namespace WTF {
         }
 
     private:
-        SegmentedVectorIterator(SegmentedVector<T, SegmentSize>& vector, size_t index)
+        SegmentedVectorIterator(SegmentedVector<T, SegmentSize, Malloc>& vector, size_t index)
             : m_vector(vector)
             , m_index(index)
         {
@@ -92,14 +92,14 @@ namespace WTF {
     // pointers into a SegmentedVector. The default tuning values are
     // optimized for segmented vectors that get large; you may want to use
     // SegmentedVector<thingy, 1> if you don't expect a lot of entries.
-    template <typename T, size_t SegmentSize>
+    template <typename T, size_t SegmentSize, typename Malloc>
     class SegmentedVector final {
-        friend class SegmentedVectorIterator<T, SegmentSize>;
+        friend class SegmentedVectorIterator<T, SegmentSize, Malloc>;
         WTF_MAKE_NONCOPYABLE(SegmentedVector);
         WTF_MAKE_FAST_ALLOCATED;
 
     public:
-        using Iterator = SegmentedVectorIterator<T, SegmentSize>;
+        using Iterator = SegmentedVectorIterator<T, SegmentSize, Malloc>;
 
         using value_type = T;
         using iterator = Iterator;
@@ -122,7 +122,7 @@ namespace WTF {
 
         const T& at(size_t index) const
         {
-            return const_cast<SegmentedVector<T, SegmentSize>*>(this)->at(index);
+            return const_cast<SegmentedVector<T, SegmentSize, Malloc>*>(this)->at(index);
         }
 
         T& operator[](size_t index)
@@ -228,7 +228,7 @@ namespace WTF {
             for (size_t i = 0; i < m_size; ++i)
                 at(i).~T();
             for (size_t i = 0; i < m_segments.size(); ++i)
-                SegmentedVectorMalloc::free(m_segments[i]);
+                Malloc::free(m_segments[i]);
         }
 
         bool segmentExistsFor(size_t index)
@@ -264,11 +264,11 @@ namespace WTF {
 
         void allocateSegment()
         {
-            m_segments.append(static_cast<Segment*>(SegmentedVectorMalloc::malloc(sizeof(T) * SegmentSize)));
+            m_segments.append(static_cast<Segment*>(Malloc::malloc(sizeof(T) * SegmentSize)));
         }
 
         size_t m_size { 0 };
-        Vector<Segment*> m_segments;
+        Vector<Segment*, 0, CrashOnOverflow, 16, Malloc> m_segments;
     };
 
 } // namespace WTF

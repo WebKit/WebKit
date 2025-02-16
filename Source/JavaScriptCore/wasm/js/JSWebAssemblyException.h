@@ -36,7 +36,7 @@ namespace JSC {
 class JSWebAssemblyException final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     using Payload = FixedVector<uint64_t>;
 
     static void destroy(JSCell*);
@@ -51,9 +51,9 @@ public:
 
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
-    static JSWebAssemblyException* create(VM& vm, Structure* structure, const Wasm::Tag& tag, FixedVector<uint64_t>&& payload)
+    static JSWebAssemblyException* create(VM& vm, Structure* structure, Ref<const Wasm::Tag>&& tag, FixedVector<uint64_t>&& payload)
     {
-        JSWebAssemblyException* exception = new (NotNull, allocateCell<JSWebAssemblyException>(vm)) JSWebAssemblyException(vm, structure, tag, WTFMove(payload));
+        JSWebAssemblyException* exception = new (NotNull, allocateCell<JSWebAssemblyException>(vm)) JSWebAssemblyException(vm, structure, WTFMove(tag), WTFMove(payload));
         exception->finishCreation(vm);
         return exception;
     }
@@ -67,9 +67,9 @@ public:
     static constexpr ptrdiff_t offsetOfPayload() { return OBJECT_OFFSETOF(JSWebAssemblyException, m_payload); }
 
 protected:
-    JSWebAssemblyException(VM&, Structure*, const Wasm::Tag&, FixedVector<uint64_t>&&);
+    JSWebAssemblyException(VM&, Structure*, Ref<const Wasm::Tag>&&, FixedVector<uint64_t>&&);
 
-    DECLARE_DEFAULT_FINISH_CREATION;
+    void finishCreation(VM&);
 
     Ref<const Wasm::Tag> m_tag;
     Payload m_payload;

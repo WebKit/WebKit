@@ -55,7 +55,7 @@ noInline(iter)
 async function test() {
     const instance = await instantiate(wat, {}, { reference_types: true, function_references: true, gc: true })
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         iter(instance)
     }
 }

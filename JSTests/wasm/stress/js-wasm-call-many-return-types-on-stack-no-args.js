@@ -21,7 +21,7 @@ async function buildWat(types) {
         throw new Error();
     if (results.length !== types.length)
         throw new Error();
-    for (let j = 0; j < 10000; ++j) {
+    for (let j = 0; j < wasmTestLoopCount; ++j) {
         for (let i = 0; i < types.length; ++i) {
             if (results[i] !== i)
                 throw new Error("got " + results[i] + " but wanted " + i + " in results: " + results);

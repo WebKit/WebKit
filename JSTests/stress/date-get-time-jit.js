@@ -11,7 +11,7 @@ noInline(test);
 var date = new Date();
 var invalid = new Date(NaN);
 var expected = date.getTime();
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test(date), expected);
     var d = new Date();
     shouldBe(test(d), d.getTime());

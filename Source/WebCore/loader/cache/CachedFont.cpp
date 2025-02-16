@@ -73,10 +73,15 @@ void CachedFont::didAddClient(CachedResourceClient& client)
 
 FontParsingPolicy CachedFont::policyForCustomFont(const Ref<SharedBuffer>& data)
 {
-    if (!m_loader || !m_loader->frame())
+    RefPtr loader = m_loader;
+    if (!loader)
         return FontParsingPolicy::Deny;
 
-    return fontBinaryParsingPolicy(data->span(), m_loader->frame()->settings().downloadableBinaryFontTrustedTypes());
+    RefPtr frame = loader->frame();
+    if (!frame)
+        return FontParsingPolicy::Deny;
+
+    return fontBinaryParsingPolicy(data->span(), frame->settings().downloadableBinaryFontTrustedTypes());
 }
 
 void CachedFont::finishLoading(const FragmentedSharedBuffer* data, const NetworkLoadMetrics& metrics)

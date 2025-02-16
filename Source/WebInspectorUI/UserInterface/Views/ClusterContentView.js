@@ -35,6 +35,7 @@ WI.ClusterContentView = class ClusterContentView extends WI.ContentView
         this._contentViewContainer.addEventListener(WI.ContentViewContainer.Event.CurrentContentViewDidChange, this._currentContentViewDidChange, this);
         this.addSubview(this._contentViewContainer);
 
+        WI.ContentView.addEventListener(WI.ContentView.Event.NavigationItemsDidChange, this._contentViewNavigationItemsDidChange, this);
         WI.ContentView.addEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
         WI.ContentView.addEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
         WI.ContentView.addEventListener(WI.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
@@ -72,6 +73,7 @@ WI.ClusterContentView = class ClusterContentView extends WI.ContentView
 
         this._contentViewContainer.closeAllContentViews();
 
+        WI.ContentView.removeEventListener(WI.ContentView.Event.NavigationItemsDidChange, this._contentViewNavigationItemsDidChange, this);
         WI.ContentView.removeEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
         WI.ContentView.removeEventListener(WI.ContentView.Event.SupplementalRepresentedObjectsDidChange, this._contentViewSupplementalRepresentedObjectsDidChange, this);
         WI.ContentView.removeEventListener(WI.ContentView.Event.NumberOfSearchResultsDidChange, this._contentViewNumberOfSearchResultsDidChange, this);
@@ -229,6 +231,13 @@ WI.ClusterContentView = class ClusterContentView extends WI.ContentView
 
         this.dispatchEventToListeners(WI.ContentView.Event.SelectionPathComponentsDidChange);
         this.dispatchEventToListeners(WI.ContentView.Event.NumberOfSearchResultsDidChange);
+        this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
+    }
+
+    _contentViewNavigationItemsDidChange(event)
+    {
+        if (event.target !== this._contentViewContainer.currentContentView)
+            return;
         this.dispatchEventToListeners(WI.ContentView.Event.NavigationItemsDidChange);
     }
 

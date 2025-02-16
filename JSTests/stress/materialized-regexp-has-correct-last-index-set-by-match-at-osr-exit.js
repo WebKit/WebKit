@@ -19,7 +19,7 @@ function test(num, string)
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var num = i % 3;
     switch (num) {
     case 0:

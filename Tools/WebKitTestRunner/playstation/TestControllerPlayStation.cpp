@@ -33,7 +33,7 @@ namespace WTR {
 
 void TestController::notifyDone()
 {
-    RunLoop::main().stop();
+    RunLoop::protectedMain()->stop();
 }
 
 void TestController::platformInitialize(const Options&)
@@ -54,7 +54,7 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
         void fired()
         {
             timedOut = true;
-            RunLoop::main().stop();
+            RunLoop::protectedMain()->stop();
         }
 
         RunLoop::Timer timer;

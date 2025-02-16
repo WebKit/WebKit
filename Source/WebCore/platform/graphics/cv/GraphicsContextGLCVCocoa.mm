@@ -46,8 +46,6 @@
 
 #include "CoreVideoSoftLink.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLCVCocoa);
@@ -248,7 +246,7 @@ struct GLfloatColors {
 };
 
 struct YCbCrMatrix {
-    GLfloat rows[4][4];
+    std::array<std::array<GLfloat, 4>, 4> rows;
 
     constexpr YCbCrMatrix(PixelRange, GLfloat cbCoefficient, GLfloat crCoefficient);
 
@@ -771,7 +769,5 @@ RetainPtr<CVPixelBufferRef> GraphicsContextGLCVCocoa::convertPixelBuffer(CVPixel
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

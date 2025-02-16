@@ -148,7 +148,7 @@ public:
 
     void stopKeyboardScrolling();
 
-    bool startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, const Function<FloatPoint(const FloatPoint&)>& destinationModifier);
+    bool startMomentumScrollWithInitialVelocity(const FloatPoint& initialOffset, const FloatSize& initialVelocity, const FloatSize& initialDelta, NOESCAPE const Function<FloatPoint(const FloatPoint&)>& destinationModifier);
 
     void willBeginKeyboardScrolling();
     void didStopKeyboardScrolling();
@@ -240,6 +240,8 @@ private:
     FloatPoint scrollOffset(ScrollAnimation&) final;
 
     void adjustDeltaForSnappingIfNeeded(float& deltaX, float& deltaY);
+
+    void clampDeltaForAllowedAxes(const PlatformWheelEvent&, FloatSize&);
 
 #if ENABLE(KINETIC_SCROLLING) && !PLATFORM(MAC)
     // Returns true if handled.

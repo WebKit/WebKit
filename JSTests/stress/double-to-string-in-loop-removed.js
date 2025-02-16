@@ -1,6 +1,6 @@
 function test()
 {
-    for (var i = 0; i < 1e6; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         (i * 0.1).toString();
 }
 noInline(test);

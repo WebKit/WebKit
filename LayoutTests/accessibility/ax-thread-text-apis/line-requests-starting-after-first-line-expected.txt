@@ -1,0 +1,9 @@
+This test verifies that requesting the current line range for a line that is not the first line works as expected.
+
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'Hello world.'
+PASS: paragraph.stringForTextMarkerRange(lineRange) === 'Here is a link'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Hello world. Here is a link

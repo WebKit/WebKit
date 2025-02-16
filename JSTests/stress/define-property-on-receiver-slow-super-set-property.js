@@ -8,7 +8,7 @@
     });
 
     var { method } = { method() { super.foo = 1; } };
-    for (var i = 0; i < 1e6; i++)
+    for (var i = 0; i < testLoopCount; i++)
         method.call(proxy);
 
     if (trapCalls !== i)

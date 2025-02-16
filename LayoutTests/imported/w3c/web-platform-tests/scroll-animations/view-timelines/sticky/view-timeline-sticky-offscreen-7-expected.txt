@@ -1,4 +1,4 @@
 Subject
 
-FAIL View timeline target > viewport, bottom-sticky and top-sticky during contain. assert_equals: Effect at the midpoint of the active range: entry 0% to entry 100% expected "0.5" but got "0.466667"
+FAIL View timeline target > viewport, bottom-sticky and top-sticky during contain. assert_equals: Effect at the midpoint of the active range: contain 0% to contain 100% expected "0.5" but got "0.3"
 

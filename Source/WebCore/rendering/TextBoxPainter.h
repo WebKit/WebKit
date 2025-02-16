@@ -93,7 +93,7 @@ protected:
         FloatPoint location;
     };
     using DecoratingBoxList = Vector<DecoratingBox>;
-    void collectDecoratingBoxesForTextBox(DecoratingBoxList&, const InlineIterator::TextBoxIterator&, FloatPoint textBoxLocation, const TextDecorationPainter::Styles&);
+    void collectDecoratingBoxesForBackgroundPainting(DecoratingBoxList&, const InlineIterator::TextBoxIterator&, FloatPoint textBoxLocation, const TextDecorationPainter::Styles&);
 
     // FIXME: We could just talk to the display box directly.
     const InlineIterator::BoxModernPath m_textBox;
@@ -110,8 +110,8 @@ protected:
     const bool m_isCombinedText;
     const bool m_isPrinting;
     const bool m_haveSelection;
-    const bool m_containsComposition;
-    const bool m_useCustomUnderlines;
+    bool m_containsComposition { false };
+    bool m_useCustomUnderlines { false };
     std::optional<bool> m_emphasisMarkExistsAndIsAbove { };
 };
 

@@ -175,9 +175,11 @@ void DrawingAreaProxyCoordinatedGraphics::sizeDidChange()
 
 void DrawingAreaProxyCoordinatedGraphics::deviceScaleFactorDidChange(CompletionHandler<void()>&& completionHandler)
 {
-    if (m_webPageProxy)
-        send(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()));
-    completionHandler();
+    if (!m_webPageProxy) {
+        completionHandler();
+        return;
+    }
+    sendWithAsyncReply(Messages::DrawingArea::SetDeviceScaleFactor(m_webPageProxy->deviceScaleFactor()), WTFMove(completionHandler));
 }
 
 void DrawingAreaProxyCoordinatedGraphics::setBackingStoreIsDiscardable(bool isBackingStoreDiscardable)

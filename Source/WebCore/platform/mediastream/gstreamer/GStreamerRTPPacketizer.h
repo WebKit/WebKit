@@ -32,7 +32,7 @@ class GStreamerRTPPacketizer : public ThreadSafeRefCounted<GStreamerRTPPacketize
     WTF_MAKE_NONCOPYABLE(GStreamerRTPPacketizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    explicit GStreamerRTPPacketizer(GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters);
+    explicit GStreamerRTPPacketizer(GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, std::optional<int>&&);
     virtual ~GStreamerRTPPacketizer();
 
     GstElement* bin() const { return m_bin.get(); }
@@ -44,7 +44,7 @@ public:
     void ensureMidExtension(const String&);
 
     String rtpStreamId() const;
-    int payloadType() const;
+    std::optional<int> payloadType() const;
     unsigned currentSequenceNumberOffset() const;
     void setSequenceNumberOffset(unsigned);
 
@@ -68,10 +68,10 @@ protected:
     GRefPtr<GstElement> m_valve;
 
     GUniquePtr<GstStructure> m_encodingParameters;
-    int m_payloadType;
     GUniquePtr<GstStructure> m_stats;
 
 private:
+    void setPayloadType(int);
     void updateStatsFromRTPExtensions();
     void applyEncodingParameters(const GstStructure*) const;
     virtual void configure(const GstStructure*) const { };
@@ -85,6 +85,7 @@ private:
 
     String m_mid;
     String m_rid;
+    std::optional<int> m_payloadType;
 };
 
 } // namespace WebCore

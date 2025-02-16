@@ -1,0 +1,19 @@
+<style>
+.flex-box {
+  display: flex;
+}
+.flex-item {
+  width: 10px;
+  line-clamp: 1;
+}
+.content {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+}
+</style>
+<div class=flex-box><div class=flex-item>PASS if no crash.<div class=content></div>
+<script>
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>

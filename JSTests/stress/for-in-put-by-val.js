@@ -23,7 +23,7 @@ function test() {
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var object = test();
     if (i & 0x100) {
         var k = 62;

@@ -28,11 +28,10 @@
 #if USE(CORE_IMAGE)
 
 #import "FilterEffectApplier.h"
+#import "SourceGraphic.h"
 #import <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-
-class SourceGraphic;
 
 class SourceGraphicCoreImageApplier final : public FilterEffectConcreteApplier<SourceGraphic> {
     WTF_MAKE_TZONE_ALLOCATED(SourceGraphicCoreImageApplier);

@@ -20,7 +20,7 @@
 #include "common/system_utils.h"
 #include "common/vulkan/libvulkan_loader.h"
 #include "common/vulkan/vulkan_icd.h"
-#include "gpu_info_util/SystemInfo.h"
+#include "gpu_info_util/SystemInfo_vulkan.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/Display.h"
 #include "libANGLE/renderer/driver_utils.h"
@@ -101,6 +101,9 @@ constexpr uint32_t kPipelineCacheVkUpdatePeriod = 60;
 // later versions, they always do so in practice.  Avoiding later core versions helps keep the
 // initialization logic simpler.
 constexpr uint32_t kPreferredVulkanAPIVersion = VK_API_VERSION_1_1;
+
+// Development flag for transition period when both old and new syncval fitlers are used
+constexpr bool kSyncValCheckExtraProperties = false;
 
 bool IsVulkan11(uint32_t apiVersion)
 {
@@ -196,8 +199,6 @@ constexpr const char *kSkippedMessages[] = {
     // http://anglebug.com/42263850
     "VUID-vkCmdDraw-magFilter-04553",
     "VUID-vkCmdDrawIndexed-magFilter-04553",
-    // http://anglebug.com/42264452
-    "VUID-VkImageViewCreateInfo-pNext-01585",
     // http://anglebug.com/42265014
     "vkEnumeratePhysicalDevices: One or more layers modified physical devices",
     // http://anglebug.com/42265797
@@ -229,6 +230,7 @@ constexpr const char *kSkippedMessages[] = {
     "VUID-VkBufferViewCreateInfo-format-08779",
     // https://anglebug.com/42266639
     "VUID-VkVertexInputBindingDivisorDescriptionKHR-divisor-01870",
+    "VUID-VkVertexInputBindingDivisorDescription-divisor-01870",
     // https://anglebug.com/42266675
     "VUID-VkGraphicsPipelineCreateInfo-topology-08773",
     // https://anglebug.com/42265766
@@ -273,12 +275,15 @@ constexpr const char *kSkippedMessages[] = {
     "Undefined-Value-ShaderFragmentOutputMismatch",
     // https://anglebug.com/336652255
     "VUID-vkCmdDraw-None-09600",
-    "UNASSIGNED-CoreValidation-DrawState-InvalidImageLayout",
     // https://issuetracker.google.com/336847261
     "VUID-VkImageCreateInfo-pNext-02397",
     "VUID-vkCmdDraw-None-06550",
     // https://anglebug.com/345304850
     "WARNING-Shader-OutputNotConsumed",
+    // https://anglebug.com/383311444
+    "VUID-vkCmdDraw-None-09462",
+    // https://anglebug.com/394598758
+    "VUID-vkBindBufferMemory-size-01037",
 };
 
 // Validation messages that should be ignored only when VK_EXT_primitive_topology_list_restart is
@@ -357,7 +362,7 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
     // http://anglebug.com/42264930
     // http://anglebug.com/42265542
     //
-    // Occassionally, this is due to VVL's lack of support for some extensions.  For example,
+    // Occasionally, this is due to VVL's lack of support for some extensions.  For example,
     // syncval doesn't properly account for VK_EXT_fragment_shader_interlock, which gives
     // synchronization guarantees without the need for an image barrier.
     // https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/4387
@@ -377,31 +382,68 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
         "ATTACHMENT_"
         "READ|SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_WRITE",
     },
-    {
-        "SYNC-HAZARD-WRITE-AFTER-WRITE",
-        "Access info (usage: SYNC_IMAGE_LAYOUT_TRANSITION, prior_usage: "
-        "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_WRITE, write_barriers: "
-        "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_READ|SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_"
-        "ATTACHMENT_WRITE",
-    },
+    {"SYNC-HAZARD-WRITE-AFTER-WRITE",
+     "Access info (usage: SYNC_IMAGE_LAYOUT_TRANSITION, prior_usage: "
+     "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_WRITE, write_barriers: "
+     "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_READ|SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_"
+     "ATTACHMENT_WRITE",
+     "",
+     false,
+     {
+         "message_type = RenderPassLayoutTransitionError",
+         "access = SYNC_IMAGE_LAYOUT_TRANSITION",  // probably not needed, message_type implies this
+         "prior_access = "
+         "VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT(VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT)",
+         "write_barriers = "
+         "VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT(VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT|VK_"
+         "ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT)",
+     }},
     // From: TraceTest.manhattan_31 with SwiftShader and
     // VulkanPerformanceCounterTest.NewTextureDoesNotBreakRenderPass for both depth and stencil
     // aspect. http://anglebug.com/42265196.
     // Additionally hit in the asphalt_9 trace
     // https://issuetracker.google.com/316337308
-    {
-        "SYNC-HAZARD-WRITE-AFTER-WRITE",
-        "with loadOp VK_ATTACHMENT_LOAD_OP_DONT_CARE. Access info (usage: "
-        "SYNC_EARLY_FRAGMENT_TESTS_DEPTH_STENCIL_ATTACHMENT_WRITE, prior_usage: "
-        "SYNC_IMAGE_LAYOUT_TRANSITION",
-    },
+    {"SYNC-HAZARD-WRITE-AFTER-WRITE",
+     "with loadOp VK_ATTACHMENT_LOAD_OP_DONT_CARE. Access info (usage: "
+     "SYNC_EARLY_FRAGMENT_TESTS_DEPTH_STENCIL_ATTACHMENT_WRITE, prior_usage: "
+     "SYNC_IMAGE_LAYOUT_TRANSITION",
+     "",
+     false,
+     {
+         "message_type = RenderPassLoadOpError",
+         "load_op = VK_ATTACHMENT_LOAD_OP_DONT_CARE",
+         "access = "
+         "VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT(VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_"
+         "BIT)",
+         "prior_access = SYNC_IMAGE_LAYOUT_TRANSITION",
+     }},
+    // DifferentStencilMasksTest.DrawWithSameEffectiveMask/ES2_Vulkan_SwiftShader
+    // Also other errors with similar message structure.
+    {"SYNC-HAZARD-WRITE-AFTER-WRITE",
+     "with loadOp VK_ATTACHMENT_LOAD_OP_DONT_CARE. Access info (usage: "
+     "SYNC_EARLY_FRAGMENT_TESTS_DEPTH_STENCIL_ATTACHMENT_WRITE, prior_usage: "
+     "SYNC_IMAGE_LAYOUT_TRANSITION",
+     "",
+     false,
+     {
+         "message_type = BeginRenderingError",
+         "load_op = VK_ATTACHMENT_LOAD_OP_DONT_CARE",
+         "access = "
+         "VK_PIPELINE_STAGE_2_EARLY_FRAGMENT_TESTS_BIT(VK_ACCESS_2_DEPTH_STENCIL_ATTACHMENT_WRITE_"
+         "BIT)",
+         "prior_access = SYNC_IMAGE_LAYOUT_TRANSITION",
+     }},
     // From various tests. The validation layer does not calculate the exact vertexCounts that's
     // being accessed. http://anglebug.com/42265220
-    {
-        "SYNC-HAZARD-READ-AFTER-WRITE",
-        "Hazard READ_AFTER_WRITE for vertex",
-        "usage: SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ",
-    },
+    {"SYNC-HAZARD-READ-AFTER-WRITE",
+     "Hazard READ_AFTER_WRITE for vertex",
+     "usage: SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ",
+     false,
+     {
+         "message_type = DrawVertexBufferError",
+         "access = "
+         "VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT(VK_ACCESS_2_VERTEX_ATTRIBUTE_READ_BIT)",
+     }},
     {
         "SYNC-HAZARD-READ-AFTER-WRITE",
         "Hazard READ_AFTER_WRITE for index",
@@ -413,12 +455,15 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
         "Access info (usage: SYNC_VERTEX_SHADER_SHADER_STORAGE_WRITE, prior_usage: "
         "SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ",
     },
-    {
-        "SYNC-HAZARD-WRITE-AFTER-READ",
-        "Hazard WRITE_AFTER_READ for dstBuffer VkBuffer",
-        "Access info (usage: SYNC_COPY_TRANSFER_WRITE, prior_usage: "
-        "SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ",
-    },
+    {"SYNC-HAZARD-WRITE-AFTER-READ",
+     "Hazard WRITE_AFTER_READ for dstBuffer VkBuffer",
+     "Access info (usage: SYNC_COPY_TRANSFER_WRITE, prior_usage: "
+     "SYNC_VERTEX_ATTRIBUTE_INPUT_VERTEX_ATTRIBUTE_READ",
+     false,
+     {"message_type = BufferRegionError", "resource_parameter = dstBuffer",
+      "access = VK_PIPELINE_STAGE_2_COPY_BIT(VK_ACCESS_2_TRANSFER_WRITE_BIT)",
+      "prior_access = "
+      "VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT(VK_ACCESS_2_VERTEX_ATTRIBUTE_READ_BIT)"}},
     {
         "SYNC-HAZARD-WRITE-AFTER-READ",
         "Hazard WRITE_AFTER_READ for VkBuffer",
@@ -446,12 +491,31 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
      "with loadOp VK_ATTACHMENT_LOAD_OP_LOAD. Access info (usage: "
      "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_READ, prior_usage: "
      "SYNC_IMAGE_LAYOUT_TRANSITION, write_barriers: 0",
-     "", true},
+     "",
+     true,
+     {
+         "message_type = RenderPassLoadOpError",
+         "load_op = VK_ATTACHMENT_LOAD_OP_LOAD",
+         "access = "
+         "VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT(VK_ACCESS_2_COLOR_ATTACHMENT_READ_BIT)",
+         "prior_access = SYNC_IMAGE_LAYOUT_TRANSITION",
+         "write_barriers = 0",
+     }},
     {"SYNC-HAZARD-WRITE-AFTER-WRITE",
-     "image layout transition (old_layout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, new_layout: "
+     "image layout transition (old_layout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, "
+     "new_layout: "
      "VK_IMAGE_LAYOUT_GENERAL). Access info (usage: SYNC_IMAGE_LAYOUT_TRANSITION, prior_usage: "
      "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_WRITE, write_barriers:",
-     "", true},
+     "",
+     true,
+     {
+         "message_type = RenderPassLayoutTransitionError",
+         "old_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL",
+         "new_layout = VK_IMAGE_LAYOUT_GENERAL",
+         "access = SYNC_IMAGE_LAYOUT_TRANSITION",  // probably not needed, message_type implies this
+         "prior_access = "
+         "VK_PIPELINE_STAGE_2_COLOR_ATTACHMENT_OUTPUT_BIT(VK_ACCESS_2_COLOR_ATTACHMENT_WRITE_BIT)",
+     }},
     // From: TraceTest.special_forces_group_2 http://anglebug.com/42264123
     {
         "SYNC-HAZARD-WRITE-AFTER-READ",
@@ -501,6 +565,13 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessages[] = {
         "SYNC-HAZARD-WRITE-AFTER-WRITE",
         "Hazard WRITE_AFTER_WRITE for VkImageView",
         "Access info (usage: SYNC_ACCESS_INDEX_NONE, prior_usage: SYNC_IMAGE_LAYOUT_TRANSITION, ",
+    },
+    // http://anglebug.com/394598470
+    {
+        "SYNC-HAZARD-WRITE-AFTER-READ",
+        "access = VK_PIPELINE_STAGE_2_COPY_BIT(VK_ACCESS_2_TRANSFER_WRITE_BIT)",
+        "prior_access = "
+        "VK_PIPELINE_STAGE_2_VERTEX_ATTRIBUTE_INPUT_BIT(VK_ACCESS_2_VERTEX_ATTRIBUTE_READ_BIT)",
     },
 };
 
@@ -569,12 +640,21 @@ constexpr vk::SkippedSyncvalMessage kSkippedSyncvalMessagesWithMSRTTEmulation[] 
         "SYNC_COLOR_ATTACHMENT_OUTPUT_COLOR_ATTACHMENT_READ",
     },
     // Unknown whether ANGLE or syncval bug.
-    {
-        "SYNC-HAZARD-WRITE-AFTER-WRITE",
-        "image layout transition (old_layout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, "
-        "new_layout: VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL). Access info (usage: "
-        "SYNC_IMAGE_LAYOUT_TRANSITION",
-    },
+    {"SYNC-HAZARD-WRITE-AFTER-WRITE",
+     "image layout transition (old_layout: VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL, "
+     "new_layout: VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL). Access info (usage: "
+     "SYNC_IMAGE_LAYOUT_TRANSITION",
+     "",
+     false,
+     // TODO: it seems if this filter is removed then the error will be
+     // intersepted by a different filter. Investigate the nature of the
+     // error if necessary how to improve its detection.
+     {
+         "message_type = RenderPassLayoutTransitionError",
+         "old_layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL",
+         "new_layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL",
+         "access = SYNC_IMAGE_LAYOUT_TRANSITION",  // probably not needed, message_type implies this
+     }},
 };
 
 enum class DebugMessageReport
@@ -620,11 +700,38 @@ DebugMessageReport ShouldReportDebugMessage(Renderer *renderer,
 
     for (const vk::SkippedSyncvalMessage &msg : renderer->getSkippedSyncvalMessages())
     {
-        if (strstr(messageId, msg.messageId) == nullptr ||
-            strstr(message, msg.messageContents1) == nullptr ||
-            strstr(message, msg.messageContents2) == nullptr)
+        if (kSyncValCheckExtraProperties && msg.extraProperties[0])
         {
-            continue;
+            if (strstr(messageId, msg.messageId) == nullptr)
+            {
+                continue;
+            }
+            bool mismatch = false;
+            for (uint32_t i = 0; i < kMaxSyncValExtraProperties; i++)
+            {
+                if (msg.extraProperties[i] == nullptr)
+                {
+                    break;
+                }
+                if (strstr(message, msg.extraProperties[i]) == nullptr)
+                {
+                    mismatch = true;
+                    break;
+                }
+            }
+            if (mismatch)
+            {
+                continue;
+            }
+        }
+        else
+        {
+            if (strstr(messageId, msg.messageId) == nullptr ||
+                strstr(message, msg.messageContents1) == nullptr ||
+                strstr(message, msg.messageContents2) == nullptr)
+            {
+                continue;
+            }
         }
 
         // If the error is due to exposing coherent framebuffer fetch (without
@@ -763,7 +870,7 @@ DebugUtilsMessenger(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
     // Aesthetic value based on length of the function name, line number, etc.
     constexpr size_t kStartIndent = 28;
 
-    // Output the debug marker hierarchy under which this error has occured.
+    // Output the debug marker hierarchy under which this error has occurred.
     size_t indent = kStartIndent;
     if (callbackData->queueLabelCount > 0)
     {
@@ -1054,9 +1161,10 @@ size_t StorePipelineCacheVkChunks(vk::GlobalOps *globalOps,
                                   const size_t cacheDataSize,
                                   angle::MemoryBuffer *scratchBuffer);
 
-// Erasing is done by writing 1/0-sized chunks starting from the 0 chunk.
+// Erasing is done by writing 1/0-sized chunks starting from the startChunk.
 void ErasePipelineCacheVkChunks(vk::GlobalOps *globalOps,
                                 Renderer *renderer,
+                                const size_t startChunk,
                                 const size_t numChunks,
                                 const size_t slotIndex,
                                 angle::MemoryBuffer *scratchBuffer);
@@ -1112,6 +1220,8 @@ void CompressAndStorePipelineCacheVk(vk::GlobalOps *globalOps,
 
     size_t previousSlotIndex = 0;
     const size_t slotIndex   = renderer->getNextPipelineCacheBlobCacheSlotIndex(&previousSlotIndex);
+    const size_t previousNumChunks = renderer->updatePipelineCacheChunkCount(numChunks);
+    const bool isSlotChanged       = (slotIndex != previousSlotIndex);
 
     PipelineCacheVkChunkInfos chunkInfos =
         GetPipelineCacheVkChunkInfos(renderer, compressedData, numChunks, chunkSize, slotIndex);
@@ -1121,17 +1231,13 @@ void CompressAndStorePipelineCacheVk(vk::GlobalOps *globalOps,
                                                         cacheData.size(), &scratchBuffer);
     ASSERT(numStoredChunks == numChunks);
 
-    // Erase data from the previous slot. Since cache data size is always increasing, use current
-    // numChunks for simplicity (to avoid storing previous numChunks).
-    if (previousSlotIndex != slotIndex)
+    // Erase all chunks from the previous slot or any trailing chunks from the current slot.
+    ASSERT(renderer->getFeatures().useDualPipelineBlobCacheSlots.enabled == isSlotChanged);
+    if (isSlotChanged || previousNumChunks > numChunks)
     {
-        ASSERT(renderer->getFeatures().useDualPipelineBlobCacheSlots.enabled);
-        ErasePipelineCacheVkChunks(globalOps, renderer, numChunks, previousSlotIndex,
-                                   &scratchBuffer);
-    }
-    else
-    {
-        ASSERT(!renderer->getFeatures().useDualPipelineBlobCacheSlots.enabled);
+        const size_t startChunk = isSlotChanged ? 0 : numChunks;
+        ErasePipelineCacheVkChunks(globalOps, renderer, startChunk, previousNumChunks,
+                                   previousSlotIndex, &scratchBuffer);
     }
 
     if (!renderer->getFeatures().verifyPipelineCacheInBlobCache.enabled)
@@ -1208,7 +1314,7 @@ size_t StorePipelineCacheVkChunks(vk::GlobalOps *globalOps,
         isMissing.resize(chunkInfos.size());
         numChunksToStore = 0;
 
-        // Defer storing chunks until all missing chunks are found to avoid unecessary stores.
+        // Defer storing chunks until all missing chunks are found to avoid unnecessary stores.
         size_t chunkIndex = chunkInfos.size();
         while (chunkIndex > 0)
         {
@@ -1289,6 +1395,7 @@ size_t StorePipelineCacheVkChunks(vk::GlobalOps *globalOps,
 
 void ErasePipelineCacheVkChunks(vk::GlobalOps *globalOps,
                                 Renderer *renderer,
+                                const size_t startChunk,
                                 const size_t numChunks,
                                 const size_t slotIndex,
                                 angle::MemoryBuffer *scratchBuffer)
@@ -1305,7 +1412,7 @@ void ErasePipelineCacheVkChunks(vk::GlobalOps *globalOps,
     // Fill data (if any) with zeroes for security.
     memset(keyData.data(), 0, keyData.size());
 
-    for (size_t chunkIndex = 0; chunkIndex < numChunks; ++chunkIndex)
+    for (size_t chunkIndex = startChunk; chunkIndex < numChunks; ++chunkIndex)
     {
         egl::BlobCache::Key chunkCacheHash;
         ComputePipelineCacheVkChunkKey(physicalDeviceProperties, slotIndex, chunkIndex,
@@ -1340,7 +1447,7 @@ class CompressAndStorePipelineCacheTask : public angle::Closure
     size_t mMaxTotalSize;
 };
 
-angle::Result GetAndDecompressPipelineCacheVk(vk::Context *context,
+angle::Result GetAndDecompressPipelineCacheVk(vk::ErrorContext *context,
                                               vk::GlobalOps *globalOps,
                                               angle::MemoryBuffer *uncompressedData,
                                               bool *success)
@@ -1414,6 +1521,8 @@ angle::Result GetAndDecompressPipelineCacheVk(vk::Context *context,
         return angle::Result::Continue;
     }
 
+    renderer->updatePipelineCacheChunkCount(numChunks);
+
     size_t chunkSize      = keyData.size() - sizeof(CacheDataHeader);
     size_t compressedSize = 0;
 
@@ -1463,8 +1572,9 @@ angle::Result GetAndDecompressPipelineCacheVk(vk::Context *context,
                 (compressedData.size() < compressedSize + chunkSize);
             if (isHeaderDataCorrupted)
             {
-                WARN() << "Pipeline cache chunk header corrupted: " << "checkCacheVersion = "
-                       << checkCacheVersion << ", cacheVersion = " << cacheVersion
+                WARN() << "Pipeline cache chunk header corrupted or old chunk: "
+                       << "checkCacheVersion = " << checkCacheVersion
+                       << ", cacheVersion = " << cacheVersion
                        << ", checkNumChunks = " << checkNumChunks << ", numChunks = " << numChunks
                        << ", checkUncompressedCacheDataSize = " << checkUncompressedCacheDataSize
                        << ", uncompressedCacheDataSize = " << uncompressedCacheDataSize
@@ -1661,17 +1771,19 @@ void OneOffCommandPool::destroy(VkDevice device)
     mProtectionType = vk::ProtectionType::InvalidEnum;
 }
 
-angle::Result OneOffCommandPool::getCommandBuffer(vk::Context *context,
-                                                  vk::PrimaryCommandBuffer *commandBufferOut)
+angle::Result OneOffCommandPool::getCommandBuffer(vk::ErrorContext *context,
+                                                  vk::ScopedPrimaryCommandBuffer *commandBufferOut)
 {
     std::unique_lock<angle::SimpleMutex> lock(mMutex);
 
     if (!mPendingCommands.empty() &&
         context->getRenderer()->hasResourceUseFinished(mPendingCommands.front().use))
     {
-        *commandBufferOut = std::move(mPendingCommands.front().commandBuffer);
+        commandBufferOut->assign(std::move(lock),
+                                 std::move(mPendingCommands.front().commandBuffer));
         mPendingCommands.pop_front();
-        ANGLE_VK_TRY(context, commandBufferOut->reset());
+        // No need to explicitly call reset() on |commandBufferOut|, since the begin() call below
+        // will do it implicitly.
     }
     else
     {
@@ -1697,14 +1809,16 @@ angle::Result OneOffCommandPool::getCommandBuffer(vk::Context *context,
         allocInfo.commandBufferCount          = 1;
         allocInfo.commandPool                 = mCommandPool.getHandle();
 
-        ANGLE_VK_TRY(context, commandBufferOut->init(context->getDevice(), allocInfo));
+        PrimaryCommandBuffer newCommandBuffer;
+        ANGLE_VK_TRY(context, newCommandBuffer.init(context->getDevice(), allocInfo));
+        commandBufferOut->assign(std::move(lock), std::move(newCommandBuffer));
     }
 
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType                    = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags                    = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
     beginInfo.pInheritanceInfo         = nullptr;
-    ANGLE_VK_TRY(context, commandBufferOut->begin(beginInfo));
+    ANGLE_VK_TRY(context, commandBufferOut->get().begin(beginInfo));
 
     return angle::Result::Continue;
 }
@@ -1730,6 +1844,7 @@ Renderer::Renderer()
       mEnabledICD(angle::vk::ICD::Default),
       mDebugUtilsMessenger(VK_NULL_HANDLE),
       mPhysicalDevice(VK_NULL_HANDLE),
+      mPhysicalDeviceProperties(mPhysicalDeviceProperties2.properties),
       mCurrentQueueFamilyIndex(std::numeric_limits<uint32_t>::max()),
       mMaxVertexAttribDivisor(1),
       mMaxVertexAttribStride(0),
@@ -1742,13 +1857,14 @@ Renderer::Renderer()
       mDeviceLocalVertexConversionBufferMemoryTypeIndex(kInvalidMemoryTypeIndex),
       mVertexConversionBufferAlignment(1),
       mCurrentPipelineCacheBlobCacheSlotIndex(0),
+      mPipelineCacheChunkCount(0),
       mPipelineCacheVkUpdateTimeout(kPipelineCacheVkUpdatePeriod),
       mPipelineCacheSizeAtLastSync(0),
       mPipelineCacheInitialized(false),
       mValidationMessageCount(0),
       mIsColorFramebufferFetchCoherent(false),
       mIsColorFramebufferFetchUsed(false),
-      mCommandProcessor(this, &mCommandQueue),
+      mCleanUpThread(this, &mCommandQueue),
       mSupportedBufferWritePipelineStageMask(0),
       mSupportedVulkanShaderStageMask(0),
       mMemoryAllocationTracker(MemoryAllocationTracker(this))
@@ -1781,7 +1897,7 @@ bool Renderer::hasSharedGarbage()
     return !mSharedGarbageList.empty() || !mSuballocationGarbageList.empty();
 }
 
-void Renderer::onDestroy(vk::Context *context)
+void Renderer::onDestroy(vk::ErrorContext *context)
 {
     if (isDeviceLost())
     {
@@ -1791,15 +1907,14 @@ void Renderer::onDestroy(vk::Context *context)
     if (mPlaceHolderDescriptorSetLayout)
     {
         ASSERT(mPlaceHolderDescriptorSetLayout.unique());
-        mPlaceHolderDescriptorSetLayout->destroy(getDevice());
         mPlaceHolderDescriptorSetLayout.reset();
     }
 
-    mCommandProcessor.destroy(context);
+    mCleanUpThread.destroy(context);
     mCommandQueue.destroy(context);
 
     // mCommandQueue.destroy should already set "last completed" serials to infinite.
-    cleanupGarbage();
+    cleanupGarbage(nullptr);
     ASSERT(!hasSharedGarbage());
     ASSERT(mOrphanedBufferBlockList.empty());
 
@@ -1883,7 +1998,7 @@ bool Renderer::isDeviceLost() const
     return mDeviceLost;
 }
 
-angle::Result Renderer::enableInstanceExtensions(vk::Context *context,
+angle::Result Renderer::enableInstanceExtensions(vk::ErrorContext *context,
                                                  const VulkanLayerVector &enabledInstanceLayerNames,
                                                  const char *wsiExtension,
                                                  UseVulkanSwapchain useVulkanSwapchain,
@@ -2040,11 +2155,14 @@ angle::Result Renderer::enableInstanceExtensions(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::initialize(vk::Context *context,
+angle::Result Renderer::initialize(vk::ErrorContext *context,
                                    vk::GlobalOps *globalOps,
                                    angle::vk::ICD desiredICD,
                                    uint32_t preferredVendorId,
                                    uint32_t preferredDeviceId,
+                                   const uint8_t *preferredDeviceUuid,
+                                   const uint8_t *preferredDriverUuid,
+                                   VkDriverId preferredDriverId,
                                    UseDebugLayers useDebugLayers,
                                    const char *wsiExtension,
                                    const char *wsiLayer,
@@ -2203,14 +2321,17 @@ angle::Result Renderer::initialize(vk::Context *context,
     const VkBool32 setting_check_shaders = IsAndroid() ? VK_FALSE : VK_TRUE;
     // http://b/316013423 Disable QueueSubmit Synchronization Validation. Lots of failures and some
     // test timeout due to https://github.com/KhronosGroup/Vulkan-ValidationLayers/issues/7285
-    const VkBool32 setting_syncval_submit_time_validation = VK_FALSE;
-    const VkLayerSettingEXT layerSettings[]               = {
+    const VkBool32 setting_syncval_submit_time_validation   = VK_FALSE;
+    const VkBool32 setting_syncval_message_extra_properties = VK_TRUE;
+    const VkLayerSettingEXT layerSettings[]                 = {
         {name, "validate_core", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_validate_core},
         {name, "validate_sync", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_validate_sync},
         {name, "thread_safety", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_thread_safety},
         {name, "check_shaders", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1, &setting_check_shaders},
         {name, "syncval_submit_time_validation", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1,
-                       &setting_syncval_submit_time_validation},
+                         &setting_syncval_submit_time_validation},
+        {name, "syncval_message_extra_properties", VK_LAYER_SETTING_TYPE_BOOL32_EXT, 1,
+                         &setting_syncval_message_extra_properties},
     };
     VkLayerSettingsCreateInfoEXT layerSettingsCreateInfo = {
         VK_STRUCTURE_TYPE_LAYER_SETTINGS_CREATE_INFO_EXT, nullptr,
@@ -2265,13 +2386,14 @@ angle::Result Renderer::initialize(vk::Context *context,
     ANGLE_VK_TRY(context, vkEnumeratePhysicalDevices(mInstance, &physicalDeviceCount, nullptr));
     ANGLE_VK_CHECK(context, physicalDeviceCount > 0, VK_ERROR_INITIALIZATION_FAILED);
 
-    // TODO(jmadill): Handle multiple physical devices. For now, use the first device.
     std::vector<VkPhysicalDevice> physicalDevices(physicalDeviceCount);
     ANGLE_VK_TRY(context, vkEnumeratePhysicalDevices(mInstance, &physicalDeviceCount,
                                                      physicalDevices.data()));
-    ChoosePhysicalDevice(vkGetPhysicalDeviceProperties, physicalDevices, mEnabledICD,
-                         preferredVendorId, preferredDeviceId, &mPhysicalDevice,
-                         &mPhysicalDeviceProperties);
+    ChoosePhysicalDevice(vkGetPhysicalDeviceProperties2, physicalDevices, mEnabledICD,
+                         preferredVendorId, preferredDeviceId, preferredDeviceUuid,
+                         preferredDriverUuid, preferredDriverId, &mPhysicalDevice,
+                         &mPhysicalDeviceProperties2, &mPhysicalDeviceIDProperties,
+                         &mDriverProperties);
 
     // The device version that is assumed by ANGLE is the minimum of the actual device version and
     // the highest it's allowed to use.
@@ -2356,14 +2478,14 @@ angle::Result Renderer::initialize(vk::Context *context,
     createInfo.bindingCount = 0;
     createInfo.pBindings    = nullptr;
 
-    mPlaceHolderDescriptorSetLayout = vk::DescriptorSetLayoutPtr::MakeShared();
+    mPlaceHolderDescriptorSetLayout = vk::DescriptorSetLayoutPtr::MakeShared(context->getDevice());
     ANGLE_VK_TRY(context, mPlaceHolderDescriptorSetLayout->init(context->getDevice(), createInfo));
     ASSERT(mPlaceHolderDescriptorSetLayout->valid());
 
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::initializeMemoryAllocator(vk::Context *context)
+angle::Result Renderer::initializeMemoryAllocator(vk::ErrorContext *context)
 {
     // This number matches Chromium and was picked by looking at memory usage of
     // Android apps. The allocator will start making blocks at 1/8 the max size
@@ -2547,6 +2669,7 @@ angle::Result Renderer::initializeMemoryAllocator(vk::Context *context)
 // - VK_KHR_dynamic_rendering_local_read:              dynamicRenderingLocalRead (feature)
 // - VK_EXT_shader_atomic_float                        shaderImageFloat32Atomics (feature)
 // - VK_EXT_image_compression_control                  imageCompressionControl (feature)
+// - VK_EXT_image_compression_control_swapchain        imageCompressionControlSwapchain (feature)
 //
 void Renderer::appendDeviceExtensionFeaturesNotPromoted(
     const vk::ExtensionNameList &deviceExtensionNames,
@@ -2725,6 +2848,11 @@ void Renderer::appendDeviceExtensionFeaturesNotPromoted(
     {
         vk::AddToPNextChain(deviceFeatures, &mImageCompressionControlFeatures);
     }
+    if (ExtensionFound(VK_EXT_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_EXTENSION_NAME,
+                       deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mImageCompressionControlSwapchainFeatures);
+    }
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.1:
@@ -2758,6 +2886,7 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo11(
     vk::AddToPNextChain(deviceProperties, &mMultiviewProperties);
     vk::AddToPNextChain(deviceFeatures, &m16BitStorageFeatures);
     vk::AddToPNextChain(deviceFeatures, &mVariablePointersFeatures);
+    vk::AddToPNextChain(deviceProperties, &mMaintenance3Properties);
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.2:
@@ -2790,6 +2919,7 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo11(
 //                                          shaderSignedZeroInfNanPreserveFloat16 (property)
 //                                          shaderSignedZeroInfNanPreserveFloat32 (property)
 //                                          shaderSignedZeroInfNanPreserveFloat64 (property)
+// - VK_KHR_uniform_buffer_standard_layout: uniformBufferStandardLayout (feature)
 //
 // Note that supportedDepthResolveModes is used just to check if the property struct is populated.
 // ANGLE always uses VK_RESOLVE_MODE_SAMPLE_ZERO_BIT for both depth and stencil, and support for
@@ -2844,6 +2974,11 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo12(
     {
         vk::AddToPNextChain(deviceFeatures, &m8BitStorageFeatures);
     }
+
+    if (ExtensionFound(VK_KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mUniformBufferStandardLayoutFeatures);
+    }
 }
 
 // The following features and properties used by ANGLE have been promoted to Vulkan 1.3:
@@ -2854,6 +2989,7 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo12(
 // - VK_KHR_synchronization2:                synchronization2 (feature)
 // - VK_KHR_dynamic_rendering:               dynamicRendering (feature)
 // - VK_KHR_maintenance5:                    maintenance5 (feature)
+// - VK_EXT_texture_compression_astc_hdr:    textureCompressionASTC_HDR(feature)
 //
 // Note that VK_EXT_extended_dynamic_state2 is partially promoted to Vulkan 1.3.  If ANGLE creates a
 // Vulkan 1.3 device, it would still need to enable this extension separately for
@@ -2888,17 +3024,16 @@ void Renderer::appendDeviceExtensionFeaturesPromotedTo13(
     {
         vk::AddToPNextChain(deviceFeatures, &mMaintenance5Features);
     }
+
+    if (ExtensionFound(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME, deviceExtensionNames))
+    {
+        vk::AddToPNextChain(deviceFeatures, &mTextureCompressionASTCHDRFeatures);
+    }
 }
 
 void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceExtensionNames)
 {
     // Default initialize all extension features to false.
-    mPhysicalDevice11Properties       = {};
-    mPhysicalDevice11Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_PROPERTIES;
-
-    mPhysicalDevice11Features       = {};
-    mPhysicalDevice11Features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_1_FEATURES;
-
     mLineRasterizationFeatures = {};
     mLineRasterizationFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT;
@@ -2958,6 +3093,9 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
 
     mMultiviewProperties       = {};
     mMultiviewProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES;
+
+    mMaintenance3Properties       = {};
+    mMaintenance3Properties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_3_PROPERTIES;
 
     mDriverProperties       = {};
     mDriverProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DRIVER_PROPERTIES;
@@ -3097,6 +3235,18 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mImageCompressionControlFeatures.sType =
         VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_FEATURES_EXT;
 
+    mImageCompressionControlSwapchainFeatures = {};
+    mImageCompressionControlSwapchainFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_FEATURES_EXT;
+
+    mTextureCompressionASTCHDRFeatures = {};
+    mTextureCompressionASTCHDRFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_TEXTURE_COMPRESSION_ASTC_HDR_FEATURES;
+
+    mUniformBufferStandardLayoutFeatures = {};
+    mUniformBufferStandardLayoutFeatures.sType =
+        VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_UNIFORM_BUFFER_STANDARD_LAYOUT_FEATURES;
+
 #if defined(ANGLE_PLATFORM_ANDROID)
     mExternalFormatResolveFeatures = {};
     mExternalFormatResolveFeatures.sType =
@@ -3127,8 +3277,6 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     vkGetPhysicalDeviceProperties2(mPhysicalDevice, &deviceProperties);
 
     // Clean up pNext chains
-    mPhysicalDevice11Properties.pNext                 = nullptr;
-    mPhysicalDevice11Features.pNext                   = nullptr;
     mLineRasterizationFeatures.pNext                  = nullptr;
     mMemoryReportFeatures.pNext                       = nullptr;
     mProvokingVertexFeatures.pNext                    = nullptr;
@@ -3181,6 +3329,10 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
     mVariablePointersFeatures.pNext                   = nullptr;
     mFloatControlProperties.pNext                     = nullptr;
     mImageCompressionControlFeatures.pNext            = nullptr;
+    mImageCompressionControlSwapchainFeatures.pNext   = nullptr;
+    mTextureCompressionASTCHDRFeatures.pNext          = nullptr;
+    mUniformBufferStandardLayoutFeatures.pNext        = nullptr;
+    mMaintenance3Properties.pNext                     = nullptr;
 #if defined(ANGLE_PLATFORM_ANDROID)
     mExternalFormatResolveFeatures.pNext   = nullptr;
     mExternalFormatResolveProperties.pNext = nullptr;
@@ -3210,6 +3362,7 @@ void Renderer::queryDeviceExtensionFeatures(const vk::ExtensionNameList &deviceE
 // - VK_EXT_blend_operation_advanced
 // - VK_EXT_full_screen_exclusive
 // - VK_EXT_image_compression_control
+// - VK_EXT_image_compression_control_swapchain
 //
 void Renderer::enableDeviceExtensionsNotPromoted(const vk::ExtensionNameList &deviceExtensionNames)
 {
@@ -3500,6 +3653,13 @@ void Renderer::enableDeviceExtensionsNotPromoted(const vk::ExtensionNameList &de
         vk::AddToPNextChain(&mEnabledFeatures, &mImageCompressionControlFeatures);
     }
 
+    if (getFeatures().supportsImageCompressionControlSwapchain.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(
+            VK_EXT_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mImageCompressionControlSwapchainFeatures);
+    }
+
 #if defined(ANGLE_PLATFORM_WINDOWS)
     // We only need the VK_EXT_full_screen_exclusive extension if we are opting
     // out of it via VK_FULL_SCREEN_EXCLUSIVE_DISALLOWED_EXT (i.e. working
@@ -3534,16 +3694,8 @@ void Renderer::enableDeviceExtensionsPromotedTo11(const vk::ExtensionNameList &d
 {
     // OVR_multiview disallows multiview with geometry and tessellation, so don't request these
     // features.
-    mMultiviewFeatures.multiviewGeometryShader            = VK_FALSE;
-    mMultiviewFeatures.multiviewTessellationShader        = VK_FALSE;
-    mPhysicalDevice11Features.multiviewGeometryShader     = VK_FALSE;
-    mPhysicalDevice11Features.multiviewTessellationShader = VK_FALSE;
-
-    // Disable protected memory if not needed as it can introduce overhead
-    if (!mFeatures.supportsProtectedMemory.enabled)
-    {
-        mPhysicalDevice11Features.protectedMemory = VK_FALSE;
-    }
+    mMultiviewFeatures.multiviewGeometryShader     = VK_FALSE;
+    mMultiviewFeatures.multiviewTessellationShader = VK_FALSE;
 
     if (mFeatures.supportsMultiview.enabled)
     {
@@ -3575,7 +3727,10 @@ void Renderer::enableDeviceExtensionsPromotedTo11(const vk::ExtensionNameList &d
 //
 // - VK_KHR_create_renderpass2
 // - VK_KHR_image_format_list
+// - VK_KHR_shader_float_controls
+// - VK_KHR_spirv_1_4
 // - VK_KHR_sampler_mirror_clamp_to_edge
+// - VK_KHR_depth_stencil_resolve
 //
 void Renderer::enableDeviceExtensionsPromotedTo12(const vk::ExtensionNameList &deviceExtensionNames)
 {
@@ -3649,6 +3804,11 @@ void Renderer::enableDeviceExtensionsPromotedTo12(const vk::ExtensionNameList &d
         mEnabledDeviceExtensions.push_back(VK_KHR_8BIT_STORAGE_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &m8BitStorageFeatures);
     }
+    if (mFeatures.supportsUniformBufferStandardLayout.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_KHR_UNIFORM_BUFFER_STANDARD_LAYOUT_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mUniformBufferStandardLayoutFeatures);
+    }
 }
 
 // See comment above appendDeviceExtensionFeaturesPromotedTo13.
@@ -3688,9 +3848,15 @@ void Renderer::enableDeviceExtensionsPromotedTo13(const vk::ExtensionNameList &d
         mEnabledDeviceExtensions.push_back(VK_KHR_MAINTENANCE_5_EXTENSION_NAME);
         vk::AddToPNextChain(&mEnabledFeatures, &mMaintenance5Features);
     }
+
+    if (getFeatures().supportsTextureCompressionAstcHdr.enabled)
+    {
+        mEnabledDeviceExtensions.push_back(VK_EXT_TEXTURE_COMPRESSION_ASTC_HDR_EXTENSION_NAME);
+        vk::AddToPNextChain(&mEnabledFeatures, &mTextureCompressionASTCHDRFeatures);
+    }
 }
 
-angle::Result Renderer::enableDeviceExtensions(vk::Context *context,
+angle::Result Renderer::enableDeviceExtensions(vk::ErrorContext *context,
                                                const angle::FeatureOverrides &featureOverrides,
                                                UseVulkanSwapchain useVulkanSwapchain,
                                                angle::NativeWindowSystem nativeWindowSystem)
@@ -3862,7 +4028,7 @@ void Renderer::initDeviceExtensionEntryPoints()
     initializeDeviceExtensionEntryPointsFromCore();
 }
 
-angle::Result Renderer::setupDevice(vk::Context *context,
+angle::Result Renderer::setupDevice(vk::ErrorContext *context,
                                     const angle::FeatureOverrides &featureOverrides,
                                     const char *wsiLayer,
                                     UseVulkanSwapchain useVulkanSwapchain,
@@ -3968,7 +4134,7 @@ angle::Result Renderer::setupDevice(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::createDeviceAndQueue(vk::Context *context, uint32_t queueFamilyIndex)
+angle::Result Renderer::createDeviceAndQueue(vk::ErrorContext *context, uint32_t queueFamilyIndex)
 {
     mCurrentQueueFamilyIndex = queueFamilyIndex;
 
@@ -4040,7 +4206,7 @@ angle::Result Renderer::createDeviceAndQueue(vk::Context *context, uint32_t queu
     initDeviceExtensionEntryPoints();
 
     ANGLE_TRY(mCommandQueue.init(context, queueFamily, enableProtectedContent, queueCount));
-    ANGLE_TRY(mCommandProcessor.init());
+    ANGLE_TRY(mCleanUpThread.init());
 
     if (mFeatures.forceMaxUniformBufferSize16KB.enabled)
     {
@@ -4093,13 +4259,10 @@ angle::Result Renderer::createDeviceAndQueue(vk::Context *context, uint32_t queu
     }
 
     // Initialize the barrierData tables by removing unsupported pipeline stage bits
-    InitializeEventAndPipelineStagesMap(&mEventStageAndPipelineStageFlagsMap, ~unsupportedStages);
+    InitializeEventStageToVkPipelineStageFlagsMap(&mEventStageToPipelineStageFlagsMap,
+                                                  ~unsupportedStages);
     InitializeImageLayoutAndMemoryBarrierDataMap(&mImageLayoutAndMemoryBarrierDataMap,
                                                  ~unsupportedStages);
-    // mEventStageAndPipelineStageFlagsMap supposedly should match the value in dstStageMask of
-    // mImageLayoutAndMemoryBarrierData
-    ASSERT(EventAndPipelineBarrierHaveMatchingStageFlags(mEventStageAndPipelineStageFlagsMap,
-                                                         mImageLayoutAndMemoryBarrierDataMap));
 
     ANGLE_TRY(initializeMemoryAllocator(context));
 
@@ -4205,7 +4368,7 @@ void Renderer::initializeValidationMessageSuppressions()
     }
 }
 
-angle::Result Renderer::checkQueueForSurfacePresent(vk::Context *context,
+angle::Result Renderer::checkQueueForSurfacePresent(vk::ErrorContext *context,
                                                     VkSurfaceKHR surface,
                                                     bool *supportedOut)
 {
@@ -4419,7 +4582,7 @@ gl::Version Renderer::getMaxConformantESVersion() const
     return getMaxSupportedESVersion();
 }
 
-uint32_t Renderer::getDeviceVersion()
+uint32_t Renderer::getDeviceVersion() const
 {
     return mDeviceVersion == 0 ? mInstanceVersion : mDeviceVersion;
 }
@@ -4594,32 +4757,44 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // maxDrawIndirectCount==1 and all CSF based has maxDrawIndirectCount>1.
     bool isMaliJobManagerBasedGPU =
         isARM && getPhysicalDeviceProperties().limits.maxDrawIndirectCount <= 1;
-    // Parse the ARM driver version to be readable/comparable
-    const ARMDriverVersion armDriverVersion =
-        ParseARMVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
-
-    // Parse the Qualcomm driver version.
-    const QualcommDriverVersion qualcommDriverVersion =
-        ParseQualcommVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
-
-    // Parse the Intel driver version. (Currently it only supports the Windows driver.)
-    const IntelDriverVersion intelDriverVersion =
-        ParseIntelWindowsDriverVersion(mPhysicalDeviceProperties.driverVersion);
 
     // Distinguish between the mesa and proprietary drivers
     const bool isRADV = IsRADV(mPhysicalDeviceProperties.vendorID, mDriverProperties.driverID,
                                mPhysicalDeviceProperties.deviceName);
 
-    angle::VersionInfo nvidiaVersion;
-    if (isNvidia)
+    angle::VersionInfo driverVersion = {};
+    if (isARM)
     {
-        nvidiaVersion = angle::ParseNvidiaDriverVersion(mPhysicalDeviceProperties.driverVersion);
+        driverVersion = angle::ParseArmVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
     }
-
-    angle::VersionInfo mesaVersion;
-    if (isIntel && IsLinux())
+    else if (isQualcommProprietary)
     {
-        mesaVersion = angle::ParseMesaDriverVersion(mPhysicalDeviceProperties.driverVersion);
+        driverVersion =
+            angle::ParseQualcommVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
+    }
+    else if (isNvidia)
+    {
+        driverVersion =
+            angle::ParseNvidiaVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
+    }
+    else if (IsLinux() && (isIntel || isRADV))
+    {
+        driverVersion =
+            angle::ParseMesaVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
+    }
+    else if (IsWindows() && isIntel)
+    {
+        driverVersion =
+            angle::ParseIntelWindowsVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
+    }
+    else if (isAMD && !isRADV)
+    {
+        driverVersion = angle::ParseAMDVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
+    }
+    else if (isSamsung)
+    {
+        driverVersion =
+            angle::ParseSamsungVulkanDriverVersion(mPhysicalDeviceProperties.driverVersion);
     }
 
     // Classify devices based on general architecture:
@@ -4662,10 +4837,14 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // Disable this extension on older ARM platforms that don't support
     // VK_EXT_pipeline_protected_access.
     // http://anglebug.com/42266183
+    //
+    // http://b/381285096. On Intel platforms, we want to prevent protected queues being used as
+    // we cannot handle the teardown scenario if PXP termination occurs.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsProtectedMemory,
         mProtectedMemoryFeatures.protectedMemory == VK_TRUE &&
-            (!isARM || mPipelineProtectedAccessFeatures.pipelineProtectedAccess == VK_TRUE));
+            (!isARM || mPipelineProtectedAccessFeatures.pipelineProtectedAccess == VK_TRUE) &&
+            !isIntel);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsHostQueryReset,
                             mHostQueryResetFeatures.hostQueryReset == VK_TRUE);
@@ -4695,12 +4874,14 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // Clamp if driver version is:
     //   < 430 on Windows
     //   < 421 otherwise
-    ANGLE_FEATURE_CONDITION(&mFeatures, clampPointSize,
-                            isNvidia && nvidiaVersion.major < uint32_t(IsWindows() ? 430 : 421));
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, clampPointSize,
+        isNvidia && driverVersion < angle::VersionTriple(IsWindows() ? 430 : 421, 0, 0));
 
     // Affecting Nvidia drivers 535 through 551.
     ANGLE_FEATURE_CONDITION(&mFeatures, avoidOpSelectWithMismatchingRelaxedPrecision,
-                            isNvidia && (nvidiaVersion.major >= 535 && nvidiaVersion.major <= 551));
+                            isNvidia && (driverVersion >= angle::VersionTriple(535, 0, 0) &&
+                                         driverVersion < angle::VersionTriple(552, 0, 0)));
 
     // Affecting Linux/Intel (unknown range).
     ANGLE_FEATURE_CONDITION(&mFeatures, wrapSwitchInIfTrue, isIntel && IsLinux());
@@ -4752,7 +4933,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // enable the extension and opt out of it to avoid seeing those error codes
     // entirely.
     ANGLE_FEATURE_CONDITION(&mFeatures, forceDisableFullScreenExclusive,
-                            isAMD && mPhysicalDeviceProperties.driverVersion < 0x800106);
+                            isAMD && driverVersion < angle::VersionTriple(2, 0, 262));
 #endif
 
     ANGLE_FEATURE_CONDITION(
@@ -4821,7 +5002,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         ExtensionFound(VK_EXT_LOAD_STORE_OP_NONE_EXTENSION_NAME, deviceExtensionNames));
 
     ANGLE_FEATURE_CONDITION(&mFeatures, disallowMixedDepthStencilLoadOpNoneAndLoad,
-                            isARM && armDriverVersion < ARMDriverVersion(38, 1, 0));
+                            isARM && driverVersion < angle::VersionTriple(38, 1, 0));
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsRenderPassStoreOpNone,
@@ -4913,8 +5094,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
                             mPhysicalDeviceFeatures.multiDrawIndirect == VK_TRUE);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, perFrameWindowSizeQuery,
-                            IsAndroid() || isIntel || (IsWindows() && isAMD) || IsFuchsia() ||
-                                isSamsung ||
+                            IsAndroid() || isIntel || (IsWindows() && (isAMD || isNvidia)) ||
+                                IsFuchsia() || isSamsung ||
                                 nativeWindowSystem == angle::NativeWindowSystem::Wayland);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, padBuffersToMaxVertexAttribStride, isAMD || isSamsung);
@@ -4963,7 +5144,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(
         &mFeatures, enablePrecisionQualifiers,
         !(IsPixel2(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID) &&
-          (qualcommDriverVersion < QualcommDriverVersion(512, 490, 0))) &&
+          (driverVersion < angle::VersionTriple(512, 490, 0))) &&
             !IsPixel4(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID));
 
     // http://anglebug.com/42265957
@@ -4979,9 +5160,6 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // by a clear to retain valid values in said extra channels.
     ANGLE_FEATURE_CONDITION(&mFeatures, preferSkippingInvalidateForEmulatedFormats,
                             isImmediateModeRenderer);
-
-    // Currently disabled by default: http://anglebug.com/42262955
-    ANGLE_FEATURE_CONDITION(&mFeatures, asyncCommandQueue, false);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, asyncCommandBufferResetAndGarbageCleanup, true);
 
@@ -5002,12 +5180,13 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     //   pipeline creation.  http://issuetracker.google.com/173636783
     // - ARM hardware
     // - Imagination hardware
+    // - Samsung hardware
     // - SwiftShader
     //
     ANGLE_FEATURE_CONDITION(
         &mFeatures, preferDriverUniformOverSpecConst,
-        (isQualcommProprietary && qualcommDriverVersion < QualcommDriverVersion(512, 513, 0)) ||
-            isARM || isPowerVR || isSwiftShader);
+        (isQualcommProprietary && driverVersion < angle::VersionTriple(512, 513, 0)) || isARM ||
+            isPowerVR || isSamsung || isSwiftShader);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, preferCachedNoncoherentForDynamicStreamBufferUsage,
                             IsMeteorLake(mPhysicalDeviceProperties.deviceID));
@@ -5088,7 +5267,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // Pixel4.  https://issuetracker.google.com/issues/166809097
     ANGLE_FEATURE_CONDITION(
         &mFeatures, preferDrawClearOverVkCmdClearAttachments,
-        isQualcommProprietary && qualcommDriverVersion < QualcommDriverVersion(512, 762, 12));
+        isQualcommProprietary && driverVersion < angle::VersionTriple(512, 762, 12));
 
     // R32F imageAtomicExchange emulation is done if shaderImageFloat32Atomics feature is not
     // supported.
@@ -5109,7 +5288,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
         mFeatures.exposeNonConformantExtensionsAndVersions.enabled &&
             (isSwiftShader ||
              IsPixel4(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID) ||
-             (IsLinux() && isNvidia && nvidiaVersion.major <= 440) || (IsWindows() && isIntel)));
+             (IsLinux() && isNvidia && driverVersion < angle::VersionTriple(441, 0, 0)) ||
+             (IsWindows() && isIntel)));
 
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsMemoryBudget,
@@ -5184,7 +5364,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 
     ANGLE_FEATURE_CONDITION(&mFeatures, adjustClearColorPrecision,
                             IsAndroid() && mFeatures.supportsLegacyDithering.enabled && isARM &&
-                                armDriverVersion < ARMDriverVersion(50, 0, 0));
+                                driverVersion < angle::VersionTriple(50, 0, 0));
 
     // ANGLE always exposes framebuffer fetch because too many apps assume it's there.  See comments
     // on |mIsColorFramebufferFetchCoherent| for details.  Non-coherent framebuffer fetch is always
@@ -5196,11 +5376,11 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // automatically deduce this support.
     //
     // http://issuetracker.google.com/376899587
-    // Advanced blend emulation depends on this functionaly, lack of which prevents support for
+    // Advanced blend emulation depends on this functionality, lack of which prevents support for
     // ES 3.2; exposeNonConformantExtensionsAndVersions is used to force this.
-    const bool isMesaAtLeast22_0_0 = mesaVersion.major >= 22;
     const bool supportsFramebufferFetchInSurface =
-        IsAndroid() || !isIntel || (isIntel && IsLinux() && isMesaAtLeast22_0_0) ||
+        IsAndroid() || !isIntel ||
+        (isIntel && IsLinux() && driverVersion >= angle::VersionTriple(22, 0, 0)) ||
         mFeatures.exposeNonConformantExtensionsAndVersions.enabled;
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderFramebufferFetch,
@@ -5261,9 +5441,9 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     //                 since at least version 47.  http://anglebug.com/343218491
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsSPIRV14,
                             ExtensionFound(VK_KHR_SPIRV_1_4_EXTENSION_NAME, deviceExtensionNames) &&
-                                !(isNvidia && nvidiaVersion.major < 525) &&
+                                !(isNvidia && driverVersion < angle::VersionTriple(525, 0, 0)) &&
                                 !isQualcommProprietary &&
-                                !(isARM && armDriverVersion < ARMDriverVersion(47, 0, 0)));
+                                !(isARM && driverVersion < angle::VersionTriple(47, 0, 0)));
 
     // Rounding features from VK_KHR_float_controls extension
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsDenormFtzFp16,
@@ -5320,12 +5500,12 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // Regressions have been detected using r46 on older architectures though
     // http://issuetracker.google.com/336411904
     const bool isExtendedDynamicStateBuggy =
-        (isARM && armDriverVersion < ARMDriverVersion(44, 1, 0)) ||
-        (isMaliJobManagerBasedGPU && armDriverVersion >= ARMDriverVersion(46, 0, 0));
+        (isARM && driverVersion < angle::VersionTriple(44, 1, 0)) ||
+        (isMaliJobManagerBasedGPU && driverVersion >= angle::VersionTriple(46, 0, 0));
 
     // Vertex input binding stride is buggy for Windows/Intel drivers before 100.9684.
     const bool isVertexInputBindingStrideBuggy =
-        IsWindows() && isIntel && intelDriverVersion < IntelDriverVersion(100, 9684);
+        IsWindows() && isIntel && driverVersion < angle::VersionTriple(100, 9684, 0);
 
     // Intel driver has issues with VK_EXT_vertex_input_dynamic_state
     // http://anglebug.com/42265637#comment9
@@ -5333,13 +5513,14 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // On ARM drivers prior to r48, |vkCmdBindVertexBuffers2| applies strides to the wrong index,
     // according to the errata: https://developer.arm.com/documentation/SDEN-3735689/0100/?lang=en
     //
-    // On Qualcomm drivers, this feature has a bug, unknown up to which version.
+    // On Qualcomm drivers prior to 777, this feature had a bug.
     // http://anglebug.com/381384988
-    ANGLE_FEATURE_CONDITION(&mFeatures, supportsVertexInputDynamicState,
-                            mVertexInputDynamicStateFeatures.vertexInputDynamicState == VK_TRUE &&
-                                !(IsWindows() && isIntel) &&
-                                !(isARM && armDriverVersion < ARMDriverVersion(48, 0, 0)) &&
-                                !isQualcommProprietary);
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsVertexInputDynamicState,
+        mVertexInputDynamicStateFeatures.vertexInputDynamicState == VK_TRUE &&
+            !(IsWindows() && isIntel) &&
+            !(isARM && driverVersion < angle::VersionTriple(48, 0, 0)) &&
+            !(isQualcommProprietary && driverVersion < angle::VersionTriple(512, 777, 0)));
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsExtendedDynamicState,
                             mExtendedDynamicStateFeatures.extendedDynamicState == VK_TRUE &&
@@ -5357,7 +5538,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, useCullModeDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled &&
                                 !isExtendedDynamicStateBuggy &&
-                                !(isARM && armDriverVersion < ARMDriverVersion(52, 0, 0)));
+                                !(isARM && driverVersion < angle::VersionTriple(52, 0, 0)));
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthCompareOpDynamicState,
                             mFeatures.supportsExtendedDynamicState.enabled);
     ANGLE_FEATURE_CONDITION(&mFeatures, useDepthTestEnableDynamicState,
@@ -5386,23 +5567,20 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
 
     // Disabled on Intel/Mesa due to driver bug (crbug.com/1379201).  This bug is fixed since Mesa
     // 22.2.0.
-    const bool isMesaLessThan22_2 =
-        mesaVersion.major < 22 || (mesaVersion.major == 22 && mesaVersion.minor < 2);
-
     ANGLE_FEATURE_CONDITION(
         &mFeatures, supportsLogicOpDynamicState,
         mFeatures.supportsExtendedDynamicState2.enabled &&
             mExtendedDynamicState2Features.extendedDynamicState2LogicOp == VK_TRUE &&
-            !(IsLinux() && isIntel && isMesaLessThan22_2) && !(IsAndroid() && isGalaxyS23));
+            !(IsLinux() && isIntel && driverVersion < angle::VersionTriple(22, 2, 0)) &&
+            !(IsAndroid() && isGalaxyS23));
 
-    // Samsung Vulkan driver with API level < 1.3.244 has a bug in imageless framebuffer support.
-    // http://issuetracker.google.com/42266906
+    // Older Samsung drivers with version < 24.0.0 have a bug in imageless framebuffer support.
     const bool isSamsungDriverWithImagelessFramebufferBug =
-        isSamsung && mPhysicalDeviceProperties.apiVersion < VK_MAKE_VERSION(1, 3, 244);
+        isSamsung && driverVersion < angle::VersionTriple(24, 0, 0);
     // Qualcomm with imageless framebuffers, vkCreateFramebuffer loops forever.
     // http://issuetracker.google.com/369693310
     const bool isQualcommWithImagelessFramebufferBug =
-        isQualcommProprietary && qualcommDriverVersion < QualcommDriverVersion(512, 802, 0);
+        isQualcommProprietary && driverVersion < angle::VersionTriple(512, 802, 0);
     // PowerVR with imageless framebuffer spends enormous amounts of time in framebuffer destruction
     // and creation. ANGLE doesn't cache imageless framebuffers, instead adding them to garbage
     // collection, expecting them to be lightweight.
@@ -5457,11 +5635,12 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // On RADV, creating graphics pipeline can crash in the driver.  http://crbug.com/1497512
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsGraphicsPipelineLibrary,
                             mGraphicsPipelineLibraryFeatures.graphicsPipelineLibrary == VK_TRUE &&
-                                (!isNvidia || nvidiaVersion.major >= 531) && !isRADV);
+                                (!isNvidia || driverVersion >= angle::VersionTriple(531, 0, 0)) &&
+                                !isRADV);
 
     // The following drivers are known to key the pipeline cache blobs with vertex input and
     // fragment output state, causing draw-time pipeline creation to miss the cache regardless of
-    // warmup:
+    // warm up:
     //
     // - ARM drivers
     // - Imagination drivers
@@ -5485,9 +5664,9 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // On SwiftShader, no data is retrieved from the pipeline cache, so there is no reason to
     // serialize it or put it in the blob cache.
     // For Windows Nvidia Vulkan driver older than 520, Vulkan pipeline cache will only generate one
-    // single huge cache for one process shared by all graphics piplines in the same process, which
+    // single huge cache for one process shared by all graphics pipelines in the same process, which
     // can be huge.
-    const bool nvVersionLessThan520 = isNvidia && (nvidiaVersion.major < 520u);
+    const bool nvVersionLessThan520 = isNvidia && driverVersion < angle::VersionTriple(520, 0, 0);
     ANGLE_FEATURE_CONDITION(&mFeatures, hasEffectivePipelineCacheSerialization,
                             !isSwiftShader && !nvVersionLessThan520);
 
@@ -5497,10 +5676,12 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     //
     // This optimization is disabled on the Intel/windows driver before 31.0.101.5379 due to driver
     // bugs.
+    // This optimization is disabled for Samsung.
     ANGLE_FEATURE_CONDITION(
         &mFeatures, preferMonolithicPipelinesOverLibraries,
         mFeatures.supportsGraphicsPipelineLibrary.enabled &&
-            !(IsWindows() && isIntel && intelDriverVersion < IntelDriverVersion(101, 5379)));
+            !(IsWindows() && isIntel && driverVersion < angle::VersionTriple(101, 5379, 0)) &&
+            !isSamsung);
 
     // Whether the pipeline caches should merge into the global pipeline cache.  This should only be
     // enabled on platforms if:
@@ -5522,8 +5703,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // - VK_EXT_graphics_pipeline_library is not supported, and the program cache is not warmed up:
     //   If the pipeline cache is being warmed up at link time, the blobs corresponding to each
     //   program is individually retrieved and stored in the blob cache already.
-    // - VK_EXT_graphics_pipeline_library is supported, but monolithic pipelines are still prefered,
-    //   and the cost of syncing the large cache is acceptable.
+    // - VK_EXT_graphics_pipeline_library is supported, but monolithic pipelines are still
+    //   preferred, and the cost of syncing the large cache is acceptable.
     //
     // Otherwise monolithic pipelines are recreated on every run.
     const bool hasNoPipelineWarmUp = !mFeatures.supportsGraphicsPipelineLibrary.enabled &&
@@ -5554,7 +5735,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // discard or alpha to coverage, if the static state provided when creating the pipeline has a
     // value of 0.
     ANGLE_FEATURE_CONDITION(&mFeatures, useNonZeroStencilWriteMaskStaticState,
-                            isARM && armDriverVersion < ARMDriverVersion(43, 0, 0));
+                            isARM && driverVersion < angle::VersionTriple(43, 0, 0));
 
     // On some vendors per-sample shading is not enabled despite the presence of a Sample
     // decoration. Guard against this by parsing shader for "sample" decoration and explicitly
@@ -5641,7 +5822,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // driver, vkGetQueryPoolResult() with VK_QUERY_RESULT_WAIT_BIT may result in incorrect result.
     // In that case we force into CPU wait for submission to complete. http://anglebug.com/42265186
     ANGLE_FEATURE_CONDITION(&mFeatures, forceWaitForSubmissionToCompleteForQueryResult,
-                            isARM || (isNvidia && nvidiaVersion.major < 470u));
+                            isARM || (isNvidia && driverVersion < angle::VersionTriple(470, 0, 0)));
 
     // Some ARM drivers may not free memory in "vkFreeCommandBuffers()" without
     // VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT flag.
@@ -5696,6 +5877,8 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // TBRs. Also enabled for SwiftShader so that we get more test coverage in bots.
     ANGLE_FEATURE_CONDITION(&mFeatures, useVkEventForImageBarrier,
                             isTileBasedRenderer || isSwiftShader);
+    ANGLE_FEATURE_CONDITION(&mFeatures, useVkEventForBufferBarrier,
+                            isTileBasedRenderer || isSwiftShader);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsMaintenance5,
                             mMaintenance5Features.maintenance5 == VK_TRUE);
@@ -5734,7 +5917,7 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
                             mFeatures.supportsDynamicRendering.enabled &&
                                 mFeatures.supportsDynamicRenderingLocalRead.enabled &&
                                 !hasLegacyDitheringV1 && !emulatesMultisampledRenderToTexture &&
-                                !(isARM && armDriverVersion < ARMDriverVersion(52, 0, 0)) &&
+                                !(isARM && driverVersion < angle::VersionTriple(52, 0, 0)) &&
                                 !isPowerVR);
 
     // On tile-based renderers, breaking the render pass is costly.  Changing into and out of
@@ -5765,12 +5948,25 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsSynchronization2,
                             mSynchronization2Features.synchronization2 == VK_TRUE);
 
-    ANGLE_FEATURE_CONDITION(&mFeatures, descriptorSetCache, true);
+    // Disable descriptorSet cache for SwiftShader to ensure the code path gets tested.
+    ANGLE_FEATURE_CONDITION(&mFeatures, descriptorSetCache, !isSwiftShader);
 
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsImageCompressionControl,
                             mImageCompressionControlFeatures.imageCompressionControl == VK_TRUE);
 
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsImageCompressionControlSwapchain,
+        mImageCompressionControlSwapchainFeatures.imageCompressionControlSwapchain == VK_TRUE);
+
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsAstcSliced3d, isARM);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsTextureCompressionAstcHdr,
+        mTextureCompressionASTCHDRFeatures.textureCompressionASTC_HDR == VK_TRUE);
+
+    ANGLE_FEATURE_CONDITION(
+        &mFeatures, supportsUniformBufferStandardLayout,
+        mUniformBufferStandardLayoutFeatures.uniformBufferStandardLayout == VK_TRUE);
 
     // Disable memory report feature overrides if extension is not supported.
     if ((mFeatures.logMemoryReportCallbacks.enabled || mFeatures.logMemoryReportStats.enabled) &&
@@ -5793,11 +5989,22 @@ void Renderer::initFeatures(const vk::ExtensionNameList &deviceExtensionNames,
     // Check if VK implementation needs to strip-out non-semantic reflection info from shader module
     // (Default is to assume not supported)
     ANGLE_FEATURE_CONDITION(&mFeatures, supportsShaderNonSemanticInfo, false);
+
+    // Don't expose these 2 extensions on Samsung devices -
+    // 1. ANGLE_rgbx_internal_format
+    // 2. GL_APPLE_clip_distance
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsAngleRgbxInternalFormat, !isSamsung);
+    ANGLE_FEATURE_CONDITION(&mFeatures, supportsAppleClipDistance, !isSamsung);
+
+    // Enable the use of below native kernels
+    // Each builtin kernel gets its own feature and condition, for now a single feature condition is
+    // setup
+    ANGLE_FEATURE_CONDITION(&mFeatures, usesNativeBuiltinClKernel, isSamsung);
 }
 
 void Renderer::appBasedFeatureOverrides(const vk::ExtensionNameList &extensions) {}
 
-angle::Result Renderer::initPipelineCache(vk::Context *context,
+angle::Result Renderer::initPipelineCache(vk::ErrorContext *context,
                                           vk::PipelineCache *pipelineCache,
                                           bool *success)
 {
@@ -5819,7 +6026,7 @@ angle::Result Renderer::initPipelineCache(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::ensurePipelineCacheInitialized(vk::Context *context)
+angle::Result Renderer::ensurePipelineCacheInitialized(vk::ErrorContext *context)
 {
     // If it is initialized already, there is nothing to do
     if (mPipelineCacheInitialized)
@@ -5862,7 +6069,14 @@ size_t Renderer::getNextPipelineCacheBlobCacheSlotIndex(size_t *previousSlotInde
     return mCurrentPipelineCacheBlobCacheSlotIndex;
 }
 
-angle::Result Renderer::getPipelineCache(vk::Context *context,
+size_t Renderer::updatePipelineCacheChunkCount(size_t chunkCount)
+{
+    const size_t previousChunkCount = mPipelineCacheChunkCount;
+    mPipelineCacheChunkCount        = chunkCount;
+    return previousChunkCount;
+}
+
+angle::Result Renderer::getPipelineCache(vk::ErrorContext *context,
                                          vk::PipelineCacheAccess *pipelineCacheOut)
 {
     ANGLE_TRY(ensurePipelineCacheInitialized(context));
@@ -5877,7 +6091,7 @@ angle::Result Renderer::getPipelineCache(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::mergeIntoPipelineCache(vk::Context *context,
+angle::Result Renderer::mergeIntoPipelineCache(vk::ErrorContext *context,
                                                const vk::PipelineCache &pipelineCache)
 {
     // It is an error to call into this method when the feature is disabled.
@@ -5924,13 +6138,16 @@ void Renderer::initializeFrontendFeatures(angle::FrontendFeatures *features) con
 {
     const bool isSwiftShader =
         IsSwiftshader(mPhysicalDeviceProperties.vendorID, mPhysicalDeviceProperties.deviceID);
+    const bool isSamsung = IsSamsung(mPhysicalDeviceProperties.vendorID);
 
     // Hopefully-temporary work-around for a crash on SwiftShader.  An Android process is turning
     // off GL error checking, and then asking ANGLE to write past the end of a buffer.
     // https://issuetracker.google.com/issues/220069903
     ANGLE_FEATURE_CONDITION(features, forceGlErrorChecking, (IsAndroid() && isSwiftShader));
 
-    ANGLE_FEATURE_CONDITION(features, cacheCompiledShader, true);
+    // Disable shader and program caching on Samsung devices.
+    ANGLE_FEATURE_CONDITION(features, cacheCompiledShader, !isSamsung);
+    ANGLE_FEATURE_CONDITION(features, disableProgramCaching, isSamsung);
 
     // https://issuetracker.google.com/292285899
     ANGLE_FEATURE_CONDITION(features, uncurrentEglSurfaceUponSurfaceDestroy, true);
@@ -5943,7 +6160,7 @@ void Renderer::initializeFrontendFeatures(angle::FrontendFeatures *features) con
     ANGLE_FEATURE_CONDITION(features, alwaysRunLinkSubJobsThreaded, true);
 }
 
-angle::Result Renderer::getLockedPipelineCacheDataIfNew(vk::Context *context,
+angle::Result Renderer::getLockedPipelineCacheDataIfNew(vk::ErrorContext *context,
                                                         size_t *pipelineCacheSizeOut,
                                                         size_t lastSyncSize,
                                                         std::vector<uint8_t> *pipelineCacheDataOut)
@@ -5991,7 +6208,7 @@ angle::Result Renderer::getLockedPipelineCacheDataIfNew(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::syncPipelineCacheVk(vk::Context *context,
+angle::Result Renderer::syncPipelineCacheVk(vk::ErrorContext *context,
                                             vk::GlobalOps *globalOps,
                                             const gl::Context *contextGL)
 {
@@ -6105,34 +6322,27 @@ void Renderer::outputVmaStatString()
     mAllocator.freeStatsString(statsString);
 }
 
-angle::Result Renderer::queueSubmitOneOff(vk::Context *context,
-                                          vk::PrimaryCommandBuffer &&primary,
+angle::Result Renderer::queueSubmitOneOff(vk::ErrorContext *context,
+                                          vk::ScopedPrimaryCommandBuffer &&scopedCommandBuffer,
                                           vk::ProtectionType protectionType,
                                           egl::ContextPriority priority,
                                           VkSemaphore waitSemaphore,
                                           VkPipelineStageFlags waitSemaphoreStageMasks,
-                                          vk::SubmitPolicy submitPolicy,
                                           QueueSerial *queueSerialOut)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "Renderer::queueSubmitOneOff");
+    DeviceScoped<PrimaryCommandBuffer> commandBuffer = scopedCommandBuffer.unlockAndRelease();
+    PrimaryCommandBuffer &primary                    = commandBuffer.get();
+
     // Allocate a one off SerialIndex and generate a QueueSerial and then use it and release the
     // index.
     vk::ScopedQueueSerialIndex index;
     ANGLE_TRY(allocateScopedQueueSerialIndex(&index));
     QueueSerial submitQueueSerial(index.get(), generateQueueSerial(index.get()));
 
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
-            context, protectionType, priority, primary.getHandle(), waitSemaphore,
-            waitSemaphoreStageMasks, submitPolicy, submitQueueSerial));
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.queueSubmitOneOff(
-            context, protectionType, priority, primary.getHandle(), waitSemaphore,
-            waitSemaphoreStageMasks, submitPolicy, submitQueueSerial));
-    }
+    ANGLE_TRY(mCommandQueue.queueSubmitOneOff(context, protectionType, priority,
+                                              primary.getHandle(), waitSemaphore,
+                                              waitSemaphoreStageMasks, submitQueueSerial));
 
     *queueSerialOut = submitQueueSerial;
     if (primary.valid())
@@ -6146,28 +6356,15 @@ angle::Result Renderer::queueSubmitOneOff(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::queueSubmitWaitSemaphore(vk::Context *context,
+angle::Result Renderer::queueSubmitWaitSemaphore(vk::ErrorContext *context,
                                                  egl::ContextPriority priority,
                                                  const vk::Semaphore &waitSemaphore,
                                                  VkPipelineStageFlags waitSemaphoreStageMasks,
                                                  QueueSerial submitQueueSerial)
 {
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.enqueueSubmitOneOffCommands(
-            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE,
-            waitSemaphore.getHandle(), waitSemaphoreStageMasks, vk::SubmitPolicy::AllowDeferred,
-            submitQueueSerial));
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.queueSubmitOneOff(
-            context, vk::ProtectionType::Unprotected, priority, VK_NULL_HANDLE,
-            waitSemaphore.getHandle(), waitSemaphoreStageMasks, vk::SubmitPolicy::AllowDeferred,
-            submitQueueSerial));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.queueSubmitOneOff(context, vk::ProtectionType::Unprotected, priority,
+                                           VK_NULL_HANDLE, waitSemaphore.getHandle(),
+                                           waitSemaphoreStageMasks, submitQueueSerial);
 }
 
 template <VkFormatFeatureFlags VkFormatProperties::*features>
@@ -6195,7 +6392,7 @@ VkFormatFeatureFlags Renderer::getFormatFeatureBits(angle::FormatID formatID,
         }
         else
         {
-            VkFormat vkFormat = vk::GetVkFormatFromFormatID(formatID);
+            VkFormat vkFormat = vk::GetVkFormatFromFormatID(this, formatID);
             ASSERT(vkFormat != VK_FORMAT_UNDEFINED);
 
             // Otherwise query the format features and cache it.
@@ -6239,17 +6436,27 @@ bool Renderer::haveSameFormatFeatureBits(angle::FormatID formatID1, angle::Forma
            hasImageFormatFeatureBits(formatID2, fmt1OptimalFeatureBits);
 }
 
-void Renderer::cleanupGarbage()
+void Renderer::cleanupGarbage(bool *anyGarbageCleanedOut)
 {
+    bool anyCleaned = false;
+
     // Clean up general garbage
-    mSharedGarbageList.cleanupSubmittedGarbage(this);
+    anyCleaned = (mSharedGarbageList.cleanupSubmittedGarbage(this) > 0) || anyCleaned;
+
     // Clean up suballocation garbages
-    mSuballocationGarbageList.cleanupSubmittedGarbage(this);
+    anyCleaned = (mSuballocationGarbageList.cleanupSubmittedGarbage(this) > 0) || anyCleaned;
+
     // Note: do this after clean up mSuballocationGarbageList so that we will have more chances to
     // find orphaned blocks being empty.
-    mOrphanedBufferBlockList.pruneEmptyBufferBlocks(this);
+    anyCleaned = (mOrphanedBufferBlockList.pruneEmptyBufferBlocks(this) > 0) || anyCleaned;
+
     // Clean up RefCountedEvent that are done resetting
-    mRefCountedEventRecycler.cleanupResettingEvents(this);
+    anyCleaned = (mRefCountedEventRecycler.cleanupResettingEvents(this) > 0) || anyCleaned;
+
+    if (anyGarbageCleanedOut != nullptr)
+    {
+        *anyGarbageCleanedOut = anyCleaned;
+    }
 }
 
 void Renderer::cleanupPendingSubmissionGarbage()
@@ -6375,12 +6582,14 @@ void Renderer::initializeDeviceExtensionEntryPointsFromCore() const
     }
 }
 
-angle::Result Renderer::submitCommands(vk::Context *context,
-                                       vk::ProtectionType protectionType,
-                                       egl::ContextPriority contextPriority,
-                                       const vk::Semaphore *signalSemaphore,
-                                       const vk::SharedExternalFence *externalFence,
-                                       const QueueSerial &submitQueueSerial)
+angle::Result Renderer::submitCommands(
+    vk::ErrorContext *context,
+    vk::ProtectionType protectionType,
+    egl::ContextPriority contextPriority,
+    const vk::Semaphore *signalSemaphore,
+    const vk::SharedExternalFence *externalFence,
+    std::vector<VkImageMemoryBarrier> &&imagesToTransitionToForeign,
+    const QueueSerial &submitQueueSerial)
 {
     ASSERT(signalSemaphore == nullptr || signalSemaphore->valid());
     const VkSemaphore signalVkSemaphore =
@@ -6392,25 +6601,16 @@ angle::Result Renderer::submitCommands(vk::Context *context,
         externalFenceCopy = *externalFence;
     }
 
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.enqueueSubmitCommands(
-            context, protectionType, contextPriority, signalVkSemaphore,
-            std::move(externalFenceCopy), submitQueueSerial));
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.submitCommands(context, protectionType, contextPriority,
-                                               signalVkSemaphore, std::move(externalFenceCopy),
-                                               submitQueueSerial));
-    }
+    ANGLE_TRY(mCommandQueue.submitCommands(
+        context, protectionType, contextPriority, signalVkSemaphore, std::move(externalFenceCopy),
+        std::move(imagesToTransitionToForeign), submitQueueSerial));
 
     ANGLE_TRY(mCommandQueue.postSubmitCheck(context));
 
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::submitPriorityDependency(vk::Context *context,
+angle::Result Renderer::submitPriorityDependency(vk::ErrorContext *context,
                                                  vk::ProtectionTypes protectionTypes,
                                                  egl::ContextPriority srcContextPriority,
                                                  egl::ContextPriority dstContextPriority,
@@ -6439,7 +6639,7 @@ angle::Result Renderer::submitPriorityDependency(vk::Context *context,
             signalSemaphore = &semaphore.get().get();
         }
         ANGLE_TRY(submitCommands(context, protectionType, srcContextPriority, signalSemaphore,
-                                 nullptr, queueSerial));
+                                 nullptr, {}, queueSerial));
     }
 
     // Submit only Wait Semaphore into the destination Priority (VkQueue).
@@ -6453,45 +6653,26 @@ angle::Result Renderer::submitPriorityDependency(vk::Context *context,
 
 void Renderer::handleDeviceLost()
 {
-    if (isAsyncCommandQueueEnabled())
-    {
-        mCommandProcessor.handleDeviceLost(this);
-    }
-    else
-    {
-        mCommandQueue.handleDeviceLost(this);
-    }
+    mCommandQueue.handleDeviceLost(this);
 }
 
-angle::Result Renderer::finishResourceUse(vk::Context *context, const vk::ResourceUse &use)
+angle::Result Renderer::finishResourceUse(vk::ErrorContext *context, const vk::ResourceUse &use)
 {
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.waitForResourceUseToBeSubmitted(context, use));
-    }
     return mCommandQueue.finishResourceUse(context, use, getMaxFenceWaitTimeNs());
 }
 
-angle::Result Renderer::finishQueueSerial(vk::Context *context, const QueueSerial &queueSerial)
+angle::Result Renderer::finishQueueSerial(vk::ErrorContext *context, const QueueSerial &queueSerial)
 {
     ASSERT(queueSerial.valid());
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.waitForQueueSerialToBeSubmitted(context, queueSerial));
-    }
     return mCommandQueue.finishQueueSerial(context, queueSerial, getMaxFenceWaitTimeNs());
 }
 
-angle::Result Renderer::waitForResourceUseToFinishWithUserTimeout(vk::Context *context,
+angle::Result Renderer::waitForResourceUseToFinishWithUserTimeout(vk::ErrorContext *context,
                                                                   const vk::ResourceUse &use,
                                                                   uint64_t timeout,
                                                                   VkResult *result)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "Renderer::waitForResourceUseToFinishWithUserTimeout");
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.waitForResourceUseToBeSubmitted(context, use));
-    }
     return mCommandQueue.waitForResourceUseToFinishWithUserTimeout(context, use, timeout, result);
 }
 
@@ -6502,17 +6683,8 @@ angle::Result Renderer::flushWaitSemaphores(
     std::vector<VkPipelineStageFlags> &&waitSemaphoreStageMasks)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "Renderer::flushWaitSemaphores");
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.enqueueFlushWaitSemaphores(protectionType, priority,
-                                                               std::move(waitSemaphores),
-                                                               std::move(waitSemaphoreStageMasks)));
-    }
-    else
-    {
-        mCommandQueue.flushWaitSemaphores(protectionType, priority, std::move(waitSemaphores),
-                                          std::move(waitSemaphoreStageMasks));
-    }
+    mCommandQueue.flushWaitSemaphores(protectionType, priority, std::move(waitSemaphores),
+                                      std::move(waitSemaphoreStageMasks));
 
     return angle::Result::Continue;
 }
@@ -6526,20 +6698,8 @@ angle::Result Renderer::flushRenderPassCommands(
     vk::RenderPassCommandBufferHelper **renderPassCommands)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "Renderer::flushRenderPassCommands");
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.enqueueFlushRenderPassCommands(
-            context, protectionType, priority, renderPass, framebufferOverride,
-            renderPassCommands));
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.flushRenderPassCommands(context, protectionType, priority,
-                                                        renderPass, framebufferOverride,
-                                                        renderPassCommands));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.flushRenderPassCommands(context, protectionType, priority, renderPass,
+                                                 framebufferOverride, renderPassCommands);
 }
 
 angle::Result Renderer::flushOutsideRPCommands(
@@ -6549,45 +6709,26 @@ angle::Result Renderer::flushOutsideRPCommands(
     vk::OutsideRenderPassCommandBufferHelper **outsideRPCommands)
 {
     ANGLE_TRACE_EVENT0("gpu.angle", "Renderer::flushOutsideRPCommands");
-    if (isAsyncCommandQueueEnabled())
-    {
-        ANGLE_TRY(mCommandProcessor.enqueueFlushOutsideRPCommands(context, protectionType, priority,
-                                                                  outsideRPCommands));
-    }
-    else
-    {
-        ANGLE_TRY(mCommandQueue.flushOutsideRPCommands(context, protectionType, priority,
-                                                       outsideRPCommands));
-    }
-
-    return angle::Result::Continue;
+    return mCommandQueue.flushOutsideRPCommands(context, protectionType, priority,
+                                                outsideRPCommands);
 }
 
-void Renderer::queuePresent(vk::Context *context,
-                            egl::ContextPriority priority,
-                            const VkPresentInfoKHR &presentInfo,
-                            vk::SwapchainStatus *swapchainStatus)
+VkResult Renderer::queuePresent(vk::ErrorContext *context,
+                                egl::ContextPriority priority,
+                                const VkPresentInfoKHR &presentInfo)
 {
-    if (isAsyncCommandQueueEnabled())
-    {
-        mCommandProcessor.enqueuePresent(priority, presentInfo, swapchainStatus);
-        // lastPresentResult should always VK_SUCCESS when isPending is true
-        ASSERT(!swapchainStatus->isPending || swapchainStatus->lastPresentResult == VK_SUCCESS);
-    }
-    else
-    {
-        mCommandQueue.queuePresent(priority, presentInfo, swapchainStatus);
-        ASSERT(!swapchainStatus->isPending);
-    }
+    VkResult result = mCommandQueue.queuePresent(priority, presentInfo);
 
     if (getFeatures().logMemoryReportStats.enabled)
     {
         mMemoryReport.logMemoryReportStats();
     }
+
+    return result;
 }
 
 template <typename CommandBufferHelperT, typename RecyclerT>
-angle::Result Renderer::getCommandBufferImpl(vk::Context *context,
+angle::Result Renderer::getCommandBufferImpl(vk::ErrorContext *context,
                                              vk::SecondaryCommandPool *commandPool,
                                              vk::SecondaryCommandMemoryAllocator *commandsAllocator,
                                              RecyclerT *recycler,
@@ -6598,7 +6739,7 @@ angle::Result Renderer::getCommandBufferImpl(vk::Context *context,
 }
 
 angle::Result Renderer::getOutsideRenderPassCommandBufferHelper(
-    vk::Context *context,
+    vk::ErrorContext *context,
     vk::SecondaryCommandPool *commandPool,
     vk::SecondaryCommandMemoryAllocator *commandsAllocator,
     vk::OutsideRenderPassCommandBufferHelper **commandBufferHelperOut)
@@ -6609,7 +6750,7 @@ angle::Result Renderer::getOutsideRenderPassCommandBufferHelper(
 }
 
 angle::Result Renderer::getRenderPassCommandBufferHelper(
-    vk::Context *context,
+    vk::ErrorContext *context,
     vk::SecondaryCommandPool *commandPool,
     vk::SecondaryCommandMemoryAllocator *commandsAllocator,
     vk::RenderPassCommandBufferHelper **commandBufferHelperOut)
@@ -6650,7 +6791,7 @@ void Renderer::logCacheStats() const
     }
 }
 
-angle::Result Renderer::getFormatDescriptorCountForVkFormat(vk::Context *context,
+angle::Result Renderer::getFormatDescriptorCountForVkFormat(vk::ErrorContext *context,
                                                             VkFormat format,
                                                             uint32_t *descriptorCountOut)
 {
@@ -6688,7 +6829,7 @@ angle::Result Renderer::getFormatDescriptorCountForVkFormat(vk::Context *context
     return angle::Result::Continue;
 }
 
-angle::Result Renderer::getFormatDescriptorCountForExternalFormat(vk::Context *context,
+angle::Result Renderer::getFormatDescriptorCountForExternalFormat(vk::ErrorContext *context,
                                                                   uint64_t format,
                                                                   uint32_t *descriptorCountOut)
 {
@@ -6712,10 +6853,10 @@ void Renderer::onAllocateHandle(vk::HandleType handleType)
     mActiveHandleCounts.onAllocate(handleType);
 }
 
-void Renderer::onDeallocateHandle(vk::HandleType handleType)
+void Renderer::onDeallocateHandle(vk::HandleType handleType, uint32_t count)
 {
     std::unique_lock<angle::SimpleMutex> localLock(mActiveHandleCountsMutex);
-    mActiveHandleCounts.onDeallocate(handleType);
+    mActiveHandleCounts.onDeallocate(handleType, count);
 }
 
 VkDeviceSize Renderer::getPreferedBufferBlockSize(uint32_t memoryTypeIndex) const
@@ -6748,10 +6889,9 @@ void Renderer::releaseQueueSerialIndex(SerialIndex index)
     mQueueSerialIndexAllocator.release(index);
 }
 
-angle::Result Renderer::finishOneCommandBatchAndCleanup(vk::Context *context, bool *anyBatchCleaned)
+angle::Result Renderer::cleanupSomeGarbage(ErrorContext *context, bool *anyGarbageCleanedOut)
 {
-    return mCommandQueue.finishOneCommandBatchAndCleanup(context, getMaxFenceWaitTimeNs(),
-                                                         anyBatchCleaned);
+    return mCommandQueue.cleanupSomeGarbage(context, 0, anyGarbageCleanedOut);
 }
 
 // static
@@ -6766,7 +6906,7 @@ ImageMemorySuballocator::~ImageMemorySuballocator() {}
 void ImageMemorySuballocator::destroy(Renderer *renderer) {}
 
 VkResult ImageMemorySuballocator::allocateAndBindMemory(
-    Context *context,
+    ErrorContext *context,
     Image *image,
     const VkImageCreateInfo *imageCreateInfo,
     VkMemoryPropertyFlags requiredFlags,
@@ -6783,6 +6923,14 @@ VkResult ImageMemorySuballocator::allocateAndBindMemory(
     ASSERT(allocationOut && !allocationOut->valid());
     Renderer *renderer         = context->getRenderer();
     const Allocator &allocator = renderer->getAllocator();
+
+    // The required size must not be greater than the maximum allocation size allowed by the driver.
+    if (memoryRequirements->size > renderer->getMaxMemoryAllocationSize())
+    {
+        renderer->getMemoryAllocationTracker()->onExceedingMaxMemoryAllocationSize(
+            memoryRequirements->size);
+        return VK_ERROR_OUT_OF_DEVICE_MEMORY;
+    }
 
     // Avoid device-local and host-visible combinations if possible. Here, "preferredFlags" is
     // expected to be the same as "requiredFlags" except in the device-local bit.

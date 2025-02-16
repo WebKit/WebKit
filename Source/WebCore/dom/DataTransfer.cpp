@@ -40,6 +40,7 @@
 #include "FrameDestructionObserverInlines.h"
 #include "FrameLoader.h"
 #include "HTMLImageElement.h"
+#include "HostWindow.h"
 #include "Image.h"
 #include "LocalFrame.h"
 #include "Page.h"
@@ -64,14 +65,16 @@ class DragImageLoader final : public CachedImageClient {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DragImageLoader);
     WTF_MAKE_NONCOPYABLE(DragImageLoader);
 public:
-    explicit DragImageLoader(DataTransfer&);
+    explicit DragImageLoader(DataTransfer&, const Document&);
     void startLoading(CachedResourceHandle<CachedImage>&);
     void stopLoading(CachedResourceHandle<CachedImage>&);
     void moveToDataTransfer(DataTransfer&);
 
 private:
     void imageChanged(CachedImage*, const IntRect*) override;
+
     WeakRef<DataTransfer> m_dataTransfer;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DragImageLoader);
@@ -433,7 +436,7 @@ struct PasteboardFileTypeReader final : PasteboardFileReader {
         types.add(type);
     }
 
-    HashSet<String, ASCIICaseInsensitiveHash> types;
+    UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> types;
 };
 
 bool DataTransfer::hasFileOfType(const String& type)
@@ -554,12 +557,13 @@ void DataTransfer::setDragImage(Ref<Element>&& element, int x, int y)
 
     m_dragLocation = IntPoint(x, y);
 
+    Ref document = element->protectedDocument();
     if (m_dragImageLoader && m_dragImage)
         m_dragImageLoader->stopLoading(m_dragImage);
     m_dragImage = image;
     if (m_dragImage) {
         if (!m_dragImageLoader)
-            m_dragImageLoader = makeUnique<DragImageLoader>(*this);
+            m_dragImageLoader = makeUnique<DragImageLoader>(*this, document);
         m_dragImageLoader->startLoading(m_dragImage);
     }
 
@@ -568,10 +572,10 @@ void DataTransfer::setDragImage(Ref<Element>&& element, int x, int y)
     else
         m_dragImageElement = WTFMove(element);
 
-    updateDragImage();
+    updateDragImage(document.ptr());
 }
 
-void DataTransfer::updateDragImage()
+void DataTransfer::updateDragImage(const Document* document)
 {
     // Don't allow setting the image if we haven't started dragging yet; we'll rely on the dragging code
     // to install this drag image as part of getting the drag kicked off.
@@ -579,7 +583,7 @@ void DataTransfer::updateDragImage()
         return;
 
     IntPoint computedHotSpot;
-    auto computedImage = DragImage { createDragImage(computedHotSpot) };
+    auto computedImage = DragImage { createDragImage(document, computedHotSpot) };
     if (!computedImage)
         return;
 
@@ -593,12 +597,15 @@ RefPtr<Element> DataTransfer::dragImageElement() const
 
 #if !PLATFORM(MAC)
 
-DragImageRef DataTransfer::createDragImage(IntPoint& location) const
+DragImageRef DataTransfer::createDragImage(const Document* document, IntPoint& location) const
 {
     location = m_dragLocation;
 
-    if (m_dragImage)
-        return createDragImageFromImage(m_dragImage->protectedImage().get(), ImageOrientation::Orientation::None);
+    if (m_dragImage) {
+        HostWindow* hostWindow = document && document->view() ? document->view()->hostWindow() : nullptr;
+        auto deviceScaleFactor = document ? document->deviceScaleFactor() : 1.f;
+        return createDragImageFromImage(m_dragImage->protectedImage().get(), ImageOrientation::Orientation::None, hostWindow, deviceScaleFactor);
+    }
 
     if (m_dragImageElement) {
         if (RefPtr frame = m_dragImageElement->document().frame())
@@ -611,8 +618,9 @@ DragImageRef DataTransfer::createDragImage(IntPoint& location) const
 
 #endif
 
-DragImageLoader::DragImageLoader(DataTransfer& dataTransfer)
+DragImageLoader::DragImageLoader(DataTransfer& dataTransfer, const Document& document)
     : m_dataTransfer(dataTransfer)
+    , m_document { document }
 {
 }
 
@@ -634,7 +642,8 @@ void DragImageLoader::stopLoading(CachedResourceHandle<WebCore::CachedImage>& im
 
 void DragImageLoader::imageChanged(CachedImage*, const IntRect*)
 {
-    m_dataTransfer->updateDragImage();
+    RefPtr document = m_document.get();
+    m_dataTransfer->updateDragImage(document.get());
 }
 
 static OptionSet<DragOperation> dragOpFromIEOp(const String& operation)

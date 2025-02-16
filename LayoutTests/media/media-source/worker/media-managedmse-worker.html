@@ -8,8 +8,9 @@
         findMediaElement();
 
         testExpected('ManagedMediaSource.canConstructInDedicatedWorker', true);
+        const canPlayPromise = waitFor(video, 'canplay', true);
         const worker = new Worker('worker.js');
-        worker.onmessage = msg => {
+        worker.onmessage = async (msg) => {
             switch (msg.data.topic) {
             case 'handle':
                 logResult(true, 'received handle message: ' + msg.data.arg);
@@ -17,6 +18,11 @@
                 break;
             case 'info':
                 logResult(true, 'info message from worker: ' + msg.data.arg);
+                break;
+            case 'done':
+                await canPlayPromise;
+                testExpected('video.readyState', HTMLMediaElement.HAVE_CURRENT_DATA, '>=');
+                testExpected('video.buffered.length', 1);
                 endTest();
                 break;
             case 'error':
@@ -29,7 +35,8 @@
             }
         };
         run('video.disableRemotePlayback = true');
-        worker.postMessage({ });
+        worker.postMessage({topic: 'setup'});
+        worker.postMessage({topic: 'manifest', arg: '../content/test-48khz-manifest.json'});
     });
     </script>
 </head>

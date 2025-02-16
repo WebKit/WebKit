@@ -4,7 +4,7 @@ function shouldBe(actual, expected) {
 }
 
 import("./resources/module-namespace-access-transitive-exports.js").then((ns) => {
-    for (var i = 0; i < 1e6; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(ns.test, 42);
         shouldBe(ns.cocoa(), 42);
     }

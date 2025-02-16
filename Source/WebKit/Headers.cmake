@@ -81,6 +81,7 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     UIProcess/API/C/WKPageFindClient.h
     UIProcess/API/C/WKPageFindMatchesClient.h
     UIProcess/API/C/WKPageFormClient.h
+    UIProcess/API/C/WKPageFullScreenClient.h
     UIProcess/API/C/WKPageGroup.h
     UIProcess/API/C/WKPageInjectedBundleClient.h
     UIProcess/API/C/WKPageLoaderClient.h
@@ -135,7 +136,6 @@ set(WebKit_PUBLIC_FRAMEWORK_HEADERS
     WebProcess/InjectedBundle/API/c/WKBundlePageContextMenuClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePageEditorClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePageFormClient.h
-    WebProcess/InjectedBundle/API/c/WKBundlePageFullScreenClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePageLoaderClient.h
     WebProcess/InjectedBundle/API/c/WKBundlePageOverlay.h
     WebProcess/InjectedBundle/API/c/WKBundlePagePolicyClient.h

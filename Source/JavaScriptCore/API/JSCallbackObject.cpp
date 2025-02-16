@@ -47,8 +47,8 @@ DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, JSCallbackObject<JSGlobalObject>
 // Define the two types of JSCallbackObjects we support.
 template <> const ClassInfo JSCallbackObject<JSNonFinalObject>::s_info = { "CallbackObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
 template <> const ClassInfo JSCallbackObject<JSGlobalObject>::s_info = { "CallbackGlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
-template<> const bool JSCallbackObject<JSNonFinalObject>::needsDestruction = true;
-template<> const bool JSCallbackObject<JSGlobalObject>::needsDestruction = true;
+template<> const DestructionMode JSCallbackObject<JSNonFinalObject>::needsDestruction = NeedsDestruction;
+template<> const DestructionMode JSCallbackObject<JSGlobalObject>::needsDestruction = NeedsDestruction;
 
 template<>
 NativeFunction::Ptr JSCallbackObject<JSNonFinalObject>::getCallFunction()

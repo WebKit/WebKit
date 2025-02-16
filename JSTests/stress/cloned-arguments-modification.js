@@ -33,5 +33,5 @@ function foo() {
         throw "one property stopped another from showing up";
 }
 
-for (i = 0; i < 10000; i++)
+for (i = 0; i < testLoopCount; i++)
     foo();

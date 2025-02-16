@@ -64,8 +64,8 @@ NetworkSendQueue WebSocketChannel::createMessageQueue(Document& document, WebSoc
 {
     return { document, [&channel](auto& utf8String) {
         auto data = utf8String.span();
-        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, data);
-        channel.sendMessageInternal(Messages::NetworkSocketChannel::SendString { data }, utf8String.length());
+        channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeText, byteCast<uint8_t>(data));
+        channel.sendMessageInternal(Messages::NetworkSocketChannel::SendString { byteCast<uint8_t>(data) }, utf8String.length());
     }, [&channel](auto span) {
         channel.notifySendFrame(WebSocketFrame::OpCode::OpCodeBinary, span);
         channel.sendMessageInternal(Messages::NetworkSocketChannel::SendData { span }, span.size());
@@ -137,7 +137,6 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
     bool allowPrivacyProxy { true };
     std::optional<FrameIdentifier> frameID;
     std::optional<PageIdentifier> pageID;
-    ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking { ShouldRelaxThirdPartyCookieBlocking::No };
     StoredCredentialsPolicy storedCredentialsPolicy { StoredCredentialsPolicy::Use };
     if (auto* frame = m_document ? m_document->frame() : nullptr) {
         RefPtr mainFrame = m_document->localMainFrame();
@@ -155,15 +154,13 @@ WebSocketChannel::ConnectStatus WebSocketChannel::connect(const URL& url, const 
                 advancedPrivacyProtections = policySourceDocumentLoader->advancedPrivacyProtections();
             }
         }
-        if (auto* page = mainFrame->page()) {
-            shouldRelaxThirdPartyCookieBlocking = page->shouldRelaxThirdPartyCookieBlocking();
+        if (auto* page = mainFrame->page())
             storedCredentialsPolicy = page->canUseCredentialStorage() ? StoredCredentialsPolicy::Use : StoredCredentialsPolicy::DoNotUse;
-        }
     }
 
     m_inspector.didCreateWebSocket(url);
     m_url = request->url();
-    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier(), m_webPageProxyID, frameID, pageID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, advancedPrivacyProtections, shouldRelaxThirdPartyCookieBlocking, storedCredentialsPolicy });
+    MessageSender::send(Messages::NetworkConnectionToWebProcess::CreateSocketChannel { *request, protocol, identifier(), m_webPageProxyID, frameID, pageID, m_document->clientOrigin(), WebProcess::singleton().hadMainFrameMainResourcePrivateRelayed(), allowPrivacyProxy, advancedPrivacyProtections, storedCredentialsPolicy });
     return ConnectStatus::OK;
 }
 

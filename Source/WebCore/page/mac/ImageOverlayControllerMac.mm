@@ -70,7 +70,7 @@ void ImageOverlayController::updateDataDetectorHighlights(const HTMLElement& ove
             dataDetectorResultElements.append(child);
     }
 
-    HashSet<Ref<HTMLElement>> dataDetectorResultElementsWithHighlights;
+    UncheckedKeyHashSet<Ref<HTMLElement>> dataDetectorResultElementsWithHighlights;
     for (auto& containerAndHighlight : m_dataDetectorContainersAndHighlights) {
         if (containerAndHighlight.first)
             dataDetectorResultElementsWithHighlights.add(*containerAndHighlight.first);

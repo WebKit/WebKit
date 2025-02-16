@@ -370,6 +370,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "eglLabelObjectKHR";
         case EntryPoint::EGLLockSurfaceKHR:
             return "eglLockSurfaceKHR";
+        case EntryPoint::EGLLockVulkanQueueANGLE:
+            return "eglLockVulkanQueueANGLE";
         case EntryPoint::EGLMakeCurrent:
             return "eglMakeCurrent";
         case EntryPoint::EGLPostSubBufferNV:
@@ -412,6 +414,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "eglQueryString";
         case EntryPoint::EGLQueryStringiANGLE:
             return "eglQueryStringiANGLE";
+        case EntryPoint::EGLQuerySupportedCompressionRatesEXT:
+            return "eglQuerySupportedCompressionRatesEXT";
         case EntryPoint::EGLQuerySurface:
             return "eglQuerySurface";
         case EntryPoint::EGLQuerySurface64KHR:
@@ -464,6 +468,8 @@ const char *GetEntryPointName(EntryPoint ep)
             return "eglTerminate";
         case EntryPoint::EGLUnlockSurfaceKHR:
             return "eglUnlockSurfaceKHR";
+        case EntryPoint::EGLUnlockVulkanQueueANGLE:
+            return "eglUnlockVulkanQueueANGLE";
         case EntryPoint::EGLWaitClient:
             return "eglWaitClient";
         case EntryPoint::EGLWaitGL:

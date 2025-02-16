@@ -149,12 +149,12 @@ angle::Result DisplayMtl::initializeImpl(egl::Display *display)
             return angle::Result::Stop;
         }
 
-        mCmdQueue.set([[mMetalDevice newCommandQueue] ANGLE_MTL_AUTORELEASE]);
+        mCmdQueue = angle::adoptObjCPtr([mMetalDevice newCommandQueue]);
 
         ANGLE_TRY(mFormatTable.initialize(this));
         ANGLE_TRY(initializeShaderLibrary());
 
-        mUtils = std::make_unique<mtl::RenderUtils>(this);
+        mUtils = std::make_unique<mtl::RenderUtils>();
 
         return angle::Result::Continue;
     }
@@ -237,11 +237,11 @@ DeviceImpl *DisplayMtl::createDevice()
     return new DeviceMtl();
 }
 
-mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
+angle::ObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
     const egl::AttributeMap &attribs)
 {
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-    auto deviceList = mtl::adoptObjCObj(MTLCopyAllDevices());
+    auto deviceList = angle::adoptObjCPtr(MTLCopyAllDevices());
 
     EGLAttrib high = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_HIGH_ANGLE, 0);
     EGLAttrib low  = attribs.get(EGL_PLATFORM_ANGLE_DEVICE_ID_LOW_ANGLE, 0);
@@ -259,12 +259,9 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
         }
     }
 
-    auto externalGPUs =
-        mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
-    auto integratedGPUs =
-        mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
-    auto discreteGPUs =
-        mtl::adoptObjCObj<NSMutableArray<id<MTLDevice>>>([[NSMutableArray alloc] init]);
+    auto externalGPUs   = angle::adoptObjCPtr([[NSMutableArray alloc] init]);
+    auto integratedGPUs = angle::adoptObjCPtr([[NSMutableArray alloc] init]);
+    auto discreteGPUs   = angle::adoptObjCPtr([[NSMutableArray alloc] init]);
     for (id<MTLDevice> device in deviceList.get())
     {
         if (device.removable)
@@ -319,7 +316,7 @@ mtl::AutoObjCPtr<id<MTLDevice>> DisplayMtl::getMetalDeviceMatchingAttribute(
 #endif
     // If we can't find anything, or are on a platform that doesn't support power options, create a
     // default device.
-    return mtl::adoptObjCObj(MTLCreateSystemDefaultDevice());
+    return angle::adoptObjCPtr(MTLCreateSystemDefaultDevice());
 }
 
 egl::Error DisplayMtl::waitClient(const gl::Context *context)
@@ -1350,7 +1347,7 @@ void DisplayMtl::initializeFeatures()
 
 angle::Result DisplayMtl::initializeShaderLibrary()
 {
-    mtl::AutoObjCPtr<NSError *> err = nil;
+    angle::ObjCPtr<NSError> err;
 #if ANGLE_METAL_XCODE_BUILDS_SHADERS || ANGLE_METAL_HAS_PREBUILT_INTERNAL_SHADERS
     mDefaultShaders = mtl::CreateShaderLibraryFromStaticBinary(getMetalDevice(), gDefaultMetallib,
                                                                std::size(gDefaultMetallib), &err);
@@ -1498,13 +1495,13 @@ bool DisplayMtl::isSimulator() const
     return TARGET_OS_SIMULATOR;
 }
 
-mtl::AutoObjCObj<MTLSharedEventListener> DisplayMtl::getOrCreateSharedEventListener()
+angle::ObjCPtr<MTLSharedEventListener> DisplayMtl::getOrCreateSharedEventListener()
 {
     if (!mSharedEventListener)
     {
         ANGLE_MTL_OBJC_SCOPE
         {
-            mSharedEventListener = [[[MTLSharedEventListener alloc] init] ANGLE_MTL_AUTORELEASE];
+            mSharedEventListener = angle::adoptObjCPtr([[MTLSharedEventListener alloc] init]);
             ASSERT(mSharedEventListener);  // Failure here most probably means a sandbox issue.
         }
     }

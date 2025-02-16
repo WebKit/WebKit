@@ -240,7 +240,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 String AccessibilityObject::subrolePlatformString() const
 {
     if (isEmptyGroup(*const_cast<AccessibilityObject*>(this)))
-        return @"AXEmptyGroup";
+        return NSAccessibilityEmptyGroupSubrole;
 
     if (isSecureField())
         return NSAccessibilitySecureTextFieldSubrole;
@@ -500,19 +500,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         }
     }
 
-    if ([axRole isEqualToString:@"AXWebArea"])
+    if ([axRole isEqualToString:NSAccessibilityWebAreaRole])
         return AXWebAreaText();
 
-    if ([axRole isEqualToString:@"AXLink"])
+    if ([axRole isEqualToString:NSAccessibilityLinkRole])
         return AXLinkText();
 
-    if ([axRole isEqualToString:@"AXListMarker"])
+    if ([axRole isEqualToString:NSAccessibilityListMarkerRole])
         return AXListMarkerText();
 
-    if ([axRole isEqualToString:@"AXImageMap"])
+    if ([axRole isEqualToString:NSAccessibilityImageMapRole])
         return AXImageMapText();
 
-    if ([axRole isEqualToString:@"AXHeading"])
+    if ([axRole isEqualToString:NSAccessibilityHeadingRole])
         return AXHeadingText();
 
     if ([axRole isEqualToString:NSAccessibilityTextFieldRole]) {
@@ -660,8 +660,7 @@ Vector<uint8_t> AXRemoteFrame::generateRemoteToken() const
 {
     if (auto* parent = parentObject()) {
         // We use the parent's wrapper so that the remote frame acts as a pass through for the remote token bridge.
-        NSData *data = [NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()];
-        return makeVector(data);
+        return makeVector([NSAccessibilityRemoteUIElement remoteTokenForLocalUIElement:parent->wrapper()]);
     }
 
     return { };
@@ -718,7 +717,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::ProgressIndicator, NSAccessibilityProgressIndicatorRole },
         { AccessibilityRole::Meter, NSAccessibilityLevelIndicatorRole },
         { AccessibilityRole::ComboBox, NSAccessibilityComboBoxRole },
-        { AccessibilityRole::DateTime, @"AXDateTimeArea" },
+        { AccessibilityRole::DateTime, NSAccessibilityDateTimeAreaRole },
         { AccessibilityRole::Splitter, NSAccessibilitySplitterRole },
         { AccessibilityRole::Code, NSAccessibilityGroupRole },
         { AccessibilityRole::ColorWell, NSAccessibilityColorWellRole },
@@ -727,10 +726,10 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::TreeGrid, NSAccessibilityTableRole },
         { AccessibilityRole::WebCoreLink, NSAccessibilityLinkRole },
         { AccessibilityRole::ImageMapLink, NSAccessibilityLinkRole },
-        { AccessibilityRole::ImageMap, @"AXImageMap" },
-        { AccessibilityRole::ListMarker, @"AXListMarker" },
-        { AccessibilityRole::WebArea, @"AXWebArea" },
-        { AccessibilityRole::Heading, @"AXHeading" },
+        { AccessibilityRole::ImageMap, NSAccessibilityImageMapRole },
+        { AccessibilityRole::ListMarker, NSAccessibilityListMarkerRole },
+        { AccessibilityRole::WebArea, NSAccessibilityWebAreaRole },
+        { AccessibilityRole::Heading, NSAccessibilityHeadingRole },
         { AccessibilityRole::ListBox, NSAccessibilityListRole },
         { AccessibilityRole::ListBoxOption, NSAccessibilityStaticTextRole },
         { AccessibilityRole::Cell, NSAccessibilityCellRole },
@@ -777,7 +776,7 @@ PlatformRoleMap createPlatformRoleMap()
         { AccessibilityRole::Form, NSAccessibilityGroupRole },
         { AccessibilityRole::Generic, NSAccessibilityGroupRole },
         { AccessibilityRole::SpinButton, NSAccessibilityIncrementorRole },
-        { AccessibilityRole::SpinButtonPart, @"AXIncrementorArrow" },
+        { AccessibilityRole::SpinButtonPart, NSAccessibilityIncrementorArrowRole },
         { AccessibilityRole::Footer, NSAccessibilityGroupRole },
         { AccessibilityRole::ToggleButton, NSAccessibilityCheckBoxRole },
         { AccessibilityRole::Canvas, NSAccessibilityImageRole },

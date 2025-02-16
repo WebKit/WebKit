@@ -85,16 +85,20 @@ def get_loader(test_paths: wptcommandline.TestPaths,
     include = kwargs["include"]
     if kwargs["include_file"]:
         include = include or []
-        include.extend(testloader.read_include_from_file(kwargs["include_file"]))
+        include.extend(testloader.read_test_prefixes_from_file(kwargs["include_file"]))
+    exclude = kwargs["exclude"]
+    if kwargs["exclude_file"]:
+        exclude = exclude or []
+        exclude.extend(testloader.read_test_prefixes_from_file(kwargs["exclude_file"]))
     if test_groups:
         include = testloader.update_include_for_groups(test_groups, include)
 
     if kwargs["tags"] or kwargs["exclude_tags"]:
         test_filters.append(testloader.TagFilter(kwargs["tags"], kwargs["exclude_tags"]))
 
-    if include or kwargs["exclude"] or kwargs["include_manifest"] or kwargs["default_exclude"]:
+    if include or exclude or kwargs["include_manifest"] or kwargs["default_exclude"]:
         manifest_filters.append(testloader.TestFilter(include=include,
-                                                      exclude=kwargs["exclude"],
+                                                      exclude=exclude,
                                                       manifest_path=kwargs["include_manifest"],
                                                       test_manifests=test_manifests,
                                                       explicit=kwargs["default_exclude"]))
@@ -128,11 +132,15 @@ def get_loader(test_paths: wptcommandline.TestPaths,
 def list_test_groups(test_paths, product, **kwargs):
     env.do_delayed_imports(logger, test_paths)
 
-    _, test_loader = get_loader(test_paths,
-                                product,
-                                **kwargs)
+    test_queue_builder, test_loader = get_loader(test_paths,
+                                                 product,
+                                                 **kwargs)
 
-    for item in sorted(test_loader.groups(kwargs["test_types"])):
+    tests_by_type = {(subsuite_name, test_type): tests
+                     for subsuite_name, subsuite_tests in test_loader.tests.items()
+                     for test_type, tests in subsuite_tests.items()}
+
+    for item in sorted(test_queue_builder.tests_by_group(tests_by_type)):
         print(item)
 
 
@@ -254,24 +262,21 @@ def run_test_iteration(test_status, test_loader, test_queue_builder,
                 logger.test_end(test.id, status="SKIP", subsuite=subsuite_name)
                 test_status.skipped += 1
 
-            if test_type == "testharness":
-                for test in test_loader.tests[subsuite_name][test_type]:
-                    skip_reason = None
-                    if test.testdriver and not executor_cls.supports_testdriver:
-                        skip_reason = "Executor does not support testdriver.js"
-                    elif test.jsshell and not executor_cls.supports_jsshell:
-                        skip_reason = "Executor does not support jsshell"
-                    if skip_reason:
-                        logger.test_start(test.id, subsuite=subsuite_name)
-                        logger.test_end(test.id,
-                                        status="SKIP",
-                                        subsuite=subsuite_name,
-                                        message=skip_reason)
-                        test_status.skipped += 1
-                    else:
-                        tests_to_run[(subsuite_name, test_type)].append(test)
-            else:
-                tests_to_run[(subsuite_name, test_type)] = test_loader.tests[subsuite_name][test_type]
+            for test in test_loader.tests[subsuite_name][test_type]:
+                skip_reason = None
+                if getattr(test, "testdriver", False) and not executor_cls.supports_testdriver:
+                    skip_reason = "Executor does not support testdriver.js"
+                elif test_type == "testharness" and test.jsshell and not executor_cls.supports_jsshell:
+                    skip_reason = "Executor does not support jsshell"
+                if skip_reason:
+                    logger.test_start(test.id, subsuite=subsuite_name)
+                    logger.test_end(test.id,
+                                    status="SKIP",
+                                    subsuite=subsuite_name,
+                                    message=skip_reason)
+                    test_status.skipped += 1
+                else:
+                    tests_to_run[(subsuite_name, test_type)].append(test)
 
     unexpected_fail_tests = defaultdict(list)
     unexpected_pass_tests = defaultdict(list)
@@ -294,6 +299,7 @@ def run_test_iteration(test_status, test_loader, test_queue_builder,
                             test_loader.subsuites,
                             kwargs["run_by_dir"])
 
+        test_environment.reset()
         with ManagerGroup("web-platform-tests",
                           test_queue_builder,
                           test_implementations,
@@ -396,11 +402,16 @@ def run_tests(config, product, test_paths, **kwargs):
 
         product.check_args(**kwargs)
 
+        kwargs["allow_list_paths"] = []
         if kwargs["install_fonts"]:
+            # Add test font to allow list for sandbox to ensure that the content
+            # processes will have read access.
+            ahem_path = os.path.join(test_paths["/"].tests_path, "fonts/Ahem.ttf")
+            kwargs["allow_list_paths"].append(ahem_path)
             env_extras.append(FontInstaller(
                 logger,
                 font_dir=kwargs["font_dir"],
-                ahem=os.path.join(test_paths["/"].tests_path, "fonts/Ahem.ttf")
+                ahem=ahem_path
             ))
 
         recording.set(["startup", "load_tests"])
@@ -447,7 +458,8 @@ def run_tests(config, product, test_paths, **kwargs):
                                  kwargs["enable_webtransport_h3"],
                                  mojojs_path,
                                  inject_script,
-                                 kwargs["suppress_handler_traceback"]) as test_environment:
+                                 kwargs["suppress_handler_traceback"],
+                                 kwargs["ws_extra"]) as test_environment:
             recording.set(["startup", "ensure_environment"])
             try:
                 test_environment.ensure_started()

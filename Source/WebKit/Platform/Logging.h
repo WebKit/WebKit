@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2010, 2013-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -95,6 +95,7 @@ extern "C" {
     M(CacheStorage) \
     M(ContentObservation) \
     M(ContextMenu) \
+    M(DigitalCredentials) \
     M(DisplayLink) \
     M(DisplayLists) \
     M(DiskPersistency) \
@@ -156,6 +157,7 @@ extern "C" {
     M(SessionState) \
     M(SharedDisplayLists) \
     M(SharedWorker) \
+    M(SiteIsolation) \
     M(Storage) \
     M(StorageAPI) \
     M(SystemPreview) \

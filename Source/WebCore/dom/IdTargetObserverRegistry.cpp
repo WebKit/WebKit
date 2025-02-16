@@ -64,7 +64,7 @@ void IdTargetObserverRegistry::removeObserver(const AtomString& id, IdTargetObse
     }
 }
 
-void IdTargetObserverRegistry::notifyObserversInternal(const AtomString& id)
+void IdTargetObserverRegistry::notifyObserversInternal(Element& element, const AtomString& id)
 {
     ASSERT(!m_registry.isEmpty());
 
@@ -74,7 +74,7 @@ void IdTargetObserverRegistry::notifyObserversInternal(const AtomString& id)
 
     for (auto& observer : copyToVector(m_notifyingObserversInSet->observers)) {
         if (m_notifyingObserversInSet->observers.contains(observer))
-            observer->idTargetChanged();
+            observer->idTargetChanged(element);
     }
 
     bool hasRemainingObservers = !m_notifyingObserversInSet->observers.isEmpty();

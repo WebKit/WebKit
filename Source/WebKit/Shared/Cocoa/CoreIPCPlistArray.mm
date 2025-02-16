@@ -59,8 +59,8 @@ CoreIPCPlistArray::CoreIPCPlistArray(Vector<CoreIPCPlistObject>&& array)
 
 RetainPtr<id> CoreIPCPlistArray::toID() const
 {
-    return createNSArray(m_array, [] (auto& object) -> id {
-        return object.toID().get();
+    return createNSArray(m_array, [] (auto& object) {
+        return object.toID();
     });
 }
 

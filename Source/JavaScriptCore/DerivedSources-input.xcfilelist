@@ -93,7 +93,6 @@ $(PROJECT_DIR)/generator/Wasm.rb
 $(PROJECT_DIR)/generator/main.rb
 $(PROJECT_DIR)/inspector/InjectedScriptSource.js
 $(PROJECT_DIR)/inspector/protocol/Animation.json
-$(PROJECT_DIR)/inspector/protocol/ApplicationCache.json
 $(PROJECT_DIR)/inspector/protocol/Audit.json
 $(PROJECT_DIR)/inspector/protocol/Browser.json
 $(PROJECT_DIR)/inspector/protocol/CPUProfiler.json
@@ -103,7 +102,6 @@ $(PROJECT_DIR)/inspector/protocol/Console.json
 $(PROJECT_DIR)/inspector/protocol/DOM.json
 $(PROJECT_DIR)/inspector/protocol/DOMDebugger.json
 $(PROJECT_DIR)/inspector/protocol/DOMStorage.json
-$(PROJECT_DIR)/inspector/protocol/Database.json
 $(PROJECT_DIR)/inspector/protocol/Debugger.json
 $(PROJECT_DIR)/inspector/protocol/GenericTypes.json
 $(PROJECT_DIR)/inspector/protocol/Heap.json

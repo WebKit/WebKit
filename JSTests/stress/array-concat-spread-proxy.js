@@ -16,14 +16,14 @@ function arrayEq(a, b) {
     let {proxy:p, revoke} = Proxy.revocable(array, { get : function(o, k) { return o[k]; } });
 
     // Test it works with proxies by default
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (!arrayEq(Array.prototype.concat.call(p,p), [1,2,3,1,2,3]))
             throw "failed normally with a proxy"
     }
 
     // Test it works with spreadable false.
     p[Symbol.isConcatSpreadable] = false;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (!arrayEq(Array.prototype.concat.call(p,p), [p,p]))
             throw "failed with no spread"
     }

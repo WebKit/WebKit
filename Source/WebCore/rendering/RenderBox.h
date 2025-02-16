@@ -54,7 +54,7 @@ public:
     bool requiresLayer() const override;
 
     bool requiresLayerWithScrollableArea() const;
-    bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const final;
+    bool backgroundIsKnownToBeOpaqueInRect(const LayoutRect& localRect) const override;
 
     LayoutUnit x() const { return m_frameRect.x(); }
     LayoutUnit y() const { return m_frameRect.y(); }
@@ -173,12 +173,12 @@ public:
 
     void applyTransform(TransformationMatrix&, const RenderStyle&, const FloatRect& boundingBox, OptionSet<RenderStyle::TransformOperationOption>) const override;
 
-    inline LayoutSize contentSize() const;
-    inline LayoutUnit contentWidth() const;
-    inline LayoutUnit contentHeight() const;
-    inline LayoutSize contentLogicalSize() const;
-    inline LayoutUnit contentLogicalWidth() const;
-    inline LayoutUnit contentLogicalHeight() const;
+    inline LayoutSize contentBoxSize() const;
+    inline LayoutUnit contentBoxWidth() const;
+    inline LayoutUnit contentBoxHeight() const;
+    inline LayoutSize contentBoxLogicalSize() const;
+    inline LayoutUnit contentBoxLogicalWidth() const;
+    inline LayoutUnit contentBoxLogicalHeight() const;
     inline LayoutUnit contentBoxLogicalWidth(LayoutUnit overridingBorderBoxWidth) const;
     inline LayoutUnit contentBoxLogicalHeight(LayoutUnit overridingBorderBoxHeight) const;
 
@@ -417,14 +417,8 @@ public:
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
     bool hasAutoHeightOrContainingBlockWithAutoHeight(UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
 
-    inline LayoutUnit availableLogicalWidth() const;
     virtual LayoutUnit availableLogicalHeight(AvailableLogicalHeightType) const;
     LayoutUnit availableLogicalHeightUsing(const Length&, AvailableLogicalHeightType) const;
-
-    // There are a few cases where we need to refer specifically to the available physical width and available physical height.
-    // Relative positioning is one of those cases, since left/top offsets are physical.
-    inline LayoutUnit availableWidth() const;
-    inline LayoutUnit availableHeight() const;
 
     WEBCORE_EXPORT virtual int verticalScrollbarWidth() const;
     WEBCORE_EXPORT virtual int horizontalScrollbarHeight() const;
@@ -513,7 +507,7 @@ public:
     LayoutUnit synthesizeBaseline(FontBaseline baselineType, BaselineSynthesisEdge) const;
 
     bool shrinkToAvoidFloats() const;
-    virtual bool avoidsFloats() const;
+    bool avoidsFloats() const;
 
     virtual void markForPaginationRelayoutIfNeeded() { }
     
@@ -625,8 +619,6 @@ public:
     inline std::optional<LayoutUnit> explicitIntrinsicInnerLogicalWidth() const;
     inline std::optional<LayoutUnit> explicitIntrinsicInnerLogicalHeight() const;
 
-    bool establishesIndependentFormattingContext() const override;
-
     void updateFloatPainterAfterSelfPaintingLayerChange();
 
     bool computeHasTransformRelatedProperty(const RenderStyle&) const;
@@ -719,7 +711,7 @@ private:
 
     bool fixedElementLaysOutRelativeToFrame(const LocalFrameView&) const;
 
-    template<typename Function> LayoutUnit computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, const Function& computeInlineMargin) const;
+    template<typename Function> LayoutUnit computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, NOESCAPE const Function& computeInlineMargin) const;
 
     bool isScrollableOrRubberbandableBox() const override;
 

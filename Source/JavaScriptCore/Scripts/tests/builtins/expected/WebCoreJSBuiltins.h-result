@@ -314,7 +314,7 @@ SUPPRESS_ASAN void JSBuiltinInternalFunctions::initialize(JSDOMGlobalObject& glo
     m_xmlCasingTest.init(globalObject);
 #endif // ENABLE(TEST_XML_CASTING_TEST_SEPARATE)
 
-    JSVMClientData& clientData = *static_cast<JSVMClientData*>(m_vm.clientData);
+    JSVMClientData& clientData = *downcast<JSVMClientData>(m_vm.clientData);
     JSDOMGlobalObject::GlobalPropertyInfo staticGlobals[] = {
 #if ENABLE(FETCH_API)
 #define DECLARE_GLOBAL_STATIC(name) \

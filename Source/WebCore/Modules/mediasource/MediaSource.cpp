@@ -39,7 +39,6 @@
 #include "AudioTrackPrivate.h"
 #include "ContentType.h"
 #include "ContentTypeUtilities.h"
-#include "DeprecatedGlobalSettings.h"
 #include "DocumentInlines.h"
 #include "Event.h"
 #include "EventNames.h"
@@ -1420,8 +1419,9 @@ void MediaSource::onReadyStateChange(ReadyState oldState, ReadyState newState)
         // https://w3c.github.io/media-source/#htmlmediaelement-extensions-buffered
         for (auto& sourceBuffer : m_sourceBuffers.get())
             sourceBuffer->setMediaSourceEnded(true);
-        updateBufferedIfNeeded(true /* force */);
     }
+    if (newState == ReadyState::Ended || (newState == ReadyState::Open && oldState == ReadyState::Ended))
+        updateBufferedIfNeeded(true /* force */);
 
     // MediaSource's readyState transitions from "open" to "closed" or "ended" to "closed".
     if (oldState > ReadyState::Closed && newState == ReadyState::Closed) {
@@ -1453,7 +1453,7 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
     Ref msp = protectedPrivate().releaseNonNull();
 
     RefPtr<SourceBufferPrivate> sourceBufferPrivate;
-    switch (msp->addSourceBuffer(type, DeprecatedGlobalSettings::webMParserEnabled(), sourceBufferPrivate)) {
+    switch (msp->addSourceBuffer(type, sourceBufferPrivate)) {
     case MediaSourcePrivate::AddStatus::Ok:
         return sourceBufferPrivate.releaseNonNull();
     case MediaSourcePrivate::AddStatus::NotSupported:

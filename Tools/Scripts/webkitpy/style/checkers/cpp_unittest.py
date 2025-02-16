@@ -1596,42 +1596,6 @@ class CppStyleTest(CppStyleTestBase):
             'Did you mean "else if"? If not, start a new line for "if".'
             '  [readability/braces] [4]')
 
-    # Test suspicious usage of memset. Specifically, a 0
-    # as the final argument is almost certainly an error.
-    def test_suspicious_usage_of_memset(self):
-        # Normal use is okay.
-        self.assert_lint(
-            '    memset(buf, 0, sizeof(buf))',
-            '')
-
-        # A 0 as the final argument is almost certainly an error.
-        self.assert_lint(
-            '    memset(buf, sizeof(buf), 0)',
-            'Did you mean "memset(buf, 0, sizeof(buf))"?'
-            '  [runtime/memset] [4]')
-        self.assert_lint(
-            '    memset(buf, xsize * ysize, 0)',
-            'Did you mean "memset(buf, 0, xsize * ysize)"?'
-            '  [runtime/memset] [4]')
-
-        # There is legitimate test code that uses this form.
-        # This is okay since the second argument is a literal.
-        self.assert_lint(
-            "    memset(buf, 'y', 0)",
-            '')
-        self.assert_lint(
-            '    memset(buf, 4, 0)',
-            '')
-        self.assert_lint(
-            '    memset(buf, -1, 0)',
-            '')
-        self.assert_lint(
-            '    memset(buf, 0xF1, 0)',
-            '')
-        self.assert_lint(
-            '    memset(buf, 0xcd, 0)',
-            '')
-
     def test_check_posix_threading(self):
         self.assert_lint('sctime_r()', '')
         self.assert_lint('strtok_r()', '')
@@ -1878,41 +1842,35 @@ class CppStyleTest(CppStyleTestBase):
     def test_insecure_string_operations(self):
         self.assert_lint(
             'sprintf(destination, "%s", arg)',
-            'Never use sprintf.  Use snprintf instead.'
+            'Never use sprintf.  Use SAFE_SPRINTF instead.'
             '  [security/printf] [5]')
         self.assert_lint(
             'strcat(destination, append)',
-            'Almost always, snprintf is better than strcat.'
+            'Almost always, SAFE_SPRINTF is better than strcat.'
             '  [security/printf] [4]')
         self.assert_lint(
             'strcpy(destination, source)',
-            'Almost always, snprintf is better than strcpy.'
+            'Almost always, SAFE_SPRINTF is better than strcpy.'
             '  [security/printf] [4]')
-        self.assert_lint('strstr(haystack, "needle")', '')
 
-    # Test potential format string bugs like printf(foo).
+    # Test potential format string bugs like SAFE_PRINTF(foo).
     def test_format_strings(self):
-        self.assert_lint('printf("foo")', '')
-        self.assert_lint('printf("foo: %s", foo)', '')
+        self.assert_lint('SAFE_PRINTF("foo")', '')
+        self.assert_lint('SAFE_PRINTF("foo: %s", foo)', '')
         self.assert_lint('DocidForPrintf(docid)', '')  # Should not trigger.
         self.assert_lint(
-            'printf(foo)',
-            'Potential format string bug. Do printf("%s", foo) instead.'
+            'SAFE_PRINTF(foo)',
+            'Potential format string bug. Do SAFE_PRINTF("%s", foo) instead.'
             '  [security/printf] [4]')
         self.assert_lint(
-            'printf(foo.c_str())',
+            'SAFE_PRINTF(foo.c_str())',
             'Potential format string bug. '
-            'Do printf("%s", foo.c_str()) instead.'
+            'Do SAFE_PRINTF("%s", foo.c_str()) instead.'
             '  [security/printf] [4]')
         self.assert_lint(
-            'printf(foo->c_str())',
+            'SAFE_PRINTF(foo->c_str())',
             'Potential format string bug. '
-            'Do printf("%s", foo->c_str()) instead.'
-            '  [security/printf] [4]')
-        self.assert_lint(
-            'StringPrintf(foo)',
-            'Potential format string bug. Do StringPrintf("%s", foo) instead.'
-            ''
+            'Do SAFE_PRINTF("%s", foo->c_str()) instead.'
             '  [security/printf] [4]')
 
     # Test for insecure temp file creation.
@@ -2675,7 +2633,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('}// namespace foo',
                          'One space before end of line comments'
                          '  [whitespace/comments] [5]')
-        self.assert_lint('printf("foo"); // Outside quotes.',
+        self.assert_lint('SAFE_PRINTF("foo"); // Outside quotes.',
                          '')
         self.assert_lint('int i = 0; // Having one space is fine.', '')
         self.assert_lint('int i = 0;  // Having two spaces is bad.',
@@ -2692,9 +2650,9 @@ class CppStyleTest(CppStyleTestBase):
                          '    { // An indented scope is opening.', '')
         self.assert_lint('if (foo) { // not a pure scope',
                          '')
-        self.assert_lint('printf("// In quotes.")', '')
-        self.assert_lint('printf("\\"%s // In quotes.")', '')
-        self.assert_lint('printf("%s", "// In quotes.")', '')
+        self.assert_lint('SAFE_PRINTF("// In quotes.")', '')
+        self.assert_lint('SAFE_PRINTF("\\"%s // In quotes.")', '')
+        self.assert_lint('SAFE_PRINTF("%s", "// In quotes.")', '')
 
     def test_one_spaces_after_punctuation_in_comments(self):
         self.assert_lint('int a; // This is a sentence.',
@@ -3075,17 +3033,17 @@ class CppStyleTest(CppStyleTestBase):
 
     def test_build_printf_format(self):
         self.assert_lint(
-            r'printf("\%%d", value);',
+            r'SAFE_PRINTF("\%%d", value);',
             '%, [, (, and { are undefined character escapes.  Unescape them.'
             '  [build/printf_format] [3]')
 
         self.assert_lint(
-            r'snprintf(buffer, sizeof(buffer), "\[%d", value);',
+            r'SAFE_SPRINTF(buffer, "\[%d", value);',
             '%, [, (, and { are undefined character escapes.  Unescape them.'
             '  [build/printf_format] [3]')
 
         self.assert_lint(
-            r'fprintf(file, "\(%d", value);',
+            r'SAFE_FPRINTF(file, "\(%d", value);',
             '%, [, (, and { are undefined character escapes.  Unescape them.'
             '  [build/printf_format] [3]')
 
@@ -3095,37 +3053,37 @@ class CppStyleTest(CppStyleTestBase):
             '  [build/printf_format] [3]')
 
         # Don't warn if double-slash precedes the symbol
-        self.assert_lint(r'printf("\\%%%d", value);',
+        self.assert_lint(r'SAFE_PRINTF("\\%%%d", value);',
                          '')
 
     def test_runtime_printf_format(self):
         self.assert_lint(
-            r'fprintf(file, "%q", value);',
+            r'SAFE_FPRINTF(file, "%q", value);',
             '%q in format strings is deprecated.  Use %ll instead.'
             '  [runtime/printf_format] [3]')
 
         self.assert_lint(
-            r'aprintf(file, "The number is %12q", value);',
+            r'SAFE_PRINTF("The number is %12q", value);',
             '%q in format strings is deprecated.  Use %ll instead.'
             '  [runtime/printf_format] [3]')
 
         self.assert_lint(
-            r'printf(file, "The number is" "%-12q", value);',
+            r'SAFE_SPRINTF(buffer, "The number is" "%-12q", value);',
             '%q in format strings is deprecated.  Use %ll instead.'
             '  [runtime/printf_format] [3]')
 
         self.assert_lint(
-            r'printf(file, "The number is" "%+12q", value);',
+            r'SAFE_PRINTF("The number is" "%+12q", value);',
             '%q in format strings is deprecated.  Use %ll instead.'
             '  [runtime/printf_format] [3]')
 
         self.assert_lint(
-            r'printf(file, "The number is" "% 12q", value);',
+            r'SAFE_PRINTF("The number is" "% 12q", value);',
             '%q in format strings is deprecated.  Use %ll instead.'
             '  [runtime/printf_format] [3]')
 
         self.assert_lint(
-            r'snprintf(file, "Never mix %d and %1$d parmaeters!", value);',
+            r'SAFE_PRINTF("Never mix %d and %1$d parmaeters!", value);',
             '%N$ formats are unconventional.  Try rewriting to avoid them.'
             '  [runtime/printf_format] [2]')
 
@@ -5263,14 +5221,14 @@ class WebKitStyleTest(CppStyleTestBase):
             '')
         self.assert_multi_line_lint(
             '#define MyMacro(name, status) \\\n'
-            '    if (strstr(arg, #name) { \\\n'
+            '    if (contains(arg, #name)) { \\\n'
             '        name##_ = !status; \\\n'
             '        continue; \\\n'
             '    }\n',
             '')
         self.assert_multi_line_lint(
             '#define MyMacro(name, status) \\\n'
-            '    if (strstr(arg, #name) \\\n'
+            '    if (contains(arg, #name)) \\\n'
             '        name##_ = !status; \\\n'
             '        continue;\n',
             'Multi line control clauses should use braces.  [whitespace/braces] [4]')
@@ -6305,6 +6263,91 @@ class WebKitStyleTest(CppStyleTestBase):
             '',
             'foo.cpp')
 
+        self.assert_lint(
+            'int number = atoi(foo);',
+            'Use parseInteger<int>() instead of atoi().  [safercpp/atoi] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'memset(foo, 0);',
+            'Use memsetSpan() / zeroSpan() instead of memset().  [safercpp/memset] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'memset_s(foo, 0);',
+            'Use secureMemsetSpan() instead of memset_s().  [safercpp/memset_s] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'memcpy(destination, source, 10);',
+            'Use memcpySpan() instead of memcpy().  [safercpp/memcpy] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'memmove(destination, source, 10);',
+            'Use memmoveSpan() instead of memmove().  [safercpp/memmove] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'if (!memcmp(a, b)) {',
+            'Use equalSpans() / spanHasPrefix() / spanHasSuffix() / compareSpans() instead of memcmp().  [safercpp/memcmp] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* result = memmem(haystack, strlen(haystack), needle, strlen(needle));',
+            'Use WTF::find() or WTF::contains() instead of memmem().  [safercpp/memmem] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* result = memchr(haystack, c, strlen(haystack));',
+            'Use WTF::find() or WTF::contains() instead of memchr().  [safercpp/memchr] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* result = strchr(haystack, c);',
+            'Use WTF::find() or WTF::contains() instead of strchr().  [safercpp/strchr] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'char* result = strstr(haystack, needle);',
+            'Use WTF::find() or WTF::contains() instead of strstr().  [safercpp/strstr] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int result = strcmp(a, "foo");',
+            'strcmp() is unsafe.  [safercpp/strcmp] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'int result = strncmp(a, "foo", 3);',
+            'strncmp() is unsafe.  [safercpp/strncmp] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'printf("%s", s);',
+            'printf is unsafe. Use SAFE_PRINTF instead.  [safercpp/printf] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'fprintf(file, "%s", s);',
+            'fprintf is unsafe. Use SAFE_FPRINTF instead.  [safercpp/printf] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'snprintf(buffer, "%s", s);',
+            'snprintf is unsafe. Use SAFE_SPRINTF instead.  [safercpp/printf] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto* result = xpc_dictionary_get_data(dictionary, "foo", &size);',
+            'Use xpc_dictionary_get_data_span() instead of xpc_dictionary_get_data().  [safercpp/xpc_dictionary_get_data] [4]',
+            'foo.cpp')
+
+        self.assert_lint(
+            'auto* result = xpc_dictionary_get_string(dictionary, "foo");',
+            'Use xpc_dictionary_get_wtfstring() instead of xpc_dictionary_get_string().  [safercpp/xpc_dictionary_get_string] [4]',
+            'foo.cpp')
+
     def test_ctype_fucntion(self):
         self.assert_lint(
             'int i = isascii(8);',
@@ -6955,13 +6998,15 @@ class WebKitStyleTest(CppStyleTestBase):
 
     def test_os_version_checks(self):
         self.assert_lint('#if PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')
-        self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101300', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')
-        self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101300', '', 'Source/WTF/wtf/PlatformEnableCocoa.h')
-        self.assert_lint('#if PLATFORM(MAC) && __IPHONE_OS_VERSION_MIN_REQUIRED > 120000', '', 'Source/WTF/wtf/PlatformHave.h')
-        self.assert_lint('#if PLATFORM(MAC) && __IPHONE_OS_VERSION_MIN_REQUIRED > 120400', 'Incorrect OS version check. VERSION_MIN_REQUIRED values never include a minor version. You may be looking for a combination of VERSION_MIN_REQUIRED for target OS version check and VERSION_MAX_ALLOWED for SDK check.  [build/version_check] [5]', 'Source/WTF/wtf/PlatformEnableCocoa.h')
+        self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 130000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')
+        self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130000', '', 'Source/WTF/wtf/PlatformEnableCocoa.h')
+        self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 120000', '', 'Source/WTF/wtf/PlatformHave.h')
+        self.assert_lint('#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 120400', '', 'Source/WTF/wtf/PlatformEnableCocoa.h')
+        self.assert_lint('#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 170401', 'Incorrect OS version check. VERSION_MIN_REQUIRED values never include a tiny version.  [build/version_check] [5]', 'Source/WTF/wtf/PlatformEnableCocoa.h')
+        self.assert_lint('#if PLATFORM(IOS) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 170401', 'Incorrect OS version check. VERSION_MAX_ALLOWED values never include a tiny version.  [build/version_check] [5]', 'Source/WTF/wtf/PlatformEnableCocoa.h')
         self.assert_lint('#if !TARGET_OS_SIMULATOR && __WATCH_OS_VERSION_MIN_REQUIRED < 50000', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')
-        self.assert_lint('#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 101304)', ['Incorrect OS version check. VERSION_MIN_REQUIRED values never include a minor version. You may be looking for a combination of VERSION_MIN_REQUIRED for target OS version check and VERSION_MAX_ALLOWED for SDK check.  [build/version_check] [5]', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]'])
-        self.assert_lint('#define FOO ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 101302 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 101300))', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]')
+        self.assert_lint('#if (PLATFORM(IOS_FAMILY) && __IPHONE_OS_VERSION_MIN_REQUIRED < 110000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED < 130401)', ['Incorrect OS version check. VERSION_MIN_REQUIRED values never include a tiny version.  [build/version_check] [5]', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]'])
+        self.assert_lint('#define FOO ((PLATFORM(MAC) && __MAC_OS_X_VERSION_MAX_ALLOWED >= 130401 && __MAC_OS_X_VERSION_MIN_REQUIRED >= 130000))', ['Incorrect OS version check. VERSION_MAX_ALLOWED values never include a tiny version.  [build/version_check] [5]', 'Misplaced OS version check. Please use a named macro in one of headers in the wtf/Platform.h suite of files or an appropriate internal file.  [build/version_check] [5]'])
 
     def test_other(self):
         # FIXME: Implement this.

@@ -341,6 +341,8 @@ inline GstWebRTCKind webrtcKindFromCaps(const GRefPtr<GstCaps>& caps)
     return GST_WEBRTC_KIND_UNKNOWN;
 }
 
+void forEachTransceiver(const GRefPtr<GstElement>&, Function<bool(GRefPtr<GstWebRTCRTPTransceiver>&&)>&&);
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_RTC) && USE(GSTREAMER_WEBRTC)

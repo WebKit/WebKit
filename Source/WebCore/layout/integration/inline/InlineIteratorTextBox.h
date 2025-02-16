@@ -73,15 +73,15 @@ public:
     TextBoxIterator& traverseNextTextBox();
 
 private:
-    BoxIterator& traverseNextOnLine() = delete;
-    BoxIterator& traversePreviousOnLine() = delete;
-    BoxIterator& traverseNextOnLineIgnoringLineBreak() = delete;
-    BoxIterator& traversePreviousOnLineIgnoringLineBreak() = delete;
+    BoxIterator& traverseLineRightwardOnLine() = delete;
+    BoxIterator& traverseLineLeftwardOnLine() = delete;
+    BoxIterator& traverseLineRightwardOnLineIgnoringLineBreak() = delete;
+    BoxIterator& traverseLineLeftwardOnLineIgnoringLineBreak() = delete;
 
     const TextBox& get() const { return downcast<TextBox>(m_box); }
 };
 
-TextBoxIterator firstTextBoxFor(const RenderText&);
+TextBoxIterator lineLeftmostTextBoxFor(const RenderText&);
 TextBoxIterator textBoxFor(const LegacyInlineTextBox*);
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, const InlineDisplay::Box&);
 TextBoxIterator textBoxFor(const LayoutIntegration::InlineContent&, size_t boxIndex);

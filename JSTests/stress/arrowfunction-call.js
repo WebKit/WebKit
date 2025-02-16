@@ -12,7 +12,7 @@ noInline(d.y);
 
 var e = { x : "bar" };
 
-for (var i=0; i<10000;i++){
+for (var i=0; i<testLoopCount;i++){
     testCase(d.y().call(e), "foo", "Error: function call shouln't change the lexical binding of the arrow function");
     testCase(d.y().apply(e), "foo", "Error: function apply shouln't change the lexical binding of the arrow function");
 }

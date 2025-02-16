@@ -26,6 +26,7 @@
 #pragma once
 
 #include "PlatformAudioData.h"
+#include "SpanCoreAudio.h"
 #include <CoreAudio/CoreAudioTypes.h>
 #include <wtf/IteratorRange.h>
 #include <wtf/RetainPtr.h>
@@ -64,11 +65,10 @@ public:
     template <typename T = uint8_t>
     std::span<T> bufferAsSpan(uint32_t index) const
     {
-        ASSERT(index < m_list->mNumberBuffers);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        if (index < m_list->mNumberBuffers)
-            return unsafeMakeSpan(static_cast<T*>(m_list->mBuffers[index].mData), m_list->mBuffers[index].mDataByteSize / sizeof(T));
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        auto buffers = span(*m_list);
+        ASSERT(index < buffers.size());
+        if (index < buffers.size())
+            return mutableSpan<T>(buffers[index]);
         return { };
     }
 

@@ -43,8 +43,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSocketTask);
 
-WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WeakPtr<SessionSet>&& sessionSet, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
-    : NetworkTaskCocoa(*channel.session(), shouldRelaxThirdPartyCookieBlocking)
+WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifier webProxyPageID, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, WeakPtr<SessionSet>&& sessionSet, const WebCore::ResourceRequest& request, const WebCore::ClientOrigin& clientOrigin, RetainPtr<NSURLSessionWebSocketTask>&& task, WebCore::StoredCredentialsPolicy storedCredentialsPolicy)
+    : NetworkTaskCocoa(*channel.session())
     , m_channel(channel)
     , m_task(WTFMove(task))
     , m_webProxyPageID(webProxyPageID)
@@ -62,7 +62,7 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
     bool shouldBlockCookies = storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
     if (auto* networkStorageSession = networkSession() ? networkSession()->networkStorageSession() : nullptr) {
         if (!shouldBlockCookies)
-            shouldBlockCookies = networkStorageSession->shouldBlockCookies(request, frameID, pageID, shouldRelaxThirdPartyCookieBlocking);
+            shouldBlockCookies = networkStorageSession->shouldBlockCookies(request, frameID, pageID, shouldRelaxThirdPartyCookieBlocking());
     }
     if (shouldBlockCookies)
         blockCookies();
@@ -172,7 +172,7 @@ void WebSocketTask::close(int32_t code, const String& reason)
     if (code == WebCore::ThreadableWebSocketChannel::CloseEventCodeNotSpecified)
         code = NSURLSessionWebSocketCloseCodeInvalid;
     auto utf8 = reason.utf8();
-    RetainPtr nsData = toNSData(utf8.span());
+    RetainPtr nsData = toNSData(byteCast<uint8_t>(utf8.span()));
     if ([m_task respondsToSelector:@selector(_sendCloseCode:reason:)]) {
         [m_task _sendCloseCode:(NSURLSessionWebSocketCloseCode)code reason:nsData.get()];
         return;

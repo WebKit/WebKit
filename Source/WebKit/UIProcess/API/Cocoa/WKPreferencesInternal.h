@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKPreferencesPrivate.h"
+#import <WebKit/WKPreferencesPrivate.h>
 
 #import <wtf/Platform.h>
 

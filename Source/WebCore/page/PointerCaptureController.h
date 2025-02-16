@@ -26,7 +26,7 @@
 
 #include "EventTarget.h"
 #include "ExceptionOr.h"
-#include "PlatformMouseEvent.h"
+#include "MouseEventTypes.h"
 #include "PointerID.h"
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>

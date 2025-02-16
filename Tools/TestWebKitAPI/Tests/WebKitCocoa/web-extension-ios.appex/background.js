@@ -6,4 +6,4 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     sendResponse({ success: true });
 });
 
-browser.test.yield('Load Tab');
+browser.test.sendMessage('Load Tab');

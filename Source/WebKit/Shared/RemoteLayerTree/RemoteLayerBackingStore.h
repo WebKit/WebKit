@@ -90,10 +90,6 @@ public:
         Bitmap
     };
 
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    enum class IncludeDisplayList : bool { No, Yes };
-#endif
-
     virtual bool isRemoteLayerWithRemoteRenderingBackingStore() const { return false; }
     virtual bool isRemoteLayerWithInProcessRenderingBackingStore() const { return false; }
 
@@ -110,7 +106,7 @@ public:
         bool isOpaque { false };
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-        IncludeDisplayList includeDisplayList { IncludeDisplayList::No };
+        WebCore::IncludeDynamicContentScalingDisplayList includeDisplayList { WebCore::IncludeDynamicContentScalingDisplayList::No };
 #endif
 
         friend bool operator==(const Parameters&, const Parameters&) = default;

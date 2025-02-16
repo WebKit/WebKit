@@ -25,6 +25,7 @@
 
 #include "compiler/translator/hlsl/ShaderStorageBlockOutputHLSL.h"
 
+#include "common/span.h"
 #include "compiler/translator/hlsl/ResourcesHLSL.h"
 #include "compiler/translator/hlsl/blocklayoutHLSL.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
@@ -115,7 +116,7 @@ const BlockMemberInfo GetBlockMemberInfoByType(const TType &type,
     }
 
     std::vector<unsigned int> arraySizes;
-    const TSpan<const unsigned int> &typeArraySizes = type.getArraySizes();
+    const angle::Span<const unsigned int> &typeArraySizes = type.getArraySizes();
     if (!typeArraySizes.empty())
     {
         arraySizes.assign(typeArraySizes.begin(), typeArraySizes.end());
@@ -623,7 +624,7 @@ TIntermTyped *ShaderStorageBlockOutputHLSL::writeEOpIndexDirectOrIndirectOutput(
 
     if (type.isArray())
     {
-        const TSpan<const unsigned int> &arraySizes = type.getArraySizes();
+        const angle::Span<const unsigned int> &arraySizes = type.getArraySizes();
         for (unsigned int i = 0; i < arraySizes.size() - 1; i++)
         {
             right = Mul(CreateUIntNode(arraySizes[i]), right);

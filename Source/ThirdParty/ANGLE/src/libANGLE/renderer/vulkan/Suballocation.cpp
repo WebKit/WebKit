@@ -84,7 +84,7 @@ void BufferBlock::destroy(Renderer *renderer)
     mDeviceMemory.destroy(device);
 }
 
-VkResult BufferBlock::init(Context *context,
+VkResult BufferBlock::init(ErrorContext *context,
                            Buffer &buffer,
                            uint32_t memoryTypeIndex,
                            vma::VirtualBlockCreateFlags flags,
@@ -112,7 +112,7 @@ VkResult BufferBlock::init(Context *context,
     return VK_SUCCESS;
 }
 
-void BufferBlock::initWithoutVirtualBlock(Context *context,
+void BufferBlock::initWithoutVirtualBlock(ErrorContext *context,
                                           Buffer &buffer,
                                           MemoryAllocationType memoryAllocationType,
                                           uint32_t memoryTypeIndex,
@@ -177,7 +177,7 @@ void BufferBlock::calculateStats(vma::StatInfo *pStatInfo) const
 }
 
 // BufferSuballocation implementation.
-VkResult BufferSuballocation::map(Context *context)
+VkResult BufferSuballocation::map(ErrorContext *context)
 {
     return mBufferBlock->map(context->getDevice());
 }

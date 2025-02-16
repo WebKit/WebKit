@@ -148,6 +148,9 @@ FloatRect AXIsolatedObject::primaryScreenRect() const
 
 FloatRect AXIsolatedObject::convertRectToPlatformSpace(const FloatRect& rect, AccessibilityConversionSpace space) const
 {
+    if (space == AccessibilityConversionSpace::Screen)
+        return convertFrameToSpace(rect, space);
+
     return Accessibility::retrieveValueFromMainThread<FloatRect>([&rect, &space, this] () -> FloatRect {
         if (auto* axObject = associatedAXObject())
             return axObject->convertRectToPlatformSpace(rect, space);
@@ -210,7 +213,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
         // {ID 5, Role Group}
         //
         // We would expect the returned range to be: {ID 2, offset 0} to {ID 4, offset 3}
-        auto* stopObject = nextUnignoredSiblingOrParent();
+        auto* stopObject = nextSiblingIncludingIgnoredOrParent();
 
         auto thisMarker = AXTextMarker { *this, 0 };
         AXTextMarkerRange range { thisMarker, thisMarker };
@@ -315,6 +318,10 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
     if (!nsRange)
         return nil;
 
+    // If the range spans the beginning of the node, account for the length of the text marker prefix, if any.
+    if (!nsRange->location)
+        nsRange->length += textContentPrefixFromListMarker().length();
+
     if (!attributedStringContainsRange(attributedText.get(), *nsRange))
         return nil;
 
@@ -325,14 +332,14 @@ RetainPtr<NSAttributedString> AXIsolatedObject::attributedStringForTextMarkerRan
     auto resultRange = NSMakeRange(0, result.length);
     // The AttributedString is cached with spelling info. If the caller does not request spelling info, we have to remove it before returning.
     if (spellCheck == SpellCheck::No) {
-        [result removeAttribute:AXDidSpellCheckAttribute range:resultRange];
+        [result removeAttribute:NSAccessibilityDidSpellCheckAttribute range:resultRange];
         [result removeAttribute:NSAccessibilityMisspelledTextAttribute range:resultRange];
         [result removeAttribute:NSAccessibilityMarkedMisspelledTextAttribute range:resultRange];
     } else if (AXObjectCache::shouldSpellCheck()) {
         // For ITM, we should only ever eagerly spellcheck for testing purposes.
         ASSERT(_AXGetClientForCurrentRequestUntrusted() == kAXClientTypeWebKitTesting);
         // We're going to spellcheck, so remove AXDidSpellCheck: NO.
-        [result removeAttribute:AXDidSpellCheckAttribute range:resultRange];
+        [result removeAttribute:NSAccessibilityDidSpellCheckAttribute range:resultRange];
         performFunctionOnMainThreadAndWait([result = retainPtr(result), &resultRange] (AccessibilityObject* axObject) {
             if (auto* node = axObject->node())
                 attributedStringSetSpelling(result.get(), *node, String { [result string] }, resultRange);

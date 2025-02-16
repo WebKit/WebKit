@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2022 Apple Inc. All rights reserved.
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,8 +37,6 @@
 #include "RenderStyleInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 namespace Style {
@@ -129,12 +127,12 @@ static std::optional<float> resolveColorStopPosition(const GradientLinearColorSt
         return std::nullopt;
 
     return WTF::switchOn(*position,
-        [&](const Length<>& length) -> std::optional<float> {
+        [&](const typename LengthPercentage<>::Dimension& length) -> std::optional<float> {
             if (gradientLength <= 0)
                 return 0;
             return length.value / gradientLength;
         },
-        [&](const Percentage<>& percentage) -> std::optional<float> {
+        [&](const typename LengthPercentage<>::Percentage& percentage) -> std::optional<float> {
             return percentage.value / 100.0;
         },
         [&](const typename LengthPercentage<>::Calc& calc) -> std::optional<float> {
@@ -151,10 +149,10 @@ static std::optional<float> resolveColorStopPosition(const GradientAngularColorS
         return std::nullopt;
 
     return WTF::switchOn(*position,
-        [](const Angle<>& angle) -> std::optional<float> {
+        [](const typename AnglePercentage<>::Dimension& angle) -> std::optional<float> {
             return angle.value / 360.0;
         },
-        [](const Percentage<>& percentage) -> std::optional<float> {
+        [](const typename AnglePercentage<>::Percentage& percentage) -> std::optional<float> {
             return percentage.value / 100.0;
         },
         [&](const typename AnglePercentage<>::Calc& calc) -> std::optional<float> {
@@ -494,7 +492,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
         }
 
         float midpoint = (offset - offset1) / (offset2 - offset1);
-        ResolvedGradientStop newStops[9];
+        std::array<ResolvedGradientStop, 9> newStops;
         if (midpoint > .5f) {
             for (size_t y = 0; y < 6; ++y)
                 newStops[y].offset = offset1 + (offset - offset1) * (7 + y) / 13;
@@ -518,7 +516,7 @@ template<typename GradientAdapter, typename StyleGradient> GradientColorStops co
         }
 
         stops.remove(x);
-        stops.insert(x, newStops, 9);
+        stops.insertSpan(x, std::span { newStops });
         x += 9;
     }
 
@@ -1198,7 +1196,7 @@ static bool stopColorIsCacheable(const Markable<Color>& stopColor)
 
 template<typename Gradient> static bool stopsAreCacheable(const Gradient& gradient)
 {
-    return std::ranges::none_of(gradient.parameters.stops, [](auto& stop) {
+    return std::ranges::all_of(gradient.parameters.stops, [](auto& stop) {
         return stopColorIsCacheable(stop.color);
     });
 }
@@ -1226,5 +1224,3 @@ bool isOpaque(const Gradient& gradient, const RenderStyle& style)
 
 } // namespace Style
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -146,6 +146,7 @@ try {
     f4`Hello${
         4}world`;
 } catch (e) {}
-for (var counter = 0x10000; counter < 0x10ffff; ++counter) {
+let counterEnd = testLoopCount + 0xffff;
+for (var counter = testLoopCount; counter < counterEnd; ++counter) {
     var charCode = String.fromCharCode();
 }

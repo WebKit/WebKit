@@ -6,12 +6,14 @@
 // CLContextVk.cpp: Implements the class methods for CLContextVk.
 
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
+#include "common/PackedEnums.h"
 #include "libANGLE/renderer/vulkan/CLCommandQueueVk.h"
 #include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
 #include "libANGLE/renderer/vulkan/CLProgramVk.h"
 #include "libANGLE/renderer/vulkan/CLSamplerVk.h"
 #include "libANGLE/renderer/vulkan/DisplayVk.h"
+#include "libANGLE/renderer/vulkan/vk_cache_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
@@ -35,6 +37,7 @@ CLContextVk::CLContextVk(const cl::Context &context, const cl::DevicePtrs device
 
 CLContextVk::~CLContextVk()
 {
+    mMetaDescriptorPool.destroy(getRenderer());
     mDescriptorSetLayoutCache.destroy(getRenderer());
     mPipelineLayoutCache.destroy(getRenderer());
 }
@@ -149,7 +152,8 @@ VkFormat CLContextVk::getVkFormatFromCL(cl_image_format format)
         default:
             return VK_FORMAT_UNDEFINED;
     }
-    return getPlatform()->getRenderer()->getFormat(formatID).getActualRenderableImageVkFormat();
+    return getPlatform()->getRenderer()->getFormat(formatID).getActualRenderableImageVkFormat(
+        getPlatform()->getRenderer());
 }
 
 angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
@@ -356,6 +360,17 @@ angle::Result CLContextVk::waitForEvents(const cl::EventPtrs &events)
     }
 
     return angle::Result::Continue;
+}
+
+angle::Result CLContextVk::allocateDescriptorSet(
+    CLKernelVk *kernelVk,
+    DescriptorSetIndex index,
+    angle::EnumIterator<DescriptorSetIndex> layoutIndex,
+    vk::OutsideRenderPassCommandBufferHelper *computePassCommands)
+{
+    std::lock_guard<angle::SimpleMutex> lock(mDescriptorSetMutex);
+
+    return kernelVk->allocateDescriptorSet(index, layoutIndex, computePassCommands);
 }
 
 }  // namespace rx

@@ -58,7 +58,7 @@ void layoutWithFormattingContextForBox(const Layout::ElementBox& box, std::optio
         return *ancestor;
     };
     auto updater = BoxGeometryUpdater { layoutState, rootLayoutBox() };
-    updater.updateBoxGeometryAfterIntegrationLayout(box, widthConstraint.value_or(renderer.containingBlock()->availableLogicalWidth()));
+    updater.updateBoxGeometryAfterIntegrationLayout(box, widthConstraint.value_or(renderer.containingBlock()->contentBoxLogicalWidth()));
 }
 
 LayoutUnit formattingContextRootLogicalWidthForType(const Layout::ElementBox& box, LogicalWidthType logicalWidthType)

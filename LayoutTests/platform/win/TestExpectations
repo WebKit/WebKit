@@ -145,6 +145,12 @@ compositing/visibility/visibility-simple-video-layer.html [ Skip ] # Timeout
 fast/events/media-focus-in-standalone-media-document.html [ Skip ]
 http/tests/canvas/webgl/origin-clean-conformance.html [ Skip ] # Timeout
 http/tests/navigation/page-cache-video.html [ Skip ] # Timeout
+http/tests/security/contentSecurityPolicy/media-src-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-video.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-redirect-allowed.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-redirect-allowed2.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-redirect-blocked.html [ Skip ]
+http/tests/security/contentSecurityPolicy/video-with-http-url-allowed-by-csp-media-src-star.html
 http/tests/security/mixedContent/insecure-audio-video-in-main-frame-UpgradeMixedContent.html [ Skip ]
 http/wpt/service-workers/media-range-request.html [ Skip ]
 imported/w3c/web-platform-tests/css/selectors/invalidation/media-pseudo-classes-in-has.html [ Skip ]
@@ -586,7 +592,6 @@ crypto/subtle/ecdsa-import-pkcs8-key-p256-validate-ecprivatekey-parameters-publi
 crypto/subtle/ecdsa-import-pkcs8-key-p384-validate-ecprivatekey-parameters-publickey.html [ Pass ]
 crypto/subtle/ecdsa-import-pkcs8-key-p521-validate-ecprivatekey-parameters-publickey.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha1.html [ Pass ]
-crypto/subtle/rsa-pss-generate-export-key-jwk-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha256.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha384.html [ Pass ]
 crypto/subtle/rsa-pss-generate-export-key-jwk-sha512.html [ Pass ]
@@ -596,7 +601,6 @@ crypto/subtle/rsa-pss-generate-key.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-private-key.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-empty-usages.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha1.html [ Pass ]
-crypto/subtle/rsa-pss-import-jwk-public-key-sha224.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha256.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha384.html [ Pass ]
 crypto/subtle/rsa-pss-import-jwk-public-key-sha512.html [ Pass ]
@@ -837,7 +841,40 @@ http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-across-origin.
 http/tests/security/clipboard/copy-paste-html-cross-origin-iframe-in-same-origin.html [ Skip ] # Failure
 http/tests/security/clipboard/copy-paste-url-across-origin-sanitizes-url.html [ Skip ] # Failure
 
-http/tests/security/contentSecurityPolicy [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/audio-redirect-allowed.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/audio-redirect-allowed2.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-insecure-scheme.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-missing-scheme.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-scheme-only.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-unsafe-inline-blocked.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/default-src/manifest-v2-default-src-wildcard-prohibited.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-insecure-scheme.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-missing-scheme.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-scheme-only.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-unsafe-inline-blocked.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v2/script-src/manifest-v2-script-src-wildcard-blocked.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-non-https-scheme.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/default-src/manifest-v3-default-src-block-wildcard.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-non-https-scheme.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-partial-wildcard.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/object-src/manifest-v3-object-src-block-wildcard.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-non-https-scheme.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-partial-wildcard.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-block-wildcard.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blockes-nonces.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/script-src/manifest-v3-script-src-blocks-hashes.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-partial-wildcard.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/extensions/manifest-v3/worker-src/manifest-v3-worker-src-block-wildcard.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/multipart-three-part.py [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/multipart-two-part.py [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/report-blocked-file-uri.py [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/upgrade-insecure-requests/upgrade-insecure-audio-video-in-main-frame.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/user-style-sheet-font-crasher.py [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/userAgentShadowDOM/allow-audio.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/video-with-https-url-allowed-by-csp-media-src-star.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/xsl-redirect-blocked.html [ Skip ] # Failure
+http/tests/security/contentSecurityPolicy/audioworklet-script-src-allowed.html [ Skip ] # Timeout
+http/tests/security/contentSecurityPolicy/audioworklet-script-src-blocked.html [ Skip ] # Timeout
 
 http/tests/security/cookie-module-import-propagate.html [ Skip ] # Failure
 http/tests/security/cookie-module-import.html [ Skip ] # Failure
@@ -988,6 +1025,8 @@ http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.htm
 
 webkit.org/b/212532 http/wpt/service-workers/service-worker-crashing-while-fetching.https.html [ Pass Failure ]
 
+http/wpt/service-workers/service-worker-spinning-install.https.html [ Failure Pass ]
+
 http/tests/workers/service/registerServiceWorkerClient-after-network-process-crash.html [ Failure ]
 http/wpt/push-api [ Skip ]
 
@@ -1044,7 +1083,13 @@ imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-wit
 webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/css/animation-range-ignored.html [ Skip ]
 webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-range.html [ Skip ]
 
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html [ Skip ] # Timeout Pass
+
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay.tentative.html [ ImageOnlyFailure ]
+
+imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-ignored.tentative.html [ Skip ]
+
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/timeline-offset-in-keyframe.html [ Pass Failure ]
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Compositing
@@ -1082,6 +1127,9 @@ animations/no-style-recalc-during-accelerated-animation.html [ Pass Failure ]
 fast/css/view-transitions-nested-transparency-layers.html [ ImageOnlyFailure Pass ]
 http/wpt/css/css-view-transitions/navigation/old_vt_promises_bfcache.html [ Failure ]
 
+compositing/shared-backing/top-layer/backing-sharing-split-by-fullscreen-variant.html [ Skip ] # Timeout
+compositing/shared-backing/top-layer/backing-sharing-split-by-fullscreen.html [ Skip ] # Timeout
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # CSS
@@ -1104,7 +1152,6 @@ fast/css/outline-auto-empty-rects.html [ Failure ]
 fast/css/visibility-hit-test.html [ Failure ]
 
 webkit.org/b/136484 fast/css-generated-content/initial-letter-first-line-wrapping.html  [ ImageOnlyFailure ]
-webkit.org/b/140767 fast/css/read-only-read-write-input-basics.html [ ImageOnlyFailure ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=138025
 # Larger text and as a result, larger elements containing said text (as compared to Mac port)
@@ -1175,8 +1222,6 @@ css3/filters/composited-during-animation-layertree.html [ Failure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection-add.html [ ImageOnlyFailure ]
 css3/filters/backdrop/backdrop-filter-with-border-radius-and-reflection.html [ ImageOnlyFailure ]
 
-fast/css/pseudo-visited-background-color-on-input.html [ ImageOnlyFailure ]
-
 fast/css/accent-color/checkbox.html [ Pass ]
 fast/css/accent-color/progress.html [ Pass ]
 fast/css/accent-color/radio.html [ Pass ]
@@ -1189,6 +1234,8 @@ fast/css/caret-color-with-initial-color-property.html [ Skip ] # ImageOnlyFailur
 # GPU process hangs. Makes the subsequent test Timeout
 fast/css/repeating-conic-gradient-small-range.html [ Skip ]
 
+imported/w3c/web-platform-tests/css/CSS2/floats/overflow-scroll-float-paint-order.html [ Pass ]
+
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Pass ]
@@ -1200,6 +1247,11 @@ imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-t
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-position-try-010.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
+
+# fullscreen isn't supported yet
+imported/w3c/web-platform-tests/css/selectors/invalidation/fullscreen-pseudo-class-in-has.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html [ Skip ] # Failure
+imported/w3c/web-platform-tests/css/selectors/modal-pseudo-class.html [ Skip ] # Failure
 
 css3/blending/blend-mode-accelerated-parent-overflow-hidden.html [ Skip ] # ImageOnlyFailure
 css3/blending/blend-mode-body-child-isolate-html-background-color.html [ Skip ] # ImageOnlyFailure
@@ -1350,6 +1402,9 @@ imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas
 imported/w3c/web-platform-tests/html/canvas/element/drawing-images-to-the-canvas/2d.drawImage.self.2.html [ Skip ] # Failure
 
 imported/w3c/web-platform-tests/html/semantics/rellist-feature-detection.html [ Skip ] # Failure
+
+fast/html/popover-with-fullscreen-crash.html [ Skip ] # Timeout
+
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # forms
@@ -1779,9 +1834,11 @@ streams/readable-stream-byob-reader-worker.html [ Skip ]
 streams/readable-stream-byob-request.html [ Skip ]
 streams/readable-stream-byob-request-worker.html [ Skip ]
 
-# The CookieStore API is not fully implemented on Windows port yet.
+# The Cookie Store API is not fully implemented on the Windows port yet.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
+http/tests/cookies/cookie-store-get-secure.https.html [ Skip ]
+http/tests/cookies/cookie-store-set-secure.https.html [ Skip ]
 
 webkit.org/b/271132 [ Debug ] fast/text/crash-grapheme-cluster-spanning-adjacent-textitems.html [ Skip ] # Crash
 
@@ -1954,6 +2011,7 @@ fast/text/hangul-generic-font-families.html [ Skip ]
 fast/text/canvas-color-fonts [ Skip ]
 fast/text/glyph-display-lists [ Skip ]
 fast/text/international/system-language/navigator-language [ Skip ]
+fast/text/otsvg-spacing-canvas.html [ Skip ]
 fast/tokenizer [ Skip ]
 fast/writing-mode [ Skip ]
 fast/xmlhttprequest [ Skip ]
@@ -2093,6 +2151,7 @@ imported/w3c/web-platform-tests/css/selectors/user-valid.html [ Skip ] # Failure
 imported/w3c/web-platform-tests/css/support [ Skip ]
 imported/w3c/web-platform-tests/css/WOFF2 [ Skip ]
 
+imported/w3c/web-platform-tests/close-watcher [ Skip ]
 imported/w3c/web-platform-tests/custom-elements [ Skip ]
 imported/w3c/web-platform-tests/deprecation-reporting [ Skip ]
 imported/w3c/web-platform-tests/dom [ Skip ]
@@ -2151,7 +2210,6 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/forms [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/grouping-content [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/interactive-elements [ Skip ]
-imported/w3c/web-platform-tests/html/semantics/invokers [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/links [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/popovers [ Skip ]
 imported/w3c/web-platform-tests/html/semantics/scripting-1 [ Skip ]
@@ -2415,9 +2473,8 @@ animations/remove-syncing-animation.html [ Pass Failure ]
 editing/execCommand/indent-input-in-image-crash.html [ Failure ]
 
 fast/box-shadow/hidpi-box-shadow-inset-on-subpixel-position.html [ ImageOnlyFailure ]
-fast/text/whitespace-with-zero-width-space-in-between.html [ ImageOnlyFailure ]
-
 fast/text/otsvg-canvas.html [ ImageOnlyFailure ]
+fast/text/whitespace/whitespace-with-zero-width-space-in-between.html [ ImageOnlyFailure ]
 
 fast/gradients/alpha-premultiplied-representable-by-unpremultiplied.html [ ImageOnlyFailure ]
 fast/gradients/alpha-premultiplied.html [ ImageOnlyFailure ]
@@ -2921,6 +2978,8 @@ editing/selection/extend-by-character-006.html [ Skip ]
 editing/selection/extend-by-sentence-001.html [ Skip ]
 editing/selection/extend-by-word-001.html [ Skip ]
 editing/selection/extend-by-word-002.html [ Skip ]
+editing/selection/extend-inside-transforms-backward.html [ Skip ]
+editing/selection/extend-inside-transforms-forward.html [ Skip ]
 editing/selection/extend-selection-bidi.html [ Skip ]
 editing/selection/fake-doubleclick.html [ Skip ]
 editing/selection/focus-body.html [ Skip ]
@@ -4218,7 +4277,6 @@ fast/constructors/event-source-caching.html [ Failure ]
 fast/events/5056619.html [ Failure ]
 fast/events/keydown-leftright-keys.html [ Failure ]
 fast/events/mouse-cursor-change.html [ Failure ]
-fast/events/mouse-cursor-image-set.html [ Failure ]
 fast/events/mouse-cursor-no-mousemove.html [ Failure ]
 fast/events/mouse-cursor-udpate-during-raf.html [ Failure ]
 fast/events/selectstart-by-single-click-with-shift.html [ Failure ]
@@ -4240,7 +4298,6 @@ imported/w3c/web-platform-tests/url/toascii.window.html [ Failure ]
 
 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
-animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
 fast/box-shadow/inset-box-shadow.html [ ImageOnlyFailure ]
 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 fast/text/international/bdo-bidi-width.html [ ImageOnlyFailure ]
@@ -4338,8 +4395,8 @@ imported/w3c/web-platform-tests/cookies/ordering/ordering.sub.html [ Skip ]
 http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failure Pass ]
 
 # waitForCompositorReady().then(takeScreenshot) times out on the internal Buildbot
-imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test.html [ ImageOnlyFailure Timeout ]
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test.html [ Skip ] # Pass ImageOnlyFailure Timeout
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html [ Skip ] # Pass Timeout
 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Failure Pass ]

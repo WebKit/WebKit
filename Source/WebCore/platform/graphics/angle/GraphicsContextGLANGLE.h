@@ -350,7 +350,7 @@ public:
 
     RefPtr<PixelBuffer> readRenderingResultsForPainting();
 
-    virtual void withBufferAsNativeImage(SurfaceBuffer, Function<void(NativeImage&)>);
+    virtual RefPtr<NativeImage> bufferAsNativeImage(SurfaceBuffer);
 
     // Returns the span of valid data read on success.
     bool getBufferSubDataWithStatus(GCGLenum target, GCGLintptr offset, std::span<uint8_t> data);
@@ -415,10 +415,12 @@ protected:
     GCGLenum adjustWebGL1TextureInternalFormat(GCGLenum internalformat, GCGLenum format, GCGLenum type);
     void setPackParameters(GCGLint alignment, GCGLint rowLength, GCGLboolean reverseRowOrder);
     bool validateClearBufferv(GCGLenum buffer, size_t valuesSize);
+    void prepareForDrawingBufferWriteIfBound();
+    virtual void prepareForDrawingBufferWrite();
 
-    HashSet<String> m_availableExtensions;
-    HashSet<String> m_requestableExtensions;
-    HashSet<String> m_enabledExtensions;
+    UncheckedKeyHashSet<String> m_availableExtensions;
+    UncheckedKeyHashSet<String> m_requestableExtensions;
+    UncheckedKeyHashSet<String> m_enabledExtensions;
     bool m_webglColorBufferFloatRGB { false };
     bool m_webglColorBufferFloatRGBA { false };
     GCGLuint m_texture { 0 };

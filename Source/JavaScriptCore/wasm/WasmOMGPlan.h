@@ -43,7 +43,7 @@ public:
     using Base = Plan;
 
     bool hasWork() const final { return !m_completed; }
-    void work(CompilationEffort) final;
+    void work() final;
     bool multiThreaded() const final { return false; }
     static FunctionAllowlist& ensureGlobalOMGAllowlist();
 

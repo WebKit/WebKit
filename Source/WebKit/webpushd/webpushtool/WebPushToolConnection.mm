@@ -82,7 +82,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
 
     xpc_connection_set_event_handler(m_connection.get(), [](xpc_object_t event) {
         if (event == XPC_ERROR_CONNECTION_INVALID || event == XPC_ERROR_CONNECTION_INTERRUPTED) {
-            fprintf(stderr, "Unexpected XPC connection issue: %s\n", event.debugDescription.UTF8String);
+            SAFE_FPRINTF(stderr, "Unexpected XPC connection issue: %s\n", String(event.debugDescription).utf8());
             return;
         }
 
@@ -92,7 +92,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
     if (waitForServiceToExist == WaitForServiceToExist::Yes) {
         auto result = maybeConnectToService(m_serviceName);
         if (result == MACH_PORT_NULL)
-            printf("Waiting for service '%s' to be available\n", m_serviceName.characters());
+            SAFE_PRINTF("Waiting for service '%s' to be available\n", m_serviceName);
 
         while (result == MACH_PORT_NULL) {
             usleep(1000);
@@ -100,7 +100,7 @@ void Connection::connectToService(WaitForServiceToExist waitForServiceToExist)
         }
     }
 
-    printf("Connecting to service '%s'\n", m_serviceName.characters());
+    SAFE_PRINTF("Connecting to service '%s'\n", m_serviceName);
     xpc_connection_activate(m_connection.get());
 
     sendAuditToken();
@@ -122,7 +122,7 @@ void Connection::getPushPermissionState(const String& scope, CompletionHandler<v
 
 void Connection::requestPushPermission(const String& scope, CompletionHandler<void(bool)>&& completionHandler)
 {
-    printf("Request push permission state for %s\n", scope.utf8().data());
+    SAFE_PRINTF("Request push permission state for %s\n", scope.utf8());
 
     sendWithAsyncReplyWithoutUsingIPCConnection(Messages::PushClientConnection::RequestPushPermission(WebCore::SecurityOriginData::fromURL(URL { scope })), WTFMove(completionHandler));
 }
@@ -133,7 +133,7 @@ void Connection::sendAuditToken()
     mach_msg_type_number_t auditTokenCount = TASK_AUDIT_TOKEN_COUNT;
     kern_return_t result = task_info(mach_task_self(), TASK_AUDIT_TOKEN, (task_info_t)(&token), &auditTokenCount);
     if (result != KERN_SUCCESS) {
-        printf("Unable to get audit token to send\n");
+        SAFE_PRINTF("Unable to get audit token to send\n");
         return;
     }
 

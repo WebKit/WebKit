@@ -883,7 +883,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
     auto cssProperties = JSON::ArrayOf<Inspector::Protocol::CSS::CSSPropertyInfo>::create();
 
     for (auto propertyID : allCSSProperties()) {
-        if (!isExposed(propertyID, &m_inspectedPage.settings()))
+        if (!isExposed(propertyID, &m_inspectedPage->settings()))
             continue;
 
         auto property = Inspector::Protocol::CSS::CSSPropertyInfo::create()
@@ -902,7 +902,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::CSS::C
         if (shorthand.length()) {
             auto longhands = JSON::ArrayOf<String>::create();
             for (auto longhand : shorthand) {
-                if (isExposed(longhand, &m_inspectedPage.settings()))
+                if (isExposed(longhand, &m_inspectedPage->settings()))
                     longhands->addItem(nameString(longhand));
             }
             if (longhands->length())

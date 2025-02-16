@@ -59,7 +59,7 @@ n = BigInt("00000");
 assert(n.toString() === "0");
 
 let giantTrailingString = "0";
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     giantTrailingString += " ";
 
 n = BigInt(giantTrailingString);

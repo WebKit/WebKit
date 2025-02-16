@@ -25,7 +25,7 @@
 
 WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 {
-    constructor(eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, extraDetails)
+    constructor(target, eventType, startTime, endTime, {stackTrace, sourceCodeLocation, details, profilePayload, extraDetails} = {})
     {
         super(WI.TimelineRecord.Type.Script, startTime, endTime, stackTrace, sourceCodeLocation);
 
@@ -34,6 +34,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
         if (eventType in WI.ScriptTimelineRecord.EventType)
             eventType = WI.ScriptTimelineRecord.EventType[eventType];
 
+        this._target = target;
         this._eventType = eventType;
         this._details = details || "";
         this._profilePayload = profilePayload || null;
@@ -48,12 +49,12 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 
     static async fromJSON(json)
     {
-        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, extraDetails} = json;
+        let {eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, target, extraDetails} = json;
 
         if (typeof details === "object" && details.__type === "GarbageCollection")
             details = WI.GarbageCollection.fromJSON(details);
 
-        return new WI.ScriptTimelineRecord(eventType, startTime, endTime, stackTrace, sourceCodeLocation, details, profilePayload, extraDetails);
+        return new WI.ScriptTimelineRecord(eventType, startTime, endTime, {stackTrace, sourceCodeLocation, details, profilePayload, target, extraDetails});
     }
 
     toJSON()
@@ -61,6 +62,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
         // FIXME: stackTrace
         // FIXME: sourceCodeLocation
         // FIXME: profilePayload
+        // FIXME: target
 
         return {
             type: this.type,
@@ -74,6 +76,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 
     // Public
 
+    get target() { return this._target; }
     get eventType() { return this._eventType; }
     get details() { return this._details; }
     get extraDetails() { return this._extraDetails; }
@@ -120,14 +123,13 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
 
         console.assert(payload.rootNodes instanceof Array);
 
-        function profileNodeFromPayload(nodePayload)
-        {
+        let profileNodeFromPayload = (nodePayload) => {
             console.assert("id" in nodePayload);
 
             if (nodePayload.url) {
                 let sourceCode = WI.networkManager.resourcesForURL(nodePayload.url).firstValue;
                 if (!sourceCode)
-                    sourceCode = WI.debuggerManager.scriptsForURL(nodePayload.url, WI.assumingMainTarget())[0];
+                    sourceCode = WI.debuggerManager.scriptsForURL(nodePayload.url, this._target)[0];
 
                 // The lineNumber is 1-based, but we expect 0-based.
                 var lineNumber = nodePayload.lineNumber - 1;
@@ -142,7 +144,7 @@ WI.ScriptTimelineRecord = class ScriptTimelineRecord extends WI.TimelineRecord
             var functionName = !isProgramCode && !isAnonymousFunction && nodePayload.functionName !== "(unknown)" ? nodePayload.functionName : null;
 
             return new WI.ProfileNode(nodePayload.id, type, functionName, sourceCodeLocation, nodePayload.callInfo, nodePayload.children);
-        }
+        };
 
         function profileNodeCallFromPayload(nodeCallPayload)
         {

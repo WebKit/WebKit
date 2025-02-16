@@ -51,9 +51,11 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalidation-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalidation-003.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/invalidation-004.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/mixed-declarations-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nest-containing-forgiving.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-cssom-whitespace.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-declarations-matching.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nested-rule-cssom-invalidation.html
@@ -63,10 +65,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-layer.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-type-selector-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/nesting-type-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/parent-pseudo-in-placeholder-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/parsing.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/pseudo-part-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/pseudo-where-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/serialize-group-rules-with-decls.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/set-selector-text.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-is-consistent.html
@@ -74,3 +78,4 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-rule-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/supports-rule.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/top-level-is-scope.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-nesting/top-level-parent-pseudo-specificity.html

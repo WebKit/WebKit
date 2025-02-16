@@ -4,4 +4,5 @@ FAIL SVGGeometryElement.prototype.getTotalLength(), getTotalLength - rect assert
 PASS SVGGeometryElement.prototype.getTotalLength(), getTotalLength - rect in document
 PASS SVGGeometryElement.prototype.getTotalLength(), getTotalLength - rect in document with percent units
 PASS SVGGeometryElement.prototype.getTotalLength(), getTotalLength - rect in document with display none
+FAIL SVGGeometryElement.prototype.getTotalLength(), getTotalLength - path modified with setPathData path.getPathData is not a function. (In 'path.getPathData()', 'path.getPathData' is undefined)
 

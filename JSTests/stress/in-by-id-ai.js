@@ -13,7 +13,7 @@ noInline(test);
 var proto = {
     __proto__: { hello: 2 }
 };
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test({
         hello: 42
     }), true);

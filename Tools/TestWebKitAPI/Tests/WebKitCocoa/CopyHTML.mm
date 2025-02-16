@@ -173,15 +173,8 @@ TEST(CopyHTML, SanitizationPreservesCharacterSet)
     }
 }
 
-TEST(CopyHTML, SanitizationPreservesRelativeURLInAttributedString)
+static std::pair<RetainPtr<NSAttributedString>, RetainPtr<NSError>> copyAndLoadAttributedStringUsingWebArchive(TestWKWebView *webView)
 {
-    auto webView = createWebViewWithCustomPasteboardDataEnabled();
-    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
-        "<html>"
-        "<head><base href='https://webkit.org/' /></head>"
-        "<body><a href='/downloads'>Click</a> for downloads</body>"
-        "</html>"];
-    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
     [webView copy:nil];
     [webView waitForNextPresentationUpdate];
 
@@ -203,6 +196,20 @@ TEST(CopyHTML, SanitizationPreservesRelativeURLInAttributedString)
     }];
     TestWebKitAPI::Util::run(&done);
 
+    return { WTFMove(resultString), WTFMove(resultError) };
+}
+
+TEST(CopyHTML, SanitizationPreservesRelativeURLInAttributedString)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html>"
+        "<html>"
+        "<head><base href='https://webkit.org/' /></head>"
+        "<body><a href='/downloads'>Click</a> for downloads</body>"
+        "</html>"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
+
+    auto [resultString, resultError] = copyAndLoadAttributedStringUsingWebArchive(webView.get());
     auto links = adoptNS([NSMutableArray<NSURL *> new]);
     [resultString enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, 5) options:0 usingBlock:^(NSURL *url, NSRange, BOOL*) {
         [links addObject:url];
@@ -212,6 +219,27 @@ TEST(CopyHTML, SanitizationPreservesRelativeURLInAttributedString)
     EXPECT_WK_STREQ("Click for downloads", [resultString string]);
     EXPECT_EQ(1U, [links count]);
     EXPECT_WK_STREQ("https://webkit.org/downloads", [links firstObject].absoluteString);
+}
+
+TEST(CopyHTML, CopyingRightToLeftTextPreservesDirection)
+{
+    auto webView = createWebViewWithCustomPasteboardDataEnabled();
+    [webView synchronouslyLoadTestPageNamed:@"rtl-bidi-text"];
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.querySelector('p'))"];
+    RetainPtr expectedPlainText = [webView stringByEvaluatingJavaScript:@"getSelection().toString()"];
+
+    auto [resultString, resultError] = copyAndLoadAttributedStringUsingWebArchive(webView.get());
+
+    __block NSUInteger paragraphCount = 0;
+    RetainPtr plainText = [resultString string];
+    [resultString enumerateAttribute:NSParagraphStyleAttributeName inRange:NSMakeRange(0, [plainText length]) options:0 usingBlock:^(NSParagraphStyle *style, NSRange, BOOL*) {
+        EXPECT_EQ(NSWritingDirectionRightToLeft, style.baseWritingDirection);
+        paragraphCount++;
+    }];
+
+    EXPECT_NULL(resultError);
+    EXPECT_EQ(1U, paragraphCount);
+    EXPECT_WK_STREQ(plainText.get(), expectedPlainText.get());
 }
 
 #if PLATFORM(MAC)
@@ -262,7 +290,7 @@ TEST(CopyHTML, CopySelectedTextInTextDocument)
 #if PLATFORM(MAC)
     RetainPtr pastedObjects = [[NSPasteboard generalPasteboard] readObjectsForClasses:@[ NSAttributedString.class ] options:nil];
     RetainPtr copiedText = dynamic_objc_cast<NSAttributedString>([pastedObjects firstObject]);
-#else
+#elif !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
     RetainPtr itemProvider = [[[UIPasteboard generalPasteboard] itemProviders] firstObject];
     __block bool doneLoading = false;
     __block RetainPtr<NSAttributedString> copiedText;
@@ -271,8 +299,8 @@ TEST(CopyHTML, CopySelectedTextInTextDocument)
         doneLoading = true;
     }];
     TestWebKitAPI::Util::run(&doneLoading);
-#endif
     EXPECT_WK_STREQ(expectedString.get(), [copiedText string]);
+#endif
 }
 
 #endif // PLATFORM(COCOA)

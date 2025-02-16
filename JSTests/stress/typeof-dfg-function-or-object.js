@@ -15,7 +15,7 @@ function foo(arg) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let bool = !!(i % 2);
     let result = foo(bool);
     if (bool)

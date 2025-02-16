@@ -48,9 +48,9 @@ static inline void append(Vector<uint8_t>& buffer, std::span<const uint8_t> byte
     buffer.append(bytes);
 }
 
-static inline void append(Vector<uint8_t>& buffer, const char* string)
+static inline void append(Vector<uint8_t>& buffer, ASCIILiteral string)
 {
-    buffer.append(span8(string));
+    buffer.append(string.span8());
 }
 
 static inline void append(Vector<uint8_t>& buffer, const CString& string)
@@ -75,13 +75,13 @@ static void appendQuoted(Vector<uint8_t>& buffer, const Vector<uint8_t>& string)
         auto character = string[i];
         switch (character) {
         case 0xA:
-            append(buffer, "%0A");
+            append(buffer, "%0A"_s);
             break;
         case 0xD:
-            append(buffer, "%0D");
+            append(buffer, "%0D"_s);
             break;
         case '"':
-            append(buffer, "%22");
+            append(buffer, "%22"_s);
             break;
         default:
             append(buffer, character);
@@ -92,16 +92,15 @@ static void appendQuoted(Vector<uint8_t>& buffer, const Vector<uint8_t>& string)
 // https://url.spec.whatwg.org/#concept-urlencoded-byte-serializer
 static void appendFormURLEncoded(Vector<uint8_t>& buffer, std::span<const uint8_t> string)
 {
-    static const char safeCharacters[] = "-._*";
+    static constexpr auto safeCharacters = "-._*"_span;
     for (size_t i = 0; i < string.size(); ++i) {
         auto character = string[i];
-        if (isASCIIAlphanumeric(character)
-            || (character != '\0' && strchr(safeCharacters, character)))
+        if (isASCIIAlphanumeric(character) || (character != '\0' && WTF::contains(safeCharacters, character)))
             append(buffer, character);
         else if (character == ' ')
             append(buffer, '+');
         else if (character == '\n' || (character == '\r' && (i + 1 >= string.size() || string[i + 1] != '\n')))
-            append(buffer, "%0D%0A"); // FIXME: Unclear exactly where this rule about normalizing line endings to CRLF comes from.
+            append(buffer, "%0D%0A"_s); // FIXME: Unclear exactly where this rule about normalizing line endings to CRLF comes from.
         else if (character != '\r') {
             append(buffer, '%');
             auto hexBuffer = hex(character, 2);
@@ -140,7 +139,7 @@ Vector<uint8_t> generateUniqueBoundaryString()
     };
 
     // Start with an informative prefix.
-    append(boundary, "----WebKitFormBoundary");
+    append(boundary, "----WebKitFormBoundary"_s);
 
     // Append 16 random 7-bit ASCII alphanumeric characters.
     for (unsigned i = 0; i < 4; ++i) {
@@ -160,25 +159,25 @@ void beginMultiPartHeader(Vector<uint8_t>& buffer, std::span<const uint8_t> boun
 
     // FIXME: This loses data irreversibly if the input name includes characters you can't encode
     // in the website's character set.
-    append(buffer, "Content-Disposition: form-data; name=\"");
+    append(buffer, "Content-Disposition: form-data; name=\""_s);
     appendQuoted(buffer, name);
     append(buffer, '"');
 }
 
 void addBoundaryToMultiPartHeader(Vector<uint8_t>& buffer, std::span<const uint8_t> boundary, bool isLastBoundary)
 {
-    append(buffer, "--");
+    append(buffer, "--"_s);
     append(buffer, boundary);
 
     if (isLastBoundary)
-        append(buffer, "--");
+        append(buffer, "--"_s);
 
-    append(buffer, "\r\n");
+    append(buffer, "\r\n"_s);
 }
 
 void addFilenameToMultiPartHeader(Vector<uint8_t>& buffer, const PAL::TextEncoding& encoding, const String& filename)
 {
-    append(buffer, "; filename=\"");
+    append(buffer, "; filename=\""_s);
     appendQuoted(buffer, encoding.encode(filename, PAL::UnencodableHandling::Entities));
     append(buffer, '"');
 }
@@ -186,13 +185,13 @@ void addFilenameToMultiPartHeader(Vector<uint8_t>& buffer, const PAL::TextEncodi
 void addContentTypeToMultiPartHeader(Vector<uint8_t>& buffer, const CString& mimeType)
 {
     ASSERT(Blob::isNormalizedContentType(mimeType));
-    append(buffer, "\r\nContent-Type: ");
+    append(buffer, "\r\nContent-Type: "_s);
     append(buffer, mimeType);
 }
 
 void finishMultiPartHeader(Vector<uint8_t>& buffer)
 {
-    append(buffer, "\r\n\r\n");
+    append(buffer, "\r\n\r\n"_s);
 }
 
 void addKeyValuePairAsFormData(Vector<uint8_t>& buffer, const Vector<uint8_t>& key, const Vector<uint8_t>& value, FormData::EncodingType encodingType)
@@ -201,7 +200,7 @@ void addKeyValuePairAsFormData(Vector<uint8_t>& buffer, const Vector<uint8_t>& k
         append(buffer, key);
         append(buffer, '=');
         append(buffer, value);
-        append(buffer, "\r\n");
+        append(buffer, "\r\n"_s);
     } else {
         if (!buffer.isEmpty())
             append(buffer, '&');

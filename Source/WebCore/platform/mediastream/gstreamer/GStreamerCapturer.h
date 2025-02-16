@@ -49,7 +49,7 @@ public:
     virtual void captureEnded() { }
 };
 
-class GStreamerCapturer : public ThreadSafeRefCounted<GStreamerCapturer> {
+class GStreamerCapturer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<GStreamerCapturer> {
 public:
     GStreamerCapturer(GStreamerCaptureDevice&&, GRefPtr<GstCaps>&&);
     GStreamerCapturer(const char* sourceFactory, GRefPtr<GstCaps>&&, CaptureDevice::DeviceType);
@@ -59,7 +59,7 @@ public:
 
     void addObserver(GStreamerCapturerObserver&);
     void removeObserver(GStreamerCapturerObserver&);
-    void forEachObserver(const Function<void(GStreamerCapturerObserver&)>&);
+    void forEachObserver(NOESCAPE const Function<void(GStreamerCapturerObserver&)>&);
 
     void setupPipeline();
     void start();

@@ -419,8 +419,13 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
 #endif
 
     // FIXME: Why are we checking top-level document only for PerDocumentAutoplayBehavior?
-    Ref topDocument = document->topDocument();
-    if (topDocument->quirks().requiresUserGestureToPauseInPictureInPicture()
+    RefPtr mainFrameDocument = document->mainFrameDocument();
+    if (!mainFrameDocument) {
+        LOG_ONCE(SiteIsolation, "Unable to properly calculate MediaElementSession::playbackStateChangePermitted() without access to the main frame document ");
+    }
+
+    if (mainFrameDocument
+        && mainFrameDocument->quirks().requiresUserGestureToPauseInPictureInPicture()
         && m_element.fullscreenMode() & HTMLMediaElementEnums::VideoFullscreenModePictureInPicture
         && !m_element.paused() && state == MediaPlaybackState::Paused
         && !document->processingUserGestureForMedia()) {
@@ -428,7 +433,9 @@ Expected<void, MediaPlaybackDenialReason> MediaElementSession::playbackStateChan
         return makeUnexpected(MediaPlaybackDenialReason::UserGestureRequired);
     }
 
-    if (topDocument->mediaState() & MediaProducerMediaState::HasUserInteractedWithMediaElement && topDocument->quirks().needsPerDocumentAutoplayBehavior())
+    if (mainFrameDocument
+        && mainFrameDocument->mediaState() & MediaProducerMediaState::HasUserInteractedWithMediaElement
+        && mainFrameDocument->quirks().needsPerDocumentAutoplayBehavior())
         return { };
 
     if (m_restrictions & RequireUserGestureForVideoRateChange && m_element.isVideo() && !document->processingUserGestureForMedia()) {
@@ -571,6 +578,14 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
         return false;
     }
 
+    if (purpose == MediaElementSession::PlaybackControlsPurpose::NowPlaying
+        && hasBehaviorRestriction(RequirePageVisibilityForVideoToBeNowPlaying)
+        && m_element.isVideo()
+        && !m_element.protectedDocument()->protectedPage()->isVisibleAndActive()) {
+        INFO_LOG(LOGIDENTIFIER, "returning FALSE: NowPlaying restricted for video in a page that is not visible");
+        return false;
+    }
+
     if (m_element.isFullscreen()) {
         INFO_LOG(LOGIDENTIFIER, "returning TRUE: is fullscreen");
         return true;
@@ -643,7 +658,7 @@ bool MediaElementSession::canShowControlsManager(PlaybackControlsPurpose purpose
 #if ENABLE(FULLSCREEN_API)
     // Elements which are not descendants of the current fullscreen element cannot be main content.
     if (CheckedPtr fullscreenManager = m_element.document().fullscreenManagerIfExists()) {
-        RefPtr fullscreenElement = fullscreenManager->currentFullscreenElement();
+        RefPtr fullscreenElement = fullscreenManager->fullscreenElement();
         if (fullscreenElement && !m_element.isDescendantOf(*fullscreenElement)) {
             INFO_LOG(LOGIDENTIFIER, "returning FALSE: outside of full screen");
             return false;
@@ -1297,8 +1312,8 @@ std::optional<NowPlayingInfo> MediaElementSession::computeNowPlayingInfo() const
     // FIXME: Eventually, this should be moved into HTMLMediaElement, so all clients
     // will use the same bundle identifier (the presentingApplication, rather than the
     // sourceApplication).
-    if (!presentingApplicationBundleIdentifier().isNull())
-        sourceApplicationIdentifier = presentingApplicationBundleIdentifier();
+    if (!page->presentingApplicationBundleIdentifier().isNull())
+        sourceApplicationIdentifier = page->presentingApplicationBundleIdentifier();
 #endif
 
     NowPlayingInfo info {
@@ -1348,7 +1363,7 @@ void MediaElementSession::updateMediaUsageIfChanged()
     bool isOutsideOfFullscreen = false;
 #if ENABLE(FULLSCREEN_API)
     if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists()) {
-        if (RefPtr fullscreenElement = document->fullscreenManager().currentFullscreenElement())
+        if (RefPtr fullscreenElement = document->fullscreenManager().fullscreenElement())
             isOutsideOfFullscreen = m_element.isDescendantOf(*fullscreenElement);
     }
 #endif

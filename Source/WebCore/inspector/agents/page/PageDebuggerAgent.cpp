@@ -101,7 +101,7 @@ String PageDebuggerAgent::sourceMapURLForScript(const JSC::Debugger::Script& scr
     static constexpr auto sourceMapHTTPHeaderDeprecated = "X-SourceMap"_s;
 
     if (!script.url.isEmpty()) {
-        RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+        RefPtr localMainFrame = m_inspectedPage->localMainFrame();
         if (!localMainFrame)
             return String();
 
@@ -142,12 +142,12 @@ void PageDebuggerAgent::debuggerDidEvaluate(JSC::Debugger&, JSC::JSGlobalObject*
 
 void PageDebuggerAgent::breakpointActionLog(JSC::JSGlobalObject* lexicalGlobalObject, const String& message)
 {
-    m_inspectedPage.console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));
+    m_inspectedPage->console().addMessage(MessageSource::JS, MessageLevel::Log, message, createScriptCallStack(lexicalGlobalObject));
 }
 
 InjectedScript PageDebuggerAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return InjectedScript();
 
@@ -186,33 +186,6 @@ void PageDebuggerAgent::mainFrameStoppedLoading()
 void PageDebuggerAgent::mainFrameNavigated()
 {
     setSuppressAllPauses(false);
-}
-
-void PageDebuggerAgent::didRequestAnimationFrame(int callbackId, Document& document)
-{
-    if (!breakpointsActive())
-        return;
-
-    auto* globalObject = document.globalObject();
-    if (!globalObject)
-        return;
-
-    didScheduleAsyncCall(globalObject, InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId, true);
-}
-
-void PageDebuggerAgent::willFireAnimationFrame(int callbackId)
-{
-    willDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
-}
-
-void PageDebuggerAgent::didCancelAnimationFrame(int callbackId)
-{
-    didCancelAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
-}
-
-void PageDebuggerAgent::didFireAnimationFrame(int callbackId)
-{
-    didDispatchAsyncCall(InspectorDebuggerAgent::AsyncCallType::RequestAnimationFrame, callbackId);
 }
 
 } // namespace WebCore

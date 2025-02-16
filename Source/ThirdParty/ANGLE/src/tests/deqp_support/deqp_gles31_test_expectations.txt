@@ -426,6 +426,9 @@ b/224537784 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.debug.error_groups.case_9
 // Fails when the expression being interpolated as an indexed varying array.
 42264718 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.multisample_interpolation.interpolate_at_offset.array_element.* = FAIL
 
+// Pixel 4 crashes in newly added test
+390138123 PIXEL4ORXL VULKAN : dEQP-GLES31.functional.shaders.framebuffer_fetch.basic.multiple_render_targets_overdraw = SKIP
+
 // Geometry shader support:
 // This fails on pre-release Android T drivers as of 3/25/22:
 42263969 PIXEL6 VULKAN : dEQP-GLES31.functional.geometry_shading.query.primitives_generated_* = FAIL
@@ -443,6 +446,8 @@ b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.multisample_interp
 b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.shaders.sample_variables.sample_* = SKIP
 b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.tessellation_geometry_interaction.render.limits.output_* = SKIP
 b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
+386749841 GALAXYS22 VULKAN : dEQP-GLES31.functional.geometry_shading.instanced.geometry_output_different_32_invocations = SKIP
+386749841 GALAXYS22 VULKAN : dEQP-GLES31.functional.geometry_shading.instanced.geometry_output_different_max_invocations = SKIP
 
 // Samsung Galaxy S23
 42266598 GALAXYS23 VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.* = SKIP
@@ -457,9 +462,16 @@ b/267953710 GALAXYS22 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = S
 42266598 GALAXYS23 VULKAN : dEQP-GLES31.functional.texture.border_clamp.* = SKIP
 
 // Snapdragon 8 Gen3 Mobile Reference Device
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced* = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.basic.hsl_hue = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.hsl_hue = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.srgb.hsl_hue = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.hsl_hue = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.basic.hsl_saturation = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.barrier.hsl_saturation = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.srgb.hsl_saturation = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.hsl_saturation = SKIP
+b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.blend_equation_advanced.msaa.colorburn = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.copy_image.*cube* = SKIP
-b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.copy_image.*texture3d* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.fbo.no_attachments.* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.image_load_store*3d* = SKIP
 b/328156792 PINEAPPLE VULKAN : dEQP-GLES31.functional.image_load_store*cube* = SKIP

@@ -2,10 +2,10 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      `return` is a valid statement within generator function bodies.
-  features: [generators]
-  es6id: 14.4
+description: >
+    `return` is a valid statement within generator function bodies.
+features: [generators]
+es6id: 14.4
 ---*/
 
 var result;

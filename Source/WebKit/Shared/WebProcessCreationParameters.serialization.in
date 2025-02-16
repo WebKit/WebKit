@@ -87,7 +87,6 @@
     String uiProcessBundleIdentifier;
     int latencyQOS;
     int throughputQOS;
-    String presentingApplicationBundleIdentifier;
 #endif
 
     ProcessID presentingApplicationPID;
@@ -180,7 +179,7 @@
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    OptionSet<WebKit::DMABufRendererBufferMode> dmaBufRendererBufferMode;
+    OptionSet<WebKit::RendererBufferTransportMode> rendererBufferTransportMode;
     WebCore::SystemSettings::State systemSettings;
 #endif
 
@@ -228,4 +227,8 @@
 
     Seconds memoryFootprintPollIntervalForTesting;
     Vector<size_t> memoryFootprintNotificationThresholds;
+
+#if ENABLE(NOTIFY_BLOCKING)
+    Vector<std::pair<String, uint64_t>> notifyState;
+#endif
 };

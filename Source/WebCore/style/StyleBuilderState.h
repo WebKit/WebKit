@@ -42,6 +42,10 @@ class RenderStyle;
 class StyleImage;
 class StyleResolver;
 
+namespace Calculation {
+class RandomKeyMap;
+}
+
 namespace CSS {
 struct AppleColorFilterProperty;
 struct FilterProperty;
@@ -110,7 +114,7 @@ public:
     void registerContentAttribute(const AtomString& attributeLocalName);
 
     const CSSToLengthConversionData& cssToLengthConversionData() const { return m_cssToLengthConversionData; }
-    const CSSToStyleMap& styleMap() const { return m_styleMap; }
+    CSSToStyleMap& styleMap() { return m_styleMap; }
 
     void setIsBuildingKeyframeStyle() { m_isBuildingKeyframeStyle = true; }
 
@@ -123,6 +127,8 @@ public:
 
     bool isCurrentPropertyInvalidAtComputedValueTime() const;
     void setCurrentPropertyInvalidAtComputedValueTime();
+
+    Ref<Calculation::RandomKeyMap> randomKeyMap(bool perElement) const;
 
 private:
     // See the comment in maybeUpdateFontForLetterSpacing() about why this needs to be a friend.
@@ -148,9 +154,9 @@ private:
 
     const CSSToLengthConversionData m_cssToLengthConversionData;
 
-    HashSet<AtomString> m_appliedCustomProperties;
-    HashSet<AtomString> m_inProgressCustomProperties;
-    HashSet<AtomString> m_inCycleCustomProperties;
+    UncheckedKeyHashSet<AtomString> m_appliedCustomProperties;
+    UncheckedKeyHashSet<AtomString> m_inProgressCustomProperties;
+    UncheckedKeyHashSet<AtomString> m_inCycleCustomProperties;
     WTF::BitSet<numCSSProperties> m_inProgressProperties;
     WTF::BitSet<numCSSProperties> m_invalidAtComputedValueTimeProperties;
 

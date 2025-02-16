@@ -35,6 +35,7 @@
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Lock.h>
+#include <wtf/MediaTime.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/WTFString.h>
 
@@ -63,6 +64,7 @@ public:
     WEBCORE_EXPORT static float hardwareSampleRate();
 
     virtual unsigned framesPerBuffer() const = 0;
+    virtual WTF::MediaTime outputLatency() const { return MediaTime::zeroTime(); }
 
     // maxChannelCount() returns the total number of output channels of the audio hardware.
     // A value of 0 indicates that the number of channels cannot be configured and

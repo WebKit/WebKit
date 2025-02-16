@@ -120,10 +120,9 @@ bool ResourceUsageOverlay::mouseEvent(PageOverlay&, const PlatformMouseEvent& ev
             newFrame.moveBy(IntPoint(-m_dragPoint.x(), -m_dragPoint.y()));
 
             // Force the frame to stay inside the viewport entirely.
-            if (newFrame.x() < 0)
-                newFrame.setX(0);
-            if (newFrame.y() < page->topContentInset())
-                newFrame.setY(page->topContentInset());
+            auto obscuredContentInsets = page->obscuredContentInsets();
+            newFrame.setX(static_cast<int>(std::max<float>(obscuredContentInsets.left(), newFrame.x())));
+            newFrame.setY(static_cast<int>(std::max<float>(obscuredContentInsets.top(), newFrame.y())));
             auto& frameView = *page->mainFrame().virtualView();
             if (newFrame.maxX() > frameView.width())
                 newFrame.setX(frameView.width() - newFrame.width());

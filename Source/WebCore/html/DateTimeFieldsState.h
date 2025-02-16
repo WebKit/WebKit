@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include <optional>
 
 namespace WebCore {
@@ -54,5 +52,3 @@ struct DateTimeFieldsState {
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

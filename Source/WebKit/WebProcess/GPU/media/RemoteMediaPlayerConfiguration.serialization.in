@@ -24,7 +24,6 @@
 
 struct WebKit::RemoteMediaPlayerConfiguration {
     String engineDescription;
-    double maximumDurationToCacheMediaTime;
     bool supportsScanning;
     bool supportsFullscreen;
     bool supportsPictureInPicture;

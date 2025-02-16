@@ -73,7 +73,7 @@ public:
     explicit AnotherGuardedInternalBuiltinBuiltinsWrapper(JSC::VM& vm)
         : m_vm(vm)
         WEBCORE_FOREACH_ANOTHERGUARDEDINTERNALBUILTIN_BUILTIN_FUNCTION_NAME(INITIALIZE_BUILTIN_NAMES)
-#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying({ s_##name, static_cast<size_t>(length) }), { }, JSC::SourceTaintedOrigin::Untainted))
+#define INITIALIZE_BUILTIN_SOURCE_MEMBERS(name, functionName, overriddenName, length) , m_##name##Source(JSC::makeSource(StringImpl::createWithoutCopying(unsafeMakeSpan(s_##name, static_cast<size_t>(length))), { }, JSC::SourceTaintedOrigin::Untainted))
         WEBCORE_FOREACH_ANOTHERGUARDEDINTERNALBUILTIN_BUILTIN_CODE(INITIALIZE_BUILTIN_SOURCE_MEMBERS)
 #undef INITIALIZE_BUILTIN_SOURCE_MEMBERS
     {
@@ -209,13 +209,13 @@ template void AnotherGuardedInternalBuiltinBuiltinFunctions::visit(JSC::SlotVisi
 
 namespace WebCore {
 
-const JSC::ConstructAbility s_anotherGuardedInternalBuiltinLetsFetchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_anotherGuardedInternalBuiltinLetsFetchCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_anotherGuardedInternalBuiltinLetsFetchCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_anotherGuardedInternalBuiltinLetsFetchCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength = 83;
-static const JSC::Intrinsic s_anotherGuardedInternalBuiltinLetsFetchCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_anotherGuardedInternalBuiltinLetsFetchCode =
+constinit const JSC::ConstructAbility s_anotherGuardedInternalBuiltinLetsFetchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_anotherGuardedInternalBuiltinLetsFetchCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_anotherGuardedInternalBuiltinLetsFetchCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_anotherGuardedInternalBuiltinLetsFetchCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_anotherGuardedInternalBuiltinLetsFetchCodeLength = 83;
+static constinit const JSC::Intrinsic s_anotherGuardedInternalBuiltinLetsFetchCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_anotherGuardedInternalBuiltinLetsFetchCode =
     "(function ()\n" \
     "{\n" \
     "   \"use strict\";\n" \
@@ -228,7 +228,7 @@ const char* const s_anotherGuardedInternalBuiltinLetsFetchCode =
 #define DEFINE_BUILTIN_GENERATOR(codeName, functionName, overriddenName, argumentCount) \
 JSC::FunctionExecutable* codeName##Generator(JSC::VM& vm) \
 {\
-    JSVMClientData* clientData = static_cast<JSVMClientData*>(vm.clientData); \
+    JSVMClientData* clientData = downcast<JSVMClientData>(vm.clientData); \
     return clientData->builtinFunctions().anotherGuardedInternalBuiltinBuiltins().codeName##Executable()->link(vm, nullptr, clientData->builtinFunctions().anotherGuardedInternalBuiltinBuiltins().codeName##Source(), std::nullopt, s_##codeName##Intrinsic); \
 }
 WEBCORE_FOREACH_ANOTHERGUARDEDINTERNALBUILTIN_BUILTIN_CODE(DEFINE_BUILTIN_GENERATOR)

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "BoxExtents.h"
 #include "FloatRect.h"
 #include "IntRect.h"
 #include "LengthBox.h"
@@ -136,7 +137,7 @@ public:
     IntRect boundsAtLastRevalidate() const { return m_boundsAtLastRevalidate; }
     IntRect boundsAtLastRevalidateWithoutMargin() const;
     void willRevalidateTiles(TileGrid&, TileRevalidationType);
-    void didRevalidateTiles(TileGrid&, TileRevalidationType, const HashSet<TileIndex>& tilesNeedingDisplay);
+    void didRevalidateTiles(TileGrid&, TileRevalidationType, const UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay);
 
     bool shouldAggressivelyRetainTiles() const;
     bool shouldTemporarilyRetainTileCohorts() const;
@@ -156,7 +157,7 @@ private:
 
     void scheduleTileRevalidation(Seconds interval);
 
-    float topContentInset() const { return m_topContentInset; }
+    FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
 
     // TiledBacking member functions.
     PlatformLayerIdentifier layerIdentifier() const final;
@@ -170,7 +171,7 @@ private:
     void setCoverageRect(const FloatRect&) final;
     bool tilesWouldChangeForCoverageRect(const FloatRect&) const final;
     void setTiledScrollingIndicatorPosition(const FloatPoint&) final;
-    void setTopContentInset(float) final;
+    void setObscuredContentInsets(const FloatBoxExtent&) final;
     void setVelocity(const VelocityData&) final;
     void setScrollability(OptionSet<Scrollability>) final;
     void prepopulateRect(const FloatRect&) final;
@@ -269,7 +270,7 @@ private:
     Color m_tileDebugBorderColor;
     float m_tileDebugBorderWidth { 0 };
     ScrollingModeIndication m_indicatorMode { SynchronousScrollingBecauseOfLackOfScrollingCoordinatorIndication };
-    float m_topContentInset { 0 };
+    FloatBoxExtent m_obscuredContentInsets;
 };
 
 } // namespace WebCore

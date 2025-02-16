@@ -87,7 +87,7 @@ public:
     std::optional<FetchIdentifier> navigationPreloadIdentifier() const { return m_navigationPreloadIdentifier.asOptional(); }
     void setNavigationPreloadIdentifier(std::optional<FetchIdentifier> identifier) { m_navigationPreloadIdentifier = identifier; }
 
-    RequestPriority fetchPriorityHint() const { return m_fetchPriorityHint; }
+    RequestPriority priority() const { return m_priority; }
 
     bool shouldEnableContentExtensionsCheck() const { return m_enableContentExtensionsCheck; }
     void disableContentExtensionsCheck() { m_enableContentExtensionsCheck = false; }
@@ -108,7 +108,7 @@ private:
     ResourceRequest m_request;
     URLKeepingBlobAlive m_requestURL;
     FetchOptions m_options;
-    RequestPriority m_fetchPriorityHint { RequestPriority::Auto };
+    RequestPriority m_priority { RequestPriority::Auto };
     String m_referrer;
     Ref<AbortSignal> m_signal;
     Markable<FetchIdentifier> m_navigationPreloadIdentifier;

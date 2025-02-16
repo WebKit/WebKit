@@ -32,6 +32,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "DashArray.h"
 #include "FontCascade.h"
 #include "ImageBuffer.h"
 #include "MockMediaDevice.h"

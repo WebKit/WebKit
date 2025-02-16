@@ -88,6 +88,13 @@ Image& Image::nullImage()
     return nullImage;
 }
 
+static bool isPDFResource(const String& mimeType, const URL& url)
+{
+    if (mimeType.isEmpty())
+        return url.path().endsWithIgnoringASCIICase(".pdf"_s);
+    return MIMETypeRegistry::isPDFMIMEType(mimeType);
+}
+
 RefPtr<Image> Image::create(ImageObserver& observer)
 {
     // SVGImage and PDFDocumentImage are not safe to use off the main thread.
@@ -96,7 +103,7 @@ RefPtr<Image> Image::create(ImageObserver& observer)
 
     auto mimeType = observer.mimeType();
     if (mimeType == "image/svg+xml"_s)
-        return SVGImage::create(observer);
+        return SVGImage::create(&observer);
 
     auto url = observer.sourceUrl();
     if (isPDFResource(mimeType, url)) {
@@ -126,13 +133,6 @@ bool Image::supportsType(const String& type)
 {
     return MIMETypeRegistry::isSupportedImageMIMEType(type);
 } 
-
-bool Image::isPDFResource(const String& mimeType, const URL& url)
-{
-    if (mimeType.isEmpty())
-        return url.path().endsWithIgnoringASCIICase(".pdf"_s);
-    return MIMETypeRegistry::isPDFMIMEType(mimeType);
-}
 
 EncodedDataStatus Image::setData(RefPtr<FragmentedSharedBuffer>&& data, bool allDataReceived)
 {

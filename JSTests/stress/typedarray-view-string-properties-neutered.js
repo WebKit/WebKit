@@ -11,7 +11,7 @@ let name = ["map", "reduce"];
 function test(constructor) {
     let array = new constructor(10);
     transferArrayBuffer(array.buffer);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         call(() => {
             if (array.map !== constructor.prototype.map)
                 throw new Error();
@@ -39,7 +39,7 @@ function test(constructor) {
         if (array[name[i % 2]] !== constructor.prototype[name[i % 2]])
             throw new Error();
     };
-    for (; i < 10000; i++) {
+    for (; i < testLoopCount; i++) {
         call(fnId);
         call(fnVal);
     }

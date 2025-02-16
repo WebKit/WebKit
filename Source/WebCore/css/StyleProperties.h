@@ -33,6 +33,10 @@ class MutableStyleProperties;
 enum CSSValueID : uint16_t;
 enum CSSParserMode : uint8_t;
 
+namespace CSS {
+struct SerializationContext;
+}
+
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleProperties);
 class StyleProperties : public RefCounted<StyleProperties> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleProperties);
@@ -52,18 +56,18 @@ public:
         CSSPropertyID shorthandID() const { return m_metadata.shorthandID(); }
 
         bool isImportant() const { return m_metadata.m_important; }
-        bool isInherited() const { return m_metadata.m_inherited; }
         bool isImplicit() const { return m_metadata.m_implicit; }
 
         String cssName() const;
-        String cssText() const;
+        String cssText(const CSS::SerializationContext&) const;
 
         const CSSValue* value() const { return m_value; }
         // FIXME: We should try to remove this mutable overload.
         CSSValue* value() { return const_cast<CSSValue*>(m_value); }
+        Ref<CSSValue> protectedValue() const { return const_cast<CSSValue&>(*m_value); }
 
         // FIXME: Remove this.
-        CSSProperty toCSSProperty() const { return CSSProperty(id(), const_cast<CSSValue*>(m_value), isImportant() ? IsImportant::Yes : IsImportant::No, m_metadata.m_isSetFromShorthand, m_metadata.m_indexInShorthandsVector, isImplicit()); }
+        CSSProperty toCSSProperty() const { return CSSProperty(id(), protectedValue(), isImportant() ? IsImportant::Yes : IsImportant::No, m_metadata.m_isSetFromShorthand, m_metadata.m_indexInShorthandsVector, isImplicit()); }
 
     private:
         const StylePropertyMetadata& m_metadata;
@@ -123,15 +127,13 @@ public:
 
     Ref<MutableStyleProperties> copyProperties(std::span<const CSSPropertyID>) const;
     
-    String asText() const;
-    AtomString asTextAtom() const;
+    String asText(const CSS::SerializationContext&) const;
+    AtomString asTextAtom(const CSS::SerializationContext&) const;
 
     bool hasCSSOMWrapper() const;
     bool isMutable() const { return m_isMutable; }
 
-    bool traverseSubresources(const Function<bool(const CachedResource&)>& handler) const;
-    void setReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
-    void clearReplacementURLForSubresources();
+    bool traverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const;
     bool mayDependOnBaseURL() const;
 
     static unsigned averageSizeInBytes();
@@ -154,13 +156,14 @@ protected:
     unsigned m_arraySize : 28 { 0 };
 
 private:
-    StringBuilder asTextInternal() const;
-    String serializeLonghandValue(CSSPropertyID) const;
-    String serializeShorthandValue(CSSPropertyID) const;
+    StringBuilder asTextInternal(const CSS::SerializationContext&) const;
+    String serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID) const;
+    String serializeShorthandValue(const CSS::SerializationContext&, CSSPropertyID) const;
 };
 
-String serializeLonghandValue(CSSPropertyID, const CSSValue&);
-inline String serializeLonghandValue(CSSPropertyID, const CSSValue*);
+String serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID, const CSSValue&);
+inline String serializeLonghandValue(const CSS::SerializationContext&, CSSPropertyID, const CSSValue*);
+
 inline CSSValueID longhandValueID(CSSPropertyID, const CSSValue&);
 inline std::optional<CSSValueID> longhandValueID(CSSPropertyID, const CSSValue*);
 

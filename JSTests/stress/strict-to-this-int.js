@@ -18,7 +18,7 @@ function test(this_, a, b, x_) {
         throw "Error: bad result: " + result;
 }
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(5, 1, 2, 100);
 
 test(5, 2000000000, 2000000000, 1);

@@ -26,7 +26,7 @@
 import Foundation
 internal import WebKit_Internal
 
-extension WebPage_v0 {
+extension WebPage {
     @MainActor
     @_spi(Private)
     public struct ElementInfo: Sendable {

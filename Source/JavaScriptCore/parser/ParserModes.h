@@ -47,6 +47,13 @@ enum class CodeGenerationMode : uint8_t {
 
 enum class FunctionMode { None, FunctionExpression, FunctionDeclaration, MethodDefinition };
 
+enum class FunctionConstructionMode : uint8_t {
+    Function,
+    Generator,
+    Async,
+    AsyncGenerator,
+};
+
 // Keep it less than 32, it means this should be within 5 bits.
 enum class SourceParseMode : uint8_t {
     NormalFunctionMode                = 0,

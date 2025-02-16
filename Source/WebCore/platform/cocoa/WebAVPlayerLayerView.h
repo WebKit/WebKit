@@ -31,6 +31,7 @@
 
 WEBCORE_EXPORT @interface WebAVPlayerLayerView : __AVPlayerLayerView
 @property (retain) UIView* videoView;
+- (void)transferVideoViewTo:(WebAVPlayerLayerView *)playerLayerView;
 @end
 
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)

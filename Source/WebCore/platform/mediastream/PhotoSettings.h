@@ -33,6 +33,8 @@ namespace WebCore {
 enum class FillLightMode : uint8_t;
 
 struct PhotoSettings {
+    PhotoSettings isolatedCopy() const { return *this; }
+
     std::optional<FillLightMode> fillLightMode;
     std::optional<double> imageHeight;
     std::optional<double> imageWidth;

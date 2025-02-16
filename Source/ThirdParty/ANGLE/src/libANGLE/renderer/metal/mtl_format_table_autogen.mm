@@ -674,6 +674,12 @@ void Format::init(const DisplayMtl *display, angle::FormatID intendedFormatId_)
                                                             0x00000000, gl::Float32One>;
             break;
 
+        case angle::FormatID::L4A4_UNORM:
+
+            this->metalFormat    = MTLPixelFormatRGBA8Unorm;
+            this->actualFormatId = angle::FormatID::R8G8B8A8_UNORM;
+            break;
+
         case angle::FormatID::L8A8_UNORM:
 
             this->metalFormat    = MTLPixelFormatRGBA8Unorm;

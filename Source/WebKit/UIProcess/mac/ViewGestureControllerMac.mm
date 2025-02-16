@@ -117,7 +117,8 @@ void ViewGestureController::handleMagnificationGestureEvent(NSEvent *event, Floa
     if (!page)
         return;
 
-    origin.setY(origin.y() - page->topContentInset());
+    auto obscuredContentInsets = page->obscuredContentInsets();
+    origin.move(-obscuredContentInsets.left(), -obscuredContentInsets.top());
 
     ASSERT(m_activeGestureType == ViewGestureType::None || m_activeGestureType == ViewGestureType::Magnification);
 
@@ -407,11 +408,11 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     m_currentSwipeCustomViewBounds = windowRelativeBoundsForCustomSwipeViews();
 
     FloatRect swipeArea;
-    float topContentInset = 0;
+    FloatBoxExtent obscuredContentInsets;
     if (!m_customSwipeViews.isEmpty()) {
-        topContentInset = m_customSwipeViewsTopContentInset;
+        obscuredContentInsets.setTop(m_customSwipeViewsTopContentInset);
         swipeArea = m_currentSwipeCustomViewBounds;
-        swipeArea.expand(0, topContentInset);
+        swipeArea.expand(0, m_customSwipeViewsTopContentInset);
 
         for (const auto& view : m_customSwipeViews) {
             CALayer *layer = [view layer];
@@ -420,7 +421,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         }
     } else {
         swipeArea = [rootContentLayer convertRect:CGRectMake(0, 0, page->viewSize().width(), page->viewSize().height()) toLayer:nil];
-        topContentInset = page->topContentInset();
+        obscuredContentInsets = page->obscuredContentInsets();
         m_currentSwipeLiveLayers.append(rootContentLayer);
     }
 
@@ -429,7 +430,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
     RetainPtr<CGColorRef> backgroundColor = CGColorGetConstantColor(kCGColorWhite);
     if (RefPtr<ViewSnapshot> snapshot = targetItem->snapshot()) {
-        if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), topContentInset))
+        if (shouldUseSnapshotForSize(*snapshot, swipeArea.size(), obscuredContentInsets))
             [m_swipeSnapshotLayer setContents:snapshot->asLayerContents()];
 
         Color coreColor = snapshot->backgroundColor();
@@ -449,7 +450,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
     [m_swipeSnapshotLayer setContentsGravity:kCAGravityTopLeft];
     [m_swipeSnapshotLayer setContentsScale:deviceScaleFactor];
     [m_swipeSnapshotLayer setAnchorPoint:CGPointZero];
-    [m_swipeSnapshotLayer setFrame:CGRectMake(0, 0, swipeArea.width(), swipeArea.height() - topContentInset)];
+    [m_swipeSnapshotLayer setFrame:CGRectMake(0, 0, swipeArea.width() - obscuredContentInsets.left(), swipeArea.height() - obscuredContentInsets.top())];
     [m_swipeSnapshotLayer setName:@"Gesture Swipe Snapshot Layer"];
     [m_swipeSnapshotLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
@@ -480,7 +481,7 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
         [m_swipeDimmingLayer setGeometryFlipped:geometryIsFlippedToRoot];
         [m_swipeDimmingLayer setDelegate:[WebActionDisablingCALayerDelegate shared]];
 
-        FloatRect shadowRect(-swipeOverlayShadowWidth, topContentInset, swipeOverlayShadowWidth, page->viewSize().height() - topContentInset);
+        FloatRect shadowRect(-swipeOverlayShadowWidth, obscuredContentInsets.top(), swipeOverlayShadowWidth, page->viewSize().height() - obscuredContentInsets.top());
         m_swipeShadowLayer = adoptNS([[CAGradientLayer alloc] init]);
         [m_swipeShadowLayer setName:@"Gesture Swipe Shadow Layer"];
         [m_swipeShadowLayer setColors:@[

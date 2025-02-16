@@ -34,10 +34,23 @@ SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, PAL_EXPORT
 
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTMaterialLayer, PAL_EXPORT)
 
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialRecipeNone, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentLight, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialRecipePlatformChromeLight, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThickLight, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThinLight, NSString *, PAL_EXPORT)
 SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentUltraThinLight, NSString *, PAL_EXPORT)
+
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStyleCategoryStroke, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStyleCategoryFill, NSString *, PAL_EXPORT)
+
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStyleNone, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStylePrimary, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStyleSecondary, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStyleTertiary, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStyleQuaternary, NSString *, PAL_EXPORT)
+SOFT_LINK_CONSTANT_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTCoreMaterialVisualStyleSeparator, NSString *, PAL_EXPORT)
+
+SOFT_LINK_FUNCTION_FOR_SOURCE_WITH_EXPORT(PAL, CoreMaterial, MTVisualStylingCreateDictionaryRepresentation, NSDictionary *, (MTCoreMaterialRecipe recipe, MTCoreMaterialVisualStyleCategory category, MTCoreMaterialVisualStyle style, NSDictionary *options), (recipe, category, style, options), PAL_EXPORT)
 
 #endif // HAVE(CORE_MATERIAL)

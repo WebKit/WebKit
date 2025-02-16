@@ -540,7 +540,7 @@ RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
     // The cloned fragment is never exposed to author scripts so it's safe to dispatch events here.
     ScriptDisallowedScope::EventAllowedScope allowedScope(clonedFragment);
 
-    m_webVTTNodeTree->cloneChildNodes(*document, clonedFragment);
+    m_webVTTNodeTree->cloneChildNodes(*document, nullptr, clonedFragment);
     return clonedFragment;
 }
 
@@ -1128,17 +1128,17 @@ std::pair<double, double> VTTCue::getPositionCoordinates() const
 VTTCue::CueSetting VTTCue::settingName(VTTScanner& input)
 {
     CueSetting parsedSetting = None;
-    if (input.scan("vertical"_span))
+    if (input.scan("vertical"_span8))
         parsedSetting = Vertical;
-    else if (input.scan("line"_span))
+    else if (input.scan("line"_span8))
         parsedSetting = Line;
-    else if (input.scan("position"_span))
+    else if (input.scan("position"_span8))
         parsedSetting = Position;
-    else if (input.scan("size"_span))
+    else if (input.scan("size"_span8))
         parsedSetting = Size;
-    else if (input.scan("align"_span))
+    else if (input.scan("align"_span8))
         parsedSetting = Align;
-    else if (input.scan("region"_span))
+    else if (input.scan("region"_span8))
         parsedSetting = Region;
 
     // Verify that a ':' follows.

@@ -29,6 +29,6 @@ function test(size) {
         throw "Error: setter not called.";
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(42);
 }

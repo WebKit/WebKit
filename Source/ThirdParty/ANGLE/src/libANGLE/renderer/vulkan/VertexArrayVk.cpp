@@ -340,16 +340,14 @@ void VertexArrayVk::destroy(const gl::Context *context)
 {
     ContextVk *contextVk = vk::GetImpl(context);
 
-    vk::Renderer *renderer = contextVk->getRenderer();
-
     for (std::unique_ptr<vk::BufferHelper> &buffer : mCachedStreamIndexBuffers)
     {
-        buffer->release(renderer);
+        buffer->release(contextVk);
     }
 
-    mStreamedIndexData.release(renderer);
-    mTranslatedByteIndexData.release(renderer);
-    mTranslatedByteIndirectData.release(renderer);
+    mStreamedIndexData.release(contextVk);
+    mTranslatedByteIndexData.release(contextVk);
+    mTranslatedByteIndirectData.release(contextVk);
     mLineLoopHelper.release(contextVk);
 }
 

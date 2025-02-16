@@ -93,7 +93,10 @@ pas_allocation_result_zero(pas_allocation_result result,
     if (size >= (1ULL << PAS_VA_BASED_ZERO_MEMORY_SHIFT))
         return pas_allocation_result_zero_large_slow(result, size);
 
+    PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     PAS_PROFILE(ZERO_ALLOCATION_RESULT, result.begin);
+    PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     void* memory = (void*)result.begin;
     pas_zero_memory(memory, size);
 

@@ -153,4 +153,7 @@ class GtkPortTest(port_testcase.PortTestCase):
             environment_driver_test = driver._setup_environ_for_test()
             for var in environment_user:
                 self.assertIn(var, environment_driver_test)
-                self.assertEqual(environment_user[var], environment_driver_test[var])
+                if var == 'GST_DEBUG':
+                    self.assertEqual('*:ERROR,99', environment_driver_test[var])
+                else:
+                    self.assertEqual(environment_user[var], environment_driver_test[var])

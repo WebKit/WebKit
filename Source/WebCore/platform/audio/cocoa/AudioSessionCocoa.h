@@ -49,14 +49,14 @@ public:
 protected:
     AudioSessionCocoa();
 
-    void setEligibleForSmartRoutingInternal(bool);
+    static void setEligibleForSmartRoutingInternal(bool);
 
     // AudioSession
     bool tryToSetActiveInternal(bool) final;
     void setCategory(CategoryType, Mode, RouteSharingPolicy) override;
 
     bool m_isEligibleForSmartRouting { false };
-    Ref<WTF::WorkQueue> m_workQueue;
+    const Ref<WTF::WorkQueue> m_workQueue;
 };
 
 }

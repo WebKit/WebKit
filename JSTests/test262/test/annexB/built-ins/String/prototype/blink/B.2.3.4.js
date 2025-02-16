@@ -5,11 +5,11 @@
 // http://mathias.html5.org/tests/javascript/string/
 
 /*---
- description: >
-     String.prototype.blink returns a string of HTML describing a single HTML
-     blink element. The element's content is the `this` value of the function
-     invocation, coerced to a string.
- es6id: B.2.3.4
+description: >
+    String.prototype.blink returns a string of HTML describing a single HTML
+    blink element. The element's content is the `this` value of the function
+    invocation, coerced to a string.
+es6id: B.2.3.4
 ---*/
 
 assert.sameValue('_'.blink(), '<blink>_</blink>');

@@ -641,7 +641,7 @@ bool TypingCommand::makeEditableRootEmpty()
         removeNode(*child);
 
     addBlockPlaceholderIfNeeded(root.get());
-    setEndingSelection(VisibleSelection(firstPositionInNode(root.get()), Affinity::Downstream, endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(firstPositionInNode(root.get()), Affinity::Downstream, endingSelection().directionality()));
 
     return true;
 }
@@ -713,7 +713,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool shouldAdd
             selection.modify(FrameSelection::Alteration::Extend, SelectionDirection::Backward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
         } else if (RefPtr table = isFirstPositionAfterTable(visibleStart)) {
-            setEndingSelection(VisibleSelection(positionBeforeNode(table.get()), endingSelection().start(), Affinity::Downstream, endingSelection().isDirectional()));
+            setEndingSelection(VisibleSelection(positionBeforeNode(table.get()), endingSelection().start(), Affinity::Downstream, endingSelection().directionality()));
             typingAddedToOpenCommand(Type::DeleteKey);
             return;
         }
@@ -809,7 +809,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool sh
         // When deleting tables: Select the table first, then perform the deletion
         if (downstreamEnd.containerNode() && downstreamEnd.containerNode()->renderer() && downstreamEnd.containerNode()->renderer()->isRenderTable()
             && downstreamEnd.computeOffsetInContainerNode() <= caretMinOffset(*downstreamEnd.containerNode())) {
-            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.containerNode()), Affinity::Downstream, endingSelection().isDirectional()));
+            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.containerNode()), Affinity::Downstream, endingSelection().directionality()));
             typingAddedToOpenCommand(Type::ForwardDeleteKey);
             return;
         }

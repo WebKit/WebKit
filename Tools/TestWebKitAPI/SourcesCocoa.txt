@@ -55,6 +55,7 @@ Tests/WebKitCocoa/AlwaysRevalidatedURLSchemes.mm
 Tests/WebKitCocoa/AnimatedResize.mm
 Tests/WebKitCocoa/AppPrivacyReport.mm
 Tests/WebKitCocoa/ApplePay.mm
+Tests/WebKitCocoa/AppleVisualEffectTests.mm
 Tests/WebKitCocoa/ApplicationManifest.mm
 Tests/WebKitCocoa/AsyncFunction.mm
 Tests/WebKitCocoa/AsyncPolicyForNavigationResponse.mm
@@ -90,6 +91,7 @@ Tests/WebKitCocoa/ContentSecurityPolicyTestHelpers.mm
 Tests/WebKitCocoa/ContextMenus.mm
 Tests/WebKitCocoa/CookieAcceptPolicy.mm
 Tests/WebKitCocoa/CookiePrivateBrowsing.mm
+Tests/WebKitCocoa/CookieStoreAPI.mm
 Tests/WebKitCocoa/CopyHTML.mm
 Tests/WebKitCocoa/CopyRTF.mm
 Tests/WebKitCocoa/CopyURL.mm
@@ -106,13 +108,14 @@ Tests/WebKitCocoa/DisableSpellcheck.mm
 Tests/WebKitCocoa/DisplayName.mm
 Tests/WebKitCocoa/DoAfterNextPresentationUpdateAfterCrash.mm
 Tests/WebKitCocoa/DocumentEditingContext.mm
-Tests/WebKitCocoa/DoubleDefersLoading.mm
 Tests/WebKitCocoa/Download.mm
 Tests/WebKitCocoa/DownloadProgress.mm
 Tests/WebKitCocoa/DragAndDropTests.mm
+Tests/WebKitCocoa/DrawingToPDF.mm
 Tests/WebKitCocoa/DuplicateCompletionHandlerCalls.mm
 Tests/WebKitCocoa/EditorStateTests.mm
 Tests/WebKitCocoa/ElementTargetingTests.mm
+Tests/WebKitCocoa/ElementTextPreview.mm
 Tests/WebKitCocoa/EventAttribution.mm
 Tests/WebKitCocoa/ExitFullscreenOnEnterPiP.mm
 Tests/WebKitCocoa/ExitPiPOnSuspendVideoElement.mm
@@ -194,6 +197,7 @@ Tests/WebKitCocoa/NoResumeSoundPlayedToTheEndAfterThePageBecomesVisible.mm
 Tests/WebKitCocoa/NotificationAPI.mm
 Tests/WebKitCocoa/NowPlaying.mm
 Tests/WebKitCocoa/NowPlayingControlsTests.mm
+Tests/WebKitCocoa/ObscuredContentInsets.mm
 Tests/WebKitCocoa/ObservedRenderingProgressEventsAfterCrash.mm
 Tests/WebKitCocoa/OpenAndCloseWindow.mm
 Tests/WebKitCocoa/OverrideViewportArguments.mm
@@ -271,7 +275,6 @@ Tests/WebKitCocoa/TextManipulation.mm
 Tests/WebKitCocoa/TextSize.mm
 Tests/WebKitCocoa/TextWidth.mm
 Tests/WebKitCocoa/TimeZoneOverride.mm
-Tests/WebKitCocoa/TopContentInset.mm
 Tests/WebKitCocoa/UIDelegate.mm
 Tests/WebKitCocoa/UnifiedPDFTestHelpers.mm
 Tests/WebKitCocoa/UnifiedPDFTests.mm
@@ -356,6 +359,7 @@ Tests/WebKitCocoa/WKWebViewFirstResponderTests.mm
 Tests/WebKitCocoa/WKWebViewGetContents.mm
 Tests/WebKitCocoa/WKWebViewInspection.mm
 Tests/WebKitCocoa/WKWebViewLoadAPIs.mm
+Tests/WebKitCocoa/WKWebViewNotificationForwarding.mm
 Tests/WebKitCocoa/WKWebViewPrintFormatter.mm
 Tests/WebKitCocoa/WKWebViewResize.mm
 Tests/WebKitCocoa/WKWebViewServerTrustKVC.mm

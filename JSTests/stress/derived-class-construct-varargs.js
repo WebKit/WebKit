@@ -23,6 +23,6 @@ class A {
 
 class B extends A {}
 noInline(B);
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     new B(1);
 shouldThrow(() => new B(0), `Error: OK`);

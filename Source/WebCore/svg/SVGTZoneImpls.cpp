@@ -25,6 +25,7 @@
 
 #include "config.h"
 
+#include "ElementInlines.h"
 #include "SVGAnimatedPropertyAnimatorImpl.h"
 #include "SVGAnimatedPropertyPairAnimatorImpl.h"
 #include "SVGDecoratedProperty.h"

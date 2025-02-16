@@ -35,7 +35,7 @@
     [CEReactions=NotNeeded, Reflect] attribute boolean noModule;
     [CEReactions=NotNeeded, Reflect] attribute DOMString integrity;
     [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
-    [CEReactions=NotNeeded, EnabledBySetting=FetchPriorityEnabled, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
+    [CEReactions=NotNeeded, ImplementedAs=fetchPriorityForBindings] attribute [AtomString] DOMString fetchPriority;
     [PutForwards=value] readonly attribute DOMTokenList blocking;
 
     static boolean supports(DOMString type);

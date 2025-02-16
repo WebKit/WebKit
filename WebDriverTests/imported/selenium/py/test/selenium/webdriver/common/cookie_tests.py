@@ -80,27 +80,18 @@ def test_add_cookie(cookie, driver):
     assert cookie["name"] in returned
 
 
-@pytest.mark.xfail_firefox(reason="sameSite cookie attribute not implemented")
-@pytest.mark.xfail_remote(reason="sameSite cookie attribute not implemented")
-@pytest.mark.xfail_safari
 def test_add_cookie_same_site_strict(same_site_cookie_strict, driver):
     driver.add_cookie(same_site_cookie_strict)
     returned = driver.get_cookie("foo")
     assert "sameSite" in returned and returned["sameSite"] == "Strict"
 
 
-@pytest.mark.xfail_firefox(reason="sameSite cookie attribute not implemented")
-@pytest.mark.xfail_remote(reason="sameSite cookie attribute not implemented")
-@pytest.mark.xfail_safari
 def test_add_cookie_same_site_lax(same_site_cookie_lax, driver):
     driver.add_cookie(same_site_cookie_lax)
     returned = driver.get_cookie("foo")
     assert "sameSite" in returned and returned["sameSite"] == "Lax"
 
 
-@pytest.mark.xfail_firefox(reason="sameSite cookie attribute not implemented")
-@pytest.mark.xfail_remote(reason="sameSite cookie attribute not implemented")
-@pytest.mark.xfail_safari
 def test_add_cookie_same_site_none(same_site_cookie_none, driver):
     driver.add_cookie(same_site_cookie_none)
     # Note that insecure sites (http:) can't set cookies with the Secure directive.
@@ -108,7 +99,6 @@ def test_add_cookie_same_site_none(same_site_cookie_none, driver):
 
 
 @pytest.mark.xfail_ie
-@pytest.mark.xfail_safari
 def test_adding_acookie_that_expired_in_the_past(cookie, driver):
     expired = cookie.copy()
     expired["expiry"] = calendar.timegm(time.gmtime()) - 1

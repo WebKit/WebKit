@@ -2,14 +2,14 @@
 // This code is governed by the BSD license found in the LICENSE file.
 
 /*---
-  description: >
-      `yield` is a reserved keyword within generator function bodies and may
-      not be used as the binding identifier of a parameter.
-  features: [generators]
-  es6id: 12.1.1
-  negative:
-    phase: parse
-    type: SyntaxError
+description: >
+    `yield` is a reserved keyword within generator function bodies and may
+    not be used as the binding identifier of a parameter.
+features: [generators]
+es6id: 12.1.1
+negative:
+  phase: parse
+  type: SyntaxError
 ---*/
 
 $DONOTEVALUATE();

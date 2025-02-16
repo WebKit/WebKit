@@ -46,6 +46,7 @@
 #include "CSSCrossfadeValue.h"
 #include "CSSCursorImageValue.h"
 #include "CSSCustomPropertyValue.h"
+#include "CSSDynamicRangeLimitValue.h"
 #include "CSSEasingFunctionValue.h"
 #include "CSSFilterImageValue.h"
 #include "CSSFilterPropertyValue.h"
@@ -80,6 +81,7 @@
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
 #include "CSSScrollValue.h"
+#include "CSSSerializationContext.h"
 #include "CSSSubgridValue.h"
 #include "CSSTextShadowPropertyValue.h"
 #include "CSSToLengthConversionData.h"
@@ -146,6 +148,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCursorImageValue>(*this));
     case CustomProperty:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSCustomPropertyValue>(*this));
+    case DynamicRangeLimit:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSDynamicRangeLimitValue>(*this));
     case EasingFunction:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSEasingFunctionValue>(*this));
     case FilterImage:
@@ -242,33 +246,19 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
     });
 }
 
-inline bool CSSValue::customTraverseSubresources(const Function<bool(const CachedResource&)>&)
+inline bool CSSValue::customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&)
 {
     return false;
 }
 
-bool CSSValue::traverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSValue::traverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const
 {
     return visitDerived([&](auto& value) {
         return value.customTraverseSubresources(handler);
     });
 }
 
-void CSSValue::setReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
-{
-    return visitDerived([&](auto& value) {
-        return value.customSetReplacementURLForSubresources(replacementURLStrings);
-    });
-}
-
-void CSSValue::clearReplacementURLForSubresources()
-{
-    return visitDerived([&](auto& value) {
-        return value.customClearReplacementURLForSubresources();
-    });
-}
-
-IterationStatus CSSValue::visitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSValue::visitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return visitDerived([&](auto& value) {
         return value.customVisitChildren(func);
@@ -346,10 +336,10 @@ bool CSSValue::isCSSLocalURL(StringView relativeURL)
     return relativeURL.isEmpty() || relativeURL.startsWith('#');
 }
 
-String CSSValue::cssText() const
+String CSSValue::cssText(const CSS::SerializationContext& context) const
 {
-    return visitDerived([](auto& value) {
-        return value.customCSSText();
+    return visitDerived([&](auto& value) {
+        return value.customCSSText(context);
     });
 }
 

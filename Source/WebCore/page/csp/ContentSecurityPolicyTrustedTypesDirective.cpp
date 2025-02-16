@@ -79,8 +79,6 @@ bool ContentSecurityPolicyTrustedTypesDirective::allows(const String& value, boo
         details = AllowTrustedTypePolicy::DisallowedName;
     else if (!(m_allowAny || m_list.contains(value)))
         details = AllowTrustedTypePolicy::DisallowedName;
-    else
-        details = AllowTrustedTypePolicy::Allowed;
 
     return details == AllowTrustedTypePolicy::Allowed;
 }

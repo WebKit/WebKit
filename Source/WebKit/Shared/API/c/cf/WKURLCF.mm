@@ -65,5 +65,5 @@ CFURLRef WKURLCopyCFURL(CFAllocatorRef allocatorRef, WKURLRef URLRef)
 
     auto buffer = string.utf8();
     auto bufferSpan = buffer.span();
-    return CFURLCreateAbsoluteURLWithBytes(nullptr, bufferSpan.data(), bufferSpan.size(), kCFStringEncodingUTF8, nullptr, true);
+    return CFURLCreateAbsoluteURLWithBytes(nullptr, byteCast<UInt8>(bufferSpan.data()), bufferSpan.size(), kCFStringEncodingUTF8, nullptr, true);
 }

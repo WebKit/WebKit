@@ -27,6 +27,8 @@
 
 #include "WebContextMenuProxy.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 namespace WebKit {
 
 class WebContextMenuProxyWPE final : public WebContextMenuProxy {
@@ -46,3 +48,5 @@ private:
 };
 
 } // namespace WebKit
+
+#endif // ENABLE(CONTEXT_MENUS)

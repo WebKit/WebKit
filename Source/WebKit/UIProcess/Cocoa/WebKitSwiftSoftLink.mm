@@ -41,7 +41,7 @@ void* WebKitSwiftLibrary(bool isOptional)
 
         // Then search in the Frameworks/ directory of the currently loaded version of WebKit.framework:
         Dl_info info { };
-        if (dladdr((const void*)&WebKitSwiftLibrary, &info) && strlen(info.dli_fname)) {
+        if (dladdr((const void*)&WebKitSwiftLibrary, &info) && *info.dli_fname) {
             auto dliPath = String::fromUTF8(info.dli_fname);
             if (dliPath.isNull())
                 return;
@@ -67,7 +67,8 @@ SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKSLinearMediaTrack)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKSPreviewWindowController)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKSRKEntity)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKSTextAnimationManager)
-SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKIntelligenceTextEffectCoordinator)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKIntelligenceReplacementTextEffectCoordinator)
+SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKIntelligenceSmartReplyTextEffectCoordinator)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKTextExtractionContainerItem)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKTextExtractionEditable)
 SOFT_LINK_CLASS_FOR_SOURCE_OPTIONAL(WebKit, WebKitSwift, WKTextExtractionLink)

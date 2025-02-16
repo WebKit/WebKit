@@ -87,6 +87,10 @@ EXPORTS
     eglCreateDeviceANGLE
     eglReleaseDeviceANGLE
 
+    ; EGL_ANGLE_device_vulkan
+    eglLockVulkanQueueANGLE
+    eglUnlockVulkanQueueANGLE
+
     ; EGL_ANGLE_external_context_and_surface
     eglAcquireExternalContextANGLE
     eglReleaseExternalContextANGLE
@@ -151,6 +155,9 @@ EXPORTS
     eglCreatePlatformPixmapSurfaceEXT
     eglCreatePlatformWindowSurfaceEXT
     eglGetPlatformDisplayEXT
+
+    ; EGL_EXT_surface_compression
+    eglQuerySupportedCompressionRatesEXT
 
     ; EGL_KHR_debug
     eglDebugMessageControlKHR

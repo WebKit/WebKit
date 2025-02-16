@@ -53,7 +53,7 @@ protected:
     void startFinished();
     void pullFinished();
     void cancelFinished();
-    void clean();
+    WEBCORE_EXPORT void clean();
 
     virtual void setActive() = 0;
     virtual void setInactive() = 0;

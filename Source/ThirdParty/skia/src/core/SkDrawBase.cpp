@@ -322,8 +322,11 @@ DRAW_PATH:
     this->drawPath(path, paint, nullptr, true);
 }
 
-void SkDrawBase::drawDevPath(const SkPath& devPath, const SkPaint& paint, bool drawCoverage,
-                         SkBlitter* customBlitter, bool doFill) const {
+void SkDrawBase::drawDevPath(const SkPath& devPath,
+                             const SkPaint& paint,
+                             SkDrawCoverage drawCoverage,
+                             SkBlitter* customBlitter,
+                             bool doFill) const {
     if (SkPathPriv::TooBigForMath(devPath)) {
         return;
     }
@@ -381,9 +384,12 @@ void SkDrawBase::drawDevPath(const SkPath& devPath, const SkPaint& paint, bool d
     proc(devPath, *fRC, blitter);
 }
 
-void SkDrawBase::drawPath(const SkPath& origSrcPath, const SkPaint& origPaint,
-                      const SkMatrix* prePathMatrix, bool pathIsMutable,
-                      bool drawCoverage, SkBlitter* customBlitter) const {
+void SkDrawBase::drawPath(const SkPath& origSrcPath,
+                          const SkPaint& origPaint,
+                          const SkMatrix* prePathMatrix,
+                          bool pathIsMutable,
+                          SkDrawCoverage drawCoverage,
+                          SkBlitter* customBlitter) const {
     SkDEBUGCODE(this->validate();)
 
     // nothing to draw
@@ -553,7 +559,7 @@ static void draw_into_mask(const SkMask& mask, const SkPath& devPath,
             break;
 
     }
-    draw.drawPath(devPath, paint);
+    draw.drawPath(devPath, paint, nullptr, false);
 }
 
 bool SkDrawBase::DrawToMask(const SkPath& devPath, const SkIRect& clipBounds,
@@ -682,17 +688,17 @@ void SkDrawBase::drawDevicePoints(SkCanvas::PointMode mode, size_t count,
 
                     if (!pointData.fFirst.isEmpty()) {
                         if (device) {
-                            device->drawPath(pointData.fFirst, newP);
+                            device->drawPath(pointData.fFirst, newP, true);
                         } else {
-                            this->drawPath(pointData.fFirst, newP);
+                            this->drawPath(pointData.fFirst, newP, nullptr, true);
                         }
                     }
 
                     if (!pointData.fLast.isEmpty()) {
                         if (device) {
-                            device->drawPath(pointData.fLast, newP);
+                            device->drawPath(pointData.fLast, newP, true);
                         } else {
-                            this->drawPath(pointData.fLast, newP);
+                            this->drawPath(pointData.fLast, newP, nullptr, true);
                         }
                     }
 

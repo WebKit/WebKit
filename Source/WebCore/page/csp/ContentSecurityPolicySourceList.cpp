@@ -336,6 +336,21 @@ template<typename CharacterType> std::optional<ContentSecurityPolicySourceList::
         return source;
     }
 
+    if (skipExactlyIgnoringASCIICase(buffer, "'report-sha256'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+        m_reportHash |= static_cast<HashAlgorithmSet>(ResourceCryptographicDigest::Algorithm::SHA256);
+        return source;
+    }
+
+    if (skipExactlyIgnoringASCIICase(buffer, "'report-sha384'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+        m_reportHash |= static_cast<HashAlgorithmSet>(ResourceCryptographicDigest::Algorithm::SHA384);
+        return source;
+    }
+
+    if (skipExactlyIgnoringASCIICase(buffer, "'report-sha512'"_s) && extensionModeAllowsKeywordsForDirective(m_contentSecurityPolicyModeForExtension, m_directiveName)) {
+        m_reportHash |= static_cast<HashAlgorithmSet>(ResourceCryptographicDigest::Algorithm::SHA512);
+        return source;
+    }
+
     if (m_allowNonParserInsertedScripts)
         return source;
 

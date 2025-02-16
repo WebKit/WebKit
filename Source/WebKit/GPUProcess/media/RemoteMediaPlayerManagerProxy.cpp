@@ -30,6 +30,7 @@
 
 #include "GPUConnectionToWebProcess.h"
 #include "GPUProcess.h"
+#include "Logging.h"
 #include "RemoteMediaPlayerConfiguration.h"
 #include "RemoteMediaPlayerManagerProxyMessages.h"
 #include "RemoteMediaPlayerProxy.h"
@@ -40,7 +41,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerPrivate.h>
-#include <wtf/Logger.h>
+#include <wtf/LoggerHelper.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
@@ -57,6 +58,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteMediaPlayerManagerProxy);
 
 RemoteMediaPlayerManagerProxy::RemoteMediaPlayerManagerProxy(GPUConnectionToWebProcess& connection)
     : m_gpuConnectionToWebProcess(connection)
+#if !RELEASE_LOG_DISABLED
+    , m_logIdentifier { LoggerHelper::uniqueLogIdentifier() }
+    , m_logger { connection.logger() }
+#endif
 {
 }
 
@@ -179,15 +184,9 @@ RefPtr<MediaPlayer> RemoteMediaPlayerManagerProxy::mediaPlayer(std::optional<Med
 }
 
 #if !RELEASE_LOG_DISABLED
-Logger& RemoteMediaPlayerManagerProxy::logger()
+WTFLogChannel& RemoteMediaPlayerManagerProxy::logChannel() const
 {
-    if (!m_logger) {
-        m_logger = Logger::create(this);
-        RefPtr connection { m_gpuConnectionToWebProcess.get() };
-        m_logger->setEnabled(this, connection && connection->isAlwaysOnLoggingAllowed());
-    }
-
-    return *m_logger;
+    return WebKit2LogMedia;
 }
 #endif
 

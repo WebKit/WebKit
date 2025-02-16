@@ -237,7 +237,7 @@ FuncRefTable* Table::asFuncrefTable()
 ExternOrAnyRefTable::ExternOrAnyRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType)
     : Table(initial, maximum, wasmType, TableElementType::Externref)
 {
-    RELEASE_ASSERT(isExternref(wasmType) || (Options::useWasmGC() && (isSubtype(wasmType, externrefType()) || isSubtype(wasmType, anyrefType()))));
+    RELEASE_ASSERT(isRefType(wasmType));
     // FIXME: It might be worth trying to pre-allocate maximum here. The spec recommends doing so.
     // But for now, we're not doing that.
     // FIXME this over-allocates and could be smarter about not committing all of that memory https://bugs.webkit.org/show_bug.cgi?id=181425
@@ -300,9 +300,9 @@ void FuncRefTable::setFunction(uint32_t index, WebAssemblyFunctionBase* function
         // This is a JS function.
         ASSERT(!*slot.m_function.boxedWasmCalleeLoadLocation);
         slot.m_protectedJSCallee = adoptRef(*new WasmToJSCallee(FunctionSpaceIndex(index), { nullptr, nullptr }));
-        slot.m_boxedProtectedJSCallee = CalleeBits::encodeNativeCallee(slot.m_protectedJSCallee.get());
-        slot.m_function.boxedWasmCalleeLoadLocation = &slot.m_boxedProtectedJSCallee;
+        slot.m_function.boxedWasmCalleeLoadLocation = slot.m_protectedJSCallee->boxedWasmCalleeLoadLocation();
     }
+    slot.m_callLinkInfo = function->callLinkInfo();
     slot.m_instance = function->instance();
     slot.m_value.set(function->instance()->vm(), m_owner, function);
 }

@@ -313,7 +313,7 @@ Exception* throwRuntimeObjectInvalidAccessError(JSGlobalObject* lexicalGlobalObj
 
 JSC::GCClient::IsoSubspace* RuntimeObject::subspaceForImpl(JSC::VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->runtimeObjectSpace();
+    return &downcast<JSVMClientData>(vm.clientData)->runtimeObjectSpace();
 }
 
 }

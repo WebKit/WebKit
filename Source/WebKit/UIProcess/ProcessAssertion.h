@@ -79,9 +79,6 @@ class ProcessAssertion : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<
     WTF_MAKE_TZONE_ALLOCATED(ProcessAssertion);
 public:
     enum class Mode : bool { Sync, Async };
-#if USE(EXTENSIONKIT)
-    static Ref<ProcessAssertion> create(ExtensionProcess&, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
-#endif
     static Ref<ProcessAssertion> create(ProcessID, const String& reason, ProcessAssertionType, Mode = Mode::Async, const String& environmentIdentifier = emptyString(), CompletionHandler<void()>&& acquisisionHandler = nullptr);
     static Ref<ProcessAssertion> create(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
 
@@ -97,12 +94,15 @@ public:
     bool isValid() const;
 
 protected:
+#if !USE(EXTENSIONKIT)
     ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier);
-    ProcessAssertion(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType);
+#else
+    ProcessAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&&);
+#endif
 
     void init(const String& environmentIdentifier);
 
-    void aquireAssertion(Mode, CompletionHandler<void()>&&);
+    void acquireAssertion(Mode, CompletionHandler<void()>&&);
 
     void acquireAsync(CompletionHandler<void()>&&);
     void acquireSync();
@@ -134,12 +134,13 @@ private:
 class ProcessAndUIAssertion final : public ProcessAssertion {
     WTF_MAKE_TZONE_ALLOCATED(ProcessAndUIAssertion);
 public:
-    static Ref<ProcessAndUIAssertion> create(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType type, Mode mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr)
-    {
-        auto assertion = adoptRef(*new ProcessAndUIAssertion(process, reason, type));
-        assertion->aquireAssertion(mode, WTFMove(acquisisionHandler));
-        return assertion;
-    }
+    static Ref<ProcessAndUIAssertion> create(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+#if !USE(EXTENSIONKIT)
+    static Ref<ProcessAndUIAssertion> create(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+#else
+    static Ref<ProcessAndUIAssertion> create(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&&, Mode = Mode::Async, CompletionHandler<void()>&& acquisisionHandler = nullptr);
+#endif
+
     ~ProcessAndUIAssertion();
 
     void uiAssertionWillExpireImminently();
@@ -150,7 +151,11 @@ public:
 #endif
 
 private:
-    ProcessAndUIAssertion(AuxiliaryProcessProxy&, const String& reason, ProcessAssertionType);
+#if !USE(EXTENSIONKIT)
+    ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier);
+#else
+    ProcessAndUIAssertion(ProcessID, const String& reason, ProcessAssertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&&);
+#endif
 
 #if PLATFORM(IOS_FAMILY)
     void processAssertionWasInvalidated() final;

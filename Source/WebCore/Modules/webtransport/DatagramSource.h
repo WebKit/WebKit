@@ -30,12 +30,13 @@
 namespace WebCore {
 
 class WebTransport;
+class Exception;
 
 class DatagramSource : public RefCountedReadableStreamSource {
 public:
     static Ref<DatagramSource> create() { return adoptRef(*new DatagramSource()); }
     ~DatagramSource();
-    void receiveDatagram(std::span<const uint8_t>);
+    void receiveDatagram(std::span<const uint8_t>, bool, std::optional<Exception>&&);
 
 private:
     DatagramSource();
@@ -47,6 +48,7 @@ private:
     void doCancel() final;
 
     bool m_isCancelled { false };
+    bool m_isClosed { false };
 };
 
 }

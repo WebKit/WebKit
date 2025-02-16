@@ -25,7 +25,7 @@ async function test() {
     const bin = builder.WebAssembly().get();
     const {instance} = await WebAssembly.instantiate(bin, {});
 
-    for (let i = 0; i < 1000000; i++) {
+    for (let i = 0; i < wasmTestLoopCount; i++) {
         assert.eq(instance.exports.foo(
             0,1,2,3,4,5,6,7,8,9,
             10,11,12,13,14,15,16,17,18,19,

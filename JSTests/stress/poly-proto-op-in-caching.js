@@ -31,13 +31,13 @@ for (let i = 0; i < 10; ++i)
 
 objs.forEach(obj => Reflect.setPrototypeOf(obj, {x:20}));
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let obj of objs)
         validate(obj, true);
 }
 
 objs.forEach(obj => Reflect.setPrototypeOf(obj, {}));
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let obj of objs)
         validate(obj, false);
 }
@@ -49,13 +49,13 @@ function validate2(o, b) {
 noInline(validate2);
 
 objs.forEach(obj => Reflect.setPrototypeOf(obj, null));
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let obj of objs)
         validate2(obj, false);
 }
 
 objs.forEach(obj => Reflect.setPrototypeOf(obj, {x:25}));
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let obj of objs)
         validate2(obj, true);
 }

@@ -151,7 +151,12 @@ bool FontCache::isSystemFontForbiddenForEditing(const String&)
 
 Ref<Font> FontCache::lastResortFallbackFont(const FontDescription& fontDescription)
 {
-    if (RefPtr<Font> font = fontForFamily(fontDescription, "serif"_s))
+#if PLATFORM(WIN)
+    const auto defaultFontName = "Times New Roman"_s;
+#else
+    const auto defaultFontName = "serif"_s;
+#endif
+    if (RefPtr<Font> font = fontForFamily(fontDescription, defaultFontName))
         return font.releaseNonNull();
 
     // Passing nullptr as family name makes Skia use a weak match.

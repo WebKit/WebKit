@@ -4,7 +4,7 @@
 // polymorphic calls every time they are called.
 
 samples = []
-for (i=0; i <= 1e6; i++) {
+for (i=0; i <= testLoopCount; i++) {
     samples[i] = i
 }
 for (i=1; i <= 20; i++) {

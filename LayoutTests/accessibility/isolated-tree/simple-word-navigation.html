@@ -1,0 +1,80 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+<title>Simple Word Navigation</title>
+<meta charset="utf-8">
+</head>
+<body>
+
+<div id="content">
+This is some text
+</div>
+
+<p>
+I'm a paragraph.
+</p>
+
+<script>
+var output = "This tests that basic word navigation is working correctly (testing previous word start, next word end, left word, and right word).\n";
+
+if (window.accessibilityController) {
+    var text = accessibilityController.accessibleElementById("content");
+    
+    // Get the actual text node.
+    text = text.childAtIndex(0);
+    
+    var textMarkerRange = text.textMarkerRangeForElement(text);
+    var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    var currentMarker = advanceAndVerify(startMarker, 1, text);
+
+    currentMarker = advanceAndVerify(currentMarker, 3, text);
+    currentMarker = advanceAndVerify(currentMarker, 1, text);
+    currentMarker = advanceAndVerify(currentMarker, 2, text);
+    currentMarker = advanceAndVerify(currentMarker, 1, text);
+    currentMarker = advanceAndVerify(currentMarker, 4, text);
+    currentMarker = advanceAndVerify(currentMarker, 1, text);
+
+    // Right word should't move beyond object boundaries.
+    currentMarker = advanceAndVerify(currentMarker, 4, text);
+    
+    // Verify we can move into another text block;
+    currentMarker = advanceAndVerify(currentMarker, 1, text);
+
+    debug(output);
+}
+
+function advanceAndVerify(currentMarker, offset, obj) {
+    var previousMarker = currentMarker;
+    for (var i = 0; i < offset; i++) {
+        previousMarker = currentMarker;
+        currentMarker = obj.nextTextMarker(previousMarker);
+    }
+    verifyWordRangeForTextMarker(previousMarker, currentMarker, obj);
+    return currentMarker;
+}
+
+function verifyWordRangeForTextMarker(preMarker, textMarker, obj) {
+    var markerRange = obj.textMarkerRangeForMarkers(preMarker, textMarker);
+    var currentCharacter = obj.stringForTextMarkerRange(markerRange);
+    output += `Current character is: ${currentCharacter}\n`;
+
+    var previousWordRange = obj.leftWordTextMarkerRangeForTextMarker(textMarker);
+    var nextWordRange = obj.rightWordTextMarkerRangeForTextMarker(textMarker);
+    var preWord = obj.stringForTextMarkerRange(previousWordRange);
+    var nextWord = obj.stringForTextMarkerRange(nextWordRange);
+    output += `Left word is: ${preWord}\n`;
+    output += `Right word is: ${nextWord}\n`;
+
+    var preWordStart = obj.previousWordStartTextMarkerForTextMarker(textMarker);
+    var nextWordEnd = obj.nextWordEndTextMarkerForTextMarker(textMarker);
+    var preAndNextWordRange = obj.textMarkerRangeForMarkers(preWordStart, nextWordEnd);
+    var preAndNextWord = obj.stringForTextMarkerRange(preAndNextWordRange);
+    output += `Pre word start to next word end: ${preAndNextWord}\n`;
+    output += `\n`;
+}
+</script>
+</body>
+</html>
+

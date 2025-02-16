@@ -46,7 +46,7 @@
 
 namespace WebKit {
 
-#if ENABLE(WEBDRIVER)
+#if ENABLE(WEBDRIVER) && (ENABLE(WEBDRIVER_MOUSE_INTERACTIONS) || ENABLE(WEBDRIVER_TOUCH_INTERACTIONS) || ENABLE(WEBDRIVER_WHEEL_INTERACTIONS))
 static WebCore::IntPoint deviceScaleLocationInView(WebPageProxy& page, const WebCore::IntPoint& locationInView)
 {
     WebCore::IntPoint deviceScaleLocationInView(locationInView);

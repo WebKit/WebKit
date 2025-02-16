@@ -60,6 +60,8 @@ public:
     void incrementCheckedPtrCount() const final { CanMakeCheckedPtr::incrementCheckedPtrCount(); }
     void decrementCheckedPtrCount() const final { CanMakeCheckedPtr::decrementCheckedPtrCount(); }
 
+    HTMLDocumentParser* asHTMLDocumentParser() final { return this; }
+
     static void parseDocumentFragment(const String&, DocumentFragment&, Element& contextElement, OptionSet<ParserContentPolicy> = { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry* = nullptr);
 
     // For HTMLParserScheduler.
@@ -68,6 +70,8 @@ public:
     // For HTMLTreeBuilder.
     HTMLTokenizer& tokenizer();
     TextPosition textPosition() const final;
+
+    bool isOnStackOfOpenElements(Element&) const;
 
 protected:
     explicit HTMLDocumentParser(HTMLDocument&, OptionSet<ParserContentPolicy> = DefaultParserContentPolicy);

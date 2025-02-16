@@ -566,7 +566,7 @@ ExceptionOr<void> ApplePaySession::canMakePaymentsWithActiveCard(Document& docum
         auto& paymentCoordinator = page->paymentCoordinator();
         bool canMakePayments = paymentCoordinator.canMakePayments();
 
-        RunLoop::main().dispatch([promise, canMakePayments]() mutable {
+        RunLoop::protectedMain()->dispatch([promise, canMakePayments]() mutable {
             promise->resolve<IDLBoolean>(canMakePayments);
         });
         return { };

@@ -89,7 +89,7 @@ public:
 
     WEBCORE_EXPORT bool scroll(ScrollDirection, ScrollGranularity, unsigned stepCount = 1);
     WEBCORE_EXPORT void scrollToPositionWithAnimation(const FloatPoint&, const ScrollPositionChangeOptions& options = ScrollPositionChangeOptions::createProgrammatic());
-    WEBCORE_EXPORT void scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
+    WEBCORE_EXPORT bool scrollToPositionWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
 
     WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(const FloatPoint&, ScrollClamping = ScrollClamping::Clamped);
     WEBCORE_EXPORT void scrollToOffsetWithoutAnimation(ScrollbarOrientation, float offset);

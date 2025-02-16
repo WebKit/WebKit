@@ -59,7 +59,7 @@ var boo = function () {
     };
 };
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     const b = boo();
     const keys = Object.keys(b);
     const values = Object.values(b);

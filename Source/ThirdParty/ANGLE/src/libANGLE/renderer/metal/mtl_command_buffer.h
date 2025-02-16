@@ -55,6 +55,19 @@ class AtomicSerial : angle::NonCopyable
     std::atomic<uint64_t> mValue{0};
 };
 
+class AtomicCommandBufferError : angle::NonCopyable
+{
+  public:
+    void store(MTLCommandBufferError value) { mValue.store(value, std::memory_order_release); }
+    MTLCommandBufferError pop()
+    {
+        return mValue.exchange(MTLCommandBufferErrorNone, std::memory_order_acq_rel);
+    }
+
+  private:
+    std::atomic<MTLCommandBufferError> mValue{MTLCommandBufferErrorNone};
+};
+
 class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::NonCopyable
 {
   public:
@@ -93,7 +106,7 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
         return *this;
     }
 
-    AutoObjCPtr<id<MTLCommandBuffer>> makeMetalCommandBuffer(uint64_t *queueSerialOut);
+    angle::ObjCPtr<id<MTLCommandBuffer>> makeMetalCommandBuffer(uint64_t *queueSerialOut);
     void onCommandBufferCommitted(id<MTLCommandBuffer> buf, uint64_t serial);
 
     uint64_t getNextRenderPassEncoderSerial();
@@ -103,6 +116,7 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
     void setActiveTimeElapsedEntry(uint64_t id);
     bool isTimeElapsedEntryComplete(uint64_t id);
     double getTimeElapsedEntryInSeconds(uint64_t id);
+    MTLCommandBufferError popCmdBufferError() { return mCmdBufferError.pop(); }
 
     bool isDeviceLost() const { return mIsDeviceLost; }
 
@@ -114,7 +128,7 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
 
     struct CmdBufferQueueEntry
     {
-        AutoObjCPtr<id<MTLCommandBuffer>> buffer;
+        angle::ObjCPtr<id<MTLCommandBuffer>> buffer;
         uint64_t serial;
     };
     std::deque<CmdBufferQueueEntry> mMetalCmdBuffers;
@@ -143,6 +157,8 @@ class CommandQueue final : public WrappedObject<id<MTLCommandQueue>>, angle::Non
 
     mutable std::mutex mLock;
     mutable std::condition_variable mCompletedBufferSerialCv;
+
+    AtomicCommandBufferError mCmdBufferError;
 
     void addCommandBufferToTimeElapsedEntry(std::lock_guard<std::mutex> &lg, uint64_t id);
     void recordCommandBufferTimeElapsed(std::lock_guard<std::mutex> &lg,
@@ -231,7 +247,7 @@ class CommandBuffer final : public WrappedObject<id<MTLCommandBuffer>>, angle::N
     std::vector<std::string> mPendingDebugSigns;
     struct PendingEvent
     {
-        AutoObjCPtr<id<MTLEvent>> event;
+        angle::ObjCPtr<id<MTLEvent>> event;
         uint64_t signalValue = 0;
     };
     std::vector<PendingEvent> mPendingSignalEvents;
@@ -617,9 +633,9 @@ class RenderCommandEncoder final : public CommandEncoder
 
     RenderPassDesc mRenderPassDesc;
     // Cached Objective-C render pass desc to avoid re-allocate every frame.
-    mtl::AutoObjCObj<MTLRenderPassDescriptor> mCachedRenderPassDescObjC;
+    angle::ObjCPtr<MTLRenderPassDescriptor> mCachedRenderPassDescObjC;
 
-    mtl::AutoObjCObj<NSString> mLabel;
+    angle::ObjCPtr<NSString> mLabel;
 
     MTLScissorRect mRenderPassMaxScissorRect;
 

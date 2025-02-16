@@ -45,6 +45,7 @@
 #include "LocalFrameView.h"
 #include "Logging.h"
 #include "LogicalSelectionOffsetCaches.h"
+#include "OverflowEvent.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderBlockFlow.h"
@@ -262,6 +263,48 @@ public:
 
 using RenderBlockRareDataMap = UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBlock>, std::unique_ptr<RenderBlockRareData>>;
 static RenderBlockRareDataMap* gRareDataMap;
+
+// This class helps dispatching the 'overflow' event on layout change. overflow can be set on RenderBoxes, yet the existing code
+// only works on RenderBlocks. If this change, this class should be shared with other RenderBoxes.
+class OverflowEventDispatcher {
+    WTF_MAKE_NONCOPYABLE(OverflowEventDispatcher);
+public:
+    OverflowEventDispatcher(const RenderBlock* block)
+        : m_block(block)
+        , m_hadHorizontalLayoutOverflow(false)
+        , m_hadVerticalLayoutOverflow(false)
+    {
+        m_shouldDispatchEvent = !m_block->isAnonymous() && m_block->hasNonVisibleOverflow() && m_block->document().hasListenerType(Document::ListenerType::OverflowChanged);
+        if (m_shouldDispatchEvent) {
+            m_hadHorizontalLayoutOverflow = m_block->hasHorizontalLayoutOverflow();
+            m_hadVerticalLayoutOverflow = m_block->hasVerticalLayoutOverflow();
+        }
+    }
+
+    ~OverflowEventDispatcher()
+    {
+        if (!m_shouldDispatchEvent)
+            return;
+
+        bool hasHorizontalLayoutOverflow = m_block->hasHorizontalLayoutOverflow();
+        bool hasVerticalLayoutOverflow = m_block->hasVerticalLayoutOverflow();
+
+        bool horizontalLayoutOverflowChanged = hasHorizontalLayoutOverflow != m_hadHorizontalLayoutOverflow;
+        bool verticalLayoutOverflowChanged = hasVerticalLayoutOverflow != m_hadVerticalLayoutOverflow;
+        if (!horizontalLayoutOverflowChanged && !verticalLayoutOverflowChanged)
+            return;
+
+        Ref<OverflowEvent> overflowEvent = OverflowEvent::create(horizontalLayoutOverflowChanged, hasHorizontalLayoutOverflow, verticalLayoutOverflowChanged, hasVerticalLayoutOverflow);
+        overflowEvent->setTarget(RefPtr { m_block->element() });
+        m_block->document().enqueueOverflowEvent(WTFMove(overflowEvent));
+    }
+
+private:
+    const RenderBlock* m_block;
+    bool m_shouldDispatchEvent;
+    bool m_hadHorizontalLayoutOverflow;
+    bool m_hadVerticalLayoutOverflow;
+};
 
 RenderBlock::RenderBlock(Type type, Element& element, RenderStyle&& style, OptionSet<TypeFlag> baseTypeFlags, TypeSpecificFlags typeSpecificFlags)
     : RenderBox(type, element, WTFMove(style), baseTypeFlags | TypeFlag::IsRenderBlock, typeSpecificFlags)
@@ -502,10 +545,11 @@ void RenderBlock::updateScrollInfoAfterLayout()
 void RenderBlock::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
+    OverflowEventDispatcher dispatcher(this);
 
     // Table cells call layoutBlock directly, so don't add any logic here.  Put code into
     // layoutBlock().
-    layoutBlock(false);
+    layoutBlock(RelayoutChildren::No);
     
     // It's safe to check for control clip here, since controls can never be table cells.
     // If we have a lightweight clip, there can never be any overflow from children.
@@ -536,11 +580,10 @@ RenderBlockRareData& RenderBlock::ensureBlockRareData()
     }).iterator->value;
 }
 
-void RenderBlock::preparePaginationBeforeBlockLayout(bool& relayoutChildren)
+void RenderBlock::preparePaginationBeforeBlockLayout(RelayoutChildren& relayoutChildren)
 {
     // Fragments changing widths can force us to relayout our children.
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow)
+    if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow())
         fragmentedFlow->logicalWidthChangedInFragmentsForBlock(*this, relayoutChildren);
 }
 
@@ -556,7 +599,7 @@ bool RenderBlock::recomputeLogicalWidth()
     return oldWidth != logicalWidth() || hasBorderOrPaddingLogicalWidthChanged;
 }
 
-void RenderBlock::layoutBlock(bool, LayoutUnit)
+void RenderBlock::layoutBlock(RelayoutChildren, LayoutUnit)
 {
     ASSERT_NOT_REACHED();
     clearNeedsLayout();
@@ -569,7 +612,7 @@ void RenderBlock::addOverflowFromChildren()
     
         // If this block is flowed inside a flow thread, make sure its overflow is propagated to the containing fragments.
         if (m_overflow) {
-            if (auto* flow = enclosingFragmentedFlow())
+            if (CheckedPtr flow = enclosingFragmentedFlow())
                 flow->addFragmentsVisualOverflow(*this, m_overflow->visualOverflowRect());
         }
     } else
@@ -691,7 +734,7 @@ void RenderBlock::addVisualOverflowFromTheme()
     theme().adjustRepaintRect(*this, inflatedRect);
     addVisualOverflow(snappedIntRect(LayoutRect(inflatedRect)));
 
-    if (RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow())
+    if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow())
         fragmentedFlow->addFragmentsVisualOverflowFromTheme(*this);
 }
 
@@ -721,7 +764,7 @@ void RenderBlock::setLogicalTopForChild(RenderBox& child, LayoutUnit logicalTop,
     }
 }
 
-void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox& child)
+void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(RelayoutChildren relayoutChildren, RenderBox& child)
 {
     if (child.isOutOfFlowPositioned())
         return;
@@ -732,11 +775,11 @@ void RenderBlock::updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, R
         auto& style = child.style();
         return style.height().isPercentOrCalculated() || style.minHeight().isPercentOrCalculated() || style.maxHeight().isPercentOrCalculated();
     };
-    if (relayoutChildren || (childHasRelativeHeight() && !isRenderView()))
+    if (relayoutChildren == RelayoutChildren::Yes || (childHasRelativeHeight() && !isRenderView()))
         child.setChildNeedsLayout(MarkOnlyThis);
 
     // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
-    if (relayoutChildren && child.needsPreferredWidthsRecalculation())
+    if (relayoutChildren == RelayoutChildren::Yes && child.needsPreferredWidthsRecalculation())
         child.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
 }
 
@@ -827,7 +870,7 @@ bool RenderBlock::simplifiedLayout()
     // relative positioned container. So if we can have fixed pos objects in our positioned objects list check if any of them
     // are statically positioned and thus need to move with their absolute ancestors.
     if (posChildNeedsLayout() || canContainFixedPosObjects)
-        layoutPositionedObjects(false, !posChildNeedsLayout() && canContainFixedPosObjects);
+        layoutPositionedObjects(RelayoutChildren::No, !posChildNeedsLayout() && canContainFixedPosObjects);
 
     // Recompute our overflow information.
     // FIXME: We could do better here by computing a temporary overflow object from layoutPositionedObjects and only
@@ -891,7 +934,7 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     return margin;
 }
 
-void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
+void RenderBlock::layoutPositionedObject(RenderBox& r, RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
 {
     if (layoutContext().isSkippedContentRootForLayout(*this)) {
         r.clearNeedsLayoutForSkippedContent();
@@ -913,11 +956,11 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
     // non-positioned block.  Rather than trying to detect all of these movement cases, we just always lay out positioned
     // objects that are positioned implicitly like this.  Such objects are rare, and so in typical DHTML menu usage (where everything is
     // positioned explicitly) this should not incur a performance penalty.
-    if (relayoutChildren || (r.style().hasStaticBlockPosition(isHorizontalWritingMode()) && r.parent() != this))
+    if (relayoutChildren == RelayoutChildren::Yes || (r.style().hasStaticBlockPosition(isHorizontalWritingMode()) && r.parent() != this))
         r.setChildNeedsLayout(MarkOnlyThis);
-        
+
     // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
-    if (relayoutChildren && r.needsPreferredWidthsRecalculation())
+    if (relayoutChildren == RelayoutChildren::Yes && r.needsPreferredWidthsRecalculation())
         r.setPreferredLogicalWidthsDirty(true, MarkOnlyThis);
     
     r.markForPaginationRelayoutIfNeeded();
@@ -969,7 +1012,7 @@ void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bo
     }
 }
 
-void RenderBlock::layoutPositionedObjects(bool relayoutChildren, bool fixedPositionObjectsOnly)
+void RenderBlock::layoutPositionedObjects(RelayoutChildren relayoutChildren, bool fixedPositionObjectsOnly)
 {
     auto* positionedDescendants = positionedObjects();
     if (!positionedDescendants)
@@ -1312,7 +1355,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffs
             // in the same layer. 
             if (!inlineEnclosedInSelfPaintingLayer && !hasLayer())
                 containingBlock->addContinuationWithOutline(inlineRenderer);
-            else if (!InlineIterator::firstInlineBoxFor(*inlineRenderer) || (!inlineEnclosedInSelfPaintingLayer && hasLayer()))
+            else if (!InlineIterator::lineLeftmostInlineBoxFor(*inlineRenderer) || (!inlineEnclosedInSelfPaintingLayer && hasLayer()))
                 inlineRenderer->paintOutline(paintInfo, paintOffset - locationOffset() + inlineRenderer->containingBlock()->location());
         }
         paintContinuationOutlines(paintInfo, paintOffset);
@@ -1344,6 +1387,75 @@ void RenderBlock::addContinuationWithOutline(RenderInline* flow)
     }
     
     continuations->add(*flow);
+}
+
+bool RenderBlock::establishesIndependentFormattingContextIgnoringDisplayType(const RenderStyle& style) const
+{
+    if (!element()) {
+        ASSERT(isAnonymous());
+        return false;
+    }
+
+    auto isBlockBoxWithPotentiallyScrollableOverflow = [&] {
+        return style.isDisplayBlockLevel()
+            && style.doesDisplayGenerateBlockContainer()
+            && hasNonVisibleOverflow()
+            && style.overflowX() != Overflow::Clip
+            && style.overflowX() != Overflow::Visible;
+    };
+
+    return style.isFloating()
+        || style.hasOutOfFlowPosition()
+        || isBlockBoxWithPotentiallyScrollableOverflow()
+        || style.containsLayout()
+        || style.containerType() != ContainerType::Normal
+        || WebCore::shouldApplyPaintContainment(style, *element())
+        || (style.isDisplayBlockLevel() && style.blockStepSize());
+}
+
+bool RenderBlock::establishesIndependentFormattingContext() const
+{
+    auto& style = this->style();
+    if (establishesIndependentFormattingContextIgnoringDisplayType(style))
+        return true;
+
+    if (isGridItem()) {
+        // Grid items establish a new independent formatting context, unless they're a subgrid
+        // https://drafts.csswg.org/css-grid-2/#grid-item-display
+        if (!style.gridSubgridColumns() && !style.gridSubgridRows())
+            return true;
+        // Masonry makes grid items not subgrids.
+        if (CheckedPtr parentGridBox = dynamicDowncast<RenderGrid>(parent()))
+            return parentGridBox->isMasonry();
+    }
+
+    return false;
+}
+
+bool RenderBlock::createsNewFormattingContext() const
+{
+    // Writing-mode changes establish an independent block formatting context
+    // if the box is a block-container.
+    // https://drafts.csswg.org/css-writing-modes/#block-flow
+    if (isWritingModeRoot() && isBlockContainer())
+        return true;
+    auto& style = this->style();
+    if (isBlockContainer() && !style.alignContent().isNormal())
+        return true;
+    return isNonReplacedAtomicInline()
+        || style.isDisplayFlexibleBoxIncludingDeprecatedOrGridBox()
+        || isFlexItemIncludingDeprecated()
+        || isRenderTable()
+        || isRenderTableCell()
+        || isRenderTableCaption()
+        || isFieldset()
+        || isDocumentElementRenderer()
+        || isRenderFragmentedFlow()
+        || isRenderSVGForeignObject()
+        || style.specifiesColumns()
+        || style.columnSpan() == ColumnSpan::All
+        || style.display() == DisplayType::FlowRoot
+        || establishesIndependentFormattingContext();
 }
 
 bool RenderBlock::paintsContinuationOutline(RenderInline* flow)
@@ -1858,7 +1970,7 @@ LayoutUnit RenderBlock::textIndentOffset() const
 {
     LayoutUnit cw;
     if (style().textIndent().isPercentOrCalculated())
-        cw = availableLogicalWidth();
+        cw = contentBoxLogicalWidth();
     return minimumValueForLength(style().textIndent(), cw);
 }
 
@@ -1875,7 +1987,7 @@ LayoutUnit RenderBlock::logicalRightOffsetForContent() const
     LayoutUnit logicalRightOffset = writingMode().isHorizontal() ? borderLeft() + paddingLeft() : borderTop() + paddingTop();
     if (shouldPlaceVerticalScrollbarOnLeft() && isHorizontalWritingMode())
         logicalRightOffset += verticalScrollbarWidth();
-    logicalRightOffset += availableLogicalWidth();
+    logicalRightOffset += contentBoxLogicalWidth();
     return logicalRightOffset;
 }
 
@@ -1896,7 +2008,7 @@ LayoutUnit RenderBlock::adjustLogicalLeftOffsetForLine(LayoutUnit offsetFromFloa
         return left;
 
     // FIXME: Should letter-spacing apply? This is complicated since it doesn't apply at the edge?
-    float maxCharWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
+    float maxCharWidth = lineGrid->style().fontCascade().primaryFont()->maxCharWidth();
     if (!maxCharWidth)
         return left;
 
@@ -1933,7 +2045,7 @@ LayoutUnit RenderBlock::adjustLogicalRightOffsetForLine(LayoutUnit offsetFromFlo
         return right;
 
     // FIXME: Should letter-spacing apply? This is complicated since it doesn't apply at the edge?
-    float maxCharWidth = lineGrid->style().fontCascade().primaryFont().maxCharWidth();
+    float maxCharWidth = lineGrid->style().fontCascade().primaryFont()->maxCharWidth();
     if (!maxCharWidth)
         return right;
 
@@ -2472,7 +2584,7 @@ LayoutUnit RenderBlock::baselinePosition(FontBaseline baselineType, bool firstLi
             // breaks -webkit-line-clamp, which is used in the wild -- we would
             // calculate the baseline as if -webkit-line-clamp wasn't used.
             // For simplicity, we use this for all uses of deprecated flexbox.
-            LayoutUnit bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentHeight() : borderRight() + paddingRight() + contentWidth();
+            LayoutUnit bottomOfContent = direction == HorizontalLine ? borderTop() + paddingTop() + contentBoxHeight() : borderRight() + paddingRight() + contentBoxWidth();
             if (baselinePos && baselinePos.value() > bottomOfContent)
                 baselinePos = std::optional<LayoutUnit>();
         }
@@ -2766,7 +2878,7 @@ void RenderBlock::absoluteQuadsIgnoringContinuation(const FloatRect& logicalRect
 {
     // FIXME: This is wrong for block-flows that are horizontal.
     // https://bugs.webkit.org/show_bug.cgi?id=46781
-    auto* fragmentedFlow = enclosingFragmentedFlow();
+    CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
     if (!fragmentedFlow || !fragmentedFlow->absoluteQuadsForBox(quads, wasFixed, *this))
         quads.append(localToAbsoluteQuad(logicalRect, UseTransforms, wasFixed));
 }
@@ -2865,8 +2977,7 @@ LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
     if (layoutState && !layoutState->isPaginated())
         return 0;
 
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (fragmentedFlow)
+    if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow())
         return fragmentedFlow->offsetFromLogicalTopOfFirstFragment(this);
 
     if (layoutState) {
@@ -2882,30 +2993,26 @@ LayoutUnit RenderBlock::offsetFromLogicalTopOfFirstPage() const
 
 RenderFragmentContainer* RenderBlock::fragmentAtBlockOffset(LayoutUnit blockOffset) const
 {
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (!fragmentedFlow || !fragmentedFlow->hasValidFragmentInfo())
-        return 0;
+    if (CheckedPtr fragmentedFlow = enclosingFragmentedFlow(); fragmentedFlow && fragmentedFlow->hasValidFragmentInfo())
+        return fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstPage() + blockOffset, true);
 
-    return fragmentedFlow->fragmentAtBlockOffset(this, offsetFromLogicalTopOfFirstPage() + blockOffset, true);
+    return nullptr;
 }
 
-static bool canComputeFragmentRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderFragmentedFlow* enclosingFragmentedFlow)
+static bool canComputeFragmentRangeForBox(const RenderBlock& parentBlock, const RenderBox& childBox, const RenderFragmentedFlow& enclosingFragmentedFlow)
 {
-    if (!enclosingFragmentedFlow)
-        return false;
-
-    if (!enclosingFragmentedFlow->hasFragments())
+    if (!enclosingFragmentedFlow.hasFragments())
         return false;
 
     if (!childBox.canHaveOutsideFragmentRange())
         return false;
 
-    return enclosingFragmentedFlow->hasCachedFragmentRangeForBox(parentBlock);
+    return enclosingFragmentedFlow.hasCachedFragmentRangeForBox(parentBlock);
 }
 
 bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child) const
 {
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
+    CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
     bool checkColumnBreaks = fragmentedFlow && fragmentedFlow->shouldCheckColumnBreaks();
     bool checkPageBreaks = !checkColumnBreaks && view().frameView().layoutContext().layoutState()->pageLogicalHeight();
     return child.isUnsplittableForPagination() || child.style().breakInside() == BreakInside::Avoid
@@ -2915,8 +3022,9 @@ bool RenderBlock::childBoxIsUnsplittableForFragmentation(const RenderBox& child)
 
 void RenderBlock::computeFragmentRangeForBoxChild(const RenderBox& box) const
 {
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    ASSERT(canComputeFragmentRangeForBox(*this, box, fragmentedFlow));
+    CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
+    ASSERT(fragmentedFlow && canComputeFragmentRangeForBox(*this, box, *fragmentedFlow));
+    ASSERT(box.fragmentedFlowState() == FragmentedFlowState::InsideFlow);
 
     RenderFragmentContainer* startFragment;
     RenderFragmentContainer* endFragment;
@@ -2933,8 +3041,8 @@ void RenderBlock::computeFragmentRangeForBoxChild(const RenderBox& box) const
 
 void RenderBlock::estimateFragmentRangeForBoxChild(const RenderBox& box) const
 {
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (!canComputeFragmentRangeForBox(*this, box, fragmentedFlow))
+    CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
+    if (!fragmentedFlow || box.fragmentedFlowState() == FragmentedFlowState::NotInsideFlow || !canComputeFragmentRangeForBox(*this, box, *fragmentedFlow))
         return;
 
     if (childBoxIsUnsplittableForFragmentation(box)) {
@@ -2952,8 +3060,8 @@ void RenderBlock::estimateFragmentRangeForBoxChild(const RenderBox& box) const
 
 bool RenderBlock::updateFragmentRangeForBoxChild(const RenderBox& box) const
 {
-    RenderFragmentedFlow* fragmentedFlow = enclosingFragmentedFlow();
-    if (!canComputeFragmentRangeForBox(*this, box, fragmentedFlow))
+    CheckedPtr fragmentedFlow = enclosingFragmentedFlow();
+    if (!fragmentedFlow || box.fragmentedFlowState() == FragmentedFlowState::NotInsideFlow || !canComputeFragmentRangeForBox(*this, box, *fragmentedFlow))
         return false;
 
     RenderFragmentContainer* startFragment = nullptr;
@@ -3244,7 +3352,7 @@ std::optional<LayoutUnit> RenderBlock::availableLogicalHeightForPercentageComput
     return availableHeight();
 }
     
-void RenderBlock::layoutExcludedChildren(bool relayoutChildren)
+void RenderBlock::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     if (!isFieldset())
         return;
@@ -3263,7 +3371,7 @@ void RenderBlock::layoutExcludedChildren(bool relayoutChildren)
     }
 
     RenderBox& legend = *box;
-    if (relayoutChildren)
+    if (relayoutChildren == RelayoutChildren::Yes)
         legend.setChildNeedsLayout(MarkOnlyThis);
     legend.layoutIfNeeded();
     
@@ -3552,8 +3660,8 @@ String RenderBlock::updateSecurityDiscCharacters(const RenderStyle& style, Strin
         return WTFMove(string);
     // This PUA character in the system font is used to render password field dots on Cocoa platforms.
     constexpr UChar textSecurityDiscPUACodePoint = 0xF79A;
-    auto& font = style.fontCascade().primaryFont();
-    if (!(font.platformData().isSystemFont() && font.glyphForCharacter(textSecurityDiscPUACodePoint)))
+    Ref font = style.fontCascade().primaryFont();
+    if (!(font->platformData().isSystemFont() && font->glyphForCharacter(textSecurityDiscPUACodePoint)))
         return WTFMove(string);
 
     // See RenderText::setRenderedText()

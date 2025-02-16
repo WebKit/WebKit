@@ -24,7 +24,7 @@ noInline(test3);
 var string = "Hello";
 var stringObject = new String(string);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(string), string);
     shouldBe(test2(stringObject), string);
     if (i & 1)

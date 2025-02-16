@@ -75,7 +75,7 @@ Ref<PlatformCALayer> GraphicsLayerCARemote::createPlatformCALayer(PlatformCALaye
 
     if (result->canHaveBackingStore()) {
         auto* localMainFrameView = m_context->webPage().localMainFrameView();
-        result->setContentsFormat(screenContentsFormat(localMainFrameView, owner));
+        result->setContentsFormat(PlatformCALayer::contentsFormatForLayer(localMainFrameView, owner));
     }
 
     return WTFMove(result);

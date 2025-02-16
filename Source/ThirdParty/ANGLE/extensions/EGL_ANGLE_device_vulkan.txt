@@ -9,6 +9,7 @@ Name Strings
 Contributors
 
     Peng Huang  (penghuang 'at' google.com)
+    Shahbaz Youssefi  (syoussefi 'at' google.com)
 
 Contact
 
@@ -53,7 +54,9 @@ New Types
 
 New Procedures and Functions
 
-    None.
+    void eglLockVulkanQueueANGLE(EGLDisplay dpy);
+
+    void eglUnlockVulkanQueueANGLE(EGLDisplay dpy);
 
 New Tokens
 
@@ -156,6 +159,33 @@ Changes to section 3.2 (Devices)
     EGL_VULKAN_GET_INSTANCE_PROC_ADDR, EGL_BAD_ATTRIBUTE is returned, and
     <value> is left unchanged.
 
+    Add the following after the eglQueryDeviceAttribEXT entry point:
+
+    The Vulkan queue queried via EGL_VULKAN_QUEUE_ANGLE can be locked using
+
+        void eglLockVulkanQueueANGLE(EGLDisplay dpy);
+
+    This function provides exclusive access to the Vulkan queue to the caller,
+    as if an internal mutex that is used to protect the queue is locked.
+    If 'dpy' is not a valid display an EGL_BAD_DISPLAY error is generated.
+    No error is generated if the EGL device is not currently associated with a
+    Vulkan device, in which case the function does nothing.
+    Each call to eglLockVulkanQueueANGLE must be paired with a following
+    eglUnlockVulkanQueueANGLE on the same thread, otherwise behavior is
+    undefined.
+
+        void eglUnlockVulkanQueueANGLE(EGLDisplay dpy);
+
+    This function releases exclusive access to the Vulkan queue that was
+    previously acquired via eglLockVulkanQueueANGLE, as if an internal mutex
+    that is used to protect the queue is unlocked.
+    If 'dpy' is not a valid display an EGL_BAD_DISPLAY error is generated.
+    No error is generated if the EGL device is not currently associated with a
+    Vulkan device, in which case the function does nothing.
+    Each call to eglUnlockVulkanQueueANGLE must be preceeded by a call to
+    eglLockVulkanQueueANGLE on the same thread, otherwise behavior is
+    undefined.
+
 Issues
 
     None
@@ -164,3 +194,5 @@ Revision History
 
     Version 1, Oct 28, 2021 (Peng Huang)
         - Initial Draft
+    Version 2, Dec 27, 2024 (Shahbaz Youssefi)
+        - Add entry points for Vulkan queue lock/unlock

@@ -14,7 +14,7 @@ noInline(forIn);
 
 var object = { i: 42, i2: 43, i3: 44 };
 var object2 = { i: 42, i2: 43, i3: 44, i4:45 };
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(forIn(null), 0);
     shouldBe(forIn(object), 3);
     shouldBe(forIn(undefined), 0);

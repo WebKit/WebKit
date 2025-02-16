@@ -19,7 +19,8 @@ WindowSurfaceVkWin32::WindowSurfaceVkWin32(const egl::SurfaceState &surfaceState
     : WindowSurfaceVk(surfaceState, window)
 {}
 
-angle::Result WindowSurfaceVkWin32::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)
+angle::Result WindowSurfaceVkWin32::createSurfaceVk(vk::ErrorContext *context,
+                                                    gl::Extents *extentsOut)
 {
     VkWin32SurfaceCreateInfoKHR createInfo = {};
 
@@ -33,7 +34,7 @@ angle::Result WindowSurfaceVkWin32::createSurfaceVk(vk::Context *context, gl::Ex
     return getCurrentWindowSize(context, extentsOut);
 }
 
-angle::Result WindowSurfaceVkWin32::getCurrentWindowSize(vk::Context *context,
+angle::Result WindowSurfaceVkWin32::getCurrentWindowSize(vk::ErrorContext *context,
                                                          gl::Extents *extentsOut)
 {
     RECT rect;

@@ -33,15 +33,15 @@ namespace CSS {
 
 // https://drafts.csswg.org/css-color-6/#color-layers
 template<typename ColorLayersType>
-void serializationForCSSColorLayers(StringBuilder& builder, const ColorLayersType& colorLayers)
+void serializationForCSSColorLayers(StringBuilder& builder, const SerializationContext& context, const ColorLayersType& colorLayers)
 {
     builder.append("color-layers("_s);
 
     if (colorLayers.blendMode != BlendMode::Normal)
         builder.append(nameLiteralForSerialization(toCSSValueID(colorLayers.blendMode)), ", "_s);
 
-    builder.append(interleave(colorLayers.colors, [](auto& builder, auto& color) {
-        serializationForCSS(builder, color);
+    builder.append(interleave(colorLayers.colors, [&](auto& builder, auto& color) {
+        serializationForCSS(builder, context, color);
     }, ", "_s));
 
     builder.append(')');

@@ -117,11 +117,12 @@ PAS_END_EXTERN_C;
 
 #elif PAS_OS(DARWIN) /* !PAS_USE_SPINLOCKS */
 
-#if defined(__has_include) && __has_include(<os/lock_private.h>) && (defined(LIBPAS) || defined(PAS_BMALLOC)) && (!defined(OS_UNFAIR_LOCK_INLINE) || OS_UNFAIR_LOCK_INLINE)
+
+#if defined(__has_include) && __has_include(<os/lock_private.h>) && (defined(LIBPAS) || defined(PAS_BMALLOC))
 #define PAS_USE_ULOCK_SPI 1
 #define PAS_USE_ULOCK_FLAGS_API 0
-#ifndef OS_UNFAIR_LOCK_INLINE
-#define OS_UNFAIR_LOCK_INLINE 1
+#if !defined(OS_UNFAIR_LOCK_INLINE) || !OS_UNFAIR_LOCK_INLINE
+#error "OS_UNFAIR_LOCK_INLINE needs to be enabled."
 #endif
 #include <os/lock_private.h>
 

@@ -327,6 +327,7 @@ async function selectPartialElementTextById(id, startIndex, endIndex, axWebArea)
     const element = document.getElementById(id);
     if (element.setSelectionRange) {
         // For textarea and input elements.
+        element.focus();
         element.setSelectionRange(startIndex, endIndex);
     } else {
         // For contenteditable elements.
@@ -369,4 +370,29 @@ function resetActiveElementAndSelectedChildren(id) {
         child.removeAttribute("aria-activedescendant");
         child.removeAttribute("aria-selected");
     });
+}
+
+function findFirstPageDescendant(startObject) {
+    if (!startObject || startObject.role == "AXRole: AXPage")
+        return startObject;
+
+    for (let i = 0; i < startObject.childrenCount; i++) {
+        let result = findFirstPageDescendant(startObject.childAtIndex(i));
+        if (result)
+            return result;
+    }
+
+    return null;
+}
+
+function traverseChildrenToFirstStaticText(startObject) {
+    if (!startObject || startObject.role == "AXRole: AXStaticText")
+        return startObject;
+
+    for (let i = 0; i < startObject.childrenCount; i++) {
+        let result = traverseChildrenToFirstStaticText(startObject.childAtIndex(i));
+        if (result)
+            return result;
+    }
+    return null;
 }

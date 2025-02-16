@@ -249,7 +249,7 @@ private:
     // Note, this can grow over time since OMG inlining can add to the set of callers and we'll tranisition from
     // a sparse adjacency matrix to a bit vector based one if that's more space efficient.
     // FIXME: This should be a WTF class and we should use it in the JIT Plans.
-    using SparseCallers = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
+    using SparseCallers = UncheckedKeyHashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using DenseCallers = BitVector;
     FixedVector<std::variant<SparseCallers, DenseCallers>> m_callers WTF_GUARDED_BY_LOCK(m_lock);
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;

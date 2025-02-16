@@ -40,9 +40,9 @@ struct Invert {
 };
 using InvertFunction = FunctionNotation<CSSValueInvert, Invert>;
 
-DEFINE_TYPE_WRAPPER(Invert, value);
+DEFINE_TYPE_WRAPPER_GET(Invert, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Invert, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Invert, 1)

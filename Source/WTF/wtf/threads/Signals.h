@@ -121,8 +121,8 @@ struct SignalHandlers {
     };
     InitState initState;
 
-    uint8_t numberOfHandlers[numberOfSignals];
-    SignalHandlerMemory handlers[numberOfSignals][maxNumberOfHandlers];
+    std::array<uint8_t, numberOfSignals> numberOfHandlers;
+    std::array<std::array<SignalHandlerMemory, maxNumberOfHandlers>, numberOfSignals> handlers;
 
 #if OS(UNIX)
     struct sigaction oldActions[numberOfSignals];

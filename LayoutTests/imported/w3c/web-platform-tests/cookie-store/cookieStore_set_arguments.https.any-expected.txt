@@ -40,7 +40,7 @@ PASS cookieStore.set with domain that is not equal current host
 PASS cookieStore.set with domain set to the current hostname
 PASS cookieStore.set with domain set to a subdomain of the current hostname
 PASS cookieStore.set with domain set to a non-domain-matching suffix of the current hostname
-FAIL cookieStore.set default domain is null and differs from current hostname assert_equals: expected 2 but got 1
+PASS cookieStore.set default domain is null and differs from current hostname
 PASS cookieStore.set with path set to the current directory
 PASS cookieStore.set with path set to a subdirectory of the current directory
 PASS cookieStore.set default path is /

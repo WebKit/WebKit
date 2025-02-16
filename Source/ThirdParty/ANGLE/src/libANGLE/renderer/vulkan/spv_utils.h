@@ -52,6 +52,7 @@ struct SpvTransformOptions
     bool enableSampleShading            = false;
     bool validate                       = true;
     bool useSpirvVaryingPrecisionFixer  = false;
+    bool removeDepthStencilInput        = false;
 };
 
 struct ShaderInterfaceVariableXfbInfo

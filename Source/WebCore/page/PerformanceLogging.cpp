@@ -81,7 +81,7 @@ Vector<std::pair<ASCIILiteral, size_t>> PerformanceLogging::memoryUsageStatistic
     return stats;
 }
 
-HashCountedSet<const char*> PerformanceLogging::javaScriptObjectCounts()
+HashCountedSet<ASCIILiteral> PerformanceLogging::javaScriptObjectCounts()
 {
     return WTFMove(*commonVM().heap.objectTypeCounts());
 }

@@ -38,6 +38,11 @@ WKURLRef WKURLCreateWithUTF8CString(const char* string)
     return WebKit::toAPI(&API::URL::create(String::fromUTF8(string)).leakRef());
 }
 
+WKURLRef WKURLCreateWithUTF8String(const char* string, size_t length)
+{
+    return WebKit::toAPI(&API::URL::create(String::fromUTF8(unsafeMakeSpan(string, length))).leakRef());
+}
+
 WKURLRef WKURLCreateWithBaseURL(WKURLRef baseURL, const char* relative)
 {
     return WebKit::toAPI(&API::URL::create(WebKit::toImpl(baseURL), String::fromUTF8(relative)).leakRef());

@@ -27,6 +27,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-ascii-case-insensitive-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-ascii-case-insensitive-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-ascii-case-insensitive.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute-tokenization.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rel-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-rellist.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-style-error-01.html
@@ -36,6 +37,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-type-attribute-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-type-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/style.css
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-bad-mime-type.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-change-href-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-change-href-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-change-href.html
@@ -45,6 +47,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-media-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-media-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-media.html
+/LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-non-OK-status.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-not-removed-until-next-stylesheet-loads.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/stylesheet-with-base-ref.html

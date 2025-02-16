@@ -176,6 +176,7 @@ void WheelEventTestMonitor::checkShouldFireCallbacks()
 TextStream& operator<<(TextStream& ts, WheelEventTestMonitor::DeferReason reason)
 {
     switch (reason) {
+    case WheelEventTestMonitor::DeferReason::None: ts << "none"; break;
     case WheelEventTestMonitor::DeferReason::HandlingWheelEvent: ts << "handling wheel event"; break;
     case WheelEventTestMonitor::DeferReason::HandlingWheelEventOnMainThread: ts << "handling wheel event on main thread"; break;
     case WheelEventTestMonitor::DeferReason::PostMainThreadWheelEventHandling: ts << "post-main thread event handling"; break;

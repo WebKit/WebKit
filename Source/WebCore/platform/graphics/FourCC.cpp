@@ -32,13 +32,15 @@ std::optional<FourCC> FourCC::fromString(StringView string)
 {
     if (string.length() != 4 || !string.containsOnlyASCII())
         return std::nullopt;
-    return { { {
+
+    std::array<char, 5> code {
         static_cast<char>(string[0]),
         static_cast<char>(string[1]),
         static_cast<char>(string[2]),
         static_cast<char>(string[3]),
         '\0'
-    } } };
+    };
+    return FourCC { std::span { code } };
 }
 
 }

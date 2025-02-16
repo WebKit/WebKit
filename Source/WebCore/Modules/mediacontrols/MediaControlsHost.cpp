@@ -322,10 +322,8 @@ bool MediaControlsHost::inWindowFullscreen() const
 
 bool MediaControlsHost::supportsRewind() const
 {
-#if ENABLE(MODERN_MEDIA_CONTROLS)
     if (auto sourceType = this->sourceType())
         return *sourceType == SourceType::HLS || *sourceType == SourceType::File;
-#endif
     return false;
 }
 
@@ -399,8 +397,6 @@ String MediaControlsHost::generateUUID()
 {
     return createVersion4UUIDString();
 }
-
-#if ENABLE(MODERN_MEDIA_CONTROLS)
 
 String MediaControlsHost::shadowRootCSSText()
 {
@@ -815,8 +811,6 @@ auto MediaControlsHost::sourceType() const -> std::optional<SourceType>
         return m_mediaElement->sourceType();
     return std::nullopt;
 }
-
-#endif // ENABLE(MODERN_MEDIA_CONTROLS)
 
 
 void MediaControlsHost::presentationModeChanged()

@@ -268,7 +268,7 @@ std::optional<TokenRequest> TokenRequest::tryCreate(const CString& pin, const Cr
 
     // The following calculates a SHA-256 digest of the PIN, and shrink to the left 16 bytes.
     crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-    crypto->addBytes(pin.span());
+    crypto->addBytes(byteCast<uint8_t>(pin.span()));
     auto pinHash = crypto->computeHash();
     pinHash.shrink(16);
 

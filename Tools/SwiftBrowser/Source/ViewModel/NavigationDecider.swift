@@ -23,12 +23,13 @@
 
 import Foundation
 @_spi(Private) import WebKit
+@_spi(Private) import _WebKit_SwiftUI
 
 @MainActor
 final class NavigationDecider: NavigationDeciding {
     weak var owner: BrowserViewModel? = nil
 
-    func decidePolicy(for action: WebPage_v0.NavigationAction, preferences: inout WebPage_v0.NavigationPreferences) async -> WKNavigationActionPolicy {
+    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {
         if action.shouldPerformDownload {
             return .download
         }
@@ -41,7 +42,7 @@ final class NavigationDecider: NavigationDeciding {
         return .allow
     }
 
-    func decidePolicy(for response: WebPage_v0.NavigationResponse) async -> WKNavigationResponsePolicy {
+    func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy {
         response.canShowMimeType && !response.response.hasAttachment ? .allow : .download
     }
 }

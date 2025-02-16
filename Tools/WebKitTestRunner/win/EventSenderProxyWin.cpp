@@ -243,13 +243,13 @@ void EventSenderProxy::keyDown(WKStringRef keyRef, WKEventModifiers wkModifiers,
         virtualKeyCode = VK_RMENU;
     else {
         size_t keyLength = WKStringGetLength(keyRef);
-        static const char shiftedUSCharacters[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*()_+{}|:\"<>?";
+        static constexpr auto shiftedUSCharacters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ~!@#$%^&*()_+{}|:\"<>?"_span;
         wchar_t keyStr[3];
         WKStringGetCharacters(keyRef, keyStr, _countof(keyStr));
         if (keyLength == 1) {
             charCode = keyStr[0];
             virtualKeyCode = LOBYTE(VkKeyScan(charCode));
-            if (strchr(shiftedUSCharacters, charCode))
+            if (contains(shiftedUSCharacters, static_cast<char>(charCode)))
                 needsShiftKeyModifier = true;
         } else if (keyStr[0] == 'F') {
             if (keyLength == 2 && isASCIIDigit(keyStr[1]))

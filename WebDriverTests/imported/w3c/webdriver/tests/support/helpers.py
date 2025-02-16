@@ -1,6 +1,8 @@
 import collections
 import math
 import sys
+import os
+from urllib.parse import urlparse
 
 import webdriver
 
@@ -40,7 +42,10 @@ def cleanup_session(session):
         try:
             session.window_handle
         except webdriver.NoSuchWindowException:
-            session.window_handle = session.handles[0]
+            handles = session.handles
+            if handles:
+                # Update only when there is at least one valid window left.
+                session.window_handle = handles[0]
 
     @ignore_exceptions
     def _restore_timeouts(session):
@@ -54,19 +59,10 @@ def cleanup_session(session):
         """Reset window to an acceptable size.
 
         This also includes bringing it out of maximized, minimized,
-        or fullscreened state.
+        or fullscreen state.
         """
         if session.capabilities.get("setWindowRect"):
-            # Only restore if needed to workaround a bug for Chrome:
-            # https://bugs.chromium.org/p/chromedriver/issues/detail?id=4642#c4
-            if (
-                session.capabilities.get("browserName") != "chrome" or
-                session.window.size != defaults.WINDOW_SIZE
-                or document_hidden(session)
-                or is_fullscreen(session)
-                or is_maximized(session)
-            ):
-                session.window.size = defaults.WINDOW_SIZE
+            session.window.size = defaults.WINDOW_SIZE
 
     @ignore_exceptions
     def _restore_windows(session):
@@ -83,7 +79,6 @@ def cleanup_session(session):
 
         session.window_handle = current_window
 
-    print("helpers.py: cleanup_session will start cleanup", flush=True)
     _restore_timeouts(session)
     _ensure_valid_window(session)
     _dismiss_user_prompts(session)
@@ -214,7 +209,7 @@ def is_fullscreen(session):
         """)
 
 
-def is_maximized(session):
+def _get_maximized_state(session):
     dimensions = session.execute_script("""
         return {
             availWidth: screen.availWidth,
@@ -224,14 +219,46 @@ def is_maximized(session):
         }
         """)
 
-    return (
-        # The maximized window can still have a border attached which would
-        # cause its dimensions to exceed the whole available screen.
-        dimensions["windowWidth"] >= dimensions["availWidth"] and
+    # The maximized window can still have a border attached which would
+    # cause its dimensions to exceed the whole available screen.
+    return (dimensions["windowWidth"] >= dimensions["availWidth"] and
         dimensions["windowHeight"] >= dimensions["availHeight"] and
         # Only return true if the window is not in fullscreen mode
         not is_fullscreen(session)
     )
+
+
+def is_maximized(session, original_rect):
+    if _get_maximized_state(session):
+        return True
+
+    # Wayland doesn't guarantee that the window will get maximized
+    # to the screen, so check if the dimensions got larger.
+    elif is_wayland():
+        dimensions = session.execute_script("""
+            return {
+                windowWidth: window.outerWidth,
+                windowHeight: window.outerHeight,
+            }
+            """)
+        return (
+            dimensions["windowWidth"] > original_rect["width"] and
+            dimensions["windowHeight"] > original_rect["height"] and
+            # Only return true if the window is not in fullscreen mode
+            not is_fullscreen(session)
+        )
+    else:
+        return False
+
+
+def is_not_maximized(session):
+    return not _get_maximized_state(session)
+
+
+def is_wayland():
+    # We don't use mozinfo.display here to make sure it also
+    # works upstream in wpt Github repo.
+    return os.environ.get("WAYLAND_DISPLAY", "") != ""
 
 
 def filter_dict(source, d):
@@ -251,6 +278,11 @@ def filter_supported_key_events(all_events, expected):
         events = [filter_dict(e, expected[0]) for e in events]
 
     return (events, expected)
+
+
+def get_origin_from_url(url):
+    parsed_uri = urlparse(url)
+    return '{uri.scheme}://{uri.netloc}'.format(uri=parsed_uri)
 
 
 def wait_for_new_handle(session, handles_before):

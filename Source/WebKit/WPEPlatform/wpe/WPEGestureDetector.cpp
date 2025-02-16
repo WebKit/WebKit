@@ -25,6 +25,8 @@
 
 #include "config.h"
 #include "WPEGestureDetector.h"
+#include "WPEDisplay.h"
+#include "WPESettings.h"
 
 #include <cmath>
 
@@ -49,6 +51,8 @@ void GestureDetector::handleEvent(WPEEvent* event)
         break;
     case WPE_EVENT_TOUCH_MOVE:
         if (double x, y; wpe_event_get_position(event, &x, &y) && m_position) {
+            auto* settings = wpe_display_get_settings(wpe_view_get_display(wpe_event_get_view(event)));
+            auto dragActivationThresholdPx = wpe_settings_get_uint32(settings, WPE_SETTING_DRAG_THRESHOLD, nullptr);
             if (m_gesture != WPE_GESTURE_DRAG && std::hypot(x - m_position->x, y - m_position->y) > dragActivationThresholdPx) {
                 m_gesture = WPE_GESTURE_DRAG;
                 m_nextDeltaReferencePosition = m_position;

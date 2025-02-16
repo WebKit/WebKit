@@ -91,7 +91,7 @@ static pas_aligned_allocation_result large_aligned_allocator(size_t size,
          here, the memory we have gotten from the OS is still clean, so it doesn't count against our
          peak dirty. */
     if (verbose)
-        printf("Taking %zu later.\n", aligned_size);
+        pas_log("Taking %zu later.\n", aligned_size);
     pas_physical_page_sharing_pool_take_later(aligned_size);
     
     allocation_result = data->cache->provider(

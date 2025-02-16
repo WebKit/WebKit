@@ -98,20 +98,20 @@ inline void FECompositeNeonArithmeticApplier::applyPlatform(const uint8_t* sourc
 
 bool FECompositeNeonArithmeticApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
-    auto& input2 = inputs[1].get();
+    Ref input = inputs[0];
+    Ref input2 = inputs[1];
 
     auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     IntRect effectADrawingRect = result.absoluteImageRectRelativeTo(input);
-    auto sourcePixelBuffer = input.getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect.operatingColorSpace());
+    auto sourcePixelBuffer = input->getPixelBuffer(AlphaPremultiplication::Premultiplied, effectADrawingRect, m_effect->operatingColorSpace());
     if (!sourcePixelBuffer)
         return false;
 
     IntRect effectBDrawingRect = result.absoluteImageRectRelativeTo(input2);
-    input2.copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
+    input2->copyPixelBuffer(*destinationPixelBuffer, effectBDrawingRect);
 
     auto* sourcePixelBytes = sourcePixelBuffer->bytes().data();
     auto* destinationPixelBytes = destinationPixelBuffer->bytes().data();
@@ -119,7 +119,7 @@ bool FECompositeNeonArithmeticApplier::apply(const Filter&, const FilterImageVec
     auto length = sourcePixelBuffer->bytes().size();
     ASSERT(length == destinationPixelBuffer->bytes().size());
 
-    applyPlatform(sourcePixelBytes, destinationPixelBytes, length, m_effect.k1(), m_effect.k2(), m_effect.k3(), m_effect.k4());
+    applyPlatform(sourcePixelBytes, destinationPixelBytes, length, m_effect->k1(), m_effect->k2(), m_effect->k3(), m_effect->k4());
     return true;
 }
 

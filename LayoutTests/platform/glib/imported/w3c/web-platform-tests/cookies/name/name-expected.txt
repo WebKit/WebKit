@@ -22,6 +22,7 @@ PASS Keep non-alphabetic first-in, first-out name order
 PASS Keep first-in, first-out order if comma-separated
 PASS Set nameless cookie, given `Set-Cookie: =test16`
 PASS Overwrite nameless cookie
+FAIL Ignore nameless cookies that impersonate cookie prefixes assert_equals: The cookie was rejected. expected "" but got "__HoSt-abc"
 PASS Ignore cookie with empty name and empty value
 PASS Ignore cookie with no name or value
 PASS URL-encoded cookie name is not decoded

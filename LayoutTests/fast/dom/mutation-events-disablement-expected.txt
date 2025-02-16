@@ -1,0 +1,11 @@
+This tests disabling mutation events.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS mutationEvents is []
+PASS mutationEvents is []
+PASS successfullyParsed is true
+
+TEST COMPLETE
+world

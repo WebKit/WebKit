@@ -898,6 +898,15 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
         if (!isCodecSupported(configuration, codec, requiresHardwareSupport, caseSensitive))
             return SupportsType::IsNotSupported;
     }
+
+    // The 'eotf' additional mime-type parameter must be supported to be compliant with
+    // "YouTube TV HTML5 Technical Requirements"
+    // (point 16.3.1 from https://developers.google.com/youtube/devices/living-room/files/pdf-guides/YouTube_TV_HTML5_Technical_Requirements_2018.pdf).
+    const auto eotf = contentType.parameter("eotf"_s);
+    if (!eotf.isEmpty()) {
+        if (eotf != "bt709"_s && eotf != "smpte2084"_s && eotf != "arib-std-b67"_s)
+            return SupportsType::IsNotSupported;
+    }
     return SupportsType::IsSupported;
 }
 
@@ -1041,7 +1050,7 @@ static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExte
     Vector<RTCRtpCapabilities::HeaderExtensionCapability> extensions;
     for (const auto& uri : candidates) {
         if (auto extension = adoptGRef(gst_rtp_header_extension_create_from_uri(uri.characters())))
-            extensions.append(makeString(span(uri)));
+            extensions.append(makeString(unsafeSpan(uri)));
     }
     return extensions;
 }

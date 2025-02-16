@@ -25,6 +25,7 @@
 #include "Butterfly.h"
 #include "JSCell.h"
 #include "JSObject.h"
+#include "ResourceExhaustion.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -265,8 +266,7 @@ inline JSArray* JSArray::tryCreate(VM& vm, Structure* structure, unsigned initia
 inline JSArray* JSArray::create(VM& vm, Structure* structure, unsigned initialLength)
 {
     JSArray* result = JSArray::tryCreate(vm, structure, initialLength);
-    RELEASE_ASSERT(result);
-
+    RELEASE_ASSERT_RESOURCE_AVAILABLE(result, MemoryExhaustion, "Crash intentionally because memory is exhausted.");
     return result;
 }
 

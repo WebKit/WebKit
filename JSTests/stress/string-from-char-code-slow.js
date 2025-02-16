@@ -1,6 +1,6 @@
 var result = (function() {
     var result;
-    for (var i = 0; i < 1000000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         result = String.fromCharCode(1000);
     return result
 })();

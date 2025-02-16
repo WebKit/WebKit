@@ -40,6 +40,7 @@ class ContainerNode;
 class DOMEditor;
 class Document;
 class Node;
+class WeakPtrImplWithEventTargetData;
 
 class DOMPatchSupport final {
 public:
@@ -67,7 +68,7 @@ private:
 #endif
 
     DOMEditor& m_domEditor;
-    Document& m_document;
+    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     UnusedNodesMap m_unusedNodesMap;
 };

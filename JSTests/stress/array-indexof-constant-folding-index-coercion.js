@@ -22,7 +22,7 @@ function shouldBe(actual, expected)
     noInline(indexOfDoubleOther);
     noInline(indexOfDoubleBoolean);
 
-    for (var i = 0; i < 1e6; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(indexOfInt32Cell(0), -1);
         shouldBe(indexOfInt32Other(0), -1);
         shouldBe(indexOfInt32Boolean(0), -1);

@@ -40,9 +40,9 @@ struct Saturate {
 };
 using SaturateFunction = FunctionNotation<CSSValueSaturate, Saturate>;
 
-DEFINE_TYPE_WRAPPER(Saturate, value);
+DEFINE_TYPE_WRAPPER_GET(Saturate, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Saturate, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Saturate, 1)

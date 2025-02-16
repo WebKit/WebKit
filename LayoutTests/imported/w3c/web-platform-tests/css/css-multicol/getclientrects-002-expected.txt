@@ -1,0 +1,11 @@
+
+PASS Rectangle count
+PASS #0 left
+PASS #0 top
+PASS #0 width
+PASS #0 height
+PASS #1 left
+PASS #1 top
+PASS #1 width
+PASS #1 height
+

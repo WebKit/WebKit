@@ -132,7 +132,7 @@
 {
     if (_webViewImpl->clipsToVisibleRect())
         _webViewImpl->updateViewExposedRect();
-    _webViewImpl->setDrawingAreaSize(NSSizeToCGSize(_view.frame.size));
+    _webViewImpl->setDrawingAreaSize(NSSizeToCGSize(_view.get().get().frame.size));
 }
 
 - (void)willChangeLayoutStrategy
@@ -198,7 +198,8 @@
 - (void)updateLayout
 {
     CGFloat inverseScale = 1 / _page->viewScaleFactor();
-    _webViewImpl->setFixedLayoutSize(CGSizeMake(_view.frame.size.width * inverseScale, _view.frame.size.height * inverseScale));
+    RetainPtr view = _view.get();
+    _webViewImpl->setFixedLayoutSize(CGSizeMake(view.get().frame.size.width * inverseScale, view.get().frame.size.height * inverseScale));
 }
 
 - (void)didChangeViewScale

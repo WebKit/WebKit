@@ -41,8 +41,10 @@ struct crashreporter_annotations_t gCRAnnotations
 namespace WTF {
 void setCrashLogMessage(const char* message)
 {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // We have to copy the string because CRSetCrashLogMessage doesn't.
     char* copiedMessage = message ? strdup(message) : nullptr;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     CRSetCrashLogMessage(copiedMessage);
 

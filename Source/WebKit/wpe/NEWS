@@ -1,4 +1,34 @@
 =================
+WPE WebKit 2.47.4
+=================
+
+What's new in WPE WebKit 2.47.4?
+
+  - Add support for the Cookie Store API.
+  - Add initial support for per-element audio output selection.
+  - Add debuging aids to visualize damage rectangles.
+  - Add documentation about how to use the remote web inspector.
+  - Enable WebDriver BiDi as an experimental feature.
+  - Remove support for GLib versions older than 2.70.
+  - Fix a crash when enabling Skia CPU rendering.
+  - Fix several crashes and rendering issues.
+
+=================
+WPE WebKit 2.47.3
+=================
+
+What's new in WPE WebKit 2.47.3?
+
+  - Add support for creating Promise objects using the JavaScriptCore GLib API.
+  - Add metadata (title and creation/modification date) to PDF documents generated for printing.
+  - Speed up reading large remote inspector protocol messages.
+  - Pause rendering when current toplevel window is in suspended state.
+  - Bring back support for OpenType-SVG fonts using the Skia SVG module.
+  - Improve performance of the preserve-3D intersection rendering.
+  - Use default configuration values from WPESettings in WPEPlatform.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.47.2
 =================
 

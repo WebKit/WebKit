@@ -43,7 +43,7 @@ function validate(x) {
 noInline(validate);
 
 let start = Date.now();
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let i = 0; i < instances.length; ++i)
         validate(instances[i]);
 }

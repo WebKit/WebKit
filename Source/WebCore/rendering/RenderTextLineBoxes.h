@@ -31,9 +31,7 @@
 namespace WebCore {
 
 class LegacyInlineTextBox;
-class RenderStyle;
-class RenderText;
-class VisiblePosition;
+class RenderSVGInlineText;
 
 class RenderTextLineBoxes {
 public:
@@ -42,19 +40,14 @@ public:
     LegacyInlineTextBox* first() const { return m_first; }
     LegacyInlineTextBox* last() const { return m_last; }
 
-    LegacyInlineTextBox* createAndAppendLineBox(RenderText&);
+    LegacyInlineTextBox* createAndAppendLineBox(RenderSVGInlineText&);
 
-    void extract(LegacyInlineTextBox&);
-    void attach(LegacyInlineTextBox&);
     void remove(LegacyInlineTextBox&);
 
-    void removeAllFromParent(RenderText&);
+    void removeAllFromParent(RenderSVGInlineText&);
     void deleteAll();
 
-    void dirtyAll();
-    bool dirtyForTextChange(RenderText&);
-
-    LegacyInlineTextBox* findNext(int offset, int& position) const;
+    void dirtyForTextChange(RenderSVGInlineText&);
 
 #if ASSERT_ENABLED
     ~RenderTextLineBoxes();
@@ -67,8 +60,8 @@ public:
 private:
     void checkConsistency() const;
 
-    LegacyInlineTextBox* m_first;
-    LegacyInlineTextBox* m_last;
+    LegacyInlineTextBox* m_first { nullptr };
+    LegacyInlineTextBox* m_last { nullptr };
 };
 
 } // namespace WebCore

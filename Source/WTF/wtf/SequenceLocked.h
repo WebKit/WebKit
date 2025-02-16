@@ -19,8 +19,8 @@
 #include <atomic>
 #include <type_traits>
 #include <wtf/Compiler.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/ParsingUtilities.h>
 
 namespace WTF {
 
@@ -58,7 +58,7 @@ public:
             uint64_t versionBefore = m_version.load(std::memory_order_acquire);
             if (UNLIKELY((versionBefore & 1) == 1))
                 continue;
-            relaxedCopyFromAtomic(&result, m_storage.data(), sizeof(T));
+            relaxedCopyFromAtomic(asMutableByteSpan(result), std::span { m_storage });
             // Another acquire fence ensures that the load of 'm_version' below is
             // strictly ordered after the RelaxedCopyToAtomic call above.
             std::atomic_thread_fence(std::memory_order_acquire);
@@ -90,7 +90,7 @@ public:
         // this barrier is not for the fetch_add above. A release barrier for the
         // fetch_add would be before it, not after.
         std::atomic_thread_fence(std::memory_order_release);
-        relaxedCopyToAtomic(m_storage.data(), &value, sizeof(T));
+        relaxedCopyToAtomic(std::span { m_storage }, asByteSpan(value));
         // "Release" semantics ensure that none of the writes done by
         // relaxedCopyToAtomic() can be reordered after the following modification.
         m_version.store(version + 2, std::memory_order_release);
@@ -99,47 +99,35 @@ public:
 private:
     // Perform the equivalent of "memcpy(dst, src, size)", but using relaxed
     // atomics.
-    static void relaxedCopyFromAtomic(void* dst, const std::atomic<uint64_t>* src, size_t size)
+    static constexpr size_t storageSize = (sizeof(T) + sizeof(uint64_t) - 1) / sizeof(std::atomic<uint64_t>);
+    static void relaxedCopyFromAtomic(std::span<uint8_t> destination, std::span<const std::atomic<uint64_t>, storageSize> source)
     {
-        char* dstChar = static_cast<char*>(dst);
-        for (;size >= sizeof(uint64_t); size -= sizeof(uint64_t)) {
-            uint64_t word = src->load(std::memory_order_relaxed);
-            std::memcpy(dstChar, &word, sizeof(uint64_t));
-            dstChar += sizeof(uint64_t);
-            src++;
+        size_t sourceIndex = 0;
+        while (destination.size() >= sizeof(uint64_t)) {
+            uint64_t word = source[sourceIndex++].load(std::memory_order_relaxed);
+            memcpySpan(consumeSpan(destination, sizeof(word)), asByteSpan(word));
         }
-        if (size) {
-            uint64_t word = src->load(std::memory_order_relaxed);
-            std::memcpy(dstChar, &word, size);
-        }
+        ASSERT(destination.empty());
     }
 
     // Perform the equivalent of "memcpy(dst, src, size)", but using relaxed
     // atomics.
-    static void relaxedCopyToAtomic(std::atomic<uint64_t>* dst, const void* src, size_t size)
+    static void relaxedCopyToAtomic(std::span<std::atomic<uint64_t>, storageSize> destination, std::span<const uint8_t> source)
     {
-        const char* srcByte = static_cast<const char*>(src);
-        for (;size >= sizeof(uint64_t); size -= sizeof(uint64_t)) {
+        size_t destinationIndex = 0;
+        while (source.size() >= sizeof(uint64_t)) {
             uint64_t word;
-            std::memcpy(&word, srcByte, sizeof(word));
-            dst->store(word, std::memory_order_relaxed);
-            srcByte += sizeof(word);
-            dst++;
+            memcpySpan(asMutableByteSpan(word), consumeSpan(source, sizeof(word)));
+            destination[destinationIndex++].store(word, std::memory_order_relaxed);
         }
-        if (size) {
-            uint64_t word = 0;
-            std::memcpy(&word, srcByte, size);
-            dst->store(word, std::memory_order_relaxed);
-        }
+        ASSERT(source.empty());
     }
 
     std::atomic<uint64_t> m_version { 0 };
-    using Storage = std::array<std::atomic<uint64_t>, (sizeof(T) + sizeof(uint64_t) - 1) / sizeof(std::atomic<uint64_t>)>;
+    using Storage = std::array<std::atomic<uint64_t>, storageSize>;
     Storage m_storage { };
 };
 
 }
 
 using WTF::SequenceLocked;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

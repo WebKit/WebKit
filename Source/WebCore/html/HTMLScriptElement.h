@@ -70,7 +70,7 @@ public:
 
     void setFetchPriorityForBindings(const AtomString&);
     String fetchPriorityForBindings() const;
-    RequestPriority fetchPriorityHint() const override;
+    RequestPriority fetchPriority() const override;
 
     WEBCORE_EXPORT DOMTokenList& blocking();
 
@@ -107,9 +107,9 @@ private:
 
     bool isScriptPreventedByAttributes() const final;
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) final;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) final;
 
-    std::unique_ptr<DOMTokenList> m_blockingList;
+    const std::unique_ptr<DOMTokenList> m_blockingList;
     bool m_isRenderBlocking { false };
 };
 

@@ -42,6 +42,9 @@ bool appleVisualEffectNeedsBackdrop(AppleVisualEffect effect)
     case AppleVisualEffect::BlurChromeMaterial:
         return true;
     case AppleVisualEffect::None:
+#if HAVE(MATERIAL_HOSTING)
+    case AppleVisualEffect::HostedBlurMaterial:
+#endif
     case AppleVisualEffect::VibrancyLabel:
     case AppleVisualEffect::VibrancySecondaryLabel:
     case AppleVisualEffect::VibrancyTertiaryLabel:
@@ -56,6 +59,62 @@ bool appleVisualEffectNeedsBackdrop(AppleVisualEffect effect)
     ASSERT_NOT_REACHED();
     return false;
 }
+
+bool appleVisualEffectAppliesFilter(AppleVisualEffect effect)
+{
+    switch (effect) {
+    case AppleVisualEffect::None:
+    case AppleVisualEffect::BlurUltraThinMaterial:
+    case AppleVisualEffect::BlurThinMaterial:
+    case AppleVisualEffect::BlurMaterial:
+    case AppleVisualEffect::BlurThickMaterial:
+    case AppleVisualEffect::BlurChromeMaterial:
+#if HAVE(MATERIAL_HOSTING)
+    case AppleVisualEffect::HostedBlurMaterial:
+#endif
+        return false;
+    case AppleVisualEffect::VibrancyLabel:
+    case AppleVisualEffect::VibrancySecondaryLabel:
+    case AppleVisualEffect::VibrancyTertiaryLabel:
+    case AppleVisualEffect::VibrancyQuaternaryLabel:
+    case AppleVisualEffect::VibrancyFill:
+    case AppleVisualEffect::VibrancySecondaryFill:
+    case AppleVisualEffect::VibrancyTertiaryFill:
+    case AppleVisualEffect::VibrancySeparator:
+        return true;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+#if HAVE(MATERIAL_HOSTING)
+bool appleVisualEffectIsHostedMaterial(AppleVisualEffect effect)
+{
+    switch (effect) {
+    case AppleVisualEffect::HostedBlurMaterial:
+        return true;
+    case AppleVisualEffect::None:
+    case AppleVisualEffect::BlurUltraThinMaterial:
+    case AppleVisualEffect::BlurThinMaterial:
+    case AppleVisualEffect::BlurMaterial:
+    case AppleVisualEffect::BlurThickMaterial:
+    case AppleVisualEffect::BlurChromeMaterial:
+    case AppleVisualEffect::VibrancyLabel:
+    case AppleVisualEffect::VibrancySecondaryLabel:
+    case AppleVisualEffect::VibrancyTertiaryLabel:
+    case AppleVisualEffect::VibrancyQuaternaryLabel:
+    case AppleVisualEffect::VibrancyFill:
+    case AppleVisualEffect::VibrancySecondaryFill:
+    case AppleVisualEffect::VibrancyTertiaryFill:
+    case AppleVisualEffect::VibrancySeparator:
+        return false;
+    }
+
+    ASSERT_NOT_REACHED();
+    return false;
+}
+#endif
 
 TextStream& operator<<(TextStream& ts, AppleVisualEffect effect)
 {
@@ -78,6 +137,11 @@ TextStream& operator<<(TextStream& ts, AppleVisualEffect effect)
     case AppleVisualEffect::BlurChromeMaterial:
         ts << "blur-material-chrome";
         break;
+#if HAVE(MATERIAL_HOSTING)
+    case AppleVisualEffect::HostedBlurMaterial:
+        ts << "hosted-blur-material";
+        break;
+#endif
     case AppleVisualEffect::VibrancyLabel:
         ts << "vibrancy-label";
         break;
@@ -103,6 +167,13 @@ TextStream& operator<<(TextStream& ts, AppleVisualEffect effect)
         ts << "vibrancy-separator";
         break;
     }
+    return ts;
+}
+
+TextStream& operator<<(TextStream& ts, AppleVisualEffectData effectData)
+{
+    ts.dumpProperty("effect", effectData.effect);
+    ts.dumpProperty("contextEffect", effectData.contextEffect);
     return ts;
 }
 

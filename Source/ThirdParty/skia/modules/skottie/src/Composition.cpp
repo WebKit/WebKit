@@ -8,7 +8,6 @@
 #include "modules/skottie/src/Composition.h"
 
 #include "include/core/SkString.h"
-#include "include/private/base/SkTPin.h"
 #include "include/private/base/SkTo.h"
 #include "modules/jsonreader/SkJSONReader.h"
 #include "modules/skottie/include/Skottie.h"
@@ -53,17 +52,8 @@ AnimationBuilder::ScopedAssetRef::ScopedAssetRef(const AnimationBuilder* abuilde
 CompositionBuilder::CompositionBuilder(const AnimationBuilder& abuilder,
                                        const SkSize& size,
                                        const skjson::ObjectValue& jcomp)
-    : fSize(size) {
-
-    // Optional motion blur params.
-    if (const skjson::ObjectValue* jmb = jcomp["mb"]) {
-        static constexpr size_t kMaxSamplesPerFrame = 64;
-        fMotionBlurSamples = std::min(ParseDefault<size_t>((*jmb)["spf"], 1ul),
-                                      kMaxSamplesPerFrame);
-        fMotionBlurAngle = SkTPin(ParseDefault((*jmb)["sa"], 0.0f),    0.0f, 720.0f);
-        fMotionBlurPhase = SkTPin(ParseDefault((*jmb)["sp"], 0.0f), -360.0f, 360.0f);
-    }
-
+    : fSize(size)
+{
     int camera_builder_index = -1;
 
     // Prepare layer builders.
@@ -116,6 +106,15 @@ LayerBuilder* CompositionBuilder::layerBuilder(int layer_index) {
     return nullptr;
 }
 
+sk_sp<sksg::RenderNode> CompositionBuilder::layerContent(const AnimationBuilder& abuilder,
+                                                         int layer_index) {
+    if (auto* lbuilder = this->layerBuilder(layer_index)) {
+        return lbuilder->getContentTree(abuilder, this);
+    }
+
+    return nullptr;
+}
+
 sk_sp<sksg::RenderNode> CompositionBuilder::build(const AnimationBuilder& abuilder) {
     // First pass - transitively attach layer transform chains.
     for (auto& lbuilder : fLayerBuilders) {
@@ -126,12 +125,12 @@ sk_sp<sksg::RenderNode> CompositionBuilder::build(const AnimationBuilder& abuild
     std::vector<sk_sp<sksg::RenderNode>> layers;
     layers.reserve(fLayerBuilders.size());
 
-    LayerBuilder* prev_layer = nullptr;
+    int prev_layer_index = -1;
     for (auto& lbuilder : fLayerBuilders) {
-        if (auto layer = lbuilder.buildRenderTree(abuilder, this, prev_layer)) {
+        if (auto layer = lbuilder.buildRenderTree(abuilder, this, prev_layer_index)) {
             layers.push_back(std::move(layer));
         }
-        prev_layer = &lbuilder;
+        prev_layer_index = lbuilder.index();
     }
 
     if (layers.empty()) {

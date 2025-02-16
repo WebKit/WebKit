@@ -39,28 +39,27 @@ struct GMarkupParseContextUserData {
 static void markupStartElement(GMarkupParseContext*, const gchar* elementName, const gchar**, const gchar**, gpointer userDataPtr, GError**)
 {
     GMarkupParseContextUserData* userData = static_cast<GMarkupParseContextUserData*>(userDataPtr);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    if (g_str_has_suffix(elementName, "pssh"))
+    auto nameView = StringView::fromLatin1(elementName);
+    if (nameView.endsWith("pssh"_s))
         userData->isParsingPssh = true;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 static void markupEndElement(GMarkupParseContext*, const gchar* elementName, gpointer userDataPtr, GError**)
 {
     GMarkupParseContextUserData* userData = static_cast<GMarkupParseContextUserData*>(userDataPtr);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    if (g_str_has_suffix(elementName, "pssh")) {
+    auto nameView = StringView::fromLatin1(elementName);
+    if (nameView.endsWith("pssh"_s)) {
         ASSERT(userData->isParsingPssh);
         userData->isParsingPssh = false;
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 static void markupText(GMarkupParseContext*, const gchar* text, gsize textLength, gpointer userDataPtr, GError**)
 {
     GMarkupParseContextUserData* userData = static_cast<GMarkupParseContextUserData*>(userDataPtr);
     if (userData->isParsingPssh) {
-        auto pssh = base64Decode({ reinterpret_cast<const uint8_t*>(text), textLength });
+        auto data = unsafeMakeSpan(reinterpret_cast<const uint8_t*>(text), textLength);
+        auto pssh = base64Decode(data);
         if (pssh.has_value())
             userData->pssh = SharedBuffer::create(WTFMove(*pssh));
     }

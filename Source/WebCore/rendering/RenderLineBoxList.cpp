@@ -80,41 +80,6 @@ void RenderLineBoxList::deleteLineBoxTree()
     m_firstLineBox = m_lastLineBox = nullptr;
 }
 
-void RenderLineBoxList::extractLineBox(LegacyInlineFlowBox* box)
-{
-    checkConsistency();
-    
-    m_lastLineBox = box->prevLineBox();
-    if (box == m_firstLineBox)
-        m_firstLineBox = 0;
-    if (box->prevLineBox())
-        box->prevLineBox()->setNextLineBox(nullptr);
-    box->setPreviousLineBox(nullptr);
-    for (auto* curr = box; curr; curr = curr->nextLineBox())
-        curr->setExtracted();
-
-    checkConsistency();
-}
-
-void RenderLineBoxList::attachLineBox(LegacyInlineFlowBox* box)
-{
-    checkConsistency();
-
-    if (m_lastLineBox) {
-        m_lastLineBox->setNextLineBox(box);
-        box->setPreviousLineBox(m_lastLineBox);
-    } else
-        m_firstLineBox = box;
-    LegacyInlineFlowBox* last = box;
-    for (auto* curr = box; curr; curr = curr->nextLineBox()) {
-        curr->setExtracted(false);
-        last = curr;
-    }
-    m_lastLineBox = last;
-
-    checkConsistency();
-}
-
 void RenderLineBoxList::removeLineBox(LegacyInlineFlowBox* box)
 {
     checkConsistency();

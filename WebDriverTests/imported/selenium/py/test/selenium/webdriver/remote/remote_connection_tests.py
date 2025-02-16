@@ -15,11 +15,13 @@
 # specific language governing permissions and limitations
 # under the License.
 import base64
-import imghdr
+
+import filetype
 
 
 def test_browser_specific_method(driver, pages):
     pages.load("simpleTest.html")
     screenshot = driver.execute("FULL_PAGE_SCREENSHOT")["value"]
     result = base64.b64decode(screenshot)
-    assert imghdr.what("", result) == "png"
+    kind = filetype.guess(result)
+    assert kind is not None and kind.mime == "image/png"

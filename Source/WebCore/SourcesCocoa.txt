@@ -301,6 +301,7 @@ platform/cocoa/CoreLocationGeolocationProvider.mm
 platform/cocoa/CoreVideoSoftLink.cpp
 platform/cocoa/DragDataCocoa.mm
 platform/cocoa/DragImageCocoa.mm
+platform/cocoa/EffectiveRateChangedListener.mm
 platform/cocoa/FileMonitorCocoa.mm
 platform/cocoa/KeyEventCocoa.mm
 platform/cocoa/LocalizedStringsCocoa.mm
@@ -330,6 +331,7 @@ platform/cocoa/ThemeCocoa.mm
 platform/cocoa/ThermalMitigationNotifier.mm
 platform/cocoa/UserAgentCocoa.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm
+platform/cocoa/VideoPresentationLayerProvider.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm
@@ -448,8 +450,10 @@ platform/graphics/cocoa/FontFamilySpecificationCoreText.cpp
 platform/graphics/cocoa/FontFamilySpecificationCoreTextCache.cpp
 platform/graphics/cocoa/FontPlatformDataCocoa.mm
 platform/graphics/cocoa/GraphicsContextCocoa.mm
+platform/graphics/cocoa/H264UtilitiesCocoa.mm
 platform/graphics/cocoa/HEVCUtilitiesCocoa.mm
 platform/graphics/cocoa/IOSurface.mm
+platform/graphics/cocoa/IOSurfaceDrawingBuffer.cpp
 platform/graphics/cocoa/IOSurfacePoolCocoa.mm
 platform/graphics/cocoa/IconCocoa.mm
 platform/graphics/cocoa/IntRectCocoa.mm

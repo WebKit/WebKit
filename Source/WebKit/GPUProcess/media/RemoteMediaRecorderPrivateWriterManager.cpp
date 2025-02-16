@@ -114,30 +114,38 @@ void RemoteMediaRecorderPrivateWriterManager::create(RemoteMediaRecorderPrivateW
 {
     ASSERT(!m_remoteMediaRecorderPrivateWriters.contains(identifier));
 
-    m_remoteMediaRecorderPrivateWriters.add(identifier, RemoteMediaRecorderPrivateWriterProxy::create(mimeType));
+    m_remoteMediaRecorderPrivateWriters.add(identifier, Writer { RemoteMediaRecorderPrivateWriterProxy::create(mimeType) });
 }
 
 void RemoteMediaRecorderPrivateWriterManager::addAudioTrack(RemoteMediaRecorderPrivateWriterIdentifier identifier, RemoteAudioInfo info, CompletionHandler<void(std::optional<uint8_t>)>&& completionHandler)
 {
     ASSERT(m_remoteMediaRecorderPrivateWriters.contains(identifier));
+    auto iterator = m_remoteMediaRecorderPrivateWriters.find(identifier);
+    if (iterator == m_remoteMediaRecorderPrivateWriters.end())
+        return;
 
-    m_audioInfo = info.toAudioInfo();
-    RefPtr writer = m_remoteMediaRecorderPrivateWriters.get(identifier);
-    auto result = writer->addAudioTrack(Ref { *m_audioInfo });
+    Ref audioInfo = info.toAudioInfo();
+    iterator->value.audioInfo = audioInfo.ptr();
+    RefPtr writer = iterator->value.proxy;
+    auto result = writer->addAudioTrack(audioInfo.get());
     if (result)
-        m_audioInfo->trackID = *result;
+        audioInfo->trackID = *result;
     completionHandler(result);
 }
 
 void RemoteMediaRecorderPrivateWriterManager::addVideoTrack(RemoteMediaRecorderPrivateWriterIdentifier identifier, RemoteVideoInfo info, std::optional<CGAffineTransform> transform, CompletionHandler<void(std::optional<uint8_t>)>&& completionHandler)
 {
     ASSERT(m_remoteMediaRecorderPrivateWriters.contains(identifier));
+    auto iterator = m_remoteMediaRecorderPrivateWriters.find(identifier);
+    if (iterator == m_remoteMediaRecorderPrivateWriters.end())
+        return;
 
-    m_videoInfo = info.toVideoInfo();
-    RefPtr writer = m_remoteMediaRecorderPrivateWriters.get(identifier);
-    auto result = writer->addVideoTrack(Ref { *m_videoInfo }, transform);
+    Ref videoInfo = info.toVideoInfo();
+    iterator->value.videoInfo = videoInfo.ptr();
+    RefPtr writer = iterator->value.proxy;
+    auto result = writer->addVideoTrack(videoInfo.get(), transform);
     if (result)
-        m_videoInfo->trackID = *result;
+        videoInfo->trackID = *result;
     completionHandler(result);
 }
 
@@ -145,19 +153,25 @@ void RemoteMediaRecorderPrivateWriterManager::allTracksAdded(RemoteMediaRecorder
 {
     ASSERT(m_remoteMediaRecorderPrivateWriters.contains(identifier));
 
-    RefPtr writer = m_remoteMediaRecorderPrivateWriters.get(identifier);
-    completionHandler(writer->allTracksAdded());
+    RefPtr writer = m_remoteMediaRecorderPrivateWriters.get(identifier).proxy;
+    completionHandler(writer ? writer->allTracksAdded() : false);
 }
 
 void RemoteMediaRecorderPrivateWriterManager::writeFrames(RemoteMediaRecorderPrivateWriterIdentifier identifier, Vector<BlockPair>&& vectorSamples, const MediaTime& endTime, CompletionHandler<void(Expected<Ref<WebCore::SharedBuffer>, WebCore::MediaRecorderPrivateWriter::Result>)>&& completionHandler)
 {
     ASSERT(m_remoteMediaRecorderPrivateWriters.contains(identifier));
+    auto iterator = m_remoteMediaRecorderPrivateWriters.find(identifier);
+    if (iterator == m_remoteMediaRecorderPrivateWriters.end())
+        return;
+
+    RefPtr audioInfo = iterator->value.audioInfo;
+    RefPtr videoInfo = iterator->value.videoInfo;
 
     Deque<UniqueRef<MediaSamplesBlock>> samples;
     for (auto& sample : vectorSamples)
-        samples.append(makeUniqueRef<MediaSamplesBlock>(sample.first == TrackInfo::TrackType::Audio ? m_audioInfo.get() : static_cast<TrackInfo*>(m_videoInfo.get()), WTFMove(sample.second)));
+        samples.append(makeUniqueRef<MediaSamplesBlock>(sample.first == TrackInfo::TrackType::Audio ? audioInfo.get() : static_cast<TrackInfo*>(videoInfo.get()), WTFMove(sample.second)));
 
-    RefPtr writer = m_remoteMediaRecorderPrivateWriters.get(identifier);
+    RefPtr writer = m_remoteMediaRecorderPrivateWriters.get(identifier).proxy;
     writer->writeFrames(WTFMove(samples), endTime)->whenSettled(RunLoop::protectedMain(), [writer, completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
         if (!result) {
             completionHandler(makeUnexpected(result.error()));
@@ -175,7 +189,7 @@ void RemoteMediaRecorderPrivateWriterManager::close(RemoteMediaRecorderPrivateWr
         return;
     }
 
-    RefPtr writer = m_remoteMediaRecorderPrivateWriters.take(identifier);
+    RefPtr writer = m_remoteMediaRecorderPrivateWriters.take(identifier).proxy;
     writer->close()->whenSettled(RunLoop::protectedMain(), [writer, completionHandler = WTFMove(completionHandler)]() mutable {
         completionHandler(writer->takeData());
     });

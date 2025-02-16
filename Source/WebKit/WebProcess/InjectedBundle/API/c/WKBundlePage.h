@@ -31,7 +31,6 @@
 #include <WebKit/WKBundlePageContextMenuClient.h>
 #include <WebKit/WKBundlePageEditorClient.h>
 #include <WebKit/WKBundlePageFormClient.h>
-#include <WebKit/WKBundlePageFullScreenClient.h>
 #include <WebKit/WKBundlePageLoaderClient.h>
 #include <WebKit/WKBundlePagePolicyClient.h>
 #include <WebKit/WKBundlePageResourceLoadClient.h>
@@ -50,11 +49,6 @@
 extern "C" {
 #endif
 
-WK_EXPORT void WKBundlePageWillEnterFullScreen(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageDidEnterFullScreen(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageWillExitFullScreen(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageDidExitFullScreen(WKBundlePageRef page);
-
 WK_EXPORT WKTypeID WKBundlePageGetTypeID();
 
 WK_EXPORT void WKBundlePageSetContextMenuClient(WKBundlePageRef page, WKBundlePageContextMenuClientBase* client);
@@ -64,7 +58,6 @@ WK_EXPORT void WKBundlePageSetPageLoaderClient(WKBundlePageRef page, WKBundlePag
 WK_EXPORT void WKBundlePageSetResourceLoadClient(WKBundlePageRef page, WKBundlePageResourceLoadClientBase* client);
 WK_EXPORT void WKBundlePageSetPolicyClient(WKBundlePageRef page, WKBundlePagePolicyClientBase* client) WK_C_API_DEPRECATED;
 WK_EXPORT void WKBundlePageSetUIClient(WKBundlePageRef page, WKBundlePageUIClientBase* client);
-WK_EXPORT void WKBundlePageSetFullScreenClient(WKBundlePageRef page, WKBundlePageFullScreenClientBase* client);
 
 WK_EXPORT WKBundleFrameRef WKBundlePageGetMainFrame(WKBundlePageRef page) WK_C_API_DEPRECATED_WITH_MESSAGE("With site isolation, the main frame is not necessarily local to the current bundle process.");
 WK_EXPORT WKFrameHandleRef WKBundleFrameCreateFrameHandle(WKBundleFrameRef);
@@ -106,7 +99,6 @@ WK_EXPORT double WKBundlePageGetBackingScaleFactor(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageListenForLayoutMilestones(WKBundlePageRef page, WKLayoutMilestones milestones);
 
-WK_EXPORT void WKBundlePageShowInspectorForTest(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageCloseInspectorForTest(WKBundlePageRef page);
 WK_EXPORT void WKBundlePageEvaluateScriptInInspectorForTest(WKBundlePageRef page, WKStringRef script);
 

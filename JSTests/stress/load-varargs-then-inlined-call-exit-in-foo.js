@@ -36,7 +36,7 @@ var array = [];
 array.push(42);
 array.push(42.5);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     for (var j = 0; j < i % 6; ++j)
         array.push(j);

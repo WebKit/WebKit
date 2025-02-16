@@ -62,13 +62,13 @@ namespace WebKit {
 
 class WebPageProxy;
 class WebProcessProxy;
-enum class DMABufRendererBufferMode : uint8_t;
+enum class RendererBufferTransportMode : uint8_t;
 
 class AcceleratedBackingStoreDMABuf final : public AcceleratedBackingStore, public IPC::MessageReceiver, public RefCounted<AcceleratedBackingStoreDMABuf> {
     WTF_MAKE_TZONE_ALLOCATED(AcceleratedBackingStoreDMABuf);
     WTF_MAKE_NONCOPYABLE(AcceleratedBackingStoreDMABuf);
 public:
-    static OptionSet<DMABufRendererBufferMode> rendererBufferMode();
+    static OptionSet<RendererBufferTransportMode> rendererBufferTransportMode();
     static bool checkRequirements();
 #if USE(GBM)
     static Vector<DMABufRendererBufferFormat> preferredBufferFormats();

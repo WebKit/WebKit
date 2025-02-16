@@ -11,6 +11,7 @@
 #define ANGLE_DEQP_LIBTESTER_H_
 
 #include <stdint.h>
+#include "tcuANGLEPlatform.h"
 
 #if defined(_WIN32)
 #    if defined(ANGLE_DEQP_LIBTESTER_IMPLEMENTATION)
@@ -41,6 +42,7 @@ struct dEQPOptions
 {
     uint32_t preRotation;
     bool enableRenderDocCapture;
+    dEQPDriverOption driverOption{dEQPDriverOption::ANGLE};
 };
 
 // Exported to the tester app.

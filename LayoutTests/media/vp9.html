@@ -14,7 +14,7 @@ test(() => {
 }, "HTMLMediaElement.canPlay VP9");
 
 promise_test(async() => {
-    if (window.internals && !window.internals.usingGStreamer() && !window.internals.usingAppleInternalSDK())
+    if (window.internals && !window.internals.usingAppleInternalSDK())
         return;
     await video.play();
     assert_equals(video.videoWidth, 640);

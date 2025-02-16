@@ -291,7 +291,7 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
     auto setBits = [&] (bool isEmpty) ALWAYS_INLINE_LAMBDA {
         Locker locker { m_directory->bitvectorLock() };
         m_directory->setIsUnswept(this, false);
-        m_directory->setIsDestructible(this, false);
+        m_directory->setIsDestructible(this, m_attributes.destruction == DestructionMode::MayNeedDestruction && destructionMode != BlockHasNoDestructors && !isEmpty && m_directory->isDestructible(this));
         m_directory->setIsEmpty(this, false);
         if (sweepMode == SweepToFreeList)
             m_isFreeListed = true;
@@ -516,7 +516,7 @@ void MarkedBlock::Handle::finishSweepKnowingHeapCellType(FreeList* freeList, con
 
 inline MarkedBlock::Handle::SweepDestructionMode MarkedBlock::Handle::sweepDestructionMode()
 {
-    if (m_attributes.destruction == NeedsDestruction) {
+    if (m_attributes.destruction != DoesNotNeedDestruction) {
         if (space()->isMarking())
             return BlockHasDestructorsAndCollectorIsRunning;
         return BlockHasDestructors;
@@ -528,6 +528,13 @@ inline bool MarkedBlock::Handle::isEmpty()
 {
     m_directory->assertIsMutatorOrMutatorIsStopped();
     return m_directory->isEmpty(this);
+}
+
+inline void MarkedBlock::Handle::setIsDestructible(bool value)
+{
+    Locker locker { m_directory->bitvectorLock() };
+    m_directory->assertIsMutatorOrMutatorIsStopped();
+    return m_directory->setIsDestructible(this, value);
 }
 
 inline MarkedBlock::Handle::EmptyMode MarkedBlock::Handle::emptyMode()

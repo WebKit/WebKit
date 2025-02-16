@@ -7,7 +7,7 @@ function bar(f) {
 }
 
 let array = [20];
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     bar(() => {
         return doIndexOf(array.concat());
     });

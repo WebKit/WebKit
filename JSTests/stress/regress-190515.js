@@ -15,7 +15,7 @@ noInline(getImmutableArrayOrSet);
 function test() {
     getImmutableArrayOrSet(true);
 
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < testLoopCount; i++)
         getImmutableArrayOrSet(false);
 
     let arr = getImmutableArrayOrSet(true);

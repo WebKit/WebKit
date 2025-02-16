@@ -201,6 +201,7 @@ template<typename CharacterType> static std::optional<LinkHeader::LinkParameterN
 //                     position               end
 template<typename CharacterType> static bool skipQuotesIfNeeded(StringParsingBuffer<CharacterType>& buffer, bool& completeQuotes)
 {
+    auto startSpan = buffer.span();
     unsigned char quote;
     if (skipExactly(buffer, '\''))
         quote = '\'';
@@ -211,10 +212,8 @@ template<typename CharacterType> static bool skipQuotesIfNeeded(StringParsingBuf
 
     while (!completeQuotes && buffer.hasCharactersRemaining()) {
         skipUntil(buffer, static_cast<CharacterType>(quote));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        if (*(buffer.position() - 1) != '\\')
+        if (startSpan[buffer.position() - startSpan.data() - 1] != '\\')
             completeQuotes = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         completeQuotes = skipExactly(buffer, static_cast<CharacterType>(quote)) && completeQuotes;
     }
     return true;
@@ -231,30 +230,32 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 // <cat.jpg>; rel=preload; foo=bar
 //                       ^        ^
 //                   position     end
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template<typename CharacterType> static bool parseParameterValue(StringParsingBuffer<CharacterType>& buffer, String& value)
 {
-    auto valueStart = buffer.position();
-    auto valueEnd = buffer.position();
+    auto valueStart = buffer.span();
+    size_t valueLength = 0;
     bool completeQuotes = false;
     bool hasQuotes = skipQuotesIfNeeded(buffer, completeQuotes);
     if (!hasQuotes)
         skipWhile<isParameterValueChar>(buffer);
-    valueEnd = buffer.position();
+    valueLength = buffer.position() - valueStart.data();
     skipWhile<isTabOrSpace>(buffer);
-    if ((!completeQuotes && valueStart == valueEnd) || (!buffer.atEnd() && !isParameterValueEnd(*buffer))) {
+    if ((!completeQuotes && !valueLength) || (!buffer.atEnd() && !isParameterValueEnd(*buffer))) {
         value = emptyString();
         return false;
     }
-    if (hasQuotes)
-        ++valueStart;
-    if (completeQuotes)
-        --valueEnd;
-    ASSERT(valueEnd >= valueStart);
-    value = String({ valueStart, valueEnd });
+    if (hasQuotes) {
+        skip(valueStart, 1);
+        ASSERT(valueLength);
+        --valueLength;
+    }
+    if (completeQuotes) {
+        ASSERT(valueLength);
+        --valueLength;
+    }
+    value = String(valueStart.first(valueLength));
     return !hasQuotes || completeQuotes;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void LinkHeader::setValue(LinkParameterName name, String&& value)
 {
@@ -291,7 +292,7 @@ void LinkHeader::setValue(LinkParameterName name, String&& value)
         m_referrerPolicy = WTFMove(value);
         break;
     case LinkParameterFetchPriority:
-        m_fetchPriorityHint = WTFMove(value);
+        m_fetchPriority = WTFMove(value);
         break;
     case LinkParameterTitle:
     case LinkParameterRev:

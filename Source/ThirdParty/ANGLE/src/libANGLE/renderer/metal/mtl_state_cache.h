@@ -258,7 +258,7 @@ struct alignas(4) RenderPipelineDesc
     size_t hash() const;
     bool rasterizationEnabled() const;
 
-    AutoObjCPtr<MTLRenderPipelineDescriptor *> createMetalDesc(
+    angle::ObjCPtr<MTLRenderPipelineDescriptor> createMetalDesc(
         id<MTLFunction> vertexShader,
         id<MTLFunction> fragmentShader) const;
 
@@ -447,23 +447,23 @@ class StateCache final : angle::NonCopyable
     ~StateCache();
 
     // Null depth stencil state has depth/stecil read & write disabled.
-    AutoObjCPtr<id<MTLDepthStencilState>> getNullDepthStencilState(
+    angle::ObjCPtr<id<MTLDepthStencilState>> getNullDepthStencilState(
         const mtl::ContextDevice &device);
-    AutoObjCPtr<id<MTLDepthStencilState>> getDepthStencilState(const mtl::ContextDevice &device,
-                                                               const DepthStencilDesc &desc);
-    AutoObjCPtr<id<MTLSamplerState>> getSamplerState(const mtl::ContextDevice &device,
-                                                     const SamplerDesc &desc);
+    angle::ObjCPtr<id<MTLDepthStencilState>> getDepthStencilState(const mtl::ContextDevice &device,
+                                                                  const DepthStencilDesc &desc);
+    angle::ObjCPtr<id<MTLSamplerState>> getSamplerState(const mtl::ContextDevice &device,
+                                                        const SamplerDesc &desc);
     // Null sampler state uses default SamplerDesc
-    AutoObjCPtr<id<MTLSamplerState>> getNullSamplerState(ContextMtl *context);
-    AutoObjCPtr<id<MTLSamplerState>> getNullSamplerState(const mtl::ContextDevice &device);
+    angle::ObjCPtr<id<MTLSamplerState>> getNullSamplerState(ContextMtl *context);
+    angle::ObjCPtr<id<MTLSamplerState>> getNullSamplerState(const mtl::ContextDevice &device);
     void clear();
 
   private:
     const angle::FeaturesMtl &mFeatures;
 
-    AutoObjCPtr<id<MTLDepthStencilState>> mNullDepthStencilState = nil;
-    angle::HashMap<DepthStencilDesc, AutoObjCPtr<id<MTLDepthStencilState>>> mDepthStencilStates;
-    angle::HashMap<SamplerDesc, AutoObjCPtr<id<MTLSamplerState>>> mSamplerStates;
+    angle::ObjCPtr<id<MTLDepthStencilState>> mNullDepthStencilState = nil;
+    angle::HashMap<DepthStencilDesc, angle::ObjCPtr<id<MTLDepthStencilState>>> mDepthStencilStates;
+    angle::HashMap<SamplerDesc, angle::ObjCPtr<id<MTLSamplerState>>> mSamplerStates;
 };
 
 }  // namespace mtl

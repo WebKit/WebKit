@@ -76,7 +76,7 @@ static bool hasInlineRun(RenderObject& renderer)
 {
     if (auto* renderBox = dynamicDowncast<RenderBox>(renderer); renderBox && InlineIterator::boxFor(*renderBox))
         return true;
-    if (auto* renderText = dynamicDowncast<RenderText>(renderer); renderText && InlineIterator::firstTextBoxFor(*renderText))
+    if (auto* renderText = dynamicDowncast<RenderText>(renderer); renderText && InlineIterator::lineLeftmostTextBoxFor(*renderText))
         return true;
     if (auto* renderLineBreak = dynamicDowncast<RenderLineBreak>(renderer); renderLineBreak && InlineIterator::boxFor(*renderLineBreak))
         return true;
@@ -1213,7 +1213,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
         if (!caretOffset)
             box = InlineIterator::boxFor(*lineBreakRenderer);
     } else if (CheckedPtr textRenderer = dynamicDowncast<RenderText>(*renderer)) {
-        auto textBox = InlineIterator::firstTextBoxFor(*textRenderer);
+        auto textBox = InlineIterator::lineLeftmostTextBoxFor(*textRenderer);
         InlineIterator::TextBoxIterator candidate;
 
         for (; textBox; ++textBox) {
@@ -1233,7 +1233,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
                 break;
 
             if (caretOffset == caretMaxOffset) {
-                auto nextOnLine = textBox->nextOnLine();
+                auto nextOnLine = textBox->nextLineRightwardOnLine();
                 if (nextOnLine && nextOnLine->isLineBreak())
                     break;
             }
@@ -1281,14 +1281,14 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
 
     if (box->direction() == primaryDirection) {
         if (caretOffset == box->rightmostCaretOffset()) {
-            auto nextBox = box->nextOnLine();
+            auto nextBox = box->nextLineRightwardOnLine();
             if (!nextBox || nextBox->bidiLevel() >= level)
                 return { box, caretOffset };
 
             level = nextBox->bidiLevel();
 
-            auto previousRun = box->previousOnLine();
-            for (; previousRun; previousRun.traversePreviousOnLine()) {
+            auto previousRun = box->nextLineLeftwardOnLine();
+            for (; previousRun; previousRun.traverseLineLeftwardOnLine()) {
                 if (previousRun->bidiLevel() <= level)
                     break;
             }
@@ -1297,21 +1297,21 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
                 return { box, caretOffset };
 
             // For example, abc 123 ^ CBA
-            for (; nextBox; nextBox.traverseNextOnLine()) {
+            for (; nextBox; nextBox.traverseLineRightwardOnLine()) {
                 if (nextBox->bidiLevel() < level)
                     break;
                 box = nextBox;
             }
             caretOffset = box->rightmostCaretOffset();
         } else {
-            auto previousRun = box->previousOnLine();
+            auto previousRun = box->nextLineLeftwardOnLine();
             if (!previousRun || previousRun->bidiLevel() >= level)
                 return { box, caretOffset };
 
             level = previousRun->bidiLevel();
 
-            auto nextBox = box->nextOnLine();
-            for (; nextBox; nextBox.traverseNextOnLine()) {
+            auto nextBox = box->nextLineRightwardOnLine();
+            for (; nextBox; nextBox.traverseLineRightwardOnLine()) {
                 if (nextBox->bidiLevel() <= level)
                     break;
             }
@@ -1319,7 +1319,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
             if (nextBox && nextBox->bidiLevel() == level)
                 return { box, caretOffset };
 
-            for (; previousRun; previousRun.traversePreviousOnLine()) {
+            for (; previousRun; previousRun.traverseLineLeftwardOnLine()) {
                 if (previousRun->bidiLevel() < level)
                     break;
                 box = previousRun;
@@ -1331,10 +1331,10 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
     }
 
     if (caretOffset == box->leftmostCaretOffset()) {
-        auto previousRun = box->previousOnLineIgnoringLineBreak();
+        auto previousRun = box->nextLineLeftwardOnLineIgnoringLineBreak();
         if (!previousRun || previousRun->bidiLevel() < level) {
             // Left edge of a secondary box. Set to the right edge of the entire box.
-            for (auto nextBox = box->nextOnLineIgnoringLineBreak(); nextBox; nextBox.traverseNextOnLineIgnoringLineBreak()) {
+            for (auto nextBox = box->nextLineRightwardOnLineIgnoringLineBreak(); nextBox; nextBox.traverseLineRightwardOnLineIgnoringLineBreak()) {
                 if (nextBox->bidiLevel() < level)
                     break;
                 box = nextBox;
@@ -1342,7 +1342,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
             caretOffset = box->rightmostCaretOffset();
         } else if (previousRun->bidiLevel() > level) {
             // Right edge of a "tertiary" box. Set to the left edge of that box.
-            for (auto tertiaryRun = box->previousOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traversePreviousOnLineIgnoringLineBreak()) {
+            for (auto tertiaryRun = box->nextLineLeftwardOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traverseLineLeftwardOnLineIgnoringLineBreak()) {
                 if (tertiaryRun->bidiLevel() <= level)
                     break;
                 box = tertiaryRun;
@@ -1350,10 +1350,10 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
             caretOffset = box->leftmostCaretOffset();
         }
     } else {
-        auto nextBox = box->nextOnLineIgnoringLineBreak();
+        auto nextBox = box->nextLineRightwardOnLineIgnoringLineBreak();
         if (!nextBox || nextBox->bidiLevel() < level) {
             // Right edge of a secondary box. Set to the left edge of the entire box.
-            for (auto previousRun = box->previousOnLineIgnoringLineBreak(); previousRun; previousRun.traversePreviousOnLineIgnoringLineBreak()) {
+            for (auto previousRun = box->nextLineLeftwardOnLineIgnoringLineBreak(); previousRun; previousRun.traverseLineLeftwardOnLineIgnoringLineBreak()) {
                 if (previousRun->bidiLevel() < level)
                     break;
                 box = previousRun;
@@ -1361,7 +1361,7 @@ InlineBoxAndOffset Position::inlineBoxAndOffset(Affinity affinity, TextDirection
             caretOffset = box->leftmostCaretOffset();
         } else if (nextBox->bidiLevel() > level) {
             // Left edge of a "tertiary" box. Set to the right edge of that box.
-            for (auto tertiaryRun = box->nextOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traverseNextOnLineIgnoringLineBreak()) {
+            for (auto tertiaryRun = box->nextLineRightwardOnLineIgnoringLineBreak(); tertiaryRun; tertiaryRun.traverseLineRightwardOnLineIgnoringLineBreak()) {
                 if (tertiaryRun->bidiLevel() <= level)
                     break;
                 box = tertiaryRun;
@@ -1384,12 +1384,14 @@ TextDirection Position::primaryDirection() const
 
 #if ENABLE(TREE_DEBUGGING)
 
-void Position::debugPosition(const char* msg) const
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+void Position::debugPosition(ASCIILiteral msg) const
 {
     if (isNull())
-        fprintf(stderr, "Position [%s]: null\n", msg);
+        SAFE_FPRINTF(stderr, "Position [%s]: null\n", msg);
     else
-        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8().data(), deprecatedNode(), m_offset);
+        SAFE_FPRINTF(stderr, "Position [%s]: %s [%p] at %d\n", msg, deprecatedNode()->nodeName().utf8(), deprecatedNode(), m_offset);
 }
 
 String Position::debugDescription() const
@@ -1422,6 +1424,8 @@ void Position::showAnchorTypeAndOffset() const
     }
     fprintf(stderr, ", offset:%d\n", m_offset);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void Position::showTreeForThis() const
 {

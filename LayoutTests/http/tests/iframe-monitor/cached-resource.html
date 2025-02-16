@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="./resources/monitor-setup.js"></script>
+</head>
+<body>
+<script>
+
+description("Cached huge resource is not handled as network usage.");
+window.jsTestIsAsync = true;
+var result;
+
+onload = async () => {
+    if (!await setup()) {
+        return;
+    }
+
+    // Make sure iframe load is done after rule is set correctly.
+    const stage = document.querySelector('#stage');
+    const base = '/iframe-monitor/resources';
+
+    // fetch the resource which can be in disk cache first.
+    await fetch(`${base}/generate-byte.py?size=20480&seed=cached-resource.html`);
+
+    // use same resource in the iframe.
+    stage.innerHTML = `
+        <iframe name="frame1" src="${base}/--eligible--/cached.html"></iframe>
+    `;
+
+    window.addEventListener('message', async (event) => {
+        await pause(100);
+        result = event.data;
+
+        shouldBe('result', '20480');
+        shouldBe(`document.querySelector('iframe[name=frame1]').srcdoc`, '""');
+        finishJSTest();
+    });
+}
+</script>
+
+<div id="stage"></div>
+</body>
+</html>

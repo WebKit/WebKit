@@ -22,8 +22,8 @@ class WindowSurfaceVkHeadless final : public WindowSurfaceVk
     ~WindowSurfaceVkHeadless() final;
 
   private:
-    angle::Result createSurfaceVk(vk::Context *context, gl::Extents *extentsOut) override;
-    angle::Result getCurrentWindowSize(vk::Context *context, gl::Extents *extentsOut) override;
+    angle::Result createSurfaceVk(vk::ErrorContext *context, gl::Extents *extentsOut) override;
+    angle::Result getCurrentWindowSize(vk::ErrorContext *context, gl::Extents *extentsOut) override;
 };
 
 }  // namespace rx

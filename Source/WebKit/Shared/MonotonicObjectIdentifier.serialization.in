@@ -37,7 +37,7 @@ header: "MonotonicObjectIdentifier.h"
 };
 
 header: "MonotonicObjectIdentifier.h"
-[Alias=class MonotonicObjectIdentifier<TransactionIDType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::TransactionID {
+[Alias=class MonotonicObjectIdentifier<TransactionIDType>, AdditionalEncoder=StreamConnectionEncoder, CustomHeader] alias WebKit::TransactionIdentifier {
     [Validator='WebKit::MonotonicObjectIdentifier<WebKit::TransactionIDType>::isValidIdentifier(*toUInt64)'] uint64_t toUInt64();
 };
 

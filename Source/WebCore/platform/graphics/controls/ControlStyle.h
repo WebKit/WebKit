@@ -36,24 +36,24 @@ namespace WebCore {
 
 struct ControlStyle {
     enum class State {
-        Hovered             = 1 << 0,
-        Pressed             = 1 << 1,
-        Focused             = 1 << 2,
-        Enabled             = 1 << 3,
-        Checked             = 1 << 4,
-        Default             = 1 << 5,
-        WindowActive        = 1 << 6,
-        Indeterminate       = 1 << 7,
-        SpinUp              = 1 << 8, // Sub-state for HoverState and PressedState.
-        Presenting          = 1 << 9,
-        FormSemanticContext = 1 << 10,
-        DarkAppearance      = 1 << 11,
-        RightToLeft         = 1 << 12,
-        LargeControls       = 1 << 13,
-        ReadOnly            = 1 << 14,
-        ListButton          = 1 << 15,
-        ListButtonPressed   = 1 << 16,
-        VerticalWritingMode = 1 << 17,
+        Hovered                  = 1 << 0,
+        Pressed                  = 1 << 1,
+        Focused                  = 1 << 2,
+        Enabled                  = 1 << 3,
+        Checked                  = 1 << 4,
+        Default                  = 1 << 5,
+        WindowActive             = 1 << 6,
+        Indeterminate            = 1 << 7,
+        SpinUp                   = 1 << 8, // Sub-state for HoverState and PressedState.
+        Presenting               = 1 << 9,
+        FormSemanticContext      = 1 << 10,
+        DarkAppearance           = 1 << 11,
+        InlineFlippedWritingMode = 1 << 12,
+        LargeControls            = 1 << 13,
+        ReadOnly                 = 1 << 14,
+        ListButton               = 1 << 15,
+        ListButtonPressed        = 1 << 16,
+        VerticalWritingMode      = 1 << 17,
     };
     OptionSet<State> states;
     float fontSize { 12 };

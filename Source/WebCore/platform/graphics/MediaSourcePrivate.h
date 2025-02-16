@@ -77,7 +77,7 @@ public:
     virtual void shutdown();
 
     virtual constexpr MediaPlatformType platformType() const = 0;
-    virtual AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) = 0;
+    virtual AddStatus addSourceBuffer(const ContentType&, RefPtr<SourceBufferPrivate>&) = 0;
     virtual void removeSourceBuffer(SourceBufferPrivate&);
     void sourceBufferPrivateDidChangeActiveState(SourceBufferPrivate&, bool active);
     virtual void notifyActiveSourceBuffersChanged() = 0;

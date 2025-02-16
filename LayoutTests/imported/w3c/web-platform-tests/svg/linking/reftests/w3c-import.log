@@ -40,6 +40,10 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/href-use-element.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-override-multiple-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/svgview-viewbox-override-multiple.html
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-001.sub-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-001.sub.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-002.sub-expected.svg
+/LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-fetch-properties-002.sub.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001-expected.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-001.svg
 /LayoutTests/imported/w3c/web-platform-tests/svg/linking/reftests/url-processing-whitespace-002-expected.svg

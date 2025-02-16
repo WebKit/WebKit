@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -106,7 +106,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 - (void)_synchronizeWebStoragePolicyWithCookiePolicy;
 #endif
 
-@property (nonatomic, getter=isDNSPrefetchingEnabled) BOOL DNSPrefetchingEnabled;
 @property (nonatomic) BOOL developerExtrasEnabled;
 @property (nonatomic) WebKitJavaScriptRuntimeFlags javaScriptRuntimeFlags;
 @property (nonatomic) BOOL authorAndUserStylesEnabled;
@@ -129,7 +128,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL asyncFrameScrollingEnabled;
 @property (nonatomic, getter=isSpatialNavigationEnabled) BOOL spatialNavigationEnabled;
 @property (nonatomic) BOOL mediaDevicesEnabled;
-@property (nonatomic) BOOL mediaStreamEnabled;
 @property (nonatomic) BOOL peerConnectionEnabled;
 @property (nonatomic) WebKitEditableLinkBehavior editableLinkBehavior;
 @property (nonatomic) WebTextDirectionSubmenuInclusionBehavior textDirectionSubmenuInclusionBehavior;
@@ -245,10 +243,6 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 
 @property (nonatomic) BOOL storageTrackerEnabled;
 @property (nonatomic) unsigned audioSessionCategoryOverride;
-// WARNING: this affect network performance. This must not be enabled for production use.
-// Enabling this makes WebCore reports the network data usage.
-// This is a global setting.
-@property (nonatomic) BOOL networkDataUsageTrackingEnabled;
 @property (nonatomic) NSString *networkInterfaceName;
 @property (nonatomic, setter=_setMinimumZoomFontSize:) float _minimumZoomFontSize;
 @property (nonatomic) BOOL mediaPlaybackAllowsAirPlay;
@@ -305,12 +299,12 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL privateClickMeasurementEnabled;
 @property (nonatomic) BOOL genericCueAPIEnabled;
 @property (nonatomic) BOOL coreMathMLEnabled;
-@property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 @property (nonatomic) BOOL remotePlaybackEnabled;
 @property (nonatomic) BOOL readableByteStreamAPIEnabled;
 @property (nonatomic) BOOL mediaRecorderEnabled;
 @property (nonatomic, setter=_setMediaRecorderEnabled:) BOOL _mediaRecorderEnabled;
 @property (nonatomic) BOOL contactPickerAPIEnabled;
+@property (nonatomic) BOOL digitalCredentialsEnabled;
 @property (nonatomic, setter=_setSpeechRecognitionEnabled:) BOOL _speechRecognitionEnabled;
 @property (nonatomic, setter=_setPitchCorrectionAlgorithm:) WebKitPitchCorrectionAlgorithm _pitchCorrectionAlgorithm;
 @end
@@ -320,6 +314,8 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 // The preferences in this category are deprecated and have no effect. They should
 // be removed when it is considered safe to do so.
 
+@property (nonatomic, getter=isDNSPrefetchingEnabled) BOOL DNSPrefetchingEnabled;
+@property (nonatomic) BOOL linkPreloadResponsiveImagesEnabled;
 @property (nonatomic) BOOL constantPropertiesEnabled;
 @property (nonatomic) BOOL maskWebGLStringsEnabled;
 @property (nonatomic) BOOL CSSCustomPropertiesAndValuesEnabled;
@@ -357,6 +353,11 @@ extern NSString *WebPreferencesCacheModelChangedInternalNotification WEBKIT_DEPR
 @property (nonatomic) BOOL offlineWebApplicationCacheEnabled;
 @property (nonatomic) int64_t applicationCacheTotalQuota;
 @property (nonatomic) int64_t applicationCacheDefaultOriginQuota;
+@property (nonatomic) BOOL mediaStreamEnabled;
+
+#if TARGET_OS_IPHONE
+@property (nonatomic) BOOL networkDataUsageTrackingEnabled;
+#endif
 
 - (void)setDiskImageCacheEnabled:(BOOL)enabled;
 

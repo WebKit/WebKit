@@ -53,6 +53,9 @@ option_parser.add_option('--display-server', choices=['xvfb', 'xorg', 'weston', 
                          help='"xvfb": Use a virtualized X11 server. "xorg": Use the current X11 session. '
                               '"weston": Use a virtualized Weston server. "wayland": Use the current wayland session.'
                               '"headless": Headless mode in current session')
+option_parser.add_option('--disable-webdriver-bidi', action='store_false',
+                         dest='enable_webdriver_bidi', default=True,
+                         help='Run Selenium tests with BiDi disabled')
 
 options, args = option_parser.parse_args()
 

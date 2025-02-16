@@ -272,13 +272,11 @@
     IMPL->setIndeterminate(newIndeterminate);
 }
 
-#if ENABLE(DATALIST_ELEMENT)
 - (DOMHTMLElement *)list
 {
     WebCore::JSMainThreadNullState state;
     return kit(WTF::getPtr(IMPL->list()));
 }
-#endif
 
 - (NSString *)max
 {

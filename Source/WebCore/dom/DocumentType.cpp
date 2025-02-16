@@ -45,9 +45,8 @@ String DocumentType::nodeName() const
     return name();
 }
 
-Ref<Node> DocumentType::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
+Ref<Node> DocumentType::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
 {
-    Ref document = treeScope.documentScope();
     return create(document, m_name, m_publicId, m_systemId);
 }
 

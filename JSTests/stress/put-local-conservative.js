@@ -39,7 +39,7 @@ function bar(o, y) {
 
 var o = {f: 42};
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar(o, i)(true, false);
     if (result != 42 + 11 * i + 55)
         throw "Error: bad result: " + result;

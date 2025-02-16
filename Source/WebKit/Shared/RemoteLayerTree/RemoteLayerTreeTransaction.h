@@ -33,6 +33,7 @@
 #include "RemoteLayerBackingStore.h"
 #include "TransactionID.h"
 #include <WebCore/Color.h>
+#include <WebCore/FixedContainerEdges.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatSize.h>
 #include <WebCore/HTMLMediaElementIdentifier.h>
@@ -128,7 +129,7 @@ public:
 #endif
     };
 
-    explicit RemoteLayerTreeTransaction();
+    explicit RemoteLayerTreeTransaction(TransactionID);
     ~RemoteLayerTreeTransaction();
     RemoteLayerTreeTransaction(RemoteLayerTreeTransaction&&);
     RemoteLayerTreeTransaction& operator=(RemoteLayerTreeTransaction&&);
@@ -232,7 +233,6 @@ public:
     void setAvoidsUnsafeArea(bool avoidsUnsafeArea) { m_avoidsUnsafeArea = avoidsUnsafeArea; }
 
     TransactionID transactionID() const { return m_transactionID; }
-    void setTransactionID(TransactionID transactionID) { m_transactionID = transactionID; }
 
     ActivityStateChangeID activityStateChangeID() const { return m_activityStateChangeID; }
     void setActivityStateChangeID(ActivityStateChangeID activityStateChangeID) { m_activityStateChangeID = activityStateChangeID; }
@@ -258,8 +258,14 @@ public:
     void setAcceleratedTimelineTimeOrigin(Seconds timeOrigin) { m_acceleratedTimelineTimeOrigin = timeOrigin; }
 #endif
 
+    const WebCore::FixedContainerEdges& fixedContainerEdges() const { return m_fixedContainerEdges; }
+    void setFixedContainerEdges(WebCore::FixedContainerEdges&& edges) { m_fixedContainerEdges = WTFMove(edges); }
+
 private:
     friend struct IPC::ArgumentCoder<RemoteLayerTreeTransaction, void>;
+
+    // Do not use, IPC constructor only
+    explicit RemoteLayerTreeTransaction();
 
     Markable<WebCore::PlatformLayerIdentifier> m_rootLayerID;
     ChangedLayers m_changedLayers;
@@ -282,6 +288,7 @@ private:
     WebCore::Color m_themeColor;
     WebCore::Color m_pageExtendedBackgroundColor;
     WebCore::Color m_sampledPageTopColor;
+    WebCore::FixedContainerEdges m_fixedContainerEdges;
 
 #if PLATFORM(MAC)
     Markable<WebCore::PlatformLayerIdentifier> m_pageScalingLayerID; // Only used for non-delegated scaling.

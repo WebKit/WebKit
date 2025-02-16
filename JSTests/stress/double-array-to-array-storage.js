@@ -28,6 +28,6 @@ function test()
     assert(arr.length === 2, "Length should be 2, but is " + arr.length);
 }
 
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     test();
 

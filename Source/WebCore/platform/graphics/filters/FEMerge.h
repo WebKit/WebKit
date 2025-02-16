@@ -26,7 +26,9 @@
 
 namespace WebCore {
 
-class FEMerge : public FilterEffect {
+class FEMerge final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEMerge);
 public:
     WEBCORE_EXPORT static Ref<FEMerge> create(unsigned numberOfEffectInputs, DestinationColorSpace = DestinationColorSpace::SRGB());
 

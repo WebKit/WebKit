@@ -10,9 +10,9 @@ function foo() {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     foo();
 
 Object.defineProperty(Object.prototype, "7", {get() { return 500; }, set(x) { }}); // this shouldn't change the test at all, it should be doing defineOwnProperty.
-for (let i = 0; i < 10000; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     foo();

@@ -20,7 +20,7 @@ function test1(map)
 noInline(test1);
 
 var map = new Map();
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test1(map);
 
 shouldThrow(() => {
@@ -33,7 +33,7 @@ function test2(map)
 }
 noInline(test2);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test2(map);
 
 shouldThrow(() => {

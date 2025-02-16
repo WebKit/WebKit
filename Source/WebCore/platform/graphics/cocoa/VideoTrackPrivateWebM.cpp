@@ -114,6 +114,9 @@ String VideoTrackPrivateWebM::codec() const
     if (codecID == "V_VP8"_s)
         return "vp08"_s;
 
+    if (codecID == "V_MPEG4/ISO/AVC"_s)
+        return "h264"_s;
+
     return emptyString();
 }
 
@@ -186,7 +189,8 @@ IGNORE_WARNINGS_BEGIN("c99-designator")
         .height = height(),
         .colorSpace = colorSpace(),
         .framerate = framerate(),
-        .spatialVideoMetadata = { }
+        .spatialVideoMetadata = { },
+        .isImmersiveVideo = false
     };
 IGNORE_WARNINGS_END
     setConfiguration(WTFMove(configuration));

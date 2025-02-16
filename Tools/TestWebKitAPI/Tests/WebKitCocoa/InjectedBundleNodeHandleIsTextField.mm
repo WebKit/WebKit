@@ -71,9 +71,7 @@
     [self verifyTextFieldForHTMLInputType:@"week" document:document jsContext:jsContext expectedResult:YES failedInputTypes:failedInputTypes];
 
     [self verifyTextFieldForHTMLInputType:@"button" document:document jsContext:jsContext expectedResult:NO failedInputTypes:failedInputTypes];
-#if ENABLE_INPUT_TYPE_COLOR
     [self verifyTextFieldForHTMLInputType:@"color" document:document jsContext:jsContext expectedResult:NO failedInputTypes:failedInputTypes];
-#endif
     [self verifyTextFieldForHTMLInputType:@"date" document:document jsContext:jsContext expectedResult:NO failedInputTypes:failedInputTypes];
     [self verifyTextFieldForHTMLInputType:@"datetime-local" document:document jsContext:jsContext expectedResult:NO failedInputTypes:failedInputTypes];
     [self verifyTextFieldForHTMLInputType:@"file" document:document jsContext:jsContext expectedResult:NO failedInputTypes:failedInputTypes];

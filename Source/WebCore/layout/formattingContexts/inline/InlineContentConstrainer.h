@@ -43,6 +43,8 @@ public:
 
 private:
     void initialize();
+    void updateCachedWidths();
+    void checkCanConstrainInlineItems();
 
     std::optional<Vector<LayoutUnit>> balanceRangeWithLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, size_t numberOfLines, bool isFirstChunk);
     std::optional<Vector<LayoutUnit>> balanceRangeWithNoLineRequirement(InlineItemRange, InlineLayoutUnit idealLineWidth, bool isFirstChunk);
@@ -69,6 +71,7 @@ private:
     double m_maximumLineWidth { 0 };
     bool m_cannotConstrainContent { false };
     bool m_hasSingleLineVisibleContent { false };
+    bool m_hasValidInlineItemWidthCache { false };
 
     struct SlidingWidth {
         SlidingWidth(const InlineContentConstrainer&, const InlineItemList&, size_t start, size_t end, bool useFirstLineStyle, bool isFirstLineInChunk);

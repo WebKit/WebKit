@@ -33,6 +33,7 @@
 #include "HitTestResult.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "MouseEventTypes.h"
 #include "Page.h"
 #include "RenderBox.h"
 #include "RenderListBox.h"

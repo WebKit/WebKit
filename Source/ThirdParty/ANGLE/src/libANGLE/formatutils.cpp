@@ -566,14 +566,9 @@ GLuint InternalFormat::getEGLConfigBufferSize() const
 
 Format::Format(GLenum internalFormat) : Format(GetSizedInternalFormatInfo(internalFormat)) {}
 
-Format::Format(const InternalFormat &internalFormat) : info(&internalFormat) {}
-
 Format::Format(GLenum internalFormat, GLenum type)
     : info(&GetInternalFormatInfo(internalFormat, type))
 {}
-
-Format::Format(const Format &other)            = default;
-Format &Format::operator=(const Format &other) = default;
 
 bool Format::valid() const
 {
@@ -1105,12 +1100,12 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddRGBAFormat(&map, GL_R8_SNORM,          true,  8,  0,  0,  0, 0, GL_RED,          GL_BYTE,                           GL_SIGNED_NORMALIZED,   false, RequireES<3, 0>,                                      AlwaysSupported, RequireExt<&Extensions::renderSnormEXT>,                 RequireExt<&Extensions::renderSnormEXT>,         RequireExt<&Extensions::renderSnormEXT>);
     AddRGBAFormat(&map, GL_RG8,               true,  8,  8,  0,  0, 0, GL_RG,           GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, false, SizedRGSupport,                                       AlwaysSupported, SizedRGSupport,                                          RequireESOrExt<3, 0, &Extensions::textureRgEXT>, RequireESOrExt<3, 0, &Extensions::textureRgEXT>);
     AddRGBAFormat(&map, GL_RG8_SNORM,         true,  8,  8,  0,  0, 0, GL_RG,           GL_BYTE,                           GL_SIGNED_NORMALIZED,   false, RequireES<3, 0>,                                      AlwaysSupported, RequireExt<&Extensions::renderSnormEXT>,                 RequireExt<&Extensions::renderSnormEXT>,         RequireExt<&Extensions::renderSnormEXT>);
-    AddRGBAFormat(&map, GL_RGB8,              true,  8,  8,  8,  0, 0, GL_RGB,          GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, false, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, AlwaysSupported, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>,    RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>);
+    AddRGBAFormat(&map, GL_RGB8,              true,  8,  8,  8,  0, 0, GL_RGB,          GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, false, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>,    RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>);
     AddRGBAFormat(&map, GL_RGB8_SNORM,        true,  8,  8,  8,  0, 0, GL_RGB,          GL_BYTE,                           GL_SIGNED_NORMALIZED,   false, RequireES<3, 0>,                                      AlwaysSupported, NeverSupported,                                          NeverSupported,                                  NeverSupported);
-    AddRGBAFormat(&map, GL_RGB565,            true,  5,  6,  5,  0, 0, GL_RGB,          GL_UNSIGNED_SHORT_5_6_5,           GL_UNSIGNED_NORMALIZED, false, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, AlwaysSupported, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, RequireESOrExt<2, 0, &Extensions::framebufferObjectOES>, RequireES<2, 0>);
-    AddRGBAFormat(&map, GL_RGBA4,             true,  4,  4,  4,  4, 0, GL_RGBA,         GL_UNSIGNED_SHORT_4_4_4_4,         GL_UNSIGNED_NORMALIZED, false, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, AlwaysSupported, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, RequireESOrExt<2, 0, &Extensions::framebufferObjectOES>, RequireES<2, 0>);
-    AddRGBAFormat(&map, GL_RGB5_A1,           true,  5,  5,  5,  1, 0, GL_RGBA,         GL_UNSIGNED_SHORT_5_5_5_1,         GL_UNSIGNED_NORMALIZED, false, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, AlwaysSupported, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, RequireESOrExt<2, 0, &Extensions::framebufferObjectOES>, RequireES<2, 0>);
-    AddRGBAFormat(&map, GL_RGBA8,             true,  8,  8,  8,  8, 0, GL_RGBA,         GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, false, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, AlwaysSupported, RequireESOrExt<3, 0, &Extensions::textureStorageEXT>, RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>,    RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>);
+    AddRGBAFormat(&map, GL_RGB565,            true,  5,  6,  5,  0, 0, GL_RGB,          GL_UNSIGNED_SHORT_5_6_5,           GL_UNSIGNED_NORMALIZED, false, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, RequireESOrExt<2, 0, &Extensions::framebufferObjectOES>, RequireES<2, 0>);
+    AddRGBAFormat(&map, GL_RGBA4,             true,  4,  4,  4,  4, 0, GL_RGBA,         GL_UNSIGNED_SHORT_4_4_4_4,         GL_UNSIGNED_NORMALIZED, false, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, RequireESOrExt<2, 0, &Extensions::framebufferObjectOES>, RequireES<2, 0>);
+    AddRGBAFormat(&map, GL_RGB5_A1,           true,  5,  5,  5,  1, 0, GL_RGBA,         GL_UNSIGNED_SHORT_5_5_5_1,         GL_UNSIGNED_NORMALIZED, false, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, RequireESOrExt<2, 0, &Extensions::framebufferObjectOES>, RequireES<2, 0>);
+    AddRGBAFormat(&map, GL_RGBA8,             true,  8,  8,  8,  8, 0, GL_RGBA,         GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, false, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported, RequireESOrExtOrExt<3, 0, &Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>,    RequireESOrExt<3, 0, &Extensions::rgb8Rgba8OES>);
     AddRGBAFormat(&map, GL_RGBA8_SNORM,       true,  8,  8,  8,  8, 0, GL_RGBA,         GL_BYTE,                           GL_SIGNED_NORMALIZED,   false, RequireES<3, 0>,                                      AlwaysSupported, RequireExt<&Extensions::renderSnormEXT>,                 RequireExt<&Extensions::renderSnormEXT>,         RequireExt<&Extensions::renderSnormEXT>);
     AddRGBAFormat(&map, GL_RGB10_A2UI,        true, 10, 10, 10,  2, 0, GL_RGBA_INTEGER, GL_UNSIGNED_INT_2_10_10_10_REV,    GL_UNSIGNED_INT,        false, RequireES<3, 0>,                                      NeverSupported,  RequireES<3, 0>,                                         RequireES<3, 0>,                                 NeverSupported);
     AddRGBAFormat(&map, GL_SRGB8,             true,  8,  8,  8,  0, 0, GL_RGB,          GL_UNSIGNED_BYTE,                  GL_UNSIGNED_NORMALIZED, true,  RequireES<3, 0>,                                      AlwaysSupported, NeverSupported,                                          NeverSupported,                                  NeverSupported);
@@ -1194,9 +1189,10 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
 
     // Luminance alpha formats
     //                | Internal format           |sized| L | A | Format            | Type             | Component type        | Texture supported                                                           | Filterable                                     | Texture attachment | Renderbuffer | Blend
-    AddLUMAFormat(&map, GL_ALPHA8_EXT,             true,  0,  8, GL_ALPHA,           GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, RequireExt<&Extensions::textureStorageEXT>,                                      AlwaysSupported,                                 NeverSupported,      NeverSupported, NeverSupported);
-    AddLUMAFormat(&map, GL_LUMINANCE8_EXT,         true,  8,  0, GL_LUMINANCE,       GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, RequireExt<&Extensions::textureStorageEXT>,                                      AlwaysSupported,                                 NeverSupported,      NeverSupported, NeverSupported);
-    AddLUMAFormat(&map, GL_LUMINANCE8_ALPHA8_EXT,  true,  8,  8, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, RequireExt<&Extensions::textureStorageEXT>,                                      AlwaysSupported,                                 NeverSupported,      NeverSupported, NeverSupported);
+    AddLUMAFormat(&map, GL_ALPHA8_EXT,             true,  0,  8, GL_ALPHA,           GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, RequireExtOrExt<&Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported,                         NeverSupported,      NeverSupported, NeverSupported);
+    AddLUMAFormat(&map, GL_LUMINANCE8_EXT,         true,  8,  0, GL_LUMINANCE,       GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, RequireExtOrExt<&Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported,                         NeverSupported,      NeverSupported, NeverSupported);
+    AddLUMAFormat(&map, GL_LUMINANCE4_ALPHA4_OES,  true,  8,  8, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, RequireExt<&Extensions::requiredInternalformatOES>,                              AlwaysSupported,                                 NeverSupported,      NeverSupported, NeverSupported);
+    AddLUMAFormat(&map, GL_LUMINANCE8_ALPHA8_EXT,  true,  8,  8, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, RequireExtOrExt<&Extensions::textureStorageEXT, &Extensions::requiredInternalformatOES>, AlwaysSupported,                         NeverSupported,      NeverSupported, NeverSupported);
     AddLUMAFormat(&map, GL_ALPHA16F_EXT,           true,  0, 16, GL_ALPHA,           GL_HALF_FLOAT_OES, GL_FLOAT,               RequireExtAndExt<&Extensions::textureStorageEXT, &Extensions::textureHalfFloatOES>, RequireExt<&Extensions::textureHalfFloatLinearOES>, NeverSupported,      NeverSupported, NeverSupported);
     AddLUMAFormat(&map, GL_LUMINANCE16F_EXT,       true, 16,  0, GL_LUMINANCE,       GL_HALF_FLOAT_OES, GL_FLOAT,               RequireExtAndExt<&Extensions::textureStorageEXT, &Extensions::textureHalfFloatOES>, RequireExt<&Extensions::textureHalfFloatLinearOES>, NeverSupported,      NeverSupported, NeverSupported);
     AddLUMAFormat(&map, GL_LUMINANCE_ALPHA16F_EXT, true, 16, 16, GL_LUMINANCE_ALPHA, GL_HALF_FLOAT_OES, GL_FLOAT,               RequireExtAndExt<&Extensions::textureStorageEXT, &Extensions::textureHalfFloatOES>, RequireExt<&Extensions::textureHalfFloatLinearOES>, NeverSupported,      NeverSupported, NeverSupported);
@@ -1367,10 +1363,10 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     //                 | Internal format    |sized| R | G | B | A |S | Format | Type             | Component type        | SRGB | Texture supported                     | Filterable     | Texture attachment                    | Renderbuffer                          | Blend
     AddRGBAFormat(&map, GL_SRG8_EXT,         true,  8,  8,  0,  0, 0, GL_RG,   GL_UNSIGNED_BYTE,  GL_UNSIGNED_NORMALIZED, true,  RequireExt<&Extensions::textureSRGBRG8EXT>,    AlwaysSupported, NeverSupported,                         NeverSupported,                         NeverSupported);
 
-    // From GL_EXT_texture_type_2_10_10_10_REV
-    // GL_RGB10_UNORM_ANGLEX is never used directly but needs to be in the list of all sized internal formats so that the backends can determine support.
-    //                  | Internal format      |sized|    R | G | B | A |S |X   | Format           | Type                          | Component type        | SRGB | Texture supported                                  | Filterable     | Texture attachment                               | Renderbuffer  | Blend
-    AddRGBAXFormat(&map, GL_RGB10_UNORM_ANGLEX, true, FB<10, 10, 10,  0, 0, 2>(), GL_RGB,            GL_UNSIGNED_INT_2_10_10_10_REV, GL_UNSIGNED_NORMALIZED, false, NeverSupported,                                     NeverSupported,  NeverSupported,                                    NeverSupported, NeverSupported);
+    // From GL_OES_required_internalformat
+    // The |shared| bit shouldn't be 2. But given this hits assertion when bits
+    // are checked, it's fine to have this bit set as 2 as a workaround.
+    AddRGBAFormat(&map, GL_RGB10_EXT,           true,   10, 10, 10, 0, 2,         GL_RGB,            GL_UNSIGNED_INT_2_10_10_10_REV, GL_UNSIGNED_NORMALIZED, false, RequireExtAndExt<&Extensions::textureType2101010REVEXT,&Extensions::requiredInternalformatOES>, NeverSupported,  NeverSupported, NeverSupported, NeverSupported);
 
     // Unsized formats
     //                  | Internal format  |sized |    R | G | B | A |S |X   | Format           | Type                          | Component type        | SRGB | Texture supported                                  | Filterable     | Texture attachment                               | Renderbuffer  | Blend
@@ -1471,12 +1467,6 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddYUVFormat(&map,  GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,            true,   8,   8,  8,   0,  0,  GL_G8_B8R8_2PLANE_420_UNORM_ANGLE,    GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::yuvInternalFormatANGLE>,          RequireExt<&Extensions::yuvInternalFormatANGLE>,          RequireExt<&Extensions::yuvInternalFormatANGLE>,          NeverSupported, NeverSupported);
     AddYUVFormat(&map,  GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE,           true,   8,   8,  8,   0,  0,  GL_G8_B8_R8_3PLANE_420_UNORM_ANGLE,   GL_UNSIGNED_BYTE, GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::yuvInternalFormatANGLE>,          RequireExt<&Extensions::yuvInternalFormatANGLE>,          RequireExt<&Extensions::yuvInternalFormatANGLE>,          NeverSupported, NeverSupported);
 
-#if defined(ANGLE_PLATFORM_LINUX)
-    // From GL_OES_required_internalformat
-    // The |shared| bit shouldn't be 2. But given this hits assertion when bits
-    // are checked, it's fine to have this bit set as 2 as a workaround.
-    AddRGBAFormat(&map, GL_RGB10_EXT,        true, 10, 10, 10, 0, 2, GL_RGB, GL_UNSIGNED_INT_2_10_10_10_REV,    GL_UNSIGNED_NORMALIZED,        false, RequireES<1, 0>,                                      NeverSupported,  RequireES<1, 0>,                                         RequireES<1, 0>,                                 NeverSupported);
-#endif
     // clang-format on
 
     return map;
@@ -2098,301 +2088,185 @@ AttributeType GetAttributeType(GLenum enumValue)
     }
 }
 
-angle::FormatID GetVertexFormatID(VertexAttribType type,
-                                  GLboolean normalized,
-                                  GLuint components,
-                                  bool pureInteger)
-{
-    switch (type)
-    {
-        case VertexAttribType::Byte:
-            switch (components)
-            {
-                case 1:
-                    if (pureInteger)
-                        return angle::FormatID::R8_SINT;
-                    if (normalized)
-                        return angle::FormatID::R8_SNORM;
-                    return angle::FormatID::R8_SSCALED;
-                case 2:
-                    if (pureInteger)
-                        return angle::FormatID::R8G8_SINT;
-                    if (normalized)
-                        return angle::FormatID::R8G8_SNORM;
-                    return angle::FormatID::R8G8_SSCALED;
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::R8G8B8_SINT;
-                    if (normalized)
-                        return angle::FormatID::R8G8B8_SNORM;
-                    return angle::FormatID::R8G8B8_SSCALED;
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::R8G8B8A8_SINT;
-                    if (normalized)
-                        return angle::FormatID::R8G8B8A8_SNORM;
-                    return angle::FormatID::R8G8B8A8_SSCALED;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::UnsignedByte:
-            switch (components)
-            {
-                case 1:
-                    if (pureInteger)
-                        return angle::FormatID::R8_UINT;
-                    if (normalized)
-                        return angle::FormatID::R8_UNORM;
-                    return angle::FormatID::R8_USCALED;
-                case 2:
-                    if (pureInteger)
-                        return angle::FormatID::R8G8_UINT;
-                    if (normalized)
-                        return angle::FormatID::R8G8_UNORM;
-                    return angle::FormatID::R8G8_USCALED;
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::R8G8B8_UINT;
-                    if (normalized)
-                        return angle::FormatID::R8G8B8_UNORM;
-                    return angle::FormatID::R8G8B8_USCALED;
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::R8G8B8A8_UINT;
-                    if (normalized)
-                        return angle::FormatID::R8G8B8A8_UNORM;
-                    return angle::FormatID::R8G8B8A8_USCALED;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::Short:
-            switch (components)
-            {
-                case 1:
-                    if (pureInteger)
-                        return angle::FormatID::R16_SINT;
-                    if (normalized)
-                        return angle::FormatID::R16_SNORM;
-                    return angle::FormatID::R16_SSCALED;
-                case 2:
-                    if (pureInteger)
-                        return angle::FormatID::R16G16_SINT;
-                    if (normalized)
-                        return angle::FormatID::R16G16_SNORM;
-                    return angle::FormatID::R16G16_SSCALED;
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::R16G16B16_SINT;
-                    if (normalized)
-                        return angle::FormatID::R16G16B16_SNORM;
-                    return angle::FormatID::R16G16B16_SSCALED;
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::R16G16B16A16_SINT;
-                    if (normalized)
-                        return angle::FormatID::R16G16B16A16_SNORM;
-                    return angle::FormatID::R16G16B16A16_SSCALED;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::UnsignedShort:
-            switch (components)
-            {
-                case 1:
-                    if (pureInteger)
-                        return angle::FormatID::R16_UINT;
-                    if (normalized)
-                        return angle::FormatID::R16_UNORM;
-                    return angle::FormatID::R16_USCALED;
-                case 2:
-                    if (pureInteger)
-                        return angle::FormatID::R16G16_UINT;
-                    if (normalized)
-                        return angle::FormatID::R16G16_UNORM;
-                    return angle::FormatID::R16G16_USCALED;
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::R16G16B16_UINT;
-                    if (normalized)
-                        return angle::FormatID::R16G16B16_UNORM;
-                    return angle::FormatID::R16G16B16_USCALED;
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::R16G16B16A16_UINT;
-                    if (normalized)
-                        return angle::FormatID::R16G16B16A16_UNORM;
-                    return angle::FormatID::R16G16B16A16_USCALED;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::Int:
-            switch (components)
-            {
-                case 1:
-                    if (pureInteger)
-                        return angle::FormatID::R32_SINT;
-                    if (normalized)
-                        return angle::FormatID::R32_SNORM;
-                    return angle::FormatID::R32_SSCALED;
-                case 2:
-                    if (pureInteger)
-                        return angle::FormatID::R32G32_SINT;
-                    if (normalized)
-                        return angle::FormatID::R32G32_SNORM;
-                    return angle::FormatID::R32G32_SSCALED;
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::R32G32B32_SINT;
-                    if (normalized)
-                        return angle::FormatID::R32G32B32_SNORM;
-                    return angle::FormatID::R32G32B32_SSCALED;
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::R32G32B32A32_SINT;
-                    if (normalized)
-                        return angle::FormatID::R32G32B32A32_SNORM;
-                    return angle::FormatID::R32G32B32A32_SSCALED;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::UnsignedInt:
-            switch (components)
-            {
-                case 1:
-                    if (pureInteger)
-                        return angle::FormatID::R32_UINT;
-                    if (normalized)
-                        return angle::FormatID::R32_UNORM;
-                    return angle::FormatID::R32_USCALED;
-                case 2:
-                    if (pureInteger)
-                        return angle::FormatID::R32G32_UINT;
-                    if (normalized)
-                        return angle::FormatID::R32G32_UNORM;
-                    return angle::FormatID::R32G32_USCALED;
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::R32G32B32_UINT;
-                    if (normalized)
-                        return angle::FormatID::R32G32B32_UNORM;
-                    return angle::FormatID::R32G32B32_USCALED;
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::R32G32B32A32_UINT;
-                    if (normalized)
-                        return angle::FormatID::R32G32B32A32_UNORM;
-                    return angle::FormatID::R32G32B32A32_USCALED;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::Float:
-            switch (components)
-            {
-                case 1:
-                    return angle::FormatID::R32_FLOAT;
-                case 2:
-                    return angle::FormatID::R32G32_FLOAT;
-                case 3:
-                    return angle::FormatID::R32G32B32_FLOAT;
-                case 4:
-                    return angle::FormatID::R32G32B32A32_FLOAT;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::HalfFloat:
-        case VertexAttribType::HalfFloatOES:
-            switch (components)
-            {
-                case 1:
-                    return angle::FormatID::R16_FLOAT;
-                case 2:
-                    return angle::FormatID::R16G16_FLOAT;
-                case 3:
-                    return angle::FormatID::R16G16B16_FLOAT;
-                case 4:
-                    return angle::FormatID::R16G16B16A16_FLOAT;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::Fixed:
-            switch (components)
-            {
-                case 1:
-                    return angle::FormatID::R32_FIXED;
-                case 2:
-                    return angle::FormatID::R32G32_FIXED;
-                case 3:
-                    return angle::FormatID::R32G32B32_FIXED;
-                case 4:
-                    return angle::FormatID::R32G32B32A32_FIXED;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::Int2101010:
-            if (pureInteger)
-                return angle::FormatID::R10G10B10A2_SINT;
-            if (normalized)
-                return angle::FormatID::R10G10B10A2_SNORM;
-            return angle::FormatID::R10G10B10A2_SSCALED;
-        case VertexAttribType::UnsignedInt2101010:
-            if (pureInteger)
-                return angle::FormatID::R10G10B10A2_UINT;
-            if (normalized)
-                return angle::FormatID::R10G10B10A2_UNORM;
-            return angle::FormatID::R10G10B10A2_USCALED;
-        case VertexAttribType::Int1010102:
-            switch (components)
-            {
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::X2R10G10B10_SINT_VERTEX;
-                    if (normalized)
-                        return angle::FormatID::X2R10G10B10_SNORM_VERTEX;
-                    return angle::FormatID::X2R10G10B10_SSCALED_VERTEX;
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::A2R10G10B10_SINT_VERTEX;
-                    if (normalized)
-                        return angle::FormatID::A2R10G10B10_SNORM_VERTEX;
-                    return angle::FormatID::A2R10G10B10_SSCALED_VERTEX;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        case VertexAttribType::UnsignedInt1010102:
-            switch (components)
-            {
-                case 3:
-                    if (pureInteger)
-                        return angle::FormatID::X2R10G10B10_UINT_VERTEX;
-                    if (normalized)
-                        return angle::FormatID::X2R10G10B10_UNORM_VERTEX;
-                    return angle::FormatID::X2R10G10B10_USCALED_VERTEX;
+// kVertexFormat* tables below rely on these values
+static_assert(kVertexFormatCount == 18);
+static_assert(static_cast<uint32_t>(VertexAttribType::Byte) == 0);
+static_assert(static_cast<uint32_t>(VertexAttribType::UnsignedByte) == 1);
+static_assert(static_cast<uint32_t>(VertexAttribType::Short) == 2);
+static_assert(static_cast<uint32_t>(VertexAttribType::UnsignedShort) == 3);
+static_assert(static_cast<uint32_t>(VertexAttribType::Int) == 4);
+static_assert(static_cast<uint32_t>(VertexAttribType::UnsignedInt) == 5);
+static_assert(static_cast<uint32_t>(VertexAttribType::Float) == 6);
+static_assert(static_cast<uint32_t>(VertexAttribType::Unused1) == 7);
+static_assert(static_cast<uint32_t>(VertexAttribType::Unused2) == 8);
+static_assert(static_cast<uint32_t>(VertexAttribType::Unused3) == 9);
+static_assert(static_cast<uint32_t>(VertexAttribType::Unused4) == 10);
+static_assert(static_cast<uint32_t>(VertexAttribType::HalfFloat) == 11);
+static_assert(static_cast<uint32_t>(VertexAttribType::Fixed) == 12);
+static_assert(static_cast<uint32_t>(VertexAttribType::UnsignedInt2101010) == 13);
+static_assert(static_cast<uint32_t>(VertexAttribType::HalfFloatOES) == 14);
+static_assert(static_cast<uint32_t>(VertexAttribType::Int2101010) == 15);
+static_assert(static_cast<uint32_t>(VertexAttribType::UnsignedInt1010102) == 16);
+static_assert(static_cast<uint32_t>(VertexAttribType::Int1010102) == 17);
 
-                case 4:
-                    if (pureInteger)
-                        return angle::FormatID::A2R10G10B10_UINT_VERTEX;
-                    if (normalized)
-                        return angle::FormatID::A2R10G10B10_UNORM_VERTEX;
-                    return angle::FormatID::A2R10G10B10_USCALED_VERTEX;
-                default:
-                    UNREACHABLE();
-                    return angle::FormatID::NONE;
-            }
-        default:
-            UNREACHABLE();
-            return angle::FormatID::NONE;
-    }
-}
+const angle::FormatID kVertexFormatPureInteger[kVertexFormatCount][4] = {
+    // Byte
+    {angle::FormatID::R8_SINT, angle::FormatID::R8G8_SINT, angle::FormatID::R8G8B8_SINT,
+     angle::FormatID::R8G8B8A8_SINT},
+    // UnsignedByte
+    {angle::FormatID::R8_UINT, angle::FormatID::R8G8_UINT, angle::FormatID::R8G8B8_UINT,
+     angle::FormatID::R8G8B8A8_UINT},
+    // Short
+    {angle::FormatID::R16_SINT, angle::FormatID::R16G16_SINT, angle::FormatID::R16G16B16_SINT,
+     angle::FormatID::R16G16B16A16_SINT},
+    // UnsignedShort
+    {angle::FormatID::R16_UINT, angle::FormatID::R16G16_UINT, angle::FormatID::R16G16B16_UINT,
+     angle::FormatID::R16G16B16A16_UINT},
+    // Int
+    {angle::FormatID::R32_SINT, angle::FormatID::R32G32_SINT, angle::FormatID::R32G32B32_SINT,
+     angle::FormatID::R32G32B32A32_SINT},
+    // UnsignedInt
+    {angle::FormatID::R32_UINT, angle::FormatID::R32G32_UINT, angle::FormatID::R32G32B32_UINT,
+     angle::FormatID::R32G32B32A32_UINT},
+    // Float
+    {angle::FormatID::R32_FLOAT, angle::FormatID::R32G32_FLOAT, angle::FormatID::R32G32B32_FLOAT,
+     angle::FormatID::R32G32B32A32_FLOAT},
+    // Unused1
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused2
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused3
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused4
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // HalfFloat
+    {angle::FormatID::R16_FLOAT, angle::FormatID::R16G16_FLOAT, angle::FormatID::R16G16B16_FLOAT,
+     angle::FormatID::R16G16B16A16_FLOAT},
+    // Fixed
+    {angle::FormatID::R32_FIXED, angle::FormatID::R32G32_FIXED, angle::FormatID::R32G32B32_FIXED,
+     angle::FormatID::R32G32B32A32_FIXED},
+    // UnsignedInt2101010
+    {angle::FormatID::R10G10B10A2_UINT, angle::FormatID::R10G10B10A2_UINT,
+     angle::FormatID::R10G10B10A2_UINT, angle::FormatID::R10G10B10A2_UINT},
+    // HalfFloatOES
+    {angle::FormatID::R16_FLOAT, angle::FormatID::R16G16_FLOAT, angle::FormatID::R16G16B16_FLOAT,
+     angle::FormatID::R16G16B16A16_FLOAT},
+    // Int2101010
+    {angle::FormatID::R10G10B10A2_SINT, angle::FormatID::R10G10B10A2_SINT,
+     angle::FormatID::R10G10B10A2_SINT, angle::FormatID::R10G10B10A2_SINT},
+    // UnsignedInt1010102
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::X2R10G10B10_UINT_VERTEX,
+     angle::FormatID::A2R10G10B10_UINT_VERTEX},
+    // Int1010102
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::X2R10G10B10_SINT_VERTEX,
+     angle::FormatID::A2R10G10B10_SINT_VERTEX},
+};
+
+const angle::FormatID kVertexFormatNormalized[kVertexFormatCount][4] = {
+    // Byte
+    {angle::FormatID::R8_SNORM, angle::FormatID::R8G8_SNORM, angle::FormatID::R8G8B8_SNORM,
+     angle::FormatID::R8G8B8A8_SNORM},
+    // UnsignedByte
+    {angle::FormatID::R8_UNORM, angle::FormatID::R8G8_UNORM, angle::FormatID::R8G8B8_UNORM,
+     angle::FormatID::R8G8B8A8_UNORM},
+    // Short
+    {angle::FormatID::R16_SNORM, angle::FormatID::R16G16_SNORM, angle::FormatID::R16G16B16_SNORM,
+     angle::FormatID::R16G16B16A16_SNORM},
+    // UnsignedShort
+    {angle::FormatID::R16_UNORM, angle::FormatID::R16G16_UNORM, angle::FormatID::R16G16B16_UNORM,
+     angle::FormatID::R16G16B16A16_UNORM},
+    // Int
+    {angle::FormatID::R32_SNORM, angle::FormatID::R32G32_SNORM, angle::FormatID::R32G32B32_SNORM,
+     angle::FormatID::R32G32B32A32_SNORM},
+    // UnsignedInt
+    {angle::FormatID::R32_UNORM, angle::FormatID::R32G32_UNORM, angle::FormatID::R32G32B32_UNORM,
+     angle::FormatID::R32G32B32A32_UNORM},
+    // Float
+    {angle::FormatID::R32_FLOAT, angle::FormatID::R32G32_FLOAT, angle::FormatID::R32G32B32_FLOAT,
+     angle::FormatID::R32G32B32A32_FLOAT},
+    // Unused1
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused2
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused3
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused4
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // HalfFloat
+    {angle::FormatID::R16_FLOAT, angle::FormatID::R16G16_FLOAT, angle::FormatID::R16G16B16_FLOAT,
+     angle::FormatID::R16G16B16A16_FLOAT},
+    // Fixed
+    {angle::FormatID::R32_FIXED, angle::FormatID::R32G32_FIXED, angle::FormatID::R32G32B32_FIXED,
+     angle::FormatID::R32G32B32A32_FIXED},
+    // UnsignedInt2101010
+    {angle::FormatID::R10G10B10A2_UNORM, angle::FormatID::R10G10B10A2_UNORM,
+     angle::FormatID::R10G10B10A2_UNORM, angle::FormatID::R10G10B10A2_UNORM},
+    // HalfFloatOES
+    {angle::FormatID::R16_FLOAT, angle::FormatID::R16G16_FLOAT, angle::FormatID::R16G16B16_FLOAT,
+     angle::FormatID::R16G16B16A16_FLOAT},
+    // Int2101010
+    {angle::FormatID::R10G10B10A2_SNORM, angle::FormatID::R10G10B10A2_SNORM,
+     angle::FormatID::R10G10B10A2_SNORM, angle::FormatID::R10G10B10A2_SNORM},
+    // UnsignedInt1010102
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::X2R10G10B10_UNORM_VERTEX,
+     angle::FormatID::A2R10G10B10_UNORM_VERTEX},
+    // Int1010102
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::X2R10G10B10_SNORM_VERTEX,
+     angle::FormatID::A2R10G10B10_SNORM_VERTEX},
+};
+
+const angle::FormatID kVertexFormatScaled[kVertexFormatCount][4] = {
+    // Byte
+    {angle::FormatID::R8_SSCALED, angle::FormatID::R8G8_SSCALED, angle::FormatID::R8G8B8_SSCALED,
+     angle::FormatID::R8G8B8A8_SSCALED},
+    // UnsignedByte
+    {angle::FormatID::R8_USCALED, angle::FormatID::R8G8_USCALED, angle::FormatID::R8G8B8_USCALED,
+     angle::FormatID::R8G8B8A8_USCALED},
+    // Short
+    {angle::FormatID::R16_SSCALED, angle::FormatID::R16G16_SSCALED,
+     angle::FormatID::R16G16B16_SSCALED, angle::FormatID::R16G16B16A16_SSCALED},
+    // UnsignedShort
+    {angle::FormatID::R16_USCALED, angle::FormatID::R16G16_USCALED,
+     angle::FormatID::R16G16B16_USCALED, angle::FormatID::R16G16B16A16_USCALED},
+    // Int
+    {angle::FormatID::R32_SSCALED, angle::FormatID::R32G32_SSCALED,
+     angle::FormatID::R32G32B32_SSCALED, angle::FormatID::R32G32B32A32_SSCALED},
+    // UnsignedInt
+    {angle::FormatID::R32_USCALED, angle::FormatID::R32G32_USCALED,
+     angle::FormatID::R32G32B32_USCALED, angle::FormatID::R32G32B32A32_USCALED},
+    // Float
+    {angle::FormatID::R32_FLOAT, angle::FormatID::R32G32_FLOAT, angle::FormatID::R32G32B32_FLOAT,
+     angle::FormatID::R32G32B32A32_FLOAT},
+    // Unused1
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused2
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused3
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // Unused4
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::NONE},
+    // HalfFloat
+    {angle::FormatID::R16_FLOAT, angle::FormatID::R16G16_FLOAT, angle::FormatID::R16G16B16_FLOAT,
+     angle::FormatID::R16G16B16A16_FLOAT},
+    // Fixed
+    {angle::FormatID::R32_FIXED, angle::FormatID::R32G32_FIXED, angle::FormatID::R32G32B32_FIXED,
+     angle::FormatID::R32G32B32A32_FIXED},
+    // UnsignedInt2101010
+    {angle::FormatID::R10G10B10A2_USCALED, angle::FormatID::R10G10B10A2_USCALED,
+     angle::FormatID::R10G10B10A2_USCALED, angle::FormatID::R10G10B10A2_USCALED},
+    // HalfFloatOES
+    {angle::FormatID::R16_FLOAT, angle::FormatID::R16G16_FLOAT, angle::FormatID::R16G16B16_FLOAT,
+     angle::FormatID::R16G16B16A16_FLOAT},
+    // Int2101010
+    {angle::FormatID::R10G10B10A2_SSCALED, angle::FormatID::R10G10B10A2_SSCALED,
+     angle::FormatID::R10G10B10A2_SSCALED, angle::FormatID::R10G10B10A2_SSCALED},
+    // UnsignedInt1010102
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::X2R10G10B10_USCALED_VERTEX,
+     angle::FormatID::A2R10G10B10_USCALED_VERTEX},
+    // Int1010102
+    {angle::FormatID::NONE, angle::FormatID::NONE, angle::FormatID::X2R10G10B10_SSCALED_VERTEX,
+     angle::FormatID::A2R10G10B10_SSCALED_VERTEX},
+};
 
 angle::FormatID GetVertexFormatID(const VertexAttribute &attrib, VertexAttribType currentValueType)
 {

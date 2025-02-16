@@ -594,6 +594,8 @@ angle::Result ProgramPipeline::link(const Context *context)
 
         mState.mExecutable->mTransformFeedbackVaryingNames =
             (*tfExecutable)->mTransformFeedbackVaryingNames;
+        mState.mExecutable->mPod.transformFeedbackBufferMode =
+            (*tfExecutable)->mPod.transformFeedbackBufferMode;
 
         if (!mState.mExecutable->linkMergedVaryings(caps, limitations, clientVersion, isWebGL,
                                                     mergedVaryings, linkingVariables,

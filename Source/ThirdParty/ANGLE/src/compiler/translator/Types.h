@@ -9,6 +9,7 @@
 
 #include "common/angleutils.h"
 #include "common/debug.h"
+#include "common/span.h"
 
 #include "compiler/translator/BaseTypes.h"
 #include "compiler/translator/Common.h"
@@ -108,7 +109,7 @@ class TType
                     TQualifier q,
                     uint8_t ps,
                     uint8_t ss,
-                    const TSpan<const unsigned int> arraySizes,
+                    const angle::Span<const unsigned int> arraySizes,
                     const char *mangledName)
         : type(t),
           precision(p),
@@ -201,7 +202,7 @@ class TType
     bool isArray() const { return !mArraySizes.empty(); }
     bool isArrayOfArrays() const { return mArraySizes.size() > 1u; }
     size_t getNumArraySizes() const { return mArraySizes.size(); }
-    const TSpan<const unsigned int> &getArraySizes() const { return mArraySizes; }
+    const angle::Span<const unsigned int> &getArraySizes() const { return mArraySizes; }
     unsigned int getArraySizeProduct() const;
     bool isUnsizedArray() const;
     unsigned int getOutermostArraySize() const
@@ -212,14 +213,14 @@ class TType
     void makeArray(unsigned int s);
 
     // sizes contain new outermost array sizes.
-    void makeArrays(const TSpan<const unsigned int> &sizes);
+    void makeArrays(const angle::Span<const unsigned int> &sizes);
     // Here, the array dimension value 0 corresponds to the innermost array.
     void setArraySize(size_t arrayDimension, unsigned int s);
 
     // Will set unsized array sizes according to newArraySizes. In case there are more
     // unsized arrays than there are sizes in newArraySizes, defaults to setting any
     // remaining array sizes to 1.
-    void sizeUnsizedArrays(const TSpan<const unsigned int> &newArraySizes);
+    void sizeUnsizedArrays(const angle::Span<const unsigned int> &newArraySizes);
 
     // Will size the outermost array according to arraySize.
     void sizeOutermostUnsizedArray(unsigned int arraySize);
@@ -367,7 +368,7 @@ class TType
   private:
     constexpr void invalidateMangledName() { mMangledName = nullptr; }
     const char *buildMangledName() const;
-    constexpr void onArrayDimensionsChange(const TSpan<const unsigned int> &sizes)
+    constexpr void onArrayDimensionsChange(const angle::Span<const unsigned int> &sizes)
     {
         mArraySizes = sizes;
         invalidateMangledName();
@@ -387,7 +388,7 @@ class TType
 
     // Used to make an array type. Outermost array size is stored at the end of the vector. Having 0
     // in this vector means an unsized array.
-    TSpan<const unsigned int> mArraySizes;
+    angle::Span<const unsigned int> mArraySizes;
     // Storage for mArraySizes, if any.  This is usually the case, except for constexpr TTypes which
     // only have a valid mArraySizes (with mArraySizesStorage being nullptr).  Therefore, all
     // modifications to array sizes happen on the storage (and if dimensions change, mArraySizes is

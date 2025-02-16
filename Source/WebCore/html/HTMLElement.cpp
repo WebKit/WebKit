@@ -74,6 +74,7 @@
 #include "LabelsNodeList.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "Logging.h"
 #include "MediaControlsHost.h"
 #include "MutableStyleProperties.h"
 #include "NodeName.h"
@@ -130,7 +131,9 @@ String HTMLElement::nodeName() const
 static inline CSSValueID unicodeBidiAttributeForDirAuto(HTMLElement& element)
 {
     ASSERT(!element.hasTagName(bdoTag));
-    if (element.hasTagName(preTag) || element.hasTagName(textareaTag))
+    ASSERT(!element.hasTagName(preTag));
+    ASSERT(!element.hasTagName(textareaTag));
+    if (RefPtr input = dynamicDowncast<HTMLInputElement>(element); input && (input->isTelephoneField() || input->isEmailField() || input->isSearchField() || input->isURLField()))
         return CSSValuePlaintext;
     return CSSValueIsolate;
 }
@@ -246,7 +249,7 @@ void HTMLElement::collectPresentationalHintsForAttribute(const QualifiedName& na
         break;
     case AttributeNames::dirAttr:
         if (equalLettersIgnoringASCIICase(value, "auto"_s)) {
-            if (!hasTagName(bdoTag))
+            if (!hasTagName(bdoTag) && !hasTagName(preTag) && !hasTagName(textareaTag))
                 addPropertyToPresentationalHintStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(*this));
         } else if (equalLettersIgnoringASCIICase(value, "rtl"_s) || equalLettersIgnoringASCIICase(value, "ltr"_s))
             addPropertyToPresentationalHintStyle(style, CSSPropertyDirection, value);
@@ -1035,7 +1038,7 @@ static ExceptionOr<bool> checkPopoverValidity(HTMLElement& element, PopoverVisib
     if (auto* dialog = dynamicDowncast<HTMLDialogElement>(element); dialog && dialog->isModal())
         return Exception { ExceptionCode::InvalidStateError, "Element is a modal <dialog> element"_s };
 
-    if (!element.document().isFullyActive())
+    if (!element.protectedDocument()->isFullyActive())
         return Exception { ExceptionCode::InvalidStateError, "Invalid for popovers within documents that are not fully active"_s };
 
 #if ENABLE(FULLSCREEN_API)
@@ -1067,8 +1070,10 @@ static void runPopoverFocusingSteps(HTMLElement& popover)
     if (!control->document().isSameOriginAsTopDocument())
         return;
 
-    Ref topDocument = control->document().topDocument();
-    topDocument->clearAutofocusCandidates();
+    if (RefPtr mainFrameDocument = control->document().mainFrameDocument())
+        mainFrameDocument->clearAutofocusCandidates();
+    else
+        LOG_ONCE(SiteIsolation, "Unable to fully perform runPopoverFocusingSteps() without access to the main frame document ");
     page->setAutofocusProcessed();
 }
 
@@ -1349,7 +1354,7 @@ void dumpInnerHTML(WebCore::HTMLElement*);
 
 void dumpInnerHTML(WebCore::HTMLElement* element)
 {
-    printf("%s\n", element->innerHTML().ascii().data());
+    SAFE_PRINTF("%s\n", element->innerHTML().ascii());
 }
 
 #endif

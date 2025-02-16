@@ -28,7 +28,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "JSDOMPromiseDeferred.h"
 #include "Navigator.h"
 #include "Page.h"
@@ -74,7 +74,7 @@ bool NavigatorLoginStatus::hasSameOrigin() const
     Ref origin = document->securityOrigin();
     bool isSameSite = true;
     for (RefPtr parentDocument = document->parentDocument(); parentDocument; parentDocument = parentDocument->parentDocument()) {
-        if (!origin->isSameOriginAs(parentDocument->securityOrigin())) {
+        if (!origin->isSameOriginAs(parentDocument->protectedSecurityOrigin())) {
             isSameSite = false;
             break;
         }

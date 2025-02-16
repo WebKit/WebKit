@@ -72,7 +72,6 @@ my (
     $cursorVisibilitySupport,
     $darkModeCSSSupport,
     $datacueValueSupport,
-    $datalistElementSupport,
     $deviceOrientationSupport,
     $dfgJITSupport,
     $dragSupportSupport,
@@ -85,12 +84,6 @@ my (
     $geolocationSupport,
     $gpuProcessSupport,
     $gstreamerGLSupport,
-    $inputTypeColorSupport,
-    $inputTypeDateSupport,
-    $inputTypeDatetimelocalSupport,
-    $inputTypeMonthSupport,
-    $inputTypeTimeSupport,
-    $inputTypeWeekSupport,
     $inspectorAlternateDispatchersSupport,
     $inspectorTelemetrySupport,
     $iosGestureEventsSupport,
@@ -223,9 +216,6 @@ my @features = (
     { option => "datacue-value", desc => "Toggle datacue value support",
       define => "ENABLE_DATACUE_VALUE", value => \$datacueValueSupport },
 
-    { option => "datalist-element", desc => "Toggle Datalist Element support",
-      define => "ENABLE_DATALIST_ELEMENT", value => \$datalistElementSupport },
-
     { option => "device-orientation", desc => "Toggle Device Orientation support",
       define => "ENABLE_DEVICE_ORIENTATION", value => \$deviceOrientationSupport },
 
@@ -255,24 +245,6 @@ my @features = (
 
     { option => "gpu-process", desc => "Toggle GPU Process support",
       define => "ENABLE_GPU_PROCESS", value => \$gpuProcessSupport },
-
-    { option => "input-type-color", desc => "Toggle Input Type Color support",
-      define => "ENABLE_INPUT_TYPE_COLOR", value => \$inputTypeColorSupport },
-
-    { option => "input-type-date", desc => "Toggle Input Type Date support",
-      define => "ENABLE_INPUT_TYPE_DATE", value => \$inputTypeDateSupport },
-
-    { option => "input-type-datetimelocal", desc => "Toggle Input Type Datetimelocal support",
-      define => "ENABLE_INPUT_TYPE_DATETIMELOCAL", value => \$inputTypeDatetimelocalSupport },
-
-    { option => "input-type-month", desc => "Toggle Input Type Month support",
-      define => "ENABLE_INPUT_TYPE_MONTH", value => \$inputTypeMonthSupport },
-
-    { option => "input-type-time", desc => "Toggle Input Type Time support",
-      define => "ENABLE_INPUT_TYPE_TIME", value => \$inputTypeTimeSupport },
-
-    { option => "input-type-week", desc => "Toggle Input Type Week support",
-      define => "ENABLE_INPUT_TYPE_WEEK", value => \$inputTypeWeekSupport },
 
     { option => "inspector-alternate-dispatchers", desc => "Toggle inspector alternate dispatchers support",
       define => "ENABLE_INSPECTOR_ALTERNATE_DISPATCHERS", value => \$inspectorAlternateDispatchersSupport },

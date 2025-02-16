@@ -72,7 +72,7 @@ void MenuListMac::updateCellStates(const FloatRect& rect, const ControlStyle& st
 {
     ControlMac::updateCellStates(rect, style);
 
-    auto direction = style.states.contains(ControlStyle::State::RightToLeft) ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
+    auto direction = style.states.contains(ControlStyle::State::InlineFlippedWritingMode) ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight;
     [m_popUpButtonCell setUserInterfaceLayoutDirection:direction];
 
     // Update the various states we respond to.

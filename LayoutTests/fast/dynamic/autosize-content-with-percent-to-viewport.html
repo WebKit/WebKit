@@ -1,0 +1,34 @@
+<html>
+<head>
+<title>This tests that autosize fallbacks to 'height: auto' when box's containing block is the viewport and has percent height.</title>
+<style>
+#percent_height {
+  height: 10%;
+  position: relative;
+  background-color: green;
+}
+
+.child {
+  width: 400px;
+  height: 200px;
+}
+</style>
+<script>
+if (window.internals)
+    internals.enableFixedWidthAutoSizeMode(true, 2000, 1);
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+</script>
+</head>
+<body>
+<div id=percent_height><div class=child></div><div class=child></div></div>
+<pre id=result></pre>
+<script>
+document.body.offsetHeight;
+result.textContent = percent_height.getBoundingClientRect().height;
+if (window.internals)
+    internals.enableFixedWidthAutoSizeMode(false, 0, 0, 0, 0);
+</script>
+</body>
+</html>

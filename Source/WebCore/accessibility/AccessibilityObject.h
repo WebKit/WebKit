@@ -243,13 +243,8 @@ public:
     Element* element() const final;
     Node* node() const override { return nullptr; }
     RenderObject* renderer() const override { return nullptr; }
-    // Resolves the computed style if necessary.
+    // Resolves the computed style if necessary (and safe to do so).
     const RenderStyle* style() const;
-    // Returns nullptr if the style is unresolved.
-    // This matters because it is not always safe to compute style — doing so at the wrong time
-    // can cause a crash. When the style is resolved naturally, we should get the appropriate updates
-    // from the render tree / DOM to make the right updates (at which point we will have existingStyle()).
-    const RenderStyle* existingStyle() const;
 
     // Note: computeIsIgnored does not consider whether an object is ignored due to presence of modals.
     // Use isIgnored as the word of law when determining if an object is ignored.
@@ -384,6 +379,7 @@ public:
 #if PLATFORM(COCOA)
     bool hasAttributedText() const;
 #endif
+    String textContentPrefixFromListMarker() const override;
 
     // Methods for determining accessibility text.
     bool isARIAStaticText() const { return ariaRoleAttribute() == AccessibilityRole::StaticText; }
@@ -396,7 +392,9 @@ public:
     virtual AXTextRuns textRuns() { return { }; }
     bool hasTextRuns() final { return textRuns().size(); }
     TextEmissionBehavior emitTextAfterBehavior() const override { return TextEmissionBehavior::None; }
-#endif
+    AXTextRunLineID listMarkerLineID() const override { return { }; }
+    String listMarkerText() const override { return { }; }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 #if PLATFORM(COCOA)
     // Returns an array of strings and AXObject wrappers corresponding to the
     // textruns and replacement nodes included in the given range.
@@ -561,6 +559,7 @@ public:
     bool shouldFocusActiveDescendant() const;
 
     WEBCORE_EXPORT static AccessibilityRole ariaRoleToWebCoreRole(const String&);
+    static AccessibilityRole ariaRoleToWebCoreRole(const String&, NOESCAPE const Function<bool(const AccessibilityRole&)>&);
     bool hasAttribute(const QualifiedName&) const;
     const AtomString& getAttribute(const QualifiedName&) const;
     String getAttributeTrimmed(const QualifiedName&) const;
@@ -568,6 +567,7 @@ public:
     String nameAttribute() const final;
     int getIntegralAttribute(const QualifiedName&) const;
     bool hasTagName(const QualifiedName&) const;
+    bool hasAttachmentTag() const final { return hasTagName(HTMLNames::attachmentTag); }
     bool hasBodyTag() const final { return hasTagName(HTMLNames::bodyTag); }
     bool hasMarkTag() const final { return hasTagName(HTMLNames::markTag); }
     AtomString tagName() const;
@@ -989,7 +989,7 @@ inline bool AccessibilityObject::hasAttributedText() const
 }
 #endif
 
-AccessibilityObject* firstAccessibleObjectFromNode(const Node*, const Function<bool(const AccessibilityObject&)>& isAccessible);
+AccessibilityObject* firstAccessibleObjectFromNode(const Node*, NOESCAPE const Function<bool(const AccessibilityObject&)>& isAccessible);
 
 namespace Accessibility {
 

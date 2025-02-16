@@ -201,8 +201,8 @@ public:
 #endif
 
 #if HAVE(CORE_MATERIAL)
-    AppleVisualEffect appleVisualEffect() const override;
-    void setAppleVisualEffect(AppleVisualEffect) override;
+    AppleVisualEffectData appleVisualEffectData() const override;
+    void setAppleVisualEffectData(AppleVisualEffectData) override;
 #endif
 
     TiledBacking* tiledBacking() override;
@@ -232,9 +232,6 @@ private:
     RetainPtr<NSObject> m_delegate;
     std::unique_ptr<PlatformCALayerList> m_customSublayers;
     GraphicsLayer::CustomAppearance m_customAppearance { GraphicsLayer::CustomAppearance::None };
-#if HAVE(CORE_MATERIAL)
-    AppleVisualEffect m_appleVisualEffect { AppleVisualEffect::None };
-#endif
     std::unique_ptr<FloatRoundedRect> m_shapeRoundedRect;
 #if ENABLE(SCROLLING_THREAD)
     Markable<ScrollingNodeID> m_scrollingNodeID;

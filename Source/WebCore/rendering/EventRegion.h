@@ -75,11 +75,11 @@ private:
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;
     UncheckedKeyHashMap<IntRect, InteractionRegion::ContentHint> m_interactionRectsAndContentHints;
-    HashSet<IntRect> m_occlusionRects;
+    UncheckedKeyHashSet<IntRect> m_occlusionRects;
     enum class Inflated : bool { No, Yes };
     UncheckedKeyHashMap<IntRect, Inflated> m_guardRects;
-    HashSet<ElementIdentifier> m_containerRemovalCandidates;
-    HashSet<ElementIdentifier> m_containersToRemove;
+    UncheckedKeyHashSet<ElementIdentifier> m_containerRemovalCandidates;
+    UncheckedKeyHashSet<ElementIdentifier> m_containersToRemove;
     UncheckedKeyHashMap<ElementIdentifier, Vector<InteractionRegion>> m_discoveredRegionsByElement;
 #endif
 };
@@ -100,9 +100,6 @@ public:
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion>
-#endif
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    , WebCore::Region
 #endif
     );
 
@@ -147,19 +144,12 @@ public:
     void clearInteractionRegions();
 #endif
 
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    const Region& scrollOverlayRegion() const { return m_scrollOverlayRegion; }
-#endif
-
 private:
     friend struct IPC::ArgumentCoder<EventRegion, void>;
 #if ENABLE(TOUCH_ACTION_REGIONS)
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
 #endif
     void uniteEventListeners(const Region&, OptionSet<EventListenerRegionType>);
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    void uniteScrollOverlayRegion(const Region&, const RenderStyle&);
-#endif
 
     Region m_region;
 #if ENABLE(TOUCH_ACTION_REGIONS)
@@ -174,9 +164,6 @@ private:
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;
-#endif
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    Region m_scrollOverlayRegion;
 #endif
 };
 

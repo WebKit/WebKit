@@ -74,7 +74,7 @@ OBJC_CLASS NSMutableDictionary;
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-#include "DMABufRendererBufferMode.h"
+#include "RendererBufferTransportMode.h"
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -401,10 +401,13 @@ public:
 #if ENABLE(NOTIFY_BLOCKING)
     void postNotification(const String& message, std::optional<uint64_t> state);
     void postObserverNotification(const String& message);
+    void getNotifyStateForTesting(const String&, CompletionHandler<void(std::optional<uint64_t>)>&&);
+    void setNotifyState(const String&, uint64_t state);
 #endif
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void setResourceMonitorContentRuleList(WebCompiledContentRuleListData&&);
+    void setResourceMonitorContentRuleListAsync(WebCompiledContentRuleListData&&, CompletionHandler<void()>&&);
 #endif
 
     bool areAllPagesThrottleable() const;
@@ -471,7 +474,7 @@ public:
 #endif
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    const OptionSet<DMABufRendererBufferMode>& dmaBufRendererBufferMode() const { return m_dmaBufRendererBufferMode; }
+    const OptionSet<RendererBufferTransportMode>& rendererBufferTransportMode() const { return m_rendererBufferTransportMode; }
     void initializePlatformDisplayIfNeeded() const;
 #endif
 
@@ -548,6 +551,9 @@ private:
     void seedResourceLoadStatisticsForTesting(const WebCore::RegistrableDomain& firstPartyDomain, const WebCore::RegistrableDomain& thirdPartyDomain, bool shouldScheduleNotification, CompletionHandler<void()>&&);
     void userPreferredLanguagesChanged(const Vector<String>&) const;
     void fullKeyboardAccessModeChanged(bool fullKeyboardAccessEnabled);
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    void setOptInCookiePartitioningEnabled(bool);
+#endif
 
     void platformSetCacheModel(CacheModel);
 
@@ -717,9 +723,11 @@ private:
     void sendLogOnStream(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t);
 #endif
 
+    bool isProcessBeingCachedForPerformance();
+
     HashMap<WebCore::PageIdentifier, RefPtr<WebPage>> m_pageMap;
     HashMap<PageGroupIdentifier, RefPtr<WebPageGroupProxy>> m_pageGroupMap;
-    RefPtr<InjectedBundle> m_injectedBundle;
+    const RefPtr<InjectedBundle> m_injectedBundle;
 
     EventDispatcher m_eventDispatcher;
 #if PLATFORM(IOS_FAMILY)
@@ -811,6 +819,7 @@ private:
     bool m_suppressMemoryPressureHandler { false };
     bool m_loggedProcessLimitWarningMemoryStatistics { false };
     bool m_loggedProcessLimitCriticalMemoryStatistics { false };
+    bool m_wasVisibleSinceLastProcessSuspensionEvent { false };
 #if PLATFORM(MAC)
     std::unique_ptr<WebCore::CPUMonitor> m_cpuMonitor;
     std::optional<double> m_cpuLimit;
@@ -830,7 +839,7 @@ private:
     WeakHashMap<WebCore::UserGestureToken, WebCore::UserGestureTokenIdentifier> m_userGestureTokens;
 
 #if PLATFORM(GTK) || PLATFORM(WPE)
-    OptionSet<DMABufRendererBufferMode> m_dmaBufRendererBufferMode;
+    OptionSet<RendererBufferTransportMode> m_rendererBufferTransportMode;
 #endif
 
     bool m_hasSuspendedPageProxy { false };
@@ -899,6 +908,10 @@ private:
     HashSet<WebCore::RegistrableDomain> m_domainsWithStorageAccessQuirks;
     std::unique_ptr<ScriptTelemetryFilter> m_scriptTelemetryFilter;
     bool m_mediaPlaybackEnabled { false };
+
+#if ENABLE(NOTIFY_BLOCKING)
+    HashMap<String, int> m_notifyTokens;
+#endif
 };
 
 } // namespace WebKit

@@ -91,9 +91,9 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
         section()->rowLogicalHeightChanged(rowIndex());
 
     // If border was changed, notify table.
-    if (RenderTable* table = this->table()) {
-        if (oldStyle && !oldStyle->borderIsEquivalentForPainting(style()))
-            table->invalidateCollapsedBorders();
+    if (CheckedPtr table = this->table()) {
+        if (oldStyle)
+            table->invalidateCollapsedBordersAfterStyleChangeIfNeeded(*oldStyle, style());
 
         if (oldStyle && diff == StyleDifference::Layout && needsLayout() && table->collapseBorders() && borderWidthChanged(oldStyle, &style())) {
             // If the border width changes on a row, we need to make sure the cells in the row know to lay out again.

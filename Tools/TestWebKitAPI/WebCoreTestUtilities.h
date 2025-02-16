@@ -28,6 +28,7 @@
 #include "Test.h"
 #include <WebCore/Color.h>
 #include <WebCore/FloatRect.h>
+#include <WebCore/FloatSegment.h>
 #include <WebCore/FloatSize.h>
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/text/TextStream.h>
@@ -71,6 +72,41 @@ inline std::ostream& operator<<(std::ostream& os, const WebCore::FloatSize& valu
 }
 
 inline std::ostream& operator<<(std::ostream& os, const WebCore::FloatRect& value)
+{
+    TextStream s { TextStream::LineMode::SingleLine };
+    s << value;
+    return os << s.release();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const WebCore::FloatPoint& value)
+{
+    TextStream s { TextStream::LineMode::SingleLine };
+    s << value;
+    return os << s.release();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const WebCore::IntRect& value)
+{
+    TextStream s { TextStream::LineMode::SingleLine };
+    s << value;
+    return os << s.release();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const WebCore::IntSize& value)
+{
+    TextStream s { TextStream::LineMode::SingleLine };
+    s << value;
+    return os << s.release();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const WebCore::IntPoint& value)
+{
+    TextStream s { TextStream::LineMode::SingleLine };
+    s << value;
+    return os << s.release();
+}
+
+inline std::ostream& operator<<(std::ostream& os, const WebCore::FloatSegment& value)
 {
     TextStream s { TextStream::LineMode::SingleLine };
     s << value;

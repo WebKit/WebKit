@@ -138,7 +138,7 @@ void WebProcess::initializePlatformDisplayIfNeeded() const
         return;
 
 #if USE(GBM)
-    if (m_dmaBufRendererBufferMode.contains(DMABufRendererBufferMode::Hardware)) {
+    if (m_rendererBufferTransportMode.contains(RendererBufferTransportMode::Hardware)) {
         bool disabled = false;
 #if PLATFORM(GTK)
         const char* disableGBM = getenv("WEBKIT_DMABUF_RENDERER_DISABLE_GBM");
@@ -185,10 +185,10 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     DRMDeviceManager::singleton().initializeMainDevice(parameters.renderDeviceFile);
 #endif
 
-    m_dmaBufRendererBufferMode = parameters.dmaBufRendererBufferMode;
+    m_rendererBufferTransportMode = parameters.rendererBufferTransportMode;
 #if PLATFORM(WPE)
     if (!parameters.isServiceWorkerProcess) {
-        if (m_dmaBufRendererBufferMode.isEmpty()) {
+        if (m_rendererBufferTransportMode.isEmpty()) {
             auto& implementationLibraryName = parameters.implementationLibraryName;
             if (!implementationLibraryName.isNull() && implementationLibraryName.data()[0] != '\0')
                 wpe_loader_init(parameters.implementationLibraryName.data());
@@ -232,7 +232,7 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #endif
 
 #if PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
-    if (!m_dmaBufRendererBufferMode.isEmpty())
+    if (!m_rendererBufferTransportMode.isEmpty())
         WebCore::setScreenProperties(parameters.screenProperties);
 #endif
 }

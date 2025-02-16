@@ -36,6 +36,7 @@ struct WebPushDaemonConnectionConfiguration {
     String bundleIdentifierOverride;
     String pushPartitionString;
     std::optional<WTF::UUID> dataStoreIdentifier;
+    bool declarativeWebPushEnabled { false };
 };
 
 } // namespace WebKit::WebPushD

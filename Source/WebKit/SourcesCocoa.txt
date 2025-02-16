@@ -296,6 +296,7 @@ UIProcess/API/Cocoa/_WKProcessPoolConfiguration.mm
 UIProcess/API/Cocoa/_WKRemoteWebInspectorViewController.mm
 UIProcess/API/Cocoa/_WKResourceLoadInfo.mm
 UIProcess/API/Cocoa/_WKSessionState.mm
+UIProcess/API/Cocoa/_WKSpatialBackdropSource.mm
 UIProcess/API/Cocoa/_WKSystemPreferences.mm
 UIProcess/API/Cocoa/_WKTargetedElementInfo.mm
 UIProcess/API/Cocoa/_WKTargetedElementRequest.mm
@@ -400,6 +401,7 @@ UIProcess/Cocoa/SOAuthorization/SOAuthorizationSession.mm
 UIProcess/Cocoa/SOAuthorization/SubFrameSOAuthorizationSession.mm
 UIProcess/Cocoa/SOAuthorization/WKSOAuthorizationDelegate.mm
 
+UIProcess/Cocoa/AppKitSoftLink.mm
 UIProcess/Cocoa/AutomationClient.mm
 UIProcess/Cocoa/AutomationSessionClient.mm
 UIProcess/Cocoa/BrowsingWarningCocoa.mm
@@ -451,8 +453,8 @@ UIProcess/Cocoa/WKTextExtractionUtilities.mm
 UIProcess/Cocoa/WKTextPlaceholder.mm
 UIProcess/Cocoa/WKTextSelectionRect.mm
 UIProcess/Cocoa/WKWebViewContentProviderRegistry.mm
-UIProcess/Cocoa/XPCConnectionTerminationWatchdog.mm
 
+UIProcess/DigitalCredentials/WKDigitalCredentialsPicker.mm
 
 UIProcess/Gamepad/cocoa/UIGamepadProviderCocoa.mm
 UIProcess/Gamepad/ios/UIGamepadProviderIOS.mm
@@ -495,7 +497,6 @@ UIProcess/ios/fullscreen/WKFullscreenStackView.mm
 UIProcess/ios/fullscreen/WKFullScreenViewController.mm
 UIProcess/ios/fullscreen/WKFullScreenWindowControllerIOS.mm
 
-UIProcess/ios/AppKitSoftLink.mm
 UIProcess/ios/CompactContextMenuPresenter.mm
 UIProcess/ios/DragDropInteractionState.mm
 UIProcess/ios/GestureRecognizerConsistencyEnforcer.mm
@@ -577,7 +578,6 @@ UIProcess/mac/WKRevealItemPresenter.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
 UIProcess/mac/WKTextAnimationManager.mm
-UIProcess/mac/WKTextInputWindowController.mm
 UIProcess/mac/WKViewLayoutStrategy.mm
 UIProcess/mac/WebViewImpl.mm
 
@@ -585,6 +585,7 @@ UIProcess/Media/cocoa/AudioSessionRoutingArbitratorProxyCocoa.mm
 UIProcess/Media/cocoa/MediaUsageManagerCocoa.mm
 
 UIProcess/Model/ModelPresentationManagerProxy.mm
+UIProcess/Model/cocoa/ModelProcessProxyCocoa.mm
 
 UIProcess/Network/CustomProtocols/LegacyCustomProtocolManagerProxy.cpp
 
@@ -616,7 +617,6 @@ UIProcess/RemoteLayerTree/RemoteLayerTreeScrollingPerformanceData.mm
 UIProcess/RemoteLayerTree/RemoteScrollingCoordinatorProxy.cpp
 UIProcess/RemoteLayerTree/RemoteScrollingTree.cpp
 
-UIProcess/WebAuthentication/Cocoa/AppAttestInternalSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/AuthenticationServicesCoreSoftLink.mm @no-unify
 UIProcess/WebAuthentication/Cocoa/AuthenticatorPresenterCoordinator.mm
 UIProcess/WebAuthentication/Cocoa/CcidConnection.mm

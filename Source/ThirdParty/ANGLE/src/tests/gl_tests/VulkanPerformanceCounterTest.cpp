@@ -457,6 +457,17 @@ class VulkanPerformanceCounterTest_SingleBuffer : public VulkanPerformanceCounte
     }
 };
 
+class VulkanPerformanceCounterTest_Prerotation : public VulkanPerformanceCounterTest
+{
+  protected:
+    VulkanPerformanceCounterTest_Prerotation() : VulkanPerformanceCounterTest()
+    {
+        // Make sure the window is non-square to correctly test prerotation
+        setWindowWidth(32);
+        setWindowHeight(64);
+    }
+};
+
 void VulkanPerformanceCounterTest::maskedFramebufferFetchDraw(const GLColor &clearColor,
                                                               GLBuffer &buffer)
 {
@@ -5691,7 +5702,7 @@ void main()
     }
 
     ASSERT_GL_NO_ERROR();
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         EXPECT_GT(expectedShaderResourcesCacheMisses, 0u);
     }
@@ -5708,7 +5719,7 @@ void main()
 
     EXPECT_EQ(expectedData, actualData);
 
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         // Check for unnecessary descriptor set allocations.
         uint64_t actualShaderResourcesCacheMisses =
@@ -6246,8 +6257,8 @@ TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
     ASSERT_GL_NO_ERROR();
 
     uint64_t expectedCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
-    GLint expectedAllocations    = getPerfCounters().descriptorSetAllocations;
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    GLint allocationsBefore      = getPerfCounters().descriptorSetAllocations;
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         EXPECT_GT(expectedCacheMisses, 0u);
     }
@@ -6266,7 +6277,7 @@ TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
 
     ASSERT_GL_NO_ERROR();
 
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         uint64_t actualCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
         EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
@@ -6274,9 +6285,12 @@ TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
     else
     {
         // If cache is disabled, we still expect descriptorSets to be reused instead of keep
-        // allocating new descriptorSets.
-        GLint actualAllocations = getPerfCounters().descriptorSetAllocations;
-        EXPECT_EQ(expectedAllocations, actualAllocations);
+        // allocating new descriptorSets. The underline reuse logic is implementation detail (as of
+        // now it will not reuse util the pool is full), but we expect it will not increasing for
+        // every iteration.
+        GLint descriptorSetAllocationsIncrease =
+            getPerfCounters().descriptorSetAllocations - allocationsBefore;
+        EXPECT_GE(kIterations - 1, descriptorSetAllocationsIncrease);
     }
 }
 
@@ -7431,7 +7445,7 @@ TEST_P(VulkanPerformanceCounterTest, TextureDescriptorsAreShared)
     ASSERT_GL_NO_ERROR();
 
     GLuint expectedCacheMisses = getPerfCounters().textureDescriptorSetCacheMisses;
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         EXPECT_GT(expectedCacheMisses, 0u);
     }
@@ -7445,7 +7459,7 @@ TEST_P(VulkanPerformanceCounterTest, TextureDescriptorsAreShared)
 
     ASSERT_GL_NO_ERROR();
 
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         GLuint actualCacheMisses = getPerfCounters().textureDescriptorSetCacheMisses;
         EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
@@ -7502,7 +7516,7 @@ void main() {
 
     GLuint expectedCacheMisses = getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
     GLuint totalAllocationsAtFirstProgram = getPerfCounters().descriptorSetAllocations;
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         EXPECT_GT(expectedCacheMisses, 0u);
     }
@@ -7516,7 +7530,7 @@ void main() {
 
     ASSERT_GL_NO_ERROR();
 
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         GLuint actualCacheMisses = getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
         EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
@@ -7850,13 +7864,13 @@ TEST_P(VulkanPerformanceCounterTest, Source2DAndRepeatedlyRespecifyTarget2DWithS
             descriptorSetAllocationsBefore = getPerfCounters().descriptorSetAllocations;
         }
     }
-    GLint descriptorSetAllocationsIncrease =
+    size_t descriptorSetAllocationsIncrease =
         getPerfCounters().descriptorSetAllocations - descriptorSetAllocationsBefore;
     GLint textureDescriptorSetCacheTotalSizeIncrease =
         getPerfCounters().textureDescriptorSetCacheTotalSize -
         textureDescriptorSetCacheTotalSizeBefore;
 
-    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    if (isFeatureEnabled(Feature::DescriptorSetCache))
     {
         // We don't expect descriptorSet cache to keep growing
         EXPECT_EQ(1, textureDescriptorSetCacheTotalSizeIncrease);
@@ -7864,8 +7878,10 @@ TEST_P(VulkanPerformanceCounterTest, Source2DAndRepeatedlyRespecifyTarget2DWithS
     else
     {
         // Because we call EXPECT_PIXEL_NEAR which will wait for draw to finish, we don't expect
-        // descriptorSet allocation to keep growing
-        EXPECT_EQ(1, descriptorSetAllocationsIncrease);
+        // descriptorSet allocation to keep growing. The underline reuse logic is implementation
+        // detail (as of now it will not reuse util the pool is full), but we expect it will not
+        // increasing for every iteration.
+        EXPECT_GE(kMaxLoop - 1, descriptorSetAllocationsIncrease);
     }
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
@@ -8370,12 +8386,9 @@ TEST_P(VulkanPerformanceCounterTest,
     ASSERT_GL_NO_ERROR();
 }
 
-class VulkanPerformanceCounterTest_AsyncCQ : public VulkanPerformanceCounterTest
-{};
-
-// Tests that submitting the outside command buffer during flushing staged updates and
-// "asyncCommandQueue" enabled, properly updates old command buffer with the new one.
-TEST_P(VulkanPerformanceCounterTest_AsyncCQ, SubmittingOutsideCommandBufferAssertIsOpen)
+// Regression test for a bug where submitting the outside command buffer during flushing staged
+// updates did not properly update the command buffer state.
+TEST_P(VulkanPerformanceCounterTest, SubmittingOutsideCommandBufferAssertIsOpen)
 {
     // If VK_EXT_host_image_copy is used, uploads will all be done on the CPU and there would be no
     // submissions.
@@ -8390,10 +8403,9 @@ TEST_P(VulkanPerformanceCounterTest_AsyncCQ, SubmittingOutsideCommandBufferAsser
     ASSERT_NE(-1, textureLoc);
     glUniform1i(textureLoc, 0);
 
-    // This loop shouls update texture with multiple staged updates. When kMaxBufferToImageCopySize
+    // This loop should update texture with multiple staged updates. When kMaxBufferToImageCopySize
     // threshold reached, outside command buffer will be submitted in the middle of staged updates
-    // flushing. If "asyncCommandQueue" enabled and bug present, old command buffer will not be
-    // replaced by a new one, casing "ASSERT(mIsOpen)" or UB in release.
+    // flushing.
     constexpr GLsizei kMaxOutsideRPCommandsSubmitCount = 10;
     constexpr GLsizei kTexDim                          = 1024;
     constexpr GLint kMaxSubOffset                      = 10;
@@ -8423,6 +8435,43 @@ TEST_P(VulkanPerformanceCounterTest_AsyncCQ, SubmittingOutsideCommandBufferAsser
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
 }
 
+// Verifies that clear followed by eglSwapBuffers() on multisampled FBO does not result
+// extra resolve pass, if the surface is double-buffered and when the egl swap behavior
+// is EGL_BUFFER_DESTROYED
+TEST_P(VulkanPerformanceCounterTest_MSAA, SwapAfterClearOnMultisampledFBOShouldNotResolve)
+{
+    // Skip test if
+    // 1) the EGL Surface is single-buffered or
+    // 2) the EGL_SWAP_BEHAVIOR is EGL_BUFFER_PRESERVED
+    EGLint renderBufferType;
+    eglQuerySurface(getEGLWindow()->getDisplay(), getEGLWindow()->getSurface(), EGL_RENDER_BUFFER,
+                    &renderBufferType);
+    EGLint swapBehavior;
+    eglQuerySurface(getEGLWindow()->getDisplay(), getEGLWindow()->getSurface(), EGL_SWAP_BEHAVIOR,
+                    &swapBehavior);
+    ANGLE_SKIP_TEST_IF(
+        !(renderBufferType == EGL_BACK_BUFFER && swapBehavior == EGL_BUFFER_DESTROYED));
+
+    uint32_t expectedResolvesSubpass = getPerfCounters().swapchainResolveInSubpass;
+    uint32_t expectedResolvesOutside = getPerfCounters().swapchainResolveOutsideSubpass;
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    swapBuffers();
+    EXPECT_EQ(getPerfCounters().swapchainResolveInSubpass, expectedResolvesSubpass);
+    EXPECT_EQ(getPerfCounters().swapchainResolveOutsideSubpass, expectedResolvesOutside);
+}
+
+// Test that swapchain does not get necessary recreation with 90 or 270 emulated pre-rotation
+TEST_P(VulkanPerformanceCounterTest_Prerotation, swapchainCreateCounterTest)
+{
+    uint64_t expectedSwapchainCreateCounter = getPerfCounters().swapchainCreate;
+    for (uint32_t i = 0; i < 10; ++i)
+    {
+        swapBuffers();
+    }
+    EXPECT_EQ(getPerfCounters().swapchainCreate, expectedSwapchainCreateCounter);
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest);
 ANGLE_INSTANTIATE_TEST(
     VulkanPerformanceCounterTest,
@@ -8448,12 +8497,15 @@ ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_MSAA,
                        ES3_VULKAN().enable(Feature::EmulatedPrerotation180),
                        ES3_VULKAN().enable(Feature::EmulatedPrerotation270));
 
+GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_Prerotation);
+ANGLE_INSTANTIATE_TEST(
+    VulkanPerformanceCounterTest_Prerotation,
+    ES3_VULKAN().enable(Feature::PerFrameWindowSizeQuery),
+    ES3_VULKAN().enable(Feature::EmulatedPrerotation90).enable(Feature::PerFrameWindowSizeQuery),
+    ES3_VULKAN().enable(Feature::EmulatedPrerotation180).enable(Feature::PerFrameWindowSizeQuery),
+    ES3_VULKAN().enable(Feature::EmulatedPrerotation270).enable(Feature::PerFrameWindowSizeQuery));
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_SingleBuffer);
 ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_SingleBuffer, ES3_VULKAN());
-
-GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(VulkanPerformanceCounterTest_AsyncCQ);
-ANGLE_INSTANTIATE_TEST(VulkanPerformanceCounterTest_AsyncCQ,
-                       ES3_VULKAN(),
-                       ES3_VULKAN().enable(Feature::AsyncCommandQueue));
 
 }  // anonymous namespace

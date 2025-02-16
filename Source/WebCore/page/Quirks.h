@@ -61,13 +61,14 @@ public:
     ~Quirks();
 
     bool shouldSilenceResizeObservers() const;
-    bool shouldSilenceWindowResizeEvents() const;
+    bool shouldSilenceWindowResizeEventsDuringApplicationSnapshotting() const;
     bool shouldSilenceMediaQueryListChangeEvents() const;
     bool shouldIgnoreInvalidSignal() const;
     bool needsFormControlToBeMouseFocusable() const;
     bool needsAutoplayPlayPauseEvents() const;
     bool needsSeekingSupportDisabled() const;
     bool needsPerDocumentAutoplayBehavior() const;
+    bool needsHotelsAnimationQuirk(Element&, const RenderStyle&) const;
     bool shouldAutoplayWebAudioForArbitraryUserGesture() const;
     bool hasBrokenEncryptedMediaAPISupportQuirk() const;
 #if ENABLE(TOUCH_EVENTS)
@@ -83,7 +84,6 @@ public:
 
     bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscape() const;
     bool shouldFlipScreenDimensions() const;
-    bool shouldAllowDownloadsInSpiteOfCSP() const;
 
     WEBCORE_EXPORT bool shouldDispatchSyntheticMouseEventsWhenModifyingSelection() const;
     WEBCORE_EXPORT bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreas() const;
@@ -117,6 +117,7 @@ public:
     bool needsFullscreenDisplayNoneQuirk() const;
     bool needsFullscreenObjectFitQuirk() const;
     bool needsWeChatScrollingQuirk() const;
+    bool needsZomatoEmailLoginLabelQuirk() const;
     bool needsGoogleMapsScrollingQuirk() const;
 
     bool needsPrimeVideoUserSelectNoneQuirk() const;
@@ -136,6 +137,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     bool shouldEnableLegacyGetUserMediaQuirk() const;
     bool shouldDisableImageCaptureQuirk() const;
+    bool shouldEnableSpeakerSelectionPermissionsPolicyQuirk() const;
 #endif
 
     bool needsCanPlayAfterSeekedQuirk() const;
@@ -158,7 +160,6 @@ public:
     WEBCORE_EXPORT bool blocksReturnToFullscreenFromPictureInPictureQuirk() const;
     WEBCORE_EXPORT bool blocksEnteringStandardFullscreenFromPictureInPictureQuirk() const;
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk() const;
-    bool shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk() const;
 
     static bool isMicrosoftTeamsRedirectURL(const URL&);
     static bool hasStorageAccessForAllLoginDomains(const HashSet<RegistrableDomain>&, const RegistrableDomain&);
@@ -213,8 +214,6 @@ public:
     bool shouldIgnorePlaysInlineRequirementQuirk() const;
     WEBCORE_EXPORT bool shouldUseEphemeralPartitionedStorageForDOMCookies(const URL&) const;
 
-    bool needsGetElementsByNameQuirk() const;
-    bool needsRelaxedCorsMixedContentCheckQuirk() const;
     bool needsLaxSameSiteCookieQuirk(const URL&) const;
 
     String scriptToEvaluateBeforeRunningScriptFromURL(const URL&);
@@ -230,6 +229,7 @@ public:
     WEBCORE_EXPORT bool shouldIgnoreContentObservationForClick(const Node&) const;
     WEBCORE_EXPORT bool shouldSynthesizeTouchEventsAfterNonSyntheticClick(const Element&) const;
     WEBCORE_EXPORT bool needsPointerTouchCompatibility(const Element&) const;
+    bool shouldTreatAddingMouseOutEventListenerAsContentChange() const;
 #endif
 
     bool needsMozillaFileTypeForDataTransfer() const;
@@ -238,7 +238,11 @@ public:
 
     bool shouldAvoidStartingSelectionOnMouseDown(const Node&) const;
 
+    bool shouldReuseLiveRangeForSelectionUpdate() const;
+
     bool needsFacebookStoriesCreationFormQuirk(const Element&, const RenderStyle&) const;
+
+    bool needsLimitedMatroskaSupport() const;
 
 private:
     bool needsQuirks() const;

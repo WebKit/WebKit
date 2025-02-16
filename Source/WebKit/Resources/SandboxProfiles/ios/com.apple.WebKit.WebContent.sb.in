@@ -283,23 +283,17 @@
     (allow iokit-open-user-client
         (require-all
             (extension "com.apple.webkit.extension.iokit")
-            (iokit-user-client-class "IOSurfaceAcceleratorClient") ;; Media rendering into pixel buffers
-        )
-        (when (defined? 'iokit-external-method)
-            (apply-message-filter
-                (deny (with telemetry)
-                    iokit-async-external-method
-                    iokit-external-trap)
-                (deny (with telemetry) (with message "IOSurfaceAcceleratorClient")
-                    iokit-external-method)
-                (allow iokit-external-method
-                    (iokit-method-number
-                        1
-                    )
-                )
-            )
-        )
-    )
+            (iokit-user-client-class "IOSurfaceAcceleratorClient")) ;; Media rendering into pixel buffers
+
+        (apply-message-filter
+            (deny (with telemetry)
+                iokit-async-external-method
+                iokit-external-trap)
+            (deny (with telemetry) (with message "IOSurfaceAcceleratorClient")
+                iokit-external-method)
+            (allow iokit-external-method
+                (iokit-method-number
+                    1))))
 
     (allow iokit-open-user-client
         (require-all
@@ -489,10 +483,7 @@
             (allow mach-message-send (notifyd-message-numbers)))))
 
 #if ENABLE(NOTIFY_BLOCKING)
-(allow mach-lookup (global-name "com.apple.system.notification_center")
-    (apply-message-filter (deny mach-message-send)))
-(with-filter (require-not (webcontent-process-launched))
-    (allow-notifyd))
+(deny mach-lookup (global-name "com.apple.system.notification_center"))
 #else
 (allow-notifyd)
 #endif
@@ -894,8 +885,6 @@
 (with-filter (system-attribute apple-internal)
     (allow mach-lookup
         (global-name "com.apple.diagnosticd")
-        ;; This is only added temporarily. See rdar://123786910.
-        (global-name "com.apple.analyticsd")
         (global-name "com.apple.osanalytics.osanalyticshelper")))
 
 (with-filter (require-not (state-flag "BlockMobileAssetInWebContentSandbox"))
@@ -1065,18 +1054,26 @@
     SYS_shared_region_map_and_slide_2_np ;; <rdar://problem/60294880>
     SYS_sysctlbyname))
 
+(define (syscall-quicklook)
+    (syscall-number
+        SYS_mkdirat
+        SYS_openat_nocancel
+        SYS_pread_nocancel
+        SYS_rmdir
+        SYS_sendto
+        SYS_thread_selfusage
+        SYS_unlink))
+
 (define (syscall-unix-rarely-in-use)
     (syscall-number
         SYS_fgetxattr
         SYS_getxattr
         SYS_iopolicysys
-        SYS_openat_nocancel
 #if ASAN_ENABLED
         SYS_sigaltstack
 #endif
         SYS_sigprocmask
         SYS_umask
-        SYS_unlink
         SYS_writev))
 
 (define (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
@@ -1087,17 +1084,12 @@
         SYS_fsync
         SYS_getattrlistbulk ;; xpc_realpath and directory enumeration
         SYS_getgid
-        SYS_mkdirat
         SYS_open_dprotected_np
-        SYS_pread_nocancel
         SYS_psynch_rw_wrlock
-        SYS_rmdir
-        SYS_sendto
         SYS_setrlimit
 #if PLATFORM(WATCHOS)
         SYS_sigreturn
 #endif
-        SYS_thread_selfusage
         SYS_write))
 
 (deny syscall-unix (with telemetry))
@@ -1112,22 +1104,18 @@
 (allow syscall-unix (syscall-unix-only-in-use-during-launch))
 #endif
 
-
-#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
 (allow syscall-unix
     (syscall-unix-rarely-in-use)
-    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
+    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
+    (syscall-quicklook))
+
+#if ENABLE(QUICKLOOK_SANDBOX_RESTRICTIONS)
 (with-filter
     (require-all
         (state-flag "ParentProcessCanEnableQuickLookStateFlag")
         (require-not (state-flag "EnableQuickLookSandboxResources")))
-    (allow syscall-unix (with report) (with telemetry-backtrace)
-        (syscall-unix-rarely-in-use)
-        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
-#else
-(allow syscall-unix
-    (syscall-unix-rarely-in-use)
-    (syscall-unix-rarely-in-use-blocked-in-lockdown-mode))
+    (deny syscall-unix (with telemetry-backtrace)
+        (syscall-quicklook)))
 #endif
 
 (deny syscall-unix (with no-report) (syscall-number
@@ -1146,12 +1134,13 @@
 
 (with-filter (system-attribute apple-internal)
     (allow syscall-unix (syscall-number SYS_kdebug_trace_string))) ;; Needed for performance sampling, see <rdar://problem/48829655>.
-    
+
 (with-filter (lockdown-mode)
     (deny syscall-unix (with telemetry) (with message "Lockdown mode")
         (syscall-unix-in-use-after-launch-blocked-in-lockdown-mode))
     (deny syscall-unix (with telemetry) (with message "Lockdown mode")
-        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)))
+        (syscall-unix-rarely-in-use-blocked-in-lockdown-mode)
+        (syscall-quicklook)))
 
 (deny file-ioctl (with telemetry))
 
@@ -1404,63 +1393,62 @@
     io_service_get_matching_service_bin
     io_service_get_matching_services_bin))
 
-(allow mach-kernel-endpoint
-    (apply-message-filter
-        (deny mach-message-send (with telemetry))
-        (allow mach-message-send (with telemetry-backtrace)
-            (kernel-mig-routine-rarely-used-need-backtrace)
-            (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
+(deny syscall-mig (with telemetry))
 
-        (allow mach-message-send (with telemetry)
-            (kernel-mig-routine-rarely-used))
+(allow syscall-mig (with telemetry-backtrace)
+    (kernel-mig-routine-rarely-used-need-backtrace)
+    (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
 
-        (allow mach-message-send
-            (kernel-mig-routine-blocked-in-lockdown-mode)
-            (kernel-mig-routine-only-in-use-during-launch)
-            (kernel-mig-routine-in-use))
+(allow syscall-mig (with telemetry)
+    (kernel-mig-routine-rarely-used))
+
+(allow syscall-mig
+    (kernel-mig-routine-blocked-in-lockdown-mode)
+    (kernel-mig-routine-only-in-use-during-launch)
+    (kernel-mig-routine-in-use))
 
 #if PLATFORM(WATCHOS)
-        (allow mach-message-send
-            (kernel-mig-routine-in-use-watchos))
+(allow syscall-mig
+    (kernel-mig-routine-in-use-watchos))
 #endif
 
 #if HAVE(SANDBOX_STATE_FLAGS)
-        (with-filter (require-not (webcontent-process-launched))
-            (allow mach-message-send
-                (kernel-mig-routine-only-in-use-during-launch)))
-        (with-filter (webcontent-process-launched)
-            (deny mach-message-send
-                (with telemetry)
-                (with message "kernel mig routine used after launch")
-                (kernel-mig-routine-only-in-use-during-launch)))
+(with-filter (require-not (webcontent-process-launched))
+    (allow syscall-mig
+        (kernel-mig-routine-only-in-use-during-launch)))
+(with-filter (webcontent-process-launched)
+    (allow syscall-mig
+        (with telemetry)
+        (with message "kernel mig routine used after launch")
+        (kernel-mig-routine-only-in-use-during-launch)))
 #if ENABLE(WEBCONTENT_GPU_SANDBOX_EXTENSIONS_BLOCKING)
-        (deny mach-message-send (with no-report) (kernel-mig-routines-iokit-service))
+(deny syscall-mig (with no-report) (kernel-mig-routines-iokit-service))
 #else
-        (with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
-            (allow mach-message-send (kernel-mig-routines-iokit-service)))
+(with-filter (require-not (state-flag "BlockIOKitInWebContentSandbox"))
+    (allow syscall-mig (kernel-mig-routines-iokit-service)))
 #endif
 #endif
 
 #if HAVE(HARDENED_MACH_EXCEPTIONS)
-        (with-filter (require-not (lockdown-mode))
-            (allow mach-message-send (kernel-mig-routine thread_adopt_exception_handler))
-            (with-filter (require-not (webcontent-process-launched))
-                (allow mach-message-send (kernel-mig-routine task_register_hardened_exception_handler))))
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-mig (kernel-mig-routine thread_adopt_exception_handler))
+    (with-filter (require-not (webcontent-process-launched))
+        (allow syscall-mig (kernel-mig-routine task_register_hardened_exception_handler))))
 #else
-        (with-filter (require-not (lockdown-mode))
-            (allow mach-message-send (kernel-mig-routine thread_set_exception_ports)))
+(with-filter (require-not (lockdown-mode))
+    (allow syscall-mig (kernel-mig-routine thread_set_exception_ports)))
 #endif ;; HAVE(HARDENED_MACH_EXCEPTIONS)
 
-        (with-filter (lockdown-mode)
-            (deny mach-message-send (with telemetry) (with message "Lockdown mode")
-                (kernel-mig-routine-blocked-in-lockdown-mode))
-            (deny mach-message-send (with telemetry) (with message "Lockdown mode")
-                (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
-            (deny mach-message-send (with telemetry) (with message "Lockdown mode")
-                (kernel-mig-routine-rarely-used)))
+(with-filter (lockdown-mode)
+    (deny syscall-mig (with telemetry) (with message "Lockdown mode")
+        (kernel-mig-routine-blocked-in-lockdown-mode))
+    (deny syscall-mig (with telemetry) (with message "Lockdown mode")
+        (kernel-mig-routine-rarely-used-need-backtrace-blocked-in-lockdown-mode))
+    (deny syscall-mig (with telemetry) (with message "Lockdown mode")
+        (kernel-mig-routine-rarely-used)))
 
-        (when (defined? 'mach_port_is_connection_for_service)
-            (allow mach-message-send (kernel-mig-routine mach_port_is_connection_for_service)))))
+(when (defined? 'mach_port_is_connection_for_service)
+    (allow syscall-mig (kernel-mig-routine mach_port_is_connection_for_service)))
 
 (deny darwin-notification-post (with no-report))
 (allow darwin-notification-post

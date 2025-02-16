@@ -1,10 +1,12 @@
-Button1  Button2  Invoker1  Button3  Button4
+Button1  Button2  Invoker0  Invoker1  Button3  Button4
 Invoker  after
 Show popover
-Toggle popover Popover with focusable element Other focusable element
+Toggle popover Other focusable element
+Toggle popover Popover with focusable element
 
 FAIL Popover focus navigation assert_equals: Hidden popover should be skipped expected Element node <button id="button2" tabindex="0">Button2</button> but got Element node <button id="button1" tabindex="0">Button1</button>
-FAIL Circular reference tab navigation assert_equals: Step 2 expected Element node <button id="circular1" autofocus="" popovertarget="popove... but got Element node <button id="circular0" popovertarget="popover4" tabindex=...
+FAIL Circular reference tab navigation assert_equals: circular reference: Step 2 expected Element node <button id="circular1" autofocus="" popovertarget="popove... but got Element node <button id="circular0" popovertarget="popover4" tabindex=...
 FAIL Popover focus returns when popover is hidden by invoker assert_true: popover should be invoked by invoker expected true got false
 FAIL Popover focus only returns to invoker when focus is within the popover assert_equals: next up is the popover expected Element node <button tabindex="0">focusable element</button> but got Element node <button popovertarget="focus-return2-p" tabindex="0">Togg...
+FAIL Cases where the next focus candidate isn't in the direct parent scope assert_equals: next up is the popover expected Element node <button tabindex="0" popovertarget="no-focus-candidate-p2... but got Element node <button popovertarget="no-focus-candidate-p" tabindex="0"...
 

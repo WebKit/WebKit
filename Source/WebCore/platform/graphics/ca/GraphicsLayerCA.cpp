@@ -337,8 +337,10 @@ Ref<PlatformCALayer> GraphicsLayerCA::createPlatformCALayer(PlatformCALayer::Lay
 {
     auto result = PlatformCALayerCocoa::create(layerType, owner);
 
-    if (result->canHaveBackingStore())
-        result->setContentsFormat(screenContentsFormat(nullptr, owner));
+    if (result->canHaveBackingStore()) {
+        auto contentsFormat = PlatformCALayer::contentsFormatForLayer(nullptr, owner);
+        result->setContentsFormat(contentsFormat);
+    }
 
     return result;
 }
@@ -811,14 +813,14 @@ void GraphicsLayerCA::setIsDescendentOfSeparatedPortal(bool isDescendentOfSepara
 #endif
 
 #if HAVE(CORE_MATERIAL)
-void GraphicsLayerCA::setAppleVisualEffect(AppleVisualEffect effect)
+void GraphicsLayerCA::setAppleVisualEffectData(AppleVisualEffectData effectData)
 {
-    if (effect == m_appleVisualEffect)
+    if (effectData == m_appleVisualEffectData)
         return;
 
-    bool backdropFiltersChanged = appleVisualEffectNeedsBackdrop(effect) != appleVisualEffectNeedsBackdrop(m_appleVisualEffect);
+    bool backdropFiltersChanged = appleVisualEffectNeedsBackdrop(effectData.effect) != appleVisualEffectNeedsBackdrop(m_appleVisualEffectData.effect);
 
-    GraphicsLayer::setAppleVisualEffect(effect);
+    GraphicsLayer::setAppleVisualEffectData(effectData);
 
     LayerChangeFlags changes = AppleVisualEffectChanged;
     if (backdropFiltersChanged)
@@ -1525,7 +1527,7 @@ void GraphicsLayerCA::flushCompositingState(const FloatRect& visibleRect)
     // There is no backdrop root above the root layer, and we can just assume the backing
     // will be opaque. RenderLayerBacking will force an explicit backdrop root outside
     // of any filters if needed.
-    commitState.backdropRootIsOpaque = true;
+    commitState.backdropRootIsOpaque = client().backdropRootIsOpaque(this);
     m_previousCommittedVisibleRect = visibleRect;
 
 #if PLATFORM(IOS_FAMILY)
@@ -1934,7 +1936,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     }
 
     if (isBackdropRoot())
-        childCommitState.backdropRootIsOpaque = backgroundColor().isOpaque();
+        childCommitState.backdropRootIsOpaque = backgroundColor().isOpaque() || client().backdropRootIsOpaque(this);
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get())) {
         maskLayer->setVisibleAndCoverageRects(rects);
@@ -2115,7 +2117,11 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
     }
 
     // Need to handle Preserves3DChanged first, because it affects which layers subsequent properties are applied to
-    if (m_uncommittedChanges & (Preserves3DChanged | ReplicatedLayerChanged | BackdropFiltersChanged)) {
+    LayerChangeFlags structuralLayerUpdateReasons = Preserves3DChanged | ReplicatedLayerChanged | BackdropFiltersChanged;
+#if HAVE(CORE_MATERIAL)
+    structuralLayerUpdateReasons |= AppleVisualEffectChanged;
+#endif
+    if (m_uncommittedChanges & structuralLayerUpdateReasons) {
         if (updateStructuralLayer())
             layerChanged = true;
     }
@@ -2176,7 +2182,7 @@ void GraphicsLayerCA::commitLayerChangesBeforeSublayers(CommitState& commitState
 
 #if HAVE(CORE_MATERIAL)
     if (m_uncommittedChanges & AppleVisualEffectChanged)
-        updateAppleVisualEffect();
+        updateAppleVisualEffectData();
 #endif
 
     if (m_uncommittedChanges & BackdropRootChanged)
@@ -2304,6 +2310,11 @@ void GraphicsLayerCA::updateNames()
     case StructuralLayerForBackdrop:
         m_structuralLayer->setName(makeString("backdrop hosting: "_s, name));
         break;
+#if HAVE(MATERIAL_HOSTING)
+    case StructuralLayerForMaterial:
+        m_structuralLayer->setName(makeString("material hosting: "_s, name));
+        break;
+#endif
     case NoStructuralLayer:
         break;
     }
@@ -2376,9 +2387,9 @@ void GraphicsLayerCA::updateSublayerList(bool maxLayerDepthReached)
     bool structuralLayerHostsChildren = !clippingLayerHostsChildren && m_structuralLayer && structuralLayerPurpose() != StructuralLayerPurpose::StructuralLayerForBackdrop;
     if (m_contentsClippingLayer) {
         PlatformCALayerList clippingChildren;
+        appendContentsLayer(clippingChildren);
         if (clippingLayerHostsChildren)
             buildChildLayerList(clippingChildren);
-        appendContentsLayer(clippingChildren);
         m_contentsClippingLayer->setSublayers(clippingChildren);
     }
 
@@ -2615,14 +2626,13 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
 
     // If nothing actually changed, no need to touch the layer properties.
     if (!(m_uncommittedChanges & BackdropFiltersChanged) && m_backdropLayer) {
-        // Opaque state depends on ancestor state, and is cheap to set, so just unconditionally update it.
-        m_backdropLayer->setBackdropRootIsOpaque(commitState.backdropRootIsOpaque);
-        return;
+        if (m_backdropLayer->backdropRootIsOpaque() == commitState.backdropRootIsOpaque)
+            return;
     }
 
     auto expectedLayerType = PlatformCALayer::LayerType::LayerTypeBackdropLayer;
 #if HAVE(CORE_MATERIAL)
-    if (appleVisualEffectNeedsBackdrop(m_appleVisualEffect))
+    if (appleVisualEffectNeedsBackdrop(m_appleVisualEffectData.effect))
         expectedLayerType = PlatformCALayer::LayerType::LayerTypeMaterialLayer;
 #endif
 
@@ -2644,8 +2654,8 @@ void GraphicsLayerCA::updateBackdropFilters(CommitState& commitState)
 
     bool shouldSetFilters = true;
 #if HAVE(CORE_MATERIAL)
-    if (m_appleVisualEffect != AppleVisualEffect::None) {
-        m_backdropLayer->setAppleVisualEffect(m_appleVisualEffect);
+    if (m_appleVisualEffectData.effect != AppleVisualEffect::None) {
+        m_backdropLayer->setAppleVisualEffectData(m_appleVisualEffectData);
         shouldSetFilters = false;
     }
 #endif
@@ -2760,10 +2770,20 @@ void GraphicsLayerCA::updateIsDescendentOfSeparatedPortal()
 #endif
 
 #if HAVE(CORE_MATERIAL)
-void GraphicsLayerCA::updateAppleVisualEffect()
+void GraphicsLayerCA::updateAppleVisualEffectData()
 {
-    if (m_backdropLayer && (appleVisualEffectNeedsBackdrop(m_backdropLayer->appleVisualEffect()) || appleVisualEffectNeedsBackdrop(m_appleVisualEffect)))
-        m_backdropLayer->setAppleVisualEffect(m_appleVisualEffect);
+    if (m_backdropLayer && (appleVisualEffectNeedsBackdrop(m_backdropLayer->appleVisualEffectData().effect) || appleVisualEffectNeedsBackdrop(m_appleVisualEffectData.effect)))
+        m_backdropLayer->setAppleVisualEffectData(m_appleVisualEffectData);
+
+    if (appleVisualEffectAppliesFilter(m_appleVisualEffectData.effect))
+        m_layer->setAppleVisualEffectData(m_appleVisualEffectData);
+    else
+        m_layer->setAppleVisualEffectData({ });
+
+#if HAVE(MATERIAL_HOSTING)
+    if (m_structuralLayer && appleVisualEffectIsHostedMaterial(m_appleVisualEffectData.effect))
+        m_structuralLayer->setAppleVisualEffectData(m_appleVisualEffectData);
+#endif
 }
 #endif
 
@@ -2818,7 +2838,19 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
         return structuralLayerChanged;
     }
 
+#if HAVE(MATERIAL_HOSTING)
+    if (purpose == StructuralLayerForMaterial) {
+        if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerType::LayerTypeMaterialHostingLayer)
+            m_structuralLayer = nullptr;
+
+        if (!m_structuralLayer) {
+            m_structuralLayer = createPlatformCALayer(PlatformCALayer::LayerType::LayerTypeMaterialHostingLayer, this);
+            structuralLayerChanged = true;
+        }
+    } else if (purpose == StructuralLayerForPreserves3D) {
+#else
     if (purpose == StructuralLayerForPreserves3D) {
+#endif
         if (m_structuralLayer && m_structuralLayer->layerType() != PlatformCALayer::LayerType::LayerTypeTransformLayer)
             m_structuralLayer = nullptr;
         
@@ -2869,6 +2901,11 @@ bool GraphicsLayerCA::ensureStructuralLayer(StructuralLayerPurpose purpose)
 
 GraphicsLayerCA::StructuralLayerPurpose GraphicsLayerCA::structuralLayerPurpose() const
 {
+#if HAVE(MATERIAL_HOSTING)
+    if (appleVisualEffectIsHostedMaterial(m_appleVisualEffectData.effect))
+        return StructuralLayerForMaterial;
+#endif
+
     if (preserves3D() && m_type != Type::Structural)
         return StructuralLayerForPreserves3D;
     
@@ -4240,9 +4277,11 @@ void GraphicsLayerCA::updateRootRelativeScale()
     };
 
     float rootRelativeScaleFactor = hasNonIdentityTransform() ? computeMaxScaleFromTransform(transform()) : 1;
-
-    if (auto* parentLayer = parent(); parentLayer && parentLayer->hasNonIdentityChildrenTransform())
-        rootRelativeScaleFactor = std::max(rootRelativeScaleFactor, computeMaxScaleFromTransform(parentLayer->childrenTransform()));
+    if (m_parent) {
+        if (m_parent->hasNonIdentityChildrenTransform())
+            rootRelativeScaleFactor *= computeMaxScaleFromTransform(m_parent->childrenTransform());
+        rootRelativeScaleFactor *= downcast<GraphicsLayerCA>(*m_parent).rootRelativeScaleFactor();
+    }
 
     if (rootRelativeScaleFactor != m_rootRelativeScaleFactor) {
         m_rootRelativeScaleFactor = rootRelativeScaleFactor;
@@ -4405,7 +4444,7 @@ ASCIILiteral GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) c
         return "contents shape mask layer"_s;
     if (&layer == m_backdropLayer.get()) {
 #if HAVE(CORE_MATERIAL)
-        if (m_backdropLayer->appleVisualEffect() != AppleVisualEffect::None)
+        if (m_backdropLayer->appleVisualEffectData().effect != AppleVisualEffect::None)
             return "backdrop layer (material)"_s;
 #endif
         return "backdrop layer"_s;

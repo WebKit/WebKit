@@ -50,10 +50,10 @@ WK_SWIFT_UI_ACTOR
 @property (nonatomic, weak) id <WKDownloadDelegate> delegate;
 
 /* @abstract A boolean value indicating whether this download was initiated by the user. */
-@property (nonatomic, readonly, getter=isUserInitiated) BOOL userInitiated WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly, getter=isUserInitiated) BOOL userInitiated WK_API_AVAILABLE(macos(15.2), ios(18.2));
 
 /* @abstract The frame that originated this download. */
-@property (nonatomic, readonly) WKFrameInfo *originatingFrame WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+@property (nonatomic, readonly) WKFrameInfo *originatingFrame WK_API_AVAILABLE(macos(15.2), ios(18.2));
 
 /* @abstract Cancel the download.
  @param completionHandler A block to invoke when cancellation is finished.

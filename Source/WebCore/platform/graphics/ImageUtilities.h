@@ -35,7 +35,7 @@ namespace WebCore {
 class ShareableBitmap;
 class SharedBuffer;
 
-WEBCORE_EXPORT WorkQueue& sharedImageTranscodingQueue();
+WEBCORE_EXPORT WorkQueue& sharedImageTranscodingQueueSingleton();
 
 // Given a list of files' 'paths' and 'allowedMIMETypes', the function returns a list
 // of strings whose size is the same as the size of 'paths' and its entries are all

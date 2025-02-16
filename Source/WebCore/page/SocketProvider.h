@@ -36,13 +36,14 @@ class ScriptExecutionContext;
 class ThreadableWebSocketChannel;
 class WebSocketChannelClient;
 class WebTransportSession;
+class WebTransportSessionClient;
 
 using WebTransportSessionPromise = NativePromise<Ref<WebTransportSession>, void>;
 
 class WEBCORE_EXPORT SocketProvider : public ThreadSafeRefCounted<SocketProvider> {
 public:
     virtual RefPtr<ThreadableWebSocketChannel> createWebSocketChannel(Document&, WebSocketChannelClient&) = 0;
-    virtual Ref<WebTransportSessionPromise> initializeWebTransportSession(ScriptExecutionContext&, const URL&) = 0;
+    virtual Ref<WebTransportSessionPromise> initializeWebTransportSession(ScriptExecutionContext&, WebTransportSessionClient&, const URL&) = 0;
 
     virtual ~SocketProvider() { };
 };

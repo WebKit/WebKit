@@ -11,7 +11,7 @@ x
 x
 x
 
-FAIL fallback role w/ region with no label assert_equals: <nav role="region group" data-testname="fallback role w/ region with no label" data-expectedrole="group" class="ex">x</nav> expected "group" but got "navigation"
+PASS fallback role w/ region with no label
 PASS fallback role w/ region with label
 PASS aria 1.1 switch role w/ fallback to aria 1.0 checkbox role
 PASS div[role=button] ignoring invalid foo role token

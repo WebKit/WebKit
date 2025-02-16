@@ -32,7 +32,7 @@ PASS MediaRecorder mimeType is not set before 'onstart' for audio/video
 PASS MediaRecorder doesn't fire 'onstart' multiple times for audio
 PASS MediaRecorder doesn't fire 'onstart' multiple times for video
 PASS MediaRecorder doesn't fire 'onstart' multiple times for audio/video
-FAIL MediaRecorder formats mimeType well after 'start' for audio assert_regexp_match: mimeType has one codec a expected object "/^[a-z]+\/[a-z]+;[ ]*codecs=[^,]+$/" but got "audio/mp4"
-FAIL MediaRecorder formats mimeType well after 'start' for video assert_regexp_match: mimeType has one codec a expected object "/^[a-z]+\/[a-z]+;[ ]*codecs=[^,]+$/" but got "video/mp4"
-FAIL MediaRecorder formats mimeType well after 'start' for audio/video assert_regexp_match: mimeType has two codecs expected object "/^[a-z]+\/[a-z]+;[ ]*codecs=[^,]+,[^,]+$/" but got "video/mp4"
+PASS MediaRecorder formats mimeType well after 'start' for audio
+PASS MediaRecorder formats mimeType well after 'start' for video
+PASS MediaRecorder formats mimeType well after 'start' for audio/video
 

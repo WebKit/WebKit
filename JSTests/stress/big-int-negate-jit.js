@@ -11,7 +11,7 @@ function negateBigInt(n) {
 }
 noInline(negateBigInt);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(negateBigInt(100n), -100n);
     assert(negateBigInt(-0x1fffffffffffff01n), 0x1fffffffffffff01n);
 }
@@ -24,7 +24,7 @@ function negateBigIntSpecializedToInt(n) {
 }
 noInline(negateBigIntSpecializedToInt);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     negateBigIntSpecializedToInt(100);
 }
 
@@ -36,7 +36,7 @@ function mixedSpeculationNegateBigInt(n, arr) {
 }
 noInline(mixedSpeculationNegateBigInt);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (i % 2)
         assert(mixedSpeculationNegateBigInt(100), -100);
     else

@@ -3,7 +3,7 @@ function foo(a0) {
         if (!a0) {
             foo({});
         }
-        for (let j = 0; j < 100000; j++) {}
+        for (let j = 0; j < testLoopCount; j++) {}
     }
     a0.a;
 }

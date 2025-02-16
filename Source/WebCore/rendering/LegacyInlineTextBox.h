@@ -24,11 +24,12 @@
 
 #include "GlyphDisplayListCacheRemoval.h"
 #include "LegacyInlineBox.h"
-#include "RenderText.h"
 #include "TextBoxSelectableRange.h"
 #include "TextRun.h"
 
 namespace WebCore {
+
+class RenderSVGInlineText;
 
 namespace InlineIterator {
 class BoxLegacyPath;
@@ -37,15 +38,11 @@ class BoxLegacyPath;
 class LegacyInlineTextBox : public LegacyInlineBox {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(LegacyInlineTextBox);
 public:
-    explicit LegacyInlineTextBox(RenderText& renderer)
-        : LegacyInlineBox(renderer)
-    {
-    }
-
+    explicit LegacyInlineTextBox(RenderSVGInlineText&);
     virtual ~LegacyInlineTextBox();
 
-    RenderText& renderer() const { return downcast<RenderText>(LegacyInlineBox::renderer()); }
-    const RenderStyle& lineStyle() const { return isFirstLine() ? renderer().firstLineStyle() : renderer().style(); }
+    RenderSVGInlineText& renderer() const;
+    const RenderStyle& lineStyle() const;
 
     LegacyInlineTextBox* prevTextBox() const { return m_prevTextBox; }
     LegacyInlineTextBox* nextTextBox() const { return m_nextTextBox; }
@@ -72,12 +69,7 @@ public:
     LayoutUnit baselinePosition(FontBaseline) const final;
     LayoutUnit lineHeight() const final;
 
-    LayoutRect logicalOverflowRect() const;
     void setLogicalOverflowRect(const LayoutRect&);
-    LayoutUnit logicalTopVisualOverflow() const { return logicalOverflowRect().y(); }
-    LayoutUnit logicalBottomVisualOverflow() const { return logicalOverflowRect().maxY(); }
-    LayoutUnit logicalLeftVisualOverflow() const { return logicalOverflowRect().x(); }
-    LayoutUnit logicalRightVisualOverflow() const { return logicalOverflowRect().maxX(); }
 
     virtual void dirtyOwnLineBoxes() { dirtyLineBoxes(); }
 
@@ -99,8 +91,6 @@ public:
 
 private:
     void deleteLine() final;
-    void extractLine() final;
-    void attachLine() final;
     
 public:
     RenderObject::HighlightState selectionState() const final;
@@ -144,7 +134,7 @@ inline void LegacyInlineTextBox::removeFromGlyphDisplayListCache()
     }
 }
 
-LayoutRect snappedSelectionRect(const LayoutRect&, float logicalRight, float selectionTop, float selectionHeight, bool isHorizontal);
+LayoutRect snappedSelectionRect(const LayoutRect&, float logicalRight, WritingMode);
 
 } // namespace WebCore
 

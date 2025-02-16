@@ -113,11 +113,8 @@ ExceptionOr<size_t> computeCopyElementCount(const WebCodecsAudioData& data, cons
     else if (options.planeIndex >= data.numberOfChannels())
         return Exception { ExceptionCode::RangeError, "Invalid planeIndex for planar format"_s };
 
-#if !USE(AVFOUNDATION)
     // 5. If [[format]] does not equal destFormat and the User Agent does not support the requested AudioSampleFormat conversion, throw a NotSupportedError DOMException. Conversion to f32-planar must always be supported.
-    if (options.format && *options.format != destFormat && destFormat != AudioSampleFormat::F32Planar)
-        return Exception { ExceptionCode::NotSupportedError, "AudioData currently only supports copy conversion to f32-planar"_s };
-#endif
+    // The backends based on AVFoundation and GStreamer support all format conversions.
 
     // 6. Let frameCount be the number of frames in the plane identified by options.planeIndex.
     // All planes have the same number of frames, always

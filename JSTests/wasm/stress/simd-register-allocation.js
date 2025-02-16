@@ -47,7 +47,7 @@ async function test() {
     const instance = await instantiate(wat, { imports: { ident: (x) => x } }, { simd: true })
     const { test_wasm_call_clobber_width } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(test_wasm_call_clobber_width(), 1337.0 + 8.0 + 42.0 + 4.0)
     }
 }

@@ -22,7 +22,7 @@ function test2(array) {
 }
 noInline(test2);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(array1), -6n);
     shouldBe(test2(array2), 6n);
 }

@@ -374,7 +374,7 @@ void MemoryPressureMonitor::start()
 
             if (usedPercentage >= s_memoryPresurePercentageThreshold) {
                 bool isCritical = (usedPercentage >= s_memoryPresurePercentageThresholdCritical);
-                RunLoop::main().dispatch([isCritical] {
+                RunLoop::protectedMain()->dispatch([isCritical] {
                     for (auto& processPool : WebProcessPool::allProcessPools())
                         processPool->sendMemoryPressureEvent(isCritical);
                 });

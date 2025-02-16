@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "BMalloced.h"
 #include "IsoDirectory.h"
 
@@ -61,3 +63,4 @@ private:
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

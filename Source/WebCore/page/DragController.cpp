@@ -61,6 +61,7 @@
 #include "HTMLPlugInElement.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "HostWindow.h"
 #include "Image.h"
 #include "ImageOrientation.h"
 #include "ImageOverlay.h"
@@ -367,14 +368,10 @@ static RefPtr<HTMLInputElement> asFileInput(Node& node)
     return inputElement && inputElement->isFileUpload() ? inputElement : nullptr;
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 static bool isEnabledColorInput(Node& node)
 {
     RefPtr input = dynamicDowncast<HTMLInputElement>(node);
-    if (!input)
-        return false;
-    return input->isColorControl() && !input->isDisabledFormControl();
+    return input && input->isColorControl() && !input->isDisabledFormControl();
 }
 
 static bool isInShadowTreeOfEnabledColorInput(Node& node)
@@ -382,8 +379,6 @@ static bool isInShadowTreeOfEnabledColorInput(Node& node)
     RefPtr host = node.shadowHost();
     return host && isEnabledColorInput(*host);
 }
-
-#endif
 
 // This can return null if an empty document is loaded.
 static Element* elementUnderMouse(Document& documentUnderMouse, const IntPoint& p)
@@ -583,13 +578,11 @@ bool DragController::concludeEditDrag(const DragData& dragData)
         Color color = dragData.asColor();
         if (!color.isValid())
             return false;
-#if ENABLE(INPUT_TYPE_COLOR)
         if (isEnabledColorInput(*element)) {
             auto& input = downcast<HTMLInputElement>(*element);
             input.setValue(serializationForHTML(color), DispatchInputAndChangeEvent);
             return true;
         }
-#endif
         auto innerRange = innerFrame->selection().selection().toNormalizedRange();
         if (!innerRange)
             return false;
@@ -696,10 +689,8 @@ bool DragController::canProcessDrag(const DragData& dragData)
     DragData::DraggingPurpose dragPurpose = DragData::DraggingPurpose::ForEditing;
     if (asFileInput(*dragNode))
         dragPurpose = DragData::DraggingPurpose::ForFileUpload;
-#if ENABLE(INPUT_TYPE_COLOR)
     else if (isEnabledColorInput(*dragNode) || isInShadowTreeOfEnabledColorInput(*dragNode))
         dragPurpose = DragData::DraggingPurpose::ForColorControl;
-#endif
 
     if (!dragData.containsCompatibleContent(dragPurpose))
         return false;
@@ -707,10 +698,8 @@ bool DragController::canProcessDrag(const DragData& dragData)
     if (dragPurpose == DragData::DraggingPurpose::ForFileUpload)
         return true;
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (dragPurpose == DragData::DraggingPurpose::ForColorControl)
         return true;
-#endif
 
     if (!dragNode->hasEditableStyle())
         return false;
@@ -861,12 +850,10 @@ RefPtr<Element> DragController::draggableElement(const LocalFrame* sourceFrame, 
                 return element;
             }
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
             if (m_dragSourceAction.contains(DragSourceAction::Color) && isEnabledColorInput(*element)) {
                 state.type.add(DragSourceAction::Color);
                 return element;
             }
-#endif
 #if ENABLE(MODEL_ELEMENT)
             if (RefPtr model = dynamicDowncast<HTMLModelElement>(*element); model
                 && m_dragSourceAction.contains(DragSourceAction::Model)
@@ -1035,7 +1022,7 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
 
     Ref dataTransfer = *state.dataTransfer;
     if (state.type == DragSourceAction::DHTML) {
-        dragImage = DragImage { dataTransfer->createDragImage(dragImageOffset) };
+        dragImage = DragImage { dataTransfer->createDragImage(src.protectedDocument().get(), dragImageOffset) };
         // We allow DHTML/JS to set the drag image, even if its a link, image or text we're dragging.
         // This is in the spirit of the IE API, which allows overriding of pasteboard data and DragOp.
         if (dragImage) {
@@ -1271,7 +1258,6 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
     }
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(state.source); input
         && m_dragSourceAction.contains(DragSourceAction::Color)
         && input->isColorControl()) {
@@ -1288,7 +1274,6 @@ bool DragController::startDrag(LocalFrame& src, const DragState& state, OptionSe
         doSystemDrag(WTFMove(dragImage), dragLoc, dragOrigin, src, state, { });
         return true;
     }
-#endif
 
 #if ENABLE(MODEL_ELEMENT)
     if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(state.source); modelElement && m_dragSourceAction.contains(DragSourceAction::Model)) {
@@ -1331,7 +1316,8 @@ void DragController::doImageDrag(Element& element, const IntPoint& dragOrigin, c
     ImageOrientation orientation = element.renderer()->imageOrientation();
 
     RefPtr image = getImage(element);
-    if (image && !layoutRect.isEmpty() && shouldUseCachedImageForDragImage(*image) && (dragImage = DragImage { createDragImageFromImage(image.get(), orientation) })) {
+    if (image && !layoutRect.isEmpty() && shouldUseCachedImageForDragImage(*image)
+        && (dragImage = DragImage { createDragImageFromImage(image.get(), orientation, frame.view() ? frame.view()->hostWindow() : nullptr, element.document().deviceScaleFactor()) })) {
         dragImage = DragImage { fitDragImageToMaxSize(dragImage.get(), layoutRect.size(), maxDragImageSize()) };
         IntSize fittedSize = dragImageSize(dragImage.get());
 
@@ -1436,6 +1422,11 @@ void DragController::doSystemDrag(DragImage image, const IntPoint& dragLoc, cons
             item.title = titleAttribute.isEmpty() ? link->innerText() : titleAttribute.string();
             item.url = frame.document()->completeURL(link->getAttribute(HTMLNames::hrefAttr));
         }
+
+#if ENABLE(MODEL_PROCESS)
+        if (RefPtr modelElement = dynamicDowncast<HTMLModelElement>(state.source); modelElement && m_dragSourceAction.contains(DragSourceAction::Model))
+            item.modelLayerID = modelElement->layerID();
+#endif
     }
     client().startDrag(WTFMove(item), *state.dataTransfer, mainFrame.get());
     // DragClient::startDrag can cause our Page to dispear, deallocating |this|.

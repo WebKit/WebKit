@@ -35,15 +35,15 @@ struct FlexValidator {
         return CSS::UnitTraits<CSS::FlexUnit>::validate(unitType);
     }
 
-    template<auto R> static bool isValid(CSS::FlexRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::FlexRaw<R, V> raw, CSSPropertyParserOptions)
     {
         return isValidCanonicalValue(raw);
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::Flex<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Flex<R>>;
-    using DimensionToken = DimensionConsumer<CSS::Flex<R>, FlexValidator>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Flex<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Flex<R, V>>;
+    using DimensionToken = DimensionConsumer<CSS::Flex<R, V>, FlexValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

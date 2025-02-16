@@ -27,7 +27,11 @@
 #include "FileSystemWritableFileStream.h"
 
 #include "InternalWritableStream.h"
+#include "JSBlob.h"
+#include "JSDOMPromise.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSFileSystemWritableFileStream.h"
+#include <JavaScriptCore/JSPromise.h>
 
 namespace WebCore {
 
@@ -45,25 +49,70 @@ FileSystemWritableFileStream::FileSystemWritableFileStream(Ref<InternalWritableS
 {
 }
 
-void FileSystemWritableFileStream::write(ChunkType&& data, DOMPromiseDeferred<void>&& promise)
+static JSC::JSValue convertChunk(JSC::JSGlobalObject& lexicalGlobalObject, JSDOMGlobalObject& globalObject, const FileSystemWritableFileStream::ChunkType& data)
 {
-    UNUSED_PARAM(data);
-    // FIXME: Implemented this.
-    promise.reject(Exception { ExceptionCode::NotSupportedError });
+    return WTF::switchOn(data, [&](const RefPtr<JSC::ArrayBufferView>& arrayBufferView) {
+        if (!arrayBufferView || arrayBufferView->isDetached())
+            return JSC::jsNull();
+        return toJS<IDLArrayBufferView>(lexicalGlobalObject, globalObject, *arrayBufferView);
+    }, [&](const RefPtr<JSC::ArrayBuffer>& arrayBuffer) {
+        if (!arrayBuffer || arrayBuffer->isDetached())
+            return JSC::jsNull();
+        return toJS<IDLArrayBuffer>(lexicalGlobalObject, globalObject, *arrayBuffer);
+    }, [&](const RefPtr<Blob>& blob) {
+        if (!blob)
+            return JSC::jsNull();
+        return toJS<IDLInterface<Blob>>(lexicalGlobalObject, globalObject, *blob);
+    }, [&](const String& string) {
+        return toJS<IDLDOMString>(lexicalGlobalObject, string);
+    }, [&](const FileSystemWritableFileStream::WriteParams& params) {
+        return toJS<IDLDictionary<FileSystemWritableFileStream::WriteParams>>(lexicalGlobalObject, globalObject, params);
+    });
 }
 
-void FileSystemWritableFileStream::seek(uint64_t position, DOMPromiseDeferred<void>&& promise)
+void FileSystemWritableFileStream::write(JSC::JSGlobalObject& lexicalGlobalObject, const ChunkType& data, DOMPromiseDeferred<void>&& promise)
 {
-    UNUSED_PARAM(position);
-    // FIXME: Implemented this.
-    promise.reject(Exception { ExceptionCode::NotSupportedError });
+    auto* globalObject = JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject);
+    RELEASE_ASSERT(globalObject);
+
+    auto jsData = convertChunk(lexicalGlobalObject, *globalObject, data);
+    if (jsData == JSC::jsNull())
+        return promise.reject(Exception { ExceptionCode::TypeError });
+
+    Ref internalStream = internalWritableStream();
+    auto result = internalStream->writeChunkForBingings(lexicalGlobalObject, jsData);
+    if (result.hasException())
+        return promise.reject(result.releaseException());
+
+    auto* jsPromise = jsCast<JSC::JSPromise*>(result.returnValue());
+    if (!jsPromise)
+        return promise.reject(Exception { ExceptionCode::UnknownError, "Failed to complete write operation"_s });
+
+    Ref domPromise = DOMPromise::create(*globalObject, *jsPromise);
+    domPromise->whenSettled([domPromise, promise = WTFMove(promise)]() mutable {
+        switch (domPromise->status()) {
+        case DOMPromise::Status::Fulfilled:
+            return promise.resolve();
+        case DOMPromise::Status::Rejected:
+            return promise.rejectWithCallback([&](auto&) {
+                return domPromise->result();
+            });
+        case DOMPromise::Status::Pending:
+            RELEASE_ASSERT_NOT_REACHED();
+        }
+    });
 }
 
-void FileSystemWritableFileStream::truncate(uint64_t size, DOMPromiseDeferred<void>&& promise)
+void FileSystemWritableFileStream::seek(JSC::JSGlobalObject& lexicalGlobalObject, uint64_t position, DOMPromiseDeferred<void>&& promise)
 {
-    UNUSED_PARAM(size);
-    // FIXME: Implemented this.
-    promise.reject(Exception { ExceptionCode::NotSupportedError });
+    WriteParams params { WriteCommandType::Seek, std::nullopt, position, std::nullopt };
+    write(lexicalGlobalObject, params, WTFMove(promise));
+}
+
+void FileSystemWritableFileStream::truncate(JSC::JSGlobalObject& lexicalGlobalObject, uint64_t size, DOMPromiseDeferred<void>&& promise)
+{
+    WriteParams params { WriteCommandType::Truncate, size, std::nullopt, std::nullopt };
+    write(lexicalGlobalObject, params, WTFMove(promise));
 }
 
 } // namespace WebCore

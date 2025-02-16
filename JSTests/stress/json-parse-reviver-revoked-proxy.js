@@ -27,7 +27,7 @@ const objJSON = '{"a": 1, "b": 2}';
 const arrJSON = '[3, 4]';
 const isArrayError = 'TypeError: Array.isArray cannot be called on a Proxy that has been revoked';
 
-for (let i = 1; i < 10000; i++) {
+for (let i = 1; i < testLoopCount; i++) {
     let error;
     try {
         JSON.parse(objJSON, revivedObjProxy);
@@ -37,7 +37,7 @@ for (let i = 1; i < 10000; i++) {
     shouldBe(error.toString(), isArrayError);
 }
 
-for (let i = 1; i < 10000; i++) {
+for (let i = 1; i < testLoopCount; i++) {
     let error;
     try {
         JSON.parse(arrJSON, revivedArrProxy);

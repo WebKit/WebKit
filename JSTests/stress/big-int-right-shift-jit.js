@@ -10,7 +10,7 @@ function bigIntRShift(x, y) {
 }
 noInline(bigIntRShift);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntRShift(0b10001n, 4n);
     assert.sameValue(r, 1n, 0b10001n + " >> " + 4n + " = " + r);
 }

@@ -3,6 +3,7 @@
 <head>
 <script src="../../resources/js-test-pre.js"></script>
 <script src="../../http/tests/inspector/resources/protocol-test.js"></script>
+<script src="resources/calling-context-tree.js"></script>
 <script>
 
 function runFor(func, millis) {
@@ -30,21 +31,21 @@ function test()
         description: "Sample some basic code.",
         test(resolve, reject) {
             InspectorProtocol.awaitEvent({event: "ScriptProfiler.trackingComplete"}).then((messageObject) => {
-                let tree = WI.CallingContextTree.__test_makeTreeFromProtocolMessageObject(messageObject);
+                let tree = ProtocolTest.CallingContextTree.createFromProtocolMessageObject(messageObject);
 
                 let trace = [
                     {name: "createElement"},
                     {name: "foo"},
                     {name: "runFor"}
                 ];
-                ProtocolTest.expectThat(tree.__test_matchesStackTrace(trace), "Should have seen stacktrace:\n" + JSON.stringify(trace, undefined, 2));
+                ProtocolTest.expectThat(ProtocolTest.CallingContextTree.matchesStackTrace(tree, trace), "Should have seen stacktrace:\n" + JSON.stringify(trace, undefined, 2));
 
                 trace = [
                     {name: "appendChild"},
                     {name: "foo"},
                     {name: "runFor"}
                 ];
-                ProtocolTest.expectThat(tree.__test_matchesStackTrace(trace), "Should have seen stacktrace:\n" + JSON.stringify(trace, undefined, 2));
+                ProtocolTest.expectThat(ProtocolTest.CallingContextTree.matchesStackTrace(tree, trace), "Should have seen stacktrace:\n" + JSON.stringify(trace, undefined, 2));
 
                 resolve();
             });

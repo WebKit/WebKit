@@ -93,6 +93,7 @@ public:
     void replace(String&&, Ref<DeferredPromise>&&);
     ExceptionOr<void> replaceSync(String&&);
 
+    bool wasMutated() const { return m_wasMutated; }
     bool wasConstructedByJS() const { return m_wasConstructedByJS; }
     Document* constructorDocument() const;
 
@@ -119,8 +120,6 @@ public:
     void setMediaQueries(MQ::MediaQueryList&&);
     void setTitle(const String& title) { m_title = title; }
 
-    bool hadRulesMutation() const { return m_mutatedRules; }
-    void clearHadRulesMutation() { m_mutatedRules = false; }
     RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
 
     enum RuleMutationType { OtherMutation, RuleInsertion, KeyframesRuleMutation, RuleReplace };
@@ -160,8 +159,8 @@ public:
     bool canAccessRules() const;
 
     String debugDescription() const final;
-    String cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>&, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>&);
-    void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&);
+    String cssText(const CSS::SerializationContext&);
+    void getChildStyleSheets(UncheckedKeyHashSet<RefPtr<CSSStyleSheet>>&);
 
     bool isDetached() const;
 
@@ -171,7 +170,7 @@ private:
     CSSStyleSheet(Ref<StyleSheetContents>&&, Node& ownerNode, const TextPosition& startPosition, bool isInlineStylesheet, const std::optional<bool>&);
     CSSStyleSheet(Ref<StyleSheetContents>&&, Document&, Init&&);
 
-    void forEachStyleScope(const Function<void(Style::Scope&)>&);
+    void forEachStyleScope(NOESCAPE const Function<void(Style::Scope&)>&);
 
     bool isCSSStyleSheet() const final { return true; }
     String type() const final { return cssContentTypeAtom(); }
@@ -180,7 +179,7 @@ private:
     Ref<StyleSheetContents> m_contents;
     bool m_isInlineStylesheet { false };
     bool m_isDisabled { false };
-    bool m_mutatedRules { false };
+    bool m_wasMutated { false };
     bool m_wasConstructedByJS { false }; // constructed flag in the spec.
     std::optional<bool> m_isOriginClean;
     String m_title;

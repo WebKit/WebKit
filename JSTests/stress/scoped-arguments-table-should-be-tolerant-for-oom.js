@@ -26,7 +26,7 @@ function bar() {
 new Promise(bar);
 
 try {
-    for (let i=0; i<10000; i++) {
+    for (let i=0; i<testLoopCount; i++) {
         new Uint8Array(10000);
     }
 } catch {}
@@ -36,7 +36,7 @@ function foo(x, y, z) {
     with (Object) {}
 }
 
-for (let i=0; i<10000; i++) {
+for (let i=0; i<testLoopCount; i++) {
     canThrow(() => {
         foo(0);
     }, `RangeError: Out of memory`);

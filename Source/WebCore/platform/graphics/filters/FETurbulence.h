@@ -35,7 +35,9 @@ enum class TurbulenceType : uint8_t {
     Turbulence
 };
 
-class FETurbulence : public FilterEffect {
+class FETurbulence final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FETurbulence);
 public:
     WEBCORE_EXPORT static Ref<FETurbulence> create(TurbulenceType, float baseFrequencyX, float baseFrequencyY, int numOctaves, float seed, bool stitchTiles, DestinationColorSpace = DestinationColorSpace::SRGB());
 

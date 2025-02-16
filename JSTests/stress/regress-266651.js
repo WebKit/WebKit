@@ -20,7 +20,7 @@ function main() {
     const handler = {};
     const proxy = new Proxy({}, handler);
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         opt(proxy);
     }
 

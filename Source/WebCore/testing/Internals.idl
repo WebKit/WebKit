@@ -338,16 +338,18 @@ enum AV1ConfigurationRange {
 [
     ExportMacro=WEBCORE_TESTSUPPORT_EXPORT,
     JSGenerateToJSObject,
+    JSGenerateToNativeObject
 ] dictionary CookieData {
     DOMString name;
     DOMString value;
-    DOMString domain;
-    double expires;
-    boolean isHttpOnly;
-    boolean isSecure;
-    boolean isSession;
-    boolean isSameSiteLax;
-    boolean isSameSiteStrict;
+    DOMString domain = "";
+    DOMString path = "";
+    double? expires = null;
+    boolean isHttpOnly = false;
+    boolean isSecure = false;
+    boolean isSession = false;
+    boolean isSameSiteLax = false;
+    boolean isSameSiteStrict = false;
 };
 
 [
@@ -813,6 +815,7 @@ enum RenderingMode {
     unsigned long numberOfLiveNodes();
     unsigned long numberOfLiveDocuments();
     unsigned long referencingNodeCount(Document document);
+    undefined executeOpportunisticallyScheduledTasks();
     unsigned long numberOfIntersectionObservers(Document document);
     unsigned long numberOfResizeObservers(Document document);
     WindowProxy? openDummyInspectorFrontend(DOMString url);
@@ -843,12 +846,6 @@ enum RenderingMode {
 
     undefined setHeaderHeight(unrestricted float height);
     undefined setFooterHeight(unrestricted float height);
-
-    [Conditional=FULLSCREEN_API] undefined webkitWillEnterFullScreenForElement(Element element);
-    [Conditional=FULLSCREEN_API] undefined webkitDidEnterFullScreenForElement(Element element);
-    [Conditional=FULLSCREEN_API] undefined webkitWillExitFullScreenForElement(Element element);
-    [Conditional=FULLSCREEN_API] undefined webkitDidExitFullScreenForElement(Element element);
-    [Conditional=FULLSCREEN_API] readonly attribute boolean isAnimatingFullScreen;
 
     undefined setFullscreenInsets(FullscreenInsets insets);
     undefined setFullscreenAutoHideDuration(double duration);
@@ -987,10 +984,6 @@ enum RenderingMode {
     [Conditional=VIDEO] unrestricted double closestTimeToTimeRanges(unrestricted double time, TimeRanges ranges);
 
     boolean isSelectPopupVisible(HTMLSelectElement element);
-
-    boolean isPluginUnavailabilityIndicatorObscured(Element element);
-    DOMString unavailablePluginReplacementText(Element element);
-    boolean isPluginSnapshotted(Element element);
 
     DOMRect selectionBounds();
     StaticRange? selectedRange();
@@ -1287,6 +1280,7 @@ enum RenderingMode {
     boolean validateAV1ConfigurationRecord(DOMString codecParameters);
     boolean validateAV1PerLevelConstraints(DOMString codecParameters, VideoConfiguration configuration);
 
+    undefined setCookie(CookieData cookieData);
     sequence<CookieData> getCookies();
 
     undefined setAlwaysAllowLocalWebarchive(boolean alwaysAllowLocalWebarchive);
@@ -1419,4 +1413,9 @@ enum RenderingMode {
     Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
 
     undefined setTopDocumentURLForQuirks(DOMString urlString);
+
+#if defined(ENABLE_CONTENT_EXTENSIONS) && ENABLE_CONTENT_EXTENSIONS
+    undefined setResourceMonitorNetworkUsageThreshold(unsigned long threshold, double randomness);
+    attribute boolean shouldSkipResourceMonitorThrottling;
+#endif
 };

@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct WebKit::ProvisionalFrameCreationParameters {
+    WebCore::FrameIdentifier frameID;
     std::optional<WebCore::LayerHostingContextIdentifier> layerHostingContextIdentifier;
     WebCore::SandboxFlags effectiveSandboxFlags;
     WebCore::ScrollbarMode scrollingMode;

@@ -37,82 +37,6 @@ namespace skgpu::graphite {
 
 class VulkanDescriptorSet;
 
-/**
- * Since intrinsic uniforms need to be read in the vertex shader, we cannot use protected buffers
- * for them when submitting protected work. Thus in order to upload data to them, we need to make
- * them mappable instead of using commands to copy data to them (would require them to be
- * protected if we did). This helper class manages rotating through buffers and writing each new
- * occurrence of a set of intrinsic uniforms into the current buffer.
- *
- * Ideally we would remove this class and instead use push constants for all intrinsic uniforms.
- */
-class VulkanCommandBuffer::IntrinsicConstantsManager {
-public:
-    BindBufferInfo add(VulkanCommandBuffer* cb, UniformDataBlock intrinsicValues) {
-        static constexpr int kNumSlots = 8;
-
-        BindBufferInfo* existing = fCachedIntrinsicValues.find(intrinsicValues);
-        if (existing) {
-            return *existing;
-        }
-
-        SkASSERT(!cb->fActiveRenderPass);
-
-        const Caps* caps = cb->fSharedContext->caps();
-        const uint32_t stride =
-                SkAlignTo(intrinsicValues.size(), caps->requiredUniformBufferAlignment());
-        if (!fCurrentBuffer || fSlotsUsed == kNumSlots) {
-            VulkanResourceProvider* resourceProvider = cb->fResourceProvider;
-            sk_sp<Buffer> buffer = resourceProvider->findOrCreateBuffer(stride * kNumSlots,
-                                                                        BufferType::kUniform,
-                                                                        AccessPattern::kHostVisible,
-                                                                        "IntrinsicConstantBuffer");
-            if (!buffer) {
-                return {};
-            }
-            VulkanBuffer* ptr = static_cast<VulkanBuffer*>(buffer.release());
-            fCurrentBuffer = sk_sp<VulkanBuffer>(ptr);
-
-            fSlotsUsed = 0;
-
-            if (!fCurrentBuffer) {
-                // If we failed to create a GPU buffer to hold the intrinsic uniforms, we will fail
-                // the Recording being inserted, so return an empty bind info.
-                return {};
-            }
-            cb->trackResource(fCurrentBuffer);
-        }
-
-        SkASSERT(fCurrentBuffer && fSlotsUsed < kNumSlots);
-        void* mapPtr = fCurrentBuffer->map();
-        if (!mapPtr) {
-            return {};
-        }
-        uint32_t offset = (fSlotsUsed++) * stride;
-        mapPtr = SkTAddOffset<void>(mapPtr, static_cast<ptrdiff_t>(offset));
-        memcpy(mapPtr, intrinsicValues.data(), intrinsicValues.size());
-        fCurrentBuffer->unmap();
-        BindBufferInfo binding{
-                fCurrentBuffer.get(), offset, SkTo<uint32_t>(intrinsicValues.size())};
-        fCachedIntrinsicValues.set(UniformDataBlock::Make(intrinsicValues, &fUniformData), binding);
-        return binding;
-    }
-
-private:
-    // The current buffer being filled up, as well as the how much of it has been written to.
-    sk_sp<VulkanBuffer> fCurrentBuffer;
-    int fSlotsUsed = 0;  // in multiples of the intrinsic uniform size and UBO binding requirement
-
-    // All uploaded intrinsic uniform sets and where they are on the GPU. All uniform sets are
-    // cached for the duration of a CommandBuffer since the maximum number of elements in this
-    // collection will equal the number of render passes and the intrinsic constants aren't that
-    // large. This maximizes the chance for reuse between passes.
-    skia_private::THashMap<UniformDataBlock, BindBufferInfo, UniformDataBlock::Hash>
-            fCachedIntrinsicValues;
-    SkArenaAlloc fUniformData{0};
-};
-
-
 std::unique_ptr<VulkanCommandBuffer> VulkanCommandBuffer::Make(
         const VulkanSharedContext* sharedContext,
         VulkanResourceProvider* resourceProvider,
@@ -198,7 +122,6 @@ void VulkanCommandBuffer::onResetCommandBuffer() {
     SkASSERT(!fActive);
     VULKAN_CALL_ERRCHECK(fSharedContext, ResetCommandPool(fSharedContext->device(), fPool, 0));
     fActiveGraphicsPipeline = nullptr;
-    fIntrinsicConstants = nullptr;
     fBindUniformBuffers = true;
     fBoundIndexBuffer = VK_NULL_HANDLE;
     fBoundIndexBufferOffset = 0;
@@ -234,7 +157,6 @@ void VulkanCommandBuffer::begin() {
 
     VULKAN_CALL_ERRCHECK(fSharedContext,
                          BeginCommandBuffer(fPrimaryCommandBuffer, &cmdBufferBeginInfo));
-    fIntrinsicConstants = std::make_unique<IntrinsicConstantsManager>();
     fActive = true;
 }
 
@@ -305,6 +227,8 @@ void VulkanCommandBuffer::prepareSurfaceForStateUpdate(SkSurface* targetSurface,
         // or foreign).
         return;
     }
+
+    this->trackCommandBufferResource(sk_ref_sp(texture));
 
     texture->setImageLayoutAndQueueIndex(this,
                                          newLayout,
@@ -448,24 +372,21 @@ void VulkanCommandBuffer::waitUntilFinished() {
                                        /*timeout=*/UINT64_MAX));
 }
 
-bool VulkanCommandBuffer::updateIntrinsicUniforms(SkIRect viewport) {
-    SkASSERT(fActive && !fActiveRenderPass);
+void VulkanCommandBuffer::pushConstants(const PushConstantInfo& pushConstantInfo,
+                                        VkPipelineLayout compatibleLayout) {
+    // size must be within limits. Vulkan spec dictates each device supports at least 128 bytes
+    SkASSERT(pushConstantInfo.fSize < 128);
+    // offset and size must be a multiple of 4
+    SkASSERT(!SkToBool(pushConstantInfo.fOffset & 0x3));
+    SkASSERT(!SkToBool(pushConstantInfo.fSize & 0x3));
 
-    // The SkSL has declared these as a top-level interface block, which will use std140 in Vulkan.
-    // If we switch to supporting push constants here, it would be std430 instead.
-    UniformManager intrinsicValues{Layout::kStd140};
-    CollectIntrinsicUniforms(fSharedContext->caps(), viewport, fDstCopyBounds, &intrinsicValues);
-    BindBufferInfo binding =
-            fIntrinsicConstants->add(this, UniformDataBlock::Wrap(&intrinsicValues));
-    if (!binding) {
-        return false;
-    } else if (binding ==
-               fUniformBuffersToBind[VulkanGraphicsPipeline::kIntrinsicUniformBufferIndex]) {
-        return true;  // no binding change needed
-    }
-
-    fUniformBuffersToBind[VulkanGraphicsPipeline::kIntrinsicUniformBufferIndex] = binding;
-    return true;
+    VULKAN_CALL(fSharedContext->interface(),
+                CmdPushConstants(fPrimaryCommandBuffer,
+                                 compatibleLayout,
+                                 pushConstantInfo.fShaderStageFlagBits,
+                                 pushConstantInfo.fOffset,
+                                 pushConstantInfo.fSize,
+                                 pushConstantInfo.fValues));
 }
 
 bool VulkanCommandBuffer::onAddRenderPass(const RenderPassDesc& renderPassDesc,
@@ -502,9 +423,6 @@ bool VulkanCommandBuffer::onAddRenderPass(const RenderPassDesc& renderPassDesc,
                                       false);
     }
 
-    if (!this->updateIntrinsicUniforms(viewport)) {
-        return false;
-    }
     this->setViewport(viewport);
 
     if (!this->beginRenderPass(renderPassDesc,
@@ -513,6 +431,29 @@ bool VulkanCommandBuffer::onAddRenderPass(const RenderPassDesc& renderPassDesc,
                                resolveTexture,
                                depthStencilTexture)) {
         return false;
+    }
+
+    // After loading msaa from resolve if needed, update intrinsic push constant values. Neither the
+    // dst copy bounds nor the rtAdjust components of the intrinsic constants change throughout the
+    // course of a RenderPass, so we can simply calculate & update the push constants once per RP.
+    {
+        // TODO(b/374997389): Somehow convey & enforce Layout::kStd430 for push constants.
+        UniformManager intrinsicValues{Layout::kStd140};
+        CollectIntrinsicUniforms(
+                fSharedContext->caps(), viewport, fDstReadBounds, &intrinsicValues);
+        SkSpan<const char> bytes = intrinsicValues.finish();
+        SkASSERT(bytes.size_bytes() == VulkanResourceProvider::kIntrinsicConstantSize);
+
+        PushConstantInfo pushConstantInfo;
+        pushConstantInfo.fOffset = 0;
+        pushConstantInfo.fSize = VulkanResourceProvider::kIntrinsicConstantSize;
+        pushConstantInfo.fShaderStageFlagBits =
+                VulkanResourceProvider::kIntrinsicConstantStageFlags;
+        pushConstantInfo.fValues = bytes.data();
+
+        // Use the mock pipeline layout (which has compatible push constant parameters with real
+        // pipeline layouts) to update push constants even if we do not have a pipeline bound yet.
+        this->pushConstants(pushConstantInfo, fResourceProvider->mockPushConstantPipelineLayout());
     }
 
     for (const auto& drawPass : drawPasses) {
@@ -546,7 +487,7 @@ bool VulkanCommandBuffer::updateAndBindLoadMSAAInputAttachment(const VulkanTextu
     writeInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     writeInfo.pNext = nullptr;
     writeInfo.dstSet = *set->descriptorSet();
-    writeInfo.dstBinding = VulkanGraphicsPipeline::kInputAttachmentBindingIndex;
+    writeInfo.dstBinding = 0;
     writeInfo.dstArrayElement = 0;
     writeInfo.descriptorCount = 1;
     writeInfo.descriptorType = DsTypeEnumToVkDs(DescriptorType::kInputAttachment);
@@ -586,20 +527,6 @@ bool VulkanCommandBuffer::loadMSAAFromResolve(const RenderPassDesc& renderPassDe
         return false;
     }
 
-    this->bindGraphicsPipeline(loadPipeline.get());
-    // Make sure we do not attempt to bind uniform or texture/sampler descriptors because we do
-    // not use them for loading MSAA from resolve.
-    fBindUniformBuffers = false;
-    fBindTextureSamplers = false;
-
-    this->setScissor(SkIRect::MakeXYWH(0, 0, dstDimensions.width(), dstDimensions.height()));
-
-    if (!this->updateAndBindLoadMSAAInputAttachment(resolveTexture)) {
-        SKGPU_LOG_E("Unable to update and bind an input attachment descriptor for loading MSAA "
-                    "from resolve");
-        return false;
-    }
-
     // Update and bind uniform descriptor set
     int w = nativeDrawBounds.width();
     int h = nativeDrawBounds.height();
@@ -612,11 +539,30 @@ bool VulkanCommandBuffer::loadMSAAFromResolve(const RenderPassDesc& renderPassDe
     float dy0 = 2.f * nativeDrawBounds.fTop / dh - 1.f;
     float dy1 = 2.f * (nativeDrawBounds.fTop + h) / dh - 1.f;
     float uniData[] = {dx1 - dx0, dy1 - dy0, dx0, dy0};  // posXform
+    SkASSERT(sizeof(uniData) == VulkanResourceProvider::kLoadMSAAPushConstantSize);
 
-    this->pushConstants(VK_SHADER_STAGE_VERTEX_BIT,
-                        /*offset=*/0,
-                        /*size=*/sizeof(uniData),
-                        uniData);
+    this->bindGraphicsPipeline(loadPipeline.get());
+
+    PushConstantInfo loadMsaaPushConstantInfo;
+    loadMsaaPushConstantInfo.fOffset = 0;
+    loadMsaaPushConstantInfo.fSize = VulkanResourceProvider::kLoadMSAAPushConstantSize;
+    loadMsaaPushConstantInfo.fShaderStageFlagBits =
+            VulkanResourceProvider::kLoadMSAAPushConstantStageFlags;
+    loadMsaaPushConstantInfo.fValues = uniData;
+    this->pushConstants(loadMsaaPushConstantInfo, loadPipeline->layout());
+
+    // Make sure we do not attempt to bind uniform or texture/sampler descriptors because we do
+    // not use them for loading MSAA from resolve.
+    fBindUniformBuffers = false;
+    fBindTextureSamplers = false;
+
+    this->setScissor(SkIRect::MakeXYWH(0, 0, dstDimensions.width(), dstDimensions.height()));
+
+    if (!this->updateAndBindLoadMSAAInputAttachment(resolveTexture)) {
+        SKGPU_LOG_E("Unable to update and bind an input attachment descriptor for loading MSAA "
+                    "from resolve");
+        return false;
+    }
 
     this->draw(PrimitiveType::kTriangleStrip, /*baseVertex=*/0, /*vertexCount=*/4);
     this->nextSubpass();
@@ -678,21 +624,6 @@ void setup_texture_layouts(VulkanCommandBuffer* cmdBuf,
                                             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT |
                                             VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT,
                                             /*byRegion=*/false);
-    }
-}
-
-void track_attachments(VulkanCommandBuffer* cmdBuf,
-                       VulkanTexture* colorTexture,
-                       VulkanTexture* resolveTexture,
-                       VulkanTexture* depthStencilTexture) {
-    if (colorTexture) {
-        cmdBuf->trackResource(sk_ref_sp(colorTexture));
-    }
-    if (resolveTexture){
-        cmdBuf->trackResource(sk_ref_sp(resolveTexture));
-    }
-    if (depthStencilTexture) {
-        cmdBuf->trackResource(sk_ref_sp(depthStencilTexture));
     }
 }
 
@@ -824,8 +755,6 @@ bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
                     "attachments must be valid.");
         return false;
     }
-
-    track_attachments(this, vulkanColorTexture, vulkanResolveTexture, vulkanDepthStencilTexture);
 
     // Before beginning a renderpass, set all textures to the appropriate image layout.
     setup_texture_layouts(this,
@@ -1030,7 +959,7 @@ void VulkanCommandBuffer::bindGraphicsPipeline(const GraphicsPipeline* graphicsP
     // descriptor sets with any new bindGraphicsPipeline DrawPassCommand.
     fBindUniformBuffers = true;
 
-    if (graphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy &&
+    if (graphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy &&
         graphicsPipeline->numFragTexturesAndSamplers() == 1) {
         // The only texture-sampler that the pipeline declares must be the dstCopy, which means
         // there are no other textures that will trigger BindTextureAndSampler commands in a
@@ -1085,47 +1014,42 @@ void VulkanCommandBuffer::syncDescriptorSets() {
 void VulkanCommandBuffer::bindUniformBuffers() {
     fBindUniformBuffers = false;
 
-    // We always bind at least one uniform buffer descriptor for intrinsic uniforms, but can bind
-    // up to three (one for render step uniforms, one for paint uniforms).
+    // Define a container with size reserved for up to kNumUniformBuffers descriptors. Only add
+    // DescriptorData for uniforms that actually are used and need to be bound.
     STArray<VulkanGraphicsPipeline::kNumUniformBuffers, DescriptorData> descriptors;
-    descriptors.push_back(VulkanGraphicsPipeline::kIntrinsicUniformBufferDescriptor);
 
-    DescriptorType uniformBufferType = fSharedContext->caps()->storageBufferSupport()
-                                            ? DescriptorType::kStorageBuffer
-                                            : DescriptorType::kUniformBuffer;
+    // Up to kNumUniformBuffers can be used and require rebinding depending upon render pass info.
+    DescriptorType uniformBufferType =
+            fSharedContext->caps()->storageBufferSupport() ? DescriptorType::kStorageBuffer
+                                                           : DescriptorType::kUniformBuffer;
     if (fActiveGraphicsPipeline->hasStepUniforms() &&
         fUniformBuffersToBind[VulkanGraphicsPipeline::kRenderStepUniformBufferIndex].fBuffer) {
         descriptors.push_back({
-            uniformBufferType,
-            /*count=*/1,
-            VulkanGraphicsPipeline::kRenderStepUniformBufferIndex,
-            PipelineStageFlags::kVertexShader | PipelineStageFlags::kFragmentShader});
+                uniformBufferType,
+                /*count=*/1,
+                VulkanGraphicsPipeline::kRenderStepUniformBufferIndex,
+                PipelineStageFlags::kVertexShader | PipelineStageFlags::kFragmentShader });
     }
     if (fActiveGraphicsPipeline->hasPaintUniforms() &&
         fUniformBuffersToBind[VulkanGraphicsPipeline::kPaintUniformBufferIndex].fBuffer) {
-        descriptors.push_back({
-            uniformBufferType,
-            /*count=*/1,
-            VulkanGraphicsPipeline::kPaintUniformBufferIndex,
-            PipelineStageFlags::kFragmentShader});
+        descriptors.push_back({ uniformBufferType, /*count=*/1,
+                                VulkanGraphicsPipeline::kPaintUniformBufferIndex,
+                                PipelineStageFlags::kFragmentShader });
     }
     if (fActiveGraphicsPipeline->hasGradientBuffer() &&
         fUniformBuffersToBind[VulkanGraphicsPipeline::kGradientBufferIndex].fBuffer) {
         SkASSERT(fSharedContext->caps()->gradientBufferSupport() &&
                  fSharedContext->caps()->storageBufferSupport());
-        descriptors.push_back({
-            DescriptorType::kStorageBuffer,
-            /*count=*/1,
-            VulkanGraphicsPipeline::kGradientBufferIndex,
-            PipelineStageFlags::kFragmentShader});
+        descriptors.push_back({ DescriptorType::kStorageBuffer, /*count=*/1,
+                                VulkanGraphicsPipeline::kGradientBufferIndex,
+                                PipelineStageFlags::kFragmentShader });
     }
 
-    sk_sp<VulkanDescriptorSet> descSet = fResourceProvider->findOrCreateUniformBuffersDescriptorSet(
-            descriptors, fUniformBuffersToBind);
-    if (!descSet) {
-        SKGPU_LOG_E("Unable to find or create uniform descriptor set");
+    // If no uniforms are used, we can go ahead and return since no descriptors need to be bound.
+    if (descriptors.empty()) {
         return;
     }
+
     skia_private::AutoSTMalloc<VulkanGraphicsPipeline::kNumUniformBuffers, uint32_t>
             dynamicOffsets(descriptors.size());
     for (int i = 0; i < descriptors.size(); i++) {
@@ -1134,12 +1058,17 @@ void VulkanCommandBuffer::bindUniformBuffers() {
         const auto& bindInfo = fUniformBuffersToBind[descriptorBindingIndex];
 #ifdef SK_DEBUG
         if (descriptors[i].fPipelineStageFlags & PipelineStageFlags::kVertexShader) {
-            // TODO (b/356874190): Renable once we fix the intrinsic uniform buffer to not be
-            // protected.
-            //SkASSERT(bindInfo.fBuffer->isProtected() == Protected::kNo);
+            SkASSERT(bindInfo.fBuffer->isProtected() == Protected::kNo);
         }
 #endif
         dynamicOffsets[i] = bindInfo.fOffset;
+    }
+
+    sk_sp<VulkanDescriptorSet> descSet = fResourceProvider->findOrCreateUniformBuffersDescriptorSet(
+            descriptors, fUniformBuffersToBind);
+    if (!descSet) {
+        SKGPU_LOG_E("Unable to find or create uniform descriptor set");
+        return;
     }
 
     VULKAN_CALL(fSharedContext->interface(),
@@ -1192,7 +1121,6 @@ void VulkanCommandBuffer::bindInputBuffer(const Buffer* buffer, VkDeviceSize off
                                              &offset));
             fBoundInputBuffers[binding] = vkBuffer;
             fBoundInputBufferOffsets[binding] = offset;
-            this->trackResource(sk_ref_sp(buffer));
         }
     }
 }
@@ -1209,7 +1137,6 @@ void VulkanCommandBuffer::bindIndexBuffer(const Buffer* indexBuffer, size_t offs
                                                                         VK_INDEX_TYPE_UINT16));
             fBoundIndexBuffer = vkBuffer;
             fBoundIndexBufferOffset = offset;
-            this->trackResource(sk_ref_sp(indexBuffer));
         }
     } else {
         fBoundIndexBuffer = VK_NULL_HANDLE;
@@ -1223,7 +1150,6 @@ void VulkanCommandBuffer::bindIndirectBuffer(const Buffer* indirectBuffer, size_
         SkASSERT(indirectBuffer->isProtected() == Protected::kNo);
         fBoundIndirectBuffer = static_cast<const VulkanBuffer*>(indirectBuffer)->vkBuffer();
         fBoundIndirectBufferOffset = offset;
-        this->trackResource(sk_ref_sp(indirectBuffer));
     } else {
         fBoundIndirectBuffer = VK_NULL_HANDLE;
         fBoundIndirectBufferOffset = 0;
@@ -1236,7 +1162,7 @@ void VulkanCommandBuffer::recordTextureAndSamplerDescSet(
     SkASSERT(fActiveGraphicsPipeline);
     // Add one extra texture for dst copies, which is not included in the command itself.
     int numTexSamplers = command ? command->fNumTexSamplers : 0;
-    if (fActiveGraphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy) {
+    if (fActiveGraphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy) {
         numTexSamplers++;
     }
 
@@ -1247,104 +1173,131 @@ void VulkanCommandBuffer::recordTextureAndSamplerDescSet(
         return;
     }
 
-    // Query resource provider to obtain a descriptor set for the texture/samplers
-    TArray<DescriptorData> descriptors(numTexSamplers);
-    if (command) {
-        for (int i = 0; i < command->fNumTexSamplers; i++) {
-            auto sampler = static_cast<const VulkanSampler*>(
-                    drawPass->getSampler(command->fSamplerIndices[i]));
-
-            const Sampler* immutableSampler = (sampler && sampler->ycbcrConversion()) ? sampler
-                                                                                      : nullptr;
-            descriptors.push_back({DescriptorType::kCombinedTextureSampler,
-                                   /*count=*/1,
-                                   /*bindingIdx=*/i,
-                                   PipelineStageFlags::kFragmentShader,
-                                   immutableSampler});
+    sk_sp<VulkanDescriptorSet> set;
+    const VulkanTexture* singleTexture = nullptr;
+    const Sampler* singleSampler = nullptr;
+    if (numTexSamplers == 1) {
+        if (fActiveGraphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy) {
+            singleTexture = static_cast<const VulkanTexture*>(fDstCopy.first);
+            singleSampler = static_cast<const VulkanSampler*>(fDstCopy.second);
+        } else {
+            SkASSERT(command);
+            singleTexture = static_cast<const VulkanTexture*>(
+                    drawPass->getTexture(command->fTextureIndices[0]));
+            singleSampler = drawPass->getSampler(command->fSamplerIndices[0]);
         }
+        SkASSERT(singleTexture && singleSampler);
+        set = singleTexture->getCachedSingleTextureDescriptorSet(singleSampler);
     }
-    // If required the dst copy texture+sampler is the last one in the descriptor set
-    if (fActiveGraphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy) {
-        descriptors.push_back({DescriptorType::kCombinedTextureSampler,
-                               /*count=*/1,
-                               /*bindingIdx=*/numTexSamplers-1,
-                               PipelineStageFlags::kFragmentShader,
-                               /*immutableSampler=*/nullptr});
-    }
-    SkASSERT(descriptors.size() == numTexSamplers);
-    sk_sp<VulkanDescriptorSet> set = fResourceProvider->findOrCreateDescriptorSet(
-            SkSpan<DescriptorData>{&descriptors.front(), descriptors.size()});
 
     if (!set) {
-        SKGPU_LOG_E("Unable to find or create descriptor set");
-        fNumTextureSamplers = 0;
-        fTextureSamplerDescSetToBind = VK_NULL_HANDLE;
-        fBindTextureSamplers = false;
-        return;
-    }
-    // Populate the descriptor set with texture/sampler descriptors
-    TArray<VkWriteDescriptorSet> writeDescriptorSets(numTexSamplers);
-    TArray<VkDescriptorImageInfo> descriptorImageInfos(numTexSamplers);
-    auto appendTextureSampler = [&](const VulkanTexture* texture, const VulkanSampler* sampler) {
-        if (!texture || !sampler) {
-            // TODO(b/294198324): Investigate the root cause for null texture or samplers on
-            // Ubuntu QuadP400 GPU
-            SKGPU_LOG_E("Texture and sampler must not be null");
+        // Query resource provider to obtain a descriptor set for the texture/samplers
+        TArray<DescriptorData> descriptors(numTexSamplers);
+        if (command) {
+            for (int i = 0; i < command->fNumTexSamplers; i++) {
+                auto sampler = static_cast<const VulkanSampler*>(
+                        drawPass->getSampler(command->fSamplerIndices[i]));
+
+                const Sampler* immutableSampler = (sampler && sampler->ycbcrConversion()) ? sampler
+                                                                                          : nullptr;
+                descriptors.push_back({DescriptorType::kCombinedTextureSampler,
+                                       /*count=*/1,
+                                       /*bindingIdx=*/i,
+                                       PipelineStageFlags::kFragmentShader,
+                                       immutableSampler});
+            }
+        }
+        // If required the dst copy texture+sampler is the last one in the descriptor set
+        if (fActiveGraphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy) {
+            descriptors.push_back({DescriptorType::kCombinedTextureSampler,
+                                   /*count=*/1,
+                                   /*bindingIdx=*/numTexSamplers-1,
+                                   PipelineStageFlags::kFragmentShader,
+                                   /*immutableSampler=*/nullptr});
+                            }
+        SkASSERT(descriptors.size() == numTexSamplers);
+        set = fResourceProvider->findOrCreateDescriptorSet(
+                SkSpan<DescriptorData>{&descriptors.front(), descriptors.size()});
+
+        if (!set) {
+            SKGPU_LOG_E("Unable to find or create descriptor set");
             fNumTextureSamplers = 0;
             fTextureSamplerDescSetToBind = VK_NULL_HANDLE;
             fBindTextureSamplers = false;
-            return false;
+            return;
         }
+        // Populate the descriptor set with texture/sampler descriptors
+        TArray<VkWriteDescriptorSet> writeDescriptorSets(numTexSamplers);
+        TArray<VkDescriptorImageInfo> descriptorImageInfos(numTexSamplers);
+        auto appendTextureSampler = [&](const VulkanTexture* texture,
+                                        const VulkanSampler* sampler) {
+            if (!texture || !sampler) {
+                // TODO(b/294198324): Investigate the root cause for null texture or samplers on
+                // Ubuntu QuadP400 GPU
+                SKGPU_LOG_E("Texture and sampler must not be null");
+                fNumTextureSamplers = 0;
+                fTextureSamplerDescSetToBind = VK_NULL_HANDLE;
+                fBindTextureSamplers = false;
+                return false;
+            }
 
-        VkDescriptorImageInfo& textureInfo = descriptorImageInfos.push_back();
-        memset(&textureInfo, 0, sizeof(VkDescriptorImageInfo));
-        textureInfo.sampler = sampler->ycbcrConversion() ? VK_NULL_HANDLE : sampler->vkSampler();
-        textureInfo.imageView =
-                texture->getImageView(VulkanImageView::Usage::kShaderInput)->imageView();
-        textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            VkDescriptorImageInfo& textureInfo = descriptorImageInfos.push_back();
+            memset(&textureInfo, 0, sizeof(VkDescriptorImageInfo));
+            textureInfo.sampler = sampler->ycbcrConversion() ? VK_NULL_HANDLE
+                                                             : sampler->vkSampler();
+            textureInfo.imageView =
+                    texture->getImageView(VulkanImageView::Usage::kShaderInput)->imageView();
+            textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-        VkWriteDescriptorSet& writeInfo = writeDescriptorSets.push_back();
-        memset(&writeInfo, 0, sizeof(VkWriteDescriptorSet));
-        writeInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        writeInfo.pNext = nullptr;
-        writeInfo.dstSet = *set->descriptorSet();
-        writeInfo.dstBinding = writeDescriptorSets.size() - 1;
-        writeInfo.dstArrayElement = 0;
-        writeInfo.descriptorCount = 1;
-        writeInfo.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        writeInfo.pImageInfo = &textureInfo;
-        writeInfo.pBufferInfo = nullptr;
-        writeInfo.pTexelBufferView = nullptr;
+            VkWriteDescriptorSet& writeInfo = writeDescriptorSets.push_back();
+            memset(&writeInfo, 0, sizeof(VkWriteDescriptorSet));
+            writeInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            writeInfo.pNext = nullptr;
+            writeInfo.dstSet = *set->descriptorSet();
+            writeInfo.dstBinding = writeDescriptorSets.size() - 1;
+            writeInfo.dstArrayElement = 0;
+            writeInfo.descriptorCount = 1;
+            writeInfo.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            writeInfo.pImageInfo = &textureInfo;
+            writeInfo.pBufferInfo = nullptr;
+            writeInfo.pTexelBufferView = nullptr;
 
-        return true;
-    };
+            return true;
+        };
 
-    if (command) {
-        for (int i = 0; i < command->fNumTexSamplers; ++i) {
-            auto texture = static_cast<const VulkanTexture*>(
-                    drawPass->getTexture(command->fTextureIndices[i]));
-            auto sampler = static_cast<const VulkanSampler*>(
-                    drawPass->getSampler(command->fSamplerIndices[i]));
+        if (command) {
+            for (int i = 0; i < command->fNumTexSamplers; ++i) {
+                auto texture = static_cast<const VulkanTexture*>(
+                        drawPass->getTexture(command->fTextureIndices[i]));
+                auto sampler = static_cast<const VulkanSampler*>(
+                        drawPass->getSampler(command->fSamplerIndices[i]));
+                if (!appendTextureSampler(texture, sampler)) {
+                    return;
+                }
+            }
+        }
+        if (fActiveGraphicsPipeline->dstReadStrategy() == DstReadStrategy::kTextureCopy) {
+            auto texture = static_cast<const VulkanTexture*>(fDstCopy.first);
+            auto sampler = static_cast<const VulkanSampler*>(fDstCopy.second);
             if (!appendTextureSampler(texture, sampler)) {
                 return;
             }
         }
-    }
-    if (fActiveGraphicsPipeline->dstReadRequirement() == DstReadRequirement::kTextureCopy) {
-        auto texture = static_cast<const VulkanTexture*>(fDstCopy.first);
-        auto sampler = static_cast<const VulkanSampler*>(fDstCopy.second);
-        if (!appendTextureSampler(texture, sampler)) {
-            return;
+
+        SkASSERT(writeDescriptorSets.size() == numTexSamplers &&
+                 descriptorImageInfos.size() == numTexSamplers);
+        VULKAN_CALL(fSharedContext->interface(),
+                    UpdateDescriptorSets(fSharedContext->device(),
+                                         numTexSamplers,
+                                         &writeDescriptorSets[0],
+                                         /*descriptorCopyCount=*/0,
+                                         /*pDescriptorCopies=*/nullptr));
+
+        if (numTexSamplers == 1) {
+            SkASSERT(singleTexture && singleSampler);
+            singleTexture->addCachedSingleTextureDescriptorSet(set, sk_ref_sp(singleSampler));
         }
     }
-
-    SkASSERT(writeDescriptorSets.size() == numTexSamplers &&
-             descriptorImageInfos.size() == numTexSamplers);
-    VULKAN_CALL(fSharedContext->interface(), UpdateDescriptorSets(fSharedContext->device(),
-                                                                  numTexSamplers,
-                                                                  &writeDescriptorSets[0],
-                                                                  /*descriptorCopyCount=*/0,
-                                                                  /*pDescriptorCopies=*/nullptr));
 
     // Store the updated descriptor set to be actually bound later on. This avoids binding and
     // potentially having to re-bind in cases where earlier descriptor sets change while going
@@ -1491,6 +1444,10 @@ bool VulkanCommandBuffer::onCopyBufferToBuffer(const Buffer* srcBuffer,
     SkASSERT(vkSrcBuffer->bufferUsageFlags() & VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
     SkASSERT(vkDstBuffer->bufferUsageFlags() & VK_BUFFER_USAGE_TRANSFER_DST_BIT);
 
+    vkSrcBuffer->setBufferAccess(this, VK_ACCESS_TRANSFER_READ_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
+    vkDstBuffer->setBufferAccess(
+        this, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
+
     VkBufferCopy region;
     memset(&region, 0, sizeof(VkBufferCopy));
     region.srcOffset = srcOffset;
@@ -1505,6 +1462,26 @@ bool VulkanCommandBuffer::onCopyBufferToBuffer(const Buffer* srcBuffer,
                               vkDstBuffer->vkBuffer(),
                               /*regionCount=*/1,
                               &region));
+
+    // TODO (b/394121386): We don't currently have a list of tracked buffers that are used on a
+    // RenderPass in order to put in any needed barriers (like we do for textures). If we did have
+    // one, then we would add the needed barriers for the buffers at the start of a render pass.
+    // Until we have such a system, we need to do some hackyness here to put in a barrier with the
+    // assumption that the buffer will be read after this write from the copy. The only buffer types
+    // we allow to be used as the dst of a transfer are vertex and index buffers. So we check the
+    // buffers usages for either of those and then set the corresponding access flag.
+    VkAccessFlags dstAccess = 0;
+    VkPipelineStageFlags dstStageMask = VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+    VkBufferUsageFlags bufferUsageFlags = vkDstBuffer->bufferUsageFlags();
+    if (bufferUsageFlags & VK_BUFFER_USAGE_VERTEX_BUFFER_BIT) {
+        dstAccess = VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT;
+    } else if (bufferUsageFlags & VK_BUFFER_USAGE_INDEX_BUFFER_BIT) {
+        dstAccess = VK_ACCESS_INDEX_READ_BIT;
+    } else {
+        SkDEBUGFAIL("Trying to copy to non vertex or index buffer\n");
+        return false;
+    }
+    vkDstBuffer->setBufferAccess(this, dstAccess, dstStageMask);
 
     return true;
 }
@@ -1654,26 +1631,6 @@ bool VulkanCommandBuffer::onCopyTextureToTexture(const Texture* src,
     return true;
 }
 
-
-bool VulkanCommandBuffer::pushConstants(VkShaderStageFlags stageFlags,
-                                        uint32_t offset,
-                                        uint32_t size,
-                                        const void* values) {
-    SkASSERT(fActiveGraphicsPipeline);
-    // offset and size must be a multiple of 4
-    SkASSERT(!SkToBool(offset & 0x3));
-    SkASSERT(!SkToBool(size & 0x3));
-
-    VULKAN_CALL(fSharedContext->interface(),
-                CmdPushConstants(fPrimaryCommandBuffer,
-                                 fActiveGraphicsPipeline->layout(),
-                                 stageFlags,
-                                 offset,
-                                 size,
-                                 values));
-    return true;
-}
-
 bool VulkanCommandBuffer::onSynchronizeBufferToCpu(const Buffer* buffer, bool* outDidResultInWork) {
     static_cast<const VulkanBuffer*>(buffer)->setBufferAccess(this,
                                                               VK_ACCESS_HOST_READ_BIT,
@@ -1790,9 +1747,6 @@ void VulkanCommandBuffer::pipelineBarrier(const Resource* resource,
     fSrcStageMask = fSrcStageMask | srcStageMask;
     fDstStageMask = fDstStageMask | dstStageMask;
 
-    if (resource) {
-        this->trackResource(sk_ref_sp(resource));
-    }
     if (fActiveRenderPass) {
         this->submitPipelineBarriers(true);
     }
@@ -1832,31 +1786,6 @@ void VulkanCommandBuffer::submitPipelineBarriers(bool forSelfDependency) {
     SkASSERT(!fBarriersByRegion);
     SkASSERT(!fSrcStageMask);
     SkASSERT(!fDstStageMask);
-}
-
-void VulkanCommandBuffer::updateBuffer(const VulkanBuffer* buffer,
-                                       const void* data,
-                                       size_t dataSize,
-                                       size_t dstOffset) {
-    // vkCmdUpdateBuffer can only be called outside of a render pass.
-    SkASSERT(fActive && !fActiveRenderPass);
-    if (!buffer || buffer->vkBuffer() == VK_NULL_HANDLE) {
-        SKGPU_LOG_W("VulkanCommandBuffer::updateBuffer requires a valid VulkanBuffer pointer backed"
-                    "by a valid VkBuffer handle");
-        return;
-    }
-
-    // Per the spec, vkCmdUpdateBuffer is treated as a “transfer" operation for the purposes of
-    // synchronization barriers. Ensure this write operation occurs after any previous read
-    // operations and without clobbering any other write operations on the same memory in the cache.
-    buffer->setBufferAccess(this, VK_ACCESS_TRANSFER_WRITE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT);
-    this->submitPipelineBarriers();
-
-    VULKAN_CALL(fSharedContext->interface(), CmdUpdateBuffer(fPrimaryCommandBuffer,
-                                                             buffer->vkBuffer(),
-                                                             dstOffset,
-                                                             dataSize,
-                                                             data));
 }
 
 void VulkanCommandBuffer::nextSubpass() {

@@ -56,7 +56,7 @@ inline void forEachProtocolImplementingProtocol(Class cls, Protocol *target, voi
     ASSERT(target);
 
     Vector<Protocol*> worklist;
-    HashSet<void*> visited;
+    UncheckedKeyHashSet<void*> visited;
 
     // Initially fill the worklist with the Class's protocols.
     {

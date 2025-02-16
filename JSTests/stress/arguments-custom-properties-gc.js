@@ -20,10 +20,10 @@ function cons(f) {
 }
 
 var array = [];
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     array.push(cons(i));
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var j = (i * 3) % array.length;
     array[j] = cons(j);
     

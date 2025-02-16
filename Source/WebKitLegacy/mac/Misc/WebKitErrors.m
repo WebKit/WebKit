@@ -71,11 +71,13 @@ static NSMutableDictionary *descriptions = nil;
 {
     // Insert a localized string here for those folks not savvy to our category methods.
     NSString *localizedDescription = [[descriptions objectForKey:domain] objectForKey:@(code)];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         URL, @"NSErrorFailingURLKey",
         [URL absoluteString], NSURLErrorFailingURLStringErrorKey,
         localizedDescription, NSLocalizedDescriptionKey,
         nil];
+    ALLOW_DEPRECATED_DECLARATIONS_END
     return [self initWithDomain:domain code:code userInfo:userInfo];
 }
 
@@ -141,10 +143,12 @@ static NSMutableDictionary *descriptions = nil;
     NSString *localizedDescription = [descriptionsForWebKitErrorDomain objectForKey:@(code)];
     if (localizedDescription)
         [userInfo setObject:localizedDescription forKey:NSLocalizedDescriptionKey];
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     if (contentURL) {
         [userInfo setObject:contentURL forKey:@"NSErrorFailingURLKey"];
         [userInfo setObject:[contentURL _web_userVisibleString] forKey:NSURLErrorFailingURLStringErrorKey];
     }
+    ALLOW_DEPRECATED_DECLARATIONS_END
     if (pluginPageURL) {
         [userInfo setObject:[pluginPageURL _web_userVisibleString] forKey:WebKitErrorPlugInPageURLStringKey];
     }

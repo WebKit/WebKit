@@ -62,7 +62,7 @@ void SharedBufferChunkReader::setSeparator(const Vector<char>& separator)
 void SharedBufferChunkReader::setSeparator(const char* separator)
 {
     m_separator.clear();
-    m_separator.append(WTF::span(separator));
+    m_separator.append(unsafeSpan(separator));
 }
 
 bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSeparator)
@@ -74,7 +74,9 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
     while (true) {
         while (m_segmentIndex < m_iteratorCurrent->segment->size()) {
             // FIXME: The existing code to check for separators doesn't work correctly with arbitrary separator strings.
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             auto currentCharacter = m_segment[m_segmentIndex++];
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             if (currentCharacter != m_separator[m_separatorIndex]) {
                 if (m_separatorIndex > 0) {
                     ASSERT_WITH_SECURITY_IMPLICATION(m_separatorIndex <= m_separator.size());
@@ -95,7 +97,9 @@ bool SharedBufferChunkReader::nextChunk(Vector<uint8_t>& chunk, bool includeSepa
 
         // Read the next segment.
         m_segmentIndex = 0;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         if (++m_iteratorCurrent == m_iteratorEnd) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             m_segment = nullptr;
             if (m_separatorIndex > 0)
                 chunk.append(byteCast<uint8_t>(m_separator.subspan(0, m_separatorIndex)));
@@ -124,12 +128,14 @@ size_t SharedBufferChunkReader::peek(Vector<uint8_t>& data, size_t requestedSize
         return 0;
 
     size_t availableInSegment = std::min(m_iteratorCurrent->segment->size() - m_segmentIndex, requestedSize);
-    data.append(std::span { m_segment + m_segmentIndex, availableInSegment });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    data.append(unsafeMakeSpan(m_segment + m_segmentIndex, availableInSegment));
 
     size_t readBytesCount = availableInSegment;
     requestedSize -= readBytesCount;
 
     auto currentSegment = m_iteratorCurrent;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     while (requestedSize && ++currentSegment != m_iteratorEnd) {
         size_t lengthInSegment = std::min(currentSegment->segment->size(), requestedSize);

@@ -38,7 +38,7 @@ let gun = eval(`(function () {
     return new B();
 })()`);
 
-for (let i = 0; i < 0x10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     gun.trigger();
     gun.triggerWithRestParameters(1, 2, 3);
 }

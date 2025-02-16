@@ -1,14 +1,14 @@
 
-FAIL removeEntry() to remove a file promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
-FAIL removeEntry() on an already removed file should fail promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL removeEntry() to remove an empty directory promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
-FAIL removeEntry() on a non-empty directory should fail promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
-FAIL removeEntry() on a directory recursively should delete all sub-items promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL removeEntry() to remove a file promise_rejects_dom: function "function() { throw e }" threw object "TypeError: Blob loading failed" that is not a DOMException NotFoundError: property "code" is equal to undefined, expected 8
+PASS removeEntry() on an already removed file should fail
+PASS removeEntry() to remove an empty directory
+FAIL removeEntry() on a non-empty directory should fail promise_rejects_dom: function "function() { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException InvalidModificationError: property "code" is equal to 0, expected 13
+PASS removeEntry() on a directory recursively should delete all sub-items
 PASS removeEntry() with empty name should fail
 PASS removeEntry() with "." name should fail
 PASS removeEntry() with ".." name should fail
 PASS removeEntry() with a path separator should fail.
-FAIL removeEntry() while the file has an open writable fails promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
-FAIL removeEntry() of a directory while a containing file has an open writable fails promise_test: Unhandled rejection with value: object "TypeError: writer.write is not a function. (In 'writer.write(new Blob([contents]))', 'writer.write' is undefined)"
-FAIL createWritable after removeEntry succeeds but doesnt recreate the file promise_test: Unhandled rejection with value: object "InvalidStateError: The object is in an invalid state."
+FAIL removeEntry() while the file has an open writable fails assert_unreached: Should have rejected: undefined Reached unreachable code
+FAIL removeEntry() of a directory while a containing file has an open writable fails promise_rejects_dom: function "function() { throw e }" threw object "UnknownError: The operation failed for an unknown transient reason (e.g. out of memory)." that is not a DOMException NoModificationAllowedError: property "code" is equal to 0, expected 7
+FAIL createWritable after removeEntry succeeds but doesnt recreate the file assert_unreached: Should have rejected: undefined Reached unreachable code
 

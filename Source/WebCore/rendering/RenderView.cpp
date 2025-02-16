@@ -40,6 +40,7 @@
 #include "LegacyRenderSVGRoot.h"
 #include "LocalFrame.h"
 #include "LocalFrameView.h"
+#include "Logging.h"
 #include "NodeTraversal.h"
 #include "Page.h"
 #include "RenderBoxInlines.h"
@@ -320,7 +321,7 @@ bool RenderView::requiresColumns(int) const
 
 void RenderView::computeColumnCountAndWidth()
 {
-    int columnWidth = contentLogicalWidth();
+    int columnWidth = contentBoxLogicalWidth();
     if (style().hasInlineColumnAxis()) {
         if (int pageLength = protectedFrameView()->pagination().pageLength)
             columnWidth = pageLength;
@@ -1013,14 +1014,13 @@ RenderView::RepaintRegionAccumulator::RepaintRegionAccumulator(RenderView* view)
     if (!view)
         return;
 
-    auto* rootRenderView = view->document().topDocument().renderView();
-    if (!rootRenderView)
+    if (!view->document().isTopDocument())
         return;
 
-    m_wasAccumulatingRepaintRegion = !!rootRenderView->m_accumulatedRepaintRegion;
+    m_wasAccumulatingRepaintRegion = !!view->m_accumulatedRepaintRegion;
     if (!m_wasAccumulatingRepaintRegion)
-        rootRenderView->m_accumulatedRepaintRegion = makeUnique<Region>();
-    m_rootView = *rootRenderView;
+        view->m_accumulatedRepaintRegion = makeUnique<Region>();
+    m_rootView = *view;
 }
 
 RenderView::RepaintRegionAccumulator::~RepaintRegionAccumulator()

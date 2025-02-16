@@ -29,7 +29,7 @@ function warmup() {
 noInline(warmup);
 
 // Warm up foo() with polymorphic objects and getters.
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     warmup();
 }
 

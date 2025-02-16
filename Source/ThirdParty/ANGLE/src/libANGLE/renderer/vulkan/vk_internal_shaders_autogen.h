@@ -237,58 +237,58 @@ class ShaderLibrary final : angle::NonCopyable
 
     void destroy(VkDevice device);
 
-    angle::Result getBlit3DSrc_frag(Context *context,
+    angle::Result getBlit3DSrc_frag(ErrorContext *context,
                                     uint32_t shaderFlags,
                                     ShaderModulePtr *shaderOut);
-    angle::Result getBlitResolve_frag(Context *context,
+    angle::Result getBlitResolve_frag(ErrorContext *context,
                                       uint32_t shaderFlags,
                                       ShaderModulePtr *shaderOut);
-    angle::Result getBlitResolveStencilNoExport_comp(Context *context,
+    angle::Result getBlitResolveStencilNoExport_comp(ErrorContext *context,
                                                      uint32_t shaderFlags,
                                                      ShaderModulePtr *shaderOut);
-    angle::Result getConvertIndex_comp(Context *context,
+    angle::Result getConvertIndex_comp(ErrorContext *context,
                                        uint32_t shaderFlags,
                                        ShaderModulePtr *shaderOut);
-    angle::Result getConvertIndexIndirectLineLoop_comp(Context *context,
+    angle::Result getConvertIndexIndirectLineLoop_comp(ErrorContext *context,
                                                        uint32_t shaderFlags,
                                                        ShaderModulePtr *shaderOut);
-    angle::Result getConvertIndirectLineLoop_comp(Context *context,
+    angle::Result getConvertIndirectLineLoop_comp(ErrorContext *context,
                                                   uint32_t shaderFlags,
                                                   ShaderModulePtr *shaderOut);
-    angle::Result getConvertVertex_comp(Context *context,
+    angle::Result getConvertVertex_comp(ErrorContext *context,
                                         uint32_t shaderFlags,
                                         ShaderModulePtr *shaderOut);
-    angle::Result getCopyImageToBuffer_comp(Context *context,
+    angle::Result getCopyImageToBuffer_comp(ErrorContext *context,
                                             uint32_t shaderFlags,
                                             ShaderModulePtr *shaderOut);
-    angle::Result getEtcToBc_comp(Context *context,
+    angle::Result getEtcToBc_comp(ErrorContext *context,
                                   uint32_t shaderFlags,
                                   ShaderModulePtr *shaderOut);
-    angle::Result getExportStencil_frag(Context *context,
+    angle::Result getExportStencil_frag(ErrorContext *context,
                                         uint32_t shaderFlags,
                                         ShaderModulePtr *shaderOut);
-    angle::Result getFullScreenTri_vert(Context *context,
+    angle::Result getFullScreenTri_vert(ErrorContext *context,
                                         uint32_t shaderFlags,
                                         ShaderModulePtr *shaderOut);
-    angle::Result getGenerateFragmentShadingRate_comp(Context *context,
+    angle::Result getGenerateFragmentShadingRate_comp(ErrorContext *context,
                                                       uint32_t shaderFlags,
                                                       ShaderModulePtr *shaderOut);
-    angle::Result getGenerateMipmap_comp(Context *context,
+    angle::Result getGenerateMipmap_comp(ErrorContext *context,
                                          uint32_t shaderFlags,
                                          ShaderModulePtr *shaderOut);
-    angle::Result getImageClear_frag(Context *context,
+    angle::Result getImageClear_frag(ErrorContext *context,
                                      uint32_t shaderFlags,
                                      ShaderModulePtr *shaderOut);
-    angle::Result getImageCopy_frag(Context *context,
+    angle::Result getImageCopy_frag(ErrorContext *context,
                                     uint32_t shaderFlags,
                                     ShaderModulePtr *shaderOut);
-    angle::Result getImageCopyFloat_frag(Context *context,
+    angle::Result getImageCopyFloat_frag(ErrorContext *context,
                                          uint32_t shaderFlags,
                                          ShaderModulePtr *shaderOut);
-    angle::Result getOverlayDraw_frag(Context *context,
+    angle::Result getOverlayDraw_frag(ErrorContext *context,
                                       uint32_t shaderFlags,
                                       ShaderModulePtr *shaderOut);
-    angle::Result getOverlayDraw_vert(Context *context,
+    angle::Result getOverlayDraw_vert(ErrorContext *context,
                                       uint32_t shaderFlags,
                                       ShaderModulePtr *shaderOut);
 

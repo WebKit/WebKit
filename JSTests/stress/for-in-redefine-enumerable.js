@@ -30,7 +30,7 @@ const dontEnumDesc = { value: 0, writable: true, enumerable: false, configurable
         shouldBe(arr[2], 0);
     }
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test();
 })();
 
@@ -50,7 +50,7 @@ const dontEnumDesc = { value: 0, writable: true, enumerable: false, configurable
         shouldBe(obj.c, 0);
     }
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test();
 })();
 
@@ -79,7 +79,7 @@ const dontEnumDesc = { value: 0, writable: true, enumerable: false, configurable
         shouldBe(target.c, 1);
     }
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test();
 })();
 
@@ -105,6 +105,6 @@ const dontEnumDesc = { value: 0, writable: true, enumerable: false, configurable
         assert(seen.e);
     }
 
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         test();
 })();

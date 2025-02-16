@@ -96,25 +96,32 @@ bool ToplevelWindow::isActive() const
 bool ToplevelWindow::isFullscreen() const
 {
 #if USE(GTK4)
-    if (auto* surface = gtk_native_get_surface(GTK_NATIVE(m_window)))
-        return gdk_toplevel_get_state(GDK_TOPLEVEL(surface)) & GDK_TOPLEVEL_STATE_FULLSCREEN;
+    return m_state & GDK_TOPLEVEL_STATE_FULLSCREEN;
 #else
     if (auto* window = gtk_widget_get_window(GTK_WIDGET(m_window)))
         return gdk_window_get_state(window) & GDK_WINDOW_STATE_FULLSCREEN;
-#endif
     return false;
+#endif
 }
 
 bool ToplevelWindow::isMinimized() const
 {
 #if USE(GTK4)
-    if (auto* surface = gtk_native_get_surface(GTK_NATIVE(m_window)))
-        return gdk_toplevel_get_state(GDK_TOPLEVEL(surface)) & GDK_TOPLEVEL_STATE_MINIMIZED;
+    return m_state & GDK_TOPLEVEL_STATE_MINIMIZED;
 #else
     if (auto* window = gtk_widget_get_window(GTK_WIDGET(m_window)))
         return gdk_window_get_state(window) & GDK_WINDOW_STATE_ICONIFIED;
-#endif
     return false;
+#endif
+}
+
+bool ToplevelWindow::isSuspended() const
+{
+#if GTK_CHECK_VERSION(4, 12, 0)
+    return m_state & GDK_TOPLEVEL_STATE_SUSPENDED;
+#else
+    return false;
+#endif
 }
 
 GdkMonitor* ToplevelWindow::monitor() const
@@ -227,6 +234,7 @@ void ToplevelWindow::disconnectSurfaceSignals()
 {
     auto* surface = gtk_native_get_surface(GTK_NATIVE(m_window));
     g_signal_handlers_disconnect_by_data(surface, this);
+    m_state = static_cast<GdkToplevelState>(0);
 }
 #endif
 

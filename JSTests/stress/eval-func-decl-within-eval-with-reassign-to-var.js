@@ -28,7 +28,7 @@ function foo() {
     assert(typeof f, "function", "#1");
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     foo();
     assertThrow(() => f, "ReferenceError: Can't find variable: f");
 }
@@ -42,7 +42,7 @@ function boo() {
     assert(typeof l, 'number', "#4");
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     boo();
     assertThrow(() => l, "ReferenceError: Can't find variable: l");
 }
@@ -52,7 +52,7 @@ function foobar() {
     assert(_bar, undefined); 
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     foobar();
     assertThrow(() => _bar, "ReferenceError: Can't find variable: _bar");
 }
@@ -73,7 +73,7 @@ function goo() {
     assert(typeof f, "undefined", "#6");
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     goo();
     assert(typeof f, "undefined", "#7");
 }
@@ -89,7 +89,7 @@ function hoo() {
     assert(typeof h, "undefined");
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     hoo();
     assertThrow(() => h, "ReferenceError: Can't find variable: h");
 }
@@ -103,7 +103,7 @@ function joo() {
     assert(typeof h, "number", "#10");
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     joo();
     assertThrow(() => h, "ReferenceError: Can't find variable: h");
 }
@@ -117,7 +117,7 @@ function koo() {
     assert(typeof k, "function", "#12");
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     koo();
     assertThrow(() => h, "ReferenceError: Can't find variable: h");
 }
@@ -134,7 +134,7 @@ function loo() {
     assert(`${error}`, "SyntaxError: Can't create duplicate variable in eval: 'h'", "#13");
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     loo();
     assertThrow(() => h, "ReferenceError: Can't find variable: h");
 }

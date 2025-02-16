@@ -23,7 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-[ExceptionForEnabledBy]
+[
+    DispatchedFrom=UI,
+    DispatchedTo=Networking,
+    ExceptionForEnabledBy
+]
 messages -> WebCookieManager {
     void GetHostnamesWithCookies(PAL::SessionID sessionID) -> (Vector<String> hostnames)
     void DeleteCookiesForHostnames(PAL::SessionID sessionID, Vector<String> hostnames) -> ()

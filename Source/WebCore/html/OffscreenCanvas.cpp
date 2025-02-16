@@ -320,7 +320,8 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
     auto encodingMIMEType = toEncodingMimeType(options.type);
     auto quality = qualityFromDouble(options.quality);
 
-    if (RefPtr context = canvasBaseScriptExecutionContext(); context && context->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
+    RefPtr context = canvasBaseScriptExecutionContext();
+    if (context && context->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::Canvas)) {
         RefPtr buffer = createImageForNoiseInjection();
         auto blobData = buffer->toData(encodingMIMEType, quality);
         if (blobData.isEmpty())
@@ -342,7 +343,7 @@ void OffscreenCanvas::convertToBlob(ImageEncodeOptions&& options, Ref<DeferredPr
         return;
     }
 
-    Ref<Blob> blob = Blob::create(canvasBaseScriptExecutionContext(), WTFMove(blobData), encodingMIMEType);
+    Ref<Blob> blob = Blob::create(context.get(), WTFMove(blobData), encodingMIMEType);
     promise->resolveWithNewlyCreated<IDLInterface<Blob>>(WTFMove(blob));
 }
 

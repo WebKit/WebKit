@@ -469,7 +469,7 @@ static bool allCharactersAllowedByTLDRules(std::span<const UChar> buffer)
 {
     // Skip trailing dot for root domain.
     if (buffer.back() == '.')
-        buffer = buffer.first(buffer.size() - 1);
+        dropLast(buffer);
 
     // http://cctld.ru/files/pdf/docs/rules_ru-rf.pdf
     static constexpr std::array<UChar, 3> cyrillicRF {
@@ -854,9 +854,9 @@ static String escapeUnsafeCharacters(const String& sourceBuffer)
 
     outBuffer.grow(i);
     if (sourceBuffer.is8Bit())
-        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.span8().first(i));
+        StringImpl::copyCharacters(outBuffer.mutableSpan(), sourceBuffer.span8().first(i));
     else
-        StringImpl::copyCharacters(outBuffer.data(), sourceBuffer.span16().first(i));
+        StringImpl::copyCharacters(outBuffer.mutableSpan(), sourceBuffer.span16().first(i));
 
     for (; i < length; ) {
         char32_t c = sourceBuffer.characterStartingAt(i);

@@ -378,7 +378,7 @@ PRINTED
                 Tracker.from_string('<rdar://problem/1>'),
             ], commit.issues)
 
-    def test_parse_trailers(self):
+    def get_trailers(self, message):
         contributor = Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')
         commit = Commit(
             revision=1,
@@ -386,29 +386,122 @@ PRINTED
             identifier='1@main',
             timestamp=1000,
             author=Contributor.Encoder().default(contributor),
-            message='Commit title\n\n'
-                    'Reviewed by NOBODY (OOPS!)\n\n'
-                    'trailer-tag: information\n'
-                    'other-tag: stuff\n',
+            message=message,
         )
 
-        self.assertEqual(commit.trailers, ['trailer-tag: information', 'other-tag: stuff'])
+        return commit.trailers
+
+    def test_parse_trailers(self):
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'Reviewed by NOBODY (OOPS!)\n\n'
+            'trailer-tag: information\n'
+            'other-tag: stuff\n',
+        )
+
+        self.assertEqual(actual, ['trailer-tag: information', 'other-tag: stuff'])
 
     def test_parse_trailers_indented(self):
-        contributor = Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')
-        commit = Commit(
-            revision=1,
-            hash='c3bd784f8b88bd03f64467ddd3304ed8be28acbe',
-            identifier='1@main',
-            timestamp=1000,
-            author=Contributor.Encoder().default(contributor),
-            message='Commit title\n\n'
-                    'Reviewed by NOBODY (OOPS!)\n\n'
-                    '    trailer-tag: information\n'
-                    'other-tag: stuff\n',
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'Reviewed by NOBODY (OOPS!)\n\n'
+            '    trailer-tag: information\n'
+            'other-tag: stuff\n',
         )
 
-        self.assertEqual(commit.trailers, ['other-tag: stuff'])
+        self.assertEqual(actual, ['other-tag: stuff'])
+
+    @unittest.expectedFailure
+    def test_parse_trailers_multiline_subject(self):
+        actual = self.get_trailers(
+            'Commit title\n'
+            'Canonical link: https://example.com\n'
+        )
+
+        self.assertEqual(actual, [])
+
+    @unittest.expectedFailure
+    def test_parse_trailers_only_subject(self):
+        actual = self.get_trailers(
+            'Canonical link: https://example.com\n'
+        )
+
+        self.assertEqual(actual, [])
+
+    def test_parse_trailers_whitepsace_in_key(self):
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'Reviewed by NOBODY (OOPS!)\n\n'
+            'not a trailer: line\n'
+        )
+
+        self.assertEqual(actual, [])
+
+    def test_parse_trailers_canonical_link(self):
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'Reviewed by NOBODY (OOPS!)\n\n'
+            'Canonical link: https://example.com\n'
+        )
+
+        self.assertEqual(actual, ['Canonical link: https://example.com'])
+
+    def test_parse_trailers_canonical_link_lowercase(self):
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'Reviewed by NOBODY (OOPS!)\n\n'
+            'canonical link: https://example.com\n'
+        )
+
+        self.assertEqual(actual, [])
+
+    def test_parse_trailers_url_at_end(self):
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'I proposed this in:\n\n'
+            'https://example.com\n'
+        )
+
+        self.assertEqual(actual, ['https: //example.com'])
+
+    def test_parse_trailers_empty_key(self):
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'Upstream:\n'
+            'https://example.com\n'
+        )
+
+        self.assertEqual(actual, ['Upstream: ', 'https: //example.com'])
+
+    def test_parse_trailers_trailing_whitespace(self):
+        actual = self.get_trailers(
+            'Commit title\n\n'
+            'other-tag: stuff\x20\n'
+        )
+
+        self.assertEqual(actual, ['other-tag: stuff'])
+
+    @unittest.expectedFailure
+    def test_parse_trailers_folded(self):
+        actual = self.get_trailers('Title\n\na: a\n a')
+        self.assertEqual(actual, ['a: a\n a'])
+
+    def test_parse_trailers_CR_after_key(self):
+        actual = self.get_trailers('Title\n\na\r:')
+        self.assertEqual(actual, [])
+
+    def test_parse_trailers_CR_before_key(self):
+        actual = self.get_trailers('Title\n\n\ra:')
+        self.assertEqual(actual, [])
+
+    def test_parse_trailers_CR_in_value(self):
+        actual = self.get_trailers('Title\n\na::\r:')
+        self.assertEqual(actual, ['a: :\r:'])
+
+    @unittest.expectedFailure
+    def test_parse_trailers_comment_after_trailers(self):
+        actual = self.get_trailers('Title\n\nother-tag: stuff\n# this is a comment\n')
+        self.assertEqual(actual, ['other-tag: stuff'])
 
     def test_parse_issue_in_trailers(self):
         contributor = Contributor.from_scm_log('Author: jbedard@apple.com <jbedard@apple.com>')

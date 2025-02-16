@@ -1,10 +1,10 @@
 input_valueAsDate_stepping
 
 
-FAIL date should step correctly The object is in an invalid state.
-FAIL time should step correctly The object is in an invalid state.
-FAIL month should step correctly The object is in an invalid state.
-FAIL week should step correctly The object is in an invalid state.
+PASS date should step correctly
+PASS time should step correctly
+PASS month should step correctly
+PASS week should step correctly
 
 
 

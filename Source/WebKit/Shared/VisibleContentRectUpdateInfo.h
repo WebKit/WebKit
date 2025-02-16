@@ -56,7 +56,7 @@ enum class ViewStabilityFlag : uint8_t {
 
 class VisibleContentRectUpdateInfo {
 public:
-    VisibleContentRectUpdateInfo() = default;
+    VisibleContentRectUpdateInfo() = delete;
 
     VisibleContentRectUpdateInfo(const WebCore::FloatRect& exposedContentRect, const WebCore::FloatRect& unobscuredContentRect, const WebCore::FloatBoxExtent& contentInsets,
         const WebCore::FloatRect& unobscuredRectInScrollViewCoordinates, const WebCore::FloatRect& unobscuredContentRectRespectingInputViewBounds, const WebCore::FloatRect& layoutViewportRect,

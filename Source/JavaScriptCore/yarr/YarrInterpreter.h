@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2009-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -536,7 +536,5 @@ private:
 
 JS_EXPORT_PRIVATE std::unique_ptr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*, ErrorCode&, ConcurrentJSLock* = nullptr);
 JS_EXPORT_PRIVATE unsigned interpret(BytecodePattern*, StringView input, unsigned start, unsigned* output);
-unsigned interpret(BytecodePattern*, std::span<const LChar> input, unsigned start, unsigned* output);
-unsigned interpret(BytecodePattern*, std::span<const UChar> input, unsigned start, unsigned* output);
 
 } } // namespace JSC::Yarr

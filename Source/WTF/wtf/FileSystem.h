@@ -169,6 +169,9 @@ WTF_EXPORT_PRIVATE int overwriteEntireFile(const String& path, std::span<const u
 // Prefix is what the filename should be prefixed with, not the full path.
 WTF_EXPORT_PRIVATE std::pair<String, PlatformFileHandle> openTemporaryFile(StringView prefix, StringView suffix = { });
 WTF_EXPORT_PRIVATE String createTemporaryFile(StringView prefix, StringView suffix = { });
+#if PLATFORM(COCOA)
+WTF_EXPORT_PRIVATE std::pair<PlatformFileHandle, CString> createTemporaryFileInDirectory(const String& directory, const String& suffix);
+#endif
 WTF_EXPORT_PRIVATE PlatformFileHandle openFile(const String& path, FileOpenMode, FileAccessPermission = FileAccessPermission::All, bool failIfFileExists = false);
 WTF_EXPORT_PRIVATE void closeFile(PlatformFileHandle&);
 // Returns the resulting offset from the beginning of the file if successful, -1 otherwise.
@@ -349,7 +352,7 @@ inline MappedFileData& MappedFileData::operator=(MappedFileData&& other)
 
 // This creates the destination file, maps it, write the provided data to it and returns the mapped file.
 // This function fails if there is already a file at the destination path.
-WTF_EXPORT_PRIVATE MappedFileData mapToFile(const String& path, size_t bytesSize, Function<void(const Function<bool(std::span<const uint8_t>)>&)>&& apply, PlatformFileHandle* = nullptr);
+WTF_EXPORT_PRIVATE MappedFileData mapToFile(const String& path, size_t bytesSize, NOESCAPE const Function<void(const Function<bool(std::span<const uint8_t>)>&)>& apply, PlatformFileHandle* = nullptr);
 
 WTF_EXPORT_PRIVATE MappedFileData createMappedFileData(const String&, size_t, PlatformFileHandle* = nullptr);
 WTF_EXPORT_PRIVATE void finalizeMappedFileData(MappedFileData&, size_t);

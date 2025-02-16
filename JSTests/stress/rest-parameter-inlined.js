@@ -13,7 +13,7 @@ function foo(a, b, c) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let result = foo(10, 20, 30);
     assert(result.length === 3);
     assert(result[0] === 10);

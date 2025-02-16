@@ -33,7 +33,7 @@ namespace WebCore {
 class RenderTreeBuilder::Inline {
     WTF_MAKE_TZONE_ALLOCATED(Inline);
 public:
-    static RenderBoxModelObject* continuationBefore(RenderInline& parent, RenderObject* beforeChild);
+    static RenderBoxModelObject& parentCandidateInContinuation(RenderInline& parent, const RenderObject* beforeChild);
 
     Inline(RenderTreeBuilder&);
 

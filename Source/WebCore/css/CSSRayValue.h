@@ -29,6 +29,7 @@
 #pragma once
 
 #include "CSSRayFunction.h"
+#include "CSSValue.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
@@ -46,9 +47,9 @@ public:
     const CSS::RayFunction& ray() const { return m_ray; }
     CSSBoxType coordinateBox() const { return m_coordinateBox; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSRayValue&) const;
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
     CSSRayValue(CSS::RayFunction ray, CSSBoxType coordinateBox)

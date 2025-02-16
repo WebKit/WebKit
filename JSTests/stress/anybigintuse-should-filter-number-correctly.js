@@ -9,7 +9,7 @@ function test(a, b)
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     if (i & 1) {
         test(0n, 0n);
         test(0n, 10n);

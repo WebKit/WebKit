@@ -27,11 +27,6 @@
 
 #pragma once
 
-#if COMPILER(MSVC)
-// Disable the "unreachable code" warning so we can compile the ASSERT_NOT_REACHED in the END_STATE macro.
-#pragma warning(disable: 4702)
-#endif
-
 namespace WebCore {
 
 inline bool isTokenizerWhitespace(UChar character)

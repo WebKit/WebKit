@@ -4,7 +4,7 @@ function foo() {
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo();
     if (result != false)
         throw "Error: bad result: " + result;

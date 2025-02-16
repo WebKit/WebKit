@@ -317,8 +317,8 @@ struct WasmBoundsCheckCustom : public CommonCustomBase<WasmBoundsCheckCustom> {
     template<typename Func>
     static void forEachArg(Inst& inst, const Func& functor)
     {
-        functor(inst.args[0], Arg::Use, GP, WidthPtr);
-        functor(inst.args[1], Arg::Use, GP, WidthPtr);
+        functor(inst.args[0], Arg::Use, GP, pointerWidth());
+        functor(inst.args[1], Arg::Use, GP, pointerWidth());
     }
 
     template<typename... Arguments>

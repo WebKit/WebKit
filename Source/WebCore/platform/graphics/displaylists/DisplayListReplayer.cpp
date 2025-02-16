@@ -68,6 +68,7 @@ ReplayResult Replayer::replay(const FloatRect& initialClip, bool trackReplayList
         if (applyResult.stopReason) {
             result.reasonForStopping = *applyResult.stopReason;
             result.missingCachedResourceIdentifier = WTFMove(applyResult.resourceIdentifier);
+            LOG_WITH_STREAM(DisplayLists, stream << " failed to replay for reason " << result.reasonForStopping << ". Resource " << result.missingCachedResourceIdentifier << " is missing");
             break;
         }
 

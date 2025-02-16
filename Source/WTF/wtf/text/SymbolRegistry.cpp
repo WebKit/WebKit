@@ -72,7 +72,7 @@ void SymbolRegistry::remove(RegisteredSymbolImpl& uid)
 {
     ASSERT(uid.symbolRegistry() == this);
     auto iterator = m_table.find<SymbolRegistryTableRemovalHashTranslator>(&uid);
-    ASSERT_WITH_MESSAGE(iterator != m_table.end(), "The string being removed is registered in the string table of an other thread!");
+    ASSERT_WITH_MESSAGE(iterator != m_table.end(), "The string being removed is registered in the string table of another thread!");
     m_table.remove(iterator);
 }
 

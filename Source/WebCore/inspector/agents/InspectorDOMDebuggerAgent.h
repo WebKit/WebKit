@@ -84,6 +84,8 @@ public:
     void didHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     void willFireTimer(bool oneShot);
     void didFireTimer(bool oneShot);
+    void willFireAnimationFrame();
+    void didFireAnimationFrame();
     void willSendRequest(ResourceRequest&);
     void willSendRequestOfType(ResourceRequest&);
 
@@ -91,8 +93,6 @@ protected:
     InspectorDOMDebuggerAgent(WebAgentContext&, Inspector::InspectorDebuggerAgent*);
     virtual void enable();
     virtual void disable();
-
-    virtual bool setAnimationFrameBreakpoint(Inspector::Protocol::ErrorString&, RefPtr<JSC::Breakpoint>&&) = 0;
 
     Inspector::InspectorDebuggerAgent* m_debuggerAgent { nullptr };
 
@@ -128,6 +128,7 @@ private:
     RefPtr<JSC::Breakpoint> m_pauseOnAllIntervalsBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllListenersBreakpoint;
     RefPtr<JSC::Breakpoint> m_pauseOnAllTimeoutsBreakpoint;
+    RefPtr<JSC::Breakpoint> m_pauseOnAllAnimationFramesBreakpoint;
 
     MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlTextBreakpoints;
     MemoryCompactRobinHoodHashMap<String, Ref<JSC::Breakpoint>> m_urlRegexBreakpoints;

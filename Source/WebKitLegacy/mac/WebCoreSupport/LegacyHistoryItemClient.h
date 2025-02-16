@@ -33,4 +33,5 @@ public:
 private:
     LegacyHistoryItemClient() = default;
     void historyItemChanged(const WebCore::HistoryItem&) final;
+    void clearChildren(const WebCore::HistoryItem&) const final;
 };

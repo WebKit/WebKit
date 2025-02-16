@@ -65,6 +65,8 @@ class HTMLCanvasElement final : public HTMLElement, public CanvasBase, public Ac
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLCanvasElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(HTMLCanvasElement);
 public:
+    USING_CAN_MAKE_WEAKPTR(HTMLElement);
+
     static Ref<HTMLCanvasElement> create(Document&);
     static Ref<HTMLCanvasElement> create(const QualifiedName&, Document&);
     virtual ~HTMLCanvasElement();
@@ -175,9 +177,6 @@ private:
     void setSurfaceSize(const IntSize&);
 
     bool usesContentsAsLayerContents() const;
-
-    void refCanvasBase() const final { HTMLElement::ref(); }
-    void derefCanvasBase() const final { HTMLElement::deref(); }
 
     ScriptExecutionContext* canvasBaseScriptExecutionContext() const final { return HTMLElement::scriptExecutionContext(); }
 

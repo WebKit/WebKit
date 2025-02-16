@@ -216,7 +216,7 @@ bool WebExtensionAPIWindows::parseWindowTypesFilter(NSDictionary *options, Optio
         windowTypeFilter.remove(WindowTypeFilter::Popup);
 
     if (!windowTypeFilter) {
-        *outExceptionString = toErrorString(nil, windowTypesKey, @"it must specify either 'normal', 'popup', or both.");
+        *outExceptionString = toErrorString(nullString(), windowTypesKey, @"it must specify either 'normal', 'popup', or both.");
         return false;
     }
 
@@ -231,7 +231,7 @@ bool WebExtensionAPIWindows::parseWindowTypeFilter(NSString *windowType, OptionS
         windowTypeFilter.add(WindowTypeFilter::Popup);
 
     if (!windowTypeFilter) {
-        *outExceptionString = toErrorString(nil, sourceKey, @"it must specify either 'normal' or 'popup'");
+        *outExceptionString = toErrorString(nullString(), sourceKey, @"it must specify either 'normal' or 'popup'");
         return false;
     }
 
@@ -275,7 +275,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
         tabParameters.url = URL { extensionContext().baseURL(), url };
 
         if (!tabParameters.url.value().isValid()) {
-            *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
+            *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid URL", url);
             return false;
         }
 
@@ -289,7 +289,7 @@ bool WebExtensionAPIWindows::parseWindowCreateOptions(NSDictionary *options, Web
             tabParameters.url = URL { extensionContext().baseURL(), url };
 
             if (!tabParameters.url.value().isValid()) {
-                *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", url);
+                *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid URL", url);
                 return false;
             }
 
@@ -329,7 +329,7 @@ bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, Web
         parameters.state = toStateImpl(state);
 
         if (!parameters.state) {
-            *outExceptionString = toErrorString(nil, stateKey, @"it must specify 'normal', 'minimized', 'maximized', or 'fullscreen'");
+            *outExceptionString = toErrorString(nullString(), stateKey, @"it must specify 'normal', 'minimized', 'maximized', or 'fullscreen'");
             return false;
         }
     }
@@ -344,7 +344,7 @@ bool WebExtensionAPIWindows::parseWindowUpdateOptions(NSDictionary *options, Web
 
     if (left || top || width || height) {
         if (parameters.state && parameters.state.value() != WebExtensionWindow::State::Normal) {
-            *outExceptionString = toErrorString(nil, sourceKey, @"when 'top', 'left', 'width', or 'height' are specified, 'state' must specify 'normal'.");
+            *outExceptionString = toErrorString(nullString(), sourceKey, @"when 'top', 'left', 'width', or 'height' are specified, 'state' must specify 'normal'.");
             return false;
         }
 
@@ -365,11 +365,11 @@ bool isValid(std::optional<WebExtensionWindowIdentifier> identifier, NSString **
 {
     if (UNLIKELY(!isValid(identifier))) {
         if (isNone(identifier))
-            *outExceptionString = toErrorString(nil, @"windowId", @"'windows.WINDOW_ID_NONE' is not allowed");
+            *outExceptionString = toErrorString(nullString(), @"windowId", @"'windows.WINDOW_ID_NONE' is not allowed");
         else if (identifier)
-            *outExceptionString = toErrorString(nil, @"windowId", @"'%llu' is not a window identifier", identifier.value().toUInt64());
+            *outExceptionString = toErrorString(nullString(), @"windowId", @"'%llu' is not a window identifier", identifier.value().toUInt64());
         else
-            *outExceptionString = toErrorString(nil, @"windowId", @"it is not a window identifier");
+            *outExceptionString = toErrorString(nullString(), @"windowId", @"it is not a window identifier");
         return false;
     }
 

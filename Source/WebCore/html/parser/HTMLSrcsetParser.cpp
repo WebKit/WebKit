@@ -32,14 +32,13 @@
 #include "config.h"
 #include "HTMLSrcsetParser.h"
 
+#include "CSSSerializationContext.h"
 #include "Element.h"
 #include "HTMLParserIdioms.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/URL.h>
 #include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/StringBuilder.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -55,19 +54,19 @@ enum DescriptorTokenizerState {
 };
 
 template<typename CharType>
-static void appendDescriptorAndReset(const CharType*& descriptorStart, const CharType* position, Vector<StringView>& descriptors)
+static void appendDescriptorAndReset(std::span<const CharType>& descriptorStart, const CharType* position, Vector<StringView>& descriptors)
 {
-    if (position > descriptorStart)
-        descriptors.append(StringView { std::span(descriptorStart, position) });
-    descriptorStart = nullptr;
+    if (position > descriptorStart.data())
+        descriptors.append(StringView { descriptorStart.first(position - descriptorStart.data()) });
+    descriptorStart = { };
 }
 
 // The following is called appendCharacter to match the spec's terminology.
 template<typename CharType>
-static void appendCharacter(const CharType* descriptorStart, const CharType* position)
+static void appendCharacter(std::span<const CharType>& descriptorStart, std::span<const CharType> position)
 {
     // Since we don't copy the tokens, this just set the point where the descriptor tokens start.
-    if (!descriptorStart)
+    if (!descriptorStart.data())
         descriptorStart = position;
 }
 
@@ -75,13 +74,13 @@ template<typename CharType>
 static void tokenizeDescriptors(std::span<const CharType>& position, Vector<StringView>& descriptors)
 {
     DescriptorTokenizerState state = Initial;
-    const CharType* descriptorsStart = position.data();
-    const CharType* currentDescriptorStart = descriptorsStart;
+    auto descriptorsStart = position;
+    auto currentDescriptorStart = descriptorsStart;
     for (; ; skip(position, 1)) {
         switch (state) {
         case Initial:
             if (position.empty()) {
-                appendDescriptorAndReset(currentDescriptorStart, position.data() + position.size(), descriptors);
+                appendDescriptorAndReset(currentDescriptorStart, std::to_address(position.end()), descriptors);
                 return;
             }
             if (isComma(position.front())) {
@@ -91,32 +90,32 @@ static void tokenizeDescriptors(std::span<const CharType>& position, Vector<Stri
             }
             if (isASCIIWhitespace(position.front())) {
                 appendDescriptorAndReset(currentDescriptorStart, position.data(), descriptors);
-                currentDescriptorStart = position.data() + 1;
+                currentDescriptorStart = position.subspan(1);
                 state = AfterToken;
             } else if (position.front() == '(') {
-                appendCharacter(currentDescriptorStart, position.data());
+                appendCharacter(currentDescriptorStart, position);
                 state = InParenthesis;
             } else
-                appendCharacter(currentDescriptorStart, position.data());
+                appendCharacter(currentDescriptorStart, position);
             break;
         case InParenthesis:
             if (position.empty()) {
-                appendDescriptorAndReset(currentDescriptorStart, position.data() + position.size(), descriptors);
+                appendDescriptorAndReset(currentDescriptorStart, std::to_address(position.end()), descriptors);
                 return;
             }
             if (position.front() == ')') {
-                appendCharacter(currentDescriptorStart, position.data());
+                appendCharacter(currentDescriptorStart, position);
                 state = Initial;
             } else
-                appendCharacter(currentDescriptorStart, position.data());
+                appendCharacter(currentDescriptorStart, position);
             break;
         case AfterToken:
             if (position.empty())
                 return;
             if (!isASCIIWhitespace(position.front())) {
                 state = Initial;
-                currentDescriptorStart = position.data();
-                position = { position.data() - 1, position.data() + position.size() };
+                currentDescriptorStart = position;
+                position = descriptorsStart.subspan(position.data() - descriptorsStart.data() - 1, position.size() + 1);
             }
             break;
         }
@@ -184,9 +183,9 @@ static Vector<ImageCandidate> parseImageCandidatesFromSrcsetAttribute(std::span<
         // 8. If url ends with a U+002C COMMA character (,)
         if (isComma(imageURLSpan.back())) {
             // Remove all trailing U+002C COMMA characters from url.
-            imageURLSpan = imageURLSpan.first(imageURLSpan.size() - 1);
+            dropLast(imageURLSpan);
             while (!imageURLSpan.empty() && isComma(imageURLSpan.back()))
-                imageURLSpan = imageURLSpan.first(imageURLSpan.size() - 1);
+                dropLast(imageURLSpan);
 
             // If url is empty, then jump to the step labeled splitting loop.
             if (imageURLSpan.empty())
@@ -231,9 +230,9 @@ void getURLsFromSrcsetAttribute(const Element& element, StringView attribute, Li
     }
 }
 
-String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const UncheckedKeyHashMap<String, String>& replacementURLStrings)
+String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute, const CSS::SerializationContext& context)
 {
-    if (replacementURLStrings.isEmpty())
+    if (context.replacementURLStrings.isEmpty())
         return attribute.toString();
 
     auto imageCandidates = parseImageCandidatesFromSrcsetAttribute(attribute);
@@ -243,7 +242,7 @@ String replaceURLsInSrcsetAttribute(const Element& element, StringView attribute
             result.append(", "_s);
 
         auto resolvedURLString = element.resolveURLStringIfNeeded(candidate.string.toString());
-        auto replacementURLString = replacementURLStrings.get(resolvedURLString);
+        auto replacementURLString = context.replacementURLStrings.get(resolvedURLString);
         if (!replacementURLString.isEmpty())
             result.append(replacementURLString);
         else
@@ -315,5 +314,3 @@ ImageCandidate bestFitSourceForImageAttributes(float deviceScaleFactor, const At
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

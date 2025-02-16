@@ -25,8 +25,7 @@
 
 #pragma once
 
-#include "BPlatform.h"
-
+#if !BUSE(TZONE)
 #if !BUSE(LIBPAS)
 
 namespace bmalloc {
@@ -39,3 +38,4 @@ struct IsoConfig {
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

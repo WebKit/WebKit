@@ -213,7 +213,7 @@ const RealtimeMediaSourceCapabilities& MockRealtimeVideoSource::capabilities()
         auto facingMode = std::get<MockCameraProperties>(m_device.properties).facingMode;
         if (facingMode != VideoFacingMode::Unknown)
             capabilities.addFacingMode(facingMode);
-        capabilities.setDeviceId(hashedId());
+        capabilities.setGroupId(hashedGroupId());
         updateCapabilities(capabilities);
 
         if (facingMode == VideoFacingMode::Environment) {
@@ -322,7 +322,7 @@ const RealtimeMediaSourceSettings& MockRealtimeVideoSource::settings()
         settings.setLogicalSurface(false);
     }
     settings.setDeviceId(hashedId());
-    settings.setGroupId(captureDevice().groupId());
+    settings.setGroupId(hashedGroupId());
 
     settings.setFrameRate(frameRate());
     auto size = this->size();

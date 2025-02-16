@@ -25,11 +25,11 @@
 
 #pragma once
 
+#if BUSE(TZONE)
+
 #include "BExport.h"
 #include "BInline.h"
 #include "BPlatform.h"
-
-#if BUSE(TZONE)
 
 #include <os/log.h>
 #include <stdarg.h>

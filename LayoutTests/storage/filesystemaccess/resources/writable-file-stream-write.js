@@ -25,11 +25,9 @@ var testCases = [
     { type:"WriteParams with position (overwrite)", input:{ type:"write", data:"Test case seven" }, secondInput:{ type:"write", data:" CASE EIGHT", position:4 }, expected:"Test CASE EIGHT" }
 ];
 
-async function runTest(testCase, fileHandle)
+async function runTest(testCase, fileHandle, writer)
 {
-    stream = await fileHandle.createWritable();
-    writer = stream.getWriter();
-
+    debug("Testing input data type: " + testCase.type);
     // Input that is expected to fail.
     if (!testCase.expected) {
         try {
@@ -38,8 +36,12 @@ async function runTest(testCase, fileHandle)
             await writer.close();
         } catch(error) {
             testPassed("write() failed with error: " + error.name);
-            // Wait until writer closed before creating new stream and writer.
-            await writer.closed.then(() => { }, () => { });
+            // Wait until stream is closed before creating new stream and writer.
+            closedPromise = writer.closed;
+            if (closedPromise)
+                await closedPromise.then(() => { }, () => { });
+            else
+                await writer.close().then(() => { }, () => { });
         }
         return;
     }
@@ -61,10 +63,17 @@ async function test()
         await rootHandle.removeEntry("file-handle-writable-stream.txt").then(() => { }, () => { });
         var fileHandle = await rootHandle.getFileHandle("file-handle-writable-stream.txt", { "create" : true  });
 
-        while (testCases.length) {
-            testCase = testCases.shift();
-            debug("Testing input data type: " + testCase.type);
-            await runTest(testCase, fileHandle);
+        debug("Run stream tests:")
+        for (let i = 0; i < testCases.length; ++i) {
+            stream = await fileHandle.createWritable();
+            await runTest(testCases[i], fileHandle, stream);
+        }
+
+        debug("Run writer tests:")
+        for (let i = 0; i < testCases.length; ++i) {
+            stream = await fileHandle.createWritable();
+            writer = stream.getWriter();
+            await runTest(testCases[i], fileHandle, writer);
         }
 
         finishTest();

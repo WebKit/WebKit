@@ -7,7 +7,7 @@ to share publicly.
 ## Accessing the traces
 
 In order to compile and run with these, you must be granted access by Google,
-then authenticate with [CIPD](CIPD). Googlers, use your @google account.
+then authenticate with [CIPD](https://chromium.googlesource.com/infra/luci/luci-go/+/main/cipd/README.md). Googlers, use your @google account.
 ```
 cipd auth-login
 ```
@@ -47,8 +47,6 @@ src/tests/restricted_traces/clash_royale/
 src/tests/restricted_traces/cod_mobile/
 ...
 ```
-
-[CIPD]: https://chromium.googlesource.com/infra/luci/luci-go/+/main/cipd/README.md
 
 ## Building the trace tests
 

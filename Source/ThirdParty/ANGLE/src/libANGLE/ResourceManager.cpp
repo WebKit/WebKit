@@ -268,6 +268,22 @@ void TextureManager::enableHandleAllocatorLogging()
     mHandleAllocator.enableLogging(true);
 }
 
+size_t TextureManager::getTotalMemorySize() const
+{
+    size_t totalBytes = 0;
+
+    for (const auto &texture : UnsafeResourceMapIter(mObjectMap))
+    {
+        if (texture.second->getBoundSurface() || texture.second->isEGLImageTarget())
+        {
+            // Skip external texture
+            continue;
+        }
+        totalBytes += static_cast<size_t>(texture.second->getMemorySize());
+    }
+    return totalBytes;
+}
+
 // RenderbufferManager Implementation.
 
 RenderbufferManager::~RenderbufferManager() = default;
@@ -318,16 +334,6 @@ void SamplerManager::DeleteObject(const Context *context, Sampler *sampler)
 SamplerID SamplerManager::createSampler()
 {
     return AllocateEmptyObject(&mHandleAllocator, &mObjectMap);
-}
-
-Sampler *SamplerManager::getSampler(SamplerID handle) const
-{
-    return mObjectMap.query(handle);
-}
-
-bool SamplerManager::isSampler(SamplerID sampler) const
-{
-    return mObjectMap.contains(sampler);
 }
 
 // SyncManager Implementation.

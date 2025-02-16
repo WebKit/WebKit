@@ -57,7 +57,6 @@
 #include "ModelPlayerProvider.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "PlatformMouseEvent.h"
 #include "RenderBoxInlines.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -97,6 +96,8 @@ HTMLModelElement::~HTMLModelElement()
         m_resource->removeClient(*this);
         m_resource = nullptr;
     }
+
+    deleteModelPlayer();
 }
 
 Ref<HTMLModelElement> HTMLModelElement::create(const QualifiedName& tagName, Document& document)
@@ -303,6 +304,7 @@ void HTMLModelElement::createModelPlayer()
     m_modelPlayer->setLoop(loop());
     m_modelPlayer->setPlaybackRate(m_playbackRate, [&](double) { });
     m_modelPlayer->setHasPortal(hasPortal());
+    m_modelPlayer->setStageMode(stageMode());
 #endif
 
     // FIXME: We need to tell the player if the size changes as well, so passing this
@@ -319,7 +321,7 @@ void HTMLModelElement::createModelPlayer()
 
 void HTMLModelElement::deleteModelPlayer()
 {
-    if (m_modelPlayer)
+    if (m_modelPlayer && document().page())
         document().page()->modelPlayerProvider().deleteModelPlayer(*m_modelPlayer);
     m_modelPlayer = nullptr;
 }
@@ -411,14 +413,6 @@ std::optional<PlatformLayerIdentifier> HTMLModelElement::modelContentsLayerID() 
     return graphicsLayer->contentsLayerIDForModel();
 }
 
-// MARK: - Background Color support.
-
-void HTMLModelElement::applyBackgroundColor(Color color)
-{
-    if (m_modelPlayer)
-        m_modelPlayer->setBackgroundColor(color);
-}
-
 #if ENABLE(MODEL_PROCESS)
 RefPtr<ModelContext> HTMLModelElement::modelContext() const
 {
@@ -430,7 +424,7 @@ RefPtr<ModelContext> HTMLModelElement::modelContext() const
     if (!modelContentsLayerHostingContextIdentifier)
         return nullptr;
 
-    return ModelContext::create(*modelLayerIdentifier, *modelContentsLayerHostingContextIdentifier).ptr();
+    return ModelContext::create(*modelLayerIdentifier, *modelContentsLayerHostingContextIdentifier, contentSize(), hasPortal() ? ModelContextDisablePortal::No : ModelContextDisablePortal::Yes, std::nullopt).ptr();
 }
 
 const DOMMatrixReadOnly& HTMLModelElement::entityTransform() const
@@ -532,6 +526,8 @@ void HTMLModelElement::attributeChanged(const QualifiedName& name, const AtomStr
         updateLoop();
     else if (name == environmentmapAttr)
         updateEnvironmentMap();
+    else if (name == stagemodeAttr)
+        updateStageMode();
 #if PLATFORM(VISION)
     else if (document().settings().modelNoPortalAttributeEnabled() && name == noportalAttr)
         updateHasPortal();
@@ -707,6 +703,21 @@ void HTMLModelElement::updateAutoplay()
         m_modelPlayer->setAutoplay(autoplay());
 }
 
+WebCore::StageModeOperation HTMLModelElement::stageMode() const
+{
+    String attr = attributeWithoutSynchronization(HTMLNames::stagemodeAttr);
+    if (equalLettersIgnoringASCIICase(attr, "orbit"_s))
+        return WebCore::StageModeOperation::Orbit;
+
+    return WebCore::StageModeOperation::None;
+}
+
+void HTMLModelElement::updateStageMode()
+{
+    if (m_modelPlayer)
+        m_modelPlayer->setStageMode(stageMode());
+}
+
 bool HTMLModelElement::loop() const
 {
     return hasAttributeWithoutSynchronization(HTMLNames::loopAttr);
@@ -740,6 +751,9 @@ bool HTMLModelElement::hasPortal() const
 
 void HTMLModelElement::updateHasPortal()
 {
+    if (CheckedPtr renderer = this->renderer())
+        renderer->updateFromElement();
+
     if (RefPtr modelPlayer = m_modelPlayer)
         modelPlayer->setHasPortal(hasPortal());
 }

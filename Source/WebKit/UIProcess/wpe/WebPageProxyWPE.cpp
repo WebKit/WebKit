@@ -168,7 +168,7 @@ Vector<DMABufRendererBufferFormat> WebPageProxy::preferredBufferFormats() const
 #endif
 }
 
-#if ENABLE(WPE_PLATFORM)
+#if USE(GBM) && ENABLE(WPE_PLATFORM)
 void WebPageProxy::preferredBufferFormatsDidChange()
 {
     auto* view = wpeView();

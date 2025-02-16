@@ -61,13 +61,6 @@ NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkLoadParameters&& para
         m_task = NetworkDataTask::create(networkSession, *this, m_parameters);
 }
 
-NetworkLoad::NetworkLoad(NetworkLoadClient& client, NetworkSession& networkSession, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>& createTask)
-    : m_client(client)
-    , m_networkProcess(networkSession.networkProcess())
-    , m_task(createTask(*this))
-{
-}
-
 std::optional<WebCore::FrameIdentifier> NetworkLoad::webFrameID() const
 {
     if (parameters().webFrameID)
@@ -208,17 +201,18 @@ void NetworkLoad::willPerformHTTPRedirection(ResourceResponse&& redirectResponse
     request.setRequester(oldRequest.requester());
 
     m_currentRequest = request;
-    m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse), [this, weakThis = WeakPtr<NetworkDataTaskClient> { *this }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& newRequest) mutable {
-        if (!weakThis)
+    m_client.get().willSendRedirectedRequest(WTFMove(oldRequest), WTFMove(request), WTFMove(redirectResponse), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler)] (ResourceRequest&& newRequest) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return completionHandler({ });
-        updateRequest(m_currentRequest, newRequest);
-        if (m_currentRequest.isNull()) {
+        updateRequest(protectedThis->m_currentRequest, newRequest);
+        if (protectedThis->m_currentRequest.isNull()) {
             NetworkLoadMetrics emptyMetrics;
-            didCompleteWithError(cancelledError(m_currentRequest), emptyMetrics);
+            protectedThis->didCompleteWithError(cancelledError(protectedThis->m_currentRequest), emptyMetrics);
             completionHandler({ });
             return;
         }
-        completionHandler(ResourceRequest(m_currentRequest));
+        completionHandler(ResourceRequest(protectedThis->m_currentRequest));
     });
 }
 
@@ -361,6 +355,13 @@ String NetworkLoad::attributedBundleIdentifier(WebPageProxyIdentifier pageID)
 RefPtr<NetworkDataTask> NetworkLoad::protectedTask()
 {
     return m_task;
+}
+
+size_t NetworkLoad::bytesTransferredOverNetwork() const
+{
+    if (RefPtr task = m_task)
+        return task->bytesTransferredOverNetwork();
+    return 0;
 }
 
 } // namespace WebKit

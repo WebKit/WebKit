@@ -119,7 +119,7 @@ bool ResponsivenessTimer::mayBecomeUnresponsive() const
         char* variable = getenv("DYLD_INSERT_LIBRARIES");
         if (!variable)
             return false;
-        if (!strstr(variable, "libgmalloc"))
+        if (!contains(unsafeSpan(variable), "libgmalloc"_span))
             return false;
         return true;
     }();

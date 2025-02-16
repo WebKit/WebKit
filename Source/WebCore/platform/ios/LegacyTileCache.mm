@@ -568,8 +568,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
 
     ++layer.paintCount;
     if (m_tilePaintCountersVisible) {
-        char text[16];
-        snprintf(text, sizeof(text), "%d", layer.paintCount);
+        auto string = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%d"), layer.paintCount));
 
         CGContextSaveGState(context);
 
@@ -577,7 +576,7 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
         CGContextSetFillColorWithColor(context, cachedCGColor(colorForGridTileBorder([layer tileGrid])).get());
         
         CGRect labelBounds = [layer bounds];
-        labelBounds.size.width = 10 + 12 * strlen(text);
+        labelBounds.size.width = 10 + 12 * CFStringGetLength(string.get());
         labelBounds.size.height = 25;
         CGContextFillRect(context, labelBounds);
 
@@ -591,7 +590,6 @@ void LegacyTileCache::drawLayer(LegacyTileLayer* layer, CGContextRef context, Dr
         CFTypeRef keys[] = { kCTFontAttributeName, kCTForegroundColorFromContextAttributeName };
         CFTypeRef values[] = { font.get(), kCFBooleanTrue };
         auto attributes = adoptCF(CFDictionaryCreate(kCFAllocatorDefault, keys, values, std::size(keys), &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
-        auto string = adoptCF(CFStringCreateWithBytesNoCopy(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(text), strlen(text), kCFStringEncodingUTF8, false, kCFAllocatorNull));
         auto attributedString = adoptCF(CFAttributedStringCreate(kCFAllocatorDefault, string.get(), attributes.get()));
         auto line = adoptCF(CTLineCreateWithAttributedString(attributedString.get()));
         CGContextSetTextPosition(context, labelBounds.origin.x + 3, labelBounds.origin.y + 20);

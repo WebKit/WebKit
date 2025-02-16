@@ -18,7 +18,7 @@ function test1() {
         func(false, o);
     }
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(func(false, o));
     }
     assert(func(true, o));
@@ -40,7 +40,7 @@ function test2() {
         func(false, o);
     }
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(func(false, o));
     }
     assert(func(true, o));
@@ -62,7 +62,7 @@ function test3() {
         func(false, o);
     }
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(func(false, o));
     }
     assert(func(true, o));
@@ -86,7 +86,7 @@ function test4() {
         func(false, o);
     }
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(func(false, o));
     }
     assert(func(true, o));

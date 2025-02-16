@@ -9,7 +9,7 @@ function foo() {
     
         let a = 2;
         let b = 3n;
-        for (let i = 0; i < 10000; i++) {
+        for (let i = 0; i < testLoopCount; i++) {
             c = i;
         }
 

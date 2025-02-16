@@ -13,7 +13,7 @@ function test(value, expected) {
         throw "Error: bad result for " + value + ": " + result;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(1.5, "yes");
     test(0.0, "no");
     test(true, "yes");

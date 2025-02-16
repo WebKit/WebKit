@@ -15,7 +15,7 @@ function foo(x){
 noInline(foo);
 
 var c = {};
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var b = {};
     foo(b);
     c = b;

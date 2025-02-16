@@ -36,6 +36,8 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 
+#include "angle_deqp_libtester.h"
+
 #if (DE_OS == DE_OS_WIN32)
 #    include "tcuWGLContextFactory.hpp"
 #    include "tcuWin32EGLNativeDisplayFactory.hpp"
@@ -52,7 +54,9 @@ namespace tcu
 class ANGLEPlatform : public tcu::Platform, private glu::Platform, private eglu::Platform
 {
   public:
-    ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation);
+    ANGLEPlatform(angle::LogErrorFunc logErrorFunc,
+                  uint32_t preRotation,
+                  dEQPDriverOption driverOption);
     ~ANGLEPlatform();
 
     bool processEvents() override;
@@ -82,7 +86,9 @@ class ANGLEPlatform : public tcu::Platform, private glu::Platform, private eglu:
 #endif
 };
 
-ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation)
+ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc,
+                             uint32_t preRotation,
+                             dEQPDriverOption driverOption)
 {
     angle::SetLowPriorityProcess();
 
@@ -166,7 +172,29 @@ ANGLEPlatform::ANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotat
         m_nativeDisplayFactoryRegistry.registerFactory(glFactory);
     }
 
-#if (DE_OS == DE_OS_ANDROID) || (DE_OS == DE_OS_WIN32) || (DE_OS == DE_OS_UNIX)
+#if (DE_OS == DE_OS_ANDROID)
+    {
+        if (driverOption == dEQPDriverOption::ANGLE)
+        {
+            std::vector<eglw::EGLAttrib> vkAttribs =
+                initAttribs(EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE);
+            auto *vkFactory =
+                new ANGLENativeDisplayFactory("angle-vulkan", "ANGLE Vulkan Display", vkAttribs,
+                                              &mEvents, EGL_PLATFORM_ANGLE_ANGLE);
+            m_nativeDisplayFactoryRegistry.registerFactory(vkFactory);
+        }
+        else
+        {
+            std::vector<eglw::EGLAttrib> nativeGlesAttribs = {EGL_NONE};
+            auto *nativeGLESFactory                        = new ANGLENativeDisplayFactory(
+                "native-gles", "Native GLES Display", nativeGlesAttribs, &mEvents,
+                EGL_PLATFORM_ANDROID_KHR);
+            m_nativeDisplayFactoryRegistry.registerFactory(nativeGLESFactory);
+        }
+    }
+#endif
+
+#if ((DE_OS == DE_OS_WIN32) || (DE_OS == DE_OS_UNIX))
     {
         std::vector<eglw::EGLAttrib> vkAttribs = initAttribs(EGL_PLATFORM_ANGLE_TYPE_VULKAN_ANGLE);
 
@@ -292,12 +320,14 @@ std::vector<eglw::EGLAttrib> ANGLEPlatform::initAttribs(eglw::EGLAttrib type,
 }  // namespace tcu
 
 // Create platform
-tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc, uint32_t preRotation)
+tcu::Platform *CreateANGLEPlatform(angle::LogErrorFunc logErrorFunc,
+                                   uint32_t preRotation,
+                                   dEQPDriverOption driverOption)
 {
-    return new tcu::ANGLEPlatform(logErrorFunc, preRotation);
+    return new tcu::ANGLEPlatform(logErrorFunc, preRotation, driverOption);
 }
 
 tcu::Platform *createPlatform()
 {
-    return CreateANGLEPlatform(nullptr, 0);
+    return CreateANGLEPlatform(nullptr, 0, dEQPDriverOption::ANGLE);
 }

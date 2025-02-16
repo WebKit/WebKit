@@ -166,8 +166,6 @@ public:
             m_wides[m_numWides++] = { id, value };
         }
 
-        unsigned m_word { 0 };
-
         Entry m_entry;
         EncodedInfo* m_startInfo { nullptr };
         EncodedInfo* m_endInfo { nullptr };

@@ -34,6 +34,7 @@
 #include "FilterResults.h"
 #include "GraphicsContext.h"
 #include "HostWindow.h"
+#include "ImageBufferDisplayListBackend.h"
 #include "ImageBufferPlatformBackend.h"
 #include "MIMETypeRegistry.h"
 #include "ProcessCapabilities.h"
@@ -107,7 +108,7 @@ RefPtr<ImageBuffer> ImageBuffer::create(const FloatSize& size, RenderingMode ren
 #endif
 
     case RenderingMode::DisplayList:
-        return nullptr;
+        return ImageBuffer::create<ImageBufferDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, { });
     }
 
     ASSERT_NOT_REACHED();
@@ -300,6 +301,13 @@ bool ImageBuffer::flushDrawingContextAsync()
     // This function is only really useful for the Remote subclass.
     flushDrawingContext();
     return true;
+}
+
+void ImageBuffer::prepareForDisplay()
+{
+    flushDrawingContextAsync();
+    if (auto* backend = ensureBackend())
+        backend->prepareForDisplay();
 }
 
 void ImageBuffer::setBackend(std::unique_ptr<ImageBufferBackend>&& backend)
@@ -562,6 +570,13 @@ RefPtr<SharedBuffer> ImageBuffer::sinkIntoPDFDocument()
     if (auto* backend = ensureBackend())
         return backend->sinkIntoPDFDocument();
     return nullptr;
+}
+
+RefPtr<SharedBuffer> ImageBuffer::sinkIntoPDFDocument(RefPtr<ImageBuffer> source)
+{
+    if (!source)
+        return nullptr;
+    return source->sinkIntoPDFDocument();
 }
 
 bool ImageBuffer::isInUse() const

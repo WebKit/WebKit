@@ -27,10 +27,7 @@
  *
  */
 
-#ifndef ColorChooser_h
-#define ColorChooser_h
-
-#if ENABLE(INPUT_TYPE_COLOR)
+#pragma once
 
 #include <wtf/AbstractRefCounted.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -50,7 +47,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
-
-#endif // ColorChooser_h

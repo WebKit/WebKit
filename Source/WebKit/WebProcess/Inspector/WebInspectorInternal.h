@@ -58,7 +58,7 @@ public:
     void didClose(IPC::Connection&) override { close(); }
     void didReceiveInvalidMessage(IPC::Connection&, IPC::MessageName, int32_t indexOfObjectFailingDecoding) override { close(); }
 
-    void show();
+    void show(CompletionHandler<void()>&&);
     void close();
 
     void canAttachWindow(bool& result);
@@ -97,7 +97,7 @@ private:
     bool canAttachWindow();
 
     // Called from WebInspectorClient
-    void openLocalInspectorFrontend(bool underTest);
+    void openLocalInspectorFrontend();
     void closeFrontendConnection();
 
     void bringToFront();

@@ -119,20 +119,6 @@ private:
     void willRunJavaScriptPrompt(WKStringRef message, WKStringRef defaultValue, WKBundleFrameRef);
     uint64_t didExceedDatabaseQuota(WKSecurityOriginRef, WKStringRef databaseName, WKStringRef databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes);
 
-#if ENABLE(FULLSCREEN_API)
-    // Full Screen client
-    static bool supportsFullScreen(WKBundlePageRef, WKFullScreenKeyboardRequestType);
-    static void setHasCustomFullScreenBehavior(WKBundlePageRef, bool value);
-    static void enterFullScreenForElement(WKBundlePageRef, WKBundleNodeHandleRef element);
-    static void exitFullScreenForElement(WKBundlePageRef, WKBundleNodeHandleRef element);
-    static void beganEnterFullScreen(WKBundlePageRef, WKRect initialFrame, WKRect finalFrame);
-    static void beganExitFullScreen(WKBundlePageRef, WKRect initialFrame, WKRect finalFrame);
-    static void closeFullScreen(WKBundlePageRef);
-
-    void enterFullScreenForElement(WKBundleNodeHandleRef element);
-    void exitFullScreenForElement(WKBundleNodeHandleRef element);
-#endif
-
     // Editor client
     static bool shouldBeginEditing(WKBundlePageRef, WKBundleRangeHandleRef, const void* clientInfo);
     static bool shouldEndEditing(WKBundlePageRef, WKBundleRangeHandleRef, const void* clientInfo);

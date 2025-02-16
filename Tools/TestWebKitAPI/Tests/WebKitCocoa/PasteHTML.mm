@@ -109,7 +109,12 @@ TEST(PasteHTML, SanitizesHTML)
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"clipboardData.values[0].includes('dangerousCode')"].boolValue);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled)
+#else
 TEST(PasteHTML, DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled)
+#endif
 {
     auto webView = createWebViewWithCustomPasteboardDataSetting(false);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
@@ -150,7 +155,12 @@ TEST(PasteHTML, StripsFileAndJavaScriptURLs)
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"clipboardData.values[0].includes('runCode()')"].boolValue);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_DoesNotStripFileURLsWhenCustomPasteboardDataIsDisabled)
+#else
 TEST(PasteHTML, DoesNotStripFileURLsWhenCustomPasteboardDataIsDisabled)
+#endif
 {
     auto webView = createWebViewWithCustomPasteboardDataSetting(false);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];

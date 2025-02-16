@@ -419,7 +419,7 @@ void WebProcess::initializeConnection(IPC::Connection* connection)
 static void scheduleLogMemoryStatistics(LogMemoryStatisticsReason reason)
 {
     // Log stats in the next turn of the run loop so that it runs after the low memory handler.
-    RunLoop::main().dispatch([reason] {
+    RunLoop::protectedMain()->dispatch([reason] {
         WebCore::logMemoryStatistics(reason);
     });
 }
@@ -461,7 +461,7 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
 #if PLATFORM(COCOA)
             // If this is a process we keep around for performance, kill it on memory pressure instead of trying to free up its memory.
-            if (m_allowExitOnMemoryPressure && (m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended())) {
+            if (m_allowExitOnMemoryPressure && isProcessBeingCachedForPerformance()) {
                 if (m_processType == ProcessType::CachedWebContent)
                     WEBPROCESS_RELEASE_LOG(Process, "initializeWebProcess: Cached WebProcess is exiting due to memory pressure");
                 else if (m_processType == ProcessType::PrewarmedWebContent)
@@ -536,8 +536,10 @@ void WebProcess::initializeWebProcess(WebProcessCreationParameters&& parameters,
 
     SandboxExtension::consumePermanently(parameters.additionalSandboxExtensionHandles);
 
-    if (!parameters.injectedBundlePath.isEmpty())
-        m_injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object()));
+    if (!parameters.injectedBundlePath.isEmpty()) {
+        if (RefPtr injectedBundle = InjectedBundle::create(parameters, transformHandlesToObjects(parameters.initializationUserData.object())))
+            lazyInitialize(m_injectedBundle, injectedBundle.releaseNonNull());
+    }
 
     for (auto& supplement : m_supplements.values())
         supplement->initialize(parameters);
@@ -704,6 +706,10 @@ void WebProcess::setWebsiteDataStoreParameters(WebProcessDataStoreParameters&& p
     platformSetWebsiteDataStoreParameters(WTFMove(parameters));
     
     ensureNetworkProcessConnection();
+
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    setOptInCookiePartitioningEnabled(parameters.isOptInCookiePartitioningEnabled);
+#endif
 }
 
 bool WebProcess::areAllPagesSuspended() const
@@ -1254,7 +1260,7 @@ NetworkProcessConnection& WebProcess::ensureNetworkProcessConnection()
 #endif
 
         // This can be called during a WebPage's constructor, so wait until after the constructor returns to touch the WebPage.
-        RunLoop::main().dispatch([this] {
+        RunLoop::protectedMain()->dispatch([this] {
             for (auto& webPage : m_pageMap.values())
                 webPage->synchronizeCORSDisablingPatternsWithNetworkProcess();
         });
@@ -1345,7 +1351,7 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 
     m_cacheStorageProvider->networkProcessConnectionClosed();
 
-    for (auto& weakSession : m_webTransportSessions.values()) {
+    for (auto& weakSession : copyToVector(m_webTransportSessions.values())) {
         if (RefPtr webtransportSession = weakSession.get())
             webtransportSession->networkProcessCrashed();
     }
@@ -1543,6 +1549,10 @@ void WebProcess::deleteWebsiteData(OptionSet<WebsiteDataType> websiteDataTypes, 
 
         CrossOriginPreflightResultCache::singleton().clear();
     }
+
+    if (websiteDataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
+        clearResourceLoadStatistics();
+
     completionHandler();
 }
 
@@ -1575,7 +1585,7 @@ void WebProcess::reloadExecutionContextsForOrigin(const ClientOrigin& origin, st
 void WebProcess::deleteWebsiteDataForOrigins(OptionSet<WebsiteDataType> websiteDataTypes, const Vector<WebCore::SecurityOriginData>& originDatas, CompletionHandler<void()>&& completionHandler)
 {
     if (websiteDataTypes.contains(WebsiteDataType::MemoryCache)) {
-        HashSet<RefPtr<SecurityOrigin>> origins;
+        UncheckedKeyHashSet<RefPtr<SecurityOrigin>> origins;
         for (auto& originData : originDatas)
             origins.add(originData.securityOrigin());
 
@@ -1669,10 +1679,14 @@ void WebProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estim
         platformMediaSessionManager->processWillSuspend();
 #endif
 
-#if !ENABLE(WEBPROCESS_CACHE)
-    if (!m_suppressMemoryPressureHandler)
+    // Ask the process to slim down before it suspends, in case it suspends for a very long time.
+    // We only allow this once for every time the process contains a visible page, to prevent
+    // ourselves from constantly running releaseMemory if the process suspends and resumes a lot
+    // while in the background. If the process is being cached for perf reasons, we don't dump
+    // caches since we want those memory caches to contain useful state once the process is reused.
+    if (!m_suppressMemoryPressureHandler && m_wasVisibleSinceLastProcessSuspensionEvent && !m_pageMap.isEmpty() && !isProcessBeingCachedForPerformance())
         releaseMemory([] { });
-#endif
+    m_wasVisibleSinceLastProcessSuspensionEvent = false;
 
     freezeAllLayerTrees();
 
@@ -1781,6 +1795,8 @@ void WebProcess::pageDidEnterWindow(PageIdentifier pageID)
 #if ENABLE(NON_VISIBLE_WEBPROCESS_MEMORY_CLEANUP_TIMER)
     m_nonVisibleProcessMemoryCleanupTimer.stop();
 #endif
+
+    m_wasVisibleSinceLastProcessSuspensionEvent = true;
 }
 
 void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
@@ -1798,7 +1814,16 @@ void WebProcess::pageWillLeaveWindow(PageIdentifier pageID)
 #endif
     }
 }
-    
+
+bool WebProcess::isProcessBeingCachedForPerformance()
+{
+#if PLATFORM(COCOA)
+    return m_processType == ProcessType::CachedWebContent || m_processType == ProcessType::PrewarmedWebContent || areAllPagesSuspended();
+#else
+    return false;
+#endif
+}
+
 void WebProcess::nonVisibleProcessEarlyMemoryCleanupTimerFired()
 {
     ASSERT(m_pagesInWindows.isEmpty());
@@ -1986,6 +2011,13 @@ void WebProcess::setEnabledServices(bool hasImageServices, bool hasSelectionServ
     m_hasImageServices = hasImageServices;
     m_hasSelectionServices = hasSelectionServices;
     m_hasRichContentServices = hasRichContentServices;
+}
+#endif
+
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+void WebProcess::setOptInCookiePartitioningEnabled(bool enabled)
+{
+    m_cookieJar->setOptInCookiePartitioningEnabled(enabled);
 }
 #endif
 
@@ -2356,7 +2388,6 @@ bool WebProcess::shouldUseRemoteRenderingFor(RenderingPurpose purpose)
         return m_useGPUProcessForCanvasRendering;
     case RenderingPurpose::DOM:
     case RenderingPurpose::LayerBacking:
-    case RenderingPurpose::BitmapOnlyLayerBacking:
     case RenderingPurpose::Snapshot:
     case RenderingPurpose::ShareableSnapshot:
         return m_useGPUProcessForDOMRendering;
@@ -2500,6 +2531,12 @@ void WebProcess::setResourceMonitorContentRuleList(WebCompiledContentRuleListDat
     backend.addContentExtension(identifier, compiledContentRuleList.releaseNonNull(), { }, ContentExtensions::ContentExtension::ShouldCompileCSS::No);
 
     WebCore::ResourceMonitorChecker::singleton().setContentRuleList(WTFMove(backend));
+}
+
+void WebProcess::setResourceMonitorContentRuleListAsync(WebCompiledContentRuleListData&& ruleListData, CompletionHandler<void()>&& completionHandler)
+{
+    setResourceMonitorContentRuleList(WTFMove(ruleListData));
+    completionHandler();
 }
 #endif
 

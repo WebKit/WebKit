@@ -32,10 +32,9 @@
 #include "PathStream.h"
 #include "PathTraversalState.h"
 #include "PlatformPathImpl.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -581,7 +580,7 @@ bool Path::contains(const FloatPoint& point, WindRule rule) const
     return const_cast<Path&>(*this).ensurePlatformPathImpl().contains(point, rule);
 }
 
-bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsContext&)>& strokeStyleApplier) const
+bool Path::strokeContains(const FloatPoint& point, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     ASSERT(strokeStyleApplier);
 
@@ -593,10 +592,10 @@ bool Path::strokeContains(const FloatPoint& point, const Function<void(GraphicsC
 
 bool Path::hasSubpaths() const
 {
-    if (auto segment = asSingle())
-        return PathStream::computeHasSubpaths({ segment, 1 });
+    if (auto* segment = asSingle())
+        return PathStream::computeHasSubpaths(singleElementSpan(*segment));
 
-    if (auto impl = asImpl())
+    if (auto* impl = asImpl())
         return impl->hasSubpaths();
 
     return false;
@@ -604,10 +603,10 @@ bool Path::hasSubpaths() const
 
 FloatRect Path::fastBoundingRect() const
 {
-    if (auto segment = asSingle())
-        return PathStream::computeFastBoundingRect({ segment, 1 });
+    if (auto* segment = asSingle())
+        return PathStream::computeFastBoundingRect(singleElementSpan(*segment));
 
-    if (auto impl = asImpl())
+    if (auto* impl = asImpl())
         return impl->fastBoundingRect();
 
     return { };
@@ -615,16 +614,16 @@ FloatRect Path::fastBoundingRect() const
 
 FloatRect Path::boundingRect() const
 {
-    if (auto segment = asSingle())
-        return PathStream::computeBoundingRect({ segment, 1 });
+    if (auto* segment = asSingle())
+        return PathStream::computeBoundingRect(singleElementSpan(*segment));
 
-    if (auto impl = asImpl())
+    if (auto* impl = asImpl())
         return impl->boundingRect();
 
     return { };
 }
 
-FloatRect Path::strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier) const
+FloatRect Path::strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const
 {
     return const_cast<Path&>(*this).ensurePlatformPathImpl().strokeBoundingRect(strokeStyleApplier);
 }
@@ -643,5 +642,3 @@ TextStream& operator<<(TextStream& ts, const Path& path)
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

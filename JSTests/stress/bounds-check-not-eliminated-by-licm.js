@@ -15,7 +15,7 @@ noInline(testInLoopTests);
 let testArray = [1, 2, 3];
 
 // Warmup "in-bounds" up to FTL.
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (testInLoopTests(testArray, 1) !== 20)
         throw "Failed testInLoopTests(testArray, 1)"
     if (testInLoopTests(testArray, 2) !== 30)

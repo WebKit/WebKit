@@ -463,6 +463,7 @@ class TIntermSwizzle : public TIntermExpression
     bool hasSideEffects() const override { return mOperand->hasSideEffects(); }
 
     TIntermTyped *getOperand() { return mOperand; }
+    ImmutableString getOffsetsAsXYZW() const;
     void writeOffsetsAsXYZW(TInfoSinkBase *out) const;
 
     const TVector<int> &getSwizzleOffsets() { return mSwizzleOffsets; }

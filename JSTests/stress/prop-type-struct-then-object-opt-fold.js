@@ -17,12 +17,12 @@ noInline(foo);
 noInline(bar);
 
 var o = {f:{g:42}};
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     bar(o, o, {g:42});
     bar({a:1, b:2}, o, {g:42});
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(o);
     if (result !== 42)
         throw "Error: bad result: " + result;

@@ -163,7 +163,7 @@ private:
     // into an HTML or for FileRead'ing, public blob URLs must be used for those purposes.
     URL m_internalURL;
 
-    HashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
+    UncheckedKeyHashSet<std::unique_ptr<BlobLoader>> m_blobLoaders;
 };
 
 WebCoreOpaqueRoot root(Blob*);

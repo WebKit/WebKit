@@ -165,7 +165,7 @@ bool PageCanvasAgent::matchesCurrentContext(ScriptExecutionContext* scriptExecut
         return false;
 
     // FIXME: <https://webkit.org/b/168475> Web Inspector: Correctly display iframe's WebSockets
-    return document->page() == &m_inspectedPage;
+    return document->page() == m_inspectedPage.ptr();
 }
 
 } // namespace WebCore

@@ -75,15 +75,15 @@ bool DocumentFragment::childTypeAllowed(NodeType type) const
     }
 }
 
-Ref<Node> DocumentFragment::cloneNodeInternal(TreeScope& treeScope, CloningOperation type)
+Ref<Node> DocumentFragment::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
 {
-    Ref clone = create(treeScope.documentScope());
+    Ref clone = create(document);
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
-        cloneChildNodes(treeScope, clone);
+        cloneChildNodes(document, registry, clone);
         break;
     }
     return clone;

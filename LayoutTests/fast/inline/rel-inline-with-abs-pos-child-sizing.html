@@ -1,0 +1,25 @@
+<style>
+.inline-box {
+  display: inline;
+  position: relative;
+  font-family: Ahem;
+}
+
+.abspos {
+  position: absolute;
+}
+</style>
+<span class=inline-box>
+  <div>
+    <div class=abspos>Pass if content is wrapped.</div>
+  </div>
+</span>
+<span class=inline-box>
+  <span>
+    <span>
+      <div>
+        <div class=abspos>Pass if content is wrapped.</div>
+      </div>
+    </span>
+  </span>
+</span>

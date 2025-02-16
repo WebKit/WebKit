@@ -1,0 +1,65 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<ol>
+    <li>Foo</li>
+    <li>
+        Bar
+        <ol type="a">
+            <li>Bar the second <button>Press</button>Last text</li>
+            <li>Bar the third</li>
+        </ol>
+    </li>
+    <li>Baz</li>
+</ol>
+
+<script>
+var output = "This test ensures we expose accessibilityRowRange correctly for list items.\n\n";
+
+var webArea;
+var current;
+function moveToNextAndExpect(description, rowRange) {
+    current = webArea.uiElementForSearchPredicate(current, true, "AXAnyTypeSearchKey", "", false);
+    if (!current)
+        return;
+
+    const role = current.role;
+    output += `${current.role}\n`;
+    output += expect("current.description", `"AXLabel: ${description}"`);
+    output += expect("current.rowIndexRange()", `"${rowRange}"`);
+}
+
+const notFoundRange = "{9223372036854775807, 0}";
+if (window.accessibilityController) {
+    webArea = accessibilityController.rootElement.childAtIndex(0);
+    current = webArea;
+
+    moveToNextAndExpect("1", notFoundRange);
+    moveToNextAndExpect("Foo", "{0, 3}");
+
+    moveToNextAndExpect("2", notFoundRange);
+    moveToNextAndExpect("Bar", "{1, 3}");
+
+    moveToNextAndExpect("a", notFoundRange);
+    moveToNextAndExpect("Bar the second", "{0, 2}");
+    // Only expect the row range to be exposed for the first child in a list item.
+    moveToNextAndExpect("Press", notFoundRange);
+    moveToNextAndExpect("Last text", notFoundRange);
+
+    moveToNextAndExpect("b", notFoundRange);
+    moveToNextAndExpect("Bar the third", "{1, 2}");
+
+    moveToNextAndExpect("3", notFoundRange);
+    moveToNextAndExpect("Baz", "{2, 3}");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

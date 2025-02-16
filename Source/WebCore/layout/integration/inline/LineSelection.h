@@ -63,7 +63,7 @@ public:
             return RenderObject::HighlightState::None;
 
         auto lineState = RenderObject::HighlightState::None;
-        for (auto box = lineBox.firstLeafBox(); box; box.traverseNextOnLine()) {
+        for (auto box = lineBox.lineLeftmostLeafBox(); box; box.traverseLineRightwardOnLine()) {
             auto boxState = box->selectionState();
             if (lineState == RenderObject::HighlightState::None)
                 lineState = boxState;

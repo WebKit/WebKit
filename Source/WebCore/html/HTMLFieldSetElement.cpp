@@ -64,13 +64,10 @@ Ref<HTMLFieldSetElement> HTMLFieldSetElement::create(const QualifiedName& tagNam
 
 bool HTMLFieldSetElement::isDisabledFormControl() const
 {
-    if (document().settings().sendMouseEventsToDisabledFormControlsEnabled()) {
-        // The fieldset element itself should never be considered disabled, it is
-        // only supposed to affect its descendants:
-        // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#concept-fe-disabled
-        return false;
-    }
-    return HTMLFormControlElement::isDisabledFormControl();
+    // The fieldset element itself should never be considered disabled, it is
+    // only supposed to affect its descendants:
+    // https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#concept-fe-disabled
+    return false;
 }
 
 // https://html.spec.whatwg.org/#concept-element-disabled

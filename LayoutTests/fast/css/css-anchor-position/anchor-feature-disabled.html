@@ -1,0 +1,28 @@
+<!-- webkit-test-runner [ CSSAnchorPositioningEnabled=false ] -->
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>Test CSS Anchor Positioning features when the feature flag is disabled</title>
+<meta charset="utf-8">
+<script src="../../../resources/testharness.js"></script>
+<script src="../../../resources/testharnessreport.js"></script>
+<script src="../../../imported/w3c/web-platform-tests/css/support/parsing-testcommon.js"></script>
+<script src="../../../imported/w3c/web-platform-tests/css/support/computed-testcommon.js"></script>
+</head>
+
+<body>
+<script>
+// FIXME: test the following features are disabled too:
+// anchor(), anchor-size(), anchor-name, anchor-scope, position-anchor,
+// position-area, position-visibility, position-try-fallbacks, position-try-order,
+// position-try, @position-try.
+
+test_invalid_value('align-self', 'anchor-center');
+test_invalid_value('align-items', 'anchor-center');
+test_invalid_value('justify-self', 'anchor-center');
+test_invalid_value('justify-items', 'anchor-center');
+</script>
+</body>
+
+</html>

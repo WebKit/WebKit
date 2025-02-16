@@ -256,7 +256,7 @@ void URLPatternConstructorStringParser::updateState(ScriptExecutionContext& cont
         else if (isNonSpecialPatternChararacter(m_tokenIndex, ']'))
             --m_hostnameIPv6BracketDepth;
         // Look for port prefix.
-        else if (isNonSpecialPatternChararacter(m_tokenIndex, ':'))
+        else if (isNonSpecialPatternChararacter(m_tokenIndex, ':') && !m_hostnameIPv6BracketDepth)
             changeState(URLPatternConstructorStringParserState::Port, 1);
         // Look for pathname start.
         else if (isNonSpecialPatternChararacter(m_tokenIndex, '/'))

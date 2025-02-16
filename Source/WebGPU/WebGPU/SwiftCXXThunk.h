@@ -36,37 +36,53 @@
  available through reverse interop.
  */
 
+#define REMOVE_PARENTHESIS(X) REMOVE_PARENTHESIS_IMPL X
+#define REMOVE_PARENTHESIS_IMPL(...) __VA_ARGS__
+
+#define CONCAT(A, B) A##B
+
 #define _DEFINE_SWIFTCXX_THUNK0(Class, Member, ReturnType) \
 ReturnType Class::Member() { \
-    return Class ## _ ## Member ## _thunk(this); \
+    return CONCAT(Class, _##Member##_thunk)(this); \
 }
 
 #define _DEFINE_SWIFTCXX_THUNK1(Class, Member, ReturnType, TypeOfArg1) \
-ReturnType Class::Member(TypeOfArg1 arg1) { \
-    return Class ## _ ## Member ## _thunk(this, arg1); \
+ReturnType Class::Member(REMOVE_PARENTHESIS((TypeOfArg1)) arg1) { \
+    return CONCAT(Class, _##Member##_thunk)(this, arg1); \
 }
 
 #define _DEFINE_SWIFTCXX_THUNK2(Class, Member, ReturnType, TypeOfArg1, TypeOfArg2) \
-ReturnType Class::Member(TypeOfArg1 arg1, TypeOfArg2 arg2) { \
-    return Class ## _ ## Member ## _thunk(this, arg1, arg2); \
+ReturnType Class::Member(REMOVE_PARENTHESIS((TypeOfArg1)) arg1, REMOVE_PARENTHESIS((TypeOfArg2)) arg2) { \
+    return CONCAT(Class, _##Member##_thunk)(this, arg1, arg2); \
 }
 
 #define _DEFINE_SWIFTCXX_THUNK3(Class, Member, ReturnType, TypeOfArg1, TypeOfArg2, TypeOfArg3) \
-ReturnType Class::Member(TypeOfArg1 arg1, TypeOfArg2 arg2, TypeOfArg3 arg3) { \
-    return Class ## _ ## Member ## _thunk(this, arg1, arg2, arg3); \
+ReturnType Class::Member(REMOVE_PARENTHESIS((TypeOfArg1)) arg1, REMOVE_PARENTHESIS((TypeOfArg2)) arg2, REMOVE_PARENTHESIS((TypeOfArg3)) arg3) { \
+    return CONCAT(Class, _##Member##_thunk)(this, arg1, arg2, arg3); \
 }
 
 #define _DEFINE_SWIFTCXX_THUNK4(Class, Member, ReturnType, TypeOfArg1, TypeOfArg2, TypeOfArg3, TypeOfArg4) \
-ReturnType Class::Member(TypeOfArg1 arg1, TypeOfArg2 arg2, TypeOfArg3 arg3, TypeOfArg4 arg4) { \
-    return Class ## _ ## Member ## _thunk(this, arg1, arg2, arg3, arg4); \
+ReturnType Class::Member(REMOVE_PARENTHESIS((TypeOfArg1)) arg1, REMOVE_PARENTHESIS((TypeOfArg2)) arg2, REMOVE_PARENTHESIS((TypeOfArg3)) arg3, REMOVE_PARENTHESIS((TypeOfArg4)) arg4) { \
+    return CONCAT(Class, _##Member##_thunk)(this, arg1, arg2, arg3, arg4); \
 }
 
 #define _DEFINE_SWIFTCXX_THUNK5(Class, Member, ReturnType, TypeOfArg1, TypeOfArg2, TypeOfArg3, TypeOfArg4, TypeOfArg5) \
-ReturnType Class::Member(TypeOfArg1 arg1, TypeOfArg2 arg2, TypeOfArg3 arg3, TypeOfArg4 arg4, TypeOfArg5 arg5) { \
-    return Class ## _ ## Member ## _thunk(this, arg1, arg2, arg3, arg4, arg5); \
+ReturnType Class::Member(REMOVE_PARENTHESIS((TypeOfArg1)) arg1, REMOVE_PARENTHESIS((TypeOfArg2)) arg2, REMOVE_PARENTHESIS((TypeOfArg3)) arg3, REMOVE_PARENTHESIS((TypeOfArg4)) arg4, REMOVE_PARENTHESIS((TypeOfArg5)) arg5) { \
+    return CONCAT(Class, _##Member##_thunk)(this, arg1, arg2, arg3, arg4, arg5); \
 }
 
-#define _GET_NTH_ARG(_1, _2, _3, _4, _5, NAME, ...) NAME
+#define _DEFINE_SWIFTCXX_THUNK6(Class, Member, ReturnType, TypeOfArg1, TypeOfArg2, TypeOfArg3, TypeOfArg4, TypeOfArg5, TypeOfArg6) \
+ReturnType Class::Member(REMOVE_PARENTHESIS((TypeOfArg1)) arg1, REMOVE_PARENTHESIS((TypeOfArg2)) arg2, REMOVE_PARENTHESIS((TypeOfArg3)) arg3, REMOVE_PARENTHESIS((TypeOfArg4)) arg4, REMOVE_PARENTHESIS((TypeOfArg5)) arg5, REMOVE_PARENTHESIS((TypeOfArg6)) arg6) { \
+    return CONCAT(Class, _##Member##_thunk)(this, arg1, arg2, arg3, arg4, arg5, arg6); \
+}
+
+#define _DEFINE_SWIFTCXX_THUNK7(Class, Member, ReturnType, TypeOfArg1, TypeOfArg2, TypeOfArg3, TypeOfArg4, TypeOfArg5, TypeOfArg6, TypeOfArg7) \
+ReturnType Class::Member(REMOVE_PARENTHESIS(TypeOfArg1) arg1, REMOVE_PARENTHESIS((TypeOfArg2)) arg2, REMOVE_PARENTHESIS((TypeOfArg3)) arg3, REMOVE_PARENTHESIS((TypeOfArg4)) arg4, REMOVE_PARENTHESIS((TypeOfArg5)) arg5, REMOVE_PARENTHESIS((TypeOfArg6)) arg6, REMOVE_PARENTHESIS((TypeOfArg7)) arg7) { \
+    return CONCAT(Class, _##Member##_thunk)(this, arg1, arg2, arg3, arg4, arg5, arg6, arg7); \
+}
+
+
+#define _GET_NTH_ARG(_1, _2, _3, _4, _5, _6, _7, NAME, ...) NAME
 
 #define DEFINE_SWIFTCXX_THUNK(Class, Member, ReturnType, ...) \
-    _GET_NTH_ARG(__VA_ARGS__, _DEFINE_SWIFTCXX_THUNK5, _DEFINE_SWIFTCXX_THUNK4, _DEFINE_SWIFTCXX_THUNK3, _DEFINE_SWIFTCXX_THUNK2, _DEFINE_SWIFTCXX_THUNK1, _DEFINE_SWIFTCXX_THUNK0)(Class, Member, ReturnType, ##__VA_ARGS__)
+    _GET_NTH_ARG(__VA_ARGS__, _DEFINE_SWIFTCXX_THUNK7, _DEFINE_SWIFTCXX_THUNK6, _DEFINE_SWIFTCXX_THUNK5, _DEFINE_SWIFTCXX_THUNK4, _DEFINE_SWIFTCXX_THUNK3, _DEFINE_SWIFTCXX_THUNK2, _DEFINE_SWIFTCXX_THUNK1, _DEFINE_SWIFTCXX_THUNK0)(Class, Member, ReturnType, ##__VA_ARGS__)

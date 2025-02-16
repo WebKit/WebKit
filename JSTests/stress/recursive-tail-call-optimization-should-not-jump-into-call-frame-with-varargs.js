@@ -33,5 +33,5 @@ function test() {
 noInline(test)
 
 var result = 0;
-for (var i = 0; i < 1000000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     result += test();

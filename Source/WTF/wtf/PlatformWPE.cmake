@@ -51,6 +51,8 @@ list(APPEND WTF_PUBLIC_HEADERS
     linux/ProcessMemoryFootprint.h
     linux/RealTimeThreads.h
 
+    posix/SocketPOSIX.h
+
     unix/UnixFileDescriptor.h
 )
 

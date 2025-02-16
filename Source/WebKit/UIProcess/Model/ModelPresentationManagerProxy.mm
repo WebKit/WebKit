@@ -30,6 +30,7 @@
 
 #import "UIKitSPI.h"
 #import "WKPageHostedModelView.h"
+#import "WKWebViewIOS.h"
 #import "WebPageProxy.h"
 #import <wtf/RefPtr.h>
 #import <wtf/TZoneMallocInlines.h>
@@ -52,11 +53,59 @@ RetainPtr<WKPageHostedModelView> ModelPresentationManagerProxy::setUpModelView(R
         return nil;
 
     auto& modelPresentation = ensureModelPresentation(modelContext, *webPageProxy);
-    return modelPresentation.pageHostedModelView;
+    auto view = modelPresentation.pageHostedModelView;
+    CGRect frame = [view frame];
+    frame.size.width = modelContext->modelLayoutSize().width().toFloat();
+    frame.size.height = modelContext->modelLayoutSize().height().toFloat();
+    [view setFrame:frame];
+    [view setShouldDisablePortal:modelContext->disablePortal() == WebCore::ModelContextDisablePortal::Yes];
+    [view applyBackgroundColor:modelContext->backgroundColor()];
+
+    return view;
+}
+
+RetainPtr<UIView> ModelPresentationManagerProxy::startDragForModel(const WebCore::PlatformLayerIdentifier& layerIdentifier)
+{
+    auto iterator = m_modelPresentations.find(layerIdentifier);
+    if (iterator == m_modelPresentations.end())
+        return nil;
+
+    auto& modelPresentation = iterator->value;
+    RetainPtr modelView = modelPresentation->remoteModelView;
+    if (!modelView)
+        return nil;
+
+#if PLATFORM(VISION)
+    CGRect frame = [modelView frame];
+    [modelView _setAssumedNoncoplanarHostedContentSize:SPSize3DMake(CGRectGetWidth(frame), CGRectGetHeight(frame), 100)];
+#endif
+
+    m_activelyDraggedModelLayerIDs.add(layerIdentifier);
+
+    return modelView;
+}
+
+void ModelPresentationManagerProxy::doneWithCurrentDragSession()
+{
+    m_activelyDraggedModelLayerIDs.clear();
 }
 
 void ModelPresentationManagerProxy::invalidateModel(const WebCore::PlatformLayerIdentifier& layerIdentifier)
 {
+    auto iterator = m_modelPresentations.find(layerIdentifier);
+    if (iterator == m_modelPresentations.end())
+        return;
+
+    auto& modelPresentation = iterator->value;
+
+    // If the model being removed is currently being dragged, we have to make sure the _UIRemoteView
+    // stays in some window by adding it to the WKContentView's _dragPreviewContainerView.
+    if (RefPtr webPageProxy = m_page.get(); m_activelyDraggedModelLayerIDs.contains(layerIdentifier)) {
+        RELEASE_LOG(ModelElement, "%p - ModelPresentationManagerProxy dragged model with layerID: %" PRIu64 " is being removed", this, layerIdentifier.object().toRawValue());
+        if (RetainPtr pageHostedModelView = modelPresentation->pageHostedModelView)
+            [webPageProxy->cocoaView() _willInvalidateDraggedModelWithContainerView:pageHostedModelView.get()];
+    }
+
     m_modelPresentations.remove(layerIdentifier);
     RELEASE_LOG_INFO(ModelElement, "%p - ModelPresentationManagerProxy removed model presentation for layer ID: %" PRIu64, this, layerIdentifier.object().toRawValue());
 }

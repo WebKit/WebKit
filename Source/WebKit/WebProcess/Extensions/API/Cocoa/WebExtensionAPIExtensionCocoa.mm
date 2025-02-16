@@ -66,7 +66,7 @@ bool WebExtensionAPIExtension::parseViewFilters(NSDictionary *filter, std::optio
         else if ([typeString isEqualToString:tabKey])
             viewType = ViewType::Tab;
         else {
-            *outExceptionString = toErrorString(nil, typeKey, @"it must specify either 'popup' or 'tab'");
+            *outExceptionString = toErrorString(nullString(), typeKey, @"it must specify either 'popup' or 'tab'");
             return false;
         }
     }

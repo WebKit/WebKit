@@ -17,7 +17,7 @@ noInline(test1);
 var array = [1, 2, 3, 4];
 ensureArrayStorage(array);
 didFTLCompile = false;
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test1(array), true);
 shouldBe(didFTLCompile, true);
 
@@ -41,7 +41,7 @@ ensureArrayStorage(array1);
 var array2 = [1, 2];
 ensureArrayStorage(array2);
 didFTLCompile = false;
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test2(array2), false);
 shouldBe(didFTLCompile, true);
 shouldBe(test2(array2), false);

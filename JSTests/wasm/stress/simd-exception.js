@@ -47,7 +47,7 @@ async function test() {
     const instance = await instantiate(wat, { m: { tag } }, { simd: true, exceptions: true })
     const { test_throw, test_catch } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         try {
             test_throw(42)
             assert.truthy(false)

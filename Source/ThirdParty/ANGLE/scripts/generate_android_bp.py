@@ -83,6 +83,8 @@ def write_blueprint_key_value(output, name, value, indent=1):
 
     if isinstance(value, set) or isinstance(value, list):
         value = list(sorted(set(value)))
+        if name == 'cflags':
+            fix_fortify_source_cflags(value)
 
     if isinstance(value, list):
         output.append(tabs(indent) + '%s: [' % name)
@@ -732,6 +734,22 @@ def handle_angle_non_conformant_extensions_and_versions(
         if 'cflags' in bp and non_conform_cflag in bp['cflags']:
             bp['cflags'] = list(set(bp['cflags']) - {non_conform_cflag})
             bp['defaults'].append(non_conform_defaults)
+
+
+def fix_fortify_source_cflags(cflags):
+    # search if there is any cflag starts with '-D_FORTIFY_SOURCE'
+    d_fortify_source_flag = [cflag for cflag in cflags if '-D_FORTIFY_SOURCE' in cflag]
+    # Insert -U_FORTIFY_SOURCE before the first -D_FORTIFY_SOURCE flag.
+    # In case a default mode for FORTIFY_SOURCE is predefined for a compiler,
+    # and the -D_FORTIFY_SOURCE mode we set is different from the default mode,
+    # the compiler will warn about "redefining FORTIFY_SOURCE macro".
+    # To fix this compiler warning, we unset the default mode with
+    # -U_FORTIFY_SOURCE before setting the desired FORTIFY_SOURCE mode in our
+    # cflags.
+    # reference:
+    # https://best.openssf.org/Compiler-Hardening-Guides/Compiler-Options-Hardening-Guide-for-C-and-C++#tldr-what-compiler-options-should-i-use
+    if d_fortify_source_flag:
+        cflags.insert(cflags.index(d_fortify_source_flag[0]), '-U_FORTIFY_SOURCE')
 
 
 def main():

@@ -30,7 +30,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/WeakPtr.h>
@@ -49,4 +48,3 @@ public:
 };
 
 } // namespace WebCore
-#endif

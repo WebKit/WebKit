@@ -21,7 +21,7 @@ function t2() {
 }
 noInline(t2);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(t1(), 6);
     shouldBe(t2(), "1helloundefined");
 }

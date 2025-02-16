@@ -70,7 +70,7 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
         for (const ParametersToTest params : parametersToTest)
         {
             VkFormat actualImageVkFormat = rx::vk::GetVkFormatFromFormatID(
-                vkFormat.getActualImageFormatID(rx::vk::ImageAccess::SampleOnly));
+                renderer, vkFormat.getActualImageFormatID(rx::vk::ImageAccess::SampleOnly));
 
             // Now let's verify that against vulkan.
             VkFormatProperties formatProperties;
@@ -96,8 +96,8 @@ TEST_P(VulkanFormatTablesTest, TestFormatSupport)
             EXPECT_EQ(isFilterable, textureCaps.filterable) << actualImageVkFormat;
 
             // isRenderable?
-            VkFormat actualRenderableImageVkFormat =
-                rx::vk::GetVkFormatFromFormatID(vkFormat.getActualRenderableImageFormatID());
+            VkFormat actualRenderableImageVkFormat = rx::vk::GetVkFormatFromFormatID(
+                renderer, vkFormat.getActualRenderableImageFormatID());
             const bool isRenderableColor =
                 (vkGetPhysicalDeviceImageFormatProperties(
                     renderer->getPhysicalDevice(), actualRenderableImageVkFormat, params.imageType,

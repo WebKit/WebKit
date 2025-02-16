@@ -32,7 +32,7 @@ function check(value)
 async function test() {
     const instance = await instantiate(wat, { a: {check} }, {reference_types: true});
     const {test} = instance.exports;
-    for (let i = 0; i < 1e5; ++i)
+    for (let i = 0; i < wasmTestLoopCount; ++i)
         test();
 }
 

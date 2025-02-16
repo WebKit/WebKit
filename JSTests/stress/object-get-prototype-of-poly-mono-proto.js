@@ -27,7 +27,7 @@ noInline(target);
 var polyProtoObject = makePolyProtoObject();
 var prototype = Reflect.getPrototypeOf(polyProtoObject);
 var object = { __proto__: prototype, hello: 44 };
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(target(polyProtoObject)[1], prototype);
     shouldBe(target(object)[1], prototype);
 }

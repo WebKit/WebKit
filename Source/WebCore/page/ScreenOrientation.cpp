@@ -72,7 +72,7 @@ Document* ScreenOrientation::document() const
 
 ScreenOrientationManager* ScreenOrientation::manager() const
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document)
         return nullptr;
     auto* page = document->page();
@@ -94,7 +94,7 @@ static bool isSupportedLockType(ScreenOrientationLockType lockType)
 
 void ScreenOrientation::lock(LockType lockType, Ref<DeferredPromise>&& promise)
 {
-    auto* document = this->document();
+    RefPtr document = this->document();
     if (!document || !document->isFullyActive()) {
         promise->reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active."_s });
         return;

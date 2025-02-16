@@ -44,7 +44,7 @@ public:
 
 private:
     struct ShareableElementDataHash;
-    using ShareableElementDataCache = HashSet<Ref<ShareableElementData>, ShareableElementDataHash>;
+    using ShareableElementDataCache = UncheckedKeyHashSet<Ref<ShareableElementData>, ShareableElementDataHash>;
     ShareableElementDataCache m_shareableElementDataCache;
 };
 

@@ -173,7 +173,7 @@ private:
     RootLayerInfo* rootLayerInfoWithFrameIdentifier(WebCore::FrameIdentifier);
 
     // GraphicsLayerClient
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
     bool hdrForImagesEnabled() const override;
 #endif
 
@@ -192,7 +192,7 @@ private:
     Ref<WorkQueue> m_commitQueue;
     RefPtr<BackingStoreFlusher> m_backingStoreFlusher;
 
-    TransactionID m_currentTransactionID;
+    TransactionID m_currentTransactionID { TransactionID::generateMonotonic() };
     Vector<IPC::AsyncReplyID> m_pendingCallbackIDs;
     ActivityStateChangeID m_activityStateChangeID { ActivityStateChangeAsynchronous };
 

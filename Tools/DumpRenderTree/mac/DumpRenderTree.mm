@@ -101,6 +101,7 @@
 #import <wtf/OSObjectPtr.h>
 #import <wtf/ProcessPrivilege.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/Threading.h>
 #import <wtf/UniqueArray.h>
 #import <wtf/WTFProcess.h>
@@ -858,11 +859,10 @@ static void createGlobalWebViewAndOffscreenWindow()
 
 static NSString *libraryPathForDumpRenderTree()
 {
-    char* dumpRenderTreeTemp = getenv("DUMPRENDERTREE_TEMP");
-    if (dumpRenderTreeTemp)
-        return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dumpRenderTreeTemp length:strlen(dumpRenderTreeTemp)];
-    else
-        return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
+    auto dumpRenderTreeTemp = unsafeSpan(getenv("DUMPRENDERTREE_TEMP"));
+    if (dumpRenderTreeTemp.data())
+        return [[NSFileManager defaultManager] stringWithFileSystemRepresentation:dumpRenderTreeTemp.data() length:dumpRenderTreeTemp.size()];
+    return [@"~/Library/Application Support/DumpRenderTree" stringByExpandingTildeInPath];
 }
 
 static void setWebPreferencesForTestOptions(WebPreferences *preferences, const WTR::TestOptions& options)
@@ -1065,9 +1065,9 @@ static bool useLongRunningServerMode(int argc, const char *argv[])
     return (argc == optind+1 && strcmp(argv[optind], "-") == 0);
 }
 
-static bool handleControlCommand(const char* command)
+static bool handleControlCommand(std::span<const char> command)
 {
-    if (!strncmp("#CHECK FOR WORLD LEAKS", command, 22) || !strncmp("#LIST CHILD PROCESSES", command, 21)) {
+    if (spanHasPrefix(command, "#CHECK FOR WORLD LEAKS"_span) || spanHasPrefix(command, "#LIST CHILD PROCESSES"_span)) {
         // DumpRenderTree does not support checking for world leaks or listing child processes.
         WTF::String result("\n"_s);
         unsigned resultLength = result.length();
@@ -1087,20 +1087,19 @@ static void runTestingServerLoop()
 {
     // When DumpRenderTree run in server mode, we just wait around for file names
     // to be passed to us and read each in turn, passing the results back to the client
-    char filenameBuffer[2048];
+    std::array<char, 2048> filenameBuffer;
     unsigned testCount = 0;
-    while (fgets(filenameBuffer, sizeof(filenameBuffer), stdin)) {
-        char *newLineCharacter = strchr(filenameBuffer, '\n');
-        if (newLineCharacter)
-            *newLineCharacter = '\0';
+    while (fgets(filenameBuffer.data(), filenameBuffer.size(), stdin)) {
+        if (size_t newLineCharacterIndex = find(std::span<const char> { filenameBuffer }, '\n'); newLineCharacterIndex != notFound)
+            filenameBuffer[newLineCharacterIndex] = '\0';
 
-        if (strlen(filenameBuffer) == 0)
+        if (!strlenSpan(std::span { filenameBuffer }))
             continue;
 
-        if (handleControlCommand(filenameBuffer))
+        if (handleControlCommand(std::span { filenameBuffer }))
             continue;
 
-        runTest(filenameBuffer);
+        runTest(filenameBuffer.data());
 
         if (printTestCount) {
             ++testCount;
@@ -1277,7 +1276,7 @@ static const char **_argv;
 - (void)_webThreadInvoked
 {
     ASSERT(WebThreadIsCurrent());
-    WorkQueue::main().dispatch([self, retainedSelf = retainPtr(self)] {
+    WorkQueue::protectedMain()->dispatch([self, retainedSelf = retainPtr(self)] {
         [self _webThreadEventLoopHasRun];
     });
 }
@@ -1708,31 +1707,31 @@ void dump()
     CFRunLoopStop(CFRunLoopGetMain());
 }
 
-static bool shouldLogFrameLoadDelegates(const char* pathOrURL)
+static bool shouldLogFrameLoadDelegates(std::span<const char> pathOrURL)
 {
-    return strstr(pathOrURL, "loading/") && !strstr(pathOrURL, "://localhost");
+    return contains(pathOrURL, "loading/"_span) && !contains(pathOrURL, "://localhost"_span);
 }
 
-static bool shouldLogHistoryDelegates(const char* pathOrURL)
+static bool shouldLogHistoryDelegates(std::span<const char> pathOrURL)
 {
-    return strstr(pathOrURL, "globalhistory/");
+    return contains(pathOrURL, "globalhistory/"_span);
 }
 
-static bool shouldDumpAsText(const char* pathOrURL)
+static bool shouldDumpAsText(std::span<const char> pathOrURL)
 {
-    return strstr(pathOrURL, "dumpAsText/");
+    return contains(pathOrURL, "dumpAsText/"_span);
 }
 
 #if PLATFORM(IOS_FAMILY)
-static bool shouldMakeViewportFlexible(const char* pathOrURL)
+static bool shouldMakeViewportFlexible(std::span<const char> pathOrURL)
 {
-    return strstr(pathOrURL, "viewport/") && !strstr(pathOrURL, "visual-viewport/");
+    return contains(pathOrURL, "viewport/"_span) && !contains(pathOrURL, "visual-viewport/"_span);
 }
 #endif
 
-static bool shouldUseEphemeralSession(const char* pathOrURL)
+static bool shouldUseEphemeralSession(std::span<const char> pathOrURL)
 {
-    return strstr(pathOrURL, "w3c/IndexedDB-private-browsing");
+    return contains(pathOrURL, "w3c/IndexedDB-private-browsing"_span);
 }
 
 static void setJSCOptions(const WTR::TestOptions& options)
@@ -1987,27 +1986,28 @@ static void runTest(const std::string& inputLine)
     gTestRunner->clearAllDatabases();
     gTestRunner->clearNotificationPermissionState();
 
+    std::span pathOrURLSpan { pathOrURL };
     if (disallowedURLs)
         CFSetRemoveAllValues(disallowedURLs.get());
-    if (shouldLogFrameLoadDelegates(pathOrURL.c_str()))
+    if (shouldLogFrameLoadDelegates(pathOrURLSpan))
         gTestRunner->setDumpFrameLoadCallbacks(true);
 
-    if (shouldLogHistoryDelegates(pathOrURL.c_str()))
+    if (shouldLogHistoryDelegates(pathOrURLSpan))
         [[mainFrame webView] setHistoryDelegate:historyDelegate().get()];
     else
         [[mainFrame webView] setHistoryDelegate:nil];
 
-    if (shouldDumpAsText(pathOrURL.c_str())) {
+    if (shouldDumpAsText(pathOrURLSpan)) {
         gTestRunner->setDumpAsText(true);
         gTestRunner->setGeneratePixelResults(false);
     }
 
 #if PLATFORM(IOS_FAMILY)
-    if (shouldMakeViewportFlexible(pathOrURL.c_str()))
+    if (shouldMakeViewportFlexible(pathOrURLSpan))
         adjustWebDocumentForFlexibleViewport(gWebBrowserView.get(), gWebScrollView.get());
 #endif
 
-    if (shouldUseEphemeralSession(pathOrURL.c_str()))
+    if (shouldUseEphemeralSession(pathOrURLSpan))
         [[[mainFrame webView] preferences] setPrivateBrowsingEnabled:YES];
 
     if ([WebHistory optionalSharedHistory])

@@ -160,8 +160,6 @@ public:
 
     void detachFromElement() { m_element = nullptr; }
 
-    static bool themeSupportsDataListUI(InputType*);
-
     virtual const AtomString& formControlType() const = 0;
 
     bool isValidValue(const String&) const;
@@ -329,9 +327,7 @@ public:
     virtual HTMLElement* sliderThumbElement() const { return nullptr; }
     virtual HTMLElement* sliderTrackElement() const { return nullptr; }
     virtual HTMLElement* placeholderElement() const;
-#if ENABLE(DATALIST_ELEMENT)
     virtual HTMLElement* dataListButtonElement() const { return nullptr; }
-#endif
     RefPtr<TextControlInnerTextElement> innerTextElementCreatingShadowSubtreeIfNeeded();
 
     // Miscellaneous functions.
@@ -347,7 +343,7 @@ public:
     virtual bool storesValueSeparateFromAttribute();
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior, TextControlSetValueSelection);
     virtual bool shouldResetOnDocumentActivation();
-    virtual bool shouldRespectListAttribute();
+    virtual bool shouldRespectListAttribute() { return false; }
     virtual bool shouldRespectHeightAndWidthAttributes();
     virtual bool supportsPlaceholder() const;
     virtual bool supportsReadOnly() const;
@@ -364,9 +360,7 @@ public:
     virtual bool isPresentingAttachedView() const;
     virtual bool supportsSelectionAPI() const;
     virtual bool dirAutoUsesValue() const;
-#if ENABLE(DATALIST_ELEMENT)
     virtual bool isFocusingWithDataListDropdown() const { return false; };
-#endif
     virtual void willUpdateCheckedness(bool /*nowChecked*/, WasSetByJavaScript) { }
 
     // Parses the specified string for the type, and return
@@ -389,10 +383,8 @@ public:
 
     void dispatchSimulatedClickIfActive(KeyboardEvent&) const;
 
-#if ENABLE(DATALIST_ELEMENT)
-    virtual void dataListMayHaveChanged();
+    virtual void dataListMayHaveChanged() { }
     virtual std::optional<Decimal> findClosestTickMarkValue(const Decimal&);
-#endif
 
 #if ENABLE(DRAG_SUPPORT)
     virtual bool receiveDroppedFiles(const DragData&);

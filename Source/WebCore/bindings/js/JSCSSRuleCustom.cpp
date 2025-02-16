@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -131,7 +131,6 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSViewTransitionRule>(globalObject, WTFMove(rule));
     case StyleRuleType::PositionTry:
         return createWrapper<CSSPositionTryRule>(globalObject, WTFMove(rule));
-    case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:
     case StyleRuleType::FontFeatureValuesBlock:

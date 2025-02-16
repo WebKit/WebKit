@@ -627,6 +627,77 @@ TEST_P(EGLPreRotationSurfaceTest, ChangeRotationWithDraw)
     }
 }
 
+// Android-specific test that changes a window's rotation and size. This is to check the actual size
+// and the surface capabilities returned by vkGetPhysicalDeviceSurfaceCapabilitiesKHR.
+TEST_P(EGLPreRotationSurfaceTest, CheckSurfaceCapabilities)
+{
+    // This test is confined to Android.
+    ANGLE_SKIP_TEST_IF(isVulkanRenderer() && !IsAndroid() && IsLinux() && isSwiftshader());
+
+    initializeDisplay();
+    initializeSurfaceWithRGBA8888Config();
+
+    eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext);
+    ASSERT_EGL_SUCCESS();
+
+    EGLint preWindowSurfaceWidth  = 0;
+    EGLint preWindowSurfaceHeight = 0;
+    EGLint curWindowSurfaceWidth  = 300;
+    EGLint curWindowSurfaceHeight = 200;
+    EGLint actualWidth            = 0;
+    EGLint actualHeight           = 0;
+
+    // Set the initial window surface size.
+    mOSWindow->resize(curWindowSurfaceWidth, curWindowSurfaceHeight);
+    mOSWindow->setOrientation(curWindowSurfaceWidth, curWindowSurfaceHeight);
+    eglSwapBuffers(mDisplay, mWindowSurface);
+    ASSERT_EGL_SUCCESS();
+
+    eglQuerySurface(mDisplay, mWindowSurface, EGL_WIDTH, &actualWidth);
+    eglQuerySurface(mDisplay, mWindowSurface, EGL_HEIGHT, &actualHeight);
+    ASSERT_EGL_SUCCESS();
+
+    // eglSwapBuffers(vkQueuePresentKHR) is called before eglQuerySurface
+    // so actualWidth and actualHeight need to be curWindowSurfaceHeight and curWindowSurfaceHeight
+    // (300, 200).
+    EXPECT_EQ(curWindowSurfaceWidth, actualWidth);
+    EXPECT_EQ(curWindowSurfaceHeight, actualHeight);
+
+    // Store the old values
+    preWindowSurfaceWidth  = curWindowSurfaceWidth;
+    preWindowSurfaceHeight = curWindowSurfaceHeight;
+
+    // Set the new values
+    curWindowSurfaceWidth  = 200;
+    curWindowSurfaceHeight = 300;
+
+    mOSWindow->resize(curWindowSurfaceWidth, curWindowSurfaceHeight);
+    mOSWindow->setOrientation(curWindowSurfaceWidth, curWindowSurfaceHeight);
+
+    eglQuerySurface(mDisplay, mWindowSurface, EGL_WIDTH, &actualWidth);
+    eglQuerySurface(mDisplay, mWindowSurface, EGL_HEIGHT, &actualHeight);
+    ASSERT_EGL_SUCCESS();
+
+    // eglSwapBuffers(vkQueuePresentKHR) is not called before eglQuerySurface
+    // so actualWidth and actualHeight need to be preWindowSurfaceWidth and preWindowSurfaceHeight
+    // (300, 200).
+    EXPECT_EQ(preWindowSurfaceWidth, actualWidth);
+    EXPECT_EQ(preWindowSurfaceHeight, actualHeight);
+
+    eglSwapBuffers(mDisplay, mWindowSurface);
+    ASSERT_EGL_SUCCESS();
+
+    eglQuerySurface(mDisplay, mWindowSurface, EGL_WIDTH, &actualWidth);
+    eglQuerySurface(mDisplay, mWindowSurface, EGL_HEIGHT, &actualHeight);
+    ASSERT_EGL_SUCCESS();
+
+    // Now eglSwapBuffers(vkQueuePresentKHR) is called
+    // so actualWidth and actualHeight will be curWindowSurfaceHeight and curWindowSurfaceHeight
+    // (200, 300).
+    EXPECT_EQ(curWindowSurfaceWidth, actualWidth);
+    EXPECT_EQ(curWindowSurfaceHeight, actualHeight);
+}
+
 // A slight variation of EGLPreRotationSurfaceTest, where the initial window size is 400x300, yet
 // the drawing is still 256x256.  In addition, gl_FragCoord is used in a "clever" way, as the color
 // of the 256x256 drawing area, which reproduces an interesting pre-rotation case from the

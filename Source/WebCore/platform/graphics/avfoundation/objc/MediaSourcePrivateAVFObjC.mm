@@ -79,7 +79,7 @@ void MediaSourcePrivateAVFObjC::setPlayer(MediaPlayerPrivateInterface* player)
     m_player = downcast<MediaPlayerPrivateMediaSourceAVFObjC>(player);
 }
 
-MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, bool webMParserEnabled, RefPtr<SourceBufferPrivate>& outPrivate)
+MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     DEBUG_LOG(LOGIDENTIFIER, contentType);
 
@@ -89,7 +89,7 @@ MediaSourcePrivate::AddStatus MediaSourcePrivateAVFObjC::addSourceBuffer(const C
     if (MediaPlayerPrivateMediaSourceAVFObjC::supportsTypeAndCodecs(parameters) == MediaPlayer::SupportsType::IsNotSupported)
         return AddStatus::NotSupported;
 
-    auto parser = SourceBufferParser::create(contentType, webMParserEnabled);
+    auto parser = SourceBufferParser::create(contentType);
     if (!parser)
         return AddStatus::NotSupported;
 #if !RELEASE_LOG_DISABLED

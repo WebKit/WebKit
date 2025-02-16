@@ -75,12 +75,9 @@ static void scanDirectoryForDictionaries(const char* directoryPath, UncheckedKey
         if (locale.isEmpty())
             continue;
 
-        auto filePath = FileSystem::pathByAppendingComponent(directoryPathString, fileName);
-        char normalizedPath[PATH_MAX];
-        if (!realpath(FileSystem::fileSystemRepresentation(filePath).data(), normalizedPath))
-            continue;
+        auto fullPath = FileSystem::pathByAppendingComponent(directoryPathString, fileName);
+        auto filePath = FileSystem::realPath(fullPath);
 
-        filePath = FileSystem::stringFromFileSystemRepresentation(normalizedPath);
         availableLocales.add(locale, Vector<String>()).iterator->value.append(filePath);
 
         String localeReplacingUnderscores = makeStringByReplacingAll(locale, '_', '-');

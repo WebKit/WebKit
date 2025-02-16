@@ -22,6 +22,7 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "FrameInfoData.h"
 #include "Logging.h"
 #include "MessageSenderInlines.h"
 #include "WebFrame.h"
@@ -98,7 +99,7 @@ void UserMediaPermissionRequestManager::sendUserMediaRequest(UserMediaRequest& u
     ASSERT(webFrame);
 
     auto* topLevelDocumentOrigin = userRequest.topLevelDocumentOrigin();
-    protectedPage()->send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier(), webFrame->frameID(), userRequest.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data(), userRequest.request()));
+    protectedPage()->send(Messages::WebPageProxy::RequestUserMediaPermissionForFrame(userRequest.identifier(), webFrame->info(), userRequest.userMediaDocumentOrigin()->data(), topLevelDocumentOrigin->data(), userRequest.request()));
 }
 
 void UserMediaPermissionRequestManager::cancelUserMediaRequest(UserMediaRequest& request)

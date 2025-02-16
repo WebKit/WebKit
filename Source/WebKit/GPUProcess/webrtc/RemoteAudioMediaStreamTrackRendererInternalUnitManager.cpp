@@ -78,6 +78,7 @@ private:
     const WebCore::CAAudioStreamDescription& format() final { return *m_description; }
     void captureUnitIsStarting() final;
     void captureUnitHasStopped() final;
+    void canRenderAudioChanged() final;
 
     // Background thread.
     OSStatus produceSpeakerSamples(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) final;
@@ -92,6 +93,7 @@ private:
 
     Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> protectedLocalUnit() { return m_localUnit; }
     void setShouldRegisterAsSpeakerSamplesProducer(bool);
+    bool computeShouldRegisterAsSpeakerSamplesProducer() const;
 
     AudioMediaStreamTrackRendererInternalUnitIdentifier m_identifier;
     ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connection;
@@ -187,7 +189,6 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::RemoteAudioMediaStre
     , m_connection(connection)
     , m_localUnit(WebCore::AudioMediaStreamTrackRendererInternalUnit::create(deviceID, *this))
     , m_canUseCaptureUnit(deviceID == AudioMediaStreamTrackRenderer::defaultDeviceID())
-    , m_shouldRegisterAsSpeakerSamplesProducer(m_canUseCaptureUnit && connection.isLastToCaptureAudio())
 {
     WebCore::AudioSession::protectedSharedSession()->addInterruptionObserver(*this);
     protectedLocalUnit()->retrieveFormatDescription([weakThis = WeakPtr { *this }, this, callback = WTFMove(callback)](auto&& description) mutable {
@@ -209,6 +210,12 @@ RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::~RemoteAudioMediaStr
     stop();
 }
 
+bool RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::computeShouldRegisterAsSpeakerSamplesProducer() const
+{
+    RefPtr connection = m_connection.get();
+    return m_canUseCaptureUnit && connection && connection->isLastToCaptureAudio() && WebCore::CoreAudioCaptureSourceFactory::singleton().shouldAudioCaptureUnitRenderAudio();
+}
+
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::reset()
 {
     if (!m_canReset)
@@ -221,11 +228,10 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::reset()
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::setShouldRegisterAsSpeakerSamplesProducer(bool value)
 {
-    if (!m_canUseCaptureUnit)
-        return;
-
     if (m_shouldRegisterAsSpeakerSamplesProducer == value)
         return;
+
+    ASSERT(m_canUseCaptureUnit);
 
     m_shouldRegisterAsSpeakerSamplesProducer = value;
     if (!m_isPlaying)
@@ -252,6 +258,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::start(ConsumerS
     m_isPlaying = true;
     m_canReset = true;
     m_renderSemaphore = WTFMove(semaphore);
+    m_shouldRegisterAsSpeakerSamplesProducer = computeShouldRegisterAsSpeakerSamplesProducer();
 
     if (m_shouldRegisterAsSpeakerSamplesProducer) {
         WebCore::CoreAudioCaptureSourceFactory::singleton().registerSpeakerSamplesProducer(*this);
@@ -272,7 +279,7 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::stop()
 
 void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::updateShouldRegisterAsSpeakerSamplesProducer()
 {
-    setShouldRegisterAsSpeakerSamplesProducer(m_connection.get()->isLastToCaptureAudio());
+    setShouldRegisterAsSpeakerSamplesProducer(computeShouldRegisterAsSpeakerSamplesProducer());
 }
 
 OSStatus RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::render(size_t sampleCount, AudioBufferList& list, uint64_t, double, AudioUnitRenderActionFlags& flags)
@@ -309,6 +316,14 @@ void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::captureUnitHasS
     // Capture unit has stopped and audio will no longer be rendered through it so start the local unit.
     if (m_isPlaying && !WebCore::CoreAudioSharedUnit::singleton().isSuspended())
         protectedLocalUnit()->start();
+}
+
+void RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit::canRenderAudioChanged()
+{
+    callOnMainRunLoop([protectedThis = Ref { *this }] {
+        if (protectedThis->m_isPlaying)
+            protectedThis->updateShouldRegisterAsSpeakerSamplesProducer();
+    });
 }
 
 // Background thread.

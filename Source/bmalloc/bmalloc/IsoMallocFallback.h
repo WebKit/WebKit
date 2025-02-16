@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "BExport.h"
 #include "BInline.h"
 #include "BPlatform.h"
@@ -84,3 +86,5 @@ BEXPORT bool tryFree(
     );
     
 } } // namespace bmalloc::IsoMallocFallback
+
+#endif // !BUSE(TZONE)

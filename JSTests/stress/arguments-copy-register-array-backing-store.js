@@ -17,7 +17,7 @@ edenGC();
 
 var expectedResult = 0;
 var result = 0;
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     expectedResult += i + i + 1 + i + 2;
     result += bar(i, i + 1, i + 2);
 }

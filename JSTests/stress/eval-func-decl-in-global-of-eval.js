@@ -29,7 +29,7 @@ function bar() {
 }
 
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     assertThrow(() => bar(), "SyntaxError: Can't create duplicate variable in eval: 'f'");
     assertThrow(() => f, "ReferenceError: Can't find variable: f");
 }
@@ -45,7 +45,7 @@ function baz() {
     assert(typeof l, 'function');
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     baz();
     assertThrow(() => l, "ReferenceError: Can't find variable: l");
 }

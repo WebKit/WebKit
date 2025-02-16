@@ -29,12 +29,13 @@ struct WebKit::RemoteAudioSessionConfiguration {
     size_t numberOfOutputChannels;
     size_t maximumNumberOfOutputChannels;
     size_t preferredBufferSize;
+    size_t outputLatency;
     bool isMuted;
     bool isActive;
     String sceneIdentifier;
     WebCore::AudioSessionSoundStageSize soundStageSize;
 };
-    
+
 #endif
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)

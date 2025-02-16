@@ -156,8 +156,9 @@ void WebCookieManager::notifyCookiesDidChange(PAL::SessionID sessionID)
 void WebCookieManager::startObservingCookieChanges(PAL::SessionID sessionID)
 {
     if (auto* storageSession = protectedProcess()->storageSession(sessionID)) {
-        WebCore::startObservingCookieChanges(*storageSession, [this, sessionID] {
-            notifyCookiesDidChange(sessionID);
+        WebCore::startObservingCookieChanges(*storageSession, [weakThis = WeakPtr { *this }, sessionID] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->notifyCookiesDidChange(sessionID);
         });
     }
 }

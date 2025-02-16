@@ -341,7 +341,8 @@ class ContextWgpu : public ContextImpl
                             gl::DrawElementsType indexTypeOrInvalid,
                             const void *indices,
                             GLint baseVertex,
-                            uint32_t *outFirstIndex);
+                            uint32_t *outFirstIndex,
+                            uint32_t *indexCountOut);
 
     angle::Result handleDirtyRenderPipelineDesc(DirtyBits::Iterator *dirtyBitsIterator);
     angle::Result handleDirtyRenderPipelineBinding(DirtyBits::Iterator *dirtyBitsIterator);

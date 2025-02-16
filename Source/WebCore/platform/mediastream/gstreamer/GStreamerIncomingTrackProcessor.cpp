@@ -61,7 +61,7 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
     }
     m_data.caps = WTFMove(caps);
 
-    m_data.mediaStreamBinName = makeString("incoming-"_s, typeName, "-track-"_s, span(GST_OBJECT_NAME(m_pad.get())));
+    m_data.mediaStreamBinName = makeString("incoming-"_s, typeName, "-track-"_s, unsafeSpan(GST_OBJECT_NAME(m_pad.get())));
     m_bin = gst_bin_new(m_data.mediaStreamBinName.ascii().data());
     GST_DEBUG_OBJECT(m_bin.get(), "Processing track with caps %" GST_PTR_FORMAT, m_data.caps.get());
 
@@ -206,7 +206,7 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     m_isDecoding = true;
 
     g_signal_connect(decodebin.get(), "deep-element-added", G_CALLBACK(+[](GstBin*, GstBin*, GstElement* element, gpointer userData) {
-        String elementClass = WTF::span(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        String elementClass = unsafeSpan(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
         auto classifiers = elementClass.split('/');
         if (!classifiers.contains("Depayloader"_s))
             return;
@@ -218,7 +218,7 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::incomingTrackProcessor()
     }), this);
 
     g_signal_connect(decodebin.get(), "element-added", G_CALLBACK(+[](GstBin*, GstElement* element, gpointer userData) {
-        String elementClass = WTF::span(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        String elementClass = unsafeSpan(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
         auto classifiers = elementClass.split('/');
         if (!classifiers.contains("Decoder"_s) || !classifiers.contains("Video"_s))
             return;
@@ -255,7 +255,7 @@ GRefPtr<GstElement> GStreamerIncomingTrackProcessor::createParser()
 {
     GRefPtr<GstElement> parsebin = makeGStreamerElement("parsebin", nullptr);
     g_signal_connect(parsebin.get(), "element-added", G_CALLBACK(+[](GstBin*, GstElement* element, gpointer userData) {
-        String elementClass = WTF::span(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        String elementClass = unsafeSpan(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
         auto classifiers = elementClass.split('/');
         if (!classifiers.contains("Depayloader"_s))
             return;
@@ -318,8 +318,8 @@ void GStreamerIncomingTrackProcessor::installRtpBufferPadProbe(const GRefPtr<Gst
             videoFrameTimeMetadata.captureTime = Seconds::fromNanoseconds(gst_rtcp_ntp_to_unix(ntpTimestamp));
         }
 
-        buffer = webkitGstBufferSetVideoFrameTimeMetadata(buffer, WTFMove(videoFrameTimeMetadata));
-        GST_PAD_PROBE_INFO_DATA(info) = buffer;
+        auto modifiedBuffer = webkitGstBufferSetVideoFrameTimeMetadata(GRefPtr(buffer), WTFMove(videoFrameTimeMetadata));
+        GST_PAD_PROBE_INFO_DATA(info) = modifiedBuffer.leakRef();
         return GST_PAD_PROBE_OK;
     }, gst_caps_new_empty_simple("timestamp/x-ntp"), reinterpret_cast<GDestroyNotify>(gst_caps_unref));
 }

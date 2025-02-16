@@ -42,7 +42,7 @@
 #import <WebCore/DestinationColorSpace.h>
 #import <WebCore/GraphicsContextCG.h>
 #import <WebCore/IOSurface.h>
-#import <WebCore/PlatformScreen.h>
+#import <WebCore/PlatformCALayer.h>
 #import <WebKit/WebCoreThread.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
@@ -68,7 +68,7 @@ RefPtr<BitmapContext> createBitmapContextFromWebView(bool onscreen, bool increme
     WebCore::FloatSize snapshotSize(viewSize);
     snapshotSize.scale(deviceScaleFactor);
 
-    auto snapshotFormat = WebCore::convertToIOSurfaceFormat(WebCore::screenContentsFormat());
+    auto snapshotFormat = WebCore::convertToIOSurfaceFormat(WebCore::PlatformCALayer::contentsFormatForLayer());
     auto surface = WebCore::IOSurface::create(nullptr, WebCore::expandedIntSize(snapshotSize), WebCore::DestinationColorSpace::SRGB(), WebCore::IOSurface::Name::Snapshot, snapshotFormat);
     if (!surface)
         return nullptr;

@@ -1,0 +1,20 @@
+
+RUN(video.src = URL.createObjectURL(source))
+EVENT(sourceopen)
+RUN(audiosb = source.addSourceBuffer("audio/mp4; codecs=mp4a.40.2"))
+RUN(videosb = source.addSourceBuffer("video/mp4; codecs=avc1.4d401e"))
+RUN(audiosb.appendWindowEnd = 0.4)
+RUN(videosb.appendWindowEnd = 0.5)
+EXPECTED (video.buffered.end(video.buffered.length-1) == Math.min(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1)) == 'true') OK
+RUN(source.endOfStream())
+EXPECTED (source.readyState == 'ended') OK
+EXPECTED (video.buffered.end(video.buffered.length-1) == Math.max(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1)) == 'true') OK
+EXPECTED (video.duration == Math.max(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1)) == 'true') OK
+EVENT(sourceended)
+EXPECTED (source.readyState == 'open') OK
+EXPECTED (video.buffered.end(video.buffered.length-1) == Math.min(audiosb.buffered.end(audiosb.buffered.length-1), videosb.buffered.end(videosb.buffered.length-1)) == 'true') OK
+EVENT(update)
+RUN(source.endOfStream())
+EVENT(ended)
+END OF TEST
+

@@ -109,9 +109,9 @@ ExceptionOr<void> Attr::setNodeValue(const String& value)
     return setValue(value.isNull() ? emptyAtom() : AtomString(value));
 }
 
-Ref<Node> Attr::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
+Ref<Node> Attr::cloneNodeInternal(Document& document, CloningOperation, CustomElementRegistry*)
 {
-    return adoptRef(*new Attr(treeScope.documentScope(), qualifiedName(), value()));
+    return adoptRef(*new Attr(document, qualifiedName(), value()));
 }
 
 CSSStyleDeclaration* Attr::style()

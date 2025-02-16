@@ -9,29 +9,118 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLCOMMANDQUEUEVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLCOMMANDQUEUEVK_H_
 
+#include <condition_variable>
 #include <vector>
 
 #include "common/PackedCLEnums_autogen.h"
+#include "common/hash_containers.h"
+
 #include "libANGLE/renderer/vulkan/CLContextVk.h"
-#include "libANGLE/renderer/vulkan/CLEventVk.h"
 #include "libANGLE/renderer/vulkan/CLKernelVk.h"
 #include "libANGLE/renderer/vulkan/CLMemoryVk.h"
-#include "libANGLE/renderer/vulkan/DisplayVk.h"
-#include "libANGLE/renderer/vulkan/ShareGroupVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_command_buffer_utils.h"
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
-#include "libANGLE/renderer/vulkan/vk_resource.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
-#include "libANGLE/renderer/vulkan/vk_wrapper.h"
 
 #include "libANGLE/renderer/CLCommandQueueImpl.h"
+#include "libANGLE/renderer/serial_utils.h"
+
+#include "libANGLE/CLKernel.h"
+#include "libANGLE/CLMemory.h"
+#include "libANGLE/cl_types.h"
+
+namespace std
+{
+// Hash function for QueueSerial so that it can serve as a key for angle::HashMap
+template <>
+struct hash<rx::QueueSerial>
+{
+    size_t operator()(const rx::QueueSerial &queueSerial) const
+    {
+        size_t hash = 0;
+        angle::HashCombine(hash, queueSerial.getSerial().getValue());
+        angle::HashCombine(hash, queueSerial.getIndex());
+        return hash;
+    }
+};
+}  // namespace std
 
 namespace rx
 {
 
 static constexpr size_t kPrintfBufferSize = 1024 * 1024;
+class CLCommandQueueVk;
+
+namespace
+{
+
+struct HostTransferConfig
+{
+    HostTransferConfig()
+        : srcRect(cl::Offset{}, cl::Extents{}, 0, 0, 0), dstRect(cl::Offset{}, cl::Extents{}, 0, 0)
+    {}
+    cl_command_type type{0};
+    size_t size            = 0;
+    size_t offset          = 0;
+    void *dstHostPtr       = nullptr;
+    const void *srcHostPtr = nullptr;
+    size_t rowPitch        = 0;
+    size_t slicePitch      = 0;
+    size_t elementSize     = 0;
+    cl::MemOffsets origin;
+    cl::Coordinate region;
+    cl::BufferRect srcRect;
+    cl::BufferRect dstRect;
+};
+struct HostTransferEntry
+{
+    HostTransferConfig transferConfig;
+    cl::MemoryPtr transferBufferHandle;
+};
+using HostTransferEntries = std::vector<HostTransferEntry>;
+
+// DispatchWorkThread setups a background thread to wait on the work submitted to Vulkan renderer.
+class DispatchWorkThread
+{
+  public:
+    DispatchWorkThread(CLCommandQueueVk *commandQueue);
+    ~DispatchWorkThread();
+
+    angle::Result init();
+    void terminate();
+
+    angle::Result notify(QueueSerial queueSerial);
+
+  private:
+    static constexpr size_t kFixedQueueLimit = 4u;
+
+    angle::Result finishLoop();
+
+    CLCommandQueueVk *const mCommandQueue;
+
+    std::mutex mThreadMutex;
+    std::condition_variable mHasWorkSubmitted;
+    std::condition_variable mHasEmptySlot;
+    bool mIsTerminating;
+    std::thread mWorkerThread;
+
+    angle::FixedQueue<QueueSerial> mQueueSerials;
+    // Queue serial index associated with the CLCommandQueueVk
+    SerialIndex mQueueSerialIndex;
+};
+
+struct CommandsState
+{
+    cl::EventPtrs events;
+    cl::MemoryPtrs memories;
+    cl::KernelPtrs kernels;
+    HostTransferEntries hostTransferList;
+};
+using CommandsStateMap = angle::HashMap<QueueSerial, CommandsState>;
+
+}  // namespace
 
 class CLCommandQueueVk : public CLCommandQueueImpl
 {
@@ -228,24 +317,41 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::Result finish() override;
 
     CLPlatformVk *getPlatform() { return mContext->getPlatform(); }
+    CLContextVk *getContext() { return mContext; }
 
-    cl_mem getOrCreatePrintfBuffer();
+    cl::MemoryPtr getOrCreatePrintfBuffer();
+
+    angle::Result finishQueueSerial(const QueueSerial queueSerial);
+
+    SerialIndex getQueueSerialIndex() const { return mQueueSerialIndex; }
+
+    bool hasCommandsPendingSubmission() const
+    {
+        return mLastFlushedQueueSerial != mLastSubmittedQueueSerial;
+    }
 
   private:
     static constexpr size_t kMaxDependencyTrackerSize    = 64;
     static constexpr size_t kMaxHostBufferUpdateListSize = 16;
 
+    angle::Result resetCommandBufferWithError(cl_int errorCode);
+
     vk::ProtectionType getProtectionType() const { return vk::ProtectionType::Unprotected; }
 
     // Create-update-bind the kernel's descriptor set, put push-constants in cmd buffer, capture
     // kernel resources, and handle kernel execution dependencies
-    angle::Result processKernelResources(CLKernelVk &kernelVk,
-                                         const cl::NDRange &ndrange,
-                                         const cl::WorkgroupCount &workgroupCount);
+    angle::Result processKernelResources(CLKernelVk &kernelVk);
+    // Updates global push constants for a given CL kernel
+    angle::Result processGlobalPushConstants(CLKernelVk &kernelVk, const cl::NDRange &ndrange);
 
     angle::Result submitCommands();
     angle::Result finishInternal();
-    angle::Result syncHostBuffers();
+    angle::Result flushInternal();
+    // Wait for the submitted work to the renderer to finish and perform post-processing such as
+    // event status updates etc. This is a blocking call.
+    angle::Result finishQueueSerialInternal(const QueueSerial queueSerial);
+
+    angle::Result syncHostBuffers(HostTransferEntries &hostTransferList);
     angle::Result flushComputePassCommands();
     angle::Result processWaitlist(const cl::EventPtrs &waitEvents);
     angle::Result createEvent(CLEventImpl::CreateFunc *createFunc,
@@ -273,6 +379,8 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     angle::Result insertBarrier();
     angle::Result addMemoryDependencies(cl::Memory *clMem);
 
+    angle::Result submitEmptyCommand();
+
     CLContextVk *mContext;
     const CLDeviceVk *mDevice;
     cl::Memory *mPrintfBuffer;
@@ -280,51 +388,31 @@ class CLCommandQueueVk : public CLCommandQueueImpl
     vk::SecondaryCommandPools mCommandPool;
     vk::OutsideRenderPassCommandBufferHelper *mComputePassCommands;
     vk::SecondaryCommandMemoryAllocator mOutsideRenderPassCommandsAllocator;
-    SerialIndex mCurrentQueueSerialIndex;
+
+    // Queue Serials for this command queue
+    SerialIndex mQueueSerialIndex;
     QueueSerial mLastSubmittedQueueSerial;
     QueueSerial mLastFlushedQueueSerial;
+
     std::mutex mCommandQueueMutex;
 
-    // Created event objects associated with this command queue
-    cl::EventPtrs mAssociatedEvents;
-
-    // Dependant event(s) that this queue has to wait on
-    cl::EventPtrs mDependantEvents;
+    // External dependent events that this queue has to wait on
+    cl::EventPtrs mExternalEvents;
 
     // Keep track of kernel resources on prior kernel enqueues
     angle::HashSet<cl::Object *> mDependencyTracker;
 
-    // Resource reference capturing during execution
-    cl::MemoryPtrs mMemoryCaptures;
-    cl::KernelPtrs mKernelCaptures;
-
-    // Check to see if flush/finish can be skipped
-    bool mHasAnyCommandsPendingSubmission;
+    CommandsStateMap mCommandsStateMap;
 
     // printf handling
     bool mNeedPrintfHandling;
     const angle::HashMap<uint32_t, ClspvPrintfInfo> *mPrintfInfos;
 
-    // Host buffer transferring utility
-    struct HostTransferConfig
-    {
-        cl_command_type type{0};
-        size_t size            = 0;
-        size_t offset          = 0;
-        void *dstHostPtr       = nullptr;
-        const void *srcHostPtr = nullptr;
-        cl::MemOffsets origin;
-        cl::Coordinate region;
-    };
-    struct HostTransferEntry
-    {
-        HostTransferConfig transferConfig;
-        cl::MemoryPtr transferBufferHandle;
-    };
-    using HostTransferEntries = std::vector<HostTransferEntry>;
-    HostTransferEntries mHostTransferList;
+    // Host buffer transferring routines
     angle::Result addToHostTransferList(CLBufferVk *srcBuffer, HostTransferConfig transferEntry);
     angle::Result addToHostTransferList(CLImageVk *srcImage, HostTransferConfig transferEntry);
+
+    DispatchWorkThread mFinishHandler;
 };
 
 }  // namespace rx

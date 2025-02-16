@@ -32,8 +32,8 @@
 
 namespace WebCore {
 
-// FIXME: Make HashSet<String>::contains(StringView) work and use StringViews here.
-using URLSchemesMap = HashSet<String, ASCIICaseInsensitiveHash>;
+// FIXME: Make UncheckedKeyHashSet<String>::contains(StringView) work and use StringViews here.
+using URLSchemesMap = UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash>;
 
 class LegacySchemeRegistry {
 public:

@@ -514,6 +514,20 @@ void PrivateState::setStencilClearValue(int stencil)
 
 void PrivateState::setColorMask(bool red, bool green, bool blue, bool alpha)
 {
+    GLint firstPLSDrawBuffer;
+    if (hasActivelyOverriddenPLSDrawBuffers(&firstPLSDrawBuffer))
+    {
+        // Some draw buffers are currently overridden by pixel local storage. Update only the
+        // buffers that are still visible to the client.
+        assert(firstPLSDrawBuffer < mCaps.maxDrawBuffers);
+        for (GLint i = 0; i < firstPLSDrawBuffer; ++i)
+        {
+            ASSERT(mExtensions.drawBuffersIndexedAny());
+            setColorMaskIndexed(red, green, blue, alpha, i);
+        }
+        return;
+    }
+
     mBlendState.colorMaskRed   = red;
     mBlendState.colorMaskGreen = green;
     mBlendState.colorMaskBlue  = blue;
@@ -525,6 +539,13 @@ void PrivateState::setColorMask(bool red, bool green, bool blue, bool alpha)
 
 void PrivateState::setColorMaskIndexed(bool red, bool green, bool blue, bool alpha, GLuint index)
 {
+    if (isActivelyOverriddenPLSDrawBuffer(index))
+    {
+        // The indexed draw buffer is currently overridden by pixel local storage. Setting the color
+        // mask has no effect.
+        return;
+    }
+
     mBlendStateExt.setColorMaskIndexed(index, red, green, blue, alpha);
     mDirtyBits.set(state::DIRTY_BIT_COLOR_MASK);
 }
@@ -645,6 +666,20 @@ void PrivateState::setClipControl(ClipOrigin origin, ClipDepthMode depth)
 
 void PrivateState::setBlend(bool enabled)
 {
+    GLint firstPLSDrawBuffer;
+    if (hasActivelyOverriddenPLSDrawBuffers(&firstPLSDrawBuffer))
+    {
+        // Some draw buffers are currently overridden by pixel local storage. Update only the
+        // buffers that are still visible to the client.
+        assert(firstPLSDrawBuffer < mCaps.maxDrawBuffers);
+        for (GLint i = 0; i < firstPLSDrawBuffer; ++i)
+        {
+            ASSERT(mExtensions.drawBuffersIndexedAny());
+            setBlendIndexed(enabled, i);
+        }
+        return;
+    }
+
     if (mSetBlendIndexedInvoked || mBlendState.blend != enabled)
     {
         mBlendState.blend = enabled;
@@ -657,6 +692,13 @@ void PrivateState::setBlend(bool enabled)
 
 void PrivateState::setBlendIndexed(bool enabled, GLuint index)
 {
+    if (isActivelyOverriddenPLSDrawBuffer(index))
+    {
+        // The indexed draw buffer is currently overridden by pixel local storage. Enabling
+        // blend has no effect.
+        return;
+    }
+
     mSetBlendIndexedInvoked = true;
     mBlendStateExt.setEnabledIndexed(index, enabled);
     mDirtyBits.set(state::DIRTY_BIT_BLEND_ENABLED);
@@ -986,7 +1028,6 @@ void PrivateState::setSampleShading(bool enabled)
     if (mIsSampleShadingEnabled != enabled)
     {
         mIsSampleShadingEnabled = enabled;
-        mMinSampleShading       = (enabled) ? 1.0f : mMinSampleShading;
         mDirtyBits.set(state::DIRTY_BIT_SAMPLE_SHADING);
     }
 }
@@ -1105,6 +1146,24 @@ void PrivateState::setUnpackImageHeight(GLint imageHeight)
 {
     mUnpack.imageHeight = imageHeight;
     mDirtyBits.set(state::DIRTY_BIT_UNPACK_STATE);
+}
+
+bool PrivateState::hasActivelyOverriddenPLSDrawBuffers(GLint *firstActivePLSDrawBuffer) const
+{
+    if (mPixelLocalStorageActivePlanes != 0)
+    {
+        *firstActivePLSDrawBuffer =
+            PixelLocalStorage::FirstOverriddenDrawBuffer(mCaps, mPixelLocalStorageActivePlanes);
+        return *firstActivePLSDrawBuffer < mCaps.maxDrawBuffers;
+    }
+    return false;
+}
+
+bool PrivateState::isActivelyOverriddenPLSDrawBuffer(GLint drawbuffer) const
+{
+    return mPixelLocalStorageActivePlanes != 0 &&
+           drawbuffer >=
+               PixelLocalStorage::FirstOverriddenDrawBuffer(mCaps, mPixelLocalStorageActivePlanes);
 }
 
 void PrivateState::setUnpackSkipImages(GLint skipImages)
@@ -2298,11 +2357,13 @@ void State::initialize(Context *context)
         mSamplerTextures[TextureType::_2DMultisample].resize(
             getCaps().maxCombinedTextureImageUnits);
     }
-    if (clientVersion >= Version(3, 1))
+    if (clientVersion >= Version(3, 2) || nativeExtensions.textureStorageMultisample2dArrayOES)
     {
         mSamplerTextures[TextureType::_2DMultisampleArray].resize(
             getCaps().maxCombinedTextureImageUnits);
-
+    }
+    if (clientVersion >= Version(3, 1))
+    {
         mAtomicCounterBuffers.resize(getCaps().maxAtomicCounterBufferBindings);
         mShaderStorageBuffers.resize(getCaps().maxShaderStorageBufferBindings);
     }
@@ -2542,11 +2603,6 @@ void State::setSamplerTexture(const Context *context, TextureType type, Texture 
     mSamplerTextures[type][getActiveSampler()].set(context, texture);
 
     mDirtyBits.set(state::DIRTY_BIT_TEXTURE_BINDINGS);
-}
-
-Texture *State::getTargetTexture(TextureType type) const
-{
-    return getSamplerTexture(getActiveSampler(), type);
 }
 
 TextureID State::getSamplerTextureId(unsigned int sampler, TextureType type) const

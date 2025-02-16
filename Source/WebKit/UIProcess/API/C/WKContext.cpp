@@ -588,3 +588,16 @@ void WKContextClearMockGamepadsForTesting(WKContextRef)
         WebCore::GamepadProvider::singleton().clearGamepadsForTesting();
 #endif
 }
+
+void WKContextSetResourceMonitorURLsForTesting(WKContextRef contextRef, WKStringRef rulesText, void* context, WKContextSetResourceMonitorURLsFunction callback)
+{
+#if ENABLE(CONTENT_EXTENSIONS) && PLATFORM(COCOA)
+    WebKit::toImpl(contextRef)->setResourceMonitorURLsForTesting(WebKit::toWTFString(rulesText), [context, callback] {
+        if (callback)
+            callback(context);
+    });
+#else
+    if (callback)
+        callback(context);
+#endif
+}

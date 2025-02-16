@@ -97,5 +97,12 @@ ALWAYS_INLINE Subspace* HeapCell::subspace() const
     return markedBlock().subspace();
 }
 
+ALWAYS_INLINE void HeapCell::notifyNeedsDestruction() const
+{
+    ASSERT(!isPreciseAllocation());
+    ASSERT(destructionMode() == MayNeedDestruction);
+    markedBlock().handle().setIsDestructible(true);
+}
+
 } // namespace JSC
 

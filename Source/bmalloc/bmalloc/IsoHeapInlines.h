@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "BPlatform.h"
 #include "DeferredDecommitInlines.h"
 #include "DeferredTriggerInlines.h"
@@ -176,3 +178,4 @@ using __makeBisoMallocedInlineMacroSemicolonifier BUNUSED_TYPE_ALIAS = int
 
 } } // namespace bmalloc::api
 
+#endif // !BUSE(TZONE)

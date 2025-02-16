@@ -5,7 +5,7 @@ function foo(x) {
 noInline(foo);
 
 // Warm up up to create array storage.
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = foo(10);
     array.__defineSetter__(0, function(v) { });
 }
@@ -24,6 +24,6 @@ function test(size) {
         throw "Error: array is in wierd state: " + result;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(10);
 }

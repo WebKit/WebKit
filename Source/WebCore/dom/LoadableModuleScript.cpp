@@ -35,13 +35,13 @@
 
 namespace WebCore {
 
-Ref<LoadableModuleScript> LoadableModuleScript::create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriorityHint, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+Ref<LoadableModuleScript> LoadableModuleScript::create(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
 {
-    return adoptRef(*new LoadableModuleScript(nonce, integrity, policy, fetchPriorityHint, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree));
+    return adoptRef(*new LoadableModuleScript(nonce, integrity, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree));
 }
 
-LoadableModuleScript::LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriorityHint, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
-    : LoadableScript(nonce, policy, fetchPriorityHint, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
+LoadableModuleScript::LoadableModuleScript(const AtomString& nonce, const AtomString& integrity, ReferrerPolicy policy, RequestPriority fetchPriority, const AtomString& crossOriginMode, const AtomString& charset, const AtomString& initiatorType, bool isInUserAgentShadowTree)
+    : LoadableScript(nonce, policy, fetchPriority, crossOriginMode, charset, initiatorType, isInUserAgentShadowTree)
     , m_parameters(ModuleFetchParameters::create(JSC::ScriptFetchParameters::Type::JavaScript, integrity, /* isTopLevelModule */ true))
 {
 }

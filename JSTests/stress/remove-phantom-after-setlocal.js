@@ -7,7 +7,7 @@ function foo(o) {
 
 noInline(foo);
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({f:null});
     if (result !== false)
         throw "Error: bogus result in loop";

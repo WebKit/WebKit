@@ -22,7 +22,7 @@ function m() { return 3; }
 
 var funcs = [a, b, c, d, e, f, g, h, i, l, m, Array];
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     foo(funcs[i % funcs.length], 1);
 
 var result = null;

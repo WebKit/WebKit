@@ -65,7 +65,9 @@ public:
         uint32_t maxComputeWorkgroupSizeX,
         uint32_t maxComputeWorkgroupSizeY,
         uint32_t maxComputeWorkgroupSizeZ,
-        uint32_t maxComputeWorkgroupsPerDimension)
+        uint32_t maxComputeWorkgroupsPerDimension,
+        uint32_t maxStorageBuffersInFragmentStage,
+        uint32_t maxStorageTexturesInFragmentStage)
     {
         return adoptRef(*new SupportedLimits(
             maxTextureDimension1D,
@@ -99,7 +101,9 @@ public:
             maxComputeWorkgroupSizeX,
             maxComputeWorkgroupSizeY,
             maxComputeWorkgroupSizeZ,
-            maxComputeWorkgroupsPerDimension));
+            maxComputeWorkgroupsPerDimension,
+            maxStorageBuffersInFragmentStage,
+            maxStorageTexturesInFragmentStage));
     }
 
     static Ref<SupportedLimits> clone(const SupportedLimits& limits)
@@ -136,7 +140,9 @@ public:
             limits.maxComputeWorkgroupSizeX(),
             limits.maxComputeWorkgroupSizeY(),
             limits.maxComputeWorkgroupSizeZ(),
-            limits.maxComputeWorkgroupsPerDimension()));
+            limits.maxComputeWorkgroupsPerDimension(),
+            limits.maxStorageBuffersInFragmentStage(),
+            limits.maxStorageTexturesInFragmentStage()));
     }
 
     uint32_t maxTextureDimension1D() const { return m_maxTextureDimension1D; }
@@ -171,6 +177,8 @@ public:
     uint32_t maxComputeWorkgroupSizeY() const { return m_maxComputeWorkgroupSizeY; }
     uint32_t maxComputeWorkgroupSizeZ() const { return m_maxComputeWorkgroupSizeZ; }
     uint32_t maxComputeWorkgroupsPerDimension() const { return m_maxComputeWorkgroupsPerDimension; }
+    uint32_t maxStorageBuffersInFragmentStage() const { return m_maxStorageBuffersInFragmentStage; }
+    uint32_t maxStorageTexturesInFragmentStage() const { return m_maxStorageTexturesInFragmentStage; }
 
 private:
     SupportedLimits(
@@ -205,7 +213,9 @@ private:
         uint32_t maxComputeWorkgroupSizeX,
         uint32_t maxComputeWorkgroupSizeY,
         uint32_t maxComputeWorkgroupSizeZ,
-        uint32_t maxComputeWorkgroupsPerDimension)
+        uint32_t maxComputeWorkgroupsPerDimension,
+        uint32_t maxStorageBuffersInFragmentStage,
+        uint32_t maxStorageTexturesInFragmentStage)
             : m_maxTextureDimension1D(maxTextureDimension1D)
             , m_maxTextureDimension2D(maxTextureDimension2D)
             , m_maxTextureDimension3D(maxTextureDimension3D)
@@ -238,6 +248,8 @@ private:
             , m_maxComputeWorkgroupSizeY(maxComputeWorkgroupSizeY)
             , m_maxComputeWorkgroupSizeZ(maxComputeWorkgroupSizeZ)
             , m_maxComputeWorkgroupsPerDimension(maxComputeWorkgroupsPerDimension)
+            , m_maxStorageBuffersInFragmentStage(maxStorageBuffersInFragmentStage)
+            , m_maxStorageTexturesInFragmentStage(maxStorageTexturesInFragmentStage)
     {
     }
 
@@ -278,6 +290,8 @@ private:
     uint32_t m_maxComputeWorkgroupSizeY { 0 };
     uint32_t m_maxComputeWorkgroupSizeZ { 0 };
     uint32_t m_maxComputeWorkgroupsPerDimension { 0 };
+    uint32_t m_maxStorageBuffersInFragmentStage { 0 };
+    uint32_t m_maxStorageTexturesInFragmentStage { 0 };
 };
 
 } // namespace WebCore::WebGPU

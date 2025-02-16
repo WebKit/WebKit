@@ -182,12 +182,12 @@ void WebExtensionAPIStorageArea::set(WebPageProxyIdentifier webPageProxyIdentifi
     });
 
     if (keyWithError) {
-        *outExceptionString = toErrorString(nil, [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"it is not JSON-serializable");
+        *outExceptionString = toErrorString(nullString(), [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"it is not JSON-serializable");
         return;
     }
 
     if (m_type == WebExtensionDataType::Sync && anyItemsExceedQuota(serializedData, webExtensionStorageAreaSyncQuotaBytesPerItem, &keyWithError)) {
-        *outExceptionString = toErrorString(nil, [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"it exceeded maximum size for a single item");
+        *outExceptionString = toErrorString(nullString(), [NSString stringWithFormat:@"items[`%@`]", keyWithError], @"it exceeded maximum size for a single item");
         return;
     }
 
@@ -241,7 +241,7 @@ void WebExtensionAPIStorageArea::setAccessLevel(WebPageProxyIdentifier webPagePr
 
     NSString *accessLevelString = accessOptions[accessLevelKey];
     if (![accessLevelString isEqualToString:accessLevelTrustedContexts] && ![accessLevelString isEqualToString:accessLevelTrustedAndUntrustedContexts]) {
-        *outExceptionString = toErrorString(nil, @"accessLevel", @"it must specify either 'TRUSTED_CONTEXTS' or 'TRUSTED_AND_UNTRUSTED_CONTEXTS'");
+        *outExceptionString = toErrorString(nullString(), @"accessLevel", @"it must specify either 'TRUSTED_CONTEXTS' or 'TRUSTED_AND_UNTRUSTED_CONTEXTS'");
         return;
     }
 

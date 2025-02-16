@@ -96,7 +96,7 @@ private:
     RefPtr<Inspector::AnimationBackendDispatcher> m_backendDispatcher;
 
     Inspector::InjectedScriptManager& m_injectedScriptManager;
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
 
     MemoryCompactRobinHoodHashMap<String, WebAnimation*> m_animationIdMap;
 

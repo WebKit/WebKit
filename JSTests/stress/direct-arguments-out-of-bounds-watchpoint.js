@@ -13,7 +13,7 @@ noInline(args);
 shouldBe(args(), undefined);
 shouldBe(args(0), undefined);
 shouldBe(args(0, 1), 1);
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(args(), undefined);
 Object.prototype[1] = 42;
 shouldBe(args(), 42);

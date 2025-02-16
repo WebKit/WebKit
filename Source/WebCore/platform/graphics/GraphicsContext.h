@@ -29,8 +29,8 @@
 #include "ControlPart.h"
 #include "DashArray.h"
 #include "DestinationColorSpace.h"
-#include "DisplayListItem.h"
 #include "FloatRect.h"
+#include "FloatSegment.h"
 #include "FontCascade.h"
 #include "GraphicsContextState.h"
 #include "Image.h"
@@ -61,7 +61,6 @@ class VideoFrame;
 
 namespace DisplayList {
 class DrawNativeImage;
-class ResourceHeap;
 }
 
 class GraphicsContext {
@@ -196,6 +195,7 @@ public:
 #endif
 
     virtual RenderingMode renderingMode() const { return RenderingMode::Unaccelerated; }
+    WEBCORE_EXPORT RenderingMode renderingModeForCompatibleBuffer() const;
 
     // Pixel Snapping
 
@@ -313,12 +313,11 @@ public:
     WEBCORE_EXPORT virtual void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&);
 
     WEBCORE_EXPORT FloatRect computeUnderlineBoundsForText(const FloatRect&, bool printing);
-    WEBCORE_EXPORT void drawLineForText(const FloatRect&, bool printing, bool doubleLines = false, StrokeStyle = StrokeStyle::SolidStroke);
-    virtual void drawLinesForText(const FloatPoint&, float thickness, const DashArray& widths, bool printing, bool doubleLines = false, StrokeStyle = StrokeStyle::SolidStroke) = 0;
+    WEBCORE_EXPORT void drawLineForText(const FloatRect&, bool isPrinting, bool doubleLines = false, StrokeStyle = StrokeStyle::SolidStroke);
+    // The `origin` defines the line origin point.
+    // The `lineSegments` defines the start and end offset of each segment along the line.
+    virtual void drawLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment> lineSegments, bool isPrinting, bool doubleLines, StrokeStyle) = 0;
     virtual void drawDotsForDocumentMarker(const FloatRect&, DocumentMarkerLineStyle) = 0;
-
-    // DisplayList
-    WEBCORE_EXPORT virtual void drawDisplayListItems(const Vector<DisplayList::Item>&, const DisplayList::ResourceHeap&, ControlFactory&, const FloatPoint& destination);
 
     // Transparency Layers
 
@@ -391,6 +390,16 @@ protected:
     float dashedLinePatternWidthForStrokeWidth(float) const;
     float dashedLinePatternOffsetForPatternAndStrokeWidth(float patternWidth, float strokeWidth) const;
     Vector<FloatPoint> centerLineAndCutOffCorners(bool isVerticalLine, float cornerWidth, FloatPoint point1, FloatPoint point2) const;
+
+    struct RectsAndStrokeColor {
+#if USE(CG)
+        Vector<CGRect, 4> rects;
+#else
+        Vector<FloatRect, 4> rects;
+#endif
+        Color strokeColor;
+    };
+    RectsAndStrokeColor computeRectsAndStrokeColorForLinesForText(const FloatPoint& origin, float thickness, std::span<const FloatSegment>, bool isPrinting, bool doubleLines, StrokeStyle);
 
     GraphicsContextState m_state;
 private:

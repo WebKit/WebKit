@@ -51,8 +51,8 @@ WI.ConsoleObserver = class ConsoleObserver extends InspectorBackend.Dispatcher
     heapSnapshot(timestamp, snapshotStringData, title)
     {
         let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-        workerProxy.createSnapshot(snapshotStringData, title || null, ({objectId, snapshot: serializedSnapshot}) => {
-            let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+        workerProxy.createSnapshot(this._target.identifier, snapshotStringData, title || null, ({objectId, snapshot: serializedSnapshot}) => {
+            let snapshot = WI.HeapSnapshotProxy.deserialize(this._target, objectId, serializedSnapshot);
             snapshot.snapshotStringData = snapshotStringData;
             WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
         });

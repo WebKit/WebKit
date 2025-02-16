@@ -30,6 +30,7 @@
 #include "PDFDocumentLayout.h"
 #include "PDFPageCoverage.h"
 #include "PDFPluginBase.h"
+#include <WebCore/ContextMenuItem.h>
 #include <WebCore/ElementIdentifier.h>
 #include <WebCore/GraphicsLayer.h>
 #include <WebCore/GraphicsLayerClient.h>
@@ -214,6 +215,8 @@ public:
     double minScaleFactor() const final;
     double maxScaleFactor() const final;
 
+    bool shouldSizeToFitContent() const final;
+
 private:
     explicit UnifiedPDFPlugin(WebCore::HTMLPlugInElement&);
     bool isUnifiedPDFPlugin() const override { return true; }
@@ -359,6 +362,7 @@ private:
     Vector<PDFContextMenuItem> displayModeContextMenuItems() const;
     Vector<PDFContextMenuItem> scaleContextMenuItems() const;
     Vector<PDFContextMenuItem> navigationContextMenuItemsForPageAtIndex(PDFDocumentLayout::PageIndex) const;
+    WebCore::ContextMenuAction contextMenuActionFromTag(ContextMenuItemTag) const;
     ContextMenuItemTag toContextMenuItemTag(int tagValue) const;
     void performContextMenuAction(ContextMenuItemTag, const WebCore::IntPoint& contextMenuEventRootViewPoint);
 
@@ -430,6 +434,8 @@ private:
 
     bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) override;
 
+    WebCore::FloatRect absoluteBoundingRectForSmartMagnificationAtPoint(WebCore::FloatPoint) const final;
+
     enum class FirstPageOnly : bool { No, Yes };
     PDFPageCoverage pageCoverageForSelection(PDFSelection *, FirstPageOnly = FirstPageOnly::No) const;
 
@@ -489,11 +495,12 @@ private:
     void revealPDFDestination(PDFDestination *);
     void revealPointInPage(WebCore::FloatPoint pointInPDFPageSpace, PDFDocumentLayout::PageIndex);
     void revealRectInPage(const WebCore::FloatRect& rectInPDFPageSpace, PDFDocumentLayout::PageIndex);
-    void revealPage(PDFDocumentLayout::PageIndex);
+    bool revealPage(PDFDocumentLayout::PageIndex);
     void revealFragmentIfNeeded();
 
     // Only use this if some other function has ensured that the correct page is visible.
-    void scrollToPointInContentsSpace(WebCore::FloatPoint);
+    // `false` can mean a failure or an inconclusive scroll request, though no caller cares about this distinction yet.
+    bool scrollToPointInContentsSpace(WebCore::FloatPoint);
 
     OptionSet<WebCore::TiledBackingScrollability> computeScrollability() const;
 
@@ -536,6 +543,8 @@ private:
 
     void setNeedsRepaintForIncrementalLoad();
     void setNeedsRepaintForAnnotation(PDFAnnotation *, RepaintRequirements);
+
+    void sizeToFitContentsIfNeeded();
 
     // "Up" is inside-out.
     template <typename T>
@@ -596,7 +605,7 @@ private:
     PDFSelection *selectionBetweenPoints(WebCore::FloatPoint fromPoint, PDFPage *fromPage, WebCore::FloatPoint toPoint, PDFPage *toPage) const;
 #endif
 
-    static PageAndPoint selectionCaretPointInPage(PDFSelection *, SelectionEndpoint);
+    PageAndPoint selectionCaretPointInPage(PDFSelection *, SelectionEndpoint) const;
     PageAndPoint selectionCaretPointInPage(SelectionEndpoint) const;
     void resetInitialSelection();
 #endif // PLATFORM(IOS_FAMILY)
@@ -693,8 +702,10 @@ T UnifiedPDFPlugin::convertDown(CoordinateSpace sourceSpace, CoordinateSpace des
         if (destinationSpace == CoordinateSpace::ScrolledContents)
             return mappedValue;
 
-        mappedValue.scale(1 / m_scaleFactor);
-        mappedValue.move(-centeringOffset());
+        if (!shouldSizeToFitContent()) {
+            mappedValue.scale(1 / m_scaleFactor);
+            mappedValue.move(-centeringOffset());
+        }
         FALLTHROUGH;
 
     case CoordinateSpace::Contents:
@@ -757,7 +768,8 @@ T UnifiedPDFPlugin::convertUp(CoordinateSpace sourceSpace, CoordinateSpace desti
         if (destinationSpace == CoordinateSpace::ScrolledContents)
             return mappedValue;
 
-        mappedValue.moveBy(-WebCore::FloatPoint { m_scrollOffset });
+        if (!shouldSizeToFitContent())
+            mappedValue.moveBy(-WebCore::FloatPoint { m_scrollOffset });
         FALLTHROUGH;
 
     case CoordinateSpace::Plugin:

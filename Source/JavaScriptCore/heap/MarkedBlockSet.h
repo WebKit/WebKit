@@ -39,13 +39,13 @@ public:
     void remove(MarkedBlock*);
 
     TinyBloomFilter<uintptr_t> filter() const;
-    const HashSet<MarkedBlock*>& set() const;
+    const UncheckedKeyHashSet<MarkedBlock*>& set() const;
 
 private:
     void recomputeFilter();
 
     TinyBloomFilter<uintptr_t> m_filter;
-    HashSet<MarkedBlock*> m_set;
+    UncheckedKeyHashSet<MarkedBlock*> m_set;
 };
 
 inline void MarkedBlockSet::add(MarkedBlock* block)
@@ -65,8 +65,8 @@ inline void MarkedBlockSet::remove(MarkedBlock* block)
 inline void MarkedBlockSet::recomputeFilter()
 {
     TinyBloomFilter<uintptr_t> filter;
-    for (HashSet<MarkedBlock*>::iterator it = m_set.begin(); it != m_set.end(); ++it)
-        filter.add(reinterpret_cast<uintptr_t>(*it));
+    for (auto* block : m_set)
+        filter.add(reinterpret_cast<uintptr_t>(block));
     m_filter = filter;
 }
 
@@ -75,7 +75,7 @@ inline TinyBloomFilter<uintptr_t> MarkedBlockSet::filter() const
     return m_filter;
 }
 
-inline const HashSet<MarkedBlock*>& MarkedBlockSet::set() const
+inline const UncheckedKeyHashSet<MarkedBlock*>& MarkedBlockSet::set() const
 {
     return m_set;
 }

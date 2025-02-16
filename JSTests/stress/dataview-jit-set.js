@@ -74,7 +74,7 @@ function test() {
     let arr = new Uint16Array(buffer);
     let dv = new DataView(buffer);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessUint16(0xfaba));
         assert(arr[0] === 0xfaba);
 
@@ -146,7 +146,7 @@ function test2() {
     let arr = new Uint16Array(buffer);
     let dv = new DataView(buffer);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessUint16(0xfaba));
         assert(arr[0] === 0xfaba);
 
@@ -230,7 +230,7 @@ function test3() {
     let arr2 = new Int32Array(buffer);
     let dv = new DataView(buffer);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessUint32(0xffffffff));
         assert(arr[0] === 0xffffffff);
         assert(arr2[0] === -1);
@@ -280,7 +280,7 @@ function test4() {
     let arr2 = new Int32Array(buffer);
     let dv = new DataView(buffer);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessUint32(0xffffffff));
         assert(arr[0] === 0xffffffff);
         assert(arr2[0] === -1);
@@ -343,7 +343,7 @@ function test5() {
     let f32_exponent_bits = 0x7F800000;
     let f32_fraction_bits = 0x007FFFFF;
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessFloat32(1.5));
         assert(arr[0] === 1.5);
 
@@ -407,7 +407,7 @@ function test6() {
     let arr = new Float64Array(buffer);
     let dv = new DataView(buffer);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         storeLittleEndian(dv, 0, adjustForEndianessFloat64(NaN));
         assert(isNaN(arr[0]));
         // The NaN we stored should be a pure NaN, so that's what we should get
@@ -450,7 +450,7 @@ function test7() {
     let arr2 = new Int8Array(buffer);
     let dv = new DataView(buffer);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         store(dv, 0, 0xff);
         assert(arr[0] === 0xff);
         assert(arr2[0] === -1);
@@ -481,7 +481,7 @@ function test8() {
     let arr2 = new Int8Array(buffer);
     let dv = new DataView(buffer);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         store(dv, 0, 0xff);
         assert(arr[0] === 0xff);
         assert(arr2[0] === -1);

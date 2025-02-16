@@ -21,59 +21,78 @@
 #include "GstAllocatorFastMalloc.h"
 
 #include <gst/gst.h>
+#include <wtf/FastMalloc.h>
+#include <wtf/MallocSpan.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/glib/WTFGType.h>
 
 typedef struct {
+    // Instance of the base GstMemory class (we're effectively subclassing it, not unlike GstMemorySystem).
     GstMemory base;
-
-    uint8_t* data;
+    // Span to the tail of an GstMemoryFastMalloc allocation block where the user memory contents will be stored.
+    // gstMemoryFastMallocNew() will allocate enough space to fit such tail after GstMemoryFastMalloc.
+    // gstAllocatorFastMallocMemShare() only allocates enough space for the GstMemoryFastMalloc struct and
+    // instead shares the `data` span with the original (parent) GstMemoryFastMalloc.
+    std::span<uint8_t> data;
 } GstMemoryFastMalloc;
+//
+// Note: when allocating GstMemoryFastMalloc we also allocate a long enough tail to hold the contents
+// the user will store. That tail is what will be returned by our map() function.
+
+typedef struct {
+} GstAllocatorFastMallocPrivate;
 
 typedef struct {
     GstAllocator parent;
+    GstAllocatorFastMallocPrivate* priv;
 } GstAllocatorFastMalloc;
 
 typedef struct {
     GstAllocatorClass parent;
 } GstAllocatorFastMallocClass;
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-G_DEFINE_TYPE(GstAllocatorFastMalloc, gst_allocator_fast_malloc, GST_TYPE_ALLOCATOR)
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+WEBKIT_DEFINE_TYPE(GstAllocatorFastMalloc, gst_allocator_fast_malloc, GST_TYPE_ALLOCATOR)
+
+#define WEBKIT_GST_ALLOCATOR_FAST_MALLOC_CAST(p) reinterpret_cast<GstAllocatorFastMalloc*>(p)
+#define GST_MEMORY_FAST_MALLOC_CAST(p) reinterpret_cast<GstMemoryFastMalloc*>(p)
 
 static GstMemoryFastMalloc* gstMemoryFastMallocNew(GstAllocator* allocator, gsize size, gsize alignment, gsize offset, gsize padding, GstMemoryFlags flags)
 {
-    // alignment should be a (power-of-two - 1).
+    ASSERT(G_TYPE_CHECK_INSTANCE_TYPE(allocator, gst_allocator_fast_malloc_get_type()));
+
+    // Alignment should be a (power-of-two - 1). That is GStreamer's convention.
     alignment |= gst_memory_alignment;
     ASSERT(!((alignment + 1) & alignment));
 
     // GStreamer's allocator requires heap allocations.
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-    gsize headerSize = (sizeof(GstMemoryFastMalloc) + alignment) & ~alignment;
-    gsize allocationSize = offset + size + padding;
+    // The block we get from FastMalloc consists of:
+    // (1) *Header*: GstMemoryFastMalloc struct, plus any extra space needed to satisfy alignment.
+    gsize headerSize = (sizeof(GstMemoryFastMalloc) + alignment) & ~alignment; // Rounds up to the nearest alignment unit.
+    // (2) *Tail*: the memory that is accessible to the user via GstMemory.map().
+    gsize tailSize = offset + size + padding;
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    auto* memory = static_cast<GstMemoryFastMalloc*>(tryFastAlignedMalloc(alignment + 1, headerSize + allocationSize));
-    if (!memory)
+    auto totalSize = headerSize + tailSize;
+    auto storage = MallocSpan<uint8_t, FastAlignedMalloc>::tryAlignedMalloc(alignment + 1 /* Power of 2 */, totalSize);
+    if (!storage)
         return nullptr;
+    auto wholeAllocation = storage.leakSpan();
 
-    memory->data = reinterpret_cast<uint8_t*>(memory) + headerSize;
+    auto& header = WTF::reinterpretCastSpanStartTo<GstMemoryFastMalloc>(wholeAllocation);
+    header.data = wholeAllocation.subspan(headerSize);
 
     if (offset && (flags & GST_MEMORY_FLAG_ZERO_PREFIXED))
-        std::memset(memory->data, 0, offset);
+        memsetSpan(header.data.subspan(0, offset), 0);
     if (padding && (flags & GST_MEMORY_FLAG_ZERO_PADDED))
-        std::memset(memory->data + offset + size, 0, padding);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        memsetSpan(header.data.subspan(offset + size, padding), 0);
 
-    gst_memory_init(GST_MEMORY_CAST(memory), flags, allocator, nullptr, allocationSize, alignment, offset, size);
-
-    return memory;
+    gst_memory_init(&header.base, flags, allocator, nullptr, tailSize, alignment, offset, size);
+    return &header;
 }
 
 static GstMemory* gstAllocatorFastMallocAlloc(GstAllocator* allocator, gsize size, GstAllocationParams* params)
 {
-    ASSERT(G_TYPE_CHECK_INSTANCE_TYPE(allocator, gst_allocator_fast_malloc_get_type()));
-
     return GST_MEMORY_CAST(gstMemoryFastMallocNew(allocator, size, params->align, params->prefix, params->padding, params->flags));
 }
 
@@ -88,39 +107,41 @@ static void gstAllocatorFastMallocFree(GstAllocator* allocator, GstMemory* memor
     fastAlignedFree(memory);
 }
 
-static gpointer gstAllocatorFastMallocMemMap(GstMemoryFastMalloc* memory, gsize, GstMapFlags)
+static gpointer gstAllocatorFastMallocMemMap(GstMemory* baseMemory, gsize, GstMapFlags)
 {
-    return memory->data;
+    auto memory = GST_MEMORY_FAST_MALLOC_CAST(baseMemory);
+    return memory->data.data();
 }
 
-static void gstAllocatorFastMallocMemUnmap(GstMemoryFastMalloc*)
+static void gstAllocatorFastMallocMemUnmap(GstMemory*)
 {
 }
 
-static GstMemoryFastMalloc* gstAllocatorFastMallocMemCopy(GstMemoryFastMalloc* memory, gssize offset, gsize size)
+static GstMemory* gstAllocatorFastMallocMemCopy(GstMemory* baseMemory, gssize offset, gssize size)
 {
-    if (size == static_cast<gsize>(-1))
+    auto memory = GST_MEMORY_FAST_MALLOC_CAST(baseMemory);
+    if (size == static_cast<gssize>(-1))
         size = memory->base.size > static_cast<gsize>(offset) ? memory->base.size - offset : 0;
 
     auto* copy = gstMemoryFastMallocNew(memory->base.allocator, size, memory->base.align, 0, 0, static_cast<GstMemoryFlags>(0));
     if (!copy)
         return nullptr;
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    std::memcpy(copy->data, memory->data + memory->base.offset + offset, size);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-    return copy;
+    auto destinationSpan = copy->data.subspan(0, size);
+    memcpySpan(destinationSpan, memory->data.subspan(memory->base.offset + offset, size));
+    return GST_MEMORY_CAST(copy);
 }
 
-static GstMemoryFastMalloc* gstAllocatorFastMallocMemShare(GstMemoryFastMalloc* memory, gssize offset, gsize size)
+static GstMemory* gstAllocatorFastMallocMemShare(GstMemory* baseMemory, gssize offset, gssize size)
 {
+    auto memory = GST_MEMORY_FAST_MALLOC_CAST(baseMemory);
     GstMemoryFastMalloc* sharedMemory;
     if (!tryFastMalloc(sizeof(GstMemoryFastMalloc)).getValue(sharedMemory))
         return nullptr;
 
     sharedMemory->data = memory->data;
 
-    if (size == static_cast<gsize>(-1))
+    if (size == static_cast<gssize>(-1))
         size = memory->base.size - offset;
 
     auto* parent = memory->base.parent ? memory->base.parent : GST_MEMORY_CAST(memory);
@@ -129,39 +150,55 @@ static GstMemoryFastMalloc* gstAllocatorFastMallocMemShare(GstMemoryFastMalloc* 
         memory->base.allocator, parent, memory->base.maxsize, memory->base.align,
         memory->base.offset + offset, size);
 
-    return sharedMemory;
+    return GST_MEMORY_CAST(sharedMemory);
 }
 
-static gboolean gstAllocatorFastMallocMemIsSpan(GstMemoryFastMalloc* memory, GstMemoryFastMalloc* other, gsize* offset)
+// Will be called by gst_memory_is_span() after checking that both GstMemories have
+// the same allocators and they both share the same non-null parent.
+//
+// Returns whether the visible end of the first memory coincides with the visible
+// start of the second memory and fills `offset` with the offset of the first memory
+// within the visible span of the parent memory.
+//
+// This is used to avoid expensive concatenation: If the function returns true, it
+// means you can use gst_memory_share() on the parent memory with the filled offset
+// and the combined size of both memories to get a GstMemory that spans both previous
+// memories without doing any copies. See _sysmem_is_span() in GStreamer for reference.
+static gboolean gstAllocatorFastMallocMemIsSpan(GstMemory* _memory1, GstMemory* _memory2, gsize* offset)
 {
+    auto memory1 = GST_MEMORY_FAST_MALLOC_CAST(_memory1);
+    auto memory2 = GST_MEMORY_FAST_MALLOC_CAST(_memory2);
     if (offset) {
-        auto* parent = reinterpret_cast<GstMemoryFastMalloc*>(memory->base.parent);
+        auto parent = GST_MEMORY_FAST_MALLOC_CAST(memory1->base.parent);
         ASSERT(parent);
-        *offset = memory->base.offset - parent->base.offset;
+        *offset = memory1->base.offset - parent->base.offset;
     }
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    return memory->data + memory->base.offset + memory->base.size == other->data + other->base.offset;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    auto visibleSpan1 = memory1->data.subspan(memory1->base.offset, memory1->base.size);
+    auto visibleSpan2 = memory2->data.subspan(memory2->base.offset, memory2->base.size);
+    return visibleSpan1.end() == visibleSpan2.begin();
+}
+
+static void gstAllocatorFastMallocConstructed(GObject* object)
+{
+    G_OBJECT_CLASS(gst_allocator_fast_malloc_parent_class)->constructed(object);
+    GST_OBJECT_FLAG_SET(GST_OBJECT_CAST(object), GST_OBJECT_FLAG_MAY_BE_LEAKED);
+
+    auto allocator = GST_ALLOCATOR_CAST(object);
+    allocator->mem_type = "FastMalloc";
+    allocator->mem_map = gstAllocatorFastMallocMemMap;
+    allocator->mem_unmap = gstAllocatorFastMallocMemUnmap;
+    allocator->mem_copy = gstAllocatorFastMallocMemCopy;
+    allocator->mem_share = gstAllocatorFastMallocMemShare;
+    allocator->mem_is_span = gstAllocatorFastMallocMemIsSpan;
 }
 
 static void gst_allocator_fast_malloc_class_init(GstAllocatorFastMallocClass* klass)
 {
-    auto* gstAllocatorClass = GST_ALLOCATOR_CLASS(klass);
+    auto gobjectClass = G_OBJECT_CLASS(klass);
+    gobjectClass->constructed = gstAllocatorFastMallocConstructed;
+
+    auto gstAllocatorClass = GST_ALLOCATOR_CLASS(klass);
     gstAllocatorClass->alloc = gstAllocatorFastMallocAlloc;
     gstAllocatorClass->free = gstAllocatorFastMallocFree;
-}
-
-static void gst_allocator_fast_malloc_init(GstAllocatorFastMalloc* allocator)
-{
-    auto* baseAllocator = GST_ALLOCATOR_CAST(allocator);
-
-    GST_OBJECT_FLAG_SET(allocator, GST_OBJECT_FLAG_MAY_BE_LEAKED);
-
-    baseAllocator->mem_type = "FastMalloc";
-    baseAllocator->mem_map = reinterpret_cast<GstMemoryMapFunction>(gstAllocatorFastMallocMemMap);
-    baseAllocator->mem_unmap = reinterpret_cast<GstMemoryUnmapFunction>(gstAllocatorFastMallocMemUnmap);
-    baseAllocator->mem_copy = reinterpret_cast<GstMemoryCopyFunction>(gstAllocatorFastMallocMemCopy);
-    baseAllocator->mem_share = reinterpret_cast<GstMemoryShareFunction>(gstAllocatorFastMallocMemShare);
-    baseAllocator->mem_is_span = reinterpret_cast<GstMemoryIsSpanFunction>(gstAllocatorFastMallocMemIsSpan);
 }

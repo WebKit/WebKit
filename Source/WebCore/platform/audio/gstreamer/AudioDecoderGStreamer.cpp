@@ -214,7 +214,7 @@ GStreamerInternalAudioDecoder::GStreamerInternalAudioDecoder(const String& codec
     bool isParserRequired = !gst_element_factory_can_sink_all_caps(factory, m_inputCaps.get());
 
     static Atomic<uint64_t> counter = 0;
-    auto binName = makeString("audio-decoder-"_s, span(GST_OBJECT_NAME(element.get())), '-', counter.exchangeAdd(1));
+    auto binName = makeString("audio-decoder-"_s, unsafeSpan(GST_OBJECT_NAME(element.get())), '-', counter.exchangeAdd(1));
 
     GRefPtr<GstElement> harnessedElement = gst_bin_new(binName.ascii().data());
     auto audioconvert = gst_element_factory_make("audioconvert", nullptr);

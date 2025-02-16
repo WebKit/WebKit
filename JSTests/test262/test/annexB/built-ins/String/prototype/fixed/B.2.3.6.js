@@ -5,11 +5,11 @@
 // http://mathias.html5.org/tests/javascript/string/
 
 /*---
- description: >
-     String.prototype.fixed returns a string of HTML describing a single HTML
-     teletype text element. The element's content is the `this` value of the
-     function invocation, coerced to a string.
- es6id: B.2.3.6
+description: >
+    String.prototype.fixed returns a string of HTML describing a single HTML
+    teletype text element. The element's content is the `this` value of the
+    function invocation, coerced to a string.
+es6id: B.2.3.6
 ---*/
 
 assert.sameValue('_'.fixed(), '<tt>_</tt>');

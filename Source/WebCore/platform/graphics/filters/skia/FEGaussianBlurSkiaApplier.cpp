@@ -46,10 +46,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FEGaussianBlurSkiaApplier);
 bool FEGaussianBlurSkiaApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
     ASSERT(inputs.size() == 1);
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr sourceImage = input.imageBuffer();
+    RefPtr sourceImage = input->imageBuffer();
     if (!resultImage || !sourceImage)
         return false;
 
@@ -57,12 +57,12 @@ bool FEGaussianBlurSkiaApplier::apply(const Filter& filter, const FilterImageVec
     if (!nativeImage || !nativeImage->platformImage())
         return false;
 
-    FloatSize sigma = FloatSize(m_effect.stdDeviationX(), m_effect.stdDeviationY()) * filter.filterScale();
+    FloatSize sigma = FloatSize(m_effect->stdDeviationX(), m_effect->stdDeviationY()) * filter.filterScale();
 
     SkPaint paint;
     paint.setImageFilter(SkImageFilters::Blur(sigma.width(), sigma.height(), nullptr));
 
-    auto inputOffsetWithinResult = input.absoluteImageRectRelativeTo(result).location();
+    auto inputOffsetWithinResult = input->absoluteImageRectRelativeTo(result).location();
     resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), inputOffsetWithinResult.x(), inputOffsetWithinResult.y(), { }, &paint);
     return true;
 }

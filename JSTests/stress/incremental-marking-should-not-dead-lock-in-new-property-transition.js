@@ -3,7 +3,7 @@
 
 let a = [];
 
-for (let i = 0; i < 1000000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let o = {};
     let p1 = `f${ (Math.random() * 10000000000) | 0 }`
     let p2 = `f${ (Math.random() * 10000000000) | 0 }`

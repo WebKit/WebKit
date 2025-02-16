@@ -40,3 +40,9 @@
 .navigation-bar .item:last-child.text {
     padding-inline-end: 2px;
 }
+
+@media (prefers-color-scheme: dark) {
+    .navigation-bar .item.text {
+        color: var(--text-color-secondary);
+    }
+}

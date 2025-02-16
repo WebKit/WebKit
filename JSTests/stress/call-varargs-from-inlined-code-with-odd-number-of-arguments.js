@@ -16,14 +16,14 @@ function baz(x) {
 
 noInline(baz);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = baz(0);
     if (result != 21586 - 26 * 101)
         throw "Error: bad result: " + result;
 }
 
 // Force recompilation.
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = baz(2147483646);
     if (result != 2147502606)
         throw "Error: bad result: " + result;

@@ -143,6 +143,7 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomStringTable.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if ENABLE(C_LOOP)
 #include "CLoopStackInlines.h"
@@ -174,8 +175,8 @@ static bool enableAssembler()
     if (!Options::useJIT())
         return false;
 
-    char* canUseJITString = getenv("JavaScriptCoreUseJIT");
-    if (canUseJITString && !atoi(canUseJITString))
+    auto canUseJITString = unsafeSpan(getenv("JavaScriptCoreUseJIT"));
+    if (canUseJITString.data() && !parseInteger<int>(canUseJITString).value_or(0))
         return false;
 
     ExecutableAllocator::initializeUnderlyingAllocator();
@@ -681,7 +682,11 @@ static ThunkGenerator thunkGeneratorForIntrinsic(Intrinsic intrinsic)
     case ToLengthIntrinsic:
         return toLengthThunkGenerator;
     case WasmFunctionIntrinsic:
+#if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
         return Wasm::wasmFunctionThunkGenerator;
+#else
+        return nullptr;
+#endif
     default:
         return nullptr;
     }

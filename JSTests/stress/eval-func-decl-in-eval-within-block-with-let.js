@@ -29,7 +29,7 @@ function foo() {
 }
 
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     foo();
     assertThrow(() => f, "ReferenceError: Can't find variable: f");
 }
@@ -43,7 +43,7 @@ function boo() {
     assert(typeof l, 'function');
 }
 
-for (var i = 0; i < 10000; i++){
+for (var i = 0; i < testLoopCount; i++){
     boo();
     assertThrow(() => l, "ReferenceError: Can't find variable: l");
 }
@@ -51,7 +51,7 @@ for (var i = 0; i < 10000; i++){
 function goo() {
     {
         let g = 20;
-        eval(" for(var j=0; j < 10000; j++){ function g() { }; } ");
+        eval(" for(var j=0; j < testLoopCount; j++){ function g() { }; } ");
         assert(typeof g, 'number');
     }
     assertThrow(() => g, "ReferenceError: Can't find variable: g");

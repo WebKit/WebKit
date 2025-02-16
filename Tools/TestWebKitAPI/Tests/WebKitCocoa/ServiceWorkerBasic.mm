@@ -221,21 +221,16 @@ navigator.serviceWorker.addEventListener("message", function(event) {
     log("Message from worker: " + event.data);
 });
 
-let worker;
 try {
-    navigator.serviceWorker.register('/sw.js').then(function(reg) {
-        worker = reg.installing ? reg.installing : reg.active;
-        postMessageToServiceWorker();
-    }).catch(function(error) {
-        log("Registration failed with: " + error);
-    });
+
+navigator.serviceWorker.register('/sw.js').then(function(reg) {
+    worker = reg.installing ? reg.installing : reg.active;
+    worker.postMessage("Hello from the web page");
+}).catch(function(error) {
+    log("Registration failed with: " + error);
+});
 } catch(e) {
     log("Exception: " + e);
-}
-
-function postMessageToServiceWorker()
-{
-    worker.postMessage('Hello from the web page');
 }
 
 </script>
@@ -2020,14 +2015,7 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-
-    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
-    //  We disable the termination delay so that it takes 2s to drop service worker process assertions.
-    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
-    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
-
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
-    configuration.get().websiteDataStore = dataStore.get();
 
     auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
@@ -2076,14 +2064,6 @@ void testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWor
 
     // The service worker process should take activity based on webView2 process.
     [webView2 _setThrottleStateForTesting: 1];
-
-    // At this point, service worker should be idle so no assertion should be taken.
-    TestWebKitAPI::Util::spinRunLoop(10);
-    EXPECT_TRUE(![webView2 _hasServiceWorkerForegroundActivityForTesting] && ![webView2 _hasServiceWorkerBackgroundActivityForTesting]);
-
-    // We trigger activity again for the service worker.
-    [webView2 evaluateJavaScript:@"postMessageToServiceWorker()" completionHandler: nil];
-
     EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
         [webView2 _setThrottleStateForTesting:1];
         return ![webView2 _hasServiceWorkerForegroundActivityForTesting] && [webView2 _hasServiceWorkerBackgroundActivityForTesting];

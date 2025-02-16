@@ -26,12 +26,15 @@
 #if PLATFORM(IOS_FAMILY) && ENABLE(MODEL_PROCESS)
 
 #import "RemoteLayerTreeViews.h"
+#import <WebCore/Color.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface WKPageHostedModelView : WKCompositingView
 
 @property (nonatomic, retain) UIView *remoteModelView;
+@property (nonatomic) BOOL shouldDisablePortal;
+- (void)applyBackgroundColor:(std::optional<WebCore::Color>)backgroundColor;
 
 @end
 

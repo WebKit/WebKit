@@ -103,7 +103,7 @@ MediaSourcePrivateRemote::~MediaSourcePrivateRemote()
         gpuProcessConnection->connection().removeWorkQueueMessageReceiver(Messages::MediaSourcePrivateRemoteMessageReceiver::messageReceiverName(), m_identifier.toUInt64());
 }
 
-MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, bool, RefPtr<SourceBufferPrivate>& outPrivate)
+MediaSourcePrivate::AddStatus MediaSourcePrivateRemote::addSourceBuffer(const ContentType& contentType, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     RefPtr mediaPlayerPrivate = m_mediaPlayerPrivate.get();
     RefPtr gpuProcessConnection = m_gpuProcessConnection.get();

@@ -24,14 +24,15 @@
 
 #pragma once
 
-#include "CSSCalcTree.h"
-
 namespace WebCore {
 namespace CSSCalc {
 
+struct AnchorSide;
+struct Tree;
+
 // Makes a copy of the tree.
 Tree copy(const Tree&);
-Anchor::Side copy(const Anchor::Side&);
+AnchorSide copy(const AnchorSide&);
 
 } // namespace CSSCalc
 } // namespace WebCore

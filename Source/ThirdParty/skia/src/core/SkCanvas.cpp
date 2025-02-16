@@ -303,11 +303,6 @@ void SkCanvas::resetForNextPicture(const SkIRect& bounds) {
 }
 
 void SkCanvas::init(sk_sp<SkDevice> device) {
-    // SkCanvas.h declares internal storage for the hidden struct MCRec, and this
-    // assert ensure it's sufficient. <= is used because the struct has pointer fields, so the
-    // declared size is an upper bound across architectures. When the size is smaller, more stack
-    static_assert(sizeof(MCRec) <= kMCRecSize);
-
     if (!device) {
         device = sk_make_sp<SkNoPixelsDevice>(SkIRect::MakeEmpty(), fProps);
     }
@@ -2181,7 +2176,7 @@ void SkCanvas::onDrawPath(const SkPath& path, const SkPaint& paint) {
 
     auto layer = this->aboutToDraw(paint, path.isInverseFillType() ? nullptr : &pathBounds);
     if (layer) {
-        this->topDevice()->drawPath(path, layer->paint());
+        this->topDevice()->drawPath(path, layer->paint(), false);
     }
 }
 

@@ -93,7 +93,7 @@ private:
     Timer m_inputNotificationTimer;
 
 #if HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
-    HashSet<IOHIDDeviceRef> m_gameControllerManagedGamepads;
+    UncheckedKeyHashSet<IOHIDDeviceRef> m_gameControllerManagedGamepads;
 #endif // HAVE(MULTIGAMEPADPROVIDER_SUPPORT)
 };
 

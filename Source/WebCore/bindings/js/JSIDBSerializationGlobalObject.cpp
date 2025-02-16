@@ -55,7 +55,7 @@ void JSIDBSerializationGlobalObject::finishCreation(VM& vm)
 
 GCClient::IsoSubspace* JSIDBSerializationGlobalObject::subspaceForImpl(VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->idbSerializationSpace();
+    return &downcast<JSVMClientData>(vm.clientData)->idbSerializationSpace();
 }
 
 void JSIDBSerializationGlobalObject::destroy(JSCell* cell)

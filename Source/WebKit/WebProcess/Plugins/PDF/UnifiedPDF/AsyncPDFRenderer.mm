@@ -53,8 +53,8 @@ Ref<AsyncPDFRenderer> AsyncPDFRenderer::create(PDFPresentationController& presen
 // in-flight renders can't be canceled when resizing or zooming makes them invalid.
 AsyncPDFRenderer::AsyncPDFRenderer(PDFPresentationController& presentationController)
     : m_presentationController(presentationController)
-    , m_paintingWorkQueue(ConcurrentWorkQueue::create("WebKit: PDF Painting Work Queue"_s, WorkQueue::QOS::UserInteractive)) // Maybe make this concurrent?
-    , m_maxConcurrentTileRenders(std::clamp(WTF::numberOfProcessorCores() - 2, 4, 16))
+    , m_workQueue(ConcurrentWorkQueue::create("WebKit: PDF Painting Work Queue"_s, WorkQueue::QOS::UserInteractive))
+    , m_workQueueSlots(std::clamp(WTF::numberOfProcessorCores() - 2, 4, 16))
 {
 }
 
@@ -129,7 +129,7 @@ void AsyncPDFRenderer::setShowDebugBorders(bool showDebugBorders)
     m_showDebugBorders = showDebugBorders;
 }
 
-static RefPtr<NativeImage> renderPDFPagePreview(RetainPtr<PDFDocument>&& pdfDocument, const PagePreviewRequest& request)
+static RefPtr<NativeImage> renderPDFPagePreview(RetainPtr<PDFDocument>&& pdfDocument, const PDFPagePreviewRenderRequest& request)
 {
     ASSERT(!isMainRunLoop());
     RefPtr imageBuffer = ImageBuffer::create(request.normalizedPageBounds.size(), RenderingMode::Unaccelerated, RenderingPurpose::Unspecified, request.scale, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
@@ -162,49 +162,42 @@ void AsyncPDFRenderer::generatePreviewImageForPage(PDFDocumentLayout::PageIndex 
     if (!pdfDocument)
         return;
 
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::generatePreviewImageForPage " << pageIndex << " (have request " << m_enqueuedPagePreviews.contains(pageIndex) << ")");
+    PDFPagePreviewRenderKey key { pageIndex };
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::generatePreviewImageForPage " << pageIndex << " (have request " << m_pendingPagePreviews.contains(key) << ")");
 
-    if (m_enqueuedPagePreviews.contains(pageIndex))
+    if (m_pendingPagePreviews.contains(key))
         return;
 
     auto pageBounds = presentationController->layoutBoundsForPageAtIndex(pageIndex);
     pageBounds.setLocation({ });
 
-    auto pagePreviewRequest = PagePreviewRequest { pageIndex, pageBounds, scale, m_showDebugBorders };
-    m_enqueuedPagePreviews.set(pageIndex, pagePreviewRequest);
-
-    protectedPaintingWorkQueue()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, pdfDocument = WTFMove(pdfDocument), pagePreviewRequest]() mutable {
-        RefPtr image = renderPDFPagePreview(WTFMove(pdfDocument), pagePreviewRequest);
-        callOnMainRunLoop([weakThis = WTFMove(weakThis), image = WTFMove(image), pagePreviewRequest]() mutable {
-            RefPtr protectedThis = weakThis.get();
-            if (!protectedThis)
-                return;
-            protectedThis->didCompletePagePreviewRender(WTFMove(image), pagePreviewRequest);
-        });
-    });
+    PDFPagePreviewRenderRequest request { pageIndex, pageBounds, scale, m_showDebugBorders };
+    m_pendingPagePreviews.set(key, request);
+    m_pendingPagePreviewOrder.appendOrMoveToLast(key);
+    serviceRequestQueues();
 }
 
 void AsyncPDFRenderer::removePreviewForPage(PDFDocumentLayout::PageIndex pageIndex)
 {
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::removePreviewForPage " << pageIndex);
-
-    m_enqueuedPagePreviews.remove(pageIndex);
-    m_pagePreviews.remove(pageIndex);
+    PDFPagePreviewRenderKey key { pageIndex };
+    m_pendingPagePreviewOrder.remove(key);
+    m_pendingPagePreviews.remove(key);
+    m_pagePreviews.remove(key);
 }
 
-void AsyncPDFRenderer::didCompletePagePreviewRender(RefPtr<NativeImage>&& image, const PagePreviewRequest& pagePreviewRequest)
+void AsyncPDFRenderer::didCompletePagePreviewRender(RefPtr<NativeImage>&& image, const PDFPagePreviewRenderRequest& request)
 {
     ASSERT(isMainRunLoop());
     RefPtr presentationController = m_presentationController.get();
     if (!presentationController)
         return;
-
-    auto pageIndex = pagePreviewRequest.pageIndex;
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompletePagePreviewRender for page " << pageIndex << " (have request " << m_enqueuedPagePreviews.contains(pageIndex) << ")");
-
-    m_enqueuedPagePreviews.remove(pageIndex);
-    m_pagePreviews.set(pageIndex, RenderedPagePreview { WTFMove(image), pagePreviewRequest.scale });
-    presentationController->didGeneratePreviewForPage(pageIndex);
+    PDFPagePreviewRenderKey key { request.pageIndex };
+    if (!m_pendingPagePreviews.contains(key))
+        return;
+    m_pendingPagePreviews.remove(key);
+    m_pagePreviews.set(key, RenderedPDFPagePreview { WTFMove(image), request.scale });
+    presentationController->didGeneratePreviewForPage(key.pageIndex);
 }
 
 bool AsyncPDFRenderer::renderInfoIsValidForTile(TiledBacking& tiledBacking, const TileForGrid& tileInfo, const TileRenderInfo& renderInfo) const
@@ -240,7 +233,7 @@ std::optional<PDFTileRenderIdentifier> AsyncPDFRenderer::enqueueTileRenderForTil
 
     bool inScaleChangeRepaint = revalidationStateForGrid(gridIdentifier).inScaleChangeRepaint;
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::willRepaintTile " << tileInfo << " rect " << tileRect << " (dirty rect " << tileDirtyRect << ") - already queued "
-        << m_currentValidTileRenders.contains(tileInfo) << " have cached tile " << m_rendereredTiles.contains(tileInfo) << " which is valid " << haveValidTile(tileInfo) << " doing scale change " << inScaleChangeRepaint);
+        << m_pendingTileRenders.contains(tileInfo) << " have cached tile " << m_rendereredTiles.contains(tileInfo) << " which is valid " << haveValidTile(tileInfo) << " doing scale change " << inScaleChangeRepaint);
 
     // If we have a tile, we can use it for layer contents.
     if (haveValidTile(tileInfo))
@@ -264,8 +257,8 @@ void AsyncPDFRenderer::willRemoveTile(TiledBacking&, TileGridIdentifier gridIden
 
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::willRemoveTile " << tileInfo << " - in full revalidation " << inFullTileInvalidation);
 
-    m_requestWorkQueue.remove(tileInfo);
-    m_currentValidTileRenders.remove(tileInfo);
+    m_pendingTileRenderOrder.remove(tileInfo);
+    m_pendingTileRenders.remove(tileInfo);
 
     if (inFullTileInvalidation) {
         auto tile = m_rendereredTiles.take(tileInfo);
@@ -295,7 +288,7 @@ void AsyncPDFRenderer::coverageRectDidChange(TiledBacking& tiledBacking, const F
     auto pagePreviewScale = presentationController->scaleForPagePreviews();
 
     for (auto& pageInfo : pageCoverage) {
-        if (m_pagePreviews.contains(pageInfo.pageIndex))
+        if (m_pagePreviews.contains({ pageInfo.pageIndex }))
             continue;
 
         generatePreviewImageForPage(pageInfo.pageIndex, pagePreviewScale);
@@ -304,7 +297,7 @@ void AsyncPDFRenderer::coverageRectDidChange(TiledBacking& tiledBacking, const F
     if (!presentationController->pluginShouldCachePagePreviews())
         removePagePreviewsOutsideCoverageRect(coverageRect, layoutRow);
 
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage << " - preview scale " << pagePreviewScale << " - have " << m_pagePreviews.size() << " page previews and " << m_enqueuedPagePreviews.size() << " enqueued");
+    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::coverageRectDidChange " << coverageRect << " " << pageCoverage << " - preview scale " << pagePreviewScale << " - have " << m_pagePreviews.size() << " page previews and " << m_pendingPagePreviews.size() << " enqueued");
 }
 
 void AsyncPDFRenderer::removePagePreviewsOutsideCoverageRect(const FloatRect& coverageRect, const std::optional<PDFLayoutRow>& layoutRow)
@@ -315,9 +308,10 @@ void AsyncPDFRenderer::removePagePreviewsOutsideCoverageRect(const FloatRect& co
 
     auto pageCoverage = presentationController->pageCoverageForContentsRect(coverageRect, layoutRow);
 
-    PDFPageIndexSet unwantedPageIndices;
-    for (auto pageIndex : m_pagePreviews.keys())
-        unwantedPageIndices.add(pageIndex);
+    using PDFPageIndex = PDFDocumentLayout::PageIndex;
+    HashSet<PDFPageIndex, IntHash<PDFPageIndex>, WTF::UnsignedWithZeroKeyHashTraits<PDFPageIndex>> unwantedPageIndices;
+    for (auto key : m_pagePreviews.keys())
+        unwantedPageIndices.add(key.pageIndex);
 
     for (auto& pageInfo : pageCoverage) {
         auto it = unwantedPageIndices.find(pageInfo.pageIndex);
@@ -341,7 +335,7 @@ void AsyncPDFRenderer::willRevalidateTiles(TiledBacking&, TileGridIdentifier gri
     gridState.inFullTileRevalidation = true;
 }
 
-void AsyncPDFRenderer::didRevalidateTiles(TiledBacking& tiledBacking, TileGridIdentifier gridIdentifier, TileRevalidationType revalidationType, const HashSet<TileIndex>& tilesNeedingDisplay)
+void AsyncPDFRenderer::didRevalidateTiles(TiledBacking& tiledBacking, TileGridIdentifier gridIdentifier, TileRevalidationType revalidationType, const UncheckedKeyHashSet<TileIndex>& tilesNeedingDisplay)
 {
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didRevalidateTiles for grid " << gridIdentifier << " is full revalidation " << (revalidationType == TileRevalidationType::Full) << " scale " << tiledBacking.tilingScaleFactor() << " - tiles to repaint " << tilesNeedingDisplay << " (saved " << m_rendereredTilesForOldState.size() << " old tiles)\n");
 
@@ -414,18 +408,18 @@ void AsyncPDFRenderer::willRemoveGrid(TiledBacking&, TileGridIdentifier gridIden
         return keyValuePair.key.gridIdentifier == gridIdentifier;
     });
 
-    m_currentValidTileRenders.removeIf([gridIdentifier](const auto& keyValuePair) {
+    m_pendingTileRenders.removeIf([gridIdentifier](const auto& keyValuePair) {
         return keyValuePair.key.gridIdentifier == gridIdentifier;
     });
 
     Vector<TileForGrid> requestsToRemove;
-    for (auto& tileRequests : m_requestWorkQueue) {
+    for (auto& tileRequests : m_pendingTileRenderOrder) {
         if (tileRequests.gridIdentifier == gridIdentifier)
             requestsToRemove.append(tileRequests);
     }
 
     for (auto& tile : requestsToRemove)
-        m_requestWorkQueue.remove(tile);
+        m_pendingTileRenderOrder.remove(tile);
 
     m_tileGridToLayerIDMap.remove(gridIdentifier);
 }
@@ -434,8 +428,8 @@ void AsyncPDFRenderer::clearRequestsAndCachedTiles()
 {
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "\nAsyncPDFRenderer::clearRequestsAndCachedTiles - have " << m_rendereredTiles.size() << " rendered tiles");
 
-    m_requestWorkQueue.clear();
-    m_currentValidTileRenders.clear();
+    m_pendingTileRenderOrder.clear();
+    m_pendingTileRenders.clear();
 //    m_rendereredTiles.clear();
 }
 
@@ -462,8 +456,8 @@ std::optional<PDFTileRenderIdentifier> AsyncPDFRenderer::enqueueTileRenderIfNece
 
     // If there's an existing partial render for this tile, we need to override it, uniting partial updates.
     // We can't support multiple full/partial renders per tile since we have no ordering guarantees on which finishes first.
-    auto it = m_currentValidTileRenders.find(tileInfo);
-    if (it != m_currentValidTileRenders.end()) {
+    auto it = m_pendingTileRenders.find(tileInfo);
+    if (it != m_pendingTileRenders.end()) {
         auto& existingRenderInfo = it->value.renderInfo;
 
         // If we already have a full tile paint pending, no need to start a new one.
@@ -474,9 +468,9 @@ std::optional<PDFTileRenderIdentifier> AsyncPDFRenderer::enqueueTileRenderIfNece
     }
 
     auto renderIdentifier = PDFTileRenderIdentifier::generate();
-    m_currentValidTileRenders.set(tileInfo, TileRenderData { renderIdentifier, renderInfo });
-    m_requestWorkQueue.appendOrMoveToLast(tileInfo);
-    serviceRequestQueue();
+    m_pendingTileRenders.set(tileInfo, TileRenderData { renderIdentifier, renderInfo });
+    m_pendingTileRenderOrder.appendOrMoveToLast(tileInfo);
+    serviceRequestQueues();
     return renderIdentifier;
 }
 
@@ -553,39 +547,49 @@ static RefPtr<NativeImage> renderPDFTile(RetainPtr<PDFDocument>&& pdfDocument, c
     return ImageBuffer::sinkIntoNativeImage(WTFMove(tileBuffer));
 }
 
-void AsyncPDFRenderer::serviceRequestQueue()
+void AsyncPDFRenderer::serviceRequestQueues()
 {
     RefPtr presentationController = m_presentationController.get();
     if (!presentationController)
         return;
 
-    while (m_numConcurrentTileRenders < m_maxConcurrentTileRenders) {
-        if (m_requestWorkQueue.isEmpty())
-            break;
-
-        TileForGrid tileInfo = m_requestWorkQueue.takeFirst();
-        auto it = m_currentValidTileRenders.find(tileInfo);
-        if (it == m_currentValidTileRenders.end())
+    while (m_workQueueSlots > 0 && !m_pendingPagePreviewOrder.isEmpty()) {
+        auto key = m_pendingPagePreviewOrder.takeFirst();
+        auto request = m_pendingPagePreviews.getOptional(key);
+        if (!request)
             continue;
-
-        TileRenderData renderData = it->value;
-
-        LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::serviceRequestQueue - rendering tile: " << tileInfo << " renderData: " << renderData << " (" << m_numConcurrentTileRenders << " concurrent renders)");
-
-        ++m_numConcurrentTileRenders;
-
-        protectedPaintingWorkQueue()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, pdfDocument = RetainPtr { presentationController->pluginPDFDocument() }, tileInfo, renderData] mutable {
-            RefPtr image = renderPDFTile(WTFMove(pdfDocument), renderData.renderInfo);
-            callOnMainRunLoop([weakThis = WTFMove(weakThis), image = WTFMove(image), tileInfo, renderData] mutable {
+        m_workQueueSlots--;
+        m_workQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }, pdfDocument = RetainPtr { presentationController->pluginPDFDocument() }, request = WTFMove(*request)] mutable {
+            RefPtr image = renderPDFPagePreview(WTFMove(pdfDocument), request);
+            callOnMainRunLoop([weakThis = WTFMove(weakThis), image = WTFMove(image), request = WTFMove(request)] mutable {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis)
                     return;
-                protectedThis->didCompleteTileRender(WTFMove(image), tileInfo, renderData);
+                protectedThis->m_workQueueSlots++;
+                protectedThis->serviceRequestQueues();
+                protectedThis->didCompletePagePreviewRender(WTFMove(image), request);
             });
         });
     }
 
-    LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::serviceRequestQueue() - " << m_numConcurrentTileRenders << " renders in flight, " << m_requestWorkQueue.size() << " in queue");
+    while (m_workQueueSlots > 0 && !m_pendingTileRenderOrder.isEmpty()) {
+        TileForGrid tileInfo = m_pendingTileRenderOrder.takeFirst();
+        auto renderData = m_pendingTileRenders.getOptional(tileInfo);
+        if (!renderData)
+            continue;
+        m_workQueueSlots--;
+        m_workQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }, pdfDocument = RetainPtr { presentationController->pluginPDFDocument() }, tileInfo, renderData = WTFMove(*renderData)] mutable {
+            RefPtr image = renderPDFTile(WTFMove(pdfDocument), renderData.renderInfo);
+            callOnMainRunLoop([weakThis = WTFMove(weakThis), image = WTFMove(image), tileInfo, renderData = WTFMove(renderData)] mutable {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
+                    return;
+                protectedThis->m_workQueueSlots++;
+                protectedThis->serviceRequestQueues();
+                protectedThis->didCompleteTileRender(WTFMove(image), tileInfo, renderData);
+            });
+        });
+    }
 }
 
 // The image may be null if allocation on the decoding thread failed.
@@ -593,19 +597,16 @@ void AsyncPDFRenderer::didCompleteTileRender(RefPtr<NativeImage>&& image, const 
 {
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::didCompleteTileRender - got results for tile: " << tileInfo << " renderData: " << renderData << " (" << m_rendereredTiles.size() << " tiles in cache).");
 
-    ASSERT(m_numConcurrentTileRenders);
-    --m_numConcurrentTileRenders;
-    serviceRequestQueue();
     auto& [renderIdentifier, renderInfo] = renderData;
     trackRenderCompletionForStaleTileMaintenance(tileInfo.gridIdentifier, renderIdentifier);
 
     {
-        auto it = m_currentValidTileRenders.find(tileInfo);
-        if (it == m_currentValidTileRenders.end() || it->value.renderIdentifier != renderIdentifier) {
+        auto it = m_pendingTileRenders.find(tileInfo);
+        if (it == m_pendingTileRenders.end() || it->value.renderIdentifier != renderIdentifier) {
             LOG_WITH_STREAM(PDFAsyncRendering, stream << "  Tile render request was revoked.");
             return;
         }
-        m_currentValidTileRenders.remove(it);
+        m_pendingTileRenders.remove(it);
     }
 
     if (!image)
@@ -714,7 +715,7 @@ bool AsyncPDFRenderer::paintTilesForPage(const GraphicsLayer* layer, GraphicsCon
 
 void AsyncPDFRenderer::paintPagePreview(GraphicsContext& context, const FloatRect&, const FloatRect& pageBoundsInPaintingCoordinates, PDFDocumentLayout::PageIndex pageIndex)
 {
-    auto preview = m_pagePreviews.get(pageIndex);
+    auto preview = m_pagePreviews.get({ pageIndex });
     LOG_WITH_STREAM(PDFAsyncRendering, stream << "AsyncPDFRenderer::paintPagePreview for page " << pageIndex  << " - buffer " << !!preview.image);
     if (!preview.image)
         return;

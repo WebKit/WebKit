@@ -174,6 +174,11 @@ void NetworkStorageSession::setCookie(const Cookie& cookie)
     cookieDatabase().setCookie(cookie);
 }
 
+void NetworkStorageSession::setCookie(const Cookie& cookie, const URL&, const URL&)
+{
+    setCookie(cookie);
+}
+
 void NetworkStorageSession::deleteCookie(const Cookie& cookie, CompletionHandler<void()>&& completionHandler)
 {
     String url = makeString(cookie.secure ? "https"_s : "http"_s, "://"_s, cookie.domain, cookie.path);
@@ -181,7 +186,7 @@ void NetworkStorageSession::deleteCookie(const Cookie& cookie, CompletionHandler
     completionHandler();
 }
 
-void NetworkStorageSession::deleteCookie(const URL& url, const String& name, CompletionHandler<void()>&& completionHandler) const
+void NetworkStorageSession::deleteCookie(const URL&, const URL& url, const String& name, CompletionHandler<void()>&& completionHandler) const
 {
     cookieDatabase().deleteCookie(url.string(), name);
     completionHandler();

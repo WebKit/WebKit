@@ -3,6 +3,10 @@ This test checks truncate command of FileSystemWritableFileStream
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
+Run writer tests:
+PASS fileContent is "abcdxy"
+PASS fileContent is "abcdxy\u0000\u0000\u0000\u0000"
+Run stream tests:
 PASS fileContent is "abcdxy"
 PASS fileContent is "abcdxy\u0000\u0000\u0000\u0000"
 PASS successfullyParsed is true

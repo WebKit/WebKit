@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2005 Allan Sandfeld Jensen (kde@carewolf.com)
  *           (C) 2005, 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2005-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010-2015 Google Inc. All rights reserved.
  * Copyright (C) 2023, 2024 Igalia S.L.
  *
@@ -158,7 +158,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             if (s_wasFloating && isFloating())
                 setChildNeedsLayout();
             createLayer();
-            if (parent() && !needsLayout() && containingBlock())
+            if (parent() && !needsLayout())
                 layer()->setRepaintStatus(RepaintStatus::NeedsFullRepaint);
         }
     } else if (layer() && layer()->parent()) {
@@ -198,8 +198,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             view().frameView().removeViewportConstrainedObject(*this);
     }
 
-    const RenderStyle& newStyle = style();
-    if (oldStyle && oldStyle->scrollPadding() != newStyle.scrollPadding()) {
+    if (oldStyle && !oldStyle->scrollPaddingEqual(style())) {
         if (isDocumentElementRenderer()) {
             LocalFrameView& frameView = view().frameView();
             frameView.updateScrollbarSteps();
@@ -207,10 +206,7 @@ void RenderLayerModelObject::styleDidChange(StyleDifference diff, const RenderSt
             renderLayer->updateScrollbarSteps();
     }
 
-    bool scrollMarginChanged = oldStyle && oldStyle->scrollMargin() != newStyle.scrollMargin();
-    bool scrollAlignChanged = oldStyle && oldStyle->scrollSnapAlign() != newStyle.scrollSnapAlign();
-    bool scrollSnapStopChanged = oldStyle && oldStyle->scrollSnapStop() != newStyle.scrollSnapStop();
-    if (scrollMarginChanged || scrollAlignChanged || scrollSnapStopChanged) {
+    if (oldStyle && !oldStyle->scrollSnapDataEquivalent(style())) {
         if (auto* scrollSnapBox = enclosingScrollableContainer())
             scrollSnapBox->setNeedsLayout();
     }

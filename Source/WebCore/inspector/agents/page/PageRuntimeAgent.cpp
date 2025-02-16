@@ -109,7 +109,7 @@ void PageRuntimeAgent::didClearWindowObjectInWorld(LocalFrame& frame, DOMWrapper
 InjectedScript PageRuntimeAgent::injectedScriptForEval(Inspector::Protocol::ErrorString& errorString, std::optional<Inspector::Protocol::Runtime::ExecutionContextId>&& executionContextId)
 {
     if (!executionContextId) {
-        RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+        RefPtr localMainFrame = m_inspectedPage->localMainFrame();
         if (!localMainFrame)
             return InjectedScript();
 
@@ -141,7 +141,7 @@ void PageRuntimeAgent::reportExecutionContextCreation()
     if (!pageAgent)
         return;
 
-    m_inspectedPage.forEachLocalFrame([&](LocalFrame& frame) {
+    m_inspectedPage->forEachLocalFrame([&](LocalFrame& frame) {
         if (!frame.script().canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
             return;
 

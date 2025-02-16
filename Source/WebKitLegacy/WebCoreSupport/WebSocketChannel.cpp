@@ -770,7 +770,7 @@ void WebSocketChannel::processOutgoingFrameQueue()
         auto frame = m_outgoingFrameQueue.takeFirst();
         switch (frame->frameType) {
         case QueuedFrameTypeString: {
-            sendFrame(frame->opCode, frame->stringData.span(), [this, protectedThis = Ref { *this }] (bool success) {
+            sendFrame(frame->opCode, byteCast<uint8_t>(frame->stringData.span()), [this, protectedThis = Ref { *this }] (bool success) {
                 if (!success)
                     fail("Failed to send WebSocket frame."_s);
             });

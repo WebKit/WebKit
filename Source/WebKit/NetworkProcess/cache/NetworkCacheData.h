@@ -82,7 +82,7 @@ public:
 
     Data subrange(size_t offset, size_t) const;
 
-    bool apply(const Function<bool(std::span<const uint8_t>)>&) const;
+    bool apply(NOESCAPE const Function<bool(std::span<const uint8_t>)>&) const;
 
     Data mapToFile(const String& path) const;
 

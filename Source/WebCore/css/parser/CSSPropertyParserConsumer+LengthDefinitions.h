@@ -37,17 +37,17 @@ struct LengthValidator {
         return CSS::UnitTraits<CSS::LengthUnit>::validate(unitType);
     }
 
-    template<auto R> static bool isValid(CSS::LengthRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::LengthRaw<R, V> raw, CSSPropertyParserOptions)
     {
         // Values other than 0 and +/-∞ are not supported for <length> numeric ranges currently.
         return isValidNonCanonicalizableDimensionValue(raw);
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::Length<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Length<R>>;
-    using DimensionToken = DimensionConsumer<CSS::Length<R>, LengthValidator>;
-    using NumberToken = NumberConsumerForUnitlessValues<CSS::Length<R>, LengthValidator, CSS::LengthUnit::Px>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Length<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Length<R, V>>;
+    using DimensionToken = DimensionConsumer<CSS::Length<R, V>, LengthValidator>;
+    using NumberToken = NumberConsumerForUnitlessValues<CSS::Length<R, V>, LengthValidator, CSS::LengthUnit::Px>;
 };
 
 } // namespace CSSPropertyParserHelpers

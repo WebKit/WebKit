@@ -210,7 +210,9 @@ void RemoteGPUProxy::requestAdapter(const WebCore::WebGPU::RequestAdapterOptions
         response->limits.maxComputeWorkgroupSizeX,
         response->limits.maxComputeWorkgroupSizeY,
         response->limits.maxComputeWorkgroupSizeZ,
-        response->limits.maxComputeWorkgroupsPerDimension
+        response->limits.maxComputeWorkgroupsPerDimension,
+        response->limits.maxStorageBuffersInFragmentStage,
+        response->limits.maxStorageTexturesInFragmentStage
     );
     callback(WebGPU::RemoteAdapterProxy::create(WTFMove(response->name), WTFMove(resultSupportedFeatures), WTFMove(resultSupportedLimits), response->isFallbackAdapter, options.xrCompatible, *this, convertToBackingContext, identifier));
 }

@@ -30,6 +30,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -47,7 +48,7 @@ public:
     AudioNodeOutput(AudioNode*, unsigned numberOfChannels);
 
     // Can be called from any thread.
-    AudioNode* node() const { return m_node; }
+    AudioNode* node() const { return m_node.get(); }
     BaseAudioContext& context() { return m_node->context(); }
     
     // Causes our AudioNode to process if it hasn't already for this render quantum.
@@ -93,7 +94,7 @@ public:
     void updateRenderingState();
     
 private:
-    AudioNode* m_node;
+    WeakPtr<AudioNode, WeakPtrImplWithEventTargetData> m_node;
 
     friend class AudioNodeInput;
     friend class AudioParam;

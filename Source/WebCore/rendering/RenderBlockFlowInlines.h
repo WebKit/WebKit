@@ -28,7 +28,8 @@ inline bool RenderBlockFlow::hasOverhangingFloats() const { return parent() && c
 
 inline LayoutUnit RenderBlockFlow::endPaddingWidthForCaret() const
 {
-    if (element() && element()->isRootEditableElement() && hasNonVisibleOverflow() && style().isLeftToRightDirection() && !paddingEnd())
+    RefPtr protectedElement = element();
+    if (protectedElement && protectedElement->isRootEditableElement() && hasNonVisibleOverflow() && style().isLeftToRightDirection() && !paddingEnd())
         return caretWidth();
     return { };
 }

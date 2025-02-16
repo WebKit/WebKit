@@ -18,7 +18,7 @@ function foo(o, p) {
 noInline(foo);
 
 // Warm up foo() with polymorphic objects and getters.
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {};
     o.__defineGetter__("f", function() {
         return 107;

@@ -28,6 +28,7 @@
 #include "DownloadID.h"
 #include "NetworkDataTask.h"
 #include "NetworkLoadParameters.h"
+#include "NetworkSession.h"
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
 
@@ -52,7 +53,7 @@ public:
         return adoptRef(*new NetworkLoad(networkLoadClient, WTFMove(networkLoadParameters), networkSession));
     }
 
-    static Ref<NetworkLoad> create(NetworkLoadClient& networkLoadClient, NetworkSession& networkSession, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>& createTask)
+    template<typename CreateTaskCallback> static Ref<NetworkLoad> create(NetworkLoadClient& networkLoadClient, NetworkSession& networkSession, NOESCAPE const CreateTaskCallback& createTask)
     {
         return adoptRef(*new NetworkLoad(networkLoadClient, networkSession, createTask));
     }
@@ -89,9 +90,17 @@ public:
     std::optional<WebCore::PageIdentifier> webPageID() const;
     Ref<NetworkProcess> networkProcess();
 
+    size_t bytesTransferredOverNetwork() const;
+
 private:
     NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
-    NetworkLoad(NetworkLoadClient&, NetworkSession&, const Function<RefPtr<NetworkDataTask>(NetworkDataTaskClient&)>&);
+
+    template<typename CreateTaskCallback> NetworkLoad(NetworkLoadClient& client, NetworkSession& networkSession, NOESCAPE const CreateTaskCallback& createTask)
+        : m_client(client)
+        , m_networkProcess(networkSession.networkProcess())
+        , m_task(createTask(*this))
+    {
+    }
 
     // NetworkDataTaskClient
     void willPerformHTTPRedirection(WebCore::ResourceResponse&&, WebCore::ResourceRequest&&, RedirectCompletionHandler&&) final;

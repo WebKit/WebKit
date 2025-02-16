@@ -10,7 +10,7 @@ noInline(ropify2);
 
 let test = new String("test");
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (ropify("a", "b", test) !== "abtest")
         throw "wrong on warmup";
 }
@@ -22,7 +22,7 @@ if (ropify("a", "b", test) !== "abchanged")
 
 
 // Test we don't start doing the wrong thing if the prototype chain has been mucked with.
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (ropify2("a", "b", test) !== "abchanged")
         throw "wrong on warmup";
 }

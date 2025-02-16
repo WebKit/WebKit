@@ -30,6 +30,7 @@
 #include "FontRenderOptions.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
+#include "SkiaSpanExtras.h"
 #include <skia/core/SkPixmap.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -82,14 +83,14 @@ void ImageBufferSkiaUnacceleratedBackend::getPixelBuffer(const IntRect& srcRect,
 {
     SkPixmap pixmap;
     if (m_surface->peekPixels(&pixmap))
-        ImageBufferBackend::getPixelBuffer(srcRect, static_cast<const uint8_t*>(pixmap.writable_addr()), destination);
+        ImageBufferBackend::getPixelBuffer(srcRect, span(pixmap), destination);
 }
 
 void ImageBufferSkiaUnacceleratedBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat)
 {
     SkPixmap pixmap;
     if (m_surface->peekPixels(&pixmap))
-        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, static_cast<uint8_t*>(pixmap.writable_addr()));
+        ImageBufferBackend::putPixelBuffer(pixelBuffer, srcRect, destPoint, destFormat, mutableSpan(pixmap));
 }
 
 } // namespace WebCore

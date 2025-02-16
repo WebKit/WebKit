@@ -45,16 +45,21 @@ static pas_allocation_result allocate_from_megapages(
     pas_physical_memory_transaction* transaction,
     void* arg)
 {
+    const pas_heap_config* heap_config;
+
     PAS_UNUSED_PARAM(name);
     PAS_ASSERT(heap);
     PAS_ASSERT(transaction);
     PAS_ASSERT(!arg);
     PAS_ASSERT(!alignment.alignment_begin);
 
+    heap_config = pas_heap_config_kind_get_config(heap->config_kind);
+
+    PAS_PROFILE(MEGAPAGES_ALLOCATION, heap, size, alignment.alignment, heap_config);
+
     return pas_large_heap_try_allocate_and_forget(
-        &heap->megapage_large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
-        pas_heap_config_kind_get_config(heap->config_kind),
-        transaction);
+        &heap->large_heap, size, alignment.alignment, pas_non_compact_allocation_mode,
+        heap_config, transaction);
 }
 
 /* Warning: This creates caches that allow type confusion. Only use this for primitive heaps! */

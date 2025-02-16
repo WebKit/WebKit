@@ -207,7 +207,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         auto contextId = window._contextId;
         ASSERT(contextId);
 
-        RunLoop::main().dispatch([strongEvent = retainPtr(eventRef), contextId] {
+        RunLoop::protectedMain()->dispatch([strongEvent = retainPtr(eventRef), contextId] {
             BKSHIDEventSetDigitizerInfo(strongEvent.get(), contextId, false, false, NULL, 0, 0);
             [[UIApplication sharedApplication] _enqueueHIDEvent:strongEvent.get()];
         });
@@ -233,7 +233,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         auto contextId = window._contextId;
         ASSERT(contextId);
 
-        RunLoop::main().dispatch([markerEvent = WTFMove(markerEvent), contextId] {
+        RunLoop::protectedMain()->dispatch([markerEvent = WTFMove(markerEvent), contextId] {
             BKSHIDEventSetDigitizerInfo(markerEvent.get(), contextId, false, false, NULL, 0, 0);
             [[UIApplication sharedApplication] _enqueueHIDEvent:markerEvent.get()];
         });

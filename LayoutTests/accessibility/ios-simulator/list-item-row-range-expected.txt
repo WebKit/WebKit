@@ -1,0 +1,47 @@
+This test ensures we expose accessibilityRowRange correctly for list items.
+
+ListMarker
+PASS: current.description === "AXLabel: 1"
+PASS: current.rowIndexRange() === "{9223372036854775807, 0}"
+StaticText
+PASS: current.description === "AXLabel: Foo"
+PASS: current.rowIndexRange() === "{0, 3}"
+ListMarker
+PASS: current.description === "AXLabel: 2"
+PASS: current.rowIndexRange() === "{9223372036854775807, 0}"
+StaticText
+PASS: current.description === "AXLabel: Bar"
+PASS: current.rowIndexRange() === "{1, 3}"
+ListMarker
+PASS: current.description === "AXLabel: a"
+PASS: current.rowIndexRange() === "{9223372036854775807, 0}"
+StaticText
+PASS: current.description === "AXLabel: Bar the second"
+PASS: current.rowIndexRange() === "{0, 2}"
+Button
+PASS: current.description === "AXLabel: Press"
+PASS: current.rowIndexRange() === "{9223372036854775807, 0}"
+StaticText
+PASS: current.description === "AXLabel: Last text"
+PASS: current.rowIndexRange() === "{9223372036854775807, 0}"
+ListMarker
+PASS: current.description === "AXLabel: b"
+PASS: current.rowIndexRange() === "{9223372036854775807, 0}"
+StaticText
+PASS: current.description === "AXLabel: Bar the third"
+PASS: current.rowIndexRange() === "{1, 2}"
+ListMarker
+PASS: current.description === "AXLabel: 3"
+PASS: current.rowIndexRange() === "{9223372036854775807, 0}"
+StaticText
+PASS: current.description === "AXLabel: Baz"
+PASS: current.rowIndexRange() === "{2, 3}"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Foo
+Bar
+Bar the second PressLast text
+Bar the third
+Baz

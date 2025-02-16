@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.zoneddatetime
 description: ZonedDateTime constructor accepts link names as time zone ID input
-features: [Temporal]
+features: [Temporal, canonical-tz]
 ---*/
 
 const testCases = [

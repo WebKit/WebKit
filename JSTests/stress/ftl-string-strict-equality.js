@@ -25,7 +25,7 @@ var array2 = [ "a", "b", "c", "d", "e" ];
 for (var i = 0; i < array2.length; ++i)
     array2[i] = makeString(array2[i]);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var index = i % array2.length;
     var result = foo(array, array2[index]);
     var expected = index >= array.length ? null : index

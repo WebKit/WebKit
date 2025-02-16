@@ -77,6 +77,7 @@ public:
             return nullptr;
 #endif
         }
+        void* returnPC() const { return m_returnPC; }
 
         bool isNativeFrame() const { return !codeBlock() && !isNativeCalleeFrame(); }
         bool isInlinedDFGFrame() const { return !isNativeCalleeFrame() && !!inlineCallFrame(); }
@@ -117,21 +118,22 @@ public:
         void setToEnd();
 
 #if ENABLE(DFG_JIT)
-        InlineCallFrame* m_inlineDFGCallFrame;
+        InlineCallFrame* m_inlineDFGCallFrame { nullptr };
 #endif
         unsigned m_wasmDistanceFromDeepestInlineFrame { 0 };
-        CallFrame* m_callFrame;
-        EntryFrame* m_entryFrame;
-        EntryFrame* m_callerEntryFrame;
-        CallFrame* m_callerFrame;
-        CalleeBits m_callee;
-        CodeBlock* m_codeBlock;
-        size_t m_index;
-        size_t m_argumentCountIncludingThis;
-        BytecodeIndex m_bytecodeIndex;
-        bool m_callerIsEntryFrame : 1;
-        bool m_isWasmFrame : 1;
-        Wasm::IndexOrName m_wasmFunctionIndexOrName;
+        CallFrame* m_callFrame { nullptr };
+        EntryFrame* m_entryFrame { nullptr };
+        EntryFrame* m_callerEntryFrame { nullptr };
+        CallFrame* m_callerFrame { nullptr };
+        CalleeBits m_callee { };
+        CodeBlock* m_codeBlock { nullptr };
+        void* m_returnPC { nullptr };
+        size_t m_index { 0 };
+        size_t m_argumentCountIncludingThis { 0 };
+        BytecodeIndex m_bytecodeIndex { };
+        bool m_callerIsEntryFrame : 1 { false };
+        bool m_isWasmFrame : 1 { false };
+        Wasm::IndexOrName m_wasmFunctionIndexOrName { };
 
         friend class StackVisitor;
     };
@@ -175,8 +177,10 @@ private:
 #if ENABLE(DFG_JIT)
     void readInlinedFrame(CallFrame*, CodeOrigin*);
 #endif
+    CallFrame* updatePreviousReturnPCIfNecessary(CallFrame*);
 
     Frame m_frame;
+    void* m_previousReturnPC { nullptr };
     bool m_topEntryFrameIsEmpty { false };
 };
 

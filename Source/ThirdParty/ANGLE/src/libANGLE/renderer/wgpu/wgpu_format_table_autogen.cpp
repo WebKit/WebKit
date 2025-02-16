@@ -949,6 +949,10 @@ void Format::initialize(const angle::Format &angleFormat)
 
             break;
 
+        case angle::FormatID::L4A4_UNORM:
+            // This format is not implemented in WebGPU.
+            break;
+
         case angle::FormatID::L8A8_UNORM:
             mIntendedGLFormat         = GL_LUMINANCE8_ALPHA8_EXT;
             mActualImageFormatID      = angle::FormatID::R8G8_UNORM;
@@ -1138,7 +1142,7 @@ void Format::initialize(const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R10G10B10X2_UNORM:
-            mIntendedGLFormat             = GL_RGB10_UNORM_ANGLEX;
+            mIntendedGLFormat             = GL_RGB10_EXT;
             mActualImageFormatID          = angle::FormatID::R10G10B10A2_UNORM;
             mImageInitializerFunction     = nullptr;
             mIsRenderable                 = true;

@@ -1,0 +1,84 @@
+<!doctype html><!-- webkit-test-runner [ WebRTCRemoteVideoFrameEnabled=true ] -->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing basic getDisplayMedia() video exchange from offerer to receiver</title>
+        <script src="../resources/testharness.js"></script>
+        <script src="../resources/testharnessreport.js"></script>
+        <script src="../fast/mediastream/resources/getDisplayMedia-utils.js"></script>
+    </head>
+    <body>
+        <div id="debuge"></div>
+        <video id="video" autoplay=""></video>
+        <canvas id="canvas" width="640" height="480"></canvas>
+        <script src ="routines.js"></script>
+        <script>
+         video = document.getElementById("video");
+         canvas = document.getElementById("canvas");
+
+         function grabFrameData(x, y, w, h)
+         {
+             canvas.width = video.videoWidth;
+             canvas.height = video.videoHeight;
+
+             canvas.getContext('2d').drawImage(video, x, y, w, h, x, y, w, h);
+             return canvas.getContext('2d').getImageData(x, y, w, h);
+         }
+
+         async function waitFor(duration)
+         {
+             return new Promise((resolve) => setTimeout(resolve, duration));
+         }
+
+         async function testImage()
+         {
+             const data = grabFrameData(0, 0, 1280, 720);
+
+             try {
+                 assertImageDataContainsMockCameraImage(data, 0, "Mock Display");
+             } catch (exc) {
+                 // Use this for debugging:
+                 // await waitFor(10000);
+                 throw exc;
+             }
+         }
+
+         var pc1, pc2;
+         promise_test(async (test) => {
+             const localStream = await callGetDisplayMedia({ video: { width: 1280, height:720 } });
+             const stream = await new Promise((resolve, reject) => {
+                 createConnections((firstConnection) => {
+                     pc1 = firstConnection;
+                     firstConnection.addTrack(localStream.getVideoTracks()[0], localStream);
+                     pc1.ontrack = (trackEvent) => {
+                         assert_unreached("The PeerConnection is not supposed to receive any stream");
+                         reject("Test failed");
+                     };
+                 }, (secondConnection) => {
+                     pc2 = secondConnection;
+                     pc2.addTransceiver("audio", { direction: "recvonly" });
+                     secondConnection.ontrack = (trackEvent) => {
+                         assert_true(trackEvent.track instanceof MediaStreamTrack);
+                         assert_true(trackEvent.receiver instanceof RTCRtpReceiver);
+                         assert_true(Array.isArray(trackEvent.streams), "Array.isArray() should return true");
+                         assert_true(Object.isFrozen(trackEvent.streams), "Object.isFrozen() should return true");
+                         assert_equals(trackEvent.streams.length, 1);
+                         assert_equals(trackEvent.streams[0].id, localStream.id, "first stream id");
+                         assert_equals(trackEvent.track.id, localStream.getVideoTracks()[0].id);
+                         assert_equals(trackEvent.track, trackEvent.streams[0].getVideoTracks()[0]);
+                         resolve(trackEvent.streams[0]);
+                     };
+                 });
+                 setTimeout(() => reject("Test timed out"), 5000);
+             });
+
+             video.srcObject = stream;
+             let promise = new Promise(resolve => video.requestVideoFrameCallback(resolve));
+             await video.play();
+             await promise;
+
+             await testImage();
+         }, "getDisplayMedia() streaming to PeerConnection");
+        </script>
+    </body>
+</html>

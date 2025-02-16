@@ -60,7 +60,7 @@ void SocketStreamHandle::sendHandshake(CString&& handshake, std::optional<Cookie
 {
     if (m_state == Connecting || m_state == Closing)
         return completionHandler(false, false);
-    platformSendHandshake(handshake.span(), WTFMove(headerFieldProxy), WTFMove(completionHandler));
+    platformSendHandshake(byteCast<uint8_t>(handshake.span()), WTFMove(headerFieldProxy), WTFMove(completionHandler));
 }
 
 void SocketStreamHandle::close()

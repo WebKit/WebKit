@@ -275,7 +275,7 @@ unsigned RenderListBox::size() const
 int RenderListBox::numVisibleItems(ConsiderPadding considerPadding) const
 {
     // Only count fully visible rows. But don't return 0 even if only part of a row shows.
-    int visibleItemsExcludingPadding = std::max<int>(1, (contentLogicalHeight() + itemBlockSpacing) / itemLogicalHeight());
+    int visibleItemsExcludingPadding = std::max<int>(1, (contentBoxLogicalHeight() + itemBlockSpacing) / itemLogicalHeight());
     if (considerPadding == ConsiderPadding::No)
         return visibleItemsExcludingPadding;
 
@@ -324,12 +324,12 @@ LayoutRect RenderListBox::itemBoundingBoxRect(const LayoutPoint& additionalOffse
 
     auto itemOffset = itemLogicalHeight() * (index - indexOffset());
     if (writingMode().isBlockFlipped())
-        itemOffset = contentLogicalHeight() - itemLogicalHeight() - itemOffset;
+        itemOffset = contentBoxLogicalHeight() - itemLogicalHeight() - itemOffset;
 
     if (writingMode().isVertical())
-        return LayoutRect(x + itemOffset, y, itemLogicalHeight(), contentHeight());
+        return LayoutRect(x + itemOffset, y, itemLogicalHeight(), contentBoxHeight());
 
-    return LayoutRect(x, y + itemOffset, contentWidth(), itemLogicalHeight());
+    return LayoutRect(x, y + itemOffset, contentBoxWidth(), itemLogicalHeight());
 }
 
 std::optional<int> RenderListBox::optionRowIndex(const HTMLOptionElement& optionElement) const
@@ -468,11 +468,12 @@ static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle& ele
     // FIXME: Firefox doesn't respect TextAlignMode::Justify. Should we?
     // FIXME: Handle TextAlignMode::End here
     if (actualAlignment == TextAlignMode::Start || actualAlignment == TextAlignMode::Justify)
-        actualAlignment = itemStyle->writingMode().isBidiLTR() ? TextAlignMode::Left : TextAlignMode::Right;
+        actualAlignment = itemStyle->writingMode().isLogicalLeftInlineStart() ? TextAlignMode::Left : TextAlignMode::Right;
 
     bool isHorizontalWritingMode = elementStyle.writingMode().isHorizontal();
 
     auto itemBoundingBoxLogicalWidth = isHorizontalWritingMode ? itemBoundingBox.width() : itemBoundingBox.height();
+    auto itemBoundingBoxLogicalHeight = isHorizontalWritingMode ? itemBoundingBox.height() : itemBoundingBox.width();
     auto offset = LayoutSize(0, itemFont.metricsOfPrimaryFont().intAscent());
     if (actualAlignment == TextAlignMode::Right || actualAlignment == TextAlignMode::WebKitRight) {
         float textWidth = itemFont.width(textRun);
@@ -482,6 +483,11 @@ static LayoutSize itemOffsetForAlignment(TextRun textRun, const RenderStyle& ele
         offset.setWidth((itemBoundingBoxLogicalWidth - textWidth) / 2);
     } else
         offset.setWidth(optionsSpacingInlineStart);
+
+    if (elementStyle.writingMode().isLineOverLeft()) {
+        offset.setWidth(offset.width() + itemFont.width(textRun));
+        offset.setHeight(itemBoundingBoxLogicalHeight - offset.height());
+    }
 
     if (!isHorizontalWritingMode)
         return LayoutSize { -offset.height(), offset.width() };
@@ -535,7 +541,10 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const LayoutPoint&
     if (!isHorizontalWritingMode) {
         auto rotationOrigin = roundedIntPoint(r.maxXMinYCorner());
         paintInfo.context().translate(rotationOrigin);
-        paintInfo.context().rotate(piOverTwoFloat);
+        if (writingMode().isLineOverLeft())
+            paintInfo.context().rotate(-piOverTwoFloat);
+        else
+            paintInfo.context().rotate(piOverTwoFloat);
         paintInfo.context().translate(-rotationOrigin);
     }
 

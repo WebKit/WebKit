@@ -26,6 +26,7 @@
 #pragma once
 
 #include "RegistrableDomain.h"
+#include <wtf/CrossThreadCopier.h>
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 
@@ -49,6 +50,23 @@ struct OrganizationStorageAccessPromptQuirk {
         { }
 
     OrganizationStorageAccessPromptQuirk() = default;
+    OrganizationStorageAccessPromptQuirk isolatedCopy() const &
+    {
+        return {
+            crossThreadCopy(organizationName),
+            crossThreadCopy(quirkDomains),
+            crossThreadCopy(triggerPages)
+        };
+    }
+
+    OrganizationStorageAccessPromptQuirk isolatedCopy() &&
+    {
+        return {
+            crossThreadCopy(WTFMove(organizationName)),
+            crossThreadCopy(WTFMove(quirkDomains)),
+            crossThreadCopy(WTFMove(triggerPages))
+        };
+    }
 };
 
 static bool operator==(const OrganizationStorageAccessPromptQuirk& a, const OrganizationStorageAccessPromptQuirk& b)

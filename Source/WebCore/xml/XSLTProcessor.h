@@ -26,8 +26,13 @@
 
 #include "Node.h"
 #include "XSLStyleSheet.h"
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+IGNORE_WARNINGS_BEGIN("undef")
 #include <libxml/parserInternals.h>
 #include <libxslt/documents.h>
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 

@@ -11,6 +11,6 @@ function banana_2() {
   avocado_1(() => null);
 }
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
   banana_2();
 }

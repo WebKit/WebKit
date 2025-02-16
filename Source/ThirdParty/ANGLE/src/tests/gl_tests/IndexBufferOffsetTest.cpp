@@ -433,6 +433,43 @@ TEST_P(IndexBufferOffsetTest, DrawAtDifferentOffsetAlignments)
     EXPECT_GL_NO_ERROR();
 }
 
+// Uses un-aligned index buffer to draw, the draw call should be ignored
+TEST_P(IndexBufferOffsetTest, DrawAtUnAlignedIndexBuffer)
+{
+    constexpr GLushort indices[6] = {0, 1, 2, 2, 3, 0};
+    GLubyte indicesUnaligned[1 + sizeof(indices)];
+
+    /* unalign indices */
+    indicesUnaligned[0] = 0;
+    for (unsigned long i = 0; i < sizeof(indices); ++i)
+    {
+        indicesUnaligned[i + 1] = ((GLubyte *)indices)[i];
+    }
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    glUseProgram(mProgram);
+    glUniform4f(mColorUniformLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+
+    glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer);
+    glVertexAttribPointer(mPositionAttributeLocation, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(mPositionAttributeLocation);
+
+    GLBuffer buffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indicesUnaligned), indicesUnaligned,
+                 GL_DYNAMIC_DRAW);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, reinterpret_cast<void *>(1));
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // The draw should be ignored, nothing should been drawn
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::black);
+
+    EXPECT_GL_NO_ERROR();
+}
+
 // Draw with the same element buffer, but with two different types of data.
 TEST_P(IndexBufferOffsetTest, DrawWithSameBufferButDifferentTypes)
 {

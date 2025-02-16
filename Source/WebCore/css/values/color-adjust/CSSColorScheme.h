@@ -48,7 +48,7 @@ struct ColorScheme {
     bool operator==(const ColorScheme&) const = default;
 };
 
-template<> struct Serialize<ColorScheme> { void operator()(StringBuilder&, const ColorScheme&); };
+template<> struct Serialize<ColorScheme> { void operator()(StringBuilder&, const SerializationContext&, const ColorScheme&); };
 
 template<size_t I> const auto& get(const ColorScheme& colorScheme)
 {
@@ -61,6 +61,6 @@ template<size_t I> const auto& get(const ColorScheme& colorScheme)
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(ColorScheme, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::ColorScheme, 2)
 
 #endif

@@ -28,9 +28,9 @@ PASS Property overflow-x value 'visible'
 PASS Property overflow-y value 'clip'
 PASS Property overflow-y value 'auto'
 PASS Property overflow-y value 'visible'
-FAIL Property overflow-block value 'hidden' assert_true: overflow-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property overflow-block value 'clip' assert_true: overflow-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property overflow-block value 'visible' assert_true: overflow-block doesn't seem to be supported in the computed style expected true got false
-FAIL Property overflow-inline value 'scroll' assert_true: overflow-inline doesn't seem to be supported in the computed style expected true got false
-FAIL Property overflow-inline value 'visible' assert_true: overflow-inline doesn't seem to be supported in the computed style expected true got false
+PASS Property overflow-block value 'hidden'
+PASS Property overflow-block value 'clip'
+PASS Property overflow-block value 'visible'
+PASS Property overflow-inline value 'scroll'
+PASS Property overflow-inline value 'visible'
 

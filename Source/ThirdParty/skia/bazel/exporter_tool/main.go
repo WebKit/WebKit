@@ -54,7 +54,8 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//src/codec:png_codec_base_srcs",
 			},
 		},
-		// TODO(https://crbug.com/381900683): Replace this with more granular lists.
+		// TODO(https://crbug.com/381900683): Replace this with more granular lists
+		// (with `skia_codec_png_base` + `skia_codec_libpng_srcs`).
 		{Var: "skia_codec_png",
 			Rules: []string{
 				"//src/codec:buffet_libpng_srcs",
@@ -156,10 +157,16 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//src/encode:png_encode_base_srcs",
 				"//src/encode:png_encode_base_hdrs",
 			}},
+		{Var: "skia_encode_libpng_srcs",
+			Rules: []string{
+				"//src/encode:png_encode_srcs",
+				"//src/encode:png_encode_hdrs",
+			}},
 		// TODO(https://crbug.com/381900683): Rename this list.
 		{Var: "skia_encode_png_public",
 			Rules: []string{"//include/encode:png_hdrs"}},
-		// TODO(https://crbug.com/381900683): Replace this with more granular lists.
+		// TODO(https://crbug.com/381900683): Replace this with more granular lists
+		// (with `skia_encode_libpng_srcs` + `skia_encode_png_base`.
 		{Var: "skia_encode_png_srcs",
 			Rules: []string{
 				"//src/encode:png_encode_base_srcs",
@@ -639,14 +646,12 @@ var gniExportDescs = []exporter.GNIExportDesc{
 			}},
 	}},
 	{GNI: "modules/skparagraph/skparagraph.gni", Vars: []exporter.GNIFileListExportDesc{
-		{Var: "skparagraph_public",
+		{Var: "skparagraph_core_public",
 			Rules: []string{
-				"//modules/skparagraph/include:hdrs",
-				"//modules/skparagraph/utils:utils_hdrs"}},
-		{Var: "skparagraph_sources",
+				"//modules/skparagraph/include:hdrs"}},
+		{Var: "skparagraph_core_sources",
 			Rules: []string{
-				"//modules/skparagraph/src:srcs",
-				"//modules/skparagraph/utils:utils_srcs"}},
+				"//modules/skparagraph/src:srcs"}},
 		{Var: "skparagraph_utils",
 			Rules: []string{
 				"//modules/skparagraph/utils:utils_hdrs",
@@ -657,6 +662,15 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//modules/skparagraph/tests:tests_hdrs",
 				"//modules/skparagraph/tests:tests_srcs",
 			}},
+		// TODO(kjlubick) remove after updating flutter
+		{Var: "skparagraph_public",
+			Rules: []string{
+				"//modules/skparagraph/include:hdrs",
+				"//modules/skparagraph/utils:utils_hdrs"}},
+		{Var: "skparagraph_sources",
+			Rules: []string{
+				"//modules/skparagraph/src:srcs",
+				"//modules/skparagraph/utils:utils_srcs"}},
 	}},
 	{GNI: "modules/skresources/skresources.gni", Vars: []exporter.GNIFileListExportDesc{
 		{Var: "skia_skresources_public",

@@ -40,7 +40,7 @@ public:
     char32_t from() const { return m_from; }
     char32_t to() const { return m_to; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSUnicodeRangeValue&) const;
 

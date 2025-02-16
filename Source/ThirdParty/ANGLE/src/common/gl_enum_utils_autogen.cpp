@@ -594,6 +594,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_ALPHA8_EXT";
                 case 0x8040:
                     return "GL_LUMINANCE8_EXT";
+                case 0x8043:
+                    return "GL_LUMINANCE4_ALPHA4_OES";
                 case 0x8045:
                     return "GL_LUMINANCE8_ALPHA8_EXT";
                 case 0x8051:
@@ -5437,6 +5439,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_ALPHA8_EXT";
                 case 0x8040:
                     return "GL_LUMINANCE8_EXT";
+                case 0x8043:
+                    return "GL_LUMINANCE4_ALPHA4_OES";
                 case 0x8045:
                     return "GL_LUMINANCE8_ALPHA8_EXT";
                 case 0x8051:
@@ -7050,6 +7054,8 @@ const char *GLenumToString(GLESEnum enumGroup, unsigned int value)
                     return "GL_ALPHA8_EXT";
                 case 0x8040:
                     return "GL_LUMINANCE8_EXT";
+                case 0x8043:
+                    return "GL_LUMINANCE4_ALPHA4_OES";
                 case 0x8045:
                     return "GL_LUMINANCE8_ALPHA8_EXT";
                 case 0x8051:

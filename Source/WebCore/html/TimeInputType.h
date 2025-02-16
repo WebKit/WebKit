@@ -30,8 +30,6 @@
 
 #pragma once
 
-#if ENABLE(INPUT_TYPE_TIME)
-
 #include "BaseDateAndTimeInputType.h"
 #include <wtf/TZoneMalloc.h>
 
@@ -66,5 +64,3 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_INPUT_TYPE(TimeInputType, Type::Time)
-
-#endif // ENABLE(INPUT_TYPE_TIME)

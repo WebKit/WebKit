@@ -225,7 +225,7 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
         RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
         if (imageElement) {
             options.referrerPolicy = imageElement->referrerPolicy();
-            options.fetchPriorityHint = imageElement->fetchPriorityHint();
+            options.fetchPriority = imageElement->fetchPriority();
             if (imageElement->usesSrcsetOrPicture())
                 options.initiator = Initiator::Imageset;
         }

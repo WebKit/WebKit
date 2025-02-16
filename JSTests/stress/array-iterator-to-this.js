@@ -10,7 +10,7 @@ function opt(f, length = 5) {
 function main() {
     opt(function () {});
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let threw = false;
         try {
             const iterator = opt(Array.prototype.keys);

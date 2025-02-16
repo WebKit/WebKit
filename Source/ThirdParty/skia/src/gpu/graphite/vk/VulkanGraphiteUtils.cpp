@@ -72,6 +72,8 @@ VkShaderModule createVulkanShaderModule(const VulkanSharedContext* context,
 void DescriptorDataToVkDescSetLayout(const VulkanSharedContext* ctxt,
                                      const SkSpan<DescriptorData>& requestedDescriptors,
                                      VkDescriptorSetLayout* outLayout) {
+    // If requestedDescriptors is empty, that simply means we should create an empty placeholder
+    // layout that doesn't actually contain any descriptors.
     skia_private::STArray<kDescriptorTypeCount, VkDescriptorSetLayoutBinding> bindingLayouts;
     for (size_t i = 0; i < requestedDescriptors.size(); i++) {
         if (requestedDescriptors[i].fCount != 0) {
@@ -96,7 +98,7 @@ void DescriptorDataToVkDescSetLayout(const VulkanSharedContext* ctxt,
     layoutCreateInfo.pNext = nullptr;
     layoutCreateInfo.flags = 0;
     layoutCreateInfo.bindingCount = bindingLayouts.size();
-    layoutCreateInfo.pBindings = &bindingLayouts.front();
+    layoutCreateInfo.pBindings = bindingLayouts.data();
 
     VkResult result;
     VULKAN_CALL_RESULT(
@@ -176,44 +178,5 @@ VkShaderStageFlags PipelineStageFlagsToVkShaderStageFlags(
     }
     return vkStageFlags;
 }
-
-namespace ycbcrPackaging {
-uint32_t nonFormatInfoAsUInt32(const VulkanYcbcrConversionInfo& conversionInfo) {
-    static_assert(kComponentAShift + kComponentBits <= 32);
-
-    SkASSERT(conversionInfo.fYcbcrModel                  < (1u << kYcbcrModelBits        ));
-    SkASSERT(conversionInfo.fYcbcrRange                  < (1u << kYcbcrRangeBits        ));
-    SkASSERT(conversionInfo.fXChromaOffset               < (1u << kXChromaOffsetBits     ));
-    SkASSERT(conversionInfo.fYChromaOffset               < (1u << kYChromaOffsetBits     ));
-    SkASSERT(conversionInfo.fChromaFilter                < (1u << kChromaFilterBits      ));
-    SkASSERT(conversionInfo.fForceExplicitReconstruction < (1u << kForceExplicitReconBits));
-    SkASSERT(conversionInfo.fComponents.r                < (1u << kComponentBits         ));
-    SkASSERT(conversionInfo.fComponents.g                < (1u << kComponentBits         ));
-    SkASSERT(conversionInfo.fComponents.b                < (1u << kComponentBits         ));
-    SkASSERT(conversionInfo.fComponents.a                < (1u << kComponentBits         ));
-
-    bool usesExternalFormat = conversionInfo.fFormat == VK_FORMAT_UNDEFINED;
-
-    return (((uint32_t)(usesExternalFormat                         ) << kUsesExternalFormatShift) |
-            ((uint32_t)(conversionInfo.fYcbcrModel                 ) << kYcbcrModelShift        ) |
-            ((uint32_t)(conversionInfo.fYcbcrRange                 ) << kYcbcrRangeShift        ) |
-            ((uint32_t)(conversionInfo.fXChromaOffset              ) << kXChromaOffsetShift     ) |
-            ((uint32_t)(conversionInfo.fYChromaOffset              ) << kYChromaOffsetShift     ) |
-            ((uint32_t)(conversionInfo.fChromaFilter               ) << kChromaFilterShift      ) |
-            ((uint32_t)(conversionInfo.fForceExplicitReconstruction) << kForceExplicitReconShift) |
-            ((uint32_t)(conversionInfo.fComponents.r               ) << kComponentRShift        ) |
-            ((uint32_t)(conversionInfo.fComponents.g               ) << kComponentGShift        ) |
-            ((uint32_t)(conversionInfo.fComponents.b               ) << kComponentBShift        ) |
-            ((uint32_t)(conversionInfo.fComponents.a               ) << kComponentAShift        ));
-}
-
-int numInt32sNeeded(const VulkanYcbcrConversionInfo& conversionInfo) {
-    if (!conversionInfo.isValid()) {
-        return 0;
-    }
-    return conversionInfo.fFormat == VK_FORMAT_UNDEFINED ? SamplerDesc::kInt32sNeededExternalFormat
-                                                         : SamplerDesc::kInt32sNeededKnownFormat;
-}
-} // namespace ycbcrPackaging
 
 } // namespace skgpu::graphite

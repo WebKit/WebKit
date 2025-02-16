@@ -83,6 +83,6 @@ assert.throws(ReferenceError, function() {
 export default await Promise.resolve(42);
 
 assert.sameValue(x, 'tick in the async evaluation');
-assert.sameValue(self, 42), 'self is initialized after export';
+assert.sameValue(self, 42, 'self is initialized after export');
 
 $DONE();

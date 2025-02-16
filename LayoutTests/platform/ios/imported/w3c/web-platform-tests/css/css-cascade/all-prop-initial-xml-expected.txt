@@ -124,6 +124,7 @@ PASS d
 PASS direction
 PASS display
 PASS dominant-baseline
+PASS dynamic-range-limit
 PASS empty-cells
 PASS field-sizing
 PASS fill
@@ -145,7 +146,6 @@ PASS font-optical-sizing
 PASS font-palette
 PASS font-size
 PASS font-size-adjust
-PASS font-stretch
 PASS font-style
 PASS font-synthesis-small-caps
 PASS font-synthesis-style
@@ -159,6 +159,7 @@ PASS font-variant-numeric
 PASS font-variant-position
 PASS font-variation-settings
 PASS font-weight
+PASS font-width
 PASS glyph-orientation-horizontal
 PASS glyph-orientation-vertical
 PASS grid-auto-columns
@@ -247,6 +248,8 @@ PASS outline-offset
 PASS outline-style
 PASS outline-width
 PASS overflow-anchor
+PASS overflow-block
+PASS overflow-inline
 PASS overflow-wrap
 PASS overflow-x
 PASS overflow-y
@@ -268,6 +271,8 @@ PASS perspective-origin
 PASS pointer-events
 PASS position
 PASS position-anchor
+PASS position-area
+PASS position-try-fallbacks
 PASS position-try-order
 PASS print-color-adjust
 PASS quotes
@@ -417,7 +422,6 @@ PASS -webkit-locale
 PASS -webkit-mask-position-x
 PASS -webkit-mask-position-y
 PASS -webkit-nbsp-mode
-PASS -webkit-overflow-scrolling
 PASS -webkit-rtl-ordering
 PASS -webkit-text-fill-color
 PASS -webkit-text-security

@@ -312,6 +312,11 @@ WebsitePolicies& PageConfiguration::defaultWebsitePolicies() const
     return m_data.defaultWebsitePolicies.get();
 }
 
+Ref<WebsitePolicies> PageConfiguration::protectedDefaultWebsitePolicies() const
+{
+    return defaultWebsitePolicies();
+}
+
 void PageConfiguration::setDefaultWebsitePolicies(RefPtr<WebsitePolicies>&& policies)
 {
     m_data.defaultWebsitePolicies = WTFMove(policies);
@@ -350,15 +355,15 @@ bool PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() const
         return false;
     }
     if (m_data.delaysWebProcessLaunchUntilFirstLoad) {
-        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of explicit client value", this, *m_data.delaysWebProcessLaunchUntilFirstLoad ? "true" : "false");
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %" PUBLIC_LOG_STRING " because of explicit client value", this, *m_data.delaysWebProcessLaunchUntilFirstLoad ? "true" : "false");
         // If the client explicitly enabled / disabled the feature, then obey their directives.
         return *m_data.delaysWebProcessLaunchUntilFirstLoad;
     }
     if (RefPtr processPool = m_data.processPool.getIfExists()) {
-        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of associated processPool value", this, processPool->delaysWebProcessLaunchDefaultValue() ? "true" : "false");
+        RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %" PUBLIC_LOG_STRING " because of associated processPool value", this, processPool->delaysWebProcessLaunchDefaultValue() ? "true" : "false");
         return processPool->delaysWebProcessLaunchDefaultValue();
     }
-    RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %{public}s because of global default value", this, WebProcessPool::globalDelaysWebProcessLaunchDefaultValue() ? "true" : "false");
+    RELEASE_LOG(Process, "%p - PageConfiguration::delaysWebProcessLaunchUntilFirstLoad() -> %" PUBLIC_LOG_STRING " because of global default value", this, WebProcessPool::globalDelaysWebProcessLaunchDefaultValue() ? "true" : "false");
     return WebProcessPool::globalDelaysWebProcessLaunchDefaultValue();
 }
 

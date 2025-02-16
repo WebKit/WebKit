@@ -11,5 +11,5 @@ function shouldBe(actual, expected) {
 noInline(test);
 
 var map = new Map([[1, 1], [2, 2], [3, 3]]);
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(map), 1);

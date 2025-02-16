@@ -29,7 +29,7 @@ for (var ch of [ '\'', '"', '\\', 'b', 'f', 'n', 'r', 't', 'v' ])
     testEval("\\" + ch, ["\\" + ch]);
 
 var evaluated = [];
-for (var i = 0; i < 0x10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var code = i.toString(16);
     var input = "\\u" + '0'.repeat(4 - code.length) + code;
     evaluated.push(input);

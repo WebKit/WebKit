@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2012, Samsung Electronics. All rights reserved.
  *
@@ -25,11 +25,19 @@
 #include "AppHighlight.h"
 #include "BarcodeDetectorInterface.h"
 #include "ChromeClient.h"
+#include "ColorChooser.h"
 #include "ContactInfo.h"
 #include "ContactsRequestData.h"
+#include "DataListSuggestionPicker.h"
+#include "DateTimeChooser.h"
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+#include "DigitalCredentialsRequestData.h"
+#include "DigitalCredentialsResponseData.h"
+#endif
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "DocumentType.h"
+#include "ExceptionData.h"
 #include "FaceDetectorInterface.h"
 #include "FileList.h"
 #include "FloatRect.h"
@@ -63,18 +71,6 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
-
-#if ENABLE(INPUT_TYPE_COLOR)
-#include "ColorChooser.h"
-#endif
-
-#if ENABLE(DATALIST_ELEMENT)
-#include "DataListSuggestionPicker.h"
-#endif
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-#include "DateTimeChooser.h"
-#endif
 
 namespace WebCore {
 
@@ -122,6 +118,11 @@ void Chrome::scroll(const IntSize& scrollDelta, const IntRect& rectToScroll, con
 IntPoint Chrome::screenToRootView(const IntPoint& point) const
 {
     return m_client->screenToRootView(point);
+}
+
+IntPoint Chrome::rootViewToScreen(const IntPoint& point) const
+{
+    return m_client->rootViewToScreen(point);
 }
 
 IntRect Chrome::rootViewToScreen(const IntRect& rect) const
@@ -353,11 +354,6 @@ bool Chrome::runJavaScriptPrompt(LocalFrame& frame, const String& prompt, const 
 
 void Chrome::mouseDidMoveOverElement(const HitTestResult& result, OptionSet<PlatformEventModifier> modifiers)
 {
-    if (RefPtr localMainFrame = m_page->localMainFrame()) {
-        if (result.innerNode() && result.innerNode()->document().isDNSPrefetchEnabled())
-            localMainFrame->protectedLoader()->client().prefetchDNS(result.absoluteLinkURL().host().toString());
-    }
-
     String toolTip;
     TextDirection toolTipDirection;
     getToolTip(result, toolTip, toolTipDirection);
@@ -444,8 +440,6 @@ void Chrome::disableSuddenTermination()
     m_client->disableSuddenTermination();
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 RefPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
 #if PLATFORM(IOS_FAMILY)
@@ -458,19 +452,11 @@ RefPtr<ColorChooser> Chrome::createColorChooser(ColorChooserClient& client, cons
 #endif
 }
 
-#endif
-
-#if ENABLE(DATALIST_ELEMENT)
-
 RefPtr<DataListSuggestionPicker> Chrome::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
     notifyPopupOpeningObservers();
     return m_client->createDataListSuggestionPicker(client);
 }
-
-#endif
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 
 RefPtr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserClient& client)
 {
@@ -482,8 +468,6 @@ RefPtr<DateTimeChooser> Chrome::createDateTimeChooser(DateTimeChooserClient& cli
     return m_client->createDateTimeChooser(client);
 #endif
 }
-
-#endif
 
 void Chrome::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
 {
@@ -500,6 +484,18 @@ void Chrome::showContactPicker(const ContactsRequestData& requestData, Completio
 {
     m_client->showContactPicker(requestData, WTFMove(callback));
 }
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+void Chrome::showDigitalCredentialsPicker(const DigitalCredentialsRequestData& requestData, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& callback)
+{
+    m_client->showDigitalCredentialsPicker(requestData, WTFMove(callback));
+}
+
+void Chrome::dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&& callback)
+{
+    m_client->dismissDigitalCredentialsPicker(WTFMove(callback));
+}
+#endif
 
 void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {

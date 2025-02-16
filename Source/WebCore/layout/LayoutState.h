@@ -128,7 +128,7 @@ private:
     UncheckedKeyHashMap<const ElementBox*, std::unique_ptr<TableFormattingState>> m_tableFormattingStates;
 
 #ifndef NDEBUG
-    HashSet<const FormattingContext*> m_formattingContextList;
+    UncheckedKeyHashSet<const FormattingContext*> m_formattingContextList;
 #endif
     UncheckedKeyHashMap<const Box*, std::unique_ptr<BoxGeometry>> m_layoutBoxToBoxGeometry;
     QuirksMode m_quirksMode { QuirksMode::No };

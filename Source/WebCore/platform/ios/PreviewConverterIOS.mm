@@ -90,9 +90,9 @@ PreviewConverter::PreviewConverter(const ResourceResponse& response, PreviewConv
 {
 }
 
-HashSet<String, ASCIICaseInsensitiveHash> PreviewConverter::platformSupportedMIMETypes()
+UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> PreviewConverter::platformSupportedMIMETypes()
 {
-    HashSet<String, ASCIICaseInsensitiveHash> supportedMIMETypes;
+    UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> supportedMIMETypes;
     for (NSString *mimeType in QLPreviewGetSupportedMIMETypesSet())
         supportedMIMETypes.add(mimeType);
     return supportedMIMETypes;

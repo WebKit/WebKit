@@ -22,7 +22,7 @@ noInline(testGet);
 
 function foo() {
     let map = new Map;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let key = i;
         map.set(key, key);
         let f = () => map.delete(key);
@@ -31,7 +31,7 @@ function foo() {
         assert(first);
         assert(!second);
     }
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let key = i;
         map.set(key, key);
         let f = () => {};
@@ -42,7 +42,7 @@ function foo() {
     }
 
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let key = i;
         let value = {};
         map.set(key, value);
@@ -52,7 +52,7 @@ function foo() {
         assert(first === value);
         assert(second === undefined);
     }
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let key = i;
         let value = {};
         map.set(key, value);

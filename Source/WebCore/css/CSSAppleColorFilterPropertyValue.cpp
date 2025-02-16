@@ -45,9 +45,9 @@ CSSAppleColorFilterPropertyValue::CSSAppleColorFilterPropertyValue(CSS::AppleCol
 {
 }
 
-String CSSAppleColorFilterPropertyValue::customCSSText() const
+String CSSAppleColorFilterPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(m_filter);
+    return CSS::serializationForCSS(context, m_filter);
 }
 
 bool CSSAppleColorFilterPropertyValue::equals(const CSSAppleColorFilterPropertyValue& other) const
@@ -55,7 +55,7 @@ bool CSSAppleColorFilterPropertyValue::equals(const CSSAppleColorFilterPropertyV
     return m_filter == other.m_filter;
 }
 
-IterationStatus CSSAppleColorFilterPropertyValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSAppleColorFilterPropertyValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_filter);
 }

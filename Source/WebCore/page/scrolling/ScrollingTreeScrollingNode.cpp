@@ -137,14 +137,68 @@ bool ScrollingTreeScrollingNode::isLatchedNode() const
     return scrollingTree()->latchedNodeID() == scrollingNodeID();
 }
 
+bool ScrollingTreeScrollingNode::shouldRubberBandOnSide(BoxSide side, RectEdges<bool> pinnedEdges) const
+{
+    if (!pinnedEdges[side])
+        return false;
+
+    if (isRootNode() && !scrollingTree()->clientAllowsMainFrameRubberBandingOnSide(side))
+        return false;
+
+    switch (side) {
+    case BoxSide::Top:
+    case BoxSide::Bottom:
+        if (!overscrollBehaviorAllowsVerticalRubberBand())
+            return false;
+
+        // The root allows rubberbanding if it doesn't have enough content, but only if a scrollbar is allowed.
+        if (isRootNode() && canHaveVerticalScrollbar())
+            return true;
+
+        if (!allowsVerticalScrolling())
+            return false;
+
+        return verticalOverscrollBehaviorPreventsPropagation();
+
+    case BoxSide::Left:
+    case BoxSide::Right:
+        if (!overscrollBehaviorAllowsHorizontalRubberBand())
+            return false;
+
+        // The root allows rubberbanding if it doesn't have enough content, but only if a scrollbar is allowed.
+        if (isRootNode() && canHaveHorizontalScrollbar())
+            return true;
+
+        if (!allowsHorizontalScrolling())
+            return false;
+
+        return horizontalOverscrollBehaviorPreventsPropagation();
+    }
+    return true;
+}
+
 bool ScrollingTreeScrollingNode::shouldRubberBand(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
 {
-    // We always rubber-band the latched node, or the root node.
-    // The stateless wheel event doesn't trigger rubber-band.
-    // Also rubberband when we should block scroll propagation
-    // at this node, which has overscroll behavior that is not none.
-    auto scrollPropagationInfo = computeScrollPropagation(wheelEvent.delta());
-    return (isLatchedNode() || eventTargeting == EventTargeting::NodeOnly || (isRootNode() && !wheelEvent.isNonGestureEvent()) || ( scrollPropagationInfo.shouldBlockScrollPropagation && scrollPropagationInfo.isHandled && overscrollBehaviorAllowsRubberBand()));
+    if (isLatchedNode())
+        return true;
+
+    if (eventTargeting == EventTargeting::NodeOnly)
+        return true;
+
+    if (wheelEvent.isNonGestureEvent())
+        return false;
+
+    auto pinnedEdges = edgePinnedState();
+
+    auto horizontalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Horizontal);
+    if (horizontalSide && shouldRubberBandOnSide(*horizontalSide, pinnedEdges))
+        return true;
+
+    auto verticalSide = ScrollableArea::targetSideForScrollDelta(-wheelEvent.delta(), ScrollEventAxis::Vertical);
+    if (verticalSide && shouldRubberBandOnSide(*verticalSide, pinnedEdges))
+        return true;
+
+    return false;
 }
 
 bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
@@ -152,8 +206,8 @@ bool ScrollingTreeScrollingNode::canHandleWheelEvent(const PlatformWheelEvent& w
     if (!canHaveScrollbars())
         return false;
 
-    // MayBegin is used to flash scrollbars; if this node is scrollable, it can handle it.
-    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin)
+    // MayBegin and End are used to update scrollbars; if this node is scrollable, it can handle it.
+    if (wheelEvent.phase() == PlatformWheelEventPhase::MayBegin || wheelEvent.phase() == PlatformWheelEventPhase::Ended || wheelEvent.momentumPhase() == PlatformWheelEventPhase::Ended)
         return true;
 
     if (shouldRubberBand(wheelEvent, eventTargeting))

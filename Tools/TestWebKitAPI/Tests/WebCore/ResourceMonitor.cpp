@@ -34,7 +34,7 @@ namespace TestWebKitAPI {
 
 using namespace WebCore;
 
-class ResouceMonitorTest : public testing::Test {
+class ResourceMonitorTest : public testing::Test {
 public:
     void SetUp() override
     {
@@ -43,6 +43,27 @@ public:
 
 protected:
     ApproximateTime m_reference;
+    RefPtr<ResourceMonitorThrottler> m_throttler;
+
+    void prepareThrottler(size_t count, Seconds duration, size_t maxHosts)
+    {
+        m_throttler = ResourceMonitorThrottler::create(count, duration, maxHosts);
+    }
+
+    void prepareThrottler()
+    {
+        m_throttler = ResourceMonitorThrottler::create();
+    }
+
+    void disposeThrottler()
+    {
+        m_throttler = nullptr;
+    }
+
+    ResourceMonitorThrottler* throttler()
+    {
+        return m_throttler.get();
+    }
 
     ApproximateTime now()
     {
@@ -56,83 +77,88 @@ protected:
         m_reference += delta;
         return m_reference;
     }
+
+    bool tryAccess(const String& host, ApproximateTime time)
+    {
+        return m_throttler->tryAccess(host, time);
+    }
 };
 
-TEST_F(ResouceMonitorTest, ThrottlerBasic)
+TEST_F(ResourceMonitorTest, ThrottlerBasic)
 {
-    ResourceMonitorThrottler throttler { /* size */ 2, /* duration */ 1_s, /* maxHosts */ 1 };
+    prepareThrottler(/* size */ 2, /* duration */ 1_s, /* maxHosts */ 1);
 
     auto host = "example.com"_s;
 
     // first access must be okay.
-    EXPECT_TRUE(throttler.tryAccess(host, now()));
+    EXPECT_TRUE(tryAccess(host, now()));
     // second one is alse okay.
-    EXPECT_TRUE(throttler.tryAccess(host, now()));
+    EXPECT_TRUE(tryAccess(host, now()));
     // but third one is not okay because size is 2.
-    EXPECT_FALSE(throttler.tryAccess(host, now()));
+    EXPECT_FALSE(tryAccess(host, now()));
 
     // after duration, it should be okay.
-    EXPECT_TRUE(throttler.tryAccess(host, later(1_s)));
+    EXPECT_TRUE(tryAccess(host, later(1_s)));
 }
 
-TEST_F(ResouceMonitorTest, ThrottlerMaxHosts)
+TEST_F(ResourceMonitorTest, ThrottlerMaxHosts)
 {
-    ResourceMonitorThrottler throttler { /* size */ 2, /* duration */ 1_s, /* maxHosts */ 2 };
+    prepareThrottler(/* size */ 2, /* duration */ 1_s, /* maxHosts */ 2);
 
     auto host1 = "h1.example.com"_s;
     auto host2 = "h2.example.com"_s;
     auto host3 = "h3.example.com"_s;
 
     // make host1 inaccessible.
-    EXPECT_TRUE(throttler.tryAccess(host1, now()));
-    EXPECT_TRUE(throttler.tryAccess(host1, now()));
-    EXPECT_FALSE(throttler.tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(host1, now()));
+    EXPECT_FALSE(tryAccess(host1, now()));
 
     // host2 is accessible and still host1 is not.
-    EXPECT_TRUE(throttler.tryAccess(host2, now()));
-    EXPECT_FALSE(throttler.tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(host2, now()));
+    EXPECT_FALSE(tryAccess(host1, now()));
 
     // host3 is accessible and host1 is now also accessible because of the max host.
-    EXPECT_TRUE(throttler.tryAccess(host3, now()));
-    EXPECT_TRUE(throttler.tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(host3, now()));
+    EXPECT_TRUE(tryAccess(host1, now()));
 }
 
-TEST_F(ResouceMonitorTest, ThrottlerLeastRecentAccessedHostWillBeRemoved)
+TEST_F(ResourceMonitorTest, ThrottlerLeastRecentAccessedHostWillBeRemoved)
 {
-    ResourceMonitorThrottler throttler { /* size */ 2, /* duration */ 1_s, /* maxHosts */ 2 };
+    prepareThrottler(/* size */ 2, /* duration */ 1_s, /* maxHosts */ 2);
 
     auto host1 = "h1.example.com"_s;
     auto host2 = "h2.example.com"_s;
     auto host3 = "h3.example.com"_s;
 
     // host1 is the oldest access.
-    EXPECT_TRUE(throttler.tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(host1, now()));
 
     // make host2 inaccessible
-    EXPECT_TRUE(throttler.tryAccess(host2, now()));
-    EXPECT_TRUE(throttler.tryAccess(host2, now()));
-    EXPECT_FALSE(throttler.tryAccess(host2, now()));
+    EXPECT_TRUE(tryAccess(host2, now()));
+    EXPECT_TRUE(tryAccess(host2, now()));
+    EXPECT_FALSE(tryAccess(host2, now()));
 
     // make host1 inaccessible and this is the most recent access.
-    EXPECT_TRUE(throttler.tryAccess(host1, now()));
-    EXPECT_FALSE(throttler.tryAccess(host1, now()));
+    EXPECT_TRUE(tryAccess(host1, now()));
+    EXPECT_FALSE(tryAccess(host1, now()));
 
     // host3 is accessible. In this access, lest recent host is removed.
-    EXPECT_TRUE(throttler.tryAccess(host3, now()));
+    EXPECT_TRUE(tryAccess(host3, now()));
     // host1 is the oldest, but recent than host2. Still it is blocked.
-    EXPECT_FALSE(throttler.tryAccess(host1, now()));
+    EXPECT_FALSE(tryAccess(host1, now()));
     // host2 is the least recent access and removed in host3 access. So it is accessible.
-    EXPECT_TRUE(throttler.tryAccess(host2, now()));
+    EXPECT_TRUE(tryAccess(host2, now()));
 }
 
-TEST_F(ResouceMonitorTest, ThrottlerEmptyHostname)
+TEST_F(ResourceMonitorTest, ThrottlerEmptyHostname)
 {
-    ResourceMonitorThrottler throttler { /* size */ 2, /* duration */ 1_s, /* maxHosts */ 2 };
+    prepareThrottler(/* size */ 2, /* duration */ 1_s, /* maxHosts */ 2);
 
     auto emptyHost = ""_s;
 
     // Accessing with an empty hostname should not crash.
-    EXPECT_FALSE(throttler.tryAccess(emptyHost, now()));
+    EXPECT_FALSE(tryAccess(emptyHost, now()));
 }
 
 } // namespace TestWebKitAPI

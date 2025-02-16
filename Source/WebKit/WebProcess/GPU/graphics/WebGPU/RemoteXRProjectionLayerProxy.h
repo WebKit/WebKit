@@ -98,11 +98,17 @@ private:
         return root().protectedStreamClientConnection()->sendSync(WTFMove(message), backing());
     }
 
+    bool isRemoteXRProjectionLayerProxy() const final { return true; }
+
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteGPUProxy> m_parent;
 };
 
 } // namespace WebKit::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteXRProjectionLayerProxy)
+    static bool isType(const WebCore::WebGPU::XRProjectionLayer& projectionLayer) { return projectionLayer.isRemoteXRProjectionLayerProxy(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

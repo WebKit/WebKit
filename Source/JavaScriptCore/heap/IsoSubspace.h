@@ -100,7 +100,7 @@ ALWAYS_INLINE Allocator IsoSubspace::allocatorFor(size_t size, AllocatorForMode)
 
 } // namespace GCClient
 
-#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("IsoSpace " #type, (heap), (heapCellType), sizeof(type), type::usePreciseAllocationsOnly, type::numberOfLowerTierPreciseCells)
+#define ISO_SUBSPACE_INIT(heap, heapCellType, type) ("IsoSpace " #type ""_s, (heap), (heapCellType), sizeof(type), type::usePreciseAllocationsOnly, type::numberOfLowerTierPreciseCells)
 
 } // namespace JSC
 

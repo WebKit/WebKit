@@ -24,7 +24,7 @@
  */
 
 #include <wtf/Assertions.h>
-#if HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN)
+#if ENABLE(WEB_AUTHN) && (HAVE(UNIFIED_ASC_AUTH_UI) || HAVE(WEB_AUTHN_AS_MODERN))
 
 #import "config.h"
 #import "WebAuthenticatorCoordinatorProxy.h"
@@ -772,7 +772,7 @@ static inline RetainPtr<ASCPublicKeyCredentialDescriptor> toASCDescriptor(Public
 
 static inline RetainPtr<ASCWebAuthenticationExtensionsClientInputs> toASCExtensions(const AuthenticationExtensionsClientInputs& extensions)
 {
-    if ([allocASCWebAuthenticationExtensionsClientInputsInstance() respondsToSelector:@selector(initWithAppID:)])
+    if ([getASCWebAuthenticationExtensionsClientInputsClass() instancesRespondToSelector:@selector(initWithAppID:)])
         return adoptNS([allocASCWebAuthenticationExtensionsClientInputsInstance() initWithAppID:extensions.appid]);
 
     return nil;
@@ -892,7 +892,11 @@ static inline RetainPtr<ASCPublicKeyCredentialAssertionOptions> configureAsserti
     auto topOrigin = parentOrigin ? parentOrigin->toString() : nullString();
     auto clientDataJson = WebCore::buildClientDataJson(ClientDataType::Get, options.challenge, callerOrigin.securityOrigin(), scope, topOrigin);
     RetainPtr nsClientDataJSON = toNSData(clientDataJson->span());
-    auto assertionOptions = adoptNS([allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:kind relyingPartyIdentifier:options.rpId clientDataJSON:nsClientDataJSON.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get() origin:callerOrigin.toString()]);
+    RetainPtr<ASCPublicKeyCredentialAssertionOptions> assertionOptions;
+    if ([getASCPublicKeyCredentialAssertionOptionsClass() instancesRespondToSelector:@selector(initWithKind:relyingPartyIdentifier:clientDataJSON:userVerificationPreference:allowedCredentials:origin:)])
+        assertionOptions = adoptNS([allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:kind relyingPartyIdentifier:options.rpId clientDataJSON:nsClientDataJSON.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get() origin:callerOrigin.toString()]);
+    else
+        assertionOptions = adoptNS([allocASCPublicKeyCredentialAssertionOptionsInstance() initWithKind:kind relyingPartyIdentifier:options.rpId clientDataJSON:nsClientDataJSON.get() userVerificationPreference:userVerification.get() allowedCredentials:allowedCredentials.get()]);
     if (options.extensions) {
         if ([assertionOptions respondsToSelector:@selector(setExtensionsCBOR:)])
             [assertionOptions setExtensionsCBOR:toNSData(options.extensions->toCBOR()).get()];

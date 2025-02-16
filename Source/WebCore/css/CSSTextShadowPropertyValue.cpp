@@ -46,9 +46,9 @@ CSSTextShadowPropertyValue::CSSTextShadowPropertyValue(CSS::TextShadowProperty&&
 {
 }
 
-String CSSTextShadowPropertyValue::customCSSText() const
+String CSSTextShadowPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(m_shadow);
+    return CSS::serializationForCSS(context, m_shadow);
 }
 
 bool CSSTextShadowPropertyValue::equals(const CSSTextShadowPropertyValue& other) const
@@ -56,7 +56,7 @@ bool CSSTextShadowPropertyValue::equals(const CSSTextShadowPropertyValue& other)
     return m_shadow == other.m_shadow;
 }
 
-IterationStatus CSSTextShadowPropertyValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSTextShadowPropertyValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_shadow);
 }

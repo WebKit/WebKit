@@ -61,7 +61,7 @@ void SelectorFilter::collectElementIdentifierHashes(const Element& element, Vect
     }
     
     if (element.hasAttributesWithoutUpdate()) {
-        for (auto& attribute : element.attributesIterator()) {
+        for (auto& attribute : element.attributes()) {
             auto attributeName = element.isHTMLElement() ? attribute.localName() : attribute.localNameLowercase();
             if (isExcludedAttribute(attributeName))
                 continue;

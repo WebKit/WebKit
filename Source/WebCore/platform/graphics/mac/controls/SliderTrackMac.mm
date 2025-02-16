@@ -62,16 +62,17 @@ FloatRect SliderTrackMac::rectForBounds(const FloatRect& bounds, const ControlSt
     return rect;
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-static void trackGradientInterpolate(void*, const CGFloat* inData, CGFloat* outData)
+static void trackGradientInterpolate(void*, const CGFloat* rawInData, CGFloat* rawOutData)
 {
+    auto inData = unsafeMakeSpan(rawInData, 1);
+    auto outData = unsafeMakeSpan(rawOutData, 4);
+
     static constexpr std::array dark { 0.0f, 0.0f, 0.0f, 0.678f };
     static constexpr std::array light { 0.0f, 0.0f, 0.0f, 0.13f };
     float a = inData[0];
     for (size_t i = 0; i < 4; ++i)
         outData[i] = (1.0f - a) * dark[i] + a * light[i];
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& borderRect, float, const ControlStyle& style)
 {
@@ -83,9 +84,7 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     auto& sliderTrackPart = owningSliderTrackPart();
 
-#if ENABLE(DATALIST_ELEMENT)
     sliderTrackPart.drawTicks(context, borderRect.rect(), style);
-#endif
 
     GraphicsContextStateSaver stateSaver(context);
 

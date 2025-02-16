@@ -86,6 +86,9 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
 {
     {
         auto& rootLayer = m_sceneState->rootLayer();
+#if ENABLE(DAMAGE_TRACKING)
+        rootLayer.setDamagePropagation(webPage.corePage()->settings().propagateDamagingInformation());
+#endif
         Locker locker { rootLayer.lock() };
         rootLayer.setAnchorPoint(FloatPoint3D(0, 0, 0));
         rootLayer.setSize(m_webPage.size());
@@ -98,9 +101,9 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     scheduleLayerFlush();
 
 #if HAVE(DISPLAY_LINK)
-    m_compositor = ThreadedCompositor::create(*this, m_webPage.deviceScaleFactor());
+    m_compositor = ThreadedCompositor::create(*this);
 #else
-    m_compositor = ThreadedCompositor::create(*this, *this, m_webPage.deviceScaleFactor(), displayID);
+    m_compositor = ThreadedCompositor::create(*this, *this, displayID);
 #endif
 #if ENABLE(DAMAGE_TRACKING)
     auto damagePropagation = ([](const Settings& settings) {
@@ -131,28 +134,24 @@ LayerTreeHost::~LayerTreeHost()
     m_compositor->invalidate();
 }
 
-void LayerTreeHost::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
+void LayerTreeHost::setLayerTreeStateIsFrozen(bool isFrozen)
 {
-    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
+    if (m_layerTreeStateIsFrozen == isFrozen)
         return;
 
-    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
+    m_layerTreeStateIsFrozen = isFrozen;
 
-    if (m_layerFlushSchedulingEnabled) {
-        m_compositor->resume();
+    if (m_layerTreeStateIsFrozen)
+        cancelPendingLayerFlush();
+    else
         scheduleLayerFlush();
-        return;
-    }
-
-    cancelPendingLayerFlush();
-    m_compositor->suspend();
 }
 
 void LayerTreeHost::scheduleLayerFlush()
 {
     WTFEmitSignpost(this, ScheduleLayerFlush, "isWaitingForRenderer %i", m_isWaitingForRenderer);
 
-    if (!m_layerFlushSchedulingEnabled)
+    if (m_layerTreeStateIsFrozen)
         return;
 
     if (m_webPage.size().isEmpty())
@@ -174,6 +173,9 @@ void LayerTreeHost::cancelPendingLayerFlush()
 
 void LayerTreeHost::flushLayers()
 {
+    if (m_layerTreeStateIsFrozen)
+        return;
+
 #if PLATFORM(GTK) || PLATFORM(WPE)
     TraceScope traceScope(FlushPendingLayerChangesStart, FlushPendingLayerChangesEnd);
 #endif
@@ -194,6 +196,12 @@ void LayerTreeHost::flushLayers()
 #endif
     page->finalizeRenderingUpdate(flags);
 
+    if (m_pendingResize) {
+        auto& rootLayer = m_sceneState->rootLayer();
+        Locker locker { rootLayer.lock() };
+        rootLayer.setSize(page->size());
+    }
+
 #if PLATFORM(GTK)
     // If we have an active transient zoom, we want the zoom to win over any changes
     // that WebCore makes to the relevant layers, so re-apply our changes after flushing.
@@ -207,10 +215,11 @@ void LayerTreeHost::flushLayers()
 #endif
 
     bool didChangeSceneState = m_sceneState->flush();
-    if (m_compositionRequired || m_forceFrameSync || didChangeSceneState)
+    if (m_compositionRequired || m_pendingResize || m_forceFrameSync || didChangeSceneState)
         commitSceneState();
 
     m_compositionRequired = false;
+    m_pendingResize = false;
     m_forceFrameSync = false;
 
     page->didUpdateRendering();
@@ -292,8 +301,16 @@ void LayerTreeHost::forceRepaint()
     if (!m_isWaitingForRenderer)
         flushLayers();
 #else
+    if (m_isWaitingForRenderer) {
+        if (m_forceRepaintAsync.callback)
+            m_pendingForceRepaint = true;
+        return;
+    }
+
+    m_pendingForceRepaint = false;
     m_webPage.corePage()->forceRepaintAllFrames();
     m_forceFrameSync = true;
+    cancelPendingLayerFlush();
     flushLayers();
     m_sceneState->waitUntilPaintingComplete();
 #endif
@@ -310,10 +327,13 @@ void LayerTreeHost::forceRepaintAsync(CompletionHandler<void()>&& callback)
     m_forceRepaintAsync.callback = WTFMove(callback);
     m_forceRepaintAsync.needsFreshFlush = m_scheduledWhileWaitingForRenderer;
 #else
-    forceRepaint();
     ASSERT(!m_forceRepaintAsync.callback);
     m_forceRepaintAsync.callback = WTFMove(callback);
-    m_forceRepaintAsync.compositionRequestID = m_compositionRequestID;
+    forceRepaint();
+    if (m_pendingForceRepaint)
+        m_forceRepaintAsync.compositionRequestID = std::nullopt;
+    else
+        m_forceRepaintAsync.compositionRequestID = m_compositionRequestID;
 #endif
 }
 
@@ -327,17 +347,13 @@ void LayerTreeHost::ensureDrawing()
 
 void LayerTreeHost::sizeDidChange(const IntSize& size)
 {
-    {
-        auto& rootLayer = m_sceneState->rootLayer();
-        Locker locker { rootLayer.lock() };
-        rootLayer.setSize(size);
-    }
-
-    m_compositor->setViewportSize(size, m_webPage.deviceScaleFactor());
+    m_pendingResize = true;
     if (m_isWaitingForRenderer)
         scheduleLayerFlush();
-    else
+    else {
+        cancelPendingLayerFlush();
         flushLayers();
+    }
 }
 
 void LayerTreeHost::pauseRendering()
@@ -365,12 +381,6 @@ FloatRect LayerTreeHost::visibleContentsRect() const
     return m_webPage.bounds();
 }
 
-void LayerTreeHost::deviceOrPageScaleFactorChanged()
-{
-    m_webPage.corePage()->pageOverlayController().didChangeDeviceScaleFactor();
-    m_compositor->setViewportSize(m_webPage.size(), m_webPage.deviceScaleFactor());
-}
-
 void LayerTreeHost::backgroundColorDidChange()
 {
     m_compositor->backgroundColorDidChange();
@@ -378,6 +388,9 @@ void LayerTreeHost::backgroundColorDidChange()
 
 void LayerTreeHost::attachLayer(CoordinatedPlatformLayer& layer)
 {
+#if ENABLE(DAMAGE_TRACKING)
+    layer.setDamagePropagation(webPage().corePage()->settings().propagateDamagingInformation());
+#endif
     m_sceneState->addLayer(layer);
 }
 
@@ -412,7 +425,12 @@ void LayerTreeHost::requestComposition()
     }
 #endif
 
-    m_compositor->updateScene();
+    m_compositor->scheduleUpdate();
+}
+
+RunLoop* LayerTreeHost::compositingRunLoop() const
+{
+    return m_compositor->runLoop();
 }
 
 #if USE(CAIRO)
@@ -424,7 +442,7 @@ Cairo::PaintingEngine& LayerTreeHost::paintingEngine()
 
 Ref<CoordinatedImageBackingStore> LayerTreeHost::imageBackingStore(Ref<NativeImage>&& nativeImage)
 {
-    auto nativeImageID = CoordinatedImageBackingStore::uniqueIDForNativeImage(nativeImage.get());
+    auto nativeImageID = nativeImage->uniqueID();
     auto addResult = m_imageBackingStores.ensure(nativeImageID, [&] {
         return CoordinatedImageBackingStore::create(WTFMove(nativeImage));
     });
@@ -477,15 +495,26 @@ void LayerTreeHost::didComposite(uint32_t compositionResponseID)
 {
     WTFBeginSignpost(this, DidComposite, "compositionRequestID %i, compositionResponseID %i", m_compositionRequestID, compositionResponseID);
 
-    if (m_forceRepaintAsync.callback && compositionResponseID >= m_forceRepaintAsync.compositionRequestID) {
+    if (m_forceRepaintAsync.callback && m_forceRepaintAsync.compositionRequestID && compositionResponseID >= *m_forceRepaintAsync.compositionRequestID) {
         m_forceRepaintAsync.callback();
-        m_forceRepaintAsync.compositionRequestID = 0;
+        m_forceRepaintAsync.compositionRequestID = std::nullopt;
     }
 
     if (!m_isWaitingForRenderer || m_compositionRequestID == compositionResponseID) {
         m_isWaitingForRenderer = false;
         bool scheduledWhileWaitingForRenderer = std::exchange(m_scheduledWhileWaitingForRenderer, false);
-        if (!m_isSuspended && (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive())) {
+        if (m_pendingForceRepaint) {
+            if (m_layerTreeStateIsFrozen) {
+                if (m_forceRepaintAsync.callback) {
+                    m_forceRepaintAsync.callback();
+                    m_forceRepaintAsync.compositionRequestID = std::nullopt;
+                }
+            } else {
+                forceRepaint();
+                if (m_forceRepaintAsync.callback)
+                    m_forceRepaintAsync.compositionRequestID = m_compositionRequestID;
+            }
+        } else if (!m_isSuspended && !m_layerTreeStateIsFrozen && (scheduledWhileWaitingForRenderer || m_layerFlushTimer.isActive())) {
             cancelPendingLayerFlush();
             flushLayers();
         }

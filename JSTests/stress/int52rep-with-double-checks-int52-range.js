@@ -12,7 +12,7 @@ function test(array)
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(doubleArray), 0xffffffff + 3);
 doubleArray[0] = 0x7ffffffffffff;
 shouldBe(test(doubleArray), 0x80000fffffffe);

@@ -24,7 +24,7 @@ async function test() {
     let instance = await instantiate(wat, {}, {exceptions: true});
 
     let caughtCount = 0;
-    for (let i = 0; i < 10000; i ++) {
+    for (let i = 0; i < wasmTestLoopCount; i ++) {
         try {
             instance.exports.call_thrower();
         } catch (e) {
@@ -33,7 +33,7 @@ async function test() {
         }
     }
 
-    assert.eq(caughtCount, 10000);
+    assert.eq(caughtCount, wasmTestLoopCount);
 }
 
 assert.asyncTest(test());

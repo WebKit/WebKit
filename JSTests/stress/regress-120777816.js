@@ -87,7 +87,7 @@ function assert(x) {
         return (() => leak())();
     }
 
-    for (var i = 0; i < 1e5; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         assert(tryToLeakThisViaGetById() === undefined);
         assert(tryToLeakThisViaGetByVal() === undefined);
         assert(tryToLeakThisViaSetById() === undefined);

@@ -8,7 +8,7 @@ noInline(foo);
 
 var array = [2000000000.5];
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(array, 0);
     if (result != 4000000000.5)
         throw "Error: bad result: " + result;

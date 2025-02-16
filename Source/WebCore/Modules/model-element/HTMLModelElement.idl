@@ -53,6 +53,8 @@
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] Promise<undefined> play();
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] Promise<undefined> pause();
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] attribute double currentTime;
+    
+    [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, Reflect] attribute DOMString stageMode;
 
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled, CEReactions=NotNeeded, Reflect, URL] attribute USVString environmentMap;
     [Conditional=MODEL_PROCESS, EnabledBySetting=ModelProcessEnabled] readonly attribute Promise<undefined> environmentMapReady;

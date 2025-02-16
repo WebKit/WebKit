@@ -74,6 +74,26 @@ namespace IPC {
 enum class NSType : uint8_t {
     Array,
     Color,
+#if USE(PASSKIT)
+    PKPaymentMethod,
+    PKPaymentMerchantSession,
+    PKContact,
+    PKSecureElementPass,
+    PKPayment,
+    PKPaymentToken,
+    PKShippingMethod,
+    PKDateComponentsRange,
+    CNContact,
+    CNPhoneNumber,
+    CNPostalAddress,
+#endif
+#if ENABLE(DATA_DETECTION) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+    DDScannerResult,
+#if PLATFORM(MAC)
+    WKDDActionContext,
+#endif
+#endif
+    NSDateComponents,
     Data,
     Date,
     Error,
@@ -82,7 +102,9 @@ enum class NSType : uint8_t {
     Locale,
     Number,
     Null,
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
     SecureCoding,
+#endif
     String,
     URL,
     NSValue,
@@ -193,6 +215,7 @@ template<typename T> struct ArgumentCoder<T *> {
     }
 };
 
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 template<typename T> struct ArgumentCoder<CoreIPCRetainPtr<T>> {
     template<typename U = T>
     static void encode(Encoder& encoder, const CoreIPCRetainPtr<U>& object)
@@ -212,6 +235,7 @@ template<typename T> struct ArgumentCoder<CoreIPCRetainPtr<T>> {
         return decodeObjectDirectlyRequiringAllowedClasses<U>(decoder);
     }
 };
+#endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 
 template<typename T> struct ArgumentCoder<RetainPtr<T>> {
     template<typename U = T, typename = IsObjCObject<U>>

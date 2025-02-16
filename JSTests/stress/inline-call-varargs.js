@@ -12,7 +12,7 @@ function baz(a, b) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(7, 11);
     if (result != 29)
         throw "Error: bad result: " + result;

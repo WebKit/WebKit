@@ -224,10 +224,18 @@ static inline FloatRect rootViewBounds(Node& node)
     if (UNLIKELY(!view))
         return { };
 
-    if (!node.renderer())
+    CheckedPtr renderer = node.renderer();
+    if (!renderer)
         return { };
 
-    return view->contentsToRootView(node.renderer()->absoluteBoundingBoxRect());
+    IntRect absoluteRect;
+    if (CheckedPtr renderElement = dynamicDowncast<RenderElement>(*renderer); renderElement && renderElement->firstChild())
+        absoluteRect = renderer->pixelSnappedAbsoluteClippedOverflowRect();
+
+    if (absoluteRect.isEmpty())
+        absoluteRect = renderer->absoluteBoundingBoxRect();
+
+    return view->contentsToRootView(absoluteRect);
 }
 
 static inline String labelText(HTMLElement& element)
@@ -262,6 +270,11 @@ static bool shouldTreatAsPasswordField(const Element* element)
 static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemData(Node& node, TraversalContext& context)
 {
     CheckedPtr renderer = node.renderer();
+
+    RefPtr element = dynamicDowncast<Element>(node);
+    if (element && element->hasDisplayContents())
+        return { SkipExtraction::Self };
+
     if (!renderer || renderer->style().opacity() < minOpacityToConsiderVisible)
         return { SkipExtraction::SelfAndSubtree };
 
@@ -279,7 +292,6 @@ static inline std::variant<SkipExtraction, ItemData, URL, Editable> extractItemD
         return { SkipExtraction::Self };
     }
 
-    RefPtr element = dynamicDowncast<Element>(node);
     if (!element)
         return { SkipExtraction::Self };
 

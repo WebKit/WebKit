@@ -27,6 +27,7 @@
 
 #include <wtf/RetainPtr.h>
 
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 namespace IPC {
 
 template<typename T>
@@ -40,3 +41,4 @@ public:
 };
 
 }
+#endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)

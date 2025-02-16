@@ -76,7 +76,7 @@ void ReplaceNodeWithSpanCommand::doUnapply()
 }
 
 #ifndef NDEBUG
-void ReplaceNodeWithSpanCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
+void ReplaceNodeWithSpanCommand::getNodesInCommand(NodeSet& nodes)
 {
     addNodeAndDescendants(m_elementToReplace.ptr(), nodes);
     addNodeAndDescendants(m_spanElement.get(), nodes);

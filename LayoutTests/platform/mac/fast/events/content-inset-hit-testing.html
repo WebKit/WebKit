@@ -15,7 +15,7 @@
             return;
         if (window.testRunner) {
             testRunner.waitUntilDone();
-            await testRunner.setTopContentInset(100);
+            await testRunner.setObscuredContentInsets(100, 0, 0, 0);
             testRunner.dumpAsText();
         }
 

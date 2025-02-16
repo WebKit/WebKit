@@ -210,7 +210,7 @@ using JSInstruction = BaseInstruction<JSOpcodeTraits>;
 
         static constexpr ptrdiff_t callerFrameOffset() { return OBJECT_OFFSETOF(CallerFrameAndPC, callerFrame); }
 
-        void* rawReturnPCForInspection() const { return callerFrameAndPC().returnPC; }
+        void* rawReturnPC() const { return callerFrameAndPC().returnPC; }
         void* returnPCForInspection() const { return removeCodePtrTag(callerFrameAndPC().returnPC); }
         bool hasReturnPC() const { return !!callerFrameAndPC().returnPC; }
         void clearReturnPC() { callerFrameAndPC().returnPC = nullptr; }

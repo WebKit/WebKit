@@ -45,6 +45,7 @@ Ref<JSON::Object> VideoTrackConfiguration::toJSON() const
     json->setDouble("framerate"_s, framerate());
     json->setInteger("bitrate"_s, bitrate());
     json->setBoolean("isSpatial"_s, !!spatialVideoMetadata());
+    json->setBoolean("isImmersive"_s, isImmersiveVideo());
     return json;
 }
 

@@ -1,0 +1,41 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<html>
+<head>
+<script src="../../resources/accessibility-helper.js"></script>
+<script src="../../resources/js-test.js"></script>
+</head>
+<body>
+
+<p id="paragraph" style="width: 500px">
+WebKit is the web browser engine used by Safari, Mail, App Store, and many other apps on macOS, iOS, and Linux. Get started contributing code, or reporting bugs.
+</p>
+
+<script>
+if (window.accessibilityController) {
+    var output = "This test verifies that all characters in each line are included in the line range when at soft line breaks.\n\n";
+
+    var paragraph = accessibilityController.accessibleElementById("paragraph");
+    var textMarkerRange = paragraph.textMarkerRangeForElement(paragraph)
+    var currentMarker = paragraph.startTextMarkerForTextMarkerRange(textMarkerRange);
+    
+    var lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    output += expect("paragraph.stringForTextMarkerRange(lineRange)", "'WebKit is the web browser engine used by Safari, Mail, App Store, and many'");
+    
+    currentMarker = paragraph.nextLineEndTextMarkerForTextMarker(currentMarker);
+    currentMarker = paragraph.nextTextMarker(currentMarker);
+
+    lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    output += expect("paragraph.stringForTextMarkerRange(lineRange)", "'other apps on macOS, iOS, and Linux. Get started contributing code, or'");
+    
+    currentMarker = paragraph.nextLineEndTextMarkerForTextMarker(currentMarker);
+    currentMarker = paragraph.nextTextMarker(currentMarker);
+    
+    lineRange = paragraph.lineTextMarkerRangeForTextMarker(currentMarker);
+    output += expect("paragraph.stringForTextMarkerRange(lineRange)", "'reporting bugs.'");
+
+    debug(output);
+}
+</script>
+</body>
+</html>
+

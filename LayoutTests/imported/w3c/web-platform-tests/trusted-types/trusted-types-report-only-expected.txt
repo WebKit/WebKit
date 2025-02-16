@@ -1,11 +1,16 @@
-CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
 CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: [Report Only] This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-CONSOLE MESSAGE: Hello
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
 CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
+CONSOLE MESSAGE: [Report Only] This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: Refused to connect to http://localhost:8800/common/blank.html because it does not appear in the connect-src directive of the Content Security Policy.
 abc
 
+PASS Trusted Type violation report-only: assign string to script url
 PASS Trusted Type violation report-only: assign string to html
 PASS Trusted Type violation report-only: assign string to script.src
 PASS Trusted Type violation report-only: assign string to script content

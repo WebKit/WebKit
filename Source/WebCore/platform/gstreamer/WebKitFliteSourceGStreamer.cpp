@@ -74,7 +74,7 @@ GST_DEBUG_CATEGORY_STATIC(webkit_flite_src_debug);
 
 #define DEFAULT_SAMPLES_PER_BUFFER 1024
 
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
+static GstStaticPadTemplate fliteSrcTemplate = GST_STATIC_PAD_TEMPLATE("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS("audio/x-raw, "
@@ -83,7 +83,6 @@ static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
         "rate = (int) 48000, " "channels = (int) [1, 8]")
 );
 
-#define webkit_flite_src_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitFliteSrc, webkit_flite_src, GST_TYPE_BASE_SRC,
     GST_DEBUG_CATEGORY_INIT(webkit_flite_src_debug, "webkitflitesrc", 0, "flitesrc element"));
 
@@ -109,7 +108,7 @@ static void webkitFliteSrcReset(WebKitFliteSrc* src)
 
 static void webkitFliteSrcConstructed(GObject* object)
 {
-    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+    G_OBJECT_CLASS(webkit_flite_src_parent_class)->constructed(object);
 
     WebKitFliteSrc* src = WEBKIT_FLITE_SRC(object);
     WebKitFliteSrcPrivate* priv = src->priv;
@@ -202,7 +201,7 @@ static void webkit_flite_src_class_init(WebKitFliteSrcClass* klass)
     objectClass->constructed = webkitFliteSrcConstructed;
 
     GstElementClass* elementClass = GST_ELEMENT_CLASS(klass);
-    gst_element_class_add_static_pad_template(elementClass, &srcTemplate);
+    gst_element_class_add_static_pad_template(elementClass, &fliteSrcTemplate);
     gst_element_class_set_static_metadata(elementClass,
         "WebKit WebSpeech GstFlite source element", "Source",
         "Handles WebSpeech data from WebCore",

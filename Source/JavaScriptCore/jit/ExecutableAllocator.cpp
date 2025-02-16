@@ -297,7 +297,9 @@ static ALWAYS_INLINE MacroAssemblerCodeRef<JITThunkPtrTag> jitWriteThunkGenerato
 #else // not USE(EXECUTE_ONLY_JIT_WRITE_FUNCTION)
 static void genericWriteToJITRegion(off_t offset, const void* data, size_t dataSize)
 {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memcpy((void*)(g_jscConfig.startOfFixedWritableMemoryPool + offset), data, dataSize);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 static MacroAssemblerCodeRef<JITThunkPtrTag> ALWAYS_INLINE jitWriteThunkGenerator(void* address, void*, size_t)
@@ -357,8 +359,10 @@ static ALWAYS_INLINE void initializeSeparatedWXHeaps(void* stubBase, size_t stub
     result = vm_protect(mach_task_self(), static_cast<vm_address_t>(writableAddr), jitSize, true, VM_PROT_READ | VM_PROT_WRITE);
     RELEASE_ASSERT(!result);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // Zero out writableAddr to avoid leaking the address of the writable mapping.
     memset_s(&writableAddr, sizeof(writableAddr), 0, sizeof(writableAddr));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(SEPARATED_WX_HEAP)
     g_jscConfig.jitWriteSeparateHeaps = reinterpret_cast<JITWriteSeparateHeapsFunction>(writeThunk.code().taggedPtr());
@@ -1340,6 +1344,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     static size_t offset WTF_GUARDED_BY_LOCK(dumpJITMemoryLock) = 0;
     static bool needsToFlush WTF_GUARDED_BY_LOCK(dumpJITMemoryLock) = false;
     static LazyNeverDestroyed<Ref<WorkQueue>> flushQueue;
+    static auto flushQueueSingleton = []() { return flushQueue.get(); };
     struct DumpJIT {
         static void flush() WTF_REQUIRES_LOCK(dumpJITMemoryLock)
         {
@@ -1360,7 +1365,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
                 return;
 
             needsToFlush = true;
-            flushQueue.get()->dispatchAfter(Seconds(Options::dumpJITMemoryFlushInterval()), [] {
+            flushQueueSingleton()->dispatchAfter(Seconds(Options::dumpJITMemoryFlushInterval()), [] {
                 Locker locker { dumpJITMemoryLock };
                 if (!needsToFlush)
                     return;

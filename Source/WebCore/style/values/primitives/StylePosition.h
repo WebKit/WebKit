@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSPosition.h"
+#include "FloatPoint.h"
 #include "StylePrimitiveNumericTypes.h"
 
 namespace WebCore {
@@ -35,14 +36,14 @@ struct TwoComponentPositionHorizontal {
 
     bool operator==(const TwoComponentPositionHorizontal&) const = default;
 };
-DEFINE_TYPE_WRAPPER(TwoComponentPositionHorizontal, offset);
+DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionHorizontal, offset);
 
 struct TwoComponentPositionVertical {
     LengthPercentage<> offset;
 
     bool operator==(const TwoComponentPositionVertical&) const = default;
 };
-DEFINE_TYPE_WRAPPER(TwoComponentPositionVertical, offset);
+DEFINE_TYPE_WRAPPER_GET(TwoComponentPositionVertical, offset);
 
 struct Position  {
     Position(TwoComponentPositionHorizontal&& x, TwoComponentPositionVertical&& y)
@@ -61,7 +62,7 @@ struct Position  {
     }
 
     Position(FloatPoint point)
-        : value { LengthPercentage<> { Length<> { point.x() } }, LengthPercentage<> { Length<> { point.y() } } }
+        : value { LengthPercentage<>::Dimension { point.x() }, LengthPercentage<>::Dimension { point.y() } }
     {
     }
 
@@ -92,13 +93,11 @@ template<> struct ToStyle<CSS::Position> { auto operator()(const CSS::Position&,
 
 // MARK: - Evaluation
 
-FloatPoint evaluate(const Position&, FloatSize referenceBox);
-float evaluate(const TwoComponentPositionHorizontal&, float referenceWidth);
-float evaluate(const TwoComponentPositionVertical&, float referenceHeight);
+template<> struct Evaluation<Position> { auto operator()(const Position&, FloatSize) -> FloatPoint; };
 
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(TwoComponentPositionHorizontal, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(TwoComponentPositionVertical, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(Position, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TwoComponentPositionHorizontal, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TwoComponentPositionVertical, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Position, 2)

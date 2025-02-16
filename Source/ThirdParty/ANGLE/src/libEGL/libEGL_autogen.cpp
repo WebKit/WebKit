@@ -480,6 +480,19 @@ EGLBoolean EGLAPIENTRY eglReleaseDeviceANGLE(EGLDeviceEXT device)
     return EGL_ReleaseDeviceANGLE(device);
 }
 
+// EGL_ANGLE_device_vulkan
+void EGLAPIENTRY eglLockVulkanQueueANGLE(EGLDisplay dpy)
+{
+    EnsureEGLLoaded();
+    return EGL_LockVulkanQueueANGLE(dpy);
+}
+
+void EGLAPIENTRY eglUnlockVulkanQueueANGLE(EGLDisplay dpy)
+{
+    EnsureEGLLoaded();
+    return EGL_UnlockVulkanQueueANGLE(dpy);
+}
+
 // EGL_ANGLE_external_context_and_surface
 void EGLAPIENTRY eglAcquireExternalContextANGLE(EGLDisplay dpy, EGLSurface drawAndRead)
 {
@@ -731,6 +744,19 @@ EGLDisplay EGLAPIENTRY eglGetPlatformDisplayEXT(EGLenum platform,
 {
     EnsureEGLLoaded();
     return EGL_GetPlatformDisplayEXT(platform, native_display, attrib_list);
+}
+
+// EGL_EXT_surface_compression
+EGLBoolean EGLAPIENTRY eglQuerySupportedCompressionRatesEXT(EGLDisplay dpy,
+                                                            EGLConfig config,
+                                                            const EGLAttrib *attrib_list,
+                                                            EGLint *rates,
+                                                            EGLint rate_size,
+                                                            EGLint *num_rates)
+{
+    EnsureEGLLoaded();
+    return EGL_QuerySupportedCompressionRatesEXT(dpy, config, attrib_list, rates, rate_size,
+                                                 num_rates);
 }
 
 // EGL_KHR_debug

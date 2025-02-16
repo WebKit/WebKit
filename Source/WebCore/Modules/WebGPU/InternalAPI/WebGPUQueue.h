@@ -42,6 +42,11 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+class NativeImage;
+class VideoFrame;
+}
+
 namespace WebCore::WebGPU {
 
 class Buffer;
@@ -93,6 +98,7 @@ public:
         const ImageCopyTextureTagged& destination,
         const Extent3D& copySize) = 0;
 
+    virtual RefPtr<WebCore::NativeImage> getNativeImage(WebCore::VideoFrame&) = 0;
 protected:
     Queue() = default;
 

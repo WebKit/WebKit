@@ -1,3 +1,4 @@
+//@ $skipModes << "no-llint".to_sym if $architecture == "arm"
 /*
  * Copyright (C) 2018 Apple Inc. All rights reserved.
  *

@@ -66,6 +66,27 @@ void dataLogLn(const Types&... values)
             dataLogLn(__VA_ARGS__); \
     } while (0)
 
+#define dataLogFIf(shouldLog, ...) do { \
+        using ShouldLogType = std::decay_t<decltype(shouldLog)>; \
+        static_assert(std::is_same_v<ShouldLogType, bool> || std::is_enum_v<ShouldLogType>, "You probably meant to pass a bool or enum as dataLogIf's first parameter"); \
+        if (UNLIKELY(shouldLog)) \
+            dataLogF(__VA_ARGS__); \
+    } while (0)
+
+#define dataLogFVIf(shouldLog, ...) do { \
+        using ShouldLogType = std::decay_t<decltype(shouldLog)>; \
+        static_assert(std::is_same_v<ShouldLogType, bool> || std::is_enum_v<ShouldLogType>, "You probably meant to pass a bool or enum as dataLogIf's first parameter"); \
+        if (UNLIKELY(shouldLog)) \
+            dataLogFV(__VA_ARGS__); \
+    } while (0)
+
+#define dataLogFStringIf(shouldLog, ...) do { \
+        using ShouldLogType = std::decay_t<decltype(shouldLog)>; \
+        static_assert(std::is_same_v<ShouldLogType, bool> || std::is_enum_v<ShouldLogType>, "You probably meant to pass a bool or enum as dataLogIf's first parameter"); \
+        if (UNLIKELY(shouldLog)) \
+            dataLogFString(__VA_ARGS__); \
+    } while (0)
+
 } // namespace WTF
 
 using WTF::dataLog;

@@ -81,7 +81,7 @@ public:
     void visitWeakReferences(Visitor&);
 
     template<typename Visitor>
-    void iterateCodeBlocksForGC(Visitor&, VM&, const Function<void(CodeBlock*)>&);
+    void iterateCodeBlocksForGC(Visitor&, VM&, NOESCAPE const Function<void(CodeBlock*)>&);
 
     void dump(PrintStream&) const;
 

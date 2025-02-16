@@ -34,7 +34,7 @@
 
 namespace JSC {
 
-#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+#if ENABLE(FTL_JIT) || ENABLE(WEBASSEMBLY_OMGJIT)
 namespace B3 {
 class PCToOriginMap;
 }
@@ -57,12 +57,12 @@ public:
 
 #if ENABLE(FTL_JIT)
     enum JSTag { JSCodeOriginMap };
-    PCToCodeOriginMapBuilder(JSTag, VM&, B3::PCToOriginMap);
+    PCToCodeOriginMapBuilder(JSTag, VM&, const B3::PCToOriginMap&);
 #endif
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
     enum WasmTag { WasmCodeOriginMap };
-    PCToCodeOriginMapBuilder(WasmTag, B3::PCToOriginMap);
+    PCToCodeOriginMapBuilder(WasmTag, const B3::PCToOriginMap&);
 #endif
 
     void appendItem(MacroAssembler::Label label, const CodeOrigin& origin)

@@ -785,6 +785,20 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         setNonCellTypeForNode(node, SpecInt32Only);
         break;
     }
+
+    case PurifyNaN: {
+        auto abstractValue = forNode(node->child1());
+        JSValue child = abstractValue.value();
+        if (child && child.isNumber()) {
+            setConstant(node, jsDoubleNumber(purifyNaN(child.asNumber())));
+            break;
+        }
+        if (!abstractValue.couldBeType(SpecDoubleImpureNaN))
+            m_state.setShouldTryConstantFolding(true);
+        abstractValue.filter(SpecBytecodeDouble);
+        forNode(node) = abstractValue;
+        break;
+    }
         
     case DoubleRep: {
         JSValue child = forNode(node->child1()).value();
@@ -926,6 +940,19 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             if (left && right && left.isNumber() && right.isNumber()) {
                 setConstant(node, jsDoubleNumber(left.asNumber() + right.asNumber()));
                 break;
+            }
+
+            // Addition is subtle with doubles. Zero is not the neutral value, negative zero is:
+            //    0 + 0 = 0
+            //    0 + -0 = 0
+            //    -0 + 0 = 0
+            //    -0 + -0 = -0
+            if (left && left.isNumber()) {
+                if (isNegativeZero(left.asNumber()))
+                    m_state.setShouldTryConstantFolding(true);
+            } else if (right && right.isNumber()) {
+                if (isNegativeZero(right.asNumber()))
+                    m_state.setShouldTryConstantFolding(true);
             }
             setNonCellTypeForNode(node, 
                 typeOfDoubleSum(
@@ -1255,6 +1282,15 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 setConstant(node, jsDoubleNumber(left.asNumber() * right.asNumber()));
                 break;
             }
+
+            if (left && left.isNumber()) {
+                if (left.asNumber() == 1)
+                    m_state.setShouldTryConstantFolding(true);
+            } else if (right && right.isNumber()) {
+                if (right.asNumber() == 1)
+                    m_state.setShouldTryConstantFolding(true);
+            }
+
             setNonCellTypeForNode(node, 
                 typeOfDoubleProduct(
                     forNode(node->child1()).m_type, forNode(node->child2()).m_type));
@@ -1511,7 +1547,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                 roundedValue = Math::ceilDouble(*number);
             else {
                 ASSERT(node->op() == ArithTrunc);
-                roundedValue = trunc(*number);
+                roundedValue = Math::truncDouble(*number);
             }
 
             if (node->child1().useKind() == UntypedUse) {
@@ -1671,6 +1707,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
         break;
 
     case MapStorage:
+    case MapStorageOrSentinel:
     case MapIterationNext:
         setTypeForNode(node, SpecCellOther);
         break;
@@ -3905,7 +3942,7 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
                     break;
                 }
             }
-            setTypeForNode(node, SpecBytecodeRealNumber);
+            setTypeForNode(node, SpecBytecodeDouble);
             break;
         }
 
@@ -4571,10 +4608,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.setIsValid(false);
 
         if (node->hasDoubleResult()) {
-            if (value.isType(SpecBytecodeRealNumber))
+            if (value.isType(SpecBytecodeDouble))
                 setForNode(node, value);
             else
-                setTypeForNode(node, SpecBytecodeRealNumber);
+                setTypeForNode(node, SpecBytecodeDouble);
         } else
             setForNode(node, value);
 
@@ -4641,10 +4678,10 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
             m_state.setIsValid(false);
         
         if (node->hasDoubleResult()) {
-            if (result.isType(SpecBytecodeRealNumber))
+            if (result.isType(SpecBytecodeDouble))
                 setForNode(node, result);
             else
-                setTypeForNode(node, SpecBytecodeRealNumber);
+                setTypeForNode(node, SpecBytecodeDouble);
         } else
             setForNode(node, result);
         break;
@@ -5040,17 +5077,35 @@ bool AbstractInterpreter<AbstractStateType>::executeEffects(unsigned clobberLimi
 
     case GetGlobalVar: {
         if (node->hasDoubleResult())
-            setTypeForNode(node, SpecBytecodeRealNumber);
-        else
+            setTypeForNode(node, SpecBytecodeDouble);
+        else {
+            // Emptiness is monotonic. And GetGlobalLexicalVariable and GetGlobalVar are tied to GlobalObject.
+            // So long as it is not unlinked.
+            if (!m_graph.m_plan.isUnlinked()) {
+                if (JSValue concurrentlyRead = node->variablePointer()->get()) {
+                    setTypeForNode(node, SpecHeapTop & ~SpecEmpty);
+                    break;
+                }
+            }
             makeHeapTopForNode(node);
+        }
         break;
     }
 
     case GetGlobalLexicalVariable:
         if (node->hasDoubleResult())
-            setTypeForNode(node, SpecBytecodeRealNumber);
-        else
+            setTypeForNode(node, SpecBytecodeDouble);
+        else {
+            // Emptiness is monotonic. And GetGlobalLexicalVariable and GetGlobalVar are tied to GlobalObject.
+            // So long as it is not unlinked.
+            if (!m_graph.m_plan.isUnlinked()) {
+                if (JSValue concurrentlyRead = node->variablePointer()->get()) {
+                    setTypeForNode(node, SpecBytecodeTop & ~SpecEmpty);
+                    break;
+                }
+            }
             makeBytecodeTopForNode(node);
+        }
         break;
 
     case GetDynamicVar:
@@ -5696,7 +5751,7 @@ template<typename AbstractStateType>
 void AbstractInterpreter<AbstractStateType>::dump(PrintStream& out)
 {
     CommaPrinter comma(" "_s);
-    HashSet<NodeFlowProjection> seen;
+    UncheckedKeyHashSet<NodeFlowProjection> seen;
     if (m_graph.m_form == SSA) {
         for (NodeFlowProjection node : m_state.block()->ssa->liveAtHead) {
             seen.add(node);

@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+CONSOLE MESSAGE: Resource usage limits exceeded: uniformBufferCount(0) > deviceLimits.maxUniformBuffersPerShaderStage(12) || storageBufferCount(9) > deviceLimits.maxStorageBuffersPerShaderStage(8) || samplerCount(0) > deviceLimits.maxSamplersPerShaderStage(16) || textureCount(0) > deviceLimits.maxSampledTexturesPerShaderStage(16) || storageTextureCount(0) > deviceLimits.maxStorageTexturesPerShaderStage(4)
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584

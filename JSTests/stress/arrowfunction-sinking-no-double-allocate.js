@@ -14,7 +14,7 @@ function sink (p, q) {
 }
 noInline(sink);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = sink(true, false);
     if (o.x != 3)
         throw "Error: expected o.x to be 2 but is " + result;

@@ -39,9 +39,9 @@ public:
 
     const CSS::Color& color() const { return m_color; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSColorValue&) const;
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
     WEBCORE_EXPORT static WebCore::Color absoluteColor(const CSSValue&);
 

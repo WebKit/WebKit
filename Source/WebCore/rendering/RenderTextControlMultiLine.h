@@ -45,7 +45,7 @@ private:
     LayoutUnit computeControlLogicalHeight(LayoutUnit lineHeight, LayoutUnit nonContentHeight) const override;
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;
 
-    void layoutExcludedChildren(bool relayoutChildren) override;
+    void layoutExcludedChildren(RelayoutChildren) override;
 };
 
 inline RenderTextControlMultiLine* HTMLTextAreaElement::renderer() const

@@ -13,7 +13,7 @@ function test() {
     return g;
 }
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var g1 = test();
     var g2 = test();
     shouldBe(g1.__proto__ != g2.__proto__, true);

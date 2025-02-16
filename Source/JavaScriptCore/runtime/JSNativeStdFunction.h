@@ -38,7 +38,7 @@ public:
     using Base = JSFunction;
 
     static constexpr unsigned StructureFlags = Base::StructureFlags;
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell* cell)
     {
         static_cast<JSNativeStdFunction*>(cell)->JSNativeStdFunction::~JSNativeStdFunction();

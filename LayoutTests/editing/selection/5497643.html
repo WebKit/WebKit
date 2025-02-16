@@ -3,20 +3,24 @@
 <body>
 <p>This tests to make sure that a selection inside a textarea is updated when the textarea is removed from the document.</p>
 <textarea id="textarea"></textarea>
-<script src="../../resources/js-test-pre.js"></script>
+<script src="../../resources/js-test.js"></script>
 <script>
-if (window.testRunner)
-    window.testRunner.dumpAsText();
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+}
 function nodeIndex(node) {
     return Array.prototype.slice.call(node.parentNode.childNodes).indexOf(node);
 }
-textarea = document.getElementById("textarea");
-evalAndLog("textareaOffset = nodeIndex(textarea); textarea.setSelectionRange(0, 0); textarea.parentNode.removeChild(textarea);");
-shouldBe("getSelection().type", "'Caret'");
-shouldBe("getSelection().getRangeAt(0).startContainer", "document.body");
-shouldBe("getSelection().getRangeAt(0).startOffset", "textareaOffset");
-var successfullyParsed = true;
+window.onload = () => {
+    textarea = document.getElementById("textarea");
+    evalAndLog("textareaOffset = nodeIndex(textarea); textarea.focus(); textarea.setSelectionRange(0, 0); textarea.parentNode.removeChild(textarea);");
+    shouldBe("getSelection().type", "'Caret'");
+    shouldBe("getSelection().getRangeAt(0).startContainer", "document.body");
+    shouldBe("getSelection().getRangeAt(0).startOffset", "textareaOffset");
+    if (window.testRunner)
+        testRunner.notifyDone();
+};
 </script>
-<script src="../../resources/js-test-post.js"></script>
 </body>
 </html>

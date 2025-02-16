@@ -70,6 +70,16 @@ struct A8L8
     static void average(A8L8 *dst, const A8L8 *src1, const A8L8 *src2);
 };
 
+struct L4A4
+{
+    uint8_t L : 4;
+    uint8_t A : 4;
+
+    static void readColor(gl::ColorF *dst, const L4A4 *src);
+    static void writeColor(L4A4 *dst, const gl::ColorF *src);
+    static void average(L4A4 *dst, const L4A4 *src1, const L4A4 *src2);
+};
+
 struct R8G8
 {
     uint8_t R;

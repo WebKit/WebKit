@@ -69,6 +69,10 @@ public:
 
     virtual void teardown();
 
+    virtual void dispatchBitrateRequest(uint32_t bitrate) = 0;
+
+    RealtimeMediaSource::Type type() const;
+
 protected:
     enum Type {
         Audio,

@@ -34,6 +34,7 @@
 
 #if ENABLE(WEB_RTC)
 
+#include "Logging.h"
 #include "RTCPeerConnection.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -128,6 +129,8 @@ ExceptionOr<void> RTCRtpTransceiver::setCodecPreferences(const Vector<RTCRtpCode
 {
     if (!m_backend)
         return { };
+
+    RELEASE_LOG_INFO(WebRTC, "RTCRtpTransceiver::setCodecPreferences");
     return m_backend->setCodecPreferences(codecs);
 }
 

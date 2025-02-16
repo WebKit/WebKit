@@ -5,16 +5,16 @@ function shouldBe(actual, expected) {
 
 {
     let string0 = '';
-    for (let i = 0; i < 1e5; ++i)
+    for (let i = 0; i < testLoopCount; ++i)
         string0 += String.fromCharCode(i);
     let string1 = '';
-    for (let i = 0; i < 1e5; ++i)
-        string1 += String.fromCharCode(i + 1e5);
+    for (let i = 0; i < testLoopCount; ++i)
+        string1 += String.fromCharCode(i + testLoopCount);
     let string2 = '';
-    for (let i = 0; i < 1e5; ++i)
-        string2 += String.fromCharCode(i + 1e5 * 2);
+    for (let i = 0; i < testLoopCount; ++i)
+        string2 += String.fromCharCode(i + testLoopCount * 2);
     let result = string0 + string1 + string2;
-    shouldBe(result.length, 1e5 * 3);
-    for (let i = 0; i < 3e5; ++i)
+    shouldBe(result.length, testLoopCount * 3);
+    for (let i = 0; i < 3 * testLoopCount; ++i)
         shouldBe(result[i], String.fromCharCode(i));
 }

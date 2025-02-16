@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#if ENABLE(INPUT_TYPE_MONTH)
 #include "MonthInputType.h"
 
 #include "DateComponents.h"
@@ -160,5 +159,3 @@ void MonthInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters
 }
 
 } // namespace WebCore
-
-#endif

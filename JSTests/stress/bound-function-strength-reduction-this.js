@@ -23,7 +23,7 @@ function t2() {
 }
 noInline(t2);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(bound(1, 2), object);
     shouldBe(t1(), object);
     shouldBe(t2(), object);

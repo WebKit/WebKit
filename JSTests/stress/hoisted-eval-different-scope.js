@@ -1,4 +1,4 @@
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     eval(`
     var x = 1;
     with ({ g() { } }) {

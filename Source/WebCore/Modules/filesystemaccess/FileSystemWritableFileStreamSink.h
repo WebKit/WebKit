@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "FileSystemWritableFileStreamIdentifier.h"
 #include "WritableStreamSink.h"
 
 namespace WebCore {
@@ -32,11 +33,11 @@ class FileSystemFileHandle;
 
 class FileSystemWritableFileStreamSink final : public WritableStreamSink {
 public:
-    static ExceptionOr<Ref<FileSystemWritableFileStreamSink>> create(FileSystemFileHandle&);
+    static ExceptionOr<Ref<FileSystemWritableFileStreamSink>> create(FileSystemWritableFileStreamIdentifier, FileSystemFileHandle&);
     ~FileSystemWritableFileStreamSink();
 
 private:
-    explicit FileSystemWritableFileStreamSink(FileSystemFileHandle&);
+    FileSystemWritableFileStreamSink(FileSystemWritableFileStreamIdentifier, FileSystemFileHandle&);
     Ref<FileSystemFileHandle> protectedSource() const { return m_source; }
 
     // WritableStreamSink
@@ -44,6 +45,7 @@ private:
     void close() final;
     void error(String&&) final;
 
+    FileSystemWritableFileStreamIdentifier m_identifier;
     const Ref<FileSystemFileHandle> m_source;
     bool m_isClosed { false };
 };

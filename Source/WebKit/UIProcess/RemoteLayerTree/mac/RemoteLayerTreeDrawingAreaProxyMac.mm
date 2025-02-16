@@ -128,14 +128,14 @@ DisplayLink* RemoteLayerTreeDrawingAreaProxyMac::existingDisplayLink()
     if (!page)
         return nullptr;
 
-    return page->protectedConfiguration()->processPool().displayLinks().existingDisplayLinkForDisplay(*m_displayID);
+    return page->configuration().processPool().displayLinks().existingDisplayLinkForDisplay(*m_displayID);
 }
 
 DisplayLink& RemoteLayerTreeDrawingAreaProxyMac::displayLink()
 {
     ASSERT(m_displayID);
 
-    auto& displayLinks = protectedWebPageProxy()->protectedConfiguration()->processPool().displayLinks();
+    auto& displayLinks = protectedWebPageProxy()->configuration().processPool().displayLinks();
     return displayLinks.displayLinkForDisplay(*m_displayID);
 }
 
@@ -173,20 +173,20 @@ void RemoteLayerTreeDrawingAreaProxyMac::layoutBannerLayers(const RemoteLayerTre
         [CATransaction commit];
     };
 
-    float topContentInset = webPageProxy->scrollingCoordinatorProxy()->topContentInset();
+    float topInset = webPageProxy->scrollingCoordinatorProxy()->obscuredContentInsets().top();
     auto scrollPosition = webPageProxy->scrollingCoordinatorProxy()->currentMainFrameScrollPosition();
     
     if (headerBannerLayer) {
         auto headerHeight = headerBannerLayer.frame.size.height;
         totalContentsHeight += headerHeight;
-        auto y = LocalFrameView::yPositionForHeaderLayer(scrollPosition, topContentInset);
+        auto y = LocalFrameView::yPositionForHeaderLayer(scrollPosition, topInset);
         layoutBannerLayer(headerBannerLayer, y, size().width());
     }
 
     if (footerBannerLayer) {
         auto footerHeight = footerBannerLayer.frame.size.height;
         totalContentsHeight += footerBannerLayer.frame.size.height;
-        auto y = LocalFrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsHeight, footerHeight);
+        auto y = LocalFrameView::yPositionForFooterLayer(scrollPosition, topInset, totalContentsHeight, footerHeight);
         layoutBannerLayer(footerBannerLayer, y, size().width());
     }
 }
@@ -203,7 +203,7 @@ void RemoteLayerTreeDrawingAreaProxyMac::didCommitLayerTree(IPC::Connection&, co
 
     if (m_transientZoomScale)
         applyTransientZoomToLayer();
-    else if (m_transactionIDAfterEndingTransientZoom && transaction.transactionID() >= m_transactionIDAfterEndingTransientZoom) {
+    else if (m_transactionIDAfterEndingTransientZoom && transaction.transactionID().greaterThanOrEqualSameProcess(*m_transactionIDAfterEndingTransientZoom)) {
         removeTransientZoomFromLayer();
         m_transactionIDAfterEndingTransientZoom = { };
     }
@@ -354,11 +354,11 @@ void RemoteLayerTreeDrawingAreaProxyMac::commitTransientZoom(double scale, Float
     [layerForPageScrolling addAnimation:scrollPositionOverrideAnimation.get() forKey:transientZoomScrollPositionOverrideAnimationKey];
 
     [CATransaction setCompletionBlock:[scale, constrainedOrigin, rootScrollingNodeID, protectedWebPageProxy = page] () {
-        if (RefPtr drawingArea = static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(protectedWebPageProxy->drawingArea()))
+        if (RefPtr drawingArea = downcast<RemoteLayerTreeDrawingAreaProxyMac>(protectedWebPageProxy->drawingArea()))
             drawingArea->sendCommitTransientZoom(scale, constrainedOrigin, rootScrollingNodeID);
 
         protectedWebPageProxy->callAfterNextPresentationUpdate([protectedWebPageProxy] {
-            RefPtr drawingArea = static_cast<RemoteLayerTreeDrawingAreaProxyMac*>(protectedWebPageProxy->drawingArea());
+            RefPtr drawingArea = downcast<RemoteLayerTreeDrawingAreaProxyMac>(protectedWebPageProxy->drawingArea());
             if (!drawingArea)
                 return;
 
@@ -534,10 +534,10 @@ void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
     updateDebugIndicatorPosition();
 }
 
-void RemoteLayerTreeDrawingAreaProxyMac::dispatchSetTopContentInset()
+void RemoteLayerTreeDrawingAreaProxyMac::dispatchSetObscuredContentInsets()
 {
     if (RefPtr page = m_webPageProxy.get())
-        page->dispatchSetTopContentInset();
+        page->dispatchSetObscuredContentInsets();
 }
 
 void RemoteLayerTreeDrawingAreaProxyMac::colorSpaceDidChange()

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+ContainerProgressEvaluator.h"
+#include "CSSCalcTree+Mappings.h"
 #include "CSSCalcTree+MediaProgressEvaluator.h"
 #include "CSSCalcTree+Simplification.h"
 #include "CSSCalcTree.h"
@@ -39,7 +40,7 @@
 namespace WebCore {
 namespace CSSCalc {
 
-static auto evaluate(const CSS::NoneRaw&, const EvaluationOptions&) -> std::optional<Calculation::None>;
+static auto evaluate(const CSS::Keyword::None&, const EvaluationOptions&) -> std::optional<Calculation::None>;
 static auto evaluate(const ChildOrNone&, const EvaluationOptions&) -> std::optional<std::variant<double, Calculation::None>>;
 static auto evaluate(const std::optional<Child>&, const EvaluationOptions&) -> std::optional<std::optional<double>>;
 static auto evaluate(const Child&, const EvaluationOptions&) -> std::optional<double>;
@@ -53,6 +54,7 @@ static auto evaluate(const IndirectNode<Product>&, const EvaluationOptions&) -> 
 static auto evaluate(const IndirectNode<Min>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Max>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Hypot>&, const EvaluationOptions&) -> std::optional<double>;
+static auto evaluate(const IndirectNode<Random>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<MediaProgress>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<ContainerProgress>&, const EvaluationOptions&) -> std::optional<double>;
 static auto evaluate(const IndirectNode<Anchor>&, const EvaluationOptions&) -> std::optional<double>;
@@ -67,13 +69,13 @@ template<typename Op, typename... Args> static std::optional<double> executeMath
     if ((!args.has_value() || ...))
         return std::nullopt;
 
-    return Calculation::executeOperation<typename Op::Base>(args.value()...);
+    return Calculation::executeOperation<ToCalculationTreeOp<Op>>(args.value()...);
 }
 
 template<typename Op> static std::optional<double> executeVariadicMathOperationAfterUnwrapping(const IndirectNode<Op>& op, const EvaluationOptions& options)
 {
     bool failure = false;
-    auto result = Calculation::executeOperation<typename Op::Base>(op->children, [&](const auto& child) -> double {
+    auto result = Calculation::executeOperation<ToCalculationTreeOp<Op>>(op->children.value, [&](const auto& child) -> double {
         if (auto value = evaluate(child, options))
             return *value;
         failure = true;
@@ -86,7 +88,7 @@ template<typename Op> static std::optional<double> executeVariadicMathOperationA
     return result;
 }
 
-std::optional<Calculation::None> evaluate(const CSS::NoneRaw&, const EvaluationOptions&)
+std::optional<Calculation::None> evaluate(const CSS::Keyword::None&, const EvaluationOptions&)
 {
     return Calculation::None { };
 }
@@ -134,10 +136,6 @@ std::optional<double> evaluate(const NonCanonicalDimension& root, const Evaluati
     if (auto canonical = canonicalize(root, options.conversionData))
         return evaluate(*canonical, options);
 
-    // FIXME: This is only needed while CSSToLengthConversionData is optional. Once all callers pass one in, this will go away.
-    if (options.allowUnresolvedUnits)
-        return root.value;
-
     return std::nullopt;
 }
 
@@ -175,6 +173,44 @@ std::optional<double> evaluate(const IndirectNode<Hypot>& root, const Evaluation
     return executeVariadicMathOperationAfterUnwrapping(root, options);
 }
 
+std::optional<double> evaluate(const IndirectNode<Random>& root, const EvaluationOptions& options)
+{
+    if (!options.conversionData || !options.conversionData->styleBuilderState())
+        return { };
+    if (root->cachingOptions.perElement && !options.conversionData->styleBuilderState()->element())
+        return { };
+
+    auto min = evaluate(root->min, options);
+    if (!min)
+        return { };
+
+    auto max = evaluate(root->max, options);
+    if (!min)
+        return { };
+
+    auto step = evaluate(root->step, options);
+    if (!step)
+        return { };
+
+    // RandomKeyMap relies on using NaN for HashTable deleted/empty values but
+    // the result is always NaN if either is NaN, so we can return early here.
+    if (std::isnan(*min) || std::isnan(*max))
+        return std::numeric_limits<double>::quiet_NaN();
+
+    auto keyMap = options.conversionData->styleBuilderState()->randomKeyMap(
+        root->cachingOptions.perElement
+    );
+
+    auto randomUnitInterval = keyMap->lookupUnitInterval(
+        root->cachingOptions.identifier,
+        *min,
+        *max,
+        *step
+    );
+
+    return Calculation::executeOperation<ToCalculationTreeOp<Random>>(randomUnitInterval, *min, *max, *step);
+}
+
 std::optional<double> evaluate(const IndirectNode<MediaProgress>& root, const EvaluationOptions& options)
 {
     if (!options.conversionData || !options.conversionData->styleBuilderState())
@@ -190,7 +226,7 @@ std::optional<double> evaluate(const IndirectNode<MediaProgress>& root, const Ev
 
     Ref document = options.conversionData->styleBuilderState()->document();
     auto value = evaluateMediaProgress(root, document, *options.conversionData);
-    return Calculation::executeOperation<Progress::Base>(value, *start, *end);
+    return Calculation::executeOperation<ToCalculationTreeOp<Progress>>(value, *start, *end);
 }
 
 std::optional<double> evaluate(const IndirectNode<ContainerProgress>& root, const EvaluationOptions& options)
@@ -211,7 +247,7 @@ std::optional<double> evaluate(const IndirectNode<ContainerProgress>& root, cons
     if (!value)
         return { };
 
-    return Calculation::executeOperation<Progress::Base>(*value, *start, *end);
+    return Calculation::executeOperation<ToCalculationTreeOp<Progress>>(*value, *start, *end);
 }
 
 std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const EvaluationOptions& options)

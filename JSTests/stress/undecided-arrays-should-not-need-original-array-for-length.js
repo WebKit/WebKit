@@ -11,7 +11,7 @@ function findFoo(name, array, bail) {
 noInline(findFoo);
 
 class SubArray extends Array {}
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let array = i % 2 ? new SubArray(0) : ["foo"];
     findFoo("foo", array, array.length);
     for (let i = 0; i < 100; ++i)

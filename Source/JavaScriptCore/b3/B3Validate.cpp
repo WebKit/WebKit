@@ -67,8 +67,8 @@ public:
 
     void run()
     {
-        HashSet<BasicBlock*> blocks;
-        HashSet<Value*> valueInProc;
+        UncheckedKeyHashSet<BasicBlock*> blocks;
+        UncheckedKeyHashSet<Value*> valueInProc;
         UncheckedKeyHashMap<Value*, unsigned> valueInBlock;
         UncheckedKeyHashMap<Value*, BasicBlock*> valueOwner;
         UncheckedKeyHashMap<Value*, unsigned> valueIndex;
@@ -114,7 +114,7 @@ public:
             }
         }
 
-        UncheckedKeyHashMap<BasicBlock*, HashSet<BasicBlock*>> allPredecessors;
+        UncheckedKeyHashMap<BasicBlock*, UncheckedKeyHashSet<BasicBlock*>> allPredecessors;
         for (BasicBlock* block : blocks) {
             VALIDATE(block->size() >= 1, ("At ", *block));
             for (unsigned i = 0; i < block->size() - 1; ++i)
@@ -122,7 +122,7 @@ public:
             VALIDATE(block->last()->effects().terminal, ("At ", *block->last()));
             
             for (BasicBlock* successor : block->successorBlocks()) {
-                allPredecessors.add(successor, HashSet<BasicBlock*>()).iterator->value.add(block);
+                allPredecessors.add(successor, UncheckedKeyHashSet<BasicBlock*>()).iterator->value.add(block);
                 VALIDATE(
                     blocks.contains(successor), ("At ", *block, "->", pointerDump(successor)));
             }
@@ -131,7 +131,7 @@ public:
         // Note that this totally allows dead code.
         for (auto& entry : allPredecessors) {
             BasicBlock* successor = entry.key;
-            HashSet<BasicBlock*>& predecessors = entry.value;
+            UncheckedKeyHashSet<BasicBlock*>& predecessors = entry.value;
             VALIDATE(predecessors == successor->predecessors(), ("At ", *successor));
         }
 
@@ -248,6 +248,12 @@ public:
                 VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
                 VALIDATE(value->type().isNumeric(), ("At ", *value));
                 break;
+            case PurifyNaN:
+                VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
+                VALIDATE(value->numChildren() == 1, ("At ", *value));
+                VALIDATE(value->type() == value->child(0)->type(), ("At ", *value));
+                VALIDATE(value->type().isFloat(), ("At ", *value));
+                break;
             case Shl:
             case SShr:
             case ZShr:
@@ -317,6 +323,7 @@ public:
             case Abs:
             case Ceil:
             case Floor:
+            case FTrunc:
             case Sqrt:
                 VALIDATE(!value->kind().hasExtraBits(), ("At ", *value));
                 VALIDATE(value->numChildren() == 1, ("At ", *value));
@@ -870,7 +877,7 @@ public:
 
         for (BasicBlock* block : m_procedure) {
             // We expect the predecessor list to be de-duplicated.
-            HashSet<BasicBlock*> predecessors;
+            UncheckedKeyHashSet<BasicBlock*> predecessors;
             for (BasicBlock* predecessor : block->predecessors())
                 predecessors.add(predecessor);
             VALIDATE(block->numPredecessors() == predecessors.size(), ("At ", *block));
@@ -969,7 +976,7 @@ private:
     {
         bool changed = true;
         BitVector blocksToVisit;
-        IndexMap<BasicBlock*, HashSet<Value*>> undominatedPhisAtTail(m_procedure.size());
+        IndexMap<BasicBlock*, UncheckedKeyHashSet<Value*>> undominatedPhisAtTail(m_procedure.size());
         for (BasicBlock* block : m_procedure)
             blocksToVisit.set(block->index());
         while (changed) {
@@ -977,7 +984,7 @@ private:
             for (BasicBlock* block : m_procedure.blocksInPostOrder()) {
                 if (!blocksToVisit.quickClear(block->index()))
                     continue;
-                HashSet<Value*> undominatedPhis = undominatedPhisAtTail[block];
+                UncheckedKeyHashSet<Value*> undominatedPhis = undominatedPhisAtTail[block];
                 for (unsigned index = block->size()-1; index--;) {
                     Value* value = block->at(index);
                     switch (value->opcode()) {

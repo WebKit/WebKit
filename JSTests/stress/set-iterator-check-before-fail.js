@@ -7,7 +7,7 @@ function test(set)
 noInline(test);
 
 var set = new Set();
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(set);
 }
 var array = [];

@@ -29,6 +29,7 @@
 #include <gtk/gtk.h>
 #if HAVE(GTK_UNIX_PRINTING)
 #include <gtk/gtkunixprint.h>
+#include <WebCore/FloatConversion.h>
 #endif
 
 namespace WebKit {
@@ -46,7 +47,7 @@ PrintInfo::PrintInfo(GtkPrintJob* job, PrintMode printMode)
     pageSetupScaleFactor = gtk_print_settings_get_scale(jobSettings.get()) / 100.0;
     availablePaperWidth = gtk_page_setup_get_paper_width(jobPageSetup.get(), GTK_UNIT_POINTS) - gtk_page_setup_get_left_margin(jobPageSetup.get(), GTK_UNIT_POINTS) - gtk_page_setup_get_right_margin(jobPageSetup.get(), GTK_UNIT_POINTS);
     availablePaperHeight = gtk_page_setup_get_paper_height(jobPageSetup.get(), GTK_UNIT_POINTS) - gtk_page_setup_get_top_margin(jobPageSetup.get(), GTK_UNIT_POINTS) - gtk_page_setup_get_bottom_margin(jobPageSetup.get(), GTK_UNIT_POINTS);
-    margin = { gtk_page_setup_get_top_margin(jobPageSetup.get(), GTK_UNIT_POINTS), gtk_page_setup_get_right_margin(jobPageSetup.get(), GTK_UNIT_POINTS), gtk_page_setup_get_bottom_margin(jobPageSetup.get(), GTK_UNIT_POINTS), gtk_page_setup_get_left_margin(jobPageSetup.get(), GTK_UNIT_POINTS) };
+    margin = { WebCore::narrowPrecisionToFloat(gtk_page_setup_get_top_margin(jobPageSetup.get(), GTK_UNIT_POINTS)), WebCore::narrowPrecisionToFloat(gtk_page_setup_get_right_margin(jobPageSetup.get(), GTK_UNIT_POINTS)), WebCore::narrowPrecisionToFloat(gtk_page_setup_get_bottom_margin(jobPageSetup.get(), GTK_UNIT_POINTS)), WebCore::narrowPrecisionToFloat(gtk_page_setup_get_left_margin(jobPageSetup.get(), GTK_UNIT_POINTS)) };
 
     pageSetup = WTFMove(jobPageSetup);
 

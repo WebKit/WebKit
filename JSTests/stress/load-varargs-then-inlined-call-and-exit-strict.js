@@ -32,7 +32,7 @@ function test(array) {
     checkEqual(actual, expected);
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     for (var j = 0; j < 1 + (i % 5); ++j)
         array.push(j);

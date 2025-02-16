@@ -30,7 +30,7 @@ function foo(o, c) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     switch (i % 2) {
     case 0:
         assert(foo(customGetter) === 100);

@@ -6,19 +6,18 @@
 // CLDeviceVk.cpp: Implements the class methods for CLDeviceVk.
 
 #include "libANGLE/renderer/vulkan/CLDeviceVk.h"
-#include "libANGLE/renderer/vulkan/CLPlatformVk.h"
+#include "libANGLE/renderer/vulkan/clspv_utils.h"
 #include "libANGLE/renderer/vulkan/vk_renderer.h"
 
 #include "libANGLE/renderer/cl_types.h"
 
-#include "libANGLE/Display.h"
 #include "libANGLE/cl_utils.h"
 
 namespace rx
 {
 
 CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
-    : CLDeviceImpl(device), mRenderer(renderer)
+    : CLDeviceImpl(device), mRenderer(renderer), mSpirvVersion(ClspvGetSpirvVersion(renderer))
 {
     const VkPhysicalDeviceProperties &props = mRenderer->getPhysicalDeviceProperties();
 
@@ -72,9 +71,9 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
     };
     mInfoUInt = {
         {cl::DeviceInfo::VendorID, props.vendorID},
-        {cl::DeviceInfo::MaxReadImageArgs, props.limits.maxPerStageDescriptorSampledImages},
-        {cl::DeviceInfo::MaxWriteImageArgs, props.limits.maxPerStageDescriptorStorageImages},
-        {cl::DeviceInfo::MaxReadWriteImageArgs, props.limits.maxPerStageDescriptorStorageImages},
+        {cl::DeviceInfo::MaxReadImageArgs, cl::IMPLEMENATION_MAX_READ_IMAGES},
+        {cl::DeviceInfo::MaxWriteImageArgs, cl::IMPLEMENATION_MAX_WRITE_IMAGES},
+        {cl::DeviceInfo::MaxReadWriteImageArgs, cl::IMPLEMENATION_MAX_WRITE_IMAGES},
         {cl::DeviceInfo::GlobalMemCachelineSize,
          static_cast<cl_uint>(props.limits.nonCoherentAtomSize)},
         {cl::DeviceInfo::Available, CL_TRUE},
@@ -126,7 +125,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::PreferredLocalAtomicAlignment, 0},
         {cl::DeviceInfo::PreferredGlobalAtomicAlignment, 0},
         {cl::DeviceInfo::PreferredPlatformAtomicAlignment, 0},
-        {cl::DeviceInfo::NonUniformWorkGroupSupport, CL_FALSE},
+        {cl::DeviceInfo::NonUniformWorkGroupSupport, CL_TRUE},
         {cl::DeviceInfo::GenericAddressSpaceSupport, CL_FALSE},
         {cl::DeviceInfo::SubGroupIndependentForwardProgress, CL_FALSE},
         {cl::DeviceInfo::WorkGroupCollectiveFunctionsSupport, CL_FALSE},
@@ -194,7 +193,34 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
         cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
                         .name    = "cl_khr_local_int32_extended_atomics"},
     };
+    if (info.imageSupport && info.image3D_MaxDepth > 1)
+    {
+        versionedExtensionList.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0), .name = "cl_khr_3d_image_writes"});
+    }
     info.initializeVersionedExtensions(std::move(versionedExtensionList));
+
+    if (!mRenderer->getFeatures().supportsUniformBufferStandardLayout.enabled)
+    {
+        ERR() << "VK_KHR_uniform_buffer_standard_layout extension support is needed to properly "
+                 "support uniform buffers. Otherwise, you must disable OpenCL.";
+    }
+
+    // Populate supported features
+    if (info.imageSupport)
+    {
+        info.OpenCL_C_Features.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0), .name = "__opencl_c_images"});
+        info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                         .name    = "__opencl_c_3d_image_writes"});
+        info.OpenCL_C_Features.push_back(cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0),
+                                                         .name = "__opencl_c_read_write_images"});
+    }
+    if (mRenderer->getEnabledFeatures().features.shaderInt64)
+    {
+        info.OpenCL_C_Features.push_back(
+            cl_name_version{.version = CL_MAKE_VERSION(3, 0, 0), .name = "__opencl_c_int64"});
+    }
 
     return info;
 }
@@ -275,10 +301,7 @@ cl::WorkgroupSize CLDeviceVk::selectWorkGroupSize(const cl::NDRange &ndrange) co
             cl::WorkgroupSize newLocalSize = localSize;
             newLocalSize[i] *= 2;
 
-            // TODO: Add support for non-uniform WGS
-            // http://anglebug.com/42267067
-            if (ndrange.globalWorkSize[i] % newLocalSize[i] == 0 &&
-                newLocalSize[i] <= props.limits.maxComputeWorkGroupCount[i] &&
+            if (newLocalSize[i] <= props.limits.maxComputeWorkGroupCount[i] &&
                 newLocalSize[0] * newLocalSize[1] * newLocalSize[2] <= maxSize)
             {
                 localSize      = newLocalSize;

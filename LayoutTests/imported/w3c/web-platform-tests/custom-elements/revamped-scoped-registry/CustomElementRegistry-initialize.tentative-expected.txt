@@ -1,0 +1,9 @@
+
+PASS initialize is a function on both global and scoped CustomElementRegistry
+PASS initialize sets element.customElements to the global registry
+PASS initialize does not set the registry of nested shadow tree to the global registry
+PASS initialize sets element.customElements to a scoped registry
+PASS initialize does not set the registry of nested shadow tree to a scoped registry
+PASS initialize sets element.customElements permantently
+PASS initialize is no-op on a subtree with a non-null registry
+

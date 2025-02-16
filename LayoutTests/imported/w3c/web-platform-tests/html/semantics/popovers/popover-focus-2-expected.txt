@@ -2,9 +2,11 @@ Button1  Button2  Invoker0  Invoker1  Button3  Button4
 Invoker  after
 Show popover
 Toggle popover Other focusable element
+Toggle popover Popover with focusable element Nested popover with focusable element
 
 PASS Popover focus navigation
 PASS Circular reference tab navigation
 PASS Popover focus returns when popover is hidden by invoker
 PASS Popover focus only returns to invoker when focus is within the popover
+PASS Cases where the next focus candidate isn't in the direct parent scope
 

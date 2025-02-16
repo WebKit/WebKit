@@ -201,10 +201,10 @@ void CookieJar::setRawCookie(const Document&, const Cookie& cookie, ShouldPartit
         ASSERT_NOT_REACHED();
 }
 
-void CookieJar::deleteCookie(const Document&, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
+void CookieJar::deleteCookie(const Document& document, const URL& url, const String& cookieName, CompletionHandler<void()>&& completionHandler)
 {
     if (CheckedPtr session = protectedStorageSessionProvider()->storageSession())
-        session->deleteCookie(url, cookieName, WTFMove(completionHandler));
+        session->deleteCookie(document.firstPartyForCookies(), url, cookieName, WTFMove(completionHandler));
     else {
         ASSERT_NOT_REACHED();
         completionHandler();

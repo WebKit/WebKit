@@ -73,13 +73,15 @@ public:
 
     virtual bool isUsingDisplayListDrawing(PlatformCALayer*) const { return false; }
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
     virtual bool hdrForImagesEnabled() const { return false; }
 #endif
 
     virtual void platformCALayerLogFilledVisibleFreshTile(unsigned /* blankPixelCount */) { }
 
-    virtual bool platformCALayerContainsBitmapOnly(const PlatformCALayer*) const { return false; }
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    virtual bool platformCALayerAllowsDynamicContentScaling(const PlatformCALayer*) const { return true; }
+#endif
 
     virtual bool platformCALayerShouldPaintUsingCompositeCopy() const { return false; }
 

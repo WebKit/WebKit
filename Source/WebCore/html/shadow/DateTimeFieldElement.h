@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "HTMLDivElement.h"
 
 #include <wtf/GregorianDateTime.h>
@@ -112,5 +110,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

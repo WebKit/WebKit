@@ -115,10 +115,10 @@ void PlayStationWebView::setViewNeedsDisplay(const WebCore::Region& region)
 }
 
 #if ENABLE(FULLSCREEN_API)
-void PlayStationWebView::willEnterFullScreen()
+void PlayStationWebView::willEnterFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
     m_isFullScreen = true;
-    m_page->fullScreenManager()->willEnterFullScreen();
+    m_page->fullScreenManager()->willEnterFullScreen(WTFMove(completionHandler));
 }
 
 void PlayStationWebView::didEnterFullScreen()
@@ -155,10 +155,12 @@ bool PlayStationWebView::isFullScreen()
     return m_isFullScreen;
 }
 
-void PlayStationWebView::enterFullScreen()
+void PlayStationWebView::enterFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
     if (m_client && !isFullScreen())
-        m_client->enterFullScreen(*this);
+        m_client->enterFullScreen(*this, WTFMove(completionHandler));
+    else
+        completionHandler(false);
 }
 
 void PlayStationWebView::exitFullScreen()

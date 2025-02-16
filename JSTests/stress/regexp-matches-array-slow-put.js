@@ -2,7 +2,7 @@
     var count = 0;
     Array.prototype.__defineSetter__("0", function(value) { count += value; });
     
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var array = /foo/.exec("foo");
         if (array[0] != "foo")
             throw "Error: bad result: " + array[0];

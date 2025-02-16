@@ -507,8 +507,7 @@ angle::Result QueryVk::getResult(const gl::Context *context, bool wait)
     // not-ready if not waiting).
     if (isCurrentlyInUse(renderer) &&
         (!renderer->getFeatures().supportsHostQueryReset.enabled ||
-         renderer->getFeatures().forceWaitForSubmissionToCompleteForQueryResult.enabled ||
-         renderer->isAsyncCommandQueueEnabled()))
+         renderer->getFeatures().forceWaitForSubmissionToCompleteForQueryResult.enabled))
     {
         // The query might appear busy because there was no check for completed commands
         // recently. Do that now and see if the query is still busy.  If the application is

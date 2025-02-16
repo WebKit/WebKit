@@ -37,7 +37,6 @@ struct ContrastColor {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     Color color;
-    bool max { false };
 
     bool operator==(const ContrastColor&) const;
 };
@@ -47,9 +46,9 @@ WebCore::Color createColor(const ContrastColor&, PlatformColorResolutionState&);
 bool containsCurrentColor(const ContrastColor&);
 bool containsColorSchemeDependentColor(const ContrastColor&);
 
-template<> struct Serialize<ContrastColor> { void operator()(StringBuilder&, const ContrastColor&); };
+template<> struct Serialize<ContrastColor> { void operator()(StringBuilder&, const SerializationContext&, const ContrastColor&); };
 template<> struct ComputedStyleDependenciesCollector<ContrastColor> { void operator()(ComputedStyleDependencies&, const ContrastColor&); };
-template<> struct CSSValueChildrenVisitor<ContrastColor> { IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const ContrastColor&); };
+template<> struct CSSValueChildrenVisitor<ContrastColor> { IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const ContrastColor&); };
 
 } // namespace CSS
 } // namespace WebCore

@@ -185,7 +185,7 @@ bool RealtimeVideoCaptureSource::presetSupportsZoom(const VideoPreset& preset, d
     return preset.minZoom() <= zoom && zoom <= preset.maxZoom();
 }
 
-bool RealtimeVideoCaptureSource::supportsCaptureSize(std::optional<int> width, std::optional<int> height, const Function<bool(const IntSize&)>&& function)
+bool RealtimeVideoCaptureSource::supportsCaptureSize(std::optional<int> width, std::optional<int> height, NOESCAPE const Function<bool(const IntSize&)>& function)
 {
     if (width && height)
         return function({ width.value(), height.value() });
@@ -506,7 +506,7 @@ auto RealtimeVideoCaptureSource::takePhoto(PhotoSettings&& photoSettings) -> Ref
         setSizeFrameRateAndZoomForPhoto(WTFMove(*newPresetForPhoto));
     }
 
-    return takePhotoInternal(WTFMove(photoSettings))->whenSettled(RunLoop::main(), [this, protectedThis = Ref { *this }, configurationToRestore = WTFMove(configurationToRestore)] (auto&& result) mutable {
+    return takePhotoInternal(WTFMove(photoSettings))->whenSettled(RunLoop::protectedMain(), [this, protectedThis = Ref { *this }, configurationToRestore = WTFMove(configurationToRestore)] (auto&& result) mutable {
 
         ASSERT(isMainThread());
 

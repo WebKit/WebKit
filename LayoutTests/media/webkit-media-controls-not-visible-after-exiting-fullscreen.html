@@ -15,11 +15,13 @@
         run('video.controls = false');
         runWithKeyDown('video.webkitEnterFullscreen()');
         await waitFor(document, 'fullscreenchange');
+        if (window.testRunner) { await testRunner.updatePresentation() }
 
         await sleepFor(100);
 
         runWithKeyDown('video.webkitExitFullscreen()');
         await waitFor(document, 'fullscreenchange');
+        if (window.testRunner) { await testRunner.updatePresentation() }
 
         if (window.internals) {
             shadow = internals.shadowRoot(mediaElement);

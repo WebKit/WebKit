@@ -365,7 +365,8 @@ static void appendHashSet(StringBuilder& builder, const String& label, const Has
 }
 
 #if ENABLE(WEB_API_STATISTICS)
-static void appendHashSet(StringBuilder& builder, const String& label, const HashSet<String>& hashSet)
+template<typename HashSetType>
+static void appendHashSet(StringBuilder& builder, const String& label, const HashSetType& hashSet)
 {
     if (hashSet.isEmpty())
         return;

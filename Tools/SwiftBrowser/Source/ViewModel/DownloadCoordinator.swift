@@ -34,7 +34,7 @@ final class DownloadCoordinator {
 
     var downloads: [DownloadCoordinator.DownloadItem] = []
 
-    func didReceiveDownloadEvent(_ event: WebPage_v0.DownloadEvent) {
+    func didReceiveDownloadEvent(_ event: WebPage.DownloadEvent) {
         Self.logger.info("Did receive download event \(String(describing: event.kind)) for download \(String(describing: event.download.id))")
 
         switch event.kind {
@@ -60,7 +60,7 @@ final class DownloadCoordinator {
 }
 
 extension DownloadCoordinator: WebKit.DownloadCoordinator {
-    func destination(forDownload download: WebPage_v0.DownloadID, response: URLResponse, suggestedFilename: String) async -> URL? {
+    func destination(forDownload download: WebPage.DownloadID, response: URLResponse, suggestedFilename: String) async -> URL? {
         let url = URL.downloadsDirectory.appending(component: suggestedFilename)
         guard !FileManager.default.fileExists(atPath: url.path()) else {
             Self.logger.error("\(url.path()) already exists")
@@ -79,19 +79,19 @@ extension DownloadCoordinator: WebKit.DownloadCoordinator {
 extension DownloadCoordinator {
     @MainActor
     struct DownloadItem: Downloadable {
-        init(source: WebPage_v0.Download) {
+        init(source: WebPage.Download) {
             self.id = source.id
             self.progress = source.progress
             self.source = source
         }
 
-        let id: WebPage_v0.DownloadID
+        let id: WebPage.DownloadID
         let progress: Progress
 
         var url: URL? = nil
         var finished: Bool = false
 
-        private let source: WebPage_v0.Download
+        private let source: WebPage.Download
 
         func cancel() async {
             await source.cancel()

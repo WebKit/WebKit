@@ -5,7 +5,7 @@ function shouldBe(actual, expected) {
 
 const json = '{"a": 1, "b": 2}';
 
-for (let i = 1; i < 10000; i++) {
+for (let i = 1; i < testLoopCount; i++) {
     let keys = [];
     let proxy = new Proxy([2, 3], {
         get: function(target, key) {

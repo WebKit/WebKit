@@ -27,6 +27,44 @@ async function br_on_null() {
 
   /*
   (module
+    (func (export "f") (param funcref) (result i32)
+      (i32.const 1357)
+      (i32.const 0)
+      (br_on_null 0 (i32.const 1) (local.get 0))
+      drop drop
+      (return)
+    )
+  )
+  */
+  {
+    let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x70\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x96\x80\x80\x80\x00\x01\x90\x80\x80\x80\x00\x00\x41\xcd\x0a\x41\x00\x41\x01\x20\x00\xd5\x00\x1a\x1a\x0f\x0b"));
+    assert.eq(instance.exports.f(null), 1);
+    assert.eq(instance.exports.f(instance.exports.f), 0);
+  }
+
+  /*
+  (module
+    (func (export "f") (param funcref) (result i32)
+      (i32.const 1357)
+      (i32.const 1)
+      (block
+        (br_on_null 0 (local.get 0))
+        drop
+        (i32.const 0)
+        (return)
+      )
+      (return)
+    )
+  )
+  */
+  {
+    let instance = new WebAssembly.Instance(module("\x00\x61\x73\x6d\x01\x00\x00\x00\x01\x86\x80\x80\x80\x00\x01\x60\x01\x70\x01\x7f\x03\x82\x80\x80\x80\x00\x01\x00\x07\x85\x80\x80\x80\x00\x01\x01\x66\x00\x00\x0a\x99\x80\x80\x80\x00\x01\x93\x80\x80\x80\x00\x00\x41\xcd\x0a\x41\x01\x02\x40\x20\x00\xd5\x00\x1a\x41\x00\x0f\x0b\x0f\x0b"));
+    assert.eq(instance.exports.f(null), 1);
+    assert.eq(instance.exports.f(instance.exports.f), 0);
+  }
+
+  /*
+  (module
     (func (import "m" "f") (param (ref extern)) (result i32))
     (func (export "g") (param externref) (result i32)
       (br_on_null 0 (i32.const 1) (local.get 0))

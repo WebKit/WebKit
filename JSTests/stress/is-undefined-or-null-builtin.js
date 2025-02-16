@@ -8,7 +8,7 @@ var isUndefinedOrNull = $vm.createBuiltin(`(function (value) { return @isUndefin
 noInline(isUndefinedOrNull);
 
 var masquerader = makeMasquerader();
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(isUndefinedOrNull(null), true);
     shouldBe(isUndefinedOrNull(undefined), true);
     shouldBe(isUndefinedOrNull("Hello"), false);

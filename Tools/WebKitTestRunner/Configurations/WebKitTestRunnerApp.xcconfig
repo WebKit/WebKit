@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2010-2015 Apple Inc. All rights reserved.
+// Copyright (C) 2010-2025 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ PRODUCT_BUNDLE_IDENTIFIER = org.webkit.$(PRODUCT_NAME:rfc1034identifier);
 
 GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 
-OTHER_LDFLAGS = $(inherited) -lWebKitTestRunner -lPAL -lWebCoreTestSupport -framework JavaScriptCore -framework CoreGraphics -framework QuartzCore -framework ImageIO -framework IOKit -framework UIKit -framework WebKit -framework Foundation -framework GraphicsServices;
+OTHER_LDFLAGS = $(inherited) -lWebKitTestRunner -lPAL -lWebCoreTestSupport -framework CoreGraphics -framework Foundation -framework GraphicsServices -framework ImageIO -framework IOKit -framework JavaScriptCore -framework QuartzCore -framework UIKit -framework UniformTypeIdentifiers -framework WebKit;
 OTHER_LDFLAGS[sdk=watch*] = $(OTHER_LDFLAGS) -framework PepperUICore
 
 STRIP_STYLE = debugging;

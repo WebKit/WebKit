@@ -14,7 +14,7 @@ function getter() { return arr.byteLength }
 noDFG(getter)
 
 function test() {
-    for (var i = 0; i < 1e5; i++)
+    for (var i = 0; i < testLoopCount; i++)
         shouldBe(getter(), 40)
 
     Object.defineProperty(Float32Array.prototype.__proto__, "byteLength", {

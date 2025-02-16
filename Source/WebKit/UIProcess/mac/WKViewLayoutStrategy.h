@@ -23,14 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WKViewLayoutStrategy_h
-#define WKViewLayoutStrategy_h
+#pragma once
 
 #if PLATFORM(MAC)
 
 #import "WKLayoutMode.h"
-#import <wtf/NakedPtr.h>
 #import <wtf/NakedRef.h>
+#import <wtf/WeakObjCPtr.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebKit {
 class WebPageProxy;
@@ -41,9 +41,9 @@ class WebViewImpl;
 
 @interface WKViewLayoutStrategy : NSObject {
 @package
-    NakedPtr<WebKit::WebPageProxy> _page;
-    NakedPtr<WebKit::WebViewImpl> _webViewImpl;
-    NSView *_view;
+    WeakPtr<WebKit::WebPageProxy> _page;
+    WeakPtr<WebKit::WebViewImpl> _webViewImpl;
+    WeakObjCPtr<NSView> _view;
 
     WKLayoutMode _layoutMode;
 }
@@ -67,5 +67,3 @@ class WebViewImpl;
 @end
 
 #endif // PLATFORM(MAC)
-
-#endif // WKViewLayoutStrategy_h

@@ -54,7 +54,7 @@
 
 namespace WebCore {
 
-using ScrollbarSet = HashSet<SingleThreadWeakRef<Scrollbar>>;
+using ScrollbarSet = UncheckedKeyHashSet<SingleThreadWeakRef<Scrollbar>>;
 
 static ScrollbarSet& scrollbarMap()
 {

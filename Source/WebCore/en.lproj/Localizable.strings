@@ -346,9 +346,6 @@
 /* Message to display in browser window when in webkit full screen mode. */
 "Click to Exit Full Screen" = "Click to Exit Full Screen";
 
-/* Subtitle of the label to show on a snapshotted plug-in */
-"Click to restart" = "Click to restart";
-
 /* Display name for audio track kind 'commentary'. */
 "Commentary (audio track)" = "Commentary";
 
@@ -1372,9 +1369,6 @@
 /* Title for Show Text action button */
 "Show Text" = "Show Text";
 
-/* Title of the context menu item to show when PDFPlugin was used instead of a blocked plugin */
-"Show in blocked plug-in" = "Show in blocked plug-in";
-
 /* Single Page context menu item */
 "Single Page" = "Single Page";
 
@@ -1392,9 +1386,6 @@
 
 /* Smart Quotes context menu item */
 "Smart Quotes" = "Smart Quotes";
-
-/* Title of the label to show on a snapshotted plug-in */
-"Snapshotted Plug-In" = "Snapshotted Plug-In";
 
 /* Speech context sub-menu item */
 "Speech" = "Speech";

@@ -25,6 +25,7 @@
 #include "CallData.h"
 #include "CellState.h"
 #include "ConstructData.h"
+#include "DestructionMode.h"
 #include "EnumerationMode.h"
 #include "Heap.h"
 #include "HeapCell.h"
@@ -99,7 +100,7 @@ class JSCell : public HeapCell {
 public:
     static constexpr unsigned StructureFlags = 0;
 
-    static constexpr bool needsDestruction = false;
+    static constexpr DestructionMode needsDestruction = DoesNotNeedDestruction;
 
     static constexpr bool usePreciseAllocationsOnly = false;
     static constexpr uint8_t numberOfLowerTierPreciseCells = 8;

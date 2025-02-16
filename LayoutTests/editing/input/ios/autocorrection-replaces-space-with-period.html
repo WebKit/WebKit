@@ -22,10 +22,7 @@ addEventListener("load", async () => {
     editor = document.querySelector(".editor");
     await UIHelper.activateElementAndWaitForInputSession(editor);
 
-    await UIHelper.callFunctionAndWaitForEvent(async () => {
-        await UIHelper.typeCharacter(" ");
-        await UIHelper.ensurePresentationUpdate();
-    }, editor, "keyup");
+    await UIHelper.typeCharacters(" ", "keyup");
 
     await UIHelper.applyAutocorrection(".", " ");
     await shouldBecomeEqual("editor.textContent", "'Hi.'");

@@ -27,17 +27,20 @@ import Foundation
 
 // MARK: Supporting types
 
-extension WebPage_v0 {
+extension WebPage {
+    @_spi(Private)
     public enum JavaScriptConfirmResult: Hashable, Sendable {
         case ok
         case cancel
     }
 
+    @_spi(Private)
     public enum JavaScriptPromptResult: Hashable, Sendable {
         case ok(String)
         case cancel
     }
 
+    @_spi(Private)
     public enum FileInputPromptResult: Hashable, Sendable {
         case ok([URL])
         case cancel
@@ -49,37 +52,37 @@ extension WebPage_v0 {
 @_spi(Private)
 public protocol DialogPresenting {
     @MainActor
-    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage_v0.FrameInfo) async
+    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async
 
     @MainActor
-    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.JavaScriptConfirmResult
+    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult
 
     @MainActor
-    func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.JavaScriptPromptResult
+    func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptPromptResult
 
     @MainActor
-    func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.FileInputPromptResult
+    func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.FileInputPromptResult
 }
 
 // MARK: Default implementation
 
 public extension DialogPresenting {
     @MainActor
-    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage_v0.FrameInfo) async {
+    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async {
     }
 
     @MainActor
-    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.JavaScriptConfirmResult {
+    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult {
         .cancel
     }
 
     @MainActor
-    func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.JavaScriptPromptResult {
+    func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptPromptResult {
         .cancel
     }
 
     @MainActor
-    func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.FileInputPromptResult {
+    func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.FileInputPromptResult {
         .cancel
     }
 }

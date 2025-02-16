@@ -505,7 +505,7 @@ function testExceptionUnwind() {
     }
     noInline(deleteIt)
 
-    for (let j = 0; j < 100000; ++j) {
+    for (let j = 0; j < testLoopCount; ++j) {
         assert(!deleteIt({ j, baz: 5 }))
     }
 

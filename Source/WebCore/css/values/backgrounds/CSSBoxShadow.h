@@ -60,4 +60,4 @@ template<size_t I> const auto& get(const BoxShadow& value)
 } // namespace CSS
 } // namespace WebCore
 
-CSS_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(BoxShadow, 5)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::BoxShadow, 5)

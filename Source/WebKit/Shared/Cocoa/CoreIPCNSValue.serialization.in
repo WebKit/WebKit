@@ -31,14 +31,7 @@ webkit_platform_headers: "CoreIPCNSValue.h" <Foundation/NSRange.h>
 using NSRange = _NSRange
 
 [WebKitPlatform] class WebKit::CoreIPCNSValue {
-    WebKit::CoreIPCNSValue::Value m_value
+    std::variant<NSRange, CGRect, UniqueRef<WebKit::CoreIPCNSCFObject>> m_value
 }
-
-#if PLATFORM(MAC)
-using WebKit::CoreIPCNSValue::WrappedNSValue = std::variant<NSRange, NSRect>;
-#else
-using WebKit::CoreIPCNSValue::WrappedNSValue = std::variant<NSRange>;
-#endif
-using WebKit::CoreIPCNSValue::Value = std::variant<WebKit::CoreIPCNSValue::WrappedNSValue, WebKit::CoreIPCSecureCoding>;
 
 #endif // PLATFORM(COCOA)

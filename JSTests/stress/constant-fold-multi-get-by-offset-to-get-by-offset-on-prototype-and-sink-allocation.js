@@ -12,7 +12,7 @@ function foo(o, p) {
     return p ? o.f : -1;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     foo(new ThingA(), true);
     foo(new ThingB(), true);
     ThingA.prototype.f = i;
@@ -25,7 +25,7 @@ function bar(p) {
 
 ThingA.prototype.f = 42;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar(false);
     if (result != -1)
         throw new Error("Bad result in loop: " + result);

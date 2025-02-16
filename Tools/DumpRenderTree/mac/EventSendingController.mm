@@ -39,7 +39,7 @@
 #import "DumpRenderTreePasteboard.h"
 #import "ModifierKeys.h"
 #import "WebCoreTestSupport.h"
-#import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/MouseEventTypes.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <functional>

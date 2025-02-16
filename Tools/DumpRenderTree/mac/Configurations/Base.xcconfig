@@ -1,4 +1,4 @@
-// Copyright (C) 2009-2024 Apple Inc. All rights reserved.
+// Copyright (C) 2009-2025 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@ CLANG_ENABLE_OBJC_WEAK = YES;
 CLANG_WARN_CXX0X_EXTENSIONS = NO;
 GCC_NO_COMMON_BLOCKS = YES;
 ENABLE_STRICT_OBJC_MSGSEND=YES;
-GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) U_DISABLE_RENAMING=1 U_SHOW_CPLUSPLUS_API=0;
+GCC_PREPROCESSOR_DEFINITIONS = $(DEBUG_DEFINES) $(WK_OS_UNFAIR_LOCK_INLINE_CFLAGS) U_DISABLE_RENAMING=1 U_SHOW_CPLUSPLUS_API=0;
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 ENABLE_BITCODE = NO;
 PREBINDING = NO

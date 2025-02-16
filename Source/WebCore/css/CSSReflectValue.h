@@ -39,10 +39,10 @@ public:
     const CSSPrimitiveValue& offset() const { return m_offset.get(); }
     const CSSValue* mask() const { return m_mask.get(); }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSReflectValue&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
         if (func(m_offset.get()) == IterationStatus::Done)
             return IterationStatus::Done;

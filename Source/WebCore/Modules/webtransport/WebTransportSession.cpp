@@ -32,9 +32,4 @@ namespace WebCore {
 
 WebTransportSession::~WebTransportSession() = default;
 
-void WebTransportSession::attachClient(WebTransportSessionClient& client)
-{
-    m_client = client;
-}
-
 }

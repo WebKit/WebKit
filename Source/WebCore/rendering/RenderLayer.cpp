@@ -89,6 +89,7 @@
 #include "LocalFrameLoaderClient.h"
 #include "LocalFrameView.h"
 #include "Logging.h"
+#include "OverflowEvent.h"
 #include "OverlapTestRequestClient.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
@@ -399,6 +400,17 @@ RenderLayer::~RenderLayer()
     // Layer and all its children should be removed from the tree before destruction.
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(renderer().renderTreeBeingDestroyed() || !parent());
     RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(renderer().renderTreeBeingDestroyed() || !firstChild());
+}
+
+RenderLayer::PaintedContentRequest::PaintedContentRequest(const RenderLayer& owningLayer)
+{
+#if HAVE(HDR_SUPPORT)
+    auto& settings = owningLayer.renderer().document().settings();
+    if ((settings.hdrForImagesEnabled() || settings.canvasPixelFormatEnabled()) && screenSupportsHighDynamicRange())
+        makePaintedHDRContentUnknown();
+#else
+    UNUSED_PARAM(owningLayer);
+#endif
 }
 
 void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
@@ -873,9 +885,9 @@ void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZ
         return;
 
     bool isStacking = isStackingContext();
-    // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    bool layerOrDescendantsAreVisible = (m_hasVisibleContent || m_alwaysIncludedInZOrderLists) || ((m_hasVisibleDescendant || m_hasAlwaysIncludedInZOrderListsDescendants) && isStacking);
+    bool layerOrDescendantsAreVisible = m_hasVisibleContent || m_alwaysIncludedInZOrderLists || m_hasVisibleDescendant || m_hasAlwaysIncludedInZOrderListsDescendants;
     layerOrDescendantsAreVisible |= page().hasEverSetVisibilityAdjustment();
+    // Normal flow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
     if (!isNormalFlowOnly()) {
         if (layerOrDescendantsAreVisible) {
             auto& layerList = (zIndex() >= 0) ? positiveZOrderList : negativeZOrderList;
@@ -1420,9 +1432,9 @@ void RenderLayer::computeRepaintRectsIncludingDescendants()
 
 void RenderLayer::compositingStatusChanged(LayoutUpToDate layoutUpToDate)
 {
-    if (layoutUpToDate == LayoutUpToDate::Yes)
+    if (parent() || isRenderViewLayer())
         computeRepaintRectsIncludingDescendants();
-    else
+    if (layoutUpToDate == LayoutUpToDate::No)
         setSelfAndDescendantsNeedPositionUpdate();
 }
 
@@ -3203,7 +3215,7 @@ void RenderLayer::paintSVGResourceLayer(GraphicsContext& context, const AffineTr
 
     OptionSet<PaintLayerFlag> flags { PaintLayerFlag::TemporaryClipRects };
     if (!renderer().hasNonVisibleOverflow())
-        flags.add(PaintLayerFlag::PaintingOverflowContents);
+        flags.add({ PaintLayerFlag::PaintingOverflowContents, PaintLayerFlag::PaintingOverflowContentsRoot });
 
     paintLayer(context, paintingInfo, flags);
 
@@ -3331,7 +3343,7 @@ void RenderLayer::paintLayerContentsAndReflection(GraphicsContext& context, cons
 {
     ASSERT(isSelfPaintingLayer() || hasSelfPaintingLayerDescendant());
 
-    auto localPaintFlags = paintFlags - PaintLayerFlag::AppliedTransform;
+    auto localPaintFlags = paintFlags - OptionSet<PaintLayerFlag> { PaintLayerFlag::AppliedTransform, PaintLayerFlag::PaintingOverflowContentsRoot };
 
     // Paint the reflection first if we have one.
     if (m_reflection && !m_paintingInsideReflection) {
@@ -3581,7 +3593,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
             return false;
 
         // For the current layer, the outline has been painted by the primary GraphicsLayer.
-        if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents))
+        if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContentsRoot))
             return false;
 
         // Paint outlines in the background phase for a scroll container so that they don't scroll with the content.
@@ -3928,7 +3940,7 @@ void RenderLayer::collectFragments(LayerFragments& fragments, const RenderLayer*
     
     // Calculate clip rects relative to the enclosingPaginationLayer. The purpose of this call is to determine our bounds clipped to intermediate
     // layers between us and the pagination context. It's important to minimize the number of fragments we need to create and this helps with that.
-    ClipRectsContext paginationClipRectsContext(paginationLayer, clipRectsType, clipRectOptions);
+    ClipRectsContext paginationClipRectsContext(paginationLayer, TemporaryClipRects, clipRectOptions);
     LayoutRect layerBoundsInFragmentedFlow;
     ClipRect backgroundRectInFragmentedFlow;
     ClipRect foregroundRectInFragmentedFlow;
@@ -4209,7 +4221,7 @@ void RenderLayer::paintOutlineForFragments(const LayerFragments& layerFragments,
     for (const auto& fragment : layerFragments) {
         if (fragment.backgroundRect.isEmpty())
             continue;
-    
+
         // Paint our own outline
         PaintInfo paintInfo(context, fragment.backgroundRect.rect(), PaintPhase::SelfOutline, paintBehavior, subtreePaintRootForRenderer, nullptr, nullptr, &localPaintingInfo.rootLayer->renderer(), this);
 
@@ -5767,10 +5779,42 @@ static const unsigned maxRendererTraversalCount = 200;
 
 static void determineNonLayerDescendantsPaintedContent(const RenderElement& renderer, unsigned& renderersTraversed, RenderLayer::PaintedContentRequest& request)
 {
+#if HAVE(HDR_SUPPORT)
+    auto hasPaintedImageHDRContent = [] (const RenderObject& childElement) {
+#if ENABLE(HDR_FOR_IMAGES)
+        CheckedPtr imageRenderer = dynamicDowncast<RenderImage>(childElement);
+        if (!imageRenderer)
+            return false;
+
+        if (auto* cachedImage = imageRenderer->cachedImage())
+            return cachedImage->drawsHDRContent();
+#else
+        UNUSED_PARAM(childElement);
+#endif
+        return false;
+    };
+
+    auto hasPaintedCanvasHDRContent = [] (const RenderObject& childElement) {
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+        CheckedPtr canavsRenderer = dynamicDowncast<RenderHTMLCanvas>(childElement);
+        if (!canavsRenderer)
+            return false;
+
+        if (auto* renderingContext = canavsRenderer->canvasElement().renderingContext())
+            return renderingContext->drawsHDRContent();
+#else
+        UNUSED_PARAM(childElement);
+#endif
+        return false;
+    };
+#endif
+
     for (const auto& child : childrenOfType<RenderObject>(renderer)) {
         if (++renderersTraversed > maxRendererTraversalCount) {
-            request.makeStatesUndetermined();
-            return;
+            if (!request.isPaintedContentSatisfied())
+                request.makePaintedContentUndetermined();
+            if (request.isSatisfied())
+                return;
         }
 
         if (CheckedPtr renderText = dynamicDowncast<RenderText>(child)) {
@@ -5807,17 +5851,32 @@ static void determineNonLayerDescendantsPaintedContent(const RenderElement& rend
                 return;
         }
 
+#if HAVE(HDR_SUPPORT)
+        if (!request.isPaintedHDRContentSatisfied() && hasPaintedImageHDRContent(*childElement)) {
+            request.setHasPaintedHDRContent();
+
+            if (request.isSatisfied())
+                return;
+        }
+
+        if (!request.isPaintedHDRContentSatisfied() && hasPaintedCanvasHDRContent(*childElement)) {
+            request.setHasPaintedHDRContent();
+
+            if (request.isSatisfied())
+                return;
+        }
+#endif
+
         determineNonLayerDescendantsPaintedContent(*childElement, renderersTraversed, request);
         if (request.isSatisfied())
             return;
     }
 }
 
-bool RenderLayer::hasNonEmptyChildRenderers(PaintedContentRequest& request) const
+void RenderLayer::determineNonLayerDescendantsPaintedContent(PaintedContentRequest& request) const
 {
     unsigned renderersTraversed = 0;
-    determineNonLayerDescendantsPaintedContent(renderer(), renderersTraversed, request);
-    return request.probablyHasPaintedContent();
+    WebCore::determineNonLayerDescendantsPaintedContent(renderer(), renderersTraversed, request);
 }
 
 bool RenderLayer::hasVisibleBoxDecorationsOrBackground() const
@@ -5867,7 +5926,8 @@ bool RenderLayer::isVisuallyNonEmpty(PaintedContentRequest* request) const
     if (!request)
         request = &localRequest;
 
-    return hasNonEmptyChildRenderers(*request);
+    determineNonLayerDescendantsPaintedContent(*request);
+    return request->probablyHasPaintedContent();
 }
 
 void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle)
@@ -5946,13 +6006,13 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
         m_scrollableArea->updateAllScrollbarRelatedStyle();
 
     updateDescendantDependentFlags();
-    updateTransform();
     updateBlendMode();
     updateFiltersAfterStyleChange(diff, oldStyle);
     clearClipRects();
 
     compositor().layerStyleChanged(diff, *this, oldStyle);
 
+    updateTransform();
     updateFilterPaintingStrategy();
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(TOUCH_EVENTS)
@@ -6168,6 +6228,19 @@ bool RenderLayer::isTransparentRespectingParentFrames() const
     return false;
 }
 
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+bool RenderLayer::allowsDynamicContentScaling() const
+{
+    if (is<RenderHTMLCanvas>(renderer()))
+        return false;
+
+    if (isBitmapOnly())
+        return false;
+
+    return true;
+}
+#endif
+
 bool RenderLayer::isBitmapOnly() const
 {
     if (hasVisibleBoxDecorationsOrBackground())
@@ -6368,6 +6441,7 @@ TextStream& operator<<(TextStream& ts, RenderLayer::PaintLayerFlag flag)
     case RenderLayer::PaintLayerFlag::PaintingCompositingClipPathPhase: ts << "PaintingCompositingClipPathPhase"; break;
     case RenderLayer::PaintLayerFlag::PaintingOverflowContainer: ts << "PaintingOverflowContainer"; break;
     case RenderLayer::PaintLayerFlag::PaintingOverflowContents: ts << "PaintingOverflowContents"; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverflowContentsRoot: ts << "PaintingOverflowContentsRoot"; break;
     case RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly: ts << "PaintingRootBackgroundOnly"; break;
     case RenderLayer::PaintLayerFlag::PaintingSkipRootBackground: ts << "PaintingSkipRootBackground"; break;
     case RenderLayer::PaintLayerFlag::PaintingChildClippingMaskPhase: ts << "PaintingChildClippingMaskPhase"; break;
@@ -6405,7 +6479,7 @@ void showLayerTree(const WebCore::RenderLayer* layer)
         WebCore::RenderAsTextFlag::DontUpdateLayout,
         WebCore::RenderAsTextFlag::ShowLayoutState,
     });
-    fprintf(stderr, "\n%s\n", output.utf8().data());
+    SAFE_FPRINTF(stderr, "\n%s\n", output.utf8());
 }
 
 void showLayerTree(const WebCore::RenderObject* renderer)

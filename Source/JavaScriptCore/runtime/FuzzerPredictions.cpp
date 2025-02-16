@@ -41,7 +41,9 @@ static String readFileIntoString(const char* fileName)
 
     std::span<LChar> buffer;
     String string = String::createUninitialized(bufferCapacity, buffer);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     size_t readSize = fread(buffer.data(), 1, buffer.size(), file);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     fclose(file);
     RELEASE_ASSERT(readSize == static_cast<size_t>(bufferCapacity));
     return string;

@@ -1,0 +1,43 @@
+Unrelated
+
+FAIL clicking outside all with modeless dialogA and modeless dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modeless dialogA and modeless dialogB, normal DOM nesting
+PASS clicking dialogB with modeless dialogA and modeless dialogB, normal DOM nesting
+FAIL clicking popoverA with modeless dialogA and modeless dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modeless dialogA and modeless dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking outside all with modeless dialogA and modal dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modeless dialogA and modal dialogB, normal DOM nesting
+PASS clicking dialogB with modeless dialogA and modal dialogB, normal DOM nesting
+FAIL clicking popoverA with modeless dialogA and modal dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modeless dialogA and modal dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking outside all with modal dialogA and modeless dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modal dialogA and modeless dialogB, normal DOM nesting
+PASS clicking dialogB with modal dialogA and modeless dialogB, normal DOM nesting
+FAIL clicking popoverA with modal dialogA and modeless dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modal dialogA and modeless dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking outside all with modal dialogA and modal dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modal dialogA and modal dialogB, normal DOM nesting
+PASS clicking dialogB with modal dialogA and modal dialogB, normal DOM nesting
+FAIL clicking popoverA with modal dialogA and modal dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modal dialogA and modal dialogB, normal DOM nesting assert_equals: dialogB should be closed expected false but got true
+FAIL clicking outside all with modeless dialogA and modeless dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modeless dialogA and modeless dialogB, same structure, but with shadow DOM slots
+PASS clicking dialogB with modeless dialogA and modeless dialogB, same structure, but with shadow DOM slots
+FAIL clicking popoverA with modeless dialogA and modeless dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modeless dialogA and modeless dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+FAIL clicking outside all with modeless dialogA and modal dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modeless dialogA and modal dialogB, same structure, but with shadow DOM slots
+PASS clicking dialogB with modeless dialogA and modal dialogB, same structure, but with shadow DOM slots
+FAIL clicking popoverA with modeless dialogA and modal dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modeless dialogA and modal dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+FAIL clicking outside all with modal dialogA and modeless dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modal dialogA and modeless dialogB, same structure, but with shadow DOM slots
+PASS clicking dialogB with modal dialogA and modeless dialogB, same structure, but with shadow DOM slots
+FAIL clicking popoverA with modal dialogA and modeless dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modal dialogA and modeless dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+FAIL clicking outside all with modal dialogA and modal dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+PASS clicking popoverB with modal dialogA and modal dialogB, same structure, but with shadow DOM slots
+PASS clicking dialogB with modal dialogA and modal dialogB, same structure, but with shadow DOM slots
+FAIL clicking popoverA with modal dialogA and modal dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+FAIL clicking dialogA with modal dialogA and modal dialogB, same structure, but with shadow DOM slots assert_equals: dialogB should be closed expected false but got true
+

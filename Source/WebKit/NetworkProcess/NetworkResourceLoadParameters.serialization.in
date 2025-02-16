@@ -46,7 +46,6 @@ class WebKit::NetworkLoadParameters {
     bool needsCertificateInfo;
     bool isMainFrameNavigation;
     std::optional<WebKit::NavigationActionData> mainResourceNavigationDataForAnyFrame;
-    WebCore::ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking;
     [NotSerialized] Vector<RefPtr<WebCore::BlobDataFileReference>> blobFileReferences;
     WebKit::PreconnectOnly shouldPreconnectOnly;
     [NotSerialized] std::optional<WebKit::NetworkActivityTracker> networkActivityTracker;
@@ -102,6 +101,7 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
     std::optional<WebCore::ServiceWorkerRegistrationIdentifier> serviceWorkerRegistrationIdentifier;
     OptionSet<WebCore::HTTPHeadersToKeepFromCleaning> httpHeadersToKeep;
     std::optional<WebCore::FetchIdentifier> navigationPreloadIdentifier;
+    std::optional<WebCore::SharedWorkerIdentifier> workerIdentifier;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     URL mainDocumentURL;

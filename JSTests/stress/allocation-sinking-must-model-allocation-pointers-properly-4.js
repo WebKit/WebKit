@@ -44,7 +44,7 @@ function bar() {
 }
 noInline(bar);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (bar() !== 42)
         throw new Error;
 }

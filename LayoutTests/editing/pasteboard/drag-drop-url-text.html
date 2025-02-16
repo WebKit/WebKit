@@ -17,6 +17,7 @@ function editingTest() {
 
     // Drag a URL text in the source
     var source = document.getElementById("source");
+    source.focus();
     source.setSelectionRange(0, source.value.length);
     x = source.offsetLeft + 10;
     y = source.offsetTop + source.offsetHeight / 2;

@@ -40,7 +40,6 @@
 #import <WebCore/HTMLFormElement.h>
 #import <WebCore/LocalFrame.h>
 #import <WebCore/MouseEvent.h>
-#import <WebCore/PlatformMouseEvent.h>
 #import <WebKitLegacy/WebDataSourcePrivate.h>
 #import <WebKitLegacy/WebFramePrivate.h>
 #import <WebKitLegacy/WebJSPDFDoc.h>

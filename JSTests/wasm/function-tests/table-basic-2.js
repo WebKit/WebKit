@@ -50,7 +50,7 @@ function makeInstance(func) {
     table.set(0, exports.bar);
     assert.eq(table.get(0), exports.bar);
 
-    for (i = 0; i < 10000; i++) {
+    for (i = 0; i < wasmTestLoopCount; i++) {
         if (foo(0, i) !== i + 44)
             throw new Error("Bad call indirect");
     }

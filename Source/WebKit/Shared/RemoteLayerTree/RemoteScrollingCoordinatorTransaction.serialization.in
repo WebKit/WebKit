@@ -105,7 +105,7 @@ header: <WebCore/ScrollingStatePositionedNode.h>
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::HeaderHeight] int headerHeight()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::FooterHeight] int footerHeight()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::BehaviorForFixedElements] WebCore::ScrollBehaviorForFixedElements scrollBehaviorForFixedElements()
-    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::TopContentInset] float topContentInset()
+    [OptionalTupleBit=WebCore::ScrollingStateNode::Property::ObscuredContentInsets] WebCore::FloatBoxExtent obscuredContentInsets()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport] bool visualViewportIsSmallerThanLayoutViewport()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::AsyncFrameOrOverflowScrollingEnabled] bool asyncFrameOrOverflowScrollingEnabled()
     [OptionalTupleBit=WebCore::ScrollingStateNode::Property::WheelEventGesturesBecomeNonBlocking] bool wheelEventGesturesBecomeNonBlocking();

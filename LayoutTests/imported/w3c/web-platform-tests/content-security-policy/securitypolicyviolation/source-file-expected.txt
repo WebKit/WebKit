@@ -1,21 +1,19 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Basic HTTPS URL Test timed out
-NOTRUN Basic HTTP URL
-NOTRUN Basic WSS URL
-NOTRUN Basic WS URL
-NOTRUN Fragment
-NOTRUN Query
-NOTRUN Port
-NOTRUN User:password
-NOTRUN User
-NOTRUN Invalid URL
-NOTRUN file:
-NOTRUN Custom protocol
-NOTRUN about:blank
-NOTRUN about:custom
-NOTRUN data:
-NOTRUN blob:
-NOTRUN javascript:
+FAIL Basic HTTPS URL assert_equals: expected "http://dummy.test/script1.js" but got ""
+FAIL Basic HTTP URL assert_equals: expected "https://dummy.test/script1.js" but got ""
+FAIL Basic WSS URL assert_equals: expected "wss://dummy.test/script1.js" but got ""
+FAIL Basic WS URL assert_equals: expected "ws://dummy.test/script1.js" but got ""
+FAIL Fragment assert_equals: expected "https://dummy.test/script1.js" but got ""
+FAIL Query assert_equals: expected "https://dummy.test/script1.js" but got ""
+FAIL Port assert_equals: expected "https://dummy.test:8080/script1.js" but got ""
+FAIL User:password assert_equals: expected "https://dummy.test/script1.js" but got ""
+FAIL User assert_equals: expected "https://dummy.test/script1.js" but got ""
+PASS Invalid URL
+FAIL file: assert_equals: expected "file" but got ""
+FAIL Custom protocol assert_equals: expected "webpack" but got ""
+FAIL about:blank assert_equals: expected "about" but got ""
+FAIL about:custom assert_equals: expected "about" but got ""
+FAIL data: assert_equals: expected "data" but got ""
+FAIL blob: assert_equals: expected "blob" but got ""
+FAIL javascript: assert_equals: expected "javascript" but got ""
 

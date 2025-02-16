@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script src="../resources/js-test.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+</head>
+<body>
+
+<details id="details">
+    <summary id="summary">Some open info</summary>
+    <p id="content">Details about the open topic.</p>
+</details>
+
+<script>
+var output = "This tests that the summary content is inaccessible when a details element is collapsed.\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var details = accessibilityController.accessibleElementById("details");
+    var summary = accessibilityController.accessibleElementById("summary");
+
+    output += expect("details.isExpanded", "false");
+    output += expect("summary.isExpanded", "false");
+    output += expect("!accessibilityController.accessibleElementById('content')", "true")
+    
+    document.getElementById("details").setAttribute("open", "true");
+    setTimeout(async function() {
+        output += await expectAsync("details.isExpanded", "true");
+        output += await expectAsync("summary.isExpanded", "true");
+        output += expect("!!accessibilityController.accessibleElementById('content')", "true");
+
+        document.getElementById("details").removeAttribute("open");
+        output += await expectAsync("details.isExpanded", "false");
+        output += await expectAsync("summary.isExpanded", "false");
+        output += expect("!accessibilityController.accessibleElementById('content')", "true");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

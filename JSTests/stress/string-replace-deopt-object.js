@@ -8,9 +8,9 @@ function test(string) {
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test("Hello"), "World");
 
 Object.prototype[Symbol.replace] = function () { return "Changed"; };
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test("Hello"), "Changed");

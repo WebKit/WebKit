@@ -56,13 +56,11 @@ public:
 
     URL reresolvedURL(const Document&) const;
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
-    bool customTraverseSubresources(const Function<bool(const CachedResource&)>&) const;
-    void customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>&);
-    void customClearReplacementURLForSubresources();
+    bool customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>&) const;
     bool customMayDependOnBaseURL() const;
 
     bool equals(const CSSImageValue&) const;
@@ -73,7 +71,7 @@ public:
 
     bool isLoadedFromOpaqueSource() const { return m_loadedFromOpaqueSource == LoadedFromOpaqueSource::Yes; }
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
         if (m_unresolvedValue) {
             if (func(*m_unresolvedValue) == IterationStatus::Done)
@@ -92,8 +90,6 @@ private:
     LoadedFromOpaqueSource m_loadedFromOpaqueSource { LoadedFromOpaqueSource::No };
     RefPtr<CSSImageValue> m_unresolvedValue;
     bool m_isInvalid { false };
-    String m_replacementURLString;
-    bool m_shouldUseResolvedURLInCSSText { false };
 };
 
 } // namespace WebCore

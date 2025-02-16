@@ -37,8 +37,6 @@
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PixelBufferConformerCV);
@@ -51,10 +49,10 @@ static constexpr int kDefaultFramesToSkip = 2;
 
 static void logStackTrace(WTFLogChannel* channel)
 {
-    void* stack[kDefaultFramesToShow + kDefaultFramesToSkip];
-    int frames = kDefaultFramesToShow + kDefaultFramesToSkip;
-    WTFGetBacktrace(stack, &frames);
-    StackTraceSymbolResolver { { stack, static_cast<size_t>(frames) } }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
+    std::array<void*, kDefaultFramesToShow + kDefaultFramesToSkip> stack;
+    int frameCount = kDefaultFramesToShow + kDefaultFramesToSkip;
+    WTFGetBacktrace(stack.data(), &frameCount);
+    StackTraceSymbolResolver { std::span { stack }.first(frameCount) }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
         if (name)
             os_log(channel->osLogChannel, "%-3d %p %{public}s", frameNumber, stackFrame, name);
         else
@@ -97,18 +95,16 @@ static const void* CVPixelBufferGetBytePointerCallback(void* refcon)
     }
 
     ++info->lockCount;
-    void* address = CVPixelBufferGetBaseAddress(info->pixelBuffer.get());
-    if (!address) {
-        RELEASE_LOG_ERROR(Media, "CVPixelBufferGetBaseAddress returned null");
+    auto bytes = CVPixelBufferGetSpan(info->pixelBuffer.get());
+    if (!bytes.data()) {
+        RELEASE_LOG_ERROR(Media, "CVPixelBufferGetSpan returned null");
         RELEASE_LOG_STACKTRACE(Media);
         return nullptr;
     }
 
-    size_t byteLength = CVPixelBufferGetBytesPerRow(info->pixelBuffer.get()) * CVPixelBufferGetHeight(info->pixelBuffer.get());
-
-    verifyImageBufferIsBigEnough({ static_cast<const uint8_t*>(address), byteLength });
-    RELEASE_LOG_INFO(Media, "CVPixelBufferGetBytePointerCallback() returning bytePointer: %p, size: %zu", address, byteLength);
-    return address;
+    verifyImageBufferIsBigEnough(bytes);
+    RELEASE_LOG_INFO(Media, "CVPixelBufferGetBytePointerCallback() returning bytePointer: %p, size: %zu", bytes.data(), bytes.size());
+    return bytes.data();
 }
 
 static void CVPixelBufferReleaseBytePointerCallback(void* refcon, const void*)
@@ -229,5 +225,3 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(RetainP
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

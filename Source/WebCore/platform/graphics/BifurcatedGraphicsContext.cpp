@@ -562,10 +562,10 @@ void BifurcatedGraphicsContext::drawBidiText(const FontCascade& cascade, const T
     VERIFY_STATE_SYNCHRONIZATION();
 }
 
-void BifurcatedGraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, const DashArray& widths, bool printing, bool doubleLines, StrokeStyle strokeStyle)
+void BifurcatedGraphicsContext::drawLinesForText(const FloatPoint& point, float thickness, std::span<const FloatSegment> lineSegments, bool printing, bool doubleLines, StrokeStyle strokeStyle)
 {
-    m_primaryContext.drawLinesForText(point, thickness, widths, printing, doubleLines, strokeStyle);
-    m_secondaryContext.drawLinesForText(point, thickness, widths, printing, doubleLines, strokeStyle);
+    m_primaryContext.drawLinesForText(point, thickness, lineSegments, printing, doubleLines, strokeStyle);
+    m_secondaryContext.drawLinesForText(point, thickness, lineSegments, printing, doubleLines, strokeStyle);
 
     VERIFY_STATE_SYNCHRONIZATION();
 }

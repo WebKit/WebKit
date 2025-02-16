@@ -40,7 +40,7 @@ static DoubleCapabilityRange defaultVolumeCapability()
 {
     return { 0.0, 1.0 };
 }
-const static RealtimeMediaSourceCapabilities::EchoCancellation defaultEchoCancellationCapability = RealtimeMediaSourceCapabilities::EchoCancellation::ReadWrite;
+const static RealtimeMediaSourceCapabilities::EchoCancellation defaultEchoCancellationCapability = RealtimeMediaSourceCapabilities::EchoCancellation::OnOrOff;
 
 GST_DEBUG_CATEGORY(webkit_audio_capture_source_debug);
 #define GST_CAT_DEFAULT webkit_audio_capture_source_debug
@@ -53,9 +53,7 @@ public:
     }
 private:
     CaptureDeviceManager& audioCaptureDeviceManager() final { return GStreamerAudioCaptureDeviceManager::singleton(); }
-    const Vector<CaptureDevice>& speakerDevices() const { return m_speakerDevices; }
-
-    Vector<CaptureDevice> m_speakerDevices;
+    const Vector<CaptureDevice>& speakerDevices() const final { return GStreamerAudioCaptureDeviceManager::singleton().speakerDevices(); }
 };
 
 static GStreamerAudioCaptureSourceFactory& libWebRTCAudioCaptureSourceFactory()

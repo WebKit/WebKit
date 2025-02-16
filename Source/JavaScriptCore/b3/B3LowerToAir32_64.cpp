@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,8 +65,6 @@
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace B3 {
 
@@ -4124,6 +4122,11 @@ private:
             return;
         }
 
+        case FTrunc: {
+            appendUnOp<Air::Oops, Air::Oops, TruncDouble, TruncFloat>(m_value->child(0));
+            return;
+        }
+
         case Sqrt: {
             appendUnOp<Air::Oops, Air::Oops, SqrtDouble, SqrtFloat>(m_value->child(0));
             return;
@@ -4800,7 +4803,9 @@ private:
 
         case Const128: {
             // We expect that the moveConstants() phase has run, and any constant vector referenced from stackmaps get fused.
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             RELEASE_ASSERT(!m_value->asV128().u64x2[0] && !m_value->asV128().u64x2[1]);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             append(MoveZeroToVector, tmp(m_value));
             return;
         }
@@ -5603,8 +5608,6 @@ void lowerToAir(Procedure& procedure)
 }
 
 } } // namespace JSC::B3
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END

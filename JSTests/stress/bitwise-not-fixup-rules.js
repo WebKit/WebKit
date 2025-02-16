@@ -20,10 +20,10 @@ if (!jscOptions().useExecutableAllocationFuzz) {
         }
     };
 
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < testLoopCount; i++)
         foo(o);
 
-    assert(c, 10000);
+    assert(c, testLoopCount);
     if (numberOfDFGCompiles(foo) > 1)
         throw new Error("Function 'foo' should be compiled just once");
 }

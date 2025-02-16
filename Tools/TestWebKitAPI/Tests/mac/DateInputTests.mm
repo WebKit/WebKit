@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(INPUT_TYPE_DATE) && PLATFORM(MAC)
+#if PLATFORM(MAC)
 
 #import "TestWKWebView.h"
 #import <WebKit/WKPreferencesPrivate.h>
@@ -75,4 +75,4 @@ TEST(DateInputTests, IgnoresUserEditsToLocale)
     EXPECT_EQ(widthForCustomFormat, widthForDefaultFormat);
 }
 
-#endif // ENABLE(INPUT_TYPE_DATE) && PLATFORM(MAC)
+#endif // PLATFORM(MAC)

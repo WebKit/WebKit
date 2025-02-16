@@ -76,6 +76,7 @@ public:
     bool willExecuteWhenDocumentFinishedParsing() const { return m_willExecuteWhenDocumentFinishedParsing; }
     bool willExecuteInOrder() const { return m_willExecuteInOrder; }
     LoadableScript* loadableScript() { return m_loadableScript.get(); }
+    RefPtr<LoadableScript> protectedLoadableScript() { return m_loadableScript; }
 
     ScriptType scriptType() const { return m_scriptType; }
 
@@ -131,7 +132,7 @@ private:
     virtual String typeAttributeValue() const = 0;
     virtual String languageAttributeValue() const = 0;
     virtual ReferrerPolicy referrerPolicy() const = 0;
-    virtual RequestPriority fetchPriorityHint() const { return RequestPriority::Auto; }
+    virtual RequestPriority fetchPriority() const { return RequestPriority::Auto; }
 
     virtual bool isScriptPreventedByAttributes() const { return false; }
 

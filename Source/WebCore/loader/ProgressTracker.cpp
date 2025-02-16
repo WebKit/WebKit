@@ -121,7 +121,7 @@ void ProgressTracker::progressStarted(LocalFrame& frame)
         m_originatingProgressFrame = &frame;
 
         m_progressHeartbeatTimer.startRepeating(progressHeartbeatInterval);
-        RefPtr originatingProgressFrame = m_originatingProgressFrame;
+        RefPtr originatingProgressFrame = m_originatingProgressFrame.get();
         originatingProgressFrame->protectedLoader()->loadProgressingStatusChanged();
 
         bool isMainFrame = !originatingProgressFrame->tree().parent();
@@ -135,7 +135,8 @@ void ProgressTracker::progressStarted(LocalFrame& frame)
     }
     m_numProgressTrackedFrames++;
 
-    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_PROGRESSSTARTED, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame ? m_originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad);
+    RefPtr originatingProgressFrame = m_originatingProgressFrame.get();
+    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_PROGRESSSTARTED, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, originatingProgressFrame ? originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad);
 
     m_client->didChangeEstimatedProgress();
     InspectorInstrumentation::frameStartedLoading(frame);
@@ -149,8 +150,9 @@ void ProgressTracker::progressEstimateChanged(LocalFrame& frame)
 
 void ProgressTracker::progressCompleted(LocalFrame& frame)
 {
-    LOG(Progress, "Progress completed (%p) - frame %p(frameID %" PRIu64 "), value %f, tracked frames %d, originating frame %p", this, &frame, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
-    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_PROGRESSCOMPLETED, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame ? m_originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad);
+    RefPtr originatingProgressFrame = m_originatingProgressFrame.get();
+    LOG(Progress, "Progress completed (%p) - frame %p(frameID %" PRIu64 "), value %f, tracked frames %d, originating frame %p", this, &frame, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, originatingProgressFrame.get());
+    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_PROGRESSCOMPLETED, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, originatingProgressFrame ? originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad);
 
     if (m_numProgressTrackedFrames <= 0)
         return;
@@ -158,7 +160,7 @@ void ProgressTracker::progressCompleted(LocalFrame& frame)
     m_client->willChangeEstimatedProgress();
 
     m_numProgressTrackedFrames--;
-    if (!m_numProgressTrackedFrames || m_originatingProgressFrame == &frame)
+    if (!m_numProgressTrackedFrames || originatingProgressFrame == &frame)
         finalProgressComplete();
 
     m_client->didChangeEstimatedProgress();
@@ -166,10 +168,9 @@ void ProgressTracker::progressCompleted(LocalFrame& frame)
 
 void ProgressTracker::finalProgressComplete()
 {
+    RefPtr frame = std::exchange(m_originatingProgressFrame, nullptr).get();
     LOG(Progress, "Final progress complete (%p)", this);
-    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_FINALPROGRESSCOMPLETE, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame ? m_originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad, isMainLoadProgressing());
-
-    RefPtr frame = std::exchange(m_originatingProgressFrame, nullptr);
+    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_FINALPROGRESSCOMPLETE, m_progressValue, m_numProgressTrackedFrames, frame ? frame->frameID().object().toUInt64() : 0, m_isMainLoad, isMainLoadProgressing());
 
     // Before resetting progress value be sure to send client a least one notification
     // with final progress value.
@@ -183,12 +184,14 @@ void ProgressTracker::finalProgressComplete()
     if (m_isMainLoad)
         m_mainLoadCompletionTime = MonotonicTime::now();
 
-    frame->protectedLoader()->protectedClient()->setMainFrameDocumentReady(true);
-    m_client->progressFinished(*frame);
-    protectedPage()->progressFinished(*frame);
-    frame->protectedLoader()->loadProgressingStatusChanged();
+    if (frame) {
+        frame->protectedLoader()->protectedClient()->setMainFrameDocumentReady(true);
+        m_client->progressFinished(*frame);
+        protectedPage()->progressFinished(*frame);
+        frame->protectedLoader()->loadProgressingStatusChanged();
 
-    InspectorInstrumentation::frameStoppedLoading(*frame);
+        InspectorInstrumentation::frameStoppedLoading(*frame);
+    }
 }
 
 void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, const ResourceResponse& response)
@@ -222,7 +225,9 @@ void ProgressTracker::incrementProgress(ResourceLoaderIdentifier identifier, uns
     if (!item)
         return;
 
-    RefPtr frame { m_originatingProgressFrame };
+    RefPtr frame { m_originatingProgressFrame.get() };
+    if (!frame)
+        return;
 
     m_client->willChangeEstimatedProgress();
 
@@ -311,7 +316,7 @@ void ProgressTracker::progressHeartbeatTimerFired()
 
     m_totalBytesReceivedBeforePreviousHeartbeat = m_totalBytesReceived;
 
-    if (RefPtr originatingProgressFrame = m_originatingProgressFrame)
+    if (RefPtr originatingProgressFrame = m_originatingProgressFrame.get())
         originatingProgressFrame->protectedLoader()->loadProgressingStatusChanged();
 
     if (m_progressValue >= finalProgressValue)

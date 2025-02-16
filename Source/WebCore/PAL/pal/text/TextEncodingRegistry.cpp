@@ -117,15 +117,15 @@ static Lock encodingRegistryLock;
 static TextEncodingNameMap* textEncodingNameMap WTF_GUARDED_BY_LOCK(encodingRegistryLock);
 static TextCodecMap* textCodecMap WTF_GUARDED_BY_LOCK(encodingRegistryLock);
 static bool didExtendTextCodecMaps;
-static HashSet<ASCIILiteral>* japaneseEncodings;
-static HashSet<ASCIILiteral>* nonBackslashEncodings;
+static UncheckedKeyHashSet<ASCIILiteral>* japaneseEncodings;
+static UncheckedKeyHashSet<ASCIILiteral>* nonBackslashEncodings;
 
 static constexpr ASCIILiteral textEncodingNameBlocklist[] = { "UTF-7"_s, "BOCU-1"_s, "SCSU"_s };
 
 static bool isUndesiredAlias(ASCIILiteral alias)
 {
     // Reject aliases with version numbers that are supported by some back-ends (such as "ISO_2022,locale=ja,version=0" in ICU).
-    if (strchr(alias.characters(), ','))
+    if (contains(alias.span(), ','))
         return true;
     // 8859_1 is known to (at least) ICU, but other browsers don't support this name - and having it caused a compatibility
     // problem, see bug 43554.
@@ -136,7 +136,7 @@ static bool isUndesiredAlias(ASCIILiteral alias)
 
 static void addToTextEncodingNameMap(ASCIILiteral alias, ASCIILiteral name) WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
-    ASSERT(strlen(alias) <= maxEncodingNameLength);
+    ASSERT(alias.length() <= maxEncodingNameLength);
     if (isUndesiredAlias(alias))
         return;
     ASCIILiteral atomName = textEncodingNameMap->get(name);
@@ -197,7 +197,7 @@ static void buildBaseTextCodecMaps() WTF_REQUIRES_LOCK(encodingRegistryLock)
     TextCodecUserDefined::registerCodecs(addToTextCodecMap);
 }
 
-static void addEncodingName(HashSet<ASCIILiteral>& set, ASCIILiteral name) WTF_REQUIRES_LOCK(encodingRegistryLock)
+static void addEncodingName(UncheckedKeyHashSet<ASCIILiteral>& set, ASCIILiteral name) WTF_REQUIRES_LOCK(encodingRegistryLock)
 {
     // We must not use atomCanonicalTextEncodingName() because this function is called in it.
     ASCIILiteral atomName = textEncodingNameMap->get(name);
@@ -213,7 +213,7 @@ static void buildQuirksSets() WTF_REQUIRES_LOCK(encodingRegistryLock)
     ASSERT(!japaneseEncodings);
     ASSERT(!nonBackslashEncodings);
 
-    japaneseEncodings = new HashSet<ASCIILiteral>;
+    japaneseEncodings = new UncheckedKeyHashSet<ASCIILiteral>;
     addEncodingName(*japaneseEncodings, "EUC-JP"_s);
     addEncodingName(*japaneseEncodings, "ISO-2022-JP"_s);
     addEncodingName(*japaneseEncodings, "ISO-2022-JP-1"_s);
@@ -229,7 +229,7 @@ static void buildQuirksSets() WTF_REQUIRES_LOCK(encodingRegistryLock)
     addEncodingName(*japaneseEncodings, "cp932"_s);
     addEncodingName(*japaneseEncodings, "x-mac-japanese"_s);
 
-    nonBackslashEncodings = new HashSet<ASCIILiteral>;
+    nonBackslashEncodings = new UncheckedKeyHashSet<ASCIILiteral>;
     // The text encodings below treat backslash as a currency symbol for IE compatibility.
     // See http://blogs.msdn.com/michkap/archive/2005/09/17/469941.aspx for more information.
     addEncodingName(*nonBackslashEncodings, "x-mac-japanese"_s);

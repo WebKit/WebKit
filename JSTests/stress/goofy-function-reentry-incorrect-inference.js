@@ -13,7 +13,7 @@ var array = foo(false);
 noInline(array[0]);
 noInline(array[1]);
 array[1](42);
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = array[0]();
     if (result != 42)
         throw "Error: bad result in loop: " + result;

@@ -36,6 +36,13 @@
 #include "common/entry_points_enum_autogen.h"
 #include "common/system_utils.h"
 
+#if defined(ANGLE_ENABLE_ASSERTS)
+bool AreAssertionsEnabled() {
+    static bool enabled = [] { return angle::GetEnvironmentVar("ANGLE_DISABLE_ASSERTS") != "1"; }();
+    return enabled;
+}
+#endif  // defined(ANGLE_ENABLE_ASSERTS)
+
 namespace gl
 {
 

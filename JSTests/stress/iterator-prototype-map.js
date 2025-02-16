@@ -8,7 +8,7 @@ function assert(x) {
 (function() {
     var arr = new Array(20).fill(0);
 
-    for (var i = 0; i < 1e6; i++)
+    for (var i = 0; i < testLoopCount; i++)
         mapped = arr.values().map((_, c) => c).toArray();
 
     assert(mapped.length === 20);

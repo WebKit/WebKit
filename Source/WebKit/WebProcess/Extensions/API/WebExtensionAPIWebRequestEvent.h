@@ -45,16 +45,22 @@ class WebExtensionAPIWebRequestEvent : public WebExtensionAPIObject, public JSWe
 
 public:
 #if PLATFORM(COCOA)
-    using FilterAndCallbackPair = std::pair<RefPtr<WebExtensionCallbackHandler>, RetainPtr<_WKWebExtensionWebRequestFilter>>;
-    using ListenerVector = Vector<FilterAndCallbackPair>;
+    struct Listener {
+        RefPtr<WebExtensionCallbackHandler> callback;
+        RetainPtr<_WKWebExtensionWebRequestFilter> filter;
+        Vector<String> extraInfo;
+    };
+
+    using ListenerVector = Vector<Listener>;
 
     const ListenerVector& listeners() const { return m_listeners; }
 
-    void addListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, id extraInfoSpec, NSString **outExceptionString);
+    void addListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSArray *extraInfo, NSString **outExceptionString);
     void removeListener(WebCore::FrameIdentifier, RefPtr<WebExtensionCallbackHandler>);
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 #endif
 
+    void enumerateListeners(WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const ResourceLoadInfo&, NOESCAPE const Function<void(WebExtensionCallbackHandler&, const Vector<String>&)>&);
     void invokeListenersWithArgument(NSDictionary *argument, WebExtensionTabIdentifier, WebExtensionWindowIdentifier, const ResourceLoadInfo&);
 
     void removeAllListeners();

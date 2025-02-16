@@ -64,7 +64,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @synthesize _waitingForSnapshot;
-@synthesize _sublayerVerticalTranslationAmount;
+@synthesize _sublayerTranslation;
 
 - (instancetype)initWithFrame:(NSRect)frame
 {
@@ -135,7 +135,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _waitingForSnapshot = YES;
 
     RetainPtr<_WKThumbnailView> thumbnailView = self;
-    WebCore::IntRect snapshotRect(WebCore::IntPoint(), _webPageProxy->viewSize() - WebCore::IntSize(0, _webPageProxy->topContentInset()));
+    auto obscuredContentInsets = _webPageProxy->obscuredContentInsets();
+    WebCore::IntRect snapshotRect(WebCore::IntPoint(), _webPageProxy->viewSize() - WebCore::IntSize {
+        static_cast<int>(obscuredContentInsets.left()),
+        static_cast<int>(obscuredContentInsets.top())
+    });
     WebKit::SnapshotOptions options { WebKit::SnapshotOption::InViewCoordinates, WebKit::SnapshotOption::UseScreenColorSpace };
     WebCore::IntSize bitmapSize = snapshotRect.size();
     bitmapSize.scale(_scale * _webPageProxy->deviceScaleFactor());
@@ -178,7 +182,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (void)_viewWasUnparented
 {
     if (!_exclusivelyUsesSnapshot) {
-        self._sublayerVerticalTranslationAmount = 0;
+        self._sublayerTranslation = CGPointMake(0, 0);
         if (_wkView) {
             [_wkView _setThumbnailView:nil];
             [_wkView _setIgnoresAllEvents:NO];
@@ -210,7 +214,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _requestSnapshotIfNeeded];
 
     if (!_exclusivelyUsesSnapshot) {
-        self._sublayerVerticalTranslationAmount = -_webPageProxy->topContentInset();
+        auto obscuredContentInsets = _webPageProxy->obscuredContentInsets();
+        self._sublayerTranslation = CGPointMake(-obscuredContentInsets.left(), -obscuredContentInsets.top());
         if (_wkView) {
             [_wkView _setThumbnailView:self];
             [_wkView _setIgnoresAllEvents:YES];
@@ -267,16 +272,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     [self _requestSnapshotIfNeeded];
 
     auto scaleTransform = CATransform3DMakeScale(_scale, _scale, 1);
-    self.layer.sublayerTransform = CATransform3DTranslate(scaleTransform, 0, _sublayerVerticalTranslationAmount, 0);
+    self.layer.sublayerTransform = CATransform3DTranslate(scaleTransform, _sublayerTranslation.x, _sublayerTranslation.y, 0);
 }
 
-- (void)_setSublayerVerticalTranslationAmount:(CGFloat)amount
+- (void)_setSublayerTranslation:(CGPoint)translation
 {
-    if (WTF::areEssentiallyEqual(_sublayerVerticalTranslationAmount, amount))
+    if (WTF::areEssentiallyEqual(_sublayerTranslation.x, translation.x) && WTF::areEssentiallyEqual(_sublayerTranslation.y, translation.y))
         return;
 
-    self.layer.sublayerTransform = CATransform3DTranslate(self.layer.sublayerTransform, 0, amount - _sublayerVerticalTranslationAmount, 0);
-    _sublayerVerticalTranslationAmount = amount;
+    self.layer.sublayerTransform = CATransform3DTranslate(self.layer.sublayerTransform, translation.x - _sublayerTranslation.x, translation.y - _sublayerTranslation.y, 0);
+    _sublayerTranslation = translation;
 }
 
 - (void)setMaximumSnapshotSize:(CGSize)maximumSnapshotSize

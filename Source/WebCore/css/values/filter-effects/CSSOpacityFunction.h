@@ -40,9 +40,9 @@ struct Opacity {
 };
 using OpacityFunction = FunctionNotation<CSSValueOpacity, Opacity>;
 
-DEFINE_TYPE_WRAPPER(Opacity, value);
+DEFINE_TYPE_WRAPPER_GET(Opacity, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Opacity, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Opacity, 1)

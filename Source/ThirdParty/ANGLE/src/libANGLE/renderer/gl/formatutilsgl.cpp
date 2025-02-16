@@ -257,7 +257,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
 
     // From GL_EXT_texture_type_2_10_10_10_REV
     // Emulated with GL_RGB10_A2 on desktop GL
-    InsertFormatMapping(&map, GL_RGB10_UNORM_ANGLEX,AlwaysSupported(),                                AlwaysSupported(), NeverSupported(),                              ExtsOnly("GL_EXT_texture_type_2_10_10_10_REV"), AlwaysSupported(), NeverSupported(),                     NeverSupported()                         );
+    InsertFormatMapping(&map, GL_RGB10_EXT,         AlwaysSupported(),                                AlwaysSupported(), NeverSupported(),                              ExtsOnly("GL_EXT_texture_type_2_10_10_10_REV GL_OES_required_internalformat"), AlwaysSupported(), NeverSupported(), NeverSupported()                         );
 
     // Floating point formats
     // Note 1: GL_EXT_texture_shared_exponent and GL_ARB_color_buffer_float suggest that RGB9_E5
@@ -300,6 +300,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     InsertFormatMapping(&map, GL_ALPHA8_EXT,             AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                                AlwaysSupported(),                                       NeverSupported(),                      NeverSupported()                );
     InsertFormatMapping(&map, GL_LUMINANCE8_EXT,         AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                                AlwaysSupported(),                                       NeverSupported(),                      NeverSupported()                );
     InsertFormatMapping(&map, GL_LUMINANCE8_ALPHA8_EXT,  AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), AlwaysSupported(),                                AlwaysSupported(),                                       NeverSupported(),                      NeverSupported()                );
+    InsertFormatMapping(&map, GL_LUMINANCE4_ALPHA4_OES,  AlwaysSupported(),                           AlwaysSupported(), NeverSupported(), ExtsOnly("GL_OES_required_internalformat"),       AlwaysSupported(),                                       NeverSupported(),                      NeverSupported()                );
     InsertFormatMapping(&map, GL_ALPHA16F_EXT,           VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_half_float"), VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
     InsertFormatMapping(&map, GL_LUMINANCE16F_EXT,       VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_half_float"), VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
     InsertFormatMapping(&map, GL_LUMINANCE_ALPHA16F_EXT, VersionOrExts(3, 0, "GL_ARB_texture_float"), AlwaysSupported(), NeverSupported(), VersionOrExts(3, 0, "GL_OES_texture_half_float"), VersionOrExts(3, 0, "GL_OES_texture_half_float_linear"), NeverSupported(),                      NeverSupported()                );
@@ -540,7 +541,7 @@ static GLenum GetNativeInternalFormat(const FunctionsGL *functions,
             }
         }
 
-        if (internalFormat.sizedInternalFormat == GL_RGB10_UNORM_ANGLEX)
+        if (internalFormat.sizedInternalFormat == GL_RGB10_EXT)
         {
             ASSERT(features.emulateRGB10.enabled);
             result = GL_RGB10_A2;

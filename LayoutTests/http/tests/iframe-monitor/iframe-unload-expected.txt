@@ -1,0 +1,11 @@
+CONSOLE MESSAGE: Frame was unloaded because its network usage exceeded the limit.
+Test iframe with huge resource usage is unloaded.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.querySelector('iframe[name=frame1]').srcdoc is not ""
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

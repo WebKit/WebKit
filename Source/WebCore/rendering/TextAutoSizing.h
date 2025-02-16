@@ -106,7 +106,7 @@ public:
 private:
     void reset();
 
-    HashSet<RefPtr<Text>> m_autoSizedNodes;
+    UncheckedKeyHashSet<RefPtr<Text>> m_autoSizedNodes;
 };
 
 struct TextAutoSizingTraits : HashTraits<TextAutoSizingKey> {

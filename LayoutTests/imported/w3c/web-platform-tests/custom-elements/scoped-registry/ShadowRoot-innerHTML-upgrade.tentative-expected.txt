@@ -1,7 +1,7 @@
 
-PASS Upgrade into autonomous custom element when inserted via innerHTML
-PASS Upgrade into autonomous custom element when definition is added
+FAIL Upgrade into autonomous custom element when inserted via innerHTML assert_true: target tree scope expected true got false
+FAIL Upgrade into autonomous custom element when definition is added assert_true: target tree scope expected true got false
 FAIL Upgrade into customized built-in element when inserted via innerHTML assert_true: target tree scope expected true got false
 FAIL Upgrade into customized built-in element when definition is added assert_true: target tree scope expected true got false
-PASS Upgrade into autonomous custom element should not inherit from global registry for missing values
+FAIL Upgrade into autonomous custom element should not inherit from global registry for missing values assert_false: is not GloballyScoped expected false got true
 

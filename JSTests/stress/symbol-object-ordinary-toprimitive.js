@@ -19,7 +19,7 @@ function shouldThrow(func, expectedError) {
 (function toPrimitiveIsNull() {
     Object.defineProperty(Symbol.prototype, Symbol.toPrimitive, { value: null });
 
-    for (let i = 0; i < 1e5; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         shouldBe(Object(Symbol()) == "Symbol()", false); // hint: default
         shouldThrow(() => { +Object(Symbol()); }, "TypeError: Cannot convert a symbol to a number"); // hint: number
         shouldBe(`${Object(Symbol())}`, "Symbol()"); // hint: string
@@ -29,7 +29,7 @@ function shouldThrow(func, expectedError) {
 (function toPrimitiveIsUndefined() {
     Object.defineProperty(Symbol.prototype, Symbol.toPrimitive, { value: undefined });
 
-    for (let i = 0; i < 1e5; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         shouldBe(Object(Symbol.iterator) != Symbol.iterator, false); // hint: default
         shouldThrow(() => { Object(Symbol()) <= ""; }, "TypeError: Cannot convert a symbol to a number"); // hint: number
         shouldBe({ "Symbol()": 1 }[Object(Symbol())], 1); // hint: string

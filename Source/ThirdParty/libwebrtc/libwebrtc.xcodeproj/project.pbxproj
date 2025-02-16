@@ -7,25 +7,45 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		31339FA12CEEFECC0054D8D5 /* libwebrtc */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 31339FA22CEEFECC0054D8D5 /* Build configuration list for PBXAggregateTarget "libwebrtc" */;
+			buildPhases = (
+			);
+			dependencies = (
+				31339FA92CEEFEDC0054D8D5 /* PBXTargetDependency */,
+				31339FA72CEEFED90054D8D5 /* PBXTargetDependency */,
+			);
+			name = libwebrtc;
+			packageProductDependencies = (
+			);
+			productName = libwebrtc;
+		};
 		449CF1592ADEDE8500F22CAF /* Fuzzers (libwebrtc) */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 449CF15F2ADEDE8C00F22CAF /* Build configuration list for PBXAggregateTarget "Fuzzers (libwebrtc)" */;
 			buildPhases = (
 			);
 			dependencies = (
+				448C3AA12D4C48C400AA535D /* PBXTargetDependency */,
 				4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */,
 				44D88ACE2AF0495A005C956E /* PBXTargetDependency */,
 				44D8D11C2B6AFBCF00B3CF91 /* PBXTargetDependency */,
 				44D88AE32AF04AE4005C956E /* PBXTargetDependency */,
 				449467D32AE05DD200A9FED0 /* PBXTargetDependency */,
 				449467BF2AE05CA800A9FED0 /* PBXTargetDependency */,
-				449CF1612ADEDE9B00F22CAF /* PBXTargetDependency */,
+				44905A102D4EC7BF002B3379 /* PBXTargetDependency */,
+				44905A222D4ECD31002B3379 /* PBXTargetDependency */,
+				44905A372D4EEC6B002B3379 /* PBXTargetDependency */,
+				44905A482D4EF129002B3379 /* PBXTargetDependency */,
 				449CF1632ADEDE9D00F22CAF /* PBXTargetDependency */,
 				4460B8C92B155B9200392062 /* PBXTargetDependency */,
+				44905A642D4F16E7002B3379 /* PBXTargetDependency */,
 				4460B8CB2B155B9200392062 /* PBXTargetDependency */,
 				446359E02AEA14F000551EEE /* PBXTargetDependency */,
 				449CF1652ADEDEA000F22CAF /* PBXTargetDependency */,
 				4460B8CD2B155B9200392062 /* PBXTargetDependency */,
+				44905A752D4F17B3002B3379 /* PBXTargetDependency */,
 				4460B8CF2B155B9200392062 /* PBXTargetDependency */,
 				444A6F0C2AEAE064005FE121 /* PBXTargetDependency */,
 				44945C6F2B9BA22A00447FFD /* PBXTargetDependency */,
@@ -3325,7 +3345,39 @@
 		4469C1072B5F24C500E32E5A /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
 		4469C1112B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4469C10F2B5F255500E32E5A /* h264_bitstream_parser_fuzzer.cc */; };
 		446CFE442AC694AB00F870D9 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		448C3A9A2D4C48B300AA535D /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		448C3AA22D4C4CBF00AA535D /* aom_av1_encoder_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 448C3A902D4C3AB700AA535D /* aom_av1_encoder_fuzzer.cc */; };
+		448C3AA32D4C4CE800AA535D /* fuzz_data_helper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */; };
+		448C3AA42D4C4CF400AA535D /* ivfenc.c in Sources */ = {isa = PBXBuildFile; fileRef = 410B385A292B81210003E515 /* ivfenc.c */; };
+		448C3AA92D4C4D4B00AA535D /* video_writer.c in Sources */ = {isa = PBXBuildFile; fileRef = 448C3AA52D4C4D4A00AA535D /* video_writer.c */; };
+		448C3AAA2D4C4D4B00AA535D /* tools_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 448C3AA62D4C4D4A00AA535D /* tools_common.c */; };
 		448D48422AB0BEBA0065014C /* vpx_dec_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */; };
+		44905A042D4EC6E6002B3379 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		44905A062D4EC6E6002B3379 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		44905A0C2D4EC714002B3379 /* fuzz_data_helper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */; };
+		44905A0E2D4EC752002B3379 /* rtp_format_h264_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44905A0D2D4EC751002B3379 /* rtp_format_h264_fuzzer.cc */; };
+		44905A172D4ECD1D002B3379 /* fuzz_data_helper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */; };
+		44905A192D4ECD1D002B3379 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		44905A1B2D4ECD1D002B3379 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		44905A242D4ECD83002B3379 /* rtp_format_h265_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44905A232D4ECD83002B3379 /* rtp_format_h265_fuzzer.cc */; };
+		44905A2A2D4EE93B002B3379 /* fuzz_data_helper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */; };
+		44905A2C2D4EE93B002B3379 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		44905A2E2D4EE93B002B3379 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		44905A352D4EEC58002B3379 /* rtp_format_vp8_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44905A342D4EEC57002B3379 /* rtp_format_vp8_fuzzer.cc */; };
+		44905A3D2D4EF116002B3379 /* fuzz_data_helper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */; };
+		44905A3F2D4EF116002B3379 /* webrtc_fuzzer_main.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44ABBE952AC64023006B44DD /* webrtc_fuzzer_main.cc */; };
+		44905A412D4EF116002B3379 /* libwebrtc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */; };
+		44905A4A2D4EF1B4002B3379 /* rtp_format_vp9_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44905A492D4EF1B4002B3379 /* rtp_format_vp9_fuzzer.cc */; };
+		44905A542D4F1471002B3379 /* libvpx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4105EB83212E01D2008C0C20 /* libvpx.a */; };
+		44905A5A2D4F1486002B3379 /* vpx_encoder_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44905A4D2D4F144D002B3379 /* vpx_encoder_fuzzer.cc */; };
+		44905A5B2D4F149C002B3379 /* fuzz_data_helper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */; };
+		44905A5E2D4F14E0002B3379 /* y4minput.c in Sources */ = {isa = PBXBuildFile; fileRef = 44905A5D2D4F14DF002B3379 /* y4minput.c */; };
+		44905A622D4F152F002B3379 /* tools_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 44905A602D4F152F002B3379 /* tools_common.c */; };
+		44905A692D4F179E002B3379 /* fuzz_data_helper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 441380CD2AE06BC200C928CB /* fuzz_data_helper.cc */; };
+		44905A6A2D4F179E002B3379 /* tools_common.c in Sources */ = {isa = PBXBuildFile; fileRef = 44905A602D4F152F002B3379 /* tools_common.c */; };
+		44905A6B2D4F179E002B3379 /* vpx_encoder_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44905A4D2D4F144D002B3379 /* vpx_encoder_fuzzer.cc */; };
+		44905A6C2D4F179E002B3379 /* y4minput.c in Sources */ = {isa = PBXBuildFile; fileRef = 44905A5D2D4F14DF002B3379 /* y4minput.c */; };
+		44905A6E2D4F179E002B3379 /* libvpx.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4105EB83212E01D2008C0C20 /* libvpx.a */; };
 		44945C6D2B9BA20C00447FFD /* libwebm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDEBB11924C0187400ADBD44 /* libwebm.a */; };
 		44945C712B9BA37800447FFD /* webm_fuzzer.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44945C702B9BA37800447FFD /* webm_fuzzer.cc */; };
 		44945C742B9BA3D200447FFD /* webm.dict in Copy Fuzzer Dictionary */ = {isa = PBXBuildFile; fileRef = 44945C722B9BA39200447FFD /* webm.dict */; };
@@ -3353,8 +3405,6 @@
 		44E751722AC7396300828AC4 /* fake_audio_capture_module.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E751662AC738D200828AC4 /* fake_audio_capture_module.h */; };
 		44E7517D2AC73B2000828AC4 /* integration_test_helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E751742AC73B2000828AC4 /* integration_test_helpers.h */; };
 		44E7517E2AC73B2000828AC4 /* integration_test_helpers.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44E7517C2AC73B2000828AC4 /* integration_test_helpers.cc */; };
-		44E751922AC73D1A00828AC4 /* audio_processing_builder_for_testing.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E751892AC73D1A00828AC4 /* audio_processing_builder_for_testing.h */; };
-		44E751932AC73D1A00828AC4 /* audio_processing_builder_for_testing.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44E751912AC73D1A00828AC4 /* audio_processing_builder_for_testing.cc */; };
 		44E7519D2AC73E0400828AC4 /* virtual_socket_server.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44E751952AC73E0400828AC4 /* virtual_socket_server.cc */; };
 		44E751A82AC73EA800828AC4 /* scoped_key_value_config.cc in Sources */ = {isa = PBXBuildFile; fileRef = 44E7519F2AC73EA700828AC4 /* scoped_key_value_config.cc */; };
 		44E751A92AC73EA800828AC4 /* scoped_key_value_config.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E751A72AC73EA700828AC4 /* scoped_key_value_config.h */; };
@@ -3592,7 +3642,6 @@
 		5C4B47661E42AAF5002651C8 /* tasn_utl.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B43D11E42A49E002651C8 /* tasn_utl.c */; };
 		5C4B47DB1E42C021002651C8 /* conf.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B47D61E42C01C002651C8 /* conf.c */; };
 		5C4B47DC1E42C026002651C8 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B47D71E42C01C002651C8 /* internal.h */; };
-		5C4B47DD1E42C029002651C8 /* conf_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B47D51E42C01C002651C8 /* conf_def.h */; };
 		5C4B482C1E42C06A002651C8 /* internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C4B47E81E42C066002651C8 /* internal.h */; };
 		5C4B48471E42C0F6002651C8 /* dsa_asn1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B48451E42C0F4002651C8 /* dsa_asn1.c */; };
 		5C4B4AB51E42C574002651C8 /* analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 5C4B4A931E42C52D002651C8 /* analysis.c */; };
@@ -5331,6 +5380,20 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		31339FA62CEEFED90054D8D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc.dylib;
+		};
+		31339FA82CEEFEDC0054D8D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 449CF1592ADEDE8500F22CAF;
+			remoteInfo = "Fuzzers (libwebrtc)";
+		};
 		410B3826292B73E90003E515 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -5450,12 +5513,110 @@
 			remoteGlobalIDString = 4469C0FF2B5F24C500E32E5A;
 			remoteInfo = h264_bitstream_parser_fuzzer;
 		};
+		448C3A942D4C48B300AA535D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		448C3AA02D4C48C400AA535D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 448C3A922D4C48B300AA535D;
+			remoteInfo = aom_av1_encoder_fuzzer;
+		};
 		448D483C2AB0BDB80065014C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 4105EB69212E01D2008C0C20;
 			remoteInfo = vpx;
+		};
+		44905A012D4EC6E6002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		44905A0F2D4EC7BF002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 449059FF2D4EC6E6002B3379;
+			remoteInfo = rtp_packetizer_h264_fuzzer;
+		};
+		44905A152D4ECD1D002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		44905A212D4ECD31002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44905A132D4ECD1D002B3379;
+			remoteInfo = rtp_packetizer_h265_fuzzer;
+		};
+		44905A282D4EE93B002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		44905A362D4EEC6B002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44905A262D4EE93B002B3379;
+			remoteInfo = rtp_packetizer_vp8_fuzzer;
+		};
+		44905A3B2D4EF116002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc;
+		};
+		44905A472D4EF129002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44905A392D4EF116002B3379;
+			remoteInfo = rtp_packetizer_vp9_fuzzer;
+		};
+		44905A502D4F1471002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4105EB69212E01D2008C0C20;
+			remoteInfo = vpx;
+		};
+		44905A632D4F16E7002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44905A4E2D4F1471002B3379;
+			remoteInfo = vp8_encoder_fuzzer;
+		};
+		44905A672D4F179E002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4105EB69212E01D2008C0C20;
+			remoteInfo = vpx;
+		};
+		44905A742D4F17B3002B3379 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 44905A652D4F179E002B3379;
+			remoteInfo = vp9_encoder_fuzzer;
 		};
 		44945C6B2B9BA20300447FFD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5498,13 +5659,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 449467C22AE05DA200A9FED0;
 			remoteInfo = rtp_depacketizer_av1_assemble_frame_fuzzer;
-		};
-		449CF1602ADEDE9B00F22CAF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 44ABBE882AC63F0C006B44DD;
-			remoteInfo = sdp_integration_fuzzer;
 		};
 		449CF1622ADEDE9D00F22CAF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5659,7 +5813,7 @@
 		};
 		41F77D14215BE45E00E72967 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
@@ -5962,7 +6116,6 @@
 		410B35C4292B6EA00003E515 /* obmc_variance_avx2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = obmc_variance_avx2.c; sourceTree = "<group>"; };
 		410B35C5292B6EA00003E515 /* fwd_txfm_ssse3_x86_64.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = fwd_txfm_ssse3_x86_64.asm; sourceTree = "<group>"; };
 		410B35C6292B6EA10003E515 /* obmc_variance_sse4.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = obmc_variance_sse4.c; sourceTree = "<group>"; };
-		410B35C7292B6EA10003E515 /* inv_wht_sse2.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = inv_wht_sse2.asm; sourceTree = "<group>"; };
 		410B35C9292B6EA10003E515 /* common_avx2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common_avx2.h; sourceTree = "<group>"; };
 		410B35CA292B6EA20003E515 /* fft_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fft_sse2.c; sourceTree = "<group>"; };
 		410B35CC292B6EAE0003E515 /* fwd_txfm_sse2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fwd_txfm_sse2.c; sourceTree = "<group>"; };
@@ -9594,8 +9747,36 @@
 		44871D222AC69336007538BC /* Base-libwebrtc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Base-libwebrtc.xcconfig"; sourceTree = "<group>"; };
 		448A76AD2AF054F400C0A67C /* h264_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h264_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
 		448A76AE2AF064FE00C0A67C /* h265_depacketizer_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = h265_depacketizer_fuzzer.xcconfig; sourceTree = "<group>"; };
+		448C3A902D4C3AB700AA535D /* aom_av1_encoder_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aom_av1_encoder_fuzzer.cc; sourceTree = "<group>"; };
+		448C3A912D4C3AC300AA535D /* aom_av1_encoder_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = aom_av1_encoder_fuzzer.xcconfig; sourceTree = "<group>"; };
+		448C3A9F2D4C48B300AA535D /* aom_av1_encoder_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = aom_av1_encoder_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		448C3AA52D4C4D4A00AA535D /* video_writer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = video_writer.c; sourceTree = "<group>"; };
+		448C3AA62D4C4D4A00AA535D /* tools_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tools_common.c; sourceTree = "<group>"; };
+		448C3AA72D4C4D4B00AA535D /* tools_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tools_common.h; sourceTree = "<group>"; };
+		448C3AA82D4C4D4B00AA535D /* video_writer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_writer.h; sourceTree = "<group>"; };
 		448D48342AB0BDB00065014C /* vp8_dec_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp8_dec_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = vpx_dec_fuzzer.cc; sourceTree = "<group>"; };
+		44905A0B2D4EC6E6002B3379 /* rtp_packetizer_h264_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_packetizer_h264_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44905A0D2D4EC751002B3379 /* rtp_format_h264_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_format_h264_fuzzer.cc; sourceTree = "<group>"; };
+		44905A112D4EC958002B3379 /* rtp_packetizer_h264_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rtp_packetizer_h264_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44905A122D4ECD11002B3379 /* rtp_packetizer_h265_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rtp_packetizer_h265_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44905A202D4ECD1D002B3379 /* rtp_packetizer_h265_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_packetizer_h265_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44905A232D4ECD83002B3379 /* rtp_format_h265_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_format_h265_fuzzer.cc; sourceTree = "<group>"; };
+		44905A252D4EE933002B3379 /* rtp_packetizer_vp8_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rtp_packetizer_vp8_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44905A332D4EE93B002B3379 /* rtp_packetizer_vp8_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_packetizer_vp8_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44905A342D4EEC57002B3379 /* rtp_format_vp8_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_format_vp8_fuzzer.cc; sourceTree = "<group>"; };
+		44905A382D4EF0FC002B3379 /* rtp_packetizer_vp9_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = rtp_packetizer_vp9_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44905A462D4EF116002B3379 /* rtp_packetizer_vp9_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rtp_packetizer_vp9_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44905A492D4EF1B4002B3379 /* rtp_format_vp9_fuzzer.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rtp_format_vp9_fuzzer.cc; sourceTree = "<group>"; };
+		44905A4B2D4F1415002B3379 /* vp9_encoder_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_encoder_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44905A4C2D4F1415002B3379 /* vp8_encoder_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_encoder_fuzzer.xcconfig; sourceTree = "<group>"; };
+		44905A4D2D4F144D002B3379 /* vpx_encoder_fuzzer.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = vpx_encoder_fuzzer.cc; sourceTree = "<group>"; };
+		44905A592D4F1471002B3379 /* vp8_encoder_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp8_encoder_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
+		44905A5C2D4F14DF002B3379 /* y4minput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = y4minput.h; sourceTree = "<group>"; };
+		44905A5D2D4F14DF002B3379 /* y4minput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = y4minput.c; sourceTree = "<group>"; };
+		44905A602D4F152F002B3379 /* tools_common.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tools_common.c; sourceTree = "<group>"; };
+		44905A612D4F152F002B3379 /* tools_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tools_common.h; sourceTree = "<group>"; };
+		44905A732D4F179E002B3379 /* vp9_encoder_fuzzer */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = vp9_encoder_fuzzer; sourceTree = BUILT_PRODUCTS_DIR; };
 		449187232AB3800D007266F2 /* Base-libvpx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Base-libvpx.xcconfig"; sourceTree = "<group>"; };
 		449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp8_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
 		449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = vp9_dec_fuzzer.xcconfig; sourceTree = "<group>"; };
@@ -9626,8 +9807,6 @@
 		44E751662AC738D200828AC4 /* fake_audio_capture_module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fake_audio_capture_module.h; sourceTree = "<group>"; };
 		44E751742AC73B2000828AC4 /* integration_test_helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = integration_test_helpers.h; sourceTree = "<group>"; };
 		44E7517C2AC73B2000828AC4 /* integration_test_helpers.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = integration_test_helpers.cc; sourceTree = "<group>"; };
-		44E751892AC73D1A00828AC4 /* audio_processing_builder_for_testing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_processing_builder_for_testing.h; sourceTree = "<group>"; };
-		44E751912AC73D1A00828AC4 /* audio_processing_builder_for_testing.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audio_processing_builder_for_testing.cc; sourceTree = "<group>"; };
 		44E751952AC73E0400828AC4 /* virtual_socket_server.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = virtual_socket_server.cc; sourceTree = "<group>"; };
 		44E7519F2AC73EA700828AC4 /* scoped_key_value_config.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = scoped_key_value_config.cc; sourceTree = "<group>"; };
 		44E751A72AC73EA700828AC4 /* scoped_key_value_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scoped_key_value_config.h; sourceTree = "<group>"; };
@@ -9838,7 +10017,6 @@
 		5C4B46321E42A994002651C8 /* cbb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbb.c; sourceTree = "<group>"; };
 		5C4B46331E42A994002651C8 /* cbs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cbs.c; sourceTree = "<group>"; };
 		5C4B46341E42A994002651C8 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
-		5C4B47D51E42C01C002651C8 /* conf_def.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = conf_def.h; sourceTree = "<group>"; };
 		5C4B47D61E42C01C002651C8 /* conf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = conf.c; sourceTree = "<group>"; };
 		5C4B47D71E42C01C002651C8 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
 		5C4B47E81E42C066002651C8 /* internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = internal.h; sourceTree = "<group>"; };
@@ -11315,11 +11493,67 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		448C3A992D4C48B300AA535D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				448C3A9A2D4C48B300AA535D /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		448D48312AB0BDB00065014C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				44A402A92AB0BFB000463B4B /* libvpx.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A052D4EC6E6002B3379 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A062D4EC6E6002B3379 /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A1A2D4ECD1D002B3379 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A1B2D4ECD1D002B3379 /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A2D2D4EE93B002B3379 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A2E2D4EE93B002B3379 /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A402D4EF116002B3379 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A412D4EF116002B3379 /* libwebrtc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A532D4F1471002B3379 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A542D4F1471002B3379 /* libvpx.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A6D2D4F179E002B3379 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A6E2D4F179E002B3379 /* libvpx.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11519,6 +11753,10 @@
 				4105EBAB212E030B008C0C20 /* vpx_ports */,
 				4105EBAC212E0319008C0C20 /* vpx_scale */,
 				4105EBAD212E0327008C0C20 /* vpx_util */,
+				44905A602D4F152F002B3379 /* tools_common.c */,
+				44905A612D4F152F002B3379 /* tools_common.h */,
+				44905A5D2D4F14DF002B3379 /* y4minput.c */,
+				44905A5C2D4F14DF002B3379 /* y4minput.h */,
 			);
 			path = libvpx;
 			sourceTree = "<group>";
@@ -12006,7 +12244,6 @@
 				410B35AF292B6E8D0003E515 /* intrapred_ssse3.c */,
 				410B35B3292B6E920003E515 /* intrapred_utils.h */,
 				410B35E0292B6EBC0003E515 /* intrapred_x86.h */,
-				410B35C7292B6EA10003E515 /* inv_wht_sse2.asm */,
 				4424593A2ACB93B000E105A1 /* jnt_sad_sse2.c */,
 				410B35ED292B6EC40003E515 /* jnt_variance_ssse3.c */,
 				410B35DA292B6EBA0003E515 /* loopfilter_avx2.c */,
@@ -12485,6 +12722,10 @@
 				410B3857292B81200003E515 /* ivfdec.h */,
 				410B385A292B81210003E515 /* ivfenc.c */,
 				410B3858292B81200003E515 /* ivfenc.h */,
+				448C3AA62D4C4D4A00AA535D /* tools_common.c */,
+				448C3AA72D4C4D4B00AA535D /* tools_common.h */,
+				448C3AA52D4C4D4A00AA535D /* video_writer.c */,
+				448C3AA82D4C4D4B00AA535D /* video_writer.h */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -15299,13 +15540,6 @@
 			path = asm;
 			sourceTree = "<group>";
 		};
-		41AA85742B1F5D7300756EEB /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		41ABB1242BFDFFE80035D075 /* keccak */ = {
 			isa = PBXGroup;
 			children = (
@@ -15770,6 +16004,7 @@
 				41C8D5D2292B6A5D00D49979 /* aom_util */,
 				41C8D5D3292B6A7100D49979 /* av1 */,
 				410B3852292B80EF0003E515 /* common */,
+				44CDF4D12D4C3A5E00B60493 /* examples */,
 				410B384C292B80980003E515 /* third_party */,
 			);
 			path = libaom;
@@ -16795,6 +17030,7 @@
 			isa = PBXGroup;
 			children = (
 				448D48412AB0BEBA0065014C /* vpx_dec_fuzzer.cc */,
+				44905A4D2D4F144D002B3379 /* vpx_encoder_fuzzer.cc */,
 			);
 			path = examples;
 			sourceTree = "<group>";
@@ -16848,6 +17084,10 @@
 				44D8D10B2B6AFB9A00B3CF91 /* h265_bitstream_parser_fuzzer.cc */,
 				44D88AE02AF04AC3005C956E /* h265_depacketizer_fuzzer.cc */,
 				449467C02AE05D6B00A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer.cc */,
+				44905A0D2D4EC751002B3379 /* rtp_format_h264_fuzzer.cc */,
+				44905A232D4ECD83002B3379 /* rtp_format_h265_fuzzer.cc */,
+				44905A342D4EEC57002B3379 /* rtp_format_vp8_fuzzer.cc */,
+				44905A492D4EF1B4002B3379 /* rtp_format_vp9_fuzzer.cc */,
 				449467D02AE05DBF00A9FED0 /* rtp_packetizer_av1_fuzzer.cc */,
 				44ABBE872AC63EF3006B44DD /* sdp_integration_fuzzer.cc */,
 				4460B8852B15572D00392062 /* vp8_depacketizer_fuzzer.cc */,
@@ -16861,6 +17101,14 @@
 			path = fuzzers;
 			sourceTree = "<group>";
 		};
+		44CDF4D12D4C3A5E00B60493 /* examples */ = {
+			isa = PBXGroup;
+			children = (
+				448C3A902D4C3AB700AA535D /* aom_av1_encoder_fuzzer.cc */,
+			);
+			path = examples;
+			sourceTree = "<group>";
+		};
 		44E751682AC738DB00828AC4 /* test */ = {
 			isa = PBXGroup;
 			children = (
@@ -16868,15 +17116,6 @@
 				44E751662AC738D200828AC4 /* fake_audio_capture_module.h */,
 				44E7517C2AC73B2000828AC4 /* integration_test_helpers.cc */,
 				44E751742AC73B2000828AC4 /* integration_test_helpers.h */,
-			);
-			path = test;
-			sourceTree = "<group>";
-		};
-		44E751802AC73C8F00828AC4 /* test */ = {
-			isa = PBXGroup;
-			children = (
-				44E751912AC73D1A00828AC4 /* audio_processing_builder_for_testing.cc */,
-				44E751892AC73D1A00828AC4 /* audio_processing_builder_for_testing.h */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -17384,7 +17623,6 @@
 			isa = PBXGroup;
 			children = (
 				5C4B47D61E42C01C002651C8 /* conf.c */,
-				5C4B47D51E42C01C002651C8 /* conf_def.h */,
 				5C4B47D71E42C01C002651C8 /* internal.h */,
 			);
 			path = conf;
@@ -18674,7 +18912,6 @@
 				5CDD84C91E43AF1D00621E92 /* include */,
 				5CDD87E21E43BD9100621E92 /* logging */,
 				41893961242A721B007FDC41 /* ns */,
-				44E751802AC73C8F00828AC4 /* test */,
 				5CDD86751E43B92900621E92 /* utility */,
 				5CDD870A1E43BAB100621E92 /* vad */,
 				5CDD84891E43AF1300621E92 /* audio_buffer.cc */,
@@ -20093,6 +20330,7 @@
 		5D7C59C41208C68B001C873E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
+				448C3A912D4C3AC300AA535D /* aom_av1_encoder_fuzzer.xcconfig */,
 				449187232AB3800D007266F2 /* Base-libvpx.xcconfig */,
 				44871D222AC69336007538BC /* Base-libwebrtc.xcconfig */,
 				5D7C59C61208C68B001C873E /* Base.xcconfig */,
@@ -20118,13 +20356,19 @@
 				5C4B4A8F1E42C431002651C8 /* opus.xcconfig */,
 				441380CB2AE069CB00C928CB /* rtp_depacketizer_av1_assemble_frame_fuzzer.xcconfig */,
 				441380CA2AE069CB00C928CB /* rtp_packetizer_av1_fuzzer.xcconfig */,
+				44905A112D4EC958002B3379 /* rtp_packetizer_h264_fuzzer.xcconfig */,
+				44905A122D4ECD11002B3379 /* rtp_packetizer_h265_fuzzer.xcconfig */,
+				44905A252D4EE933002B3379 /* rtp_packetizer_vp8_fuzzer.xcconfig */,
+				44905A382D4EF0FC002B3379 /* rtp_packetizer_vp9_fuzzer.xcconfig */,
 				44ABBE972AC641B4006B44DD /* sdp_integration_fuzzer.xcconfig */,
 				449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */,
 				4460B8882B155A8700392062 /* vp8_depacketizer_fuzzer.xcconfig */,
+				44905A4C2D4F1415002B3379 /* vp8_encoder_fuzzer.xcconfig */,
 				4460B8892B155A8700392062 /* vp8_qp_parser_fuzzer.xcconfig */,
 				44FD166E2AEA16CC003636CB /* vp8_replay_fuzzer.xcconfig */,
 				449187252AB380BE007266F2 /* vp9_dec_fuzzer.xcconfig */,
 				4460B88B2B155A8800392062 /* vp9_depacketizer_fuzzer.xcconfig */,
+				44905A4B2D4F1415002B3379 /* vp9_encoder_fuzzer.xcconfig */,
 				4460B88A2B155A8800392062 /* vp9_qp_parser_fuzzer.xcconfig */,
 				444A6F0A2AEAE01D005FE121 /* vp9_replay_fuzzer.xcconfig */,
 				44945C752B9BA41D00447FFD /* webm_fuzzer.xcconfig */,
@@ -20573,7 +20817,6 @@
 				5CB3048A1DE4143400D2C405 /* Frameworks */,
 				FB39D0CC1200EF9B00088E69 /* Products */,
 				FB39D0841200EDEB00088E69 /* Source */,
-				41AA85742B1F5D7300756EEB /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -20615,6 +20858,13 @@
 				4460B8C62B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				44D8D1192B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */,
 				44945C692B9BA1C300447FFD /* webm_fuzzer */,
+				448C3A9F2D4C48B300AA535D /* aom_av1_encoder_fuzzer */,
+				44905A0B2D4EC6E6002B3379 /* rtp_packetizer_h264_fuzzer */,
+				44905A202D4ECD1D002B3379 /* rtp_packetizer_h265_fuzzer */,
+				44905A332D4EE93B002B3379 /* rtp_packetizer_vp8_fuzzer */,
+				44905A462D4EF116002B3379 /* rtp_packetizer_vp9_fuzzer */,
+				44905A592D4F1471002B3379 /* vp8_encoder_fuzzer */,
+				44905A732D4F179E002B3379 /* vp9_encoder_fuzzer */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -20863,7 +21113,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44E751922AC73D1A00828AC4 /* audio_processing_builder_for_testing.h in Headers */,
 				44E751722AC7396300828AC4 /* fake_audio_capture_module.h in Headers */,
 				44E751C02AC7424000828AC4 /* fake_video_renderer.h in Headers */,
 				44E751B52AC73F8800828AC4 /* field_trial.h in Headers */,
@@ -20962,7 +21211,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				41402E812CFF3DAA00F7A84A /* bcm_interface.h in Headers */,
-				5C4B47DD1E42C029002651C8 /* conf_def.h in Headers */,
 				412FF947254B10A5001DF036 /* curve25519_tables.h in Headers */,
 				410A43BD2D08351B00A701EC /* internal.h in Headers */,
 				41ABB1282BFE00220035D075 /* internal.h in Headers */,
@@ -23555,6 +23803,23 @@
 			productReference = 4469C10C2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
+		448C3A922D4C48B300AA535D /* aom_av1_encoder_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 448C3A9B2D4C48B300AA535D /* Build configuration list for PBXNativeTarget "aom_av1_encoder_fuzzer" */;
+			buildPhases = (
+				448C3A962D4C48B300AA535D /* Sources */,
+				448C3A992D4C48B300AA535D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				448C3A932D4C48B300AA535D /* PBXTargetDependency */,
+			);
+			name = aom_av1_encoder_fuzzer;
+			productName = aom_av1_encoder_fuzzer;
+			productReference = 448C3A9F2D4C48B300AA535D /* aom_av1_encoder_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
 		448D48332AB0BDB00065014C /* vp8_dec_fuzzer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "vp8_dec_fuzzer" */;
@@ -23570,6 +23835,108 @@
 			name = vp8_dec_fuzzer;
 			productName = vp8_dec_fuzzer;
 			productReference = 448D48342AB0BDB00065014C /* vp8_dec_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		449059FF2D4EC6E6002B3379 /* rtp_packetizer_h264_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44905A072D4EC6E6002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_h264_fuzzer" */;
+			buildPhases = (
+				44905A022D4EC6E6002B3379 /* Sources */,
+				44905A052D4EC6E6002B3379 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44905A002D4EC6E6002B3379 /* PBXTargetDependency */,
+			);
+			name = rtp_packetizer_h264_fuzzer;
+			productName = rtp_packetizer_h264_fuzzer;
+			productReference = 44905A0B2D4EC6E6002B3379 /* rtp_packetizer_h264_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		44905A132D4ECD1D002B3379 /* rtp_packetizer_h265_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44905A1C2D4ECD1D002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_h265_fuzzer" */;
+			buildPhases = (
+				44905A162D4ECD1D002B3379 /* Sources */,
+				44905A1A2D4ECD1D002B3379 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44905A142D4ECD1D002B3379 /* PBXTargetDependency */,
+			);
+			name = rtp_packetizer_h265_fuzzer;
+			productName = rtp_packetizer_h265_fuzzer;
+			productReference = 44905A202D4ECD1D002B3379 /* rtp_packetizer_h265_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		44905A262D4EE93B002B3379 /* rtp_packetizer_vp8_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44905A2F2D4EE93B002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_vp8_fuzzer" */;
+			buildPhases = (
+				44905A292D4EE93B002B3379 /* Sources */,
+				44905A2D2D4EE93B002B3379 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44905A272D4EE93B002B3379 /* PBXTargetDependency */,
+			);
+			name = rtp_packetizer_vp8_fuzzer;
+			productName = rtp_packetizer_vp8_fuzzer;
+			productReference = 44905A332D4EE93B002B3379 /* rtp_packetizer_vp8_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		44905A392D4EF116002B3379 /* rtp_packetizer_vp9_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44905A422D4EF116002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_vp9_fuzzer" */;
+			buildPhases = (
+				44905A3C2D4EF116002B3379 /* Sources */,
+				44905A402D4EF116002B3379 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44905A3A2D4EF116002B3379 /* PBXTargetDependency */,
+			);
+			name = rtp_packetizer_vp9_fuzzer;
+			productName = rtp_packetizer_vp9_fuzzer;
+			productReference = 44905A462D4EF116002B3379 /* rtp_packetizer_vp9_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		44905A4E2D4F1471002B3379 /* vp8_encoder_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44905A552D4F1471002B3379 /* Build configuration list for PBXNativeTarget "vp8_encoder_fuzzer" */;
+			buildPhases = (
+				44905A512D4F1471002B3379 /* Sources */,
+				44905A532D4F1471002B3379 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44905A4F2D4F1471002B3379 /* PBXTargetDependency */,
+			);
+			name = vp8_encoder_fuzzer;
+			productName = vp8_encoder_fuzzer;
+			productReference = 44905A592D4F1471002B3379 /* vp8_encoder_fuzzer */;
+			productType = "com.apple.product-type.tool";
+		};
+		44905A652D4F179E002B3379 /* vp9_encoder_fuzzer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 44905A6F2D4F179E002B3379 /* Build configuration list for PBXNativeTarget "vp9_encoder_fuzzer" */;
+			buildPhases = (
+				44905A682D4F179E002B3379 /* Sources */,
+				44905A6D2D4F179E002B3379 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				44905A662D4F179E002B3379 /* PBXTargetDependency */,
+			);
+			name = vp9_encoder_fuzzer;
+			productName = vp9_encoder_fuzzer;
+			productReference = 44905A732D4F179E002B3379 /* vp9_encoder_fuzzer */;
 			productType = "com.apple.product-type.tool";
 		};
 		44945C512B9BA1C300447FFD /* webm_fuzzer */ = {
@@ -23848,9 +24215,9 @@
 			productReference = DDF30D0627C5C003006A526F /* libabsl.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		FB39D0D01200F0E300088E69 /* libwebrtc */ = {
+		FB39D0D01200F0E300088E69 /* libwebrtc.dylib */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc" */;
+			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc.dylib" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
 				DD114ECB2CEFBDBA00125A79 /* Use WTF's derived Public SDK Headers */,
@@ -23882,7 +24249,7 @@
 				5C4B4AC71E42C58B002651C8 /* PBXTargetDependency */,
 				5C63FC621E418449002CA531 /* PBXTargetDependency */,
 			);
-			name = libwebrtc;
+			name = libwebrtc.dylib;
 			productName = libwebrtc;
 			productReference = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
@@ -23896,6 +24263,9 @@
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
+					31339FA12CEEFECC0054D8D5 = {
+						CreatedOnToolsVersion = 16.3;
+					};
 					41F77D15215BE45E00E72967 = {
 						CreatedOnToolsVersion = 10.0;
 						ProvisioningStyle = Manual;
@@ -23929,7 +24299,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FB39D0D01200F0E300088E69 /* libwebrtc */,
+				31339FA12CEEFECC0054D8D5 /* libwebrtc */,
+				FB39D0D01200F0E300088E69 /* libwebrtc.dylib */,
 				5C63FA7A1E418411002CA531 /* boringssl */,
 				5C4B490E1E42C336002651C8 /* opus */,
 				5C08848B1E4A97E300403995 /* srtp */,
@@ -23940,19 +24311,26 @@
 				DDEBB11824C0187400ADBD44 /* aom */,
 				DDF30D0527C5C003006A526F /* absl */,
 				449CF1592ADEDE8500F22CAF /* Fuzzers (libwebrtc) */,
+				448C3A922D4C48B300AA535D /* aom_av1_encoder_fuzzer */,
 				4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */,
 				44D88ABD2AF04946005C956E /* h264_depacketizer_fuzzer */,
 				44D8D10C2B6AFBA900B3CF91 /* h265_bitstream_parser_fuzzer */,
 				44D88AD12AF04AA1005C956E /* h265_depacketizer_fuzzer */,
 				449467C22AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */,
 				449467A22AE05C9600A9FED0 /* rtp_packetizer_av1_fuzzer */,
+				449059FF2D4EC6E6002B3379 /* rtp_packetizer_h264_fuzzer */,
+				44905A132D4ECD1D002B3379 /* rtp_packetizer_h265_fuzzer */,
+				44905A262D4EE93B002B3379 /* rtp_packetizer_vp8_fuzzer */,
+				44905A392D4EF116002B3379 /* rtp_packetizer_vp9_fuzzer */,
 				44ABBE882AC63F0C006B44DD /* sdp_integration_fuzzer */,
 				448D48332AB0BDB00065014C /* vp8_dec_fuzzer */,
 				4460B88C2B155AFD00392062 /* vp8_depacketizer_fuzzer */,
+				44905A4E2D4F1471002B3379 /* vp8_encoder_fuzzer */,
 				4460B8AA2B155B4E00392062 /* vp8_qp_parser_fuzzer */,
 				446359B62AEA108C00551EEE /* vp8_replay_fuzzer */,
 				44C20E892AB39FA80046C6A8 /* vp9_dec_fuzzer */,
 				4460B89B2B155B2E00392062 /* vp9_depacketizer_fuzzer */,
+				44905A652D4F179E002B3379 /* vp9_encoder_fuzzer */,
 				4460B8B92B155B6A00392062 /* vp9_qp_parser_fuzzer */,
 				444A6EF02AEADFC9005FE121 /* vp9_replay_fuzzer */,
 				44945C512B9BA1C300447FFD /* webm_fuzzer */,
@@ -24585,11 +24963,85 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		448C3A962D4C48B300AA535D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				448C3AA22D4C4CBF00AA535D /* aom_av1_encoder_fuzzer.cc in Sources */,
+				448C3AA32D4C4CE800AA535D /* fuzz_data_helper.cc in Sources */,
+				448C3AA42D4C4CF400AA535D /* ivfenc.c in Sources */,
+				448C3AAA2D4C4D4B00AA535D /* tools_common.c in Sources */,
+				448C3AA92D4C4D4B00AA535D /* video_writer.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		448D48302AB0BDB00065014C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				448D48422AB0BEBA0065014C /* vpx_dec_fuzzer.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A022D4EC6E6002B3379 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A0C2D4EC714002B3379 /* fuzz_data_helper.cc in Sources */,
+				44905A0E2D4EC752002B3379 /* rtp_format_h264_fuzzer.cc in Sources */,
+				44905A042D4EC6E6002B3379 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A162D4ECD1D002B3379 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A172D4ECD1D002B3379 /* fuzz_data_helper.cc in Sources */,
+				44905A242D4ECD83002B3379 /* rtp_format_h265_fuzzer.cc in Sources */,
+				44905A192D4ECD1D002B3379 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A292D4EE93B002B3379 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A2A2D4EE93B002B3379 /* fuzz_data_helper.cc in Sources */,
+				44905A352D4EEC58002B3379 /* rtp_format_vp8_fuzzer.cc in Sources */,
+				44905A2C2D4EE93B002B3379 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A3C2D4EF116002B3379 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A3D2D4EF116002B3379 /* fuzz_data_helper.cc in Sources */,
+				44905A4A2D4EF1B4002B3379 /* rtp_format_vp9_fuzzer.cc in Sources */,
+				44905A3F2D4EF116002B3379 /* webrtc_fuzzer_main.cc in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A512D4F1471002B3379 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A5B2D4F149C002B3379 /* fuzz_data_helper.cc in Sources */,
+				44905A622D4F152F002B3379 /* tools_common.c in Sources */,
+				44905A5A2D4F1486002B3379 /* vpx_encoder_fuzzer.cc in Sources */,
+				44905A5E2D4F14E0002B3379 /* y4minput.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		44905A682D4F179E002B3379 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				44905A692D4F179E002B3379 /* fuzz_data_helper.cc in Sources */,
+				44905A6A2D4F179E002B3379 /* tools_common.c in Sources */,
+				44905A6B2D4F179E002B3379 /* vpx_encoder_fuzzer.cc in Sources */,
+				44905A6C2D4F179E002B3379 /* y4minput.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24625,7 +25077,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44E751932AC73D1A00828AC4 /* audio_processing_builder_for_testing.cc in Sources */,
 				44E751672AC738D200828AC4 /* fake_audio_capture_module.cc in Sources */,
 				44E751B82AC7421D00828AC4 /* fake_video_renderer.cc in Sources */,
 				44E751B42AC73F8800828AC4 /* field_trial.cc in Sources */,
@@ -26663,6 +27114,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		31339FA72CEEFED90054D8D5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 31339FA62CEEFED90054D8D5 /* PBXContainerItemProxy */;
+		};
+		31339FA92CEEFEDC0054D8D5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 449CF1592ADEDE8500F22CAF /* Fuzzers (libwebrtc) */;
+			targetProxy = 31339FA82CEEFEDC0054D8D5 /* PBXContainerItemProxy */;
+		};
 		410B3827292B73E90003E515 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DDEBB11824C0187400ADBD44 /* aom */;
@@ -26680,7 +27141,7 @@
 		};
 		444A6EF12AEADFC9005FE121 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 444A6EF22AEADFC9005FE121 /* PBXContainerItemProxy */;
 		};
 		444A6F0C2AEAE064005FE121 /* PBXTargetDependency */ = {
@@ -26693,22 +27154,22 @@
 		};
 		4460B88D2B155AFD00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B88E2B155AFD00392062 /* PBXContainerItemProxy */;
 		};
 		4460B89C2B155B2E00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B89D2B155B2E00392062 /* PBXContainerItemProxy */;
 		};
 		4460B8AB2B155B4E00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B8AC2B155B4E00392062 /* PBXContainerItemProxy */;
 		};
 		4460B8BA2B155B6A00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B8BB2B155B6A00392062 /* PBXContainerItemProxy */;
 		};
 		4460B8C92B155B9200392062 /* PBXTargetDependency */ = {
@@ -26733,7 +27194,7 @@
 		};
 		446359C52AEA10F400551EEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 446359C42AEA10F400551EEE /* PBXContainerItemProxy */;
 		};
 		446359E02AEA14F000551EEE /* PBXTargetDependency */ = {
@@ -26746,7 +27207,7 @@
 		};
 		4469C1002B5F24C500E32E5A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4469C1012B5F24C500E32E5A /* PBXContainerItemProxy */;
 		};
 		4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */ = {
@@ -26754,10 +27215,80 @@
 			target = 4469C0FF2B5F24C500E32E5A /* h264_bitstream_parser_fuzzer */;
 			targetProxy = 4469C10D2B5F24DA00E32E5A /* PBXContainerItemProxy */;
 		};
+		448C3A932D4C48B300AA535D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 448C3A942D4C48B300AA535D /* PBXContainerItemProxy */;
+		};
+		448C3AA12D4C48C400AA535D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 448C3A922D4C48B300AA535D /* aom_av1_encoder_fuzzer */;
+			targetProxy = 448C3AA02D4C48C400AA535D /* PBXContainerItemProxy */;
+		};
 		448D483D2AB0BDB80065014C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 4105EB69212E01D2008C0C20 /* vpx */;
 			targetProxy = 448D483C2AB0BDB80065014C /* PBXContainerItemProxy */;
+		};
+		44905A002D4EC6E6002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 44905A012D4EC6E6002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A102D4EC7BF002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 449059FF2D4EC6E6002B3379 /* rtp_packetizer_h264_fuzzer */;
+			targetProxy = 44905A0F2D4EC7BF002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A142D4ECD1D002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 44905A152D4ECD1D002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A222D4ECD31002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44905A132D4ECD1D002B3379 /* rtp_packetizer_h265_fuzzer */;
+			targetProxy = 44905A212D4ECD31002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A272D4EE93B002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 44905A282D4EE93B002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A372D4EEC6B002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44905A262D4EE93B002B3379 /* rtp_packetizer_vp8_fuzzer */;
+			targetProxy = 44905A362D4EEC6B002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A3A2D4EF116002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 44905A3B2D4EF116002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A482D4EF129002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44905A392D4EF116002B3379 /* rtp_packetizer_vp9_fuzzer */;
+			targetProxy = 44905A472D4EF129002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A4F2D4F1471002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4105EB69212E01D2008C0C20 /* vpx */;
+			targetProxy = 44905A502D4F1471002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A642D4F16E7002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44905A4E2D4F1471002B3379 /* vp8_encoder_fuzzer */;
+			targetProxy = 44905A632D4F16E7002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A662D4F179E002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4105EB69212E01D2008C0C20 /* vpx */;
+			targetProxy = 44905A672D4F179E002B3379 /* PBXContainerItemProxy */;
+		};
+		44905A752D4F17B3002B3379 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 44905A652D4F179E002B3379 /* vp9_encoder_fuzzer */;
+			targetProxy = 44905A742D4F17B3002B3379 /* PBXContainerItemProxy */;
 		};
 		44945C6C2B9BA20300447FFD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -26771,7 +27302,7 @@
 		};
 		449467A32AE05C9600A9FED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 449467A42AE05C9600A9FED0 /* PBXContainerItemProxy */;
 		};
 		449467BF2AE05CA800A9FED0 /* PBXTargetDependency */ = {
@@ -26781,18 +27312,13 @@
 		};
 		449467C32AE05DA200A9FED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 449467C42AE05DA200A9FED0 /* PBXContainerItemProxy */;
 		};
 		449467D32AE05DD200A9FED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 449467C22AE05DA200A9FED0 /* rtp_depacketizer_av1_assemble_frame_fuzzer */;
 			targetProxy = 449467D22AE05DD200A9FED0 /* PBXContainerItemProxy */;
-		};
-		449CF1612ADEDE9B00F22CAF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 44ABBE882AC63F0C006B44DD /* sdp_integration_fuzzer */;
-			targetProxy = 449CF1602ADEDE9B00F22CAF /* PBXContainerItemProxy */;
 		};
 		449CF1632ADEDE9D00F22CAF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -26811,7 +27337,7 @@
 		};
 		44D88ABE2AF04946005C956E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44D88ABF2AF04946005C956E /* PBXContainerItemProxy */;
 		};
 		44D88ACE2AF0495A005C956E /* PBXTargetDependency */ = {
@@ -26821,7 +27347,7 @@
 		};
 		44D88AD22AF04AA1005C956E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44D88AD32AF04AA1005C956E /* PBXContainerItemProxy */;
 		};
 		44D88AE32AF04AE4005C956E /* PBXTargetDependency */ = {
@@ -26831,7 +27357,7 @@
 		};
 		44D8D10D2B6AFBA900B3CF91 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44D8D10E2B6AFBA900B3CF91 /* PBXContainerItemProxy */;
 		};
 		44D8D11C2B6AFBCF00B3CF91 /* PBXTargetDependency */ = {
@@ -26841,7 +27367,7 @@
 		};
 		44E7509C2AC726A600828AC4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44E7509B2AC726A600828AC4 /* PBXContainerItemProxy */;
 		};
 		5C0884E01E4A982000403995 /* PBXTargetDependency */ = {
@@ -26877,6 +27403,30 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		31339FA32CEEFECC0054D8D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		31339FA42CEEFECC0054D8D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		31339FA52CEEFECC0054D8D5 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		4105EB80212E01D2008C0C20 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 411ED035212E05DE004320BA /* libvpx.xcconfig */;
@@ -27070,6 +27620,30 @@
 			};
 			name = Production;
 		};
+		448C3A9C2D4C48B300AA535D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 448C3A912D4C3AC300AA535D /* aom_av1_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		448C3A9D2D4C48B300AA535D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 448C3A912D4C3AC300AA535D /* aom_av1_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		448C3A9E2D4C48B300AA535D /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 448C3A912D4C3AC300AA535D /* aom_av1_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		448D48382AB0BDB10065014C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */;
@@ -27088,6 +27662,150 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 449187242AB380BE007266F2 /* vp8_dec_fuzzer.xcconfig */;
 			buildSettings = {
+			};
+			name = Production;
+		};
+		44905A082D4EC6E6002B3379 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A112D4EC958002B3379 /* rtp_packetizer_h264_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		44905A092D4EC6E6002B3379 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A112D4EC958002B3379 /* rtp_packetizer_h264_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		44905A0A2D4EC6E6002B3379 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A112D4EC958002B3379 /* rtp_packetizer_h264_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44905A1D2D4ECD1D002B3379 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A122D4ECD11002B3379 /* rtp_packetizer_h265_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		44905A1E2D4ECD1D002B3379 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A122D4ECD11002B3379 /* rtp_packetizer_h265_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		44905A1F2D4ECD1D002B3379 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A122D4ECD11002B3379 /* rtp_packetizer_h265_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44905A302D4EE93B002B3379 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A252D4EE933002B3379 /* rtp_packetizer_vp8_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		44905A312D4EE93B002B3379 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A252D4EE933002B3379 /* rtp_packetizer_vp8_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		44905A322D4EE93B002B3379 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A252D4EE933002B3379 /* rtp_packetizer_vp8_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44905A432D4EF116002B3379 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A382D4EF0FC002B3379 /* rtp_packetizer_vp9_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		44905A442D4EF116002B3379 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A382D4EF0FC002B3379 /* rtp_packetizer_vp9_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		44905A452D4EF116002B3379 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A382D4EF0FC002B3379 /* rtp_packetizer_vp9_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44905A562D4F1471002B3379 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A4C2D4F1415002B3379 /* vp8_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		44905A572D4F1471002B3379 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A4C2D4F1415002B3379 /* vp8_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		44905A582D4F1471002B3379 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A4C2D4F1415002B3379 /* vp8_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
+		44905A702D4F179E002B3379 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A4B2D4F1415002B3379 /* vp9_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		44905A712D4F179E002B3379 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A4B2D4F1415002B3379 /* vp9_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		44905A722D4F179E002B3379 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 44905A4B2D4F1415002B3379 /* vp9_encoder_fuzzer.xcconfig */;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Production;
 		};
@@ -27491,6 +28209,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		31339FA22CEEFECC0054D8D5 /* Build configuration list for PBXAggregateTarget "libwebrtc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31339FA32CEEFECC0054D8D5 /* Debug */,
+				31339FA42CEEFECC0054D8D5 /* Release */,
+				31339FA52CEEFECC0054D8D5 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		4105EB7F212E01D2008C0C20 /* Build configuration list for PBXNativeTarget "vpx" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -27581,12 +28309,82 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
+		448C3A9B2D4C48B300AA535D /* Build configuration list for PBXNativeTarget "aom_av1_encoder_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				448C3A9C2D4C48B300AA535D /* Debug */,
+				448C3A9D2D4C48B300AA535D /* Release */,
+				448C3A9E2D4C48B300AA535D /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		448D483B2AB0BDB10065014C /* Build configuration list for PBXNativeTarget "vp8_dec_fuzzer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				448D48382AB0BDB10065014C /* Debug */,
 				448D48392AB0BDB10065014C /* Release */,
 				448D483A2AB0BDB10065014C /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44905A072D4EC6E6002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_h264_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44905A082D4EC6E6002B3379 /* Debug */,
+				44905A092D4EC6E6002B3379 /* Release */,
+				44905A0A2D4EC6E6002B3379 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44905A1C2D4ECD1D002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_h265_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44905A1D2D4ECD1D002B3379 /* Debug */,
+				44905A1E2D4ECD1D002B3379 /* Release */,
+				44905A1F2D4ECD1D002B3379 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44905A2F2D4EE93B002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_vp8_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44905A302D4EE93B002B3379 /* Debug */,
+				44905A312D4EE93B002B3379 /* Release */,
+				44905A322D4EE93B002B3379 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44905A422D4EF116002B3379 /* Build configuration list for PBXNativeTarget "rtp_packetizer_vp9_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44905A432D4EF116002B3379 /* Debug */,
+				44905A442D4EF116002B3379 /* Release */,
+				44905A452D4EF116002B3379 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44905A552D4F1471002B3379 /* Build configuration list for PBXNativeTarget "vp8_encoder_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44905A562D4F1471002B3379 /* Debug */,
+				44905A572D4F1471002B3379 /* Release */,
+				44905A582D4F1471002B3379 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		44905A6F2D4F179E002B3379 /* Build configuration list for PBXNativeTarget "vp9_encoder_fuzzer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				44905A702D4F179E002B3379 /* Debug */,
+				44905A712D4F179E002B3379 /* Release */,
+				44905A722D4F179E002B3379 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
@@ -27761,7 +28559,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc" */ = {
+		FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc.dylib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FB39D0D21200F0E400088E69 /* Debug */,

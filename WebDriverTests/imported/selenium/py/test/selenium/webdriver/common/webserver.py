@@ -59,27 +59,43 @@ DEFAULT_PORT = 8000
 
 
 class HtmlOnlyHandler(BaseHTTPRequestHandler):
-    """Http handler."""
+    """Handler for HTML responses and JSON files."""
+
+    def _serve_page(self, page_number):
+        """Serve a dynamically generated HTML page."""
+        html = f"""<html><head><title>Page{page_number}</title></head>
+        <body>Page number <span id="pageNumber">{page_number}</span>
+        <p><a href="../xhtmlTest.html" target="_top">top</a></p>
+        </body></html>"""
+        return html.encode("utf-8")
+
+    def _serve_file(self, file_path):
+        """Serve a file from the HTML root directory."""
+        with open(file_path, encoding="latin-1") as f:
+            return f.read().encode("utf-8")
+
+    def _send_response(self, content_type="text/html"):
+        """Send a response."""
+        self.send_response(200)
+        self.send_header("Content-type", content_type)
+        self.end_headers()
 
     def do_GET(self):
         """GET method handler."""
         try:
             path = self.path[1:].split("?")[0]
-            if path[:5] == "page/":
-                html = """<html><head><title>Page{page_number}</title></head>
-                <body>Page number <span id=\"pageNumber\">{page_number}</span>
-                <p><a href=\"../xhtmlTest.html\" target=\"_top\">top</a>
-                </body></html>""".format(
-                    page_number=path[5:]
-                )
-                html = html.encode("utf-8")
+            file_path = os.path.join(HTML_ROOT, path)
+            if path.startswith("page/"):
+                html = self._serve_page(path[5:])
+                self._send_response("text/html")
+                self.wfile.write(html)
+            elif os.path.isfile(file_path):
+                content_type = "application/json" if file_path.endswith(".json") else "text/html"
+                content = self._serve_file(file_path)
+                self._send_response(content_type)
+                self.wfile.write(content)
             else:
-                with open(os.path.join(HTML_ROOT, path), encoding="latin-1") as f:
-                    html = f.read().encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-            self.wfile.write(html)
+                self.send_error(404, f"File Not Found: {path}")
         except OSError:
             self.send_error(404, f"File Not Found: {path}")
 
@@ -87,34 +103,12 @@ class HtmlOnlyHandler(BaseHTTPRequestHandler):
         """POST method handler."""
         try:
             remaining_bytes = int(self.headers["content-length"])
-            contents = ""
-            line = self.rfile.readline()
-            contents += line.decode("utf-8")
-            remaining_bytes -= len(line)
-            line = self.rfile.readline()
-            contents += line.decode("utf-8")
-            remaining_bytes -= len(line)
-            fn = re.findall(r'Content-Disposition.*name="upload"; filename="(.*)"', line.decode("utf-8"))
-            if not fn:
-                self.send_error(500, f"File not found. {contents}")
+            contents = self.rfile.read(remaining_bytes).decode("utf-8")
+            fn_match = re.search(r'Content-Disposition.*name="upload"; filename="(.*)"', contents)
+            if not fn_match:
+                self.send_error(500, f"File not found in content. {contents}")
                 return
-            line = self.rfile.readline()
-            remaining_bytes -= len(line)
-            contents += line.decode("utf-8")
-            line = self.rfile.readline()
-            remaining_bytes -= len(line)
-            contents += line.decode("utf-8")
-            preline = self.rfile.readline()
-            remaining_bytes -= len(preline)
-            while remaining_bytes > 0:
-                line = self.rfile.readline()
-                remaining_bytes -= len(line)
-                contents += line.decode("utf-8")
-
-            self.send_response(200)
-            self.send_header("Content-type", "text/html")
-            self.end_headers()
-
+            self._send_response("text/html")
             self.wfile.write(
                 f"""<!doctype html>
                 {contents}

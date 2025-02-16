@@ -323,6 +323,7 @@ InlineLayoutResult InlineFormattingContext::lineLayout(AbstractLineBuilder& line
         if (formattingUtils().shouldDiscardRemainingContentInBlockDirection(numberOfContentfulLines)) {
             resetBoxGeometriesForDiscardedContent({ leadingInlineItemPosition, needsLayoutRange.end }, lineLayoutResult.floatContent.suspendedFloats);
             layoutResult.range = !isPartialLayout ? InlineLayoutResult::Range::Full : InlineLayoutResult::Range::FullFromDamage;
+            layoutResult.didDiscardContent = true;
             break;
         }
 

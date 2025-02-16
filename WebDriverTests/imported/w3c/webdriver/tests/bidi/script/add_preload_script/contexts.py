@@ -82,7 +82,7 @@ async def test_page_script_context_isolation(bidi_session, add_preload_script,
         target=ContextTarget(new_context["context"]),
         await_promise=True,
     )
-    assert result == {type: "undefined"}
+    assert result == {"type": "undefined"}
 
 
 @pytest.mark.asyncio
@@ -108,4 +108,48 @@ async def test_identical_contexts(
         target=ContextTarget(new_tab["context"]),
         await_promise=True,
     )
-    assert result == {"type": "number", "value": "1"}
+    assert result == {"type": "number", "value": 1}
+
+
+@pytest.mark.asyncio
+async def test_contexts_and_user_contexts(bidi_session, add_preload_script, new_tab, inline, create_user_context):
+    user_context = await create_user_context()
+    context_in_user_context = await bidi_session.browsing_context.create(
+        user_context=user_context, type_hint="tab"
+    )
+    url = inline(f"<div>test</div>")
+
+    # user_contexts argument should be ignored if contexts argument is provided.
+    await add_preload_script(
+        function_declaration="() => { window.foo = 'bar'; }",
+        contexts=[new_tab["context"]],
+        user_contexts=[context_in_user_context]
+    )
+
+    # Navigate both contexts.
+    await bidi_session.browsing_context.navigate(
+        context=new_tab["context"],
+        url=url,
+        wait="complete",
+    )
+    await bidi_session.browsing_context.navigate(
+        context=context_in_user_context["context"],
+        url=url,
+        wait="complete",
+    )
+
+    # Check that preload script applied the changes to the specified context.
+    result = await bidi_session.script.evaluate(
+        expression="window.foo",
+        target=ContextTarget(new_tab["context"]),
+        await_promise=True,
+    )
+    assert result == {"type": "string", "value": "bar"}
+
+    # Check that preload script didn't apply the changes to the context in user context.
+    result = await bidi_session.script.evaluate(
+        expression="window.foo",
+        target=ContextTarget(context_in_user_context["context"]),
+        await_promise=True,
+    )
+    assert result == {"type": "undefined"}

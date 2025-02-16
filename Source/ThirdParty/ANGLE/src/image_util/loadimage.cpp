@@ -314,6 +314,36 @@ void LoadL16FToRGBA16F(const ImageLoadContext &context,
     }
 }
 
+void LoadLA8ToRGBA4(const ImageLoadContext &context,
+                    size_t width,
+                    size_t height,
+                    size_t depth,
+                    const uint8_t *input,
+                    size_t inputRowPitch,
+                    size_t inputDepthPitch,
+                    uint8_t *output,
+                    size_t outputRowPitch,
+                    size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const uint8_t *source =
+                priv::OffsetDataPointer<uint8_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            uint8_t *dest =
+                priv::OffsetDataPointer<uint8_t>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                uint8_t l       = source[2 * x + 0] >> 4;
+                uint8_t a       = source[2 * x + 1] >> 4;
+                dest[4 * x + 0] = l | l << 4;
+                dest[4 * x + 1] = l | a << 4;
+            }
+        }
+    }
+}
+
 void LoadLA8ToRGBA8(const ImageLoadContext &context,
                     size_t width,
                     size_t height,
@@ -1052,6 +1082,39 @@ void LoadRGB10A2ToRGB5A1(const ImageLoadContext &context,
     }
 }
 
+void LoadRGB10A2ToRGB565(const ImageLoadContext &context,
+                         size_t width,
+                         size_t height,
+                         size_t depth,
+                         const uint8_t *input,
+                         size_t inputRowPitch,
+                         size_t inputDepthPitch,
+                         uint8_t *output,
+                         size_t outputRowPitch,
+                         size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+            const R10G10B10A2 *source =
+                priv::OffsetDataPointer<R10G10B10A2>(input, y, z, inputRowPitch, inputDepthPitch);
+            uint16_t *dest =
+                priv::OffsetDataPointer<uint16_t>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                R10G10B10A2 rgb10a2 = source[x];
+
+                uint16_t r5 = static_cast<uint16_t>(rgb10a2.R >> 5u);
+                uint16_t g6 = static_cast<uint16_t>(rgb10a2.G >> 4u);
+                uint16_t b5 = static_cast<uint16_t>(rgb10a2.B >> 5u);
+
+                dest[x] = (r5 << 11) | (g6 << 5) | b5;
+            }
+        }
+    }
+}
+
 void LoadRGB5A1ToA1RGB5(const ImageLoadContext &context,
                         size_t width,
                         size_t height,
@@ -1239,6 +1302,37 @@ void LoadRGB10A2ToRGBA8(const ImageLoadContext &context,
                 dest[4 * x + 1] = static_cast<uint8_t>((rgba & 0x000FFC00) >> 12);
                 dest[4 * x + 2] = static_cast<uint8_t>((rgba & 0x3FF00000) >> 22);
                 dest[4 * x + 3] = static_cast<uint8_t>(((rgba & 0xC0000000) >> 30) * 0x55);
+            }
+        }
+    }
+}
+
+void LoadRGB10A2ToRGB8(const ImageLoadContext &context,
+                       size_t width,
+                       size_t height,
+                       size_t depth,
+                       const uint8_t *input,
+                       size_t inputRowPitch,
+                       size_t inputDepthPitch,
+                       uint8_t *output,
+                       size_t outputRowPitch,
+                       size_t outputDepthPitch)
+{
+    for (size_t z = 0; z < depth; z++)
+    {
+        for (size_t y = 0; y < height; y++)
+        {
+
+            const uint32_t *source =
+                priv::OffsetDataPointer<uint32_t>(input, y, z, inputRowPitch, inputDepthPitch);
+            uint8_t *dest =
+                priv::OffsetDataPointer<uint8_t>(output, y, z, outputRowPitch, outputDepthPitch);
+            for (size_t x = 0; x < width; x++)
+            {
+                uint32_t rgba   = source[x];
+                dest[3 * x + 0] = static_cast<uint8_t>((rgba & 0x000003FF) >> 2);
+                dest[3 * x + 1] = static_cast<uint8_t>((rgba & 0x000FFC00) >> 12);
+                dest[3 * x + 2] = static_cast<uint8_t>((rgba & 0x3FF00000) >> 22);
             }
         }
     }

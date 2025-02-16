@@ -43,6 +43,7 @@ _log = logging.getLogger(__name__)
 
 class WPEPort(GLibPort):
     port_name = "wpe"
+    webdriver_name = "WPEWebDriver"
     supports_localhost_aliases = True
 
     def __init__(self, *args, **kwargs):
@@ -62,6 +63,11 @@ class WPEPort(GLibPort):
     def setup_environ_for_server(self, server_name=None):
         environment = super(WPEPort, self).setup_environ_for_server(server_name)
         environment['LIBGL_ALWAYS_SOFTWARE'] = '1'
+        # Run WPE tests with Skia CPU (usual configuration on embedded)
+        # to help catching issues/crashes <https://webkit.org/b/287632>
+        if 'WEBKIT_SKIA_ENABLE_CPU_RENDERING' in environment:
+            _log.warning('Ignoring "WEBKIT_SKIA_ENABLE_CPU_RENDERING" variable from environment. Defaulting to value "1".')
+        environment['WEBKIT_SKIA_ENABLE_CPU_RENDERING'] = '1'
         self._copy_value_from_environ_if_set(environment, 'XR_RUNTIME_JSON')
         self._copy_value_from_environ_if_set(environment, 'BREAKPAD_MINIDUMP_DIR')
         return environment
@@ -127,6 +133,14 @@ class WPEPort(GLibPort):
         if self.browser_name() == "cog":
             env['COG_MODULEDIR'] = self.cog_path_to('platform')
 
+        return env
+
+    def setup_environ_for_webdriver(self):
+        env = super(WPEPort, self).setup_environ_for_minibrowser()
+        # The browser is started from the webdriver process and will inherit
+        # the environmnet of the webdriver process. So setup an environmnet
+        # that works for any browser (cog, minibrowser)
+        env['COG_MODULEDIR'] = self.cog_path_to('platform')
         return env
 
     def run_minibrowser(self, args):

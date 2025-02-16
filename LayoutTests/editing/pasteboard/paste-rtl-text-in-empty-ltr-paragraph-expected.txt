@@ -1,0 +1,14 @@
+Verifies that copying and pasting Arabic text in an empty paragraph produces right-to-left text
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(container).direction is "rtl"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+الإنجليزي مثلالإنجليزي مثل “hello world” يُكتب من اليسار إلىالاتجاهين
+
+Click to copy
+Testing
+الإنجليزي مثل “hello world” يُكتب من اليسار إلى

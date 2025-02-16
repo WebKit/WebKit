@@ -120,23 +120,23 @@ NetworkDataTask::~NetworkDataTask()
 void NetworkDataTask::scheduleFailure(FailureType type)
 {
     m_failureScheduled = true;
-    RunLoop::protectedMain()->dispatch([this, weakThis = ThreadSafeWeakPtr { *this }, type] {
+    RunLoop::protectedMain()->dispatch([weakThis = ThreadSafeWeakPtr { *this }, type] {
         auto protectedThis = weakThis.get();
-        if (!protectedThis || !m_client)
+        if (!protectedThis || !protectedThis->m_client)
             return;
 
         switch (type) {
         case FailureType::Blocked:
-            m_client->wasBlocked();
+            protectedThis->m_client->wasBlocked();
             return;
         case FailureType::InvalidURL:
-            m_client->cannotShowURL();
+            protectedThis->m_client->cannotShowURL();
             return;
         case FailureType::RestrictedURL:
-            m_client->wasBlockedByRestrictions();
+            protectedThis->m_client->wasBlockedByRestrictions();
             return;
         case FailureType::FTPDisabled:
-            m_client->wasBlockedByDisabledFTP();
+            protectedThis->m_client->wasBlockedByDisabledFTP();
         }
     });
 }

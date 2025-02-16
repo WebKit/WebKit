@@ -39,5 +39,3 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/TZoneMalloc.h>
 #endif
-
-#include <wtf/DisallowCType.h>

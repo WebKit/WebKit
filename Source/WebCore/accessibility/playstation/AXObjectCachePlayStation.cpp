@@ -79,7 +79,8 @@ static AXNotification checkInteractableObjects(AXCoreObject* object)
 
 void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNotification notification)
 {
-    if (!!object.document()
+    if (!document()
+        || !!object.document()
         || !object.document()->view()
         || object.document()->view()->layoutContext().layoutState()
         || object.document()->childNeedsStyleRecalc())
@@ -97,31 +98,33 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
         break;
     }
 
-    ChromeClient& client = document().frame()->page()->chrome().client();
+    ChromeClient& client = document()->frame()->page()->chrome().client();
     client.postAccessibilityNotification(*protectedObject, notification);
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject* object, AXTextChange textChange, unsigned offset, const String& text)
 {
-    if (!object
+    if (!document()
+        || !object
         || !object->document()
         || !object->document()->view()
         || object->document()->view()->layoutContext().layoutState()
         || object->document()->childNeedsStyleRecalc())
         return;
-    ChromeClient& client = document().frame()->page()->chrome().client();
+    ChromeClient& client = document()->frame()->page()->chrome().client();
     client.postAccessibilityNodeTextChangeNotification(object, textChange, offset, text);
 }
 
 void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* object, AXLoadingEvent loadingEvent)
 {
-    if (!object
+    if (!document()
+        || !object
         || !object->document()
         || !object->document()->view()
         || object->document()->view()->layoutContext().layoutState()
         || object->document()->childNeedsStyleRecalc())
         return;
-    ChromeClient& client = document().frame()->page()->chrome().client();
+    ChromeClient& client = document()->frame()->page()->chrome().client();
     client.postAccessibilityFrameLoadingEventNotification(object, loadingEvent);
 }
 

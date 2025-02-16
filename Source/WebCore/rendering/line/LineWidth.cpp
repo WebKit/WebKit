@@ -31,6 +31,7 @@
 #include "LineWidth.h"
 
 #include "RenderBlockFlow.h"
+#include "RenderBlockInlines.h"
 #include "RenderBoxInlines.h"
 #include "RenderStyleInlines.h"
 

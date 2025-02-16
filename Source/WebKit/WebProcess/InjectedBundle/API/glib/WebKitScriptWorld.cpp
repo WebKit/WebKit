@@ -113,7 +113,7 @@ static WebKitScriptWorld* webkitScriptWorldCreate(Ref<InjectedBundleScriptWorld>
 
 static gpointer createDefaultScriptWorld(gpointer)
 {
-    return webkitScriptWorldCreate(InjectedBundleScriptWorld::normalWorld());
+    return webkitScriptWorldCreate(InjectedBundleScriptWorld::normalWorldSingleton());
 }
 
 /**

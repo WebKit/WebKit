@@ -27,6 +27,7 @@
 
 #if ENABLE(ASYNC_SCROLLING)
 
+#include "BoxExtents.h"
 #include "EventTrackingRegions.h"
 #include "ScrollTypes.h"
 #include "ScrollbarThemeComposite.h"
@@ -74,8 +75,8 @@ public:
     int footerHeight() const { return m_footerHeight; }
     WEBCORE_EXPORT void setFooterHeight(int);
 
-    float topContentInset() const { return m_topContentInset; }
-    WEBCORE_EXPORT void setTopContentInset(float);
+    FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
+    WEBCORE_EXPORT void setObscuredContentInsets(const FloatBoxExtent&);
 
     const LayerRepresentation& rootContentsLayer() const { return m_rootContentsLayer; }
     WEBCORE_EXPORT void setRootContentsLayer(const LayerRepresentation&);
@@ -85,8 +86,8 @@ public:
     WEBCORE_EXPORT void setCounterScrollingLayer(const LayerRepresentation&);
 
     // This is a clipping layer that will scroll with the page for all y-delta scroll values between 0
-    // and topContentInset(). Once the y-deltas get beyond the content inset point, this layer no longer
-    // needs to move. If the topContentInset() is 0, this layer does not need to move at all. This is
+    // and obscuredInset().top. Once the y-deltas get beyond the content inset point, this layer no longer
+    // needs to move. If the obscuredInset().top is 0, this layer does not need to move at all. This is
     // only used on the Mac.
     const LayerRepresentation& insetClipLayer() const { return m_insetClipLayer; }
     WEBCORE_EXPORT void setInsetClipLayer(const LayerRepresentation&);
@@ -164,7 +165,7 @@ private:
         int headerHeight,
         int footerHeight,
         ScrollBehaviorForFixedElements&&,
-        float topContentInset,
+        FloatBoxExtent&& obscuredContentInsets,
         bool visualViewportIsSmallerThanLayoutViewport,
         bool asyncFrameOrOverflowScrollingEnabled,
         bool wheelEventGesturesBecomeNonBlocking,
@@ -196,7 +197,7 @@ private:
     std::optional<FloatSize> m_overrideVisualViewportSize;
 
     float m_frameScaleFactor { 1 };
-    float m_topContentInset { 0 };
+    FloatBoxExtent m_obscuredContentInsets;
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };
     ScrollBehaviorForFixedElements m_behaviorForFixed { ScrollBehaviorForFixedElements::StickToDocumentBounds };

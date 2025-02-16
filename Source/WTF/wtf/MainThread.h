@@ -44,7 +44,7 @@ class Thread;
 WTF_EXPORT_PRIVATE void initializeMainThread();
 
 WTF_EXPORT_PRIVATE void callOnMainThread(Function<void()>&&);
-WTF_EXPORT_PRIVATE void callOnMainThreadAndWait(Function<void()>&&);
+WTF_EXPORT_PRIVATE void callOnMainThreadAndWait(NOESCAPE Function<void()>&&);
 WTF_EXPORT_PRIVATE void ensureOnMainThread(Function<void()>&&); // Sync if called on main thread, async otherwise.
 
 #if PLATFORM(COCOA)
@@ -58,7 +58,7 @@ WTF_EXPORT_PRIVATE bool canCurrentThreadAccessThreadLocalData(Thread&);
 
 WTF_EXPORT_PRIVATE bool isMainRunLoop();
 WTF_EXPORT_PRIVATE void callOnMainRunLoop(Function<void()>&&);
-WTF_EXPORT_PRIVATE void callOnMainRunLoopAndWait(Function<void()>&&);
+WTF_EXPORT_PRIVATE void callOnMainRunLoopAndWait(NOESCAPE Function<void()>&&);
 WTF_EXPORT_PRIVATE void ensureOnMainRunLoop(Function<void()>&&); // Sync if called on main run loop, async otherwise.
 
 #if USE(WEB_THREAD)

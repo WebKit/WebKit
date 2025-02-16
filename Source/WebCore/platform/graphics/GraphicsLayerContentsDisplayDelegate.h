@@ -28,13 +28,17 @@
 #include "GraphicsLayer.h"
 #include <wtf/RefCounted.h>
 
-#if !USE(CA)
+#if !USE(CA) && !USE(COORDINATED_GRAPHICS)
 #include "PlatformLayer.h"
 #endif
+
 namespace WebCore {
 class ImageBuffer;
 #if USE(CA)
 class PlatformCALayer;
+#elif USE(COORDINATED_GRAPHICS)
+class CoordinatedPlatformLayer;
+class CoordinatedPlatformLayerBuffer;
 #endif
 
 // Platform specific interface for attaching contents to GraphicsLayer.
@@ -49,6 +53,9 @@ public:
     // Must not detach the platform layer backing store.
     virtual void display(PlatformCALayer&) = 0;
     virtual GraphicsLayer::CompositingCoordinatesOrientation orientation() const;
+#elif USE(COORDINATED_GRAPHICS)
+    virtual void setDisplayBuffer(std::unique_ptr<CoordinatedPlatformLayerBuffer>&&) = 0;
+    virtual bool display(CoordinatedPlatformLayer&) = 0;
 #else
     virtual PlatformLayer* platformLayer() const = 0;
 #endif

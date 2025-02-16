@@ -46,7 +46,7 @@ CSSImageSetValue::CSSImageSetValue(CSSValueListBuilder builder)
 {
 }
 
-String CSSImageSetValue::customCSSText() const
+String CSSImageSetValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder result;
     result.append("image-set("_s);
@@ -54,7 +54,7 @@ String CSSImageSetValue::customCSSText() const
         if (i > 0)
             result.append(", "_s);
         ASSERT(is<CSSImageSetOptionValue>(item(i)));
-        result.append(item(i)->cssText());
+        result.append(item(i)->cssText(context));
     }
     result.append(')');
     return result.toString();

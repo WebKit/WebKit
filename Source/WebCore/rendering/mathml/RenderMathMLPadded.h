@@ -43,7 +43,7 @@ private:
     ASCIILiteral renderName() const final { return "RenderMathMLPadded"_s; }
 
     void computePreferredLogicalWidths() final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     std::optional<LayoutUnit> firstLineBaseline() const final;
 
     MathMLPaddedElement& element() const { return static_cast<MathMLPaddedElement&>(nodeForNonAnonymous()); }

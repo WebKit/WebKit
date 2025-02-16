@@ -47,7 +47,7 @@ public:
 protected:
     DECLARE_VISIT_CHILDREN;
 
-    WebAssemblyGCObjectBase(VM&, Structure*, RefPtr<const Wasm::RTT>);
+    WebAssemblyGCObjectBase(VM&, Structure*, RefPtr<const Wasm::RTT>&&);
 
     DECLARE_DEFAULT_FINISH_CREATION;
 

@@ -36,7 +36,7 @@ function testBasicCases() {
 }
 noInline(testBasicCases);
 
-for (let i = 0; i < 1e5; i++)
+for (let i = 0; i < testLoopCount; i++)
     testBasicCases();
 
 shouldBe(1 | null ?? 3, 1);

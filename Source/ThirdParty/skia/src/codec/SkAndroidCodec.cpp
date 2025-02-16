@@ -214,30 +214,22 @@ std::unique_ptr<SkAndroidCodec> SkAndroidCodec::MakeFromCodec(std::unique_ptr<Sk
         return nullptr;
     }
 
-    const SkEncodedImageFormat format = codec->getEncodedFormat();
-    if (format == SkEncodedImageFormat::kAVIF) {
-        if (SkCodecs::HasDecoder("avif")) {
-            // If a dedicated AVIF decoder has been registered, SkAvifCodec can
-            // handle scaling internally.
-            return std::make_unique<SkAndroidCodecAdapter>(codec.release());
-        }
-        // This will fallback to SkHeifCodec, which needs sampling.
-        return std::make_unique<SkSampledCodec>(codec.release());
-    }
-
-    switch (format) {
+    switch (codec->getEncodedFormat()) {
         case SkEncodedImageFormat::kPNG:
         case SkEncodedImageFormat::kICO:
         case SkEncodedImageFormat::kJPEG:
         case SkEncodedImageFormat::kBMP:
         case SkEncodedImageFormat::kWBMP:
-        case SkEncodedImageFormat::kHEIF:
             return std::make_unique<SkSampledCodec>(codec.release());
         case SkEncodedImageFormat::kGIF:
         case SkEncodedImageFormat::kWEBP:
         case SkEncodedImageFormat::kDNG:
+        // On the Android framework, both HEIF and AVIF are handled by
+        // SkCrabbyAvifCodec. It can handle scaling internally. So we can use
+        // SkAndroidCodecAdapter for both these formats.
+        case SkEncodedImageFormat::kAVIF:
+        case SkEncodedImageFormat::kHEIF:
             return std::make_unique<SkAndroidCodecAdapter>(codec.release());
-        case SkEncodedImageFormat::kAVIF: // Handled above
         case SkEncodedImageFormat::kPKM:
         case SkEncodedImageFormat::kKTX:
         case SkEncodedImageFormat::kASTC:
@@ -347,7 +339,7 @@ sk_sp<SkColorSpace> SkAndroidCodec::computeOutputColorSpace(SkColorType outputCo
     }
 }
 
-static bool supports_any_down_scale(const SkCodec* codec) {
+static bool is_webp(const SkCodec* codec) {
     return codec->getEncodedFormat() == SkEncodedImageFormat::kWEBP;
 }
 
@@ -383,7 +375,11 @@ int SkAndroidCodec::computeSampleSize(SkISize* desiredSize) const {
                                      std::max(1, desiredSize->height()));
     }
 
-    if (supports_any_down_scale(fCodec.get())) {
+    if (is_webp(fCodec.get())) {
+        if (fCodec->getFrameCount() > 1) {
+           // Cannot downscale animated webp
+           *desiredSize = origDims;
+        }
         return 1;
     }
 

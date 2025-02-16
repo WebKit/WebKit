@@ -144,7 +144,7 @@ static uint buildIndexBufferKey(const mtl::ProvokingVertexComputePipelineDesc &p
 angle::Result ProvokingVertexHelper::getComputePipleineState(
     ContextMtl *context,
     const mtl::ProvokingVertexComputePipelineDesc &desc,
-    mtl::AutoObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
+    angle::ObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
 {
     auto iter = mComputeFunctions.find(desc);
     if (iter != mComputeFunctions.end())
@@ -155,10 +155,10 @@ angle::Result ProvokingVertexHelper::getComputePipleineState(
 
     id<MTLLibrary> provokingVertexLibrary = context->getDisplay()->getDefaultShadersLib();
     uint indexBufferKey                   = buildIndexBufferKey(desc);
-    auto fcValues = mtl::adoptObjCObj([[MTLFunctionConstantValues alloc] init]);
+    auto fcValues = angle::adoptObjCPtr([[MTLFunctionConstantValues alloc] init]);
     [fcValues setConstantValue:&indexBufferKey type:MTLDataTypeUInt withName:@"fixIndexBufferKey"];
 
-    mtl::AutoObjCPtr<id<MTLFunction>> computeShader;
+    angle::ObjCPtr<id<MTLFunction>> computeShader;
     if (desc.generateIndices)
     {
         ANGLE_TRY(CreateMslShader(context, provokingVertexLibrary, @"genIndexBuffer",
@@ -180,7 +180,7 @@ angle::Result ProvokingVertexHelper::prepareCommandEncoderForDescriptor(
     mtl::ComputeCommandEncoder *encoder,
     mtl::ProvokingVertexComputePipelineDesc desc)
 {
-    mtl::AutoObjCPtr<id<MTLComputePipelineState>> pipelineState;
+    angle::ObjCPtr<id<MTLComputePipelineState>> pipelineState;
     ANGLE_TRY(getComputePipleineState(context, desc, &pipelineState));
 
     encoder->setComputePipelineState(pipelineState);

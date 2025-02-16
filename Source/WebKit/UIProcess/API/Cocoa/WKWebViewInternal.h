@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,13 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "WKWebView.h"
+#import <WebKit/WKWebView.h>
 
 #ifdef __cplusplus
 
 #import "PDFPluginIdentifier.h"
+#import "WKIntelligenceReplacementTextEffectCoordinator.h"
+#import "WKIntelligenceSmartReplyTextEffectCoordinator.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKTextAnimationType.h"
+#import <WebCore/FixedContainerEdges.h>
 #import <WebKit/WKShareSheet.h>
 #import <WebKit/WKWebViewConfiguration.h>
 #import <WebKit/WKWebViewPrivate.h>
@@ -104,6 +107,7 @@ class Attachment;
 namespace WebCore {
 struct AppHighlight;
 struct ExceptionDetails;
+struct DigitalCredentialsRequestData;
 enum class WheelScrollGestureState : uint8_t;
 }
 
@@ -134,6 +138,10 @@ class ViewGestureController;
 @class WKWebViewContentProviderRegistry;
 @class _WKFrameHandle;
 @class _WKWarningView;
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+@class WKDigitalCredentialsPicker;
+#endif
 
 #if ENABLE(WRITING_TOOLS)
 @class WTTextSuggestion;
@@ -176,7 +184,6 @@ struct PerWebProcessState {
     CGFloat viewportMetaTagWidth { WebCore::ViewportArguments::ValueAuto };
     CGFloat initialScaleFactor { 1 };
     BOOL hasCommittedLoadForMainFrame { NO };
-    BOOL needsResetViewStateAfterCommitLoadForMainFrame { NO };
 
     WebKit::DynamicViewportUpdateMode dynamicViewportUpdateMode { WebKit::DynamicViewportUpdateMode::NotResizing };
 
@@ -218,8 +225,8 @@ struct PerWebProcessState {
     std::optional<CGRect> frozenVisibleContentRect;
     std::optional<CGRect> frozenUnobscuredContentRect;
 
-    WebKit::TransactionID firstPaintAfterCommitLoadTransactionID;
-    WebKit::TransactionID lastTransactionID;
+    std::optional<WebKit::TransactionID> resetViewStateAfterTransactionID;
+    std::optional<WebKit::TransactionID> lastTransactionID;
 
     std::optional<WebKit::TransactionID> firstTransactionIDAfterPageRestore;
 
@@ -235,7 +242,7 @@ struct PerWebProcessState {
 
 @package
     RetainPtr<WKWebViewConfiguration> _configuration;
-    RefPtr<WebKit::WebPageProxy> _page;
+    const RefPtr<WebKit::WebPageProxy> _page;
 
     std::unique_ptr<WebKit::NavigationState> _navigationState;
     std::unique_ptr<WebKit::UIDelegate> _uiDelegate;
@@ -261,7 +268,7 @@ struct PerWebProcessState {
     RetainPtr<NSMapTable<NSUUID *, WTTextSuggestion *>> _writingToolsTextSuggestions;
     RetainPtr<WTSession> _activeWritingToolsSession;
 
-    RetainPtr<WKIntelligenceTextEffectCoordinator> _intelligenceTextEffectCoordinator;
+    RetainPtr<id<WKIntelligenceTextEffectCoordinating>> _intelligenceTextEffectCoordinator;
 
     NSUInteger _partialIntelligenceTextAnimationCount;
     BOOL _writingToolsTextReplacementsFinished;
@@ -269,6 +276,11 @@ struct PerWebProcessState {
 
 #if ENABLE(SCREEN_TIME)
     RetainPtr<STWebpageController> _screenTimeWebpageController;
+#if PLATFORM(MAC)
+    RetainPtr<NSVisualEffectView> _screenTimeBlurredSnapshot;
+#else
+    RetainPtr<UIVisualEffectView> _screenTimeBlurredSnapshot;
+#endif
     BOOL _isBlockedByScreenTime;
 #endif
 
@@ -394,6 +406,10 @@ struct PerWebProcessState {
     String _defaultSTSLabel;
 #endif
 
+#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+    RetainPtr<_WKSpatialBackdropSource> _cachedSpatialBackdropSource;
+#endif
+
     BOOL _didAccessBackForwardList;
     BOOL _dontResetTransientActivationAfterRunJavaScript;
 
@@ -408,6 +424,8 @@ struct PerWebProcessState {
 #if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
     BOOL _isScrollingWithOverlayRegion;
 #endif
+
+    WebCore::FixedContainerEdges _fixedContainerEdges;
 }
 
 - (BOOL)_isValid;
@@ -415,6 +433,10 @@ struct PerWebProcessState {
 
 #if PLATFORM(MAC) && HAVE(NSWINDOW_SNAPSHOT_READINESS_HANDLER)
 - (void)_invalidateWindowSnapshotReadinessHandler;
+#endif
+
+#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+- (void)_spatialBackdropSourceDidChange;
 #endif
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -472,6 +494,12 @@ struct PerWebProcessState {
 
 - (void)_didAccessBackForwardList NS_DIRECT;
 
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+- (void)_showDigitalCredentialsPicker:(const WebCore::DigitalCredentialsRequestData&)requestData completionHandler:(WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&)completionHandler;
+- (void)_dismissDigitalCredentialsPicker:(WTF::CompletionHandler<void(bool)>&&)completionHandler;
+#endif
+
+
 #if ENABLE(GAMEPAD)
 - (void)_setGamepadsRecentlyAccessed:(BOOL)gamepadsRecentlyAccessed;
 
@@ -482,6 +510,8 @@ struct PerWebProcessState {
 - (void)_setAllowGamepadsAccess;
 #endif
 #endif
+
+- (void)_updateFixedContainerEdges:(const WebCore::FixedContainerEdges&)edges;
 
 - (WKPageRef)_pageForTesting;
 - (NakedPtr<WebKit::WebPageProxy>)_page;

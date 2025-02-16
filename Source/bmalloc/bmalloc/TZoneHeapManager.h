@@ -26,7 +26,6 @@
 #pragma once
 
 #include "BExport.h"
-#include "BPlatform.h"
 
 #if BUSE(TZONE)
 
@@ -130,6 +129,7 @@ public:
     TZoneHeapManager(TZoneHeapManager &other) = delete;
     void operator=(const TZoneHeapManager &) = delete;
 
+    BEXPORT static void requirePerBootSeed();
     BEXPORT static void setBucketParams(unsigned smallSizeCount, unsigned largeSizeCount = 0, unsigned smallSizeLimit = 0);
 
     BEXPORT static bool isReady();
@@ -143,11 +143,6 @@ public:
 
     static void setHasDisableTZoneEntitlementCallback(bool (*hasDisableTZoneEntitlement)());
 
-#if BUSE_TZONE_PREINITIALIZATION
-    void preInitializeHeapRefs(const TZoneSpecification* start, const TZoneSpecification* end);
-#endif
-
-    pas_heap_ref* heapRefForIsoFallback(const TZoneSpecification&);
     pas_heap_ref* heapRefForTZoneType(const TZoneSpecification&);
     pas_heap_ref* heapRefForTZoneTypeDifferentSize(size_t requestedSize, const TZoneSpecification&);
 
@@ -160,11 +155,6 @@ public:
 
     static bool s_tzoneEnabled;
 private:
-    struct IsoFallbackRecord {
-        bmalloc_type typeDescriptor;
-        pas_heap_ref heapRef;
-    };
-
     void init();
 
     BINLINE Mutex& mutex() { return m_mutex; }
@@ -177,7 +167,7 @@ private:
     inline unsigned tzoneBucketForKey(const TZoneSpecification&, unsigned bucketCountForSize, LockHolder&);
     TZoneTypeBuckets* populateBucketsForSizeClass(LockHolder&, SizeAndAlignment::Value);
 
-    static TZoneHeapManager::State m_state;
+    static TZoneHeapManager::State s_state;
     Mutex m_mutex;
     Mutex m_differentSizeMutex;
     uint64_t m_tzoneKeySeed;
@@ -187,12 +177,7 @@ private:
 #endif
     Map<SizeAndAlignment::Value, TZoneTypeBuckets*, SizeAndAlignment> m_heapRefsBySizeAndAlignment;
     Map<TZoneTypeKey, pas_heap_ref*, TZoneTypeKey> m_differentSizedHeapRefs;
-    SegmentedVector<bmalloc_type, 16> m_isoTypeDescriptors;
-    SegmentedVector<pas_heap_ref, 16> m_isoHeapRefs;
 };
-
-void tzoneFreeFast(void*);
-void tzoneFreeWithDebugMalloc(void*);
 
 } } // namespace bmalloc::api
 

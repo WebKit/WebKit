@@ -224,7 +224,7 @@ bool JSObservableArray::defineOwnProperty(JSObject* object, JSGlobalObject* glob
 
 JSC::GCClient::IsoSubspace* JSObservableArray::subspaceForImpl(JSC::VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->observableArraySpace();
+    return &downcast<JSVMClientData>(vm.clientData)->observableArraySpace();
 }
 
 } // namespace JSC

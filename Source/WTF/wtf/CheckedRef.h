@@ -113,14 +113,18 @@ public:
 
     ALWAYS_INLINE T& get() const
     {
-        ASSERT(ptr());
+        RELEASE_ASSERT(m_ptr);
         return *ptr();
     }
 
-    ALWAYS_INLINE T* operator->() const { return ptr(); }
+    ALWAYS_INLINE T* operator->() const
+    {
+        RELEASE_ASSERT(m_ptr);
+        return ptr();
+    }
 
     ALWAYS_INLINE operator T&() const { return get(); }
-    ALWAYS_INLINE explicit operator bool() const { return get(); }
+    ALWAYS_INLINE explicit operator bool() const { return ptr(); }
 
     CheckedRef& operator=(T& reference)
     {

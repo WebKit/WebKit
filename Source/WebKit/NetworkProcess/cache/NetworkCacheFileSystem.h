@@ -31,7 +31,7 @@ namespace WebKit {
 namespace NetworkCache {
 
 enum class DirectoryEntryType { Directory, File };
-void traverseDirectory(const String& path, const Function<void (const String& fileName, DirectoryEntryType)>&);
+void traverseDirectory(const String& path, NOESCAPE const Function<void (const String& fileName, DirectoryEntryType)>&);
 
 struct FileTimes {
     WallTime creation;

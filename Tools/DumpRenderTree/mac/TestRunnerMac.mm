@@ -1209,7 +1209,7 @@ bool TestRunner::isSecureEventInputEnabled() const
 
 #endif // PLATFORM(MAC)
 
-void TestRunner::setTopContentInset(double contentInset)
+void TestRunner::setObscuredContentInsets(double top, double right, double bottom, double left)
 {
-    [[mainFrame webView] _setTopContentInsetForTesting:contentInset];
+    [[mainFrame webView] _setObscuredTopContentInsetForTesting:top right:right bottom:bottom left:left];
 }

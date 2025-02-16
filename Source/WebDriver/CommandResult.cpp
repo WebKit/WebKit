@@ -175,8 +175,12 @@ unsigned CommandResult::errorCodeToHTTPStatusCode(ErrorCode errorCode)
 String CommandResult::errorString() const
 {
     ASSERT(isError());
+    return errorCodeToString(m_errorCode.value());
+}
 
-    switch (m_errorCode.value()) {
+String CommandResult::errorCodeToString(ErrorCode errorCode)
+{
+    switch (errorCode) {
     case ErrorCode::ElementClickIntercepted:
         return "element click intercepted"_s;
     case ErrorCode::ElementNotSelectable:

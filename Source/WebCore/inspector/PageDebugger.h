@@ -61,7 +61,7 @@ private:
 
     bool platformShouldContinueRunningEventLoopWhilePaused();
 
-    Page& m_page;
+    WeakRef<Page> m_page;
 };
 
 } // namespace WebCore

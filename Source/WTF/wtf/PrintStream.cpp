@@ -30,6 +30,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 PrintStream::PrintStream() = default;
@@ -231,3 +233,4 @@ void dumpCharacter(PrintStream& out, char value)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

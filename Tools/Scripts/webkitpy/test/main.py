@@ -67,17 +67,18 @@ def main():
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitscmpy'), 'webkitscmpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'webkitflaskpy'), 'webkitflaskpy')
     tester.add_tree(os.path.join(_webkit_root, 'Tools', 'Scripts', 'libraries', 'reporelaypy'), 'reporelaypy')
-
-    # AppleWin is the only platform that does not support Modern WebKit
-    # FIXME: Find a better way to detect this currently assuming cygwin means AppleWin
-    if sys.platform != 'cygwin':
-        tester.add_tree(os.path.join(_webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
+    tester.add_tree(os.path.join(_webkit_root, 'Source', 'WebKit', 'Scripts'), 'webkit')
 
     tester.skip(('webkitpy.common.checkout.scm.scm_unittest',), 'are really, really, slow', 31818)
     if sys.platform.startswith('win'):
         tester.skip(('webkitpy.common.checkout', 'webkitpy.tool'), 'fail horribly on win32', 54526)
         tester.skip(('reporelaypy',), 'fail to install lupa and don\'t have to test on win32', 243316)
         tester.skip(('webkitflaskpy',), 'fail to install lupa and don\'t have to test on win32', 253419)
+
+    if sys.version_info >= (3, 13):
+        tester.skip(('reporelaypy',), 'lupa wheel is not yet available for python 3.13', 285315)
+        tester.skip(('resultsdbpy',), 'lupa wheel is not yet available for python 3.13', 285315)
+        tester.skip(('webkitflaskpy',), 'lupa wheel is not yet available for python 3.13', 285315)
 
     # Tests that are platform specific
     mac_only_tests = (

@@ -63,18 +63,25 @@ public:
 
     float contentLogicalTopAdjustedForPrecedingLineBox() const
     {
-        if (formattingContextRoot().style().writingMode().isLineInverted() || !m_lineIndex)
+        if (formattingContextRoot().writingMode().isLineInverted() || !m_lineIndex)
             return contentLogicalTop();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex - 1 }.contentLogicalBottom();
     }
     float contentLogicalBottomAdjustedForFollowingLineBox() const
     {
-        if (!formattingContextRoot().style().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
+        if (!formattingContextRoot().writingMode().isLineInverted() || m_lineIndex == lines().size() - 1)
             return contentLogicalBottom();
         return LineBoxIteratorModernPath { *m_inlineContent, m_lineIndex + 1 }.contentLogicalTop();
     }
 
-    float contentLogicalLeft() const { return line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection(); }
+    float contentLogicalLeft() const
+    {
+        auto writingMode = formattingContextRoot().writingMode();
+        if (writingMode.isLogicalLeftLineLeft())
+            return line().lineBoxLeft() + line().contentLogicalLeftIgnoringInlineDirection();
+        ASSERT(writingMode.isVertical()); // Currently only sideways-lr gets this far.
+        return line().bottom() - (line().contentLogicalLeftIgnoringInlineDirection() + line().contentLogicalWidth());
+    }
     float contentLogicalRight() const { return contentLogicalLeft() + line().contentLogicalWidth(); }
     bool isHorizontal() const { return line().isHorizontal(); }
     FontBaseline baselineType() const { return line().baselineType(); }

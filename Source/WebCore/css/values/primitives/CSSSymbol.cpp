@@ -30,12 +30,12 @@ namespace CSS {
 
 // MARK: - Serialization
 
-void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SymbolRaw& value)
+void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SerializationContext&, const SymbolRaw& value)
 {
     builder.append(nameLiteralForSerialization(value.value));
 }
 
-void Serialize<Symbol>::operator()(StringBuilder& builder, const Symbol& value)
+void Serialize<Symbol>::operator()(StringBuilder& builder, const SerializationContext&, const Symbol& value)
 {
     builder.append(nameLiteralForSerialization(value.value));
 }

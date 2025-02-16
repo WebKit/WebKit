@@ -30,16 +30,16 @@ import Foundation
 @_spi(Private)
 public protocol DownloadCoordinator {
     @MainActor
-    func destination(forDownload download: WebPage_v0.DownloadID, response: URLResponse, suggestedFilename: String) async -> URL?
+    func destination(forDownload download: WebPage.DownloadID, response: URLResponse, suggestedFilename: String) async -> URL?
 
     @MainActor
-    func authenticationChallengeDisposition(forDownload download: WebPage_v0.DownloadID, challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
+    func authenticationChallengeDisposition(forDownload download: WebPage.DownloadID, challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
 
     @MainActor
-    func httpRedirectionPolicy(forDownload download: WebPage_v0.DownloadID, response: HTTPURLResponse, newRequest request: URLRequest) async -> WebPage_v0.Download.RedirectPolicy
+    func httpRedirectionPolicy(forDownload download: WebPage.DownloadID, response: HTTPURLResponse, newRequest request: URLRequest) async -> WebPage.Download.RedirectPolicy
 
     @MainActor
-    func placeholderPolicy(forDownload download: WebPage_v0.DownloadID) async -> WebPage_v0.Download.PlaceholderPolicy
+    func placeholderPolicy(forDownload download: WebPage.DownloadID) async -> WebPage.Download.PlaceholderPolicy
 }
 
 // MARK: Default implementation
@@ -47,22 +47,22 @@ public protocol DownloadCoordinator {
 @_spi(Private)
 public extension DownloadCoordinator {
     @MainActor
-    func destination(forDownload download: WebPage_v0.DownloadID, response: URLResponse, suggestedFilename: String) async -> URL? {
+    func destination(forDownload download: WebPage.DownloadID, response: URLResponse, suggestedFilename: String) async -> URL? {
         nil
     }
 
     @MainActor
-    func authenticationChallengeDisposition(forDownload download: WebPage_v0.DownloadID, challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+    func authenticationChallengeDisposition(forDownload download: WebPage.DownloadID, challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         (.performDefaultHandling, nil)
     }
 
     @MainActor
-    func httpRedirectionPolicy(forDownload download: WebPage_v0.DownloadID, response: HTTPURLResponse, newRequest request: URLRequest) async -> WebPage_v0.Download.RedirectPolicy {
+    func httpRedirectionPolicy(forDownload download: WebPage.DownloadID, response: HTTPURLResponse, newRequest request: URLRequest) async -> WebPage.Download.RedirectPolicy {
         .allow
     }
 
     @MainActor
-    func placeholderPolicy(forDownload download: WebPage_v0.DownloadID) async -> WebPage_v0.Download.PlaceholderPolicy {
+    func placeholderPolicy(forDownload download: WebPage.DownloadID) async -> WebPage.Download.PlaceholderPolicy {
         .disable(alternatePlaceholder: nil)
     }
 }

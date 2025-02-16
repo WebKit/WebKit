@@ -12,7 +12,7 @@ noInline(af1);
 noInline(af2);
 noInline(af3);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
   testCase(typeof af1.prototype, 'undefined', "Error: Not correct result for prototype of arrow function #1");
   testCase(typeof af2.prototype, 'undefined', "Error: Not correct result for prototype of arrow function #2");
   testCase(typeof af3.prototype, 'undefined', "Error: Not correct result for prototype of arrow function #5");

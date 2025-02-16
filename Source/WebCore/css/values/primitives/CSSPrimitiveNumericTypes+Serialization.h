@@ -43,28 +43,28 @@ void formatCSSNumberValue(StringBuilder&, const SerializableNumber&);
 String formatCSSNumberValue(const SerializableNumber&);
 
 template<> struct Serialize<SerializableNumber> {
-    void operator()(StringBuilder&, const SerializableNumber&);
+    void operator()(StringBuilder&, const SerializationContext&, const SerializableNumber&);
 };
 
 template<NumericRaw RawType> struct Serialize<RawType> {
-    void operator()(StringBuilder& builder, const RawType& value)
+    void operator()(StringBuilder& builder, const SerializationContext& context, const RawType& value)
     {
-        serializationForCSS(builder, SerializableNumber { value.value, unitString(value.unit) });
+        serializationForCSS(builder, context, SerializableNumber { value.value, unitString(value.unit) });
     }
 };
 
-template<auto nR, auto pR> struct Serialize<NumberOrPercentageResolvedToNumber<nR, pR>> {
-    void operator()(StringBuilder& builder, const NumberOrPercentageResolvedToNumber<nR, pR>& value)
+template<auto nR, auto pR, typename V> struct Serialize<NumberOrPercentageResolvedToNumber<nR, pR, V>> {
+    void operator()(StringBuilder& builder, const SerializationContext& context, const NumberOrPercentageResolvedToNumber<nR, pR, V>& value)
     {
         WTF::switchOn(value,
-            [&](const Number<nR>& number) {
-                serializationForCSS(builder, number);
+            [&](const typename NumberOrPercentageResolvedToNumber<nR, pR, V>::Number& number) {
+                serializationForCSS(builder, context, number);
             },
-            [&](const Percentage<pR>& percentage) {
+            [&](const typename NumberOrPercentageResolvedToNumber<nR, pR, V>::Percentage& percentage) {
                 if (auto raw = percentage.raw())
-                    serializationForCSS(builder, NumberRaw<nR> { raw->value / 100.0 });
+                    serializationForCSS(builder, context, NumberRaw<nR, V> { raw->value / 100.0 });
                 else
-                    serializationForCSS(builder, percentage);
+                    serializationForCSS(builder, context, percentage);
             }
         );
     }

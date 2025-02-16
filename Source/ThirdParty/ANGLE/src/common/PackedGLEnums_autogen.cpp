@@ -2223,7 +2223,7 @@ TextureTarget FromGLenum<TextureTarget>(GLenum from)
             return TextureTarget::_2DArray;
         case GL_TEXTURE_2D_MULTISAMPLE:
             return TextureTarget::_2DMultisample;
-        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
             return TextureTarget::_2DMultisampleArray;
         case GL_TEXTURE_3D:
             return TextureTarget::_3D;
@@ -2265,7 +2265,7 @@ GLenum ToGLenum(TextureTarget from)
         case TextureTarget::_2DMultisample:
             return GL_TEXTURE_2D_MULTISAMPLE;
         case TextureTarget::_2DMultisampleArray:
-            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES;
+            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
         case TextureTarget::_3D:
             return GL_TEXTURE_3D;
         case TextureTarget::External:
@@ -2310,7 +2310,7 @@ std::ostream &operator<<(std::ostream &os, TextureTarget value)
             os << "GL_TEXTURE_2D_MULTISAMPLE";
             break;
         case TextureTarget::_2DMultisampleArray:
-            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES";
+            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY";
             break;
         case TextureTarget::_3D:
             os << "GL_TEXTURE_3D";
@@ -2366,7 +2366,7 @@ TextureType FromGLenum<TextureType>(GLenum from)
             return TextureType::_2DArray;
         case GL_TEXTURE_2D_MULTISAMPLE:
             return TextureType::_2DMultisample;
-        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES:
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
             return TextureType::_2DMultisampleArray;
         case GL_TEXTURE_3D:
             return TextureType::_3D;
@@ -2398,7 +2398,7 @@ GLenum ToGLenum(TextureType from)
         case TextureType::_2DMultisample:
             return GL_TEXTURE_2D_MULTISAMPLE;
         case TextureType::_2DMultisampleArray:
-            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES;
+            return GL_TEXTURE_2D_MULTISAMPLE_ARRAY;
         case TextureType::_3D:
             return GL_TEXTURE_3D;
         case TextureType::External:
@@ -2433,7 +2433,7 @@ std::ostream &operator<<(std::ostream &os, TextureType value)
             os << "GL_TEXTURE_2D_MULTISAMPLE";
             break;
         case TextureType::_2DMultisampleArray:
-            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES";
+            os << "GL_TEXTURE_2D_MULTISAMPLE_ARRAY";
             break;
         case TextureType::_3D:
             os << "GL_TEXTURE_3D";

@@ -67,7 +67,7 @@ public:
     void finalizeConstruction(CSSParserToken* firstParserToken)
     {
         m_firstParserToken = firstParserToken;
-        m_commentIterator = m_commentOffsets.begin();
+        ASSERT(!m_commentIndex);
     }
 
 private:
@@ -82,7 +82,7 @@ private:
     };
 
     Vector<CommentPosition> m_commentOffsets;
-    Vector<CommentPosition>::iterator m_commentIterator;
+    size_t m_commentIndex { 0 };
 };
 
 } // namespace WebCore

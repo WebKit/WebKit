@@ -45,6 +45,8 @@ struct VideoPlaybackQualityMetrics {
         displayCompositedVideoFrames += other.displayCompositedVideoFrames;
         return *this;
     }
+
+    VideoPlaybackQualityMetrics isolatedCopy() const { return *this; }
 };
 
 } // namespace WebCore

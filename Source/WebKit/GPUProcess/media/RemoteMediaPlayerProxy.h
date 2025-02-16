@@ -76,6 +76,7 @@ class MachSendRight;
 
 namespace WebCore {
 class AudioTrackPrivate;
+struct MediaPlayerLoadOptions;
 class SecurityOriginData;
 class VideoTrackPrivate;
 
@@ -147,9 +148,9 @@ public:
     void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, WebCore::DynamicRangeMode);
     void prepareForRendering();
 
-    void load(URL&&, std::optional<SandboxExtension::Handle>&&, const WebCore::ContentType&, const String&, bool, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
+    void load(URL&&, std::optional<SandboxExtension::Handle>&&, const WebCore::MediaPlayerLoadOptions&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
 #if ENABLE(MEDIA_SOURCE)
-    void loadMediaSource(URL&&, const WebCore::ContentType&, bool webMParserEnabled, RemoteMediaSourceIdentifier, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
+    void loadMediaSource(URL&&, const WebCore::MediaPlayerLoadOptions&, RemoteMediaSourceIdentifier, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
 #endif
     void cancelLoad();
 
@@ -160,6 +161,7 @@ public:
 
     void seekToTarget(const WebCore::SeekTarget&);
 
+    void setVolumeLocked(bool);
     void setVolume(double);
     void setMuted(bool);
 
@@ -316,6 +318,7 @@ private:
 #endif
 
     String mediaPlayerSourceApplicationIdentifier() const final;
+    WebCore::MediaPlayerClientIdentifier mediaPlayerClientIdentifier() const final { return m_clientIdentifier; }
 
     double mediaPlayerRequestedPlaybackRate() const final;
 #if ENABLE(VIDEO_PRESENTATION_MODE)

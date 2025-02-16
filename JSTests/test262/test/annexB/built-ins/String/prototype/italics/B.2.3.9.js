@@ -5,11 +5,11 @@
 // http://mathias.html5.org/tests/javascript/string/
 
 /*---
- description: >
-     String.prototype.italics returns a string of HTML describing a single HTML
-     italic element. The element's content is the `this` value of the function
-     invocation, coerced to a string.
- es6id: B.2.3.9
+description: >
+    String.prototype.italics returns a string of HTML describing a single HTML
+    italic element. The element's content is the `this` value of the function
+    invocation, coerced to a string.
+es6id: B.2.3.9
 ---*/
 
 assert.sameValue('_'.italics(), '<i>_</i>');

@@ -38,8 +38,6 @@
 #include <wtf/CheckedRef.h>
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 static const constexpr GlyphBufferGlyph deletedGlyph = 0xFFFF;
@@ -76,6 +74,9 @@ public:
         ASSERT(m_fonts[index]);
         return *m_fonts[index];
     }
+
+    Ref<const Font> protectedFontAt(size_t index) const { return fontAt(index); }
+
     GlyphBufferGlyph glyphAt(size_t index) const { return m_glyphs[index]; }
     GlyphBufferAdvance& advanceAt(size_t index) { return m_advances[index]; }
     GlyphBufferAdvance advanceAt(size_t index) const { return m_advances[index]; }
@@ -282,5 +283,3 @@ private:
 };
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

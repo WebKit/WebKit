@@ -8,7 +8,7 @@ function parseIntDouble(value) {
 }
 noInline(parseIntDouble);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(Object.is(parseIntDouble(-0.0), 0), true); // Not -0 since -0.0.toString() is "0".
     shouldBe(Object.is(parseIntDouble(-1.0), -1.0), true);
     shouldBe(Object.is(parseIntDouble(-0.01), -0), true);

@@ -14,10 +14,12 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-import typing
+
+import warnings
 from abc import ABCMeta
 from abc import abstractmethod
 from enum import Enum
+from typing import Optional
 
 from selenium.common.exceptions import InvalidArgumentException
 from selenium.webdriver.common.proxy import Proxy
@@ -456,9 +458,9 @@ class BaseOptions(metaclass=ABCMeta):
 
     def enable_mobile(
         self,
-        android_package: typing.Optional[str] = None,
-        android_activity: typing.Optional[str] = None,
-        device_serial: typing.Optional[str] = None,
+        android_package: Optional[str] = None,
+        android_activity: Optional[str] = None,
+        device_serial: Optional[str] = None,
     ) -> None:
         """Enables mobile browser use for browsers that support it.
 
@@ -490,6 +492,8 @@ class BaseOptions(metaclass=ABCMeta):
 
 class ArgOptions(BaseOptions):
     BINARY_LOCATION_ERROR = "Binary Location Must be a String"
+    # FedCM capability key
+    FEDCM_CAPABILITY = "fedcm:accounts"
 
     def __init__(self) -> None:
         super().__init__()
@@ -514,6 +518,15 @@ class ArgOptions(BaseOptions):
     def ignore_local_proxy_environment_variables(self) -> None:
         """By calling this you will ignore HTTP_PROXY and HTTPS_PROXY from
         being picked up and used."""
+        warnings.warn(
+            "using ignore_local_proxy_environment_variables in Options has been deprecated, "
+            "instead, create a Proxy instance with ProxyType.DIRECT to ignore proxy settings, "
+            "pass the proxy instance into a ClientConfig constructor, "
+            "pass the client config instance into the Webdriver constructor",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
         super().ignore_local_proxy_environment_variables()
 
     def to_capabilities(self):

@@ -45,7 +45,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true, exceptions: true })
     const { test, test_with_call, test_with_call_indirect } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(test(41), 0x0EEFBAADDEADFEEDn + 41n + (0x100000000n + 1n) * 2n)
         assert.eq(test(42), 0x0EEFBAADDEADFEEDn + 42n + (0x100000000n + 5n) * 2n)
     }

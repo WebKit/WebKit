@@ -98,7 +98,7 @@ public:
     void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
 
 #if PLATFORM(COCOA)
-    void didDrawCompositedToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier);
+    void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier);
 #endif
 
     void createRemoteImageBuffer(WebCore::ImageBuffer&);

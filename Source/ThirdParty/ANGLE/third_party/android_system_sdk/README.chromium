@@ -1,12 +1,11 @@
 Name: Android System SDK
 URL: https://android.googlesource.com/platform/frameworks/base
 Short Name:  Android System SDK
-Version: N/A
-Revision: RPB2.200611.009
-License: GPL v2
+Version: AP31.240517.022
+License: GPL-2.0-with-classpath-exception
 License File: LICENSE
 Security Critical: No
-Shipped: yes
+Shipped: no
 
 Description:
 System SDK stubs for compiling Android Webview and Monochrome targets.

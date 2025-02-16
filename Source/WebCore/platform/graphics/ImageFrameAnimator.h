@@ -69,7 +69,7 @@ private:
 
     unsigned nextFrameIndex() const { return (m_currentFrameIndex + 1) % m_frameCount; }
 
-    const char* sourceUTF8() const;
+    CString sourceUTF8() const;
 
     ThreadSafeWeakPtr<BitmapImageSource> m_source; // Cannot be null.
     unsigned m_frameCount { 0 };

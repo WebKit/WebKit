@@ -54,6 +54,12 @@ bool IsValidImageFormat(const cl_image_format *imageFormat, const rx::CLExtensio
 
 bool IsImageType(cl::MemObjectType memObjectType);
 bool IsBufferType(cl::MemObjectType memObjectType);
+bool IsArrayType(cl::MemObjectType memObjectType);
+bool Is3DImage(cl::MemObjectType memObjectType);
+bool Is2DImage(cl::MemObjectType memObjectType);
+bool Is1DImage(cl::MemObjectType memObjectType);
+
+cl::Extents GetExtentFromDescriptor(cl::ImageDescriptor desc);
 
 extern thread_local cl_int gClErrorTls;
 

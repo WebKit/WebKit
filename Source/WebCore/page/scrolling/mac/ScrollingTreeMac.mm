@@ -112,14 +112,14 @@ static bool isScrolledBy(const ScrollingTree& tree, ScrollingNodeID scrollingNod
         if (nodeID == scrollingNodeID)
             return true;
 
-        auto* scrollingNode = tree.nodeForID(nodeID);
-        if (auto* proxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(scrollingNode)) {
+        RefPtr scrollingNode = tree.nodeForID(nodeID);
+        if (RefPtr proxyNode = dynamicDowncast<ScrollingTreeOverflowScrollProxyNode>(scrollingNode)) {
             auto actingOverflowScrollingNodeID = proxyNode->overflowScrollingNodeID();
             if (actingOverflowScrollingNodeID == scrollingNodeID)
                 return true;
         }
 
-        if (auto* positionedNode = dynamicDowncast<ScrollingTreePositionedNode>(scrollingNode)) {
+        if (RefPtr positionedNode = dynamicDowncast<ScrollingTreePositionedNode>(scrollingNode)) {
             if (positionedNode->relatedOverflowScrollingNodes().contains(scrollingNodeID))
                 return false;
         }
@@ -136,7 +136,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
 
     Locker locker { m_layerHitTestMutex };
 
-    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode.get())->rootContentsLayer();
+    auto rootContentsLayer = downcast<ScrollingTreeFrameScrollingNodeMac>(rootScrollingNode.get())->rootContentsLayer();
     FloatPoint scrollOrigin = rootScrollingNode->scrollOrigin();
     auto pointInContentsLayer = point;
     pointInContentsLayer.moveBy(scrollOrigin);
@@ -147,7 +147,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeMac " << this << " scrollingNodeForPoint " << point << " found " << layersAtPoint.size() << " layers");
 #if !LOG_DISABLED
     for (auto [layer, point] : layersAtPoint)
-        LOG_WITH_STREAM(Scrolling, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer));
+        LOG_WITH_STREAM(Scrolling, stream << " layer " << [layer description] << " scrolling node " << scrollingNodeIDForLayer(layer.get()));
 #endif
 
     if (layersAtPoint.size()) {
@@ -155,7 +155,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
         for (size_t i = 0 ; i < layersAtPoint.size() ; i++) {
             auto [layer, point] = layersAtPoint[i];
 
-            if (!layerEventRegionContainsPoint(layer, point))
+            if (!layerEventRegionContainsPoint(layer.get(), point))
                 continue;
 
             if (!frontmostInteractiveLayer)
@@ -163,7 +163,7 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
 
             auto scrollingNodeForLayer = [&] (auto layer, auto point) -> RefPtr<ScrollingTreeNode> {
                 UNUSED_PARAM(point);
-                auto nodeID = scrollingNodeIDForLayer(layer);
+                auto nodeID = scrollingNodeIDForLayer(layer.get());
                 RefPtr scrollingNode = nodeForID(nodeID);
                 if (!is<ScrollingTreeScrollingNode>(scrollingNode))
                     return nullptr;
@@ -197,13 +197,13 @@ RefPtr<ScrollingTreeNode> ScrollingTreeMac::scrollingNodeForPoint(FloatPoint poi
 #if ENABLE(WHEEL_EVENT_REGIONS)
 OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesForPoint(FloatPoint point) const
 {
-    auto* rootScrollingNode = rootNode();
+    RefPtr rootScrollingNode = rootNode();
     if (!rootScrollingNode)
         return { };
 
     Locker locker { m_layerHitTestMutex };
 
-    auto rootContentsLayer = static_cast<ScrollingTreeFrameScrollingNodeMac*>(rootScrollingNode)->rootContentsLayer();
+    auto rootContentsLayer = downcast<ScrollingTreeFrameScrollingNodeMac>(rootScrollingNode)->rootContentsLayer();
 
     Vector<LayerAndPoint, 16> layersAtPoint;
     collectDescendantLayersAtPoint(layersAtPoint, rootContentsLayer.get(), point, layerEventRegionContainsPoint);
@@ -215,7 +215,7 @@ OptionSet<EventListenerRegionType> ScrollingTreeMac::eventListenerRegionTypesFor
     if (!hitLayer)
         return { };
 
-    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)hitLayer);
+    auto platformCALayer = PlatformCALayer::platformCALayerForLayer((__bridge void*)hitLayer.get());
     if (!platformCALayer)
         return { };
 

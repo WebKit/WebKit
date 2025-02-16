@@ -126,21 +126,6 @@ private:
     void committedLoad(DocumentLoader*, const SharedBuffer&) final;
     void finishedLoading(DocumentLoader*) final;
 
-    ResourceError cancelledError(const ResourceRequest&) const final;
-    ResourceError blockedError(const ResourceRequest&) const final;
-    ResourceError blockedByContentBlockerError(const ResourceRequest&) const final;
-    ResourceError cannotShowURLError(const ResourceRequest&) const final;
-    ResourceError interruptedForPolicyChangeError(const ResourceRequest&) const final;
-#if ENABLE(CONTENT_FILTERING)
-    ResourceError blockedByContentFilterError(const ResourceRequest&) const final;
-#endif
-
-    ResourceError cannotShowMIMETypeError(const ResourceResponse&) const final;
-    ResourceError fileDoesNotExistError(const ResourceResponse&) const final;
-    ResourceError httpsUpgradeRedirectLoopError(const ResourceRequest&) const final;
-    ResourceError httpNavigationWithHTTPSOnlyError(const ResourceRequest&) const final;
-    ResourceError pluginWillHandleLoadError(const ResourceResponse&) const final;
-
     void loadStorageAccessQuirksIfNeeded() final;
 
     bool shouldFallBack(const ResourceError&) const final;
@@ -173,7 +158,10 @@ private:
 
     void updateGlobalHistory() final;
     void updateGlobalHistoryRedirectLinks() final;
-    bool shouldGoToHistoryItem(HistoryItem&) const final;
+    bool shouldGoToHistoryItem(HistoryItem&, IsSameDocumentNavigation) const final;
+    bool supportsAsyncShouldGoToHistoryItem() const final;
+    void shouldGoToHistoryItemAsync(HistoryItem&, CompletionHandler<void(bool)>&&) const final;
+
     void saveViewStateToItem(HistoryItem&) final;
     bool canCachePage() const final;
     void didDisplayInsecureContent() final;

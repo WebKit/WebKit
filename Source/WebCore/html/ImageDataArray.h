@@ -44,6 +44,7 @@ public:
 
     ImageDataArray(Ref<JSC::Uint8ClampedArray>&&);
     ImageDataArray(Ref<JSC::Float16Array>&&);
+    ImageDataArray(ImageDataArray&& original, std::optional<ImageDataStorageFormat> overridingStorageFormat);
 
     static std::optional<ImageDataArray> tryCreate(size_t, ImageDataStorageFormat, std::span<const uint8_t> = { });
 
@@ -63,6 +64,8 @@ public:
 
 private:
     ImageDataArray(Ref<JSC::ArrayBufferView>&&);
+
+    Ref<ArrayBufferView> extractBufferViewWithStorageFormat(std::optional<ImageDataStorageFormat>) &&;
 
     // Needed by `toJS<IDLUnion<IDLUint8ClampedArray, ...>, const ImageDataArray&>()`
     template<typename IDL, bool needsState, bool needsGlobalObject> friend struct JSConverterOverloader;

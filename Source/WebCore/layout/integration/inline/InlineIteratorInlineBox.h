@@ -44,13 +44,14 @@ public:
     // FIXME: Remove. For intermediate porting steps only.
     const LegacyInlineFlowBox* legacyInlineBox() const { return downcast<LegacyInlineFlowBox>(Box::legacyInlineBox()); }
 
-    InlineBoxIterator nextInlineBox() const;
-    InlineBoxIterator previousInlineBox() const;
+    InlineBoxIterator nextInlineBoxLineRightward() const;
+    InlineBoxIterator nextInlineBoxLineLeftward() const;
     InlineBoxIterator iterator() const;
 
     LeafBoxIterator firstLeafBox() const;
     LeafBoxIterator lastLeafBox() const;
     LeafBoxIterator endLeafBox() const;
+    inline bool isSplit() const;
 
     IteratorRange<BoxIterator> descendants() const;
 };
@@ -64,14 +65,14 @@ public:
     const InlineBox& operator*() const { return get(); }
     const InlineBox* operator->() const { return &get(); }
 
-    InlineBoxIterator& traverseNextInlineBox();
-    InlineBoxIterator& traversePreviousInlineBox();
+    InlineBoxIterator& traverseInlineBoxLineRightward();
+    InlineBoxIterator& traverseInlineBoxLineLeftward();
 
 private:
     const InlineBox& get() const { return downcast<InlineBox>(m_box); }
 };
 
-InlineBoxIterator firstInlineBoxFor(const RenderInline&);
+InlineBoxIterator lineLeftmostInlineBoxFor(const RenderInline&);
 InlineBoxIterator firstRootInlineBoxFor(const RenderBlockFlow&);
 
 InlineBoxIterator inlineBoxFor(const LegacyInlineFlowBox&);
@@ -81,6 +82,11 @@ InlineBoxIterator inlineBoxFor(const LayoutIntegration::InlineContent&, size_t b
 inline InlineBoxIterator InlineBox::iterator() const
 {
     return { *this };
+}
+
+inline bool InlineBox::isSplit() const
+{
+    return nextInlineBoxLineRightward() || nextInlineBoxLineLeftward();
 }
 
 }

@@ -22,7 +22,7 @@ function assign(object, name, value)
 }
 noInline(assign);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var object = {};
     if (i % 2 === 0) {
         assign(object, gen1('llo'), 42);

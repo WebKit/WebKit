@@ -33,6 +33,8 @@ IGNORE_WARNINGS_BEGIN("cast-qual")
 IGNORE_WARNINGS_BEGIN("cast-align")
 IGNORE_WARNINGS_BEGIN("documentation")
 
+#define SIMDUTF_CPLUSPLUS20 0
+
 #include <wtf/simdutf/simdutf_impl.h>
 
 IGNORE_WARNINGS_END

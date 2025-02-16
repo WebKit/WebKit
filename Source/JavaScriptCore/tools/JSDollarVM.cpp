@@ -605,7 +605,7 @@ public:
     static constexpr unsigned StructureFlags = Base::StructureFlags | OverridesGetOwnPropertySlot | InterceptsGetOwnPropertySlotByIndexEvenWhenLengthIsNotZero;
 
 IGNORE_WARNINGS_BEGIN("unused-const-variable")
-    static constexpr bool needsDestruction = false;
+    static constexpr DestructionMode needsDestruction = DoesNotNeedDestruction;
 IGNORE_WARNINGS_END
 
     template<typename CellType, SubspaceAccess>

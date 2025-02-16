@@ -147,12 +147,11 @@ TEST(WKWebExtensionAPICommands, CommandEvent)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Perform Command')"
+        @"browser.test.sendMessage('Perform Command')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform Command");
+    auto manager = Util::loadExtension(commandsManifest, @{ @"background.js": backgroundScript });
+    [manager runUntilTestMessage:@"Perform Command"];
 
     auto *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", @"test-command"];
     auto *filteredCommands = [manager.get().context.commands filteredArrayUsingPredicate:predicate];
@@ -217,12 +216,11 @@ TEST(WKWebExtensionAPICommands, PerformCommandForEvent)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Test Command Event')"
+        @"browser.test.sendMessage('Test Command Event')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Command Event");
+    auto manager = Util::loadExtension(commandsManifest, @{ @"background.js": backgroundScript });
+    [manager runUntilTestMessage:@"Test Command Event"];
 
     auto *keyCommandEvent = [NSEvent keyEventWithType:NSEventTypeKeyDown location:NSZeroPoint modifierFlags:(NSEventModifierFlagCommand | NSEventModifierFlagOption)
         timestamp:0 windowNumber:0 context:nil characters:@"Ω" charactersIgnoringModifiers:@"z" isARepeat:NO keyCode:kVK_ANSI_Z];
@@ -247,12 +245,11 @@ TEST(WKWebExtensionAPICommands, PerformKeyCommand)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Test Command Event')"
+        @"browser.test.sendMessage('Test Command Event')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Command Event");
+    auto manager = Util::loadExtension(commandsManifest, @{ @"background.js": backgroundScript });
+    [manager runUntilTestMessage:@"Test Command Event"];
 
     auto *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", @"test-command"];
     auto *filteredCommands = [manager.get().context.commands filteredArrayUsingPredicate:predicate];
@@ -278,12 +275,11 @@ TEST(WKWebExtensionAPICommands, PerformMenuItem)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Test Command Event')"
+        @"browser.test.sendMessage('Test Command Event')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Command Event");
+    auto manager = Util::loadExtension(commandsManifest, @{ @"background.js": backgroundScript });
+    [manager runUntilTestMessage:@"Test Command Event"];
 
     auto *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", @"test-command"];
     auto *filteredCommands = [manager.get().context.commands filteredArrayUsingPredicate:predicate];
@@ -315,12 +311,11 @@ TEST(WKWebExtensionAPICommands, ExecuteActionCommand)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Test Execute Action Command')"
+        @"browser.test.sendMessage('Test Execute Action Command')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Execute Action Command");
+    auto manager = Util::loadExtension(commandsManifest, @{ @"background.js": backgroundScript });
+    [manager runUntilTestMessage:@"Test Execute Action Command"];
 
     auto *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", @"_execute_action"];
     auto *filteredCommands = [manager.get().context.commands filteredArrayUsingPredicate:predicate];
@@ -343,12 +338,11 @@ TEST(WKWebExtensionAPICommands, ChangedEvent)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Test Command Shortcut Change')"
+        @"browser.test.sendMessage('Test Command Shortcut Change')"
     ]);
 
-    auto manager = Util::loadAndRunExtension(commandsManifest, @{ @"background.js": backgroundScript });
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Test Command Shortcut Change");
+    auto manager = Util::loadExtension(commandsManifest, @{ @"background.js": backgroundScript });
+    [manager runUntilTestMessage:@"Test Command Shortcut Change"];
 
     auto *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", @"test-command"];
     auto *filteredCommands = [manager.get().context.commands filteredArrayUsingPredicate:predicate];
@@ -381,11 +375,10 @@ TEST(WKWebExtensionAPICommands, PerformCommandAndPermissionsRequest)
         @"  }",
         @"})",
 
-        @"browser.test.yield('Perform Command')"
+        @"browser.test.sendMessage('Perform Command')"
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:commandsManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(commandsManifest, @{ @"background.js": backgroundScript });
 
     manager.get().internalDelegate.promptForPermissions = ^(id<WKWebExtensionTab> tab, NSSet<NSString *> *requestedPermissions, void (^callback)(NSSet<NSString *> *, NSDate *)) {
         EXPECT_EQ(requestedPermissions.count, 1lu);
@@ -393,9 +386,7 @@ TEST(WKWebExtensionAPICommands, PerformCommandAndPermissionsRequest)
         callback(requestedPermissions, nil);
     };
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform Command");
+    [manager runUntilTestMessage:@"Perform Command"];
 
     auto *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", @"test-command"];
     auto *filteredCommands = [manager.get().context.commands filteredArrayUsingPredicate:predicate];

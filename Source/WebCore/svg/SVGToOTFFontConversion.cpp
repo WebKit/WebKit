@@ -232,9 +232,9 @@ private:
 
     Vector<char> transcodeGlyphPaths(float width, const SVGElement& glyphOrMissingGlyphElement, std::optional<FloatRect>& boundingBox) const;
 
-    void addCodepointRanges(const UnicodeRanges&, HashSet<Glyph>& glyphSet) const;
-    void addCodepoints(const HashSet<String>& codepoints, HashSet<Glyph>& glyphSet) const;
-    void addGlyphNames(const HashSet<String>& glyphNames, HashSet<Glyph>& glyphSet) const;
+    void addCodepointRanges(const UnicodeRanges&, UncheckedKeyHashSet<Glyph>& glyphSet) const;
+    void addCodepoints(const UncheckedKeyHashSet<String>& codepoints, UncheckedKeyHashSet<Glyph>& glyphSet) const;
+    void addGlyphNames(const UncheckedKeyHashSet<String>& glyphNames, UncheckedKeyHashSet<Glyph>& glyphSet) const;
     void addKerningPair(Vector<KerningData>&, SVGKerningPair&&) const;
     template<typename T> size_t appendKERNSubtable(std::optional<SVGKerningPair> (T::*buildKerningPair)() const, uint16_t coverage);
     size_t finishAppendingKERNSubtable(Vector<KerningData>, uint16_t coverage);
@@ -1018,7 +1018,7 @@ Vector<Glyph, 1> SVGToOTFFontConverter::glyphsForCodepoint(char32_t codepoint) c
     return m_codepointsToIndicesMap.get(codepointToString(codepoint));
 }
 
-void SVGToOTFFontConverter::addCodepointRanges(const UnicodeRanges& unicodeRanges, HashSet<Glyph>& glyphSet) const
+void SVGToOTFFontConverter::addCodepointRanges(const UnicodeRanges& unicodeRanges, UncheckedKeyHashSet<Glyph>& glyphSet) const
 {
     for (auto& unicodeRange : unicodeRanges) {
         for (auto codepoint = unicodeRange.first; codepoint <= unicodeRange.second; ++codepoint) {
@@ -1028,7 +1028,7 @@ void SVGToOTFFontConverter::addCodepointRanges(const UnicodeRanges& unicodeRange
     }
 }
 
-void SVGToOTFFontConverter::addCodepoints(const HashSet<String>& codepoints, HashSet<Glyph>& glyphSet) const
+void SVGToOTFFontConverter::addCodepoints(const UncheckedKeyHashSet<String>& codepoints, UncheckedKeyHashSet<Glyph>& glyphSet) const
 {
     for (auto& codepointString : codepoints) {
         for (auto index : m_codepointsToIndicesMap.get(codepointString))
@@ -1036,7 +1036,7 @@ void SVGToOTFFontConverter::addCodepoints(const HashSet<String>& codepoints, Has
     }
 }
 
-void SVGToOTFFontConverter::addGlyphNames(const HashSet<String>& glyphNames, HashSet<Glyph>& glyphSet) const
+void SVGToOTFFontConverter::addGlyphNames(const UncheckedKeyHashSet<String>& glyphNames, UncheckedKeyHashSet<Glyph>& glyphSet) const
 {
     for (auto& glyphName : glyphNames) {
         if (Glyph glyph = m_glyphNameToIndexMap.get(glyphName))
@@ -1046,8 +1046,8 @@ void SVGToOTFFontConverter::addGlyphNames(const HashSet<String>& glyphNames, Has
 
 void SVGToOTFFontConverter::addKerningPair(Vector<KerningData>& data, SVGKerningPair&& kerningPair) const
 {
-    HashSet<Glyph> glyphSet1;
-    HashSet<Glyph> glyphSet2;
+    UncheckedKeyHashSet<Glyph> glyphSet1;
+    UncheckedKeyHashSet<Glyph> glyphSet2;
 
     addCodepointRanges(kerningPair.unicodeRange1, glyphSet1);
     addCodepointRanges(kerningPair.unicodeRange2, glyphSet2);
@@ -1307,8 +1307,8 @@ void SVGToOTFFontConverter::processGlyphElement(const SVGElement& glyphOrMissing
 
 void SVGToOTFFontConverter::appendLigatureGlyphs()
 {
-    HashSet<uint32_t> ligatureCodepoints;
-    HashSet<uint32_t> nonLigatureCodepoints;
+    UncheckedKeyHashSet<uint32_t> ligatureCodepoints;
+    UncheckedKeyHashSet<uint32_t> nonLigatureCodepoints;
     for (auto& glyph : m_glyphs) {
         auto codePoints = StringView(glyph.codepoints).codePoints();
         auto codePointsIterator = codePoints.begin();

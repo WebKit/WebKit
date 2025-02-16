@@ -90,7 +90,7 @@ void InsertIntoTextNodeCommand::doUnapply()
 
 #ifndef NDEBUG
 
-void InsertIntoTextNodeCommand::getNodesInCommand(HashSet<Ref<Node>>& nodes)
+void InsertIntoTextNodeCommand::getNodesInCommand(NodeSet& nodes)
 {
     auto node = protectedNode();
     addNodeAndDescendants(node.ptr(), nodes);

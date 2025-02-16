@@ -95,7 +95,7 @@ ASCIILiteral AXObjectCache::notificationPlatformName(AXNotification notification
 
 void AXObjectCache::relayNotification(const String& notificationName, RetainPtr<NSData> notificationData)
 {
-    if (auto* page = document().page())
+    if (RefPtr page = document() ? document()->page() : nullptr)
         page->chrome().relayAccessibilityNotification(notificationName, notificationData);
 }
 

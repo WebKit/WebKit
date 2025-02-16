@@ -4,7 +4,7 @@ function foo(o) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = Object.create(null);
     foo(o);
     if (o.f != 42)

@@ -252,7 +252,7 @@ private:
     StorageAccessWasGranted storageAccessWasGrantedValueForFrame(WebCore::FrameIdentifier, const WebCore::RegistrableDomain&);
 
     WeakPtr<NetworkSession> m_networkSession;
-    Ref<SuspendableWorkQueue> m_statisticsQueue;
+    const Ref<SuspendableWorkQueue> m_statisticsQueue;
     RefPtr<ResourceLoadStatisticsStore> m_statisticsStore;
 
     RunLoop::Timer m_dailyTasksTimer;

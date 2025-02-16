@@ -41,9 +41,9 @@ struct HueRotate {
 };
 using HueRotateFunction = FunctionNotation<CSSValueHueRotate, HueRotate>;
 
-DEFINE_TYPE_WRAPPER(HueRotate, value);
+DEFINE_TYPE_WRAPPER_GET(HueRotate, value);
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(HueRotate, 1)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::HueRotate, 1)

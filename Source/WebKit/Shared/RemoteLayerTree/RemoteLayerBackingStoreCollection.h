@@ -112,6 +112,8 @@ private:
     bool updateUnreachableBackingStores();
     void volatilityTimerFired();
 
+    Ref<RemoteLayerTreeContext> protectedLayerTreeContext() const;
+
 protected:
     void sendMarkBuffersVolatile(Vector<std::pair<Ref<RemoteImageBufferSetProxy>, OptionSet<BufferInSetType>>>&&, CompletionHandler<void(bool)>&&, bool forcePurge = false);
 

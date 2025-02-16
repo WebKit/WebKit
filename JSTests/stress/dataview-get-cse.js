@@ -35,7 +35,7 @@ function test1() {
     let ab = new ArrayBuffer(8);
     let dv = new DataView(ab);
     dv.setFloat64(0, 128431.42342189432, false);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let result = foo(dv);
         assert(result[0] !== result[1]);
     }
@@ -51,7 +51,7 @@ function test2() {
     let ab = new ArrayBuffer(8);
     let dv = new DataView(ab);
     dv.setFloat64(0, 128431.42342189432, false);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let result = foo(dv);
         assert(result[0] === result[1]);
     }

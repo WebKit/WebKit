@@ -476,6 +476,9 @@ AccessibilityTextMarkerRange AccessibilityUIElement::misspellingTextMarkerRange(
 
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
+    if (!element)
+        return nullptr;
+
     id textMarkerRange = [element->platformUIElement() textMarkerRange];
     return AccessibilityTextMarkerRange(textMarkerRange);
 }

@@ -39,9 +39,12 @@
 #endif
 
 namespace WebCore {
+class Exception;
 struct ClientOrigin;
 struct WebTransportStreamIdentifierType;
 using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
+using WebTransportSessionErrorCode = uint32_t;
+using WebTransportStreamErrorCode = uint64_t;
 }
 
 namespace WebKit {
@@ -65,19 +68,22 @@ public:
     void ref() const final { RefCounted::ref(); }
     void deref() const final { RefCounted::deref(); }
 
-    void sendDatagram(std::span<const uint8_t>, CompletionHandler<void()>&&);
+    void sendDatagram(std::span<const uint8_t>, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
     void createOutgoingUnidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&&);
     void createBidirectionalStream(CompletionHandler<void(std::optional<WebCore::WebTransportStreamIdentifier>)>&&);
     void destroyOutgoingUnidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void destroyBidirectionalStream(WebCore::WebTransportStreamIdentifier);
-    void sendStreamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void()>&&);
-    void streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void()>&&);
-    void terminate(uint32_t, CString&&);
+    void streamSendBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin, CompletionHandler<void(std::optional<WebCore::Exception>&&)>&&);
+    void terminate(WebCore::WebTransportSessionErrorCode, CString&&);
 
-    void receiveDatagram(std::span<const uint8_t>);
-    void streamReceiveBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool withFin);
+    void receiveDatagram(std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
+    void streamReceiveBytes(WebCore::WebTransportStreamIdentifier, std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
     void receiveIncomingUnidirectionalStream(WebCore::WebTransportStreamIdentifier);
     void receiveBidirectionalStream(WebCore::WebTransportStreamIdentifier);
+
+    void cancelReceiveStream(WebCore::WebTransportStreamIdentifier, std::optional<WebCore::WebTransportStreamErrorCode>);
+    void cancelSendStream(WebCore::WebTransportStreamIdentifier, std::optional<WebCore::WebTransportStreamErrorCode>);
+    void destroyStream(WebCore::WebTransportStreamIdentifier, std::optional<WebCore::WebTransportStreamErrorCode>);
 
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;

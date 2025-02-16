@@ -14,13 +14,13 @@ function mathPowDoubleInt1(x, y) {
 noInline(mathPowDoubleInt1);
 
 function test1(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble1(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble1(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt1(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt1(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -39,13 +39,13 @@ function mathPowDoubleInt2(x, y) {
 }
 noInline(mathPowDoubleInt2);
 function test2(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble2(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble2(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt2(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt2(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -64,13 +64,13 @@ function mathPowDoubleInt3(x, y) {
 }
 noInline(mathPowDoubleInt3);
 function test3(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble3(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble3(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt3(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt3(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -90,13 +90,13 @@ function mathPowDoubleInt4(x, y) {
 }
 noInline(mathPowDoubleInt4);
 function test4(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble4(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble4(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt4(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt4(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -116,13 +116,13 @@ function mathPowDoubleInt5(x, y) {
 }
 noInline(mathPowDoubleInt5);
 function test5(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble5(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble5(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt5(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -142,13 +142,13 @@ function mathPowDoubleInt6(x, y) {
 }
 noInline(mathPowDoubleInt6);
 function test6(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble6(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble6(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt6(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt6(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -168,13 +168,13 @@ function mathPowDoubleInt7(x, y) {
 }
 noInline(mathPowDoubleInt7);
 function test7(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble7(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble7(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble7(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleDouble7(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -194,13 +194,13 @@ function mathPowDoubleInt8(x, y) {
 }
 noInline(mathPowDoubleInt8);
 function test8(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble8(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble8(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt8(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt8(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -219,13 +219,13 @@ function mathPowDoubleInt9(x, y) {
 }
 noInline(mathPowDoubleInt9);
 function test9(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble9(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble9(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt9(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt9(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -245,13 +245,13 @@ function mathPowDoubleInt10(x, y) {
 }
 noInline(mathPowDoubleInt10);
 function test10(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble10(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt10(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;
@@ -270,13 +270,13 @@ function mathPowDoubleInt11(x, y) {
 }
 noInline(mathPowDoubleInt11);
 function test11(x, y, expected1, expected2) {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleDouble11(x, y);
         if (!valuesAreClose(result, expected1))
             throw "Error: bad result, mathPowDoubleDouble(" + x + ", " + y + ") = " + result + " expected a value close to " + expected1;
     }
     var integerY = y | 0;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = mathPowDoubleInt11(x, integerY);
         if (!valuesAreClose(result, expected2))
             throw "Error: bad result, mathPowDoubleInt(" + x + ", " + integerY + ") = " + result + " expected a value close to " + expected2;

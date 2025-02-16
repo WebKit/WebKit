@@ -34,7 +34,6 @@
 #include "CSSSelector.h"
 #include "CanvasBase.h"
 #include "CanvasRenderingContext.h"
-#include "Database.h"
 #include "DocumentThreadableLoader.h"
 #include "Element.h"
 #include "Event.h"
@@ -170,15 +169,17 @@ public:
     static void didAddEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static void willRemoveEventListener(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static bool isEventListenerDisabled(EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    static void willDispatchEvent(Document&, const Event&);
-    static void didDispatchEvent(Document&, const Event&);
+    static void willDispatchEvent(ScriptExecutionContext&, const Event&);
+    static void didDispatchEvent(ScriptExecutionContext&, const Event&);
     static void willHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didHandleEvent(ScriptExecutionContext&, Event&, const RegisteredEventListener&);
-    static void willDispatchEventOnWindow(LocalFrame*, const Event&, LocalDOMWindow&);
+    static void willDispatchEventOnWindow(LocalFrame*, const Event&);
     static void didDispatchEventOnWindow(LocalFrame*, const Event&);
     static void eventDidResetAfterDispatch(const Event&);
     static void willEvaluateScript(LocalFrame&, const String& url, int lineNumber, int columnNumber);
+    static void willEvaluateScript(WorkerOrWorkletGlobalScope&, const String& url, int lineNumber, int columnNumber);
     static void didEvaluateScript(LocalFrame&);
+    static void didEvaluateScript(WorkerOrWorkletGlobalScope&);
     static void willFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
     static void didFireTimer(ScriptExecutionContext&, int timerId, bool oneShot);
     static void didInvalidateLayout(LocalFrame&);
@@ -265,22 +266,20 @@ public:
     static void stopConsoleTiming(Frame&, JSC::JSGlobalObject*, const String& label);
     static void stopConsoleTiming(WorkerOrWorkletGlobalScope&, JSC::JSGlobalObject*, const String& label);
     static void consoleTimeStamp(Frame&, Ref<Inspector::ScriptArguments>&&);
-    static void startProfiling(Page&, JSC::JSGlobalObject*, const String& title);
-    static void stopProfiling(Page&, JSC::JSGlobalObject*, const String& title);
+    static void startProfiling(Page&, const String& title);
+    static void stopProfiling(Page&, const String& title);
     static void consoleStartRecordingCanvas(CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     static void consoleStopRecordingCanvas(CanvasRenderingContext&);
 
-    static void performanceMark(ScriptExecutionContext&, const String&, std::optional<MonotonicTime>, LocalFrame*);
+    static void performanceMark(ScriptExecutionContext&, const String&, std::optional<MonotonicTime>);
 
-    static void didRequestAnimationFrame(Document&, int callbackId);
-    static void didCancelAnimationFrame(Document&, int callbackId);
-    static void willFireAnimationFrame(Document&, int callbackId);
-    static void didFireAnimationFrame(Document&, int callbackId);
+    static void didRequestAnimationFrame(ScriptExecutionContext&, int callbackId);
+    static void didCancelAnimationFrame(ScriptExecutionContext&, int callbackId);
+    static void willFireAnimationFrame(ScriptExecutionContext&, int callbackId);
+    static void didFireAnimationFrame(ScriptExecutionContext&, int callbackId);
 
     static void willFireObserverCallback(ScriptExecutionContext&, const String& callbackType);
     static void didFireObserverCallback(ScriptExecutionContext&);
-
-    static void didOpenDatabase(Database&);
 
     static void didDispatchDOMStorageEvent(Page&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
@@ -320,9 +319,6 @@ public:
     static void didChangeWebAnimationEffectTarget(WebAnimation&);
     static void didCreateWebAnimation(WebAnimation&);
     static void willDestroyWebAnimation(WebAnimation&);
-
-    static void networkStateChanged(Page&);
-    static void updateApplicationCacheStatus(LocalFrame*);
 
     static void layerTreeDidChange(Page*);
     static void renderLayerDestroyed(Page*, const RenderLayer&);
@@ -386,7 +382,7 @@ private:
     static void willSendXMLHttpRequestImpl(InstrumentingAgents&, const String& url);
     static void willFetchImpl(InstrumentingAgents&, const String& url);
     static void didInstallTimerImpl(InstrumentingAgents&, int timerId, Seconds timeout, bool singleShot, ScriptExecutionContext&);
-    static void didRemoveTimerImpl(InstrumentingAgents&, int timerId, ScriptExecutionContext&);
+    static void didRemoveTimerImpl(InstrumentingAgents&, int timerId);
 
     static int willPostMessageImpl(InstrumentingAgents&);
     static void didPostMessageImpl(InstrumentingAgents&, int postMessageIdentifier, JSC::JSGlobalObject&);
@@ -394,31 +390,31 @@ private:
     static void willDispatchPostMessageImpl(InstrumentingAgents&, int postMessageIdentifier);
     static void didDispatchPostMessageImpl(InstrumentingAgents&, int postMessageIdentifier);
 
-    static void willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, int scriptColumn, ScriptExecutionContext*);
-    static void didCallFunctionImpl(InstrumentingAgents&, ScriptExecutionContext*);
+    static void willCallFunctionImpl(InstrumentingAgents&, const String& scriptName, int scriptLine, int scriptColumn);
+    static void didCallFunctionImpl(InstrumentingAgents&);
     static void didAddEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static void willRemoveEventListenerImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
     static bool isEventListenerDisabledImpl(InstrumentingAgents&, EventTarget&, const AtomString& eventType, EventListener&, bool capture);
-    static void willDispatchEventImpl(InstrumentingAgents&, Document&, const Event&);
+    static void willDispatchEventImpl(InstrumentingAgents&, const Event&);
     static void willHandleEventImpl(InstrumentingAgents&, ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didHandleEventImpl(InstrumentingAgents&, ScriptExecutionContext&, Event&, const RegisteredEventListener&);
     static void didDispatchEventImpl(InstrumentingAgents&, const Event&);
-    static void willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&, LocalDOMWindow&);
+    static void willDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&);
     static void didDispatchEventOnWindowImpl(InstrumentingAgents&, const Event&);
     static void eventDidResetAfterDispatchImpl(InstrumentingAgents&, const Event&);
-    static void willEvaluateScriptImpl(InstrumentingAgents&, LocalFrame&, const String& url, int lineNumber, int columnNumber);
-    static void didEvaluateScriptImpl(InstrumentingAgents&, LocalFrame&);
-    static void willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot, ScriptExecutionContext&);
+    static void willEvaluateScriptImpl(InstrumentingAgents&, const String& url, int lineNumber, int columnNumber);
+    static void didEvaluateScriptImpl(InstrumentingAgents&);
+    static void willFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot);
     static void didFireTimerImpl(InstrumentingAgents&, int timerId, bool oneShot);
-    static void didInvalidateLayoutImpl(InstrumentingAgents&, LocalFrame&);
-    static void willLayoutImpl(InstrumentingAgents&, LocalFrame&);
+    static void didInvalidateLayoutImpl(InstrumentingAgents&);
+    static void willLayoutImpl(InstrumentingAgents&);
     static void didLayoutImpl(InstrumentingAgents&, RenderObject&);
     static void didScrollImpl(InstrumentingAgents&);
-    static void willCompositeImpl(InstrumentingAgents&, LocalFrame&);
+    static void willCompositeImpl(InstrumentingAgents&);
     static void didCompositeImpl(InstrumentingAgents&);
-    static void willPaintImpl(InstrumentingAgents&, RenderObject&);
+    static void willPaintImpl(InstrumentingAgents&);
     static void didPaintImpl(InstrumentingAgents&, RenderObject&, const LayoutRect&);
-    static void willRecalculateStyleImpl(InstrumentingAgents&, Document&);
+    static void willRecalculateStyleImpl(InstrumentingAgents&);
     static void didRecalculateStyleImpl(InstrumentingAgents&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents&, Document&);
     static void applyUserAgentOverrideImpl(InstrumentingAgents&, String&);
@@ -469,28 +465,24 @@ private:
     static void consoleCountImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
     static void consoleCountResetImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
     static void takeHeapSnapshotImpl(InstrumentingAgents&, const String& title);
-    static void startConsoleTimingImpl(InstrumentingAgents&, Frame&, JSC::JSGlobalObject*, const String& label);
     static void startConsoleTimingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
     static void logConsoleTimingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label, Ref<Inspector::ScriptArguments>&&);
-    static void stopConsoleTimingImpl(InstrumentingAgents&, Frame&, JSC::JSGlobalObject*, const String& label);
     static void stopConsoleTimingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& label);
-    static void consoleTimeStampImpl(InstrumentingAgents&, Frame&, Ref<Inspector::ScriptArguments>&&);
-    static void startProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
-    static void stopProfilingImpl(InstrumentingAgents&, JSC::JSGlobalObject*, const String& title);
+    static void consoleTimeStampImpl(InstrumentingAgents&, Ref<Inspector::ScriptArguments>&&);
+    static void startProfilingImpl(InstrumentingAgents&, const String& title);
+    static void stopProfilingImpl(InstrumentingAgents&, const String& title);
     static void consoleStartRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&, JSC::JSGlobalObject&, JSC::JSObject* options);
     static void consoleStopRecordingCanvasImpl(InstrumentingAgents&, CanvasRenderingContext&);
 
-    static void performanceMarkImpl(InstrumentingAgents&, const String& label, std::optional<MonotonicTime>, LocalFrame*);
+    static void performanceMarkImpl(InstrumentingAgents&, const String& label, std::optional<MonotonicTime>);
 
-    static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
-    static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
-    static void willFireAnimationFrameImpl(InstrumentingAgents&, int callbackId, Document&);
+    static void didRequestAnimationFrameImpl(InstrumentingAgents&, int callbackId, ScriptExecutionContext&);
+    static void didCancelAnimationFrameImpl(InstrumentingAgents&, int callbackId);
+    static void willFireAnimationFrameImpl(InstrumentingAgents&, int callbackId);
     static void didFireAnimationFrameImpl(InstrumentingAgents&, int callbackId);
 
-    static void willFireObserverCallbackImpl(InstrumentingAgents&, const String&, ScriptExecutionContext&);
+    static void willFireObserverCallbackImpl(InstrumentingAgents&, const String&);
     static void didFireObserverCallbackImpl(InstrumentingAgents&);
-
-    static void didOpenDatabaseImpl(InstrumentingAgents&, Database&);
 
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents&, const String& key, const String& oldValue, const String& newValue, StorageType, const SecurityOrigin&);
 
@@ -509,9 +501,6 @@ private:
 #if ENABLE(RESOURCE_USAGE)
     static void didHandleMemoryPressureImpl(InstrumentingAgents&, Critical);
 #endif
-
-    static void networkStateChangedImpl(InstrumentingAgents&);
-    static void updateApplicationCacheStatusImpl(InstrumentingAgents&, LocalFrame&);
 
     static void didChangeCSSCanvasClientNodesImpl(InstrumentingAgents&, CanvasBase&);
     static void didCreateCanvasRenderingContextImpl(InstrumentingAgents&, CanvasRenderingContext&);
@@ -830,7 +819,7 @@ inline void InspectorInstrumentation::didRemoveTimer(ScriptExecutionContext& con
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        didRemoveTimerImpl(*agents, timerId, context);
+        didRemoveTimerImpl(*agents, timerId);
 }
 
 inline void InspectorInstrumentation::didAddEventListener(EventTarget& target, const AtomString& eventType, EventListener& listener, bool capture)
@@ -895,27 +884,27 @@ inline void InspectorInstrumentation::willCallFunction(ScriptExecutionContext* c
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        willCallFunctionImpl(*agents, scriptName, scriptLine, scriptColumn, context);
+        willCallFunctionImpl(*agents, scriptName, scriptLine, scriptColumn);
 }
 
 inline void InspectorInstrumentation::didCallFunction(ScriptExecutionContext* context)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        didCallFunctionImpl(*agents, context);
+        didCallFunctionImpl(*agents);
 }
 
-inline void InspectorInstrumentation::willDispatchEvent(Document& document, const Event& event)
+inline void InspectorInstrumentation::willDispatchEvent(ScriptExecutionContext& context, const Event& event)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(document))
-        willDispatchEventImpl(*agents, document, event);
+    if (auto* agents = instrumentingAgents(context))
+        willDispatchEventImpl(*agents, event);
 }
 
-inline void InspectorInstrumentation::didDispatchEvent(Document& document, const Event& event)
+inline void InspectorInstrumentation::didDispatchEvent(ScriptExecutionContext& context, const Event& event)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(document))
+    if (auto* agents = instrumentingAgents(context))
         didDispatchEventImpl(*agents, event);
 }
 
@@ -933,11 +922,11 @@ inline void InspectorInstrumentation::didHandleEvent(ScriptExecutionContext& con
         return didHandleEventImpl(*agents, context, event, listener);
 }
 
-inline void InspectorInstrumentation::willDispatchEventOnWindow(LocalFrame* frame, const Event& event, LocalDOMWindow& window)
+inline void InspectorInstrumentation::willDispatchEventOnWindow(LocalFrame* frame, const Event& event)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        willDispatchEventOnWindowImpl(*agents, event, window);
+        willDispatchEventOnWindowImpl(*agents, event);
 }
 
 inline void InspectorInstrumentation::didDispatchEventOnWindow(LocalFrame* frame, const Event& event)
@@ -963,21 +952,33 @@ inline void InspectorInstrumentation::willEvaluateScript(LocalFrame& frame, cons
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        willEvaluateScriptImpl(*agents, frame, url, lineNumber, columnNumber);
+        willEvaluateScriptImpl(*agents, url, lineNumber, columnNumber);
+}
+
+inline void InspectorInstrumentation::willEvaluateScript(WorkerOrWorkletGlobalScope& globalScope, const String& url, int lineNumber, int columnNumber)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    willEvaluateScriptImpl(instrumentingAgents(globalScope), url, lineNumber, columnNumber);
 }
 
 inline void InspectorInstrumentation::didEvaluateScript(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        didEvaluateScriptImpl(*agents, frame);
+        didEvaluateScriptImpl(*agents);
+}
+
+inline void InspectorInstrumentation::didEvaluateScript(WorkerOrWorkletGlobalScope& globalScope)
+{
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    didEvaluateScriptImpl(instrumentingAgents(globalScope));
 }
 
 inline void InspectorInstrumentation::willFireTimer(ScriptExecutionContext& context, int timerId, bool oneShot)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        willFireTimerImpl(*agents, timerId, oneShot, context);
+        willFireTimerImpl(*agents, timerId, oneShot);
 }
 
 inline void InspectorInstrumentation::didFireTimer(ScriptExecutionContext& context, int timerId, bool oneShot)
@@ -991,14 +992,14 @@ inline void InspectorInstrumentation::didInvalidateLayout(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        didInvalidateLayoutImpl(*agents, frame);
+        didInvalidateLayoutImpl(*agents);
 }
 
 inline void InspectorInstrumentation::willLayout(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        willLayoutImpl(*agents, frame);
+        willLayoutImpl(*agents);
 }
 
 inline void InspectorInstrumentation::didLayout(LocalFrame& frame, RenderObject& root)
@@ -1018,7 +1019,7 @@ inline void InspectorInstrumentation::willComposite(LocalFrame& frame)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        willCompositeImpl(*agents, frame);
+        willCompositeImpl(*agents);
 }
 
 inline void InspectorInstrumentation::didComposite(LocalFrame& frame)
@@ -1032,7 +1033,7 @@ inline void InspectorInstrumentation::willPaint(RenderObject& renderer)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(renderer))
-        return willPaintImpl(*agents, renderer);
+        return willPaintImpl(*agents);
 }
 
 inline void InspectorInstrumentation::didPaint(RenderObject& renderer, const LayoutRect& rect)
@@ -1046,7 +1047,7 @@ inline void InspectorInstrumentation::willRecalculateStyle(Document& document)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(document))
-        willRecalculateStyleImpl(*agents, document);
+        willRecalculateStyleImpl(*agents);
 }
 
 inline void InspectorInstrumentation::didRecalculateStyle(Document& document)
@@ -1362,13 +1363,6 @@ inline void InspectorInstrumentation::interceptResponse(const LocalFrame& frame,
         interceptResponseImpl(*agents, response, identifier, WTFMove(handler));
 }
 
-inline void InspectorInstrumentation::didOpenDatabase(Database& database)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(database.document()))
-        didOpenDatabaseImpl(*agents, database);
-}
-
 inline void InspectorInstrumentation::didDispatchDOMStorageEvent(Page& page, const String& key, const String& oldValue, const String& newValue, StorageType storageType, const SecurityOrigin& securityOrigin)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
@@ -1577,19 +1571,6 @@ inline void InspectorInstrumentation::willDestroyWebAnimation(WebAnimation& anim
         willDestroyWebAnimationImpl(*agents, animation);
 }
 
-inline void InspectorInstrumentation::networkStateChanged(Page& page)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    networkStateChangedImpl(instrumentingAgents(page));
-}
-
-inline void InspectorInstrumentation::updateApplicationCacheStatus(LocalFrame* frame)
-{
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(frame))
-        updateApplicationCacheStatusImpl(*agents, *frame);
-}
-
 inline void InspectorInstrumentation::addMessageToConsole(Page& page, std::unique_ptr<Inspector::ConsoleMessage> message)
 {
     addMessageToConsoleImpl(instrumentingAgents(page), WTFMove(message));
@@ -1630,7 +1611,7 @@ inline void InspectorInstrumentation::takeHeapSnapshot(Frame& frame, const Strin
 inline void InspectorInstrumentation::startConsoleTiming(Frame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
     if (auto* agents = instrumentingAgents(frame))
-        startConsoleTimingImpl(*agents, frame, exec, label);
+        startConsoleTimingImpl(*agents, exec, label);
 }
 
 inline void InspectorInstrumentation::startConsoleTiming(WorkerOrWorkletGlobalScope& globalScope, JSC::JSGlobalObject* exec, const String& label)
@@ -1652,7 +1633,7 @@ inline void InspectorInstrumentation::logConsoleTiming(WorkerOrWorkletGlobalScop
 inline void InspectorInstrumentation::stopConsoleTiming(Frame& frame, JSC::JSGlobalObject* exec, const String& label)
 {
     if (auto* agents = instrumentingAgents(frame))
-        stopConsoleTimingImpl(*agents, frame, exec, label);
+        stopConsoleTimingImpl(*agents, exec, label);
 }
 
 inline void InspectorInstrumentation::stopConsoleTiming(WorkerOrWorkletGlobalScope& globalScope, JSC::JSGlobalObject* exec, const String& label)
@@ -1664,19 +1645,19 @@ inline void InspectorInstrumentation::consoleTimeStamp(Frame& frame, Ref<Inspect
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(frame))
-        consoleTimeStampImpl(*agents, frame, WTFMove(arguments));
+        consoleTimeStampImpl(*agents, WTFMove(arguments));
 }
 
-inline void InspectorInstrumentation::startProfiling(Page& page, JSC::JSGlobalObject* exec, const String &title)
+inline void InspectorInstrumentation::startProfiling(Page& page, const String &title)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    startProfilingImpl(instrumentingAgents(page), exec, title);
+    startProfilingImpl(instrumentingAgents(page), title);
 }
 
-inline void InspectorInstrumentation::stopProfiling(Page& page, JSC::JSGlobalObject* exec, const String &title)
+inline void InspectorInstrumentation::stopProfiling(Page& page, const String &title)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    stopProfilingImpl(instrumentingAgents(page), exec, title);
+    stopProfilingImpl(instrumentingAgents(page), title);
 }
 
 inline void InspectorInstrumentation::consoleStartRecordingCanvas(CanvasRenderingContext& context, JSC::JSGlobalObject& exec, JSC::JSObject* options)
@@ -1691,38 +1672,38 @@ inline void InspectorInstrumentation::consoleStopRecordingCanvas(CanvasRendering
         consoleStopRecordingCanvasImpl(*agents, context);
 }
 
-inline void InspectorInstrumentation::performanceMark(ScriptExecutionContext& context, const String& label, std::optional<MonotonicTime> startTime, LocalFrame* frame)
+inline void InspectorInstrumentation::performanceMark(ScriptExecutionContext& context, const String& label, std::optional<MonotonicTime> startTime)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        performanceMarkImpl(*agents, label, WTFMove(startTime), frame);
+        performanceMarkImpl(*agents, label, WTFMove(startTime));
 }
 
-inline void InspectorInstrumentation::didRequestAnimationFrame(Document& document, int callbackId)
+inline void InspectorInstrumentation::didRequestAnimationFrame(ScriptExecutionContext& scriptExecutionContext, int callbackId)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(document))
-        didRequestAnimationFrameImpl(*agents, callbackId, document);
+    if (auto* agents = instrumentingAgents(scriptExecutionContext))
+        didRequestAnimationFrameImpl(*agents, callbackId, scriptExecutionContext);
 }
 
-inline void InspectorInstrumentation::didCancelAnimationFrame(Document& document, int callbackId)
+inline void InspectorInstrumentation::didCancelAnimationFrame(ScriptExecutionContext& scriptExecutionContext, int callbackId)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(document))
-        didCancelAnimationFrameImpl(*agents, callbackId, document);
+    if (auto* agents = instrumentingAgents(scriptExecutionContext))
+        didCancelAnimationFrameImpl(*agents, callbackId);
 }
 
-inline void InspectorInstrumentation::willFireAnimationFrame(Document& document, int callbackId)
+inline void InspectorInstrumentation::willFireAnimationFrame(ScriptExecutionContext& scriptExecutionContext, int callbackId)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(document))
-        willFireAnimationFrameImpl(*agents, callbackId, document);
+    if (auto* agents = instrumentingAgents(scriptExecutionContext))
+        willFireAnimationFrameImpl(*agents, callbackId);
 }
 
-inline void InspectorInstrumentation::didFireAnimationFrame(Document& document, int callbackId)
+inline void InspectorInstrumentation::didFireAnimationFrame(ScriptExecutionContext& scriptExecutionContext, int callbackId)
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (auto* agents = instrumentingAgents(document))
+    if (auto* agents = instrumentingAgents(scriptExecutionContext))
         didFireAnimationFrameImpl(*agents, callbackId);
 }
 
@@ -1730,7 +1711,7 @@ inline void InspectorInstrumentation::willFireObserverCallback(ScriptExecutionCo
 {
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (auto* agents = instrumentingAgents(context))
-        willFireObserverCallbackImpl(*agents, callbackType, context);
+        willFireObserverCallbackImpl(*agents, callbackType);
 }
 
 inline void InspectorInstrumentation::didFireObserverCallback(ScriptExecutionContext& context)

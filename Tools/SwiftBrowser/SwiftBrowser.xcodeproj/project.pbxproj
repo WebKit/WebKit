@@ -15,6 +15,7 @@
 		072823132D1D315D00A0658F /* DownloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 072823122D1D315D00A0658F /* DownloadsView.swift */; };
 		078F11852D288FAC00B3582D /* URLRequest+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078F11842D288FAC00B3582D /* URLRequest+Codable.swift */; };
 		07A4CE9F2D08C06400764F5E /* Empty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A4CE9E2D08C06400764F5E /* Empty.swift */; };
+		07A4CEC32D092C0800764F5E /* _WebKit_SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 07A4CEC22D092C0800764F5E /* _WebKit_SwiftUI.framework */; };
 		07A58BED2D04013100CAB4ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 07A58BE82D04013100CAB4ED /* Assets.xcassets */; };
 		07A58BEE2D04013100CAB4ED /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A58BE92D04013100CAB4ED /* ContentView.swift */; };
 		07A58BEF2D04013100CAB4ED /* SwiftBrowser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A58BEB2D04013100CAB4ED /* SwiftBrowser.swift */; };
@@ -25,6 +26,19 @@
 		07A58C4A2D0567A100CAB4ED /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07A58C492D0567A100CAB4ED /* SettingsView.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		07A4CEC52D092C0800764F5E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		07259B2D2D1F308500B45C4E /* DialogPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogPresenter.swift; sourceTree = "<group>"; };
 		07259B312D1F325E00B45C4E /* DownloadCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadCoordinator.swift; sourceTree = "<group>"; };
@@ -34,6 +48,7 @@
 		072823122D1D315D00A0658F /* DownloadsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadsView.swift; sourceTree = "<group>"; };
 		078F11842D288FAC00B3582D /* URLRequest+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+Codable.swift"; sourceTree = "<group>"; };
 		07A4CE9E2D08C06400764F5E /* Empty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Empty.swift; sourceTree = "<group>"; };
+		07A4CEC22D092C0800764F5E /* _WebKit_SwiftUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = _WebKit_SwiftUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A58BD42D0400B300CAB4ED /* SwiftBrowser.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftBrowser.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		07A58BE82D04013100CAB4ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		07A58BE92D04013100CAB4ED /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -56,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				07A4CEC32D092C0800764F5E /* _WebKit_SwiftUI.framework in Frameworks */,
 				07A58C0E2D04DD4700CAB4ED /* WebKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -167,6 +183,7 @@
 		07A58C0C2D04DD4700CAB4ED /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				07A4CEC22D092C0800764F5E /* _WebKit_SwiftUI.framework */,
 				07A58C0D2D04DD4700CAB4ED /* WebKit.framework */,
 			);
 			name = Frameworks;
@@ -182,6 +199,7 @@
 				07A58BD02D0400B300CAB4ED /* Sources */,
 				07A58BD12D0400B300CAB4ED /* Frameworks */,
 				07A58BD22D0400B300CAB4ED /* Resources */,
+				07A4CEC52D092C0800764F5E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

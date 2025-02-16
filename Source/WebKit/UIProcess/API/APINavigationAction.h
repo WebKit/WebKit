@@ -67,6 +67,7 @@ public:
     WebCore::ShouldOpenExternalURLsPolicy shouldOpenExternalURLsPolicy() const { return m_navigationActionData.shouldOpenExternalURLsPolicy; }
 
     bool isProcessingUserGesture() const { return m_userInitiatedAction; }
+    bool isProcessingUnconsumedUserGesture() const { return m_userInitiatedAction && !m_userInitiatedAction->consumed(); }
     UserInitiatedAction* userInitiatedAction() const { return m_userInitiatedAction.get(); }
 
     Navigation* mainFrameNavigation() const { return m_mainFrameNavigation.get(); }

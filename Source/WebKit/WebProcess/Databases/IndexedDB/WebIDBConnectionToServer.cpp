@@ -50,13 +50,13 @@
 namespace WebKit {
 using namespace WebCore;
 
-Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create()
+Ref<WebIDBConnectionToServer> WebIDBConnectionToServer::create(PAL::SessionID sessionID)
 {
-    return adoptRef(*new WebIDBConnectionToServer());
+    return adoptRef(*new WebIDBConnectionToServer(sessionID));
 }
 
-WebIDBConnectionToServer::WebIDBConnectionToServer()
-    : m_connectionToServer(IDBClient::IDBConnectionToServer::create(*this))
+WebIDBConnectionToServer::WebIDBConnectionToServer(PAL::SessionID sessionID)
+    : m_connectionToServer(IDBClient::IDBConnectionToServer::create(*this, sessionID))
 {
 }
 
@@ -137,9 +137,9 @@ void WebIDBConnectionToServer::renameIndex(const IDBRequestData& requestData, We
     send(Messages::NetworkStorageManager::RenameIndex(requestData, objectStoreIdentifier, indexIdentifier, newName));
 }
 
-void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode mode)
+void WebIDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexIDToIndexKeyMap& indexKeys, const IndexedDB::ObjectStoreOverwriteMode mode)
 {
-    send(Messages::NetworkStorageManager::PutOrAdd(requestData, keyData, value, mode));
+    send(Messages::NetworkStorageManager::PutOrAdd(requestData, keyData, value, indexKeys, mode));
 }
 
 void WebIDBConnectionToServer::getRecord(const IDBRequestData& requestData, const IDBGetRecordData& getRecordData)

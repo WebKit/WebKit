@@ -7,7 +7,7 @@
 #if ENABLE(MODEL_PROCESS)
 
 #import <QuartzCore/QuartzCore.h>
-#import <wtf/RefPtr.h>
+#import <wtf/WeakPtr.h>
 
 namespace WebKit {
 class ModelProcessModelPlayerProxy;
@@ -15,7 +15,7 @@ class ModelProcessModelPlayerProxy;
 
 @interface WKModelProcessModelLayer : CALayer
 
-@property (direct) RefPtr<WebKit::ModelProcessModelPlayerProxy> player;
+@property (direct) WeakPtr<WebKit::ModelProcessModelPlayerProxy> player;
 
 @end
 

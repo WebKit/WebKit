@@ -204,9 +204,9 @@ static bool takeSnapshots(TextIndicatorData& data, LocalFrame& frame, IntRect sn
     return true;
 }
 
-static HashSet<Color> estimatedTextColorsForRange(const SimpleRange& range)
+static UncheckedKeyHashSet<Color> estimatedTextColorsForRange(const SimpleRange& range)
 {
-    HashSet<Color> colors;
+    UncheckedKeyHashSet<Color> colors;
     for (TextIterator iterator(range); !iterator.atEnd(); iterator.advance()) {
         auto node = iterator.node();
         if (!node)
@@ -227,7 +227,7 @@ static FloatRect absoluteBoundingRectForRange(const SimpleRange& range)
     }));
 }
 
-static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgroundColor, HashSet<Color>&& textColors)
+static bool hasAnyIllegibleColors(TextIndicatorData& data, const Color& backgroundColor, UncheckedKeyHashSet<Color>&& textColors)
 {
     if (data.options.contains(TextIndicatorOption::PaintAllContent))
         return false;

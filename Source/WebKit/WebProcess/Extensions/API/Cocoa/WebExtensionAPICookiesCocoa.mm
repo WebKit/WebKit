@@ -165,20 +165,20 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
 
     String name = details[nameKey];
     if (!name.isNull() && name.isEmpty()) {
-        *outExceptionString = toErrorString(nil, nameKey, @"it must not be empty");
+        *outExceptionString = toErrorString(nullString(), nameKey, @"it must not be empty");
         return std::nullopt;
     }
 
     URL url;
     if (NSString *urlString = details[urlKey]) {
         if (!urlString.length) {
-            *outExceptionString = toErrorString(nil, urlKey, @"it must not be empty");
+            *outExceptionString = toErrorString(nullString(), urlKey, @"it must not be empty");
             return std::nullopt;
         }
 
         url = URL { urlString };
         if (!url.isValid()) {
-            *outExceptionString = toErrorString(nil, urlKey, @"'%@' is not a valid URL", urlString);
+            *outExceptionString = toErrorString(nullString(), urlKey, @"'%@' is not a valid URL", urlString);
             return std::nullopt;
         }
     }
@@ -186,13 +186,13 @@ std::optional<WebExtensionAPICookies::ParsedDetails> WebExtensionAPICookies::par
     std::optional<PAL::SessionID> sessionID;
     if (NSString *storeID = details[storeIdKey]) {
         if (!storeID.length) {
-            *outExceptionString = toErrorString(nil, storeIdKey, @"it must not be empty");
+            *outExceptionString = toErrorString(nullString(), storeIdKey, @"it must not be empty");
             return std::nullopt;
         }
 
         sessionID = toImpl(storeID);
         if (!sessionID) {
-            *outExceptionString = toErrorString(nil, storeIdKey, @"'%@' is not a valid cookie store identifier", storeID);
+            *outExceptionString = toErrorString(nullString(), storeIdKey, @"'%@' is not a valid cookie store identifier", storeID);
             return std::nullopt;
         }
     }
@@ -329,7 +329,7 @@ void WebExtensionAPICookies::set(NSDictionary *details, Ref<WebExtensionCallback
         else if ([sameSiteString isEqualToString:strictKey])
             cookie.sameSite = WebCore::Cookie::SameSitePolicy::Strict;
         else {
-            *outExceptionString = toErrorString(nil, sameSiteKey, @"it must specify either 'no_restriction', 'lax', or 'strict'");
+            *outExceptionString = toErrorString(nullString(), sameSiteKey, @"it must specify either 'no_restriction', 'lax', or 'strict'");
             return;
         }
     }

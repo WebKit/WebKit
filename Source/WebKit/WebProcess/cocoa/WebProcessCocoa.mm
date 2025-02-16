@@ -68,7 +68,6 @@
 #endif
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/CPUMonitor.h>
-#import <WebCore/DeprecatedGlobalSettings.h>
 #import <WebCore/DisplayRefreshMonitorManager.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/FontCacheCoreText.h>
@@ -342,6 +341,11 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     setupLogStream();
 #endif
 
+#if ENABLE(NOTIFY_BLOCKING)
+    for (const auto& [name, state] : parameters.notifyState)
+        setNotifyState(name, state);
+#endif
+
     RELEASE_LOG_FORWARDABLE(Process, PLATFORM_INITIALIZE_WEBPROCESS);
 
 #if USE(EXTENSIONKIT)
@@ -361,8 +365,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
     populateMobileGestaltCache(WTFMove(parameters.mobileGestaltExtensionHandle));
 
     m_uiProcessBundleIdentifier = parameters.uiProcessBundleIdentifier;
-
-    setPresentingApplicationBundleIdentifier(parameters.presentingApplicationBundleIdentifier);
 
 #if ENABLE(SANDBOX_EXTENSIONS)
     SandboxExtension::consumePermanently(parameters.uiProcessBundleResourcePathExtensionHandle);
@@ -498,14 +500,6 @@ void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& para
 #if TARGET_OS_IPHONE
     // Priority decay on iOS 9 is impacting page load time so we fix the priority of the WebProcess' main thread (rdar://problem/22003112).
     pthread_set_fixedpriority_self();
-#endif
-
-#if ENABLE(VORBIS)
-    PlatformMediaSessionManager::setVorbisDecoderEnabled(DeprecatedGlobalSettings::vorbisDecoderEnabled());
-#endif
-
-#if ENABLE(OPUS)
-    PlatformMediaSessionManager::setOpusDecoderEnabled(DeprecatedGlobalSettings::opusDecoderEnabled());
 #endif
 
     if (!parameters.mediaMIMETypes.isEmpty())
@@ -837,14 +831,14 @@ void WebProcess::registerLogHook()
             return;
 #endif
 
-        auto logChannel = span8IncludingNullTerminator(msg->subsystem);
-        auto logCategory = span8IncludingNullTerminator(msg->category);
+        auto logChannel = unsafeSpan8IncludingNullTerminator(msg->subsystem);
+        auto logCategory = unsafeSpan8IncludingNullTerminator(msg->category);
 
         if (type == OS_LOG_TYPE_FAULT)
             type = OS_LOG_TYPE_ERROR;
 
         if (char* messageString = os_log_copy_message_string(msg)) {
-            auto logString = span8IncludingNullTerminator(messageString);
+            auto logString = unsafeSpan8IncludingNullTerminator(messageString);
             WebProcess::singleton().sendLogOnStream(logChannel, logCategory, logString, type);
             free(messageString);
         }
@@ -1024,11 +1018,11 @@ void WebProcess::updateActivePages(const String& overrideDisplayName)
     ensureNetworkProcessConnection().connection().send(Messages::NetworkConnectionToWebProcess::UpdateActivePages(overrideDisplayName, activePagesOrigins(m_pageMap), *auditToken), 0);
 #else
     if (!overrideDisplayName) {
-        RunLoop::main().dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
+        RunLoop::protectedMain()->dispatch([activeOrigins = activePagesOrigins(m_pageMap)] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), CFSTR("LSActivePageUserVisibleOriginsKey"), (__bridge CFArrayRef)createNSArray(activeOrigins).get(), nullptr);
         });
     } else {
-        RunLoop::main().dispatch([name = overrideDisplayName.createCFString()] {
+        RunLoop::protectedMain()->dispatch([name = overrideDisplayName.createCFString()] {
             _LSSetApplicationInformationItem(kLSDefaultSessionID, _LSGetCurrentApplicationASN(), _kLSDisplayNameKey, name.get(), nullptr);
         });
     }
@@ -1518,19 +1512,56 @@ void WebProcess::revokeLaunchServicesSandboxExtension()
 #if ENABLE(NOTIFY_BLOCKING)
 void WebProcess::postNotification(const String& message, std::optional<uint64_t> state)
 {
-    if (state) {
-        int token = 0;
-        if (notify_register_check(message.ascii().data(), &token) == NOTIFY_STATUS_OK) {
-            notify_set_state(token, *state);
-            notify_cancel(token);
-        }
-    }
+    if (state)
+        setNotifyState(message, state.value());
     notify_post(message.ascii().data());
 }
 
 void WebProcess::postObserverNotification(const String& message)
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:message object:nil];
+}
+
+void WebProcess::setNotifyState(const String& name, uint64_t state)
+{
+    // FIXME: explain why caching the token for a non-zero state value is necessary
+    if (!state) {
+        if (auto maybeToken = m_notifyTokens.takeOptional(name)) {
+            notify_set_state(*maybeToken, 0);
+            notify_cancel(*maybeToken);
+        }
+        return;
+    }
+
+    int token = NOTIFY_TOKEN_INVALID;
+    int status = NOTIFY_STATUS_OK;
+    if (auto maybeToken = m_notifyTokens.getOptional(name))
+        token = maybeToken.value();
+    else if ((status = notify_register_check(name.ascii().data(), &token)) == NOTIFY_STATUS_OK)
+        m_notifyTokens.set(name, token);
+
+    if (token == NOTIFY_TOKEN_INVALID) {
+        WEBPROCESS_RELEASE_LOG_ERROR(Process, "setNotifyState: Couldn't create token for %" PUBLIC_LOG_STRING ": %d", name.ascii().data(), status);
+        return;
+    }
+
+    notify_set_state(token, state);
+}
+
+void WebProcess::getNotifyStateForTesting(const String& name, CompletionHandler<void(std::optional<uint64_t>)>&& completionHandler)
+{
+    int token = NOTIFY_TOKEN_INVALID;
+    uint64_t state = 0;
+
+    if (notify_register_check(name.ascii().data(), &token) != NOTIFY_STATUS_OK)
+        completionHandler(std::nullopt);
+    else if (notify_get_state(token, &state) != NOTIFY_STATUS_OK)
+        completionHandler(std::nullopt);
+    else
+        completionHandler(state);
+
+    if (token != NOTIFY_TOKEN_INVALID)
+        notify_cancel(token);
 }
 
 #endif

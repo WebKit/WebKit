@@ -275,7 +275,21 @@ void FetchResponse::fetch(ScriptExecutionContext& context, FetchRequest& request
         return;
     }
 
-    auto response = createFetchResponse(context, request, WTFMove(responseCallback));
+    if (request.hasReadableStreamBody()) {
+        request.body().convertReadableStreamToArrayBuffer(request, [context = Ref { context }, weakRequest = WeakPtr { request }, responseCallback = WTFMove(responseCallback), initiator](auto&& exception) mutable {
+            if (!!exception) {
+                responseCallback(WTFMove(*exception));
+                return;
+            }
+
+            Ref protectedRequest = *weakRequest;
+            Ref response = createFetchResponse(context.get(), protectedRequest.get(), WTFMove(responseCallback));
+            response->startLoader(context.get(), protectedRequest.get(), initiator);
+        });
+        return;
+    }
+
+    Ref response = createFetchResponse(context, request, WTFMove(responseCallback));
     response->startLoader(context, request, initiator);
 }
 

@@ -29,14 +29,30 @@
 
 #import <pal/spi/cocoa/CoreMaterialSPI.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 SOFT_LINK_FRAMEWORK_FOR_HEADER(PAL, CoreMaterial)
 SOFT_LINK_CLASS_FOR_HEADER(PAL, MTMaterialLayer)
 
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipeNone, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformChromeLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThickLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentUltraThinLight, NSString *)
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialRecipePlatformContentThinLight, NSString *)
+
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleCategoryStroke, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleCategoryFill, NSString *)
+
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleNone, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStylePrimary, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleSecondary, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleTertiary, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleQuaternary, NSString *)
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMaterial, MTCoreMaterialVisualStyleSeparator, NSString *)
+
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMaterial, MTVisualStylingCreateDictionaryRepresentation, NSDictionary *, (MTCoreMaterialRecipe recipe, MTCoreMaterialVisualStyleCategory category, MTCoreMaterialVisualStyle style, NSDictionary *options), (recipe, category, style, options))
+
+SPECIALIZE_OBJC_TYPE_TRAITS(MTMaterialLayer, PAL::getMTMaterialLayerClass())
 
 #endif // HAVE(CORE_MATERIAL)

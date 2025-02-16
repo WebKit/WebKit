@@ -55,12 +55,11 @@ public:
     LegacyLineLayout(RenderBlockFlow&);
     ~LegacyLineLayout();
 
-    RenderLineBoxList& lineBoxes() { return m_lineBoxes; }
-    const RenderLineBoxList& lineBoxes() const { return m_lineBoxes; }
-
-    LegacyRootInlineBox* legacyRootBox() const { return downcast<LegacyRootInlineBox>(m_lineBoxes.firstLegacyLineBox()); }
+    LegacyRootInlineBox* legacyRootBox() const { return m_legacyRootInlineBox.get(); }
+    void deleteLegacyRootBox(bool runCleanup = false);
 
     void layoutLineBoxes();
+    void shiftLineBy(LayoutUnit shiftX, LayoutUnit shiftY);
 
     LegacyRootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     void addOverflowFromInlineChildren();
@@ -85,7 +84,7 @@ private:
     const LocalFrameViewLayoutContext& layoutContext() const;
 
     RenderBlockFlow& m_flow;
-    RenderLineBoxList m_lineBoxes;
+    std::unique_ptr<LegacyRootInlineBox> m_legacyRootInlineBox;
 };
 
 };

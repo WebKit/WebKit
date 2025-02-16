@@ -70,6 +70,7 @@ int main(int argc, const char* argv[])
     _argv = argv;
 
     [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+    [WKProcessPool _crashOnMessageCheckFailureForTesting];
 
     UIApplicationMain(argc, (char**)argv, @"WebKitTestRunnerApp", @"WebKitTestRunnerApp");
     return 0;

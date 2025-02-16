@@ -1011,7 +1011,7 @@ WebKitDOMNamedNodeMap* webkit_dom_element_get_attributes(WebKitDOMElement* self)
     WebCore::JSMainThreadNullState state;
     g_return_val_if_fail(WEBKIT_DOM_IS_ELEMENT(self), 0);
     WebCore::Element* item = WebKit::core(self);
-    RefPtr<WebCore::NamedNodeMap> gobjectResult = WTF::getPtr(item->attributes());
+    RefPtr<WebCore::NamedNodeMap> gobjectResult = WTF::getPtr(item->attributesMap());
     return WebKit::kit(gobjectResult.get());
 }
 

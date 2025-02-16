@@ -68,7 +68,7 @@ private:
 
     Timer m_timer;
 
-    HashSet<String> m_names;
+    UncheckedKeyHashSet<String> m_names;
     std::atomic<int> m_requestsInFlight;
     MonotonicTime m_lastProxyEnabledStatusCheckTime;
 };

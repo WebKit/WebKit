@@ -36,6 +36,7 @@
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/RenderingResourceIdentifier.h>
 #include <wtf/RefCounted.h>
+#include <wtf/URL.h>
 #include <wtf/WeakPtr.h>
 
 #if !LOG_DISABLED
@@ -87,7 +88,6 @@ public:
     void resetClip();
     void drawGlyphs(WebCore::DisplayList::DrawGlyphs&&);
     void drawDecomposedGlyphs(WebCore::RenderingResourceIdentifier fontIdentifier, WebCore::RenderingResourceIdentifier decomposedGlyphsIdentifier);
-    void drawDisplayListItems(Vector<WebCore::DisplayList::Item>&&, const WebCore::FloatPoint& destination);
     void drawFilteredImageBuffer(std::optional<WebCore::RenderingResourceIdentifier> sourceImageIdentifier, const WebCore::FloatRect& sourceImageRect, Ref<WebCore::Filter>);
     void drawImageBuffer(WebCore::RenderingResourceIdentifier imageBufferIdentifier, const WebCore::FloatRect& destinationRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions);
     void drawNativeImage(WebCore::RenderingResourceIdentifier imageIdentifier, const WebCore::FloatRect& destRect, const WebCore::FloatRect& srcRect, WebCore::ImagePaintingOptions);
@@ -147,6 +147,8 @@ public:
 
     void beginPage(const WebCore::IntSize& pageSize);
     void endPage();
+
+    void setURLForRect(const URL&, const WebCore::FloatRect&);
 
 private:
     RemoteDisplayListRecorder(WebCore::ImageBuffer&, WebCore::RenderingResourceIdentifier, RemoteRenderingBackend&);

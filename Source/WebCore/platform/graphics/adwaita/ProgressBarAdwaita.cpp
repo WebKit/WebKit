@@ -72,7 +72,7 @@ void ProgressBarAdwaita::draw(GraphicsContext& graphicsContext, const FloatRound
     bool isDeterminate = progressBarPart.position() >= 0;
     if (isDeterminate) {
         auto progressWidth = fieldRect.width() * progressBarPart.position();
-        if (style.states.contains(ControlStyle::State::RightToLeft))
+        if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode))
             fieldRect.move(fieldRect.width() - progressWidth, 0);
         fieldRect.setWidth(progressWidth);
     } else {

@@ -95,8 +95,7 @@ public:
         return adoptRef(*new DeprecatedCSSOMComplexValue(WTFMove(value), owner));
     }
 
-    String cssText() const { return m_value->cssText(); }
-
+    String cssText() const;
     unsigned short cssValueType() const;
 
 protected:
@@ -105,6 +104,8 @@ protected:
         , m_value(WTFMove(value))
     {
     }
+
+    Ref<const CSSValue> protectedValue() const { return m_value; }
 
 private:
     Ref<const CSSValue> m_value;

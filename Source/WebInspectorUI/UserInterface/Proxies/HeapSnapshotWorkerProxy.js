@@ -54,7 +54,7 @@ WI.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WI.Object
         this.performAction("clearSnapshots", callback);
     }
 
-    createSnapshot(snapshotStringData, callback)
+    createSnapshot(targetId, snapshotStringData, callback)
     {
         this.performAction("createSnapshot", ...arguments);
     }
@@ -66,8 +66,8 @@ WI.HeapSnapshotWorkerProxy = class HeapSnapshotWorkerProxy extends WI.Object
 
     createImportedSnapshot(snapshotStringData, title, callback)
     {
-        const imported = true;
-        this.performAction("createSnapshot", snapshotStringData, title, imported, callback);
+        const targetId = null;
+        this.performAction("createSnapshot", targetId, snapshotStringData, title, callback);
     }
 
     // Public

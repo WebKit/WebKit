@@ -36,6 +36,7 @@ namespace WebCore {
 class Element;
 class RenderBox;
 class EventListener;
+template<typename> class ExceptionOr;
 }
 
 @interface WebFullScreenController : NSWindowController {
@@ -69,7 +70,7 @@ class EventListener;
 - (void)setElement:(RefPtr<WebCore::Element>&&)element;
 - (WebCore::Element*)element;
 
-- (void)enterFullScreen:(NSScreen *)screen;
+- (void)enterFullScreen:(NSScreen *)screen completionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)completionHandler;
 - (void)exitFullScreen;
 - (void)close;
 @end

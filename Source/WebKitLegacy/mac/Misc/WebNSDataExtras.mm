@@ -26,25 +26,28 @@
 #import <WebKitLegacy/WebNSDataExtras.h>
 
 #import <wtf/Assertions.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/text/ParsingUtilities.h>
+#import <wtf/text/StringCommon.h>
 
 @implementation NSData (WebNSDataExtras)
 
 - (NSString *)_webkit_guessedMIMETypeForXML
 {
-    NSUInteger length = [self length];
-    const UInt8* bytes = static_cast<const UInt8*>([self bytes]);
+    auto bytes = span(self);
 
-#define CHANNEL_TAG_LENGTH 7
+    constexpr size_t channelTagLength = 7;
 
-    const char* p = byteCast<char>(bytes);
-    int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (CHANNEL_TAG_LENGTH - 1);
+    size_t remaining = std::min<size_t>(bytes.size(), WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (channelTagLength - 1);
+    bytes = bytes.first(remaining);
 
     BOOL foundRDF = false;
 
-    while (remaining > 0) {
+    while (!bytes.empty()) {
         // Look for a "<".
-        const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
-        if (!hit)
+        auto hitIndex = WTF::find(bytes, '<');
+        if (hitIndex == notFound)
             break;
 
         // We are trying to identify RSS or Atom. RSS has a top-level
@@ -56,21 +59,21 @@
         // bail if we don't find an <rss>, <feed> or <rdf> element
         // right after those.
 
+        auto hit = bytes.subspan(hitIndex);
         if (foundRDF) {
-            if (!strncasecmp(hit, "<channel", strlen("<channel")))
+            if (spanHasPrefixIgnoringASCIICase(hit, "<channel"_span))
                 return @"application/rss+xml";
-        } else if (!strncasecmp(hit, "<rdf", strlen("<rdf")))
+        } else if (spanHasPrefixIgnoringASCIICase(hit, "<rdf"_span))
             foundRDF = TRUE;
-        else if (!strncasecmp(hit, "<rss", strlen("<rss")))
+        else if (spanHasPrefixIgnoringASCIICase(hit, "<rss"_span))
             return @"application/rss+xml";
-        else if (!strncasecmp(hit, "<feed", strlen("<feed")))
+        else if (spanHasPrefixIgnoringASCIICase(hit, "<feed"_span))
             return @"application/atom+xml";
-        else if (strncasecmp(hit, "<?", strlen("<?")) && strncasecmp(hit, "<!", strlen("<!")))
+        else if (!spanHasPrefixIgnoringASCIICase(hit, "<?"_span) && !spanHasPrefixIgnoringASCIICase(hit, "<!"_span))
             return nil;
 
         // Skip the "<" and continue.
-        remaining -= (hit + 1) - p;
-        p = hit + 1;
+        skip(bytes, hitIndex + 1);
     }
 
     return nil;
@@ -78,81 +81,73 @@
 
 - (NSString *)_webkit_guessedMIMEType
 {
-#define JPEG_MAGIC_NUMBER_LENGTH 4
-#define SCRIPT_TAG_LENGTH 7
-#define TEXT_HTML_LENGTH 9
-#define VCARD_HEADER_LENGTH 11
-#define VCAL_HEADER_LENGTH 15
+    constexpr size_t scriptTagLength = 7;
+    constexpr size_t textHTMLLength = 9;
 
     NSString *MIMEType = [self _webkit_guessedMIMETypeForXML];
     if ([MIMEType length])
         return MIMEType;
 
-    NSUInteger length = [self length];
-    const char* bytes = static_cast<const char*>([self bytes]);
+    auto bytes = span(self);
 
-    const char* p = bytes;
-    int remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (SCRIPT_TAG_LENGTH - 1);
-    while (remaining > 0) {
+    size_t remaining = std::min<size_t>(bytes.size(), WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (scriptTagLength - 1);
+    auto cursor = bytes.first(remaining);
+    while (!cursor.empty()) {
         // Look for a "<".
-        const char* hit = static_cast<const char*>(memchr(p, '<', remaining));
-        if (!hit)
+        size_t hitIndex = WTF::find(cursor, '<');
+        if (hitIndex == notFound)
             break;
 
+        auto hit = cursor.subspan(hitIndex);
         // If we found a "<", look for "<html>" or "<a " or "<script".
-        if (!strncasecmp(hit, "<html>", strlen("<html>"))
-            || !strncasecmp(hit, "<a ", strlen("<a "))
-            || !strncasecmp(hit, "<script", strlen("<script"))
-            || !strncasecmp(hit, "<title>", strlen("<title>"))) {
+        if (spanHasPrefixIgnoringASCIICase(hit, "<html>"_span)
+            || spanHasPrefixIgnoringASCIICase(hit, "<a "_span)
+            || spanHasPrefixIgnoringASCIICase(hit, "<script"_span)
+            || spanHasPrefixIgnoringASCIICase(hit, "<title>"_span)) {
             return @"text/html";
         }
 
         // Skip the "<" and continue.
-        remaining -= (hit + 1) - p;
-        p = hit + 1;
+        skip(cursor, hitIndex + 1);
     }
 
     // Test for a broken server which has sent the content type as part of the content.
     // This code could be improved to look for other mime types.
-    p = bytes;
-    remaining = std::min<NSUInteger>(length, WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (TEXT_HTML_LENGTH - 1);
-    while (remaining > 0) {
+    remaining = std::min<size_t>(bytes.size(), WEB_GUESS_MIME_TYPE_PEEK_LENGTH) - (textHTMLLength - 1);
+    cursor = bytes.first(remaining);
+    while (!cursor.empty()) {
         // Look for a "t" or "T".
-        const char* hit = nullptr;
-        const char* lowerhit = static_cast<const char*>(memchr(p, 't', remaining));
-        const char* upperhit = static_cast<const char*>(memchr(p, 'T', remaining));
-        if (!lowerhit && !upperhit)
+        size_t lowerHitIndex = WTF::find(cursor, 't');
+        size_t upperHitIndex = WTF::find(cursor, 'T');
+        if (lowerHitIndex == notFound && upperHitIndex == notFound)
             break;
 
-        if (!lowerhit)
-            hit = upperhit;
-        else if (!upperhit)
-            hit = lowerhit;
-        else
-            hit = std::min<const char*>(lowerhit, upperhit);
+        static_assert(notFound == std::numeric_limits<size_t>::max());
+        size_t hitIndex = std::min(lowerHitIndex, upperHitIndex);
+        auto hit = cursor.subspan(hitIndex);
 
         // If we found a "t/T", look for "text/html".
-        if (!strncasecmp(hit, "text/html", TEXT_HTML_LENGTH))
+        if (spanHasPrefixIgnoringASCIICase(hit, "text/html"_span))
             return @"text/html";
 
         // Skip the "t/T" and continue.
-        remaining -= (hit + 1) - p;
-        p = hit + 1;
+        skip(cursor, hitIndex + 1);
     }
 
-    if ((length >= VCARD_HEADER_LENGTH) && !strncmp(bytes, "BEGIN:VCARD", VCARD_HEADER_LENGTH))
+    if (spanHasPrefix(bytes, "BEGIN:VCARD"_span))
         return @"text/vcard";
-    if ((length >= VCAL_HEADER_LENGTH) && !strncmp(bytes, "BEGIN:VCALENDAR", VCAL_HEADER_LENGTH))
+    if (spanHasPrefix(bytes, "BEGIN:VCALENDAR"_span))
         return @"text/calendar";
 
     // Test for plain text.
-    NSUInteger i;
-    for (i = 0; i < length; ++i) {
-        char c = bytes[i];
-        if ((c < 0x20 || c > 0x7E) && (c != '\t' && c != '\r' && c != '\n'))
+    bool foundBadCharacter = false;
+    for (auto c : bytes) {
+        if ((c < 0x20 || c > 0x7E) && (c != '\t' && c != '\r' && c != '\n')) {
+            foundBadCharacter = true;
             break;
+        }
     }
-    if (i == length) {
+    if (!foundBadCharacter) {
         // Didn't encounter any bad characters, looks like plain text.
         return @"text/plain";
     }
@@ -160,14 +155,9 @@
     // Looks like this is a binary file.
 
     // Sniff for the JPEG magic number.
-    if ((length >= JPEG_MAGIC_NUMBER_LENGTH) && !strncmp(bytes, "\xFF\xD8\xFF\xE0", JPEG_MAGIC_NUMBER_LENGTH))
+    constexpr std::array<uint8_t, 4> jpegMagicNumber { 0xFF, 0xD8, 0xFF, 0xE0 };
+    if (spanHasPrefix(bytes, std::span { jpegMagicNumber }))
         return @"image/jpeg";
-
-#undef JPEG_MAGIC_NUMBER_LENGTH
-#undef SCRIPT_TAG_LENGTH
-#undef TEXT_HTML_LENGTH
-#undef VCARD_HEADER_LENGTH
-#undef VCAL_HEADER_LENGTH
 
     return nil;
 }
@@ -175,9 +165,7 @@
 - (BOOL)_web_isCaseInsensitiveEqualToCString:(const char *)string
 {
     ASSERT(string);
-
-    const char* bytes = static_cast<const char*>([self bytes]);
-    return !strncasecmp(bytes, string, [self length]);
+    return equalLettersIgnoringASCIICase(span(self), unsafeSpan(string));
 }
 
 @end

@@ -5,11 +5,11 @@
 // http://mathias.html5.org/tests/javascript/string/
 
 /*---
- description: >
-     String.prototype.sub returns a string of HTML describing a single HTML
-     subscript element. The element's content is the `this` value of the
-     function invocation, coerced to a string.
- es6id: B.2.3.13
+description: >
+    String.prototype.sub returns a string of HTML describing a single HTML
+    subscript element. The element's content is the `this` value of the
+    function invocation, coerced to a string.
+es6id: B.2.3.13
 ---*/
 
 assert.sameValue('_'.sub(), '<sub>_</sub>');

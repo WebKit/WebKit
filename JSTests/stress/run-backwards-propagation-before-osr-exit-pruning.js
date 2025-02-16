@@ -15,7 +15,7 @@ function main() {
         const v39 = v38 ? v30 : 1;
         v40 = v34;
             
-        for (let v41 = 0; v41 != 100000; v41++) { }
+        for (let v41 = 0; v41 != testLoopCount; v41++) { }
     }
     [1,1,1].filter(v24);
     assert(Object.is(v40, -0) === true);

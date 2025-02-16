@@ -63,9 +63,11 @@ public:
     bool isTable() const final { return boolAttributeValue(AXProperty::IsTable); }
     bool isExposable() const final { return boolAttributeValue(AXProperty::IsExposable); }
     bool hasClickHandler() const final { return boolAttributeValue(AXProperty::HasClickHandler); }
+    FloatRect relativeFrame() const final;
 
-    bool hasBodyTag() const final { return boolAttributeValue(AXProperty::HasBodyTag); }
-    bool hasMarkTag() const final { return boolAttributeValue(AXProperty::HasMarkTag); }
+    bool hasAttachmentTag() const final { return propertyValue<TagName>(AXProperty::TagName) == TagName::attachment; }
+    bool hasBodyTag() const final { return propertyValue<TagName>(AXProperty::TagName) == TagName::body; }
+    bool hasMarkTag() const final { return propertyValue<TagName>(AXProperty::TagName) == TagName::mark; }
 
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) final;
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
@@ -88,7 +90,17 @@ public:
         return runs && runs->size();
     }
     TextEmissionBehavior emitTextAfterBehavior() const final { return propertyValue<TextEmissionBehavior>(AXProperty::EmitTextAfterBehavior); }
+    AXTextRunLineID listMarkerLineID() const final { return propertyValue<AXTextRunLineID>(AXProperty::ListMarkerLineID); };
+    String listMarkerText() const final { return stringAttributeValue(AXProperty::ListMarkerText); }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
+
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    bool isIgnored() const final { return boolAttributeValue(AXProperty::IsIgnored); }
+#else
+    // When not including ignored objects in the core tree, we should never create an isolated object from
+    // an ignored live object, so we can hardcode this to false.
+    bool isIgnored() const final { return false; }
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     AXTextMarkerRange textMarkerRange() const final;
 
@@ -223,8 +235,7 @@ private:
     bool isFileUploadButton() const final { return boolAttributeValue(AXProperty::IsFileUploadButton); }
     FloatPoint screenRelativePosition() const final;
     IntPoint remoteFrameOffset() const final;
-    FloatRect relativeFrame() const final;
-    bool hasCachedRelativeFrame() const { return optionalAttributeValue<IntRect>(AXProperty::RelativeFrame).has_value(); }
+    std::optional<IntRect> cachedRelativeFrame() const { return optionalAttributeValue<IntRect>(AXProperty::RelativeFrame); }
 #if PLATFORM(MAC)
     FloatRect primaryScreenRect() const final;
 #endif
@@ -236,13 +247,6 @@ private:
     String datetimeAttributeValue() const final { return stringAttributeValue(AXProperty::DatetimeAttributeValue); }
     bool canSetValueAttribute() const final { return boolAttributeValue(AXProperty::CanSetValueAttribute); }
     bool canSetSelectedAttribute() const final { return boolAttributeValue(AXProperty::CanSetSelectedAttribute); }
-#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    bool isIgnored() const final { return boolAttributeValue(AXProperty::IsIgnored); }
-#else
-    // When not including ignored objects in the core tree, we should never create an isolated object from
-    // an ignored live object, so we can hardcode this to false.
-    bool isIgnored() const final { return false; }
-#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     unsigned blockquoteLevel() const final { return unsignedAttributeValue(AXProperty::BlockquoteLevel); }
     unsigned headingLevel() const final { return unsignedAttributeValue(AXProperty::HeadingLevel); }
     AccessibilityButtonState checkboxOrRadioValue() const final { return propertyValue<AccessibilityButtonState>(AXProperty::ButtonState); }
@@ -489,6 +493,7 @@ private:
     bool inheritsPresentationalRole() const final;
     void setAccessibleName(const AtomString&) final;
 
+    String textContentPrefixFromListMarker() const final;
     String titleAttributeValue() const final;
     String title() const final { return stringAttributeValue(AXProperty::Title); }
     String description() const final { return stringAttributeValue(AXProperty::Description); }

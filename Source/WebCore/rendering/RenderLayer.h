@@ -173,6 +173,7 @@ public:
     String name() const;
 
     Page& page() const { return renderer().page(); }
+    Ref<Page> protectedPage() const { return renderer().page(); }
     RenderLayerModelObject& renderer() const { return m_renderer; }
     RenderBox* renderBox() const { return dynamicDowncast<RenderBox>(renderer()); }
 
@@ -557,21 +558,34 @@ public:
     bool behavesAsFixed() const { return m_behavesAsFixed; }
 
     struct PaintedContentRequest {
-        void makeStatesUndetermined()
-        {
-            if (hasPaintedContent == RequestState::Unknown)
-                hasPaintedContent = RequestState::Undetermined;
-        }
+        PaintedContentRequest() = default;
+        PaintedContentRequest(const RenderLayer& owningLayer);
 
         void setHasPaintedContent() { hasPaintedContent = RequestState::True; }
-
-        bool needToDeterminePaintedContentState() const { return hasPaintedContent == RequestState::Unknown; }
-
+        void makePaintedContentUndetermined() { hasPaintedContent = RequestState::Undetermined; }
         bool probablyHasPaintedContent() const { return hasPaintedContent == RequestState::True || hasPaintedContent == RequestState::Undetermined; }
-        
-        bool isSatisfied() const { return hasPaintedContent != RequestState::Unknown; }
+        bool isPaintedContentSatisfied() const { return hasPaintedContent != RequestState::Unknown; }
+
+#if HAVE(HDR_SUPPORT)
+        void setHasPaintedHDRContent() { hasPaintedHDRContent = RequestState::True; }
+        void makePaintedHDRContentUnknown() { hasPaintedHDRContent = RequestState::Unknown; }
+        bool probablyHasPaintedHDRContent() const { return hasPaintedHDRContent == RequestState::True || hasPaintedHDRContent == RequestState::Undetermined; }
+        bool isPaintedHDRContentSatisfied() const { return hasPaintedHDRContent != RequestState::Unknown; }
+#endif
+
+        bool isSatisfied() const
+        {
+#if HAVE(HDR_SUPPORT)
+            if (!isPaintedHDRContentSatisfied())
+                return false;
+#endif
+            return isPaintedContentSatisfied();
+        }
 
         RequestState hasPaintedContent { RequestState::Unknown };
+#if HAVE(HDR_SUPPORT)
+        RequestState hasPaintedHDRContent { RequestState::DontCare };
+#endif
     };
 
     bool isVisibilityHiddenOrOpacityZero() const;
@@ -579,7 +593,7 @@ public:
     // Returns true if this layer has visible content (ignoring any child layers).
     bool isVisuallyNonEmpty(PaintedContentRequest* = nullptr) const;
     // True if this layer container renderers that paint.
-    bool hasNonEmptyChildRenderers(PaintedContentRequest&) const;
+    void determineNonLayerDescendantsPaintedContent(PaintedContentRequest&) const;
 
     // FIXME: We should ASSERT(!m_hasSelfPaintingLayerDescendantDirty); here but we hit the same bugs as visible content above.
     // Part of the issue is with subtree relayout: we don't check if our ancestors have some descendant flags dirty, missing some updates.
@@ -637,13 +651,14 @@ public:
         PaintingCompositingMaskPhase          = 1 << 7,
         PaintingCompositingClipPathPhase      = 1 << 8,
         PaintingOverflowContainer             = 1 << 9,
-        PaintingOverflowContents              = 1 << 10,
-        PaintingRootBackgroundOnly            = 1 << 11,
-        PaintingSkipRootBackground            = 1 << 12,
-        PaintingChildClippingMaskPhase        = 1 << 13,
-        PaintingSVGClippingMask               = 1 << 14,
-        CollectingEventRegion                 = 1 << 15,
-        PaintingSkipDescendantViewTransition  = 1 << 16,
+        PaintingOverflowContentsRoot          = 1 << 10,
+        PaintingOverflowContents              = 1 << 11,
+        PaintingRootBackgroundOnly            = 1 << 12,
+        PaintingSkipRootBackground            = 1 << 13,
+        PaintingChildClippingMaskPhase        = 1 << 14,
+        PaintingSVGClippingMask               = 1 << 15,
+        CollectingEventRegion                 = 1 << 16,
+        PaintingSkipDescendantViewTransition  = 1 << 17,
     };
     static constexpr OptionSet<PaintLayerFlag> paintLayerPaintingCompositingAllPhasesFlags() { return { PaintLayerFlag::PaintingCompositingBackgroundPhase, PaintLayerFlag::PaintingCompositingForegroundPhase }; }
 
@@ -882,6 +897,10 @@ public:
     void establishesTopLayerDidChange();
 
     bool isBitmapOnly() const;
+
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    bool allowsDynamicContentScaling() const;
+#endif
 
     enum ViewportConstrainedNotCompositedReason {
         NoNotCompositedReason,

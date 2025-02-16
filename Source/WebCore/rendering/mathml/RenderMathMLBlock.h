@@ -72,7 +72,7 @@ protected:
 
     static inline LayoutUnit ascentForChild(const RenderBox& child);
 
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
     void computeAndSetBlockDirectionMarginsOfChildren();
     void insertPositionedChildrenIntoContainingBlock();
     void layoutFloatingChildren();
@@ -100,9 +100,8 @@ protected:
 private:
     bool isRenderMathMLBlock() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLBlock"_s; }
-    bool avoidsFloats() const final { return true; }
     bool canDropAnonymousBlockChild() const final { return false; }
-    void layoutItems(bool relayoutChildren);
+    void layoutItems(RelayoutChildren);
 
     Ref<MathMLStyle> m_mathMLStyle;
 };

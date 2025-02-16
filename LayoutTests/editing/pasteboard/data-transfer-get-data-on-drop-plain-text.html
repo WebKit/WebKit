@@ -45,6 +45,7 @@ function updateResultWithEvent(event) {
 destination.addEventListener("dragover", updateResultWithEvent);
 destination.addEventListener("drop", updateResultWithEvent);
 
+source.focus();
 source.setSelectionRange(0, source.value.length);
 
 if (window.testRunner && window.eventSender && window.internals) {

@@ -488,7 +488,7 @@ void InteractionRegionOverlay::drawSettings(GraphicsContext& context)
     for (unsigned i = 1; i < m_settings.size(); i++)
         rect.unite(rectForSettingAtIndex(i));
 
-    rect.expand(FloatBoxExtent { 4, 4, 4, 4 });
+    rect.expand(FloatBoxExtent { 4.0f, 4.0f, 4.0f, 4.0f });
 
     {
         GraphicsContextStateSaver stateSaver(context);

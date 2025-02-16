@@ -165,8 +165,7 @@ CSSDocumentation = {
     },
     "-webkit-mask-attachment": {
         "description": "If a -webkit-mask-image is specified, -webkit-mask-attachment determines whether the mask image's position is fixed within the viewport, or scrolls along with its containing block.",
-        "syntax": "<attachment>#",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/-webkit-mask-attachment"
+        "syntax": "<attachment>#"
     },
     "-webkit-mask-clip": {
         "description": "Determines the mask painting area, which determines the area that is affected by the mask.",
@@ -222,8 +221,7 @@ CSSDocumentation = {
     },
     "-webkit-overflow-scrolling": {
         "description": "Specifies whether to use native-style scrolling in an overflow:scroll element.",
-        "syntax": "auto | touch",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/-webkit-overflow-scrolling"
+        "syntax": "auto | touch"
     },
     "-webkit-perspective": {
         "description": "Applies the same transform as the perspective(<number>) transform function, except that it applies only to the positioned or transformed children of the element, not to the transform on the element itself."
@@ -327,8 +325,7 @@ CSSDocumentation = {
     },
     "align-tracks": {
         "description": "The align-tracks CSS property sets the alignment in the masonry axis for grid containers that have masonry in their block axis.",
-        "syntax": "[ normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position> ]#",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/align-tracks"
+        "syntax": "[ normal | <baseline-position> | <content-distribution> | <overflow-position>? <content-position> ]#"
     },
     "all": {
         "description": "Shorthand that resets all properties except 'direction' and 'unicode-bidi'.",
@@ -336,8 +333,7 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/all"
     },
     "alt": {
-        "description": "Provides alternative text for assistive technology to replace the generated content of a ::before or ::after element.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/alt"
+        "description": "Provides alternative text for assistive technology to replace the generated content of a ::before or ::after element."
     },
     "anchor-name": {
         "description": "The anchor-name property declares that an element is an anchor element, and gives it a list of anchor names to be targeted by.",
@@ -429,7 +425,7 @@ CSSDocumentation = {
     },
     "aspect-ratio": {
         "description": "The aspect-ratio   CSS property sets a preferred aspect ratio for the box, which will be used in the calculation of auto sizes and some other layout functions.",
-        "syntax": "auto | <ratio>",
+        "syntax": "auto || <ratio>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/aspect-ratio"
     },
     "azimuth": {
@@ -936,7 +932,9 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/clip-path"
     },
     "clip-rule": {
-        "description": "Indicates the algorithm which is to be used to determine what parts of the canvas are included inside the shape."
+        "description": "Indicates the algorithm which is to be used to determine what parts of the canvas are included inside the shape.",
+        "syntax": "nonzero | evenodd",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/clip-rule"
     },
     "color": {
         "description": "Sets the color of an element's text",
@@ -944,7 +942,9 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/color"
     },
     "color-interpolation-filters": {
-        "description": "Specifies the color space for imaging operations performed via filter effects."
+        "description": "Specifies the color space for imaging operations performed via filter effects.",
+        "syntax": "auto | sRGB | linearRGB",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/color-interpolation-filters"
     },
     "color-scheme": {
         "description": "The color-scheme CSS property allows an element to indicate which color schemes it can comfortably be rendered in.",
@@ -958,7 +958,7 @@ CSSDocumentation = {
     },
     "column-fill": {
         "description": "In continuous media, this property will only be consulted if the length of columns has been constrained. Otherwise, columns will automatically be balanced.",
-        "syntax": "auto | balance | balance-all",
+        "syntax": "auto | balance",
         "url": "https://developer.mozilla.org/docs/Web/CSS/column-fill"
     },
     "column-gap": {
@@ -1009,7 +1009,7 @@ CSSDocumentation = {
     "contain-intrinsic-block-size": {
         "description": "Block size of an element when the element is subject to size containment.",
         "syntax": "auto? [ none | <length> ]",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-block-size"
+        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-block-size"
     },
     "contain-intrinsic-height": {
         "description": "Height of an element when the element is subject to size containment.",
@@ -1019,7 +1019,7 @@ CSSDocumentation = {
     "contain-intrinsic-inline-size": {
         "description": "Inline size of an element when the element is subject to size containment.",
         "syntax": "auto? [ none | <length> ]",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-contain-intrinsic-inline-size"
+        "url": "https://developer.mozilla.org/docs/Web/CSS/contain-intrinsic-inline-size"
     },
     "contain-intrinsic-size": {
         "description": "Size of an element when the element is subject to size containment.",
@@ -1076,6 +1076,21 @@ CSSDocumentation = {
         "syntax": "[ [ <url> [ <x> <y> ]? , ]* [ auto | default | none | context-menu | help | pointer | progress | wait | cell | crosshair | text | vertical-text | alias | copy | move | no-drop | not-allowed | e-resize | n-resize | ne-resize | nw-resize | s-resize | se-resize | sw-resize | w-resize | ew-resize | ns-resize | nesw-resize | nwse-resize | col-resize | row-resize | all-scroll | zoom-in | zoom-out | grab | grabbing ] ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/cursor"
     },
+    "cx": {
+        "description": "The cx CSS property defines the x-axis center point of an SVG circle or ellipse element. If present, it overrides the element's cx attribute.",
+        "syntax": "<length> | <percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/cx"
+    },
+    "cy": {
+        "description": "The cy CSS property defines the y-axis center point of an SVG circle or ellipse elements. If present, it overrides the element's cy attribute.",
+        "syntax": "<length> | <percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/cy"
+    },
+    "d": {
+        "description": "The d CSS property defines a path to be drawn by the SVG path element. If present, it overrides the element's d attribute.",
+        "syntax": "none | path(<string>)",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/d"
+    },
     "descent-override": {
         "description": "Describes the descent metric of a font.",
         "syntax": "normal | <percentage>"
@@ -1089,6 +1104,11 @@ CSSDocumentation = {
         "description": "In combination with 'float' and 'position', determines the type of box or boxes that are generated for an element.",
         "syntax": "[ <display-outside> || <display-inside> ] | <display-listitem> | <display-internal> | <display-box> | <display-legacy>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/display"
+    },
+    "dominant-baseline": {
+        "description": "The dominant-baseline CSS property specifies the specific baseline used to align the box's text and inline-level contents. It also indicates the default alignment baseline of any boxes participating in baseline alignment in the box's alignment context. If present, it overrides the shape's dominant-baseline attribute.",
+        "syntax": "auto | text-bottom | alphabetic | ideographic | middle | central | mathematical | hanging | text-top",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/dominant-baseline"
     },
     "empty-cells": {
         "description": "In the separated borders model, this property controls the rendering of borders and backgrounds around cells that have no visible content.",
@@ -1104,16 +1124,23 @@ CSSDocumentation = {
     },
     "field-sizing": {
         "description": "The field-sizing CSS property enables you to control the sizing behavior of elements that are given a default preferred size, such as form control elements. This property enables you to override the default sizing behavior, allowing form controls to adjust in size to fit their contents.",
-        "syntax": "content | fixed"
+        "syntax": "content | fixed",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/field-sizing"
     },
     "fill": {
-        "description": "Paints the interior of the given graphical element."
+        "description": "Paints the interior of the given graphical element.",
+        "syntax": "none | <color> | <url> [none | <color>]? | context-fill | context-stroke",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/fill"
     },
     "fill-opacity": {
-        "description": "Specifies the opacity of the painting operation used to paint the interior the current object."
+        "description": "Specifies the opacity of the painting operation used to paint the interior the current object.",
+        "syntax": "<alpha-value>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/fill-opacity"
     },
     "fill-rule": {
-        "description": "Indicates the algorithm (or winding rule) which is to be used to determine what parts of the canvas are included inside the shape."
+        "description": "Indicates the algorithm (or winding rule) which is to be used to determine what parts of the canvas are included inside the shape.",
+        "syntax": "nonzero | evenodd",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/fill-rule"
     },
     "filter": {
         "description": "Processes an element's rendering before it is displayed in the document, by applying one or more filter effects.",
@@ -1307,7 +1334,7 @@ CSSDocumentation = {
     },
     "forced-color-adjust": {
         "description": "Allows authors to opt certain elements out of forced colors mode. This then restores the control of those values to CSS",
-        "syntax": "auto | none",
+        "syntax": "auto | none | preserve-parent-color",
         "url": "https://developer.mozilla.org/docs/Web/CSS/forced-color-adjust"
     },
     "gap": {
@@ -1425,7 +1452,8 @@ CSSDocumentation = {
     },
     "hyphenate-limit-chars": {
         "description": "The hyphenate-limit-chars CSS property specifies the minimum word length to allow hyphenation of words as well as the minimum number of characters before and after the hyphen.",
-        "syntax": "[ auto | <integer> ]{1,3}"
+        "syntax": "[ auto | <integer> ]{1,3}",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/hyphenate-limit-chars"
     },
     "hyphens": {
         "description": "Controls whether hyphenation is allowed to create more break opportunities within a line of text.",
@@ -1448,8 +1476,7 @@ CSSDocumentation = {
     },
     "ime-mode": {
         "description": "Controls the state of the input method editor for text fields.",
-        "syntax": "auto | normal | active | inactive | disabled",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/ime-mode"
+        "syntax": "auto | normal | active | inactive | disabled"
     },
     "inherits": {
         "description": "Specifies the inherit flag of the custom property registration represented by the @property rule, controlling whether or not the property inherits by default.",
@@ -1462,8 +1489,7 @@ CSSDocumentation = {
     },
     "initial-letter-align": {
         "description": "The initial-letter-align CSS property specifies the alignment of initial letters within a paragraph.",
-        "syntax": "[ auto | alphabetic | hanging | ideographic ]",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/initial-letter-align"
+        "syntax": "[ auto | alphabetic | hanging | ideographic ]"
     },
     "initial-value": {
         "description": "Specifies the initial value of the custom property registration represented by the @property rule, controlling the property\u2019s initial value.",
@@ -1482,11 +1508,6 @@ CSSDocumentation = {
         "description": "The inset CSS property defines the logical block and inline start and end offsets of an element, which map to physical offsets depending on the element's writing mode, directionality, and text orientation. It corresponds to the top and bottom, or right and left properties depending on the values defined for writing-mode, direction, and text-orientation.",
         "syntax": "<'top'>{1,4}",
         "url": "https://developer.mozilla.org/docs/Web/CSS/inset"
-    },
-    "inset-area": {
-        "description": "Most common use-cases of anchor positioning only need to worry about the edges of the positioned element\u2019s containing block, and the edges of the default anchor element. These lines can be thought of as defining a 3x3 grid; inset-area lets you easily set up the positioned element\u2019s inset properties by specifying what area of this inset-area grid you want the positioned element to be in",
-        "syntax": "none | <inset-area>",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/inset-area"
     },
     "inset-block": {
         "description": "The inset-block CSS property defines the logical block start and end offsets of an element, which maps to physical offsets depending on the element's writing mode, directionality, and text orientation. It corresponds to the top and bottom, or right and left properties depending on the values defined for writing-mode, direction, and text-orientation.",
@@ -1518,6 +1539,11 @@ CSSDocumentation = {
         "syntax": "<'top'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/inset-inline-start"
     },
+    "interpolate-size": {
+        "description": "The interpolate-size CSS property allows you to enable animations and transitions between a <length-percentage> value and an intrinsic size value such as auto, fit-content, or max-content.",
+        "syntax": "numeric-only | allow-keywords",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/interpolate-size"
+    },
     "isolation": {
         "description": "In CSS setting to 'isolate' will turn the element into a stacking context. In SVG, it defines whether an element is isolated or not.",
         "syntax": "auto | isolate",
@@ -1540,8 +1566,7 @@ CSSDocumentation = {
     },
     "justify-tracks": {
         "description": "The justify-tracks CSS property sets the alignment in the masonry axis for grid containers that have masonry in their inline axis",
-        "syntax": "[ normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ] ]#",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/justify-tracks"
+        "syntax": "[ normal | <content-distribution> | <overflow-position>? [ <content-position> | left | right ] ]#"
     },
     "kerning": {
         "description": "Indicates whether the user agent should adjust inter-glyph spacing based on kerning tables that are included in the relevant font or instead disable auto-kerning and set inter-character spacing to a specific length."
@@ -1664,16 +1689,24 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/margin-trim"
     },
     "marker": {
-        "description": "Specifies the marker symbol that shall be used for all points on the sets the value for all vertices on the given 'path' element or basic shape."
+        "description": "Specifies the marker symbol that shall be used for all points on the sets the value for all vertices on the given 'path' element or basic shape.",
+        "syntax": "none | <url>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/marker"
     },
     "marker-end": {
-        "description": "Specifies the marker that will be drawn at the last vertices of the given markable element."
+        "description": "Specifies the marker that will be drawn at the last vertices of the given markable element.",
+        "syntax": "none | <url>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/marker-end"
     },
     "marker-mid": {
-        "description": "Specifies the marker that will be drawn at all vertices except the first and last."
+        "description": "Specifies the marker that will be drawn at all vertices except the first and last.",
+        "syntax": "none | <url>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/marker-mid"
     },
     "marker-start": {
-        "description": "Specifies the marker that will be drawn at the first vertices of the given markable element."
+        "description": "Specifies the marker that will be drawn at the first vertices of the given markable element.",
+        "syntax": "none | <url>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/marker-start"
     },
     "marks": {
         "description": "The marks CSS at-rule descriptor, used with the @page at-rule, adds crop and/or cross marks to the presentation of the document. Crop marks indicate where the page should be cut. Cross marks are used to align sheets.",
@@ -1765,8 +1798,7 @@ CSSDocumentation = {
     },
     "masonry-auto-flow": {
         "description": "The masonry-auto-flow CSS property modifies how items are placed when using masonry in CSS Grid Layout.",
-        "syntax": "[ pack | next ] || [ definite-first | ordered ]",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/masonry-auto-flow"
+        "syntax": "[ pack | next ] || [ definite-first | ordered ]"
     },
     "math-depth": {
         "description": "Describe a notion of \"depth\" for each element of a mathematical formula, with respect to the top-level container of that formula.",
@@ -1932,7 +1964,7 @@ CSSDocumentation = {
     },
     "outline": {
         "description": "Shorthand property for 'outline-style', 'outline-width', and 'outline-color'.",
-        "syntax": "[ <'outline-color'> || <'outline-style'> || <'outline-width'> ]",
+        "syntax": "[ <'outline-width'> || <'outline-style'> || <'outline-color'> ]",
         "url": "https://developer.mozilla.org/docs/Web/CSS/outline"
     },
     "outline-color": {
@@ -2158,18 +2190,23 @@ CSSDocumentation = {
     },
     "position-anchor": {
         "description": "The position-anchor property defines the default anchor specifier for all anchor functions on the element, allowing multiple elements to use the same set of anchor functions (and position options lists!) while changing which anchor element each is referring to.",
-        "syntax": "<anchor-element>",
+        "syntax": "auto | <anchor-name>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/position-anchor"
+    },
+    "position-area": {
+        "description": "The position-area CSS property enables an anchor-positioned element to be positioned relative to the edges of its associated anchor element by placing the positioned element on one or more tiles of an implicit 3x3 grid, where the anchoring element is the center cell.",
+        "syntax": "none | <position-area>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/position-area"
     },
     "position-try": {
         "description": "This shorthand sets both position-try-options and position-try-order. If <'position-try-order'> is omitted, it\u2019s set to the property\u2019s initial value.",
-        "syntax": "<'position-try-order'>? <'position-try-options'>",
+        "syntax": "<'position-try-order'>? <'position-try-fallbacks'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/position-try"
     },
-    "position-try-options": {
-        "description": "This property provides a list of alternate positioning styles to try when the absolutely positioned box overflows its inset-modified containing block. This position options list is initially empty.",
-        "syntax": "none | [ [<dashed-ident> || <try-tactic>] | inset-area( <'inset-area'> ) ]#",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/position-try-options"
+    "position-try-fallbacks": {
+        "description": "The position-try-fallbacks CSS property enables you to specify a list of one or more alternative position try fallback options for anchor-positioned elements to be placed relative to their associated anchor elements. When the element would otherwise overflow its inset-modified containing block, the browser will try placing the positioned element in these different fallback positions, in the order provided, until it finds a value that stops it from overflowing its container or the viewport.",
+        "syntax": "none | [ [<dashed-ident> || <try-tactic>] | <'position-area'> ]#",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/position-try-fallbacks"
     },
     "position-try-order": {
         "description": "This property specifies the order in which the position options list will be tried.",
@@ -2194,6 +2231,11 @@ CSSDocumentation = {
         "description": "Specifies quotation marks for any number of embedded quotations.",
         "syntax": "none | auto | [ <string> <string> ]+",
         "url": "https://developer.mozilla.org/docs/Web/CSS/quotes"
+    },
+    "r": {
+        "description": "The r CSS property defines the radius of a circle. It can only be used with the SVG circle element. If present, it overrides the circle's r attribute.",
+        "syntax": "<length> | <percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/r"
     },
     "range": {
         "description": "@counter-style descriptor. Defines the ranges over which the counter style is defined.",
@@ -2239,9 +2281,19 @@ CSSDocumentation = {
     "ruby-span": {
         "description": "Determines whether, and on which side, ruby text is allowed to partially overhang any adjacent text in addition to its own base, when the ruby text is wider than the ruby base."
     },
+    "rx": {
+        "description": "The rx CSS property defines the x-axis, or horizontal, radius of an SVG ellipse and the horizontal curve of the corners of an SVG rect rectangle. If present, it overrides the shape's rx attribute.",
+        "syntax": "<length> | <percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/rx"
+    },
+    "ry": {
+        "description": "The ry CSS property defines the y-axis, or vertical, radius of an SVG ellipse and the vertical curve of the corners of an SVG rect rectangle. If present, it overrides the shape's ry attribute.",
+        "syntax": "<length> | <percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/ry"
+    },
     "scale": {
         "description": "The scale CSS property allows you to specify scale transforms individually and independently of the transform property. This maps better to typical user interface usage, and saves having to remember the exact order of transform functions to specify in the transform value.",
-        "syntax": "none | <number>{1,3}",
+        "syntax": "none | [ <number> | <percentage> ]{1,3}",
         "url": "https://developer.mozilla.org/docs/Web/CSS/scale"
     },
     "scroll-behavior": {
@@ -2414,16 +2466,13 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/scroll-timeline-name"
     },
     "scrollbar-3dlight-color": {
-        "description": "Determines the color of the top and left edges of the scroll box and scroll arrows of a scroll bar.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-3dlight-color"
+        "description": "Determines the color of the top and left edges of the scroll box and scroll arrows of a scroll bar."
     },
     "scrollbar-arrow-color": {
-        "description": "Determines the color of the arrow elements of a scroll arrow.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-arrow-color"
+        "description": "Determines the color of the arrow elements of a scroll arrow."
     },
     "scrollbar-base-color": {
-        "description": "Determines the color of the main elements of a scroll bar, which include the scroll box, track, and scroll arrows.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-base-color"
+        "description": "Determines the color of the main elements of a scroll bar, which include the scroll box, track, and scroll arrows."
     },
     "scrollbar-color": {
         "description": "The scrollbar-color CSS property sets the color of the scrollbar track and thumb.",
@@ -2431,12 +2480,10 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-color"
     },
     "scrollbar-darkshadow-color": {
-        "description": "Determines the color of the gutter of a scroll bar.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-darkshadow-color"
+        "description": "Determines the color of the gutter of a scroll bar."
     },
     "scrollbar-face-color": {
-        "description": "Determines the color of the scroll box and scroll arrows of a scroll bar.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-face-color"
+        "description": "Determines the color of the scroll box and scroll arrows of a scroll bar."
     },
     "scrollbar-gutter": {
         "description": "The scrollbar-gutter CSS property allows authors to reserve space for the scrollbar, preventing unwanted layout changes as the content grows while also avoiding unnecessary visuals when scrolling isn't needed.",
@@ -2444,12 +2491,10 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-gutter"
     },
     "scrollbar-highlight-color": {
-        "description": "Determines the color of the top and left edges of the scroll box and scroll arrows of a scroll bar.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-highlight-color"
+        "description": "Determines the color of the top and left edges of the scroll box and scroll arrows of a scroll bar."
     },
     "scrollbar-shadow-color": {
-        "description": "Determines the color of the bottom and right edges of the scroll box and scroll arrows of a scroll bar.",
-        "url": "https://developer.mozilla.org/docs/Web/CSS/scrollbar-shadow-color"
+        "description": "Determines the color of the bottom and right edges of the scroll box and scroll arrows of a scroll bar."
     },
     "scrollbar-track-color": {
         "description": "Determines the color of the track element of a scroll bar."
@@ -2475,7 +2520,9 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/shape-outside"
     },
     "shape-rendering": {
-        "description": "Provides hints about what tradeoffs to make as it renders vector graphics elements such as <path> elements and basic shapes such as circles and rectangles."
+        "description": "Provides hints about what tradeoffs to make as it renders vector graphics elements such as <path> elements and basic shapes such as circles and rectangles.",
+        "syntax": "auto | optimizeSpeed | crispEdges | geometricPrecision",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/shape-rendering"
     },
     "size": {
         "description": "The size CSS at-rule descriptor, used with the @page at-rule, defines the size and orientation of the box which is used to represent a page. Most of the time, this size corresponds to the target size of the printed page if applicable.",
@@ -2494,34 +2541,51 @@ CSSDocumentation = {
         "syntax": "[ <url> [ format( <string># ) ]? | local( <family-name> ) ]#"
     },
     "stop-color": {
-        "description": "Indicates what color to use at that gradient stop."
+        "description": "Indicates what color to use at that gradient stop.",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stop-color"
     },
     "stop-opacity": {
-        "description": "Defines the opacity of a given gradient stop."
+        "description": "Defines the opacity of a given gradient stop.",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stop-opacity"
     },
     "stroke": {
-        "description": "Paints along the outline of the given graphical element."
+        "description": "Paints along the outline of the given graphical element.",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke"
     },
     "stroke-dasharray": {
-        "description": "Controls the pattern of dashes and gaps used to stroke paths."
+        "description": "Controls the pattern of dashes and gaps used to stroke paths.",
+        "syntax": "none | <dasharray>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke-dasharray"
     },
     "stroke-dashoffset": {
-        "description": "Specifies the distance into the dash pattern to start the dash."
+        "description": "Specifies the distance into the dash pattern to start the dash.",
+        "syntax": "<length-percentage> | <number>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke-dashoffset"
     },
     "stroke-linecap": {
-        "description": "Specifies the shape to be used at the end of open subpaths when they are stroked."
+        "description": "Specifies the shape to be used at the end of open subpaths when they are stroked.",
+        "syntax": "butt | round | square",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke-linecap"
     },
     "stroke-linejoin": {
-        "description": "Specifies the shape to be used at the corners of paths or basic shapes when they are stroked."
+        "description": "Specifies the shape to be used at the corners of paths or basic shapes when they are stroked.",
+        "syntax": "miter | miter-clip | round | bevel | arcs",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke-linejoin"
     },
     "stroke-miterlimit": {
-        "description": "When two line segments meet at a sharp angle and miter joins have been specified for 'stroke-linejoin', it is possible for the miter to extend far beyond the thickness of the line stroking the path."
+        "description": "When two line segments meet at a sharp angle and miter joins have been specified for 'stroke-linejoin', it is possible for the miter to extend far beyond the thickness of the line stroking the path.",
+        "syntax": "<number>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke-miterlimit"
     },
     "stroke-opacity": {
-        "description": "Specifies the opacity of the painting operation used to stroke the current object."
+        "description": "Specifies the opacity of the painting operation used to stroke the current object.",
+        "syntax": "<'opacity'>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke-opacity"
     },
     "stroke-width": {
-        "description": "Specifies the width of the stroke on the current object."
+        "description": "Specifies the width of the stroke on the current object.",
+        "syntax": "<length-percentage> | <number>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/stroke-width"
     },
     "suffix": {
         "description": "@counter-style descriptor. Specifies a <symbol> that is appended to the marker representation.",
@@ -2560,7 +2624,9 @@ CSSDocumentation = {
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-align-last"
     },
     "text-anchor": {
-        "description": "Used to align (start-, middle- or end-alignment) a string of text relative to a given point."
+        "description": "Used to align (start-, middle- or end-alignment) a string of text relative to a given point.",
+        "syntax": "start | middle | end",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/text-anchor"
     },
     "text-combine-upright": {
         "description": "The text-combine-upright CSS property specifies the combination of multiple characters into the space of a single character. If the combined text is wider than 1em, the user agent must fit the contents within 1em. The resulting composition is treated as a single upright glyph for layout and decoration. This property only has an effect in vertical writing modes.\n\nThis is used to produce an effect that is known as tate-ch\u016b-yoko (\u7e26\u4e2d\u6a2a) in Japanese, or as \u76f4\u66f8\u6a6b\u5411 in Chinese.",
@@ -2614,7 +2680,7 @@ CSSDocumentation = {
     },
     "text-emphasis-position": {
         "description": "The text-emphasis-position CSS property describes where emphasis marks are drawn at. The effect of emphasis marks on the line height is the same as for ruby text: if there isn't enough place, the line height is increased.",
-        "syntax": "[ over | under ] && [ right | left ]",
+        "syntax": "auto | [ over | under ] && [ right | left ]?",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-emphasis-position"
     },
     "text-emphasis-style": {
@@ -2657,6 +2723,11 @@ CSSDocumentation = {
         "syntax": "none | auto | <percentage>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-size-adjust"
     },
+    "text-spacing-trim": {
+        "description": "The text-spacing-trim CSS property controls the internal spacing set on Chinese/Japanese/Korean (CJK) punctuation characters between adjacent characters (kerning) and at the start or end of text lines.",
+        "syntax": "space-all | normal | space-first | trim-start | trim-both | trim-all | auto",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/text-spacing-trim"
+    },
     "text-transform": {
         "description": "Controls capitalization effects of an element's text.",
         "syntax": "none | capitalize | uppercase | lowercase | full-width | full-size-kana",
@@ -2674,16 +2745,18 @@ CSSDocumentation = {
     },
     "text-wrap": {
         "description": "The text-wrap CSS property controls how text inside an element is wrapped.",
-        "syntax": "wrap | nowrap | balance | stable | pretty",
+        "syntax": "<'text-wrap-mode> || <'text-wrap-style'>",
         "url": "https://developer.mozilla.org/docs/Web/CSS/text-wrap"
     },
     "text-wrap-mode": {
         "description": "The text-wrap-mode CSS property controls whether the text inside an element is wrapped. The different values provide alternate ways of wrapping the content of a block element. It can also be set, and reset, using the text-wrap shorthand.",
-        "syntax": "auto | wrap | nowrap"
+        "syntax": "auto | wrap | nowrap",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/text-wrap-mode"
     },
     "text-wrap-style": {
         "description": "The text-wrap-style CSS property controls how text inside an element is wrapped. The different values provide alternate ways of wrapping the content of a block element. It can also be set, and reset, using the text-wrap shorthand.",
-        "syntax": "auto | balance | stable | pretty"
+        "syntax": "auto | balance | stable | pretty",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/text-wrap-style"
     },
     "timeline-scope": {
         "description": "The timeline-scope CSS property modifies the scope of a named animation timeline.",
@@ -2769,6 +2842,11 @@ CSSDocumentation = {
         "syntax": "auto | text | none | contain | all",
         "url": "https://developer.mozilla.org/docs/Web/CSS/user-select"
     },
+    "vector-effect": {
+        "description": "The vector-effect CSS property suppresses specific transformation effects in SVG, thus permitting effects like a road on a map staying the same width no matter how the map is zoomed, or allowing a diagram key to retain its position and size regardless of other transforms. It can only be used with SVG elements that accept the vector-effect attribute. When used, the CSS value overrides any values of the element's vector-effect attribute.",
+        "syntax": "none | non-scaling-stroke | non-scaling-size | non-rotation | fixed-position",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/vector-effect"
+    },
     "vertical-align": {
         "description": "Affects the vertical positioning of the inline boxes generated by an inline-level element inside a line box.",
         "syntax": "baseline | sub | super | text-top | text-bottom | middle | top | bottom | <percentage> | <length>",
@@ -2847,6 +2925,16 @@ CSSDocumentation = {
         "description": "This is a shorthand property for both 'direction' and 'block-progression'.",
         "syntax": "horizontal-tb | vertical-rl | vertical-lr | sideways-rl | sideways-lr",
         "url": "https://developer.mozilla.org/docs/Web/CSS/writing-mode"
+    },
+    "x": {
+        "description": "The x CSS property defines the x-axis coordinate of the top left corner of the SVG rect shape, image image, foreignObject viewport or nested svg viewport relative to the nearest <svg> ancestor's user coordinate system. If present, it overrides the element's x attribute.",
+        "syntax": "<length> | <percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/x"
+    },
+    "y": {
+        "description": "The y CSS property defines the y-axis coordinate of the top left corner of the SVG rect shape, image image, foreignObject viewport and nested svg viewport relative to the nearest <svg> ancestor's user coordinate system. If present, it overrides the element's y attribute.",
+        "syntax": "<length> | <percentage>",
+        "url": "https://developer.mozilla.org/docs/Web/CSS/y"
     },
     "z-index": {
         "description": "For a positioned box, the 'z-index' property specifies the stack level of the box in the current stacking context and whether the box establishes a local stacking context.",

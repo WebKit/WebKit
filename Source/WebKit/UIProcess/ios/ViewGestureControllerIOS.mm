@@ -107,7 +107,9 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
 
 - (BOOL)shouldBeginInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition
 {
-    return _gestureController->canSwipeInDirection([self directionForTransition:transition]);
+    using enum WebKit::ViewGestureController::DeferToConflictingGestures;
+    auto deferToConflictingGestures = transition.gestureRecognizer.state == UIGestureRecognizerStateFailed ? Yes : No;
+    return _gestureController->canSwipeInDirection([self directionForTransition:transition], deferToConflictingGestures);
 }
 
 - (BOOL)interactiveTransition:(_UINavigationInteractiveTransitionBase *)transition gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -120,15 +122,21 @@ static const float swipeSnapshotRemovalRenderTreeSizeTargetFraction = 0.5;
     return YES;
 }
 
-- (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition WithTarget:(id)target action:(SEL)action
+static Class interactiveTransitionGestureRecognizerClass()
 {
 #if HAVE(UI_PARALLAX_TRANSITION_GESTURE_RECOGNIZER)
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
-    auto recognizer = adoptNS([[_UIParallaxTransitionPanGestureRecognizer alloc] initWithTarget:target action:action]);
+    return [_UIParallaxTransitionPanGestureRecognizer class];
 ALLOW_NEW_API_WITHOUT_GUARDS_END
 #else
-    auto recognizer = adoptNS([[UIScreenEdgePanGestureRecognizer alloc] initWithTarget:target action:action]);
+    return [UIScreenEdgePanGestureRecognizer class];
 #endif
+}
+
+- (UIPanGestureRecognizer *)gestureRecognizerForInteractiveTransition:(_UINavigationInteractiveTransitionBase *)transition WithTarget:(id)target action:(SEL)action
+{
+    RetainPtr recognizer = adoptNS([[interactiveTransitionGestureRecognizerClass() alloc] initWithTarget:target action:action]);
+
     bool isLTR = [UIView userInterfaceLayoutDirectionForSemanticContentAttribute:[_gestureRecognizerView.get() semanticContentAttribute]] == UIUserInterfaceLayoutDirectionLeftToRight;
 
     switch ([self directionForTransition:transition]) {
@@ -144,7 +152,13 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 - (BOOL)isNavigationSwipeGestureRecognizer:(UIGestureRecognizer *)recognizer
 {
-    return recognizer == [_backTransitionController gestureRecognizer] || recognizer == [_forwardTransitionController gestureRecognizer];
+    if (recognizer == [_backTransitionController gestureRecognizer] || recognizer == [_forwardTransitionController gestureRecognizer])
+        return YES;
+
+    if ([recognizer isKindOfClass:interactiveTransitionGestureRecognizerClass()])
+        return recognizer.delegate == _backTransitionController || recognizer.delegate == _forwardTransitionController;
+
+    return NO;
 }
 
 @end
@@ -458,7 +472,7 @@ void ViewGestureController::reset()
 
 bool ViewGestureController::beginSimulatedSwipeInDirectionForTesting(SwipeDirection direction)
 {
-    if (!canSwipeInDirection(direction))
+    if (!canSwipeInDirection(direction, DeferToConflictingGestures::No))
         return false;
 
     _UINavigationInteractiveTransitionBase *transition = [m_swipeInteractiveTransitionDelegate transitionForDirection:direction];

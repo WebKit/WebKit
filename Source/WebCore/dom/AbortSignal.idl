@@ -32,7 +32,7 @@
 ] interface AbortSignal : EventTarget {
     [NewObject, CallWith=CurrentScriptExecutionContext&CurrentGlobalObject] static AbortSignal abort(optional any reason);
     [Exposed=(Window, Worker), NewObject, CallWith=CurrentScriptExecutionContext] static AbortSignal timeout([EnforceRange] unsigned long long milliseconds);
-    [NewObject, CallWith=CurrentScriptExecutionContext, EnabledBySetting=AbortSignalAnyOperationEnabled] static AbortSignal _any(sequence<AbortSignal> signals);
+    [NewObject, CallWith=CurrentScriptExecutionContext] static AbortSignal _any(sequence<AbortSignal> signals);
 
     readonly attribute boolean aborted;
     readonly attribute any reason;

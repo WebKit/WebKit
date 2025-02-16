@@ -37,30 +37,35 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
 {
     if (s1.display() != s2.display())
         return Change::Renderer;
+
     if (s1.hasPseudoStyle(PseudoId::FirstLetter) != s2.hasPseudoStyle(PseudoId::FirstLetter))
         return Change::Renderer;
+
     // We just detach if a renderer acquires or loses a column-span, since spanning elements
     // typically won't contain much content.
     auto columnSpanNeedsNewRenderer = [&] {
-        if (s1.columnSpan() != s2.columnSpan())
+        if (!s1.columnSpanEqual(s2))
             return true;
         if (s1.columnSpan() != ColumnSpan::All)
             return false;
         // Spanning in ignored for floating and out-of-flow boxes.
         return s1.isFloating() != s2.isFloating() || s1.hasOutOfFlowPosition() != s2.hasOutOfFlowPosition();
     }();
+
     if (columnSpanNeedsNewRenderer)
         return Change::Renderer;
-    if (!s1.contentDataEquivalent(&s2))
-        return Change::Renderer;
+
     // When text-combine property has been changed, we need to prepare a separate renderer object.
     // When text-combine is on, we use RenderCombineText, otherwise RenderText.
     // https://bugs.webkit.org/show_bug.cgi?id=55069
     if (s1.hasTextCombine() != s2.hasTextCombine())
         return Change::Renderer;
 
+    if (!s1.contentDataEquivalent(s2))
+        return Change::Renderer;
+
     // Query container changes affect descendant style.
-    if (s1.containerType() != s2.containerType() || s1.containerNames() != s2.containerNames())
+    if (!s1.containerTypeAndNamesEqual(s2))
         return Change::Descendants;
 
     if (!s1.descendantAffectingNonInheritedPropertiesEqual(s2))
@@ -69,14 +74,30 @@ Change determineChange(const RenderStyle& s1, const RenderStyle& s2)
     if (!s1.nonFastPathInheritedEqual(s2))
         return Change::Inherited;
 
+    bool nonInheritedEqual = s1.nonInheritedEqual(s2);
     if (!s1.fastPathInheritedEqual(s2))
-        return Change::FastPathInherited;
+        return nonInheritedEqual ? Change::FastPathInherited : Change::NonInheritedAndFastPathInherited;
 
-    if (s1 != s2)
+    if (!nonInheritedEqual)
         return Change::NonInherited;
 
     return Change::None;
 }
 
+TextStream& operator<<(TextStream& ts, Change change)
+{
+    switch (change) {
+    case Change::None: ts << "None"; break;
+    case Change::NonInherited: ts << "NonInherited"; break;
+    case Change::FastPathInherited: ts << "FastPathInherited"; break;
+    case Change::NonInheritedAndFastPathInherited: ts << "NonInheritedAndFastPathInherited"; break;
+    case Change::Inherited: ts << "Inherited"; break;
+    case Change::Descendants: ts << "Descendants"; break;
+    case Change::Renderer: ts << "Renderer"; break;
+    }
+    return ts;
 }
-}
+
+} // namespace Style
+
+} // namespace WebCore

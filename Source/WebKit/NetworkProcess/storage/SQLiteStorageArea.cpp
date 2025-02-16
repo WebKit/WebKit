@@ -218,8 +218,8 @@ void SQLiteStorageArea::startTransactionIfNecessary()
     m_transaction->begin();
 
     m_queue->dispatchAfter(transactionDuration, [weakThis = WeakPtr { *this }] {
-        if (weakThis)
-            weakThis->commitTransactionIfNecessary();
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->commitTransactionIfNecessary();
     });
 }
 

@@ -622,7 +622,7 @@ static bool anyAttributeMatches(const Element& element, const CSSSelector& selec
 {
     ASSERT(element.hasAttributesWithoutUpdate());
     bool isHTML = element.isHTMLElement() && element.document().isHTMLDocument();
-    for (const Attribute& attribute : element.attributesIterator()) {
+    for (auto& attribute : element.attributes()) {
         if (!attribute.matches(selectorAttr.prefix(), isHTML ? selectorAttr.localNameLowercase() : selectorAttr.localName(), selectorAttr.namespaceURI()))
             continue;
 

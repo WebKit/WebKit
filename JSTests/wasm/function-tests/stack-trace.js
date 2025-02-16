@@ -37,7 +37,7 @@ const bin = builder.WebAssembly().get();
 const module = new WebAssembly.Module(bin);
 let instance = new WebAssembly.Instance(module, {imp: {f: imp}});
 assert.falsy(stacktrace);
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     instance.exports.entry();
     assert.truthy(stacktrace);
     stacktrace = stacktrace.split("\n");

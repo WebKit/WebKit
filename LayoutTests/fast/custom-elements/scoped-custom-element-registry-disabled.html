@@ -1,0 +1,20 @@
+<!DOCTYPE html><!-- webkit-test-runner [ ScopedCustomElementRegistryEnabled=true ] -->
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<script>
+
+description('This tests that attachShadow does not call "registry" attribute getter when scoped custom element registry is disabled');
+
+let registryGetterWasCalled = false;
+document.createElement('div').attachShadow({
+    mode: 'closed',
+    get registry2() {
+        registryGetterWasCalled = true;
+    }
+});
+shouldBeFalse('registryGetterWasCalled');
+
+</script>
+</body>
+</html>

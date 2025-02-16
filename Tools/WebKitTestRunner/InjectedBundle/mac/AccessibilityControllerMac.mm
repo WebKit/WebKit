@@ -168,6 +168,12 @@ void AccessibilityController::overrideClient(JSStringRef clientType)
         _AXSetClientIdentificationOverride(kAXClientTypeNoActiveRequestFound);
 }
 
+void AccessibilityController::printTrees(JSContextRef context)
+{
+    PlatformUIElement root = static_cast<PlatformUIElement>(WKAccessibilityRootObject(WKBundleFrameForJavaScriptContext(context)));
+    [root accessibilityPerformAction:@"AXLogTrees"];
+}
+
 // AXThread implementation
 
 void AXThread::initializeRunLoop()

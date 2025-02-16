@@ -25,6 +25,9 @@
 
 #include "config.h"
 #include "PASReportCrashPrivate.h"
+#include <wtf/Compiler.h>
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 
 #if !USE(SYSTEM_MALLOC)
 #include <bmalloc/BPlatform.h>
@@ -32,6 +35,8 @@
 #include <bmalloc/pas_report_crash.h>
 #endif
 #endif
+
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 using namespace JSC;
 

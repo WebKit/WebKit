@@ -162,6 +162,13 @@ EGLBoolean QueryStreamu64KHR(Thread *thread,
                              egl::Stream *streamPacked,
                              EGLenum attribute,
                              EGLuint64KHR *value);
+EGLBoolean QuerySupportedCompressionRatesEXT(Thread *thread,
+                                             egl::Display *dpyPacked,
+                                             egl::Config *configPacked,
+                                             const EGLAttrib *attrib_list,
+                                             EGLint *rates,
+                                             EGLint rate_size,
+                                             EGLint *num_rates);
 EGLBoolean QuerySurface64KHR(Thread *thread,
                              egl::Display *dpyPacked,
                              SurfaceID surfacePacked,
@@ -254,6 +261,8 @@ EGLBoolean SwapBuffersWithFrameTokenANGLE(Thread *thread,
                                           egl::Display *dpyPacked,
                                           SurfaceID surfacePacked,
                                           EGLFrameTokenANGLE frametoken);
+void LockVulkanQueueANGLE(Thread *thread, egl::Display *dpyPacked);
+void UnlockVulkanQueueANGLE(Thread *thread, egl::Display *dpyPacked);
 EGLBoolean PrepareSwapBuffersANGLE(Thread *thread,
                                    egl::Display *dpyPacked,
                                    SurfaceID surfacePacked);

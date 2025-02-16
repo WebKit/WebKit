@@ -28,7 +28,7 @@
     Exposed=Window,
     JSGenerateToJSObject
 ] interface ViewTimeline : ScrollTimeline {
-    constructor(optional ViewTimelineOptions options = {});
+    [CallWith=CurrentDocument] constructor(optional ViewTimelineOptions options = {});
     readonly attribute Element subject;
     readonly attribute CSSNumericValue startOffset;
     readonly attribute CSSNumericValue endOffset;

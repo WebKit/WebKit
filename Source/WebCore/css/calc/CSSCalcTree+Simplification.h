@@ -25,7 +25,7 @@
 #pragma once
 
 #include "CSSCalcSymbolTable.h"
-#include "CSSCalcTree.h"
+#include "CSSPrimitiveNumericRange.h"
 #include "CSSToLengthConversionData.h"
 
 namespace WebCore {
@@ -36,11 +36,56 @@ enum class Category : uint8_t;
 
 namespace CSSCalc {
 
+struct Child;
+struct Tree;
+
+struct Abs;
+struct Acos;
+struct Anchor;
+struct AnchorSize;
+struct Asin;
+struct Atan2;
+struct Atan;
+struct CanonicalDimension;
+struct Clamp;
+struct ContainerProgress;
+struct Cos;
+struct Exp;
+struct Hypot;
+struct Invert;
+struct Log;
+struct Max;
+struct MediaProgress;
+struct Min;
+struct Mod;
+struct Negate;
+struct NonCanonicalDimension;
+struct Number;
+struct Percentage;
+struct Pow;
+struct Product;
+struct Progress;
+struct Random;
+struct Rem;
+struct RoundDown;
+struct RoundNearest;
+struct RoundToZero;
+struct RoundUp;
+struct Sign;
+struct Sin;
+struct Sqrt;
+struct Sum;
+struct Symbol;
+struct Tan;
+
 // https://drafts.csswg.org/css-values-4/#calc-simplification
 
 struct SimplificationOptions {
     // `category` represents the context in which the simplification is taking place.
     Calculation::Category category;
+
+    // `range` represents the allowed numeric range for the calculated result.
+    CSS::Range range;
 
     // `conversionData` contains information needed to convert length units into their canonical forms.
     std::optional<CSSToLengthConversionData> conversionData;
@@ -50,13 +95,12 @@ struct SimplificationOptions {
 
     // `allowZeroValueLengthRemovalFromSum` allows removal of 0 value lengths (px, em, etc.) from Sum operations.
     bool allowZeroValueLengthRemovalFromSum = false;
-
-    // `allowUnresolvedUnits` allows math operations to be evaluated even if the unit is not fully canonicalized. Only meaningful if `conversionData` cannot be supplied.
-    bool allowUnresolvedUnits = false;
-
-    // `allowNonMatchingUnits` allows math operations to be evaluated even if the units of its arguments don't match. Only meaningful if `conversionData` cannot be supplied.
-    bool allowNonMatchingUnits = false;
 };
+
+
+// MARK: Can Simplify
+
+bool canSimplify(const Tree&, const SimplificationOptions&);
 
 // MARK: Copy & Simplify
 
@@ -97,6 +141,7 @@ std::optional<Child> simplify(Log&, const SimplificationOptions&);
 std::optional<Child> simplify(Exp&, const SimplificationOptions&);
 std::optional<Child> simplify(Abs&, const SimplificationOptions&);
 std::optional<Child> simplify(Sign&, const SimplificationOptions&);
+std::optional<Child> simplify(Random&, const SimplificationOptions&);
 std::optional<Child> simplify(Progress&, const SimplificationOptions&);
 std::optional<Child> simplify(MediaProgress&, const SimplificationOptions&);
 std::optional<Child> simplify(ContainerProgress&, const SimplificationOptions&);

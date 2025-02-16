@@ -144,18 +144,12 @@ protected:
 
     RetainPtr<TestWebExtensionManager> getManagerFor(NSArray<NSString *> *script, NSDictionary<NSString *, id> *manifest)
     {
-        auto *resources = @{
-            @"background.js" : Util::constructScript(script),
-        };
-        return getManagerFor(resources, manifest);
+        return getManagerFor(@{ @"background.js" : Util::constructScript(script) }, manifest);
     }
 
     RetainPtr<TestWebExtensionManager> getManagerFor(NSDictionary<NSString *, id> *resources, NSDictionary<NSString *, id> *manifest)
     {
-        extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-        auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:sidebarConfig]);
-
-        return manager;
+        return Util::parseExtension(manifest, resources, sidebarConfig);
     }
 
     WKWebExtensionControllerConfiguration *sidebarConfig;
@@ -264,6 +258,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionAPIWindowSpecificTitlePersists)
     ];
 
     auto manager = getManagerFor(script, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -286,6 +281,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionAPITabSpecificTitlePersists)
     ];
 
     auto manager = getManagerFor(script, sidebarActionManifest);
+
     [manager.get().defaultWindow openNewTab];
 
     [manager loadAndRun];
@@ -317,7 +313,9 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionAPIMixedSpecificityTitlesNotConfus
     ];
 
     auto manager = getManagerFor(script, sidebarActionManifest);
+
     [manager.get().defaultWindow openNewTab];
+
     auto window2 = [manager openNewWindow];
     [window2 openNewTab];
 
@@ -347,6 +345,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionAPIWindowSpecificPanelPersists)
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -375,6 +374,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionAPITabSpecificDocumentPersists)
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -414,7 +414,9 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionDocumentsMixedSpecificityNotConfus
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager.get().defaultWindow openNewTab];
+
     auto window2 = [manager openNewWindow];
     [window2 openNewTab];
 
@@ -454,6 +456,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionChangeWindowTitle)
     ];
 
     auto manager = getManagerFor(script, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -479,6 +482,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionChangeTabTitle)
     ];
 
     auto manager = getManagerFor(script, sidebarActionManifest);
+
     [manager.get().defaultWindow openNewTab];
 
     [manager loadAndRun];
@@ -502,6 +506,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionChangeGlobalPanel)
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -534,6 +539,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionChangeWindowPanel)
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -566,6 +572,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionChangeTabPanel)
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -609,6 +616,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionClearWindowTitle)
     ];
 
     auto manager = getManagerFor(script, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -634,6 +642,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionClearTabTitle)
     ];
 
     auto manager = getManagerFor(script, sidebarActionManifest);
+
     [manager.get().defaultWindow openNewTab];
 
     [manager loadAndRun];
@@ -659,6 +668,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionClearGlobalPanel)
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -689,6 +699,7 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionClearWindowPanel)
     };
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     [manager openNewWindow];
 
     [manager loadAndRun];
@@ -740,11 +751,13 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionOpenFailsWithoutUserGesture)
     int *presentSidebarCallCountPtr = &presentSidebarCallCount;
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
         (*presentSidebarCallCountPtr)++;
     };
 
     [manager loadAndRun];
+
     EXPECT_EQ(presentSidebarCallCount, 0);
 }
 
@@ -764,11 +777,13 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionCloseFailsWithoutUserGesture)
     int *closeSidebarCallCountPtr = &closeSidebarCallCount;
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     manager.get().internalDelegate.closeSidebar = ^(_WKWebExtensionSidebar *) {
         (*closeSidebarCallCountPtr)++;
     };
 
     [manager loadAndRun];
+
     EXPECT_EQ(closeSidebarCallCount, 0);
 }
 
@@ -790,14 +805,17 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionToggleFailsWithoutUserGesture)
     int *closeSidebarCallCountPtr = &closeSidebarCallCount;
 
     auto manager = getManagerFor(resources, sidebarActionManifest);
+
     manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
         (*openSidebarCallCountPtr)++;
     };
+
     manager.get().internalDelegate.closeSidebar = ^(_WKWebExtensionSidebar *) {
         (*closeSidebarCallCountPtr)++;
     };
 
     [manager loadAndRun];
+
     EXPECT_EQ(openSidebarCallCount, 0);
     EXPECT_EQ(closeSidebarCallCount, 0);
 }
@@ -805,11 +823,11 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionToggleFailsWithoutUserGesture)
 TEST_F(WKWebExtensionAPISidebar, SidebarActionOpenSucceedsWithUserGesture)
 {
     auto *script = @[
-        @"window.runTest = async () => {",
-        @"    await browser.test.assertSafeResolve(() => browser.sidebarAction.open())",
-        @"    browser.test.notifyPass()",
-        @"}",
-        @"browser.test.yield('Apply user gesture')",
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidebarAction.open())",
+        @"})",
+
+        @"browser.test.notifyPass()",
     ];
 
     auto *resources = @{
@@ -836,21 +854,17 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionOpenSucceedsWithUserGesture)
 
     [manager loadAndRun];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Apply user gesture");
-    Util::runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
-    [manager run];
-
     EXPECT_EQ(presentSidebarCallCount, 1);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidebarActionCloseSucceedsWithUserGesture)
 {
     auto *script = @[
-        @"window.runTest = async () => {",
-        @"    await browser.test.assertSafeResolve(() => browser.sidebarAction.close())",
-        @"    browser.test.notifyPass()",
-        @"}",
-        @"browser.test.yield('Apply user gesture')",
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidebarAction.close())",
+        @"})",
+
+        @"browser.test.notifyPass()",
     ];
 
     auto *resources = @{
@@ -879,21 +893,17 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionCloseSucceedsWithUserGesture)
 
     [manager loadAndRun];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Apply user gesture");
-    Util::runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
-    [manager run];
-
     EXPECT_EQ(closeSidebarCallCount, 1);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidebarActionToggleSucceedsWithUserGesture)
 {
     auto *script = @[
-        @"window.runTest = async () => {",
-        @"    await browser.test.assertSafeResolve(() => browser.sidebarAction.toggle())",
-        @"    browser.test.notifyPass()",
-        @"}",
-        @"browser.test.yield('Apply user gesture')",
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidebarAction.toggle())",
+        @"})",
+
+        @"browser.test.notifyPass()",
     ];
 
     auto *resources = @{
@@ -910,10 +920,6 @@ TEST_F(WKWebExtensionAPISidebar, SidebarActionToggleSucceedsWithUserGesture)
     };
 
     [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Apply user gesture");
-    Util::runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
-    [manager run];
 
     EXPECT_EQ(openSidebarCallCount, 1);
 }
@@ -1039,6 +1045,7 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPITabEnablePersists)
     ];
 
     auto manager = getManagerFor(script, sidePanelManifest);
+
     [manager.get().defaultWindow openNewTab];
 
     [manager loadAndRun];
@@ -1098,6 +1105,7 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelAPIModifyTabPath)
     };
 
     auto manager = getManagerFor(resources, sidePanelManifest);
+
     [manager.get().defaultWindow openNewTab];
 
     [manager loadAndRun];
@@ -1147,6 +1155,7 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelModifyTabEnable)
     ];
 
     auto manager = getManagerFor(script, sidePanelManifest);
+
     [manager.get().defaultWindow openNewTab];
 
     [manager loadAndRun];
@@ -1170,11 +1179,13 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForTabFailsWithoutUserGesture)
     int *presentSidebarCallCountPtr = &presentSidebarCallCount;
 
     auto manager = getManagerFor(resources, sidePanelManifest);
+
     manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
         (*presentSidebarCallCountPtr)++;
     };
 
     [manager loadAndRun];
+
     EXPECT_EQ(presentSidebarCallCount, 0);
 }
 
@@ -1196,23 +1207,26 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowFailsWithoutUserGesture)
     int *presentSidebarCallCountPtr = &presentSidebarCallCount;
 
     auto manager = getManagerFor(resources, sidePanelManifest);
+
     manager.get().internalDelegate.presentSidebar = ^(_WKWebExtensionSidebar *) {
         (*presentSidebarCallCountPtr)++;
     };
 
     [manager loadAndRun];
+
     EXPECT_EQ(presentSidebarCallCount, 0);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForTabSucceedsWithUserGesture)
 {
     auto *script = @[
-        @"window.runTest = async () => {",
-        @"    await browser.test.assertSafeResolve(() => browser.sidePanel.open({ tabId: tabs[0].id }))",
-        @"    browser.test.notifyPass()",
-        @"}",
         @"var tabs = await browser.tabs.query({})",
-        @"browser.test.yield('Apply user gesture')",
+
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidePanel.open({ tabId: tabs[0].id }))",
+        @"})",
+
+        @"browser.test.notifyPass()",
     ];
 
     auto *resources = @{
@@ -1239,22 +1253,19 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForTabSucceedsWithUserGesture)
 
     [manager loadAndRun];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Apply user gesture");
-    Util::runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
-    [manager run];
-
     EXPECT_EQ(presentSidebarCallCount, 1);
 }
 
 TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowSucceedsWithUserGesture)
 {
     auto *script = @[
-        @"window.runTest = async () => {",
-        @"    await browser.test.assertSafeResolve(() => browser.sidePanel.open({ windowId: currentWindow.id }))",
-        @"    browser.test.notifyPass()",
-        @"}",
         @"var currentWindow = await browser.windows.getCurrent()",
-        @"browser.test.yield('Apply user gesture')",
+
+        @"await browser.test.runWithUserGesture(() => {",
+        @"  return browser.test.assertSafeResolve(() => browser.sidePanel.open({ windowId: currentWindow.id }))",
+        @"})",
+
+        @"browser.test.notifyPass()",
     ];
 
     auto *resources = @{
@@ -1288,10 +1299,6 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpenForWindowSucceedsWithUserGesture)
 
     [manager loadAndRun];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Apply user gesture");
-    Util::runScriptWithUserGesture("window.runTest()"_s, manager.get().context._backgroundWebView);
-    [manager run];
-
     EXPECT_EQ(presentSidebarCallCount, 1);
 }
 
@@ -1321,12 +1328,14 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpensSidebarOnActionClickWhenConfigure
         @"await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: true })",
         @"let initialPanelBehavior = await browser.sidePanel.getPanelBehavior()",
         @"browser.test.assertTrue(initialPanelBehavior.openPanelOnActionClick)",
-        @"browser.test.yield('Perform action')",
+
+        @"browser.test.sendMessage('Perform action')",
 
         @"await browser.sidePanel.setPanelBehavior({ openPanelOnActionClick: false })",
         @"let newPanelBehavior = await browser.sidePanel.getPanelBehavior()",
         @"browser.test.assertFalse(newPanelBehavior.openPanelOnActionClick)",
-        @"browser.test.yield('Perform action again')",
+
+        @"browser.test.sendMessage('Perform action again')",
     ];
 
     auto *resources = @{
@@ -1348,16 +1357,18 @@ TEST_F(WKWebExtensionAPISidebar, SidePanelOpensSidebarOnActionClickWhenConfigure
         (*presentSidebarCallCountPtr)++;
     };
 
-    [manager loadAndRun];
+    [manager load];
+    [manager runUntilTestMessage:@"Perform action"];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform action");
     [manager.get().context performActionForTab:manager.get().defaultTab];
-    [manager run];
 
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Perform action again");
+    [manager runUntilTestMessage:@"Perform action again"];
+
     EXPECT_EQ(presentSidebarCallCount, 1);
     EXPECT_EQ(presentActionPopupCallCount, 0);
+
     [manager.get().context performActionForTab:manager.get().defaultTab];
+
     [manager run];
 
     EXPECT_EQ(presentSidebarCallCount, 1);

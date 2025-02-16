@@ -47,8 +47,8 @@ private:
     bool apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const final;
 
     struct PaintingData {
-        const PixelBuffer& sourcePixelBuffer;
-        PixelBuffer& destinationPixelBuffer;
+        const Ref<const PixelBuffer> sourcePixelBuffer;
+        const Ref<PixelBuffer> destinationPixelBuffer;
         int width;
         int height;
 

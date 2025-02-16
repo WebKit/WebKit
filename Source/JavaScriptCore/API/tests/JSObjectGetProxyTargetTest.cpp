@@ -33,6 +33,7 @@
 #include "JSObjectRefPrivate.h"
 #include "JavaScript.h"
 #include "ProxyObject.h"
+#include <wtf/text/ASCIILiteral.h>
 
 using namespace JSC;
 
@@ -42,8 +43,8 @@ int testJSObjectGetProxyTarget()
     
     printf("JSObjectGetProxyTargetTest:\n");
     
-    auto test = [&] (const char* description, bool currentResult) {
-        printf("    %s: %s\n", description, currentResult ? "PASS" : "FAIL");
+    auto test = [&] (ASCIILiteral description, bool currentResult) {
+        SAFE_PRINTF("    %s: %s\n", description, currentResult ? "PASS"_s : "FAIL"_s);
         overallResult &= currentResult;
     };
     
@@ -98,7 +99,7 @@ int testJSObjectGetProxyTarget()
     JSGlobalContextRelease(context);
     JSContextGroupRelease(group);
 
-    printf("JSObjectGetProxyTargetTest: %s\n", overallResult ? "PASS" : "FAIL");
+    SAFE_PRINTF("JSObjectGetProxyTargetTest: %s\n", overallResult ? "PASS"_s : "FAIL"_s);
     return !overallResult;
 }
 

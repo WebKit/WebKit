@@ -14,7 +14,7 @@ var af0 = afFactory0('ABC', 'DEF');
 
 noInline(af0);
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     var arr = af0(i);
 
     testCase(arr.length, 2, txtMsg + "#1");
@@ -32,7 +32,7 @@ var af = afFactory(12);
 
 noInline(af);
 
-for (var i=0; i<10000; i++) {
+for (var i=0; i<testLoopCount; i++) {
     testCase(af(6), 12, txtMsg + "#5");
 }
 
@@ -44,7 +44,7 @@ var af1 = afFactory1('AB', 'CD', 'EF');
 
 noInline(af1);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(af1('G', i), 'AB-CD-EF-G-' + i, txtMsg + "#5");
 }
 
@@ -55,7 +55,7 @@ if (true) {
 
     noInline(af2);
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         testCase(af2('ABC', i), 'undefined-ABC' + i, txtMsg + "#6");
     }
 
@@ -63,7 +63,7 @@ if (true) {
 
     noInline(af3);
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         testCase(typeof af3('ABC', i), 'object', txtMsg + "#7");
         testCase(typeof af3('ABC', i)[0], 'undefined', txtMsg + "#8");
     }
@@ -76,7 +76,7 @@ var afFactory4 = function () {
 var af4 = new afFactory4('P1', 'Q2', 'R3');
 noInline(af4);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(af4.func('EF', i), 'P1_Q2_R3_EF_' + i, txtMsg + "#9");
 }
 
@@ -87,7 +87,7 @@ var afFactory5 = function () {
 var af5 = new afFactory5('PQ', 'RS', 'TU');
 noInline(af5);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(af5.func('VW', 'XY')('Z',i), 'PQ_RS_TU_VW_XY_Z_' + i, txtMsg + "#9");
 }
 
@@ -101,7 +101,7 @@ var afInternal = new afNested('AB', 'CD', 'EF');
 var af6 = new afInternal('GH', 'IJ', 'KL');
 noInline(af6);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(af6.func('VW', 'XY')('Z',i), 'GH_IJ_KL_VW_XY_Z_' + i, txtMsg + "#9");
 }
 
@@ -115,7 +115,7 @@ if (true) {
 
     noInline(obj.method);
 
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         testCase(obj.method(i), 'undefined-' + i, txtMsg + "#10");
     }
 }
@@ -129,7 +129,7 @@ var objFactory = function () {
 
 var objInternal = objFactory('ABC', 'DEF');
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(objInternal.method(i), 'ABC-' + i, txtMsg + "#11");
 }
 
@@ -180,7 +180,7 @@ var af_mixed_scope = function (first, x, y) {
     return arr;
 };
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(af_block_scope(true, 'A', 'B')('C'), 'branch-1', txtMsg + "#12");
     testCase(af_block_scope(false, 'A', 'B')('C'), 'internal-arrow-block-scope', txtMsg + "#12");
     testCase(af_function_scope(true, 'D', 'E')('F'), 'af_function_scope', txtMsg + "#13");
@@ -196,7 +196,7 @@ function foo() {
 
 var foo_arr = foo('A', 'B');
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(foo_arr('arguments[0]'), 'A', txtMsg + "#15");
     testCase(foo_arr('arguments[1]'), 'B', txtMsg + "#16");
 }
@@ -211,7 +211,7 @@ function boo() {
     }
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(boo('A' + i)('B' + i)('D' + i)('E' + i)('G' + i)[0], 'E' + i, txtMsg + "#17");
 }
 
@@ -229,7 +229,7 @@ function f_args () {
     return () => 'no-value';
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let v = f_args(testValue, 'anotherValue')()()();
     testCase(v, testValue);
 }
@@ -246,7 +246,7 @@ function f_args_eval () {
     return () => 'no-value';
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let v = f_args_eval(testValue, 'anotherValue')()()();
     testCase(v, testValue);
 }

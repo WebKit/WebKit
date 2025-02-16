@@ -27,11 +27,14 @@
 
 #if ENABLE(SCREEN_TIME)
 
+#import <ScreenTime/STWebHistory.h>
 #import <ScreenTime/STWebpageController.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, ScreenTime, PAL_EXPORT)
 
 SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ScreenTime, STWebpageController, PAL_EXPORT)
+SOFT_LINK_CLASS_FOR_SOURCE_WITH_EXPORT(PAL, ScreenTime, STWebHistory, PAL_EXPORT)
+
 
 #endif // ENABLE(SCREEN_TIME)

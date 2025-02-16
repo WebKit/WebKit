@@ -30,7 +30,7 @@ let interestingValues = [
     [-Number.MAX_VALUE, true],
 ];
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let [value, result] of interestingValues) {
         assert(onlyDouble(value) === result);
     }
@@ -51,7 +51,7 @@ function generic(x) {
 }
 noInline(generic);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let [value, result] of interestingValues) {
         assert(generic(value) === result);
     }
@@ -62,10 +62,10 @@ function onlyInts(x) {
 }
 noInline(onlyInts);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     assert(onlyInts(i) === true);
 }
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let [value, result] of interestingValues) {
         assert(onlyInts(value) === result);
     }

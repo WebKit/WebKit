@@ -60,12 +60,13 @@ public:
     void matchUserRules();
 
     bool matchesAnyAuthorRules();
+    bool matchesAnyRules(const RuleSet&);
 
     void setMode(SelectorChecker::Mode mode) { m_mode = mode; }
+
     void setPseudoElementRequest(const std::optional<PseudoElementRequest>& request) { m_pseudoElementRequest = request; }
     void setMedium(const MQ::MediaQueryEvaluator& medium) { m_isPrintStyle = medium.isPrintMedia(); }
 
-    bool hasAnyMatchingRules(const RuleSet&);
 
     const MatchResult& matchResult() const;
     std::unique_ptr<MatchResult> releaseMatchResult();
@@ -98,6 +99,7 @@ private:
     void collectMatchingRules(CascadeLevel);
     void collectMatchingRules(const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
+    bool isFirstMatchModeAndHasMatchedAnyRules() const;
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, const ContainerNode* scopingRoot = nullptr);
     bool containerQueriesMatch(const RuleData&, const MatchRequest&);
     struct ScopingRootWithDistance {
@@ -127,6 +129,8 @@ private:
 
     bool m_shouldIncludeEmptyRules { false };
     bool m_isPrintStyle { false };
+    // FIXME: This should be a SelectorChecker::Mode.
+    bool m_firstMatchMode { false };
     std::optional<PseudoElementRequest> m_pseudoElementRequest { };
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
 

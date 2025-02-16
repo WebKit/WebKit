@@ -38,7 +38,7 @@ class CSSSubgridValue final : public CSSValueContainingVector {
 public:
     static Ref<CSSSubgridValue> create(CSSValueListBuilder);
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSSubgridValue& other) const { return itemsEqual(other); }
 
 private:

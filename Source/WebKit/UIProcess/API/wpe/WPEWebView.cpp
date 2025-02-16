@@ -150,11 +150,13 @@ bool View::isFullScreen() const
     return m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen || m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::InFullscreen;
 }
 
-void View::willEnterFullScreen()
+void View::willEnterFullScreen(CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(m_fullscreenState == WebFullScreenManagerProxy::FullscreenState::NotInFullscreen);
     if (auto* fullScreenManagerProxy = page().fullScreenManager())
-        fullScreenManagerProxy->willEnterFullScreen();
+        fullScreenManagerProxy->willEnterFullScreen(WTFMove(completionHandler));
+    else
+        completionHandler(false);
     m_fullscreenState = WebFullScreenManagerProxy::FullscreenState::EnteringFullscreen;
 }
 

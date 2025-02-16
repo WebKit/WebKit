@@ -40,8 +40,6 @@
 #include <CoreText/CoreText.h>
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 static CGContextDelegateRef beginLayer(CGContextDelegateRef delegate, CGRenderingStateRef rstate, CGGStateRef gstate, CGRect rect, CFDictionaryRef, CGContextDelegateRef)
@@ -514,5 +512,3 @@ void DrawGlyphsRecorder::drawNativeText(CTFontRef font, CGFloat fontSize, CTLine
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

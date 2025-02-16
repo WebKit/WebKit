@@ -33,6 +33,7 @@
 #import "EditingRange.h"
 #import "EditorState.h"
 #import "InteractionInformationAtPosition.h"
+#import "KeyEventInterpretationContext.h"
 #import "Logging.h"
 #import "MessageSenderInlines.h"
 #import "NativeWebKeyboardEvent.h"
@@ -615,8 +616,23 @@ bool WebPage::handleEditingKeyboardEvent(KeyboardEvent& event)
 
     updateLastNodeBeforeWritingSuggestions(event);
 
+    auto scrollingNodeID = [&] -> std::optional<WebCore::ScrollingNodeID> {
+        RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+        if (!frame)
+            return std::nullopt;
+
+        auto scrollableArea = frame->eventHandler().focusedScrollableArea();
+        if (!scrollableArea)
+            return std::nullopt;
+
+        return scrollableArea->scrollingNodeID();
+    }();
+
+    auto isCharEvent = platformEvent->type() == PlatformKeyboardEvent::Type::Char;
+    auto context = KeyEventInterpretationContext { isCharEvent, scrollingNodeID };
+
     // FIXME: Interpret the event immediately upon receiving it in UI process, without sending to WebProcess first.
-    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(ShouldPerformLayout::Yes), platformEvent->type() == PlatformKeyboardEvent::Type::Char), m_identifier);
+    auto sendResult = WebProcess::singleton().parentProcessConnection()->sendSync(Messages::WebPageProxy::InterpretKeyEvent(editorState(ShouldPerformLayout::Yes), context), m_identifier);
     auto [eventWasHandled] = sendResult.takeReplyOr(false);
     return eventWasHandled;
 }
@@ -685,10 +701,11 @@ void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebC
     [accessibilityRemoteObject() setRemoteFrameOffset:offset];
 }
 
-void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken)
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken, WebCore::FrameIdentifier frameID)
 {
     createMockAccessibilityElement(pid);
     [m_mockAccessibilityElement setRemoteTokenData:toNSData(elementToken).get()];
+    [m_mockAccessibilityElement setFrameIdentifier:frameID];
 }
 
 void WebPage::createMockAccessibilityElement(pid_t pid)
@@ -735,16 +752,6 @@ void WebPage::shouldDelayWindowOrderingEvent(const WebKit::WebMouseEvent&, Compl
 {
     notImplemented();
     completionHandler(false);
-}
-
-void WebPage::computePagesForPrintingPDFDocument(WebCore::FrameIdentifier, const PrintInfo&, Vector<IntRect>&)
-{
-    notImplemented();
-}
-
-void WebPage::drawPagesToPDFFromPDFDocument(CGContextRef, PDFDocument *, const PrintInfo&, uint32_t, uint32_t)
-{
-    notImplemented();
 }
 
 void WebPage::advanceToNextMisspelling(bool)
@@ -992,8 +999,12 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
         auto& document = nodeRespondingToClick.document();
         // Dispatch mouseOut to dismiss tooltip content when tapping on the control bar buttons (cc, settings).
         if (document.quirks().needsYouTubeMouseOutQuirk()) {
-            if (auto* frame = document.frame())
-                frame->eventHandler().dispatchSyntheticMouseOut(PlatformMouseEvent(roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::NoType, 0, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::NoTap, pointerId));
+            if (RefPtr frame = document.frame()) {
+                PlatformMouseEvent event { roundedAdjustedPoint, roundedAdjustedPoint, MouseButton::Left, PlatformEvent::Type::NoType, 0, platformModifiers, WallTime::now(), 0, WebCore::SyntheticClickType::NoTap, pointerId };
+                if (!nodeRespondingToClick.isConnected())
+                    frame->eventHandler().dispatchSyntheticMouseMove(event);
+                frame->eventHandler().dispatchSyntheticMouseOut(event);
+            }
         }
     }
 
@@ -1025,7 +1036,7 @@ void WebPage::attemptSyntheticClick(const IntPoint& point, OptionSet<WebEventMod
     auto* frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
     IntPoint adjustedIntPoint = roundedIntPoint(adjustedPoint);
 
-    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
+    if (!frameRespondingToClick || lastLayerTreeTransactionId.lessThanSameProcess(*WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()))
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(adjustedIntPoint));
     else if (m_interactionNode == nodeRespondingToClick)
         completeSyntheticClick(*nodeRespondingToClick, adjustedPoint, modifiers, WebCore::SyntheticClickType::OneFingerTap);
@@ -1042,7 +1053,7 @@ void WebPage::handleDoubleTapForDoubleClickAtPoint(const IntPoint& point, Option
         return;
 
     auto* frameRespondingToDoubleClick = nodeRespondingToDoubleClick->document().frame();
-    if (!frameRespondingToDoubleClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToDoubleClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())
+    if (!frameRespondingToDoubleClick || lastLayerTreeTransactionId.lessThanSameProcess(*WebFrame::fromCoreFrame(*frameRespondingToDoubleClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()))
         return;
 
     SetForScope userIsInteractingChange { m_userIsInteracting, true };
@@ -1218,7 +1229,10 @@ void WebPage::sendTapHighlightForNodeIfNecessary(WebKit::TapIdentifier requestID
 
     if (RefPtr element = dynamicDowncast<Element>(*node)) {
         ASSERT(m_page);
-        localMainFrame->loader().client().prefetchDNS(element->absoluteLinkURL().host().toString());
+        auto linkURL = element->absoluteLinkURL();
+        if (!linkURL.protocolIsInHTTPFamily())
+            return;
+        localMainFrame->loader().client().prefetchDNS(linkURL.host().toString());
     }
 
     if (RefPtr area = dynamicDowncast<HTMLAreaElement>(*node)) {
@@ -1325,7 +1339,8 @@ void WebPage::potentialTapAtPosition(WebKit::TapIdentifier requestID, const WebC
         viewGestureGeometryCollector->computeZoomInformationForNode(*m_potentialTapNode, origin, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale);
 
         bool nodeIsRootLevel = is<WebCore::Document>(*m_potentialTapNode) || is<WebCore::HTMLBodyElement>(*m_potentialTapNode);
-        send(Messages::WebPageProxy::HandleSmartMagnificationInformationForPotentialTap(requestID, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel));
+        bool nodeIsPluginElement = is<WebCore::HTMLPlugInElement>(*m_potentialTapNode);
+        send(Messages::WebPageProxy::HandleSmartMagnificationInformationForPotentialTap(requestID, absoluteBoundingRect, fitEntireRect, viewportMinimumScale, viewportMaximumScale, nodeIsRootLevel, nodeIsPluginElement));
     }
 
     sendTapHighlightForNodeIfNecessary(requestID, m_potentialTapNode.get(), position);
@@ -1356,7 +1371,7 @@ void WebPage::commitPotentialTap(OptionSet<WebEventModifier> modifiers, Transact
     Node* nodeRespondingToClick = localMainFrame ? localMainFrame->nodeRespondingToClickEvents(m_potentialTapLocation, adjustedPoint, m_potentialTapSecurityOrigin.get()) : nullptr;
     auto* frameRespondingToClick = nodeRespondingToClick ? nodeRespondingToClick->document().frame() : nullptr;
 
-    if (!frameRespondingToClick || lastLayerTreeTransactionId < WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad()) {
+    if (!frameRespondingToClick || lastLayerTreeTransactionId.lessThanSameProcess(*WebFrame::fromCoreFrame(*frameRespondingToClick)->firstLayerTreeTransactionIDAfterDidCommitLoad())) {
         commitPotentialTapFailed();
         return;
     }
@@ -1801,6 +1816,11 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
     std::optional<SimpleRange> range;
     SelectionWasFlipped selectionFlipped = SelectionWasFlipped::No;
 
+    auto shouldUseOldExtentAsNewBase = [&] {
+        return frame.settings().visuallyContiguousBidiTextSelectionEnabled()
+            && crossesBidiTextBoundaryInSameLine(result, baseIsStart ? selectionEnd : selectionStart);
+    };
+
     if (targetNode)
         result = frame.eventHandler().selectionExtentRespectingEditingBoundary(frame.selection().selection(), hitTest.localPoint(), targetNode.get()).deepEquivalent();
     else
@@ -1815,7 +1835,7 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
             result = VisibleSelection::adjustPositionForEnd(result.deepEquivalent(), containerNode.get());
         
         if (selectionFlippingEnabled && flipSelection) {
-            range = makeSimpleRange(result, selectionStart);
+            range = makeSimpleRange(result, shouldUseOldExtentAsNewBase() ? selectionEnd : selectionStart);
             selectionFlipped = SelectionWasFlipped::Yes;
         } else
             range = makeSimpleRange(selectionStart, result);
@@ -1828,7 +1848,7 @@ static std::pair<std::optional<SimpleRange>, SelectionWasFlipped> rangeForPointI
             result = VisibleSelection::adjustPositionForStart(result.deepEquivalent(), containerNode.get());
 
         if (selectionFlippingEnabled && flipSelection) {
-            range = makeSimpleRange(selectionEnd, result);
+            range = makeSimpleRange(shouldUseOldExtentAsNewBase() ? selectionStart : selectionEnd, result);
             selectionFlipped = SelectionWasFlipped::Yes;
         } else
             range = makeSimpleRange(result, selectionEnd);
@@ -2087,7 +2107,7 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
-        return;
+        return completionHandler(point, selectionTouch, { });
 
 #if ENABLE(PDF_PLUGIN)
     if (RefPtr pluginView = focusedPluginViewForFrame(*frame)) {
@@ -2098,6 +2118,14 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         return completionHandler(point, selectionTouch, resultFlags);
     }
 #endif
+
+    if (selectionTouch == SelectionTouch::Moved
+        && m_bidiSelectionFlippingState != BidiSelectionFlippingState::NotFlipping
+        && baseIsStart == (m_bidiSelectionFlippingState == BidiSelectionFlippingState::FlippingToStart)) {
+        // The last selection update caused the selection base and extent to swap. Ignore any in-flight selection
+        // update that's still trying to adjust the new selection base (after flipping).
+        return completionHandler(point, selectionTouch, { });
+    }
 
     if (selectionTouch == SelectionTouch::Started)
         addTextInteractionSources(TextInteractionSource::Touch);
@@ -2151,8 +2179,11 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
         break;
     }
 
-    if (selectionFlipped == SelectionWasFlipped::Yes)
-        flags = SelectionFlags::SelectionFlipped;
+    if (selectionFlipped == SelectionWasFlipped::Yes) {
+        flags.add(SelectionFlags::SelectionFlipped);
+        m_bidiSelectionFlippingState = baseIsStart ? BidiSelectionFlippingState::FlippingToStart : BidiSelectionFlippingState::FlippingToEnd;
+    } else
+        m_bidiSelectionFlippingState = BidiSelectionFlippingState::NotFlipping;
 
     completionHandler(point, selectionTouch, flags);
 }
@@ -2704,6 +2735,7 @@ void WebPage::setSelectionRange(const WebCore::IntPoint& point, WebCore::TextGra
     auto range = rangeForGranularityAtPoint(*frame, point, granularity, isInteractingWithFocusedElement);
     if (range)
         frame->selection().setSelectedRange(*range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
+
     m_initialSelection = range;
 }
 
@@ -2733,8 +2765,8 @@ void WebPage::selectTextWithGranularityAtPoint(const WebCore::IntPoint& point, W
 
 void WebPage::beginSelectionInDirection(WebCore::SelectionDirection direction, CompletionHandler<void(bool)>&& completionHandler)
 {
-    m_selectionAnchor = direction == SelectionDirection::Left ? Start : End;
-    completionHandler(m_selectionAnchor == Start);
+    m_selectionAnchor = direction == SelectionDirection::Left ? SelectionAnchor::Start : SelectionAnchor::End;
+    completionHandler(m_selectionAnchor == SelectionAnchor::Start);
 }
 
 void WebPage::updateSelectionWithExtentPointAndBoundary(const WebCore::IntPoint& point, WebCore::TextGranularity granularity, bool isInteractingWithFocusedElement, TextInteractionSource source, CompletionHandler<void(bool)>&& callback)
@@ -2795,13 +2827,13 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
     VisiblePosition selectionEnd;
     
     if (respectSelectionAnchor == RespectSelectionAnchor::Yes) {
-        if (m_selectionAnchor == Start) {
+        if (m_selectionAnchor == SelectionAnchor::Start) {
             selectionStart = frame->selection().selection().visibleStart();
             selectionEnd = position;
             if (position <= selectionStart) {
                 selectionStart = selectionStart.previous();
                 selectionEnd = frame->selection().selection().visibleEnd();
-                m_selectionAnchor = End;
+                m_selectionAnchor = SelectionAnchor::End;
             }
         } else {
             selectionStart = position;
@@ -2809,7 +2841,7 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
             if (position >= selectionEnd) {
                 selectionStart = frame->selection().selection().visibleStart();
                 selectionEnd = selectionEnd.next();
-                m_selectionAnchor = Start;
+                m_selectionAnchor = SelectionAnchor::Start;
             }
         }
     } else {
@@ -2827,7 +2859,7 @@ void WebPage::updateSelectionWithExtentPoint(const WebCore::IntPoint& point, boo
     if (auto range = makeSimpleRange(selectionStart, selectionEnd))
         frame->selection().setSelectedRange(range, Affinity::Upstream, WebCore::FrameSelection::ShouldCloseTyping::Yes, UserTriggered::Yes);
 
-    callback(m_selectionAnchor == Start);
+    callback(m_selectionAnchor == SelectionAnchor::Start);
 }
 
 void WebPage::didReleaseAllTouchPoints()
@@ -3232,15 +3264,11 @@ static inline bool isAssistableElement(Element& element)
         return true;
     if (RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element)) {
         // FIXME: This laundry list of types is not a good way to factor this. Need a suitable function on HTMLInputElement itself.
-#if ENABLE(INPUT_TYPE_COLOR)
-        if (inputElement->isColorControl())
-            return true;
-#endif
 #if ENABLE(INPUT_TYPE_WEEK_PICKER)
         if (inputElement->isWeekField())
             return true;
 #endif
-        return inputElement->isTextField() || inputElement->isDateField() || inputElement->isDateTimeLocalField() || inputElement->isMonthField() || inputElement->isTimeField();
+        return inputElement->isTextField() || inputElement->isDateField() || inputElement->isDateTimeLocalField() || inputElement->isMonthField() || inputElement->isTimeField() || inputElement->isColorControl();
     }
     if (is<HTMLIFrameElement>(element))
         return false;
@@ -3249,13 +3277,18 @@ static inline bool isAssistableElement(Element& element)
 
 static inline bool isObscuredElement(Element& element)
 {
-    Ref topDocument = element.document().topDocument();
+    RefPtr mainFrameDocument = element.document().protectedMainFrameDocument();
+    if (!mainFrameDocument) {
+        LOG_ONCE(SiteIsolation, "Unable to properly perform isObscuredElement() without access to the main frame document ");
+        return false;
+    }
+
     auto elementRectInMainFrame = element.boundingBoxInRootViewCoordinates();
 
     constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::AllowChildFrameContent, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::IgnoreClipping };
     HitTestResult result(elementRectInMainFrame.center());
 
-    topDocument->hitTest(hitType, result);
+    mainFrameDocument->hitTest(hitType, result);
     result.setToNonUserAgentShadowAncestor();
 
     if (result.targetElement() == &element)
@@ -3592,7 +3625,6 @@ static void selectionPositionInformation(WebPage& page, const InteractionInforma
 #endif
 }
 
-#if ENABLE(DATALIST_ELEMENT)
 static void textInteractionPositionInformation(WebPage& page, const HTMLInputElement& input, const InteractionInformationRequest& request, InteractionInformationAtPosition& info)
 {
     if (!input.list())
@@ -3606,7 +3638,6 @@ static void textInteractionPositionInformation(WebPage& page, const HTMLInputEle
     if (result.innerNode() == input.dataListButtonElement())
         info.preventTextInteraction = true;
 }
-#endif
 
 RefPtr<ShareableBitmap> WebPage::shareableBitmapSnapshotForNode(Element& element)
 {
@@ -3680,7 +3711,7 @@ static CursorContext cursorContext(const HitTestResult& hitTestResult, const Int
     bool isEditable = node->hasEditableStyle();
 
     if (isEditable)
-        lineRect.setWidth(blockFlow.contentWidth());
+        lineRect.setWidth(blockFlow.contentBoxWidth());
 
     context.isVerticalWritingMode = !renderer->isHorizontalWritingMode();
     context.lineCaretExtent = view->contentsToRootView(lineRect);
@@ -3830,10 +3861,8 @@ InteractionInformationAtPosition WebPage::positionInformation(const InteractionI
     selectionPositionInformation(*this, request, info);
 
     // Prevent the callout bar from showing when tapping on the datalist button.
-#if ENABLE(DATALIST_ELEMENT)
     if (RefPtr input = dynamicDowncast<HTMLInputElement>(nodeRespondingToClickEvents))
         textInteractionPositionInformation(*this, *input, request, info);
-#endif
 
 #if ENABLE(PDF_PLUGIN)
     if (pluginView) {
@@ -4153,21 +4182,15 @@ std::optional<FocusedElementInformation> WebPage::focusedElementInformation()
                     information.elementType = InputType::Search;
             }
         }
-#if ENABLE(INPUT_TYPE_COLOR)
         else if (element->isColorControl()) {
             information.elementType = InputType::Color;
             information.colorValue = element->valueAsColor();
             information.supportsAlpha = element->alpha() ? WebKit::ColorControlSupportsAlpha::Yes : WebKit::ColorControlSupportsAlpha::No;
-#if ENABLE(DATALIST_ELEMENT)
             information.suggestedColors = element->suggestedColors();
-#endif
         }
-#endif
 
-#if ENABLE(DATALIST_ELEMENT)
         information.isFocusingWithDataListDropdown = element->isFocusingWithDataListDropdown();
         information.hasSuggestions = !!element->list();
-#endif
         information.inputMode = element->canonicalInputMode();
         information.enterKeyHint = element->canonicalEnterKeyHint();
         information.isReadOnly = element->isReadOnly();
@@ -4840,7 +4863,7 @@ static inline void adjustVelocityDataForBoundedScale(VelocityData& velocityData,
 std::optional<float> WebPage::scaleFromUIProcess(const VisibleContentRectUpdateInfo& visibleContentRectUpdateInfo) const
 {
     auto transactionIDForLastScaleFromUIProcess = visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
-    if (m_internals->lastTransactionIDWithScaleChange > transactionIDForLastScaleFromUIProcess)
+    if (m_internals->lastTransactionIDWithScaleChange && m_internals->lastTransactionIDWithScaleChange->greaterThanSameProcess(transactionIDForLastScaleFromUIProcess))
         return std::nullopt;
 
     float scaleFromUIProcess = visibleContentRectUpdateInfo.scale();
@@ -4885,7 +4908,7 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
     LOG_WITH_STREAM(VisibleRects, stream << "\nWebPage " << m_identifier << " updateVisibleContentRects " << visibleContentRectUpdateInfo);
 
     // Skip any VisibleContentRectUpdate that have been queued before DidCommitLoad suppresses the updates in the UIProcess.
-    if (visibleContentRectUpdateInfo.lastLayerTreeTransactionID() < m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad() && !visibleContentRectUpdateInfo.isFirstUpdateForNewViewSize())
+    if (m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad() && visibleContentRectUpdateInfo.lastLayerTreeTransactionID().lessThanSameProcess(*m_mainFrame->firstLayerTreeTransactionIDAfterDidCommitLoad()) && !visibleContentRectUpdateInfo.isFirstUpdateForNewViewSize())
         return;
 
     m_hasReceivedVisibleContentRectsAfterDidCommitLoad = true;
@@ -4936,15 +4959,8 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
         if (!scalesAreEssentiallyEqual(scaleBeforeScalingPage, scaleToUse))
             return false;
 
-        return transactionIdBeforeScalingPage >= visibleContentRectUpdateInfo.lastLayerTreeTransactionID();
+        return transactionIdBeforeScalingPage.greaterThanOrEqualSameProcess( visibleContentRectUpdateInfo.lastLayerTreeTransactionID());
     })();
-
-    bool pluginHandlesScaleFactor = [&]() -> bool {
-#if ENABLE(PDF_PLUGIN)
-        return mainFramePlugIn();
-#endif
-        return false;
-    }();
 
     if (!pageHasBeenScaledSinceLastLayerTreeCommitThatChangedPageScale) {
         bool hasSetPageScale = false;
@@ -4954,7 +4970,17 @@ void WebPage::updateVisibleContentRects(const VisibleContentRectUpdateInfo& visi
 
             m_dynamicSizeUpdateHistory.clear();
 
-            if (!pluginHandlesScaleFactor)
+            // FIXME: <webkit.org/b/287511> Also call Page::setPageScaleFactor() for main frame plugins that do not handle page scale factor.
+            bool pluginHandlesPageScaleFactor = [this] {
+#if ENABLE(PDF_PLUGIN)
+                return this->mainFramePlugIn();
+#else
+                UNUSED_PARAM(this);
+                return false;
+#endif
+            }();
+
+            if (!pluginHandlesPageScaleFactor)
                 m_page->setPageScaleFactor(scaleFromUIProcess.value(), scrollPosition, m_isInStableState);
 
             hasSetPageScale = true;
@@ -5125,10 +5151,8 @@ void WebPage::updateLayoutViewportHeightExpansionTimerFired()
 void WebPage::willStartUserTriggeredZooming()
 {
 #if ENABLE(PDF_PLUGIN)
-    if (RefPtr pluginView = mainFramePlugIn()) {
+    if (RefPtr pluginView = mainFramePlugIn())
         pluginView->didBeginMagnificationGesture();
-        return;
-    }
 #endif
 
     m_page->diagnosticLoggingClient().logDiagnosticMessage(DiagnosticLoggingKeys::webViewKey(), DiagnosticLoggingKeys::userZoomActionKey(), ShouldSample::No);
@@ -5498,10 +5522,14 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
             if (RefPtr rootEditableElement = selection.rootEditableElement()) {
                 VisiblePosition startOfEditableRoot { firstPositionInOrBeforeNode(rootEditableElement.get()) };
                 VisiblePosition endOfEditableRoot { lastPositionInOrAfterNode(rootEditableElement.get()) };
-                if (rangeOfInterest.start < startOfEditableRoot)
-                    rangeOfInterest.start = WTFMove(startOfEditableRoot);
-                if (rangeOfInterest.end > endOfEditableRoot)
-                    rangeOfInterest.end = WTFMove(endOfEditableRoot);
+                auto clampToEditableRoot = [&](VisiblePosition& position) {
+                    if (position < startOfEditableRoot)
+                        position = startOfEditableRoot;
+                    else if (position > endOfEditableRoot)
+                        position = endOfEditableRoot;
+                };
+                clampToEditableRoot(rangeOfInterest.start);
+                clampToEditableRoot(rangeOfInterest.end);
             }
         }
     } else if (!selection.isNone())
@@ -5950,7 +5978,7 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
         return layer.enclosingScrollableLayer(includeSelf, CrossFrameBoundaries::Yes);
     };
 
-    auto scrollPositionAndNodeIDForLayer = [](RenderLayer* layer) -> std::pair<ScrollPosition, std::optional<ScrollingNodeID>> {
+    auto scrollOffsetAndNodeIDForLayer = [](RenderLayer* layer) -> std::pair<ScrollOffset, std::optional<ScrollingNodeID>> {
         CheckedRef renderer = layer->renderer();
         WeakPtr scrollableArea = [&] -> ScrollableArea* {
             if (renderer->isRenderView())
@@ -5966,13 +5994,13 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
         if (!scrollingNodeID)
             return { };
 
-        return { scrollableArea->scrollPosition(), WTFMove(scrollingNodeID) };
+        return { scrollableArea->scrollOffset(), WTFMove(scrollingNodeID) };
     };
 
     CheckedPtr<RenderLayer> scrollableLayer;
     for (CheckedPtr layer = nextScroller(*enclosingLayer, IncludeSelfOrNot::IncludeSelf); layer; layer = nextScroller(*layer, IncludeSelfOrNot::ExcludeSelf)) {
-        if (auto [scrollPosition, scrollingNodeID] = scrollPositionAndNodeIDForLayer(layer.get()); scrollingNodeID) {
-            state.visualData->enclosingScrollPosition = scrollPosition;
+        if (auto [scrollOffset, scrollingNodeID] = scrollOffsetAndNodeIDForLayer(layer.get()); scrollingNodeID) {
+            state.visualData->enclosingScrollOffset = scrollOffset;
             state.visualData->enclosingScrollingNodeID = WTFMove(scrollingNodeID);
             scrollableLayer = WTFMove(layer);
             break;
@@ -5990,7 +6018,7 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
 
     auto scrollingNodeIDForEndpoint = [&](RenderLayer* endpointLayer) {
         for (CheckedPtr layer = endpointLayer; layer && layer != scrollableLayer; layer = nextScroller(*layer, IncludeSelfOrNot::ExcludeSelf)) {
-            if (auto scrollingNodeID = scrollPositionAndNodeIDForLayer(layer.get()).second)
+            if (auto scrollingNodeID = scrollOffsetAndNodeIDForLayer(layer.get()).second)
                 return scrollingNodeID;
         }
         return state.visualData->enclosingScrollingNodeID;

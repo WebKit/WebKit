@@ -91,7 +91,7 @@ private:
     Lock m_processLock;
     RefPtr<AudioWorkletProcessor> m_processor; // Should only be used on the rendering thread.
     MemoryCompactLookupOnlyRobinHoodHashMap<String, std::unique_ptr<AudioFloatArray>> m_paramValuesMap;
-    Thread* m_workletThread { nullptr };
+    RefPtr<Thread> m_workletThread { nullptr };
 
     // Keeps the reference of AudioBus objects from AudioNodeInput and AudioNodeOutput in order
     // to pass them to AudioWorkletProcessor.

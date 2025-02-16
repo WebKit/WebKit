@@ -91,7 +91,6 @@ RetainPtr<NSDateFormatter> LocaleCocoa::shortDateFormatter()
     return createDateTimeFormatter(m_locale.get(), m_gregorianCalendar.get(), NSDateFormatterShortStyle, NSDateFormatterNoStyle);
 }
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 String LocaleCocoa::formatDateTime(const DateComponents& dateComponents, FormatType)
 {
     double msec = dateComponents.millisecondsSinceEpoch();
@@ -268,8 +267,6 @@ const Vector<String>& LocaleCocoa::timeAMPMLabels()
     m_timeAMPMLabels = { String([formatter AMSymbol]), String([formatter PMSymbol]) };
     return m_timeAMPMLabels;
 }
-
-#endif
 
 using CanonicalLocaleMap = UncheckedKeyHashMap<AtomString, RetainPtr<CFStringRef>>;
 

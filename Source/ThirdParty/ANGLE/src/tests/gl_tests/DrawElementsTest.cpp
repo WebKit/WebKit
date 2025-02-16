@@ -684,16 +684,14 @@ TEST_P(WebGLDrawElementsTest, DrawElementsTypeAlignment)
 
     ASSERT_GL_NO_ERROR();
 
-    const char *zeroIndices = nullptr;
-
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, zeroIndices);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, nullptr);
     ASSERT_GL_NO_ERROR();
 
     const GLushort indices2[] = {0, 0, 0, 0, 0, 0};
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
 
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, zeroIndices + 1);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(1));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 

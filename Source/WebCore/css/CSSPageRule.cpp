@@ -24,6 +24,7 @@
 
 #include "CSSParser.h"
 #include "CSSSelector.h"
+#include "CSSSerializationContext.h"
 #include "CSSStyleSheet.h"
 #include "CommonAtomStrings.h"
 #include "Document.h"
@@ -56,11 +57,10 @@ CSSStyleDeclaration& CSSPageRule::style()
 String CSSPageRule::selectorText() const
 {
     if (auto* selector = m_pageRule->selector()) {
-        String pageSpecification = selector->selectorText();
-        if (!pageSpecification.isEmpty() && pageSpecification != starAtom())
-            return makeString("@page "_s, pageSpecification);
+        if (!selector->selectorText().isEmpty())
+            return selector->selectorText();
     }
-    return "@page"_s;
+    return ""_s;
 }
 
 void CSSPageRule::setSelectorText(const String& selectorText)
@@ -78,9 +78,11 @@ void CSSPageRule::setSelectorText(const String& selectorText)
 
 String CSSPageRule::cssText() const
 {
-    if (auto declarations = m_pageRule->properties().asText(); !declarations.isEmpty())
-        return makeString(selectorText(), " { "_s, declarations, " }"_s);
-    return makeString(selectorText(), " { }"_s);
+    auto selector = selectorText();
+    auto optionalSpace = selector.isEmpty() ? ""_s : " "_s;
+    if (auto declarations = m_pageRule->properties().asText(CSS::defaultSerializationContext()); !declarations.isEmpty())
+        return makeString("@page"_s, optionalSpace, selector, " { "_s, declarations, " }"_s);
+    return makeString("@page"_s, optionalSpace, selector, " { }"_s);
 }
 
 void CSSPageRule::reattach(StyleRuleBase& rule)

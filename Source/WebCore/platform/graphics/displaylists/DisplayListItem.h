@@ -63,7 +63,6 @@ class DrawFocusRingPath;
 class DrawFocusRingRects;
 class DrawGlyphs;
 class DrawDecomposedGlyphs;
-class DrawDisplayListItems;
 class DrawImageBuffer;
 class DrawLine;
 class DrawLinesForText;
@@ -119,6 +118,7 @@ class ApplyStrokePattern;
 #endif
 class BeginPage;
 class EndPage;
+class SetURLForRect;
 
 using Item = std::variant
     < ApplyDeviceScaleFactor
@@ -142,7 +142,6 @@ using Item = std::variant
     , DrawFocusRingRects
     , DrawGlyphs
     , DrawDecomposedGlyphs
-    , DrawDisplayListItems
     , DrawImageBuffer
     , DrawLine
     , DrawLinesForText
@@ -198,6 +197,7 @@ using Item = std::variant
 #endif
     , BeginPage
     , EndPage
+    , SetURLForRect
 >;
 
 enum class StopReplayReason : uint8_t {
@@ -213,7 +213,7 @@ struct ApplyItemResult {
 };
 
 enum class ReplayOption : uint8_t {
-    FlushImagesAndWaitForCompletion = 1 << 0,
+    FlushAcceleratedImagesAndWaitForCompletion = 1 << 0,
 };
 
 enum class AsTextFlag : uint8_t {
@@ -230,6 +230,7 @@ bool shouldDumpItem(const Item&, OptionSet<AsTextFlag>);
 WEBCORE_EXPORT void dumpItem(TextStream&, const Item&, OptionSet<AsTextFlag>);
 
 WEBCORE_EXPORT TextStream& operator<<(TextStream&, const Item&);
+WEBCORE_EXPORT TextStream& operator<<(TextStream&, StopReplayReason);
 
 } // namespace DisplayList
 } // namespace WebCore

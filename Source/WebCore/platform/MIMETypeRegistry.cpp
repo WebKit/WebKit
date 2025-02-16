@@ -416,7 +416,7 @@ bool MIMETypeRegistry::isSupportedImageMIMEType(const String& mimeType)
     // Ensure supportedImageMIMETypeArray matches defaultSupportedImageTypes().
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        for (auto& imageType : defaultSupportedImageTypes()) {
+        for (auto& imageType : supportedImageTypes()) {
             auto mimeType = MIMETypeForImageType(imageType);
             ASSERT_IMPLIES(!mimeType.isEmpty(), supportedImageMIMETypeSet.contains(mimeType));
         }

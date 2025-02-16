@@ -4,7 +4,7 @@ function foo(array) {
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(new Int32Array(100));
     if (result != 0)
         throw "Error: bad result for fast typed array: " + result;

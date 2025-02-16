@@ -38,6 +38,8 @@
 #import <UIFoundation/NSAttributedString_Private.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/FontCocoa.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WebKitPrivate.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/UIFoundationSPI.h>
@@ -689,6 +691,12 @@ TEST(AdaptiveImageGlyph, InsertTextAfterAdaptiveImageGlyph)
 TEST(AdaptiveImageGlyph, CopyRTF)
 {
     auto webView = adoptNS([[AdaptiveImageGlyphWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+
+#if PLATFORM(IOS_FAMILY)
+    auto preferences = (__bridge WKPreferencesRef)[[webView configuration] preferences];
+    WKPreferencesSetWriteRichTextDataWhenCopyingOrDragging(preferences, true);
+#endif
+
     [webView _setEditable:YES];
 
     [webView synchronouslyLoadHTMLString:@"<body></body>"];

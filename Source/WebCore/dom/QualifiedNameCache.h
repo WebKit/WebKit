@@ -68,7 +68,7 @@ private:
         static const int minimumTableSize = WTF::HashTableCapacityForSize<staticQualifiedNamesCount>::value;
     };
 
-    using QNameSet = HashSet<QualifiedName::QualifiedNameImpl*, QualifiedNameHash, QualifiedNameHashTraits>;
+    using QNameSet = UncheckedKeyHashSet<QualifiedName::QualifiedNameImpl*, QualifiedNameHash, QualifiedNameHashTraits>;
     QNameSet m_cache;
 };
 

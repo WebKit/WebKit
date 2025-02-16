@@ -23,25 +23,25 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitFullScreenListener_h
-#define WebKitFullScreenListener_h
+#pragma once
 
 #import "WebUIDelegatePrivate.h"
+#import <wtf/CompletionHandler.h>
 #import <wtf/RefPtr.h>
 
 #if ENABLE(FULLSCREEN_API)
 
 namespace WebCore {
 class Element;
+template<typename> class ExceptionOr;
 }
 
 @interface WebKitFullScreenListener : NSObject <WebKitFullScreenListener> {
     RefPtr<WebCore::Element> _element;
+    CompletionHandler<void(WebCore::ExceptionOr<void>)> _completionHandler;
 }
 
-- (id)initWithElement:(WebCore::Element*)element;
+- (id)initWithElement:(WebCore::Element*)element completionHandler:(CompletionHandler<void(WebCore::ExceptionOr<void>)>&&)completionHandler;
 @end
 
 #endif
-
-#endif // WebFullScreenListener_h

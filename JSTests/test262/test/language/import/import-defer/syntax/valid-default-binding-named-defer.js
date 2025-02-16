@@ -27,4 +27,4 @@ features: [import-defer]
 
 import defer from "./dep_FIXTURE.js";
 
-asserts.sameValue(defer, 1, "`defer` is the default export binding");
+assert.sameValue(defer, 1, "`defer` is the default export binding");

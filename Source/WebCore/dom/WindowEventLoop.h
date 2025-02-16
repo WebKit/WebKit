@@ -50,8 +50,8 @@ public:
 
     void queueMutationObserverCompoundMicrotask();
     Vector<GCReachableRef<HTMLSlotElement>>& signalSlotList() { return m_signalSlotList; }
-    HashSet<RefPtr<MutationObserver>>& activeMutationObservers() { return m_activeObservers; }
-    HashSet<RefPtr<MutationObserver>>& suspendedMutationObservers() { return m_suspendedObservers; }
+    UncheckedKeyHashSet<RefPtr<MutationObserver>>& activeMutationObservers() { return m_activeObservers; }
+    UncheckedKeyHashSet<RefPtr<MutationObserver>>& suspendedMutationObservers() { return m_suspendedObservers; }
 
     CustomElementQueue& backupElementQueue();
 
@@ -91,8 +91,8 @@ private:
     bool m_mutationObserverCompoundMicrotaskQueuedFlag { false };
     bool m_deliveringMutationRecords { false }; // FIXME: This flag doesn't exist in the spec.
     Vector<GCReachableRef<HTMLSlotElement>> m_signalSlotList; // https://dom.spec.whatwg.org/#signal-slot-list
-    HashSet<RefPtr<MutationObserver>> m_activeObservers;
-    HashSet<RefPtr<MutationObserver>> m_suspendedObservers;
+    UncheckedKeyHashSet<RefPtr<MutationObserver>> m_activeObservers;
+    UncheckedKeyHashSet<RefPtr<MutationObserver>> m_suspendedObservers;
 
     std::unique_ptr<CustomElementQueue> m_customElementQueue;
     bool m_processingBackupElementQueue { false };

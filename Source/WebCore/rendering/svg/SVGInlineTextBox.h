@@ -35,8 +35,6 @@ class SVGInlineTextBox final : public LegacyInlineTextBox {
 public:
     explicit SVGInlineTextBox(RenderSVGInlineText&);
 
-    inline RenderSVGInlineText& renderer() const;
-
     float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 

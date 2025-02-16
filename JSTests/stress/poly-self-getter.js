@@ -19,7 +19,7 @@ function getter() {
     return 84;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {};
     o.__defineGetter__("f", getter);
     test(o, 84, counter + 1);

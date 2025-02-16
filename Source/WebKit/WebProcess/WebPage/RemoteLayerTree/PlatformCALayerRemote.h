@@ -47,7 +47,6 @@ class ModelContext;
 
 namespace WebKit {
 
-
 using LayerHostingContextID = uint32_t;
 
 struct PlatformCALayerRemoteDelegatedContents {
@@ -237,8 +236,8 @@ public:
 #endif
 
 #if HAVE(CORE_MATERIAL)
-    WebCore::AppleVisualEffect appleVisualEffect() const override;
-    void setAppleVisualEffect(WebCore::AppleVisualEffect) override;
+    WebCore::AppleVisualEffectData appleVisualEffectData() const override;
+    void setAppleVisualEffectData(WebCore::AppleVisualEffectData) override;
 #endif
 
     WebCore::TiledBacking* tiledBacking() override { return nullptr; }
@@ -266,7 +265,9 @@ public:
     void markFrontBufferVolatileForTesting() override;
     virtual void populateCreationProperties(RemoteLayerTreeTransaction::LayerCreationProperties&, const RemoteLayerTreeContext&, WebCore::PlatformCALayer::LayerType);
 
-    bool containsBitmapOnly() const;
+#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
+    bool allowsDynamicContentScaling() const;
+#endif
 
     void purgeFrontBufferForTesting() override;
     void purgeBackBufferForTesting() override;
@@ -286,7 +287,7 @@ private:
     WebCore::DestinationColorSpace displayColorSpace() const;
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    RemoteLayerBackingStore::IncludeDisplayList shouldIncludeDisplayListInBackingStore() const;
+    WebCore::IncludeDynamicContentScalingDisplayList shouldIncludeDisplayListInBackingStore() const;
 #endif
 
     bool requiresCustomAppearanceUpdateOnBoundsChange() const;

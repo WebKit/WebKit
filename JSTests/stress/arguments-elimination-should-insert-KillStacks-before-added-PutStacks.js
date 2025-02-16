@@ -17,7 +17,7 @@ function test(arr) {
     reflect();
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let arr = [];
     for (let j = 0; j < 1 + i % 100; j++)
         arr.push(1);

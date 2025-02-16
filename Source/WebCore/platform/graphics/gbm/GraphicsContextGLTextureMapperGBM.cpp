@@ -28,17 +28,19 @@
 
 #if ENABLE(WEBGL) && USE(COORDINATED_GRAPHICS) && USE(GBM)
 #include "ANGLEHeaders.h"
+#include "CoordinatedPlatformLayerBufferDMABuf.h"
 #include "DMABufBuffer.h"
 #include "DRMDeviceManager.h"
 #include "GBMVersioning.h"
 #include "GLFence.h"
 #include "PlatformDisplay.h"
+#include "TextureMapperFlags.h"
 #include <drm_fourcc.h>
 #include <wtf/unix/UnixFileDescriptor.h>
 
 namespace WebCore {
 
-RefPtr<GraphicsContextGLTextureMapperGBM> GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegateGBM>&& delegate)
+RefPtr<GraphicsContextGLTextureMapperGBM> GraphicsContextGLTextureMapperGBM::create(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
 {
     auto context = adoptRef(new GraphicsContextGLTextureMapperGBM(WTFMove(attributes), WTFMove(delegate)));
     if (!context->initialize())
@@ -46,7 +48,7 @@ RefPtr<GraphicsContextGLTextureMapperGBM> GraphicsContextGLTextureMapperGBM::cre
     return context;
 }
 
-GraphicsContextGLTextureMapperGBM::GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegateGBM>&& delegate)
+GraphicsContextGLTextureMapperGBM::GraphicsContextGLTextureMapperGBM(GraphicsContextGLAttributes&& attributes, RefPtr<GraphicsLayerContentsDisplayDelegate>&& delegate)
     : GraphicsContextGLTextureMapperANGLE(WTFMove(attributes))
 {
     m_layerContentsDisplayDelegate = WTFMove(delegate);
@@ -213,8 +215,14 @@ void GraphicsContextGLTextureMapperGBM::prepareForDisplay()
         fence = GLFence::create();
     });
 
+    if (!m_displayBuffer.dmabuf)
+        return;
+
     RELEASE_ASSERT(m_layerContentsDisplayDelegate);
-    static_cast<GraphicsLayerContentsDisplayDelegateGBM*>(m_layerContentsDisplayDelegate.get())->setDisplayBuffer(m_displayBuffer.dmabuf, WTFMove(fence));
+    OptionSet<TextureMapperFlags> flags = TextureMapperFlags::ShouldFlipTexture;
+    if (contextAttributes().alpha)
+        flags.add(TextureMapperFlags::ShouldBlend);
+    m_layerContentsDisplayDelegate->setDisplayBuffer(CoordinatedPlatformLayerBufferDMABuf::create(Ref { *m_displayBuffer.dmabuf }, flags, WTFMove(fence)));
 }
 
 void GraphicsContextGLTextureMapperGBM::prepareForDisplayWithFinishedSignal(Function<void()>&& finishedSignalCreator)

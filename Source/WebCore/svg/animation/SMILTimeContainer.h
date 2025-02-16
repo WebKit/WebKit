@@ -76,7 +76,7 @@ private:
     using AnimationsVector = Vector<SVGSMILElement*>;
     using GroupedAnimationsMap = UncheckedKeyHashMap<ElementAttributePair, AnimationsVector>;
 
-    void processScheduledAnimations(const Function<void(SVGSMILElement&)>&);
+    void processScheduledAnimations(NOESCAPE const Function<void(SVGSMILElement&)>&);
     void updateDocumentOrderIndexes();
     void sortByPriority(AnimationsVector& smilElements, SMILTime elapsed);
 

@@ -25,7 +25,7 @@
 
 import Combine
 import Foundation
-import RealityKit
+ @_spi(RealityKit) import RealityKit
 import WebKitSwift
 import os
 import simd
@@ -43,8 +43,48 @@ public final class WKSRKEntity: NSObject {
     private var _duration: TimeInterval? = nil
     private var _playbackRate: Float = 1.0
 
+    @objc(isLoadFromDataAvailable) public static func isLoadFromDataAvailable() -> Bool {
+#if canImport(RealityKit, _version: 377)
+        return true
+#else
+        return false
+#endif
+    }
+
+    @objc(loadFromData:completionHandler:) public static func load(from data: Data, completionHandler: @MainActor @escaping (WKSRKEntity?) -> Void) {
+#if canImport(RealityKit, _version: 377)
+        Task {
+            do {
+                let loadedEntity = try await Entity(fromData: data)
+                let result: WKSRKEntity = .init(with: loadedEntity)
+                await completionHandler(result)
+            } catch {
+                Logger.realityKitEntity.error("Failed to load entity from data")
+                await completionHandler(nil)
+            }
+        }
+#else
+        Task {
+            await completionHandler(nil)
+        }
+#endif
+    }
+
+    private init(with rkEntity: Entity) {
+        self.entity = rkEntity
+    }
+
     @objc(initWithCoreEntity:) init(with coreEntity: REEntityRef) {
         entity = Entity.__fromCore(__EntityRef.__fromCore(coreEntity))
+    }
+
+    @objc(name) public var name: String {
+        get {
+            entity.name
+        }
+        set {
+            entity.name = newValue
+        }
     }
 
     @objc(boundingBoxExtents) public var boundingBoxExtents: simd_float3 {
@@ -225,7 +265,12 @@ public final class WKSRKEntity: NSObject {
 
     private func animationPlaybackStateDidUpdate() {
         delegate?.entityAnimationPlaybackStateDidUpdate?(self)
-     }
+    }
+
+    @objc(setParentCoreEntity:) public func setParent(_ coreEntity: REEntityRef) {
+        let parentEntity = Entity.__fromCore(__EntityRef.__fromCore(coreEntity))
+        entity.setParent(parentEntity)
+    }
 }
 
 #endif // os(visionOS)

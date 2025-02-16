@@ -4,6 +4,7 @@
 /*---
 esid: sec-initializedatetimeformat
 description: Time zone identifiers are not canonicalized before storing in internal slots
+features: [canonical-tz]
 ---*/
 
 const baseOptions = {

@@ -1,4 +1,4 @@
-# Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+# Copyright (C) 2022-2025 Apple Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -672,6 +672,7 @@ struct WebCore::IDBDatabaseNameAndVersion {
 }
 
 class WebCore::IDBKeyData {
+    bool isPlaceholder()
     std::variant<std::nullptr_t, WebCore::IDBKeyData::Invalid, Vector<WebCore::IDBKeyData>, String, double, WebCore::IDBKeyData::Date, WebCore::ThreadSafeDataBuffer, WebCore::IDBKeyData::Min, WebCore::IDBKeyData::Max> value()
 }
 
@@ -687,6 +688,12 @@ class WebCore::IDBKeyData {
 [Nested] struct WebCore::IDBKeyData::Date {
     double value
 }
+
+class WebCore::IndexKey {
+    std::variant<std::nullptr_t, WebCore::IDBKeyData, Vector<WebCore::IDBKeyData>> data()
+}
+
+using WebCore::IndexIDToIndexKeyMap = HashMap<WebCore::IDBIndexIdentifier, WebCore::IndexKey>;
 
 enum class WebCore::IndexedDB::KeyType : int8_t {
     Max,
@@ -896,6 +903,14 @@ struct WebCore::ShareData {
 };
 
 enum class WebCore::ShareDataOriginator : bool
+
+#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+struct WebCore::SpatialBackdropSource {
+    URL m_sourceURL;
+    URL m_modelURL;
+    std::optional<URL> m_environmentMapURL;
+};
+#endif
 
 using WebCore::TargetedElementIdentifiers = std::pair<WebCore::ElementIdentifier, WebCore::ScriptExecutionContextIdentifier>;
 using WebCore::TargetedElementSelectors = Vector<HashSet<String>>;
@@ -1550,7 +1565,7 @@ struct WebCore::SpeechRecognitionRequestInfo {
     bool interimResults;
     uint64_t maxAlternatives;
     WebCore::ClientOrigin clientOrigin;
-    WebCore::FrameIdentifier frameIdentifier;
+    WebCore::FrameIdentifier mainFrameIdentifier;
 };
 
 [CustomHeader] struct WebCore::SpeechRecognitionAlternativeData {
@@ -1805,7 +1820,6 @@ enum class WebCore::RenderingPurpose : uint8_t {
     Canvas,
     DOM,
     LayerBacking,
-    BitmapOnlyLayerBacking,
     Snapshot,
     ShareableSnapshot,
     ShareableLocalSnapshot,
@@ -1814,10 +1828,10 @@ enum class WebCore::RenderingPurpose : uint8_t {
 
 enum class WebCore::ContentsFormat : uint8_t {
     RGBA8,
-#if HAVE(IOSURFACE_RGB10)
+#if ENABLE(PIXEL_FORMAT_RGB10)
     RGBA10,
 #endif
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     RGBA16F,
 #endif
 };
@@ -1977,6 +1991,13 @@ header: <WebCore/RectEdges.h>
     bool right();
     bool bottom();
     bool left();
+}
+
+[CustomHeader] class WebCore::RectEdges<WebCore::Color> {
+    WebCore::Color top();
+    WebCore::Color right();
+    WebCore::Color bottom();
+    WebCore::Color left();
 }
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::Path {
@@ -2415,7 +2436,6 @@ class WebCore::ContentType {
     bool typeWasInferredFromExtension();
 }
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 struct WebCore::DateTimeChooserParameters {
     AtomString type;
     WebCore::IntRect anchorRectInRootView;
@@ -2434,7 +2454,6 @@ struct WebCore::DateTimeChooserParameters {
     bool hasSecondField;
     bool hasMillisecondField;
 }
-#endif
 
 header: <WebCore/ScreenProperties.h>
 [CustomHeader] struct WebCore::ScreenData {
@@ -2523,7 +2542,6 @@ class WebCore::SelectionGeometry {
 };
 #endif
 
-#if ENABLE(DATALIST_ELEMENT)
 header: <WebCore/DataListSuggestionInformation.h>
 [CustomHeader] enum class WebCore::DataListSuggestionActivationType : uint8_t {
     ControlClicked,
@@ -2543,7 +2561,6 @@ struct WebCore::DataListSuggestionInformation {
     Vector<WebCore::DataListSuggestion> suggestions;
     WebCore::IntRect elementRect;
 };
-#endif
 
 struct WebCore::ClientOrigin {
     [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
@@ -2559,9 +2576,13 @@ enum class WebCore::PixelFormat : uint8_t {
     RGBA8,
     BGRX8,
     BGRA8,
+#if ENABLE(PIXEL_FORMAT_RGB10)
     RGB10,
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
     RGB10A8,
-#if HAVE(HDR_SUPPORT)
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     RGBA16F,
 #endif
 };
@@ -2569,9 +2590,13 @@ enum class WebCore::PixelFormat : uint8_t {
 enum class WebCore::ImageBufferPixelFormat : uint8_t {
     BGRX8,
     BGRA8,
+#if ENABLE(PIXEL_FORMAT_RGB10)
     RGB10,
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
     RGB10A8,
-#if HAVE(HDR_SUPPORT)
+#endif
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     RGBA16F,
 #endif
 };
@@ -2623,13 +2648,13 @@ header: <wtf/MachSendRight.h>
 
 [CustomHeader, RValue] class WebCore::SharedMemoryHandle {
 #if USE(UNIX_DOMAIN_SOCKETS)
-    [Validator='!!m_handle'] UnixFileDescriptor m_handle;
+    [Validator='!!m_handle && *m_handle'] UnixFileDescriptor m_handle;
 #endif
 #if OS(DARWIN)
-    [Validator='!!m_handle'] MachSendRight m_handle;
+    [Validator='!!m_handle && *m_handle'] MachSendRight m_handle;
 #endif
 #if OS(WINDOWS)
-    [Validator='!!m_handle'] Win32Handle m_handle;
+    [Validator='!!m_handle && *m_handle'] Win32Handle m_handle;
 #endif
     size_t m_size;
 };
@@ -3062,9 +3087,18 @@ header: <WebCore/StylePrimitiveNumericTypes.h>
     double value;
 };
 
-[CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::Nonnegative> {
+[CustomHeader, Nested] struct WebCore::Style::PercentageNonnegativeFloat {
     float value;
 };
+
+[CustomHeader, Nested] struct WebCore::Style::PercentageAllFloat {
+    float value;
+};
+
+[CustomHeader, Nested] struct WebCore::Style::LengthNonnegative {
+    float value;
+};
+using WebCore::Style::LengthAll = WebCore::Style::Length<WebCore::CSS::All>;
 [CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::All> {
     float value;
 };
@@ -3077,10 +3111,10 @@ header: <WebCore/StylePrimitiveNumericTypes.h>
 };
 
 [CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::All> {
-    std::variant<WebCore::Style::Length<WebCore::CSS::All>, WebCore::Style::Percentage<WebCore::CSS::All>> ipcData()
+    std::variant<WebCore::Style::LengthAll, WebCore::Style::PercentageAllFloat> ipcData()
 };
 [CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative> {
-    std::variant<WebCore::Style::Length<WebCore::CSS::Nonnegative>, WebCore::Style::Percentage<WebCore::CSS::Nonnegative>> ipcData();
+    std::variant<WebCore::Style::LengthNonnegative, WebCore::Style::PercentageNonnegativeFloat> ipcData();
 };
 
 using WebCore::Style::LengthPercentageNonnegative = WebCore::Style::LengthPercentage<WebCore::CSS::Nonnegative>;
@@ -3525,7 +3559,7 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
     Opaqueredirect
 };
 
-[Nested] enum class WebCore::ResourceResponseBaseSource : uint8_t {
+[CustomHeader] enum class WebCore::ResourceResponseSource : uint8_t {
     Unknown,
     Network,
     DiskCache,
@@ -3540,7 +3574,7 @@ enum class WebCore::ResourceLoadPriority : uint8_t {
 
 using WebCore::ResourceResponseBase::Type = WebCore::ResourceResponseBaseType;
 using WebCore::ResourceResponseBase::Tainting = WebCore::ResourceResponseBaseTainting;
-using WebCore::ResourceResponseBase::Source = WebCore::ResourceResponseBaseSource;
+using WebCore::ResourceResponseBase::Source = WebCore::ResourceResponseSource;
 
 class WebCore::ResourceResponseBase {
     std::optional<WebCore::ResourceResponseData> getResponseData()
@@ -3569,6 +3603,7 @@ enum class WebCore::WasPrivateRelayed : bool;
     bool isRedirected;
     WebCore::UsedLegacyTLS usedLegacyTLS;
     WebCore::WasPrivateRelayed wasPrivateRelayed;
+    String proxyName;
     bool isRangeRequested;
     std::optional<WebCore::CertificateInfo> certificateInfo;
 };
@@ -3672,7 +3707,7 @@ enum class WebCore::FetchHeadersGuard : uint8_t {
     Presenting,
     FormSemanticContext,
     DarkAppearance,
-    RightToLeft,
+    InlineFlippedWritingMode,
     LargeControls,
     ReadOnly,
     ListButton,
@@ -3715,16 +3750,12 @@ enum class WebCore::StyleAppearance : uint8_t {
 #endif
     TextArea,
     TextField,
-#if ENABLE(INPUT_TYPE_COLOR)
     ColorWell,
-#endif
 #if ENABLE(SERVICE_CONTROLS)
     ImageControlsButton,
 #endif
     InnerSpinButton,
-#if ENABLE(DATALIST_ELEMENT)
     ListButton,
-#endif
     SearchFieldDecoration,
     SearchFieldResultsDecoration,
     SearchFieldResultsButton,
@@ -3739,6 +3770,7 @@ enum class WebCore::StyleAppearance : uint8_t {
 header: <WebCore/ControlPart.h>
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder] class WebCore::ControlPart subclasses {
     WebCore::ButtonPart,
+    WebCore::ColorWellPart,
     WebCore::InnerSpinButtonPart,
     WebCore::MenuListButtonPart,
     WebCore::MenuListPart,
@@ -3759,9 +3791,6 @@ header: <WebCore/ControlPart.h>
 #endif
 #if ENABLE(SERVICE_CONTROLS)
     WebCore::ImageControlsButtonPart,
-#endif
-#if ENABLE(INPUT_TYPE_COLOR)
-    WebCore::ColorWellPart,
 #endif
 }
 
@@ -3820,11 +3849,9 @@ header: <WebCore/ImageControlsButtonPart.h>
 }
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
 header: <WebCore/ColorWellPart.h>
 [RefCounted, AdditionalEncoder=StreamConnectionEncoder, DisableMissingMemberCheck] class WebCore::ColorWellPart {
 }
-#endif
 
 #if ENABLE(APPLE_PAY)
 header: <WebCore/ApplePayButtonPart.h>
@@ -4388,7 +4415,7 @@ header: <WebCore/ScrollingStateNode.h>
     HeaderLayer
     FooterLayer
     BehaviorForFixedElements
-    TopContentInset
+    ObscuredContentInsets
     VisualViewportIsSmallerThanLayoutViewport
     AsyncFrameOrOverflowScrollingEnabled
     WheelEventGesturesBecomeNonBlocking
@@ -4634,6 +4661,7 @@ header: <WebCore/MediaPlayer.h>
     bool isMediaSource;
     bool isMediaStream;
     bool requiresRemotePlayback;
+    bool supportsLimitedMatroska;
     Vector<WebCore::ContentType> contentTypesRequiringHardwareSupport;
     std::optional<Vector<String>> allowedMediaContainerTypes;
     std::optional<Vector<String>> allowedMediaCodecTypes;
@@ -4647,6 +4675,13 @@ header: <WebCore/MediaPlayer.h>
     MediaTime time;
     MediaTime negativeThreshold;
     MediaTime positiveThreshold;
+};
+
+header: <WebCore/MediaPlayer.h>
+[CustomHeader] struct WebCore::MediaPlayerLoadOptions {
+    WebCore::ContentType contentType;
+    bool requiresRemotePlayback;
+    bool supportsLimitedMatroska;
 };
 
 #endif
@@ -5219,6 +5254,11 @@ header: <WebCore/ImageTypes.h>
     WebCore::Headroom headroom();
 };
 
+[AdditionalEncoder=StreamConnectionEncoder] struct WebCore::FloatSegment {
+    float begin;
+    float end;
+};
+
 struct WebCore::CanvasActivityRecord {
     HashSet<String> textWritten;
     bool wasDataRead;
@@ -5700,7 +5740,12 @@ struct WebCore::CaptureDeviceWithCapabilities {
     WebCore::RealtimeMediaSourceCapabilities capabilities;
 };
 
-[Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : bool
+[Nested] enum class WebCore::RealtimeMediaSourceCapabilities::EchoCancellation : uint8_t {
+    Off,
+    On,
+    OnOrOff
+}
+
 [Nested] enum class WebCore::RealtimeMediaSourceCapabilities::BackgroundBlur : uint8_t {
     Off,
     On,
@@ -5830,6 +5875,7 @@ struct WebCore::PlatformVideoTrackConfiguration : WebCore::PlatformTrackConfigur
     double framerate;
     uint64_t bitrate;
     std::optional<WebCore::SpatialVideoMetadata> spatialVideoMetadata;
+    bool isImmersiveVideo;
 };
 
 #endif
@@ -6060,9 +6106,6 @@ class WebCore::EventRegion {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<WebCore::InteractionRegion> m_interactionRegions;
 #endif
-#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
-    WebCore::Region m_scrollOverlayRegion;
-#endif
 };
 
 enum class WebCore::PasteboardItemPresentationStyle : uint8_t {
@@ -6282,12 +6325,11 @@ struct WebCore::InteractionRegion {
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region::Shape {
     Vector<int, 32> m_segments;
-    Vector<WebCore::Region::Span, 16> m_spans;
+    [Validator='WebCore::Region::Shape::isValidShape(m_segments->span(), m_spans->span())'] Vector<WebCore::Region::Span, 16> m_spans;
 };
 
 [AdditionalEncoder=StreamConnectionEncoder] class WebCore::Region {
-    WebCore::IntRect bounds();
-    [Validator='!*copyShape || (*copyShape)->isValid()'] std::unique_ptr<WebCore::Region::Shape> copyShape();
+    WebCore::Region::Shape data();
 }
 
 header: <WebCore/ISOVTTCue.h>
@@ -6375,21 +6417,32 @@ struct WebCore::MockWebAuthenticationConfiguration {
     std::optional<WebCore::MockWebAuthenticationConfiguration::CcidConfiguration> ccid;
 };
 
-struct WebCore::OpenID4VPRequest {
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+
+[Nested] struct WebCore::OpenID4VPRequest {
 };
 
-[Nested] struct WebCore::IdentityRequestProvider {
+[Nested] struct WebCore::MobileDocumentRequest {
+    String deviceRequest;
+    String encryptionInfo;
+};
+
+struct WebCore::DigitalCredentialsRequestData {
+    Vector<std::variant<WebCore::MobileDocumentRequest, WebCore::OpenID4VPRequest>> requests;
+    [Validator='!topOrigin->isNull()'] WebCore::SecurityOriginData topOrigin;
+    [Validator='!documentOrigin->isNull()'] WebCore::SecurityOriginData documentOrigin;
+};
+
+struct WebCore::DigitalCredentialsResponseData {
     WebCore::IdentityCredentialProtocol protocol;
-    WebCore::OpenID4VPRequest request;
+    String responseData;
 };
 
-struct WebCore::DigitalCredentialRequestOptions {
-    Vector<WebCore::IdentityRequestProvider> providers;
-};
-
-enum class WebCore::IdentityCredentialProtocol : uint8_t {
+[Nested] enum class WebCore::IdentityCredentialProtocol : uint8_t {
     Openid4vp
 };
+
+#endif // HAVE(DIGITAL_CREDENTIALS_UI)
 
 #endif // ENABLE(WEB_AUTHN)
 
@@ -6398,6 +6451,7 @@ enum class WebCore::IdentityCredentialProtocol : uint8_t {
 header: <WebCore/MockMediaDevice.h>
 [CustomHeader] struct WebCore::MockMicrophoneProperties {
     int defaultSampleRate;
+    std::optional<bool> echoCancellation;
 };
 
 header: <WebCore/MockMediaDevice.h>
@@ -7021,9 +7075,14 @@ struct WebCore::CookieChangeSubscription {
 }
 
 #if ENABLE(MODEL_PROCESS)
+enum class WebCore::ModelContextDisablePortal : bool
+
 [RefCounted] class WebCore::ModelContext {
     WebCore::PlatformLayerIdentifier modelLayerIdentifier()
     WebCore::LayerHostingContextIdentifier modelContentsLayerHostingContextIdentifier()
+    WebCore::LayoutSize modelLayoutSize()
+    WebCore::ModelContextDisablePortal disablePortal()
+    std::optional<WebCore::Color> backgroundColor()
 };
 #endif
 
@@ -7520,6 +7579,9 @@ struct WebCore::DragItem {
     WebCore::IntRect dragPreviewFrameInRootViewCoordinates;
     bool containsSelection;
     WebCore::PromisedAttachmentInfo promisedAttachmentInfo;
+#if ENABLE(MODEL_PROCESS)
+    Markable<WebCore::PlatformLayerIdentifier> modelLayerID;
+#endif
     [NotSerialized] WebCore::PasteboardWriterData data;
 };
 
@@ -7565,6 +7627,7 @@ class WebCore::FilterOperations {
 
 header: <WebCore/WheelEventTestMonitor.h>
 [OptionSet] enum class WebCore::WheelEventTestMonitorDeferReason : uint16_t {
+    None,
     HandlingWheelEvent,
     HandlingWheelEventOnMainThread,
     PostMainThreadWheelEventHandling,
@@ -7940,6 +8003,9 @@ enum class WebCore::AppleVisualEffect : uint8_t {
     BlurMaterial,
     BlurThickMaterial,
     BlurChromeMaterial,
+#if HAVE(MATERIAL_HOSTING)
+    HostedBlurMaterial,
+#endif
     VibrancyLabel,
     VibrancySecondaryLabel,
     VibrancyTertiaryLabel,
@@ -7948,6 +8014,13 @@ enum class WebCore::AppleVisualEffect : uint8_t {
     VibrancySecondaryFill,
     VibrancyTertiaryFill,
     VibrancySeparator,
+};
+
+header: <WebCore/AppleVisualEffect.h>
+[CustomHeader] struct WebCore::AppleVisualEffectData {
+    WebCore::AppleVisualEffect effect;
+    WebCore::AppleVisualEffect contextEffect;
+    std::optional<WebCore::FloatRoundedRect> borderRect;
 };
 
 #endif
@@ -8131,6 +8204,8 @@ header: <WebCore/ShareableResource.h>
     Ref<WebCore::SharedBuffer> displayList();
     Vector<MachSendRight> takeSurfaces();
 }
+
+enum class WebCore::IncludeDynamicContentScalingDisplayList : bool;
 #endif
 
 enum class WebCore::PlatformCursorType : uint8_t {
@@ -8515,13 +8590,13 @@ enum class WebCore::ContentExtensionDefaultEnablement : bool
 using WebCore::ContentExtensionEnablement = std::pair<WebCore::ContentExtensionDefaultEnablement, HashSet<String>>;
 
 #if USE(CG)
-using WebCore::DisplayList::Item = std::variant<WebCore::DisplayList::ApplyDeviceScaleFactor, WebCore::DisplayList::BeginTransparencyLayer, WebCore::DisplayList::BeginTransparencyLayerWithCompositeMode, WebCore::DisplayList::ClearRect, WebCore::DisplayList::ClearDropShadow, WebCore::DisplayList::Clip, WebCore::DisplayList::ClipRoundedRect, WebCore::DisplayList::ClipOut, WebCore::DisplayList::ClipOutRoundedRect, WebCore::DisplayList::ClipOutToPath, WebCore::DisplayList::ClipPath, WebCore::DisplayList::ClipToImageBuffer, WebCore::DisplayList::ConcatenateCTM, WebCore::DisplayList::DrawControlPart, WebCore::DisplayList::DrawDotsForDocumentMarker, WebCore::DisplayList::DrawEllipse, WebCore::DisplayList::DrawFilteredImageBuffer, WebCore::DisplayList::DrawFocusRingPath, WebCore::DisplayList::DrawFocusRingRects, WebCore::DisplayList::DrawGlyphs, WebCore::DisplayList::DrawDecomposedGlyphs, WebCore::DisplayList::DrawDisplayListItems, WebCore::DisplayList::DrawImageBuffer, WebCore::DisplayList::DrawLine, WebCore::DisplayList::DrawLinesForText, WebCore::DisplayList::DrawNativeImage, WebCore::DisplayList::DrawPath, WebCore::DisplayList::DrawPattern, WebCore::DisplayList::DrawRect, WebCore::DisplayList::DrawSystemImage, WebCore::DisplayList::EndTransparencyLayer, WebCore::DisplayList::FillCompositedRect, WebCore::DisplayList::FillEllipse, WebCore::DisplayList::FillPathSegment, WebCore::DisplayList::FillPath, WebCore::DisplayList::FillRect, WebCore::DisplayList::FillRectWithColor, WebCore::DisplayList::FillRectWithGradient, WebCore::DisplayList::FillRectWithGradientAndSpaceTransform, WebCore::DisplayList::FillRectWithRoundedHole, WebCore::DisplayList::FillRoundedRect, WebCore::DisplayList::ResetClip, WebCore::DisplayList::Restore, WebCore::DisplayList::Rotate, WebCore::DisplayList::Save, WebCore::DisplayList::Scale, WebCore::DisplayList::SetCTM, WebCore::DisplayList::SetInlineFillColor, WebCore::DisplayList::SetInlineStroke, WebCore::DisplayList::SetLineCap, WebCore::DisplayList::SetLineDash, WebCore::DisplayList::SetLineJoin, WebCore::DisplayList::SetMiterLimit, WebCore::DisplayList::SetState, WebCore::DisplayList::StrokeEllipse, WebCore::DisplayList::StrokeLine, WebCore::DisplayList::StrokePathSegment, WebCore::DisplayList::StrokePath, WebCore::DisplayList::StrokeRect, WebCore::DisplayList::Translate, WebCore::DisplayList::FillLine, WebCore::DisplayList::FillArc, WebCore::DisplayList::FillClosedArc, WebCore::DisplayList::FillQuadCurve, WebCore::DisplayList::FillBezierCurve, WebCore::DisplayList::StrokeArc, WebCore::DisplayList::StrokeClosedArc, WebCore::DisplayList::StrokeQuadCurve, WebCore::DisplayList::StrokeBezierCurve, WebCore::DisplayList::ApplyFillPattern, WebCore::DisplayList::ApplyStrokePattern, WebCore::DisplayList::BeginPage, WebCore::DisplayList::EndPage>;
+using WebCore::DisplayList::Item = std::variant<WebCore::DisplayList::ApplyDeviceScaleFactor, WebCore::DisplayList::BeginTransparencyLayer, WebCore::DisplayList::BeginTransparencyLayerWithCompositeMode, WebCore::DisplayList::ClearRect, WebCore::DisplayList::ClearDropShadow, WebCore::DisplayList::Clip, WebCore::DisplayList::ClipRoundedRect, WebCore::DisplayList::ClipOut, WebCore::DisplayList::ClipOutRoundedRect, WebCore::DisplayList::ClipOutToPath, WebCore::DisplayList::ClipPath, WebCore::DisplayList::ClipToImageBuffer, WebCore::DisplayList::ConcatenateCTM, WebCore::DisplayList::DrawControlPart, WebCore::DisplayList::DrawDotsForDocumentMarker, WebCore::DisplayList::DrawEllipse, WebCore::DisplayList::DrawFilteredImageBuffer, WebCore::DisplayList::DrawFocusRingPath, WebCore::DisplayList::DrawFocusRingRects, WebCore::DisplayList::DrawGlyphs, WebCore::DisplayList::DrawDecomposedGlyphs, WebCore::DisplayList::DrawImageBuffer, WebCore::DisplayList::DrawLine, WebCore::DisplayList::DrawLinesForText, WebCore::DisplayList::DrawNativeImage, WebCore::DisplayList::DrawPath, WebCore::DisplayList::DrawPattern, WebCore::DisplayList::DrawRect, WebCore::DisplayList::DrawSystemImage, WebCore::DisplayList::EndTransparencyLayer, WebCore::DisplayList::FillCompositedRect, WebCore::DisplayList::FillEllipse, WebCore::DisplayList::FillPathSegment, WebCore::DisplayList::FillPath, WebCore::DisplayList::FillRect, WebCore::DisplayList::FillRectWithColor, WebCore::DisplayList::FillRectWithGradient, WebCore::DisplayList::FillRectWithGradientAndSpaceTransform, WebCore::DisplayList::FillRectWithRoundedHole, WebCore::DisplayList::FillRoundedRect, WebCore::DisplayList::ResetClip, WebCore::DisplayList::Restore, WebCore::DisplayList::Rotate, WebCore::DisplayList::Save, WebCore::DisplayList::Scale, WebCore::DisplayList::SetCTM, WebCore::DisplayList::SetInlineFillColor, WebCore::DisplayList::SetInlineStroke, WebCore::DisplayList::SetLineCap, WebCore::DisplayList::SetLineDash, WebCore::DisplayList::SetLineJoin, WebCore::DisplayList::SetMiterLimit, WebCore::DisplayList::SetState, WebCore::DisplayList::StrokeEllipse, WebCore::DisplayList::StrokeLine, WebCore::DisplayList::StrokePathSegment, WebCore::DisplayList::StrokePath, WebCore::DisplayList::StrokeRect, WebCore::DisplayList::Translate, WebCore::DisplayList::FillLine, WebCore::DisplayList::FillArc, WebCore::DisplayList::FillClosedArc, WebCore::DisplayList::FillQuadCurve, WebCore::DisplayList::FillBezierCurve, WebCore::DisplayList::StrokeArc, WebCore::DisplayList::StrokeClosedArc, WebCore::DisplayList::StrokeQuadCurve, WebCore::DisplayList::StrokeBezierCurve, WebCore::DisplayList::ApplyFillPattern, WebCore::DisplayList::ApplyStrokePattern, WebCore::DisplayList::BeginPage, WebCore::DisplayList::EndPage, WebCore::DisplayList::SetURLForRect>;
 #endif
 #if ENABLE(VIDEO) && !USE(CG)
-using WebCore::DisplayList::Item = std::variant<WebCore::DisplayList::ApplyDeviceScaleFactor, WebCore::DisplayList::BeginTransparencyLayer, WebCore::DisplayList::BeginTransparencyLayerWithCompositeMode, WebCore::DisplayList::ClearRect, WebCore::DisplayList::ClearDropShadow, WebCore::DisplayList::Clip, WebCore::DisplayList::ClipRoundedRect, WebCore::DisplayList::ClipOut, WebCore::DisplayList::ClipOutRoundedRect, WebCore::DisplayList::ClipOutToPath, WebCore::DisplayList::ClipPath, WebCore::DisplayList::ClipToImageBuffer, WebCore::DisplayList::ConcatenateCTM, WebCore::DisplayList::DrawControlPart, WebCore::DisplayList::DrawDotsForDocumentMarker, WebCore::DisplayList::DrawEllipse, WebCore::DisplayList::DrawFilteredImageBuffer, WebCore::DisplayList::DrawFocusRingPath, WebCore::DisplayList::DrawFocusRingRects, WebCore::DisplayList::DrawGlyphs, WebCore::DisplayList::DrawDecomposedGlyphs, WebCore::DisplayList::DrawDisplayListItems, WebCore::DisplayList::DrawImageBuffer, WebCore::DisplayList::DrawLine, WebCore::DisplayList::DrawLinesForText, WebCore::DisplayList::DrawNativeImage, WebCore::DisplayList::DrawPath, WebCore::DisplayList::DrawPattern, WebCore::DisplayList::DrawRect, WebCore::DisplayList::DrawSystemImage, WebCore::DisplayList::EndTransparencyLayer, WebCore::DisplayList::FillCompositedRect, WebCore::DisplayList::FillEllipse, WebCore::DisplayList::FillPathSegment, WebCore::DisplayList::FillPath, WebCore::DisplayList::FillRect, WebCore::DisplayList::FillRectWithColor, WebCore::DisplayList::FillRectWithGradient, WebCore::DisplayList::FillRectWithGradientAndSpaceTransform, WebCore::DisplayList::FillRectWithRoundedHole, WebCore::DisplayList::FillRoundedRect, WebCore::DisplayList::ResetClip, WebCore::DisplayList::Restore, WebCore::DisplayList::Rotate, WebCore::DisplayList::Save, WebCore::DisplayList::Scale, WebCore::DisplayList::SetCTM, WebCore::DisplayList::SetInlineFillColor, WebCore::DisplayList::SetInlineStroke, WebCore::DisplayList::SetLineCap, WebCore::DisplayList::SetLineDash, WebCore::DisplayList::SetLineJoin, WebCore::DisplayList::SetMiterLimit, WebCore::DisplayList::SetState, WebCore::DisplayList::StrokeEllipse, WebCore::DisplayList::StrokeLine, WebCore::DisplayList::StrokePathSegment, WebCore::DisplayList::StrokePath, WebCore::DisplayList::StrokeRect, WebCore::DisplayList::Translate, WebCore::DisplayList::BeginPage, WebCore::DisplayList::EndPage>;
+using WebCore::DisplayList::Item = std::variant<WebCore::DisplayList::ApplyDeviceScaleFactor, WebCore::DisplayList::BeginTransparencyLayer, WebCore::DisplayList::BeginTransparencyLayerWithCompositeMode, WebCore::DisplayList::ClearRect, WebCore::DisplayList::ClearDropShadow, WebCore::DisplayList::Clip, WebCore::DisplayList::ClipRoundedRect, WebCore::DisplayList::ClipOut, WebCore::DisplayList::ClipOutRoundedRect, WebCore::DisplayList::ClipOutToPath, WebCore::DisplayList::ClipPath, WebCore::DisplayList::ClipToImageBuffer, WebCore::DisplayList::ConcatenateCTM, WebCore::DisplayList::DrawControlPart, WebCore::DisplayList::DrawDotsForDocumentMarker, WebCore::DisplayList::DrawEllipse, WebCore::DisplayList::DrawFilteredImageBuffer, WebCore::DisplayList::DrawFocusRingPath, WebCore::DisplayList::DrawFocusRingRects, WebCore::DisplayList::DrawGlyphs, WebCore::DisplayList::DrawDecomposedGlyphs, WebCore::DisplayList::DrawImageBuffer, WebCore::DisplayList::DrawLine, WebCore::DisplayList::DrawLinesForText, WebCore::DisplayList::DrawNativeImage, WebCore::DisplayList::DrawPath, WebCore::DisplayList::DrawPattern, WebCore::DisplayList::DrawRect, WebCore::DisplayList::DrawSystemImage, WebCore::DisplayList::EndTransparencyLayer, WebCore::DisplayList::FillCompositedRect, WebCore::DisplayList::FillEllipse, WebCore::DisplayList::FillPathSegment, WebCore::DisplayList::FillPath, WebCore::DisplayList::FillRect, WebCore::DisplayList::FillRectWithColor, WebCore::DisplayList::FillRectWithGradient, WebCore::DisplayList::FillRectWithGradientAndSpaceTransform, WebCore::DisplayList::FillRectWithRoundedHole, WebCore::DisplayList::FillRoundedRect, WebCore::DisplayList::ResetClip, WebCore::DisplayList::Restore, WebCore::DisplayList::Rotate, WebCore::DisplayList::Save, WebCore::DisplayList::Scale, WebCore::DisplayList::SetCTM, WebCore::DisplayList::SetInlineFillColor, WebCore::DisplayList::SetInlineStroke, WebCore::DisplayList::SetLineCap, WebCore::DisplayList::SetLineDash, WebCore::DisplayList::SetLineJoin, WebCore::DisplayList::SetMiterLimit, WebCore::DisplayList::SetState, WebCore::DisplayList::StrokeEllipse, WebCore::DisplayList::StrokeLine, WebCore::DisplayList::StrokePathSegment, WebCore::DisplayList::StrokePath, WebCore::DisplayList::StrokeRect, WebCore::DisplayList::Translate, WebCore::DisplayList::BeginPage, WebCore::DisplayList::EndPage, WebCore::DisplayList::SetURLForRect>;
 #endif
 #if !ENABLE(VIDEO) && !USE(CG)
-using WebCore::DisplayList::Item = std::variant<WebCore::DisplayList::ApplyDeviceScaleFactor, WebCore::DisplayList::BeginTransparencyLayer, WebCore::DisplayList::BeginTransparencyLayerWithCompositeMode, WebCore::DisplayList::ClearRect, WebCore::DisplayList::ClearDropShadow, WebCore::DisplayList::Clip, WebCore::DisplayList::ClipRoundedRect, WebCore::DisplayList::ClipOut, WebCore::DisplayList::ClipOutRoundedRect, WebCore::DisplayList::ClipOutToPath, WebCore::DisplayList::ClipPath, WebCore::DisplayList::ClipToImageBuffer, WebCore::DisplayList::ConcatenateCTM, WebCore::DisplayList::DrawControlPart, WebCore::DisplayList::DrawDotsForDocumentMarker, WebCore::DisplayList::DrawEllipse, WebCore::DisplayList::DrawFilteredImageBuffer, WebCore::DisplayList::DrawFocusRingPath, WebCore::DisplayList::DrawFocusRingRects, WebCore::DisplayList::DrawGlyphs, WebCore::DisplayList::DrawDecomposedGlyphs, WebCore::DisplayList::DrawDisplayListItems, WebCore::DisplayList::DrawImageBuffer, WebCore::DisplayList::DrawLine, WebCore::DisplayList::DrawLinesForText, WebCore::DisplayList::DrawNativeImage, WebCore::DisplayList::DrawPath, WebCore::DisplayList::DrawPattern, WebCore::DisplayList::DrawRect, WebCore::DisplayList::DrawSystemImage, WebCore::DisplayList::EndTransparencyLayer, WebCore::DisplayList::FillCompositedRect, WebCore::DisplayList::FillEllipse, WebCore::DisplayList::FillPathSegment, WebCore::DisplayList::FillPath, WebCore::DisplayList::FillRect, WebCore::DisplayList::FillRectWithColor, WebCore::DisplayList::FillRectWithGradient, WebCore::DisplayList::FillRectWithGradientAndSpaceTransform, WebCore::DisplayList::FillRectWithRoundedHole, WebCore::DisplayList::FillRoundedRect, WebCore::DisplayList::ResetClip, WebCore::DisplayList::Restore, WebCore::DisplayList::Rotate, WebCore::DisplayList::Save, WebCore::DisplayList::Scale, WebCore::DisplayList::SetCTM, WebCore::DisplayList::SetInlineFillColor, WebCore::DisplayList::SetInlineStroke, WebCore::DisplayList::SetLineCap, WebCore::DisplayList::SetLineDash, WebCore::DisplayList::SetLineJoin, WebCore::DisplayList::SetMiterLimit, WebCore::DisplayList::SetState, WebCore::DisplayList::StrokeEllipse, WebCore::DisplayList::StrokeLine, WebCore::DisplayList::StrokePathSegment, WebCore::DisplayList::StrokePath, WebCore::DisplayList::StrokeRect, WebCore::DisplayList::Translate, WebCore::DisplayList::BeginPage, WebCore::DisplayList::EndPage>;
+using WebCore::DisplayList::Item = std::variant<WebCore::DisplayList::ApplyDeviceScaleFactor, WebCore::DisplayList::BeginTransparencyLayer, WebCore::DisplayList::BeginTransparencyLayerWithCompositeMode, WebCore::DisplayList::ClearRect, WebCore::DisplayList::ClearDropShadow, WebCore::DisplayList::Clip, WebCore::DisplayList::ClipRoundedRect, WebCore::DisplayList::ClipOut, WebCore::DisplayList::ClipOutRoundedRect, WebCore::DisplayList::ClipOutToPath, WebCore::DisplayList::ClipPath, WebCore::DisplayList::ClipToImageBuffer, WebCore::DisplayList::ConcatenateCTM, WebCore::DisplayList::DrawControlPart, WebCore::DisplayList::DrawDotsForDocumentMarker, WebCore::DisplayList::DrawEllipse, WebCore::DisplayList::DrawFilteredImageBuffer, WebCore::DisplayList::DrawFocusRingPath, WebCore::DisplayList::DrawFocusRingRects, WebCore::DisplayList::DrawGlyphs, WebCore::DisplayList::DrawDecomposedGlyphs, WebCore::DisplayList::DrawImageBuffer, WebCore::DisplayList::DrawLine, WebCore::DisplayList::DrawLinesForText, WebCore::DisplayList::DrawNativeImage, WebCore::DisplayList::DrawPath, WebCore::DisplayList::DrawPattern, WebCore::DisplayList::DrawRect, WebCore::DisplayList::DrawSystemImage, WebCore::DisplayList::EndTransparencyLayer, WebCore::DisplayList::FillCompositedRect, WebCore::DisplayList::FillEllipse, WebCore::DisplayList::FillPathSegment, WebCore::DisplayList::FillPath, WebCore::DisplayList::FillRect, WebCore::DisplayList::FillRectWithColor, WebCore::DisplayList::FillRectWithGradient, WebCore::DisplayList::FillRectWithGradientAndSpaceTransform, WebCore::DisplayList::FillRectWithRoundedHole, WebCore::DisplayList::FillRoundedRect, WebCore::DisplayList::ResetClip, WebCore::DisplayList::Restore, WebCore::DisplayList::Rotate, WebCore::DisplayList::Save, WebCore::DisplayList::Scale, WebCore::DisplayList::SetCTM, WebCore::DisplayList::SetInlineFillColor, WebCore::DisplayList::SetInlineStroke, WebCore::DisplayList::SetLineCap, WebCore::DisplayList::SetLineDash, WebCore::DisplayList::SetLineJoin, WebCore::DisplayList::SetMiterLimit, WebCore::DisplayList::SetState, WebCore::DisplayList::StrokeEllipse, WebCore::DisplayList::StrokeLine, WebCore::DisplayList::StrokePathSegment, WebCore::DisplayList::StrokePath, WebCore::DisplayList::StrokeRect, WebCore::DisplayList::Translate, WebCore::DisplayList::BeginPage, WebCore::DisplayList::EndPage, WebCore::DisplayList::SetURLForRect>;
 #endif
 
 #if ENABLE(WEBGL)
@@ -8813,7 +8888,7 @@ enum class WebCore::CryptoAlgorithmIdentifier : uint8_t {
     AES_KW,
     HMAC,
     SHA_1,
-    SHA_224,
+    DEPRECATED_SHA_224,
     SHA_256,
     SHA_384,
     SHA_512,
@@ -8880,6 +8955,8 @@ header: <WebCore/MediaSample.h>
     MediaTime duration;
     std::pair<MediaTime, MediaTime> trimInterval;
     RefPtr<WebCore::FragmentedSharedBuffer> data;
+    RefPtr<WebCore::SharedBuffer> hdrMetadata;
+    std::optional<WebCore::HdrMetadataType> hdrMetadataType;
     uint32_t flags;
 };
 
@@ -8906,4 +8983,14 @@ header: <WebCore/DocumentClasses.h>
     Model,
 #endif
     PDF
+};
+
+#if ENABLE(MODEL_PROCESS)
+header: <WebCore/StageModeOperations.h>
+enum class WebCore::StageModeOperation : bool;
+#endif
+
+struct WebCore::FixedContainerEdges {
+    WebCore::RectEdges<WebCore::Color> predominantColors;
+    WebCore::RectEdges<bool> fixedEdges;
 };

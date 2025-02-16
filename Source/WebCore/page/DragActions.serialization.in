@@ -65,9 +65,7 @@ enum class WebCore::DragSourceAction : uint8_t {
 #if ENABLE(ATTACHMENT_ELEMENT)
     Attachment
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
     Color
-#endif
 #if ENABLE(MODEL_ELEMENT)
     Model
 #endif
@@ -82,9 +80,7 @@ enum class WebCore::DragSourceAction : uint8_t {
 #if ENABLE(ATTACHMENT_ELEMENT)
     Attachment
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
     Color
-#endif
 #if ENABLE(MODEL_ELEMENT)
     Model
 #endif

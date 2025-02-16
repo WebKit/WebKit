@@ -80,7 +80,7 @@ static void initializeLogFileOnce()
 
 #if DATA_LOG_TO_FILE || DATA_LOG_TO_DARWIN_TEMP_DIR
 #if DATA_LOG_TO_DARWIN_TEMP_DIR
-    char filenameBuffer[maxPathLength + 1];
+    std::array<char, maxPathLength + 1> filenameBuffer;
     const char* logBasename = DATA_LOG_DEFAULT_BASENAME;
 #if !DATA_LOG_IGNORE_ENV_VAR
     logBasename = getenv("WTF_DATA_LOG_FILENAME");
@@ -88,18 +88,18 @@ static void initializeLogFileOnce()
         logBasename = DATA_LOG_DEFAULT_BASENAME;
 #endif
 
-    bool success = confstr(_CS_DARWIN_USER_TEMP_DIR, filenameBuffer, sizeof(filenameBuffer));
+    bool success = confstr(_CS_DARWIN_USER_TEMP_DIR, filenameBuffer.data(), filenameBuffer.size());
     if (success) {
         // FIXME: Assert that the path ends with a slash instead of adding a slash if it does not exist
         // once <rdar://problem/23579077> is fixed in all iOS Simulator versions that we use.
         size_t lastComponentLength = strlen(logBasename) + 20; // More than enough for ".<pid>.txt"
-        size_t dirnameLength = strlen(filenameBuffer);
+        size_t dirnameLength = strlenSpan(filenameBuffer);
         bool shouldAddPathSeparator = filenameBuffer[dirnameLength - 1] != '/' && logBasename[0] != '/';
-        if (lastComponentLength + shouldAddPathSeparator <= sizeof(filenameBuffer) - dirnameLength - 1) {
+        if (lastComponentLength + shouldAddPathSeparator <= filenameBuffer.size() - dirnameLength - 1) {
             if (shouldAddPathSeparator)
-                strncat(filenameBuffer, "/", 1);
-            strncat(filenameBuffer, logBasename, sizeof(filenameBuffer) - strlen(filenameBuffer) - 1);
-            filename = filenameBuffer;
+                strncat(filenameBuffer.data(), "/", 1);
+            strncat(filenameBuffer.data(), logBasename, filenameBuffer.size() - strlenSpan(filenameBuffer) - 1);
+            filename = filenameBuffer.data();
         }
     }
 #elif DATA_LOG_TO_FILE // !DATA_LOG_TO_DARWIN_TEMP_DIR
@@ -112,8 +112,7 @@ static void initializeLogFileOnce()
 #endif
 #endif // DATA_LOG_TO_FILE
     char actualFilename[maxPathLength + 1];
-
-    if (filename && !strstr(filename, "%pid")) {
+    if (filename && !contains(unsafeSpan(filename), "%pid"_span)) {
         snprintf(actualFilename, sizeof(actualFilename), "%s.%%pid.txt", filename);
         filename = actualFilename;
     }
@@ -139,10 +138,9 @@ void setDataFile(const char* path)
     const char* pathToOpen = path;
 
     if (path) {
-        const char* pidFormat = strstr(path, "%pid");
-        if (pidFormat) {
-            size_t leadingPathLength = pidFormat - path;
-            size_t pathCharactersAvailable = std::min(maxPathLength, leadingPathLength);
+        auto pathSpan = unsafeSpan(path);
+        if (size_t pidIndex = find(pathSpan, "%pid"_span); pidIndex != notFound) {
+            size_t pathCharactersAvailable = std::min(maxPathLength, pidIndex);
             strncpy(formattedPath, path, pathCharactersAvailable);
             char* nextDest = formattedPath + pathCharactersAvailable;
             pathCharactersAvailable = maxPathLength - pathCharactersAvailable;
@@ -152,7 +150,7 @@ void setDataFile(const char* path)
                 if (pidTextLength >= 0 && static_cast<size_t>(pidTextLength) < pathCharactersAvailable) {
                     pathCharactersAvailable -= static_cast<size_t>(pidTextLength);
                     nextDest += pidTextLength;
-                    strncpy(nextDest, pidFormat + 4, pathCharactersAvailable);
+                    strncpy(nextDest, pathSpan.subspan(pidIndex + 4).data(), pathCharactersAvailable);
                 }
             }
             formattedPath[maxPathLength] = '\0';

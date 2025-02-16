@@ -29,8 +29,8 @@ final class DialogPresenter: DialogPresenting {
     struct Dialog: Hashable, Identifiable, Sendable {
         enum Configuration: Sendable {
             case alert(String, @Sendable () -> Void)
-            case confirm(String, @Sendable (sending WebPage_v0.JavaScriptConfirmResult) -> Void)
-            case prompt(String, defaultText: String?, @Sendable (sending WebPage_v0.JavaScriptPromptResult) -> Void)
+            case confirm(String, @Sendable (sending WebPage.JavaScriptConfirmResult) -> Void)
+            case prompt(String, defaultText: String?, @Sendable (sending WebPage.JavaScriptPromptResult) -> Void)
         }
 
         let id = UUID()
@@ -48,30 +48,30 @@ final class DialogPresenter: DialogPresenting {
     struct FilePicker {
         let allowsMultipleSelection: Bool
         let allowsDirectories: Bool
-        let completion: @Sendable (sending WebPage_v0.FileInputPromptResult) -> Void
+        let completion: @Sendable (sending WebPage.FileInputPromptResult) -> Void
     }
 
     weak var owner: BrowserViewModel? = nil
 
-    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage_v0.FrameInfo) async {
+    func handleJavaScriptAlert(message: String, initiatedBy frame: WebPage.FrameInfo) async {
         await withCheckedContinuation { continuation in
             owner?.currentDialog = Dialog(configuration: .alert(message, continuation.resume))
         }
     }
 
-    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.JavaScriptConfirmResult {
+    func handleJavaScriptConfirm(message: String, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptConfirmResult {
         await withCheckedContinuation { continuation in
             owner?.currentDialog = Dialog(configuration: .confirm(message, continuation.resume(returning:)))
         }
     }
 
-    func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.JavaScriptPromptResult {
+    func handleJavaScriptPrompt(message: String, defaultText: String?, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.JavaScriptPromptResult {
         await withCheckedContinuation { continuation in
             owner?.currentDialog = Dialog(configuration: .prompt(message, defaultText: defaultText, continuation.resume(returning:)))
         }
     }
 
-    func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage_v0.FrameInfo) async -> WebPage_v0.FileInputPromptResult {
+    func handleFileInputPrompt(parameters: WKOpenPanelParameters, initiatedBy frame: WebPage.FrameInfo) async -> WebPage.FileInputPromptResult {
         await withCheckedContinuation { continuation in
             owner?.currentFilePicker = FilePicker(allowsMultipleSelection: parameters.allowsMultipleSelection, allowsDirectories: parameters.allowsDirectories, completion: continuation.resume(returning:))
         }

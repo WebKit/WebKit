@@ -25,7 +25,7 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES) && USE(APPKIT)
+#if USE(APPKIT)
 
 #import "WebDateTimePicker.h"
 #import <WebCore/DateTimeChooserParameters.h>
@@ -57,4 +57,4 @@ private:
 
 } // namespace WebKit
 
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES) && USE(APPKIT)
+#endif // USE(APPKIT)

@@ -16,6 +16,7 @@
 #include "include/core/SkStrokeRec.h"
 #include "include/private/base/SkDebug.h"
 #include "src/base/SkZip.h"
+#include "src/core/SkDrawTypes.h"
 #include "src/core/SkGlyphRunPainter.h"
 #include "src/core/SkMask.h"
 
@@ -41,13 +42,13 @@ class SkDrawBase : public SkGlyphRunListPainterCPU::BitmapDevicePainter {
 public:
     SkDrawBase();
 
-    void    drawPaint(const SkPaint&) const;
-    void    drawRect(const SkRect& prePaintRect, const SkPaint&, const SkMatrix* paintMatrix,
+    void drawPaint(const SkPaint&) const;
+    void drawRect(const SkRect& prePaintRect, const SkPaint&, const SkMatrix* paintMatrix,
                      const SkRect* postPaintRect) const;
-    void    drawRect(const SkRect& rect, const SkPaint& paint) const {
+    void drawRect(const SkRect& rect, const SkPaint& paint) const {
         this->drawRect(rect, paint, nullptr, nullptr);
     }
-    void    drawRRect(const SkRRect&, const SkPaint&) const;
+    void drawRRect(const SkRRect&, const SkPaint&) const;
     /**
      *  To save on mallocs, we allow a flag that tells us that srcPath is
      *  mutable, so that we don't have to make copies of it as we transform it.
@@ -57,9 +58,9 @@ public:
      *  affect the geometry/rasterization, then the pre matrix can just be
      *  pre-concated with the current matrix.
      */
-    void    drawPath(const SkPath& path, const SkPaint& paint,
-                     const SkMatrix* prePathMatrix = nullptr, bool pathIsMutable = false) const {
-        this->drawPath(path, paint, prePathMatrix, pathIsMutable, false);
+    void drawPath(const SkPath& path, const SkPaint& paint,
+                  const SkMatrix* prePathMatrix, bool pathIsMutable) const {
+        this->drawPath(path, paint, prePathMatrix, pathIsMutable, SkDrawCoverage::kNo);
     }
 
     /**
@@ -72,7 +73,12 @@ public:
                           SkBlitter* customBlitter = nullptr) const {
         bool isHairline = paint.getStyle() == SkPaint::kStroke_Style &&
                           paint.getStrokeWidth() == 0;
-        this->drawPath(src, paint, nullptr, false, !isHairline, customBlitter);
+        this->drawPath(src,
+                       paint,
+                       nullptr,
+                       false,
+                       isHairline ? SkDrawCoverage::kNo : SkDrawCoverage::kYes,
+                       customBlitter);
     }
 
     void drawDevicePoints(SkCanvas::PointMode, size_t count, const SkPoint[], const SkPaint&,
@@ -110,14 +116,13 @@ public:
     static RectType ComputeRectType(const SkRect&, const SkPaint&, const SkMatrix&,
                                     SkPoint* strokeSize);
 
-    using BlitterChooser = SkBlitter* (const SkPixmap& dst,
-                                       const SkMatrix& ctm,
-                                       const SkPaint&,
-                                       SkArenaAlloc*,
-                                       bool drawCoverage,
-                                       sk_sp<SkShader> clipShader,
-                                       const SkSurfaceProps&);
-
+    using BlitterChooser = SkBlitter*(const SkPixmap& dst,
+                                      const SkMatrix& ctm,
+                                      const SkPaint&,
+                                      SkArenaAlloc*,
+                                      SkDrawCoverage drawCoverage,
+                                      sk_sp<SkShader> clipShader,
+                                      const SkSurfaceProps&);
 
 private:
     // not supported
@@ -129,14 +134,14 @@ private:
                   const SkPaint&,
                   const SkMatrix* preMatrix,
                   bool pathIsMutable,
-                  bool drawCoverage,
+                  SkDrawCoverage drawCoverage,
                   SkBlitter* customBlitter = nullptr) const;
 
     void drawLine(const SkPoint[2], const SkPaint&) const;
 
     void drawDevPath(const SkPath& devPath,
                      const SkPaint& paint,
-                     bool drawCoverage,
+                     SkDrawCoverage drawCoverage,
                      SkBlitter* customBlitter,
                      bool doFill) const;
     /**

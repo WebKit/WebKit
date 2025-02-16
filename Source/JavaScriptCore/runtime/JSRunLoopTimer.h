@@ -110,7 +110,7 @@ private:
 
     void timerDidFire();
 
-    HashSet<TimerNotificationCallback> m_timerSetCallbacks;
+    UncheckedKeyHashSet<TimerNotificationCallback> m_timerSetCallbacks;
     Lock m_timerCallbacksLock;
 
     Lock m_lock;

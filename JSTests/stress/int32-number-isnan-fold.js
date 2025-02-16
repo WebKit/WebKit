@@ -9,7 +9,7 @@ function test(array, index) {
 noInline(test);
 
 var array = ['string', 0, 1, 2, 3, NaN];
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test(array, 1), false);
     shouldBe(test(array, 2), false);
     shouldBe(test(array, 3), false);

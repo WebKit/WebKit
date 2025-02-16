@@ -1,5 +1,3 @@
-//@ requireOptions("--useWasmGC=1")
-
 let wasm_code = new Uint8Array([
     0x00, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00, 0x01, 0x26, 0x03, 0x4e,
     0x02, 0x50, 0x00, 0x5f, 0x01, 0x63, 0x01, 0x00, 0x50, 0x01, 0x00, 0x5f,
@@ -14,5 +12,5 @@ let wasm_module = new WebAssembly.Module(wasm_code);
 let wasm_instance = new WebAssembly.Instance(wasm_module);
 let test = wasm_instance.exports.test;
 
-for (let i = 0; i < 10000; i ++)
+for (let i = 0; i < wasmTestLoopCount; i ++)
     test();

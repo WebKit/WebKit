@@ -26,13 +26,14 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-
 #include "CompositingRunLoop.h"
-#include "CoordinatedGraphicsScene.h"
 #include <WebCore/Damage.h>
 #include <WebCore/DisplayUpdate.h>
 #include <WebCore/GLContext.h>
 #include <WebCore/IntSize.h>
+#include <WebCore/TextureMapperDamageVisualizer.h>
+#include <WebCore/TextureMapperFPSCounter.h>
+#include <atomic>
 #include <wtf/Atomics.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/Noncopyable.h>
@@ -43,12 +44,17 @@
 #include "ThreadedDisplayRefreshMonitor.h"
 #endif
 
-namespace WebKit {
+namespace WebCore {
+class TextureMapper;
+class TransformationMatrix;
+}
 
+namespace WebKit {
 class AcceleratedSurface;
+class CoordinatedSceneState;
 class LayerTreeHost;
 
-class ThreadedCompositor : public CoordinatedGraphicsSceneClient, public ThreadSafeRefCounted<ThreadedCompositor>, public CanMakeThreadSafeCheckedPtr<ThreadedCompositor> {
+class ThreadedCompositor : public ThreadSafeRefCounted<ThreadedCompositor>, public CanMakeThreadSafeCheckedPtr<ThreadedCompositor> {
     WTF_MAKE_TZONE_ALLOCATED(ThreadedCompositor);
     WTF_MAKE_NONCOPYABLE(ThreadedCompositor);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ThreadedCompositor);
@@ -60,23 +66,22 @@ public:
     };
 
 #if HAVE(DISPLAY_LINK)
-    static Ref<ThreadedCompositor> create(LayerTreeHost&, float scaleFactor);
+    static Ref<ThreadedCompositor> create(LayerTreeHost&);
 #else
-    static Ref<ThreadedCompositor> create(LayerTreeHost&, ThreadedDisplayRefreshMonitor::Client&, float scaleFactor, WebCore::PlatformDisplayID);
+    static Ref<ThreadedCompositor> create(LayerTreeHost&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID);
 #endif
     virtual ~ThreadedCompositor();
 
     uint64_t surfaceID() const;
 
-    void setViewportSize(const WebCore::IntSize&, float scale);
     void backgroundColorDidChange();
 #if PLATFORM(WPE) && USE(GBM) && ENABLE(WPE_PLATFORM)
     void preferredBufferFormatsDidChange();
 #endif
 
     uint32_t requestComposition();
-
-    void updateScene();
+    void scheduleUpdate();
+    RunLoop* runLoop();
 
     void invalidate();
 
@@ -95,18 +100,14 @@ public:
 
 private:
 #if HAVE(DISPLAY_LINK)
-    ThreadedCompositor(LayerTreeHost&, float scaleFactor);
+    explicit ThreadedCompositor(LayerTreeHost&);
 #else
-    ThreadedCompositor(LayerTreeHost&, ThreadedDisplayRefreshMonitor::Client&, float scaleFactor, WebCore::PlatformDisplayID);
+    ThreadedCompositor(LayerTreeHost&, ThreadedDisplayRefreshMonitor::Client&, WebCore::PlatformDisplayID);
 #endif
 
-    // CoordinatedGraphicsSceneClient
-    void updateViewport() override;
-#if ENABLE(DAMAGE_TRACKING)
-    const WebCore::Damage& addSurfaceDamage(const WebCore::Damage&) override;
-#endif
-
+    void updateSceneState();
     void renderLayerTree();
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::IntSize&);
     void frameComplete();
 
 #if HAVE(DISPLAY_LINK)
@@ -118,23 +119,32 @@ private:
 
     CheckedPtr<LayerTreeHost> m_layerTreeHost;
     std::unique_ptr<AcceleratedSurface> m_surface;
-    RefPtr<CoordinatedGraphicsScene> m_scene;
+    RefPtr<CoordinatedSceneState> m_sceneState;
     std::unique_ptr<WebCore::GLContext> m_context;
 
     bool m_flipY { false };
-    unsigned m_suspendedCount { 0 };
+    std::atomic<unsigned> m_suspendedCount { 0 };
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;
 
     struct {
         Lock lock;
         WebCore::IntSize viewportSize;
-        float scaleFactor { 1 };
-        bool needsResize { false };
-
-        bool clientRendersNextFrame { false };
+        float deviceScaleFactor { 1 };
         uint32_t compositionRequestID { 0 };
+
+#if !HAVE(DISPLAY_LINK)
+        bool clientRendersNextFrame { false };
+#endif
     } m_attributes;
+
+    std::unique_ptr<WebCore::TextureMapper> m_textureMapper;
+    WebCore::TextureMapperFPSCounter m_fpsCounter;
+
+#if ENABLE(DAMAGE_TRACKING)
+    WebCore::Damage::Propagation m_damagePropagation { WebCore::Damage::Propagation::None };
+    std::unique_ptr<WebCore::TextureMapperDamageVisualizer> m_damageVisualizer;
+#endif
 
 #if HAVE(DISPLAY_LINK)
     std::atomic<uint32_t> m_compositionResponseID { 0 };

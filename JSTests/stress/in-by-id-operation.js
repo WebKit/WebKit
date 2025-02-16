@@ -9,7 +9,7 @@ function test(object)
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test({
         hello: 42
     }), true);
@@ -31,7 +31,7 @@ noInline(selfCache);
 
 var object = {};
 object.hello = 42;
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(selfCache(object), true);
 object.world = 43;
 shouldBe(selfCache(object), true);

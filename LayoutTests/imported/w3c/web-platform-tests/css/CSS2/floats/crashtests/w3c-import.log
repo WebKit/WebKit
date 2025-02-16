@@ -1,0 +1,24 @@
+The tests in this directory were imported from the W3C repository.
+Do NOT modify these tests directly in WebKit.
+Instead, create a pull request on the WPT github:
+	https://github.com/web-platform-tests/wpt
+
+Then run the Tools/Scripts/import-w3c-tests in WebKit to reimport
+
+Do NOT modify or remove this file.
+
+------------------------------------------------------------------------
+Properties requiring vendor prefixes:
+None
+Property values requiring vendor prefixes:
+None
+------------------------------------------------------------------------
+List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904409.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904419.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904421.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1904428.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/firefox-bug-1906768.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-rewind-parallel-flow-1-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-rewind-parallel-flow-2-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/CSS2/floats/crashtests/float-rewind-parallel-flow-3-crash.html

@@ -44,7 +44,7 @@ public:
     static bool isCodecSupported(const StringView&);
 
     struct Config {
-        std::span<const uint8_t> description;
+        Vector<uint8_t> description;
         uint64_t sampleRate { 0 };
         uint64_t numberOfChannels { 0 };
     };

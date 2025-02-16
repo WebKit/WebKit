@@ -392,7 +392,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::disable()
     setEmulatedMedia(emptyString());
     overridePrefersColorScheme(std::nullopt);
 
-    auto& inspectedPageSettings = m_inspectedPage.settings();
+    auto& inspectedPageSettings = m_inspectedPage->settings();
     inspectedPageSettings.setAuthorAndUserStylesEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setICECandidateFilteringEnabledInspectorOverride(std::nullopt);
     inspectedPageSettings.setImagesEnabledInspectorOverride(std::nullopt);
@@ -427,7 +427,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::reload(std::optiona
     if (!revalidateAllResources || !*revalidateAllResources)
         reloadOptions.add(ReloadOption::ExpiredOnly);
 
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return makeUnexpected("main frame is not local"_s);
     localMainFrame->loader().reload(reloadOptions);
@@ -437,10 +437,10 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::reload(std::optiona
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::navigate(const String& url)
 {
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return { };
-    RefPtr localTopDocument = m_inspectedPage.localTopDocument();
+    RefPtr localTopDocument = m_inspectedPage->localTopDocument();
     if (!localTopDocument)
         return { };
 
@@ -463,7 +463,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideUserAgent(c
 
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::overrideSetting(Inspector::Protocol::Page::Setting setting, std::optional<bool>&& value)
 {
-    auto& inspectedPageSettings = m_inspectedPage.settings();
+    auto& inspectedPageSettings = m_inspectedPage->settings();
 
     switch (setting) {
     case Inspector::Protocol::Page::Setting::PrivateClickMeasurementDebugModeEnabled:
@@ -550,8 +550,8 @@ void InspectorPageAgent::overridePrefersReducedMotion(std::optional<Inspector::P
     else if (value == Inspector::Protocol::Page::UserPreferenceValue::NoPreference)
         forcedValue = ForcedAccessibilityValue::Off;
 
-    m_inspectedPage.settings().setForcedPrefersReducedMotionAccessibilityValue(forcedValue);
-    m_inspectedPage.accessibilitySettingsDidChange();
+    m_inspectedPage->settings().setForcedPrefersReducedMotionAccessibilityValue(forcedValue);
+    m_inspectedPage->accessibilitySettingsDidChange();
 }
 
 void InspectorPageAgent::overridePrefersContrast(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&& value)
@@ -563,19 +563,19 @@ void InspectorPageAgent::overridePrefersContrast(std::optional<Inspector::Protoc
     else if (value == Inspector::Protocol::Page::UserPreferenceValue::NoPreference)
         forcedValue = ForcedAccessibilityValue::Off;
 
-    m_inspectedPage.settings().setForcedPrefersContrastAccessibilityValue(forcedValue);
-    m_inspectedPage.accessibilitySettingsDidChange();
+    m_inspectedPage->settings().setForcedPrefersContrastAccessibilityValue(forcedValue);
+    m_inspectedPage->accessibilitySettingsDidChange();
 }
 
 void InspectorPageAgent::overridePrefersColorScheme(std::optional<Inspector::Protocol::Page::UserPreferenceValue>&& value)
 {
 #if ENABLE(DARK_MODE_CSS)
     if (!value)
-        m_inspectedPage.setUseDarkAppearanceOverride(std::nullopt);
+        m_inspectedPage->setUseDarkAppearanceOverride(std::nullopt);
     else if (value == Inspector::Protocol::Page::UserPreferenceValue::Light)
-        m_inspectedPage.setUseDarkAppearanceOverride(false);
+        m_inspectedPage->setUseDarkAppearanceOverride(false);
     else if (value == Inspector::Protocol::Page::UserPreferenceValue::Dark)
-        m_inspectedPage.setUseDarkAppearanceOverride(true);
+        m_inspectedPage->setUseDarkAppearanceOverride(true);
 #else
     UNUSED_PARAM(value);
 #endif
@@ -640,7 +640,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
 {
     ListHashSet<Cookie> allRawCookies;
 
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -754,7 +754,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON:
         return makeUnexpected(errorString);
 
     auto shouldPartitionCookie = shouldPartition.value_or(false) ? ShouldPartitionCookie::Yes : ShouldPartitionCookie::No;
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -773,7 +773,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setCookie(Ref<JSON:
 Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const String& cookieName, const String& url)
 {
     URL parsedURL({ }, url);
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -791,7 +791,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::deleteCookie(const 
 
 Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::Page::FrameResourceTree>> InspectorPageAgent::getResourceTree()
 {
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     return buildObjectForFrameTree(localMainFrame.get());
 }
 
@@ -878,7 +878,7 @@ Inspector::Protocol::ErrorStringOr<Ref<JSON::ArrayOf<Inspector::Protocol::Page::
     auto searchStringType = (isRegex && *isRegex) ? ContentSearchUtilities::SearchStringType::Regex : ContentSearchUtilities::SearchStringType::ContainsString;
     auto regex = ContentSearchUtilities::createRegularExpressionForSearchString(text, caseSensitive && *caseSensitive, searchStringType);
 
-    for (Frame* frame = &m_inspectedPage.mainFrame(); frame; frame = frame->tree().traverseNext()) {
+    for (Frame* frame = &m_inspectedPage->mainFrame(); frame; frame = frame->tree().traverseNext()) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
@@ -1032,7 +1032,7 @@ void InspectorPageAgent::defaultUserPreferencesDidChange()
 #if ENABLE(DARK_MODE_CSS)
     auto prefersColorSchemeUserPreference = Inspector::Protocol::Page::UserPreference::create()
         .setName(Inspector::Protocol::Page::UserPreferenceName::PrefersColorScheme)
-        .setValue(m_inspectedPage.defaultUseDarkAppearance() ? Inspector::Protocol::Page::UserPreferenceValue::Dark : Inspector::Protocol::Page::UserPreferenceValue::Light)
+        .setValue(m_inspectedPage->defaultUseDarkAppearance() ? Inspector::Protocol::Page::UserPreferenceValue::Dark : Inspector::Protocol::Page::UserPreferenceValue::Light)
         .release();
 
     defaultUserPreferences->addItem(WTFMove(prefersColorSchemeUserPreference));
@@ -1176,9 +1176,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setEmulatedMedia(co
     m_emulatedMedia = AtomString(media);
 
     // FIXME: Schedule a rendering update instead of synchronously updating the layout.
-    m_inspectedPage.updateStyleAfterChangeInEnvironment();
+    m_inspectedPage->updateStyleAfterChangeInEnvironment();
 
-    RefPtr document = m_inspectedPage.localTopDocument();
+    RefPtr document = m_inspectedPage->localTopDocument();
     if (!document)
         return { };
 
@@ -1210,7 +1210,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotNode(Insp
     if (!node)
         return makeUnexpected(errorString);
     
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return makeUnexpected("Main frame isn't local"_s);
 
@@ -1228,7 +1228,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int 
         options.flags.add(SnapshotFlags::InViewCoordinates);
 
     IntRect rectangle(x, y, width, height);
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return makeUnexpected("Main frame isn't local"_s);
     auto snapshot = snapshotFrameRect(*localMainFrame, rectangle, WTFMove(options));
@@ -1242,7 +1242,7 @@ Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::snapshotRect(int 
 #if ENABLE(WEB_ARCHIVE) && USE(CF)
 Inspector::Protocol::ErrorStringOr<String> InspectorPageAgent::archive()
 {
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return makeUnexpected("Main frame isn't local"_s);
 
@@ -1267,7 +1267,7 @@ Inspector::Protocol::ErrorStringOr<void> InspectorPageAgent::setScreenSizeOverri
     if (height && *height <= 0)
         return makeUnexpected("Screen height override should be a positive integer"_s);
 
-    RefPtr localMainFrame = m_inspectedPage.localMainFrame();
+    RefPtr localMainFrame = m_inspectedPage->localMainFrame();
     if (!localMainFrame)
         return makeUnexpected("Main frame isn't local"_s);
     localMainFrame->setOverrideScreenSize(FloatSize(width.value_or(0), height.value_or(0)));

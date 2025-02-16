@@ -230,7 +230,7 @@ void SimpleEditCommand::doReapply()
 }
 
 #ifndef NDEBUG
-void SimpleEditCommand::addNodeAndDescendants(Node* startNode, HashSet<Ref<Node>>& nodes)
+void SimpleEditCommand::addNodeAndDescendants(Node* startNode, NodeSet& nodes)
 {
     for (RefPtr node = startNode; node; node = NodeTraversal::next(*node, startNode))
         nodes.add(*node);

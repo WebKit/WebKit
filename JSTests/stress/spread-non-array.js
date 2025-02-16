@@ -29,7 +29,7 @@ let customIterator = {
         };
     }
 };
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     for (let o of [customIterator, map]) {
         let [[a, b], [c, d]] = foo(o);
         assert(a === 20);
@@ -45,7 +45,7 @@ function bar(m) {
     return [...m, ...m];
 }
 noInline(bar);
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     for (let o of [customIterator, map]) {
         let [[a, b], [c, d], [e, f], [g, h]] = bar(o);
         assert(a === 20);

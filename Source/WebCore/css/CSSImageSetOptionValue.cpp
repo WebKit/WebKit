@@ -77,11 +77,11 @@ bool CSSImageSetOptionValue::equals(const CSSImageSetOptionValue& other) const
     return true;
 }
 
-String CSSImageSetOptionValue::customCSSText() const
+String CSSImageSetOptionValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder result;
-    result.append(m_image->cssText());
-    result.append(' ', m_resolution->cssText());
+    result.append(m_image->cssText(context));
+    result.append(' ', m_resolution->cssText(context));
     if (!m_mimeType.isNull())
         result.append(" type(\""_s, m_mimeType, "\")"_s);
 
@@ -98,21 +98,9 @@ void CSSImageSetOptionValue::setType(String type)
     m_mimeType = WTFMove(type);
 }
 
-bool CSSImageSetOptionValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSImageSetOptionValue::customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const
 {
     return m_resolution->traverseSubresources(handler) || m_image->traverseSubresources(handler);
-}
-
-void CSSImageSetOptionValue::customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
-{
-    m_image->setReplacementURLForSubresources(replacementURLStrings);
-    m_resolution->setReplacementURLForSubresources(replacementURLStrings);
-}
-
-void CSSImageSetOptionValue::customClearReplacementURLForSubresources()
-{
-    m_image->clearReplacementURLForSubresources();
-    m_resolution->clearReplacementURLForSubresources();
 }
 
 } // namespace WebCore

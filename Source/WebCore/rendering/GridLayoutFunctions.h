@@ -79,6 +79,9 @@ ExtraMarginsFromSubgrids extraMarginForSubgridAncestors(GridTrackSizingDirection
 
 unsigned alignmentContextForBaselineAlignment(const GridSpan&, const ItemPosition& alignment);
 
+GridAxis gridAxisForDirection(GridTrackSizingDirection);
+GridTrackSizingDirection gridDirectionForAxis(GridAxis);
+
 }
 
 } // namespace WebCore

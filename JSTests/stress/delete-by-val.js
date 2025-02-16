@@ -11,5 +11,5 @@ function test(i) {
     assert(!("bar" + i in foo));
 }
 
-for (let i = 0; i < 100000; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     test(i);

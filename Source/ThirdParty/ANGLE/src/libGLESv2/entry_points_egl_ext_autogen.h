@@ -66,6 +66,10 @@ ANGLE_EXPORT EGLDeviceEXT EGLAPIENTRY EGL_CreateDeviceANGLE(EGLint device_type,
                                                             const EGLAttrib *attrib_list);
 ANGLE_EXPORT EGLBoolean EGLAPIENTRY EGL_ReleaseDeviceANGLE(EGLDeviceEXT device);
 
+// EGL_ANGLE_device_vulkan
+ANGLE_EXPORT void EGLAPIENTRY EGL_LockVulkanQueueANGLE(EGLDisplay dpy);
+ANGLE_EXPORT void EGLAPIENTRY EGL_UnlockVulkanQueueANGLE(EGLDisplay dpy);
+
 // EGL_ANGLE_external_context_and_surface
 ANGLE_EXPORT void EGLAPIENTRY EGL_AcquireExternalContextANGLE(EGLDisplay dpy,
                                                               EGLSurface drawAndRead);
@@ -190,6 +194,15 @@ ANGLE_EXPORT EGLSurface EGLAPIENTRY EGL_CreatePlatformWindowSurfaceEXT(EGLDispla
 ANGLE_EXPORT EGLDisplay EGLAPIENTRY EGL_GetPlatformDisplayEXT(EGLenum platform,
                                                               void *native_display,
                                                               const EGLint *attrib_list);
+
+// EGL_EXT_surface_compression
+ANGLE_EXPORT EGLBoolean EGLAPIENTRY
+EGL_QuerySupportedCompressionRatesEXT(EGLDisplay dpy,
+                                      EGLConfig config,
+                                      const EGLAttrib *attrib_list,
+                                      EGLint *rates,
+                                      EGLint rate_size,
+                                      EGLint *num_rates);
 
 // EGL_KHR_debug
 ANGLE_EXPORT EGLint EGLAPIENTRY EGL_DebugMessageControlKHR(EGLDEBUGPROCKHR callback,

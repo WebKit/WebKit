@@ -94,6 +94,8 @@ inline Signal fromSystemException(DWORD signal)
 LONG WINAPI vectoredHandler(struct _EXCEPTION_POINTERS *exceptionInfo)
 {
     Signal signal = fromSystemException(exceptionInfo->ExceptionRecord->ExceptionCode);
+    if (signal >= Signal::Unknown)
+        return EXCEPTION_CONTINUE_SEARCH;
     SignalHandlers& handlers = g_wtfConfig.signalHandlers;
 
     SigInfo sigInfo;

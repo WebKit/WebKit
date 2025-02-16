@@ -65,6 +65,7 @@
 
             testOutput += "\nClosing dialog2.\n\n";
             document.getElementById("close").click();
+            focusFirstDescendant(document.getElementById("dialog1"));
             await backgroundAccessible(false);
             await dialog1Accessible(true);
 

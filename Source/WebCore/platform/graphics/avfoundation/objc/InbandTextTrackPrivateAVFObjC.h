@@ -66,10 +66,16 @@ public:
 protected:
     InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent*, AVMediaSelectionGroup *, AVMediaSelectionOption *, TrackID, InbandTextTrackPrivate::CueFormat);
     
+    bool isInbandTextTrackPrivateAVFObjC() const final { return true; }
+
     RetainPtr<AVMediaSelectionGroup> m_mediaSelectionGroup;
     RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
 };
 
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::InbandTextTrackPrivateAVFObjC)
+static bool isType(const WebCore::InbandTextTrackPrivateAVF& track) { return track.isInbandTextTrackPrivateAVFObjC(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif

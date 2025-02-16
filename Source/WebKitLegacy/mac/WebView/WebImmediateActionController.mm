@@ -203,7 +203,7 @@
 
     if (![_immediateActionRecognizer animationController]) {
         // FIXME: We should be able to remove the dispatch_async when rdar://problem/19502927 is resolved.
-        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
+        RunLoop::protectedMain()->dispatch([self, strongSelf = retainPtr(self)] {
             [self _cancelImmediateAction];
         });
     }

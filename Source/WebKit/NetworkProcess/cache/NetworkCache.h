@@ -230,8 +230,8 @@ private:
 
     Ref<Storage> protectedStorage() const { return m_storage; }
 
-    Ref<Storage> m_storage;
-    Ref<NetworkProcess> m_networkProcess;
+    const Ref<Storage> m_storage;
+    const Ref<NetworkProcess> m_networkProcess;
 
 #if ENABLE(NETWORK_CACHE_SPECULATIVE_REVALIDATION)
     bool shouldUseSpeculativeLoadManager() const;

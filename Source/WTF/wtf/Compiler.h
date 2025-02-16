@@ -558,6 +558,13 @@
 #define SUPPRESS_UNCOUNTED_MEMBER \
     IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE_ON_MEMBER("webkit.NoUncountedMemberChecker")
 
+#if COMPILER(APPLE_CLANG) || defined(CLANG_WEBKIT_BRANCH) || !defined __clang_major__ || __clang_major__ >= 19
+#define SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE \
+    IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE("webkit.UncountedLambdaCapturesChecker")
+#else
+#define SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE
+#endif
+
 #define SUPPRESS_REFCOUNTED_WITHOUT_VIRTUAL_DESTRUCTOR \
     IGNORE_CLANG_STATIC_ANALYZER_WARNINGS_ATTRIBUTE_ON_CLASS("webkit.RefCntblBaseVirtualDtor")
 
@@ -615,7 +622,9 @@
 #if COMPILER(CLANG)
 #define WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
     _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Wunsafe-buffer-usage\"")
+    _Pragma("clang diagnostic ignored \"-Wunknown-warning-option\"") \
+    _Pragma("clang diagnostic ignored \"-Wunsafe-buffer-usage\"") \
+    _Pragma("clang diagnostic ignored \"-Wunsafe-buffer-usage-in-libc-call\"")
 
 #define WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
     _Pragma("clang diagnostic pop")

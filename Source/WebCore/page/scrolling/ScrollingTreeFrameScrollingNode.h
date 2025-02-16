@@ -54,10 +54,13 @@ public:
     float frameScaleFactor() const { return m_frameScaleFactor; }
     int headerHeight() const { return m_headerHeight; }
     int footerHeight() const { return m_footerHeight; }
-    float topContentInset() const { return m_topContentInset; }
+    FloatBoxExtent obscuredContentInsets() const { return m_obscuredContentInsets; }
     virtual void viewWillStartLiveResize() { }
     virtual void viewWillEndLiveResize() { }
     virtual void viewSizeDidChange() { }
+
+    virtual bool isScrollingTreeFrameScrollingNodeMac() const { return false; };
+
 protected:
     ScrollingTreeFrameScrollingNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
 
@@ -79,7 +82,7 @@ private:
     std::optional<FloatSize> m_overrideVisualViewportSize;
     
     float m_frameScaleFactor { 1 };
-    float m_topContentInset { 0 };
+    FloatBoxExtent m_obscuredContentInsets;
 
     int m_headerHeight { 0 };
     int m_footerHeight { 0 };

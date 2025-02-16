@@ -407,7 +407,7 @@ skia_source_set("fontscanner_tests") {
 
 optional("fontmgr_FontConfigInterface") {
   enabled = skia_enable_fontmgr_FontConfigInterface
-
+  public_defines = [ "SK_FONTMGR_FCI_AVAILABLE" ]
   deps = [
     ":typeface_freetype",
     "//third_party:fontconfig",
@@ -2774,39 +2774,6 @@ if (skia_enable_tools) {
       ":flags",
       ":skia",
     ]
-  }
-
-  if (!is_ios && target_cpu != "wasm" &&
-      !((is_win || is_mac) && target_cpu == "arm64")) {
-    test_app("skiaserve") {
-      sources = [
-        "tools/skiaserve/Request.cpp",
-        "tools/skiaserve/Response.cpp",
-        "tools/skiaserve/skiaserve.cpp",
-        "tools/skiaserve/urlhandlers/BreakHandler.cpp",
-        "tools/skiaserve/urlhandlers/ClipAlphaHandler.cpp",
-        "tools/skiaserve/urlhandlers/CmdHandler.cpp",
-        "tools/skiaserve/urlhandlers/ColorModeHandler.cpp",
-        "tools/skiaserve/urlhandlers/DataHandler.cpp",
-        "tools/skiaserve/urlhandlers/DownloadHandler.cpp",
-        "tools/skiaserve/urlhandlers/EnableGPUHandler.cpp",
-        "tools/skiaserve/urlhandlers/ImgHandler.cpp",
-        "tools/skiaserve/urlhandlers/InfoHandler.cpp",
-        "tools/skiaserve/urlhandlers/OpBoundsHandler.cpp",
-        "tools/skiaserve/urlhandlers/OpsHandler.cpp",
-        "tools/skiaserve/urlhandlers/OverdrawHandler.cpp",
-        "tools/skiaserve/urlhandlers/PostHandler.cpp",
-        "tools/skiaserve/urlhandlers/QuitHandler.cpp",
-        "tools/skiaserve/urlhandlers/RootHandler.cpp",
-      ]
-      deps = [
-        ":flags",
-        ":gpu_tool_utils",
-        ":skia",
-        ":tool_utils",
-        "//third_party/libmicrohttpd",
-      ]
-    }
   }
 
   test_app("fuzz") {

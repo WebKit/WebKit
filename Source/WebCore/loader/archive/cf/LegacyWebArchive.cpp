@@ -30,6 +30,7 @@
 #include "LegacyWebArchive.h"
 
 #include "CSSImportRule.h"
+#include "CSSSerializationContext.h"
 #include "CachedResource.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
@@ -110,7 +111,7 @@ static String getFileNameFromURIComponent(StringView input)
     return result.toString();
 }
 
-static String generateValidFileName(const URL& url, const HashSet<String>& existingFileNames, const String& extension = { })
+static String generateValidFileName(const URL& url, const UncheckedKeyHashSet<String>& existingFileNames, const String& extension = { })
 {
     String suffix = extension.isEmpty() ? emptyString() : makeString('.', extension);
     auto extractedFileName = getFileNameFromURIComponent(url.lastPathComponent());
@@ -485,7 +486,7 @@ RetainPtr<CFDataRef> LegacyWebArchive::createPropertyListRepresentation(const Re
 
 #endif
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& customMarkupExclusionRules, const String& mainResourceFilePath)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& customMarkupExclusionRules, const String& mainResourceFilePath, bool saveScriptsFromMemoryCache)
 {
     auto* frame = node.document().frame();
     if (!frame)
@@ -509,7 +510,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(Node& node, Function<bool(Loca
     if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
         markupString = makeString(documentTypeString(node.document()), markupString);
 
-    return create(markupString, *frame, WTFMove(nodeList), WTFMove(frameFilter), markupExclusionRules, mainResourceFilePath);
+    return create(markupString, saveScriptsFromMemoryCache, *frame, WTFMove(nodeList), WTFMove(frameFilter), markupExclusionRules, mainResourceFilePath);
 }
 
 RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
@@ -534,7 +535,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(LocalFrame& frame)
     return create(mainResource.releaseNonNull(), documentLoader->subresources(), WTFMove(subframeArchives));
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range, bool saveScriptsFromMemoryCache)
 {
     auto& document = range.start.document();
     auto* frame = document.frame();
@@ -544,7 +545,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const SimpleRange& range)
     // FIXME: This is always "for interchange". Is that right?
     Vector<Ref<Node>> nodeList;
     auto markupString = makeString(documentTypeString(document), serializePreservingVisualAppearance(range, &nodeList, AnnotateForInterchange::Yes));
-    return create(markupString, *frame, WTFMove(nodeList), nullptr);
+    return create(markupString, saveScriptsFromMemoryCache, *frame, WTFMove(nodeList), nullptr);
 }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
@@ -584,7 +585,7 @@ static void addSubresourcesForAttachmentElementsIfNecessary(LocalFrame& frame, c
 
 #endif
 
-static UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNecessary(LocalFrame& frame, const String& subresourcesDirectoryName, HashSet<String>& uniqueFileNames, UncheckedKeyHashMap<String, String>& uniqueSubresources, Vector<Ref<ArchiveResource>>& subresources)
+static UncheckedKeyHashMap<Ref<CSSStyleSheet>, String> addSubresourcesForCSSStyleSheetsIfNecessary(LocalFrame& frame, const String& subresourcesDirectoryName, UncheckedKeyHashSet<String>& uniqueFileNames, UncheckedKeyHashMap<String, String>& uniqueSubresources, Vector<Ref<ArchiveResource>>& subresources)
 {
     if (subresourcesDirectoryName.isEmpty())
         return { };
@@ -593,18 +594,19 @@ static UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSS
     if (!document)
         return { };
 
-    UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> uniqueCSSStyleSheets;
-    UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> relativeUniqueCSSStyleSheets;
+    CSS::SerializationContext serializationContext;
+
+    UncheckedKeyHashMap<Ref<CSSStyleSheet>, String> uniqueCSSStyleSheets;
     Ref documentStyleSheets = document->styleSheets();
     for (unsigned index = 0; index < documentStyleSheets->length(); ++index) {
         RefPtr cssStyleSheet = dynamicDowncast<CSSStyleSheet>(documentStyleSheets->item(index));
         if (!cssStyleSheet)
             continue;
 
-        if (uniqueCSSStyleSheets.contains(cssStyleSheet.get()))
+        if (uniqueCSSStyleSheets.contains(*cssStyleSheet))
             continue;
 
-        HashSet<RefPtr<CSSStyleSheet>> cssStyleSheets;
+        UncheckedKeyHashSet<RefPtr<CSSStyleSheet>> cssStyleSheets;
         cssStyleSheets.add(cssStyleSheet.get());
         cssStyleSheet->getChildStyleSheets(cssStyleSheets);
         for (auto& currentCSSStyleSheet : cssStyleSheets) {
@@ -616,7 +618,7 @@ static UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSS
             if (url.isNull() || url.isEmpty())
                 continue;
 
-            auto addResult = uniqueCSSStyleSheets.add(currentCSSStyleSheet, emptyString());
+            auto addResult = uniqueCSSStyleSheets.add(*currentCSSStyleSheet, emptyString());
             if (!addResult.isNewEntry)
                 continue;
 
@@ -635,27 +637,26 @@ static UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String> addSubresourcesForCSSS
             String subresourceFileName = generateValidFileName(url, uniqueFileNames, extension);
             uniqueFileNames.add(subresourceFileName);
             addResult.iterator->value = FileSystem::pathByAppendingComponent(subresourcesDirectoryName, subresourceFileName);
-            relativeUniqueCSSStyleSheets.add(currentCSSStyleSheet, subresourceFileName);
+            serializationContext.replacementURLStringsForCSSStyleSheet.add(*currentCSSStyleSheet, subresourceFileName);
         }
     }
 
     auto frameName = frame.tree().uniqueName();
-    UncheckedKeyHashMap<String, String> relativeUniqueSubresources;
     for (auto& [urlString, path] : uniqueSubresources) {
         // The style sheet files are stored in the same directory as other subresources.
-        relativeUniqueSubresources.add(urlString, FileSystem::lastComponentOfPathIgnoringTrailingSlash(path));
+        serializationContext.replacementURLStrings.add(urlString, FileSystem::lastComponentOfPathIgnoringTrailingSlash(path));
     }
 
     for (auto& [cssStyleSheet, path]  : uniqueCSSStyleSheets) {
-        auto contentString = cssStyleSheet->cssTextWithReplacementURLs(relativeUniqueSubresources, relativeUniqueCSSStyleSheets);
+        auto contentString = cssStyleSheet->cssText(serializationContext);
         if (auto newResource = ArchiveResource::create(utf8Buffer(contentString), URL { cssStyleSheet->href() }, "text/css"_s, "UTF-8"_s, frameName, ResourceResponse(), path))
             subresources.append(newResource.releaseNonNull());
     }
 
-    return frame.isMainFrame() ? uniqueCSSStyleSheets : relativeUniqueCSSStyleSheets;
+    return frame.isMainFrame() ? uniqueCSSStyleSheets : serializationContext.replacementURLStringsForCSSStyleSheet;
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules, const String& mainFrameFilePath)
+RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, bool saveScriptsFromMemoryCache, LocalFrame& frame, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules, const String& mainFrameFilePath)
 {
     auto& response = frame.loader().documentLoader()->response();
     URL responseURL = response.url();
@@ -672,7 +673,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
     Vector<Ref<LegacyWebArchive>> subframeArchives;
     Vector<Ref<ArchiveResource>> subresources;
     UncheckedKeyHashMap<String, String> uniqueSubresources;
-    HashSet<String> uniqueFileNames;
+    UncheckedKeyHashSet<String> uniqueFileNames;
     String subresourcesDirectoryName = mainFrameFilePath.isNull() ? String { } : makeString(mainFrameFilePath, "_files"_s);
 
     for (auto& node : nodes) {
@@ -696,6 +697,14 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
             ListHashSet<URL> subresourceURLs;
             node->getSubresourceURLs(subresourceURLs);
             node->getCandidateSubresourceURLs(subresourceURLs);
+
+            if (saveScriptsFromMemoryCache && responseURL.protocolIsInHTTPFamily()) {
+                RegistrableDomain domain { responseURL };
+                MemoryCache::singleton().forEachSessionResource(frame.page()->sessionID(), [&](auto& resource) {
+                    if (domain.matches(resource.url()) && resource.hasClients() && resource.type() == CachedResource::Type::Script)
+                        subresourceURLs.add(resource.url());
+                });
+            }
 
             ASSERT(frame.loader().documentLoader());
             Ref documentLoader = *frame.loader().documentLoader();
@@ -781,7 +790,7 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::create(const String& markupString, Lo
     return create(mainResource.releaseNonNull(), WTFMove(subresources), WTFMove(subframeArchives));
 }
 
-RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(LocalFrame* frame)
+RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(LocalFrame* frame, bool saveScriptsFromMemoryCache)
 {
     if (!frame)
         return nullptr;
@@ -794,9 +803,9 @@ RefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(LocalFrame* frame
     builder.append(documentTypeString(*document));
 
     Vector<Ref<Node>> nodeList;
-    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes, PreserveBaseElement::Yes, &nodeList));
+    builder.append(serializePreservingVisualAppearance(frame->selection().selection(), ResolveURLs::No, SerializeComposedTree::Yes, IgnoreUserSelectNone::Yes, PreserveBaseElement::Yes, PreserveDirectionForInlineText::Yes, &nodeList));
 
-    auto archive = create(builder.toString(), *frame, WTFMove(nodeList), nullptr);
+    auto archive = create(builder.toString(), saveScriptsFromMemoryCache, *frame, WTFMove(nodeList), nullptr);
     if (!archive)
         return nullptr;
 

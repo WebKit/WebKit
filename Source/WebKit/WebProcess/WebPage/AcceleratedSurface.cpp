@@ -70,20 +70,16 @@ std::unique_ptr<AcceleratedSurface> AcceleratedSurface::create(ThreadedComposito
 AcceleratedSurface::AcceleratedSurface(WebPage& webPage, Function<void()>&& frameCompleteHandler)
     : m_webPage(webPage)
     , m_frameCompleteHandler(WTFMove(frameCompleteHandler))
-    , m_size(webPage.size())
     , m_isOpaque(!webPage.backgroundColor().has_value() || webPage.backgroundColor()->isOpaque())
 {
-    m_size.scale(m_webPage->deviceScaleFactor());
 }
 
-bool AcceleratedSurface::hostResize(const IntSize& size)
+bool AcceleratedSurface::resize(const IntSize& size)
 {
-    IntSize scaledSize(size);
-    scaledSize.scale(m_webPage->deviceScaleFactor());
-    if (scaledSize == m_size)
+    if (m_size == size)
         return false;
 
-    m_size = scaledSize;
+    m_size = size;
     return true;
 }
 

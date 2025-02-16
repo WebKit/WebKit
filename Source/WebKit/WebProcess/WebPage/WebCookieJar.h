@@ -26,6 +26,7 @@
 #pragma once
 
 #include "WebCookieCache.h"
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/CookieChangeListener.h>
 #include <WebCore/CookieJar.h>
 #include <optional>
@@ -65,7 +66,7 @@ public:
     void setCookieAsync(WebCore::Document&, const URL&, const WebCore::Cookie&, CompletionHandler<void(bool)>&&) const final;
 
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
-    void addChangeListenerWithAccess(const URL&, const URL& firstParty, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::ShouldRelaxThirdPartyCookieBlocking, const WebCore::CookieChangeListener&);
+    void addChangeListenerWithAccess(const URL&, const URL& firstParty, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, const WebCore::CookieChangeListener&);
     void addChangeListener(const WebCore::Document&, const WebCore::CookieChangeListener&) final;
     void removeChangeListener(const String& host, const WebCore::CookieChangeListener&) final;
 #endif
@@ -75,6 +76,10 @@ public:
     void allCookiesDeleted();
 
     void clearCache() final;
+
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    void setOptInCookiePartitioningEnabled(bool);
+#endif
 
 private:
     WebCookieJar();

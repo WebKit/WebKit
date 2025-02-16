@@ -5,7 +5,7 @@ function assert(a) {
 
 let a = 0n;
 let b = 1n;
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     a = b * 30n;
 }
 

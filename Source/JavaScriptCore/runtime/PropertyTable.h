@@ -115,7 +115,7 @@ public:
         return &vm.propertyTableSpace();
     }
 
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
     DECLARE_VISIT_CHILDREN;
 

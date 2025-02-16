@@ -75,8 +75,7 @@ public:
 
     bool WARN_UNUSED_RETURN failed() const { return !m_errorMessage.isNull(); }
     virtual bool hasWork() const = 0;
-    enum CompilationEffort { All, Partial };
-    virtual void work(CompilationEffort = All) = 0;
+    virtual void work() = 0;
     virtual bool multiThreaded() const = 0;
 
     void waitForCompletion();

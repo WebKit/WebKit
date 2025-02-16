@@ -36,9 +36,12 @@
 #import "_WKErrorRecoveryAttempting.h"
 #import "_WKRemoteObjectInterfaceInternal.h"
 #import <objc/runtime.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Scope.h>
 #import <wtf/SetForScope.h>
+#import <wtf/StdLibExtras.h>
+#import <wtf/cocoa/NSStringExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
 #import <wtf/text/CString.h>
@@ -89,10 +92,10 @@ bool methodSignaturesAreCompatible(NSString *wire, NSString *local)
 @end
 
 @implementation WKRemoteObjectEncoder {
-    RefPtr<API::Dictionary> _rootDictionary;
-    API::Array* _objectStream;
+    const RefPtr<API::Dictionary> _rootDictionary;
+    RefPtr<API::Array> _objectStream;
 
-    API::Dictionary* _currentDictionary;
+    RefPtr<API::Dictionary> _currentDictionary;
     HashSet<NSObject *> _objectsBeingEncoded; // Used to detect cycles.
 }
 
@@ -101,8 +104,8 @@ bool methodSignaturesAreCompatible(NSString *wire, NSString *local)
     if (!(self = [super init]))
         return nil;
 
-    _rootDictionary = API::Dictionary::create();
-    _currentDictionary = _rootDictionary.get();
+    lazyInitialize(_rootDictionary, API::Dictionary::create());
+    _currentDictionary = _rootDictionary;
 
     return self;
 }
@@ -136,12 +139,13 @@ static void encodeToObjectStream(WKRemoteObjectEncoder *encoder, id value)
 {
     ensureObjectStream(encoder);
 
-    size_t position = encoder->_objectStream->size();
-    encoder->_objectStream->elements().append(nullptr);
+    Ref objectStream = *encoder->_objectStream;
+    size_t position = objectStream->size();
+    objectStream->elements().append(nullptr);
 
     auto encodedObject = createEncodedObject(encoder, value);
-    ASSERT(!encoder->_objectStream->elements()[position]);
-    encoder->_objectStream->elements()[position] = WTFMove(encodedObject);
+    ASSERT(!objectStream->elements()[position]);
+    objectStream->elements()[position] = WTFMove(encodedObject);
 }
 
 static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocation *invocation, NSUInteger firstArgument)
@@ -152,9 +156,9 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
     ASSERT(firstArgument <= argumentCount);
 
     for (NSUInteger i = firstArgument; i < argumentCount; ++i) {
-        const char* type = [methodSignature getArgumentTypeAtIndex:i];
+        auto type = unsafeSpan([methodSignature getArgumentTypeAtIndex:i]);
 
-        switch (*type) {
+        switch (type[0]) {
         // double
         case 'd': {
             double value;
@@ -288,13 +292,14 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
 
         // struct
         case '{':
-            if (!strcmp(type, @encode(NSRange))) {
+            if (equalSpans(type, objcEncode<NSRange>())) {
                 NSRange value;
                 [invocation getArgument:&value atIndex:i];
 
                 encodeToObjectStream(encoder, [NSValue valueWithRange:value]);
                 break;
-            } else if (!strcmp(type, @encode(CGSize))) {
+            }
+            if (equalSpans(type, objcEncode<CGSize>())) {
                 CGSize value;
                 [invocation getArgument:&value atIndex:i];
 
@@ -305,7 +310,7 @@ static void encodeInvocationArguments(WKRemoteObjectEncoder *encoder, NSInvocati
             FALLTHROUGH;
 
         default:
-            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s'", type];
+            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%.*s'", static_cast<int>(type.size()), type.data()];
         }
     }
 }
@@ -326,7 +331,7 @@ static void encodeInvocation(WKRemoteObjectEncoder *encoder, NSInvocation *invoc
 
 static void encodeString(WKRemoteObjectEncoder *encoder, NSString *string)
 {
-    encoder->_currentDictionary->set(stringKey, API::String::create(string));
+    Ref { *encoder->_currentDictionary }->set(stringKey, API::String::create(string));
 }
 
 static RetainPtr<id> decodeObjCObject(WKRemoteObjectDecoder *decoder, Class objectClass)
@@ -468,7 +473,7 @@ static void encodeObject(WKRemoteObjectEncoder *encoder, id object)
         encoder->_objectsBeingEncoded.remove(object);
     });
 
-    encoder->_currentDictionary->set(classNameKey, API::String::create(String::fromLatin1(class_getName(objectClass))));
+    Ref { *encoder->_currentDictionary }->set(classNameKey, API::String::create(String::fromLatin1(class_getName(objectClass))));
 
     if ([object isKindOfClass:[NSInvocation class]]) {
         // We have to special case NSInvocation since we don't want to encode the target.
@@ -593,32 +598,32 @@ static NSString *escapeKey(NSString *key)
 
 - (void)encodeObject:(id)object forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), createEncodedObject(self, object));
+    Ref { *_currentDictionary }->set(escapeKey(key), createEncodedObject(self, object));
 }
 
 - (void)encodeBytes:(const uint8_t *)bytes length:(NSUInteger)length forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::Data::create(unsafeMakeSpan(bytes, length)));
+    Ref { *_currentDictionary }->set(escapeKey(key), API::Data::create(unsafeMakeSpan(bytes, length)));
 }
 
 - (void)encodeBool:(BOOL)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::Boolean::create(value));
+    Ref { *_currentDictionary }->set(escapeKey(key), API::Boolean::create(value));
 }
 
 - (void)encodeInt:(int)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::UInt64::create(value));
+    Ref { *_currentDictionary }->set(escapeKey(key), API::UInt64::create(value));
 }
 
 - (void)encodeInt32:(int32_t)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::UInt64::create(value));
+    Ref { *_currentDictionary }->set(escapeKey(key), API::UInt64::create(value));
 }
 
 - (void)encodeInt64:(int64_t)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::UInt64::create(value));
+    Ref { *_currentDictionary }->set(escapeKey(key), API::UInt64::create(value));
 }
 
 - (void)encodeInteger:(NSInteger)intv forKey:(NSString *)key
@@ -628,12 +633,12 @@ static NSString *escapeKey(NSString *key)
 
 - (void)encodeFloat:(float)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::Double::create(value));
+    Ref { *_currentDictionary }->set(escapeKey(key), API::Double::create(value));
 }
 
 - (void)encodeDouble:(double)value forKey:(NSString *)key
 {
-    _currentDictionary->set(escapeKey(key), API::Double::create(value));
+    Ref { *_currentDictionary }->set(escapeKey(key), API::Double::create(value));
 }
 
 - (BOOL)requiresSecureCoding
@@ -646,12 +651,12 @@ static NSString *escapeKey(NSString *key)
 @implementation WKRemoteObjectDecoder {
     RetainPtr<_WKRemoteObjectInterface> _interface;
 
-    const API::Dictionary* _rootDictionary;
-    const API::Dictionary* _currentDictionary;
+    const RefPtr<const API::Dictionary> _rootDictionary;
+    RefPtr<const API::Dictionary> _currentDictionary;
 
     SEL _replyToSelector;
 
-    const API::Array* _objectStream;
+    const RefPtr<const API::Array> _objectStream;
     size_t _objectStreamPosition;
 
     const HashSet<CFTypeRef>* _allowedClasses;
@@ -664,12 +669,13 @@ static NSString *escapeKey(NSString *key)
 
     _interface = interface;
 
-    _rootDictionary = rootObjectDictionary;
+    lazyInitialize(_rootDictionary, Ref { *rootObjectDictionary });
     _currentDictionary = _rootDictionary;
 
     _replyToSelector = replyToSelector;
 
-    _objectStream = _rootDictionary->get<API::Array>(objectStreamKey);
+    if (RefPtr objectStream = _rootDictionary->get<API::Array>(objectStreamKey))
+        lazyInitialize(_objectStream, objectStream.releaseNonNull());
 
     return self;
 }
@@ -754,7 +760,7 @@ static NSString *escapeKey(NSString *key)
 
 - (BOOL)containsValueForKey:(NSString *)key
 {
-    return _currentDictionary->map().contains(escapeKey(key));
+    return Ref { *_currentDictionary }->map().contains(escapeKey(key));
 }
 
 - (id)decodeObjectForKey:(NSString *)key
@@ -806,16 +812,18 @@ static const HashSet<CFTypeRef> alwaysAllowedClasses()
     return classes.get();
 }
 
-NO_RETURN static void crashWithClassName(const char* className)
+template<typename CharacterType>
+NO_RETURN static void crashWithClassName(std::span<const CharacterType> className) requires(sizeof(CharacterType) == 1)
 {
     std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
-    strncpy(reinterpret_cast<char*>(values.data()), className, sizeof(values));
+    auto valuesAsBytes  = asMutableByteSpan(std::span { values });
+    memcpySpan(valuesAsBytes, className.first(valuesAsBytes.size()));
     CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
 }
 
 NO_RETURN static void crashWithClassName(Class objectClass)
 {
-    crashWithClassName(NSStringFromClass(objectClass).UTF8String);
+    crashWithClassName(span(NSStringFromClass(objectClass)));
 }
 
 static void checkIfClassIsAllowed(WKRemoteObjectDecoder *decoder, Class objectClass)
@@ -859,9 +867,9 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
     ASSERT(firstArgument <= argumentCount);
 
     for (NSUInteger i = firstArgument; i < argumentCount; ++i) {
-        const char* type = [methodSignature getArgumentTypeAtIndex:i];
+        auto type = unsafeSpan([methodSignature getArgumentTypeAtIndex:i]);
 
-        switch (*type) {
+        switch (type[0]) {
         // double
         case 'd': {
             double value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) doubleValue];
@@ -966,11 +974,12 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
 
         // struct
         case '{':
-            if (!strcmp(type, @encode(NSRange))) {
+            if (equalSpans(type, objcEncode<NSRange>())) {
                 NSRange value = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSValue class] }) rangeValue];
                 [invocation setArgument:&value atIndex:i];
                 break;
-            } else if (!strcmp(type, @encode(CGSize))) {
+            }
+            if (equalSpans(type, objcEncode<CGSize>())) {
                 CGSize value;
                 value.width = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) doubleValue];
                 value.height = [decodeObjectFromObjectStream(decoder, { (__bridge CFTypeRef)[NSNumber class] }) doubleValue];
@@ -980,7 +989,7 @@ static void decodeInvocationArguments(WKRemoteObjectDecoder *decoder, NSInvocati
             FALLTHROUGH;
 
         default:
-            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%s' for argument %zu", type, (unsigned long)i];
+            [NSException raise:NSInvalidArgumentException format:@"Unsupported invocation argument type '%.*s' for argument %zu", static_cast<int>(type.size()), type.data(), (unsigned long)i];
         }
     }
 }
@@ -1033,7 +1042,7 @@ static NSInvocation *decodeInvocation(WKRemoteObjectDecoder *decoder)
 
 static RetainPtr<NSString> decodeString(WKRemoteObjectDecoder *decoder)
 {
-    RefPtr string = decoder->_currentDictionary->get<API::String>(stringKey);
+    RefPtr string = Ref { *decoder->_currentDictionary }->get<API::String>(stringKey);
     if (!string)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"String missing"];
 
@@ -1042,7 +1051,7 @@ static RetainPtr<NSString> decodeString(WKRemoteObjectDecoder *decoder)
 
 static id decodeObject(WKRemoteObjectDecoder *decoder)
 {
-    RefPtr classNameString = decoder->_currentDictionary->get<API::String>(classNameKey);
+    RefPtr classNameString = Ref { *decoder->_currentDictionary }->get<API::String>(classNameKey);
     if (!classNameString)
         [NSException raise:NSInvalidUnarchiveOperationException format:@"Class name missing"];
 
@@ -1050,7 +1059,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder)
 
     Class objectClass = objc_lookUpClass(className.data());
     if (!objectClass)
-        crashWithClassName(className.data());
+        crashWithClassName(className.span());
 
     validateClass(decoder, objectClass);
 
@@ -1086,7 +1095,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (BOOL)decodeBoolForKey:(NSString *)key
 {
-    RefPtr value = _currentDictionary->get<API::Boolean>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::Boolean>(escapeKey(key));
     if (!value)
         return false;
     return value->value();
@@ -1094,7 +1103,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (int)decodeIntForKey:(NSString *)key
 {
-    RefPtr value = _currentDictionary->get<API::UInt64>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(escapeKey(key));
     if (!value)
         return 0;
     return static_cast<int>(value->value());
@@ -1102,7 +1111,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (int32_t)decodeInt32ForKey:(NSString *)key
 {
-    RefPtr value = _currentDictionary->get<API::UInt64>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(escapeKey(key));
     if (!value)
         return 0;
     return static_cast<int32_t>(value->value());
@@ -1110,7 +1119,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (int64_t)decodeInt64ForKey:(NSString *)key
 {
-    RefPtr value = _currentDictionary->get<API::UInt64>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::UInt64>(escapeKey(key));
     if (!value)
         return 0;
     return value->value();
@@ -1123,7 +1132,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (float)decodeFloatForKey:(NSString *)key
 {
-    RefPtr value = _currentDictionary->get<API::Double>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::Double>(escapeKey(key));
     if (!value)
         return 0;
     return value->value();
@@ -1131,7 +1140,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (double)decodeDoubleForKey:(NSString *)key
 {
-    RefPtr value = _currentDictionary->get<API::Double>(escapeKey(key));
+    RefPtr value = Ref { *_currentDictionary }->get<API::Double>(escapeKey(key));
     if (!value)
         return 0;
     return value->value();
@@ -1139,7 +1148,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
 
 - (const uint8_t *)decodeBytesForKey:(NSString *)key returnedLength:(NSUInteger *)length
 {
-    RefPtr data = _currentDictionary->get<API::Data>(escapeKey(key));
+    RefPtr data = Ref { *_currentDictionary }->get<API::Data>(escapeKey(key));
     if (!data || !data->size()) {
         *length = 0;
         return nullptr;
@@ -1160,7 +1169,7 @@ static id decodeObject(WKRemoteObjectDecoder *decoder, const API::Dictionary* di
     for (Class allowedClass in classes)
         allowedClasses.add((__bridge CFTypeRef)allowedClass);
 
-    RefPtr dictionary = _currentDictionary->get<API::Dictionary>(escapeKey(key));
+    RefPtr dictionary = Ref { *_currentDictionary }->get<API::Dictionary>(escapeKey(key));
     return decodeObject(self, dictionary.get(), allowedClasses);
 }
 

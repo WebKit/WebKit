@@ -1,0 +1,8 @@
+<!-- webkit-test-runner [ LayerBasedSVGEngineEnabled=true ] -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g style="transform: scale(20)">
+    <g style="transform: translate3d(0, 0, 0)">
+      <rect x="1" y="1" width="4" height="4"  fill="blue" stroke="red"/>
+    </g>
+  </g>
+</svg>

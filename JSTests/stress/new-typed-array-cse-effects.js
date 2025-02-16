@@ -11,7 +11,7 @@ noInline(foo);
 var o = {f:42};
 o.f = 43;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({f:42}, [1, 2, 3]);
     if (result != 84)
         throw "Error: bad result: " + result;

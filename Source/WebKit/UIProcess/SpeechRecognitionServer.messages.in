@@ -29,7 +29,7 @@
     EnabledBy=SpeechRecognitionEnabled
 ]
  messages -> SpeechRecognitionServer {
-    Start(WebCore::SpeechRecognitionConnectionClientIdentifier identifier, String lang, bool continuous, bool interimResults, uint64_t maxAlternatives, struct WebCore::ClientOrigin origin, WebCore::FrameIdentifier frameIdentifier)
+    Start(WebCore::SpeechRecognitionConnectionClientIdentifier identifier, String lang, bool continuous, bool interimResults, uint64_t maxAlternatives, struct WebCore::ClientOrigin origin, WebCore::FrameIdentifier mainFrameIdentifier, struct WebKit::FrameInfoData frameInfo)
     Stop(WebCore::SpeechRecognitionConnectionClientIdentifier identifier)
     Abort(WebCore::SpeechRecognitionConnectionClientIdentifier identifier)
     Invalidate(WebCore::SpeechRecognitionConnectionClientIdentifier identifier)

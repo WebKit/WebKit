@@ -247,7 +247,7 @@ void WebPushDaemon::setPushService(RefPtr<PushService>&& pushService)
     if (!m_pendingPushServiceFunctions.size())
         return;
 
-    WorkQueue::main().dispatch([this]() {
+    WorkQueue::protectedMain()->dispatch([this]() {
         while (m_pendingPushServiceFunctions.size()) {
             auto function = m_pendingPushServiceFunctions.takeFirst();
             function();
@@ -465,9 +465,9 @@ void WebPushDaemon::injectPushMessageForTesting(PushClientConnection& connection
     PushSubscriptionSetIdentifier identifier { .bundleIdentifier = message.targetAppCodeSigningIdentifier, .pushPartition = message.pushPartitionString, .dataStoreIdentifier = connection.dataStoreIdentifier() };
     auto data = message.payload.utf8();
 #if ENABLE(DECLARATIVE_WEB_PUSH)
-    WebKit::WebPushMessage pushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) };
+    WebKit::WebPushMessage pushMessage { Vector(byteCast<uint8_t>(data.span())), message.pushPartitionString, message.registrationURL, WTFMove(message.parsedPayload) };
 #else
-    WebKit::WebPushMessage pushMessage { Vector(data.span()), message.pushPartitionString, message.registrationURL, { } };
+    WebKit::WebPushMessage pushMessage { Vector(byteCast<uint8_t>(data.span())), message.pushPartitionString, message.registrationURL, { } };
 #endif
 
     WEBPUSHDAEMON_RELEASE_LOG(Push, "Injected a test push message for %{public}s at %{public}s with %zu pending messages, payload: %{public}s", message.targetAppCodeSigningIdentifier.utf8().data(), message.registrationURL.string().utf8().data(), m_pendingPushMessages.size(), message.payload.utf8().data());
@@ -488,8 +488,7 @@ void WebPushDaemon::injectEncryptedPushMessageForTesting(PushClientConnection& c
         if (!m_pushService)
             return replySender(false);
 
-        auto bytes = message.utf8();
-        RetainPtr data = toNSData(bytes.span());
+        RetainPtr data = toNSData(byteCast<uint8_t>(message.utf8().span()));
 
         id obj = [NSJSONSerialization JSONObjectWithData:data.get() options:0 error:nullptr];
         if (!obj || ![obj isKindOfClass:[NSDictionary class]])
@@ -521,7 +520,7 @@ void WebPushDaemon::handleIncomingPush(const PushSubscriptionSetIdentifier& iden
             return;
         }
 
-        WorkQueue::main().dispatch([this, identifier = crossThreadCopy(identifier), message = WTFMove(message)] mutable {
+        WorkQueue::protectedMain()->dispatch([this, identifier = crossThreadCopy(identifier), message = WTFMove(message)] mutable {
             handleIncomingPushImpl(identifier, WTFMove(message));
         });
     });
@@ -752,7 +751,11 @@ void WebPushDaemon::getPendingPushMessage(PushClientConnection& connection, Comp
         return replySender(std::nullopt);
     }
 
-    m_potentialSilentPushes.push_back(PotentialSilentPush { pendingPushMessage.identifier, pendingPushMessage.message.registrationURL.string(), MonotonicTime::now() + silentPushTimeout() });
+    // Declarative push messages can never result in a silent push timeout,
+    // so don't push them onto the m_potentialSilentPushes queue.
+    if (!connection.declarativeWebPushEnabled() || !pendingPushMessage.message.notificationPayload)
+        m_potentialSilentPushes.push_back(PotentialSilentPush { pendingPushMessage.identifier, pendingPushMessage.message.registrationURL.string(), MonotonicTime::now() + silentPushTimeout() });
+
     if (m_potentialSilentPushes.size() == 1)
         rescheduleSilentPushTimer();
 
@@ -1015,7 +1018,7 @@ ALLOW_NONLITERAL_FORMAT_END
     center.get().notificationCategories = [NSSet setWithObject:category];
 
     auto blockPtr = makeBlockPtr([this, identifier = crossThreadCopy(identifier), scope = crossThreadCopy(notificationData.serviceWorkerRegistrationURL.string()), completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
-        WorkQueue::main().dispatch([this, identifier = crossThreadCopy(identifier), scope = crossThreadCopy(scope), error = RetainPtr { error }, completionHandler = WTFMove(completionHandler)] mutable {
+        WorkQueue::protectedMain()->dispatch([this, identifier = crossThreadCopy(identifier), scope = crossThreadCopy(scope), error = RetainPtr { error }, completionHandler = WTFMove(completionHandler)] mutable {
             if (error)
                 RELEASE_LOG_ERROR(Push, "Failed to add notification request: %{public}@", error.get());
             else
@@ -1119,7 +1122,7 @@ void WebPushDaemon::getPushPermissionState(PushClientConnection& connection, con
         }(settings.authorizationStatus);
         RELEASE_LOG(Push, "getPushPermissionState for %{sensitive}s with result: %u", originString.utf8().data(), static_cast<unsigned>(permissionState));
 
-        WorkQueue::main().dispatch([replySender = WTFMove(replySender), permissionState] mutable {
+        WorkQueue::protectedMain()->dispatch([replySender = WTFMove(replySender), permissionState] mutable {
             replySender(permissionState);
         });
     });
@@ -1162,7 +1165,7 @@ void WebPushDaemon::requestPushPermission(PushClientConnection& connection, cons
         else
             RELEASE_LOG(Push, "Requested push permission for %{sensitive}s with result: %d", originString.utf8().data(), granted);
 
-        WorkQueue::main().dispatch([replySender = WTFMove(replySender), granted] mutable {
+        WorkQueue::protectedMain()->dispatch([replySender = WTFMove(replySender), granted] mutable {
             replySender(granted);
         });
     });

@@ -52,9 +52,7 @@ enum class DragSourceAction : uint8_t {
 #if ENABLE(ATTACHMENT_ELEMENT)
     Attachment = 1 << 4,
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
     Color      = 1 << 5,
-#endif
 #if ENABLE(MODEL_ELEMENT)
     Model      = 1 << 6,
 #endif
@@ -70,9 +68,7 @@ constexpr OptionSet<DragSourceAction> anyDragSourceAction()
 #if ENABLE(ATTACHMENT_ELEMENT)
         , DragSourceAction::Attachment
 #endif
-#if ENABLE(INPUT_TYPE_COLOR)
         , DragSourceAction::Color
-#endif
 #if ENABLE(MODEL_ELEMENT)
         , DragSourceAction::Model
 #endif

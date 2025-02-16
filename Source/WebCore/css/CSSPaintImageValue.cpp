@@ -43,7 +43,7 @@ CSSPaintImageValue::CSSPaintImageValue(String&& name, Ref<CSSVariableData>&& arg
 
 CSSPaintImageValue::~CSSPaintImageValue() = default;
 
-String CSSPaintImageValue::customCSSText() const
+String CSSPaintImageValue::customCSSText(const CSS::SerializationContext&) const
 {
     // FIXME: This should include the arguments too.
     return makeString("paint("_s, m_name, ')');

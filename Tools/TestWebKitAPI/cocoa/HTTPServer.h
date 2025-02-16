@@ -111,6 +111,12 @@ struct HTTPResponse {
     HTTPResponse& operator=(const HTTPResponse&) = default;
     HTTPResponse& operator=(HTTPResponse&&) = default;
 
+    void setShouldRespondWith304ToConditionalRequests(HashMap<String, String>&& headerFields = { })
+    {
+        shouldRespondWith304ToConditionalRequests = true;
+        headerFieldsFor304 = WTFMove(headerFields);
+    }
+
     enum class IncludeContentLength : bool { No, Yes };
     Vector<uint8_t> serialize(IncludeContentLength = IncludeContentLength::Yes) const;
     static Vector<uint8_t> bodyFromString(const String&);
@@ -119,6 +125,8 @@ struct HTTPResponse {
     HashMap<String, String> headerFields;
     Vector<uint8_t> body;
     Behavior behavior { Behavior::SendResponseNormally };
+    bool shouldRespondWith304ToConditionalRequests { false };
+    HashMap<String, String> headerFieldsFor304;
 };
 
 namespace H2 {

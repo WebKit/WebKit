@@ -142,33 +142,7 @@ void TreeScope::setParentTreeScope(TreeScope& newParentScope)
 
 void TreeScope::setCustomElementRegistry(Ref<CustomElementRegistry>&& registry)
 {
-    if (!m_customElementRegistry)
-        m_customElementRegistry = WTFMove(registry);
-}
-
-ExceptionOr<Ref<Node>> TreeScope::importNode(Node& nodeToImport, bool deep)
-{
-    switch (nodeToImport.nodeType()) {
-    case Node::DOCUMENT_FRAGMENT_NODE:
-        if (nodeToImport.isShadowRoot())
-            break;
-        FALLTHROUGH;
-    case Node::ELEMENT_NODE:
-    case Node::TEXT_NODE:
-    case Node::CDATA_SECTION_NODE:
-    case Node::PROCESSING_INSTRUCTION_NODE:
-    case Node::COMMENT_NODE:
-        return nodeToImport.cloneNodeInternal(*this, deep ? Node::CloningOperation::Everything : Node::CloningOperation::OnlySelf);
-
-    case Node::ATTRIBUTE_NODE: {
-        auto& attribute = uncheckedDowncast<Attr>(nodeToImport);
-        return Ref<Node> { Attr::create(documentScope(), attribute.qualifiedName(), attribute.value()) };
-    }
-    case Node::DOCUMENT_NODE: // Can't import a document into another document.
-    case Node::DOCUMENT_TYPE_NODE: // FIXME: Support cloning a DocumentType node per DOM4.
-        break;
-    }
-    return Exception { ExceptionCode::NotSupportedError };
+    m_customElementRegistry = WTFMove(registry);
 }
 
 RefPtr<Element> TreeScope::getElementById(const AtomString& elementId) const
@@ -217,7 +191,7 @@ void TreeScope::addElementById(const AtomString& elementId, Element& element, bo
         m_elementsById = makeUnique<TreeScopeOrderedMap>();
     m_elementsById->add(elementId, element, *this);
     if (m_idTargetObserverRegistry && notifyObservers)
-        m_idTargetObserverRegistry->notifyObservers(elementId);
+        m_idTargetObserverRegistry->notifyObservers(element, elementId);
 }
 
 void TreeScope::removeElementById(const AtomString& elementId, Element& element, bool notifyObservers)
@@ -226,7 +200,7 @@ void TreeScope::removeElementById(const AtomString& elementId, Element& element,
         return;
     m_elementsById->remove(elementId, element);
     if (m_idTargetObserverRegistry && notifyObservers)
-        m_idTargetObserverRegistry->notifyObservers(elementId);
+        m_idTargetObserverRegistry->notifyObservers(element, elementId);
 }
 
 RefPtr<Element> TreeScope::getElementByName(const AtomString& name) const
@@ -524,22 +498,28 @@ RefPtr<Element> TreeScope::findAnchor(StringView name)
         return nullptr;
     if (RefPtr element = getElementById(name))
         return element;
-    auto inQuirksMode = documentScope().inQuirksMode();
     Ref rootNode = m_rootNode.get();
     for (Ref anchor : descendantsOfType<HTMLAnchorElement>(rootNode)) {
-        if (inQuirksMode) {
-            // Quirks mode, ASCII case-insensitive comparison of names.
-            // FIXME: This behavior is not mentioned in the HTML specification.
-            // We should either remove this or get this into the specification.
-            if (equalIgnoringASCIICase(anchor->name(), name))
-                return anchor;
-        } else {
-            // Strict mode, names need to match exactly.
-            if (anchor->name() == name)
-                return anchor;
-        }
+        if (isMatchingAnchor(anchor, name))
+            return anchor;
     }
     return nullptr;
+}
+
+bool TreeScope::isMatchingAnchor(HTMLAnchorElement& anchor, StringView name)
+{
+    if (documentScope().inQuirksMode()) {
+        // Quirks mode, ASCII case-insensitive comparison of names.
+        // FIXME: This behavior is not mentioned in the HTML specification.
+        // We should either remove this or get this into the specification.
+        if (equalIgnoringASCIICase(anchor.name(), name))
+            return true;
+    } else {
+        // Strict mode, names need to match exactly.
+        if (anchor.name() == name)
+            return true;
+    }
+    return false;
 }
 
 static Element* focusedFrameOwnerElement(Frame* focusedFrame, LocalFrame* currentFrame)

@@ -97,7 +97,7 @@ bool GraphicsContextGLImageExtractor::extractImage(bool premultiplyAlpha, bool i
             ++srcUnpackAlignment;
     }
 
-    m_imagePixelData = cairo_image_surface_get_data(m_imageSurface.get());
+    m_imagePixelData = span(m_imageSurface.get());
     m_imageSourceFormat = DataFormat::BGRA8;
     m_imageSourceUnpackAlignment = srcUnpackAlignment;
     return true;

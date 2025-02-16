@@ -13,7 +13,7 @@ var o = {};
 for (var i = 0; i < 5; ++i)
     bar(o, 4.2);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(o);
     if (result !== 5.2)
         throw "Error: bad result: " + result;

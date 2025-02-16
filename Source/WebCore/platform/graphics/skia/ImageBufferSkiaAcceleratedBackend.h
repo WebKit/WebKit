@@ -49,6 +49,8 @@ private:
     static std::unique_ptr<ImageBufferSkiaAcceleratedBackend> create(const Parameters&, const ImageBufferCreationContext&, sk_sp<SkSurface>&&);
     ImageBufferSkiaAcceleratedBackend(const Parameters&, sk_sp<SkSurface>&&);
 
+    void prepareForDisplay() final;
+
     RefPtr<NativeImage> copyNativeImage() final;
     RefPtr<NativeImage> createNativeImageReference() final;
 

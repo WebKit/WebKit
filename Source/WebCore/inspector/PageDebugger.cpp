@@ -66,14 +66,14 @@ void PageDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
-    m_page.setDebugger(this);
+    m_page->setDebugger(this);
 }
 
 void PageDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
-    m_page.setDebugger(nullptr);
+    m_page->setDebugger(nullptr);
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
 }
@@ -88,14 +88,14 @@ void PageDebugger::didPause(JSGlobalObject* globalObject)
 {
     JSC::Debugger::didPause(globalObject);
 
-    setJavaScriptPaused(m_page.group(), true);
+    setJavaScriptPaused(m_page->group(), true);
 }
 
 void PageDebugger::didContinue(JSGlobalObject* globalObject)
 {
     JSC::Debugger::didContinue(globalObject);
 
-    setJavaScriptPaused(m_page.group(), false);
+    setJavaScriptPaused(m_page->group(), false);
 }
 
 void PageDebugger::runEventLoopWhilePaused()
@@ -127,7 +127,7 @@ void PageDebugger::runEventLoopWhilePausedInternal()
     TimerBase::fireTimersInNestedEventLoop();
 
     // Protect the page during the execution of the nested run loop.
-    Ref protectedPage = m_page;
+    Ref protectedPage = m_page.get();
 
     while (!m_doneProcessingDebuggerEvents) {
         if (!platformShouldContinueRunningEventLoopWhilePaused())

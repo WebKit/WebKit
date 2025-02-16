@@ -28,6 +28,6 @@ namespace WebCore {
 
 enum class RequestPriority : uint8_t { High, Low, Auto };
 
-static constexpr unsigned bitWidthOfFetchPriorityHint = 2;
+static constexpr unsigned bitWidthOfRequestPriority = 2;
 
 }

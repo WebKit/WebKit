@@ -218,25 +218,6 @@ WI.CallingContextTreeNode = class CallingContextTreeNode
 
         return cpuProfileNode;
     }
-
-    // Testing.
-
-    __test_buildLeafLinkedLists(parent, result)
-    {
-        let linkedListNode = {
-            name: this._name,
-            url: this._url,
-            parent: parent
-        };
-        if (this.hasChildren()) {
-            this.forEachChild((child) => {
-                child.__test_buildLeafLinkedLists(linkedListNode, result);
-            });
-        } else {
-            // We're a leaf.
-            result.push(linkedListNode);
-        }
-    }
 };
 
 WI.CallingContextTreeNode.__uid = 0;

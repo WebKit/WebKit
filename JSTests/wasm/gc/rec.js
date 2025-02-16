@@ -1,5 +1,3 @@
-//@ runWebAssemblySuite("--useWasmGC=true")
-
 import * as assert from "../assert.js";
 import { compile, instantiate } from "./wast-wrapper.js";
 
@@ -109,7 +107,7 @@ function testRecDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "type signature was not a function signature"
+    "WebAssembly.Module doesn't parse at byte 30: 0th Function type 0 doesn't have a function signature"
   );
 
   assert.throws(
@@ -120,7 +118,7 @@ function testRecDeclaration() {
       )
     `),
     WebAssembly.CompileError,
-    "type signature was not a function signature"
+    "WebAssembly.Module doesn't parse at byte 31: 0th Function type 0 doesn't have a function signature"
   );
 
   instantiate(`

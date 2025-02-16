@@ -22,7 +22,7 @@
     Exposed=Window
 ] interface HTMLButtonElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
-    readonly attribute HTMLFormElement form;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement form;
     [CEReactions=NotNeeded] attribute [AtomString] USVString formAction;
 
     [CEReactions=NotNeeded] attribute [AtomString] DOMString formEnctype;
@@ -33,6 +33,10 @@
     [CEReactions=NotNeeded, Reflect] attribute DOMString formTarget;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;
     [CEReactions=NotNeeded, Reflect] attribute DOMString value;
+
+    // Command Invokers
+    [CEReactions=NotNeeded, Reflect=commandfor, EnabledBySetting=InvokerAttributesEnabled] attribute Element? commandForElement;
+    [CEReactions=NotNeeded, Reflect=command, EnabledBySetting=InvokerAttributesEnabled] attribute DOMString command;
 
     readonly attribute boolean willValidate;
     readonly attribute ValidityState validity;
@@ -45,5 +49,3 @@
 };
 
 HTMLButtonElement includes PopoverInvokerElement;
-
-HTMLButtonElement includes InvokerElement;

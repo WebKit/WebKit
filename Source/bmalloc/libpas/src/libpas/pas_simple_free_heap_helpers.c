@@ -58,7 +58,7 @@ pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
     pas_heap_lock_assert_held();
 
     if (verbose) {
-        printf("%s: Doing simple free heap allocation with size = %zu, alignment = %zu/%zu.\n",
+        pas_log("%s: Doing simple free heap allocation with size = %zu, alignment = %zu/%zu.\n",
                pas_heap_kind_get_string(heap_kind), size, alignment.alignment,
                alignment.alignment_begin);
     }
@@ -73,7 +73,7 @@ pas_simple_free_heap_helpers_try_allocate_with_manual_alignment(
                                                      size, alignment,
                                                      &config);
     if (verbose)
-        printf("Simple allocated %p with size %zu\n", (void*)result.begin, size);
+        pas_log("Simple allocated %p with size %zu\n", (void*)result.begin, size);
 
     if (exaggerate_cost && result.did_succeed) {
         pas_simple_large_free_heap_deallocate(free_heap,
@@ -118,7 +118,7 @@ void pas_simple_free_heap_helpers_deallocate(
     if (!size)
         return;
     if (verbose) {
-        printf("%s: Simple freeing %p with size %zu\n",
+        pas_log("%s: Simple freeing %p with size %zu\n",
                pas_heap_kind_get_string(heap_kind), ptr, size);
     }
 

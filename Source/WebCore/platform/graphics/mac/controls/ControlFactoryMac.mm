@@ -243,12 +243,10 @@ std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformButton(ButtonP
     return makeUnique<ButtonMac>(part, *this, part.type() == StyleAppearance::DefaultButton ? defaultButtonCell() : buttonCell());
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformColorWell(ColorWellPart& part)
 {
     return makeUnique<ColorWellMac>(part, *this, buttonCell());
 }
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 std::unique_ptr<PlatformControl> ControlFactoryMac::createPlatformImageControlsButton(ImageControlsButtonPart& part)

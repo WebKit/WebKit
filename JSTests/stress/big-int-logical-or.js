@@ -9,7 +9,7 @@ function logicalOr(a, b) {
 }
 noInline(logicalOr);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(logicalOr(10n, "abc"), 10n);
     assert(logicalOr(1n, "abc"), 1n);
     assert(logicalOr(0n, "abc"), "abc");

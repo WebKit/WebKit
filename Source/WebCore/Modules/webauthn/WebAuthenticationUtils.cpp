@@ -44,7 +44,7 @@ Vector<uint8_t> produceRpIdHash(const String& rpId)
 {
     auto crypto = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
     auto rpIdUTF8 = rpId.utf8();
-    crypto->addBytes(rpIdUTF8.span());
+    crypto->addBytes(byteCast<uint8_t>(rpIdUTF8.span()));
     return crypto->computeHash();
 }
 
@@ -174,7 +174,7 @@ Ref<ArrayBuffer> buildClientDataJson(ClientDataType type, const BufferSource& ch
     if (!topOrigin.isNull())
         object->setString("topOrigin"_s, topOrigin);
 
-    return ArrayBuffer::create(object->toJSONString().utf8().span());
+    return ArrayBuffer::create(byteCast<uint8_t>(object->toJSONString().utf8().span()));
 }
 
 Vector<uint8_t> buildClientDataJsonHash(const ArrayBuffer& clientDataJson)

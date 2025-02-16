@@ -165,14 +165,24 @@ public:
         bool isCaptureTrack = track.isCaptureTrack();
         m_src = makeGStreamerElement("appsrc", elementName.ascii().data());
 
-        g_object_set(m_src.get(), "is-live", TRUE, "format", GST_FORMAT_TIME, "emit-signals", TRUE, "min-percent", 100,
+        g_object_set(m_src.get(), "is-live", TRUE, "format", GST_FORMAT_TIME, "min-percent", 100,
             "do-timestamp", isCaptureTrack, "handle-segment-change", TRUE, nullptr);
-        g_signal_connect(m_src.get(), "enough-data", G_CALLBACK(+[](GstElement*, InternalSource* data) {
-            data->m_enoughData = true;
-        }), this);
-        g_signal_connect(m_src.get(), "need-data", G_CALLBACK(+[](GstElement*, unsigned, InternalSource* data) {
-            data->m_enoughData = false;
-        }), this);
+
+        static GstAppSrcCallbacks callbacks = {
+            // need_data
+            [](GstAppSrc*, unsigned, gpointer userData) {
+                auto self = reinterpret_cast<InternalSource*>(userData);
+                self->m_enoughData = false;
+            },
+            // enough_data
+            [](GstAppSrc*, gpointer userData) {
+                auto self = reinterpret_cast<InternalSource*>(userData);
+                self->m_enoughData = true;
+            },
+            nullptr,
+            { nullptr }
+        };
+        gst_app_src_set_callbacks(GST_APP_SRC(m_src.get()), &callbacks, this, nullptr);
 
         createGstStream();
 
@@ -367,17 +377,19 @@ public:
             m_audioTrack->play();
     }
 
-    void signalEndOfStream()
+    bool signalEndOfStream()
     {
+        bool result = false;
         if (m_src)
-            gst_app_src_end_of_stream(GST_APP_SRC(m_src.get()));
+            result = gst_app_src_end_of_stream(GST_APP_SRC(m_src.get())) == GST_FLOW_OK;
         callOnMainThreadAndWait([&] {
             stopObserving();
         });
 
         if (!m_track)
-            return;
+            return result;
         trackEnded(*m_track);
+        return result;
     }
 
     void pushSample(GRefPtr<GstSample>&& sample, [[maybe_unused]] const ASCIILiteral logMessage)
@@ -623,14 +635,16 @@ private:
 
         VideoFrameTimeMetadata metadata;
         metadata.captureTime = MonotonicTime::now().secondsSinceEpoch();
-        auto buffer = adoptGRef(webkitGstBufferSetVideoFrameTimeMetadata(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr), metadata));
+        auto emptyBuffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
+        auto buffer = webkitGstBufferSetVideoFrameTimeMetadata(WTFMove(emptyBuffer), metadata);
         {
             GstMappedBuffer data(buffer, GST_MAP_WRITE);
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-            auto yOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 1);
-            memset(data.data(), 0, yOffset);
-            memset(data.data() + yOffset, 128, data.size() - yOffset);
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
+            auto uOffset = GST_VIDEO_INFO_PLANE_OFFSET(&info, 1);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
+            auto mutableData = data.mutableSpan<uint8_t>();
+            memsetSpan(mutableData.subspan(0, uOffset), 0);
+            memsetSpan(mutableData.subspan(uOffset, mutableData.size() - uOffset), 128);
         }
         gst_buffer_add_video_meta_full(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_INFO_FORMAT(&info), GST_VIDEO_INFO_WIDTH(&info),
             GST_VIDEO_INFO_HEIGHT(&info), GST_VIDEO_INFO_N_PLANES(&info), info.offset, info.stride);
@@ -717,9 +731,9 @@ struct _WebKitMediaStreamSrcPrivate {
 };
 
 enum {
-    PROP_0,
-    PROP_IS_LIVE,
-    PROP_LAST
+    WEBKIT_MEDIASTREAM_SRC_PROP_0,
+    WEBKIT_MEDIASTREAM_SRC_PROP_IS_LIVE,
+    WEBKIT_MEDIASTREAM_SRC_PROP_LAST
 };
 
 void InternalSource::updateFirstVideoSampleSeenFlag()
@@ -837,7 +851,6 @@ static void webkitMediaStreamSrcUriHandlerInit(gpointer gIface, gpointer)
     G_IMPLEMENT_INTERFACE(GST_TYPE_URI_HANDLER, webkitMediaStreamSrcUriHandlerInit); \
     GST_DEBUG_CATEGORY_INIT(webkitMediaStreamSrcDebug, "webkitmediastreamsrc", 0, "mediastreamsrc element");
 
-#define webkit_media_stream_src_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitMediaStreamSrc, webkit_media_stream_src, GST_TYPE_BIN, doInit)
 
 static void webkitMediaStreamSrcSetProperty(GObject* object, guint propertyId, const GValue*, GParamSpec* pspec)
@@ -852,7 +865,7 @@ static void webkitMediaStreamSrcSetProperty(GObject* object, guint propertyId, c
 static void webkitMediaStreamSrcGetProperty(GObject* object, guint propertyId, GValue* value, GParamSpec* pspec)
 {
     switch (propertyId) {
-    case PROP_IS_LIVE:
+    case WEBKIT_MEDIASTREAM_SRC_PROP_IS_LIVE:
         g_value_set_boolean(value, TRUE);
         break;
     default:
@@ -863,7 +876,8 @@ static void webkitMediaStreamSrcGetProperty(GObject* object, guint propertyId, G
 
 static void webkitMediaStreamSrcConstructed(GObject* object)
 {
-    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+    G_OBJECT_CLASS(webkit_media_stream_src_parent_class)->constructed(object);
+
     WebKitMediaStreamSrc* self = WEBKIT_MEDIA_STREAM_SRC_CAST(object);
     auto* priv = self->priv;
 
@@ -895,7 +909,7 @@ static void webkitMediaStreamSrcDispose(GObject* object)
         }
     }
 
-    GST_CALL_PARENT(G_OBJECT_CLASS, dispose, (object));
+    G_OBJECT_CLASS(webkit_media_stream_src_parent_class)->dispose(object);
 }
 
 static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element, GstStateChange transition)
@@ -951,7 +965,7 @@ static GstStateChangeReturn webkitMediaStreamSrcChangeState(GstElement* element,
 
 static gboolean webkitMediaStreamSrcQuery(GstElement* element, GstQuery* query)
 {
-    gboolean result = GST_ELEMENT_CLASS(parent_class)->query(element, query);
+    gboolean result = GST_ELEMENT_CLASS(webkit_media_stream_src_parent_class)->query(element, query);
 
     if (GST_QUERY_TYPE(query) != GST_QUERY_SCHEDULING)
         return result;
@@ -974,7 +988,7 @@ static void webkit_media_stream_src_class_init(WebKitMediaStreamSrcClass* klass)
     gobjectClass->get_property = webkitMediaStreamSrcGetProperty;
     gobjectClass->set_property = webkitMediaStreamSrcSetProperty;
 
-    g_object_class_install_property(gobjectClass, PROP_IS_LIVE, g_param_spec_boolean("is-live", nullptr, nullptr,
+    g_object_class_install_property(gobjectClass, WEBKIT_MEDIASTREAM_SRC_PROP_IS_LIVE, g_param_spec_boolean("is-live", nullptr, nullptr,
         TRUE, static_cast<GParamFlags>(G_PARAM_READABLE | G_PARAM_STATIC_STRINGS)));
 
     gstElementClass->change_state = GST_DEBUG_FUNCPTR(webkitMediaStreamSrcChangeState);
@@ -1190,12 +1204,18 @@ void webkitMediaStreamSrcReplaceTrack(WebKitMediaStreamSrc* self, RefPtr<MediaSt
     self->priv->sources[0]->replaceTrack(WTFMove(newTrack));
 }
 
-void webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc* self)
+bool webkitMediaStreamSrcSignalEndOfStream(WebKitMediaStreamSrc* self)
 {
+    bool result = true;
     GST_DEBUG_OBJECT(self, "Signaling EOS");
-    for (auto& source : self->priv->sources)
-        source->signalEndOfStream();
+    for (auto& source : self->priv->sources) {
+        if (!source->signalEndOfStream()) {
+            result = false;
+            break;
+        }
+    }
     self->priv->sources.clear();
+    return result;
 }
 
 void webkitMediaStreamSrcCharacteristicsChanged([[maybe_unused]] WebKitMediaStreamSrc* self)

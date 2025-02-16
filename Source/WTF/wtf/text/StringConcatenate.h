@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -123,14 +123,14 @@ private:
 template<> class StringTypeAdapter<const LChar*, void> {
 public:
     StringTypeAdapter(const LChar* characters)
-        : m_characters { span(characters) }
+        : m_characters { unsafeSpan(characters) }
     {
         RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
     }
 
     unsigned length() const { return m_characters.size(); }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination.data(), m_characters); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination, m_characters); }
 
 private:
     std::span<const LChar> m_characters;
@@ -139,7 +139,7 @@ private:
 template<> class StringTypeAdapter<const UChar*, void> {
 public:
     StringTypeAdapter(const UChar* characters)
-        : m_characters { span(characters) }
+        : m_characters { unsafeSpan(characters) }
     {
         RELEASE_ASSERT(m_characters.size() <= String::MaxLength);
     }
@@ -147,7 +147,7 @@ public:
     unsigned length() const { return m_characters.size(); }
     bool is8Bit() const { return m_characters.empty(); }
     void writeTo(std::span<LChar>) const { ASSERT(m_characters.empty()); }
-    void writeTo(std::span<UChar> destination) const { StringImpl::copyCharacters(destination.data(), m_characters); }
+    void writeTo(std::span<UChar> destination) const { StringImpl::copyCharacters(destination, m_characters); }
 
 private:
     std::span<const UChar> m_characters;
@@ -168,11 +168,19 @@ public:
     {
         using CharacterTypeForString = std::conditional_t<sizeof(CharacterType) == sizeof(LChar), LChar, UChar>;
         static_assert(sizeof(CharacterTypeForString) == sizeof(CharacterType));
-        StringImpl::copyCharacters(destination.data(), spanReinterpretCast<const CharacterTypeForString>(m_characters));
+        StringImpl::copyCharacters(destination, spanReinterpretCast<const CharacterTypeForString>(m_characters));
     }
 
 private:
     std::span<const CharacterType> m_characters;
+};
+
+template<> class StringTypeAdapter<CString, void> : public StringTypeAdapter<std::span<const char>, void> {
+public:
+    StringTypeAdapter(const CString& string)
+        : StringTypeAdapter<std::span<const char>, void> { spanReinterpretCast<const char>(string.span()) }
+    {
+    }
 };
 
 template<> class StringTypeAdapter<ASCIILiteral, void> : public StringTypeAdapter<std::span<const LChar>, void> {

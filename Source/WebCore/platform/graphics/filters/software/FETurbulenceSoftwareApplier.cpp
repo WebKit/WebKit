@@ -296,7 +296,7 @@ void FETurbulenceSoftwareApplier::applyPlatformGeneric(const IntRect& filterRegi
 
 void FETurbulenceSoftwareApplier::applyPlatformWorker(ApplyParameters* parameters)
 {
-    applyPlatformGeneric(parameters->filterRegion, parameters->filterScale, *parameters->pixelBuffer, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
+    applyPlatformGeneric(parameters->filterRegion, parameters->filterScale, Ref { *parameters->pixelBuffer }, *parameters->paintingData, parameters->stitchData, parameters->startY, parameters->endY);
 }
 
 void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, const FloatSize& filterScale, PixelBuffer& pixelBuffer, PaintingData& paintingData, StitchData& stitchData)
@@ -344,7 +344,7 @@ void FETurbulenceSoftwareApplier::applyPlatform(const IntRect& filterRegion, con
 
 bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterImageVector&, FilterImage& result) const
 {
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
+    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Unpremultiplied);
     if (!destinationPixelBuffer)
         return false;
 
@@ -359,11 +359,11 @@ bool FETurbulenceSoftwareApplier::apply(const Filter& filter, const FilterImageV
 
     auto tileSize = roundedIntSize(result.primitiveSubregion().size());
 
-    float baseFrequencyX = m_effect.baseFrequencyX();
-    float baseFrequencyY = m_effect.baseFrequencyY();
-    auto stitchData = computeStitching(tileSize, baseFrequencyX, baseFrequencyY, m_effect.stitchTiles());
+    float baseFrequencyX = m_effect->baseFrequencyX();
+    float baseFrequencyY = m_effect->baseFrequencyY();
+    auto stitchData = computeStitching(tileSize, baseFrequencyX, baseFrequencyY, m_effect->stitchTiles());
 
-    auto paintingData = initPaintingData(m_effect.type(), baseFrequencyX, baseFrequencyY, m_effect.numOctaves(), m_effect.seed(), m_effect.stitchTiles(), tileSize);
+    auto paintingData = initPaintingData(m_effect->type(), baseFrequencyX, baseFrequencyY, m_effect->numOctaves(), m_effect->seed(), m_effect->stitchTiles(), tileSize);
 
     applyPlatform(result.absoluteImageRect(), filter.filterScale(), *destinationPixelBuffer, paintingData, stitchData);
     return true;

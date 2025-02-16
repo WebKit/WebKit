@@ -1,0 +1,54 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ ShouldIgnoreMetaViewport=true ] -->
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body, html {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    #output {
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+    }
+    </style>
+    <script src="../../../resources/ui-helper.js"></script>
+    <script src="../../../resources/js-test.js"></script>
+    <script>
+    if (window.testRunner) {
+        jsTestIsAsync = true;
+        testRunner.setIgnoresViewportScaleLimits(true);
+    }
+
+    function bodyWidth() {
+        return document.body.getBoundingClientRect().width;
+    }
+
+    description("This test verifies that the width of the viewport and the content width are consistent when zooming out by changing the view scale in a responsive viewport that doesn't lay out wider than the viewport.");
+
+    addEventListener("load", async () => {
+        const appendOutput = message => {
+            output.appendChild(document.createTextNode(message));
+            output.appendChild(document.createElement("br"));
+        };
+
+        for (const scale of [0.85, 0.75, 0.5]) {
+            await UIHelper.setViewScale(scale);
+            await UIHelper.ensurePresentationUpdate();
+            testPassed(`Set view scale: ${scale}`);
+            shouldBe("visualViewport.width", "bodyWidth()");
+        }
+
+        finishJSTest();
+    });
+    </script>
+</head>
+
+<body>
+    <p id="description"></p>
+    <pre id="output"></pre>
+</body>
+</html>

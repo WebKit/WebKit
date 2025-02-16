@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathMax.h"
 
+#include "CSSCalcTree.h"
 #include "CSSNumericArray.h"
 #include "ExceptionOr.h"
 #include <wtf/Algorithms.h>

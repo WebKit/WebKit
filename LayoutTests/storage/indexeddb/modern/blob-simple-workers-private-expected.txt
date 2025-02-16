@@ -1,0 +1,18 @@
+[Worker] This tests basic operations putting blobs into an object store and then retrieving them.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Starting worker: resources/blob-simple-workers.js
+[Worker] indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+[Worker]
+[Worker] indexedDB.deleteDatabase(dbname)
+[Worker] indexedDB.open(dbname)
+[Worker] Initial upgrade needed: Old version - 0 New version - 1
+[Worker] Let's create a blob and store it in IndexedDB twice.
+FAIL [Worker] Failed to add blob with error: Error preparing Blob/File data to be stored in object store
+PASS successfullyParsed is true
+Some tests failed.
+
+TEST COMPLETE
+

@@ -241,9 +241,12 @@ bool AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         virtualDeltaFrames = virtualMaxFrame - virtualMinFrame;
     }
 
-    // If we're looping and the offset (virtualReadIndex) is past the end of the loop, wrap back to the
-    // beginning of the loop. For other cases, nothing needs to be done.
-    if (m_isLooping && m_virtualReadIndex >= virtualMaxFrame) {
+    if (m_virtualReadIndex >= virtualMaxFrame) {
+        // Early exit to avoid going past the end of the source buffer.
+        if (!m_isLooping)
+            return false;
+
+        // Wrap back to the beginning of the loop.
         m_virtualReadIndex = (m_loopStart < 0) ? 0 : (m_loopStart * m_buffer->sampleRate());
         m_virtualReadIndex = std::min(m_virtualReadIndex, static_cast<double>(bufferLength - 1));
     }

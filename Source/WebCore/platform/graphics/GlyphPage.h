@@ -38,8 +38,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Ref.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 // Holds the glyph index and the corresponding Font information for a given
@@ -137,12 +135,10 @@ private:
     }
 
     SingleThreadWeakPtr<const Font> m_font;
-    Glyph m_glyphs[size] { };
+    std::array<Glyph, size> m_glyphs { };
     WTF::BitSet<size> m_isColor;
 
     WEBCORE_EXPORT static unsigned s_count;
 };
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

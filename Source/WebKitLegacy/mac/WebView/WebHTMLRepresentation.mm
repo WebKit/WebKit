@@ -39,6 +39,7 @@
 #import "WebKitNSStringExtras.h"
 #import "WebKitStatisticsPrivate.h"
 #import "WebNSObjectExtras.h"
+#import "WebResourceLoadScheduler.h"
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
 #import <JavaScriptCore/RegularExpression.h>
@@ -176,7 +177,7 @@ using JSC::Yarr::RegularExpression;
     // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
     auto* coreFrame = core(webFrame);
     if (coreFrame->document()->isMediaDocument() && coreFrame->loader().documentLoader())
-        coreFrame->loader().documentLoader()->cancelMainResourceLoad(coreFrame->loader().client().pluginWillHandleLoadError(coreFrame->loader().documentLoader()->response()));
+        coreFrame->loader().documentLoader()->cancelMainResourceLoad(WebResourceLoadScheduler::pluginWillHandleLoadErrorFromResponse(coreFrame->loader().documentLoader()->response()));
 
     if (_private->pluginView) {
         if (!_private->hasSentResponseToPlugin) {

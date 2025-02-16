@@ -34,7 +34,7 @@ noInline(is14);
 function is15(a, b) { return Object.is(a, b); }
 noInline(is15);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(Object.is(NaN, NaN), true);
     shouldBe(Object.is(null, null), true);
     shouldBe(Object.is(null), false);

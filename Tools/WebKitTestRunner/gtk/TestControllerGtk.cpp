@@ -52,7 +52,7 @@ namespace WTR {
 
 void TestController::notifyDone()
 {
-    RunLoop::main().stop();
+    RunLoop::protectedMain()->stop();
 }
 
 void TestController::platformInitialize(const Options&)
@@ -71,7 +71,7 @@ void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
         TimeoutTimer(WTF::Seconds timeout, bool& timedOut)
             : m_timer(RunLoop::main(), [&timedOut] {
                 timedOut = true;
-                RunLoop::main().stop();
+                RunLoop::protectedMain()->stop();
             })
         {
             m_timer.setPriority(G_PRIORITY_DEFAULT_IDLE);

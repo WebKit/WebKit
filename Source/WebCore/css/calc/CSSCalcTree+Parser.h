@@ -25,7 +25,7 @@
 #pragma once
 
 #include "CSSCalcSymbolsAllowed.h"
-#include "CSSPrimitiveNumericTypes.h"
+#include "CSSPrimitiveNumericRange.h"
 #include "CSSPropertyParserOptions.h"
 #include <optional>
 

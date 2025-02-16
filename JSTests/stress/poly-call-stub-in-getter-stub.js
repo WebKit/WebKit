@@ -18,7 +18,7 @@ function makeGetter() {
     };
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = Object.create(p);
     if (i & 1) {
         o.__defineGetter__("f", makeGetter());

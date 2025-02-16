@@ -30,8 +30,8 @@
 #include "NetscapePlugInStreamLoader.h"
 
 #include "DocumentLoader.h"
-#include "FrameLoader.h"
-#include "LocalFrameLoaderClient.h"
+#include "LoaderStrategy.h"
+#include "PlatformStrategies.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/Ref.h>
 
@@ -140,7 +140,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
 
         // Status code can be null when serving from a Web archive.
         if (response.httpStatusCode() && (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400))
-            cancel(protectedFrameLoader()->protectedClient()->fileDoesNotExistError(response));
+            cancel(platformStrategies()->loaderStrategy()->fileDoesNotExistError(response));
     });
 }
 

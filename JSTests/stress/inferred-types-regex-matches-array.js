@@ -13,7 +13,7 @@ function createArray() {
         return a;
     }
 
-    for (let i = 1; i < 10000; i++) {
+    for (let i = 1; i < testLoopCount; i++) {
         helper(i);
     }
     return helper(0);
@@ -38,7 +38,7 @@ function foo() {
     return global.groups.oolProperty1.objProperty.fetchme;
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     try {
         foo(i);
     } catch { }

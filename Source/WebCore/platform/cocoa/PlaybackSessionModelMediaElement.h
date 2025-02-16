@@ -146,17 +146,19 @@ private:
 
     RefPtr<HTMLMediaElement> m_mediaElement;
     bool m_isListening { false };
-    HashSet<CheckedPtr<PlaybackSessionModelClient>> m_clients;
+    UncheckedKeyHashSet<CheckedPtr<PlaybackSessionModelClient>> m_clients;
     Vector<RefPtr<TextTrack>> m_legibleTracksForMenu;
     Vector<RefPtr<AudioTrack>> m_audioTracksForMenu;
     AudioSessionSoundStageSize m_soundStageSize;
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     std::optional<SpatialVideoMetadata> m_spatialVideoMetadata;
+    bool m_isImmersiveVideo { false };
 #endif
 
     double playbackStartedTime() const;
     void updateMediaSelectionOptions();
     void updateMediaSelectionIndices();
+    void maybeUpdateVideoMetadata();
 };
 
 }

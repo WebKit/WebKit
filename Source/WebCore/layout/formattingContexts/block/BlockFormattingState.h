@@ -63,7 +63,7 @@ private:
     PlacedFloats m_placedFloats;
     OutOfFlowBoxList m_outOfFlowBoxes;
     UncheckedKeyHashMap<CheckedRef<const Box>, UsedVerticalMargin> m_usedVerticalMargins;
-    HashSet<CheckedRef<const Box>> m_clearanceSet;
+    UncheckedKeyHashSet<CheckedRef<const Box>> m_clearanceSet;
 };
 
 }

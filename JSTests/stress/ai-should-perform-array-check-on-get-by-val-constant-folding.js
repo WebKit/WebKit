@@ -11,4 +11,4 @@ compareArray([], [0]);
 compareArray([0, 'b'].copyWithin(), ['a', 0]);
 compareArray([0], [1.1]);
 runString('');
-for (var i = 0; i < 1e6; ++i);
+for (var i = 0; i < testLoopCount; ++i);

@@ -10,7 +10,7 @@ function test(a, b, expected) {
         throw new Error("Unexpected result: " + result);
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var o = {f:42};
     var p = {g:43};
     test(o, o, true);

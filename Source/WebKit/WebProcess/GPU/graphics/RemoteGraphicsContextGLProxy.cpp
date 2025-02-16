@@ -219,11 +219,11 @@ bool RemoteGraphicsContextGLProxy::copyTextureFromVideoFrame(WebCore::VideoFrame
     if (isContextLost())
         return false;
 
-    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame, [this](auto& semaphore) {
+    auto sharedVideoFrame = m_sharedVideoFrameWriter.write(videoFrame, [this, protectedThis = Ref { *this }](auto& semaphore) {
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameSemaphore { semaphore });
         if (sendResult != IPC::Error::NoError)
             markContextLost();
-    }, [this](SharedMemory::Handle&& handle) {
+    }, [this, protectedThis = Ref { *this }](SharedMemory::Handle&& handle) {
         auto sendResult = send(Messages::RemoteGraphicsContextGL::SetSharedVideoFrameMemory { WTFMove(handle) });
         if (sendResult != IPC::Error::NoError)
             markContextLost();

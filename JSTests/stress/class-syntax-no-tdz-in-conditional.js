@@ -14,5 +14,5 @@ class B extends A {
 
 noInline(B);
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     new B(false);

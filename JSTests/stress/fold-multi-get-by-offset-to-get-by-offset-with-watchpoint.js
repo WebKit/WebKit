@@ -18,7 +18,7 @@ function bar(o) {
 
 noInline(bar);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar({f:i, g:i * 3});
     if (result != i * 4 + 42)
         throw "Error: bad result for i = " + i + ": " + result;

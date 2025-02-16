@@ -54,7 +54,7 @@ public:
     static bool put(JSCell*, JSGlobalObject*, PropertyName, JSValue, PutPropertySlot&);
 
     static void destroy(JSCell*);
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     bool isEmpty() const { return !symbolTable()->size(); }
     bool isConstVariable(UniquedStringImpl*);

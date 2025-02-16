@@ -24,6 +24,7 @@ function runTest()
     // that when you go down by a line, the cursor will be at the end of the
     // numbered lines:
     textarea.setSelectionRange(5, 5);
+    textarea.focus();
     for (var i = 0; i < 10; i++) {
         // press the 'down arrow' a bunch of times to try to get to the end of the text area
         eventSender.keyDown("downArrow");

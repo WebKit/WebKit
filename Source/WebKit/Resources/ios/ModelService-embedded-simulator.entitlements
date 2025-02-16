@@ -6,9 +6,5 @@
 	<true/>
 	<key>com.apple.private.webkit.use-xpc-endpoint</key>
 	<true/>
-	<key>com.apple.surfboard.application-service-client</key>
-	<true/>
-	<key>com.apple.surfboard.shared-simulation-connection-request</key>
-	<true/>
 </dict>
 </plist>

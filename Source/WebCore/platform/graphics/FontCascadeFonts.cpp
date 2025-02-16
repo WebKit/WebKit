@@ -78,8 +78,8 @@ inline FontCascadeFonts::GlyphPageCacheEntry::GlyphPageCacheEntry(RefPtr<GlyphPa
 GlyphData FontCascadeFonts::GlyphPageCacheEntry::glyphDataForCharacter(char32_t character)
 {
     ASSERT(!(m_singleFont && m_mixedFont));
-    if (m_singleFont)
-        return m_singleFont->glyphDataForCharacter(character);
+    if (RefPtr singleFont = m_singleFont)
+        return singleFont->glyphDataForCharacter(character);
     if (m_mixedFont)
         return m_mixedFont->glyphDataForCharacter(character);
     return 0;
@@ -166,7 +166,7 @@ static FontRanges realizeNextFallback(const FontCascadeDescription& description,
 
     auto& fontCache = FontCache::forCurrentThread();
     while (index < description.effectiveFamilyCount()) {
-        auto visitor = WTF::makeVisitor([&](const AtomString& family) -> FontRanges {
+        auto visitor = WTF::makeVisitor([&, fontSelector = RefPtr { fontSelector }](const AtomString& family) -> FontRanges {
             if (family.isNull())
                 return FontRanges();
             if (fontSelector) {
@@ -318,7 +318,7 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(char32_t charac
 {
     bool syntheticOblique = data.font->platformData().syntheticOblique();
     if (orientation == NonCJKGlyphOrientation::Upright || shouldIgnoreRotation(character)) {
-        GlyphData uprightData = data.font->uprightOrientationFont().glyphDataForCharacter(character);
+        GlyphData uprightData = data.font->protectedUprightOrientationFont()->glyphDataForCharacter(character);
         // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically
         // to be upright. For synthetic oblique, however, we will always return the uprightData to ensure
         // that non-CJK and CJK runs are broken up. This guarantees that vertical
@@ -331,7 +331,7 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(char32_t charac
         if (uprightData.font)
             return uprightData;
     } else if (orientation == NonCJKGlyphOrientation::Mixed) {
-        GlyphData verticalRightData = data.font->verticalRightOrientationFont().glyphDataForCharacter(character);
+        GlyphData verticalRightData = data.font->protectedVerticalRightOrientationFont()->glyphDataForCharacter(character);
 
         // If there is a baked-in rotated glyph, we will use it unless syntheticOblique is set. If
         // synthetic oblique is set, we fall back to the horizontal glyph. This guarantees that vertical
@@ -347,13 +347,13 @@ static GlyphData glyphDataForNonCJKCharacterWithGlyphOrientation(char32_t charac
     return data;
 }
 
-static const Font* findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, const FontCascadeDescription& description, char32_t character)
+static RefPtr<const Font> findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, const FontCascadeDescription& description, char32_t character)
 {
     for (unsigned fallbackIndex = 0; ; ++fallbackIndex) {
         auto& fontRanges = fontCascadeFonts.realizeFallbackRangesAt(description, fallbackIndex);
         if (fontRanges.isNull())
             break;
-        auto* currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font.get();
+        RefPtr currentFont = fontRanges.glyphDataForCharacter(character, ExternalResourceDownloadPolicy::Forbid).font.get();
         if (!currentFont)
             currentFont = &fontRanges.fontForFirstRange();
 
@@ -366,7 +366,7 @@ static const Font* findBestFallbackFont(FontCascadeFonts& fontCascadeFonts, cons
 
 GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const FontCascadeDescription& description, FontVariant variant, ResolvedEmojiPolicy resolvedEmojiPolicy, bool systemFallbackShouldBeInvisible)
 {
-    const Font* font = findBestFallbackFont(*this, description, character);
+    RefPtr font = findBestFallbackFont(*this, description, character);
 
     if (!font)
         font = &realizeFallbackRangesAt(description, 0).fontForFirstRange();
@@ -387,7 +387,7 @@ GlyphData FontCascadeFonts::glyphDataForSystemFallback(char32_t character, const
     if (variant == NormalVariant)
         fallbackGlyphData = systemFallbackFont->glyphDataForCharacter(character);
     else
-        fallbackGlyphData = systemFallbackFont->variantFont(description, variant)->glyphDataForCharacter(character);
+        fallbackGlyphData = systemFallbackFont->protectedVariantFont(description, variant)->glyphDataForCharacter(character);
 
     if (fallbackGlyphData.font && fallbackGlyphData.font->platformData().orientation() == FontOrientation::Vertical && !fallbackGlyphData.font->isTextOrientationFallback()) {
         if (variant == NormalVariant && !FontCascade::isCJKIdeographOrSymbol(character))
@@ -436,10 +436,14 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         if (!data.isValid())
             continue;
 
-        if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireText && data.colorGlyphType == ColorGlyphType::Color)
-            continue;
-        if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireEmoji && data.colorGlyphType == ColorGlyphType::Outline)
-            continue;
+#if PLATFORM(COCOA)
+        if (fontRanges.isGenericFontFamily()) {
+            if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireText && data.colorGlyphType == ColorGlyphType::Color)
+                continue;
+            if (resolvedEmojiPolicy == ResolvedEmojiPolicy::RequireEmoji && data.colorGlyphType == ColorGlyphType::Outline)
+                continue;
+        }
+#endif
 
         if (data.font->isInterstitial()) {
             policy = ExternalResourceDownloadPolicy::Forbid;
@@ -451,7 +455,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         }
 
         if (fallbackVisibility == FallbackVisibility::Invisible && data.font->visibility() == Font::Visibility::Visible)
-            data.font = &data.font->invisibleFont();
+            data.font = &Ref { *data.font }->invisibleFont();
 
         if (variant == NormalVariant) {
             if (data.font->platformData().orientation() == FontOrientation::Vertical && !data.font->isTextOrientationFallback()) {
@@ -467,7 +471,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
         } else {
             // The variantFont function should not normally return 0.
             // But if it does, we will just render the capital letter big.
-            if (const Font* variantFont = data.font->variantFont(description, variant))
+            if (RefPtr variantFont = Ref { *data.font }->variantFont(description, variant))
                 return variantFont->glyphDataForCharacter(character);
         }
 
@@ -492,7 +496,7 @@ GlyphData FontCascadeFonts::glyphDataForVariant(char32_t character, const FontCa
 
 static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const FontRanges& fontRanges)
 {
-    const Font* font = nullptr;
+    RefPtr<const Font> font;
     char32_t pageRangeFrom = pageNumber * GlyphPage::size;
     char32_t pageRangeTo = pageRangeFrom + GlyphPage::size - 1;
     auto policy = ExternalResourceDownloadPolicy::Allow;
@@ -524,7 +528,7 @@ static RefPtr<GlyphPage> glyphPageFromFontRanges(unsigned pageNumber, const Font
         return nullptr;
 
     if (desiredVisibility == FallbackVisibility::Invisible && font->visibility() == Font::Visibility::Visible)
-        return const_cast<GlyphPage*>(font->invisibleFont().glyphPage(pageNumber));
+        return const_cast<GlyphPage*>(font->protectedInvisibleFont()->glyphPage(pageNumber));
     return const_cast<GlyphPage*>(font->glyphPage(pageNumber));
 }
 

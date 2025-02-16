@@ -543,11 +543,16 @@ angle::Result CLCommandQueueCL::enqueueNDRangeKernel(const cl::Kernel &kernel,
     const cl_event *const nativeEventsPtr    = nativeEvents.empty() ? nullptr : nativeEvents.data();
     cl_event nativeEvent                     = nullptr;
     cl_event *const nativeEventPtr           = eventCreateFunc != nullptr ? &nativeEvent : nullptr;
+    std::array<size_t, 3> globalWorkOffset{ndrange.globalWorkOffset[0], ndrange.globalWorkOffset[1],
+                                           ndrange.globalWorkOffset[2]};
+    std::array<size_t, 3> globalWorkSize{ndrange.globalWorkSize[0], ndrange.globalWorkSize[1],
+                                         ndrange.globalWorkSize[2]};
+    std::array<size_t, 3> localWorkSize{ndrange.localWorkSize[0], ndrange.localWorkSize[1],
+                                        ndrange.localWorkSize[2]};
 
     ANGLE_CL_TRY(mNative->getDispatch().clEnqueueNDRangeKernel(
-        mNative, nativeKernel, ndrange.workDimensions, ndrange.globalWorkOffset.data(),
-        ndrange.globalWorkSize.data(), ndrange.localWorkSize.data(), numEvents, nativeEventsPtr,
-        nativeEventPtr));
+        mNative, nativeKernel, ndrange.workDimensions, globalWorkOffset.data(),
+        globalWorkSize.data(), localWorkSize.data(), numEvents, nativeEventsPtr, nativeEventPtr));
 
     CheckCreateEvent(nativeEvent, eventCreateFunc);
     return angle::Result::Continue;

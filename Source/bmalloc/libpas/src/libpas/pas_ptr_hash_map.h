@@ -93,11 +93,12 @@ static inline bool pas_ptr_hash_map_key_is_equal(pas_ptr_hash_map_key a,
     return a == b;
 }
 
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 PAS_CREATE_HASHTABLE(pas_ptr_hash_map,
                      pas_ptr_hash_map_entry,
                      pas_ptr_hash_map_key);
+PAS_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 PAS_END_EXTERN_C;
 
 #endif /* PAS_PTR_HASH_MAP_H */
-

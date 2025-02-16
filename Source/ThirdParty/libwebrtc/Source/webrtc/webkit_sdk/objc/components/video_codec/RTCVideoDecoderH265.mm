@@ -17,6 +17,7 @@
 #import "base/RTCVideoFrame.h"
 #import "base/RTCVideoFrameBuffer.h"
 #import "common_video/h265/h265_common.h"
+#import "common_video/h265/h265_sps_parser.h"
 #import "common_video/h265/h265_vps_parser.h"
 #import "components/video_frame_buffer/RTCCVPixelBuffer.h"
 #import "helpers.h"
@@ -51,7 +52,7 @@ static void overrideColorSpaceAttachments(CVImageBufferRef imageBuffer) {
   CVBufferSetAttachment(imageBuffer, (CFStringRef)@"ColorInfoGuessedBy", (CFStringRef)@"RTCVideoDecoderH265", kCVAttachmentMode_ShouldPropagate);
 }
 
-std::span<const uint8_t> vpsDataFromHvcc(const uint8_t* hvccData, size_t hvccDataSize) {
+std::pair<std::span<const uint8_t>, std::span<const uint8_t>> spsAndVpsDataFromHvcc(const uint8_t* hvccData, size_t hvccDataSize) {
   std::vector<uint8_t> unpacked_buffer { hvccData, hvccData + hvccDataSize };
   webrtc::BitstreamReader reader(unpacked_buffer);
 
@@ -91,6 +92,8 @@ std::span<const uint8_t> vpsDataFromHvcc(const uint8_t* hvccData, size_t hvccDat
     return { };
   }
 
+  std::span<const uint8_t> spsData, vpsData;
+
   size_t position = (8 + 8 + 32 + 32 + 16 + 8 + 16 + 8 + 8 + 8 + 8 + 16 + 8 + 8) / 8;
   for (uint32_t j = 0; j < numOfArrays; j++) {
     // NAL_unit_type: bit(1) array_completeness; unsigned int(1) reserved = 0; unsigned int(6) NAL_unit_type;
@@ -115,21 +118,26 @@ std::span<const uint8_t> vpsDataFromHvcc(const uint8_t* hvccData, size_t hvccDat
             return { };
         }
 
-        if (nalUnitType != webrtc::H265::NaluType::kVps) {
-            position += size;
-            continue;
+        if (nalUnitType == webrtc::H265::NaluType::kSps) {
+            spsData = { hvccData + position + hevcNalHeaderSize, size - hevcNalHeaderSize };
+            if (vpsData.size())
+                return { spsData, vpsData };
+        } else if (nalUnitType == webrtc::H265::NaluType::kVps) {
+            vpsData = { hvccData + position + hevcNalHeaderSize, size - hevcNalHeaderSize };
+            if (spsData.size())
+                return { spsData, vpsData };
         }
 
-        return { hvccData + position + hevcNalHeaderSize, size - hevcNalHeaderSize };
+        position += size;
     }
   }
   reader.Ok();
   return { };
 }
 
-uint8_t ComputeH265ReorderSizeFromVPS(const uint8_t* spsData, size_t spsDataSize)
+uint8_t ComputeH265ReorderSizeFromVPS(const uint8_t* vpsData, size_t vpsDataSize)
 {
-    auto parsedVps = webrtc::H265VpsParser::ParseVps(spsData, spsDataSize);
+    auto parsedVps = webrtc::H265VpsParser::ParseVps(vpsData, vpsDataSize);
     if (!parsedVps)
         return 0;
 
@@ -138,14 +146,24 @@ uint8_t ComputeH265ReorderSizeFromVPS(const uint8_t* spsData, size_t spsDataSize
     return std::min(reorderSize, 16u);
 }
 
-uint8_t ComputeH265ReorderSizeFromHVCC(const uint8_t* hvccData, size_t hvccDataSize)
+struct HVCCInformation {
+    uint16_t width { 0 };
+    uint16_t height { 0 };
+    uint8_t reorderSize { 0 };
+};
+std::optional<HVCCInformation> ComputeH265InfoFromHVCC(const uint8_t* hvccData, size_t hvccDataSize)
 {
-    // FIXME: we should probably get the VPS from the SPS sps_video_parameter_set_id.
-    auto vpsData = vpsDataFromHvcc(hvccData, hvccDataSize);
-    if (!vpsData.size())
-        return 0;
+    auto [spsData, vpsData] = spsAndVpsDataFromHvcc(hvccData, hvccDataSize);
+    if (!spsData.size() || !vpsData.size())
+        return { };
 
-    return ComputeH265ReorderSizeFromVPS(vpsData.data(), vpsData.size());
+    auto sps = webrtc::H265SpsParser::ParseSps(spsData.data(), spsData.size());
+    return HVCCInformation {
+        static_cast<uint16_t>(sps ? sps->width : 0),
+        static_cast<uint16_t>(sps ? sps->height : 0),
+        // FIXME: we should probably get the VPS from the SPS sps_video_parameter_set_id.
+        ComputeH265ReorderSizeFromVPS(vpsData.data(), vpsData.size())
+    };
 }
 
 uint8_t ComputeH265ReorderSizeFromAnnexB(const uint8_t* annexb_buffer, size_t annexb_buffer_size)
@@ -329,6 +347,14 @@ CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
 }
 
 - (NSInteger)setHVCCFormat:(const uint8_t *)data size:(size_t)size width:(uint16_t)width height:(uint16_t)height {
+  if (auto hvccInformation = ComputeH265InfoFromHVCC(data, size)) {
+    if (hvccInformation->width)
+      width = hvccInformation->width;
+    if (hvccInformation->height)
+      height = hvccInformation->height;
+    _reorderQueue.setReorderSize(hvccInformation->reorderSize);
+  }
+
   CFStringRef avcCString = (CFStringRef)@"hvcC";
   CFDataRef codecConfig = CFDataCreate(kCFAllocatorDefault, data, size);
   CFDictionaryRef atomsDict = CFDictionaryCreate(NULL,
@@ -357,8 +383,6 @@ CMSampleBufferRef H265BufferToCMSampleBuffer(const uint8_t* buffer, size_t buffe
 
   rtc::ScopedCFTypeRef<CMVideoFormatDescriptionRef> inputFormat = rtc::ScopedCF(videoFormatDescription);
   if (inputFormat) {
-    _reorderQueue.setReorderSize(ComputeH265ReorderSizeFromHVCC(data, size));
-
     // Check if the video format has changed, and reinitialize decoder if
     // needed.
     if (!CMFormatDescriptionEqual(inputFormat.get(), _videoFormat)) {

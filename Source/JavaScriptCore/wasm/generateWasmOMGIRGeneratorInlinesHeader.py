@@ -133,8 +133,6 @@ class CodeGenerator:
 
     def generateB3OpCode(self, index, op, params):
         self.code.append("Value* " + temp(index) + " = m_currentBlock->appendNew<Value>(m_proc, B3::" + op + ", origin(), " + ", ".join(params) + ");")
-        self.code.append("if (B3::Kind::hasIsSensitiveToNaN(" + op + ") && " + temp(index) + "->type().isFloat())")
-        self.code.append("    " + temp(index) + "->setKindUnsafely(sensitiveToNaN(B3::" + op + "));")
 
     def generateConstCode(self, index, value, type):
         self.code.append("Value* " + temp(index) + " = constant(" + type + ", " + value + ");")

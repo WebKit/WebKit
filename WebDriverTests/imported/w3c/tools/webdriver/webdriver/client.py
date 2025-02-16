@@ -301,7 +301,6 @@ class BrowserWindow:
 
     @command
     def close(self):
-        print("BrowserWindow.close() with session id %s", self.session.session_id, flush=True)
         handles = self.session.send_session_command("DELETE", "window")
         if handles is not None and len(handles) == 0:
             # With no more open top-level browsing contexts, the session is closed.
@@ -471,12 +470,10 @@ class Session:
                 self.session_id == other.session_id)
 
     def __enter__(self):
-        print("Session.__enter__() with session id %s", self.session_id, flush=True)
         self.start()
         return self
 
     def __exit__(self, *args, **kwargs):
-        print("Session.__exit_ with session id %s", self.session_id, flush=True)
         self.end()
 
     def __del__(self):
@@ -525,7 +522,6 @@ class Session:
 
     def end(self):
         """Try to close the active session."""
-        print("Session.end()", flush=True)
         if self.session_id is None:
             return
 
@@ -555,8 +551,6 @@ class Session:
         :raises ValueError: If the response body does not contain a
             `value` key.
         """
-
-        print("client.py send_command %s %s", method, url, flush=True)
 
         response = self.transport.send(
             method, url, body,
@@ -647,8 +641,6 @@ class Session:
     def new_window(self, type_hint="tab"):
         body = {"type": type_hint}
         value = self.send_session_command("POST", "window/new", body)
-
-        print("Session.new_window.handle == %s", value["handle"], flush=True)
 
         return value["handle"]
 
@@ -747,6 +739,29 @@ class Session:
     @command
     def screenshot(self):
         return self.send_session_command("GET", "screenshot")
+
+    @command
+    def print(self,
+              background=None,
+              margin=None,
+              orientation=None,
+              page=None,
+              page_ranges=None,
+              scale=None,
+              shrink_to_fit=None):
+        body = {}
+        for prop, value in {
+            "background": background,
+            "margin": margin,
+            "orientation": orientation,
+            "page": page,
+            "pageRanges": page_ranges,
+            "scale": scale,
+            "shrinkToFit": shrink_to_fit,
+        }.items():
+            if value is not None:
+                body[prop] = value
+        return self.send_session_command("POST", "print", body)
 
 
 class ShadowRoot:
@@ -892,6 +907,7 @@ class WebElement:
     @command
     def property(self, name):
         return self.send_element_command("GET", "property/%s" % name)
+
 
 class WebFrame:
     identifier = "frame-075b-4da1-b6ba-e579c2d3230a"

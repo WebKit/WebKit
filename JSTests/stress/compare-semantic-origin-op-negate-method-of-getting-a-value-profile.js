@@ -10,9 +10,9 @@ function foo(x) {
 }
 noInline(foo);
 
-for (let i = 0; i < 100000; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     foo(!!(i%2));
 
 flag = true;
-for (let i = 0; i < 100000; ++i)
+for (let i = 0; i < testLoopCount; ++i)
     foo(!!(i%2));

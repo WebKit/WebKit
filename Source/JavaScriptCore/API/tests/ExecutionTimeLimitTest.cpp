@@ -42,6 +42,8 @@
 #include <dispatch/dispatch.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using JSC::Options;
 
 static JSGlobalContextRef context = nullptr;
@@ -564,3 +566,5 @@ int testExecutionTimeLimit()
     
     return failed;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

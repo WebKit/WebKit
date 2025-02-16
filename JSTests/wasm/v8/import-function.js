@@ -21,7 +21,7 @@ function testCallImport(func, check) {
 
   var main = builder.instantiate({q: {func: func}}).exports.main;
 
-  for (var i = 0; i < 100000; i += 10003) {
+  for (var i = 0; i < wasmTestLoopCount; i += 10003) {
     var a = 22.5 + i, b = 10.5 + i;
     var r = main(a, b);
     check(r, a, b);
@@ -198,7 +198,7 @@ function testCallBinopVoid(type, func, check) {
 
   // print("testCallBinopVoid", type);
 
-  for (var i = 0; i < 100000; i += 10003.1) {
+  for (var i = 0; i < wasmTestLoopCount; i += 10003.1) {
     var a = 22.5 + i, b = 10.5 + i;
     var r = main(a, b);
     assertEquals(39, r);

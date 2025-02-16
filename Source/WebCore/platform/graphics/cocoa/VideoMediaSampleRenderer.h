@@ -49,6 +49,7 @@ class WorkQueue;
 
 namespace WebCore {
 
+class EffectiveRateChangedListener;
 class MediaSample;
 class WebCoreDecompressionSession;
 
@@ -150,6 +151,7 @@ private:
 #endif
     mutable Lock m_lock;
     TimebaseAndTimerSource m_timebaseAndTimerSource WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<EffectiveRateChangedListener> m_effectiveRateChangedListener;
     std::atomic<ssize_t> m_framesBeingDecoded { 0 };
     std::atomic<FlushId> m_flushId { 0 };
     Deque<std::pair<RetainPtr<CMSampleBufferRef>, FlushId>> m_compressedSampleQueue WTF_GUARDED_BY_CAPABILITY(dispatcher().get());

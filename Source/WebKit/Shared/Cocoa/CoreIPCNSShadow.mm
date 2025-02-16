@@ -28,6 +28,8 @@
 
 #if PLATFORM(COCOA)
 
+#import <WebCore/AttributedString.h>
+
 #if USE(APPKIT)
 #import <AppKit/NSShadow.h>
 #endif

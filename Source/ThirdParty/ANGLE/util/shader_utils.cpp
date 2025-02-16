@@ -145,6 +145,14 @@ void GetPerfCounterValue(const CounterNameToIndexMap &counterIndexMap,
         }
     }
 
+    // Additional logs for b/382094011
+    std::cerr << "GetPerfCounterValue missing counter: " << name << "; index: " << counterIndex
+              << "; triplets: " << std::endl;
+    for (const angle::PerfMonitorTriplet &triplet : triplets)
+    {
+        std::cerr << triplet.counter << " " << triplet.value << std::endl;
+    }
+
     UNREACHABLE();
 }
 }  // namespace
@@ -390,6 +398,7 @@ CounterNameToIndexMap BuildCounterNameToIndexMap()
     glGetPerfMonitorCountersAMD(0, &numCounters, nullptr, 0, nullptr);
     if (glGetError() != GL_NO_ERROR)
     {
+        std::cerr << "glGetPerfMonitorCountersAMD failed (count)" << std::endl;
         return {};
     }
 
@@ -397,6 +406,7 @@ CounterNameToIndexMap BuildCounterNameToIndexMap()
     glGetPerfMonitorCountersAMD(0, nullptr, nullptr, numCounters, counterIndexes.data());
     if (glGetError() != GL_NO_ERROR)
     {
+        std::cerr << "glGetPerfMonitorCountersAMD failed (data)" << std::endl;
         return {};
     }
 
@@ -409,6 +419,7 @@ CounterNameToIndexMap BuildCounterNameToIndexMap()
         glGetPerfMonitorCounterStringAMD(0, counterIndex, kBufSize, nullptr, buffer);
         if (glGetError() != GL_NO_ERROR)
         {
+            std::cerr << "glGetPerfMonitorCounterStringAMD failed" << std::endl;
             return {};
         }
 
@@ -425,6 +436,7 @@ std::vector<angle::PerfMonitorTriplet> GetPerfMonitorTriplets()
                                    nullptr);
     if (glGetError() != GL_NO_ERROR || resultSize == 0)
     {
+        std::cerr << "glGetPerfMonitorCounterDataAMD failed (count)" << std::endl;
         return {};
     }
 
@@ -437,6 +449,7 @@ std::vector<angle::PerfMonitorTriplet> GetPerfMonitorTriplets()
 
     if (glGetError() != GL_NO_ERROR)
     {
+        std::cerr << "glGetPerfMonitorCounterDataAMD failed (data)" << std::endl;
         return {};
     }
     ASSERT(static_cast<GLuint>(bytesWritten) == resultSize);

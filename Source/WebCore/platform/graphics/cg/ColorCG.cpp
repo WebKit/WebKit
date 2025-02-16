@@ -38,8 +38,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TinyLRUCache.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 static RetainPtr<CGColorRef> createCGColor(const Color&);
 }
@@ -56,6 +54,11 @@ RetainPtr<CGColorRef> TinyLRUCachePolicy<WebCore::Color, RetainPtr<CGColorRef>>:
 
 namespace WebCore {
 
+static std::span<const CGFloat> componentsSpan(CGColorRef color)
+{
+    return unsafeMakeSpan(CGColorGetComponents(color), CGColorGetNumberOfComponents(color));
+}
+
 std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
 {
     // FIXME: Interpreting components of a color in an arbitrary color space
@@ -64,15 +67,14 @@ std::optional<SRGBA<uint8_t>> roundAndClampToSRGBALossy(CGColorRef color)
     if (!color)
         return std::nullopt;
 
-    size_t numComponents = CGColorGetNumberOfComponents(color);
-    const CGFloat* components = CGColorGetComponents(color);
+    auto components = componentsSpan(color);
 
     float r = 0;
     float g = 0;
     float b = 0;
     float a = 0;
 
-    switch (numComponents) {
+    switch (components.size()) {
     case 2:
         r = g = b = components[0];
         a = components[1];
@@ -129,13 +131,11 @@ Color Color::createAndPreserveColorSpace(CGColorRef color, OptionSet<Flags> flag
     if (!color)
         return Color();
 
-    size_t numComponents = CGColorGetNumberOfComponents(color);
+    auto components = componentsSpan(color);
     auto colorSpace = colorSpaceForCGColorSpace(CGColorGetColorSpace(color));
 
-    if (numComponents != 4 || !colorSpace)
+    if (components.size() != 4 || !colorSpace)
         return createAndLosslesslyConvertToSupportedColorSpace(color, flags);
-
-    const CGFloat* components = CGColorGetComponents(color);
 
     float a = components[0];
     float b = components[1];
@@ -232,7 +232,5 @@ ColorComponents<float, 4> platformConvertColorComponents(ColorSpace inputColorSp
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

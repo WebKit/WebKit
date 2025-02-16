@@ -75,7 +75,8 @@ AutoInstall.register(Package('pyasn1_modules', Version(0, 2, 8), pypi_name='pyas
 AutoInstall.register(Package('redis', Version(3, 5, 3)))
 
 if sys.platform == 'linux':
-    AutoInstall.register(Package('selenium', Version(4, 19, 0), wheel=True))
+    AutoInstall.register(Package('selenium', Version(4, 24, 0), wheel=True, implicit_deps=[
+        Package('websocket', Version(1, 8, 0), pypi_name='websocket-client')]))
 else:
     AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
 

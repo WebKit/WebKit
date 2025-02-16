@@ -527,7 +527,9 @@ void AbstractValue::ensureCanInitializeWithZeros()
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     std::aligned_storage<sizeof(AbstractValue), alignof(AbstractValue)>::type zeroFilledStorage;
     ALLOW_DEPRECATED_DECLARATIONS_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memset(static_cast<void*>(&zeroFilledStorage), 0, sizeof(AbstractValue));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     ASSERT(*this == *static_cast<AbstractValue*>(static_cast<void*>(&zeroFilledStorage)));
 }
 #endif

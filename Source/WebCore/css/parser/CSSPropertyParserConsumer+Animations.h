@@ -31,9 +31,14 @@ namespace WebCore {
 
 class CSSParserTokenRange;
 class CSSValue;
+enum CSSValueID : uint16_t;
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
+
+// MARK: <keyframe-selector> consuming
+// https://drafts.csswg.org/css-animations-1/#typedef-keyframe-selector
+Vector<std::pair<CSSValueID, double>> consumeKeyframeKeyList(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: <keyframes-name> consuming
 // https://drafts.csswg.org/css-animations/#typedef-keyframes-name

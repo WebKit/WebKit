@@ -18,7 +18,7 @@
 
 namespace angle
 {
-enum class FormatID;
+enum class FormatID : uint8_t;
 
 extern const Format gFormatInfoTable[];
 

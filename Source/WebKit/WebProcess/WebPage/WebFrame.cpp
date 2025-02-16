@@ -68,6 +68,7 @@
 #include <WebCore/EventHandler.h>
 #include <WebCore/File.h>
 #include <WebCore/FocusController.h>
+#include <WebCore/FrameLoader.h>
 #include <WebCore/FrameSnapshotting.h>
 #include <WebCore/HTMLFormElement.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
@@ -83,6 +84,7 @@
 #include <WebCore/JSRange.h>
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
+#include <WebCore/MouseEventTypes.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/Page.h>
 #include <WebCore/PluginDocument.h>
@@ -262,6 +264,11 @@ WebCore::RemoteFrame* WebFrame::coreRemoteFrame() const
 WebCore::Frame* WebFrame::coreFrame() const
 {
     return m_coreFrame.get();
+}
+
+RefPtr<WebCore::Frame> WebFrame::protectedCoreFrame() const
+{
+    return coreFrame();
 }
 
 FrameInfoData WebFrame::info() const
@@ -883,7 +890,7 @@ void WebFrame::setAccessibleName(const AtomString& accessibleName)
     if (!document)
         return;
     
-    RefPtr rootObject = document->axObjectCache()->rootObject();
+    RefPtr rootObject = document->axObjectCache()->rootObjectForFrame(*localFrame);
     if (!rootObject)
         return;
 
@@ -1237,7 +1244,13 @@ inline DocumentLoader* WebFrame::policySourceDocumentLoader() const
     if (!document)
         return nullptr;
 
-    RefPtr policySourceDocumentLoader = document->topDocument().loader();
+    RefPtr mainFrameDocument = document->protectedMainFrameDocument();
+    if (!mainFrameDocument) {
+        LOG_ONCE(SiteIsolation, "Unable to properly calculate WebFrame::policySourceDocumentLoader() without access to the main frame document ");
+        return nullptr;
+    }
+
+    RefPtr policySourceDocumentLoader = mainFrameDocument->loader();
     if (!policySourceDocumentLoader)
         return nullptr;
 

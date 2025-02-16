@@ -63,6 +63,8 @@ class JSValue;
 
 namespace WebCore {
 
+class CloseWatcherManager;
+
 enum class IncludeTargetOrigin : bool { No, Yes };
 
 class LocalDOMWindowObserver : public CanMakeWeakPtr<LocalDOMWindowObserver> {
@@ -163,7 +165,7 @@ public:
 
     WEBCORE_EXPORT ExceptionOr<RefPtr<WindowProxy>> open(LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const String& urlString, const AtomString& frameName, const String& windowFeaturesString);
 
-    void showModalDialog(const String& urlString, const String& dialogFeaturesString, LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, const Function<void(LocalDOMWindow&)>& prepareDialogFunction);
+    void showModalDialog(const String& urlString, const String& dialogFeaturesString, LocalDOMWindow& activeWindow, LocalDOMWindow& firstWindow, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction);
 
     void prewarmLocalStorageIfNecessary();
 
@@ -365,9 +367,11 @@ public:
     Page* page() const;
     RefPtr<Page> protectedPage() const;
 
-    WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(const Function<void(LocalDOMWindow&)>&);
+    WEBCORE_EXPORT static void forEachWindowInterestedInStorageEvents(NOESCAPE const Function<void(LocalDOMWindow&)>&);
 
     CookieStore& cookieStore();
+
+    CloseWatcherManager& closeWatcherManager();
 
 #if ENABLE(DECLARATIVE_WEB_PUSH)
     PushManager& pushManager();
@@ -383,11 +387,11 @@ private:
 
     void closePage() final;
     void eventListenersDidChange() final;
-    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking) final;
+    void setLocation(LocalDOMWindow& activeWindow, const URL& completedURL, NavigationHistoryBehavior, SetLocationLocking, CanNavigateState) final;
 
     bool allowedToChangeWindowGeometry() const;
 
-    static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, const Function<void(LocalDOMWindow&)>& prepareDialogFunction = nullptr);
+    static ExceptionOr<RefPtr<Frame>> createWindow(const String& urlString, const AtomString& frameName, const WindowFeatures&, LocalDOMWindow& activeWindow, LocalFrame& firstFrame, LocalFrame& openerFrame, NOESCAPE const Function<void(LocalDOMWindow&)>& prepareDialogFunction = nullptr);
     bool isInsecureScriptAccess(LocalDOMWindow& activeWindow, const String& urlString);
 
 #if ENABLE(DEVICE_ORIENTATION)
@@ -435,6 +439,7 @@ private:
     mutable RefPtr<BarProp> m_toolbar;
     mutable RefPtr<VisualViewport> m_visualViewport;
     mutable RefPtr<Navigation> m_navigation;
+    mutable RefPtr<CloseWatcherManager> m_closeWatcherManager;
 
     String m_status;
 

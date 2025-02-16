@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, _WKProcessTerminationReason) {
     _WKProcessTerminationReasonExceededCPULimit,
     _WKProcessTerminationReasonRequestedByClient,
     _WKProcessTerminationReasonCrash,
-    _WKProcessTerminationReasonExceededSharedProcessCrashLimit WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA)),
+    _WKProcessTerminationReasonExceededSharedProcessCrashLimit WK_API_AVAILABLE(macos(15.2), ios(18.2)),
 } WK_API_AVAILABLE(macos(10.14), ios(12.0));
 
 typedef NS_ENUM(NSInteger, _WKSOAuthorizationLoadPolicy) {
@@ -126,6 +126,7 @@ static const WKNavigationResponsePolicy _WKNavigationResponsePolicyBecomeDownloa
 - (void)_webView:(WKWebView *)webView willGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache WK_API_AVAILABLE(macos(10.13.4), ios(14.0));
 - (void)_webView:(WKWebView *)webView decidePolicyForSOAuthorizationLoadWithCurrentPolicy:(_WKSOAuthorizationLoadPolicy)policy forExtension:(NSString *)extension completionHandler:(void (^)(_WKSOAuthorizationLoadPolicy policy))completionHandler WK_API_AVAILABLE(macos(10.15), ios(13.0));
 
-- (void)_webView:(WKWebView *)webView didGeneratePageLoadTiming:(_WKPageLoadTiming *)timing WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
+- (void)_webView:(WKWebView *)webView didGeneratePageLoadTiming:(_WKPageLoadTiming *)timing WK_API_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2));
 
+- (void)_webView:(WKWebView *)webView shouldGoToBackForwardListItem:(WKBackForwardListItem *)item inPageCache:(BOOL)inPageCache completionHandler:(void (^)(bool shouldGoToItem))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 @end

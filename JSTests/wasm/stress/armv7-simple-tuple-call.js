@@ -20,7 +20,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true })
     const { test, test_with_call, test_with_call_indirect } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         let a = (1n<<32n) - 1n
         let b = (1n<<40n) + (1n<<33n) + (1n<<32n) + (1n<<31n)
         let c = 1n

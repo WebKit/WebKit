@@ -11,7 +11,7 @@ function test1() {
     noInline(foo);
 
     let arr = [1,2,3];
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let result = foo(...arr);
         assert(result.length === 3);
         assert(result.length === arr.length);
@@ -31,7 +31,7 @@ function test1() {
         set: function(x) { called2 = true; }
     });
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let result = foo(...arr);
         assert(result.length === 3);
         assert(result[0] === arr[0]);
@@ -47,7 +47,7 @@ function test1() {
         assert(!called2); // Creating a rest should defineProperty, ensuring we don't call the setter.
     }
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let result = foo(...arr);
         assert(result.length === 3);
         assert(result[0] === arr[0]);

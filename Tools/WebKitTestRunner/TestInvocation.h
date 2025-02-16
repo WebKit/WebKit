@@ -35,11 +35,12 @@
 #include <wtf/RefCounted.h>
 #include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
+#include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WTR {
 
-class TestInvocation final : public RefCounted<TestInvocation>, public UIScriptContextDelegate {
+class TestInvocation final : public RefCounted<TestInvocation>, public UIScriptContextDelegate, public CanMakeWeakPtr<TestInvocation> {
     WTF_MAKE_FAST_ALLOCATED;
     WTF_MAKE_NONCOPYABLE(TestInvocation);
 public:
@@ -119,7 +120,7 @@ private:
     struct UIScriptInvocationData {
         unsigned callbackID;
         WebKit::WKRetainPtr<WKStringRef> scriptString;
-        TestInvocation* testInvocation;
+        WeakPtr<TestInvocation> testInvocation;
     };
     static void runUISideScriptAfterUpdateCallback(WKErrorRef, void* context);
     static void runUISideScriptImmediately(WKErrorRef, void* context);
@@ -167,8 +168,7 @@ private:
     WKRetainPtr<WKImageRef> m_pixelResult;
     WKRetainPtr<WKArrayRef> m_repaintRects;
     
-    std::unique_ptr<UIScriptContext> m_UIScriptContext;
-    UIScriptInvocationData* m_pendingUIScriptInvocationData { nullptr };
+    RefPtr<UIScriptContext> m_UIScriptContext;
 };
 
 } // namespace WTR

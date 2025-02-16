@@ -31,141 +31,141 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<ToPosition>::operator()(StringBuilder& builder, const ToPosition& value)
+void Serialize<ToPosition>::operator()(StringBuilder& builder, const SerializationContext& context, const ToPosition& value)
 {
     // <to-position> = to <position>
 
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 }
 
-void Serialize<ByCoordinatePair>::operator()(StringBuilder& builder, const ByCoordinatePair& value)
+void Serialize<ByCoordinatePair>::operator()(StringBuilder& builder, const SerializationContext& context, const ByCoordinatePair& value)
 {
     // <by-coordinate-pair> = by <coordinate-pair>
 
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 }
 
-void Serialize<RelativeControlPoint>::operator()(StringBuilder& builder, const RelativeControlPoint& value)
+void Serialize<RelativeControlPoint>::operator()(StringBuilder& builder, const SerializationContext& context, const RelativeControlPoint& value)
 {
     // <relative-control-point> = [<coordinate-pair> [from [start | end | origin]]?]
     // Specified https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 
     if (value.anchor) {
         builder.append(' ', nameLiteralForSerialization(CSSValueFrom), ' ');
-        serializationForCSS(builder, *value.anchor);
+        serializationForCSS(builder, context, *value.anchor);
     }
 }
 
-void Serialize<AbsoluteControlPoint>::operator()(StringBuilder& builder, const AbsoluteControlPoint& value)
+void Serialize<AbsoluteControlPoint>::operator()(StringBuilder& builder, const SerializationContext& context, const AbsoluteControlPoint& value)
 {
     // <to-control-point> = [<position> | <relative-control-point>]
     // Specified https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 
     // Representation diverges from grammar due to overlap between <position> and <relative-control-point>.
 
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 
     if (value.anchor) {
         builder.append(' ', nameLiteralForSerialization(CSSValueFrom), ' ');
-        serializationForCSS(builder, *value.anchor);
+        serializationForCSS(builder, context, *value.anchor);
     }
 }
 
-void Serialize<MoveCommand>::operator()(StringBuilder& builder, const MoveCommand& value)
+void Serialize<MoveCommand>::operator()(StringBuilder& builder, const SerializationContext& context, const MoveCommand& value)
 {
     // <move-command> = move [to <position>] | [by <coordinate-pair>]
     // https://drafts.csswg.org/css-shapes-2/#typedef-shape-move-command
     // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 
     builder.append(nameLiteralForSerialization(value.name), ' ');
-    serializationForCSS(builder, value.toBy);
+    serializationForCSS(builder, context, value.toBy);
 }
 
-void Serialize<LineCommand>::operator()(StringBuilder& builder, const LineCommand& value)
+void Serialize<LineCommand>::operator()(StringBuilder& builder, const SerializationContext& context, const LineCommand& value)
 {
     // <line-command> = line [to <position>] | [by <coordinate-pair>]
     // https://drafts.csswg.org/css-shapes-2/#typedef-shape-line-command
     // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 
     builder.append(nameLiteralForSerialization(value.name), ' ');
-    serializationForCSS(builder, value.toBy);
+    serializationForCSS(builder, context, value.toBy);
 }
 
-void Serialize<HLineCommand::To>::operator()(StringBuilder& builder, const HLineCommand::To& value)
+void Serialize<HLineCommand::To>::operator()(StringBuilder& builder, const SerializationContext& context, const HLineCommand::To& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 }
 
-void Serialize<HLineCommand::By>::operator()(StringBuilder& builder, const HLineCommand::By& value)
+void Serialize<HLineCommand::By>::operator()(StringBuilder& builder, const SerializationContext& context, const HLineCommand::By& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 }
 
-void Serialize<HLineCommand>::operator()(StringBuilder& builder, const HLineCommand& value)
+void Serialize<HLineCommand>::operator()(StringBuilder& builder, const SerializationContext& context, const HLineCommand& value)
 {
     // <horizontal-line-command> = hline [ to [ <length-percentage> | left | center | right | x-start | x-end ] | by <length-percentage> ]
     // https://drafts.csswg.org/css-shapes-2/#typedef-shape-hv-line-command
     // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2426552611
 
     builder.append(nameLiteralForSerialization(value.name), ' ');
-    serializationForCSS(builder, value.toBy);
+    serializationForCSS(builder, context, value.toBy);
 }
 
-void Serialize<VLineCommand::To>::operator()(StringBuilder& builder, const VLineCommand::To& value)
+void Serialize<VLineCommand::To>::operator()(StringBuilder& builder, const SerializationContext& context, const VLineCommand::To& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 }
 
-void Serialize<VLineCommand::By>::operator()(StringBuilder& builder, const VLineCommand::By& value)
+void Serialize<VLineCommand::By>::operator()(StringBuilder& builder, const SerializationContext& context, const VLineCommand::By& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 }
 
-void Serialize<VLineCommand>::operator()(StringBuilder& builder, const VLineCommand& value)
+void Serialize<VLineCommand>::operator()(StringBuilder& builder, const SerializationContext& context, const VLineCommand& value)
 {
     // <vertical-line-command> = vline [ to [ <length-percentage> | top | center | bottom | y-start | y-end ] | by <length-percentage> ]
     // https://drafts.csswg.org/css-shapes-2/#typedef-shape-hv-line-command
     // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2426552611
 
     builder.append(nameLiteralForSerialization(value.name), ' ');
-    serializationForCSS(builder, value.toBy);
+    serializationForCSS(builder, context, value.toBy);
 }
 
-void Serialize<CurveCommand::To>::operator()(StringBuilder& builder, const CurveCommand::To& value)
+void Serialize<CurveCommand::To>::operator()(StringBuilder& builder, const SerializationContext& context, const CurveCommand::To& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 
     builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
-    serializationForCSS(builder, value.controlPoint1);
+    serializationForCSS(builder, context, value.controlPoint1);
     if (value.controlPoint2) {
         builder.append(" / "_s);
-        serializationForCSS(builder, *value.controlPoint2);
+        serializationForCSS(builder, context, *value.controlPoint2);
     }
 }
 
-void Serialize<CurveCommand::By>::operator()(StringBuilder& builder, const CurveCommand::By& value)
+void Serialize<CurveCommand::By>::operator()(StringBuilder& builder, const SerializationContext& context, const CurveCommand::By& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 
     builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
-    serializationForCSS(builder, value.controlPoint1);
+    serializationForCSS(builder, context, value.controlPoint1);
     if (value.controlPoint2) {
         builder.append(" / "_s);
-        serializationForCSS(builder, *value.controlPoint2);
+        serializationForCSS(builder, context, *value.controlPoint2);
     }
 }
 
-void Serialize<CurveCommand>::operator()(StringBuilder& builder, const CurveCommand& value)
+void Serialize<CurveCommand>::operator()(StringBuilder& builder, const SerializationContext& context, const CurveCommand& value)
 {
     // <curve-command> = curve [to <position> with <to-control-point> [/ <to-control-point>]?]
     //                       | [by <coordinate-pair> with <relative-control-point> [/ <relative-control-point>]?]
@@ -173,32 +173,32 @@ void Serialize<CurveCommand>::operator()(StringBuilder& builder, const CurveComm
     // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 
     builder.append(nameLiteralForSerialization(value.name), ' ');
-    serializationForCSS(builder, value.toBy);
+    serializationForCSS(builder, context, value.toBy);
 }
 
-void Serialize<SmoothCommand::To>::operator()(StringBuilder& builder, const SmoothCommand::To& value)
+void Serialize<SmoothCommand::To>::operator()(StringBuilder& builder, const SerializationContext& context, const SmoothCommand::To& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 
     if (value.controlPoint) {
         builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
-        serializationForCSS(builder, *value.controlPoint);
+        serializationForCSS(builder, context, *value.controlPoint);
     }
 }
 
-void Serialize<SmoothCommand::By>::operator()(StringBuilder& builder, const SmoothCommand::By& value)
+void Serialize<SmoothCommand::By>::operator()(StringBuilder& builder, const SerializationContext& context, const SmoothCommand::By& value)
 {
     builder.append(nameLiteralForSerialization(value.affinity.value), ' ');
-    serializationForCSS(builder, value.offset);
+    serializationForCSS(builder, context, value.offset);
 
     if (value.controlPoint) {
         builder.append(' ', nameLiteralForSerialization(CSSValueWith), ' ');
-        serializationForCSS(builder, *value.controlPoint);
+        serializationForCSS(builder, context, *value.controlPoint);
     }
 }
 
-void Serialize<SmoothCommand>::operator()(StringBuilder& builder, const SmoothCommand& value)
+void Serialize<SmoothCommand>::operator()(StringBuilder& builder, const SerializationContext& context, const SmoothCommand& value)
 {
     // <smooth-command> = smooth [to <position> [with <to-control-point>]?]
     //                         | [by <coordinate-pair> [with <relative-control-point>]?]
@@ -206,53 +206,53 @@ void Serialize<SmoothCommand>::operator()(StringBuilder& builder, const SmoothCo
     // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 
     builder.append(nameLiteralForSerialization(value.name), ' ');
-    serializationForCSS(builder, value.toBy);
+    serializationForCSS(builder, context, value.toBy);
 }
 
-void Serialize<ArcCommand>::operator()(StringBuilder& builder, const ArcCommand& value)
+void Serialize<ArcCommand>::operator()(StringBuilder& builder, const SerializationContext& context, const ArcCommand& value)
 {
     // <arc-command> = arc [to <position>] | [by <coordinate-pair>] of <length-percentage>{1,2} [<arc-sweep>? || <arc-size>? || [rotate <angle>]?]
     // https://drafts.csswg.org/css-shapes-2/#typedef-shape-arc-command
     // Modified by https://github.com/w3c/csswg-drafts/issues/10649#issuecomment-2412816773
 
     builder.append(nameLiteralForSerialization(value.name), ' ');
-    serializationForCSS(builder, value.toBy);
+    serializationForCSS(builder, context, value.toBy);
 
     builder.append(' ', nameLiteralForSerialization(CSSValueOf), ' ');
     if (value.size.width() == value.size.height())
-        serializationForCSS(builder, value.size.width());
+        serializationForCSS(builder, context, value.size.width());
     else
-        serializationForCSS(builder, value.size);
+        serializationForCSS(builder, context, value.size);
 
     if (!std::holds_alternative<CSS::Keyword::Ccw>(value.arcSweep)) {
         builder.append(' ');
-        serializationForCSS(builder, value.arcSweep);
+        serializationForCSS(builder, context, value.arcSweep);
     }
 
     if (!std::holds_alternative<CSS::Keyword::Small>(value.arcSize)) {
         builder.append(' ');
-        serializationForCSS(builder, value.arcSize);
+        serializationForCSS(builder, context, value.arcSize);
     }
 
     if (value.rotation != 0_css_deg) {
         builder.append(' ', nameLiteralForSerialization(CSSValueRotate), ' ');
-        serializationForCSS(builder, value.rotation);
+        serializationForCSS(builder, context, value.rotation);
     }
 }
 
-void Serialize<Shape>::operator()(StringBuilder& builder, const Shape& value)
+void Serialize<Shape>::operator()(StringBuilder& builder, const SerializationContext& context, const Shape& value)
 {
     // shape() = shape( <'fill-rule'>? from <coordinate-pair>, <shape-command>#)
 
     if (value.fillRule && !std::holds_alternative<Keyword::Nonzero>(*value.fillRule)) {
-        serializationForCSS(builder, *value.fillRule);
+        serializationForCSS(builder, context, *value.fillRule);
         builder.append(' ');
     }
 
     builder.append(nameLiteralForSerialization(CSSValueFrom), ' ');
-    serializationForCSS(builder, value.startingPoint);
+    serializationForCSS(builder, context, value.startingPoint);
     builder.append(", "_s);
-    serializationForCSS(builder, value.commands);
+    serializationForCSS(builder, context, value.commands);
 }
 
 } // namespace CSS

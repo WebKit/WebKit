@@ -35,15 +35,15 @@ struct PercentageValidator {
         return CSS::UnitTraits<CSS::PercentageUnit>::validate(unitType);
     }
 
-    template<auto R> static bool isValid(CSS::PercentageRaw<R> raw, CSSPropertyParserOptions)
+    template<auto R, typename V> static bool isValid(CSS::PercentageRaw<R, V> raw, CSSPropertyParserOptions)
     {
         return isValidCanonicalValue(raw);
     }
 };
 
-template<auto R> struct ConsumerDefinition<CSS::Percentage<R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Percentage<R>>;
-    using PercentageToken = PercentageConsumer<CSS::Percentage<R>, PercentageValidator>;
+template<auto R, typename V> struct ConsumerDefinition<CSS::Percentage<R, V>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Percentage<R, V>>;
+    using PercentageToken = PercentageConsumer<CSS::Percentage<R, V>, PercentageValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

@@ -62,13 +62,13 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
 {
     // This function is expected to work with the format used by cookies, so skip any leading dots.
     unsigned position = 0;
-    while (domain[position] == '.')
+    while (position < domain.length() && domain[position] == '.')
         position++;
 
-    if (position == domain.length())
+    auto tldView = domain.substring(position);
+    if (tldView.isEmpty())
         return String();
 
-    auto tldView = domain.substring(position);
     const auto tldCString = tldView.utf8();
 
     GUniqueOutPtr<GError> error;

@@ -26,7 +26,7 @@ function testCallFFI(func, check) {
 
   var main = builder.instantiate({"": {func: func}}).exports.main;
 
-  for (var i = 0; i < 100000; i += 10003) {
+  for (var i = 0; i < wasmTestLoopCount; i += 10003) {
     var a = 22.5 + i, b = 10.5 + i;
     var r = main(a, b);
     if (check) {
@@ -275,7 +275,7 @@ function testCallBinopVoid(type, func, check) {
 
   // print("testCallBinopVoid", type);
 
-  for (var i = 0; i < 100000; i += 10003.1) {
+  for (var i = 0; i < wasmTestLoopCount; i += 10003.1) {
     var a = 22.5 + i, b = 10.5 + i;
     var r = main(a, b);
     assertEquals(33, r);

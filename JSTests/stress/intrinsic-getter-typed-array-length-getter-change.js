@@ -13,7 +13,7 @@ function getter() { return (new Int8Array(10)).length }
 noDFG(getter)
 
 function test() {
-    for (var i = 0; i < 1e5; i++)
+    for (var i = 0; i < testLoopCount; i++)
         shouldBe(getter(), 10)
 
     Object.defineProperty(Int8Array.prototype.__proto__, "length", {

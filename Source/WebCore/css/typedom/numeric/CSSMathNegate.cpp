@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathNegate.h"
 
+#include "CSSCalcTree.h"
 #include "CSSNumericValue.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringBuilder.h>

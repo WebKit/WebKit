@@ -105,7 +105,7 @@ void VerifierSlotVisitor::OpaqueRootData::addMarkerData(MarkerData&& marker)
 }
 
 VerifierSlotVisitor::VerifierSlotVisitor(JSC::Heap& heap)
-    : Base(heap, "Verifier", m_opaqueRootStorage)
+    : Base(heap, "Verifier"_s, m_opaqueRootStorage)
 {
     m_needsExtraOpaqueRootHandling = true;
 }

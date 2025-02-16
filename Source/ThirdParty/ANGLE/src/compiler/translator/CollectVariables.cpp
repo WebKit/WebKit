@@ -793,7 +793,7 @@ void CollectVariablesTraverser::setFieldOrVariableProperties(const TType &type,
         variableOut->precision = GLVariablePrecision(type);
     }
 
-    const TSpan<const unsigned int> &arraySizes = type.getArraySizes();
+    const angle::Span<const unsigned int> &arraySizes = type.getArraySizes();
     if (!arraySizes.empty())
     {
         variableOut->arraySizes.assign(arraySizes.begin(), arraySizes.end());

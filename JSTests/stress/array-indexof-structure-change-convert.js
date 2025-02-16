@@ -18,15 +18,15 @@ noInline(indexOf);
     array3[9] = 8;
     array3[8] = 10.2;
 
-    for (var i = 0; i < 1e6; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(indexOf(array, 8), 8);
 
     array[9] = 8;
     array[8] = 10.2;
 
-    for (var i = 0; i < 1e6; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(indexOf(array, 8), 9);
 
-    for (var i = 0; i < 1e6; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(indexOf(array2, 8), 8);
 }());

@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/ParsingUtilities.h>
 #include <wtf/text/TextStream.h>
 
 // A region class based on the paper "Scanline Coherent Shape Algebra"
@@ -35,8 +36,6 @@
 //
 // This implementation uses two vectors instead of linked list, and
 // also compresses regions when possible.
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
@@ -50,12 +49,6 @@ Region::Region()
 
 Region::Region(const IntRect& rect)
     : m_bounds(rect)
-{
-}
-
-Region::Region(IntRect&& bounds, std::unique_ptr<Region::Shape>&& shape)
-    : m_bounds(WTFMove(bounds))
-    , m_shape(WTFMove(shape))
 {
 }
 
@@ -99,13 +92,13 @@ Vector<IntRect, 1> Region::rects() const
         return rects;
     }
 
-    for (Shape::SpanIterator span = m_shape->spans_begin(), end = m_shape->spans_end(); span != end && span + 1 != end; ++span) {
-        int y = span->y;
-        int height = (span + 1)->y - y;
+    for (auto spans = m_shape->spans(); spans.size() > 1; skip(spans, 1)) {
+        int y = spans[0].y;
+        int height = spans[1].y - y; // Ok since isValidShape ensures increasing Span::y.
 
-        for (Shape::SegmentIterator segment = m_shape->segments_begin(span), end = m_shape->segments_end(span); segment != end && segment + 1 != end; segment += 2) {
-            int x = *segment;
-            int width = *(segment + 1) - x;
+        for (auto segments = m_shape->segments(spans); segments.size() > 1; skip(segments, 2)) {
+            int x = segments[0];
+            int width = segments[1] - x; // Ok since isValidShape ensures increasing segments.
 
             rects.append(IntRect(x, y, width, height));
         }
@@ -133,18 +126,18 @@ bool Region::contains(const IntPoint& point) const
     if (!m_shape)
         return true;
 
-    for (Shape::SpanIterator span = m_shape->spans_begin(), end = m_shape->spans_end(); span != end && span + 1 != end; ++span) {
-        int y = span->y;
-        int maxY = (span + 1)->y;
+    for (auto spans = m_shape->spans(); spans.size() > 1; skip(spans, 1)) {
+        int y = spans[0].y;
+        int maxY = spans[1].y;
 
         if (y > point.y())
             break;
         if (maxY <= point.y())
             continue;
 
-        for (Shape::SegmentIterator segment = m_shape->segments_begin(span), end = m_shape->segments_end(span); segment != end && segment + 1 != end; segment += 2) {
-            int x = *segment;
-            int maxX = *(segment + 1);
+        for (auto segments = m_shape->segments(spans); segments.size() > 1; skip(segments, 2)) {
+            int x = segments[0];
+            int maxX = segments[1];
 
             if (x > point.x())
                 break;
@@ -182,27 +175,23 @@ bool Region::Shape::compareShapes(const Shape& aShape, const Shape& bShape)
 {
     bool result = CompareOperation::defaultResult;
 
-    Shape::SpanIterator aSpan = aShape.spans_begin();
-    Shape::SpanIterator aSpanEnd = aShape.spans_end();
-    Shape::SpanIterator bSpan = bShape.spans_begin();
-    Shape::SpanIterator bSpanEnd = bShape.spans_end();
+    auto aSpans = aShape.spans();
+    auto bSpans = bShape.spans();
 
     bool aHadSegmentInPreviousSpan = false;
     bool bHadSegmentInPreviousSpan = false;
-    while (aSpan != aSpanEnd && aSpan + 1 != aSpanEnd && bSpan != bSpanEnd && bSpan + 1 != bSpanEnd) {
-        int aY = aSpan->y;
-        int aMaxY = (aSpan + 1)->y;
-        int bY = bSpan->y;
-        int bMaxY = (bSpan + 1)->y;
+    while (aSpans.size() > 1 && bSpans.size() > 1) {
+        int aY = aSpans[0].y;
+        int aMaxY = aSpans[1].y;
+        int bY = bSpans[0].y;
+        int bMaxY = bSpans[1].y;
 
-        Shape::SegmentIterator aSegment = aShape.segments_begin(aSpan);
-        Shape::SegmentIterator aSegmentEnd = aShape.segments_end(aSpan);
-        Shape::SegmentIterator bSegment = bShape.segments_begin(bSpan);
-        Shape::SegmentIterator bSegmentEnd = bShape.segments_end(bSpan);
+        auto aSegments = aShape.segments(aSpans);
+        auto bSegments = bShape.segments(bSpans);
 
         // Look for a non-overlapping part of the spans. If B had a segment in its previous span, then we already tested A against B within that span.
-        bool aHasSegmentInSpan = aSegment != aSegmentEnd;
-        bool bHasSegmentInSpan = bSegment != bSegmentEnd;
+        bool aHasSegmentInSpan = !aSegments.empty();
+        bool bHasSegmentInSpan = !bSegments.empty();
         if (aY < bY && !bHadSegmentInPreviousSpan && aHasSegmentInSpan && CompareOperation::aOutsideB(result))
             return result;
         if (bY < aY && !aHadSegmentInPreviousSpan && bHasSegmentInSpan && CompareOperation::bOutsideA(result))
@@ -213,11 +202,11 @@ bool Region::Shape::compareShapes(const Shape& aShape, const Shape& bShape)
 
         bool spansOverlap = bMaxY > aY && bY < aMaxY;
         if (spansOverlap) {
-            while (aSegment != aSegmentEnd && bSegment != bSegmentEnd) {
-                int aX = *aSegment;
-                int aMaxX = *(aSegment + 1);
-                int bX = *bSegment;
-                int bMaxX = *(bSegment + 1);
+            while (!aSegments.empty() && !bSegments.empty()) {
+                int aX = aSegments[0];
+                int aMaxX = aSegments[1];
+                int bX = bSegments[0];
+                int bMaxX = bSegments[1];
 
                 bool segmentsOverlap = bMaxX > aX && bX < aMaxX;
                 if (segmentsOverlap && CompareOperation::aOverlapsB(result))
@@ -228,34 +217,34 @@ bool Region::Shape::compareShapes(const Shape& aShape, const Shape& bShape)
                     return result;
 
                 if (aMaxX < bMaxX)
-                    aSegment += 2;
+                    skip(aSegments, 2);
                 else if (bMaxX < aMaxX)
-                    bSegment += 2;
+                    skip(bSegments, 2);
                 else {
-                    aSegment += 2;
-                    bSegment += 2;
+                    skip(aSegments, 2);
+                    skip(bSegments, 2);
                 }
             }
 
-            if (aSegment != aSegmentEnd && CompareOperation::aOutsideB(result))
+            if (!aSegments.empty() && CompareOperation::aOutsideB(result))
                 return result;
-            if (bSegment != bSegmentEnd && CompareOperation::bOutsideA(result))
+            if (!bSegments.empty() && CompareOperation::bOutsideA(result))
                 return result;
         }
 
         if (aMaxY < bMaxY)
-            aSpan += 1;
+            skip(aSpans, 1);
         else if (bMaxY < aMaxY)
-            bSpan += 1;
+            skip(bSpans, 1);
         else {
-            aSpan += 1;
-            bSpan += 1;
+            skip(aSpans, 1);
+            skip(bSpans, 1);
         }
     }
 
-    if (aSpan != aSpanEnd && aSpan + 1 != aSpanEnd && CompareOperation::aOutsideB(result))
+    if (aSpans.size() > 1 && CompareOperation::aOutsideB(result))
         return result;
-    if (bSpan != bSpanEnd && bSpan + 1 != bSpanEnd && CompareOperation::bOutsideA(result))
+    if (bSpans.size() > 1 && CompareOperation::bOutsideA(result))
         return result;
 
     return result;
@@ -276,15 +265,20 @@ struct Region::Shape::CompareIntersectsOperation {
 };
 
 Region::Shape::Shape(const IntRect& rect)
-    : m_segments({ rect.x(), rect.maxX() })
-    , m_spans({ { rect.y(), 0 }, { rect.maxY(), 2 } })
 {
+    if (rect.isEmpty())
+        return;
+    m_segments.append(rect.x());
+    m_segments.append(rect.maxX());
+    m_spans.append({ rect.y(), 0 });
+    m_spans.append({ rect.maxY(), 2 });
 }
 
 Region::Shape::Shape(Vector<int, 32>&& segments, Vector<Span, 16>&& spans)
     : m_segments(WTFMove(segments))
     , m_spans(WTFMove(spans))
 {
+    ASSERT(isValidShape(m_segments.span(), m_spans.span()));
 }
 
 void Region::Shape::appendSpan(int y)
@@ -292,128 +286,91 @@ void Region::Shape::appendSpan(int y)
     m_spans.append({ y, m_segments.size() });
 }
 
-bool Region::Shape::canCoalesce(SegmentIterator begin, SegmentIterator end)
+bool Region::Shape::canCoalesce(std::span<const int> segments)
 {
     if (m_spans.isEmpty())
         return false;
 
-    SegmentIterator lastSpanBegin = m_segments.data() + m_spans.last().segmentIndex;
-    SegmentIterator lastSpanEnd = m_segments.data() + m_segments.size();
-
-    // Check if both spans have an equal number of segments.
-    if (lastSpanEnd - lastSpanBegin != end - begin)
-        return false;
-
-    // Check if both spans are equal.
-    if (!std::equal(begin, end, lastSpanBegin))
-        return false;
-
-    // Since the segments are equal the second segment can just be ignored.
-    return true;
+    return equalSpans(segments, m_segments.subspan(m_spans.last().segmentIndex));
 }
 
-void Region::Shape::appendSpan(int y, SegmentIterator begin, SegmentIterator end)
+void Region::Shape::appendSpan(int y, std::span<const int> segments)
 {
-    if (canCoalesce(begin, end))
+    if (canCoalesce(segments))
         return;
   
     appendSpan(y);
-    m_segments.appendRange(begin, end);
+    m_segments.append(segments);
 }
 
-void Region::Shape::appendSpans(const Shape& shape, SpanIterator begin, SpanIterator end)
+void Region::Shape::appendSpans(const Shape& shape, std::span<const Span> spans)
 {
-    for (SpanIterator it = begin; it != end; ++it)
-        appendSpan(it->y, shape.segments_begin(it), shape.segments_end(it));
+    for (; !spans.empty(); skip(spans, 1))
+        appendSpan(spans[0].y, shape.segments(spans));
 }
 
-void Region::Shape::appendSegment(int x)
+std::span<const int> Region::Shape::segments(std::span<const Span> span) const
 {
-    m_segments.append(x);
-}
-
-Region::Shape::SpanIterator Region::Shape::spans_begin() const
-{
-    return m_spans.data();
-}
-
-Region::Shape::SpanIterator Region::Shape::spans_end() const
-{
-    return m_spans.data() + m_spans.size();
-}
-
-Region::Shape::SegmentIterator Region::Shape::segments_begin(SpanIterator it) const
-{
-    ASSERT(it >= m_spans.data());
-    ASSERT(it < m_spans.data() + m_spans.size());
+    ASSERT(span.data() >= m_spans.data());
+    ASSERT(span.data() < std::to_address(m_spans.end()));
+    ASSERT(std::to_address(span.end()) <= std::to_address(m_spans.end()));
 
     // Check if this span has any segments.
-    if (it->segmentIndex == m_segments.size())
-        return 0;
+    if (span[0].segmentIndex == m_segments.size())
+        return { };
 
-    return &m_segments[it->segmentIndex];
+    return m_segments.subspan(span[0].segmentIndex, span[1].segmentIndex - span[0].segmentIndex);
 }
 
-Region::Shape::SegmentIterator Region::Shape::segments_end(SpanIterator it) const
+WTF::TextStream& operator<<(WTF::TextStream& ts, const Region::Shape& value)
 {
-    ASSERT(it >= m_spans.data());
-    ASSERT(it < m_spans.data() + m_spans.size());
-
-    // Check if this span has any segments.
-    if (it->segmentIndex == m_segments.size())
-        return 0;
-
-    ASSERT(it + 1 < m_spans.data() + m_spans.size());
-    size_t segmentIndex = (it + 1)->segmentIndex;
-
-    ASSERT_WITH_SECURITY_IMPLICATION(segmentIndex <= m_segments.size());
-    return m_segments.data() + segmentIndex;
-}
-
-#ifndef NDEBUG
-void Region::Shape::dump() const
-{
-    for (auto span = spans_begin(), end = spans_end(); span != end; ++span) {
-        printf("%6d: (", span->y);
-
-        for (auto segment = segments_begin(span), end = segments_end(span); segment != end; ++segment)
-            printf("%d ", *segment);
-        printf(")\n");
+    ts << '\n';
+    TextStream::IndentScope indentScope(ts);
+    ts << indent;
+    for (auto spans = value.spans(); !spans.empty(); skip(spans, 1)) {
+        ts << "y: " << spans[0].y << " spans: (";
+        int comma = 0;
+        for (auto& segment : value.segments(spans))
+            ts << (comma++ > 0 ? ", "_s : ""_s) << segment;
+        ts << ")\n";
     }
-
-    printf("\n");
+    ts << "spans: (";
+    for (size_t i = 0; i < value.m_spans.size(); ++i)
+        ts << (i > 0 ? ", "_s : ""_s) << "y: " << value.m_spans[i].y << " si: " << value.m_spans[i].segmentIndex;
+    ts << ")\n" << "segments: (";
+    for (size_t i = 0; i < value.m_segments.size(); ++i)
+        ts << (i > 0 ? ", "_s : ""_s) << value.m_segments[i];
+    ts << ")\n";
+    return ts;
 }
-#endif
 
 IntRect Region::Shape::bounds() const
 {
     if (isEmpty())
         return IntRect();
 
-    SpanIterator span = spans_begin();
-    int minY = span->y;
-
-    SpanIterator lastSpan = spans_end() - 1;
-    int maxY = lastSpan->y;
+    auto spans = this->spans();
+    int minY = spans.front().y;
+    int maxY = spans.back().y;
 
     int minX = std::numeric_limits<int>::max();
     int maxX = std::numeric_limits<int>::min();
 
-    while (span != lastSpan) {
-        SegmentIterator firstSegment = segments_begin(span);
-        SegmentIterator lastSegment = segments_end(span) - 1;
+    while (spans.size() > 1) {
+        auto segments = this->segments(spans);
+        if (!segments.empty()) {
+            auto& firstSegment = segments.front();
+            auto& lastSegment = segments.back();
+            ASSERT(&firstSegment != &lastSegment);
 
-        if (firstSegment && lastSegment) {
-            ASSERT(firstSegment != lastSegment);
+            if (firstSegment < minX)
+                minX = firstSegment;
 
-            if (*firstSegment < minX)
-                minX = *firstSegment;
-
-            if (*lastSegment > maxX)
-                maxX = *lastSegment;
+            if (lastSegment > maxX)
+                maxX = lastSegment;
         }
 
-        ++span;
+        skip(spans, 1);
     }
 
     ASSERT(minX <= maxX);
@@ -447,60 +404,52 @@ Region::Shape Region::Shape::shapeOperation(const Shape& shape1, const Shape& sh
     if (Operation::trySimpleOperation(shape1, shape2, result))
         return result;
 
-    SpanIterator spans1 = shape1.spans_begin();
-    SpanIterator spans1End = shape1.spans_end();
+    auto spans1 = shape1.spans();
+    auto spans2 = shape2.spans();
 
-    SpanIterator spans2 = shape2.spans_begin();
-    SpanIterator spans2End = shape2.spans_end();
-
-    SegmentIterator segments1 = 0;
-    SegmentIterator segments1End = 0;
-
-    SegmentIterator segments2 = 0;
-    SegmentIterator segments2End = 0;
+    std::span<const int> segments1;
+    std::span<const int> segments2;
 
     // Iterate over all spans.
-    while (spans1 != spans1End && spans2 != spans2End) {
+    while (!spans1.empty() && !spans2.empty()) {
         int y = 0;
-        int test = spans1->y - spans2->y;
+        auto test = spans1[0].y <=> spans2[0].y;
 
         if (test <= 0) {
-            y = spans1->y;
+            y = spans1[0].y;
 
-            segments1 = shape1.segments_begin(spans1);
-            segments1End = shape1.segments_end(spans1);
-            ++spans1;
+            segments1 = shape1.segments(spans1);
+            skip(spans1, 1);
         }
         if (test >= 0) {
-            y = spans2->y;
+            y = spans2[0].y;
 
-            segments2 = shape2.segments_begin(spans2);
-            segments2End = shape2.segments_end(spans2);
-            ++spans2;
+            segments2 = shape2.segments(spans2);
+            skip(spans2, 1);
         }
 
         int flag = 0;
         int oldFlag = 0;
 
-        SegmentIterator s1 = segments1;
-        SegmentIterator s2 = segments2;
+        auto s1 = segments1;
+        auto s2 = segments2;
 
         Vector<int, 32> segments;
 
         // Now iterate over the segments in each span and construct a new vector of segments.
-        while (s1 != segments1End && s2 != segments2End) {
-            int test = *s1 - *s2;
+        while (!s1.empty() && !s2.empty()) {
+            auto test = s1[0] <=> s2[0];
             int x;
 
             if (test <= 0) {
-                x = *s1;
+                x = s1[0];
                 flag = flag ^ 1;
-                ++s1;
+                skip(s1, 1);
             }
             if (test >= 0) {
-                x = *s2;
+                x = s2[0];
                 flag = flag ^ 2;
-                ++s2;
+                skip(s2, 1);
             }
 
             if (flag == Operation::opCode || oldFlag == Operation::opCode)
@@ -510,21 +459,21 @@ Region::Shape Region::Shape::shapeOperation(const Shape& shape1, const Shape& sh
         }
 
         // Add any remaining segments.
-        if (Operation::shouldAddRemainingSegmentsFromSpan1 && s1 != segments1End)
-            segments.appendRange(s1, segments1End);
-        else if (Operation::shouldAddRemainingSegmentsFromSpan2 && s2 != segments2End)
-            segments.appendRange(s2, segments2End);
+        if (Operation::shouldAddRemainingSegmentsFromSpan1 && !s1.empty())
+            segments.append(s1);
+        else if (Operation::shouldAddRemainingSegmentsFromSpan2 && !s2.empty())
+            segments.append(s2);
 
         // Add the span.
         if (!segments.isEmpty() || !result.isEmpty())
-            result.appendSpan(y, segments.data(), segments.data() + segments.size());
+            result.appendSpan(y, segments.span());
     }
 
     // Add any remaining spans.
-    if (Operation::shouldAddRemainingSpansFromShape1 && spans1 != spans1End)
-        result.appendSpans(shape1, spans1, spans1End);
-    else if (Operation::shouldAddRemainingSpansFromShape2 && spans2 != spans2End)
-        result.appendSpans(shape2, spans2, spans2End);
+    if (Operation::shouldAddRemainingSpansFromShape1 && !spans1.empty())
+        result.appendSpans(shape1, spans1);
+    else if (Operation::shouldAddRemainingSpansFromShape2 && !spans2.empty())
+        result.appendSpans(shape2, spans2);
 
     return result;
 }
@@ -590,16 +539,6 @@ Region::Shape Region::Shape::subtractShapes(const Shape& shape1, const Shape& sh
 {
     return shapeOperation<SubtractOperation>(shape1, shape2);
 }
-
-#ifndef NDEBUG
-void Region::dump() const
-{
-    printf("Bounds: (%d, %d, %d, %d)\n",
-           m_bounds.x(), m_bounds.y(), m_bounds.width(), m_bounds.height());
-    if (m_shape)
-        m_shape->dump();
-}
-#endif
 
 void Region::intersect(const Region& region)
 {
@@ -672,10 +611,48 @@ void Region::setShape(Shape&& shape)
         *m_shape = WTFMove(shape);
 }
 
-bool Region::Shape::isValid() const
+static std::span<const int> segmentsForSpanSegmentIndices(std::span<const int> segments, size_t start, size_t end)
 {
-    for (auto span = spans_begin(), end = spans_end(); span != end; ++span) {
-        if (UNLIKELY(span->segmentIndex > m_segments.size()))
+    if (segments.size() <= end)
+        return { };
+    return segments.subspan(start, end - start);
+}
+
+bool Region::Shape::isValidShape(std::span<const int> segments, std::span<const Span> spans)
+{
+    const size_t spansSize = spans.size();
+    const size_t segmentsSize = segments.size();
+    if (!spansSize)
+        return !segmentsSize;
+    if (!segmentsSize)
+        return !spansSize;
+    if (UNLIKELY(spansSize == 1))
+        return false;
+    if (UNLIKELY(segmentsSize % 2))
+        return false;
+    for (size_t i = 0; i < spansSize; ++i) {
+        auto& span = spans[i];
+        if (UNLIKELY(span.segmentIndex > segmentsSize))
+            return false;
+        if (UNLIKELY(span.segmentIndex % 2))
+            return false;
+
+        if (i < spansSize - 1) {
+            auto& nextSpan = spans[i + 1];
+
+            if (UNLIKELY(span.y >= nextSpan.y))
+                return false;
+            if (UNLIKELY(span.segmentIndex > nextSpan.segmentIndex))
+                return false;
+
+            std::span spanSegments = segmentsForSpanSegmentIndices(segments, span.segmentIndex, nextSpan.segmentIndex);
+            int lastX = std::numeric_limits<int>::min();
+            for (int segment : spanSegments) {
+                if (UNLIKELY(lastX > segment))
+                    return false;
+                lastX = segment;
+            }
+        } else if (UNLIKELY(span.segmentIndex != segments.size()))
             return false;
     }
     return true;
@@ -694,5 +671,3 @@ TextStream& operator<<(TextStream& ts, const Region& region)
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

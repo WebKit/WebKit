@@ -298,15 +298,28 @@ void BlockDirectory::endMarking()
     emptyBits() = liveBits() & ~markingNotEmptyBits();
     canAllocateButNotEmptyBits() = liveBits() & markingNotEmptyBits() & ~markingRetiredBits();
 
-    if (needsDestruction()) {
+    switch (m_attributes.destruction) {
+    case NeedsDestruction: {
         // There are some blocks that we didn't allocate out of in the last cycle, but we swept them. This
         // will forget that we did that and we will end up sweeping them again and attempting to call their
         // destructors again. That's fine because of zapping. The only time when we cannot forget is when
         // we just allocate a block or when we move a block from one size class to another. That doesn't
         // happen here.
         destructibleBits() = liveBits();
+        break;
     }
-    
+
+    case MayNeedDestruction: {
+        // When this destruction mode is specified, each cell notifies whether this MarkedBlock needs destructor runs conservatively.
+        // The bit will be set from the mutator and we use this bit to decide whether we run a destructor.
+        // Until we clear the MarkedBlock completely, once this bit is set, this bit is stickily set to the MarkedBlock.
+        break;
+    }
+
+    case DoesNotNeedDestruction:
+        break;
+    }
+
     if (BlockDirectoryInternal::verbose) {
         dataLogLn("Bits for ", m_cellSize, ", ", m_attributes, " after endMarking:");
         dumpBits(WTF::dataFile());
@@ -476,14 +489,18 @@ void BlockDirectory::dumpBits(PrintStream& out)
     forEachBitVectorWithName(
         [&](auto vectorRef, const char* name) {
             UNUSED_PARAM(vectorRef);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             unsigned length = strlen(name);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             maxNameLength = std::max(maxNameLength, length);
         });
     
     forEachBitVectorWithName(
         [&](auto vectorRef, const char* name) {
             out.print("    ", name, ": ");
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             for (unsigned i = maxNameLength - strlen(name); i--;)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 out.print(" ");
             out.print(vectorRef, "\n");
         });

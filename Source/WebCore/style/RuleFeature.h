@@ -106,11 +106,11 @@ struct RuleFeatureSet {
     bool usesMatchElement(MatchElement matchElement) const { return usedMatchElements[enumToUnderlyingType(matchElement)]; }
     void setUsesMatchElement(MatchElement matchElement) { usedMatchElements[enumToUnderlyingType(matchElement)] = true; }
 
-    HashSet<AtomString> idsInRules;
-    HashSet<AtomString> idsMatchingAncestorsInRules;
-    HashSet<AtomString> attributeLowercaseLocalNamesInRules;
-    HashSet<AtomString> attributeLocalNamesInRules;
-    HashSet<AtomString> contentAttributeNamesInRules;
+    UncheckedKeyHashSet<AtomString> idsInRules;
+    UncheckedKeyHashSet<AtomString> idsMatchingAncestorsInRules;
+    UncheckedKeyHashSet<AtomString> attributeLowercaseLocalNamesInRules;
+    UncheckedKeyHashSet<AtomString> attributeLocalNamesInRules;
+    UncheckedKeyHashSet<AtomString> contentAttributeNamesInRules;
     Vector<RuleAndSelector> siblingRules;
     Vector<RuleAndSelector> uncommonAttributeRules;
 
@@ -121,10 +121,10 @@ struct RuleFeatureSet {
     UncheckedKeyHashMap<PseudoClassInvalidationKey, std::unique_ptr<Vector<RuleFeatureWithInvalidationSelector>>> hasPseudoClassRules;
     Vector<RuleAndSelector> scopeBreakingHasPseudoClassRules;
 
-    HashSet<AtomString> classesAffectingHost;
-    HashSet<AtomString> attributesAffectingHost;
-    HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClassesAffectingHost;
-    HashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClasses;
+    UncheckedKeyHashSet<AtomString> classesAffectingHost;
+    UncheckedKeyHashSet<AtomString> attributesAffectingHost;
+    UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClassesAffectingHost;
+    UncheckedKeyHashSet<CSSSelector::PseudoClass, IntHash<CSSSelector::PseudoClass>, WTF::StrongEnumHashTraits<CSSSelector::PseudoClass>> pseudoClasses;
 
     std::array<bool, matchElementCount> usedMatchElements { };
 

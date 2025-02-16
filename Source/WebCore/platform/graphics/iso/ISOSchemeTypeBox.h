@@ -34,7 +34,7 @@ public:
     ISOSchemeTypeBox();
     ~ISOSchemeTypeBox();
 
-    static FourCC boxTypeName() { return "schm"; }
+    static FourCC boxTypeName() { return std::span { "schm" }; }
 
     FourCC schemeType() const { return m_schemeType; }
     uint32_t schemeVersion() const { return m_schemeVersion; }

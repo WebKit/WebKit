@@ -71,7 +71,7 @@ private:
     Ref<WebProcessPool> protectedProcessPool() const;
 
     void removeOldestEntry();
-    void removeEntriesMatching(const Function<bool(WebBackForwardListItem&)>&);
+    void removeEntriesMatching(NOESCAPE const Function<bool(WebBackForwardListItem&)>&);
     void addEntry(WebBackForwardListItem&, Ref<WebBackForwardCacheEntry>&&);
 
     WeakRef<WebProcessPool> m_processPool;

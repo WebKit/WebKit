@@ -50,9 +50,9 @@ void JSSetIterator::finishCreation(JSGlobalObject* globalObject,  JSSet* iterate
     setEntry(vm, 0);
     setIteratedObject(vm, iteratedObject);
 
-    iteratedObject->materializeIfNeeded(globalObject);
+    JSCell* storage = iteratedObject->storage(globalObject);
     RETURN_IF_EXCEPTION(scope, void());
-    setStorage(vm, iteratedObject->m_storage.get());
+    setStorage(vm, storage);
 
     internalField(Field::Kind).set(vm, this, jsNumber(static_cast<int32_t>(kind)));
 }

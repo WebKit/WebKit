@@ -15,7 +15,7 @@ function Foo() { }
 function Bar() { }
 Bar.prototype = new Foo();
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test({}, Object, true);
     test({}, Array, false);
     test({}, String, false);

@@ -11,7 +11,7 @@ function indexOf(array, value)
 noInline(indexOf);
 
 var array = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     if (i === 1e6 - 1) {
         array[8] = "Hello";
         shouldBe(indexOf(array, 8), -1);

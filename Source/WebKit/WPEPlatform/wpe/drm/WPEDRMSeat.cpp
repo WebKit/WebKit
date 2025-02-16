@@ -28,6 +28,7 @@
 
 #include "WPEDRMSession.h"
 #include "WPEKeymapXKB.h"
+#include "WPESettings.h"
 #include "WPEViewDRMPrivate.h"
 #include <linux/input.h>
 #include <wtf/MonotonicTime.h>
@@ -416,9 +417,9 @@ void Seat::handleKey(uint32_t time, uint32_t key, bool pressed, bool fromRepeat)
         g_source_attach(m_keyboard.repeat.source.get(), g_main_context_get_thread_default());
     }
 
-    // FIXME: make this configurable.
-    static const Seconds delay = 400_ms;
-    static const Seconds interval = 80_ms;
+    auto* settings = wpe_display_get_settings(wpe_view_get_display(view.get()));
+    Seconds delay = Seconds::fromMilliseconds(wpe_settings_get_uint32(settings, WPE_SETTING_KEY_REPEAT_DELAY, nullptr));
+    Seconds interval = Seconds::fromMilliseconds(wpe_settings_get_uint32(settings, WPE_SETTING_KEY_REPEAT_INTERVAL, nullptr));
 
     auto now = MonotonicTime::now().secondsSinceEpoch();
     if (!fromRepeat)

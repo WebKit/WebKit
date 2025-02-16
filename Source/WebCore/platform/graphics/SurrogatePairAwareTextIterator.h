@@ -23,8 +23,6 @@
 #include <unicode/utf16.h>
 #include <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 class SurrogatePairAwareTextIterator {
@@ -32,7 +30,7 @@ public:
     // The passed in UChar pointer starts at 'currentIndex'. The iterator operates on the range [currentIndex, lastIndex].
     // 'endIndex' denotes the maximum length of the UChar array, which might exceed 'lastIndex'.
     SurrogatePairAwareTextIterator(std::span<const UChar> characters, unsigned currentIndex, unsigned lastIndex)
-        : m_characters(characters.data())
+        : m_characters(characters)
         , m_currentIndex(currentIndex)
         , m_originalIndex(currentIndex)
         , m_lastIndex(lastIndex)
@@ -47,7 +45,8 @@ public:
 
         auto relativeIndex = m_currentIndex - m_originalIndex;
         clusterLength = 0;
-        U16_NEXT(&m_characters[relativeIndex], clusterLength, m_endIndex - m_currentIndex, character);
+        auto spanAtRelativeIndex = m_characters.subspan(relativeIndex);
+        U16_NEXT(spanAtRelativeIndex, clusterLength, m_endIndex - m_currentIndex, character);
         return true;
     }
 
@@ -63,17 +62,17 @@ public:
         m_currentIndex = index;
     }
 
-    const UChar* remainingCharacters() const
+    std::span<const UChar> remainingCharacters() const
     {
         auto relativeIndex = m_currentIndex - m_originalIndex;
-        return m_characters + relativeIndex;
+        return m_characters.subspan(relativeIndex);
     }
 
     unsigned currentIndex() const { return m_currentIndex; }
-    const UChar* characters() const { return m_characters; }
+    std::span<const UChar> characters() const { return m_characters; }
 
 private:
-    const UChar* const m_characters { nullptr };
+    std::span<const UChar> m_characters;
     unsigned m_currentIndex { 0 };
     const unsigned m_originalIndex { 0 };
     const unsigned m_lastIndex { 0 };
@@ -81,5 +80,3 @@ private:
 };
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

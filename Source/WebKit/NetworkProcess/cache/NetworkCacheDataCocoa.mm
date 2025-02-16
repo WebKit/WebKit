@@ -74,7 +74,7 @@ bool Data::isNull() const
     return !m_dispatchData;
 }
 
-bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
+bool Data::apply(NOESCAPE const Function<bool(std::span<const uint8_t>)>& applier) const
 {
     if (!size())
         return false;

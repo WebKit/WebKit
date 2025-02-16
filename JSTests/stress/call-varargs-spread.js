@@ -15,7 +15,7 @@ function foo(a, ...args) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = foo(i, i+1, i+2, i+3);
     assert(r.length === 7);
     assert(r[0] === i+1, JSON.stringify(r));

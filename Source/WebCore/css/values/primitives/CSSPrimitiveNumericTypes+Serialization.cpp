@@ -65,7 +65,7 @@ NEVER_INLINE String formatCSSNumberValue(const SerializableNumber& number)
     return makeString(FormattedCSSNumber::create(number.value), number.suffix);
 }
 
-void Serialize<SerializableNumber>::operator()(StringBuilder& builder, const SerializableNumber& number)
+void Serialize<SerializableNumber>::operator()(StringBuilder& builder, const SerializationContext&, const SerializableNumber& number)
 {
     formatCSSNumberValue(builder, number);
 }

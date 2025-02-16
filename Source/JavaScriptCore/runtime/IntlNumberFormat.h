@@ -89,16 +89,16 @@ public:
             case NumberType::Integer: {
                 double value = std::get<double>(m_value);
                 if (isNegativeZero(value))
-                    m_value = CString("-0");
+                    m_value = CString("-0"_s);
                 else
                     m_value = String::number(value).ascii();
                 break;
             }
             case NumberType::NaN:
-                m_value = CString("nan");
+                m_value = CString("nan"_s);
                 break;
             case NumberType::Infinity:
-                m_value = CString(m_sign ? "-infinity" : "infinity");
+                m_value = CString(m_sign ? "-infinity"_s : "infinity"_s);
                 break;
             }
         }
@@ -137,7 +137,7 @@ class IntlNumberFormat final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
 
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     static void destroy(JSCell* cell)
     {

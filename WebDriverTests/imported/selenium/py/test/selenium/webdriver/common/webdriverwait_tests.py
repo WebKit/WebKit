@@ -35,6 +35,7 @@ def throw_sere(driver):
 
 @pytest.mark.xfail_chrome(reason="https://bugs.chromium.org/p/chromedriver/issues/detail?id=4743")
 @pytest.mark.xfail_edge(reason="https://bugs.chromium.org/p/chromedriver/issues/detail?id=4743")
+@pytest.mark.xfail_safari
 def test_should_fail_with_invalid_selector_exception(driver, pages):
     pages.load("dynamic.html")
     with pytest.raises(InvalidSelectorException):

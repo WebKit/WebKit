@@ -359,7 +359,7 @@ static String cookieRequestHeaderFieldValue(const CookieJar* cookieJar, const Re
     return cookieJar->cookieRequestHeaderFieldValue(request.firstPartyForCookies(), SameSiteInfo::create(request), request.url(), std::nullopt, std::nullopt, request.url().protocolIs("https"_s) ? IncludeSecureCookies::Yes : IncludeSecureCookies::No).first;
 }
 
-static String headerValueForVary(const ResourceRequest& request, StringView headerName, Function<String()>&& cookieRequestHeaderFieldValueFunction)
+static String headerValueForVary(const ResourceRequest& request, StringView headerName, NOESCAPE const Function<String()>& cookieRequestHeaderFieldValueFunction)
 {
     // Explicit handling for cookies is needed because they are added magically by the networking layer.
     // FIXME: The value might have changed between making the request and retrieving the cookie here.
@@ -370,7 +370,7 @@ static String headerValueForVary(const ResourceRequest& request, StringView head
     return request.httpHeaderField(headerName);
 }
 
-static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(const ResourceResponse& response, Function<String(StringView headerName)>&& headerValueForVaryFunction)
+static Vector<std::pair<String, String>> collectVaryingRequestHeadersInternal(const ResourceResponse& response, NOESCAPE const Function<String(StringView headerName)>& headerValueForVaryFunction)
 {
     auto varyValue = response.httpHeaderField(HTTPHeaderName::Vary);
     if (varyValue.isEmpty())

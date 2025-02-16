@@ -1358,8 +1358,8 @@ private:
 BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 {
     ASSERT(bytecodeIndex);
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(bytecodeIndex, m_numArguments, m_numLocals, m_numTmps, 1));
-    BasicBlock* blockPtr = block.ptr();
+    auto block = makeUnique<BasicBlock>(bytecodeIndex, m_numArguments, m_numLocals, m_numTmps, 1);
+    BasicBlock* blockPtr = block.get();
     // m_blockLinkingTargets must always be sorted in increasing order of bytecodeBegin
     if (m_inlineStackTop->m_blockLinkingTargets.size())
         ASSERT(m_inlineStackTop->m_blockLinkingTargets.last()->bytecodeBegin.offset() < bytecodeIndex.offset());
@@ -1370,8 +1370,8 @@ BasicBlock* ByteCodeParser::allocateTargetableBlock(BytecodeIndex bytecodeIndex)
 
 BasicBlock* ByteCodeParser::allocateUntargetableBlock()
 {
-    Ref<BasicBlock> block = adoptRef(*new BasicBlock(BytecodeIndex(), m_numArguments, m_numLocals, m_numTmps, 1));
-    BasicBlock* blockPtr = block.ptr();
+    auto block = makeUnique<BasicBlock>(BytecodeIndex(), m_numArguments, m_numLocals, m_numTmps, 1);
+    BasicBlock* blockPtr = block.get();
     m_graph.appendBlock(WTFMove(block));
     VERBOSE_LOG("Adding new untargetable block: ", blockPtr->index, "\n");
     return blockPtr;
@@ -2350,7 +2350,7 @@ ByteCodeParser::CallOptimizationResult ByteCodeParser::handleInlining(
         if (inliningResult == CallOptimizationResult::DidNothing) {
             // That failed so we let the block die. Nothing interesting should have been added to
             // the block. We also give up on inlining any of the (less frequent) callees.
-            ASSERT(m_graph.m_blocks.last() == m_currentBlock);
+            ASSERT(m_graph.m_blocks.last().get() == m_currentBlock);
             m_graph.killBlockAndItsContents(m_currentBlock);
             m_graph.m_blocks.removeLast();
             VERBOSE_LOG("Inlining of a poly call failed, we will have to go through a slow path\n");
@@ -3673,7 +3673,7 @@ auto ByteCodeParser::handleIntrinsicCall(Node* callee, Operand resultOperand, Ca
             insertChecks();
             Node* map = get(virtualRegisterForArgumentIncludingThis(1, registerOffset));
             UseKind useKind = intrinsic == JSSetStorageIntrinsic ? SetObjectUse : MapObjectUse;
-            Node* storage = addToGraph(MapStorage, Edge(map, useKind));
+            Node* storage = addToGraph(MapStorageOrSentinel, Edge(map, useKind));
             setResult(storage);
             return CallOptimizationResult::Inlined;
         }
@@ -8351,7 +8351,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
 
             Vector<SpeculatedType> argumentPredictions(m_numArguments);
             Vector<SpeculatedType> localPredictions;
-            HashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenArguments;
+            UncheckedKeyHashSet<unsigned, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> seenArguments;
 
             {
                 ConcurrentJSLocker locker(m_inlineStackTop->m_profiledBlock->valueProfileLock());

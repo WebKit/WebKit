@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-String CSSGridLineNamesValue::customCSSText() const
+String CSSGridLineNamesValue::customCSSText(const CSS::SerializationContext&) const
 {
     StringBuilder result;
     result.append('[');

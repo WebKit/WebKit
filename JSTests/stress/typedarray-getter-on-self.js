@@ -25,7 +25,7 @@
         Object.defineProperty(array, name, { get: getter, configurable: true });
     });
 
-    for (let i = 0; i < 100000; i++)
+    for (let i = 0; i < testLoopCount; i++)
         foo(array);
 
     properties.map(function(name) {

@@ -163,6 +163,22 @@ function test()
     });
 
     addTest({
+        name: "console.screenshot.DOMRect",
+        expression: `console.screenshot(document.querySelector("#testNode").getBoundingClientRect())`,
+    });
+
+    addTest({
+        name: "console.screenshot.DOMRectReadOnly",
+        expression: `console.screenshot(DOMRectReadOnly.fromRect(document.querySelector("#testNode").getBoundingClientRect()))`,
+    });
+
+    addTest({
+        name: "console.screenshot.DOMRectInit",
+        expression: `console.screenshot({x: 0, y: 0, width: 2, height: 2})`,
+        shouldCaptureViewport: true,
+    });
+
+    addTest({
         name: "console.screenshot.String.Valid",
         expression: `console.screenshot("test")`,
         shouldCaptureViewport: true,

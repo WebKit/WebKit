@@ -95,7 +95,7 @@ bool DOMWindow::closed() const
 
 void DOMWindow::close(Document& document)
 {
-    if (!document.canNavigate(protectedFrame().get()))
+    if (document.canNavigate(protectedFrame().get()) != CanNavigateState::Able)
         return;
     close();
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/js-test-resources/js-test.js"></script>
+<script src="./resources/monitor-setup.js"></script>
+</head>
+<body>
+<script>
+
+description("Test iframe with large Blob usage is not handled as network usage.");
+window.jsTestIsAsync = true;
+var result;
+
+onload = async () => {
+    if (!await setup()) {
+        return;
+    }
+
+    // Make sure iframe load is done after rule is set correctly.
+    const stage = document.querySelector('#stage');
+    const base = 'http://localhost:8080/iframe-monitor/resources';
+
+    stage.innerHTML = `
+        <iframe name="frame1" src="${base}/--eligible--/data-url.html"></iframe>
+    `;
+
+    window.addEventListener('message', async (event) => {
+        await pause(100);
+        result = event.data;
+
+        shouldBeTrue('result');
+        shouldBe(`document.querySelector('iframe[name=frame1]').srcdoc`, '""');
+        finishJSTest();
+    });
+}
+</script>
+
+<div id="stage"></div>
+</body>
+</html>

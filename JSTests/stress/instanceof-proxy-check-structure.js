@@ -31,13 +31,13 @@ function foo(o, p, q)
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({f:42}, new Bar(), {f:0});
     if (result != 84)
         throw "Error: bad result in loop: " + result;
 }
 
-if (numberOfGetPrototypeOfCalls != 10000)
+if (numberOfGetPrototypeOfCalls != testLoopCount)
     throw "Error: did not call getPrototypeOf() the right number of times";
 
 var globalO = {f:42};
@@ -55,5 +55,5 @@ if (result != 85)
     throw "Error: bad result at end: " + result;
 if (!didCallGetter)
     throw "Error: did not call getter";
-if (numberOfGetPrototypeOfCalls != 10001)
+if (numberOfGetPrototypeOfCalls != testLoopCount + 1)
     throw "Error: did not call getPrototypeOf() the right number of times at end";

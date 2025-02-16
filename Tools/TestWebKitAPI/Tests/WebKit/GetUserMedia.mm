@@ -167,7 +167,7 @@ static void initializeMediaCaptureConfiguration(WKWebViewConfiguration* configur
     preferences._getUserMediaRequiresFocus = NO;
 }
 
-void doCaptureMuteTest(const Function<void(TestWKWebView*, _WKMediaMutedState)>& setPageMuted)
+void doCaptureMuteTest(NOESCAPE const Function<void(TestWKWebView*, _WKMediaMutedState)>& setPageMuted)
 {
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto processPoolConfig = adoptNS([[_WKProcessPoolConfiguration alloc] init]);

@@ -28,6 +28,7 @@
 #include "AudioIOCallback.h"
 #include "AudioUtilities.h"
 #include "GStreamerCommon.h"
+#include "GStreamerQuirks.h"
 #include <gst/app/gstappsrc.h>
 #include <gst/audio/audio-info.h>
 #include <gst/pbutils/missing-plugins.h>
@@ -53,7 +54,7 @@ struct _WebKitWebAudioSrcClass {
     GstBinClass parentClass;
 };
 
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src",
+static GstStaticPadTemplate webAudioSrcTemplate = GST_STATIC_PAD_TEMPLATE("src",
     GST_PAD_SRC,
     GST_PAD_ALWAYS,
     GST_STATIC_CAPS(GST_AUDIO_CAPS_MAKE(GST_AUDIO_NE(F32))));
@@ -90,7 +91,7 @@ struct _WebKitWebAudioSrcPrivate {
 
     _WebKitWebAudioSrcPrivate()
     {
-        sourcePad = webkitGstGhostPadFromStaticTemplate(&srcTemplate, "src", nullptr);
+        sourcePad = webkitGstGhostPadFromStaticTemplate(&webAudioSrcTemplate, "src", nullptr);
 
         g_rec_mutex_init(&mutex);
     }
@@ -163,7 +164,6 @@ static GstCaps* getGStreamerAudioCaps(float sampleRate, unsigned numberOfChannel
         "layout", G_TYPE_STRING, "non-interleaved", nullptr);
 }
 
-#define webkit_web_audio_src_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitWebAudioSrc, webkit_web_audio_src, GST_TYPE_BIN, GST_DEBUG_CATEGORY_INIT(webkit_web_audio_src_debug, "webkitwebaudiosrc", 0, "webaudiosrc element"))
 
 static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAudioSrcClass)
@@ -171,7 +171,7 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
     GObjectClass* objectClass = G_OBJECT_CLASS(webKitWebAudioSrcClass);
     GstElementClass* elementClass = GST_ELEMENT_CLASS(webKitWebAudioSrcClass);
 
-    gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&srcTemplate));
+    gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&webAudioSrcTemplate));
     gst_element_class_set_metadata(elementClass, "WebKit WebAudio source element", "Source", "Handles WebAudio data from WebCore", "Philippe Normand <pnormand@igalia.com>");
 
     objectClass->constructed = webKitWebAudioSrcConstructed;
@@ -199,7 +199,7 @@ static void webkit_web_audio_src_class_init(WebKitWebAudioSrcClass* webKitWebAud
 
 static void webKitWebAudioSrcConstructed(GObject* object)
 {
-    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+    G_OBJECT_CLASS(webkit_web_audio_src_parent_class)->constructed(object);
 
     WebKitWebAudioSrc* src = WEBKIT_WEB_AUDIO_SRC(object);
     WebKitWebAudioSrcPrivate* priv = src->priv;
@@ -213,6 +213,10 @@ static void webKitWebAudioSrcConstructed(GObject* object)
 
     priv->task = adoptGRef(gst_task_new(reinterpret_cast<GstTaskFunction>(webKitWebAudioSrcRenderIteration), src, nullptr));
     gst_task_set_lock(priv->task.get(), &priv->mutex);
+
+    static Atomic<uint32_t> taskId;
+    auto taskName = makeString("webaudioSrcTask"_s, taskId.exchangeAdd(1));
+    gst_object_set_name(GST_OBJECT_CAST(priv->task.get()), taskName.ascii().data());
 
     priv->source = makeGStreamerElement("appsrc", "webaudioSrc");
 
@@ -297,10 +301,8 @@ static GRefPtr<GstBuffer> webKitWebAudioSrcAllocateBuffer(WebKitWebAudioSrc* src
     {
         GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_READ);
         ASSERT(mappedBuffer);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++)
-            priv->bus->setChannelMemory(channelIndex, spanReinterpretCast<float>(mappedBuffer.mutableSpan().subspan(channelIndex * priv->bufferSize)).first(priv->framesToPull));
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+            priv->bus->setChannelMemory(channelIndex, spanReinterpretCast<float>(mappedBuffer.mutableSpan<uint8_t>().subspan(channelIndex * priv->bufferSize)).first(priv->framesToPull));
     }
 
     return buffer;
@@ -349,8 +351,13 @@ static void webKitWebAudioSrcRenderAndPushFrames(const GRefPtr<GstElement>& elem
     GST_BUFFER_DURATION(buffer.get()) = duration;
 
     if (priv->bus->isSilent()) {
-        GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_GAP);
-        GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_DROPPABLE);
+        auto& quirksManager = GStreamerQuirksManager::singleton();
+        if (quirksManager.isEnabled())
+            quirksManager.processWebAudioSilentBuffer(buffer.get());
+        else {
+            GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_GAP);
+            GST_BUFFER_FLAG_SET(buffer.get(), GST_BUFFER_FLAG_DROPPABLE);
+        }
     }
 
     // Leak the buffer ref, because gst_app_src_push_buffer steals it.
@@ -430,7 +437,7 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
         break;
     }
 
-    returnValue = GST_ELEMENT_CLASS(parent_class)->change_state(element, transition);
+    returnValue = GST_ELEMENT_CLASS(webkit_web_audio_src_parent_class)->change_state(element, transition);
     if (UNLIKELY(returnValue == GST_STATE_CHANGE_FAILURE)) {
         GST_DEBUG_OBJECT(src, "State change failed");
         return returnValue;

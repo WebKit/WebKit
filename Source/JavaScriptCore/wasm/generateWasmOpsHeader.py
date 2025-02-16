@@ -385,6 +385,12 @@ inline TypeKind linearizedToType(int i)
 
 
 """ + defines + """
+#define FOR_EACH_WASM_EXT_PREFIX_OP_WITH_ENUM(macro) \\
+    macro(ExtGC, 0xFB, Oops, 0, ExtGCOpType) \\
+    macro(Ext1, 0xFC, Oops, 0, Ext1OpType) \\
+    macro(ExtSIMD, 0xFD, Oops, 0, ExtSIMDOpType) \\
+    macro(ExtAtomic, 0xFE, Oops, 0, ExtAtomicOpType)
+
 #define FOR_EACH_WASM_OP(macro) \\
     FOR_EACH_WASM_SPECIAL_OP(macro) \\
     FOR_EACH_WASM_CONTROL_FLOW_OP(macro) \\
@@ -392,10 +398,7 @@ inline TypeKind linearizedToType(int i)
     FOR_EACH_WASM_BINARY_OP(macro) \\
     FOR_EACH_WASM_MEMORY_LOAD_OP(macro) \\
     FOR_EACH_WASM_MEMORY_STORE_OP(macro) \\
-    macro(ExtGC,  0xFB, Oops, 0) \\
-    macro(Ext1,  0xFC, Oops, 0) \\
-    macro(ExtSIMD, 0xFD, Oops, 0) \\
-    macro(ExtAtomic, 0xFE, Oops, 0)
+    FOR_EACH_WASM_EXT_PREFIX_OP_WITH_ENUM(macro)
 
 #define CREATE_ENUM_VALUE(name, id, ...) name = id,
 

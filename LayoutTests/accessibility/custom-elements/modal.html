@@ -4,7 +4,7 @@
 <script src="../../resources/js-test.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
 <p role="group" id="background-content">background</p>
-<custom-dialog id="custom-dialog">modal content</custom-dialog>
+<custom-dialog id="custom-dialog" tabindex="0">modal content</custom-dialog>
 <script>
 
 customElements.define('custom-dialog', class CustomDialog extends HTMLElement {
@@ -17,6 +17,10 @@ customElements.define('custom-dialog', class CustomDialog extends HTMLElement {
     }
 });
 
+// In order for an object to be "modal" (trapping user focus inside), it must have focus within itself, or on the modal.
+// Here, we focus the modal. This is intentional as a testcase ensuring we allow focus on the modal element itself to
+// trigger modality.
+document.getElementById("custom-dialog").focus();
 description("This tests that aria fallback roles work correctly.");
 if (!window.accessibilityController)
     debug('This test requires accessibilityController');

@@ -68,6 +68,10 @@ public:
     WEBCORE_EXPORT void replaceBackend(UniqueRef<NativeImageBackend>);
     NativeImageBackend& backend() { return m_backend.get(); }
     const NativeImageBackend& backend() const { return m_backend.get(); }
+
+#if USE(COORDINATED_GRAPHICS)
+    uint64_t uniqueID() const;
+#endif
 protected:
     NativeImage(UniqueRef<NativeImageBackend>, RenderingResourceIdentifier);
 

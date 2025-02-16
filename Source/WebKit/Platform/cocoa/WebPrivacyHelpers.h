@@ -27,6 +27,7 @@
 
 #import "ScriptTelemetry.h"
 #import <wtf/CompletionHandler.h>
+#import <wtf/ContinuousApproximateTime.h>
 #import <wtf/Function.h>
 #import <wtf/Ref.h>
 #import <wtf/RetainPtr.h>
@@ -54,6 +55,7 @@ namespace WebKit {
 enum class RestrictedOpenerType : uint8_t;
 
 void configureForAdvancedPrivacyProtections(NSURLSession *);
+bool isKnownTrackerAddressOrDomain(StringView host);
 void requestLinkDecorationFilteringData(CompletionHandler<void(Vector<WebCore::LinkDecorationFilteringData>&&)>&&);
 
 class ListDataObserver : public RefCountedAndCanMakeWeakPtr<ListDataObserver> {
@@ -176,12 +178,12 @@ public:
 private:
     friend class NeverDestroyed<RestrictedOpenerDomainsController, MainThreadAccessTraits>;
     RestrictedOpenerDomainsController();
-    void scheduleNextUpdate(uint64_t);
+    void scheduleNextUpdate(ContinuousApproximateTime);
     void update();
 
     RetainPtr<WKWebPrivacyNotificationListener> m_notificationListener;
     HashMap<WebCore::RegistrableDomain, RestrictedOpenerType> m_restrictedOpenerTypes;
-    uint64_t m_nextScheduledUpdateTime { 0 };
+    ContinuousApproximateTime m_nextScheduledUpdateTime;
 };
 
 class ResourceMonitorURLsController {

@@ -54,7 +54,7 @@ private:
     InsideLink determineLinkStateSlowCase(const Element&);
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
-    HashSet<SharedStringHash, SharedStringHashHash> m_linksCheckedForVisitedState;
+    UncheckedKeyHashSet<SharedStringHash, SharedStringHashHash> m_linksCheckedForVisitedState;
 };
 
 inline InsideLink VisitedLinkState::determineLinkState(const Element& element)

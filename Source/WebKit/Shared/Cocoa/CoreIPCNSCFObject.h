@@ -36,6 +36,25 @@ namespace WebKit {
 class CoreIPCArray;
 class CoreIPCCFType;
 class CoreIPCColor;
+#if USE(PASSKIT)
+class CoreIPCPKPaymentMethod;
+class CoreIPCPKPaymentMerchantSession;
+class CoreIPCPKContact;
+class CoreIPCPKSecureElementPass;
+class CoreIPCPKPayment;
+class CoreIPCPKPaymentToken;
+class CoreIPCPKShippingMethod;
+class CoreIPCPKDateComponentsRange;
+class CoreIPCCNContact;
+class CoreIPCCNPhoneNumber;
+class CoreIPCCNPostalAddress;
+#endif
+#if ENABLE(DATA_DETECTION) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+class CoreIPCDDScannerResult;
+#if PLATFORM(MAC)
+class CoreIPCDDSecureActionContext;
+#endif
+#endif
 class CoreIPCData;
 class CoreIPCDate;
 class CoreIPCDateComponents;
@@ -47,7 +66,9 @@ class CoreIPCNSShadow;
 class CoreIPCNSValue;
 class CoreIPCNumber;
 class CoreIPCNull;
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 class CoreIPCSecureCoding;
+#endif
 class CoreIPCString;
 class CoreIPCURL;
 
@@ -66,12 +87,35 @@ using ObjectValue = std::variant<
     CoreIPCNSValue,
     CoreIPCNumber,
     CoreIPCNull,
+#if USE(PASSKIT)
+    CoreIPCPKPaymentMethod,
+    CoreIPCPKPaymentMerchantSession,
+    CoreIPCPKContact,
+    CoreIPCPKSecureElementPass,
+    CoreIPCPKPayment,
+    CoreIPCPKPaymentToken,
+    CoreIPCPKShippingMethod,
+    CoreIPCPKDateComponentsRange,
+    CoreIPCCNContact,
+    CoreIPCCNPhoneNumber,
+    CoreIPCCNPostalAddress,
+#endif
+#if ENABLE(DATA_DETECTION) && HAVE(WK_SECURE_CODING_DATA_DETECTORS)
+    CoreIPCDDScannerResult,
+#if PLATFORM(MAC)
+    CoreIPCDDSecureActionContext,
+#endif
+#endif
+    CoreIPCDateComponents,
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
     CoreIPCSecureCoding,
+#endif // HAVE(WK_SECURE_CODING_NSURLREQUEST)
     CoreIPCString,
     CoreIPCURL
 >;
 
 class CoreIPCNSCFObject {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     CoreIPCNSCFObject(id);
     CoreIPCNSCFObject(UniqueRef<ObjectValue>&&);

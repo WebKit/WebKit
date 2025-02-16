@@ -1,0 +1,6 @@
+
+FAIL margin rule without any preceding @page properties assert_equals: expected 1 but got 0
+FAIL margin rule followed by @page properties assert_equals: expected 1 but got 0
+FAIL margin rule preceded by @page properties assert_equals: expected 1 but got 0
+FAIL margin rules with @page properties between assert_equals: expected 2 but got 0
+

@@ -1,0 +1,23 @@
+<html>
+<head>
+    <script src="../../resources/js-test.js"></script>
+    <script>
+        function runTest() {
+            const MAX_LENGTH = 1 << 28;
+
+            const largeString = 'A'.repeat(MAX_LENGTH);
+
+            const container = document.getElementById('container');
+
+            for (let i = 0; i < 9; ++i)
+                container.appendChild(document.createTextNode(largeString));
+
+            shouldThrowErrorName('container.normalize()', 'InvalidModificationError');
+            description("This test passes if there is no crash and there's an exception");
+        }
+    </script>
+</head>
+<body onload="runTest()">
+    <div id="container" hidden></div>
+</body>
+</html>

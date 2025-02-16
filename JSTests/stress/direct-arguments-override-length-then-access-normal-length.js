@@ -13,10 +13,10 @@
     noInline(foo);
     
     var result = 0;
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         result += foo(array[i % array.length]);
     
-    if (result != 45000)
+    if (result != 4.5 * testLoopCount)
         throw "Error: bad result: " + result;
     
     var result = foo((function() { return arguments; })(1, 2, 3, 4));

@@ -56,6 +56,8 @@ set(WTF_PUBLIC_HEADERS
     ConcurrentPtrHashSet.h
     ConcurrentVector.h
     Condition.h
+    ContinuousApproximateTime.h
+    ContinuousTime.h
     CountingLock.h
     CrossThreadCopier.h
     CrossThreadQueue.h
@@ -71,7 +73,6 @@ set(WTF_PUBLIC_HEADERS
     DebugUtilities.h
     DeferrableRefCounted.h
     Deque.h
-    DisallowCType.h
     Dominators.h
     DoublyLinkedList.h
     EmbeddedFixedVector.h
@@ -91,6 +92,7 @@ set(WTF_PUBLIC_HEADERS
     FixedBitVector.h
     FixedVector.h
     FixedWidthDouble.h
+    FlatteningVariantAdaptor.h
     FlipBytes.h
     Float16.h
     ForbidHeapAllocation.h
@@ -506,6 +508,8 @@ set(WTF_SOURCES
     CompilationThread.cpp
     ConcurrentBuffer.cpp
     ConcurrentPtrHashSet.cpp
+    ContinuousApproximateTime.cpp
+    ContinuousTime.cpp
     CountingLock.cpp
     CrossThreadCopier.cpp
     CrossThreadTaskHandler.cpp

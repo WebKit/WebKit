@@ -24,7 +24,6 @@
  */
 
 [
-    EnabledBySetting=ReportingEnabled,
     LegacyNoInterfaceObject
 ] interface CORPViolationReportBody : ReportBody {
     readonly attribute DOMString disposition;

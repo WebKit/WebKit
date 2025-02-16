@@ -633,7 +633,7 @@ static Ref<GenericPromise> myMethodReturningThenCommandWithPromise()
 {
     assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
+    return GenericPromise::createAndResolve()->whenSettled(RunLoop::protectedMain(),
         [](GenericPromise::Result result) {
             return GenericPromise::createAndSettle(WTFMove(result));
         });
@@ -643,7 +643,7 @@ static Ref<GenericPromise> myMethodReturningThenCommandWithVoid()
 {
     assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndReject()->whenSettled(RunLoop::main(),
+    return GenericPromise::createAndReject()->whenSettled(RunLoop::protectedMain(),
         [](GenericPromise::Result result) {
             EXPECT_FALSE(result.has_value());
         });
@@ -706,7 +706,7 @@ static Ref<GenericPromise> myMethodReturningProducer()
 {
     assertIsCurrent(RunLoop::main());
     // You would normally do some work here.
-    return GenericPromise::createAndResolve()->whenSettled(RunLoop::main(),
+    return GenericPromise::createAndResolve()->whenSettled(RunLoop::protectedMain(),
         [](GenericPromise::Result result) {
             GenericPromise::Producer producer;
             producer.settle(WTFMove(result));
@@ -1683,7 +1683,7 @@ TEST(NativePromise, DisconnectNotOwnedInstance)
     GenericPromise::Producer producer;
     auto request = makeUnique<NativePromiseRequest>();
     WeakPtr weakRequest { *request };
-    producer->whenSettled(RunLoop::main(), [request = WTFMove(request)] (auto&& result) mutable {
+    producer->whenSettled(RunLoop::protectedMain().get(), [request = WTFMove(request)] (auto&& result) mutable {
         request->complete();
         EXPECT_TRUE(false);
     })->track(*weakRequest);

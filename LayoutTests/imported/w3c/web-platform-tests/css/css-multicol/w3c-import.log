@@ -111,6 +111,15 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-count-used-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-fill-balance-orthog-block-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-fill-balance-orthog-block-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-pseudo-background-color-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-pseudo-background-color-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-pseudo-background-color.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-rule-001-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-rule-001-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-rule-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-rule-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-rule-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/column-rule-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-001.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/columnfill-auto-max-height-002-expected.xht
@@ -149,6 +158,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/float-with-line-after-spanner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/getclientrects-000.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/getclientrects-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/getclientrects-002.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/getclientrects-003.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/getclientrects-004.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/going-out-of-flow-after-spanner.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/hit-test-child-under-perspective.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/hit-test-in-vertical-rl.html
@@ -456,6 +468,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-008-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-008-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-list-item-008.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-loads-indefinitely-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-margin-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-margin-001.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-margin-002-expected.xht
@@ -865,6 +878,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-001.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-002-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-002-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-all-rule-002.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-float-001-expected.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-float-001-ref.xht
 /LayoutTests/imported/w3c/web-platform-tests/css/css-multicol/multicol-span-float-001.xht

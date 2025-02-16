@@ -108,13 +108,15 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidReceiveInitiali
 
     ASSERT(remoteMediaPlayerProxy);
     // We need to wait for the CP's MediaPlayerRemote to have created all the tracks
-    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(*segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
+    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }, segmentInfo = WTFMove(*segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
         RefPtr protectedThis = weakThis.get();
-        RefPtr connection = m_connectionToWebProcess.get();
-        if (!protectedThis  || !result || !connection)
+        if (!protectedThis)
+            return MediaPromise::createAndReject(PlatformMediaError::IPCError);
+        RefPtr connection = protectedThis->m_connectionToWebProcess.get();
+        if (!result || !connection)
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segmentInfo)), m_identifier);
+        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidReceiveInitializationSegment(WTFMove(segmentInfo)), protectedThis->m_identifier);
     });
 }
 
@@ -364,13 +366,15 @@ Ref<MediaPromise> RemoteSourceBufferProxy::sourceBufferPrivateDidAttach(Initiali
 
     ASSERT(remoteMediaPlayerProxy);
     // We need to wait for the CP's MediaPlayerRemote to have created all the tracks
-    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }, this, segmentInfo = WTFMove(*segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
+    return remoteMediaPlayerProxy->commitAllTransactions()->whenSettled(RunLoop::protectedCurrent(), [weakThis = ThreadSafeWeakPtr { *this }, segmentInfo = WTFMove(*segmentInfo)](auto&& result) mutable -> Ref<MediaPromise> {
         RefPtr protectedThis = weakThis.get();
-        RefPtr connection = m_connectionToWebProcess.get();
-        if (!protectedThis  || !result || !connection)
+        if (!protectedThis)
+            return MediaPromise::createAndReject(PlatformMediaError::IPCError);
+        RefPtr connection = protectedThis->m_connectionToWebProcess.get();
+        if (!result || !connection)
             return MediaPromise::createAndReject(PlatformMediaError::IPCError);
 
-        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidAttach(WTFMove(segmentInfo)), m_identifier);
+        return connection->protectedConnection()->sendWithPromisedReply<MediaPromiseConverter>(Messages::SourceBufferPrivateRemoteMessageReceiver::SourceBufferPrivateDidAttach(WTFMove(segmentInfo)), protectedThis->m_identifier);
     });
 }
 

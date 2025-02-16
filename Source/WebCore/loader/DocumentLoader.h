@@ -178,6 +178,12 @@ enum class PushAndNotificationsEnabledPolicy: uint8_t {
     Yes,
 };
 
+enum class InlineMediaPlaybackPolicy : uint8_t {
+    Default,
+    RequiresPlaysInlineAttribute,
+    DoesNotRequirePlaysInlineAttribute
+};
+
 enum class ContentExtensionDefaultEnablement : bool { Disabled, Enabled };
 using ContentExtensionEnablement = std::pair<ContentExtensionDefaultEnablement, HashSet<String>>;
 
@@ -414,6 +420,9 @@ public:
     PushAndNotificationsEnabledPolicy pushAndNotificationsEnabledPolicy() const { return m_pushAndNotificationsEnabledPolicy; }
     void setPushAndNotificationsEnabledPolicy(PushAndNotificationsEnabledPolicy policy) { m_pushAndNotificationsEnabledPolicy = policy; }
 
+    InlineMediaPlaybackPolicy inlineMediaPlaybackPolicy() const { return m_inlineMediaPlaybackPolicy; }
+    void setInlineMediaPlaybackPolicy(InlineMediaPlaybackPolicy policy) { m_inlineMediaPlaybackPolicy = policy; }
+
     void addSubresourceLoader(SubresourceLoader&);
     void removeSubresourceLoader(LoadCompletionType, SubresourceLoader&);
     void addPlugInStreamLoader(ResourceLoader&);
@@ -512,6 +521,9 @@ public:
 
     bool isRequestFromClientOrUserInput() const { return m_isRequestFromClientOrUserInput; }
     void setIsRequestFromClientOrUserInput(bool isRequestFromClientOrUserInput) { m_isRequestFromClientOrUserInput = isRequestFromClientOrUserInput; }
+
+    bool loadStartedDuringSwipeAnimation() const { return m_loadStartedDuringSwipeAnimation; }
+    void setLoadStartedDuringSwipeAnimation() { m_loadStartedDuringSwipeAnimation = true; }
 
     bool isInFinishedLoadingOfEmptyDocument() const { return m_isInFinishedLoadingOfEmptyDocument; }
 #if ENABLE(CONTENT_FILTERING)
@@ -750,10 +762,12 @@ private:
     HTTPSByDefaultMode m_httpsByDefaultMode { HTTPSByDefaultMode::Disabled };
     ShouldOpenExternalURLsPolicy m_shouldOpenExternalURLsPolicy { ShouldOpenExternalURLsPolicy::ShouldNotAllow };
     PushAndNotificationsEnabledPolicy m_pushAndNotificationsEnabledPolicy { PushAndNotificationsEnabledPolicy::UseGlobalPolicy };
+    InlineMediaPlaybackPolicy m_inlineMediaPlaybackPolicy { InlineMediaPlaybackPolicy::Default };
 
     bool m_idempotentModeAutosizingOnlyHonorsPercentages { false };
 
     bool m_isRequestFromClientOrUserInput { false };
+    bool m_loadStartedDuringSwipeAnimation { false };
     bool m_lastNavigationWasAppInitiated { true };
     bool m_allowPrivacyProxy { true };
 

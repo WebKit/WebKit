@@ -160,6 +160,7 @@ public:
     LValue mod(LValue, LValue);
     LValue chillMod(LValue, LValue);
     LValue neg(LValue);
+    LValue purifyNaN(LValue);
 
     LValue doubleAdd(LValue, LValue);
     LValue doubleSub(LValue, LValue);

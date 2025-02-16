@@ -71,7 +71,7 @@ private:
     bool m_runThread { false };
 
     Vector<Function<void()>> m_taskQueue;
-    HashSet<CurlRequestSchedulerClient*> m_activeJobs;
+    UncheckedKeyHashSet<CurlRequestSchedulerClient*> m_activeJobs;
     HashMap<CURL*, CurlRequestSchedulerClient*> m_clientMaps;
 
     Lock m_multiHandleMutex;

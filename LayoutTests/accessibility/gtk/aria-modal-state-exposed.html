@@ -6,12 +6,13 @@
 <body id="body">
 <div id="content">
   <div role="dialog" aria-modal="true" id="test">
-    <input type="button" value="ok"/>
+    <input tabindex="0" id="ok-button" type="button" value="ok"/>
   </div>
 </div>
 <p id="description"></p>
 <div id="console"></div>
 <script>
+    document.getElementById("ok-button").focus();
     description("This tests that a dialog with aria-modal='true' exposes modal state");
     if (window.accessibilityController) {
         var axElement = accessibilityController.accessibleElementById("test");

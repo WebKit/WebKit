@@ -50,11 +50,11 @@ public:
     bool continuous() const { return m_info.continuous;; }
     bool interimResults() const { return m_info.interimResults; }
     uint64_t maxAlternatives() const { return m_info.maxAlternatives; }
-    const ClientOrigin clientOrigin() const { return m_info.clientOrigin; }
-    FrameIdentifier frameIdentifier() const { return m_info.frameIdentifier; }
+    const ClientOrigin& clientOrigin() const { return m_info.clientOrigin; }
+    FrameIdentifier mainFrameIdentifier() const { return m_info.mainFrameIdentifier; }
 
 private:
-    SpeechRecognitionRequestInfo m_info;
+    const SpeechRecognitionRequestInfo m_info;
 };
 
 } // namespace WebCore

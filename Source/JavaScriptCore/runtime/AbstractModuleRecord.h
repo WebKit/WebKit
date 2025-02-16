@@ -44,7 +44,7 @@ class AbstractModuleRecord : public JSInternalFieldObjectImpl<2> {
 public:
     using Base = JSInternalFieldObjectImpl<2>;
 
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
 
     template<typename CellType, SubspaceAccess>
     static void subspaceFor(VM&)

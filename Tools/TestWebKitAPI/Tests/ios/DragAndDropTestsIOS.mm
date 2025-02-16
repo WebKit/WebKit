@@ -102,14 +102,21 @@ static NSData *testZIPArchive()
 @interface ModelLoadingMessageHandler : NSObject <WKScriptMessageHandler>
 
 @property (nonatomic) BOOL didLoadModel;
+@property (nonatomic) BOOL modelIsReady;
 
 @end
 
 @implementation ModelLoadingMessageHandler
 - (void)userContentController:(WKUserContentController *)userContentController didReceiveScriptMessage:(WKScriptMessage *)message
 {
-    EXPECT_WK_STREQ(@"READY", [message body]);
-    _didLoadModel = true;
+    if ([[message body] isEqualToString:@"LOADED"])
+        _didLoadModel = YES;
+    else if ([[message body] isEqualToString:@"READY"])
+        _modelIsReady = YES;
+    else {
+        EXPECT_TRUE(false);
+        NSLog(@"Unexpected message received: %@", [message body]);
+    }
 }
 @end
 
@@ -2214,23 +2221,11 @@ TEST(DragAndDropTests, CanStartDragOnModel)
             [[configuration preferences] _setEnabled:YES forFeature:feature];
     }
 
-    // FIXME: Remove this after <rdar://problem/83863149> is fixed.
-    // It should not be necessary to use WKURLSchemeHandler here, but CFNetwork does not correctly identify USDZ files.
-    auto handler = adoptNS([TestURLSchemeHandler new]);
-    RetainPtr<NSData> modelData = [NSData dataWithContentsOfURL:[NSBundle.test_resourcesBundle URLForResource:@"cube" withExtension:@"usdz"]];
-    [handler setStartURLSchemeTaskHandler:^(WKWebView *, id<WKURLSchemeTask> task) {
-        NSURLResponse *response = [[[NSURLResponse alloc] initWithURL:task.request.URL MIMEType:@"model/vnd.usdz+zip" expectedContentLength:[modelData length] textEncodingName:nil] autorelease];
-        [task didReceiveResponse:response];
-        [task didReceiveData:modelData.get()];
-        [task didFinish];
-    }];
-
-    auto messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    RetainPtr messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
     [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
-    [configuration setURLSchemeHandler:handler.get() forURLScheme:@"model"];
     
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
-    [webView synchronouslyLoadHTMLString:@"<model><source src='model://cube.usdz'></model><script>document.querySelector('model').addEventListener('load', event => window.webkit.messageHandlers.modelLoading.postMessage('READY'));</script>"];
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple-model-page"];
 
     while (![messageHandler didLoadModel])
         Util::spinRunLoop();
@@ -2241,6 +2236,57 @@ TEST(DragAndDropTests, CanStartDragOnModel)
     NSArray *registeredTypes = [[simulator sourceItemProviders].firstObject registeredTypeIdentifiers];
     EXPECT_WK_STREQ("com.pixar.universal-scene-description-mobile", [registeredTypes firstObject]);
 }
+
+#if ENABLE(MODEL_PROCESS)
+
+TEST(DragAndDropTests, CheckModelDragPreview)
+{
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    for (_WKFeature *feature in [WKPreferences _features]) {
+        if ([feature.key isEqualToString:@"ModelElementEnabled"] || [feature.key isEqualToString:@"ModelProcessEnabled"])
+            [[configuration preferences] _setEnabled:YES forFeature:feature];
+    }
+
+    RetainPtr messageHandler = adoptNS([[ModelLoadingMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"modelLoading"];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500) configuration:configuration.get()]);
+    [webView synchronouslyLoadTestPageNamed:@"simple-model-page"];
+
+    while (![messageHandler modelIsReady])
+        Util::spinRunLoop();
+
+    [webView waitForNextPresentationUpdate];
+
+    bool done = false;
+
+    auto simulator = adoptNS([[DragAndDropSimulator alloc] initWithWebView:webView.get()]);
+    [simulator setDragProgressMidPointReachedBlock:makeBlockPtr([&done, simulator, webView] () mutable {
+        EXPECT_TRUE([[simulator liftPreviews].firstObject.view window] != nil);
+
+        [webView evaluateJavaScript:@"document.querySelector('model').remove()" completionHandler:makeBlockPtr([&done, simulator, webView] (NSNumber *value, NSError *error) mutable {
+            [webView waitForNextPresentationUpdate];
+            NSArray *liftPreviews = [simulator liftPreviews];
+            UITargetedDragPreview *liftPreview = (UITargetedDragPreview *)liftPreviews.firstObject;
+            EXPECT_TRUE([liftPreview.view isKindOfClass:_UIRemoteView.class]);
+            EXPECT_TRUE([liftPreview.view window] != nil);
+            done = true;
+        }).get()];
+    }).get()];
+
+    [simulator runFrom:CGPointMake(20, 20) to:CGPointMake(100, 100)];
+
+    NSArray *liftPreviews = [simulator liftPreviews];
+    EXPECT_EQ(1U, liftPreviews.count);
+    EXPECT_TRUE([liftPreviews.firstObject isKindOfClass:UITargetedDragPreview.class]);
+    UITargetedDragPreview *liftPreview = (UITargetedDragPreview *)liftPreviews.firstObject;
+    EXPECT_TRUE([liftPreview.view isKindOfClass:_UIRemoteView.class]);
+
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+}
+
+#endif
 
 } // namespace TestWebKitAPI
 

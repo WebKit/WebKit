@@ -9,7 +9,7 @@ function test(array)
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [i, i, i];
     var result = test(array);
     shouldBe(array !== result, true);

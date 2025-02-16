@@ -41,13 +41,12 @@ public:
 
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
 
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageHeight = 0_lu) override;
-    void layoutHorizontalBox(bool relayoutChildren);
-    void layoutVerticalBox(bool relayoutChildren);
+    void layoutBlock(RelayoutChildren, LayoutUnit pageHeight = 0_lu) override;
+    void layoutHorizontalBox(RelayoutChildren);
+    void layoutVerticalBox(RelayoutChildren);
 
     bool isStretchingChildren() const { return m_stretchingChildren; }
 
-    bool avoidsFloats() const override { return true; }
     bool canDropAnonymousBlockChild() const override { return false; }
 
 private:
@@ -65,7 +64,7 @@ private:
         LayoutUnit contentHeight;
         SingleThreadWeakPtr<const RenderBlockFlow> renderer;
     };
-    ClampedContent applyLineClamp(FlexBoxIterator&, bool relayoutChildren);
+    ClampedContent applyLineClamp(FlexBoxIterator&, RelayoutChildren);
     void clearLineClamp();
 
     bool m_stretchingChildren;

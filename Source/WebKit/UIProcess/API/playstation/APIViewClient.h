@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -45,7 +46,7 @@ public:
     virtual ~ViewClient() = default;
 
     virtual void setViewNeedsDisplay(WebKit::PlayStationWebView&, const WebCore::Region&) { }
-    virtual void enterFullScreen(WebKit::PlayStationWebView&) { }
+    virtual void enterFullScreen(WebKit::PlayStationWebView&, CompletionHandler<void(bool)>&& completionHandler) { completionHandler(false); }
     virtual void exitFullScreen(WebKit::PlayStationWebView&) { }
     virtual void closeFullScreen(WebKit::PlayStationWebView&) { }
     virtual void beganEnterFullScreen(WebKit::PlayStationWebView&, const WebCore::IntRect&, const WebCore::IntRect&) { }

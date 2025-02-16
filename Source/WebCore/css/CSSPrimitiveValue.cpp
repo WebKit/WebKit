@@ -29,6 +29,7 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyNames.h"
+#include "CSSSerializationContext.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
@@ -901,7 +902,7 @@ String CSSPrimitiveValue::stringValue() const
     case CSSUnitType::CSS_PROPERTY_ID:
         return nameString(m_value.propertyID);
     case CSSUnitType::CSS_ATTR:
-        return m_value.attr->cssText();
+        return m_value.attr->cssText(CSS::defaultSerializationContext());
     default:
         return String();
     }
@@ -1008,7 +1009,7 @@ ASCIILiteral CSSPrimitiveValue::unitTypeString(CSSUnitType unitType)
     return ""_s;
 }
 
-ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
+ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal(const CSS::SerializationContext& context) const
 {
     auto type = primitiveUnitType();
     switch (type) {
@@ -1078,9 +1079,9 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
     case CSSUnitType::CSS_X:
         return formatNumberValue(unitTypeString(type));
     case CSSUnitType::CSS_ATTR:
-        return m_value.attr->cssText();
+        return m_value.attr->cssText(context);
     case CSSUnitType::CSS_CALC:
-        return m_value.calc->cssText();
+        return m_value.calc->cssText(context);
     case CSSUnitType::CSS_DIMENSION:
         // FIXME: This isn't correct.
         return formatNumberValue(""_s);
@@ -1112,7 +1113,7 @@ ALWAYS_INLINE String CSSPrimitiveValue::serializeInternal() const
     return String();
 }
 
-String CSSPrimitiveValue::customCSSText() const
+String CSSPrimitiveValue::customCSSText(const CSS::SerializationContext& context) const
 {
     switch (primitiveUnitType()) {
     case CSSUnitType::CSS_UNKNOWN:
@@ -1126,7 +1127,7 @@ String CSSPrimitiveValue::customCSSText() const
         ASSERT(map.contains(this) == m_hasCachedCSSText);
         if (m_hasCachedCSSText)
             return map.get(this);
-        String serializedValue = serializeInternal();
+        String serializedValue = serializeInternal(context);
         m_hasCachedCSSText = true;
         map.add(this, serializedValue);
         return serializedValue;
@@ -1362,7 +1363,7 @@ bool CSSPrimitiveValue::convertingToLengthHasRequiredConversionData(int lengthCo
     return canResolveDependenciesWithConversionData(conversionData);
 }
 
-IterationStatus CSSPrimitiveValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSPrimitiveValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     if (auto* calc = cssCalcValue()) {
         if (func(const_cast<CSSCalcValue&>(*calc)) == IterationStatus::Done)

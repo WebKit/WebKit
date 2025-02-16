@@ -40,7 +40,7 @@ class CryptoDigest {
 public:
     enum class Algorithm {
         SHA_1,
-        SHA_224,
+        DEPRECATED_SHA_224,
         SHA_256,
         SHA_384,
         SHA_512,

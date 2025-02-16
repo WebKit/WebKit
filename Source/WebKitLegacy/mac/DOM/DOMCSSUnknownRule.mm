@@ -25,7 +25,6 @@
 
 #import "DOMCSSUnknownRule.h"
 
-#import <WebCore/CSSUnknownRule.h>
 #import "DOMCSSRuleInternal.h"
 #import "DOMNodeInternal.h"
 #import "ExceptionHandlers.h"

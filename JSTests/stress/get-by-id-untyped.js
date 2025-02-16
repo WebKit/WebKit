@@ -7,7 +7,7 @@ noInline(foo);
 String.prototype.f = 42;
 Number.prototype.f = 24;
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo("hello");
     if (result != 42)
         throw "Error: bad result for string: " + result;

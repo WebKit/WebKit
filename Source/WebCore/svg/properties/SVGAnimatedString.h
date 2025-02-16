@@ -31,23 +31,32 @@ namespace WebCore {
 
 class TrustedScriptURL;
 
+enum class IsHrefProperty : bool {
+    No,
+    Yes,
+};
+
 using StringOrTrustedScriptURL = std::variant<String, RefPtr<TrustedScriptURL>>;
 
 class SVGAnimatedString : public SVGAnimatedPrimitiveProperty<String> {
 public:
-    static Ref<SVGAnimatedString> create(SVGElement* contextElement)
+    static Ref<SVGAnimatedString> create(SVGElement* contextElement, const IsHrefProperty& isHrefProperty = IsHrefProperty::No)
     {
-        return adoptRef(*new SVGAnimatedString(contextElement));
+        return adoptRef(*new SVGAnimatedString(contextElement, isHrefProperty));
     }
 
     virtual ExceptionOr<void> setBaseVal(const StringOrTrustedScriptURL&);
 
 protected:
-    SVGAnimatedString(SVGElement* contextElement)
+    SVGAnimatedString(SVGElement* contextElement, const IsHrefProperty& isHrefProperty = IsHrefProperty::No)
         : SVGAnimatedPrimitiveProperty<String>(contextElement)
+        , m_isHrefProperty(isHrefProperty)
     {
 
     }
+
+private:
+    IsHrefProperty m_isHrefProperty;
 };
 
 }

@@ -47,10 +47,10 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(FEDropShadowSkiaApplier);
 bool FEDropShadowSkiaApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
     ASSERT(inputs.size() == 1);
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
     RefPtr resultImage = result.imageBuffer();
-    RefPtr sourceImage = input.imageBuffer();
+    RefPtr sourceImage = input->imageBuffer();
     if (!resultImage || !sourceImage)
         return false;
 
@@ -58,15 +58,15 @@ bool FEDropShadowSkiaApplier::apply(const Filter& filter, const FilterImageVecto
     if (!nativeImage || !nativeImage->platformImage())
         return false;
 
-    auto offset = filter.scaledByFilterScale(filter.resolvedSize({ m_effect.dx(), m_effect.dy() }));
-    auto sigma = filter.scaledByFilterScale(filter.resolvedSize({ m_effect.stdDeviationX(), m_effect.stdDeviationY() }));
+    auto offset = filter.scaledByFilterScale(filter.resolvedSize({ m_effect->dx(), m_effect->dy() }));
+    auto sigma = filter.scaledByFilterScale(filter.resolvedSize({ m_effect->stdDeviationX(), m_effect->stdDeviationY() }));
 
     SkPaint paint;
 
-    auto shadowColorWithAlpha = m_effect.shadowColor().colorWithAlphaMultipliedBy(m_effect.shadowOpacity());
+    auto shadowColorWithAlpha = m_effect->shadowColor().colorWithAlphaMultipliedBy(m_effect->shadowOpacity());
     paint.setImageFilter(SkImageFilters::DropShadow(offset.width(), offset.height(), sigma.width(), sigma.height(), shadowColorWithAlpha, nullptr));
 
-    auto inputOffsetWithinResult = input.absoluteImageRectRelativeTo(result).location();
+    auto inputOffsetWithinResult = input->absoluteImageRectRelativeTo(result).location();
     resultImage->context().platformContext()->drawImage(nativeImage->platformImage(), inputOffsetWithinResult.x(), inputOffsetWithinResult.y(), { }, &paint);
     return true;
 }

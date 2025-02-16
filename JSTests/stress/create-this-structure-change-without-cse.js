@@ -32,7 +32,7 @@ var Bar = new Proxy(RealBar, {
 
 noInline(RealBar);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     (function() {
         globalO = {f:43};
         var result = new Bar().result;

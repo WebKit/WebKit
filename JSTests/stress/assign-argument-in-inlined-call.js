@@ -19,7 +19,7 @@ function f3(a) {
 
 noInline(f3);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = f3(42);
     if (result != 42)
         throw "Error: bad result: " + result;

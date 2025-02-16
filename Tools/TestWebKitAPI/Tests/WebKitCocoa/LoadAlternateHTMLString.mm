@@ -118,9 +118,8 @@ TEST(WKWebView, LoadAlternateHTMLStringFromProvisionalLoadErrorBackToBack)
 
         isDone = false;
         TestWebKitAPI::Util::run(&isDone);
-        // In success, we should only start 2 provisional loads: 1 for the second loadRequest, and 1 for the _loadAlternateHTMLString.
-        // The second loadRequest cancels the first one before its provisional load starts.
-        EXPECT_EQ(2, provisionalLoadCount);
+        // We should only start 1 provisional load for the _loadAlternateHTMLString.
+        EXPECT_EQ(1, provisionalLoadCount);
     }
 }
 
@@ -210,7 +209,7 @@ TEST(WebKit, LoadHTMLStringWithInvalidBaseURL)
 
     [webView loadHTMLString:@"test" baseURL:[NSURL URLWithString:@"invalid"]];
     TestWebKitAPI::Util::run(&didFinishNavigation);
-    EXPECT_WK_STREQ([webView URL].absoluteString, "invalid");
+    EXPECT_WK_STREQ([webView URL].absoluteString, "");
 
     EXPECT_FALSE(didCrash);
 }

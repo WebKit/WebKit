@@ -29,6 +29,7 @@
 #include "MarkSurfacesAsVolatileRequestIdentifier.h"
 #include "PrepareBackingStoreBuffersData.h"
 #include "RemoteDisplayListRecorderProxy.h"
+#include "RemoteImageBufferSetConfiguration.h"
 #include "RemoteImageBufferSetIdentifier.h"
 #include "RenderingUpdateID.h"
 #include "WorkQueueMessageReceiver.h"
@@ -100,7 +101,7 @@ public:
 
     std::unique_ptr<ThreadSafeImageBufferSetFlusher> flushFrontBufferAsync(ThreadSafeImageBufferSetFlusher::FlushType);
 
-    void setConfiguration(WebCore::FloatSize, float, const WebCore::DestinationColorSpace&, WebCore::ImageBufferPixelFormat, WebCore::RenderingMode, WebCore::RenderingPurpose);
+    void setConfiguration(RemoteImageBufferSetConfiguration&&);
     void willPrepareForDisplay();
     void remoteBufferSetWasDestroyed();
 
@@ -128,12 +129,8 @@ private:
     OptionSet<BufferInSetType> m_requestedVolatility;
     OptionSet<BufferInSetType> m_confirmedVolatility;
 
-    WebCore::FloatSize m_size;
-    float m_scale { 1.0f };
-    WebCore::DestinationColorSpace m_colorSpace { WebCore::DestinationColorSpace::SRGB() };
-    WebCore::ImageBufferPixelFormat m_pixelFormat;
-    WebCore::RenderingMode m_renderingMode { WebCore::RenderingMode::Unaccelerated };
-    WebCore::RenderingPurpose m_renderingPurpose { WebCore::RenderingPurpose::Unspecified };
+    RemoteImageBufferSetConfiguration m_configuration;
+
     unsigned m_generation { 0 };
     bool m_remoteNeedsConfigurationUpdate { false };
 

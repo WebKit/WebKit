@@ -125,7 +125,7 @@ JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncGet, (JSGlobalObject* globalOb
     if (index >= table->length())
         return throwVMRangeError(globalObject, throwScope, "WebAssembly.Table.prototype.get expects an integer less than the length of the table"_s);
 
-    return JSValue::encode(table->get(index));
+    RELEASE_AND_RETURN(throwScope, JSValue::encode(table->get(globalObject, index)));
 }
 
 JSC_DEFINE_HOST_FUNCTION(webAssemblyTableProtoFuncSet, (JSGlobalObject* globalObject, CallFrame* callFrame))

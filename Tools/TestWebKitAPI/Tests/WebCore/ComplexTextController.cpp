@@ -51,7 +51,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInRTL)
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
-    auto spaceWidth = font.primaryFont().spaceWidth();
+    auto spaceWidth = font.primaryFont()->spaceWidth();
 
     Vector<FloatSize> advances = { FloatSize(), FloatSize(21.640625, 0.0), FloatSize(42.3046875, 0.0), FloatSize(55.8984375, 0.0), FloatSize(22.34375, 0.0) };
     Vector<FloatPoint> origins = { FloatPoint(-15.15625, 18.046875), FloatPoint(), FloatPoint(), FloatPoint(), FloatPoint() };
@@ -140,7 +140,7 @@ TEST_F(ComplexTextControllerTest, InitialAdvanceWithLeftRunInLTR)
     description.setComputedSize(80);
     FontCascade font(WTFMove(description));
     font.update();
-    auto spaceWidth = font.primaryFont().spaceWidth();
+    auto spaceWidth = font.primaryFont()->spaceWidth();
 
     Vector<FloatSize> advances = { FloatSize(76.347656, 0.000000), FloatSize(0.000000, 0.000000) };
     Vector<FloatPoint> origins = { FloatPoint(), FloatPoint(-23.281250, -8.398438) };

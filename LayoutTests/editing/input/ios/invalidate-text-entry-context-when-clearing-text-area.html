@@ -28,13 +28,7 @@ addEventListener("load", async () => {
 
     const textarea = document.querySelector("textarea");
     await UIHelper.activateElementAndWaitForInputSession(textarea);
-
-    for (let character of [..."hello"]) {
-        await UIHelper.callFunctionAndWaitForEvent(async () => {
-            await UIHelper.typeCharacter(character);
-            await UIHelper.ensurePresentationUpdate();
-        }, textarea, "keyup");
-    }
+    await UIHelper.typeCharacters("hello", "keyup");
 
     updateCountBefore = await UIHelper.keyboardUpdateForChangedSelectionCount();
     textarea.value = "";

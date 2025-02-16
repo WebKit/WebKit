@@ -23,14 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.application-cache-manifest .icon {
-    content: url(../Images/ApplicationCacheManifest.svg#light);
-}
-
-.application-cache-frame .icon {
-    content: url(../Images/TableIcons.svg#application-cache-light);
-}
-
 .cookie-icon .icon {
     content: url(../Images/Cookie.svg);
 }
@@ -52,14 +44,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .application-cache-manifest .icon {
-        content: url(../Images/ApplicationCacheManifest.svg#dark);
-    }
-
-    .application-cache-frame .icon {
-        content: url(../Images/TableIcons.svg#application-cache-dark);
-    }
-
     .local-storage-icon .icon {
         content: url(../Images/TableIcons.svg#local-dark);
     }

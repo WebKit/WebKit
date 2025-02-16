@@ -8,8 +8,6 @@ function test()
     function payloadJSONFilter(key, value) {
         if (key === "objectId")
             return "<filtered>";
-        if (key === "databaseId")
-            return "<filtered>";
         return value;
     }
 
@@ -25,7 +23,6 @@ function test()
     let suite = ProtocolTest.createAsyncSuite("CommandLineAPI.prototype.inspect");
 
     InspectorProtocol.awaitCommand({method: "Inspector.enable", params: {}})
-    InspectorProtocol.awaitCommand({method: "Database.enable", params: {}})
 
     function addTestCase({name, description, expression}) {
         suite.addTestCase({

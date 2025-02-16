@@ -31,17 +31,17 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Xywh>::operator()(StringBuilder& builder, const Xywh& value)
+void Serialize<Xywh>::operator()(StringBuilder& builder, const SerializationContext& context, const Xywh& value)
 {
     // <xywh()> = xywh( <length-percentage>{2} <length-percentage [0,∞]>{2} [ round <'border-radius'> ]? )
 
-    serializationForCSS(builder, value.location);
+    serializationForCSS(builder, context, value.location);
     builder.append(' ');
-    serializationForCSS(builder, value.size);
+    serializationForCSS(builder, context, value.size);
 
     if (!hasDefaultValue(value.radii)) {
         builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
-        serializationForCSS(builder, value.radii);
+        serializationForCSS(builder, context, value.radii);
     }
 }
 

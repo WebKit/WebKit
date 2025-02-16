@@ -39,7 +39,9 @@ bool ICEvent::operator<(const ICEvent& other) const
             return true;
         if (!other.m_classInfo)
             return false;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return strcmp(m_classInfo->className, other.m_classInfo->className) < 0;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     
     if (m_propertyName != other.m_propertyName)

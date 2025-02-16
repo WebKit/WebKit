@@ -39,8 +39,24 @@
     "label": "//src/tests:angle_oclcts_basic",
     "type": "windowed_test_launcher",
   },
+  "angle_oclcts_bruteforce": {
+    "label": "//src/tests:angle_oclcts_bruteforce",
+    "type": "windowed_test_launcher",
+  },
   "angle_oclcts_buffers": {
     "label": "//src/tests:angle_oclcts_buffers",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_cl_copy_images": {
+    "label": "//src/tests:angle_oclcts_cl_copy_images",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_cl_fill_images": {
+    "label": "//src/tests:angle_oclcts_cl_fill_images",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_cl_get_info": {
+    "label": "//src/tests:angle_oclcts_cl_get_info",
     "type": "windowed_test_launcher",
   },
   "angle_oclcts_compiler": {
@@ -51,8 +67,16 @@
     "label": "//src/tests:angle_oclcts_events",
     "type": "windowed_test_launcher",
   },
+  "angle_oclcts_multiples": {
+    "label": "//src/tests:angle_oclcts_multiples",
+    "type": "windowed_test_launcher",
+  },
   "angle_oclcts_profiling": {
     "label": "//src/tests:angle_oclcts_profiling",
+    "type": "windowed_test_launcher",
+  },
+  "angle_oclcts_non_uniform_work_group": {
+    "label": "//src/tests:angle_oclcts_non_uniform_work_group",
     "type": "windowed_test_launcher",
   },
   "angle_deqp_egl_tests": {

@@ -39,7 +39,7 @@ CSSNamedImageValue::CSSNamedImageValue(String&& name)
 
 CSSNamedImageValue::~CSSNamedImageValue() = default;
 
-String CSSNamedImageValue::customCSSText() const
+String CSSNamedImageValue::customCSSText(const CSS::SerializationContext&) const
 {
     return makeString("-webkit-named-image("_s, m_name, ')');
 }

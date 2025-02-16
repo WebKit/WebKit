@@ -19,7 +19,7 @@ function test()
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(JSON.stringify(test()), `["a","b"]`);
 Object.defineProperty(Array.prototype, 10, {
     value: 42

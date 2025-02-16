@@ -46,7 +46,7 @@ public:
     static Ref<WebBackForwardListItem> create(Ref<FrameState>&&, WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>);
     virtual ~WebBackForwardListItem();
 
-    static WebBackForwardListItem* itemForID(const WebCore::BackForwardItemIdentifier&);
+    static WebBackForwardListItem* itemForID(WebCore::BackForwardItemIdentifier);
     static HashMap<WebCore::BackForwardItemIdentifier, WeakRef<WebBackForwardListItem>>& allItems();
 
     WebCore::BackForwardItemIdentifier identifier() const { return m_identifier; }
@@ -89,6 +89,7 @@ public:
     Ref<WebBackForwardListFrameItem> protectedNavigatedFrameItem() const;
 
     WebBackForwardListFrameItem& mainFrameItem() const;
+    Ref<WebBackForwardListFrameItem> protectedMainFrameItem() const;
 
     void setIsRemoteFrameNavigation(bool isRemoteFrameNavigation) { m_isRemoteFrameNavigation = isRemoteFrameNavigation; }
     bool isRemoteFrameNavigation() const { return m_isRemoteFrameNavigation; }

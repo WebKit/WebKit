@@ -144,6 +144,7 @@ class Renderbuffer final : public RefCountObject<RenderbufferID>,
     bool isRenderable(const Context *context,
                       GLenum binding,
                       const ImageIndex &imageIndex) const override;
+    bool isEGLImageSource() const;
 
     void onAttach(const Context *context, rx::UniqueSerial framebufferSerial) override;
     void onDetach(const Context *context, rx::UniqueSerial framebufferSerial) override;

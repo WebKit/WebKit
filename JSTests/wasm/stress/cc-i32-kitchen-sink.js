@@ -60,7 +60,7 @@ async function test() {
     const instance = await instantiate(wat, {}, { simd: true })
     const { f0, f1, f2, f3 } = instance.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(f0(1, 2, 3, 4, 5, 6, 7, 8), 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)
         assert.eq(f0(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8)
         assert.eq(f0(1, 2, 3, 4, 5), 1 + 2 + 3 + 4 + 5)

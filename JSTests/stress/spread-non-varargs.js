@@ -24,7 +24,7 @@
         return Math.max(...args);
     }
 
-    for (var i = 0; i < 1e6; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         flag = i > (1e6 - 100);
         var ret = a(0, 1, 2, 3, 4);
         if (!flag)

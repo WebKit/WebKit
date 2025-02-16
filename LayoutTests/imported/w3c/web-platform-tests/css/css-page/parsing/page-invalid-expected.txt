@@ -1,0 +1,7 @@
+
+PASS e.style['page'] = "not valid" should not set the property value
+PASS e.style['page'] = "not,valid" should not set the property value
+PASS e.style['page'] = "123px" should not set the property value
+PASS e.style['page'] = "calc(10%+1px)" should not set the property value
+PASS e.style['page'] = "default" should not set the property value
+

@@ -1,5 +1,5 @@
 
-FAIL ch unit in SVGLength undefined is not an object (evaluating 'ch_length.unitType')
-FAIL Convert back to ch from new user unit value undefined is not an object (evaluating 'ch_length.value = ref_width * 4')
-FAIL upright vertical ch unit in SVGLength undefined is not an object (evaluating 'ch_length.value')
+PASS ch unit in SVGLength
+PASS Convert back to ch from new user unit value
+FAIL upright vertical ch unit in SVGLength assert_approx_equals: expected 200 +/- 0.1 but got 100
 

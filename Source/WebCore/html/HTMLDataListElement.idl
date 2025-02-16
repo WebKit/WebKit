@@ -29,7 +29,6 @@
  */
 
 [
-    Conditional=DATALIST_ELEMENT,
     EnabledBySetting=DataListElementEnabled,
     Exposed=Window
 ] interface HTMLDataListElement : HTMLElement {

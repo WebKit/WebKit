@@ -64,7 +64,7 @@ async function test() {
     const instance2 = await instantiate(wat2, { o : { cross_module_callee } }, { simd: true, tail_call: true })
     const { main } = instance2.exports
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(main(0), 18)
         assert.eq(main(1), 18)
     }

@@ -155,7 +155,7 @@ static bool processHasActiveRunTimeLimitation()
         return;
 
     RELEASE_LOG(ProcessSuspension, "%p - WKProcessAssertionBackgroundTaskManager: _scheduleReleaseTask because the expiration handler has been called", self);
-    WorkQueue::main().dispatchAfter(releaseBackgroundTaskAfterExpirationDelay, [self, retainedSelf = retainPtr(self)] {
+    WorkQueue::protectedMain()->dispatchAfter(releaseBackgroundTaskAfterExpirationDelay, [self, retainedSelf = retainPtr(self)] {
         _pendingTaskReleaseTask = nil;
         [self _releaseBackgroundTask];
     });
@@ -195,7 +195,7 @@ static bool processHasActiveRunTimeLimitation()
     } else if (_assertionsNeedingBackgroundTask.isEmptyIgnoringNullReferences()) {
         // Release the background task asynchronously because releasing the background task may destroy the ProcessThrottler and we don't
         // want it to get destroyed while in the middle of updating its assertion.
-        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
+        RunLoop::protectedMain()->dispatch([self, strongSelf = retainPtr(self)] {
             if (_assertionsNeedingBackgroundTask.isEmptyIgnoringNullReferences())
                 [self _releaseBackgroundTask];
         });
@@ -237,7 +237,7 @@ static bool processHasActiveRunTimeLimitation()
     // upon resuming, or the user reactivated the app shortly after expiration).
     if (remainingTime == RBSProcessTimeLimitationNone) {
         [self _releaseBackgroundTask];
-        RunLoop::main().dispatch([self, strongSelf = retainPtr(self)] {
+        RunLoop::protectedMain()->dispatch([self, strongSelf = retainPtr(self)] {
             [self _updateBackgroundTask];
         });
         return;
@@ -303,7 +303,7 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertionWillInvalidate", self);
 
-    RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
+    RunLoop::protectedMain()->dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
         auto strongSelf = weakSelf.get();
         if (strongSelf && strongSelf.get().prepareForInvalidationCallback)
             strongSelf.get().prepareForInvalidationCallback();
@@ -314,7 +314,7 @@ typedef void(^RBSAssertionInvalidationCallbackType)();
 {
     RELEASE_LOG(ProcessSuspension, "%p - WKRBSAssertionDelegate: assertion was invalidated, error: %{public}@", self, error);
 
-    RunLoop::main().dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
+    RunLoop::protectedMain()->dispatch([weakSelf = WeakObjCPtr<WKRBSAssertionDelegate>(self)] {
         auto strongSelf = weakSelf.get();
         if (strongSelf && strongSelf.get().invalidationCallback)
             strongSelf.get().invalidationCallback();
@@ -367,9 +367,7 @@ static ASCIILiteral runningBoardDomainForAssertionType(ProcessAssertionType asse
     }
 }
 
-#if USE(EXTENSIONKIT)
-Lock ProcessAssertion::s_capabilityLock;
-#endif
+#if !USE(EXTENSIONKIT)
 
 ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
     : m_assertionType(assertionType)
@@ -379,17 +377,20 @@ ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAsser
     init(environmentIdentifier);
 }
 
-ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
+#else
+
+Lock ProcessAssertion::s_capabilityLock;
+
+ProcessAssertion::ProcessAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess)
     : m_assertionType(assertionType)
-    , m_pid(process.processID())
+    , m_pid(pid)
     , m_reason(reason)
 {
-#if USE(EXTENSIONKIT)
-    if (process.extensionProcess()) {
+    if (extensionProcess) {
         ASCIILiteral runningBoardAssertionName = runningBoardNameForAssertionType(m_assertionType);
         ASCIILiteral runningBoardDomain = runningBoardDomainForAssertionType(m_assertionType);
         auto didInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName] () {
-            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
+            RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
                 auto strongThis = weakThis.get();
                 RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion: RBS %{public}s assertion for process with PID=%d was invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
                 if (strongThis)
@@ -397,22 +398,23 @@ ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String&
             });
         };
         auto willInvalidateBlock = [weakThis = ThreadSafeWeakPtr { *this }, runningBoardAssertionName] () {
-            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
+            RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), runningBoardAssertionName = WTFMove(runningBoardAssertionName)] {
                 auto strongThis = weakThis.get();
                 RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() RBS %{public}s assertion for process with PID=%d will be invalidated", strongThis.get(), runningBoardAssertionName.characters(), strongThis ? strongThis->m_pid : 0);
                 if (strongThis)
                     strongThis->processAssertionWillBeInvalidated();
             });
         };
-        m_capability = AssertionCapability { process.environmentIdentifier(), runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
-        m_process = process.extensionProcess();
+        m_capability = AssertionCapability { environmentIdentifier, runningBoardDomain, runningBoardAssertionName, WTFMove(willInvalidateBlock), WTFMove(didInvalidateBlock) };
+        m_process = WTFMove(extensionProcess);
         if (m_capability && m_capability->hasPlatformCapability())
             return;
         RELEASE_LOG(ProcessSuspension, "%p - ProcessAssertion() Failed to create capability %s", this, runningBoardAssertionName.characters());
     }
-#endif
-    init(process.environmentIdentifier());
+    init(environmentIdentifier);
 }
+
+#endif // !USE(EXTENSIONKIT)
 
 void ProcessAssertion::init(const String& environmentIdentifier)
 {
@@ -467,7 +469,7 @@ void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandle
     ASSERT(isMainRunLoop());
     assertionsWorkQueue().dispatch([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
         protectedThis->acquireSync();
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
+        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis), completionHandler = WTFMove(completionHandler)]() mutable {
             if (completionHandler)
                 completionHandler();
         });
@@ -493,7 +495,7 @@ void ProcessAssertion::acquireSync()
     NSError *acquisitionError = nil;
     if (![m_rbsAssertion acquireWithError:&acquisitionError]) {
         RELEASE_LOG_ERROR(ProcessSuspension, "%p - ProcessAssertion::acquireSync Failed to acquire RBS assertion '%{public}s' for process with PID=%d, error: %{public}@", this, m_reason.utf8().data(), m_pid, acquisitionError);
-        RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
+        RunLoop::protectedMain()->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
             if (auto protectedThis = weakThis.get())
                 protectedThis->processAssertionWasInvalidated();
         });
@@ -543,13 +545,29 @@ bool ProcessAssertion::isValid() const
     return !m_wasInvalidated;
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
-    : ProcessAssertion(process, reason, assertionType)
+
+
+#if !USE(EXTENSIONKIT)
+
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
+    : ProcessAssertion(pid, reason, assertionType, environmentIdentifier)
 {
 #if PLATFORM(IOS_FAMILY)
     updateRunInBackgroundCount();
 #endif
 }
+
+#else
+
+ProcessAndUIAssertion::ProcessAndUIAssertion(pid_t pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess)
+    : ProcessAssertion(pid, reason, assertionType, environmentIdentifier, WTFMove(extensionProcess))
+{
+#if PLATFORM(IOS_FAMILY)
+    updateRunInBackgroundCount();
+#endif
+}
+
+#endif
 
 ProcessAndUIAssertion::~ProcessAndUIAssertion()
 {

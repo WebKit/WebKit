@@ -32,26 +32,26 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Ray>::operator()(StringBuilder& builder, const Ray& value)
+void Serialize<Ray>::operator()(StringBuilder& builder, const SerializationContext& context, const Ray& value)
 {
     // ray() = ray( <angle> && <ray-size>? && contain? && [at <position>]? )
     // https://drafts.fxtf.org/motion-1/#ray-function
 
-    serializationForCSS(builder, value.angle);
+    serializationForCSS(builder, context, value.angle);
 
     if (!std::holds_alternative<Keyword::ClosestSide>(value.size)) {
         builder.append(' ');
-        serializationForCSS(builder, value.size);
+        serializationForCSS(builder, context, value.size);
     }
 
     if (value.contain) {
         builder.append(' ');
-        serializationForCSS(builder, *value.contain);
+        serializationForCSS(builder, context, *value.contain);
     }
 
     if (value.position) {
         builder.append(' ', nameLiteralForSerialization(CSSValueAt), ' ');
-        serializationForCSS(builder, *value.position);
+        serializationForCSS(builder, context, *value.position);
     }
 }
 

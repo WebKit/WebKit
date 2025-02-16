@@ -43,6 +43,10 @@
  * Virtual memory for this allocator is limited to 1GB. Wasted memory, which is the unused memory in the page(s)
  * allocated by the user, is limited to 1MB. These overall limits should ensure that the memory impact on the system
  * is minimal, while helping to tackle the problems of catching use after frees and out of bounds accesses.
+ *
+ * PGM will maintain the metadata of recently deallocated objects. This is beneficial for crash analystics to better 
+ * identify the type and reason for a crash. After enough deallocations an object will no longer be considered 
+ * recently deleted and will have its metadata destroyed.
  */
 
 #ifndef PAS_PROBABILISTIC_GUARD_MALLOC_ALLOCATOR
@@ -62,6 +66,8 @@ struct pas_pgm_storage {
     size_t allocation_size_requested;
     size_t size_of_data_pages;
     uintptr_t start_of_data_pages;
+    size_t size_of_allocated_pages;
+    uintptr_t start_of_allocated_pages;
 
     /*
      * These parameter below rely on page sizes being less than 65536.
@@ -92,8 +98,8 @@ struct pas_pgm_storage {
  */
 #define PAS_PGM_MAX_VIRTUAL_MEMORY (1024 * 1024 * 1024)
 
-/* Total MAX_PGM_HASH_ENTRIES {0 - (MAX_PGM_HASH_ENTRIES - 1)} PGM entries are allowed for which metadata is kept alive */
-#define MAX_PGM_HASH_ENTRIES    10
+/* Total MAX_PGM_DEALLOCATED_METADATA_ENTRIES {0 - (MAX_PGM_DEALLOCATED_METADATA_ENTRIES - 1)} PGM entries are allowed for which metadata is kept alive */
+#define MAX_PGM_DEALLOCATED_METADATA_ENTRIES    10
 
 extern PAS_API pas_ptr_hash_map pas_pgm_hash_map;
 extern PAS_API pas_ptr_hash_map_in_flux_stash pas_pgm_hash_map_in_flux_stash;
@@ -110,12 +116,12 @@ extern PAS_API bool pas_probabilistic_guard_malloc_is_initialized;
 extern PAS_API uint16_t pas_probabilistic_guard_malloc_random;
 extern PAS_API uint16_t pas_probabilistic_guard_malloc_counter;
 
-pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, pas_allocation_mode allocation_mode, const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
+pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* large_heap, size_t size, size_t alignment, pas_allocation_mode allocation_mode, const pas_heap_config* heap_config, pas_physical_memory_transaction* transaction);
 void pas_probabilistic_guard_malloc_deallocate(void* memory);
 
 size_t pas_probabilistic_guard_malloc_get_free_virtual_memory(void);
 size_t pas_probabilistic_guard_malloc_get_free_wasted_memory(void);
-pas_ptr_hash_map_entry** pas_probabilistic_guard_malloc_get_metadata_array(void);
+pas_ptr_hash_map_entry* pas_probabilistic_guard_malloc_get_metadata_array(void);
 
 bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem);
 
@@ -134,7 +140,7 @@ static PAS_ALWAYS_INLINE bool pas_probabilistic_guard_malloc_should_call_pgm(voi
 }
 
 extern PAS_API void pas_probabilistic_guard_malloc_initialize_pgm(void);
-extern PAS_API void pas_probabilistic_guard_malloc_initialize_pgm_as_enabled(void);
+extern PAS_API void pas_probabilistic_guard_malloc_initialize_pgm_as_enabled(uint16_t pgm_random_rate);
 pas_large_map_entry pas_probabilistic_guard_malloc_return_as_large_map_entry(uintptr_t mem);
 
 PAS_END_EXTERN_C;

@@ -165,7 +165,7 @@ public:
     unsigned approximateHash(InlineCallFrame* terminal = nullptr) const;
 
     template <typename Function>
-    void walkUpInlineStack(const Function&) const;
+    void walkUpInlineStack(NOESCAPE const Function&) const;
 
     inline bool inlineStackContainsActiveCheckpoint() const;
     

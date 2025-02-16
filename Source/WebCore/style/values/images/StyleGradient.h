@@ -390,7 +390,7 @@ using Gradient = std::variant<
 Ref<WebCore::Gradient> createPlatformGradient(const Gradient&, const FloatSize&, const RenderStyle&);
 
 // Returns whether it caching based on the gradient's stops is allowed.
-bool stopsAreCacheable(const Gradient&);
+WEBCORE_EXPORT bool stopsAreCacheable(const Gradient&);
 
 // Returns whether the gradient is opaque.
 bool isOpaque(const Gradient&, const RenderStyle&);
@@ -398,19 +398,19 @@ bool isOpaque(const Gradient&, const RenderStyle&);
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(LinearGradient, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(PrefixedLinearGradient, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(DeprecatedLinearGradient, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(RadialGradient::Ellipse, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(RadialGradient::Circle, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(RadialGradient, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(PrefixedRadialGradient::Ellipse, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(PrefixedRadialGradient::Circle, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(PrefixedRadialGradient, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(DeprecatedRadialGradient::GradientBox, 4)
-STYLE_TUPLE_LIKE_CONFORMANCE(DeprecatedRadialGradient, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(ConicGradient::GradientBox, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(ConicGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::LinearGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PrefixedLinearGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::DeprecatedLinearGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::RadialGradient::Ellipse, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::RadialGradient::Circle, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::RadialGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PrefixedRadialGradient::Ellipse, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PrefixedRadialGradient::Circle, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::PrefixedRadialGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::DeprecatedRadialGradient::GradientBox, 4)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::DeprecatedRadialGradient, 3)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ConicGradient::GradientBox, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ConicGradient, 3)
 
 template<typename C, typename P> inline constexpr bool WebCore::TreatAsTupleLike<WebCore::Style::GradientColorStop<C, P>> = true;
 

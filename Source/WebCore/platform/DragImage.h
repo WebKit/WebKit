@@ -50,6 +50,7 @@ typedef struct HBITMAP__* HBITMAP;
 namespace WebCore {
 
 class Element;
+class GraphicsClient;
 class Image;
 class IntRect;
 class LocalFrame;
@@ -85,9 +86,10 @@ DragImageRef scaleDragImage(DragImageRef, FloatSize scale);
 DragImageRef platformAdjustDragImageForDeviceScaleFactor(DragImageRef, float deviceScaleFactor);
 DragImageRef dissolveDragImageToFraction(DragImageRef, float delta);
 
-DragImageRef createDragImageFromImage(Image*, ImageOrientation);
+DragImageRef createDragImageFromImage(Image*, ImageOrientation, GraphicsClient* = nullptr, float deviceScaleFactor = 1);
 DragImageRef createDragImageIconForCachedImageFilename(const String&);
 
+// FIXME: These platform helpers should be refactored to avoid using `LocalFrame` and `Node`.
 WEBCORE_EXPORT DragImageRef createDragImageForNode(LocalFrame&, Node&);
 WEBCORE_EXPORT DragImageRef createDragImageForSelection(LocalFrame&, TextIndicatorData&, bool forceBlackText = false);
 WEBCORE_EXPORT DragImageRef createDragImageForRange(LocalFrame&, const SimpleRange&, bool forceBlackText = false);

@@ -58,7 +58,7 @@ class RemoteMediaSourceProxy final
     , private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaSourceProxy);
 public:
-    RemoteMediaSourceProxy(RemoteMediaPlayerManagerProxy&, RemoteMediaSourceIdentifier, bool webMParserEnabled, RemoteMediaPlayerProxy&);
+    RemoteMediaSourceProxy(RemoteMediaPlayerManagerProxy&, RemoteMediaSourceIdentifier, RemoteMediaPlayerProxy&);
     virtual ~RemoteMediaSourceProxy();
 
     void ref() const final { WebCore::MediaSourcePrivateClient::ref(); }
@@ -102,7 +102,6 @@ private:
 
     WeakPtr<RemoteMediaPlayerManagerProxy> m_manager;
     RemoteMediaSourceIdentifier m_identifier;
-    bool m_webMParserEnabled { false };
     RefPtr<WebCore::MediaSourcePrivate> m_private;
     WeakPtr<RemoteMediaPlayerProxy> m_remoteMediaPlayerProxy;
 

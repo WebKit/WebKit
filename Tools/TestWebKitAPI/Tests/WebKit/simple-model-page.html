@@ -1,0 +1,7 @@
+<model>
+    <source src='cube.usdz'>
+</model>
+<script>
+    document.querySelector('model').addEventListener('load', event => window.webkit.messageHandlers.modelLoading.postMessage('LOADED'));
+    document.querySelector('model').ready.then((result) => window.webkit.messageHandlers.modelLoading.postMessage('READY'));
+</script>

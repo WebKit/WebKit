@@ -1,13 +1,13 @@
 
 PASS Property timeline-scope value 'initial'
-FAIL Property timeline-scope value 'inherit' assert_equals: expected "foo" but got "none"
+PASS Property timeline-scope value 'inherit'
 PASS Property timeline-scope value 'unset'
 PASS Property timeline-scope value 'revert'
 PASS Property timeline-scope value 'none'
-FAIL Property timeline-scope value 'test' assert_true: 'test' is a supported value for timeline-scope. expected true got false
-FAIL Property timeline-scope value 'foo, bar' assert_true: 'foo, bar' is a supported value for timeline-scope. expected true got false
-FAIL Property timeline-scope value 'bar, foo' assert_true: 'bar, foo' is a supported value for timeline-scope. expected true got false
-FAIL Property timeline-scope value 'a, b, c, D, e' assert_true: 'a, b, c, D, e' is a supported value for timeline-scope. expected true got false
+PASS Property timeline-scope value '--test'
+PASS Property timeline-scope value '--foo, --bar'
+PASS Property timeline-scope value '--bar, --foo'
+PASS Property timeline-scope value '--a, --b, --c, --D, --e'
 PASS The timeline-scope property shows up in CSSStyleDeclaration enumeration
 PASS The timeline-scope property shows up in CSSStyleDeclaration.cssText
 

@@ -78,8 +78,8 @@ WEBCORE_EXPORT @interface WebCoreNSURLSession : NSObject {
     RetainPtr<NSOperationQueue> _queue;
     RetainPtr<NSString> _sessionDescription;
     Lock _dataTasksLock;
-    HashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks WTF_GUARDED_BY_LOCK(_dataTasksLock);
-    HashSet<RefPtr<WebCore::SecurityOrigin>> _origins WTF_GUARDED_BY_LOCK(_dataTasksLock);
+    UncheckedKeyHashSet<RetainPtr<WebCoreNSURLSessionDataTask>> _dataTasks WTF_GUARDED_BY_LOCK(_dataTasksLock);
+    UncheckedKeyHashSet<RefPtr<WebCore::SecurityOrigin>> _origins WTF_GUARDED_BY_LOCK(_dataTasksLock);
     BOOL _invalidated; // Access on multiple thread, must be accessed via ObjC property.
     NSUInteger _nextTaskIdentifier;
     RefPtr<WTF::WorkQueue> _internalQueue;

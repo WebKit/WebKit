@@ -57,7 +57,7 @@ noInline(foo);
 function blah() { return "blah"; }
 noInline(blah);
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(foo(blah, "b", "a") === "blahba");
     if (!exponentialBlowup)
         expString = "a";

@@ -24,7 +24,7 @@
     let bar = new Bar();
 
     let noThrow = false;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         try {
             foo(bar);
             noThrow = true

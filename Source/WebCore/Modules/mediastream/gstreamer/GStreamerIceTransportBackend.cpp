@@ -65,6 +65,13 @@ void GStreamerIceTransportBackend::iceTransportChanged()
 
     g_object_get(m_backend.get(), "transport", &m_iceTransport.outPtr(), nullptr);
 
+    // Setting same libnice socket size options as LibWebRTC. 1MB for incoming streams and 256Kb for outgoing streams.
+    if (gstObjectHasProperty(GST_OBJECT_CAST(m_iceTransport.get()), "receive-buffer-size"))
+        g_object_set(m_iceTransport.get(), "receive-buffer-size", 1048576, nullptr);
+
+    if (gstObjectHasProperty(GST_OBJECT_CAST(m_iceTransport.get()), "send-buffer-size"))
+        g_object_set(m_iceTransport.get(), "send-buffer-size", 262144, nullptr);
+
     g_signal_connect_swapped(m_iceTransport.get(), "notify::state", G_CALLBACK(+[](GStreamerIceTransportBackend* backend) {
         backend->stateChanged();
     }), this);

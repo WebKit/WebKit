@@ -39,7 +39,7 @@ namespace ContentExtensions {
 // A NFANode abstract the transition table out of a NFA state.
 
 typedef Vector<uint64_t, 0, CrashOnOverflow, 1> ActionList;
-typedef HashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> NFANodeIndexSet;
+typedef UncheckedKeyHashSet<unsigned, DefaultHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>> NFANodeIndexSet;
 typedef UncheckedKeyHashMap<uint16_t, NFANodeIndexSet, DefaultHash<uint16_t>, WTF::UnsignedWithZeroKeyHashTraits<uint16_t>> NFANodeTransitions;
 
 class NFANode {

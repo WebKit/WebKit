@@ -11,12 +11,12 @@ function bigIntBitXor(a, b) {
 }
 noInline(bigIntBitXor);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntBitXor(0b11n, 0b1010n);
     assert.sameValue(r, 0b1001n);
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntBitXor(0xfffafafaf19281fefafeafebcn, 0b1010n);
     assert.sameValue(r, 0b1001n);
 }

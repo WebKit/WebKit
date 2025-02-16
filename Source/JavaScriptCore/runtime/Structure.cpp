@@ -44,7 +44,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace JSC {
 
 #if DUMP_STRUCTURE_ID_STATISTICS
-static HashSet<Structure*>& liveStructureSet = *(new HashSet<Structure*>);
+static UncheckedKeyHashSet<Structure*>& liveStructureSet = *(new UncheckedKeyHashSet<Structure*>);
 #endif
 
 inline void StructureTransitionTable::setSingleTransition(VM& vm, JSCell* owner, Structure* structure)
@@ -93,10 +93,7 @@ void Structure::dumpStatistics()
     unsigned numberWithPropertyTables = 0;
     unsigned totalPropertyTablesSize = 0;
 
-    HashSet<Structure*>::const_iterator end = liveStructureSet.end();
-    for (HashSet<Structure*>::const_iterator it = liveStructureSet.begin(); it != end; ++it) {
-        Structure* structure = *it;
-
+    for (auto* structure : liveStructureSet) {
         switch (structure->m_transitionTable.size()) {
             case 0:
                 ++numberLeaf;

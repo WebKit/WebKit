@@ -50,9 +50,9 @@ template<size_t I> const auto& get(const Inset& value)
         return value.radii;
 }
 
-template<> struct Serialize<Inset> { void operator()(StringBuilder&, const Inset&); };
+template<> struct Serialize<Inset> { void operator()(StringBuilder&, const SerializationContext&, const Inset&); };
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Inset, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Inset, 2)

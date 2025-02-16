@@ -13,6 +13,7 @@
 #include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
+#include "libANGLE/CLMemory.h"
 #include "libANGLE/renderer/CLKernelImpl.h"
 #include "vulkan/vulkan_core.h"
 
@@ -90,15 +91,11 @@ class CLKernelVk : public CLKernelImpl
 
     angle::Result createInfo(CLKernelImpl::Info *infoOut) const override;
 
+    angle::Result initPipelineLayout();
+
     CLProgramVk *getProgram() { return mProgram; }
     const std::string &getKernelName() { return mName; }
     const CLKernelArguments &getArgs() { return mArgs; }
-    angle::Result initPipelineLayout()
-    {
-        PipelineLayoutCache *pipelineLayoutCache = mContext->getPipelineLayoutCache();
-        return pipelineLayoutCache->getPipelineLayout(mContext, mPipelineLayoutDesc,
-                                                      mDescriptorSetLayouts, &mPipelineLayout);
-    }
     const vk::PipelineLayout &getPipelineLayout() const { return *mPipelineLayout; }
     vk::DescriptorSetLayoutPointerArray &getDescriptorSetLayouts() { return mDescriptorSetLayouts; }
     cl::Kernel &getFrontendObject() { return const_cast<cl::Kernel &>(mKernel); }
@@ -106,8 +103,7 @@ class CLKernelVk : public CLKernelImpl
     angle::Result getOrCreateComputePipeline(vk::PipelineCacheAccess *pipelineCache,
                                              const cl::NDRange &ndrange,
                                              const cl::Device &device,
-                                             vk::PipelineHelper **pipelineOut,
-                                             cl::WorkgroupCount *workgroupCountOut);
+                                             vk::PipelineHelper **pipelineOut);
 
     const vk::DescriptorSetLayoutDesc &getDescriptorSetLayoutDesc(DescriptorSetIndex index) const
     {
@@ -133,7 +129,9 @@ class CLKernelVk : public CLKernelImpl
         return mDescriptorSets[index]->getDescriptorSet();
     }
 
-    std::vector<uint8_t> &getPodArgumentsData() { return mPodArgumentsData; }
+    std::vector<uint8_t> &getPodArgumentPushConstantsData() { return mPodArgumentPushConstants; }
+
+    cl::MemoryPtr getPodBuffer() { return mPodBuffer; }
 
     bool usesPrintf() const;
 
@@ -143,7 +141,8 @@ class CLKernelVk : public CLKernelImpl
         vk::OutsideRenderPassCommandBufferHelper *computePassCommands);
 
   private:
-    static constexpr std::array<size_t, 3> kEmptyWorkgroupSize = {0, 0, 0};
+    // Initialize the descriptor pools for this kernel resources
+    angle::Result initializeDescriptorPools();
 
     CLProgramVk *mProgram;
     CLContextVk *mContext;
@@ -151,16 +150,20 @@ class CLKernelVk : public CLKernelImpl
     std::string mAttributes;
     CLKernelArguments mArgs;
 
-    // Copy of the pod data
-    std::vector<uint8_t> mPodArgumentsData;
+    std::vector<uint8_t> mPodArgumentPushConstants;
+    cl::MemoryPtr mPodBuffer;
 
     vk::ShaderProgramHelper mShaderProgramHelper;
-    vk::ComputePipelineCache mComputePipelineCache;
+    ComputePipelineCache mComputePipelineCache;
     KernelSpecConstants mSpecConstants;
+
+    // Pipeline and DescriptorSetLayout Shared pointers
     vk::PipelineLayoutPtr mPipelineLayout;
     vk::DescriptorSetLayoutPointerArray mDescriptorSetLayouts{};
 
+    // DescriptorSet and DescriptorPool shared pointers for this kernel resources
     vk::DescriptorSetArray<vk::DescriptorSetPointer> mDescriptorSets;
+    vk::DescriptorSetArray<vk::DynamicDescriptorPoolPointer> mDynamicDescriptorPools;
 
     vk::DescriptorSetArray<vk::DescriptorSetLayoutDesc> mDescriptorSetLayoutDescs;
     vk::PipelineLayoutDesc mPipelineLayoutDesc;

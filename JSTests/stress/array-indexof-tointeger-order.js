@@ -26,7 +26,7 @@ function assert(b) {
     var doubleArray = [0, 1, 2, 3, 4.2, 5, 6, 7.33, 8, 9, 10.5];
     var stringArray = ["cocoa", "cappuccino", "matcha", "rize"];
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         assert(indexOfInt32(int32Array, 3, 2) === 3);
         assert(indexOfDouble(doubleArray, 3, 1) === 3);
         assert(indexOfString(stringArray, "cocoa", 0) === 0);
@@ -46,7 +46,7 @@ function assert(b) {
         },
     };
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         assert(indexOfInt32(int32Array, 3, fromIndex) === -1);
         assert(indexOfDouble(doubleArray, 3, fromIndex) === -1);
         assert(indexOfString(stringArray, "cocoa", fromIndex) === -1);

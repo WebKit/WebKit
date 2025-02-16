@@ -34,14 +34,17 @@
     // Notifies that test passed.
     [NeedsScriptContext] void notifyPass([Optional] DOMString message);
 
-    // Yields the running of the extension back to the test harness.
-    [NeedsScriptContext] void yield([Optional] DOMString message);
-
     // Sends a message to the test harness.
     [NeedsScriptContext] void sendMessage(DOMString message, [Optional, ValuesAllowed] any argument);
 
     // Event for receiving messages from the test harness.
     readonly attribute WebExtensionAPIEvent onMessage;
+
+    // Runs the provided function in the context of a user gesture.
+    [NeedsFrame] any runWithUserGesture([ValuesAllowed] any function);
+
+    // Returns if a user gesture is active.
+    boolean isProcessingUserGesture();
 
     // Logs a message during testing.
     [NeedsScriptContext] void log([ValuesAllowed] any message);

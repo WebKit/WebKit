@@ -15,7 +15,10 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import typing
+
+from typing import List
+from typing import Mapping
+from typing import Optional
 
 from selenium.webdriver.common import service
 
@@ -28,28 +31,37 @@ class Service(service.Service):
     :param port: Port for the service to run on, defaults to 0 where the operating system will decide.
     :param service_args: (Optional) List of args to be passed to the subprocess when launching the executable.
     :param env: (Optional) Mapping of environment variables for the new process, defaults to `os.environ`.
+    :param enable_logging: (Optional) Enable logging of the service. Logs can be located at `~/Library/Logs/com.apple.WebDriver/`
+    :param driver_path_env_key: (Optional) Environment variable to use to get the path to the driver executable.
     """
 
     def __init__(
         self,
         executable_path: str = None,
         port: int = 0,
-        service_args: typing.Optional[typing.List[str]] = None,
-        env: typing.Optional[typing.Mapping[str, str]] = None,
+        service_args: Optional[List[str]] = None,
+        env: Optional[Mapping[str, str]] = None,
         reuse_service=False,
+        enable_logging: bool = False,
+        driver_path_env_key: str = None,
         **kwargs,
     ) -> None:
         self.service_args = service_args or []
+        driver_path_env_key = driver_path_env_key or "SE_SAFARIDRIVER"
+
+        if enable_logging:
+            self.service_args.append("--diagnose")
 
         self.reuse_service = reuse_service
         super().__init__(
             executable_path=executable_path,
             port=port,
             env=env,
+            driver_path_env_key=driver_path_env_key,
             **kwargs,
         )
 
-    def command_line_args(self) -> typing.List[str]:
+    def command_line_args(self) -> List[str]:
         return ["-p", f"{self.port}"] + self.service_args
 
     @property

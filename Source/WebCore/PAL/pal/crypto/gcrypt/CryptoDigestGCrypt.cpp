@@ -50,8 +50,9 @@ static int getGcryptAlgorithm(CryptoDigest::Algorithm algorithm)
     switch (algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
         return GCRY_MD_SHA1;
-    case CryptoDigest::Algorithm::SHA_224:
-        return GCRY_MD_SHA224;
+    case CryptoDigest::Algorithm::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("SHA224 is not supported.");
+        return GCRY_MD_SHA256;
     case CryptoDigest::Algorithm::SHA_256:
         return GCRY_MD_SHA256;
     case CryptoDigest::Algorithm::SHA_384:

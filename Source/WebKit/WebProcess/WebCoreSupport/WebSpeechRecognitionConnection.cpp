@@ -26,12 +26,14 @@
 #include "config.h"
 #include "WebSpeechRecognitionConnection.h"
 
+#include "FrameInfoData.h"
 #include "MessageSenderInlines.h"
 #include "SpeechRecognitionServerMessages.h"
 #include "WebFrame.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
 #include "WebSpeechRecognitionConnectionMessages.h"
+#include <WebCore/Frame.h>
 #include <WebCore/SpeechRecognitionConnectionClient.h>
 #include <WebCore/SpeechRecognitionRequestInfo.h>
 #include <WebCore/SpeechRecognitionUpdate.h>
@@ -72,7 +74,18 @@ void WebSpeechRecognitionConnection::unregisterClient(WebCore::SpeechRecognition
 
 void WebSpeechRecognitionConnection::start(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier, const String& lang, bool continuous, bool interimResults, uint64_t maxAlternatives, WebCore::ClientOrigin&& clientOrigin, WebCore::FrameIdentifier frameIdentifier)
 {
-    send(Messages::SpeechRecognitionServer::Start(clientIdentifier, lang, continuous, interimResults, maxAlternatives, WTFMove(clientOrigin), frameIdentifier));
+    RefPtr frame = WebProcess::singleton().webFrame(frameIdentifier);
+    if (!frame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+    RefPtr coreFrame = frame->coreFrame();
+    if (!coreFrame) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    send(Messages::SpeechRecognitionServer::Start(clientIdentifier, lang, continuous, interimResults, maxAlternatives, WTFMove(clientOrigin), coreFrame->mainFrame().frameID(), frame->info()));
 }
 
 void WebSpeechRecognitionConnection::stop(WebCore::SpeechRecognitionConnectionClientIdentifier clientIdentifier)

@@ -67,7 +67,7 @@ public:
 
     void addBytes(const CString& input)
     {
-        addBytes(input.span());
+        addBytes(std::as_bytes(input.span()));
     }
 
     WTF_EXPORT_PRIVATE void addUTF8Bytes(StringView);

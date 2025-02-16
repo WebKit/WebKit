@@ -90,7 +90,7 @@ public:
     bool equals(const VisiblePosition&) const;
 
 #if ENABLE(TREE_DEBUGGING)
-    void debugPosition(const char* msg = "") const;
+    void debugPosition(ASCIILiteral msg = ""_s) const;
     String debugDescription() const;
     void showTreeForThis() const;
 #endif

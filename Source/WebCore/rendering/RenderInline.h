@@ -71,8 +71,7 @@ public:
 
     RenderLineBoxList& legacyLineBoxes() { return m_legacyLineBoxes; }
     const RenderLineBoxList& legacyLineBoxes() const { return m_legacyLineBoxes; }
-    void dirtyLegacyLineBoxes(bool fullLayout);
-    void deleteLegacyLines();
+    void deleteLegacyLineBoxes();
     LegacyInlineFlowBox* firstLegacyInlineBox() const { return m_legacyLineBoxes.firstLegacyLineBox(); }
     LegacyInlineFlowBox* lastLegacyInlineBox() const { return m_legacyLineBoxes.lastLegacyLineBox(); }
 

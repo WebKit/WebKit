@@ -33,6 +33,7 @@
 #import "AVStreamDataParserMIMETypeCache.h"
 #import "CDMSessionAVContentKeySession.h"
 #import "ContentTypeUtilities.h"
+#import "EffectiveRateChangedListener.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
 #import "Logging.h"
@@ -70,8 +71,6 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 @interface AVSampleBufferDisplayLayer (Staging_100128644)
 @property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
 @end
@@ -82,35 +81,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 @end
 #endif
 
-@interface WebEffectiveRateChangedListenerObjCAdapter : NSObject
-@property (atomic, readonly, direct) RefPtr<WebCore::EffectiveRateChangedListener> protectedListener;
-- (instancetype)init NS_UNAVAILABLE;
-- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener;
-@end
-
-NS_DIRECT_MEMBERS
-@implementation WebEffectiveRateChangedListenerObjCAdapter {
-    ThreadSafeWeakPtr<WebCore::EffectiveRateChangedListener> _listener;
-}
-
-- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener
-{
-    if ((self = [super init]))
-        _listener = listener;
-    return self;
-}
-
-- (RefPtr<WebCore::EffectiveRateChangedListener>)protectedListener
-{
-    return _listener.get();
-}
-@end
-
 namespace WebCore {
 
 String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekState enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 3> values {
         MAKE_STATIC_STRING_IMPL("Seeking"),
         MAKE_STATIC_STRING_IMPL("WaitingForAvailableFame"),
         MAKE_STATIC_STRING_IMPL("SeekCompleted"),
@@ -125,51 +100,6 @@ String convertEnumerationToString(MediaPlayerPrivateMediaSourceAVFObjC::SeekStat
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
-class EffectiveRateChangedListener : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EffectiveRateChangedListener> {
-public:
-    static Ref<EffectiveRateChangedListener> create(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
-    {
-        return adoptRef(*new EffectiveRateChangedListener(client, timebase));
-    }
-    ~EffectiveRateChangedListener() = default;
-
-    void effectiveRateChanged()
-    {
-        callOnMainThread([this, protectedThis = Ref { *this }] {
-            if (m_client)
-                m_client->effectiveRateChanged();
-        });
-    }
-
-    void stop(CMTimebaseRef);
-
-private:
-    EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC&, CMTimebaseRef);
-
-    WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_client;
-    RetainPtr<WebEffectiveRateChangedListenerObjCAdapter> m_objcAdapter;
-};
-
-static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
-{
-    RetainPtr adapter { dynamic_objc_cast<WebEffectiveRateChangedListenerObjCAdapter>(reinterpret_cast<id>(observer)) };
-    if (auto protectedListener = [adapter protectedListener])
-        protectedListener->effectiveRateChanged();
-}
-
-void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
-{
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), kCMTimebaseNotification_EffectiveRateChanged, timebase);
-}
-
-EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
-    : m_client(client)
-    , m_objcAdapter(adoptNS([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this]))
-{
-    // Observer removed MediaPlayerPrivateMediaSourceAVFObjC destructor.
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
-}
-
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
     : m_player(player)
     , m_synchronizer(adoptNS([PAL::allocAVSampleBufferRenderSynchronizerInstance() init]))
@@ -179,7 +109,12 @@ MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(Media
     , m_logger(player->mediaPlayerLogger())
     , m_logIdentifier(player->mediaPlayerLogIdentifier())
     , m_videoLayerManager(makeUnique<VideoLayerManagerObjC>(m_logger, m_logIdentifier))
-    , m_effectiveRateChangedListener(EffectiveRateChangedListener::create(*this, [m_synchronizer timebase]))
+    , m_effectiveRateChangedListener(EffectiveRateChangedListener::create([weakThis = WeakPtr { *this }] {
+        callOnMainThread([weakThis] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->effectiveRateChanged();
+        });
+    }, [m_synchronizer timebase]))
 {
     auto logSiteIdentifier = LOGIDENTIFIER;
     ALWAYS_LOG(logSiteIdentifier);
@@ -224,7 +159,7 @@ MediaPlayerPrivateMediaSourceAVFObjC::~MediaPlayerPrivateMediaSourceAVFObjC()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_effectiveRateChangedListener->stop([m_synchronizer timebase]);
+    m_effectiveRateChangedListener->stop();
 
     if (m_timeJumpedObserver)
         [m_synchronizer removeTimeObserver:m_timeJumpedObserver.get()];
@@ -327,7 +262,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const String&)
         player->networkStateChanged();
 }
 
-void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, MediaSourcePrivateClient& client)
+void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const LoadOptions& options, MediaSourcePrivateClient& client)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
@@ -337,8 +272,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::load(const URL&, const ContentType&, 
         client.reOpen();
     } else
         m_mediaSourcePrivate = MediaSourcePrivateAVFObjC::create(*this, client);
-    m_mediaSourcePrivate->setResourceOwner(m_resourceOwner);
-    m_mediaSourcePrivate->setVideoRenderer(layerOrVideoRenderer().get());
+
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    mediaSourcePrivate->setResourceOwner(m_resourceOwner);
+    mediaSourcePrivate->setVideoRenderer(layerOrVideoRenderer().get());
+    m_loadOptions = options;
 
     acceleratedRenderingStateChanged();
 }
@@ -371,16 +309,17 @@ void MediaPlayerPrivateMediaSourceAVFObjC::play()
 
 void MediaPlayerPrivateMediaSourceAVFObjC::playInternal(std::optional<MonotonicTime>&& hostTime)
 {
-    if (!m_mediaSourcePrivate)
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate)
         return;
 
-    if (currentTime() >= m_mediaSourcePrivate->duration()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "bailing, current time: ", currentTime(), " greater than duration ", m_mediaSourcePrivate->duration());
+    if (currentTime() >= mediaSourcePrivate->duration()) {
+        ALWAYS_LOG(LOGIDENTIFIER, "bailing, current time: ", currentTime(), " greater than duration ", mediaSourcePrivate->duration());
         return;
     }
 
     ALWAYS_LOG(LOGIDENTIFIER);
-    m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
+    mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
     m_isPlaying = true;
     if (!shouldBePlaying())
         return;
@@ -433,18 +372,14 @@ FloatSize MediaPlayerPrivateMediaSourceAVFObjC::naturalSize() const
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasVideo() const
 {
-    if (!m_mediaSourcePrivate)
-        return false;
-
-    return m_mediaSourcePrivate->hasVideo();
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return mediaSourcePrivate && mediaSourcePrivate->hasVideo();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAudio() const
 {
-    if (!m_mediaSourcePrivate)
-        return false;
-
-    return m_mediaSourcePrivate->hasAudio();
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return mediaSourcePrivate && mediaSourcePrivate->hasAudio();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
@@ -459,9 +394,9 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
 
         // Rendering may have been interrupted while the page was in a non-visible
         // state, which would require a flush to resume decoding.
-        if (m_mediaSourcePrivate) {
+        if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate) {
             SetForScope(m_flushingActiveSourceBuffersDueToVisibilityChange, true, false);
-            m_mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
+            mediaSourcePrivate->flushActiveSourceBuffersIfNeeded();
         }
     }
 
@@ -472,7 +407,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setPageIsVisible(bool visible)
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::duration() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->duration() : MediaTime::zeroTime();
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return mediaSourcePrivate ? mediaSourcePrivate->duration() : MediaTime::zeroTime();
 }
 
 MediaTime MediaPlayerPrivateMediaSourceAVFObjC::currentTime() const
@@ -558,43 +494,46 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
     if (!m_pendingSeek)
         return;
 
-    if (!m_mediaSourcePrivate)
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate)
         return;
 
     auto pendingSeek = std::exchange(m_pendingSeek, { }).value();
     m_lastSeekTime = pendingSeek.time;
 
     m_seekState = Seeking;
-    m_mediaSourcePrivate->waitForTarget(pendingSeek)->whenSettled(RunLoop::current(), [this, weakThis = WeakPtr { *this }] (auto&& result) mutable {
-        if (!weakThis)
+    mediaSourcePrivate->waitForTarget(pendingSeek)->whenSettled(RunLoop::protectedCurrent(), [weakThis = WeakPtr { *this }] (auto&& result) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
-        if (m_seekState != Seeking || !result) {
-            ALWAYS_LOG(LOGIDENTIFIER, "seek Interrupted, aborting");
+        if (protectedThis->m_seekState != Seeking || !result) {
+            ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "seek Interrupted, aborting");
             return;
         }
         auto seekedTime = *result;
-        m_lastSeekTime = seekedTime;
+        protectedThis->m_lastSeekTime = seekedTime;
 
-        ALWAYS_LOG(LOGIDENTIFIER);
-        MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
+        ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis));
+        MediaTime synchronizerTime = PAL::toMediaTime([protectedThis->m_synchronizer currentTime]);
 
-        m_isSynchronizerSeeking = m_isSynchronizerSeeking = std::abs((synchronizerTime - seekedTime).toMicroseconds()) > 1000;
+        protectedThis->m_isSynchronizerSeeking = protectedThis->m_isSynchronizerSeeking = std::abs((synchronizerTime - seekedTime).toMicroseconds()) > 1000;
 
-        ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
+        ALWAYS_LOG_WITH_THIS(protectedThis, LOGIDENTIFIER_WITH_THIS(protectedThis), "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", protectedThis->m_isSynchronizerSeeking);
 
-        if (!m_isSynchronizerSeeking) {
+        if (!protectedThis->m_isSynchronizerSeeking) {
             // In cases where the destination seek time precisely matches the synchronizer's existing time
             // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
             // the seek completed successfully.
-            maybeCompleteSeek();
+            protectedThis->maybeCompleteSeek();
             return;
         }
-        m_mediaSourcePrivate->willSeek();
-        [m_synchronizer setRate:0 time:PAL::toCMTime(seekedTime)];
+        RefPtr mediaSourcePrivate = protectedThis->m_mediaSourcePrivate;
+        mediaSourcePrivate->willSeek();
+        [protectedThis->m_synchronizer setRate:0 time:PAL::toCMTime(seekedTime)];
 
-        m_mediaSourcePrivate->seekToTime(seekedTime)->whenSettled(RunLoop::current(), [this, weakThis = WTFMove(weakThis)]() mutable {
-            if (weakThis)
-                maybeCompleteSeek();
+        mediaSourcePrivate->seekToTime(seekedTime)->whenSettled(RunLoop::protectedCurrent(), [weakThis = WTFMove(weakThis)]() mutable {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->maybeCompleteSeek();
         });
     });
 }
@@ -689,6 +628,11 @@ const PlatformTimeRanges& MediaPlayerPrivateMediaSourceAVFObjC::buffered() const
     return PlatformTimeRanges::emptyRanges();
 }
 
+RefPtr<MediaSourcePrivateAVFObjC> MediaPlayerPrivateMediaSourceAVFObjC::protectedMediaSourcePrivate() const
+{
+    return m_mediaSourcePrivate;
+}
+
 void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
 {
     if (m_gapObserver) {
@@ -696,7 +640,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
         m_gapObserver = nullptr;
     }
 
-    auto ranges = m_mediaSourcePrivate->buffered();
+    auto ranges = protectedMediaSourcePrivate()->buffered();
     auto currentTime = this->currentTime();
     size_t index = ranges.find(currentTime);
     if (index == notFound)
@@ -711,19 +655,20 @@ void MediaPlayerPrivateMediaSourceAVFObjC::bufferedChanged()
             auto logSiteIdentifier = LOGIDENTIFIER;
             UNUSED_PARAM(logSiteIdentifier);
 
-            m_gapObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }, this, logSiteIdentifier, gapStart] {
-                if (!weakThis)
+            m_gapObserver = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = WeakPtr { *this }, logSiteIdentifier, gapStart] {
+                RefPtr protectedThis = weakThis.get();
+                if (!protectedThis)
                     return;
-                if (m_mediaSourcePrivate->hasFutureTime(gapStart))
+                if (protectedThis->protectedMediaSourcePrivate()->hasFutureTime(gapStart))
                     return; // New data was added, don't stall.
-                MediaTime now = weakThis->currentTime();
-                ALWAYS_LOG(logSiteIdentifier, "boundary time observer called, now = ", now);
+                MediaTime now = protectedThis->currentTime();
+                ALWAYS_LOG_WITH_THIS(protectedThis, logSiteIdentifier, "boundary time observer called, now = ", now);
 
-                if (gapStart == duration())
-                    weakThis->pauseInternal();
+                if (gapStart == protectedThis->duration())
+                    protectedThis->pauseInternal();
                 // Experimentation shows that between the time the boundary time observer is called, the time have progressed by a few milliseconds. Re-adjust time. This seek doesn't require re-enqueuing/flushing.
-                [m_synchronizer setRate:0 time:PAL::toCMTime(gapStart)];
-                if (auto player = m_player.get())
+                [protectedThis->m_synchronizer setRate:0 time:PAL::toCMTime(gapStart)];
+                if (RefPtr player = protectedThis->m_player.get())
                     player->timeChanged();
             }];
             return;
@@ -823,7 +768,8 @@ RefPtr<VideoFrame> MediaPlayerPrivateMediaSourceAVFObjC::videoFrameForCurrentTim
 DestinationColorSpace MediaPlayerPrivateMediaSourceAVFObjC::colorSpace()
 {
     updateLastImage();
-    return m_lastImage ? m_lastImage->colorSpace() : DestinationColorSpace::SRGB();
+    RefPtr lastImage = m_lastImage;
+    return lastImage ? lastImage->colorSpace() : DestinationColorSpace::SRGB();
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::hasAvailableVideoFrame() const
@@ -863,11 +809,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::acceleratedRenderingStateChanged()
     RefPtr renderer = layerOrVideoRenderer();
     if (willUseDecompressionSessionIfNeeded()) {
         if (renderer && !renderer->isUsingDecompressionSession()) {
-            if (m_mediaSourcePrivate)
-                m_mediaSourcePrivate->videoRendererWillReconfigure(*renderer);
+            if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+                mediaSourcePrivate->videoRendererWillReconfigure(*renderer);
             renderer->setPrefersDecompressionSession(true);
-            if (m_mediaSourcePrivate)
-                m_mediaSourcePrivate->videoRendererDidReconfigure(*renderer);
+            if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+                mediaSourcePrivate->videoRendererDidReconfigure(*renderer);
             return;
         }
         if (renderer)
@@ -1203,7 +1149,8 @@ MediaPlayerPrivateMediaSourceAVFObjC::AcceleratedVideoMode MediaPlayerPrivateMed
 bool MediaPlayerPrivateMediaSourceAVFObjC::canUseDecompressionSession() const
 {
     // FIXME: with shouldUseModernAVContentKeySession can a DecompressionSession be used so long as we have a AVSBDL considering the cryptor is now attached to the CMSampleBuffer?
-    return !m_mediaSourcePrivate || (!m_mediaSourcePrivate->cdmInstance() && !m_mediaSourcePrivate->needsVideoLayer());
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return !mediaSourcePrivate || (!mediaSourcePrivate->cdmInstance() && !mediaSourcePrivate->needsVideoLayer());
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isUsingDecompressionSession() const
@@ -1321,10 +1268,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::updateAllRenderersHaveAvailableSample
 
 void MediaPlayerPrivateMediaSourceAVFObjC::durationChanged()
 {
-    if (!m_mediaSourcePrivate)
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    if (!mediaSourcePrivate)
         return;
 
-    MediaTime duration = m_mediaSourcePrivate->duration();
+    MediaTime duration = mediaSourcePrivate->duration();
     // Avoid emiting durationchanged in the case where the previous duration was unkniwn as that case is already handled
     // by the HTMLMediaElement.
     if (m_duration != duration && m_duration.isValid()) {
@@ -1345,16 +1293,17 @@ void MediaPlayerPrivateMediaSourceAVFObjC::sizeWillChangeAtTime(const MediaTime&
 {
     auto weakThis = m_sizeChangeObserverWeakPtrFactory.createWeakPtr(*this);
     NSArray* times = @[[NSValue valueWithCMTime:PAL::toCMTime(time)]];
-    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[this, weakThis = WTFMove(weakThis), size] {
-        if (!weakThis)
+    RetainPtr<id> observer = [m_synchronizer addBoundaryTimeObserverForTimes:times queue:dispatch_get_main_queue() usingBlock:[weakThis = WTFMove(weakThis), size] {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
             return;
 
-        ASSERT(!m_sizeChangeObservers.isEmpty());
-        if (!m_sizeChangeObservers.isEmpty()) {
-            RetainPtr<id> observer = m_sizeChangeObservers.takeFirst();
-            [m_synchronizer removeTimeObserver:observer.get()];
+        ASSERT(!protectedThis->m_sizeChangeObservers.isEmpty());
+        if (!protectedThis->m_sizeChangeObservers.isEmpty()) {
+            RetainPtr<id> observer = protectedThis->m_sizeChangeObservers.takeFirst();
+            [protectedThis->m_synchronizer removeTimeObserver:observer.get()];
         }
-        setNaturalSize(size);
+        protectedThis->setNaturalSize(size);
     }];
     m_sizeChangeObservers.append(WTFMove(observer));
 
@@ -1398,16 +1347,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
 
     m_session = toCDMSessionAVContentKeySession(session);
 
-    if (!m_mediaSourcePrivate)
-        return;
-
-    m_mediaSourcePrivate->setCDMSession(session);
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->setCDMSession(session);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::keyAdded()
 {
-    if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->keyAdded();
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->keyAdded();
 }
 
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -1424,8 +1371,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExtern
 {
 #if ENABLE(ENCRYPTED_MEDIA)
     ALWAYS_LOG(LOGIDENTIFIER, obscured);
-    if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->outputObscuredDueToInsufficientExternalProtectionChanged(obscured);
 #else
     UNUSED_PARAM(obscured);
 #endif
@@ -1435,8 +1382,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::outputObscuredDueToInsufficientExtern
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& instance)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->cdmInstanceAttached(instance);
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->cdmInstanceAttached(instance);
 
     updateDisplayLayer();
 }
@@ -1444,8 +1391,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceAttached(CDMInstance& inst
 void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& instance)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->cdmInstanceDetached(instance);
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->cdmInstanceDetached(instance);
 
     updateDisplayLayer();
 }
@@ -1453,13 +1400,14 @@ void MediaPlayerPrivateMediaSourceAVFObjC::cdmInstanceDetached(CDMInstance& inst
 void MediaPlayerPrivateMediaSourceAVFObjC::attemptToDecryptWithInstance(CDMInstance& instance)
 {
     ALWAYS_LOG(LOGIDENTIFIER);
-    if (m_mediaSourcePrivate)
-        m_mediaSourcePrivate->attemptToDecryptWithInstance(instance);
+    if (RefPtr mediaSourcePrivate = m_mediaSourcePrivate)
+        mediaSourcePrivate->attemptToDecryptWithInstance(instance);
 }
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::waitingForKey() const
 {
-    return m_mediaSourcePrivate ? m_mediaSourcePrivate->waitingForKey() : false;
+    RefPtr mediaSourcePrivate = m_mediaSourcePrivate;
+    return mediaSourcePrivate && mediaSourcePrivate->waitingForKey();
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::waitingForKeyChanged()
@@ -1636,7 +1584,8 @@ RetainPtr<PlatformLayer> MediaPlayerPrivateMediaSourceAVFObjC::createVideoFullsc
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenLayer(PlatformLayer *videoFullscreenLayer, WTF::Function<void()>&& completionHandler)
 {
     updateLastImage();
-    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), m_lastImage ? m_lastImage->platformImage() : nullptr);
+    RefPtr lastImage = m_lastImage;
+    m_videoLayerManager->setVideoFullscreenLayer(videoFullscreenLayer, WTFMove(completionHandler), lastImage ? lastImage->platformImage() : nullptr);
 }
 
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoFullscreenFrame(FloatRect frame)
@@ -1676,10 +1625,11 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setShouldPlayToPlaybackTarget(bool sh
 
 bool MediaPlayerPrivateMediaSourceAVFObjC::isCurrentPlaybackTargetWireless() const
 {
-    if (!m_playbackTarget)
+    RefPtr playbackTarget = m_playbackTarget;
+    if (!playbackTarget)
         return false;
 
-    auto hasTarget = m_shouldPlayToTarget && m_playbackTarget->hasActiveRoute();
+    auto hasTarget = m_shouldPlayToTarget && playbackTarget->hasActiveRoute();
     INFO_LOG(LOGIDENTIFIER, hasTarget);
     return hasTarget;
 }
@@ -1919,8 +1869,7 @@ RefPtr<VideoMediaSampleRenderer> MediaPlayerPrivateMediaSourceAVFObjC::layerOrVi
 void MediaPlayerPrivateMediaSourceAVFObjC::setVideoTarget(const PlatformVideoTarget& videoTarget)
 {
     ALWAYS_LOG(LOGIDENTIFIER, !!videoTarget);
-    if (!!videoTarget)
-        m_usingLinearMediaPlayer = true;
+    m_usingLinearMediaPlayer = !!videoTarget;
     m_videoTarget = videoTarget;
     updateDisplayLayer();
 }
@@ -1939,7 +1888,5 @@ void MediaPlayerPrivateMediaSourceAVFObjC::isInFullscreenOrPictureInPictureChang
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

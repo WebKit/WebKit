@@ -55,5 +55,10 @@ HTMLFormElement* HTMLLegendElement::form() const
     RefPtr fieldset = dynamicDowncast<HTMLFieldSetElement>(parentNode());
     return fieldset ? fieldset->form() : nullptr;
 }
+
+HTMLFormElement* HTMLLegendElement::formForBindings() const
+{
+    return form();
+}
     
 } // namespace

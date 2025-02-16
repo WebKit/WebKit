@@ -388,9 +388,13 @@ class StateCache final : angle::NonCopyable
     void updateValidDrawModes(Context *context);
     void updateValidBindTextureTypes(Context *context);
     void updateValidDrawElementsTypes(Context *context);
-    void updateBasicDrawStatesError();
-    void updateProgramPipelineError();
-    void updateBasicDrawElementsError();
+    void updateBasicDrawStatesError()
+    {
+        mCachedBasicDrawStatesErrorString = kInvalidPointer;
+        mCachedBasicDrawStatesErrorCode   = GL_NO_ERROR;
+    }
+    void updateProgramPipelineError() { mCachedProgramPipelineError = kInvalidPointer; }
+    void updateBasicDrawElementsError() { mCachedBasicDrawElementsError = kInvalidPointer; }
     void updateTransformFeedbackActiveUnpaused(Context *context);
     void updateVertexAttribTypesValidation(Context *context);
     void updateActiveShaderStorageBufferIndices(Context *context);
@@ -692,7 +696,7 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     ANGLE_INLINE Program *getProgramResolveLink(ShaderProgramID handle) const
     {
         Program *program = mState.mShaderProgramManager->getProgram(handle);
-        if (program)
+        if (ANGLE_LIKELY(program))
         {
             program->resolveLink(this);
         }
@@ -774,7 +778,17 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
 
     void onPreSwap();
 
-    Program *getActiveLinkedProgram() const;
+    ANGLE_INLINE Program *getActiveLinkedProgram() const
+    {
+        Program *program = mState.getLinkedProgram(this);
+        if (ANGLE_LIKELY(program))
+        {
+            return program;
+        }
+        return getActiveLinkedProgramPPO();
+    }
+
+    ANGLE_NOINLINE Program *getActiveLinkedProgramPPO() const;
 
     // EGL_ANGLE_power_preference implementation.
     egl::Error releaseHighPowerGPU();
@@ -823,9 +837,11 @@ class Context final : public egl::LabeledObject, angle::NonCopyable, public angl
     const angle::PerfMonitorCounterGroups &getPerfMonitorCounterGroups() const;
 
     // Ends the currently active pixel local storage session with GL_STORE_OP_STORE on all planes.
-    void endPixelLocalStorageWithStoreOpsStore();
+    void endPixelLocalStorageImplicit();
 
     bool areBlobCacheFuncsSet() const;
+
+    size_t getMemoryUsage() const;
 
   private:
     void initializeDefaultResources();

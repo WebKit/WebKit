@@ -38,6 +38,7 @@ struct RemoteAudioSessionConfiguration {
     size_t numberOfOutputChannels { 0 };
     size_t maximumNumberOfOutputChannels { 0 };
     size_t preferredBufferSize { 0 };
+    size_t outputLatency { 0 };
     bool isMuted { false };
     bool isActive { false };
     String sceneIdentifier;

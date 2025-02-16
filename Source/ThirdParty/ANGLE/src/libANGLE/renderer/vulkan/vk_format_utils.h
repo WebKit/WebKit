@@ -56,7 +56,7 @@ struct BufferFormatInitInfo final
     bool vertexLoadRequiresConversion;
 };
 
-VkFormat GetVkFormatFromFormatID(angle::FormatID actualFormatID);
+VkFormat GetVkFormatFromFormatID(const Renderer *renderer, angle::FormatID actualFormatID);
 angle::FormatID GetFormatIDFromVkFormat(VkFormat vkFormat);
 
 // Returns buffer alignment for image-copy operations (to or from a buffer).
@@ -98,9 +98,9 @@ class Format final : private angle::NonCopyable
     {
         return angle::Format::Get(mActualRenderableImageFormatID);
     }
-    VkFormat getActualRenderableImageVkFormat() const
+    VkFormat getActualRenderableImageVkFormat(const Renderer *renderer) const
     {
-        return GetVkFormatFromFormatID(mActualRenderableImageFormatID);
+        return GetVkFormatFromFormatID(renderer, mActualRenderableImageFormatID);
     }
 
     angle::FormatID getActualImageFormatID(ImageAccess access) const
@@ -108,9 +108,9 @@ class Format final : private angle::NonCopyable
         return ImageAccess::Renderable == access ? mActualRenderableImageFormatID
                                                  : mActualSampleOnlyImageFormatID;
     }
-    VkFormat getActualImageVkFormat(ImageAccess access) const
+    VkFormat getActualImageVkFormat(const Renderer *renderer, ImageAccess access) const
     {
-        return GetVkFormatFromFormatID(getActualImageFormatID(access));
+        return GetVkFormatFromFormatID(renderer, getActualImageFormatID(access));
     }
 
     LoadImageFunctionInfo getTextureLoadFunction(ImageAccess access, GLenum type) const
@@ -129,10 +129,10 @@ class Format final : private angle::NonCopyable
                                              : mActualBufferFormatID);
     }
 
-    VkFormat getActualBufferVkFormat(bool compressed) const
+    VkFormat getActualBufferVkFormat(const Renderer *renderer, bool compressed) const
     {
-        return GetVkFormatFromFormatID(compressed ? mActualCompressedBufferFormatID
-                                                  : mActualBufferFormatID);
+        return GetVkFormatFromFormatID(
+            renderer, compressed ? mActualCompressedBufferFormatID : mActualBufferFormatID);
     }
 
     VertexCopyFunction getVertexLoadFunction(bool compressed) const
@@ -286,6 +286,8 @@ bool IsETCFormat(angle::FormatID formatID);
 bool IsBCFormat(angle::FormatID formatID);
 
 angle::FormatID GetTranscodeBCFormatID(angle::FormatID formatID);
+
+VkFormat AdjustASTCFormatForHDR(const vk::Renderer *renderer, VkFormat vkFormat);
 
 // Get Etc format cpu transcoding to Bc function.
 LoadImageFunctionInfo GetEtcToBcTransCodingFunc(angle::FormatID formatID);

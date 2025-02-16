@@ -49,7 +49,7 @@ class SkiaPaintingEngine {
     WTF_MAKE_NONCOPYABLE(SkiaPaintingEngine);
 public:
     SkiaPaintingEngine(unsigned numberOfCPUThreads, unsigned numberOfGPUThreads);
-    ~SkiaPaintingEngine() = default;
+    ~SkiaPaintingEngine();
 
     static std::unique_ptr<SkiaPaintingEngine> create();
 
@@ -60,7 +60,7 @@ public:
 
 private:
     Ref<CoordinatedTileBuffer> createBuffer(RenderingMode, const IntSize&, bool contentsOpaque) const;
-    std::unique_ptr<DisplayList::DisplayList> recordDisplayList(const GraphicsLayer&, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale) const;
+    std::unique_ptr<DisplayList::DisplayList> recordDisplayList(RenderingMode, const GraphicsLayer&, const IntRect& dirtyRect, bool contentsOpaque, float contentsScale) const;
     void paintIntoGraphicsContext(const GraphicsLayer&, GraphicsContext&, const IntRect&, bool contentsOpaque, float contentsScale) const;
 
     static bool paintDisplayListIntoBuffer(Ref<CoordinatedTileBuffer>&, DisplayList::DisplayList&);

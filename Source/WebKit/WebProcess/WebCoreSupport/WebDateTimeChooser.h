@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include <WebCore/DateTimeChooser.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
@@ -68,5 +66,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif

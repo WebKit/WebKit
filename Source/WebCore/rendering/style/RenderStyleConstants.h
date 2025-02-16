@@ -1032,14 +1032,12 @@ enum class RubyOverhang : bool {
     None
 };
 
-#if ENABLE(DARK_MODE_CSS)
 enum class ColorScheme : uint8_t {
     Light = 1 << 0,
     Dark = 1 << 1
 };
 
 constexpr size_t ColorSchemeBits = 2;
-#endif
 
 constexpr size_t GridAutoFlowBits = 4;
 enum InternalGridAutoFlow : uint8_t {

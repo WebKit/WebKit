@@ -50,6 +50,7 @@ inline void setInstructionPointer(PlatformRegisters&, void *);
 
 template<size_t N> void*& argumentPointer(PlatformRegisters&);
 template<size_t N> void* argumentPointer(const PlatformRegisters&);
+void* wasmInstancePointer(const PlatformRegisters&);
 #if !ENABLE(C_LOOP)
 void*& llintInstructionPointer(PlatformRegisters&);
 void* llintInstructionPointer(const PlatformRegisters&);
@@ -73,6 +74,7 @@ inline CodePtr<PlatformRegistersPCPtrTag> instructionPointer(const mcontext_t&);
 
 template<size_t N> void*& argumentPointer(mcontext_t&);
 template<size_t N> void* argumentPointer(const mcontext_t&);
+void* wasmInstancePointer(const mcontext_t&);
 #if !ENABLE(C_LOOP)
 void*& llintInstructionPointer(mcontext_t&);
 void* llintInstructionPointer(const mcontext_t&);
@@ -88,9 +90,7 @@ static inline void*& stackPointerImpl(PlatformRegisters& regs)
 #if OS(DARWIN)
 #if __DARWIN_UNIX03
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.__esp);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.__rsp);
 #elif CPU(PPC) || CPU(PPC64)
     return reinterpret_cast<void*&>(regs.__r1);
@@ -102,12 +102,8 @@ static inline void*& stackPointerImpl(PlatformRegisters& regs)
 
 #else // !__DARWIN_UNIX03
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.esp);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.rsp);
-#elif CPU(PPC) || CPU(PPC64)
-    return reinterpret_cast<void*&>(regs.r1);
 #else
 #error Unknown Architecture
 #endif
@@ -118,8 +114,6 @@ static inline void*& stackPointerImpl(PlatformRegisters& regs)
 
 #if CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) regs.Sp);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) regs.IntSp);
 #elif CPU(X86)
     return reinterpret_cast<void*&>((uintptr_t&) regs.Esp);
 #elif CPU(X86_64)
@@ -166,48 +160,36 @@ static inline void*& stackPointerImpl(mcontext_t& machineContext)
     return stackPointerImpl(machineContext->__ss);
 #elif OS(FREEBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_esp);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_rsp);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_SP]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_gpregs.gp_sp);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_regs[29]);
 #else
 #error Unknown Architecture
 #endif
 
 #elif OS(NETBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_UESP]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_RSP]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_SP]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_SP]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_SP]);
 #else
 #error Unknown Architecture
 #endif
 
-#elif OS(FUCHSIA) || OS(LINUX)
+#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ESP]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_RSP]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.arm_sp);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.sp);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[29]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_SP]);
 #else
@@ -242,14 +224,8 @@ static inline void*& framePointerImpl(PlatformRegisters& regs)
 
 #if __DARWIN_UNIX03
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.__ebp);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.__rbp);
-#elif CPU(ARM_THUMB2)
-    return reinterpret_cast<void*&>(regs.__r[7]);
-#elif CPU(ARM)
-    return reinterpret_cast<void*&>(regs.__r[11]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>(regs.__x[29]);
 #else
@@ -258,9 +234,7 @@ static inline void*& framePointerImpl(PlatformRegisters& regs)
 
 #else // !__DARWIN_UNIX03
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.esp);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.rsp);
 #else
 #error Unknown Architecture
@@ -272,8 +246,6 @@ static inline void*& framePointerImpl(PlatformRegisters& regs)
 
 #if CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) regs.R11);
-#elif CPU(MIPS)
-#error Dont know what to do with mips. Do we even need this?
 #elif CPU(X86)
     return reinterpret_cast<void*&>((uintptr_t&) regs.Ebp);
 #elif CPU(X86_64)
@@ -311,49 +283,37 @@ static inline void*& framePointerImpl(mcontext_t& machineContext)
     return framePointerImpl(machineContext->__ss);
 #elif OS(FREEBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_ebp);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_rbp);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_FP]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_gpregs.gp_x[29]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_regs[30]);
 #else
 #error Unknown Architecture
 #endif
 
 #elif OS(NETBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_EBP]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_RBP]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_FP]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_FP]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_S8]);
 #else
 #error Unknown Architecture
 #endif
 
-#elif OS(FUCHSIA) || OS(LINUX)
+#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
 
 // The following sequence depends on glibc's sys/ucontext.h.
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_EBP]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_RBP]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.arm_fp);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.regs[29]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[30]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_S0]);
 #else
@@ -397,9 +357,7 @@ static inline void*& instructionPointerImpl(PlatformRegisters& regs)
 #if OS(DARWIN)
 #if __DARWIN_UNIX03
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.__eip);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.__rip);
 #elif CPU(ARM_THUMB2) || CPU(ARM)
     return reinterpret_cast<void*&>(regs.__pc);
@@ -408,9 +366,7 @@ static inline void*& instructionPointerImpl(PlatformRegisters& regs)
 #endif
 
 #else // !__DARWIN_UNIX03
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.eip);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.rip);
 #else
 #error Unknown Architecture
@@ -422,8 +378,6 @@ static inline void*& instructionPointerImpl(PlatformRegisters& regs)
 
 #if CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) regs.Pc);
-#elif CPU(MIPS)
-#error Dont know what to do with mips. Do we even need this?
 #elif CPU(X86)
     return reinterpret_cast<void*&>((uintptr_t&) regs.Eip);
 #elif CPU(X86_64)
@@ -491,48 +445,36 @@ static inline void*& instructionPointerImpl(mcontext_t& machineContext)
     return instructionPointerImpl(machineContext->__ss);
 #elif OS(FREEBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_eip);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_rip);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_PC]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_gpregs.gp_elr);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_pc);
 #else
 #error Unknown Architecture
 #endif
 
 #elif OS(NETBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_EIP]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_RIP]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_PC]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_PC]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_EPC]);
 #else
 #error Unknown Architecture
 #endif
 
-#elif OS(FUCHSIA) || OS(LINUX)
+#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
 
 // The following sequence depends on glibc's sys/ucontext.h.
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_EIP]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_RIP]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.arm_pc);
 #elif CPU(ARM64)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.pc);
-#elif CPU(MIPS)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.pc);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_PC]);
@@ -598,9 +540,7 @@ inline void*& argumentPointer<1>(PlatformRegisters& regs)
 #if OS(DARWIN)
 #if __DARWIN_UNIX03
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.__edx);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.__rsi);
 #elif CPU(ARM_THUMB2) || CPU(ARM)
     return reinterpret_cast<void*&>(regs.__r[1]);
@@ -612,9 +552,7 @@ inline void*& argumentPointer<1>(PlatformRegisters& regs)
 
 #else // !__DARWIN_UNIX03
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>(regs.edx);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>(regs.rsi);
 #else
 #error Unknown Architecture
@@ -626,8 +564,6 @@ inline void*& argumentPointer<1>(PlatformRegisters& regs)
 
 #if CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) regs.R1);
-#elif CPU(MIPS)
-#error Dont know what to do with mips. Do we even need this?
 #elif CPU(X86)
     return reinterpret_cast<void*&>((uintptr_t&) regs.Edx);
 #elif CPU(X86_64)
@@ -640,6 +576,47 @@ inline void*& argumentPointer<1>(PlatformRegisters& regs)
     return argumentPointer<1>(regs.machineContext);
 #endif
 }
+
+inline void* wasmInstancePointer(const PlatformRegisters& regs)
+{
+#if OS(DARWIN)
+#if __DARWIN_UNIX03
+
+#if CPU(X86_64)
+    return reinterpret_cast<void*>(regs.__rbx);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>(regs.__x[19]);
+#else
+#error Unknown Architecture
+#endif
+
+#else // !__DARWIN_UNIX03
+
+#if CPU(X86_64)
+    return reinterpret_cast<void*>(regs.rbx);
+#else
+#error Unknown Architecture
+#endif
+
+#endif // __DARWIN_UNIX03
+
+#elif OS(WINDOWS)
+
+#if CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) regs.R10);
+#elif CPU(X86)
+    return reinterpret_cast<void*>((uintptr_t) regs.Ebx);
+#elif CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) regs.Rbx);
+#else
+#error Unknown Architecture
+#endif
+
+#elif HAVE(MACHINE_CONTEXT)
+    return wasmInstancePointer(regs.machineContext);
+#endif
+}
+
 
 template<size_t N>
 inline void* argumentPointer(const PlatformRegisters& regs)
@@ -656,49 +633,37 @@ inline void*& argumentPointer<1>(mcontext_t& machineContext)
     return argumentPointer<1>(machineContext->__ss);
 #elif OS(FREEBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_edx);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_rsi);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_R1]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_gpregs.gp_x[1]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_regs[5]);
 #else
 #error Unknown Architecture
 #endif
 
 #elif OS(NETBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_EDX]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_RSI]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_R1]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_X1]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_A1]);
 #else
 #error Unknown Architecture
 #endif
 
-#elif OS(FUCHSIA) || OS(LINUX)
+#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
 
 // The following sequence depends on glibc's sys/ucontext.h.
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_EDX]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_RSI]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.arm_r1);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.regs[1]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[5]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[REG_A0 + 1]);
 #else
@@ -719,6 +684,64 @@ inline void*& argumentPointer<1>(mcontext_t& machineContext)
 #endif
 }
 
+inline void* wasmInstancePointer(const mcontext_t& machineContext)
+{
+#if OS(DARWIN)
+    return wasmInstancePointer(machineContext->__ss);
+#elif OS(FREEBSD)
+
+#if CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.mc_rbx);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.__gregs[_REG_R10]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.mc_gpregs.gp_x[19]);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(NETBSD)
+
+#if CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.__gregs[_REG_RBX]);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.__gregs[_REG_R10]);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.__gregs[_REG_X19]);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
+
+// The following sequence depends on glibc's sys/ucontext.h.
+#if CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.gregs[REG_RBX]);
+#elif CPU(ARM)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.arm_r10);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.regs[19]);
+#elif CPU(RISCV64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.__gregs[9]);
+#else
+#error Unknown Architecture
+#endif
+
+#elif OS(QNX)
+#if CPU(X86_64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.cpu.rbx);
+#elif CPU(ARM64)
+    return reinterpret_cast<void*>((uintptr_t) machineContext.cpu.gpr[19]);
+#else
+#error Unknown Architecture
+#endif
+
+#else
+#error Need a way to get the frame pointer for another thread on this platform
+#endif
+}
+
+
 template<unsigned N>
 inline void* argumentPointer(const mcontext_t& machineContext)
 {
@@ -734,15 +757,9 @@ inline void*& llintInstructionPointer(PlatformRegisters& regs)
 #if OS(DARWIN)
 #if __DARWIN_UNIX03
 
-#if CPU(X86)
-    static_assert(LLInt::LLIntPC == X86Registers::esi, "Wrong LLInt PC.");
-    return reinterpret_cast<void*&>(regs.__esi);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     static_assert(LLInt::LLIntPC == X86Registers::r8, "Wrong LLInt PC.");
     return reinterpret_cast<void*&>(regs.__r8);
-#elif CPU(ARM)
-    static_assert(LLInt::LLIntPC == ARMRegisters::r8, "Wrong LLInt PC.");
-    return reinterpret_cast<void*&>(regs.__r[8]);
 #elif CPU(ARM64)
     static_assert(LLInt::LLIntPC == ARM64Registers::x4, "Wrong LLInt PC.");
     return reinterpret_cast<void*&>(regs.__x[4]);
@@ -751,10 +768,7 @@ inline void*& llintInstructionPointer(PlatformRegisters& regs)
 #endif
 
 #else // !__DARWIN_UNIX03
-#if CPU(X86)
-    static_assert(LLInt::LLIntPC == X86Registers::esi, "Wrong LLInt PC.");
-    return reinterpret_cast<void*&>(regs.esi);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     static_assert(LLInt::LLIntPC == X86Registers::r8, "Wrong LLInt PC.");
     return reinterpret_cast<void*&>(regs.r8);
 #else
@@ -768,8 +782,6 @@ inline void*& llintInstructionPointer(PlatformRegisters& regs)
 #if CPU(ARM)
     static_assert(LLInt::LLIntPC == ARMRegisters::r8, "Wrong LLInt PC.");
     return reinterpret_cast<void*&>((uintptr_t&) regs.R8);
-#elif CPU(MIPS)
-#error Dont know what to do with mips. Do we even need this?
 #elif CPU(X86)
     static_assert(LLInt::LLIntPC == X86Registers::esi, "Wrong LLInt PC.");
     return reinterpret_cast<void*&>((uintptr_t&) regs.Esi);
@@ -800,49 +812,37 @@ inline void*& llintInstructionPointer(mcontext_t& machineContext)
     return llintInstructionPointer(machineContext->__ss);
 #elif OS(FREEBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_esi);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_r8);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_R8]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_gpregs.gp_x[4]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.mc_regs[12]);
 #else
 #error Unknown Architecture
 #endif
 
 #elif OS(NETBSD)
 
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_ESI]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_R8]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_R8]);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_X4]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[_REG_T4]);
 #else
 #error Unknown Architecture
 #endif
 
-#elif OS(FUCHSIA) || OS(LINUX)
+#elif OS(FUCHSIA) || OS(LINUX) || OS(HURD)
 
 // The following sequence depends on glibc's sys/ucontext.h.
-#if CPU(X86)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_ESI]);
-#elif CPU(X86_64)
+#if CPU(X86_64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[REG_R8]);
 #elif CPU(ARM)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.arm_r8);
 #elif CPU(ARM64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.regs[4]);
-#elif CPU(MIPS)
-    return reinterpret_cast<void*&>((uintptr_t&) machineContext.gregs[12]);
 #elif CPU(RISCV64)
     return reinterpret_cast<void*&>((uintptr_t&) machineContext.__gregs[14]);
 #else

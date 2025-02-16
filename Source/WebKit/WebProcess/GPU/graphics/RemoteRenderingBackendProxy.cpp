@@ -30,6 +30,7 @@
 
 #include "BufferIdentifierSet.h"
 #include "GPUConnectionToWebProcess.h"
+#include "ImageBufferRemoteDisplayListBackend.h"
 #include "ImageBufferRemotePDFDocumentBackend.h"
 #include "ImageBufferShareableBitmapBackend.h"
 #include "Logging.h"
@@ -252,6 +253,7 @@ RefPtr<ImageBuffer> RemoteRenderingBackendProxy::createImageBuffer(const FloatSi
         break;
 
     case RenderingMode::DisplayList:
+        imageBuffer = RemoteImageBufferProxy::create<ImageBufferRemoteDisplayListBackend>(size, resolutionScale, colorSpace, pixelFormat, purpose, *this);
         break;
     }
 
@@ -307,9 +309,9 @@ void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceId
 }
 
 #if PLATFORM(COCOA)
-void RemoteRenderingBackendProxy::didDrawCompositedToPDF(PageIdentifier pageID, RenderingResourceIdentifier imageBufferIdentifier, SnapshotIdentifier snapshotIdentifier)
+void RemoteRenderingBackendProxy::didDrawRemoteToPDF(PageIdentifier pageID, RenderingResourceIdentifier imageBufferIdentifier, SnapshotIdentifier snapshotIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::DidDrawCompositedToPDF(pageID, imageBufferIdentifier, snapshotIdentifier));
+    send(Messages::RemoteRenderingBackend::DidDrawRemoteToPDF(pageID, imageBufferIdentifier, snapshotIdentifier));
 }
 #endif
 

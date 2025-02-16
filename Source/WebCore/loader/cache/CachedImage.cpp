@@ -319,7 +319,7 @@ FloatSize CachedImage::imageSizeForRenderer(const RenderElement* renderer, SizeT
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
     if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(renderer); renderImage && renderImage->isMultiRepresentationHEIC()) {
-        auto metrics = renderImage->style().fontCascade().primaryFont().metricsForMultiRepresentationHEIC();
+        auto metrics = renderImage->style().fontCascade().primaryFont()->metricsForMultiRepresentationHEIC();
         return metrics.size();
     }
 #endif
@@ -363,6 +363,13 @@ void CachedImage::computeIntrinsicDimensions(Length& intrinsicWidth, Length& int
         image->computeIntrinsicDimensions(intrinsicWidth, intrinsicHeight, intrinsicRatio);
 }
 
+Headroom CachedImage::headroom() const
+{
+    if (RefPtr image = m_image)
+        return image->headroom();
+    return Headroom::None;
+}
+
 void CachedImage::notifyObservers(const IntRect* changeRect)
 {
     CachedResourceClientWalker<CachedImageClient> walker(*this);
@@ -372,15 +379,10 @@ void CachedImage::notifyObservers(const IntRect* changeRect)
 
 void CachedImage::checkShouldPaintBrokenImage()
 {
-    if (!m_loader || m_loader->reachedTerminalState())
+    if (!m_loader || m_loader->reachedTerminalState() || !m_loader->frameLoader())
         return;
 
     m_shouldPaintBrokenImage = m_loader->frameLoader()->client().shouldPaintBrokenImage(url());
-}
-
-bool CachedImage::isPDFResource() const
-{
-    return Image::isPDFResource(response().mimeType(), url());
 }
 
 void CachedImage::clear()

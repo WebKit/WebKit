@@ -36,6 +36,8 @@
 #endif
 #include "SharedBuffer.h"
 
+#include <array>
+
 namespace WebCore {
 
 #if ENABLE(OPENTYPE_MATH)
@@ -362,25 +364,25 @@ void OpenTypeMathData::getMathVariants(Glyph glyph, bool isVertical, Vector<Glyp
     hb_direction_t direction = isVertical ? HB_DIRECTION_BTT : HB_DIRECTION_LTR;
 
     sizeVariants.clear();
-    hb_ot_math_glyph_variant_t variants[10];
+    std::array<hb_ot_math_glyph_variant_t, 10> variants;
     unsigned variantsSize = std::size(variants);
     unsigned count;
     unsigned offset = 0;
     do {
         count = variantsSize;
-        hb_ot_math_get_glyph_variants(m_mathFont.get(), glyph, direction, offset, &count, variants);
+        hb_ot_math_get_glyph_variants(m_mathFont.get(), glyph, direction, offset, &count, variants.data());
         offset += count;
         for (unsigned i = 0; i < count; i++)
             sizeVariants.append(variants[i].glyph);
     } while (count == variantsSize);
 
     assemblyParts.clear();
-    hb_ot_math_glyph_part_t parts[10];
+    std::array<hb_ot_math_glyph_part_t, 10> parts;
     unsigned partsSize = std::size(parts);
     offset = 0;
     do {
         count = partsSize;
-        hb_ot_math_get_glyph_assembly(m_mathFont.get(), glyph, direction, offset, &count, parts, nullptr);
+        hb_ot_math_get_glyph_assembly(m_mathFont.get(), glyph, direction, offset, &count, parts.data(), nullptr);
         offset += count;
         for (unsigned i = 0; i < count; i++) {
             AssemblyPart assemblyPart;

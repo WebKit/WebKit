@@ -46,10 +46,10 @@ public:
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(FragmentedSharedBuffer&);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const URL&, FragmentedSharedBuffer&);
     WEBCORE_EXPORT static Ref<LegacyWebArchive> create(Ref<ArchiveResource>&& mainResource, Vector<Ref<ArchiveResource>>&& subresources, Vector<Ref<LegacyWebArchive>>&& subframeArchives);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, Function<bool(LocalFrame&)>&& frameFilter = { }, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainFrameFileName = { });
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(Node&, Function<bool(LocalFrame&)>&& frameFilter = { }, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainFrameFileName = { }, bool saveScriptsFromMemoryCache = true);
     WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(LocalFrame&);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(LocalFrame*);
-    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const SimpleRange&);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> createFromSelection(LocalFrame*, bool saveScriptsFromMemoryCache = true);
+    WEBCORE_EXPORT static RefPtr<LegacyWebArchive> create(const SimpleRange&, bool saveScriptsFromMemoryCache = true);
 
     WEBCORE_EXPORT RetainPtr<CFDataRef> rawDataRepresentation();
 
@@ -63,7 +63,7 @@ private:
 
     enum MainResourceStatus { Subresource, MainResource };
 
-    static RefPtr<LegacyWebArchive> create(const String& markupString, LocalFrame&, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainResourceFileName = { });
+    static RefPtr<LegacyWebArchive> create(const String& markupString, bool saveScriptsFromMemoryCache, LocalFrame&, Vector<Ref<Node>>&& nodes, Function<bool(LocalFrame&)>&& frameFilter, const Vector<MarkupExclusionRule>& markupExclusionRules = { }, const String& mainResourceFileName = { });
     static RefPtr<ArchiveResource> createResource(CFDictionaryRef);
     static ResourceResponse createResourceResponseFromMacArchivedData(CFDataRef);
     static ResourceResponse createResourceResponseFromPropertyListData(CFDataRef, CFStringRef responseDataType);

@@ -25,6 +25,6 @@ const numPages = 10;
     const module = new WebAssembly.Module(bin);
     const foo = new WebAssembly.Instance(module, {a: {b: new WebAssembly.Memory({initial: numPages, maximum: numPages * 2, shared: true})}}).exports.foo;
 
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < wasmTestLoopCount; i++)
         assert.throws(() => foo(i, numPages * pageSize + 1), WebAssembly.RuntimeError, "Out of bounds memory access");
 }

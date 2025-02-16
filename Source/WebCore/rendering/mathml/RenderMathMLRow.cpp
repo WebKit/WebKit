@@ -160,13 +160,13 @@ void RenderMathMLRow::layoutRowItems(LayoutUnit width, LayoutUnit ascent)
     }
 }
 
-void RenderMathMLRow::layoutBlock(bool relayoutChildren, LayoutUnit)
+void RenderMathMLRow::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     layoutFloatingChildren();

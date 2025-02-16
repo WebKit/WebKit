@@ -332,7 +332,7 @@ JSValue IntlDisplayNames::of(JSGlobalObject* globalObject, JSValue codeValue) co
             break;
         }
 
-        buffer = vm.intlCache().getFieldDisplayName(m_localeCString.data(), field.value(), style, status);
+        buffer = vm.intlCache().getFieldDisplayName(m_localeCString, field.value(), style, status);
         if (U_FAILURE(status))
             return (m_fallback == Fallback::None) ? jsUndefined() : jsString(vm, WTFMove(code));
         return jsString(vm, String(WTFMove(buffer)));

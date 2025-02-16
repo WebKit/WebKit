@@ -187,7 +187,7 @@ public:
     static bool nodeIsUserSelectAll(const Node*);
     static RefPtr<Node> rootUserSelectAllForNode(Node*);
 
-    void debugPosition(const char* msg = "") const;
+    void debugPosition(ASCIILiteral msg = ""_s) const;
 
 #if ENABLE(TREE_DEBUGGING)
     String debugDescription() const;

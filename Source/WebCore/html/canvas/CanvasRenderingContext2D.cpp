@@ -126,7 +126,7 @@ RefPtr<Filter> CanvasRenderingContext2D::createFilter(const FloatRect& bounds) c
 
     auto outsets = calculateFilterOutsets(bounds);
 
-    filter->setFilterRegion(bounds + outsets);
+    filter->setFilterRegion(bounds + toFloatBoxExtent(outsets));
     return filter;
 }
 

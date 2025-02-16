@@ -19,7 +19,7 @@ function test(a, b)
 var bound1 = test.bind(undefined, 1);
 var bound2 = bound1.bind(undefined, 2);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(bound2(), 3);
 flag = true;
 var error = null;

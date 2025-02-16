@@ -22,7 +22,11 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-[ExceptionForEnabledBy]
+[
+    DispatchedFrom=Model,
+    DispatchedTo=UI,
+    ExceptionForEnabledBy
+]
 messages -> ModelProcessProxy {
 
     TerminateWebProcess(WebCore::ProcessIdentifier webProcessIdentifier)
@@ -32,6 +36,10 @@ messages -> ModelProcessProxy {
 #endif
 
     ProcessIsReadyToExit()
+
+#if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
+    RequestSharedSimulationConnection(WebCore::ProcessIdentifier webProcessIdentifier) -> (std::optional<IPC::SharedFileHandle> sharedSimulationConnection)
+#endif
 }
 
 #endif // ENABLE(MODEL_PROCESS)

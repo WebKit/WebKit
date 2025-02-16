@@ -111,8 +111,10 @@ void UserMediaController::checkDocumentForVoiceActivity(const Document* document
 
 void UserMediaController::voiceActivityDetected()
 {
+#if ENABLE(MEDIA_SESSION)
     for (auto& document : m_voiceActivityDocuments)
         Ref(document)->voiceActivityDetected();
+#endif
 }
 
 } // namespace WebCore

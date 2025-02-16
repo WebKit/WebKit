@@ -63,7 +63,7 @@ static JSC_DECLARE_CUSTOM_GETTER(staticFunctionGetterJSAPIWrapperGlobalObjectCal
 DEFINE_VISIT_CHILDREN_WITH_MODIFIER(template<>, JSCallbackObject<JSAPIWrapperGlobalObject>);
 
 template <> const ClassInfo JSCallbackObject<JSAPIWrapperGlobalObject>::s_info = { "JSAPIWrapperGlobalObject"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSCallbackObject) };
-template<> const bool JSCallbackObject<JSAPIWrapperGlobalObject>::needsDestruction = true;
+template<> const DestructionMode JSCallbackObject<JSAPIWrapperGlobalObject>::needsDestruction = NeedsDestruction;
 
 template <>
 NativeFunction::Ptr JSCallbackObject<JSAPIWrapperGlobalObject>::getCallFunction()

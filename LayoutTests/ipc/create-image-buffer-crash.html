@@ -1,0 +1,57 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<p>This test passes if WebKit does not crash.</p>
+
+<script>
+  if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+  }
+
+  window.setTimeout(async () => {
+    if (!window.IPC)
+      return window.testRunner?.notifyDone();
+
+    const { CoreIPC } = await import('./coreipc.js');
+
+    const connection = CoreIPC.newStreamConnection();
+    CoreIPC.GPU.GPUConnectionToWebProcess.CreateRenderingBackend(0, { renderingBackendIdentifier: 393221, connectionHandle: connection });
+    const remoteBackend = connection.newInterface("RemoteRenderingBackend", 393221);
+
+    // The pixel formats to test
+    const pixelFormats = [
+      0, // BGRX8
+      1, // BGRA8
+      2, // RGB10
+      3, // RGB10A8
+      4  // RGBA16F (if HDR_SUPPORT is enabled)
+    ];
+
+    // Iterate through each pixel format and create image buffer
+    for (let format of pixelFormats) {
+      try {
+        remoteBackend.CreateImageBuffer({
+          logicalSize: { width: 69, height: 67 },
+          renderingMode: 1,
+          renderingPurpose: 2,
+          resolutionScale: 96,
+          colorSpace: {
+            serializableColorSpace: {
+              alias: {
+                m_cgColorSpace: {
+                  alias: {
+                    variantType: 'RetainPtr<CFStringRef>',
+                    variant: 'A'
+                  }
+                }
+              }
+            }
+          },
+          pixelFormat: format,
+          renderingResourceIdentifier: 393230 + format
+        });
+      } catch {}
+    }
+
+    window.testRunner?.notifyDone();
+  }, 10);
+</script>

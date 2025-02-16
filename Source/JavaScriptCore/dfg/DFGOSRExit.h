@@ -52,8 +52,8 @@ class OSRExit;
 
 namespace DFG {
 
+class BasicBlock;
 class SpeculativeJIT;
-struct BasicBlock;
 struct Node;
 
 // This enum describes the types of additional recovery that

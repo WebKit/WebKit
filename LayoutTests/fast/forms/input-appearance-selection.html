@@ -19,6 +19,7 @@ function test () {
 
 function testSelectionRange (testNumber, start, end, expectedStart, expectedEnd, tf, res)
 {
+    tf.focus();
     tf.setSelectionRange(start, end);
     res.innerHTML = res.innerHTML + "<br>Test " + testNumber + ": setSelectionRange(" + start + ", " + end + ")";            
     if (tf.selectionStart == expectedStart && tf.selectionEnd == expectedEnd)

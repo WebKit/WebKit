@@ -247,9 +247,7 @@ RELAND** button.
 
 Similar to [Chromium's committer status][Committer-status], long-term contributors to the ANGLE
 project may request to join the `angle-committers` group.  This allows you to give `+2` on code
-reviews and land patches without assistance.  After about 6 months of regular contributions, you may
-request committer status from a core ANGLE team member via email or code review.  Chromium
-committers and Googlers may ask at any time.
+reviews and land patches without assistance.  See [Becoming a Committer](BecomingCommitter.md).
 
 ### OWNERS files and becoming an Owner
 

@@ -281,7 +281,6 @@ set(WebKit_MESSAGES_IN_FILES
 
     Shared/Notifications/NotificationManagerMessageHandler
 
-    UIProcess/DigitalCredentials/DigitalCredentialsCoordinatorProxy
     UIProcess/DrawingAreaProxy
 
     UIProcess/Extensions/WebExtensionContext
@@ -584,6 +583,8 @@ set(WebKit_SERIALIZATION_IN_FILES
     Shared/Extensions/WebExtensionWindow.serialization.in
 
     Shared/Gamepad/GamepadData.serialization.in
+
+    Shared/graphics/RemoteImageBufferSetConfiguration.serialization.in
 
     Shared/WebGPU/WebGPUBindGroupDescriptor.serialization.in
     Shared/WebGPU/WebGPUBindGroupEntry.serialization.in

@@ -187,7 +187,8 @@
     if (immediateActionRecognizer != _immediateActionRecognizer)
         return;
 
-    if (_state == WebKit::ImmediateActionState::None)
+    Ref mainFrameProcess = RefPtr { _page.get() }->legacyMainFrameProcess();
+    if (_state == WebKit::ImmediateActionState::None || !mainFrameProcess->hasConnection())
         return;
 
     _hasActiveImmediateAction = YES;
@@ -195,7 +196,7 @@
     // FIXME: We need to be able to cancel this if the gesture recognizer is cancelled.
     // FIXME: Connection can be null if the process is closed; we should clean up better in that case.
     if (_state == WebKit::ImmediateActionState::Pending) {
-        Ref connection = RefPtr { _page.get() }->legacyMainFrameProcess().connection();
+        Ref connection = mainFrameProcess->connection();
         bool receivedReply = connection->waitForAndDispatchImmediately<Messages::WebPageProxy::DidPerformImmediateActionHitTest>(RefPtr { _page.get() }->webPageIDInMainFrameProcess(), 500_ms) == IPC::Error::NoError;
         if (!receivedReply)
             _state = WebKit::ImmediateActionState::TimedOut;

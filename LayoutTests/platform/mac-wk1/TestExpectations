@@ -83,6 +83,7 @@ imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interfac
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-setsinkid.https.html [ Skip ]
 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-audiocontext-interface/audiocontext-sinkid-state-change.https.html [ Skip ]
 media/now-playing-status-for-video-conference-web-page.html [ Skip ]
+webaudio/MediaStreamAudioSource/mediastreamaudiosourcenode.html [ Skip ]
 
 # Payment request &  Merchant Validation APIs are not supported on WK1.
 imported/w3c/web-platform-tests/permissions-policy/payment-allowed-by-permissions-policy-attribute-redirect-on-load.https.sub.html [ Skip ]
@@ -860,6 +861,9 @@ webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/generateTestReport
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-report-no-credentials.https.sub.html [ Failure ]
 webkit.org/b/246719 imported/w3c/web-platform-tests/reporting/cross-origin-reports-isolated.https.sub.html [ Failure ]
 
+# Reports are not being sent, potentially due to issues with WebKitLegacy and https-based WPT
+webkit.org/b/285098 imported/w3c/web-platform-tests/content-security-policy/report-hash/ [ Failure ]
+
 # WebKitLegacy is flaky on reporting API
 webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-sends-reports-on-violation.https.sub.html [ Pass Failure ]
 webkit.org/b/246350 imported/w3c/web-platform-tests/content-security-policy/reporting-api/report-to-directive-allowed-in-meta.https.sub.html [ Pass Failure DumpJSConsoleLogInStdErr ]
@@ -892,6 +896,9 @@ accessibility/datalist.html [ WontFix ]
 fast/forms/datalist [ WontFix ]
 imported/w3c/web-platform-tests/html/semantics/forms/the-datalist-element [ WontFix ]
 
+# Missing AccessibilityController::setForceInitialFrameCaching implementation.
+accessibility/mac/clipped-radio-input-frame.html [ WontFix ]
+
 accessibility/range-input-increment-decrement-fires-input-event.html [ WontFix ]
 
 # Default ARIA for custom elements are not yet enabled
@@ -912,6 +919,8 @@ accessibility/page-reload-deadlock.html [ Skip ]
 accessibility/dynamic-rowspan.html [ Skip ]
 accessibility/dynamic-colspan.html [ Skip ]
 accessibility/dynamic-table-descendants.html [ Skip ]
+
+accessibility/select-whitespace-collapsed-text.html [ Skip ]
 
 # Missing AccessibilityUIElement::isIndeterminate() implementation.
 accessibility/indeterminate-progressbar-custom-element.html [ Skip ]
@@ -1031,6 +1040,12 @@ http/tests/local/blob/navigate-blob.html [ Skip ]
 
 # Not supported on WK1
 media/no-fullscreen-when-hidden.html [ Skip ]
+
+# Multi-process test
+fullscreen/iframe-fullscreen-system-exit.html [ Skip ]
+
+# The Trusted Types API is not supported in WebKit1.
+imported/w3c/web-platform-tests/trusted-types [ Skip ]
 
 # Beacon is not supported on WK1.
 http/tests/blink/sendbeacon/ [ Skip ]
@@ -1166,6 +1181,8 @@ http/tests/media/video-webm-stall-seek.html [ Skip ]
 media/media-rvfc-paused-offscreen-webm.html [ Skip ]
 media/media-rvfc-paused-webm.html [ Skip ]
 media/media-rvfc-playing-webm.html [ Skip ]
+media/video-webm-seek-singlekeyframe.html [ Skip ]
+media/media-source/media-source-webm-seek-singlekeyframe.html [ Skip ]
 
 # Managed MediaSource isn't enabled on WK1
 media/media-source/media-managedmse-append.html [ Skip ]
@@ -1181,12 +1198,16 @@ media/media-webm-opus-error.html [ Failure ]
 media/media-webm-opus-variable-length.html [ Failure ]
 media/media-webm-no-duration.html [ Failure ]
 
+media/video-currenttime-monotonic.html [ Failure ]
+
 # Screenshots timeline does not capture screenshots for changes in WebKitLegacy.
 webkit.org/b/251113 inspector/timeline/timeline-event-screenshots.html [ Skip ]
 
-# The CookieStore API is not fully implemented on macOS WK1 yet.
+# The Cookie Store API is not supported on WK1.
 imported/w3c/web-platform-tests/cookie-store [ Skip ]
 imported/w3c/web-platform-tests/cookies/partitioned-cookies/partitioned-cookies.tentative.https.html [ Skip ]
+http/tests/cookies/cookie-store-get-secure.https.html [ Skip ]
+http/tests/cookies/cookie-store-set-secure.https.html [ Skip ]
 
 # View Transitions API is disabled in WK1.
 imported/w3c/web-platform-tests/css/css-view-transitions [ Skip ]
@@ -1197,6 +1218,7 @@ accessibility/mac/text-operation/text-operation-lowercase.html [ Skip ]
 accessibility/mac/text-operation/text-operation-replace-across-multiple-fields.html [ Skip ]
 accessibility/mac/text-operation/text-operation-replace-at-node-boundary.html [ Skip ]
 accessibility/mac/text-operation/text-operation-replace-preserve-case.html [ Skip ]
+accessibility/mac/text-operation/text-operation-replace-slotted-shadow.html [ Skip ]
 accessibility/mac/text-operation/text-operation-replace.html [ Skip ]
 accessibility/mac/text-operation/text-operation-select.html [ Skip ]
 accessibility/mac/text-operation/text-operation-smart-replace.html [ Skip ]
@@ -1331,6 +1353,7 @@ editing/secure-input/reset-state-on-navigation.html [ Failure ]
 
 # Context menu API is not exposed on DumpRenderTree.
 editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item.html [ Skip ]
+editing/mac/spelling/disable-automatic-spelling-correction-context-menu-item-does-not-leak.html [ Skip ]
 
 # Color input is not yet implemented on Mac WK1. Currently, using it erroneously triggers an ASSERT_NOT_REACHED.
 webkit.org/b/119094 fast/forms/color/input-color-onchange-event.html [ Skip ]
@@ -1959,7 +1982,6 @@ webkit.org/b/179853 imported/blink/fast/text/international-iteration-simple-text
 webkit.org/b/230062 fast/text/FontFaceSet-check-after-style-update.html [ Pass Failure ]
 
 # Skip anything related to WebAuthN
-http/wpt/credential-management/ [ Skip ]
 http/wpt/webauthn/ [ Skip ]
 imported/w3c/web-platform-tests/credential-management/ [ Skip ]
 imported/w3c/web-platform-tests/webauthn [ Skip ]
@@ -2449,6 +2471,9 @@ intersection-observer/observe-then-disconnect-target.html [ Skip ]
 # These tests rely on painting during the test, which DRT doesn't do.
 fast/text/glyph-display-lists [ Skip ]
 
+# OpenType-SVG fonts get truncated a little when drawn in 2D canvas. Enabling this test for WK1 will require large pixel tolerance.
+fast/text/otsvg-spacing-canvas.html [ ImageOnlyFailure ]
+
 # rdar://82399990 ([ Catalina EWS ] webgl/2.0.0/* tests are flaky crashing ASSERTION FAILED: !needsLayout() (229580)) Disable webgl tests for mac-wk1
 webgl [ Skip ]
 
@@ -2812,6 +2837,9 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-nestin
 #test uses test helper functions not implemented on WK1
 fast/dom/no-scroll-when-command-click-fragment-URL.html [ Skip ]
 
+# Deletes nodes asynchronously using OpportunisticTaskScheduler, which is disabled on WK1
+intersection-observer/root-element-deleted.html [ Skip ]
+
 # webkit.org/b/267799 [ Ventura wk1 ] 2 tests in media/track are constant crash
 [ Ventura ] media/track/track-in-band-layout.html [ Crash ]
 [ Ventura ] media/track/track-paint-on-captions.html [ Crash ]
@@ -2871,6 +2899,7 @@ imported/w3c/web-platform-tests/css/css-typed-om/the-stylepropertymap/properties
 # webkit.org/b/272115 REGRESSION (274826@main): [ Sonoma WK1 ] 2X imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades tests are flaky failures
 [ Ventura+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/image-upgrade.https.sub.html [ Pass Failure ]
 [ Ventura+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/audio-upgrade.https.sub.html [ Pass Failure ]
+[ Ventura+ ] imported/w3c/web-platform-tests/mixed-content/tentative/autoupgrades/mixed-content-cors.https.sub.html [ Pass Failure ]
 
 # webkit.org/b/272081 [web-animations] update WPT import for web-animations
 [ Sonoma ] imported/w3c/web-platform-tests/css/filter-effects/css-filters-animation-drop-shadow.html [ ImageOnlyFailure ]
@@ -2920,8 +2949,6 @@ webkit.org/b/260883 inspector/timeline/timeline-recording.html [ Skip ]
 
 webkit.org/b/274409 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-works-on-frame-src.https.sub.html [ Pass Failure ]
 
-webkit.org/b/274792 compositing/repaint/iframes/compositing-iframe-with-fixed-background-doc-repaint.html [ Pass Failure ]
-
 webkit.org/b/276145 http/tests/security/block-popup-to-all-zero-address.html [ Skip ]
 
 # rdar://124363343 ([ Sequoia+ ] Multiple WebKit tests failing after explicit "SameSite" attribute change)
@@ -2948,6 +2975,7 @@ imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-007.svg [ Ski
 imported/w3c/web-platform-tests/svg/text/reftests/text-inline-size-101.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-001.svg [ Skip ]
 imported/w3c/web-platform-tests/svg/text/reftests/text-multiline-002.svg [ Skip ]
+imported/w3c/web-platform-tests/svg/pservers/reftests/radialgradient-basic-002.svg [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/scroll-animations/ [ Skip ]
 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/scroll-timeline-overallProgress.tentative.html [ Skip ]
@@ -2991,11 +3019,23 @@ webkit.org/b/284486 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-grid/su
 webkit.org/b/284486 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-006.html [ Pass Failure ]
 webkit.org/b/284486 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-007.html [ Pass Failure ]
 
-webkit.org/b/284507 [ Ventura+ ] storage/indexeddb/objectstore-basics.html [ Pass Crash Timeout ]
-
 webkit.org/b/284898 [ Ventura+ ] fonts/font-weight-invalid-crash.html [ Pass Failure ]
 webkit.org/b/284898 [ Ventura+ ] fonts/ligature.html [ Pass Failure ImageOnlyFailure ]
 
 webkit.org/b/284954 [ Ventura+ ] imported/w3c/web-platform-tests/css/css-box/margin-trim/computed-margin-values/block-container-block-start-child-with-border.html [ Pass Failure ]
 
 webkit.org/b/285089 [ Ventura+ Debug ] imported/w3c/web-platform-tests/editing/crashtests/replace-document-root-and-refocus-window.html [ Skip ]
+
+webkit.org/b/286159 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba4444.html [ Pass Failure ]
+
+webkit.org/b/286185 [ Debug ] fast/canvas/webgl/tex-image-and-sub-image-2d-with-video-rgba5551.html [ Pass Failure ]
+
+webkit.org/b/286387 [ Debug ] inspector/worker/worker-create-and-terminate.html [ Pass Failure ]
+
+webkit.org/b/286392 imported/w3c/web-platform-tests/css/css-grid/subgrid/subgrid-baseline-008.html [ Pass Failure ]
+
+webkit.org/b/286602 media/media-source/media-detachablemse-append.html [ Pass Failure ]
+
+webkit.org/b/255555 [ Ventura+ ] imported/w3c/web-platform-tests/xhr/request-content-length.any.worker.html [ Pass Failure ]
+
+webkit.org/b/287713 printing/background-clip-text.html [ Failure ]

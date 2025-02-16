@@ -4,7 +4,7 @@ function foo(x) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(i);
     if (result != i * 11 + 55)
         throw "Error: bad result for i = " + i + ": " + result;

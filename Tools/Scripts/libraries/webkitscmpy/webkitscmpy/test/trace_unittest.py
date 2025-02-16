@@ -72,9 +72,21 @@ class TestRelationship(TestCase):
             ))
         )
         self.assertEqual(
-            ('original', ['123@main']), Relationship.parse(Commit(
+            (None, []), Relationship.parse(Commit(
                 hash='deadbeef1234', revision=1234, identifier='1234@main',
                 message='Commit title\n\nOriginally landed as: 123@main. <rdar://54321>',
+            ))
+        )
+        self.assertEqual(
+            ('original', ['123@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Originally landed as: 123@main. <rdar://54321>',
+            ))
+        )
+        self.assertEqual(
+            ('original', ['123@main']), Relationship.parse(Commit(
+                hash='deadbeef1234', revision=1234, identifier='1234@main',
+                message='Commit title\n\nOriginally-landed-as: 123@main. <rdar://54321>',
             ))
         )
 

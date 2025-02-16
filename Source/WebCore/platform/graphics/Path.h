@@ -110,11 +110,11 @@ public:
     FloatPoint pointAtLength(float length) const;
 
     bool contains(const FloatPoint&, WindRule = WindRule::NonZero) const;
-    bool strokeContains(const FloatPoint&, const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
+    bool strokeContains(const FloatPoint&, NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier) const;
 
     WEBCORE_EXPORT FloatRect fastBoundingRect() const;
     WEBCORE_EXPORT FloatRect boundingRect() const;
-    FloatRect strokeBoundingRect(const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
+    FloatRect strokeBoundingRect(NOESCAPE const Function<void(GraphicsContext&)>& strokeStyleApplier = { }) const;
 
     WEBCORE_EXPORT void ensureImplForTesting();
 

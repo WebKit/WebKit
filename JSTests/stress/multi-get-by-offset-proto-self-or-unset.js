@@ -17,11 +17,11 @@ q.f = 42;
 
 var f = {};
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     o.f = i;
 o.f = 42;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     if (i % 100 === 0) {
         let result = foo(q)
         if (result !== 4200)

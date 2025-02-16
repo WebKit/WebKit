@@ -1,0 +1,196 @@
+<!-- webkit-test-runner [ IPCTestingAPIEnabled=true ] -->
+<script>
+    function splitTypeFromList(container, list) {
+        const firstTypeOnly = container == "std::span"
+            || container == "Vector"
+            || container == "std::array"
+            || container == "HashSet";
+        const firstTwoTypesOnly = container == "HashMap";
+
+        const set = new Set();
+        let nestedTypeDepth = 0;
+        let atComma = false;
+        let previousTypeEnd = 0;
+        for (let i = 0; i < list.length; i++) {
+            const c = list[i];
+            if (c == '<')
+                nestedTypeDepth = nestedTypeDepth + 1;
+            if (c == '>')
+                nestedTypeDepth = nestedTypeDepth - 1;
+            if (c == ',') {
+                atComma = true;
+                continue;
+            }
+            if (c == ' ' && !nestedTypeDepth && atComma) {
+                set.add(list.substring(previousTypeEnd, i - 1));
+                if (firstTypeOnly)
+                    return set;
+                if (set.size == 2 && firstTwoTypesOnly)
+                    return set;
+                previousTypeEnd = i + 1;
+            }
+            atComma = false;
+        }
+        set.add(list.substring(previousTypeEnd, list.length));
+        return set;
+    }
+
+    function removeConst(input) {
+        if (input.startsWith("const ")) { return input.substring(6) }
+        return input;
+    }
+    
+    function extractTypesFromContainers(inputSet) {
+        let containerTypes = [
+            "Expected",
+            "HashMap",
+            "MemoryCompactRobinHoodHashMap",
+            "MemoryCompactLookupOnlyRobinHoodHashSet",
+            "std::pair",
+            "IPC::ArrayReferenceTuple",
+            "std::span",
+            "std::array",
+            "std::tuple",
+            "std::variant",
+            "std::unique_ptr",
+            "UniqueRef",
+            "Vector",
+            "HashSet",
+            "Ref",
+            "RefPtr",
+            "std::optional",
+            "OptionSet",
+            "OptionalTuple",
+            "KeyValuePair",
+            "Markable",
+            "RetainPtr",
+            "HashCountedSet"
+        ];
+        if (window.testRunner && !testRunner.haveSecureCodingRequest) {
+            containerTypes.push("IPC::CoreIPCRetainPtr");
+        }
+
+        const outputSet = new Set();
+        for (const input of inputSet) {
+            let foundContainer = false;
+            for (const container of containerTypes) {
+                if (input.startsWith(container + "<") && input.endsWith(">")) {
+                    for (const type of extractTypesFromContainers(splitTypeFromList(container, input.substring(container.length + 1, input.length - 1))))
+                        outputSet.add(type);
+                    foundContainer = true;
+                }
+            }
+            if (!foundContainer) { outputSet.add(removeConst(input)) }
+        }
+        
+        return outputSet;
+    }
+    
+    function typesNeedingDescriptions() {
+        let result = new Set();
+        for (const [name, message] of Object.entries(IPC.messages)) {
+            for (const messageAttribute of ["arguments", "replyArguments"]) {
+                const typeList = message[messageAttribute];
+                if (!typeList) { continue; }
+                for (const argument of typeList) {
+                    result.add(argument.type);
+                }
+            }
+        }
+        for (const [typeName, memberTypes] of Object.entries(IPC.serializedTypeInfo)) {
+            for (const memberType of memberTypes) {
+                result.add(memberType.type);
+            }
+        }
+        return extractTypesFromContainers(result);
+    }
+
+    function typesHavingDescriptions() {
+        const result = new Set();
+        for (const [describedType, metadata] of Object.entries(IPC.serializedTypeInfo))
+            result.add(describedType);
+        for (const [describedType, metadata] of Object.entries(IPC.serializedEnumInfo))
+            result.add(describedType);
+        for (const objectIdentifier of IPC.objectIdentifiers)
+            result.add(objectIdentifier);
+
+        const fundamentalTypes = [
+            "char",
+            "char32_t",
+            "short",
+            "float",
+            "bool",
+            "NSUInteger",
+            "NSInteger",
+            "size_t",
+            "std::nullptr_t",
+            "uint32_t",
+            "int32_t",
+            "uint8_t",
+            "UInt32",
+            "long",
+            "unsigned",
+            "unsigned long long",
+            "unsigned long",
+            "unsigned char",
+            "unsigned short",
+            "void",
+            "double",
+            "uint16_t",
+            "int64_t",
+            "pid_t",
+            "CGFloat",
+            "String",
+            "uint32_t",
+            "int16_t",
+            "uint64_t",
+            "uintptr_t",
+            "int",
+            "long long",
+            "GCGLint",
+            "GCGLenum",
+            "OSStatus",
+            "GCGLErrorCodeSet",
+            "CGBitmapInfo",
+            "uintptr_t",
+        ];
+        return result.union(new Set(fundamentalTypes));
+    }
+
+    function expectedTypesNeedingDescriptions() {
+        // Note: This set should only be shrinking. If you need to add to this set to fix the test,
+        // add IPC metadata in a *.serialization.in file instead.
+        let result = [
+            "CTFontDescriptorOptions",
+            "MachSendRight"
+        ];
+        if (window.testRunner) {
+            if (testRunner.isMac) {
+                result.push("WebCore::ContextMenuAction");
+                if (!testRunner.haveSecureCodingDataDetectors) {
+                    result.push("WKDDActionContext");
+                }
+            }
+            if (!testRunner.haveSecureCodingRequest) {
+                result.push("NSObject<NSSecureCoding>");
+                result.push("NSURLRequest");
+            }
+            if (!testRunner.haveSecureCodingDataDetectors) {
+                result.push("DDScannerResult");
+            }
+        }
+        return result.sort();
+    }
+    
+    onload = () => {
+        if (window.testRunner) { testRunner.dumpAsText(); }
+        if (!window.IPC) { alert("PASS"); return; }
+        const remainingTypesNeedingDescriptions = typesNeedingDescriptions().difference(typesHavingDescriptions());
+        const typesWithoutDescriptions = remainingTypesNeedingDescriptions.symmetricDifference(new Set(expectedTypesNeedingDescriptions()));
+        if (typesWithoutDescriptions.size) {
+            alert("FAIL - IPC Metadata is incorrect for types: " + Array.from(typesWithoutDescriptions));
+        } else {
+            alert("PASS");
+        }
+    }
+</script>

@@ -30,6 +30,7 @@
 
 #include "JITCompilation.h"
 #include "LinkBuffer.h"
+#include "NativeCalleeRegistry.h"
 #include "WasmCallee.h"
 #include "WasmIRGeneratorHelpers.h"
 #include "WasmMachineThreads.h"
@@ -91,7 +92,7 @@ void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& link
     }
 }
 
-void OSREntryPlan::work(CompilationEffort)
+void OSREntryPlan::work()
 {
     ASSERT(m_calleeGroup->runnable());
     ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
@@ -129,6 +130,8 @@ void OSREntryPlan::work(CompilationEffort)
     Vector<CodeLocationLabel<ExceptionHandlerPtrTag>> exceptionHandlerLocations;
     computeExceptionHandlerLocations(exceptionHandlerLocations, internalFunction, context, linkBuffer);
 
+    auto samplingProfilerMap = callee->materializePCToOriginMap(context.procedure->releasePCToOriginMap(), linkBuffer);
+
     dumpDisassembly(context, linkBuffer, m_functionIndex, signature, functionIndexSpace);
     omgEntrypoint.compilation = makeUnique<Compilation>(
         FINALIZE_CODE_IF(context.procedure->shouldDumpIR(), linkBuffer, JITCompilationPtrTag, nullptr, "WebAssembly OMGForOSREntry function[%i] %s name %s", m_functionIndex, signature.toString().ascii().data(), makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data()),
@@ -138,6 +141,10 @@ void OSREntryPlan::work(CompilationEffort)
 
     ASSERT(m_calleeGroup.ptr() == m_module->calleeGroupFor(mode()));
     callee->setEntrypoint(WTFMove(omgEntrypoint), internalFunction->osrEntryScratchBufferSize, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
+
+    if (samplingProfilerMap)
+        NativeCalleeRegistry::singleton().addPCToCodeOriginMap(callee.ptr(), WTFMove(samplingProfilerMap));
+
     {
         Locker locker { m_calleeGroup->m_lock };
         m_calleeGroup->recordOMGOSREntryCallee(locker, m_functionIndex, callee.get());

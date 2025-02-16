@@ -7,7 +7,7 @@ function foo (x, y, z, newX, checkZ, errorMessage) {
     }
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     foo(1, 2, {a:42}, 2, z => z.a === 42, "Error: bad result for non-overlapping case, i = " + i);
     foo(1, 2, {x:42}, 1, z => z.x === 2, "Error: bad result for setter case, i = " + i);
     foo(1, 2, {y:42}, 42, z => z.y === 42, "Error: bad result for getter case, i = " + i);

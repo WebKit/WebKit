@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test that WebFullScreenManagerProxy::RequestExitFullscreen works when fullscreen was initiated from an iframe</title>
+    <style>
+        ::backdrop {
+            background: red;
+        }
+    </style>
+</head>
+<body>
+    <script src="../resources/testharness.js"></script>
+    <script src="../resources/testharnessreport.js"></script>
+    <script src="../imported/w3c/web-platform-tests/resources/testdriver.js"></script>
+    <script src="../imported/w3c/web-platform-tests/resources/testdriver-vendor.js"></script>
+    <script>
+        addEventListener("load", () => {
+            promise_test(async () => {
+                await new Promise(resolve => {
+                    test_driver.bless("fullscreen", () => { iframe.contentDocument.documentElement.requestFullscreen() }, iframe.contentWindow);
+                    iframe.contentDocument.documentElement.addEventListener("fullscreenchange", resolve);
+                });
+                assert_equals(document.fullscreenElement, iframe, "iframe is fullscreen");
+                assert_equals(iframe.contentDocument.fullscreenElement, iframe.contentDocument.documentElement, "iframe content is fullscreen");
+                await new Promise(resolve => {
+                    // Simulate clicking on the system fullscreen button.
+                    testRunner.requestExitFullscreenFromUIProcess();
+                    iframe.contentDocument.documentElement.addEventListener("fullscreenchange", resolve);
+                });
+                assert_equals(document.fullscreenElement, null, "iframe is no longer fullscreen");
+                assert_equals(iframe.contentDocument.fullscreenElement, null, "iframe content is no longer fullscreen");
+                assert_false(iframe.contentDocument.documentElement.matches(":fullscreen"));
+            });
+        });
+    </script>
+    <iframe allowfullscreen id="iframe" srcdoc="<button onclick='document.documentElement.requestFullscreen();'>Go fullscreen</button><p>This test passes if there is no red after exiting fullscreen from the system control.</p>"></iframe>
+</body>
+</html>

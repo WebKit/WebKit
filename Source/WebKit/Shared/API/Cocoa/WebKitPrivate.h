@@ -24,6 +24,7 @@
  */
 
 #import <WebKit/WKDownloadDelegatePrivate.h>
+#import <WebKit/WKFoundation.h>
 #import <WebKit/WKHistoryDelegatePrivate.h>
 #import <WebKit/WKNavigationPrivate.h>
 #import <WebKit/WKProcessPoolPrivate.h>
@@ -50,6 +51,7 @@
 #import <WebKit/_WKInputDelegate.h>
 #import <WebKit/_WKPageLoadTiming.h>
 #import <WebKit/_WKProcessPoolConfiguration.h>
+#import <WebKit/_WKSpatialBackdropSource.h>
 #import <WebKit/_WKTargetedElementInfo.h>
 #import <WebKit/_WKTargetedElementRequest.h>
 #import <WebKit/_WKTextRun.h>

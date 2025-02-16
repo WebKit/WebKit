@@ -11,5 +11,5 @@ function foo() {
 let a = [10, foo];
 let s1 = a.toLocaleString();
 let bar = eval(s1);
-for (let i = 0; i < 100000; i++)
+for (let i = 0; i < testLoopCount; i++)
   bar();

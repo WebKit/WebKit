@@ -1,6 +1,8 @@
-This tests that a mouse click event will not cause a media element to gain focus.
+This tests that a mouse click event will cause a media element to gain focus without displaying an outline.
 
 
-EXPECTED (document.activeElement.id != 'video') OK
+EXPECTED (document.activeElement.id == 'video') OK
+EXPECTED (getComputedStyle(video).outlineStyle == 'none') OK
+EXPECTED (getComputedStyle(video).outlineWidth == '0px') OK
 END OF TEST
 

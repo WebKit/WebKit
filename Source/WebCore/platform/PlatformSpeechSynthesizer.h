@@ -28,6 +28,7 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "PlatformSpeechSynthesisVoice.h"
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
@@ -66,7 +67,7 @@ protected:
     virtual ~PlatformSpeechSynthesizerClient() = default;
 };
 
-class WEBCORE_EXPORT PlatformSpeechSynthesizer : public RefCounted<PlatformSpeechSynthesizer> {
+class WEBCORE_EXPORT PlatformSpeechSynthesizer : public RefCountedAndCanMakeWeakPtr<PlatformSpeechSynthesizer> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(PlatformSpeechSynthesizer, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT static Ref<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient&);

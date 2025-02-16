@@ -40,7 +40,7 @@ WI.ScreenshotsInstrument = class ScreenshotsInstrument extends WI.Instrument
         if (WI.sharedApp.debuggableType === WI.DebuggableType.Page)
             return false;
 
-        // COMPATIBILITY (macOS 12.3, iOS 15.4): Timeline.Instrument.Screenshot did not exist yet.
+        // COMPATIBILITY (iOS 15.4): Timeline.Instrument.Screenshot did not exist yet.
         return InspectorBackend.Enum.Timeline.Instrument.Screenshot;
     }
 

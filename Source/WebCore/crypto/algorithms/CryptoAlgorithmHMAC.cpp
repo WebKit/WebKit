@@ -35,7 +35,6 @@ namespace WebCore {
 
 namespace CryptoAlgorithmHMACInternal {
 static constexpr auto ALG1 = "HS1"_s;
-static constexpr auto ALG224 = "HS224"_s;
 static constexpr auto ALG256 = "HS256"_s;
 static constexpr auto ALG384 = "HS384"_s;
 static constexpr auto ALG512 = "HS512"_s;
@@ -116,8 +115,9 @@ void CryptoAlgorithmHMAC::importKey(CryptoKeyFormat format, KeyData&& data, cons
             switch (hash) {
             case CryptoAlgorithmIdentifier::SHA_1:
                 return alg.isNull() || alg == ALG1;
-            case CryptoAlgorithmIdentifier::SHA_224:
-                return alg.isNull() || alg == ALG224;
+            case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+                RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+                return false;
             case CryptoAlgorithmIdentifier::SHA_256:
                 return alg.isNull() || alg == ALG256;
             case CryptoAlgorithmIdentifier::SHA_384:
@@ -165,8 +165,8 @@ void CryptoAlgorithmHMAC::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& key
         case CryptoAlgorithmIdentifier::SHA_1:
             jwk.alg = String(ALG1);
             break;
-        case CryptoAlgorithmIdentifier::SHA_224:
-            jwk.alg = String(ALG224);
+        case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
             jwk.alg = String(ALG256);

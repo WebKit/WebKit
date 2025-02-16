@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CSSStyleImageValue.h"
 
+#include "CSSSerializationContext.h"
 #include "Document.h"
 
 #include <wtf/TZoneMallocInlines.h>
@@ -46,7 +47,7 @@ CSSStyleImageValue::CSSStyleImageValue(Ref<CSSImageValue>&& cssValue, Document* 
 
 void CSSStyleImageValue::serialize(StringBuilder& builder, OptionSet<SerializationArguments>) const
 {
-    builder.append(m_cssValue->cssText());
+    builder.append(m_cssValue->cssText(CSS::defaultSerializationContext()));
 }
 
 Document* CSSStyleImageValue::document() const

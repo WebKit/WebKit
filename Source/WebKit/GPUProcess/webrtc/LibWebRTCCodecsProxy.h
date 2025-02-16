@@ -116,7 +116,7 @@ private:
         std::unique_ptr<WebCore::FrameRateMonitor> frameRateMonitor;
         Deque<CompletionHandler<void(bool)>> decodingCallbacks;
     };
-    void doDecoderTask(VideoDecoderIdentifier, Function<void(Decoder&)>&&);
+    void doDecoderTask(VideoDecoderIdentifier, NOESCAPE Function<void(Decoder&)>&&);
 
     struct Encoder {
         webrtc::LocalEncoder webrtcEncoder { nullptr };

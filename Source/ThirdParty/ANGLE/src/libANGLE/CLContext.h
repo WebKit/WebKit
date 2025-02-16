@@ -113,6 +113,7 @@ class Context final : public _cl_context, public Object
     bool supportsImages() const;
     bool supportsIL() const;
     bool supportsBuiltInKernel(const std::string &name) const;
+    bool supportsImage2DFromBuffer() const;
 
     static void CL_CALLBACK ErrorCallback(const char *errinfo,
                                           const void *privateInfo,
@@ -177,6 +178,13 @@ inline bool Context::supportsImages() const
 {
     return (std::find_if(mDevices.cbegin(), mDevices.cend(), [](const DevicePtr &ptr) {
                 return ptr->getInfo().imageSupport == CL_TRUE;
+            }) != mDevices.cend());
+}
+
+inline bool Context::supportsImage2DFromBuffer() const
+{
+    return (std::find_if(mDevices.cbegin(), mDevices.cend(), [](const DevicePtr &ptr) {
+                return ptr->getInfo().khrImage2D_FromBuffer == true;
             }) != mDevices.cend());
 }
 

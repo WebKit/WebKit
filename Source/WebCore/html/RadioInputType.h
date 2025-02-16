@@ -46,7 +46,7 @@ public:
         return adoptRef(*new RadioInputType(element));
     }
 
-    static void forEachButtonInDetachedGroup(ContainerNode& rootName, const String& groupName, const Function<bool(HTMLInputElement&)>&);
+    static void forEachButtonInDetachedGroup(ContainerNode& rootName, const String& groupName, NOESCAPE const Function<bool(HTMLInputElement&)>&);
 
     bool valueMissing(const String&) const final;
 

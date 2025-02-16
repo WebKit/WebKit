@@ -450,6 +450,7 @@
 		7B600EBD2CF9CFF600D5DE66 /* Name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B600EBC2CF9CFF600D5DE66 /* Name.cpp */; };
 		7B600EBF2CF9CFF600D5DE66 /* Name.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B600EBB2CF9CFF600D5DE66 /* Name.h */; };
 		7B600EC02CF9CFF600D5DE66 /* Name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B600EBC2CF9CFF600D5DE66 /* Name.cpp */; };
+		7B6D22912D31034A0014BFCF /* context_private_call.inl.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B6D22902D31034A0014BFCF /* context_private_call.inl.h */; };
 		7B7608312898322F000012A1 /* loadimage_astc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7608302898322F000012A1 /* loadimage_astc.cpp */; };
 		7B7608342898326C000012A1 /* RewritePixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B7608322898326C000012A1 /* RewritePixelLocalStorage.cpp */; };
 		7B7608352898326C000012A1 /* RewritePixelLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B7608332898326C000012A1 /* RewritePixelLocalStorage.h */; };
@@ -458,14 +459,19 @@
 		7B76083D289832BD000012A1 /* VertexArrayImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B760838289832BD000012A1 /* VertexArrayImpl.cpp */; };
 		7B76083E289832BD000012A1 /* ProgramImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B760839289832BD000012A1 /* ProgramImpl.cpp */; };
 		7B76083F289832BD000012A1 /* TransformFeedbackImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */; };
+		7B77FE182D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B77FE172D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp */; };
+		7B77FE1A2D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B77FE172D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp */; };
+		7B77FE1B2D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B77FE162D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.h */; };
 		7B81955B28CF63D800C7ABCD /* MemoryShaderCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */; };
 		7B81955C28CF63D800C7ABCD /* MemoryShaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */; };
+		7B9BB4482D563C4A00E39E4C /* ObjCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9BB4472D563C4A00E39E4C /* ObjCPtr.h */; };
+		7B9BB4492D563C4A00E39E4C /* ObjCPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B9BB4472D563C4A00E39E4C /* ObjCPtr.h */; };
+		7B9BB44B2D563C9300E39E4C /* egl_stubs_getprocaddress_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B9BB44A2D563C9300E39E4C /* egl_stubs_getprocaddress_autogen.cpp */; };
 		7BA890552CB522400020C411 /* ImmutableString_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890542CB522400020C411 /* ImmutableString_autogen.cpp */; };
 		7BA890562CB522400020C411 /* ImmutableString_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890542CB522400020C411 /* ImmutableString_autogen.cpp */; };
 		7BA890582CB5227C0020C411 /* SymbolTable_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890572CB5227C0020C411 /* SymbolTable_autogen.cpp */; };
 		7BA890592CB5227C0020C411 /* SymbolTable_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890572CB5227C0020C411 /* SymbolTable_autogen.cpp */; };
 		7BA890622CB522F40020C411 /* context_private_call_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA890612CB522F40020C411 /* context_private_call_autogen.h */; };
-		7BA890632CB522F40020C411 /* context_private_call.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890602CB522F40020C411 /* context_private_call.cpp */; };
 		7BA890652CB5234E0020C411 /* BuiltIn_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA890642CB5234E0020C411 /* BuiltIn_autogen.h */; };
 		7BA890662CB5234E0020C411 /* BuiltIn_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA890642CB5234E0020C411 /* BuiltIn_autogen.h */; };
 		7BB2CF222B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */; };
@@ -657,6 +663,8 @@
 		7BF99CBD2C5A368800CEEA21 /* PruneInfiniteLoops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BF99CBC2C5A368800CEEA21 /* PruneInfiniteLoops.cpp */; };
 		7BF99CBE2C5A368800CEEA21 /* PruneInfiniteLoops.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BF99CBB2C5A368800CEEA21 /* PruneInfiniteLoops.h */; };
 		7BF99CC02C5A36BD00CEEA21 /* hash_containers.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BF99CBF2C5A36BD00CEEA21 /* hash_containers.h */; };
+		7BFD81842D50CF7C0010ED68 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BFD81832D50CF7C0010ED68 /* span.h */; };
+		7BFD81852D50CF7C0010ED68 /* span.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BFD81832D50CF7C0010ED68 /* span.h */; };
 		7BFF6EDF29E9908A009E1A57 /* SourcesPlatform.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9429E98CF200D23E74 /* SourcesPlatform.cpp */; };
 		7BFF6EE229E9908A009E1A57 /* SourcesPlatform-mm.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7B037F9529E98CF200D23E74 /* SourcesPlatform-mm.mm */; };
 		A3C49BF6255DF6C4005E8DF7 /* compression_utils_portable.h in Headers */ = {isa = PBXBuildFile; fileRef = A3C49BF1255DEDC5005E8DF7 /* compression_utils_portable.h */; };
@@ -965,8 +973,6 @@
 		FFD002AE2746E560002BE3BC /* egl_stubs_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD002A92746E55F002BE3BC /* egl_stubs_autogen.h */; };
 		FFD002AF2746E560002BE3BC /* egl_ext_stubs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD002AA2746E55F002BE3BC /* egl_ext_stubs.cpp */; };
 		FFD002B02746E560002BE3BC /* entry_points_gles_3_1_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD002AB2746E55F002BE3BC /* entry_points_gles_3_1_autogen.h */; };
-		FFD002B32746E5B2002BE3BC /* proc_table_egl_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FFD002B12746E5B2002BE3BC /* proc_table_egl_autogen.cpp */; };
-		FFD002B42746E5B2002BE3BC /* proc_table_egl.h in Headers */ = {isa = PBXBuildFile; fileRef = FFD002B22746E5B2002BE3BC /* proc_table_egl.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -1650,6 +1656,7 @@
 		7B359E182A7CFE0B0016DC59 /* RegenerateStructNames.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RegenerateStructNames.cpp; sourceTree = "<group>"; };
 		7B600EBB2CF9CFF600D5DE66 /* Name.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Name.h; sourceTree = "<group>"; };
 		7B600EBC2CF9CFF600D5DE66 /* Name.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Name.cpp; sourceTree = "<group>"; };
+		7B6D22902D31034A0014BFCF /* context_private_call.inl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = context_private_call.inl.h; sourceTree = "<group>"; };
 		7B7608302898322F000012A1 /* loadimage_astc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = loadimage_astc.cpp; sourceTree = "<group>"; };
 		7B7608322898326C000012A1 /* RewritePixelLocalStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewritePixelLocalStorage.cpp; sourceTree = "<group>"; };
 		7B7608332898326C000012A1 /* RewritePixelLocalStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewritePixelLocalStorage.h; sourceTree = "<group>"; };
@@ -1658,11 +1665,14 @@
 		7B760838289832BD000012A1 /* VertexArrayImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VertexArrayImpl.cpp; sourceTree = "<group>"; };
 		7B760839289832BD000012A1 /* ProgramImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgramImpl.cpp; sourceTree = "<group>"; };
 		7B76083A289832BD000012A1 /* TransformFeedbackImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TransformFeedbackImpl.cpp; sourceTree = "<group>"; };
+		7B77FE162D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoveUnusedFramebufferFetch.h; sourceTree = "<group>"; };
+		7B77FE172D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveUnusedFramebufferFetch.cpp; sourceTree = "<group>"; };
 		7B81955928CF63D800C7ABCD /* MemoryShaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryShaderCache.cpp; sourceTree = "<group>"; };
 		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
+		7B9BB4472D563C4A00E39E4C /* ObjCPtr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjCPtr.h; sourceTree = "<group>"; };
+		7B9BB44A2D563C9300E39E4C /* egl_stubs_getprocaddress_autogen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = egl_stubs_getprocaddress_autogen.cpp; sourceTree = "<group>"; };
 		7BA890542CB522400020C411 /* ImmutableString_autogen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableString_autogen.cpp; sourceTree = "<group>"; };
 		7BA890572CB5227C0020C411 /* SymbolTable_autogen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable_autogen.cpp; sourceTree = "<group>"; };
-		7BA890602CB522F40020C411 /* context_private_call.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = context_private_call.cpp; sourceTree = "<group>"; };
 		7BA890612CB522F40020C411 /* context_private_call_autogen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = context_private_call_autogen.h; sourceTree = "<group>"; };
 		7BA890642CB5234E0020C411 /* BuiltIn_autogen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuiltIn_autogen.h; sourceTree = "<group>"; };
 		7BB2CF202B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreTransformTextureCubeGradDerivatives.h; sourceTree = "<group>"; };
@@ -1701,6 +1711,7 @@
 		7BF99CBB2C5A368800CEEA21 /* PruneInfiniteLoops.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PruneInfiniteLoops.h; sourceTree = "<group>"; };
 		7BF99CBC2C5A368800CEEA21 /* PruneInfiniteLoops.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PruneInfiniteLoops.cpp; sourceTree = "<group>"; };
 		7BF99CBF2C5A36BD00CEEA21 /* hash_containers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hash_containers.h; sourceTree = "<group>"; };
+		7BFD81832D50CF7C0010ED68 /* span.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = span.h; sourceTree = "<group>"; };
 		A264F89316974DED006FAA5A /* DiagnosticsBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagnosticsBase.cpp; sourceTree = "<group>"; };
 		A264F89416974DED006FAA5A /* DiagnosticsBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticsBase.h; sourceTree = "<group>"; };
 		A264F89516974DED006FAA5A /* DirectiveHandlerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectiveHandlerBase.cpp; sourceTree = "<group>"; };
@@ -1957,8 +1968,6 @@
 		FFD002A92746E55F002BE3BC /* egl_stubs_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egl_stubs_autogen.h; sourceTree = "<group>"; };
 		FFD002AA2746E55F002BE3BC /* egl_ext_stubs.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = egl_ext_stubs.cpp; sourceTree = "<group>"; };
 		FFD002AB2746E55F002BE3BC /* entry_points_gles_3_1_autogen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = entry_points_gles_3_1_autogen.h; sourceTree = "<group>"; };
-		FFD002B12746E5B2002BE3BC /* proc_table_egl_autogen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = proc_table_egl_autogen.cpp; sourceTree = "<group>"; };
-		FFD002B22746E5B2002BE3BC /* proc_table_egl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = proc_table_egl.h; sourceTree = "<group>"; };
 		FFDA50D6269F9E5800AE11E2 /* create_mtl_internal_shaders.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = create_mtl_internal_shaders.py; sourceTree = "<group>"; };
 		FFE0D91526A0B4E80071ADAE /* AngleMetalLib.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = AngleMetalLib.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -2295,7 +2304,7 @@
 				FF62F69327448D6900AD6EDC /* Context_gles_3_1_autogen.h */,
 				FF62F69427448D6900AD6EDC /* Context_gles_3_2_autogen.h */,
 				FF62F68C27448D6900AD6EDC /* Context_gles_ext_autogen.h */,
-				7BA890602CB522F40020C411 /* context_private_call.cpp */,
+				7B6D22902D31034A0014BFCF /* context_private_call.inl.h */,
 				7BA890612CB522F40020C411 /* context_private_call_autogen.h */,
 				7B359DE62A7CEF9E0016DC59 /* ContextMutex.cpp */,
 				7B359DE52A7CEF9E0016DC59 /* ContextMutex.h */,
@@ -2502,6 +2511,7 @@
 				FFD002A72746E55F002BE3BC /* egl_ext_stubs_autogen.h */,
 				FFD002A82746E55F002BE3BC /* egl_stubs.cpp */,
 				FFD002A92746E55F002BE3BC /* egl_stubs_autogen.h */,
+				7B9BB44A2D563C9300E39E4C /* egl_stubs_getprocaddress_autogen.cpp */,
 				FFD0029F2746E4CF002BE3BC /* entry_points_egl_autogen.cpp */,
 				FFD002A32746E4F3002BE3BC /* entry_points_egl_autogen.h */,
 				FFD002A02746E4CF002BE3BC /* entry_points_egl_ext_autogen.cpp */,
@@ -2520,8 +2530,6 @@
 				A30B581F238DF74F0079FDDC /* entry_points_gles_ext_autogen.h */,
 				5CB300C71DE39E7500D2C405 /* global_state.cpp */,
 				5CB300C81DE39E7500D2C405 /* global_state.h */,
-				FFD002B22746E5B2002BE3BC /* proc_table_egl.h */,
-				FFD002B12746E5B2002BE3BC /* proc_table_egl_autogen.cpp */,
 				5CB300CC1DE39E7500D2C405 /* resource.h */,
 			);
 			path = libGLESv2;
@@ -2659,6 +2667,8 @@
 				5C55D5F122826B8E00B5BA2C /* RemoveInvariantDeclaration.h */,
 				5C55D5F522826B8E00B5BA2C /* RemoveUnreferencedVariables.cpp */,
 				5C55D64B22826B9F00B5BA2C /* RemoveUnreferencedVariables.h */,
+				7B77FE172D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp */,
+				7B77FE162D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.h */,
 				7BB62F512AA2008600C1DDA8 /* RescopeGlobalVariables.cpp */,
 				7BB62F502AA2008600C1DDA8 /* RescopeGlobalVariables.h */,
 				FF194FD327432CC2006A97A3 /* RewriteArrayOfArrayOfOpaqueUniforms.cpp */,
@@ -2746,6 +2756,7 @@
 				7B359E052A7CFD610016DC59 /* RingBufferAllocator.h */,
 				7BBC97D42BDB11C800628E74 /* SimpleMutex.cpp */,
 				7BBC97D52BDB11C800628E74 /* SimpleMutex.h */,
+				7BFD81832D50CF7C0010ED68 /* span.h */,
 				5CCD818B1DBFEA10006066B8 /* string_utils.cpp */,
 				5CCD818C1DBFEA10006066B8 /* string_utils.h */,
 				7B359E0D2A7CFD610016DC59 /* SynchronizedValue.h */,
@@ -3001,6 +3012,7 @@
 		A3C3FE1B255DDE7800B73018 /* apple */ = {
 			isa = PBXGroup;
 			children = (
+				7B9BB4472D563C4A00E39E4C /* ObjCPtr.h */,
 				A3C3FE1C255DDE7800B73018 /* SoftLinking.h */,
 			);
 			path = apple;
@@ -3332,6 +3344,7 @@
 				FF62F69F27448D6A00AD6EDC /* Context_gles_3_1_autogen.h in Headers */,
 				FF62F6A027448D6A00AD6EDC /* Context_gles_3_2_autogen.h in Headers */,
 				FF62F69827448D6A00AD6EDC /* Context_gles_ext_autogen.h in Headers */,
+				7B6D22912D31034A0014BFCF /* context_private_call.inl.h in Headers */,
 				7BA890622CB522F40020C411 /* context_private_call_autogen.h in Headers */,
 				31CD0036249184F400486F27 /* ContextImpl.h in Headers */,
 				7B359DE92A7CEF9F0016DC59 /* ContextMutex.h in Headers */,
@@ -3484,6 +3497,7 @@
 				31CDFFB5249184A100486F27 /* NodeSearch.h in Headers */,
 				7B1538862BBC2C7A00B50C74 /* NodeType.h in Headers */,
 				31CDFF732491849200486F27 /* numeric_lex.h in Headers */,
+				7B9BB4492D563C4A00E39E4C /* ObjCPtr.h in Headers */,
 				31CD0052249184FC00486F27 /* Observer.h in Headers */,
 				FF194FC727432C4D006A97A3 /* Operator_autogen.h in Headers */,
 				31CDFF552491848C00486F27 /* Optional.h in Headers */,
@@ -3507,7 +3521,6 @@
 				31CDFFCD249184A700486F27 /* Pragma.h in Headers */,
 				31CDFF712491849200486F27 /* Preprocessor.h in Headers */,
 				7BB2CF222B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.h in Headers */,
-				FFD002B42746E5B2002BE3BC /* proc_table_egl.h in Headers */,
 				31CD006F249184FC00486F27 /* Program.h in Headers */,
 				31CD0058249184FC00486F27 /* ProgramExecutable.h in Headers */,
 				7BB62F5D2AA2032500C1DDA8 /* ProgramExecutableMtl.h in Headers */,
@@ -3535,6 +3548,7 @@
 				31CDFF872491849800486F27 /* RemoveInactiveInterfaceVariables.h in Headers */,
 				31CDFF922491849800486F27 /* RemoveInvariantDeclaration.h in Headers */,
 				31CDFFAB2491849800486F27 /* RemoveUnreferencedVariables.h in Headers */,
+				7B77FE1B2D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.h in Headers */,
 				31CD0075249184FD00486F27 /* Renderbuffer.h in Headers */,
 				31CD0035249184F400486F27 /* RenderbufferImpl.h in Headers */,
 				31CD0039249184F400486F27 /* RenderbufferImpl_mock.h in Headers */,
@@ -3593,6 +3607,7 @@
 				31CD005E249184FC00486F27 /* SizedMRUCache.h in Headers */,
 				A3C49C04255DF719005E8DF7 /* SoftLinking.h in Headers */,
 				31CDFF6C2491849200486F27 /* SourceLocation.h in Headers */,
+				7BFD81852D50CF7C0010ED68 /* span.h in Headers */,
 				FF62F64927446DC800AD6EDC /* SpecializationConstant.h in Headers */,
 				31CDFF7B2491849700486F27 /* SplitSequenceOperator.h in Headers */,
 				31CD0082249184FD00486F27 /* State.h in Headers */,
@@ -3677,6 +3692,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BA890652CB5234E0020C411 /* BuiltIn_autogen.h in Headers */,
+				7B9BB4482D563C4A00E39E4C /* ObjCPtr.h in Headers */,
+				7BFD81842D50CF7C0010ED68 /* span.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3982,7 +3999,6 @@
 				DF83E2CD2639FD84000825EF /* ConstantUnion.cpp in Sources */,
 				DF83E2F32639FE17000825EF /* Context.cpp in Sources */,
 				DF83E31D2639FE17000825EF /* Context_gles_1_0.cpp in Sources */,
-				7BA890632CB522F40020C411 /* context_private_call.cpp in Sources */,
 				DF83E39A2639FED4000825EF /* ContextImpl.cpp in Sources */,
 				DF83E3772639FEB8000825EF /* ContextMtl.mm in Sources */,
 				7B359DEA2A7CEF9F0016DC59 /* ContextMutex.cpp in Sources */,
@@ -4013,6 +4029,7 @@
 				7B359D552A7CECAE0016DC59 /* DriverUniformMetal.cpp in Sources */,
 				FFD002AF2746E560002BE3BC /* egl_ext_stubs.cpp in Sources */,
 				FFD002AD2746E560002BE3BC /* egl_stubs.cpp in Sources */,
+				7B9BB44B2D563C9300E39E4C /* egl_stubs_getprocaddress_autogen.cpp in Sources */,
 				DF83E3902639FED4000825EF /* EGLReusableSync.cpp in Sources */,
 				DF83E30E2639FE17000825EF /* EGLSync.cpp in Sources */,
 				DF83E3972639FED4000825EF /* EGLSyncImpl.cpp in Sources */,
@@ -4146,7 +4163,6 @@
 				DF83E22C2639FCB0000825EF /* preprocessor_lex_autogen.cpp in Sources */,
 				DF83E2332639FCB0000825EF /* preprocessor_tab_autogen.cpp in Sources */,
 				7BB2CF232B1A554B00848B36 /* PreTransformTextureCubeGradDerivatives.cpp in Sources */,
-				FFD002B32746E5B2002BE3BC /* proc_table_egl_autogen.cpp in Sources */,
 				7BD5BEE929F139F2003F2E53 /* process.cpp in Sources */,
 				DF83E3052639FE17000825EF /* Program.cpp in Sources */,
 				DF83E3062639FE17000825EF /* ProgramExecutable.cpp in Sources */,
@@ -4175,6 +4191,7 @@
 				DF83E2652639FD33000825EF /* RemoveInactiveInterfaceVariables.cpp in Sources */,
 				DF83E26C2639FD33000825EF /* RemoveInvariantDeclaration.cpp in Sources */,
 				DF83E2762639FD33000825EF /* RemoveUnreferencedVariables.cpp in Sources */,
+				7B77FE1A2D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp in Sources */,
 				DF83E31F2639FE17000825EF /* Renderbuffer.cpp in Sources */,
 				7B76083B289832BD000012A1 /* RenderbufferImpl.cpp in Sources */,
 				DF83E3852639FEB8000825EF /* RenderBufferMtl.mm in Sources */,
@@ -4409,6 +4426,7 @@
 				7BF554E42C81F198002B101E /* RemoveInactiveInterfaceVariables.cpp in Sources */,
 				7BF5552D2C81F198002B101E /* RemoveInvariantDeclaration.cpp in Sources */,
 				7BF555792C81F198002B101E /* RemoveUnreferencedVariables.cpp in Sources */,
+				7B77FE182D31003B0040D6D6 /* RemoveUnusedFramebufferFetch.cpp in Sources */,
 				7BF555542C81F198002B101E /* ReplaceArrayOfMatrixVarying.cpp in Sources */,
 				7BF555782C81F198002B101E /* ReplaceClipCullDistanceVariable.cpp in Sources */,
 				7BF555132C81F198002B101E /* ReplaceShadowingVariables.cpp in Sources */,

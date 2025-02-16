@@ -160,9 +160,7 @@ static inline Ref<ArrayBuffer> toArrayBuffer(std::span<const uint8_t> data)
 
 static Vector<AuthenticatorTransport> transports()
 {
-    Vector<WebCore::AuthenticatorTransport> transports = { WebCore::AuthenticatorTransport::Internal };
-    if (shouldUpdateQuery())
-        transports.append(WebCore::AuthenticatorTransport::Hybrid);
+    Vector<WebCore::AuthenticatorTransport> transports = { WebCore::AuthenticatorTransport::Hybrid, WebCore::AuthenticatorTransport::Internal };
     return transports;
 }
 
@@ -377,7 +375,6 @@ std::optional<WebCore::ExceptionData> LocalAuthenticator::processLargeBlobExtens
         auto fetchQuery = adoptNS([[NSMutableDictionary alloc] init]);
         [fetchQuery setDictionary:@{
             (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
             (id)kSecUseDataProtectionKeychain: @YES,
             (id)kSecReturnAttributes: @YES,
@@ -530,7 +527,6 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
         auto query = adoptNS([[NSMutableDictionary alloc] init]);
         [query setDictionary:@{
             (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrLabel: secAttrLabel,
             (id)kSecAttrApplicationLabel: m_provisionalCredentialId.get(),
             (id)kSecUseDataProtectionKeychain: @YES
@@ -567,38 +563,6 @@ void LocalAuthenticator::continueMakeCredentialAfterUserVerification(SecAccessCo
     LOCAL_AUTHENTICATOR_ADDITIONS
 
     auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-
-    finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
-}
-
-void LocalAuthenticator::continueMakeCredentialAfterAttested(Vector<uint8_t>&& credentialId, Vector<uint8_t>&& authData, NSArray *certificates, NSError *error)
-{
-    using namespace LocalAuthenticatorInternal;
-
-    ASSERT(m_state == State::UserVerified);
-    m_state = State::Attested;
-    auto& creationOptions = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
-
-    if (error) {
-        LOG_ERROR("Couldn't attest: %s", String(error.localizedDescription).utf8().data());
-        auto attestationObject = buildAttestationObject(WTFMove(authData), String { emptyString() }, { }, AttestationConveyancePreference::None);
-        finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
-        return;
-    }
-    // Attestation Certificate and Attestation Issuing CA
-    ASSERT(certificates && ([certificates count] == 2));
-
-    // Step 13. Apple Attestation Cont'
-    // Assemble the attestation object:
-    // https://www.w3.org/TR/webauthn/#attestation-object
-    cbor::CBORValue::MapValue attestationStatementMap;
-    {
-        Vector<cbor::CBORValue> cborArray;
-        for (size_t i = 0; i < [certificates count]; i++)
-            cborArray.append(cbor::CBORValue(makeVector((NSData *)adoptCF(SecCertificateCopyData((__bridge SecCertificateRef)certificates[i])).get())));
-        attestationStatementMap[cbor::CBORValue("x5c")] = cbor::CBORValue(WTFMove(cborArray));
-    }
-    auto attestationObject = buildAttestationObject(WTFMove(authData), "apple"_s, WTFMove(attestationStatementMap), creationOptions.attestation);
 
     finishMakeCredential(WTFMove(credentialId), WTFMove(attestationObject), std::nullopt);
 }
@@ -719,7 +683,6 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
         BOOL useAlternateKeychainAttribute = shouldUseAlternateKeychainAttribute();
         NSMutableDictionary *queryDictionary = [@{
             (id)kSecClass: (id)kSecClassKey,
-            (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
             (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
             (id)kSecReturnRef: @YES,
             (id)kSecUseDataProtectionKeychain: @YES
@@ -768,7 +731,6 @@ void LocalAuthenticator::continueGetAssertionAfterUserVerification(Ref<WebCore::
     auto query = adoptNS([[NSMutableDictionary alloc] init]);
     [query setDictionary:@{
         (id)kSecClass: (id)kSecClassKey,
-        (id)kSecAttrKeyClass: (id)kSecAttrKeyClassPrivate,
         (id)kSecAttrSynchronizable: (id)kSecAttrSynchronizableAny,
         (id)kSecUseDataProtectionKeychain: @YES
     }];

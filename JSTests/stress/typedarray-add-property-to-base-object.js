@@ -8,7 +8,7 @@
 
     let array = new Int32Array(10);
 
-    for (let i = 0; i < 100000; i++)
+    for (let i = 0; i < testLoopCount; i++)
         foo(array);
 
 

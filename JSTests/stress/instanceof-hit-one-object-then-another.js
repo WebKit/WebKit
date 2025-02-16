@@ -8,7 +8,7 @@ noInline(foo);
 class Foo { }
 class Bar { }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(new Foo(), Foo);
     if (!result)
         throw "Error: bad result in loop: " + result;

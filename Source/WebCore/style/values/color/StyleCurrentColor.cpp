@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StyleCurrentColor.h"
 
+#include "CSSSerializationContext.h"
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
@@ -33,12 +34,12 @@ namespace Style {
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const CurrentColor&)
+void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext&, const CurrentColor&)
 {
     builder.append("currentcolor"_s);
 }
 
-String serializationForCSS(const CurrentColor&)
+String serializationForCSS(const CSS::SerializationContext&, const CurrentColor&)
 {
     return "currentcolor"_s;
 }

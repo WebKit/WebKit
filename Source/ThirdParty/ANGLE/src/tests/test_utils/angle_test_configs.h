@@ -219,6 +219,7 @@ PlatformParameters ES31_ANGLE_Vulkan_Secondaries();
 PlatformParameters ES32_ANGLE_Vulkan_Secondaries();
 
 PlatformParameters ES2_WEBGPU();
+PlatformParameters ES3_WEBGPU();
 
 PlatformParameters ES1_Zink();
 PlatformParameters ES2_Zink();

@@ -37,6 +37,8 @@ struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {
 
+bool isAnimationRangeKeyword(CSSValueID);
+
 // MARK: - Consumer functions
 
 RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange&, const CSSParserContext&, SingleTimelineRange::Type);

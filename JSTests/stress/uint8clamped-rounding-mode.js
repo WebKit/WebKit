@@ -4,7 +4,7 @@ function foo(value) {
 }
 noInline(foo);
 
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     foo(2.5);
     if (array[0] != 2)
         throw new Error(i);

@@ -995,26 +995,6 @@ void Box::extend(const Box &other)
     depth  = z1 - z0;
 }
 
-bool operator==(const Offset &a, const Offset &b)
-{
-    return a.x == b.x && a.y == b.y && a.z == b.z;
-}
-
-bool operator!=(const Offset &a, const Offset &b)
-{
-    return !(a == b);
-}
-
-bool operator==(const Extents &lhs, const Extents &rhs)
-{
-    return lhs.width == rhs.width && lhs.height == rhs.height && lhs.depth == rhs.depth;
-}
-
-bool operator!=(const Extents &lhs, const Extents &rhs)
-{
-    return !(lhs == rhs);
-}
-
 bool ValidateComponentTypeMasks(unsigned long outputTypes,
                                 unsigned long inputTypes,
                                 unsigned long outputMask,
@@ -1081,8 +1061,8 @@ bool CompressBlob(const size_t cacheSize, const uint8_t *cacheData, MemoryBuffer
     uLong expectedCompressedSize = zlib_internal::GzipExpectedCompressedSize(uncompressedSize);
     uLong actualCompressedSize   = expectedCompressedSize;
 
-    // Allocate memory.
-    if (!compressedData->resize(expectedCompressedSize))
+    // Clear previous contents and reserve enough memory.
+    if (!compressedData->clearAndReserve(expectedCompressedSize))
     {
         ERR() << "Failed to allocate memory for compression";
         return false;
@@ -1127,8 +1107,8 @@ bool DecompressBlob(const uint8_t *compressedData,
         return false;
     }
 
-    // Allocate enough memory.
-    if (!uncompressedData->resize(uncompressedSize))
+    // Clear previous contents and reserve enough memory.
+    if (!uncompressedData->clearAndReserve(uncompressedSize))
     {
         ERR() << "Failed to allocate memory for decompression";
         return false;

@@ -7,7 +7,7 @@ function test(map)
 noInline(test);
 
 var map = new Map();
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(map);
 }
 var array = [];

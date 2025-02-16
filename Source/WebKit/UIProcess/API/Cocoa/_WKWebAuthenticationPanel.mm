@@ -199,7 +199,7 @@ static _WKWebAuthenticationTransport wkWebAuthenticationTransport(WebCore::Authe
         return _transports.get();
 
     auto& transports = _panel->transports();
-    _transports = [[NSMutableSet alloc] initWithCapacity:transports.size()];
+    _transports = adoptNS([[NSMutableSet alloc] initWithCapacity:transports.size()]);
     for (auto& transport : transports)
         [_transports addObject:adoptNS([[NSNumber alloc] initWithInt:wkWebAuthenticationTransport(transport)]).get()];
     return _transports.get();
@@ -260,7 +260,6 @@ static RetainPtr<NSArray> getAllLocalAuthenticatorCredentialsImpl(NSString *acce
     auto query = adoptNS([[NSMutableDictionary alloc] init]);
     [query setDictionary:@{
         (__bridge id)kSecClass: bridge_id_cast(kSecClassKey),
-        (__bridge id)kSecAttrKeyClass: bridge_id_cast(kSecAttrKeyClassPrivate),
         (__bridge id)kSecAttrAccessGroup: accessGroup,
         (__bridge id)kSecReturnAttributes: @YES,
         (__bridge id)kSecMatchLimit: bridge_id_cast(kSecMatchLimitAll),
@@ -662,7 +661,6 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     BOOL useAlternateKeychainAttribute = WebKit::shouldUseAlternateKeychainAttribute();
     auto query = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
         (id)kSecClassKey, (id)kSecClass,
-        (id)kSecAttrKeyClassPrivate, (id)kSecAttrKeyClass,
         (id)rp, (id)kSecAttrLabel,
         @YES, (id)kSecUseDataProtectionKeychain,
         nil
@@ -727,7 +725,6 @@ static void createNSErrorFromWKErrorIfNecessary(NSError **error, WKErrorCode err
     BOOL useAlternateKeychainAttribute = WebKit::shouldUseAlternateKeychainAttribute();
     auto query = adoptNS([[NSMutableDictionary alloc] initWithObjectsAndKeys:
         (id)kSecClassKey, (id)kSecClass,
-        (id)kSecAttrKeyClassPrivate, (id)kSecAttrKeyClass,
         @YES, (id)kSecReturnRef,
         @YES, (id)kSecUseDataProtectionKeychain,
         (id)kSecAttrSynchronizableAny, (id)kSecAttrSynchronizable,

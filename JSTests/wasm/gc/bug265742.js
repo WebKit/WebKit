@@ -1,5 +1,3 @@
-//@ runWebAssemblySuite("--useWasmGC=true")
-
 import { instantiate } from "./wast-wrapper.js";
 
 instantiate(`

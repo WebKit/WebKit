@@ -113,7 +113,7 @@ private:
     RetainPtr<AVAssetTrack> m_track;
     RetainPtr<WebCoreSharedBufferResourceLoaderDelegate> m_loader;
     std::unique_ptr<ImageRotationSessionVT> m_imageRotationSession;
-    Ref<WebCoreDecompressionSession> m_decompressionSession;
+    const Ref<WebCoreDecompressionSession> m_decompressionSession;
     Function<void(EncodedDataStatus)> m_encodedDataStatusChangedCallback;
 
     SampleMap m_sampleData;

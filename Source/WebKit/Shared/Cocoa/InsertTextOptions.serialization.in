@@ -26,4 +26,5 @@ struct WebKit::InsertTextOptions {
     bool processingUserGesture;
     bool shouldSimulateKeyboardInput;
     WebKit::EditingRangeIsRelativeTo editingRangeIsRelativeTo;
+    std::optional<WebCore::TextDirection> directionFromCurrentInputMode;
 };

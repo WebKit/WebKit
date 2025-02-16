@@ -128,7 +128,7 @@ bool JITPlan::isKnownToBeLiveDuringGC(AbstractSlotVisitor& visitor)
     return true;
 }
 
-bool JITPlan::iterateCodeBlocksForGC(AbstractSlotVisitor& visitor, const Function<void(CodeBlock*)>& func)
+bool JITPlan::iterateCodeBlocksForGC(AbstractSlotVisitor& visitor, NOESCAPE const Function<void(CodeBlock*)>& func)
 {
     if (!isKnownToBeLiveDuringGC(visitor))
         return false;

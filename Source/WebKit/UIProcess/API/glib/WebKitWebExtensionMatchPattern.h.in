@@ -60,10 +60,10 @@ WEBKIT_API void
 webkit_web_extension_match_pattern_unref (WebKitWebExtensionMatchPattern *matchPattern);
 
 WEBKIT_API WebKitWebExtensionMatchPattern*
-webkit_web_extension_match_pattern_new_all_urls ();
+webkit_web_extension_match_pattern_new_all_urls (void);
 
 WEBKIT_API WebKitWebExtensionMatchPattern*
-webkit_web_extension_match_pattern_new_all_hosts_and_schemes ();
+webkit_web_extension_match_pattern_new_all_hosts_and_schemes (void);
 
 WEBKIT_API WebKitWebExtensionMatchPattern*
 webkit_web_extension_match_pattern_new_with_string (const gchar  *string,

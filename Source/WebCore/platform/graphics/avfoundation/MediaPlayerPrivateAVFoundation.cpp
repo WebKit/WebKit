@@ -53,8 +53,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/CString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 MediaPlayerPrivateAVFoundation::MediaPlayerPrivateAVFoundation(MediaPlayer* player)
@@ -207,7 +205,7 @@ void MediaPlayerPrivateAVFoundation::load(const String& url)
 }
 
 #if ENABLE(MEDIA_SOURCE)
-void MediaPlayerPrivateAVFoundation::load(const URL&, const ContentType&, MediaSourcePrivateClient&)
+void MediaPlayerPrivateAVFoundation::load(const URL&, const LoadOptions&, MediaSourcePrivateClient&)
 {
     setNetworkState(MediaPlayer::NetworkState::FormatError);
 }
@@ -268,8 +266,9 @@ void MediaPlayerPrivateAVFoundation::seekToTarget(const SeekTarget& target)
 {
     if (m_seeking) {
         ALWAYS_LOG(LOGIDENTIFIER, "saving pending seek");
-        m_pendingSeek = [this, target]() {
-            seekToTarget(target);
+        m_pendingSeek = [weakThis = ThreadSafeWeakPtr { * this }, target]() {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->seekToTarget(target);
         };
         return;
     }
@@ -282,8 +281,8 @@ void MediaPlayerPrivateAVFoundation::seekToTarget(const SeekTarget& target)
     if (target.time > duration())
         adjustedTarget.time = duration();
 
-    if (currentTextTrack())
-        currentTextTrack()->beginSeeking();
+    if (RefPtr track = currentTextTrack())
+        track->beginSeeking();
 
     ALWAYS_LOG(LOGIDENTIFIER, "seeking to ", adjustedTarget.time);
 
@@ -783,7 +782,7 @@ void MediaPlayerPrivateAVFoundation::processNewAndRemovedTextTracks(const Vector
                 continue;
             }
             if (player)
-                player->removeTextTrack(*m_textTracks[i]);
+                player->removeTextTrack(Ref { *m_textTracks[i] });
             m_textTracks.remove(i);
         }
     }
@@ -910,7 +909,7 @@ WTFLogChannel& MediaPlayerPrivateAVFoundation::logChannel() const
 
 String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRenderingMode enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 3> values {
         MAKE_STATIC_STRING_IMPL("MediaRenderingNone"),
         MAKE_STATIC_STRING_IMPL("MediaRenderingToContext"),
         MAKE_STATIC_STRING_IMPL("MediaRenderingToLayer"),
@@ -923,7 +922,5 @@ String convertEnumerationToString(MediaPlayerPrivateAVFoundation::MediaRendering
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

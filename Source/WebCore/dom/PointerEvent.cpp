@@ -27,8 +27,8 @@
 #include "PointerEvent.h"
 
 #include "EventNames.h"
+#include "MouseEventTypes.h"
 #include "Node.h"
-#include "PlatformMouseEvent.h"
 #include "PointerEventTypeNames.h"
 #include <wtf/TZoneMallocInlines.h>
 

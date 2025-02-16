@@ -417,7 +417,8 @@ double DateCache::parseDate(JSGlobalObject* globalObject, VM& vm, const String& 
         return value;
     };
 
-    double value = parseDateImpl(expectedString.value().span());
+    // FIXME: expectedString is UTF-8 but parseDateImpl requires Latin1. Which is correct?
+    double value = parseDateImpl(byteCast<LChar>(expectedString.value().span()));
     m_cachedDateString = date;
     m_cachedDateStringValue = value;
     return value;

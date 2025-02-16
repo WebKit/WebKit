@@ -44,7 +44,7 @@ function test2() {
 }
 noInline(test2);
 
-for (let i = 0; i < 1e5; i++) {
+for (let i = 0; i < testLoopCount; i++) {
   test1();
   shouldThrowTypeError(test2);
 }

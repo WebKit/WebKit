@@ -236,6 +236,11 @@ bool FramebufferAttachment::isRenderToTexture() const
 
 GLsizei FramebufferAttachment::getRenderToTextureSamples() const
 {
+    if (!isRenderToTexture())
+    {
+        return 0;
+    }
+
     ASSERT(mRenderToTextureSamples == kDefaultRenderToTextureSamples || mType == GL_TEXTURE);
 
     if (mType == GL_RENDERBUFFER)

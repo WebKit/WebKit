@@ -15,7 +15,7 @@ function test1() {
     }
     noInline(foo);
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let [a, b, c, d] = foo();
         assert(a === 0);
         assert(b === 1);
@@ -34,7 +34,7 @@ function test2() {
     }
     noInline(foo);
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let r = foo();
         assert(r.length === 7);
         let [a, b, c, d, e, f, g] = r;
@@ -61,7 +61,7 @@ function test3() {
     }
     noInline(foo);
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let r = foo();
         assert(r.length === 3);
         let [a, b, c] = r;
@@ -84,7 +84,7 @@ function test4() {
     }
     noInline(foo);
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let r = foo();
         assert(r.length === 1);
         assert(r[0] === 0);

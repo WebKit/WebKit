@@ -100,7 +100,7 @@ GStreamerPeerConnectionBackend::GStreamerPeerConnectionBackend(RTCPeerConnection
     auto& logObserver = webrtcLogObserverSingleton();
     logObserver.addWatch(logger());
 
-    auto identifier = makeString(logIdentifier());
+    auto identifier = makeString(hex(LOGIDENTIFIER.objectIdentifier));
     GST_INFO_OBJECT(m_endpoint->pipeline(), "WebCore logs identifier for this pipeline is: %s", identifier.convertToASCIIUppercase().ascii().data());
 #endif
 }
@@ -137,6 +137,22 @@ GStreamerRtpSenderBackend& GStreamerPeerConnectionBackend::backendFromRTPSender(
 {
     ASSERT(!sender.isStopped());
     return static_cast<GStreamerRtpSenderBackend&>(*sender.backend());
+}
+
+void GStreamerPeerConnectionBackend::dispatchSenderBitrateRequest(const GRefPtr<GstWebRTCDTLSTransport>& transport, uint32_t bitrate)
+{
+    for (auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
+        auto& senderBackend = backendFromRTPSender(transceiver->sender());
+        GRefPtr<GstWebRTCDTLSTransport> candidate;
+        g_object_get(senderBackend.rtcSender(), "transport", &candidate.outPtr(), nullptr);
+        if (!candidate)
+            continue;
+
+        if (candidate == transport) {
+            senderBackend.dispatchBitrateRequest(bitrate);
+            return;
+        }
+    }
 }
 
 void GStreamerPeerConnectionBackend::getStats(Ref<DeferredPromise>&& promise)
@@ -228,44 +244,120 @@ std::unique_ptr<RTCDataChannelHandler> GStreamerPeerConnectionBackend::createDat
     return m_endpoint->createDataChannel(label, options);
 }
 
-RefPtr<RTCRtpSender> GStreamerPeerConnectionBackend::findExistingSender(const Vector<RefPtr<RTCRtpTransceiver>>& transceivers, GStreamerRtpSenderBackend& senderBackend)
-{
-    ASSERT(senderBackend.rtcSender());
-    for (auto& transceiver : transceivers) {
-        auto& sender = transceiver->sender();
-        if (!sender.isStopped() && senderBackend.rtcSender() == backendFromRTPSender(sender).rtcSender())
-            return Ref(sender);
-    }
-    return nullptr;
-}
-
 ExceptionOr<Ref<RTCRtpSender>> GStreamerPeerConnectionBackend::addTrack(MediaStreamTrack& track, FixedVector<String>&& mediaStreamIds)
 {
+    // https://www.w3.org/TR/webrtc/#dom-rtcpeerconnection-addtrack
     GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Adding new track.");
+
+    // 6. Let senders be the result of executing the CollectSenders algorithm.
+    // This is already done in RTCPeerConnection so no need to repeat:
+    // If an RTCRtpSender for track already exists in senders, throw an InvalidAccessError.
+    Vector<RefPtr<RTCRtpSender>> senders;
+    for (const auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
+        if (transceiver->stopped())
+            continue;
+        senders.append(&transceiver->sender());
+    }
+
+    // 7. The steps below describe how to determine if an existing sender can be reused. If any
+    // RTCRtpSender object in senders matches all the following criteria, let sender be that object,
+    // or null otherwise:
+    RefPtr<RTCRtpSender> sender;
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Looking for a re-usable sender in %zu existing senders", senders.size());
+    for (const auto& currentSender : senders) {
+        bool noTrack = false;
+        bool trackKindMatches = false;
+        bool isNotStopped = false;
+        bool isNotActivelySending = false;
+
+        // The sender's track is null.
+        if (!currentSender->track()) {
+            GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Sender %p has no track, potentially reusing", currentSender.get());
+            noTrack = true;
+        }
+
+        // The transceiver kind of the RTCRtpTransceiver, associated with the sender, matches kind.
+        if (currentSender->trackKind() == track.kind()) {
+            GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Sender %p kind matches, potentially reusing", currentSender.get());
+            trackKindMatches = true;
+        }
+
+        // The [[Stopping]] slot of the RTCRtpTransceiver associated with the sender is false.
+        if (!currentSender->isStopped()) {
+            GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Sender %p is not stopped, potentially reusing", currentSender.get());
+            isNotStopped = true;
+        }
+
+        // The sender has never been used to send. More precisely, the [[CurrentDirection]] slot of
+        // the RTCRtpTransceiver associated with the sender has never had a value of "sendrecv" or
+        // "sendonly".
+        auto direction = currentSender->currentTransceiverDirection();
+        if (direction != RTCRtpTransceiverDirection::Sendonly && direction != RTCRtpTransceiverDirection::Sendrecv) {
+            GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Sender %p is not actively sending, potentially reusing", currentSender.get());
+            isNotActivelySending = true;
+        }
+
+        if (noTrack && trackKindMatches && isNotStopped && isNotActivelySending) {
+            sender = currentSender;
+            break;
+        }
+    }
+
+    // 8. If sender is not null, run the following steps to use that sender:
+    if (sender) {
+        GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Re-using sender %p", sender.get());
+
+        // 1. Set sender.[[SenderTrack]] to track.
+        sender->setTrack(track);
+
+        // 2. Set sender.[[AssociatedMediaStreamIds]] to an empty set.
+        // 3. For each stream in streams, add stream.id to [[AssociatedMediaStreamIds]] if it's not already there.
+        sender->setMediaStreamIds(mediaStreamIds);
+
+        // 4. Let transceiver be the RTCRtpTransceiver associated with sender.
+        RefPtr<RTCRtpTransceiver> transceiver;
+        for (const auto& currentTransceiver : protectedPeerConnection()->currentTransceivers()) {
+            if (&currentTransceiver->sender() == sender.get()) {
+                transceiver = currentTransceiver;
+                break;
+            }
+        }
+        if (!transceiver)
+            return Exception { ExceptionCode::TypeError, "Unable to add track"_s };
+
+        m_endpoint->recycleTransceiverForSenderTrack(reinterpret_cast<GStreamerRtpTransceiverBackend*>(transceiver->backend()), track, mediaStreamIds);
+
+        // 5. If transceiver.[[Direction]] is "recvonly", set transceiver.[[Direction]] to "sendrecv".
+        // 6. If transceiver.[[Direction]] is "inactive", set transceiver.[[Direction]] to "sendonly".
+        auto direction = transceiver->direction();
+        if (direction == RTCRtpTransceiverDirection::Recvonly)
+            transceiver->setDirection(RTCRtpTransceiverDirection::Sendrecv);
+        else if (direction == RTCRtpTransceiverDirection::Inactive)
+            transceiver->setDirection(RTCRtpTransceiverDirection::Sendonly);
+
+        // 11. Update the negotiation-needed flag for connection.
+        m_endpoint->onNegotiationNeeded();
+
+        // 12. Return sender.
+        return sender.releaseNonNull();
+    }
+
+    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Creating new transceiver.");
     auto addTrackResult = m_endpoint->addTrack(track, mediaStreamIds);
     if (addTrackResult.hasException())
         return addTrackResult.releaseException();
 
     auto senderBackend = addTrackResult.releaseReturnValue();
 
-    Ref peerConnection = m_peerConnection.get();
-    if (auto sender = findExistingSender(peerConnection->currentTransceivers(), *senderBackend)) {
-        GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Existing sender found, associating track to it.");
-        backendFromRTPSender(*sender).takeSource(*senderBackend);
-        sender->setTrack(track);
-        sender->setMediaStreamIds(mediaStreamIds);
-        return sender.releaseNonNull();
-    }
-
-    GST_DEBUG_OBJECT(m_endpoint->pipeline(), "Creating new transceiver.");
     auto transceiverBackend = m_endpoint->transceiverBackendFromSender(*senderBackend);
 
-    auto sender = RTCRtpSender::create(peerConnection, track, WTFMove(senderBackend));
-    sender->setMediaStreamIds(mediaStreamIds);
+    Ref peerConnection = m_peerConnection.get();
+    auto newSender = RTCRtpSender::create(peerConnection, track, WTFMove(senderBackend));
+    newSender->setMediaStreamIds(mediaStreamIds);
     auto receiver = createReceiver(transceiverBackend->createReceiverBackend(), track.kind(), track.id());
-    auto transceiver = RTCRtpTransceiver::create(sender.copyRef(), WTFMove(receiver), WTFMove(transceiverBackend));
+    auto transceiver = RTCRtpTransceiver::create(newSender.copyRef(), WTFMove(receiver), WTFMove(transceiverBackend));
     peerConnection->addInternalTransceiver(WTFMove(transceiver));
-    return sender;
+    return newSender;
 }
 
 template<typename T>
@@ -335,6 +427,7 @@ void GStreamerPeerConnectionBackend::collectTransceivers()
 
 void GStreamerPeerConnectionBackend::removeTrack(RTCRtpSender& sender)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "Removing "_s, sender.trackKind(), " track with ID "_s, sender.trackId());
     m_endpoint->removeTrack(backendFromRTPSender(sender));
 }
 

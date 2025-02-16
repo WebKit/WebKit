@@ -261,7 +261,7 @@ static inline String computeTagAndAttributeSelector(const Element& element, cons
     static constexpr auto maximumValueLengthForExactMatch = 60;
 
     Vector<std::pair<String, String>> attributesToCheck;
-    auto& attributes = element.attributes();
+    auto& attributes = element.attributesMap();
     attributesToCheck.reserveInitialCapacity(attributes.length());
     for (unsigned i = 0; i < attributes.length(); ++i) {
         RefPtr attribute = attributes.item(i);
@@ -874,7 +874,7 @@ Vector<TargetedElementInfo> ElementTargetingController::findTargets(TargetedElem
     return extractTargets(WTFMove(nodes), WTFMove(innerElement), checkViewportAreaRatio, includeNearbyElements);
 }
 
-void ElementTargetingController::topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, HashSet<ElementIdentifier>& processingIDs, HashSet<ElementIdentifier>& unprocessedIDs, const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
+void ElementTargetingController::topologicallySortElementsHelper(ElementIdentifier currentElementID, Vector<ElementIdentifier>& depthSortedIDs, UncheckedKeyHashSet<ElementIdentifier>& processingIDs, UncheckedKeyHashSet<ElementIdentifier>& unprocessedIDs, const UncheckedKeyHashMap<ElementIdentifier, UncheckedKeyHashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
 {
     if (processingIDs.contains(currentElementID)) {
         ASSERT_NOT_REACHED();
@@ -894,11 +894,11 @@ void ElementTargetingController::topologicallySortElementsHelper(ElementIdentifi
     depthSortedIDs.append(currentElementID);
 }
 
-Vector<ElementIdentifier> ElementTargetingController::topologicallySortElements(const UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
+Vector<ElementIdentifier> ElementTargetingController::topologicallySortElements(const UncheckedKeyHashMap<ElementIdentifier, UncheckedKeyHashSet<ElementIdentifier>>& elementIDToOccludedElementIDs)
 {
     Vector<ElementIdentifier> depthSortedIDs;
-    HashSet<ElementIdentifier> processingIDs;
-    HashSet<ElementIdentifier> unprocessedIDs;
+    UncheckedKeyHashSet<ElementIdentifier> processingIDs;
+    UncheckedKeyHashSet<ElementIdentifier> unprocessedIDs;
 
     const auto elementIDs = elementIDToOccludedElementIDs.keys();
     unprocessedIDs.add(elementIDs.begin(), elementIDs.end());
@@ -950,14 +950,14 @@ Vector<Vector<TargetedElementInfo>> ElementTargetingController::findAllTargets(f
         }
     }
 
-    UncheckedKeyHashMap<ElementIdentifier, HashSet<ElementIdentifier>> elementIDToOccludedElementIDs;
+    UncheckedKeyHashMap<ElementIdentifier, UncheckedKeyHashSet<ElementIdentifier>> elementIDToOccludedElementIDs;
     UncheckedKeyHashMap<ElementIdentifier, Vector<TargetedElementInfo>> elementIDToTargets;
     for (auto& targets : targetsList) {
         if (targets.isEmpty())
             continue;
 
         const auto topElementID = targets.first().elementIdentifier;
-        HashSet<ElementIdentifier> occludedElementIDsToInsert;
+        UncheckedKeyHashSet<ElementIdentifier> occludedElementIDsToInsert;
         for (unsigned index = 1; index < targets.size(); ++index)
             occludedElementIDsToInsert.add(targets[index].elementIdentifier);
 
@@ -1091,7 +1091,7 @@ std::pair<Vector<Ref<Node>>, RefPtr<Element>> ElementTargetingController::findNo
     return { { *foundElement }, foundElement };
 }
 
-static Vector<Ref<Element>> filterRedundantNearbyTargets(HashSet<Ref<Element>>&& unfilteredNearbyTargets)
+static Vector<Ref<Element>> filterRedundantNearbyTargets(UncheckedKeyHashSet<Ref<Element>>&& unfilteredNearbyTargets)
 {
     UncheckedKeyHashMap<Ref<Element>, bool> shouldKeepCache;
     Vector<Ref<Element>> filteredResults;
@@ -1344,7 +1344,7 @@ Vector<TargetedElementInfo> ElementTargetingController::extractTargets(Vector<Re
         return results;
 
     auto nearbyTargets = [&]() -> Vector<Ref<Element>> {
-        HashSet<Ref<Element>> results;
+        UncheckedKeyHashSet<Ref<Element>> results;
         CheckedPtr bodyRenderer = bodyElement->renderer();
         if (!bodyRenderer)
             return { };
@@ -1461,8 +1461,16 @@ bool ElementTargetingController::adjustVisibility(Vector<TargetedElementAdjustme
     Region newAdjustmentRegion;
     for (auto& [identifiers, selectors] : adjustments) {
         auto [elementID, documentID] = identifiers;
-        if (auto rect = m_recentAdjustmentClientRects.get(elementID); !rect.isEmpty())
-            newAdjustmentRegion.unite(rect);
+        auto rect = m_recentAdjustmentClientRects.get(elementID);
+        if (rect.isEmpty())
+            continue;
+
+        if (RefPtr target = Element::fromIdentifier(identifiers.first); target && target->isInVisibilityAdjustmentSubtree()) {
+            // This target's visibility has already been adjusted; avoid treating it as a new region.
+            continue;
+        }
+
+        newAdjustmentRegion.unite(rect);
     }
 
     m_repeatedAdjustmentClientRegion.unite(intersect(m_adjustmentClientRegion, newAdjustmentRegion));
@@ -1826,7 +1834,7 @@ bool ElementTargetingController::resetVisibilityAdjustments(const Vector<Targete
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    HashSet<Ref<Element>> elementsToReset;
+    UncheckedKeyHashSet<Ref<Element>> elementsToReset;
     if (identifiers.isEmpty()) {
         elementsToReset.reserveInitialCapacity(m_adjustedElements.computeSize());
         for (auto& element : m_adjustedElements)

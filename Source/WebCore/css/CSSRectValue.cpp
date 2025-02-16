@@ -39,9 +39,9 @@ Ref<CSSRectValue> CSSRectValue::create(Rect rect)
     return adoptRef(*new CSSRectValue(WTFMove(rect)));
 }
 
-String CSSRectValue::customCSSText() const
+String CSSRectValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return m_rect.cssText();
+    return m_rect.cssText(context);
 }
 
 bool CSSRectValue::equals(const CSSRectValue& other) const

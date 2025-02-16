@@ -17,6 +17,7 @@
 #include "include/core/SkStream.h"
 #include "include/effects/SkGradientShader.h"
 #include "include/pathops/SkPathOps.h"
+#include "include/private/base/SkMutex.h"
 #include "src/base/SkScopeExit.h"
 #include "src/core/SkFontDescriptor.h"
 #include "src/core/SkFontPriv.h"
@@ -317,6 +318,8 @@ public:
             , fBridgeNormalizedCoords(static_cast<SkTypeface_Fontations*>(proxyTypeface.get())
                                               ->getBridgeNormalizedCoords())
             , fOutlines(static_cast<SkTypeface_Fontations*>(proxyTypeface.get())->getOutlines())
+            , fMappingIndex(
+                      static_cast<SkTypeface_Fontations*>(proxyTypeface.get())->getMappingIndex())
             , fPalette(static_cast<SkTypeface_Fontations*>(proxyTypeface.get())->getPalette())
             , fHintingInstance(fontations_ffi::no_hinting_instance()) {
         fRec.computeMatrices(
@@ -325,58 +328,80 @@ public:
         fDoLinearMetrics = this->isLinearMetrics();
         bool forceAutohinting = SkToBool(fRec.fFlags & kForceAutohinting_Flag);
 
-        if (SkMask::kBW_Format == fRec.fMaskFormat) {
-            if (fRec.getHinting() == SkFontHinting::kNone) {
-                fHintingInstance = fontations_ffi::no_hinting_instance();
-                fDoLinearMetrics = true;
-            } else {
-                fHintingInstance = fontations_ffi::make_mono_hinting_instance(
-                        fOutlines, fScale.y(), fBridgeNormalizedCoords);
-                fDoLinearMetrics = false;
-            }
+        // Hinting-reliant fonts exist that display incorrect contours when not executing their
+        // hinting instructions. Detect those and force-enable hinting for them.
+        if (fontations_ffi::hinting_reliant(fOutlines)) {
+            fHintingInstance = fontations_ffi::make_mono_hinting_instance(
+                    fOutlines, fScale.y(), fBridgeNormalizedCoords);
+            fDoLinearMetrics = false;
         } else {
-            switch (fRec.getHinting()) {
-                case SkFontHinting::kNone:
+            if (SkMask::kBW_Format == fRec.fMaskFormat) {
+                if (fRec.getHinting() == SkFontHinting::kNone) {
                     fHintingInstance = fontations_ffi::no_hinting_instance();
                     fDoLinearMetrics = true;
-                    break;
-                case SkFontHinting::kSlight:
-                    // Unhinted metrics.
-                    fHintingInstance = fontations_ffi::make_hinting_instance(
-                            fOutlines,
-                            fScale.y(),
-                            fBridgeNormalizedCoords,
-                            true /* do_light_hinting */,
-                            false /* do_lcd_antialiasing */,
-                            false /* lcd_orientation_vertical */,
-                            true /* force_autohinting */);
-                    fDoLinearMetrics = true;
-                    break;
-                case SkFontHinting::kNormal:
-                    // No hinting to subpixel coordinates.
-                    fHintingInstance = fontations_ffi::make_hinting_instance(
-                            fOutlines,
-                            fScale.y(),
-                            fBridgeNormalizedCoords,
-                            false /* do_light_hinting */,
-                            false /* do_lcd_antialiasing */,
-                            false /* lcd_orientation_vertical */,
-                            forceAutohinting /* force_autohinting */);
-                    break;
-                case SkFontHinting::kFull:
-                    // Attempt to make use of hinting to subpixel coordinates.
-                    fHintingInstance = fontations_ffi::make_hinting_instance(
-                            fOutlines,
-                            fScale.y(),
-                            fBridgeNormalizedCoords,
-                            false /* do_light_hinting */,
-                            isLCD(fRec) /* do_lcd_antialiasing */,
-                            SkToBool(fRec.fFlags &
-                                     SkScalerContext::
-                                             kLCD_Vertical_Flag) /* lcd_orientation_vertical */,
-                            forceAutohinting /* force_autohinting */);
+                } else {
+                    fHintingInstance = fontations_ffi::make_mono_hinting_instance(
+                            fOutlines, fScale.y(), fBridgeNormalizedCoords);
+                    fDoLinearMetrics = false;
+                }
+            } else {
+                switch (fRec.getHinting()) {
+                    case SkFontHinting::kNone:
+                        fHintingInstance = fontations_ffi::no_hinting_instance();
+                        fDoLinearMetrics = true;
+                        break;
+                    case SkFontHinting::kSlight:
+                        // Unhinted metrics.
+                        fHintingInstance = fontations_ffi::make_hinting_instance(
+                                fOutlines,
+                                fScale.y(),
+                                fBridgeNormalizedCoords,
+                                true /* do_light_hinting */,
+                                false /* do_lcd_antialiasing */,
+                                false /* lcd_orientation_vertical */,
+                                true /* force_autohinting */);
+                        fDoLinearMetrics = true;
+                        break;
+                    case SkFontHinting::kNormal:
+                        // No hinting to subpixel coordinates.
+                        fHintingInstance = fontations_ffi::make_hinting_instance(
+                                fOutlines,
+                                fScale.y(),
+                                fBridgeNormalizedCoords,
+                                false /* do_light_hinting */,
+                                false /* do_lcd_antialiasing */,
+                                false /* lcd_orientation_vertical */,
+                                forceAutohinting /* force_autohinting */);
+                        break;
+                    case SkFontHinting::kFull:
+                        // Attempt to make use of hinting to subpixel coordinates.
+                        fHintingInstance = fontations_ffi::make_hinting_instance(
+                                fOutlines,
+                                fScale.y(),
+                                fBridgeNormalizedCoords,
+                                false /* do_light_hinting */,
+                                isLCD(fRec) /* do_lcd_antialiasing */,
+                                SkToBool(fRec.fFlags &
+                                         SkScalerContext::
+                                                 kLCD_Vertical_Flag) /* lcd_orientation_vertical */,
+                                forceAutohinting /* force_autohinting */);
+                }
             }
         }
+    }
+
+    bool getContourHeightForLetter(char letter, SkScalar& height) {
+        uint16_t glyphId =
+                fontations_ffi::lookup_glyph_or_zero(fBridgeFontRef, fMappingIndex, letter);
+        if (!glyphId) {
+            return false;
+        }
+        SkPath glyphPath;
+        if (!generateYScalePathForGlyphId(glyphId, &glyphPath, fScale.y(), *fHintingInstance)) {
+            return false;
+        }
+        height = glyphPath.getBounds().height();
+        return true;
     }
 
     // yScale is only used if hintinInstance is set to Unhinted,
@@ -390,6 +415,11 @@ public:
             const fontations_ffi::BridgeHintingInstance& hintingInstance) {
         fontations_ffi::BridgeScalerMetrics scalerMetrics;
 
+        // See https://crbug.com/390889644 - while SkScalerContexts are single-thread
+        // in general, generateYScalePathForGlyphId() can be called from a COLRv1
+        // SkDrawable as well (see generateDrawable()). For this reason access to the
+        // path extraction array needs to be made thread-safe here.
+        SkAutoMutexExclusive l(fPathMutex);
         // Keep allocations in check. The rust side pre-allocates a fixed amount,
         // and afer leaving this function, we shrink to the same amount.
         SK_AT_SCOPE_EXIT(fontations_ffi::shrink_verbs_points_if_needed(fPathVerbs, fPathPoints));
@@ -775,6 +805,26 @@ protected:
         out_metrics->fXHeight = -metrics.x_height;
         out_metrics->fCapHeight = -metrics.cap_height;
         out_metrics->fFlags = 0;
+
+        // Cap height synthesis.
+        if (!out_metrics->fCapHeight) {
+            SkScalar height;
+            if (getContourHeightForLetter('H', height)) {
+                out_metrics->fCapHeight = height;
+            } else  {
+                out_metrics->fCapHeight = metrics.ascent;
+            }
+        }
+
+        if (!out_metrics->fXHeight) {
+            SkScalar xHeight;
+            if (getContourHeightForLetter('x', xHeight)) {
+                out_metrics->fXHeight = xHeight;
+            } else {
+                out_metrics->fXHeight = metrics.ascent;
+            }
+        }
+
         if (fontations_ffi::table_data(fBridgeFontRef,
                                        SkSetFourByteTag('f', 'v', 'a', 'r'),
                                        0,
@@ -809,11 +859,13 @@ private:
     const fontations_ffi::BridgeFontRef& fBridgeFontRef;
     const fontations_ffi::BridgeNormalizedCoords& fBridgeNormalizedCoords;
     const fontations_ffi::BridgeOutlineCollection& fOutlines;
+    const fontations_ffi::BridgeMappingIndex& fMappingIndex;
     const SkSpan<const SkColor> fPalette;
     rust::Box<fontations_ffi::BridgeHintingInstance> fHintingInstance;
     bool fDoLinearMetrics = false;
     // Keeping the path extraction target buffers around significantly avoids
     // allocation churn.
+    SkMutex fPathMutex;
     rust::Vec<uint8_t> fPathVerbs;
     rust::Vec<fontations_ffi::FfiPoint> fPathPoints;
 

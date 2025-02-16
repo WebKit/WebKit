@@ -11,6 +11,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "common/span.h"
 #include "compiler/translator/Name.h"
 #include "compiler/translator/msl/IdGen.h"
 #include "compiler/translator/msl/SymbolEnv.h"
@@ -22,11 +23,12 @@ namespace sh
 const TVariable &CreateStructTypeVariable(TSymbolTable &symbolTable, const TStructure &structure);
 
 // Creates a variable for a struct instance.
-const TVariable &CreateInstanceVariable(TSymbolTable &symbolTable,
-                                        const TStructure &structure,
-                                        const Name &name,
-                                        TQualifier qualifier = TQualifier::EvqTemporary,
-                                        const TSpan<const unsigned int> *arraySizes = nullptr);
+const TVariable &CreateInstanceVariable(
+    TSymbolTable &symbolTable,
+    const TStructure &structure,
+    const Name &name,
+    TQualifier qualifier                              = TQualifier::EvqTemporary,
+    const angle::Span<const unsigned int> *arraySizes = nullptr);
 
 // The input sequence should be discarded from AST after this is called.
 TIntermSequence &CloneSequenceAndPrepend(const TIntermSequence &seq, TIntermNode &node);

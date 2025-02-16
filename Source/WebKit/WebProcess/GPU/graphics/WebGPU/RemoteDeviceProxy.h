@@ -123,6 +123,8 @@ private:
     Ref<WebCore::WebGPU::ComputePassEncoder> invalidComputePassEncoder() final;
     void pauseAllErrorReporting(bool pause) final;
 
+    bool isRemoteDeviceProxy() const final { return true; }
+
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteAdapterProxy> m_parent;
@@ -137,5 +139,9 @@ private:
 };
 
 } // namespace WebKit::WebGPU
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebKit::WebGPU::RemoteDeviceProxy)
+    static bool isType(const WebCore::WebGPU::Device& device) { return device.isRemoteDeviceProxy(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(GPU_PROCESS)

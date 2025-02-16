@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/WeakPtr.h>
 
@@ -52,5 +50,3 @@ protected:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

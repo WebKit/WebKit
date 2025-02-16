@@ -35,7 +35,7 @@
 #endif
 
 namespace WebCore {
-
+#if !HAVE(SWIFT_CPP_INTEROP)
 static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCC(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
     CCDigestAlgorithm digestAlgorithm;
@@ -44,7 +44,7 @@ static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCC(const CryptoAlgorithmHk
     return deriveHDKFBits(digestAlgorithm, key.key().span(), parameters.saltVector().span(), parameters.infoVector().span(), length);
 }
 
-#if HAVE(SWIFT_CPP_INTEROP)
+#else
 static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
     if (!isValidHashParameter(parameters.hashIdentifier))
@@ -59,9 +59,7 @@ static ExceptionOr<Vector<uint8_t>> platformDeriveBitsCryptoKit(const CryptoAlgo
 ExceptionOr<Vector<uint8_t>> CryptoAlgorithmHKDF::platformDeriveBits(const CryptoAlgorithmHkdfParams& parameters, const CryptoKeyRaw& key, size_t length)
 {
 #if HAVE(SWIFT_CPP_INTEROP)
-    if (parameters.hashIdentifier != CryptoAlgorithmIdentifier::SHA_224)
-        return platformDeriveBitsCryptoKit(parameters, key, length);
-    return platformDeriveBitsCC(parameters, key, length);
+    return platformDeriveBitsCryptoKit(parameters, key, length);
 #else
     return platformDeriveBitsCC(parameters, key, length);
 #endif

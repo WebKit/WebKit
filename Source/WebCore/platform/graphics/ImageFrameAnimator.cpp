@@ -133,10 +133,10 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
     m_nextFrameSubsamplingLevel = subsamplingLevel;
     m_nextFrameOptions = options;
 
-    LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Animation at index = %d will be started.", __FUNCTION__, this, sourceUTF8(), m_currentFrameIndex);
+    LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Animation at index = %d will be started.", __FUNCTION__, this, sourceUTF8().data(), m_currentFrameIndex);
 
     if (options.decodingMode() == DecodingMode::Asynchronous) {
-        LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8(), nextFrameIndex());
+        LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Decoding for frame at index = %d will be requested.", __FUNCTION__, this, sourceUTF8().data(), nextFrameIndex());
         source->requestNativeImageAtIndexIfNeeded(nextFrameIndex(), subsamplingLevel, ImageAnimatingState::Yes, options);
     }
 
@@ -157,11 +157,11 @@ bool ImageFrameAnimator::startAnimation(SubsamplingLevel subsamplingLevel, const
 
 void ImageFrameAnimator::advanceAnimation()
 {
-    LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Animation at index = %d will be advanced.", __FUNCTION__, this, sourceUTF8(), m_currentFrameIndex);
+    LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Animation at index = %d will be advanced.", __FUNCTION__, this, sourceUTF8().data(), m_currentFrameIndex);
 
     m_currentFrameIndex = nextFrameIndex();
     if (m_currentFrameIndex == m_frameCount - 1) {
-        LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Animation loop %d has ended.", __FUNCTION__, this, sourceUTF8(), m_repetitionsComplete);
+        LOG(Images, "ImageFrameAnimator::%s - %p - url: %s. Animation loop %d has ended.", __FUNCTION__, this, sourceUTF8().data(), m_repetitionsComplete);
         ++m_repetitionsComplete;
     }
 
@@ -190,7 +190,7 @@ bool ImageFrameAnimator::isAnimationAllowed() const
     return m_repetitionCount == RepetitionCountInfinite || m_repetitionsComplete < m_repetitionCount;
 }
 
-const char* ImageFrameAnimator::sourceUTF8() const
+CString ImageFrameAnimator::sourceUTF8() const
 {
     return m_source.get()->sourceUTF8();
 }

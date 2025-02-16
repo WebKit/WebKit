@@ -58,9 +58,7 @@ WI.InspectorObserver = class InspectorObserver extends InspectorBackend.Dispatch
             return;
         }
 
-        if (hints.databaseId)
-            WI.databaseManager.inspectDatabase(hints.databaseId);
-        else if (hints.domStorageId)
+        if (hints.domStorageId)
             WI.domStorageManager.inspectDOMStorage(hints.domStorageId);
 
         remoteObject.release();

@@ -21,7 +21,9 @@ bar
               (position 8.00 26.00)
               (bounds 200.00 200.00)
               (drawsContent 1)
-              (appleVisualEffect blur-material-thick)
+              (appleVisualEffectData
+              (effect blur-material-thick)
+              (contextEffect blur-material-thick))
               (structural layer
                 (position 108.00 126.00)
                 (bounds 200.00 200.00)

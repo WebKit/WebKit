@@ -2524,6 +2524,18 @@ void Texture::setInitState(InitState initState)
     mState.mInitState = initState;
 }
 
+bool Texture::isEGLImageSource(const ImageIndex &index) const
+{
+    for (const egl::Image *sourceImage : getSiblingSourcesOf())
+    {
+        if (sourceImage->getSourceImageIndex() == index)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 bool Texture::doesSubImageNeedInit(const Context *context,
                                    const ImageIndex &imageIndex,
                                    const Box &area) const

@@ -35,6 +35,17 @@ namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Tag);
 
+
+Tag& Tag::jsExceptionTag()
+{
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<Tag>> result;
+    std::call_once(onceKey, [] {
+        result.construct(Tag::create(TypeInformation::signatureForJSException()));
+    });
+    return result.get();
+}
+
 } } // namespace JSC::Wasm
 
 #endif

@@ -39,13 +39,13 @@ CSSFontFeatureValue::CSSFontFeatureValue(FontTag&& tag, Ref<CSSPrimitiveValue>&&
 {
 }
 
-String CSSFontFeatureValue::customCSSText() const
+String CSSFontFeatureValue::customCSSText(const CSS::SerializationContext& context) const
 {
     StringBuilder builder;
     builder.append('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], '"');
     // Omit the value if it's `1` as `1` is implied by default.
     if (m_value->resolveAsIntegerIfNotCalculated() != 1)
-        builder.append(' ', m_value->customCSSText());
+        builder.append(' ', m_value->customCSSText(context));
     return builder.toString();
 }
 

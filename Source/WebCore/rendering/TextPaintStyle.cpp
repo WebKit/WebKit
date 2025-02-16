@@ -71,8 +71,9 @@ static Color adjustColorForVisibilityOnBackground(const Color& textColor, const 
     return textColor.lightened();
 }
 
-TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
+TextPaintStyle computeTextPaintStyle(const RenderText& renderer, const RenderStyle& lineStyle, const PaintInfo& paintInfo)
 {
+    auto& frame = renderer.frame();
     TextPaintStyle paintStyle;
     paintStyle.useDarkAppearance = frame.document() ? frame.document()->useDarkAppearance(&lineStyle) : false;
 
@@ -91,7 +92,7 @@ TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle&
     }
 
     if (lineStyle.insideDefaultButton()) {
-        Page* page = frame.page();
+        Page* page = renderer.frame().page();
         if (page && page->focusController().isActive()) {
             OptionSet<StyleColorOptions> options;
             if (page->settings().useSystemAppearance())
@@ -107,8 +108,14 @@ TextPaintStyle computeTextPaintStyle(const LocalFrame& frame, const RenderStyle&
     if (frame.document() && frame.document()->printing()) {
         if (lineStyle.printColorAdjust() == PrintColorAdjust::Economy)
             forceBackgroundToWhite = true;
+
         if (frame.settings().shouldPrintBackgrounds())
             forceBackgroundToWhite = false;
+
+        if (forceBackgroundToWhite) {
+            if (renderer.style().hasAnyBackgroundClipText())
+                paintStyle.fillColor = Color::black;
+        }
     }
 
     // Make the text fill color legible against a white background

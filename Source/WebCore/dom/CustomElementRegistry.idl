@@ -38,4 +38,5 @@
 
     [Custom, ReturnsOwnPromise] Promise<undefined> whenDefined(DOMString name);
     [CEReactions=Needed] undefined upgrade(Node root);
+    [CEReactions=Needed] undefined initialize(Node root);
 };

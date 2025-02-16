@@ -12,14 +12,14 @@ noInline(bigIntDiv);
 
 let o =  {valueOf: () => 10n};
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntDiv(30n, o);
     assert.sameValue(r, 3n, 30n + " / {valueOf: () => 10n} = " + r);
 }
 
 o2 =  {valueOf: () => 10000n};
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntDiv(o2, o);
     assert.sameValue(r, 1000n, "{valueOf: () => 10000n} / {valueOf: () => 10n}  = " + r);
 }

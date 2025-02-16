@@ -13,7 +13,7 @@ function foo(o) {
 noInline(foo);
 
 // Warm up foo with some different object types.
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     foo({f:{k:0, f:1}});
     foo({g:1, f:{l: -1, f:2, g:3}});
     foo({h:2, f:null});

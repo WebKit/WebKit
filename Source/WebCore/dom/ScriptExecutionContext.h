@@ -184,7 +184,8 @@ public:
 
     JSC::ScriptExecutionStatus jscScriptExecutionStatus() const;
 
-    URL currentSourceURL() const;
+    enum class CallStackPosition : bool { BottomMost, TopMost };
+    URL currentSourceURL(CallStackPosition = CallStackPosition::BottomMost) const;
 
     // Called from the constructor and destructors of ActiveDOMObject.
     void didCreateActiveDOMObject(ActiveDOMObject&);
@@ -328,6 +329,7 @@ public:
     WEBCORE_EXPORT static bool postTaskForModeToWorkerOrWorklet(ScriptExecutionContextIdentifier, Task&&, const String&);
     WEBCORE_EXPORT static bool ensureOnContextThread(ScriptExecutionContextIdentifier, Task&&);
     WEBCORE_EXPORT static bool isContextThread(ScriptExecutionContextIdentifier);
+    WEBCORE_EXPORT static bool ensureOnContextThreadForCrossThreadTask(ScriptExecutionContextIdentifier, CrossThreadTask&&);
 
     ScriptExecutionContextIdentifier identifier() const { return m_identifier; }
 
@@ -423,16 +425,16 @@ private:
     void dispatchMessagePortEvents();
 
     enum class ShouldContinue : bool { No, Yes };
-    void forEachActiveDOMObject(const Function<ShouldContinue(ActiveDOMObject&)>&) const;
+    void forEachActiveDOMObject(NOESCAPE const Function<ShouldContinue(ActiveDOMObject&)>&) const;
 
     RejectedPromiseTracker* ensureRejectedPromiseTrackerSlow();
 
     void checkConsistency() const;
     WEBCORE_EXPORT GuaranteedSerialFunctionDispatcher& nativePromiseDispatcher();
 
-    HashSet<MessagePort*> m_messagePorts;
-    HashSet<ContextDestructionObserver*> m_destructionObservers;
-    HashSet<ActiveDOMObject*> m_activeDOMObjects;
+    UncheckedKeyHashSet<MessagePort*> m_messagePorts;
+    UncheckedKeyHashSet<ContextDestructionObserver*> m_destructionObservers;
+    UncheckedKeyHashSet<ActiveDOMObject*> m_activeDOMObjects;
 
     UncheckedKeyHashMap<int, RefPtr<DOMTimer>> m_timeouts;
 

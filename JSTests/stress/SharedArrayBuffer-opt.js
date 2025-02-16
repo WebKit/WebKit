@@ -47,7 +47,7 @@ for (var op of ["add", "and", "compareExchange", "exchange", "load", "or", "stor
     var f = eval(str());
     noInline(f);
     // Warm it up on crazy.
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         f(arrays[i % arrays.length], 0, 0, 0);
     genericAtomics.set(op, f);
     
@@ -58,7 +58,7 @@ for (var op of ["add", "and", "compareExchange", "exchange", "load", "or", "stor
         noInline(f);
         
         // Warm it up on something easy.
-        for (var i = 0; i < 10000; ++i)
+        for (var i = 0; i < testLoopCount; ++i)
             f(a, 0, 0, 0);
         
         map.set(op, f);

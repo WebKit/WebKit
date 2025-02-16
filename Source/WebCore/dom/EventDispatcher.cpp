@@ -27,6 +27,7 @@
 #include "EventDispatcher.h"
 
 #include "CompositionEvent.h"
+#include "DocumentInlines.h"
 #include "EventContext.h"
 #include "EventNames.h"
 #include "EventPath.h"
@@ -119,7 +120,7 @@ static bool shouldSuppressEventDispatchInDOM(Node& node, Event& event)
     if (!event.isTrusted())
         return false;
 
-    RefPtr localMainFrame = node.document().localMainFrame();
+    RefPtr localMainFrame = node.protectedDocument()->localMainFrame();
     if (!localMainFrame)
         return false;
 
@@ -137,7 +138,8 @@ static HTMLInputElement* findInputElementInEventPath(const EventPath& path)
     size_t size = path.size();
     for (size_t i = 0; i < size; ++i) {
         auto& eventContext = path.contextAt(i);
-        if (auto* inputElement = dynamicDowncast<HTMLInputElement>(eventContext.currentTarget()))
+        // FIXME: Remove SUPPRESS_UNCOUNTED_LOCAL once rdar://144654664 is resolved.
+        SUPPRESS_UNCOUNTED_LOCAL if (auto* inputElement = dynamicDowncast<HTMLInputElement>(eventContext.currentTarget()))
             return inputElement;
     }
     return nullptr;
@@ -165,14 +167,15 @@ static void resetAfterDispatchInShadowTree(Event& event)
 void EventDispatcher::dispatchEvent(Node& node, Event& event)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(ScriptDisallowedScope::InMainThread::isEventDispatchAllowedInSubtree(node));
-    
+
     LOG_WITH_STREAM(Events, stream << "EventDispatcher::dispatchEvent " << event << " on node " << node);
 
     Ref protectedNode { node };
-    RefPtr protectedView { node.document().view() };
+    Ref document = node.document();
+    RefPtr protectedView { document->view() };
 
     auto typeInfo = eventNames().typeInfoForEvent(event.type());
-    bool shouldDispatchEventToScripts = hasRelevantEventListener(node.document(), event);
+    bool shouldDispatchEventToScripts = hasRelevantEventListener(document, event);
 
     bool targetOrRelatedTargetIsInShadowTree = node.isInShadowTree() || isInShadowTree(event.relatedTarget());
     // FIXME: We should also check touch target list.
@@ -185,7 +188,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
 
     EventPath eventPath { node, event };
 
-    if (node.document().settings().sendMouseEventsToDisabledFormControlsEnabled() && event.isTrusted() && is<MouseEvent>(event)
+    if (event.isTrusted() && is<MouseEvent>(event)
         && (typeInfo.type() == EventType::mousedown || typeInfo.type() == EventType::mouseup || typeInfo.type() == EventType::click || typeInfo.type() == EventType::dblclick)) {
         eventPath.adjustForDisabledFormControl();
     }
@@ -196,7 +199,7 @@ void EventDispatcher::dispatchEvent(Node& node, Event& event)
         // FIXME: We should also set shouldClearTargetsAfterDispatch to true if an EventTarget object in eventContext's touch target list
         // is a node and its root is a shadow root.
         if (eventContext.target()) {
-            shouldClearTargetsAfterDispatch = isInShadowTree(eventContext.target()) || isInShadowTree(eventContext.relatedTarget());
+            shouldClearTargetsAfterDispatch = isInShadowTree(eventContext.protectedTarget().get()) || isInShadowTree(eventContext.protectedRelatedTarget().get());
             break;
         }
     }

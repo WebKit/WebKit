@@ -35,22 +35,13 @@ function addOptions() {
   document.getElementById('fruits').innerHTML = options;
 }
 
-function waitForDataListSuggestionsToChangeVisibility(visible)
-{
-    return new Promise(async resolve => {
-        while (visible != await UIHelper.isShowingDataListSuggestions())
-            continue;
-        resolve();
-    });
-}
-
 (async () => {
     input = document.getElementById("fruit");
 
     await UIHelper.activateElementAndWaitForInputSession(input);
     await UIHelper.typeCharacter("A");
 
-    await waitForDataListSuggestionsToChangeVisibility(true);
+    await UIHelper.waitForDataListSuggestionsToChangeVisibility(true);
 
     await new Promise(resolve => shouldBecomeEqual("input.value", "'A'", resolve));
 

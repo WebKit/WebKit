@@ -139,13 +139,13 @@ public:
 
     void dump(PrintStream& out) const;
 
-    WordType* storage() { return bits.data(); }
-    const WordType* storage() const { return bits.data(); }
+    std::span<WordType> storage() { return bits; }
+    std::span<const WordType> storage() const { return bits; }
 
     constexpr size_t storageLengthInBytes() { return sizeof(bits); }
 
-    std::span<uint8_t> storageBytes() { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(storage()), storageLengthInBytes()); }
-    std::span<const uint8_t> storageBytes() const { return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(storage()), storageLengthInBytes()); }
+    std::span<uint8_t> storageBytes() { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(bits.data()), storageLengthInBytes()); }
+    std::span<const uint8_t> storageBytes() const { return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(bits.data()), storageLengthInBytes()); }
 
 private:
     void cleanseLastWord();

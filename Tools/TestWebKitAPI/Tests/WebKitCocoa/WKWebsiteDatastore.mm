@@ -130,6 +130,101 @@ TEST(WKWebsiteDataStore, RemoveEphemeralData)
     TestWebKitAPI::Util::run(&done);
 }
 
+static constexpr auto mainBytes = R"SWRESOURCE(
+<script>
+function log(message)
+{
+    window.webkit.messageHandlers.testHandler.postMessage(message);
+}
+
+function installServiceWorker()
+{
+    navigator.serviceWorker.register('/sw.js').then((registration) => {
+        const worker = registration.installing ? registration.installing : registration.active;
+        worker.postMessage('Hello');
+    }).catch((error) => {
+        log('register() failed with: ' + error);
+    });
+}
+
+navigator.serviceWorker.addEventListener('message', function(event) {
+    log('Message from ServiceWorker: ' + event.data);
+});
+
+installServiceWorker();
+</script>
+)SWRESOURCE"_s;
+
+static constexpr auto scriptBytes = R"SWRESOURCE(
+async function cacheResources(resources)
+{
+    const cache = await caches.open("v1");
+    await cache.addAll(resources);
+}
+
+self.addEventListener('message', (event) => {
+    event.source.postMessage(event.data);
+});
+
+self.addEventListener('install', (event) => {
+    event.waitUntil(cacheResources(["/cached_1.html", "/cached_2.html", "/cached_3.html", "/cached_4.html", "/cached_5.html"]));
+});
+)SWRESOURCE"_s;
+
+TEST(WKWebsiteDataStore, RemoveDataWaitUntilWebProcessesExit)
+{
+    readyToContinue = false;
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+        { "/cached_1.html"_s, { "hi"_s } },
+        { "/cached_2.html"_s, { "hi"_s } },
+        { "/cached_3.html"_s, { "hi"_s } },
+        { "/cached_4.html"_s, { "hi"_s } },
+        { "/cached_5.html"_s, { "hi"_s } }
+    });
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    RetainPtr handler = adoptNS([[WKWebsiteDataStoreMessageHandler alloc] init]);
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:handler.get() name:@"testHandler"];
+    RetainPtr webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"Message from ServiceWorker: Hello", [lastScriptMessage body]);
+
+    // Service worker process may keep requesting resources after page closes.
+    [webView _close];
+    webView = nullptr;
+
+    // Service worker process will be shut down.
+    readyToContinue = false;
+    [[configuration websiteDataStore] removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler: ^{
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    readyToContinue = false;
+    [[configuration websiteDataStore] fetchDataRecordsOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] completionHandler:^(NSArray<WKWebsiteDataRecord *> *dataRecords) {
+        EXPECT_EQ(dataRecords.count, 0u);
+        readyToContinue = true;
+    }];
+    TestWebKitAPI::Util::run(&readyToContinue);
+
+    // Ensure service worker can be installed again.
+    webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    receivedScriptMessage = false;
+    [webView loadRequest:server.request()];
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    EXPECT_WK_STREQ(@"Message from ServiceWorker: Hello", [lastScriptMessage body]);
+}
+
 TEST(WKWebsiteDataStore, FetchNonPersistentCredentials)
 {
     HTTPServer server(HTTPServer::respondWithChallengeThenOK);

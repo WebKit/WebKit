@@ -1,6 +1,6 @@
 // This shouldn't crash when running with ASAN.
 let arr = [];
-for (var i = 0; i < 1000000; i++)
+for (var i = 0; i < testLoopCount; i++)
     arr[i] = [];
 
 arr.indexOf(new Object(), {

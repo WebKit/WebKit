@@ -15,14 +15,14 @@ var bigArray = [];
 for (var i = 0; i < 50; ++i)
     bigArray.push(42);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var mi = i % 50;
     var result = bar(bigArray, mi);
     if (result !== 42)
         throw "Bad result in first loop: " + result + "; expected: " + 42;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var mi = i % 100;
     var result = bar([42], mi);
     var expected = mi ? void 0 : 42;

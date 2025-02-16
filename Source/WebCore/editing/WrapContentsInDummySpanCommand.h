@@ -50,7 +50,7 @@ private:
     Ref<Element> protectedElement() const { return m_element; }
 
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(NodeSet&) override;
 #endif
 
     Ref<Element> m_element;

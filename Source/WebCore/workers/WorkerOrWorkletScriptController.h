@@ -103,7 +103,7 @@ public:
     void evaluate(const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     void evaluate(const ScriptSourceCode&, NakedPtr<JSC::Exception>& returnedException, String* returnedExceptionMessage = nullptr);
 
-    JSC::JSValue evaluateModule(JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
+    JSC::JSValue evaluateModule(const URL&, JSC::AbstractModuleRecord&, JSC::JSValue awaitedValue, JSC::JSValue resumeMode);
 
     void linkAndEvaluateModule(WorkerScriptFetcher&, const ScriptSourceCode&, String* returnedExceptionMessage = nullptr);
     bool loadModuleSynchronously(WorkerScriptFetcher&, const ScriptSourceCode&);

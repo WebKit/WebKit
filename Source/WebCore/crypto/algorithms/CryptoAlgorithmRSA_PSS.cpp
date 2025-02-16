@@ -40,7 +40,6 @@ namespace WebCore {
 
 namespace CryptoAlgorithmRSA_PSSInternal {
 static constexpr auto ALG1 = "PS1"_s;
-static constexpr auto ALG224 = "PS224"_s;
 static constexpr auto ALG256 = "PS256"_s;
 static constexpr auto ALG384 = "PS384"_s;
 static constexpr auto ALG512 = "PS512"_s;
@@ -127,8 +126,8 @@ void CryptoAlgorithmRSA_PSS::importKey(CryptoKeyFormat format, KeyData&& data, c
         case CryptoAlgorithmIdentifier::SHA_1:
             isMatched = key.alg.isNull() || key.alg == ALG1;
             break;
-        case CryptoAlgorithmIdentifier::SHA_224:
-            isMatched = key.alg.isNull() || key.alg == ALG224;
+        case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
             isMatched = key.alg.isNull() || key.alg == ALG256;
@@ -198,8 +197,8 @@ void CryptoAlgorithmRSA_PSS::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&& 
         case CryptoAlgorithmIdentifier::SHA_1:
             jwk.alg = String(ALG1);
             break;
-        case CryptoAlgorithmIdentifier::SHA_224:
-            jwk.alg = String(ALG224);
+        case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
             jwk.alg = String(ALG256);

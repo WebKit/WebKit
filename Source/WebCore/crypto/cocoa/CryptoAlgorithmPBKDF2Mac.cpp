@@ -38,8 +38,9 @@ static CCPseudoRandomAlgorithm commonCryptoHMACAlgorithm(CryptoAlgorithmIdentifi
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
         return kCCPRFHmacAlgSHA1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return kCCPRFHmacAlgSHA224;
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        return kCCPRFHmacAlgSHA256;
     case CryptoAlgorithmIdentifier::SHA_256:
         return kCCPRFHmacAlgSHA256;
     case CryptoAlgorithmIdentifier::SHA_384:

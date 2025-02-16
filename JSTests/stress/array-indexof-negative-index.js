@@ -42,7 +42,7 @@ function shouldBe(actual, expected)
     var objectArray = [ {}, {}, {}, {}, {}, key, {}, {}, {} ];
     var valueArray = [ {}, {}, {}, {}, {}, null, {}, {}, {} ];
 
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(indexOfInt32(int32Array, 3, -2), -1);
         shouldBe(indexOfInt32(int32Array, 3, -10), 3);
         shouldBe(indexOfInt32(int32Array, 3, -20), 3);

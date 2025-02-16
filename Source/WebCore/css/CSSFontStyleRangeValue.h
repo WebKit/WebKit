@@ -42,11 +42,11 @@ public:
         return adoptRef(*new CSSFontStyleRangeValue(WTFMove(fontStyleValue), WTFMove(obliqueValues)));
     }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSFontStyleRangeValue&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
     {
         if (func(fontStyleValue.get()) == IterationStatus::Done)
             return IterationStatus::Done;

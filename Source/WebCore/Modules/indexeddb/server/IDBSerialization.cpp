@@ -216,7 +216,7 @@ template <typename T> static bool readLittleEndian(std::span<const uint8_t>& dat
     if (data.size() < sizeof(value))
         return false;
 
-    value = consumeAndCastTo<const T>(data);
+    value = consumeAndReinterpretCastTo<const T>(data);
     return true;
 }
 #endif

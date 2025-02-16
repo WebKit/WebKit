@@ -10,5 +10,5 @@ function test()
     shouldBe(this.x, undefined);
 }
 noInline(test);
-for (let i=0; i<100000; i++)
+for (let i=0; i<testLoopCount; i++)
     test();

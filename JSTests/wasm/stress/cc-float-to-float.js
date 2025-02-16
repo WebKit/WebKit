@@ -34,7 +34,7 @@ async function test() {
     }
 
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
         assert.eq(test(5), 42 + 5)
         assert.eq(test(), NaN)
         assert.eq(test(null), 42 + 0)

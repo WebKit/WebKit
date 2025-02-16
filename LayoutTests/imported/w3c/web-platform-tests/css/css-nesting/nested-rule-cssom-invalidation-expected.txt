@@ -1,0 +1,5 @@
+A1
+A2
+
+PASS Nested rule responds to parent selector text change
+

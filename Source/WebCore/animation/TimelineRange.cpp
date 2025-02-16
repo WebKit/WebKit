@@ -88,7 +88,7 @@ static const std::optional<CSSToLengthConversionData> cssToLengthConversionData(
 
 Length SingleTimelineRange::lengthForCSSValue(RefPtr<const CSSPrimitiveValue> value, RefPtr<Element> element)
 {
-    if (!value || value->isCalculated() || !element)
+    if (!value || !element)
         return { };
     if (value->valueID() == CSSValueAuto)
         return { };
@@ -117,7 +117,7 @@ Length SingleTimelineRange::lengthForCSSValue(RefPtr<const CSSPrimitiveValue> va
     return { };
 }
 
-SingleTimelineRange SingleTimelineRange::range(const CSSValue& value, Type type, const Style::BuilderState* state, RefPtr<Element> element)
+SingleTimelineRange SingleTimelineRange::range(const CSSValue& value, Type type, Style::BuilderState* state, RefPtr<Element> element)
 {
     if (RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         // <length-percentage>
@@ -137,7 +137,7 @@ SingleTimelineRange SingleTimelineRange::range(const CSSValue& value, Type type,
     return { SingleTimelineRange::timelineName(pair->first().valueID()), state ? Style::BuilderConverter::convertLength(*state, primitiveValue) : lengthForCSSValue(RefPtr { primitiveValue.ptr() }, element) };
 }
 
-SingleTimelineRange SingleTimelineRange::parse(TimelineRangeValue&& value, RefPtr<Element> element, Type type)
+RefPtr<CSSValue> SingleTimelineRange::parse(TimelineRangeValue&& value, RefPtr<Element> element, Type type)
 {
     if (!element)
         return { };
@@ -146,32 +146,30 @@ SingleTimelineRange SingleTimelineRange::parse(TimelineRangeValue&& value, RefPt
         return { };
     const auto& parserContext = document->cssParserContext();
     return WTF::switchOn(value,
-    [&](String& rangeString) {
+    [&](String& rangeString) -> RefPtr<CSSValue> {
         CSSTokenizer tokenizer(rangeString);
         auto tokenRange = tokenizer.tokenRange();
         tokenRange.consumeWhitespace();
-        if (auto consumedRange = CSSPropertyParserHelpers::consumeAnimationRange(tokenRange, parserContext, type))
-            return range(*consumedRange, type, nullptr, element);
-        return SingleTimelineRange { };
+        return CSSPropertyParserHelpers::consumeAnimationRange(tokenRange, parserContext, type);
     },
-    [&](TimelineRangeOffset& rangeOffset) {
+    [&](TimelineRangeOffset& rangeOffset) -> RefPtr<CSSValue> {
         CSSTokenizer tokenizer(rangeOffset.rangeName);
         auto tokenRange = tokenizer.tokenRange();
         tokenRange.consumeWhitespace();
         if (auto consumedRangeName = CSSPropertyParserHelpers::consumeAnimationRange(tokenRange, parserContext, type)) {
             if (rangeOffset.offset)
-                return range(CSSValuePair::createNoncoalescing(*consumedRangeName, *rangeOffset.offset->toCSSValue()), type, nullptr, element);
-            return range(*consumedRangeName, type, nullptr, element);
+                return CSSValuePair::createNoncoalescing(*consumedRangeName, *rangeOffset.offset->toCSSValue());
+            return consumedRangeName;
         }
         if (RefPtr offset = rangeOffset.offset)
-            return range(*offset->toCSSValue(), type, nullptr, element);
-        return SingleTimelineRange { };
+            return offset->toCSSValue();
+        return nullptr;
     },
     [&](RefPtr<CSSKeywordValue> rangeKeyword) {
-        return range(*rangeKeyword->toCSSValue(), type, nullptr, element);
+        return rangeKeyword->toCSSValue();
     },
     [&](RefPtr<CSSNumericValue> rangeValue) {
-        return range(*rangeValue->toCSSValue(), type, nullptr, element);
+        return rangeValue->toCSSValue();
     });
 }
 

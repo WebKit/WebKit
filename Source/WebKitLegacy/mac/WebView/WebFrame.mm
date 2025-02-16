@@ -93,6 +93,7 @@
 #import <WebCore/LocalFrame.h>
 #import <WebCore/LocalFrameView.h>
 #import <WebCore/MIMETypeRegistry.h>
+#import <WebCore/MouseEventTypes.h>
 #import <WebCore/MutableStyleProperties.h>
 #import <WebCore/OriginAccessPatterns.h>
 #import <WebCore/Page.h>
@@ -1830,7 +1831,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
 {
     ASSERT(WebThreadIsLockedOrDisabled());
     if (auto* view = _private->coreFrame->view())
-        view->setWasScrolledByUser(true);
+        view->setLastUserScrollType(WebCore::LocalFrameView::UserScrollType::Explicit);
 }
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string forceUserGesture:(BOOL)forceUserGesture
@@ -2149,7 +2150,7 @@ static WebFrameLoadType toWebFrameLoadType(WebCore::FrameLoadType frameLoadType)
     if (!_private->coreFrame || !_private->coreFrame->document())
         return;
     
-    auto* rootObject = _private->coreFrame->document()->axObjectCache()->rootObject();
+    auto* rootObject = _private->coreFrame->document()->axObjectCache()->rootObjectForFrame(*_private->coreFrame);
     if (rootObject)
         rootObject->setAccessibleName(AtomString { name });
 }
@@ -2191,14 +2192,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!document || !document->axObjectCache())
         return nil;
     
-    auto* rootObject = document->axObjectCache()->rootObjectForFrame(_private->coreFrame);
+    auto* rootObject = document->axObjectCache()->rootObjectForFrame(*_private->coreFrame);
     if (!rootObject)
         return nil;
     
     // The root object will be a WebCore scroll view object. In WK1, scroll views are handled
     // by the system and the root object should be the web area (instead of the scroll view).
-    if (rootObject->isAttachment() && rootObject->firstChild())
-        return rootObject->firstChild()->wrapper();
+    auto* rootAccessibilityObject = dynamicDowncast<WebCore::AccessibilityObject>(rootObject);
+    if (rootAccessibilityObject && rootAccessibilityObject->isAttachment() && rootAccessibilityObject->firstChild())
+        return rootAccessibilityObject->firstChild()->wrapper();
     
     return rootObject->wrapper();
 }

@@ -10,7 +10,7 @@ function bigIntBitNot(a) {
 }
 noInline(bigIntBitNot);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntBitNot(3n);
     assert.sameValue(r, 3n, "~~" + 3n + " = " + r);
 }

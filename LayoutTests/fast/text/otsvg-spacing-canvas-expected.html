@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .container {
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+        font-size: 0;
+    }
+    .black-box {
+        width: 100px;
+        height: 100px;
+        background-color: black;
+        display: inline-block;
+    }
+    .green-box {
+        width: 80px;
+        height: 80px;
+        margin: 10px;
+        background-color: green;
+        display: inline-block;
+    }
+</style>
+</head>
+<body>
+    <h2>This tests drawing text with OpenType-SVG fonts in 2D canvas.</h2>
+    <div class="container">
+        <div class="black-box"></div>
+        <div class="green-box"></div>
+        <img src="resources/glyph-image-1.png">
+        <img src="resources/glyph-image-2.png">
+        <div class="black-box"></div>
+    </div>
+</body>
+</html>

@@ -24,8 +24,60 @@
 
 webkit_platform_headers: "CoreIPCSecTrust.h"
 
+#if HAVE(WK_SECURE_CODING_SECTRUST)
+
+header: "CoreIPCSecTrust.h"
+[CustomHeader, WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] enum class WebKit::CoreIPCSecTrustResult : uint8_t {
+    Invalid,
+    Proceed,
+    Confirm,
+    Deny,
+    Unspecified,
+    RecoverableTrustFailure,
+    FatalTrustFailure,
+    OtherError
+};
+
+using WebKit::CoreIPCSecTrustData::Detail = Vector<std::pair<WebKit::CoreIPCString, bool>>;
+using WebKit::CoreIPCSecTrustData::InfoOption = std::variant<WebKit::CoreIPCDate, WebKit::CoreIPCString, bool>;
+using WebKit::CoreIPCSecTrustData::InfoType = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::InfoOption>>;
+using WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumber = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCNumber>>;
+using WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers = Vector<Vector<std::variant<WebKit::CoreIPCNumber, WebKit::CoreIPCDate>>>;
+using WebKit::CoreIPCSecTrustData::PolicyArrayOfNumbers = Vector<WebKit::CoreIPCNumber>;
+using WebKit::CoreIPCSecTrustData::PolicyArrayOfStrings = Vector<WebKit::CoreIPCString>;
+using WebKit::CoreIPCSecTrustData::PolicyArrayOfData = Vector<WebKit::CoreIPCData>;
+using WebKit::CoreIPCSecTrustData::PolicyVariant = std::variant<bool, WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyArrayOfNumbers, WebKit::CoreIPCSecTrustData::PolicyArrayOfStrings, WebKit::CoreIPCSecTrustData::PolicyArrayOfData, WebKit::CoreIPCSecTrustData::PolicyArrayOfArrayContainingDateOrNumbers, WebKit::CoreIPCSecTrustData::PolicyDictionaryValueIsNumber>;
+using WebKit::CoreIPCSecTrustData::PolicyOption = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyVariant>>;
+using WebKit::CoreIPCSecTrustData::PolicyValue = std::variant<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyOption>
+using WebKit::CoreIPCSecTrustData::PolicyType = Vector<std::pair<WebKit::CoreIPCString, WebKit::CoreIPCSecTrustData::PolicyValue>>;
+using WebKit::CoreIPCSecTrustData::ExceptionType = Vector<std::pair<WebKit::CoreIPCString, std::variant<WebKit::CoreIPCNumber, WebKit::CoreIPCData, bool>>>;
+
+header: "CoreIPCSecTrust.h"
+[CustomHeader, WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] struct WebKit::CoreIPCSecTrustData {
+    WebKit::CoreIPCSecTrustResult result;
+    bool anchorsOnly;
+    bool keychainsAllowed;
+    Vector<WebKit::CoreIPCData> certificates;
+    Vector<WebKit::CoreIPCData> chain;
+    Vector<WebKit::CoreIPCSecTrustData::Detail> details;
+    Vector<WebKit::CoreIPCSecTrustData::PolicyType> policies;
+    std::optional<WebKit::CoreIPCSecTrustData::InfoType> info;
+    std::optional<WebKit::CoreIPCDate> verifyDate;
+    std::optional<Vector<WebKit::CoreIPCData>> responses;
+    std::optional<Vector<WebKit::CoreIPCData>> scts;
+    std::optional<Vector<WebKit::CoreIPCData>> anchors;
+    std::optional<Vector<WebKit::CoreIPCData>> trustedLogs;
+    std::optional<Vector<WebKit::CoreIPCSecTrustData::ExceptionType>> exceptions;
+};
+
+[WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCSecTrust {
+    std::optional<WebKit::CoreIPCSecTrustData> m_data;
+}
+#endif
+#if !HAVE(WK_SECURE_CODING_SECTRUST)
 [WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WebKit::CoreIPCSecTrust {
     std::span<const uint8_t> dataReference();
 }
+#endif
 
 #endif // USE(CF)

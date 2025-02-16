@@ -39,7 +39,7 @@ CSSCanvasValue::CSSCanvasValue(String&& name)
 
 CSSCanvasValue::~CSSCanvasValue() = default;
 
-String CSSCanvasValue::customCSSText() const
+String CSSCanvasValue::customCSSText(const CSS::SerializationContext&) const
 {
     return makeString("-webkit-canvas("_s, m_name, ')');
 }

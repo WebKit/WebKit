@@ -54,7 +54,7 @@ private:
     void unmuteConsole() { }
 
     RefPtr<Inspector::RuntimeBackendDispatcher> m_backendDispatcher;
-    WorkerOrWorkletGlobalScope& m_globalScope;
+    WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;
 };
 
 } // namespace WebCore

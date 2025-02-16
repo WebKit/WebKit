@@ -27,8 +27,6 @@
 #include "config.h"
 #include "DateTimeSymbolicFieldElement.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "EventNames.h"
 #include "FontCascade.h"
 #include "KeyboardEvent.h"
@@ -138,5 +136,3 @@ String DateTimeSymbolicFieldElement::optionAtIndex(int index) const
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

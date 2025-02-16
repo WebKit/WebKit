@@ -19,7 +19,7 @@ let o2 = {
         try {} catch (e) {}
     }
 };
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let j = 0; j < 100; j++) {}
     f2(o2, 897989, 42, theObj);
 }

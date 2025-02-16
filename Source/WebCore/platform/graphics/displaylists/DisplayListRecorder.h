@@ -102,7 +102,6 @@ protected:
 #endif
     virtual void recordStrokePathSegment(const PathSegment&) = 0;
     virtual void recordStrokePath(const Path&) = 0;
-    virtual void recordDrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination) = 0;
 
     virtual bool recordResourceUse(NativeImage&) = 0;
     virtual bool recordResourceUse(ImageBuffer&) = 0;
@@ -183,7 +182,6 @@ private:
     WEBCORE_EXPORT void drawGlyphs(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& anchorPoint, FontSmoothingMode) final;
     WEBCORE_EXPORT void drawDecomposedGlyphs(const Font&, const DecomposedGlyphs&) override;
     WEBCORE_EXPORT void drawGlyphsAndCacheResources(const Font&, std::span<const GlyphBufferGlyph>, std::span<const GlyphBufferAdvance>, const FloatPoint& localAnchor, FontSmoothingMode) final;
-    WEBCORE_EXPORT void drawDisplayListItems(const Vector<Item>&, const ResourceHeap&, ControlFactory&, const FloatPoint& destination) final;
     WEBCORE_EXPORT void drawImageBuffer(ImageBuffer&, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
     WEBCORE_EXPORT void drawConsumingImageBuffer(RefPtr<ImageBuffer>, const FloatRect& destination, const FloatRect& source, ImagePaintingOptions) final;
     WEBCORE_EXPORT void drawNativeImageInternal(NativeImage&, const FloatRect& destRect, const FloatRect& srcRect, ImagePaintingOptions) final;

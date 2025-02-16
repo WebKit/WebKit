@@ -48,13 +48,11 @@ std::unique_ptr<PlatformControl> EmptyControlFactory::createPlatformButton(Butto
     return nullptr;
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 std::unique_ptr<PlatformControl> EmptyControlFactory::createPlatformColorWell(ColorWellPart&)
 {
     notImplemented();
     return nullptr;
 }
-#endif
 
 #if ENABLE(SERVICE_CONTROLS)
 std::unique_ptr<PlatformControl> EmptyControlFactory::createPlatformImageControlsButton(ImageControlsButtonPart&)

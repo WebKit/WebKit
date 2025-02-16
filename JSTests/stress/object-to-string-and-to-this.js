@@ -10,7 +10,7 @@ function foo() {
 }
 
 let before = foo();
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
   foo();
 }
 let after = foo();

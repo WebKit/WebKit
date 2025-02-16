@@ -60,4 +60,4 @@ template<> struct Blending<TextShadow> {
 } // namespace Style
 } // namespace WebCore
 
-STYLE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(TextShadow, 3)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::Style::TextShadow, 3)

@@ -62,7 +62,7 @@ namespace WTF {
         const ValueType* operator->() const { return get(); }
 
         HashTableConstIteratorAdapter& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableConstIteratorAdapter& operator++(int) { auto result = *this; ++m_impl; return result; }
 
         Keys keys() { return Keys(*this); }
         Values values() { return Values(*this); }
@@ -92,7 +92,7 @@ namespace WTF {
         ValueType* operator->() const { return get(); }
 
         HashTableIteratorAdapter& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableIteratorAdapter& operator++(int) { auto result = *this; ++m_impl; return result; }
 
         operator HashTableConstIteratorAdapter<HashTableType, ValueType>() {
             typename HashTableType::const_iterator i = m_impl;
@@ -117,6 +117,7 @@ namespace WTF {
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
 
     public:
+        HashTableConstKeysIterator() { }
         HashTableConstKeysIterator(const ConstIterator& impl) : m_impl(impl) {}
         
         const KeyType* get() const { return &(m_impl.get()->key); }
@@ -124,7 +125,7 @@ namespace WTF {
         const KeyType* operator->() const { return get(); }
 
         HashTableConstKeysIterator& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableConstKeysIterator& operator++(int) { auto result = *this; ++m_impl; return result; }
 
         ConstIterator m_impl;
     };
@@ -141,6 +142,7 @@ namespace WTF {
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
 
     public:
+        HashTableConstValuesIterator() { }
         HashTableConstValuesIterator(const ConstIterator& impl) : m_impl(impl) {}
         
         const MappedType* get() const { return std::addressof(m_impl.get()->value); }
@@ -148,7 +150,7 @@ namespace WTF {
         const MappedType* operator->() const { return get(); }
 
         HashTableConstValuesIterator& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableConstValuesIterator& operator++(int) { auto result = *this; ++m_impl; return result; }
 
         ConstIterator m_impl;
     };
@@ -166,6 +168,7 @@ namespace WTF {
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
 
     public:
+        HashTableKeysIterator() { }
         HashTableKeysIterator(const Iterator& impl) : m_impl(impl) {}
         
         KeyType* get() const { return &(m_impl.get()->key); }
@@ -173,7 +176,7 @@ namespace WTF {
         KeyType* operator->() const { return get(); }
 
         HashTableKeysIterator& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableKeysIterator& operator++(int) { auto result = *this; ++m_impl; return result; }
 
         operator HashTableConstKeysIterator<HashTableType, KeyType, MappedType>() {
             ConstIterator i = m_impl;
@@ -196,6 +199,7 @@ namespace WTF {
         typedef HashTableConstIteratorAdapter<HashTableType, KeyValuePair<KeyType, MappedType>> ConstIterator;
 
     public:
+        HashTableValuesIterator() { }
         HashTableValuesIterator(const Iterator& impl) : m_impl(impl) {}
         
         MappedType* get() const { return std::addressof(m_impl.get()->value); }
@@ -203,7 +207,7 @@ namespace WTF {
         MappedType* operator->() const { return get(); }
 
         HashTableValuesIterator& operator++() { ++m_impl; return *this; }
-        // postfix ++ intentionally omitted
+        HashTableValuesIterator& operator++(int) { auto result = *this; ++m_impl; return result; }
 
         operator HashTableConstValuesIterator<HashTableType, KeyType, MappedType>() {
             ConstIterator i = m_impl;

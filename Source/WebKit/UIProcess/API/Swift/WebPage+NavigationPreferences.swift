@@ -26,33 +26,72 @@
 import Foundation
 internal import WebKit_Internal
 
-extension WebPage_v0 {
-    @MainActor
-    @_spi(Private)
+extension WebPage {
+    /// A type that specifies the behaviors to use when loading and rendering page content.
+    ///
+    /// Create a `NavigationPreferences` value when you want to change the default rendering behavior of
+    /// your web page. Typically, iOS devices render web content for a mobile experience, and Mac devices
+    /// render content for a desktop experience.
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
     public struct NavigationPreferences: Sendable {
+        /// Options to indicate how to render web view content.
+        ///
+        /// Browsers often render webpages differently based on device type. For example, Safari provides a
+        /// desktop-class experience when displaying webpages on Mac and iPad, but it displays a mobile experience
+        /// when displaying pages on iPhone. Use content modes to specify how you want your web page to render
+        /// content within your app.
         public enum ContentMode: Sendable {
+            /// The content mode that is appropriate for the current device.
             case recommended
+
+            /// The content mode that represents a mobile experience.
             case mobile
+
+            /// The content mode that represents a desktop experience.
             case desktop
         }
 
+        /// Preference for loading a webpage with HTTPS, and how failures should be handled.
         public enum UpgradeToHTTPSPolicy: Sendable {
             case keepAsRequested
+
             case automaticFallbackToHTTP
+
             case userMediatedFallbackToHTTP
+
             case errorOnFailure
         }
 
+        /// Creates a new NavigationPreferences value.
         public init() {
         }
 
+        /// The content mode for the web view to use when it loads and renders a webpage.
+        ///
+        /// The default value of this property is `recommended`. The web page ignores this preference for subframe navigation.
         public var preferredContentMode: ContentMode = .recommended
 
+        /// Indicates whether JavaScript from web content is allowed to run.
+        ///
+        /// The default value of this property is `true`. If you change the value to `false`, the web page doesn’t
+        /// execute JavaScript code referenced by the web content. That includes JavaScript code found in inline `<script>`
+        /// elements, `javascript:` URLs, and all other referenced JavaScript content.
         public var allowsContentJavaScript: Bool = true
 
+        /// Used when performing a top-level navigation to a webpage.
+        ///
+        /// The default value is `.keepAsRequested`. The stated preference is ignored on subframe navigation, and it may be ignored based on system configuration.
+        /// The `WebPage.Configuration.upgradeKnownHostsToHTTPS` property supersedes this property for known hosts.
         public var preferredHTTPSNavigationPolicy: UpgradeToHTTPSPolicy = .keepAsRequested
 
         fileprivate var _isLockdownModeEnabled: Bool? = nil
+
+        /// A Boolean value that indicates whether to use Lockdown Mode in the web page.
+        ///
+        /// By default, this reflects whether the user has enabled Lockdown Mode on the device. Update this preference to
+        /// override the device setting when you implement a per-website or similar setting.
         public var isLockdownModeEnabled: Bool {
             get { _isLockdownModeEnabled ?? false }
             set { _isLockdownModeEnabled = newValue }
@@ -63,7 +102,7 @@ extension WebPage_v0 {
 // MARK: Adapters
 
 extension WKWebpagePreferences.ContentMode {
-    init(_ wrapped: WebPage_v0.NavigationPreferences.ContentMode) {
+    init(_ wrapped: WebPage.NavigationPreferences.ContentMode) {
         self = switch wrapped {
         case .recommended: .recommended
         case .mobile: .mobile
@@ -73,7 +112,7 @@ extension WKWebpagePreferences.ContentMode {
 }
 
 extension WKWebpagePreferences.UpgradeToHTTPSPolicy {
-    init(_ wrapped: WebPage_v0.NavigationPreferences.UpgradeToHTTPSPolicy) {
+    init(_ wrapped: WebPage.NavigationPreferences.UpgradeToHTTPSPolicy) {
         self = switch wrapped {
         case .keepAsRequested: .keepAsRequested
         case .automaticFallbackToHTTP: .automaticFallbackToHTTP
@@ -84,7 +123,7 @@ extension WKWebpagePreferences.UpgradeToHTTPSPolicy {
 }
 
 extension WKWebpagePreferences {
-    convenience init(_ wrapped: WebPage_v0.NavigationPreferences) {
+    convenience init(_ wrapped: WebPage.NavigationPreferences) {
         self.init()
 
         self.preferredContentMode = .init(wrapped.preferredContentMode)
@@ -97,7 +136,7 @@ extension WKWebpagePreferences {
     }
 }
 
-extension WebPage_v0.NavigationPreferences.ContentMode {
+extension WebPage.NavigationPreferences.ContentMode {
     init(_ wrapped: WKWebpagePreferences.ContentMode) {
         self = switch wrapped {
         case .recommended: .recommended
@@ -109,7 +148,7 @@ extension WebPage_v0.NavigationPreferences.ContentMode {
     }
 }
 
-extension WebPage_v0.NavigationPreferences.UpgradeToHTTPSPolicy {
+extension WebPage.NavigationPreferences.UpgradeToHTTPSPolicy {
     init(_ wrapped: WKWebpagePreferences.UpgradeToHTTPSPolicy) {
         self = switch wrapped {
         case .keepAsRequested: .keepAsRequested
@@ -122,7 +161,8 @@ extension WebPage_v0.NavigationPreferences.UpgradeToHTTPSPolicy {
     }
 }
 
-extension WebPage_v0.NavigationPreferences {
+extension WebPage.NavigationPreferences {
+    @MainActor
     init(_ wrapped: WKWebpagePreferences) {
         self.init()
 

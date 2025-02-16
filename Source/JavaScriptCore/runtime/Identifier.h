@@ -118,8 +118,7 @@ public:
     static Identifier fromString(VM&, AtomStringImpl*);
     static Identifier fromString(VM&, Ref<AtomStringImpl>&&);
     static Identifier fromString(VM&, const AtomString&);
-    static Identifier fromString(VM& vm, SymbolImpl*);
-    static Identifier fromLatin1(VM&, const char*);
+    static Identifier fromString(VM&, SymbolImpl*);
 
     static Identifier fromUid(VM&, UniquedStringImpl* uid);
     static Identifier fromUid(const PrivateName&);
@@ -283,7 +282,7 @@ struct IdentifierMapIndexHashTraits : HashTraits<int> {
     static constexpr bool emptyValueIsZero = false;
 };
 
-typedef HashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
+typedef UncheckedKeyHashSet<RefPtr<UniquedStringImpl>, IdentifierRepHash> IdentifierSet;
 typedef UncheckedKeyHashMap<RefPtr<UniquedStringImpl>, int, IdentifierRepHash, HashTraits<RefPtr<UniquedStringImpl>>, IdentifierMapIndexHashTraits> IdentifierMap;
 typedef UncheckedKeyHashMap<UniquedStringImpl*, int, IdentifierRepHash, HashTraits<UniquedStringImpl*>, IdentifierMapIndexHashTraits> BorrowedIdentifierMap;
 

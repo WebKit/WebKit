@@ -69,8 +69,8 @@ TextStream& operator<<(TextStream& ts, ControlStyle::State state)
     case ControlStyle::State::DarkAppearance:
         ts << "dark-appearance";
         break;
-    case ControlStyle::State::RightToLeft:
-        ts << "right-to-left";
+    case ControlStyle::State::InlineFlippedWritingMode:
+        ts << "inline-flipped-writing-mode";
         break;
     case ControlStyle::State::LargeControls:
         ts << "large-controls";

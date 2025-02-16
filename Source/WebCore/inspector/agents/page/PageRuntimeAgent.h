@@ -76,7 +76,7 @@ private:
 
     InstrumentingAgents& m_instrumentingAgents;
 
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
 };
 
 } // namespace WebCore

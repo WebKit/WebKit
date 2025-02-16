@@ -24,7 +24,7 @@ let assert = {
     }
 
     let c = new C;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert.sameValue(C.access(c), 'test');
         assert.sameValue(C.access(undefined), undefined);
         assert.sameValue(C.access(null), undefined);
@@ -47,7 +47,7 @@ let assert = {
 
     let c = new C;
     let o = {private: c};
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert.sameValue(C.chainedAccess(o), 'test');
         assert.sameValue(C.chainedAccess({}), undefined);
         assert.sameValue(C.chainedAccess({private: null}), undefined);
@@ -73,7 +73,7 @@ let assert = {
     }
 
     let c = new C;
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         c.setField({property: 'test'});
         assert.sameValue(C.access(c), 'test');
 

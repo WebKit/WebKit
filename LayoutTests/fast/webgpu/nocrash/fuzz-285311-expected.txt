@@ -1,0 +1,36 @@
+CONSOLE MESSAGE: promises created
+CONSOLE MESSAGE: A VideoFrame was destroyed without having been closed explicitly
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: device0 lost!
+CONSOLE MESSAGE:
+CONSOLE MESSAGE: error
+CONSOLE MESSAGE: GPUPipelineError
+CONSOLE MESSAGE: GPUPipelineError
+CONSOLE MESSAGE: _
+CONSOLE MESSAGE: GPUPipelineError - validation
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#99DDBBCC] [bgcolor=#102030E0]
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderImage {IMG} at (0,172) size 16x1
+      RenderImage {IMG} at (16,84) size 20x89
+      RenderImage {IMG} at (36,169) size 105x4
+      RenderImage {IMG} at (141,55) size 80x118
+      RenderImage {IMG} at (221,157) size 7x16
+      RenderImage {IMG} at (228,166) size 45x7
+layer at (281,8) size 300x173
+  RenderHTMLCanvas {CANVAS} at (273,0) size 300x173

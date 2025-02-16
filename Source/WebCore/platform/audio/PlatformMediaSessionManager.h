@@ -65,10 +65,6 @@ public:
     WEBCORE_EXPORT static void setShouldDeactivateAudioSession(bool);
     WEBCORE_EXPORT static bool shouldDeactivateAudioSession();
 
-    WEBCORE_EXPORT static void setVorbisDecoderEnabled(bool);
-    WEBCORE_EXPORT static bool vorbisDecoderEnabled();
-    WEBCORE_EXPORT static void setOpusDecoderEnabled(bool);
-    WEBCORE_EXPORT static bool opusDecoderEnabled();
     WEBCORE_EXPORT static void setAlternateWebMPlayerEnabled(bool);
     WEBCORE_EXPORT static bool alternateWebMPlayerEnabled();
     WEBCORE_EXPORT static void setUseSCContentSharingPicker(bool);
@@ -169,7 +165,7 @@ public:
     WEBCORE_EXPORT void setSupportsSpatialAudioPlayback(bool);
     virtual std::optional<bool> supportsSpatialAudioPlaybackForConfiguration(const MediaConfiguration&);
 
-    void forEachMatchingSession(const Function<bool(const PlatformMediaSession&)>& predicate, const Function<void(PlatformMediaSession&)>& matchingCallback);
+    void forEachMatchingSession(NOESCAPE const Function<bool(const PlatformMediaSession&)>& predicate, NOESCAPE const Function<void(PlatformMediaSession&)>& matchingCallback);
 
     bool processIsSuspended() const { return m_processIsSuspended; }
 
@@ -195,7 +191,7 @@ public:
 
     bool isApplicationInBackground() const { return m_isApplicationInBackground; }
 
-    WeakPtr<PlatformMediaSession> bestEligibleSessionForRemoteControls(const Function<bool(const PlatformMediaSession&)>&, PlatformMediaSession::PlaybackControlsPurpose);
+    WeakPtr<PlatformMediaSession> bestEligibleSessionForRemoteControls(NOESCAPE const Function<bool(const PlatformMediaSession&)>&, PlatformMediaSession::PlaybackControlsPurpose);
 
     WEBCORE_EXPORT void addNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
     WEBCORE_EXPORT void removeNowPlayingMetadataObserver(const NowPlayingMetadataObserver&);
@@ -212,9 +208,9 @@ protected:
     virtual void addSession(PlatformMediaSession&);
     virtual void removeSession(PlatformMediaSession&);
 
-    void forEachSession(const Function<void(PlatformMediaSession&)>&);
-    void forEachSessionInGroup(std::optional<MediaSessionGroupIdentifier>, const Function<void(PlatformMediaSession&)>&);
-    bool anyOfSessions(const Function<bool(const PlatformMediaSession&)>&) const;
+    void forEachSession(NOESCAPE const Function<void(PlatformMediaSession&)>&);
+    void forEachSessionInGroup(std::optional<MediaSessionGroupIdentifier>, NOESCAPE const Function<void(PlatformMediaSession&)>&);
+    bool anyOfSessions(NOESCAPE const Function<bool(const PlatformMediaSession&)>&) const;
 
     void maybeDeactivateAudioSession();
     bool maybeActivateAudioSession();
@@ -241,7 +237,8 @@ private:
     void scheduleUpdateSessionState();
     virtual void updateSessionState() { }
 
-    Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(const Function<bool(const PlatformMediaSession&)>&) const;
+    Vector<WeakPtr<PlatformMediaSession>> sessionsMatching(NOESCAPE const Function<bool(const PlatformMediaSession&)>&) const;
+    WeakPtr<PlatformMediaSession> firstSessionMatching(NOESCAPE const Function<bool(const PlatformMediaSession&)>&) const;
 
 #if !RELEASE_LOG_DISABLED
     void scheduleStateLog();
@@ -269,12 +266,6 @@ private:
     WeakHashSet<NowPlayingMetadataObserver> m_nowPlayingMetadataObservers;
     TaskCancellationGroup m_taskGroup;
 
-#if ENABLE(VORBIS)
-    static bool m_vorbisDecoderEnabled;
-#endif
-#if ENABLE(OPUS)
-    static bool m_opusDecoderEnabled;
-#endif
 #if ENABLE(ALTERNATE_WEBM_PLAYER)
     static bool m_alternateWebMPlayerEnabled;
 #endif

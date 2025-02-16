@@ -26,7 +26,7 @@ function validate(item) {
     assert(item.__proto__ === Object.prototype);
 }
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     for (let item of items)
         validate(item);
 }

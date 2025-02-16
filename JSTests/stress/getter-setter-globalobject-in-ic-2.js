@@ -11,7 +11,7 @@ const createCustom = `
     const other = runString(createCustom);
     const otherCustom = other.custom;
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(otherCustom.customAccessorGlobalObject === other);
     }
 })();
@@ -20,7 +20,7 @@ const createCustom = `
     const other = runString(createCustom);
     const otherCustom = other.custom;
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(otherCustom.customValueGlobalObject === other);
     }
 })();
@@ -29,7 +29,7 @@ const createCustom = `
     const other = runString(createCustom);
     const otherCustom = other.custom;
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         const value = {};
         otherCustom.customAccessorGlobalObject = value;
         assert(value.result === other);
@@ -40,7 +40,7 @@ const createCustom = `
     const other = runString(createCustom);
     const otherCustom = other.custom;
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         const value = {};
         otherCustom.customValueGlobalObject = value;
         assert(value.result === other);
@@ -51,7 +51,7 @@ const createCustom = `
     const other = runString(createCustom);
     const otherCustomHeir = Object.create(other.custom);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(otherCustomHeir.customAccessorGlobalObject === other);
     }
 })();
@@ -60,7 +60,7 @@ const createCustom = `
     const other = runString(createCustom);
     const otherCustomHeir = Object.create(other.custom);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         assert(otherCustomHeir.customValueGlobalObject === other);
     }
 })();
@@ -69,7 +69,7 @@ const createCustom = `
     const other = runString(createCustom);
     const otherCustomHeir = Object.create(other.custom);
 
-    for (let i = 0; i < 1e5; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         const value = {};
         otherCustomHeir.customAccessorGlobalObject = value;
         assert(value.result === other);

@@ -17,7 +17,7 @@ noInline(opaqueCheckedBetweenIntMinAndZeroExclusive);
 
 function testCheckedBetweenIntMinAndZeroExclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedBetweenIntMinAndZeroExclusive(-i) !== i) {
             throw "Failed testCheckedBetweenIntMinAndZeroExclusive()";
         }
@@ -45,7 +45,7 @@ noInline(opaqueCheckedBetweenIntMinExclusiveAndZeroInclusive);
 
 function testCheckedBetweenIntMinExclusiveAndZeroInclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedBetweenIntMinExclusiveAndZeroInclusive(-i) !== i) {
             throw "Failed testCheckedBetweenIntMinExclusiveAndZeroInclusive()";
         }
@@ -76,7 +76,7 @@ noInline(opaqueCheckedBetweenIntMinInclusiveAndZeroExclusive);
 
 function testCheckedBetweenIntMinInclusiveAndZeroExclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedBetweenIntMinInclusiveAndZeroExclusive(-i) !== i) {
             throw "Failed testCheckedBetweenIntMinInclusiveAndZeroExclusive()";
         }
@@ -88,7 +88,7 @@ function testCheckedBetweenIntMinInclusiveAndZeroExclusive()
         throw "Failed optimizing testCheckedBetweenIntMinInclusiveAndZeroExclusive(). None of the tested case need to OSR Exit.";
     }
 
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedBetweenIntMinInclusiveAndZeroExclusive(-i) !== i) {
             throw "Failed testCheckedBetweenIntMinInclusiveAndZeroExclusive()";
         }
@@ -118,7 +118,7 @@ noInline(opaqueCheckedBetweenIntMinAndZeroInclusive);
 
 function testCheckedBetweenIntMinAndZeroInclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedBetweenIntMinAndZeroInclusive(-i) !== i) {
             throw "Failed testCheckedBetweenIntMinAndZeroInclusive()";
         }
@@ -133,7 +133,7 @@ function testCheckedBetweenIntMinAndZeroInclusive()
         throw "Failed optimizing testCheckedBetweenIntMinAndZeroInclusive(). None of the tested case need to OSR Exit.";
     }
 
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedBetweenIntMinAndZeroInclusive(-i) !== i) {
             throw "Failed testCheckedBetweenIntMinAndZeroInclusive()";
         }
@@ -165,7 +165,7 @@ noInline(opaqueUncheckedBetweenIntMinAndZeroExclusive);
 
 function testUncheckedBetweenIntMinAndZeroExclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueUncheckedBetweenIntMinAndZeroExclusive(-i) !== i) {
             throw "Failed testUncheckedBetweenIntMinAndZeroExclusive()";
         }
@@ -193,7 +193,7 @@ noInline(opaqueUncheckedBetweenIntMinExclusiveAndZeroInclusive);
 
 function testUncheckedBetweenIntMinExclusiveAndZeroInclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueUncheckedBetweenIntMinExclusiveAndZeroInclusive(-i) !== i) {
             throw "Failed testUncheckedBetweenIntMinExclusiveAndZeroInclusive()";
         }
@@ -224,7 +224,7 @@ noInline(opaqueUncheckedBetweenIntMinInclusiveAndZeroExclusive);
 
 function testUncheckedBetweenIntMinInclusiveAndZeroExclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueUncheckedBetweenIntMinInclusiveAndZeroExclusive(-i) !== i) {
             throw "Failed testUncheckedBetweenIntMinInclusiveAndZeroExclusive()";
         }
@@ -255,7 +255,7 @@ noInline(opaqueUncheckedBetweenIntMinAndZeroInclusive);
 
 function testUncheckedBetweenIntMinAndZeroInclusive()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueUncheckedBetweenIntMinAndZeroInclusive(-i) !== i) {
             throw "Failed testUncheckedBetweenIntMinAndZeroInclusive()";
         }
@@ -287,7 +287,7 @@ noInline(opaqueCheckedLessThanZero);
 
 function testCheckedLessThanZero()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedLessThanZero(-i) !== i) {
             throw "Failed testCheckedLessThanZero()";
         }
@@ -299,7 +299,7 @@ function testCheckedLessThanZero()
         throw "Failed optimizing testCheckedLessThanZero(). None of the tested case need to OSR Exit.";
     }
 
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedLessThanZero(-i) !== i) {
             throw "Failed testCheckedLessThanZero()";
         }
@@ -326,7 +326,7 @@ noInline(opaqueCheckedLessThanOrEqualZero);
 
 function testCheckedLessThanOrEqualZero()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedLessThanOrEqualZero(-i) !== i) {
             throw "Failed testCheckedLessThanOrEqualZero()";
         }
@@ -341,7 +341,7 @@ function testCheckedLessThanOrEqualZero()
         throw "Failed optimizing testCheckedLessThanOrEqualZero(). None of the tested case need to OSR Exit.";
     }
 
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueCheckedLessThanOrEqualZero(-i) !== i) {
             throw "Failed testCheckedLessThanOrEqualZero()";
         }
@@ -367,7 +367,7 @@ noInline(opaqueUncheckedLessThanZero);
 
 function testUncheckedLessThanZero()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueUncheckedLessThanZero(-i) !== i) {
             throw "Failed testUncheckedLessThanZero()";
         }
@@ -382,7 +382,7 @@ function testUncheckedLessThanZero()
         throw "Failed optimizing testUncheckedLessThanZero(). None of the tested case need to OSR Exit.";
     }
 
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueUncheckedLessThanZero(-i) !== i) {
             throw "Failed testUncheckedLessThanZero()";
         }
@@ -408,7 +408,7 @@ noInline(opaqueUncheckedLessThanOrEqualZero);
 
 function testUncheckedLessThanOrEqualZero()
 {
-    for (let i = 1; i < 1e5; ++i) {
+    for (let i = 1; i < testLoopCount; ++i) {
         if (opaqueUncheckedLessThanOrEqualZero(-i) !== i) {
             throw "Failed testUncheckedLessThanOrEqualZero()";
         }

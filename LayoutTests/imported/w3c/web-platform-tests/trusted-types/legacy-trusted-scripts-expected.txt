@@ -1,0 +1,3 @@
+
+PASS Legacy sinks for TrustedScript accept arbitrary strings.
+

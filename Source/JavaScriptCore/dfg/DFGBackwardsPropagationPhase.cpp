@@ -617,6 +617,7 @@ private:
             break;
 
         case DoubleRep:
+        case PurifyNaN:
             ASSERT(m_graph.afterFixup());
             // The result of the node is pure unboxed floating point values.
             node->child1()->mergeFlags(NodeBytecodeUsesAsNumber);

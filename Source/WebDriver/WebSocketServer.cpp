@@ -167,7 +167,8 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandR
     if (errorMessage)
         reply->setString("message"_s, *errorMessage);
 
-    reply->setInteger("error"_s, CommandResult::errorCodeToHTTPStatusCode(errorCode));
+    reply->setString("error"_s, CommandResult::errorCodeToString(errorCode));
+    reply->setString("type"_s, "error"_s);
 
     return { (connection ? (*connection) : nullptr), reply->toJSONString().utf8() };
 }

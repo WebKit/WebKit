@@ -1,0 +1,12 @@
+This tests that dragging a slider in sideways-lr writing mode works as expected.
+
+
+PASS slider.value is '0'
+Dragging slider
+PASS slider.value is '100'
+Dragging slider back
+PASS slider.value is '0'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

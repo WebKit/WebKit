@@ -46,8 +46,6 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/ParsingUtilities.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 enum {
@@ -82,8 +80,8 @@ public:
         });
 
         // We do not need to recreate the buffer if the current buffer is large enough.
-        if (m_imageBuffer && m_imageBuffer->truncatedLogicalSize().width() >= size.width() && m_imageBuffer->truncatedLogicalSize().height() >= size.height())
-            return m_imageBuffer;
+        if (RefPtr imageBuffer = m_imageBuffer; imageBuffer && imageBuffer->truncatedLogicalSize().width() >= size.width() && imageBuffer->truncatedLogicalSize().height() >= size.height())
+            return imageBuffer;
 
         // Round to the nearest 32 pixels so we do not grow the buffer for similar sized requests.
         IntSize roundedSize(roundUpToMultipleOf32(size.width()), roundUpToMultipleOf32(size.height()));
@@ -245,7 +243,7 @@ void ShadowBlur::updateShadowBlurValues()
 static const int blurSumShift = 15;
 
 // Takes a two dimensional array with three rows and two columns for the lobes.
-static void calculateLobes(int lobes[][2], float blurRadius, bool shadowsIgnoreTransforms)
+static void calculateLobes(std::array<std::array<int, 2>, 3>& lobes, float blurRadius, bool shadowsIgnoreTransforms)
 {
     int diameter;
     if (shadowsIgnoreTransforms)
@@ -295,9 +293,9 @@ void ShadowBlur::clear()
 
 void ShadowBlur::blurLayerImage(std::span<uint8_t> imageData, const IntSize& size, int rowStride)
 {
-    const int channels[4] = { 3, 0, 1, 3 };
+    constexpr std::array channels { 3, 0, 1, 3 };
 
-    int lobes[3][2]; // indexed by pass, and left/right lobe
+    std::array<std::array<int, 2>, 3> lobes; // indexed by pass, and left/right lobe
     calculateLobes(lobes, m_blurRadius.width(), m_shadowsIgnoreTransforms);
 
     // First pass is horizontal.
@@ -949,5 +947,3 @@ void ShadowBlur::drawShadowLayer(const AffineTransform& transform, const IntRect
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

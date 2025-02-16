@@ -2530,6 +2530,9 @@ static inline bool disallowTelephoneNumberParsing(const ContainerNode& node)
 
 static inline bool shouldParseTelephoneNumbersInNode(const ContainerNode& node)
 {
+    if (node.namespaceURI() != HTMLNames::xhtmlNamespaceURI)
+        return false;
+
     // FIXME: It seems very wasteful to perform a full ancestor walk to check whether we should create
     // telephone number links, when parsing every text node in the document. Ideally, we should maintain
     // the count of elements that disallow telephone number parsing while pushing or popping from the
@@ -3136,6 +3139,11 @@ void HTMLTreeBuilder::finished()
 
 inline void HTMLTreeBuilder::parseError(const AtomHTMLToken&)
 {
+}
+
+bool HTMLTreeBuilder::isOnStackOfOpenElements(Element& element) const
+{
+    return m_tree.openElements().contains(element);
 }
 
 }

@@ -36,7 +36,7 @@ void Authenticator::handleRequest(const WebAuthenticationRequestData& data)
 {
     m_pendingRequestData = data;
     // Enforce asynchronous execution of makeCredential/getAssertion.
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }, this] {
+    RunLoop::protectedMain()->dispatch([weakThis = WeakPtr { *this }, this] {
         if (!weakThis)
             return;
         if (std::holds_alternative<WebCore::PublicKeyCredentialCreationOptions>(m_pendingRequestData.options))

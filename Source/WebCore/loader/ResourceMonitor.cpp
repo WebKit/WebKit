@@ -27,23 +27,21 @@
 #include "ResourceMonitor.h"
 
 #include "Document.h"
+#include "FrameLoader.h"
 #include "HTMLIFrameElement.h"
+#include "LocalDOMWindow.h"
 #include "LocalFrame.h"
+#include "LocalFrameLoaderClient.h"
+#include "Logging.h"
+#include "Page.h"
 #include "ResourceMonitorChecker.h"
-#include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-static constexpr size_t networkUsageThreshold = 4 * MB;
-static constexpr size_t networkUsageThresholdRandomness = 1303 * KB;
-
-static size_t networkUsageThresholdWithRandomNoise()
-{
-    return networkUsageThreshold + static_cast<size_t>(cryptographicallyRandomUnitInterval() * networkUsageThresholdRandomness);
-}
+#define RESOURCEMONITOR_RELEASE_LOG(fmt, ...) RELEASE_LOG(ResourceLoading, "%p - ResourceMonitor(frame %p)::" fmt, this, m_frame.get(), ##__VA_ARGS__)
 
 Ref<ResourceMonitor> ResourceMonitor::create(LocalFrame& frame)
 {
@@ -52,7 +50,6 @@ Ref<ResourceMonitor> ResourceMonitor::create(LocalFrame& frame)
 
 ResourceMonitor::ResourceMonitor(LocalFrame& frame)
     : m_frame(frame)
-    , m_networkUsageThreshold { networkUsageThresholdWithRandomNoise() }
 {
     if (RefPtr parentMonitor = parentResourceMonitorIfExists())
         m_eligibility = parentMonitor->eligibility();
@@ -64,6 +61,7 @@ void ResourceMonitor::setEligibility(Eligibility eligibility)
         return;
 
     m_eligibility = eligibility;
+    RESOURCEMONITOR_RELEASE_LOG("The frame is %" PUBLIC_LOG_STRING ".", (eligibility == Eligibility::Eligible ? "eligible" : "not eligible"));
 
     if (RefPtr parentMonitor = parentResourceMonitorIfExists())
         parentMonitor->setEligibility(eligibility);
@@ -131,18 +129,22 @@ void ResourceMonitor::checkNetworkUsageExcessIfNecessary()
     if (m_eligibility != Eligibility::Eligible || m_networkUsageExceed)
         return;
 
-    if (m_networkUsage.hasOverflowed() || m_networkUsage >= m_networkUsageThreshold) {
+    if (m_networkUsage.hasOverflowed() || ResourceMonitorChecker::singleton().checkNetworkUsageExceedingThreshold(m_networkUsage)) {
         m_networkUsageExceed = true;
 
         RefPtr frame = m_frame.get();
         if (!frame)
             return;
 
-        // If the frame has sticky user activation, don't do offloading.
-        if (RefPtr protectedWindow = frame->window(); protectedWindow && protectedWindow->hasStickyActivation())
-            return;
+        RESOURCEMONITOR_RELEASE_LOG("The frame exceeds the network usage threshold: used %zu", m_networkUsage.hasOverflowed() ? std::numeric_limits<size_t>::max() : m_networkUsage.value());
 
-        frame->loader().client().didExceedNetworkUsageThreshold();
+        // If the frame has sticky user activation, don't do offloading.
+        if (RefPtr protectedWindow = frame->window(); protectedWindow && protectedWindow->hasStickyActivation()) {
+            RESOURCEMONITOR_RELEASE_LOG("But the frame has sticky user activation so ignoring.");
+            return;
+        }
+
+        frame->loader().protectedClient()->didExceedNetworkUsageThreshold();
     }
 }
 
@@ -152,6 +154,8 @@ ResourceMonitor* ResourceMonitor::parentResourceMonitorIfExists() const
     RefPtr document = frame ? frame->document() : nullptr;
     return document ? document->parentResourceMonitorIfExists() : nullptr;
 }
+
+#undef RESOURCEMONITOR_RELEASE_LOG
 
 #endif
 

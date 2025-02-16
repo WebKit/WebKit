@@ -21,7 +21,7 @@ function testIsNaNOnDoubles()
 }
 noInline(testIsNaNOnDoubles);
 
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     testIsNaNOnDoubles();
 }
 
@@ -34,13 +34,13 @@ function isNaNOnDouble2(value)
 noInline(isNaNOnDouble2);
 
 // Warm up without NaN.
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (isNaNOnDouble2(1.5))
         throw "Failed isNaNOnDouble(1.5)";
 }
 
 // Then pass some NaNs.
-for (let i = 0; i < 1e6; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     if (!isNaNOnDouble2(NaN))
         throw "Failed isNaNOnDouble(NaN)";
 }

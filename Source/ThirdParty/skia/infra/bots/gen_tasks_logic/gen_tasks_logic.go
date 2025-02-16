@@ -66,6 +66,9 @@ const (
 	COMPILE_TASK_NAME_OS_LINUX_OLD = "Debian9"
 	DEFAULT_OS_MAC                 = "Mac-14.5"
 	DEFAULT_OS_WIN_GCE             = "Windows-Server-17763"
+	UBUNTU_20_04_OS                = "Ubuntu-20.04"
+	UBUNTU_22_04_OS                = "Ubuntu-22.04"
+	UBUNTU_24_04_OS                = "Ubuntu-24.04"
 
 	// Small is a 2-core machine.
 	// TODO(dogben): Would n1-standard-1 or n1-standard-2 be sufficient?
@@ -447,6 +450,7 @@ func GenTasks(cfg *Config) {
 			"skia/tools",
 			// Needed for tests.
 			"skia/bench", // Needed to run benchmark tests with Bazel.
+			"skia/dm",    // Needed to run tests with Bazel.
 			"skia/gm",    // Needed to run GMs with Bazel.
 			"skia/gn",    // Some Python scripts still live here.
 			"skia/resources",
@@ -829,26 +833,24 @@ func (b *taskBuilder) swarmDimensions() {
 var androidDeviceInfos = map[string][]string{
 	"AndroidOne":      {"sprout", "MOB30Q"},
 	"GalaxyS7_G930FD": {"herolte", "R16NW_G930FXXS2ERH6"}, // This is Oreo.
-	"GalaxyS9":        {"starlte", "QP1A.190711.020"},     // This is Android10.
 	"GalaxyS20":       {"exynos990", "QP1A.190711.020"},
 	"GalaxyS24":       {"pineapple", "UP1A.231005.007"},
 	"JioNext":         {"msm8937", "RKQ1.210602.002"},
 	"Mokey":           {"mokey", "UDC_11161052"},
 	"MokeyGo32":       {"mokey_go32", "UQ1A.240105.003.A1_11159138"},
-	"MotoG73":         {"devonf", "U1TNS34.82-12-7-4"},
+	"MotoG73":         {"devonf", "U1TNS34.82-12-7-6"},
 	"Nexus5":          {"hammerhead", "M4B30Z_3437181"},
 	"Nexus7":          {"grouper", "LMY47V_1836172"}, // 2012 Nexus 7
 	"P30":             {"HWELE", "HUAWEIELE-L29"},
-	"Pixel2XL":        {"taimen", "PPR1.180610.009"},
-	"Pixel3":          {"blueline", "PQ1A.190105.004"},
 	"Pixel3a":         {"sargo", "QP1A.190711.020"},
 	"Pixel4":          {"flame", "RPB2.200611.009"},       // R Preview
 	"Pixel4a":         {"sunfish", "AOSP.MASTER_7819821"}, // Pixel4a flashed with an Android HWASan build.
 	"Pixel4XL":        {"coral", "QD1A.190821.011.C4"},
 	"Pixel5":          {"redfin", "RD1A.200810.022.A4"},
 	"Pixel6":          {"oriole", "SD1A.210817.037"},
-	"Pixel7":          {"cheetah", "TD1A.221105.002"},
-	"Pixel9":          {"tokay", "AD1A.240905.004"},
+	"Pixel7":          {"panther", "AP4A.241205.013"},
+	"Pixel7Pro":       {"cheetah", "TD1A.221105.002"},
+	"Pixel9":          {"tokay", "AP4A.241205.013"},
 	"TecnoSpark3Pro":  {"TECNO-KB8", "PPR1.180610.011"},
 	"Wembley":         {"wembley", "SP2A.220505.008"},
 }
@@ -860,26 +862,30 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 	}
 	if os, ok := b.parts["os"]; ok {
 		d["os"], ok = map[string]string{
-			"Android":    "Android",
-			"Android12":  "Android",
-			"ChromeOS":   "ChromeOS",
-			"Debian9":    DEFAULT_OS_LINUX_GCE, // Runs in Deb9 Docker.
-			"Debian10":   DEFAULT_OS_LINUX_GCE,
-			"Debian11":   DEBIAN_11_OS,
-			"Mac":        DEFAULT_OS_MAC,
-			"Mac10.15.1": "Mac-10.15.1",
-			"Mac10.15.7": "Mac-10.15.7",
-			"Mac11":      "Mac-11.4",
-			"Mac12":      "Mac-12",
-			"Mac13":      "Mac-13",
-			"Mokey":      "Android",
-			"MokeyGo32":  "Android",
-			"Ubuntu18":   "Ubuntu-18.04",
-			"Win":        DEFAULT_OS_WIN_GCE,
-			"Win10":      "Windows-10-19045",
-			"Win11":      "Windows-11-26100.1742",
-			"Win2019":    DEFAULT_OS_WIN_GCE,
-			"iOS":        "iOS-13.3.1",
+			"Android":     "Android",
+			"Android12":   "Android",
+			"ChromeOS":    "ChromeOS",
+			"Debian9":     DEFAULT_OS_LINUX_GCE, // Runs in Deb9 Docker.
+			"Debian10":    DEFAULT_OS_LINUX_GCE,
+			"Debian11":    DEBIAN_11_OS,
+			"Mac":         DEFAULT_OS_MAC,
+			"Mac10.15.1":  "Mac-10.15.1",
+			"Mac10.15.7":  "Mac-10.15.7",
+			"Mac11":       "Mac-11.4",
+			"Mac12":       "Mac-12",
+			"Mac13":       "Mac-13",
+			"Mac14":       "Mac-14.7", // Builds run on 14.5, tests on 14.7.
+			"Mokey":       "Android",
+			"MokeyGo32":   "Android",
+			"Ubuntu18":    "Ubuntu-18.04",
+			"Ubuntu20.04": UBUNTU_20_04_OS,
+			"Ubuntu22.04": UBUNTU_22_04_OS,
+			"Ubuntu24.04": UBUNTU_24_04_OS,
+			"Win":         DEFAULT_OS_WIN_GCE,
+			"Win10":       "Windows-10-19045",
+			"Win11":       "Windows-11-26100.1742",
+			"Win2019":     DEFAULT_OS_WIN_GCE,
+			"iOS":         "iOS-13.3.1",
 		}[os]
 		if !ok {
 			log.Fatalf("Entry %q not found in OS mapping.", os)
@@ -890,9 +896,6 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 		if os == "Win10" && b.parts["model"] == "Golo" {
 			// ChOps-owned machines have Windows 10 22H2.
 			d["os"] = "Windows-10-19045"
-		}
-		if b.parts["model"] == "iPhone11" {
-			d["os"] = "iOS-13.6"
 		}
 		if b.parts["model"] == "iPadPro" {
 			d["os"] = "iOS-13.6"
@@ -938,7 +941,6 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 				"iPadMini4": "iPad5,1",
 				"iPhone7":   "iPhone9,1",
 				"iPhone8":   "iPhone10,1",
-				"iPhone11":  "iPhone12,1",
 				"iPadPro":   "iPad6,3",
 			}[b.parts["model"]]
 			if !ok {
@@ -949,6 +951,9 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 			modelMapping, ok := map[string]map[string]string{
 				"AppleM1": {
 					"MacMini9.1": "arm64-64-Apple_M1",
+				},
+				"AppleM3": {
+					"MacBookPro15.3": "arm64-64-Apple_M3",
 				},
 				"AppleIntel": {
 					"MacBookPro16.2": "x86-64",
@@ -961,6 +966,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 					"MacBookAir7.2":  "x86-64-i5-5350U",
 					"MacBookPro11.5": "x86-64-i7-4870HQ",
 					"MacMini7.1":     "x86-64-i5-4278U",
+					"MacMini8.1":     "x86-64-i7-8700B",
 					"NUC5i7RYH":      "x86-64-i7-5557U",
 					"NUC9i7QN":       "x86-64-i7-9750H",
 					"NUC11TZi5":      "x86-64-i5-1135G7",
@@ -994,10 +1000,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 			// It's a GPU job.
 			if b.matchOs("Win") {
 				gpu, ok := map[string]string{
-					// At some point this might use the device ID, but for now it's like Chromebooks.
 					"GTX1660":       "10de:2184-31.0.15.4601",
-					"GTX660":        "10de:11c0-26.21.14.4120",
-					"GTX960":        "10de:1401-32.0.15.6094",
 					"IntelHD4400":   "8086:0a16-20.19.15.4963",
 					"IntelIris540":  "8086:1926-31.0.101.2115",
 					"IntelIris6100": "8086:162b-20.19.15.4963",
@@ -1007,6 +1010,7 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 					"RadeonR9M470X": "1002:6646-26.20.13031.18002",
 					"QuadroP400":    "10de:1cb3-31.0.15.5222",
 					"RadeonVega6":   "1002:1636-31.0.14057.5006",
+					"RadeonVega8":   "1002:1638-31.0.21916.2",
 					"RTX3060":       "10de:2489-32.0.15.6094",
 				}[b.parts["cpu_or_gpu_value"]]
 				if !ok {
@@ -1023,9 +1027,10 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 					"RTX3060":      "10de:2489-470.182.03",
 					"IntelIrisXe":  "8086:9a49",
 					"RadeonVega6":  "1002:1636",
+					"RadeonVega8":  "1002:1638-23.2.1",
 				}[b.parts["cpu_or_gpu_value"]]
 				if !ok {
-					log.Fatalf("Entry %q not found in Ubuntu GPU mapping.", b.parts["cpu_or_gpu_value"])
+					log.Fatalf("Entry %q not found in Linux GPU mapping.", b.parts["cpu_or_gpu_value"])
 				}
 				d["gpu"] = gpu
 
@@ -1041,12 +1046,14 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 				}
 			} else if b.matchOs("Mac") {
 				gpu, ok := map[string]string{
-					"AppleM1":       "AppleM1",
-					"IntelHD6000":   "8086:1626",
-					"IntelHD615":    "8086:591e",
-					"IntelIris5100": "8086:0a2e",
-					"IntelIrisPlus": "8086:8a53",
-					"RadeonHD8870M": "1002:6821-4.0.20-3.2.8",
+					"AppleM1":             "AppleM1",
+					"AppleM3":             "apple:m3",
+					"IntelHD6000":         "8086:1626",
+					"IntelHD615":          "8086:591e",
+					"IntelIris5100":       "8086:0a2e",
+					"IntelIrisPlus":       "8086:8a53",
+					"IntelUHDGraphics630": "8086:3e9b",
+					"RadeonHD8870M":       "1002:6821-4.0.20-3.2.8",
 				}[b.parts["cpu_or_gpu_value"]]
 				if !ok {
 					log.Fatalf("Entry %q not found in Mac GPU mapping.", b.parts["cpu_or_gpu_value"])
@@ -1396,7 +1403,7 @@ func (b *jobBuilder) recreateSKPs() {
 		)
 		b.usesGo()
 		b.cache(CACHES_WORKDIR...)
-		b.timeout(6 * time.Hour)
+		b.timeout(8 * time.Hour)
 		b.usesPython()
 		b.attempts(2)
 	})
@@ -2157,6 +2164,7 @@ var shorthandToLabel = map[string]labelAndSavedOutputDir{
 	"core":                       {"//:core", ""},
 	"cpu_8888_benchmark_test":    {"//bench:cpu_8888_test", ""},
 	"cpu_gms":                    {"//gm:cpu_gm_tests", ""},
+	"dm":                         {"//dm", ""},
 	"full_library":               {"//tools:full_build", ""},
 	"ganesh_gl":                  {"//:ganesh_gl", ""},
 	"hello_bazel_world_test":     {"//gm:hello_bazel_world_test", ""},
@@ -2176,6 +2184,7 @@ var shorthandToLabel = map[string]labelAndSavedOutputDir{
 	"use_skresources":            {"//example/external_client:use_skresources", ""},
 	"write_text_to_png":          {"//example/external_client:write_text_to_png", ""},
 	"write_to_pdf":               {"//example/external_client:write_to_pdf", ""},
+	"play_skottie":               {"//example/external_client:play_skottie", ""},
 
 	// Currently there is no way to tell Bazel "only test go_test targets", so we must group them
 	// under a test_suite.

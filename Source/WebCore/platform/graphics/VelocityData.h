@@ -83,7 +83,8 @@ private:
         MonotonicTime timestamp;
         FloatPoint position;
         double scale;
-    } m_positionHistory[maxHistoryDepth];
+    };
+    std::array<Data, maxHistoryDepth> m_positionHistory;
 };
 
 } // namespace WebCore

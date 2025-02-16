@@ -12,7 +12,7 @@ var result = foo(true);
 if (result !== false)
     throw "Error: bad result at beginning: " + result;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(false);
     if (result !== 42)
         throw "Error: bad result: " + result;

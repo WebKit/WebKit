@@ -92,7 +92,7 @@ static void commit(pas_large_virtual_range range)
         return;
     
     if (verbose) {
-        printf("Committing %p...%p.\n",
+        pas_log("Committing %p...%p.\n",
                (void*)range.begin,
                (void*)range.end);
     }

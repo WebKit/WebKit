@@ -17,14 +17,14 @@ var x = 0;
 (function() {
   var x = 0;
 
-  for (var i = 0; i < 1e5; i++) {
+  for (var i = 0; i < testLoopCount; i++) {
     eval(...genFn());
     eval(...genFn(), (() => xxx++)());
   }
 
-  shouldBe(x, 1e5 * 2);
-  shouldBe(xx, 1e5 * 2);
-  shouldBe(xxx, 1e5);
+  shouldBe(x, testLoopCount * 2);
+  shouldBe(xx, testLoopCount * 2);
+  shouldBe(xxx, testLoopCount);
 })();
 
 shouldBe(x, 0);

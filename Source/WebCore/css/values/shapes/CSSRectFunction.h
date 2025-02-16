@@ -51,9 +51,9 @@ template<size_t I> const auto& get(const Rect& value)
         return value.radii;
 }
 
-template<> struct Serialize<Rect> { void operator()(StringBuilder&, const Rect&); };
+template<> struct Serialize<Rect> { void operator()(StringBuilder&, const SerializationContext&, const Rect&); };
 
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(Rect, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::Rect, 2)

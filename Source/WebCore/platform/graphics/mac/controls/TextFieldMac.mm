@@ -90,9 +90,7 @@ void TextFieldMac::draw(GraphicsContext& context, const FloatRoundedRect& border
         drawCell(context, paintRect, deviceScaleFactor, styleForDrawing, m_textFieldCell.get(), true);
     }
 
-#if ENABLE(DATALIST_ELEMENT)
     drawListButton(context, borderRect.rect(), deviceScaleFactor, style);
-#endif
 }
 
 } // namespace WebCore

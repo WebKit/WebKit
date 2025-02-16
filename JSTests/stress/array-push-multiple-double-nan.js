@@ -10,7 +10,7 @@ function test(array, val1, val2, val3)
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     var value = 3.3;
     if (i === 1e5 - 1)

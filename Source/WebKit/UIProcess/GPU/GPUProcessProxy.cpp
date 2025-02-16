@@ -270,7 +270,9 @@ void GPUProcessProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientat
 #if HAVE(APPLE_CAMERA_USER_CLIENT)
 static const ASCIILiteral appleCameraUserClientPath { "com.apple.aneuserd"_s };
 static const ASCIILiteral appleCameraUserClientIOKitClientClass { "H11ANEInDirectPathClient"_s };
+// FIXME: Remove the "H11ANEIn" extension. See rdar://144622656.
 static const ASCIILiteral appleCameraUserClientIOKitServiceClass { "H11ANEIn"_s };
+static const ASCIILiteral appleCameraUserClientIOKitServiceClassLoadBalancer { "H1xANELoadBalancer"_s };
 #endif
 
 #if PLATFORM(COCOA)
@@ -319,6 +321,13 @@ static inline bool addCameraSandboxExtensions(Vector<SandboxExtension::Handle>& 
                 return false;
             }
             extensions.append(WTFMove(*appleCameraUserClientIOKitServiceClassExtensionHandle));
+
+            auto appleCameraUserClientIOKitServiceClassLoadBalancerExtensionHandle = SandboxExtension::createHandleForIOKitClassExtension(appleCameraUserClientIOKitServiceClassLoadBalancer, std::nullopt);
+            if (!appleCameraUserClientIOKitServiceClassLoadBalancerExtensionHandle) {
+                RELEASE_LOG_ERROR(WebRTC, "Unable to create %s sandbox extension", appleCameraUserClientIOKitServiceClassLoadBalancer.characters());
+                return false;
+            }
+            extensions.append(WTFMove(*appleCameraUserClientIOKitServiceClassLoadBalancerExtensionHandle));
 
 #endif
         }
@@ -499,10 +508,10 @@ void GPUProcessProxy::cancelGetDisplayMediaPrompt()
 #endif
 
 #if PLATFORM(COCOA)
-void GPUProcessProxy::didDrawCompositedToPDF(PageIdentifier pageID, RefPtr<SharedBuffer>&& data, SnapshotIdentifier snapshotIdentifier)
+void GPUProcessProxy::didDrawRemoteToPDF(PageIdentifier pageID, RefPtr<SharedBuffer>&& data, SnapshotIdentifier snapshotIdentifier)
 {
     if (auto page = WebProcessProxy::webPage(pageID))
-        page->didDrawCompositedToPDF(WTFMove(data), snapshotIdentifier);
+        page->didDrawRemoteToPDF(WTFMove(data), snapshotIdentifier);
 }
 #endif
 
@@ -546,10 +555,9 @@ void GPUProcessProxy::createGPUProcessConnection(WebProcessProxy& webProcessProx
 
     RELEASE_LOG(ProcessSuspension, "%p - GPUProcessProxy is taking a background assertion because a web process is requesting a connection", this);
     startResponsivenessTimer(UseLazyStop::No);
-    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), WTFMove(connectionIdentifier), WTFMove(parameters) }, [this, weakThis = WeakPtr { *this }]() mutable {
-        if (!weakThis)
-            return;
-        stopResponsivenessTimer();
+    sendWithAsyncReply(Messages::GPUProcess::CreateGPUConnectionToWebProcess { webProcessProxy.coreProcessIdentifier(), webProcessProxy.sessionID(), WTFMove(connectionIdentifier), WTFMove(parameters) }, [weakThis = WeakPtr { *this }]() mutable {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->stopResponsivenessTimer();
     }, 0, IPC::SendOption::DispatchMessageEvenWhenWaitingForSyncReply);
 }
 
@@ -916,6 +924,13 @@ void GPUProcessProxy::statusBarWasTapped(CompletionHandler<void()>&& completionH
 void GPUProcessProxy::setPresentingApplicationAuditToken(WebCore::ProcessIdentifier processIdentifier, WebCore::PageIdentifier pageIdentifier, std::optional<CoreIPCAuditToken> auditToken)
 {
     send(Messages::GPUProcess::SetPresentingApplicationAuditToken(processIdentifier, pageIdentifier, auditToken), 0);
+}
+#endif
+
+#if PLATFORM(VISION) && ENABLE(MODEL_PROCESS)
+void GPUProcessProxy::requestSharedSimulationConnection(audit_token_t modelProcessAuditToken, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
+{
+    sendWithAsyncReply(Messages::GPUProcess::RequestSharedSimulationConnection { modelProcessAuditToken }, WTFMove(completionHandler));
 }
 #endif
 

@@ -17,7 +17,7 @@ namespace sh
 class TCompiler;
 class TSymbolTable;
 
-typedef std::vector<sh::ShaderVariable> InitVariableList;
+typedef std::vector<const TVariable *> InitVariableList;
 
 // For all of the functions below: If canUseLoopsToInitialize is set, for loops are used instead of
 // a large number of initializers where it can make sense, such as for initializing large arrays.

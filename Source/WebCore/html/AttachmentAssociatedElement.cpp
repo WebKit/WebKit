@@ -77,7 +77,7 @@ void AttachmentAssociatedElement::copyAttachmentAssociatedPropertiesFromElement(
 void AttachmentAssociatedElement::cloneAttachmentAssociatedElementWithoutAttributesAndChildren(AttachmentAssociatedElement& clone, Document& targetDocument)
 {
     if (auto attachment = attachmentElement()) {
-        auto attachmentClone = attachment->cloneElementWithoutChildren(targetDocument);
+        auto attachmentClone = attachment->cloneElementWithoutChildren(targetDocument, nullptr);
         clone.setAttachmentElement(downcast<HTMLAttachmentElement>(attachmentClone.get()));
     }
 }

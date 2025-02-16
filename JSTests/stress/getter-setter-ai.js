@@ -51,7 +51,7 @@ function main() {
         opt(/* inline */ false, /* callTypeOf */ true, object2, {});
     }
 
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         opt(/* inline */ true, /* callTypeOf */ false, object1, {});
     }
 

@@ -20,6 +20,6 @@ function test() {
         throw "did not throw reference error";
 }
 
-for (i = 0; i < 10000; i++) {
+for (i = 0; i < testLoopCount; i++) {
     test();
 }

@@ -5,6 +5,7 @@
 </head>
 <body>
 <p id="description"></p>
+<textarea id="target"></textarea>
 <div id="console"></div>
 <script>
 description('Test that middle click triggers the onpaste event');
@@ -16,7 +17,6 @@ function handlePaste(eventObj)
     pasteCount++;
 }
 
-var target = document.getElementById("description");
 target.onpaste = handlePaste;
 
 if (window.testRunner)

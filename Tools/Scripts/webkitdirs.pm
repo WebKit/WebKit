@@ -1159,7 +1159,7 @@ sub determineConfigurationProductDir
     return if defined $configurationProductDir;
     determineBaseProductDir();
     determineConfiguration();
-    if (isWin() || isPlayStation()) {
+    if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
         $configurationProductDir = File::Spec->catdir($baseProductDir, $configuration);
     } else {
         if (usesPerConfigurationBuildDirectory()) {
@@ -3256,9 +3256,10 @@ sub findOrCreateSimulatorForIOSDevice($)
     my $simulatorName;
     my $simulatorDeviceType;
 
+    # These should match the DEFAULT_DEVICE_TYPES in webkitpy/port/ios_simulator.py.
     if ($simulatorIdiom eq "iPad") {
-        $simulatorName = "iPad Pro " . $simulatorNameSuffix;
-        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPad-Pro--9-7-inch-";
+        $simulatorName = "iPad (9th generation) " . $simulatorNameSuffix;
+        $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPad-9th-generation";
     } else {
         $simulatorName = "iPhone 12 " . $simulatorNameSuffix;
         $simulatorDeviceType = "com.apple.CoreSimulator.SimDeviceType.iPhone-12";

@@ -432,25 +432,25 @@ inline void FEGaussianBlurSoftwareApplier::applyPlatform(PixelBuffer& ioBuffer, 
 
 bool FEGaussianBlurSoftwareApplier::apply(const Filter& filter, const FilterImageVector& inputs, FilterImage& result) const
 {
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
-    auto destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
+    RefPtr destinationPixelBuffer = result.pixelBuffer(AlphaPremultiplication::Premultiplied);
     if (!destinationPixelBuffer)
         return false;
 
     auto effectDrawingRect = result.absoluteImageRectRelativeTo(input);
-    input.copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
-    if (!m_effect.stdDeviationX() && !m_effect.stdDeviationY())
+    input->copyPixelBuffer(*destinationPixelBuffer, effectDrawingRect);
+    if (!m_effect->stdDeviationX() && !m_effect->stdDeviationY())
         return true;
 
-    auto kernelSize = m_effect.calculateKernelSize(filter, { m_effect.stdDeviationX(), m_effect.stdDeviationY() });
+    auto kernelSize = m_effect->calculateKernelSize(filter, { m_effect->stdDeviationX(), m_effect->stdDeviationY() });
 
     IntSize paintSize = result.absoluteImageRect().size();
     auto tempBuffer = destinationPixelBuffer->createScratchPixelBuffer(paintSize);
     if (!tempBuffer)
         return false;
 
-    applyPlatform(*destinationPixelBuffer, *tempBuffer, kernelSize.width(), kernelSize.height(), paintSize, result.isAlphaImage(), m_effect.edgeMode());
+    applyPlatform(*destinationPixelBuffer, *tempBuffer, kernelSize.width(), kernelSize.height(), paintSize, result.isAlphaImage(), m_effect->edgeMode());
     return true;
 }
 

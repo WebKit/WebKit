@@ -188,4 +188,11 @@ egl::Error SurfaceImpl::setRenderBuffer(EGLint renderBuffer)
 {
     return egl::NoError();
 }
+
+EGLint SurfaceImpl::getCompressionRate(const egl::Display *display) const
+{
+    UNREACHABLE();
+    return EGL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT;
+}
+
 }  // namespace rx

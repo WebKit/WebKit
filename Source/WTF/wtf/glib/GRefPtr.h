@@ -264,11 +264,8 @@ template <> WTF_EXPORT_PRIVATE GArray* refGPtr(GArray*);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GArray*);
 template <> WTF_EXPORT_PRIVATE GResource* refGPtr(GResource*);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GResource*);
-
-#if HAVE(GURI)
 template <> WTF_EXPORT_PRIVATE GUri* refGPtr(GUri*);
 template <> WTF_EXPORT_PRIVATE void derefGPtr(GUri*);
-#endif
 
 template <typename T> inline T* refGPtr(T* ptr)
 {

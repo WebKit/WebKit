@@ -255,6 +255,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scroll-adjust-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scroll-adjust-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scroll-adjust.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/position-area-scrolling-003.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/position-area-value.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/position-area-with-insets.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/position-area-wm-dir.html
@@ -350,6 +351,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/property-interpolations.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/pseudo-element-anchor-dynamic.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/pseudo-element-anchor.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/remove-anchor-dirty-layout.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/sticky-anchor-position-invalid-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/sticky-anchor-position-invalid.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-anchor-position/try-tactic-alignment.html

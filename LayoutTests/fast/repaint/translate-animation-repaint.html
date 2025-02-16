@@ -40,7 +40,9 @@ const repaintRectsFromString = (str) => {
     const lines = str.split("\n");
     lines.shift();
     lines.pop();
-    return lines.map(line => line.trim());
+    return lines.map(line => line.trim()).filter(function(item, pos, arr){
+      return pos === 0 || item !== arr[pos-1];
+    });
 }
 
 (async function main() {
@@ -51,6 +53,8 @@ const repaintRectsFromString = (str) => {
 
     const animation = target.animate({ translate: ["200px", "200px"] }, { duration: 1, fill: "forwards" });
     await animation.finished;
+
+    await UIHelper.renderingUpdate();
 
     if (window.internals) {
         const repaintRects = repaintRectsFromString(window.internals?.repaintRectsAsText());

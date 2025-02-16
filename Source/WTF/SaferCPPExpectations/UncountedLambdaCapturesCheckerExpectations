@@ -1,8 +1,5 @@
 wtf/AutomaticThread.cpp
-wtf/NativePromise.h
-wtf/ParkingLot.cpp
 wtf/PrintStream.h
-wtf/RunLoop.cpp
 wtf/RunLoop.h
 wtf/SuspendableWorkQueue.cpp
 wtf/ThreadSafeWeakPtr.h

@@ -119,7 +119,7 @@ void ProcessLauncher::launchProcess()
             g_error("Unable to spawn a new child process");
 
         // We've finished launching the process, message back to the main run loop.
-        RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] mutable {
+        RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] mutable {
             didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
         });
 
@@ -181,7 +181,9 @@ void ProcessLauncher::launchProcess()
     argv[i++] = const_cast<char*>(realExecutablePath.data());
     argv[i++] = processIdentifier.get();
     argv[i++] = webkitSocket.get();
+#if OS(LINUX)
     argv[i++] = pidSocketString.get();
+#endif
 #if ENABLE(DEVELOPER_MODE)
     if (configureJSCForTesting)
         argv[i++] = const_cast<char*>("--configure-jsc-for-testing");
@@ -211,7 +213,7 @@ void ProcessLauncher::launchProcess()
     UnixFileDescriptor sysprofFd;
 
     if (const char* sysprofFdStr = getenv("SYSPROF_CONTROL_FD"))
-        sysprofFd = UnixFileDescriptor(parseInteger<int>(StringView(span(sysprofFdStr))).value_or(-1), UnixFileDescriptor::Duplicate);
+        sysprofFd = UnixFileDescriptor(parseInteger<int>(StringView(unsafeSpan(sysprofFdStr))).value_or(-1), UnixFileDescriptor::Duplicate);
 
     if (sysprofFd) {
         int fd = sysprofFd.release();
@@ -272,7 +274,7 @@ void ProcessLauncher::launchProcess()
     m_processID = g_ascii_strtoll(processIdStr, nullptr, 0);
     RELEASE_ASSERT(m_processID);
 
-    RunLoop::main().dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] {
+    RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, this, serverSocket = WTFMove(webkitSocketPair.server)] {
         didFinishLaunchingProcess(m_processID, IPC::Connection::Identifier { WTFMove(serverSocket) });
     });
 #endif

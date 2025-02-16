@@ -42,7 +42,7 @@ static Vector<URLRegistry*>& allRegistries() WTF_REQUIRES_LOCK(allRegistriesLock
     return list;
 }
 
-void URLRegistry::forEach(const Function<void(URLRegistry&)>& apply)
+void URLRegistry::forEach(NOESCAPE const Function<void(URLRegistry&)>& apply)
 {
     Vector<URLRegistry*> registries;
     {

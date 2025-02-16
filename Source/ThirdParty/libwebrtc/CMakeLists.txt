@@ -887,7 +887,6 @@ set(webrtc_SOURCES
     Source/webrtc/media/base/codec_comparators.cc
     Source/webrtc/media/base/fake_frame_source.cc
     Source/webrtc/media/base/fake_media_engine.cc
-    Source/webrtc/media/base/fake_rtp.cc
     Source/webrtc/media/base/fake_video_renderer.cc
     Source/webrtc/media/base/media_channel_impl.cc
     Source/webrtc/media/base/media_constants.cc
@@ -1543,7 +1542,6 @@ set(webrtc_SOURCES
     Source/webrtc/pc/peer_connection.cc
     Source/webrtc/pc/peer_connection_factory.cc
     Source/webrtc/pc/peer_connection_message_handler.cc
-    Source/webrtc/pc/peer_connection_wrapper.cc
     Source/webrtc/pc/remote_audio_source.cc
     Source/webrtc/pc/rtc_stats_collector.cc
     Source/webrtc/pc/rtc_stats_traversal.cc
@@ -1757,17 +1755,13 @@ set(webrtc_SOURCES
     Source/webrtc/video/report_block_stats.cc
     Source/webrtc/video/rtp_streams_synchronizer2.cc
     Source/webrtc/video/rtp_video_stream_receiver2.cc
-    Source/webrtc/video/screenshare_loopback.cc
     Source/webrtc/video/send_delay_stats.cc
     Source/webrtc/video/send_statistics_proxy.cc
     Source/webrtc/video/stats_counter.cc
     Source/webrtc/video/stream_synchronization.cc
-    Source/webrtc/video/sv_loopback.cc
     Source/webrtc/video/task_queue_frame_decode_scheduler.cc
     Source/webrtc/video/transport_adapter.cc
     Source/webrtc/video/unique_timestamp_counter.cc
-    Source/webrtc/video/video_analyzer.cc
-    Source/webrtc/video/video_loopback.cc
     Source/webrtc/video/video_loopback_main.cc
     Source/webrtc/video/video_quality_observer2.cc
     Source/webrtc/video/video_receive_stream2.cc

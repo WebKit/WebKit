@@ -7,7 +7,6 @@
 
 #include "libANGLE/CLImage.h"
 #include "libANGLE/CLContext.h"
-
 #include "libANGLE/cl_utils.h"
 
 #include <cstring>
@@ -66,15 +65,15 @@ angle::Result Image::getInfo(ImageInfo name,
             copySize  = sizeof(mDesc.width);
             break;
         case ImageInfo::Height:
-            copyValue = &mDesc.height;
+            copyValue = Is1DImage(mDesc.type) ? &valSizeT : &mDesc.height;
             copySize  = sizeof(mDesc.height);
             break;
         case ImageInfo::Depth:
-            copyValue = &mDesc.depth;
+            copyValue = Is3DImage(mDesc.type) ? &mDesc.depth : &valSizeT;
             copySize  = sizeof(mDesc.depth);
             break;
         case ImageInfo::ArraySize:
-            copyValue = &mDesc.arraySize;
+            copyValue = IsArrayType(mDesc.type) ? &mDesc.arraySize : &valSizeT;
             copySize  = sizeof(mDesc.arraySize);
             break;
         case ImageInfo::Buffer:

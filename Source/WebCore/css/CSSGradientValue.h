@@ -41,11 +41,11 @@ public:
         return adoptRef(*new CSSGradientValue(WTFMove(gradient)));
     }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
     CSSGradientValue(CSS::Gradient&& gradient)

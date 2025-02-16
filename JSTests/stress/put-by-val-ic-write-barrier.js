@@ -8,7 +8,7 @@ function PutByValICPrimitive() {
     }
     noInline(doByVal)
 
-    for (let i = 0; i < 1000000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let o1 = {a: 1, b: 2}
         let o2 = {a: 1, b: 2}
         let o3 = {a: 1, b: 2}

@@ -89,4 +89,20 @@ Vector<IDBKeyData> IndexKey::multiEntry() const
     return multiEntry;
 }
 
+void IndexKey::updatePlaceholderKeys(const IDBKeyData& newKeyData)
+{
+    ASSERT(newKeyData.isValid());
+
+    WTF::switchOn(m_keys, [](std::nullptr_t) {
+    }, [&](IDBKeyData& keyData) {
+        if (!keyData.isValid() && keyData.isPlaceholder())
+            keyData = newKeyData;
+    }, [&](Vector<IDBKeyData>& keyDataVector) {
+        for (auto& keyData : keyDataVector) {
+            if (!keyData.isValid() && keyData.isPlaceholder())
+                keyData = newKeyData;
+        }
+    });
+}
+
 } // namespace WebCore

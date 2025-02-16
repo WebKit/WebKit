@@ -4,6 +4,8 @@
 // found in the LICENSE file.
 //
 
+#include <variant>
+
 #include "test_utils/ANGLETest.h"
 
 #include "test_utils/gl_raii.h"
@@ -15,6 +17,36 @@ using namespace angle;
 
 namespace
 {
+
+struct FormatTableElement
+{
+    GLint internalformat;
+    GLenum format;
+    GLenum type;
+
+    bool isInt() const
+    {
+        return format == GL_RED_INTEGER || format == GL_RG_INTEGER || format == GL_RGB_INTEGER ||
+               format == GL_RGBA_INTEGER;
+    }
+
+    // Call isUInt only if isInt is true.
+    bool isUInt() const
+    {
+        return type == GL_UNSIGNED_BYTE || type == GL_UNSIGNED_SHORT || type == GL_UNSIGNED_INT;
+    }
+};
+
+using ColorTypes = std::variant<GLColor,
+                                GLColorT<int8_t>,
+                                GLColor16,
+                                GLColorT<int16_t>,
+                                GLColor32F,
+                                GLColor32I,
+                                GLColor32UI,
+                                GLushort,
+                                GLuint,
+                                GLint>;
 class ClearTestBase : public ANGLETest<>
 {
   protected:
@@ -178,6 +210,1053 @@ class ClearTextureEXTTest : public ANGLETest<>
         setConfigGreenBits(8);
         setConfigBlueBits(8);
         setConfigAlphaBits(8);
+    }
+};
+
+class ClearTextureEXTTestES31 : public ANGLETest<>
+{
+  protected:
+    ClearTextureEXTTestES31()
+    {
+        setWindowWidth(128);
+        setWindowHeight(128);
+        setConfigRedBits(8);
+        setConfigGreenBits(8);
+        setConfigBlueBits(8);
+        setConfigAlphaBits(8);
+
+        angle::RNG rng;
+        mWidth  = rng.randomIntBetween(1, 32);
+        mHeight = rng.randomIntBetween(1, 32);
+        mDepth  = rng.randomIntBetween(1, 4);
+
+        mLevels = std::log2(std::max(mWidth, mHeight)) + 1;
+    }
+
+    // Texture's information.
+    int mWidth;
+    int mHeight;
+    int mDepth;
+    int mLevels;
+
+    GLenum mTarget;
+
+    bool mIsArray      = true;
+    bool mHasLayer     = true;
+    bool mExtraSupport = true;
+
+    GLColor mFullColorRef    = GLColor::red;
+    GLColor mPartialColorRef = GLColor::blue;
+
+    // Convert the reference color so that it can be suitable for different type of format.
+    ColorTypes convertColorTypeInternal(const GLenum &type, const GLColor &color);
+    ColorTypes convertColorType(const GLenum &format, const GLenum &type, GLColor color);
+    GLColor getClearColor(GLenum format, GLColor full);
+
+    // Check color results by format type.
+    void colorCheckType(const FormatTableElement &fmt,
+                        const int &x,
+                        const int &y,
+                        const int &width,
+                        const int &height,
+                        GLColor &color);
+
+    bool requiredNorm16(GLint internalformat);
+
+    const std::string getVertexShader(const GLenum &target);
+    const std::string getFragmentShader(const GLenum &target, bool isInteger, bool isUInteger);
+
+    // Initialize texture.
+    void initTexture(int levelNum, FormatTableElement &fmt, GLTexture &tex);
+
+    // Clear and check results.
+    void clearCheckRenderable(int level,
+                              int width,
+                              int height,
+                              int depth,
+                              const GLTexture &tex,
+                              const FormatTableElement &fmt,
+                              GLColor &fullColorRef,
+                              ColorTypes &fullColor,
+                              GLColor &partialColorRef,
+                              ColorTypes &partialColor);
+    void clearCheckUnrenderable(int level,
+                                int width,
+                                int height,
+                                int depth,
+                                const GLTexture &tex,
+                                const FormatTableElement &fmt,
+                                GLuint program,
+                                const std::vector<int> &loc,
+                                GLColor &fullColorRef,
+                                ColorTypes &fullColor,
+                                GLColor &partialColorRef,
+                                ColorTypes &partialColor);
+};
+
+ColorTypes ClearTextureEXTTestES31::convertColorTypeInternal(const GLenum &type,
+                                                             const GLColor &color)
+{
+    GLColor32F colorFloat;
+    colorFloat.R = gl::normalizedToFloat<uint8_t>(color.R);
+    colorFloat.G = gl::normalizedToFloat<uint8_t>(color.G);
+    colorFloat.B = gl::normalizedToFloat<uint8_t>(color.B);
+    colorFloat.A = gl::normalizedToFloat<uint8_t>(color.A);
+
+    switch (type)
+    {
+        case GL_UNSIGNED_BYTE:
+        {
+            return color;
+        }
+        case GL_BYTE:
+        {
+            GLColorT<int8_t> retColorByte;
+            retColorByte.R = gl::floatToNormalized<int8_t>(colorFloat.R);
+            retColorByte.G = gl::floatToNormalized<int8_t>(colorFloat.G);
+            retColorByte.B = gl::floatToNormalized<int8_t>(colorFloat.B);
+            retColorByte.A = gl::floatToNormalized<int8_t>(colorFloat.A);
+            return retColorByte;
+        }
+        case GL_UNSIGNED_SHORT:
+        {
+            GLColor16 retColorUShort;
+            retColorUShort.R = gl::floatToNormalized<uint16_t>(colorFloat.R);
+            retColorUShort.G = gl::floatToNormalized<uint16_t>(colorFloat.G);
+            retColorUShort.B = gl::floatToNormalized<uint16_t>(colorFloat.B);
+            retColorUShort.A = gl::floatToNormalized<uint16_t>(colorFloat.A);
+            return retColorUShort;
+        }
+        case GL_UNSIGNED_SHORT_5_6_5:
+        {
+            GLushort retColor565;
+            retColor565 = gl::shiftData<5, 11>(gl::floatToNormalized<5, uint16_t>(colorFloat.R)) |
+                          gl::shiftData<6, 5>(gl::floatToNormalized<6, uint16_t>(colorFloat.G)) |
+                          gl::shiftData<5, 0>(gl::floatToNormalized<5, uint16_t>(colorFloat.B));
+            return retColor565;
+        }
+        case GL_UNSIGNED_SHORT_5_5_5_1:
+        {
+            GLushort retColor5551;
+            retColor5551 = gl::shiftData<5, 11>(gl::floatToNormalized<5, uint16_t>(colorFloat.R)) |
+                           gl::shiftData<5, 6>(gl::floatToNormalized<5, uint16_t>(colorFloat.G)) |
+                           gl::shiftData<5, 1>(gl::floatToNormalized<5, uint16_t>(colorFloat.B)) |
+                           gl::shiftData<1, 0>(gl::floatToNormalized<1, uint16_t>(colorFloat.A));
+            return retColor5551;
+        }
+        case GL_UNSIGNED_SHORT_4_4_4_4:
+        {
+            GLushort retColor4444;
+            retColor4444 = gl::shiftData<4, 12>(gl::floatToNormalized<4, uint16_t>(colorFloat.R)) |
+                           gl::shiftData<4, 8>(gl::floatToNormalized<4, uint16_t>(colorFloat.G)) |
+                           gl::shiftData<4, 4>(gl::floatToNormalized<4, uint16_t>(colorFloat.B)) |
+                           gl::shiftData<4, 0>(gl::floatToNormalized<4, uint16_t>(colorFloat.A));
+            return retColor4444;
+        }
+        case GL_SHORT:
+        {
+            GLColorT<int16_t> retColorShort;
+            retColorShort.R = gl::floatToNormalized<int16_t>(colorFloat.R);
+            retColorShort.G = gl::floatToNormalized<int16_t>(colorFloat.G);
+            retColorShort.B = gl::floatToNormalized<int16_t>(colorFloat.B);
+            retColorShort.A = gl::floatToNormalized<int16_t>(colorFloat.A);
+            return retColorShort;
+        }
+        case GL_UNSIGNED_INT:
+        {
+            GLColor32UI retColorUInt;
+            retColorUInt.R = gl::floatToNormalized<uint32_t>(colorFloat.R);
+            retColorUInt.G = gl::floatToNormalized<uint32_t>(colorFloat.G);
+            retColorUInt.B = gl::floatToNormalized<uint32_t>(colorFloat.B);
+            retColorUInt.A = gl::floatToNormalized<uint32_t>(colorFloat.A);
+            return retColorUInt;
+        }
+        case GL_UNSIGNED_INT_10F_11F_11F_REV:
+        {
+            GLuint retColor101011;
+            retColor101011 = (GLuint)gl::float32ToFloat11(colorFloat.R) |
+                             (GLuint)(gl::float32ToFloat11(colorFloat.G) << 11) |
+                             (GLuint)(gl::float32ToFloat10(colorFloat.B) << 22);
+            return retColor101011;
+        }
+        case GL_UNSIGNED_INT_2_10_10_10_REV:
+        {
+            GLuint retColor1010102;
+            retColor1010102 = gl::floatToNormalized<10, uint32_t>(colorFloat.R) |
+                              (gl::floatToNormalized<10, uint32_t>(colorFloat.G) << 10) |
+                              (gl::floatToNormalized<10, uint32_t>(colorFloat.B) << 20) |
+                              (gl::floatToNormalized<2, uint32_t>(colorFloat.A) << 30);
+            return retColor1010102;
+        }
+        case GL_UNSIGNED_INT_5_9_9_9_REV:
+        {
+            GLuint retColor9995;
+            retColor9995 = gl::convertRGBFloatsTo999E5(colorFloat.R, colorFloat.G, colorFloat.B);
+            return retColor9995;
+        }
+        case GL_INT:
+        {
+            GLColor32I retColorInt;
+            retColorInt.R = gl::floatToNormalized<int32_t>(colorFloat.R);
+            retColorInt.G = gl::floatToNormalized<int32_t>(colorFloat.G);
+            retColorInt.B = gl::floatToNormalized<int32_t>(colorFloat.B);
+            retColorInt.A = gl::floatToNormalized<int32_t>(colorFloat.A);
+            return retColorInt;
+        }
+        case GL_HALF_FLOAT:
+        {
+            GLColor16 retColorHFloat;
+            retColorHFloat.R = gl::float32ToFloat16(colorFloat.R);
+            retColorHFloat.G = gl::float32ToFloat16(colorFloat.G);
+            retColorHFloat.B = gl::float32ToFloat16(colorFloat.B);
+            retColorHFloat.A = gl::float32ToFloat16(colorFloat.A);
+            return retColorHFloat;
+        }
+        case GL_FLOAT:
+        {
+            return colorFloat;
+        }
+        default:
+        {
+            return color;
+        }
+    }
+}
+
+ColorTypes ClearTextureEXTTestES31::convertColorType(const GLenum &format,
+                                                     const GLenum &type,
+                                                     GLColor color)
+{
+    // LUMINANCE, LUMINANCE_ALPHA and ALPHA are special.
+    switch (format)
+    {
+        case GL_LUMINANCE:
+        {
+            color.G = color.B = color.A = 0;
+            break;
+        }
+        case GL_LUMINANCE_ALPHA:
+        {
+            color.G = color.A;
+            color.B = color.A = 0;
+            break;
+        }
+        case GL_ALPHA:
+        {
+            color.R = color.A;
+            color.G = color.B = color.A = 0;
+            break;
+        }
+        default:
+        {
+            // Other formats do nothing.
+            break;
+        }
+    }
+    return convertColorTypeInternal(type, color);
+}
+
+GLColor ClearTextureEXTTestES31::getClearColor(GLenum format, GLColor full)
+{
+    switch (format)
+    {
+        case GL_RED_INTEGER:
+        case GL_RED:
+            return GLColor(full.R, 0, 0, 255u);
+        case GL_RG_INTEGER:
+        case GL_RG:
+            return GLColor(full.R, full.G, 0, 255u);
+        case GL_RGB_INTEGER:
+        case GL_RGB:
+            return GLColor(full.R, full.G, full.B, 255u);
+        case GL_RGBA_INTEGER:
+        case GL_RGBA:
+            return full;
+        case GL_LUMINANCE:
+            return GLColor(full.R, full.R, full.R, 255u);
+        case GL_ALPHA:
+            return GLColor(0, 0, 0, full.A);
+        case GL_LUMINANCE_ALPHA:
+            return GLColor(full.R, full.R, full.R, full.A);
+        default:
+            EXPECT_TRUE(false);
+            return GLColor::white;
+    }
+}
+
+void ClearTextureEXTTestES31::colorCheckType(const FormatTableElement &fmt,
+                                             const int &x,
+                                             const int &y,
+                                             const int &width,
+                                             const int &height,
+                                             GLColor &color)
+{
+    if (fmt.isInt())
+    {
+        GLColor32UI colorUInt;
+        GLColor32I colorInt;
+        switch (fmt.type)
+        {
+            case GL_UNSIGNED_BYTE:
+            {
+                colorUInt.R = static_cast<uint32_t>(color.R);
+                colorUInt.G = static_cast<uint32_t>(color.G);
+                colorUInt.B = static_cast<uint32_t>(color.B);
+                colorUInt.A = static_cast<uint32_t>(color.A);
+                if (fmt.format != GL_RGBA_INTEGER)
+                {
+                    colorUInt.A = 1;
+                }
+                EXPECT_PIXEL_RECT32UI_EQ(x, y, width, height, colorUInt);
+                return;
+            }
+            case GL_UNSIGNED_SHORT:
+            {
+                GLColor16 colorUShort =
+                    std::get<GLColor16>(convertColorTypeInternal(GL_UNSIGNED_SHORT, color));
+                colorUInt.R = static_cast<uint32_t>(colorUShort.R);
+                colorUInt.G = static_cast<uint32_t>(colorUShort.G);
+                colorUInt.B = static_cast<uint32_t>(colorUShort.B);
+                colorUInt.A = static_cast<uint32_t>(colorUShort.A);
+                if (fmt.format != GL_RGBA_INTEGER)
+                {
+                    colorUInt.A = 1;
+                }
+                EXPECT_PIXEL_RECT32UI_EQ(x, y, width, height, colorUInt);
+                return;
+            }
+            case GL_UNSIGNED_INT:
+            {
+                colorUInt = std::get<GLColor32UI>(convertColorTypeInternal(GL_UNSIGNED_INT, color));
+                if (fmt.format != GL_RGBA_INTEGER)
+                {
+                    colorUInt.A = 1;
+                }
+                EXPECT_PIXEL_RECT32UI_EQ(x, y, width, height, colorUInt);
+                return;
+            }
+            case GL_BYTE:
+            {
+                GLColorT<int8_t> colorByte =
+                    std::get<GLColorT<int8_t>>(convertColorTypeInternal(GL_BYTE, color));
+                colorInt.R = static_cast<int32_t>(colorByte.R);
+                colorInt.G = static_cast<int32_t>(colorByte.G);
+                colorInt.B = static_cast<int32_t>(colorByte.B);
+                colorInt.A = static_cast<int32_t>(colorByte.A);
+                if (fmt.format != GL_RGBA_INTEGER)
+                {
+                    colorInt.A = 1;
+                }
+                EXPECT_PIXEL_RECT32I_EQ(x, y, width, height, colorInt);
+                return;
+            }
+            case GL_SHORT:
+            {
+                GLColorT<int16_t> colorShort =
+                    std::get<GLColorT<int16_t>>(convertColorTypeInternal(GL_SHORT, color));
+                colorInt.R = static_cast<int32_t>(colorShort.R);
+                colorInt.G = static_cast<int32_t>(colorShort.G);
+                colorInt.B = static_cast<int32_t>(colorShort.B);
+                colorInt.A = static_cast<int32_t>(colorShort.A);
+                if (fmt.format != GL_RGBA_INTEGER)
+                {
+                    colorInt.A = 1;
+                }
+                EXPECT_PIXEL_RECT32I_EQ(x, y, width, height, colorInt);
+                return;
+            }
+            case GL_INT:
+            {
+                colorInt = std::get<GLColor32I>(convertColorTypeInternal(GL_INT, color));
+                if (fmt.format != GL_RGBA_INTEGER)
+                {
+                    colorInt.A = 1;
+                }
+                EXPECT_PIXEL_RECT32I_EQ(x, y, width, height, colorInt);
+                return;
+            }
+            default:
+            {
+                UNREACHABLE();
+            }
+        }
+    }
+    else
+    {
+        switch (fmt.type)
+        {
+            case GL_UNSIGNED_INT_10F_11F_11F_REV:
+            case GL_HALF_FLOAT:
+            case GL_FLOAT:
+            {
+                GLColor32F colorFloat =
+                    std::get<GLColor32F>(convertColorTypeInternal(GL_FLOAT, color));
+                EXPECT_PIXEL_RECT32F_EQ(x, y, width, height, colorFloat);
+                return;
+            }
+            default:
+            {
+                EXPECT_PIXEL_RECT_EQ(x, y, width, height, color);
+                return;
+            }
+        }
+    }
+}
+
+bool ClearTextureEXTTestES31::requiredNorm16(GLint internalformat)
+{
+    switch (internalformat)
+    {
+        case GL_R16_EXT:
+        case GL_RG16_EXT:
+        case GL_RGB16_EXT:
+        case GL_RGBA16_EXT:
+        case GL_R16_SNORM_EXT:
+        case GL_RG16_SNORM_EXT:
+        case GL_RGB16_SNORM_EXT:
+        case GL_RGBA16_SNORM_EXT:
+            return true;
+        default:
+            return false;
+    }
+}
+
+const std::string ClearTextureEXTTestES31::getVertexShader(const GLenum &target)
+{
+    std::string uniform  = "";
+    std::string texcoord = "    texcoord = (a_position.xy * 0.5) + 0.5;\n";
+
+    if (target == GL_TEXTURE_2D_MULTISAMPLE || target == GL_TEXTURE_2D_MULTISAMPLE_ARRAY)
+    {
+        uniform = "uniform vec2 texsize;\n";
+        texcoord =
+            "    texcoord = (a_position.xy * 0.5) + 0.5;\n"
+            "    texcoord.x = texcoord.x * texsize.x;\n"
+            "    texcoord.y = texcoord.y * texsize.y;\n";
+    }
+
+    return "#version 310 es\n"
+           "out vec2 texcoord;\n"
+           "in vec4 a_position;\n" +
+           uniform +
+           "void main()\n"
+           "{\n"
+           "    gl_Position = vec4(a_position.xy, 0.0, 1.0);\n" +
+           texcoord + "}\n";
+}
+
+const std::string ClearTextureEXTTestES31::getFragmentShader(const GLenum &target,
+                                                             bool isInteger,
+                                                             bool isUInteger)
+{
+    std::string version  = "";
+    std::string sampler  = "";
+    std::string uniform  = "";
+    std::string mainCode = "";
+    std::string ui       = "";
+    if (isInteger)
+    {
+        if (isUInteger)
+        {
+            ui = "u";
+        }
+        else
+        {
+            ui = "i";
+        }
+    }
+    switch (target)
+    {
+        case GL_TEXTURE_2D:
+        {
+            sampler  = "uniform highp " + ui + "sampler2D tex;\n";
+            mainCode = "    fragColor = vec4(texture(tex, texcoord));\n";
+            break;
+        }
+        case GL_TEXTURE_2D_ARRAY:
+        {
+            sampler  = "uniform highp " + ui + "sampler2DArray tex;\n";
+            uniform  = "uniform int slice;\n";
+            mainCode = "    fragColor = vec4(texture(tex, vec3(texcoord, float(slice))));\n";
+            break;
+        }
+        case GL_TEXTURE_3D:
+        {
+            sampler  = "uniform highp " + ui + "sampler3D tex;\n";
+            uniform  = "uniform float slice;\n";
+            mainCode = "    fragColor = vec4(texture(tex, vec3(texcoord, slice)));\n";
+            break;
+        }
+        case GL_TEXTURE_CUBE_MAP:
+        {
+            sampler = sampler = "uniform highp " + ui + "samplerCube tex;\n";
+            uniform           = "uniform int cubeFace;\n";
+            mainCode =
+                "    vec2 scaled = texcoord.xy * 2. - 1.;\n"
+                "    vec3 cubecoord = vec3(1, -scaled.yx);\n"
+                "    if (cubeFace == 1)\n"
+                "        cubecoord = vec3(-1, -scaled.y, scaled.x);\n"
+                "    if (cubeFace == 2)\n"
+                "        cubecoord = vec3(scaled.x, 1, scaled.y);\n"
+                "    if (cubeFace == 3)\n"
+                "        cubecoord = vec3(scaled.x, -1, -scaled.y);\n"
+                "    if (cubeFace == 4)\n"
+                "        cubecoord = vec3(scaled.x, -scaled.y, 1);\n"
+                "    if (cubeFace == 5)\n"
+                "        cubecoord = vec3(-scaled.xy, -1);\n"
+                "    fragColor = vec4(texture(tex, cubecoord));\n";
+            break;
+        }
+        case GL_TEXTURE_CUBE_MAP_ARRAY:
+        {
+            version = "#extension GL_EXT_texture_cube_map_array : enable\n";
+            sampler = "uniform highp " + ui + "samplerCubeArray tex;\n";
+            uniform =
+                "uniform int cubeFace;\n"
+                "uniform int layer;\n";
+            mainCode =
+                "    vec2 scaled = texcoord.xy * 2. - 1.;\n"
+                "    vec3 cubecoord = vec3(1, -scaled.yx);\n"
+                "    if (cubeFace == 1)\n"
+                "        cubecoord = vec3(-1, -scaled.y, scaled.x);\n"
+                "    if (cubeFace == 2)\n"
+                "        cubecoord = vec3(scaled.x, 1, scaled.y);\n"
+                "    if (cubeFace == 3)\n"
+                "        cubecoord = vec3(scaled.x, -1, -scaled.y);\n"
+                "    if (cubeFace == 4)\n"
+                "        cubecoord = vec3(scaled.x, -scaled.y, 1);\n"
+                "    if (cubeFace == 5)\n"
+                "        cubecoord = vec3(-scaled.xy, -1);\n"
+                "    fragColor = vec4(texture(tex, vec4(cubecoord, layer)));\n";
+            break;
+        }
+        case GL_TEXTURE_2D_MULTISAMPLE:
+        {
+            sampler  = "uniform highp " + ui + "sampler2DMS tex;\n";
+            uniform  = "uniform int s;\n";
+            mainCode = "    fragColor = vec4(texelFetch(tex, ivec2(texcoord), s));\n";
+            break;
+        }
+        case GL_TEXTURE_2D_MULTISAMPLE_ARRAY:
+        {
+            version = "#extension GL_OES_texture_storage_multisample_2d_array : require\n";
+            sampler = "uniform highp " + ui + "sampler2DMSArray tex;\n";
+            uniform =
+                "uniform int s;\n"
+                "uniform int slice;\n";
+            mainCode = "    fragColor = vec4(texelFetch(tex, ivec3(texcoord, slice), s));\n";
+            break;
+        }
+        default:
+        {
+            UNREACHABLE();
+        }
+    }
+
+    return "#version 310 es\n" + version + "precision highp float;\n" + sampler + uniform +
+           "in vec2 texcoord;\n"
+           "out vec4 fragColor;\n"
+           "void main()\n"
+           "{\n" +
+           mainCode + "}\n";
+}
+
+void ClearTextureEXTTestES31::initTexture(int levelNum, FormatTableElement &fmt, GLTexture &tex)
+{
+    // Create a texture widthxheightxdepth with 0x33.
+    std::vector<uint8_t> initColor(mWidth * mHeight * mDepth * 4 * sizeof(fmt.type), 0x33);
+
+    glBindTexture(mTarget, tex);
+    if (1 == levelNum)
+    {
+        glTexParameteri(mTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    }
+    else
+    {
+        glTexParameteri(mTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    }
+    glTexParameteri(mTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    EXPECT_GL_ERROR(GL_NO_ERROR);
+
+    // For each level, initialize the texture color.
+    for (int level = 0; level < levelNum; ++level)
+    {
+        int w = std::max(mWidth >> level, 1);
+        int h = std::max(mHeight >> level, 1);
+        int d = (mTarget == GL_TEXTURE_3D ? std::max(mDepth >> level, 1) : mDepth);
+
+        if (mTarget == GL_TEXTURE_2D)
+        {
+            glTexImage2D(mTarget, level, fmt.internalformat, w, h, 0, fmt.format, fmt.type,
+                         initColor.data());
+        }
+        else if (mTarget == GL_TEXTURE_CUBE_MAP)
+        {
+            for (int f = 0; f < 6; ++f)
+            {
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + f, level, fmt.internalformat, w, h, 0,
+                             fmt.format, fmt.type, initColor.data());
+            }
+        }
+        else
+        {
+            glTexImage3D(mTarget, level, fmt.internalformat, w, h, d, 0, fmt.format, fmt.type,
+                         initColor.data());
+        }
+    }
+}
+
+void ClearTextureEXTTestES31::clearCheckRenderable(int level,
+                                                   int width,
+                                                   int height,
+                                                   int depth,
+                                                   const GLTexture &tex,
+                                                   const FormatTableElement &fmt,
+                                                   GLColor &fullColorRef,
+                                                   ColorTypes &fullColor,
+                                                   GLColor &partialColorRef,
+                                                   ColorTypes &partialColor)
+{
+    // Clear the entire texture.
+    glClearTexImageEXT(tex, level, fmt.format, fmt.type, &fullColor);
+
+    for (int z = 0; z < depth; ++z)
+    {
+        if (mHasLayer)
+        {
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, level, z);
+        }
+        else
+        {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, level);
+        }
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+        colorCheckType(fmt, 0, 0, width, height, fullColorRef);
+    }
+
+    // Partial clear the texture.
+    int clearXOffset = width >> 2;
+    int clearYOffset = height >> 2;
+    int clearZOffset = depth >> 2;
+    int clearWidth   = std::max(width >> 1, 1);
+    int clearHeight  = std::max(height >> 1, 1);
+    int clearDepth   = std::max(depth >> 1, 1);
+
+    glClearTexSubImageEXT(tex, level, clearXOffset, clearYOffset, clearZOffset, clearWidth,
+                          clearHeight, clearDepth, fmt.format, fmt.type, &partialColor);
+
+    for (int z = 0; z < depth; ++z)
+    {
+        if (mHasLayer)
+        {
+            glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, tex, level, z);
+        }
+        else
+        {
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, level);
+        }
+
+        ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+        if (z >= clearZOffset && z < (clearZOffset + clearDepth))
+        {
+            colorCheckType(fmt, clearXOffset, clearYOffset, clearWidth, clearHeight,
+                           partialColorRef);
+        }
+        else
+        {
+            colorCheckType(fmt, clearXOffset, clearYOffset, clearWidth, clearHeight, fullColorRef);
+        }
+    }
+}
+
+void ClearTextureEXTTestES31::clearCheckUnrenderable(int level,
+                                                     int width,
+                                                     int height,
+                                                     int depth,
+                                                     const GLTexture &tex,
+                                                     const FormatTableElement &fmt,
+                                                     GLuint program,
+                                                     const std::vector<int> &loc,
+                                                     GLColor &fullColorRef,
+                                                     ColorTypes &fullColor,
+                                                     GLColor &partialColorRef,
+                                                     ColorTypes &partialColor)
+{
+    // Clear the entire texture.
+    glClearTexImageEXT(tex, level, fmt.format, fmt.type, &fullColor);
+    glTexParameteri(mTarget, GL_TEXTURE_BASE_LEVEL, level);
+
+    int sampleNum = 1;
+    if (mTarget == GL_TEXTURE_2D_MULTISAMPLE || mTarget == GL_TEXTURE_2D_MULTISAMPLE_ARRAY)
+    {
+        glGetInternalformativ(mTarget, fmt.internalformat, GL_SAMPLES, 1, &sampleNum);
+        sampleNum = std::min(sampleNum, 4);
+    }
+
+    for (int z = 0; z < depth; ++z)
+    {
+        if (mHasLayer)
+        {
+            if (mTarget == GL_TEXTURE_CUBE_MAP_ARRAY)
+            {
+                glUniform1i(loc[0], z % 6);
+                glUniform1i(loc[1], z / 6);
+            }
+            else if (mTarget == GL_TEXTURE_3D)
+            {
+                glUniform1f(loc[0], (z + 0.5f) / depth);
+            }
+            else if (mTarget == GL_TEXTURE_2D_MULTISAMPLE_ARRAY)
+            {
+                glUniform1i(loc[1], z);
+            }
+            else
+            {
+                glUniform1i(loc[0], z);
+            }
+        }
+
+        for (int sample = 0; sample < sampleNum; ++sample)
+        {
+            if (sampleNum != 1)
+            {
+                glUniform1i(loc[0], sample);
+            }
+            drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+            EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), fullColorRef);
+        }
+    }
+
+    // Partial clear the texture.
+    int clearXOffset = width >> 2;
+    int clearYOffset = height >> 2;
+    int clearZOffset = depth >> 2;
+    int clearWidth   = std::max(width >> 1, 1);
+    int clearHeight  = std::max(height >> 1, 1);
+    int clearDepth   = std::max(depth >> 1, 1);
+    int pixelXOffset =
+        static_cast<int>(clearXOffset * getWindowWidth() / static_cast<float>(width) + 0.5);
+    int pixelYOffset =
+        static_cast<int>(clearYOffset * getWindowHeight() / static_cast<float>(height) + 0.5);
+    int pixelWidth =
+        static_cast<int>(
+            (clearXOffset + clearWidth) * getWindowWidth() / static_cast<float>(width) + 0.5) -
+        pixelXOffset;
+    int pixelHeight =
+        static_cast<int>(
+            (clearYOffset + clearHeight) * getWindowHeight() / static_cast<float>(height) + 0.5) -
+        pixelYOffset;
+
+    glClearTexSubImageEXT(tex, level, clearXOffset, clearYOffset, clearZOffset, clearWidth,
+                          clearHeight, clearDepth, fmt.format, fmt.type, &partialColor);
+
+    for (int z = 0; z < depth; ++z)
+    {
+        if (mHasLayer)
+        {
+            if (mTarget == GL_TEXTURE_CUBE_MAP_ARRAY)
+            {
+                glUniform1i(loc[0], z % 6);
+                glUniform1i(loc[1], z / 6);
+            }
+            else if (mTarget == GL_TEXTURE_3D)
+            {
+                glUniform1f(loc[0], (z + 0.5f) / depth);
+            }
+            else if (mTarget == GL_TEXTURE_2D_MULTISAMPLE_ARRAY)
+            {
+                glUniform1i(loc[1], z);
+            }
+            else
+            {
+                glUniform1i(loc[0], z);
+            }
+        }
+
+        for (int sample = 0; sample < sampleNum; ++sample)
+        {
+            if (sampleNum != 1)
+            {
+                glUniform1i(loc[0], sample);
+            }
+            drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+            if (z >= clearZOffset && z < (clearZOffset + clearDepth))
+            {
+                EXPECT_PIXEL_RECT_EQ(pixelXOffset, pixelYOffset, pixelWidth, pixelHeight,
+                                     partialColorRef);
+            }
+            else
+            {
+                EXPECT_PIXEL_RECT_EQ(pixelXOffset, pixelYOffset, pixelWidth, pixelHeight,
+                                     fullColorRef);
+            }
+        }
+    }
+}
+
+class ClearTextureEXTTestES31Renderable : public ClearTextureEXTTestES31
+{
+  protected:
+    std::vector<FormatTableElement> mFormats = {
+        {GL_R8, GL_RED, GL_UNSIGNED_BYTE},
+        {GL_R16F, GL_RED, GL_HALF_FLOAT},
+        {GL_R16F, GL_RED, GL_FLOAT},
+        {GL_R32F, GL_RED, GL_FLOAT},
+        {GL_RG8, GL_RG, GL_UNSIGNED_BYTE},
+        {GL_RG16F, GL_RG, GL_HALF_FLOAT},
+        {GL_RG16F, GL_RG, GL_FLOAT},
+        {GL_RG32F, GL_RG, GL_FLOAT},
+        {GL_RGB8, GL_RGB, GL_UNSIGNED_BYTE},
+        {GL_RGB565, GL_RGB, GL_UNSIGNED_SHORT_5_6_5},
+        {GL_RGB565, GL_RGB, GL_UNSIGNED_BYTE},
+        {GL_R11F_G11F_B10F, GL_RGB, GL_UNSIGNED_INT_10F_11F_11F_REV},
+        {GL_R11F_G11F_B10F, GL_RGB, GL_HALF_FLOAT},
+        {GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT},
+        {GL_SRGB8_ALPHA8, GL_RGBA, GL_UNSIGNED_BYTE},
+        {GL_RGB5_A1, GL_RGBA, GL_UNSIGNED_BYTE},
+        {GL_RGB5_A1, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1},
+        {GL_RGB5_A1, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV},
+        {GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE},
+        {GL_RGBA4, GL_RGBA, GL_UNSIGNED_BYTE},
+        {GL_RGBA4, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4},
+        {GL_RGB10_A2, GL_RGBA, GL_UNSIGNED_INT_2_10_10_10_REV},
+        {GL_RGBA16F, GL_RGBA, GL_HALF_FLOAT},
+        {GL_RGBA16F, GL_RGBA, GL_FLOAT},
+        {GL_RGBA32F, GL_RGBA, GL_FLOAT},
+        {GL_R16_EXT, GL_RED, GL_UNSIGNED_SHORT},
+        {GL_RG16_EXT, GL_RG, GL_UNSIGNED_SHORT},
+        {GL_RGBA16_EXT, GL_RGBA, GL_UNSIGNED_SHORT},
+        {GL_R8UI, GL_RED_INTEGER, GL_UNSIGNED_BYTE},
+        {GL_R8I, GL_RED_INTEGER, GL_BYTE},
+        {GL_R16UI, GL_RED_INTEGER, GL_UNSIGNED_SHORT},
+        {GL_R16I, GL_RED_INTEGER, GL_SHORT},
+        {GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT},
+        {GL_R32I, GL_RED_INTEGER, GL_INT},
+        {GL_RG8UI, GL_RG_INTEGER, GL_UNSIGNED_BYTE},
+        {GL_RG8I, GL_RG_INTEGER, GL_BYTE},
+        {GL_RG16UI, GL_RG_INTEGER, GL_UNSIGNED_SHORT},
+        {GL_RG16I, GL_RG_INTEGER, GL_SHORT},
+        {GL_RG32UI, GL_RG_INTEGER, GL_UNSIGNED_INT},
+        {GL_RG32I, GL_RG_INTEGER, GL_INT},
+        {GL_RGBA8UI, GL_RGBA_INTEGER, GL_UNSIGNED_BYTE},
+        {GL_RGBA8I, GL_RGBA_INTEGER, GL_BYTE},
+        {GL_RGBA16UI, GL_RGBA_INTEGER, GL_UNSIGNED_SHORT},
+        {GL_RGBA16I, GL_RGBA_INTEGER, GL_SHORT},
+        {GL_RGBA32UI, GL_RGBA_INTEGER, GL_UNSIGNED_INT},
+        {GL_RGBA32I, GL_RGBA_INTEGER, GL_INT},
+    };
+
+    void testRenderable()
+    {
+        ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                           !IsGLExtensionEnabled("GL_EXT_clear_texture") || !mExtraSupport);
+
+        const auto test = [&](FormatTableElement &fmt) {
+            // Update MAX level numbers.
+            if (mTarget == GL_TEXTURE_3D)
+            {
+                mLevels = std::max(mLevels, static_cast<int>(std::log2(mDepth)) + 1);
+            }
+
+            GLTexture tex;
+            initTexture(mLevels, fmt, tex);
+
+            GLFramebuffer fbo;
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+            // Calculate specific clear color value.
+            GLColor fullColorRef    = getClearColor(fmt.format, mFullColorRef);
+            ColorTypes fullColor    = convertColorType(fmt.format, fmt.type, fullColorRef);
+            GLColor partialColorRef = getClearColor(fmt.format, mPartialColorRef);
+            ColorTypes partialColor = convertColorType(fmt.format, fmt.type, partialColorRef);
+
+            for (int level = 0; level < mLevels; ++level)
+            {
+                int width  = std::max(mWidth >> level, 1);
+                int height = std::max(mHeight >> level, 1);
+                int depth  = mIsArray ? mDepth : std::max(mDepth >> level, 1);
+
+                clearCheckRenderable(level, width, height, depth, tex, fmt, fullColorRef, fullColor,
+                                     partialColorRef, partialColor);
+            }
+        };
+
+        bool supportNorm16 = IsGLExtensionEnabled("GL_EXT_texture_norm16");
+        for (auto fmt : mFormats)
+        {
+            if (!supportNorm16 && requiredNorm16(fmt.internalformat))
+            {
+                continue;
+            }
+            test(fmt);
+        }
+    }
+
+    void testMS()
+    {
+        ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                           !IsGLExtensionEnabled("GL_EXT_clear_texture") || !mExtraSupport);
+
+        const auto test = [&](FormatTableElement &fmt) {
+            // Initialize the texture.
+            GLTexture tex;
+            glBindTexture(mTarget, tex);
+            int sampleNum = 0;
+            glGetInternalformativ(mTarget, fmt.internalformat, GL_SAMPLES, 1, &sampleNum);
+            sampleNum = std::min(sampleNum, 4);
+            if (mIsArray)
+            {
+                glTexStorage3DMultisampleOES(mTarget, sampleNum, fmt.internalformat, mWidth,
+                                             mHeight, mDepth, GL_TRUE);
+            }
+            else
+            {
+                glTexStorage2DMultisample(mTarget, sampleNum, fmt.internalformat, mWidth, mHeight,
+                                          GL_TRUE);
+            }
+            EXPECT_GL_ERROR(GL_NO_ERROR);
+            ANGLE_GL_PROGRAM(initProgram, essl31_shaders::vs::Simple(),
+                             essl31_shaders::fs::Green());
+            glUseProgram(initProgram);
+            drawQuad(initProgram, essl31_shaders::PositionAttrib(), 0.5f);
+
+            // Calculate specific clear color value.
+            GLColor fullColorRef    = getClearColor(fmt.format, mFullColorRef);
+            ColorTypes fullColor    = convertColorType(fmt.format, fmt.type, fullColorRef);
+            GLColor partialColorRef = getClearColor(fmt.format, mPartialColorRef);
+            ColorTypes partialColor = convertColorType(fmt.format, fmt.type, partialColorRef);
+
+            ANGLE_GL_PROGRAM(program, getVertexShader(mTarget).c_str(),
+                             getFragmentShader(mTarget, fmt.isInt(), fmt.isUInt()).c_str());
+            glUseProgram(program);
+
+            std::vector<int> uniformLocs = {0, 0, 0};
+
+            uniformLocs[0] = glGetUniformLocation(program, "s");
+            ASSERT_NE(-1, uniformLocs[0]);
+            uniformLocs[2] = glGetUniformLocation(program, "texsize");
+            ASSERT_NE(-1, uniformLocs[2]);
+            glUniform2f(uniformLocs[2], static_cast<float>(mWidth), static_cast<float>(mHeight));
+            if (mIsArray)
+            {
+                uniformLocs[1] = glGetUniformLocation(program, "slice");
+                ASSERT_NE(-1, uniformLocs[1]);
+            }
+
+            clearCheckUnrenderable(0, mWidth, mHeight, mDepth, tex, fmt, program, uniformLocs,
+                                   fullColorRef, fullColor, partialColorRef, partialColor);
+        };
+
+        bool supportNorm16 = IsGLExtensionEnabled("GL_EXT_texture_norm16");
+        for (auto fmt : mFormats)
+        {
+            if (!supportNorm16 && requiredNorm16(fmt.internalformat))
+            {
+                continue;
+            }
+            test(fmt);
+        }
+    }
+};
+
+class ClearTextureEXTTestES31Unrenderable : public ClearTextureEXTTestES31
+{
+  protected:
+    std::vector<FormatTableElement> mFormats = {
+        {GL_RGB16F, GL_RGB, GL_HALF_FLOAT},
+        {GL_RGB16F, GL_RGB, GL_FLOAT},
+        {GL_RGB8UI, GL_RGB_INTEGER, GL_UNSIGNED_BYTE},
+        {GL_RGB8I, GL_RGB_INTEGER, GL_BYTE},
+        {GL_RGB16UI, GL_RGB_INTEGER, GL_UNSIGNED_SHORT},
+        {GL_RGB16I, GL_RGB_INTEGER, GL_SHORT},
+        {GL_RGB32UI, GL_RGB_INTEGER, GL_UNSIGNED_INT},
+        {GL_RGB32I, GL_RGB_INTEGER, GL_INT},
+        {GL_SRGB8, GL_RGB, GL_UNSIGNED_BYTE},
+        {GL_R8_SNORM, GL_RED, GL_BYTE},
+        {GL_RG8_SNORM, GL_RG, GL_BYTE},
+        {GL_RGB8_SNORM, GL_RGB, GL_BYTE},
+        {GL_RGB32F, GL_RGB, GL_FLOAT},
+        {GL_RGBA8_SNORM, GL_RGBA, GL_BYTE},
+        {GL_RGB16_EXT, GL_RGB, GL_UNSIGNED_SHORT},
+        {GL_R16_SNORM_EXT, GL_RED, GL_SHORT},
+        {GL_RG16_SNORM_EXT, GL_RG, GL_SHORT},
+        {GL_RGBA16_SNORM_EXT, GL_RGBA, GL_SHORT},
+        {GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE},
+        {GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE},
+        {GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE},
+    };
+
+    std::vector<FormatTableElement> mFormatsRGB9E5 = {
+        {GL_RGB9_E5, GL_RGB, GL_UNSIGNED_INT_5_9_9_9_REV},
+        {GL_RGB9_E5, GL_RGB, GL_HALF_FLOAT},
+        {GL_RGB9_E5, GL_RGB, GL_FLOAT},
+    };
+
+    void testUnrenderable(std::vector<FormatTableElement> &formats)
+    {
+        ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 ||
+                           !IsGLExtensionEnabled("GL_EXT_clear_texture") || !mExtraSupport);
+
+        const auto test = [&](FormatTableElement &fmt) {
+            // Update MAX level numbers.
+            if (mTarget == GL_TEXTURE_3D)
+            {
+                mLevels = std::max(mLevels, static_cast<int>(std::log2(mDepth)) + 1);
+            }
+
+            GLTexture tex;
+            initTexture(mLevels, fmt, tex);
+
+            // Calculate specific clear color value.
+            GLColor fullColorRef    = getClearColor(fmt.format, mFullColorRef);
+            ColorTypes fullColor    = convertColorType(fmt.format, fmt.type, fullColorRef);
+            GLColor partialColorRef = getClearColor(fmt.format, mPartialColorRef);
+            ColorTypes partialColor = convertColorType(fmt.format, fmt.type, partialColorRef);
+
+            ANGLE_GL_PROGRAM(program, getVertexShader(mTarget).c_str(),
+                             getFragmentShader(mTarget, fmt.isInt(), fmt.isUInt()).c_str());
+            glUseProgram(program);
+
+            std::vector<int> uniformLocs = {0, 0};
+            if (mTarget == GL_TEXTURE_2D_ARRAY || mTarget == GL_TEXTURE_3D)
+            {
+                uniformLocs[0] = glGetUniformLocation(program, "slice");
+                ASSERT_NE(-1, uniformLocs[0]);
+            }
+            else if (mTarget == GL_TEXTURE_CUBE_MAP)
+            {
+                uniformLocs[0] = glGetUniformLocation(program, "cubeFace");
+            }
+            else if (mTarget == GL_TEXTURE_CUBE_MAP_ARRAY)
+            {
+                uniformLocs[0] = glGetUniformLocation(program, "cubeFace");
+                ASSERT_NE(-1, uniformLocs[0]);
+                uniformLocs[1] = glGetUniformLocation(program, "layer");
+                ASSERT_NE(-1, uniformLocs[1]);
+            }
+
+            // For each level, clear the texture.
+            for (int level = 0; level < mLevels; ++level)
+            {
+                int width  = std::max(mWidth >> level, 1);
+                int height = std::max(mHeight >> level, 1);
+                int depth  = mIsArray ? mDepth : std::max(mDepth >> level, 1);
+
+                clearCheckUnrenderable(level, width, height, depth, tex, fmt, program, uniformLocs,
+                                       fullColorRef, fullColor, partialColorRef, partialColor);
+            }
+        };
+
+        bool supportNorm16 = IsGLExtensionEnabled("GL_EXT_texture_norm16");
+        for (auto fmt : formats)
+        {
+            if (!supportNorm16 && requiredNorm16(fmt.internalformat))
+            {
+                continue;
+            }
+            test(fmt);
+        }
     }
 };
 
@@ -3892,6 +4971,27 @@ TEST_P(ClearTextureEXTTest, Clear2DRGB8Snorm)
     EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
 }
 
+// Test clearing a corner of a 2D RGB8 Snorm texture with GL_EXT_clear_texture.
+TEST_P(ClearTextureEXTTest, Clear2DRGB8SnormCorner)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Create a 4x4 texture with no data.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8_SNORM, 4, 4, 0, GL_RGB, GL_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Clear one corner of the texture.
+    GLint colorGreenRGBSnorm = 0x007F00;
+    glClearTexSubImageEXT(tex, 0, 0, 0, 0, 2, 2, 1, GL_RGB, GL_BYTE, &colorGreenRGBSnorm);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth() / 2, getWindowHeight() / 2, GLColor::green);
+}
+
 // Test basic functionality of clearing 2D textures with GL_EXT_clear_texture using nullptr.
 TEST_P(ClearTextureEXTTest, Clear2DWithNull)
 {
@@ -5069,6 +6169,10 @@ TEST_P(ClearTextureEXTTest, Validation)
     glClearTexImageEXT(0, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
+    // Texture is not the name of a texture object
+    glClearTexImageEXT(1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
     GLTexture tex2D;
     glBindTexture(GL_TEXTURE_2D, tex2D);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -5125,6 +6229,64 @@ TEST_P(ClearTextureEXTTest, Validation)
     glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGB8_ETC2, 16, 16, 0, 128, nullptr);
     glClearTexImageEXT(tex2DCompressed, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // Buffer texture
+    if (IsGLExtensionEnabled("GL_EXT_texture_buffer"))
+    {
+        GLTexture texBuffer;
+        glBindTexture(GL_TEXTURE_BUFFER_EXT, texBuffer);
+        glClearTexImageEXT(texBuffer, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+        EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    }
+
+    // internal format is integer and format does not specify integer data
+    GLTexture texInt;
+    glBindTexture(GL_TEXTURE_2D, texInt);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA4, 16, 16, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glClearTexImageEXT(texInt, 0, GL_RGBA, GL_FLOAT, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // internal format is not integer and format does specify integer data
+    GLTexture texFloat;
+    glBindTexture(GL_TEXTURE_2D, texFloat);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 16, 16, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glClearTexImageEXT(texFloat, 0, GL_RGBA_INTEGER, GL_UNSIGNED_INT, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // internal format is DEPTH_COMPONENT and format is not DEPTH_COMPONENT
+    GLTexture texDepth;
+    glBindTexture(GL_TEXTURE_2D, texDepth);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, 16, 16, 0, GL_DEPTH_COMPONENT, GL_FLOAT,
+                 nullptr);
+    glClearTexImageEXT(texDepth, 0, GL_RGBA, GL_FLOAT, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // internal format is DEPTH_STENCIL and format is not DEPTH_STENCIL
+    GLTexture texDepthStencil;
+    glBindTexture(GL_TEXTURE_2D, texDepthStencil);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, 16, 16, 0, GL_DEPTH_STENCIL,
+                 GL_UNSIGNED_INT_24_8, nullptr);
+    glClearTexImageEXT(texDepthStencil, 0, GL_RGBA, GL_UNSIGNED_INT_24_8, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // internal format is STENCIL_INDEX and format is not STENCIL_INDEX
+    GLTexture texStencil;
+    glBindTexture(GL_TEXTURE_2D, texStencil);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX8, 16, 16, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE,
+                 nullptr);
+    glClearTexImageEXT(texStencil, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+
+    // internal format is RGBA and the <format> is DEPTH_COMPONENT, STENCIL_INDEX, or DEPTH_STENCIL
+    GLTexture texRGBA;
+    glBindTexture(GL_TEXTURE_2D, texRGBA);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 16, 16, 0, GL_RGBA, GL_FLOAT, nullptr);
+    glClearTexImageEXT(texRGBA, 0, GL_DEPTH_COMPONENT, GL_FLOAT, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glClearTexImageEXT(texRGBA, 0, GL_STENCIL_INDEX, GL_FLOAT, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    glClearTexImageEXT(texRGBA, 0, GL_DEPTH_STENCIL, GL_FLOAT, &GLColor::red);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
 // Covers a driver bug that leaks color mask state into clear texture ops.
@@ -5157,6 +6319,150 @@ TEST_P(ClearTextureEXTTest, ClearTextureAfterMaskedClearBug)
         drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
         EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::transparentBlack);
     }
+}
+
+// Test clearing renderable format textures with GL_EXT_clear_texture for TEXTURE_2D.
+TEST_P(ClearTextureEXTTestES31Renderable, Clear2D)
+{
+    mDepth   = 1;
+    mTarget  = GL_TEXTURE_2D;
+    mIsArray = mHasLayer = false;
+    testRenderable();
+}
+
+// Test clearing unrenderable format textures with GL_EXT_clear_texture for TEXTURE_2D.
+TEST_P(ClearTextureEXTTestES31Unrenderable, Clear2D)
+{
+    mDepth   = 1;
+    mTarget  = GL_TEXTURE_2D;
+    mIsArray = mHasLayer = false;
+    testUnrenderable(mFormats);
+}
+
+// Test clearing renderable format textures with GL_EXT_clear_texture for TEXTURE_2D_ARRAY.
+TEST_P(ClearTextureEXTTestES31Renderable, Clear2DArray)
+{
+    mTarget = GL_TEXTURE_2D_ARRAY;
+    testRenderable();
+}
+
+// Test clearing unrenderable format textures with GL_EXT_clear_texture for TEXTURE_2D_ARRAY.
+TEST_P(ClearTextureEXTTestES31Unrenderable, Clear2DArray)
+{
+    mTarget = GL_TEXTURE_2D_ARRAY;
+    testUnrenderable(mFormats);
+}
+
+// Test clearing renderable format textures with GL_EXT_clear_texture for TEXTURE_3D.
+TEST_P(ClearTextureEXTTestES31Renderable, Clear3D)
+{
+    mTarget  = GL_TEXTURE_3D;
+    mIsArray = false;
+    testRenderable();
+}
+
+// Test clearing unrenderable format textures with GL_EXT_clear_texture for TEXTURE_3D.
+TEST_P(ClearTextureEXTTestES31Unrenderable, Clear3D)
+{
+    mTarget  = GL_TEXTURE_3D;
+    mIsArray = false;
+    testUnrenderable(mFormats);
+}
+
+// Test clearing renderable format textures with GL_EXT_clear_texture for TEXTURE_CUBE_MAP.
+TEST_P(ClearTextureEXTTestES31Renderable, ClearCubeMap)
+{
+    mHeight = mWidth;
+    mDepth  = 6;
+    mLevels = std::log2(mWidth) + 1;
+    mTarget = GL_TEXTURE_CUBE_MAP;
+    testRenderable();
+}
+
+// Test clearing unrenderable format textures with GL_EXT_clear_texture for TEXTURE_CUBE_MAP.
+TEST_P(ClearTextureEXTTestES31Unrenderable, ClearCubeMap)
+{
+    mHeight = mWidth;
+    mDepth  = 6;
+    mLevels = std::log2(mWidth) + 1;
+    mTarget = GL_TEXTURE_CUBE_MAP;
+    testUnrenderable(mFormats);
+}
+
+// Test clearing renderable format textures with GL_EXT_clear_texture for
+// TEXTURE_CUBE_MAP_ARRAY.
+TEST_P(ClearTextureEXTTestES31Renderable, ClearCubeMapArray)
+{
+    mHeight       = mWidth;
+    mDepth        = 2 * 6;
+    mLevels       = std::log2(mWidth) + 1;
+    mTarget       = GL_TEXTURE_CUBE_MAP_ARRAY;
+    mExtraSupport = IsGLExtensionEnabled("GL_EXT_texture_cube_map_array");
+    testRenderable();
+}
+
+// Test clearing unrenderable format textures with GL_EXT_clear_texture for
+// TEXTURE_CUBE_MAP_ARRAY.
+TEST_P(ClearTextureEXTTestES31Unrenderable, ClearCubeMapArray)
+{
+    mHeight       = mWidth;
+    mDepth        = 2 * 6;
+    mLevels       = std::log2(mWidth) + 1;
+    mTarget       = GL_TEXTURE_CUBE_MAP_ARRAY;
+    mExtraSupport = IsGLExtensionEnabled("GL_EXT_texture_cube_map_array");
+    testUnrenderable(mFormats);
+}
+
+// Test clearing GL_RGB9_E5 format.
+TEST_P(ClearTextureEXTTestES31Unrenderable, ClearRGB9E5)
+{
+    // Test for TEXTURE_2D_ARRAY.
+    mTarget = GL_TEXTURE_2D_ARRAY;
+    testUnrenderable(mFormatsRGB9E5);
+
+    // Test for TEXTURE_3D.
+    mTarget  = GL_TEXTURE_3D;
+    mIsArray = false;
+    testUnrenderable(mFormatsRGB9E5);
+
+    // Test for TEXTURE_2D.
+    mDepth   = 1;
+    mLevels  = std::log2(std::max(mWidth, mHeight)) + 1;
+    mTarget  = GL_TEXTURE_2D;
+    mIsArray = mHasLayer = false;
+    testUnrenderable(mFormatsRGB9E5);
+
+    // Test for TEXTURE_CUBE_MAP.
+    mHeight  = mWidth;
+    mDepth   = 6;
+    mLevels  = std::log2(mWidth) + 1;
+    mTarget  = GL_TEXTURE_CUBE_MAP;
+    mIsArray = mHasLayer = true;
+    testUnrenderable(mFormatsRGB9E5);
+
+    // Test for TEXTURE_CUBE_MAP_ARRAY.
+    mDepth        = 2 * 6;
+    mTarget       = GL_TEXTURE_CUBE_MAP_ARRAY;
+    mExtraSupport = IsGLExtensionEnabled("GL_EXT_texture_cube_map_array");
+    testUnrenderable(mFormatsRGB9E5);
+}
+
+// Test clearing unrenderable format textures with GL_EXT_clear_texture for TEXTURE_2D_MULTISAMPLE.
+TEST_P(ClearTextureEXTTestES31Renderable, ClearMultisample)
+{
+    mDepth   = 1;
+    mTarget  = GL_TEXTURE_2D_MULTISAMPLE;
+    mIsArray = mHasLayer = false;
+    testMS();
+}
+
+// Test clearing unrenderable format textures with GL_EXT_clear_texture for
+// TEXTURE_2D_MULTISAMPLE_ARRAY.
+TEST_P(ClearTextureEXTTestES31Renderable, ClearMultisampleArray)
+{
+    mTarget       = GL_TEXTURE_2D_MULTISAMPLE_ARRAY_OES;
+    mExtraSupport = EnsureGLExtensionEnabled("GL_OES_texture_storage_multisample_2d_array");
+    testMS();
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3_AND(
@@ -5216,5 +6522,7 @@ GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(ClearTestRGB_ES3);
 ANGLE_INSTANTIATE_TEST(ClearTestRGB_ES3, ES3_D3D11(), ES3_VULKAN(), ES3_METAL());
 
 ANGLE_INSTANTIATE_TEST_ES3(ClearTextureEXTTest);
+ANGLE_INSTANTIATE_TEST_ES31(ClearTextureEXTTestES31Renderable);
+ANGLE_INSTANTIATE_TEST_ES31(ClearTextureEXTTestES31Unrenderable);
 
 }  // anonymous namespace

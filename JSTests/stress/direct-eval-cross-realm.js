@@ -22,7 +22,7 @@ function shouldBe(actual, expected) {
   var otherEval = otherGlobal.eval;
   var eval = globalThis.eval;
 
-  for (var i = 0; i < 1e5; i++) {
+  for (var i = 0; i < testLoopCount; i++) {
     eval("maybeReplaceEval(i)");
     shouldBe(eval("isDirectEval()"), i < (1e5 / 2));
   }

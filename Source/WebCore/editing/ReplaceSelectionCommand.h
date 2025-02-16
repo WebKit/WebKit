@@ -127,6 +127,8 @@ private:
     ReplacementFragment* ensureReplacementFragment();
     bool performTrivialReplace(const ReplacementFragment&);
 
+    void updateDirectionForStartOfInsertedContentIfNeeded();
+
     RefPtr<DocumentFragment> protectedDocumentFragment() const { return m_documentFragment; }
 
     VisibleSelection m_visibleSelectionForInsertedText;

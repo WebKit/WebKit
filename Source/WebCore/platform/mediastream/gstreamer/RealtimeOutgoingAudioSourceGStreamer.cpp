@@ -27,6 +27,7 @@
 #include "GStreamerMediaStreamSource.h"
 #include "GStreamerRegistryScanner.h"
 #include "MediaStreamTrack.h"
+#include "NotImplemented.h"
 #include <wtf/text/MakeString.h>
 
 GST_DEBUG_CATEGORY(webkit_webrtc_outgoing_audio_debug);
@@ -79,6 +80,11 @@ GRefPtr<GstPad> RealtimeOutgoingAudioSourceGStreamer::outgoingSourcePad() const
 RefPtr<GStreamerRTPPacketizer> RealtimeOutgoingAudioSourceGStreamer::createPacketizer(RefPtr<UniqueSSRCGenerator> ssrcGenerator, const GstStructure* codecParameters, GUniquePtr<GstStructure>&& encodingParameters)
 {
     return GStreamerAudioRTPPacketizer::create(ssrcGenerator, codecParameters, WTFMove(encodingParameters));
+}
+
+void RealtimeOutgoingAudioSourceGStreamer::dispatchBitrateRequest(uint32_t)
+{
+    notImplemented();
 }
 
 #undef GST_CAT_DEFAULT

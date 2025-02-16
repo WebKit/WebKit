@@ -80,7 +80,7 @@ void BaseAudioSharedUnit::clearClients()
     m_audioThreadClients.clear();
 }
 
-void BaseAudioSharedUnit::forEachClient(const Function<void(CoreAudioCaptureSource&)>& apply) const
+void BaseAudioSharedUnit::forEachClient(NOESCAPE const Function<void(CoreAudioCaptureSource&)>& apply) const
 {
     ASSERT(isMainThread());
     m_clients.forEach(apply);

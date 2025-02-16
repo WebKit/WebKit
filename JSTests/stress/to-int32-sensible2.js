@@ -39,7 +39,7 @@ for (var i = 0; i < testCases.length; i++) {
         var test = new Function("x", "y", "y = " + i + "; return x|0;");
         noInline(test);
 
-        for (var k = 0; k < 10000; ++k) {
+        for (var k = 0; k < testLoopCount; ++k) {
             actual = test(testCase.value);
             if (actual != testCase.expected)
                 throw ("FAILED: x|0 where x = " + testCase.value + ": expected " + testCase.expected + ", actual " + actual);

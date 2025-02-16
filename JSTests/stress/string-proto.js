@@ -8,5 +8,5 @@ function target(value)
     return value.__proto__;
 }
 noInline(target);
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(target("Cocoa"), String.prototype)

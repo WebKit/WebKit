@@ -34,12 +34,12 @@
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Path>::operator()(StringBuilder& builder, const Path& value)
+void Serialize<Path>::operator()(StringBuilder& builder, const SerializationContext& context, const Path& value)
 {
     // <path()> = path( <'fill-rule'>? , <string> )
 
     if (value.fillRule && !std::holds_alternative<Keyword::Nonzero>(*value.fillRule)) {
-        serializationForCSS(builder, *value.fillRule);
+        serializationForCSS(builder, context, *value.fillRule);
         builder.append(", "_s);
     }
 
@@ -53,7 +53,7 @@ void ComputedStyleDependenciesCollector<Path::Data>::operator()(ComputedStyleDep
 {
 }
 
-IterationStatus CSSValueChildrenVisitor<Path::Data>::operator()(const Function<IterationStatus(CSSValue&)>&, const Path::Data&)
+IterationStatus CSSValueChildrenVisitor<Path::Data>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const Path::Data&)
 {
     return IterationStatus::Continue;
 }

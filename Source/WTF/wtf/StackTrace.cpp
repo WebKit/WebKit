@@ -154,9 +154,11 @@ auto StackTraceSymbolResolver::demangle(void* pc) -> std::optional<DemangleEntry
 
 void StackTracePrinter::dump(PrintStream& out) const
 {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     StackTraceSymbolResolver { m_stack }.forEach([&](int frameNumber, void* stackFrame, const char* name) {
         out.printf("%s%-3d %p %s\n", m_prefix ? m_prefix : "", frameNumber, stackFrame, name);
     });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 } // namespace WTF

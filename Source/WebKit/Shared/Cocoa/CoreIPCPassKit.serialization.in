@@ -33,6 +33,11 @@ secure_coding_header: <pal/cocoa/PassKitSoftLink.h>
     String m_supplementarySublocality;
 }
 
+webkit_platform_headers: "CoreIPCPKSecureElementPass.h"
+[WebKitPlatform] class WebKit::CoreIPCPKSecureElementPass {
+    Vector<uint8_t> ipcData()
+}
+
 [WebKitSecureCodingClass=PAL::getPKPaymentMerchantSessionClass(), SupportWKKeyedCoder, WebKitPlatform] webkit_secure_coding PKPaymentMerchantSession {
     merchantIdentifier: String
     merchantSessionIdentifier: String

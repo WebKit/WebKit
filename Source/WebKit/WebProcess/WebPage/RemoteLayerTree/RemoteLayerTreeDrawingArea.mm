@@ -373,8 +373,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
         backingStoreCollection.willBuildTransaction();
         rootLayer.layer->flushCompositingStateForThisLayerOnly();
 
-        RemoteLayerTreeTransaction layerTransaction;
-        layerTransaction.setTransactionID(transactionID);
+        RemoteLayerTreeTransaction layerTransaction(transactionID);
         layerTransaction.setCallbackIDs(WTFMove(m_pendingCallbackIDs));
 
         m_remoteLayerTreeContext->buildTransaction(layerTransaction, *downcast<GraphicsLayerCARemote>(rootLayer.layer.get()).platformCALayer(), rootLayer.frameID);
@@ -421,7 +420,7 @@ void RemoteLayerTreeDrawingArea::updateRendering()
     m_commitQueue->dispatch([backingStoreFlusher = m_backingStoreFlusher, commitEncoder = WTFMove(commitEncoder), flushers = WTFMove(flushers), pageID] () mutable {
         bool flushSucceeded = backingStoreFlusher->flush(WTFMove(commitEncoder), WTFMove(flushers));
 
-        RunLoop::main().dispatch([pageID, flushSucceeded] () mutable {
+        RunLoop::protectedMain()->dispatch([pageID, flushSucceeded] () mutable {
             if (auto* webPage = WebProcess::singleton().webPage(pageID)) {
                 if (auto* drawingArea = dynamicDowncast<RemoteLayerTreeDrawingArea>(webPage->drawingArea())) {
                     drawingArea->didCompleteRenderingUpdateDisplayFlush(flushSucceeded);
@@ -473,7 +472,7 @@ auto RemoteLayerTreeDrawingArea::rootLayerInfoWithFrameIdentifier(WebCore::Frame
     return &m_rootLayers[index];
 }
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(HDR_FOR_IMAGES)
 bool RemoteLayerTreeDrawingArea::hdrForImagesEnabled() const
 {
     if (auto corePage = m_webPage->corePage())

@@ -288,7 +288,7 @@ if (isAppleCocoaWebKit()) {
         push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
     }
 
-} elsif (isWin() && !$skipLibraryUpdate) {
+} elsif (!$skipLibraryUpdate && (isWin() || (isJSCOnly() && isWindows()))) {
     (system("python Tools/Scripts/update-webkit-win-libs.py") == 0) or die;
 }
 
@@ -324,7 +324,7 @@ if (isCMakeBuild() && !isAnyWindows()) {
 }
 
 my $baseProductDir = baseProductDir();
-if (isWin() || isPlayStation()) {
+if (isWin() || isPlayStation() || (isJSCOnly() && isWindows())) {
     my @featureArgs = cmakeArgsFromFeatures(@features, !$noExperimentalFeatures);
     removeCMakeCache(@featureArgs);
 

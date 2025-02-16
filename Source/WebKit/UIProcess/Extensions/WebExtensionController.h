@@ -38,6 +38,7 @@
 #include "WebExtensionDataType.h"
 #include "WebExtensionError.h"
 #include "WebExtensionFrameIdentifier.h"
+#include "WebExtensionStorageSQLiteStore.h"
 #include "WebExtensionURLSchemeHandler.h"
 #include "WebProcessProxy.h"
 #include "WebUserContentControllerProxy.h"
@@ -52,7 +53,6 @@
 OBJC_CLASS NSError;
 OBJC_CLASS NSMenu;
 OBJC_CLASS _WKWebExtensionControllerHelper;
-OBJC_CLASS _WKWebExtensionStorageSQLiteStore;
 OBJC_PROTOCOL(WKWebExtensionControllerDelegatePrivate);
 
 #ifdef __OBJC__
@@ -84,7 +84,7 @@ class WebExtensionController : public API::ObjectImpl<API::Object::Type::WebExte
 
 public:
     static Ref<WebExtensionController> create(Ref<WebExtensionControllerConfiguration> configuration) { return adoptRef(*new WebExtensionController(configuration)); }
-    static WebExtensionController* get(WebExtensionControllerIdentifier);
+    static RefPtr<WebExtensionController> get(WebExtensionControllerIdentifier);
 
     void ref() const final { API::ObjectImpl<API::Object::Type::WebExtensionController>::ref(); }
     void deref() const final { API::ObjectImpl<API::Object::Type::WebExtensionController>::deref(); }
@@ -122,8 +122,8 @@ public:
     void getDataRecord(OptionSet<WebExtensionDataType>, WebExtensionContext&, CompletionHandler<void(RefPtr<WebExtensionDataRecord>)>&&);
     void removeData(OptionSet<WebExtensionDataType>, const Vector<Ref<WebExtensionDataRecord>>&, CompletionHandler<void()>&&);
 
-    void calculateStorageSize(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&&);
-    void removeStorage(_WKWebExtensionStorageSQLiteStore *, WebExtensionDataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
+    void calculateStorageSize(RefPtr<WebExtensionStorageSQLiteStore>, WebExtensionDataType, CompletionHandler<void(Expected<size_t, WebExtensionError>&&)>&&);
+    void removeStorage(RefPtr<WebExtensionStorageSQLiteStore>, WebExtensionDataType, CompletionHandler<void(Expected<void, WebExtensionError>&&)>&&);
 
     bool hasLoadedContexts() const { return !m_extensionContexts.isEmpty(); }
     bool isFreshlyCreated() const { return m_freshlyCreated; }
@@ -209,7 +209,7 @@ private:
     String storageDirectory(WebExtensionContext&) const;
 
     String stateFilePath(const String& uniqueIdentifier) const;
-    _WKWebExtensionStorageSQLiteStore* sqliteStore(const String& storageDirectory, WebExtensionDataType, RefPtr<WebExtensionContext>);
+    RefPtr<WebExtensionStorageSQLiteStore> sqliteStore(const String& storageDirectory, WebExtensionDataType, RefPtr<WebExtensionContext>);
 
     void didStartProvisionalLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
     void didCommitLoadForFrame(WebPageProxyIdentifier, const WebExtensionFrameParameters&, WallTime);
@@ -221,8 +221,7 @@ private:
     // Test APIs
     void testResult(bool result, String message, String sourceURL, unsigned lineNumber);
     void testEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber);
-    void testMessage(String message, String sourceURL, unsigned lineNumber);
-    void testYielded(String message, String sourceURL, unsigned lineNumber);
+    void testLogMessage(String message, String sourceURL, unsigned lineNumber);
     void testSentMessage(String message, String argument, String sourceURL, unsigned lineNumber);
     void testFinished(bool result, String message, String sourceURL, unsigned lineNumber);
 

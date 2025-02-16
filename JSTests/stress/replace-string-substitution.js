@@ -13,8 +13,8 @@ function test2(string) {
 }
 noInline(test2);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test("Hi, Hello World"), `Hi, Hi,  World`);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test2("Hi, Hello World"), `Hi, REPLACEHi, REPLACE World`);

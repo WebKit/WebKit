@@ -533,7 +533,7 @@ std::optional<InlineContentBreaker::PartialRun> InlineContentBreaker::tryBreakin
             }
 
             // This is a non-overflowing content.
-            ASSERT(lineHasRoomForContent);
+            ASSERT(lineHasRoomForContent || !candidateRun.spaceRequired());
             if (auto breakingPosition = lastValidBreakingPosition(runs, candidateTextRun.index)) {
                 ASSERT(*breakingPosition <= inlineTextItem.end());
                 auto trailingLength = *breakingPosition - inlineTextItem.start();

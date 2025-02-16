@@ -87,7 +87,6 @@ public:
     ExceptionType didComplete(const WebCore::ResourceError&);
 
     void stop();
-    void pageDestroyed();
 
     void suppressTaskStoppedExceptions() { m_shouldSuppressTaskStoppedExceptions = true; }
 

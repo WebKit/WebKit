@@ -31,14 +31,10 @@ namespace WebCore {
 namespace CSS {
 
 // https://drafts.csswg.org/css-color-5/#contrast-color
-template<typename ContrastColorType> void serializationForCSSContrastColor(StringBuilder& builder, const ContrastColorType& contrastColor)
+template<typename ContrastColorType> void serializationForCSSContrastColor(StringBuilder& builder, const CSS::SerializationContext& context, const ContrastColorType& contrastColor)
 {
     builder.append("contrast-color("_s);
-    serializationForCSS(builder, contrastColor.color);
-
-    if (contrastColor.max)
-        builder.append(' ', nameLiteralForSerialization(CSSValueMax));
-
+    serializationForCSS(builder, context, contrastColor.color);
     builder.append(')');
 }
 

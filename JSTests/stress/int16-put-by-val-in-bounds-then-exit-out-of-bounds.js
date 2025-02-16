@@ -12,7 +12,7 @@ function test(length, expected) {
         throw "Error: bad value at a[42]: " + result;
 }
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(100, 29474);
 
 test(10, void 0);

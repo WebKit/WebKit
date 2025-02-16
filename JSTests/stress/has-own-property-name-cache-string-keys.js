@@ -12,7 +12,7 @@ const numKeys = 800;
 for (let i = 0; i < numKeys; ++i)
     keyPool.push(i + "foo");
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let num = (Math.random() * numKeys) | 0;
     let o = {};
     for (let i = 0; i < num; ++i) {

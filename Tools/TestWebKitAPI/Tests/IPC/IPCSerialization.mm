@@ -27,6 +27,7 @@
 
 #import "ArgumentCodersCocoa.h"
 #import "CoreIPCError.h"
+#import "CoreIPCPlistDictionary.h"
 #import "Encoder.h"
 #import "MessageSenderInlines.h"
 #import "test.h"
@@ -183,11 +184,26 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
 {
     // SecTrust doesn't compare equal after round-tripping through SecTrustSerialize/SecTrustDeserialize <rdar://122051396>
     // Therefore, we compare all the attributes we can access to verify equality.
+    CFErrorRef error = NULL;
+    bool equal;
+#if HAVE(WK_SECURE_CODING_SECTRUST)
+    CFPropertyListRef trust1Plist = SecTrustCopyPropertyListRepresentation(trust1, &error);
+    EXPECT_FALSE(error);
+    CFPropertyListRef trust2Plist = SecTrustCopyPropertyListRepresentation(trust2, &error);
+    EXPECT_FALSE(error);
+    EXPECT_TRUE(CFGetTypeID(trust1Plist) == CFDictionaryGetTypeID());
+    EXPECT_TRUE(CFGetTypeID(trust2Plist) == CFDictionaryGetTypeID());
+    equal = CFEqual(trust1Plist, trust2Plist);
+    EXPECT_TRUE(equal);
+    CFRelease(trust1Plist);
+    CFRelease(trust2Plist);
+#endif
+
     SecKeyRef pk1 = SecTrustCopyPublicKey(trust1);
     SecKeyRef pk2 = SecTrustCopyPublicKey(trust2);
     EXPECT_TRUE(pk1);
     EXPECT_TRUE(pk2);
-    bool equal = CFEqual(pk1, pk2);
+    equal = CFEqual(pk1, pk2);
     CFRelease(pk1);
     CFRelease(pk2);
     EXPECT_TRUE(equal);
@@ -204,22 +220,33 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
     EXPECT_TRUE(ex1);
     EXPECT_TRUE(ex2);
     equal = CFEqual(ex1, ex2);
+
+    CFPropertyListFormat format;
+    CFPropertyListRef ex1plist = CFPropertyListCreateWithData(
+        kCFAllocatorDefault,
+        ex1,
+        kCFPropertyListImmutable,
+        &format,
+        &error
+    );
+    EXPECT_FALSE(error);
+    CFPropertyListRef ex2plist = CFPropertyListCreateWithData(
+        kCFAllocatorDefault,
+        ex2,
+        kCFPropertyListImmutable,
+        &format,
+        &error
+    );
+    EXPECT_FALSE(error);
+    equal = CFEqual(ex1plist, ex2plist);
     CFRelease(ex1);
     CFRelease(ex2);
+    CFRelease(ex1plist);
+    CFRelease(ex2plist);
     EXPECT_TRUE(equal);
     if (!equal)
         return false;
-
     CFArrayRef array1, array2;
-    EXPECT_TRUE(SecTrustCopyPolicies(trust1, &array1) == errSecSuccess);
-    EXPECT_TRUE(SecTrustCopyPolicies(trust2, &array2) == errSecSuccess);
-    equal = CFEqual(array1, array2);
-    CFRelease(array1);
-    CFRelease(array2);
-    EXPECT_TRUE(equal);
-    if (!equal)
-        return false;
-
     EXPECT_TRUE(SecTrustCopyPolicies(trust1, &array1) == errSecSuccess);
     EXPECT_TRUE(SecTrustCopyPolicies(trust2, &array2) == errSecSuccess);
     equal = CFEqual(array1, array2);
@@ -232,14 +259,16 @@ static bool secTrustRefsEqual(SecTrustRef trust1, SecTrustRef trust2)
 #if HAVE(SECTRUST_COPYPROPERTIES)
     array1 = SecTrustCopyProperties(trust1);
     array2 = SecTrustCopyProperties(trust2);
-    EXPECT_TRUE(array1);
-    EXPECT_TRUE(array2);
-    equal = CFEqual(array1, array2);
-    CFRelease(array1);
-    CFRelease(array2);
-    EXPECT_TRUE(equal);
-    if (!equal)
-        return false;
+    if (array1 && array2) {
+        equal = CFEqual(array1, array2);
+        CFRelease(array1);
+        CFRelease(array2);
+        EXPECT_TRUE(equal);
+        if (!equal)
+            return false;
+    }
+    bool onlyOneIsNil = (!array1 && array2) || (!array2 && array1);
+    EXPECT_FALSE(onlyOneIsNil);
 #endif
 
     Boolean bool1, bool2;
@@ -931,6 +960,26 @@ static void runTestCF(const CFHolderForTesting& holderArg)
     runTestCFWithExpectedResult(holderArg, holderArg);
 };
 
+TEST(IPCSerialization, Plist)
+{
+    NSDictionary *plist = @{
+        @"key1": @"A String",
+        @"key2": @1.0,
+        @"key3": @[
+            @{
+                @"date": NSDate.now,
+                @"number": @2.0,
+                @"string": @"A String"
+            },
+        ],
+        @"key4": [NSData dataWithBytes:"Data test" length:strlen("Data test")]
+    };
+
+    auto p = WebKit::CoreIPCPlistDictionary(plist);
+    auto d = p.toID();
+    EXPECT_TRUE([d.get() isEqual:plist]);
+}
+
 TEST(IPCSerialization, Basic)
 {
     // CVPixelBuffer
@@ -1325,6 +1374,302 @@ TEST(IPCSerialization, Basic)
 #endif
     runTestNS({ [NSURLCredential credentialWithUser:@"user" password:@"password" persistence:NSURLCredentialPersistenceSynchronizable] });
 }
+
+#if HAVE(WK_SECURE_CODING_SECTRUST)
+String cert1(""
+    "MIIHezCCBmOgAwIBAgIQfrZYqgaHdOKdEb5ZVqa0LTANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQGEw"
+    "JVUzETMBEGA1UEChMKQXBwbGUgSW5jLjEtMCsGA1UEAxMkQXBwbGUgUHVibGljIEVWIFNlcnZlciBS"
+    "U0EgQ0EgMiAtIEcxMB4XDTI0MTIwOTE3NTcwNFoXDTI1MDQwODE5NTY1NlowgccxHTAbBgNVBA8MFF"
+    "ByaXZhdGUgT3JnYW5pemF0aW9uMRMwEQYLKwYBBAGCNzwCAQMTAlVTMRswGQYLKwYBBAGCNzwCAQIM"
+    "CkNhbGlmb3JuaWExETAPBgNVBAUTCEMwODA2NTkyMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaW"
+    "Zvcm5pYTESMBAGA1UEBwwJQ3VwZXJ0aW5vMRMwEQYDVQQKDApBcHBsZSBJbmMuMRYwFAYDVQQDDA13"
+    "d3cuYXBwbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxlSqT8ZVN6y8/a3TDd"
+    "V9zwNyhjeCH7AEckmzN810eAKJ/079QHFI+5KisoP9Uuu0W/dWO/NVFSH6cf6zA6I1qvewAkkaocJE"
+    "TuO+OKosPXWZpAGFUcoT1j098EQy2OCLD5DfYYGYZDIFqGzGw9jgxAfuMcIcPmHn0PbS6wX/ePTze5"
+    "kFzNTlc5//w+UtIGHi3QP327Urzyi2rjIGOWBjjKDdvqdYQl+7Sv1QKKBZpWlinNqe5POugwkOYQLb"
+    "E3MwjaVDN/iF7CE005avSxPo4G8vNKaq9VGdQuJb0qzI1M2gTD9G86oeFh5AZ0/erTAe+NshueHXK3"
+    "tX13JLNjodlwIDAQABo4ID1jCCA9IwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBRQVatDoa+pSCta"
+    "waKHiQTkeg7K2jB6BggrBgEFBQcBAQRuMGwwMgYIKwYBBQUHMAKGJmh0dHA6Ly9jZXJ0cy5hcHBsZS"
+    "5jb20vYXBldnNyc2EyZzEuZGVyMDYGCCsGAQUFBzABhipodHRwOi8vb2NzcC5hcHBsZS5jb20vb2Nz"
+    "cDAzLWFwZXZzcnNhMmcxMDEwPAYDVR0RBDUwM4IQd3d3LmFwcGxlLmNvbS5jboINd3d3LmFwcGxlLm"
+    "NvbYIQaW1hZ2VzLmFwcGxlLmNvbTBgBgNVHSAEWTBXMEgGBWeBDAEBMD8wPQYIKwYBBQUHAgEWMWh0"
+    "dHBzOi8vd3d3LmFwcGxlLmNvbS9jZXJ0aWZpY2F0ZWF1dGhvcml0eS9wdWJsaWMwCwYJYIZIAYb9bA"
+    "IBMBMGA1UdJQQMMAoGCCsGAQUFBwMBMDUGA1UdHwQuMCwwKqAooCaGJGh0dHA6Ly9jcmwuYXBwbGUu"
+    "Y29tL2FwZXZzcnNhMmcxLmNybDAdBgNVHQ4EFgQURk32jbOK8tOTKUM09x18GFD6T6MwDgYDVR0PAQ"
+    "H/BAQDAgWgMA8GCSqGSIb3Y2QGVgQCBQAwggH3BgorBgEEAdZ5AgQCBIIB5wSCAeMB4QB3AH1ZHhLh"
+    "eCp7HGFnfF79+NCHXBSgTpWeuQMv2Q6MLnm4AAABk6yafEsAAAQDAEgwRgIhAOb4XXNkF7XCVLpkJY"
+    "YXdIKiD+Tziy4e0v4d+0dqXSZiAiEA5pyC6BSpmzVasV2UZLgc5Efc/JrvEJsA8gGQyeDcKZQAdgDM"
+    "+w9qhXEJZf6Vm1PO6bJ8IumFXA2XjbapflTA/kwNsAAAAZOsmnxzAAAEAwBHMEUCIQDgvdW/qcpks4"
+    "kJ8s0p3L+Dbk2oFW8WoX6Y0QTbQZ3AqAIgQKsyTTgEX7+nBebYXO9P95TnNFfZzZ8j6O3yNNBTZh4A"
+    "dgBOdaMnXJoQwzhbbNTfP1LrHfDgjhuNacCx+mSxYpo53wAAAZOsmnxNAAAEAwBHMEUCIG5b5kcJPY"
+    "mr4IYZaC0YpHwUv+qbZz8D8+PPxsfu8nGaAiEA/gFI1QZrlKSxFWnzLVNJxbnSfUxK78RfvmzAUJTu"
+    "9poAdgDgkrP8DB3I52g2H95huZZNClJ4GYpy1nLEsE2lbW9UBAAAAZOsmnxnAAAEAwBHMEUCIQCz0K"
+    "gSqiTLe9nviiPOBcnKhvfyN33UpL6gx2Ot9NF6oAIgUgLXXf+hys90XZnVumvz5omAQ8zK1iSzkLtw"
+    "GaJx6dIwDQYJKoZIhvcNAQELBQADggEBAGZWm3BMjUDhPBgvkopxXuQreRAzJmEWlD+cJdoHFYhsdf"
+    "TSIbSvO3kEsKoBzxVZPeDopZTTfqH+XLDHu46HCXYLUjEmHZi3gwd93cu8WytJc0O3Vb9HbeSChgMi"
+    "7q4zcNpzqYS9m6+z4sD6I3hCVV8iv7dqoZulTh1g9MD9bOql9eEW8LvryY6qu8JeDuha/eYU6lGJwl"
+    "eS/MTE0gr+TxmY6N0bv7xYtSlEBLXSElz7VFcq7GqsrApEqoVkk24oOpfQ4xeEDhvulyDtEOW0DT8D"
+    "l+UjuDVM264DL03VGGv1bidxXqf1ZtsLYiVfIFz+7GNj9xjKL+6JR7ir/XGGvyY="_s);
+
+String cert2(""
+    "MIIFMjCCBBqgAwIBAgIQBxd5EQBdImf2iJL2j4tQWDANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQGEw"
+    "JVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSswKQYD"
+    "VQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTIwMDQyOTEyNTQ1MFoXDT"
+    "MwMDQxMDIzNTk1OVowUTELMAkGA1UEBhMCVVMxEzARBgNVBAoTCkFwcGxlIEluYy4xLTArBgNVBAMT"
+    "JEFwcGxlIFB1YmxpYyBFViBTZXJ2ZXIgUlNBIENBIDIgLSBHMTCCASIwDQYJKoZIhvcNAQEBBQADgg"
+    "EPADCCAQoCggEBAOIA/aXfX7k4cUnrupPYw00z3FwU6nAvwepTO8ueUcBUsmQGppcx5BeEyngvZ8PS"
+    "ieH0GHHK7RnHbgLChyon2H9EpgYo7NQ1yrcC5THvo3VrlAP6U746ORSDxUbbv4z15kAsyvABUCFi8S"
+    "7IXkzDIjhOICNrA8fXUpUKbIccI2JvMz7Rvw5GeG7caa2u+vSI3TmBnwMcjVqlsScqY6tbE/ji7C/X"
+    "Dw7wUpMHyaQMVGPO7mJfi0/QbiUPWwnCJPYAqPpvBVjeBh0avUCGaP2ZtZc2Jns1C8h9ebJG+Z3awd"
+    "gBqQPYD2I+fy/aBtnTOkhnBJti8jxh1ThNV65S9SucZecCAwEAAaOCAekwggHlMB0GA1UdDgQWBBRQ"
+    "VatDoa+pSCtawaKHiQTkeg7K2jAfBgNVHSMEGDAWgBSxPsNpA/i/RwHUmCYaCALvY2QrwzAOBgNVHQ"
+    "8BAf8EBAMCAYYwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBIGA1UdEwEB/wQIMAYBAf8C"
+    "AQAwNAYIKwYBBQUHAQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wSw"
+    "YDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0SGlnaEFzc3Vy"
+    "YW5jZUVWUm9vdENBLmNybDCB3AYDVR0gBIHUMIHRMIHFBglghkgBhv1sAgEwgbcwKAYIKwYBBQUHAg"
+    "EWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwgYoGCCsGAQUFBwICMH4MfEFueSB1c2Ugb2Yg"
+    "dGhpcyBDZXJ0aWZpY2F0ZSBjb25zdGl0dXRlcyBhY2NlcHRhbmNlIG9mIHRoZSBSZWx5aW5nIFBhcn"
+    "R5IEFncmVlbWVudCBsb2NhdGVkIGF0IGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9ycGEtdWEwBwYF"
+    "Z4EMAQEwDQYJKoZIhvcNAQELBQADggEBAKZebFC2ZVwrTj+u6nDo3O03e0/g/hN+6U5iA7X9dBGmQx"
+    "3C7NkPNAV0mUoaklsceIBIQ/bC7utdgwnSKTnm5HdVipASyLloU7TP2jAtDQdAxBavmLnFwcwXBp6n"
+    "17uLp+uPU4DZgubM96LyUQilUlYERbgu66rCK18jRmobDvFT8E71oU13o1Oe/1WUHFbTynRkKW73JD"
+    "d2rZ21Pim7LEJVY3OcRmtYNHaM/lunYx1ZQ+0fw7Hc5J/xR7vlRiuyP+fJ9ucuDYupLg333Di5R7JZ"
+    "IfnX42ecX0Dd0wIeuFj0HBjH6c25FUov/Fa5Zjr0VPjmmgN6PnoMArUZXDkQe3M="_s);
+
+String chain1(""
+    "MIIHezCCBmOgAwIBAgIQfrZYqgaHdOKdEb5ZVqa0LTANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQGEw"
+    "JVUzETMBEGA1UEChMKQXBwbGUgSW5jLjEtMCsGA1UEAxMkQXBwbGUgUHVibGljIEVWIFNlcnZlciBS"
+    "U0EgQ0EgMiAtIEcxMB4XDTI0MTIwOTE3NTcwNFoXDTI1MDQwODE5NTY1NlowgccxHTAbBgNVBA8MFF"
+    "ByaXZhdGUgT3JnYW5pemF0aW9uMRMwEQYLKwYBBAGCNzwCAQMTAlVTMRswGQYLKwYBBAGCNzwCAQIM"
+    "CkNhbGlmb3JuaWExETAPBgNVBAUTCEMwODA2NTkyMQswCQYDVQQGEwJVUzETMBEGA1UECAwKQ2FsaW"
+    "Zvcm5pYTESMBAGA1UEBwwJQ3VwZXJ0aW5vMRMwEQYDVQQKDApBcHBsZSBJbmMuMRYwFAYDVQQDDA13"
+    "d3cuYXBwbGUuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxlSqT8ZVN6y8/a3TDd"
+    "V9zwNyhjeCH7AEckmzN810eAKJ/079QHFI+5KisoP9Uuu0W/dWO/NVFSH6cf6zA6I1qvewAkkaocJE"
+    "TuO+OKosPXWZpAGFUcoT1j098EQy2OCLD5DfYYGYZDIFqGzGw9jgxAfuMcIcPmHn0PbS6wX/ePTze5"
+    "kFzNTlc5//w+UtIGHi3QP327Urzyi2rjIGOWBjjKDdvqdYQl+7Sv1QKKBZpWlinNqe5POugwkOYQLb"
+    "E3MwjaVDN/iF7CE005avSxPo4G8vNKaq9VGdQuJb0qzI1M2gTD9G86oeFh5AZ0/erTAe+NshueHXK3"
+    "tX13JLNjodlwIDAQABo4ID1jCCA9IwDAYDVR0TAQH/BAIwADAfBgNVHSMEGDAWgBRQVatDoa+pSCta"
+    "waKHiQTkeg7K2jB6BggrBgEFBQcBAQRuMGwwMgYIKwYBBQUHMAKGJmh0dHA6Ly9jZXJ0cy5hcHBsZS"
+    "5jb20vYXBldnNyc2EyZzEuZGVyMDYGCCsGAQUFBzABhipodHRwOi8vb2NzcC5hcHBsZS5jb20vb2Nz"
+    "cDAzLWFwZXZzcnNhMmcxMDEwPAYDVR0RBDUwM4IQd3d3LmFwcGxlLmNvbS5jboINd3d3LmFwcGxlLm"
+    "NvbYIQaW1hZ2VzLmFwcGxlLmNvbTBgBgNVHSAEWTBXMEgGBWeBDAEBMD8wPQYIKwYBBQUHAgEWMWh0"
+    "dHBzOi8vd3d3LmFwcGxlLmNvbS9jZXJ0aWZpY2F0ZWF1dGhvcml0eS9wdWJsaWMwCwYJYIZIAYb9bA"
+    "IBMBMGA1UdJQQMMAoGCCsGAQUFBwMBMDUGA1UdHwQuMCwwKqAooCaGJGh0dHA6Ly9jcmwuYXBwbGUu"
+    "Y29tL2FwZXZzcnNhMmcxLmNybDAdBgNVHQ4EFgQURk32jbOK8tOTKUM09x18GFD6T6MwDgYDVR0PAQ"
+    "H/BAQDAgWgMA8GCSqGSIb3Y2QGVgQCBQAwggH3BgorBgEEAdZ5AgQCBIIB5wSCAeMB4QB3AH1ZHhLh"
+    "eCp7HGFnfF79+NCHXBSgTpWeuQMv2Q6MLnm4AAABk6yafEsAAAQDAEgwRgIhAOb4XXNkF7XCVLpkJY"
+    "YXdIKiD+Tziy4e0v4d+0dqXSZiAiEA5pyC6BSpmzVasV2UZLgc5Efc/JrvEJsA8gGQyeDcKZQAdgDM"
+    "+w9qhXEJZf6Vm1PO6bJ8IumFXA2XjbapflTA/kwNsAAAAZOsmnxzAAAEAwBHMEUCIQDgvdW/qcpks4"
+    "kJ8s0p3L+Dbk2oFW8WoX6Y0QTbQZ3AqAIgQKsyTTgEX7+nBebYXO9P95TnNFfZzZ8j6O3yNNBTZh4A"
+    "dgBOdaMnXJoQwzhbbNTfP1LrHfDgjhuNacCx+mSxYpo53wAAAZOsmnxNAAAEAwBHMEUCIG5b5kcJPY"
+    "mr4IYZaC0YpHwUv+qbZz8D8+PPxsfu8nGaAiEA/gFI1QZrlKSxFWnzLVNJxbnSfUxK78RfvmzAUJTu"
+    "9poAdgDgkrP8DB3I52g2H95huZZNClJ4GYpy1nLEsE2lbW9UBAAAAZOsmnxnAAAEAwBHMEUCIQCz0K"
+    "gSqiTLe9nviiPOBcnKhvfyN33UpL6gx2Ot9NF6oAIgUgLXXf+hys90XZnVumvz5omAQ8zK1iSzkLtw"
+    "GaJx6dIwDQYJKoZIhvcNAQELBQADggEBAGZWm3BMjUDhPBgvkopxXuQreRAzJmEWlD+cJdoHFYhsdf"
+    "TSIbSvO3kEsKoBzxVZPeDopZTTfqH+XLDHu46HCXYLUjEmHZi3gwd93cu8WytJc0O3Vb9HbeSChgMi"
+    "7q4zcNpzqYS9m6+z4sD6I3hCVV8iv7dqoZulTh1g9MD9bOql9eEW8LvryY6qu8JeDuha/eYU6lGJwl"
+    "eS/MTE0gr+TxmY6N0bv7xYtSlEBLXSElz7VFcq7GqsrApEqoVkk24oOpfQ4xeEDhvulyDtEOW0DT8D"
+    "l+UjuDVM264DL03VGGv1bidxXqf1ZtsLYiVfIFz+7GNj9xjKL+6JR7ir/XGGvyY="_s);
+
+String chain2(""
+    "MIIFMjCCBBqgAwIBAgIQBxd5EQBdImf2iJL2j4tQWDANBgkqhkiG9w0BAQsFADBsMQswCQYDVQQGEw"
+    "JVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSswKQYD"
+    "VQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTIwMDQyOTEyNTQ1MFoXDT"
+    "MwMDQxMDIzNTk1OVowUTELMAkGA1UEBhMCVVMxEzARBgNVBAoTCkFwcGxlIEluYy4xLTArBgNVBAMT"
+    "JEFwcGxlIFB1YmxpYyBFViBTZXJ2ZXIgUlNBIENBIDIgLSBHMTCCASIwDQYJKoZIhvcNAQEBBQADgg"
+    "EPADCCAQoCggEBAOIA/aXfX7k4cUnrupPYw00z3FwU6nAvwepTO8ueUcBUsmQGppcx5BeEyngvZ8PS"
+    "ieH0GHHK7RnHbgLChyon2H9EpgYo7NQ1yrcC5THvo3VrlAP6U746ORSDxUbbv4z15kAsyvABUCFi8S"
+    "7IXkzDIjhOICNrA8fXUpUKbIccI2JvMz7Rvw5GeG7caa2u+vSI3TmBnwMcjVqlsScqY6tbE/ji7C/X"
+    "Dw7wUpMHyaQMVGPO7mJfi0/QbiUPWwnCJPYAqPpvBVjeBh0avUCGaP2ZtZc2Jns1C8h9ebJG+Z3awd"
+    "gBqQPYD2I+fy/aBtnTOkhnBJti8jxh1ThNV65S9SucZecCAwEAAaOCAekwggHlMB0GA1UdDgQWBBRQ"
+    "VatDoa+pSCtawaKHiQTkeg7K2jAfBgNVHSMEGDAWgBSxPsNpA/i/RwHUmCYaCALvY2QrwzAOBgNVHQ"
+    "8BAf8EBAMCAYYwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBIGA1UdEwEB/wQIMAYBAf8C"
+    "AQAwNAYIKwYBBQUHAQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wSw"
+    "YDVR0fBEQwQjBAoD6gPIY6aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0SGlnaEFzc3Vy"
+    "YW5jZUVWUm9vdENBLmNybDCB3AYDVR0gBIHUMIHRMIHFBglghkgBhv1sAgEwgbcwKAYIKwYBBQUHAg"
+    "EWHGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9DUFMwgYoGCCsGAQUFBwICMH4MfEFueSB1c2Ugb2Yg"
+    "dGhpcyBDZXJ0aWZpY2F0ZSBjb25zdGl0dXRlcyBhY2NlcHRhbmNlIG9mIHRoZSBSZWx5aW5nIFBhcn"
+    "R5IEFncmVlbWVudCBsb2NhdGVkIGF0IGh0dHBzOi8vd3d3LmRpZ2ljZXJ0LmNvbS9ycGEtdWEwBwYF"
+    "Z4EMAQEwDQYJKoZIhvcNAQELBQADggEBAKZebFC2ZVwrTj+u6nDo3O03e0/g/hN+6U5iA7X9dBGmQx"
+    "3C7NkPNAV0mUoaklsceIBIQ/bC7utdgwnSKTnm5HdVipASyLloU7TP2jAtDQdAxBavmLnFwcwXBp6n"
+    "17uLp+uPU4DZgubM96LyUQilUlYERbgu66rCK18jRmobDvFT8E71oU13o1Oe/1WUHFbTynRkKW73JD"
+    "d2rZ21Pim7LEJVY3OcRmtYNHaM/lunYx1ZQ+0fw7Hc5J/xR7vlRiuyP+fJ9ucuDYupLg333Di5R7JZ"
+    "IfnX42ecX0Dd0wIeuFj0HBjH6c25FUov/Fa5Zjr0VPjmmgN6PnoMArUZXDkQe3M="_s);
+
+String chain3(""
+    "MIIDxTCCAq2gAwIBAgIQAqxcJmoLQJuPC3nyrkYldzANBgkqhkiG9w0BAQUFADBsMQswCQYDVQQGEw"
+    "JVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSswKQYD"
+    "VQQDEyJEaWdpQ2VydCBIaWdoIEFzc3VyYW5jZSBFViBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDT"
+    "MxMTExMDAwMDAwMFowbDELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UE"
+    "CxMQd3d3LmRpZ2ljZXJ0LmNvbTErMCkGA1UEAxMiRGlnaUNlcnQgSGlnaCBBc3N1cmFuY2UgRVYgUm"
+    "9vdCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMbM5XPm+9S75S0tMqbf5YE/yc0l"
+    "SbZxKsPVlDRnogocsF9ppkCxxLeyj9CYpKlBWTrT3JTWPNt0OKRKzE0lgvdKpVMSOO7zSW1xkX5jtq"
+    "umX8OkhPhPYlG++MXs2ziS4wblCJEMxChBVfvLWokVfnHoNb9Ncgk9vjo4UFt3MRuNs8ckRZqnrG0A"
+    "FFoEt7oT61EKmEFBIk5lYYeBQVCmeVyJ3hlKV9Uu5l0cUyx+mM0aBhakaHPQNAQTXKFx01p8VdteZO"
+    "E3hzBWBOURtCmAEvF5OYiiAhF8J2a3iLd48soKqDirCmTCv2ZdlYTBoSUeh10aUAsgEsxBu24LUTi4"
+    "S8sCAwEAAaNjMGEwDgYDVR0PAQH/BAQDAgGGMA8GA1UdEwEB/wQFMAMBAf8wHQYDVR0OBBYEFLE+w2"
+    "kD+L9HAdSYJhoIAu9jZCvDMB8GA1UdIwQYMBaAFLE+w2kD+L9HAdSYJhoIAu9jZCvDMA0GCSqGSIb3"
+    "DQEBBQUAA4IBAQAcGgaX3NecnzyIZgYIVyHbIUf4KmeqvxgydkAQV8GK83rZEWWONfqe/EW1ntlMMU"
+    "u4kehDLI6zeM7b41N5cdblIZQB2lWHmiRk9opmzN6cN82oNLFpmyPInngiK3BD41VHMWEZ71jFhS9O"
+    "MPagMRYjyOfiZRYzy78aG6A9+MpeizGLYAiJLQwGXFK3xPkKmNEVX58Svnw2Yzi9RKR/5CYrCsSXaQ"
+    "3pjOLAEFe4yHYSkVXySGnYvCoCWw9E1CAx2/S6cCZdkGCevEsXCS+0yx5DaMkHJ8HSXPfqIbloEpw8"
+    "nL+e/IBcm2PN7EeqJSdnoDfzAIJ9VNep+OkuE6N36B9K"_s);
+
+String extendedKeyUsage1("VR0lAA=="_s);
+String extendedKeyUsage2("KwYBBQUHAwE="_s);
+String extendedKeyUsage3("KwYBBAGCNwoDAw=="_s);
+String extendedKeyUsage4("YIZIAYb4QgQB"_s);
+
+TEST(IPCSerialization, SecTrustRef)
+{
+    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+    [dateFormatter setDateFormat:@"yyyy-MM-dd HH:mm:ss Z"];
+    [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+
+    NSDictionary *appleCertificatePlist = @{
+        @"anchorsOnly" : @(NO),
+        @"certificates" : @[
+            [[NSData alloc] initWithBase64EncodedString:cert1 options:0],
+            [[NSData alloc] initWithBase64EncodedString:cert2 options:0]
+        ],
+        @"chain" : @[
+            [[NSData alloc] initWithBase64EncodedString:chain1 options:0],
+            [[NSData alloc] initWithBase64EncodedString:chain2 options:0],
+            [[NSData alloc] initWithBase64EncodedString:chain3 options:0],
+        ],
+        @"details" : @[
+            @{ },
+            @{ },
+            @{ },
+        ],
+        @"info" : @{
+            @"CertificateTransparency" : @(YES),
+            @"CompanyName" : @"Apple Inc.",
+            @"ExtendedValidation" : @(YES),
+            @"Organization" : @"Apple Inc.",
+            @"Revocation" : @(YES),
+            @"RevocationValidUntil" : [dateFormatter dateFromString:@"2024-12-20 15:15:45 +0000"],
+            @"TrustExpirationDate" : [dateFormatter dateFromString:@"2024-12-20 15:15:45 +0000"],
+            @"TrustExtendedValidation" : @(YES),
+            @"TrustResultNotAfter" : [dateFormatter dateFromString:@"2024-12-20 06:12:43 +0000"],
+            @"TrustResultNotBefore" : [dateFormatter dateFromString:@"2024-12-20 03:42:43 +0000"],
+            @"TrustRevocationChecked" : @(YES),
+        },
+        @"keychainsAllowed" : @(YES),
+        @"policies" : @[
+            @{
+                @"SecPolicyOid" : @"1.2.840.113635.100.1.3",
+                @"SecPolicyPolicyName" : @"sslServer",
+                @"policyOptions" : @{
+                    @"BasicConstraints" : @(YES),
+                    @"CriticalExtensions" : @(YES),
+                    @"DuplicateExtension" : @(YES),
+                    @"ExtendedKeyUsage" : @[
+                        [NSData new],
+                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage1 options:0],
+                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage2 options:0],
+                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage3 options:0],
+                        [[NSData alloc] initWithBase64EncodedString:extendedKeyUsage4 options:0],
+                    ],
+                    @"GrayListedLeaf" : @(YES),
+                    @"IdLinkage" : @(YES),
+                    @"KeySize" : @{
+                        @"42" : @(2048),
+                        @"73" : @(256)
+                    },
+                    @"KeyUsage" : @[
+                        @(1),
+                        @(0)
+                    ],
+                    @"NonEmptySubject" : @(YES),
+                    @"OtherTrustValidityPeriod": @[
+                        @[
+                            [dateFormatter dateFromString:@"2019-06-30 23:00:00 +0000"],
+                            @(71283600)
+                        ]
+                    ],
+                    @"SSLHostname" : @"www.apple.com",
+                    @"ServerAuthEKU" : @(YES),
+                    @"SignatureHashAlgorithms" : @[
+                        @"SignatureDigestMD2",
+                        @"SignatureDigestMD4",
+                        @"SignatureDigestMD5",
+                        @"SignatureDigestSHA1"
+                    ],
+                    @"SystemTrustValidityPeriod" : @[
+                        @[
+                            [dateFormatter dateFromString:@"2018-03-01 00:00:00 +0000"],
+                            @(71283600)
+                        ],
+                        @[
+                            [dateFormatter dateFromString:@"2020-09-01 00:00:00 +0000"],
+                            @(34387200)
+                        ]
+                    ],
+                    @"SystemTrustedCTRequired" : @(YES),
+                    @"TemporalValidity" : @(YES),
+                    @"UnparseableExtension" : @(YES),
+                    @"WeakKeySize" : @(YES),
+                    @"WeakSignature" : @(YES)
+                }
+            }
+        ],
+        @"result" : @(4),
+        @"verifyDate" : [dateFormatter dateFromString:@"2024-12-20 04:57:08 +0000"],
+        @"responses" : @[
+            [NSData dataWithBytes:"AAAA" length:strlen("AAAA")]
+        ],
+        @"scts" : @[
+            [NSData dataWithBytes:"BBBB" length:strlen("BBBB")]
+        ],
+        @"anchors" : @[
+            [[NSData alloc] initWithBase64EncodedString:cert1 options:0]
+        ],
+        @"trustedLogs" : @[
+            [NSData dataWithBytes:"CCCC" length:strlen("CCCC")]
+        ],
+        @"exceptions" : @[
+            @{
+                @"Exception1" : @(YES),
+                @"Exception2" : @(NO),
+                @"Exception3" : [NSData dataWithBytes:"DDDD" length:strlen("DDDD")],
+                @"Exception4" : @(3)
+            }
+        ]
+    };
+
+    // The inline dictionary above does not compare equal. Do a serialization loop to get types which will compare equal.
+    CFErrorRef error = NULL;
+    RetainPtr<CFDataRef> dataBlob = adoptCF(CFPropertyListCreateData(
+        kCFAllocatorDefault,
+        appleCertificatePlist,
+        kCFPropertyListBinaryFormat_v1_0,
+        0,
+        &error
+    ));
+    EXPECT_FALSE(error);
+
+    CFPropertyListFormat format;
+    RetainPtr<CFPropertyListRef> recreatedAppleCertificatePlist = adoptCF(CFPropertyListCreateWithData(
+        kCFAllocatorDefault,
+        dataBlob.get(),
+        kCFPropertyListImmutable,
+        &format,
+        &error
+    ));
+    EXPECT_FALSE(error);
+
+    RetainPtr<SecTrustRef> trust = adoptCF(SecTrustCreateFromPropertyListRepresentation(recreatedAppleCertificatePlist.get(), &error));
+    EXPECT_FALSE(error);
+
+    RetainPtr<CFPropertyListRef> plistFromGeneratedObject = adoptCF(SecTrustCopyPropertyListRepresentation(trust.get(), &error));
+
+    bool loopedPlistEqual = CFEqual(recreatedAppleCertificatePlist.get(), plistFromGeneratedObject.get());
+    EXPECT_TRUE(loopedPlistEqual);
+
+    runTestCF({ trust.get() });
+}
+#endif
 
 TEST(IPCSerialization, NSShadow)
 {

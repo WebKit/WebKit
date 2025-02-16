@@ -39,9 +39,7 @@ public:
     
 private:
     std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
-#if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) final;
-#endif
     std::unique_ptr<PlatformControl> createPlatformInnerSpinButton(InnerSpinButtonPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMenuList(MenuListPart&) final;
     std::unique_ptr<PlatformControl> createPlatformMenuListButton(MenuListButtonPart&) final;

@@ -231,7 +231,7 @@ void ExtensionStyleSheets::maybeAddContentExtensionSheet(const String& identifie
 
 String ExtensionStyleSheets::contentForInjectedStyleSheet(const RefPtr<CSSStyleSheet>& styleSheet) const
 {
-    return m_injectedStyleSheetToSource.get(styleSheet);
+    return m_injectedStyleSheetToSource.get(*styleSheet);
 }
 
 void ExtensionStyleSheets::detachFromDocument()

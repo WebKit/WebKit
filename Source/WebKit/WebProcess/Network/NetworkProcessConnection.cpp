@@ -297,7 +297,8 @@ void NetworkProcessConnection::didCacheResource(const ResourceRequest& request, 
 WebIDBConnectionToServer& NetworkProcessConnection::idbConnectionToServer()
 {
     if (!m_webIDBConnection)
-        m_webIDBConnection = WebIDBConnectionToServer::create();
+        m_webIDBConnection = WebIDBConnectionToServer::create(WebProcess::singleton().sessionID());
+
     return *m_webIDBConnection;
 }
 

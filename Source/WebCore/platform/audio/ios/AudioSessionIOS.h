@@ -65,6 +65,7 @@ private:
     String routingContextUID() const final;
     size_t preferredBufferSize() const final;
     void setPreferredBufferSize(size_t) final;
+    size_t outputLatency() const final;
     bool isMuted() const final;
     void handleMutedStateChange() final;
 

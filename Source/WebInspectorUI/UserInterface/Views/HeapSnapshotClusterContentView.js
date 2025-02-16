@@ -75,6 +75,7 @@ WI.HeapSnapshotClusterContentView = class HeapSnapshotClusterContentView extends
         case "Promise":
         case "Error":
         case "Window":
+        case "DedicatedWorkerGlobalScope":
         case "Map Iterator":
         case "Set Iterator":
         case "Math":

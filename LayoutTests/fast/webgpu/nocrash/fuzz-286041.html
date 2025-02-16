@@ -1,0 +1,131 @@
+<!-- webkit-test-runner [ enableMetalDebugDevice=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+    try {
+// START
+let adapter0 = await navigator.gpu.requestAdapter({}
+);
+ let device0 = await adapter0.requestDevice({});
+ let texture0 = device0.createTexture({   size: [16, 16, 18],   format: 'bgra8unorm',   usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC, }
+);
+ let textureView0 = texture0.createView({dimension: '2d', format: 'bgra8unorm', baseArrayLayer: 3}
+);
+ let veryExplicitBindGroupLayout0 = device0.createBindGroupLayout({   entries: [     {       binding: 18,       visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,       buffer: { type: 'read-only-storage', minBindingSize: 86, hasDynamicOffset: false },     },     {       binding: 374,       visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,       externalTexture: {},     },   ], }
+);
+ 
+ let texture1 = device0.createTexture({   size: [1, 54, 1],   mipLevelCount: 3,   format: 'rg16sint',   usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT, }
+);
+ try { device0.queue.writeTexture({   texture: texture0,   mipLevel: 0,   origin: {x: 0, y: 0, z: 13},   aspect: 'all', }, new Uint8Array(8_699).fill(214), /* required buffer size: 8_699 */{offset: 197, bytesPerRow: 26, rowsPerImage: 109}, {width: 0, height: 0, depthOrArrayLayers: 4}); }
+ catch {}
+ let commandEncoder0 = device0.createCommandEncoder({}
+);
+ let texture2 = device0.createTexture({size: [2, 216, 1], format: 'r16uint', usage: GPUTextureUsage.RENDER_ATTACHMENT}
+);
+ try { commandEncoder0.copyTextureToTexture({   texture: texture0,   mipLevel: 0, }, {width: 0, height: 8, depthOrArrayLayers: 0}); }
+ catch {}
+ let imageData0 = new ImageData(64, 36);
+ let pipelineLayout0 = device0.createPipelineLayout({bindGroupLayouts: [veryExplicitBindGroupLayout0]}
+);
+ let buffer1 = device0.createBuffer({size: 8237, usage: GPUBufferUsage.INDEX | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX}
+);
+ let commandEncoder1 = device0.createCommandEncoder({}
+);
+ let textureView1 = texture0.createView({baseArrayLayer: 1, arrayLayerCount: 1}
+);
+ let computePassEncoder0 = commandEncoder0.beginComputePass();
+ let commandEncoder2 = device0.createCommandEncoder({}
+);
+ let texture3 = device0.createTexture({   size: {width: 272, height: 1, depthOrArrayLayers: 1},   sampleCount: 1,   format: 'rgba8unorm-srgb',   usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,   viewFormats: [], }
+);
+ let computePassEncoder1 = commandEncoder1.beginComputePass();
+ 
+ try { device0.queue.writeTexture({   texture: texture1,   mipLevel: 0,   origin: {x: 0, y: 4, z: 0},   aspect: 'all', }, new Uint8Array(165).fill(178), /* required buffer size: 165 */{offset: 165, bytesPerRow: 44}, {width: 0, height: 6, depthOrArrayLayers: 0}); }
+ catch {}
+ let commandEncoder3 = device0.createCommandEncoder({}
+);
+ 
+ let texture4 = device0.createTexture({   size: [1088, 1, 6],   sampleCount: 1,   format: 'r32float',   usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,   viewFormats: [], }
+);
+ 
+ let commandEncoder4 = device0.createCommandEncoder({}
+);
+ let textureView2 = texture3.createView({format: 'rgba8unorm-srgb', baseArrayLayer: 0}
+);
+ try { commandEncoder3.copyBufferToTexture({ }, new Uint8Array(131).fill(160), /* required buffer size: 131 */{offset: 131}, {width: 29, height: 0, depthOrArrayLayers: 0}); }
+ catch {}
+ let veryExplicitBindGroupLayout1 = device0.createBindGroupLayout({   entries: [     {binding: 12, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', hasDynamicOffset: false }},     {       binding: 39,       visibility: GPUShaderStage.FRAGMENT,       buffer: { type: 'uniform', minBindingSize: 0, hasDynamicOffset: false },     },     {binding: 61, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'comparison' }},   ], }
+);
+ let commandEncoder5 = device0.createCommandEncoder({}
+);
+ let texture5 = device0.createTexture({   size: [544],   dimension: '1d',   format: 'r32uint',   usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING,   viewFormats: [], }
+);
+ let textureView3 = texture5.createView({}
+);
+ let promise0 = device0.queue.onSubmittedWorkDone();
+ let texture6 = device0.createTexture({   size: [2, 216, 1],   format: 'r32uint',   usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,   viewFormats: [], }
+);
+ let textureView4 = texture6.createView({dimension: '2d-array'}
+);
+ await device0.queue.onSubmittedWorkDone();
+// END
+} catch {}
+globalThis.testRunner?.notifyDone();
+try {
+} catch {}
+try {
+} catch {}
+}
+onload = async () => {
+  try {
+  let workers = [
+  ];
+  let promises = [ window0() ];
+  } catch (e) {
+    if (e instanceof GPUPipelineError) {
+      if (e.name === 'OperationError') {
+      }
+    }
+  }
+};
+</script>

@@ -8,7 +8,6 @@ Evaluating in page...
 PASS: Capturing started.
 {
   "startTime": "<filtered>",
-  "frameId": "<filtered>",
   "data": {
     "type": "click",
     "defaultPrevented": false
@@ -19,7 +18,6 @@ PASS: Capturing started.
 }
 {
   "startTime": "<filtered>",
-  "frameId": "<filtered>",
   "data": {
     "type": "click",
     "defaultPrevented": false
@@ -52,7 +50,6 @@ PASS: Capturing started.
           }
         ]
       },
-      "frameId": "<filtered>",
       "data": {
         "scriptName": "timeline/line-column.html",
         "scriptLine": 17,
@@ -93,7 +90,6 @@ PASS: Capturing started.
       }
     ]
   },
-  "frameId": "<filtered>",
   "data": {
     "title": ""
   },
@@ -133,7 +129,6 @@ PASS: Capturing started.
       }
     ]
   },
-  "frameId": "<filtered>",
   "data": {
     "title": ""
   },

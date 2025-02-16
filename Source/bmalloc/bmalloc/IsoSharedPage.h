@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "IsoHeap.h"
 #include "IsoPage.h"
 #include "IsoSharedConfig.h"
@@ -61,3 +63,4 @@ uint8_t* indexSlotFor(void* ptr)
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +26,7 @@
 #pragma once
 
 #include "CSSCalcSymbolsAllowed.h"
+#include "CSSCalcValue.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSPropertyParserOptions.h"
@@ -238,6 +240,22 @@ template<typename Primitive> struct FunctionConsumerForCalcValues {
         if (RefPtr value = CSSCalcValue::parse(rangeCopy, context, Primitive::category, Primitive::range, WTFMove(symbolsAllowed), options)) {
             range = rangeCopy;
             return {{ value.releaseNonNull() }};
+        }
+
+        return std::nullopt;
+    }
+};
+
+template<typename T> struct KeywordConsumer {
+    static constexpr CSSParserTokenType tokenType = IdentToken;
+
+    static std::optional<T> consume(CSSParserTokenRange& range, const CSSParserContext&, CSSCalcSymbolsAllowed, CSSPropertyParserOptions)
+    {
+        ASSERT(range.peek().type() == IdentToken);
+
+        if (range.peek().id() == T::value) {
+            range.consumeIncludingWhitespace();
+            return T { };
         }
 
         return std::nullopt;

@@ -12,7 +12,7 @@ noInline(test2);
 var array = new Int32Array([1, 2, 3, 4, 5]);
 array.buffer.transfer();
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test1(array, i & 0b111);
     test2(array, i & 0b111);
 }

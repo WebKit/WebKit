@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.zoneddatetime.from
 description: Built-in time zones are parsed correctly out of valid strings
-features: [Temporal]
+features: [Temporal, canonical-tz]
 ---*/
 
 const valids = [

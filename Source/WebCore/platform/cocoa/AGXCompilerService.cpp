@@ -49,8 +49,8 @@ bool deviceHasAGXCompilerService()
             hasAGXCompilerService = false;
             return *hasAGXCompilerService;
         }
-        const char* machine = systemInfo.machine;
-        if (!strcmp(machine, "iPad5,1") || !strcmp(machine, "iPad5,2") || !strcmp(machine, "iPad5,3") || !strcmp(machine, "iPad5,4"))
+        auto machine = unsafeSpan(systemInfo.machine);
+        if (equalSpans(machine, "iPad5,1"_span) || equalSpans(machine, "iPad5,2"_span) || equalSpans(machine, "iPad5,3"_span) || equalSpans(machine, "iPad5,4"_span))
             hasAGXCompilerService = true;
         else
             hasAGXCompilerService = false;

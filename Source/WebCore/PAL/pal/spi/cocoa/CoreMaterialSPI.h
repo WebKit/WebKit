@@ -36,13 +36,30 @@
 
 #else
 
+typedef NSString * MTCoreMaterialVisualStyleCategory NS_STRING_ENUM;
+
+extern MTCoreMaterialVisualStyleCategory const MTCoreMaterialVisualStyleCategoryStroke;
+extern MTCoreMaterialVisualStyleCategory const MTCoreMaterialVisualStyleCategoryFill;
+
+typedef NSString * MTCoreMaterialVisualStyle NS_STRING_ENUM;
+
+extern MTCoreMaterialVisualStyle const MTCoreMaterialVisualStyleNone;
+extern MTCoreMaterialVisualStyle const MTCoreMaterialVisualStylePrimary;
+extern MTCoreMaterialVisualStyle const MTCoreMaterialVisualStyleSecondary;
+extern MTCoreMaterialVisualStyle const MTCoreMaterialVisualStyleTertiary;
+extern MTCoreMaterialVisualStyle const MTCoreMaterialVisualStyleQuaternary;
+extern MTCoreMaterialVisualStyle const MTCoreMaterialVisualStyleSeparator;
+
 typedef NSString * MTCoreMaterialRecipe NS_STRING_ENUM;
 
+extern MTCoreMaterialRecipe const MTCoreMaterialRecipeNone;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformChromeLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentUltraThinLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentThinLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentLight;
 extern MTCoreMaterialRecipe const MTCoreMaterialRecipePlatformContentThickLight;
+
+extern NSDictionary <NSString *, id> *MTVisualStylingCreateDictionaryRepresentation(MTCoreMaterialRecipe, MTCoreMaterialVisualStyleCategory, MTCoreMaterialVisualStyle, NSDictionary <NSString *, id> *);
 
 @interface MTMaterialLayer : CABackdropLayer
 

@@ -6,8 +6,8 @@ PASS animation-iteration-count: 0
 PASS animation-iteration-count: infinite
 PASS animation-direction: normal
 PASS animation-direction: reverse
-FAIL animation-direction: alternate assert_equals: expected "80px" but got "79.999992px"
-FAIL animation-direction: alternate-reverse assert_equals: expected "20px" but got "20.000008px"
+PASS animation-direction: alternate
+PASS animation-direction: alternate-reverse
 PASS animation-delay with a positive value
 PASS animation-delay with a negative value
 PASS animation-fill-mode

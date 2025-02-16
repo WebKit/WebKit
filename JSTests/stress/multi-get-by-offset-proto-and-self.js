@@ -7,7 +7,7 @@ noInline(foo);
 function Foo() { }
 Foo.prototype.f = 42;
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     if (i & 1) {
         var result = foo(new Foo());
         if (result != 42)

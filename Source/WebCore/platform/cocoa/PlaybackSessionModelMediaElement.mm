@@ -87,7 +87,13 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
             audioTracks->removeEventListener(events.removetrackEvent, *this, false);
         }
 
-        if (auto* textTracks = oldMediaElement->audioTracks()) {
+        if (auto* videoTracks = oldMediaElement->videoTracks()) {
+            videoTracks->removeEventListener(events.addtrackEvent, *this, false);
+            videoTracks->removeEventListener(events.changeEvent, *this, false);
+            videoTracks->removeEventListener(events.removetrackEvent, *this, false);
+        }
+
+        if (auto* textTracks = oldMediaElement->textTracks()) {
             textTracks->removeEventListener(events.addtrackEvent, *this, false);
             textTracks->removeEventListener(events.changeEvent, *this, false);
             textTracks->removeEventListener(events.removetrackEvent, *this, false);
@@ -108,6 +114,11 @@ void PlaybackSessionModelMediaElement::setMediaElement(HTMLMediaElement* mediaEl
         audioTracks.addEventListener(events.addtrackEvent, *this, false);
         audioTracks.addEventListener(events.changeEvent, *this, false);
         audioTracks.addEventListener(events.removetrackEvent, *this, false);
+
+        auto& videoTracks = newMediaElement->ensureVideoTracks();
+        videoTracks.addEventListener(events.addtrackEvent, *this, false);
+        videoTracks.addEventListener(events.changeEvent, *this, false);
+        videoTracks.addEventListener(events.removetrackEvent, *this, false);
 
         auto& textTracks = newMediaElement->ensureTextTracks();
         textTracks.addEventListener(events.addtrackEvent, *this, false);
@@ -494,7 +505,15 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
         client->legibleMediaSelectionOptionsChanged(legibleOptions, legibleIndex);
     }
 
+    maybeUpdateVideoMetadata();
+}
+
+void PlaybackSessionModelMediaElement::maybeUpdateVideoMetadata()
+{
 #if ENABLE(LINEAR_MEDIA_PLAYER)
+    RefPtr mediaElement = m_mediaElement;
+    if (!mediaElement)
+        return;
     RefPtr videoTracks = mediaElement->videoTracks();
     auto* selectedItem = videoTracks ? videoTracks->selectedItem() : nullptr;
     auto spatialVideoMetadata = selectedItem ? selectedItem->configuration().spatialVideoMetadata() : std::nullopt;
@@ -502,6 +521,13 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionOptions()
         for (auto& client : m_clients)
             client->spatialVideoMetadataChanged(spatialVideoMetadata);
         m_spatialVideoMetadata = WTFMove(spatialVideoMetadata);
+    }
+
+    bool isImmersiveVideo = selectedItem && selectedItem->configuration().isImmersiveVideo();
+    if (isImmersiveVideo != m_isImmersiveVideo) {
+        for (auto& client : m_clients)
+            client->isImmersiveVideoChanged(isImmersiveVideo);
+        m_isImmersiveVideo = isImmersiveVideo;
     }
 #endif
 }
@@ -515,6 +541,8 @@ void PlaybackSessionModelMediaElement::updateMediaSelectionIndices()
         client->audioMediaSelectionIndexChanged(audioIndex);
         client->legibleMediaSelectionIndexChanged(legibleIndex);
     }
+
+    maybeUpdateVideoMetadata();
 }
 
 double PlaybackSessionModelMediaElement::playbackStartedTime() const

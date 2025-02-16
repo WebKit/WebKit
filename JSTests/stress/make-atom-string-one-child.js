@@ -5,6 +5,6 @@ function foo() {
 }
 
 noInline(foo);
-for (let i = 0; i < 1e6; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     foo();
 }

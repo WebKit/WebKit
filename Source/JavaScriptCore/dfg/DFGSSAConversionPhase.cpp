@@ -482,7 +482,7 @@ private:
     InsertionSet m_insertionSet;
     UncheckedKeyHashMap<VariableAccessData*, SSACalculator::Variable*> m_ssaVariableForVariable;
     UncheckedKeyHashMap<Node*, Node*> m_argumentMapping;
-    HashSet<Node*> m_argumentGetters;
+    UncheckedKeyHashSet<Node*> m_argumentGetters;
     Vector<VariableAccessData*> m_variableForSSAIndex;
 };
 

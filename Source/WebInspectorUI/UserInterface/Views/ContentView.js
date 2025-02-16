@@ -122,12 +122,6 @@ WI.ContentView = class ContentView extends WI.View
         if (representedObject instanceof WI.CookieStorageObject)
             return new WI.CookieStorageContentView(representedObject, extraArguments);
 
-        if (representedObject instanceof WI.DatabaseTableObject)
-            return new WI.DatabaseTableContentView(representedObject, extraArguments);
-
-        if (representedObject instanceof WI.DatabaseObject)
-            return new WI.DatabaseContentView(representedObject, extraArguments);
-
         if (representedObject instanceof WI.IndexedDatabase)
             return new WI.IndexedDatabaseContentView(representedObject, extraArguments);
 
@@ -136,9 +130,6 @@ WI.ContentView = class ContentView extends WI.View
 
         if (representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
             return new WI.IndexedDatabaseObjectStoreContentView(representedObject, extraArguments);
-
-        if (representedObject instanceof WI.ApplicationCacheFrame)
-            return new WI.ApplicationCacheFrameContentView(representedObject, extraArguments);
 
         if (representedObject instanceof WI.DOMTree)
             return new WI.FrameDOMTreeContentView(representedObject, extraArguments);
@@ -308,17 +299,11 @@ WI.ContentView = class ContentView extends WI.View
             return true;
         if (representedObject instanceof WI.CookieStorageObject)
             return true;
-        if (representedObject instanceof WI.DatabaseTableObject)
-            return true;
-        if (representedObject instanceof WI.DatabaseObject)
-            return true;
         if (representedObject instanceof WI.IndexedDatabase)
             return true;
         if (representedObject instanceof WI.IndexedDatabaseObjectStore)
             return true;
         if (representedObject instanceof WI.IndexedDatabaseObjectStoreIndex)
-            return true;
-        if (representedObject instanceof WI.ApplicationCacheFrame)
             return true;
         if (representedObject instanceof WI.DOMTree)
             return true;

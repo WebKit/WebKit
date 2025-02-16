@@ -172,7 +172,7 @@ static pas_thread_local_cache* allocate_cache(unsigned allocator_index_capacity)
     size = pas_thread_local_cache_size_for_allocator_index_capacity(allocator_index_capacity);
     
     if (verbose)
-        printf("Cache size: %zu\n", size);
+        pas_log("Cache size: %zu\n", size);
     
     result = (pas_thread_local_cache*)pas_large_utility_free_heap_allocate_with_alignment(
         size, pas_alignment_create_traditional(pas_page_malloc_alignment()), "pas_thread_local_cache");
@@ -340,7 +340,7 @@ pas_local_allocator_result pas_thread_local_cache_get_local_allocator_slow(
         new_thread_local_cache = allocate_cache(index_capacity);
     
         if (verbose)
-            printf("[%d] Reallocating TLC %p -> %p\n", getpid(), thread_local_cache, new_thread_local_cache);
+            pas_log("[%d] Reallocating TLC %p -> %p\n", getpid(), thread_local_cache, new_thread_local_cache);
     
         new_thread_local_cache->node = thread_local_cache->node;
     
@@ -824,7 +824,7 @@ static void suspend(pas_thread_local_cache* cache, scavenger_thread_suspend_data
     thread_suspend_data->did_suspend = true;
     
     if (verbose)
-        printf("Suspending TLC %p with thread %p.\n", cache, cache->thread);
+        pas_log("Suspending TLC %p with thread %p.\n", cache, cache->thread);
 
     thread = cache->thread;
     PAS_ASSERT(thread);

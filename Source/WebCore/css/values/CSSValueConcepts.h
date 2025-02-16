@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -68,5 +68,15 @@ template<typename> inline constexpr auto TreatAsVariantLike = false;
 
 // The `VariantLike` concept can be used to filter to types that specialize `TreatAsVariantLike`.
 template<typename T> concept VariantLike = TreatAsVariantLike<T>;
+
+// The `HasIsZero` concept can be used to filter to types that have an `isZero` member function.
+template<typename T> concept HasIsZero = requires(T t) {
+    { t.isZero() } -> std::convertible_to<bool>;
+};
+
+// The `HasIsEmpty` concept can be used to filter to types that have an `isEmpty` member function.
+template<typename T> concept HasIsEmpty = requires(T t) {
+    { t.isEmpty() } -> std::convertible_to<bool>;
+};
 
 } // namespace WebCore

@@ -7,6 +7,6 @@ function foo(o) {
   o.x;
 };
 let i=0;
-for (;i<100000;++i) {
+for (;i<testLoopCount;++i) {
   foo(Object);
 }

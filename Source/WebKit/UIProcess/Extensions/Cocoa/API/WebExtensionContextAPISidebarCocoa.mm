@@ -183,7 +183,7 @@ void WebExtensionContext::sidebarOpen(const std::optional<WebExtensionWindowIden
     static NSString * const apiName = @"open()";
 
     if (!canProgrammaticallyOpenSidebar()) {
-        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nullString(), @"it is not implemented"));
         return;
     }
 
@@ -194,7 +194,7 @@ void WebExtensionContext::sidebarOpen(const std::optional<WebExtensionWindowIden
         if (RefPtr window = frontmostWindow())
             tab = window->activeTab();
         else {
-            completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, @"no windows are open"));
+            completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nullString(), @"no windows are open"));
             return;
         }
     } else {
@@ -216,24 +216,24 @@ void WebExtensionContext::sidebarOpen(const std::optional<WebExtensionWindowIden
         else if (auto window = frontmostWindow())
             tab = window->activeTab();
         else {
-            completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, unknownErrorString));
+            completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nullString(), unknownErrorString));
             return;
         }
     }
 
     if (!tab) {
-        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, unknownErrorString));
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nullString(), unknownErrorString));
         return;
     }
 
     std::optional<Ref<WebExtensionSidebar>> sidebar = getOrCreateSidebar(*tab);
     if (!sidebar) {
-        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, unknownErrorString));
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nullString(), unknownErrorString));
         return;
     }
 
     if (!sidebar.value()->isEnabled()) {
-        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nil, @"the sidebar is not enabled"));
+        completionHandler(toWebExtensionError(scopedAPINameFor(apiName, *this), nullString(), @"the sidebar is not enabled"));
         return;
     }
 
@@ -248,25 +248,25 @@ void WebExtensionContext::sidebarClose(CompletionHandler<void(Expected<void, Web
     static NSString * const apiName = @"sidebarAction.close()";
 
     if (!canProgrammaticallyCloseSidebar()) {
-        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
         return;
     }
 
     auto window = frontmostWindow();
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nil, @"no windows are open"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"no windows are open"));
         return;
     }
 
     auto tab = window->activeTab();
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
+        completionHandler(toWebExtensionError(apiName, nullString(), unknownErrorString));
         return;
     }
 
     auto maybeSidebar = getOrCreateSidebar(*tab);
     if (!maybeSidebar) {
-        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
+        completionHandler(toWebExtensionError(apiName, nullString(), unknownErrorString));
         return;
     }
 
@@ -306,25 +306,25 @@ void WebExtensionContext::sidebarToggle(CompletionHandler<void(Expected<void, We
     static NSString * const apiName = @"sidebarAction.toggle()";
 
     if (!canProgrammaticallyCloseSidebar() || !canProgrammaticallyOpenSidebar()) {
-        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
         return;
     }
 
     auto window = frontmostWindow();
     if (!window) {
-        completionHandler(toWebExtensionError(apiName, nil, @"no windows are open"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"no windows are open"));
         return;
     }
 
     auto tab = window->activeTab();
     if (!tab) {
-        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
+        completionHandler(toWebExtensionError(apiName, nullString(), unknownErrorString));
         return;
     }
 
     auto maybeSidebar = getOrCreateSidebar(*tab);
     if (!maybeSidebar) {
-        completionHandler(toWebExtensionError(apiName, nil, unknownErrorString));
+        completionHandler(toWebExtensionError(apiName, nullString(), unknownErrorString));
         return;
     }
 

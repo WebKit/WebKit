@@ -20,6 +20,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import importlib.abc
+import importlib.machinery
 import json
 import logging
 import math
@@ -43,7 +45,6 @@ from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
 
 from html.parser import HTMLParser
-from importlib import machinery as importmachinery
 from urllib.request import urlopen
 from urllib.error import URLError
 
@@ -438,6 +439,7 @@ class Package(object):
                 AutoInstall.log('Failed to install {}!'.format(archive), level=logging.CRITICAL)
                 raise
             finally:
+                importlib.machinery.PathFinder.invalidate_caches()
                 manifest = os.path.join(AutoInstall.directory, AutoInstall.MANIFEST_JSON)
                 with open(manifest, 'w') as file:
                     json.dump(AutoInstall.manifest, file, indent=4)
@@ -457,7 +459,7 @@ def _default_pypi_index():
     return 'pypi.org'
 
 
-class AutoInstall(object):
+class AutoInstall(importlib.abc.MetaPathFinder):
     LOCKFILE_TIMEOUT = 5 * 60
     MANIFEST_JSON = 'manifest.json'
     LOCK_FILE = 'autoinstall.lock'
@@ -492,10 +494,14 @@ class AutoInstall(object):
 
     @classmethod
     def _request(cls, url, ca_cert_path=None):
-        if sys.platform.startswith('linux'):
-            return urlopen(url, timeout=cls.timeout)
+        # This creates a default context, including default CA certs.
+        context = ssl.create_default_context()
 
-        context = ssl.create_default_context(cafile=ca_cert_path or cls.ca_cert_path)
+        if ca_cert_path is not None:
+            context.load_verify_locations(cafile=ca_cert_path)
+        elif cls.ca_cert_path is not None:
+            context.load_verify_locations(cafile=cls.ca_cert_path)
+
         return urlopen(url, timeout=cls.timeout, context=context)
 
     @classmethod
@@ -694,13 +700,6 @@ class AutoInstall(object):
 
     @classmethod
     def find_spec(cls, fullname, path=None, target=None):
-        loader = cls.find_module(fullname, path=path)
-        if not loader:
-            return None
-        return loader.create_module(None)
-
-    @classmethod
-    def find_module(cls, fullname, path=None):
         if not cls.enabled() or path is not None:
             return None
 
@@ -710,20 +709,9 @@ class AutoInstall(object):
 
         cls.install(name)
 
-        path = cls.directory
-        for part in fullname.split('.'):
-            path = os.path.join(path, part)
-            for ext in ('', '.py', '.pyc', '.py3', '.pyo'):
-                candidate = '{}{}'.format(path, ext)
-                if os.path.exists(candidate):
-                    path = candidate
-                    break
-            if not os.path.isdir(path):
-                break
-        if os.path.isdir(path):
-            path = os.path.join(path, '__init__.py')
-
-        return importmachinery.SourceFileLoader(name, path)
+        return importlib.machinery.PathFinder.find_spec(
+            fullname, [cls.directory], target
+        )
 
     @classmethod
     def tags(cls):

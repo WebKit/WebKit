@@ -81,24 +81,24 @@ std::optional<PercentageRaw<>> subtractFrom100Percent(const Style::ColorMix::Com
     return PercentageRaw<> { 100.0 - percentage.value };
 }
 
-void serializeColorMixColor(StringBuilder& builder, const ColorMix::Component& component)
+void serializeColorMixColor(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix::Component& component)
 {
-    serializationForCSS(builder, component.color);
+    serializationForCSS(builder, context, component.color);
 }
 
-void serializeColorMixColor(StringBuilder& builder, const Style::ColorMix::Component& component)
+void serializeColorMixColor(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ColorMix::Component& component)
 {
-    serializationForCSS(builder, component.color);
+    serializationForCSS(builder, context, component.color);
 }
 
-void serializeColorMixPercentage(StringBuilder& builder, const ColorMix::Component::Percentage& percentage)
+void serializeColorMixPercentage(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMix::Component::Percentage& percentage)
 {
-    serializationForCSS(builder, percentage);
+    serializationForCSS(builder, context, percentage);
 }
 
-void serializeColorMixPercentage(StringBuilder& builder, const Style::ColorMix::Component::Percentage& percentage)
+void serializeColorMixPercentage(StringBuilder& builder, const CSS::SerializationContext& context, const Style::ColorMix::Component::Percentage& percentage)
 {
-    serializationForCSS(builder, PercentageRaw<> { percentage.value });
+    serializationForCSS(builder, context, PercentageRaw<> { percentage.value });
 }
 
 } // namespace CSS

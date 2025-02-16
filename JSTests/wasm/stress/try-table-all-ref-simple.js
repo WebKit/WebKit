@@ -37,6 +37,6 @@ var instance = new WebAssembly.Instance(wasm_module);
 
 const { rethrow_test } = instance.exports
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     assert.eq(rethrow_test(), 3)
 }

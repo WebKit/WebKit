@@ -31,7 +31,7 @@ if autoinstall_path:
     from webkitcorepy import AutoInstall
     AutoInstall.set_directory(autoinstall_path)
 
-from flask import Flask, current_app, json as fjson
+from flask import Flask, current_app, json as fjson, render_template
 from reporelaypy import Checkout, CheckoutRoute, Redirector, HookReceiver
 from webkitflaskpy import Database
 
@@ -75,6 +75,12 @@ def health():
         fjson.dumps(dict(status='ready'), indent=4),
         mimetype='application/json',
     )
+
+
+@app.route('/')
+def compare():
+    return render_template('compare.html')
+
 
 # Crawling a reporelay service is always a bad idea
 @app.route('/robots.txt')

@@ -19,7 +19,7 @@ function foo(a, ...args) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let args = [];
     for (let i = 0; i < 400; i++) {
         args.push(i);

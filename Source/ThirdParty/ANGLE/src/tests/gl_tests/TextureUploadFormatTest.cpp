@@ -224,6 +224,7 @@ TEST_P(TextureUploadFormatTest, All)
         const auto actual = ReadColor(0, 0);
 
         GLColor expected;
+        std::optional<GLColor> alternativeExpected;
         switch (format.unpackFormat)
         {
             case GL_RGBA:
@@ -238,20 +239,10 @@ TEST_P(TextureUploadFormatTest, All)
                 break;
             case GL_DEPTH_COMPONENT:
             case GL_DEPTH_STENCIL:
-                // Metal back-end requires swizzle feature to return (depth, 0, 0, 1) from sampling
-                // a depth texture.
-                // http://anglebug.com/42263796
-                if (IsMetal() && !IsMetalTextureSwizzleAvailable())
-                {
-                    // If texture swizzle is not supported, we should only compare the first
-                    // component.
-                    expected = {refVals[0], actual[1], actual[2], actual[3]};
-                }
-                else
-                {
-
-                    expected = {refVals[0], 0, 0, 255};
-                }
+                expected = {refVals[0], 0, 0, 255};
+                // The green and blue channels are undefined. Some backends treat these textures are
+                // luminance while others return 0 in g/b channels.
+                alternativeExpected = {refVals[0], refVals[0], refVals[0], 255};
                 break;
             case GL_RED:
                 expected = {refVals[0], 0, 0, 255};
@@ -283,12 +274,13 @@ TEST_P(TextureUploadFormatTest, All)
 
         ASSERT_GL_NO_ERROR();
         auto result = actual.ExpectNear(expected, err);
-        if (!result)
+        if (!result && alternativeExpected.has_value())
         {
-            result << " [" << EnumStr(format.internalFormat) << "/" << EnumStr(format.unpackFormat)
-                   << "/" << EnumStr(format.unpackType) << " " << info << "]";
+            result = actual.ExpectNear(*alternativeExpected, err);
         }
-        EXPECT_TRUE(result);
+        EXPECT_TRUE(result) << " [" << EnumStr(format.internalFormat) << "/"
+                            << EnumStr(format.unpackFormat) << "/" << EnumStr(format.unpackType)
+                            << " " << info << "]";
     };
 
     // Provide buffers for test data, and a func to run the test on both the data directly, and on
@@ -346,6 +338,15 @@ TEST_P(TextureUploadFormatTest, All)
         fnTest(TexFormat(GL_LUMINANCE_ALPHA, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE), {1, 1, 1, 1});
         fnTest(TexFormat(GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE), {1, 1, 1, 0});
         fnTest(TexFormat(GL_ALPHA, GL_ALPHA, GL_UNSIGNED_BYTE), {0, 0, 0, 1});
+        if (IsGLExtensionEnabled("GL_OES_required_internalformat"))
+        {
+            fnTest(TexFormat(GL_LUMINANCE4_ALPHA4_OES, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE),
+                   {4, 4, 4, 4});
+            fnTest(TexFormat(GL_LUMINANCE8_ALPHA8_OES, GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE),
+                   {1, 1, 1, 1});
+            fnTest(TexFormat(GL_LUMINANCE8_OES, GL_LUMINANCE, GL_UNSIGNED_BYTE), {1, 1, 1, 0});
+            fnTest(TexFormat(GL_ALPHA8_OES, GL_ALPHA, GL_UNSIGNED_BYTE), {0, 0, 0, 1});
+        }
     }
 
     // RGBA+BYTE
@@ -392,6 +393,7 @@ TEST_P(TextureUploadFormatTest, All)
         ZeroAndCopy(srcBuffer, src);
 
         fnTest(TexFormat(GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1), {8, 8, 8, 255});
+        fnTest(TexFormat(GL_RGB5_A1, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1), {8, 8, 8, 255});
     }
 
     // RGBA+UNSIGNED_INT_2_10_10_10_REV

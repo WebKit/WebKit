@@ -5,8 +5,11 @@
 //
 
 #include "common/apple_platform_utils.h"
-#include "common/debug.h"
 
+#include "common/debug.h"
+#include "common/system_utils.h"
+
+#include <Foundation/Foundation.h>
 #include <Metal/Metal.h>
 
 namespace angle
@@ -70,6 +73,24 @@ bool IsMetalRendererAvailable()
     {
         ASSERT(queriedMachineModel);
         return false;
+    }
+#endif
+
+#if defined(ANGLE_PLATFORM_MACOS) && defined(__aarch64__)
+    NSOperatingSystemVersion systemVersion = [[NSProcessInfo processInfo] operatingSystemVersion];
+    if (systemVersion.majorVersion == 15 && systemVersion.minorVersion == 0)
+    {
+        // On ARM64 MacOS 15.0.x, Metal Shader with newLibraryWithSource didn't work,
+        // if the executable path contains non-ASCII characters.
+        // Bug: https://issues.chromium.org/issues/389559087
+        std::string executableName = GetExecutablePath();
+        for (char c : executableName)
+        {
+            if (static_cast<unsigned char>(c) > 127)
+            {
+                return false;
+            }
+        }
     }
 #endif
 

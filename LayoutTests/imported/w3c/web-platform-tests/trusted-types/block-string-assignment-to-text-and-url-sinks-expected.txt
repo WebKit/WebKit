@@ -1,0 +1,20 @@
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScriptURL value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+
+PASS Setting HTMLDivElement.innerHTML to a plain string
+PASS Setting HTMLScriptElement.innerHTML to a plain string
+PASS Setting SVGScriptElement.innerHTML to a plain string
+PASS Setting HTMLDivElement.innerText to a plain string
+PASS Setting HTMLScriptElement.innerText to a plain string
+PASS Setting SVGScriptElement.innerText to a plain string
+PASS Setting HTMLDivElement.textContent to a plain string
+PASS Setting HTMLScriptElement.textContent to a plain string
+PASS Setting SVGScriptElement.textContent to a plain string
+PASS Setting HTMLScriptElement.text to a plain string
+PASS Setting HTMLScriptElement.src to a plain string
+

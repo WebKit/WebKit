@@ -25,7 +25,7 @@ noInline(foo);
 var o = {g: 1};
 o.h = 2;
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({f: 1}, {g: 3});
     if (result != 8)
         throw "Error: bad result in loop: " + result;

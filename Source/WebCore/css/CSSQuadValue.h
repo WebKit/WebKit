@@ -35,12 +35,13 @@ public:
 
     const Quad& quad() const { return m_quad; }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSQuadValue&) const;
+    bool canBeCoalesced() const;
 
 private:
     explicit CSSQuadValue(Quad);
-
+    bool m_coalesceIdenticalValues { true };
     Quad m_quad;
 };
 

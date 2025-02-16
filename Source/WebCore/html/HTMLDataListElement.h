@@ -31,8 +31,6 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "HTMLElement.h"
 #include "TypedElementDescendantIterator.h"
 
@@ -64,5 +62,3 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(DATALIST_ELEMENT)

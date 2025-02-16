@@ -129,6 +129,11 @@
     [self doesNotRecognizeSelector:_cmd];
 }
 
+- (IBAction)saveAsCompleteWebPage:(id)sender
+{
+    [self doesNotRecognizeSelector:_cmd];
+}
+
 - (IBAction)goBack:(id)sender
 {
     [self doesNotRecognizeSelector:_cmd];

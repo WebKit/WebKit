@@ -29,6 +29,7 @@
 #if ENABLE(WEBASSEMBLY)
 
 #include "InPlaceInterpreter.h"
+#include "JSCJSValueInlines.h"
 #include "JSToWasm.h"
 #include "LLIntData.h"
 #include "LLIntExceptions.h"
@@ -205,6 +206,14 @@ void JSToWasmICCallee::setEntrypoint(MacroAssemblerCodeRef<JSEntryPtrTag>&& entr
 
 WasmToJSCallee::WasmToJSCallee()
     : Callee(Wasm::CompilationMode::WasmToJSMode)
+    , m_boxedThis(CalleeBits::encodeNativeCallee(this))
+{
+    NativeCalleeRegistry::singleton().registerCallee(this);
+}
+
+WasmToJSCallee::WasmToJSCallee(FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
+    : Callee(Wasm::CompilationMode::WasmToJSMode, index, WTFMove(name))
+    , m_boxedThis(CalleeBits::encodeNativeCallee(this))
 {
     NativeCalleeRegistry::singleton().registerCallee(this);
 }
@@ -446,6 +455,19 @@ IndexOrName OptimizingJITCallee::getOrigin(unsigned csi, unsigned depth, bool& i
     return indexOrName();
 }
 
+std::optional<CallSiteIndex> OptimizingJITCallee::tryGetCallSiteIndex(const void* pc) const
+{
+    constexpr bool verbose = false;
+    if (m_callSiteIndexMap) {
+        dataLogLnIf(verbose, "Querying ", RawPointer(pc));
+        if (std::optional<CodeOrigin> codeOrigin = m_callSiteIndexMap->findPC(removeCodePtrTag<void*>(pc))) {
+            dataLogLnIf(verbose, "Found ", *codeOrigin);
+            return CallSiteIndex { codeOrigin->bytecodeIndex().offset() };
+        }
+    }
+    return std::nullopt;
+}
+
 const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
 {
     auto iter = m_stackmaps.find(callSiteIndex);
@@ -460,6 +482,40 @@ const StackMap& OptimizingJITCallee::stackmap(CallSiteIndex callSiteIndex) const
     RELEASE_ASSERT(iter != m_stackmaps.end());
     return iter->value;
 }
+
+Box<PCToCodeOriginMap> OptimizingJITCallee::materializePCToOriginMap(B3::PCToOriginMap&& originMap, LinkBuffer& linkBuffer)
+{
+    constexpr bool shouldBuildMapping = true;
+    PCToCodeOriginMapBuilder builder(shouldBuildMapping);
+    for (const B3::PCToOriginMap::OriginRange& originRange : originMap.ranges()) {
+        B3::Origin b3Origin = originRange.origin;
+        auto* origin = std::bit_cast<const OMGOrigin*>(b3Origin.data());
+        if (origin) {
+            // We stash the location into a BytecodeIndex.
+            builder.appendItem(originRange.label, CodeOrigin(BytecodeIndex(origin->m_callSiteIndex.bits())));
+        } else
+            builder.appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
+    }
+    auto map = Box<PCToCodeOriginMap>::create(WTFMove(builder), linkBuffer);
+    WTF::storeStoreFence();
+    m_callSiteIndexMap = WTFMove(map);
+
+    if (Options::useSamplingProfiler()) {
+        PCToCodeOriginMapBuilder samplingProfilerBuilder(shouldBuildMapping);
+        for (const B3::PCToOriginMap::OriginRange& originRange : originMap.ranges()) {
+            B3::Origin b3Origin = originRange.origin;
+            auto* origin = std::bit_cast<const OMGOrigin*>(b3Origin.data());
+            if (origin) {
+                // We stash the location into a BytecodeIndex.
+                samplingProfilerBuilder.appendItem(originRange.label, CodeOrigin(BytecodeIndex(origin->m_opcodeOrigin.location())));
+            } else
+                samplingProfilerBuilder.appendItem(originRange.label, PCToCodeOriginMapBuilder::defaultCodeOrigin());
+        }
+        return Box<PCToCodeOriginMap>::create(WTFMove(samplingProfilerBuilder), linkBuffer);
+    }
+    return nullptr;
+}
+
 #endif
 
 JSEntrypointCallee::JSEntrypointCallee(TypeIndex typeIndex, bool usesSIMD)

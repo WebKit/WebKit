@@ -27,7 +27,7 @@ namespace
 // Limit decompressed vulkan pipelines to 10MB per program.
 static constexpr size_t kMaxLocalPipelineCacheSize = 10 * 1024 * 1024;
 
-bool ValidateTransformedSpirV(vk::Context *context,
+bool ValidateTransformedSpirV(vk::ErrorContext *context,
                               const gl::ShaderBitSet &linkedShaderStages,
                               const ShaderInterfaceVariableInfoMap &variableInfoMap,
                               const gl::ShaderMap<angle::spirv::Blob> &spirvBlobs)
@@ -86,7 +86,7 @@ uint32_t GetInterfaceBlockArraySize(const std::vector<gl::InterfaceBlock> &block
     return arraySize;
 }
 
-void SetupDefaultPipelineState(const vk::Context *context,
+void SetupDefaultPipelineState(const vk::ErrorContext *context,
                                const gl::ProgramExecutable &glExecutable,
                                gl::PrimitiveMode mode,
                                vk::PipelineRobustness pipelineRobustness,
@@ -248,7 +248,7 @@ vk::GraphicsPipelineSubset GetWarmUpSubset(const angle::FeaturesVk &features)
                                                             : vk::GraphicsPipelineSubset::Complete;
 }
 
-angle::Result UpdateFullTexturesDescriptorSet(vk::Context *context,
+angle::Result UpdateFullTexturesDescriptorSet(vk::ErrorContext *context,
                                               const ShaderInterfaceVariableInfoMap &variableInfoMap,
                                               const vk::WriteDescriptorDescs &writeDescriptorDescs,
                                               UpdateDescriptorSetsBuilder *updateBuilder,
@@ -354,15 +354,15 @@ angle::Result UpdateFullTexturesDescriptorSet(vk::Context *context,
 }
 }  // namespace
 
-class ProgramExecutableVk::WarmUpTaskCommon : public vk::Context, public LinkSubTask
+class ProgramExecutableVk::WarmUpTaskCommon : public vk::ErrorContext, public LinkSubTask
 {
   public:
-    WarmUpTaskCommon(vk::Renderer *renderer) : vk::Context(renderer) {}
+    WarmUpTaskCommon(vk::Renderer *renderer) : vk::ErrorContext(renderer) {}
     WarmUpTaskCommon(vk::Renderer *renderer,
                      ProgramExecutableVk *executableVk,
                      vk::PipelineRobustness pipelineRobustness,
                      vk::PipelineProtectedAccess pipelineProtectedAccess)
-        : vk::Context(renderer),
+        : vk::ErrorContext(renderer),
           mExecutableVk(executableVk),
           mPipelineRobustness(pipelineRobustness),
           mPipelineProtectedAccess(pipelineProtectedAccess)
@@ -523,7 +523,7 @@ ShaderInfo::ShaderInfo() {}
 
 ShaderInfo::~ShaderInfo() = default;
 
-angle::Result ShaderInfo::initShaders(vk::Context *context,
+angle::Result ShaderInfo::initShaders(vk::ErrorContext *context,
                                       const gl::ShaderBitSet &linkedShaderStages,
                                       const gl::ShaderMap<const angle::spirv::Blob *> &spirvBlobs,
                                       const ShaderInterfaceVariableInfoMap &variableInfoMap,
@@ -596,7 +596,7 @@ ProgramInfo::ProgramInfo() {}
 
 ProgramInfo::~ProgramInfo() = default;
 
-angle::Result ProgramInfo::initProgram(vk::Context *context,
+angle::Result ProgramInfo::initProgram(vk::ErrorContext *context,
                                        gl::ShaderType shaderType,
                                        bool isLastPreFragmentStage,
                                        bool isTransformFeedbackProgram,
@@ -618,6 +618,8 @@ angle::Result ProgramInfo::initProgram(vk::Context *context,
     options.isMultisampledFramebufferFetch =
         optionBits.multiSampleFramebufferFetch && shaderType == gl::ShaderType::Fragment;
     options.enableSampleShading = optionBits.enableSampleShading;
+    options.removeDepthStencilInput =
+        optionBits.removeDepthStencilInput && shaderType == gl::ShaderType::Fragment;
 
     options.useSpirvVaryingPrecisionFixer =
         context->getFeatures().varyingsRequireMatchingPrecisionInSpirv.enabled;
@@ -638,10 +640,6 @@ void ProgramInfo::release(ContextVk *contextVk)
 
     for (vk::ShaderModulePtr &shader : mShaders)
     {
-        if (shader)
-        {
-            shader->destroy(contextVk->getDevice());
-        }
         shader.reset();
     }
 }
@@ -712,10 +710,7 @@ void ProgramExecutableVk::resetLayout(ContextVk *contextVk)
     }
     mValidGraphicsPermutations.reset();
 
-    for (size_t index : mValidComputePermutations)
-    {
-        mComputePipelines[index].release(contextVk);
-    }
+    mComputePipelines.release(contextVk);
     mComputeProgramInfo.release(contextVk);
     mValidComputePermutations.reset();
 
@@ -734,7 +729,7 @@ void ProgramExecutableVk::reset(ContextVk *contextVk)
     }
 }
 
-angle::Result ProgramExecutableVk::initializePipelineCache(vk::Context *context,
+angle::Result ProgramExecutableVk::initializePipelineCache(vk::ErrorContext *context,
                                                            bool compressed,
                                                            const std::vector<uint8_t> &pipelineData)
 {
@@ -771,7 +766,7 @@ angle::Result ProgramExecutableVk::initializePipelineCache(vk::Context *context,
     return angle::Result::Continue;
 }
 
-angle::Result ProgramExecutableVk::ensurePipelineCacheInitialized(vk::Context *context)
+angle::Result ProgramExecutableVk::ensurePipelineCacheInitialized(vk::ErrorContext *context)
 {
     if (!mPipelineCache.valid())
     {
@@ -955,7 +950,7 @@ angle::Result ProgramExecutableVk::getPipelineCacheWarmUpTasks(
 }
 
 angle::Result ProgramExecutableVk::prepareForWarmUpPipelineCache(
-    vk::Context *context,
+    vk::ErrorContext *context,
     vk::PipelineRobustness pipelineRobustness,
     vk::PipelineProtectedAccess pipelineProtectedAccess,
     vk::GraphicsPipelineSubset subset,
@@ -1037,7 +1032,7 @@ angle::Result ProgramExecutableVk::prepareForWarmUpPipelineCache(
 }
 
 angle::Result ProgramExecutableVk::warmUpComputePipelineCache(
-    vk::Context *context,
+    vk::ErrorContext *context,
     vk::PipelineRobustness pipelineRobustness,
     vk::PipelineProtectedAccess pipelineProtectedAccess)
 {
@@ -1064,7 +1059,7 @@ angle::Result ProgramExecutableVk::warmUpComputePipelineCache(
 }
 
 angle::Result ProgramExecutableVk::warmUpGraphicsPipelineCache(
-    vk::Context *context,
+    vk::ErrorContext *context,
     vk::PipelineRobustness pipelineRobustness,
     vk::PipelineProtectedAccess pipelineProtectedAccess,
     vk::GraphicsPipelineSubset subset,
@@ -1142,11 +1137,11 @@ void ProgramExecutableVk::waitForGraphicsPostLinkTasks(
 
     if (!mWarmUpGraphicsPipelineDesc.keyEqual(currentGraphicsPipelineDesc, subset))
     {
-        // The GraphicsPipelineDesc used for warmup differs from the one used by the draw call.
-        // There is no need to wait for the warmup tasks to complete.
+        // The GraphicsPipelineDesc used for warm up differs from the one used by the draw call.
+        // There is no need to wait for the warm up tasks to complete.
         ANGLE_PERF_WARNING(
             contextVk->getDebug(), GL_DEBUG_SEVERITY_LOW,
-            "GraphicsPipelineDesc used for warmup differs from the one used by draw.");
+            "GraphicsPipelineDesc used for warm up differs from the one used by draw.");
 
         // If the warm up tasks are finished anyway, let |waitForPostLinkTasksImpl| clean them up.
         if (!angle::WaitableEvent::AllReady(&mExecutable->getPostLinkSubTaskWaitableEvents()))
@@ -1158,7 +1153,7 @@ void ProgramExecutableVk::waitForGraphicsPostLinkTasks(
     waitForPostLinkTasksImpl(contextVk);
 }
 
-angle::Result ProgramExecutableVk::mergePipelineCacheToRenderer(vk::Context *context) const
+angle::Result ProgramExecutableVk::mergePipelineCacheToRenderer(vk::ErrorContext *context) const
 {
     // Merge the cache with Renderer's
     if (context->getFeatures().mergeProgramPipelineCachesToGlobalCache.enabled)
@@ -1257,7 +1252,7 @@ void ProgramExecutableVk::addImageDescriptorSetDesc(vk::DescriptorSetLayoutDesc 
     }
 }
 
-void ProgramExecutableVk::addInputAttachmentDescriptorSetDesc(vk::Context *context,
+void ProgramExecutableVk::addInputAttachmentDescriptorSetDesc(vk::ErrorContext *context,
                                                               vk::DescriptorSetLayoutDesc *descOut)
 {
     if (!mExecutable->getLinkedShaderStages()[gl::ShaderType::Fragment])
@@ -1309,7 +1304,7 @@ void ProgramExecutableVk::addInputAttachmentDescriptorSetDesc(vk::Context *conte
 }
 
 angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
-    vk::Context *context,
+    vk::ErrorContext *context,
     const gl::ActiveTextureArray<TextureVk *> *activeTextures,
     vk::DescriptorSetLayoutDesc *descOut)
 {
@@ -1387,7 +1382,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
             }
             else
             {
-                VkFormat vkFormat = image.getActualVkFormat();
+                VkFormat vkFormat = image.getActualVkFormat(renderer);
                 ASSERT(vkFormat != 0);
                 ANGLE_TRY(renderer->getFormatDescriptorCountForVkFormat(context, vkFormat,
                                                                         &formatDescriptorCount));
@@ -1409,7 +1404,7 @@ angle::Result ProgramExecutableVk::addTextureDescriptorSetDesc(
     return angle::Result::Continue;
 }
 
-void ProgramExecutableVk::initializeWriteDescriptorDesc(vk::Context *context)
+void ProgramExecutableVk::initializeWriteDescriptorDesc(vk::ErrorContext *context)
 {
     const gl::ShaderBitSet &linkedShaderStages = mExecutable->getLinkedShaderStages();
 
@@ -1467,19 +1462,23 @@ ProgramTransformOptions ProgramExecutableVk::getTransformOptions(
         contextVk->getFeatures().emulateTransformFeedback.enabled &&
         !contextVk->getState().isTransformFeedbackActiveUnpaused();
     FramebufferVk *drawFrameBuffer = vk::GetImpl(contextVk->getState().getDrawFramebuffer());
-    const bool hasFramebufferFetch = mExecutable->usesColorFramebufferFetch() ||
-                                     mExecutable->usesDepthFramebufferFetch() ||
-                                     mExecutable->usesStencilFramebufferFetch();
-    const bool isMultisampled      = drawFrameBuffer->getSamples() > 1;
+    const bool hasDepthStencilFramebufferFetch =
+        mExecutable->usesDepthFramebufferFetch() || mExecutable->usesStencilFramebufferFetch();
+    const bool hasFramebufferFetch =
+        mExecutable->usesColorFramebufferFetch() || hasDepthStencilFramebufferFetch;
+    const bool isMultisampled                    = drawFrameBuffer->getSamples() > 1;
     transformOptions.multiSampleFramebufferFetch = hasFramebufferFetch && isMultisampled;
     transformOptions.enableSampleShading =
         contextVk->getState().isSampleShadingEnabled() && isMultisampled;
+    transformOptions.removeDepthStencilInput =
+        hasDepthStencilFramebufferFetch &&
+        drawFrameBuffer->getDepthStencilRenderTarget() == nullptr;
 
     return transformOptions;
 }
 
 angle::Result ProgramExecutableVk::initGraphicsShaderPrograms(
-    vk::Context *context,
+    vk::ErrorContext *context,
     ProgramTransformOptions transformOptions)
 {
     ASSERT(mExecutable->hasLinkedShaderStage(gl::ShaderType::Vertex));
@@ -1503,7 +1502,7 @@ angle::Result ProgramExecutableVk::initGraphicsShaderPrograms(
 }
 
 angle::Result ProgramExecutableVk::initProgramThenCreateGraphicsPipeline(
-    vk::Context *context,
+    vk::ErrorContext *context,
     ProgramTransformOptions transformOptions,
     vk::GraphicsPipelineSubset pipelineSubset,
     vk::PipelineCacheAccess *pipelineCache,
@@ -1520,7 +1519,7 @@ angle::Result ProgramExecutableVk::initProgramThenCreateGraphicsPipeline(
 }
 
 angle::Result ProgramExecutableVk::createGraphicsPipelineImpl(
-    vk::Context *context,
+    vk::ErrorContext *context,
     ProgramTransformOptions transformOptions,
     vk::GraphicsPipelineSubset pipelineSubset,
     vk::PipelineCacheAccess *pipelineCache,
@@ -1671,7 +1670,7 @@ angle::Result ProgramExecutableVk::linkGraphicsPipelineLibraries(
 }
 
 angle::Result ProgramExecutableVk::getOrCreateComputePipeline(
-    vk::Context *context,
+    vk::ErrorContext *context,
     vk::PipelineCacheAccess *pipelineCache,
     PipelineSource source,
     vk::PipelineRobustness pipelineRobustness,
@@ -1690,7 +1689,7 @@ angle::Result ProgramExecutableVk::getOrCreateComputePipeline(
 }
 
 angle::Result ProgramExecutableVk::createPipelineLayout(
-    vk::Context *context,
+    vk::ErrorContext *context,
     PipelineLayoutCache *pipelineLayoutCache,
     DescriptorSetLayoutCache *descriptorSetLayoutCache,
     gl::ActiveTextureArray<TextureVk *> *activeTextures)
@@ -1816,7 +1815,7 @@ angle::Result ProgramExecutableVk::createPipelineLayout(
 }
 
 angle::Result ProgramExecutableVk::initializeDescriptorPools(
-    vk::Context *context,
+    vk::ErrorContext *context,
     DescriptorSetLayoutCache *descriptorSetLayoutCache,
     vk::DescriptorSetArray<vk::MetaDescriptorPool> *metaDescriptorPools)
 {
@@ -2013,7 +2012,7 @@ angle::Result ProgramExecutableVk::updateTexturesDescriptorSet(
 
 template <typename CommandBufferT>
 angle::Result ProgramExecutableVk::bindDescriptorSets(
-    vk::Context *context,
+    vk::ErrorContext *context,
     uint32_t currentFrame,
     vk::CommandBufferHelperCommon *commandBufferHelper,
     CommandBufferT *commandBuffer,
@@ -2083,13 +2082,13 @@ angle::Result ProgramExecutableVk::bindDescriptorSets(
 }
 
 template angle::Result ProgramExecutableVk::bindDescriptorSets<vk::priv::SecondaryCommandBuffer>(
-    vk::Context *context,
+    vk::ErrorContext *context,
     uint32_t currentFrame,
     vk::CommandBufferHelperCommon *commandBufferHelper,
     vk::priv::SecondaryCommandBuffer *commandBuffer,
     PipelineType pipelineType);
 template angle::Result ProgramExecutableVk::bindDescriptorSets<vk::VulkanSecondaryCommandBuffer>(
-    vk::Context *context,
+    vk::ErrorContext *context,
     uint32_t currentFrame,
     vk::CommandBufferHelperCommon *commandBufferHelper,
     vk::VulkanSecondaryCommandBuffer *commandBuffer,
@@ -2199,7 +2198,7 @@ angle::Result ProgramExecutableVk::updateUniforms(vk::Context *context,
 }
 
 size_t ProgramExecutableVk::calcUniformUpdateRequiredSpace(
-    vk::Context *context,
+    vk::ErrorContext *context,
     gl::ShaderMap<VkDeviceSize> *uniformOffsets) const
 {
     size_t requiredSpace = 0;
@@ -2227,7 +2226,7 @@ void ProgramExecutableVk::onProgramBind()
 }
 
 angle::Result ProgramExecutableVk::resizeUniformBlockMemory(
-    vk::Context *context,
+    vk::ErrorContext *context,
     const gl::ShaderMap<size_t> &requiredBufferSize)
 {
     for (gl::ShaderType shaderType : mExecutable->getLinkedShaderStages())

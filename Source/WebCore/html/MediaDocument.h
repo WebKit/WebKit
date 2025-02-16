@@ -51,7 +51,7 @@ private:
 
     Ref<DocumentParser> createParser() override;
 
-    void defaultEventHandler(Event&) override;
+    void defaultEventHandler(Event&) override { }
 
     void replaceMediaElementTimerFired();
 

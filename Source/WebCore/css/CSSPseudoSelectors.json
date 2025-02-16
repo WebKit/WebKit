@@ -282,62 +282,50 @@
             "user-agent-part": true
         },
         "-webkit-date-and-time-value": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-day-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-fields-wrapper": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-hour-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-meridiem-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-millisecond-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-minute-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-month-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-second-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-text": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },
         "-webkit-datetime-edit-year-field": {
-            "conditional": "ENABLE(DATE_AND_TIME_INPUT_TYPES)",
             "status": "non-standard",
             "user-agent-part": true
         },

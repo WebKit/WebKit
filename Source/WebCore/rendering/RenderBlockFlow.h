@@ -127,7 +127,7 @@ public:
     RenderBlockFlow(Type, Document&, RenderStyle&&, OptionSet<BlockFlowFlag> = { });
     virtual ~RenderBlockFlow();
         
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) override;
 
 protected:
     void willBeDestroyed() override;
@@ -140,9 +140,9 @@ protected:
 
     // RenderBlockFlow always contains either lines or paragraphs. When the children are all blocks (e.g. paragraphs), we call layoutBlockChildren.
     // When the children are all inline (e.g., lines), we call layoutInlineChildren.
-    void layoutInFlowChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
-    void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
-    void layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    void layoutInFlowChildren(RelayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
+    void layoutBlockChildren(RelayoutChildren, LayoutUnit& maxFloatLogicalBottom);
+    void layoutInlineChildren(RelayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
 
     void simplifiedNormalFlowLayout() override;
     LayoutUnit shiftForAlignContent(LayoutUnit intrinsicLogicalHeight, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
@@ -153,8 +153,8 @@ protected:
 
     void dirtyLineFromChangedChild() final
     {
-        if (svgTextLayout())
-            svgTextLayout()->lineBoxes().dirtyLineFromChangedChild(*this);
+        if (svgTextLayout() && svgTextLayout()->legacyRootBox())
+            svgTextLayout()->legacyRootBox()->markDirty();
     }
 
     void paintColumnRules(PaintInfo&, const LayoutPoint&) override;
@@ -463,7 +463,7 @@ protected:
 protected:
     // Called to lay out the legend for a fieldset or the ruby text of a ruby run. Also used by multi-column layout to handle
     // the flow thread child.
-    void layoutExcludedChildren(bool relayoutChildren) override;
+    void layoutExcludedChildren(RelayoutChildren) override;
     void addOverflowFromFloats();
 
 private:
@@ -472,7 +472,7 @@ private:
     
     RenderBlockFlow* previousSiblingWithOverhangingFloats(bool& parentHasFloats) const;
 
-    void checkForPaginationLogicalHeightChange(bool& relayoutChildren, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged);
+    void checkForPaginationLogicalHeightChange(RelayoutChildren&, LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged);
 
     void paintInlineChildren(PaintInfo&, const LayoutPoint&) override;
     void paintFloats(PaintInfo&, const LayoutPoint&, bool preservePhase = false) override;
@@ -523,7 +523,7 @@ private:
     bool hasSvgTextLayout() const;
 
     bool hasInlineLayout() const;
-    void layoutInlineContent(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
+    void layoutInlineContent(RelayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom);
     bool tryComputePreferredWidthsUsingInlinePath(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth);
     void setStaticPositionsForSimpleOutOfFlowContent();
 

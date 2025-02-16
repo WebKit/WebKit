@@ -33,11 +33,10 @@
 
 #if !UCONFIG_NO_COLLATION
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #include <mutex>
 #include <unicode/ucol.h>
 #include <wtf/Lock.h>
+#include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringView.h>
 
 #if OS(DARWIN) && USE(CF)
@@ -61,16 +60,19 @@ static inline const char* resolveDefaultLocale(const char* locale)
 
 #else
 
-static inline char* copyShortASCIIString(CFStringRef string)
+static inline CString copyShortASCIIString(CFStringRef string)
 {
-    // OK to have a fixed size buffer and to only handle ASCII since we only use this for locale names.
-    char buffer[256];
-    if (!string || !CFStringGetCString(string, buffer, sizeof(buffer), kCFStringEncodingASCII))
-        return strdup("");
-    return strdup(buffer);
+    if (!string)
+        return CString(""_s);
+
+    std::span<char> buffer;
+    auto result = CString::newUninitialized(CFStringGetLength(string) + 1, buffer);
+    if (!CFStringGetCString(string, buffer.data(), buffer.size(), kCFStringEncodingASCII))
+        return CString(""_s);
+    return result;
 }
 
-static char* copyDefaultLocale()
+static CString copyDefaultLocale()
 {
 #if !PLATFORM(IOS_FAMILY)
     return copyShortASCIIString(static_cast<CFStringRef>(CFLocaleGetValue(adoptCF(CFLocaleCopyCurrent()).get(), kCFLocaleCollatorIdentifier)));
@@ -86,20 +88,22 @@ static inline const char* resolveDefaultLocale(const char* locale)
         return locale;
     // Since iOS and OS X don't set UNIX locale to match the user's selected locale, the ICU default locale is not the right one.
     // So, instead of passing null to ICU, we pass the name of the user's selected locale.
-    static char* defaultLocale;
+    static LazyNeverDestroyed<CString> defaultLocale;
     static std::once_flag initializeDefaultLocaleOnce;
     std::call_once(initializeDefaultLocaleOnce, []{
-        defaultLocale = copyDefaultLocale();
+        defaultLocale.construct(copyDefaultLocale());
     });
-    return defaultLocale;
+    return defaultLocale.get().data();
 }
 
 #endif
 
 static inline bool localesMatch(const char* a, const char* b)
 {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // Two null locales are equal, other locales are compared with strcmp.
     return a == b || (a && b && !strcmp(a, b));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 Collator::Collator(const char* locale, bool shouldSortLowercaseFirst)
@@ -180,6 +184,7 @@ static UBool hasPreviousLatin1(UCharIterator* iterator)
     return iterator->index > iterator->start;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static UChar32 currentLatin1(UCharIterator* iterator)
 {
     ASSERT(iterator->index >= iterator->start);
@@ -202,6 +207,7 @@ static UChar32 previousLatin1(UCharIterator* iterator)
         return U_SENTINEL;
     return static_cast<const LChar*>(iterator->context)[--iterator->index];
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static uint32_t getStateLatin1(const UCharIterator* iterator)
 {
@@ -258,7 +264,9 @@ int Collator::collate(StringView a, StringView b) const
 static UCharIterator createIterator(const char8_t* string)
 {
     UCharIterator iterator;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     uiter_setUTF8(&iterator, byteCast<char>(string), strlen(byteCast<char>(string)));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return iterator;
 }
 
@@ -273,7 +281,5 @@ int Collator::collate(const char8_t* a, const char8_t* b) const
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

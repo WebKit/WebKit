@@ -318,7 +318,7 @@ void UniqueIDBDatabaseTransaction::renameIndex(const IDBRequestData& requestData
 }
 
 
-void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& keyData, const IDBValue& value, const IndexIDToIndexKeyMap& indexKeys, IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "UniqueIDBDatabaseTransaction::putOrAdd");
 
@@ -329,7 +329,7 @@ void UniqueIDBDatabaseTransaction::putOrAdd(const IDBRequestData& requestData, c
     if (!database)
         return;
     
-    database->putOrAdd(requestData, keyData, value, overwriteMode, [this, weakThis = WeakPtr { *this }, requestData](auto& error, const IDBKeyData& key) {
+    database->putOrAdd(requestData, keyData, value, indexKeys, overwriteMode, [this, weakThis = WeakPtr { *this }, requestData](auto& error, const IDBKeyData& key) {
         LOG(IndexedDB, "UniqueIDBDatabaseTransaction::putOrAdd (callback)");
 
         if (!weakThis || !m_databaseConnection)

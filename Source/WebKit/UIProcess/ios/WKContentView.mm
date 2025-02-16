@@ -61,6 +61,7 @@
 #import "_WKWebViewPrintFormatterInternal.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <WebCore/AccessibilityObject.h>
+#import <WebCore/FloatConversion.h>
 #import <WebCore/FloatQuad.h>
 #import <WebCore/InspectorOverlay.h>
 #import <WebCore/LocalFrameView.h>
@@ -669,7 +670,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 static WebCore::FloatBoxExtent floatBoxExtent(UIEdgeInsets insets)
 {
-    return WebCore::FloatBoxExtent(insets.top, insets.right, insets.bottom, insets.left);
+    return { WebCore::narrowPrecisionToFloatFromCGFloat(insets.top), WebCore::narrowPrecisionToFloatFromCGFloat(insets.right), WebCore::narrowPrecisionToFloatFromCGFloat(insets.bottom), WebCore::narrowPrecisionToFloatFromCGFloat(insets.left) };
 }
 
 - (CGRect)_computeUnobscuredContentRectRespectingInputViewBounds:(CGRect)unobscuredContentRect inputViewBounds:(CGRect)inputViewBounds

@@ -195,7 +195,7 @@ void Structure::forEachPropertyConcurrently(const Functor& functor)
     
     bool didFindStructure = findStructuresAndMapForMaterialization(structures, tableStructure, table);
 
-    HashSet<UniquedStringImpl*> seenProperties;
+    UncheckedKeyHashSet<UniquedStringImpl*> seenProperties;
 
     for (auto* structure : structures) {
         if (!structure->m_transitionPropertyName || seenProperties.contains(structure->m_transitionPropertyName.get()))

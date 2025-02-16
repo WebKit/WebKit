@@ -8,39 +8,25 @@
 #ifndef SkMaskFilterBase_DEFINED
 #define SkMaskFilterBase_DEFINED
 
-#include "include/core/SkBlurTypes.h"
 #include "include/core/SkFlattenable.h"
 #include "include/core/SkMaskFilter.h"
-#include "include/core/SkPaint.h"
+#include "include/core/SkPoint.h"
+#include "include/core/SkRect.h"
+#include "include/core/SkRefCnt.h"
+#include "include/core/SkScalar.h"
 #include "include/core/SkStrokeRec.h"
 #include "include/private/base/SkNoncopyable.h"
-#include "src/base/SkTLazy.h"
+#include "src/base/SkTLazy.h"  // IWYU pragma: keep
 #include "src/core/SkMask.h"
 
-class GrClip;
-struct GrFPArgs;
-class GrFragmentProcessor;
-class GrPaint;
-class GrRecordingContext;
-class GrRenderTarget;
-namespace skgpu {
-namespace ganesh {
-class SurfaceDrawContext;
-}
-}  // namespace skgpu
-class GrResourceProvider;
-class GrStyledShape;
-class GrSurfaceProxyView;
-class GrTexture;
-class GrTextureProxy;
-
-class SkBitmap;
 class SkBlitter;
 class SkCachedData;
+class SkImageFilter;
 class SkMatrix;
 class SkPath;
-class SkRasterClip;
 class SkRRect;
+class SkRasterClip;
+enum SkBlurStyle : int;
 
 class SkMaskFilterBase : public SkMaskFilter {
 public:
@@ -116,10 +102,10 @@ public:
 protected:
     SkMaskFilterBase() {}
 
-    enum FilterReturn {
-        kFalse_FilterReturn,
-        kTrue_FilterReturn,
-        kUnimplemented_FilterReturn
+    enum class FilterReturn {
+        kFalse,
+        kTrue,
+        kUnimplemented,
     };
 
     class NinePatch : ::SkNoncopyable {
@@ -137,9 +123,9 @@ protected:
     /**
      *  Override if your subclass can filter a rect, and return the answer as
      *  a ninepatch mask to be stretched over the returned outerRect. On success
-     *  return kTrue_FilterReturn. On failure (e.g. out of memory) return
-     *  kFalse_FilterReturn. If the normal filterMask() entry-point should be
-     *  called (the default) return kUnimplemented_FilterReturn.
+     *  return FilterReturn::kTrue. On failure (e.g. out of memory) return
+     *  FilterReturn::kFalse. If the normal filterMask() entry-point should be
+     *  called (the default) return FilterReturn::kUnimplemented.
      *
      *  By convention, the caller will take the center rol/col from the returned
      *  mask as the slice it can replicate horizontally and vertically as we

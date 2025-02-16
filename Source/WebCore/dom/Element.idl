@@ -37,8 +37,10 @@
     [CEReactions=Needed, Reflect, Unscopable] attribute DOMString slot;
     [SameObject, PutForwards=value] readonly attribute DOMTokenList part;
 
+    [ImplementedAs=customElementRegistry, EnabledBySetting=ScopedCustomElementRegistryEnabled] readonly attribute CustomElementRegistry? customElements;
+
     [DOMJIT=ReadDOM] boolean hasAttributes();
-    [SameObject] readonly attribute NamedNodeMap attributes;
+    [SameObject, ImplementedAs=attributesMap] readonly attribute NamedNodeMap attributes;
     sequence<DOMString> getAttributeNames();
     [DOMJIT=ReadDOM, ImplementedAs=getAttributeForBindings] DOMString? getAttribute([AtomString] DOMString qualifiedName);
     [ImplementedAs=getAttributeNSForBindings] DOMString? getAttributeNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString localName);

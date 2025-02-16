@@ -172,6 +172,7 @@ class CommandBuffer : public WrappedObject<CommandBuffer, VkCommandBuffer>
     VkCommandBuffer releaseHandle();
 
     // This is used for normal pool allocated command buffers. It reset the handle.
+    // Note: this method does not require pool synchronization (locking the pool mutex).
     void destroy(VkDevice device);
 
     // This is used in conjunction with VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT.
@@ -600,8 +601,6 @@ class ShaderModule final : public WrappedObject<ShaderModule, VkShaderModule>
   public:
     ShaderModule() = default;
     void destroy(VkDevice device);
-    // Somebody must have called destroy(device) explicitly already
-    void destroy() { ASSERT(!valid()); }
 
     VkResult init(VkDevice device, const VkShaderModuleCreateInfo &createInfo);
 };
@@ -611,8 +610,6 @@ class PipelineLayout final : public WrappedObject<PipelineLayout, VkPipelineLayo
   public:
     PipelineLayout() = default;
     void destroy(VkDevice device);
-    // Owner must explicitly call destroy(device) before last reference count goes away.
-    void destroy() { ASSERT(!valid()); }
 
     VkResult init(VkDevice device, const VkPipelineLayoutCreateInfo &createInfo);
 };
@@ -633,8 +630,6 @@ class DescriptorSetLayout final : public WrappedObject<DescriptorSetLayout, VkDe
   public:
     DescriptorSetLayout() = default;
     void destroy(VkDevice device);
-    // Owner must explicitly call destroy(device) before last reference count goes away.
-    void destroy() { ASSERT(!valid()); }
 
     VkResult init(VkDevice device, const VkDescriptorSetLayoutCreateInfo &createInfo);
 };
@@ -916,6 +911,8 @@ ANGLE_INLINE void CommandBuffer::imageWaitEvent(const VkEvent &event,
 
 ANGLE_INLINE void CommandBuffer::destroy(VkDevice device)
 {
+    // Note: do not add code that may access the pool in any way, because this method may be called
+    // without taking the pool mutex lock.
     releaseHandle();
 }
 

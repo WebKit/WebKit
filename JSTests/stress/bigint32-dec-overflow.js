@@ -9,12 +9,12 @@ function dec(a) {
 noInline(dec);
 
 {
-    for (var i = 0; i < 100000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(dec(BigInt(i)), BigInt(i - 1));
 }
 {
     let min = -0x7fffffffn - 1n;
     let result = -0x80000001n;
-    for (var i = 0; i < 100000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(dec(min), result);
 }

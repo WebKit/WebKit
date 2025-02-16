@@ -97,7 +97,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
     String persistentId = [coordinator device].uniqueID;
     auto rotation = computeVideoFrameRotation(clampToInteger([coordinator videoRotationAngleForHorizonLevelPreview]));
 
-    RunLoop::main().dispatch([protectedSelf = retainPtr(self), self, persistentId = WTFMove(persistentId).isolatedCopy(), rotation] {
+    RunLoop::protectedMain()->dispatch([protectedSelf = retainPtr(self), self, persistentId = WTFMove(persistentId).isolatedCopy(), rotation] {
         if (_managerProxy)
             _managerProxy->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
     });

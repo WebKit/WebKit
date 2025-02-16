@@ -27,7 +27,6 @@
 #pragma once
 
 #include <wtf/Forward.h>
-#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 namespace Calculation {
@@ -63,6 +62,7 @@ enum class Operator : uint8_t {
     Down,
     ToZero,
     Progress,
+    Random,
     Blend,
 };
 

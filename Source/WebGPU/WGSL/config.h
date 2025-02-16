@@ -25,6 +25,4 @@
 
 #include <wtf/Assertions.h>
 
-#include <wtf/DisallowCType.h>
-
 #include <wtf/Platform.h>

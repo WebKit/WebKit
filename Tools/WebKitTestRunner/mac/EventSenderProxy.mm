@@ -35,7 +35,7 @@
 #import "TestRunnerWKWebView.h"
 #import "WebKitTestRunnerWindow.h"
 #import <Carbon/Carbon.h>
-#import <WebCore/PlatformMouseEvent.h>
+#import <WebCore/MouseEventTypes.h>
 #import <WebKit/WKString.h>
 #import <WebKit/WKPagePrivate.h>
 #import <WebKit/WKWebView.h>

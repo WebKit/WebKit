@@ -86,6 +86,7 @@ void InspectorDOMDebuggerAgent::disable()
     m_pauseOnAllIntervalsBreakpoint = nullptr;
     m_pauseOnAllListenersBreakpoint = nullptr;
     m_pauseOnAllTimeoutsBreakpoint = nullptr;
+    m_pauseOnAllAnimationFramesBreakpoint = nullptr;
 
     m_urlTextBreakpoints.clear();
     m_urlRegexBreakpoints.clear();
@@ -133,6 +134,9 @@ void InspectorDOMDebuggerAgent::mainFrameNavigated()
 
     if (m_pauseOnAllTimeoutsBreakpoint)
         m_pauseOnAllTimeoutsBreakpoint->resetHitCount();
+
+    if (m_pauseOnAllAnimationFramesBreakpoint)
+        m_pauseOnAllAnimationFramesBreakpoint->resetHitCount();
 }
 
 Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBreakpoint(Inspector::Protocol::DOMDebugger::EventBreakpointType breakpointType, const String& eventName, std::optional<bool>&& caseSensitive, std::optional<bool>&& isRegex, RefPtr<JSON::Object>&& options)
@@ -169,8 +173,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::setEventBrea
 
     switch (breakpointType) {
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
-        if (!setAnimationFrameBreakpoint(errorString, WTFMove(breakpoint)))
-            return makeUnexpected(errorString);
+        if (m_pauseOnAllAnimationFramesBreakpoint)
+            return makeUnexpected("Breakpoint for AnimationFrame already exists"_s);
+        m_pauseOnAllAnimationFramesBreakpoint = WTFMove(breakpoint);
         return { };
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
@@ -225,8 +230,9 @@ Inspector::Protocol::ErrorStringOr<void> InspectorDOMDebuggerAgent::removeEventB
 
     switch (breakpointType) {
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::AnimationFrame:
-        if (!setAnimationFrameBreakpoint(errorString, nullptr))
-            return makeUnexpected(errorString);
+        if (!m_pauseOnAllAnimationFramesBreakpoint)
+            return makeUnexpected("Breakpoint for AnimationFrame missing"_s);
+        m_pauseOnAllAnimationFramesBreakpoint = nullptr;
         return { };
 
     case Inspector::Protocol::DOMDebugger::EventBreakpointType::Interval:
@@ -369,6 +375,30 @@ void InspectorDOMDebuggerAgent::didFireTimer(bool oneShot)
         return;
 
     auto breakpoint = oneShot ? m_pauseOnAllTimeoutsBreakpoint : m_pauseOnAllIntervalsBreakpoint;
+    if (!breakpoint)
+        return;
+
+    m_debuggerAgent->cancelPauseForSpecialBreakpoint(*breakpoint);
+}
+
+void InspectorDOMDebuggerAgent::willFireAnimationFrame()
+{
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
+    auto breakpoint = m_pauseOnAllAnimationFramesBreakpoint;
+    if (!breakpoint)
+        return;
+
+    m_debuggerAgent->schedulePauseForSpecialBreakpoint(*breakpoint, Inspector::DebuggerFrontendDispatcher::Reason::AnimationFrame);
+}
+
+void InspectorDOMDebuggerAgent::didFireAnimationFrame()
+{
+    if (!m_debuggerAgent->breakpointsActive())
+        return;
+
+    auto breakpoint = m_pauseOnAllAnimationFramesBreakpoint;
     if (!breakpoint)
         return;
 

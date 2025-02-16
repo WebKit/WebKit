@@ -692,7 +692,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncPop, (JSGlobalObject* globalObject, CallF
 
     JSValue thisValue = callFrame->thisValue().toThis(globalObject, ECMAMode::strict());
 
-    if (isJSArray(thisValue))
+    if (LIKELY(isJSArray(thisValue)))
         RELEASE_AND_RETURN(scope, JSValue::encode(asArray(thisValue)->pop(globalObject)));
 
     JSObject* thisObj = thisValue.toObject(globalObject);
@@ -1267,14 +1267,25 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncSplice, (JSGlobalObject* globalObject, Ca
 
     uint64_t actualDeleteCount = length - actualStart;
     if (callFrame->argumentCount() > 1) {
-        double deleteCount = callFrame->uncheckedArgument(1).toIntegerOrInfinity(globalObject);
-        RETURN_IF_EXCEPTION(scope, encodedJSValue());
-        if (deleteCount < 0)
-            actualDeleteCount = 0;
-        else if (deleteCount > length - actualStart)
-            actualDeleteCount = length - actualStart;
-        else
-            actualDeleteCount = static_cast<uint64_t>(deleteCount);
+        JSValue deleteCountValue = callFrame->uncheckedArgument(1);
+        if (LIKELY(deleteCountValue.isInt32())) {
+            int32_t deleteCount = deleteCountValue.asInt32();
+            if (deleteCount < 0)
+                actualDeleteCount = 0;
+            else if (static_cast<uint64_t>(deleteCount) > length - actualStart)
+                actualDeleteCount = length - actualStart;
+            else
+                actualDeleteCount = static_cast<uint64_t>(deleteCount);
+        } else {
+            double deleteCount = deleteCountValue.toIntegerOrInfinity(globalObject);
+            RETURN_IF_EXCEPTION(scope, encodedJSValue());
+            if (deleteCount < 0)
+                actualDeleteCount = 0;
+            else if (deleteCount > length - actualStart)
+                actualDeleteCount = length - actualStart;
+            else
+                actualDeleteCount = static_cast<uint64_t>(deleteCount);
+        }
     }
     unsigned itemCount = std::max<int>(callFrame->argumentCount() - 2, 0);
     if (UNLIKELY(length - actualDeleteCount + itemCount > static_cast<uint64_t>(maxSafeInteger())))
@@ -1399,7 +1410,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         }
         auto& butterfly = *array->butterfly();
         auto data = butterfly.contiguous().data();
-        if (direction == IndexOfDirection::Forward) {
+        if constexpr (direction == IndexOfDirection::Forward) {
             for (; index < length; ++index) {
                 // Array#indexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches against Int32 value.
@@ -1421,7 +1432,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         auto& butterfly = *array->butterfly();
         auto data = butterfly.contiguous().data();
 
-        if (direction == IndexOfDirection::Forward) {
+        if constexpr (direction == IndexOfDirection::Forward) {
             if (searchElement.isObject()) {
                 auto* result = std::bit_cast<const WriteBarrier<Unknown>*>(WTF::find64(std::bit_cast<const uint64_t*>(data + index), JSValue::encode(searchElement), length - index));
                 if (result)
@@ -1458,7 +1469,7 @@ ALWAYS_INLINE JSValue fastIndexOf(JSGlobalObject* globalObject, VM& vm, JSArray*
         double searchNumber = searchElement.asNumber();
         auto& butterfly = *array->butterfly();
         auto data = butterfly.contiguousDouble().data();
-        if (direction == IndexOfDirection::Forward) {
+        if constexpr (direction == IndexOfDirection::Forward) {
             for (; index < length; ++index) {
                 // Array#indexOf uses `===` semantics (not UncheckedKeyHashMap isEqual semantics).
                 // And the hole never matches since it is NaN.
@@ -1500,7 +1511,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIndexOf, (JSGlobalObject* globalObject, C
     RETURN_IF_EXCEPTION(scope, { });
     JSValue searchElement = callFrame->argument(0);
 
-    if (isJSArray(thisObject)) {
+    if (LIKELY(isJSArray(thisObject))) {
         JSValue result = fastIndexOf<IndexOfDirection::Forward>(globalObject, vm, asArray(thisObject), length, searchElement, index);
         RETURN_IF_EXCEPTION(scope, { });
         if (result)
@@ -1564,7 +1575,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncLastIndexOf, (JSGlobalObject* globalObjec
 
     JSValue searchElement = callFrame->argument(0);
 
-    if (isJSArray(thisObject)) {
+    if (LIKELY(isJSArray(thisObject))) {
         JSValue result = fastIndexOf<IndexOfDirection::Backward>(globalObject, vm, asArray(thisObject), length, searchElement, index);
         RETURN_IF_EXCEPTION(scope, { });
         if (result)
@@ -1782,7 +1793,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
     JSValue thisValue = callFrame->thisValue();
 
     if (!callFrame->argumentCount()) {
-        if (isJSArray(thisValue)) {
+        if (LIKELY(isJSArray(thisValue))) {
             auto* array = jsCast<JSArray*>(thisValue);
             if (LIKELY(arrayMissingIsConcatSpreadable(vm, array) && arraySpeciesWatchpointIsValid(vm, array))) {
                 JSArray* result = tryCloneArrayFromFast<ArrayFillMode::Empty>(globalObject, array);
@@ -1793,7 +1804,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
         }
     } else if (callFrame->argumentCount() == 1) {
         JSValue argumentValue = callFrame->uncheckedArgument(0);
-        if (isJSArray(thisValue)) {
+        if (LIKELY(isJSArray(thisValue))) {
             auto* firstArray = jsCast<JSArray*>(thisValue);
             if (LIKELY(arrayMissingIsConcatSpreadable(vm, firstArray) && arraySpeciesWatchpointIsValid(vm, firstArray))) {
                 // This code assumes that neither array has set Symbol.isConcatSpreadable. If the first array
@@ -1953,7 +1964,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncFill, (JSGlobalObject* globalObject, Call
         return JSValue::encode(thisObject);
 
     JSValue value = callFrame->argument(0);
-    if (isJSArray(thisValue)) {
+    if (LIKELY(isJSArray(thisValue))) {
         auto* array = jsCast<JSArray*>(thisValue);
         if (array->fastFill(vm, k, finalIndex, value))
             return JSValue::encode(array);
@@ -1987,7 +1998,7 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncToReversed, (JSGlobalObject* globalObject
         return { };
     }
 
-    if (isJSArray(thisObject)) {
+    if (LIKELY(isJSArray(thisObject))) {
         JSArray* thisArray = jsCast<JSArray*>(thisObject);
         if (auto fastResult = thisArray->fastToReversed(globalObject, length))
             return JSValue::encode(fastResult);

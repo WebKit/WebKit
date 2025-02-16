@@ -169,7 +169,7 @@ LayoutRect RenderButton::controlClipRect(const LayoutPoint& additionalOffset) co
 
 static LayoutUnit synthesizedBaselineFromContentBox(const RenderBox& box, LineDirectionMode direction)
 {
-    return direction == HorizontalLine ? box.borderTop() + box.paddingTop() + box.contentHeight() : box.borderRight() + box.paddingRight() + box.contentWidth();
+    return direction == HorizontalLine ? box.borderTop() + box.paddingTop() + box.contentBoxHeight() : box.borderRight() + box.paddingRight() + box.contentBoxWidth();
 }
 
 LayoutUnit RenderButton::baselinePosition(FontBaseline fontBaseline, bool firstLine, LineDirectionMode direction, LinePositionMode mode) const

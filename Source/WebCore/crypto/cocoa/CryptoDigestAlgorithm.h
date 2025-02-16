@@ -36,8 +36,6 @@ static std::optional<PAL::CryptoDigest::Algorithm> cryptoDigestAlgorithm(CryptoA
     switch (hashFunction) {
     case CryptoAlgorithmIdentifier::SHA_1:
         return PAL::CryptoDigest::Algorithm::SHA_1;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        return PAL::CryptoDigest::Algorithm::SHA_224;
     case CryptoAlgorithmIdentifier::SHA_256:
         return PAL::CryptoDigest::Algorithm::SHA_256;
     case CryptoAlgorithmIdentifier::SHA_384:

@@ -82,13 +82,13 @@ class SyncedData(object):
             self.fully_qualified_type = underlying_type_namespace + '::' + underlying_type
 
 
-def sorted_headers_from_datas(datas):
-    header_set = set()
+def headers_from_datas(datas):
+    header_list = []
     for data in datas:
         if data.header is None:
             continue
-        header_set.add(data.header)
-    return sorted(list(header_set))
+        header_list.append(data.header)
+    return header_list
 
 
 def parse_process_sync_data(file):
@@ -154,11 +154,8 @@ def generate_process_sync_client_header(synched_datas):
     result.append(_header_license)
     result.append('#pragma once\n')
 
-    headers = sorted_headers_from_datas(synched_datas)
-
-    headers_set = set(headers)
-    headers_set.add('<wtf/TZoneMallocInlines.h>')
-    headers = sorted(list(headers_set))
+    headers = headers_from_datas(synched_datas)
+    headers.append('<wtf/TZoneMallocInlines.h>')
     for header in headers:
         result.append('#include %s' % header)
 
@@ -222,9 +219,9 @@ def generate_process_sync_data_header(synched_datas, document_synched_datas):
     result.append(_header_license)
     result.append('#pragma once\n')
 
-    headers = sorted_headers_from_datas(synched_datas)
+    headers = headers_from_datas(synched_datas)
     headers.append('<variant>')
-    for header in sorted(headers):
+    for header in headers:
         result.append('#include %s' % header)
 
     result.append('\nnamespace WebCore {\n')
@@ -306,7 +303,7 @@ def generate_document_synched_data_header(synched_datas):
             continue
         headers.append(data.header)
 
-    for header in sorted(headers):
+    for header in headers:
         result.append('#include %s' % header)
 
     result.append(_document_synced_data_header_midfix)
@@ -513,17 +510,14 @@ def generate_process_sync_data_serialiation_in(synched_datas, document_synched_d
 
 
 def sort_data_lists(synched_datas):
-    type_set = set()
-    conditional_type_set = set()
+    type_list = []
+    conditional_type_list = []
 
     for data in synched_datas:
         if data.conditional is None:
-            type_set.add(data)
+            type_list.append(data)
         else:
-            conditional_type_set.add(data)
-
-    type_list = sorted(list(type_set), key=lambda data: data.fully_qualified_type)
-    conditional_type_list = sorted(list(conditional_type_set), key=lambda data: data.fully_qualified_type)
+            conditional_type_list.append(data)
 
     return type_list, conditional_type_list
 

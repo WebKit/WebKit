@@ -33,9 +33,9 @@
 #include "TextCombinerPadGStreamer.h"
 #include <wtf/glib/WTFGType.h>
 
-static GstStaticPadTemplate sinkTemplate = GST_STATIC_PAD_TEMPLATE("sink_%u", GST_PAD_SINK, GST_PAD_REQUEST, GST_STATIC_CAPS_ANY);
+static GstStaticPadTemplate combinerSinkTemplate = GST_STATIC_PAD_TEMPLATE("sink_%u", GST_PAD_SINK, GST_PAD_REQUEST, GST_STATIC_CAPS_ANY);
 
-static GstStaticPadTemplate srcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS_ANY);
+static GstStaticPadTemplate combinerSrcTemplate = GST_STATIC_PAD_TEMPLATE("src", GST_PAD_SRC, GST_PAD_ALWAYS, GST_STATIC_CAPS_ANY);
 
 GST_DEBUG_CATEGORY_STATIC(webkitTextCombinerDebug);
 #define GST_CAT_DEFAULT webkitTextCombinerDebug
@@ -44,7 +44,6 @@ struct _WebKitTextCombinerPrivate {
     GRefPtr<GstElement> combinerElement;
 };
 
-#define webkit_text_combiner_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(WebKitTextCombiner, webkit_text_combiner, GST_TYPE_BIN,
     GST_DEBUG_CATEGORY_INIT(webkitTextCombinerDebug, "webkittextcombiner", 0, "webkit text combiner"))
 
@@ -180,7 +179,7 @@ static void webkitTextCombinerReleasePad(GstElement* element, GstPad* pad)
 
 static void webKitTextCombinerConstructed(GObject* object)
 {
-    GST_CALL_PARENT(G_OBJECT_CLASS, constructed, (object));
+    G_OBJECT_CLASS(webkit_text_combiner_parent_class)->constructed(object);
 
     auto* combiner = WEBKIT_TEXT_COMBINER(object);
     auto* priv = combiner->priv;
@@ -204,8 +203,8 @@ static void webkit_text_combiner_class_init(WebKitTextCombinerClass* klass)
 
     objectClass->constructed = webKitTextCombinerConstructed;
 
-    gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&sinkTemplate));
-    gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&srcTemplate));
+    gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&combinerSinkTemplate));
+    gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&combinerSrcTemplate));
 
     gst_element_class_set_metadata(elementClass, "WebKit text combiner", "Generic",
         "A combiner that accepts any caps, but converts plain text to WebVTT",

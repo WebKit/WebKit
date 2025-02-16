@@ -53,9 +53,9 @@ public:
     
     void run()
     {
-        HashSet<StackSlot*> validSlots;
-        HashSet<BasicBlock*> validBlocks;
-        HashSet<Special*> validSpecials;
+        UncheckedKeyHashSet<StackSlot*> validSlots;
+        UncheckedKeyHashSet<BasicBlock*> validBlocks;
+        UncheckedKeyHashSet<Special*> validSpecials;
         
         for (BasicBlock* block : m_code)
             validBlocks.add(block);
@@ -134,7 +134,7 @@ public:
 
         for (BasicBlock* block : m_code) {
             // We expect the predecessor list to be de-duplicated.
-            HashSet<BasicBlock*> predecessors;
+            UncheckedKeyHashSet<BasicBlock*> predecessors;
             for (BasicBlock* predecessor : block->predecessors())
                 predecessors.add(predecessor);
             VALIDATE(block->numPredecessors() == predecessors.size(), ("At ", *block));

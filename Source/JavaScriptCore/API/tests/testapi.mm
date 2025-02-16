@@ -493,7 +493,9 @@ static bool blockSignatureContainsClass()
 {
     static bool containsClass = ^{
         id block = ^(NSString *string){ return string; };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return _Block_has_signature(block) && strstr(_Block_signature(block), "NSString");
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }();
     return containsClass;
 }
@@ -2088,10 +2090,14 @@ static NSURL* cacheFileInDataVault(NSString* name)
         char userDir[PATH_MAX];
         RELEASE_ASSERT(confstr(_CS_DARWIN_USER_DIR, userDir, sizeof(userDir)));
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         NSString *userDirPath = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:userDir length:strlen(userDir)];
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         dataVaultURL = [NSURL fileURLWithPath:userDirPath isDirectory:YES];
         dataVaultURL = [dataVaultURL URLByAppendingPathComponent:@"JavaScriptCore" isDirectory:YES];
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         rootless_mkdir_datavault(dataVaultURL.path.UTF8String, 0700, "JavaScriptCore");
+ALLOW_DEPRECATED_DECLARATIONS_END
     });
 
     return [dataVaultURL URLByAppendingPathComponent:name isDirectory:NO];

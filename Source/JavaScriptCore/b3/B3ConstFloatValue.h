@@ -53,7 +53,9 @@ public:
     Value* absConstant(Procedure&) const final;
     Value* ceilConstant(Procedure&) const final;
     Value* floorConstant(Procedure&) const final;
+    Value* fTruncConstant(Procedure&) const final;
     Value* sqrtConstant(Procedure&) const final;
+    Value* purifyNaNConstant(Procedure&) const final;
     Value* fMinConstant(Procedure&, const Value* other) const final;
     Value* fMaxConstant(Procedure&, const Value* other) const final;
 

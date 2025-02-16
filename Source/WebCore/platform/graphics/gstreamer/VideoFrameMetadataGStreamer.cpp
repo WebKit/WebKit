@@ -103,12 +103,16 @@ const GstMetaInfo* videoFrameMetadataGetInfo()
     return metaInfo;
 }
 
-GstBuffer* webkitGstBufferSetVideoFrameTimeMetadata(GstBuffer* buffer, std::optional<VideoFrameTimeMetadata>&& metadata)
+GRefPtr<GstBuffer> webkitGstBufferSetVideoFrameTimeMetadata(GRefPtr<GstBuffer>&& buffer, std::optional<WebCore::VideoFrameTimeMetadata>&& metadata)
 {
-    if (!GST_IS_BUFFER(buffer))
-        return nullptr;
+    auto modifiedBuffer = adoptGRef(gst_buffer_make_writable(buffer.leakRef()));
+    auto meta = getInternalVideoFrameMetadata(modifiedBuffer.get());
+    if (meta) {
+        meta->priv->videoSampleMetadata = WTFMove(metadata);
+        return modifiedBuffer;
+    }
 
-    auto [modifiedBuffer, meta] = ensureVideoFrameMetadata(buffer);
+    meta = VIDEO_FRAME_METADATA_CAST(gst_buffer_add_meta(modifiedBuffer.get(), videoFrameMetadataGetInfo(), nullptr));
     meta->priv->videoSampleMetadata = WTFMove(metadata);
     return modifiedBuffer;
 }

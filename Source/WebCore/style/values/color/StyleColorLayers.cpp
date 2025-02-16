@@ -28,6 +28,7 @@
 
 #include "CSSColorLayersResolver.h"
 #include "CSSColorLayersSerialization.h"
+#include "CSSSerializationContext.h"
 #include "ColorSerialization.h"
 #include "StyleBuilderState.h"
 #include "StyleColorResolutionState.h"
@@ -93,15 +94,15 @@ bool containsCurrentColor(const ColorLayers& colorLayers)
 
 // MARK: - Serialization
 
-void serializationForCSS(StringBuilder& builder, const ColorLayers& colorLayers)
+void serializationForCSS(StringBuilder& builder, const CSS::SerializationContext& context, const ColorLayers& colorLayers)
 {
-    CSS::serializationForCSSColorLayers(builder, colorLayers);
+    CSS::serializationForCSSColorLayers(builder, context, colorLayers);
 }
 
-String serializationForCSS(const ColorLayers& colorLayers)
+String serializationForCSS(const CSS::SerializationContext& context, const ColorLayers& colorLayers)
 {
     StringBuilder builder;
-    serializationForCSS(builder, colorLayers);
+    serializationForCSS(builder, context, colorLayers);
     return builder.toString();
 }
 
@@ -109,7 +110,7 @@ String serializationForCSS(const ColorLayers& colorLayers)
 
 WTF::TextStream& operator<<(WTF::TextStream& ts, const ColorLayers& colorLayers)
 {
-    return ts << serializationForCSS(colorLayers);
+    return ts << serializationForCSS(CSS::defaultSerializationContext(), colorLayers);
 }
 
 } // namespace Style

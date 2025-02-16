@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WebPageProxyIdentifier.h"
 #include <WebCore/CookieChangeListener.h>
 #include <WebCore/CookieJar.h>
 #include <WebCore/SameSiteInfo.h>
@@ -50,7 +51,7 @@ public:
 
     bool isSupported();
 
-    String cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebCore::IncludeSecureCookies);
+    String cookiesForDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, WebPageProxyIdentifier, WebCore::IncludeSecureCookies);
     void setCookiesFromDOM(const URL& firstParty, const WebCore::SameSiteInfo&, const URL&, WebCore::FrameIdentifier, WebCore::PageIdentifier, const String& cookieString, WebCore::ShouldRelaxThirdPartyCookieBlocking);
 
     PendingCookieUpdateCounter::Token WARN_UNUSED_RETURN willSetCookieFromDOM();
@@ -60,6 +61,8 @@ public:
 
     void clear();
     void clearForHost(const String&);
+
+    void setOptInCookiePartitioningEnabled(bool);
 
 private:
     WebCore::NetworkStorageSession& inMemoryStorageSession();
@@ -72,6 +75,9 @@ private:
 
     HashSet<String> m_hostsWithInMemoryStorage;
     std::unique_ptr<WebCore::NetworkStorageSession> m_inMemoryStorageSession;
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    bool m_optInCookiePartitioningEnabled { false };
+#endif
 
     PendingCookieUpdateCounter m_pendingCookieUpdateCounter;
 };

@@ -42,13 +42,15 @@ LCHLike convertToPolarForm(const LabLike& color)
     // https://drafts.csswg.org/css-color/#lab-to-lch
     auto [lightness, a, b, alpha] = color.resolved();
 
-    // Epsilon chosen to ensure `white` (the SRGB named value) is
-    // considered achromatic (e.g. we set hue to NaN) when converted
-    // to lch/oklch.
-    constexpr auto epsilon = 0.02f;
+    constexpr float epsilon = LabLike::Model::achromaticEpsilon;
+
+    bool achromatic = std::abs(a) < epsilon && std::abs(b) < epsilon;
+
+    if (achromatic)
+        return { lightness, 0, std::numeric_limits<float>::quiet_NaN(), alpha };
 
     float chroma = std::hypot(a, b);
-    float hue = (std::abs(a) < epsilon && std::abs(b) < epsilon) ? std::numeric_limits<float>::quiet_NaN() : rad2deg(atan2(b, a));
+    float hue = rad2deg(atan2(b, a));
 
     return { lightness, chroma, hue >= 0.0f ? hue : hue + 360.0f, alpha };
 }

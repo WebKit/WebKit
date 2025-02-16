@@ -71,7 +71,7 @@ NetworkRTCProvider::NetworkRTCProvider(NetworkConnectionToWebProcess& connection
 #endif
 {
 #if PLATFORM(COCOA)
-    if (auto* session = static_cast<NetworkSessionCocoa*>(connection.networkSession()))
+    if (auto* session = downcast<NetworkSessionCocoa>(connection.networkSession()))
         m_applicationBundleIdentifier = session->sourceApplicationBundleIdentifier().utf8();
 #endif
 #if !RELEASE_LOG_DISABLED
@@ -207,9 +207,11 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
 
         auto ipAddresses = WTF::compactMap(result.value(), [](auto& address) -> std::optional<RTCNetwork::IPAddress> {
             if (address.isIPv4())
-                return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv4Address() } };
+                // FIXME: Remove SUPPRESS_MEMORY_UNSAFE_CAST once rdar://144236356 is fixed.
+                SUPPRESS_MEMORY_UNSAFE_CAST return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv4Address() } };
             if (address.isIPv6())
-                return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv6Address() } };
+                // FIXME: Remove SUPPRESS_MEMORY_UNSAFE_CAST once rdar://144236356 is fixed.
+                SUPPRESS_MEMORY_UNSAFE_CAST return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv6Address() } };
             return std::nullopt;
         });
 
@@ -235,10 +237,10 @@ void NetworkRTCProvider::stopResolver(LibWebRTCResolverIdentifier identifier)
 #if PLATFORM(COCOA)
 const String& NetworkRTCProvider::attributedBundleIdentifierFromPageIdentifier(WebPageProxyIdentifier pageIdentifier)
 {
-    return m_attributedBundleIdentifiers.ensure(pageIdentifier, [&]() -> String {
+    return m_attributedBundleIdentifiers.ensure(pageIdentifier, [protectedThis = Ref { *this }, pageIdentifier]() -> String {
         String value;
-        callOnMainRunLoopAndWait([&] {
-            RefPtr connection = m_connection.get();
+        callOnMainRunLoopAndWait([protectedThis, &value, pageIdentifier] {
+            RefPtr connection = protectedThis->m_connection.get();
             if (auto* session = connection ? connection->networkSession() : nullptr)
                 value = session->attributedBundleIdentifierFromPageIdentifier(pageIdentifier).isolatedCopy();
         });

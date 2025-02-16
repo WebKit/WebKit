@@ -275,7 +275,7 @@ for (var lengthIndex = 0; lengthIndex < lengths.length; lengthIndex++) {
 (function optimizeOSR() {
   function f() {
     var result;
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
       result = 'abc'.indexOf('a');
     }
     return result;
@@ -284,7 +284,7 @@ for (var lengthIndex = 0; lengthIndex < lengths.length; lengthIndex++) {
 
   function f2() {
     var result;
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
       result = 'abc'.indexOf('a', 1);
     }
     return result;
@@ -293,7 +293,7 @@ for (var lengthIndex = 0; lengthIndex < lengths.length; lengthIndex++) {
 
   function f3() {
     var result;
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
       result = 'abc'.indexOf('a');
     }
     return result;
@@ -302,7 +302,7 @@ for (var lengthIndex = 0; lengthIndex < lengths.length; lengthIndex++) {
 
   function f4() {
     var result;
-    for (var i = 0; i < 100000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
       result = 'abcbc'.indexOf('bc', 2);
     }
     return result;

@@ -20,7 +20,7 @@ for (var i = 0; i < 100; ++i) {
         throw "Error: bad result in first loop: " + result;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     index = -(i & 1) - 1;
     var result = bar();
     if (result !== 13)

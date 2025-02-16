@@ -13,7 +13,7 @@ function falsey() { return false; }
 noInline(truthy);
 noInline(falsey);
 
-for (var i=0;i<10000;i++) {
+for (var i=0;i<testLoopCount;i++) {
     testCase(Object.getPrototypeOf(simpleArrowFunction), Function.prototype, "Error: Not correct getPrototypeOf value for arrow function");
 
     testCase(simpleArrowFunction instanceof Function, true, "Error: Not correct result for instanceof method for arrow function");

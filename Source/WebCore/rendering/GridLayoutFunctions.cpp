@@ -232,6 +232,17 @@ void clearOverridingContentSizeForGridItem(const RenderGrid& renderGrid, RenderB
         direction == GridTrackSizingDirection::ForColumns ? gridItem.clearOverridingBorderBoxLogicalHeight() : gridItem.clearOverridingBorderBoxLogicalWidth();
 }
 
+
+GridAxis gridAxisForDirection(GridTrackSizingDirection direction)
+{
+    return direction == GridTrackSizingDirection::ForColumns ? GridAxis::GridRowAxis : GridAxis::GridColumnAxis;
+}
+
+GridTrackSizingDirection gridDirectionForAxis(GridAxis axis)
+{
+    return axis == GridAxis::GridRowAxis ? GridTrackSizingDirection::ForColumns : GridTrackSizingDirection::ForRows;
+}
+
 } // namespace GridLayoutFunctions
 
 } // namespace WebCore

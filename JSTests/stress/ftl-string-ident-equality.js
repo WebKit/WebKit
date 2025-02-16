@@ -11,8 +11,8 @@ function foo(array, s) {
 noInline(foo);
 
 var result = 0;
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     result += foo(array, "d");
 
-if (result != 100000)
+if (result != testLoopCount)
     throw "Bad result: " + result;

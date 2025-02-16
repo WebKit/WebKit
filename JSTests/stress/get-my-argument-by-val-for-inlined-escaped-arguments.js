@@ -10,7 +10,7 @@ function bar(a, b, c, i) {
 noInline(bar);
 
 var expected = [2, 3, 42];
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar(1, 2, 3, i % 3);
     if (result != expected[i % 3])
         throw "Error: bad result: " + result;

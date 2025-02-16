@@ -249,18 +249,20 @@ void CSSStyleSheet::didMutateRules(RuleMutationType mutationType, ContentsCloned
 
         scope.didChangeStyleSheetContents();
 
-        m_mutatedRules = true;
+        m_wasMutated = true;
     });
 }
 
 void CSSStyleSheet::didMutate()
 {
-    forEachStyleScope([](auto& scope) {
+    forEachStyleScope([&](auto& scope) {
         scope.didChangeStyleSheetContents();
+
+        m_wasMutated = true;
     });
 }
 
-void CSSStyleSheet::forEachStyleScope(const Function<void(Style::Scope&)>& apply)
+void CSSStyleSheet::forEachStyleScope(NOESCAPE const Function<void(Style::Scope&)>& apply)
 {
     if (auto* scope = styleScope()) {
         apply(*scope);
@@ -487,7 +489,7 @@ String CSSStyleSheet::debugDescription() const
     return makeString("CSSStyleSheet "_s, "0x"_s, hex(reinterpret_cast<uintptr_t>(this), Lowercase), ' ', href());
 }
 
-String CSSStyleSheet::cssTextWithReplacementURLs(const UncheckedKeyHashMap<String, String>& replacementURLStrings, const UncheckedKeyHashMap<RefPtr<CSSStyleSheet>, String>& replacementURLStringsForCSSStyleSheet)
+String CSSStyleSheet::cssText(const CSS::SerializationContext& context)
 {
     auto ruleList = cssRulesSkippingAccessCheck();
     if (!ruleList)
@@ -499,7 +501,7 @@ String CSSStyleSheet::cssTextWithReplacementURLs(const UncheckedKeyHashMap<Strin
         if (!rule)
             continue;
 
-        auto ruleText = rule->cssTextWithReplacementURLs(replacementURLStrings, replacementURLStringsForCSSStyleSheet);
+        auto ruleText = rule->cssText(context);
         if (!result.isEmpty() && !ruleText.isEmpty())
             result.append(' ');
 
@@ -581,7 +583,7 @@ Ref<StyleSheetContents> CSSStyleSheet::protectedContents()
     return m_contents;
 }
 
-void CSSStyleSheet::getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
+void CSSStyleSheet::getChildStyleSheets(UncheckedKeyHashSet<RefPtr<CSSStyleSheet>>& childStyleSheets)
 {
     RefPtr ruleList = cssRules();
     if (!ruleList)

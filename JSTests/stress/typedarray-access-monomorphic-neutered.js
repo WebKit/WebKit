@@ -8,7 +8,7 @@ noInline(checkNoException);
 function testNoException(thunk, array) {
     let fn = Function("array", "i", thunk);
     noInline(fn);
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < testLoopCount; i++)
         checkNoException(array, fn, i);
 }
 
@@ -25,7 +25,7 @@ for (let constructor of typedArrays) {
 function testFTLNoException(thunk, array, failArray) {
     let fn = Function("array", "i", thunk);
     noInline(fn);
-    for (let i = 0; i < 10000; i++)
+    for (let i = 0; i < testLoopCount; i++)
         fn(array, i)
     checkNoException(failArray, fn, 10000);
 }

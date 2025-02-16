@@ -45,7 +45,9 @@ union Data {
     Data()
     {
         const intptr_t uninitialized = 0xdeadb0d0;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memcpy(&buffer, &uninitialized, sizeof(uninitialized));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     Data(uintptr_t value)
         : Data(&value, sizeof(value))
@@ -56,7 +58,9 @@ union Data {
     Data(void* src, size_t size)
     {
         RELEASE_ASSERT(size <= sizeof(buffer));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         memcpy(&buffer, src, size);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     template<typename T, typename = typename std::enable_if<std::is_integral<T>::value>::type>

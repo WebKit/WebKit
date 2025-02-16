@@ -35,9 +35,9 @@
 
 namespace WebCore {
 
-inline AttributeIteratorAccessor Element::attributesIterator() const
+inline std::span<const Attribute> Element::attributes() const
 {
-    return elementData()->attributesIterator();
+    return elementData()->attributes();
 }
 
 inline unsigned Element::findAttributeIndexByName(const QualifiedName& name) const
@@ -56,10 +56,10 @@ inline bool Node::hasAttributes() const
     return element && element->hasAttributes();
 }
 
-inline NamedNodeMap* Node::attributes() const
+inline NamedNodeMap* Node::attributesMap() const
 {
     if (auto* element = dynamicDowncast<Element>(*this))
-        return &element->attributes();
+        return &element->attributesMap();
     return nullptr;
 }
 

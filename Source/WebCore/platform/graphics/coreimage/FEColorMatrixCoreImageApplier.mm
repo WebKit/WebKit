@@ -35,8 +35,6 @@
 #import <CoreImage/CoreImage.h>
 #import <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FEColorMatrixCoreImageApplier);
@@ -58,16 +56,16 @@ bool FEColorMatrixCoreImageApplier::supportsCoreImageRendering(const FEColorMatr
 bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector& inputs, FilterImage& result) const
 {
     ASSERT(inputs.size() == 1);
-    auto& input = inputs[0].get();
+    Ref input = inputs[0];
 
-    auto inputImage = input.ciImage();
+    auto inputImage = input->ciImage();
     if (!inputImage)
         return false;
 
-    auto values = FEColorMatrix::normalizedFloats(m_effect.values());
-    float components[9];
+    auto values = FEColorMatrix::normalizedFloats(m_effect->values());
+    std::array<float, 9> components;
 
-    switch (m_effect.type()) {
+    switch (m_effect->type()) {
     case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
         FEColorMatrix::calculateSaturateComponents(components, values[0]);
         break;
@@ -87,7 +85,7 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
     auto *colorMatrixFilter = [CIFilter filterWithName:@"CIColorMatrix"];
     [colorMatrixFilter setValue:inputImage.get() forKey:kCIInputImageKey];
 
-    switch (m_effect.type()) {
+    switch (m_effect->type()) {
     case ColorMatrixType::FECOLORMATRIX_TYPE_SATURATE:
     case ColorMatrixType::FECOLORMATRIX_TYPE_HUEROTATE:
         [colorMatrixFilter setValue:[CIVector vectorWithX:components[0] Y:components[1] Z:components[2] W:0] forKey:@"inputRVector"];
@@ -115,7 +113,5 @@ bool FEColorMatrixCoreImageApplier::apply(const Filter&, const FilterImageVector
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CORE_IMAGE)

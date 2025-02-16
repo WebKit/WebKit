@@ -3,7 +3,7 @@ function shouldBe(actual, expected) {
         throw new Error('bad value: ' + actual);
 }
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var promise = new Promise(function() { });
     shouldBe(promise.__proto__, Promise.prototype);
 }
@@ -11,17 +11,17 @@ for (var i = 0; i < 1e5; ++i) {
 class DerivedPromise extends Promise {
 };
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var promise = new DerivedPromise(function() { });
     shouldBe(promise.__proto__, DerivedPromise.prototype);
 }
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var promise = new Promise(function() { });
     shouldBe(promise.__proto__, Promise.prototype);
 }
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var promise = new DerivedPromise(function() { });
     shouldBe(promise.__proto__, DerivedPromise.prototype);
 }

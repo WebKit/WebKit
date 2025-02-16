@@ -32,8 +32,7 @@
 #import "WAKWindow.h"
 #import "WKUtilities.h"
 #import <wtf/Assertions.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#import <wtf/IteratorRange.h>
 
 void _WKViewSetSuperview (WKViewRef view, WKViewRef superview)
 {
@@ -628,24 +627,23 @@ CGPoint WKViewConvertPointToBase(WKViewRef view, CGPoint p)
     return aPoint;
 }
 
-#define VIEW_ARRAY_SIZE 128
+constexpr size_t VIEW_ARRAY_SIZE = 128;
 
-static void _WKViewGetAncestorViewsIncludingView (WKViewRef view, WKViewRef *views, unsigned maxViews, unsigned *viewCount)
+static std::span<WKViewRef> _WKViewGetAncestorViewsIncludingView(WKViewRef view, std::array<WKViewRef, VIEW_ARRAY_SIZE>& views)
 {
-    unsigned count = 0;
+    size_t count = 0;
     
     views[count++] = view;
     WKViewRef superview = view->superview;
     while (superview) {
         views[count++] = superview;
-        if (count >= maxViews) {
+        if (count >= views.size()) {
             WKError ("Exceeded maxViews, use malloc/realloc");
-            *viewCount = 0;
-            return;
+            return { };
         }
         superview = superview->superview;
     }
-    *viewCount = count;
+    return std::span { views }.first(count);
 }
 
 CGPoint WKViewConvertPointFromBase(WKViewRef view, CGPoint p)
@@ -655,19 +653,14 @@ CGPoint WKViewConvertPointFromBase(WKViewRef view, CGPoint p)
         return CGPointZero;
     }
 
-    WKViewRef views[VIEW_ARRAY_SIZE];
-    unsigned viewCount = 0;
-
-    _WKViewGetAncestorViewsIncludingView (view, views, VIEW_ARRAY_SIZE, &viewCount);
-    if (viewCount == 0)
+    std::array<WKViewRef, VIEW_ARRAY_SIZE> views;
+    auto ancestorViews = _WKViewGetAncestorViewsIncludingView(view, views);
+    if (ancestorViews.empty())
         return CGPointZero;
 
     CGPoint aPoint = p;
-    int i;
-    for (i = viewCount-1; i >= 0; i--) {
-        aPoint = WKViewConvertPointFromSuperview (views[i], aPoint);
-    }
-        
+    for (auto& ancestorView : makeReversedRange(ancestorViews))
+        aPoint = WKViewConvertPointFromSuperview(ancestorView, aPoint);
     return aPoint;
 }
 
@@ -689,19 +682,14 @@ CGRect WKViewConvertRectFromBase(WKViewRef view, CGRect r)
         return CGRectZero;
     }
 
-    WKViewRef views[VIEW_ARRAY_SIZE];
-    unsigned viewCount = 0;
-
-    _WKViewGetAncestorViewsIncludingView (view, views, VIEW_ARRAY_SIZE, &viewCount);
-    if (viewCount == 0)
+    std::array<WKViewRef, VIEW_ARRAY_SIZE> views;
+    auto ancestorViews = _WKViewGetAncestorViewsIncludingView(view, views);
+    if (ancestorViews.empty())
         return CGRectZero;
     
     CGRect aRect = r;
-    int i;
-    for (i = viewCount-1; i >= 0; i--) {
-        aRect = WKViewConvertRectFromSuperview (views[i], aRect);
-    }
-        
+    for (auto& ancestorView : makeReversedRange(ancestorViews))
+        aRect = WKViewConvertRectFromSuperview(ancestorView, aRect);
     return aRect;
 }
 
@@ -746,7 +734,5 @@ void WKViewSetAutoresizingMask (WKViewRef view, unsigned int mask)
     }    
     view->autoresizingMask = mask;
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

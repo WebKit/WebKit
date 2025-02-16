@@ -221,10 +221,10 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
     return adoptCF(CGImageCreate(width, height, bitsPerComponent, bitsPerPixel, bytesPerRow, colorSpace, bitmapInfo, provider.get(), 0, shouldInterpolate, intent));
 }
 
-- (void)enterFullScreen:(NSScreen *)screen
+- (void)enterFullScreen:(NSScreen *)screen completionHandler:(CompletionHandler<void(bool)>&&)completionHandler
 {
     if ([self isFullScreen])
-        return;
+        return completionHandler(false);
     _fullScreenState = WaitingToEnterFullScreen;
 
     if (!screen)
@@ -250,9 +250,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     _page->startDeferringResizeEvents();
     _page->startDeferringScrollEvents();
-    [self _manager]->saveScrollPosition();
-    _savedTopContentInset = _page->topContentInset();
-    _page->setTopContentInset(0);
+    _savedObscuredContentInsets = _page->obscuredContentInsets();
+    _page->setObscuredContentInsets({ });
     [[self window] setFrame:screenFrame display:NO];
 
     // Painting is normally suspended when the WKView is removed from the window, but this is
@@ -266,18 +265,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _webViewPlaceholder = adoptNS([[WebCoreFullScreenPlaceholderView alloc] initWithFrame:[_webView frame]]);
     [_webViewPlaceholder setTarget:nil];
     [_webViewPlaceholder setContents:(__bridge id)webViewContents.get()];
-    [self _saveConstraintsOf:_webView.superview];
-    [self _replaceView:_webView with:_webViewPlaceholder.get()];
+    [self _saveConstraintsOf:[_webView superview]];
+    [self _replaceView:_webView.get().get() with:_webViewPlaceholder.get()];
     
     // Then insert the WebView into the full screen window
     NSView *contentView = [[self window] contentView];
-    [_clipView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
-    _webView.frame = NSInsetRect(contentView.bounds, 0, -_page->topContentInset());
+    [_clipView addSubview:_webView.get().get() positioned:NSWindowBelow relativeTo:nil];
+    auto obscuredContentInsets = _page->obscuredContentInsets();
+    [_webView setFrame:NSInsetRect(contentView.bounds, -obscuredContentInsets.left(), -obscuredContentInsets.top())];
 
     _savedScale = _page->pageScaleFactor();
     _page->scalePageRelativeToScrollPosition(1, { });
     [self _manager]->setAnimatingFullScreen(true);
-    [self _manager]->willEnterFullScreen();
+    [self _manager]->willEnterFullScreen(WTFMove(completionHandler));
 }
 
 - (void)beganEnterFullScreenWithInitialFrame:(NSRect)initialFrame finalFrame:(NSRect)finalFrame
@@ -307,7 +307,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSWindow* window = self.window;
     NSWindowCollectionBehavior behavior = [window collectionBehavior];
     [window setCollectionBehavior:(behavior | NSWindowCollectionBehaviorCanJoinAllSpaces)];
-    [window makeFirstResponder:_webView];
+    [window makeFirstResponder:_webView.get().get()];
     [window makeKeyAndOrderFront:self];
     [window setCollectionBehavior:behavior];
 
@@ -358,17 +358,16 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _page->setSuppressVisibilityUpdates(false);
 
         NSResponder *firstResponder = [[self window] firstResponder];
-        [self _replaceView:_webViewPlaceholder.get() with:_webView];
+        [self _replaceView:_webViewPlaceholder.get() with:_webView.get().get()];
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [NSLayoutConstraint activateConstraints:self.savedConstraints];
         END_BLOCK_OBJC_EXCEPTIONS
         self.savedConstraints = nil;
-        makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
+        makeResponderFirstResponderIfDescendantOfView([_webView window], firstResponder, _webView.get().get());
         [[_webView window] makeKeyAndOrderFront:self];
 
         _page->scalePageRelativeToScrollPosition(_savedScale, { });
-        [self _manager]->restoreScrollPosition();
-        _page->setTopContentInset(_savedTopContentInset);
+        _page->setObscuredContentInsets(_savedObscuredContentInsets);
         [self _manager]->setAnimatingFullScreen(false);
         [self _manager]->didExitFullScreen();
 
@@ -382,7 +381,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             eventNumber:0
             clickCount:0
             pressure:0];
-        WebKit::NativeWebMouseEvent webEvent(fakeEvent, nil, _webView);
+        WebKit::NativeWebMouseEvent webEvent(fakeEvent, nil, _webView.get().get());
         _page->handleMouseEvent(webEvent);
     }
     _page->flushDeferredResizeEvents();
@@ -518,7 +517,7 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     [_exitPlaceholder setLayerContentsRedrawPolicy: NSViewLayerContentsRedrawNever];
     [_exitPlaceholder setFrame:[_webView frame]];
     [[_exitPlaceholder layer] setContents:(__bridge id)webViewContents.get()];
-    [[_webView superview] addSubview:_exitPlaceholder.get() positioned:NSWindowAbove relativeTo:_webView];
+    [[_webView superview] addSubview:_exitPlaceholder.get() positioned:NSWindowAbove relativeTo:_webView.get().get()];
 
     [CATransaction commit];
     [CATransaction flush];
@@ -531,20 +530,19 @@ static RetainPtr<CGImageRef> takeWindowSnapshot(CGSWindowID windowID, bool captu
     [_webView removeFromSuperview];
     [_webView setFrame:[_webViewPlaceholder frame]];
     [_webView setAutoresizingMask:[_webViewPlaceholder autoresizingMask]];
-    [[_webViewPlaceholder superview] addSubview:_webView positioned:NSWindowBelow relativeTo:_webViewPlaceholder.get()];
+    [[_webViewPlaceholder superview] addSubview:_webView.get().get() positioned:NSWindowBelow relativeTo:_webViewPlaceholder.get()];
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
     [NSLayoutConstraint activateConstraints:self.savedConstraints];
     END_BLOCK_OBJC_EXCEPTIONS
     self.savedConstraints = nil;
-    makeResponderFirstResponderIfDescendantOfView(_webView.window, firstResponder, _webView);
+    makeResponderFirstResponderIfDescendantOfView([_webView window], firstResponder, _webView.get().get());
 
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     [self _manager]->setAnimatingFullScreen(false);
     [self _manager]->didExitFullScreen();
     _page->scalePageRelativeToScrollPosition(_savedScale, { });
-    [self _manager]->restoreScrollPosition();
-    _page->setTopContentInset(_savedTopContentInset);
+    _page->setObscuredContentInsets(_savedObscuredContentInsets);
     _page->flushDeferredResizeEvents();
     _page->flushDeferredScrollEvents();
 

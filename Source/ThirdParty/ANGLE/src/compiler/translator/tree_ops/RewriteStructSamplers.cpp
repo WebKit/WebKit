@@ -9,6 +9,7 @@
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
 
 #include "common/hash_containers.h"
+#include "common/span.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
@@ -350,7 +351,12 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
     // Same implementation as in RewriteExpressionTraverser.  That traverser cannot replace root.
     void visitSymbol(TIntermSymbol *node) override
     {
-        ASSERT(mStructureUniformMap.find(&node->variable()) == mStructureUniformMap.end());
+        auto replacement = mStructureUniformMap.find(&node->variable());
+        if (replacement != mStructureUniformMap.end())
+        {
+            // This is a reference to the whole struct, just replace it with its replacement.
+            queueReplacement(new TIntermSymbol(replacement->second), OriginalNode::IS_DROPPED);
+        }
     }
 
   private:
@@ -565,7 +571,7 @@ class RewriteStructSamplersTraverser final : public TIntermTraverser
 
     void enterArray(const TType &arrayType)
     {
-        const TSpan<const unsigned int> &arraySizes = arrayType.getArraySizes();
+        const angle::Span<const unsigned int> &arraySizes = arrayType.getArraySizes();
         for (auto it = arraySizes.rbegin(); it != arraySizes.rend(); ++it)
         {
             unsigned int arraySize = *it;

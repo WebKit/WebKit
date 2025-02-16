@@ -29,6 +29,7 @@
 #include "AudioSummingJunction.h"
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
@@ -50,7 +51,7 @@ public:
     void didUpdate() override;
 
     // Can be called from any thread.
-    AudioNode* node() const { return m_node; }
+    AudioNode* node() const { return m_node.get(); }
 
     // Must be called with the context's graph lock.
     void connect(AudioNodeOutput*);
@@ -81,7 +82,7 @@ public:
     unsigned numberOfChannels() const;        
     
 private:
-    AudioNode* m_node;
+    WeakPtr<AudioNode, WeakPtrImplWithEventTargetData> m_node;
 
     // m_disabledOutputs contains the AudioNodeOutputs which are disabled (will not be processed) by the audio graph rendering.
     // But, from JavaScript's perspective, these outputs are still connected to us.

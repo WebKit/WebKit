@@ -56,12 +56,16 @@ template<size_t I> const auto& get(const BorderRadius& value)
         return value.bottomLeft;
 }
 
+// MARK: - Conversion
+
 template<> struct ToCSS<BorderRadius> { auto operator()(const BorderRadius&, const RenderStyle&) -> CSS::BorderRadius; };
 template<> struct ToStyle<CSS::BorderRadius> { auto operator()(const CSS::BorderRadius&, const BuilderState&) -> BorderRadius; };
 
-FloatRoundedRect::Radii evaluate(const BorderRadius&, FloatSize referenceBox);
+// MARK: - Evaluation
+
+template<> struct Evaluation<BorderRadius> { auto operator()(const BorderRadius&, FloatSize) -> FloatRoundedRect::Radii; };
 
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(BorderRadius, 4)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::BorderRadius, 4)

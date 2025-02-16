@@ -52,7 +52,7 @@ private:
     void addConsoleMessage(std::unique_ptr<Inspector::ConsoleMessage>&&);
     bool shouldForceBufferingNetworkResourceData() const { return false; }
 
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     InspectorClient* m_client { nullptr };
 #endif

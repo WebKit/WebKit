@@ -26,6 +26,7 @@
 #if ENABLE(FULLSCREEN_API) && PLATFORM(IOS_FAMILY)
 
 #import <UIKit/UIViewControllerTransitioning.h>
+#import <wtf/CompletionHandler.h>
 
 @class WKFullScreenViewController;
 @class WKWebView;
@@ -43,7 +44,7 @@
 #endif
 
 - (id)initWithWebView:(WKWebView *)webView;
-- (void)enterFullScreen:(CGSize)mediaDimensions;
+- (void)enterFullScreen:(CGSize)mediaDimensions completionHandler:(CompletionHandler<void(bool)>&&)completionHandler;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 - (void)updateImageSource;
 #endif

@@ -23,7 +23,7 @@ var builtin2 = $vm.createBuiltin(`(function (a) {
 noInline(builtin2);
 
 let p = new Proxy(function(){}, {});
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     assert(builtin(p) === true);
     assert(builtin2(p) === true);
 }

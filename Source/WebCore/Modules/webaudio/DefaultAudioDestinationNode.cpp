@@ -40,6 +40,7 @@
 #include "ScriptExecutionContext.h"
 #include "WorkerRunLoop.h"
 #include <wtf/MainThread.h>
+#include <wtf/MediaTime.h>
 #include <wtf/TZoneMallocInlines.h>
 
 constexpr unsigned EnabledInputChannels = 2;
@@ -247,6 +248,11 @@ ExceptionOr<void> DefaultAudioDestinationNode::setChannelCount(unsigned channelC
 unsigned DefaultAudioDestinationNode::framesPerBuffer() const
 {
     return m_destination ? m_destination->framesPerBuffer() : 0;
+}
+
+MediaTime DefaultAudioDestinationNode::outputLatency() const
+{
+    return m_destination ? m_destination->outputLatency() : MediaTime::zeroTime();
 }
 
 void DefaultAudioDestinationNode::render(AudioBus*, AudioBus* destinationBus, size_t numberOfFrames, const AudioIOPosition& outputPosition)

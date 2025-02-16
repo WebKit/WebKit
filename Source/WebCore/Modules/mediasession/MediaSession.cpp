@@ -265,6 +265,11 @@ ExceptionOr<void> MediaSession::setActionHandler(MediaSessionAction action, RefP
     if (document && !document->settings().mediaSessionCaptureToggleAPIEnabled() && (action == MediaSessionAction::Togglecamera || action == MediaSessionAction::Togglemicrophone || action == MediaSessionAction::Togglescreenshare || action == MediaSessionAction::Voiceactivity))
         return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
 
+#if PLATFORM(MAC) && !HAVE(VOICEACTIVITYDETECTION)
+    if (document && action == MediaSessionAction::Voiceactivity)
+        return Exception { ExceptionCode::TypeError, makeString("Argument 1 ('action') to MediaSession.setActionHandler must be a value other than '"_s, convertEnumerationToString(action), "'"_s) };
+#endif
+
     if (action == MediaSessionAction::Voiceactivity) {
         if (RefPtr document = this->document())
             document->setShouldListenToVoiceActivity(!!handler);
@@ -404,7 +409,7 @@ void MediaSession::removeObserver(MediaSessionObserver& observer)
     m_observers.remove(observer);
 }
 
-void MediaSession::forEachObserver(const Function<void(MediaSessionObserver&)>& apply)
+void MediaSession::forEachObserver(NOESCAPE const Function<void(MediaSessionObserver&)>& apply)
 {
     ASSERT(isMainThread());
     Ref protectedThis { *this };

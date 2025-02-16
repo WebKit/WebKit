@@ -123,7 +123,7 @@ RefPtr<RenderPassEncoder> CommandEncoderImpl::beginRenderPass(const RenderPassDe
 
 RefPtr<ComputePassEncoder> CommandEncoderImpl::beginComputePass(const std::optional<ComputePassDescriptor>& descriptor)
 {
-    CString label = descriptor ? descriptor->label.utf8() : CString("");
+    CString label = descriptor ? descriptor->label.utf8() : CString(""_s);
 
     WGPUComputePassTimestampWrites timestampWrites {
         .querySet = (descriptor && descriptor->timestampWrites && descriptor->timestampWrites->querySet) ? protectedConvertToBackingContext()->convertToBacking(*descriptor->timestampWrites->protectedQuerySet().get()) : nullptr,

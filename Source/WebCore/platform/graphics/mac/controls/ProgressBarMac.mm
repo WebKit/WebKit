@@ -152,7 +152,7 @@ void ProgressBarMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
         context.translate(-inflatedRect.location());
     }
 
-    if (style.states.contains(ControlStyle::State::RightToLeft)) {
+    if (style.states.contains(ControlStyle::State::InlineFlippedWritingMode)) {
         context.translate(2 * inflatedRect.x() + inflatedRect.width(), 0);
         context.scale(FloatSize(-1, 1));
     }

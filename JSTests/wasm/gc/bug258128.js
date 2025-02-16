@@ -1,6 +1,5 @@
 //@ requireOptions("--useWasmSIMD=1")
 //@ skip if !$isSIMDPlatform
-//@ runWebAssemblySuite("--useWasmGC=true")
 
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);

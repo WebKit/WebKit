@@ -20,6 +20,7 @@
 #include "common/utilities.h"
 #include "compiler/translator/Diagnostics.h"
 #include "compiler/translator/ImmutableString.h"
+#include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/IntermNode.h"
 #include "compiler/translator/SymbolTable.h"
 #include "compiler/translator/util.h"
@@ -1761,28 +1762,35 @@ bool TIntermSwizzle::offsetsMatch(int offset) const
     return mSwizzleOffsets.size() == 1 && mSwizzleOffsets[0] == offset;
 }
 
-void TIntermSwizzle::writeOffsetsAsXYZW(TInfoSinkBase *out) const
+ImmutableString TIntermSwizzle::getOffsetsAsXYZW() const
 {
+    ImmutableStringBuilder offsets(mSwizzleOffsets.size());
     for (const int offset : mSwizzleOffsets)
     {
         switch (offset)
         {
             case 0:
-                *out << "x";
+                offsets << "x";
                 break;
             case 1:
-                *out << "y";
+                offsets << "y";
                 break;
             case 2:
-                *out << "z";
+                offsets << "z";
                 break;
             case 3:
-                *out << "w";
+                offsets << "w";
                 break;
             default:
                 UNREACHABLE();
         }
     }
+    return offsets;
+}
+
+void TIntermSwizzle::writeOffsetsAsXYZW(TInfoSinkBase *out) const
+{
+    *out << getOffsetsAsXYZW();
 }
 
 TQualifier TIntermBinary::GetCommaQualifier(int shaderVersion,

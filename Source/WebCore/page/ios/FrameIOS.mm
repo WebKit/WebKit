@@ -79,8 +79,6 @@ using namespace WTF::Unicode;
 
 using JSC::JSLockHolder;
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 // Create <html><body (style="...")></body></html> doing minimal amount of work.
@@ -304,7 +302,7 @@ Node* LocalFrame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLoc
     int searchRadius = static_cast<int>(unscaledSearchRadius * ppiFactor / scale);
 
     if (approximateNode && shouldApproximate == ShouldApproximate::Yes) {
-        const float testOffsets[] = {
+        constexpr std::array testOffsets {
             -.3f, -.3f,
             -.6f, -.6f,
             +.3f, +.3f,
@@ -337,7 +335,7 @@ Node* LocalFrame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLoc
             failedNode = candidate;
 
         // The center point was tested earlier.
-        const float testOffsets[] = {
+        constexpr std::array testOffsets {
             -.3f, -.3f,
             +.3f, -.3f,
             -.3f, +.3f,
@@ -346,10 +344,10 @@ Node* LocalFrame::qualifyingNodeAtViewportLocation(const FloatPoint& viewportLoc
             +.6f, -.6f,
             -.6f, +.6f,
             +.6f, +.6f,
-            -1.f, 0,
-            +1.f, 0,
-            0, +1.f,
-            0, -1.f,
+            -1.f, 0.f,
+            +1.f, 0.f,
+            0.f, +1.f,
+            0.f, -1.f,
         };
         IntRect bestFrame;
         IntRect testRect(testCenter, IntSize());
@@ -486,7 +484,7 @@ static inline NodeQualifier ancestorRespondingToClickEventsNodeQualifier(Securit
             *nodeBounds = IntRect();
 
         auto node = hitTestResult.innerNode();
-        if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(node->document().securityOrigin())))
+        if (!node || (securityOrigin && !securityOrigin->isSameOriginAs(node->document().protectedSecurityOrigin())))
             return nullptr;
 
         for (; node && node != terminationNode; node = node->parentInComposedTree()) {
@@ -849,7 +847,5 @@ void LocalFrame::resetAllGeolocationPermission()
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

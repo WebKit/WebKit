@@ -35,8 +35,6 @@
 #import <wtf/Assertions.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #if !defined(_C_LNG_LNG)
 #define _C_LNG_LNG 'q'
 #endif
@@ -151,7 +149,7 @@ ObjcValue convertValueToObjcValue(JSGlobalObject* lexicalGlobalObject, JSValue v
             result.doubleValue = (double)d;
             break;
         case ObjcVoidType:
-            bzero(&result, sizeof(ObjcValue));
+            zeroBytes(result);
             break;
 
         case ObjcInvalidType:
@@ -253,13 +251,11 @@ JSValue convertObjcValueToValue(JSGlobalObject* lexicalGlobalObject, void* buffe
     return jsUndefined();
 }
 
-ObjcValueType objcValueTypeForType(const char *type)
+ObjcValueType objcValueTypeForType(const char* rawType)
 {
-    int typeLength = strlen(type);
     ObjcValueType objcValueType = ObjcInvalidType;
 
-    for (int i = 0; i < typeLength; ++i) {
-        char typeChar = type[i];
+    for (char typeChar : unsafeSpan(rawType)) {
         switch (typeChar) {
             case _C_CONST:
             case _C_BYCOPY:
@@ -335,5 +331,3 @@ Exception *throwError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope, NS
 
 }
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

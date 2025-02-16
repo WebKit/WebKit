@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "DataListSuggestionInformation.h"
 #include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -46,5 +44,3 @@ public:
 };
 
 } // namespace WebCore
-
-#endif

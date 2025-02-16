@@ -17,7 +17,7 @@ let a = {
     }
 };
 
-for (let i = 0; i < 1e5; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     depth = 0;
     foo.apply(null, a);
 }

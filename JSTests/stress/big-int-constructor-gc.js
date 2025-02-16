@@ -5,13 +5,13 @@ function assert(expected, value) {
 
 let arr = [];
 
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     arr[i] = BigInt(i.toString());
 }
 
 gc();
 
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(i.toString(), arr[i].toString());
 }
 

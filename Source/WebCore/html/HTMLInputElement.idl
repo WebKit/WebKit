@@ -40,15 +40,15 @@ enum AutofillButtonType {
     Exposed=Window
 ] interface HTMLInputElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString accept;
-    [Conditional=INPUT_TYPE_COLOR, EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded, Reflect] attribute boolean alpha;
+    [EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded, Reflect] attribute boolean alpha;
     [CEReactions=NotNeeded, Reflect] attribute DOMString alt;
     [CEReactions=NotNeeded] attribute [AtomString] DOMString autocomplete;
     [CEReactions=NotNeeded, Reflect=checked] attribute boolean defaultChecked;
     attribute boolean checked;
-    [Conditional=INPUT_TYPE_COLOR, EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded] attribute [AtomString] DOMString colorSpace;
+    [EnabledBySetting=InputTypeColorEnhancementsEnabled, CEReactions=NotNeeded] attribute [AtomString] DOMString colorSpace;
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
-    readonly attribute HTMLFormElement form;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement form;
     [ImplementedAs=filesForBindings] attribute FileList? files;
     [CEReactions=NotNeeded] attribute [AtomString] USVString formAction;
 
@@ -59,7 +59,7 @@ enum AutofillButtonType {
     [CEReactions=NotNeeded, Reflect] attribute DOMString formTarget;
     [CEReactions=NotNeeded] attribute unsigned long height;
     attribute boolean indeterminate;
-    [Conditional=DATALIST_ELEMENT] readonly attribute HTMLElement list;
+    readonly attribute HTMLElement list;
     [CEReactions=NotNeeded, Reflect] attribute DOMString max;
     [CEReactions=NotNeeded] attribute long minLength;
     [CEReactions=NotNeeded] attribute long maxLength;
@@ -112,6 +112,7 @@ enum AutofillButtonType {
     // WebKit extension for autofill.
     [EnabledForWorld=allowAutofill] attribute boolean autofillAvailable;
     [EnabledForWorld=allowAutofill] attribute boolean autofilled;
+    [EnabledForWorld=allowAutofill] readonly attribute boolean lastChangeWasUserEdit;
     [EnabledForWorld=allowAutofill] attribute AutofillVisibility autofillVisibility;
     [EnabledForWorld=allowAutofill] attribute AutofillButtonType autofillButtonType;
     [EnabledForWorld=allowAutofill] attribute boolean autofillSpellcheck;
@@ -121,6 +122,4 @@ enum AutofillButtonType {
 };
 
 HTMLInputElement includes PopoverInvokerElement;
-
-HTMLInputElement includes InvokerElement;
 

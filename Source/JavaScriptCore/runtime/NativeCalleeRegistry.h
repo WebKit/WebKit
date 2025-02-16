@@ -60,14 +60,14 @@ public:
 #endif
     }
 
-    const HashSet<NativeCallee*>& allCallees() WTF_REQUIRES_LOCK(m_lock)
+    const UncheckedKeyHashSet<NativeCallee*>& allCallees() WTF_REQUIRES_LOCK(m_lock)
     {
         return m_calleeSet;
     }
 
     bool isValidCallee(NativeCallee* callee)  WTF_REQUIRES_LOCK(m_lock)
     {
-        if (!HashSet<NativeCallee*>::isValidValue(callee))
+        if (!UncheckedKeyHashSet<NativeCallee*>::isValidValue(callee))
             return false;
         return m_calleeSet.contains(callee);
     }
@@ -95,7 +95,7 @@ public:
 
 private:
     Lock m_lock;
-    HashSet<NativeCallee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
+    UncheckedKeyHashSet<NativeCallee*> m_calleeSet WTF_GUARDED_BY_LOCK(m_lock);
 #if ENABLE(JIT)
     UncheckedKeyHashMap<NativeCallee*, Box<PCToCodeOriginMap>> m_pcToCodeOriginMaps WTF_GUARDED_BY_LOCK(m_lock);
 #endif

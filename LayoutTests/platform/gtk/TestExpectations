@@ -41,14 +41,10 @@ security/contentSecurityPolicy/plugins-types-allows-youtube-plugin-replacement.h
 
 webkit.org/b/175290 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
 
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-background-color-001.html [ Pass ]
-
 webkit.org/b/191506 fast/css-grid-layout/grid-item-scroll-position.html [ Pass ]
 
 css-dark-mode [ Pass ]
 css-dark-mode/older-systems [ Skip ]
-
-editing/selection/extend-by-character-007.html [ Pass ]
 
 fast/loader/plain-text-document-dark-mode.html [ Pass ]
 
@@ -162,6 +158,11 @@ imported/w3c/web-platform-tests/service-workers/service-worker/fetch-audio-taint
 imported/w3c/web-platform-tests/css/css-masking/clip-path/clip-path-descendant-text-mutated-001.html [ Pass ]
 
 webkit.org/b/256310 imported/w3c/web-platform-tests/css/css-fonts/parsing/font-face-src-tech.html [ Skip ]
+
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-composited-scrolling-006.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-001.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-003.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-to-sticky-004.html [ Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of PASSING tests. See below where to put expected failures.
@@ -916,9 +917,6 @@ webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-images/image-orienta
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-002.html [ ImageOnlyFailure ]
 webkit.org/b/214470 imported/w3c/web-platform-tests/css/css-values/ch-unit-011.html [ ImageOnlyFailure ]
 webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/attr-all-types.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-001p.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-003p.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-images/object-fit-contain-svg-005i.html [ ImageOnlyFailure ]
 
 webkit.org/b/219614 inspector/css/getComputedPrimaryFontForNode.html [ Failure ]
 
@@ -968,6 +966,22 @@ webkit.org/b/120839 animations/cross-fade-background-image.html [ ImageOnlyFailu
 webkit.org/b/207605 [ Debug ] http/tests/workers/service/registration-clear-redundant-worker.html [ Crash ]
 webkit.org/b/207605 [ Debug ] http/tests/websocket/tests/hybi/no-subprotocol.html [ Crash ]
 
+webkit.org/b/286466 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-character.html [ Crash ]
+webkit.org/b/286466 imported/w3c/web-platform-tests/css/css-text/hyphens/i18n/hyphens-i18n-auto-002.html [ Crash ]
+webkit.org/b/286466 imported/w3c/web-platform-tests/css/css-text/hyphens/i18n/hyphens-i18n-auto-001.html [ Crash ]
+
+webkit.org/b/286930 media/modern-media-controls/scrubber-support/scrubber-support-seek-back.html [ Crash ]
+
+# Tests crashing due to failing assertions
+
+webkit.org/b/286127 editing/pasteboard/copy-paste-across-shadow-boundaries-with-style-2.html [ Crash ]
+webkit.org/b/286128 editing/inserting/insert-list-user-select-none-crash.html [ Crash ]
+webkit.org/b/286129 fast/forms/textarea-node-removed-from-document-crash.html [ Crash ]
+webkit.org/b/286130 imported/w3c/web-platform-tests/css/css-multicol/crashtests/inline-float-parallel-flow.html [ Crash ]
+webkit.org/b/286131 imported/w3c/web-platform-tests/css/css-transforms/transform-box/cssbox-content-box-002.html [ Crash ]
+webkit.org/b/286132 inspector/debugger/breakpoints/resolved-dump-all-inline-script-pause-locations.html [ Crash ]
+webkit.org/b/286133 imported/w3c/web-platform-tests/css/css-view-transitions/transition-in-hidden-page.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1002,8 +1016,6 @@ webkit.org/b/264664 fast/media/mq-inverted-colors-live-update-for-listener.html 
 webkit.org/b/264664 fast/media/mq-prefers-reduced-motion-live-update-for-listener.html [ Pass Failure ]
 
 webkit.org/b/127742 fast/spatial-navigation/snav-unit-overflow-and-scroll-in-direction.html [ Failure ]
-
-webkit.org/b/132385 compositing/repaint/repaint-on-layer-grouping-change.html [ Failure ]
 
 webkit.org/b/143985 editing/pasteboard/drop-text-events.html [ Failure ]
 
@@ -1187,7 +1199,6 @@ webkit.org/b/257624 http/tests/security/video-cross-origin-caching.html [ Pass T
 
 # Uncomment when webkit.org/b/267992 is fixed
 #webkit.org/b/257624 http/wpt/cross-origin-opener-policy/header-parsing-with-report-to.https.html [ Failure Pass ]
-webkit.org/b/257624 http/wpt/mediarecorder/pause-recording.html [ Crash Failure Pass ]
 webkit.org/b/257624 imported/blink/fast/text/international/vertical-positioning-with-combining-marks.html [ Crash ImageOnlyFailure Pass ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/content-security-policy/reporting/report-multiple-violations-01.html [ Failure ]
 webkit.org/b/257624 imported/w3c/web-platform-tests/cors/cors-safelisted-request-header.any.html [ Crash Failure Pass ]
@@ -1609,6 +1620,8 @@ webkit.org/b/174460 fast/canvas/canvas-blend-solid.html [ Failure ]
 
 webkit.org/b/175421 printing/width-overflow.html [ Failure ]
 
+webkit.org/b/285785 printing/background-clip-text.html [ ImageOnlyFailure ]
+
 webkit.org/b/176648 fast/repaint/inline-outline-repaint.html [ ImageOnlyFailure ]
 
 webkit.org/b/177294 platform/gtk/fonts/fontconfig-aliasing-settings.html [ Failure ]
@@ -1648,9 +1661,6 @@ webkit.org/b/186142 imported/w3c/web-platform-tests/css/css-text/text-transform/
 webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
 
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
-
-# No support for compositing clip-path?
-webkit.org/b/282148 compositing/masks/clip-path-on-tiled-toggle.html [ Failure ]
 
 webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
 
@@ -1821,8 +1831,6 @@ webkit.org/b/245324 http/tests/notifications/notification.html  [ Crash Pass ]
 
 webgl/1.0.x/conformance/textures/misc/texture-corner-case-videos.html [ Timeout ]
 
-# Trusted Types aren't implemented yet
-
 # Flaky tests on Aug-2023
 webkit.org/b/261024 http/wpt/mediarecorder/MediaRecorder-video-bitrate.html [ Crash Failure Pass ]
 webkit.org/b/261024 imported/w3c/web-platform-tests/css/css-transforms/animation/transform-interpolation-rotate-slerp.html [ ImageOnlyFailure Pass ]
@@ -1887,7 +1895,6 @@ imported/w3c/web-platform-tests/html/semantics/popovers/popover-focus-harness.ht
 webkit.org/b/273196 imported/w3c/web-platform-tests/html/semantics/popovers/popover-top-layer-combinations.html [ Failure ]
 
 compositing/overflow/dynamic-composited-scrolling-status.html [ Failure ]
-http/tests/security/svg-image-with-cached-remote-image.html [ ImageOnlyFailure ]
 fast/scrolling/gtk/repeated-mouse-wheel-smooth.html [ Pass Timeout ]
 compositing/repaint/copy-forward-dirty-region.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api.html [ ImageOnlyFailure ]

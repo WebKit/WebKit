@@ -67,6 +67,8 @@ PFNEGLDUPNATIVEFENCEFDANDROIDPROC l_EGL_DupNativeFenceFDANDROID;
 PFNEGLPRESENTATIONTIMEANDROIDPROC l_EGL_PresentationTimeANDROID;
 PFNEGLCREATEDEVICEANGLEPROC l_EGL_CreateDeviceANGLE;
 PFNEGLRELEASEDEVICEANGLEPROC l_EGL_ReleaseDeviceANGLE;
+PFNEGLLOCKVULKANQUEUEANGLEPROC l_EGL_LockVulkanQueueANGLE;
+PFNEGLUNLOCKVULKANQUEUEANGLEPROC l_EGL_UnlockVulkanQueueANGLE;
 PFNEGLACQUIREEXTERNALCONTEXTANGLEPROC l_EGL_AcquireExternalContextANGLE;
 PFNEGLRELEASEEXTERNALCONTEXTANGLEPROC l_EGL_ReleaseExternalContextANGLE;
 PFNEGLQUERYDISPLAYATTRIBANGLEPROC l_EGL_QueryDisplayAttribANGLE;
@@ -98,6 +100,7 @@ PFNEGLQUERYDMABUFMODIFIERSEXTPROC l_EGL_QueryDmaBufModifiersEXT;
 PFNEGLCREATEPLATFORMPIXMAPSURFACEEXTPROC l_EGL_CreatePlatformPixmapSurfaceEXT;
 PFNEGLCREATEPLATFORMWINDOWSURFACEEXTPROC l_EGL_CreatePlatformWindowSurfaceEXT;
 PFNEGLGETPLATFORMDISPLAYEXTPROC l_EGL_GetPlatformDisplayEXT;
+PFNEGLQUERYSUPPORTEDCOMPRESSIONRATESEXTPROC l_EGL_QuerySupportedCompressionRatesEXT;
 PFNEGLDEBUGMESSAGECONTROLKHRPROC l_EGL_DebugMessageControlKHR;
 PFNEGLLABELOBJECTKHRPROC l_EGL_LabelObjectKHR;
 PFNEGLQUERYDEBUGKHRPROC l_EGL_QueryDebugKHR;
@@ -214,6 +217,10 @@ void LoadLibEGL_EGL(LoadProc loadProc)
         reinterpret_cast<PFNEGLCREATEDEVICEANGLEPROC>(loadProc("EGL_CreateDeviceANGLE"));
     l_EGL_ReleaseDeviceANGLE =
         reinterpret_cast<PFNEGLRELEASEDEVICEANGLEPROC>(loadProc("EGL_ReleaseDeviceANGLE"));
+    l_EGL_LockVulkanQueueANGLE =
+        reinterpret_cast<PFNEGLLOCKVULKANQUEUEANGLEPROC>(loadProc("EGL_LockVulkanQueueANGLE"));
+    l_EGL_UnlockVulkanQueueANGLE =
+        reinterpret_cast<PFNEGLUNLOCKVULKANQUEUEANGLEPROC>(loadProc("EGL_UnlockVulkanQueueANGLE"));
     l_EGL_AcquireExternalContextANGLE = reinterpret_cast<PFNEGLACQUIREEXTERNALCONTEXTANGLEPROC>(
         loadProc("EGL_AcquireExternalContextANGLE"));
     l_EGL_ReleaseExternalContextANGLE = reinterpret_cast<PFNEGLRELEASEEXTERNALCONTEXTANGLEPROC>(
@@ -280,6 +287,9 @@ void LoadLibEGL_EGL(LoadProc loadProc)
             loadProc("EGL_CreatePlatformWindowSurfaceEXT"));
     l_EGL_GetPlatformDisplayEXT =
         reinterpret_cast<PFNEGLGETPLATFORMDISPLAYEXTPROC>(loadProc("EGL_GetPlatformDisplayEXT"));
+    l_EGL_QuerySupportedCompressionRatesEXT =
+        reinterpret_cast<PFNEGLQUERYSUPPORTEDCOMPRESSIONRATESEXTPROC>(
+            loadProc("EGL_QuerySupportedCompressionRatesEXT"));
     l_EGL_DebugMessageControlKHR =
         reinterpret_cast<PFNEGLDEBUGMESSAGECONTROLKHRPROC>(loadProc("EGL_DebugMessageControlKHR"));
     l_EGL_LabelObjectKHR =

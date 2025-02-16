@@ -74,7 +74,7 @@ public:
 
     WEBCORE_EXPORT void registerSharedWorkerThread(Ref<SharedWorkerThreadProxy>&&);
 
-    void forEachSharedWorker(const Function<Function<void(ScriptExecutionContext&)>()>&);
+    void forEachSharedWorker(NOESCAPE const Function<Function<void(ScriptExecutionContext&)>()>&);
 
 private:
     friend class NeverDestroyed<SharedWorkerContextManager>;

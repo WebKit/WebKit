@@ -1,0 +1,10 @@
+This test passes if there is no crash and there's an exception
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS container.normalize() threw exception InvalidModificationError: Normalized Node String representation exceeds implementation maximum length..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

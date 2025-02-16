@@ -61,11 +61,6 @@ public:
 
     uint64_t didExceedDatabaseQuota(WebPage*, API::SecurityOrigin*, const String& databaseName, const String& databaseDisplayName, uint64_t currentQuotaBytes, uint64_t currentOriginUsageBytes, uint64_t currentDatabaseUsageBytes, uint64_t expectedUsageBytes) override;
 
-    String plugInStartLabelTitle(const String& mimeType) const override;
-    String plugInStartLabelSubtitle(const String& mimeType) const override;
-    String plugInExtraStyleSheet() const override;
-    String plugInExtraScript() const override;
-
     void didClickAutoFillButton(WebPage&, InjectedBundleNodeHandle&, RefPtr<API::Object>& userData) override;
 
     void didResignInputElementStrongPasswordAppearance(WebPage&, InjectedBundleNodeHandle&, RefPtr<API::Object>& userData) override;

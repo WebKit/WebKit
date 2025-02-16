@@ -1471,21 +1471,54 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _impl->setDrawsBackground(drawsBackground);
 }
 
-- (void)_setTopContentInset:(CGFloat)contentInset
+- (void)_setTopContentInset:(CGFloat)inset
 {
-    _impl->setTopContentInset(contentInset);
+    auto insets = _impl->obscuredContentInsets();
+    insets.setTop(static_cast<float>(inset));
+    _impl->setObscuredContentInsets(insets);
 }
 
 - (CGFloat)_topContentInset
 {
-    return _impl->topContentInset();
+    return _impl->obscuredContentInsets().top();
 }
 
-- (void)_setTopContentInset:(CGFloat)contentInset immediate:(BOOL)immediate
+- (void)_setTopContentInset:(CGFloat)inset immediate:(BOOL)immediate
 {
-    _impl->setTopContentInset(contentInset);
+    auto insets = _impl->obscuredContentInsets();
+    insets.setTop(static_cast<float>(inset));
+    _impl->setObscuredContentInsets(insets);
     if (immediate)
-        _impl->flushPendingTopContentInset();
+        _impl->flushPendingObscuredContentInsetChanges();
+}
+
+- (void)_setObscuredContentInsets:(NSEdgeInsets)insets immediate:(BOOL)immediate
+{
+    if (insets.top < 0 || insets.left < 0 || insets.bottom < 0 || insets.right < 0) {
+        [NSException raise:NSInvalidArgumentException format:@"Obscured insets cannot be negative: {%f, %f, %f, %f}", insets.top, insets.left, insets.bottom, insets.right];
+        return;
+    }
+
+    _impl->setObscuredContentInsets({
+        static_cast<float>(insets.top),
+        static_cast<float>(insets.right),
+        static_cast<float>(insets.bottom),
+        static_cast<float>(insets.left)
+    });
+
+    if (immediate)
+        _impl->flushPendingObscuredContentInsetChanges();
+}
+
+- (NSEdgeInsets)_obscuredContentInsets
+{
+    auto insets = _impl->obscuredContentInsets();
+    return NSEdgeInsetsMake(
+        static_cast<CGFloat>(insets.top()),
+        static_cast<CGFloat>(insets.left()),
+        static_cast<CGFloat>(insets.bottom()),
+        static_cast<CGFloat>(insets.right())
+    );
 }
 
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets

@@ -45,7 +45,7 @@ noInline(classDeclaration);
 let C1 = classDeclaration();
 let C2 = classDeclaration();
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let c = i % 2 ? new C1 : new C2;
     c.setField('test' + i);
     assert.equals(c.getField(), 'test' + i);

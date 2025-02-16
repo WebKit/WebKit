@@ -295,12 +295,15 @@ WI.TimelineTabContentView = class TimelineTabContentView extends WI.ContentBrows
             if (timelineRecord.name)
                 return WI.UIString("Frame %d \u2014 %s").format(timelineRecord.frameNumber, timelineRecord.name);
             return WI.UIString("Frame %d").format(timelineRecord.frameNumber);
-        case WI.TimelineRecord.Type.HeapAllocations:
-            if (timelineRecord.heapSnapshot.imported)
-                return WI.UIString("Imported \u2014 %s").format(timelineRecord.heapSnapshot.title);
-            if (timelineRecord.heapSnapshot.title)
-                return WI.UIString("Snapshot %d \u2014 %s").format(timelineRecord.heapSnapshot.identifier, timelineRecord.heapSnapshot.title);
-            return WI.UIString("Snapshot %d").format(timelineRecord.heapSnapshot.identifier);
+        case WI.TimelineRecord.Type.HeapAllocations: {
+            let snapshot = timelineRecord.heapSnapshot;
+            if (snapshot.imported)
+                return WI.UIString("Imported Snapshot \u2014 %s").format(snapshot.title || snapshot.identifier);
+            let title = snapshot.title ? WI.UIString("%d \u2014 \u201C%s\u201D", "Label for JavaScript heap snapshot identifier and user provided name.").format(snapshot.identifier, snapshot.title) : snapshot.identifier;
+            if (snapshot.target.type === WI.TargetType.Worker)
+                return WI.UIString("Worker \u201C%s\u201D Snapshot %s").format(snapshot.target.displayName, title);
+            return WI.UIString("Page Snapshot %s").format(title);
+        }
         case WI.TimelineRecord.Type.Media:
             // Since the `displayName` can be specific to an `animation-name`/`transition-property`,
             // use the generic `subtitle` text instead of we are rendering from the overview.

@@ -44,53 +44,53 @@ namespace CSS {
 
 // MARK: - Gradient Color Stop
 
-template<typename C, typename P> static void colorStopSerializationForCSS(StringBuilder& builder, const GradientColorStop<C, P>& stop)
+template<typename C, typename P> static void colorStopSerializationForCSS(StringBuilder& builder, const SerializationContext& context, const GradientColorStop<C, P>& stop)
 {
     if (stop.color && stop.position) {
-        serializationForCSS(builder, *stop.color);
+        serializationForCSS(builder, context, *stop.color);
         builder.append(' ');
-        serializationForCSS(builder, *stop.position);
+        serializationForCSS(builder, context, *stop.position);
     } else if (stop.color)
-        serializationForCSS(builder, *stop.color);
+        serializationForCSS(builder, context, *stop.color);
     else if (stop.position)
-        serializationForCSS(builder, *stop.position);
+        serializationForCSS(builder, context, *stop.position);
 }
 
-void Serialize<GradientAngularColorStop>::operator()(StringBuilder& builder, const GradientAngularColorStop& stop)
+void Serialize<GradientAngularColorStop>::operator()(StringBuilder& builder, const SerializationContext& context, const GradientAngularColorStop& stop)
 {
-    colorStopSerializationForCSS(builder, stop);
+    colorStopSerializationForCSS(builder, context, stop);
 }
 
-void Serialize<GradientLinearColorStop>::operator()(StringBuilder& builder, const GradientLinearColorStop& stop)
+void Serialize<GradientLinearColorStop>::operator()(StringBuilder& builder, const SerializationContext& context, const GradientLinearColorStop& stop)
 {
-    colorStopSerializationForCSS(builder, stop);
+    colorStopSerializationForCSS(builder, context, stop);
 }
 
-void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, const GradientDeprecatedColorStop& stop)
+void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, const SerializationContext& context, const GradientDeprecatedColorStop& stop)
 {
     auto appendRaw = [&](const auto& color, NumberRaw<> raw) {
         if (!raw.value) {
             builder.append("from("_s);
-            serializationForCSS(builder, color);
+            serializationForCSS(builder, context, color);
             builder.append(')');
         } else if (raw.value == 1) {
             builder.append("to("_s);
-            serializationForCSS(builder, color);
+            serializationForCSS(builder, context, color);
             builder.append(')');
         } else {
             builder.append("color-stop("_s);
-            serializationForCSS(builder, raw);
+            serializationForCSS(builder, context, raw);
             builder.append(", "_s);
-            serializationForCSS(builder, color);
+            serializationForCSS(builder, context, color);
             builder.append(')');
         }
     };
 
     auto appendCalc = [&](const auto& color, const auto& calc) {
         builder.append("color-stop("_s);
-        serializationForCSS(builder, calc);
+        serializationForCSS(builder, context, calc);
         builder.append(", "_s);
-        serializationForCSS(builder, color);
+        serializationForCSS(builder, context, color);
         builder.append(')');
     };
 
@@ -148,7 +148,7 @@ static bool appendColorInterpolationMethod(StringBuilder& builder, CSS::Gradient
 
 // MARK: - LinearGradient
 
-void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearGradient& gradient)
+void Serialize<LinearGradient>::operator()(StringBuilder& builder, const SerializationContext& context, const LinearGradient& gradient)
 {
     bool wroteSomething = false;
 
@@ -159,18 +159,18 @@ void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearG
                     if (convertToValueInUnitsOf<AngleUnit::Deg>(angleRaw) == 180)
                         return;
 
-                    serializationForCSS(builder, angleRaw);
+                    serializationForCSS(builder, context, angleRaw);
                     wroteSomething = true;
                 },
                 [&](const Angle<>::Calc& angleCalc) {
-                    serializationForCSS(builder, angleCalc);
+                    serializationForCSS(builder, context, angleCalc);
                     wroteSomething = true;
                 }
             );
         },
         [&](const Horizontal& horizontal) {
             builder.append("to "_s);
-            serializationForCSS(builder, horizontal);
+            serializationForCSS(builder, context, horizontal);
             wroteSomething = true;
         },
         [&](const Vertical& vertical) {
@@ -178,12 +178,12 @@ void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearG
                 return;
 
             builder.append("to "_s);
-            serializationForCSS(builder, vertical);
+            serializationForCSS(builder, context, vertical);
             wroteSomething = true;
         },
         [&](const SpaceSeparatedTuple<Horizontal, Vertical>& pair) {
             builder.append("to "_s);
-            serializationForCSS(builder, pair);
+            serializationForCSS(builder, context, pair);
             wroteSomething = true;
         }
     );
@@ -194,45 +194,45 @@ void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearG
     if (wroteSomething)
         builder.append(", "_s);
 
-    serializationForCSS(builder, gradient.stops);
+    serializationForCSS(builder, context, gradient.stops);
 }
 
 // MARK: - PrefixedLinearGradient
 
-void Serialize<PrefixedLinearGradient>::operator()(StringBuilder& builder, const PrefixedLinearGradient& gradient)
+void Serialize<PrefixedLinearGradient>::operator()(StringBuilder& builder, const SerializationContext& context, const PrefixedLinearGradient& gradient)
 {
-    serializationForCSS(builder, gradient.gradientLine);
+    serializationForCSS(builder, context, gradient.gradientLine);
     builder.append(", "_s);
-    serializationForCSS(builder, gradient.stops);
+    serializationForCSS(builder, context, gradient.stops);
 }
 
 // MARK: - DeprecatedLinearGradient
 
-void Serialize<DeprecatedLinearGradient>::operator()(StringBuilder& builder, const DeprecatedLinearGradient& gradient)
+void Serialize<DeprecatedLinearGradient>::operator()(StringBuilder& builder, const SerializationContext& context, const DeprecatedLinearGradient& gradient)
 {
     builder.append("linear, "_s);
 
-    serializationForCSS(builder, gradient.gradientLine);
+    serializationForCSS(builder, context, gradient.gradientLine);
 
     if (!gradient.stops.isEmpty()) {
         builder.append(", "_s);
-        serializationForCSS(builder, gradient.stops);
+        serializationForCSS(builder, context, gradient.stops);
     }
 }
 
 // MARK: - RadialGradient
 
-void Serialize<RadialGradient::Ellipse>::operator()(StringBuilder& builder, const RadialGradient::Ellipse& ellipse)
+void Serialize<RadialGradient::Ellipse>::operator()(StringBuilder& builder, const SerializationContext& context, const RadialGradient::Ellipse& ellipse)
 {
     auto lengthBefore = builder.length();
 
     WTF::switchOn(ellipse.size,
         [&](const RadialGradient::Ellipse::Size& size) {
-            serializationForCSS(builder, size);
+            serializationForCSS(builder, context, size);
         },
         [&](const RadialGradient::Extent& extent) {
             if (!std::holds_alternative<Keyword::FarthestCorner>(extent))
-                serializationForCSS(builder, extent);
+                serializationForCSS(builder, context, extent);
         }
     );
 
@@ -243,21 +243,21 @@ void Serialize<RadialGradient::Ellipse>::operator()(StringBuilder& builder, cons
                 builder.append(' ');
 
             builder.append("at "_s);
-            serializationForCSS(builder, *ellipse.position);
+            serializationForCSS(builder, context, *ellipse.position);
         }
     }
 }
 
-void Serialize<RadialGradient::Circle>::operator()(StringBuilder& builder, const RadialGradient::Circle& circle)
+void Serialize<RadialGradient::Circle>::operator()(StringBuilder& builder, const SerializationContext& context, const RadialGradient::Circle& circle)
 {
     WTF::switchOn(circle.size,
         [&](const RadialGradient::Circle::Length& length) {
-            serializationForCSS(builder, length);
+            serializationForCSS(builder, context, length);
         },
         [&](const RadialGradient::Extent& extent) {
             if (!std::holds_alternative<Keyword::FarthestCorner>(extent)) {
                 builder.append("circle "_s);
-                serializationForCSS(builder, extent);
+                serializationForCSS(builder, context, extent);
             } else
                 builder.append("circle"_s);
         }
@@ -266,15 +266,15 @@ void Serialize<RadialGradient::Circle>::operator()(StringBuilder& builder, const
     if (circle.position) {
         if (!isCenterPosition(*circle.position)) {
             builder.append(" at "_s);
-            serializationForCSS(builder, *circle.position);
+            serializationForCSS(builder, context, *circle.position);
         }
     }
 }
 
-void Serialize<RadialGradient>::operator()(StringBuilder& builder, const RadialGradient& gradient)
+void Serialize<RadialGradient>::operator()(StringBuilder& builder, const SerializationContext& context, const RadialGradient& gradient)
 {
     auto lengthBefore = builder.length();
-    serializationForCSS(builder, gradient.gradientBox);
+    serializationForCSS(builder, context, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
 
     if (appendColorInterpolationMethod(builder, gradient.colorInterpolationMethod, wroteSomething))
@@ -283,15 +283,15 @@ void Serialize<RadialGradient>::operator()(StringBuilder& builder, const RadialG
     if (wroteSomething)
         builder.append(", "_s);
 
-    serializationForCSS(builder, gradient.stops);
+    serializationForCSS(builder, context, gradient.stops);
 }
 
 // MARK: - PrefixedRadialGradient
 
-void Serialize<PrefixedRadialGradient::Ellipse>::operator()(StringBuilder& builder, const PrefixedRadialGradient::Ellipse& ellipse)
+void Serialize<PrefixedRadialGradient::Ellipse>::operator()(StringBuilder& builder, const SerializationContext& context, const PrefixedRadialGradient::Ellipse& ellipse)
 {
     if (ellipse.position)
-        serializationForCSS(builder, *ellipse.position);
+        serializationForCSS(builder, context, *ellipse.position);
     else
         builder.append("center"_s);
 
@@ -299,67 +299,67 @@ void Serialize<PrefixedRadialGradient::Ellipse>::operator()(StringBuilder& build
         WTF::switchOn(*ellipse.size,
             [&](const PrefixedRadialGradient::Ellipse::Size& size) {
                 builder.append(", "_s);
-                serializationForCSS(builder, size);
+                serializationForCSS(builder, context, size);
             },
             [&](const PrefixedRadialGradient::Extent& extent) {
                 builder.append(", ellipse "_s);
-                serializationForCSS(builder, extent);
+                serializationForCSS(builder, context, extent);
             }
         );
     }
 }
 
-void Serialize<PrefixedRadialGradient::Circle>::operator()(StringBuilder& builder, const PrefixedRadialGradient::Circle& circle)
+void Serialize<PrefixedRadialGradient::Circle>::operator()(StringBuilder& builder, const SerializationContext& context, const PrefixedRadialGradient::Circle& circle)
 {
     if (circle.position)
-        serializationForCSS(builder, *circle.position);
+        serializationForCSS(builder, context, *circle.position);
     else
         builder.append("center"_s);
 
     builder.append(", circle "_s);
-    serializationForCSS(builder, circle.size.value_or(PrefixedRadialGradient::Extent { CSS::Keyword::Cover { } }));
+    serializationForCSS(builder, context, circle.size.value_or(PrefixedRadialGradient::Extent { CSS::Keyword::Cover { } }));
 }
 
-void Serialize<PrefixedRadialGradient>::operator()(StringBuilder& builder, const PrefixedRadialGradient& gradient)
+void Serialize<PrefixedRadialGradient>::operator()(StringBuilder& builder, const SerializationContext& context, const PrefixedRadialGradient& gradient)
 {
     auto lengthBefore = builder.length();
-    serializationForCSS(builder, gradient.gradientBox);
+    serializationForCSS(builder, context, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
 
     if (wroteSomething)
         builder.append(", "_s);
 
-    serializationForCSS(builder, gradient.stops);
+    serializationForCSS(builder, context, gradient.stops);
 }
 
 // MARK: - DeprecatedRadialGradient
 
-void Serialize<DeprecatedRadialGradient::GradientBox>::operator()(StringBuilder& builder, const DeprecatedRadialGradient::GradientBox& gradientBox)
+void Serialize<DeprecatedRadialGradient::GradientBox>::operator()(StringBuilder& builder, const SerializationContext& context, const DeprecatedRadialGradient::GradientBox& gradientBox)
 {
-    serializationForCSS(builder, gradientBox.first);
+    serializationForCSS(builder, context, gradientBox.first);
     builder.append(", "_s);
-    serializationForCSS(builder, gradientBox.firstRadius);
+    serializationForCSS(builder, context, gradientBox.firstRadius);
     builder.append(", "_s);
-    serializationForCSS(builder, gradientBox.second);
+    serializationForCSS(builder, context, gradientBox.second);
     builder.append(", "_s);
-    serializationForCSS(builder, gradientBox.secondRadius);
+    serializationForCSS(builder, context, gradientBox.secondRadius);
 }
 
-void Serialize<DeprecatedRadialGradient>::operator()(StringBuilder& builder, const DeprecatedRadialGradient& gradient)
+void Serialize<DeprecatedRadialGradient>::operator()(StringBuilder& builder, const SerializationContext& context, const DeprecatedRadialGradient& gradient)
 {
     builder.append("radial, "_s);
 
-    serializationForCSS(builder, gradient.gradientBox);
+    serializationForCSS(builder, context, gradient.gradientBox);
 
     if (!gradient.stops.isEmpty()) {
         builder.append(", "_s);
-        serializationForCSS(builder, gradient.stops);
+        serializationForCSS(builder, context, gradient.stops);
     }
 }
 
 // MARK: - ConicGradient
 
-void Serialize<ConicGradient::GradientBox>::operator()(StringBuilder& builder, const ConicGradient::GradientBox& gradientBox)
+void Serialize<ConicGradient::GradientBox>::operator()(StringBuilder& builder, const SerializationContext& context, const ConicGradient::GradientBox& gradientBox)
 {
     bool wroteSomething = false;
 
@@ -368,13 +368,13 @@ void Serialize<ConicGradient::GradientBox>::operator()(StringBuilder& builder, c
             [&](const Angle<>::Raw& angleRaw) {
                 if (angleRaw.value) {
                     builder.append("from "_s);
-                    serializationForCSS(builder, angleRaw);
+                    serializationForCSS(builder, context, angleRaw);
                     wroteSomething = true;
                 }
             },
             [&](const Angle<>::Calc& angleCalc) {
                 builder.append("from "_s);
-                serializationForCSS(builder, angleCalc);
+                serializationForCSS(builder, context, angleCalc);
                 wroteSomething = true;
             }
         );
@@ -384,14 +384,14 @@ void Serialize<ConicGradient::GradientBox>::operator()(StringBuilder& builder, c
         if (wroteSomething)
             builder.append(' ');
         builder.append("at "_s);
-        serializationForCSS(builder, *gradientBox.position);
+        serializationForCSS(builder, context, *gradientBox.position);
     }
 }
 
-void Serialize<ConicGradient>::operator()(StringBuilder& builder, const ConicGradient& gradient)
+void Serialize<ConicGradient>::operator()(StringBuilder& builder, const SerializationContext& context, const ConicGradient& gradient)
 {
     auto lengthBefore = builder.length();
-    serializationForCSS(builder, gradient.gradientBox);
+    serializationForCSS(builder, context, gradient.gradientBox);
     bool wroteSomething = builder.length() != lengthBefore;
 
     if (appendColorInterpolationMethod(builder, gradient.colorInterpolationMethod, wroteSomething))
@@ -400,7 +400,7 @@ void Serialize<ConicGradient>::operator()(StringBuilder& builder, const ConicGra
     if (wroteSomething)
         builder.append(", "_s);
 
-    serializationForCSS(builder, gradient.stops);
+    serializationForCSS(builder, context, gradient.stops);
 }
 
 } // namespace CSS

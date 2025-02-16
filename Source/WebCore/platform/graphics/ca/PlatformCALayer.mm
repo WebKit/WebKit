@@ -76,8 +76,8 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
     constexpr auto acceleratedContextLabelColor = Color::red;
     constexpr auto unacceleratedContextLabelColor = Color::white;
     constexpr auto displayListBorderColor = Color::black.colorWithAlphaByte(166);
-#if HAVE(HDR_SUPPORT)
-    constexpr auto hdrBackgroundColor = SRGBA<uint8_t> { 116, 214, 255 };
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    constexpr auto rgba16FBackgroundColor = SRGBA<uint8_t> { 116, 214, 255 };
 #endif
 
     TextRun textRun(String::number(repaintCount));
@@ -94,9 +94,9 @@ void PlatformCALayer::drawRepaintIndicator(GraphicsContext& graphicsContext, Pla
 
     auto backgroundColor = customBackgroundColor.isValid() ? customBackgroundColor : defaultBackgroundColor;
 
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     if (platformCALayer->contentsFormat() == ContentsFormat::RGBA16F)
-        backgroundColor = hdrBackgroundColor;
+        backgroundColor = rgba16FBackgroundColor;
 #endif
 
     GraphicsContextStateSaver stateSaver(graphicsContext);
@@ -176,6 +176,23 @@ Ref<PlatformCALayer> PlatformCALayer::createCompatibleLayerOrTakeFromPool(Platfo
     auto layer = createCompatibleLayer(layerType, client);
     layer->setBounds(FloatRect(FloatPoint(), size));
     return layer;
+}
+
+ContentsFormat PlatformCALayer::contentsFormatForLayer(Widget* widget, PlatformCALayerClient* client)
+{
+    auto contentsFormats = screenContentsFormats(widget);
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    if (client && client->hdrForImagesEnabled() && contentsFormats.contains(ContentsFormat::RGBA16F))
+        return ContentsFormat::RGBA16F;
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    if (contentsFormats.contains(ContentsFormat::RGBA10))
+        return ContentsFormat::RGBA10;
+#endif
+    UNUSED_PARAM(client);
+    UNUSED_PARAM(contentsFormats);
+    ASSERT(contentsFormats.contains(ContentsFormat::RGBA8));
+    return ContentsFormat::RGBA8;
 }
 
 void PlatformCALayer::moveToLayerPool()
@@ -269,6 +286,11 @@ TextStream& operator<<(TextStream& ts, PlatformCALayer::LayerType layerType)
 #if HAVE(CORE_MATERIAL)
     case PlatformCALayer::LayerType::LayerTypeMaterialLayer:
         ts << "material-layer";
+        break;
+#endif
+#if HAVE(MATERIAL_HOSTING)
+    case PlatformCALayer::LayerType::LayerTypeMaterialHostingLayer:
+        ts << "material-hosting-layer";
         break;
 #endif
     case PlatformCALayer::LayerType::LayerTypeAVPlayerLayer:

@@ -468,16 +468,6 @@ bool WKPreferencesGetTabsToLinks(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->tabsToLinks();
 }
 
-void WKPreferencesSetDNSPrefetchingEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setDNSPrefetchingEnabled(enabled);
-}
-
-bool WKPreferencesGetDNSPrefetchingEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->dnsPrefetchingEnabled();
-}
-
 void WKPreferencesSetAuthorAndUserStylesEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setAuthorAndUserStylesEnabled(enabled);
@@ -676,6 +666,11 @@ void WKPreferencesSetMainContentUserGestureOverrideEnabled(WKPreferencesRef pref
 bool WKPreferencesGetMainContentUserGestureOverrideEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->mainContentUserGestureOverrideEnabled();
+}
+
+bool WKPreferencesGetVerifyUserGestureInUIProcessEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->verifyWindowOpenUserGestureFromUIProcess();
 }
 
 void WKPreferencesSetManagedMediaSourceLowThreshold(WKPreferencesRef preferencesRef, double threshold)
@@ -1126,16 +1121,6 @@ void WKPreferencesSetMediaDevicesEnabled(WKPreferencesRef preferencesRef, bool e
 bool WKPreferencesGetMediaDevicesEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->mediaDevicesEnabled();
-}
-
-void WKPreferencesSetMediaStreamEnabled(WKPreferencesRef preferencesRef, bool enabled)
-{
-    toImpl(preferencesRef)->setMediaStreamEnabled(enabled);
-}
-
-bool WKPreferencesGetMediaStreamEnabled(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->mediaStreamEnabled();
 }
 
 void WKPreferencesSetPeerConnectionEnabled(WKPreferencesRef preferencesRef, bool enabled)
@@ -1618,16 +1603,6 @@ bool WKPreferencesGetMediaCapabilitiesEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->mediaCapabilitiesEnabled();
 }
 
-void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef, bool flag)
-{
-    toImpl(preferencesRef)->setRestrictedHTTPResponseAccess(flag);
-}
-
-bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef preferencesRef)
-{
-    return toImpl(preferencesRef)->restrictedHTTPResponseAccess();
-}
-
 void WKPreferencesSetColorFilterEnabled(WKPreferencesRef preferencesRef, bool flag)
 {
     toImpl(preferencesRef)->setColorFilterEnabled(flag);
@@ -1740,6 +1715,24 @@ bool WKPreferencesGetRequestVideoFrameCallbackEnabled(WKPreferencesRef preferenc
 
 
 // The following are all deprecated and do nothing. They should be removed when possible.
+
+void WKPreferencesSetDNSPrefetchingEnabled(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetDNSPrefetchingEnabled(WKPreferencesRef)
+{
+    return false;
+}
+
+void WKPreferencesSetRestrictedHTTPResponseAccess(WKPreferencesRef, bool)
+{
+}
+
+bool WKPreferencesGetRestrictedHTTPResponseAccess(WKPreferencesRef)
+{
+    return true;
+}
 
 void WKPreferencesSetPluginsEnabled(WKPreferencesRef, bool)
 {
@@ -2115,6 +2108,15 @@ void WKPreferencesSetServerTimingEnabled(WKPreferencesRef, bool)
 }
 
 bool WKPreferencesGetServerTimingEnabled(WKPreferencesRef)
+{
+    return true;
+}
+
+void WKPreferencesSetMediaStreamEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+}
+
+bool WKPreferencesGetMediaStreamEnabled(WKPreferencesRef preferencesRef)
 {
     return true;
 }

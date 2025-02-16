@@ -145,7 +145,7 @@ Ref<EditingStyle> FontAttributeChanges::createEditingStyle() const
 
     if (m_shadow) {
         if (auto shadowValue = cssValueForTextShadow(*m_shadow))
-            style->setProperty(CSSPropertyTextShadow, WTFMove(shadowValue));
+            style->setProperty(CSSPropertyTextShadow, shadowValue.releaseNonNull());
         else
             style->setProperty(CSSPropertyTextShadow, CSSValueNone);
     }

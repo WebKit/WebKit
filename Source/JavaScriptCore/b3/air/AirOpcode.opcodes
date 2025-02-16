@@ -341,6 +341,12 @@ x86: MulFloat U:F:32, UD:F:32
     Tmp, Tmp
     Addr, Tmp
 
+arm64: MultiplyNegDouble U:F:64, U:F:64, D:F:64
+    Tmp, Tmp, Tmp
+
+arm64: MultiplyNegFloat U:F:32, U:F:32, D:F:32
+    Tmp, Tmp, Tmp
+
 arm x86_64_avx: DivDouble U:F:64, U:F:64, D:F:64
     Tmp, Tmp, Tmp
 
@@ -623,6 +629,14 @@ FloorDouble U:F:64, D:F:64
     x86: Addr, Tmp
 
 FloorFloat U:F:32, D:F:32
+    Tmp, Tmp
+    x86: Addr, Tmp
+
+TruncDouble U:F:64, D:F:64
+    Tmp, Tmp
+    x86: Addr, Tmp
+
+TruncFloat U:F:32, D:F:32
     Tmp, Tmp
     x86: Addr, Tmp
 

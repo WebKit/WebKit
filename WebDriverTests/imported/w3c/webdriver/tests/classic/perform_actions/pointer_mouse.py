@@ -1,6 +1,10 @@
 import pytest
-
-from webdriver.error import InvalidArgumentException, NoSuchWindowException, StaleElementReferenceException
+from webdriver.error import (
+    InvalidArgumentException,
+    MoveTargetOutOfBoundsException,
+    NoSuchWindowException,
+    StaleElementReferenceException,
+)
 
 from tests.classic.perform_actions.support.mouse import (
     get_inview_center,
@@ -8,7 +12,7 @@ from tests.classic.perform_actions.support.mouse import (
 )
 from tests.classic.perform_actions.support.refine import get_events
 from tests.support.asserts import assert_move_to_coordinates
-from tests.support.helpers import filter_dict
+from tests.support.helpers import center_point, filter_dict
 from tests.support.sync import Poll
 
 from . import assert_pointer_events, record_pointer_events
@@ -29,12 +33,36 @@ def test_no_browsing_context(session, closed_frame, mouse_chain):
         mouse_chain.click().perform()
 
 
+def test_pointer_down_closes_browsing_context(
+    session, configuration, http_new_tab, inline, mouse_chain
+):
+    session.url = inline(
+        """<input onpointerdown="window.close()">close</input>""")
+    origin = session.find.css("input", all=False)
+
+    with pytest.raises(NoSuchWindowException):
+        mouse_chain.pointer_move(0, 0, origin=origin) \
+            .pointer_down(button=0) \
+            .pause(100 * configuration["timeout_multiplier"]) \
+            .pointer_up(button=0) \
+            .perform()
+
+
 @pytest.mark.parametrize("as_frame", [False, True], ids=["top_context", "child_context"])
 def test_stale_element_reference(session, stale_element, mouse_chain, as_frame):
     element = stale_element("input#text", as_frame=as_frame)
 
     with pytest.raises(StaleElementReferenceException):
         mouse_chain.click(element=element).perform()
+
+
+@pytest.mark.parametrize("origin", ["element", "pointer", "viewport"])
+def test_params_actions_origin_outside_viewport(session, test_actions_page, mouse_chain, origin):
+    if origin == "element":
+        origin = session.find.css("#outer", all=False)
+
+    with pytest.raises(MoveTargetOutOfBoundsException):
+        mouse_chain.pointer_move(-100, -100, origin=origin).perform()
 
 
 def test_click_at_coordinates(session, test_actions_page, mouse_chain):
@@ -204,71 +232,51 @@ def test_move_to_position_in_viewport(
     assert len(events) == event_count
 
 
-@pytest.mark.parametrize("drag_duration", [0, 300, 800])
-@pytest.mark.parametrize("dx, dy", [
-    (20, 0), (0, 15), (10, 15), (-20, 0), (10, -15), (-10, -15)
-])
-def test_drag_and_drop(session,
-                       test_actions_page,
-                       mouse_chain,
-                       dx,
-                       dy,
-                       drag_duration):
-    drag_target = session.find.css("#dragTarget", all=False)
-    initial_rect = drag_target.rect
-    initial_center = get_inview_center(initial_rect, get_viewport_rect(session))
-    # Conclude chain with extra move to allow time for last queued
-    # coordinate-update of drag_target and to test that drag_target is "dropped".
-    mouse_chain \
-        .pointer_move(0, 0, origin=drag_target) \
-        .pointer_down() \
-        .pointer_move(dx, dy, duration=drag_duration, origin="pointer") \
-        .pointer_up() \
-        .pointer_move(80, 50, duration=100, origin="pointer") \
-        .perform()
-    # mouseup that ends the drag is at the expected destination
-    e = get_events(session)[1]
-    assert e["type"] == "mouseup"
-    assert e["pageX"] == pytest.approx(initial_center["x"] + dx, abs=1.0)
-    assert e["pageY"] == pytest.approx(initial_center["y"] + dy, abs=1.0)
-    # check resulting location of the dragged element
-    final_rect = drag_target.rect
-    assert initial_rect["x"] + dx == final_rect["x"]
-    assert initial_rect["y"] + dy == final_rect["y"]
+@pytest.mark.parametrize("origin", ["viewport", "pointer", "element"])
+def test_move_to_origin_position_within_frame(
+    session, iframe, inline, mouse_chain, origin
+):
+    session.url = inline(
+        iframe(
+            """
+        <input>
+        <script>
+            "use strict;"
 
+            var allEvents = { events: [] };
+            window.addEventListener("mousemove", e => {
+                allEvents.events.push([
+                    e.clientX,
+                    e.clientY,
+                ]);
+            });
+        </script>
+    """
+        )
+    )
 
-@pytest.mark.parametrize("drag_duration", [0, 300, 800])
-def test_drag_and_drop_with_draggable_element(session_new_window,
-                       test_actions_page,
-                       mouse_chain,
-                       drag_duration):
-    new_session = session_new_window
-    drag_target = new_session.find.css("#draggable", all=False)
-    drop_target = new_session.find.css("#droppable", all=False)
-    # Conclude chain with extra move to allow time for last queued
-    # coordinate-update of drag_target and to test that drag_target is "dropped".
-    mouse_chain \
-        .pointer_move(0, 0, origin=drag_target) \
-        .pointer_down() \
-        .pointer_move(50,
-                      25,
-                      duration=drag_duration,
-                      origin=drop_target) \
-        .pointer_up() \
-        .pointer_move(80, 50, duration=100, origin="pointer") \
-        .perform()
-    # mouseup that ends the drag is at the expected destination
-    e = get_events(new_session)
-    assert len(e) >= 5
-    assert e[1]["type"] == "dragstart", "Events captured were {}".format(e)
-    assert e[2]["type"] == "dragover", "Events captured were {}".format(e)
-    drag_events_captured = [
-        ev["type"] for ev in e if ev["type"].startswith("drag") or ev["type"].startswith("drop")
-    ]
-    assert "dragend" in drag_events_captured
-    assert "dragenter" in drag_events_captured
-    assert "dragleave" in drag_events_captured
-    assert "drop" in drag_events_captured
+    frame = session.find.css("iframe", all=False)
+    session.switch_frame(frame)
+
+    elem = session.find.css("input", all=False)
+    elem_center_point = center_point(elem)
+
+    offset = [10, 5]
+
+    if origin == "element":
+        origin = elem
+        target_point = [
+            elem_center_point[0] + offset[0],
+            elem_center_point[1] + offset[1],
+        ]
+    else:
+        target_point = offset
+
+    mouse_chain.pointer_move(offset[0], offset[1], origin=origin).perform()
+
+    events = get_events(session)
+    assert len(events) == 1
+    assert events[0] == target_point
 
 
 @pytest.mark.parametrize("missing", ["x", "y"])

@@ -130,15 +130,16 @@ void WebSWRegistrationStore::updateToStorage(CompletionHandler<void()>&& callbac
     if (!m_manager)
         return callback();
 
-    checkedManager()->updateServiceWorkerRegistrations(WTFMove(registrationsToUpdate), WTFMove(registrationsToDelete), [this, weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& result) mutable {
+    checkedManager()->updateServiceWorkerRegistrations(WTFMove(registrationsToUpdate), WTFMove(registrationsToDelete), [weakThis = WeakPtr { *this }, callback = WTFMove(callback)](auto&& result) mutable {
         ASSERT(RunLoop::isMain());
 
-        if (!weakThis || !m_server || !result)
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !protectedThis->m_server || !result)
             return callback();
 
         auto allScripts = WTFMove(result.value());
         for (auto&& scripts : allScripts)
-            protectedServer()->didSaveWorkerScriptsToDisk(scripts.identifier, WTFMove(scripts.mainScript), WTFMove(scripts.importedScripts));
+            protectedThis->protectedServer()->didSaveWorkerScriptsToDisk(scripts.identifier, WTFMove(scripts.mainScript), WTFMove(scripts.importedScripts));
 
         callback();
     });

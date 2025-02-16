@@ -16,7 +16,7 @@ function typeOf(n) {
 }
 noInline(typeOf);
 
-for (let i = 0; i < 1e6; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     switch (i % 3) {
     case 0:
         assert(typeOf(i) === "bigint");

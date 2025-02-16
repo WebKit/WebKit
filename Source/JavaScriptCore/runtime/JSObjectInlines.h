@@ -60,7 +60,7 @@ inline Structure* JSFinalObject::createStructure(VM& vm, JSGlobalObject* globalO
 template<typename CellType, SubspaceAccess>
 CompleteSubspace* JSFinalObject::subspaceFor(VM& vm)
 {
-    static_assert(!CellType::needsDestruction);
+    static_assert(CellType::needsDestruction == DoesNotNeedDestruction);
     return &vm.cellSpace();
 }
 
@@ -821,7 +821,7 @@ ALWAYS_INLINE void JSObject::getNonReifiedStaticPropertyNames(VM& vm, PropertyNa
 
         for (auto iter = table->begin(); iter != table->end(); ++iter) {
             if (mode == DontEnumPropertiesMode::Include || !(iter->attributes() & PropertyAttribute::DontEnum)) {
-                auto identifier = Identifier::fromLatin1(vm, iter.key());
+                auto identifier = Identifier::fromString(vm, iter.key());
                 // If the structure is shadowing the static property use it's attributes to determine if
                 // the property name is enumerable but add it here to preserve the right property order.
                 unsigned structureAttributes;

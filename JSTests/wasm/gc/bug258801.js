@@ -1,5 +1,3 @@
-//@ runWebAssemblySuite("--useWasmGC=true")
-
 import * as assert from "../assert.js";
 function module(bytes, valid = true) {
   let buffer = new ArrayBuffer(bytes.length);

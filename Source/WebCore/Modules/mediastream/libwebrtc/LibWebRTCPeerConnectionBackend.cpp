@@ -402,6 +402,7 @@ void LibWebRTCPeerConnectionBackend::collectTransceivers()
 
 void LibWebRTCPeerConnectionBackend::removeTrack(RTCRtpSender& sender)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "Removing "_s, sender.trackKind(), " track with ID "_s, sender.trackId());
     m_endpoint->removeTrack(backendFromRTPSender(sender));
 }
 

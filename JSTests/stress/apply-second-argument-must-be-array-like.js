@@ -7,7 +7,7 @@ function assert(x) {
 
 function shouldThrow(expr) {
     let testFunc = new Function(expr);
-    for (let i = 0; i < 10000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let error;
         try {
             testFunc();
@@ -33,7 +33,7 @@ function bar() {
     return arguments.length;
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     new Function(`
         assert(bar.apply(undefined, undefined) === 0);
         assert(bar.apply(undefined, null) === 0);

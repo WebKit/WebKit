@@ -299,6 +299,9 @@ class Display final : public LabeledObject,
     angle::SimpleMutex &getDisplayGlobalMutex() { return mDisplayGlobalMutex; }
     angle::SimpleMutex &getProgramCacheMutex() { return mProgramCacheMutex; }
 
+    void lockVulkanQueue();
+    void unlockVulkanQueue();
+
     gl::MemoryShaderCache *getMemoryShaderCache() { return &mMemoryShaderCache; }
 
     // Installs LoggingAnnotator as the global DebugAnnotator, for back-ends that do not implement
@@ -312,6 +315,12 @@ class Display final : public LabeledObject,
                                EGLuint64KHR *modifiers,
                                EGLBoolean *external_only,
                                EGLint *num_modifiers);
+
+    Error querySupportedCompressionRates(const Config *configuration,
+                                         const AttributeMap &attributes,
+                                         EGLint *rates,
+                                         EGLint rate_size,
+                                         EGLint *num_rates) const;
 
     std::shared_ptr<angle::WorkerThreadPool> getSingleThreadPool() const
     {

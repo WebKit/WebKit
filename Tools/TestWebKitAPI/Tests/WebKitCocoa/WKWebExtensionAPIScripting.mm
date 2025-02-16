@@ -204,15 +204,14 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     static auto *backgroundColor = @"document.body.style.background = 'pink'";
 
     static auto *resources = @{ @"background.js": backgroundScript, @"backgroundColor.js": backgroundColor };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
@@ -221,9 +220,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScript)
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -256,19 +253,16 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptJSONTypes)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:@{ @"background.js": backgroundScript }]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, @{ @"background.js": backgroundScript });
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -299,7 +293,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithFrameIds)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')"
+        @"browser.test.sendMessage('Load Tab')"
     ]);
 
     auto *contentScript = Util::constructScript(@[
@@ -332,14 +326,11 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithFrameIds)
         @"content.js": contentScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, resources);
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost("/frame.html"_s).URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
 
@@ -374,7 +365,7 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithDocumentIds)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')"
+        @"browser.test.sendMessage('Load Tab')"
     ]);
 
     auto *contentScript = Util::constructScript(@[
@@ -407,14 +398,11 @@ TEST(WKWebExtensionAPIScripting, ExecuteScriptWithDocumentIds)
         @"content.js": contentScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(manifest, resources);
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:server.requestWithLocalhost("/frame.html"_s).URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:server.requestWithLocalhost()];
 
@@ -495,7 +483,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     static auto *backgroundColor = @"body { background-color: pink !important }";
@@ -507,8 +495,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
         @"fontSize.css": fontSize,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
@@ -516,9 +503,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSS)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -571,7 +556,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     static auto *backgroundColor = @"body { background-color: pink !important }";
@@ -583,8 +568,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
         @"fontSize.css": fontSize,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
@@ -592,9 +576,7 @@ TEST(WKWebExtensionAPIScripting, InsertAndRemoveCSSWithFrameIds)
     auto *matchPattern = [WKWebExtensionMatchPattern matchPatternWithScheme:url.scheme host:url.host path:@"/*"];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -619,23 +601,20 @@ TEST(WKWebExtensionAPIScripting, CSSUserOrigin)
         @"  }",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     auto *resources = @{
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -660,23 +639,20 @@ TEST(WKWebExtensionAPIScripting, CSSAuthorOrigin)
         @"  }",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     auto *resources = @{
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -708,23 +684,20 @@ TEST(WKWebExtensionAPIScripting, World)
         @"  }",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     auto *resources = @{
         @"background.js": backgroundScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -777,7 +750,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     static auto *resources = @{
@@ -786,8 +759,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
@@ -796,9 +768,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScripts)
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -834,7 +804,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSUserOrigin)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     auto *css = @"body { color: green !important }";
@@ -844,16 +814,13 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSUserOrigin)
         @"changeColor.css": css
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -889,7 +856,7 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSAuthorOrigin)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     auto *css = @"body { color: green !important }";
@@ -899,16 +866,13 @@ TEST(WKWebExtensionAPIScripting, RegisterContentScriptsWithCSSAuthorOrigin)
         @"changeColor.css": css
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
 
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -973,7 +937,7 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     static auto *resources = @{
@@ -982,8 +946,7 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
@@ -992,9 +955,7 @@ TEST(WKWebExtensionAPIScripting, UpdateContentScripts)
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -1042,7 +1003,7 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"  browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     static auto *resources = @{
@@ -1051,8 +1012,7 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
@@ -1061,9 +1021,7 @@ TEST(WKWebExtensionAPIScripting, GetContentScripts)
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -1117,7 +1075,7 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
         @"    browser.test.notifyPass()",
         @"})",
 
-        @"browser.test.yield('Load Tab')",
+        @"browser.test.sendMessage('Load Tab')",
     ]);
 
     static auto *resources = @{
@@ -1126,8 +1084,7 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
         @"changeBackgroundFontScript.js": changeBackgroundFontScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(scriptingManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     auto *url = urlRequest.URL;
@@ -1136,9 +1093,7 @@ TEST(WKWebExtensionAPIScripting, UnregisterContentScripts)
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebNavigation];
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forMatchPattern:matchPattern];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager runUntilTestMessage:@"Load Tab"];
 
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
@@ -1169,11 +1124,11 @@ TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
         @"  registeredScripts = await browser.scripting.getRegisteredContentScripts()",
         @"  browser.test.assertEq(registeredScripts.length, 1)",
 
-        @"  browser.test.yield('Unload extension')",
+        @"  browser.test.sendMessage('Unload extension')",
         @"} else {",
         @"  browser.test.assertEq(registeredScripts.length, 1)",
 
-        @"  browser.test.yield('Load Tab')",
+        @"  browser.test.sendMessage('Load Tab')",
         @"}"
     ]);
 
@@ -1182,27 +1137,24 @@ TEST(WKWebExtensionAPIScripting, RegisteredScriptIsInjectedAfterContextReloads)
         @"changeBackgroundColorScript.js": changeBackgroundColorScript,
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:scriptingManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:WKWebExtensionControllerConfiguration._temporaryConfiguration]);
+    auto manager = Util::parseExtension(scriptingManifest, resources, WKWebExtensionControllerConfiguration._temporaryConfiguration);
 
     // Give the extension a unique identifier so it opts into saving data in the temporary configuration.
     manager.get().context.uniqueIdentifier = @"org.webkit.test.extension (76C788B8)";
 
     EXPECT_FALSE(manager.get().context.hasInjectedContent);
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Unload extension");
+    [manager load];
+    [manager runUntilTestMessage:@"Unload extension"];
 
     EXPECT_TRUE(manager.get().context.hasInjectedContent);
 
-    [manager.get().controller unloadExtensionContext:manager.get().context error:nullptr];
+    [manager unload];
 
     EXPECT_FALSE(manager.get().context.hasInjectedContent);
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+    [manager load];
+    [manager runUntilTestMessage:@"Load Tab"];
 
     EXPECT_TRUE(manager.get().context.hasInjectedContent);
 
@@ -1248,14 +1200,13 @@ TEST(WKWebExtensionAPIScripting, MainWorld)
         @"content_script.js": contentScript
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(contentScriptsManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIScripting, IsolatedWorld)
@@ -1292,14 +1243,13 @@ TEST(WKWebExtensionAPIScripting, IsolatedWorld)
         @"content_script.js": contentScript
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(contentScriptsManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
 
-    [manager loadAndRun];
+    [manager run];
 }
 
 TEST(WKWebExtensionAPIScripting, RemoveAllUserScriptsDoesNotRemoveWebExtensionScripts)
@@ -1328,7 +1278,7 @@ TEST(WKWebExtensionAPIScripting, RemoveAllUserScriptsDoesNotRemoveWebExtensionSc
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.yield('Remove Scripts and Load Tab')"
+        @"browser.test.sendMessage('Remove Scripts and Load Tab')"
     ]);
 
     auto *contentScript = Util::constructScript(@[
@@ -1340,15 +1290,12 @@ TEST(WKWebExtensionAPIScripting, RemoveAllUserScriptsDoesNotRemoveWebExtensionSc
         @"content.js": contentScript
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(contentScriptsManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Remove Scripts and Load Tab");
+    [manager runUntilTestMessage:@"Remove Scripts and Load Tab"];
 
     [manager.get().defaultTab.webView.configuration.userContentController removeAllUserScripts];
     [manager.get().defaultTab.webView loadRequest:urlRequest];
@@ -1383,7 +1330,7 @@ TEST(WKWebExtensionAPIScripting, RemoveAllUserStyleSheetsDoesNotRemoveWebExtensi
     };
 
     auto *backgroundScript = Util::constructScript(@[
-        @"browser.test.yield('Remove StyleSheets and Load Tab')"
+        @"browser.test.sendMessage('Remove StyleSheets and Load Tab')"
     ]);
 
     auto *contentScript = Util::constructScript(@[
@@ -1400,15 +1347,12 @@ TEST(WKWebExtensionAPIScripting, RemoveAllUserStyleSheetsDoesNotRemoveWebExtensi
         @"content.js": contentScript
     };
 
-    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:contentScriptsManifest resources:resources]);
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+    auto manager = Util::loadExtension(contentScriptsManifest, resources);
 
     auto *urlRequest = server.requestWithLocalhost();
     [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
 
-    [manager loadAndRun];
-
-    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Remove StyleSheets and Load Tab");
+    [manager runUntilTestMessage:@"Remove StyleSheets and Load Tab"];
 
     [manager.get().defaultTab.webView.configuration.userContentController _removeAllUserStyleSheets];
     [manager.get().defaultTab.webView loadRequest:urlRequest];

@@ -9,7 +9,7 @@ function bar(x) {
 
 noInline(bar);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar(42);
     if (result.length != 42)
         throw "Error: bad result length: " + result;

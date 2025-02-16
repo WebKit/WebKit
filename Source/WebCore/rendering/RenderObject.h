@@ -761,9 +761,11 @@ public:
     Document& document() const { return m_node.get().document(); }
     inline Ref<Document> protectedDocument() const; // Defined in RenderObjectInlines.h.
     TreeScope& treeScopeForSVGReferences() const { return m_node.get().treeScopeForSVGReferences(); }
+    Ref<TreeScope> protectedTreeScopeForSVGReferences() const { return treeScopeForSVGReferences(); }
     LocalFrame& frame() const;
     Ref<LocalFrame> protectedFrame() const { return frame(); }
     Page& page() const;
+    Ref<Page> protectedPage() const;
     Settings& settings() const { return page().settings(); }
 
     // Returns the object containing this one. Can be different from parent for positioned elements.
@@ -1054,7 +1056,7 @@ public:
     virtual std::optional<RepaintRects> computeVisibleRectsInContainer(const RepaintRects&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
     virtual std::optional<FloatRect> computeFloatVisibleRectInContainer(const FloatRect&, const RenderLayerModelObject* repaintContainer, VisibleRectContext) const;
 
-    WEBCORE_EXPORT bool hasNonEmptyVisibleRectRespectingParentFrames() const;
+    WEBCORE_EXPORT bool hasEmptyVisibleRectRespectingParentFrames() const;
 
     virtual unsigned length() const { return 1; }
 
@@ -1351,6 +1353,11 @@ inline Page& RenderObject::page() const
     // so it's safe to assume Frame::page() is non-null as long as there are live RenderObjects.
     ASSERT(frame().page());
     return *frame().page();
+}
+
+inline Ref<Page> RenderObject::protectedPage() const
+{
+    return page();
 }
 
 inline bool RenderObject::renderTreeBeingDestroyed() const

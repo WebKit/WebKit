@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -125,6 +125,7 @@ private:
     WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) override;
     WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) override;
     WebCore::IntPoint screenToRootView(const WebCore::IntPoint&) override;
+    WebCore::IntPoint rootViewToScreen(const WebCore::IntPoint&) override;
     WebCore::IntRect rootViewToScreen(const WebCore::IntRect&) override;
     WebCore::IntPoint accessibilityScreenToRootView(const WebCore::IntPoint&) override;
     WebCore::IntRect rootViewToAccessibilityScreen(const WebCore::IntRect&) override;
@@ -146,19 +147,13 @@ private:
     RefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy&) override;
     Ref<WebCore::ValidationBubble> createValidationBubble(const String& message, const WebCore::ValidationBubble::Settings&) final;
 
-#if ENABLE(INPUT_TYPE_COLOR)
-    RefPtr<WebColorPicker> createColorPicker(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) final;
-#endif
+    RefPtr<WebColorPicker> createColorPicker(WebPageProxy&, const WebCore::Color& initialColor, const WebCore::IntRect&, ColorControlSupportsAlpha, Vector<WebCore::Color>&&) final { return nullptr; }
 
-#if ENABLE(DATALIST_ELEMENT)
     RefPtr<WebDataListSuggestionsDropdown> createDataListSuggestionsDropdown(WebPageProxy&) final;
-#endif
 
     WebCore::DataOwnerType dataOwnerForPasteboard(PasteboardAccessIntent) const final;
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-    RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) final;
-#endif
+    RefPtr<WebDateTimePicker> createDateTimePicker(WebPageProxy&) final { return nullptr; }
 
     void setTextIndicator(Ref<WebCore::TextIndicator>, WebCore::TextIndicatorLifetime) override;
     void clearTextIndicator(WebCore::TextIndicatorDismissalAnimation) override;
@@ -183,7 +178,7 @@ private:
     void commitPotentialTapFailed() override;
     void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling) override;
 
-    void didCommitLayerTree(const RemoteLayerTreeTransaction&) override;
+    void didCommitLayerTree(const RemoteLayerTreeTransaction&) final;
     void layerTreeCommitComplete() override;
         
     void didPerformDictionaryLookup(const WebCore::DictionaryPopupInfo&) override;
@@ -205,20 +200,27 @@ private:
     void reconcileEnclosingScrollViewContentOffset(EditorState&) final;
     bool isFocusingElement() override;
     void selectionDidChange() override;
-    bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
+    bool interpretKeyEvent(const NativeWebKeyboardEvent&, KeyEventInterpretationContext&&) override;
     void positionInformationDidChange(const InteractionInformationAtPosition&) override;
     void saveImageToLibrary(Ref<WebCore::SharedBuffer>&&) override;
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&) override;
     void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&) override;
+
+    bool canStartNavigationSwipeAtLastInteractionLocation() const final;
 
     void hardwareKeyboardAvailabilityChanged() override;
 
     bool handleRunOpenPanel(WebPageProxy*, WebFrameProxy*, const FrameInfoData&, API::OpenPanelParameters*, WebOpenPanelResultListenerProxy*) override;
     bool showShareSheet(const WebCore::ShareDataWithParsedURL&, WTF::CompletionHandler<void(bool)>&&) override;
     void showContactPicker(const WebCore::ContactsRequestData&, WTF::CompletionHandler<void(std::optional<Vector<WebCore::ContactInfo>>&&)>&&) override;
-    
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    void showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData&, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&&) override;
+    void dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&&) override;
+#endif
+
     void disableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier) override;
-    void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel) override;
+    void handleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier, const WebCore::FloatRect& renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel, bool nodeIsPluginElement) override;
 
     double minimumZoomScale() const override;
     WebCore::FloatRect documentRect() const override;
@@ -238,17 +240,14 @@ private:
     void scrollingNodeScrollDidEndScroll(std::optional<WebCore::ScrollingNodeID>) override;
         
     void requestScrollToRect(const WebCore::FloatRect& targetRect, const WebCore::FloatPoint& origin) override;
-        
-    // Auxiliary Client Creation
-#if ENABLE(FULLSCREEN_API)
-    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;
-#endif
 
 #if ENABLE(FULLSCREEN_API)
+    WebFullScreenManagerProxyClient& fullScreenManagerProxyClient() override;
+
     // WebFullScreenManagerProxyClient
     void closeFullScreenManager() override;
     bool isFullScreen() override;
-    void enterFullScreen(WebCore::FloatSize mediaDimensions) override;
+    void enterFullScreen(WebCore::FloatSize mediaDimensions, CompletionHandler<void(bool)>&&) override;
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     void updateImageSource() override;
 #endif
@@ -363,10 +362,6 @@ private:
 
 #if HAVE(SPATIAL_TRACKING_LABEL)
     const String& spatialTrackingLabel() const final;
-#endif
-
-#if ENABLE(PDF_PLUGIN)
-    void pluginDidInstallPDFDocument(double initialScale) final;
 #endif
 
     void scheduleVisibleContentRectUpdate() final;

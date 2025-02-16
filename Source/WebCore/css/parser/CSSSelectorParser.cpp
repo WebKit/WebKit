@@ -86,9 +86,9 @@ static void appendImplicitSelectorIfNeeded(MutableCSSSelector& selector, CSSPars
     }
 }
 
-MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange& range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext, CSSParserEnum::IsForgiving isForgiving)
+MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange& range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext, CSSParserEnum::IsForgiving isForgiving, CSSSelectorParser::DisallowPseudoElement disallowPseudoElement)
 {
-    CSSSelectorParser parser(context, styleSheet, nestedContext);
+    CSSSelectorParser parser(context, styleSheet, nestedContext, disallowPseudoElement);
     range.consumeWhitespace();
     auto consume = [&] {
         if (nestedContext && isForgiving == CSSParserEnum::IsForgiving::No)
@@ -114,7 +114,7 @@ MutableCSSSelectorList parseMutableCSSSelectorList(CSSParserTokenRange& range, c
 
 std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext)
 {
-    auto result = parseMutableCSSSelectorList(range, context, styleSheet, nestedContext, CSSParserEnum::IsForgiving::No);
+    auto result = parseMutableCSSSelectorList(range, context, styleSheet, nestedContext, CSSParserEnum::IsForgiving::No, CSSSelectorParser::DisallowPseudoElement::No);
 
     if (result.isEmpty() || !range.atEnd())
         return { };
@@ -122,10 +122,11 @@ std::optional<CSSSelectorList> parseCSSSelectorList(CSSParserTokenRange range, c
     return CSSSelectorList { WTFMove(result) };
 }
 
-CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext)
+CSSSelectorParser::CSSSelectorParser(const CSSSelectorParserContext& context, StyleSheetContents* styleSheet, CSSParserEnum::NestedContext nestedContext, DisallowPseudoElement disallowPseudoElement)
     : m_context(context)
     , m_styleSheet(styleSheet)
     , m_nestedContext(nestedContext)
+    , m_disallowPseudoElements(disallowPseudoElement == DisallowPseudoElement::Yes)
 {
 }
 
@@ -185,7 +186,7 @@ MutableCSSSelectorList CSSSelectorParser::consumeForgivingSelectorList(CSSParser
         auto initialRange = range;
         auto unknownSelector = [&] {
             auto unknownSelector = makeUnique<MutableCSSSelector>();
-            auto unknownRange = initialRange.makeSubRange(initialRange.begin(), range.begin());
+            auto unknownRange = initialRange.rangeUntil(range);
             unknownSelector->setMatch(CSSSelector::Match::ForgivingUnknown);
             // We store the complete range content for serialization.
             unknownSelector->setValue(AtomString { unknownRange.serialize() });

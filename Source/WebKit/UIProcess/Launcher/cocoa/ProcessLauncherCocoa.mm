@@ -425,7 +425,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     }
     
     auto sdkBehaviors = sdkAlignedBehaviors();
-    xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviors.storage(), sdkBehaviors.storageLengthInBytes());
+    xpc_dictionary_set_data(bootstrapMessage.get(), "client-sdk-aligned-behaviors", sdkBehaviors.storage().data(), sdkBehaviors.storageLengthInBytes());
 
     auto extraInitializationData = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
 
@@ -449,7 +449,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
 #endif
 
         if (event)
-            LOG_ERROR("Error while launching %s: %s", logName.data(), xpc_dictionary_get_string(event, XPC_ERROR_KEY_DESCRIPTION));
+            LOG_ERROR("Error while launching %s: %s", logName.data(), xpc_dictionary_get_wtfstring(event, xpcErrorDescriptionKey).utf8().data());
         else
             LOG_ERROR("Error while launching %s: No xpc_object_t event available.", logName.data());
 
@@ -475,7 +475,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     Function<void(xpc_object_t)> eventHandler = [errorHandlerImpl = WTFMove(errorHandlerImpl), xpcEventHandler = m_client->xpcEventHandler()] (xpc_object_t event) mutable {
 
         if (!event || xpc_get_type(event) == XPC_TYPE_ERROR) {
-            RunLoop::main().dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr(event)] {
+            RunLoop::protectedMain()->dispatch([errorHandlerImpl = std::exchange(errorHandlerImpl, nullptr), event = OSObjectPtr(event)] {
                 if (errorHandlerImpl)
                     errorHandlerImpl(event.get());
                 else if (event.get() != XPC_ERROR_CONNECTION_INVALID)
@@ -485,7 +485,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         }
 
         if (xpcEventHandler) {
-            RunLoop::main().dispatch([xpcEventHandler = xpcEventHandler, event = OSObjectPtr(event)] {
+            RunLoop::protectedMain()->dispatch([xpcEventHandler = xpcEventHandler, event = OSObjectPtr(event)] {
                 xpcEventHandler->handleXPCEvent(event.get());
             });
         }
@@ -508,7 +508,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
         // launching and we already took care of cleaning things up.
         if (isLaunching() && xpc_get_type(reply) != XPC_TYPE_ERROR) {
             ASSERT(xpc_get_type(reply) == XPC_TYPE_DICTIONARY);
-            ASSERT(!strcmp(xpc_dictionary_get_string(reply, "message-name"), "process-finished-launching"));
+            ASSERT(xpc_dictionary_get_wtfstring(reply, "message-name"_s) == "process-finished-launching"_s);
 
 #if ASSERT_ENABLED
             mach_port_urefs_t sendRightCount = 0;

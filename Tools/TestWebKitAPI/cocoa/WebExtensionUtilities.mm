@@ -40,6 +40,9 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+// Enable this to test all web extension tests with site isolation.
+static constexpr BOOL shouldEnableSiteIsolation = NO;
+
 @interface TestWebExtensionManager () <WKWebExtensionControllerDelegatePrivate>
 @end
 
@@ -60,10 +63,14 @@
     if (!(self = [super init]))
         return nil;
 
-    _yieldMessage = @"";
+    if (!configuration)
+        configuration = WKWebExtensionControllerConfiguration.nonPersistentConfiguration;
+
+    configuration.webViewConfiguration.preferences._siteIsolationEnabled = shouldEnableSiteIsolation;
+
     _extension = extension;
     _context = [[WKWebExtensionContext alloc] initForExtension:extension];
-    _controller = [[WKWebExtensionController alloc] initWithConfiguration:configuration ?: WKWebExtensionControllerConfiguration.nonPersistentConfiguration];
+    _controller = [[WKWebExtensionController alloc] initWithConfiguration:configuration];
 
     // Grant all requested API permissions.
     for (WKWebExtensionPermission permission in _extension.requestedPermissions)
@@ -91,7 +98,7 @@
 #if PLATFORM(MAC)
     __weak TestWebExtensionManager *weakSelf = self;
 
-    _internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
+    _internalDelegate.openNewWindow = ^(WKWebExtensionWindowConfiguration *configuration, WKWebExtensionContext *context, void (^completionHandler)(id<WKWebExtensionWindow>, NSError *)) {
         auto *newWindow = [weakSelf openNewWindowUsingPrivateBrowsing:configuration.shouldBePrivate];
 
         newWindow.windowType = configuration.windowType;
@@ -118,6 +125,14 @@
         }
 
         newWindow.frame = desiredFrame;
+
+        bool isFirstURL = true;
+        for (NSURL *url in configuration.tabURLs) {
+            auto *targetTab = isFirstURL ? newWindow.tabs.firstObject : [newWindow openNewTab];
+            [targetTab changeWebViewIfNeededForURL:url forExtensionContext:context];
+            [targetTab.webView loadRequest:[NSURLRequest requestWithURL:url]];
+            isFirstURL = false;
+        }
 
         completionHandler(newWindow, nil);
     };
@@ -150,6 +165,11 @@
     _controllerDelegate = _internalDelegate;
 
     return self;
+}
+
+- (void)dealloc
+{
+    [self unload];
 }
 
 - (BOOL)respondsToSelector:(SEL)selector
@@ -227,10 +247,16 @@
     EXPECT_NULL(error);
 }
 
+- (void)unload
+{
+    NSError *error;
+    EXPECT_TRUE([_controller unloadExtensionContext:_context error:&error]);
+    EXPECT_NULL(error);
+}
+
 - (void)run
 {
     _done = false;
-    _yieldMessage = @"";
 
     TestWebKitAPI::Util::run(&_done);
 }
@@ -238,7 +264,6 @@
 - (void)runForTimeInterval:(NSTimeInterval)interval
 {
     _done = false;
-    _yieldMessage = @"";
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(interval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         self->_done = true;
@@ -309,15 +334,9 @@
         << "Expected: " << expectedValue.UTF8String;
 }
 
-- (void)_webExtensionController:(WKWebExtensionController *)controller recordTestMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
+- (void)_webExtensionController:(WKWebExtensionController *)controller logTestMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
 {
     printf("\n%s:%u\n%s\n\n", sourceURL.UTF8String, lineNumber, message.UTF8String);
-}
-
-- (void)_webExtensionController:(WKWebExtensionController *)controller recordTestYieldedWithMessage:(NSString *)message andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
-{
-    _done = true;
-    _yieldMessage = [message copy] ?: @"";
 }
 
 - (void)_webExtensionController:(WKWebExtensionController *)controller receivedTestMessage:(NSString *)message withArgument:(id)argument andSourceURL:(NSString *)sourceURL lineNumber:(unsigned)lineNumber
@@ -380,11 +399,14 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     if (extensionController) {
         BOOL usingPrivateBrowsing = _window.usingPrivateBrowsing;
 
-        WKWebViewConfiguration *configuration = [[WKWebViewConfiguration alloc] init];
+        auto *configuration = [[WKWebViewConfiguration alloc] init];
         configuration.webExtensionController = extensionController;
         configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
         configuration.userContentController = userContentController(usingPrivateBrowsing);
-        configuration.preferences._developerExtrasEnabled = YES;
+
+        auto *preferences = configuration.preferences;
+        preferences._siteIsolationEnabled = shouldEnableSiteIsolation;
+        preferences._developerExtrasEnabled = YES;
 
         _webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
         _webView.navigationDelegate = self;
@@ -430,10 +452,14 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     if ([_webView.URL.scheme isEqualToString:url.scheme])
         return;
 
-    WKWebViewConfiguration *configuration = [url.scheme hasPrefix:@"http"] ? [[WKWebViewConfiguration alloc] init] : context.webViewConfiguration;
+    auto *configuration = [url.scheme hasPrefix:@"http"] ? [[WKWebViewConfiguration alloc] init] : context.webViewConfiguration;
     configuration.webExtensionController = _extensionController;
     configuration.websiteDataStore = usingPrivateBrowsing ? WKWebsiteDataStore.nonPersistentDataStore : WKWebsiteDataStore.defaultDataStore;
     configuration.userContentController = userContentController(usingPrivateBrowsing);
+
+    auto *preferences = configuration.preferences;
+    preferences._siteIsolationEnabled = shouldEnableSiteIsolation;
+    preferences._developerExtrasEnabled = YES;
 
     _webView = [[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration];
     _webView.navigationDelegate = self;
@@ -916,26 +942,22 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
 namespace TestWebKitAPI {
 namespace Util {
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(WKWebExtension *extension, WKWebExtensionControllerConfiguration *configuration)
+RetainPtr<TestWebExtensionManager> parseExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
 {
-    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension extensionControllerConfiguration:configuration]);
-    [manager loadAndRun];
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources]);
+    return adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get() extensionControllerConfiguration:configuration]);
+}
+
+RetainPtr<TestWebExtensionManager> loadExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
+{
+    auto manager = parseExtension(manifest, resources, configuration);
+    [manager load];
     return manager;
 }
 
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
+void loadAndRunExtension(NSDictionary *manifest, NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
 {
-    return loadAndRunExtension([[WKWebExtension alloc] _initWithManifestDictionary:manifest resources:resources], configuration);
-}
-
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSDictionary *resources, WKWebExtensionControllerConfiguration *configuration)
-{
-    return loadAndRunExtension([[WKWebExtension alloc] _initWithResources:resources], configuration);
-}
-
-RetainPtr<TestWebExtensionManager> loadAndRunExtension(NSURL *baseURL, WKWebExtensionControllerConfiguration *configuration)
-{
-    return loadAndRunExtension([[WKWebExtension alloc] initWithResourceBaseURL:baseURL error:nullptr], configuration);
+    [loadExtension(manifest, resources, configuration) run];
 }
 
 NSData *makePNGData(CGSize size, SEL colorSelector)
@@ -967,26 +989,6 @@ NSData *makePNGData(CGSize size, SEL colorSelector)
 
     return UIImagePNGRepresentation(image);
 #endif
-}
-
-void runScriptWithUserGesture(const String& script, WKWebView *webView)
-{
-    ASSERT(webView);
-
-    bool callbackComplete = false;
-    id evalResult;
-
-    [webView callAsyncJavaScript:script arguments:nil inFrame:nil inContentWorld:WKContentWorld.pageWorld completionHandler:[&](id result, NSError *error) {
-        evalResult = result;
-        callbackComplete = true;
-
-        EXPECT_NULL(error);
-
-        if (error)
-            NSLog(@"Encountered error: %@ while evaluating script: %@", error, static_cast<NSString *>(script));
-    }];
-
-    TestWebKitAPI::Util::run(&callbackComplete);
 }
 
 void performWithAppearance(Appearance appearance, void (^block)(void))

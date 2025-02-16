@@ -75,7 +75,7 @@ bool RadioInputType::valueMissing(const String&) const
     return isRequired && !foundCheckedRadio;
 }
 
-void RadioInputType::forEachButtonInDetachedGroup(ContainerNode& rootNode, const String& groupName, const Function<bool(HTMLInputElement&)>& apply)
+void RadioInputType::forEachButtonInDetachedGroup(ContainerNode& rootNode, const String& groupName, NOESCAPE const Function<bool(HTMLInputElement&)>& apply)
 {
     ASSERT(!groupName.isEmpty());
 

@@ -25,6 +25,6 @@ function main() {
         }
 }
 
-for (let v0 = 0; v0 < 100000; v0++) {
+for (let v0 = 0; v0 < testLoopCount; v0++) {
         main();
 }

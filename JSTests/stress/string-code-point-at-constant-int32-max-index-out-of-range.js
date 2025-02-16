@@ -17,9 +17,9 @@ for (var i = 0; i < 40; ++i) {
 }
 
 flag = false;
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(""), 42);
 
 flag = true;
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(""), undefined);

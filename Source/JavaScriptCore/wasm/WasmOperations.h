@@ -55,7 +55,7 @@ typedef int64_t EncodedWasmValue;
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildFrame, JSEntrypointCallee*, (void*, CallFrame*, WebAssemblyFunction*));
 JSC_DECLARE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJSValue, (void*, CallFrame*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationGetWasmCalleeStackSize, unsigned, (JSWebAssemblyInstance*, WasmCallableFunction*));
-JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmToJSExitNeedToUnpack, const TypeDefinition*, (WasmOrJSImportableFunction*));
+JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmToJSExitNeedToUnpack, const TypeDefinition*, (WasmOrJSImportableFunctionCallLinkInfo*));
 JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void*, CallFrame*, void*, JSWebAssemblyInstance*));
 JSC_DECLARE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* sp, CallFrame* cfr, JSWebAssemblyInstance*));
 JSC_DECLARE_NOEXCEPT_JIT_OPERATION(operationWasmToJSExitIterateResults, bool, (JSWebAssemblyInstance*, const TypeDefinition*, uint64_t* registerResults, uint64_t* calleeFramePointer));

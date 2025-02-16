@@ -1,0 +1,31 @@
+<html>
+<head>
+<title>Test user-select: none Test</title>
+<style>
+#test-element {
+   background-color: lightblue;
+   padding: 10px;
+   font-size: 16px;
+   text-align: center;
+   border: 1px solid #000;
+   -webkit-user-select: none;
+}
+</style>
+</head>
+<script src="../../resources/js-test.js"></script>
+<body>
+<div id="test-element">
+You should not be able of select this text.
+</div>
+<div id="console"></div>
+<script>
+   const testElement = document.getElementById('test-element');
+   const range = document.createRange();
+   range.selectNodeContents(testElement);
+   const selection = window.getSelection();
+   selection.removeAllRanges();
+   selection.addRange(range);
+   shouldBeEqualToString("selection.toString()" , '');
+</script>
+</body>
+</html>

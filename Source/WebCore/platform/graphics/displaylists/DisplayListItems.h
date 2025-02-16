@@ -538,25 +538,6 @@ private:
     RenderingResourceIdentifier m_decomposedGlyphsIdentifier;
 };
 
-class DrawDisplayListItems {
-public:
-    static constexpr char name[] = "draw-display-list-items";
-
-    DrawDisplayListItems(const Vector<Item>&, const FloatPoint& destination);
-    WEBCORE_EXPORT DrawDisplayListItems(Vector<Item>&&, const FloatPoint& destination);
-
-    const Vector<Item>& items() const { return m_items; }
-    FloatPoint destination() const { return m_destination; }
-
-    WEBCORE_EXPORT void apply(GraphicsContext&, const ResourceHeap&, ControlFactory&) const;
-    NO_RETURN_DUE_TO_ASSERT void apply(GraphicsContext&) const;
-    void dump(TextStream&, OptionSet<AsTextFlag>) const;
-
-private:
-    Vector<Item> m_items;
-    FloatPoint m_destination;
-};
-
 class DrawImageBuffer {
 public:
     static constexpr char name[] = "draw-image-buffer";
@@ -758,11 +739,11 @@ class DrawLinesForText {
 public:
     static constexpr char name[] = "draw-lines-for-text";
 
-    WEBCORE_EXPORT DrawLinesForText(const FloatPoint&, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle);
+    WEBCORE_EXPORT DrawLinesForText(const FloatPoint&, std::span<const FloatSegment> lineSegments, float thickness, bool printing, bool doubleLines, StrokeStyle);
 
     FloatPoint point() const { return m_point; }
     float thickness() const { return m_thickness; }
-    const DashArray& widths() const { return m_widths; }
+    const Vector<FloatSegment>& lineSegments() const { return m_lineSegments; }
     bool isPrinting() const { return m_printing; }
     bool doubleLines() const { return m_doubleLines; }
     StrokeStyle style() const { return m_style; }
@@ -772,7 +753,7 @@ public:
 
 private:
     FloatPoint m_point;
-    DashArray m_widths;
+    Vector<FloatSegment> m_lineSegments;
     float m_thickness;
     bool m_printing;
     bool m_doubleLines;
@@ -1514,6 +1495,27 @@ public:
 
     WEBCORE_EXPORT void apply(GraphicsContext&) const;
     void dump(TextStream&, OptionSet<AsTextFlag>) const { }
+};
+
+class SetURLForRect {
+public:
+    static constexpr char name[] = "set-URL-for-rect";
+
+    SetURLForRect(const URL& link, const FloatRect& destRect)
+        : m_link(link)
+        , m_destRect(destRect)
+    {
+    }
+
+    const URL& link() const { return m_link; }
+    const FloatRect& destRect() const { return m_destRect; }
+
+    WEBCORE_EXPORT void apply(GraphicsContext&) const;
+    void dump(TextStream&, OptionSet<AsTextFlag>) const;
+
+private:
+    URL m_link;
+    FloatRect m_destRect;
 };
 
 } // namespace DisplayList

@@ -284,6 +284,7 @@ inline CapabilityLevel canCompile(Node* node)
     case MapIterationEntryKey:
     case MapIterationEntryValue:
     case MapStorage:
+    case MapStorageOrSentinel:
     case MapIteratorNext:
     case MapIteratorKey:
     case MapIteratorValue:
@@ -319,6 +320,7 @@ inline CapabilityLevel canCompile(Node* node)
     case DoubleRep:
     case ValueRep:
     case Int52Rep:
+    case PurifyNaN:
     case DoubleConstant:
     case Int52Constant:
     case BooleanToNumber:

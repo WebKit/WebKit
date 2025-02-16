@@ -13,6 +13,8 @@
 #include "test_utils/gl_raii.h"
 #include "util/EGLWindow.h"
 
+#include <condition_variable>
+
 using namespace angle;
 
 class EGLSyncTest : public ANGLETest<>
@@ -367,6 +369,21 @@ TEST_P(EGLSyncTest, AndroidNativeFence_DupNativeFenceFD)
     EXPECT_EGL_TRUE(eglDestroySyncKHR(display, syncWithGeneratedFD));
 }
 
+// Test the validation errors for bad parameters for eglDupNativeFenceFDANDROID
+TEST_P(EGLSyncTest, AndroidNativeFence_DupNativeFenceFD_NegativeValidation)
+{
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension());
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension() || !hasGLSyncExtension());
+    ANGLE_SKIP_TEST_IF(!hasAndroidNativeFenceSyncExtension());
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    int fd;
+    fd = eglDupNativeFenceFDANDROID(display, EGL_NO_SYNC_KHR);
+    EXPECT_EGL_ERROR(EGL_BAD_PARAMETER);
+    EXPECT_EQ(fd, EGL_NO_NATIVE_FENCE_FD_ANDROID);
+}
+
 // Verify CreateSync and ClientWait for EGL_ANDROID_native_fence_sync
 TEST_P(EGLSyncTest, AndroidNativeFence_ClientWait)
 {
@@ -718,6 +735,194 @@ TEST_P(EGLSyncTest, DISABLED_LeakSyncToDisplayDestruction)
 
     EGLSyncKHR sync = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, nullptr);
     EXPECT_NE(sync, EGL_NO_SYNC_KHR);
+}
+
+// Test the validation errors for bad parameters for eglCreateSyncKHR
+TEST_P(EGLSyncTest, NegativeValidationBadAttributes)
+{
+    EGLDisplay display = getEGLWindow()->getDisplay();
+    EGLSyncKHR sync;
+    const EGLint invalidCreateSyncAttributeList[][3] = {
+        {EGL_SYNC_CONDITION_KHR, EGL_NONE, 0},
+        {EGL_SYNC_CONDITION_KHR, EGL_RENDERABLE_TYPE, EGL_NONE},
+        {EGL_SYNC_CONDITION_KHR, EGL_SYNC_PRIOR_COMMANDS_COMPLETE_KHR, EGL_RENDERABLE_TYPE},
+    };
+
+    for (size_t i = 0; i < 3; i++)
+    {
+        sync = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, &invalidCreateSyncAttributeList[i][0]);
+
+        ASSERT_EQ(sync, EGL_NO_SYNC_KHR);
+        ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    }
+}
+
+// Tests that eglClientWaitSyncKHR() is not blocking when Vulkan CommandQueue performs CPU
+// throttling during submission (when `kInFlightCommandsLimit` is exceeded).
+TEST_P(EGLSyncTest, BlockingOnSubmitCPUThrottling)
+{
+    ANGLE_SKIP_TEST_IF(!isVulkanRenderer() || isSwiftshader());
+    ANGLE_SKIP_TEST_IF(!hasFenceSyncExtension() || !hasGLSyncExtension());
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3);
+
+    // Should be somewhat larger than the `kInFlightCommandsLimit`.  At the same time,
+    // `kInFlightCommandsLimit` should be less than the internal driver limit, otherwise test will
+    // not work.
+    constexpr size_t kMaxSyncCount = 100;
+
+    constexpr GLsizei kBufferResolution = 1024;
+    constexpr size_t kDrawsPerSync      = 2;
+
+    constexpr double kLongWaitThresholdMs = 5.0;
+    constexpr size_t kMinLongWaitsToFail  = 5;
+
+    constexpr char kCostlyVS[] = R"(attribute highp vec4 position;
+varying highp vec4 testPos;
+void main(void)
+{
+    testPos     = position;
+    gl_Position = position;
+})";
+
+    constexpr char kCostlyFS[] = R"(precision highp float;
+varying highp vec4 testPos;
+void main(void)
+{
+    vec4 test = testPos;
+    for (int i = 0; i < 500; i++)
+    {
+        test = sqrt(test);
+    }
+    gl_FragColor = test;
+})";
+
+    std::array<EGLSyncKHR, kMaxSyncCount> syncArray;
+    size_t syncCount = 0;
+    std::mutex mutex;
+    std::condition_variable condVar;
+    size_t numLongWaits        = 0;
+    bool isSyncWaitThreadReady = false;
+
+    EGLDisplay display = getEGLWindow()->getDisplay();
+
+    std::thread syncWaitThread([&]() {
+        constexpr GLuint64 kTimeout = 0;  // Just check status
+
+        EGLConfig config = getEGLWindow()->getConfig();
+
+        const EGLint contextAttribs[] = {
+            EGL_CONTEXT_CLIENT_VERSION, getEGLWindow()->getClientMajorVersion(),
+            EGL_CONTEXT_MINOR_VERSION_KHR, getEGLWindow()->getClientMinorVersion(), EGL_NONE};
+
+        EGLContext context2 = eglCreateContext(display, config, EGL_NO_CONTEXT, contextAttribs);
+        ASSERT_NE(EGL_NO_CONTEXT, context2);
+
+        const EGLint pbufferAttribs[] = {EGL_WIDTH, getWindowWidth(), EGL_HEIGHT, getWindowHeight(),
+                                         EGL_NONE};
+        EGLSurface drawSurface2       = eglCreatePbufferSurface(display, config, pbufferAttribs);
+        ASSERT_NE(EGL_NO_SURFACE, drawSurface2);
+
+        // Making some Context current just to prevent blocking in ANGLE_CAPTURE_EGL
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, drawSurface2, drawSurface2, context2));
+
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            isSyncWaitThreadReady = true;
+        }
+        condVar.notify_one();
+
+        for (size_t syncIndex = 0; syncIndex < kMaxSyncCount; ++syncIndex)
+        {
+            {
+                std::unique_lock<std::mutex> lock(mutex);
+                condVar.wait(lock, [&]() { return syncIndex < syncCount; });
+            }
+            while (true)
+            {
+                const double t1 = angle::GetCurrentSystemTime();
+                EGLint result   = eglClientWaitSyncKHR(display, syncArray[syncIndex], 0, kTimeout);
+                const double t2 = angle::GetCurrentSystemTime();
+                if ((t2 - t1) * 1000.0 > kLongWaitThresholdMs)
+                {
+                    ++numLongWaits;
+                }
+                if (result != EGL_TIMEOUT_EXPIRED_KHR)
+                {
+                    EXPECT_EQ(result, EGL_CONDITION_SATISFIED_KHR);
+                    break;
+                }
+                // Wait some time and try again...
+                std::this_thread::sleep_for(std::chrono::microseconds(1000));
+            }
+        }
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+        EXPECT_EGL_TRUE(eglDestroySurface(display, drawSurface2));
+        EXPECT_EGL_TRUE(eglDestroyContext(display, context2));
+    });
+
+    // Prepare the framebuffer
+    GLFramebuffer framebuffer;
+    GLTexture fbTexture;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glBindTexture(GL_TEXTURE_2D, fbTexture);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kBufferResolution, kBufferResolution);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbTexture, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    EXPECT_GLENUM_EQ(GL_FRAMEBUFFER_COMPLETE, glCheckFramebufferStatus(GL_FRAMEBUFFER));
+    ASSERT_GL_NO_ERROR();
+    glViewport(0, 0, kBufferResolution, kBufferResolution);
+
+    ANGLE_GL_PROGRAM(program, kCostlyVS, kCostlyFS);
+
+    // Wait until thread is ready waiting on EGL sync objects...
+    {
+        std::unique_lock<std::mutex> lock(mutex);
+        condVar.wait(lock, [&]() { return isSyncWaitThreadReady; });
+    }
+
+    while (syncCount < kMaxSyncCount)
+    {
+        // Perform GPU heavy rendering
+        for (size_t i = 0; i < kDrawsPerSync; ++i)
+        {
+            drawQuad(program, "position", 0.0f);
+            ASSERT_GL_NO_ERROR();
+        }
+
+        // Using glFenceSync() to force submission without also blocking on the EGL Global mutex.
+        GLsync clientWaitSync = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        ASSERT_GL_NO_ERROR();
+        constexpr GLuint64 kTimeout = 0;  // Just check status
+        glClientWaitSync(clientWaitSync, GL_SYNC_FLUSH_COMMANDS_BIT, kTimeout);
+        EXPECT_GL_NO_ERROR();
+        glDeleteSync(clientWaitSync);
+        ASSERT_GL_NO_ERROR();
+
+        // Creating EGL sync should not block on submission, since glClientWaitSync() should have
+        // already done that.
+        EGLSyncKHR sync = eglCreateSyncKHR(display, EGL_SYNC_FENCE_KHR, nullptr);
+        EXPECT_NE(sync, EGL_NO_SYNC_KHR);
+
+        // Make sync ready for checking from another thread.
+        syncArray[syncCount] = sync;
+        {
+            std::unique_lock<std::mutex> lock(mutex);
+            ++syncCount;
+        }
+        condVar.notify_one();
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    syncWaitThread.join();
+
+    for (EGLSyncKHR sync : syncArray)
+    {
+        EXPECT_EGL_TRUE(eglDestroySyncKHR(display, sync));
+    }
+
+    EXPECT_LT(numLongWaits, kMinLongWaitsToFail);
 }
 
 ANGLE_INSTANTIATE_TEST_ES2_AND_ES3(EGLSyncTest);

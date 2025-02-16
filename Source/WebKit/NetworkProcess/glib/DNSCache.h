@@ -65,10 +65,8 @@ private:
 
     Lock m_lock;
     DNSCacheMap m_dnsMap WTF_GUARDED_BY_LOCK(m_lock);
-#if GLIB_CHECK_VERSION(2, 59, 0)
     DNSCacheMap m_ipv4Map;
     DNSCacheMap m_ipv6Map;
-#endif
     RunLoop::Timer m_expiredTimer;
 };
 

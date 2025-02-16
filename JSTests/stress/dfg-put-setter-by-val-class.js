@@ -40,5 +40,5 @@ function setter(name)
 }
 noInline(setter);
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(setter('hello'), 42);

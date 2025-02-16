@@ -20,7 +20,8 @@ WindowSurfaceVkSimple::WindowSurfaceVkSimple(const egl::SurfaceState &surfaceSta
 
 WindowSurfaceVkSimple::~WindowSurfaceVkSimple() {}
 
-angle::Result WindowSurfaceVkSimple::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)
+angle::Result WindowSurfaceVkSimple::createSurfaceVk(vk::ErrorContext *context,
+                                                     gl::Extents *extentsOut)
 {
     vk::Renderer *renderer = context->getRenderer();
     ASSERT(renderer != nullptr);
@@ -65,7 +66,7 @@ angle::Result WindowSurfaceVkSimple::createSurfaceVk(vk::Context *context, gl::E
     return getCurrentWindowSize(context, extentsOut);
 }
 
-angle::Result WindowSurfaceVkSimple::getCurrentWindowSize(vk::Context *context,
+angle::Result WindowSurfaceVkSimple::getCurrentWindowSize(vk::ErrorContext *context,
                                                           gl::Extents *extentsOut)
 {
     vk::Renderer *renderer                 = context->getRenderer();

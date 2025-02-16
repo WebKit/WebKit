@@ -55,7 +55,7 @@
 #include <WebCore/FrameLoaderTypes.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/LayoutMilestone.h>
-#include <WebCore/PlatformMouseEvent.h>
+#include <WebCore/MouseEventTypes.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/UserContentTypes.h>
 #include <WebCore/UserScriptTypes.h>

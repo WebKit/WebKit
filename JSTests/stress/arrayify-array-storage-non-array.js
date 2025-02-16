@@ -18,7 +18,7 @@ function testArrayStorage(array)
 }
 noInline(testArrayStorage);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(testArrayStorage(array), 5);
     shouldBe(testArrayStorage(array2), 5);
     shouldBe(testArrayStorage(array3), 0.5);

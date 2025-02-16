@@ -17,6 +17,7 @@ function editingTest() {
 
     // Drag a word in the textarea
     var textarea = document.getElementById("textarea");
+    textarea.focus();
     textarea.setSelectionRange(0, 4);
     x = textarea.offsetLeft + 10;
     y = textarea.offsetTop + textarea.offsetHeight / 2;

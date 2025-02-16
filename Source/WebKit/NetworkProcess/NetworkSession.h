@@ -59,6 +59,7 @@
 namespace WebCore {
 class CertificateInfo;
 class NetworkStorageSession;
+class ResourceMonitorThrottler;
 class ResourceRequest;
 class ResourceError;
 class SWServer;
@@ -142,6 +143,7 @@ public:
     void setShouldDowngradeReferrerForTesting(bool);
     bool shouldDowngradeReferrer() const;
     void setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode);
+    WebCore::ThirdPartyCookieBlockingMode thirdPartyCookieBlockingMode() const { return m_thirdPartyCookieBlockingMode; }
     void setShouldEnbleSameSiteStrictEnforcement(WebCore::SameSiteStrictEnforcementEnabled);
     void setFirstPartyHostCNAMEDomain(String&& firstPartyHost, WebCore::RegistrableDomain&& cnameDomain);
     std::optional<WebCore::RegistrableDomain> firstPartyHostCNAMEDomain(const String& firstPartyHost);
@@ -189,7 +191,7 @@ public:
     CheckedRef<PrefetchCache> checkedPrefetchCache();
     void clearPrefetchCache() { m_prefetchCache.clear(); }
 
-    virtual std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy);
+    virtual std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::StoredCredentialsPolicy);
     virtual void removeWebSocketTask(SessionSet&, WebSocketTask&) { }
     virtual void addWebSocketTask(WebPageProxyIdentifier, WebSocketTask&) { }
 
@@ -287,7 +289,18 @@ public:
     double currentHTTPSConnectionAverageTiming() const { return m_recentHTTPSConnectionTiming.currentMovingAverage; }
 
     virtual bool isNetworkSessionCocoa() const { return false; }
-                                    
+
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    bool isDeclarativeWebPushEnabled() const { return m_isDeclarativeWebPushEnabled; }
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+    WebCore::ResourceMonitorThrottler& resourceMonitorThrottler();
+    Ref<WebCore::ResourceMonitorThrottler> protectedResourceMonitorThrottler();
+
+    void resetResourceMonitorThrottlerForTesting();
+#endif
+
 protected:
     NetworkSession(NetworkProcess&, const NetworkSessionCreationParameters&);
 
@@ -304,9 +317,10 @@ protected:
     Ref<WebCore::BackgroundFetchStore> createBackgroundFetchStore() final;
 
     BackgroundFetchStoreImpl& ensureBackgroundFetchStore();
+    Ref<BackgroundFetchStoreImpl> ensureProtectedBackgroundFetchStore();
 
     PAL::SessionID m_sessionID;
-    Ref<NetworkProcess> m_networkProcess;
+    const Ref<NetworkProcess> m_networkProcess;
     ThreadSafeWeakHashSet<NetworkDataTask> m_dataTaskSet;
     String m_resourceLoadStatisticsDirectory;
     RefPtr<WebResourceLoadStatisticsStore> m_resourceLoadStatistics;
@@ -324,7 +338,7 @@ protected:
     HashMap<String, WebCore::IPAddress> m_firstPartyHostIPAddresses;
     std::optional<WebCore::RegistrableDomain> m_thirdPartyCNAMEDomainForTesting;
     bool m_isStaleWhileRevalidateEnabled { false };
-    Ref<PCM::ManagerInterface> m_privateClickMeasurement;
+    const Ref<PCM::ManagerInterface> m_privateClickMeasurement;
     bool m_privateClickMeasurementDebugModeEnabled { false };
     std::optional<WebCore::PrivateClickMeasurement> m_ephemeralMeasurement;
     bool m_isRunningEphemeralMeasurementTest { false };
@@ -393,6 +407,12 @@ protected:
 #endif
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     std::optional<int64_t> m_bytesPerSecondLimit;
+#endif
+#if ENABLE(DECLARATIVE_WEB_PUSH)
+    bool m_isDeclarativeWebPushEnabled { false };
+#endif
+#if ENABLE(CONTENT_EXTENSIONS)
+    RefPtr<WebCore::ResourceMonitorThrottler> m_resourceMonitorThrottler;
 #endif
 };
 

@@ -42,6 +42,7 @@ namespace WebCore {
 
 class Exception;
 class ScriptExecutionContext;
+class QualifiedName;
 
 enum class TrustedType : int8_t {
     TrustedHTML,
@@ -73,5 +74,7 @@ ExceptionOr<String> trustedTypeCompliantString(ScriptExecutionContext&, std::var
 WEBCORE_EXPORT AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const String& attributeName, const String& elementNamespace, const String& attributeNamespace);
 
 ExceptionOr<bool> canCompile(ScriptExecutionContext&, JSC::CompilationType, String codeString, const JSC::ArgList& args);
+
+bool isEventHandlerAttribute(const QualifiedName& attributeName);
 
 } // namespace WebCore

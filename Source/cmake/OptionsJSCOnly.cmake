@@ -20,7 +20,6 @@ WEBKIT_OPTION_DEFINE(ENABLE_STATIC_JSC "Whether to build JavaScriptCore as a sta
 WEBKIT_OPTION_DEFINE(USE_LIBBACKTRACE "Whether to enable usage of libbacktrace." PUBLIC OFF)
 WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_REMOTE_INSPECTOR PRIVATE OFF)
 if (WIN32)
-    WEBKIT_OPTION_DEFAULT_PORT_VALUE(ENABLE_FTL_JIT PRIVATE ON)
     # FIXME: Port bmalloc to Windows. https://bugs.webkit.org/show_bug.cgi?id=143310
     WEBKIT_OPTION_DEFAULT_PORT_VALUE(USE_SYSTEM_MALLOC PRIVATE ON)
 endif ()
@@ -60,24 +59,32 @@ if (NOT ENABLE_STATIC_JSC)
 endif ()
 
 if (WIN32)
+    add_definitions(-D_WINDOWS -DNTDDI_VERSION=0x0A000006 -D_WIN32_WINNT=0x0A00)
+
     add_definitions(-DNOMINMAX)
-    add_definitions(-D_WINDOWS -DWINVER=0x601 -D_WIN32_WINNT=0x601)
     add_definitions(-DUNICODE -D_UNICODE)
+    add_definitions(-DNOCRYPT)
+
+    # For fileno, wcsicmp, getpid and strdup.
+    # https://learn.microsoft.com/en-us/previous-versions/ms235384(v=vs.100)
+    add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+
+    # FIXME: warning STL4042: std::float_denorm_style, std::numeric_limits::has_denorm, and std::numeric_limits::has_denorm_loss are deprecated in C++23.
+    add_definitions(-D_SILENCE_CXX23_DENORM_DEPRECATION_WARNING)
 
     if (NOT WEBKIT_LIBRARIES_DIR)
         if (DEFINED ENV{WEBKIT_LIBRARIES})
-            set(WEBKIT_LIBRARIES_DIR "$ENV{WEBKIT_LIBRARIES}")
+            file(TO_CMAKE_PATH "$ENV{WEBKIT_LIBRARIES}" WEBKIT_LIBRARIES_DIR)
         else ()
-            set(WEBKIT_LIBRARIES_DIR "${CMAKE_SOURCE_DIR}/WebKitLibraries/win")
+            file(TO_CMAKE_PATH "${CMAKE_SOURCE_DIR}/WebKitLibraries/win" WEBKIT_LIBRARIES_DIR)
         endif ()
     endif ()
 
-    set(CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
-
-    if (WTF_CPU_X86_64)
-        set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB32_PATHS OFF)
-        set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+    if (DEFINED ENV{WEBKIT_IGNORE_PATH})
+        set(CMAKE_IGNORE_PATH $ENV{WEBKIT_IGNORE_PATH})
     endif ()
+
+    set(CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
 
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
     set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
@@ -85,6 +92,8 @@ if (WIN32)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE "${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+    set(CMAKE_DISABLE_PRECOMPILE_HEADERS OFF)
 endif ()
 
 string(TOLOWER ${EVENT_LOOP_TYPE} LOWERCASE_EVENT_LOOP_TYPE)

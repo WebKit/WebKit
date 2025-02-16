@@ -30,11 +30,6 @@
 
 namespace WebCore {
 
-inline RenderSVGInlineText& SVGInlineTextBox::renderer() const
-{
-    return downcast<RenderSVGInlineText>(LegacyInlineTextBox::renderer());
-}
-
 inline SVGInlineTextBox* SVGInlineTextBox::nextTextBox() const
 {
     return downcast<SVGInlineTextBox>(LegacyInlineTextBox::nextTextBox());

@@ -21,7 +21,7 @@ function sloppy(flag)
 }
 noInline(sloppy);
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(strict(false), 1);
     shouldBe(sloppy(false), 1);
 }

@@ -38,7 +38,6 @@ public:
     static Ref<CoordinatedImageBackingStore> create(Ref<NativeImage>&&);
     ~CoordinatedImageBackingStore();
 
-    static uint64_t uniqueIDForNativeImage(const NativeImage&);
     bool isSameNativeImage(const NativeImage&);
     CoordinatedPlatformLayerBuffer* buffer() const { return m_buffer.get(); }
 

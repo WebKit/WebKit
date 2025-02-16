@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #if ENABLE(WEB_AUTHN)
 #include "AuthenticatorCoordinatorClient.h"
+#endif
+#if HAVE(DIGITAL_CREDENTIALS_UI)
 #include "CredentialRequestCoordinatorClient.h"
 #endif
 #if ENABLE(APPLE_PAY)
@@ -104,6 +106,9 @@ PageConfiguration::PageConfiguration(
     UniqueRef<ChromeClient>&& chromeClient,
     UniqueRef<CryptoClient>&& cryptoClient,
     UniqueRef<ProcessSyncClient>&& processSyncClient
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    , UniqueRef<CredentialRequestCoordinatorClient>&& credentialRequestCoordinatorClient
+#endif
 )
     : identifier(identifier)
     , sessionID(sessionID)
@@ -133,6 +138,9 @@ PageConfiguration::PageConfiguration(
     , historyItemClient(WTFMove(historyItemClient))
     , cryptoClient(WTFMove(cryptoClient))
     , processSyncClient(WTFMove(processSyncClient))
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+    , credentialRequestCoordinatorClient(WTFMove(credentialRequestCoordinatorClient))
+#endif
 {
 }
 

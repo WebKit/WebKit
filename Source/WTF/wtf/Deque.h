@@ -114,9 +114,9 @@ public:
 
     void clear();
 
-    template<typename Predicate> iterator findIf(const Predicate&);
-    template<typename Predicate> const_iterator findIf(const Predicate&) const;
-    template<typename Predicate> bool containsIf(const Predicate& predicate) const
+    template<typename Predicate> iterator findIf(NOESCAPE const Predicate&);
+    template<typename Predicate> const_iterator findIf(NOESCAPE const Predicate&) const;
+    template<typename Predicate> bool containsIf(NOESCAPE const Predicate& predicate) const
     {
         return findIf(predicate) != end();
     }
@@ -409,14 +409,14 @@ inline void Deque<T, inlineCapacity>::clear()
 
 template<typename T, size_t inlineCapacity>
 template<typename Predicate>
-inline auto Deque<T, inlineCapacity>::findIf(const Predicate& predicate) -> iterator
+inline auto Deque<T, inlineCapacity>::findIf(NOESCAPE const Predicate& predicate) -> iterator
 {
     return std::find_if(begin(), end(), predicate);
 }
 
 template<typename T, size_t inlineCapacity>
 template<typename Predicate>
-inline auto Deque<T, inlineCapacity>::findIf(const Predicate& predicate) const -> const_iterator
+inline auto Deque<T, inlineCapacity>::findIf(NOESCAPE const Predicate& predicate) const -> const_iterator
 {
     return std::find_if(begin(), end(), predicate);
 }

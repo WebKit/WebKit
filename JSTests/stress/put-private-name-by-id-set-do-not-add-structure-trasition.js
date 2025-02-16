@@ -38,7 +38,7 @@ class C extends Base {
 noInline(C.prototype.getField);
 
 let c = new C();
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (i < 9000)
         C.prototype.getField.call(c, false);
     else {

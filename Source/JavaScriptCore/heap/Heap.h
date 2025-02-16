@@ -290,7 +290,7 @@ class Heap;
 
 
 typedef HashCountedSet<JSCell*> ProtectCountSet;
-typedef HashCountedSet<const char*> TypeCountSet;
+typedef HashCountedSet<ASCIILiteral> TypeCountSet;
 
 enum class HeapType : uint8_t { Small, Large };
 
@@ -436,12 +436,12 @@ public:
     JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> protectedObjectTypeCounts();
     JS_EXPORT_PRIVATE std::unique_ptr<TypeCountSet> objectTypeCounts();
 
-    HashSet<MarkedVectorBase*>& markListSet();
+    UncheckedKeyHashSet<MarkedVectorBase*>& markListSet();
     void addMarkedJSValueRefArray(MarkedJSValueRefArray*);
     
     template<typename Functor> void forEachProtectedCell(const Functor&);
-    template<typename Functor> void forEachCodeBlock(const Functor&);
-    template<typename Functor> void forEachCodeBlockIgnoringJITPlans(const AbstractLocker& codeBlockSetLocker, const Functor&);
+    template<typename Functor> void forEachCodeBlock(NOESCAPE const Functor&);
+    template<typename Functor> void forEachCodeBlockIgnoringJITPlans(const AbstractLocker& codeBlockSetLocker, NOESCAPE const Functor&);
 
     HandleSet* handleSet() { return &m_handleSet; }
 
@@ -777,7 +777,7 @@ private:
     bool overCriticalMemoryThreshold(MemoryThresholdCallType memoryThresholdCallType = MemoryThresholdCallType::Cached);
     
     template<typename Visitor>
-    void iterateExecutingAndCompilingCodeBlocks(Visitor&, const Function<void(CodeBlock*)>&);
+    void iterateExecutingAndCompilingCodeBlocks(Visitor&, NOESCAPE const Function<void(CodeBlock*)>&);
     
     template<typename Func, typename Visitor>
     void iterateExecutingAndCompilingCodeBlocksWithoutHoldingLocks(Visitor&, const Func&);
@@ -832,7 +832,7 @@ private:
     size_t m_deprecatedExtraMemorySize { 0 };
 
     ProtectCountSet m_protectedValues;
-    HashSet<MarkedVectorBase*> m_markListSet;
+    UncheckedKeyHashSet<MarkedVectorBase*> m_markListSet;
     SentinelLinkedList<MarkedJSValueRefArray, BasicRawSentinelNode<MarkedJSValueRefArray>> m_markedJSValueRefArrays;
 
     std::unique_ptr<MachineThreads> m_machineThreads;
@@ -896,10 +896,10 @@ private:
 #endif
     unsigned m_deferralDepth { 0 };
 
-    HashSet<WeakGCHashTable*> m_weakGCHashTables;
+    UncheckedKeyHashSet<WeakGCHashTable*> m_weakGCHashTables;
     
 #if ENABLE(WEBASSEMBLY)
-    HashSet<Ref<Wasm::Callee>> m_wasmCalleesPendingDestruction WTF_GUARDED_BY_LOCK(m_wasmCalleesPendingDestructionLock);
+    UncheckedKeyHashSet<Ref<Wasm::Callee>> m_wasmCalleesPendingDestruction WTF_GUARDED_BY_LOCK(m_wasmCalleesPendingDestructionLock);
 #endif
 
     std::unique_ptr<MarkStackArray> m_sharedCollectorMarkStack;
@@ -951,6 +951,7 @@ private:
 
     uint64_t m_mutatorExecutionVersion { 0 };
     uint64_t m_phaseVersion { 0 };
+    uint64_t m_gcVersion { 0 };
     Box<Lock> m_threadLock;
     Ref<AutomaticThreadCondition> m_threadCondition; // The mutator must not wait on this. It would cause a deadlock.
     RefPtr<AutomaticThread> m_thread;
@@ -1186,6 +1187,7 @@ public:
 
     Vector<IsoSubspacePerVM*> perVMIsoSubspaces;
 #undef DYNAMIC_SPACE_AND_SET_DEFINE_MEMBER
+    CString m_signpostMessage;
 };
 
 namespace GCClient {

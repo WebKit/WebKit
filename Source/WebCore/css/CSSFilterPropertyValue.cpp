@@ -45,9 +45,9 @@ CSSFilterPropertyValue::CSSFilterPropertyValue(CSS::FilterProperty filter)
 {
 }
 
-String CSSFilterPropertyValue::customCSSText() const
+String CSSFilterPropertyValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(m_filter);
+    return CSS::serializationForCSS(context, m_filter);
 }
 
 bool CSSFilterPropertyValue::equals(const CSSFilterPropertyValue& other) const
@@ -55,7 +55,7 @@ bool CSSFilterPropertyValue::equals(const CSSFilterPropertyValue& other) const
     return m_filter == other.m_filter;
 }
 
-IterationStatus CSSFilterPropertyValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSFilterPropertyValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_filter);
 }

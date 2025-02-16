@@ -1,5 +1,5 @@
 
-FAIL Default view-timeline assert_equals: expected "-1" but got "100"
-FAIL Horizontal view-timeline assert_equals: expected "-1" but got "100"
-FAIL Multiple view-timelines on the same element assert_equals: expected "-1" but got "100"
+PASS Default view-timeline
+PASS Horizontal view-timeline
+PASS Multiple view-timelines on the same element
 

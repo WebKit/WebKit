@@ -389,6 +389,9 @@ struct Extensions
     // GL_EXT_render_snorm
     bool renderSnormEXT = false;
 
+    // GL_OES_required_internalformat
+    bool requiredInternalformatOES = false;
+
     // GL_OES_rgb8_rgba8
     bool rgb8Rgba8OES = false;
 

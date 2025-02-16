@@ -360,8 +360,10 @@ void Renderer::ensureCapsInitialized() const
         mNativeExtensions.textureCompressionAstcLdrKHR &&
         getFeatures().supportsAstcSliced3d.enabled;
 
-    // Vulkan doesn't guarantee HDR blocks decoding without VK_EXT_texture_compression_astc_hdr.
-    mNativeExtensions.textureCompressionAstcHdrKHR = false;
+    // Enable KHR_texture_compression_astc_hdr
+    mNativeExtensions.textureCompressionAstcHdrKHR =
+        mNativeExtensions.textureCompressionAstcLdrKHR &&
+        getFeatures().supportsTextureCompressionAstcHdr.enabled;
 
     // Enable EXT_compressed_ETC1_RGB8_sub_texture
     mNativeExtensions.compressedETC1RGB8SubTextureEXT =
@@ -413,9 +415,11 @@ void Renderer::ensureCapsInitialized() const
 
     // Enable EXT_multi_draw_indirect
     mNativeExtensions.multiDrawIndirectEXT = true;
+    mNativeLimitations.multidrawEmulated   = false;
 
     // Enable EXT_base_instance
     mNativeExtensions.baseInstanceEXT = true;
+    mNativeLimitations.baseInstanceEmulated = false;
 
     // Enable ANGLE_base_vertex_base_instance
     mNativeExtensions.baseVertexBaseInstanceANGLE              = true;
@@ -630,8 +634,8 @@ void Renderer::ensureCapsInitialized() const
     // https://gitlab.khronos.org/opengl/API/-/issues/149
     mNativeExtensions.shaderMultisampleInterpolationOES = mNativeExtensions.sampleVariablesOES;
 
-    // Always enable ANGLE_rgbx_internal_format to expose GL_RGBX8_ANGLE.
-    mNativeExtensions.rgbxInternalFormatANGLE = true;
+    // Always enable ANGLE_rgbx_internal_format to expose GL_RGBX8_ANGLE except for Samsung.
+    mNativeExtensions.rgbxInternalFormatANGLE = mFeatures.supportsAngleRgbxInternalFormat.enabled;
 
     // https://vulkan.lunarg.com/doc/view/1.0.30.0/linux/vkspec.chunked/ch31s02.html
     mNativeCaps.maxElementIndex  = std::numeric_limits<GLuint>::max() - 1;
@@ -1088,6 +1092,31 @@ void Renderer::ensureCapsInitialized() const
     mNativeCaps.textureBufferOffsetAlignment =
         rx::LimitToInt(limitsVk.minTexelBufferOffsetAlignment);
 
+    // From the GL_EXT_texture_norm16 spec: Accepted by the <internalFormat> parameter of
+    // TexImage2D,TexImage3D, TexStorage2D, TexStorage3D and TexStorage2DMultisample,
+    // TexStorage3DMultisampleOES, TexBufferEXT, TexBufferRangeEXT, TextureViewEXT,
+    // RenderbufferStorage and RenderbufferStorageMultisample:
+    //   - R16_EXT
+    //   - RG16_EXT
+    //   - RGBA16_EXT
+    bool norm16FormatsSupportedForBufferTexture =
+        hasBufferFormatFeatureBits(angle::FormatID::R16_UNORM,
+                                   VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT) &&
+        hasBufferFormatFeatureBits(angle::FormatID::R16G16_UNORM,
+                                   VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT) &&
+        hasBufferFormatFeatureBits(angle::FormatID::R16G16B16A16_UNORM,
+                                   VK_FORMAT_FEATURE_UNIFORM_TEXEL_BUFFER_BIT);
+
+    if (!norm16FormatsSupportedForBufferTexture)
+    {
+        mNativeExtensions.textureNorm16EXT = false;
+
+        // With textureNorm16EXT disabled, renderSnormEXT will skip checking support for the 16-bit
+        // normalized formats.
+        mNativeExtensions.renderSnormEXT =
+            DetermineRenderSnormSupport(mNativeTextureCaps, mNativeExtensions.textureNorm16EXT);
+    }
+
     // Atomic image operations in the vertex and fragment shaders require the
     // vertexPipelineStoresAndAtomics and fragmentStoresAndAtomics Vulkan features respectively.
     // If either of these features is not present, the number of image uniforms for that stage is
@@ -1224,7 +1253,8 @@ void Renderer::ensureCapsInitialized() const
     if (mPhysicalDeviceFeatures.shaderClipDistance &&
         limitsVk.maxClipDistances >= kMaxClipDistancePerSpec)
     {
-        mNativeExtensions.clipDistanceAPPLE     = true;
+        // Do not enable GL_APPLE_clip_distance for Samsung devices.
+        mNativeExtensions.clipDistanceAPPLE     = mFeatures.supportsAppleClipDistance.enabled;
         mNativeExtensions.clipCullDistanceANGLE = true;
         mNativeCaps.maxClipDistances            = limitsVk.maxClipDistances;
 
@@ -1381,6 +1411,8 @@ void Renderer::ensureCapsInitialized() const
 
     mNativeExtensions.textureStorageCompressionEXT =
         mFeatures.supportsImageCompressionControl.enabled;
+    mNativeExtensions.EGLImageStorageCompressionEXT =
+        mFeatures.supportsImageCompressionControl.enabled;
 
     // Log any missing extensions required for GLES 3.2.
     LogMissingExtensionsForGLES32(mNativeExtensions);
@@ -1471,12 +1503,12 @@ egl::Config GenerateDefaultConfig(DisplayVk *display,
 
     const VkPhysicalDeviceProperties &physicalDeviceProperties =
         renderer->getPhysicalDeviceProperties();
-    gl::Version maxSupportedESVersion                = renderer->getMaxSupportedESVersion();
+    gl::Version maxSupportedESVersion = renderer->getMaxSupportedESVersion();
 
     // ES3 features are required to emulate ES1
-    EGLint es1Support     = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES_BIT : 0);
-    EGLint es2Support     = (maxSupportedESVersion.major >= 2 ? EGL_OPENGL_ES2_BIT : 0);
-    EGLint es3Support     = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES3_BIT : 0);
+    EGLint es1Support = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES_BIT : 0);
+    EGLint es2Support = (maxSupportedESVersion.major >= 2 ? EGL_OPENGL_ES2_BIT : 0);
+    EGLint es3Support = (maxSupportedESVersion.major >= 3 ? EGL_OPENGL_ES3_BIT : 0);
 
     egl::Config config;
 

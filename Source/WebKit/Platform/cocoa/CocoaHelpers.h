@@ -154,7 +154,8 @@ NSSet *toAPI(const HashSet<String>&);
 NSArray *toAPIArray(const HashSet<String>&);
 HashSet<String> toImpl(NSSet *);
 
-HashMap<String, Ref<API::Data>> toDataMap(NSDictionary *);
+using DataMap = HashMap<String, std::variant<String, Ref<API::Data>>>;
+DataMap toDataMap(NSDictionary *);
 
 } // namespace WebKit
 

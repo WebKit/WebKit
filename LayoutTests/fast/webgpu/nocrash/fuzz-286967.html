@@ -1,0 +1,195 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+// START
+device0 = await adapter0.requestDevice({
+  });
+{
+}
+texture17 = device0.createTexture({
+  size : [ 1278, 120, 16 ],
+  dimension : '3d',
+  format : 'bgra8unorm-srgb',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT});
+textureView16 = texture17.createView();
+{
+}
+querySet4 = commandEncoder29 = device0.createCommandEncoder();
+{
+}
+{
+}
+shaderModule3 = device0.createShaderModule({
+  code : ` ;
+              fn unconst_u32(v: u32) -> u32 {
+            return v;
+            }
+              struct VertexOutput3 {
+              @location(7) f7: vec4f,   @invariant @builtin(position) f8: vec4f,   @location(8) f9: i32}
+              override override7: f32;
+              struct FragmentOutput3 {
+              @location(0) f0: vec4f}
+              fn fn3() -> u32 {
+              var out: u32;
+              return out;
+            }
+              @must_use  fn fn4(a0: FragmentOutput4) -> VertexOutput3 {
+              var out: VertexOutput3;
+              return out;
+              _ = override7;
+            }
+              struct FragmentOutput4 {
+              f0: vec4f}
+              @vertex fn vertex3(@builtin(vertex_index) a0: u32, @location(12) a1: vec4i, @location(7) a2: vec2i, @location(15) a3: f32, @location(6) a4: vec4u, @location(14) a5: vec2i, @location(2) a6: vec2h, @location(5) a7: f16, @location(11) a8: vec4u, @location(3) a9: vec4u, @location(1) a10: u32) -> VertexOutput3 {
+              var out: VertexOutput3;
+              out.f7 = unpack4x8snorm(a9[unconst_u32(599)]);
+              return out;
+            }
+              @fragment fn fragment4() -> FragmentOutput3 {
+              var out: FragmentOutput3;
+              _ = fn4(FragmentOutput4(vec4f(unpack4xI8(unconst_u32(260)))));
+              return out;
+            }
+             `});
+renderPassEncoder34 = commandEncoder29.beginRenderPass({
+  colorAttachments : [ {
+    view : textureView16,
+    depthSlice : 7,
+    clearValue : {
+      r : 791.1,
+      g : 190.8,
+      b : 826.1,
+      a : 370.9},
+    loadOp : 'load',
+    storeOp : 'store'} ],
+  querySet4});
+{
+}
+pipeline15 = device0.createRenderPipeline({
+  layout : 'auto',
+  multisample : {mask : 0x1329388},
+  fragment : {
+    module : shaderModule3,
+    constants : {override7 : 1},
+    targets : [ {
+      format : 'bgra8unorm-srgb',
+      writeMask : GPUColorWrite.BLUE | GPUColorWrite.GREEN | GPUColorWrite.RED
+    } ]},
+  vertex : {
+    module : shaderModule3,
+    buffers : [
+      {
+        arrayStride : 176,
+        attributes : [
+          {format : 'uint32x3', offset : 12, shaderLocation : 6},
+          {format : 'uint32', offset : 40, shaderLocation : 11},
+          {format : 'sint32x4', offset : 80, shaderLocation : 7},
+          {format : 'uint32x3', offset : 0, shaderLocation : 3},
+          {format : 'float32', offset : 28, shaderLocation : 2},
+          {format : 'float16x2', offset : 0, shaderLocation : 5},
+          {format : 'sint32x3', offset : 36, shaderLocation : 12},
+          {format : 'uint32x3', offset : 12, shaderLocation : 1},
+          {format : 'sint16x4', offset : 64, shaderLocation : 14},
+          {format : 'float16x2', offset : 40, shaderLocation : 15}]}]},
+  primitive : {
+    topology : 'line-strip',
+    stripIndexFormat : 'uint16',
+    }});
+{
+}
+buffer58 = device0.createBuffer({
+  size : 5523,
+  usage : GPUBufferUsage.INDEX |
+              GPUBufferUsage});
+{
+}
+try {
+  renderPassEncoder34.setIndexBuffer(buffer58, 'uint16', )} catch {
+}
+try {
+  renderPassEncoder34.setPipeline(pipeline15)} catch {
+}
+buffer69 = device0.createBuffer({
+  size : 20824,
+  usage : GPUBufferUsage.VERTEX});
+try {
+  renderPassEncoder34.setVertexBuffer(0, buffer69)} catch {
+}
+{
+}
+try {
+  renderPassEncoder34.drawIndexed(77, 65, 14, -1)} catch {
+}
+
+  try {
+  renderPassEncoder34.end()} catch {
+}
+commandBuffer11 = commandEncoder29.finish();
+{
+}
+try {
+  device0.queue.submit([ commandBuffer11 ])} catch {
+}
+// END
+await device1.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

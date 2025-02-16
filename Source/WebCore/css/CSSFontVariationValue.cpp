@@ -39,9 +39,9 @@ CSSFontVariationValue::CSSFontVariationValue(FontTag tag, Ref<CSSPrimitiveValue>
 {
 }
 
-String CSSFontVariationValue::customCSSText() const
+String CSSFontVariationValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return makeString('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], "\" "_s, m_value->customCSSText());
+    return makeString('"', m_tag[0], m_tag[1], m_tag[2], m_tag[3], "\" "_s, m_value->customCSSText(context));
 }
 
 bool CSSFontVariationValue::equals(const CSSFontVariationValue& other) const

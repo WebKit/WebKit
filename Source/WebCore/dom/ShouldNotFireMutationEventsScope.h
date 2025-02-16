@@ -31,18 +31,19 @@ class ShouldNotFireMutationEventsScope {
 public:
     ShouldNotFireMutationEventsScope(Document& document)
         : m_document(document)
+        , m_previousValue(document.shouldNotFireMutationEvents())
     {
-        ASSERT(!document.shouldNotFireMutationEvents());
         document.setShouldNotFireMutationEvents(true);
     }
+
     ~ShouldNotFireMutationEventsScope()
     {
-        ASSERT(m_document->shouldNotFireMutationEvents());
-        m_document->setShouldNotFireMutationEvents(false);
+        m_document->setShouldNotFireMutationEvents(m_previousValue);
     }
 
 private:
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    bool m_previousValue;
 };
 
 } // namespace WebCore

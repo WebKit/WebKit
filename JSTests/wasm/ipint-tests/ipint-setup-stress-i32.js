@@ -17,7 +17,7 @@ const MAX_INT = 1048576
 
 const wabtModule = await WabtModule();
 let s = prologue;
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     let x = '';
     if (Math.random() < CHANCE_ABOVE) {
         x = `

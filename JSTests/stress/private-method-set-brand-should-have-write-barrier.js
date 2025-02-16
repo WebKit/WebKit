@@ -33,7 +33,7 @@ c = null;
 overrideSuper = true;
 new C();
 edenGC(); // this leaves obj with a Strucutre that was freed
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert.sameValue(C.access(obj), 'test');
 }
 

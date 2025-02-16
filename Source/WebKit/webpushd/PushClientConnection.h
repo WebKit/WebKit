@@ -83,6 +83,7 @@ public:
     const String& hostAppCodeSigningIdentifier() const { return m_hostAppCodeSigningIdentifier; }
     bool hostAppHasPushInjectEntitlement() const { return m_hostAppHasPushInjectEntitlement; };
     std::optional<WTF::UUID> dataStoreIdentifier() const { return m_dataStoreIdentifier; }
+    bool declarativeWebPushEnabled() const { return m_declarativeWebPushEnabled; }
 
     // You almost certainly do not want to use this and should probably use subscriptionSetIdentifierForOrigin instead.
     const String& pushPartitionIfExists() const { return m_pushPartitionString; }
@@ -94,7 +95,7 @@ public:
     void didReceiveMessageWithReplyHandler(IPC::Decoder&, Function<void(UniqueRef<IPC::Encoder>&&)>&&) override;
 
 private:
-    PushClientConnection(xpc_connection_t, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier);
+    PushClientConnection(xpc_connection_t, String&& hostAppCodeSigningIdentifier, bool hostAppHasPushInjectEntitlement, String&& pushPartitionString, std::optional<WTF::UUID>&& dataStoreIdentifier, bool declarativeWebPushEnabled);
 
     // PushClientConnectionMessages
     void setPushAndNotificationsEnabledForOrigin(const String& originString, bool, CompletionHandler<void()>&& replySender);
@@ -127,6 +128,7 @@ private:
     bool m_hostAppHasPushInjectEntitlement { false };
     String m_pushPartitionString;
     Markable<WTF::UUID> m_dataStoreIdentifier;
+    bool m_declarativeWebPushEnabled { false };
 };
 
 } // namespace WebPushD

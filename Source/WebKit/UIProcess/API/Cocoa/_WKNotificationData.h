@@ -60,7 +60,7 @@ WK_CLASS_AVAILABLE(macos(13.3), ios(16.4))
 
 @end
 
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA))
+WK_CLASS_AVAILABLE(macos(15.2), ios(18.2))
 @interface _WKMutableNotificationData : _WKNotificationData
 - (instancetype)init;
 

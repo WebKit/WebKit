@@ -1,3 +1,3 @@
 
-FAIL Ensure that animation is updated on a style change assert_equals: expected "33" but got "30"
+PASS Ensure that animation is updated on a style change
 

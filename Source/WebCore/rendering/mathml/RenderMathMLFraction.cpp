@@ -74,7 +74,7 @@ RenderBox& RenderMathMLFraction::denominator() const
 
 LayoutUnit RenderMathMLFraction::defaultLineThickness() const
 {
-    const Ref primaryFont = style().fontCascade().primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData())
         return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::FractionRuleThickness));
     return ruleThicknessFallback();
@@ -102,7 +102,7 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::fractionParameter
 
     // We try and read constants to draw the fraction from the OpenType MATH and use fallback values otherwise.
     bool display = style().mathStyle() == MathStyle::Normal;
-    const Ref primaryFont = style().fontCascade().primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         numeratorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionNumDisplayStyleGapMin : OpenTypeMathData::FractionNumeratorGapMin);
         denominatorGapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::FractionDenomDisplayStyleGapMin : OpenTypeMathData::FractionDenominatorGapMin);
@@ -140,7 +140,7 @@ RenderMathMLFraction::FractionParameters RenderMathMLFraction::stackParameters()
     
     // We try and read constants to draw the stack from the OpenType MATH and use fallback values otherwise.
     bool display = style().mathStyle() == MathStyle::Normal;
-    const Ref primaryFont = style().fontCascade().primaryFont();
+    Ref primaryFont = style().fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData()) {
         gapMin = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackDisplayStyleGapMin : OpenTypeMathData::StackGapMin);
         parameters.numeratorShiftUp = mathData->getMathConstant(primaryFont, display ? OpenTypeMathData::StackTopDisplayStyleShiftUp : OpenTypeMathData::StackTopShiftUp);
@@ -226,13 +226,13 @@ LayoutUnit RenderMathMLFraction::fractionAscent() const
     return numeratorAscent + stackParameters().numeratorShiftUp;
 }
 
-void RenderMathMLFraction::layoutBlock(bool relayoutChildren, LayoutUnit)
+void RenderMathMLFraction::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     if (!isValid()) {

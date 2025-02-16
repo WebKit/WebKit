@@ -74,9 +74,15 @@
 {
     if (!m_page)
         return nil;
-    
+
     WebCore::IntPoint convertedPoint = m_page->accessibilityScreenToRootView(WebCore::IntPoint(point));
-    return [[self accessibilityRootObjectWrapper] accessibilityHitTest:convertedPoint];
+
+    // If we are hit-testing a remote element, offset the hit test by the scroll of the web page.
+    RefPtr focusedLocalFrame = [self focusedLocalFrame];
+    if (CheckedPtr frameView = focusedLocalFrame ? focusedLocalFrame->view() : nullptr)
+        convertedPoint.moveBy(frameView->scrollPosition());
+
+    return [[self accessibilityRootObjectWrapper:focusedLocalFrame.get()] accessibilityHitTest:convertedPoint];
 }
 
 @end

@@ -10,7 +10,7 @@ function bigIntDiv(x, y) {
 }
 noInline(bigIntDiv);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntDiv(30n, 10n);
     assert.sameValue(r, 3n, 30n + " / " + 10n + " = " + r);
 }

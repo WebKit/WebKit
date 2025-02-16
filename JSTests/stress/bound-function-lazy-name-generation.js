@@ -19,5 +19,5 @@ function test() {
     assert(f.name === "bound foo");
     assert(Reflect.ownKeys(f).includes("name"));
 }
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     test();

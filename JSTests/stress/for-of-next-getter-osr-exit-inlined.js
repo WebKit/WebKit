@@ -14,7 +14,7 @@ function foo() {
 }
 noInline(foo);
 
-for (let j = 0; j < 1e5; j++) {
+for (let j = 0; j < testLoopCount; j++) {
     if (i !== j)
         throw new Error(i + ", " + j);
     foo();

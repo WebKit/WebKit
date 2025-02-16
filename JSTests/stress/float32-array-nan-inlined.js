@@ -14,7 +14,7 @@ function test(a, x) {
 
 noInline(test);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(0, 1);
 
 test(0xFFFF0000, 0/0);

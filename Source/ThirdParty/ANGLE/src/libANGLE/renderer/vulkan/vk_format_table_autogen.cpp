@@ -1215,6 +1215,13 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
 
             break;
 
+        case angle::FormatID::L4A4_UNORM:
+            mIntendedGLFormat              = GL_LUMINANCE4_ALPHA4_OES;
+            mActualSampleOnlyImageFormatID = angle::FormatID::R8G8_UNORM;
+            mImageInitializerFunction      = nullptr;
+
+            break;
+
         case angle::FormatID::L8A8_UNORM:
             mIntendedGLFormat              = GL_LUMINANCE8_ALPHA8_EXT;
             mActualSampleOnlyImageFormatID = angle::FormatID::R8G8_UNORM;
@@ -1422,7 +1429,7 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
             break;
 
         case angle::FormatID::R10G10B10X2_UNORM:
-            mIntendedGLFormat              = GL_RGB10_UNORM_ANGLEX;
+            mIntendedGLFormat              = GL_RGB10_EXT;
             mActualSampleOnlyImageFormatID = angle::FormatID::R10G10B10A2_UNORM;
             mImageInitializerFunction      = nullptr;
             mActualBufferFormatID          = angle::FormatID::NONE;
@@ -2707,7 +2714,7 @@ void Format::initialize(Renderer *renderer, const angle::Format &angleFormat)
     }
 }
 
-VkFormat GetVkFormatFromFormatID(angle::FormatID formatID)
+VkFormat GetVkFormatFromFormatID(const Renderer *renderer, angle::FormatID formatID)
 {
     static constexpr angle::FormatMap<VkFormat> kMap = {
         {angle::FormatID::A1R5G5B5_UNORM, VK_FORMAT_A1R5G5B5_UNORM_PACK16},
@@ -2868,7 +2875,7 @@ VkFormat GetVkFormatFromFormatID(angle::FormatID formatID)
         {angle::FormatID::R9G9B9E5_SHAREDEXP, VK_FORMAT_E5B9G9R9_UFLOAT_PACK32},
         {angle::FormatID::S8_UINT, VK_FORMAT_S8_UINT}};
 
-    return kMap[formatID];
+    return AdjustASTCFormatForHDR(renderer, kMap[formatID]);
 }
 
 angle::FormatID GetFormatIDFromVkFormat(VkFormat vkFormat)

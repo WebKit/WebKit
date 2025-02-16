@@ -86,7 +86,7 @@ private:
     UncheckedKeyHashMap<InlineIterator::SVGTextBox::Key, Vector<SVGTextFragment>> m_fragmentMap;
 
     SVGTextChunkBuilder m_chunkLayoutBuilder;
-    HashSet<InlineIterator::SVGTextBox::Key> m_lineLayoutChunkStarts;
+    UncheckedKeyHashSet<InlineIterator::SVGTextBox::Key> m_lineLayoutChunkStarts;
 
     SVGTextFragment m_currentTextFragment;
     unsigned m_layoutAttributesPosition { 0 };

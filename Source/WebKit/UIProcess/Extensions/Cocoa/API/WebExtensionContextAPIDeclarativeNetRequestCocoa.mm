@@ -113,7 +113,7 @@ WebExtensionContext::DeclarativeNetRequestValidatedRulesets WebExtensionContext:
     for (auto& identifier : rulesetIdentifiers) {
         auto ruleset = extension->declarativeNetRequestRuleset(identifier);
         if (!ruleset)
-            return toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nil, @"Failed to apply rules. Invalid ruleset id: %@.", (NSString *)identifier);
+            return toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), @"Failed to apply rules. Invalid ruleset id: %@.", (NSString *)identifier);
 
         validatedRulesets.append(ruleset.value());
     }
@@ -158,7 +158,7 @@ void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vecto
     }
 
     if (declarativeNetRequestEnabledRulesetCount() - rulesetIdentifiersToDisable.size() + rulesetIdentifiersToEnable.size() > webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets) {
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nil, @"The number of enabled static rulesets exceeds the limit. Only %lu rulesets can be enabled at once.", webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets));
+        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), @"The number of enabled static rulesets exceeds the limit. Only %lu rulesets can be enabled at once.", webExtensionDeclarativeNetRequestMaximumNumberOfEnabledRulesets));
         return;
     }
 
@@ -178,7 +178,7 @@ void WebExtensionContext::declarativeNetRequestUpdateEnabledRulesets(const Vecto
         declarativeNetRequestToggleRulesets(rulesetIdentifiersToDisable, true, rulesetIdentifiersToEnabledState.get());
         declarativeNetRequestToggleRulesets(rulesetIdentifiersToEnable, false, rulesetIdentifiersToEnabledState.get());
 
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nil, @"Failed to apply rules."));
+        completionHandler(toWebExtensionError(@"declarativeNetRequest.updateEnabledRulesets()", nullString(), @"Failed to apply rules."));
     });
 }
 
@@ -222,7 +222,7 @@ void WebExtensionContext::declarativeNetRequestIncrementActionCount(WebExtension
 {
     RefPtr tab = getTab(tabIdentifier);
     if (!tab) {
-        completionHandler(toWebExtensionError(@"declarativeNetRequest.setExtensionActionOptions()", nil, @"tab not found"));
+        completionHandler(toWebExtensionError(@"declarativeNetRequest.setExtensionActionOptions()", nullString(), @"tab not found"));
         return;
     }
 
@@ -236,13 +236,13 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
 
     static NSString * const apiName = @"declarativeNetRequest.getMatchedRules()";
     if (tabIdentifier && !tab) {
-        completionHandler(toWebExtensionError(apiName, nil, @"tab not found"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"tab not found"));
         return;
     }
 
     if (!hasPermission(WKWebExtensionPermissionDeclarativeNetRequestFeedback)) {
         if (!tab->extensionHasTemporaryPermission()) {
-            completionHandler(toWebExtensionError(apiName, nil, @"the 'activeTab' permission has not been granted by the user for the tab"));
+            completionHandler(toWebExtensionError(apiName, nullString(), @"the 'activeTab' permission has not been granted by the user for the tab"));
             return;
         }
     }
@@ -263,10 +263,10 @@ void WebExtensionContext::declarativeNetRequestGetMatchedRules(std::optional<Web
         allURLs.append(matchedRule.url);
     }
 
-    requestPermissionToAccessURLs(allURLs, tab, [this, protectedThis = Ref { *this }, filteredRules = WTFMove(filteredRules), completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
-        auto result = WTF::compactMap(filteredRules, [&](auto& matchedRule) -> std::optional<WebExtensionMatchedRuleParameters> {
-            RefPtr matchTab = getTab(matchedRule.tabIdentifier);
-            return hasPermission(matchedRule.url, matchTab.get()) ? std::optional(matchedRule) : std::nullopt;
+    requestPermissionToAccessURLs(allURLs, tab, [protectedThis = Ref { *this }, filteredRules = WTFMove(filteredRules), completionHandler = WTFMove(completionHandler)](auto&& requestedURLs, auto&& allowedURLs, auto expirationDate) mutable {
+        auto result = WTF::compactMap(filteredRules, [protectedThis](auto& matchedRule) -> std::optional<WebExtensionMatchedRuleParameters> {
+            RefPtr matchTab = protectedThis->getTab(matchedRule.tabIdentifier);
+            return protectedThis->hasPermission(matchedRule.url, matchTab.get()) ? std::optional(matchedRule) : std::nullopt;
         });
 
         completionHandler(WTFMove(result));
@@ -296,7 +296,7 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(_WKWebExtens
             RELEASE_LOG_ERROR(Extensions, "Unable to create %{public}@ rules savepoint for extension %{private}@. Error: %{public}@", storageType, (NSString *)uniqueIdentifier(), errorMessage);
 
         if (errorMessage.length) {
-            completionHandler(toWebExtensionError(apiName, nil, errorMessage));
+            completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
             return;
         }
 
@@ -310,7 +310,7 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(_WKWebExtens
                     if (savepointErrorMessage)
                         RELEASE_LOG_ERROR(Extensions, "Unable to rollback to %{public}@ rules savepoint for extension %{private}@. Error: %{public}@", storageType, (NSString *)uniqueIdentifier(), savepointErrorMessage);
 
-                    completionHandler(toWebExtensionError(apiName, nil, errorMessage));
+                    completionHandler(toWebExtensionError(apiName, nullString(), errorMessage));
                 }).get()];
 
                 return;
@@ -327,7 +327,7 @@ void WebExtensionContext::updateDeclarativeNetRequestRulesInStorage(_WKWebExtens
                         // Load the declarativeNetRequest rules again after rolling back the dynamic update.
                         loadDeclarativeNetRequestRules([completionHandler = WTFMove(completionHandler), apiName](bool success) mutable {
                             if (!success) {
-                                completionHandler(toWebExtensionError(apiName, nil, @"unable to load declarativeNetRequest rules"));
+                                completionHandler(toWebExtensionError(apiName, nullString(), @"unable to load declarativeNetRequest rules"));
                                 return;
                             }
 
@@ -354,7 +354,7 @@ void WebExtensionContext::declarativeNetRequestGetDynamicRules(CompletionHandler
 {
     [declarativeNetRequestDynamicRulesStore() getRulesWithCompletionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
         if (errorMessage) {
-            completionHandler(toWebExtensionError(@"declarativeNetRequest.getDynamicRules()", nil, errorMessage));
+            completionHandler(toWebExtensionError(@"declarativeNetRequest.getDynamicRules()", nullString(), errorMessage));
             return;
         }
 
@@ -381,7 +381,7 @@ void WebExtensionContext::declarativeNetRequestUpdateDynamicRules(String&& rules
 
     auto updatedDynamicRulesCount = m_dynamicRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
     if (updatedDynamicRulesCount + m_sessionRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
-        completionHandler(toWebExtensionError(apiName, nil, @"Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"Failed to add dynamic rules. Maximum number of dynamic and session rules exceeded."));
         return;
     }
 
@@ -392,7 +392,7 @@ void WebExtensionContext::declarativeNetRequestGetSessionRules(CompletionHandler
 {
     [declarativeNetRequestSessionRulesStore() getRulesWithCompletionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSArray *rules, NSString *errorMessage) mutable {
         if (errorMessage) {
-            completionHandler(toWebExtensionError(@"declarativeNetRequest.getSessionRules()", nil, errorMessage));
+            completionHandler(toWebExtensionError(@"declarativeNetRequest.getSessionRules()", nullString(), errorMessage));
             return;
         }
 
@@ -419,7 +419,7 @@ void WebExtensionContext::declarativeNetRequestUpdateSessionRules(String&& rules
 
     auto updatedSessionRulesCount = m_sessionRulesIDs.size() + rulesToAdd.count - ruleIDsToDelete.count;
     if (updatedSessionRulesCount + m_dynamicRulesIDs.size() > webExtensionDeclarativeNetRequestMaximumNumberOfDynamicAndSessionRules) {
-        completionHandler(toWebExtensionError(apiName, nil, @"Failed to add session rules. Maximum number of dynamic and session rules exceeded."));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"Failed to add session rules. Maximum number of dynamic and session rules exceeded."));
         return;
     }
 

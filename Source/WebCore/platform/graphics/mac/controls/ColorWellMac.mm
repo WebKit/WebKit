@@ -26,7 +26,7 @@
 #import "config.h"
 #import "ColorWellMac.h"
 
-#if PLATFORM(MAC) && ENABLE(INPUT_TYPE_COLOR)
+#if PLATFORM(MAC)
 
 #import "ColorWellPart.h"
 #import "ControlFactoryMac.h"
@@ -58,4 +58,4 @@ void ColorWellMac::draw(GraphicsContext& context, const FloatRoundedRect& border
 
 } // namespace WebCore
 
-#endif // PLATFORM(MAC) && ENABLE(INPUT_TYPE_COLOR)
+#endif // PLATFORM(MAC)

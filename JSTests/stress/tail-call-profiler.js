@@ -19,7 +19,7 @@ function inlineTailTernary(a) {
 }
 
 function body() {
-    for (var i = 0; i < 10000; i++) {
+    for (var i = 0; i < testLoopCount; i++) {
         inlineTail(1);
         inlineTailVarArgs(1);
         inlineTailTernary(1)

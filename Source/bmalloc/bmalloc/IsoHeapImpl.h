@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "BMalloced.h"
 #include "IsoAllocator.h"
 #include "IsoDirectoryPage.h"
@@ -55,14 +57,14 @@ public:
     void scavengeNow();
     static void finishScavenging(Vector<DeferredDecommit>&);
 
-    void didCommit(void* ptr, size_t bytes);
-    void didDecommit(void* ptr, size_t bytes);
+    inline void didCommit(void* ptr, size_t bytes);
+    inline void didDecommit(void* ptr, size_t bytes);
 
-    void isNowFreeable(void* ptr, size_t bytes);
-    void isNoLongerFreeable(void* ptr, size_t bytes);
+    inline void isNowFreeable(void* ptr, size_t bytes);
+    inline void isNoLongerFreeable(void* ptr, size_t bytes);
 
-    size_t freeableMemory();
-    size_t footprint();
+    inline size_t freeableMemory();
+    inline size_t footprint();
 
     void addToAllIsoHeaps();
 
@@ -145,3 +147,4 @@ private:
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

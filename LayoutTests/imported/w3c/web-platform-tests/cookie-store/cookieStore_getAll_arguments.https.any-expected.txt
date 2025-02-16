@@ -8,4 +8,6 @@ PASS cookieStore.getAll with absolute url in options
 PASS cookieStore.getAll with relative url in options
 PASS cookieStore.getAll with invalid url path in options
 PASS cookieStore.getAll with invalid url host in options
+PASS cookieStore.getAll with absolute url with fragment in options
+PASS cookieStore.getAll with absolute different url in options
 

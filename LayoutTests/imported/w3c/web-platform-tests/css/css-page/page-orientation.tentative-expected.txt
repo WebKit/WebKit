@@ -1,0 +1,13 @@
+
+FAIL contents for selector [''] assert_equals: unexpected @page contents expected "page-orientation: rotate-right;" but got ""
+FAIL contents for selector [':left'] assert_equals: unexpected @page contents expected "page-orientation: rotate-left;" but got ""
+FAIL contents for selector [':right'] assert_equals: unexpected @page contents expected "page-orientation: rotate-right;" but got ""
+FAIL contents for selector [':first'] assert_equals: unexpected @page contents expected "page-orientation: rotate-left;" but got ""
+FAIL contents for selector ['named1'] assert_equals: unexpected @page contents expected "page-orientation: upright;" but got ""
+PASS contents for selector ['named2']
+FAIL contents for selector ['named3'] assert_equals: unexpected @page contents expected "page-orientation: rotate-right;" but got ""
+FAIL contents for selector ['named4'] assert_equals: unexpected @page contents expected "page-orientation: rotate-left;" but got ""
+FAIL contents for selector ['named5'] assert_equals: unexpected @page contents expected "page-orientation: rotate-right;" but got ""
+FAIL contents for selector ['named6'] assert_equals: unexpected @page contents expected "page-orientation: rotate-right;" but got ""
+PASS contents for selector ['h5']
+

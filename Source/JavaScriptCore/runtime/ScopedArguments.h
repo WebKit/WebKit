@@ -48,7 +48,7 @@ public:
     template<typename CellType, SubspaceAccess>
     static GCClient::IsoSubspace* subspaceFor(VM& vm)
     {
-        static_assert(!CellType::needsDestruction);
+        static_assert(CellType::needsDestruction == DoesNotNeedDestruction);
         return &vm.scopedArgumentsSpace();
     }
 

@@ -61,5 +61,5 @@ function test()
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test();

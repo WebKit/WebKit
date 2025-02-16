@@ -37,9 +37,7 @@ public:
 
 private:
     std::unique_ptr<PlatformControl> createPlatformButton(ButtonPart&) final;
-#if ENABLE(INPUT_TYPE_COLOR)
     std::unique_ptr<PlatformControl> createPlatformColorWell(ColorWellPart&) final;
-#endif
 #if ENABLE(SERVICE_CONTROLS)
     std::unique_ptr<PlatformControl> createPlatformImageControlsButton(ImageControlsButtonPart&) final;
 #endif

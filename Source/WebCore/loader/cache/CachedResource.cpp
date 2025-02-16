@@ -100,7 +100,7 @@ CachedResource::CachedResource(CachedResourceRequest&& request, Type type, PAL::
 {
     ASSERT(m_sessionID.isValid());
 
-    setLoadPriority(request.priority(), request.fetchPriorityHint());
+    setLoadPriority(request.priority(), request.fetchPriority());
 #ifndef NDEBUG
     cachedResourceLeakCounter.increment();
 #endif
@@ -294,7 +294,7 @@ void CachedResource::loadFrom(const CachedResource& resource)
 
     if (isCrossOrigin() && m_options.mode == FetchOptions::Mode::Cors) {
         ASSERT(m_origin);
-        auto accessControlCheckResult = WebCore::passesAccessControlCheck(resource.response(), m_options.storedCredentialsPolicy, *m_origin, &CrossOriginAccessControlCheckDisabler::singleton());
+        auto accessControlCheckResult = WebCore::passesAccessControlCheck(resource.response(), m_options.storedCredentialsPolicy, *protectedOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
         if (!accessControlCheckResult) {
             setResourceError(ResourceError(String(), 0, url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
             return;
@@ -369,7 +369,8 @@ void CachedResource::cancelLoad(LoadWillContinueInAnotherProcess loadWillContinu
     if (!isLoading() && !stillNeedsLoad())
         return;
 
-    RefPtr documentLoader = (m_loader && m_loader->frame()) ? m_loader->frame()->loader().activeDocumentLoader() : nullptr;
+    RefPtr loader = m_loader;
+    RefPtr documentLoader = (loader && loader->frame()) ? loader->frame()->loader().activeDocumentLoader() : nullptr;
     if (m_options.keepAlive && (!documentLoader || documentLoader->isStopping())) {
         if (m_response)
             m_response->m_error = { };
@@ -483,7 +484,7 @@ void CachedResource::setResponse(const ResourceResponse& newResponse)
 {
     ASSERT(response().type() == ResourceResponse::Type::Default || isOpaqueRedirectResponseWithoutLocationHeader(response()));
     mutableResponse() = newResponse;
-    m_varyingHeaderValues = collectVaryingRequestHeaders(cookieJar(), m_resourceRequest, response());
+    m_varyingHeaderValues = collectVaryingRequestHeaders(protectedCookieJar().get(), m_resourceRequest, response());
 
     if (response().source() == ResourceResponse::Source::ServiceWorker) {
         m_responseTainting = response().tainting();
@@ -505,8 +506,8 @@ void CachedResource::responseReceived(const ResourceResponse& response)
 
 void CachedResource::clearLoader()
 {
-    if (m_loader)
-        m_identifierForLoadWithoutResourceLoader = m_loader->identifier();
+    if (RefPtr loader = m_loader)
+        m_identifierForLoadWithoutResourceLoader = loader->identifier();
     else
         ASSERT_NOT_REACHED();
     m_loader = nullptr;
@@ -917,13 +918,13 @@ unsigned CachedResource::overheadSize() const
     return sizeof(CachedResource) + response().memoryUsage() + kAverageClientsHashMapSize + m_resourceRequest.url().string().length() * 2;
 }
 
-void CachedResource::setLoadPriority(const std::optional<ResourceLoadPriority>& loadPriority, RequestPriority fetchPriorityHint)
+void CachedResource::setLoadPriority(const std::optional<ResourceLoadPriority>& loadPriority, RequestPriority fetchPriority)
 {
     ResourceLoadPriority priority = loadPriority ? loadPriority.value() : DefaultResourceLoadPriority::forResourceType(type());
-    if (fetchPriorityHint == RequestPriority::Low) {
+    if (fetchPriority == RequestPriority::Low) {
         if (priority != ResourceLoadPriority::Lowest)
             --priority;
-    } else if (fetchPriorityHint == RequestPriority::High) {
+    } else if (fetchPriority == RequestPriority::High) {
         if (priority != ResourceLoadPriority::Highest)
             ++priority;
     }
@@ -1069,8 +1070,13 @@ ResourceCryptographicDigest CachedResource::cryptographicDigest(ResourceCryptogr
     ASSERT(static_cast<std::underlying_type_t<ResourceCryptographicDigest::Algorithm>>(algorithm) == (1 << digestIndex));
     auto& existingDigest = m_cryptographicDigests[digestIndex];
     if (!existingDigest)
-        existingDigest = cryptographicDigestForSharedBuffer(algorithm, resourceBuffer());
+        existingDigest = cryptographicDigestForSharedBuffer(algorithm, protectedResourceBuffer().get());
     return *existingDigest;
+}
+
+RefPtr<FragmentedSharedBuffer> CachedResource::protectedResourceBuffer() const
+{
+    return m_data;
 }
 
 }

@@ -20,6 +20,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include "FrameInfoData.h"
 #include <WebCore/CaptureDevice.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/MediaDeviceHashSalts.h>
@@ -39,7 +40,7 @@ class UserMediaPermissionRequestManagerProxy;
 
 class UserMediaPermissionRequestProxy : public API::ObjectImpl<API::Object::Type::UserMediaPermissionRequest> {
 public:
-    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&&, Ref<WebCore::SecurityOrigin>&&, Vector<WebCore::CaptureDevice>&&, Vector<WebCore::CaptureDevice>&&, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&& = { });
+    static Ref<UserMediaPermissionRequestProxy> create(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&&, Ref<WebCore::SecurityOrigin>&&, Vector<WebCore::CaptureDevice>&&, Vector<WebCore::CaptureDevice>&&, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&& = { });
 
     ~UserMediaPermissionRequestProxy();
 
@@ -76,7 +77,8 @@ public:
 
     std::optional<WebCore::UserMediaRequestIdentifier> userMediaID() const { return m_userMediaID; }
     WebCore::FrameIdentifier mainFrameID() const { return m_mainFrameID; }
-    WebCore::FrameIdentifier frameID() const { return m_frameID; }
+    const FrameInfoData& frameInfo() const { return m_frameInfo; }
+    WebCore::FrameIdentifier frameID() const { return *m_frameInfo.frameID; }
 
     WebCore::SecurityOrigin& topLevelDocumentSecurityOrigin() { return m_topLevelDocumentSecurityOrigin.get(); }
     WebCore::SecurityOrigin& userMediaDocumentSecurityOrigin() { return m_userMediaDocumentSecurityOrigin.get(); }
@@ -104,7 +106,7 @@ public:
     Function<void()> beforeStartingCaptureCallback() { return std::exchange(m_beforeStartingCaptureCallback, { }); }
 
 protected:
-    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, WebCore::FrameIdentifier, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
+    UserMediaPermissionRequestProxy(UserMediaPermissionRequestManagerProxy&, std::optional<WebCore::UserMediaRequestIdentifier>, WebCore::FrameIdentifier mainFrameID, FrameInfoData&&, Ref<WebCore::SecurityOrigin>&& userMediaDocumentOrigin, Ref<WebCore::SecurityOrigin>&& topLevelDocumentOrigin, Vector<WebCore::CaptureDevice>&& audioDevices, Vector<WebCore::CaptureDevice>&& videoDevices, WebCore::MediaStreamRequest&&, CompletionHandler<void(bool)>&&);
 
     UserMediaPermissionRequestManagerProxy* manager() const;
     RefPtr<UserMediaPermissionRequestManagerProxy> protectedManager() const;
@@ -113,7 +115,7 @@ private:
     WeakPtr<UserMediaPermissionRequestManagerProxy> m_manager;
     Markable<WebCore::UserMediaRequestIdentifier> m_userMediaID;
     WebCore::FrameIdentifier m_mainFrameID;
-    WebCore::FrameIdentifier m_frameID;
+    FrameInfoData m_frameInfo;
     Ref<WebCore::SecurityOrigin> m_userMediaDocumentSecurityOrigin;
     Ref<WebCore::SecurityOrigin> m_topLevelDocumentSecurityOrigin;
     Vector<WebCore::CaptureDevice> m_eligibleVideoDevices;

@@ -11,7 +11,7 @@ function foo(a, b, string)
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(1, 2, "x + 1");
     if (result != 42)
         throw "Error: bad result in loop: " + result;

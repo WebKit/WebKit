@@ -10,7 +10,7 @@ PASS inset-inline-end: 1px is allowed in @position-try
 PASS inset-block: 1px is allowed in @position-try
 PASS inset-inline: 1px is allowed in @position-try
 PASS inset: 1px is allowed in @position-try
-FAIL position-area: span-all is allowed in @position-try assert_equals: expected "@position-try --foo { position-area: span-all; }" but got "@position-try --foo { }"
+PASS position-area: span-all is allowed in @position-try
 PASS margin-top: 1px is allowed in @position-try
 PASS margin-bottom: 1px is allowed in @position-try
 PASS margin-left: 1px is allowed in @position-try

@@ -42,7 +42,6 @@ struct CookieListItem {
         , domain(WTFMove(cookie.domain))
         , path(WTFMove(cookie.path))
         , expires(cookie.expires)
-        , secure(cookie.secure)
     {
         switch (cookie.sameSite) {
         case Cookie::SameSitePolicy::Strict:
@@ -55,6 +54,11 @@ struct CookieListItem {
             sameSite = CookieSameSite::None;
             break;
         }
+
+        // Due to how CFNetwork handles host-only cookies, we may need to prepend a '.' to the domain when
+        // setting a cookie (see CookieStore::set). So we must strip this '.' when returning the cookie.
+        if (domain.startsWith('.'))
+            domain = domain.substring(1, domain.length() - 1);
     }
 
     String name;
@@ -62,7 +66,7 @@ struct CookieListItem {
     String domain;
     String path;
     std::optional<DOMHighResTimeStamp> expires;
-    bool secure { false };
+    bool secure { true };
     CookieSameSite sameSite { CookieSameSite::Strict };
 };
 

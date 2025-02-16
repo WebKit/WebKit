@@ -60,6 +60,8 @@ public:
     bool allowUnsafeHashes() const { return m_allowUnsafeHashes; }
     bool shouldReportSample() const { return m_reportSample; }
 
+    HashAlgorithmSet reportHash() const { return m_reportHash; }
+
 private:
     struct Host {
         StringView value;
@@ -90,7 +92,7 @@ private:
     const ContentSecurityPolicy& m_policy;
     Vector<ContentSecurityPolicySource> m_list;
     MemoryCompactLookupOnlyRobinHoodHashSet<String> m_nonces;
-    HashSet<ContentSecurityPolicyHash> m_hashes;
+    UncheckedKeyHashSet<ContentSecurityPolicyHash> m_hashes;
     OptionSet<ContentSecurityPolicyHashAlgorithm> m_hashAlgorithmsUsed;
     String m_directiveName;
     ContentSecurityPolicyModeForExtension m_contentSecurityPolicyModeForExtension { ContentSecurityPolicyModeForExtension::None };
@@ -103,6 +105,7 @@ private:
     bool m_allowNonParserInsertedScripts { false };
     bool m_allowUnsafeHashes { false };
     bool m_reportSample { false };
+    HashAlgorithmSet m_reportHash { 0 };
 };
 
 } // namespace WebCore

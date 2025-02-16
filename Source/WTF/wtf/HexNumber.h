@@ -79,7 +79,7 @@ public:
 
     unsigned length() const { return m_buffer.length; }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination.data(), m_buffer.span()); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { StringImpl::copyCharacters(destination, m_buffer.span()); }
 
 private:
     const HexNumberBuffer& m_buffer;

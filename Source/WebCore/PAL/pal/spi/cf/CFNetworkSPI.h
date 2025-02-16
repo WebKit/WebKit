@@ -99,6 +99,7 @@ OS_OBJECT_DECL(nw_resolver);
 OS_OBJECT_DECL(nw_parameters);
 OS_OBJECT_DECL(nw_proxy_config);
 OS_OBJECT_DECL(nw_protocol_options);
+OS_OBJECT_DECL(nw_establishment_report);
 #else
 struct nw_array;
 typedef struct nw_array *nw_array_t;
@@ -116,6 +117,8 @@ struct nw_proxy_config;
 typedef struct nw_proxy_config *nw_proxy_config_t;
 struct nw_protocol_options;
 typedef struct nw_protocol_options *nw_protocol_options_t;
+struct nw_establishment_report;
+typedef struct nw_establishment_report *nw_establishment_report_t;
 #endif // OS_OBJECT_USE_OBJC
 
 #if HAVE(NW_PROXY_CONFIG) || HAVE(SYSTEM_SUPPORT_FOR_ADVANCED_PRIVACY_PROTECTIONS)
@@ -145,6 +148,7 @@ bool nw_resolver_set_update_handler(nw_resolver_t, dispatch_queue_t, nw_resolver
 bool nw_resolver_cancel(nw_resolver_t);
 void nw_context_set_privacy_level(nw_context_t, nw_context_privacy_level_t);
 void nw_parameters_set_context(nw_parameters_t, nw_context_t);
+nw_endpoint_t nw_establishment_report_copy_proxy_endpoint(nw_establishment_report_t);
 
 nw_context_t nw_context_create(const char *);
 size_t nw_array_get_count(nw_array_t);
@@ -228,6 +232,7 @@ typedef enum {
 - (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
 - (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition completionHandler:(void (^)(NSArray *))completionHandler;
 - (void)_getCookiesForURL:(NSURL *)url mainDocumentURL:(NSURL *)mainDocumentURL partition:(NSString *)partition policyProperties:(NSDictionary*)props completionHandler:(void (NS_NOESCAPE ^)(NSArray *))completionHandler;
+- (void)_getCookiesForPartition:(NSString* __nullable) partition completionHandler:(void (NS_NOESCAPE ^) (NSArray* __nullable))completionHandler;
 - (void)_setCookies:(NSArray *)cookies forURL:(NSURL *)URL mainDocumentURL:(NSURL *)mainDocumentURL policyProperties:(NSDictionary*) props;
 - (void)removeCookiesSinceDate:(NSDate *)date;
 - (id)_initWithCFHTTPCookieStorage:(CFHTTPCookieStorageRef)cfStorage;
@@ -400,6 +405,7 @@ typedef NS_ENUM(NSInteger, NSURLSessionCompanionProxyPreference) {
 @property (nullable, copy, readonly) NSString* _interfaceName;
 #if HAVE(NETWORK_CONNECTION_PRIVACY_STANCE)
 @property (assign, readonly) nw_connection_privacy_stance_t _privacyStance;
+@property (nullable, retain, readonly) nw_establishment_report_t _establishmentReport;
 #endif
 @property (assign) SSLProtocol _negotiatedTLSProtocol;
 @property (assign) SSLCipherSuite _negotiatedTLSCipher;
@@ -449,6 +455,7 @@ enum : NSUInteger {
 @interface NSURLSessionTask ()
 @property (nonatomic, copy, nullable) NSArray<NSHTTPCookie*>* (^_cookieTransformCallback)(NSArray<NSHTTPCookie*>* cookies);
 @property (nonatomic, readonly, nullable) NSArray<NSString*>* _resolvedCNAMEChain;
+@property (nonatomic, readonly) int64_t _countOfBytesReceivedEncoded;
 @end
 
 #endif // defined(__OBJC__)
@@ -588,7 +595,6 @@ WTF_EXTERN_C_END
 
 @interface NSURLSessionTask ()
 - (void)_setExplicitCookieStorage:(CFHTTPCookieStorageRef)storage;
-@property (readonly) SSLProtocol _TLSNegotiatedProtocolVersion;
 @end
 
 @interface NSURLSessionWebSocketTask (SPI)

@@ -708,13 +708,12 @@ Element* FocusController::findFocusableElementAcrossFocusScope(FocusDirection di
         if (direction == FocusDirection::Backward && isFocusableScopeOwner(*owner, event))
             return findFocusableElementDescendingIntoSubframes(direction, owner.get(), event);
 
-        auto outerScope = FocusNavigationScope::scopeOf(*owner);
-
         // If we're getting out of a popover backwards, focus the invoker itself instead of the node preceding it, if possible.
         RefPtr invoker = invokerForOpenPopover(owner.get());
         if (invoker && direction == FocusDirection::Backward && invoker->isKeyboardFocusable(event))
             return invoker.get();
 
+        auto outerScope = FocusNavigationScope::scopeOf(invoker ? *invoker : *owner);
         if (auto* candidateInOuterScope = findFocusableElementWithinScope(direction, outerScope, invoker ? invoker.get() : owner.get(), event))
             return candidateInOuterScope;
         owner = outerScope.owner();

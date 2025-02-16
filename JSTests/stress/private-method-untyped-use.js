@@ -33,11 +33,11 @@ noInline(C.prototype.access);
 let c = new C();
 
 // Let's trigger JIT compilation for `C.prototype.access`
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     c.access(15);
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert.shouldThrow(TypeError, () => {
         c.access.call({}, 0);
     });

@@ -15,7 +15,7 @@ function baz(a, b) {
 
 noInline(baz);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     global = i;
     var result = baz(1, 2);
     if (result != i + 1 + 1 + 2)

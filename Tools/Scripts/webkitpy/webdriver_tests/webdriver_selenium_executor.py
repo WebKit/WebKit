@@ -35,15 +35,29 @@ _log = logging.getLogger(__name__)
 
 class WebDriverSeleniumExecutor(object):
 
-    def __init__(self, driver, env):
+    def __init__(self, port, driver, env):
+        self._port = port
         self._driver_name = driver.selenium_name()
         self._env = env
         self._env.update(driver.browser_env())
 
-        self._args = ['--driver=%s' % self._driver_name, '--driver-binary=%s' % driver.binary_path()]
+        self._args = []
+        if self._port.get_option('enable_webdriver_bidi'):
+            self._args.append('--bidi=1')
+
+        self._args.extend(['--driver=%s' % self._driver_name, '--driver-binary=%s' % driver.binary_path()])
         browser_path = driver.browser_path()
         if browser_path:
             self._args.extend(['--browser-binary=%s' % browser_path])
+
+        # `--browser_args` must not be followed by other custom options as the space-separated list
+        # of arguments to the browser might make pytest lose track of cli parameters while
+        # searching for the root config file (e.g. conftest.py).
+        # If it fails to find the root config file, it will not add the custom
+        # command line parameters, failing to run the suite with `USAGE_ERROR` exit
+        # For more info, check the following issues:
+        # https://github.com/pytest-dev/pytest/issues/9749
+        # https://github.com/python/cpython/issues/66623
         browser_args = driver.browser_args()
         if browser_args:
             self._args.extend(['--browser-args=%s' % ' '.join(browser_args)])

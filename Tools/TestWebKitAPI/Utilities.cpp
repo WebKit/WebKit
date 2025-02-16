@@ -57,7 +57,7 @@ bool runFor(bool* done, Seconds duration)
 
 void runFor(Seconds duration)
 {
-    RunLoop::current().dispatchAfter(duration, [] {
+    RunLoop::protectedCurrent()->dispatchAfter(duration, [] {
         RunLoop::current().stop();
     });
     RunLoop::current().run();

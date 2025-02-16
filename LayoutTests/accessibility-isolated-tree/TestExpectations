@@ -39,3 +39,6 @@ accessibility/datetime/input-date-field-labels-and-value-changes.html [ Pass Tim
 
 # When ENABLE(AX_THREAD_TEXT_APIS) is on by default, un-comment this.
 # accessibility/ax-thread-text-apis [ Pass ]
+
+# Un-skip all isolated-tree specific tests (when AX_THREAD_TEXT_APIS is enabled, un-comment this)
+# accessibility/isolated-tree [ Pass ]

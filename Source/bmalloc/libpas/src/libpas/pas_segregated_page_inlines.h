@@ -443,30 +443,33 @@ pas_segregated_page_deallocate_with_page(pas_segregated_page* page,
         } }
     }
 
+    uintptr_t object_size;
+    pas_segregated_view owner;
+    size_t offset_in_page;
+    size_t bit_index;
+
+    offset_in_page = pas_modulo_power_of_2(begin, page_config.base.page_size);
+    bit_index = offset_in_page >> page_config.base.min_align_shift;
+    owner = page->owner;
+
+    if (pas_segregated_view_is_some_exclusive(owner))
+        object_size = page->object_size;
+    else {
+        object_size = pas_compact_segregated_size_directory_ptr_load_non_null(
+            &pas_segregated_shared_handle_partial_view_for_index(
+                pas_segregated_view_get_shared_handle(owner),
+                bit_index,
+                page_config)->directory)->object_size;
+    }
+
+    PAS_PROFILE(SEGREGATED_PAGE_DEALLOCATION, page_config, begin, object_size);
+
     if (page_config.base.page_size > page_config.base.granule_size) {
         /* This is the partial decommit case. It's intended for medium pages. It requires doing
            more work, but it's a bounded amount of work, and it only happens when freeing
            medium objects. */
 
-        uintptr_t object_size;
-        pas_segregated_view owner;
-        size_t offset_in_page;
-        size_t bit_index;
         bool did_find_empty_granule;
-
-        offset_in_page = pas_modulo_power_of_2(begin, page_config.base.page_size);
-        bit_index = offset_in_page >> page_config.base.min_align_shift;
-        owner = page->owner;
-
-        if (pas_segregated_view_is_some_exclusive(owner))
-            object_size = page->object_size;
-        else {
-            object_size = pas_compact_segregated_size_directory_ptr_load_non_null(
-                &pas_segregated_shared_handle_partial_view_for_index(
-                    pas_segregated_view_get_shared_handle(owner),
-                    bit_index,
-                    page_config)->directory)->object_size;
-        }
 
         did_find_empty_granule = pas_page_base_free_granule_uses_in_range(
             pas_segregated_page_get_granule_use_counts(page, page_config),

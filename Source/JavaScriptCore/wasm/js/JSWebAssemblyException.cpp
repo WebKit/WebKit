@@ -47,11 +47,18 @@ Structure* JSWebAssemblyException::createStructure(VM& vm, JSGlobalObject* globa
     return Structure::create(vm, globalObject, prototype, TypeInfo(ErrorInstanceType, StructureFlags), info());
 }
 
-JSWebAssemblyException::JSWebAssemblyException(VM& vm, Structure* structure, const Wasm::Tag& tag, FixedVector<uint64_t>&& payload)
+JSWebAssemblyException::JSWebAssemblyException(VM& vm, Structure* structure, Ref<const Wasm::Tag>&& tag, FixedVector<uint64_t>&& payload)
     : Base(vm, structure)
-    , m_tag(Ref { tag })
+    , m_tag(WTFMove(tag))
     , m_payload(WTFMove(payload))
 {
+}
+
+void JSWebAssemblyException::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+    vm.heap.reportExtraMemoryAllocated(this, payload().byteSize());
 }
 
 template<typename Visitor>
@@ -67,6 +74,7 @@ void JSWebAssemblyException::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             visitor.append(std::bit_cast<WriteBarrier<Unknown>>(exception->payload()[offset]));
         offset += tagType.argumentType(i).kind == Wasm::TypeKind::V128 ? 2 : 1;
     }
+    visitor.reportExtraMemoryVisited(exception->payload().size());
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyException);

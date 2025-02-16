@@ -46,6 +46,7 @@
 
 #if HAVE(IOSURFACE)
 #include "IOSurface.h"
+#include "IOSurfacePool.h"
 #endif
 
 #if USE(SKIA)
@@ -62,16 +63,13 @@ class BifurcatedGraphicsContext;
 class DynamicContentScalingDisplayList;
 class Filter;
 class GraphicsClient;
-#if HAVE(IOSURFACE)
-class IOSurfacePool;
-#endif
 class ScriptExecutionContext;
 
 class SerializedImageBuffer;
 
 struct ImageBufferCreationContext {
 #if HAVE(IOSURFACE)
-    IOSurfacePool* surfacePool { nullptr };
+    RefPtr<IOSurfacePool> surfacePool;
     PlatformDisplayID displayID { 0 };
 #endif
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
@@ -142,6 +140,8 @@ public:
 
     WEBCORE_EXPORT virtual void flushDrawingContext();
     WEBCORE_EXPORT virtual bool flushDrawingContextAsync();
+
+    void prepareForDisplay();
 
     WEBCORE_EXPORT IntSize backendSize() const;
 
@@ -220,6 +220,7 @@ public:
     static RefPtr<ImageBuffer> sinkIntoImageBufferAfterCrossThreadTransfer(RefPtr<ImageBuffer>);
 #endif
     static std::unique_ptr<SerializedImageBuffer> sinkIntoSerializedImageBuffer(RefPtr<ImageBuffer>&&);
+    WEBCORE_EXPORT static RefPtr<SharedBuffer> sinkIntoPDFDocument(RefPtr<ImageBuffer>);
 
     WEBCORE_EXPORT virtual void convertToLuminanceMask();
     WEBCORE_EXPORT virtual void transformToColorSpace(const DestinationColorSpace& newColorSpace);

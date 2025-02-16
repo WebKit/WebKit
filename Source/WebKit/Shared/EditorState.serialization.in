@@ -61,7 +61,7 @@ struct WebKit::EditorState {
     std::optional<WebKit::EditorState::VisualData> visualData;
 };
 
-using WebCore::ScrollPosition = WebCore::IntPoint;
+using WebCore::ScrollOffset = WebCore::IntPoint;
 
 [Nested] struct WebKit::EditorState::PostLayoutData {
     OptionSet<WebKit::TypingAttribute> typingAttributes;
@@ -131,6 +131,6 @@ using WebCore::ScrollPosition = WebCore::IntPoint;
     std::optional<WebCore::ScrollingNodeID> enclosingScrollingNodeID;
     std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtStart;
     std::optional<WebCore::ScrollingNodeID> scrollingNodeIDAtEnd;
-    WebCore::ScrollPosition enclosingScrollPosition;
+    WebCore::ScrollOffset enclosingScrollOffset;
 #endif
 };

@@ -86,9 +86,9 @@ public:
     void start(IDBFactory*, SecurityOrigin*, const String& databaseName);
     virtual void execute(IDBDatabase&) = 0;
     virtual BackendDispatcher::CallbackBase& requestCallback() = 0;
-    ScriptExecutionContext* context() const { return m_context; }
+    ScriptExecutionContext* context() const { return m_context.get(); }
 private:
-    ScriptExecutionContext* m_context;
+    WeakPtr<ScriptExecutionContext> m_context;
 };
 
 class OpenDatabaseCallback final : public EventListener {

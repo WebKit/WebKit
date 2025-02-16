@@ -11,6 +11,7 @@
 #include "include/gpu/graphite/precompile/PrecompileBlender.h"
 #include "include/gpu/graphite/precompile/PrecompileColorFilter.h"
 #include "include/gpu/graphite/precompile/PrecompileShader.h"
+#include "src/core/SkColorSpacePriv.h"
 #include "src/gpu/graphite/KeyContext.h"
 #include "src/gpu/graphite/KeyHelpers.h"
 #include "src/gpu/graphite/PaintParams.h"
@@ -29,11 +30,11 @@ void PaintOption::toKey(const KeyContext& keyContext,
     this->handleDithering(keyContext, keyBuilder, gatherer);
 
     // Root Node 1 is the final blender
-    std::optional<SkBlendMode> finalBlendMode = this->finalBlender()
-                                                        ? this->finalBlender()->priv().asBlendMode()
-                                                        : SkBlendMode::kSrcOver;
+    std::optional<SkBlendMode> finalBlendMode =
+            this->finalBlender() ? this->finalBlender()->priv().asBlendMode()
+                                 : SkBlendMode::kSrcOver;
     if (finalBlendMode) {
-        if (fDstReadReq == DstReadRequirement::kNone) {
+        if (!fDstReadRequired) {
             AddFixedBlendMode(keyContext, keyBuilder, gatherer, *finalBlendMode);
         } else {
             AddBlendMode(keyContext, keyBuilder, gatherer, *finalBlendMode);
@@ -77,7 +78,7 @@ void PaintOption::handlePrimitiveColor(const KeyContext& keyContext,
                   this->addPaintColorToKey(keyContext, keyBuilder, gatherer);
               },
               /* addDstToKey= */ [&]() -> void {
-                  PrimitiveColorBlock::AddBlock(keyContext, keyBuilder, gatherer);
+                  AddPrimitiveColor(keyContext, keyBuilder, gatherer, sk_srgb_singleton());
               });
     } else {
         this->addPaintColorToKey(keyContext, keyBuilder, gatherer);

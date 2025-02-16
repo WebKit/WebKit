@@ -1,0 +1,69 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<style>
+body, html {
+    font-size: 24px;
+    font-family: system-ui;
+}
+
+.container {
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 0;
+}
+
+#start, #end {
+    position: absolute;
+    left: 1em;
+}
+
+#start {
+    top: 24px;
+}
+
+#end {
+    top: 64px;
+}
+
+#description {
+    margin-top: 300px;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that native selection UI is not suppressed. To manually run the test, select from START to END and verify that the selection highlight is visible.");
+
+    if (!window.testRunner)
+        return;
+
+    const start = document.getElementById("start");
+    const end = document.getElementById("end");
+
+    await UIHelper.longPressElement(start);
+    await UIHelper.waitForSelectionToAppear();
+    getSelection().setBaseAndExtent(start, 0, end, 1);
+    await UIHelper.ensurePresentationUpdate();
+
+    selectionRects = await UIHelper.waitForSelectionToAppear();
+
+    shouldBe("selectionRects.length", "2");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div class="container">
+        <span id="start">START</span>
+        <span id="end">END</span>
+    </div>
+    <div id="description"></div>
+    <div id="console"></div>
+</body>
+</html>

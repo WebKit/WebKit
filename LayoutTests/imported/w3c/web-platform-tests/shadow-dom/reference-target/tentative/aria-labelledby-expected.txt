@@ -1,0 +1,6 @@
+  Label 2
+
+FAIL Label 1 assert_equals: <input class="ex" aria-labelledby="x-label1" data-expectedlabel="Label 1"> expected "Label 1" but got "FAIL IF INCLUDED Label 1"
+FAIL Label 2 assert_equals: <input class="ex" aria-labelledby="x-label2" data-expectedlabel="Label 2"> expected "Label 2" but got "FAIL IF INCLUDED Label 2"
+FAIL Label 3 assert_equals: <input id="input3" class="ex" data-expectedlabel="Label 3" aria-labelledby=""> expected "Label 3" but got "FAIL IF INCLUDED Label 3"
+

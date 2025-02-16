@@ -34,16 +34,23 @@ namespace JSC {
 
 const ClassInfo JSPropertyNameEnumerator::s_info = { "JSPropertyNameEnumerator"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSPropertyNameEnumerator) };
 
-JSPropertyNameEnumerator* JSPropertyNameEnumerator::create(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, PropertyNameArray&& propertyNames)
+JSPropertyNameEnumerator* JSPropertyNameEnumerator::tryCreate(VM& vm, Structure* structure, uint32_t indexedLength, uint32_t numberStructureProperties, PropertyNameArray&& propertyNames)
 {
     unsigned propertyNamesSize = propertyNames.size();
-    unsigned propertyNamesBufferSizeInBytes = Checked<unsigned>(propertyNamesSize) * sizeof(WriteBarrier<JSString>);
+    auto propertyNamesBufferSizeInBytes = CheckedUint32(propertyNamesSize) * sizeof(WriteBarrier<JSString>);
+    if (UNLIKELY(propertyNamesBufferSizeInBytes.hasOverflowed()))
+        return nullptr;
+
     WriteBarrier<JSString>* propertyNamesBuffer = nullptr;
     if (propertyNamesBufferSizeInBytes) {
-        propertyNamesBuffer = static_cast<WriteBarrier<JSString>*>(vm.auxiliarySpace().allocate(vm, propertyNamesBufferSizeInBytes, nullptr, AllocationFailureMode::Assert));
+        propertyNamesBuffer = static_cast<WriteBarrier<JSString>*>(vm.auxiliarySpace().allocate(vm, propertyNamesBufferSizeInBytes, nullptr, AllocationFailureMode::ReturnNull));
+        if (UNLIKELY(!propertyNamesBuffer))
+            return nullptr;
+
         for (unsigned i = 0; i < propertyNamesSize; ++i)
             propertyNamesBuffer[i].clear();
     }
+
     JSPropertyNameEnumerator* enumerator = new (NotNull, allocateCell<JSPropertyNameEnumerator>(vm)) JSPropertyNameEnumerator(vm, structure, indexedLength, numberStructureProperties, propertyNamesBuffer, propertyNamesSize);
     enumerator->finishCreation(vm, propertyNames.releaseData());
     return enumerator;

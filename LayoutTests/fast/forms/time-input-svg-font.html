@@ -18,7 +18,7 @@ a sane width. You should see five time input elements, followed by five "PASS"es
 <div id="console"></div>
 <script>
 function test(inputId) {
-    if (document.getElementById("i").offsetWidth > 50)
+    if (document.getElementById(inputId).offsetWidth > 50)
         return "Pass"
     else
         return "Fail"

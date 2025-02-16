@@ -74,7 +74,7 @@ async function test() {
     }, { simd: true, log: false })
     const { bad, good } = instance.exports
 
-    for (let i = 0; i < 100000; ++i) {
+    for (let i = 0; i < wasmTestLoopCount; ++i) {
       bad()
     }
 

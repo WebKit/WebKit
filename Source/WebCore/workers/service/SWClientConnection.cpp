@@ -147,7 +147,7 @@ void SWClientConnection::postMessageToServiceWorkerClient(ScriptExecutionContext
     });
 }
 
-static void forDedicatedAndSharedWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
+static void forDedicatedAndSharedWorkers(NOESCAPE const Function<Function<void(ScriptExecutionContext&)>()>& callback)
 {
     Worker::forEachWorker(callback);
     SharedWorkerContextManager::singleton().forEachSharedWorker(callback);
@@ -246,7 +246,7 @@ void SWClientConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistration
     });
 }
 
-static void forAllWorkers(const Function<Function<void(ScriptExecutionContext&)>()>& callback)
+static void forAllWorkers(NOESCAPE const Function<Function<void(ScriptExecutionContext&)>()>& callback)
 {
     SWContextManager::singleton().forEachServiceWorker(callback);
     forDedicatedAndSharedWorkers(callback);

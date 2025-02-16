@@ -207,10 +207,10 @@ void EventDispatcher::wheelEvent(PageIdentifier pageID, const WebWheelEvent& whe
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-void EventDispatcher::gestureEvent(FrameIdentifier frameID, PageIdentifier pageID, const WebGestureEvent& gestureEvent)
+void EventDispatcher::gestureEvent(FrameIdentifier frameID, PageIdentifier pageID, const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
-    RunLoop::main().dispatch([this, frameID, pageID, gestureEvent] mutable {
-        dispatchGestureEvent(frameID, pageID, gestureEvent);
+    RunLoop::protectedMain()->dispatch([this, frameID, pageID, gestureEvent, completionHandler = WTFMove(completionHandler)] mutable {
+        dispatchGestureEvent(frameID, pageID, gestureEvent, WTFMove(completionHandler));
     });
 }
 #endif
@@ -253,7 +253,7 @@ void EventDispatcher::touchEvent(PageIdentifier pageID, FrameIdentifier frameID,
     }
 
     if (updateListWasEmpty) {
-        RunLoop::main().dispatch([this] {
+        RunLoop::protectedMain()->dispatch([this] {
             dispatchTouchEvents();
         });
     }
@@ -279,7 +279,7 @@ void EventDispatcher::dispatchTouchEvents()
 void EventDispatcher::dispatchWheelEventViaMainThread(WebCore::PageIdentifier pageID, const WebWheelEvent& wheelEvent, OptionSet<WheelEventProcessingSteps> processingSteps, WheelEventOrigin wheelEventOrigin)
 {
     ASSERT(!RunLoop::isMain());
-    RunLoop::main().dispatch([this, pageID, wheelEvent, wheelEventOrigin, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling] {
+    RunLoop::protectedMain()->dispatch([this, pageID, wheelEvent, wheelEventOrigin, steps = processingSteps - WheelEventProcessingSteps::AsyncScrolling] {
         dispatchWheelEvent(pageID, wheelEvent, steps, wheelEventOrigin);
     });
 }
@@ -303,15 +303,15 @@ void EventDispatcher::dispatchWheelEvent(PageIdentifier pageID, const WebWheelEv
 }
 
 #if ENABLE(MAC_GESTURE_EVENTS)
-void EventDispatcher::dispatchGestureEvent(FrameIdentifier frameID, PageIdentifier pageID, const WebGestureEvent& gestureEvent)
+void EventDispatcher::dispatchGestureEvent(FrameIdentifier frameID, PageIdentifier pageID, const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
 {
     ASSERT(RunLoop::isMain());
 
     RefPtr webPage = WebProcess::singleton().webPage(pageID);
     if (!webPage)
-        return;
+        return completionHandler(gestureEvent.type(), false, std::nullopt);
 
-    webPage->gestureEvent(frameID, gestureEvent);
+    webPage->gestureEvent(frameID, gestureEvent, WTFMove(completionHandler));
 }
 #endif
 
@@ -345,7 +345,7 @@ void EventDispatcher::displayDidRefresh(PlatformDisplayID displayID, const Displ
     if (!sendToMainThread)
         return;
 
-    RunLoop::main().dispatch([displayID, displayUpdate]() {
+    RunLoop::protectedMain()->dispatch([displayID, displayUpdate]() {
         DisplayRefreshMonitorManager::sharedManager().displayDidRefresh(displayID, displayUpdate);
     });
 }

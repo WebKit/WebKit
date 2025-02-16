@@ -1,4 +1,4 @@
-textareaOffset = nodeIndex(textarea); textarea.setSelectionRange(0, 0); textarea.parentNode.removeChild(textarea);
+textareaOffset = nodeIndex(textarea); textarea.focus(); textarea.setSelectionRange(0, 0); textarea.parentNode.removeChild(textarea);
 PASS getSelection().type is 'Caret'
 PASS getSelection().getRangeAt(0).startContainer is document.body
 PASS getSelection().getRangeAt(0).startOffset is textareaOffset

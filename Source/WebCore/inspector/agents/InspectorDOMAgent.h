@@ -277,7 +277,7 @@ private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     std::unique_ptr<Inspector::DOMFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::DOMBackendDispatcher> m_backendDispatcher;
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
     WeakRef<InspectorOverlay> m_overlay;
     WeakHashMap<Node, Inspector::Protocol::DOM::NodeId, WeakPtrImplWithEventTargetData> m_nodeToId;
     HashMap<Inspector::Protocol::DOM::NodeId, WeakPtr<Node, WeakPtrImplWithEventTargetData>> m_idToNode;

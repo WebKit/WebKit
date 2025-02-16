@@ -44,7 +44,7 @@ namespace JSC { namespace Bindings {
 // comments in this file claimed that problem #1 was an issue in Java, in particular, 
 // because Java, allegedly, didn't always call finalize when collecting an object.
 
-typedef HashSet<RootObject*> RootObjectSet;
+typedef UncheckedKeyHashSet<RootObject*> RootObjectSet;
 
 static RootObjectSet& rootObjectSet()
 {
@@ -117,8 +117,8 @@ void RootObject::invalidate()
     m_globalObject.clear();
 
     {
-        HashSet<InvalidationCallback*>::iterator end = m_invalidationCallbacks.end();
-        for (HashSet<InvalidationCallback*>::iterator iter = m_invalidationCallbacks.begin(); iter != end; ++iter)
+        UncheckedKeyHashSet<InvalidationCallback*>::iterator end = m_invalidationCallbacks.end();
+        for (UncheckedKeyHashSet<InvalidationCallback*>::iterator iter = m_invalidationCallbacks.begin(); iter != end; ++iter)
             (**iter)(this);
 
         m_invalidationCallbacks.clear();

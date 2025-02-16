@@ -1,4 +1,4 @@
-// Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+// Copyright (C) 2022-2025 Apple Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -43,6 +43,10 @@ GCC_OPTIMIZATION_LEVEL = $(WK_GCC_OPTIMIZATION_LEVEL_SANITIZER_OVERRIDE_$(WK_ANY
 WK_GCC_OPTIMIZATION_LEVEL_SANITIZER_OVERRIDE_NO = $(WK_DEFAULT_GCC_OPTIMIZATION_LEVEL);
 WK_GCC_OPTIMIZATION_LEVEL_SANITIZER_OVERRIDE_YES = $(WK_SANITIZER_GCC_OPTIMIZATION_LEVEL);
 
+WK_OS_UNFAIR_LOCK_INLINE_CFLAGS = $(WK_OS_UNFAIR_LOCK_INLINE_CFLAGS_$(USE_INTERNAL_SDK));
+WK_OS_UNFAIR_LOCK_INLINE_CFLAGS_YES = OS_UNFAIR_LOCK_INLINE=1
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) $(WK_OS_UNFAIR_LOCK_INLINE_CFLAGS);
+
 WK_COMMON_OTHER_CFLAGS = $(WK_SANITIZER_OTHER_CFLAGS);
 OTHER_CFLAGS = $(inherited) $(WK_COMMON_OTHER_CFLAGS);
 
@@ -64,7 +68,7 @@ GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wreorder-init-list -Wundef -Wvla;
 WARNING_CFLAGS = $(inherited) $(WK_COMMON_WARNING_CFLAGS) $(WK_SANITIZER_WARNING_CFLAGS);
 
-WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL = -Wno-unknown-warning-option -Wno-unsafe-buffer-usage-in-libc-call;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL = ;
 WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx13*] = ;
 WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx14*] = ;
 WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx15.0*] = ;

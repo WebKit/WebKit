@@ -943,4 +943,18 @@ TEST(WTF_HashSet, FormSymmetricDifference)
     }
 }
 
+TEST(WTF_HashSet, RangesAllAnyNoneOf)
+{
+    HashSet<int> set1 { 1, 2, 3 };
+    EXPECT_TRUE(std::ranges::all_of(set1, [] (int el) {
+        return el < 4;
+    }));
+    EXPECT_TRUE(std::ranges::none_of(set1, [] (int el) {
+        return el > 4;
+    }));
+    EXPECT_TRUE(std::ranges::any_of(set1, [] (int el) {
+        return el < 2;
+    }));
+}
+
 } // namespace TestWebKitAPI

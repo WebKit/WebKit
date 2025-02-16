@@ -122,10 +122,10 @@ void AXGeometryManager::willUpdateObjectRegions()
 
 void AXGeometryManager::scheduleRenderingUpdate()
 {
-    if (!m_cache)
+    if (!m_cache || !m_cache->document())
         return;
 
-    if (RefPtr page = m_cache->document().page())
+    if (RefPtr page = m_cache->document()->page())
         page->scheduleRenderingUpdate(RenderingUpdateStep::AccessibilityRegionUpdate);
 }
 

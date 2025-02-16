@@ -87,8 +87,7 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
 
     auto tree = adoptRef(*new AXIsolatedTree(axObjectCache));
 
-    RefPtr axRoot = axObjectCache.getOrCreate(axObjectCache.document().view());
-    if (axRoot) {
+    if (RefPtr axRoot = axObjectCache.document() ? axObjectCache.getOrCreate(axObjectCache.document()->view()) : nullptr) {
         tree->updatingSubtree(axRoot.get());
         tree->createEmptyContent(*axRoot);
     }
@@ -141,7 +140,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     queueAppendsAndRemovals({ rootAppend, webAreaAppend }, { });
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
+RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
 {
     AXTRACE("AXIsolatedTree::create"_s);
     ASSERT(isMainThread());
@@ -151,24 +150,26 @@ Ref<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     if (RefPtr existingTree = isolatedTreeForID(tree->treeID()))
         tree->m_replacingTree = existingTree;
 
-    auto& document = axObjectCache.document();
-    if (!Accessibility::inRenderTreeOrStyleUpdate(document))
-        document.updateLayoutIgnorePendingStylesheets();
+    RefPtr document = axObjectCache.document();
+    if (!document)
+        return nullptr;
+    if (!Accessibility::inRenderTreeOrStyleUpdate(*document))
+        document->updateLayoutIgnorePendingStylesheets();
 
-    tree->m_maxTreeDepth = document.settings().maximumHTMLParserDOMTreeDepth();
+    tree->m_maxTreeDepth = document->settings().maximumHTMLParserDOMTreeDepth();
     ASSERT(tree->m_maxTreeDepth);
 
     // Generate the nodes of the tree and set its root and focused objects.
     // For this, we need the root and focused objects of the AXObject tree.
-    auto* axRoot = axObjectCache.getOrCreate(document.view());
+    auto* axRoot = axObjectCache.getOrCreate(document->view());
     if (axRoot)
         tree->generateSubtree(*axRoot);
     tree->applyPendingRootNode();
 
-    auto* axFocus = axObjectCache.focusedObjectForPage(document.page());
+    auto* axFocus = axObjectCache.focusedObjectForPage(document->page());
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
-    tree->setSelectedTextMarkerRange(document.selection().selection());
+    tree->setSelectedTextMarkerRange(document->selection().selection());
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
     const auto relations = axObjectCache.relations();
@@ -1177,7 +1178,7 @@ void AXIsolatedTree::updateRootScreenRelativePosition()
     ASSERT(isMainThread());
 
     CheckedPtr cache = m_axObjectCache.get();
-    if (auto* axRoot = cache ? cache->getOrCreate(cache->document().view()) : nullptr)
+    if (auto* axRoot = cache && cache->document() ? cache->getOrCreate(cache->document()->view()) : nullptr)
         updateNodeProperties(*axRoot, { AXProperty::ScreenRelativePosition });
 }
 

@@ -67,8 +67,8 @@ Color toStyleColor(const CSS::ColorMix&, ColorResolutionState&);
 WebCore::Color resolveColor(const ColorMix&, const WebCore::Color& currentColor);
 bool containsCurrentColor(const ColorMix&);
 
-void serializationForCSS(StringBuilder&, const ColorMix&);
-String serializationForCSS(const ColorMix&);
+void serializationForCSS(StringBuilder&, const CSS::SerializationContext&, const ColorMix&);
+String serializationForCSS(const CSS::SerializationContext&, const ColorMix&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ColorMix&);
 

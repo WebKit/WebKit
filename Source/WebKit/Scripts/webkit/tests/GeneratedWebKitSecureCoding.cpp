@@ -44,7 +44,7 @@ static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingTypeFromWKKeyedCod
 
 static RetainPtr<NSDictionary> dictionaryForWebKitSecureCodingType(id object)
 {
-    if (WebKit::CoreIPCSecureCoding::conformsToWebKitSecureCoding(object))
+    if (WebKit::conformsToWebKitSecureCoding(object))
         return [object _webKitPropertyListData];
 
     return dictionaryForWebKitSecureCodingTypeFromWKKeyedCoder(object);

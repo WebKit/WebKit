@@ -33,6 +33,7 @@
 #include "PDFKitSPI.h"
 #include "PDFScrollingPresentationController.h"
 #include <WebCore/GraphicsLayer.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -234,6 +235,44 @@ std::optional<PDFDocumentLayout::PageIndex> PDFPresentationController::pageIndex
     }
 
     return { };
+}
+
+auto PDFPresentationController::pdfPositionForCurrentView(AnchorPoint anchorPoint, bool preservePosition) const -> std::optional<VisiblePDFPosition>
+{
+    if (!preservePosition)
+        return { };
+
+    auto& documentLayout = m_plugin->documentLayout();
+    if (!documentLayout.hasLaidOutPDFDocument())
+        return { };
+
+    auto maybePageIndex = pageIndexForCurrentView(anchorPoint);
+    if (!maybePageIndex)
+        return { };
+
+    auto pageIndex = *maybePageIndex;
+    auto pageBounds = documentLayout.layoutBoundsForPageAtIndex(pageIndex);
+    auto topLeftInDocumentSpace = m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, FloatPoint { });
+    auto pagePoint = documentLayout.documentToPDFPage(FloatPoint { pageBounds.center().x(), topLeftInDocumentSpace.y() }, pageIndex);
+
+    LOG_WITH_STREAM(PDF, stream << "PDFPresentationController::pdfPositionForCurrentView - point " << pagePoint << " in page " << pageIndex << " with anchor point " << std::to_underlying(anchorPoint));
+
+    return VisiblePDFPosition { pageIndex, pagePoint };
+}
+
+FloatPoint PDFPresentationController::anchorPointInDocumentSpace(AnchorPoint anchorPoint) const
+{
+    auto anchorPointInPluginSpace = [anchorPoint, checkedPlugin = CheckedRef { m_plugin.get() }] -> FloatPoint {
+        switch (anchorPoint) {
+        case AnchorPoint::TopLeft:
+            return { };
+        case AnchorPoint::Center:
+            return flooredIntPoint(checkedPlugin->size() / 2);
+        }
+        ASSERT_NOT_REACHED();
+        return { };
+    }();
+    return m_plugin->convertDown(UnifiedPDFPlugin::CoordinateSpace::Plugin, UnifiedPDFPlugin::CoordinateSpace::PDFDocumentLayout, anchorPointInPluginSpace);
 }
 
 } // namespace WebKit

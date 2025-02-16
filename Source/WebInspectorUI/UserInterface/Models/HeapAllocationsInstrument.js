@@ -45,8 +45,11 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
         // FIXME: Include a periodic snapshot interval option for this instrument.
 
         if (!initiatedByBackend) {
-            let target = WI.assumingMainTarget();
-            target.HeapAgent.startTracking();
+            for (let target of WI.targets) {
+                if (target.type === WI.TargetType.Worker && !WI.settings.experimentalEnableWorkerTimelineRecording.value)
+                    continue;
+                target.HeapAgent.startTracking();
+            }
         }
 
         // Periodic snapshots.
@@ -57,8 +60,11 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
     stopInstrumentation(initiatedByBackend)
     {
         if (!initiatedByBackend) {
-            let target = WI.assumingMainTarget();
-            target.HeapAgent.stopTracking();
+            for (let target of WI.targets) {
+                if (target.type === WI.TargetType.Worker && !WI.settings.experimentalEnableWorkerTimelineRecording.value)
+                    continue;
+                target.HeapAgent.stopTracking();
+            }
         }
 
         window.clearInterval(this._snapshotIntervalIdentifier);
@@ -69,13 +75,15 @@ WI.HeapAllocationsInstrument = class HeapAllocationsInstrument extends WI.Instru
 
     _takeHeapSnapshot()
     {
-        WI.heapManager.snapshot((error, timestamp, snapshotStringData) => {
-            let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-            workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
-                snapshot.snapshotStringData = snapshotStringData;
-                WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+        for (let target of WI.targets) {
+            WI.heapManager.snapshot(target, (error, timestamp, snapshotStringData) => {
+                let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
+                    snapshot.snapshotStringData = snapshotStringData;
+                    WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+                });
             });
-        });
+        }
     }
 };

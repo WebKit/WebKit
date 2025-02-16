@@ -47,9 +47,9 @@
 
 #define WebFrameLoaderClient_PREFIX_PARAMETERS "%p - [webFrame=%p, webFrameID=%" PRIu64 ", webPage=%p, webPageID=%" PRIu64 "] WebFrameLoaderClient::"
 #define WebFrameLoaderClient_WEBFRAME (&webFrame())
-#define WebFrameLoaderClient_WEBFRAMEID static_cast<unsigned long long>(webFrame().frameID().object().toUInt64())
+#define WebFrameLoaderClient_WEBFRAMEID (webFrame().frameID().object().toUInt64())
 #define WebFrameLoaderClient_WEBPAGE (webFrame().page())
-#define WebFrameLoaderClient_WEBPAGEID static_cast<unsigned long long>(WebFrameLoaderClient_WEBPAGE ? WebFrameLoaderClient_WEBPAGE->identifier().toUInt64() : 0)
+#define WebFrameLoaderClient_WEBPAGEID (WebFrameLoaderClient_WEBPAGE ? WebFrameLoaderClient_WEBPAGE->identifier().toUInt64() : 0)
 
 #define WebFrameLoaderClient_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Network, fmt, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
 #define WebFrameLoaderClient_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR_FORWARDABLE(Network, fmt, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
@@ -209,7 +209,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         if (!frame)
             return;
 
-        RELEASE_LOG_ERROR_FORWARDABLE(Network, WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, static_cast<unsigned long long>(frame->frameID().object().toUInt64()), webPageID, (unsigned)policyDecision.policyAction);
+        RELEASE_LOG_ERROR_FORWARDABLE(Network, WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, frame->frameID().object().toUInt64(), webPageID, (unsigned)policyDecision.policyAction);
 
         frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
     });

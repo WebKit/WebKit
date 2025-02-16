@@ -291,9 +291,6 @@ public:
     virtual LayoutRect paintRectToClipOutFromBorder(const LayoutRect&) { return { }; }
     void paintFocusRing(const PaintInfo&, const RenderStyle&, const Vector<LayoutRect>& focusRingRects) const;
 
-    virtual bool establishesIndependentFormattingContext() const;
-    bool createsNewFormattingContext() const;
-
     static void markRendererDirtyAfterTopLayerChange(RenderElement* renderer, RenderBlock* containingBlockBeforeStyleResolution);
 
     void clearNeedsLayoutForSkippedContent();

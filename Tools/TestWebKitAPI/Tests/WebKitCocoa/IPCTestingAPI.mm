@@ -376,6 +376,68 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
 }
 
+TEST(IPCTestingAPI, EmptyFirstPartyForCookiesCookieRequestHeaderFieldValue)
+{
+    RetainPtr webView = createWebViewWithIPCTestingAPI();
+    RetainPtr delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>document.cookie='a=b';</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    auto sendMessage = @"const connection = IPC.connectionForProcessTarget('Networking');"
+        "const result = connection.sendSyncMessage("
+        "    0,"
+        "    IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValue.name,"
+        "    1000,"
+        "    ["
+        "        {type: 'String', value: null},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'String', value: location.href},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'FrameID', value: IPC.frameID},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint64_t', value: IPC.pageID},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint64_t', value: IPC.webPageProxyID},"
+        "    ]"
+        ");";
+    [webView evaluateJavaScript:sendMessage completionHandler:nil];
+    while (![webView objectByEvaluatingJavaScript:@"result"])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"result.arguments[0].value"] UTF8String], "<null>");
+}
+
+TEST(IPCTestingAPI, InvalidSameSiteInfoCookieRequestHeaderFieldValue)
+{
+    RetainPtr webView = createWebViewWithIPCTestingAPI();
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>document.cookie='a=b';</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    [webView synchronouslyLoadHTMLString:@"" baseURL:[NSURL URLWithString:@"https://apple.com/"]];
+    auto sendMessage = @"const connection = IPC.connectionForProcessTarget('Networking');"
+        "const result = connection.sendSyncMessage("
+        "    0,"
+        "    IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValue.name,"
+        "    1000,"
+        "    ["
+        "        {type: 'String', value: location.href},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'String', value: 'https://webkit.org'},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'FrameID', value: IPC.frameID},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint64_t', value: IPC.pageID},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint64_t', value: IPC.webPageProxyID},"
+        "    ]"
+        ");";
+    [webView evaluateJavaScript:sendMessage completionHandler:nil];
+    while (![webView objectByEvaluatingJavaScript:@"result"])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"result.arguments[0].value"] UTF8String], "<null>");
+}
+
 TEST(IPCTestingAPI, DescribesArguments)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -485,90 +547,6 @@ TEST(IPCTestingAPI, CanInterceptFindString)
         [webView stringByEvaluatingJavaScript:@"IPC.webPageProxyID.toString()"].intValue);
 }
 
-static NSSet<NSString *> *splitTypeFromList(NSString *container, NSString *list)
-{
-    bool firstTypeOnly = [container isEqualToString:@"std::span"]
-        || [container isEqualToString:@"Vector"]
-        || [container isEqualToString:@"std::array"]
-        || [container isEqualToString:@"HashSet"];
-    bool firstTwoTypesOnly = [container isEqualToString:@"HashMap"];
-
-    NSMutableSet *set = NSMutableSet.set;
-    size_t nestedTypeDepth { 0 };
-    bool atComma { false };
-    size_t previousTypeEnd { 0 };
-    for (size_t i = 0; i < list.length; i++) {
-        auto c = [list characterAtIndex:i];
-        if (c == '<')
-            nestedTypeDepth++;
-        if (c == '>')
-            nestedTypeDepth--;
-        if (c == ',') {
-            atComma = true;
-            continue;
-        }
-        if (c == ' ' && !nestedTypeDepth && atComma) {
-            [set addObject:[list substringWithRange:NSMakeRange(previousTypeEnd, i - 1 - previousTypeEnd)]];
-            if (firstTypeOnly)
-                return set;
-            if ([set count] == 2 && firstTwoTypesOnly)
-                return set;
-            previousTypeEnd = i + 1;
-        }
-        atComma = false;
-    }
-    [set addObject:[list substringWithRange:NSMakeRange(previousTypeEnd, list.length - previousTypeEnd)]];
-    return set;
-}
-
-static NSMutableSet<NSString *> *extractTypesFromContainers(NSSet<NSString *> *inputSet)
-{
-    NSMutableSet *outputSet = NSMutableSet.set;
-    for (NSString *input in inputSet) {
-        BOOL foundContainer = NO;
-        NSArray<NSString *> *containerTypes = @[
-            @"Expected",
-            @"HashMap",
-            @"MemoryCompactRobinHoodHashMap",
-            @"MemoryCompactLookupOnlyRobinHoodHashSet",
-            @"std::pair",
-            @"IPC::ArrayReferenceTuple",
-            @"std::span",
-            @"std::array",
-            @"std::tuple",
-            @"std::variant",
-            @"std::unique_ptr",
-            @"UniqueRef",
-            @"Vector",
-            @"HashSet",
-            @"Ref",
-            @"RefPtr",
-            @"std::optional",
-            @"OptionSet",
-            @"OptionalTuple",
-            @"KeyValuePair",
-            @"Markable",
-            @"RetainPtr",
-            @"HashCountedSet",
-            @"IPC::CoreIPCRetainPtr"
-        ];
-        for (NSString *container in containerTypes) {
-            if ([input hasPrefix:[container stringByAppendingString:@"<"]]
-                && [input hasSuffix:@">"]) {
-                NSString *containedTypes = [input substringWithRange:NSMakeRange(container.length + 1, input.length - container.length - 2)];
-                for (NSString *type : extractTypesFromContainers(splitTypeFromList(container, containedTypes)))
-                    [outputSet addObject:type];
-                foundContainer = YES;
-            }
-        }
-        if ([input hasPrefix:@"const "])
-            input = [input substringWithRange:NSMakeRange(6, input.length - 6)];
-        if (!foundContainer)
-            [outputSet addObject:input];
-    }
-    return outputSet;
-}
-
 TEST(IPCTestingAPI, SerializedTypeInfo)
 {
     auto webView = createWebViewWithIPCTestingAPI();
@@ -601,112 +579,11 @@ TEST(IPCTestingAPI, SerializedTypeInfo)
 
     NSArray *objectIdentifiers = [webView objectByEvaluatingJavaScript:@"IPC.objectIdentifiers"];
     EXPECT_TRUE([objectIdentifiers containsObject:@"WebCore::PageIdentifier"]);
-
-    NSMutableSet<NSString *> *typesNeedingDescriptions = NSMutableSet.set;
-    NSDictionary *messages = [webView objectByEvaluatingJavaScript:@"IPC.messages"];
-    for (NSDictionary *message in messages.allValues) {
-        if (![message isKindOfClass:NSDictionary.class])
-            continue;
-        for (NSString *key in @[@"arguments", @"replyArguments"]) {
-            NSArray *arguments = message[key];
-            if (![arguments isKindOfClass:NSArray.class])
-                continue;
-            for (NSDictionary *argument in arguments) {
-                if (![argument isKindOfClass:NSDictionary.class])
-                    continue;
-                if (NSString *enumName = argument[@"enum"]) {
-                    [typesNeedingDescriptions addObject:enumName];
-                    continue;
-                }
-                [typesNeedingDescriptions addObject:argument[@"type"]];
-            }
-        }
-    }
-    for (NSArray *memberTypes in typeInfo.allValues) {
-        for (NSDictionary *memberType in memberTypes)
-            [typesNeedingDescriptions addObject:memberType[@"type"]];
-    }
-
-    typesNeedingDescriptions = extractTypesFromContainers(typesNeedingDescriptions);
-
-    NSMutableSet<NSString *> *typesHavingDescriptions = NSMutableSet.set;
-    for (NSString *describedType in typeInfo.keyEnumerator)
-        [typesHavingDescriptions addObject:describedType];
-    for (NSString *describedType in enumInfo.keyEnumerator)
-        [typesHavingDescriptions addObject:describedType];
-    for (NSString *objectIdentifier in objectIdentifiers)
-        [typesHavingDescriptions addObject:objectIdentifier];
-
-    NSSet *fundamentalTypes = [NSSet setWithArray:@[
-        @"char",
-        @"char32_t",
-        @"short",
-        @"float",
-        @"bool",
-        @"NSUInteger",
-        @"NSInteger",
-        @"size_t",
-        @"std::nullptr_t",
-        @"uint32_t",
-        @"int32_t",
-        @"uint8_t",
-        @"UInt32",
-        @"long",
-        @"unsigned",
-        @"unsigned long long",
-        @"unsigned long",
-        @"unsigned char",
-        @"unsigned short",
-        @"void",
-        @"double",
-        @"uint16_t",
-        @"int64_t",
-        @"pid_t",
-        @"CGFloat",
-        @"String",
-        @"uint32_t",
-        @"int16_t",
-        @"uint64_t",
-        @"int",
-        @"long long",
-        @"GCGLint",
-        @"GCGLenum",
-        @"OSStatus",
-        @"GCGLErrorCodeSet",
-        @"CGBitmapInfo",
-    ]];
-
-    [typesNeedingDescriptions minusSet:typesHavingDescriptions];
-    [typesNeedingDescriptions minusSet:fundamentalTypes];
-
-    // Note: This set should only be shrinking. If you need to add to this set to fix the test,
-    // add IPC metadata in a *.serialization.in file instead.
-    NSSet<NSString *> *expectedTypesNeedingDescriptions = [NSSet setWithArray:@[
-        @"CTFontDescriptorOptions",
-        @"NSObject<NSSecureCoding>",
-        @"PKSecureElementPass",
-#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
-        @"NSURLRequest",
-#endif
-        @"MachSendRight",
-#if ENABLE(DATA_DETECTION) && !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
-        @"DDScannerResult",
-#endif
-#if PLATFORM(MAC)
-#if !HAVE(WK_SECURE_CODING_DATA_DETECTORS)
-        @"WKDDActionContext",
-#endif
-        @"WebCore::ContextMenuAction",
-#endif
-    ]];
-    if (![expectedTypesNeedingDescriptions isEqual:typesNeedingDescriptions]) {
-        EXPECT_TRUE(false);
-        WTFLogAlways("%@", typesNeedingDescriptions);
-    }
 }
 
 #endif
 
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 TEST(IPCTestingAPI, CGColorInNSSecureCoding)
 {
     auto archiver = adoptNS([[NSKeyedArchiver alloc] initRequiringSecureCoding:YES]);
@@ -792,3 +669,4 @@ TEST(IPCTestingAPI, NSURLWithBaseURLInNSSecureCoding)
     [unarchiver finishDecoding];
     unarchiver.get().delegate = nil;
 }
+#endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)

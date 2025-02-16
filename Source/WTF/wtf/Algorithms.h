@@ -32,13 +32,6 @@
 
 namespace WTF {
 
-template<typename ContainerType, typename ForEachFunction>
-void forEach(ContainerType&& container, NOESCAPE ForEachFunction&& forEachFunction)
-{
-    for (auto& value : container)
-        forEachFunction(value);
-}
-
 template<typename ContainerType, typename AnyOfFunction>
 bool anyOf(ContainerType&& container, NOESCAPE AnyOfFunction&& anyOfFunction)
 {

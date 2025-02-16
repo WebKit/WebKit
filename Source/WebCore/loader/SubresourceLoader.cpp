@@ -73,8 +73,8 @@
 
 #undef SUBRESOURCELOADER_RELEASE_LOG
 #undef SUBRESOURCELOADER_RELEASE_LOG_ERROR
-#define PAGE_ID (frame() && frame()->pageID() ? frame()->pageID()->toUInt64() : 0)
-#define FRAME_ID (frame() ? frame()->frameID().object().toUInt64() : 0)
+#define PAGE_ID (this->frame() && this->frame()->pageID() ? this->frame()->pageID()->toUInt64() : 0)
+#define FRAME_ID (this->frame() ? this->frame()->frameID().object().toUInt64() : 0)
 #if RELEASE_LOG_DISABLED
 #define SUBRESOURCELOADER_RELEASE_LOG(fmt, ...) UNUSED_VARIABLE(this)
 #define SUBRESOURCELOADER_RELEASE_LOG_ERROR(fmt, ...) UNUSED_VARIABLE(this)
@@ -260,8 +260,8 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
             if (options().redirect == FetchOptions::Redirect::Error) {
                 ResourceError error { errorDomainWebKitInternal, 0, request().url(), makeString("Not allowed to follow a redirection while loading "_s, request().url().string()), ResourceError::Type::AccessControl };
 
-                if (m_frame && m_frame->document())
-                    m_frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
+                if (RefPtr frame = m_frame.get(); frame && frame->document())
+                    frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
 
                 SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCELOAD_CANCELLED_REDIRECT_NOT_ALLOWED);
 
@@ -293,17 +293,18 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
         // Requesting the same original URL a second time can redirect to a unique second resource.
         // Therefore, if a redirect to a different destination URL occurs, we should no longer consider this a revalidation of the first resource.
         // Doing so would have us reusing the resource from the first request if the second request's revalidation succeeds.
+        RefPtr frame = m_frame.get();
         if (newRequest.isConditional() && resource->resourceToRevalidate() && newRequest.url() != resource->resourceToRevalidate()->response().url()) {
             newRequest.makeUnconditional();
             MemoryCache::singleton().revalidationFailed(*resource);
-            if (m_frame && m_frame->page())
-                m_frame->protectedPage()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail, ShouldSample::Yes);
+            if (frame && frame->page())
+                frame->protectedPage()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail, ShouldSample::Yes);
         }
 
         RefPtr documentLoader = this->documentLoader();
         Ref originalOrigin = SecurityOrigin::create(redirectResponse.url());
         Ref cachedResourceLoader = documentLoader->cachedResourceLoader();
-        m_site = CachedResourceLoader::computeFetchMetadataSiteAfterRedirection(newRequest, m_resource->type(), options().mode, originalOrigin.get(), m_site, m_frame && m_frame->isMainFrame() && documentLoader->isRequestFromClientOrUserInput());
+        m_site = CachedResourceLoader::computeFetchMetadataSiteAfterRedirection(newRequest, m_resource->type(), options().mode, originalOrigin.get(), m_site, frame && frame->isMainFrame() && documentLoader->isRequestFromClientOrUserInput());
 
         if (!cachedResourceLoader->updateRequestAfterRedirection(resource->type(), newRequest, options(), m_site, originalRequest().url())) {
             SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_CANNOT_REQUEST_AFTER_REDIRECTION);
@@ -313,17 +314,18 @@ void SubresourceLoader::willSendRequestInternal(ResourceRequest&& newRequest, co
 
         if (!portAllowed(newRequest.url())) {
             SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_USING_BLOCKED_PORT);
-            if (RefPtr frame = m_frame)
+            if (RefPtr frame = m_frame.get())
                 FrameLoader::reportBlockedLoadFailed(*frame, newRequest.url());
-            cancel(frameLoader()->blockedError(newRequest));
+            if (frameLoader())
+                cancel(frameLoader()->blockedError(newRequest));
             return completionHandler(WTFMove(newRequest));
         }
 
         auto accessControlCheckResult = checkRedirectionCrossOriginAccessControl(request(), redirectResponse, newRequest);
         if (!accessControlCheckResult) {
             auto errorMessage = makeString("Cross-origin redirection to "_s, newRequest.url().string(), " denied by Cross-Origin Resource Sharing policy: "_s, accessControlCheckResult.error());
-            if (m_frame && m_frame->document())
-                m_frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
+            if (RefPtr frame = m_frame.get(); frame && frame->document())
+                frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, errorMessage);
             SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_REDIRECT_DENIED_BY_CORS_POLICY);
             cancel(ResourceError(String(), 0, request().url(), errorMessage, ResourceError::Type::AccessControl));
             return completionHandler(WTFMove(newRequest));
@@ -436,6 +438,7 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
         RELEASE_LOG_FAULT(Loading, "Resource was unexpectedly null in SubresourceLoader::didReceiveResponse");
     }
 
+    RefPtr frame = m_frame.get();
     if (resource && resource->resourceToRevalidate()) {
         if (response.httpStatusCode() == httpStatus304NotModified) {
             // Existing resource is ok, just use it updating the expiration time.
@@ -443,22 +446,22 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
             revalidationResponse.setSource(ResourceResponse::Source::MemoryCacheAfterValidation);
             resource->setResponse(revalidationResponse);
             MemoryCache::singleton().revalidationSucceeded(*resource, revalidationResponse);
-            if (m_frame && m_frame->page())
-                m_frame->protectedPage()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultPass, ShouldSample::Yes);
+            if (frame && frame->page())
+                frame->protectedPage()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultPass, ShouldSample::Yes);
             if (!reachedTerminalState())
                 ResourceLoader::didReceiveResponse(revalidationResponse, [completionHandlerCaller = WTFMove(completionHandlerCaller)] { });
             return;
         }
         // Did not get 304 response, continue as a regular resource load.
         MemoryCache::singleton().revalidationFailed(*resource);
-        if (m_frame && m_frame->page())
-            m_frame->protectedPage()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail, ShouldSample::Yes);
+        if (frame && frame->page())
+            frame->protectedPage()->diagnosticLoggingClient().logDiagnosticMessageWithResult(DiagnosticLoggingKeys::cachedResourceRevalidationKey(), emptyString(), DiagnosticLoggingResultFail, ShouldSample::Yes);
     }
 
     auto accessControlCheckResult = checkResponseCrossOriginAccessControl(response);
     if (!accessControlCheckResult) {
-        if (m_frame && m_frame->document())
-            m_frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, accessControlCheckResult.error());
+        if (frame && frame->document())
+            frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, accessControlCheckResult.error());
         SUBRESOURCELOADER_RELEASE_LOG(SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BECAUSE_OF_CROSS_ORIGIN_ACCESS_CONTROL);
         cancel(ResourceError(String(), 0, request().url(), accessControlCheckResult.error(), ResourceError::Type::AccessControl));
         return;
@@ -505,8 +508,8 @@ void SubresourceLoader::didReceiveResponse(const ResourceResponse& response, Com
         return;
 
     bool isResponseMultipart = response.isMultipart();
-    if (options().mode != FetchOptions::Mode::Navigate)
-        LinkLoader::loadLinksFromHeader(response.httpHeaderField(HTTPHeaderName::Link), protectedDocumentLoader()->url(), *m_frame->protectedDocument(), LinkLoader::MediaAttributeCheck::SkipMediaAttributeCheck);
+    if (options().mode != FetchOptions::Mode::Navigate && frame && frame->document())
+        LinkLoader::loadLinksFromHeader(response.httpHeaderField(HTTPHeaderName::Link), protectedDocumentLoader()->url(), *frame->protectedDocument(), LinkLoader::MediaAttributeCheck::SkipMediaAttributeCheck);
     ResourceLoader::didReceiveResponse(response, [this, protectedThis = WTFMove(protectedThis), isResponseMultipart, completionHandlerCaller = WTFMove(completionHandlerCaller)]() mutable {
         if (reachedTerminalState())
             return;
@@ -634,7 +637,9 @@ static void logResourceLoaded(LocalFrame* frame, CachedResource::Type type)
         break;
 #endif
     case CachedResource::Type::LinkPrefetch:
+#if ENABLE(VIDEO)
     case CachedResource::Type::TextTrackResource:
+#endif
         resourceType = DiagnosticLoggingKeys::otherKey();
         break;
     }
@@ -810,8 +815,9 @@ void SubresourceLoader::didFail(const ResourceError& error)
     CachedResourceHandle resource = m_resource.get();
     LOG(ResourceLoading, "Failed to load '%s'.\n", resource->url().string().latin1().data());
 
-    if (m_frame->document() && error.isAccessControl() && error.domain() != InspectorNetworkAgent::errorDomain() && resource->type() != CachedResource::Type::Ping)
-        m_frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
+    RefPtr frame = m_frame.get();
+    if (frame && frame->document() && error.isAccessControl() && error.domain() != InspectorNetworkAgent::errorDomain() && resource->type() != CachedResource::Type::Ping)
+        frame->protectedDocument()->addConsoleMessage(MessageSource::Security, MessageLevel::Error, error.localizedDescription());
 
     Ref protectedThis { *this };
     m_state = Finishing;

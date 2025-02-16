@@ -136,7 +136,7 @@
 		A185103A1B9AE0DA00744AEB /* CrashReporterInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */; };
 		A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */; };
 		A185103C1B9AE0FE00744AEB /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 841CC00D181185BF0042E9B6 /* Options.cpp */; };
-		A185103D1B9AE10600744AEB /* TestInvocationCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9192041333E4F8003011DC /* TestInvocationCG.cpp */; };
+		A185103D1B9AE10600744AEB /* TestInvocationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC9192041333E4F8003011DC /* TestInvocationCocoa.mm */; };
 		A185103E1B9AE12200744AEB /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */; };
 		A185103F1B9AE12900744AEB /* GeolocationProviderMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D758E5160BECDC00268472 /* GeolocationProviderMock.cpp */; };
 		A18510401B9AE13100744AEB /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */; };
@@ -466,7 +466,7 @@
 		BC8FD8CB120E52B000F3E71A /* EventSendingController.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventSendingController.idl; sourceTree = "<group>"; };
 		BC8FD8D0120E545B00F3E71A /* JSEventSendingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventSendingController.cpp; sourceTree = "<group>"; };
 		BC8FD8D1120E545B00F3E71A /* JSEventSendingController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSEventSendingController.h; sourceTree = "<group>"; };
-		BC9192041333E4F8003011DC /* TestInvocationCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestInvocationCG.cpp; path = cg/TestInvocationCG.cpp; sourceTree = "<group>"; };
+		BC9192041333E4F8003011DC /* TestInvocationCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TestInvocationCocoa.mm; sourceTree = "<group>"; };
 		BC952EC511F3C10F003398B4 /* DerivedSources.make */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DerivedSources.make; sourceTree = "<group>"; };
 		BC952ED211F3C29F003398B4 /* TestRunner.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TestRunner.idl; sourceTree = "<group>"; };
 		BC952ED311F3C318003398B4 /* CodeGeneratorTestRunner.pm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = CodeGeneratorTestRunner.pm; sourceTree = "<group>"; };
@@ -591,7 +591,6 @@
 		08FB7795FE84155DC02AAC07 /* TestRunner */ = {
 			isa = PBXGroup;
 			children = (
-				BC9192021333E4CD003011DC /* cg */,
 				0FEB90A11905BC4A000FDBF3 /* cocoa */,
 				7CAA0E7525353BC500C519E5 /* Derived Sources */,
 				2EE52D121890A9FB0010ED21 /* ios */,
@@ -720,6 +719,7 @@
 				0FEB90A31905BC6A000FDBF3 /* CrashReporterInfo.mm */,
 				2904FA1D265CC5D900A7EBC9 /* StringFunctionsCocoa.h */,
 				2DCE2CD11B84524500C7F832 /* TestControllerCocoa.mm */,
+				BC9192041333E4F8003011DC /* TestInvocationCocoa.mm */,
 				0F87B6141BACC4B9004EC572 /* TestRunnerWKWebView.h */,
 				0F87B6151BACC4B9004EC572 /* TestRunnerWKWebView.mm */,
 				41C5378C21F1333C008B1FAD /* TestWebsiteDataStoreDelegate.h */,
@@ -979,14 +979,6 @@
 				BC251A1811D16795002EBC01 /* WebKitTestRunnerLibrary.xcconfig */,
 			);
 			path = Configurations;
-			sourceTree = "<group>";
-		};
-		BC9192021333E4CD003011DC /* cg */ = {
-			isa = PBXGroup;
-			children = (
-				BC9192041333E4F8003011DC /* TestInvocationCG.cpp */,
-			);
-			name = cg;
 			sourceTree = "<group>";
 		};
 		BC952C0A11F3B939003398B4 /* Bindings */ = {
@@ -1399,7 +1391,7 @@
 				A185103B1B9AE0E200744AEB /* TestControllerCocoa.mm in Sources */,
 				7CFF9BCA2534AF1D0008009F /* TestFeatures.cpp in Sources */,
 				A18510421B9AE13E00744AEB /* TestInvocation.cpp in Sources */,
-				A185103D1B9AE10600744AEB /* TestInvocationCG.cpp in Sources */,
+				A185103D1B9AE10600744AEB /* TestInvocationCocoa.mm in Sources */,
 				0F622CE91BBB3A1A00838AD3 /* TestOptions.cpp in Sources */,
 				0F87B6171BACC4C0004EC572 /* TestRunnerWKWebView.mm in Sources */,
 				41C5378E21F13414008B1FAD /* TestWebsiteDataStoreDelegate.mm in Sources */,

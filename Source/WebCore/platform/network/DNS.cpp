@@ -108,7 +108,7 @@ bool IPAddress::isLoopback() const
         [] (const struct in_addr& address) {
         return address.s_addr == htonl(INADDR_LOOPBACK);
     }, [] (const struct in6_addr& address) {
-        const auto in6addrLoopback = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1"_span;
+        constexpr auto in6addrLoopback = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\1"_span;
         return equalSpans(asByteSpan(address.s6_addr), in6addrLoopback);
     }, [] (const WTF::HashTableEmptyValueType&) {
         ASSERT_NOT_REACHED();

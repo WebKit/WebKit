@@ -26,7 +26,7 @@
 ] interface HTMLTextAreaElement : HTMLElement {
     [CEReactions=NotNeeded, Reflect] attribute DOMString dirName;
     [CEReactions=NotNeeded, Reflect] attribute boolean disabled;
-    readonly attribute HTMLFormElement form;
+    [ImplementedAs=formForBindings] readonly attribute HTMLFormElement form;
     [CEReactions=NotNeeded] attribute long minLength;
     [CEReactions=NotNeeded] attribute long maxLength;
     [CEReactions=NotNeeded, Reflect] attribute DOMString name;

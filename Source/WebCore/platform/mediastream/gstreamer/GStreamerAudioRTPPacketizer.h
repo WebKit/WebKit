@@ -31,7 +31,7 @@ public:
     static RefPtr<GStreamerAudioRTPPacketizer> create(RefPtr<UniqueSSRCGenerator>, const GstStructure* codecParameters, GUniquePtr<GstStructure>&& encodingParameters);
 
 private:
-    explicit GStreamerAudioRTPPacketizer(GRefPtr<GstCaps>&& inputCaps, GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, GRefPtr<GstCaps>&& rtpCaps);
+    explicit GStreamerAudioRTPPacketizer(GRefPtr<GstCaps>&& inputCaps, GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, GRefPtr<GstCaps>&& rtpCaps, std::optional<int>&& payloadType);
 
     GRefPtr<GstElement> m_audioconvert;
     GRefPtr<GstElement> m_audioresample;

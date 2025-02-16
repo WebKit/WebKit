@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include "BPlatform.h"
 #include "IsoMallocFallback.h"
+
+#if !BUSE(TZONE)
 
 #include "DebugHeap.h"
 #include "Environment.h"
@@ -112,3 +115,5 @@ bool tryFree(
 }
 
 } } // namespace bmalloc::IsoMallocFallback
+
+#endif // !BUSE(TZONE)

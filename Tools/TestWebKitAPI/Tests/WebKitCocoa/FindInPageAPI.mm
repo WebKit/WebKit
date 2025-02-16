@@ -28,6 +28,7 @@
 #import "PlatformUtilities.h"
 #import "TestNavigationDelegate.h"
 #import "TestWKWebView.h"
+#import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKFindConfiguration.h>
 #import <WebKit/WKFindResult.h>
 #import <WebKit/WKPreferencesPrivate.h>

@@ -46,7 +46,7 @@ function main() {
     // Just to force the compiler to emit the GetById node. Otherwise, it'll optimize it into a GetByOffset node.
     opt(wrapper1, object3, /* call */ true, /* get */ true);
 
-    for (let i = 0; i < 1000000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         opt(wrapper1, object1, /* call */ true, /* get */ false);
         opt(wrapper1, object2, /* call */ false, /* get */ false);
     }

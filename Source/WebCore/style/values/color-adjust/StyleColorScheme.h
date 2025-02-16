@@ -65,6 +65,6 @@ TextStream& operator<<(TextStream&, const ColorScheme&);
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(ColorScheme, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::ColorScheme, 2)
 
 #endif

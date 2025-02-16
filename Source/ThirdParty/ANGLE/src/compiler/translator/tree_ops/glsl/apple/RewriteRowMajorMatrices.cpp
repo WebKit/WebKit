@@ -8,6 +8,7 @@
 
 #include "compiler/translator/tree_ops/glsl/apple/RewriteRowMajorMatrices.h"
 
+#include "common/span.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/ImmutableStringBuilder.h"
 #include "compiler/translator/StaticType.h"
@@ -225,7 +226,7 @@ class TransformArrayHelper
 
     TIntermTyped *getNextElement(TIntermTyped *valueExpression, TIntermTyped **valueElementOut)
     {
-        const TSpan<const unsigned int> &arraySizes = mBaseExpressionType.getArraySizes();
+        const angle::Span<const unsigned int> &arraySizes = mBaseExpressionType.getArraySizes();
 
         // If the last index overflows, element enumeration is done.
         if (mArrayIndices.back() >= arraySizes.back())
@@ -253,7 +254,8 @@ class TransformArrayHelper
 
     TIntermTyped *constructReadTransformExpression()
     {
-        const TSpan<const unsigned int> &baseTypeArraySizes = mBaseExpressionType.getArraySizes();
+        const angle::Span<const unsigned int> &baseTypeArraySizes =
+            mBaseExpressionType.getArraySizes();
         TVector<unsigned int> arraySizes(baseTypeArraySizes.begin(), baseTypeArraySizes.end());
         TIntermTyped *firstElement = mReadTransformConstructorArgs.front()->getAsTyped();
         const TType &baseType      = firstElement->getType();
@@ -287,7 +289,7 @@ class TransformArrayHelper
         return element;
     }
 
-    void incrementIndices(const TSpan<const unsigned int> &arraySizes)
+    void incrementIndices(const angle::Span<const unsigned int> &arraySizes)
     {
         // Assume mArrayIndices is an N digit number, where digit i is in the range
         // [0, arraySizes[i]).  This function increments this number.  Last digit is the most

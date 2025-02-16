@@ -107,7 +107,7 @@ std::optional<AutofillElements> AutofillElements::computeAutofillElements(Ref<HT
 
     // Handle the case where a username field appears separately from a password field.
     auto autofillData = start->autofillData();
-    if (toAutofillFieldName(autofillData.fieldName) == AutofillFieldName::Username)
+    if (toAutofillFieldName(autofillData.fieldName) == AutofillFieldName::Username || toAutofillFieldName(autofillData.fieldName) == AutofillFieldName::WebAuthn)
         return {{ WTFMove(start), nullptr, nullptr }};
 
     return std::nullopt;

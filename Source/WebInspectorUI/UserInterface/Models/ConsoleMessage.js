@@ -104,7 +104,6 @@ WI.ConsoleMessage.MessageSource = {
     Network: "network",
     ConsoleAPI: "console-api",
     Storage: "storage",
-    Appcache: "appcache",
     Rendering: "rendering",
     CSS: "css",
     Security: "security",

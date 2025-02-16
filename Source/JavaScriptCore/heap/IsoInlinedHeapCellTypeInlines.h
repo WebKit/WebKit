@@ -33,7 +33,7 @@ namespace JSC {
 
 template<typename CellType>
 inline IsoInlinedHeapCellType<CellType>::IsoInlinedHeapCellType()
-    : HeapCellType(CellAttributes(CellType::needsDestruction ? NeedsDestruction : DoesNotNeedDestruction, HeapCell::JSCell))
+    : HeapCellType(CellAttributes(CellType::needsDestruction, HeapCell::JSCell))
 {
 }
 

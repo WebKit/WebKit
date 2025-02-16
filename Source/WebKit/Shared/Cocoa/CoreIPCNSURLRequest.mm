@@ -27,6 +27,7 @@
 #import "CoreIPCNSURLRequest.h"
 
 #import "GeneratedSerializers.h"
+#import <WebCore/ResourceLoadPriority.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
@@ -226,7 +227,7 @@ CoreIPCNSURLRequest::CoreIPCNSURLRequest(const RetainPtr<NSURLRequest>& request)
 
 RetainPtr<id> CoreIPCNSURLRequest::toID() const
 {
-    auto dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:43]); // Initialized with the count of members in CoreIPCNSURLRequestData
+    auto dict = adoptNS([[NSMutableDictionary alloc] initWithCapacity:CoreIPCNSURLRequestData::numberOfFields]);
 
     SET_DICT_FROM_OPTIONAL_MEMBER(protocolProperties);
     SET_DICT_FROM_PRIMITIVE(isMutable, NSNumber, Bool);
@@ -250,7 +251,10 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
 
     [dict setObject:[NSNumber numberWithUnsignedChar:static_cast<uint8_t>(m_data.networkServiceType)] forKey:@"networkServiceType"];
 
-    SET_DICT_FROM_PRIMITIVE(requestPriority, NSNumber, Int);
+    int clampedRequestPriority = std::min(std::max(m_data.requestPriority, -1),
+        static_cast<int>(WTF::enumToUnderlyingType(WebCore::ResourceLoadPriority::Highest)));
+    [dict setObject:[NSNumber numberWithInt:clampedRequestPriority] forKey:@"requestPriority"];
+
     SET_DICT_FROM_OPTIONAL_PRIMITIVE(isHTTP, NSNumber, Bool);
     SET_DICT_FROM_OPTIONAL_MEMBER(httpMethod);
 

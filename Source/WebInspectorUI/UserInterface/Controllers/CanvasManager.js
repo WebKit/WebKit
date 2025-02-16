@@ -64,17 +64,9 @@ WI.CanvasManager = class CanvasManager extends WI.Object
         if (target.hasDomain("Canvas")) {
             target.CanvasAgent.enable();
 
-            // COMPATIBILITY (iOS 12): Canvas.setRecordingAutoCaptureFrameCount did not exist yet.
-            if (target.hasCommand("Canvas.setRecordingAutoCaptureFrameCount") && WI.settings.canvasRecordingAutoCaptureEnabled.value && WI.settings.canvasRecordingAutoCaptureFrameCount.value)
+            if (WI.settings.canvasRecordingAutoCaptureEnabled.value && WI.settings.canvasRecordingAutoCaptureFrameCount.value)
                 target.CanvasAgent.setRecordingAutoCaptureFrameCount(WI.settings.canvasRecordingAutoCaptureFrameCount.value);
         }
-    }
-
-    // Static
-
-    static supportsRecordingAutoCapture()
-    {
-        return InspectorBackend.hasCommand("Canvas.setRecordingAutoCaptureFrameCount");
     }
 
     // Public
@@ -139,11 +131,8 @@ WI.CanvasManager = class CanvasManager extends WI.Object
     {
         console.assert(!isNaN(count) && count >= 0);
 
-        for (let target of WI.targets) {
-            // COMPATIBILITY (iOS 12): Canvas.setRecordingAutoCaptureFrameCount did not exist yet.
-            if (target.hasCommand("Canvas.setRecordingAutoCaptureFrameCount"))
-                target.CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0);
-        }
+        for (let target of WI.targets)
+            target.CanvasAgent.setRecordingAutoCaptureFrameCount(enabled ? count : 0);
 
         WI.settings.canvasRecordingAutoCaptureEnabled.value = enabled && count;
         WI.settings.canvasRecordingAutoCaptureFrameCount.value = count;

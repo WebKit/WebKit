@@ -2625,6 +2625,8 @@ angle::CallCapture CaptureQueryMatrixxOES(const State &glState,
                                           GLint *exponent,
                                           GLbitfield returnValue);
 
+// GL_OES_required_internalformat
+
 // GL_OES_rgb8_rgba8
 
 // GL_OES_sample_shading

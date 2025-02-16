@@ -37,9 +37,9 @@ struct FilterReference {
     bool operator==(const FilterReference&) const = default;
 };
 
-template<> struct Serialize<FilterReference> { void operator()(StringBuilder&, const FilterReference&); };
+template<> struct Serialize<FilterReference> { void operator()(StringBuilder&, const SerializationContext&, const FilterReference&); };
 template<> struct ComputedStyleDependenciesCollector<FilterReference> { constexpr void operator()(ComputedStyleDependencies&, const FilterReference&) { } };
-template<> struct CSSValueChildrenVisitor<FilterReference> { constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const FilterReference&) { return IterationStatus::Continue; } };
+template<> struct CSSValueChildrenVisitor<FilterReference> { constexpr IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const FilterReference&) { return IterationStatus::Continue; } };
 
 } // namespace CSS
 } // namespace WebCore

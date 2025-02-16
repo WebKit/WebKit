@@ -25,7 +25,6 @@
     DispatchedTo=WebContent
 ]
 messages -> WebPageTesting {
-    SetDefersLoading(bool defersLoading)
     IsLayerTreeFrozen() -> (bool isFrozen)
     SetPermissionLevel(String origin, bool allowed)
     IsEditingCommandEnabled(String commandName) -> (bool result) Synchronous
@@ -36,7 +35,7 @@ messages -> WebPageTesting {
 
     ClearWheelEventTestMonitor()
     ResetStateBetweenTests()
-    SetTopContentInset(float contentInset) -> ()
+    SetObscuredContentInsets(float top, float right, float bottom, float left) -> ()
     ClearCachedBackForwardListCounts() -> ()
     SetTracksRepaints(bool trackRepaints) -> ()
     DisplayAndTrackRepaints() -> ()

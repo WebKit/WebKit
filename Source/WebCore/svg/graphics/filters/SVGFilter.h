@@ -52,7 +52,7 @@ public:
 
     FilterEffectVector effectsOfType(FilterFunction::Type) const final;
 
-    WEBCORE_EXPORT FilterResults& ensureResults(const FilterResultsCreator&);
+    WEBCORE_EXPORT FilterResults& ensureResults(NOESCAPE const FilterResultsCreator&);
     void clearEffectResult(FilterEffect&);
     WEBCORE_EXPORT void mergeEffects(const FilterEffectVector&);
 

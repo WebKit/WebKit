@@ -1,0 +1,18 @@
+<!-- webkit-test-runner [ SiteIsolationEnabled=true ] -->
+<script>
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        testRunner.dumpAsText()
+        testRunner.dumpFullScreenCallbacks();
+    }
+    addEventListener("message", (event) => {
+        document.getElementById("mylog").innerHTML += event.data + "<br>";
+        if (event.data.startsWith('Size after exiting') && window.testRunner) { testRunner.notifyDone() }
+    });
+</script>
+<iframe allowfullscreen src="http://localhost:8000/site-isolation/resources/fullscreen.html" frameborder=0></iframe>
+<div id=mylog>
+FIXME: Size after entering should be 600x800 like it is with site isolation off.<br>
+The size currently comes from screenRectOfContents.<br>
+Also, there should be exitFullScreenForElement and beganExitFullScreen callbacks like there are with site isolation off.<br><br>
+</div>

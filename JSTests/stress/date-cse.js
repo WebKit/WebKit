@@ -30,7 +30,7 @@ var date = new Date();
 var result = date.getTime() + date.getTime();
 var result2 = (new Date(20)).getTime() + (new Date(0)).getTime();
 var result3 = date.getTime() + date.getFullYear();
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test(date), result);
     shouldBe(test2(date), result2);
     shouldBe(test3(date), result3);

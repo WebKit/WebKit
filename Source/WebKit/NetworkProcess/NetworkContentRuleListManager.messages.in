@@ -22,7 +22,11 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
-[ExceptionForEnabledBy]
+[
+    DispatchedFrom=UI,
+    DispatchedTo=Networking,
+    ExceptionForEnabledBy
+]
 messages -> NetworkContentRuleListManager {
     Remove(WebKit::UserContentControllerIdentifier identifier)
     AddContentRuleLists(WebKit::UserContentControllerIdentifier identifier, Vector<std::pair<WebKit::WebCompiledContentRuleListData, URL>> contentFilters)

@@ -50,7 +50,7 @@ StreamingPlan::StreamingPlan(VM& vm, Ref<ModuleInformation>&& info, Ref<EntryPla
     dataLogLnIf(WasmStreamingPlanInternal::verbose, "Starting Streaming plan for ", functionIndex, " of module info: ", RawPointer(&m_moduleInformation.get()));
 }
 
-void StreamingPlan::work(CompilationEffort)
+void StreamingPlan::work()
 {
     m_plan->compileFunction(m_functionIndex);
     dataLogLnIf(WasmStreamingPlanInternal::verbose, "Finished Streaming ", m_functionIndex);

@@ -33,9 +33,9 @@
 
 namespace WTF {
 
-static RunLoop* s_mainRunLoop;
+SUPPRESS_UNCOUNTED_LOCAL static RunLoop* s_mainRunLoop;
 #if USE(WEB_THREAD)
-static RunLoop* s_webRunLoop;
+SUPPRESS_UNCOUNTED_LOCAL static RunLoop* s_webRunLoop;
 #endif
 
 // Helper class for ThreadSpecificData.
@@ -55,7 +55,7 @@ public:
     RunLoop& runLoop() { return m_runLoop; }
 
 private:
-    Ref<RunLoop> m_runLoop;
+    const Ref<RunLoop> m_runLoop;
 };
 
 void RunLoop::initializeMain()
@@ -106,15 +106,15 @@ RunLoop* RunLoop::webIfExists()
 
 Ref<RunLoop> RunLoop::create(ASCIILiteral threadName, ThreadType threadType, Thread::QOS qos)
 {
-    RunLoop* runLoop = nullptr;
+    RefPtr<RunLoop> runLoop;
     BinarySemaphore semaphore;
-    Thread::create(threadName, [&] {
+    Thread::create(threadName, [&] SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE {
         runLoop = &RunLoop::current();
         semaphore.signal();
         runLoop->run();
     }, threadType, qos)->detach();
     semaphore.wait();
-    return *runLoop;
+    return runLoop.releaseNonNull();
 }
 
 bool RunLoop::isCurrent() const

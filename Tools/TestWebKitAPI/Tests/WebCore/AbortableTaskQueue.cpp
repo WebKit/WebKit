@@ -55,7 +55,7 @@ TEST(AbortableTaskQueue, AsyncTasks)
             testFinished = true;
         });
     };
-    RunLoop::current().dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::protectedCurrent()->dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
     });
 
@@ -119,11 +119,11 @@ TEST(AbortableTaskQueue, SyncTasks)
         EXPECT_EQ(100, response->fancyInt);
         response = std::nullopt;
         EXPECT_TRUE(destructedResponseFlag);
-        RunLoop::main().dispatch([&]() {
+        RunLoop::protectedMain()->dispatch([&]() {
             testFinished = true;
         });
     };
-    RunLoop::current().dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::protectedCurrent()->dispatch([backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
     });
 
@@ -218,7 +218,7 @@ TEST(AbortableTaskQueue, Abort)
             testFinished = true;
         });
     };
-    RunLoop::current().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::protectedCurrent()->dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
         DeterministicScheduler<TestThread>::ThreadContext mainThreadContext(scheduler, TestThread::Main);
         WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
@@ -254,11 +254,11 @@ TEST(AbortableTaskQueue, AbortBeforeSyncTaskRun)
         // Main thread has called startAborting().
         EXPECT_FALSE(response);
 
-        RunLoop::main().dispatch([&]() {
+        RunLoop::protectedMain()->dispatch([&]() {
             testFinished = true;
         });
     };
-    RunLoop::current().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::protectedCurrent()->dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
         WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
 
@@ -301,11 +301,11 @@ TEST(AbortableTaskQueue, AbortedBySyncTaskHandler)
         // The response object has not been leaked.
         EXPECT_TRUE(destructedResponseFlag);
 
-        RunLoop::main().dispatch([&]() {
+        RunLoop::protectedMain()->dispatch([&]() {
             testFinished = true;
         });
     };
-    RunLoop::current().dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
+    RunLoop::protectedCurrent()->dispatch([&, backgroundThreadFunction = WTFMove(backgroundThreadFunction)]() mutable {
         EXPECT_TRUE(isMainThread());
         WTF::Thread::create("atq-background"_s, WTFMove(backgroundThreadFunction))->detach();
     });

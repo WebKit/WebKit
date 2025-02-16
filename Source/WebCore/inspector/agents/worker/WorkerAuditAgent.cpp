@@ -44,7 +44,7 @@ WorkerAuditAgent::WorkerAuditAgent(WorkerAgentContext& context)
     : InspectorAuditAgent(context)
     , m_globalScope(context.globalScope)
 {
-    ASSERT(context.globalScope.isContextThread());
+    ASSERT(context.globalScope->isContextThread());
 }
 
 WorkerAuditAgent::~WorkerAuditAgent() = default;

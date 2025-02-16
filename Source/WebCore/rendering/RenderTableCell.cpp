@@ -314,7 +314,7 @@ void RenderTableCell::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
     int oldCellBaseline = cellBaselinePosition();
-    layoutBlock(cellWidthChanged());
+    layoutBlock(cellWidthChanged() ? RelayoutChildren::Yes : RelayoutChildren::No);
 
     // If we have replaced content, the intrinsic height of our content may have changed since the last time we laid out. If that's the case the intrinsic padding we used
     // for layout (the padding required to push the contents of the cell down to the row's baseline) is included in our new height and baseline and makes both
@@ -324,13 +324,13 @@ void RenderTableCell::layout()
         LayoutUnit newIntrinsicPaddingBefore = std::max<LayoutUnit>(0, intrinsicPaddingBefore() - std::max<LayoutUnit>(0, cellBaselinePosition() - oldCellBaseline));
         setIntrinsicPaddingBefore(newIntrinsicPaddingBefore);
         setNeedsLayout(MarkOnlyThis);
-        layoutBlock(cellWidthChanged());
+        layoutBlock(cellWidthChanged() ? RelayoutChildren::Yes : RelayoutChildren::No);
     }
     invalidateHasEmptyCollapsedBorders();
     
     // FIXME: This value isn't the intrinsic content logical height, but we need
     // to update the value as its used by flexbox layout. crbug.com/367324
-    cacheIntrinsicContentLogicalHeightForFlexItem(contentLogicalHeight());
+    cacheIntrinsicContentLogicalHeightForFlexItem(contentBoxLogicalHeight());
 
     setCellWidthChanged(false);
 }
@@ -490,7 +490,7 @@ LayoutUnit RenderTableCell::cellBaselinePosition() const
     // <http://www.w3.org/TR/2007/CR-CSS21-20070719/tables.html#height-layout>: The baseline of a cell is the baseline of
     // the first in-flow line box in the cell, or the first in-flow table-row in the cell, whichever comes first. If there
     // is no such line box or table-row, the baseline is the bottom of content edge of the cell box.
-    return firstLineBaseline().value_or(borderAndPaddingBefore() + contentLogicalHeight());
+    return firstLineBaseline().value_or(borderAndPaddingBefore() + contentBoxLogicalHeight());
 }
 
 static inline void markCellDirtyWhenCollapsedBorderChanges(RenderTableCell* cell)
@@ -516,10 +516,8 @@ void RenderTableCell::styleDidChange(StyleDifference diff, const RenderStyle* ol
     if (oldStyle && (style().verticalAlign() != oldStyle->verticalAlign() || style().alignContent() != oldStyle->alignContent()))
         clearIntrinsicPadding();
 
-    // If border was changed, notify table.
-    RenderTable* table = this->table();
-    if (table && oldStyle && !oldStyle->borderIsEquivalentForPainting(style())) {
-        table->invalidateCollapsedBorders(this);
+    if (CheckedPtr table = this->table(); table && oldStyle) {
+        table->invalidateCollapsedBordersAfterStyleChangeIfNeeded(*oldStyle, style(), this);
         if (table->collapseBorders() && diff == StyleDifference::Layout) {
             markCellDirtyWhenCollapsedBorderChanges(table->cellBelow(this));
             markCellDirtyWhenCollapsedBorderChanges(table->cellAbove(this));

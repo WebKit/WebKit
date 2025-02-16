@@ -26,6 +26,7 @@
 #include "config.h"
 #include "CSSMathInvert.h"
 
+#include "CSSCalcTree.h"
 #include "CSSNumericValue.h"
 #include "CSSPrimitiveValue.h"
 #include <wtf/TZoneMallocInlines.h>

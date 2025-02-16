@@ -117,6 +117,7 @@ class EmptyChromeClient : public ChromeClient {
     void scroll(const IntSize&, const IntRect&, const IntRect&) final { }
 
     IntPoint screenToRootView(const IntPoint& p) const final { return p; }
+    IntPoint rootViewToScreen(const IntPoint& p) const final { return p; }
     IntRect rootViewToScreen(const IntRect& r) const final { return r; }
     IntPoint accessibilityScreenToRootView(const IntPoint& p) const final { return p; };
     IntRect rootViewToAccessibilityScreen(const IntRect& r) const final { return r; };
@@ -139,18 +140,12 @@ class EmptyChromeClient : public ChromeClient {
     void reachedMaxAppCacheSize(int64_t) final { }
     void reachedApplicationCacheOriginQuota(SecurityOrigin&, int64_t) final { }
 
-#if ENABLE(INPUT_TYPE_COLOR)
     RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) final;
-#endif
 
-#if ENABLE(DATALIST_ELEMENT)
     RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) final;
     bool canShowDataListSuggestionLabels() const final { return false; }
-#endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) final;
-#endif
 
     void setTextIndicator(const TextIndicatorData&) const final;
 

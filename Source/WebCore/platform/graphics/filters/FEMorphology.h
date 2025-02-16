@@ -32,7 +32,9 @@ enum class MorphologyOperatorType : uint8_t {
     Dilate
 };
 
-class FEMorphology : public FilterEffect {
+class FEMorphology final : public FilterEffect {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(FEMorphology);
 public:
     WEBCORE_EXPORT static Ref<FEMorphology> create(MorphologyOperatorType, float radiusX, float radiusY, DestinationColorSpace = DestinationColorSpace::SRGB());
 

@@ -71,7 +71,6 @@ private:
     WebCore::FloatPoint locationInScreen() const;
 
     const WeakObjCPtr<WKWebView> m_view;
-    RunLoop::Timer m_stateResetWatchdogTimer;
     WebCore::FloatPoint m_centroid;
     WebCore::FloatSize m_touchDelta;
     WebCore::FloatSize m_initialDelta;

@@ -60,9 +60,7 @@ void SearchFieldMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 
     [m_searchFieldCell resetSearchButtonCell];
     
-#if ENABLE(DATALIST_ELEMENT)
     drawListButton(context, borderRect.rect(), deviceScaleFactor, style);
-#endif
 }
 
 } // namespace WebCore

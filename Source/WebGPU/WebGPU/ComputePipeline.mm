@@ -29,6 +29,7 @@
 #import "APIConversions.h"
 #import "BindGroupLayout.h"
 #import "Device.h"
+#import "IsValidToUseWith.h"
 #import "Pipeline.h"
 #import "PipelineLayout.h"
 #import "ShaderModule.h"
@@ -88,6 +89,9 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
         return returnInvalidComputePipeline(*this, isAsync);
 
     Ref pipelineLayout = WebGPU::protectedFromAPI(descriptor.layout);
+    if (!isValidToUseWithDevice(pipelineLayout.get(), *this))
+        return returnInvalidComputePipeline(*this, isAsync, @"GPUDevice.createComputePipeline: Pipeline layout is invalid");
+
     auto& deviceLimits = limits();
     auto label = fromAPI(descriptor.label);
     auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule->defaultComputeEntryPoint();

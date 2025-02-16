@@ -100,6 +100,13 @@ public:
 
     bool isPercentHeightResolveDisabledFor(const RenderBox& flexItem);
 
+    struct TextBoxTrim {
+        bool trimFirstFormattedLine { false };
+        SingleThreadWeakPtr<const RenderBlockFlow> lastFormattedLineRoot;
+    };
+    std::optional<TextBoxTrim> textBoxTrim() const { return m_textBoxTrim; }
+    void setTextBoxTrim(std::optional<TextBoxTrim> textBoxTrim) { m_textBoxTrim = textBoxTrim; }
+
     RenderElement* subtreeLayoutRoot() const;
     void clearSubtreeLayoutRoot() { m_subtreeLayoutRoot.clear(); }
     void convertSubtreeLayoutToFullLayout();
@@ -226,6 +233,7 @@ private:
     std::unique_ptr<UpdateScrollInfoAfterLayoutTransaction> m_updateScrollInfoAfterLayoutTransaction;
     SingleThreadWeakHashMap<RenderBlock, Vector<SingleThreadWeakPtr<RenderBox>>> m_containersWithDescendantsNeedingTransformUpdate;
     SingleThreadWeakHashSet<RenderBox> m_percentHeightIgnoreList;
+    std::optional<TextBoxTrim> m_textBoxTrim;
 
     struct UpdateLayerPositions {
         void merge(const UpdateLayerPositions& other)

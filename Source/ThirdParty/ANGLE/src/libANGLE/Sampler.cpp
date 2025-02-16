@@ -184,11 +184,6 @@ const ColorGeneric &Sampler::getBorderColor() const
     return mState.getBorderColor();
 }
 
-const SamplerState &Sampler::getSamplerState() const
-{
-    return mState;
-}
-
 rx::SamplerImpl *Sampler::getImplementation() const
 {
     return mSampler;

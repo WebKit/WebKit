@@ -39,24 +39,26 @@
 
 namespace WebCore {
 
-Ref<CalculationValue> CalculationValue::create(Calculation::Tree&& tree)
+Ref<CalculationValue> CalculationValue::create(Calculation::Category category, Calculation::Range range, Calculation::Tree&& tree)
 {
-    return adoptRef(*new CalculationValue(WTFMove(tree)));
+    return adoptRef(*new CalculationValue(category, range, WTFMove(tree)));
 }
 
-CalculationValue::CalculationValue(Calculation::Tree&& tree)
-    : m_tree(WTFMove(tree))
+CalculationValue::CalculationValue(Calculation::Category category, Calculation::Range range, Calculation::Tree&& tree)
+    : m_category(category)
+    , m_range(range)
+    , m_tree(WTFMove(tree))
 {
 }
 
 CalculationValue::~CalculationValue() = default;
 
-Calculation::NumericValue CalculationValue::evaluate(Calculation::NumericValue percentResolutionLength) const
+double CalculationValue::evaluate(double percentResolutionLength) const
 {
     auto result = Calculation::evaluate(m_tree, percentResolutionLength);
     if (std::isnan(result))
         return 0;
-    return std::clamp(result, m_tree.range.min, m_tree.range.max);
+    return std::clamp(result, m_range.min, m_range.max);
 }
 
 Calculation::Tree CalculationValue::copyTree() const

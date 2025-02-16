@@ -1,0 +1,262 @@
+<!-- webkit-test-runner [ enableMetalShaderValidation=true ] -->
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let promise0 = navigator.gpu.requestAdapter({});
+let promise1 = navigator.gpu.requestAdapter({});
+let adapter0 = await promise0;
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'indirect-first-instance',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage',
+    'float32-blendable',
+  ],
+  requiredLimits: {
+    maxUniformBufferBindingSize: 13240071,
+    maxStorageBufferBindingSize: 141623714,
+    maxSampledTexturesPerShaderStage: 16,
+  },
+});
+// START
+veryExplicitBindGroupLayout0 = device0.createBindGroupLayout({
+      entries : [     {
+         binding : 478,       visibility : GPUShaderStage.FRAGMENT,       buffer : {
+ }
+  }
+   ]}
+    );
+     buffer0 = device0.createBuffer({
+      label : '\u9cf1\u0a5e\u0b34\ue493',   size : 14850,   usage : GPUBufferUsage.STORAGE | GPUBufferUsage.UNIFORM}
+    );
+     pipelineLayout1 = device0.createPipelineLayout(     {
+   bindGroupLayouts : [ veryExplicitBindGroupLayout0 ]}
+    );
+     bindGroup0 = device0.createBindGroup({
+      layout : veryExplicitBindGroupLayout0,   entries : [     {
+  binding : 478, resource : {
+ buffer : buffer0, offset : 4608, size : 5803}
+  }
+      ]}
+    );
+     shaderModule0 = device0.createShaderModule({
+      label : '\u01ca\u024b\u1f904',   code : ` enable f16;
+                     struct S0 {
+                   @location(12) f0: vec4i,   @location(3) f1: vec4i,   @location(0) f2: vec4u}
+                     struct FragmentOutput0 {
+                   @location(0) f0: vec2i,   @location(2) f1: vec4u,   @location(6) @interpolate(perspective) f2: f32}
+                     fn fn7(a0: i32) {
+                   vp0 = S0(bitcast<vec4i>((buffer1)[1][8]), bitcast<vec4i>((buffer1)[1][8]), vec4u((buffer1)[1][8]));
+                   let ptr10: ptr<uniform, vec4f> = &buffer1[1][unconst_u32(394)];
+                   var vf34 = fn5();
+                   var vf35 = fn2((mat2x4h() * mat2x2h())[unconst_i32(0)].r);
+                   while bool((mat2x4h((2640.6), (11877.4), (37888.7), (18686.1), (3473.3), (24355.4), (7694.0), (3896.5)) * mat2x2h((7520.7), (2421.4), (4808.6), unconst_f16(17626.4)))[(0)].g) {
+      }
+                   vf35 += (*ptr10);
+                 }
+                     fn unconst_i32(v: i32) -> i32 {
+                 return v;
+                 }
+                     var<private> vp0: S0 = S0();
+                     fn unconst_f32(v: f32) -> f32 {
+                 return v;
+                 }
+                     fn unconst_u32(v: u32) -> u32 {
+                 return v;
+                 }
+                     @must_use  fn fn2(a0: f16) -> vec4f {
+                   var out: vec4f;
+                   let vf12i32 = vp0.f0[unconst_u32(83)];
+                   return out;
+                 }
+                     struct VertexOutput0 {
+                   @builtin(position) f0: vec4f,   @location(3) @interpolate(flat, either) f1: u32,   @location(13) @interpolate(flat, centroid) f2: vec2u}
+                     override override2: f32;
+                     struct S1 {
+                   @builtin(local_invocation_index) f0: u32,   @builtin(local_invocation_id) @size(16) f1: vec3u}
+                     override override4: f16;
+                     override override0: f32;
+                     fn fn5() -> S1 {
+                   var out: S1;
+                   var vf27 = fn4();
+                   _ = fn2(f16((vec2f((0.08689), unconst_f32(0.4009)))[0]));
+                   out.f0 = u32(vp0.f0[unconst_u32(207)]);
+                   return out;
+                 }
+                     var<private> vp1 = modf(vec4f());
+                     @group(0) @binding(478) var<uniform> buffer1: array<array<vec4f, 9>, 2>;
+                     @must_use  fn fn4() -> FragmentOutput0 {
+                   var out: FragmentOutput0;
+                   loop {
+               break;
+             }
+                   switch bitcast<i32>(override0) {
+                default {
+           vp0.f2 = unpack4xU8(u32(vp0.f0[unconst_u32(233)]));
+           _ = fn2(vec2h((vec2f((0.2101), unconst_f32(0.04690))))[1]);
+           var vf17 = fn2(f16());
+           var vf18 = fn2(f16());
+           let vf19: vec2f = acos(vec2f(vf17[unconst_u32(342)]));
+         }
+               }
+                   vp1 = modf(vec4f(f32(override4)));
+                   var vf20 = fn2(vec4h().y);
+                   out.f0 = vec2i(i32(override2));
+                   while bool(vp0.f0.z) {
+      }
+                   if bool(vf20[unconst_u32(294)]) {
+      }
+                   return out;
+                 }
+                     fn unconst_f16(v: f16) -> f16 {
+                 return v;
+                 }
+                     @vertex fn vertex0() -> VertexOutput0 {
+                   var out: VertexOutput0;
+                   _ = fn4();
+                   return out;
+                 }
+                     @fragment fn fragment0() -> FragmentOutput0 {
+                   var out: FragmentOutput0;
+                   for (var it2=u32((*&buffer1)[1][unconst_u32(122)][0]);
+                 it2<firstLeadingBit(vec2u()).y;
+                 it2++) {
+               for (var it1=pack4xI8((vec4i() << vec4u()));
+             it1<pack4x8snorm((*&buffer1)[1][unconst_u32(127)]);
+             it1++) {
+    }
+               return out;
+             }
+                   fn7(i32());
+                   var vf51 = fn4();
+                   switch i32() {
+                default {
+           fn7(bitcast<i32>(saturate((*&buffer1)[1][8].g)));
+         }
+               }
+                   return out;
+                 }
+                    `, }
+    );
+     let querySet0 = device0.createQuerySet0;
+     let texture12 = device0.createTexture({
+      size : {
+  width : 1200, height : 1, depthOrArrayLayers : 1}
+   ,   sampleCount : 4,   format : 'r16sint',   usage : GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT |               GPUTextureUsage.TEXTURE_BINDING,   viewFormats : [], }
+    );
+     let textureView17 = texture12.createView();
+     try {
+    }
+     catch {
+    }
+     let pipeline2 = await device0.createRenderPipelineAsync({
+      layout : pipelineLayout1,   multisample : {
+  count : 4, mask : 0x2bb3f243}
+   ,   fragment : {
+       module : shaderModule0,     constants : {
+ override4 : 1, override0 : 1, override2 : 1}
+  ,     targets : [ {
+ format : 'r16sint', writeMask : 0}
+   ],   }
+   ,   vertex : {
+       module : shaderModule0,     constants : {
+ override0 : 1, override4 : 1, override2 : 1}
+  ,     buffers : [],   }
+   ,   primitive :       {
+  topology : 'point-list', frontFace : 'cw', unclippedDepth : true}
+   , }
+    );
+     try {
+    }
+     catch {
+    }
+     let commandEncoder29 = device0.createCommandEncoder();
+     let renderPassEncoder2 = commandEncoder29.beginRenderPass({
+      colorAttachments : [ {
+       view : textureView17,     clearValue : {
+        r : 562.0,       g : 421.8,       b : -672.4,       a : 694.7,     }
+  ,     loadOp : 'load',     storeOp : 'store',   }
+    ],   occlusionQuerySet : querySet0, }
+    );
+     try {
+      renderPassEncoder2.setBindGroup(0, bindGroup0, new Uint32Array(1234), 47, 0);
+      renderPassEncoder2.setPipeline(pipeline2);
+    }
+     catch {
+    }
+     try {
+      renderPassEncoder2.draw(17, 68, 12, 542_724_990);
+      renderPassEncoder2.end();
+    }
+     catch {
+    }
+     let commandBuffer0 = commandEncoder29.finish();
+     try {
+      device0.queue.submit([ commandBuffer0 ]);
+    }
+     catch {
+    }
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

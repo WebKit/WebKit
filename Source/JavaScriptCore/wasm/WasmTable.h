@@ -133,6 +133,7 @@ public:
     // call_indirect needs to do an Instance check to potentially context switch when calling a function to another instance. We can hold raw pointers to JSWebAssemblyInstance here because the js ensures that Table keeps all the instances alive.
     struct Function {
         WasmOrJSImportableFunction m_function;
+        WasmOrJSImportableFunctionCallLinkInfo* m_callLinkInfo { nullptr };
         JSWebAssemblyInstance* m_instance { nullptr };
         WriteBarrier<Unknown> m_value { NullWriteBarrierTag };
         // In the case when we do not JIT, we cannot use the WasmToJSCallee singleton.
@@ -140,9 +141,9 @@ public:
         // function with the correct wasm type.
         // Note that wasm to js calls will have m_function's boxedWasmCalleeLoadLocation already set.
         RefPtr<WasmToJSCallee> m_protectedJSCallee;
-        uintptr_t m_boxedProtectedJSCallee;
 
         static constexpr ptrdiff_t offsetOfFunction() { return OBJECT_OFFSETOF(Function, m_function); }
+        static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(Function, m_callLinkInfo); }
         static constexpr ptrdiff_t offsetOfInstance() { return OBJECT_OFFSETOF(Function, m_instance); }
         static constexpr ptrdiff_t offsetOfValue() { return OBJECT_OFFSETOF(Function, m_value); }
     };

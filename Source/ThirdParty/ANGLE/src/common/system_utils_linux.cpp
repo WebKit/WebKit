@@ -6,8 +6,10 @@
 
 // system_utils_linux.cpp: Implementation of OS-specific functions for Linux
 
+#include "common/debug.h"
 #include "system_utils.h"
 
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -55,7 +57,8 @@ double GetCurrentSystemTime()
 void SetCurrentThreadName(const char *name)
 {
     // There's a 15-character (16 including '\0') limit.  If the name is too big (and ERANGE is
-    // returned), just ignore the name.
+    // returned), name will be ignored.
+    ASSERT(strlen(name) < 16);
     pthread_setname_np(pthread_self(), name);
 }
 }  // namespace angle

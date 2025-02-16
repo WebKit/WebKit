@@ -215,38 +215,85 @@ constexpr std::span<const char> enumName()
     return result;
 }
 
-namespace detail {
-
-template<size_t i, size_t end>
-constexpr void forConstexpr(const auto& func)
+template<typename E>
+constexpr std::underlying_type_t<E> enumNamesMin()
 {
-    if constexpr (i < end) {
-        func(std::integral_constant<size_t, i>());
-        forConstexpr<i + 1, end>(func);
+    using Underlying = std::underlying_type_t<E>;
+
+    if constexpr (requires { EnumTraits<E>::min; }) {
+        static_assert(std::is_same_v<std::remove_cv_t<decltype(EnumTraits<E>::min)>, Underlying>,
+            "EnumTraits<E>::min must have the same type as the underlying type of the enum.");
+        return EnumTraits<E>::min;
     }
+
+    // Default for both signed and unsigned enums.
+    return 0;
 }
 
-}
-
-template<typename E, size_t limit = 256>
-constexpr std::array<std::span<const char>, limit> enumNames()
+template<typename E>
+constexpr std::underlying_type_t<E> enumNamesMax()
 {
-    std::array<std::span<const char>, limit> names;
+    using Underlying = std::underlying_type_t<E>;
 
-    detail::forConstexpr<0, limit>([&] (auto i) {
-        names[i] = enumName<static_cast<E>(static_cast<unsigned>(i))>();
-    });
-    return names;
+    if constexpr (requires { EnumTraits<E>::max; }) {
+        static_assert(std::is_same_v<std::remove_cv_t<decltype(EnumTraits<E>::max)>, Underlying>,
+            "EnumTraits<E>::max must have the same type as the underlying type of the enum.");
+        return EnumTraits<E>::max;
+    }
+
+    constexpr Underlying defaultMax = std::is_signed_v<Underlying>
+        ? static_cast<Underlying>(INT8_MAX) : static_cast<Underlying>(UINT8_MAX);
+    constexpr Underlying computedMax = (sizeof(E) > 1) ? static_cast<Underlying>(defaultMax << 1) : defaultMax;
+    return computedMax;
 }
 
-
-template<typename T>
-constexpr std::span<const char> enumName(T v)
+template<typename E>
+constexpr size_t enumNamesSize()
 {
-    constexpr auto names = enumNames<std::decay_t<T>>();
-    if (static_cast<size_t>(v) >= names.size())
+    using Underlying = std::underlying_type_t<E>;
+    using Unsigned = std::make_unsigned_t<Underlying>;
+
+    constexpr Underlying min = enumNamesMin<E>();
+    constexpr Underlying max = enumNamesMax<E>();
+    static_assert(min <= max, "Invalid enum range: min must be <= max.");
+    return static_cast<size_t>(static_cast<Unsigned>(max - min)) + 1;
+}
+
+template<typename E, size_t... Is>
+constexpr auto makeEnumNames(std::index_sequence<Is...>)
+{
+    constexpr auto min = enumNamesMin<E>();
+    return std::array<std::span<const char>, sizeof...(Is)> {
+        enumName<static_cast<E>(static_cast<std::underlying_type_t<E>>(Is) + min)>()...
+    };
+}
+
+template<typename E>
+constexpr auto enumNames()
+{
+    constexpr size_t size = enumNamesSize<E>();
+    return makeEnumNames<E>(std::make_index_sequence<size> { });
+}
+
+template<typename E>
+constexpr std::span<const char> enumName(E v)
+{
+    static_assert(std::is_enum_v<E>, "enumName can only be used with enum types.");
+
+    using Underlying = std::underlying_type_t<E>;
+    using Unsigned = std::make_unsigned_t<Underlying>;
+
+    constexpr auto names = enumNames<E>();
+    constexpr Underlying min = enumNamesMin<E>();
+    constexpr Underlying max = enumNamesMax<E>();
+
+    Underlying value = static_cast<Underlying>(v);
+    if (value < min || value > max)
         return { "enum out of range" };
-    return names[static_cast<uint8_t>(v)];
+
+    // Compute index safely using unsigned extension.
+    size_t index = static_cast<size_t>(static_cast<Unsigned>(value - min));
+    return names[index];
 }
 
 #if COMPILER(CLANG)

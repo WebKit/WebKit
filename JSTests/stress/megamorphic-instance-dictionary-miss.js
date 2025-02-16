@@ -14,7 +14,7 @@ for (var i = 0; i < 0x100; ++i) {
 }
 function access(object) { return object.test2; }
 
-for (var i = 0; i < 1e6; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var index = i & (0x100 - 1);
     var object = array[index];
     shouldBe(access(object), undefined);

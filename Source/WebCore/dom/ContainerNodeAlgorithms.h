@@ -62,12 +62,20 @@ public:
 #endif // not ASSERT_ENABLED
 
 void notifyChildNodeInserted(ContainerNode& parentOfInsertedTree, Node&, NodeVector& postInsertionNotificationTargets);
+inline void updateCanDelayNodeDeletion(ContainerNode::CanDelayNodeDeletion& currentCanDelayDeletion, ContainerNode::CanDelayNodeDeletion newStatus);
 
 enum class RemovedSubtreeObservability : bool {
     NotObservable,
     MaybeObservableByRefPtr,
 };
-RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node&);
+
+struct RemovedSubtreeResult {
+    unsigned subTreeSize;
+    RemovedSubtreeObservability removedSubtreeObservability;
+    ContainerNode::CanDelayNodeDeletion canBeDelayed;
+};
+
+RemovedSubtreeResult notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node&);
 void removeDetachedChildrenInContainer(ContainerNode&);
 
 enum class SubframeDisconnectPolicy : bool {
@@ -81,6 +89,12 @@ inline void disconnectSubframesIfNeeded(ContainerNode& root, SubframeDisconnectP
     if (!root.connectedSubframeCount())
         return;
     disconnectSubframes(root, policy);
+}
+
+inline void updateCanDelayNodeDeletion(ContainerNode::CanDelayNodeDeletion& currentCanDelayDeletion, ContainerNode::CanDelayNodeDeletion newStatus)
+{
+    if (newStatus == ContainerNode::CanDelayNodeDeletion::No)
+        currentCanDelayDeletion = ContainerNode::CanDelayNodeDeletion::No;
 }
 
 } // namespace WebCore

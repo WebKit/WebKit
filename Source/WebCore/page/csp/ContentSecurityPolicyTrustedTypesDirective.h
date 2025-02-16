@@ -47,7 +47,7 @@ private:
 
     bool m_allowDuplicates { false };
     bool m_allowAny { false };
-    HashSet<String> m_list;
+    UncheckedKeyHashSet<String> m_list;
 };
 
 } // namespace WebCore

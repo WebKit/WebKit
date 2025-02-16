@@ -49,7 +49,7 @@ public:
     const String& name() const { return m_name; }
 
     bool equals(const CSSPaintImageValue& other) const { return m_name == other.m_name; }
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 

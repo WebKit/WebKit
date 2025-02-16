@@ -102,7 +102,7 @@ public:
     virtual IntRect windowClipRect() const = 0;
 
     // Functions for child manipulation and inspection.
-    const HashSet<Ref<Widget>>& children() const { return m_children; }
+    const UncheckedKeyHashSet<Ref<Widget>>& children() const { return m_children; }
     WEBCORE_EXPORT virtual void addChild(Widget&);
     WEBCORE_EXPORT virtual void removeChild(Widget&);
 
@@ -176,13 +176,14 @@ public:
     void setCanBlitOnScroll(bool);
     bool canBlitOnScroll() const;
 
-    // There are at least three types of contentInset. Usually we just care about WebCoreContentInset, which is the inset
+    // There are at least three types of contentInset. Usually we just care about WebCoreInset, which is the inset
     // that is set on a Page that requires WebCore to move its layers to accomodate the inset. However, there are platform
     // concepts that are similar on both iOS and Mac when there is a platformWidget(). Sometimes we need the Mac platform value
-    // for topContentInset, so when the TopContentInsetType is WebCoreOrPlatformContentInset, platformTopContentInset()
+    // for content insets, so when the inset type is WebCoreOrPlatformInset, platformContentInsets()
     // will be returned instead of the value set on Page.
-    enum class TopContentInsetType { WebCoreContentInset, WebCoreOrPlatformContentInset };
-    virtual float topContentInset(TopContentInsetType = TopContentInsetType::WebCoreContentInset) const { return 0; }
+    // FIXME: Note that WebCoreOrPlatformInset may return either WebCore obscured insets or platform content insets.
+    enum class InsetType : bool { WebCoreInset, WebCoreOrPlatformInset };
+    virtual FloatBoxExtent obscuredContentInsets(InsetType = InsetType::WebCoreInset) const { return 0; }
     IntRect frameRectShrunkByInset() const;
 
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the unobscured viewport
@@ -267,7 +268,7 @@ public:
     ScrollPosition documentScrollPositionRelativeToScrollableAreaOrigin() const;
 
     // scrollPostion() anchors its (0,0) point at the ScrollableArea's origin. The top of the scrolling
-    // layer does not represent the top of the view when there is a topContentInset. Additionally, as
+    // layer does not represent the top/left of the view when there are content insets. Additionally, as
     // detailed above, the origin of the scrolling layer also does not necessarily correspond with the
     // top of the document anyway, since there could also be header. documentScrollPositionRelativeToViewOrigin()
     // will return a version of the current scroll offset which tracks the top of the Document
@@ -431,8 +432,8 @@ protected:
     virtual bool isVerticalDocument() const = 0;
     virtual bool isFlippedDocument() const = 0;
 
-    float platformTopContentInset() const;
-    void platformSetTopContentInset(float);
+    FloatBoxExtent platformContentInsets() const;
+    void platformSetContentInsets(const FloatBoxExtent&);
 
     void handleDeferredScrollUpdateAfterContentSizeChange();
 
@@ -518,7 +519,7 @@ private:
             didFinishProhibitingScrollingWhenChangingContentSize();
     }
 
-    HashSet<Ref<Widget>> m_children;
+    UncheckedKeyHashSet<Ref<Widget>> m_children;
 
     RefPtr<Scrollbar> m_horizontalScrollbar;
     RefPtr<Scrollbar> m_verticalScrollbar;

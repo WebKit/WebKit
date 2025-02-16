@@ -275,6 +275,8 @@ private:
     {
     }
 
+    bool isImageDecoderAVFObjCSample() const final { return true; }
+
     std::optional<ByteRange> byteRangeForAttachment(CFStringRef key) const
     {
         auto byteOffsetCF = dynamic_cf_cast<CFNumberRef>(PAL::CMGetAttachment(m_sample.get(), key, nullptr));
@@ -299,15 +301,29 @@ private:
     bool m_hasAlpha { false };
 };
 
-static ImageDecoderAVFObjCSample* toSample(const PresentationOrderSampleMap::value_type& pair)
+} // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImageDecoderAVFObjCSample)
+    static bool isType(const WebCore::MediaSample& sample) { return sample.isImageDecoderAVFObjCSample(); }
+SPECIALIZE_TYPE_TRAITS_END()
+
+namespace WebCore {
+
+static RefPtr<ImageDecoderAVFObjCSample> toProtectedSample(const PresentationOrderSampleMap::value_type& pair)
 {
-    return (ImageDecoderAVFObjCSample*)pair.second.ptr();
+    return downcast<ImageDecoderAVFObjCSample>(pair.second.ptr());
 }
 
 template <typename Iterator>
 ImageDecoderAVFObjCSample* toSample(Iterator iter)
 {
-    return (ImageDecoderAVFObjCSample*)iter->second.ptr();
+    return downcast<ImageDecoderAVFObjCSample>(iter->second.ptr());
+}
+
+template <typename Iterator>
+RefPtr<ImageDecoderAVFObjCSample> toProtectedSample(Iterator iter)
+{
+    return downcast<ImageDecoderAVFObjCSample>(iter->second.ptr());
 }
 
 #pragma mark - ImageDecoderAVFObjC
@@ -459,7 +475,7 @@ bool ImageDecoderAVFObjC::storeSampleBuffer(CMSampleBufferRef sampleBuffer)
     // obtain RGBA IOSurface-backed CVPixelBuffer from the decoding session is enough
     // to ensure the pixel buffer is not replaced in VTCreateCGImageFromCVPixelBuffer.
 
-    toSample(iter)->setImage(adoptCF(rawImage));
+    toProtectedSample(iter)->setImage(adoptCF(rawImage));
 
     return true;
 }
@@ -543,16 +559,13 @@ IntSize ImageDecoderAVFObjC::frameSizeAtIndex(size_t, SubsamplingLevel) const
 
 bool ImageDecoderAVFObjC::frameIsCompleteAtIndex(size_t index) const
 {
-    auto* sampleData = sampleAtIndex(index);
-    if (!sampleData)
-        return false;
-
-    return sampleIsComplete(*sampleData);
+    RefPtr sampleData = sampleAtIndex(index);
+    return sampleData && sampleIsComplete(*sampleData);
 }
 
 Seconds ImageDecoderAVFObjC::frameDurationAtIndex(size_t index) const
 {
-    auto* sampleData = sampleAtIndex(index);
+    RefPtr sampleData = sampleAtIndex(index);
     if (!sampleData)
         return { };
 
@@ -561,8 +574,8 @@ Seconds ImageDecoderAVFObjC::frameDurationAtIndex(size_t index) const
 
 bool ImageDecoderAVFObjC::frameHasAlphaAtIndex(size_t index) const
 {
-    auto* sampleData = sampleAtIndex(index);
-    return sampleData ? sampleData->hasAlpha() : false;
+    RefPtr sampleData = sampleAtIndex(index);
+    return sampleData && sampleData->hasAlpha();
 }
 
 Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
@@ -571,8 +584,8 @@ Vector<ImageDecoder::FrameInfo> ImageDecoderAVFObjC::frameInfos() const
         return { };
 
     return WTF::map(m_sampleData.presentationOrder(), [](auto& sample) {
-        auto& imageSample = static_cast<ImageDecoderAVFObjCSample&>(sample.second.get());
-        return ImageDecoder::FrameInfo { imageSample.hasAlpha(), Seconds(imageSample.duration().toDouble()) };
+        Ref imageSample = downcast<ImageDecoderAVFObjCSample>(sample.second.get());
+        return ImageDecoder::FrameInfo { imageSample->hasAlpha(), Seconds(imageSample->duration().toDouble()) };
     });
 }
 
@@ -589,7 +602,7 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
 {
     Locker locker { m_sampleGeneratorLock };
 
-    auto* sampleData = sampleAtIndex(index);
+    RefPtr sampleData = sampleAtIndex(index);
     if (!sampleData)
         return nullptr;
 
@@ -601,20 +614,20 @@ PlatformImagePtr ImageDecoderAVFObjC::createFrameImageAtIndex(size_t index, Subs
 
     auto decodeTime = sampleData->decodeTime();
 
-    if (decodeTime < m_cursor->second->decodeTime()) {
+    if (decodeTime < Ref { m_cursor->second }->decodeTime()) {
         // Rewind cursor to the last sync sample to begin decoding
         m_cursor = m_sampleData.decodeOrder().findSampleWithDecodeKey({decodeTime, sampleData->presentationTime()});
         do {
-            if (m_cursor->second->isSync())
+            if (Ref { m_cursor->second }->isSync())
                 break;
         } while (--m_cursor != m_sampleData.decodeOrder().begin());
     }
 
     while (true) {
-        if (decodeTime < m_cursor->second->decodeTime())
+        if (decodeTime < Ref { m_cursor->second }->decodeTime())
             return nullptr;
 
-        auto cursorSample = toSample(m_cursor);
+        RefPtr cursorSample = toSample(m_cursor);
         if (!cursorSample)
             return nullptr;
 
@@ -690,7 +703,7 @@ void ImageDecoderAVFObjC::clearFrameBufferCache(size_t index)
 {
     size_t i = 0;
     for (auto& samplePair : m_sampleData.presentationOrder()) {
-        toSample(samplePair)->setImage(nullptr);
+        toProtectedSample(samplePair)->setImage(nullptr);
         if (++i > index)
             break;
     }

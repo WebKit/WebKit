@@ -1,0 +1,52 @@
+This tests that basic word navigation is working correctly (testing previous word start, next word end, left word, and right word).
+Current character is: T
+Left word is: This
+Right word is: This
+Pre word start to next word end: This
+
+Current character is: s
+Left word is: This
+Right word is:
+Pre word start to next word end: This is
+
+Current character is:
+Left word is:
+Right word is: is
+Pre word start to next word end: This is
+
+Current character is: s
+Left word is: is
+Right word is:
+Pre word start to next word end: is some
+
+Current character is:
+Left word is:
+Right word is: some
+Pre word start to next word end: is some
+
+Current character is: e
+Left word is: some
+Right word is:
+Pre word start to next word end: some text
+
+Current character is:
+Left word is:
+Right word is: text
+Pre word start to next word end: some text
+
+Current character is: t
+Left word is: text
+Right word is: text
+Pre word start to next word end: text
+
+Current character is: I
+Left word is: I'm
+Right word is: I'm
+Pre word start to next word end: I'm
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is some text
+I'm a paragraph.

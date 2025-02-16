@@ -44,7 +44,7 @@ function test1() {
     ta[0] = adjustForEndianess(0x01020304);
     let dv = new DataView(ab);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === 0x04030201);
         assert(littleEndian(dv, 0) === 0x01020304);
         if (i % 2)
@@ -53,7 +53,7 @@ function test1() {
             assert(biEndian(dv, 0, false) === 0x04030201);
     }
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === 0x04030201);
         assert(littleEndian(dv, 0) === 0x01020304);
         if (i % 2)
@@ -64,7 +64,7 @@ function test1() {
 
     // Make sure we get the right sign.
     ta[0] = adjustForEndianess(-32361386); // 0xfe123456
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === 0x563412fe);
         assert(littleEndian(dv, 0) === -32361386);
         if (i % 2)
@@ -75,7 +75,7 @@ function test1() {
 
     // -2146290602 == (int)0x80123456
     ta[0] = adjustForEndianess(0x56341280);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === -2146290602);
         assert(littleEndian(dv, 0) === 0x56341280);
         if (i % 2)
@@ -115,7 +115,7 @@ function test2() {
     ta[0] = adjustForEndianess(0x0102);
     let dv = new DataView(ab);
 
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === 0x0201);
         assert(littleEndian(dv, 0) === 0x0102);
         if (i % 2)
@@ -126,7 +126,7 @@ function test2() {
 
     // Check sign.
     ta[0] = adjustForEndianess(-512); // 0xfe00
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === 0x00fe);
         assert(littleEndian(dv, 0) === -512);
         if (i % 2)
@@ -137,7 +137,7 @@ function test2() {
 
     // Check sign extension.
     ta[0] = adjustForEndianess(0x00fe);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === -512);
         assert(littleEndian(dv, 0) === 0x00fe);
         if (i % 2)
@@ -181,7 +181,7 @@ function test3() {
     ta[0] = adjustForEndianess(normal);
 
     let dv = new DataView(ab);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === flipped);
         assert(littleEndian(dv, 0) === 12912.403320312500);
         if (i % 2)
@@ -222,7 +222,7 @@ function test4() {
     ta[0] = adjustForEndianessUint32(0xa0b0d0f0);
 
     let dv = new DataView(ab);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(bigEndian(dv, 0) === 0xf0d0b0a0);
         assert(littleEndian(dv, 0) === 0xa0b0d0f0);
         if (i % 2)
@@ -252,7 +252,7 @@ function test5() {
     ta[0] = adjustForEndianessUint32(0xa0b0d0f0);
 
     let dv = new DataView(ab);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(littleEndian(dv, 0) == 0xd0f0);
         assert(bigEndian(dv, 0) == 0xf0d0);
 
@@ -293,7 +293,7 @@ function test6() {
     ta[0] = adjustForEndianessUint32(0xa070fa01);
 
     let dv = new DataView(ab);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(littleEndian(dv, 0) == -1535);
         assert(bigEndian(dv, 0) == 0x01fa);
 
@@ -326,7 +326,7 @@ function test7() {
     ta[0] = adjustForEndianessUint32(0xa070fa01);
 
     let dv = new DataView(ab);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(load(dv, 0) === 0x01);
         assert(load(dv, 1) === -6);
         assert(load(dv, 2) === 0x70);
@@ -346,7 +346,7 @@ function test8() {
     ta[0] = adjustForEndianessUint32(0xa070fa01);
 
     let dv = new DataView(ab);
-    for (let i = 0; i < 10000; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         assert(load(dv, 0) === 0x01);
         assert(load(dv, 1) === 0xfa);
         assert(load(dv, 2) === 0x70);

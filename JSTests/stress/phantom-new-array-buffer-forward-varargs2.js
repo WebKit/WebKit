@@ -18,7 +18,7 @@ function test() {
     }
     noInline(foo);
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         let r = foo(i, i+1, i+2, i+3);
         assert(r.length === 5);
         let [a, b, c, d, e] = r;

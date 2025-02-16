@@ -29,11 +29,13 @@
 #include "CSSAnimation.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
+#include "CSSParserContext.h"
 #include "CSSPropertyParserConsumer+Easing.h"
 #include "CommonAtomStrings.h"
 #include "FillMode.h"
 #include "JSComputedEffectTiming.h"
 #include "ScriptExecutionContext.h"
+#include "ScrollTimeline.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/TZoneMallocInlines.h>
@@ -52,8 +54,7 @@ void AnimationEffect::setAnimation(WebAnimation* animation)
         return;
 
     m_animation = animation;
-    if (animation)
-        animation->updateRelevance();
+    m_timingDidMutate = true;
 }
 
 EffectTiming AnimationEffect::getBindingsTiming() const
@@ -415,9 +416,10 @@ void AnimationEffect::animationPlaybackRateDidChange()
     m_timingDidMutate = true;
 }
 
-void AnimationEffect::animationProgressBasedTimelineSourceDidChangeMetrics()
+void AnimationEffect::animationProgressBasedTimelineSourceDidChangeMetrics(const TimelineRange& animationAttachmentRange)
 {
-    m_timingDidMutate = true;
+    if (!animationAttachmentRange.isDefault())
+        m_timingDidMutate = true;
 }
 
 void AnimationEffect::animationRangeDidChange()

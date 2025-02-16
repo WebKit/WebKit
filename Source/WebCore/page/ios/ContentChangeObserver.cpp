@@ -42,6 +42,7 @@
 #include "Page.h"
 #include "RenderDescendantIterator.h"
 #include "RenderStyleInlines.h"
+#include "Quirks.h"
 #include "Settings.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -57,7 +58,13 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 {
     // Fullscreen status is propagated on the ancestor document chain all the way to the top document.
     auto& document = descendantCandidate.document();
-    CheckedPtr fullscreenManager = document.topDocument().fullscreenManagerIfExists();
+    RefPtr mainFrameDocument = document.protectedMainFrameDocument();
+    if (!mainFrameDocument) {
+        LOG_ONCE(SiteIsolation, "Unable to properly calculate isHiddenBehindFullscreenElement() without access to the main frame document ");
+        return false;
+    }
+
+    CheckedPtr fullscreenManager = mainFrameDocument->fullscreenManagerIfExists();
     if (!fullscreenManager)
         return false;
     auto* topMostFullScreenElement = fullscreenManager->fullscreenElement();
@@ -471,6 +478,9 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
 void ContentChangeObserver::didAddMouseMoveRelatedEventListener(const AtomString& eventType, const Node& node)
 {
     if (!isObservingContentChanges())
+        return;
+
+    if (!node.protectedDocument()->quirks().shouldTreatAddingMouseOutEventListenerAsContentChange())
         return;
 
     if (eventType != eventNames().mouseoutEvent)

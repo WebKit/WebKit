@@ -50,7 +50,8 @@ function runTest(testNumber) {
     root.remove();
     root = null;
     target = null;
-    requestAnimationFrame(function () {
+    // add a timeout between requestAnimationFrame calls to allow opportunistic node deletion to occur
+    setTimeout(() => { requestAnimationFrame(function () {
         observer.takeRecords();
         gc();
 
@@ -71,6 +72,7 @@ function runTest(testNumber) {
         else
             setTimeout(() => finish(testNumber), 0);
     });
+    }, 5);
 }
 
 function testFailed(testNumber, error)

@@ -42,7 +42,7 @@ class C {
 }
 noInline(C.prototype.setField);
 
-for (; i < 10000; i++) {
+for (; i < testLoopCount; i++) {
     let c = new C;
     if (i > 5000) {
         assert.throws(TypeError, function() {

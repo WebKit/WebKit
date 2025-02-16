@@ -72,7 +72,7 @@ std::pair<TextBoxIterator, TextLogicalOrderCache> firstTextBoxInLogicalOrderFor(
     if (auto cache = makeTextLogicalOrderCacheIfNeeded(text))
         return { cache->boxes.first(), WTFMove(cache) };
 
-    return { firstTextBoxFor(text), nullptr };
+    return { lineLeftmostTextBoxFor(text), nullptr };
 }
 
 TextBoxIterator nextTextBoxInLogicalOrder(const TextBoxIterator& textBox, TextLogicalOrderCache& cache)

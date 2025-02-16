@@ -45,8 +45,8 @@ public:
 
     WEBCORE_EXPORT bool enqueue(RefPtr<JSC::ArrayBuffer>&&);
     bool enqueue(JSC::JSValue);
-    void error(const Exception&);
-    void close();
+    WEBCORE_EXPORT void error(const Exception&);
+    WEBCORE_EXPORT void close();
 
 private:
     JSReadableStreamDefaultController& jsController() const;

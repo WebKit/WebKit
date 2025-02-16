@@ -549,6 +549,7 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
     uintptr_t word_index;
     uintptr_t bit_index_in_word;
     uintptr_t other_word_index;
+    uintptr_t original_object_size;
     uint64_t* free_words;
     uint64_t* object_end_words;
     uint64_t object_end_word;
@@ -642,6 +643,8 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
 
     object_end_word = object_end_words[word_index];
     shifted_object_end_word = object_end_word >> bit_index_in_word;
+    original_object_size = 1 << ((uint64_t)(__builtin_ctzll(shifted_object_end_word)) + 1);
+
     if (shifted_object_end_word) {
         uint64_t object_end_bit_index;
 
@@ -895,6 +898,8 @@ static PAS_ALWAYS_INLINE uintptr_t pas_bitfit_page_deallocate_with_page_impl(
         pas_lock_unlock(&owner->ownership_lock);
         break;
     } }
+
+    PAS_PROFILE(BITFIT_PAGE_DEALLOCATION, page_config, begin, original_object_size);
 
     return num_bits;
 }

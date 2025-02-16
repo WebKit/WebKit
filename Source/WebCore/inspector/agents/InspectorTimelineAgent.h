@@ -47,10 +47,7 @@ namespace WebCore {
 
 class Event;
 class FloatQuad;
-class Frame;
-class LocalFrame;
 class RenderObject;
-class RunLoopObserver;
 
 enum class TimelineRecordType {
     EventDispatch,
@@ -85,11 +82,11 @@ enum class TimelineRecordType {
     Screenshot,
 };
 
-class InspectorTimelineAgent final : public InspectorAgentBase , public Inspector::TimelineBackendDispatcherHandler , public JSC::Debugger::Observer {
+class InspectorTimelineAgent : public InspectorAgentBase, public Inspector::TimelineBackendDispatcherHandler, public JSC::Debugger::Observer {
     WTF_MAKE_NONCOPYABLE(InspectorTimelineAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorTimelineAgent);
 public:
-    InspectorTimelineAgent(PageAgentContext&);
+    InspectorTimelineAgent(WebAgentContext&);
     ~InspectorTimelineAgent();
 
     // InspectorAgentBase
@@ -101,69 +98,55 @@ public:
     Inspector::Protocol::ErrorStringOr<void> disable();
     Inspector::Protocol::ErrorStringOr<void> start(std::optional<int>&& maxCallStackDepth);
     Inspector::Protocol::ErrorStringOr<void> stop();
-    Inspector::Protocol::ErrorStringOr<void> setAutoCaptureEnabled(bool);
     Inspector::Protocol::ErrorStringOr<void> setInstruments(Ref<JSON::Array>&&);
 
     // JSC::Debugger::Observer
     void breakpointActionProbe(JSC::JSGlobalObject*, JSC::BreakpointActionID, unsigned batchId, unsigned sampleId, JSC::JSValue result);
 
     // InspectorInstrumentation
-    void didInstallTimer(int timerId, Seconds timeout, bool singleShot, LocalFrame*);
-    void didRemoveTimer(int timerId, LocalFrame*);
-    void willFireTimer(int timerId, LocalFrame*);
+    void didInstallTimer(int timerId, Seconds timeout, bool singleShot);
+    void didRemoveTimer(int timerId);
+    void willFireTimer(int timerId);
     void didFireTimer();
-    void willCallFunction(const String& scriptName, int scriptLine, int scriptColumn, LocalFrame*);
-    void didCallFunction(LocalFrame*);
-    void willDispatchEvent(const Event&, LocalFrame*);
+    void willCallFunction(const String& scriptName, int scriptLine, int scriptColumn);
+    void didCallFunction();
+    void willDispatchEvent(const Event&);
     void didDispatchEvent(bool defaultPrevented);
-    void willEvaluateScript(const String&, int lineNumber, int columnNumber, LocalFrame&);
-    void didEvaluateScript(LocalFrame&);
-    void didInvalidateLayout(LocalFrame&);
-    void willLayout(LocalFrame&);
-    void didLayout(RenderObject&);
-    void willComposite(LocalFrame&);
-    void didComposite();
-    void willPaint(LocalFrame&);
-    void didPaint(RenderObject&, const LayoutRect&);
-    void willRecalculateStyle(LocalFrame*);
-    void didRecalculateStyle();
-    void didScheduleStyleRecalculation(LocalFrame*);
-    void didTimeStamp(Frame&, const String&);
-    void didPerformanceMark(const String&, std::optional<MonotonicTime>, Frame*);
-    void didRequestAnimationFrame(int callbackId, LocalFrame*);
-    void didCancelAnimationFrame(int callbackId, LocalFrame*);
-    void willFireAnimationFrame(int callbackId, LocalFrame*);
+    void willEvaluateScript(const String& url, int lineNumber, int columnNumber);
+    void didEvaluateScript();
+    void didTimeStamp(const String& message);
+    void didPerformanceMark(const String& label, std::optional<MonotonicTime>);
+    void didRequestAnimationFrame(int callbackId);
+    void didCancelAnimationFrame(int callbackId);
+    void willFireAnimationFrame(int callbackId);
     void didFireAnimationFrame();
-    void willFireObserverCallback(const String& callbackType, LocalFrame*);
+    void willFireObserverCallback(const String& callbackType);
     void didFireObserverCallback();
-    void time(Frame&, const String&);
-    void timeEnd(Frame&, const String&);
-    void mainFrameStartedLoading();
-    void mainFrameNavigated();
-    void didCompleteRenderingFrame();
+    void time(const String& label);
+    void timeEnd(const String& label);
 
     // Console
-    void startFromConsole(JSC::JSGlobalObject*, const String& title);
-    void stopFromConsole(JSC::JSGlobalObject*, const String& title);
+    void startFromConsole(const String& title);
+    void stopFromConsole(const String& title);
 
-private:
-    void startProgrammaticCapture();
-    void stopProgrammaticCapture();
+protected:
+    virtual bool enabled() const;
+    virtual void internalEnable();
+    virtual void internalDisable();
+
+    virtual bool tracking() const;
+    virtual void internalStart(std::optional<int>&& maxCallStackDepth);
+    virtual void internalStop();
+
+    virtual bool shouldStartHeapInstrument() const { return true; }
+    void autoCaptureStarted() const;
+
+    const Vector<Inspector::Protocol::Timeline::Instrument>& instruments() const { return m_instruments; }
 
     enum class InstrumentState { Start, Stop };
     void toggleInstruments(InstrumentState);
-    void toggleScriptProfilerInstrument(InstrumentState);
-    void toggleHeapInstrument(InstrumentState);
-    void toggleCPUInstrument(InstrumentState);
-    void toggleMemoryInstrument(InstrumentState);
-    void toggleTimelineInstrument(InstrumentState);
-    void toggleAnimationInstrument(InstrumentState);
-    void disableBreakpoints();
-    void enableBreakpoints();
 
-    void captureScreenshot();
-
-    friend class TimelineRecordStack;
+    double timestamp();
 
     struct TimelineRecordEntry {
         TimelineRecordEntry(Ref<JSON::Object>&& record, Ref<JSON::Object>&& data, RefPtr<JSON::Array>&& children, TimelineRecordType type)
@@ -179,53 +162,48 @@ private:
         RefPtr<JSON::Array> children;
         TimelineRecordType type;
     };
+    TimelineRecordEntry* lastRecordEntry();
 
-    void internalStart(std::optional<int>&& maxCallStackDepth);
-    void internalStop();
-    double timestamp();
+    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, std::optional<double> startTime = std::nullopt);
+    void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, std::optional<double> startTime = std::nullopt);
+    void didCompleteCurrentRecord(TimelineRecordType);
+
+private:
+    void startProgrammaticCapture();
+    void stopProgrammaticCapture();
+
+    void toggleScriptProfilerInstrument(InstrumentState);
+    void toggleHeapInstrument(InstrumentState);
+    void toggleCPUInstrument(InstrumentState);
+    void toggleMemoryInstrument(InstrumentState);
+    void toggleTimelineInstrument(InstrumentState);
+    void toggleAnimationInstrument(InstrumentState);
+    void disableBreakpoints();
+    void enableBreakpoints();
+
     std::optional<double> timestampFromMonotonicTime(MonotonicTime);
 
     void sendEvent(Ref<JSON::Object>&&);
-    void appendRecord(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, Frame*, std::optional<double> startTime = std::nullopt);
-    void pushCurrentRecord(Ref<JSON::Object>&&, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
     void pushCurrentRecord(const TimelineRecordEntry& record) { m_recordStack.append(record); }
 
-    TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, LocalFrame*, std::optional<double> startTime = std::nullopt);
-
-    void setFrameIdentifier(JSON::Object* record, Frame*);
+    TimelineRecordEntry createRecordEntry(Ref<JSON::Object>&& data, TimelineRecordType, bool captureCallStack, std::optional<double> startTime = std::nullopt);
 
     void didCompleteRecordEntry(const TimelineRecordEntry&);
-    void didCompleteCurrentRecord(TimelineRecordType);
 
     void addRecordToTimeline(Ref<JSON::Object>&&, TimelineRecordType);
 
     std::unique_ptr<Inspector::TimelineFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::TimelineBackendDispatcher> m_backendDispatcher;
-    Page& m_inspectedPage;
 
     Vector<TimelineRecordEntry> m_recordStack;
     Vector<TimelineRecordEntry> m_pendingConsoleProfileRecords;
 
     int m_maxCallStackDepth { 5 };
 
-    bool m_tracking { false };
     bool m_trackingFromFrontend { false };
     bool m_programmaticCaptureRestoreBreakpointActiveValue { false };
 
-    bool m_autoCaptureEnabled { false };
-    enum class AutoCapturePhase { None, BeforeLoad, FirstNavigation, AfterFirstNavigation };
-    AutoCapturePhase m_autoCapturePhase { AutoCapturePhase::None };
     Vector<Inspector::Protocol::Timeline::Instrument> m_instruments;
-
-#if PLATFORM(COCOA)
-    std::unique_ptr<WebCore::RunLoopObserver> m_frameStartObserver;
-    std::unique_ptr<WebCore::RunLoopObserver> m_frameStopObserver;
-    int m_runLoopNestingLevel { 0 };
-#elif USE(GLIB_EVENT_LOOP)
-    std::unique_ptr<RunLoop::Observer> m_runLoopObserver;
-#endif
-    bool m_startedComposite { false };
-    bool m_isCapturingScreenshot { false };
 };
 
 } // namespace WebCore

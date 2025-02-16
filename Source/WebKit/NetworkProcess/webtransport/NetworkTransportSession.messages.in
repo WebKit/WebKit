@@ -26,12 +26,12 @@
     EnabledBy=WebTransportEnabled
 ]
 messages -> NetworkTransportSession {
-    SendDatagram(std::span<const uint8_t> datagram) -> ()
+    SendDatagram(std::span<const uint8_t> datagram) -> (std::optional<WebCore::Exception> exception)
     CreateOutgoingUnidirectionalStream() -> (std::optional<WebCore::WebTransportStreamIdentifier> identifier)
     CreateBidirectionalStream() -> (std::optional<WebCore::WebTransportStreamIdentifier> identifier)
-    DestroyOutgoingUnidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
-    DestroyBidirectionalStream(WebCore::WebTransportStreamIdentifier identifier)
-    SendStreamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin) -> ()
-    StreamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin) -> ()
+    StreamSendBytes(WebCore::WebTransportStreamIdentifier identifier, std::span<const uint8_t> bytes, bool withFin) -> (std::optional<WebCore::Exception> exception)
+    CancelReceiveStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<uint64_t> errorCode)
+    CancelSendStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<uint64_t> errorCode)
+    DestroyStream(WebCore::WebTransportStreamIdentifier identifier, std::optional<uint64_t> errorCode)
     Terminate(uint32_t code, CString reason)
 }

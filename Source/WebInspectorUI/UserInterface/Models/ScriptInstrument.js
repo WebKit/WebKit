@@ -34,20 +34,28 @@ WI.ScriptInstrument = class ScriptInstrument extends WI.Instrument
 
     startInstrumentation(initiatedByBackend)
     {
-        let target = WI.assumingMainTarget();
-
         // FIXME: Make this some UI visible option.
         const includeSamples = true;
 
-        if (!initiatedByBackend)
-            target.ScriptProfilerAgent.startTracking(includeSamples);
+        if (!initiatedByBackend) {
+            for (let target of WI.targets) {
+                if (target.type === WI.TargetType.Worker && !WI.settings.experimentalEnableWorkerTimelineRecording.value)
+                    continue;
+                if (target.hasDomain("ScriptProfiler"))
+                    target.ScriptProfilerAgent.startTracking(includeSamples);
+            }
+        }
     }
 
     stopInstrumentation(initiatedByBackend)
     {
-        let target = WI.assumingMainTarget();
-
-        if (!initiatedByBackend)
-            target.ScriptProfilerAgent.stopTracking();
+        if (!initiatedByBackend) {
+            for (let target of WI.targets) {
+                if (target.type === WI.TargetType.Worker && !WI.settings.experimentalEnableWorkerTimelineRecording.value)
+                    continue;
+                if (target.hasDomain("ScriptProfiler"))
+                    target.ScriptProfilerAgent.stopTracking();
+            }
+        }
     }
 };

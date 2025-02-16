@@ -1,0 +1,17 @@
+Verify there is no crash when setting x/y baseVal on a filter referencing an empty viewport
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS x.unitType is SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+PASS x.value is -0
+PASS x.unitType is SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+PASS x.value is 0
+PASS y.unitType is SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+PASS y.value is -0
+PASS y.unitType is SVGLength.SVG_LENGTHTYPE_PERCENTAGE
+PASS y.value is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

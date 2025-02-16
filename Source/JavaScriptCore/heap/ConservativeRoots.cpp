@@ -113,7 +113,7 @@ inline void ConservativeRoots::genericAddPointer(char* pointer, HeapVersion mark
         m_roots[m_size++] = std::bit_cast<HeapCell*>(p);
     };
 
-    const HashSet<MarkedBlock*>& set = m_heap.objectSpace().blocks().set();
+    const UncheckedKeyHashSet<MarkedBlock*>& set = m_heap.objectSpace().blocks().set();
 
     ASSERT(m_heap.objectSpace().isMarking());
     static constexpr bool isMarking = true;

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "VideoMediaSampleRenderer.h"
 
+#import "EffectiveRateChangedListener.h"
 #import "IOSurface.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
@@ -53,6 +54,13 @@
 - (void)resetUpcomingSampleBufferPresentationTimeExpectations;
 @end
 
+// Equivalent to WTF_DECLARE_CF_TYPE_TRAIT(CMSampleBuffer);
+// Needed due to requirement of specifying the PAL namespace.
+template <>
+struct WTF::CFTypeTrait<CMSampleBufferRef> {
+    static inline CFTypeID typeID(void) { return PAL::CMSampleBufferGetTypeID(); }
+};
+
 namespace WebCore {
 
 static constexpr CMItemCount SampleQueueHighWaterMark = 30;
@@ -67,6 +75,63 @@ static bool isRendererThreadSafe(WebSampleBufferVideoRendering *renderering)
 #else
     return false;
 #endif
+}
+
+static CMTime getDecodeTime(CMBufferRef buf, void*)
+{
+    CMSampleBufferRef sample = checked_cf_cast<CMSampleBufferRef>(buf);
+    return PAL::CMSampleBufferGetDecodeTimeStamp(sample);
+}
+
+static CMTime getPresentationTime(CMBufferRef buf, void*)
+{
+    CMSampleBufferRef sample = checked_cf_cast<CMSampleBufferRef>(buf);
+    return PAL::CMSampleBufferGetPresentationTimeStamp(sample);
+}
+
+static CMTime getDuration(CMBufferRef buf, void*)
+{
+    CMSampleBufferRef sample = checked_cf_cast<CMSampleBufferRef>(buf);
+    return PAL::CMSampleBufferGetDuration(sample);
+}
+
+static CFComparisonResult compareBuffers(CMBufferRef buf1, CMBufferRef buf2, void* refcon)
+{
+    return (CFComparisonResult)PAL::CMTimeCompare(getPresentationTime(buf1, refcon), getPresentationTime(buf2, refcon));
+}
+
+static RetainPtr<CMBufferQueueRef> createBufferQueue()
+{
+    // CMBufferCallbacks contains 64-bit pointers that aren't 8-byte aligned. To suppress the linker
+    // warning about this, we prepend 4 bytes of padding when building.
+    const size_t padSize = 4;
+
+#pragma pack(push, 4)
+    struct BufferCallbacks {
+        uint8_t pad[padSize];
+        CMBufferCallbacks callbacks;
+    } callbacks {
+        { }, {
+            0,
+            nullptr,
+            &getDecodeTime,
+            &getPresentationTime,
+            &getDuration,
+            nullptr,
+            &compareBuffers,
+            nullptr,
+            nullptr,
+        }
+    };
+#pragma pack(pop)
+    static_assert(sizeof(callbacks.callbacks.version) == sizeof(uint32_t), "Version field must be 4 bytes");
+    static_assert(alignof(BufferCallbacks) == 4, "CMBufferCallbacks struct must have 4 byte alignment");
+
+    static const CMItemCount kMaximumCapacity = 120;
+
+    CMBufferQueueRef outQueue { nullptr };
+    PAL::CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
+    return adoptCF(outQueue);
 }
 
 VideoMediaSampleRenderer::VideoMediaSampleRenderer(WebSampleBufferVideoRendering *renderer)
@@ -232,6 +297,17 @@ void VideoMediaSampleRenderer::setTimebase(RetainPtr<CMTimebaseRef>&& timebase)
     });
     dispatch_activate(timerSource.get());
     PAL::CMTimebaseAddTimerDispatchSource(timebase.get(), timerSource.get());
+    m_effectiveRateChangedListener = EffectiveRateChangedListener::create([weakThis = ThreadSafeWeakPtr { *this }, dispatcher = dispatcher()] {
+        dispatcher->dispatch([weakThis] {
+            if (RefPtr protectedThis = weakThis.get()) {
+                RetainPtr timebase = protectedThis->timebase();
+                if (!timebase)
+                    return;
+                if (PAL::CMTimebaseGetRate(timebase.get()))
+                    protectedThis->purgeDecodedSampleQueueAndDisplay(protectedThis->m_flushId);
+            }
+        });
+    }, timebase.get());
     m_timebaseAndTimerSource = { WTFMove(timebase), WTFMove(timerSource) };
 }
 
@@ -245,6 +321,7 @@ void VideoMediaSampleRenderer::clearTimebase()
 
     PAL::CMTimebaseRemoveTimerDispatchSource(timebase.get(), timerSource.get());
     dispatch_source_cancel(timerSource.get());
+    m_effectiveRateChangedListener = nullptr;
 }
 
 VideoMediaSampleRenderer::TimebaseAndTimerSource VideoMediaSampleRenderer::timebaseAndTimerSource() const
@@ -417,7 +494,7 @@ void VideoMediaSampleRenderer::initializeDecompressionSession()
     if (m_decompressionSession)
         return;
 
-    m_decodedSampleQueue = WebCoreDecompressionSession::createBufferQueue();
+    m_decodedSampleQueue = createBufferQueue();
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
 
     m_startupTime = MonotonicTime::now();
@@ -742,7 +819,7 @@ auto VideoMediaSampleRenderer::copyDisplayedPixelBuffer() -> DisplayedPixelBuffe
         CMTime currentTime = PAL::CMTimebaseGetTime(timebase.get());
         CMTime presentationTime = PAL::CMSampleBufferGetOutputPresentationTimeStamp(nextSample.get());
 
-        if (PAL::CMTimeCompare(presentationTime, currentTime) > 0)
+        if (PAL::CMTimeCompare(presentationTime, currentTime) > 0 && (!m_lastDisplayedSample || PAL::CMTimeCompare(presentationTime, *m_lastDisplayedSample) > 0))
             return;
 
         imageBuffer = (CVPixelBufferRef)PAL::CMSampleBufferGetImageBuffer(nextSample.get());
@@ -867,7 +944,7 @@ Ref<GuaranteedSerialFunctionDispatcher> VideoMediaSampleRenderer::dispatcher() c
 
 dispatch_queue_t VideoMediaSampleRenderer::dispatchQueue() const
 {
-    return m_workQueue ? m_workQueue->dispatchQueue() : WorkQueue::main().dispatchQueue();
+    return m_workQueue ? m_workQueue->dispatchQueue() : WorkQueue::protectedMain()->dispatchQueue();
 }
 
 void VideoMediaSampleRenderer::ensureOnDispatcher(Function<void()>&& function) const

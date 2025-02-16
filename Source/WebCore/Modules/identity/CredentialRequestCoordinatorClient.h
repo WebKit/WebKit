@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,16 +27,14 @@
 
 #if ENABLE(WEB_AUTHN)
 
-#include "CredentialRequestCoordinator.h"
-#include "ExceptionData.h"
 #include <wtf/CompletionHandler.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-struct DigitalCredentialRequestOptions;
-class LocalFrame;
-
-using DigitalCredentialRequestCompletionHandler = CompletionHandler<void(WebCore::ExceptionData&&)>;
+struct ExceptionData;
+struct DigitalCredentialsResponseData;
+struct DigitalCredentialsRequestData;
 
 class CredentialRequestCoordinatorClient {
     WTF_MAKE_TZONE_ALLOCATED(CredentialRequestCoordinatorClient);
@@ -45,9 +43,8 @@ class CredentialRequestCoordinatorClient {
 public:
     CredentialRequestCoordinatorClient() = default;
     virtual ~CredentialRequestCoordinatorClient() = default;
-
-    virtual void requestDigitalCredential(const LocalFrame&, const DigitalCredentialRequestOptions&, DigitalCredentialRequestCompletionHandler&&) = 0;
-    virtual void cancel(CompletionHandler<void()>&&) = 0;
+    virtual void showDigitalCredentialsPicker(const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&&) = 0;
+    virtual void dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&&) = 0;
 };
 
 } // namespace WebCore

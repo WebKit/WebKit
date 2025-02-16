@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <script src="video-test.js"></script>
+        <script>
+            async function start()
+            {
+                findMediaElement();
+
+                waitForEvent('canplay');
+                waitForEvent('seeking');
+                waitForEvent('seeked');
+                video.src = 'content/test-vp8-singlekeyframe.webm';
+                await waitFor(video, "canplay", true);
+                video.currentTime = 1;
+                await waitFor(video, "seeked", true);
+                video.currentTime = 0;
+                await waitFor(video, "seeked", true);
+                endTest();
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test that we can seek within a file containing a single keyframe (which starts with two frames having the same timestamp).</p>
+        <video controls></video>
+    </body>
+</html>

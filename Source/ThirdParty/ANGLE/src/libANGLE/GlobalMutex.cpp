@@ -8,6 +8,7 @@
 #include "libANGLE/GlobalMutex.h"
 
 #include <atomic>
+#include <type_traits>
 
 #include "common/debug.h"
 #include "common/system_utils.h"

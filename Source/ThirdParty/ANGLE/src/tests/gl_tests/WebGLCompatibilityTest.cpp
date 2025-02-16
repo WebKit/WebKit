@@ -1570,36 +1570,39 @@ void main()
 
     glEnableVertexAttribArray(posLocation);
 
-    const uint8_t *zeroOffset = nullptr;
-
     // Test touching the last element is valid.
-    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 12);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(12));
     glDrawArrays(GL_POINTS, 0, 4);
     ASSERT_GL_NO_ERROR();
 
     // Test touching the last element + 1 is invalid.
-    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 13);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(13));
     glDrawArrays(GL_POINTS, 0, 4);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Test touching the last element is valid, using a stride.
-    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2, zeroOffset + 9);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2,
+                          reinterpret_cast<const void *>(9));
     glDrawArrays(GL_POINTS, 0, 4);
     ASSERT_GL_NO_ERROR();
 
     // Test touching the last element + 1 is invalid, using a stride.
-    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2, zeroOffset + 10);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2,
+                          reinterpret_cast<const void *>(10));
     glDrawArrays(GL_POINTS, 0, 4);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Test any offset is valid if no vertices are drawn.
-    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 32);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(32));
     glDrawArrays(GL_POINTS, 0, 0);
     ASSERT_GL_NO_ERROR();
 
     // Test a case of overflow that could give a max vertex that's negative
     constexpr GLint kIntMax = std::numeric_limits<GLint>::max();
-    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 0);
+    glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, nullptr);
     glDrawArrays(GL_POINTS, kIntMax, kIntMax);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
@@ -1701,35 +1704,39 @@ void main()
     glEnableVertexAttribArray(wLocation);
     glVertexAttribDivisor(wLocation, 1);
 
-    const uint8_t *zeroOffset = nullptr;
-
     // Test touching the last element is valid.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 12);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(12));
     glDrawArraysInstanced(GL_POINTS, 0, 1, 4);
     ASSERT_GL_NO_ERROR();
 
     // Test touching the last element + 1 is invalid.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 13);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(13));
     glDrawArraysInstanced(GL_POINTS, 0, 1, 4);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Test touching the last element is valid, using a stride.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2, zeroOffset + 9);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2,
+                          reinterpret_cast<const void *>(9));
     glDrawArraysInstanced(GL_POINTS, 0, 1, 4);
     ASSERT_GL_NO_ERROR();
 
     // Test touching the last element + 1 is invalid, using a stride.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2, zeroOffset + 10);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2,
+                          reinterpret_cast<const void *>(10));
     glDrawArraysInstanced(GL_POINTS, 0, 1, 4);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Test any offset is valid if no vertices are drawn.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 32);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(32));
     glDrawArraysInstanced(GL_POINTS, 0, 0, 1);
     ASSERT_GL_NO_ERROR();
 
     // Test any offset is valid if no primitives are drawn.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 32);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(32));
     glDrawArraysInstanced(GL_POINTS, 0, 1, 0);
     ASSERT_GL_NO_ERROR();
 }
@@ -1767,35 +1774,39 @@ void main()
     glEnableVertexAttribArray(wLocation);
     glVertexAttribDivisorANGLE(wLocation, 1);
 
-    const uint8_t *zeroOffset = nullptr;
-
     // Test touching the last element is valid.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 12);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(12));
     glDrawArraysInstancedANGLE(GL_POINTS, 0, 1, 4);
     ASSERT_GL_NO_ERROR() << "touching the last element.";
 
     // Test touching the last element + 1 is invalid.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 13);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(13));
     glDrawArraysInstancedANGLE(GL_POINTS, 0, 1, 4);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "touching the last element + 1.";
 
     // Test touching the last element is valid, using a stride.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2, zeroOffset + 9);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2,
+                          reinterpret_cast<const void *>(9));
     glDrawArraysInstancedANGLE(GL_POINTS, 0, 1, 4);
     ASSERT_GL_NO_ERROR() << "touching the last element using a stride.";
 
     // Test touching the last element + 1 is invalid, using a stride.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2, zeroOffset + 10);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 2,
+                          reinterpret_cast<const void *>(10));
     glDrawArraysInstancedANGLE(GL_POINTS, 0, 1, 4);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION) << "touching the last element + 1 using a stride.";
 
     // Test any offset is valid if no vertices are drawn.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 32);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(32));
     glDrawArraysInstancedANGLE(GL_POINTS, 0, 0, 1);
     ASSERT_GL_NO_ERROR() << "any offset with no vertices.";
 
     // Test any offset is valid if no primitives are drawn.
-    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, zeroOffset + 32);
+    glVertexAttribPointer(wLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0,
+                          reinterpret_cast<const void *>(32));
     glDrawArraysInstancedANGLE(GL_POINTS, 0, 1, 0);
     ASSERT_GL_NO_ERROR() << "any offset with primitives.";
 }
@@ -1822,7 +1833,6 @@ void main()
     glEnableVertexAttribArray(posLocation);
     glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, nullptr);
 
-    const uint8_t *zeroOffset   = nullptr;
     const uint8_t zeroIndices[] = {0, 0, 0, 0, 0, 0, 0, 0};
 
     GLBuffer indexBuffer;
@@ -1831,25 +1841,26 @@ void main()
     ASSERT_GL_NO_ERROR();
 
     // Test touching the last index is valid
-    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, zeroOffset + 4);
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(4));
     ASSERT_GL_NO_ERROR();
 
     // Test touching the last + 1 element is invalid
-    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, zeroOffset + 5);
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(5));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Test any offset if valid if count is zero
-    glDrawElements(GL_POINTS, 0, GL_UNSIGNED_BYTE, zeroOffset + 42);
+    glDrawElements(GL_POINTS, 0, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(42));
     ASSERT_GL_NO_ERROR();
 
     // Test touching the first index is valid
-    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, zeroOffset + 4);
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(4));
     ASSERT_GL_NO_ERROR();
 
     // Test touching the first - 1 index is invalid
     // The error ha been specified to be INVALID_VALUE instead of INVALID_OPERATION because it was
     // the historic behavior of WebGL implementations
-    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE, zeroOffset - 1);
+    glDrawElements(GL_POINTS, 4, GL_UNSIGNED_BYTE,
+                   reinterpret_cast<const void *>(static_cast<ptrdiff_t>(0) - 1));
     EXPECT_GL_ERROR(GL_INVALID_VALUE);
 }
 
@@ -1875,7 +1886,6 @@ void main()
     glEnableVertexAttribArray(posLocation);
     glVertexAttribPointer(posLocation, 1, GL_UNSIGNED_BYTE, GL_FALSE, 0, nullptr);
 
-    const uint8_t *zeroOffset   = nullptr;
     const uint8_t testIndices[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 255};
 
     GLBuffer indexBuffer;
@@ -1884,19 +1894,19 @@ void main()
     ASSERT_GL_NO_ERROR();
 
     // Test touching the end of the vertex buffer is valid
-    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_BYTE, zeroOffset + 7);
+    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(7));
     ASSERT_GL_NO_ERROR();
 
     // Test touching just after the end of the vertex buffer is invalid
-    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_BYTE, zeroOffset + 8);
+    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(8));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Test touching the whole vertex buffer is valid
-    glDrawElements(GL_POINTS, 8, GL_UNSIGNED_BYTE, zeroOffset + 0);
+    glDrawElements(GL_POINTS, 8, GL_UNSIGNED_BYTE, nullptr);
     ASSERT_GL_NO_ERROR();
 
     // Test an index that would be negative
-    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_BYTE, zeroOffset + 9);
+    glDrawElements(GL_POINTS, 1, GL_UNSIGNED_BYTE, reinterpret_cast<const void *>(9));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
@@ -2622,15 +2632,13 @@ void main()
 
     ASSERT_GL_NO_ERROR();
 
-    const char *zeroIndices = nullptr;
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, zeroIndices);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
     ASSERT_GL_NO_ERROR();
 
-    glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, zeroIndices);
+    glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, nullptr);
     ASSERT_GL_NO_ERROR();
 
-    glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, zeroIndices + 1);
+    glDrawElements(GL_TRIANGLES, 4, GL_UNSIGNED_SHORT, reinterpret_cast<const void *>(1));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
@@ -2638,26 +2646,24 @@ void main()
 // size
 TEST_P(WebGLCompatibilityTest, VertexAttribPointerOffsetRestriction)
 {
-    const char *zeroOffset = nullptr;
-
     // Base case, vector of two floats
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, zeroOffset);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
     ASSERT_GL_NO_ERROR();
 
     // Test setting a non-multiple offset
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, zeroOffset + 1);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const void *>(1));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, zeroOffset + 2);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const void *>(2));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, zeroOffset + 3);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, reinterpret_cast<const void *>(3));
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 
     // Test setting a non-multiple stride
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 1, zeroOffset);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 1, nullptr);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2, zeroOffset);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2, nullptr);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 3, zeroOffset);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 3, nullptr);
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 

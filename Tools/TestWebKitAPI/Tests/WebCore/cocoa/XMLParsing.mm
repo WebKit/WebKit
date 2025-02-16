@@ -30,7 +30,12 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/ParserContentPolicy.h>
 #include <WebCore/ProcessIdentifier.h>
+// FIXME (286277): Stop ignoring -Wundef and -Wdeprecated-declarations in code that imports libxml and libxslt headers
+IGNORE_WARNINGS_BEGIN("deprecated-declarations")
+IGNORE_WARNINGS_BEGIN("undef")
 #include <libxml/parser.h>
+IGNORE_WARNINGS_END
+IGNORE_WARNINGS_END
 
 namespace TestWebKitAPI {
 

@@ -46,8 +46,6 @@ struct OpenRequest: Equatable {
 @Observable
 @MainActor
 final class BrowserViewModel {
-    typealias WebPage = WebPage_v0
-
     private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: String(describing: BrowserViewModel.self))
 
     private static func decideSensorAuthorization(permission: WebPage.DeviceSensorAuthorization.Permission, frame: WebPage.FrameInfo, origin: WKSecurityOrigin) async -> WKPermissionDecision {

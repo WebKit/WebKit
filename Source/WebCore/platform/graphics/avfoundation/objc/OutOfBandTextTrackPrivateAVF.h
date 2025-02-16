@@ -56,11 +56,17 @@ protected:
         , m_mediaSelectionOption(selection)
     {
     }
+
+    bool isOutOfBandTextTrackPrivateAVF() const final { return true; }
     
     RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
 };
     
 }
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::OutOfBandTextTrackPrivateAVF)
+static bool isType(const WebCore::InbandTextTrackPrivateAVF& track) { return track.isOutOfBandTextTrackPrivateAVF(); }
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif
 

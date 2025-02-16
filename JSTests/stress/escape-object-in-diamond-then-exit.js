@@ -23,7 +23,7 @@ function validateEscape(when) {
     global = null;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var escape = !!(i & 1);
     var result = foo(escape, 42);
     if (result != 42 + 42 + 1)

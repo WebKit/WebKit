@@ -21,7 +21,7 @@ function foo(a) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     for (let i = 0; i < tests.length; i++) {
         let test = tests[i][0];
         let result = tests[i][1];

@@ -33,6 +33,8 @@
 #include <thread>
 #include <vector>
 #include <wtf/MainThread.h>
+#include <wtf/Vector.h>
+#include <wtf/text/CString.h>
 
 static int failuresFound = 0;
 
@@ -53,7 +55,9 @@ void startMultithreadedMultiVMExecutionTest()
 
 #define CHECK(condition, threadNumber, count, message) do { \
         if (!condition) { \
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN \
             printf("FAIL: MultithreadedMultiVMExecutionTest: %d %d %s\n", threadNumber, count, message); \
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END \
             failuresFound++; \
         } \
     } while (false)
@@ -82,12 +86,9 @@ void startMultithreadedMultiVMExecutionTest()
             if (exception) {
                 JSStringRef string = JSValueToStringCopy(context, exception, nullptr);
                 if (string) {
-                    std::vector<char> buffer;
-                    buffer.resize(JSStringGetMaximumUTF8CStringSize(string));
+                    Vector<char> buffer(JSStringGetMaximumUTF8CStringSize(string));
                     JSStringGetUTF8CString(string, buffer.data(), buffer.size());
-IGNORE_GCC_WARNINGS_BEGIN("format-overflow")
-                    printf("FAIL: MultithreadedMultiVMExecutionTest: %d %d %s\n", threadNumber, i, buffer.data());
-IGNORE_GCC_WARNINGS_END
+                    SAFE_PRINTF("FAIL: MultithreadedMultiVMExecutionTest: %d %d %s\n", threadNumber, i, CString(buffer.span()));
                     JSStringRelease(string);
                 } else
                     printf("FAIL: MultithreadedMultiVMExecutionTest: %d %d stringifying exception failed\n", threadNumber, i);
@@ -112,6 +113,6 @@ int finalizeMultithreadedMultiVMExecutionTest()
     for (auto& thread : threads)
         thread.join();
 
-    printf("%s: MultithreadedMultiVMExecutionTest\n", failuresFound ? "FAIL" : "PASS");
+    SAFE_PRINTF("%s: MultithreadedMultiVMExecutionTest\n", failuresFound ? "FAIL"_s : "PASS"_s);
     return (failuresFound > 0);
 }

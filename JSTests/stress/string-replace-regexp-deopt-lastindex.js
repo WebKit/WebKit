@@ -5,7 +5,7 @@ function shouldBe(actual, expected) {
 
 let count = 0;
 function foo() {
-    for (let i = 0; i < 1e6; ++i) {
+    for (let i = 0; i < testLoopCount; ++i) {
         let r = /abcd/;
         regexLastIndex = {};
         regexLastIndex.toString = function () {
@@ -19,4 +19,4 @@ function foo() {
 
 foo();
 
-shouldBe(count, 1e6);
+shouldBe(count, testLoopCount);

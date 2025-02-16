@@ -253,11 +253,12 @@ ExceptionOr<void> Location::replace(LocalDOMWindow& activeWindow, LocalDOMWindow
     if (!completedURL.isValid())
         return Exception { ExceptionCode::SyntaxError };
 
-    if (!activeWindow.document()->canNavigate(frame.get(), completedURL))
+    auto canNavigateState = activeWindow.document()->canNavigate(frame.get(), completedURL);
+    if (canNavigateState == CanNavigateState::Unable)
         return Exception { ExceptionCode::SecurityError };
 
     // We call LocalDOMWindow::setLocation directly here because replace() always operates on the current frame.
-    frame->window()->setLocation(activeWindow, completedURL, NavigationHistoryBehavior::Replace, SetLocationLocking::LockHistoryAndBackForwardList);
+    frame->window()->setLocation(activeWindow, completedURL, NavigationHistoryBehavior::Replace, SetLocationLocking::LockHistoryAndBackForwardList, canNavigateState);
     return { };
 }
 
@@ -303,7 +304,8 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
     if (!completedURL.isValid())
         return Exception { ExceptionCode::SyntaxError, "Invalid URL"_s };
 
-    if (!incumbentWindow.document()->canNavigate(frame.get(), completedURL))
+    auto canNavigateState = incumbentWindow.document()->canNavigate(frame.get(), completedURL);
+    if (canNavigateState == CanNavigateState::Unable)
         return Exception { ExceptionCode::SecurityError };
 
     // https://html.spec.whatwg.org/multipage/nav-history-apis.html#the-location-interface:location-object-navigate
@@ -312,7 +314,7 @@ ExceptionOr<void> Location::setLocation(LocalDOMWindow& incumbentWindow, LocalDO
         historyHandling = NavigationHistoryBehavior::Replace;
 
     ASSERT(frame->window());
-    frame->window()->setLocation(incumbentWindow, completedURL, historyHandling);
+    frame->window()->setLocation(incumbentWindow, completedURL, historyHandling, SetLocationLocking::LockHistoryBasedOnGestureState, canNavigateState);
     return { };
 }
 

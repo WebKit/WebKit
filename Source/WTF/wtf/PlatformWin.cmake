@@ -17,6 +17,7 @@ list(APPEND WTF_SOURCES
     win/RunLoopWin.cpp
     win/SignalsWin.cpp
     win/ThreadingWin.cpp
+    win/WTFCRTDebug.cpp
     win/Win32Handle.cpp
 )
 
@@ -27,6 +28,7 @@ list(APPEND WTF_PUBLIC_HEADERS
     win/GDIObject.h
     win/PathWalker.h
     win/SoftLinking.h
+    win/WTFCRTDebug.h
     win/Win32Handle.h
 )
 

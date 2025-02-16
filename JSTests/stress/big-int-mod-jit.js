@@ -10,7 +10,7 @@ function bigIntMod(x, y) {
 }
 noInline(bigIntMod);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntMod(30n, 10n);
     assert.sameValue(r, 0n, 30n + " % " + 10n + " = " + r);
 }
@@ -21,7 +21,7 @@ function bigIntModFolding(x, y) {
 }
 noInline(bigIntModFolding);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntModFolding(10, 30);
     assert.sameValue(r, -10, "[Number] -(" + 10 + " % " + 30 + ") = " + r);
 }

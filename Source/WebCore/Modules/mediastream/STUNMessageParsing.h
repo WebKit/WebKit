@@ -41,7 +41,7 @@ struct STUNMessageLengths {
 WEBCORE_EXPORT std::optional<STUNMessageLengths> getSTUNOrTURNMessageLengths(std::span<const uint8_t>);
 
 enum class MessageType { STUN, Data };
-WEBCORE_EXPORT Vector<uint8_t> extractMessages(Vector<uint8_t>&&, MessageType, const Function<void(std::span<const uint8_t> data)>&);
+WEBCORE_EXPORT Vector<uint8_t> extractMessages(Vector<uint8_t>&&, MessageType, NOESCAPE const Function<void(std::span<const uint8_t> data)>&);
 
 } // namespace WebRTC
 } // namespace WebCore

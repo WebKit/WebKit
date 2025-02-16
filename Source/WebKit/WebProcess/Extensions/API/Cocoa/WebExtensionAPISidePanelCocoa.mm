@@ -54,10 +54,10 @@ static ParseResult parseTabIdentifier(NSDictionary *options)
 
     if ([maybeTabId isKindOfClass:NSNumber.class]) {
         auto tabId = toWebExtensionTabIdentifier(((NSNumber *) maybeTabId).doubleValue);
-        return isValid(tabId) ? ParseResult(tabId.value()) : ParseResult(toErrorString(nil, @"options", @"'tabId' is invalid"));
+        return isValid(tabId) ? ParseResult(tabId.value()) : ParseResult(toErrorString(nullString(), @"options", @"'tabId' is invalid"));
     }
 
-    return toErrorString(nil, @"options", @"'tabId' must be a number");
+    return toErrorString(nullString(), @"options", @"'tabId' must be a number");
 }
 
 static ParseResult parseWindowIdentifier(NSDictionary *options)
@@ -69,10 +69,10 @@ static ParseResult parseWindowIdentifier(NSDictionary *options)
 
     if ([maybeWindowId isKindOfClass:NSNumber.class]) {
         auto windowId = toWebExtensionWindowIdentifier(((NSNumber *) maybeWindowId).doubleValue);
-        return isValid(windowId) ? ParseResult(windowId.value()) : ParseResult(toErrorString(nil, @"options", @"'windowId' is invalid"));
+        return isValid(windowId) ? ParseResult(windowId.value()) : ParseResult(toErrorString(nullString(), @"options", @"'windowId' is invalid"));
     }
 
-    return toErrorString(nil, @"options", @"'windowId' must be a number");
+    return toErrorString(nullString(), @"options", @"'windowId' must be a number");
 }
 
 static std::variant<WebExtensionActionClickBehavior, SidebarError> parseActionClickBehavior(NSDictionary *behavior)
@@ -215,7 +215,7 @@ void WebExtensionAPISidePanel::open(NSDictionary *options, Ref<WebExtensionCallb
     auto windowId = toOptional<WebExtensionWindowIdentifier>(windowResult);
 
     if (!windowId && !tabId) {
-        *outExceptionString = toErrorString(nil, @"details", @"it must specify at least one of 'tabId' or 'windowId'");
+        *outExceptionString = toErrorString(nullString(), @"details", @"it must specify at least one of 'tabId' or 'windowId'");
         return;
     }
 

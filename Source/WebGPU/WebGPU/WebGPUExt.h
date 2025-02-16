@@ -161,6 +161,8 @@ WGPU_EXPORT void wgpuDeviceClearUncapturedErrorCallback(WGPUDevice device) WGPU_
 
 #endif  // !defined(WGPU_SKIP_DECLARATIONS)
 
+WGPU_EXPORT String wgpuAdapterFeatureName(WGPUFeatureName feature) WGPU_FUNCTION_ATTRIBUTE;
+
 // Current Swift-C++ encapsulation rules prevent Swift from accessing non-public data members,
 // even in extensions. When building WebGPU, use these macros to allow our Swift module to break
 // encapsulation.

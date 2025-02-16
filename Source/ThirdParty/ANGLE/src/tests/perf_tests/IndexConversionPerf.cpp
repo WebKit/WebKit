@@ -177,7 +177,7 @@ void IndexConversionPerfTest::drawIndexRange()
     for (unsigned int it = 0; it < params.iterationsPerStep; it++)
     {
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indexCount), GL_UNSIGNED_SHORT,
-                       reinterpret_cast<void *>(offset));
+                       reinterpret_cast<void *>(offset * sizeof(GLushort)));
     }
 
     ASSERT_GL_NO_ERROR();

@@ -29,13 +29,13 @@
 #import "WebCoreJITOperations.h"
 #import "WebCoreObjCExtras.h"
 #import <JavaScriptCore/InitializeThreading.h>
-#import <pal/cf/CoreMediaSoftLink.h>
 #import <string.h>
 #import <wtf/MainThread.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#import <pal/cf/CoreMediaSoftLink.h>
 
 @interface WebCoreSharedBufferData : NSData
 - (instancetype)initWithDataSegment:(const WebCore::DataSegment&)dataSegment position:(NSUInteger)position size:(NSUInteger)size;
@@ -84,7 +84,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 - (const void *)bytes
 {
-    return _dataSegment->span().subspan(_position).data();
+    return Ref { *_dataSegment }->span().subspan(_position).data();
 }
 
 @end
@@ -175,10 +175,10 @@ RetainPtr<NSData> DataSegment::createNSData() const
     return adoptNS([[WebCoreSharedBufferData alloc] initWithDataSegment:*this position:0 size:size()]);
 }
 
-void DataSegment::iterate(CFDataRef data, const Function<void(std::span<const uint8_t>)>& apply) const
+void DataSegment::iterate(CFDataRef data, NOESCAPE const Function<void(std::span<const uint8_t>)>& apply) const
 {
     [(__bridge NSData *)data enumerateByteRangesUsingBlock:^(const void *bytes, NSRange byteRange, BOOL *) {
-        apply({ static_cast<const uint8_t*>(bytes), byteRange.length });
+        apply(unsafeMakeSpan(static_cast<const uint8_t*>(bytes), byteRange.length));
     }];
 }
 
@@ -188,5 +188,3 @@ RetainPtr<NSData> SharedBufferDataView::createNSData() const
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

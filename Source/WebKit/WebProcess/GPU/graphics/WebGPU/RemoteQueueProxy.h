@@ -28,6 +28,7 @@
 #if ENABLE(GPU_PROCESS)
 
 #include "RemoteAdapterProxy.h"
+#include "RemoteVideoFrameObjectHeapProxy.h"
 #include "WebGPUIdentifier.h"
 #include <WebCore/WebGPUQueue.h>
 #include <wtf/TZoneMalloc.h>
@@ -109,10 +110,17 @@ private:
         const WebCore::WebGPU::Extent3D& copySize) final;
 
     void setLabelInternal(const String&) final;
+#if ENABLE(VIDEO)
+    RefPtr<RemoteVideoFrameObjectHeapProxy> protectedVideoFrameObjectHeapProxy() const;
+#endif
+    RefPtr<WebCore::NativeImage> getNativeImage(WebCore::VideoFrame&) final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteAdapterProxy> m_parent;
+#if ENABLE(VIDEO)
+    RefPtr<RemoteVideoFrameObjectHeapProxy> m_videoFrameObjectHeapProxy;
+#endif
 };
 
 } // namespace WebKit::WebGPU

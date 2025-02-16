@@ -215,6 +215,9 @@ WK_EXPORT void WKContextSetCustomWebContentServiceBundleIdentifier(WKContextRef 
 
 WK_EXPORT void WKContextClearMockGamepadsForTesting(WKContextRef contextRef);
 
+typedef void (*WKContextSetResourceMonitorURLsFunction)(void* functionContext);
+WK_EXPORT void WKContextSetResourceMonitorURLsForTesting(WKContextRef contextRef, WKStringRef rulesText, void* context, WKContextSetResourceMonitorURLsFunction callback);
+
 #ifdef __cplusplus
 }
 #endif

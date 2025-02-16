@@ -24,6 +24,7 @@
 
 #include "CSSPropertyParser.h"
 #include "CSSRule.h"
+#include "CSSSerializationContext.h"
 #include "CSSStyleSheet.h"
 #include "Document.h"
 #include "DocumentInlines.h"
@@ -81,7 +82,7 @@ String PropertySetCSSStyleDeclaration::item(unsigned i) const
 
 String PropertySetCSSStyleDeclaration::cssText() const
 {
-    return m_propertySet->asText();
+    return m_propertySet->asText(CSS::defaultSerializationContext());
 }
 
 ExceptionOr<void> PropertySetCSSStyleDeclaration::setCssText(const String& text)

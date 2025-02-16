@@ -3407,6 +3407,16 @@ public:
         roundFP<64, RISCV64Assembler::FPRoundingMode::RDN>(src, dest);
     }
 
+    void truncDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        roundTowardZeroDouble(src, dst);
+    }
+
+    void truncFloat(FPRegisterID src, FPRegisterID dst)
+    {
+        roundTowardZeroFloat(src, dst);
+    }
+
     void roundTowardNearestIntFloat(FPRegisterID src, FPRegisterID dest)
     {
         roundFP<32, RISCV64Assembler::FPRoundingMode::RNE>(src, dest);

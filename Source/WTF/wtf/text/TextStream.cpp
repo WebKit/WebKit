@@ -108,18 +108,24 @@ TextStream& TextStream::operator<<(double d)
 
 TextStream& TextStream::operator<<(const char* string)
 {
-    m_text.append(span(string));
+    m_text.append(unsafeSpan(string));
     return *this;
 }
 
 TextStream& TextStream::operator<<(const void* p)
 {
     char buffer[printBufferSize];
-    snprintf(buffer, sizeof(buffer) - 1, "%p", p);
+    SAFE_SPRINTF(std::span { buffer }, "%p", p);
     return *this << buffer;
 }
 
 TextStream& TextStream::operator<<(const AtomString& string)
+{
+    m_text.append(string);
+    return *this;
+}
+
+TextStream& TextStream::operator<<(const CString& string)
 {
     m_text.append(string);
     return *this;

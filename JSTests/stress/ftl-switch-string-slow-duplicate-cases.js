@@ -21,7 +21,7 @@ function cat(a, b) {
     return a + b;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(cat("16-", "bit"));
     if (result != 43)
         throw "Error: bad result (1): " + result;

@@ -26,8 +26,6 @@
 
 #pragma once
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 #include "WebDateTimePicker.h"
 #include <WebCore/DateComponents.h>
 #include <WebCore/DateTimeChooserParameters.h>
@@ -57,5 +55,3 @@ private:
 };
 
 } // namespace WebKit
-
-#endif // ENABLE(DATE_AND_TIME_INPUT_TYPES)

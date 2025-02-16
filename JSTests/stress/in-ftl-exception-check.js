@@ -9,7 +9,7 @@ function bar(a) {
 }
 noInline(bar);
 
-for (let i = 0; i < 1000000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (foo({}))
         throw new Error("bad");
 }

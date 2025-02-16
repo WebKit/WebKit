@@ -2,11 +2,15 @@ Tests for animation frame event breakpoint functionality (DOMDebugger) in a Work
 
 
 == Running test suite: Worker.DOMDebugger.EventBreakpoint.AnimationFrame
--- Running test case: Worker.DOMDebugger.EventBreakpoint.AnimationFrame.setEventBreakpoint
-PASS: Should produce an exception.
-Error: Not supported
-
--- Running test case: Worker.DOMDebugger.EventBreakpoint.AnimationFrame.removeEventBreakpoint
-PASS: Should produce an exception.
-Error: Not supported
+-- Running test case: Worker.DOMDebugger.EventBreakpoint.AnimationFrame.Basic
+PASS: Should have paused.
+PASS: Pause reason should have been AnimationFrame.
+CALL STACK:
+0: [F] animationFrame
+ASYNC CALL STACK:
+1: --- requestAnimationFrame ---
+2: [F] triggerAnimationFrame
+3: [F] handleMessage
+4: --- addEventListener ---
+5: [P] Global Code
 

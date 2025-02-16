@@ -26,7 +26,7 @@ async function test() {
     let jsModule = { foo };
     const instance = await instantiate(wat, { jsModule }, { exceptions: true });
     const { bar } = instance.exports;
-    for (let i = 0; i < 10000; i ++)
+    for (let i = 0; i < wasmTestLoopCount; i ++)
         bar();
 }
 

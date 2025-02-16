@@ -71,6 +71,7 @@ private:
 
     void willBeDestroyed() final;
     void willDoProgrammaticScroll(const FloatPoint&) final;
+    bool isScrollingTreeFrameScrollingNodeMac() const final { return true; };
 
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;
     void repositionScrollingLayers() final WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
@@ -87,5 +88,9 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ScrollingTreeFrameScrollingNodeMac) \
+    static bool isType(const WebCore::ScrollingTreeFrameScrollingNode& node) { return node.isScrollingTreeFrameScrollingNodeMac(); } \
+SPECIALIZE_TYPE_TRAITS_END()
 
 #endif // ENABLE(ASYNC_SCROLLING) && PLATFORM(MAC)

@@ -46,7 +46,7 @@ public:
     const String& imageSizes() const { return m_imageSizes; }
     const String& nonce() const { return m_nonce; }
     const String& referrerPolicy() const { return m_referrerPolicy; }
-    const String& fetchPriorityHint() const { return m_fetchPriorityHint; }
+    const String& fetchPriority() const { return m_fetchPriority; }
     bool valid() const { return m_isValid; }
     bool isViewportDependent() const { return !media().isEmpty() || !imageSrcSet().isEmpty() || !imageSizes().isEmpty(); }
 
@@ -82,7 +82,7 @@ private:
     String m_imageSizes;
     String m_nonce;
     String m_referrerPolicy;
-    String m_fetchPriorityHint;
+    String m_fetchPriority;
     bool m_isValid { true };
 };
 

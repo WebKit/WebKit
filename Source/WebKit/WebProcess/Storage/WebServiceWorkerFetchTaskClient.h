@@ -90,7 +90,7 @@ private:
         void didFail(const WebCore::ResourceError& error) final { client->didFail(error); }
         void didSucceed(const WebCore::NetworkLoadMetrics&) final { client->didFinishBlobLoading(); }
 
-        Ref<WebServiceWorkerFetchTaskClient> client;
+        const Ref<WebServiceWorkerFetchTaskClient> client;
         std::unique_ptr<WebCore::FetchLoader> loader;
     };
 

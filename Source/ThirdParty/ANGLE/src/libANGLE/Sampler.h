@@ -71,7 +71,7 @@ class Sampler final : public RefCountObject<SamplerID>, public LabeledObject, pu
     void setBorderColor(const Context *context, const ColorGeneric &color);
     const ColorGeneric &getBorderColor() const;
 
-    const SamplerState &getSamplerState() const;
+    const SamplerState &getSamplerState() const { return mState; }
 
     rx::SamplerImpl *getImplementation() const;
 

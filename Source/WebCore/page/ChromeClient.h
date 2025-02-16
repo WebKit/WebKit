@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2023 Apple, Inc. All rights reserved.
+ * Copyright (C) 2006-2025 Apple, Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
  *
@@ -25,8 +25,11 @@
 #include "ContactInfo.h"
 #include "DatabaseDetails.h"
 #include "DeviceOrientationOrMotionPermissionState.h"
+#include "DigitalCredentialsRequestData.h"
+#include "DigitalCredentialsResponseData.h"
 #include "DisabledAdaptations.h"
 #include "DocumentStorageAccess.h"
+#include "ExceptionData.h"
 #include "FocusDirection.h"
 #include "HTMLMediaElementEnums.h"
 #include "HighlightVisibility.h"
@@ -156,6 +159,8 @@ enum class TextAnimationRunMode : uint8_t;
 enum class MediaProducerMediaState : uint32_t;
 using MediaProducerMediaStateFlags = OptionSet<MediaProducerMediaState>;
 
+template<typename> class ExceptionOr;
+
 namespace ShapeDetection {
 class BarcodeDetector;
 struct BarcodeDetectorOptions;
@@ -245,6 +250,7 @@ public:
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
 
     virtual IntPoint screenToRootView(const IntPoint&) const = 0;
+    virtual IntPoint rootViewToScreen(const IntPoint&) const = 0;
     virtual IntRect rootViewToScreen(const IntRect&) const = 0;
     virtual IntPoint accessibilityScreenToRootView(const IntPoint&) const = 0;
     virtual IntRect rootViewToAccessibilityScreen(const IntRect&) const = 0;
@@ -287,7 +293,10 @@ public:
     virtual void themeColorChanged() const { }
     virtual void pageExtendedBackgroundColorDidChange() const { }
     virtual void sampledPageTopColorChanged() const { }
-    
+#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+    virtual void spatialBackdropSourceChanged() const { }
+#endif
+
 #if ENABLE(APP_HIGHLIGHTS)
     virtual WebCore::HighlightVisibility appHighlightsVisiblility() const { return HighlightVisibility::Hidden; };
 #endif
@@ -355,28 +364,30 @@ public:
     virtual IntDegrees deviceOrientation() const = 0;
 #endif
 
-#if ENABLE(INPUT_TYPE_COLOR)
     virtual RefPtr<ColorChooser> createColorChooser(ColorChooserClient&, const Color&) = 0;
-#endif
 
-#if ENABLE(DATALIST_ELEMENT)
     virtual RefPtr<DataListSuggestionPicker> createDataListSuggestionPicker(DataListSuggestionsClient&) = 0;
     virtual bool canShowDataListSuggestionLabels() const = 0;
-#endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual RefPtr<DateTimeChooser> createDateTimeChooser(DateTimeChooserClient&) = 0;
-#endif
 
     virtual void setTextIndicator(const TextIndicatorData&) const = 0;
 
     virtual void runOpenPanel(LocalFrame&, FileChooser&) = 0;
     virtual void showShareSheet(ShareDataWithParsedURL&, CompletionHandler<void(bool)>&& callback) { callback(false); }
     virtual void showContactPicker(const ContactsRequestData&, CompletionHandler<void(std::optional<Vector<ContactInfo>>&&)>&& callback) { callback(std::nullopt); }
-    
+
+    virtual void showDigitalCredentialsPicker(const DigitalCredentialsRequestData&, CompletionHandler<void(Expected<DigitalCredentialsResponseData, ExceptionData>&&)>&& completionHandler)
+    {
+        completionHandler(makeUnexpected(WebCore::ExceptionData { WebCore::ExceptionCode::NotSupportedError, "Digital credentials are not supported."_s }));
+    }
+    virtual void dismissDigitalCredentialsPicker(CompletionHandler<void(bool)>&& completionHandler)
+    {
+        completionHandler(false);
+    }
+
     // Asynchronous request to load an icon for specified filenames.
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader&) = 0;
-        
     virtual void elementDidFocus(Element&, const FocusOptions&) { }
     virtual void elementDidBlur(Element&) { }
     virtual void elementDidRefocus(Element&, const FocusOptions&) { }
@@ -389,7 +400,7 @@ public:
 
     // Allows ports to customize the type of graphics layers created by this page.
     virtual GraphicsLayerFactory* graphicsLayerFactory() const { return nullptr; }
-    
+
     virtual DisplayRefreshMonitorFactory* displayRefreshMonitorFactory() const { return nullptr; }
 
     virtual RefPtr<ImageBuffer> createImageBuffer(const FloatSize&, RenderingMode, RenderingPurpose, float, const DestinationColorSpace&, ImageBufferPixelFormat) const { return nullptr; }
@@ -477,7 +488,7 @@ public:
 
 #if ENABLE(FULLSCREEN_API)
     virtual bool supportsFullScreenForElement(const Element&, bool) { return false; }
-    virtual void enterFullScreenForElement(Element&, HTMLMediaElementEnums::VideoFullscreenMode = WebCore::HTMLMediaElementEnums::VideoFullscreenModeStandard) { }
+    virtual void enterFullScreenForElement(Element&, HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler) { completionHandler({ }); }
 #if ENABLE(QUICKLOOK_FULLSCREEN)
     virtual void updateImageSource(Element&) { }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
@@ -547,11 +558,6 @@ public:
     virtual FloatSize minimumWindowSize() const { return FloatSize(100, 100); };
 
     virtual bool isEmptyChromeClient() const { return false; }
-
-    virtual String plugInStartLabelTitle(const String& mimeType) const { UNUSED_PARAM(mimeType); return String(); }
-    virtual String plugInStartLabelSubtitle(const String& mimeType) const { UNUSED_PARAM(mimeType); return String(); }
-    virtual String plugInExtraStyleSheet() const { return String(); }
-    virtual String plugInExtraScript() const { return String(); }
 
     virtual void didAssociateFormControls(const Vector<RefPtr<Element>>&, LocalFrame&) { };
     virtual bool shouldNotifyOnFormChanges() { return false; };

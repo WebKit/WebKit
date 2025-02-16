@@ -75,7 +75,7 @@ void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
         n->ref();
     m_currentNodeStack.append(std::exchange(m_currentNode, n));
     if (m_currentNodeStack.size() > maxXMLTreeDepth)
-        handleError(XMLErrors::fatal, "Excessive node nesting.", textPosition());
+        handleError(XMLErrors::Type::Fatal, "Excessive node nesting.", textPosition());
 }
 
 void XMLDocumentParser::popCurrentNode()
@@ -129,14 +129,14 @@ void XMLDocumentParser::append(RefPtr<StringImpl>&& inputSource)
     doWrite(source);
 }
 
-void XMLDocumentParser::handleError(XMLErrors::ErrorType type, const char* m, TextPosition position)
+void XMLDocumentParser::handleError(XMLErrors::Type type, const char* m, TextPosition position)
 {
     if (!m_xmlErrors)
         m_xmlErrors = makeUnique<XMLErrors>(*document());
     m_xmlErrors->handleError(type, m, position);
-    if (type != XMLErrors::warning)
+    if (type != XMLErrors::Type::Warning)
         m_sawError = true;
-    if (type == XMLErrors::fatal)
+    if (type == XMLErrors::Type::Fatal)
         stopParsing();
 }
 
@@ -276,7 +276,7 @@ static XMLParsingNamespaces findXMLParsingNamespaces(Element* contextElement)
     for (auto& element : lineageOfType<Element>(*contextElement)) {
         if (!element.hasAttributes())
             continue;
-        for (auto& attribute : element.attributesIterator()) {
+        for (auto& attribute : element.attributes()) {
             if (attribute.prefix() == xmlnsAtom())
                 result.prefixNamespaces.set(attribute.localName(), attribute.value());
         }

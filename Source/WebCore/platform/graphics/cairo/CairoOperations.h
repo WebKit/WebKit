@@ -148,7 +148,7 @@ WEBCORE_EXPORT void drawSurface(GraphicsContextCairo&, cairo_surface_t*, const F
 
 void drawRect(GraphicsContextCairo&, const FloatRect&, float, const Color&, StrokeStyle, const Color&);
 void drawLine(GraphicsContextCairo&, const FloatPoint&, const FloatPoint&, StrokeStyle, const Color&, float, bool);
-void drawLinesForText(GraphicsContextCairo&, const FloatPoint&, float thickness, const DashArray&, bool, bool, const Color&);
+void drawLinesForText(GraphicsContextCairo&, const FloatPoint&, float thickness, std::span<const FloatSegment>, bool, bool, const Color&);
 void drawDotsForDocumentMarker(GraphicsContextCairo&, const FloatRect&, DocumentMarkerLineStyle);
 void drawEllipse(GraphicsContextCairo&, const FloatRect&, const Color&, StrokeStyle, const Color&, float);
 

@@ -12,9 +12,9 @@ function test(array, indicies, result) {
 noInline(test);
 
 let interestingIndicies = [0, 1, 2, 8, 9];
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     test(array, interestingIndicies, true);
 
 interestingIndicies = [-1, 10, 100];
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     test(array, interestingIndicies, false);

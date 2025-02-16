@@ -44,25 +44,25 @@ bool sumTo100Percent(const Style::ColorMix::Component::Percentage&, const Style:
 std::optional<PercentageRaw<>> subtractFrom100Percent(const ColorMix::Component::Percentage&);
 std::optional<PercentageRaw<>> subtractFrom100Percent(const Style::ColorMix::Component::Percentage&);
 
-void serializeColorMixColor(StringBuilder&, const ColorMix::Component&);
-void serializeColorMixColor(StringBuilder&, const Style::ColorMix::Component&);
+void serializeColorMixColor(StringBuilder&, const CSS::SerializationContext&, const ColorMix::Component&);
+void serializeColorMixColor(StringBuilder&, const CSS::SerializationContext&, const Style::ColorMix::Component&);
 
-void serializeColorMixPercentage(StringBuilder&, const ColorMix::Component::Percentage&);
-void serializeColorMixPercentage(StringBuilder&, const Style::ColorMix::Component::Percentage&);
+void serializeColorMixPercentage(StringBuilder&, const CSS::SerializationContext&, const ColorMix::Component::Percentage&);
+void serializeColorMixPercentage(StringBuilder&, const CSS::SerializationContext&, const Style::ColorMix::Component::Percentage&);
 
 template<typename ColorMixType>
-void serializationForColorMixPercentage1(StringBuilder& builder, const ColorMixType& colorMix)
+void serializationForColorMixPercentage1(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMixType& colorMix)
 {
     if (colorMix.mixComponents1.percentage && colorMix.mixComponents2.percentage) {
         if (is50Percent(*colorMix.mixComponents1.percentage) && is50Percent(*colorMix.mixComponents2.percentage))
             return;
         builder.append(' ');
-        serializeColorMixPercentage(builder, *colorMix.mixComponents1.percentage);
+        serializeColorMixPercentage(builder, context, *colorMix.mixComponents1.percentage);
     } else if (colorMix.mixComponents1.percentage) {
         if (is50Percent(*colorMix.mixComponents1.percentage))
             return;
         builder.append(' ');
-        serializeColorMixPercentage(builder, *colorMix.mixComponents1.percentage);
+        serializeColorMixPercentage(builder, context, *colorMix.mixComponents1.percentage);
     } else if (colorMix.mixComponents2.percentage) {
         if (is50Percent(*colorMix.mixComponents2.percentage))
             return;
@@ -72,19 +72,19 @@ void serializationForColorMixPercentage1(StringBuilder& builder, const ColorMixT
             return;
 
         builder.append(' ');
-        serializationForCSS(builder, *subtractedPercent);
+        serializationForCSS(builder, context, *subtractedPercent);
     }
 }
 
 template<typename ColorMixType>
-void serializationForColorMixPercentage2(StringBuilder& builder, const ColorMixType& colorMix)
+void serializationForColorMixPercentage2(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMixType& colorMix)
 {
     if (colorMix.mixComponents1.percentage && colorMix.mixComponents2.percentage) {
         if (sumTo100Percent(*colorMix.mixComponents1.percentage, *colorMix.mixComponents2.percentage))
             return;
 
         builder.append(' ');
-        serializeColorMixPercentage(builder, *colorMix.mixComponents2.percentage);
+        serializeColorMixPercentage(builder, context, *colorMix.mixComponents2.percentage);
     } else if (colorMix.mixComponents2.percentage) {
         if (is50Percent(*colorMix.mixComponents2.percentage))
             return;
@@ -92,22 +92,22 @@ void serializationForColorMixPercentage2(StringBuilder& builder, const ColorMixT
             return;
 
         builder.append(' ');
-        serializeColorMixPercentage(builder, *colorMix.mixComponents2.percentage);
+        serializeColorMixPercentage(builder, context, *colorMix.mixComponents2.percentage);
     }
 }
 
 // https://drafts.csswg.org/css-color-5/#serial-color-mix
 template<typename ColorMixType>
-void serializationForCSSColorMix(StringBuilder& builder, const ColorMixType& colorMix)
+void serializationForCSSColorMix(StringBuilder& builder, const CSS::SerializationContext& context, const ColorMixType& colorMix)
 {
     builder.append("color-mix(in "_s);
     serializationForCSS(builder, colorMix.colorInterpolationMethod);
     builder.append(", "_s);
-    serializeColorMixColor(builder, colorMix.mixComponents1);
-    serializationForColorMixPercentage1(builder, colorMix);
+    serializeColorMixColor(builder, context, colorMix.mixComponents1);
+    serializationForColorMixPercentage1(builder, context, colorMix);
     builder.append(", "_s);
-    serializeColorMixColor(builder, colorMix.mixComponents2);
-    serializationForColorMixPercentage2(builder, colorMix);
+    serializeColorMixColor(builder, context, colorMix.mixComponents2);
+    serializationForColorMixPercentage2(builder, context, colorMix);
     builder.append(')');
 }
 

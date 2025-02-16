@@ -1,0 +1,9 @@
+Unrelated
+
+FAIL Dialog closedby=any parent, popover child assert_equals: dialog should close on second ESC, if closedby is not none expected false but got true
+FAIL Dialog closedby=closerequest parent, popover child assert_true: clicking on popover should always leave everything open expected true got false
+FAIL Dialog closedby=none parent, popover child assert_equals: dialog should close on second ESC, if closedby is not none expected false but got true
+FAIL Popover parent, dialog closedby=any child assert_equals: dialog should close after first ESC, if closedby!=none expected false but got true
+FAIL Popover parent, dialog closedby=closerequest child assert_true: clicking on dialog should always leave everything open expected true got false
+FAIL Popover parent, dialog closedby=none child assert_equals: dialog should close after first ESC, if closedby!=none expected false but got true
+

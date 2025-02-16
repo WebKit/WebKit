@@ -76,13 +76,13 @@ TextExtractionOptions* toTextExtractionOptions(JSContextRef context, JSValueRef 
 }
 
 UIScriptController::UIScriptController(UIScriptContext& context)
-    : m_context(&context)
+    : m_context(context)
 {
 }
 
-void UIScriptController::contextDestroyed()
+UIScriptContext* UIScriptController::context()
 {
-    m_context = nullptr;
+    return m_context.get();
 }
 
 void UIScriptController::makeWindowObject(JSContextRef context)

@@ -149,7 +149,7 @@ SuspendedPageProxy::~SuspendedPageProxy()
     allSuspendedPages().remove(*this);
 
     if (m_readyToUnsuspendHandler) {
-        RunLoop::main().dispatch([readyToUnsuspendHandler = WTFMove(m_readyToUnsuspendHandler)]() mutable {
+        RunLoop::protectedMain()->dispatch([readyToUnsuspendHandler = WTFMove(m_readyToUnsuspendHandler)]() mutable {
             readyToUnsuspendHandler(nullptr);
         });
     }

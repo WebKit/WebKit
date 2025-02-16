@@ -1,0 +1,258 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+
+/**
+ * @param {GPUDevice} device
+ * @param {GPUComputePassEncoder} computePassEncoder
+ */
+function clearResourceUsages(device, computePassEncoder) {
+  let code = `@compute @workgroup_size(1) fn c() {}`;
+  let module = device.createShaderModule({code});
+  computePassEncoder.setPipeline(device.createComputePipeline(
+    {
+      layout: 'auto',
+      compute: {module},
+    }));
+  computePassEncoder.dispatchWorkgroups(1);
+}
+
+/**
+ * @template {any} T
+ * @param {GPUDevice} device
+ * @param {string} label
+ * @param {()=>T} payload
+ * @returns {Promise<T>}
+ */
+async function validationWrapper(device, label, payload)  {
+  device.pushErrorScope('internal');
+  device.pushErrorScope('out-of-memory');
+  device.pushErrorScope('validation');
+  let result = payload();
+  let validationError = await device.popErrorScope();
+  let outOfMemoryError = await device.popErrorScope();
+  let internalError = await device.popErrorScope();
+  let error = validationError ?? outOfMemoryError ?? internalError;
+  if (error) {
+    log('*'.repeat(25));
+    log(error[Symbol.toStringTag]);
+    log(error.message);
+    log(label);
+    if (error.stack != `_`) {
+      log(error.stack);
+    }
+    log(location);
+    log('*'.repeat(25));
+    throw error;
+  }
+  return result;
+}
+
+const videoUrls = [
+
+];
+
+/**
+ * @param {number} index
+ * @returns {Promise<HTMLVideoElement>}
+ */
+function videoWithData(index) {
+  let video = document.createElement('video');
+  video.src = videoUrls[index % videoUrls.length];
+  return new Promise(resolve => {
+    video.onloadeddata = () => {
+      resolve(video);
+    };
+  });
+}
+
+/**
+* @returns {Promise<string>}
+*/
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, color0);
+  gradient.addColorStop(0.1, color1);
+  gradient.addColorStop(0.3, color0);
+  gradient.addColorStop(0.7, color1);
+  gradient.addColorStop(0.9, color0);
+  gradient.addColorStop(1, color1);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+/**
+ * @param {string} payload
+ * @returns {string}
+ */
+function toBlobUrl(payload) {
+  let blob = new Blob([payload], {type: 'text/javascript'});
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({});
+let device0 = await adapter0.requestDevice({});
+// START
+c = device0.createBuffer({
+  size : 3,
+  usage : GPUBufferUsage.VERTEX})
+d = device0.createCommandEncoder()
+f = device0.createTexture({
+  size : {width : 2 },
+  format : 'rg32uint',
+  usage : GPUTextureUsage.RENDER_ATTACHMENT 
+              })
+j = f.createView()
+k = device0.createShaderModule({
+  code : ` 
+                        struct l {
+                      @location(0) m: vec2u}
+                        @vertex fn n(@location(7) o: f32) -> @builtin(position) vec4f {
+                      var out: vec4f;
+                      while bool(o) {}
+                      return out;
+                    }
+                        @fragment fn p() -> l {
+                      var out: l;
+                      return out;
+                    }
+                       `})
+q = d.beginRenderPass({
+  colorAttachments : [ {
+    view : j,
+    loadOp : 'clear',
+    storeOp : 'discard'} ]
+  })
+t = device0.createCommandEncoder()
+u = t.beginRenderPass({
+  colorAttachments : [ {
+    view : j,
+    loadOp : 'clear',
+    storeOp : 'discard'} ]})
+buffer14 = device0.createBuffer({
+  size : 374,
+  usage : GPUBufferUsage.INDEX 
+              })
+v = device0.createPipelineLayout({bindGroupLayouts : []})
+pipeline8 = device0.createRenderPipeline({
+  layout : v,
+  fragment : {
+    module : k,
+    targets : [ {format : 'rg32uint' } ]
+  },
+  vertex : {
+    module : k,
+    buffers : [
+      {
+        arrayStride : 2048,
+        attributes : [
+          {format : 'float32x2', offset : 0   , shaderLocation : 7}]}]}})
+w = device0.createRenderBundleEncoder({
+  colorFormats : [ 'rg32uint' ]
+  })
+try {
+  w.setIndexBuffer(buffer14, 'uint16' )
+  w.setVertexBuffer(0, c)} catch {}
+try {
+  w.setPipeline(pipeline8)} catch {}
+try {
+  w.drawIndexed(32)} catch {}
+x = w.finish()
+try {
+  u.executeBundles(
+      [ x ])
+  u.drawIndexed(6)
+  await device0.queue.onSubmittedWorkDone()
+  q.executeBundles([ x ])} catch {}
+try {
+  q.end()} catch {}
+y = d.finish()
+try {
+  device0.queue.submit([ y ])} catch {}
+// END
+await device0.queue.onSubmittedWorkDone();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

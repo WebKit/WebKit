@@ -2091,7 +2091,7 @@ TEST_P(EGLSurfaceTest, TimestampSurfaceAttribute)
 TEST_P(EGLSingleBufferTest, OnCreateWindowSurface)
 {
     EGLConfig config = EGL_NO_CONFIG_KHR;
-    ANGLE_SKIP_TEST_IF(!chooseConfig(&config, false));
+    ANGLE_SKIP_TEST_IF(!chooseConfig(&config, true));
 
     EGLContext context = EGL_NO_CONTEXT;
     EXPECT_EGL_TRUE(createContext(config, &context));
@@ -2159,13 +2159,13 @@ TEST_P(EGLSingleBufferTest, OnSetSurfaceAttrib)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
 
-    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
-    {
-        // Transition into EGL_SINGLE_BUFFER mode.
-        glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
 
+    // Transition into EGL_SINGLE_BUFFER mode.
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    if (eglSwapBuffers(mDisplay, surface))
+    {
         EGLint actualRenderbuffer;
         EXPECT_EGL_TRUE(eglQueryContext(mDisplay, context, EGL_RENDER_BUFFER, &actualRenderbuffer));
         EXPECT_EGL_TRUE(actualRenderbuffer == EGL_SINGLE_BUFFER);
@@ -2342,13 +2342,13 @@ TEST_P(EGLSingleBufferTest, SharedPresentBarrier)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
 
-    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
-    {
-        // Transition into EGL_SINGLE_BUFFER mode.
-        glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
 
+    // Transition into EGL_SINGLE_BUFFER mode.
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    if (eglSwapBuffers(mDisplay, surface))
+    {
         EGLint actualRenderbuffer;
         EXPECT_EGL_TRUE(eglQueryContext(mDisplay, context, EGL_RENDER_BUFFER, &actualRenderbuffer));
         EXPECT_EGL_TRUE(actualRenderbuffer == EGL_SINGLE_BUFFER);
@@ -2405,10 +2405,9 @@ TEST_P(EGLSingleBufferTest, ScissoredClear)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
 
-    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
+    if (eglSwapBuffers(mDisplay, surface))
     {
-        eglSwapBuffers(mDisplay, surface);
-
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glFlush();
@@ -2460,10 +2459,9 @@ TEST_P(EGLSingleBufferTest, ScissoredDraw)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
 
-    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
+    if (eglSwapBuffers(mDisplay, surface))
     {
-        eglSwapBuffers(mDisplay, surface);
-
         glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         glFlush();
@@ -2531,11 +2529,10 @@ TEST_P(EGLSingleBufferTest, WaitOneOffSubmission)
     EGLint age = 0;
     EXPECT_EGL_TRUE(eglQuerySurface(mDisplay, surface, EGL_BUFFER_AGE_EXT, &age));
 
-    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
+    // Transition into EGL_SINGLE_BUFFER mode.
+    if (eglSwapBuffers(mDisplay, surface))
     {
-        // Transition into EGL_SINGLE_BUFFER mode.
-        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
-
         // Submit heavy work to the GPU before querying the buffer age.
         std::thread([this, context2, pbufferSurface]() {
             EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, pbufferSurface, pbufferSurface, context2));
@@ -2600,10 +2597,9 @@ TEST_P(EGLSingleBufferTest, AcquireImageFromSwapImpl)
     EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
     ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
 
-    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
+    if (eglSwapBuffers(mDisplay, surface))
     {
-        eglSwapBuffers(mDisplay, surface);
-
         ANGLE_GL_PROGRAM(greenProgram, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
 
         // Draw into the single buffered surface.
@@ -2678,13 +2674,13 @@ TEST_P(EGLAndroidAutoRefreshTest, Basic)
     EXPECT_EGL_TRUE(
         eglSurfaceAttrib(mDisplay, surface, EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID, EGL_TRUE));
 
-    if (eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER))
-    {
-        // Transition into EGL_SINGLE_BUFFER mode.
-        glClearColor(1.0, 1.0, 1.0, 1.0);
-        glClear(GL_COLOR_BUFFER_BIT);
-        EXPECT_EGL_TRUE(eglSwapBuffers(mDisplay, surface));
+    EXPECT_EGL_TRUE(eglSurfaceAttrib(mDisplay, surface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
 
+    // Transition into EGL_SINGLE_BUFFER mode.
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    if (eglSwapBuffers(mDisplay, surface))
+    {
         EGLint actualRenderbuffer;
         EXPECT_EGL_TRUE(eglQueryContext(mDisplay, context, EGL_RENDER_BUFFER, &actualRenderbuffer));
         EXPECT_EGL_TRUE(actualRenderbuffer == EGL_SINGLE_BUFFER);
@@ -2709,6 +2705,81 @@ TEST_P(EGLAndroidAutoRefreshTest, Basic)
         glClearColor(1.0, 0.0, 0.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
         EXPECT_PIXEL_COLOR_EQ(1, 1, GLColor::red);
+    }
+    else
+    {
+        std::cout << "EGL_SINGLE_BUFFER mode is not supported." << std::endl;
+    }
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent - uncurrent failed.";
+
+    eglDestroySurface(mDisplay, surface);
+    surface = EGL_NO_SURFACE;
+    osWindow->destroy();
+    OSWindow::Delete(&osWindow);
+
+    eglDestroyContext(mDisplay, context);
+    context = EGL_NO_CONTEXT;
+}
+
+// Tests that CPU throttling unlocked call, added in the implicit swap buffers call, is executed.
+TEST_P(EGLAndroidAutoRefreshTest, SwapCPUThrottling)
+{
+    ANGLE_SKIP_TEST_IF(
+        !IsEGLDisplayExtensionEnabled(mDisplay, "EGL_ANDROID_front_buffer_auto_refresh"));
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+
+    // Use high resolution to increase GPU load.
+    const EGLint kWidth  = 2048;
+    const EGLint kHeight = 2048;
+
+    // These settings are expected to trigger CPU throttling in present.
+    constexpr size_t kFrameFlushCount   = 8;
+    constexpr GLuint kDrawInstanceCount = 256;
+
+    EGLConfig config = EGL_NO_CONFIG_KHR;
+    ANGLE_SKIP_TEST_IF(!chooseConfig(&config, true));
+
+    EGLContext context = EGL_NO_CONTEXT;
+    EXPECT_EGL_TRUE(createContext(config, &context));
+    ASSERT_EGL_SUCCESS() << "eglCreateContext failed.";
+
+    EGLSurface surface = EGL_NO_SURFACE;
+    OSWindow *osWindow = OSWindow::New();
+    osWindow->initialize("EGLSingleBufferTest", kWidth, kHeight);
+    EXPECT_EGL_TRUE(
+        createWindowSurface(config, osWindow->getNativeWindow(), &surface, EGL_SINGLE_BUFFER));
+    ASSERT_EGL_SUCCESS() << "eglCreateWindowSurface failed.";
+
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, surface, surface, context));
+    ASSERT_EGL_SUCCESS() << "eglMakeCurrent failed.";
+
+    EGLint actualRenderbuffer;
+    EXPECT_EGL_TRUE(eglQueryContext(mDisplay, context, EGL_RENDER_BUFFER, &actualRenderbuffer));
+    if (actualRenderbuffer == EGL_SINGLE_BUFFER)
+    {
+        // Enable auto refresh to prevent present from waiting on GPU.
+        EXPECT_EGL_TRUE(
+            eglSurfaceAttrib(mDisplay, surface, EGL_FRONT_BUFFER_AUTO_REFRESH_ANDROID, EGL_TRUE));
+
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        glViewport(0, 0, kWidth, kHeight);
+
+        for (size_t i = 0; i < kFrameFlushCount; ++i)
+        {
+            // Perform heavy draw call to load GPU.
+            drawQuadInstanced(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, false,
+                              kDrawInstanceCount);
+            // This should cause implicit swap and possible CPU throttling in the tail call.
+            glFlush();
+        }
+
+        // Tests same as the glFlush above.
+        drawQuadInstanced(program, essl1_shaders::PositionAttrib(), 0.5f, 1.0f, false,
+                          kDrawInstanceCount);
+        glFinish();
     }
     else
     {
@@ -3072,6 +3143,164 @@ TEST_P(EGLSurfaceTest, CreateMultiWindowsSurfaceNoDestroy)
         eglCreateWindowSurface(mDisplay, mConfig, w->getNativeWindow(), windowAttributes.data());
         ASSERT_EGL_SUCCESS();
         mOtherWindows.push_back(w);
+    }
+}
+
+// Test that querying EGL_RENDER_BUFFER of surface and context returns correct value.
+// Context's render buffer should only change once eglSwapBuffers is called.
+TEST_P(EGLSurfaceTest, QueryRenderBuffer)
+{
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_KHR_mutable_render_buffer"));
+    ANGLE_SKIP_TEST_IF(!IsAndroid());
+
+    const EGLint configAttributes[] = {EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, EGL_SURFACE_TYPE,
+                                       EGL_WINDOW_BIT | EGL_MUTABLE_RENDER_BUFFER_BIT_KHR,
+                                       EGL_NONE};
+
+    initializeDisplay();
+    ANGLE_SKIP_TEST_IF(EGLWindow::FindEGLConfig(mDisplay, configAttributes, &mConfig) == EGL_FALSE);
+
+    // Create window surface and make current
+    mWindowSurface =
+        eglCreateWindowSurface(mDisplay, mConfig, mOSWindow->getNativeWindow(), nullptr);
+    ASSERT_EGL_SUCCESS();
+    ASSERT_NE(EGL_NO_SURFACE, mWindowSurface);
+
+    initializeMainContext();
+    EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext));
+    ASSERT_EGL_SUCCESS();
+
+    // Set to single buffer mode and query the value
+    ASSERT_EGL_TRUE(
+        eglSurfaceAttrib(mDisplay, mWindowSurface, EGL_RENDER_BUFFER, EGL_SINGLE_BUFFER));
+
+    EGLint queryRenderBuffer;
+    ASSERT_EGL_TRUE(
+        eglQuerySurface(mDisplay, mWindowSurface, EGL_RENDER_BUFFER, &queryRenderBuffer));
+    ASSERT_EGL_SUCCESS();
+    ASSERT_EQ(queryRenderBuffer, EGL_SINGLE_BUFFER);
+
+    ASSERT_EGL_TRUE(eglQueryContext(mDisplay, mContext, EGL_RENDER_BUFFER, &queryRenderBuffer));
+    ASSERT_EGL_SUCCESS();
+    ASSERT_EQ(queryRenderBuffer, EGL_BACK_BUFFER);
+
+    // Swap buffers and then query the value
+    ASSERT_EGL_TRUE(eglSwapBuffers(mDisplay, mWindowSurface));
+    ASSERT_EGL_SUCCESS();
+
+    ASSERT_EGL_TRUE(
+        eglQuerySurface(mDisplay, mWindowSurface, EGL_RENDER_BUFFER, &queryRenderBuffer));
+    ASSERT_EGL_SUCCESS();
+    ASSERT_EQ(queryRenderBuffer, EGL_SINGLE_BUFFER);
+
+    ASSERT_EGL_TRUE(eglQueryContext(mDisplay, mContext, EGL_RENDER_BUFFER, &queryRenderBuffer));
+    ASSERT_EGL_SUCCESS();
+    ASSERT_EQ(queryRenderBuffer, EGL_SINGLE_BUFFER);
+
+    ASSERT_EGL_TRUE(eglMakeCurrent(mDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    ASSERT_EGL_TRUE(eglDestroySurface(mDisplay, mWindowSurface));
+    mWindowSurface = EGL_NO_SURFACE;
+    ASSERT_EGL_TRUE(eglDestroyContext(mDisplay, mContext));
+    mContext = EGL_NO_CONTEXT;
+    ASSERT_EGL_SUCCESS();
+}
+
+// Test that new API eglQuerySupportedCompressionRatesEXT could work, and
+// validation for the API should also work. If any rate can be queried, then use
+// that rate to create window surface. Query the surface's compression rate
+// should get the expected rate, and a simple draw should succeed on the surface.
+TEST_P(EGLSurfaceTest, SurfaceFixedRateCompression)
+{
+    initializeDisplay();
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(mDisplay, "EGL_EXT_surface_compression"));
+    // Initialize an RGBA8 window and pbuffer surface
+    constexpr EGLint kSurfaceAttributes[] = {EGL_RED_SIZE,
+                                             8,
+                                             EGL_GREEN_SIZE,
+                                             8,
+                                             EGL_BLUE_SIZE,
+                                             8,
+                                             EGL_ALPHA_SIZE,
+                                             8,
+                                             EGL_SURFACE_TYPE,
+                                             EGL_WINDOW_BIT,
+                                             EGL_RENDERABLE_TYPE,
+                                             EGL_OPENGL_ES2_BIT,
+                                             EGL_NONE};
+    EGLint configCount                    = 0;
+    EGLint numRates                       = 0;
+    EXPECT_EGL_TRUE(eglChooseConfig(mDisplay, kSurfaceAttributes, &mConfig, 1, &configCount));
+    ASSERT_NE(configCount, 0);
+    ASSERT_NE(mConfig, nullptr);
+    // Fail, invalid display
+    EXPECT_EGL_FALSE(eglQuerySupportedCompressionRatesEXT(EGL_NO_DISPLAY, mConfig, nullptr, nullptr,
+                                                          0, &numRates));
+    ASSERT_EGL_ERROR(EGL_BAD_DISPLAY);
+    // Fail, rate_size < 0
+    EXPECT_EGL_FALSE(
+        eglQuerySupportedCompressionRatesEXT(mDisplay, mConfig, nullptr, nullptr, -1, &numRates));
+    ASSERT_EGL_ERROR(EGL_BAD_PARAMETER);
+    // Fail, pointer rates is nullptr
+    EXPECT_EGL_FALSE(
+        eglQuerySupportedCompressionRatesEXT(mDisplay, mConfig, nullptr, nullptr, 1, &numRates));
+    ASSERT_EGL_ERROR(EGL_BAD_PARAMETER);
+    // Fail, return num_rates is nullptr
+    EXPECT_EGL_FALSE(
+        eglQuerySupportedCompressionRatesEXT(mDisplay, mConfig, nullptr, nullptr, 0, nullptr));
+    ASSERT_EGL_ERROR(EGL_BAD_PARAMETER);
+    EGLint rates[3];
+    // Success, actual values of rates are depended on each platform
+    EXPECT_EGL_TRUE(
+        eglQuerySupportedCompressionRatesEXT(mDisplay, mConfig, NULL, rates, 3, &numRates));
+    ASSERT_EGL_SUCCESS();
+
+    if (numRates > 0 && rates[0] != EGL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT)
+    {
+        // If any rate can be queried, then use that rate to create window surface and test
+        std::vector<EGLint> winSurfaceAttribs;
+        winSurfaceAttribs.push_back(EGL_SURFACE_COMPRESSION_EXT);
+        winSurfaceAttribs.push_back(rates[0]);
+        // Create window surface using the selected rate.
+        initializeWindowSurfaceWithAttribs(mConfig, winSurfaceAttribs, EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+        EGLint selectedRate;
+        ASSERT_EGL_TRUE(
+            eglQuerySurface(mDisplay, mWindowSurface, EGL_SURFACE_COMPRESSION_EXT, &selectedRate));
+        ASSERT_EGL_SUCCESS();
+        ASSERT_EQ(selectedRate, rates[0]);
+        initializeMainContext();
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext));
+        ASSERT_EGL_SUCCESS();
+        // Make sure the surface works. Draw red and verify.
+        ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+        glUseProgram(program);
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        ASSERT_EGL_TRUE(eglSwapBuffers(mDisplay, mWindowSurface));
+
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, nullptr, nullptr, mContext));
+        EXPECT_EGL_TRUE(eglDestroySurface(mDisplay, mWindowSurface));
+        mWindowSurface = EGL_NO_SURFACE;
+
+        // Create another surface using default rate.
+        winSurfaceAttribs.back() = EGL_SURFACE_COMPRESSION_FIXED_RATE_DEFAULT_EXT;
+        initializeWindowSurfaceWithAttribs(mConfig, winSurfaceAttribs, EGL_SUCCESS);
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(mWindowSurface, EGL_NO_SURFACE);
+        selectedRate = EGL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT;
+        ASSERT_EGL_TRUE(
+            eglQuerySurface(mDisplay, mWindowSurface, EGL_SURFACE_COMPRESSION_EXT, &selectedRate));
+        ASSERT_EGL_SUCCESS();
+        ASSERT_NE(selectedRate, EGL_SURFACE_COMPRESSION_FIXED_RATE_NONE_EXT);
+        EXPECT_EGL_TRUE(eglMakeCurrent(mDisplay, mWindowSurface, mWindowSurface, mContext));
+        ASSERT_EGL_SUCCESS();
+        // Make sure the surface works. Draw red and verify.
+        drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+        ASSERT_GL_NO_ERROR();
+        EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::red);
+        ASSERT_EGL_TRUE(eglSwapBuffers(mDisplay, mWindowSurface));
     }
 }
 

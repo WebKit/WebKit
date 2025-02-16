@@ -39,7 +39,7 @@ static std::optional<size_t> getKeyLengthFromHash(CryptoAlgorithmIdentifier hash
 {
     switch (hash) {
     case CryptoAlgorithmIdentifier::SHA_1:
-    case CryptoAlgorithmIdentifier::SHA_224:
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
     case CryptoAlgorithmIdentifier::SHA_256:
         return 512;
     case CryptoAlgorithmIdentifier::SHA_384:

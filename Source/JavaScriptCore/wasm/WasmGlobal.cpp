@@ -61,8 +61,13 @@ JSValue Global::get(JSGlobalObject* globalObject) const
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Ref:
-    case TypeKind::RefNull:
+    case TypeKind::RefNull: {
+        if (UNLIKELY(isExnref(m_type))) {
+            throwException(globalObject, throwScope, createJSWebAssemblyRuntimeError(globalObject, vm, "Cannot get value of exnref global"_s));
+            return { };
+        }
         return m_value.m_externref.get();
+    }
     default:
         return jsUndefined();
     }
@@ -131,6 +136,9 @@ void Global::set(JSGlobalObject* globalObject, JSValue argument)
                 }
             }
             m_value.m_externref.set(m_owner->vm(), m_owner, argument);
+        } else if (isExnref(m_type)) {
+            throwTypeError(globalObject, throwScope, "Cannot set value of exnref global"_s);
+            return;
         } else {
             JSValue internref = Wasm::internalizeExternref(argument);
             if (!Wasm::TypeInformation::castReference(internref, m_type.isNullable(), m_type.index)) {

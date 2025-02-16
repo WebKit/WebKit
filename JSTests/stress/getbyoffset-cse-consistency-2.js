@@ -33,7 +33,7 @@ function func(flag, arg0, arg1) {
     c.slot_1 = x;
 }
 
-for (let i = 0; i < 0x100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     func(i % 2, {}, i);
 }
 

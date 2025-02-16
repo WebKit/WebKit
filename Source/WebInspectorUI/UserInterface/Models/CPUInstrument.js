@@ -25,21 +25,6 @@
 
 WI.CPUInstrument = class CPUInstrument extends WI.Instrument
 {
-    constructor()
-    {
-        super();
-
-        console.assert(WI.CPUInstrument.supported());
-    }
-
-    // Static
-
-    static supported()
-    {
-        // COMPATIBILITY (iOS 12): CPUProfiler domain did not exist.
-        return InspectorBackend.hasDomain("CPUProfiler");
-    }
-
     // Protected
 
     get timelineRecordType()

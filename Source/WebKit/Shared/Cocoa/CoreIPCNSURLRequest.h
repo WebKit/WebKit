@@ -147,6 +147,8 @@ struct CoreIPCNSURLRequestData {
     bool isWebSearchContent { false };
     bool allowOnlyPartitionedCookies { false };
     std::optional<Vector<CoreIPCNumber>> contentDispositionEncodingFallbackArray;
+
+    static constexpr unsigned numberOfFields = 44;
 };
 
 class CoreIPCNSURLRequest {

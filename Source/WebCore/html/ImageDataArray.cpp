@@ -32,6 +32,7 @@
 #include <JavaScriptCore/Float16Array.h>
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/Uint8ClampedArray.h>
+#include <wtf/StdLibExtras.h>
 
 // Needed for `downcast` below.
 SPECIALIZE_TYPE_TRAITS_BEGIN(JSC::Uint8ClampedArray)
@@ -68,6 +69,10 @@ ImageDataArray::ImageDataArray(Ref<JSC::Float16Array>&& data)
     : ImageDataArray(Ref<JSC::ArrayBufferView>(WTFMove(data)))
 { }
 
+ImageDataArray::ImageDataArray(ImageDataArray&& original, std::optional<ImageDataStorageFormat> overridingStorageFormat)
+    : m_arrayBufferView(WTFMove(original).extractBufferViewWithStorageFormat(overridingStorageFormat))
+{ }
+
 template <typename TypedArray>
 static void fillTypedArray(TypedArray& typedArray, std::span<const uint8_t> optionalBytes)
 {
@@ -75,7 +80,7 @@ static void fillTypedArray(TypedArray& typedArray, std::span<const uint8_t> opti
         return typedArray.zeroFill();
     auto bufferViewSpan = typedArray.mutableSpan();
     RELEASE_ASSERT(bufferViewSpan.size_bytes() == optionalBytes.size_bytes(), "Caller should provide correctly-sized buffer to copy");
-    memcpy(bufferViewSpan.data(), optionalBytes.data(), optionalBytes.size_bytes());
+    memcpySpan(bufferViewSpan, optionalBytes);
 }
 
 std::optional<ImageDataArray> ImageDataArray::tryCreate(size_t length, ImageDataStorageFormat storageFormat, std::span<const uint8_t> optionalBytes)
@@ -129,7 +134,7 @@ struct TypedArrayItemConverter<JSC::Float16Array, JSC::Uint8ClampedArray> {
             return 0;
         if (d >= 1)
             return 255;
-        return d * 255.0;
+        return d * 255.0 + 0.5;
     }
 };
 
@@ -180,6 +185,18 @@ Ref<JSON::Value> ImageDataArray::copyToJSONArray() const
             jsArray->addItem(CType(item));
         return jsArray;
     });
+}
+
+Ref<ArrayBufferView> ImageDataArray::extractBufferViewWithStorageFormat(std::optional<ImageDataStorageFormat> overridingStorageFormat) &&
+{
+    if (!overridingStorageFormat)
+        return WTFMove(m_arrayBufferView);
+
+    switch (*overridingStorageFormat) {
+    case ImageDataStorageFormat::Uint8: return asUint8ClampedArray();
+    case ImageDataStorageFormat::Float16: return asFloat16Array();
+    }
+    RELEASE_ASSERT_NOT_REACHED("Unexpected ImageDataStorageFormat value");
 }
 
 ImageDataArray::operator Variant() const

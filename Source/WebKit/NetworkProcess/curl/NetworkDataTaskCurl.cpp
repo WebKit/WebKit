@@ -57,7 +57,7 @@ NetworkDataTaskCurl::NetworkDataTaskCurl(NetworkSession& session, NetworkDataTas
     : NetworkDataTask(session, client, parameters.request, parameters.storedCredentialsPolicy, parameters.shouldClearReferrerOnHTTPSToHTTPRedirect, parameters.isMainFrameNavigation)
     , m_frameID(parameters.webFrameID)
     , m_pageID(parameters.webPageID)
-    , m_shouldRelaxThirdPartyCookieBlocking(parameters.shouldRelaxThirdPartyCookieBlocking)
+    , m_webPageProxyID(parameters.webPageProxyID)
     , m_sourceOrigin(parameters.sourceOrigin)
 {
     auto request = parameters.request;
@@ -579,7 +579,7 @@ bool NetworkDataTaskCurl::shouldBlockCookies(const WebCore::ResourceRequest& req
     bool shouldBlockCookies = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless;
 
     if (!shouldBlockCookies && m_session->networkStorageSession())
-        shouldBlockCookies = m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID, m_shouldRelaxThirdPartyCookieBlocking);
+        shouldBlockCookies = m_session->networkStorageSession()->shouldBlockCookies(request, m_frameID, m_pageID, m_session->networkProcess().shouldRelaxThirdPartyCookieBlockingForPage(m_webPageProxyID));
 
     if (shouldBlockCookies)
         return true;

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "DataListButtonElement.h"
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
@@ -72,5 +70,3 @@ void DataListButtonElement::defaultEventHandler(Event& event)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(DATALIST_ELEMENT)

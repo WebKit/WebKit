@@ -1,0 +1,6 @@
+
+PASS There should be 3 @page rules.
+PASS Rule #0
+FAIL Rule #1 assert_equals: expected 1 but got 0
+FAIL Rule #2 assert_equals: expected 18 but got 0
+

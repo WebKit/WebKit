@@ -7,7 +7,7 @@ function foo(x) {
 }
 noInline(foo);
 
-for (let i = 0; i < 1000000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let x = 1n;
     assert(foo(x) === (0n - x) - 1n);
 

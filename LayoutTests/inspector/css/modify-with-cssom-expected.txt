@@ -1,0 +1,259 @@
+Test that the CSS.getMatchedStylesForNode command works with CSSOM modified styles.
+
+
+== Running test suite: ModifyWithCSSOM
+-- Running test case: CSS.getMatchedStylesForNode with CSSOM modifications
+After modifying a style rule in place:
+[
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "body",
+          "specificity": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "body",
+      "range": {
+        "startLine": 0,
+        "startColumn": 0,
+        "endLine": 0,
+        "endColumn": 4
+      }
+    },
+    "sourceLine": 0,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "blue",
+          "text": "color: blue;",
+          "range": {
+            "startLine": 0,
+            "startColumn": 7,
+            "endLine": 0,
+            "endColumn": 19
+          },
+          "implicit": false,
+          "status": "active"
+        },
+        {
+          "name": "background-color",
+          "value": "azure",
+          "text": "background-color: azure;",
+          "range": {
+            "startLine": 0,
+            "startColumn": 20,
+            "endLine": 0,
+            "endColumn": 44
+          },
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": {
+        "startLine": 0,
+        "startColumn": 6,
+        "endLine": 0,
+        "endColumn": 45
+      },
+      "cssText": " color: blue; background-color: azure; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  }
+]
+
+After adding a style rule:
+[
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "body",
+          "specificity": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "body",
+      "range": {
+        "startLine": 0,
+        "startColumn": 0,
+        "endLine": 0,
+        "endColumn": 4
+      }
+    },
+    "sourceLine": 0,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "font-size",
+          "value": "17px",
+          "text": "font-size: 17px;",
+          "range": {
+            "startLine": 0,
+            "startColumn": 7,
+            "endLine": 0,
+            "endColumn": 23
+          },
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": {
+        "startLine": 0,
+        "startColumn": 6,
+        "endLine": 0,
+        "endColumn": 24
+      },
+      "cssText": " font-size: 17px; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  },
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "body",
+          "specificity": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "body",
+      "range": {
+        "startLine": 1,
+        "startColumn": 0,
+        "endLine": 1,
+        "endColumn": 4
+      }
+    },
+    "sourceLine": 1,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "color",
+          "value": "blue",
+          "text": "color: blue;",
+          "range": {
+            "startLine": 1,
+            "startColumn": 7,
+            "endLine": 1,
+            "endColumn": 19
+          },
+          "implicit": false,
+          "status": "active"
+        },
+        {
+          "name": "background-color",
+          "value": "azure",
+          "text": "background-color: azure;",
+          "range": {
+            "startLine": 1,
+            "startColumn": 20,
+            "endLine": 1,
+            "endColumn": 44
+          },
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": {
+        "startLine": 1,
+        "startColumn": 6,
+        "endLine": 1,
+        "endColumn": 45
+      },
+      "cssText": " color: blue; background-color: azure; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  }
+]
+
+After removing a style rule:
+[
+  {
+    "selectorList": {
+      "selectors": [
+        {
+          "text": "body",
+          "specificity": [
+            0,
+            0,
+            1
+          ]
+        }
+      ],
+      "text": "body",
+      "range": {
+        "startLine": 0,
+        "startColumn": 0,
+        "endLine": 0,
+        "endColumn": 4
+      }
+    },
+    "sourceLine": 0,
+    "origin": "author",
+    "style": {
+      "cssProperties": [
+        {
+          "name": "font-size",
+          "value": "17px",
+          "text": "font-size: 17px;",
+          "range": {
+            "startLine": 0,
+            "startColumn": 7,
+            "endLine": 0,
+            "endColumn": 23
+          },
+          "implicit": false,
+          "status": "active"
+        }
+      ],
+      "shorthandEntries": [],
+      "styleId": "<filtered>",
+      "width": "",
+      "height": "",
+      "range": {
+        "startLine": 0,
+        "startColumn": 6,
+        "endLine": 0,
+        "endColumn": 24
+      },
+      "cssText": " font-size: 17px; "
+    },
+    "sourceURL": "<filtered>",
+    "ruleId": "<filtered>",
+    "isImplicitlyNested": false
+  }
+]
+

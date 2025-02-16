@@ -2,6 +2,7 @@
 <html>
 <head>
 <script src="../../resources/js-test.js"></script>
+<script src="../../resources/ui-helper.js"></script>
 <script src="../../resources/accessibility-helper.js"></script>
 </head>
 <body>
@@ -16,8 +17,9 @@ if (window.accessibilityController) {
 
     var pageOne, pageTwo;
     var pdfAxObject, pdfLayerController;
-    requestAnimationFrame(async function() {
+    internals.registerPDFTest(async () => {
         await new Promise((resolve) => setTimeout(resolve, 0)); // Wait for the embed plugin to load after style update.
+        await UIHelper.waitForPDFFadeIn();
 
         await waitFor(() => {
             const embedElement = accessibilityController.accessibleElementById("pdfEmbed");
@@ -56,7 +58,7 @@ if (window.accessibilityController) {
 
         debug(output);
         finishJSTest();
-    });
+    }, plugin);
 }
 </script>
 </body>

@@ -34,7 +34,8 @@ bool WindowSurfaceVkFuchsia::isValidNativeWindow(EGLNativeWindowType window)
     return fuchsia_egl_window_get_width(egl_window) >= 0;
 }
 
-angle::Result WindowSurfaceVkFuchsia::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)
+angle::Result WindowSurfaceVkFuchsia::createSurfaceVk(vk::ErrorContext *context,
+                                                      gl::Extents *extentsOut)
 {
 #if !defined(ANGLE_SHARED_LIBVULKAN)
     InitImagePipeSurfaceFUCHSIAFunctions(context->getRenderer()->getInstance());
@@ -50,7 +51,7 @@ angle::Result WindowSurfaceVkFuchsia::createSurfaceVk(vk::Context *context, gl::
     return getCurrentWindowSize(context, extentsOut);
 }
 
-angle::Result WindowSurfaceVkFuchsia::getCurrentWindowSize(vk::Context *context,
+angle::Result WindowSurfaceVkFuchsia::getCurrentWindowSize(vk::ErrorContext *context,
                                                            gl::Extents *extentsOut)
 {
     fuchsia_egl_window *egl_window = reinterpret_cast<fuchsia_egl_window *>(mNativeWindowType);

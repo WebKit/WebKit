@@ -649,6 +649,18 @@ pre {
   border-radius: var(--tinySize);
 }
 
+.dot.tiny img, .dot.tiny .text {
+  width: calc(var(--tinySize) - 2px);
+  height: calc(var(--tinySize) - 2px);
+  font-size: calc(var(--tinySize) - 2px);
+}
+
+.dot.tiny>img, .dot.tiny>.text {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+}
+
 .dot.small {
   font-size: var(--tinySize);
   width: var(--smallSize);

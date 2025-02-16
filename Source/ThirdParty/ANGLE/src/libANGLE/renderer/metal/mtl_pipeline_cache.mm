@@ -9,6 +9,7 @@
 
 #include "libANGLE/renderer/metal/mtl_pipeline_cache.h"
 
+#include "libANGLE/ErrorStrings.h"
 #include "libANGLE/renderer/metal/ContextMtl.h"
 
 namespace rx
@@ -66,10 +67,9 @@ angle::Result ValidateRenderPipelineState(ContextMtl *context,
     if (!context->getDisplay()->getFeatures().allowRenderpassWithoutAttachment.enabled &&
         !HasValidRenderTarget(device, descriptor))
     {
-        ANGLE_MTL_HANDLE_ERROR(
-            context, "Render pipeline requires at least one render target for this device.",
-            GL_INVALID_OPERATION);
-        return angle::Result::Stop;
+        ANGLE_CHECK(context, false,
+                    "Render pipeline requires at least one render target for this device.",
+                    GL_INVALID_OPERATION);
     }
 
     // Ensure the device can support the storage requirement for render targets.
@@ -83,29 +83,21 @@ angle::Result ValidateRenderPipelineState(ContextMtl *context,
             std::stringstream errorStream;
             errorStream << "This set of render targets requires " << renderTargetSize
                         << " bytes of pixel storage. This device supports " << maxSize << " bytes.";
-            ANGLE_MTL_HANDLE_ERROR(context, errorStream.str().c_str(), GL_INVALID_OPERATION);
-            return angle::Result::Stop;
+            ANGLE_CHECK(context, false, errorStream.str().c_str(), GL_INVALID_OPERATION);
         }
     }
-
     return angle::Result::Continue;
 }
 
-angle::Result CreateRenderPipelineState(ContextMtl *context,
-                                        const PipelineKey &key,
-                                        AutoObjCPtr<id<MTLRenderPipelineState>> *outRenderPipeline)
+angle::Result CreateRenderPipelineState(
+    ContextMtl *context,
+    const PipelineKey &key,
+    angle::ObjCPtr<id<MTLRenderPipelineState>> *outRenderPipeline)
 {
+    ASSERT(key.isRenderPipeline());
+    ANGLE_CHECK(context, key.vertexShader, gl::err::kInternalError, GL_INVALID_OPERATION);
     ANGLE_MTL_OBJC_SCOPE
     {
-        ASSERT(key.isRenderPipeline());
-        if (!key.vertexShader)
-        {
-            // Render pipeline without vertex shader is invalid.
-            ANGLE_MTL_HANDLE_ERROR(context, "Render pipeline without vertex shader is invalid.",
-                                   GL_INVALID_OPERATION);
-            return angle::Result::Stop;
-        }
-
         const mtl::ContextDevice &metalDevice = context->getMetalDevice();
 
         auto objCDesc = key.pipelineDesc.createMetalDesc(key.vertexShader, key.fragmentShader);
@@ -115,8 +107,8 @@ angle::Result CreateRenderPipelineState(ContextMtl *context,
         // Special attribute slot for default attribute
         if (HasDefaultAttribs(key.pipelineDesc))
         {
-            auto defaultAttribLayoutObjCDesc = adoptObjCObj<MTLVertexBufferLayoutDescriptor>(
-                [[MTLVertexBufferLayoutDescriptor alloc] init]);
+            auto defaultAttribLayoutObjCDesc =
+                angle::adoptObjCPtr([[MTLVertexBufferLayoutDescriptor alloc] init]);
             defaultAttribLayoutObjCDesc.get().stepFunction = MTLVertexStepFunctionConstant;
             defaultAttribLayoutObjCDesc.get().stepRate     = 0;
             defaultAttribLayoutObjCDesc.get().stride = kDefaultAttributeSize * kMaxVertexAttribs;
@@ -127,13 +119,7 @@ angle::Result CreateRenderPipelineState(ContextMtl *context,
         // Create pipeline state
         NSError *err  = nil;
         auto newState = metalDevice.newRenderPipelineStateWithDescriptor(objCDesc, &err);
-        if (err)
-        {
-            ANGLE_MTL_HANDLE_ERROR(context, mtl::FormatMetalErrorMessage(err).c_str(),
-                                   GL_INVALID_OPERATION);
-            return angle::Result::Stop;
-        }
-
+        ANGLE_MTL_CHECK(context, newState, err);
         *outRenderPipeline = newState;
         return angle::Result::Continue;
     }
@@ -142,30 +128,16 @@ angle::Result CreateRenderPipelineState(ContextMtl *context,
 angle::Result CreateComputePipelineState(
     ContextMtl *context,
     const PipelineKey &key,
-    AutoObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
+    angle::ObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
 {
+    ASSERT(!key.isRenderPipeline());
+    ANGLE_CHECK(context, key.computeShader, gl::err::kInternalError, GL_INVALID_OPERATION);
     ANGLE_MTL_OBJC_SCOPE
     {
-        ASSERT(!key.isRenderPipeline());
-        if (!key.computeShader)
-        {
-            ANGLE_MTL_HANDLE_ERROR(context, "Compute pipeline without a shader is invalid.",
-                                   GL_INVALID_OPERATION);
-            return angle::Result::Stop;
-        }
-
         const mtl::ContextDevice &metalDevice = context->getMetalDevice();
-
-        // Create pipeline state
         NSError *err  = nil;
         auto newState = metalDevice.newComputePipelineStateWithFunction(key.computeShader, &err);
-        if (err)
-        {
-            ANGLE_MTL_HANDLE_ERROR(context, mtl::FormatMetalErrorMessage(err).c_str(),
-                                   GL_INVALID_OPERATION);
-            return angle::Result::Stop;
-        }
-
+        ANGLE_MTL_CHECK(context, newState, err);
         *outComputePipeline = newState;
         return angle::Result::Continue;
     }
@@ -224,11 +196,11 @@ angle::Result PipelineCache::getRenderPipeline(
     id<MTLFunction> vertexShader,
     id<MTLFunction> fragmentShader,
     const RenderPipelineDesc &desc,
-    AutoObjCPtr<id<MTLRenderPipelineState>> *outRenderPipeline)
+    angle::ObjCPtr<id<MTLRenderPipelineState>> *outRenderPipeline)
 {
     PipelineKey key;
-    key.vertexShader.retainAssign(vertexShader);
-    key.fragmentShader.retainAssign(fragmentShader);
+    key.vertexShader   = std::move(vertexShader);
+    key.fragmentShader = std::move(fragmentShader);
     key.pipelineDesc = desc;
 
     auto iter = mPipelineCache.Get(key);
@@ -254,10 +226,10 @@ angle::Result PipelineCache::getRenderPipeline(
 angle::Result PipelineCache::getComputePipeline(
     ContextMtl *context,
     id<MTLFunction> computeShader,
-    AutoObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
+    angle::ObjCPtr<id<MTLComputePipelineState>> *outComputePipeline)
 {
     PipelineKey key;
-    key.computeShader.retainAssign(computeShader);
+    key.computeShader = std::move(computeShader);
 
     auto iter = mPipelineCache.Get(key);
     if (iter != mPipelineCache.end())

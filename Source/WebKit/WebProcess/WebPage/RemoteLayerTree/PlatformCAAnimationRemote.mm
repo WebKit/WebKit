@@ -542,7 +542,7 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         }
 
         if (properties.timingFunction)
-            [keyframeAnimation setTimingFunction:toCAMediaTimingFunction(*properties.timingFunction, false)]; // FIXME: handle reverse.
+            [keyframeAnimation setTimingFunction:toCAMediaTimingFunction(Ref { *properties.timingFunction }, false)]; // FIXME: handle reverse.
 
         if (properties.timingFunctions.size()) {
             [keyframeAnimation setTimingFunctions:createNSArray(properties.timingFunctions, [&] (auto& function) {
@@ -564,11 +564,11 @@ static RetainPtr<CAAnimation> createAnimation(CALayer *layer, RemoteLayerTreeHos
         if (properties.timingFunctions.size()) {
             auto& timingFunction = properties.timingFunctions[0];
             if (timingFunction->isSpringTimingFunction()) {
-                auto& function = static_cast<const SpringTimingFunction&>(timingFunction.get());
-                [springAnimation setMass:function.mass()];
-                [springAnimation setStiffness:function.stiffness()];
-                [springAnimation setDamping:function.damping()];
-                [springAnimation setInitialVelocity:function.initialVelocity()];
+                Ref function = downcast<SpringTimingFunction>(timingFunction.get());
+                [springAnimation setMass:function->mass()];
+                [springAnimation setStiffness:function->stiffness()];
+                [springAnimation setDamping:function->damping()];
+                [springAnimation setInitialVelocity:function->initialVelocity()];
             }
         }
         caAnimation = springAnimation;
@@ -663,7 +663,7 @@ TextStream& operator<<(TextStream& ts, const PlatformCAAnimationRemote::Properti
     ts.dumpProperty("fillMode", animation.fillMode);
     ts.dumpProperty("valueFunction", animation.valueFunction);
     if (animation.timingFunction)
-        ts.dumpProperty<const TimingFunction&>("timing function", *animation.timingFunction);
+        ts.dumpProperty<const TimingFunction&>("timing function", Ref { *animation.timingFunction });
 
     if (animation.autoReverses)
         ts.dumpProperty("autoReverses", animation.autoReverses);

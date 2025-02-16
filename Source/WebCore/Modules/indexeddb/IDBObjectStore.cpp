@@ -351,17 +351,6 @@ ExceptionOr<Ref<IDBRequest>> IDBObjectStore::putOrAdd(JSGlobalObject& state, JSV
     if (UNLIKELY(scope.exception()))
         return Exception { ExceptionCode::DataCloneError, "Failed to store record in an IDBObjectStore: An object could not be cloned."_s };
 
-    bool privateBrowsingEnabled = false;
-    if (auto* document = dynamicDowncast<Document>(*context)) {
-        if (auto* page = document->page())
-            privateBrowsingEnabled = page->sessionID().isEphemeral();
-    }
-
-    if (serializedValue->hasBlobURLs() && privateBrowsingEnabled) {
-        // https://bugs.webkit.org/show_bug.cgi?id=156347 - Support Blobs in private browsing.
-        return Exception { ExceptionCode::DataCloneError, "Failed to store record in an IDBObjectStore: BlobURLs are not yet supported."_s };
-    }
-
     if (key && !key->isValid())
         return Exception { ExceptionCode::DataError, "Failed to store record in an IDBObjectStore: The parameter is not a valid key."_s };
 

@@ -27,7 +27,7 @@ const table = new WebAssembly.Table(tableDescription);
 new WebAssembly.Instance(module, {imp: {table}});
 const foo = table.get(0);
 const objs = [];
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < wasmTestLoopCount; i++) {
     objs.push(new String("foo"));
     if (foo(20) !== 20 + 42)
         throw new Error("bad!!!");

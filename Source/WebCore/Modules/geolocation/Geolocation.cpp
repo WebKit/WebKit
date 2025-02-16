@@ -320,7 +320,8 @@ void Geolocation::getCurrentPosition(Ref<PositionCallback>&& successCallback, Re
 
 int Geolocation::watchPosition(Ref<PositionCallback>&& successCallback, RefPtr<PositionErrorCallback>&& errorCallback, PositionOptions&& options)
 {
-    if (!document() || !document()->isFullyActive()) {
+    RefPtr document = this->document();
+    if (!document || !document->isFullyActive()) {
         if (errorCallback && errorCallback->scriptExecutionContext()) {
             errorCallback->scriptExecutionContext()->eventLoop().queueTask(TaskSource::Geolocation, [errorCallback] {
                 errorCallback->handleEvent(GeolocationPositionError::create(GeolocationPositionError::POSITION_UNAVAILABLE, "Document is not fully active"_s));

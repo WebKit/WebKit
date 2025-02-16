@@ -48,6 +48,7 @@ public:
     Damage(Damage&&) = default;
     Damage(const Damage&) = default;
     Damage& operator=(const Damage&) = default;
+    Damage& operator=(Damage&&) = default;
 
     static const Damage& invalid()
     {

@@ -108,8 +108,10 @@ def cmd_exists(cmd):
 
 class BuildbotTestRunner(object):
 
-    def __init__(self, configdir):
-        self._configdir = os.path.abspath(os.path.realpath(configdir))
+    def __init__(self, dir_to_copy, subdir_with_configuration):
+        self._dir_to_copy = os.path.abspath(os.path.realpath(dir_to_copy))
+        self._subdir_with_configuration = subdir_with_configuration
+        self._configdir = os.path.join(self._dir_to_copy, self._subdir_with_configuration)
         if not os.path.isdir(self._configdir):
             raise RuntimeError('The configdir {} is not a directory'.format(self._configdir))
         if not os.path.isfile(os.path.join(self._configdir, 'config.json')):
@@ -240,12 +242,14 @@ class BuildbotTestRunner(object):
         return result
 
     def _setup_server_workdir(self):
-        self._server_wordir = os.path.join(self._base_workdir_temp, os.path.basename(self._configdir))
+        self._server_wordir = os.path.join(self._base_workdir_temp, os.path.basename(self._dir_to_copy))
         assert(not os.path.exists(self._server_wordir))
+        print('Copying files from {} to {} ...'.format(self._dir_to_copy, self._server_wordir))
+        shutil.copytree(self._dir_to_copy, self._server_wordir)
+        self._server_wordir = os.path.join(self._server_wordir, self._subdir_with_configuration)
+        assert(os.path.isdir(self._server_wordir))
         self._server_log = os.path.join(self._server_wordir, 'server.log')
         self._server_ready_fd = os.path.join(self._server_wordir, '.server-is-ready')
-        print('Copying files from {} to {} ...'.format(self._configdir, self._server_wordir))
-        shutil.copytree(self._configdir, self._server_wordir)
         print('Generating buildbot files at {} ...'.format(self._server_wordir))
         with open(os.path.join(self._server_wordir, 'buildbot.tac'), 'w') as f:
             f.write(buildbot_server_tac % {'config_file': self._server_config_file_name})
@@ -406,14 +410,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.configuration == "ews":
-        configdir = os.path.join(os.path.dirname(__file__), 'ews-build')
+        dir_to_copy = os.path.dirname(__file__)
+        subdir_with_configuration = "ews-build"
     elif args.configuration == "post_commit":
-        configdir = os.path.join(os.path.dirname(__file__), 'build-webkit-org')
+        dir_to_copy = os.path.dirname(__file__)
+        subdir_with_configuration = "build-webkit-org"
     else:
-        configdir = args.configdir
+        dir_to_copy = args.configdir
+        subdir_with_configuration = ""
 
     if args.number_workers is None:
         args.number_workers = 1
 
-    buildbot_test_runner = BuildbotTestRunner(configdir)
+    buildbot_test_runner = BuildbotTestRunner(dir_to_copy, subdir_with_configuration)
     buildbot_test_runner.start(args.basetempdir, args.no_clean, args.number_workers, args.use_system_version)

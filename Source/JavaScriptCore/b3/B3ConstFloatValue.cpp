@@ -116,9 +116,19 @@ Value* ConstFloatValue::floorConstant(Procedure& proc) const
     return proc.add<ConstFloatValue>(origin(), floorf(m_value));
 }
 
+Value* ConstFloatValue::fTruncConstant(Procedure& proc) const
+{
+    return proc.add<ConstFloatValue>(origin(), Math::truncFloat(m_value));
+}
+
 Value* ConstFloatValue::sqrtConstant(Procedure& proc) const
 {
     return proc.add<ConstFloatValue>(origin(), static_cast<float>(sqrt(m_value)));
+}
+
+Value* ConstFloatValue::purifyNaNConstant(Procedure& proc) const
+{
+    return proc.add<ConstFloatValue>(origin(), static_cast<float>(purifyNaN(m_value)));
 }
 
 Value* ConstFloatValue::divConstant(Procedure& proc, const Value* other) const

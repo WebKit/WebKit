@@ -6,7 +6,7 @@ noInline(foo);
 
 var d = new DataView(new ArrayBuffer(43));
 d.setInt8(42, 43);
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(d);
     if (result != 43)
         throw "Error: bad result: " + result;

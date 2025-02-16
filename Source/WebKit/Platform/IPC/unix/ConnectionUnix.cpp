@@ -45,6 +45,7 @@
 
 #if USE(GLIB)
 #include <gio/gio.h>
+#include <wtf/glib/GUniquePtr.h>
 #endif
 
 #if OS(DARWIN)

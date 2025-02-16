@@ -126,6 +126,11 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
     return success ? noErr : -1;
 }
 
+MediaTime AudioDestinationCocoa::outputLatency() const
+{
+    return MediaTime { static_cast<int64_t>(m_audioOutputUnitAdaptor.outputLatency()), static_cast<uint32_t>(sampleRate()) } + MediaTime { static_cast<int64_t>(AudioSession::protectedSharedSession()->outputLatency()), static_cast<uint32_t>(AudioSession::protectedSharedSession()->sampleRate()) };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEB_AUDIO)

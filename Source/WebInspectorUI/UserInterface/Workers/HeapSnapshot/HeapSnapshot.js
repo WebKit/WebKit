@@ -84,16 +84,19 @@ const rootNodeIdentifier = 0;
 //   - nodeOrdinalToPostOrderIndex - `nodeOrdinal` to a `postOrderIndex`.
 //   - postOrderIndexToNodeOrdinal - `postOrderIndex` to a `nodeOrdinal`.
 
-let nextSnapshotIdentifier = 1;
+let lastSnapshotIdentifierForTarget = new Map;
 
 HeapSnapshot = class HeapSnapshot
 {
-    constructor(objectId, snapshotDataString, title = null, imported = false)
+    constructor(targetId, objectId, snapshotDataString, title = null)
     {
-        this._identifier = nextSnapshotIdentifier++;
+        let nextSnapshotIdentifier = (lastSnapshotIdentifierForTarget.get(targetId) ?? 0) + 1;
+        lastSnapshotIdentifierForTarget.set(targetId, nextSnapshotIdentifier);
+
+        this._identifier = nextSnapshotIdentifier;
+        this._targetId = targetId;
         this._objectId = objectId;
         this._title = title;
-        this._imported = imported;
 
         let json = JSON.parse(snapshotDataString);
         snapshotDataString = null;
@@ -110,8 +113,8 @@ HeapSnapshot = class HeapSnapshot
         this._edges = edges;
         this._edgeCount = edges.length / edgeFieldCount;
 
-        this._roots = roots;
-        this._labels = labels;
+        this._roots = roots || [];
+        this._labels = labels || [];
 
         this._edgeTypesTable = edgeTypes;
         this._edgeNamesTable = edgeNames;
@@ -374,8 +377,8 @@ HeapSnapshot = class HeapSnapshot
 
     updateDeadNodesAndGatherCollectionData(snapshots)
     {
-        console.assert(!this._imported, "Should never use an imported snapshot to modify snapshots");
-        console.assert(snapshots.every((x) => !x._imported), "Should never modify nodes of imported snapshots");
+        console.assert(this._targetId, "Should never use an imported snapshot to modify snapshots");
+        console.assert(snapshots.every((x) => x._targetId), "Should never modify nodes of imported snapshots");
 
         let previousSnapshotIndex = snapshots.indexOf(this) - 1;
         let previousSnapshot = snapshots[previousSnapshotIndex];
@@ -407,6 +410,8 @@ HeapSnapshot = class HeapSnapshot
         for (let snapshot of snapshots) {
             if (snapshot === this)
                 break;
+            if (snapshot._targetId !== this._targetId)
+                continue;
             if (snapshot._markDeadNodes(collectedNodesList))
                 affectedSnapshots.push(snapshot._identifier);
         }
@@ -433,7 +438,6 @@ HeapSnapshot = class HeapSnapshot
             totalObjectCount: this._nodeCount - 1, // <root>.
             liveSize: this._liveSize,
             categories: this._categories,
-            imported: this._imported,
         };
     }
 
@@ -745,6 +749,7 @@ HeapSnapshot = class HeapSnapshot
         let className = this._nodeClassNamesTable[this._nodes[nodeIndex + nodeClassNameOffset]];
         return className === "Window"
             || className === "JSWindowProxy"
+            || className === "DedicatedWorkerGlobalScope"
             || className === "GlobalObject";
     }
 

@@ -170,13 +170,13 @@ skia_graphite_sources = [
   "$_src/compute/DispatchGroup.h",
   "$_src/geom/AnalyticBlurMask.cpp",
   "$_src/geom/AnalyticBlurMask.h",
-  "$_src/geom/AnalyticClip.h",
   "$_src/geom/BoundsManager.h",
   "$_src/geom/CoverageMaskShape.h",
   "$_src/geom/EdgeAAQuad.h",
   "$_src/geom/Geometry.h",
   "$_src/geom/IntersectionTree.cpp",
   "$_src/geom/IntersectionTree.h",
+  "$_src/geom/NonMSAAClip.h",
   "$_src/geom/Rect.h",
   "$_src/geom/Shape.cpp",
   "$_src/geom/Shape.h",
@@ -284,6 +284,7 @@ skia_graphite_dawn_sources = [
 skia_graphite_mtl_public = [
   "$_include/mtl/MtlBackendContext.h",
   "$_include/mtl/MtlGraphiteTypes.h",
+  "$_include/mtl/MtlGraphiteTypesUtils.h",
   "$_include/mtl/MtlGraphiteUtils.h",
 ]
 
@@ -303,6 +304,7 @@ skia_graphite_mtl_sources = [
   "$_src/mtl/MtlGraphicsPipeline.h",
   "$_src/mtl/MtlGraphicsPipeline.mm",
   "$_src/mtl/MtlGraphiteTypes.mm",
+  "$_src/mtl/MtlGraphiteTypesPriv.h",
   "$_src/mtl/MtlGraphiteUtils.mm",
   "$_src/mtl/MtlGraphiteUtilsPriv.h",
   "$_src/mtl/MtlQueueManager.h",
@@ -405,4 +407,6 @@ skia_graphite_precompile_sources = [
   "$_src/precompile/PrecompileShader.cpp",
   "$_src/precompile/PrecompileShaderPriv.h",
   "$_src/precompile/PrecompileShadersPriv.h",
+  "$_src/precompile/SerializationUtils.cpp",
+  "$_src/precompile/SerializationUtils.h",
 ]

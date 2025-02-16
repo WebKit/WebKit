@@ -21,6 +21,7 @@
 #include "WebKitDOMDocumentFragment.h"
 
 #include <WebCore/CSSImportRule.h>
+#include <WebCore/CustomElementRegistry.h>
 #include "DOMObjectCache.h"
 #include <WebCore/DOMException.h>
 #include <WebCore/Document.h>

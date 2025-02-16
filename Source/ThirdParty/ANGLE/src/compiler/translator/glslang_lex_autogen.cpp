@@ -10,7 +10,7 @@
 //   Lexer for the OpenGL shading language.
 
 // Ignore errors in auto-generated code.
-#if defined(__GNUC__)
+#if defined(__GNUC__) || defined(__clang__)
 #    pragma GCC diagnostic ignored "-Wswitch-enum"
 #    pragma GCC diagnostic ignored "-Wunused-function"
 #    pragma GCC diagnostic ignored "-Wunused-variable"
@@ -1839,7 +1839,7 @@ YY_DECL
                 case 85:
                     YY_RULE_SETUP
                     {
-                        return ES3_reserved_ES3_1_extension_ES3_2_keyword(
+                        return ES3_reserved_ES3_extension_ES3_2_keyword(
                             context, TExtension::OES_texture_storage_multisample_2d_array,
                             SAMPLER2DMSARRAY);
                     }
@@ -1847,7 +1847,7 @@ YY_DECL
                 case 86:
                     YY_RULE_SETUP
                     {
-                        return ES3_reserved_ES3_1_extension_ES3_2_keyword(
+                        return ES3_reserved_ES3_extension_ES3_2_keyword(
                             context, TExtension::OES_texture_storage_multisample_2d_array,
                             ISAMPLER2DMSARRAY);
                     }
@@ -1855,7 +1855,7 @@ YY_DECL
                 case 87:
                     YY_RULE_SETUP
                     {
-                        return ES3_reserved_ES3_1_extension_ES3_2_keyword(
+                        return ES3_reserved_ES3_extension_ES3_2_keyword(
                             context, TExtension::OES_texture_storage_multisample_2d_array,
                             USAMPLER2DMSARRAY);
                     }

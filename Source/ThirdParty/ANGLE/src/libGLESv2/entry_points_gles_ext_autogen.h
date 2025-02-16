@@ -1775,6 +1775,8 @@ ANGLE_EXPORT void GL_APIENTRY GL_PrimitiveBoundingBoxOES(GLfloat minX,
 // GL_OES_query_matrix
 ANGLE_EXPORT GLbitfield GL_APIENTRY GL_QueryMatrixxOES(GLfixed *mantissa, GLint *exponent);
 
+// GL_OES_required_internalformat
+
 // GL_OES_rgb8_rgba8
 
 // GL_OES_sample_shading

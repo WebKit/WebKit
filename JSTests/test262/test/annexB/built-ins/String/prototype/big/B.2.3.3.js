@@ -5,11 +5,11 @@
 // http://mathias.html5.org/tests/javascript/string/
 
 /*---
- description: >
-     String.prototype.big returns a string of HTML describing a single HTML
-     big element. The element's content is the `this` value of the function
-     invocation, coerced to a string.
- es6id: B.2.3.3
+description: >
+    String.prototype.big returns a string of HTML describing a single HTML
+    big element. The element's content is the `this` value of the function
+    invocation, coerced to a string.
+es6id: B.2.3.3
 ---*/
 
 assert.sameValue('_'.big(), '<big>_</big>');

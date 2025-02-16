@@ -62,16 +62,16 @@ var E = class E extends A {
  };
 
 var b = new B();
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(b.getParentValue(), testValue, i);
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     testCase(D.getParentStaticValue(), testValue, i);
 }
 
 var e = new E();
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
      e.setInitValue();
      testCase(e.prop, testValue+'-'+testValue, i);
      e.prop = 'new-test-value';
@@ -87,7 +87,7 @@ var F  = class F extends A {
 };
 
 var f = new F();
-for (var i=0; i < 10000; i++) {
+for (var i=0; i < testLoopCount; i++) {
     try {
         var result = f.newMethod();
         testCase(result, testValue, i);
@@ -148,7 +148,7 @@ var G = class G extends A {
  };
 
  var g = new G();
- for (var i = 0; i < 10000; i++) {
+ for (var i = 0; i < testLoopCount; i++) {
     g.setInitValue();
     testCase(g.prop, testValue + '-' + testValue, 'Error: Some problem with using arrow and "super" inside of the method');
     g.prop = 'new-test-value';
@@ -156,7 +156,7 @@ var G = class G extends A {
  }
 
 var g1 = new G();
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     g1.setInitValue();
     let getValue = g1.getValueCB();
     testCase(getValue(), testValue,  'Error: Some problem with using arrow and "super" inside of the method that retun arrow function');
@@ -177,7 +177,7 @@ var H = class H extends A {
     }
 };
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let h = new H();
     testCase(h.newValue, testValue, 'Error: Some problem with using "super" inside of the constructor');
 }
@@ -210,7 +210,7 @@ var J = class J extends A {
     }
 }
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let i = new I(false);
     testCase(i._value, testValue, 'Error: Some problem with using "super" inside of the constructor');
     let j = new J(false);

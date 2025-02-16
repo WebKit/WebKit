@@ -61,13 +61,14 @@ ImageBuffer* FilterImage::imageBufferFromCIImage()
     if (m_imageBuffer)
         return m_imageBuffer.get();
 
-    m_imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(m_absoluteImageRect.size(), 1, m_colorSpace, ImageBufferPixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
-    if (!m_imageBuffer)
+    RefPtr imageBuffer = ImageBuffer::create<ImageBufferIOSurfaceBackend>(m_absoluteImageRect.size(), 1, m_colorSpace, ImageBufferPixelFormat::BGRA8, RenderingPurpose::Unspecified, { });
+    m_imageBuffer = imageBuffer;
+    if (!imageBuffer)
         return nullptr;
 
-    ASSERT(m_imageBuffer->surface());
+    ASSERT(imageBuffer->surface());
     auto destRect = FloatRect { FloatPoint(), m_absoluteImageRect.size() };
-    [sharedCIContext().get() render:m_ciImage.get() toIOSurface:m_imageBuffer->surface()->surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
+    [sharedCIContext().get() render:m_ciImage.get() toIOSurface:imageBuffer->surface()->surface() bounds:destRect colorSpace:m_colorSpace.platformColorSpace()];
 
     return m_imageBuffer.get();
 }

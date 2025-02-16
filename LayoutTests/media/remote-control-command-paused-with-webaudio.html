@@ -1,0 +1,64 @@
+<html>
+<head>
+    <script src="media-file.js"></script>
+    <script src="video-test.js"></script>
+    <script>
+    audio = null;
+    context = null;
+    event = null;
+
+    async function runTest()
+    {
+        if (!window.internals) {
+            failTest('This test requires window.internals.');
+            return;
+        }
+
+        findMediaElement();
+        run('video.src = findMediaFile("video", "content/test")');
+        await waitFor(video, 'canplay');
+
+        audio = document.querySelector('audio');
+        run('audio.src = findMediaFile("audio", "content/test")');
+        await waitFor(audio, 'canplay');
+
+        run('context = new AudioContext()');
+
+        consoleWrite('-');
+        consoleWrite('Start the AudioContext');
+        await shouldResolve(run('context.resume()'));
+
+        consoleWrite('-');
+        consoleWrite('Play then pause the audio element');
+        run('audio.play()');
+        await waitFor(audio, 'playing');
+        run('audio.pause()');
+        await waitFor(audio, 'pause');
+
+        consoleWrite('-')
+        consoleWrite('Play then pause the video element');
+        run('video.play()');
+        await waitFor(video, 'playing');
+        run('video.pause()');
+        await waitFor(video, 'pause');
+
+        consoleWrite('-');
+        consoleWrite('Send a "play" remote control command');
+        run("internals.postRemoteControlCommand('play')");
+        waitFor(audio, 'play').then(failTest);
+        event = await waitFor(video, 'play');
+        testExpected('event.target === video', true);
+    }
+
+    window.addEventListener('load', event => {
+        runTest().then(endTest).catch(failTest);
+    });
+    </script>
+</head>
+
+<body>
+    <p>Test that the "seekToPlaybackPosition" remote control command works.</p>
+    <video muted controls></video>
+    <audio muted></audio>
+</body>
+</html>

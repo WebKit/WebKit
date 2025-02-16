@@ -9,7 +9,7 @@ function foo(a, b) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(2000000001, 2000000001);
     if (result != 2000000001 + 2000000001 + 42 && result != 2000000000 + 2000000000 + 42)
         throw "Error: bad result: " + result;

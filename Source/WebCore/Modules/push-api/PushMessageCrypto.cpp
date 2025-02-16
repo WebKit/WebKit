@@ -31,6 +31,7 @@
 #include <wtf/ByteOrder.h>
 #include <wtf/CryptographicallyRandomNumber.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/ASCIILiteral.h>
 
 namespace WebCore::PushCrypto {
 
@@ -150,7 +151,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * cek_info = "Content-Encoding: aes128gcm" || 0x00
      * CEK = HMAC-SHA-256(PRK, cek_info || 0x01)[0..15]
      */
-    static const auto cekInfo = "Content-Encoding: aes128gcm\x00\x01"_span;
+    static const auto cekInfo = "Content-Encoding: aes128gcm\x00\x01"_span8;
     auto cek = hmacSHA256(prk, cekInfo);
     cek.shrink(16);
 
@@ -159,7 +160,7 @@ std::optional<Vector<uint8_t>> decryptAES128GCMPayload(const ClientKeys& clientK
      * nonce_info = "Content-Encoding: nonce" || 0x00
      * NONCE = HMAC-SHA-256(PRK, nonce_info || 0x01)[0..11]
      */
-    static const auto nonceInfo = "Content-Encoding: nonce\x00\x01"_span;
+    static const auto nonceInfo = "Content-Encoding: nonce\x00\x01"_span8;
     auto nonce = hmacSHA256(prk, nonceInfo);
     nonce.shrink(12);
 
@@ -235,7 +236,7 @@ std::optional<Vector<uint8_t>> decryptAESGCMPayload(const ClientKeys& clientKeys
      * IKM = HMAC-SHA-256(PRK_combine, auth_info || 0x01)
      * PRK = HMAC-SHA-256(salt, IKM)
      */
-    static const auto authInfo = "Content-Encoding: auth\x00\x01"_span;
+    static const auto authInfo = "Content-Encoding: auth\x00\x01"_span8;
     auto prkCombine = hmacSHA256(clientKeys.sharedAuthSecret, *ecdhSecretResult);
     auto ikm = hmacSHA256(prkCombine, authInfo);
     auto prk = hmacSHA256(salt, ikm);

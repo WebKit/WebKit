@@ -16,6 +16,7 @@ basic.host_numeric_constants
 basic.kernel_limit_constants
 basic.vec_type_hint
 basic.local_linear_id
+basic.bufferreadwriterect
 api.get_platform_info
 api.get_command_queue_info
 api.get_command_queue_info_compatibility
@@ -65,6 +66,7 @@ api.get_image2d_info
 api.queue_hint
 api.queue_properties
 api.sub_group_dispatch
+api.consistency_device_enqueue
 compiler.load_program_source
 compiler.load_multistring_source
 compiler.load_null_terminated_partial_multi_line_source
@@ -117,6 +119,7 @@ events.event_enqueue_marker
 events.event_enqueue_marker_with_event_list
 events.event_enqueue_barrier_with_event_list
 events.waitlists
+events.userevents
 events.userevents_multithreaded
 buffers.mem_read_write_flags
 buffers.mem_write_only_flags
@@ -126,3 +129,14 @@ buffers.mem_alloc_ref_flags
 buffers.buffer_read_long
 buffers.buffer_write_char
 profiling.copy_array_to_image
+multiples.context_four_contexts_same_device
+cl_copy_images.1D
+cl_copy_images.2D use_pitches
+cl_fill_images.2D
+cl_fill_images.1D use_pitches
+cl_get_info.2D
+non_uniform_work_group.non_uniform_1d_basic
+non_uniform_work_group.non_uniform_2d_atomics
+non_uniform_work_group.non_uniform_3d_barriers
+non_uniform_work_group.non_uniform_other_basic
+bruteforce.-w4 log2 modf mad

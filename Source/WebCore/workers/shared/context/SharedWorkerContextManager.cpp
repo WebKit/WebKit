@@ -147,7 +147,7 @@ void SharedWorkerContextManager::Connection::resumeSharedWorker(SharedWorkerIden
     SharedWorkerContextManager::singleton().resumeSharedWorker(identifier);
 }
 
-void SharedWorkerContextManager::forEachSharedWorker(const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
+void SharedWorkerContextManager::forEachSharedWorker(NOESCAPE const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
 {
     for (auto& worker : m_workerMap.values())
         worker->thread().runLoop().postTask(createTask());

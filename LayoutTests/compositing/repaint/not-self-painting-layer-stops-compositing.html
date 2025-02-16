@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../resources/ui-helper.js"></script>
+    <style>
+        #inner {
+            background: green;
+            width: 200px;
+            height: 2000px;
+        }
+        #scroller {
+            width: 200px;
+            height: 200px;
+            overflow: scroll;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.waitUntilDone();
+            if (testRunner.dontForceRepaint)
+                testRunner.dontForceRepaint();
+        }
+        async function doTest()
+        {
+            await UIHelper.renderingUpdate();
+
+            document.getElementById('scroller').style.overflow = "hidden";
+            
+            await UIHelper.renderingUpdate();
+            await UIHelper.renderingUpdate();
+
+            if (window.testRunner)
+                testRunner.notifyDone();
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+    <div id="scroller">
+        <div id="inner"></div>
+    </div>
+</body>
+</html>

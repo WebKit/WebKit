@@ -33,7 +33,7 @@
     [Reflect, CEReactions=NotNeeded] attribute DOMString width;
     [Reflect, CEReactions=NotNeeded] attribute DOMString height;
     [CEReactions=NotNeeded, ImplementedAs=referrerPolicyForBindings] attribute [AtomString] DOMString referrerPolicy;
-    [CEReactions=NotNeeded, EnabledBySetting=LazyIframeLoadingEnabled, ImplementedAs=loadingForBindings] attribute [AtomString] DOMString loading;
+    [CEReactions=NotNeeded, EnabledBySetting=LazyIframeLoadingEnabled] attribute [AtomString] DOMString loading;
     [CheckSecurityForNode] readonly attribute Document? contentDocument;
     readonly attribute WindowProxy? contentWindow;
     [CheckSecurityForNode] Document? getSVGDocument();

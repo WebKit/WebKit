@@ -22,9 +22,6 @@
 
 #include "tcuANGLENativeDisplayFactory.h"
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-
 #include "deClock.h"
 #include "deMemory.h"
 #include "egluDefs.hpp"
@@ -53,6 +50,10 @@
 #if defined(ANGLE_USE_WAYLAND)
 #    include <wayland-client.h>
 #    include <wayland-egl-backend.h>
+#endif
+
+#if (DE_OS == DE_OS_ANDROID)
+#    define NATIVE_EGL_LIBRARY_FULL_NAME "libEGL.so"
 #endif
 
 namespace tcu
@@ -97,7 +98,10 @@ constexpr eglu::NativeWindow::Capability kWindowCapabilities =
 class ANGLENativeDisplay : public eglu::NativeDisplay
 {
   public:
-    explicit ANGLENativeDisplay(EGLNativeDisplayType display, std::vector<eglw::EGLAttrib> attribs);
+    explicit ANGLENativeDisplay(EGLNativeDisplayType display,
+                                std::vector<eglw::EGLAttrib> attribs,
+                                const EGLenum platformType,
+                                const char *eglLibraryName);
     ~ANGLENativeDisplay() override = default;
 
     void *getPlatformNative() override
@@ -194,10 +198,13 @@ class NativeWindow : public eglu::NativeWindow
 
 // ANGLE NativeDisplay
 
-ANGLENativeDisplay::ANGLENativeDisplay(EGLNativeDisplayType display, std::vector<EGLAttrib> attribs)
-    : eglu::NativeDisplay(kDisplayCapabilities, EGL_PLATFORM_ANGLE_ANGLE, "EGL_EXT_platform_base"),
+ANGLENativeDisplay::ANGLENativeDisplay(EGLNativeDisplayType display,
+                                       std::vector<EGLAttrib> attribs,
+                                       const EGLenum platformType,
+                                       const char *eglLibraryName)
+    : eglu::NativeDisplay(kDisplayCapabilities, platformType, "EGL_EXT_platform_base"),
       mDeviceContext(display),
-      mLibrary(ANGLE_EGL_LIBRARY_FULL_NAME),
+      mLibrary(eglLibraryName),
       mPlatformAttributes(std::move(attribs))
 {}
 
@@ -418,14 +425,16 @@ ANGLENativeDisplayFactory::ANGLENativeDisplayFactory(
     const std::string &name,
     const std::string &description,
     std::vector<eglw::EGLAttrib> platformAttributes,
-    EventState *eventState)
+    EventState *eventState,
+    const EGLenum platformType)
     : eglu::NativeDisplayFactory(name,
                                  description,
                                  kDisplayCapabilities,
-                                 EGL_PLATFORM_ANGLE_ANGLE,
+                                 platformType,
                                  "EGL_EXT_platform_base"),
       mNativeDisplay(bitCast<eglw::EGLNativeDisplayType>(EGL_DEFAULT_DISPLAY)),
-      mPlatformAttributes(std::move(platformAttributes))
+      mPlatformAttributes(std::move(platformAttributes)),
+      mPlatformType(platformType)
 {
 #if (DE_OS == DE_OS_UNIX)
 #    if defined(ANGLE_USE_X11)
@@ -488,8 +497,24 @@ eglu::NativeDisplay *ANGLENativeDisplayFactory::createDisplay(
     const eglw::EGLAttrib *attribList) const
 {
     DE_UNREF(attribList);
-    return new ANGLENativeDisplay(bitCast<EGLNativeDisplayType>(mNativeDisplay),
-                                  mPlatformAttributes);
+    if (mPlatformType == EGL_PLATFORM_ANGLE_ANGLE)
+    {
+        return new ANGLENativeDisplay(bitCast<EGLNativeDisplayType>(mNativeDisplay),
+                                      mPlatformAttributes, mPlatformType,
+                                      ANGLE_EGL_LIBRARY_FULL_NAME);
+    }
+#if (DE_OS == DE_OS_ANDROID)
+    else if (mPlatformType == EGL_PLATFORM_ANDROID_KHR)
+    {
+        return new ANGLENativeDisplay(bitCast<EGLNativeDisplayType>(mNativeDisplay),
+                                      mPlatformAttributes, mPlatformType,
+                                      NATIVE_EGL_LIBRARY_FULL_NAME);
+    }
+#endif
+    else
+    {
+        throw InternalError("unsupported platform type", DE_NULL, __FILE__, __LINE__);
+    }
 }
 
 }  // namespace tcu

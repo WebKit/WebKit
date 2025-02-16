@@ -716,7 +716,9 @@
 (allow iokit-open-service
     (require-all
         (extension "com.apple.webkit.extension.iokit")
-        (iokit-user-client-class "H11ANEIn")))
+        (iokit-user-client-class
+            "H11ANEIn"
+            "H1xANELoadBalancer")))
 #endif // HAVE(APPLE_CAMERA_USER_CLIENT)
 
 (deny IOKIT_OPEN_USER_CLIENT

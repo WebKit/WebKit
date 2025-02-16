@@ -54,10 +54,13 @@ if (window.accessibilityController) {
         await findTextInsideId("container");
 
         output += "\nAppending a text node to modal to make it accessible.";
-        let text = document.createTextNode("Foo text, inside modal");
-        document.getElementById("modal").appendChild(text);
+        let heading = document.createElement("h3");
+        heading.tabIndex = "0";
+        heading.innerText = "Foo text, inside modal";
+        document.getElementById("modal").appendChild(heading);
+        heading.focus();
 
-        // Wait for text node to be added as an AX child.
+        // Wait for heading to be added as an AX child.
         await waitFor(() => accessibilityController.accessibleElementById("modal").childAtIndex(0));
         await waitFor(() => !accessibilityController.accessibleElementById("container"));
 

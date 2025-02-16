@@ -122,3 +122,13 @@ class Command:
     GET_DOWNLOADABLE_FILES: str = "getDownloadableFiles"
     DOWNLOAD_FILE: str = "downloadFile"
     DELETE_DOWNLOADABLE_FILES: str = "deleteDownloadableFiles"
+
+    # Federated Credential Management (FedCM)
+    GET_FEDCM_TITLE: str = "getFedcmTitle"
+    GET_FEDCM_DIALOG_TYPE: str = "getFedcmDialogType"
+    GET_FEDCM_ACCOUNT_LIST: str = "getFedcmAccountList"
+    SELECT_FEDCM_ACCOUNT: str = "selectFedcmAccount"
+    CLICK_FEDCM_DIALOG_BUTTON: str = "clickFedcmDialogButton"
+    CANCEL_FEDCM_DIALOG: str = "cancelFedcmDialog"
+    SET_FEDCM_DELAY: str = "setFedcmDelay"
+    RESET_FEDCM_COOLDOWN: str = "resetFedcmCooldown"

@@ -177,9 +177,9 @@ class WindowSurfaceMtl : public SurfaceMtl
     // Check if metal layer has been resized.
     bool checkIfLayerResized(const gl::Context *context);
 
-    mtl::AutoObjCObj<CAMetalLayer> mMetalLayer = nil;
+    angle::ObjCPtr<CAMetalLayer> mMetalLayer = nil;
     CALayer *mLayer;
-    mtl::AutoObjCPtr<id<CAMetalDrawable>> mCurrentDrawable = nil;
+    angle::ObjCPtr<id<CAMetalDrawable>> mCurrentDrawable = nil;
 
     // Cache last known drawable size that is used by GL context. Can be used to detect resize
     // event. We don't use mMetalLayer.drawableSize directly since it might be changed internally by

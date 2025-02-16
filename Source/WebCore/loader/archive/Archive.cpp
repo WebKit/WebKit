@@ -38,12 +38,12 @@ Archive::~Archive() = default;
 
 void Archive::clearAllSubframeArchives()
 {
-    HashSet<Archive*> clearedArchives;
+    UncheckedKeyHashSet<Archive*> clearedArchives;
     clearedArchives.add(this);
     clearAllSubframeArchives(clearedArchives);
 }
 
-void Archive::clearAllSubframeArchives(HashSet<Archive*>& clearedArchives)
+void Archive::clearAllSubframeArchives(UncheckedKeyHashSet<Archive*>& clearedArchives)
 {
     ASSERT(clearedArchives.contains(this));
     for (auto& archive : m_subframeArchives) {

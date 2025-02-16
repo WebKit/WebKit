@@ -15,8 +15,8 @@
 # specific language governing permissions and limitations
 # under the License.
 
-import typing
 from dataclasses import dataclass
+from typing import List
 
 from .session import session_subscribe
 from .session import session_unsubscribe
@@ -64,7 +64,6 @@ class LogEntryAdded:
 
     @classmethod
     def from_json(cls, json):
-        print(json)
         if json["type"] == "console":
             return ConsoleLogEntry.from_json(json)
         elif json["type"] == "javascript":
@@ -77,7 +76,7 @@ class ConsoleLogEntry:
     text: str
     timestamp: str
     method: str
-    args: typing.List[dict]
+    args: List[dict]
     type_: str
 
     @classmethod

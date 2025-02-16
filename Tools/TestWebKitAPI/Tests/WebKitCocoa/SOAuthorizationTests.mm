@@ -2403,7 +2403,7 @@ TEST(SOAuthorizationPopUp, InterceptionSucceedNewWindowNavigation)
 
     RetainPtr<NSURL> baseURL = [NSBundle.test_resourcesBundle URLForResource:@"simple2" withExtension:@"html"];
     URL testURL { "http://www.example.com"_str };
-    auto testHtml = generateHtml(openerTemplate, testURL.string(), makeString("newWindow.location = '"_s, span(baseURL.get().absoluteString.UTF8String), "';"_s)); // Starts a new navigation on the new window.
+    auto testHtml = generateHtml(openerTemplate, testURL.string(), makeString("newWindow.location = '"_s, unsafeSpan(baseURL.get().absoluteString.UTF8String), "';"_s)); // Starts a new navigation on the new window.
 
     auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
     auto messageHandler = adoptNS([[TestSOAuthorizationScriptMessageHandler alloc] initWithExpectation:@[@"Hello.", @"WindowClosed."]]);
@@ -2739,10 +2739,10 @@ TEST(SOAuthorizationSubFrame, InterceptionSucceedWithCookie)
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
-    [webView loadHTMLString:testHtml baseURL:nil];
+    [webView loadHTMLString:testHtml baseURL:[NSURL URLWithString:@"http://example.com"]];
     Util::run(&allMessagesReceived);
 
-    checkAuthorizationOptions(false, "null"_s, 2);
+    checkAuthorizationOptions(false, "http://example.com"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
     [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello.", @"http://www.example.com", @"Cookies: sessionid=38afes7a8"]];
 

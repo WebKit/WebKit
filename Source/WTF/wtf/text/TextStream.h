@@ -77,6 +77,7 @@ public:
     WTF_EXPORT_PRIVATE TextStream& operator<<(const char*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const void*);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const AtomString&);
+    WTF_EXPORT_PRIVATE TextStream& operator<<(const CString&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(const String&);
     WTF_EXPORT_PRIVATE TextStream& operator<<(ASCIILiteral);
     WTF_EXPORT_PRIVATE TextStream& operator<<(StringView);
@@ -275,8 +276,8 @@ TextStream& operator<<(TextStream& ts, const FixedVector<ItemType>& vector)
     return streamSizedContainer(ts, vector);
 }
 
-template<typename ValueArg, typename HashArg, typename TraitsArg>
-TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsArg>& set)
+template<typename ValueArg, typename HashArg, typename TraitsArg, typename TableTraitsArg, ShouldValidateKey shouldValidateKey>
+TextStream& operator<<(TextStream& ts, const HashSet<ValueArg, HashArg, TraitsArg, TableTraitsArg, shouldValidateKey>& set)
 {
     return streamSizedContainer(ts, set);
 }

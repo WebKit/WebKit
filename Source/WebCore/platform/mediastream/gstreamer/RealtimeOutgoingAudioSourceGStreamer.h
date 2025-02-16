@@ -40,6 +40,8 @@ public:
     WARN_UNUSED_RETURN GRefPtr<GstPad> outgoingSourcePad() const final;
     RefPtr<GStreamerRTPPacketizer> createPacketizer(RefPtr<UniqueSSRCGenerator>, const GstStructure*, GUniquePtr<GstStructure>&&) final;
 
+    void dispatchBitrateRequest(uint32_t bitrate) final;
+
 protected:
     explicit RealtimeOutgoingAudioSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&, const String& mediaStreamId, MediaStreamTrack&);
     explicit RealtimeOutgoingAudioSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&);

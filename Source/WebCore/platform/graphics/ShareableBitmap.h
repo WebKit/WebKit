@@ -208,7 +208,7 @@ private:
 #endif
 
     ShareableBitmapConfiguration m_configuration;
-    Ref<SharedMemory> m_sharedMemory;
+    const Ref<SharedMemory> m_sharedMemory;
 #if USE(CG)
     std::optional<SharedMemoryHandle> m_ownershipHandle;
     bool m_releaseBitmapContextDataCalled : 1 { false };

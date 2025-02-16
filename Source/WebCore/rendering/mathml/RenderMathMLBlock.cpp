@@ -71,7 +71,7 @@ bool RenderMathMLBlock::isChildAllowed(const RenderObject& child, const RenderSt
 static LayoutUnit axisHeight(const RenderStyle& style)
 {
     // If we have a MATH table we just return the AxisHeight constant.
-    const Ref primaryFont = style.fontCascade().primaryFont();
+    Ref primaryFont = style.fontCascade().primaryFont();
     if (RefPtr mathData = primaryFont->mathData())
         return LayoutUnit(mathData->getMathConstant(primaryFont, OpenTypeMathData::AxisHeight));
 
@@ -146,7 +146,7 @@ std::optional<LayoutUnit> RenderMathMLTable::firstLineBaseline() const
     return LayoutUnit { (logicalHeight() / 2 + axisHeight(style())).toInt() };
 }
 
-void RenderMathMLBlock::layoutItems(bool relayoutChildren)
+void RenderMathMLBlock::layoutItems(RelayoutChildren relayoutChildren)
 {
     LayoutUnit verticalOffset = borderAndPaddingBefore();
     LayoutUnit horizontalOffset = borderAndPaddingStart();
@@ -160,7 +160,7 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
         preferredHorizontalExtent += childHorizontalMarginBoxExtent;
     }
 
-    LayoutUnit currentHorizontalExtent = contentLogicalWidth();
+    LayoutUnit currentHorizontalExtent = contentBoxLogicalWidth();
     for (auto* child = firstInFlowChildBox(); child; child = child->nextInFlowSiblingBox()) {
         auto everHadLayout = child->everHadLayout();
         LayoutUnit childSize = child->maxPreferredLogicalWidth() - child->horizontalBorderAndPaddingExtent();
@@ -194,13 +194,13 @@ void RenderMathMLBlock::layoutItems(bool relayoutChildren)
     }
 }
 
-void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
+void RenderMathMLBlock::layoutBlock(RelayoutChildren relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
 
     insertPositionedChildrenIntoContainingBlock();
 
-    if (!relayoutChildren && simplifiedLayout())
+    if (relayoutChildren == RelayoutChildren::No && simplifiedLayout())
         return;
 
     layoutFloatingChildren();
@@ -208,7 +208,7 @@ void RenderMathMLBlock::layoutBlock(bool relayoutChildren, LayoutUnit)
     LayoutRepainter repainter(*this);
 
     if (recomputeLogicalWidth())
-        relayoutChildren = true;
+        relayoutChildren = RelayoutChildren::Yes;
 
     setLogicalHeight(borderAndPaddingLogicalHeight() + scrollbarLogicalHeight());
 

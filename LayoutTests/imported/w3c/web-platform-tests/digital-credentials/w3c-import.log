@@ -16,6 +16,7 @@ None
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/allow-attribute.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/create.tentative.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/dc-types.ts
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/default-permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/digital-credentials-static-methods.tentative.https.html
@@ -24,7 +25,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/enabled-on-self-origin-by-permissions-policy.https.sub.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/enabled-on-self-origin-by-permissions-policy.https.sub.html.headers
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get-user-activation.https.html
-/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/identity-create.tentative.https.html
-/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/identity-get.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/get.tentative.https.html
+/LayoutTests/imported/w3c/web-platform-tests/digital-credentials/historical.any.js
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/non-fully-active.https.html
 /LayoutTests/imported/w3c/web-platform-tests/digital-credentials/tsconfig.json

@@ -63,6 +63,7 @@ ImageBufferSkiaSurfaceBackend::ImageBufferSkiaSurfaceBackend(const Parameters& p
     , m_surface(WTFMove(surface))
     , m_context(*m_surface->getCanvas(), renderingMode, parameters.purpose)
 {
+    m_context.applyDeviceScaleFactor(parameters.resolutionScale);
 }
 
 ImageBufferSkiaSurfaceBackend::~ImageBufferSkiaSurfaceBackend() = default;

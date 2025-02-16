@@ -39,14 +39,14 @@ DOMWrapperWorld::DOMWrapperWorld(JSC::VM& vm, Type type, const String& name)
 {
     VM::ClientData* clientData = m_vm.clientData;
     ASSERT(clientData);
-    static_cast<JSVMClientData*>(clientData)->rememberWorld(*this);
+    downcast<JSVMClientData>(clientData)->rememberWorld(*this);
 }
 
 DOMWrapperWorld::~DOMWrapperWorld()
 {
     VM::ClientData* clientData = m_vm.clientData;
     ASSERT(clientData);
-    static_cast<JSVMClientData*>(clientData)->forgetWorld(*this);
+    downcast<JSVMClientData>(clientData)->forgetWorld(*this);
 
     // These items are created lazily.
     while (!m_jsWindowProxies.isEmpty())
@@ -66,7 +66,7 @@ DOMWrapperWorld& normalWorld(JSC::VM& vm)
 {
     VM::ClientData* clientData = vm.clientData;
     ASSERT(clientData);
-    return static_cast<JSVMClientData*>(clientData)->normalWorld();
+    return downcast<JSVMClientData>(clientData)->normalWorldSingleton();
 }
 
 DOMWrapperWorld& mainThreadNormalWorld()

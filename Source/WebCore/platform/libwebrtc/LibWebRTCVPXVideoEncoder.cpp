@@ -54,7 +54,11 @@ static constexpr double defaultFrameRate = 30.0;
 
 static WorkQueue& vpxEncoderQueue()
 {
-    static NeverDestroyed<Ref<WorkQueue>> queue(WorkQueue::create("VPX VideoEncoder Queue"_s));
+    static std::once_flag onceKey;
+    static LazyNeverDestroyed<Ref<WorkQueue>> queue;
+    std::call_once(onceKey, [] {
+        queue.construct(WorkQueue::create("VPx VideoEncoder Queue"_s));
+    });
     return queue.get();
 }
 

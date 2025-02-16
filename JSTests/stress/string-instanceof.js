@@ -5,7 +5,7 @@ function foo(value, proto)
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo("hello", String);
     if (result)
         throw "Error: bad result: " + result;

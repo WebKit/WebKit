@@ -30,8 +30,6 @@
 #include "WebFakeXRDevice.h"
 #include "XRHandJoint.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 using InputSource = PlatformXR::FrameData::InputSource;
@@ -172,11 +170,11 @@ WebFakeXRInputController::ButtonOrPlaceholder WebFakeXRInputController::getButto
         // Devices that lack one of the optional inputs listed in the tables above MUST preserve their place in the
         // buttons or axes array, reporting a placeholder button or placeholder axis, respectively.
         if (buttonType != ButtonType::OptionalButton && buttonType != ButtonType::OptionalThumbstick) {
-            auto priority = std::find(XR_STANDARD_BUTTONS.begin(), XR_STANDARD_BUTTONS.end(), buttonType);
-            ASSERT(priority != XR_STANDARD_BUTTONS.end());
+            size_t priority = std::find(XR_STANDARD_BUTTONS.begin(), XR_STANDARD_BUTTONS.end(), buttonType) - XR_STANDARD_BUTTONS.begin();
+            ASSERT(priority != XR_STANDARD_BUTTONS.size());
 
-            for (auto it = priority + 1; it != XR_STANDARD_BUTTONS.end(); ++it) {
-                if (m_buttons.contains(*it)) {
+            for (size_t i = priority + 1; i < XR_STANDARD_BUTTONS.size(); ++i) {
+                if (m_buttons.contains(XR_STANDARD_BUTTONS[i])) {
                     result.button = InputSourceButton();
                     break;
                 }
@@ -213,7 +211,5 @@ void WebFakeXRInputController::updateHandJoints(const Vector<FakeXRJointStateIni
 #endif // ENABLE(WEBXR_HANDS)
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBXR)

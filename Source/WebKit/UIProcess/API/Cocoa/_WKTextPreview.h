@@ -26,7 +26,7 @@
 #import <WebKit/WKFoundation.h>
 
 NS_SWIFT_SENDABLE
-WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+WK_CLASS_AVAILABLE(macos(15.2), ios(18.2), visionos(2.2))
 @interface _WKTextPreview : NSObject
 
 // Preview image of text rendered against a transparent background.

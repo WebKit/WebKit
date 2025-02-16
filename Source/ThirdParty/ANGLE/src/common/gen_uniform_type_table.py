@@ -74,13 +74,13 @@ using namespace angle;
 namespace gl
 {{
 
-namespace
-{{
-constexpr std::array<UniformTypeInfo, {total_count}> kInfoTable =
+extern const std::array<UniformTypeInfo, {total_count}> kUniformInfoTable =
 {{{{
 {uniform_type_info_data}
 }}}};
 
+namespace
+{{
 uint16_t GetIndex(GLenum uniformType)
 {{
     switch (uniformType)
@@ -100,14 +100,8 @@ UniformTypeIndex GetUniformTypeIndex(GLenum uniformType)
 
 const UniformTypeInfo &GetUniformTypeInfo(GLenum uniformType)
 {{
-    ASSERT(kInfoTable[GetIndex(uniformType)].type == uniformType);
-    return kInfoTable[GetIndex(uniformType)];
-}}
-
-const UniformTypeInfo &GetUniformTypeInfoFromIndex(UniformTypeIndex index)
-{{
-    ASSERT(index.value >= 0 && index.value < {total_count});
-    return kInfoTable[index.value];
+    ASSERT(kUniformInfoTable[GetIndex(uniformType)].type == uniformType);
+    return kUniformInfoTable[GetIndex(uniformType)];
 }}
 
 }}  // namespace gl
@@ -138,6 +132,8 @@ inline GLint GetUniformElementComponents(UniformTypeIndex index)
     ASSERT(index.value >= 0 && index.value < {total_count});
     return kElementComponents[index.value];
 }}
+
+extern const std::array<UniformTypeInfo, {total_count}> kUniformInfoTable;
 
 }}  // namespace gl
 #endif  // COMMON_UNIFORM_TYPE_INFO_AUTOGEN_H_

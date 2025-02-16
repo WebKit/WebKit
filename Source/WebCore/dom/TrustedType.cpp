@@ -28,6 +28,7 @@
 
 #include "ContentSecurityPolicy.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "HTMLElement.h"
 #include "JSDOMExceptionHandling.h"
 #include "JSTrustedScript.h"
@@ -240,8 +241,7 @@ AttributeTypeAndSink trustedTypeForAttribute(const String& elementName, const St
     QualifiedName attribute(nullAtom(), AtomString(attributeName), attributeNS);
 
     if (attributeNS.isNull() && !attributeName.isNull()) {
-        auto& eventName = HTMLElement::eventNameForEventHandlerAttribute(attribute);
-        if (!eventName.isNull()) {
+        if (isEventHandlerAttribute(attribute)) {
             returnValues.sink = makeString("Element "_s, attributeName);
             returnValues.attributeType = trustedTypeToString(TrustedType::TrustedScript);
             return returnValues;
@@ -345,6 +345,25 @@ ExceptionOr<bool> canCompile(ScriptExecutionContext& scriptExecutionContext, JSC
         return stringValueHolder.releaseException();
 
     return codeString == stringValueHolder.releaseReturnValue();
+}
+
+bool isEventHandlerAttribute(const QualifiedName& attributeName)
+{
+    ASSERT(!attributeName.localName().isNull());
+
+    // Event handler attributes have no namespace.
+    if (!attributeName.namespaceURI().isNull())
+        return false;
+
+    // Fast early return for names that don't start with "on".
+    AtomStringImpl& localName = *attributeName.localName().impl();
+    if (localName.length() < 3 || localName[0] != 'o' || localName[1] != 'n')
+        return false;
+    static const NeverDestroyed<WTF::HashSet<AtomString>> eventHandlerNames([] {
+        return eventNames().allEventHandlerNames();
+    }());
+
+    return eventHandlerNames->contains(&localName);
 }
 
 } // namespace WebCore

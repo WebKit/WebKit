@@ -27,6 +27,7 @@
 #import "Test.h"
 
 #if PLATFORM(COCOA) && ENABLE(WEBGL)
+#import "GraphicsTestUtilities.h"
 #import "WebCoreTestUtilities.h"
 #import <Metal/Metal.h>
 #import <WebCore/Color.h>
@@ -39,9 +40,11 @@
 
 namespace TestWebKitAPI {
 
+using namespace WebCore;
+
 namespace {
 
-class MockGraphicsContextGLClient final : public WebCore::GraphicsContextGL::Client {
+class MockGraphicsContextGLClient final : public GraphicsContextGL::Client {
 public:
     void forceContextLost() final { ++m_contextLostCalls; }
     void addDebugMessage(GCGLenum, GCGLenum, GCGLenum, const String&) final { }
@@ -51,19 +54,19 @@ private:
     int m_contextLostCalls { 0 };
 };
 
-class TestedGraphicsContextGLCocoa : public WebCore::GraphicsContextGLCocoa {
+class TestedGraphicsContextGLCocoa : public GraphicsContextGLCocoa {
 public:
-    static RefPtr<TestedGraphicsContextGLCocoa> create(WebCore::GraphicsContextGLAttributes&& attributes)
+    static RefPtr<TestedGraphicsContextGLCocoa> create(GraphicsContextGLAttributes&& attributes)
     {
         auto context = adoptRef(*new TestedGraphicsContextGLCocoa(WTFMove(attributes)));
         if (!context->initialize())
             return nullptr;
         return context;
     }
-    RefPtr<WebCore::GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return nullptr; }
+    RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() final { return nullptr; }
 private:
-    TestedGraphicsContextGLCocoa(WebCore::GraphicsContextGLAttributes attributes)
-        : WebCore::GraphicsContextGLCocoa(WTFMove(attributes), { })
+    TestedGraphicsContextGLCocoa(GraphicsContextGLAttributes attributes)
+        : GraphicsContextGLCocoa(WTFMove(attributes), { })
     {
     }
 };
@@ -86,8 +89,8 @@ class AnyContextAttributeTest : public testing::TestWithParam<std::tuple<bool, b
 protected:
     bool antialias() const { return std::get<0>(GetParam()); }
     bool preserveDrawingBuffer() const { return std::get<1>(GetParam()); }
-    WebCore::GraphicsContextGLAttributes attributes();
-    RefPtr<TestedGraphicsContextGLCocoa> createTestContext(WebCore::IntSize contextSize);
+    GraphicsContextGLAttributes attributes();
+    RefPtr<TestedGraphicsContextGLCocoa> createTestContext(IntSize contextSize);
 
     void SetUp() override // NOLINT
     {
@@ -102,9 +105,9 @@ private:
     std::optional<ScopedSetAuxiliaryProcessTypeForTesting> m_scopedProcessType;
 };
 
-WebCore::GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
+GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
 {
-    WebCore::GraphicsContextGLAttributes attributes;
+    GraphicsContextGLAttributes attributes;
     attributes.antialias = antialias();
     attributes.depth = false;
     attributes.stencil = false;
@@ -113,7 +116,7 @@ WebCore::GraphicsContextGLAttributes AnyContextAttributeTest::attributes()
     return attributes;
 }
 
-RefPtr<TestedGraphicsContextGLCocoa> AnyContextAttributeTest::createTestContext(WebCore::IntSize contextSize)
+RefPtr<TestedGraphicsContextGLCocoa> AnyContextAttributeTest::createTestContext(IntSize contextSize)
 {
     auto context = TestedGraphicsContextGLCocoa::create(attributes());
     if (!context)
@@ -128,16 +131,16 @@ static const int expectedDisplayBufferPoolSize = 3;
 
 static ::testing::AssertionResult changeContextContents(TestedGraphicsContextGLCocoa& context, int iteration)
 {
-    WebCore::Color expected { iteration % 2 ? WebCore::Color::green : WebCore::Color::yellow };
-    auto [r, g, b, a] = expected.toColorTypeLossy<WebCore::SRGBA<float>>().resolved();
+    Color expected { iteration % 2 ? Color::green : Color::yellow };
+    auto [r, g, b, a] = expected.toColorTypeLossy<SRGBA<float>>().resolved();
     context.clearColor(r, g, b, a);
-    context.clear(WebCore::GraphicsContextGL::COLOR_BUFFER_BIT);
+    context.clear(GraphicsContextGL::COLOR_BUFFER_BIT);
     uint8_t gotValues[4] = { };
     auto sampleAt = context.getInternalFramebufferSize();
     sampleAt.contract(2, 3);
     sampleAt.clampNegativeToZero();
-    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0, false);
-    WebCore::Color got { WebCore::SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
+    context.readPixels({ sampleAt.width(), sampleAt.height(), 1, 1 }, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, gotValues, 4, 0, false);
+    Color got { SRGBA<uint8_t> { gotValues[0], gotValues[1], gotValues[2], gotValues[3] } };
     if (got != expected)
         return ::testing::AssertionFailure() << "Failed to verify draw to context. Got: " << got << ", expected: " << expected << ".";
     return ::testing::AssertionSuccess();
@@ -193,21 +196,21 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentPowerPreferenceMetal)
 {
     if (!hasMultipleGPUs())
         return;
-    WebCore::GraphicsContextGLAttributes attributes;
-    EXPECT_EQ(attributes.powerPreference, WebCore::GraphicsContextGLPowerPreference::Default);
-    auto defaultContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    GraphicsContextGLAttributes attributes;
+    EXPECT_EQ(attributes.powerPreference, GraphicsContextGLPowerPreference::Default);
+    auto defaultContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes });
     ASSERT_NE(defaultContext, nullptr);
 
-    attributes.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
-    auto lowPowerContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    attributes.powerPreference = GraphicsContextGLPowerPreference::LowPower;
+    auto lowPowerContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes });
     ASSERT_NE(lowPowerContext, nullptr);
 
-    attributes.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
-    auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+    attributes.powerPreference = GraphicsContextGLPowerPreference::HighPerformance;
+    auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes });
     ASSERT_NE(highPerformanceContext, nullptr);
 
-    EXPECT_NE(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER));
-    EXPECT_EQ(defaultContext->getString(WebCore::GraphicsContextGL::RENDERER), lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER));
+    EXPECT_NE(lowPowerContext->getString(GraphicsContextGL::RENDERER), highPerformanceContext->getString(GraphicsContextGL::RENDERER));
+    EXPECT_EQ(defaultContext->getString(GraphicsContextGL::RENDERER), lowPowerContext->getString(GraphicsContextGL::RENDERER));
 }
 #endif
 
@@ -219,24 +222,24 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitLowPowerDeviceMetal)
 {
     if (!hasMultipleGPUs())
         return;
-    WebCore::GraphicsContextGLAttributes attributes1;
-    attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
-    auto lowPowerContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
+    GraphicsContextGLAttributes attributes1;
+    attributes1.powerPreference = GraphicsContextGLPowerPreference::LowPower;
+    auto lowPowerContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes1 });
     ASSERT_NE(lowPowerContext, nullptr);
 
-    WebCore::GraphicsContextGLAttributes attributes2;
+    GraphicsContextGLAttributes attributes2;
     attributes2.windowGPUID = [lowPowerDevice() registryID];
-    auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(explicitDeviceContext.get(), nullptr);
 
     // Context with windowGPUID from low power device results to same thing as requesting default low power context.
-    EXPECT_EQ(lowPowerContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+    EXPECT_EQ(lowPowerContext->getString(GraphicsContextGL::RENDERER), explicitDeviceContext->getString(GraphicsContextGL::RENDERER));
 
     // High performance request on a low power explicit device as windowGPUID respects the high performance request.
-    attributes2.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
-    auto highPerformanceExplicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    attributes2.powerPreference = GraphicsContextGLPowerPreference::HighPerformance;
+    auto highPerformanceExplicitDeviceContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(highPerformanceExplicitDeviceContext.get(), nullptr);
-    EXPECT_NE(highPerformanceExplicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+    EXPECT_NE(highPerformanceExplicitDeviceContext->getString(GraphicsContextGL::RENDERER), explicitDeviceContext->getString(GraphicsContextGL::RENDERER));
 }
 
 // Tests that requesting context with windowGPUID from high performance device results to same thing
@@ -247,24 +250,24 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsExplicitHighPerformanceDeviceMeta
 {
     if (!hasMultipleGPUs())
         return;
-    WebCore::GraphicsContextGLAttributes attributes1;
-    attributes1.powerPreference = WebCore::GraphicsContextGLPowerPreference::HighPerformance;
-    auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes1 });
+    GraphicsContextGLAttributes attributes1;
+    attributes1.powerPreference = GraphicsContextGLPowerPreference::HighPerformance;
+    auto highPerformanceContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes1 });
     ASSERT_NE(highPerformanceContext, nullptr);
 
-    WebCore::GraphicsContextGLAttributes attributes2;
+    GraphicsContextGLAttributes attributes2;
     attributes2.windowGPUID = [highPerformanceDevice() registryID];
-    auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    auto explicitDeviceContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(explicitDeviceContext.get(), nullptr);
 
     // Context with windowGPUID from high performance device results to same thing as requesting default high performance context.
-    EXPECT_EQ(highPerformanceContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+    EXPECT_EQ(highPerformanceContext->getString(GraphicsContextGL::RENDERER), explicitDeviceContext->getString(GraphicsContextGL::RENDERER));
 
     // Low power request on a high performance explicit device as windowGPUID ignores the low power request.
-    attributes2.powerPreference = WebCore::GraphicsContextGLPowerPreference::LowPower;
-    auto lowPowerExplicitDeviceContext = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes2 });
+    attributes2.powerPreference = GraphicsContextGLPowerPreference::LowPower;
+    auto lowPowerExplicitDeviceContext = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes2 });
     ASSERT_NE(lowPowerExplicitDeviceContext.get(), nullptr);
-    EXPECT_EQ(lowPowerExplicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER), explicitDeviceContext->getString(WebCore::GraphicsContextGL::RENDERER));
+    EXPECT_EQ(lowPowerExplicitDeviceContext->getString(GraphicsContextGL::RENDERER), explicitDeviceContext->getString(GraphicsContextGL::RENDERER));
 }
 
 // Tests that requesting GraphicsContextGL instances with different devices results in different underlying
@@ -276,9 +279,9 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
     Vector<Ref<TestedGraphicsContextGLCocoa>> contexts;
     auto devices = allDevices();
     for (id<MTLDevice> device in devices.get()) {
-        WebCore::GraphicsContextGLAttributes attributes;
+        GraphicsContextGLAttributes attributes;
         attributes.windowGPUID = [device registryID];
-        auto context = TestedGraphicsContextGLCocoa::create(WebCore::GraphicsContextGLAttributes { attributes });
+        auto context = TestedGraphicsContextGLCocoa::create(GraphicsContextGLAttributes { attributes });
         EXPECT_NE(context.get(), nullptr);
         if (!context)
             continue;
@@ -296,8 +299,8 @@ TEST_F(GraphicsContextGLCocoaTest, MultipleGPUsDifferentGPUIDsMetal)
 
 TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
 {
-    using GL = WebCore::GraphicsContextGL;
-    WebCore::GraphicsContextGLAttributes attributes;
+    using GL = GraphicsContextGL;
+    GraphicsContextGLAttributes attributes;
     attributes.isWebGL2 = true;
     attributes.depth = true;
     attributes.stencil = true;
@@ -380,14 +383,34 @@ TEST_F(GraphicsContextGLCocoaTest, ClearBufferIncorrectSizes)
     gl = nullptr;
 }
 
+// Test destroying graphics contexts so that the underlying current OpenGL context is different
+// than the underlying OpenGL context of destroyed context.
+TEST_F(GraphicsContextGLCocoaTest, DestroyWithoutMakingCurrent)
+{
+    GraphicsContextGLAttributes attributes;
+    attributes.isWebGL2 = true;
+    attributes.depth = true;
+    attributes.stencil = true;
+    RefPtr gl1 = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    gl1->reshape(1, 1);
+    RefPtr gl2 = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    gl2->reshape(1, 1);
+    RefPtr gl3 = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
+    gl3->reshape(1, 1);
+    // Current context is now 3.
+    gl1 = nullptr; // Test the case where we destroy with other context being current.
+    // Current context is now nullptr.
+    gl2 = nullptr; // Test the case where we destroy without context being current.
+}
+
 TEST_F(GraphicsContextGLCocoaTest, TwoLinks)
 {
-    WebCore::GraphicsContextGLAttributes attributes;
+    GraphicsContextGLAttributes attributes;
     auto gl = TestedGraphicsContextGLCocoa::create(WTFMove(attributes));
-    auto vs = gl->createShader(WebCore::GraphicsContextGL::VERTEX_SHADER);
+    auto vs = gl->createShader(GraphicsContextGL::VERTEX_SHADER);
     gl->shaderSource(vs, "void main() { }"_s);
     gl->compileShader(vs);
-    auto fs = gl->createShader(WebCore::GraphicsContextGL::FRAGMENT_SHADER);
+    auto fs = gl->createShader(GraphicsContextGL::FRAGMENT_SHADER);
     gl->shaderSource(fs, "void main() { }"_s);
     gl->compileShader(fs);
     auto program = gl->createProgram();
@@ -398,6 +421,65 @@ TEST_F(GraphicsContextGLCocoaTest, TwoLinks)
     gl->linkProgram(program);
     EXPECT_TRUE(gl->getErrors().isEmpty());
     gl = nullptr;
+}
+
+TEST_F(GraphicsContextGLCocoaTest, BufferAsImageNoDrawingBufferReturnsNullptr)
+{
+    using GL = GraphicsContextGL;
+    auto gl = TestedGraphicsContextGLCocoa::create({ });
+    RefPtr drawingImage = gl->bufferAsNativeImage(GL::SurfaceBuffer::DrawingBuffer);
+    RefPtr displayImage = gl->bufferAsNativeImage(GL::SurfaceBuffer::DisplayBuffer);
+    EXPECT_EQ(drawingImage, nullptr);
+    EXPECT_EQ(displayImage, nullptr);
+}
+
+
+TEST_F(GraphicsContextGLCocoaTest, BufferAsImageAfterReshape)
+{
+    using GL = GraphicsContextGL;
+    auto gl = TestedGraphicsContextGLCocoa::create({ });
+    gl->reshape(10, 10);
+    RefPtr drawingImage = gl->bufferAsNativeImage(GL::SurfaceBuffer::DrawingBuffer);
+    RefPtr displayImage = gl->bufferAsNativeImage(GL::SurfaceBuffer::DisplayBuffer);
+    EXPECT_NE(drawingImage, nullptr);
+    EXPECT_EQ(displayImage, nullptr);
+    EXPECT_EQ(drawingImage->size(), FloatSize(10, 10));
+    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage, FloatPoint(5, 5)));
+}
+
+// Test copying images and mutating the drawing buffer.
+// The mutations should only be visible in the new buffers, and not the old ones.
+TEST_F(GraphicsContextGLCocoaTest, CopyImageAndMutateDrawingBuffer)
+{
+    using GL = GraphicsContextGL;
+    auto gl = TestedGraphicsContextGLCocoa::create({ });
+    gl->reshape(10, 10);
+    RefPtr drawingImage0 = gl->bufferAsNativeImage(GL::SurfaceBuffer::DrawingBuffer);
+    ASSERT_NE(drawingImage0, nullptr);
+    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    gl->clearColor(0.f, 1.f, 0.f, 1.f);
+    gl->clear(GL::COLOR_BUFFER_BIT);
+    RefPtr drawingImage1 = gl->bufferAsNativeImage(GL::SurfaceBuffer::DrawingBuffer);
+    ASSERT_NE(drawingImage1, nullptr);
+    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+
+    gl->clearColor(0.f, 0.f, 1.f, 1.f);
+    gl->clear(GL::COLOR_BUFFER_BIT);
+    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+    RefPtr drawingImage2 = gl->bufferAsNativeImage(GL::SurfaceBuffer::DrawingBuffer);
+    ASSERT_NE(drawingImage2, nullptr);
+    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+    EXPECT_TRUE(imagePixelIs(Color::blue, *drawingImage2, FloatPoint(5, 5)));
+    gl->prepareForDisplay();
+    RefPtr displayImage = gl->bufferAsNativeImage(GL::SurfaceBuffer::DisplayBuffer);
+    ASSERT_NE(displayImage, nullptr);
+    EXPECT_TRUE(imagePixelIs(Color::transparentBlack, *drawingImage0, FloatPoint(5, 5)));
+    EXPECT_TRUE(imagePixelIs(Color::green, *drawingImage1, FloatPoint(5, 5)));
+    EXPECT_TRUE(imagePixelIs(Color::blue, *drawingImage2, FloatPoint(5, 5)));
+    EXPECT_TRUE(imagePixelIs(Color::blue, *displayImage, FloatPoint(5, 5)));
 }
 
 TEST_P(AnyContextAttributeTest, DisplayBuffersAreRecycled)
@@ -484,7 +566,7 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     EXPECT_TRUE(context->getErrors().isEmpty());
     ASSERT_TRUE(changeContextContents(*context, 0));
     EXPECT_TRUE(context->getErrors().isEmpty());
-    context->simulateEventForTesting(WebCore::GraphicsContextGLSimulatedEventForTesting::DisplayBufferAllocationFailure);
+    context->simulateEventForTesting(GraphicsContextGLSimulatedEventForTesting::DisplayBufferAllocationFailure);
     context->prepareForDisplay();
     EXPECT_NE(context->displayBufferSurface(), nullptr);
     EXPECT_EQ(1, client.contextLostCalls());
@@ -503,7 +585,7 @@ TEST_P(AnyContextAttributeTest, PrepareFailureWorks)
     } else {
         ASSERT_FALSE(changeContextContents(*context, 1));
         uint32_t gotValue = 0;
-        context->readPixels({ 0, 0, 1, 1 }, WebCore::GraphicsContextGL::RGBA, WebCore::GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0, false);
+        context->readPixels({ 0, 0, 1, 1 }, GraphicsContextGL::RGBA, GraphicsContextGL::UNSIGNED_BYTE, { reinterpret_cast<uint8_t*>(&gotValue), 4 }, 4, 0, false);
         EXPECT_EQ(0u, gotValue);
         EXPECT_EQ(GCGLErrorCode::InvalidFramebufferOperation, context->getErrors());
     }
@@ -520,7 +602,7 @@ TEST_P(AnyContextAttributeTest, FinishIsSignaled)
     auto context = createTestContext({ 2048, 2048 });
     ASSERT_NE(context, nullptr);
     context->clearColor(0.f, 1.f, 0.f, 1.f);
-    context->clear(WebCore::GraphicsContextGL::COLOR_BUFFER_BIT);
+    context->clear(GraphicsContextGL::COLOR_BUFFER_BIT);
     std::atomic<bool> signalled = false;
     std::atomic<uint32_t> signalThreadUID = 0;
     context->prepareForDisplayWithFinishedSignal([&signalled, &signalThreadUID] {

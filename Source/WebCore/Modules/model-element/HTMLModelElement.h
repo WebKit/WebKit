@@ -42,6 +42,10 @@
 #include "SharedBuffer.h"
 #include <wtf/UniqueRef.h>
 
+#if ENABLE(MODEL_PROCESS)
+#include "StageModeOperations.h"
+#endif
+
 namespace WebCore {
 
 class DOMMatrixReadOnly;
@@ -90,7 +94,7 @@ public:
 
     std::optional<LayerHostingContextIdentifier> layerHostingContextIdentifier() const;
 
-    void applyBackgroundColor(Color);
+    std::optional<PlatformLayerIdentifier> layerID() const;
 
 #if ENABLE(MODEL_PROCESS)
     RefPtr<ModelContext> modelContext() const;
@@ -147,7 +151,6 @@ public:
     void setPaused(bool, DOMPromiseDeferred<void>&&);
     double currentTime() const;
     void setCurrentTime(double);
-
     const URL& environmentMap() const;
     void setEnvironmentMap(const URL&);
 #endif
@@ -172,7 +175,6 @@ private:
     void deleteModelPlayer();
 
     RefPtr<GraphicsLayer> graphicsLayer() const;
-    std::optional<PlatformLayerIdentifier> layerID() const;
 
     HTMLModelElement& readyPromiseResolve();
 
@@ -231,6 +233,8 @@ private:
     void environmentMapResourceFinished();
     bool hasPortal() const;
     void updateHasPortal();
+    WebCore::StageModeOperation stageMode() const;
+    void updateStageMode();
 #endif
     void modelResourceFinished();
 

@@ -75,7 +75,7 @@ FontCache::CreateDWriteFactoryResult FontCache::createDWriteFactory()
     if (baseFontPath.isEmpty())
         return result;
 
-    const std::span<const LChar> fontFilenames[] = {
+    const auto fontFilenames = {
         "AHEM____.TTF"_span,
         "WebKitWeightWatcher100.ttf"_span,
         "WebKitWeightWatcher200.ttf"_span,

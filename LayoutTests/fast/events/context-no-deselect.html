@@ -8,6 +8,7 @@
 // This test checks that if the user right clicks on selected text,
 // the selected text doesn't change or get deselected.
 var input = document.getElementById("text");
+input.focus();
 input.selectionStart = 5;
 input.selectionEnd = 15;
 

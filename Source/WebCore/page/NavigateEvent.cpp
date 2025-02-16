@@ -123,7 +123,7 @@ void NavigateEvent::processScrollBehavior(Document& document)
     m_interceptionState = InterceptionState::Scrolled;
 
     if (m_navigationType == NavigationNavigationType::Traverse || m_navigationType == NavigationNavigationType::Reload)
-        document.frame()->loader().checkedHistory()->restoreScrollPositionAndViewState();
+        document.frame()->loader().protectedHistory()->restoreScrollPositionAndViewState();
     else if (!document.frame()->view()->scrollToFragment(document.url())) {
         if (!document.url().hasFragmentIdentifier())
             document.frame()->view()->scrollTo({ 0, 0 });

@@ -16,7 +16,7 @@ function arrayEq(a, b) {
 
     concat.call(p,p);
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (!arrayEq(concat.call(p,p), [1,2,3,1,2,3]))
             throw "bad";
     }

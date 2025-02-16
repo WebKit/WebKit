@@ -2,7 +2,7 @@
 function foo() {
   const a0 = [1,2,3];
   let zero = 0;
-  for (let i=0; i<100000; i++) {
+  for (let i=0; i<testLoopCount; i++) {
     const zero2 = zero;
     const a1 = [1];
     const a2 = [a1];

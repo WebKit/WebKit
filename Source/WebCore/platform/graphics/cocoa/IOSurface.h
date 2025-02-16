@@ -60,7 +60,6 @@ public:
         ImageBuffer,
         ImageBufferShareableMapped,
         LayerBacking,
-        BitmapOnlyLayerBacking,
         MediaPainting,
         Snapshot,
         ShareableSnapshot,
@@ -72,13 +71,15 @@ public:
         BGRX,
         BGRA,
         YUV422,
-#if HAVE(IOSURFACE_RGB10)
+        RGBA,
+        RGBX,
+#if ENABLE(PIXEL_FORMAT_RGB10)
         RGB10,
+#endif
+#if ENABLE(PIXEL_FORMAT_RGB10A8)
         RGB10A8,
 #endif
-        RGBA, // NOLINT
-        RGBX, // NOLINT
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
         RGBA16F,
 #endif
     };
@@ -116,6 +117,16 @@ public:
         void* surfaceBaseAddress() const
         {
             return IOSurfaceGetBaseAddress(m_surface.get());
+        }
+
+        std::span<uint8_t> surfaceSpan()
+        {
+            return unsafeMakeSpan(static_cast<uint8_t*>(IOSurfaceGetBaseAddress(m_surface.get())), IOSurfaceGetAllocSize(m_surface.get()));
+        }
+
+        std::span<const uint8_t> surfaceSpan() const
+        {
+            return unsafeMakeSpan(static_cast<const uint8_t*>(IOSurfaceGetBaseAddress(m_surface.get())), IOSurfaceGetAllocSize(m_surface.get()));
         }
 
     private:

@@ -36,7 +36,9 @@
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
+#import "TestPDFDocument.h"
 #import "TestWKWebView.h"
+#import "UIKitSPIForTesting.h"
 #import "UISideCompositingScope.h"
 #import "UnifiedPDFTestHelpers.h"
 #import "WKPrinting.h"
@@ -47,9 +49,19 @@
 #import <WebKit/WKNavigationDelegatePrivate.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
+#import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/_WKFeature.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/MakeString.h>
+
+#if PLATFORM(IOS_FAMILY)
+@interface UIPrintInteractionController ()
+- (BOOL)_setupPrintPanel:(void (^)(UIPrintInteractionController *printInteractionController, BOOL completed, NSError *error))completion;
+- (void)_generatePrintPreview:(void (^)(NSURL *previewPDF, BOOL shouldRenderOnChosenPaper))completionHandler;
+- (void)_cleanPrintState;
+@end
+#endif
 
 @interface ObserveWebContentCrashNavigationDelegate : NSObject <WKNavigationDelegate>
 @end
@@ -85,16 +97,57 @@ namespace TestWebKitAPI {
 
 #if PLATFORM(MAC)
 
-UNIFIED_PDF_TEST(KeyboardScrollingInSinglePageMode)
-{
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
-    [webView setForceWindowToBecomeKey:YES];
+class UnifiedPDFWithKeyboardScrolling : public testing::Test {
+public:
+    RetainPtr<TestWKWebView> webView;
 
-    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"multiple-pages" withExtension:@"pdf"]];
-    [webView synchronouslyLoadRequest:request.get()];
-    [[webView window] makeFirstResponder:webView.get()];
-    [[webView window] makeKeyAndOrderFront:nil];
-    [[webView window] orderFrontRegardless];
+    void SetUp() final
+    {
+        webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get() addToWindow:YES]);
+        [webView setForceWindowToBecomeKey:YES];
+    }
+
+    void synchronouslyLoadPDFDocument(String documentName)
+    {
+        RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:documentName withExtension:@"pdf"]];
+        [webView synchronouslyLoadRequest:request.get()];
+        [[webView window] makeFirstResponder:webView.get()];
+        [[webView window] makeKeyAndOrderFront:nil];
+        [[webView window] orderFrontRegardless];
+        [webView waitForNextPresentationUpdate];
+    }
+
+    void scrollDown(Seconds duration = 200_ms)
+    {
+        pressKey(NSDownArrowFunctionKey, DownArrowKeyCode, duration);
+    }
+
+    void scrollRight(Seconds duration = 200_ms)
+    {
+        pressKey(NSRightArrowFunctionKey, RightArrowKeyCode, duration);
+    }
+
+private:
+    static constexpr unsigned short DownArrowKeyCode { 0x7D };
+    static constexpr unsigned short RightArrowKeyCode { 0x7C };
+
+    void pressKey(auto key, unsigned short code, Seconds duration = 200_ms)
+    {
+        NSString *keyString = [NSString stringWithFormat:@"%C", static_cast<unichar>(key)];
+        [webView sendKey:keyString code:code isDown:YES modifiers:0];
+        Util::runFor(duration);
+        [webView sendKey:keyString code:code isDown:NO modifiers:0];
+        Util::runFor(50_ms);
+    }
+};
+
+TEST_F(UnifiedPDFWithKeyboardScrolling, KeyboardScrollingInSinglePageMode)
+{
+    if constexpr (!unifiedPDFForTestingEnabled)
+        return;
+
+    synchronouslyLoadPDFDocument("multiple-pages"_s);
+
     [webView objectByEvaluatingJavaScript:@"internals.setPDFDisplayModeForTesting(document.querySelector('embed'), 'SinglePageDiscrete')"];
     [webView waitForNextPresentationUpdate];
     [webView setMagnification:2];
@@ -102,10 +155,7 @@ UNIFIED_PDF_TEST(KeyboardScrollingInSinglePageMode)
     auto colorsBeforeScrolling = [webView sampleColors];
     Vector<WebCore::Color> colorsAfterScrollingDown;
     while (true) {
-        [webView sendKey:@"ArrowDown" code:NSDownArrowFunctionKey isDown:YES modifiers:0];
-        Util::runFor(200_ms);
-        [webView sendKey:@"ArrowDown" code:NSDownArrowFunctionKey isDown:NO modifiers:0];
-        Util::runFor(50_ms);
+        scrollDown();
         colorsAfterScrollingDown = [webView sampleColors];
         if (colorsBeforeScrolling != colorsAfterScrollingDown)
             break;
@@ -113,14 +163,29 @@ UNIFIED_PDF_TEST(KeyboardScrollingInSinglePageMode)
 
     Vector<WebCore::Color> colorsAfterScrollingRight;
     while (true) {
-        [webView sendKey:@"ArrowRight" code:NSRightArrowFunctionKey isDown:YES modifiers:0];
-        Util::runFor(200_ms);
-        [webView sendKey:@"ArrowRight" code:NSRightArrowFunctionKey isDown:NO modifiers:0];
-        Util::runFor(50_ms);
+        scrollRight();
         colorsAfterScrollingRight = [webView sampleColors];
         if (colorsAfterScrollingDown != colorsAfterScrollingRight)
             break;
     }
+}
+
+TEST_F(UnifiedPDFWithKeyboardScrolling, DisplayModeTransitionLandingPage)
+{
+    if constexpr (!unifiedPDFForTestingEnabled)
+        return;
+
+    synchronouslyLoadPDFDocument("multiple-pages-colored"_s);
+
+    auto colorsBefore = [webView sampleColors];
+
+    scrollDown(800_ms);
+    [webView objectByEvaluatingJavaScript:@"internals.setPDFDisplayModeForTesting(document.querySelector('embed'), 'SinglePageDiscrete')"];
+    [webView waitForNextPresentationUpdate];
+
+    auto colorsAfter = [webView sampleColors];
+
+    EXPECT_NE(colorsBefore, colorsAfter);
 }
 
 UNIFIED_PDF_TEST(CopyEditingCommandOnEmptySelectionShouldNotCrash)
@@ -273,6 +338,25 @@ UNIFIED_PDF_TEST(CopySelectedText)
     EXPECT_WK_STREQ(@"Test", [[UIPasteboard generalPasteboard] string]);
 }
 
+UNIFIED_PDF_TEST(SelectTextInRotatedPage)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test-rotated-cw-90" withExtension:@"pdf"]]];
+    [webView becomeFirstResponder];
+    [webView waitForNextPresentationUpdate];
+
+    [webView selectTextInGranularity:UITextGranularityWord atPoint:CGPointMake(350, 200)];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr contentView = [webView textInputContentView];
+    RetainPtr selectionRects = [contentView selectionRectsForRange:[contentView selectedTextRange]];
+    auto firstSelectionRect = [[selectionRects firstObject] rect];
+
+    EXPECT_EQ(1U, [selectionRects count]);
+    EXPECT_GT(firstSelectionRect.size.height, firstSelectionRect.size.width); // Final selection rect should run vertically.
+    EXPECT_WK_STREQ("Test", [contentView selectedText]);
+}
+
 UNIFIED_PDF_TEST(LookUpSelectedText)
 {
     RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 600, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
@@ -316,6 +400,39 @@ UNIFIED_PDF_TEST(LookUpSelectedText)
     EXPECT_EQ(selectedRangeInLookupContext.length, 3U);
 }
 
+UNIFIED_PDF_TEST(PrintPDFUsingPrintInteractionController)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"multiple-pages" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr printPageRenderer = adoptNS([[UIPrintPageRenderer alloc] init]);
+    [printPageRenderer addPrintFormatter:[webView viewPrintFormatter] startingAtPageAtIndex:0];
+
+    RetainPtr printInteractionController = adoptNS([[UIPrintInteractionController alloc] init]);
+    [printInteractionController setPrintPageRenderer:printPageRenderer.get()];
+
+    __block bool done = false;
+    __block RetainPtr<NSData> pdfData;
+
+    [printInteractionController _setupPrintPanel:nil];
+    [printInteractionController _generatePrintPreview:^(NSURL *pdfURL, BOOL shouldRenderOnChosenPaper) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            pdfData = adoptNS([[NSData alloc] initWithContentsOfURL:pdfURL]);
+            [printInteractionController _cleanPrintState];
+            done = true;
+        });
+    }];
+
+    TestWebKitAPI::Util::run(&done);
+    EXPECT_NE([pdfData length], 0UL);
+
+    Ref pdf = TestWebKitAPI::TestPDFDocument::createFromData(pdfData.get());
+    EXPECT_EQ(pdf->pageCount(), 16UL);
+}
+
 #endif // PLATFORM(IOS_FAMILY)
 
 #if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
@@ -338,11 +455,59 @@ UNIFIED_PDF_TEST(MouseDidMoveOverPDF)
     TestWebKitAPI::Util::run(&done);
 }
 
+UNIFIED_PDF_TEST(SelectionClearsOnAnchorLinkTap)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    RetainPtr preferences = adoptNS([[WKWebpagePreferences alloc] init]);
+    [preferences _setMouseEventPolicy:_WKWebsiteMouseEventPolicySynthesizeTouchEvents];
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"anchorLink" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+    RetainPtr contentView = [webView textInputContentView];
+
+    [webView selectTextInGranularity:UITextGranularityWord atPoint:CGPointMake(224, 404)];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("Bye", [contentView selectedText]);
+
+    TestWebKitAPI::MouseEventTestHarness testHarness { webView.get() };
+    testHarness.mouseMove(224, 50);
+    testHarness.mouseDown();
+    testHarness.mouseUp();
+    [webView waitForPendingMouseEvents];
+    [webView waitForNextPresentationUpdate];
+    EXPECT_WK_STREQ("", [contentView selectedText]);
+}
+
 #endif
 
 UNIFIED_PDF_TEST(LoadPDFWithSandboxCSPDirective)
 {
     runLoadPDFWithSandboxCSPDirectiveTest([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+}
+
+// FIXME: <https://webkit.org/b/287473> This test should be correct on iOS family, too.
+#if PLATFORM(MAC)
+UNIFIED_PDF_TEST(RespectsPageFragment)
+#else
+UNIFIED_PDF_TEST(DISABLED_RespectsPageFragment)
+#endif
+{
+    static constexpr auto fileName = "multiple-pages-colored"_s;
+    auto path = makeString('/', fileName, ".pdf"_s);
+    auto pathWithFragment = makeString(path, "#page=2"_s);
+
+    RetainPtr pdfURL = [NSBundle.test_resourcesBundle URLForResource:String { fileName } withExtension:@"pdf"];
+    HTTPResponse response { [NSData dataWithContentsOfURL:pdfURL.get()] };
+    HTTPServer server { { { path, response }, { pathWithFragment, response } } };
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:pdfURL.get()]];
+    auto colorsWithoutFragment = [webView sampleColors];
+
+    [webView synchronouslyLoadRequest:server.request(pathWithFragment)];
+    auto colorsWithFragment = [webView sampleColors];
+
+    EXPECT_NE(colorsWithoutFragment, colorsWithFragment);
 }
 
 } // namespace TestWebKitAPI

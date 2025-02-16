@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class CustomElementRegistry;
 class Document;
 class Element;
 class HTMLAttachmentElement;
@@ -69,7 +70,7 @@ private:
     virtual void refAttachmentAssociatedElement() const = 0;
     virtual void derefAttachmentAssociatedElement() const = 0;
 
-    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) = 0;
+    virtual Ref<Element> cloneElementWithoutAttributesAndChildren(Document&, CustomElementRegistry*) = 0;
     virtual void copyNonAttributePropertiesFromElement(const Element&) = 0;
 
     virtual AttachmentAssociatedElement* asAttachmentAssociatedElement() = 0;

@@ -242,9 +242,9 @@ std::optional<HEVCParameters> parseHEVCDecoderConfigurationRecord(FourCC codecCo
         return std::nullopt;
 
     HEVCParameters parameters;
-    if (codecCode == "hev1")
+    if (codecCode == std::span { "hev1" })
         parameters.codec = HEVCParameters::Codec::Hev1;
-    else if (codecCode == "hvc1")
+    else if (codecCode == std::span { "hvc1" })
         parameters.codec = HEVCParameters::Codec::Hvc1;
     else
         return std::nullopt;

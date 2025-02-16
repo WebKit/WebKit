@@ -16,10 +16,9 @@
         run("testRunner.dumpFullScreenCallbacks()");
 
         internals.withUserGesture(() => { run('target.webkitRequestFullScreen()'); });
-
         await waitFor(target, 'webkitfullscreenchange');
-
         await sleepFor(10);
+        if (window.testRunner) { await testRunner.updatePresentation() }
 
         run('document.webkitExitFullscreen()');
 

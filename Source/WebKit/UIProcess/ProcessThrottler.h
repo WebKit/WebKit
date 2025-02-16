@@ -169,6 +169,7 @@ private:
 
     void clearPendingRequestToSuspend();
     void clearAssertion();
+    void dropLastAssertion();
 
     class ProcessAssertionCache;
 

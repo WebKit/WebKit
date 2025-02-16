@@ -26,7 +26,6 @@
 #include "config.h"
 #include "DateTimeFormat.h"
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 #include <wtf/ASCIICType.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -272,5 +271,3 @@ void DateTimeFormat::quoteAndAppendLiteral(const String& literal, StringBuilder&
 }
 
 } // namespace WebCore
-
-#endif

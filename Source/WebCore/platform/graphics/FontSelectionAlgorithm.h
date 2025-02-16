@@ -433,8 +433,8 @@ public:
 private:
     using DistanceFunction = DistanceResult (FontSelectionAlgorithm::*)(Capabilities) const;
     using CapabilitiesRange = FontSelectionRange Capabilities::*;
-    FontSelectionValue bestValue(const bool eliminated[], DistanceFunction) const;
-    void filterCapability(bool eliminated[], DistanceFunction, CapabilitiesRange);
+    FontSelectionValue bestValue(std::span<const bool> eliminated, DistanceFunction) const;
+    void filterCapability(std::span<bool> eliminated, DistanceFunction, CapabilitiesRange);
 
     FontSelectionRequest m_request;
     Capabilities m_capabilitiesBounds;

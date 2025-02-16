@@ -51,7 +51,7 @@ public:
 class URLRegistry {
     WTF_MAKE_TZONE_ALLOCATED(URLRegistry);
 public:
-    static void forEach(const Function<void(URLRegistry&)>&);
+    static void forEach(NOESCAPE const Function<void(URLRegistry&)>&);
 
     URLRegistry();
 

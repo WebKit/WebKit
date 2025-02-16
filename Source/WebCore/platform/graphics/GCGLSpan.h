@@ -53,6 +53,12 @@ struct GCGLSpanTuple {
         return std::get<I>(dataTuple);
     }
 
+    template<unsigned I>
+    auto span() const
+    {
+        return unsafeMakeSpan(std::get<I>(dataTuple), bufSize);
+    }
+
     const size_t bufSize;
     std::tuple<Types*...> dataTuple;
 };

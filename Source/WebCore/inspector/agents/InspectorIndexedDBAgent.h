@@ -67,7 +67,7 @@ private:
     Inspector::InjectedScriptManager& m_injectedScriptManager;
     RefPtr<Inspector::IndexedDBBackendDispatcher> m_backendDispatcher;
 
-    Page& m_inspectedPage;
+    WeakRef<Page> m_inspectedPage;
 };
 
 } // namespace WebCore

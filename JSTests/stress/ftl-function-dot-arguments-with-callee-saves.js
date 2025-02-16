@@ -15,7 +15,7 @@ function bar(o, i) {
 
 noInline(bar);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var a = bar({f:42});
     if (a.length != 2 || a[0].length != 3 || a[0][0] != 1 || a[0][1] != 2 || a[0][2] != 3 || a[1] != 42)
         throw "Error: bad result: " + a;

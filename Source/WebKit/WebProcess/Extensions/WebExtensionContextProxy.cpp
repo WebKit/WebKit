@@ -29,12 +29,15 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 #include "JSWebExtensionAPINamespace.h"
+#include "JSWebExtensionAPIWebPageNamespace.h"
 #include "JSWebExtensionWrapper.h"
 #include "WebExtensionAPINamespace.h"
+#include "WebExtensionAPIWebPageNamespace.h"
 #include "WebExtensionControllerProxy.h"
 #include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
+#include <WebCore/Page.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
@@ -183,7 +186,7 @@ void WebExtensionContextProxy::setStorageAccessLevel(bool allowedInContentScript
     m_isSessionStorageAllowedInContentScripts = allowedInContentScripts;
 }
 
-void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, DOMWrapperWorld& world)
+void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(NOESCAPE const Function<void(WebFrame&, WebExtensionAPINamespace&)>& function, Ref<DOMWrapperWorld>&& world)
 {
     m_extensionContentFrames.forEach([&](auto& frame) {
         RefPtr page = frame.page() ? frame.page()->corePage() : nullptr;
@@ -203,6 +206,24 @@ void WebExtensionContextProxy::enumerateFramesAndNamespaceObjects(const Function
             if (chromeNamespaceObject && JSValueIsObject(context, chromeNamespaceObject))
                 namespaceObjectImpl = toWebExtensionAPINamespace(context, chromeNamespaceObject);
         }
+
+        if (!namespaceObjectImpl)
+            return;
+
+        function(frame, *namespaceObjectImpl);
+    });
+}
+
+void WebExtensionContextProxy::enumerateFramesAndWebPageNamespaceObjects(NOESCAPE const Function<void(WebFrame&, WebExtensionAPIWebPageNamespace&)>& function)
+{
+    m_extensionContentFrames.forEach([&](auto& frame) {
+        auto context = frame.jsContextForWorld(mainWorldSingleton());
+        auto globalObject = JSContextGetGlobalObject(context);
+
+        RefPtr<WebExtensionAPIWebPageNamespace> namespaceObjectImpl;
+        auto browserNamespaceObject = JSObjectGetProperty(context, globalObject, toJSString("browser").get(), nullptr);
+        if (browserNamespaceObject && JSValueIsObject(context, browserNamespaceObject))
+            namespaceObjectImpl = toWebExtensionAPIWebPageNamespace(context, browserNamespaceObject);
 
         if (!namespaceObjectImpl)
             return;

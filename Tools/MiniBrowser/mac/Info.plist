@@ -75,6 +75,15 @@
 			<key>LSHandlerRank</key>
 			<string>none</string>
 		</dict>
+		<dict>
+			<key>LSHandlerRank</key>
+			<string>Default</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>http</string>
+				<string>https</string>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>

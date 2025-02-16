@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "IsoPage.h"
 
 #if !BUSE(LIBPAS)
@@ -56,3 +58,4 @@ struct EligibilityResult {
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

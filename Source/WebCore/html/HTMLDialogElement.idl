@@ -31,4 +31,5 @@
     [CEReactions=Needed] undefined show();
     [CEReactions=Needed] undefined showModal();
     [CEReactions=Needed] undefined close(optional DOMString returnValue);
+    [CEReactions=Needed] undefined requestClose(optional DOMString returnValue);
 };

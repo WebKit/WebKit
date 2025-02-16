@@ -52,6 +52,11 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/text/AtomString.h>
 
+#if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
+#include "SharedFileHandle.h"
+#include <WebKitAdditions/WKREEngine.h>
+#endif
+
 namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ModelProcess);
@@ -80,6 +85,18 @@ void ModelProcess::createModelConnectionToWebProcess(WebCore::ProcessIdentifier 
     // may not be valid.
     if (!connectionHandle)
         return;
+
+#if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
+    WKREEngine::shared().initializeWithSharedSimulationConnectionGetterIfNeeded([identifier, weakThis = WeakPtr { *this }] (CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis) {
+            completionHandler(std::nullopt);
+            return;
+        }
+
+        protectedThis->requestSharedSimulationConnection(identifier, WTFMove(completionHandler));
+    });
+#endif
 
     auto newConnection = ModelConnectionToWebProcess::create(*this, identifier, sessionID, WTFMove(connectionHandle), WTFMove(parameters));
 
@@ -176,6 +193,8 @@ void ModelProcess::initializeModelProcess(ModelProcessCreationParameters&& param
 {
     CompletionHandlerCallingScope callCompletionHandler(WTFMove(completionHandler));
 
+    WKREEngine::enableRestrictiveRenderingMode(parameters.restrictiveRenderingMode);
+
     applyProcessCreationParameters(parameters.auxiliaryProcessParameters);
     RELEASE_LOG(Process, "%p - ModelProcess::initializeModelProcess:", this);
     WTF::Thread::setCurrentThreadIsUserInitiated();
@@ -221,6 +240,13 @@ ModelConnectionToWebProcess* ModelProcess::webProcessConnection(WebCore::Process
 {
     return m_webProcessConnections.get(identifier);
 }
+
+#if PLATFORM(VISION) && ENABLE(GPU_PROCESS)
+void ModelProcess::requestSharedSimulationConnection(WebCore::ProcessIdentifier webProcessIdentifier, CompletionHandler<void(std::optional<IPC::SharedFileHandle>)>&& completionHandler)
+{
+    parentProcessConnection()->sendWithAsyncReply(Messages::ModelProcessProxy::RequestSharedSimulationConnection(webProcessIdentifier), WTFMove(completionHandler));
+}
+#endif
 
 void ModelProcess::webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&& completionHandler)
 {

@@ -55,11 +55,7 @@
 #import <Quartz/Quartz.h>
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/AXObjectCache.h>
-#import <WebCore/CSSPropertyNames.h>
 #import <WebCore/Chrome.h>
-#import <WebCore/Color.h>
-#import <WebCore/ColorCocoa.h>
-#import <WebCore/ColorSerialization.h>
 #import <WebCore/Cursor.h>
 #import <WebCore/DictionaryLookup.h>
 #import <WebCore/DocumentLoader.h>
@@ -91,6 +87,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/TextIndicator.h>
+#import <WebCore/VoidCallback.h>
 #import <WebCore/WebAccessibilityObjectWrapperMac.h>
 #import <WebCore/WheelEventTestMonitor.h>
 #import <pal/spi/cg/CoreGraphicsSPI.h>
@@ -539,12 +536,6 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     m_pdfLayerController.get().delegate = m_pdfLayerControllerDelegate.get();
     m_pdfLayerController.get().parentLayer = m_contentLayer.get();
 
-    bool isFullFrame = isFullFramePlugin();
-    if (isFullFrame) {
-        // FIXME: <rdar://problem/75332948> get the background color from PDFKit instead of hardcoding it
-        RefPtr { document->bodyOrFrameset() }->setInlineStyleProperty(WebCore::CSSPropertyBackgroundColor, WebCore::serializationForHTML(WebCore::roundAndClampToSRGBALossy([WebCore::CocoaColor grayColor].CGColor)));
-    }
-
     if (supportsForms()) {
         RefPtr annotationContainer = m_annotationContainer = document->createElement(divTag, false);
         annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
@@ -559,7 +550,7 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     RefPtr frame = m_frame.get();
     m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]);
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
-    if (isFullFrame && frame->isMainFrame())
+    if (isFullFramePlugin() && frame->isMainFrame())
         [m_accessibilityObject setParent:frame->page()->accessibilityRemoteObject()];
     // If this is not a main-frame (e.g. it originated from an iframe) full-frame plugin, we'll need to set the parent later after the AXObjectCache has been initialized.
 
@@ -640,6 +631,11 @@ void PDFPlugin::installPDFDocument()
         RELEASE_LOG(IncrementalPDF, "PDFPlugin::installPDFDocument called - Plug-in has not been destroyed, but there's also no view.");
         return;
     }
+
+    auto handlePDFTestCallback = makeScopeExit([testCallback = WTFMove(m_pdfTestCallback)] {
+        if (testCallback)
+            testCallback->handleEvent();
+    });
 
 #if HAVE(INCREMENTAL_PDF_APIS)
     maybeClearHighLatencyDataProviderFlag();
@@ -1128,7 +1124,7 @@ bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
             continue;
         if ([NSStringFromSelector(item.action) isEqualToString:@"openWithPreview"])
             openInPreviewTag = i;
-        PDFContextMenuItem menuItem { String([item title]), static_cast<int>([item state]), i,
+        PDFContextMenuItem menuItem { String([item title]), static_cast<int>([item state]), i, ContextMenuItemTagNoAction,
             [item isEnabled] ? ContextMenuItemEnablement::Enabled : ContextMenuItemEnablement::Disabled,
             [item action] ? ContextMenuItemHasAction::Yes : ContextMenuItemHasAction::No,
             [item isSeparatorItem] ? ContextMenuItemIsSeparator::Yes : ContextMenuItemIsSeparator::No

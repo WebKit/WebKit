@@ -72,6 +72,7 @@ def main():
 #include "ThreadGlobalData.h"
 #include <array>
 #include <functional>
+#include <wtf/HashSet.h>
 #include <wtf/OptionSet.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/text/AtomString.h>
@@ -153,6 +154,7 @@ public:''')
     }
 ''')
         writeln(f'    std::array<const AtomString, {len(event_names_input)}> allEventNames() const;')
+        writeln(f'    WTF::HashSet<AtomString> allEventHandlerNames() const;')
         writeln('''
 private:
     EventNames();
@@ -246,7 +248,21 @@ EventNames::EventNames()''')
             writeln(f'        {name}Event,')
             if conditional:
                 writeln(f'#endif')
-        writeln('''    } };
+        writeln('''    } };''')
+        writeln('}')
+        writeln('')
+        writeln(f'WTF::HashSet<AtomString> EventNames::allEventHandlerNames() const')
+        writeln('{')
+        writeln(f'    WTF::HashSet<AtomString> set;')
+        for name in sorted(event_names_input.keys()):
+            conditional = event_names_input[name].get('conditional', None)
+            if conditional:
+                writeln(f'#if {conditional}')
+            writeln(f'    set.add("on{name.lower()}"_s);')
+            if conditional:
+                writeln(f'#endif')
+        writeln('''    return set;''')
+        writeln('''
 }
 
 } // namespace WebCore''')

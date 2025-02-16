@@ -3433,7 +3433,7 @@ void webkit_web_view_load_plain_text(WebKitWebView* webView, const gchar* plainT
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(plainText);
 
-    getPage(webView).loadData(WebCore::SharedBuffer::create(span8(plainText)), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
+    getPage(webView).loadData(WebCore::SharedBuffer::create(unsafeSpan8(plainText)), "text/plain"_s, "UTF-8"_s, aboutBlankURL().string());
 }
 
 /**
@@ -4752,6 +4752,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const char* 
     return getPage(webView).canShowMIMEType(String::fromUTF8(mimeType));
 }
 
+#if ENABLE(MHTML)
 struct ViewSaveAsyncData {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     RefPtr<API::Data> webData;
@@ -4759,7 +4760,6 @@ struct ViewSaveAsyncData {
 };
 WEBKIT_DEFINE_ASYNC_DATA_STRUCT(ViewSaveAsyncData)
 
-#if ENABLE(MHTML)
 static void fileReplaceContentsCallback(GObject* object, GAsyncResult* result, gpointer data)
 {
     GRefPtr<GTask> task = adoptGRef(G_TASK(data));
@@ -4821,13 +4821,16 @@ void webkit_web_view_save(WebKitWebView* webView, WebKitSaveMode saveMode, GCanc
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
 
-#if ENABLE(MHTML)
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save));
+
+#if ENABLE(MHTML)
     g_task_set_task_data(task, createViewSaveAsyncData(), reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
     getPage(webView).getContentsAsMHTMLData([task](API::Data* data) {
         getContentsAsMHTMLDataCallback(data, task);
     });
+#else
+    g_task_return_new_error_literal(task, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, "WebKit was built without MHTML support which this API requires");
 #endif // ENABLE(MHTML)
 }
 
@@ -4851,6 +4854,7 @@ GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* 
     if (!g_task_propagate_boolean(task, error))
         return 0;
 
+#if ENABLE(MHTML)
     GInputStream* dataStream = g_memory_input_stream_new();
     ViewSaveAsyncData* data = static_cast<ViewSaveAsyncData*>(g_task_get_task_data(task));
     auto bytes = data->webData->span();
@@ -4858,6 +4862,9 @@ GInputStream* webkit_web_view_save_finish(WebKitWebView* webView, GAsyncResult* 
         g_memory_input_stream_add_data(G_MEMORY_INPUT_STREAM(dataStream), fastMemDup(bytes.data(), bytes.size()), bytes.size(), fastFree);
 
     return dataStream;
+#else
+    return 0;
+#endif
 }
 
 /**
@@ -4887,9 +4894,10 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     // We only support MHTML at the moment.
     g_return_if_fail(saveMode == WEBKIT_SAVE_MODE_MHTML);
 
-#if ENABLE(MHTML)
     GTask* task = g_task_new(webView, cancellable, callback, userData);
     g_task_set_source_tag(task, reinterpret_cast<gpointer>(webkit_web_view_save_to_file));
+
+#if ENABLE(MHTML)
     ViewSaveAsyncData* data = createViewSaveAsyncData();
     data->file = file;
     g_task_set_task_data(task, data, reinterpret_cast<GDestroyNotify>(destroyViewSaveAsyncData));
@@ -4897,6 +4905,8 @@ void webkit_web_view_save_to_file(WebKitWebView* webView, GFile* file, WebKitSav
     getPage(webView).getContentsAsMHTMLData([task](API::Data* data) {
         getContentsAsMHTMLDataCallback(data, task);
     });
+#else
+    g_task_return_new_error_literal(task, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED, "WebKit was built without MHTML support which this API requires");
 #endif // ENABLE(MHTML)
 }
 

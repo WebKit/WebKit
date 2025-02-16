@@ -15,7 +15,7 @@ if (!jscOptions().useExecutableAllocationFuzz) {
 
     var o = { valueOf: () => 0b1101 };
 
-    for (var i = 0; i < 10000; i++)
+    for (var i = 0; i < testLoopCount; i++)
         assert(bitAnd(0b11, o), 0b1);
 
     assert(numberOfDFGCompiles(bitAnd) <= 1, true);
@@ -25,7 +25,7 @@ if (!jscOptions().useExecutableAllocationFuzz) {
     }
     noInline(bitOr);
 
-    for (var i = 0; i < 10000; i++)
+    for (var i = 0; i < testLoopCount; i++)
         assert(bitOr(0b11, o), 0b1111);
 
     assert(numberOfDFGCompiles(bitOr) <= 1, true);
@@ -35,7 +35,7 @@ if (!jscOptions().useExecutableAllocationFuzz) {
     }
     noInline(bitXor);
 
-    for (var i = 0; i < 10000; i++)
+    for (var i = 0; i < testLoopCount; i++)
         assert(bitXor(0b0011, o), 0b1110);
 
     assert(numberOfDFGCompiles(bitXor) <= 1, true);
@@ -45,7 +45,7 @@ if (!jscOptions().useExecutableAllocationFuzz) {
     }
     noInline(bitNot);
 
-    for (var i = 0; i < 10000; i++)
+    for (var i = 0; i < testLoopCount; i++)
         assert(bitNot(o), -14);
 
     assert(numberOfDFGCompiles(bitNot) <= 1, true);
@@ -55,7 +55,7 @@ if (!jscOptions().useExecutableAllocationFuzz) {
     }
     noInline(bitLShift);
 
-    for (var i = 0; i < 10000; i++)
+    for (var i = 0; i < testLoopCount; i++)
         assert(bitLShift(o, 3), 0b1101000);
 
     assert(numberOfDFGCompiles(bitLShift) <= 1, true);

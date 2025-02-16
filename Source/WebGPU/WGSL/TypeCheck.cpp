@@ -1984,6 +1984,9 @@ const Type* TypeChecker::chooseOverload(ASCIILiteral kind, const SourceSpan& spa
             auto& call = uncheckedDowncast<AST::CallExpression>(*expression);
             call.m_isConstructor = it->value.kind == OverloadedDeclaration::Constructor;
             call.m_visibility = it->value.visibility;
+
+            if (call.isFloatToIntConversion(overload->result))
+                m_shaderModule.setUsesFtoi();
         }
 
         unsigned argumentCount = callArguments.size();
@@ -2193,7 +2196,7 @@ Behaviors TypeChecker::analyze(AST::LoopStatement& statement)
         m_breakTargetStack.append(&continuing.value());
         behaviors.add(analyzeStatements(continuing->body));
         m_breakTargetStack.removeLast();
-        if (auto* breakIf = continuing->breakIf)
+        if (continuing->breakIf)
             behaviors.add({ Behavior::Break, Behavior::Continue });
     }
     m_breakTargetStack.removeLast();

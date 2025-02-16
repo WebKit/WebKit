@@ -39,7 +39,7 @@ namespace JSC {
 class JSWebAssemblyGlobal final : public JSNonFinalObject {
 public:
     using Base = JSNonFinalObject;
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 
     template<typename CellType, SubspaceAccess mode>
@@ -48,7 +48,7 @@ public:
         return vm.webAssemblyGlobalSpace<mode>();
     }
 
-    static JSWebAssemblyGlobal* tryCreate(JSGlobalObject*, VM&, Structure*, Ref<Wasm::Global>&&);
+    static JSWebAssemblyGlobal* create(VM&, Structure*, Ref<Wasm::Global>&&);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;

@@ -61,14 +61,15 @@
 #import <WebCore/LocalFrame.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformEventFactoryMac.h>
-#import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/Range.h>
 #import <WebCore/ReferrerPolicy.h>
 #import <WebCore/SimpleRange.h>
 #import <WebCore/WebNSAttributedStringExtras.h>
 #import <wtf/Assertions.h>
+#import <wtf/FileSystem.h>
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/URL.h>
+#import <wtf/text/cf/StringConcatenateCF.h>
 
 extern "C" {
     bool CGContextGetAllowsFontSmoothing(CGContextRef context);
@@ -1268,20 +1269,15 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
     path = [temporaryPDFDirectoryPath stringByAppendingPathComponent:filename];
     if ([manager fileExistsAtPath:path]) {
-        NSString *pathTemplatePrefix = [temporaryPDFDirectoryPath stringByAppendingPathComponent:@"XXXXXX-"];
-        NSString *pathTemplate = [pathTemplatePrefix stringByAppendingString:filename];
-        // fileSystemRepresentation returns a const char *; copy it into a char * so we can modify it safely
-        char *cPath = strdup([pathTemplate fileSystemRepresentation]);
-        int fd = mkstemps(cPath, strlen(cPath) - strlen([pathTemplatePrefix fileSystemRepresentation]) + 1);
+        auto [fd, pathTemplateRepresentation] = FileSystem::createTemporaryFileInDirectory(temporaryPDFDirectoryPath, makeString('-', filename));
         if (fd < 0) {
             // Couldn't create a temporary file! Should never happen; if it does we'll fail silently on non-debug builds.
             ASSERT_NOT_REACHED();
             path = nil;
         } else {
             close(fd);
-            path = [manager stringWithFileSystemRepresentation:cPath length:strlen(cPath)];
+            path = [manager stringWithFileSystemRepresentation:pathTemplateRepresentation.data() length:pathTemplateRepresentation.length()];
         }
-        free(cPath);
     }
     
     [path retain];

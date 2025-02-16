@@ -54,6 +54,9 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     if (!tag)
         return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects the first argument to be a WebAssembly.Tag"_s);
 
+    if (UNLIKELY(&tag->tag() == &Wasm::Tag::jsExceptionTag()))
+        return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor does not accept WebAssembly.JSTag"_s);
+
     const auto& tagFunctionType = tag->type();
     MarkedArgumentBuffer values;
     values.ensureCapacity(tagFunctionType.argumentCount());
@@ -70,7 +73,10 @@ JSC_DEFINE_HOST_FUNCTION(constructJSWebAssemblyException, (JSGlobalObject* globa
     // Any GC'd values in here will be marked by the MarkedArugementBuffer until stored in the Exception.
     FixedVector<uint64_t> payload(values.size());
     for (unsigned i = 0; i < values.size(); ++i) {
-        payload[i] = toWebAssemblyValue(globalObject, tagFunctionType.argumentType(i), values.at(i));
+        auto type = tagFunctionType.argumentType(i);
+        if (UNLIKELY(type.kind == Wasm::TypeKind::V128 || isExnref(type)))
+            return throwVMTypeError(globalObject, scope, "WebAssembly.Exception constructor expects payload includes neither v128 nor exnref."_s);
+        payload[i] = toWebAssemblyValue(globalObject, type, values.at(i));
         RETURN_IF_EXCEPTION(scope, { });
     }
 

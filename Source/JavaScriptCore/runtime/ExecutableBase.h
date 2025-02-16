@@ -71,7 +71,7 @@ protected:
 public:
     static constexpr unsigned StructureFlags = Base::StructureFlags;
 
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
     
     // Force subclasses to override this.

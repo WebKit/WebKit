@@ -52,7 +52,7 @@ class Canonicalize(Command):
             default='origin',
         )
         parser.add_argument(
-            '--number', '-n',  type=int,
+            '--number', '-n', type=int,
             help='Number of commits to be canonicalized, regardless of the state of the remote',
             dest='number',
             default=None,

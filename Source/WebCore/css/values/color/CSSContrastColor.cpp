@@ -43,7 +43,6 @@ WebCore::Color createColor(const ContrastColor& unresolved, PlatformColorResolut
     return resolve(
         ContrastColorResolver {
             createColor(unresolved.color, state),
-            unresolved.max
         }
     );
 }
@@ -58,9 +57,9 @@ bool containsColorSchemeDependentColor(const ContrastColor& unresolved)
     return containsColorSchemeDependentColor(unresolved.color);
 }
 
-void Serialize<ContrastColor>::operator()(StringBuilder& builder, const ContrastColor& value)
+void Serialize<ContrastColor>::operator()(StringBuilder& builder, const SerializationContext& context, const ContrastColor& value)
 {
-    serializationForCSSContrastColor(builder, value);
+    serializationForCSSContrastColor(builder, context, value);
 }
 
 void ComputedStyleDependenciesCollector<ContrastColor>::operator()(ComputedStyleDependencies& dependencies, const ContrastColor& value)
@@ -68,7 +67,7 @@ void ComputedStyleDependenciesCollector<ContrastColor>::operator()(ComputedStyle
     collectComputedStyleDependencies(dependencies, value.color);
 }
 
-IterationStatus CSSValueChildrenVisitor<ContrastColor>::operator()(const Function<IterationStatus(CSSValue&)>& func, const ContrastColor& value)
+IterationStatus CSSValueChildrenVisitor<ContrastColor>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const ContrastColor& value)
 {
     return visitCSSValueChildren(func, value.color);
 }

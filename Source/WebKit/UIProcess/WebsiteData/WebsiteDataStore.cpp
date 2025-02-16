@@ -135,7 +135,7 @@ WorkQueue& WebsiteDataStore::websiteDataStoreIOQueue()
     return queue;
 }
 
-void WebsiteDataStore::forEachWebsiteDataStore(Function<void(WebsiteDataStore&)>&& function)
+void WebsiteDataStore::forEachWebsiteDataStore(NOESCAPE Function<void(WebsiteDataStore&)>&& function)
 {
     for (auto& dataStore : allDataStores().values())
         function(Ref { dataStore.get() });
@@ -202,7 +202,7 @@ WebsiteDataStore::~WebsiteDataStore()
     if (RefPtr networkProcess = m_networkProcess)
         networkProcess->removeSession(*this, std::exchange(m_completionHandlerForRemovalFromNetworkProcess, { }));
     if (m_completionHandlerForRemovalFromNetworkProcess) {
-        RunLoop::main().dispatch([completionHandler = std::exchange(m_completionHandlerForRemovalFromNetworkProcess, { })]() mutable {
+        RunLoop::protectedMain()->dispatch([completionHandler = std::exchange(m_completionHandlerForRemovalFromNetworkProcess, { })]() mutable {
             completionHandler({ });
         });
     }
@@ -511,7 +511,7 @@ void WebsiteDataStore::resolveDirectoriesAsynchronously()
             m_mediaKeysStorageSalt = WTFMove(mediaKeysStorageSalt);
             m_resolveDirectoriesCondition.notifyOne();
         }
-        RunLoop::main().dispatch([protectedThis = WTFMove(protectedThis)] { });
+        RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
 
@@ -608,7 +608,7 @@ void WebsiteDataStore::fetchDataAndApply(OptionSet<WebsiteDataType> dataTypes, O
         void addWebsiteData(WebsiteData&& websiteData)
         {
             if (!RunLoop::isMain()) {
-                RunLoop::main().dispatch([protectedThis = Ref { *this }, websiteData = crossThreadCopy(websiteData)]() mutable {
+                RunLoop::protectedMain()->dispatch([protectedThis = Ref { *this }, websiteData = crossThreadCopy(websiteData)]() mutable {
                     protectedThis->addWebsiteData(WTFMove(websiteData));
                 });
                 return;
@@ -759,6 +759,22 @@ private:
             callbackAggregator->addWebsiteData(WTFMove(websiteData));
         });
     }
+
+#if ENABLE(SCREEN_TIME)
+    if (dataTypes.contains(WebsiteDataType::ScreenTime) && isPersistent()) {
+        m_client->getScreenTimeURLs(configuration().identifier(), [callbackAggregator](HashSet<URL> urls) {
+            WebsiteData websiteData;
+            Vector<WebCore::SecurityOriginData> origins;
+            for (auto url : urls)
+                origins.append(SecurityOriginData::fromURL(url));
+
+            websiteData.entries = WTF::map(origins, [](auto& origin) {
+                return WebsiteData::Entry { origin, WebsiteDataType::ScreenTime, 0 };
+            });
+            callbackAggregator->addWebsiteData(WTFMove(websiteData));
+        });
+    }
+#endif
 }
 
 void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType> dataTypes, OptionSet<WebsiteDataFetchOption> fetchOptions, Vector<WebCore::RegistrableDomain>&& domains, CompletionHandler<void(Vector<WebsiteDataRecord>&&, HashSet<WebCore::RegistrableDomain>&&)>&& completionHandler)
@@ -777,7 +793,7 @@ void WebsiteDataStore::fetchDataForRegistrableDomains(OptionSet<WebsiteDataType>
                 }
             }
         }
-        RunLoop::main().dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
+        RunLoop::protectedMain()->dispatch([completionHandler = WTFMove(completionHandler), matchingDataRecords = WTFMove(matchingDataRecords), domainsWithMatchingDataRecords = WTFMove(domainsWithMatchingDataRecords)] () mutable {
             completionHandler(WTFMove(matchingDataRecords), WTFMove(domainsWithMatchingDataRecords));
         });
     });
@@ -802,16 +818,66 @@ auto WebsiteDataStore::computeWebProcessAccessTypeForDataRemoval(OptionSet<Websi
 {
     if (dataTypes.contains(WebsiteDataType::MemoryCache))
         return ProcessAccessType::OnlyIfLaunched;
+
+    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics))
+        return ProcessAccessType::OnlyIfLaunched;
+
     return ProcessAccessType::None;
+}
+
+static WebsiteDataStore::ProcessAccessType computeWebProcessAccessTypeForDataRemovalWithRecords(OptionSet<WebsiteDataType> dataTypes)
+{
+    // FIXME: We currently don't remove resource load statistics in web process for origin data removal as TestRunner might dead lock.
+    if (dataTypes.contains(WebsiteDataType::MemoryCache))
+        return WebsiteDataStore::ProcessAccessType::OnlyIfLaunched;
+
+    return WebsiteDataStore::ProcessAccessType::None;
+}
+
+HashSet<WebCore::ProcessIdentifier> WebsiteDataStore::activeWebProcesses(ServiceWorkerProcessCanBeActive serviceWorkerProcessCanBeActive) const
+{
+    HashSet<WebCore::ProcessIdentifier> identifiers;
+    // m_processes does not include worker processes now, so we iterate all processes.
+    for (Ref processPool : WebProcessPool::allProcessPools()) {
+        for (Ref process : processPool->processes()) {
+            if (process->isPrewarmed() || process->websiteDataStore() != this)
+                continue;
+
+            if (process->pageCount() || process->provisionalPageCount())
+                identifiers.add(process->coreProcessIdentifier());
+            else if (serviceWorkerProcessCanBeActive == ServiceWorkerProcessCanBeActive::Yes && process->isRunningServiceWorkers())
+                identifiers.add(process->coreProcessIdentifier());
+        }
+    }
+
+    return identifiers;
+}
+
+void WebsiteDataStore::removeDataInNetworkProcess(WebsiteDataStore::ProcessAccessType networkProcessAccessType, OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr<NetworkProcessProxy> networkProcess;
+    if (networkProcessAccessType == ProcessAccessType::Launch)
+        networkProcess = &this->networkProcess();
+    else if (networkProcessAccessType == ProcessAccessType::OnlyIfLaunched)
+        networkProcess = networkProcessIfExists();
+
+    if (!networkProcess)
+        return completionHandler();
+
+    // Service worker processes will be terminated for data removal if types include service worker registrations,
+    // so they cannot be treated as active process.
+    ServiceWorkerProcessCanBeActive canBeActive = dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations) ? ServiceWorkerProcessCanBeActive::No : ServiceWorkerProcessCanBeActive::Yes;
+    networkProcess->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, activeWebProcesses(canBeActive), WTFMove(completionHandler));
 }
 
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime modifiedSince, Function<void()>&& completionHandler)
 {
     RELEASE_LOG(Storage, "WebsiteDataStore::removeData started to delete data modified since %f for session %" PRIu64, modifiedSince.secondsSinceEpoch().value(), m_sessionID.toUInt64());
-    Ref callbackAggregator = MainRunLoopCallbackAggregator::create([protectedThis = Ref { *this }, sessionID = m_sessionID, completionHandler = WTFMove(completionHandler)] {
+    Ref callbackAggregator = MainRunLoopCallbackAggregator::create([protectedThis = Ref { *this }, sessionID = m_sessionID, completionHandler = WTFMove(completionHandler), token = m_removeDataTaskCounter.count()] {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(sessionID);
 #endif
+        UNUSED_PARAM(token);
         RELEASE_LOG(Storage, "WebsiteDataStore::removeData finished deleting modified data for session %" PRIu64, sessionID.toUInt64());
         completionHandler();
     });
@@ -824,38 +890,32 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     }
 #endif
 
-    bool didNotifyNetworkProcessToDeleteWebsiteData = false;
-    auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
-    switch (networkProcessAccessType) {
-    case ProcessAccessType::Launch:
-        networkProcess();
-        ASSERT(m_networkProcess);
-        FALLTHROUGH;
-    case ProcessAccessType::OnlyIfLaunched:
-        if (RefPtr networkProcess = m_networkProcess) {
-            networkProcess->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
-            didNotifyNetworkProcessToDeleteWebsiteData = true;
-        }
-        break;
-    case ProcessAccessType::None:
-        break;
-    }
-
     auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
-    if (webProcessAccessType != ProcessAccessType::None) {
-        for (RefPtr processPool : processPools()) {
+    auto networkProcessAccessType = computeNetworkProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
+    // Terminate web processes to avoid new data being created during deletion.
+    if (webProcessAccessType != ProcessAccessType::None || networkProcessAccessType != ProcessAccessType::None) {
+        for (Ref processPool : WebProcessPool::allProcessPools()) {
             // Clear back/forward cache first as processes removed from the back/forward cache will likely
             // be added to the WebProcess cache.
             processPool->protectedBackForwardCache()->removeEntriesForSession(sessionID());
             processPool->checkedWebProcessCache()->clearAllProcessesForSession(sessionID());
-        }
 
+            // Terminate worker processes if we will also delete service worker registrations.
+            if (dataTypes.contains(WebsiteDataType::ServiceWorkerRegistrations))
+                processPool->terminateServiceWorkersForSession(sessionID());
+        }
+    }
+
+    if (webProcessAccessType != ProcessAccessType::None) {
         for (Ref process : processes()) {
             if (webProcessAccessType == ProcessAccessType::OnlyIfLaunched && process->state() != WebProcessProxy::State::Running)
                 continue;
+
             process->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
         }
     }
+
+    removeDataInNetworkProcess(networkProcessAccessType, dataTypes, modifiedSince, [callbackAggregator] { });
 
     if (dataTypes.contains(WebsiteDataType::DeviceIdHashSalt) || (dataTypes.contains(WebsiteDataType::Cookies)))
         ensureProtectedDeviceIdHashSaltStorage()->deleteDeviceIdHashSaltOriginsModifiedSince(modifiedSince, [callbackAggregator] { });
@@ -870,12 +930,10 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, WallTime
     if (dataTypes.contains(WebsiteDataType::SearchFieldRecentSearches) && isPersistent())
         removeRecentSearches(modifiedSince, [callbackAggregator] { });
 
-    if (dataTypes.contains(WebsiteDataType::ResourceLoadStatistics)) {
-        if (!didNotifyNetworkProcessToDeleteWebsiteData)
-            protectedNetworkProcess()->deleteWebsiteData(m_sessionID, dataTypes, modifiedSince, [callbackAggregator] { });
-
-        clearResourceLoadStatisticsInWebProcesses([callbackAggregator] { });
-    }
+#if ENABLE(SCREEN_TIME)
+    if (dataTypes.contains(WebsiteDataType::ScreenTime) && isPersistent())
+        removeScreenTimeDataWithInterval(modifiedSince);
+#endif
 }
 
 void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Vector<WebsiteDataRecord>& dataRecords, Function<void()>&& completionHandler)
@@ -940,7 +998,7 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
         }
     }
 
-    auto webProcessAccessType = computeWebProcessAccessTypeForDataRemoval(dataTypes, !isPersistent());
+    auto webProcessAccessType = computeWebProcessAccessTypeForDataRemovalWithRecords(dataTypes);
     if (webProcessAccessType != ProcessAccessType::None) {
         for (Ref process : processes()) {
             if (webProcessAccessType == ProcessAccessType::OnlyIfLaunched && process->state() != WebProcessProxy::State::Running)
@@ -964,6 +1022,18 @@ void WebsiteDataStore::removeData(OptionSet<WebsiteDataType> dataTypes, const Ve
             removeMediaKeysStorage(mediaKeysStorageDirectory, origins, salt);
         });
     }
+#if ENABLE(SCREEN_TIME)
+    if (dataTypes.contains(WebsiteDataType::ScreenTime) && isPersistent()) {
+        HashSet<URL> websitesToRemove;
+        for (const auto& dataRecord : dataRecords) {
+            if (dataRecord.types.contains(WebsiteDataType::ScreenTime)) {
+                for (const auto& origin : dataRecord.origins)
+                    websitesToRemove.add(origin.toURL());
+            }
+        }
+        removeScreenTimeData(websitesToRemove);
+    }
+#endif
 }
 
 DeviceIdHashSaltStorage& WebsiteDataStore::ensureDeviceIdHashSaltStorage()
@@ -1686,7 +1756,7 @@ void WebsiteDataStore::getNetworkProcessConnection(WebProcessProxy& webProcessPr
             }
 
             // Retry on the next RunLoop iteration because we may be inside the WebsiteDataStore destructor.
-            RunLoop::main().dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), weakWebProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
+            RunLoop::protectedMain()->dispatch([weakThis = WTFMove(weakThis), networkProcessProxy = WTFMove(networkProcessProxy), weakWebProcessProxy = WTFMove(webProcessProxy), reply = WTFMove(reply)] () mutable {
                 RefPtr protectedThis = weakThis.get();
                 RefPtr webProcessProxy = weakWebProcessProxy.get();
                 if (protectedThis && webProcessProxy) {
@@ -1930,8 +2000,11 @@ void WebsiteDataStore::propagateSettingUpdates()
         m_isOptInCookiePartitioningEnabled = enabled;
         networkProcess->send(Messages::NetworkProcess::SetOptInCookiePartitioningEnabled(sessionID(), enabled), 0);
 
+        for (Ref webProcess : processes())
+            webProcess->setOptInCookiePartitioningEnabled(enabled);
+
         if (m_isOptInCookiePartitioningEnabled && m_thirdPartyCookieBlockingMode == WebCore::ThirdPartyCookieBlockingMode::All) {
-            RELEASE_LOG(Storage, "WebsiteDataStore::propagateSettingUpdates (%p) sessionID=%" PRIu64 ", OptInCookiePartitioning enabled, setting ThirdPartyCookieBlockingMode::AllExceptPartitioned" PRIu64, this, m_sessionID.toUInt64());
+            RELEASE_LOG(Storage, "WebsiteDataStore::propagateSettingUpdates (%p) sessionID=%" PRIu64 ", OptInCookiePartitioning enabled, setting ThirdPartyCookieBlockingMode::AllExceptPartitioned", this, m_sessionID.toUInt64());
             setThirdPartyCookieBlockingMode(WebCore::ThirdPartyCookieBlockingMode::AllExceptPartitioned, []() { });
         } else if (!m_isOptInCookiePartitioningEnabled && m_thirdPartyCookieBlockingMode == WebCore::ThirdPartyCookieBlockingMode::AllExceptPartitioned) {
             RELEASE_LOG(Storage, "WebsiteDataStore::propagateSettingUpdates (%p) sessionID=%" PRIu64 ", OptInCookiePartitioning disabled, setting ThirdPartyCookieBlockingMode::All", this, m_sessionID.toUInt64());
@@ -2745,6 +2818,13 @@ bool WebsiteDataStore::builtInNotificationsEnabled() const
             return true;
     }
     return false;
+}
+#endif
+
+#if ENABLE(CONTENT_EXTENSIONS)
+void WebsiteDataStore::resetResourceMonitorThrottlerForTesting(CompletionHandler<void()>&& completionHandler)
+{
+    protectedNetworkProcess()->resetResourceMonitorThrottlerForTesting(m_sessionID, WTFMove(completionHandler));
 }
 #endif
 

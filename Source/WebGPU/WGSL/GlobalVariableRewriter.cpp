@@ -78,7 +78,7 @@ private:
     };
 
     template<typename Value>
-    using IndexMap = HashMap<unsigned, Value, WTF::IntHash<unsigned>, WTF::UnsignedWithZeroKeyHashTraits<unsigned>>;
+    using IndexMap = HashMap<uint64_t, Value, WTF::IntHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
 
     using UsedResources = IndexMap<IndexMap<Global*>>;
     using UsedPrivateGlobals = Vector<Global*>;
@@ -127,7 +127,7 @@ private:
     void insertWorkgroupBarrier(AST::Function&, size_t);
     AST::Identifier& findOrInsertLocalInvocationIndex(AST::Function&);
     AST::Statement::List storeInitialValue(const UsedPrivateGlobals&);
-    void storeInitialValue(AST::Expression&, AST::Statement::List&, unsigned, bool isNested);
+    void storeInitialValue(AST::Expression&, AST::Statement::List&, unsigned);
 
     void packResource(AST::Variable&);
     void packArrayResource(AST::Variable&, const Types::Array*);
@@ -878,8 +878,11 @@ const Type* RewriteGlobalVariables::packArrayType(const Types::Array* arrayType)
 {
     auto* structType = std::get_if<Types::Struct>(arrayType->element);
     if (!structType) {
-        if (arrayType->element->packing() & Packing::Vec3)
+        if (arrayType->element->packing() & Packing::Vec3) {
+            m_shaderModule.setUsesUnpackArray();
+            m_shaderModule.setUsesPackArray();
             m_shaderModule.setUsesPackedVec3();
+        }
         return nullptr;
     }
 
@@ -1008,16 +1011,6 @@ void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& p
             if (!entry.visibility.contains(m_stage))
                 continue;
 
-            auto argumentBufferIndex = [&] {
-                switch (m_stage) {
-                case ShaderStage::Vertex:
-                    return entry.vertexArgumentBufferIndex;
-                case ShaderStage::Fragment:
-                    return entry.fragmentArgumentBufferIndex;
-                case ShaderStage::Compute:
-                    return entry.computeArgumentBufferIndex;
-                }
-            }();
             auto bufferDynamicOffset = [&] {
                 switch (m_stage) {
                 case ShaderStage::Vertex:
@@ -1032,7 +1025,7 @@ void RewriteGlobalVariables::collectDynamicOffsetGlobals(const PipelineLayout& p
             if (!bufferDynamicOffset.has_value())
                 continue;
 
-            m_globalsUsingDynamicOffset.add({ group + 1, *argumentBufferIndex + 1 }, *bufferDynamicOffset);
+            m_globalsUsingDynamicOffset.add({ group + 1, entry.binding + 1 }, *bufferDynamicOffset);
         }
         ++group;
     }
@@ -2358,12 +2351,12 @@ AST::Statement::List RewriteGlobalVariables::storeInitialValue(const UsedPrivate
             AST::Identifier::make(variable.name().id())
         );
         target.m_inferredType = type;
-        storeInitialValue(target, statements, 0, false);
+        storeInitialValue(target, statements, 0);
     }
     return statements;
 }
 
-void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Statement::List& statements, unsigned arrayDepth, bool isNested)
+void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Statement::List& statements, unsigned arrayDepth)
 {
     const auto& zeroInitialize = [&]() {
         // This piece of code generation relies on 2 implementation details from the metal serializer:
@@ -2410,7 +2403,7 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
         arrayAccess.m_inferredType = arrayType->element;
 
         AST::Statement::List forBodyStatements;
-        storeInitialValue(arrayAccess, forBodyStatements, arrayDepth + 1, true);
+        storeInitialValue(arrayAccess, forBodyStatements, arrayDepth + 1);
 
         auto& zero = m_shaderModule.astBuilder().construct<AST::Unsigned32Literal>(
             SourceSpan::empty(),
@@ -2497,12 +2490,12 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
                 AST::Identifier::make(member.name())
             );
             fieldAccess.m_inferredType = fieldType;
-            storeInitialValue(fieldAccess, statements, arrayDepth, true);
+            storeInitialValue(fieldAccess, statements, arrayDepth);
         }
         return;
     }
 
-    if (auto* atomicType = std::get_if<Types::Atomic>(type)) {
+    if (type && std::holds_alternative<Types::Atomic>(*type)) {
         auto& callee = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("atomicStore"_s));
         callee.m_inferredType = m_shaderModule.types().bottomType();
 
@@ -2530,9 +2523,6 @@ void RewriteGlobalVariables::storeInitialValue(AST::Expression& target, AST::Sta
         statements.append(AST::Statement::Ref(callStatement));
         return;
     }
-
-    if (!isNested)
-        return;
 
     zeroInitialize();
 }

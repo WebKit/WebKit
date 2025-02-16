@@ -12,7 +12,7 @@ function doesGCAdd(a) {
 }
 noInline(doesGCAdd);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o = doesGCAdd(3n);
     assert(o.b, 4n);
 }
@@ -26,7 +26,7 @@ function doesGCSub(a) {
 }
 noInline(doesGCSub);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o = doesGCSub(3n);
     assert(o.b, 2n);
 }
@@ -40,7 +40,7 @@ function doesGCDiv(a) {
 }
 noInline(doesGCDiv);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o = doesGCDiv(4n);
     assert(o.b, 2n);
 }
@@ -54,7 +54,7 @@ function doesGCMul(a) {
 }
 noInline(doesGCMul);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o = doesGCMul(4n);
     assert(o.b, 8n);
 }
@@ -68,7 +68,7 @@ function doesGCBitAnd(a) {
 }
 noInline(doesGCBitAnd);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o = doesGCBitAnd(0b1010n);
     assert(o.b, 0b10n);
 }
@@ -82,7 +82,7 @@ function doesGCBitOr(a) {
 }
 noInline(doesGCBitOr);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o = doesGCBitOr(0b10n);
     assert(o.b, 0b11n);
 }
@@ -96,7 +96,7 @@ function doesGCBitXor(a) {
 }
 noInline(doesGCBitXor);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o = doesGCBitXor(0b10n);
     assert(o.b, 0b1n);
 }

@@ -63,12 +63,12 @@ bool containsCurrentColor(const LightDarkColor& unresolved)
         || containsCurrentColor(unresolved.darkColor);
 }
 
-void Serialize<LightDarkColor>::operator()(StringBuilder& builder, const LightDarkColor& value)
+void Serialize<LightDarkColor>::operator()(StringBuilder& builder, const SerializationContext& context, const LightDarkColor& value)
 {
     builder.append("light-dark("_s);
-    serializationForCSS(builder, value.lightColor);
+    serializationForCSS(builder, context, value.lightColor);
     builder.append(", "_s);
-    serializationForCSS(builder, value.darkColor);
+    serializationForCSS(builder, context, value.darkColor);
     builder.append(')');
 }
 
@@ -78,7 +78,7 @@ void ComputedStyleDependenciesCollector<LightDarkColor>::operator()(ComputedStyl
     collectComputedStyleDependencies(dependencies, value.darkColor);
 }
 
-IterationStatus CSSValueChildrenVisitor<LightDarkColor>::operator()(const Function<IterationStatus(CSSValue&)>& func, const LightDarkColor& value)
+IterationStatus CSSValueChildrenVisitor<LightDarkColor>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const LightDarkColor& value)
 {
     if (visitCSSValueChildren(func, value.lightColor) == IterationStatus::Done)
         return IterationStatus::Done;

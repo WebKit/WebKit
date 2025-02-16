@@ -152,7 +152,7 @@ def gl_format_channels(internal_format):
         return 'rgba'
     if internal_format.find('GL_RGB10_A2') == 0:
         return 'rgba'
-    if internal_format == 'GL_RGB10_UNORM_ANGLEX':
+    if internal_format.find('GL_RGB10') == 0:
         return 'rgb'
     # signed/unsigned int_10_10_10_2 for vertex format
     if internal_format.find('INT_10_10_10_2_OES') == 0:
@@ -194,7 +194,7 @@ def get_internal_format_initializer(internal_format, format_id):
     if not gl_format_no_alpha or channels != 'rgba':
         return 'nullptr'
 
-    elif internal_format == 'GL_RGB10_UNORM_ANGLEX':
+    elif internal_format == 'GL_RGB10_EXT':
         return 'nullptr'
 
     elif 'BC1_' in format_id:

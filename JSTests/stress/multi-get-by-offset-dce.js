@@ -6,7 +6,7 @@ function foo(o) {
 noInline(foo);
 
 var array = [{f:1}, {g:1, f:2}];
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(array[i % array.length]);
     if (result != 42)
         throw "Error: bad result in loop: " + result;

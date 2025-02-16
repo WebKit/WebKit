@@ -780,6 +780,7 @@ bool RTCPeerConnection::virtualHasPendingActivity() const
 
 void RTCPeerConnection::addInternalTransceiver(Ref<RTCRtpTransceiver>&& transceiver)
 {
+    ALWAYS_LOG(LOGIDENTIFIER, "Adding internal transceiver with mid "_s, transceiver->mid());
     transceiver->setConnection(*this);
     m_transceiverSet.append(WTFMove(transceiver));
 }

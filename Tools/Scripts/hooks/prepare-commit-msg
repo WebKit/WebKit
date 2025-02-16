@@ -43,7 +43,7 @@ def set_env_variables_from_branch_config():
         cherry_picked=('GIT_WEBKIT_CHERRY_PICKED', 1),
     ).items():
         variable, mode = data
-        if variable in os.environ:
+        if variable in os.environ and os.environ[variable]:
             continue
         try:
             value = ''

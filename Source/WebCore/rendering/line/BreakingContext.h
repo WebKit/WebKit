@@ -632,12 +632,6 @@ inline bool BreakingContext::handleText()
     return false;
 }
 
-inline bool textBeginsWithBreakablePosition(RenderText& nextText)
-{
-    UChar c = nextText.characterAt(0);
-    return c == ' ' || c == '\t' || (c == '\n' && !nextText.preservesNewline());
-}
-
 inline void BreakingContext::trailingSpacesHang(LegacyInlineIterator& lineBreak, RenderObject& renderObject, bool canBreakMidWord, bool previousCharacterIsSpace)
 {
     ASSERT(m_currentWhitespaceCollapse == WhiteSpaceCollapse::BreakSpaces && m_currentTextWrap == TextWrapMode::Wrap);
@@ -656,55 +650,7 @@ inline void BreakingContext::trailingSpacesHang(LegacyInlineIterator& lineBreak,
 
 inline bool BreakingContext::canBreakAtThisPosition()
 {
-    // If we are no-wrap and have found a line-breaking opportunity already then we should take it.
-    if (m_width.committedWidth() && !m_width.fitsOnLine(m_currentCharacterIsSpace) && m_currentWhitespaceCollapse == WhiteSpaceCollapse::Collapse && m_currentTextWrap == TextWrapMode::NoWrap)
-        return true;
-
-    // Avoid breaking on empty inlines.
-    auto* renderInline = dynamicDowncast<RenderInline>(*m_current.renderer());
-    if (renderInline && isEmptyInline(*renderInline))
-        return false;
-
-    // Avoid breaking before empty inlines (as long as the current object isn't replaced).
-    if (!m_current.renderer()->isReplacedOrAtomicInline()) {
-        auto* renderInline = dynamicDowncast<RenderInline>(m_nextObject);
-        if (renderInline && isEmptyInline(*renderInline))
-            return false;
-    }
-
-    // Return early if we autowrap and the current character is a space as we will always want to break at such a position.
-    if (m_autoWrap && m_currentCharacterIsSpace)
-        return true;
-
-    if (m_nextObject && m_nextObject->isLineBreakOpportunity())
-        return m_autoWrap;
-
-    auto* renderText = dynamicDowncast<RenderText>(m_nextObject);
-    bool nextIsAutoWrappingText = renderText && (m_autoWrap || m_nextObject->style().autoWrap());
-    if (!nextIsAutoWrappingText)
-        return m_autoWrap;
-    RenderText& nextRenderText = *renderText;
-    bool currentIsTextOrEmptyInline = [this] {
-        if (is<RenderText>(*m_current.renderer()))
-            return true;
-        auto* renderInline = dynamicDowncast<RenderInline>(*m_current.renderer());
-        return renderInline && isEmptyInline(*renderInline);
-    }();
-    if (!currentIsTextOrEmptyInline)
-        return m_autoWrap;
-
-    bool canBreakHere = !m_currentCharacterIsSpace && textBeginsWithBreakablePosition(nextRenderText);
-
-    // See if attempting to fit below floats creates more available width on the line.
-    if (!m_width.fitsOnLine() && !m_width.hasCommitted())
-        m_width.fitBelowFloats(m_lineInfo.isFirstLine());
-
-    bool canPlaceOnLine = m_width.fitsOnLine() || !m_autoWrapWasEverTrueOnLine;
-
-    if (canPlaceOnLine && canBreakHere)
-        commitLineBreakAtCurrentWidth(nextRenderText);
-
-    return canBreakHere;
+    return false;
 }
 
 inline void BreakingContext::commitAndUpdateLineBreakIfNeeded()

@@ -51,7 +51,6 @@ SliderTrackPart::SliderTrackPart(StyleAppearance type, const IntSize& thumbSize,
     ASSERT(type == StyleAppearance::SliderHorizontal || type == StyleAppearance::SliderVertical);
 }
 
-#if ENABLE(DATALIST_ELEMENT)
 void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect, const ControlStyle& style) const
 {
     if (m_tickRatios.isEmpty())
@@ -89,11 +88,11 @@ void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect,
     context.setFillColor(style.textColor);
 
     bool isVerticalWritingMode = style.states.contains(ControlStyle::State::VerticalWritingMode);
-    bool isRightToLeft = style.states.contains(ControlStyle::State::RightToLeft);
-    bool isReversedInlineDirection = (!isHorizontal && !isVerticalWritingMode) || isRightToLeft;
+    bool isInlineFlippedWritingMode = style.states.contains(ControlStyle::State::InlineFlippedWritingMode);
+    bool isInlineFlipped = (!isHorizontal && !isVerticalWritingMode) || isInlineFlippedWritingMode;
 
     for (auto tickRatio : m_tickRatios) {
-        double value = isReversedInlineDirection ? 1.0 - tickRatio : tickRatio;
+        double value = isInlineFlipped ? 1.0 - tickRatio : tickRatio;
         double tickPosition = round(tickRegionMargin + tickRegionWidth * value);
         if (isHorizontal)
             tickRect.setX(tickPosition);
@@ -102,7 +101,6 @@ void SliderTrackPart::drawTicks(GraphicsContext& context, const FloatRect& rect,
         context.fillRect(tickRect);
     }
 }
-#endif
 
 std::unique_ptr<PlatformControl> SliderTrackPart::createPlatformControl()
 {

@@ -10,7 +10,7 @@ function bigIntAddition(x, y) {
 }
 noInline(bigIntAddition);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntAddition(3n, 10n);
     assert.sameValue(r, 13n, 3n + " + " + 10n + " = " + r);
 }

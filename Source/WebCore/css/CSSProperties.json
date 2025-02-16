@@ -800,7 +800,6 @@
             "codegen-properties": {
                 "name-for-methods": "FeatureSettings",
                 "converter": "FontFeatureSettings",
-                "custom": "Initial|Inherit",
                 "font-property": true,
                 "high-priority": true,
                 "parser-grammar": "normal | <feature-tag-value>#@(no-single-item-opt)",
@@ -819,7 +818,6 @@
             "codegen-properties": {
                 "name-for-methods": "VariationSettings",
                 "converter": "FontVariationSettings",
-                "custom": "Initial|Inherit",
                 "font-property": true,
                 "high-priority": true,
                 "enable-if": "ENABLE_VARIATION_FONTS",
@@ -1472,7 +1470,10 @@
                     "animation-direction",
                     "animation-fill-mode",
                     "animation-play-state",
-                    "animation-name"
+                    "animation-name",
+                    "animation-timeline",
+                    "animation-range-start",
+                    "animation-range-end"
                 ]
             },
             "specification": {
@@ -3595,6 +3596,25 @@
                 "url": "https://www.w3.org/TR/SVG11/text.html#DominantBaselineProperty"
             }
         },
+        "dynamic-range-limit": {
+            "inherited": true,
+            "values": [
+                "standard",
+                "constrained-high",
+                "high"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssDynamicRangeLimitPropertyEnabled",
+                "converter": "DynamicRangeLimit",
+                "parser-function": "consumeDynamicRangeLimit",
+                "parser-grammar-unused": "<<values>> | <dynamic-range-limit-mix()>",
+                "parser-grammar-unused-reason": "Needs support for functional notation."
+           },
+           "specification": {
+               "category": "css-color",
+               "url": "https://drafts.csswg.org/css-color-hdr/#the-dynamic-range-limit-property"
+           }
+        },
         "empty-cells": {
             "inherited": true,
             "values": [
@@ -5178,7 +5198,11 @@
                 }
             ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "logical-property-group": {
+                    "name": "overflow",
+                    "resolver": "horizontal"
+                }
             },
             "specification": {
                 "category": "css-overflow",
@@ -5206,11 +5230,57 @@
                 }
             ],
             "codegen-properties": {
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "logical-property-group": {
+                    "name": "overflow",
+                    "resolver": "vertical"
+                }
             },
             "specification": {
                 "category": "css-overflow",
                 "url": "https://www.w3.org/TR/css-overflow-3/#propdef-overflow-y"
+            }
+        },
+        "overflow-inline": {
+            "values": [
+                "visible",
+                "hidden",
+                "clip",
+                "scroll",
+                "auto"
+            ],
+            "codegen-properties": {
+                "skip-builder": true,
+                "logical-property-group": {
+                    "name": "overflow",
+                    "resolver": "inline"
+                },
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-overflow",
+                "url": "https://www.w3.org/TR/css-overflow-3/#propdef-overflow-inline"
+            }
+        },
+        "overflow-block": {
+            "values": [
+                "visible",
+                "hidden",
+                "clip",
+                "scroll",
+                "auto"
+            ],
+            "codegen-properties": {
+                "skip-builder": true,
+                "logical-property-group": {
+                    "name": "overflow",
+                    "resolver": "block"
+                },
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-overflow",
+                "url": "https://www.w3.org/TR/css-overflow-3/#propdef-overflow-block"
             }
         },
         "overscroll-behavior": {
@@ -8032,7 +8102,8 @@
                     "max-lines",
                     "block-ellipsis",
                     "continue"
-                ]
+                ],
+                "settings-flag": "cssLineClampEnabled"
             },
             "specification": {
                 "category": "css-inline",
@@ -8931,7 +9002,7 @@
         "scroll-margin-bottom": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-bottom"
                 ],
@@ -8949,7 +9020,7 @@
         "scroll-margin-left": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-left"
                 ],
@@ -8967,7 +9038,7 @@
         "scroll-margin-right": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-right"
                 ],
@@ -8985,7 +9056,7 @@
         "scroll-margin-top": {
             "codegen-properties": {
                 "initial": "initialScrollMargin",
-                "converter": "Length",
+                "converter": "ScrollMarginEdge",
                 "aliases": [
                     "scroll-snap-margin-top"
                 ],
@@ -9097,7 +9168,7 @@
         "scroll-padding-bottom": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "bottom"
@@ -9112,7 +9183,7 @@
         "scroll-padding-left": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "left"
@@ -9127,7 +9198,7 @@
         "scroll-padding-right": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "right"
@@ -9142,7 +9213,7 @@
         "scroll-padding-top": {
             "codegen-properties": {
                 "initial": "initialScrollPadding",
-                "converter": "LengthOrAuto",
+                "converter": "ScrollPaddingEdge",
                 "logical-property-group": {
                     "name": "scroll-padding",
                     "resolver": "top"
@@ -9510,6 +9581,19 @@
                 "url": "https://drafts.csswg.org/css-anchor-position-1/#position-anchor"
             }
         },
+        "position-area": {
+            "codegen-properties": {
+                "converter": "PositionArea",
+                "parser-function": "consumePositionArea",
+                "parser-grammar-unused": "none | <position-area>",
+                "parser-grammar-unused-reason": "Needs support for '||' groups.",
+                "settings-flag": "cssAnchorPositioningEnabled"
+            },
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#position-area"
+            }
+        },
         "position-try-order": {
             "values": [
                 "normal",
@@ -9619,26 +9703,12 @@
             "status": "non-standard"
         },
         "-apple-visual-effect": {
-            "values": [
-                "none",
-                "-apple-system-blur-material-ultra-thin",
-                "-apple-system-blur-material-thin",
-                "-apple-system-blur-material",
-                "-apple-system-blur-material-thick",
-                "-apple-system-blur-material-chrome",
-                "-apple-system-vibrancy-label",
-                "-apple-system-vibrancy-secondary-label",
-                "-apple-system-vibrancy-tertiary-label",
-                "-apple-system-vibrancy-quaternary-label",
-                "-apple-system-vibrancy-fill",
-                "-apple-system-vibrancy-secondary-fill",
-                "-apple-system-vibrancy-tertiary-fill",
-                "-apple-system-vibrancy-separator"
-            ],
             "codegen-properties": {
                 "enable-if": "HAVE_CORE_MATERIAL",
                 "settings-flag": "useSystemAppearance",
-                "parser-grammar": "<<values>>"
+                "parser-function": "consumeAppleVisualEffect",
+                "parser-grammar-unused": "<<values>>",
+                "parser-grammar-unused-reason": "Needs support for internal values"
             },
             "status": "non-standard"
         },

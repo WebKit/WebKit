@@ -172,8 +172,8 @@ void RenderLineBreak::collectSelectionGeometries(Vector<SelectionGeometry>& rect
     extentsRect = localToAbsoluteQuad(FloatRect(extentsRect)).enclosingBoundingBox();
     if (!run->isHorizontal())
         extentsRect = extentsRect.transposedRect();
-    bool isFirstOnLine = !run->previousOnLine();
-    bool isLastOnLine = !run->nextOnLine();
+    bool isFirstOnLine = !run->nextLineLeftwardOnLine();
+    bool isLastOnLine = !run->nextLineRightwardOnLine();
 
     bool isFixed = false;
     auto absoluteQuad = localToAbsoluteQuad(FloatRect(rect), UseTransforms, &isFixed);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "WorkerOrWorkletGlobalScope.h"
 #include <JavaScriptCore/InspectorAgentRegistry.h>
 #include <JavaScriptCore/InspectorEnvironment.h>
 #include <wtf/Forward.h>
@@ -42,7 +43,6 @@ namespace WebCore {
 class InstrumentingAgents;
 class WebInjectedScriptManager;
 class WorkerDebugger;
-class WorkerOrWorkletGlobalScope;
 struct WorkerAgentContext;
 
 class WorkerInspectorController final : public Inspector::InspectorEnvironment {
@@ -84,7 +84,7 @@ private:
     Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<WorkerDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
-    WorkerOrWorkletGlobalScope& m_globalScope;
+    WeakRef<WorkerOrWorkletGlobalScope> m_globalScope;
     std::unique_ptr<Inspector::FrontendChannel> m_forwardingChannel;
     bool m_didCreateLazyAgents { false };
 };

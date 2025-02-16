@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "BPlatform.h"
 #include "IsoSharedPage.h"
+
+#if !BUSE(TZONE)
 
 #include "VMAllocate.h"
 #include <bit>
@@ -45,3 +48,4 @@ IsoSharedPage* IsoSharedPage::tryCreate()
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

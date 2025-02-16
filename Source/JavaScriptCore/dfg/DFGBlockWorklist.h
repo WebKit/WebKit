@@ -33,7 +33,7 @@
 
 namespace JSC { namespace DFG {
 
-struct BasicBlock;
+class BasicBlock;
 
 typedef GraphNodeWorklist<BasicBlock*, BlockSet> BlockWorklist;
 

@@ -42,7 +42,7 @@ var instance = new WebAssembly.Instance(wasm_module);
 
 const { catch_complex_1 } = instance.exports
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < wasmTestLoopCount; ++i) {
     assert.eq(catch_complex_1(0), 3)
     assert.eq(catch_complex_1(1), 4)
     try {

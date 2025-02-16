@@ -67,7 +67,7 @@ public:
     static URLRegistry& registry();
 
     Lock m_urlsPerContextLock;
-    HashMap<ScriptExecutionContextIdentifier, HashSet<URL>> m_urlsPerContext WTF_GUARDED_BY_LOCK(m_urlsPerContextLock);
+    HashMap<ScriptExecutionContextIdentifier, UncheckedKeyHashSet<URL>> m_urlsPerContext WTF_GUARDED_BY_LOCK(m_urlsPerContextLock);
 };
 
 void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const URL& publicURL, URLRegistrable& blob)
@@ -75,7 +75,7 @@ void BlobURLRegistry::registerURL(const ScriptExecutionContext& context, const U
     ASSERT(&blob.registry() == this);
     {
         Locker locker { m_urlsPerContextLock };
-        m_urlsPerContext.add(context.identifier(), HashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
+        m_urlsPerContext.add(context.identifier(), UncheckedKeyHashSet<URL>()).iterator->value.add(publicURL.isolatedCopy());
     }
     ThreadableBlobRegistry::registerBlobURL(context.securityOrigin(), context.policyContainer(), publicURL, downcast<Blob>(blob).url(), context.topOrigin().data());
 }
@@ -102,7 +102,7 @@ void BlobURLRegistry::unregisterURL(const URL& url, const SecurityOriginData& to
 
 void BlobURLRegistry::unregisterURLsForContext(const ScriptExecutionContext& context)
 {
-    HashSet<URL> urlsForContext;
+    UncheckedKeyHashSet<URL> urlsForContext;
     {
         Locker locker { m_urlsPerContextLock };
         urlsForContext = m_urlsPerContext.take(context.identifier());

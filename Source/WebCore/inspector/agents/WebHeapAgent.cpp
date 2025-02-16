@@ -111,6 +111,22 @@ WebHeapAgent::WebHeapAgent(WebAgentContext& context)
 
 WebHeapAgent::~WebHeapAgent() = default;
 
+void WebHeapAgent::didCreateFrontendAndBackend(FrontendRouter* frontendRouter, BackendDispatcher* backendDispatcher)
+{
+    InspectorHeapAgent::didCreateFrontendAndBackend(frontendRouter, backendDispatcher);
+
+    ASSERT(m_instrumentingAgents.persistentWebHeapAgent() != this);
+    m_instrumentingAgents.setPersistentWebHeapAgent(this);
+}
+
+void WebHeapAgent::willDestroyFrontendAndBackend(DisconnectReason reason)
+{
+    InspectorHeapAgent::willDestroyFrontendAndBackend(reason);
+
+    ASSERT(m_instrumentingAgents.persistentWebHeapAgent() == this);
+    m_instrumentingAgents.setPersistentWebHeapAgent(nullptr);
+}
+
 Inspector::Protocol::ErrorStringOr<void> WebHeapAgent::enable()
 {
     auto result = InspectorHeapAgent::enable();

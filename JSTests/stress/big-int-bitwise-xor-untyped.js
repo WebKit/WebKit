@@ -15,10 +15,10 @@ let o = { valueOf: function () {
     return 0b1111n;
 }};
 
-for (let i = 0; i < 100000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let out = bigIntOperations(o, 0b1010n);
     assert(out, 0b1010n);
 }
 
-assert(c, 200000);
+assert(c, 2 * testLoopCount);
 

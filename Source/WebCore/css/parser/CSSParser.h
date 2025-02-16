@@ -60,7 +60,7 @@ public:
     static RefPtr<StyleRuleBase> parseRule(const CSSParserContext&, StyleSheetContents*, const String&, CSSParserEnum::NestedContext = { });
     
     RefPtr<StyleRuleKeyframe> parseKeyframeRule(const String&);
-    static Vector<double> parseKeyframeKeyList(const String&);
+    static Vector<std::pair<CSSValueID, double>> parseKeyframeKeyList(const String&, const CSSParserContext&);
 
     bool parseSupportsCondition(const String&);
 

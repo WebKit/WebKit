@@ -22,7 +22,7 @@ function sink (p, q) {
 }
 noInline(sink);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var f = sink.call(newContext, true, true);// use call to substitute context
     var result = f(42);
     if (result != 42)

@@ -38,7 +38,7 @@ function runTest2(a, b, c) {
 }
 noInline(runTest2);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     for (let [input, output, ...args] of tests) {
         assert(args.length === 1 || args.length === 2);
         if (args.length === 1)

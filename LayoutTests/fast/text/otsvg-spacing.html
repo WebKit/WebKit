@@ -1,27 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="fuzzy" content="maxDifference=0-64; totalPixels=0-16682" />
 <style>
-@font-face {
-    font-family: "WebFont";
-    src: url("resources/Ahem-SVG.ttf") format("truetype");
-}
+    @font-face {
+        font-family: "WebFont";
+        src: url("resources/Ahem-SVG.ttf") format("truetype");
+    }
+    .WebFont {
+        font-family: "WebFont" !important;
+        font-size: 100px;
+        margin-block-start: 0em;
+        margin-block-end: 0em;
+    }
 </style>
 </head>
 <body>
-<canvas id="canvas" width="800" height="800">
-<script>
-if (window.testRunner)
-    testRunner.waitUntilDone();
-var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
-document.fonts.load("100px 'WebFont'").then(function() {
-    context.font = "100px 'WebFont'";
-    context.fillText("aABCa", 100, 100);
-    context.fillRect(200, 20, 300, 100);
-    if (window.testRunner)
-        testRunner.notifyDone();
-});
-</script>
+    <h2>This tests drawing text with OpenType-SVG fonts.</h2>
+    <p class="WebFont">aABCa</p>
 </body>
 </html>

@@ -63,20 +63,20 @@ PASS getAttributeType("dummy", "ontoggle", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onvolumechange", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onwaiting", "dummyNs", attrNs)
 PASS getAttributeType("dummy", "onwheel", "dummyNs", attrNs)
-FAIL getAttributeType("dummy", "onafterprint", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onbeforeprint", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onbeforeunload", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onhashchange", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onlanguagechange", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onmessage", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onmessageerror", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onoffline", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "ononline", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onpagehide", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onpageshow", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onpopstate", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onrejectionhandled", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onstorage", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onunhandledrejection", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
-FAIL getAttributeType("dummy", "onunload", "dummyNs", attrNs) assert_equals: for attrNs='' expected (string) "TrustedScript" but got (object) null
+PASS getAttributeType("dummy", "onafterprint", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onbeforeprint", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onbeforeunload", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onhashchange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onlanguagechange", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmessage", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onmessageerror", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onoffline", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "ononline", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onpagehide", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onpageshow", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onpopstate", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onrejectionhandled", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onstorage", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onunhandledrejection", "dummyNs", attrNs)
+PASS getAttributeType("dummy", "onunload", "dummyNs", attrNs)
 

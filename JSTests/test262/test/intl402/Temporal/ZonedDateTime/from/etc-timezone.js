@@ -4,7 +4,7 @@
 /*---
 esid: sec-temporal.zoneddatetime.from
 description: Some Etc/GMT{+/-}{0}N timezones are valid, but not all
-features: [Temporal]
+features: [Temporal, canonical-tz]
 ---*/
 
 // "Etc/GMT-0" through "Etc/GMT-14" are OK

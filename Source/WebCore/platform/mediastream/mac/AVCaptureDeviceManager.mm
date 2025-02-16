@@ -231,7 +231,7 @@ void AVCaptureDeviceManager::refreshCaptureDevicesInternal(CompletionHandler<voi
     m_dispatchQueue->dispatch([this, callback = WTFMove(callback), shouldSetUserPreferredCamera]() mutable {
         if (shouldSetUserPreferredCamera == ShouldSetUserPreferredCamera::Yes)
             setUserPreferredCamera();
-        RunLoop::main().dispatch([this, callback = WTFMove(callback), deviceList = crossThreadCopy(retrieveCaptureDevices())]() mutable {
+        RunLoop::protectedMain()->dispatch([this, callback = WTFMove(callback), deviceList = crossThreadCopy(retrieveCaptureDevices())]() mutable {
             bool deviceHasChanged = m_devices.size() != deviceList.size();
             if (!deviceHasChanged) {
                 for (size_t cptr = 0; cptr < deviceList.size(); ++cptr) {
@@ -336,7 +336,7 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
     if (!m_callback)
         return;
 
-    RunLoop::main().dispatch([self, protectedSelf = retainPtr(self)] {
+    RunLoop::protectedMain()->dispatch([self, protectedSelf = retainPtr(self)] {
         if (m_callback)
             m_callback->refreshCaptureDevices();
     });
@@ -354,7 +354,7 @@ void AVCaptureDeviceManager::registerForDeviceNotifications()
     if (![keyPath isEqualToString:@"suspended"] && ![keyPath isEqualToString:@"systemPreferredCamera"] && ![keyPath isEqualToString:@"devices"])
         return;
 
-    RunLoop::main().dispatch([self, protectedSelf = retainPtr(self)] {
+    RunLoop::protectedMain()->dispatch([self, protectedSelf = retainPtr(self)] {
         if (m_callback)
             m_callback->refreshCaptureDevices();
     });

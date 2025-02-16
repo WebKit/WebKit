@@ -56,7 +56,7 @@ struct MediaTrackCapabilities {
     std::optional<Vector<bool>> powerEfficient;
 };
 
-MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities&, const String& groupId);
+MediaTrackCapabilities toMediaTrackCapabilities(const RealtimeMediaSourceCapabilities&);
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)

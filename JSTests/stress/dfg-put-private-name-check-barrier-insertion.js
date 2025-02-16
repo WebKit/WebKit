@@ -54,7 +54,7 @@ noDFG(C.prototype.getField);
 noFTL(C.prototype.getField);
 
 let oldObject = new C;
-for (; i < 10000; i++) {
+for (; i < testLoopCount; i++) {
     if (i < 5000) {
         let c = new C;
         c.setField(i);

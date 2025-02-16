@@ -42,7 +42,6 @@ function generate_Android_bp_file() {
             "symbol_level = 0"
             "angle_standalone = false"
             "angle_build_all = false"
-            "angle_expose_non_conformant_extensions_and_versions = true"
 
             # Build for 64-bit CPUs
             "target_cpu = \"$abi\""

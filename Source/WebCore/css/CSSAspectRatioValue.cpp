@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-String CSSAspectRatioValue::customCSSText() const
+String CSSAspectRatioValue::customCSSText(const CSS::SerializationContext&) const
 {
     return makeString(m_numeratorValue, " / "_s, m_denominatorValue);
 }

@@ -61,10 +61,8 @@ private:
     RetainPtr<WebLowPowerModeObserver> m_observer;
     LowPowerModeChangeCallback m_callback;
 #elif USE(GLIB)
-#if GLIB_CHECK_VERSION(2, 69, 1)
     LowPowerModeChangeCallback m_callback;
     GRefPtr<GPowerProfileMonitor> m_powerProfileMonitor;
-#endif
     bool m_lowPowerModeEnabled { false };
 #endif
 };

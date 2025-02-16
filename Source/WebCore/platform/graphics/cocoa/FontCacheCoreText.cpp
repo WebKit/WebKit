@@ -289,7 +289,7 @@ public:
     static Lock lock;
 
 private:
-    HashSet<String, ASCIICaseInsensitiveHash> m_families;
+    UncheckedKeyHashSet<String, ASCIICaseInsensitiveHash> m_families;
 };
 
 Lock FontCacheAllowlist::lock;

@@ -166,7 +166,7 @@ Structure* InternalFunction::createSubclassStructure(JSGlobalObject* globalObjec
 
     // .prototype can't be a getter if we canUseAllocationProfiles().
     JSValue prototypeValue = targetFunction->get(globalObject, vm.propertyNames->prototype);
-    scope.assertNoException();
+    RETURN_IF_EXCEPTION(scope, nullptr);
 
     if (JSObject* prototype = jsDynamicCast<JSObject*>(prototypeValue))
         return rareData->createInternalFunctionAllocationStructureFromBase(vm, baseGlobalObject, prototype, baseClass);

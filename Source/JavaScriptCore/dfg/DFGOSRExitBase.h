@@ -32,7 +32,7 @@
 
 namespace JSC { namespace DFG {
 
-struct BasicBlock;
+class BasicBlock;
 struct Node;
 
 // Provides for the OSR exit profiling functionality that is common between the DFG

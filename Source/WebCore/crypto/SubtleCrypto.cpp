@@ -220,12 +220,13 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
     case Operations::Digest:
         switch (*identifier) {
         case CryptoAlgorithmIdentifier::SHA_1:
-        case CryptoAlgorithmIdentifier::SHA_224:
         case CryptoAlgorithmIdentifier::SHA_256:
         case CryptoAlgorithmIdentifier::SHA_384:
         case CryptoAlgorithmIdentifier::SHA_512:
             result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
             break;
+        case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
         default:
             return Exception { ExceptionCode::NotSupportedError };
         }
@@ -411,7 +412,7 @@ static ExceptionOr<std::unique_ptr<CryptoAlgorithmParameters>> normalizeCryptoAl
             result = makeUnique<CryptoAlgorithmParameters>(params.releaseReturnValue());
             break;
         case CryptoAlgorithmIdentifier::SHA_1:
-        case CryptoAlgorithmIdentifier::SHA_224:
+        case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
         case CryptoAlgorithmIdentifier::SHA_256:
         case CryptoAlgorithmIdentifier::SHA_384:
         case CryptoAlgorithmIdentifier::SHA_512:

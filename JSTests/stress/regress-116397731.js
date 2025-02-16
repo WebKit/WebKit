@@ -7,7 +7,7 @@ function func0(value) {
 }
 
 function main() {
-  for (let i = 0; i < 0x100000; i++)
+  for (let i = 0; i < testLoopCount; i++)
     func0(undefined);
   if (out !== undefined)
     throw new Error(`Bad value: ${out}!`);

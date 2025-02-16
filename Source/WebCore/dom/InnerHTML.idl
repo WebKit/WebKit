@@ -26,7 +26,7 @@
 // https://html.spec.whatwg.org/multipage/dynamic-markup-insertion.html#dom-parsing-and-serialization
 
 interface mixin InnerHTML {
-    [CEReactions=Needed, EnabledBySetting=DeclarativeShadowRootsParserAPIsEnabled] undefined setHTMLUnsafe((TrustedHTML or DOMString) html);
+    [CEReactions=Needed] undefined setHTMLUnsafe((TrustedHTML or DOMString) html);
     [CEReactions=NotNeeded, EnabledBySetting=DeclarativeShadowRootsSerializerAPIsEnabled] DOMString getHTML(optional GetHTMLOptions options = {});
     [CEReactions=Needed] attribute (TrustedHTML or [LegacyNullToEmptyString] DOMString) innerHTML;
 };

@@ -54,4 +54,6 @@
     uint32_t maxComputeWorkgroupSizeY
     uint32_t maxComputeWorkgroupSizeZ
     uint32_t maxComputeWorkgroupsPerDimension
+    uint32_t maxStorageBuffersInFragmentStage
+    uint32_t maxStorageTexturesInFragmentStage
 }

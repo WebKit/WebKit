@@ -156,7 +156,7 @@ for (var i = 0; i < 64; ++i)
     array[i] = new Object();
 
 // Now, do some warming up.
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = ftlFunction(array, happyCallees[i % happyCallees.length]);
     if (result.length != array.length)
         throw "Error: bad length: " + result;

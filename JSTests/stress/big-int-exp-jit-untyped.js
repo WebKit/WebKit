@@ -12,14 +12,14 @@ noInline(bigIntExp);
 
 let o =  {valueOf: () => 10n};
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntExp(3n, o);
     assert.sameValue(r, 59049n, 3n + " ** {valueOf: () => 10n} = " + r);
 }
 
 o2 =  {valueOf: () => 3n};
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntExp(o2, o);
     assert.sameValue(r, 59049n, "{valueOf: () => 3n} ** {valueOf: () => 10n}  = " + r);
 }

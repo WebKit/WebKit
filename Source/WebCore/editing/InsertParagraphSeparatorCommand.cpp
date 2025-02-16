@@ -138,7 +138,7 @@ Ref<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock(const 
     // Make clones of ancestors in between the start node and the start block.
     RefPtr<Element> parent = WTFMove(blockToInsert);
     for (size_t i = ancestors.size(); i != 0; --i) {
-        auto child = ancestors[i - 1]->cloneElementWithoutChildren(document());
+        auto child = ancestors[i - 1]->cloneElementWithoutChildren(document(), nullptr);
         // It should always be okay to remove id from the cloned elements, since the originals are not deleted.
         child->removeAttribute(idAttr);
         appendNode(child.copyRef(), parent.releaseNonNull());
@@ -299,7 +299,7 @@ void InsertParagraphSeparatorCommand::doApply()
     } else if (shouldUseDefaultParagraphElement(startBlock.get())) 
         blockToInsert = createDefaultParagraphElement(document);
     else
-        blockToInsert = startBlock->cloneElementWithoutChildren(document);
+        blockToInsert = startBlock->cloneElementWithoutChildren(document, nullptr);
 
     //---------------------------------------------------------------------
     // Handle case when position is in the last visible position in its block,
@@ -340,7 +340,7 @@ void InsertParagraphSeparatorCommand::doApply()
         if (!appendBlockPlaceholder(parent.copyRef()))
             return;
 
-        setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInNode(parent.ptr()), Affinity::Downstream), endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInNode(parent.ptr()), Affinity::Downstream), endingSelection().directionality()));
         return;
     }
     
@@ -380,7 +380,7 @@ void InsertParagraphSeparatorCommand::doApply()
             return;
         
         // In this case, we need to set the new ending selection.
-        setEndingSelection(VisibleSelection(VisiblePosition(insertionPosition, Affinity::Downstream), endingSelection().isDirectional()));
+        setEndingSelection(VisibleSelection(VisiblePosition(insertionPosition, Affinity::Downstream), endingSelection().directionality()));
         return;
     }
 
@@ -400,7 +400,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // If the insertion point is a break element, there is nothing else
         // we need to do.
         if (auto* renderer = visiblePos.deepEquivalent().anchorNode()->renderer(); renderer && renderer->isBR()) {
-            setEndingSelection(VisibleSelection(VisiblePosition(insertionPosition, Affinity::Downstream), endingSelection().isDirectional()));
+            setEndingSelection(VisibleSelection(VisiblePosition(insertionPosition, Affinity::Downstream), endingSelection().directionality()));
             return;
         }
     }
@@ -501,7 +501,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInNode(blockToInsert.get()), Affinity::Downstream), endingSelection().isDirectional()));
+    setEndingSelection(VisibleSelection(VisiblePosition(firstPositionInNode(blockToInsert.get()), Affinity::Downstream), endingSelection().directionality()));
     applyStyleAfterInsertion(startBlock.get());
 }
 

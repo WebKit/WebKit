@@ -26,10 +26,12 @@
 #pragma once
 
 #include "MonotonicObjectIdentifier.h"
+#include <WebCore/ProcessQualified.h>
 
 namespace WebKit {
 
 struct TransactionIDType;
-using TransactionID = MonotonicObjectIdentifier<TransactionIDType>;
+using TransactionIdentifier = MonotonicObjectIdentifier<TransactionIDType>;
+using TransactionID = WebCore::ProcessQualified<TransactionIdentifier>;
 
 } // namespace WebKit

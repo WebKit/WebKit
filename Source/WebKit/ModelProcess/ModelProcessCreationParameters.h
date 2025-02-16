@@ -36,6 +36,7 @@ struct ModelProcessCreationParameters {
     AuxiliaryProcessCreationParameters auxiliaryProcessParameters;
     ProcessID parentPID;
     String applicationVisibleName;
+    bool restrictiveRenderingMode { false };
 };
 
 } // namespace WebKit

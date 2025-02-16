@@ -274,6 +274,28 @@ RefPtr<FormData> FetchBody::bodyAsFormData() const
     return nullptr;
 }
 
+void FetchBody::convertReadableStreamToArrayBuffer(FetchBodyOwner& owner, CompletionHandler<void(std::optional<Exception>&&)>&& completionHandler)
+{
+    ASSERT(hasReadableStream());
+
+    consumer().extract(*readableStream(), [owner = Ref { owner }, data = SharedBufferBuilder(), completionHandler = WTFMove(completionHandler)](auto&& result) mutable {
+        if (result.hasException()) {
+            completionHandler(result.releaseException());
+            return;
+        }
+
+        if (auto* chunk = result.returnValue()) {
+            data.append(*chunk);
+            return;
+        }
+
+        if (RefPtr arrayBuffer = data.takeAsArrayBuffer())
+            owner->body().m_data = *arrayBuffer;
+
+        completionHandler({ });
+    });
+}
+
 FetchBody::TakenData FetchBody::take()
 {
     if (m_consumer.hasData()) {

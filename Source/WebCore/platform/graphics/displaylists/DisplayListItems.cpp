@@ -327,34 +327,6 @@ void DrawDecomposedGlyphs::dump(TextStream& ts, OptionSet<AsTextFlag> flags) con
     }
 }
 
-DrawDisplayListItems::DrawDisplayListItems(const Vector<Item>& items, const FloatPoint& destination)
-    : m_items(items)
-    , m_destination(destination)
-{
-}
-
-DrawDisplayListItems::DrawDisplayListItems(Vector<Item>&& items, const FloatPoint& destination)
-    : m_items(WTFMove(items))
-    , m_destination(destination)
-{
-}
-
-void DrawDisplayListItems::apply(GraphicsContext& context, const ResourceHeap& resourceHeap, ControlFactory& controlFactory) const
-{
-    context.drawDisplayListItems(m_items, resourceHeap, controlFactory, m_destination);
-}
-
-NO_RETURN_DUE_TO_ASSERT void DrawDisplayListItems::apply(GraphicsContext&) const
-{
-    ASSERT_NOT_REACHED();
-}
-
-void DrawDisplayListItems::dump(TextStream& ts, OptionSet<AsTextFlag>) const
-{
-    ts << items();
-    ts.dumpProperty("destination", destination());
-}
-
 void DrawImageBuffer::apply(GraphicsContext& context, ImageBuffer& imageBuffer) const
 {
     context.drawImageBuffer(imageBuffer, m_destinationRect, m_srcRect, m_options);
@@ -451,9 +423,9 @@ void DrawLine::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("point-2", point2());
 }
 
-DrawLinesForText::DrawLinesForText(const FloatPoint& point, const DashArray& widths, float thickness, bool printing, bool doubleLines, StrokeStyle style)
+DrawLinesForText::DrawLinesForText(const FloatPoint& point, std::span<const FloatSegment> lineSegments, float thickness, bool printing, bool doubleLines, StrokeStyle style)
     : m_point(point)
-    , m_widths(widths)
+    , m_lineSegments(lineSegments)
     , m_thickness(thickness)
     , m_printing(printing)
     , m_doubleLines(doubleLines)
@@ -463,7 +435,7 @@ DrawLinesForText::DrawLinesForText(const FloatPoint& point, const DashArray& wid
 
 void DrawLinesForText::apply(GraphicsContext& context) const
 {
-    context.drawLinesForText(m_point, m_thickness, m_widths, m_printing, m_doubleLines, m_style);
+    context.drawLinesForText(m_point, m_thickness, m_lineSegments, m_printing, m_doubleLines, m_style);
 }
 
 void DrawLinesForText::dump(TextStream& ts, OptionSet<AsTextFlag>) const
@@ -471,7 +443,7 @@ void DrawLinesForText::dump(TextStream& ts, OptionSet<AsTextFlag>) const
     ts.dumpProperty("point", point());
     ts.dumpProperty("thickness", thickness());
     ts.dumpProperty("double", doubleLines());
-    ts.dumpProperty("widths", widths());
+    ts.dumpProperty("lineSegments", lineSegments());
     ts.dumpProperty("is-printing", isPrinting());
     ts.dumpProperty("double", doubleLines());
 }
@@ -925,6 +897,17 @@ void BeginPage::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 void EndPage::apply(GraphicsContext& context) const
 {
     context.endPage();
+}
+
+void SetURLForRect::apply(GraphicsContext& context) const
+{
+    context.setURLForRect(m_link, m_destRect);
+}
+
+void SetURLForRect::dump(TextStream& ts, OptionSet<AsTextFlag>) const
+{
+    ts.dumpProperty("link", link());
+    ts.dumpProperty("dest_rect", destRect());
 }
 
 } // namespace DisplayList

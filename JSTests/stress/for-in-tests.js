@@ -21,7 +21,7 @@ function shouldThrowSyntaxError(script) {
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() !== "12345")
             throw new Error("bad result");
     }
@@ -40,7 +40,7 @@ function shouldThrowSyntaxError(script) {
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() !== "123")
             throw new Error("bad result");
     }
@@ -62,7 +62,7 @@ function shouldThrowSyntaxError(script) {
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() != "456123")
             throw new Error("bad result");
     }
@@ -81,7 +81,7 @@ function shouldThrowSyntaxError(script) {
         return result;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (foo() !== "456123")
             throw new Error("bad result");
     }
@@ -100,7 +100,7 @@ function shouldThrowSyntaxError(script) {
     }
     noInline(forIn);
 
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         if (forIn() !== "foo")
             throw new Error("bad result");
     }
@@ -117,7 +117,7 @@ function shouldThrowSyntaxError(script) {
         }
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var o1 = {};
         var o2 = {};
         o2.x = 42;
@@ -136,26 +136,26 @@ function shouldThrowSyntaxError(script) {
         return p;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var expected = 'expected-result';
         var result = foo({}, expected);
         if (expected !== result)
             throw new Error("bad result: " + result + "!==" + expected);
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var expected = 'a';
         var result = foo({a:'abcd'}, expected);
         if (expected !== result)
             throw new Error("bad result: " + result + "!==" + expected);
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var expected = 'b';
         var result = foo({a:'abcd', b: 'bcde'}, expected);
         if (expected !== result)
             throw new Error("bad result: " + result + "!==" + expected);
     }
 
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var expected = 'c';
         var o = {a:'abcd', b: 'bcde'};
         o.c = 'cdef';
@@ -172,7 +172,7 @@ function shouldThrowSyntaxError(script) {
         return p;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var expected = 'expected-result';
         var result = foo({});
         if (expected !== result)
@@ -195,7 +195,7 @@ shouldThrowSyntaxError(
         return p;
     };
     noInline(foo);
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var expected = 'expected-result';
         var result = foo({}, 'expected', '-result');
         if (expected !== result)

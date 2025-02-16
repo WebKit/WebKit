@@ -9,7 +9,7 @@ function test(target)
 }
 noInline(test);
 
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test("Replaced"), `ReplacedReplaced`);
 RegExp.prototype[Symbol.replace] = function() { return "Hello"; }
 shouldBe(test("Replaced"), `Hello`);

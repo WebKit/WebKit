@@ -33,9 +33,9 @@
 #include "ImageBufferUtilitiesCG.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <wtf/MallocSpan.h>
 
 namespace WebCore {
 
@@ -54,36 +54,41 @@ std::unique_ptr<ImageBufferCGBitmapBackend> ImageBufferCGBitmapBackend::create(c
     if (backendSize.isEmpty())
         return nullptr;
 
-    void* data;
-    unsigned bytesPerRow = 4 * backendSize.width();
-
-    if (!tryFastCalloc(backendSize.height(), bytesPerRow).getValue(data))
+    CheckedSize bytesPerRow = checkedProduct<size_t>(4, backendSize.width());
+    if (bytesPerRow.hasOverflowed())
         return nullptr;
 
-    ASSERT(!(reinterpret_cast<intptr_t>(data) & 3));
+    CheckedSize numBytes = checkedProduct<size_t>(backendSize.height(), bytesPerRow);
+    if (numBytes.hasOverflowed())
+        return nullptr;
 
-    size_t numBytes = backendSize.height() * bytesPerRow;
-    verifyImageBufferIsBigEnough({ static_cast<const uint8_t*>(data), numBytes });
+    auto data = MallocSpan<uint8_t>::tryZeroedMalloc(numBytes);
+    if (!data)
+        return nullptr;
 
-    auto cgContext = adoptCF(CGBitmapContextCreate(data, backendSize.width(), backendSize.height(), 8, bytesPerRow, parameters.colorSpace.platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
+    ASSERT(!(reinterpret_cast<intptr_t>(data.span().data()) & 3));
+
+    verifyImageBufferIsBigEnough(data.span());
+
+    RetainPtr cgContext = adoptCF(CGBitmapContextCreate(data.mutableSpan().data(), backendSize.width(), backendSize.height(), 8, bytesPerRow, parameters.colorSpace.platformColorSpace(), static_cast<uint32_t>(kCGImageAlphaPremultipliedFirst) | static_cast<uint32_t>(kCGBitmapByteOrder32Host)));
     if (!cgContext)
         return nullptr;
 
     auto context = makeUnique<GraphicsContextCG>(cgContext.get());
 
-    auto dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data, numBytes, [] (void*, const void* data, size_t) {
+    RetainPtr dataProvider = adoptCF(CGDataProviderCreateWithData(nullptr, data.mutableSpan().data(), numBytes, [] (void*, const void* data, size_t) {
         fastFree(const_cast<void*>(data));
     }));
 
-    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, static_cast<uint8_t*>(data), WTFMove(dataProvider), WTFMove(context)));
+    return std::unique_ptr<ImageBufferCGBitmapBackend>(new ImageBufferCGBitmapBackend(parameters, data.leakSpan(), WTFMove(dataProvider), WTFMove(context)));
 }
 
-ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, uint8_t* data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContextCG>&& context)
+ImageBufferCGBitmapBackend::ImageBufferCGBitmapBackend(const Parameters& parameters, std::span<uint8_t> data, RetainPtr<CGDataProviderRef>&& dataProvider, std::unique_ptr<GraphicsContextCG>&& context)
     : ImageBufferCGBackend(parameters, WTFMove(context))
     , m_data(data)
     , m_dataProvider(WTFMove(dataProvider))
 {
-    ASSERT(m_data);
+    ASSERT(m_data.data());
     ASSERT(m_dataProvider);
     ASSERT(m_context);
     applyBaseTransform(*m_context);
@@ -131,7 +136,5 @@ void ImageBufferCGBitmapBackend::putPixelBuffer(const PixelBuffer& pixelBuffer, 
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

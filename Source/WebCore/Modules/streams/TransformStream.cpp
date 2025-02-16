@@ -96,7 +96,7 @@ static ExceptionOr<JSC::JSValue> invokeTransformStreamFunction(JSC::JSGlobalObje
 
 ExceptionOr<CreateInternalTransformStreamResult> createInternalTransformStream(JSDOMGlobalObject& globalObject, JSC::JSValue transformer, JSC::JSValue writableStrategy, JSC::JSValue readableStrategy)
 {
-    auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
+    auto* clientData = downcast<JSVMClientData>(globalObject.vm().clientData);
     auto& privateName = clientData->builtinFunctions().transformStreamInternalsBuiltins().createInternalTransformStreamFromTransformerPrivateName();
 
     JSC::MarkedArgumentBuffer arguments;

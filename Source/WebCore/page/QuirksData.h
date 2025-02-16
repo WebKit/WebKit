@@ -39,7 +39,6 @@ struct WEBCORE_EXPORT QuirksData {
     bool isGoogleMaps { false };
     bool isNetflix { false };
     bool isSoundCloud { false };
-    bool isSpotify { false };
     bool isThesaurus { false };
     bool isVimeo { false };
     bool isWebEx { false };
@@ -53,15 +52,14 @@ struct WEBCORE_EXPORT QuirksData {
     bool needsBodyScrollbarWidthNoneDisabledQuirk { false };
     bool needsCanPlayAfterSeekedQuirk { false };
     bool needsChromeMediaControlsPseudoElementQuirk { false };
+    bool needsHotelsAnimationQuirk { false };
     bool needsMozillaFileTypeForDataTransferQuirk { false };
-    bool needsRelaxedCorsMixedContentCheckQuirk { false };
     bool needsResettingTransitionCancelsRunningTransitionQuirk { false };
     bool needsScrollbarWidthThinDisabledQuirk { false };
     bool needsSeekingSupportDisabledQuirk { false };
     bool needsVP9FullRangeFlagQuirk { false };
     bool needsVideoShouldMaintainAspectRatioQuirk { false };
     bool returnNullPictureInPictureElementDuringFullscreenChangeQuirk { false };
-    bool shouldAllowDownloadsInSpiteOfCSPQuirk { false };
     bool shouldAutoplayWebAudioForArbitraryUserGestureQuirk { false };
     bool shouldAvoidResizingWhenInputViewBoundsChangeQuirk { false };
     bool shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk { false };
@@ -84,6 +82,8 @@ struct WEBCORE_EXPORT QuirksData {
     // Requires check at moment of use
     std::optional<bool> needsDisableDOMPasteAccessQuirk;
 
+    std::optional<bool> needsReuseLiveRangeForSelectionUpdateQuirk;
+
 #if PLATFORM(IOS_FAMILY)
     bool mayNeedToIgnoreContentObservation { false };
     bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk { false };
@@ -101,19 +101,16 @@ struct WEBCORE_EXPORT QuirksData {
     bool shouldEnableApplicationCacheQuirk { false };
     bool shouldIgnoreAriaForFastPathContentObservationCheckQuirk { false };
     bool shouldNavigatorPluginsBeEmpty { false };
+    bool shouldSilenceWindowResizeEventsDuringApplicationSnapshotting { false };
     bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk { false };
     bool shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk { false };
-#endif
-
-#if PLATFORM(IOS)
-    bool needsGetElementsByNameQuirk { false };
-#endif
+    bool shouldTreatAddingMouseOutEventListenerAsContentChange { false };
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
     bool allowLayeredFullscreenVideos { false };
     bool shouldSilenceMediaQueryListChangeEvents { false };
     bool shouldSilenceResizeObservers { false };
-    bool shouldSilenceWindowResizeEvents { false };
 #endif
 
 #if PLATFORM(VISION)
@@ -125,6 +122,7 @@ struct WEBCORE_EXPORT QuirksData {
     bool isTouchBarUpdateSuppressedForHiddenContentEditableQuirk { false };
     bool needsFormControlToBeMouseFocusableQuirk { false };
     bool needsPrimeVideoUserSelectNoneQuirk { false };
+    bool needsZomatoEmailLoginLabelQuirk { false };
     bool shouldAvoidStartingSelectionOnMouseDown { false };
 #endif
 
@@ -140,6 +138,7 @@ struct WEBCORE_EXPORT QuirksData {
 #if ENABLE(MEDIA_STREAM)
     bool shouldDisableImageCaptureQuirk { false };
     bool shouldEnableLegacyGetUserMediaQuirk { false };
+    bool shouldEnableSpeakerSelectionPermissionsPolicyQuirk { false };
 #endif
 
 #if ENABLE(META_VIEWPORT)
@@ -170,7 +169,6 @@ struct WEBCORE_EXPORT QuirksData {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     bool requiresUserGestureToLoadInPictureInPictureQuirk { false };
     bool requiresUserGestureToPauseInPictureInPictureQuirk { false };
-    bool shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk { false };
     bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk { false };
 #endif
 };

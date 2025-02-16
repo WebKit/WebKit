@@ -101,7 +101,7 @@ void ScrollingStateNode::setChildren(Vector<Ref<ScrollingStateNode>>&& children)
     ASSERT(parentPointersAreCorrect());
 }
 
-void ScrollingStateNode::traverse(const Function<void(ScrollingStateNode&)>& function)
+void ScrollingStateNode::traverse(NOESCAPE const Function<void(ScrollingStateNode&)>& function)
 {
     function(*this);
     for (auto& child : m_children)

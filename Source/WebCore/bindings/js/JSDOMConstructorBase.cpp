@@ -48,7 +48,7 @@ JSC_DEFINE_HOST_FUNCTION(callThrowTypeErrorForJSDOMConstructorNotConstructable, 
 
 JSC::GCClient::IsoSubspace* JSDOMConstructorBase::subspaceForImpl(JSC::VM& vm)
 {
-    return &static_cast<JSVMClientData*>(vm.clientData)->domConstructorSpace();
+    return &downcast<JSVMClientData>(vm.clientData)->domConstructorSpace();
 }
 
 } // namespace WebCore

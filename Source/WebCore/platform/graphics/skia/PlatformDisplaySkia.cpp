@@ -191,7 +191,7 @@ private:
 
 GLContext* PlatformDisplay::skiaGLContext()
 {
-#if !(PLATFORM(PLAYSTATION) && USE(COORDINATED_GRAPHICS))
+#if PLATFORM(GTK) || PLATFORM(WPE) || (PLATFORM(PLAYSTATION) && !USE(COORDINATED_GRAPHICS))
     if (!s_skiaGLContext) {
         s_skiaGLContext = SkiaGLContext::create(*this);
         m_skiaGLContexts.add(*s_skiaGLContext);

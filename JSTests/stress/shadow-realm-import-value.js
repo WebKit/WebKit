@@ -121,7 +121,7 @@ async function shouldThrowAsync(func, errorType) {
         noInline(doImport);
 
         let realm = new ShadowRealm();
-        for (var i = 0; i < 10000; ++i) {
+        for (var i = 0; i < testLoopCount; ++i) {
             let result = await doImport(realm, "getCallCount");
             shouldBe(result(), 0);
         }

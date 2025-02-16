@@ -205,7 +205,7 @@ void RenderTextControl::addFocusRingRects(Vector<LayoutRect>& rects, const Layou
         rects.append(LayoutRect(additionalOffset, size()));
 }
 
-void RenderTextControl::layoutExcludedChildren(bool relayoutChildren)
+void RenderTextControl::layoutExcludedChildren(RelayoutChildren relayoutChildren)
 {
     RenderBlockFlow::layoutExcludedChildren(relayoutChildren);
 
@@ -215,7 +215,7 @@ void RenderTextControl::layoutExcludedChildren(bool relayoutChildren)
         return;
     placeholderRenderer->setIsExcludedFromNormalLayout(true);
 
-    if (relayoutChildren) {
+    if (relayoutChildren == RelayoutChildren::Yes) {
         // The markParents arguments should be false because this function is
         // called from layout() of the parent and the placeholder layout doesn't
         // affect the parent layout.

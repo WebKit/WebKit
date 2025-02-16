@@ -22,7 +22,7 @@ function main() {
 
     const object = {x: 1, p1: 1, p2: 1, p3: 1, p4: 0x1234};
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         opt(/* access */ true, instance, {});
         opt(/* access */ false, object, {});
     }

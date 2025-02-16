@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="reftest-wait">
+<html>
 <style>
     #test {
         background-color: green;
@@ -9,14 +9,18 @@
 </style>
 <div id="test"></div>
 <script>
+if (window.testRunner) { testRunner.waitUntilDone() }
+
 document.addEventListener("webkitfullscreenchange", () => {
     test.style.backgroundColor = "red";
 });
-document.addEventListener("fullscreenchange", () => {
+document.addEventListener("fullscreenchange", async () => {
     if (document.fullscreenElement)
         document.exitFullscreen();
-    else
-        document.documentElement.classList.remove("reftest-wait");
+    else if (window.testRunner) {
+        await testRunner.updatePresentation();
+        testRunner.notifyDone();
+    }
 });
 if (window.internals) {
     internals.withUserGesture(() => {

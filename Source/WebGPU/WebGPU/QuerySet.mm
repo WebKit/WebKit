@@ -136,6 +136,7 @@ void QuerySet::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
     CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
     commandEncoder.addBuffer(m_visibilityBuffer);
+    commandEncoder.addBuffer(m_timestampBuffer);
     if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }

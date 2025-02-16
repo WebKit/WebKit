@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
+ * Copyright (C) 2024-2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,28 +42,6 @@ struct BlendingContext;
 namespace Style {
 
 class BuilderState;
-
-// Helper for declaring types in the Style namespace as Tuple-Like.
-#define STYLE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
-    namespace std { \
-        template<> class tuple_size<WebCore::Style::t> : public std::integral_constant<size_t, numberOfArguments> { }; \
-        template<size_t I> class tuple_element<I, WebCore::Style::t> { \
-        public: \
-            using type = decltype(WebCore::Style::get<I>(std::declval<WebCore::Style::t>())); \
-        }; \
-    } \
-    template<> inline constexpr bool WebCore::TreatAsTupleLike<WebCore::Style::t> = true; \
-\
-
-#define STYLE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
-    STYLE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
-    template<> inline constexpr ASCIILiteral WebCore::SerializationSeparator<WebCore::Style::t> = " "_s; \
-\
-
-#define STYLE_COMMA_SEPARATED_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
-    STYLE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \
-    template<> inline constexpr ASCIILiteral WebCore::SerializationSeparator<WebCore::Style::t> = ", "_s; \
-\
 
 // Types can specialize this and set the value to true to be treated as "non-converting"
 // for css to style / style to css conversion algorithms. This means the type is identical
@@ -123,6 +101,9 @@ template<typename To, typename From, typename... Rest> auto toCSSOnTupleLike(con
 {
     return WTF::apply([&](const auto& ...x) { return To { toCSS(x, rest...)... }; }, tupleLike);
 }
+
+// Standard NonConverting type mappings (identity mappings):
+template<NonConverting T> struct ToCSSMapping<T> { using type = T; };
 
 // Standard Optional-Like type mappings:
 template<typename T> struct ToCSSMapping<std::optional<T>> { using type = std::optional<CSSType<T>>; };
@@ -244,6 +225,9 @@ template<typename To, typename From, typename... Rest> auto toStyleNoConversionD
 // Conversion Utility Types
 template<typename CSSType> using StyleType = std::decay_t<decltype(toStyle(std::declval<const CSSType&>(), std::declval<const BuilderState&>()))>;
 
+// Standard NonConverting type mappings (identity mappings):
+template<NonConverting T> struct ToStyleMapping<T> { using type = T; };
+
 // Standard Optional-Like type mappings:
 template<typename T> struct ToStyleMapping<std::optional<T>> { using type = std::optional<StyleType<T>>; };
 template<typename T> struct ToStyleMapping<WTF::Markable<T>> { using type = WTF::Markable<StyleType<T>>; };
@@ -324,6 +308,43 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CommaSeparatedV
     template<typename... Rest> Result operator()(const CommaSeparatedVector<CSSType, inlineCapacity>& value, Rest&&... rest)
     {
         return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyle(x, rest...); }) };
+    }
+};
+
+// MARK: - Evaluation
+
+// Types that want to participate in evaluation overloading must specialize the following interface:
+//
+//    template<> struct WebCore::Style::Evaluation<StyleType> {
+//        decltype(auto) operator()(const StyleType&, ...);
+//    };
+
+template<typename> struct Evaluation;
+
+// `Evaluation` Invokers
+template<typename StyleType> decltype(auto) evaluate(const StyleType& value)
+{
+    return Evaluation<StyleType>{}(value);
+}
+
+template<typename StyleType, typename Reference> decltype(auto) evaluate(const StyleType& value, Reference&& reference)
+{
+    return Evaluation<StyleType>{}(value, std::forward<Reference>(reference));
+}
+
+// Specialization for `VariantLike`.
+template<VariantLike StyleType> struct Evaluation<StyleType> {
+    template<typename... Rest> decltype(auto) operator()(const StyleType& value, Rest&&... rest)
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) { return evaluate(alternative, std::forward<Rest>(rest)...); });
+    }
+};
+
+// Specialization for `TupleLike` (wrapper).
+template<TupleLike StyleType> requires (std::tuple_size_v<StyleType> == 1) struct Evaluation<StyleType> {
+    template<typename... Rest> decltype(auto) operator()(const StyleType& value, Rest&&... rest)
+    {
+        return evaluate(get<0>(value), std::forward<Rest>(rest)...);
     }
 };
 
@@ -614,6 +635,83 @@ template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparat
         for (size_t i = 0; i < size; ++i)
             result.append(WebCore::Style::blend(a[i], b[i], aStyle, bStyle, context));
         return { WTFMove(result) };
+    }
+};
+
+// MARK: - IsZero
+
+// All leaf types that want to conform to IsZero must implement
+// the following:
+//
+//    template<> struct WebCore::Style::IsZero<CSSType> {
+//        bool operator()(const CSSType&);
+//    };
+//
+// or have a member function such that the type matches the
+// `HasIsZero` concept.
+
+template<typename> struct IsZero;
+
+// IsZero Invoker
+template<typename T> bool isZero(const T& value)
+{
+    return IsZero<T>{}(value);
+}
+
+template<HasIsZero T> struct IsZero<T> {
+    bool operator()(const T& value)
+    {
+        return value.isZero();
+    }
+};
+
+// Constrained for `TreatAsTupleLike`.
+template<TupleLike T> struct IsZero<T> {
+    bool operator()(const T& value)
+    {
+        return WTF::apply([&](const auto& ...x) { return (isZero(x) && ...); }, value);
+    }
+};
+
+// Constrained for `TreatAsVariantLike`.
+template<VariantLike T> struct IsZero<T> {
+    bool operator()(const T& value)
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) { return isZero(alternative); });
+    }
+};
+
+// MARK: - IsEmpty
+
+// All leaf types that want to conform to IsEmpty must implement
+// the following:
+//
+//    template<> struct WebCore::Style::IsEmpty<CSSType> {
+//        bool operator()(const CSSType&);
+//    };
+//
+// or have a member function such that the type matches the
+// `HasIsEmpty` concept.
+
+template<typename> struct IsEmpty;
+
+// IsEmpty Invoker
+template<typename T> bool isEmpty(const T& value)
+{
+    return IsEmpty<T>{}(value);
+}
+
+template<HasIsEmpty T> struct IsEmpty<T> {
+    bool operator()(const T& value)
+    {
+        return value.isEmpty();
+    }
+};
+
+template<typename T> struct IsEmpty<SpaceSeparatedSize<T>> {
+    bool operator()(const auto& value)
+    {
+        return isZero(value.width()) || isZero(value.height());
     }
 };
 

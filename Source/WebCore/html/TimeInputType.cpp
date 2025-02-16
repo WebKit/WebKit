@@ -29,7 +29,6 @@
  */
 
 #include "config.h"
-#if ENABLE(INPUT_TYPE_TIME)
 #include "TimeInputType.h"
 
 #include "DateComponents.h"
@@ -150,5 +149,3 @@ void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
 }
 
 } // namespace WebCore
-
-#endif

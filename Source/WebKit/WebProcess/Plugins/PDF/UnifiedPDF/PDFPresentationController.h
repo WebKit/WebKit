@@ -99,7 +99,10 @@ public:
         WebCore::FloatPoint pagePoint;
     };
 
-    virtual std::optional<VisiblePDFPosition> pdfPositionForCurrentView(bool preservePosition = true) const = 0;
+    enum class AnchorPoint : uint8_t { TopLeft, Center };
+    std::optional<VisiblePDFPosition> pdfPositionForCurrentView(AnchorPoint, bool preservePosition = true) const;
+    WebCore::FloatPoint anchorPointInDocumentSpace(AnchorPoint) const;
+    virtual std::optional<PDFDocumentLayout::PageIndex> pageIndexForCurrentView(AnchorPoint) const = 0;
     virtual void restorePDFPosition(const VisiblePDFPosition&) = 0;
 
     virtual void ensurePageIsVisible(PDFDocumentLayout::PageIndex) = 0;
@@ -139,7 +142,6 @@ protected:
 
     Ref<UnifiedPDFPlugin> m_plugin;
     RefPtr<AsyncPDFRenderer> m_asyncRenderer;
-
 };
 
 } // namespace WebKit

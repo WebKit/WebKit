@@ -123,7 +123,7 @@ public:
     PolicyChecker& policyChecker() const { return *m_policyChecker; }
 
     HistoryController& history() const { return m_history; }
-    WEBCORE_EXPORT CheckedRef<HistoryController> checkedHistory() const;
+    WEBCORE_EXPORT Ref<HistoryController> protectedHistory() const;
 
     ResourceLoadNotifier& notifier() const { return m_notifier; }
 
@@ -182,7 +182,7 @@ public:
     WEBCORE_EXPORT DocumentLoader* activeDocumentLoader() const;
     RefPtr<DocumentLoader> protectedActiveDocumentLoader() const;
     DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
-    RefPtr<DocumentLoader> protectedDocumentLoader() const;
+    WEBCORE_EXPORT RefPtr<DocumentLoader> protectedDocumentLoader() const;
     DocumentLoader* policyDocumentLoader() const { return m_policyDocumentLoader.get(); }
     DocumentLoader* provisionalDocumentLoader() const { return m_provisionalDocumentLoader.get(); }
     RefPtr<DocumentLoader> protectedProvisionalDocumentLoader() const;
@@ -200,11 +200,11 @@ public:
 
     bool willLoadMediaElementURL(URL&, Node&);
 
-    WEBCORE_EXPORT ResourceError cancelledError(const ResourceRequest&) const;
-    WEBCORE_EXPORT ResourceError blockedByContentBlockerError(const ResourceRequest&) const;
-    ResourceError blockedError(const ResourceRequest&) const;
+    WEBCORE_EXPORT static ResourceError cancelledError(const ResourceRequest&);
+    WEBCORE_EXPORT static ResourceError blockedByContentBlockerError(const ResourceRequest&);
+    static ResourceError blockedError(const ResourceRequest&);
 #if ENABLE(CONTENT_FILTERING)
-    ResourceError blockedByContentFilterError(const ResourceRequest&) const;
+    static ResourceError blockedByContentFilterError(const ResourceRequest&);
 #endif
 
     bool isReplacing() const;
@@ -233,7 +233,7 @@ public:
     void detachViewsAndDocumentLoader();
 
     static void addHTTPOriginIfNeeded(ResourceRequest&, const String& origin);
-    static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr, const Page* = nullptr);
+    static void addSameSiteInfoToRequestIfNeeded(ResourceRequest&, const Document* initiator = nullptr);
 
     const LocalFrameLoaderClient& client() const { return m_client.get(); }
     LocalFrameLoaderClient& client() { return m_client.get(); }
@@ -321,6 +321,7 @@ public:
     bool shouldSkipHTTPSUpgradeForSameSiteNavigation() const { return m_shouldSkipHTTPSUpgradeForSameSiteNavigation; }
 
     WEBCORE_EXPORT void completePageTransitionIfNeeded();
+    WEBCORE_EXPORT void setDocumentVisualUpdatesAllowed(bool);
 
     void setOverrideCachePolicyForTesting(ResourceRequestCachePolicy policy) { m_overrideCachePolicyForTesting = policy; }
     void setOverrideResourceLoadPriorityForTesting(ResourceLoadPriority priority) { m_overrideResourceLoadPriorityForTesting = priority; }

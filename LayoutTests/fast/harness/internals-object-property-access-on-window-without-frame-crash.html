@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<iframe id="iframe"></iframe>
+<script>
+if (testRunner)
+    testRunner.dumpAsText();
+
+const skippedInternalFunctions = [
+  // Calling the following internals function can cause crashes or assertions, but
+  // they don't actually involve a DOM tree and shouldn't be covered by this test.
+  "reportBacktrace",
+  "terminateWebContentProcess",
+  "beginAudioSessionInterruption",
+  "beginMediaSessionInterruption",
+  "createFile",
+  "hasSandboxMachLookupAccessToGlobalName",
+  "hasSandboxMachLookupAccessToXPCServiceName",
+  "hasSandboxUnixSyscallAccess",
+  "setHardwareVP9DecoderDisabledForTesting",
+  "setSystemHasACForTesting",
+  "setSystemHasBatteryForTesting",
+  "setVP9DecoderDisabledForTesting",
+  "setVP9ScreenSizeAndScaleForTesting",
+  // These two crashes on mac-wk1, but don't require a frame.
+  "hasServiceWorkerRegistration",
+  "storeRegistrationsOnDisk",
+];
+
+// The following exceptions can be thrown because the internals properties are
+// accessed in a bad state, or because we pass invalid parameters to functions.
+const expectedErrors = [
+  "DataCloneError",
+  "InvalidAccessError",
+  "InvalidStateError",
+  "NotFoundError",
+  "NotSupportedError",
+  "SyntaxError",
+  "TypeError",
+];
+function runAndIgnoreExpectedErrors(property, fn) {
+    try {
+        return fn();
+    } catch(e) {
+        if (!expectedErrors.includes(e.name))
+            throw e;
+    }
+}
+
+const iframe_window = window.frames[0];
+document.adoptNode(document.getElementById("iframe"));
+for (let property in iframe_window.internals) {
+    // Try the getter.
+    let value = runAndIgnoreExpectedErrors(property, function() {
+        return iframe_window.internals[property];
+    });
+
+    if (typeof value == 'function') {
+        if (skippedInternalFunctions.includes(property))
+            continue;
+        // For functions, we don't really have a generic way to produce a valid
+        // set of arguments, so just try some basic call.
+        runAndIgnoreExpectedErrors(property, function() {
+            const argumentCount = 10;
+            iframe_window.internals[property](...Array(argumentCount).fill(1));
+        });
+    } else {
+        // Try the setter.
+        runAndIgnoreExpectedErrors(property, function() {
+            iframe_window.internals[property] = value;
+        });
+    }
+}
+
+document.body.innerHTML = "PASS if no crash or assert.";
+</script>

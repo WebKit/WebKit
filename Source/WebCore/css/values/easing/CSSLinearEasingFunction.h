@@ -52,7 +52,7 @@ struct LinearEasingParameters {
 };
 using LinearEasingFunction = FunctionNotation<CSSValueLinear, LinearEasingParameters>;
 
-DEFINE_TYPE_WRAPPER(LinearEasingParameters, stops);
+DEFINE_TYPE_WRAPPER_GET(LinearEasingParameters, stops);
 
 template<size_t I> const auto& get(const LinearEasingParameters::Stop& value)
 {
@@ -73,6 +73,6 @@ template<size_t I> const auto& get(const LinearEasingParameters::Stop::Length& v
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(LinearEasingParameters, 1)
-CSS_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(LinearEasingParameters::Stop, 2)
-CSS_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(LinearEasingParameters::Stop::Length, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearEasingParameters, 1)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearEasingParameters::Stop, 2)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::LinearEasingParameters::Stop::Length, 2)

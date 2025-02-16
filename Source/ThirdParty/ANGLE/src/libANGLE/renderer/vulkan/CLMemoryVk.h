@@ -100,17 +100,32 @@ class CLBufferVk : public CLMemoryVk
 
     angle::Result create(void *hostPtr);
     angle::Result createStagingBuffer(size_t size);
+    angle::Result copyToWithPitch(void *hostPtr,
+                                  size_t srcOffset,
+                                  size_t size,
+                                  size_t rowPitch,
+                                  size_t slicePitch,
+                                  cl::Coordinate region,
+                                  const size_t elementSize);
 
     angle::Result fillWithPattern(const void *pattern,
                                   size_t patternSize,
                                   size_t offset,
                                   size_t size)
     {
-        getBuffer().fillWithPattern(pattern, patternSize, offset, size);
+        getBuffer().fillWithPattern(pattern, patternSize, getOffset() + offset, size);
         return angle::Result::Continue;
     }
 
     bool isSubBuffer() const { return mParent != nullptr; }
+
+    angle::Result setRect(const void *data,
+                          const cl::BufferRect &srcRect,
+                          const cl::BufferRect &bufferRect);
+    angle::Result getRect(const cl::BufferRect &srcRect,
+                          const cl::BufferRect &outRect,
+                          void *outData);
+    std::vector<VkBufferCopy> rectCopyRegions(const cl::BufferRect &bufferRect);
 
     bool isCurrentlyInUse() const override;
     size_t getSize() const override { return mMemory.getSize(); }
@@ -166,7 +181,7 @@ class CLImageVk : public CLMemoryVk
     VkImageUsageFlags getVkImageUsageFlags();
     VkImageType getVkImageType(const cl::ImageDescriptor &desc);
     bool isStagingBufferInitialized() { return mStagingBufferInitialized; }
-    VkExtent3D getImageExtent() { return mExtent; }
+    cl::Extents getImageExtent() { return mExtent; }
     uint8_t *getMappedPtr() { return mMappedMemory; }
     vk::ImageView &getImageView() { return mImageView; }
     void packPixels(const void *fillColor, PixelColor *packedColor);
@@ -174,8 +189,8 @@ class CLImageVk : public CLMemoryVk
                             const cl::Coordinate &region,
                             uint8_t *imagePtr,
                             PixelColor *packedColor);
-    VkExtent3D getExtentForCopy(const cl::Coordinate &region);
-    VkOffset3D getOffsetForCopy(const cl::MemOffsets &origin);
+    cl::Extents getExtentForCopy(const cl::Coordinate &region);
+    cl::Offset getOffsetForCopy(const cl::MemOffsets &origin);
     VkImageSubresourceLayers getSubresourceLayersForCopy(const cl::MemOffsets &origin,
                                                          const cl::Coordinate &region,
                                                          cl::MemObjectType copyToType,
@@ -194,7 +209,7 @@ class CLImageVk : public CLMemoryVk
 
     vk::ImageHelper mImage;
     vk::BufferHelper mStagingBuffer;
-    VkExtent3D mExtent;
+    cl::Extents mExtent;
     angle::FormatID mAngleFormat;
     bool mStagingBufferInitialized;
     vk::ImageView mImageView;

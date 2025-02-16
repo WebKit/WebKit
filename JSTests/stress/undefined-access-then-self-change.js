@@ -6,7 +6,7 @@ noInline(foo);
 
 var o = Object.create(null);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo(o);
     if (result !== void 0)
         throw "Error: bad result in loop: " + result;

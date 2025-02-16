@@ -246,17 +246,20 @@ void WindowEventLoop::queueMutationObserverCompoundMicrotask()
     if (m_mutationObserverCompoundMicrotaskQueuedFlag)
         return;
     m_mutationObserverCompoundMicrotaskQueuedFlag = true;
-    m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([this] {
+    m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([weakThis = WeakPtr { *this }] {
         // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
-        Ref protectedThis { *this };
-        m_mutationObserverCompoundMicrotaskQueuedFlag = false;
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis)
+            return;
+
+        protectedThis->m_mutationObserverCompoundMicrotaskQueuedFlag = false;
 
         // FIXME: This check doesn't exist in the spec.
-        if (m_deliveringMutationRecords)
+        if (protectedThis->m_deliveringMutationRecords)
             return;
-        m_deliveringMutationRecords = true;
-        MutationObserver::notifyMutationObservers(*this);
-        m_deliveringMutationRecords = false;
+        protectedThis->m_deliveringMutationRecords = true;
+        MutationObserver::notifyMutationObservers(*protectedThis);
+        protectedThis->m_deliveringMutationRecords = false;
     });
 }
 
@@ -264,12 +267,15 @@ CustomElementQueue& WindowEventLoop::backupElementQueue()
 {
     if (!m_processingBackupElementQueue) {
         m_processingBackupElementQueue = true;
-        m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([this] {
+        m_perpetualTaskGroupForSimilarOriginWindowAgents.queueMicrotask([weakThis = WeakPtr { *this }] {
             // We can't make a Ref to WindowEventLoop in the lambda capture as that would result in a reference cycle & leak.
-            Ref protectedThis { *this };
-            m_processingBackupElementQueue = false;
-            ASSERT(m_customElementQueue);
-            CustomElementReactionQueue::processBackupQueue(*m_customElementQueue);
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+
+            protectedThis->m_processingBackupElementQueue = false;
+            ASSERT(protectedThis->m_customElementQueue);
+            CustomElementReactionQueue::processBackupQueue(*protectedThis->m_customElementQueue);
         });
     }
     if (!m_customElementQueue)
@@ -286,7 +292,7 @@ void WindowEventLoop::breakToAllowRenderingUpdate()
     // FIXME: Also bail out from the task loop in EventLoop::run().
     threadGlobalData().threadTimers().breakFireLoopForRenderingUpdate();
 
-    RunLoop::main().suspendFunctionDispatchForCurrentCycle();
+    RunLoop::protectedMain()->suspendFunctionDispatchForCurrentCycle();
 #endif
 }
 

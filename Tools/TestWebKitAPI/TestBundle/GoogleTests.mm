@@ -182,12 +182,29 @@ static void RunTest(id self, SEL _cmd)
     delete listeners.Release(listeners.default_result_printer());
     free(argv);
 
+    bool shouldListTestsOnly = testing::GTEST_FLAG(list_tests);
+
+    // Calling RUN_ALL_TESTS() has the side effect of applying --gtest_filter to all test cases,
+    // properly setting the value of TestCase::should_run() and TestInfo::should_run(). Since
+    // GTEST_FLAG(list_tests) is set, no tests will actually be run.
+    testing::GTEST_FLAG(list_tests) = true;
+    (void)RUN_ALL_TESTS();
+
+    // If the user specified --gtest_list_tests, skip registering XCTestCases. Otherwise, set the
+    // list_tests flag back to false and continue.
+    if (shouldListTestsOnly)
+        return;
+    testing::GTEST_FLAG(list_tests) = false;
+
     BOOL runDisabledTests = testing::GTEST_FLAG(also_run_disabled_tests);
     NSMutableDictionary *testFilterMap = [NSMutableDictionary dictionary];
     NSCharacterSet *decimalDigitCharacterSet = [NSCharacterSet decimalDigitCharacterSet];
 
     for (int testCaseIndex = 0; testCaseIndex < googleTest->total_test_case_count(); testCaseIndex++) {
         const TestCase *testCase = googleTest->GetTestCase(testCaseIndex);
+        if (!testCase->should_run())
+            continue;
+
         NSString *testCaseName = @(testCase->name());
 
         // For typed tests '/' is used to separate the parts of the test case name.
@@ -217,6 +234,9 @@ static void RunTest(id self, SEL _cmd)
 
         for (int testIndex = 0; testIndex < testCase->total_test_count(); testIndex++) {
             const TestInfo *testInfo = testCase->GetTestInfo(testIndex);
+            if (!testInfo->should_run())
+                continue;
+
             NSString *testName = @(testInfo->name());
             if (runDisabledTests == NO && [testName hasPrefix:GoogleTestDisabledPrefix])
                 continue;

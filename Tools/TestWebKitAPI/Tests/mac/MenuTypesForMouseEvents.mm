@@ -27,6 +27,7 @@
 
 #import "PlatformUtilities.h"
 #import <Carbon/Carbon.h> // For GetCurrentEventTime
+#import <WebCore/MouseEventTypes.h>
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <pal/spi/mac/NSMenuSPI.h>
 #import <wtf/RetainPtr.h>

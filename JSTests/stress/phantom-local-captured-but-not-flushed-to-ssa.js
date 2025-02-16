@@ -14,7 +14,7 @@ function bar(x) {
 
 noInline(bar);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar(true);
     if (result != 10)
         throw "Error: bad result: " + result;

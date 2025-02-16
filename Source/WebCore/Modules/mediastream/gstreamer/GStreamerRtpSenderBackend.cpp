@@ -309,6 +309,15 @@ std::unique_ptr<RTCDtlsTransportBackend> GStreamerRtpSenderBackend::dtlsTranspor
     return makeUnique<GStreamerDtlsTransportBackend>(WTFMove(transport));
 }
 
+void GStreamerRtpSenderBackend::dispatchBitrateRequest(uint32_t bitrate)
+{
+    switchOn(m_source, [&](Ref<RealtimeOutgoingAudioSourceGStreamer>& source) {
+        source->dispatchBitrateRequest(bitrate);
+    }, [&](Ref<RealtimeOutgoingVideoSourceGStreamer>& source) {
+        source->dispatchBitrateRequest(bitrate);
+    }, [](const std::nullptr_t&) { });
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

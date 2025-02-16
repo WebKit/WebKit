@@ -23,6 +23,7 @@
 
 #include "CSSMarkup.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSSerializationContext.h"
 #include "CSSValueKeywords.h"
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
@@ -118,17 +119,9 @@ CachedImage* CSSImageValue::loadImage(CachedResourceLoader& loader, const Resour
     return m_cachedImage.value().get();
 }
 
-bool CSSImageValue::customTraverseSubresources(const Function<bool(const CachedResource&)>& handler) const
+bool CSSImageValue::customTraverseSubresources(NOESCAPE const Function<bool(const CachedResource&)>& handler) const
 {
     return m_cachedImage && *m_cachedImage && handler(**m_cachedImage);
-}
-
-void CSSImageValue::customSetReplacementURLForSubresources(const UncheckedKeyHashMap<String, String>& replacementURLStrings)
-{
-    auto replacementURLString = replacementURLStrings.get(m_location.resolvedURL.string());
-    if (!replacementURLString.isNull())
-        m_replacementURLString = replacementURLString;
-    m_shouldUseResolvedURLInCSSText = true;
 }
 
 bool CSSImageValue::customMayDependOnBaseURL() const
@@ -136,26 +129,20 @@ bool CSSImageValue::customMayDependOnBaseURL() const
     return WebCore::mayDependOnBaseURL(m_location);
 }
 
-void CSSImageValue::customClearReplacementURLForSubresources()
-{
-    m_replacementURLString = { };
-    m_shouldUseResolvedURLInCSSText = false;
-}
-
 bool CSSImageValue::equals(const CSSImageValue& other) const
 {
     return m_location == other.m_location;
 }
 
-String CSSImageValue::customCSSText() const
+String CSSImageValue::customCSSText(const CSS::SerializationContext& context) const
 {
     if (m_isInvalid)
         return ""_s;
 
-    if (!m_replacementURLString.isEmpty())
-        return serializeURL(m_replacementURLString);
+    if (auto replacementURLString = context.replacementURLStrings.get(m_location.resolvedURL.string()); !replacementURLString.isEmpty())
+        return serializeURL(replacementURLString);
 
-    if (m_shouldUseResolvedURLInCSSText)
+    if (context.shouldUseResolvedURLInCSSText)
         return serializeURL(m_location.resolvedURL.string());
 
     return serializeURL(m_location.specifiedURLString);

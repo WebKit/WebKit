@@ -33,14 +33,12 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(IdentifierRep);
 
-typedef HashSet<IdentifierRep*> IdentifierSet;
+typedef UncheckedKeyHashSet<IdentifierRep*> IdentifierSet;
 
 static IdentifierSet& identifierSet()
 {
@@ -59,13 +57,13 @@ static IntIdentifierMap& intIdentifierMap()
 IdentifierRep* IdentifierRep::get(int intID)
 {
     if (intID == 0 || intID == -1) {
-        static IdentifierRep* negativeOneAndZeroIdentifiers[2];
+        static NeverDestroyed<std::array<IdentifierRep*, 2>> negativeOneAndZeroIdentifiers;
 
-        IdentifierRep* identifier = negativeOneAndZeroIdentifiers[intID + 1];
+        auto* identifier = negativeOneAndZeroIdentifiers.get()[intID + 1];
         if (!identifier) {
             identifier = new IdentifierRep(intID);
 
-            negativeOneAndZeroIdentifiers[intID + 1] = identifier;
+            negativeOneAndZeroIdentifiers.get()[intID + 1] = identifier;
         }
         
         return identifier;
@@ -96,7 +94,7 @@ IdentifierRep* IdentifierRep::get(const char* name)
     if (!name)
         return nullptr;
   
-    String string = String::fromUTF8WithLatin1Fallback(span(name));
+    String string = String::fromUTF8WithLatin1Fallback(unsafeSpan(name));
     StringIdentifierMap::AddResult result = stringIdentifierMap().add(string.impl(), nullptr);
     if (result.isNewEntry) {
         ASSERT(!result.iterator->value);
@@ -114,5 +112,3 @@ bool IdentifierRep::isValid(IdentifierRep* identifier)
 }
     
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,7 +31,7 @@ function classDeclaration(dynamicProperty) {
 }
 noInline(classDeclaration);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let Class = classDeclaration('property' + i);
     let c = new Class();
     c.setField('test');

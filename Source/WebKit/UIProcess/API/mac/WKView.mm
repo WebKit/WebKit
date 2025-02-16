@@ -1255,11 +1255,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _WKOverlayScrollbarStyleDefault;
 }
 
-- (NSColor *)_pageExtendedBackgroundColor
-{
-    return nil;
-}
-
 - (BOOL)isUsingUISideCompositing
 {
     return NO;

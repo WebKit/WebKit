@@ -270,7 +270,7 @@ class Plan < BasePlan
         command = ""
         executionTimeMessage = ""
         if $reportExecutionTime
-            executionTimeMessage = " $(($SECONDS - $START_TIME))s"
+            executionTimeMessage = " $(($(($(date +%s%N)/1000000)) - $START_TIME))ms"
         end
         if $progressMeter or $reportExecutionTime or $verbosity >= 2
             command = "echo PASS: #{Shellwords.shellescape(@name)}#{executionTimeMessage}"
@@ -286,7 +286,7 @@ class Plan < BasePlan
         File.open(filename, "w") {
             | outp |
             if $reportExecutionTime
-                outp.puts "START_TIME=$SECONDS"
+                outp.puts "START_TIME=$(($(date +%s%N)/1000000))"
             end
             outp.puts "echo Running #{Shellwords.shellescape(@name)}"
             #

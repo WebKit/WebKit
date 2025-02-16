@@ -12,7 +12,7 @@ function foo(r, s) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let r = /foo/g;
     regexLastIndex = {};
     regexLastIndex.toString = function() {
@@ -34,7 +34,7 @@ function bar(r, s) {
 }
 noInline(bar);
 
-for (let i = 0; i < 10000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     let r = /foo/g;
     regexLastIndex = {};
     regexLastIndex.toString = function() {

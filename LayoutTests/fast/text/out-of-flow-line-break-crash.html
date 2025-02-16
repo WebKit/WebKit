@@ -17,6 +17,7 @@ PASS if no crash or assert.
     testRunner.dumpAsText();
   embed.appendChild(meter);
   textarea.setSelectionRange(1,0,"text");
+  textarea.focus();
   container.appendChild(meter);
   document.execCommand("selectAll", false);
   document.execCommand("createLink", false, "#link");

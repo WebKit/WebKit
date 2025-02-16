@@ -27,7 +27,7 @@ while (var_1_.length < 200000)
 }
 `;
       const var_8_ = eval?.(var_10_);
-      for (let var_6_ = 0; var_6_ < 1000000; ++var_6_) {
+      for (let var_6_ = 0; var_6_ < testLoopCount; ++var_6_) {
         String.prototype.blink.__proto__ = Intl.PluralRules.prototype;
       }
     } catch {

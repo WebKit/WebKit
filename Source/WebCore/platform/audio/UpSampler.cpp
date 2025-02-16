@@ -101,14 +101,14 @@ void UpSampler::process(std::span<const float> source, std::span<float> destinat
     if (!isInputBufferGood)
         return;
 
-    auto inputP = m_inputBuffer.span().subspan(source.size());
+    auto inputBuffer = m_inputBuffer.span();
+    auto inputP = inputBuffer.subspan(source.size());
     memcpySpan(inputP, source);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     // Copy even sample-frames 0,2,4,6... (delayed by the linear phase delay) directly into destination.
+    auto inputPMinusHalfSize = inputBuffer.subspan(inputP.data() - inputBuffer.data() - halfSize);
     for (size_t i = 0; i < source.size(); ++i)
-        destination[i * 2] = *((inputP.data() - halfSize) + i);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        destination[i * 2] = inputPMinusHalfSize[i];
 
     // Compute odd sample-frames 1,3,5,7...
     auto oddSamplesP = m_tempBuffer.span();

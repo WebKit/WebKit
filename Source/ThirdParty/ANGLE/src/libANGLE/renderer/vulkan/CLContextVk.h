@@ -8,9 +8,12 @@
 #ifndef LIBANGLE_RENDERER_VULKAN_CLCONTEXTVK_H_
 #define LIBANGLE_RENDERER_VULKAN_CLCONTEXTVK_H_
 
+#include "common/PackedEnums.h"
+#include "common/SimpleMutex.h"
 #include "libANGLE/renderer/vulkan/CLPlatformVk.h"
 #include "libANGLE/renderer/vulkan/cl_types.h"
 #include "libANGLE/renderer/vulkan/vk_cache_utils.h"
+#include "libANGLE/renderer/vulkan/vk_helpers.h"
 #include "libANGLE/renderer/vulkan/vk_utils.h"
 
 #include "libANGLE/renderer/CLContextImpl.h"
@@ -20,6 +23,8 @@
 
 namespace rx
 {
+
+class CLKernelVk;
 
 class CLContextVk : public CLContextImpl, public vk::Context
 {
@@ -94,13 +99,26 @@ class CLContextVk : public CLContextImpl, public vk::Context
     DescriptorSetLayoutCache *getDescriptorSetLayoutCache() { return &mDescriptorSetLayoutCache; }
     PipelineLayoutCache *getPipelineLayoutCache() { return &mPipelineLayoutCache; }
 
+    vk::MetaDescriptorPool &getMetaDescriptorPool() { return mMetaDescriptorPool; }
+
+    angle::Result allocateDescriptorSet(
+        CLKernelVk *kernelVk,
+        DescriptorSetIndex index,
+        angle::EnumIterator<DescriptorSetIndex> layoutIndex,
+        vk::OutsideRenderPassCommandBufferHelper *computePassCommands);
+
   private:
     void handleDeviceLost() const;
     VkFormat getVkFormatFromCL(cl_image_format format);
 
+    // mutex to synchronize the descriptor set allocations
+    angle::SimpleMutex mDescriptorSetMutex;
+
     // Caches for DescriptorSetLayout and PipelineLayout
     DescriptorSetLayoutCache mDescriptorSetLayoutCache;
     PipelineLayoutCache mPipelineLayoutCache;
+
+    vk::MetaDescriptorPool mMetaDescriptorPool;
 
     // Have the CL Context keep tabs on associated CL objects
     struct Mutable

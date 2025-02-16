@@ -10,6 +10,6 @@ function foo(o, p) {
 }
 noInline(foo);
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     foo({});
 }

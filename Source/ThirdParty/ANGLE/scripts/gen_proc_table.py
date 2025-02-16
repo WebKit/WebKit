@@ -11,7 +11,7 @@ import os
 import sys
 import registry_xml
 
-out_file_name_gles = "../src/libGLESv2/proc_table_egl_autogen.cpp"
+out_file_name_gles = "../src/libGLESv2/egl_stubs_getprocaddress_autogen.cpp"
 out_file_name_cl = "../src/libGLESv2/proc_table_cl_autogen.cpp"
 out_file_name_cl_map = "../src/libOpenCL/libOpenCL_autogen.map"
 
@@ -33,13 +33,44 @@ template_cpp = """// GENERATED FILE - DO NOT EDIT.
 
 namespace {namespace}
 {{
+
+namespace
+{{
+struct ProcEntry
+{{
+    const char *name;
+    __eglMustCastToProperFunctionPointerType func;
+}};
+
+bool CompareProc(const ProcEntry &a, const char *b)
+{{
+    return strcmp(a.name, b) < 0;
+}}
+
 // clang-format off
 const ProcEntry g_procTable[] = {{
 {proc_data}
 }};
 // clang-format on
-const size_t g_numProcs = {num_procs};
+}}  // anonymous namespace
+
+__eglMustCastToProperFunctionPointerType GetProcAddress(Thread *thread, const char *procname)
+{{
+    const ProcEntry *entry =
+        std::lower_bound(std::begin(g_procTable), std::end(g_procTable), procname, CompareProc);
+
+    thread->setSuccess();
+
+    if (entry == std::end(g_procTable) || strcmp(entry->name, procname) != 0)
+    {{
+        return nullptr;
+    }}
+
+    return entry->func;
+}}
+
 }}  // namespace {namespace}
+
 """
 
 # FOR OPENCL
@@ -83,8 +114,7 @@ template_map = """/* GENERATED FILE - DO NOT EDIT.
 {symbol_maps}
 """
 
-includes_gles = """#include "libGLESv2/proc_table_egl.h"
-
+includes_gles = """#include "libANGLE/Thread.h"
 #include "libGLESv2/entry_points_egl_autogen.h"
 #include "libGLESv2/entry_points_egl_ext_autogen.h"
 #include "libGLESv2/entry_points_gles_1_0_autogen.h"

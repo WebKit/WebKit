@@ -7,12 +7,12 @@ function exponentIsZero(x) {
 noInline(exponentIsZero);
 
 function testExponentIsZero() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = exponentIsZero(5);
         if (result !== 1)
             throw "Error: zeroExponent(5) should be 1, was = " + result;
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = exponentIsZero(5.5);
         if (result !== 1)
             throw "Error: zeroExponent(5.5) should be 1, was = " + result;
@@ -27,12 +27,12 @@ function exponentIsOne(x) {
 noInline(exponentIsOne);
 
 function testExponentIsOne() {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = exponentIsOne(5);
         if (result !== 5)
             throw "Error: exponentIsOne(5) should be 5, was = " + result;
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = exponentIsOne(5.5);
         if (result !== 5.5)
             throw "Error: exponentIsOne(5.5) should be 5.5, was = " + result;
@@ -159,27 +159,27 @@ noInline(doubleIntConstants);
 
 function testBaseAndExponentConstantLiterals()
 {
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = intIntConstantsSmallNumbers();
         if (result !== 74088)
             throw "Error: intIntConstantsSmallNumbers() should be 74088, was = " + result;
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = intIntConstantsLargeNumbers();
         if (result !== 1.5013093754529656e+68)
             throw "Error: intIntConstantsLargeNumbers() should be 1.5013093754529656e+68, was = " + result;
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = intDoubleConstants();
         if (result !== 5.1338303882015765e+48)
             throw "Error: intDoubleConstants() should be 5.1338303882015765e+48, was = " + result;
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = doubleDoubleConstants();
         if (result !== 1.0944228729647829e+48)
             throw "Error: doubleDoubleConstants() should be 1.0944228729647829e+48, was = " + result;
     }
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var result = doubleIntConstants();
         if (result !== 5.989022735311158e+58)
             throw "Error: doubleIntConstants() should be 5.989022735311158e+58, was = " + result;

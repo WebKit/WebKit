@@ -30,24 +30,22 @@
 
 #import "WebCoreThreadInternal.h"
 #import <pal/spi/cg/CoreGraphicsSPI.h>
+#import <wtf/StdLibExtras.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
-static inline void _FillRectsUsingOperation(CGContextRef context, const CGRect* rects, int count, CGCompositeOperation op)
+static inline void _FillRectsUsingOperation(CGContextRef context, std::span<const CGRect> rects, CGCompositeOperation op)
 {
-    int i;
-    CGRect *integralRects = reinterpret_cast<CGRect *>(alloca(sizeof(CGRect) * count));
+    auto integralRects = unsafeMakeSpan(reinterpret_cast<CGRect *>(alloca(sizeof(CGRect) * rects.size())), rects.size());
     
-    assert (integralRects);
+    assert(integralRects.data());
     
-    for (i = 0; i < count; i++) {
+    for (size_t i = 0; i < rects.size(); ++i) {
         integralRects[i] = CGRectApplyAffineTransform (rects[i], CGContextGetCTM(context));
         integralRects[i] = CGRectIntegral (integralRects[i]);
         integralRects[i] = CGRectApplyAffineTransform (integralRects[i], CGAffineTransformInvert(CGContextGetCTM(context)));
     }
     CGCompositeOperation oldOp = CGContextGetCompositeOperation(context);
     CGContextSetCompositeOperation(context, op);
-    CGContextFillRects(context, integralRects, count);
+    CGContextFillRects(context, integralRects.data(), rects.size());
     CGContextSetCompositeOperation(context, oldOp);
 }
 
@@ -56,7 +54,7 @@ void WKRectFill(CGContextRef context, CGRect aRect)
     if (aRect.size.width > 0 && aRect.size.height > 0) {
         CGContextSaveGState(context);
         if (aRect.size.width > 0 && aRect.size.height > 0)
-            _FillRectsUsingOperation(context, &aRect, 1, kCGCompositeCopy);
+            _FillRectsUsingOperation(context, singleElementSpan(aRect), kCGCompositeCopy);
         CGContextRestoreGState(context);
     }
 }
@@ -72,7 +70,5 @@ CGContextRef WKGetCurrentGraphicsContext(void)
     WebThreadContext* threadContext =  WebThreadCurrentContext();
     return threadContext->currentCGContext;
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

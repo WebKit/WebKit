@@ -47,6 +47,39 @@ enum class TestNonZeroBasedEnum {
     C = 3,
 };
 
+enum class EmptyEnum : int8_t { };
+
+enum class SmallEnum : uint8_t {
+    A = 0,
+    B = 1,
+    C = 2,
+    D = 3
+};
+
+enum class MediumEnum : uint16_t {
+    X = 0,
+    Y = 100,
+    Z = 255
+};
+
+enum class LargeEnum : uint32_t {
+    Alpha = 1000,
+    Beta = 1023,
+    Gamma = 2048
+};
+
+enum class SignedSmallEnum : int8_t {
+    Neg = -1,
+    Zero = 0,
+    Pos = 1
+};
+
+enum class SignedMediumEnum : int16_t {
+    Neg = -100,
+    Zero = 0,
+    Pos = 100
+};
+
 namespace WTF {
 template<> bool isValidEnum<TestEnum>(std::underlying_type_t<TestEnum> value)
 {
@@ -68,6 +101,24 @@ template<> struct EnumTraits<TestNonContiguousEnum> {
 template<> struct EnumTraits<TestNonZeroBasedEnum> {
     using values = EnumValues<TestNonZeroBasedEnum, TestNonZeroBasedEnum::A, TestNonZeroBasedEnum::B, TestNonZeroBasedEnum::C>;
 };
+
+template<> struct EnumTraits<LargeEnum> {
+    using Underlying = std::underlying_type_t<LargeEnum>;
+    static constexpr Underlying min = static_cast<Underlying>(LargeEnum::Alpha);
+    static constexpr Underlying max = static_cast<Underlying>(LargeEnum::Gamma);
+};
+
+template<> struct EnumTraits<SignedSmallEnum> {
+    using Underlying = std::underlying_type_t<SignedSmallEnum>;
+    static constexpr Underlying min = static_cast<Underlying>(SignedSmallEnum::Neg);
+    static constexpr Underlying max = static_cast<Underlying>(SignedSmallEnum::Pos);
+};
+
+template<> struct EnumTraits<SignedMediumEnum> {
+    using Underlying = std::underlying_type_t<SignedMediumEnum>;
+    static constexpr Underlying min = static_cast<Underlying>(SignedMediumEnum::Neg);
+};
+
 }
 
 namespace TestWebKitAPI {
@@ -157,5 +208,71 @@ TEST(WTF_EnumTraits, EnumNameArgument)
     EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName(ClassMultiWord::Hole)));
     EXPECT_TRUE(isExpectedEnumString("Hole"_s, enumName(ClassMultiWord::Duplicate)));
 }
+
+TEST(WTF_EnumTraits, EnumMinMax)
+{
+    EXPECT_EQ(WTF::enumNamesMin<EmptyEnum>(), static_cast<std::underlying_type_t<EmptyEnum>>(0));
+    EXPECT_EQ(WTF::enumNamesMax<EmptyEnum>(), static_cast<std::underlying_type_t<EmptyEnum>>(INT8_MAX));
+
+    EXPECT_EQ(WTF::enumNamesMin<SmallEnum>(), static_cast<std::underlying_type_t<SmallEnum>>(0));
+    EXPECT_EQ(WTF::enumNamesMax<SmallEnum>(), static_cast<std::underlying_type_t<SmallEnum>>(UINT8_MAX));
+
+    EXPECT_EQ(WTF::enumNamesMin<MediumEnum>(), static_cast<std::underlying_type_t<MediumEnum>>(0));
+    EXPECT_EQ(WTF::enumNamesMax<MediumEnum>(), static_cast<std::underlying_type_t<MediumEnum>>(UINT8_MAX << 1));
+
+    EXPECT_EQ(WTF::enumNamesMin<LargeEnum>(), static_cast<std::underlying_type_t<LargeEnum>>(1000));
+    EXPECT_EQ(WTF::enumNamesMax<LargeEnum>(), static_cast<std::underlying_type_t<LargeEnum>>(2048));
+
+    EXPECT_EQ(WTF::enumNamesMin<SignedSmallEnum>(), static_cast<std::underlying_type_t<SignedSmallEnum>>(-1));
+    EXPECT_EQ(WTF::enumNamesMax<SignedSmallEnum>(), static_cast<std::underlying_type_t<SignedSmallEnum>>(1));
+
+    EXPECT_EQ(WTF::enumNamesMin<SignedMediumEnum>(), static_cast<std::underlying_type_t<SignedMediumEnum>>(-100));
+    EXPECT_EQ(WTF::enumNamesMax<SignedMediumEnum>(), static_cast<std::underlying_type_t<SignedMediumEnum>>(INT8_MAX << 1));
+}
+
+TEST(WTF_EnumTraits, EnumNameValid)
+{
+    EXPECT_TRUE(isExpectedEnumString("A"_s, enumName(SmallEnum::A)));
+    EXPECT_TRUE(isExpectedEnumString("B"_s, enumName(SmallEnum::B)));
+
+    EXPECT_TRUE(isExpectedEnumString("X"_s, enumName(MediumEnum::X)));
+    EXPECT_TRUE(isExpectedEnumString("Y"_s, enumName(MediumEnum::Y)));
+    EXPECT_TRUE(isExpectedEnumString("Z"_s, enumName(MediumEnum::Z)));
+
+    EXPECT_TRUE(isExpectedEnumString("Neg"_s, enumName(SignedSmallEnum::Neg)));
+    EXPECT_TRUE(isExpectedEnumString("Zero"_s, enumName(SignedSmallEnum::Zero)));
+    EXPECT_TRUE(isExpectedEnumString("Pos"_s, enumName(SignedSmallEnum::Pos)));
+
+    EXPECT_TRUE(isExpectedEnumString("Neg"_s, enumName(SignedMediumEnum::Neg)));
+    EXPECT_TRUE(isExpectedEnumString("Zero"_s, enumName(SignedMediumEnum::Zero)));
+    EXPECT_TRUE(isExpectedEnumString("Pos"_s, enumName(SignedMediumEnum::Pos)));
+}
+
+TEST(WTF_EnumTraits, EnumNameMediumEnumGaps)
+{
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<MediumEnum>(50))));
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<MediumEnum>(200))));
+}
+
+TEST(WTF_EnumTraits, EnumNameOutOfRange)
+{
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<EmptyEnum>(0))));
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<SmallEnum>(300))));
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<MediumEnum>(600))));
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<LargeEnum>(5000))));
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<SignedSmallEnum>(-5))));
+    EXPECT_TRUE(isExpectedEnumString("enum out of range"_s, enumName(static_cast<SignedMediumEnum>(256))));
+}
+
+TEST(WTF_EnumTraits, EnumNameSignedValues)
+{
+    EXPECT_TRUE(isExpectedEnumString("Neg"_s, enumName(SignedSmallEnum::Neg)));
+    EXPECT_TRUE(isExpectedEnumString("Zero"_s, enumName(SignedSmallEnum::Zero)));
+    EXPECT_TRUE(isExpectedEnumString("Pos"_s, enumName(SignedSmallEnum::Pos)));
+    EXPECT_TRUE(isExpectedEnumString("Neg"_s, enumName(SignedMediumEnum::Neg)));
+    EXPECT_TRUE(isExpectedEnumString("Zero"_s, enumName(SignedMediumEnum::Zero)));
+    EXPECT_TRUE(isExpectedEnumString("Pos"_s, enumName(SignedMediumEnum::Pos)));
+}
+
 
 } // namespace TestWebKitAPI

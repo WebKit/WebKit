@@ -140,11 +140,11 @@ void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRepaint()
 
 void SVGFilterPrimitiveStandardAttributes::markFilterEffectForRebuild()
 {
+    m_effect = nullptr;
+
     CheckedPtr renderer = this->renderer();
     if (!renderer)
         return;
-
-    m_effect = nullptr;
 
     if (auto* filterPrimitiveRenderer = dynamicDowncast<RenderSVGResourceFilterPrimitive>(renderer.get())) {
         filterPrimitiveRenderer->markFilterEffectForRebuild();

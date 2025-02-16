@@ -35,7 +35,9 @@
 
 #define WKSOAUTHORIZATIONDELEGATE_RELEASE_LOG(fmt, ...) RELEASE_LOG(AppSSO, "%p - WKSOAuthorizationDelegate::" fmt, &self, ##__VA_ARGS__)
 
-@implementation WKSOAuthorizationDelegate
+@implementation WKSOAuthorizationDelegate {
+    RefPtr<WebKit::SOAuthorizationSession> _session;
+}
 
 - (void)authorization:(SOAuthorization *)authorization presentViewController:(SOAuthorizationViewController)viewController withCompletion:(void (^)(BOOL success, NSError *error))completion
 {

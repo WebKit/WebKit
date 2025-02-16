@@ -412,7 +412,7 @@ ALWAYS_INLINE bool matchesFullscreenPseudoClass(const Element& element)
 ALWAYS_INLINE bool matchesAnimatingFullscreenTransitionPseudoClass(const Element& element)
 {
     CheckedPtr fullscreenManager = element.document().fullscreenManagerIfExists();
-    if (!fullscreenManager || &element != fullscreenManager->currentFullscreenElement())
+    if (!fullscreenManager || &element != fullscreenManager->fullscreenElement())
         return false;
     return fullscreenManager->isAnimatingFullscreen();
 }
@@ -428,7 +428,7 @@ ALWAYS_INLINE bool matchesFullscreenDocumentPseudoClass(const Element& element)
 ALWAYS_INLINE bool matchesInWindowFullscreenPseudoClass(const Element& element)
 {
 #if ENABLE(VIDEO)
-    if (&element != element.document().fullscreenManager().currentFullscreenElement())
+    if (&element != element.document().fullscreenManager().fullscreenElement())
         return false;
 
     auto* mediaElement = dynamicDowncast<HTMLMediaElement>(element);

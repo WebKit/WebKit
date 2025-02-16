@@ -12,7 +12,7 @@ function baz() {
 
 noInline(baz);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = baz();
     if (!(result instanceof Array))
         throw "Error: result is not an array.";

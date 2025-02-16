@@ -21,7 +21,7 @@ var bound = test.bind(undefined, 1, 2);
 for (var i = 0; i < 100; ++i)
     var bound = bound.bind(undefined);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(bound(), 3);
 flag = true;
 var error = null;

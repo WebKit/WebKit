@@ -31,7 +31,6 @@ namespace CSS {
 
 struct ContrastColorResolver {
     WebCore::Color color { };
-    bool max { false };
 };
 
 WebCore::Color resolve(const ContrastColorResolver&);

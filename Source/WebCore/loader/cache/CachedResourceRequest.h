@@ -65,7 +65,7 @@ public:
     const std::optional<ResourceLoadPriority>& priority() const { return m_priority; }
     void setPriority(std::optional<ResourceLoadPriority>&& priority) { m_priority = WTFMove(priority); }
 
-    RequestPriority fetchPriorityHint() const { return m_options.fetchPriorityHint; }
+    RequestPriority fetchPriority() const { return m_options.fetchPriority; }
 
     void setInitiator(Element&);
     void setInitiatorType(const AtomString&);

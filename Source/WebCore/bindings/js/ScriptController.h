@@ -188,7 +188,7 @@ private:
 
     Ref<LocalFrame> protectedFrame() const;
 
-    LocalFrame& m_frame;
+    WeakRef<LocalFrame> m_frame;
     const URL* m_sourceURL { nullptr };
 
     bool m_paused;

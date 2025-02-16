@@ -5,7 +5,7 @@ let func = (x) => x;
 noInline(Array.prototype.map);
 
 // This test should not crash.
-for (let i = 0; i < 100000; ++i) {
+for (let i = 0; i < testLoopCount; ++i) {
     try {
         if (i > 0 && (i % 1000) === 0)
             thingy.map(func)

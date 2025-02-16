@@ -16,7 +16,7 @@ function arraycmp(a, b) {
     return true;
 }
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo([42], 0, false);
     if (!arraycmp(result, [false, 42, 42, 42, false]) && !arraycmp(result, [12]))
         throw "Error: bad result for i = " + i + ": " + result;

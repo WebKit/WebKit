@@ -8,7 +8,7 @@ promise_test(async testCase => {
   const currentPath = currentUrl.pathname;
   const currentDirectory =
       currentPath.substr(0, currentPath.lastIndexOf('/') + 1);
-  
+
   await cookieStore.delete({ name: 'cookie-name', path: currentDirectory });
 
   await cookieStore.set(
@@ -19,8 +19,8 @@ promise_test(async testCase => {
 
   // This changes the Document's current URL to this different URL.
   // The Document's creation URL does not change.
-  // If set() and get() use Document's current URL, the cookie will be set 
-  // using the original URL above, and the get below will fail since it looks 
+  // If set() and get() use Document's current URL, the cookie will be set
+  // using the original URL above, and the get below will fail since it looks
   // for cookies with this different URL. If they both use the creation URL,
   // the get will succeed since it won't use this different URL to search.
   let different_url = `${self.location.protocol}//${self.location.host}/different/path`;

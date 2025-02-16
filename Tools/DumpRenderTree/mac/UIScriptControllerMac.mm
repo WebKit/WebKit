@@ -54,7 +54,7 @@ void UIScriptControllerMac::doAsyncTask(JSValueRef callback)
 {
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
 
-    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -110,7 +110,7 @@ void UIScriptControllerMac::activateDataListSuggestion(unsigned index, JSValueRe
     UNUSED_PARAM(index);
 
     unsigned callbackID = m_context->prepareForAsyncTask(callback, CallbackTypeNonPersistent);
-    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -133,7 +133,7 @@ void UIScriptControllerMac::removeViewFromWindow(JSValueRef callback)
     WebView *webView = [mainFrame webView];
     [webView removeFromSuperview];
 
-    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -147,7 +147,7 @@ void UIScriptControllerMac::addViewToWindow(JSValueRef callback)
     WebView *webView = [mainFrame webView];
     [[mainWindow contentView] addSubview:webView];
 
-    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);
@@ -307,7 +307,7 @@ void UIScriptControllerMac::sendEventStream(JSStringRef eventsJSON, JSValueRef c
         currentTime += nanosecondsEventInterval;
     }
 
-    WorkQueue::main().dispatch([this, protectedThis = Ref { *this }, callbackID] {
+    WorkQueue::protectedMain()->dispatch([this, protectedThis = Ref { *this }, callbackID] {
         if (!m_context)
             return;
         m_context->asyncTaskComplete(callbackID);

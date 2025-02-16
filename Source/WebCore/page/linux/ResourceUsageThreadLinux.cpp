@@ -167,6 +167,7 @@ static bool threadCPUUsage(pid_t id, float period, ThreadInfo& info)
 
     // Skip tid and name.
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+    // FIXME: Use `find(std::span { buffer }, ')')` instead of `strchr()`.
     char* position = strchr(buffer, ')');
     if (!position)
         return false;
@@ -209,7 +210,7 @@ static void collectCPUUsage(float period)
         return;
     }
 
-    HashSet<pid_t> previousTasks;
+    UncheckedKeyHashSet<pid_t> previousTasks;
     for (const auto& key : threadInfoMap().keys())
         previousTasks.add(key);
 
@@ -245,7 +246,7 @@ void ResourceUsageThread::platformCollectCPUData(JSC::VM*, ResourceUsageData& da
 
     pid_t resourceUsageThreadID = Thread::currentID();
 
-    HashSet<pid_t> knownWebKitThreads;
+    UncheckedKeyHashSet<pid_t> knownWebKitThreads;
     {
         Locker locker { Thread::allThreadsLock() };
         for (auto* thread : Thread::allThreads()) {

@@ -14,7 +14,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
 
     let obj = {caller: 1};
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (get(obj) !== 1)
             throw new Error("wrong on iteration: " + i);
         if (getStrict(obj) !== 1)
@@ -31,7 +31,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
 
     let func = function () {};
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (get(func) !== null)
             throw new Error("wrong on iteration: " + i);
         if (getStrict(func) !== null)
@@ -49,7 +49,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
     let obj = {};
     Object.defineProperty(obj, "getterSetter", { get: function () { throw new Error("should not be called"); } });
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (get(obj) !== getGetterSetter(obj, "getterSetter"))
             throw new Error("wrong on iteration: " + i);
         if (getStrict(obj) !== getGetterSetter(obj, "getterSetter"))
@@ -66,7 +66,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
 
     let obj = {};
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (get(obj) !== undefined)
             throw new Error("wrong on iteration: " + i);
         if (getStrict(obj) !== undefined)
@@ -84,7 +84,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
     let obj = {value: 1};
     let p = new Proxy(obj, { get: function() { throw new Error("should not be called"); } });
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (get(p) !== null)
             throw new Error("wrong on iteration: " + i);
         if (getStrict(p) !== null)
@@ -102,7 +102,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
     let obj = {caller : 1};
     let func = function() {};
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (i % 100 === 0) {
             if (get(func) !== null)
                 throw new Error("wrong on iteration: " + i);
@@ -126,7 +126,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
 
     let func = function() {};
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (i % 100 === 0) {
             if (get(func) !== null)
                 throw new Error("wrong on iteration: " + i);
@@ -151,7 +151,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
 
     let arr = [];
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (get(arr) !== null)
             throw new Error("wrong on iteration: " + i);
         if (getStrict(arr) !== null)
@@ -166,7 +166,7 @@ function tryGetByIdTextStrict(propertyName) { return `(function (base) { "use st
     let getStrict = createBuiltin(tryGetByIdTextStrict("length"));
     noInline(getStrict);
 
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < testLoopCount; i++) {
         if (get(1) !== undefined)
             throw new Error("wrong on iteration: " + i);
         if (getStrict(1) !== undefined)

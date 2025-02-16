@@ -59,7 +59,7 @@ struct CompressedShaderBlob
 
 {shader_tables_cpp}
 
-angle::Result GetShader(Context *context,
+angle::Result GetShader(ErrorContext *context,
                         ShaderModulePtr shaders[],
                         const CompressedShaderBlob *compressedShaderBlobs,
                         size_t shadersCount,
@@ -114,7 +114,6 @@ ShaderLibrary::~ShaderLibrary()
 
 void ShaderLibrary::destroy(VkDevice device)
 {{
-    {shader_destroy_calls}
 }}
 
 {shader_get_functions_cpp}
@@ -651,7 +650,7 @@ def get_get_function_h(shader_and_variation):
     function_name = get_var_name(os.path.basename(shader_file), 'get')
 
     definition = 'angle::Result %s' % function_name
-    definition += '(Context *context, uint32_t shaderFlags, ShaderModulePtr *shaderOut);'
+    definition += '(ErrorContext *context, uint32_t shaderFlags, ShaderModulePtr *shaderOut);'
 
     return definition
 
@@ -666,21 +665,11 @@ def get_get_function_cpp(shader_and_variation):
     constant_table_name = get_variation_table_name(shader_file)
 
     definition = 'angle::Result ShaderLibrary::%s' % function_name
-    definition += '(Context *context, uint32_t shaderFlags, ShaderModulePtr *shaderOut)\n{\n'
+    definition += '(ErrorContext *context, uint32_t shaderFlags, ShaderModulePtr *shaderOut)\n{\n'
     definition += 'return GetShader(context, %s, %s, ArraySize(%s), shaderFlags, shaderOut);\n}\n' % (
         member_table_name, constant_table_name, constant_table_name)
 
     return definition
-
-
-def get_destroy_call(shader_and_variation):
-    shader_file = shader_and_variation.shader_file
-
-    table_name = get_variation_table_name(shader_file, 'm')
-
-    destroy = 'for (ShaderModulePtr &shader : %s)\n' % table_name
-    destroy += '{\nif(shader)\n{shader->destroy(device);\n}\n}'
-    return destroy
 
 
 def shader_path(shader):
@@ -777,8 +766,6 @@ def main():
         includes = "\n".join([gen_shader_include(shader) for shader in output_shaders])
         shader_tables_cpp = '\n'.join(
             [get_shader_table_cpp(s) for s in input_shaders_and_variations])
-        shader_destroy_calls = '\n'.join(
-            [get_destroy_call(s) for s in input_shaders_and_variations])
         shader_get_functions_cpp = '\n'.join(
             [get_get_function_cpp(s) for s in input_shaders_and_variations])
 
@@ -788,7 +775,6 @@ def main():
             input_file_name='shaders/src/*',
             internal_shader_includes=includes,
             shader_tables_cpp=shader_tables_cpp,
-            shader_destroy_calls=shader_destroy_calls,
             shader_get_functions_cpp=shader_get_functions_cpp)
         outfile.write(outcode)
         outfile.close()

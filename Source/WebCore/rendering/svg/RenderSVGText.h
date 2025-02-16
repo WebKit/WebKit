@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006-2023 Apple Inc.
+ * Copyright (C) 2006-2025 Apple Inc. All rights reserved.
+ * Copyright (C) 2016 Google Inc. All rights reserved.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010-2012. All rights reserved.
  *
@@ -69,6 +70,7 @@ public:
 
     FloatRect objectBoundingBox() const final { return m_objectBoundingBox; }
     FloatRect strokeBoundingBox() const final;
+    bool isObjectBoundingBoxValid() const;
     FloatRect repaintRectInLocalCoordinates(RepaintRectCalculation = RepaintRectCalculation::Fast) const final;
 
     LayoutRect visualOverflowRectEquivalent() const { return SVGBoundingBoxComputation::computeVisualOverflowRect(*this); }

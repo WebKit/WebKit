@@ -39,6 +39,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
     void* styleImage;
     Style::Color firstColor;
     Style::Color colors[10];
+    Style::DynamicRangeLimit dynamicRangeLimit;
     void* ownPtrs[1];
     AtomString atomStrings[5];
     void* refPtrs[3];
@@ -85,6 +86,7 @@ StyleRareInheritedData::StyleRareInheritedData()
     , caretColor(Style::Color::currentColor())
     , visitedLinkCaretColor(Style::Color::currentColor())
     , accentColor(Style::Color::currentColor())
+    , dynamicRangeLimit(RenderStyle::initialDynamicRangeLimit())
     , indent(RenderStyle::initialTextIndent())
     , usedZoom(RenderStyle::initialZoom())
     , textUnderlineOffset(RenderStyle::initialTextUnderlineOffset())
@@ -143,6 +145,9 @@ StyleRareInheritedData::StyleRareInheritedData()
     , isInSubtreeWithBlendMode(false)
     , isInVisibilityAdjustmentSubtree(false)
     , usedContentVisibility(static_cast<unsigned>(ContentVisibility::Visible))
+#if HAVE(CORE_MATERIAL)
+    , usedAppleVisualEffectForSubtree(static_cast<unsigned>(AppleVisualEffect::None))
+#endif
     , usedTouchActions(RenderStyle::initialTouchActions())
     , strokeWidth(RenderStyle::initialStrokeWidth())
     , strokeColor(RenderStyle::initialStrokeColor())
@@ -178,6 +183,7 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , caretColor(o.caretColor)
     , visitedLinkCaretColor(o.visitedLinkCaretColor)
     , accentColor(o.accentColor)
+    , dynamicRangeLimit(o.dynamicRangeLimit)
     , textShadow(o.textShadow ? makeUnique<ShadowData>(*o.textShadow) : nullptr)
     , cursorData(o.cursorData)
     , indent(o.indent)
@@ -239,6 +245,9 @@ inline StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedDa
     , isInSubtreeWithBlendMode(o.isInSubtreeWithBlendMode)
     , isInVisibilityAdjustmentSubtree(o.isInVisibilityAdjustmentSubtree)
     , usedContentVisibility(o.usedContentVisibility)
+#if HAVE(CORE_MATERIAL)
+    , usedAppleVisualEffectForSubtree(o.usedAppleVisualEffectForSubtree)
+#endif
     , usedTouchActions(o.usedTouchActions)
     , eventListenerRegionTypes(o.eventListenerRegionTypes)
     , strokeWidth(o.strokeWidth)
@@ -288,6 +297,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && caretColor == o.caretColor
         && visitedLinkCaretColor == o.visitedLinkCaretColor
         && accentColor == o.accentColor
+        && dynamicRangeLimit == o.dynamicRangeLimit
 #if ENABLE(TOUCH_EVENTS)
         && tapHighlightColor == o.tapHighlightColor
 #endif
@@ -369,6 +379,9 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && eventListenerRegionTypes == o.eventListenerRegionTypes
         && effectiveInert == o.effectiveInert
         && usedContentVisibility == o.usedContentVisibility
+#if HAVE(CORE_MATERIAL)
+        && usedAppleVisualEffectForSubtree == o.usedAppleVisualEffectForSubtree
+#endif
         && strokeWidth == o.strokeWidth
         && strokeColor == o.strokeColor
         && visitedLinkStrokeColor == o.visitedLinkStrokeColor
@@ -402,6 +415,8 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
 
     LOG_IF_DIFFERENT(caretColor);
     LOG_IF_DIFFERENT(visitedLinkCaretColor);
+
+    LOG_IF_DIFFERENT(dynamicRangeLimit);
 
     LOG_IF_DIFFERENT(textShadow);
 
@@ -489,6 +504,9 @@ void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInhe
 
     LOG_IF_DIFFERENT_WITH_CAST(ContentVisibility, usedContentVisibility);
 
+#if HAVE(CORE_MATERIAL)
+    LOG_IF_DIFFERENT_WITH_CAST(AppleVisualEffect, usedAppleVisualEffectForSubtree);
+#endif
 
     LOG_IF_DIFFERENT(usedTouchActions);
     LOG_IF_DIFFERENT(eventListenerRegionTypes);

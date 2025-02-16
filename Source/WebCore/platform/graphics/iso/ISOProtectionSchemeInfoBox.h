@@ -37,7 +37,7 @@ public:
     ISOProtectionSchemeInfoBox();
     ~ISOProtectionSchemeInfoBox();
 
-    static FourCC boxTypeName() { return "sinf"; }
+    static FourCC boxTypeName() { return std::span { "sinf" }; }
 
     const ISOOriginalFormatBox& originalFormatBox() const { return m_originalFormatBox; }
     const ISOSchemeTypeBox* schemeTypeBox() const { return m_schemeTypeBox.get(); }

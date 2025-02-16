@@ -248,25 +248,18 @@ static std::pair<LayoutType, std::optional<unsigned>> closestSnapOffsetWithInfoA
     return velocity < 0 ? *previous : *next;
 }
 
-enum class InsetOrOutset {
-    Inset,
-    Outset
-};
-
-static LayoutRect computeScrollSnapPortOrAreaRect(const LayoutRect& rect, const LengthBox& insetOrOutsetBox, InsetOrOutset insetOrOutset)
+static LayoutRect computeScrollSnapPortRect(const Style::ScrollPadding& padding, const LayoutRect& rect)
 {
-    // We are using minimumValueForLength here for insetOrOutset box, because if this value is defined by scroll-padding then the
-    // Length of any side may be "auto." In that case, we want to use 0, because that is how WebKit currently interprets an "auto"
-    // value for scroll-padding. See: https://drafts.csswg.org/css-scroll-snap-1/#propdef-scroll-padding
-    LayoutBoxExtent extents(
-        minimumValueForLength(insetOrOutsetBox.top(), rect.height()), minimumValueForLength(insetOrOutsetBox.right(), rect.width()),
-        minimumValueForLength(insetOrOutsetBox.bottom(), rect.height()), minimumValueForLength(insetOrOutsetBox.left(), rect.width()));
-    auto snapPortOrArea(rect);
-    if (insetOrOutset == InsetOrOutset::Inset)
-        snapPortOrArea.contract(extents);
-    else
-        snapPortOrArea.expand(extents);
-    return snapPortOrArea;
+    auto result = rect;
+    result.contract(Style::extentForRect(padding, rect));
+    return result;
+}
+
+static LayoutRect computeScrollSnapAreaRect(const Style::ScrollMargin& margin, const LayoutRect& rect)
+{
+    auto result = rect;
+    result.expand(Style::extentForRect(margin, rect));
+    return result;
 }
 
 static LayoutUnit computeScrollSnapAlignOffset(LayoutUnit minLocation, LayoutUnit maxLocation, ScrollSnapAxisAlignType alignment, bool axisIsFlipped)
@@ -334,7 +327,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
     }
 
     // The bounds of the scrolling container's snap port, where the top left of the scrolling container's border box is the origin.
-    auto scrollSnapPort = computeScrollSnapPortOrAreaRect(viewportRectInBorderBoxCoordinates, scrollingElementStyle.scrollPadding(), InsetOrOutset::Inset);
+    auto scrollSnapPort = computeScrollSnapPortRect(scrollingElementStyle.scrollPadding(), viewportRectInBorderBoxCoordinates);
     LOG_WITH_STREAM(ScrollSnap, stream << "Computing scroll snap offsets for " << scrollableArea << " in snap port " << scrollSnapPort);
     for (auto& child : boxesWithScrollSnapPositions) {
         if (child.enclosingScrollableContainer() != &scrollingElementBox || !child.element())
@@ -350,7 +343,7 @@ void updateSnapOffsetsForScrollableArea(ScrollableArea& scrollableArea, const Re
         if (!scrollableArea.isScrollView())
             scrollSnapArea.moveBy(scrollPosition);
 
-        scrollSnapArea = computeScrollSnapPortOrAreaRect(scrollSnapArea, child.style().scrollMargin(), InsetOrOutset::Outset);
+        scrollSnapArea = computeScrollSnapAreaRect(child.style().scrollMargin(), scrollSnapArea);
         LOG_WITH_STREAM(ScrollSnap, stream << "    Considering scroll snap target area " << scrollSnapArea << " scroll snap id: " << child.element()->identifier() << " element: " << *child.element());
         auto alignment = child.style().scrollSnapAlign();
         auto stop = child.style().scrollSnapStop();

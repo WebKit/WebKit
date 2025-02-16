@@ -32,6 +32,7 @@
 #import <wtf/SHA1.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/Base64.h>
+#import <wtf/text/StringToIntegerConversion.h>
 
 namespace TestWebKitAPI {
 
@@ -71,7 +72,7 @@ void Connection::receiveHTTPRequest(CompletionHandler<void(Vector<char>&&)>&& co
         buffer.appendVector(WTFMove(bytes));
         if (auto* doubleNewline = strnstr(buffer.data(), "\r\n\r\n", buffer.size())) {
             if (auto* contentLengthBegin = strnstr(buffer.data(), "Content-Length", buffer.size())) {
-                size_t contentLength = atoi(contentLengthBegin + strlen("Content-Length: "));
+                size_t contentLength = parseIntegerAllowingTrailingJunk<int>(buffer.span().subspan(contentLengthBegin - buffer.data() + strlen("Content-Length: "))).value_or(0);
                 size_t headerLength = doubleNewline - buffer.data() + strlen("\r\n\r\n");
                 if (buffer.size() - headerLength < contentLength)
                     return connection.receiveHTTPRequest(WTFMove(completionHandler), WTFMove(buffer));

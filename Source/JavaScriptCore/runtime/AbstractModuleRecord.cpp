@@ -497,7 +497,7 @@ auto AbstractModuleRecord::resolveExportImpl(JSGlobalObject* globalObject, const
     //  4. Once we follow star links, we should not retrieve the result from the cache and should not cache the result.
     //  5. Once we see star links, even if we have not yet traversed that star link path, we should disable caching.
 
-    using ResolveSet = WTF::HashSet<ResolveQuery, ResolveQuery::Hash, ResolveQuery::HashTraits>;
+    using ResolveSet = WTF::UncheckedKeyHashSet<ResolveQuery, ResolveQuery::Hash, ResolveQuery::HashTraits>;
     enum class Type { Query, IndirectFallback, GatherStars };
     struct Task {
         ResolveQuery query;
@@ -720,7 +720,7 @@ static void getExportedNames(JSGlobalObject* globalObject, AbstractModuleRecord*
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    HashSet<AbstractModuleRecord*> exportStarSet;
+    UncheckedKeyHashSet<AbstractModuleRecord*> exportStarSet;
     Vector<AbstractModuleRecord*, 8> pendingModules;
 
     pendingModules.append(root);

@@ -43,7 +43,7 @@ private:
     void doUnapply() override;
     
 #ifndef NDEBUG
-    void getNodesInCommand(HashSet<Ref<Node>>&) override;
+    void getNodesInCommand(NodeSet&) override;
 #endif
 
     Ref<Element> protectedElement1() const { return m_element1; }

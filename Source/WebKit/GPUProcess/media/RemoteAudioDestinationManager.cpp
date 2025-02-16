@@ -136,6 +136,15 @@ public:
 
     bool isPlaying() const { return m_isPlaying; }
 
+    size_t audioUnitLatency() const
+    {
+#if PLATFORM(COCOA)
+        return m_audioOutputUnitAdaptor.outputLatency();
+#else
+        return 0;
+#endif
+    }
+
 private:
 #if PLATFORM(COCOA)
     void incrementTotalFrameCount(UInt32 numberOfFrames)
@@ -203,11 +212,13 @@ void RemoteAudioDestinationManager::deref() const
     m_gpuConnectionToWebProcess.get()->deref();
 }
 
-void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle)
+void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle, CompletionHandler<void(size_t)>&& completionHandler)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
-    if (!connection)
+    if (!connection) {
+        completionHandler(0);
         return;
+    }
     MESSAGE_CHECK(!connection->isLockdownModeEnabled(), "Received a createAudioDestination() message from a webpage in Lockdown mode.");
 
     auto destination = makeUniqueRef<RemoteAudioDestination>(*connection, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate, hardwareSampleRate, WTFMove(renderSemaphore));
@@ -216,7 +227,9 @@ void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinatio
 #else
     UNUSED_PARAM(handle);
 #endif
+    size_t latency = destination->audioUnitLatency();
     m_audioDestinations.add(identifier, WTFMove(destination));
+    completionHandler(latency);
 }
 
 void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinationIdentifier identifier)
@@ -232,19 +245,21 @@ void RemoteAudioDestinationManager::deleteAudioDestination(RemoteAudioDestinatio
         connection->protectedGPUProcess()->tryExitIfUnusedAndUnderMemoryPressure();
 }
 
-void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)
+void RemoteAudioDestinationManager::startAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool, size_t)>&& completionHandler)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
-        return completionHandler(false);
-    MESSAGE_CHECK_COMPLETION(!connection->isLockdownModeEnabled(), completionHandler(false));
+        return completionHandler(false, 0);
+    MESSAGE_CHECK_COMPLETION(!connection->isLockdownModeEnabled(), completionHandler(false, 0));
 
     bool isPlaying = false;
+    size_t latency = 0;
     if (auto* item = m_audioDestinations.get(identifier)) {
         item->start();
         isPlaying = item->isPlaying();
+        latency = item->audioUnitLatency();
     }
-    completionHandler(isPlaying);
+    completionHandler(isPlaying, latency);
 }
 
 void RemoteAudioDestinationManager::stopAudioDestination(RemoteAudioDestinationIdentifier identifier, CompletionHandler<void(bool)>&& completionHandler)

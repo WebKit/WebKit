@@ -33,6 +33,7 @@
 #include "CustomElementRegistry.h"
 #include "ElementInlines.h"
 #include "ElementTraversal.h"
+#include "ExceptionCode.h"
 #include "GetHTMLOptions.h"
 #include "HTMLSlotElement.h"
 #if ENABLE(PICTURE_IN_PICTURE_API)
@@ -126,8 +127,10 @@ Node::InsertedIntoAncestorResult ShadowRoot::insertedIntoAncestor(InsertionType 
     DocumentFragment::insertedIntoAncestor(insertionType, parentOfInsertedTree);
     if (insertionType.connectedToDocument) {
         protectedDocument()->didInsertInDocumentShadowRoot(*this);
-        if (m_hasScopedCustomElementRegistry)
-            RefPtr { customElementRegistry() }->didAssociateWithDocument(protectedDocument());
+        if (m_hasScopedCustomElementRegistry) {
+            if (RefPtr registry = customElementRegistry())
+                registry->didAssociateWithDocument(protectedDocument());
+        }
     }
     if (!adoptedStyleSheets().empty() && document().frame())
         checkedStyleScope()->didChangeActiveStyleSheetCandidates();
@@ -143,7 +146,7 @@ void ShadowRoot::removedFromAncestor(RemovalType removalType, ContainerNode& old
 {
     DocumentFragment::removedFromAncestor(removalType, oldParentOfRemovedTree);
     if (removalType.disconnectedFromDocument)
-        Ref<Document> { document() }->didRemoveInDocumentShadowRoot(*this);
+        protectedDocument()->didRemoveInDocumentShadowRoot(*this);
 }
 
 void ShadowRoot::childrenChanged(const ChildChange& childChange)
@@ -195,6 +198,16 @@ StyleSheetList& ShadowRoot::styleSheets()
     if (!m_styleSheetList)
         m_styleSheetList = StyleSheetList::create(*this);
     return *m_styleSheetList;
+}
+
+CustomElementRegistry* ShadowRoot::registryForBindings() const
+{
+    if (usesNullCustomElementRegistry())
+        return nullptr;
+    auto* registry = customElementRegistry();
+    if (RefPtr window = document().domWindow(); window && !registry)
+        registry = &window->ensureCustomElementRegistry();
+    return registry;
 }
 
 ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
@@ -257,17 +270,19 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-Ref<Node> ShadowRoot::cloneNodeInternal(TreeScope& treeScope, CloningOperation type)
+Ref<Node> ShadowRoot::cloneNodeInternal(Document& document, CloningOperation type, CustomElementRegistry* registry)
 {
     RELEASE_ASSERT(m_mode != ShadowRootMode::UserAgent);
     ASSERT(m_isClonable);
     switch (type) {
     case CloningOperation::SelfWithTemplateContent:
-        return create(treeScope.documentScope(), m_mode, m_slotAssignmentMode,
+        return create(document, m_mode, m_slotAssignmentMode,
             m_delegatesFocus ? DelegatesFocus::Yes : DelegatesFocus::No,
             Clonable::Yes,
             m_serializable ? Serializable::Yes : Serializable::No,
-            m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No);
+            m_availableToElementInternals ? AvailableToElementInternals::Yes : AvailableToElementInternals::No,
+            registry,
+            m_hasScopedCustomElementRegistry ? ScopedCustomElementRegistry::Yes : ScopedCustomElementRegistry::No);
     case CloningOperation::OnlySelf:
     case CloningOperation::Everything:
         break;

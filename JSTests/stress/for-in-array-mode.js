@@ -70,7 +70,7 @@ function test(name, data) {
 
     var failed = false;
     var previousResult;
-    for (var i = 0; i < 10000; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         var expected = data.out;
         var actual = eval(name + "(data.in)");
 

@@ -9,11 +9,11 @@ Do NOT modify or remove this file.
 
 ------------------------------------------------------------------------
 Properties requiring vendor prefixes:
-text-size-adjust
-user-select
-initial-letter
 mask-position-x
+user-select
 mask-position-y
+text-size-adjust
+initial-letter
 box-decoration-break
 Property values requiring vendor prefixes:
 None
@@ -141,6 +141,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-container.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-cssom.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-declaration-list-crash.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-declarations.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-deep.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-evaluation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless-expected.html
@@ -148,13 +149,22 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-featureless.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-focus.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-hover.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-crash-print.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit-external.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-implicit.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-implicit.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-inner-scope.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-multiple.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-parent-pseudo.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-scope-end.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-scope-pseudo.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-import-scope-start.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-invalidation.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-layer.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-media.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-name-defining-rules.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-nesting.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-overlapping-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-part-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-part-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-cascade/scope-part.html

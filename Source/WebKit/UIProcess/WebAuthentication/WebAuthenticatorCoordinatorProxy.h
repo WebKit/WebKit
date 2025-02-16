@@ -33,6 +33,7 @@
 #include <WebCore/MediationRequirement.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/Forward.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -69,6 +70,12 @@ struct FrameInfoData;
 struct SharedPreferencesForWebProcess;
 struct WebAuthenticationRequestData;
 
+struct AutofillEvent {
+    MonotonicTime time;
+    String username;
+    URL url;
+};
+
 using CapabilitiesCompletionHandler = CompletionHandler<void(Vector<KeyValuePair<String, bool>>&&)>;
 using RequestCompletionHandler = CompletionHandler<void(const WebCore::AuthenticatorResponseData&, WebCore::AuthenticatorAttachment, const WebCore::ExceptionData&)>;
 
@@ -89,6 +96,7 @@ public:
     void pauseConditionalAssertion(CompletionHandler<void()>&&);
     void unpauseConditionalAssertion();
     void makeActiveConditionalAssertion();
+    void recordAutofill(const String& username, const URL&);
 #endif
 
 private:
@@ -119,6 +127,9 @@ private:
     RetainPtr<ASAuthorizationController> constructASController(const WebAuthenticationRequestData&);
     RetainPtr<NSArray> requestsForRegistration(const WebCore::PublicKeyCredentialCreationOptions&, const WebCore::SecurityOriginData& callerOrigin);
     RetainPtr<NSArray> requestsForAssertion(const WebCore::PublicKeyCredentialRequestOptions&, const WebCore::SecurityOriginData& callerOrigin, const std::optional<WebCore::SecurityOriginData>& parentOrigin);
+    bool removeMatchingAutofillEventForUsername(const String&, const WebCore::SecurityOriginData&);
+    void removeExpiredAutofillEvents();
+
 #endif
 
     void performRequest(WebAuthenticationRequestData&&, RequestCompletionHandler&&);
@@ -134,6 +145,7 @@ private:
     RetainPtr<ASAuthorizationController> m_controller;
     bool m_paused { false };
     bool m_isConditionalMediation { false };
+    Vector<AutofillEvent> m_recentAutofills;
 #endif
 
 #if HAVE(UNIFIED_ASC_AUTH_UI)

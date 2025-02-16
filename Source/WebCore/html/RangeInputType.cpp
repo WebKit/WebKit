@@ -38,7 +38,9 @@
 #include "ElementRareData.h"
 #include "EventNames.h"
 #include "HTMLCollection.h"
+#include "HTMLDataListElement.h"
 #include "HTMLInputElement.h"
+#include "HTMLOptionElement.h"
 #include "HTMLParserIdioms.h"
 #include "InputTypeNames.h"
 #include "KeyboardEvent.h"
@@ -60,11 +62,6 @@
 #include "Touch.h"
 #include "TouchEvent.h"
 #include "TouchList.h"
-#endif
-
-#if ENABLE(DATALIST_ELEMENT)
-#include "HTMLDataListElement.h"
-#include "HTMLOptionElement.h"
 #endif
 
 namespace WebCore {
@@ -376,14 +373,9 @@ String RangeInputType::sanitizeValue(const String& proposedValue) const
 
 bool RangeInputType::shouldRespectListAttribute()
 {
-#if ENABLE(DATALIST_ELEMENT)
     return element() && element()->document().settings().dataListElementEnabled();
-#else
-    return InputType::themeSupportsDataListUI(this);
-#endif
 }
 
-#if ENABLE(DATALIST_ELEMENT)
 void RangeInputType::dataListMayHaveChanged()
 {
     m_tickMarkValuesDirty = true;
@@ -456,6 +448,5 @@ std::optional<Decimal> RangeInputType::findClosestTickMarkValue(const Decimal& v
 
     return closestLeft;
 }
-#endif
 
 } // namespace WebCore

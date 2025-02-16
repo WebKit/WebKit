@@ -87,7 +87,7 @@ bool RenderVTTCue::initializeLayoutParameters(LayoutUnit& step, LayoutUnit& posi
     if (!box)
         return false;
 
-    auto firstInlineBox = InlineIterator::firstInlineBoxFor(*box) ? InlineIterator::firstInlineBoxFor(*box) : InlineIterator::firstRootInlineBoxFor(*this);
+    auto firstInlineBox = InlineIterator::lineLeftmostInlineBoxFor(*box) ? : InlineIterator::firstRootInlineBoxFor(*this);
     if (!firstInlineBox)
         return false;
 
@@ -105,7 +105,7 @@ bool RenderVTTCue::initializeLayoutParameters(LayoutUnit& step, LayoutUnit& posi
     // position the difference between the the logicalHeight of the cue and its
     // first line box.
     auto inlineBoxHeights = LayoutUnit { };
-    for (auto inlineBox = firstInlineBox; inlineBox; inlineBox = inlineBox->nextInlineBox())
+    for (auto inlineBox = firstInlineBox; inlineBox; inlineBox = inlineBox->nextInlineBoxLineRightward())
         inlineBoxHeights += inlineBox->logicalHeight();
     auto logicalHeightDelta = backdropBox().logicalHeight() - inlineBoxHeights;
     if (logicalHeightDelta > 0)
@@ -364,7 +364,7 @@ void RenderVTTCue::repositionCueSnapToLinesSet()
     if (!box)
         return;
 
-    auto firstInlineBox = InlineIterator::firstInlineBoxFor(*box) ? InlineIterator::firstInlineBoxFor(*box) : InlineIterator::firstRootInlineBoxFor(*this);
+    auto firstInlineBox = InlineIterator::lineLeftmostInlineBoxFor(*box) ? : InlineIterator::firstRootInlineBoxFor(*this);
     ASSERT(firstInlineBox);
     // 11. Step loop: If none of the boxes in boxes would overlap any of the boxes
     // in output and all the boxes in output are within the video's rendering area
@@ -395,7 +395,7 @@ void RenderVTTCue::repositionGenericCue()
     if (!box)
         return;
 
-    auto firstInlineBox = InlineIterator::firstInlineBoxFor(*box);
+    auto firstInlineBox = InlineIterator::lineLeftmostInlineBoxFor(*box);
     if (downcast<TextTrackCueGeneric>(*m_cue).useDefaultPosition() && firstInlineBox) {
         LayoutUnit parentWidth = containingBlock()->logicalWidth();
         LayoutUnit width { firstInlineBox->visualRectIgnoringBlockDirection().width() };

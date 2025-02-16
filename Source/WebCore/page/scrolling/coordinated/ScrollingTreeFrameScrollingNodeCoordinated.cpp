@@ -127,15 +127,15 @@ void ScrollingTreeFrameScrollingNodeCoordinated::repositionRelatedLayers()
     if (m_counterScrollingLayer)
         m_counterScrollingLayer->setPositionForScrolling(layoutViewport.location());
 
-    float topContentInset = this->topContentInset();
+    auto contentInsets = obscuredContentInsets();
     if (m_insetClipLayer && m_rootContentsLayer) {
         FloatPoint insetClipPosition;
         {
             Locker locker { m_insetClipLayer->lock() };
-            insetClipPosition = FloatPoint(m_insetClipLayer->position().x(), LocalFrameView::yPositionForInsetClipLayer(scrollPosition, topContentInset));
+            insetClipPosition = LocalFrameView::positionForInsetClipLayer(scrollPosition, contentInsets);
         }
         m_insetClipLayer->setPositionForScrolling(insetClipPosition);
-        auto rootContentsPosition = LocalFrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), topContentInset, headerHeight());
+        auto rootContentsPosition = LocalFrameView::positionForRootContentLayer(scrollPosition, scrollOrigin(), contentInsets, headerHeight());
         m_rootContentsLayer->setPositionForScrolling(rootContentsPosition);
         if (m_contentShadowLayer)
             m_contentShadowLayer->setPositionForScrolling(rootContentsPosition);
@@ -147,9 +147,9 @@ void ScrollingTreeFrameScrollingNodeCoordinated::repositionRelatedLayers()
         // then we should recompute layoutViewport.x() for the banner with a scale factor of 1.
         float horizontalScrollOffsetForBanner = layoutViewport.x();
         if (m_headerLayer)
-            m_headerLayer->setPositionForScrolling(FloatPoint(horizontalScrollOffsetForBanner, LocalFrameView::yPositionForHeaderLayer(scrollPosition, topContentInset)));
+            m_headerLayer->setPositionForScrolling(FloatPoint(horizontalScrollOffsetForBanner, LocalFrameView::yPositionForHeaderLayer(scrollPosition, contentInsets.top())));
         if (m_footerLayer)
-            m_footerLayer->setPositionForScrolling(FloatPoint(horizontalScrollOffsetForBanner, LocalFrameView::yPositionForFooterLayer(scrollPosition, topContentInset, totalContentsSize().height(), footerHeight())));
+            m_footerLayer->setPositionForScrolling(FloatPoint(horizontalScrollOffsetForBanner, LocalFrameView::yPositionForFooterLayer(scrollPosition, contentInsets.top(), totalContentsSize().height(), footerHeight())));
     }
 
     delegate().updateVisibleLengths();

@@ -205,7 +205,7 @@ void AudioWorkletNode::process(size_t framesToProcess)
         return;
     }
     Locker locker { AdoptLock, m_processLock };
-    if (!m_processor || &Thread::current() != m_workletThread) {
+    if (!m_processor || &Thread::current() != m_workletThread.get()) {
         // We're not ready yet or we are getting destroyed. In this case, we output silence.
         zeroOutput();
         return;

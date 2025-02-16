@@ -185,32 +185,6 @@ void LegacyInlineFlowBox::removeLineBoxFromRenderObject()
     downcast<RenderInline>(renderer()).legacyLineBoxes().removeLineBox(this);
 }
 
-void LegacyInlineFlowBox::extractLine()
-{
-    if (!extracted())
-        extractLineBoxFromRenderObject();
-    for (auto* child = firstChild(); child; child = child->nextOnLine())
-        child->extractLine();
-}
-
-void LegacyInlineFlowBox::extractLineBoxFromRenderObject()
-{
-    downcast<RenderInline>(renderer()).legacyLineBoxes().extractLineBox(this);
-}
-
-void LegacyInlineFlowBox::attachLine()
-{
-    if (extracted())
-        attachLineBoxToRenderObject();
-    for (auto* child = firstChild(); child; child = child->nextOnLine())
-        child->attachLine();
-}
-
-void LegacyInlineFlowBox::attachLineBoxToRenderObject()
-{
-    downcast<RenderInline>(renderer()).legacyLineBoxes().attachLineBox(this);
-}
-
 void LegacyInlineFlowBox::adjustPosition(float dx, float dy)
 {
     LegacyInlineBox::adjustPosition(dx, dy);

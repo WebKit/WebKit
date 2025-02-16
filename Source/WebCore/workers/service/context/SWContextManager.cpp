@@ -224,7 +224,7 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
     });
 }
 
-void SWContextManager::forEachServiceWorker(const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
+void SWContextManager::forEachServiceWorker(NOESCAPE const Function<Function<void(ScriptExecutionContext&)>()>& createTask)
 {
     Locker locker { m_workerMapLock };
     for (auto& worker : m_workerMap.values())

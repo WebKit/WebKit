@@ -9,5 +9,5 @@ function bar() {
     return 20;
 }
 
-for (let i = 0; i < 100000; i++)
+for (let i = 0; i < testLoopCount; i++)
     o.foo = 20;

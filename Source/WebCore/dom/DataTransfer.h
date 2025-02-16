@@ -104,8 +104,8 @@ public:
     void setDestinationOperationMask(OptionSet<DragOperation>);
 
     void setDragHasStarted() { m_shouldUpdateDragImage = true; }
-    DragImageRef createDragImage(IntPoint& dragLocation) const;
-    void updateDragImage();
+    DragImageRef createDragImage(const Document*, IntPoint& dragLocation) const;
+    void updateDragImage(const Document*);
     RefPtr<Element> dragImageElement() const;
 
     void moveDragState(Ref<DataTransfer>&&);

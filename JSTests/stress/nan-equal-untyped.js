@@ -10,7 +10,7 @@ function test(value) {
         throw "Error: bad result for " + value + ": " + result;
 }
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     test(true);
     test(4);
     test("hello");

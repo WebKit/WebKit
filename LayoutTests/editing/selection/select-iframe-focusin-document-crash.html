@@ -17,6 +17,7 @@
             window.addEventListener('focusin', eventHandle);
             var element = iframe.contentWindow.document.getElementById("input");
             element.value = 'demo';
+            element.focus();
             element.selectionStart = 0;
         }
         function eventHandle(event)

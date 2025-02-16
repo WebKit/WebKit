@@ -51,7 +51,7 @@ class TextureCapsMap;
 
 struct FramebufferStatus
 {
-    bool isComplete() const;
+    bool isComplete() const { return status == GL_FRAMEBUFFER_COMPLETE; }
 
     static FramebufferStatus Complete();
     static FramebufferStatus Incomplete(GLenum status, const char *reason);
@@ -311,7 +311,7 @@ class Framebuffer final : public angle::ObserverInterface,
     const FramebufferAttachment *getDrawBuffer(size_t drawBuffer) const;
     ComponentType getDrawbufferWriteType(size_t drawBuffer) const;
     ComponentTypeMask getDrawBufferTypeMask() const;
-    DrawBufferMask getDrawBufferMask() const;
+    DrawBufferMask getDrawBufferMask() const { return mState.mEnabledDrawBuffers; }
     bool hasEnabledDrawBuffer() const;
 
     GLenum getReadBufferState() const;
@@ -344,7 +344,10 @@ class Framebuffer final : public angle::ObserverInterface,
     void setDefaultLayers(GLint defaultLayers);
     void setFlipY(bool flipY);
 
-    bool isFoveationEnabled() const;
+    bool isFoveationEnabled() const
+    {
+        return (mState.mFoveationState.getFoveatedFeatureBits() & GL_FOVEATION_ENABLE_BIT_QCOM);
+    }
     void setFoveatedFeatureBits(const GLuint features);
     GLuint getFoveatedFeatureBits() const;
     bool isFoveationConfigured() const;
@@ -610,6 +613,11 @@ class Framebuffer final : public angle::ObserverInterface,
     // QCOM_framebuffer_foveated
     bool mAttachmentChangedAfterEnablingFoveation;
 };
+
+inline bool FramebufferState::isDefault() const
+{
+    return mId == Framebuffer::kDefaultDrawFramebufferHandle;
+}
 
 using UniqueFramebufferPointer = angle::UniqueObjectPointer<Framebuffer, Context>;
 

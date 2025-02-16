@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+enum class LoginStatusAuthenticationType : uint8_t { WebAuthn, PasswordManager, Unmanaged };
+
 class LoginStatus {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED_EXPORT(LoginStatus, WEBCORE_EXPORT);
 public:
@@ -43,7 +45,7 @@ public:
     static constexpr Seconds TimeToLiveLong { 24_h * 90 };
 
     enum class CredentialTokenType : bool { LegacyCookie, HTTPStateToken };
-    enum class AuthenticationType : uint8_t { WebAuthn, PasswordManager, Unmanaged };
+    using AuthenticationType = LoginStatusAuthenticationType;
 
     WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType);
     WEBCORE_EXPORT static ExceptionOr<UniqueRef<LoginStatus>> create(const RegistrableDomain&, const String& username, CredentialTokenType, AuthenticationType, Seconds timeToLive);

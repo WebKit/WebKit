@@ -12,35 +12,33 @@
 </div>
 
 <div role="dialog" aria-modal="true" aria-labelledby="myDialog" id="box" class="box-hidden" tabindex="-1">
-    <h3 id="myDialog">Just an example.</h3>
+    <h3 tabindex="0" id="heading">Just an example.</h3>
     <p id="text">text</p>
 </div>
 
 
 <script>
+document.getElementById("heading").focus();
 
-    description("This tests text descendants of modal dialog are accessible.");
+description("This tests text descendants of modal dialog are accessible.");
 
-    if (window.accessibilityController) {
-        // Background should be unaccessible after loading, since the 
-        // dialog is displayed and aria-modal=true.
-        shouldBeFalse("backgroundAccessible()");
-        
-        var text = accessibilityController.accessibleElementById("text").childAtIndex(0);
-        shouldBeFalse("text.isIgnored");
-    }
+if (window.accessibilityController) {
+    // Background should be inaccessible after loading, since the dialog is displayed and aria-modal=true.
+    shouldBeFalse("backgroundAccessible()");
     
-    function backgroundAccessible() {
-        var displayBtn = accessibilityController.accessibleElementById("displayBtn");
-        var bgContent = accessibilityController.accessibleElementById("bgContent");
-        
-        if (!displayBtn || !bgContent)
-            return false;
-        
-        return !displayBtn.isIgnored && !bgContent.isIgnored;
-    }
+    var text = accessibilityController.accessibleElementById("text").childAtIndex(0);
+    shouldBeFalse("text.isIgnored");
+}
 
+function backgroundAccessible() {
+    var displayBtn = accessibilityController.accessibleElementById("displayBtn");
+    var bgContent = accessibilityController.accessibleElementById("bgContent");
 
+    if (!displayBtn || !bgContent)
+        return false;
+
+    return !displayBtn.isIgnored && !bgContent.isIgnored;
+}
 </script>
 
 

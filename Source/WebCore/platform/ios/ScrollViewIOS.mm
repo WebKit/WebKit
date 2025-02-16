@@ -138,12 +138,12 @@ void ScrollView::setActualScrollPosition(const IntPoint& position)
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-float ScrollView::platformTopContentInset() const
+FloatBoxExtent ScrollView::platformContentInsets() const
 {
-    return 0;
+    return { };
 }
 
-void ScrollView::platformSetTopContentInset(float)
+void ScrollView::platformSetContentInsets(const FloatBoxExtent&)
 {
 }
 

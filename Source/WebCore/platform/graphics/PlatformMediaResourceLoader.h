@@ -59,6 +59,8 @@ public:
     virtual void accessControlCheckFailed(PlatformMediaResource&, const ResourceError&) { }
     virtual void loadFailed(PlatformMediaResource&, const ResourceError&) { }
     virtual void loadFinished(PlatformMediaResource&, const NetworkLoadMetrics&) { }
+
+    virtual bool isWebCoreNSURLSessionDataTaskClient() const { return false; }
 };
 
 class PlatformMediaResourceLoader : public ThreadSafeRefCounted<PlatformMediaResourceLoader, WTF::DestructionThread::Main> {

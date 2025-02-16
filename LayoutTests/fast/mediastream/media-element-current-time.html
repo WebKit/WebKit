@@ -16,6 +16,8 @@ promise_test(async() => {
     let currentTime = video.currentTime;
     assert_not_equals(currentTime, 0, "Playback has started, currentTime must not be zero");
 
+    assert_less_than(currentTime, 3, "currentTime should be small initially");
+
     await waitForVideoFrame(video);
     await waitForVideoFrame(video);
     assert_greater_than(video.currentTime, currentTime, "video is playing, time should advance");

@@ -144,7 +144,7 @@ public:
     static Thread& current();
 
     // Set of all WTF::Thread created threads.
-    WTF_EXPORT_PRIVATE static HashSet<Thread*>& allThreads() WTF_REQUIRES_LOCK(allThreadsLock());
+    WTF_EXPORT_PRIVATE static UncheckedKeyHashSet<Thread*>& allThreads() WTF_REQUIRES_LOCK(allThreadsLock());
     WTF_EXPORT_PRIVATE static Lock& allThreadsLock() WTF_RETURNS_LOCK(s_allThreadsLock);
 
     WTF_EXPORT_PRIVATE unsigned numberOfThreadGroups();
@@ -439,7 +439,7 @@ inline Thread& Thread::current()
     if (UNLIKELY(Thread::s_key == InvalidThreadSpecificKey))
         WTF::initialize();
 #endif
-    if (auto* thread = currentMayBeNull(); LIKELY(thread))
+    if (SUPPRESS_UNCOUNTED_LOCAL auto* thread = currentMayBeNull(); LIKELY(thread))
         return *thread;
     return initializeCurrentTLS();
 }

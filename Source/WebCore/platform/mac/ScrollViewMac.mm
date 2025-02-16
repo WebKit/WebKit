@@ -114,26 +114,29 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
 ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
-float ScrollView::platformTopContentInset() const
+FloatBoxExtent ScrollView::platformContentInsets() const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    return scrollView().contentInsets.top;
+    auto insets = scrollView().contentInsets;
+    return {
+        static_cast<float>(insets.top),
+        static_cast<float>(insets.right),
+        static_cast<float>(insets.bottom),
+        static_cast<float>(insets.left)
+    };
     END_BLOCK_OBJC_EXCEPTIONS
 
     return 0;
 }
 
-void ScrollView::platformSetTopContentInset(float topContentInset)
+void ScrollView::platformSetContentInsets(const FloatBoxExtent& insets)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    if (topContentInset)
+    if (insets.top() || insets.left() || insets.right() || insets.bottom())
         scrollView().automaticallyAdjustsContentInsets = NO;
     else
         scrollView().automaticallyAdjustsContentInsets = YES;
-
-    NSEdgeInsets contentInsets = scrollView().contentInsets;
-    contentInsets.top = topContentInset;
-    scrollView().contentInsets = contentInsets;
+    scrollView().contentInsets = NSEdgeInsetsMake(insets.top(), insets.left(), insets.bottom(), insets.right());
     END_BLOCK_OBJC_EXCEPTIONS
 }
 

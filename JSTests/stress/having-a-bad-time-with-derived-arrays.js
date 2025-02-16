@@ -33,7 +33,7 @@ function doSlice(a) {
     return r;
 }
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     for (let [a, b, ...c] of arr) {
         let s = doSlice(a);
         iterate(s);

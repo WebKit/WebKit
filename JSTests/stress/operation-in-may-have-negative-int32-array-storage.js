@@ -15,5 +15,5 @@ function test1(o)
 }
 noInline(test1);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test1(o1), true);

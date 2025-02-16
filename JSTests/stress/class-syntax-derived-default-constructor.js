@@ -8,7 +8,7 @@ noInline(C);
 
 (function() {
     var x;
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         x = new C(false);
 })();
 
@@ -22,6 +22,6 @@ noInline(E);
 
 (function() {
     var x;
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         x = new C(false);
 })();

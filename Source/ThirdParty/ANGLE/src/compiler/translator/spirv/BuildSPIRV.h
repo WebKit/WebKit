@@ -14,6 +14,7 @@
 #include "common/bitset_utils.h"
 #include "common/hash_containers.h"
 #include "common/hash_utils.h"
+#include "common/span.h"
 #include "common/spirv/spirv_instruction_builder_autogen.h"
 #include "compiler/translator/Compiler.h"
 
@@ -96,7 +97,7 @@ struct SpirvType
     uint8_t primarySize   = 1;
     uint8_t secondarySize = 1;
 
-    TSpan<const unsigned int> arraySizes;
+    angle::Span<const unsigned int> arraySizes;
 
     // Only useful for image types.
     TLayoutImageInternalFormat imageInternalFormat = EiifUnspecified;

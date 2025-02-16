@@ -320,7 +320,7 @@ public:
     bool usesEval() const { return m_usesEval; }
     bool usesImportMeta() const { return m_usesImportMeta; }
 
-    const HashSet<UniquedStringImpl*>& closedVariableCandidates() const { return m_closedVariableCandidates; }
+    const UncheckedKeyHashSet<UniquedStringImpl*>& closedVariableCandidates() const { return m_closedVariableCandidates; }
     VariableEnvironment& declaredVariables() { return m_declaredVariables; }
     VariableEnvironment& lexicalVariables() { return m_lexicalVariables; }
     void finalizeLexicalEnvironment()
@@ -999,7 +999,7 @@ private:
     Vector<UniquedStringImplPtrSet, 6> m_usedVariables;
     UniquedStringImplPtrSet m_variablesBeingHoisted;
     UncheckedKeyHashMap<FunctionMetadataNode*, NeedsDuplicateDeclarationCheck> m_sloppyModeFunctionHoistingCandidates;
-    HashSet<UniquedStringImpl*> m_closedVariableCandidates;
+    UncheckedKeyHashSet<UniquedStringImpl*> m_closedVariableCandidates;
     DeclarationStacks::FunctionStack m_functionDeclarations;
 };
 

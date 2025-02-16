@@ -99,7 +99,7 @@ TEST_P(MessageSenderTest, SendWithPromisedReplyAfterInvalidateCancelsAllAsyncRep
     // This works for IPC::Connection.
     bool done = false;
 
-    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::protectedCurrent(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;
@@ -112,7 +112,7 @@ TEST_P(MessageSenderTest, SendWithPromisedReplyAfterInvalidateCancelsAllAsyncRep
     done = false;
     SimpleMessageSender sender { b() };
 
-    sender.sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    sender.sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::protectedCurrent(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;
@@ -141,7 +141,7 @@ TEST_P(MessageSenderTest, SendAsyncWithErrorAsynchronousCallback)
         RunLoop::current().cycle();
 
     done = false;
-    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::current(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
+    b()->sendWithPromisedReply(MockTestMessageWithAsyncReply1 { }, 100)->whenSettled(RunLoop::protectedCurrent(), [&] (MockTestMessageWithAsyncReply1::Promise::Result result) {
         EXPECT_FALSE(result.has_value());
         EXPECT_EQ(result.error(), IPC::Error::InvalidConnection);
         done = true;

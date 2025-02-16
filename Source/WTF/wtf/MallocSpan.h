@@ -128,6 +128,14 @@ public:
         return MallocSpan { static_cast<T*>(ptr), sizeInBytes };
     }
 
+    static MallocSpan tryAlignedMalloc(size_t alignment, size_t sizeInBytes)
+    {
+        auto* ptr = Malloc::tryAlignedMalloc(alignment, sizeInBytes);
+        if (!ptr)
+            return { };
+        return MallocSpan { static_cast<T*>(ptr), sizeInBytes };
+    }
+
     void realloc(size_t newSizeInBytes)
     {
         RELEASE_ASSERT(!(newSizeInBytes % sizeof(T)));

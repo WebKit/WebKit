@@ -159,7 +159,7 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
             if (!newValue.isNull()) {
                 m_defaultSlot->removeInlineStyleProperty(CSSPropertyContentVisibility);
                 queueDetailsToggleEventTask(ToggleState::Closed, ToggleState::Open);
-                if (document().settings().detailsNameAttributeEnabled() && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
+                if (!attributeWithoutSynchronization(nameAttr).isEmpty()) {
                     ShouldNotFireMutationEventsScope scope(document());
                     for (auto& otherDetailsElement : otherElementsInNameGroup())
                         otherDetailsElement->removeAttribute(openAttr);
@@ -199,7 +199,7 @@ Vector<RefPtr<HTMLDetailsElement>> HTMLDetailsElement::otherElementsInNameGroup(
 
 void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
 {
-    if (document().settings().detailsNameAttributeEnabled() && hasAttribute(openAttr) && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
+    if (hasAttribute(openAttr) && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
         ShouldNotFireMutationEventsScope scope(document());
         for (auto& otherDetailsElement : otherElementsInNameGroup()) {
             if (otherDetailsElement->hasAttribute(openAttr)) {
@@ -210,12 +210,4 @@ void HTMLDetailsElement::ensureDetailsExclusivityAfterMutation()
     }
 }
 
-void HTMLDetailsElement::toggleOpen()
-{
-    setBooleanAttribute(openAttr, !hasAttribute(openAttr));
-
-    if (CheckedPtr cache = document().existingAXObjectCache())
-        cache->onExpandedChanged(*this);
-}
-
-}
+} // namespace WebCore

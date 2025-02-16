@@ -36,29 +36,29 @@ namespace WebCore {
 class DestinationColorSpace;
 
 enum class ContentsFormat : uint8_t {
-    RGBA8,
-#if HAVE(IOSURFACE_RGB10)
-    RGBA10,
+    RGBA8 = 1 << 0,
+#if ENABLE(PIXEL_FORMAT_RGB10)
+    RGBA10 = 1 << 1,
 #endif
-#if HAVE(HDR_SUPPORT)
-    RGBA16F,
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
+    RGBA16F = 1 << 2,
 #endif
 };
 
 constexpr unsigned contentsFormatBytesPerPixel(ContentsFormat contentsFormat, bool isOpaque)
 {
-#if !HAVE(IOSURFACE_RGB10)
+#if !ENABLE(PIXEL_FORMAT_RGB10)
     UNUSED_PARAM(isOpaque);
 #endif
 
     switch (contentsFormat) {
     case ContentsFormat::RGBA8:
         return 4;
-#if HAVE(IOSURFACE_RGB10)
+#if ENABLE(PIXEL_FORMAT_RGB10)
     case ContentsFormat::RGBA10:
         return isOpaque ? 4 : 5;
 #endif
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
     case ContentsFormat::RGBA16F:
         return 8;
 #endif

@@ -36,7 +36,7 @@ CSSFontVariantAlternatesValue::CSSFontVariantAlternatesValue(FontVariantAlternat
 {
 }
 
-String CSSFontVariantAlternatesValue::customCSSText() const
+String CSSFontVariantAlternatesValue::customCSSText(const CSS::SerializationContext&) const
 {
     TextStream ts;
     // For the moment, the stream operator implements the CSS serialization exactly.

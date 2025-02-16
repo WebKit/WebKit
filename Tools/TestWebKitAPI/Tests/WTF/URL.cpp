@@ -536,10 +536,10 @@ TEST_F(WTF_URL, URLRemoveQueryParameters)
     auto url14 = createURL("http://www.webkit.org/?u+v=x+%20y&key1=foo"_s);
     auto url15 = createURL("http://www.webkit.org/?u+v=x+%20y"_s);
 
-    HashSet<String> keyRemovalSet1 { "key"_s };
-    HashSet<String> keyRemovalSet2 { "key1"_s };
-    HashSet<String> keyRemovalSet3 { "key2"_s };
-    HashSet<String> keyRemovalSet4 { "key"_s, "key1"_s };
+    UncheckedKeyHashSet<String> keyRemovalSet1 { "key"_s };
+    UncheckedKeyHashSet<String> keyRemovalSet2 { "key1"_s };
+    UncheckedKeyHashSet<String> keyRemovalSet3 { "key2"_s };
+    UncheckedKeyHashSet<String> keyRemovalSet4 { "key"_s, "key1"_s };
 
     auto checkRemovedParameters = [](int lineNumber, const Vector<String>& removedParameters, std::initializer_list<String>&& expected) {
         Vector<String> expectedParameters { WTFMove(expected) };

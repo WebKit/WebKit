@@ -33,6 +33,7 @@ OBJC_CLASS UIScrollView;
 
 namespace WebCore {
 class FloatRect;
+class FloatSize;
 class IntPoint;
 
 enum class EventListenerRegionType : uint8_t;
@@ -64,6 +65,17 @@ class WebPageProxy;
 
 #if HAVE(CORE_MATERIAL)
 @interface WKMaterialView : WKCompositingView
+@end
+#endif
+
+#if HAVE(MATERIAL_HOSTING)
+@interface WKMaterialHostingView : WKCompositingView
+
+@property (nonatomic, readonly) UIView *contentView;
+
+- (void)updateHostingSize:(WebCore::FloatSize)size;
+- (void)updateCornerRadius:(CGFloat)cornerRadius;
+
 @end
 #endif
 

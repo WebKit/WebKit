@@ -61,6 +61,10 @@ static void configureSeparatedLayer(CALayer *) { }
 #import <UIKitSPI.h>
 #endif
 
+#if HAVE(MATERIAL_HOSTING)
+#import "WKMaterialHostingSupport.h"
+#endif
+
 #if HAVE(CORE_MATERIAL)
 #import <pal/cocoa/CoreMaterialSoftLink.h>
 #endif
@@ -160,6 +164,10 @@ static MTCoreMaterialRecipe materialRecipeForAppleVisualEffect(AppleVisualEffect
     case AppleVisualEffect::BlurChromeMaterial:
         return PAL::get_CoreMaterial_MTCoreMaterialRecipePlatformChromeLight();
     case AppleVisualEffect::None:
+        return PAL::get_CoreMaterial_MTCoreMaterialRecipeNone();
+#if HAVE(MATERIAL_HOSTING)
+    case AppleVisualEffect::HostedBlurMaterial:
+#endif
     case AppleVisualEffect::VibrancyLabel:
     case AppleVisualEffect::VibrancySecondaryLabel:
     case AppleVisualEffect::VibrancyTertiaryLabel:
@@ -171,6 +179,129 @@ static MTCoreMaterialRecipe materialRecipeForAppleVisualEffect(AppleVisualEffect
         ASSERT_NOT_REACHED();
         return nil;
     }
+}
+
+static MTCoreMaterialVisualStyle materialVisualStyleForAppleVisualEffect(AppleVisualEffect effect)
+{
+    switch (effect) {
+    case AppleVisualEffect::VibrancyLabel:
+    case AppleVisualEffect::VibrancyFill:
+        return PAL::get_CoreMaterial_MTCoreMaterialVisualStylePrimary();
+    case AppleVisualEffect::VibrancySecondaryLabel:
+    case AppleVisualEffect::VibrancySecondaryFill:
+        return PAL::get_CoreMaterial_MTCoreMaterialVisualStyleSecondary();
+    case AppleVisualEffect::VibrancyTertiaryLabel:
+    case AppleVisualEffect::VibrancyTertiaryFill:
+        return PAL::get_CoreMaterial_MTCoreMaterialVisualStyleTertiary();
+    case AppleVisualEffect::VibrancyQuaternaryLabel:
+        return PAL::get_CoreMaterial_MTCoreMaterialVisualStyleQuaternary();
+    case AppleVisualEffect::VibrancySeparator:
+        return PAL::get_CoreMaterial_MTCoreMaterialVisualStyleSeparator();
+    case AppleVisualEffect::None:
+    case AppleVisualEffect::BlurUltraThinMaterial:
+    case AppleVisualEffect::BlurThinMaterial:
+    case AppleVisualEffect::BlurMaterial:
+    case AppleVisualEffect::BlurThickMaterial:
+    case AppleVisualEffect::BlurChromeMaterial:
+#if HAVE(MATERIAL_HOSTING)
+    case AppleVisualEffect::HostedBlurMaterial:
+#endif
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+}
+
+static MTCoreMaterialVisualStyleCategory materialVisualStyleCategoryForAppleVisualEffect(AppleVisualEffect effect)
+{
+    switch (effect) {
+    case AppleVisualEffect::VibrancyLabel:
+    case AppleVisualEffect::VibrancySecondaryLabel:
+    case AppleVisualEffect::VibrancyTertiaryLabel:
+    case AppleVisualEffect::VibrancyQuaternaryLabel:
+        return PAL::get_CoreMaterial_MTCoreMaterialVisualStyleCategoryStroke();
+    case AppleVisualEffect::VibrancyFill:
+    case AppleVisualEffect::VibrancySecondaryFill:
+    case AppleVisualEffect::VibrancyTertiaryFill:
+    case AppleVisualEffect::VibrancySeparator:
+        return PAL::get_CoreMaterial_MTCoreMaterialVisualStyleCategoryFill();
+    case AppleVisualEffect::None:
+    case AppleVisualEffect::BlurUltraThinMaterial:
+    case AppleVisualEffect::BlurThinMaterial:
+    case AppleVisualEffect::BlurMaterial:
+    case AppleVisualEffect::BlurThickMaterial:
+    case AppleVisualEffect::BlurChromeMaterial:
+#if HAVE(MATERIAL_HOSTING)
+    case AppleVisualEffect::HostedBlurMaterial:
+#endif
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+}
+
+static void applyVisualStylingToLayer(CALayer *layer, AppleVisualEffect material, AppleVisualEffect visualStyling)
+{
+    MTCoreMaterialRecipe recipe = materialRecipeForAppleVisualEffect(material);
+    if ([recipe isEqualToString:PAL::get_CoreMaterial_MTCoreMaterialRecipeNone()]) {
+#if PLATFORM(VISION)
+        recipe = PAL::get_CoreMaterial_MTCoreMaterialRecipePlatformContentUltraThinLight();
+#else
+        recipe = PAL::get_CoreMaterial_MTCoreMaterialRecipePlatformContentThickLight();
+#endif
+    }
+
+    // Despite the name, MTVisualStylingCreateDictionaryRepresentation returns an autoreleased object.
+    RetainPtr visualStylingDescription = PAL::softLink_CoreMaterial_MTVisualStylingCreateDictionaryRepresentation(recipe, materialVisualStyleCategoryForAppleVisualEffect(visualStyling), materialVisualStyleForAppleVisualEffect(visualStyling), nil);
+
+    RetainPtr<NSArray<NSDictionary<NSString *, id> *>> filterDescriptionsArray = [visualStylingDescription objectForKey:@"filters"];
+    RetainPtr filterDescription = [filterDescriptionsArray firstObject];
+
+    NSArray *filters = nil;
+    if (filterDescription) {
+        RetainPtr<NSValue> colorMatrix = [filterDescription objectForKey:kCAFilterInputColorMatrix];
+        RetainPtr filter = [CAFilter filterWithType:kCAFilterVibrantColorMatrix];
+        [filter setValue:colorMatrix.get() forKey:kCAFilterInputColorMatrix];
+        filters = @[ filter.get() ];
+    }
+    [layer setFilters:filters];
+}
+
+static void updateAppleVisualEffect(CALayer *layer, RemoteLayerTreeNode* layerTreeNode, AppleVisualEffectData effectData)
+{
+    if (RetainPtr materialLayer = dynamic_objc_cast<MTMaterialLayer>(layer)) {
+        if (RetainPtr recipe = materialRecipeForAppleVisualEffect(effectData.effect)) {
+            [materialLayer setRecipe:recipe.get()];
+            return;
+        }
+    }
+
+    if (appleVisualEffectAppliesFilter(effectData.effect)) {
+        applyVisualStylingToLayer(layer, effectData.contextEffect, effectData.effect);
+        return;
+    }
+
+#if HAVE(MATERIAL_HOSTING)
+    if (appleVisualEffectIsHostedMaterial(effectData.effect)) {
+        CGFloat cornerRadius = 0;
+        if (auto borderRect = effectData.borderRect) {
+            // FIXME: Support more complex shapes and non-uniform corner radius.
+            cornerRadius = std::max({
+                borderRect->radii().topLeft().maxDimension(),
+                borderRect->radii().topRight().maxDimension(),
+                borderRect->radii().bottomLeft().maxDimension(),
+                borderRect->radii().bottomRight().maxDimension()
+            });
+        }
+
+#if PLATFORM(IOS_FAMILY)
+        if (layerTreeNode) {
+            if (RetainPtr materialHostingView = dynamic_objc_cast<WKMaterialHostingView>(layerTreeNode->uiView()))
+                [materialHostingView updateCornerRadius:cornerRadius];
+        }
+#endif
+
+        [WKMaterialHostingSupport updateHostingLayer:layer cornerRadius:cornerRadius];
+    }
+#endif // HAVE(MATERIAL_HOSTING)
 }
 
 #endif
@@ -357,8 +488,8 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
             playerLayer = [(WKVideoView*)layerTreeNode->uiView() playerLayer];
 #endif
         ASSERT([playerLayer respondsToSelector:@selector(setVideoGravity:)]);
-        if ([playerLayer respondsToSelector:@selector(setVideoGravity:)])
-            [(WebAVPlayerLayer*)playerLayer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
+        if (RetainPtr webAVPlayerLayer = dynamic_objc_cast<WebAVPlayerLayer>(playerLayer))
+            [webAVPlayerLayer setVideoGravity:convertMediaPlayerToAVLayerVideoGravity(properties.videoGravity)];
     }
 #endif
 
@@ -366,7 +497,7 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         auto contentsFormat = properties.contentsFormat;
         if (NSString *formatString = contentsFormatString(contentsFormat))
             [layer setContentsFormat:formatString];
-#if HAVE(HDR_SUPPORT)
+#if ENABLE(PIXEL_FORMAT_RGBA16F)
         if (contentsFormat == ContentsFormat::RGBA16F) {
             [layer setWantsExtendedDynamicRangeContent:true];
             [layer setToneMapMode:CAToneMapModeIfSupported];
@@ -375,12 +506,8 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
     }
 
 #if HAVE(CORE_MATERIAL)
-    if (properties.changedProperties & LayerChange::AppleVisualEffectChanged) {
-        if ([layer isKindOfClass:PAL::getMTMaterialLayerClass()]) {
-            if (RetainPtr recipe = materialRecipeForAppleVisualEffect(properties.appleVisualEffect))
-                [(MTMaterialLayer *)layer setRecipe:recipe.get()];
-        }
-    }
+    if (properties.changedProperties & LayerChange::AppleVisualEffectChanged)
+        updateAppleVisualEffect(layer, layerTreeNode, properties.appleVisualEffectData);
 #endif
 }
 
@@ -411,7 +538,7 @@ void RemoteLayerTreePropertyApplier::applyProperties(RemoteLayerTreeNode& node, 
         if (node.visibleRect() && node.shouldBeSeparated()) {
             node.layer().separated = true;
             configureSeparatedLayer(node.layer());
-        } else
+        } else if (node.layer().isSeparated)
             node.layer().separated = false;
     }
 #endif
@@ -448,7 +575,14 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
 
     if (hasViewChildren()) {
         ASSERT(node.uiView());
-        [node.uiView() _web_setSubviews:createNSArray(properties.children, [&] (auto& child) -> UIView * {
+
+        RetainPtr view = node.uiView();
+#if HAVE(MATERIAL_HOSTING)
+        if (RetainPtr materialHostingView = dynamic_objc_cast<WKMaterialHostingView>(view.get()))
+            view = [materialHostingView contentView];
+#endif
+
+        [view _web_setSubviews:createNSArray(properties.children, [&] (auto& child) -> UIView * {
             auto* childNode = relatedLayers.get(child);
             ASSERT(childNode);
             if (!childNode)
@@ -463,7 +597,13 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
     }
 #endif
 
-    node.layer().sublayers = createNSArray(properties.children, [&] (auto& child) -> CALayer * {
+    RetainPtr layer = node.layer();
+#if HAVE(MATERIAL_HOSTING)
+    if (RetainPtr contentLayer = [WKMaterialHostingSupport contentLayerForMaterialHostingLayer:layer.get()])
+        layer = contentLayer;
+#endif
+
+    [layer setSublayers:createNSArray(properties.children, [&] (auto& child) -> CALayer * {
         auto* childNode = relatedLayers.get(child);
         ASSERT(childNode);
         if (!childNode)
@@ -472,7 +612,7 @@ void RemoteLayerTreePropertyApplier::applyHierarchyUpdates(RemoteLayerTreeNode& 
         ASSERT(!childNode->uiView());
 #endif
         return childNode->layer();
-    }).get();
+    }).get()];
 
     END_BLOCK_OBJC_EXCEPTIONS
 }
@@ -505,6 +645,13 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToUIView(UIView *view, const
 {
     if (properties.changedProperties.containsAny({ LayerChange::ContentsHiddenChanged, LayerChange::UserInteractionEnabledChanged }))
         view.userInteractionEnabled = !properties.contentsHidden && properties.userInteractionEnabled;
+
+#if HAVE(MATERIAL_HOSTING)
+    if (properties.changedProperties & LayerChange::BoundsChanged) {
+        if (RetainPtr materialHostingView = dynamic_objc_cast<WKMaterialHostingView>(view))
+            [materialHostingView updateHostingSize:properties.bounds.size()];
+    }
+#endif
 }
 #endif
 

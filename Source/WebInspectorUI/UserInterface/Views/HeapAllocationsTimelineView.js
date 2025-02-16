@@ -37,6 +37,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             name: {
                 title: WI.UIString("Name"),
                 width: "150px",
+                sortable: true,
                 icon: true,
             },
             timestamp: {
@@ -246,6 +247,8 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
         WI.ContentView.removeEventListener(WI.ContentView.Event.SelectionPathComponentsDidChange, this._contentViewSelectionPathComponentDidChange, this);
         WI.HeapSnapshotProxy.removeEventListener(WI.HeapSnapshotProxy.Event.Invalidated, this._heapSnapshotInvalidated, this);
         WI.HeapSnapshotWorkerProxy.singleton().removeEventListener(WI.HeapSnapshotWorkerProxy.Event.Collection, this._heapSnapshotCollectionEvent, this);
+
+        super.closed();
     }
 
     layout()
@@ -406,7 +409,8 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
             let snapshotStringData = result.text;
             let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
             workerProxy.createImportedSnapshot(snapshotStringData, result.filename, ({objectId, snapshot: serializedSnapshot}) => {
-                let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
+                const target = null;
+                let snapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
                 snapshot.snapshotStringData = snapshotStringData;
                 const timestamp = NaN;
                 WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
@@ -417,15 +421,17 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
     _takeHeapSnapshotClicked()
     {
-        WI.heapManager.snapshot((error, timestamp, snapshotStringData) => {
-            let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
-            workerProxy.createSnapshot(snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
-                let snapshot = WI.HeapSnapshotProxy.deserialize(objectId, serializedSnapshot);
-                snapshot.snapshotStringData = snapshotStringData;
-                WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
-                this.dispatchEventToListeners(WI.TimelineView.Event.NeedsEntireSelectedRange);
+        for (let target of WI.targets) {
+            WI.heapManager.snapshot(target, (error, timestamp, snapshotStringData) => {
+                let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
+                workerProxy.createSnapshot(target.identifier, snapshotStringData, ({objectId, snapshot: serializedSnapshot}) => {
+                    let snapshot = WI.HeapSnapshotProxy.deserialize(target, objectId, serializedSnapshot);
+                    snapshot.snapshotStringData = snapshotStringData;
+                    WI.timelineManager.heapSnapshotAdded(timestamp, snapshot);
+                    this.dispatchEventToListeners(WI.TimelineView.Event.NeedsEntireSelectedRange);
+                });
             });
-        });
+        }
     }
 
     _cancelSelectComparisonHeapSnapshots()
@@ -501,7 +507,7 @@ WI.HeapAllocationsTimelineView = class HeapAllocationsTimelineView extends WI.Ti
 
         let workerProxy = WI.HeapSnapshotWorkerProxy.singleton();
         workerProxy.createSnapshotDiff(snapshot1.proxyObjectId, snapshot2.proxyObjectId, ({objectId, snapshotDiff: serializedSnapshotDiff}) => {
-            let diff = WI.HeapSnapshotDiffProxy.deserialize(objectId, serializedSnapshotDiff);
+            let diff = WI.HeapSnapshotDiffProxy.deserialize(snapshot2.target, objectId, serializedSnapshotDiff);
             this.showHeapSnapshotDiff(diff);
         });
 

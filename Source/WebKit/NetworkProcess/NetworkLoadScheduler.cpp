@@ -90,7 +90,7 @@ void NetworkLoadScheduler::HostContext::unschedule(NetworkLoad& load)
     if (shouldDelayLowPriority())
         return;
 
-    if (auto* firstPendingLoad = m_pendingLoads.tryTakeFirst())
+    if (RefPtr firstPendingLoad = m_pendingLoads.tryTakeFirst())
         start(*firstPendingLoad);
 }
 
@@ -114,7 +114,7 @@ void NetworkLoadScheduler::HostContext::start(NetworkLoad& load)
 
 NetworkLoadScheduler::HostContext::~HostContext()
 {
-    for (auto& load : m_pendingLoads)
+    for (Ref load : m_pendingLoads)
         start(load);
 }
 
@@ -229,9 +229,9 @@ void NetworkLoadScheduler::finishedPreconnectForMainResource(const URL& url, con
 
     PendingMainResourcePreconnectInfo& info = iter->value;
     if (!info.pendingLoads.isEmptyIgnoringNullReferences()) {
-        auto& load = info.pendingLoads.takeFirst();
-        RELEASE_LOG(Network, "%p - NetworkLoadScheduler::finishedPreconnectForMainResource (error: %d) starting delayed main resource load %p; %u pending preconnects; %u total pending loads", this, static_cast<int>(error.type()), &load, info.pendingPreconnects, info.pendingLoads.computeSize());
-        load.start();
+        Ref load = info.pendingLoads.takeFirst();
+        RELEASE_LOG(Network, "%p - NetworkLoadScheduler::finishedPreconnectForMainResource (error: %d) starting delayed main resource load %p; %u pending preconnects; %u total pending loads", this, static_cast<int>(error.type()), load.ptr(), info.pendingPreconnects, info.pendingLoads.computeSize());
+        load->start();
     } else
         --info.pendingPreconnects;
 
@@ -280,7 +280,7 @@ void NetworkLoadScheduler::setResourceLoadSchedulingMode(WebCore::PageIdentifier
 
 void NetworkLoadScheduler::prioritizeLoads(const Vector<NetworkLoad*>& loads)
 {
-    for (auto* load : loads) {
+    for (RefPtr load : loads) {
         if (auto* context = contextForLoad(*load))
             context->prioritize(*load);
     }

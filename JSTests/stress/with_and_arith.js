@@ -1,4 +1,4 @@
-for (var i = 0; i < 10000;) {
+for (var i = 0; i < testLoopCount;) {
     var x = 1;
     with({}) {
         i += x;

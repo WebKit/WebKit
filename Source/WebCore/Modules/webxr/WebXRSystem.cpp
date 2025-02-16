@@ -31,7 +31,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "IDLTypes.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSWebXRSession.h"
@@ -206,7 +206,7 @@ bool WebXRSystem::immersiveSessionRequestIsAllowedForGlobalObject(LocalDOMWindow
         return false;
 
     // https://immersive-web.github.io/webxr/#active-and-focused
-    if (!document.hasFocus() || !document.securityOrigin().isSameOriginAs(globalObject.document()->securityOrigin()))
+    if (!document.hasFocus() || !document.protectedSecurityOrigin()->isSameOriginAs(globalObject.document()->securityOrigin()))
         return false;
 
     // 3. If user intent to begin an immersive session is not well understood,

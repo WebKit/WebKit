@@ -89,13 +89,13 @@ AuthenticationResponseJSON::AuthenticatorAssertionResponseJSON AuthenticatorAsse
 {
     AuthenticationResponseJSON::AuthenticatorAssertionResponseJSON value;
     if (auto authData = authenticatorData())
-        value.authenticatorData = base64EncodeToString(authData->span());
+        value.authenticatorData = base64URLEncodeToString(authData->span());
     if (auto sig = signature())
-        value.signature = base64EncodeToString(sig->span());
+        value.signature = base64URLEncodeToString(sig->span());
     if (auto handle = userHandle())
-        value.userHandle = base64EncodeToString(handle->span());
+        value.userHandle = base64URLEncodeToString(handle->span());
     if (auto clientData = clientDataJSON())
-        value.clientDataJSON = base64EncodeToString(clientData->span());
+        value.clientDataJSON = base64URLEncodeToString(clientData->span());
     return value;
 }
 

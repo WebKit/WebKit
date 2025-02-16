@@ -86,7 +86,7 @@ private:
         unsigned count { 0 };
         Vector<WeakRef<Element, WeakPtrImplWithEventTargetData>> orderedList;
 #if ASSERT_ENABLED || ENABLE(SECURITY_ASSERTIONS)
-        HashSet<WeakRef<Element, WeakPtrImplWithEventTargetData>> registeredElements;
+        UncheckedKeyHashSet<WeakRef<Element, WeakPtrImplWithEventTargetData>> registeredElements;
 #endif
     };
 

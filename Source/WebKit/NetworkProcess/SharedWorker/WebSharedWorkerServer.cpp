@@ -316,4 +316,17 @@ void WebSharedWorkerServer::terminateContextConnectionWhenPossible(const WebCore
     contextConnection->terminateWhenPossible();
 }
 
+void WebSharedWorkerServer::reportNetworkUsageToAllSharedWorkerClients(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, size_t bytesTransferredOverNetwork)
+{
+    auto* sharedWorker = WebSharedWorker::fromIdentifier(sharedWorkerIdentifier);
+    RELEASE_LOG_ERROR(SharedWorker, "WebSharedWorkerServer::sendNetworkUsageToAllSharedWorkerClients: sharedWorkerIdentifier=%" PRIu64 ", sharedWorker=%p", sharedWorkerIdentifier.toUInt64(), sharedWorker);
+    if (!sharedWorker)
+        return;
+
+    sharedWorker->forEachSharedWorkerObject([&](auto sharedWorkerObjectIdentifier, auto&) {
+        if (auto* serverConnection = m_connections.get(sharedWorkerObjectIdentifier.processIdentifier()))
+            serverConnection->reportNetworkUsageToWorkerObject(sharedWorkerObjectIdentifier, bytesTransferredOverNetwork);
+    });
+}
+
 } // namespace WebKit

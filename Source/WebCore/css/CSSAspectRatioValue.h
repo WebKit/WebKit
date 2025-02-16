@@ -39,7 +39,7 @@ public:
         return adoptRef(*new CSSAspectRatioValue(numeratorValue, denominatorValue));
     }
 
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     float numeratorValue() const { return m_numeratorValue; }
     float denominatorValue() const { return m_denominatorValue; }

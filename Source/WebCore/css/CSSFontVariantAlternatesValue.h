@@ -39,7 +39,7 @@ public:
     }
 
     const FontVariantAlternates& value() const { return m_value; }
-    String customCSSText() const;
+    String customCSSText(const CSS::SerializationContext&) const;
 
     bool equals(const CSSFontVariantAlternatesValue&) const;
 

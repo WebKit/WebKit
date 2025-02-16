@@ -1,0 +1,8 @@
+
+PASS createElement should use the global registry by default
+PASS createElement should use the specified scoped registry
+PASS createElement should create a builtin element regardles of a custom element registry specified
+PASS createElement should use the specified global registry
+PASS createElement should create an upgrade candidate when there is no matching definition in the specified registry
+PASS createElement should create an upgrade candidate and the candidate should be upgraded when the element is defined
+

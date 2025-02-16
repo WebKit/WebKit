@@ -8,7 +8,7 @@ function assert(condition) {
         throw new Error("assertion failed");
 }
 
-for (let i = 0; i < 1e5; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(!test(null));
     assert(!test(undefined));
     assert(!test(1));

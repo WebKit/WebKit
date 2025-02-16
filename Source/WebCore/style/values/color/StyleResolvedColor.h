@@ -55,8 +55,8 @@ constexpr bool containsCurrentColor(const ResolvedColor&)
     return false;
 }
 
-void serializationForCSS(StringBuilder&, const ResolvedColor&);
-String serializationForCSS(const ResolvedColor&);
+void serializationForCSS(StringBuilder&, const CSS::SerializationContext&, const ResolvedColor&);
+String serializationForCSS(const CSS::SerializationContext&, const ResolvedColor&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const ResolvedColor&);
 

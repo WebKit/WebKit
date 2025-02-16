@@ -35,14 +35,6 @@ struct SHA1Functions {
     static constexpr auto final = SHA1_Final;
     static constexpr size_t digestLength = SHA_DIGEST_LENGTH;
 };
-
-struct SHA224Functions {
-    static constexpr auto init = SHA224_Init;
-    static constexpr auto update = SHA224_Update;
-    static constexpr auto final = SHA224_Final;
-    static constexpr size_t digestLength = SHA224_DIGEST_LENGTH;
-};
-
 struct SHA256Functions {
     static constexpr auto init = SHA256_Init;
     static constexpr auto update = SHA256_Update;
@@ -112,8 +104,9 @@ static std::unique_ptr<CryptoDigestContext> createCryptoDigest(CryptoDigest::Alg
     switch (algorithm) {
     case CryptoDigest::Algorithm::SHA_1:
         return CryptoDigestContextImpl<SHA_CTX, SHA1Functions>::create();
-    case CryptoDigest::Algorithm::SHA_224:
-        return CryptoDigestContextImpl<SHA256_CTX, SHA224Functions>::create();
+    case CryptoDigest::Algorithm::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("SHA224 is not supported.");
+        return CryptoDigestContextImpl<SHA256_CTX, SHA256Functions>::create();
     case CryptoDigest::Algorithm::SHA_256:
         return CryptoDigestContextImpl<SHA256_CTX, SHA256Functions>::create();
     case CryptoDigest::Algorithm::SHA_384:

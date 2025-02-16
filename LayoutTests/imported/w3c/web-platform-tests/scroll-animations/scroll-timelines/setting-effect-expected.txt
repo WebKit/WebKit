@@ -1,0 +1,3 @@
+
+PASS Setting the effect of scroll-driven animation computes percentage timing values.
+

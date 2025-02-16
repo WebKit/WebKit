@@ -46,7 +46,7 @@ public:
 
     WEBCORE_EXPORT SerializedPlatformDataCueValue encodableValue() const final;
 
-    WEBCORE_EXPORT static const HashSet<RetainPtr<Class>>& allowedClassesForNativeValues();
+    WEBCORE_EXPORT static const UncheckedKeyHashSet<RetainPtr<Class>>& allowedClassesForNativeValues();
 
 private:
     SerializedPlatformDataCueValue m_value;

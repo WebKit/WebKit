@@ -38,7 +38,9 @@ LockedPrintStream::~LockedPrintStream() = default;
 void LockedPrintStream::vprintf(const char* format, va_list args)
 {
     Locker locker { m_lock };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     m_target->vprintf(format, args);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void LockedPrintStream::flush()

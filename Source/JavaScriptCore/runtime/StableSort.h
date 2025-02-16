@@ -67,7 +67,7 @@ static ALWAYS_INLINE void arrayInsertionSort(VM& vm, std::span<ElementType> span
 }
 
 template<typename ElementType, typename Functor>
-static ALWAYS_INLINE void arrayMerge(VM& vm, ElementType* dst, ElementType* src, size_t srcIndex, size_t srcEnd, size_t width, const Functor& comparator)
+static ALWAYS_INLINE void arrayMerge(VM& vm, std::span<ElementType> dst, std::span<const ElementType> src, size_t srcIndex, size_t srcEnd, size_t width, const Functor& comparator)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
@@ -80,7 +80,7 @@ static ALWAYS_INLINE void arrayMerge(VM& vm, ElementType* dst, ElementType* src,
         // The right subarray does not exist. Just copy src to dst.
         // This is OK to use WTF::copyElements since both src and dst comes from MarkedArgumentBuffer when using this function for EncodedJSValue,
         // thus marking happens after suspending the main thread completely.
-        WTF::copyElements(dst + left, src + left, rightEnd - left);
+        WTF::copyElements(dst.subspan(left), src.subspan(left, rightEnd - left));
         return;
     }
 
@@ -90,7 +90,7 @@ static ALWAYS_INLINE void arrayMerge(VM& vm, ElementType* dst, ElementType* src,
         // This entire array is already sorted.
         // This is OK to use WTF::copyElements since both src and dst comes from MarkedArgumentBuffer when using this function for EncodedJSValue,
         // thus marking happens after suspending the main thread completely.
-        WTF::copyElements(dst + left, src + left, rightEnd - left);
+        WTF::copyElements(dst.subspan(left), src.subspan(left, rightEnd - left));
         return;
     }
 
@@ -117,24 +117,23 @@ static ALWAYS_INLINE std::span<ElementType> arrayStableSort(VM& vm, std::span<El
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto* to = dst.data();
-    auto* from = src.data();
-    size_t length = src.size();
+    auto to = dst;
+    auto from = src;
 
-    for (size_t i = 0; i < length; i += initialWidth) {
-        arrayInsertionSort(vm, std::span { from + i, std::min(i + initialWidth, length) - i }, comparator);
+    for (size_t i = 0; i < src.size(); i += initialWidth) {
+        arrayInsertionSort(vm, from.subspan(i, std::min(i + initialWidth, src.size()) - i), comparator);
         RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, src);
     }
 
-    for (size_t width = initialWidth; width < length; width *= 2) {
-        for (size_t srcIndex = 0; srcIndex < length; srcIndex += 2 * width) {
-            arrayMerge(vm, to, from, srcIndex, length, width, comparator);
+    for (size_t width = initialWidth; width < src.size(); width *= 2) {
+        for (size_t srcIndex = 0; srcIndex < src.size(); srcIndex += 2 * width) {
+            arrayMerge(vm, to, spanConstCast<const ElementType>(from), srcIndex, src.size(), width, comparator);
             RETURN_IF_EXCEPTION_WITH_TRAPS_DEFERRED(scope, src);
         }
         std::swap(to, from);
     }
 
-    return (from == src.data()) ? src : dst;
+    return from.data() == src.data() ? src : dst;
 }
 
 } // namespace JSC

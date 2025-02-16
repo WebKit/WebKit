@@ -14,7 +14,7 @@ if (this.noInline) {
 
 var array = [1,2,3,4,5];
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
      result ^= test2(1,2,3,4,5,6,7).length;
 }
 

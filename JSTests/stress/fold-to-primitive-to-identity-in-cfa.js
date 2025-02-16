@@ -6,7 +6,7 @@ function foo(x, p) {
 
 noInline(foo);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = foo({toString:function() { return "foo" }}, i & 1);
     if (result != "foo world" && result != "hello world" && result != "bar world")
         throw "Error: bad result: " + result;

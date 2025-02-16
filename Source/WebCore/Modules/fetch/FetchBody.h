@@ -95,6 +95,8 @@ public:
         m_readableStream = WTFMove(stream);
     }
 
+    void convertReadableStreamToArrayBuffer(FetchBodyOwner&, CompletionHandler<void(std::optional<Exception>&&)>&&);
+
     bool isBlob() const { return std::holds_alternative<Ref<const Blob>>(m_data); }
     bool isFormData() const { return std::holds_alternative<Ref<FormData>>(m_data); }
     bool isReadableStream() const { return std::holds_alternative<Ref<ReadableStream>>(m_data); }

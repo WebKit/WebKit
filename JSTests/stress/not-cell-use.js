@@ -16,7 +16,7 @@ function bar(o) {
 noInline(foo);
 noInline(bar);
 
-for (var i = 0; i < 100000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var result = bar({
         f:i * 3, g:i - 1, h:(i / 2)|0, i:-i, j:13 + ((i / 5)|0), k:14 - ((i / 6)|0),
         l:1 - i});

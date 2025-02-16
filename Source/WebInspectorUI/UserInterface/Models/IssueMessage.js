@@ -63,7 +63,6 @@ WI.IssueMessage = class IssueMessage extends WI.Object
 
         case WI.ConsoleMessage.MessageSource.ConsoleAPI:
         case WI.ConsoleMessage.MessageSource.Storage:
-        case WI.ConsoleMessage.MessageSource.Appcache:
         case WI.ConsoleMessage.MessageSource.Rendering:
         case WI.ConsoleMessage.MessageSource.Media:
         case WI.ConsoleMessage.MessageSource.Mediasource:

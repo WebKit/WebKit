@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2010-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,6 +76,7 @@
 #include "WebWorkerClient.h"
 #include <WebCore/AppHighlight.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/BarcodeDetectorInterface.h>
 #include <WebCore/ColorChooser.h>
 #include <WebCore/ContentRuleListResults.h>
 #include <WebCore/CookieConsentDecisionResult.h>
@@ -84,6 +85,7 @@
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/DocumentStorageAccess.h>
 #include <WebCore/ElementInlines.h>
+#include <WebCore/FaceDetectorInterface.h>
 #include <WebCore/FileChooser.h>
 #include <WebCore/FileIconLoader.h>
 #include <WebCore/FrameLoader.h>
@@ -102,6 +104,7 @@
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/Settings.h>
+#include <WebCore/TextDetectorInterface.h>
 #include <WebCore/TextIndicator.h>
 #include <WebCore/TextRecognitionOptions.h>
 #include <WebCore/ViewportConfiguration.h>
@@ -706,6 +709,11 @@ IntPoint WebChromeClient::screenToRootView(const IntPoint& point) const
     return protectedPage()->screenToRootView(point);
 }
 
+IntPoint WebChromeClient::rootViewToScreen(const IntPoint& point) const
+{
+    return protectedPage()->rootViewToScreen(point);
+}
+
 IntRect WebChromeClient::rootViewToScreen(const IntRect& rect) const
 {
     return protectedPage()->rootViewToScreen(rect);
@@ -835,16 +843,10 @@ void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
     page->sendSyncWithDelayedReply(Messages::WebPageProxy::PrintFrame(webFrame->frameID(), truncatedTitle.string, pdfFirstPageSize));
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
     return WebColorChooser::create(protectedPage().ptr(), &client, initialColor);
 }
-
-#endif
-
-#if ENABLE(DATALIST_ELEMENT)
 
 RefPtr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
@@ -860,16 +862,10 @@ bool WebChromeClient::canShowDataListSuggestionLabels() const
 #endif
 }
 
-#endif
-
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
-
 RefPtr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient& client)
 {
     return WebDateTimeChooser::create(protectedPage(), client);
 }
-
-#endif
 
 void WebChromeClient::runOpenPanel(LocalFrame& frame, FileChooser& fileChooser)
 {
@@ -893,6 +889,18 @@ void WebChromeClient::showContactPicker(const WebCore::ContactsRequestData& requ
 {
     protectedPage()->showContactPicker(requestData, WTFMove(callback));
 }
+
+#if HAVE(DIGITAL_CREDENTIALS_UI)
+void WebChromeClient::showDigitalCredentialsPicker(const WebCore::DigitalCredentialsRequestData& requestData, WTF::CompletionHandler<void(Expected<WebCore::DigitalCredentialsResponseData, WebCore::ExceptionData>&&)>&& callback)
+{
+    protectedPage()->showDigitalCredentialsPicker(requestData, WTFMove(callback));
+}
+
+void WebChromeClient::dismissDigitalCredentialsPicker(WTF::CompletionHandler<void(bool)>&& completionHandler)
+{
+    protectedPage()->dismissDigitalCredentialsPicker(WTFMove(completionHandler));
+}
+#endif
 
 void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader& loader)
 {
@@ -1318,14 +1326,14 @@ void WebChromeClient::clearVideoFullscreenMode(HTMLVideoElement& videoElement, H
 
 bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool withKeyboard)
 {
-    return protectedPage()->fullScreenManager()->supportsFullScreenForElement(element, withKeyboard);
+    return protectedPage()->fullScreenManager().supportsFullScreenForElement(element, withKeyboard);
 }
 
-void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
+void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
 {
-    protectedPage()->fullScreenManager()->enterFullScreenForElement(&element, mode);
+    protectedPage()->fullScreenManager().enterFullScreenForElement(element, mode, WTFMove(completionHandler));
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(&element); videoElement && mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow)
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(element); videoElement && mode == HTMLMediaElementEnums::VideoFullscreenModeInWindow)
         setVideoFullscreenMode(*videoElement, mode);
 #endif
 }
@@ -1333,7 +1341,7 @@ void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaEleme
 #if ENABLE(QUICKLOOK_FULLSCREEN)
 void WebChromeClient::updateImageSource(Element& element)
 {
-    protectedPage()->fullScreenManager()->updateImageSource(element);
+    protectedPage()->fullScreenManager().updateImageSource(element);
 }
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
@@ -1346,7 +1354,7 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
             exitingInWindowFullscreen = videoElement->fullscreenMode() == HTMLMediaElementEnums::VideoFullscreenModeInWindow;
     }
 #endif
-    protectedPage()->fullScreenManager()->exitFullScreenForElement(element);
+    protectedPage()->fullScreenManager().exitFullScreenForElement(element);
 #if ENABLE(VIDEO_PRESENTATION_MODE)
     if (exitingInWindowFullscreen)
         clearVideoFullscreenMode(*dynamicDowncast<HTMLVideoElement>(*element), HTMLMediaElementEnums::VideoFullscreenModeInWindow);
@@ -1429,6 +1437,13 @@ void WebChromeClient::sampledPageTopColorChanged() const
     protectedPage()->sampledPageTopColorChanged();
 }
 
+#if ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+void WebChromeClient::spatialBackdropSourceChanged() const
+{
+    protectedPage()->spatialBackdropSourceChanged();
+}
+#endif
+
 #if ENABLE(APP_HIGHLIGHTS)
 WebCore::HighlightVisibility WebChromeClient::appHighlightsVisiblility() const
 {
@@ -1439,26 +1454,6 @@ WebCore::HighlightVisibility WebChromeClient::appHighlightsVisiblility() const
 void WebChromeClient::wheelEventHandlersChanged(bool hasHandlers)
 {
     protectedPage()->wheelEventHandlersChanged(hasHandlers);
-}
-
-String WebChromeClient::plugInStartLabelTitle(const String& mimeType) const
-{
-    return protectedPage()->injectedBundleUIClient().plugInStartLabelTitle(mimeType);
-}
-
-String WebChromeClient::plugInStartLabelSubtitle(const String& mimeType) const
-{
-    return protectedPage()->injectedBundleUIClient().plugInStartLabelSubtitle(mimeType);
-}
-
-String WebChromeClient::plugInExtraStyleSheet() const
-{
-    return protectedPage()->injectedBundleUIClient().plugInExtraStyleSheet();
-}
-
-String WebChromeClient::plugInExtraScript() const
-{
-    return protectedPage()->injectedBundleUIClient().plugInExtraScript();
 }
 
 void WebChromeClient::enableSuddenTermination()

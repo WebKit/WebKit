@@ -96,20 +96,6 @@ AVKitContentSourceEnabled:
     WebCore:
       default: false
 
-AbortSignalAnyOperationEnabled:
-  type: bool
-  category: dom
-  status: stable
-  humanReadableName: "AbortSignal.any() API"
-  humanReadableDescription: "Enable AbortSignal.any() API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 AcceleratedCompositingEnabled:
   type: bool
   status: embedder
@@ -458,18 +444,6 @@ AllowsPictureInPictureMediaPlayback:
       "PLATFORM(VISION)": false
       default: true
   disableInLockdownMode: true
-
-AlternateFormControlDesignEnabled:
-  type: bool
-  status: embedder
-  condition: PLATFORM(IOS_FAMILY)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
 
 AlternateFullScreenControlDesignEnabled:
   type: bool
@@ -874,6 +848,20 @@ BeaconAPIEnabled:
     WebCore:
       default: false
 
+BidiContentAwarePasteEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Bidi Content Aware Paste"
+  humanReadableDescription: "Bidi content aware paste"
+  defaultValue:
+    WebKit:
+      "PLATFORM(IOS_FAMILY)": WebKit::defaultBidiContentAwarePasteEnabled()
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
+
 BlobFileAccessEnforcementEnabled:
   type: bool
   status: embedder
@@ -1176,16 +1164,16 @@ CSSContentVisibilityEnabled:
 CSSContrastColorEnabled:
   type: bool
   category: css
-  status: preview
+  status: stable
   humanReadableName: "CSS contrast-color()"
   humanReadableDescription: "Enable support for CSS Color Module Level 5 contrast-color()"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 CSSCounterStyleAtRuleImageSymbolsEnabled:
   type: bool
@@ -1217,10 +1205,24 @@ CSSCounterStyleAtRulesEnabled:
 
 CSSDPropertyEnabled:
   type: bool
-  status: testable
+  status: preview
   category: css
   humanReadableName: "CSS d property"
   humanReadableDescription: "Enable support for the CSS d property and SVG d presentation attribute"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CSSDynamicRangeLimitPropertyEnabled:
+  type: bool
+  status: testable
+  category: css
+  humanReadableName: "CSS dynamic-range-limit"
+  humanReadableDescription: "Enable support for the CSS Color HDR Module Level 1 dynamic-range-limit CSS property"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -1433,6 +1435,20 @@ CSSProgressFunctionEnabled:
   status: preview
   humanReadableName: "CSS progress()"
   humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 progress()"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+CSSRandomFunctionEnabled:
+  type: bool
+  category: css
+  status: preview
+  humanReadableName: "CSS random()"
+  humanReadableDescription: "Enable support for CSS Values and Units Module Level 5 random()"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -2005,6 +2021,20 @@ ClientBadgeEnabled:
     WebCore:
       default: false
 
+CloseWatcherEnabled:
+  type: bool
+  status: testable
+  category: html
+  humanReadableName: "Close Watcher API"
+  humanReadableDescription: "Enable Close Watcher API"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 ColorFilterEnabled:
   type: bool
   status: embedder
@@ -2112,6 +2142,35 @@ ContentDispositionAttachmentSandboxEnabled:
     WebCore:
       default: false
 
+ContentInsetBackgroundFillEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Content Inset Background Fill"
+  humanReadableDescription: "Fill content insets with background colors"
+  condition: ENABLE(CONTENT_INSET_BACKGROUND_FILL)
+  defaultValue:
+    WebKit:
+      default: WebKit::defaultContentInsetBackgroundFillEnabled()
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
+
+ContextMenuImagesForInternalClientsEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Context Menu Images Allowed for Internal Clients"
+  humanReadableDescription: "Allow internal clients to enable images for context menu items"
+  condition: PLATFORM(MAC)
+  defaultValue:
+    WebKit:
+      "ENABLE(CONTEXT_MENU_IMAGES_FOR_INTERNAL_CLIENTS)" : true
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
+
 ContextMenuQRCodeDetectionEnabled:
   type: bool
   status: embedder
@@ -2163,11 +2222,9 @@ CookieStoreAPIEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(COCOA)" : true
-      default: false
+      default: defaultCookieStoreAPIEnabled()
     WebCore:
-      "PLATFORM(COCOA)" : true
-      default: false
+      default: true
 
 CookieStoreAPIExtendedAttributesEnabled:
   type: bool
@@ -2285,18 +2342,6 @@ CustomPasteboardDataEnabled:
       "PLATFORM(COCOA) || PLATFORM(GTK) || PLATFORM(WIN)": true
       default: false
 
-DNSPrefetchingEnabled:
-  type: bool
-  status: embedder
-  webcoreOnChange: dnsPrefetchingEnabledChanged
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-
 DOMAudioSessionEnabled:
   type: bool
   status: mature
@@ -2397,19 +2442,18 @@ DataDetectorTypes:
 # FIXME: This is on by default in WebKit2 (for everything but WatchOS). Perhaps we should consider turning it on for WebKitLegacy as well.
 DataListElementEnabled:
   type: bool
-  status: embedder
+  status: mature
   humanReadableName: "DataList Element"
   humanReadableDescription: "Enable datalist elements"
-  condition: ENABLE(DATALIST_ELEMENT)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(WATCHOS)": false
-      default: true
+      "(PLATFORM(COCOA) && !PLATFORM(WATCHOS)) || PLATFORM(GTK)": true
+      default: false
     WebCore:
-      "PLATFORM(WATCHOS)": false
-      default: true
+      "(PLATFORM(COCOA) && !PLATFORM(WATCHOS)) || PLATFORM(GTK)": true
+      default: false
   sharedPreferenceForWebProcess: true
 
 DataTransferItemsEnabled:
@@ -2443,7 +2487,6 @@ DateTimeInputsEditableComponentsEnabled:
   status: embedder
   humanReadableName: "Date/Time inputs have editable components"
   humanReadableDescription: "Enable multiple editable components in date/time inputs"
-  condition: ENABLE(DATE_AND_TIME_INPUT_TYPES)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -2452,20 +2495,6 @@ DateTimeInputsEditableComponentsEnabled:
       default: false
     WebCore:
       default: false
-
-DeclarativeShadowRootsParserAPIsEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Declarative Shadow Roots Parser APIs"
-  humanReadableDescription: "Declarative Shadow Roots Parser APIs (Element/ShadowRoot's setHTMLUnsafe() and Document.parseHTMLUnsafe())"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 DeclarativeShadowRootsSerializerAPIsEnabled:
   type: bool
@@ -2575,20 +2604,6 @@ DetachableMediaSourceEnabled:
     WebCore:
       default: false
 
-DetailsNameAttributeEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "HTML <details name> attribute"
-  humanReadableDescription: "Enable HTML <details name> attribute"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 DeveloperExtrasEnabled:
   type: bool
   status: embedder
@@ -2693,6 +2708,7 @@ DigitalCredentialsEnabled:
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
+  disableInLockdownMode: true
   richJavaScript: true
 
 DirectoryUploadEnabled:
@@ -2736,21 +2752,6 @@ DisabledAdaptationsMetaTagEnabled:
       default: false
     WebCore:
       default: false
-
-DisallowSyncXHRDuringPageDismissalEnabled:
-  type: bool
-  status: stable
-  category: security
-  humanReadableName: "Disallow sync XHR during page dismissal"
-  humanReadableDescription: "Disallow synchronous XMLHttpRequest during page dismissal"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      "PLATFORM(MAC) || PLATFORM(IOS_FAMILY)": WebKit::defaultDisallowSyncXHRDuringPageDismissalEnabled()
-      default: true
-    WebCore:
-      default: true
 
 # FIXME: This is on by default in WebKit2. Perhaps we should consider turning it on for WebKitLegacy as well.
 DownloadAttributeEnabled:
@@ -3014,20 +3015,6 @@ FasterClicksEnabled:
     WebKit:
       default: true
 
-FetchPriorityEnabled:
-  type: bool
-  status: stable
-  category: networking
-  humanReadableName: "Fetch Priority"
-  humanReadableDescription: "Enable Fetch Priority support"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
 FileReaderAPIEnabled:
   type: bool
   status: embedder
@@ -3088,6 +3075,20 @@ FilterLinkDecorationByDefaultEnabled:
       default: true
     WebCore:
       default: true
+
+FixedContainerEdgeSamplingEnabled:
+  type: bool
+  status: internal
+  humanReadableName: "Fixed container edge sampling"
+  humanReadableDescription: "Enable fixed container edge sampling"
+  condition: PLATFORM(COCOA)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: WebKit::defaultFixedContainerEdgeSamplingEnabled()
+    WebCore:
+      default: false
 
 FixedFontFamily:
   type: String
@@ -3401,7 +3402,7 @@ HDRForImagesEnabled:
   webcoreOnChange: setNeedsRelayoutAllFrames
   humanReadableName: "HDR for Images Support"
   humanReadableDescription: "HDR for Images Support"
-  condition: HAVE(HDR_SUPPORT)
+  condition: ENABLE(HDR_FOR_IMAGES)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -3744,16 +3745,15 @@ InlineMediaPlaybackRequiresPlaysInlineAttribute:
 
 InputTypeColorEnabled:
   type: bool
-  status: embedder
+  status: mature
   humanReadableName: "Color Inputs"
   humanReadableDescription: "Enable input elements of type color"
-  condition: ENABLE(INPUT_TYPE_COLOR)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      "PLATFORM(WATCHOS)": false
-      default: true
+      "PLATFORM(COCOA) && !PLATFORM(WATCHOS) || PLATFORM(GTK)": true
+      default: false
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
@@ -3762,7 +3762,6 @@ InputTypeColorEnhancementsEnabled:
   type: bool
   status: stable
   category: html
-  condition: ENABLE(INPUT_TYPE_COLOR)
   humanReadableName: "HTML alpha and colorspace attribute support for color inputs"
   humanReadableDescription: "Enable HTML alpha and colorspace attribute support for input elements of type color"
   defaultValue:
@@ -3778,79 +3777,82 @@ InputTypeColorEnhancementsEnabled:
 
 InputTypeDateEnabled:
   type: bool
-  status: embedder
+  status: mature
   humanReadableName: "Date Input"
   humanReadableDescription: "Enable input elements of type date"
-  condition: ENABLE(INPUT_TYPE_DATE)
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      default: true
+      "PLATFORM(COCOA) || PLATFORM(GTK)": true
+      default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 InputTypeDateTimeLocalEnabled:
   type: bool
-  status: embedder
+  status: mature
   humanReadableName: "datetime-local Inputs"
   humanReadableDescription: "Enable input elements of type datetime-local"
-  condition: ENABLE(INPUT_TYPE_DATETIMELOCAL)
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      default: true
+      "PLATFORM(COCOA) || PLATFORM(GTK)": true
+      default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 InputTypeMonthEnabled:
   type: bool
   status: embedder
   humanReadableName: "Month Input"
   humanReadableDescription: "Enable input elements of type month"
-  condition: ENABLE(INPUT_TYPE_MONTH)
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "!PLATFORM(MAC)": true
+      "PLATFORM(IOS_FAMILY) || PLATFORM(GTK)": true
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 InputTypeTimeEnabled:
   type: bool
-  status: embedder
+  status: mature
   humanReadableName: "Time Input"
   humanReadableDescription: "Enable input elements of type time"
-  condition: ENABLE(INPUT_TYPE_TIME)
   defaultValue:
     WebKitLegacy:
       "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      default: true
+      "PLATFORM(COCOA) || PLATFORM(GTK)": true
+      default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 InputTypeWeekEnabled:
   type: bool
   status: embedder
   humanReadableName: "Week Input"
   humanReadableDescription: "Enable input elements of type week"
-  condition: ENABLE(INPUT_TYPE_WEEK)
   defaultValue:
     WebKitLegacy:
       default: false
     WebKit:
-      "!PLATFORM(MAC) && !PLATFORM(APPLETV)": true
+      "PLATFORM(IOS_FAMILY) && !PLATFORM(APPLETV) || PLATFORM(GTK)": true
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 InspectorAttachedHeight:
   type: uint32_t
@@ -4239,17 +4241,17 @@ LayoutViewportHeightExpansionFactor:
 
 LazyIframeLoadingEnabled:
   type: bool
-  status: stable
+  status: mature
   category: html
   humanReadableName: "Lazy iframe loading"
   humanReadableDescription: "Enable lazy iframe loading support"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
       default: true
     WebCore:
-      default: true
+      default: false
 
 LazyImageLoadingEnabled:
   type: bool
@@ -4340,6 +4342,21 @@ LegacyWebRTCOfferOptionsEnabled:
     WebCore:
       default: false
 
+LimitedMatroskaSupportEnabled:
+  type: bool
+  status: developer
+  category: media
+  humanReadableName: "Limited Matroska Support"
+  humanReadableDescription: "Enable H264 and PCM with WebM Player and MediaRecorder"
+  condition: ENABLE(MEDIA_RECORDER_WEBM)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 LinearMediaPlayerEnabled:
   type: bool
   status: internal
@@ -4355,12 +4372,12 @@ LinearMediaPlayerEnabled:
     WebCore:
       default: false
 
-LinkModulePreloadEnabled:
+LinkDNSPrefetchEnabled:
   type: bool
   status: stable
   category: networking
-  humanReadableName: "Link rel=modulepreload"
-  humanReadableDescription: "Enable Link rel=modulepreload"
+  humanReadableName: "<link rel=dns-prefetch>"
+  humanReadableDescription: "Enable <link rel=dns-prefetch>"
   defaultValue:
     WebKitLegacy:
       default: true
@@ -4417,20 +4434,6 @@ LinkPreloadEnabled:
   defaultValue:
     WebKitLegacy:
       default: false
-    WebKit:
-      default: true
-    WebCore:
-      default: true
-
-LinkPreloadResponsiveImagesEnabled:
-  type: bool
-  status: stable
-  category: networking
-  humanReadableName: "Link preload responsive images"
-  humanReadableDescription: "Enable link preload responsive images"
-  defaultValue:
-    WebKitLegacy:
-      default: true
     WebKit:
       default: true
     WebCore:
@@ -4612,6 +4615,20 @@ LowPowerVideoAudioBufferSizeEnabled:
       default: false
     WebKit:
       default: true
+      
+MacStyleControlsOnCatalyst:
+  type: bool
+  status: internal
+  humanReadableName: "Mac style controls on Catalyst"
+  humanReadableDescription: "Use Mac style controls on Catalyst"
+  condition: ENABLE(MAC_STYLE_CONTROLS_ON_CATALYST)
+  defaultValue:
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
+      default: false
 
 MainContentUserGestureOverrideEnabled:
   type: bool
@@ -5051,7 +5068,7 @@ MediaSessionPlaylistEnabled:
 
 MediaSourceCanFallbackToDecompressionSession:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "MediaSource automatically falls back to DecompressionSession"
   humanReadableDescription: "MediaSource automatically falls back to DecompressionSession"
@@ -5060,9 +5077,9 @@ MediaSourceCanFallbackToDecompressionSession:
     WebKitLegacy:
       default: false
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
   sharedPreferenceForWebProcess: true
 
 MediaSourceEnabled:
@@ -5105,26 +5122,11 @@ MediaSourceInWorkerEnabled:
 
 MediaSourcePrefersDecompressionSession:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "MediaSource prefers DecompressionSession"
   humanReadableDescription: "MediaSource prefers DecompressionSession"
   condition: ENABLE(MEDIA_SOURCE) && USE(AVFOUNDATION)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: false
-    WebCore:
-      default: false
-  sharedPreferenceForWebProcess: true
-
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
-# FIXME: Seems to be unused. Remove once verified.
-MediaStreamEnabled:
-  type: bool
-  status: embedder
-  condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKitLegacy:
       default: false
@@ -5340,6 +5342,19 @@ MouseEventsSimulationEnabled:
   humanReadableName: "Mouse events simulation"
   humanReadableDescription: "Enable mouse events dispatch along with touch events on iOS"
   condition: ENABLE(TOUCH_EVENTS)
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
+MutationEventsEnabled:
+  type: bool
+  status: testable
+  category: dom
+  humanReadableName: "DOM mutation events"
   defaultValue:
     WebKitLegacy:
       default: false
@@ -5579,20 +5594,6 @@ OptInPartitionedCookiesEnabled:
       default: true
     WebCore:
       default: true
-
-OpusDecoderEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Opus audio decoder"
-  humanReadableDescription: "Enable Opus audio decoder"
-  condition: ENABLE(OPUS)
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-
 
 OverlappingBackingStoreProvidersEnabled:
   type: bool
@@ -6030,7 +6031,7 @@ ProcessSwapOnCrossSiteNavigationEnabled:
 
 PropagateDamagingInformation:
    type: bool
-   status: unstable
+   status: testable
    category: dom
    humanReadableName: "Propagate Damaging Information"
    humanReadableDescription: "Propagate Damaging Information"
@@ -6101,6 +6102,19 @@ RemotePlaybackEnabled:
       default: true
   disableInLockdownMode: true
 
+RemoteSnapshottingEnabled:
+   type: bool
+   status: stable
+   category: media
+   humanReadableName: "Remote Snapshotting"
+   defaultValue:
+     WebKitLegacy:
+       default: false
+     WebKit:
+       default: true
+     WebCore:
+       default: true
+
 RemoveBackgroundEnabled:
   type: bool
   # FIXME: Change to "embedder" when there is a way to enable/disable embedder features from API tests.
@@ -6129,20 +6143,6 @@ ReplayCGDisplayListsIntoBackingStore:
   defaultValue:
     WebKit:
       default: false
-
-ReportingEnabled:
-  type: bool
-  status: stable
-  category: dom
-  humanReadableName: "Reporting API"
-  humanReadableDescription: "Enable Reporting API"
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
-    WebCore:
-      default: true
 
 RequestIdleCallbackEnabled:
   type: bool
@@ -6202,6 +6202,17 @@ RequireUAGetDisplayMediaPrompt:
       default: true
     WebCore:
       default: true
+
+RequiresPageVisibilityForVideoToBeNowPlaying:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: defaultRequiresPageVisibilityForVideoToBeNowPlaying()
+    WebCore:
+      default: false
 
 RequiresPageVisibilityToPlayAudio:
   type: bool
@@ -6304,28 +6315,11 @@ RespondToThermalPressureAggressively:
   humanReadableDescription: "Enable responding to thermal pressure aggressively"
   defaultValue:
     WebKitLegacy:
-      "PLATFORM(IOS_FAMILY)": true
       default: false
     WebKit:
-      "PLATFORM(IOS_FAMILY)": true
       default: false
     WebCore:
-      "PLATFORM(IOS_FAMILY)": true
       default: false
-
-# FIXME: This is not relevent for WebKitLegacy, so should be excluded from WebKitLegacy entirely.
-RestrictedHTTPResponseAccess:
-  type: bool
-  status: internal
-  category: networking
-  humanReadableName: "Filter HTTP Response for Web Processes"
-  humanReadableDescription: "Enable HTTP Response filtering for Web Processes"
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
 
 RubberBandingForSubScrollableRegionsEnabled:
   type: bool
@@ -6412,16 +6406,19 @@ SansSerifFontFamily:
 
 ScopedCustomElementRegistryEnabled:
   type: bool
-  status: preview
+  status: stable
   category: dom
   humanReadableName: "Scoped custom element registry"
   humanReadableDescription: "Enable scoped custom element registry"
   defaultValue:
     WebKitLegacy:
+      "PLATFORM(COCOA)": true
       default: false
     WebKit:
+      "PLATFORM(COCOA)": true
       default: false
     WebCore:
+      "PLATFORM(COCOA)": true
       default: false
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
@@ -6509,7 +6506,7 @@ ScriptTelemetryEnabled:
   webcoreBinding: none
   defaultValue:
     WebKit:
-      default: false
+      default: true
 
 ScriptTelemetryLoggingEnabled:
   type: bool
@@ -6721,20 +6718,6 @@ SelectionHonorsOverflowScrolling:
     WebCore:
       default: false
 
-SendMouseEventsToDisabledFormControlsEnabled:
-  type: bool
-  status: stable
-  category: html
-  humanReadableName: "Send mouse events to disabled form controls"
-  humanReadableDescription: "Send mouse events to disabled form controls"
-  defaultValue:
-    WebKit:
-      default: true
-    WebKitLegacy:
-      default: true
-    WebCore:
-      default: true
-
 SerifFontFamily:
   type: String
   status: embedder
@@ -6767,6 +6750,20 @@ ServiceWorkerEntitlementDisabledForTesting:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      default: false
+
+ServiceWorkerInstallEventEnabled:
+  type: bool
+  status: testable
+  category: networking
+  humanReadableName: "Service Worker Install Event"
+  humanReadableDescription: "Enable Service Worker Install Event API"
+  defaultValue:
+    WebKit:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebCore:
       default: false
 
 ServiceWorkerNavigationPreloadEnabled:
@@ -7727,16 +7724,16 @@ UAVisualTransitionDetectionEnabled:
 URLPatternAPIEnabled:
   type: bool
   category: dom
-  status: testable
+  status: stable
   humanReadableName: "URL Pattern API"
   humanReadableDescription: "Enable URL Pattern API"
   defaultValue:
     WebKitLegacy:
-      default: false
+      default: true
     WebKit:
-      default: false
+      default: true
     WebCore:
-      default: false
+      default: true
 
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
 UndoManagerAPIEnabled:
@@ -7834,7 +7831,6 @@ UseAVCaptureDeviceRotationCoordinatorAPI:
   condition: HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
   defaultValue:
     WebKit:
-      "PLATFORM(VISION)": true
       "PLATFORM(APPLETV)": true
       default: false
   sharedPreferenceForWebProcess: true
@@ -7983,14 +7979,13 @@ UseImageDocumentForSubframePDF:
 
 UseMicrophoneMuteStatusAPI:
   type: bool
-  status: stable
+  status: testable
   category: media
   humanReadableName: "Use Microphone Mute Status API"
   humanReadableDescription: "Use Microphone Mute Status API"
   condition: ENABLE(MEDIA_STREAM)
   defaultValue:
     WebKit:
-      "PLATFORM(COCOA)": true
       default: false
     WebCore:
       default: false
@@ -8174,7 +8169,22 @@ VideoFullscreenRequiresElementFullscreen:
     WebCore:
       default: false
   sharedPreferenceForWebProcess: true
-
+      
+VideoPresentationManagerEnabled:
+  type: bool
+  status: embedder
+  defaultValue:
+    WebKitLegacy:
+      "PLATFORM(VISION)" : true
+      default: false
+    WebKit:
+      "PLATFORM(VISION)" : true
+      default: false
+    WebCore:
+      "PLATFORM(VISION)" : true
+      default: false
+  sharedPreferenceForWebProcess: true
+  
 VideoPresentationModeAPIEnabled:
   type: bool
   status: embedder
@@ -8325,19 +8335,6 @@ VisuallyContiguousBidiTextSelectionEnabled:
       default: false
     WebCore:
       default: false
-
-VorbisDecoderEnabled:
-  type: bool
-  status: mature
-  humanReadableName: "Vorbis audio decoder"
-  humanReadableDescription: "Enable Vorbis audio decoder"
-  condition: ENABLE(VORBIS)
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      default: true
-    WebKit:
-      default: true
 
 WantsBalancedSetDefersLoadingBehavior:
   type: bool
@@ -8532,7 +8529,7 @@ WebCodecsAV1Enabled:
 
 WebCodecsAudioEnabled:
   type: bool
-  status: testable
+  status: stable
   category: media
   humanReadableName: "WebCodecs Audio API"
   humanReadableDescription: "Enable WebCodecs Audio API"
@@ -8541,11 +8538,9 @@ WebCodecsAudioEnabled:
     WebKitLegacy:
       default: false
     WebKit:
-      "USE(GSTREAMER)": true
-      default: false
+      default: true
     WebCore:
-      "USE(GSTREAMER)": true
-      default: false
+      default: true
 
 WebCodecsHEVCEnabled:
   type: bool
@@ -8761,17 +8756,22 @@ WebLocksAPIEnabled:
   sharedPreferenceForWebProcess: true
   richJavaScript: true
 
-# FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely.
-WebMParserEnabled:
+WebPageSpatialBackdropEnabled:
   type: bool
-  status: embedder
-  webcoreBinding: DeprecatedGlobalSettings
-  condition: ENABLE(MEDIA_SOURCE)
+  status: testable
+  category: html
+  condition: ENABLE(WEB_PAGE_SPATIAL_BACKDROP)
+  humanReadableName: "Web Page Spatial Backdrop"
+  humanReadableDescription: "Enable Web Page Spatial Backdrop"
   defaultValue:
     WebKitLegacy:
-      default: true
+      default: false
     WebKit:
-      default: true
+      default: false
+    WebCore:
+      default: false
+  disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
 
 WebRTCAV1CodecEnabled:
   type: bool

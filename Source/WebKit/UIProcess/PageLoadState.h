@@ -33,9 +33,13 @@
 #include <wtf/WeakHashSet.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+enum class ResourceResponseSource : uint8_t;
+}
 namespace WebKit {
 
 class WebPageProxy;
+enum class Source;
 
 class PageLoadStateObserverBase : public AbstractRefCountedAndCanMakeWeakPtr<PageLoadStateObserverBase> {
 public:
@@ -152,6 +156,8 @@ public:
     bool hasNegotiatedLegacyTLS() const;
     void negotiatedLegacyTLS(const Transaction::Token&);
     bool wasPrivateRelayed() const { return m_committedState.wasPrivateRelayed; }
+    String proxyName() { return m_committedState.proxyName; }
+    WebCore::ResourceResponseSource source() { return m_committedState.source; }
 
     double estimatedProgress() const;
     bool networkRequestsInProgress() const { return m_committedState.networkRequestsInProgress; }
@@ -170,7 +176,8 @@ public:
     void didReceiveServerRedirectForProvisionalLoad(const Transaction::Token&, const String& url);
     void didFailProvisionalLoad(const Transaction::Token&);
 
-    void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed, const WebCore::SecurityOriginData&);
+    void didCommitLoad(const Transaction::Token&, const WebCore::CertificateInfo&, bool hasInsecureContent, bool usedLegacyTLS, bool privateRelayed, const String& proxyName, const WebCore::ResourceResponseSource, const WebCore::SecurityOriginData&);
+
     void didFinishLoad(const Transaction::Token&);
     void didFailLoad(const Transaction::Token&);
 
@@ -241,6 +248,8 @@ private:
         bool networkRequestsInProgress { false };
 
         WebCore::CertificateInfo certificateInfo;
+        String proxyName;
+        WebCore::ResourceResponseSource source;
     };
 
     static bool isLoading(const Data&);

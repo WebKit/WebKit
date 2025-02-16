@@ -126,7 +126,8 @@ void RealtimeOutgoingMediaSourceGStreamer::start()
     }
 
     GST_DEBUG_OBJECT(m_bin.get(), "Starting outgoing source");
-    m_track->addObserver(*this);
+    if (m_track)
+        m_track->addObserver(*this);
     m_isStopped = false;
 
     if (m_transceiver) {
@@ -152,11 +153,9 @@ void RealtimeOutgoingMediaSourceGStreamer::stop()
 
 void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource()
 {
-    if (!m_track)
-        return;
-
     GST_DEBUG_OBJECT(m_bin.get(), "Stopping outgoing source %" GST_PTR_FORMAT, m_outgoingSource.get());
-    m_track->removeObserver(*this);
+    if (m_track)
+        m_track->removeObserver(*this);
 
     if (!m_outgoingSource)
         return;
@@ -246,7 +245,7 @@ void RealtimeOutgoingMediaSourceGStreamer::checkMid()
     if (!mid)
         return;
 
-    auto newMid = makeString(span(mid.get()));
+    auto newMid = makeString(unsafeSpan(mid.get()));
     if (newMid == m_mid)
         return;
 
@@ -295,9 +294,12 @@ void RealtimeOutgoingMediaSourceGStreamer::codecPreferencesChanged()
     while (!m_packetizers.isEmpty()) {
         RefPtr packetizer = m_packetizers.takeLast();
 
-        int payloadType = packetizer->payloadType();
+        auto payloadType = packetizer->payloadType();
+        if (!payloadType)
+            continue;
+
         unsigned sequenceNumber = packetizer->currentSequenceNumberOffset();
-        payloaderStates.add(payloadType, sequenceNumber);
+        payloaderStates.add(*payloadType, sequenceNumber);
 
         auto bin = packetizer->bin();
         auto binSinkPad = adoptGRef(gst_element_get_static_pad(bin, "sink"));
@@ -316,10 +318,12 @@ void RealtimeOutgoingMediaSourceGStreamer::codecPreferencesChanged()
     }
 
     for (auto& packetizer : m_packetizers) {
-        int payloadType = packetizer->payloadType();
-        if (!payloaderStates.contains(payloadType))
+        auto payloadType = packetizer->payloadType();
+        if (!payloadType)
             continue;
-        packetizer->setSequenceNumberOffset(payloaderStates.get(payloadType));
+        if (!payloaderStates.contains(*payloadType))
+            continue;
+        packetizer->setSequenceNumberOffset(payloaderStates.get(*payloadType));
     }
 
     gst_bin_sync_children_states(GST_BIN_CAST(m_bin.get()));
@@ -347,12 +351,14 @@ void RealtimeOutgoingMediaSourceGStreamer::setInitialParameters(GUniquePtr<GstSt
 
 void RealtimeOutgoingMediaSourceGStreamer::configure(GRefPtr<GstCaps>&& allowedCaps)
 {
-    const auto encodingsValue = gst_structure_get_value(m_parameters.get(), "encodings");
-    RELEASE_ASSERT(GST_VALUE_HOLDS_LIST(encodingsValue));
-    unsigned encodingsSize = gst_value_list_get_size(encodingsValue);
-    if (UNLIKELY(!encodingsSize)) {
-        GST_WARNING_OBJECT(m_bin.get(), "Encodings list is empty, cancelling configuration");
-        return;
+    if (m_parameters) {
+        const auto encodingsValue = gst_structure_get_value(m_parameters.get(), "encodings");
+        RELEASE_ASSERT(GST_VALUE_HOLDS_LIST(encodingsValue));
+        unsigned encodingsSize = gst_value_list_get_size(encodingsValue);
+        if (UNLIKELY(!encodingsSize)) {
+            GST_WARNING_OBJECT(m_bin.get(), "Encodings list is empty, cancelling configuration");
+            return;
+        }
     }
 
     configurePacketizers(WTFMove(allowedCaps));
@@ -499,12 +505,13 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
     auto payloadType = gstStructureGet<int>(structure, "payload"_s);
     if (!payloadType) {
         auto& firstPacketizer = m_packetizers.first();
-        gst_structure_set(structure, "payload", G_TYPE_INT, firstPacketizer->payloadType(), nullptr);
+        if (auto pt = firstPacketizer->payloadType())
+            gst_structure_set(structure, "payload", G_TYPE_INT, *pt, nullptr);
     }
 
     StringBuilder simulcastBuilder;
-    const char* direction = "send";
-    simulcastBuilder.append(span(direction));
+    auto direction = "send"_s;
+    simulcastBuilder.append(direction);
     simulcastBuilder.append(' ');
     unsigned totalStreams = 0;
     for (auto& packetizer : m_packetizers) {
@@ -515,7 +522,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
         if (totalStreams > 0)
             simulcastBuilder.append(';');
         simulcastBuilder.append(rtpStreamId);
-        gst_structure_set(structure, makeString("rid-"_s, rtpStreamId).ascii().data(), G_TYPE_STRING, direction, nullptr);
+        gst_structure_set(structure, makeString("rid-"_s, rtpStreamId).ascii().data(), G_TYPE_STRING, direction.characters(), nullptr);
         packetizer->configureExtensions();
         totalStreams++;
     }
@@ -600,17 +607,15 @@ GUniquePtr<GstStructure> RealtimeOutgoingMediaSourceGStreamer::stats()
 void RealtimeOutgoingMediaSourceGStreamer::startUpdatingStats()
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Starting buffer monitoring for stats gathering");
-    forEach(m_packetizers, [](auto& packetizer) {
+    for (auto& packetizer : m_packetizers)
         packetizer->startUpdatingStats();
-    });
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::stopUpdatingStats()
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Stopping buffer monitoring for stats gathering");
-    forEach(m_packetizers, [](auto& packetizer) {
+    for (auto& packetizer : m_packetizers)
         packetizer->stopUpdatingStats();
-    });
 }
 
 void RealtimeOutgoingMediaSourceGStreamer::teardown()
@@ -647,6 +652,14 @@ void RealtimeOutgoingMediaSourceGStreamer::teardown()
     m_sender.clear();
     m_webrtcSinkPad.clear();
     m_parameters.reset();
+}
+
+RealtimeMediaSource::Type RealtimeOutgoingMediaSourceGStreamer::type() const
+{
+    if (m_type == Type::Video)
+        return RealtimeMediaSource::Type::Video;
+
+    return RealtimeMediaSource::Type::Audio;
 }
 
 #undef GST_CAT_DEFAULT

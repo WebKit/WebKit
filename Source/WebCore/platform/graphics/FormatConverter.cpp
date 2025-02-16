@@ -30,6 +30,7 @@
 #if ENABLE(WEBGL)
 
 #include "FormatConverter.h"
+#include <wtf/text/ParsingUtilities.h>
 
 #if HAVE(ARM_NEON_INTRINSICS)
 #include "GraphicsContextGLNEON.h"
@@ -39,34 +40,32 @@
 #include <Accelerate/Accelerate.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 namespace {
 
-const float MaxInt8Value = INT8_MAX;
-const float MaxUInt8Value = UINT8_MAX;
-const float MaxInt16Value = INT16_MAX;
-const float MaxUInt16Value = UINT16_MAX;
-const double MaxInt32Value = INT32_MAX;
-const double MaxUInt32Value = UINT32_MAX;
+constexpr float MaxInt8Value = INT8_MAX;
+constexpr float MaxUInt8Value = UINT8_MAX;
+constexpr float MaxInt16Value = INT16_MAX;
+constexpr float MaxUInt16Value = UINT16_MAX;
+constexpr double MaxInt32Value = INT32_MAX;
+constexpr double MaxUInt32Value = UINT32_MAX;
 
 int8_t clampMin(int8_t value)
 {
-    const int8_t MinInt8Value = INT8_MIN + 1;
+    constexpr int8_t MinInt8Value = INT8_MIN + 1;
     return value < MinInt8Value ? MinInt8Value : value;
 }
 
 int16_t clampMin(int16_t value)
 {
-    const int16_t MinInt16Value = INT16_MIN + 1;
+    constexpr int16_t MinInt16Value = INT16_MIN + 1;
     return value < MinInt16Value ? MinInt16Value : value;
 }
 
 int32_t clampMin(int32_t value)
 {
-    const int32_t MinInt32Value = INT32_MIN + 1;
+    constexpr int32_t MinInt32Value = INT32_MIN + 1;
     return value < MinInt32Value ? MinInt32Value : value;
 }
 
@@ -76,14 +75,13 @@ int32_t clampMin(int32_t value)
 // "Fast Half Float Conversions" by Jeroen van der Zijp, November 2008 (Revised September 2010).
 // Specially, the basetable[512] and shifttable[512] are generated as follows:
 /*
-unsigned short basetable[512];
-unsigned char shifttable[512];
+std::array<uint16_t, 512> basetable;
+std::array<uint8_t, 512> shifttable;
 
-void generatetables(){
-    unsigned int i;
-    int e;
-    for (i = 0; i < 256; ++i){
-        e = i - 127;
+void generatetables()
+{
+    for (unsigned i = 0; i < 256; ++i){
+        int e = i - 127;
         if (e < -24){ // Very small numbers map to zero
             basetable[i | 0x000] = 0x0000;
             basetable[i | 0x100] = 0x8000;
@@ -118,7 +116,7 @@ void generatetables(){
 }
 */
 
-static const unsigned short baseTable[512] = {
+static constexpr std::array<uint16_t, 512> baseTable {
 0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
 0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
 0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,
@@ -153,7 +151,7 @@ static const unsigned short baseTable[512] = {
 64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512,  64512
 };
 
-static const unsigned char shiftTable[512] = {
+static constexpr std::array<uint8_t, 512> shiftTable {
 24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
 24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
 24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,
@@ -188,7 +186,7 @@ static const unsigned char shiftTable[512] = {
 24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     24,     13
 };
 
-inline unsigned short convertFloatToHalfFloat(float f)
+inline uint16_t convertFloatToHalfFloat(float f)
 {
     unsigned temp = *(reinterpret_cast<unsigned *>(&f));
     unsigned signexp = (temp >> 23) & 0x1ff;
@@ -204,40 +202,42 @@ inline unsigned short convertFloatToHalfFloat(float f)
 //----------------------------------------------------------------------
 // Pixel unpacking routines.
 template<GraphicsContextGL::DataFormat format, typename SourceType, typename DstType>
-ALWAYS_INLINE void unpack(const SourceType*, DstType*, unsigned)
+ALWAYS_INLINE void unpack(std::span<const SourceType>, std::span<DstType>, unsigned)
 {
     ASSERT_NOT_REACHED();
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[1];
         destination[1] = source[2];
         destination[2] = source[3];
         destination[3] = source[0];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[3];
         destination[1] = source[2];
         destination[2] = source[1];
         destination[3] = source[0];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
-    const uint32_t* source32 = reinterpret_cast_ptr<const uint32_t*>(source);
-    uint32_t* destination32 = reinterpret_cast_ptr<uint32_t*>(destination);
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    auto source32 = spanReinterpretCast<const uint32_t>(source);
+    auto destination32 = spanReinterpretCast<uint32_t>(destination);
+    pixelsPerRow = std::min<unsigned>(source32.size(), pixelsPerRow);
+    pixelsPerRow = std::min<unsigned>(destination32.size(), pixelsPerRow);
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         uint32_t bgra = source32[i];
 #if CPU(BIG_ENDIAN)
         uint32_t brMask = 0xff00ff00;
@@ -251,12 +251,12 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGRA8, uint8
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA5551, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA5551, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGBA5551ToRGBA8(source, destination, pixelsPerRow);
 #endif
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         uint16_t packedValue = source[0];
         uint8_t r = packedValue >> 11;
         uint8_t g = (packedValue >> 6) & 0x1F;
@@ -265,17 +265,17 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA5551, ui
         destination[1] = (g << 3) | (g & 0x7);
         destination[2] = (b << 3) | (b & 0x7);
         destination[3] = (packedValue & 0x1) ? 0xFF : 0x0;
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA4444, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA4444, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGBA4444ToRGBA8(source, destination, pixelsPerRow);
 #endif
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         uint16_t packedValue = source[0];
         uint8_t r = packedValue >> 12;
         uint8_t g = (packedValue >> 8) & 0x0F;
@@ -285,62 +285,62 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA4444, ui
         destination[1] = g << 4 | g;
         destination[2] = b << 4 | b;
         destination[3] = a << 4 | a;
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RA8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RA8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[0];
         destination[2] = source[0];
         destination[3] = source[1];
-        source += 2;
-        destination += 4;
+        skip(source, 2);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::AR8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::AR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[1];
         destination[1] = source[1];
         destination[2] = source[1];
         destination[3] = source[0];
-        source += 2;
-        destination += 4;
+        skip(source, 2);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0] * scaleFactor;
         destination[1] = source[1] * scaleFactor;
         destination[2] = source[2] * scaleFactor;
         destination[3] = source[3] * scaleFactor;
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGRA8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
-    for (unsigned int i = 0; i < pixelsPerRow; ++i) {
+    for (unsigned i = 0; i < pixelsPerRow && source.size() >= 4 && destination.size() >= 4; ++i) {
         destination[0] = source[2] * scaleFactor;
         destination[1] = source[1] * scaleFactor;
         destination[2] = source[0] * scaleFactor;
         destination[3] = source[3] * scaleFactor;
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ABGR8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
@@ -348,12 +348,12 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ABGR8, uint8
         destination[1] = source[2] * scaleFactor;
         destination[2] = source[1] * scaleFactor;
         destination[3] = source[0] * scaleFactor;
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, float>(const uint8_t* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ARGB8, uint8_t, float>(std::span<const uint8_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float scaleFactor = 1.0f / 255.0f;
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
@@ -361,24 +361,24 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::ARGB8, uint8
         destination[1] = source[2] * scaleFactor;
         destination[2] = source[3] * scaleFactor;
         destination[3] = source[0] * scaleFactor;
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RA32F, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RA32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[0];
         destination[2] = source[0];
         destination[3] = source[1];
-        source += 2;
-        destination += 4;
+        skip(source, 2);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, uint32_t, float>(const uint32_t* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, uint32_t, float>(std::span<const uint32_t> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     const float rgbScaleFactor = 1.0f / 1023.0f;
     const float alphaScaleFactor = 1.0f / 3.0f;
@@ -388,87 +388,87 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGBA2_10_10_
         destination[1] = static_cast<float>((packedValue >> 10) & 0x3FF) * rgbScaleFactor;
         destination[2] = static_cast<float>((packedValue >> 20) & 0x3FF) * rgbScaleFactor;
         destination[3] = static_cast<float>(packedValue >> 30) * alphaScaleFactor;
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
 // Unpacking routines needed by various WebKit ports, for example to
 // handle the internal representations of grayscale PNGs.
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::R8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::R8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[0];
         destination[2] = source[0];
         destination[3] = 0xFF;
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::A8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::A8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = 0x0;
         destination[1] = 0x0;
         destination[2] = 0x0;
         destination[3] = source[0];
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::R32F, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::R32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[0];
         destination[2] = source[0];
         destination[3] = 1;
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::A32F, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::A32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = 0;
         destination[1] = 0;
         destination[2] = 0;
         destination[3] = source[0];
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[1];
         destination[2] = source[2];
         destination[3] = 0xFF;
-        source += 3;
-        destination += 4;
+        skip(source, 3);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGR8, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::BGR8, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[2];
         destination[1] = source[1];
         destination[2] = source[0];
         destination[3] = 0xFF;
-        source += 3;
-        destination += 4;
+        skip(source, 3);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB565, uint16_t, uint8_t>(const uint16_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB565, uint16_t, uint8_t>(std::span<const uint16_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::unpackOneRowOfRGB565ToRGBA8(source, destination, pixelsPerRow);
@@ -482,20 +482,20 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB565, uint
         destination[1] = (g << 2) | (g & 0x3);
         destination[2] = (b << 3) | (b & 0x7);
         destination[3] = 0xFF;
-        source += 1;
-        destination += 4;
+        skip(source, 1);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB32F, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB32F, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[1];
         destination[2] = source[2];
         destination[3] = 1;
-        source += 3;
-        destination += 4;
+        skip(source, 3);
+        skip(destination, 4);
     }
 }
 
@@ -504,99 +504,99 @@ template<> ALWAYS_INLINE void unpack<GraphicsContextGL::DataFormat::RGB32F, floa
 //
 
 template<GraphicsContextGL::DataFormat format, int alphaOp, typename SourceType, typename DstType>
-ALWAYS_INLINE void pack(const SourceType*, DstType*, unsigned)
+ALWAYS_INLINE void pack(std::span<const SourceType>, std::span<DstType>, unsigned)
 {
     ASSERT_NOT_REACHED();
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::A8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::A8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[3];
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[0] = sourceR;
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[0] = sourceR;
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[3];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[0] = sourceR;
         destination[1] = source[3];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[0] = sourceR;
         destination[1] = source[3];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[1];
         destination[2] = source[2];
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -606,13 +606,13 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, Graphics
         destination[0] = sourceR;
         destination[1] = sourceG;
         destination[2] = sourceB;
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -622,13 +622,13 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB8, Graphics
         destination[0] = sourceR;
         destination[1] = sourceG;
         destination[2] = sourceB;
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
@@ -639,13 +639,13 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA8, Graphic
         destination[1] = sourceG;
         destination[2] = sourceB;
         destination[3] = source[3];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
@@ -656,188 +656,188 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA8, Graphic
         destination[1] = sourceG;
         destination[2] = sourceB;
         destination[3] = source[3];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::packOneRowOfRGBA8ToUnsignedShort4444(source, destination, pixelsPerRow);
 #endif
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
-        *destination = (((source[0] & 0xF0) << 8)
+        destination[0] = (((source[0] & 0xF0) << 8)
                         | ((source[1] & 0xF0) << 4)
                         | (source[2] & 0xF0)
                         | (source[3] >> 4));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-        *destination = (((sourceR & 0xF0) << 8)
+        destination[0] = (((sourceR & 0xF0) << 8)
                         | ((sourceG & 0xF0) << 4)
                         | (sourceB & 0xF0)
                         | (source[3] >> 4));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA4444, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-        *destination = (((sourceR & 0xF0) << 8)
+        destination[0] = (((sourceR & 0xF0) << 8)
                         | ((sourceG & 0xF0) << 4)
                         | (sourceB & 0xF0)
                         | (source[3] >> 4));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::packOneRowOfRGBA8ToUnsignedShort5551(source, destination, pixelsPerRow);
 #endif
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
-        *destination = (((source[0] & 0xF8) << 8)
+        destination[0] = (((source[0] & 0xF8) << 8)
                         | ((source[1] & 0xF8) << 3)
                         | ((source[2] & 0xF8) >> 2)
                         | (source[3] >> 7));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-        *destination = (((sourceR & 0xF8) << 8)
+        destination[0] = (((sourceR & 0xF8) << 8)
                         | ((sourceG & 0xF8) << 3)
                         | ((sourceB & 0xF8) >> 2)
                         | (source[3] >> 7));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA5551, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-        *destination = (((sourceR & 0xF8) << 8)
+        destination[0] = (((sourceR & 0xF8) << 8)
                         | ((sourceG & 0xF8) << 3)
                         | ((sourceB & 0xF8) >> 2)
                         | (source[3] >> 7));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
 #if HAVE(ARM_NEON_INTRINSICS)
     SIMD::packOneRowOfRGBA8ToUnsignedShort565(source, destination, pixelsPerRow);
 #endif
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
-        *destination = (((source[0] & 0xF8) << 8)
+        destination[0] = (((source[0] & 0xF8) << 8)
                         | ((source[1] & 0xFC) << 3)
                         | ((source[2] & 0xF8) >> 3));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] / 255.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-        *destination = (((sourceR & 0xF8) << 8)
+        destination[0] = (((sourceR & 0xF8) << 8)
                         | ((sourceG & 0xFC) << 3)
                         | ((sourceB & 0xF8) >> 3));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(const uint8_t* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB565, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint16_t>(std::span<const uint8_t> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 255.0f / source[3] : 1.0f;
         uint8_t sourceR = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         uint8_t sourceG = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
         uint8_t sourceB = static_cast<uint8_t>(static_cast<float>(source[2]) * scaleFactor);
-        *destination = (((sourceR & 0xF8) << 8)
+        destination[0] = (((sourceR & 0xF8) << 8)
                         | ((sourceG & 0xFC) << 3)
                         | ((sourceB & 0xF8) >> 3));
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[1];
         destination[2] = source[2];
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
         destination[0] = source[0] * scaleFactor;
         destination[1] = source[1] * scaleFactor;
         destination[2] = source[2] * scaleFactor;
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = source[0] * scaleFactor;
         destination[1] = source[1] * scaleFactor;
         destination[2] = source[2] * scaleFactor;
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -845,12 +845,12 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA32F, Graph
         destination[1] = source[1] * scaleFactor;
         destination[2] = source[2] * scaleFactor;
         destination[3] = source[3];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -858,94 +858,94 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA32F, Graph
         destination[1] = source[1] * scaleFactor;
         destination[2] = source[2] * scaleFactor;
         destination[3] = source[3];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::A32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::A32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[3];
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
         destination[0] = source[0] * scaleFactor;
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = source[0] * scaleFactor;
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = source[0];
         destination[1] = source[3];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
         destination[0] = source[0] * scaleFactor;
         destination[1] = source[3];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(const float* source, float* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = source[0] * scaleFactor;
         destination[1] = source[3];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
         destination[1] = convertFloatToHalfFloat(source[1]);
         destination[2] = convertFloatToHalfFloat(source[2]);
         destination[3] = convertFloatToHalfFloat(source[3]);
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
@@ -953,12 +953,12 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, Graph
         destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
         destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
         destination[3] = convertFloatToHalfFloat(source[3]);
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
@@ -966,118 +966,118 @@ template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGBA16F, Graph
         destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
         destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
         destination[3] = convertFloatToHalfFloat(source[3]);
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
         destination[1] = convertFloatToHalfFloat(source[1]);
         destination[2] = convertFloatToHalfFloat(source[2]);
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
         destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
         destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RGB16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
         destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
         destination[2] = convertFloatToHalfFloat(source[2] * scaleFactor);
-        source += 4;
-        destination += 3;
+        skip(source, 4);
+        skip(destination, 3);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
         destination[1] = convertFloatToHalfFloat(source[3]);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
         destination[1] = convertFloatToHalfFloat(source[3]);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::RA16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
         destination[1] = convertFloatToHalfFloat(source[3]);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3];
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::R16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
-template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::A16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixelsPerRow)
+template<> ALWAYS_INLINE void pack<GraphicsContextGL::DataFormat::A16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixelsPerRow)
 {
     for (unsigned i = 0; i < pixelsPerRow; ++i) {
         destination[0] = convertFloatToHalfFloat(source[3]);
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA8_S, GraphicsContextGL::AlphaOp::DoPremultiply, int8_t, int8_t>(const int8_t* source, int8_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA8_S, GraphicsContextGL::AlphaOp::DoPremultiply, int8_t, int8_t>(std::span<const int8_t> source, std::span<int8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[3] = clampMin(source[3]);
@@ -1085,13 +1085,13 @@ void pack<GraphicsContextGL::DataFormat::RGBA8_S, GraphicsContextGL::AlphaOp::Do
         destination[0] = static_cast<int8_t>(static_cast<float>(clampMin(source[0])) * scaleFactor);
         destination[1] = static_cast<int8_t>(static_cast<float>(clampMin(source[1])) * scaleFactor);
         destination[2] = static_cast<int8_t>(static_cast<float>(clampMin(source[2])) * scaleFactor);
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA16, GraphicsContextGL::AlphaOp::DoPremultiply, uint16_t, uint16_t>(const uint16_t* source, uint16_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA16, GraphicsContextGL::AlphaOp::DoPremultiply, uint16_t, uint16_t>(std::span<const uint16_t> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = static_cast<float>(source[3]) / MaxUInt16Value;
@@ -1099,13 +1099,13 @@ void pack<GraphicsContextGL::DataFormat::RGBA16, GraphicsContextGL::AlphaOp::DoP
         destination[1] = static_cast<uint16_t>(static_cast<float>(source[1]) * scaleFactor);
         destination[2] = static_cast<uint16_t>(static_cast<float>(source[2]) * scaleFactor);
         destination[3] = source[3];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA16_S, GraphicsContextGL::AlphaOp::DoPremultiply, int16_t, int16_t>(const int16_t* source, int16_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA16_S, GraphicsContextGL::AlphaOp::DoPremultiply, int16_t, int16_t>(std::span<const int16_t> source, std::span<int16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[3] = clampMin(source[3]);
@@ -1113,13 +1113,13 @@ void pack<GraphicsContextGL::DataFormat::RGBA16_S, GraphicsContextGL::AlphaOp::D
         destination[0] = static_cast<int16_t>(static_cast<float>(clampMin(source[0])) * scaleFactor);
         destination[1] = static_cast<int16_t>(static_cast<float>(clampMin(source[1])) * scaleFactor);
         destination[2] = static_cast<int16_t>(static_cast<float>(clampMin(source[2])) * scaleFactor);
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA32, GraphicsContextGL::AlphaOp::DoPremultiply, uint32_t, uint32_t>(const uint32_t* source, uint32_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA32, GraphicsContextGL::AlphaOp::DoPremultiply, uint32_t, uint32_t>(std::span<const uint32_t> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         double scaleFactor = static_cast<double>(source[3]) / MaxUInt32Value;
@@ -1127,13 +1127,13 @@ void pack<GraphicsContextGL::DataFormat::RGBA32, GraphicsContextGL::AlphaOp::DoP
         destination[1] = static_cast<uint32_t>(static_cast<double>(source[1]) * scaleFactor);
         destination[2] = static_cast<uint32_t>(static_cast<double>(source[2]) * scaleFactor);
         destination[3] = source[3];
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA32_S, GraphicsContextGL::AlphaOp::DoPremultiply, int32_t, int32_t>(const int32_t* source, int32_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA32_S, GraphicsContextGL::AlphaOp::DoPremultiply, int32_t, int32_t>(std::span<const int32_t> source, std::span<int32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[3] = clampMin(source[3]);
@@ -1141,13 +1141,13 @@ void pack<GraphicsContextGL::DataFormat::RGBA32_S, GraphicsContextGL::AlphaOp::D
         destination[0] = static_cast<int32_t>(static_cast<double>(clampMin(source[0])) * scaleFactor);
         destination[1] = static_cast<int32_t>(static_cast<double>(clampMin(source[1])) * scaleFactor);
         destination[2] = static_cast<int32_t>(static_cast<double>(clampMin(source[2])) * scaleFactor);
-        source += 4;
-        destination += 4;
+        skip(source, 4);
+        skip(destination, 4);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoNothing, float, uint32_t>(const float* source, uint32_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoNothing, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         uint32_t r = static_cast<uint32_t>(source[0] * 1023.0f);
@@ -1155,13 +1155,13 @@ void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::Alph
         uint32_t b = static_cast<uint32_t>(source[2] * 1023.0f);
         uint32_t a = static_cast<uint32_t>(source[3] * 3.0f);
         destination[0] = (a << 30) | (b << 20) | (g << 10) | r;
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint32_t>(const float* source, uint32_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         uint32_t r = static_cast<uint32_t>(source[0] * source[3] * 1023.0f);
@@ -1169,13 +1169,13 @@ void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::Alph
         uint32_t b = static_cast<uint32_t>(source[2] * source[3] * 1023.0f);
         uint32_t a = static_cast<uint32_t>(source[3] * 3.0f);
         destination[0] = (a << 30) | (b << 20) | (g << 10) | r;
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint32_t>(const float* source, uint32_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint32_t>(std::span<const float> source, std::span<uint32_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1023.0f / source[3] : 1023.0f;
@@ -1184,116 +1184,116 @@ void pack<GraphicsContextGL::DataFormat::RGBA2_10_10_10, GraphicsContextGL::Alph
         uint32_t b = static_cast<uint32_t>(source[2] * scaleFactor);
         uint32_t a = static_cast<uint32_t>(source[3] * 3.0f);
         destination[0] = (a << 30) | (b << 20) | (g << 10) | r;
-        source += 4;
-        destination += 1;
+        skip(source, 4);
+        skip(destination, 1);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoNothing, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[0] = source[0];
         destination[1] = source[1];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoPremultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = static_cast<float>(source[3]) / MaxUInt8Value;
         destination[0] = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[1] = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(const uint8_t* source, uint8_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG8, GraphicsContextGL::AlphaOp::DoUnmultiply, uint8_t, uint8_t>(std::span<const uint8_t> source, std::span<uint8_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? MaxUInt8Value / static_cast<float>(source[3]) : 1.0f;
         destination[0] = static_cast<uint8_t>(static_cast<float>(source[0]) * scaleFactor);
         destination[1] = static_cast<uint8_t>(static_cast<float>(source[1]) * scaleFactor);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoNothing, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[0] = convertFloatToHalfFloat(source[0]);
         destination[1] = convertFloatToHalfFloat(source[1]);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoPremultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3];
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
         destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(const float* source, uint16_t* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG16F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, uint16_t>(std::span<const float> source, std::span<uint16_t> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = convertFloatToHalfFloat(source[0] * scaleFactor);
         destination[1] = convertFloatToHalfFloat(source[1] * scaleFactor);
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(const float* source, float* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoNothing, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         destination[0] = source[0];
         destination[1] = source[1];
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(const float* source, float* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoPremultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3];
         destination[0] = source[0] * scaleFactor;
         destination[1] = source[1] * scaleFactor;
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
 // FIXME: this routine is lossy and must be removed.
 template<> ALWAYS_INLINE
-void pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(const float* source, float* destination, unsigned pixels_per_row)
+void pack<GraphicsContextGL::DataFormat::RG32F, GraphicsContextGL::AlphaOp::DoUnmultiply, float, float>(std::span<const float> source, std::span<float> destination, unsigned pixels_per_row)
 {
     for (unsigned i = 0; i < pixels_per_row; ++i) {
         float scaleFactor = source[3] ? 1.0f / source[3] : 1.0f;
         destination[0] = source[0] * scaleFactor;
         destination[1] = source[1] * scaleFactor;
-        source += 4;
-        destination += 2;
+        skip(source, 4);
+        skip(destination, 2);
     }
 }
 
@@ -1753,16 +1753,14 @@ ALWAYS_INLINE void FormatConverter::convert()
     const GraphicsContextGL::DataFormat IntermediateSrcFormat = IntermediateFormat<DstFormat>::Value;
     typedef typename DataTypeForFormat<IntermediateSrcFormat>::Type IntermediateSrcType;
     // Stride here could be negative.
-    const ptrdiff_t srcStrideInElements = m_srcStride / sizeof(SrcType);
-    const ptrdiff_t dstStrideInElements = m_dstStride / sizeof(DstType);
-    const bool trivialUnpack = SrcFormat == IntermediateSrcFormat;
-    const bool trivialPack = DstFormat == IntermediateSrcFormat && alphaOp == GraphicsContextGL::AlphaOp::DoNothing;
+    int srcStrideInElements = m_srcStride / sizeof(SrcType);
+    int dstStrideInElements = m_dstStride / sizeof(DstType);
+    bool trivialUnpack = SrcFormat == IntermediateSrcFormat;
+    bool trivialPack = DstFormat == IntermediateSrcFormat && alphaOp == GraphicsContextGL::AlphaOp::DoNothing;
     ASSERT(!trivialUnpack || !trivialPack);
 
-    const SrcType* srcRowStart =
-        static_cast<const SrcType*>(static_cast<const void*>(
-        static_cast<const uint8_t*>(m_srcStart) +
-        ((m_srcStride * m_srcSubRectangle.y()) + m_srcRowOffset)));
+    auto sourceElements = spanReinterpretCast<const SrcType>(m_source);
+    auto srcRowStart = spanReinterpretCast<const SrcType>(m_source.subspan(m_srcStride * m_srcSubRectangle.y() + m_srcRowOffset));
 
     // If packing multiple images into a 3D texture, and flipY is true,
     // then the sub-rectangle is pointing at the start of the
@@ -1770,48 +1768,42 @@ ALWAYS_INLINE void FormatConverter::convert()
     // the positive direction, we need to back it up to point at the
     // last, or "topmost", of these images.
     if (m_dstStride < 0 && m_depth > 1)
-        srcRowStart -= (m_depth - 1) * srcStrideInElements * m_unpackImageHeight;
+        clampedMoveCursorWithinSpan(srcRowStart, sourceElements, -(m_depth - 1) * srcStrideInElements * m_unpackImageHeight);
 
-    DstType* dstRowStart = static_cast<DstType*>(m_dstStart);
+    auto destinationElements = spanReinterpretCast<DstType>(m_destination);
+    auto dstRowStart = spanReinterpretCast<DstType>(m_destinationCursor);
     if (trivialUnpack) {
         for (int d = 0; d < m_depth; ++d) {
             for (int i = 0; i < m_srcSubRectangle.height(); ++i) {
-                pack<DstFormat, alphaOp>(srcRowStart, dstRowStart,
-                    m_srcSubRectangle.width());
-                srcRowStart += srcStrideInElements;
-                dstRowStart += dstStrideInElements;
+                pack<DstFormat, alphaOp>(srcRowStart, dstRowStart, m_srcSubRectangle.width());
+                clampedMoveCursorWithinSpan(srcRowStart, sourceElements, srcStrideInElements);
+                clampedMoveCursorWithinSpan(dstRowStart, destinationElements, dstStrideInElements);
             }
-            srcRowStart += srcStrideInElements * (m_unpackImageHeight - m_srcSubRectangle.height());
+            clampedMoveCursorWithinSpan(srcRowStart, sourceElements, srcStrideInElements * (m_unpackImageHeight - m_srcSubRectangle.height()));
         }
     } else if (trivialPack) {
         for (int d = 0; d < m_depth; ++d) {
             for (int i = 0; i < m_srcSubRectangle.height(); ++i) {
-                unpack<SrcFormat>(srcRowStart, dstRowStart,
-                    m_srcSubRectangle.width());
-                srcRowStart += srcStrideInElements;
-                dstRowStart += dstStrideInElements;
+                unpack<SrcFormat>(srcRowStart, dstRowStart, m_srcSubRectangle.width());
+                clampedMoveCursorWithinSpan(srcRowStart, sourceElements, srcStrideInElements);
+                clampedMoveCursorWithinSpan(dstRowStart, destinationElements, dstStrideInElements);
             }
-            srcRowStart += srcStrideInElements * (m_unpackImageHeight - m_srcSubRectangle.height());
+            clampedMoveCursorWithinSpan(srcRowStart, sourceElements, srcStrideInElements * (m_unpackImageHeight - m_srcSubRectangle.height()));
         }
     } else {
         for (int d = 0; d < m_depth; ++d) {
             for (int i = 0; i < m_srcSubRectangle.height(); ++i) {
-                unpack<SrcFormat>(srcRowStart,
-                    reinterpret_cast<IntermediateSrcType*>(m_unpackedIntermediateSrcData.get()),
-                    m_srcSubRectangle.width());
-                pack<DstFormat, alphaOp>(reinterpret_cast<IntermediateSrcType*>(m_unpackedIntermediateSrcData.get()),
-                    dstRowStart, m_srcSubRectangle.width());
-                srcRowStart += srcStrideInElements;
-                dstRowStart += dstStrideInElements;
+                unpack<SrcFormat>(srcRowStart, spanReinterpretCast<IntermediateSrcType>(m_unpackedIntermediateSrcData.mutableSpan()), m_srcSubRectangle.width());
+                pack<DstFormat, alphaOp>(spanReinterpretCast<const IntermediateSrcType>(m_unpackedIntermediateSrcData.span()), dstRowStart, m_srcSubRectangle.width());
+                clampedMoveCursorWithinSpan(srcRowStart, sourceElements, srcStrideInElements);
+                clampedMoveCursorWithinSpan(dstRowStart, destinationElements, dstStrideInElements);
             }
-            srcRowStart += srcStrideInElements * (m_unpackImageHeight - m_srcSubRectangle.height());
+            clampedMoveCursorWithinSpan(srcRowStart, sourceElements, srcStrideInElements * (m_unpackImageHeight - m_srcSubRectangle.height()));
         }
     }
     m_success = true;
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

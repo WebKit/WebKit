@@ -17,6 +17,18 @@
 namespace rx
 {
 
+enum class BufferType
+{
+    IndexBuffer,
+    ArrayBuffer,
+};
+
+enum class IndexDataNeedsStreaming
+{
+    Yes,
+    No,
+};
+
 class VertexArrayWgpu : public VertexArrayImpl
 {
   public:
@@ -32,6 +44,7 @@ class VertexArrayWgpu : public VertexArrayImpl
 
     angle::Result syncClientArrays(const gl::Context *context,
                                    const gl::AttributesMask &activeAttributesMask,
+                                   gl::PrimitiveMode mode,
                                    GLint first,
                                    GLsizei count,
                                    GLsizei instanceCount,
@@ -39,7 +52,8 @@ class VertexArrayWgpu : public VertexArrayImpl
                                    const void *indices,
                                    GLint baseVertex,
                                    bool primitiveRestartEnabled,
-                                   const void **adjustedIndicesPtr);
+                                   const void **adjustedIndicesPtr,
+                                   uint32_t *indexCountOut);
 
   private:
     angle::Result syncDirtyAttrib(ContextWgpu *contextWgpu,
@@ -47,6 +61,13 @@ class VertexArrayWgpu : public VertexArrayImpl
                                   const gl::VertexBinding &binding,
                                   size_t attribIndex);
     angle::Result syncDirtyElementArrayBuffer(ContextWgpu *contextWgpu);
+
+    angle::Result ensureBufferCreated(const gl::Context *context,
+                                      webgpu::BufferHelper &buffer,
+                                      size_t size,
+                                      size_t attribIndex,
+                                      wgpu::BufferUsage usage,
+                                      BufferType bufferType);
 
     gl::AttribArray<webgpu::PackedVertexAttribute> mCurrentAttribs;
     gl::AttribArray<webgpu::BufferHelper> mStreamingArrayBuffers;

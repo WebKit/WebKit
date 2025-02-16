@@ -179,7 +179,7 @@ public:
 
         if (m_delayedScriptDialogs) {
             webkit_script_dialog_ref(dialog);
-            RunLoop::main().dispatch([this, dialog] {
+            RunLoop::protectedMain()->dispatch([this, dialog] {
                 webkit_script_dialog_close(dialog);
                 webkit_script_dialog_unref(dialog);
                 g_main_loop_quit(m_mainLoop);
@@ -312,7 +312,7 @@ public:
 
     void waitUntilDisplayCaptureStateChangedTo(WebKitMediaCaptureState expectedCaptureState)
     {
-        *m_expectedDisplayCaptureState = expectedCaptureState;
+        m_expectedDisplayCaptureState = expectedCaptureState;
         g_signal_connect(m_webView, "notify::display-capture-state", G_CALLBACK(displayCaptureChanged), this);
         g_main_loop_run(m_mainLoop);
         g_assert_cmpuint(webkit_web_view_get_display_capture_state(m_webView), ==, expectedCaptureState);
@@ -330,7 +330,7 @@ public:
 
     void waitUntilMicrophoneCaptureStateChangedTo(WebKitMediaCaptureState expectedCaptureState)
     {
-        *m_expectedMicrophoneCaptureState = expectedCaptureState;
+        m_expectedMicrophoneCaptureState = expectedCaptureState;
         g_signal_connect(m_webView, "notify::microphone-capture-state", G_CALLBACK(microphoneCaptureChanged), this);
         g_main_loop_run(m_mainLoop);
         g_assert_cmpuint(webkit_web_view_get_microphone_capture_state(m_webView), ==, expectedCaptureState);
@@ -348,7 +348,7 @@ public:
 
     void waitUntilCameraCaptureStateChangedTo(WebKitMediaCaptureState expectedCaptureState)
     {
-        *m_expectedCameraCaptureState = expectedCaptureState;
+        m_expectedCameraCaptureState = expectedCaptureState;
         g_signal_connect(m_webView, "notify::camera-capture-state", G_CALLBACK(cameraCaptureChanged), this);
         g_main_loop_run(m_mainLoop);
         g_assert_cmpuint(webkit_web_view_get_camera_capture_state(m_webView), ==, expectedCaptureState);

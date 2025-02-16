@@ -97,6 +97,7 @@ public:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(bool);
     void spatialVideoMetadataChanged(const std::optional<WebCore::SpatialVideoMetadata>&);
+    void isImmersiveVideoChanged(bool);
 #endif
 
     bool wirelessVideoPlaybackDisabled() const final { return m_wirelessVideoPlaybackDisabled; }
@@ -217,6 +218,7 @@ private:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     bool m_supportsLinearMediaPlayer { false };
     std::optional<WebCore::SpatialVideoMetadata> m_spatialVideoMetadata;
+    bool m_isImmersiveVideo { false };
 #endif
 
 #if !RELEASE_LOG_DISABLED
@@ -290,6 +292,7 @@ private:
 #if ENABLE(LINEAR_MEDIA_PLAYER)
     void supportsLinearMediaPlayerChanged(PlaybackSessionContextIdentifier, bool);
     void spatialVideoMetadataChanged(PlaybackSessionContextIdentifier, const std::optional<WebCore::SpatialVideoMetadata>&);
+    void isImmersiveVideoChanged(PlaybackSessionContextIdentifier, bool);
 #endif
 
     // Messages to PlaybackSessionManager

@@ -28,8 +28,6 @@
 
 #include "vulkan/vulkan_core.h"
 
-#include "spirv-tools/libspirv.h"
-
 #include "spirv/unified1/NonSemanticClspvReflection.h"
 
 namespace rx
@@ -116,6 +114,7 @@ class CLProgramVk : public CLProgramImpl
         VkPushConstantRange pushConstRange{};
         cl_build_status buildStatus{CL_BUILD_NONE};
         cl_program_binary_type binaryType{CL_PROGRAM_BINARY_TYPE_NONE};
+        spv_target_env spirvVersion;
 
         size_t numKernels() const { return reflectionData.kernelArgsMap.size(); }
 
@@ -340,23 +339,8 @@ class CLProgramVk : public CLProgramImpl
                        const LinkProgramsList &LinkProgramsList);
     angle::spirv::Blob stripReflection(const DeviceProgramData *deviceProgramData);
 
-    angle::Result allocateDescriptorSet(const DescriptorSetIndex setIndex,
-                                        const vk::DescriptorSetLayout &descriptorSetLayout,
-                                        vk::CommandBufferHelperCommon *commandBuffer,
-                                        vk::DescriptorSetPointer *descriptorSetOut);
-
     // Sets the status for given associated device programs
     void setBuildStatus(const cl::DevicePtrs &devices, cl_build_status status);
-
-    vk::MetaDescriptorPool &getMetaDescriptorPool(DescriptorSetIndex index)
-    {
-        return mMetaDescriptorPools[index];
-    }
-
-    vk::DynamicDescriptorPoolPointer &getDynamicDescriptorPoolPointer(DescriptorSetIndex index)
-    {
-        return mDynamicDescriptorPools[index];
-    }
 
     const angle::HashMap<uint32_t, ClspvPrintfInfo> *getPrintfDescriptors(
         const std::string &kernelName) const;
@@ -366,8 +350,6 @@ class CLProgramVk : public CLProgramImpl
     std::string mProgramOpts;
     vk::ShaderModulePtr mShader;
     DevicePrograms mAssociatedDevicePrograms;
-    vk::DescriptorSetArray<vk::MetaDescriptorPool> mMetaDescriptorPools;
-    vk::DescriptorSetArray<vk::DynamicDescriptorPoolPointer> mDynamicDescriptorPools;
     angle::SimpleMutex mProgramMutex;
 
     std::shared_ptr<angle::WaitableEvent> mAsyncBuildEvent;

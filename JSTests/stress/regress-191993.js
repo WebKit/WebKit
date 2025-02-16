@@ -5,7 +5,7 @@ noInline(foo);
 
 Object.assign({}, RegExp);
 
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     foo({r: RegExp});
 
 let input = foo({r: RegExp});

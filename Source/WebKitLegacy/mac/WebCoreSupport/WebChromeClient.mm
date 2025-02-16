@@ -261,7 +261,7 @@ RefPtr<Page> WebChromeClient::createWindow(LocalFrame& frame, const String& open
 #if ENABLE(FULLSCREEN_API)
     if (RefPtr document = frame.document()) {
         if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists()) {
-            if (fullscreenManager->currentFullscreenElement())
+            if (fullscreenManager->fullscreenElement())
                 fullscreenManager->cancelFullscreen();
         }
     }
@@ -600,6 +600,12 @@ IntPoint WebChromeClient::screenToRootView(const IntPoint& p) const
     return p;
 }
 
+IntPoint WebChromeClient::rootViewToScreen(const IntPoint& p) const
+{
+    // FIXME: Implement this.
+    return p;
+}
+
 IntRect WebChromeClient::rootViewToScreen(const IntRect& r) const
 {
     // FIXME: Implement this.
@@ -695,8 +701,6 @@ void WebChromeClient::exceededDatabaseQuota(LocalFrame& frame, const String& dat
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
-
 RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& client, const Color& initialColor)
 {
     // FIXME: Implement <input type='color'> for WK1 (Bug 119094).
@@ -704,23 +708,17 @@ RefPtr<ColorChooser> WebChromeClient::createColorChooser(ColorChooserClient& cli
     return nullptr;
 }
 
-#endif
-
-#if ENABLE(DATALIST_ELEMENT)
 RefPtr<DataListSuggestionPicker> WebChromeClient::createDataListSuggestionPicker(DataListSuggestionsClient& client)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
 }
-#endif
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 RefPtr<DateTimeChooser> WebChromeClient::createDateTimeChooser(DateTimeChooserClient&)
 {
     ASSERT_NOT_REACHED();
     return nullptr;
 }
-#endif
 
 void WebChromeClient::setTextIndicator(const WebCore::TextIndicatorData& indicatorData) const
 {
@@ -1045,17 +1043,17 @@ bool WebChromeClient::supportsFullScreenForElement(const Element& element, bool 
 #endif
 }
 
-void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode mode)
+// FIXME: Remove this when rdar://144645925 is resolved.
+void WebChromeClient::enterFullScreenForElement(Element& element, HTMLMediaElementEnums::VideoFullscreenMode, CompletionHandler<void(ExceptionOr<void>)>&& completionHandler)
 {
-    UNUSED_PARAM(mode);
     SEL selector = @selector(webView:enterFullScreenForElement:listener:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:&element]);
+        auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:&element completionHandler:WTFMove(completionHandler)]);
         CallUIDelegate(m_webView, selector, kit(&element), listener.get());
     }
 #if !PLATFORM(IOS_FAMILY)
     else
-        [m_webView _enterFullScreenForElement:&element];
+        [m_webView _enterFullScreenForElement:&element completionHandler:WTFMove(completionHandler)];
 #endif
 }
 
@@ -1063,7 +1061,7 @@ void WebChromeClient::exitFullScreenForElement(Element* element)
 {
     SEL selector = @selector(webView:exitFullScreenForElement:listener:);
     if ([[m_webView UIDelegate] respondsToSelector:selector]) {
-        auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element]);
+        auto listener = adoptNS([[WebKitFullScreenListener alloc] initWithElement:element completionHandler:nullptr]);
         CallUIDelegate(m_webView, selector, kit(element), listener.get());
     }
 #if !PLATFORM(IOS_FAMILY)

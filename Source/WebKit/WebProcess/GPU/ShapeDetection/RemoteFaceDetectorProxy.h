@@ -25,8 +25,6 @@
 
 #pragma once
 
-#if ENABLE(GPU_PROCESS)
-
 #include "RenderingBackendIdentifier.h"
 #include "ShapeDetectionIdentifier.h"
 #include <WebCore/FaceDetectorInterface.h>
@@ -35,6 +33,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
+
+#if ENABLE(GPU_PROCESS)
 
 namespace IPC {
 class StreamClientConnection;

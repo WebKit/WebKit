@@ -1,0 +1,26 @@
+This tests that word navigation in editable contexts is working correctly (testing previous word start, next word end, left word, and right word).
+Current character is: E
+Left word is: Edit
+Right word is: Edit
+Pre word start to next word end: Edit
+
+Current character is: t
+Left word is: Edit
+Right word is:
+Pre word start to next word end: Edit me
+
+Current character is:
+Left word is:
+Right word is: me
+Pre word start to next word end: Edit me
+
+Current character is: e
+Left word is: me
+Right word is: me
+Pre word start to next word end: me
+
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

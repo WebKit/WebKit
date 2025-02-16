@@ -62,6 +62,9 @@ function whenEnabled(command)
     if (summaryInteger === 0x7F)
         return "always";
 
+    if (summaryInteger === 0x75)
+        return "always except editable caret";
+
     if (summaryInteger === 0x54)
         return "range";
 
@@ -90,7 +93,7 @@ shouldBe("whenEnabled('SelectAll')", "'always'");
 
 shouldBe("whenEnabled('Transpose')", "'caret'");
 
-shouldBe("whenEnabled('Copy')", "'range'");
+shouldBe("whenEnabled('Copy')", "'always except editable caret'");
 
 shouldBe("whenEnabled('Cut')", "'editable range'");
 shouldBe("whenEnabled('Delete')", "'editable range'");

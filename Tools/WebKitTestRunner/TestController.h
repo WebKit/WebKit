@@ -196,6 +196,19 @@ public:
     void setPluginSupportedMode(const String&);
 
     void dumpPolicyDelegateCallbacks() { m_dumpPolicyDelegateCallbacks = true; }
+    void dumpFullScreenCallbacks() { m_dumpFullScreenCallbacks = true; }
+    void waitBeforeFinishingFullscreenExit() { m_waitBeforeFinishingFullscreenExit = true; }
+    void finishFullscreenExit(WKPageRef);
+    void requestExitFullscreenFromUIProcess(WKPageRef);
+
+    static bool willEnterFullScreen(WKPageRef, const void*);
+    bool willEnterFullScreen(WKPageRef);
+    static void beganEnterFullScreen(WKPageRef, WKRect initialFrame, WKRect finalFrame, const void*);
+    void beganEnterFullScreen(WKPageRef, WKRect initialFrame, WKRect finalFrame);
+    static void exitFullScreen(WKPageRef, const void*);
+    void exitFullScreen(WKPageRef);
+    static void beganExitFullScreen(WKPageRef, WKRect initialFrame, WKRect finalFrame, const void*);
+    void beganExitFullScreen(WKPageRef, WKRect initialFrame, WKRect finalFrame);
 
     void setShouldLogHistoryClientCallbacks(bool shouldLog) { m_shouldLogHistoryClientCallbacks = shouldLog; }
     void setShouldLogCanAuthenticateAgainstProtectionSpace(bool shouldLog) { m_shouldLogCanAuthenticateAgainstProtectionSpace = shouldLog; }
@@ -292,6 +305,7 @@ public:
     bool didLoadNonAppInitiatedRequest();
 
     void setPageScaleFactor(float scaleFactor, int x, int y, CompletionHandler<void(WKTypeRef)>&&);
+    void updatePresentation(CompletionHandler<void(WKTypeRef)>&&);
 
     void reloadFromOrigin();
 
@@ -356,6 +370,8 @@ public:
     void addTestKeyToKeychain(const String& privateKeyBase64, const String& attrLabel, const String& applicationTagBase64);
     void cleanUpKeychain(const String& attrLabel, const String& applicationLabelBase64);
     bool keyExistsInKeychain(const String& attrLabel, const String& applicationLabelBase64);
+
+    void setResourceMonitorList(WKStringRef rulesText, CompletionHandler<void(WKTypeRef)>&&);
 
 #if PLATFORM(COCOA)
     NSString *overriddenCalendarIdentifier() const;
@@ -453,12 +469,12 @@ private:
     void runTestingServerLoop();
     bool runTest(const char* pathOrURL);
 
-    WKURLRef createTestURL(const char* pathOrURL);
+    WKURLRef createTestURL(std::span<const char> pathOrURL);
 
     // Returns false if timed out.
     bool waitForCompletion(const WTF::Function<void ()>&, WTF::Seconds timeout);
 
-    bool handleControlCommand(const char* command);
+    bool handleControlCommand(std::span<const char> command);
 
     void platformInitialize(const Options&);
     void platformInitializeDataStore(WKPageConfigurationRef, const TestOptions&);
@@ -793,6 +809,8 @@ private:
     size_t m_downloadIndex { 0 };
     bool m_shouldDownloadContentDispositionAttachments { true };
     bool m_dumpPolicyDelegateCallbacks { false };
+    bool m_dumpFullScreenCallbacks { false };
+    bool m_waitBeforeFinishingFullscreenExit { false };
 
 #if PLATFORM(WPE)
     bool m_useWPEPlatformAPI { false };

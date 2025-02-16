@@ -25,6 +25,6 @@ function test(flags)
 }
 noInline(test);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBeArray(test(false), ["hello", "world"]);
 shouldBeArray(test(true), ["hello", "world"]);

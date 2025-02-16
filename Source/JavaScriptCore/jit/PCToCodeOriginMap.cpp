@@ -107,7 +107,7 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(PCToCodeOriginMapBuilder&& ot
 { }
 
 #if ENABLE(FTL_JIT)
-PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(JSTag, VM& vm, B3::PCToOriginMap b3PCToOriginMap)
+PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(JSTag, VM& vm, const B3::PCToOriginMap& b3PCToOriginMap)
     : m_shouldBuildMapping(vm.shouldBuilderPCToCodeOriginMapping())
 {
     if (!m_shouldBuildMapping)
@@ -123,8 +123,8 @@ PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(JSTag, VM& vm, B3::PCToOrigin
 }
 #endif
 
-#if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
-PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(WasmTag, B3::PCToOriginMap b3PCToOriginMap)
+#if ENABLE(WEBASSEMBLY_OMGJIT)
+PCToCodeOriginMapBuilder::PCToCodeOriginMapBuilder(WasmTag, const B3::PCToOriginMap& b3PCToOriginMap)
     : m_shouldBuildMapping(true)
 {
     for (const B3::PCToOriginMap::OriginRange& originRange : b3PCToOriginMap.ranges()) {

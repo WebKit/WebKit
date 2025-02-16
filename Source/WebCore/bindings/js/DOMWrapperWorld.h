@@ -79,7 +79,7 @@ protected:
 
 private:
     JSC::VM& m_vm;
-    HashSet<WindowProxy*> m_jsWindowProxies;
+    UncheckedKeyHashSet<WindowProxy*> m_jsWindowProxies;
     DOMObjectWrapperMap m_wrappers;
 
     String m_name;

@@ -6,7 +6,7 @@ CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the followin
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedHTML value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
-abczxcvbnjkl
+assertSinkEqualsDocumentWriteLn
 
 PASS document.write with html assigned via policy (successful URL transformation).
 PASS document.write with multiple trusted arguments.
@@ -23,7 +23,9 @@ PASS `document.writeln(null)` throws
 PASS `document.write(string)` observes default policy
 PASS `document.write(string, string)` observes default policy
 PASS `document.write(string, TrustedHTML)` observes default policy
+PASS `document.write` passes the correct sink string to the default policy
 PASS `document.writeln(string)` observes default policy
 PASS `document.writeln(string, string)` observes default policy
 PASS `document.writeln(string, TrustedHTML)` observes default policy
+PASS `document.writeln` passes the correct sink string to the default policy
 

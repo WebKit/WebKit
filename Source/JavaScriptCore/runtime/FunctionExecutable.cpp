@@ -28,8 +28,10 @@
 
 #include "CodeBlock.h"
 #include "FunctionCodeBlock.h"
+#include "FunctionConstructor.h"
 #include "FunctionExecutableInlines.h"
 #include "FunctionOverrides.h"
+#include "SourceCodeKey.h"
 #include "IsoCellSetInlines.h"
 #include "JSCJSValueInlines.h"
 
@@ -129,15 +131,25 @@ DEFINE_VISIT_OUTPUT_CONSTRAINTS(FunctionExecutable);
 
 FunctionExecutable* FunctionExecutable::fromGlobalCode(
     const Identifier& name, JSGlobalObject* globalObject, const SourceCode& source, LexicallyScopedFeatures lexicallyScopedFeatures,
-    JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition)
+    JSObject*& exception, int overrideLineNumber, std::optional<int> functionConstructorParametersEndPosition, FunctionConstructionMode functionConstructionMode)
 {
+    if (overrideLineNumber == overrideLineNumberNotFound) {
+        if (auto* executable = globalObject->tryGetCachedFunctionExecutableForFunctionConstructor(name, source, lexicallyScopedFeatures, functionConstructionMode))
+            return executable;
+    }
+
     UnlinkedFunctionExecutable* unlinkedExecutable = 
         UnlinkedFunctionExecutable::fromGlobalCode(
             name, globalObject, source, lexicallyScopedFeatures, exception, overrideLineNumber, functionConstructorParametersEndPosition);
     if (!unlinkedExecutable)
         return nullptr;
 
-    return unlinkedExecutable->link(globalObject->vm(), nullptr, source, overrideLineNumber);
+    auto* executable = unlinkedExecutable->link(globalObject->vm(), nullptr, source, overrideLineNumber);
+    if (overrideLineNumber == overrideLineNumberNotFound) {
+        if (executable)
+            globalObject->cachedFunctionExecutableForFunctionConstructor(executable);
+    }
+    return executable;
 }
 
 FunctionExecutable::RareData& FunctionExecutable::ensureRareDataSlow()

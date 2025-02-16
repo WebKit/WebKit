@@ -9,6 +9,7 @@
 
 #include "include/gpu/ShaderErrorHandler.h"
 #include "include/gpu/graphite/BackendTexture.h"
+#include "include/gpu/graphite/mtl/MtlGraphiteTypesUtils.h"
 #include "src/sksl/SkSLProgramKind.h"
 
 #include "src/core/SkSLTypeShared.h"
@@ -74,9 +75,8 @@ sk_sp<ComputePipeline> MtlResourceProvider::createComputePipeline(
 }
 
 sk_sp<Texture> MtlResourceProvider::createTexture(SkISize dimensions,
-                                                  const TextureInfo& info,
-                                                  skgpu::Budgeted budgeted) {
-    return MtlTexture::Make(this->mtlSharedContext(), dimensions, info, budgeted);
+                                                  const TextureInfo& info) {
+    return MtlTexture::Make(this->mtlSharedContext(), dimensions, info);
 }
 
 sk_sp<Texture> MtlResourceProvider::onCreateWrappedTexture(const BackendTexture& texture) {

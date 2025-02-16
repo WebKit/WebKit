@@ -27,6 +27,7 @@
 #import "WebFrameNetworkingContext.h"
 
 #import "NetworkSession.h"
+#import "WebErrors.h"
 #import "WebPage.h"
 #import "WebProcess.h"
 #import "WebsiteDataStoreParameters.h"
@@ -66,7 +67,7 @@ String WebFrameNetworkingContext::sourceApplicationIdentifier() const
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
-    return protectedFrame()->protectedLoader()->protectedClient()->blockedError(request);
+    return WebKit::blockedError(request);
 }
 
 WebLocalFrameLoaderClient* WebFrameNetworkingContext::webFrameLoaderClient() const

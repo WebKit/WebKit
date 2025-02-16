@@ -23,7 +23,7 @@ noInline(iterator);
 var node_list = {
     [Symbol.iterator]: iterator,
 }
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     f(node_list);
 }
 x = true;

@@ -10,5 +10,5 @@ function test(a, b, c)
 var bound1 = test.bind(undefined, 0, 1, 2);
 var bound2 = bound1.bind(undefined);
 
-for (var i = 0; i < 1e6; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(bound2(), 3);

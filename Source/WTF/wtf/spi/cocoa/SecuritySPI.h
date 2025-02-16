@@ -58,7 +58,7 @@ enum {
     kSecSignatureHashAlgorithmMD4 = 2,
     kSecSignatureHashAlgorithmMD5 = 3,
     kSecSignatureHashAlgorithmSHA1 = 4,
-    kSecSignatureHashAlgorithmSHA224 = 5,
+    DeprecatedKSecSignatureHashAlgorithmSHA224 = 5,
     kSecSignatureHashAlgorithmSHA256 = 6,
     kSecSignatureHashAlgorithmSHA384 = 7,
     kSecSignatureHashAlgorithmSHA512 = 8
@@ -124,6 +124,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(COCOA)
 CF_RETURNS_RETAINED CFDataRef SecTrustSerialize(SecTrustRef, CFErrorRef *);
 CF_RETURNS_RETAINED SecTrustRef SecTrustDeserialize(CFDataRef serializedTrust, CFErrorRef *);
+CF_RETURNS_RETAINED CFPropertyListRef SecTrustCopyPropertyListRepresentation(SecTrustRef, CFErrorRef *);
+CF_RETURNS_RETAINED SecTrustRef SecTrustCreateFromPropertyListRepresentation(CFPropertyListRef trustPlist, CFErrorRef *);
 #endif
 
 CF_RETURNS_RETAINED CFDictionaryRef SecTrustCopyInfo(SecTrustRef);

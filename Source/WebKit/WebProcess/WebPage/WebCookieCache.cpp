@@ -65,14 +65,14 @@ static String cookiesToString(const Vector<WebCore::Cookie>& cookies)
     return cookiesBuilder.toString();
 }
 
-String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, IncludeSecureCookies includeSecureCookies)
+String WebCookieCache::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, WebPageProxyIdentifier webPageProxyID, IncludeSecureCookies includeSecureCookies)
 {
     bool hasCacheForHost = m_hostsWithInMemoryStorage.contains<StringViewHashTranslator>(url.host());
     if (!hasCacheForHost || cacheMayBeOutOfSync()) {
         auto host = url.host().toString();
 #if HAVE(COOKIE_CHANGE_LISTENER_API)
         if (!hasCacheForHost)
-            WebProcess::singleton().protectedCookieJar()->addChangeListenerWithAccess(url, firstParty, frameID, pageID, ShouldRelaxThirdPartyCookieBlocking::No, *this);
+            WebProcess::singleton().protectedCookieJar()->addChangeListenerWithAccess(url, firstParty, frameID, pageID, webPageProxyID, *this);
 #endif
         auto sendResult = WebProcess::singleton().ensureNetworkProcessConnection().protectedConnection()->sendSync(Messages::NetworkConnectionToWebProcess::DomCookiesForHost(url), 0);
         if (!sendResult.succeeded())
@@ -162,12 +162,19 @@ void WebCookieCache::pruneCacheIfNecessary()
         clearForHost(*m_hostsWithInMemoryStorage.random());
 }
 
-#if !PLATFORM(COCOA)
+#if !PLATFORM(COCOA) && !USE(SOUP)
 NetworkStorageSession& WebCookieCache::inMemoryStorageSession()
 {
     ASSERT_NOT_IMPLEMENTED_YET();
     return *m_inMemoryStorageSession;
 }
+
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+void WebCookieCache::setOptInCookiePartitioningEnabled(bool)
+{
+    ASSERT_NOT_IMPLEMENTED_YET();
+}
+#endif
 #endif
 
 bool WebCookieCache::cacheMayBeOutOfSync() const

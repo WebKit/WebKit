@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2005-2025 Apple Inc. All rights reserved.
  * Copyright (C) 2014 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -23,9 +23,11 @@
 
 #include "BorderShape.h"
 #include "ButtonPart.h"
+#include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "ColorBlending.h"
 #include "ColorLuminance.h"
+#include "ColorSerialization.h"
 #include "ColorWellPart.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
@@ -39,9 +41,11 @@
 #include "GraphicsTypes.h"
 #include "HTMLAttachmentElement.h"
 #include "HTMLButtonElement.h"
+#include "HTMLDataListElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
+#include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
 #include "HTMLTextAreaElement.h"
@@ -82,11 +86,6 @@
 
 #if ENABLE(SERVICE_CONTROLS)
 #include "ImageControlsMac.h"
-#endif
-
-#if ENABLE(DATALIST_ELEMENT)
-#include "HTMLDataListElement.h"
-#include "HTMLOptionElement.h"
 #endif
 
 namespace WebCore {
@@ -225,7 +224,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         case StyleAppearance::MenulistButton:
             appearance = widgetMayDevolve ? StyleAppearance::MenulistButton : StyleAppearance::None;
             break;
-#if PLATFORM(IOS_FAMILY) && ENABLE(DATALIST_ELEMENT)
+#if PLATFORM(IOS_FAMILY)
         case StyleAppearance::ListButton:
 #endif
         default:
@@ -236,7 +235,7 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         style.setUsedAppearance(appearance);
     }
 
-    if (!widgetMayDevolve && appearance == StyleAppearance::SearchField && searchFieldShouldAppearAsTextField(style)) {
+    if (appearance == StyleAppearance::SearchField && searchFieldShouldAppearAsTextField(style)) {
         appearance = StyleAppearance::TextField;
         style.setUsedAppearance(appearance);
     }
@@ -258,10 +257,8 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
         return adjustCheckboxStyle(style, element);
     case StyleAppearance::Radio:
         return adjustRadioStyle(style, element);
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         return adjustColorWellStyle(style, element);
-#endif
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
     case StyleAppearance::DefaultButton:
@@ -310,10 +307,8 @@ void RenderTheme::adjustStyle(RenderStyle& style, const Element* element, const 
     case StyleAppearance::ApplePayButton:
         return adjustApplePayButtonStyle(style, element);
 #endif
-#if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
         return adjustListButtonStyle(style, element);
-#endif
     default:
         break;
     }
@@ -350,10 +345,8 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
 #endif
         }
 
-#if ENABLE(INPUT_TYPE_COLOR)
         if (input->isColorControl())
             return StyleAppearance::ColorWell;
-#endif
 
         if (input->isRangeControl())
             return style.writingMode().isHorizontal() ? StyleAppearance::SliderHorizontal : StyleAppearance::SliderVertical;
@@ -399,10 +392,8 @@ StyleAppearance RenderTheme::autoAppearanceForElement(RenderStyle& style, const 
     if (element->isInUserAgentShadowTree()) {
         auto& part = element->userAgentPart();
 
-#if ENABLE(DATALIST_ELEMENT)
         if (part == UserAgentParts::webkitListButton())
             return StyleAppearance::ListButton;
-#endif
 
         if (part == UserAgentParts::webkitSearchCancelButton())
             return StyleAppearance::SearchFieldCancelButton;
@@ -510,7 +501,6 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
         thumbPosition = (input.valueAsNumber() - minimum) / (maximum - minimum);
 
     Vector<double> tickRatios;
-#if ENABLE(DATALIST_ELEMENT)
     if (auto dataList = input.dataList()) {
 
         for (auto& optionElement : dataList->suggestions()) {
@@ -521,7 +511,6 @@ static void updateSliderTrackPartForRenderer(SliderTrackPart& sliderTrackPart, c
             tickRatios.append(tickRatio);
         }
     }
-#endif
 
     sliderTrackPart.setThumbSize(thumbSize);
     sliderTrackPart.setTrackBounds(trackBounds);
@@ -603,10 +592,9 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case StyleAppearance::TextField:
         return TextFieldPart::create();
 
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         return ColorWellPart::create();
-#endif
+
 #if ENABLE(SERVICE_CONTROLS)
     case StyleAppearance::ImageControlsButton:
         return ImageControlsButtonPart::create();
@@ -615,10 +603,8 @@ RefPtr<ControlPart> RenderTheme::createControlPart(const RenderObject& renderer)
     case StyleAppearance::InnerSpinButton:
         return InnerSpinButtonPart::create();
 
-#if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
         break;
-#endif
 
     case StyleAppearance::SearchFieldDecoration:
         break;
@@ -714,19 +700,17 @@ OptionSet<ControlStyle::State> RenderTheme::extractControlStyleStatesForRenderer
         states.add(ControlStyle::State::FormSemanticContext);
     if (renderer.useDarkAppearance())
         states.add(ControlStyle::State::DarkAppearance);
-    if (!renderer.style().isLeftToRightDirection())
-        states.add(ControlStyle::State::RightToLeft);
+    if (renderer.writingMode().isInlineFlipped())
+        states.add(ControlStyle::State::InlineFlippedWritingMode);
     if (supportsLargeFormControls())
         states.add(ControlStyle::State::LargeControls);
     if (isReadOnlyControl(renderer))
         states.add(ControlStyle::State::ReadOnly);
-#if ENABLE(DATALIST_ELEMENT)
     if (hasListButton(renderer)) {
         states.add(ControlStyle::State::ListButton);
         if (hasListButtonPressed(renderer))
             states.add(ControlStyle::State::ListButtonPressed);
     }
-#endif
     if (!renderer.writingMode().isHorizontal())
         states.add(ControlStyle::State::VerticalWritingMode);
     return states;
@@ -826,10 +810,8 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
         return paintCheckbox(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::Radio:
         return paintRadio(box, paintInfo, devicePixelSnappedRect);
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         return paintColorWell(box, paintInfo, integralSnappedRect);
-#endif
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
     case StyleAppearance::DefaultButton:
@@ -853,7 +835,7 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::Listbox:
         return true;
     case StyleAppearance::SearchField:
-        return paintSearchField(box, paintInfo, integralSnappedRect);
+        return paintSearchField(box, paintInfo, devicePixelSnappedRect);
     case StyleAppearance::SearchFieldCancelButton:
         return paintSearchFieldCancelButton(box, paintInfo, integralSnappedRect);
     case StyleAppearance::SearchFieldDecoration:
@@ -872,10 +854,8 @@ bool RenderTheme::paint(const RenderBox& box, const PaintInfo& paintInfo, const 
     case StyleAppearance::ImageControlsButton:
         return paintImageControlsButton(box, paintInfo, integralSnappedRect);
 #endif
-#if ENABLE(DATALIST_ELEMENT)
     case StyleAppearance::ListButton:
         return paintListButton(box, paintInfo, devicePixelSnappedRect);
-#endif
 #if ENABLE(ATTACHMENT_ELEMENT)
     case StyleAppearance::Attachment:
     case StyleAppearance::BorderlessAttachment:
@@ -912,9 +892,7 @@ bool RenderTheme::paintBorderOnly(const RenderBox& box, const PaintInfo& paintIn
     case StyleAppearance::Radio:
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
     case StyleAppearance::Menulist:
@@ -964,11 +942,9 @@ void RenderTheme::paintDecorations(const RenderBox& box, const PaintInfo& paintI
     case StyleAppearance::SquareButton:
         paintSquareButtonDecorations(box, paintInfo, integralSnappedRect);
         break;
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
         paintColorWellDecorations(box, paintInfo, devicePixelSnappedRect);
         break;
-#endif
     case StyleAppearance::Menulist:
         paintMenuListDecorations(box, paintInfo, integralSnappedRect);
         break;
@@ -1127,9 +1103,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     switch (style.usedAppearance()) {
     case StyleAppearance::PushButton:
     case StyleAppearance::SquareButton:
-#if ENABLE(INPUT_TYPE_COLOR)
     case StyleAppearance::ColorWell:
-#endif
     case StyleAppearance::DefaultButton:
     case StyleAppearance::Button:
     case StyleAppearance::Listbox:
@@ -1146,7 +1120,7 @@ bool RenderTheme::isControlStyled(const RenderStyle& style, const RenderStyle& u
     }
 }
 
-bool RenderTheme::supportsFocusRing(const RenderStyle& style) const
+bool RenderTheme::supportsFocusRing(const RenderObject&, const RenderStyle& style) const
 {
     return style.hasUsedAppearance()
         && style.usedAppearance() != StyleAppearance::TextField
@@ -1247,11 +1221,10 @@ bool RenderTheme::isDefault(const RenderObject& o) const
     return o.style().usedAppearance() == StyleAppearance::DefaultButton;
 }
 
-#if ENABLE(DATALIST_ELEMENT)
 bool RenderTheme::hasListButton(const RenderObject& renderer) const
 {
     RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.generatingNode());
-    return input && input->list();
+    return input && input->hasDataList();
 }
 
 bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
@@ -1259,7 +1232,6 @@ bool RenderTheme::hasListButtonPressed(const RenderObject& renderer) const
     RefPtr input = dynamicDowncast<HTMLInputElement>(renderer.generatingNode());
     return input && input->dataListButtonElement() && input->dataListButtonElement()->active();
 }
-#endif
 
 // FIXME: iOS does not use this so arguably this should be better abstracted. Or maybe we should
 // investigate if we can bring the various ports closer together.
@@ -1272,9 +1244,7 @@ void RenderTheme::adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle
 
     auto supportsVerticalWritingMode = [](StyleAppearance appearance) {
         return appearance == StyleAppearance::Button
-#if ENABLE(INPUT_TYPE_COLOR)
             || appearance == StyleAppearance::ColorWell
-#endif
             || appearance == StyleAppearance::DefaultButton
             || appearance == StyleAppearance::SquareButton
             || appearance == StyleAppearance::PushButton;
@@ -1359,12 +1329,10 @@ void RenderTheme::adjustRadioStyle(RenderStyle& style, const Element* element) c
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
 
-#if ENABLE(INPUT_TYPE_COLOR)
 void RenderTheme::adjustColorWellStyle(RenderStyle& style, const Element* element) const
 {
     adjustButtonOrCheckboxOrColorWellOrInnerSpinButtonOrRadioStyle(style, element);
 }
-#endif
 
 void RenderTheme::adjustButtonStyle(RenderStyle& style, const Element* element) const
 {
@@ -1401,22 +1369,6 @@ String RenderTheme::attachmentStyleSheet() const
 }
 
 #endif // ENABLE(ATTACHMENT_ELEMENT)
-
-#if ENABLE(INPUT_TYPE_COLOR)
-
-String RenderTheme::colorInputStyleSheet() const
-{
-    return "input[type=\"color\"] { appearance: auto; inline-size: 44px; block-size: 23px; box-sizing: border-box; outline: none; } "_s;
-}
-
-#endif // ENABLE(INPUT_TYPE_COLOR)
-
-#if ENABLE(DATALIST_ELEMENT)
-
-String RenderTheme::dataListStyleSheet() const
-{
-    return "datalist { display: none; }"_s;
-}
 
 void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo& paintInfo, const FloatRect& rect)
 {
@@ -1477,11 +1429,11 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
     }
     GraphicsContextStateSaver stateSaver(paintInfo.context());
     paintInfo.context().setFillColor(renderer.style().visitedDependentColorWithColorFilter(CSSPropertyColor));
-    bool isReversedInlineDirection = (!isHorizontal && renderer.writingMode().isHorizontal()) || !renderer.style().isLeftToRightDirection();
+    bool isInlineFlipped = (!isHorizontal && renderer.writingMode().isHorizontal()) || renderer.writingMode().isInlineFlipped();
     for (auto& optionElement : dataList->suggestions()) {
         if (auto optionValue = input->listOptionValueAsDouble(optionElement)) {
             double tickFraction = (*optionValue - min) / (max - min);
-            double tickRatio = isReversedInlineDirection ? 1.0 - tickFraction : tickFraction;
+            double tickRatio = isInlineFlipped ? 1.0 - tickFraction : tickFraction;
             double tickPosition = round(tickRegionSideMargin + tickRegionWidth * tickRatio);
             if (isHorizontal)
                 tickRect.setX(tickPosition);
@@ -1492,11 +1444,16 @@ void RenderTheme::paintSliderTicks(const RenderObject& renderer, const PaintInfo
     }
 }
 
-#endif // ENABLE(DATALIST_ELEMENT)
-
 bool RenderTheme::shouldHaveSpinButton(const HTMLInputElement& inputElement) const
 {
     return inputElement.isSteppable() && !inputElement.isRangeControl();
+}
+
+void RenderTheme::setColorWellSwatchBackground(HTMLElement& swatch, Color color)
+{
+    if (!color.isOpaque())
+        color = blendSourceOver(Color::white, color);
+    swatch.setInlineStyleProperty(CSSPropertyBackgroundColor, serializationForHTML(color));
 }
 
 void RenderTheme::adjustSliderThumbStyle(RenderStyle& style, const Element* element) const

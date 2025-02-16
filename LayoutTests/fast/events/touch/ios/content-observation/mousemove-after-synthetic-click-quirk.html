@@ -1,0 +1,80 @@
+<!DOCTYPE html><!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<script src="../../../../../resources/ui-helper.js"></script>
+<script src="../../../../../resources/js-test.js"></script>
+<style>
+#target {
+    width: 300px;
+    height: 300px;
+    border: 1px solid green;
+}
+
+#target-wrapper {
+    width: 320px;
+    height: 320px;
+    border: 1px solid blue;
+}
+
+#popup {
+    position: absolute;
+    top: 100px;
+    left: -1000px;
+    width: 100px;
+    height: 100px;
+    background-color: green;
+    transition: left 0ms ease-in-out 0ms;
+}
+</style>
+<script>
+jsTestIsAsync = true;
+dispatchedMouseMoveOverTarget = false;
+dispatchedMouseOutOverWrapper = false;
+dispatchedMouseMoveOverWrapper = false;
+window.internals?.settings.setContentChangeObserverEnabled(true);
+window.internals?.setTopDocumentURLForQuirks("https://www.youtube.com");
+
+addEventListener("load", async () => {
+    description("Verifies that mousemove is dispatched after a synthetic click");
+
+    let targetContainer = document.getElementById("target-wrapper");
+    let target = document.getElementById("target");
+    let popup = document.getElementById("popup");
+
+    target.addEventListener("mousemove", event => {
+        popup.style.left = "10px";
+        dispatchedMouseMoveOverTarget = true;
+    });
+    target.addEventListener("click", event => {
+        testPassed("Clicked target");
+        target.remove();
+        targetContainer.addEventListener("mousemove", () => { dispatchedMouseMoveOverWrapper = true; });
+        targetContainer.addEventListener("mouseout", () => { dispatchedMouseOutOverWrapper = true; });
+    });
+    popup.addEventListener("click", () => testFailed("Unexpected click over popup"));
+
+    // First tap should trigger mouse hover.
+    await UIHelper.activateElement(target);
+    await shouldBecomeEqual("dispatchedMouseMoveOverTarget", "true");
+
+    // Second tap should complete the synthetic click.
+    await UIHelper.waitForDoubleTapDelay();
+    await UIHelper.activateElement(target);
+
+    await shouldBecomeEqual("dispatchedMouseMoveOverWrapper", "true");
+    await shouldBecomeEqual("dispatchedMouseOutOverWrapper", "true");
+
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div id="target-wrapper">
+        <div id="target"></div>
+    </div>
+    <div id="popup"></div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>

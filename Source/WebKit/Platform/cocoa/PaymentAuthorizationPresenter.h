@@ -29,6 +29,7 @@
 
 #include "CocoaWindow.h"
 #include <WebCore/ApplePaySessionPaymentRequest.h>
+#include <wtf/AbstractRefCountedAndCanMakeWeakPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
@@ -58,9 +59,8 @@ class PaymentAuthorizationPresenter : public RefCountedAndCanMakeWeakPtr<Payment
     WTF_MAKE_TZONE_ALLOCATED(PaymentAuthorizationPresenter);
     WTF_MAKE_NONCOPYABLE(PaymentAuthorizationPresenter);
 public:
-    struct Client : public CanMakeWeakPtr<Client>, public CanMakeCheckedPtr<Client> {
+    struct Client : public AbstractRefCountedAndCanMakeWeakPtr<Client> {
         WTF_MAKE_STRUCT_FAST_ALLOCATED;
-        WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(Client);
 
         virtual ~Client() = default;
 
@@ -78,8 +78,7 @@ public:
 
     virtual ~PaymentAuthorizationPresenter() = default;
 
-    Client* client() { return m_client.get(); }
-    CheckedPtr<Client> checkedClient() { return m_client.get(); }
+    RefPtr<Client> protectedClient() { return m_client.get(); }
 
     void completeMerchantValidation(const WebCore::PaymentMerchantSession&);
     void completePaymentMethodSelection(std::optional<WebCore::ApplePayPaymentMethodUpdate>&&);

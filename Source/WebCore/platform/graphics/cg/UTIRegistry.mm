@@ -32,6 +32,7 @@
 #import "UTIUtilities.h"
 #import <ImageIO/ImageIO.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
+#import <pal/cocoa/LockdownModeSoftLink.h>
 #import <wtf/HashSet.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
@@ -43,9 +44,42 @@
 
 namespace WebCore {
 
-const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes()
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+static bool isLockdownModeEnabled()
+{
+    static std::optional<bool> isLockdownModeEnabled;
+    if (!isLockdownModeEnabled)
+        isLockdownModeEnabled = PAL::isLockdownModeEnabled();
+    return *isLockdownModeEnabled;
+}
+#endif
+
+template<std::size_t size>
+static MemoryCompactLookupOnlyRobinHoodHashSet<String> filterSupportedImageTypes(const std::array<ASCIILiteral, size>& imageTypes)
+{
+    auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
+    CFIndex count = CFArrayGetCount(systemSupportedCFImageTypes.get());
+
+    UncheckedKeyHashSet<String> systemSupportedImageTypes;
+    CFArrayApplyFunction(systemSupportedCFImageTypes.get(), CFRangeMake(0, count), [](const void *value, void *context) {
+        String imageType = static_cast<CFStringRef>(value);
+        static_cast<UncheckedKeyHashSet<String>*>(context)->add(imageType);
+    }, &systemSupportedImageTypes);
+
+    MemoryCompactLookupOnlyRobinHoodHashSet<String> filtered;
+    for (auto& imageType : imageTypes) {
+        if (systemSupportedImageTypes.contains(imageType))
+            filtered.add(imageType);
+    }
+
+    return filtered;
+}
+
+static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageTypes()
 {
     static NeverDestroyed defaultSupportedImageTypes = [] {
+        // Changes to supported formats may require updates in Info.plist
+        // accepted formats for macOS clients such as Safari or MiniBrowse.
         static constexpr std::array defaultSupportedImageTypes = {
             "com.compuserve.gif"_s,
             "com.microsoft.bmp"_s,
@@ -74,29 +108,38 @@ const MemoryCompactLookupOnlyRobinHoodHashSet<String>& defaultSupportedImageType
 #endif
         };
 
-        auto systemSupportedCFImageTypes = adoptCF(CGImageSourceCopyTypeIdentifiers());
-        CFIndex count = CFArrayGetCount(systemSupportedCFImageTypes.get());
-
-        HashSet<String> systemSupportedImageTypes;
-        CFArrayApplyFunction(systemSupportedCFImageTypes.get(), CFRangeMake(0, count), [](const void *value, void *context) {
-            String imageType = static_cast<CFStringRef>(value);
-            static_cast<HashSet<String>*>(context)->add(imageType);
-        }, &systemSupportedImageTypes);
-
-        MemoryCompactLookupOnlyRobinHoodHashSet<String> filtered;
-        for (auto& imageType : defaultSupportedImageTypes) {
-            if (systemSupportedImageTypes.contains(imageType))
-                filtered.add(imageType);
-        }
-        // rdar://104940377 Workaround for CGImageSourceCopyTypeIdentifiers not returning AVIF for iOS simulator
-#if HAVE(CG_IMAGE_SOURCE_AVIF_IMAGE_TYPES_BUG)
-        filtered.add("public.avif"_s);
-        filtered.add("public.avis"_s);
-#endif
-        return filtered;
+        return filterSupportedImageTypes(defaultSupportedImageTypes);
     }();
 
     return defaultSupportedImageTypes;
+}
+
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+static const MemoryCompactLookupOnlyRobinHoodHashSet<String>& lockdownSupportedImageTypes()
+{
+    static NeverDestroyed lockdownSupportedImageTypes = [] {
+        // Keep this list in sync with process-entitlements.sh.
+        static constexpr std::array lockdownSupportedImageTypes = {
+            "org.webmproject.webp"_s,
+            "public.jpeg"_s,
+            "public.png"_s,
+            "com.compuserve.gif"_s,
+        };
+
+        return filterSupportedImageTypes(lockdownSupportedImageTypes);
+    }();
+
+    return lockdownSupportedImageTypes;
+}
+#endif
+
+const MemoryCompactLookupOnlyRobinHoodHashSet<String>& supportedImageTypes()
+{
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+    if (isLockdownModeEnabled())
+        return lockdownSupportedImageTypes();
+#endif
+    return defaultSupportedImageTypes();
 }
 
 MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
@@ -107,6 +150,10 @@ MemoryCompactRobinHoodHashSet<String>& additionalSupportedImageTypes()
 
 void setAdditionalSupportedImageTypes(const Vector<String>& imageTypes)
 {
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+    if (isLockdownModeEnabled())
+        return;
+#endif
     MIMETypeRegistry::additionalSupportedImageMIMETypes().clear();
     for (const auto& imageType : imageTypes) {
         additionalSupportedImageTypes().add(imageType);
@@ -124,7 +171,7 @@ bool isSupportedImageType(const String& imageType)
 {
     if (imageType.isEmpty())
         return false;
-    return defaultSupportedImageTypes().contains(imageType) || additionalSupportedImageTypes().contains(imageType);
+    return supportedImageTypes().contains(imageType) || additionalSupportedImageTypes().contains(imageType);
 }
 
 bool isGIFImageType(StringView imageType)
@@ -145,24 +192,58 @@ String preferredExtensionForImageType(const String& uti)
 
     auto *type = [UTType typeWithIdentifier:uti];
     String extension = type.preferredFilenameExtension;
-    RELEASE_ASSERT(oldExtension == extension);
+    if (UNLIKELY(oldExtension != extension)) {
+        std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
+        auto utiInfo = makeString(uti, '~', oldExtension, '~', extension);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        strncpy(reinterpret_cast<char*>(values.data()), utiInfo.utf8().data(), sizeof(values));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
+    }
     return extension;
+}
+
+static Vector<String> allowableDefaultSupportedImageTypes()
+{
+    auto allowableDefaultSupportedImageTypes = copyToVector(defaultSupportedImageTypes());
+#if HAVE(AVIF)
+    // AVIF might be embedded in a HEIF container. So HEIF/HEIC decoding have
+    // to be allowed to get AVIF decoded.
+    allowableDefaultSupportedImageTypes.append("public.heif"_s);
+    allowableDefaultSupportedImageTypes.append("public.heic"_s);
+#endif
+    // JPEG2000 is supported only for PDF. Allow it at the process
+    // level but disallow it in WebCore.
+    allowableDefaultSupportedImageTypes.append("public.jpeg-2000"_s);
+    return allowableDefaultSupportedImageTypes;
+}
+
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+static Vector<String> allowableLockdownSupportedImageTypes()
+{
+    return copyToVector(lockdownSupportedImageTypes());
+}
+#endif
+
+static Vector<String> allowableSupportedImageTypes()
+{
+#if HAVE(LOCKDOWN_MODE_FRAMEWORK)
+    if (isLockdownModeEnabled())
+        return allowableLockdownSupportedImageTypes();
+#endif
+    return allowableDefaultSupportedImageTypes();
+}
+
+static Vector<String> allowableAdditionalSupportedImageTypes()
+{
+    return copyToVector(additionalSupportedImageTypes());
 }
 
 Vector<String> allowableImageTypes()
 {
-    auto allowableImageTypes = copyToVector(defaultSupportedImageTypes());
-    auto additionalImageTypes = copyToVector(additionalSupportedImageTypes());
+    auto allowableImageTypes = allowableSupportedImageTypes();
+    auto additionalImageTypes = allowableAdditionalSupportedImageTypes();
     allowableImageTypes.appendVector(additionalImageTypes);
-#if HAVE(AVIF)
-    // AVIF might be embedded in a HEIF container. So HEIF/HEIC decoding have
-    // to be allowed to get AVIF decoded.
-    allowableImageTypes.append("public.heif"_s);
-    allowableImageTypes.append("public.heic"_s);
-#endif
-    // JPEG2000 is supported only for PDF. Allow it at the process
-    // level but disallow it in WebCore.
-    allowableImageTypes.append("public.jpeg-2000"_s);
     return allowableImageTypes;
 }
 

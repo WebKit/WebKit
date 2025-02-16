@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
+#if PLATFORM(IOS_FAMILY)
 
 #import "PlatformUtilities.h"
 #import "TestInputDelegate.h"
@@ -34,11 +34,10 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <pal/spi/ios/BrowserEngineKitSPI.h>
 
-@interface DataListTextSuggestionInputDelegate : NSObject <UITextInputSuggestionDelegate
+@interface DataListTextSuggestionInputDelegate : NSObject
 #if USE(BROWSERENGINEKIT)
-    , BETextInputDelegate
+    <BETextInputDelegate>
 #endif
->
 @end
 
 @implementation DataListTextSuggestionInputDelegate {
@@ -151,7 +150,7 @@ TEST(DataListTextSuggestionTestView, InsertSuggestion)
         "</datalist>"];
 
     RetainPtr inputDelegate = adoptNS([[DataListTextSuggestionInputDelegate alloc] init]);
-    [[webView textInputContentView] setInputDelegate:inputDelegate.get()];
+    [[webView textInputContentView] setInputDelegate:static_cast<id<UITextInputDelegate>>(inputDelegate.get())];
 #if USE(BROWSERENGINEKIT)
     [[webView asyncTextInput] setAsyncInputDelegate:inputDelegate.get()];
 #endif
@@ -171,4 +170,4 @@ TEST(DataListTextSuggestionTestView, InsertSuggestion)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(DATALIST_ELEMENT) && PLATFORM(IOS_FAMILY)
+#endif // PLATFORM(IOS_FAMILY)

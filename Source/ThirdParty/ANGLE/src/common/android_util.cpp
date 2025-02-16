@@ -45,6 +45,16 @@ typedef struct native_handle
 // https://android.googlesource.com/platform/frameworks/native/+/master/libs/nativebase/include/nativebase/nativebase.h
 typedef const native_handle_t *buffer_handle_t;
 
+// Taken from nativebase/nativebase.h
+// https://android.googlesource.com/platform/frameworks/native/+/master/libs/nativebase/include/nativebase/nativebase.h
+#define ANDROID_NATIVE_UNSIGNED_CAST(x) static_cast<unsigned int>(x)
+
+#define ANDROID_NATIVE_MAKE_CONSTANT(a, b, c, d)                                         \
+    ((ANDROID_NATIVE_UNSIGNED_CAST(a) << 24) | (ANDROID_NATIVE_UNSIGNED_CAST(b) << 16) | \
+     (ANDROID_NATIVE_UNSIGNED_CAST(c) << 8) | (ANDROID_NATIVE_UNSIGNED_CAST(d)))
+
+#define ANDROID_NATIVE_BUFFER_MAGIC ANDROID_NATIVE_MAKE_CONSTANT('_', 'b', 'f', 'r')
+
 typedef struct android_native_base_t
 {
     /* a magic value defined by the actual EGL native type */
@@ -161,6 +171,11 @@ GLenum GetPixelFormatInfo(int pixelFormat, bool *isYUV)
 ANativeWindowBuffer *ClientBufferToANativeWindowBuffer(EGLClientBuffer clientBuffer)
 {
     return reinterpret_cast<ANativeWindowBuffer *>(clientBuffer);
+}
+
+bool IsValidNativeWindowBuffer(ANativeWindowBuffer *windowBuffer)
+{
+    return windowBuffer->common.magic == ANDROID_NATIVE_BUFFER_MAGIC;
 }
 
 uint64_t GetAHBUsage(int eglNativeBufferUsage)

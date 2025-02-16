@@ -38,7 +38,7 @@ namespace Style {
 class Builder {
     WTF_MAKE_TZONE_ALLOCATED(Builder);
 public:
-    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, OptionSet<PropertyCascade::PropertyType> = PropertyCascade::normalProperties(), const HashSet<AnimatableCSSProperty>* animatedProperties = nullptr);
+    Builder(RenderStyle&, BuilderContext&&, const MatchResult&, CascadeLevel, OptionSet<PropertyCascade::PropertyType> = PropertyCascade::normalProperties(), const UncheckedKeyHashSet<AnimatableCSSProperty>* animatedProperties = nullptr);
     ~Builder();
 
     void applyAllProperties();
@@ -53,7 +53,7 @@ public:
 
     BuilderState& state() { return m_state; }
 
-    const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const { return m_cascade.overriddenAnimatedProperties(); }
+    const UncheckedKeyHashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const { return m_cascade.overriddenAnimatedProperties(); }
 
 private:
     void applyProperties(int firstProperty, int lastProperty);

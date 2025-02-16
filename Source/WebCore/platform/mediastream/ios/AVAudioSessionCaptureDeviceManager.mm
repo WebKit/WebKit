@@ -180,7 +180,8 @@ void AVAudioSessionCaptureDeviceManager::setPreferredSpeakerID(const String& spe
 #if USE(APPLE_INTERNAL_SDK)
 #import <WebKitAdditions/AVAudioSessionCaptureDeviceManagerAdditions-2.mm>
 #endif
-    }
+    } else
+        m_isReceiverPreferredSpeaker = false;
 
     AudioSession::sharedSession().setCategory(AudioSession::sharedSession().category(), AudioSession::sharedSession().mode(), AudioSession::sharedSession().routeSharingPolicy());
 }

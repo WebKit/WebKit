@@ -35,7 +35,6 @@ struct _GStreamerMockDevicePrivate {
 GST_DEBUG_CATEGORY_STATIC(webkitGstMockDeviceDebug);
 #define GST_CAT_DEFAULT webkitGstMockDeviceDebug
 
-#define webkit_mock_device_provider_parent_class parent_class
 WEBKIT_DEFINE_TYPE_WITH_CODE(GStreamerMockDevice, webkit_mock_device, GST_TYPE_DEVICE, GST_DEBUG_CATEGORY_INIT(webkitGstMockDeviceDebug, "webkitmockdevice", 0, "Mock Device"))
 
 static GstElement* webkitMockDeviceCreateElement([[maybe_unused]] GstDevice* device, const char* name)

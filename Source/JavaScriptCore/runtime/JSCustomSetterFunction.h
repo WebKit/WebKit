@@ -36,7 +36,7 @@ public:
 
     using CustomFunctionPointer = PutValueFunc;
 
-    static constexpr bool needsDestruction = true;
+    static constexpr DestructionMode needsDestruction = NeedsDestruction;
     static void destroy(JSCell*);
 
     template<typename CellType, SubspaceAccess mode>

@@ -52,8 +52,6 @@ struct UpdateInfo;
 #if USE(CAIRO) || PLATFORM(GTK)
 typedef struct _cairo cairo_t;
 using PlatformPaintContextPtr = cairo_t*;
-#elif PLATFORM(WIN)
-using PlatformPaintContextPtr = HDC;
 #elif USE(SKIA)
 using PlatformPaintContextPtr = SkCanvas*;
 #endif

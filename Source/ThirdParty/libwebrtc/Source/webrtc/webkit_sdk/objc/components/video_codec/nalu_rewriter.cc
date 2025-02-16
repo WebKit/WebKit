@@ -719,7 +719,7 @@ uint8_t ComputeH264ReorderSizeFromAnnexB(const uint8_t* annexb_buffer, size_t an
   return ComputeH264ReorderSizeFromSPS(*spsAndVui);
 }
 
-uint8_t ComputeH264ReorderSizeFromAVC(const uint8_t* avcData, size_t avcDataSize) {
+std::optional<H264Information> ComputeH264InfoFromAVC(const uint8_t* avcData, size_t avcDataSize) {
   std::vector<uint8_t> unpacked_buffer { avcData, avcData + avcDataSize };
   BitstreamReader reader(unpacked_buffer);
 
@@ -739,7 +739,7 @@ uint8_t ComputeH264ReorderSizeFromAVC(const uint8_t* avcData, size_t avcDataSize
   auto numOfSequenceParameterSets = 0x1F & reader.Read<uint8_t>();
 
   if (!reader.Ok()) {
-    return 0;
+    return { };
   }
 
   size_t offset = 6;
@@ -749,15 +749,19 @@ uint8_t ComputeH264ReorderSizeFromAVC(const uint8_t* avcData, size_t avcDataSize
 
     reader.ConsumeBits(8 * (size + H264::kNaluTypeSize));
     if (!reader.Ok()) {
-      return 0;
+      return { };
     }
 
     auto spsAndVui = SpsAndVuiParser::Parse({ avcData + offset + H264::kNaluTypeSize, avcData + offset + size });
     if (spsAndVui) {
-      return ComputeH264ReorderSizeFromSPS(*spsAndVui);
+      return H264Information {
+        static_cast<uint16_t>(spsAndVui->width),
+        static_cast<uint16_t>(spsAndVui->height),
+        ComputeH264ReorderSizeFromSPS(*spsAndVui)
+      };
     }
   }
-  return 0;
+  return { };
 }
 
 #ifndef DISABLE_H265

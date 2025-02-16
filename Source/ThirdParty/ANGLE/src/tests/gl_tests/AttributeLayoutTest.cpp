@@ -154,18 +154,23 @@ struct Attrib
         if (mPureInteger)
         {
             glVertexAttribIPointer(index, mData.getDimension(), mGLType, mStride,
-                                   mContainer->getAddress() + mOffset);
+                                   getContainerOffset());
         }
         else
         {
             glVertexAttribPointer(index, mData.getDimension(), mGLType, mNormalized, mStride,
-                                  mContainer->getAddress() + mOffset);
+                                  getContainerOffset());
         }
         EXPECT_GL_NO_ERROR();
         glEnableVertexAttribArray(index);
     }
 
-    bool inClientMemory(void) const { return mContainer->getAddress() != nullptr; }
+    bool inClientMemory() const { return mContainer->getAddress() != nullptr; }
+    const char *getContainerOffset() const
+    {
+        return inClientMemory() ? mContainer->getAddress() + mOffset
+                                : reinterpret_cast<const char *>(mOffset);
+    }
 
     std::shared_ptr<Container> mContainer;
     unsigned mOffset;

@@ -55,6 +55,9 @@ public:
     sk_sp<GraphicsPipeline> addGraphicsPipeline(const UniqueKey&,
                                                 sk_sp<GraphicsPipeline>) SK_EXCLUDES(fSpinLock);
 
+    void purgePipelinesNotUsedSince(
+            StdSteadyClock::time_point purgeTime) SK_EXCLUDES(fSpinLock);
+
 #if defined(GPU_TEST_UTILS)
     int numGraphicsPipelines() const SK_EXCLUDES(fSpinLock);
     void resetGraphicsPipelines() SK_EXCLUDES(fSpinLock);
@@ -67,6 +70,7 @@ public:
         int fGraphicsCacheMisses = 0;
         int fGraphicsCacheAdditions = 0;
         int fGraphicsRaces = 0;
+        int fGraphicsPurges = 0;
     };
 
     PipelineStats getStats() const SK_EXCLUDES(fSpinLock);
@@ -83,6 +87,13 @@ public:
     // or reference tracking.
     void addStaticResource(sk_sp<Resource>) SK_EXCLUDES(fSpinLock);
 
+    using PipelineCallbackContext = void*;
+    using PipelineCallback = void (*)(PipelineCallbackContext context, sk_sp<SkData> pipelineData);
+    void setPipelineCallback(PipelineCallback, PipelineCallbackContext) SK_EXCLUDES(fSpinLock);
+
+    void invokePipelineCallback(SharedContext*,
+                                const GraphicsPipelineDesc&,
+                                const RenderPassDesc&);
 private:
     struct KeyHash {
         uint32_t operator()(const UniqueKey& key) const { return key.hash(); }
@@ -106,6 +117,9 @@ private:
     ComputePipelineCache  fComputePipelineCache  SK_GUARDED_BY(fSpinLock);
 
     skia_private::TArray<sk_sp<Resource>> fStaticResource SK_GUARDED_BY(fSpinLock);
+
+    PipelineCallback fPipelineCallback SK_GUARDED_BY(fSpinLock) = nullptr;
+    PipelineCallbackContext fPipelineCallbackContext SK_GUARDED_BY(fSpinLock) = nullptr;
 
 #if defined(GPU_TEST_UTILS)
     PipelineStats fStats SK_GUARDED_BY(fSpinLock);

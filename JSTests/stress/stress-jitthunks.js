@@ -1,6 +1,6 @@
 {
     let functions = [];
-    for (var i = 0; i < 1e5; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         functions.push($vm.createEmptyFunctionWithName(i));
     let newGlobal = $vm.createGlobalObject();
     newGlobal.WeakMap.prototype.set;

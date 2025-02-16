@@ -194,12 +194,14 @@ public:
     {
         if (m_didDisableImage)
             m_cachedResourceLoader->setImagesEnabled(true);
-        if (m_didEnabledDeferredLoading)
-            m_frame->page()->setDefersLoading(false);
+        if (m_didEnabledDeferredLoading) {
+            if (RefPtr frame = m_frame.get())
+                frame->page()->setDefersLoading(false);
+        }
     }
 
 private:
-    Ref<LocalFrame> m_frame;
+    WeakPtr<LocalFrame> m_frame;
     Ref<CachedResourceLoader> m_cachedResourceLoader;
     bool m_didEnabledDeferredLoading { false };
     bool m_didDisableImage { false };
@@ -394,11 +396,13 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
         if (supportsClientSideAttachmentData(frame)) {
             if (RefPtr image = dynamicDowncast<HTMLImageElement>(originalElement); image && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
                 RefPtr document = frame.document();
-                image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(*document, Blob::create(document.get(), info.data->copyData(), info.contentType)) });
+                Ref data = info.data;
+                image->setAttributeWithoutSynchronization(HTMLNames::srcAttr, AtomString { DOMURL::createObjectURL(*document, Blob::create(document.get(), data->copyData(), info.contentType)) });
                 image->setAttachmentElement(attachment.copyRef());
             } else if (RefPtr source = dynamicDowncast<HTMLSourceElement>(originalElement); source && contentTypeIsSuitableForInlineImageRepresentation(info.contentType)) {
                 RefPtr document = frame.document();
-                source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(*document, Blob::create(document.get(), info.data->copyData(), info.contentType)) });
+                Ref data = info.data;
+                source->setAttributeWithoutSynchronization(HTMLNames::srcsetAttr, AtomString { DOMURL::createObjectURL(*document, Blob::create(document.get(), data->copyData(), info.contentType)) });
                 source->setAttachmentElement(attachment.copyRef());
             } else {
                 attachment->updateAttributes(info.data->size(), AtomString { info.contentType }, AtomString { info.fileName });
@@ -407,7 +411,8 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
             frame.editor().registerAttachmentIdentifier(attachment->ensureUniqueIdentifier(), WTFMove(info.contentType), WTFMove(info.fileName), WTFMove(info.data));
         } else {
             RefPtr document = frame.document();
-            attachment->setFile(File::create(document.get(), Blob::create(document.get(), info.data->copyData(), WTFMove(info.contentType)), WTFMove(info.fileName)), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
+            Ref data = info.data;
+            attachment->setFile(File::create(document.get(), Blob::create(document.get(), data->copyData(), WTFMove(info.contentType)), WTFMove(info.fileName)), HTMLAttachmentElement::UpdateDisplayAttributes::Yes);
             parent->replaceChild(WTFMove(attachment), WTFMove(originalElement));
         }
     }
@@ -489,7 +494,8 @@ RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *s
 
     UncheckedKeyHashMap<AtomString, AtomString> blobURLMap;
     for (auto& subresource : fragmentAndResources.resources) {
-        auto blob = Blob::create(&document, subresource->data().copyData(), subresource->mimeType());
+        Ref data = subresource->data();
+        auto blob = Blob::create(&document, data->copyData(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(document, blob);
         blobURLMap.set(AtomString { subresource->url().string() }, AtomString { blobURL });
     }
@@ -541,7 +547,8 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
         auto& subresourceURL = subresource->url();
         if (!shouldReplaceSubresourceURLWithBlobDuringSanitization(subresourceURL))
             continue;
-        auto blob = Blob::create(&destinationDocument, subresource->data().copyData(), subresource->mimeType());
+        Ref data = subresource->data();
+        auto blob = Blob::create(&destinationDocument, data->copyData(), subresource->mimeType());
         String blobURL = DOMURL::createObjectURL(destinationDocument, blob);
         blobURLMap.set(AtomString { subresourceURL.string() }, AtomString { blobURL });
     }
@@ -564,7 +571,7 @@ static String sanitizeMarkupWithArchive(LocalFrame& frame, Document& destination
             subframeMainResource.releaseNonNull(), subframeArchive.copyRef() };
         auto subframeMarkup = sanitizeMarkupWithArchive(frame, destinationDocument, subframeContent, MSOListQuirks::Disabled, canShowMIMETypeAsHTML);
 
-        auto blob = Blob::create(&destinationDocument, Vector(subframeMarkup.utf8().span()), type);
+        auto blob = Blob::create(&destinationDocument, Vector(byteCast<uint8_t>(subframeMarkup.utf8().span())), type);
 
         String subframeBlobURL = DOMURL::createObjectURL(destinationDocument, blob);
         blobURLMap.set(AtomString { subframeURL.string() }, AtomString { subframeBlobURL });

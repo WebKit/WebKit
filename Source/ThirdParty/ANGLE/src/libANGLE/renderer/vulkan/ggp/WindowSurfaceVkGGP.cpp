@@ -27,7 +27,8 @@ WindowSurfaceVkGGP::WindowSurfaceVkGGP(const egl::SurfaceState &surfaceState,
     : WindowSurfaceVk(surfaceState, window)
 {}
 
-angle::Result WindowSurfaceVkGGP::createSurfaceVk(vk::Context *context, gl::Extents *extentsOut)
+angle::Result WindowSurfaceVkGGP::createSurfaceVk(vk::ErrorContext *context,
+                                                  gl::Extents *extentsOut)
 {
     vk::Renderer *renderer = context->getRenderer();
 
@@ -45,7 +46,7 @@ angle::Result WindowSurfaceVkGGP::createSurfaceVk(vk::Context *context, gl::Exte
     return getCurrentWindowSize(context, extentsOut);
 }
 
-angle::Result WindowSurfaceVkGGP::getCurrentWindowSize(vk::Context *context,
+angle::Result WindowSurfaceVkGGP::getCurrentWindowSize(vk::ErrorContext *context,
                                                        gl::Extents *extentsOut)
 {
     vk::Renderer *renderer                 = context->getRenderer();

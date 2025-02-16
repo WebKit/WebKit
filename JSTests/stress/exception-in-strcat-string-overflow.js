@@ -4,7 +4,7 @@ function foo(a, b) {
 
 noInline(foo);
 
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var b;
     var expected;
     if (i & 1) {

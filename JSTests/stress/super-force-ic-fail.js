@@ -18,7 +18,7 @@ Object.setPrototypeOf(obj, aObj);
 
 noInline(obj.jaz);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (i == 9999) {
         delete aObj.foo;
         assert(obj.jaz() === undefined);
@@ -43,7 +43,7 @@ Object.setPrototypeOf(obj2, bObj);
 
 noInline(obj.jaz);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     if (i == 9999) {
         Object.defineProperty(bObj, "foo", {
             get: () => {return "boo"; }

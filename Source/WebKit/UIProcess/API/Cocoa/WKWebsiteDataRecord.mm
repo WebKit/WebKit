@@ -46,6 +46,7 @@ NSString * const WKWebsiteDataTypeFileSystem = @"WKWebsiteDataTypeFileSystem";
 NSString * const WKWebsiteDataTypeSearchFieldRecentSearches = @"WKWebsiteDataTypeSearchFieldRecentSearches";
 NSString * const WKWebsiteDataTypeMediaKeys = @"WKWebsiteDataTypeMediaKeys";
 NSString * const WKWebsiteDataTypeHashSalt = @"WKWebsiteDataTypeHashSalt";
+NSString * const WKWebsiteDataTypeScreenTime = @"WKWebsiteDataTypeScreenTime";
 
 NSString * const _WKWebsiteDataTypeMediaKeys = WKWebsiteDataTypeMediaKeys;
 NSString * const _WKWebsiteDataTypeHSTSCache = @"_WKWebsiteDataTypeHSTSCache";
@@ -56,6 +57,7 @@ NSString * const _WKWebsiteDataTypeAdClickAttributions = @"_WKWebsiteDataTypeAdC
 NSString * const _WKWebsiteDataTypePrivateClickMeasurements = @"_WKWebsiteDataTypePrivateClickMeasurements";
 NSString * const _WKWebsiteDataTypeAlternativeServices = @"_WKWebsiteDataTypeAlternativeServices";
 NSString * const _WKWebsiteDataTypeFileSystem = WKWebsiteDataTypeFileSystem;
+NSString * const _WKWebsiteDataTypeScreenTime = WKWebsiteDataTypeScreenTime;
 
 @implementation WKWebsiteDataRecord
 
@@ -113,6 +115,10 @@ static NSString *dataTypesToString(NSSet *dataTypes)
         [array addObject:@"Private Click Measurements"];
     if ([dataTypes containsObject:_WKWebsiteDataTypeAlternativeServices])
         [array addObject:@"Alternative Services"];
+#if ENABLE(SCREEN_TIME)
+    if ([dataTypes containsObject:_WKWebsiteDataTypeScreenTime])
+        [array addObject:@"Screen Time"];
+#endif
 
     return [array componentsJoinedByString:@", "];
 }

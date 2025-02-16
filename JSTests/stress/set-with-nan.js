@@ -73,7 +73,7 @@ function test4()
 }
 noInline(test4);
 
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(), 1);
     shouldBe(test2(), 1);
     shouldBe(test3(), 1);

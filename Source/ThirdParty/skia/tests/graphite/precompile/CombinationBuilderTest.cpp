@@ -32,8 +32,8 @@ namespace {
 
 // colorfilters
 static constexpr int kExpectedBlendCFCombos = 15;
-static constexpr int kExpectedColorSpaceCFCombos = 1;
-static constexpr int kExpectedHighContrastCFCombos = 1;
+static constexpr int kExpectedColorSpaceCFCombos = 3;
+static constexpr int kExpectedHighContrastCFCombos = 3;
 static constexpr int kExpectedLightingCFCombos = 1;
 static constexpr int kExpectedLumaCFCombos = 1;
 static constexpr int kExpectedMatrixCFCombos = 1;
@@ -41,11 +41,11 @@ static constexpr int kExpectedOverdrawCFCombos = 1;
 static constexpr int kExpectedTableCFCombos = 1;
 
 // shaders
-static constexpr int kExpectedGradientCombos = 3;
-static constexpr int kExpectedImageCombos = 6;
+static constexpr int kExpectedGradientCombos = 9;
+static constexpr int kExpectedImageCombos = 18;
 static constexpr int kExpectedPerlinNoiseCombos = 1;
-static constexpr int kExpectedPictureCombos = 12;
-static constexpr int kExpectedRawImageCombos = 3;
+static constexpr int kExpectedPictureCombos = 36;
+static constexpr int kExpectedRawImageCombos = 9;
 static constexpr int kExpectedSolidColorCombos = 1;
 
 
@@ -112,17 +112,17 @@ void big_test(const KeyContext& keyContext,
               const RenderPassDesc& renderPassDesc,
               skiatest::Reporter* reporter) {
 
-    static constexpr int kNumExpected = 444;
-    // paintOptions (444 = 4*111)
-    //  |- (111 = 3+108) sweepGrad_0 (3) |
-    //  |                blendShader_0 (108 = 1*4*27)
-    //  |                 |- 0: (1)       kSrc (1)
-    //  |                 |- 1: (4=3+1)   (dsts) linearGrad_0 (3) | solid_0 (1)
-    //  |                 |- 2: (27=3+24) (srcs) linearGrad_1 (3) |
-    //  |                                        blendShader_1 (24=1*4*6)
-    //  |                                         |- 0: (1) kDst (1)
-    //  |                                         |- 1: (4=3+1) (dsts) radGrad_0 (3) | solid_1 (1)
-    //  |                                         |- 2: (6) (srcs) imageShader_0 (6)
+    static constexpr int kNumExpected = 7596;
+    // paintOptions (7596 = 4*1899)
+    //  |- (1899 = 9+1890) sweepGrad_0 (9) |
+    //  |                  blendShader_0 (1890 = 1*10*189)
+    //  |                   |- 0: (1)         kSrc (1)
+    //  |                   |- 1: (10=9+1)    (dsts) linearGrad_0 (9) | solid_0 (1)
+    //  |                   |- 2: (189=9+180) (srcs) linearGrad_1 (9) |
+    //  |                                            blendShader_1 (180=1*10*18)
+    //  |                                             |- 0: (1) kDst (1)
+    //  |                                             |- 1: (10=9+1) (dsts) radGrad_0 (9) | solid_1 (1)
+    //  |                                             |- 2: (18) (srcs) imageShader_0 (18)
     //  |
     //  |- (4) 4-built-in-blend-modes
 
@@ -439,7 +439,8 @@ void shader_subtest(const KeyContext& keyContext,
                                            kExpectedPerlinNoiseCombos);
     }
 
-    // The ImageShaders have 6 combinations (3 sampling/tiling x 2 alpha/non-alpha)
+    // The ImageShaders have 18 combinations
+    // (3 sampling/tiling x 2 alpha/non-alpha x 3 color space xform)
     // The CoordClamp shader doesn't add any additional combinations to its wrapped shader.
     {
         PaintOptions paintOptions;
@@ -449,7 +450,7 @@ void shader_subtest(const KeyContext& keyContext,
                  /* expectedNumOptions= */ kExpectedImageCombos);
     }
 
-    // RawImageShaders only have 3 combinations (since they never incorporate alpha)
+    // RawImageShaders only have 9 combinations (since they never incorporate alpha)
     {
         PaintOptions paintOptions;
         paintOptions.setShaders({ PrecompileShaders::RawImage() });
@@ -468,7 +469,7 @@ void shader_subtest(const KeyContext& keyContext,
                  /* expectedNumOptions= */ kExpectedPerlinNoiseCombos + kExpectedPerlinNoiseCombos);
     }
 
-    // Each gradient shader generates 3 combinations
+    // Each gradient shader generates 9 combinations (3 stop options x 3 color space xform)
     {
         PaintOptions paintOptions;
         paintOptions.setShaders({ PrecompileShaders::LinearGradient(),
@@ -482,7 +483,7 @@ void shader_subtest(const KeyContext& keyContext,
     }
 
     // Each picture shader generates 12 combinations:
-    //    2 (pictureShader LM) x 6 (imageShader variations)
+    //    2 (pictureShader LM) x 12 (imageShader variations)
     {
         PaintOptions paintOptions;
         paintOptions.setShaders({ PrecompileShaders::Picture() });

@@ -1,0 +1,10 @@
+This test ensures setting text selection works.
+
+PASS: editable.selectedText === 'Charlie'
+PASS: editable.selectedText === 'Charlie Delta'
+PASS: editable.selectedText === 'Charlie Delta Ninja Kel'
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Charlie Delta Ninja Kelly

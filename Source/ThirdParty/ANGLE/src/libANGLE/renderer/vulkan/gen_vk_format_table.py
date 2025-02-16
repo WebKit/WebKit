@@ -50,13 +50,13 @@ void Format::initialize(Renderer *renderer,
     }}
 }}
 
-VkFormat GetVkFormatFromFormatID(angle::FormatID formatID)
+VkFormat GetVkFormatFromFormatID(const Renderer *renderer, angle::FormatID formatID)
 {{
     static constexpr angle::FormatMap<VkFormat> kMap = {{
 {format_id_cases}
     }};
 
-    return kMap[formatID];
+    return AdjustASTCFormatForHDR(renderer, kMap[formatID]);
 }}
 
 angle::FormatID GetFormatIDFromVkFormat(VkFormat vkFormat)

@@ -26,8 +26,6 @@
 #include "config.h"
 #include "FontSelectionAlgorithm.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 FontSelectionAlgorithm::FontSelectionAlgorithm(FontSelectionRequest request, const Vector<Capabilities>& capabilities, std::optional<Capabilities> bounds)
@@ -139,7 +137,7 @@ auto FontSelectionAlgorithm::weightDistance(Capabilities capabilities) const -> 
     return { threshold - weight.maximum, weight.maximum };
 }
 
-FontSelectionValue FontSelectionAlgorithm::bestValue(const bool eliminated[], DistanceFunction computeDistance) const
+FontSelectionValue FontSelectionAlgorithm::bestValue(std::span<const bool> eliminated, DistanceFunction computeDistance) const
 {
     std::optional<DistanceResult> smallestDistance;
     for (size_t i = 0, size = m_capabilities.size(); i < size; ++i) {
@@ -152,24 +150,20 @@ FontSelectionValue FontSelectionAlgorithm::bestValue(const bool eliminated[], Di
     return smallestDistance.value().value;
 }
 
-void FontSelectionAlgorithm::filterCapability(bool eliminated[], DistanceFunction computeDistance, CapabilitiesRange inclusionRange)
+void FontSelectionAlgorithm::filterCapability(std::span<bool> eliminated, DistanceFunction computeDistance, CapabilitiesRange inclusionRange)
 {
     auto value = bestValue(eliminated, computeDistance);
-    for (size_t i = 0, size = m_capabilities.size(); i < size; ++i) {
-        eliminated[i] = eliminated[i]
-            || !(m_capabilities[i].*inclusionRange).includes(value);
-    }
+    for (size_t i = 0, size = m_capabilities.size(); i < size; ++i)
+        eliminated[i] = eliminated[i] || !(m_capabilities[i].*inclusionRange).includes(value);
 }
 
 size_t FontSelectionAlgorithm::indexOfBestCapabilities()
 {
     Vector<bool, 256> eliminated(m_capabilities.size(), false);
-    filterCapability(eliminated.data(), &FontSelectionAlgorithm::widthDistance, &Capabilities::width);
-    filterCapability(eliminated.data(), &FontSelectionAlgorithm::styleDistance, &Capabilities::slope);
-    filterCapability(eliminated.data(), &FontSelectionAlgorithm::weightDistance, &Capabilities::weight);
+    filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::widthDistance, &Capabilities::width);
+    filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::styleDistance, &Capabilities::slope);
+    filterCapability(eliminated.mutableSpan(), &FontSelectionAlgorithm::weightDistance, &Capabilities::weight);
     return eliminated.find(false);
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

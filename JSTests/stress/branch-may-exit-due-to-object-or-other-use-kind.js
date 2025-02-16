@@ -42,5 +42,5 @@ function foo(x) {
 }
 
 makeMasquerader(); // Invalidates the masqueradesAsUndefined watchpoint for condition 3.
-for (var i = 0; i < 10000; i++)
+for (var i = 0; i < testLoopCount; i++)
     foo({}); // Pass an object argument to set up condition 1.

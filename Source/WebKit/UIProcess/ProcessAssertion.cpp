@@ -59,7 +59,7 @@ ASCIILiteral processAssertionTypeDescription(ProcessAssertionType type)
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessAssertion);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessAndUIAssertion);
 
-void ProcessAssertion::aquireAssertion(Mode mode, CompletionHandler<void()>&& acquisisionHandler)
+void ProcessAssertion::acquireAssertion(Mode mode, CompletionHandler<void()>&& acquisisionHandler)
 {
     if (mode == Mode::Async)
         acquireAsync(WTFMove(acquisisionHandler));
@@ -70,32 +70,73 @@ void ProcessAssertion::aquireAssertion(Mode mode, CompletionHandler<void()>&& ac
     }
 }
 
+#if !USE(EXTENSIONKIT)
+
 Ref<ProcessAssertion> ProcessAssertion::create(ProcessID processID, const String& reason, ProcessAssertionType type, Mode mode, const String& environmentIdentifier, CompletionHandler<void()>&& acquisisionHandler)
 {
     auto assertion = adoptRef(*new ProcessAssertion(processID, reason, type, environmentIdentifier));
-    assertion->aquireAssertion(mode, WTFMove(acquisisionHandler));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
     return assertion;
 }
 
 Ref<ProcessAssertion> ProcessAssertion::create(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType type, Mode mode, CompletionHandler<void()>&& acquisisionHandler)
 {
-    auto assertion = adoptRef(*new ProcessAssertion(process, reason, type));
-    assertion->aquireAssertion(mode, WTFMove(acquisisionHandler));
+    auto assertion = adoptRef(*new ProcessAssertion(process.processID(), reason, type, process.environmentIdentifier()));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
     return assertion;
 }
+
+Ref<ProcessAndUIAssertion> ProcessAndUIAssertion::create(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType type, Mode mode, CompletionHandler<void()>&& acquisisionHandler)
+{
+    auto assertion = adoptRef(*new ProcessAndUIAssertion(process.processID(), reason, type, process.environmentIdentifier()));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
+    return assertion;
+}
+
+Ref<ProcessAndUIAssertion> ProcessAndUIAssertion::create(ProcessID processID, const String& reason, ProcessAssertionType type, const String& environmentIdentifier, Mode mode, CompletionHandler<void()>&& acquisisionHandler)
+{
+    auto assertion = adoptRef(*new ProcessAndUIAssertion(processID, reason, type, environmentIdentifier));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
+    return assertion;
+}
+
+#else
+
+Ref<ProcessAssertion> ProcessAssertion::create(ProcessID processID, const String& reason, ProcessAssertionType type, Mode mode, const String& environmentIdentifier, CompletionHandler<void()>&& acquisisionHandler)
+{
+    auto assertion = adoptRef(*new ProcessAssertion(processID, reason, type, environmentIdentifier, std::nullopt));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
+    return assertion;
+}
+
+Ref<ProcessAssertion> ProcessAssertion::create(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType type, Mode mode, CompletionHandler<void()>&& acquisisionHandler)
+{
+    auto assertion = adoptRef(*new ProcessAssertion(process.processID(), reason, type, process.environmentIdentifier(), process.extensionProcess()));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
+    return assertion;
+}
+
+Ref<ProcessAndUIAssertion> ProcessAndUIAssertion::create(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType type, Mode mode, CompletionHandler<void()>&& acquisisionHandler)
+{
+    auto assertion = adoptRef(*new ProcessAndUIAssertion(process.processID(), reason, type, process.environmentIdentifier(), process.extensionProcess()));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
+    return assertion;
+}
+
+Ref<ProcessAndUIAssertion> ProcessAndUIAssertion::create(ProcessID processID, const String& reason, ProcessAssertionType type, const String& environmentIdentifier, std::optional<ExtensionProcess>&& extensionProcess, Mode mode, CompletionHandler<void()>&& acquisisionHandler)
+{
+    auto assertion = adoptRef(*new ProcessAndUIAssertion(processID, reason, type, environmentIdentifier, WTFMove(extensionProcess)));
+    assertion->acquireAssertion(mode, WTFMove(acquisisionHandler));
+    return assertion;
+}
+
+#endif
 
 #if !PLATFORM(COCOA) || !USE(RUNNINGBOARD)
 
 ProcessAssertion::ProcessAssertion(ProcessID pid, const String& reason, ProcessAssertionType assertionType, const String&)
     : m_assertionType(assertionType)
     , m_pid(pid)
-    , m_reason(reason)
-{
-}
-
-ProcessAssertion::ProcessAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
-    : m_assertionType(assertionType)
-    , m_pid(process.processID())
     , m_reason(reason)
 {
 }
@@ -115,21 +156,21 @@ bool ProcessAssertion::isValid() const
 void ProcessAssertion::acquireAsync(CompletionHandler<void()>&& completionHandler)
 {
     if (completionHandler)
-        RunLoop::main().dispatch(WTFMove(completionHandler));
+        RunLoop::protectedMain()->dispatch(WTFMove(completionHandler));
 }
 
 void ProcessAssertion::acquireSync()
 {
 }
 
-ProcessAndUIAssertion::ProcessAndUIAssertion(AuxiliaryProcessProxy& process, const String& reason, ProcessAssertionType assertionType)
-    : ProcessAssertion(process, reason, assertionType)
+ProcessAndUIAssertion::ProcessAndUIAssertion(ProcessID pid, const String& reason, ProcessAssertionType assertionType, const String& environmentIdentifier)
+    : ProcessAssertion(pid, reason, assertionType, environmentIdentifier)
 {
 }
 
 ProcessAndUIAssertion::~ProcessAndUIAssertion() = default;
 
-#endif // !USE(RUNNINGBOARD)
+#endif
 
 } // namespace WebKit
 

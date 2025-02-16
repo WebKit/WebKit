@@ -27,14 +27,12 @@
 
 #include <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 struct FourCC {
     constexpr FourCC() = default;
     constexpr FourCC(uint32_t value) : value { value } { }
-    constexpr FourCC(const char (&nullTerminatedString)[5]);
+    constexpr FourCC(std::span<const char, 5> nullTerminatedString);
     constexpr std::array<char, 5> string() const;
     static std::optional<FourCC> fromString(StringView);
     friend constexpr bool operator==(FourCC, FourCC) = default;
@@ -42,7 +40,7 @@ struct FourCC {
     uint32_t value { 0 };
 };
 
-constexpr FourCC::FourCC(const char (&data)[5])
+constexpr FourCC::FourCC(std::span<const char, 5> data)
     : value(data[0] << 24 | data[1] << 16 | data[2] << 8 | data[3])
 {
     ASSERT_UNDER_CONSTEXPR_CONTEXT(isASCII(data[0]));
@@ -74,5 +72,3 @@ template<> struct LogArgument<WebCore::FourCC> {
 };
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

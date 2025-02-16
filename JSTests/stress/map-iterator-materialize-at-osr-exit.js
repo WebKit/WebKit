@@ -17,7 +17,7 @@ function shouldBe(actual, expected)
 noInline(test);
 
 var map = new Map([[0, 0]]);
-for (var i = 0; i < 1e5; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(test(map, false), true);
 
  var iterator = test(map, true);

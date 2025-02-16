@@ -19,7 +19,7 @@ ensureArrayStorage(array);
 function testOutOfBound()
 {
     var results = 0;
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         for (var j = 0; j < 7; ++j) {
             var value = array[j];
             if (value !== undefined)
@@ -33,7 +33,7 @@ noInline(testOutOfBound);
 function testInBound()
 {
     var results = 0;
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         for (var j = 0; j < 6; ++j)
             results += array[j];
     }
@@ -48,7 +48,7 @@ slowPutArray.__proto__ = object;
 function testSlowPutOutOfBound()
 {
     var results = 0;
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         for (var j = 0; j < 7; ++j) {
             var value = slowPutArray[j];
             if (value !== undefined)
@@ -62,7 +62,7 @@ noInline(testSlowPutOutOfBound);
 function testSlowPutInBound()
 {
     var results = 0;
-    for (var i = 0; i < 1e5; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         for (var j = 0; j < 6; ++j)
             results += slowPutArray[j];
     }
@@ -70,7 +70,7 @@ function testSlowPutInBound()
 }
 noInline(testSlowPutInBound);
 
-shouldBe(testOutOfBound(), 1500000);
-shouldBe(testInBound(), 1500000);
-shouldBe(testSlowPutOutOfBound(), 1500000);
-shouldBe(testSlowPutInBound(), 1500000);
+shouldBe(testOutOfBound(), 15 * testLoopCount);
+shouldBe(testInBound(), 15 * testLoopCount);
+shouldBe(testSlowPutOutOfBound(), 15 * testLoopCount);
+shouldBe(testSlowPutInBound(), 15 * testLoopCount);

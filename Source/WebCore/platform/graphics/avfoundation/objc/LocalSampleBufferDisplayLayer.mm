@@ -132,7 +132,7 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LocalSampleBufferDisplayLayer);
 
-static void runWithoutAnimations(const WTF::Function<void()>& function)
+static void runWithoutAnimations(NOESCAPE const WTF::Function<void()>& function)
 {
     [CATransaction begin];
     [CATransaction setAnimationDuration:0];

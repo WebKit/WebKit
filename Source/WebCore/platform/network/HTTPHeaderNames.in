@@ -111,7 +111,6 @@ User-Agent
 Vary
 Via
 X-Content-Type-Options
-X-DNS-Prefetch-Control
 X-Frame-Options
 X-SourceMap
 X-XSS-Protection

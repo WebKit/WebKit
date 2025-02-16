@@ -29,15 +29,23 @@
 
 namespace WebCore {
 
+class Exception;
+class WebTransport;
 class WebTransportReceiveStream;
+
+struct WebTransportStreamIdentifierType;
+
+using WebTransportStreamIdentifier = ObjectIdentifier<WebTransportStreamIdentifierType>;
 
 class WebTransportReceiveStreamSource : public RefCountedReadableStreamSource {
 public:
-    static Ref<WebTransportReceiveStreamSource> create() { return adoptRef(*new WebTransportReceiveStreamSource()); }
-    void receiveIncomingStream(JSC::JSGlobalObject&, Ref<WebTransportReceiveStream>&&);
-    void receiveBytes(std::span<const uint8_t> bytes, bool);
-
+    static Ref<WebTransportReceiveStreamSource> createIncomingStreamsSource() { return adoptRef(*new WebTransportReceiveStreamSource()); }
+    static Ref<WebTransportReceiveStreamSource> createIncomingDataSource(WebTransport& transport, WebTransportStreamIdentifier identifier) { return adoptRef(*new WebTransportReceiveStreamSource(transport, identifier)); }
+    bool receiveIncomingStream(JSC::JSGlobalObject&, Ref<WebTransportReceiveStream>&);
+    void receiveBytes(std::span<const uint8_t>, bool, std::optional<WebCore::Exception>&&);
 private:
+    WebTransportReceiveStreamSource();
+    WebTransportReceiveStreamSource(WebTransport&, WebTransportStreamIdentifier);
     void setActive() final { }
     void setInactive() final { }
     void doStart() final { }
@@ -45,6 +53,10 @@ private:
     void doCancel() final;
 
     bool m_isCancelled { false };
+    bool m_isClosed { false };
+
+    ThreadSafeWeakPtr<WebTransport> m_transport;
+    const std::optional<WebTransportStreamIdentifier> m_identifier;
 };
 
 }

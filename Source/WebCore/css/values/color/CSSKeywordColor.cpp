@@ -135,7 +135,7 @@ bool containsColorSchemeDependentColor(const KeywordColor& unresolved)
     return isSystemColorKeyword(unresolved.valueID);
 }
 
-void Serialize<KeywordColor>::operator()(StringBuilder& builder, const KeywordColor& value)
+void Serialize<KeywordColor>::operator()(StringBuilder& builder, const SerializationContext&, const KeywordColor& value)
 {
     builder.append(nameLiteralForSerialization(value.valueID));
 }

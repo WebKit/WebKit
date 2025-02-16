@@ -14,7 +14,7 @@ function foo(a) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     assert(foo(0b1000n), 0b1011);
 }
 

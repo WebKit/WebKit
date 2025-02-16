@@ -1,0 +1,30 @@
+
+
+PASS changing command attribute inside invokeevent doesn't impact the invocation
+PASS invoking (as toggle-popover) closed popover opens
+PASS invoking (as toggle-popover) closed popover with preventDefault does not open
+PASS invoking (as show-popover) closed popover opens
+PASS invoking (as show-popover) closed popover with preventDefault does not open
+PASS invoking (as tOgGlE-pOpOvEr) closed popover opens
+PASS invoking (as tOgGlE-pOpOvEr) closed popover with preventDefault does not open
+PASS invoking (as sHoW-pOpOvEr) closed popover opens
+PASS invoking (as sHoW-pOpOvEr) closed popover with preventDefault does not open
+PASS invoking (as toggle-popover) open popover closes
+PASS invoking (as toggle-popover) open popover with preventDefault does not close
+PASS invoking (as toggle-popover) from within open popover closes
+PASS invoking (as toggle-popover) from within open popover with preventDefault does not close
+PASS invoking (as hide-popover) open popover closes
+PASS invoking (as hide-popover) open popover with preventDefault does not close
+PASS invoking (as hide-popover) from within open popover closes
+PASS invoking (as hide-popover) from within open popover with preventDefault does not close
+PASS invoking (as tOgGlE-pOpOvEr) open popover closes
+PASS invoking (as tOgGlE-pOpOvEr) open popover with preventDefault does not close
+PASS invoking (as tOgGlE-pOpOvEr) from within open popover closes
+PASS invoking (as tOgGlE-pOpOvEr) from within open popover with preventDefault does not close
+PASS invoking (as hIdE-pOpOvEr) open popover closes
+PASS invoking (as hIdE-pOpOvEr) open popover with preventDefault does not close
+PASS invoking (as hIdE-pOpOvEr) from within open popover closes
+PASS invoking (as hIdE-pOpOvEr) from within open popover with preventDefault does not close
+PASS invoking (as show-popover) open popover is noop
+PASS invoking (as hide-popover) closed popover is noop
+

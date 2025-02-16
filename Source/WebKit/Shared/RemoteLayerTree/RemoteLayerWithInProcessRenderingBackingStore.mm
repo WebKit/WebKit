@@ -201,18 +201,17 @@ static RefPtr<ImageBuffer> allocateBufferInternal(RemoteLayerBackingStore::Type 
 
 RefPtr<WebCore::ImageBuffer> RemoteLayerWithInProcessRenderingBackingStore::allocateBuffer()
 {
-    auto purpose = m_layer->containsBitmapOnly() ? WebCore::RenderingPurpose::BitmapOnlyLayerBacking : WebCore::RenderingPurpose::LayerBacking;
     ImageBufferCreationContext creationContext;
     creationContext.surfacePool = &WebCore::IOSurfacePool::sharedPoolSingleton();
 
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    if (m_parameters.includeDisplayList == IncludeDisplayList::Yes) {
+    if (m_parameters.includeDisplayList == WebCore::IncludeDynamicContentScalingDisplayList::Yes) {
         creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
-        return allocateBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(type(), size(), purpose, scale(), colorSpace(), pixelFormat(), creationContext);
+        return allocateBufferInternal<DynamicContentScalingBifurcatedImageBuffer>(type(), size(), RenderingPurpose::LayerBacking, scale(), colorSpace(), pixelFormat(), creationContext);
     }
 #endif
 
-    return allocateBufferInternal<ImageBuffer>(type(), size(), purpose, scale(), colorSpace(), pixelFormat(), creationContext);
+    return allocateBufferInternal<ImageBuffer>(type(), size(), RenderingPurpose::LayerBacking, scale(), colorSpace(), pixelFormat(), creationContext);
 }
 
 void RemoteLayerWithInProcessRenderingBackingStore::ensureFrontBuffer()

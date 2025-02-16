@@ -36,7 +36,6 @@ namespace WebCore {
 
 namespace CryptoAlgorithmRSASSA_PKCS1_v1_5Internal {
 static constexpr auto ALG1 = "RS1"_s;
-static constexpr auto ALG224 = "RS224"_s;
 static constexpr auto ALG256 = "RS256"_s;
 static constexpr auto ALG384 = "RS384"_s;
 static constexpr auto ALG512 = "RS512"_s;
@@ -123,9 +122,6 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::importKey(CryptoKeyFormat format, KeyData
         case CryptoAlgorithmIdentifier::SHA_1:
             isMatched = key.alg.isNull() || key.alg == ALG1;
             break;
-        case CryptoAlgorithmIdentifier::SHA_224:
-            isMatched = key.alg.isNull() || key.alg == ALG224;
-            break;
         case CryptoAlgorithmIdentifier::SHA_256:
             isMatched = key.alg.isNull() || key.alg == ALG256;
             break;
@@ -193,9 +189,6 @@ void CryptoAlgorithmRSASSA_PKCS1_v1_5::exportKey(CryptoKeyFormat format, Ref<Cry
         switch (rsaKey.hashAlgorithmIdentifier()) {
         case CryptoAlgorithmIdentifier::SHA_1:
             jwk.alg = String(ALG1);
-            break;
-        case CryptoAlgorithmIdentifier::SHA_224:
-            jwk.alg = String(ALG224);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
             jwk.alg = String(ALG256);

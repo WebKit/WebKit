@@ -270,7 +270,7 @@ void MarkedSpace::prepareForAllocation()
 
 void MarkedSpace::enablePreciseAllocationTracking()
 {
-    m_preciseAllocationSet = makeUnique<HashSet<HeapCell*>>();
+    m_preciseAllocationSet = makeUnique<UncheckedKeyHashSet<HeapCell*>>();
     for (auto* allocation : m_preciseAllocations)
         m_preciseAllocationSet->add(allocation->cell());
 }

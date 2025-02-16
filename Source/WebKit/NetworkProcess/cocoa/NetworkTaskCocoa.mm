@@ -29,6 +29,7 @@
 #import "Logging.h"
 #import "NetworkProcess.h"
 #import "NetworkSession.h"
+#import "WebPrivacyHelpers.h"
 #import <WebCore/DNS.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Quirks.h>
@@ -44,16 +45,15 @@ using namespace WebCore;
 
 static inline bool computeIsAlwaysOnLoggingAllowed(NetworkSession& session)
 {
-    if (session.networkProcess().sessionIsControlledByAutomation(session.sessionID()))
+    if (session.protectedNetworkProcess()->sessionIsControlledByAutomation(session.sessionID()))
         return true;
 
     return session.sessionID().isAlwaysOnLoggingAllowed();
 }
 
-NetworkTaskCocoa::NetworkTaskCocoa(NetworkSession& session, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
+NetworkTaskCocoa::NetworkTaskCocoa(NetworkSession& session)
     : m_networkSession(session)
     , m_isAlwaysOnLoggingAllowed(computeIsAlwaysOnLoggingAllowed(session))
-    , m_shouldRelaxThirdPartyCookieBlocking(shouldRelaxThirdPartyCookieBlocking)
 {
 }
 
@@ -315,8 +315,13 @@ WebCore::ThirdPartyCookieBlockingDecision NetworkTaskCocoa::requestThirdPartyCoo
     auto thirdPartyCookieBlockingDecision = storedCredentialsPolicy() == WebCore::StoredCredentialsPolicy::EphemeralStateless ? WebCore::ThirdPartyCookieBlockingDecision::All : WebCore::ThirdPartyCookieBlockingDecision::None;
     if (CheckedPtr networkStorageSession = m_networkSession->networkStorageSession()) {
         if (!shouldBlockCookies(thirdPartyCookieBlockingDecision))
-            thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID(), pageID(), m_shouldRelaxThirdPartyCookieBlocking);
+            thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID(), pageID(), shouldRelaxThirdPartyCookieBlocking());
     }
+
+#if ENABLE(ADVANCED_PRIVACY_PROTECTIONS) && HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    if (thirdPartyCookieBlockingDecision == WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned && request.isThirdParty() && isKnownTrackerAddressOrDomain(request.url().host()))
+        return WebCore::ThirdPartyCookieBlockingDecision::All;
+#endif
     return thirdPartyCookieBlockingDecision;
 }
 
@@ -394,6 +399,11 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
     updateTaskWithStoragePartitionIdentifier(request);
 #endif
     completionHandler(WTFMove(request));
+}
+
+ShouldRelaxThirdPartyCookieBlocking NetworkTaskCocoa::shouldRelaxThirdPartyCookieBlocking() const
+{
+    return m_networkSession->protectedNetworkProcess()->shouldRelaxThirdPartyCookieBlockingForPage(webPageProxyID());
 }
 
 } // namespace WebKit

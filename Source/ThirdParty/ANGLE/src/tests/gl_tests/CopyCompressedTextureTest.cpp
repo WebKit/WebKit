@@ -239,6 +239,33 @@ TEST_P(CopyCompressedTextureTest, InternalFormatNotSupported)
     EXPECT_GL_ERROR(GL_INVALID_OPERATION);
 }
 
+// Test that uncompressed to compressed textures generate errors when copying
+TEST_P(CopyCompressedTextureTest, UncompressedToCompressed)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::red);
+    ASSERT_GL_NO_ERROR();
+
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glCompressedTexImage2D(GL_TEXTURE_2D, 0, GL_COMPRESSED_RGBA8_ETC2_EAC, 1, 1, 0, 16, NULL);
+    ASSERT_GL_NO_ERROR();
+
+    // return GL_INVALID_OPERATION because the two formats are not compatible
+    glCopyImageSubDataEXT(mTextures[0], GL_TEXTURE_2D, 0, 0, 0, 0, mTextures[1], GL_TEXTURE_2D, 0,
+                          0, 0, 0, 1, 1, 1);
+    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+}
+
 // Test validation of texture IDs
 TEST_P(CopyCompressedTextureTest, InvalidTextureIds)
 {

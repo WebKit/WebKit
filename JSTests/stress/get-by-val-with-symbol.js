@@ -29,5 +29,5 @@ var object = {
     hello: 50
 };
 
-for (var i = 0; i < 10000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     shouldBe(getByVal(object, i % 2 === 0 ? getSym1() : getSym2()), 42);

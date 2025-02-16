@@ -36,7 +36,6 @@
 #import "ThreadGlobalData.h"
 #import "WAKWindow.h"
 #import "WKUtilities.h"
-#import "WebCoreHeapSupport.h"
 #import "WebCoreJITOperations.h"
 #import "WebCoreThreadInternal.h"
 #import "WebCoreThreadMessage.h"
@@ -51,10 +50,10 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RecursiveLockAdapter.h>
 #import <wtf/RunLoop.h>
-#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/ThreadSpecific.h>
 #import <wtf/Threading.h>
 #import <wtf/WorkQueue.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/spi/cf/CFRunLoopSPI.h>
 #import <wtf/spi/cocoa/objcSPI.h>
 #import <wtf/text/AtomString.h>
@@ -207,7 +206,7 @@ static inline void SendMessage(RetainPtr<NSInvocation>&& invocation)
     if (!WebThreadIsEnabled() || CFRunLoopGetMain() == CFRunLoopGetCurrent())
         return;
 
-    RunLoop::main().dispatch([invocation = WTFMove(invocation)] { });
+    RunLoop::protectedMain()->dispatch([invocation = WTFMove(invocation)] { });
 }
 
 static void HandleDelegateSource(void*)
@@ -314,7 +313,7 @@ void WebThreadRunOnMainThread(void(^delegateBlock)())
     JSC::JSLock::DropAllLocks dropAllLocks(WebCore::commonVM());
     _WebThreadUnlock();
 
-    WorkQueue::main().dispatchSync(makeBlockPtr(delegateBlock).get());
+    WorkQueue::protectedMain()->dispatchSync(makeBlockPtr(delegateBlock).get());
 
     _WebThreadLock();
 }
@@ -458,7 +457,7 @@ void WebThreadPostNotification(NSString* name, id object, id userInfo)
     if (pthread_main_np())
         [[NSNotificationCenter defaultCenter] postNotificationName:name object:object userInfo:userInfo];
     else {
-        RunLoop::main().dispatch([name = retainPtr(name), object = retainPtr(object), userInfo = retainPtr(userInfo)] {
+        RunLoop::protectedMain()->dispatch([name = retainPtr(name), object = retainPtr(object), userInfo = retainPtr(userInfo)] {
             [[NSNotificationCenter defaultCenter] postNotificationName:name.get() object:object.get() userInfo:userInfo.get()];
         });
     }
@@ -645,7 +644,6 @@ static void* RunWebThread(void*)
     // <rdar://problem/8502487>.
     WTF::initializeWebThread();
     JSC::initialize();
-    WebCore::initializeHeapRefs();
     WebCore::populateJITOperations();
     
     // Make sure that the WebThread and the main thread share the same ThreadGlobalData objects.

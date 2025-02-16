@@ -64,11 +64,11 @@ void CSSCounterStyleRegistry::resolveReferencesIfNeeded()
 
 void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counterStyle, CounterStyleMap* map)
 {
-    HashSet<CSSCounterStyle*> countersInChain;
+    UncheckedKeyHashSet<CSSCounterStyle*> countersInChain;
     resolveExtendsReference(counterStyle, countersInChain, map);
 }
 
-void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counter, HashSet<CSSCounterStyle*>& countersInChain, CounterStyleMap* map)
+void CSSCounterStyleRegistry::resolveExtendsReference(CSSCounterStyle& counter, UncheckedKeyHashSet<CSSCounterStyle*>& countersInChain, CounterStyleMap* map)
 {
     ASSERT(counter.isExtendsSystem() && counter.isExtendsUnresolved());
     if (!(counter.isExtendsSystem() && counter.isExtendsUnresolved()))

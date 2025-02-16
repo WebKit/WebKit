@@ -25,23 +25,26 @@
 
 WI.CallingContextTree = class CallingContextTree
 {
-    constructor(type)
+    constructor(target, type)
     {
+        this._target = target;
         this._type = type || WI.CallingContextTree.Type.TopDown;
 
-        this.reset();
+        const sourceID = -1;
+        const line = -1;
+        const column = -1;
+        const name = "<root>";
+        const url = null;
+        this._root = new WI.CallingContextTreeNode(sourceID, line, column, name, url);
+
+        this._totalNumberOfSamples = 0;
     }
 
     // Public
 
+    get target() { return this._target; }
     get type() { return this._type; }
     get totalNumberOfSamples() { return this._totalNumberOfSamples; }
-
-    reset()
-    {
-        this._root = new WI.CallingContextTreeNode(-1, -1, -1, "<root>", null);
-        this._totalNumberOfSamples = 0;
-    }
 
     totalDurationInTimeRange(startTime, endTime)
     {
@@ -119,50 +122,6 @@ WI.CallingContextTree = class CallingContextTree
     forEachNode(callback)
     {
         this._root.forEachNode(callback);
-    }
-
-    // Testing.
-
-    static __test_makeTreeFromProtocolMessageObject(messageObject)
-    {
-        let tree = new WI.CallingContextTree;
-        let stackTraces = messageObject.params.samples.stackTraces;
-        for (let i = 0; i < stackTraces.length; i++)
-            tree.updateTreeWithStackTrace(stackTraces[i]);
-        return tree;
-    }
-
-    __test_matchesStackTrace(stackTrace)
-    {
-        // StackTrace should have top frame first in the array and bottom frame last.
-        // We don't look for a match that traces down the tree from the root; instead,
-        // we match by looking at all the leafs, and matching while walking up the tree
-        // towards the root. If we successfully make the walk, we've got a match that
-        // suffices for a particular test. A successful match doesn't mean we actually
-        // walk all the way up to the root; it just means we didn't fail while walking
-        // in the direction of the root.
-        let leaves = this.__test_buildLeafLinkedLists();
-
-        outer:
-        for (let node of leaves) {
-            for (let stackNode of stackTrace) {
-                for (let propertyName of Object.getOwnPropertyNames(stackNode)) {
-                    if (stackNode[propertyName] !== node[propertyName])
-                        continue outer;
-                }
-                node = node.parent;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    __test_buildLeafLinkedLists()
-    {
-        let result = [];
-        let parent = null;
-        this._root.__test_buildLeafLinkedLists(parent, result);
-        return result;
     }
 };
 

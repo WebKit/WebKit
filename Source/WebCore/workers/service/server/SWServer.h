@@ -130,6 +130,8 @@ public:
         SWServer* server() { return m_server.get(); }
         const SWServer* server() const { return m_server.get(); }
 
+        virtual bool isWebSWServerConnection() const { return false; }
+
     protected:
         WEBCORE_EXPORT Connection(SWServer&, Identifier);
 
@@ -198,6 +200,7 @@ public:
     WEBCORE_EXPORT void addConnection(Ref<Connection>&&);
     WEBCORE_EXPORT void removeConnection(SWServerConnectionIdentifier);
     Connection* connection(SWServerConnectionIdentifier identifier) const { return m_connections.get(identifier); }
+    RefPtr<Connection> protectedConnection(SWServerConnectionIdentifier identifier) const { return connection(identifier); }
 
     const HashMap<SWServerConnectionIdentifier, Ref<Connection>>& connections() const { return m_connections; }
     WEBCORE_EXPORT bool canHandleScheme(StringView) const;
@@ -239,7 +242,6 @@ public:
     WEBCORE_EXPORT void addContextConnection(SWServerToContextConnection&);
     WEBCORE_EXPORT void removeContextConnection(SWServerToContextConnection&);
     WEBCORE_EXPORT void terminateIdleServiceWorkers(SWServerToContextConnection&);
-    WEBCORE_EXPORT bool areServiceWorkersIdle(const SWServerToContextConnection&);
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnectionForRegistrableDomain(const RegistrableDomain&);
     WEBCORE_EXPORT void createContextConnection(const Site&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
@@ -267,15 +269,15 @@ public:
 
     ScriptExecutionContextIdentifier clientIdFromVisibleClientId(const String& visibleIdentifier) const { return m_visibleClientIdToInternalClientIdMap.get(visibleIdentifier); }
 
-    void forEachServiceWorker(const Function<bool(const SWServerWorker&)>&) const;
+    void forEachServiceWorker(NOESCAPE const Function<bool(const SWServerWorker&)>&) const;
     bool hasClientsWithOrigin(const ClientOrigin& origin) { return m_clientIdentifiersPerOrigin.contains(origin); }
 
     enum class ShouldDelayRemoval : bool { No, Yes };
     ShouldDelayRemoval removeContextConnectionIfPossible(const RegistrableDomain&);
 
     std::optional<ServiceWorkerRegistrationIdentifier> clientIdentifierToControllingRegistration(ScriptExecutionContextIdentifier) const;
-    WEBCORE_EXPORT void forEachClientForOrigin(const ClientOrigin&, const Function<void(ServiceWorkerClientData&)>&);
-    void forEachClientForOrigin(const ClientOrigin&, const Function<void(const ServiceWorkerClientData&)>&) const;
+    WEBCORE_EXPORT void forEachClientForOrigin(const ClientOrigin&, NOESCAPE const Function<void(ServiceWorkerClientData&)>&);
+    void forEachClientForOrigin(const ClientOrigin&, NOESCAPE const Function<void(const ServiceWorkerClientData&)>&) const;
 
     struct GatheredClientData {
         ClientOrigin clientOrigin;
@@ -290,10 +292,11 @@ public:
     RefPtr<BackgroundFetchRecordLoader> createBackgroundFetchRecordLoader(BackgroundFetchRecordLoaderClient& client, const BackgroundFetchRequest& request, size_t responseDataSize, const WebCore::ClientOrigin& origin) { return m_delegate->createBackgroundFetchRecordLoader(client, request, responseDataSize, origin); }
     Ref<BackgroundFetchStore> createBackgroundFetchStore() { return m_delegate->createBackgroundFetchStore(); }
     WEBCORE_EXPORT BackgroundFetchEngine& backgroundFetchEngine();
+    WEBCORE_EXPORT Ref<BackgroundFetchEngine> protectedBackgroundFetchEngine();
 
     WEBCORE_EXPORT Vector<ServiceWorkerClientPendingMessage> releaseServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier);
 
-    WEBCORE_EXPORT void postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier, const String&, const Function<void(ScriptExecutionContextIdentifier, const MessageWithMessagePorts&, const ServiceWorkerData&, const String&)>&);
+    WEBCORE_EXPORT void postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier, const MessageWithMessagePorts&, ServiceWorkerIdentifier, const String&, NOESCAPE const Function<void(ScriptExecutionContextIdentifier, const MessageWithMessagePorts&, const ServiceWorkerData&, const String&)>&);
 
     WEBCORE_EXPORT OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtectionsFromClient(const ClientOrigin&) const;
 

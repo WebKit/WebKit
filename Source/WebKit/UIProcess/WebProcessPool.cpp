@@ -97,6 +97,7 @@
 #include <WebCore/GamepadProvider.h>
 #include <WebCore/MockRealtimeMediaSourceCenter.h>
 #include <WebCore/NetworkStorageSession.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformMediaSessionManager.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ProcessIdentifier.h>
@@ -679,7 +680,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     }
 
     // Prioritize the requesting WebProcess for running the service worker.
-    if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess) {
+    if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess && requestingProcess->state() != WebProcessProxy::State::Terminated) {
         if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->site() == site)
             useProcessForRemoteWorkers(*requestingProcess);
     }
@@ -920,6 +921,9 @@ WebProcessDataStoreParameters WebProcessPool::webProcessDataStoreParameters(WebP
         WTFMove(containerTemporaryDirectoryExtensionHandle),
 #endif
         websiteDataStore.trackingPreventionEnabled()
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+        , websiteDataStore.isOptInCookiePartitioningEnabled()
+#endif
     };
 }
 
@@ -1039,6 +1043,11 @@ void WebProcessPool::initializeNewWebProcess(WebProcessProxy& process, WebsiteDa
 
 #if HAVE(AUDIO_COMPONENT_SERVER_REGISTRATIONS)
     process.sendAudioComponentRegistrations();
+#endif
+
+#if PLATFORM(IOS) && ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)
+    if (WTF::CocoaApplication::isIBooks())
+        registerAssetFonts(process);
 #endif
 
     registerDisplayConfigurationCallback();
@@ -1650,6 +1659,18 @@ void WebProcessPool::terminateAllWebContentProcesses(ProcessTerminationReason re
         process->requestTermination(reason);
 }
 
+void WebProcessPool::terminateServiceWorkersForSession(PAL::SessionID sessionID)
+{
+    Ref protectedThis { *this };
+    Vector<Ref<WebProcessProxy>> serviceWorkerProcesses;
+    remoteWorkerProcesses().forEach([&](auto& process) {
+        if (process.isRunningServiceWorkers() && process.sessionID() == sessionID)
+            serviceWorkerProcesses.append(process);
+    });
+    for (Ref serviceWorkerProcess : serviceWorkerProcesses)
+        serviceWorkerProcess->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
+}
+
 void WebProcessPool::terminateServiceWorkers()
 {
     Ref protectedThis { *this };
@@ -1966,7 +1987,7 @@ void WebProcessPool::removeProcessFromOriginCacheSet(WebProcessProxy& process)
     });
 }
 
-void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
+void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& frame, const API::Navigation& navigation, const URL& sourceURL, ProcessSwapRequestedByClient processSwapRequestedByClient, WebProcessProxy::LockdownMode lockdownMode, LoadedWebArchive loadedWebArchive, const FrameInfoData& frameInfo, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler)
 {
     Site site { navigation.currentRequest().url() };
     bool siteIsolationEnabled = page.protectedPreferences()->siteIsolationEnabled();
@@ -2012,19 +2033,19 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         return completionHandler(WTFMove(process), suspendedPage.get(), reason);
 
     ASSERT(process->state() != AuxiliaryProcessProxy::State::Terminated);
-    prepareProcessForNavigation(WTFMove(process), page, suspendedPage.get(), reason, site, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler));
+    prepareProcessForNavigation(WTFMove(process), page, suspendedPage.get(), reason, site, navigation, lockdownMode, loadedWebArchive, WTFMove(dataStore), WTFMove(completionHandler));
 }
 
-void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process, WebPageProxy& page, SuspendedPageProxy* suspendedPage, ASCIILiteral reason, const Site& site, const API::Navigation& navigation, WebProcessProxy::LockdownMode lockdownMode, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler, unsigned previousAttemptsCount)
+void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process, WebPageProxy& page, SuspendedPageProxy* suspendedPage, ASCIILiteral reason, const Site& site, const API::Navigation& navigation, WebProcessProxy::LockdownMode lockdownMode, LoadedWebArchive loadedWebArchive, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler, unsigned previousAttemptsCount)
 {
     static constexpr unsigned maximumNumberOfAttempts = 3;
     auto preventProcessShutdownScope = process->shutdownPreventingScope();
-    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, navigation = Ref { navigation }, process, preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), reason, dataStore, lockdownMode, previousAttemptsCount, site](SuspendedPageProxy* suspendedPage) mutable {
+    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, navigation = Ref { navigation }, process, preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), reason, dataStore, lockdownMode, loadedWebArchive, previousAttemptsCount, site](SuspendedPageProxy* suspendedPage) mutable {
         // Since the IPC is asynchronous, make sure the destination process and suspended page are still valid.
         if (process->state() == AuxiliaryProcessProxy::State::Terminated && previousAttemptsCount < maximumNumberOfAttempts) {
             // The destination process crashed during the IPC to the network process, use a new process.
-            Ref fallbackProcess = processForSite(dataStore, site, lockdownMode, page->protectedConfiguration());
-            prepareProcessForNavigation(WTFMove(fallbackProcess), page, nullptr, reason, site, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler), previousAttemptsCount + 1);
+            Ref fallbackProcess = processForSite(dataStore, site, lockdownMode, page->configuration());
+            prepareProcessForNavigation(WTFMove(fallbackProcess), page, nullptr, reason, site, navigation, lockdownMode, loadedWebArchive, WTFMove(dataStore), WTFMove(completionHandler), previousAttemptsCount + 1);
             return;
         }
         if (suspendedPage) {
@@ -2033,12 +2054,6 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
         }
         completionHandler(WTFMove(process), suspendedPage, reason);
     };
-
-    auto loadedWebArchive = LoadedWebArchive::No;
-#if ENABLE(WEB_ARCHIVE)
-    if (auto& substituteData = navigation.substituteData(); substituteData && equalIgnoringASCIICase(substituteData->MIMEType, "application/x-webarchive"_s))
-        loadedWebArchive = LoadedWebArchive::Yes;
-#endif
 
     dataStore->protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, site.domain(), loadedWebArchive, [callCompletionHandler = WTFMove(callCompletionHandler), weakSuspendedPage = WeakPtr { suspendedPage }]() mutable {
         if (RefPtr suspendedPage = weakSuspendedPage.get())
@@ -2401,7 +2416,7 @@ bool WebProcessPool::anyProcessPoolNeedsUIBackgroundAssertion()
     });
 }
 
-void WebProcessPool::forEachProcessForSession(PAL::SessionID sessionID, const Function<void(WebProcessProxy&)>& apply)
+void WebProcessPool::forEachProcessForSession(PAL::SessionID sessionID, NOESCAPE const Function<void(WebProcessProxy&)>& apply)
 {
     for (Ref process : m_processes) {
         if (process->isPrewarmed() || process->sessionID() != sessionID)
@@ -2564,9 +2579,9 @@ static bool shouldSuspendAggressivelyBasedOnSystemMemoryPressureStatus(SystemMem
     }();
 
     if (status == SystemMemoryPressureStatus::Warning)
-        return threshold >= DISPATCH_MEMORYPRESSURE_WARN;
+        return threshold <= DISPATCH_MEMORYPRESSURE_WARN;
     if (status == SystemMemoryPressureStatus::Critical)
-        return threshold >= DISPATCH_MEMORYPRESSURE_CRITICAL;
+        return threshold <= DISPATCH_MEMORYPRESSURE_CRITICAL;
     return false;
 }
 
@@ -2707,18 +2722,24 @@ void WebProcessPool::loadOrUpdateResourceMonitorRuleList()
 
     m_resourceMonitorRuleListLoading = true;
 
-    platformLoadResourceMonitorRuleList([weakThis = WeakPtr { *this }] {
+    void* savedRuleList = reinterpret_cast<void*>(m_resourceMonitorRuleListCache.get());
+    platformLoadResourceMonitorRuleList([weakThis = WeakPtr { *this }, savedRuleList](RefPtr<WebCompiledContentRuleList> ruleList) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         protectedThis->m_resourceMonitorRuleListLoading = false;
 
-        RefPtr ruleList = protectedThis->m_resourceMonitorRuleListCache;
         if (!ruleList) {
             protectedThis->m_resourceMonitorRuleListFailed = true;
             return;
         }
+
+        // Check somebody already updates the list or not.
+        if (savedRuleList != protectedThis->m_resourceMonitorRuleListCache.get())
+            return;
+
+        protectedThis->m_resourceMonitorRuleListCache = ruleList;
 
         if (!protectedThis->m_resourceMonitorRuleListRefreshTimer.isActive()) {
             auto interval = resourceMonitorRuleListCheckInterval + Seconds::fromHours(cryptographicallyRandomUnitInterval());
@@ -2729,14 +2750,41 @@ void WebProcessPool::loadOrUpdateResourceMonitorRuleList()
             return;
 
         for (Ref process : protectedThis->m_processes)
-            process->setResourceMonitorRuleListsIfRequired(ruleList.get());
+            process->setResourceMonitorRuleListsIfRequired(RefPtr { ruleList });
+    });
+}
+
+void WebProcessPool::setResourceMonitorURLsForTesting(const String& rulesText, CompletionHandler<void()>&& completionHandler)
+{
+    auto callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+
+    platformCompileResourceMonitorRuleList(rulesText, [weakThis = WeakPtr { *this }, callbackAggregator](auto ruleList) {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !ruleList)
+            return;
+
+        protectedThis->m_resourceMonitorRuleListCache = ruleList;
+        protectedThis->m_resourceMonitorRuleListRefreshTimer.stop();
+
+        if (protectedThis->m_processes.isEmpty())
+            return;
+
+        for (Ref process : protectedThis->m_processes)
+            process->setResourceMonitorRuleLists(RefPtr { ruleList }, [callbackAggregator] { });
     });
 }
 
 #if !PLATFORM(COCOA)
-void WebProcessPool::platformLoadResourceMonitorRuleList(CompletionHandler<void()>&& completionHandler)
+void WebProcessPool::platformLoadResourceMonitorRuleList(CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&& completionHandler)
 {
-    completionHandler();
+    notImplemented();
+    completionHandler(nullptr);
+}
+
+void WebProcessPool::platformCompileResourceMonitorRuleList(const String& rulesText, CompletionHandler<void(RefPtr<WebCompiledContentRuleList>)>&& completionHandler)
+{
+    notImplemented();
+    completionHandler(nullptr);
 }
 #endif
 

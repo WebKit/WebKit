@@ -51,6 +51,7 @@ void applyProcessCreationParameters(const AuxiliaryProcessCreationParameters&);
 
 #ifdef __OBJC__
 
+#if !HAVE(WK_SECURE_CODING_NSURLREQUEST)
 class CoreIPCSecureCoding {
 WTF_MAKE_TZONE_ALLOCATED(CoreIPCSecureCoding);
 public:
@@ -64,14 +65,14 @@ public:
 
     Class objectClass() { return m_secureCoding.get().class; }
 
-    static bool conformsToWebKitSecureCoding(id);
-    static bool conformsToSecureCoding(id);
-
 private:
     friend struct IPC::ArgumentCoder<CoreIPCSecureCoding, void>;
 
     IPC::CoreIPCRetainPtr<NSObject<NSSecureCoding>> m_secureCoding;
 };
+#endif // !HAVE(WK_SECURE_CODING_NSURLREQUEST)
+
+bool conformsToWebKitSecureCoding(id);
 
 #endif // __OBJC__
 

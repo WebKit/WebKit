@@ -727,7 +727,7 @@ Could be worth adding to the API.
 - (int)validationMessageTimerMagnification;
 - (void)setValidationMessageTimerMagnification:(int)newValue;
 - (NSDictionary *)_contentsOfUserInterfaceItem:(NSString *)userInterfaceItem;
-- (void)_setTopContentInsetForTesting:(float)contentInset;
+- (void)_setObscuredTopContentInsetForTesting:(float)top right:(float)right bottom:(float)bottom left:(float)left;
 
 // Returns YES if NSView -displayRectIgnoringOpacity:inContext: will produce a faithful representation of the content.
 - (BOOL)_isSoftwareRenderable;

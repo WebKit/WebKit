@@ -87,10 +87,10 @@ protected:
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, CSSValueID identifier);
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, double value, CSSUnitType);
     void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, const String& value);
-    void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, RefPtr<CSSValue>&&);
+    void addPropertyToPresentationalHintStyle(MutableStyleProperties&, CSSPropertyID, Ref<CSSValue>&&);
 
     void addSubresourceAttributeURLs(ListHashSet<URL>&) const override;
-    Attribute replaceURLsInAttributeValue(const Attribute&, const UncheckedKeyHashMap<String, String>&) const override;
+    Attribute replaceURLsInAttributeValue(const Attribute&, const CSS::SerializationContext&) const override;
 
 private:
     void styleAttributeChanged(const AtomString& newStyleString, AttributeModificationReason);

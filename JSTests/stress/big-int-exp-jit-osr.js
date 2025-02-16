@@ -10,7 +10,7 @@ function bigIntExp(x, y) {
 }
 noInline(bigIntExp);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     let r = bigIntExp(3n, 10n);
     assert.sameValue(r, 59049n, 3n + " ** " + 10n + " = " + r);
 }

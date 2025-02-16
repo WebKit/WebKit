@@ -60,4 +60,4 @@ template<> struct PathComputation<Inset> { WebCore::Path operator()(const Inset&
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(Inset, 2)
+DEFINE_TUPLE_LIKE_CONFORMANCE(WebCore::Style::Inset, 2)

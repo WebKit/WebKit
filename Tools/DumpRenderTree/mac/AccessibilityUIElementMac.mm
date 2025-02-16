@@ -1706,6 +1706,9 @@ AccessibilityTextMarkerRange AccessibilityUIElement::misspellingTextMarkerRange(
 
 AccessibilityTextMarkerRange AccessibilityUIElement::textMarkerRangeForElement(AccessibilityUIElement* element)
 {
+    if (!element)
+        return nullptr;
+
     BEGIN_AX_OBJC_EXCEPTIONS
     id textMarkerRange = [m_element accessibilityAttributeValue:@"AXTextMarkerRangeForUIElement" forParameter:element->platformUIElement()];
     return AccessibilityTextMarkerRange(textMarkerRange);

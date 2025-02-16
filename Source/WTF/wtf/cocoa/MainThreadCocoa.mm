@@ -66,14 +66,14 @@ void dispatchAsyncOnMainThreadWithWebThreadLockIfNeeded(void (^block)())
 {
 #if USE(WEB_THREAD)
     if (WebCoreWebThreadIsEnabled && WebCoreWebThreadIsEnabled()) {
-        RunLoop::main().dispatch([block = makeBlockPtr(block)] {
+        RunLoop::protectedMain()->dispatch([block = makeBlockPtr(block)] {
             WebCoreWebThreadLock();
             block();
         });
         return;
     }
 #endif
-    RunLoop::main().dispatch([block = makeBlockPtr(block)] {
+    RunLoop::protectedMain()->dispatch([block = makeBlockPtr(block)] {
         block();
     });
 }
@@ -86,7 +86,7 @@ void callOnWebThreadOrDispatchAsyncOnMainThread(void (^block)())
         return;
     }
 #endif
-    RunLoop::main().dispatch([block = makeBlockPtr(block)] {
+    RunLoop::protectedMain()->dispatch([block = makeBlockPtr(block)] {
         block();
     });
 }

@@ -17,7 +17,7 @@ noInline(test2);
 
 var target1 = $vm.createCustomTestGetterSetter();
 var target2 = { __proto__: target1 };
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     shouldBe(test1(target1), true);
     shouldBe(test1(target2), true);
     shouldBe(test2(target1), true);

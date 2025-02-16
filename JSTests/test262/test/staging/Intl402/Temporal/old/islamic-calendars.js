@@ -12,10 +12,23 @@ features: [Temporal]
 const tests = [
   {
     calendar: "islamic",
-    inLeapYear: false,
-    daysInYear: 354,
-    daysInMonth12: 29,
-    isoDate: "2023-07-18",
+    choices: [
+      // Approximations of the observational Islamic calendar as computed by ICU4C.
+      {
+        inLeapYear: false,
+        daysInYear: 354,
+        daysInMonth12: 29,
+        isoDate: "2023-07-18",
+      },
+
+      // Approximations of the observational Islamic calendar as computed by ICU4X.
+      {
+        inLeapYear: true,
+        daysInYear: 355,
+        daysInMonth12: 30,
+        isoDate: "2023-07-19",
+      }
+    ],
   },
   {
     calendar: "islamic-umalqura",
@@ -33,10 +46,23 @@ const tests = [
   },
   {
     calendar: "islamic-rgsa",
-    inLeapYear: false,
-    daysInYear: 354,
-    daysInMonth12: 29,
-    isoDate: "2023-07-18",
+    choices: [
+      // Approximations of the observational Islamic calendar as computed by ICU4C.
+      {
+        inLeapYear: false,
+        daysInYear: 354,
+        daysInMonth12: 29,
+        isoDate: "2023-07-18",
+      },
+
+      // Approximations of the observational Islamic calendar as computed by ICU4X.
+      {
+        inLeapYear: true,
+        daysInYear: 355,
+        daysInMonth12: 30,
+        isoDate: "2023-07-19",
+      }
+    ],
   },
   {
     calendar: "islamic-tbla",
@@ -48,7 +74,7 @@ const tests = [
 ];
 
 for (const test of tests) {
-  const { calendar, inLeapYear, daysInYear, daysInMonth12, isoDate } = test;
+  const { calendar, choices = [test] } = test;
   const year = 1445;
   const date = Temporal.PlainDate.from({ year, month: 1, day: 1, calendar });
   assert.sameValue(date.calendarId, calendar);
@@ -56,6 +82,15 @@ for (const test of tests) {
   assert.sameValue(date.month, 1);
   assert.sameValue(date.monthCode, "M01");
   assert.sameValue(date.day, 1);
+
+  // Match the possible choice by comparing the ISO date value.
+  const choice = choices.find(({ isoDate }) => {
+    return date.toString().startsWith(isoDate);
+  });
+  assert(choice !== undefined, `No applicable choice found for calendar: ${calendar}`);
+
+  const { inLeapYear, daysInYear, daysInMonth12, isoDate } = choice;
+
   assert.sameValue(date.inLeapYear, inLeapYear);
   assert.sameValue(date.daysInYear, daysInYear);
   assert.sameValue(date.monthsInYear, 12);

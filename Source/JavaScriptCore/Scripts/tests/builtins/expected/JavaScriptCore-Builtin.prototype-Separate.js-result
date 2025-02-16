@@ -140,13 +140,13 @@ JSC_FOREACH_BUILTIN.PROTOTYPE_BUILTIN_CODE(DECLARE_BUILTIN_GENERATOR)
 
 namespace JSC {
 
-const JSC::ConstructAbility s_builtinPrototypeEveryCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_builtinPrototypeEveryCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_builtinPrototypeEveryCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_builtinPrototypeEveryCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_builtinPrototypeEveryCodeLength = 762;
-static const JSC::Intrinsic s_builtinPrototypeEveryCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_builtinPrototypeEveryCode =
+constinit const JSC::ConstructAbility s_builtinPrototypeEveryCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_builtinPrototypeEveryCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_builtinPrototypeEveryCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_builtinPrototypeEveryCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_builtinPrototypeEveryCodeLength = 762;
+static constinit const JSC::Intrinsic s_builtinPrototypeEveryCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_builtinPrototypeEveryCode =
     "(function (callback )\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -176,13 +176,13 @@ const char* const s_builtinPrototypeEveryCode =
     "})\n" \
 ;
 
-const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_builtinPrototypeForEachCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_builtinPrototypeForEachCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_builtinPrototypeForEachCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_builtinPrototypeForEachCodeLength = 694;
-static const JSC::Intrinsic s_builtinPrototypeForEachCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_builtinPrototypeForEachCode =
+constinit const JSC::ConstructAbility s_builtinPrototypeForEachCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_builtinPrototypeForEachCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_builtinPrototypeForEachCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_builtinPrototypeForEachCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_builtinPrototypeForEachCodeLength = 694;
+static constinit const JSC::Intrinsic s_builtinPrototypeForEachCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_builtinPrototypeForEachCode =
     "(function (callback )\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -208,13 +208,13 @@ const char* const s_builtinPrototypeForEachCode =
     "})\n" \
 ;
 
-const JSC::ConstructAbility s_builtinPrototypeMatchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_builtinPrototypeMatchCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_builtinPrototypeMatchCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_builtinPrototypeMatchCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_builtinPrototypeMatchCodeLength = 1238;
-static const JSC::Intrinsic s_builtinPrototypeMatchCodeIntrinsic = JSC::NoIntrinsic;
-const char* const s_builtinPrototypeMatchCode =
+constinit const JSC::ConstructAbility s_builtinPrototypeMatchCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_builtinPrototypeMatchCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_builtinPrototypeMatchCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_builtinPrototypeMatchCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_builtinPrototypeMatchCodeLength = 1238;
+static constinit const JSC::Intrinsic s_builtinPrototypeMatchCodeIntrinsic = JSC::NoIntrinsic;
+constinit const char* const s_builtinPrototypeMatchCode =
     "(function (strArg)\n" \
     "{\n" \
     "    \"use strict\";\n" \
@@ -267,13 +267,13 @@ const char* const s_builtinPrototypeMatchCode =
     "})\n" \
 ;
 
-const JSC::ConstructAbility s_builtinPrototypeTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
-const JSC::ConstructorKind s_builtinPrototypeTestCodeConstructorKind = JSC::ConstructorKind::None;
-const JSC::ImplementationVisibility s_builtinPrototypeTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
-const JSC::InlineAttribute s_builtinPrototypeTestCodeInlineAttribute = JSC::InlineAttribute::None;
-const int s_builtinPrototypeTestCodeLength = 504;
-static const JSC::Intrinsic s_builtinPrototypeTestCodeIntrinsic = JSC::RegExpTestIntrinsic;
-const char* const s_builtinPrototypeTestCode =
+constinit const JSC::ConstructAbility s_builtinPrototypeTestCodeConstructAbility = JSC::ConstructAbility::CannotConstruct;
+constinit const JSC::ConstructorKind s_builtinPrototypeTestCodeConstructorKind = JSC::ConstructorKind::None;
+constinit const JSC::ImplementationVisibility s_builtinPrototypeTestCodeImplementationVisibility = JSC::ImplementationVisibility::Public;
+constinit const JSC::InlineAttribute s_builtinPrototypeTestCodeInlineAttribute = JSC::InlineAttribute::None;
+constinit const int s_builtinPrototypeTestCodeLength = 504;
+static constinit const JSC::Intrinsic s_builtinPrototypeTestCodeIntrinsic = JSC::RegExpTestIntrinsic;
+constinit const char* const s_builtinPrototypeTestCode =
     "(function (strArg)\n" \
     "{\n" \
     "    \"use strict\";\n" \

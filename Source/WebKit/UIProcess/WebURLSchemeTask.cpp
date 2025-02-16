@@ -106,7 +106,7 @@ auto WebURLSchemeTask::willPerformRedirection(ResourceResponse&& response, Resou
             completionHandler(WTFMove(request));
     };
 
-    m_process->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler), page->webPageIDInMainFrameProcess());
+    m_process->sendWithAsyncReply(Messages::WebPage::URLSchemeTaskWillPerformRedirection(m_urlSchemeHandler->identifier(), m_resourceLoaderID, response, request), WTFMove(innerCompletionHandler), *m_webPageID);
 
     return ExceptionType::None;
 }
@@ -222,21 +222,6 @@ auto WebURLSchemeTask::didComplete(const ResourceError& error) -> ExceptionType
     m_urlSchemeHandler->taskCompleted(*pageProxyID(), *this);
 
     return ExceptionType::None;
-}
-
-void WebURLSchemeTask::pageDestroyed()
-{
-    ASSERT(RunLoop::isMain());
-
-    m_pageProxyID = std::nullopt;
-    m_webPageID = std::nullopt;
-    m_process = nullptr;
-    m_stopped = true;
-    
-    if (isSync()) {
-        Locker locker { m_requestLock };
-        m_syncCompletionHandler({ }, failedCustomProtocolSyncLoad(m_request), { });
-    }
 }
 
 void WebURLSchemeTask::stop()

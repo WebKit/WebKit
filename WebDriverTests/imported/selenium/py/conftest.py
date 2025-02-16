@@ -150,7 +150,8 @@ def driver(request):
             options = get_options("Firefox", request.config) or webdriver.FirefoxOptions()
             options.set_capability("moz:firefoxOptions", {})
             options.enable_downloads = True
-        if driver_class == "WebKitGTK":
+        if driver_class.lower() == "webkitgtk":
+            driver_class = "WebKitGTK"
             options = get_options(driver_class, request.config)
         if driver_class == "Edge":
             options = get_options(driver_class, request.config)
@@ -215,6 +216,7 @@ def get_options(driver_class, config):
             options = getattr(webdriver, f"{driver_class}Options")()
 
         options.web_socket_url = True
+        options.unhandled_prompt_behavior = "ignore"
 
     return options
 

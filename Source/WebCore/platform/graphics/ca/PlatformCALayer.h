@@ -80,6 +80,9 @@ enum class PlatformCALayerLayerType : uint8_t {
 #if HAVE(CORE_MATERIAL)
         LayerTypeMaterialLayer,
 #endif
+#if HAVE(MATERIAL_HOSTING)
+        LayerTypeMaterialHostingLayer,
+#endif
         LayerTypeShapeLayer,
         LayerTypeScrollContainerLayer,
 #if ENABLE(MODEL_ELEMENT)
@@ -310,8 +313,8 @@ public:
 #endif
 
 #if HAVE(CORE_MATERIAL)
-    virtual AppleVisualEffect appleVisualEffect() const = 0;
-    virtual void setAppleVisualEffect(AppleVisualEffect) = 0;
+    virtual AppleVisualEffectData appleVisualEffectData() const = 0;
+    virtual void setAppleVisualEffectData(AppleVisualEffectData) = 0;
 #endif
 
     virtual TiledBacking* tiledBacking() = 0;
@@ -344,6 +347,8 @@ public:
     static void drawLayerContents(GraphicsContext&, PlatformCALayer*, RepaintRectList&, OptionSet<GraphicsLayerPaintBehavior>);
     static void drawRepaintIndicator(GraphicsContext&, PlatformCALayer*, int repaintCount, Color customBackgroundColor = { });
     static CGRect frameForLayer(const PlatformLayer*);
+
+    static ContentsFormat contentsFormatForLayer(Widget* = nullptr, PlatformCALayerClient* = nullptr);
 
     virtual void markFrontBufferVolatileForTesting() { }
     void moveToLayerPool();

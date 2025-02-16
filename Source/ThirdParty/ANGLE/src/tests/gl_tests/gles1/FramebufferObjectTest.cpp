@@ -149,6 +149,85 @@ TEST_P(FramebufferObjectTest, RenderbufferObject)
     EXPECT_GL_NO_ERROR();
 }
 
+// Checks that an RGBA8 renderbuffer object can be used and can be bound for framebuffer object.
+TEST_P(FramebufferObjectTest, RGBA8Renderbuffer)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_framebuffer_object"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_rgba8"));
+
+    GLuint fbo;
+    GLuint rbo;
+
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glGenRenderbuffersOES(1, &rbo);
+    EXPECT_GL_NO_ERROR();
+    glIsRenderbufferOES(rbo);
+    EXPECT_GL_NO_ERROR();
+    glBindRenderbufferOES(GL_RENDERBUFFER, rbo);
+    EXPECT_GL_NO_ERROR();
+    glRenderbufferStorageOES(GL_RENDERBUFFER, GL_RGBA8, 16, 16);
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferRenderbufferOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, 16, 16, GLColor::white);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &fbo);
+    glDeleteRenderbuffersOES(1, &rbo);
+    EXPECT_GL_NO_ERROR();
+}
+
+// Checks that an RGB8 and an RGBA8 renderbuffer object can be used and can be bound for framebuffer
+// object one after the other.
+TEST_P(FramebufferObjectTest, RGB8AndRGBA8Renderbuffers)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_framebuffer_object"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_rgb8_rgba8"));
+
+    GLuint fbo;
+    GLuint rbo[2];
+
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    glGenRenderbuffersOES(2, rbo);
+    EXPECT_GL_NO_ERROR();
+    glBindRenderbufferOES(GL_RENDERBUFFER, rbo[0]);
+    EXPECT_GL_NO_ERROR();
+    glRenderbufferStorageOES(GL_RENDERBUFFER, GL_RGB8, 16, 16);
+    EXPECT_GL_NO_ERROR();
+    glBindRenderbufferOES(GL_RENDERBUFFER, rbo[1]);
+    EXPECT_GL_NO_ERROR();
+    glRenderbufferStorageOES(GL_RENDERBUFFER, GL_RGBA8, 16, 16);
+    EXPECT_GL_NO_ERROR();
+
+    glFramebufferRenderbufferOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo[0]);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(0.0, 1.0, 0.0, 0.1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 16, 16, GLColor::green);
+
+    glFramebufferRenderbufferOES(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo[1]);
+    EXPECT_GL_NO_ERROR();
+
+    glClearColor(1.0, 0.0, 1.0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    EXPECT_PIXEL_RECT_EQ(0, 0, 16, 16, GLColor::magenta);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDeleteFramebuffers(1, &fbo);
+    glDeleteRenderbuffersOES(2, rbo);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Checks that generateMipmap can be called without GL errors.
 TEST_P(FramebufferObjectTest, GenerateMipmap)
 {

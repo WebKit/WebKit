@@ -82,7 +82,12 @@ static void showShareSheet(WKWebView *webView, ShareSheetObserver *observer, CGP
     [copyAction runActionWithElementInfo:copyElement.get()];
 }
 
+// rdar://142903525 (REGRESSION(iOS 18): TestWebKitAPI.ShareSheetTests.ShareImgElementWithBase64URL (api-test) is a flaky crash on iOS (285929))
+#if PLATFORM(IOS)
+TEST(ShareSheetTests, DISABLED_ShareImgElementWithBase64URL)
+#else
 TEST(ShareSheetTests, ShareImgElementWithBase64URL)
+#endif
 {
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
     auto observer = adoptNS([[ShareSheetObserver alloc] init]);

@@ -9,7 +9,7 @@ function foo(...args) {
 }
 noInline(foo);
 
-for (let i = 0; i < 10000; i++) {
+for (let i = 0; i < testLoopCount; i++) {
     // Warm it up on both in bound and out of bound accesses.
     if (i % 2)
         assert(foo(i) === i);
@@ -21,5 +21,5 @@ let newProto = [50];
 newProto.__proto__ = null;
 
 Array.prototype.__proto__ = newProto;
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
     assert(foo() === 50);

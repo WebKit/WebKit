@@ -10,7 +10,7 @@ function f(o) {
 }
 noInline(f);
 
-for (var i = 0; i < 10000; i++) {
+for (var i = 0; i < testLoopCount; i++) {
     let o;
     // This test needs to allocate a large rope string, which is slow.
     // The following is tweaked so that we only use this large string once each to

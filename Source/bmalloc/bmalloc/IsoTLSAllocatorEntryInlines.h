@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if !BUSE(TZONE)
+
 #include "IsoHeapImpl.h"
 
 #if !BUSE(LIBPAS)
@@ -57,3 +59,4 @@ void IsoTLSAllocatorEntry<Config>::scavenge(void* entry)
 } // namespace bmalloc
 
 #endif
+#endif // !BUSE(TZONE)

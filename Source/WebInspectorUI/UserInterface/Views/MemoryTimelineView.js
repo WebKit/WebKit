@@ -131,6 +131,8 @@ WI.MemoryTimelineView = class MemoryTimelineView extends WI.TimelineView
     closed()
     {
         this.representedObject.removeEventListener(WI.Timeline.Event.RecordAdded, this._memoryTimelineRecordAdded, this);
+
+        super.closed();
     }
 
     reset()

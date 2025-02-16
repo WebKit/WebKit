@@ -38,7 +38,6 @@ namespace WebCore {
 
 namespace CryptoAlgorithmRSA_OAEPInternal {
 static constexpr auto ALG1 = "RSA-OAEP"_s;
-static constexpr auto ALG224 = "RSA-OAEP-224"_s;
 static constexpr auto ALG256 = "RSA-OAEP-256"_s;
 static constexpr auto ALG384 = "RSA-OAEP-384"_s;
 static constexpr auto ALG512 = "RSA-OAEP-512"_s;
@@ -137,8 +136,8 @@ void CryptoAlgorithmRSA_OAEP::importKey(CryptoKeyFormat format, KeyData&& data, 
         case CryptoAlgorithmIdentifier::SHA_1:
             isMatched = key.alg.isNull() || key.alg == ALG1;
             break;
-        case CryptoAlgorithmIdentifier::SHA_224:
-            isMatched = key.alg.isNull() || key.alg == ALG224;
+        case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
             isMatched = key.alg.isNull() || key.alg == ALG256;
@@ -208,8 +207,8 @@ void CryptoAlgorithmRSA_OAEP::exportKey(CryptoKeyFormat format, Ref<CryptoKey>&&
         case CryptoAlgorithmIdentifier::SHA_1:
             jwk.alg = String(ALG1);
             break;
-        case CryptoAlgorithmIdentifier::SHA_224:
-            jwk.alg = String(ALG224);
+        case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+            RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
             break;
         case CryptoAlgorithmIdentifier::SHA_256:
             jwk.alg = String(ALG256);

@@ -21,12 +21,17 @@
 #include "config.h"
 #include "Fuzzilli.h"
 
+#include <fcntl.h>
 #include <mutex>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <wtf/Assertions.h>
 #include <wtf/Compiler.h>
 #include <wtf/DataLog.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/ASCIILiteral.h>
 
 #if ENABLE(FUZZILLI)
 
@@ -53,8 +58,10 @@ size_t Fuzzilli::numPendingRejectedPromises { 0 };
 void Fuzzilli::resetCoverageEdges()
 {
     uint64_t n = 0;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (uint32_t* edge = edgesStart; edge < edgesStop && n < MAX_EDGES; edge++)
         *edge = ++n;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 FilePrintStream& Fuzzilli::logFile()
@@ -139,7 +146,7 @@ void Fuzzilli::initializeReprl()
     WRITE_TO_FUZZILLI(helo.data(), helo.size());
     READ_FROM_FUZZILLI(helo.data(), helo.size());
 
-    RELEASE_ASSERT_WITH_MESSAGE(equalSpans(helo, "HELO"_span), "[REPRL] Invalid response from parent");
+    RELEASE_ASSERT_WITH_MESSAGE(equalSpans(std::span { helo } , "HELO"_span), "[REPRL] Invalid response from parent");
 
     // Mmap the data input buffer.
     reprlInputData = static_cast<char*>(mmap(0, REPRL_MAX_DATA_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, REPRL_DRFD, 0));
@@ -166,7 +173,9 @@ extern "C" void __sanitizer_cov_trace_pc_guard(uint32_t* guard)
     // instrumentation ignores the first edge (see libcoverage.c) and so the race is unproblematic.
 
     uint32_t index = *guard;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     Fuzzilli::sharedData->edges[index / 8] |= 1 << (index % 8);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     *guard = 0;
 }

@@ -76,6 +76,7 @@ unsigned FunctionCodeBlockGenerator::numberOfJumpTables() const
 
 void FunctionCodeBlockGenerator::setTailCall(uint32_t functionIndex, bool isImportedFunctionFromFunctionIndexSpace)
 {
+    m_hasTailCallSuccessors = true;
     m_tailCallSuccessors.set(functionIndex);
     if (isImportedFunctionFromFunctionIndexSpace)
         setTailCallClobbersInstance();

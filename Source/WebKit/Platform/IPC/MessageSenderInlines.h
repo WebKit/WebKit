@@ -41,7 +41,7 @@ template<typename MessageType> inline bool MessageSender::send(MessageType&& mes
 template<typename MessageType> inline auto MessageSender::sendSync(MessageType&& message, uint64_t destinationID, Timeout timeout, OptionSet<SendSyncOption> options) -> SendSyncResult<MessageType>
 {
     static_assert(MessageType::isSync);
-    if (auto* connection = messageSenderConnection())
+    if (RefPtr connection = messageSenderConnection())
         return connection->sendSync(std::forward<MessageType>(message), destinationID, timeout, options);
     return { Error::NoMessageSenderConnection };
 }

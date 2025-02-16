@@ -63,7 +63,7 @@ WebBackForwardList::~WebBackForwardList()
     ASSERT((!m_page && !provisionalOrCurrentIndex()) || !m_page->hasRunningProcess());
 }
 
-WebBackForwardListItem* WebBackForwardList::itemForID(const BackForwardItemIdentifier& identifier)
+WebBackForwardListItem* WebBackForwardList::itemForID(BackForwardItemIdentifier identifier)
 {
     if (!m_page)
         return nullptr;
@@ -117,16 +117,19 @@ void WebBackForwardList::addItem(Ref<WebBackForwardListItem>&& newItem)
             m_entries.removeLast();
         }
 
-        if (auto frameID = newItem->navigatedFrameItem().frameID()) {
-            while (m_entries.size()) {
-                Ref lastEntry = m_entries.last();
-                if (!lastEntry->isRemoteFrameNavigation() || !lastEntry->navigatedFrameItem().hasAncestorFrame(*frameID))
-                    break;
-                didRemoveItem(lastEntry);
-                removedItems.append(WTFMove(lastEntry));
-                m_entries.removeLast();
+        while (m_entries.size()) {
+            Ref lastEntry = m_entries.last();
+            if (!lastEntry->isRemoteFrameNavigation() || lastEntry->protectedNavigatedFrameItem()->sharesAncestor(newItem->protectedNavigatedFrameItem()))
+                break;
+            didRemoveItem(lastEntry);
+            removedItems.append(WTFMove(lastEntry));
+            m_entries.removeLast();
+
+            if (m_entries.isEmpty()) {
+                m_currentIndex = std::nullopt;
+                m_provisionalIndex = std::nullopt;
+            } else
                 setProvisionalOrCurrentIndex(*provisionalOrCurrentIndex() - 1);
-            }
         }
 
         // Toss the first item if the list is getting too big, as long as we're not using it
@@ -270,6 +273,22 @@ void WebBackForwardList::clearProvisionalItem(WebBackForwardListFrameItem& frame
     m_provisionalIndex = std::nullopt;
 }
 
+void WebBackForwardList::commitProvisionalItem(WebBackForwardListFrameItem& frameItem)
+{
+    if (!m_provisionalIndex)
+        return;
+
+    if (m_entries[*m_provisionalIndex].ptr() != frameItem.backForwardListItem())
+        return;
+
+    if (*m_provisionalIndex >= m_entries.size()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    m_currentIndex = std::exchange(m_provisionalIndex, std::nullopt);
+}
+
 WebBackForwardListItem* WebBackForwardList::currentItem() const
 {
     ASSERT(!provisionalOrCurrentIndex() || *provisionalOrCurrentIndex() < m_entries.size());
@@ -357,7 +376,9 @@ Ref<API::Array> WebBackForwardList::backListAsAPIArrayWithLimit(unsigned limit) 
     ASSERT(backListSize >= size);
     size_t startIndex = backListSize - size;
     Vector<RefPtr<API::Object>> vector(size, [&](size_t i) -> RefPtr<API::Object> {
-        return m_entries[startIndex + i].ptr();
+        // FIXME: Remove SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE when the false positive
+        // in the static analyzer is fixed.
+        SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE return m_entries[startIndex + i].ptr();
     });
 
     return API::Array::create(WTFMove(vector));
@@ -514,7 +535,7 @@ void WebBackForwardList::setItemsAsRestoredFromSession()
     });
 }
 
-void WebBackForwardList::setItemsAsRestoredFromSessionIf(Function<bool(WebBackForwardListItem&)>&& functor)
+void WebBackForwardList::setItemsAsRestoredFromSessionIf(NOESCAPE Function<bool(WebBackForwardListItem&)>&& functor)
 {
     for (auto& entry : m_entries) {
         if (functor(entry))
@@ -534,11 +555,11 @@ void WebBackForwardList::didRemoveItem(WebBackForwardListItem& backForwardListIt
 }
 
 enum class NavigationDirection { Backward, Forward };
-static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(const WebBackForwardList& backForwardList, NavigationDirection direction)
+static RefPtr<WebBackForwardListItem> itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(const WebBackForwardList& backForwardList, NavigationDirection direction)
 {
     auto delta = direction == NavigationDirection::Backward ? -1 : 1;
     int itemIndex = delta;
-    auto* item = backForwardList.itemAtIndex(itemIndex);
+    RefPtr item = backForwardList.itemAtIndex(itemIndex);
     if (!item)
         return nullptr;
 
@@ -551,7 +572,7 @@ static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserG
     // Yahoo -> Yahoo#a (no userInteraction) -> Google -> Google#a (no user interaction) -> Google#b (no user interaction)
     // If we're on Google and navigate back, we don't want to skip anything and load Yahoo#a.
     // However, if we're on Yahoo and navigate forward, we do want to skip items and end up on Google#b.
-    if (direction == NavigationDirection::Backward && !backForwardList.currentItem()->wasCreatedByJSWithoutUserInteraction())
+    if (direction == NavigationDirection::Backward && !backForwardList.protectedCurrentItem()->wasCreatedByJSWithoutUserInteraction())
         return item;
 
     // For example:
@@ -559,7 +580,7 @@ static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserG
     // If we are on Google#b and navigate backwards, we want to skip over Google#a and Google, to end up on Yahoo#a.
     // If we are on Yahoo#a and navigate forwards, we want to skip over Google and Google#a, to end up on Google#b.
 
-    auto* originalItem = item;
+    RefPtr originalItem = item;
     while (item->wasCreatedByJSWithoutUserInteraction()) {
         itemIndex += delta;
         item = backForwardList.itemAtIndex(itemIndex);
@@ -582,21 +603,19 @@ static WebBackForwardListItem* itemSkippingBackForwardItemsAddedByJSWithoutUserG
     } else {
         // If going forward and there are items that we created by JS without user interaction, move forward to the last
         // one in the series.
-        auto* nextItem = backForwardList.itemAtIndex(itemIndex + 1);
-        while (nextItem && nextItem->wasCreatedByJSWithoutUserInteraction()) {
-            item = nextItem;
-            nextItem = backForwardList.itemAtIndex(++itemIndex);
-        }
+        RefPtr nextItem = backForwardList.itemAtIndex(itemIndex + 1);
+        while (nextItem && nextItem->wasCreatedByJSWithoutUserInteraction())
+            item = std::exchange(nextItem, backForwardList.itemAtIndex(++itemIndex));
     }
     return item;
 }
 
-WebBackForwardListItem* WebBackForwardList::goBackItemSkippingItemsWithoutUserGesture() const
+RefPtr<WebBackForwardListItem> WebBackForwardList::goBackItemSkippingItemsWithoutUserGesture() const
 {
     return itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(*this, NavigationDirection::Backward);
 }
 
-WebBackForwardListItem* WebBackForwardList::goForwardItemSkippingItemsWithoutUserGesture() const
+RefPtr<WebBackForwardListItem> WebBackForwardList::goForwardItemSkippingItemsWithoutUserGesture() const
 {
     return itemSkippingBackForwardItemsAddedByJSWithoutUserGesture(*this, NavigationDirection::Forward);
 }
@@ -632,10 +651,11 @@ Ref<FrameState> WebBackForwardList::completeFrameStateForNavigation(Ref<FrameSta
     if (!navigatedFrameID)
         return navigatedFrameState;
 
-    if (currentItem->mainFrameItem().frameID() == navigatedFrameID)
+    Ref mainFrameItem = currentItem->mainFrameItem();
+    if (mainFrameItem->frameID() == navigatedFrameID)
         return navigatedFrameState;
 
-    if (!currentItem->mainFrameItem().childItemForFrameID(*navigatedFrameID))
+    if (!mainFrameItem->childItemForFrameID(*navigatedFrameID))
         return navigatedFrameState;
 
     Ref frameState = currentItem->mainFrameState();

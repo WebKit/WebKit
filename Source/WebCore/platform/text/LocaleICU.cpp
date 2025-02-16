@@ -66,11 +66,9 @@ LocaleICU::~LocaleICU()
 #if !UCONFIG_NO_FORMATTING
     unum_close(m_numberFormat);
 #endif
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     udat_close(m_shortDateFormat);
     udat_close(m_mediumTimeFormat);
     udat_close(m_shortTimeFormat);
-#endif
 }
 
 Locale::WritingDirection LocaleICU::defaultWritingDirection() const
@@ -154,7 +152,6 @@ void LocaleICU::initializeLocaleData()
 #endif
 }
 
-#if ENABLE(DATE_AND_TIME_INPUT_TYPES)
 bool LocaleICU::initializeShortDateFormat()
 {
     if (m_didCreateShortDateFormat)
@@ -177,12 +174,12 @@ static String getDateFormatPattern(const UDateFormat* dateFormat)
         return emptyString();
 
     UErrorCode status = U_ZERO_ERROR;
-    int32_t length = udat_toPattern(dateFormat, TRUE, 0, 0, &status);
+    int32_t length = udat_toPattern(dateFormat, true, 0, 0, &status);
     if (!needsToGrowToProduceBuffer(status) || !length)
         return emptyString();
     StringBuffer<UChar> buffer(length);
     status = U_ZERO_ERROR;
-    udat_toPattern(dateFormat, TRUE, buffer.characters(), length, &status);
+    udat_toPattern(dateFormat, true, buffer.characters(), length, &status);
     if (U_FAILURE(status))
         return emptyString();
     return String::adopt(WTFMove(buffer));
@@ -388,8 +385,6 @@ const Vector<String>& LocaleICU::timeAMPMLabels()
     initializeDateTimeFormat();
     return m_timeAMPMLabels;
 }
-
-#endif
 
 } // namespace WebCore
 

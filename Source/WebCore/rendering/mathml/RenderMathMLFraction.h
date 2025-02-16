@@ -51,7 +51,7 @@ private:
     ASCIILiteral renderName() const final { return "RenderMathMLFraction"_s; }
 
     void computePreferredLogicalWidths() final;
-    void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
+    void layoutBlock(RelayoutChildren, LayoutUnit pageLogicalHeight = 0_lu) final;
     std::optional<LayoutUnit> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;
     RenderMathMLOperator* unembellishedOperator() const final;

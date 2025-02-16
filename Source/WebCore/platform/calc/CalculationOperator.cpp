@@ -64,6 +64,7 @@ TextStream& operator<<(TextStream& ts, Operator op)
     case Operator::ToZero: ts << "to-zero"; break;
     case Operator::Nearest: ts << "nearest"; break;
     case Operator::Progress: ts << "progress"; break;
+    case Operator::Random: ts << "random"; break;
     case Operator::Blend: ts << "blend"; break;
     }
     return ts;

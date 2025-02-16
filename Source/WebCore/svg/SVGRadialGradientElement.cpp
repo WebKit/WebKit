@@ -155,7 +155,7 @@ bool SVGRadialGradientElement::collectGradientAttributes(RadialGradientAttribute
     if (!renderer())
         return false;
 
-    HashSet<RefPtr<SVGGradientElement>> processedGradients;
+    UncheckedKeyHashSet<RefPtr<SVGGradientElement>> processedGradients;
     RefPtr<SVGGradientElement> current = this;
 
     setGradientAttributes(*current, attributes);

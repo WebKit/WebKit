@@ -31,7 +31,7 @@ function f(x) {
 
 assertEquals(0n, f(1n));
 assertEquals(1n, f(2n));
-for (var i = 0; i < 10000; ++i) {
+for (var i = 0; i < wasmTestLoopCount; ++i) {
     f(1n);
     f(2n);
 }

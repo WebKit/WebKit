@@ -1621,11 +1621,14 @@ void SpirvVaryingPrecisionFixer::modifyEntryPointInterfaceList(EntryPointList en
     //
     // With SPIR-V 1.4, the original variables are changed to Private and should remain in the list.
     // The new variables should be added to the variable list.
+    //
+    // If any ID is beyond the original bound, it was added by another transformation, and should be
+    // left intact.
     const size_t variableCount = interfaceList->size();
     for (size_t index = 0; index < variableCount; ++index)
     {
         const spirv::IdRef id            = (*interfaceList)[index];
-        const spirv::IdRef replacementId = getReplacementId(id);
+        const spirv::IdRef replacementId = id < mFixedVaryingId.size() ? getReplacementId(id) : id;
         if (replacementId != id)
         {
             if (entryPointList == EntryPointList::InterfaceVariables)
@@ -2703,6 +2706,7 @@ class SpirvMultisampleTransformer final : angle::NonCopyable
                                           const ShaderInterfaceVariableInfo &info,
                                           gl::ShaderType shaderType,
                                           spirv::IdRef id,
+                                          spirv::IdRef replacementId,
                                           spv::Decoration &decoration,
                                           spirv::Blob *blobOut);
 
@@ -2928,6 +2932,7 @@ TransformationState SpirvMultisampleTransformer::transformDecorate(
     const ShaderInterfaceVariableInfo &info,
     gl::ShaderType shaderType,
     spirv::IdRef id,
+    spirv::IdRef replacementId,
     spv::Decoration &decoration,
     spirv::Blob *blobOut)
 {
@@ -2956,7 +2961,7 @@ TransformationState SpirvMultisampleTransformer::transformDecorate(
             // not already decorated with Sample:
             //
             //     OpDecorate %id Sample
-            spirv::WriteDecorate(blobOut, id, spv::DecorationSample, {});
+            spirv::WriteDecorate(blobOut, replacementId, spv::DecorationSample, {});
         }
         else if (decoration == spv::DecorationBlock)
         {
@@ -2969,8 +2974,9 @@ TransformationState SpirvMultisampleTransformer::transformDecorate(
             {
                 if (!mVaryingInfoById[id].skipMemberSampleDecoration[member])
                 {
-                    spirv::WriteMemberDecorate(blobOut, id, spirv::LiteralInteger(member),
-                                               spv::DecorationSample, {});
+                    spirv::WriteMemberDecorate(blobOut, replacementId,
+                                               spirv::LiteralInteger(member), spv::DecorationSample,
+                                               {});
                 }
             }
         }
@@ -3149,7 +3155,8 @@ void SpirvSecondaryOutputTransformer::modifyEntryPointInterfaceList(
     for (size_t index = 0; index < interfaceList->size(); ++index)
     {
         const spirv::IdRef id((*interfaceList)[index]);
-        const ShaderInterfaceVariableInfo *info = variableInfoById[id];
+        const ShaderInterfaceVariableInfo *info =
+            id < variableInfoById.size() ? variableInfoById[id] : nullptr;
 
         if (info == nullptr || info->index != 1 || !info->isArray)
         {
@@ -3274,6 +3281,155 @@ void SpirvSecondaryOutputTransformer::writeOutputPrologue(
     }
 }
 
+// Helper class that removes mentions of depth/stencil input attachments and replaces subpassLoads
+// of these attachments with 0.
+class SpirvDepthStencilInputRemover final : angle::NonCopyable
+{
+  public:
+    SpirvDepthStencilInputRemover() {}
+
+    TransformationState transformName(spirv::IdRef id, spirv::LiteralString name);
+    TransformationState transformDecorate(spirv::IdRef id,
+                                          spv::Decoration decoration,
+                                          const spirv::LiteralIntegerList &decorationValues,
+                                          spirv::Blob *blobOut);
+    TransformationState transformVariable(spirv::IdResultType typeId,
+                                          spirv::IdResult id,
+                                          spirv::Blob *blobOut);
+    TransformationState transformLoad(spirv::IdResultType typeId,
+                                      spirv::IdResult id,
+                                      spirv::IdRef pointerId,
+                                      spirv::Blob *blobOut);
+
+    TransformationState transformImageRead(const uint32_t *instruction, spirv::Blob *blobOut);
+
+    void modifyEntryPointInterfaceList(spirv::IdRefList *interfaceList, spirv::Blob *blobOut);
+
+    void writePendingDeclarations(spirv::Blob *blobOut);
+
+  private:
+    bool isDepthStencilInput(spirv::IdRef id)
+    {
+        return id == sh::vk::spirv::kIdDepthInputAttachment ||
+               id == sh::vk::spirv::kIdStencilInputAttachment;
+    }
+
+    spirv::IdRef mVec4ZeroId;
+    spirv::IdRef mIVec4ZeroId;
+
+    std::vector<spirv::IdRef> mImageReadParamIdsToRemove;
+};
+
+TransformationState SpirvDepthStencilInputRemover::transformName(spirv::IdRef id,
+                                                                 spirv::LiteralString name)
+{
+    // Both depth and stencil input variables are removed, so remove their debug info too
+    return isDepthStencilInput(id) ? TransformationState::Transformed
+                                   : TransformationState::Unchanged;
+}
+
+TransformationState SpirvDepthStencilInputRemover::transformDecorate(
+    spirv::IdRef id,
+    spv::Decoration decoration,
+    const spirv::LiteralIntegerList &decorationValues,
+    spirv::Blob *blobOut)
+{
+    // Both depth and stencil input variables are removed, so remove their decorations too
+    return isDepthStencilInput(id) ? TransformationState::Transformed
+                                   : TransformationState::Unchanged;
+}
+
+TransformationState SpirvDepthStencilInputRemover::transformVariable(spirv::IdResultType typeId,
+                                                                     spirv::IdResult id,
+                                                                     spirv::Blob *blobOut)
+{
+    // Both depth and stencil input variables are removed
+    return isDepthStencilInput(id) ? TransformationState::Transformed
+                                   : TransformationState::Unchanged;
+}
+
+TransformationState SpirvDepthStencilInputRemover::transformLoad(spirv::IdResultType typeId,
+                                                                 spirv::IdResult id,
+                                                                 spirv::IdRef pointerId,
+                                                                 spirv::Blob *blobOut)
+{
+    if (isDepthStencilInput(pointerId))
+    {
+        // Both depth and stencil input variables are removed, so OpLoad from them needs to be
+        // removed.  Later, OpImageRead from the result of this instruction should also be removed,
+        // so keep that in |mImageReadParamIdsToRemove|.
+        mImageReadParamIdsToRemove.push_back(id);
+
+        // The result of OpLoad for the stencil attachment is decorated with RelaxedPrecision.  At
+        // this point, we have passed the OpDecorate section; instead of adding another pass to
+        // either discover this ID earlier or remove the OpDecorate later, this instruction is
+        // simply replaced with OpCopyObject given the ivec4(0) constant.  The driver would
+        // eliminate it as dead code.
+        if (pointerId == sh::vk::spirv::kIdStencilInputAttachment)
+        {
+            spirv::WriteCopyObject(blobOut, ID::IVec4, id, mIVec4ZeroId);
+        }
+
+        return TransformationState::Transformed;
+    }
+
+    return TransformationState::Unchanged;
+}
+
+TransformationState SpirvDepthStencilInputRemover::transformImageRead(const uint32_t *instruction,
+                                                                      spirv::Blob *blobOut)
+{
+    spirv::IdResultType idResultType;
+    spirv::IdResult idResult;
+    spirv::IdRef image;
+    spirv::IdRef coordinate;
+    spv::ImageOperandsMask imageOperands;
+    spirv::IdRefList imageOperandIdsList;
+
+    spirv::ParseImageRead(instruction, &idResultType, &idResult, &image, &coordinate,
+                          &imageOperands, &imageOperandIdsList);
+
+    if (std::find(mImageReadParamIdsToRemove.begin(), mImageReadParamIdsToRemove.end(), image) !=
+        mImageReadParamIdsToRemove.end())
+    {
+        // Replace the OpImageRead from removed images with OpCopyObject from [i]vec4(0).
+        ASSERT(idResultType == ID::Vec4 || idResultType == ID::IVec4);
+        spirv::WriteCopyObject(blobOut, idResultType, idResult,
+                               idResultType == ID::Vec4 ? mVec4ZeroId : mIVec4ZeroId);
+        return TransformationState::Transformed;
+    }
+
+    return TransformationState::Unchanged;
+}
+
+void SpirvDepthStencilInputRemover::modifyEntryPointInterfaceList(spirv::IdRefList *interfaceList,
+                                                                  spirv::Blob *blobOut)
+{
+    // Remove the depth and stencil input variables from the interface list.
+    size_t writeIndex = 0;
+    for (size_t index = 0; index < interfaceList->size(); ++index)
+    {
+        spirv::IdRef id((*interfaceList)[index]);
+        if (!isDepthStencilInput(id))
+        {
+            (*interfaceList)[writeIndex] = id;
+            ++writeIndex;
+        }
+    }
+
+    interfaceList->resize_down(writeIndex);
+}
+
+void SpirvDepthStencilInputRemover::writePendingDeclarations(spirv::Blob *blobOut)
+{
+    // Add vec4(0) and uvec4(0) declarations for future use.
+    mVec4ZeroId  = SpirvTransformerBase::GetNewId(blobOut);
+    mIVec4ZeroId = SpirvTransformerBase::GetNewId(blobOut);
+
+    spirv::WriteConstantNull(blobOut, ID::Vec4, mVec4ZeroId);
+    spirv::WriteConstantNull(blobOut, ID::IVec4, mIVec4ZeroId);
+}
+
 // A SPIR-V transformer.  It walks the instructions and modifies them as necessary, for example to
 // assign bindings or locations.
 class SpirvTransformer final : public SpirvTransformerBase
@@ -3321,6 +3477,7 @@ class SpirvTransformer final : public SpirvTransformerBase
     TransformationState transformExtension(const uint32_t *instruction);
     TransformationState transformExtInstImport(const uint32_t *instruction);
     TransformationState transformExtInst(const uint32_t *instruction);
+    TransformationState transformLoad(const uint32_t *instruction);
     TransformationState transformDecorate(const uint32_t *instruction);
     TransformationState transformMemberDecorate(const uint32_t *instruction);
     TransformationState transformName(const uint32_t *instruction);
@@ -3354,6 +3511,7 @@ class SpirvTransformer final : public SpirvTransformerBase
     SpirvPositionTransformer mPositionTransformer;
     SpirvMultisampleTransformer mMultisampleTransformer;
     SpirvSecondaryOutputTransformer mSecondaryOutputTransformer;
+    SpirvDepthStencilInputRemover mDepthStencilInputRemover;
 };
 
 void SpirvTransformer::transform()
@@ -3500,6 +3658,9 @@ void SpirvTransformer::transformInstruction()
             case spv::OpInBoundsPtrAccessChain:
                 transformationState = transformAccessChain(instruction);
                 break;
+            case spv::OpLoad:
+                transformationState = transformLoad(instruction);
+                break;
             case spv::OpImageRead:
                 transformationState = transformImageRead(instruction);
                 break;
@@ -3570,6 +3731,11 @@ void SpirvTransformer::transformInstruction()
 // present in the original shader need to be done here.
 void SpirvTransformer::writePendingDeclarations()
 {
+    if (mOptions.removeDepthStencilInput)
+    {
+        mDepthStencilInputRemover.writePendingDeclarations(mSpirvBlobOut);
+    }
+
     mMultisampleTransformer.writePendingDeclarations(mNonSemanticInstructions, mVariableInfoById,
                                                      mSpirvBlobOut);
 
@@ -3834,14 +4000,14 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
         }
     }
 
-    mMultisampleTransformer.transformDecorate(mNonSemanticInstructions, *info, mOptions.shaderType,
-                                              id, decoration, mSpirvBlobOut);
-
-    if (mXfbCodeGenerator.transformDecorate(info, mOptions.shaderType, id, decoration,
-                                            decorationValues,
-                                            mSpirvBlobOut) == TransformationState::Transformed)
+    if (mOptions.removeDepthStencilInput)
     {
-        return TransformationState::Transformed;
+        if (mDepthStencilInputRemover.transformDecorate(id, decoration, decorationValues,
+                                                        mSpirvBlobOut) ==
+            TransformationState::Transformed)
+        {
+            return TransformationState::Transformed;
+        }
     }
 
     if (mInactiveVaryingRemover.transformDecorate(*info, mOptions.shaderType, id, decoration,
@@ -3851,11 +4017,22 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
         return TransformationState::Transformed;
     }
 
+    if (mXfbCodeGenerator.transformDecorate(info, mOptions.shaderType, id, decoration,
+                                            decorationValues,
+                                            mSpirvBlobOut) == TransformationState::Transformed)
+    {
+        return TransformationState::Transformed;
+    }
+
     // If using relaxed precision, generate instructions for the replacement id instead.
+    spirv::IdRef replacementId = id;
     if (mOptions.useSpirvVaryingPrecisionFixer)
     {
-        id = mVaryingPrecisionFixer.getReplacementId(id);
+        replacementId = mVaryingPrecisionFixer.getReplacementId(id);
     }
+
+    mMultisampleTransformer.transformDecorate(mNonSemanticInstructions, *info, mOptions.shaderType,
+                                              id, replacementId, decoration, mSpirvBlobOut);
 
     uint32_t newDecorationValue = ShaderInterfaceVariableInfo::kInvalid;
 
@@ -3877,7 +4054,7 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
             if (mOptions.useSpirvVaryingPrecisionFixer && info->useRelaxedPrecision)
             {
                 // Change the id to replacement variable
-                spirv::WriteDecorate(mSpirvBlobOut, id, decoration, decorationValues);
+                spirv::WriteDecorate(mSpirvBlobOut, replacementId, decoration, decorationValues);
                 return TransformationState::Transformed;
             }
             break;
@@ -3892,7 +4069,7 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
             }
             break;
         case spv::DecorationInvariant:
-            spirv::WriteDecorate(mSpirvBlobOut, id, spv::DecorationInvariant, {});
+            spirv::WriteDecorate(mSpirvBlobOut, replacementId, spv::DecorationInvariant, {});
             return TransformationState::Transformed;
         default:
             break;
@@ -3906,7 +4083,7 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
 
     // Modify the decoration value.
     ASSERT(decorationValues.size() == 1);
-    spirv::WriteDecorate(mSpirvBlobOut, id, decoration,
+    spirv::WriteDecorate(mSpirvBlobOut, replacementId, decoration,
                          {spirv::LiteralInteger(newDecorationValue)});
 
     // If there are decorations to be added, add them right after the Location decoration is
@@ -3920,20 +4097,20 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
     // fixedVaryingId.
     if (mOptions.useSpirvVaryingPrecisionFixer && info->useRelaxedPrecision)
     {
-        mVaryingPrecisionFixer.addDecorate(id, mSpirvBlobOut);
+        mVaryingPrecisionFixer.addDecorate(replacementId, mSpirvBlobOut);
     }
 
     // Add component decoration, if any.
     if (info->component != ShaderInterfaceVariableInfo::kInvalid)
     {
-        spirv::WriteDecorate(mSpirvBlobOut, id, spv::DecorationComponent,
+        spirv::WriteDecorate(mSpirvBlobOut, replacementId, spv::DecorationComponent,
                              {spirv::LiteralInteger(info->component)});
     }
 
     // Add index decoration, if any.
     if (info->index != ShaderInterfaceVariableInfo::kInvalid)
     {
-        spirv::WriteDecorate(mSpirvBlobOut, id, spv::DecorationIndex,
+        spirv::WriteDecorate(mSpirvBlobOut, replacementId, spv::DecorationIndex,
                              {spirv::LiteralInteger(info->index)});
     }
 
@@ -3941,7 +4118,7 @@ TransformationState SpirvTransformer::transformDecorate(const uint32_t *instruct
     if (mOptions.isTransformFeedbackStage && info->hasTransformFeedback)
     {
         const XFBInterfaceVariableInfo &xfbInfo = mVariableInfoMap.getXFBDataForVariableInfo(info);
-        mXfbCodeGenerator.addDecorate(xfbInfo, id, mSpirvBlobOut);
+        mXfbCodeGenerator.addDecorate(xfbInfo, replacementId, mSpirvBlobOut);
     }
 
     return TransformationState::Transformed;
@@ -3989,6 +4166,14 @@ TransformationState SpirvTransformer::transformName(const uint32_t *instruction)
     spirv::LiteralString name;
     spirv::ParseName(instruction, &id, &name);
 
+    if (mOptions.removeDepthStencilInput)
+    {
+        if (mDepthStencilInputRemover.transformName(id, name) == TransformationState::Transformed)
+        {
+            return TransformationState::Transformed;
+        }
+    }
+
     return mXfbCodeGenerator.transformName(id, name);
 }
 
@@ -4030,6 +4215,10 @@ TransformationState SpirvTransformer::transformEntryPoint(const uint32_t *instru
     if (mOptions.useSpirvVaryingPrecisionFixer)
     {
         mVaryingPrecisionFixer.modifyEntryPointInterfaceList(entryPointList(), &interfaceList);
+    }
+    if (mOptions.removeDepthStencilInput)
+    {
+        mDepthStencilInputRemover.modifyEntryPointInterfaceList(&interfaceList, mSpirvBlobOut);
     }
 
     mMultisampleTransformer.modifyEntryPointInterfaceList(
@@ -4135,6 +4324,21 @@ TransformationState SpirvTransformer::transformExtInst(const uint32_t *instructi
     return mNonSemanticInstructions.transformExtInst(instruction);
 }
 
+TransformationState SpirvTransformer::transformLoad(const uint32_t *instruction)
+{
+    if (!mOptions.removeDepthStencilInput)
+    {
+        return TransformationState::Unchanged;
+    }
+
+    spirv::IdResultType typeId;
+    spirv::IdResult id;
+    spirv::IdRef pointerId;
+    ParseLoad(instruction, &typeId, &id, &pointerId, nullptr);
+
+    return mDepthStencilInputRemover.transformLoad(typeId, id, pointerId, mSpirvBlobOut);
+}
+
 TransformationState SpirvTransformer::transformTypeStruct(const uint32_t *instruction)
 {
     spirv::IdResult id;
@@ -4182,6 +4386,15 @@ TransformationState SpirvTransformer::transformVariable(const uint32_t *instruct
         }
     }
 
+    if (mOptions.removeDepthStencilInput)
+    {
+        if (mDepthStencilInputRemover.transformVariable(typeId, id, mSpirvBlobOut) ==
+            TransformationState::Transformed)
+        {
+            return TransformationState::Transformed;
+        }
+    }
+
     // Furthermore, if it's not an inactive varying output, there's nothing to do.  Note that
     // inactive varying inputs are already pruned by the translator.
     // However, input or output storage class for interface block will not be pruned when a shader
@@ -4218,6 +4431,14 @@ TransformationState SpirvTransformer::transformTypeImage(const uint32_t *instruc
 
 TransformationState SpirvTransformer::transformImageRead(const uint32_t *instruction)
 {
+    if (mOptions.removeDepthStencilInput)
+    {
+        if (mDepthStencilInputRemover.transformImageRead(instruction, mSpirvBlobOut) ==
+            TransformationState::Transformed)
+        {
+            return TransformationState::Transformed;
+        }
+    }
     return mMultisampleTransformer.transformImageRead(instruction, mSpirvBlobOut);
 }
 

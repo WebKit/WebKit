@@ -118,8 +118,8 @@ static pas_allocation_result allocate_impl(pas_large_heap* heap,
     *size = pas_round_up_to_power_of_2(*size, *alignment);
     
     if (verbose) {
-        printf("large heap allocating large object of size %zu\n", *size);
-        printf("large heap cartesian tree minimum = %p, num mapped bytes = %zu\n", pas_cartesian_tree_minimum(&heap->free_heap.tree), heap->free_heap.num_mapped_bytes);
+        pas_log("large heap allocating large object of size %zu\n", *size);
+        pas_log("large heap cartesian tree minimum = %p, num mapped bytes = %zu\n", pas_cartesian_tree_minimum(&heap->free_heap.tree), heap->free_heap.num_mapped_bytes);
     }
     
     initialize_config(&config, &data, heap, heap_config);
@@ -185,25 +185,6 @@ pas_large_heap_try_allocate(pas_large_heap* heap,
     entry.end = result.begin + size;
     entry.heap = heap;
     pas_large_map_add(entry);
-
-    return result;
-}
-
-pas_allocation_result
-pas_large_heap_try_allocate_pgm(pas_large_heap* heap,
-                            size_t size,
-                            size_t alignment,
-                            pas_allocation_mode allocation_mode,
-                            const pas_heap_config* heap_config,
-                            pas_physical_memory_transaction* transaction)
-{
-    pas_allocation_result result;
-    result = pas_probabilistic_guard_malloc_allocate(heap, size, allocation_mode, heap_config, transaction);
-
-    /* PGM may not succeed for a variety of reasons. We will give it a last ditch effort to try to do a
-       regular allocation instead. */
-    if (!result.did_succeed)
-        result = pas_large_heap_try_allocate(heap, size, alignment, allocation_mode, heap_config, transaction);
 
     return result;
 }

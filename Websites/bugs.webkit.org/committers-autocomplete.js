@@ -174,6 +174,8 @@ WebKitCommitters = (function() {
     }
 
     function getIndex(item) {
+        item = item.closest('.committer-suggestion');
+
         for (var i = 0; i < getMenu().childNodes.length; i++) {
             if (item == getMenu().childNodes[i])
                 return i;

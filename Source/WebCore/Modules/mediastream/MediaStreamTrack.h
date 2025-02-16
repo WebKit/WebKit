@@ -229,7 +229,6 @@ private:
     MediaTrackConstraints m_constraints;
 
     String m_mediaStreamId;
-    String m_groupId;
     State m_readyState { State::Live };
     bool m_muted { false };
     bool m_ended { false };

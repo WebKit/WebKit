@@ -96,11 +96,11 @@ RenderThemeCocoa& RenderThemeCocoa::singleton()
 
 void RenderThemeCocoa::purgeCaches()
 {
-#if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#if ENABLE(VIDEO)
     m_mediaControlsLocalizedStringsScript.clearImplIfNotShared();
     m_mediaControlsScript.clearImplIfNotShared();
     m_mediaControlsStyleSheet.clearImplIfNotShared();
-#endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#endif // ENABLE(VIDEO)
 
     RenderTheme::purgeCaches();
 }
@@ -176,7 +176,7 @@ void RenderThemeCocoa::adjustApplePayButtonStyle(RenderStyle& style, const Eleme
 
 #endif // ENABLE(APPLE_PAY)
 
-#if ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#if ENABLE(VIDEO)
 
 String RenderThemeCocoa::mediaControlsStyleSheet()
 {
@@ -226,7 +226,7 @@ String RenderThemeCocoa::mediaControlsFormattedStringForDuration(const double du
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
-#endif // ENABLE(VIDEO) && ENABLE(MODERN_MEDIA_CONTROLS)
+#endif // ENABLE(VIDEO)
 
 static inline FontSelectionValue cssWeightOfSystemFont(CTFontRef font)
 {

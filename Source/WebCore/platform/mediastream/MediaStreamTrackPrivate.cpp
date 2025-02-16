@@ -387,7 +387,7 @@ bool MediaStreamTrackPrivate::isOnCreationThread()
 }
 #endif
 
-void MediaStreamTrackPrivate::forEachObserver(const Function<void(MediaStreamTrackPrivateObserver&)>& apply)
+void MediaStreamTrackPrivate::forEachObserver(NOESCAPE const Function<void(MediaStreamTrackPrivateObserver&)>& apply)
 {
     ASSERT(isOnCreationThread());
     ASSERT(!m_observers.hasNullReferences());
@@ -509,6 +509,16 @@ const RealtimeMediaSource& MediaStreamTrackPrivate::source() const
 {
     ASSERT(isMainThread());
     return m_sourceObserver->source();
+}
+
+Ref<RealtimeMediaSource> MediaStreamTrackPrivate::protectedSource()
+{
+    return source();
+}
+
+Ref<const RealtimeMediaSource> MediaStreamTrackPrivate::protectedSource() const
+{
+    return source();
 }
 
 RealtimeMediaSource& MediaStreamTrackPrivate::sourceForProcessor()

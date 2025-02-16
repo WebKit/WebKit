@@ -19,6 +19,8 @@ import pytest
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 def test_should_fire_key_press_events(driver, pages):
@@ -49,6 +51,7 @@ def test_should_type_lower_case_letters(driver, pages):
     pages.load("javascriptPage.html")
     keyReporter = driver.find_element(by=By.ID, value="keyReporter")
     keyReporter.send_keys("abc def")
+    WebDriverWait(driver, 2).until(EC.text_to_be_present_in_element_value((By.ID, "keyReporter"), "abc def"))
     assert keyReporter.get_attribute("value") == "abc def"
 
 
@@ -98,6 +101,7 @@ def test_should_be_able_to_use_arrow_keys(driver, pages):
     pages.load("javascriptPage.html")
     keyReporter = driver.find_element(by=By.ID, value="keyReporter")
     keyReporter.send_keys("Tet", Keys.ARROW_LEFT, "s")
+    WebDriverWait(driver, 2).until(EC.text_to_be_present_in_element_value((By.ID, "keyReporter"), "Test"))
     assert keyReporter.get_attribute("value") == "Test"
 
 
@@ -212,6 +216,7 @@ def test_lower_case_alpha_keys(driver, pages):
     element = driver.find_element(by=By.ID, value="keyReporter")
     lowerAlphas = "abcdefghijklmnopqrstuvwxyz"
     element.send_keys(lowerAlphas)
+    WebDriverWait(driver, 2).until(EC.text_to_be_present_in_element_value((By.ID, "keyReporter"), lowerAlphas))
     assert element.get_attribute("value") == lowerAlphas
 
 
@@ -235,7 +240,7 @@ def test_all_printable_keys(driver, pages):
     element = driver.find_element(by=By.ID, value="keyReporter")
     allPrintable = "!\"#$%&'()*+,-./0123456789:<=>?@ ABCDEFGHIJKLMNOPQRSTUVWXYZ [\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
     element.send_keys(allPrintable)
-
+    WebDriverWait(driver, 2).until(EC.text_to_be_present_in_element_value((By.ID, "keyReporter"), allPrintable))
     assert element.get_attribute("value") == allPrintable
     assert "up: 16" in result.text.strip()
 
@@ -282,6 +287,7 @@ def test_special_space_keys(driver, pages):
     pages.load("javascriptPage.html")
     element = driver.find_element(by=By.ID, value="keyReporter")
     element.send_keys("abcd" + Keys.SPACE + "fgh" + Keys.SPACE + "ij")
+    WebDriverWait(driver, 2).until(EC.text_to_be_present_in_element_value((By.ID, "keyReporter"), "abcd fgh ij"))
     assert element.get_attribute("value") == "abcd fgh ij"
 
 

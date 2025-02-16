@@ -191,7 +191,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
     if (!m_browser && !m_isRemoteBrowser)
         return;
 
-    RunLoop::main().dispatchAfter(100_ms, [connectToBrowserData = WTFMove(data)]() mutable {
+    RunLoop::protectedMain()->dispatchAfter(100_ms, [connectToBrowserData = WTFMove(data)]() mutable {
         auto* data = connectToBrowserData.release();
         if (g_cancellable_is_cancelled(data->cancellable.get()))
             return;

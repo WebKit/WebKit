@@ -73,6 +73,7 @@ int main(int argc, const char* argv[])
         setDefaultsToConsistentValuesForTesting();
         disableAppNapInUIProcess(); // For secondary processes, app nap is disabled using WKPreferencesSetPageVisibilityBasedProcessSuppressionEnabled().
         [WKProcessPool _setLinkedOnOrAfterEverythingForTesting];
+        [WKProcessPool _crashOnMessageCheckFailureForTesting];
     }
     WTR::TestController controller(argc, argv);
     return 0;

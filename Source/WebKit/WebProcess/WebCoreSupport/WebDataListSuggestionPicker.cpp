@@ -26,8 +26,6 @@
 #include "config.h"
 #include "WebDataListSuggestionPicker.h"
 
-#if ENABLE(DATALIST_ELEMENT)
-
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
@@ -46,6 +44,11 @@ WebDataListSuggestionPicker::~WebDataListSuggestionPicker() = default;
 
 void WebDataListSuggestionPicker::handleKeydownWithIdentifier(const String& key)
 {
+    if (key == "U+001B"_s) {
+        close();
+        return;
+    }
+
     RefPtr page = m_page.get();
     if (!page)
         return;
@@ -109,5 +112,3 @@ void WebDataListSuggestionPicker::detach()
 }
 
 } // namespace WebKit
-
-#endif

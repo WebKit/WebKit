@@ -12,7 +12,7 @@ noInline(test);
 
 var values = [ "AB", "BC", "CD", "DE", "EF", "FG", "GH", "HI", "IJ", "JK", "KL", "LM" ];
 shouldBe(values.length, 12);
-for (var i = 0; i < 1e5; ++i) {
+for (var i = 0; i < testLoopCount; ++i) {
     var array = [];
     ensureArrayStorage(array);
     shouldBe(test(array, values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11]), 12);

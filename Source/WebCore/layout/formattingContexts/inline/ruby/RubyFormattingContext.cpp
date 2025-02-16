@@ -248,6 +248,8 @@ InlineLayoutPoint RubyFormattingContext::placeAnnotationBox(const Box& rubyBaseL
         // Move it over/under the base and make it border box positioned.
         auto leftOffset = annotationBoxLogicalGeometry.marginStart();
         auto topOffset = rubyPosition(rubyBaseLayoutBox) == RubyPosition::Over ? -annotationBoxLogicalGeometry.marginBoxHeight() : rubyBaseMarginBoxLogicalRect.height();
+        topOffset += annotationBoxLogicalGeometry.marginBefore();
+
         auto logicalTopLeft = rubyBaseMarginBoxLogicalRect.topLeft();
         logicalTopLeft.move(LayoutSize { leftOffset, topOffset });
         return logicalTopLeft;

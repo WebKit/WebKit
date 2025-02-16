@@ -394,7 +394,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 #endif
 
     // Now playing won't work unless we turn on the delivery of remote control events.
-    RunLoop::main().dispatch([] {
+    RunLoop::protectedMain()->dispatch([] {
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         [[PAL::getUIApplicationClass() sharedApplication] beginReceivingRemoteControlEvents];
         END_BLOCK_OBJC_EXCEPTIONS
@@ -409,7 +409,7 @@ void MediaSessionHelperIOS::externalOutputDeviceAvailableDidChange()
 
 #if !PLATFORM(WATCHOS)
     if (!pthread_main_np()) {
-        RunLoop::main().dispatch([routeDetector = std::exchange(_routeDetector, nil)]() {
+        RunLoop::protectedMain()->dispatch([routeDetector = std::exchange(_routeDetector, nil)]() {
             LOG(Media, "safelyTearDown - dipatched to UI thread.");
             BEGIN_BLOCK_OBJC_EXCEPTIONS
             [routeDetector setRouteDetectionEnabled:NO];

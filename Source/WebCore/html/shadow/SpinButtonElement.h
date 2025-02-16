@@ -47,7 +47,6 @@ public:
     virtual ~SpinButtonOwner() = default;
     virtual void focusAndSelectSpinButtonOwner() = 0;
     virtual bool shouldSpinButtonRespondToMouseEvents() const = 0;
-    virtual bool shouldSpinButtonRespondToWheelEvents() const = 0;
     virtual void spinButtonStepDown() = 0;
     virtual void spinButtonStepUp() = 0;
 };
@@ -76,8 +75,6 @@ public:
     
     bool willRespondToMouseMoveEvents() const override;
     bool willRespondToMouseClickEventsWithEditability(Editability) const override;
-
-    void forwardEvent(Event&);
 
 private:
     SpinButtonElement(Document&, SpinButtonOwner&);

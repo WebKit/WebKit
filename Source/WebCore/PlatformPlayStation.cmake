@@ -68,10 +68,6 @@ list(APPEND WebCore_SOURCES
     rendering/playstation/RenderThemePlayStation.cpp
 )
 
-list(APPEND WebCore_USER_AGENT_STYLE_SHEETS
-    ${WEBCORE_DIR}/css/mediaControls.css
-)
-
 list(APPEND WebCore_LIBRARIES
     WPE::libwpe
     WebKitRequirements::WebKitResources

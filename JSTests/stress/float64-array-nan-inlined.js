@@ -25,7 +25,7 @@ function test(a, b, x) {
 
 noInline(test);
 
-for (var i = 0; i < 100000; ++i)
+for (var i = 0; i < testLoopCount; ++i)
     test(0, 0, 1);
 
 if (isBigEndian()) {

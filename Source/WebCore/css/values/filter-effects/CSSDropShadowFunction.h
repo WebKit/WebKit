@@ -54,4 +54,4 @@ template<size_t I> const auto& get(const DropShadow& value)
 } // namespace CSS
 } // namespace WebCore
 
-CSS_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(DropShadow, 3)
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::DropShadow, 3)

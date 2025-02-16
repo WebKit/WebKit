@@ -129,7 +129,9 @@ void dumpIndexingType(PrintStream& out, IndexingType indexingType)
         break;
     }
     
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     out.printf("%s%s", basicName, (indexingType & MayHaveIndexedAccessors) ? "|MayHaveIndexedAccessors" : "");
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 } // namespace JSC

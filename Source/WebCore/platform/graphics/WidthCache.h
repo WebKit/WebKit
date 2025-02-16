@@ -38,8 +38,6 @@
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/WYHash.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 struct GlyphOverflow;
@@ -239,7 +237,5 @@ private:
 };
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // WidthCache_h

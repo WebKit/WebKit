@@ -50,7 +50,7 @@ PlatformLayerContainer MediaPlayerPrivateRemote::createVideoFullscreenLayer()
 
 void MediaPlayerPrivateRemote::pushVideoFrameMetadata(WebCore::VideoFrameMetadata&& videoFrameMetadata, RemoteVideoFrameProxy::Properties&& properties)
 {
-    auto videoFrame = RemoteVideoFrameProxy::create(protectedConnection(), videoFrameObjectHeapProxy(), WTFMove(properties));
+    auto videoFrame = RemoteVideoFrameProxy::create(protectedConnection(), protectedVideoFrameObjectHeapProxy(), WTFMove(properties));
     if (!m_isGatheringVideoFrameMetadata)
         return;
     m_videoFrameMetadata = WTFMove(videoFrameMetadata);
@@ -66,7 +66,7 @@ RefPtr<NativeImage> MediaPlayerPrivateRemote::nativeImageForCurrentTime()
     if (!videoFrame)
         return nullptr;
 
-    return WebProcess::singleton().ensureGPUProcessConnection().videoFrameObjectHeapProxy().getNativeImage(*videoFrame);
+    return WebProcess::singleton().ensureProtectedGPUProcessConnection()->protectedVideoFrameObjectHeapProxy()->getNativeImage(*videoFrame);
 }
 
 WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
@@ -74,7 +74,7 @@ WebCore::DestinationColorSpace MediaPlayerPrivateRemote::colorSpace()
     if (readyState() < MediaPlayer::ReadyState::HaveCurrentData)
         return DestinationColorSpace::SRGB();
 
-    auto sendResult = connection().sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
+    auto sendResult = protectedConnection()->sendSync(Messages::RemoteMediaPlayerProxy::ColorSpace(), m_id);
     auto [colorSpace] = sendResult.takeReplyOr(DestinationColorSpace::SRGB());
     return colorSpace;
 }
@@ -103,7 +103,7 @@ WebCore::FloatSize MediaPlayerPrivateRemote::videoLayerSize() const
 
 void MediaPlayerPrivateRemote::setVideoLayerSizeFenced(const FloatSize& size, WTF::MachSendRight&& machSendRight)
 {
-    connection().send(Messages::RemoteMediaPlayerProxy::SetVideoLayerSizeFenced(size, WTFMove(machSendRight)), m_id);
+    protectedConnection()->send(Messages::RemoteMediaPlayerProxy::SetVideoLayerSizeFenced(size, WTFMove(machSendRight)), m_id);
 }
 
 } // namespace WebKit

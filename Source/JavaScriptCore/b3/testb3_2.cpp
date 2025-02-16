@@ -1943,6 +1943,32 @@ void testMulImmsDouble(double a, double b)
     CHECK(isIdentical(compileAndRun<double>(proc), a * b));
 }
 
+void testMulNegArgsDouble()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<double, double>(proc, root);
+
+    Value* arg0 = arguments[0];
+    Value* arg1 = arguments[1];
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* added = root->appendNew<Value>(proc, Neg, Origin(), multiplied);
+    root->appendNewControlValue(proc, Return, Origin(), added);
+
+    auto code = compileProc(proc);
+    auto testValues = floatingPointOperands<double>();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            auto expected = -(a.value * b.value);
+            auto actual = invoke<double>(*code, a.value, b.value);
+            if (std::isnan(expected))
+                CHECK(std::isnan(actual));
+            else
+                CHECK_EQ(actual, expected);
+        }
+    }
+}
+
 void testMulArgFloat(float a)
 {
     Procedure proc;
@@ -2080,6 +2106,32 @@ void testMulArgsFloatWithEffectfulDoubleConversion(float a, float b)
     double effect = 0;
     CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b), &effect), std::bit_cast<int32_t>(a * b)));
     CHECK(isIdentical(effect, static_cast<double>(a) * static_cast<double>(b)));
+}
+
+void testMulNegArgsFloat()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<float, float>(proc, root);
+
+    Value* arg0 = arguments[0];
+    Value* arg1 = arguments[1];
+    Value* multiplied = root->appendNew<Value>(proc, Mul, Origin(), arg0, arg1);
+    Value* added = root->appendNew<Value>(proc, Neg, Origin(), multiplied);
+    root->appendNewControlValue(proc, Return, Origin(), added);
+
+    auto code = compileProc(proc);
+    auto testValues = floatingPointOperands<float>();
+    for (auto a : testValues) {
+        for (auto b : testValues) {
+            auto expected = -(a.value * b.value);
+            auto actual = invoke<float>(*code, a.value, b.value);
+            if (std::isnan(expected))
+                CHECK(std::isnan(actual));
+            else
+                CHECK_EQ(actual, expected);
+        }
+    }
 }
 
 void testDivArgDouble(double a)
@@ -3232,6 +3284,28 @@ void testNegDouble(double a)
             arguments[0]));
 
     CHECK(isIdentical(compileAndRun<double>(proc, a), -a));
+}
+
+void testImpureNaN()
+{
+    if (isARM64()) {
+        {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<double>(proc, root);
+            root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Neg, Origin(), arguments[0]));
+            double res = compileAndRun<double>(proc, ImpureNaN);
+            CHECK(!isImpureNaN(res));
+        }
+        {
+            Procedure proc;
+            BasicBlock* root = proc.addBlock();
+            auto arguments = cCallArgumentValues<double>(proc, root);
+            root->appendNewControlValue(proc, Return, Origin(), root->appendNew<Value>(proc, Abs, Origin(), arguments[0]));
+            double res = compileAndRun<double>(proc, ImpureNaN);
+            CHECK(!isImpureNaN(res));
+        }
+    }
 }
 
 void testNegFloat(float a)

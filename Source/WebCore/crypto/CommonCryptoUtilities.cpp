@@ -36,8 +36,9 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         algorithm = kCCDigestSHA1;
 ALLOW_DEPRECATED_DECLARATIONS_END
         return true;
-    case CryptoAlgorithmIdentifier::SHA_224:
-        algorithm = kCCDigestSHA224;
+    case CryptoAlgorithmIdentifier::DEPRECATED_SHA_224:
+        RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE(sha224DeprecationMessage);
+        algorithm = kCCDigestSHA256;
         return true;
     case CryptoAlgorithmIdentifier::SHA_256:
         algorithm = kCCDigestSHA256;

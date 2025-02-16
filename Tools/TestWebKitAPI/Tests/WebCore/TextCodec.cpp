@@ -94,7 +94,7 @@ static const char* testDecode(ASCIILiteral encodingName, std::initializer_list<c
         auto vector = decodeHexTestBytes(inputs.begin()[i]);
         bool last = i == size - 1;
         bool sawError = false;
-        resultBuilder.append(span(escapeNonASCIIPrintableCharacters(codec->decode(vector.span(), last, false, sawError))));
+        resultBuilder.append(unsafeSpan(escapeNonASCIIPrintableCharacters(codec->decode(vector.span(), last, false, sawError))));
         if (sawError)
             resultBuilder.append(" ERROR"_s);
     }

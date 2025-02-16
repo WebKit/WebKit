@@ -96,7 +96,7 @@ void DocumentWriter::replaceDocumentWithResultOfExecutingJavascriptURL(const Str
         }
 
         if (RefPtr parser = frame->document()->parser())
-            parser->appendBytes(*this, source.utf8().span());
+            parser->appendBytes(*this, byteCast<uint8_t>(source.utf8().span()));
     }
 
     end();
@@ -293,6 +293,11 @@ TextResourceDecoder& DocumentWriter::decoder()
         frame->protectedDocument()->setDecoder(WTFMove(decoder));
     }
     return *m_decoder;
+}
+
+Ref<TextResourceDecoder> DocumentWriter::protectedDecoder()
+{
+    return decoder();
 }
 
 void DocumentWriter::reportDataReceived()

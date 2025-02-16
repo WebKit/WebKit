@@ -46,14 +46,14 @@ namespace IDBClient {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(IDBConnectionToServer);
 
-Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDelegate& delegate)
+Ref<IDBConnectionToServer> IDBConnectionToServer::create(IDBConnectionToServerDelegate& delegate, PAL::SessionID sessionID)
 {
-    return adoptRef(*new IDBConnectionToServer(delegate));
+    return adoptRef(*new IDBConnectionToServer(delegate, sessionID));
 }
 
-IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& delegate)
+IDBConnectionToServer::IDBConnectionToServer(IDBConnectionToServerDelegate& delegate, PAL::SessionID sessionID)
     : m_delegate(delegate)
-    , m_proxy(makeUniqueWithoutRefCountedCheck<IDBConnectionProxy>(*this))
+    , m_proxy(makeUniqueWithoutRefCountedCheck<IDBConnectionProxy>(*this, sessionID))
 {
 }
 
@@ -228,13 +228,13 @@ void IDBConnectionToServer::didRenameIndex(const IDBResultData& resultData)
     m_proxy->completeOperation(resultData);
 }
 
-void IDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& key, const IDBValue& value, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
+void IDBConnectionToServer::putOrAdd(const IDBRequestData& requestData, const IDBKeyData& key, const IDBValue& value, const IndexIDToIndexKeyMap& indexKeys, const IndexedDB::ObjectStoreOverwriteMode overwriteMode)
 {
     LOG(IndexedDB, "IDBConnectionToServer::putOrAdd");
     ASSERT(isMainThread());
 
     if (m_serverConnectionIsValid)
-        m_delegate->putOrAdd(requestData, key, value, overwriteMode);
+        m_delegate->putOrAdd(requestData, key, value, indexKeys, overwriteMode);
     else
         callResultFunctionWithErrorLater(&IDBConnectionToServer::didPutOrAdd, requestData.requestIdentifier());
 }

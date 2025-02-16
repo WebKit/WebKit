@@ -346,11 +346,11 @@ class [[nodiscard]] ScopedQueueSerialIndex final : angle::NonCopyable
 class RefCountedEventsGarbageRecycler;
 // Abstracts error handling. Implemented by ContextVk for GL, DisplayVk for EGL, worker threads,
 // CLContextVk etc.
-class Context : angle::NonCopyable
+class ErrorContext : angle::NonCopyable
 {
   public:
-    Context(Renderer *renderer);
-    virtual ~Context();
+    ErrorContext(Renderer *renderer);
+    virtual ~ErrorContext();
 
     virtual void handleError(VkResult result,
                              const char *file,
@@ -362,16 +362,10 @@ class Context : angle::NonCopyable
 
     const angle::VulkanPerfCounters &getPerfCounters() const { return mPerfCounters; }
     angle::VulkanPerfCounters &getPerfCounters() { return mPerfCounters; }
-    RefCountedEventsGarbageRecycler *getRefCountedEventsGarbageRecycler()
-    {
-        return mShareGroupRefCountedEventsGarbageRecycler;
-    }
     const DeviceQueueIndex &getDeviceQueueIndex() const { return mDeviceQueueIndex; }
 
   protected:
     Renderer *const mRenderer;
-    // Stash the ShareGroupVk's RefCountedEventRecycler here ImageHelper to conveniently access
-    RefCountedEventsGarbageRecycler *mShareGroupRefCountedEventsGarbageRecycler;
     DeviceQueueIndex mDeviceQueueIndex;
     angle::VulkanPerfCounters mPerfCounters;
 };
@@ -517,7 +511,7 @@ class MemoryProperties final : angle::NonCopyable
 
     void init(VkPhysicalDevice physicalDevice);
     bool hasLazilyAllocatedMemory() const;
-    VkResult findCompatibleMemoryIndex(Context *context,
+    VkResult findCompatibleMemoryIndex(Renderer *renderer,
                                        const VkMemoryRequirements &memoryRequirements,
                                        VkMemoryPropertyFlags requestedMemoryPropertyFlags,
                                        bool isExternalMemory,
@@ -560,7 +554,7 @@ class StagingBuffer final : angle::NonCopyable
     void collectGarbage(Renderer *renderer, const QueueSerial &queueSerial);
     void destroy(Renderer *renderer);
 
-    angle::Result init(Context *context, VkDeviceSize size, StagingUsage usage);
+    angle::Result init(ErrorContext *context, VkDeviceSize size, StagingUsage usage);
 
     Buffer &getBuffer() { return mBuffer; }
     const Buffer &getBuffer() const { return mBuffer; }
@@ -572,14 +566,14 @@ class StagingBuffer final : angle::NonCopyable
     size_t mSize;
 };
 
-angle::Result InitMappableAllocation(Context *context,
+angle::Result InitMappableAllocation(ErrorContext *context,
                                      const Allocator &allocator,
                                      Allocation *allocation,
                                      VkDeviceSize size,
                                      int value,
                                      VkMemoryPropertyFlags memoryPropertyFlags);
 
-VkResult AllocateBufferMemory(Context *context,
+VkResult AllocateBufferMemory(ErrorContext *context,
                               vk::MemoryAllocationType memoryAllocationType,
                               VkMemoryPropertyFlags requestedMemoryPropertyFlags,
                               VkMemoryPropertyFlags *memoryPropertyFlagsOut,
@@ -589,7 +583,7 @@ VkResult AllocateBufferMemory(Context *context,
                               DeviceMemory *deviceMemoryOut,
                               VkDeviceSize *sizeOut);
 
-VkResult AllocateImageMemory(Context *context,
+VkResult AllocateImageMemory(ErrorContext *context,
                              vk::MemoryAllocationType memoryAllocationType,
                              VkMemoryPropertyFlags memoryPropertyFlags,
                              VkMemoryPropertyFlags *memoryPropertyFlagsOut,
@@ -599,7 +593,7 @@ VkResult AllocateImageMemory(Context *context,
                              DeviceMemory *deviceMemoryOut,
                              VkDeviceSize *sizeOut);
 
-VkResult AllocateImageMemoryWithRequirements(Context *context,
+VkResult AllocateImageMemoryWithRequirements(ErrorContext *context,
                                              vk::MemoryAllocationType memoryAllocationType,
                                              VkMemoryPropertyFlags memoryPropertyFlags,
                                              const VkMemoryRequirements &memoryRequirements,
@@ -609,7 +603,7 @@ VkResult AllocateImageMemoryWithRequirements(Context *context,
                                              uint32_t *memoryTypeIndexOut,
                                              DeviceMemory *deviceMemoryOut);
 
-VkResult AllocateBufferMemoryWithRequirements(Context *context,
+VkResult AllocateBufferMemoryWithRequirements(ErrorContext *context,
                                               MemoryAllocationType memoryAllocationType,
                                               VkMemoryPropertyFlags memoryPropertyFlags,
                                               const VkMemoryRequirements &memoryRequirements,
@@ -633,7 +627,8 @@ template <typename T>
 class [[nodiscard]] DeviceScoped final : angle::NonCopyable
 {
   public:
-    DeviceScoped(VkDevice device) : mDevice(device) {}
+    explicit DeviceScoped(VkDevice device) : mDevice(device) {}
+    DeviceScoped(DeviceScoped &&other) : mDevice(other.mDevice), mVar(std::move(other.mVar)) {}
     ~DeviceScoped() { mVar.destroy(mDevice); }
 
     const T &get() const { return mVar; }
@@ -791,13 +786,33 @@ class AtomicRefCounted : angle::NonCopyable
         return mRefCount.fetch_sub(1, std::memory_order_acq_rel);
     }
 
+    // Making decisions based on reference count is not thread safe, so it should not used in
+    // release build.
+#if defined(ANGLE_ENABLE_ASSERTS)
     // Warning: method does not perform any synchronization.  See `releaseRef()` for details.
     // Method may be only used after external synchronization.
     bool isReferenced() const { return mRefCount.load(std::memory_order_relaxed) != 0; }
     uint32_t getRefCount() const { return mRefCount.load(std::memory_order_relaxed); }
-
     // This is used by SharedPtr::unique, so needs strong ordering.
     bool isLastReferenceCount() const { return mRefCount.load(std::memory_order_acquire) == 1; }
+#else
+    // Compiler still compile but should never actually produce code.
+    bool isReferenced() const
+    {
+        UNREACHABLE();
+        return false;
+    }
+    uint32_t getRefCount() const
+    {
+        UNREACHABLE();
+        return 0;
+    }
+    bool isLastReferenceCount() const
+    {
+        UNREACHABLE();
+        return false;
+    }
+#endif
 
     T &get() { return mObject; }
     const T &get() const { return mObject; }
@@ -807,49 +822,6 @@ class AtomicRefCounted : angle::NonCopyable
     T mObject;
 };
 
-template <typename T, typename RC = RefCounted<T>>
-class BindingPointer final : angle::NonCopyable
-{
-  public:
-    BindingPointer() = default;
-    ~BindingPointer() { reset(); }
-
-    BindingPointer(BindingPointer &&other) : mRefCounted(other.mRefCounted)
-    {
-        other.mRefCounted = nullptr;
-    }
-
-    void set(RC *refCounted)
-    {
-        if (mRefCounted)
-        {
-            mRefCounted->releaseRef();
-        }
-
-        mRefCounted = refCounted;
-
-        if (mRefCounted)
-        {
-            mRefCounted->addRef();
-        }
-    }
-
-    void reset() { set(nullptr); }
-
-    T &get() { return mRefCounted->get(); }
-    const T &get() const { return mRefCounted->get(); }
-
-    bool valid() const { return mRefCounted != nullptr; }
-
-    RC *getRefCounted() { return mRefCounted; }
-
-  private:
-    RC *mRefCounted = nullptr;
-};
-
-template <typename T>
-using AtomicBindingPointer = BindingPointer<T, AtomicRefCounted<T>>;
-
 // This is intended to have same interface as std::shared_ptr except this must used in thread safe
 // environment.
 template <typename>
@@ -858,13 +830,14 @@ template <typename T, class RefCountedStorage = RefCounted<T>>
 class SharedPtr final
 {
   public:
-    SharedPtr() : mRefCounted(nullptr) {}
-    SharedPtr(T &&object)
+    SharedPtr() : mRefCounted(nullptr), mDevice(VK_NULL_HANDLE) {}
+    SharedPtr(VkDevice device, T &&object) : mDevice(device)
     {
         mRefCounted = new RefCountedStorage(std::move(object));
         mRefCounted->addRef();
     }
-    SharedPtr(const WeakPtr<T> &other) : mRefCounted(other.mRefCounted)
+    SharedPtr(VkDevice device, const WeakPtr<T> &other)
+        : mRefCounted(other.mRefCounted), mDevice(device)
     {
         if (mRefCounted)
         {
@@ -876,16 +849,23 @@ class SharedPtr final
     }
     ~SharedPtr() { reset(); }
 
-    SharedPtr(const SharedPtr &other) : mRefCounted(nullptr) { *this = other; }
+    SharedPtr(const SharedPtr &other) : mRefCounted(nullptr), mDevice(VK_NULL_HANDLE)
+    {
+        *this = other;
+    }
 
-    SharedPtr(SharedPtr &&other) : mRefCounted(nullptr) { *this = std::move(other); }
+    SharedPtr(SharedPtr &&other) : mRefCounted(nullptr), mDevice(VK_NULL_HANDLE)
+    {
+        *this = std::move(other);
+    }
 
     template <class... Args>
-    static SharedPtr<T, RefCountedStorage> MakeShared(Args &&...args)
+    static SharedPtr<T, RefCountedStorage> MakeShared(VkDevice device, Args &&...args)
     {
         SharedPtr<T, RefCountedStorage> newObject;
         newObject.mRefCounted = new RefCountedStorage(std::forward<Args>(args)...);
         newObject.mRefCounted->addRef();
+        newObject.mDevice = device;
         return newObject;
     }
 
@@ -895,6 +875,7 @@ class SharedPtr final
         {
             releaseRef();
             mRefCounted = nullptr;
+            mDevice     = VK_NULL_HANDLE;
         }
     }
 
@@ -905,7 +886,9 @@ class SharedPtr final
             releaseRef();
         }
         mRefCounted       = other.mRefCounted;
+        mDevice           = other.mDevice;
         other.mRefCounted = nullptr;
+        other.mDevice     = VK_NULL_HANDLE;
         return *this;
     }
 
@@ -916,6 +899,7 @@ class SharedPtr final
             releaseRef();
         }
         mRefCounted = other.mRefCounted;
+        mDevice     = other.mDevice;
         if (mRefCounted)
         {
             mRefCounted->addRef();
@@ -956,13 +940,14 @@ class SharedPtr final
         unsigned int refCount = mRefCounted->getAndReleaseRef();
         if (refCount == 1)
         {
-            mRefCounted->get().destroy();
+            mRefCounted->get().destroy(mDevice);
             SafeDelete(mRefCounted);
         }
     }
 
     friend class WeakPtr<T>;
     RefCountedStorage *mRefCounted;
+    VkDevice mDevice;
 };
 
 template <typename T>
@@ -977,7 +962,7 @@ class WeakPtr final
 
     WeakPtr() : mRefCounted(nullptr) {}
 
-    WeakPtr(const SharedPtr<T> &other) { mRefCounted = other.mRefCounted; }
+    WeakPtr(const SharedPtr<T> &other) : mRefCounted(other.mRefCounted) {}
 
     void reset() { mRefCounted = nullptr; }
 
@@ -1200,7 +1185,7 @@ using SpecializationConstantMap = angle::PackedEnumMap<sh::vk::SpecializationCon
 using ShaderModulePtr = SharedPtr<ShaderModule>;
 using ShaderModuleMap = gl::ShaderMap<ShaderModulePtr>;
 
-angle::Result InitShaderModule(Context *context,
+angle::Result InitShaderModule(ErrorContext *context,
                                ShaderModulePtr *shaderModulePtr,
                                const uint32_t *shaderCode,
                                size_t shaderCodeSize);
@@ -1362,7 +1347,8 @@ constexpr bool IsDynamicDescriptor(VkDescriptorType descriptorType)
     }
 }
 
-void ApplyPipelineCreationFeedback(Context *context, const VkPipelineCreationFeedback &feedback);
+void ApplyPipelineCreationFeedback(ErrorContext *context,
+                                   const VkPipelineCreationFeedback &feedback);
 
 angle::Result SetDebugUtilsObjectName(ContextVk *contextVk,
                                       VkObjectType objectType,
@@ -1446,7 +1432,11 @@ GLenum CalculateGenerateMipmapFilter(ContextVk *contextVk, angle::FormatID forma
 
 namespace gl_vk
 {
-VkRect2D GetRect(const gl::Rectangle &source);
+inline VkRect2D GetRect(const gl::Rectangle &source)
+{
+    return {{source.x, source.y},
+            {static_cast<uint32_t>(source.width), static_cast<uint32_t>(source.height)}};
+}
 VkFilter GetFilter(const GLenum filter);
 VkSamplerMipmapMode GetSamplerMipmapMode(const GLenum filter);
 VkSamplerAddressMode GetSamplerAddressMode(const GLenum wrap);
@@ -1493,6 +1483,9 @@ vk::LevelIndex GetLevelIndex(gl::LevelIndex levelGL, gl::LevelIndex baseLevel);
 
 VkImageTiling GetTilingMode(gl::TilingMode tilingMode);
 
+VkImageCompressionFixedRateFlagsEXT ConvertEGLFixedRateToVkFixedRate(
+    const EGLenum eglCompressionRate,
+    const angle::FormatID actualFormatID);
 }  // namespace gl_vk
 
 namespace vk_gl
@@ -1521,10 +1514,16 @@ GLuint GetSampleCount(VkSampleCountFlags supportedCounts, GLuint requestedCount)
 gl::LevelIndex GetLevelIndex(vk::LevelIndex levelVk, gl::LevelIndex baseLevel);
 
 GLenum ConvertVkFixedRateToGLFixedRate(const VkImageCompressionFixedRateFlagsEXT vkCompressionRate);
-GLint convertCompressionFlagsToGLFixedRates(
+GLint ConvertCompressionFlagsToGLFixedRates(
     VkImageCompressionFixedRateFlagsEXT imageCompressionFixedRateFlags,
     GLsizei bufSize,
     GLint *rates);
+
+EGLenum ConvertVkFixedRateToEGLFixedRate(
+    const VkImageCompressionFixedRateFlagsEXT vkCompressionRate);
+std::vector<EGLint> ConvertCompressionFlagsToEGLFixedRate(
+    VkImageCompressionFixedRateFlagsEXT imageCompressionFixedRateFlags,
+    size_t rateSize);
 }  // namespace vk_gl
 
 enum class RenderPassClosureReason
@@ -1589,6 +1588,7 @@ enum class RenderPassClosureReason
     // common cases.
     XfbPause,
     FramebufferFetchEmulation,
+    ColorBufferWithEmulatedAlphaInvalidate,
     GenerateMipmapOnCPU,
     CopyTextureOnCPU,
     TextureReformatToRenderable,

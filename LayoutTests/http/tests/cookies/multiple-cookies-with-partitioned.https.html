@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN"><!-- webkit-test-runner [ OptInPartitionedCookiesEnabled=true ] -->
+<html>
+<head>
+<link rel="stylesheet" href="resources/cookies-test-style.css">
+<script src="resources/cookies-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description(
+"This test checks that mulitple cookies are correctly set."
+);
+
+let expectedCookies = [ "test=foobarPartitioned", "test=foobarPartitioned; test=foobarPath", "test=foobarPartitioned; test=foobarPath; test=foobar" ];
+let testSetCookies = [ "test=foobarPartitioned;SameSite=None;Secure;Partitioned", "test=foobarPath;SameSite=None;Secure;Path=/", "test=foobar;SameSite=None;Secure" ];
+
+async function runTest() {
+    clearAllCookies();
+
+    debug("Check setting several cookies without clearing.");
+
+    document.cookie = testSetCookies[0]
+    shouldBe('document.cookie', 'expectedCookies[0]');
+    document.cookie = testSetCookies[1]
+    shouldBe('document.cookie', 'expectedCookies[1]');
+    document.cookie = testSetCookies[2]
+    shouldBe('document.cookie', 'expectedCookies[2]');
+
+    await fetch(`/clear-site-data/resources/clear-site-data-cookies.py`);
+
+    cookiesShouldBe(testSetCookies[0], expectedCookies[0]);
+    cookiesShouldBe(testSetCookies[1], expectedCookies[1]);
+    cookiesShouldBe(testSetCookies[2], expectedCookies[2]);
+
+    clearCookies();
+
+    successfullyParsed = true;
+}
+
+runTest();
+</script>
+<script src="resources/cookies-test-post.js"></script>
+</body>
+</html>

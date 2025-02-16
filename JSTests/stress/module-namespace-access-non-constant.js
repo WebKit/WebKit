@@ -5,7 +5,7 @@ function shouldBe(actual, expected) {
 
 import("./resources/module-namespace-access.js").then((ns) => {
     ns.change();
-    for (var i = 0; i < 1e6; ++i) {
+    for (var i = 0; i < testLoopCount; ++i) {
         shouldBe(ns.test, 55);
         shouldBe(ns.cocoa(), 55);
     }

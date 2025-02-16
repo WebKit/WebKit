@@ -27,6 +27,7 @@
  */
 
 #import "AXCoreObject.h"
+#import "CocoaAccessibilityConstants.h"
 #import "FontPlatformData.h"
 #import <CoreGraphics/CoreGraphics.h>
 #import <variant>

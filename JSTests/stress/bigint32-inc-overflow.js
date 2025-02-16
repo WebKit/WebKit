@@ -9,12 +9,12 @@ function inc(a) {
 noInline(inc);
 
 {
-    for (var i = 0; i < 100000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(inc(BigInt(i)), BigInt(i + 1));
 }
 {
     let max = 0x7fffffffn;
     let result = 0x80000000n;
-    for (var i = 0; i < 100000; ++i)
+    for (var i = 0; i < testLoopCount; ++i)
         shouldBe(inc(max), result);
 }

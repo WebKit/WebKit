@@ -53,8 +53,8 @@ auto ToStyle<CSS::BoxShadow>::operator()(const CSS::BoxShadow& value, const Buil
     return {
         .color = value.color ? toStyle(*value.color, state) : Color::currentColor(),
         .location = toStyle(value.location, state),
-        .blur = value.blur ? toStyle(*value.blur, state) : Length<CSS::Nonnegative> { 0 },
-        .spread = value.spread ? toStyle(*value.spread, state) : Length<> { 0 },
+        .blur = value.blur ? toStyle(*value.blur, state) : 0_css_px,
+        .spread = value.spread ? toStyle(*value.spread, state) : 0_css_px,
         .inset = toStyle(value.inset, state),
         .isWebkitBoxShadow = value.isWebkitBoxShadow,
     };

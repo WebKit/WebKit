@@ -42,15 +42,11 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
         if (!target.hasDomain("Page"))
             return
 
-        // COMPATIBILITY (iOS 12.2): Page.overrideUserAgent did not exist.
-        if (target.hasCommand("Page.overrideUserAgent") && this._overridenDeviceUserAgent)
+        if (this._overridenDeviceUserAgent)
             target.PageAgent.overrideUserAgent(this._overridenDeviceUserAgent);
 
-        // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-        if (target.hasCommand("Page.overrideSetting")) {
-            for (let [setting, value] of this._overridenDeviceSettings)
-                target.PageAgent.overrideSetting(setting, value);
-        }
+        for (let [setting, value] of this._overridenDeviceSettings)
+            target.PageAgent.overrideSetting(setting, value);
 
         const objectGroup = "user-agent";
 
@@ -84,11 +80,6 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
     overrideDeviceSetting(setting, value, callback)
     {
         let target = WI.assumingMainTarget();
-        if (!target.hasCommand("Page.overrideSetting")) {
-            callback(false);
-            return;
-        }
-
         let commandArguments = {
             setting,
         };
@@ -120,9 +111,6 @@ WI.DeviceSettingsManager = class DeviceSettingsManager extends WI.Object
             return;
 
         let target = WI.assumingMainTarget();
-        if (!target.hasCommand("Page.overrideUserAgent"))
-            return;
-
         let commandArguments = {};
 
         let shouldOverride = value && (value !== WI.DeviceSettingsManager.DefaultValue || force);

@@ -310,7 +310,7 @@ public:
 
     bool isAnimatedStylePropertyAttribute(const QualifiedName& attributeName) const override
     {
-        static NeverDestroyed<HashSet<QualifiedName::QualifiedNameImpl*>> animatedStyleAttributes = std::initializer_list<QualifiedName::QualifiedNameImpl*> {
+        static NeverDestroyed<UncheckedKeyHashSet<QualifiedName::QualifiedNameImpl*>> animatedStyleAttributes = std::initializer_list<QualifiedName::QualifiedNameImpl*> {
             SVGNames::cxAttr->impl(),
             SVGNames::cyAttr->impl(),
             SVGNames::rAttr->impl(),

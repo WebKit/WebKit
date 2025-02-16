@@ -74,13 +74,14 @@ void RemoteSampleBufferDisplayLayer::initialize(bool hideRootLayer, IntSize size
 #else
     UNUSED_PARAM(canShowWhileLocked);
 #endif
-    protectedSampleBufferDisplayLayer()->initialize(hideRootLayer, size, shouldMaintainAspectRatio, [this, weakThis = WeakPtr { *this }, contextOptions, callback = WTFMove(callback)](bool didSucceed) mutable {
-        if (!weakThis || !didSucceed)
+    protectedSampleBufferDisplayLayer()->initialize(hideRootLayer, size, shouldMaintainAspectRatio, [weakThis = WeakPtr { *this }, contextOptions, callback = WTFMove(callback)](bool didSucceed) mutable {
+        RefPtr protectedThis = weakThis.get();
+        if (!protectedThis || !didSucceed)
             return callback({ });
 
-        m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
-        m_layerHostingContext->setRootLayer(protectedSampleBufferDisplayLayer()->rootLayer());
-        callback(m_layerHostingContext->contextID());
+        protectedThis->m_layerHostingContext = LayerHostingContext::createForExternalHostingProcess(contextOptions);
+        protectedThis->m_layerHostingContext->setRootLayer(protectedThis->protectedSampleBufferDisplayLayer()->rootLayer());
+        callback(protectedThis->m_layerHostingContext->contextID());
     });
 }
 

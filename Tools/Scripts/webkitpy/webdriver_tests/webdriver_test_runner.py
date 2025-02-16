@@ -22,7 +22,39 @@
 
 import json
 import logging
+import importlib.abc
+import importlib.util
 import os
+from pathlib import Path
+import sys
+
+
+class WebDriverSeleniumFinder(importlib.abc.MetaPathFinder):
+    """
+    Custom finder for the WebDriverTests-specific version of selenium
+
+    It ensures we use the specific version require for the tests, which might
+    include unreleased fixes or features, instead of the stable one pulled from
+    AutoInstall by other webkit modules.
+    """
+    def __init__(self):
+        self.selenium_path = Path(__file__).parent.parent.parent.parent.parent / 'WebDriverTests' / 'imported' / 'selenium' / 'py'
+
+    def find_spec(self, fullname, path, target=None):
+        if fullname.startswith('selenium'):
+            module_path = self.selenium_path / fullname.replace('.', '/') / '__init__.py'
+            if module_path.exists():
+                return importlib.util.spec_from_file_location(fullname, module_path)
+
+            file_path = self.selenium_path / (fullname.replace('.', '/') + '.py')
+            if file_path.exists():
+                return importlib.util.spec_from_file_location(fullname, file_path)
+
+            logging.warning('Selenium module %s not found in %s' % (fullname, self.selenium_path))
+        return None
+
+
+sys.meta_path.insert(0, WebDriverSeleniumFinder())
 
 from webkitpy.common.webkit_finder import WebKitFinder
 from webkitpy.common.test_expectations import TestExpectations

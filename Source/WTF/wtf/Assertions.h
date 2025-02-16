@@ -585,19 +585,37 @@ static constexpr bool unreachableForValue = false;
 
 #if ERROR_DISABLED
 #define LOG_ERROR(...) ((void)0)
+#define LOG_ERROR_ONCE(...) ((void)0)
 #else
 #define LOG_ERROR(...) WTFReportError(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, __VA_ARGS__)
+#define LOG_ERROR_ONCE(...) do { \
+    static std::once_flag onceFlag; \
+    std::call_once( \
+        onceFlag, \
+        [&] { \
+            LOG_ERROR(__VA_ARGS__); \
+        }); \
+} while (0)
 #endif
 
 /* LOG */
 
 #if LOG_DISABLED
 #define LOG(channel, ...) ((void)0)
+#define LOG_ONCE(channel, ...) ((void)0)
 #else
 #define LOG(channel, ...) do { \
         if (LOG_CHANNEL(channel).state != logChannelStateOff) \
             WTFLog(&LOG_CHANNEL(channel), __VA_ARGS__); \
     } while (0)
+#define LOG_ONCE(channel, ...) do { \
+    static std::once_flag onceFlag; \
+    std::call_once( \
+        onceFlag, \
+        [&] { \
+            LOG(channel, __VA_ARGS__); \
+        }); \
+} while (0)
 #endif
 
 /* LOG_VERBOSE */

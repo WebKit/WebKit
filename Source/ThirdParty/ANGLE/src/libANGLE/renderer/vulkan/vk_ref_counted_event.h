@@ -26,6 +26,7 @@ namespace rx
 {
 namespace vk
 {
+class Context;
 enum class ImageLayout;
 
 // There are two ways to implement a barrier: Using VkCmdPipelineBarrier or VkCmdWaitEvents. The
@@ -109,28 +110,30 @@ static constexpr PipelineStageAccessHeuristic kPipelineStageAccessPreFragmentOnl
 // Renderer::getPipelineStageMask call.
 enum class EventStage : uint32_t
 {
-    Transfer                                          = 0,
-    VertexShader                                      = 1,
-    FragmentShader                                    = 2,
-    ComputeShader                                     = 3,
-    AllShaders                                        = 4,
-    PreFragmentShaders                                = 5,
-    FragmentShadingRate                               = 6,
-    ColorAttachmentOutput                             = 7,
-    ColorAttachmentOutputAndFragmentShader            = 8,
-    ColorAttachmentOutputAndFragmentShaderAndTransfer = 9,
-    ColorAttachmentOutputAndAllShaders                = 10,
-    AllFragmentTest                                   = 11,
-    AllFragmentTestAndFragmentShader                  = 12,
-    AllFragmentTestAndAllShaders                      = 13,
-    TransferAndComputeShader                          = 14,
-    InvalidEnum                                       = 15,
-    EnumCount                                         = InvalidEnum,
+    Transfer                               = 0,
+    VertexShader                           = 1,
+    FragmentShader                         = 2,
+    ComputeShader                          = 3,
+    AllShaders                             = 4,
+    PreFragmentShaders                     = 5,
+    FragmentShadingRate                    = 6,
+    Attachment                             = 7,
+    AttachmentAndFragmentShader            = 8,
+    AttachmentAndFragmentShaderAndTransfer = 9,
+    AttachmentAndAllShaders                = 10,
+    TransferAndComputeShader               = 11,
+    // For buffers only
+    VertexInput            = 12,
+    TransformFeedbackWrite = 13,
+    InvalidEnum            = 14,
+    EnumCount              = InvalidEnum,
 };
+using EventStageBitMask = typename angle::PackedEnumBitSet<EventStage, uint64_t>;
 
+using EventStageToVkPipelineStageFlagsMap = angle::PackedEnumMap<EventStage, VkPipelineStageFlags>;
 // Initialize EventStage to VkPipelineStageFlags mapping table.
-void InitializeEventAndPipelineStagesMap(
-    angle::PackedEnumMap<EventStage, VkPipelineStageFlags> *mapping,
+void InitializeEventStageToVkPipelineStageFlagsMap(
+    EventStageToVkPipelineStageFlagsMap *map,
     VkPipelineStageFlags supportedVulkanPipelineStageMask);
 
 // VkCmdWaitEvents requires srcStageMask must be the bitwise OR of the stageMask parameter used in
@@ -226,6 +229,8 @@ class RefCountedEvent final
         return mHandle->get().eventStage;
     }
 
+    VkPipelineStageFlags getPipelineStageMask(Renderer *renderer) const;
+
   private:
     // Release one reference count to the underline Event object and destroy or recycle the handle
     // to the provided recycler if this is the very last reference.
@@ -238,13 +243,137 @@ class RefCountedEvent final
 using RefCountedEventCollector = std::deque<RefCountedEvent>;
 
 // Tracks a list of RefCountedEvents per EventStage.
-struct EventMaps
+class RefCountedEventArray : angle::NonCopyable
 {
-    angle::PackedEnumMap<EventStage, RefCountedEvent> map;
+  public:
+    RefCountedEventArray &operator=(RefCountedEventArray &&other)
+    {
+        for (EventStage stage : other.mBitMask)
+        {
+            mEvents[stage] = std::move(other.mEvents[stage]);
+        }
+        mBitMask = std::move(other.mBitMask);
+        other.mBitMask.reset();
+        return *this;
+    }
+
+    void release(Renderer *renderer);
+    void release(Context *context);
+
+    void releaseToEventCollector(RefCountedEventCollector *eventCollector);
+
+    const RefCountedEvent &getEvent(EventStage eventStage) const { return mEvents[eventStage]; }
+
+    bool initEventAtStage(Context *context, EventStage eventStage);
+
+    bool empty() const { return mBitMask.none(); }
+    const EventStageBitMask getBitMask() const { return mBitMask; }
+
+    template <typename CommandBufferT>
+    void flushSetEvents(Renderer *renderer, CommandBufferT *commandBuffer) const;
+
+  protected:
+    angle::PackedEnumMap<EventStage, RefCountedEvent> mEvents;
     // The mask is used to accelerate the loop of map
-    angle::PackedEnumBitSet<EventStage, uint64_t> mask;
-    // Only used by RenderPassCommandBufferHelper
-    angle::PackedEnumMap<EventStage, VkEvent> vkEvents;
+    EventStageBitMask mBitMask;
+};
+
+class RefCountedEventArrayWithAccessFlags final : public RefCountedEventArray
+{
+  public:
+    RefCountedEventArrayWithAccessFlags() { mAccessFlags.fill(0); }
+    void replaceEventAtStage(Context *context,
+                             EventStage eventStage,
+                             const RefCountedEvent &event,
+                             VkAccessFlags accessFlags)
+    {
+        if (mBitMask[eventStage])
+        {
+            mEvents[eventStage].release(context);
+        }
+        mEvents[eventStage] = event;
+        mAccessFlags[eventStage] |= accessFlags;
+        mBitMask.set(eventStage);
+    }
+    VkAccessFlags getAccessFlags(EventStage eventStage) const
+    {
+        ASSERT(mBitMask[eventStage]);
+        return mAccessFlags[eventStage];
+    }
+    void releaseToEventCollector(RefCountedEventCollector *eventCollector)
+    {
+        for (EventStage eventStage : mBitMask)
+        {
+            eventCollector->emplace_back(std::move(mEvents[eventStage]));
+            mAccessFlags[eventStage] = 0;
+        }
+        mBitMask.reset();
+    }
+    bool hasEventAndAccess(EventStage eventStage, VkAccessFlags accessType) const
+    {
+        return mBitMask.test(eventStage) && (mAccessFlags[eventStage] & accessType) == accessType;
+    }
+
+  private:
+    angle::PackedEnumMap<EventStage, VkAccessFlags> mAccessFlags;
+};
+
+class RefCountedEventWithAccessFlags final
+{
+  public:
+    RefCountedEventWithAccessFlags() : mAccessFlags(0) {}
+
+    void release(Renderer *renderer) { mEvent.release(renderer); }
+    void release(Context *context) { mEvent.release(context); }
+    void releaseToEventCollector(RefCountedEventCollector *eventCollector)
+    {
+        eventCollector->emplace_back(std::move(mEvent));
+        mAccessFlags = 0;
+    }
+    RefCountedEventWithAccessFlags &operator=(RefCountedEventWithAccessFlags &&other)
+    {
+        mEvent             = std::move(other.mEvent);
+        mAccessFlags       = other.mAccessFlags;
+        other.mAccessFlags = 0;
+        return *this;
+    }
+
+    void setEventAndAccessFlags(const RefCountedEvent &event, VkAccessFlags accessFlags)
+    {
+        mEvent       = event;
+        mAccessFlags = accessFlags;
+    }
+
+    const RefCountedEvent &getEvent() const { return mEvent; }
+    VkAccessFlags getAccessFlags() const
+    {
+        ASSERT(mEvent.valid());
+        return mAccessFlags;
+    }
+
+    bool valid() const { return mEvent.valid(); }
+
+    EventStage getEventStage() const { return mEvent.getEventStage(); }
+
+  private:
+    RefCountedEvent mEvent;
+    VkAccessFlags mAccessFlags;
+};
+
+// Only used by RenderPassCommandBufferHelper
+class EventArray final : angle::NonCopyable
+{
+  public:
+    void init(Renderer *renderer, const RefCountedEventArray &refCountedEventArray);
+
+    bool empty() const { return mBitMask.none(); }
+    void flushSetEvents(PrimaryCommandBuffer *primary);
+
+  private:
+    // The mask is used to accelerate the loop of map
+    EventStageBitMask mBitMask;
+    angle::PackedEnumMap<EventStage, VkEvent> mEvents;
+    angle::PackedEnumMap<EventStage, VkPipelineStageFlags> mPipelineStageFlags;
 };
 
 // This class tracks a vector of RefcountedEvent garbage. For performance reason, instead of
@@ -289,7 +418,7 @@ class RefCountedEventsGarbage final
 // events recycler system. The first level is per ShareGroupVk, which owns RefCountedEventRecycler.
 // RefCountedEvent garbage is added to it without any lock. Once GPU complete, the refCount is
 // decremented. When the last refCount goes away, it goes into mEventsToReset. Note that since
-// ShareGoupVk access is already protected by context share lock at the API level, so no lock is
+// ShareGroupVk access is already protected by context share lock at the API level, so no lock is
 // taken and reference counting is not atomic. At RefCountedEventsGarbageRecycler::cleanup time, the
 // entire mEventsToReset is added into renderer's list. The renderer owns RefCountedEventRecycler
 // list, and all access to it is protected with simple mutex lock. When any context calls
@@ -340,12 +469,13 @@ class RefCountedEventRecycler final
     }
 
     // Reset all events in the toReset list and move them to the toReuse list
-    void resetEvents(Context *context,
+    void resetEvents(ErrorContext *context,
                      const QueueSerial queueSerial,
                      PrimaryCommandBuffer *commandbuffer);
 
     // Clean up the resetting event list and move completed events to the toReuse list.
-    void cleanupResettingEvents(Renderer *renderer);
+    // Number of events released is returned.
+    size_t cleanupResettingEvents(Renderer *renderer);
 
     // Fetch a list of events that are ready to be reused. Returns true if eventsToReuseOut is
     // returned.
@@ -499,15 +629,16 @@ class EventBarrierArray final
                                   VkPipelineStageFlags dstStageMask,
                                   VkAccessFlags dstAccess);
 
-    void addMemoryEvent(Renderer *renderer,
-                        const RefCountedEvent &waitEvent,
-                        VkPipelineStageFlags dstStageMask,
-                        VkAccessFlags dstAccess);
+    void addEventMemoryBarrier(Renderer *renderer,
+                               const RefCountedEvent &waitEvent,
+                               VkAccessFlags srcAccess,
+                               VkPipelineStageFlags dstStageMask,
+                               VkAccessFlags dstAccess);
 
-    void addImageEvent(Renderer *renderer,
-                       const RefCountedEvent &waitEvent,
-                       VkPipelineStageFlags dstStageMask,
-                       const VkImageMemoryBarrier &imageMemoryBarrier);
+    void addEventImageBarrier(Renderer *renderer,
+                              const RefCountedEvent &waitEvent,
+                              VkPipelineStageFlags dstStageMask,
+                              const VkImageMemoryBarrier &imageMemoryBarrier);
 
     void reset() { ASSERT(mBarriers.empty()); }
 

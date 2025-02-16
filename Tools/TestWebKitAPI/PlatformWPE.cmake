@@ -64,6 +64,8 @@ list(APPEND TestWebKit_SOURCES
     wpe/PlatformWebViewWPE.cpp
 )
 
+add_subdirectory(wpe/mock-platform)
+
 list(APPEND TestWebKit_PRIVATE_INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/Source
     ${FORWARDING_HEADERS_DIR}

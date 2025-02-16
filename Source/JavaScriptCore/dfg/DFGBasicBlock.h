@@ -47,8 +47,11 @@ typedef Vector<Node*, 8> BlockNodeList;
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(BasicBlock);
 
-struct BasicBlock : RefCounted<BasicBlock> {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BasicBlock);
+class BasicBlock {
+    WTF_MAKE_NONCOPYABLE(BasicBlock);
+    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(BasicBlock);
+public:
+
     BasicBlock(
         BytecodeIndex bytecodeBegin, unsigned numArguments, unsigned numLocals, unsigned numTmps,
         float executionCount);

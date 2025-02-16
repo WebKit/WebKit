@@ -57,15 +57,15 @@ void WorkerDebugger::attachDebugger()
 {
     JSC::Debugger::attachDebugger();
 
-    m_globalScope.script()->attachDebugger(this);
+    m_globalScope->script()->attachDebugger(this);
 }
 
 void WorkerDebugger::detachDebugger(bool isBeingDestroyed)
 {
     JSC::Debugger::detachDebugger(isBeingDestroyed);
 
-    if (m_globalScope.script())
-        m_globalScope.script()->detachDebugger(this);
+    if (m_globalScope->script())
+        m_globalScope->script()->detachDebugger(this);
     if (!isBeingDestroyed)
         recompileAllJSFunctions();
 }
@@ -83,12 +83,12 @@ void WorkerDebugger::runEventLoopWhilePaused()
     TimerBase::fireTimersInNestedEventLoop();
 
     // FIXME: Add support for pausing workers running on the main thread.
-    if (!is<WorkerDedicatedRunLoop>(m_globalScope.workerOrWorkletThread()->runLoop()))
+    if (!is<WorkerDedicatedRunLoop>(m_globalScope->workerOrWorkletThread()->runLoop()))
         return;
 
     MessageQueueWaitResult result;
     do {
-        result = downcast<WorkerDedicatedRunLoop>(m_globalScope.workerOrWorkletThread()->runLoop()).runInDebuggerMode(m_globalScope);
+        result = downcast<WorkerDedicatedRunLoop>(m_globalScope->workerOrWorkletThread()->runLoop()).runInDebuggerMode(m_globalScope);
     } while (result != MessageQueueTerminated && !m_doneProcessingDebuggerEvents);
 }
 

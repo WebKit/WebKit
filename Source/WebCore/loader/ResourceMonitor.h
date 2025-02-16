@@ -27,6 +27,7 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+#include "ResourceMonitorChecker.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 
@@ -36,7 +37,7 @@ class LocalFrame;
 
 class ResourceMonitor final : public RefCountedAndCanMakeWeakPtr<ResourceMonitor> {
 public:
-    enum class Eligibility : uint8_t { Unsure, NotEligible, Eligible };
+    using Eligibility = ResourceMonitorEligibility;
 
     static Ref<ResourceMonitor> create(LocalFrame&);
 
@@ -45,7 +46,7 @@ public:
 
     void setDocumentURL(URL&&);
     void didReceiveResponse(const URL&, OptionSet<ContentExtensions::ResourceType>);
-    void addNetworkUsage(size_t);
+    WEBCORE_EXPORT void addNetworkUsage(size_t);
 
 private:
     explicit ResourceMonitor(LocalFrame&);
@@ -57,7 +58,6 @@ private:
     URL m_frameURL;
     Eligibility m_eligibility { Eligibility::Unsure };
     bool m_networkUsageExceed { false };
-    size_t m_networkUsageThreshold { 0 };
     CheckedSize m_networkUsage;
 };
 

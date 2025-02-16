@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +28,6 @@
 
 #include "CSSColorConversion+Normalize.h"
 #include "CSSColorDescriptors.h"
-#include "StyleNone.h"
 
 namespace WebCore {
 
@@ -78,7 +78,7 @@ template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(
     return normalizeHue(angle.value);
 }
 
-template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(Style::None)
+template<typename Descriptor, unsigned Index> float convertToTypeColorComponent(CSS::Keyword::None)
 {
     return std::numeric_limits<double>::quiet_NaN();
 }

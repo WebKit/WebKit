@@ -880,15 +880,32 @@ TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_RectAfterInputWit
 
 TEST(DocumentEditingContext, SpatialAndCurrentSelectionRequest_LimitContextToEditableRoot)
 {
-    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 980, 600)]);
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 980, 600)]);
 
-    [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"hello world <textarea>foo bar baz</textarea> this is a test")];
-    [webView stringByEvaluatingJavaScript:@"document.querySelector('textarea').select()"];
+    {
+        [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(@"hello world <textarea>foo bar baz</textarea> this is a test")];
+        [webView stringByEvaluatingJavaScript:@"document.querySelector('textarea').select()"];
 
-    auto *context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, CGRectMake(0, 0, 980, 600))];
-    EXPECT_NULL(context.contextBefore);
-    EXPECT_NSSTRING_EQ("foo bar baz", context.selectedText);
-    EXPECT_NULL(context.contextAfter);
+        RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityWord, 200, CGRectMake(0, 0, 980, 600))];
+        EXPECT_NULL([context contextBefore]);
+        EXPECT_NSSTRING_EQ("foo bar baz", [context selectedText]);
+        EXPECT_NULL([context contextAfter]);
+    }
+    {
+        [webView synchronouslyLoadHTMLString:DocumentEditingContextTestHelpers::applyAhemStyle(String {
+            "<body style='width: 100%; height: 100%;'>"
+            "  <p style='font-size:500px;'>hello world</p>"
+            "  <input style='position: absolute; top: 100px; left: 100px;' value='foo' />"
+            "</body>"_s
+        })];
+        [webView stringByEvaluatingJavaScript:@"document.querySelector('input').focus()"];
+        [webView stringByEvaluatingJavaScript:@"document.querySelector('input').select()"];
+
+        RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText | UIWKDocumentRequestSpatialAndCurrentSelection, UITextGranularityParagraph, 3, CGRectMake(1, 1, 978, 598))];
+        EXPECT_NULL([context contextBefore]);
+        EXPECT_NSSTRING_EQ("foo", [context selectedText]);
+        EXPECT_NULL([context contextAfter]);
+    }
 }
 
 TEST(DocumentEditingContext, RequestRectsInTextAreaAcrossWordWrappedLine)

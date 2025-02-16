@@ -32,6 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if USE(JPEGXL)
 
 #include "PixelBufferConversion.h"
+#include <wtf/MallocSpan.h>
 
 #if USE(LCMS)
 #include "LCMSUniquePtr.h"
@@ -387,17 +388,19 @@ void JPEGXLImageDecoder::imageOut(size_t x, size_t y, size_t numPixels, const ui
     if (buffer.isInvalid())
         return;
 
-    uint32_t* row = buffer.backingStore()->pixelAt(x, y);
-    uint32_t* currentAddress = row;
+    auto row = buffer.backingStore()->pixelsStartingAt(x, y);
+    auto currentAddress = row;
     for (size_t i = 0; i < numPixels; i++) {
         uint8_t r = *pixels++;
         uint8_t g = *pixels++;
         uint8_t b = *pixels++;
         uint8_t a = *pixels++;
-        buffer.backingStore()->setPixel(currentAddress++, r, g, b, a);
+        buffer.backingStore()->setPixel(currentAddress[0], r, g, b, a);
+        currentAddress = currentAddress.subspan(1);
     }
 
-    maybePerformColorSpaceConversion(row, row, numPixels);
+    auto rowBytes = spanReinterpretCast<uint8_t>(row);
+    maybePerformColorSpaceConversion(rowBytes, rowBytes, numPixels);
 }
 
 #if USE(LCMS)
@@ -444,12 +447,12 @@ LCMSProfilePtr JPEGXLImageDecoder::tryDecodeICCColorProfile()
     return LCMSProfilePtr(cmsOpenProfileFromMem(profileData.data(), profileData.size()));
 }
 
-void JPEGXLImageDecoder::maybePerformColorSpaceConversion(void* inputBuffer, void* outputBuffer, unsigned numberOfPixels)
+void JPEGXLImageDecoder::maybePerformColorSpaceConversion(std::span<uint8_t> inputBuffer, std::span<uint8_t> outputBuffer, unsigned numberOfPixels)
 {
     if (!m_iccTransform)
         return;
 
-    cmsDoTransform(m_iccTransform.get(), inputBuffer, outputBuffer, numberOfPixels);
+    cmsDoTransform(m_iccTransform.get(), inputBuffer.data(), outputBuffer.data(), numberOfPixels);
 }
 
 #elif USE(CG)
@@ -484,7 +487,7 @@ RetainPtr<CGColorSpaceRef> JPEGXLImageDecoder::tryDecodeICCColorProfile()
     return adoptCF(CGColorSpaceCreateWithICCData(data.get()));
 }
 
-void JPEGXLImageDecoder::maybePerformColorSpaceConversion(void* inputBuffer, void* outputBuffer, unsigned numberOfPixels)
+void JPEGXLImageDecoder::maybePerformColorSpaceConversion(std::span<uint8_t> inputBuffer, std::span<uint8_t> outputBuffer, unsigned numberOfPixels)
 {
     if (!m_profile)
         return;
@@ -492,7 +495,7 @@ void JPEGXLImageDecoder::maybePerformColorSpaceConversion(void* inputBuffer, voi
     // https://developer.apple.com/documentation/accelerate/1399134-vimageconvert_anytoany?language=objc
     // "The destination buffer may only alias the srcs buffers if vImageConverter_MustOperateOutOfPlace returns 0 and the respective scanlines of the aliasing buffers start at the same address."
     // convertImagePixels() doesn't have any logic for this, so we can just pessimize here and assume aliasing is illegal.
-    std::unique_ptr<uint8_t[]> intermediateBuffer(new uint8_t[4 * numberOfPixels]);
+    auto intermediateBuffer = MallocSpan<uint8_t>::malloc(4 * numberOfPixels);
     auto alphaFormat = m_premultiplyAlpha ? AlphaPremultiplication::Premultiplied : AlphaPremultiplication::Unpremultiplied;
     ConstPixelBufferConversionView source {
         .format = {
@@ -501,7 +504,7 @@ void JPEGXLImageDecoder::maybePerformColorSpaceConversion(void* inputBuffer, voi
             .colorSpace = DestinationColorSpace(m_profile.get()),
         },
         .bytesPerRow = static_cast<unsigned>(4 * size().width()),
-        .rows = static_cast<const uint8_t*>(inputBuffer),
+        .rows = inputBuffer,
     };
     PixelBufferConversionView destination {
         .format = {
@@ -510,15 +513,15 @@ void JPEGXLImageDecoder::maybePerformColorSpaceConversion(void* inputBuffer, voi
             .colorSpace = DestinationColorSpace::SRGB(),
         },
         .bytesPerRow = static_cast<unsigned>(4 * size().width()),
-        .rows = intermediateBuffer.get(),
+        .rows = intermediateBuffer.mutableSpan()
     };
     convertImagePixels(source, destination, { static_cast<int>(numberOfPixels), 1 });
-    memcpy(outputBuffer, intermediateBuffer.get(), numberOfPixels * 4);
+    memcpySpan(outputBuffer, intermediateBuffer.span());
 }
 
 #else
 
-void JPEGXLImageDecoder::maybePerformColorSpaceConversion(void*, void*, unsigned)
+void JPEGXLImageDecoder::maybePerformColorSpaceConversion(std::span<uint8_t>, std::span<uint8_t>, unsigned)
 {
 }
 

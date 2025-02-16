@@ -154,7 +154,7 @@ const AtomString& ElementInternals::attributeWithoutSynchronization(const Qualif
     return defaultARIA ? defaultARIA->valueForAttribute(*element, name) : nullAtom();
 }
 
-RefPtr<Element> ElementInternals::getElementAttribute(const QualifiedName& name) const
+RefPtr<Element> ElementInternals::getElementAttributeForBindings(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
     CheckedPtr defaultARIA = m_element->customElementDefaultARIAIfExists();
@@ -172,7 +172,7 @@ void ElementInternals::setElementAttribute(const QualifiedName& name, Element* v
         cache->deferAttributeChangeIfNeeded(*element, name, oldValue, computeValueForAttribute(*element, name));
 }
 
-std::optional<Vector<Ref<Element>>> ElementInternals::getElementsArrayAttribute(const QualifiedName& name) const
+std::optional<Vector<Ref<Element>>> ElementInternals::getElementsArrayAttributeForBindings(const QualifiedName& name) const
 {
     RefPtr element = m_element.get();
     CheckedPtr defaultARIA = m_element->customElementDefaultARIAIfExists();

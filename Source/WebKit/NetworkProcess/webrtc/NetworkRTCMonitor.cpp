@@ -42,6 +42,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/WeakHashSet.h>
 #include <wtf/WorkQueue.h>
+#include <wtf/posix/SocketPOSIX.h>
 
 #if PLATFORM(COCOA)
 #include <pal/spi/cocoa/NetworkSPI.h>
@@ -205,12 +206,12 @@ static HashMap<String, RTCNetwork> gatherNetworkMap()
             continue;
 
         int scopeID = 0;
-        if (iterator->ifa_addr->sa_family == AF_INET6)
-            scopeID = reinterpret_cast<sockaddr_in6*>(iterator->ifa_addr)->sin6_scope_id;
+        if (auto* address = dynamicCastToIPV6SocketAddress(*iterator->ifa_addr))
+            scopeID = address->sin6_scope_id;
 
         auto prefixLength = rtc::CountIPMaskBits(address->second.rtcAddress());
 
-        auto name = span(iterator->ifa_name);
+        auto name = unsafeSpan(iterator->ifa_name);
         auto prefixString = address->second.rtcAddress().ToString();
         auto networkKey = makeString(name, "-"_s, prefixLength, "-"_s, std::span { prefixString });
 
@@ -229,33 +230,30 @@ static bool connectToRemoteAddress(int socket, bool useIPv4)
     const int publicPort = 53;
 
     sockaddr_storage remoteAddressStorage;
-    zeroBytes(remoteAddressStorage);
     size_t remoteAddressStorageLength = 0;
+    bool success = false;
     if (useIPv4) {
-        auto& remoteAddress = *reinterpret_cast<sockaddr_in*>(&remoteAddressStorage);
-        remoteAddressStorageLength = sizeof(sockaddr_in);
-
-        remoteAddress.sin_family = AF_INET;
-        remoteAddress.sin_port = publicPort;
-
-        if (!::inet_pton(AF_INET, publicHost, &remoteAddress.sin_addr)) {
-            RELEASE_LOG_ERROR(WebRTC, "getDefaultIPAddress inet_pton failed, useIPv4=%d", useIPv4);
-            return false;
-        }
+        success = initializeIPV4SocketAddress(remoteAddressStorage, [&](auto& remoteAddress) {
+            remoteAddressStorageLength = sizeof(remoteAddress);
+            remoteAddress.sin_family = AF_INET;
+            remoteAddress.sin_port = publicPort;
+            return ::inet_pton(AF_INET, publicHost, &remoteAddress.sin_addr);
+        });
     } else {
-        auto& remoteAddress = *reinterpret_cast<sockaddr_in6*>(&remoteAddressStorage);
-        remoteAddressStorageLength = sizeof(sockaddr_in6);
-
-        remoteAddress.sin6_family = AF_INET6;
-        remoteAddress.sin6_port = publicPort;
-
-        if (!::inet_pton(AF_INET6, publicHost, &remoteAddress.sin6_addr)) {
-            RELEASE_LOG_ERROR(WebRTC, "getDefaultIPAddress inet_pton failed, useIPv4=%d", useIPv4);
-            return false;
-        }
+        success = initializeIPV6SocketAddress(remoteAddressStorage, [&](auto& remoteAddress) {
+            remoteAddressStorageLength = sizeof(remoteAddress);
+            remoteAddress.sin6_family = AF_INET6;
+            remoteAddress.sin6_port = publicPort;
+            return ::inet_pton(AF_INET6, publicHost, &remoteAddress.sin6_addr);
+        });
+    }
+    if (!success) {
+        RELEASE_LOG_ERROR(WebRTC, "getDefaultIPAddress inet_pton failed, useIPv4=%d", useIPv4);
+        return false;
     }
 
-    auto connectResult = ::connect(socket, reinterpret_cast<sockaddr*>(&remoteAddressStorage), remoteAddressStorageLength);
+    auto& remoteAddress = asSocketAddress(remoteAddressStorage);
+    auto connectResult = ::connect(socket, &remoteAddress, remoteAddressStorageLength);
     if (connectResult < 0) {
         RELEASE_LOG_ERROR(WebRTC, "getDefaultIPAddress connect failed, useIPv4=%d", useIPv4);
         return false;
@@ -268,8 +266,11 @@ static std::optional<RTCNetwork::IPAddress> getSocketLocalAddress(int socket, bo
 {
     sockaddr_storage localAddressStorage;
     zeroBytes(localAddressStorage);
-    socklen_t localAddressStorageLength = sizeof(sockaddr_storage);
-    if (::getsockname(socket, reinterpret_cast<sockaddr*>(&localAddressStorage), &localAddressStorageLength) < 0) {
+
+    auto& localAddress = asSocketAddress(localAddressStorage);
+    socklen_t localAddressStorageLength = sizeof(localAddress);
+
+    if (::getsockname(socket, &localAddress, &localAddressStorageLength) < 0) {
         RELEASE_LOG_ERROR(WebRTC, "getDefaultIPAddress getsockname failed, useIPv4=%d", useIPv4);
         return { };
     }
@@ -280,7 +281,7 @@ static std::optional<RTCNetwork::IPAddress> getSocketLocalAddress(int socket, bo
         return { };
     }
 
-    return RTCNetwork::IPAddress { *reinterpret_cast<const struct sockaddr*>(&localAddressStorage) };
+    return RTCNetwork::IPAddress { localAddress };
 }
 
 static std::optional<RTCNetwork::IPAddress> getDefaultIPAddress(bool useIPv4)

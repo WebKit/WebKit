@@ -656,7 +656,7 @@ void InspectorNetworkAgent::didFinishLoading(ResourceLoaderIdentifier identifier
         elapsedFinishTime = timestamp();
 
     String requestId = IdentifiersFactory::requestId(identifier.toUInt64());
-    if (loader && m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource)
+    if (loader && loader->frameLoader() && m_resourcesData->resourceType(requestId) == InspectorPageAgent::DocumentResource)
         m_resourcesData->addResourceSharedBuffer(requestId, loader->frameLoader()->documentLoader()->mainResourceData(), loader->frame()->document()->encoding());
 
     m_resourcesData->maybeDecodeDataToContent(requestId);

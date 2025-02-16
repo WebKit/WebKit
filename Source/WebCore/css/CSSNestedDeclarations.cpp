@@ -20,6 +20,7 @@
 #include "config.h"
 #include "CSSNestedDeclarations.h"
 
+#include "CSSSerializationContext.h"
 #include "DeclaredStylePropertyMap.h"
 #include "MutableStyleProperties.h"
 #include "PropertySetCSSStyleDeclaration.h"
@@ -47,7 +48,7 @@ CSSStyleDeclaration& CSSNestedDeclarations::style()
 
 String CSSNestedDeclarations::cssText() const
 {
-    return m_styleRule->properties().asText();
+    return m_styleRule->properties().asText(CSS::defaultSerializationContext());
 }
 
 void CSSNestedDeclarations::reattach(StyleRuleBase& rule)

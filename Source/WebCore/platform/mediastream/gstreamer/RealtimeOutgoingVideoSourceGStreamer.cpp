@@ -110,6 +110,11 @@ RefPtr<GStreamerRTPPacketizer> RealtimeOutgoingVideoSourceGStreamer::createPacke
     return GStreamerVideoRTPPacketizer::create(ssrcGenerator, codecParameters, WTFMove(encodingParameters));
 }
 
+void RealtimeOutgoingVideoSourceGStreamer::dispatchBitrateRequest(uint32_t bitrate)
+{
+    gst_element_send_event(m_bin.get(), gst_event_new_custom(GST_EVENT_CUSTOM_DOWNSTREAM_OOB, gst_structure_new("encoder-bitrate-change-request", "bitrate", G_TYPE_UINT, static_cast<uint32_t>(bitrate / 1000), nullptr)));
+}
+
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore

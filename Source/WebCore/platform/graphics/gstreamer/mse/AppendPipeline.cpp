@@ -46,8 +46,8 @@
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/MakeString.h>
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
-#define GST_CAT_DEFAULT webkit_mse_debug
+GST_DEBUG_CATEGORY_STATIC(webkit_mse_append_pipeline_debug);
+#define GST_CAT_DEFAULT webkit_mse_append_pipeline_debug
 
 namespace WebCore {
 
@@ -68,6 +68,7 @@ struct EndOfAppendMeta {
 void AppendPipeline::staticInitialization()
 {
     ASSERT(isMainThread());
+    GST_DEBUG_CATEGORY_INIT(webkit_mse_append_pipeline_debug, "webkitmseappendpipeline", 0, "WebKit MSE AppendPipeline");
 
     const char* tags[] = { nullptr };
     s_endOfAppendMetaType = gst_meta_api_type_register("WebKitEndOfAppendMetaAPI", tags);
@@ -164,7 +165,7 @@ AppendPipeline::AppendPipeline(SourceBufferPrivateGStreamer& sourceBufferPrivate
     m_demuxerDataEnteringPadProbeInformation.probeId = gst_pad_add_probe(demuxerPad.get(), GST_PAD_PROBE_TYPE_BUFFER, reinterpret_cast<GstPadProbeCallback>(appendPipelinePadProbeDebugInformation), &m_demuxerDataEnteringPadProbeInformation, nullptr);
 #endif
 
-    String elementClass = span(gst_element_get_metadata(m_demux.get(), GST_ELEMENT_METADATA_KLASS));
+    String elementClass = unsafeSpan(gst_element_get_metadata(m_demux.get(), GST_ELEMENT_METADATA_KLASS));
     auto classifiers = elementClass.split('/');
     if (classifiers.contains("Demuxer"_s)) {
         // These signals won't outlive the lifetime of `this`.
@@ -439,9 +440,9 @@ void AppendPipeline::didReceiveInitializationSegment()
                 linkPadWithTrack(pad, *track);
         }
     } else {
-        HashSet<String> videoPadStreamIDs;
-        HashSet<String> audioPadStreamIDs;
-        HashSet<String> textPadStreamIDs;
+        UncheckedKeyHashSet<String> videoPadStreamIDs;
+        UncheckedKeyHashSet<String> audioPadStreamIDs;
+        UncheckedKeyHashSet<String> textPadStreamIDs;
         for (auto pad : GstIteratorAdaptor<GstPad>(GUniquePtr<GstIterator>(gst_element_iterate_src_pads(m_demux.get())))) {
             auto [parsedCaps, streamType, presentationSize] = parseDemuxerSrcPadCaps(adoptGRef(gst_pad_get_current_caps(pad)).get());
             UNUSED_VARIABLE(parsedCaps);
@@ -815,7 +816,7 @@ bool AppendPipeline::recycleTrackForPad(GstPad* demuxerSrcPad)
 {
     ASSERT(isMainThread());
     ASSERT(m_hasReceivedFirstInitializationSegment);
-    auto trackId = AtomString::fromLatin1(GST_PAD_NAME(demuxerSrcPad));
+    auto trackId = AtomString(unsafeSpan8(GST_PAD_NAME(demuxerSrcPad)));
     auto [parsedCaps, streamType, presentationSize] = parseDemuxerSrcPadCaps(adoptGRef(gst_pad_get_current_caps(demuxerSrcPad)).get());
 
     GST_DEBUG_OBJECT(demuxerSrcPad, "Caps: %" GST_PTR_FORMAT, parsedCaps.get());

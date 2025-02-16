@@ -66,14 +66,11 @@ void TextCodecUTF16::registerCodecs(TextCodecRegistrar registrar)
     });
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 // https://encoding.spec.whatwg.org/#shared-utf-16-decoder
 String TextCodecUTF16::decode(std::span<const uint8_t> bytes, bool flush, bool, bool& sawError)
 {
-    const auto* p = bytes.data();
-    const auto* const end = p + bytes.size();
-    const auto* const endMinusOneOrNull = end ? end - 1 : nullptr;
+    size_t index = 0;
+    size_t lengthMinusOne = bytes.size() - 1;
 
     StringBuilder result;
     result.reserveCapacity(bytes.size() / 2);
@@ -109,32 +106,29 @@ String TextCodecUTF16::decode(std::span<const uint8_t> bytes, bool flush, bool, 
         processCodeUnit((first << 8) | second);
     };
 
-    if (m_leadByte && p < end) {
-        auto leadByte = *std::exchange(m_leadByte, std::nullopt);
-        if (m_littleEndian)
-            processBytesLE(leadByte, p[0]);
-        else
-            processBytesBE(leadByte, p[0]);
-        p++;
-    }
-
-    if (m_littleEndian) {
-        while (p < endMinusOneOrNull) {
-            processBytesLE(p[0], p[1]);
-            p += 2;
+    if (!bytes.empty()) {
+        if (m_leadByte && index < bytes.size()) {
+            auto leadByte = *std::exchange(m_leadByte, std::nullopt);
+            auto trailByte = bytes[index++];
+            if (m_littleEndian)
+                processBytesLE(leadByte, trailByte);
+            else
+                processBytesBE(leadByte, trailByte);
         }
-    } else {
-        while (p < endMinusOneOrNull) {
-            processBytesBE(p[0], p[1]);
-            p += 2;
+        if (m_littleEndian) {
+            for (; index < lengthMinusOne; index += 2)
+                processBytesLE(bytes[index], bytes[index + 1]);
+        } else {
+            for (; index < lengthMinusOne; index += 2)
+                processBytesBE(bytes[index], bytes[index + 1]);
         }
-    }
 
-    if (p && p == endMinusOneOrNull) {
-        ASSERT(!m_leadByte);
-        m_leadByte = p[0];
-    } else
-        ASSERT(!p || p == end);
+        if (index == lengthMinusOne) {
+            ASSERT(!m_leadByte);
+            m_leadByte = bytes[index];
+        } else
+            ASSERT(index == bytes.size());
+    }
 
     if (flush) {
         m_shouldStripByteOrderMark = false;
@@ -148,8 +142,6 @@ String TextCodecUTF16::decode(std::span<const uint8_t> bytes, bool flush, bool, 
 
     return result.toString();
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling) const
 {

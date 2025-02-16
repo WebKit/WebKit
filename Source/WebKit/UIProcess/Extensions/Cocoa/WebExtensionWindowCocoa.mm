@@ -307,14 +307,14 @@ void WebExtensionWindow::setState(WebExtensionWindow::State state, CompletionHan
     static NSString * const apiName = @"windows.update()";
 
     if (!isValid() || !m_respondsToSetWindowState || !m_respondsToWindowState) {
-        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'state'"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'state'"));
         return;
     }
 
     [m_delegate setWindowState:toAPI(state) forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setWindowState: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
             return;
         }
 
@@ -356,14 +356,14 @@ void WebExtensionWindow::focus(CompletionHandler<void(Expected<void, WebExtensio
     static NSString * const apiName = @"windows.update()";
 
     if (!isValid() || !m_respondsToFocus) {
-        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'focused'"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'focused'"));
         return;
     }
 
     [m_delegate focusForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window focus: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
             return;
         }
 
@@ -419,7 +419,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Expected<
     if (!isValid() || !m_respondsToSetFrame || !m_respondsToFrame)
 #endif
     {
-        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented for 'top', 'left', 'width', and 'height'"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented for 'top', 'left', 'width', and 'height'"));
         return;
     }
 
@@ -430,7 +430,7 @@ void WebExtensionWindow::setFrame(CGRect frame, CompletionHandler<void(Expected<
     [m_delegate setFrame:frame forWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for setFrame: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
             return;
         }
 
@@ -453,14 +453,14 @@ void WebExtensionWindow::close(CompletionHandler<void(Expected<void, WebExtensio
     static NSString * const apiName = @"windows.remove()";
 
     if (!isValid() || !m_respondsToClose) {
-        completionHandler(toWebExtensionError(apiName, nil, @"it is not implemented"));
+        completionHandler(toWebExtensionError(apiName, nullString(), @"it is not implemented"));
         return;
     }
 
     [m_delegate closeForWebExtensionContext:m_extensionContext->wrapper() completionHandler:makeBlockPtr([protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler)](NSError *error) mutable {
         if (error) {
             RELEASE_LOG_ERROR(Extensions, "Error for window close: %{public}@", privacyPreservingDescription(error));
-            completionHandler(toWebExtensionError(apiName, nil, error.localizedDescription));
+            completionHandler(toWebExtensionError(apiName, nullString(), error.localizedDescription));
             return;
         }
 

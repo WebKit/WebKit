@@ -1003,6 +1003,26 @@ TEST_P(PbufferTest, UseAsFramebufferColorThenDeferredDestroy)
     ASSERT_GL_NO_ERROR();
 }
 
+// Test the validation errors for bad parameters for eglCreatePbufferSurface
+TEST_P(PbufferTest, NegativeValidationBadAttributes)
+{
+    EGLWindow *window = getEGLWindow();
+    EGLSurface pbufferSurface;
+
+    const EGLint invalidPBufferAttributeList[][3] = {
+        {EGL_MIPMAP_TEXTURE, EGL_MIPMAP_TEXTURE, EGL_NONE},
+        {EGL_LARGEST_PBUFFER, EGL_LARGEST_PBUFFER, EGL_NONE},
+    };
+
+    for (size_t i = 0; i < 2; i++)
+    {
+        pbufferSurface = eglCreatePbufferSurface(window->getDisplay(), window->getConfig(),
+                                                 &invalidPBufferAttributeList[i][0]);
+        ASSERT_EQ(pbufferSurface, EGL_NO_SURFACE);
+        ASSERT_EGL_ERROR(EGL_BAD_ATTRIBUTE);
+    }
+}
+
 // Test that passing colorspace attributes do not generate EGL validation errors
 // when EGL_ANGLE_colorspace_attribute_passthrough extension is supported.
 TEST_P(PbufferColorspaceTest, CreateSurfaceWithColorspace)

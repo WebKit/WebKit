@@ -49,18 +49,6 @@ InspectorBackend.registerEvent("Animation.trackingComplete", null, ["timestamp"]
 InspectorBackend.registerAnimationDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Animation");
 InspectorBackend.activateDomain("Animation", ["page", "web-page"]);
 
-// ApplicationCache
-InspectorBackend.registerDomain("ApplicationCache", ["page"]);
-InspectorBackend.registerCommand("ApplicationCache.getFramesWithManifests", null, [], ["frameIds"]);
-InspectorBackend.registerCommand("ApplicationCache.enable", null, [], []);
-InspectorBackend.registerCommand("ApplicationCache.disable", null, [], []);
-InspectorBackend.registerCommand("ApplicationCache.getManifestForFrame", null, [{"name": "frameId", "type": "string"}], ["manifestURL"]);
-InspectorBackend.registerCommand("ApplicationCache.getApplicationCacheForFrame", null, [{"name": "frameId", "type": "string"}], ["applicationCache"]);
-InspectorBackend.registerEvent("ApplicationCache.applicationCacheStatusUpdated", null, ["frameId", "manifestURL", "status"]);
-InspectorBackend.registerEvent("ApplicationCache.networkStateUpdated", null, ["isNowOnline"]);
-InspectorBackend.registerApplicationCacheDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "ApplicationCache");
-InspectorBackend.activateDomain("ApplicationCache", ["page", "web-page"]);
-
 // Audit
 InspectorBackend.registerDomain("Audit", ["itml", "javascript", "page", "service-worker", "worker"]);
 InspectorBackend.registerVersion("Audit", 4);
@@ -158,7 +146,7 @@ InspectorBackend.activateDomain("Canvas", ["page", "web-page"]);
 
 // Console
 InspectorBackend.registerDomain("Console", ["itml", "javascript", "page", "service-worker", "worker"]);
-InspectorBackend.registerEnum("Console.ChannelSource", {XML: "xml", JavaScript: "javascript", Network: "network", ConsoleAPI: "console-api", Storage: "storage", Appcache: "appcache", Rendering: "rendering", CSS: "css", Security: "security", ContentBlocker: "content-blocker", Media: "media", MediaSource: "mediasource", WebRTC: "webrtc", ITPDebug: "itp-debug", PrivateClickMeasurement: "private-click-measurement", PaymentRequest: "payment-request", Other: "other"});
+InspectorBackend.registerEnum("Console.ChannelSource", {XML: "xml", JavaScript: "javascript", Network: "network", ConsoleAPI: "console-api", Storage: "storage", Rendering: "rendering", CSS: "css", Security: "security", ContentBlocker: "content-blocker", Media: "media", MediaSource: "mediasource", WebRTC: "webrtc", ITPDebug: "itp-debug", PrivateClickMeasurement: "private-click-measurement", PaymentRequest: "payment-request", Other: "other"});
 InspectorBackend.registerEnum("Console.ChannelLevel", {Off: "off", Basic: "basic", Verbose: "verbose"});
 InspectorBackend.registerEnum("Console.ConsoleMessageLevel", {Log: "log", Info: "info", Warning: "warning", Error: "error", Debug: "debug"});
 InspectorBackend.registerEnum("Console.ConsoleMessageType", {Log: "log", Dir: "dir", DirXML: "dirxml", Table: "table", Trace: "trace", Clear: "clear", StartGroup: "startGroup", StartGroupCollapsed: "startGroupCollapsed", EndGroup: "endGroup", Assert: "assert", Timing: "timing", Profile: "profile", ProfileEnd: "profileEnd", Image: "image"});
@@ -258,8 +246,8 @@ InspectorBackend.activateDomain("DOM", ["itml", "page", "web-page"]);
 InspectorBackend.registerDomain("DOMDebugger", ["page", "worker"]);
 InspectorBackend.registerEnum("DOMDebugger.DOMBreakpointType", {SubtreeModified: "subtree-modified", AttributeModified: "attribute-modified", NodeRemoved: "node-removed"});
 InspectorBackend.registerEnum("DOMDebugger.EventBreakpointType", {AnimationFrame: "animation-frame", Interval: "interval", Listener: "listener", Timeout: "timeout"});
-InspectorBackend.registerCommand("DOMDebugger.setDOMBreakpoint", null, [{"name": "nodeId", "type": "number"}, {"name": "type", "type": "string"}, {"name": "options", "type": "object", "optional": true}], []);
-InspectorBackend.registerCommand("DOMDebugger.removeDOMBreakpoint", null, [{"name": "nodeId", "type": "number"}, {"name": "type", "type": "string"}], []);
+InspectorBackend.registerCommand("DOMDebugger.setDOMBreakpoint", ["page"], [{"name": "nodeId", "type": "number"}, {"name": "type", "type": "string"}, {"name": "options", "type": "object", "optional": true}], []);
+InspectorBackend.registerCommand("DOMDebugger.removeDOMBreakpoint", ["page"], [{"name": "nodeId", "type": "number"}, {"name": "type", "type": "string"}], []);
 InspectorBackend.registerCommand("DOMDebugger.setEventBreakpoint", null, [{"name": "breakpointType", "type": "string"}, {"name": "eventName", "type": "string", "optional": true}, {"name": "options", "type": "object", "optional": true}], []);
 InspectorBackend.registerCommand("DOMDebugger.removeEventBreakpoint", null, [{"name": "breakpointType", "type": "string"}, {"name": "eventName", "type": "string", "optional": true}], []);
 InspectorBackend.registerCommand("DOMDebugger.setURLBreakpoint", null, [{"name": "url", "type": "string"}, {"name": "isRegex", "type": "boolean", "optional": true}, {"name": "options", "type": "object", "optional": true}], []);
@@ -280,16 +268,6 @@ InspectorBackend.registerEvent("DOMStorage.domStorageItemAdded", null, ["storage
 InspectorBackend.registerEvent("DOMStorage.domStorageItemUpdated", null, ["storageId", "key", "oldValue", "newValue"]);
 InspectorBackend.registerDOMStorageDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "DOMStorage");
 InspectorBackend.activateDomain("DOMStorage", ["itml", "page", "web-page"]);
-
-// Database
-InspectorBackend.registerDomain("Database", ["page"]);
-InspectorBackend.registerCommand("Database.enable", null, [], []);
-InspectorBackend.registerCommand("Database.disable", null, [], []);
-InspectorBackend.registerCommand("Database.getDatabaseTableNames", null, [{"name": "databaseId", "type": "string"}], ["tableNames"]);
-InspectorBackend.registerCommand("Database.executeSQL", null, [{"name": "databaseId", "type": "string"}, {"name": "query", "type": "string"}], ["columnNames", "values", "sqlError"]);
-InspectorBackend.registerEvent("Database.addDatabase", null, ["database"]);
-InspectorBackend.registerDatabaseDispatcher = InspectorBackend.registerDispatcher.bind(InspectorBackend, "Database");
-InspectorBackend.activateDomain("Database", ["page", "web-page"]);
 
 // Debugger
 InspectorBackend.registerDomain("Debugger", ["itml", "javascript", "page", "service-worker", "worker"]);

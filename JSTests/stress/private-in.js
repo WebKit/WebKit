@@ -73,7 +73,7 @@ function test() {
 }
 noInline(test);
 
-for (let i = 0; i < 10000; i++)
+for (let i = 0; i < testLoopCount; i++)
   test();
 
 shouldNotThrow(() => { class C { #x; f() { 0 == #x in {}; } } });

@@ -6,18 +6,24 @@
 <body>
     <div><input id="top" autocorrect="off"></input></div>
     <div><input id="bottom"></input></div>
-</body>
 <p id="description"></p>
 <p id="console"></p>
 </body>
 <script>
 function isSpellingCorrectionMenuItemEnabled(element)
 {
+    if (window.frameElement)
+        window.frameElement.scrollIntoView(true);
+
     const elementRect = element.getBoundingClientRect();
     eventSender.mouseMoveTo(elementRect.left + elementRect.width / 2, elementRect.top + elementRect.height / 2);
 
     const spellingMenuItem = eventSender.contextClick().find(item => item.title === "Spelling and Grammar");
-    return spellingMenuItem.children.find(item => item.title === "Correct Spelling Automatically").enabled;
+    var isFound = spellingMenuItem.children.find(item => item.title === "Correct Spelling Automatically").enabled;
+    // open the context menu through the UI process
+    eventSender.mouseDown(2);
+    eventSender.mouseUp(2);
+    return isFound;
 }
 
 description("Verifies that autocorrect='off' disables the 'Correct Spelling Automatically' context menu item on macOS. To manually test, check that the menu item is disabled when right clicking the top text field, but enabled when clicking the bottom text field.");
@@ -28,6 +34,11 @@ bottomInput = document.getElementById("bottom");
 if (window.eventSender) {
     shouldBeFalse("isSpellingCorrectionMenuItemEnabled(topInput)");
     shouldBeTrue("isSpellingCorrectionMenuItemEnabled(bottomInput)");
+    // remove focus from the input element by clicking somewhere else or this document won't be gc'able on an iframe-based document leak test
+    eventSender.mouseMoveTo(0, 0);
+    eventSender.mouseDown();
 }
+
+onload = () => parent.postMessage("iframe loaded");
 </script>
 </html>

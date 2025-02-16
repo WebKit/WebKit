@@ -85,13 +85,13 @@ Ref<UniqueElementData> UniqueElementData::create()
 ShareableElementData::ShareableElementData(std::span<const Attribute> attributes)
     : ElementData(attributes.size())
 {
-    for (auto [sourceAttribute, destinationAttribute] : zippedRange(attributes, span()))
+    for (auto [sourceAttribute, destinationAttribute] : zippedRange(attributes, this->attributes()))
         new (NotNull, &destinationAttribute) Attribute(sourceAttribute);
 }
 
 ShareableElementData::~ShareableElementData()
 {
-    for (auto& attribute : span())
+    for (auto& attribute : attributes())
         attribute.~Attribute();
 }
 
@@ -105,7 +105,7 @@ ShareableElementData::ShareableElementData(const UniqueElementData& other)
         m_inlineStyle = other.m_inlineStyle->immutableCopyIfNeeded();
     }
 
-    for (auto [sourceAttribute, destinationAttribute] : zippedRange(other.m_attributeVector.span(), span()))
+    for (auto [sourceAttribute, destinationAttribute] : zippedRange(other.m_attributeVector.span(), attributes()))
         new (NotNull, &destinationAttribute) Attribute(sourceAttribute);
 }
 
@@ -142,7 +142,7 @@ UniqueElementData::UniqueElementData(const UniqueElementData& other)
 
 UniqueElementData::UniqueElementData(const ShareableElementData& other)
     : ElementData(other, true)
-    , m_attributeVector(std::span { other.m_attributeArray, other.length() })
+    , m_attributeVector(other.attributes())
 {
     // An ShareableElementData should never have a mutable inline StyleProperties attached.
     ASSERT(!other.m_inlineStyle || !other.m_inlineStyle->isMutable());
@@ -170,8 +170,8 @@ bool ElementData::isEquivalent(const ElementData* other) const
     if (length() != other->length())
         return false;
 
-    for (const Attribute& attribute : attributesIterator()) {
-        const Attribute* otherAttr = other->findAttributeByName(attribute.name());
+    for (auto& attribute : attributes()) {
+        auto* otherAttr = other->findAttributeByName(attribute.name());
         if (!otherAttr || attribute.value() != otherAttr->value())
             return false;
     }

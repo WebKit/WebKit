@@ -42,7 +42,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerTouchCompatibilitySimulator);
 
 PointerTouchCompatibilitySimulator::PointerTouchCompatibilitySimulator(WKWebView *view)
     : m_view { view }
-    , m_stateResetWatchdogTimer { RunLoop::main(), this, &PointerTouchCompatibilitySimulator::resetState }
 {
 }
 
@@ -50,7 +49,6 @@ PointerTouchCompatibilitySimulator::PointerTouchCompatibilitySimulator(WKWebView
 
 static constexpr auto predominantAxisDeltaRatio = 5;
 static constexpr auto minimumPredominantAxisDelta = 15;
-static constexpr auto stateResetTimerDelay = 250_ms;
 
 static bool hasPredominantHorizontalAxis(WebCore::FloatSize delta)
 {
@@ -97,7 +95,6 @@ bool PointerTouchCompatibilitySimulator::handleScrollUpdate(WKBaseScrollView *sc
         return false;
 
     m_centroid = [update locationInView:view.get()];
-    m_stateResetWatchdogTimer.startOneShot(stateResetTimerDelay);
 
     if (!isSimulatingTouches()) {
         [[_WKTouchEventGenerator sharedTouchEventGenerator] touchDown:locationInScreen() window:window.get()];
@@ -119,7 +116,6 @@ void PointerTouchCompatibilitySimulator::resetState()
     m_centroid = { };
     m_touchDelta = { };
     m_initialDelta = { };
-    m_stateResetWatchdogTimer.stop();
 }
 
 WebCore::FloatPoint PointerTouchCompatibilitySimulator::locationInScreen() const

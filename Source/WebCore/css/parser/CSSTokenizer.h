@@ -52,7 +52,7 @@ public:
     WEBCORE_EXPORT explicit CSSTokenizer(const String&);
     CSSTokenizer(const String&, CSSParserObserverWrapper&); // For the inspector
 
-    WEBCORE_EXPORT CSSParserTokenRange tokenRange() const;
+    WEBCORE_EXPORT CSSParserTokenRange tokenRange() const LIFETIME_BOUND;
     unsigned tokenCount();
 
     static bool isWhitespace(CSSParserTokenType);
