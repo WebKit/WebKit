@@ -70,6 +70,7 @@ void RemoteMediaPlayerProxy::mediaPlayerRenderingModeChanged()
     ALWAYS_LOG(LOGIDENTIFIER);
 
     auto* layer = protectedPlayer()->platformLayer();
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " RemoteMediaPlayerProxy[" << this << "]::mediaPlayerRenderingModeChanged() - layer=" << layer);
     if (layer && !m_inlineLayerHostingContext) {
         LayerHostingContextOptions contextOptions;
 #if USE(EXTENSIONKIT)

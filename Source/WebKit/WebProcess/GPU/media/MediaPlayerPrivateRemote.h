@@ -441,6 +441,7 @@ private:
     void applicationWillResignActive() final;
     void applicationDidBecomeActive() final;
     void setPreferredDynamicRangeMode(WebCore::DynamicRangeMode) final;
+    void setPlatformDynamicRangeLimit(WebCore::PlatformDynamicRangeLimit) final;
 
 #if USE(AVFOUNDATION)
     AVPlayer *objCAVFoundationAVPlayer() const final { return nullptr; }

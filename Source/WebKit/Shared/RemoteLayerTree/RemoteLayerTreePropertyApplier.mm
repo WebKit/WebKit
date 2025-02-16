@@ -36,6 +36,7 @@
 #import <WebCore/ContentsFormatCocoa.h>
 #import <WebCore/MediaPlayerEnumsCocoa.h>
 #import <WebCore/PlatformCAFilters.h>
+#import <WebCore/PlatformDynamicRangeLimitCocoa.h>
 #import <WebCore/ScrollbarThemeMac.h>
 #import <WebCore/WebAVPlayerLayer.h>
 #import <WebCore/WebCoreCALayerExtras.h>
@@ -536,6 +537,11 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
             [layer setToneMapMode:CAToneMapModeIfSupported];
         }
 #endif
+    }
+
+    if ((properties.changedProperties & LayerChange::PlatformDynamicRangeLimitChanged) && [layer respondsToSelector:@selector(setPreferredDynamicRange:)]) {
+        ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " RemoteLayerTreePropertyApplier::applyPropertiesToLayer(layer=" << layer << ") - platformDynamicRangeLimit=" << properties.platformDynamicRangeLimit);
+        [layer setPreferredDynamicRange:platformDynamicRangeLimitString(properties.platformDynamicRangeLimit)];
     }
 
 #if HAVE(CORE_MATERIAL)

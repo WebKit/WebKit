@@ -29,6 +29,7 @@
 
 #include "ContentType.h"
 #include "Cookie.h"
+#include "PlatformDynamicRangeLimit.h"
 #include "FourCC.h"
 #include "GraphicsTypesGL.h"
 #include "LayoutRect.h"
@@ -746,6 +747,8 @@ public:
 
     DynamicRangeMode preferredDynamicRangeMode() const { return m_preferredDynamicRangeMode; }
     void setPreferredDynamicRangeMode(DynamicRangeMode);
+    PlatformDynamicRangeLimit platformDynamicRangeLimit() const { return m_platformDynamicRangeLimit; }
+    void setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit);
 
     String audioOutputDeviceId() const;
     String audioOutputDeviceIdOverride() const;
@@ -830,6 +833,7 @@ private:
     bool m_shouldPrepareToRender { false };
     bool m_initializingMediaEngine { false };
     DynamicRangeMode m_preferredDynamicRangeMode;
+    PlatformDynamicRangeLimit m_platformDynamicRangeLimit { };
     PitchCorrectionAlgorithm m_pitchCorrectionAlgorithm { PitchCorrectionAlgorithm::BestAllAround };
     RefPtr<PlatformMediaResourceLoader> m_mediaResourceLoader;
 

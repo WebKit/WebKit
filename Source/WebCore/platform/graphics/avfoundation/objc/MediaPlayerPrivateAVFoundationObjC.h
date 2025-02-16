@@ -342,6 +342,8 @@ private:
     void setShouldObserveTimeControlStatus(bool);
 
     void setPreferredDynamicRangeMode(DynamicRangeMode) final;
+    void setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit) final;
+
     void audioOutputDeviceChanged() final;
 
     void currentTimeDidChange(MediaTime&&) const;

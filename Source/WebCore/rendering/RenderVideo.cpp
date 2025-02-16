@@ -55,6 +55,7 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderVideo);
 RenderVideo::RenderVideo(HTMLVideoElement& element, RenderStyle&& style)
     : RenderMedia(Type::Video, element, WTFMove(style))
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " RenderVideo[" << this << "]::RenderVideo(e,s) has called RenderMedia[" << static_cast<RenderMedia*>(this) << "]::RenderMedia()");
     setIntrinsicSize(calculateIntrinsicSize());
     ASSERT(isRenderVideo());
 }

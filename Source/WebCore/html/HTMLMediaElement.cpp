@@ -7927,6 +7927,7 @@ void HTMLMediaElement::createMediaPlayer() WTF_IGNORES_THREAD_SAFETY_ANALYSIS
 
     m_player = MediaPlayer::create(*this);
     RefPtr player = m_player;
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " HTMLMediaElement[" << this << "]::createMediaPlayer -> m_player[" << player.get() << "]");
     player->setBufferingPolicy(m_bufferingPolicy);
     player->setPreferredDynamicRangeMode(m_overrideDynamicRangeMode.value_or(preferredDynamicRangeMode(document().protectedView().get())));
     player->setShouldDisableHDR(shouldDisableHDR());
@@ -8365,6 +8366,16 @@ void HTMLMediaElement::setOverridePreferredDynamicRangeMode(DynamicRangeMode mod
     Ref player = *m_player;
     player->setPreferredDynamicRangeMode(mode);
     player->setShouldDisableHDR(shouldDisableHDR());
+}
+
+void HTMLMediaElement::setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit)
+{
+    if (!m_player)
+        return;
+
+    Ref player = *m_player;
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " HTMLMediaElement[" << this << "]::setPlatformDynamicRangeLimit(platformDynamicRangeLimit=" << platformDynamicRangeLimit << ") -> m_player[" << player.ptr() << "]->setPlatformDynamicRangeLimit(" << platformDynamicRangeLimit << ")...");
+    player->setPlatformDynamicRangeLimit(platformDynamicRangeLimit);
 }
 
 Vector<String> HTMLMediaElement::mediaPlayerPreferredAudioCharacteristics() const

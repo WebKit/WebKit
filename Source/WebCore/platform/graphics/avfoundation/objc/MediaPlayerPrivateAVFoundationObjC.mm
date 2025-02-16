@@ -55,6 +55,7 @@
 #import "MediaSessionManagerCocoa.h"
 #import "OutOfBandTextTrackPrivateAVF.h"
 #import "PixelBufferConformerCV.h"
+#import "PlatformDynamicRangeLimitCocoa.h"
 #import "PlatformMediaResourceLoader.h"
 #import "PlatformScreen.h"
 #import "PlatformTextTrack.h"
@@ -429,6 +430,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_loaderDelegate(adoptNS([[WebCoreAVFLoaderDelegate alloc] initWithPlayer:*this]))
     , m_cachedItemStatus(MediaPlayerAVPlayerItemStatusDoesNotExist)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayerPrivateAVFoundationObjC[" << this << "]::MediaPlayerPrivateAVFoundationObjC(MediaPlayer[" << player << "]) - m_videoLayerManager[" << m_videoLayerManager.get() << "]");
     ALWAYS_LOG(LOGIDENTIFIER);
     m_muted = player->muted();
 #if HAVE(SPATIAL_TRACKING_LABEL)
@@ -650,6 +652,8 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerLayer()
     [m_videoLayer addObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay" options:NSKeyValueObservingOptionNew context:(void *)MediaPlayerAVFoundationObservationContextAVPlayerLayer];
     updateVideoLayerGravity();
     [m_videoLayer setContentsScale:player->playerContentsScale()];
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayerPrivateAVFoundationObjC[" << this << "]::createAVPlayerLayer() -> setPlatformDynamicRangeLimit() and m_videoLayerManager->setVideoLayer(new AVPlayerLayer[" << m_videoLayer.get() << "])");
+    setPlatformDynamicRangeLimit(player->platformDynamicRangeLimit());
     m_videoLayerManager->setVideoLayer(m_videoLayer.get(), player->presentationSize());
 
 #if PLATFORM(IOS_FAMILY) && !PLATFORM(WATCHOS) && !PLATFORM(APPLETV)
@@ -671,6 +675,7 @@ void MediaPlayerPrivateAVFoundationObjC::destroyVideoLayer()
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayerPrivateAVFoundationObjC[" << this << "]::destroyVideoLayer m_videoLayerManager->setVideoLayer(new AVPlayerLayer[" << m_videoLayer.get() << "])");
     [m_videoLayer removeObserver:m_objcObserver.get() forKeyPath:@"readyForDisplay"];
     [m_videoLayer setPlayer:nil];
     m_videoLayerManager->didDestroyVideoLayer();
@@ -4004,6 +4009,15 @@ void MediaPlayerPrivateAVFoundationObjC::setPreferredDynamicRangeMode(DynamicRan
 #else
     UNUSED_PARAM(mode);
 #endif
+}
+
+void MediaPlayerPrivateAVFoundationObjC::setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit)
+{
+    assertIsMainThread();
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayerPrivateAVFoundationObjC[" << this << "]::setPlatformDynamicRangeLimit(" << platformDynamicRangeLimit << ") - m_videoLayer[" << m_videoLayer.get() << "]." << ([m_videoLayer respondsToSelector:@selector(setPreferredDynamicRange:)] ? "" : "NOT-RESPONDING!") << "setPreferredDynamicRange:" << platformDynamicRangeLimitString(platformDynamicRangeLimit));
+
+    if ([m_videoLayer respondsToSelector:@selector(setPreferredDynamicRange:)])
+        [m_videoLayer setPreferredDynamicRange:platformDynamicRangeLimitString(platformDynamicRangeLimit)];
 }
 
 void MediaPlayerPrivateAVFoundationObjC::setShouldDisableHDR(bool shouldDisable)

@@ -68,6 +68,7 @@ public:
 
     virtual void prepareForPlayback(bool privateMode, MediaPlayer::Preload preload, bool preservesPitch, bool prepareToPlay, bool prepareToRender)
     {
+        ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayerPrivateInterface[" << this << "]::prepareForPlayback() - minimal base implementation");
         setPrivateBrowsingMode(privateMode);
         setPreload(preload);
         setPreservesPitch(preservesPitch);
@@ -323,6 +324,9 @@ public:
     virtual bool shouldIgnoreIntrinsicSize() { return false; }
 
     virtual void setPreferredDynamicRangeMode(DynamicRangeMode) { }
+    virtual void setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit) {
+        ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayerPrivateInterface[" << this << "]::setPlatformDynamicRangeLimit(platformDynamicRangeLimit=" << platformDynamicRangeLimit << ") - empty base implementation");
+    }
 
     virtual void audioOutputDeviceChanged() { }
 

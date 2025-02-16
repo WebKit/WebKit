@@ -2853,6 +2853,7 @@
 		726516E62C9CB75600647895 /* ContentsFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = 726516E42C9BB70E00647895 /* ContentsFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726516F72CA4B4A300647895 /* ContentsFormatCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 726516F52CA4AEDC00647895 /* ContentsFormatCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726516E62C9CB75600647896 /* PlatformDynamicRangeLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = 726516E42C9BB70E00647896 /* PlatformDynamicRangeLimit.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		726516F72CA4B4A300647896 /* PlatformDynamicRangeLimitCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 726516F52CA4AEDC00647896 /* PlatformDynamicRangeLimitCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726CDE202759735000A445B2 /* FilterEffectGeometry.h in Headers */ = {isa = PBXBuildFile; fileRef = 729661A2275960A500E7DF9B /* FilterEffectGeometry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E2253AE28D0002EF90 /* PlatformImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 726D56E1253AE0430002EF90 /* PlatformImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		726D56E3253AE3660002EF90 /* NativeImage.h in Headers */ = {isa = PBXBuildFile; fileRef = 55A336F61D8209F40022C4C7 /* NativeImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13413,6 +13414,7 @@
 		726516F52CA4AEDC00647895 /* ContentsFormatCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContentsFormatCocoa.h; sourceTree = "<group>"; };
 		726516E42C9BB70E00647896 /* PlatformDynamicRangeLimit.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformDynamicRangeLimit.h; sourceTree = "<group>"; };
 		726516E52C9CB59900647896 /* PlatformDynamicRangeLimit.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformDynamicRangeLimit.cpp; sourceTree = "<group>"; };
+		726516F52CA4AEDC00647896 /* PlatformDynamicRangeLimitCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformDynamicRangeLimitCocoa.h; sourceTree = "<group>"; };
 		7266F0132241BCE200833975 /* SVGPropertyAnimatorFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPropertyAnimatorFactory.h; sourceTree = "<group>"; };
 		7266F0142241BFB200833975 /* SVGPrimitivePropertyAnimatorImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPrimitivePropertyAnimatorImpl.h; sourceTree = "<group>"; };
 		7266F0152241C09800833975 /* SVGPrimitivePropertyAnimator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SVGPrimitivePropertyAnimator.h; sourceTree = "<group>"; };
@@ -26103,6 +26105,7 @@
 				4958782012A57DDF007238AC /* PlatformCALayerCocoa.mm */,
 				0FA2B233276817540020C7C1 /* PlatformCALayerContentsDelayedReleaser.h */,
 				0FA2B235276817550020C7C1 /* PlatformCALayerContentsDelayedReleaser.mm */,
+				726516F52CA4AEDC00647896 /* PlatformDynamicRangeLimitCocoa.h */,
 				31DEA4541B39F4D900F77178 /* WebSystemBackdropLayer.h */,
 				31DEA4531B39F4D900F77178 /* WebSystemBackdropLayer.mm */,
 				0F580FA11496939100FB5BD8 /* WebTiledBackingLayer.h */,
@@ -43449,6 +43452,7 @@
 				A14978711ABAF3A500CEF7E4 /* PlatformContentFilter.h in Headers */,
 				72A645212949049700C14BA3 /* PlatformControl.h in Headers */,
 				726516E62C9CB75600647896 /* PlatformDynamicRangeLimit.h in Headers */,
+				726516F72CA4B4A300647896 /* PlatformDynamicRangeLimitCocoa.h in Headers */,
 				BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */,
 				F4CCD04E2A9917ED00536C6B /* PlatformEvent.serialization.in in Headers */,
 				26601EBF14B3B9AD0012C0FE /* PlatformEventFactoryIOS.h in Headers */,

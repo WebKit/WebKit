@@ -42,12 +42,16 @@ WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderMedia);
 RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, RenderStyle&& style)
     : RenderImage(type, element, WTFMove(style), ReplacedFlag::IsMedia)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " RenderMedia[" << this << "]::RenderMedia(t,e,s) has called RenderImage[" << static_cast<RenderImage*>(this) << "]::RenderImage() -> element.setPlatformDynamicRangeLimit(" << this->style().dynamicRangeLimit().toPlatformDynamicRangeLimit() << ")");
+    element.setPlatformDynamicRangeLimit(this->style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
     setHasShadowControls(true);
 }
 
 RenderMedia::RenderMedia(Type type, HTMLMediaElement& element, RenderStyle&& style, const IntSize& intrinsicSize)
     : RenderImage(type, element, WTFMove(style), ReplacedFlag::IsMedia)
 {
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " RenderMedia[" << this << "]::RenderMedia(t,e,s,s) has called RenderImage[" << static_cast<RenderImage*>(this) << "]::RenderImage() -> element.setPlatformDynamicRangeLimit(" << this->style().dynamicRangeLimit().toPlatformDynamicRangeLimit() << ")");
+    element.setPlatformDynamicRangeLimit(this->style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
     setIntrinsicSize(intrinsicSize);
     setHasShadowControls(true);
 }
@@ -71,6 +75,11 @@ void RenderMedia::styleDidChange(StyleDifference difference, const RenderStyle* 
     RenderImage::styleDidChange(difference, oldStyle);
     if (!oldStyle || style().usedVisibility() != oldStyle->usedVisibility())
         mediaElement().visibilityDidChange();
+
+    if (!oldStyle || style().dynamicRangeLimit() != oldStyle->dynamicRangeLimit()) {
+        ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " RenderMedia[" << this << "]::styleDidChange() -> mediaElement().setPlatformDynamicRangeLimit(" << style().dynamicRangeLimit().toPlatformDynamicRangeLimit() << ")...");
+        mediaElement().setPlatformDynamicRangeLimit(style().dynamicRangeLimit().toPlatformDynamicRangeLimit());
+    }
 }
 
 } // namespace WebCore

@@ -662,6 +662,7 @@ void MediaPlayer::loadWithNextMediaEngine(const MediaPlayerFactory* current)
             if (m_shouldContinueAfterKeyNeeded)
                 playerPrivate->setShouldContinueAfterKeyNeeded(m_shouldContinueAfterKeyNeeded);
 #endif
+            ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayer[" << this << "]::loadWithNextMediaEngine -> m_private[" << playerPrivate.get() << "] -> prepareForPlayback()...");
             playerPrivate->prepareForPlayback(m_inPrivateBrowsingMode, m_preload, m_preservesPitch, m_shouldPrepareToPlay, m_shouldPrepareToRender);
 #if HAVE(SPATIAL_TRACKING_LABEL)
             playerPrivate->setDefaultSpatialTrackingLabel(m_defaultSpatialTrackingLabel);
@@ -1895,6 +1896,17 @@ void MediaPlayer::setPreferredDynamicRangeMode(DynamicRangeMode mode)
 {
     m_preferredDynamicRangeMode = mode;
     m_private->setPreferredDynamicRangeMode(mode);
+}
+
+void MediaPlayer::setPlatformDynamicRangeLimit(PlatformDynamicRangeLimit platformDynamicRangeLimit)
+{
+    if (platformDynamicRangeLimit == m_platformDynamicRangeLimit) {
+        ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayer[" << this << "]::setPlatformDynamicRangeLimit(platformDynamicRangeLimit=" << platformDynamicRangeLimit << ") - no change, stop here");
+        return;
+    }
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " MediaPlayer[" << this << "]::setPlatformDynamicRangeLimit(platformDynamicRangeLimit=" << platformDynamicRangeLimit << ") - was " << m_platformDynamicRangeLimit << " -> m_private->setPlatformDynamicRangeLimit()...");
+    m_platformDynamicRangeLimit = platformDynamicRangeLimit;
+    m_private->setPlatformDynamicRangeLimit(platformDynamicRangeLimit);
 }
 
 void MediaPlayer::audioOutputDeviceChanged()

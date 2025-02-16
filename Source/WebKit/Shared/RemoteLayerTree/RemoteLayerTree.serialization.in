@@ -77,6 +77,7 @@ header: "RemoteLayerTreeTransaction.h"
     VisibleRectChanged
 #endif
     ContentsFormatChanged
+    PlatformDynamicRangeLimitChanged
 #if HAVE(CORE_MATERIAL)
     AppleVisualEffectChanged
 #endif
@@ -282,6 +283,7 @@ headers: "LayerProperties.h" "PlatformCALayerRemote.h"
     [OptionalTupleBit=WebKit::LayerChange::VisibleRectChanged] WebCore::FloatRect visibleRect;
 #endif
     [OptionalTupleBit=WebKit::LayerChange::ContentsFormatChanged] WebCore::ContentsFormat contentsFormat;
+    [OptionalTupleBit=WebKit::LayerChange::PlatformDynamicRangeLimitChanged] WebCore::PlatformDynamicRangeLimit platformDynamicRangeLimit;
 #if HAVE(CORE_MATERIAL)
     [OptionalTupleBit=WebKit::LayerChange::AppleVisualEffectChanged] WebCore::AppleVisualEffectData appleVisualEffectData;
 #endif

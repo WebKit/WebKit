@@ -72,6 +72,7 @@ void VideoLayerManagerObjC::setVideoLayer(PlatformLayer *videoLayer, FloatSize c
     [m_videoLayer web_disableAllActions];
 
     m_videoInlineLayer = adoptNS([[WebVideoContainerLayer alloc] init]);
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " VideoLayerManagerObjC[" << this << "]::setVideoLayer(PlatformLayer m_videoLayer=[" << videoLayer << "]) -> m_videoInlineLayer[" << m_videoInlineLayer.get() << "]");
     [m_videoInlineLayer setName:@"WebVideoContainerLayer"];
     [m_videoInlineLayer setFrame:CGRectMake(0, 0, contentSize.width(), contentSize.height())];
     [m_videoInlineLayer setContentsGravity:kCAGravityResizeAspect];

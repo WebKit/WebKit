@@ -39,6 +39,7 @@
 #include "SandboxExtension.h"
 #include "ScopedRenderingResourcesRequest.h"
 #include <WebCore/Cookie.h>
+#include <WebCore/PlatformDynamicRangeLimit.h>
 #include <WebCore/InbandTextTrackPrivate.h>
 #include <WebCore/MediaPlayer.h>
 #include <WebCore/MediaPlayerIdentifier.h>
@@ -145,7 +146,7 @@ public:
 
     void getConfiguration(RemoteMediaPlayerConfiguration&);
 
-    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, WebCore::DynamicRangeMode);
+    void prepareForPlayback(bool privateMode, WebCore::MediaPlayerEnums::Preload, bool preservesPitch, WebCore::MediaPlayerEnums::PitchCorrectionAlgorithm, bool prepareToPlay, bool prepareForRendering, WebCore::IntSize presentationSize, float videoContentScale, WebCore::DynamicRangeMode, WebCore::PlatformDynamicRangeLimit platformDynamicRangeLimit);
     void prepareForRendering();
 
     void load(URL&&, std::optional<SandboxExtension::Handle>&&, const WebCore::MediaPlayerLoadOptions&, CompletionHandler<void(RemoteMediaPlayerConfiguration&&)>&&);
@@ -230,6 +231,7 @@ public:
     void setVideoPlaybackMetricsUpdateInterval(double);
 
     void setPreferredDynamicRangeMode(WebCore::DynamicRangeMode);
+    void setPlatformDynamicRangeLimit(WebCore::PlatformDynamicRangeLimit);
 
     RefPtr<WebCore::PlatformMediaResource> requestResource(WebCore::ResourceRequest&&, WebCore::PlatformMediaResourceLoader::LoadOptions);
     void sendH2Ping(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);

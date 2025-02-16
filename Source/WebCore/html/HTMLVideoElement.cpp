@@ -133,6 +133,7 @@ bool HTMLVideoElement::supportsAcceleratedRendering() const
 void HTMLVideoElement::mediaPlayerRenderingModeChanged()
 {
     HTMLVIDEOELEMENT_RELEASE_LOG(HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED);
+    ALWAYS_LOG_WITH_STREAM(stream << "__GS__ pid=" << getpid() << " HTMLVideoElement[" << this << "]::mediaPlayerRenderingModeChanged() - platformLayer=" << platformLayer());
 
     // Kick off a fake recalcStyle that will update the compositing tree.
     computeAcceleratedRenderingStateAndUpdateMediaPlayer();
