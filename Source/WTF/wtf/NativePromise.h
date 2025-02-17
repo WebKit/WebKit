@@ -323,7 +323,7 @@ public:
         ASSERT(m_callback);
         if (!m_callback)
             return;
-        std::exchange(m_callback, nullptr)->disconnect();
+        Ref { *std::exchange(m_callback, nullptr) }->disconnect();
     }
 
 private:
