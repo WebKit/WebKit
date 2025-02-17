@@ -30,7 +30,7 @@ PASS Font-style (computed): 'italic' is valid
 PASS Font-style (computed): 'oblique' is valid
 PASS Font-style (computed): 'oblique' followed by zero degrees is valid
 PASS Font-style (computed): 'oblique' followed by positive angle in degrees is valid
-FAIL Font-style (computed): 'oblique' followed by positive angle in radians is valid assert_equals: Font-style computed style: 'oblique' followed by positive angle in radians is valid expected "oblique 28.6479deg" but got "oblique 28.5deg"
+PASS Font-style (computed): 'oblique' followed by positive angle in radians is valid
 PASS Font-style (computed): 'oblique' followed by positive angle in gradians is valid
 PASS Font-style (computed): 'oblique' followed by positive angle in turns is valid
 PASS Font-style (computed): 'oblique' followed by negative angle is valid

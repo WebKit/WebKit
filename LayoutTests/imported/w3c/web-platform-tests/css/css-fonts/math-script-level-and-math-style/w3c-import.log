@@ -14,6 +14,12 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/font-size-math-001.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/font-size-math-001.tentative-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/font-size-math-001.tentative.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/font-size-math-002.tentative-expected.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/font-size-math-002.tentative-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/font-size-math-002.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-depth-001-crash.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-001.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/math-script-level-and-math-style/math-script-level-002.tentative.html

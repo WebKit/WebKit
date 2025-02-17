@@ -39,6 +39,9 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/font-weight-normal-001-ref.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/green15x15.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/green_box.png
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/iframe-missing-font-face-rule.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/iframe-using-ahem-as-web-font.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/iframe-without-web-font.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/margin-collapse-2em-space.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/margin-collapse-4em-space.png
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/support/orange15x15.png

@@ -14,9 +14,6 @@
 <script>
 const div = document.querySelector("#test");
 test(function() {
-  assert_equals(div.style.fontVariationSettings, "\"XHGT\" calc(0.7)");
-}, "calc() specified value serialization in font-variation-settings");
-test(function() {
   assert_equals(getComputedStyle(div).fontVariationSettings, "\"XHGT\" 0.7");
-}, "calc() computed value serialization in font-variation-settings");
+}, "calc() in font-variation-settings");
 </script>
