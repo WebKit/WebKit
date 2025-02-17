@@ -3,7 +3,7 @@
 # Tests will be run as non-root (user skia, in fact), so /OUT should have permissions
 # 777 so as to be able to create output there.
 
-FROM node:8.11
+FROM node:22.2
 
 RUN apt-get update && apt-get upgrade -y
 

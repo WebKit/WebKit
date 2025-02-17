@@ -20,7 +20,340 @@
         "test": "mocha"
     },
     "dependencies": {
-        "mocha": "~1.21.4",
+
+      
+      ,
+CPUs : 8
+SoCs : 1
+
+CPU 0 :
+Name : ARM Cortex-A55+ARM Cortex-A78
+Model : SM6375
+CPUs : 8
+Max Frequency : 2208 MHz
+
+Core set 0 : ARM Cortex-A55
+Core set 0 Nb Cores : 6
+Core set 0 Max Clock : 1804 MHz
+Core set 0 Impl.id : 0x41
+Core set 0 Arch.id : 0x8
+Core set 0 Var.id : 2
+Core set 0 Part.id : 0xd05
+Core set 0 Rev.id : 0
+Core set 0 Revision : r2p0
+
+Core set 1 : ARM Cortex-A78
+Core set 1 NbCores : 2
+Core set 1 Max Clock : 2208 MHz
+Core set 1 Impl.id : 0x41
+Core set 1 Arch.id : 0x8
+Core set 1 Var.id : 1
+Core set 1 Part.id : 0xd41
+Core set 1 Rev.id : 1
+Core set 1 Revision : r1p1
+
+Arch : 6x ARM Cortex-A55 @1.80 GHz+2x ARM Cortex-A78 @2.21 GHz
+Codename :
+GPU Vendor : Qualcomm
+GPU Renderer : Adreno (TM) 619
+
+Model : CPH2515 (CPH2515)
+Manufacturer : OnePlus
+Board : holi
+Hardware : qcom
+Android Ver. : 14
+Kernel Arch. : aarch64
+Soc #1 : SM6375
+Soc #2 :
+Soc #3 :
+Platform : holi
+
+Battery capacity : 5000
+
+--- CPUInfos ---
+abi : arm64-v8a
+abi2 :
+supported abis : [arm64-v8a, armeabi-v7a, armeabi]
+supported 32-bit abis : [armeabi-v7a, armeabi]
+supported 64-bit abis : [arm64-v8a]
+processor : 0
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 1
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 2
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 3
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 4
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 5
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 6
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x1
+CPU part : 0xd41
+CPU revision : 1
+
+processor : 7
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x1
+CPU part : 0xd41
+CPU revision : 1
+
+Hardware : Qualcomm Technologies, Inc SM6375
+
+--- Debug Infos ---
+4=840000000
+
+23=modem-lte-sub6-pa1=33000
+24=modem-lte-sub6-pa2=35000
+25=modem-mmw0-usr=2000
+26=modem-mmw1-usr=2000
+27=modem-mmw2-usr=2000
+28=modem-mmw3-usr=2000
+29=modem-skin-usr=35000
+30=modem-0-usr=44000
+31=modem-1-usr=46000
+32=modem-streamer-usr=2000
+33=modem-mmw0-mod-usr=2000
+34=modem-mmw1-mod-usr=2000
+35=modem-mmw2-mod-usr=2000
+36=modem-mmw3-mod-usr=2000
+37=beamer-n-therm-usr=27000
+
+clock 0=1804800
+clock2 0=180400
+clock 1=1804800
+clock2 1=180400
+clock 2=1804800
+clock2 2=180400
+clock 3=1804800
+clock2 3=180400
+clock 4=1804800
+clock2 4=180400
+clock 5=1804800
+clock2 5=180400
+clock 6=2208000
+
+CPUs : 8
+SoCs : 1
+
+CPU 0 :
+Name : ARM Cortex-A55+ARM Cortex-A78
+Model : SM6375
+CPUs : 8
+Max Frequency : 2208 MHz
+
+Core set 0 : ARM Cortex-A55
+Core set 0 Nb Cores : 6
+Core set 0 Max Clock : 1804 MHz
+Core set 0 Impl.id : 0x41
+Core set 0 Arch.id : 0x8
+Core set 0 Var.id : 2
+Core set 0 Part.id : 0xd05
+Core set 0 Rev.id : 0
+Core set 0 Revision : r2p0
+
+Core set 1 : ARM Cortex-A78
+Core set 1 NbCores : 2
+Core set 1 Max Clock : 2208 MHz
+Core set 1 Impl.id : 0x41
+Core set 1 Arch.id : 0x8
+Core set 1 Var.id : 1
+Core set 1 Part.id : 0xd41
+Core set 1 Rev.id : 1
+Core set 1 Revision : r1p1
+
+Arch : 6x ARM Cortex-A55 @1.80 GHz+2x ARM Cortex-A78 @2.21 GHz
+Codename :
+GPU Vendor : Qualcomm
+GPU Renderer : Adreno (TM) 619
+
+Model : CPH2515 (CPH2515)
+Manufacturer : OnePlus
+Board : holi
+Hardware : qcom
+Android Ver. : 14
+Kernel Arch. : aarch64
+Soc #1 : SM6375
+Soc #2 :
+Soc #3 :
+Platform : holi
+
+Battery capacity : 5000
+
+--- CPUInfos ---
+abi : arm64-v8a
+abi2 :
+supported abis : [arm64-v8a, armeabi-v7a, armeabi]
+supported 32-bit abis : [armeabi-v7a, armeabi]
+supported 64-bit abis : [arm64-v8a]
+processor : 0
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 1
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 2
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 3
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 4
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 5
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x2
+CPU part : 0xd05
+CPU revision : 0
+
+processor : 6
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x1
+CPU part : 0xd41
+CPU revision : 1
+
+processor : 7
+BogoMIPS : 38.40
+Features : fp asimd evtstrm aes pmull sha1 sha2 crc32 atomics fphp asimdhp cpuid asimdrdm lrcpc dcpop asimddp
+CPU implementer : 0x41
+CPU architecture: 8
+CPU variant : 0x1
+CPU part : 0xd41
+CPU revision : 1
+
+Hardware : Qualcomm Technologies, Inc SM6375
+
+--- Debug Infos ---
+4=840000000
+
+23=modem-lte-sub6-pa1=33000
+24=modem-lte-sub6-pa2=35000
+25=modem-mmw0-usr=2000
+26=modem-mmw1-usr=2000
+27=modem-mmw2-usr=2000
+28=modem-mmw3-usr=2000
+29=modem-skin-usr=35000
+30=modem-0-usr=44000
+31=modem-1-usr=46000
+32=modem-streamer-usr=2000
+33=modem-mmw0-mod-usr=2000
+34=modem-mmw1-mod-usr=2000
+35=modem-mmw2-mod-usr=2000
+36=modem-mmw3-mod-usr=2000
+37=beamer-n-therm-usr=27000
+
+clock 0=1804800
+clock2 0=180400
+clock 1=1804800
+clock2 1=180400
+clock 2=1804800
+clock2 2=180400
+clock 3=1804800
+clock2 3=180400
+clock 4=1804800
+clock2 4=180400
+clock 5=1804800
+clock2 5=180400
+clock 6=2208000
+clock2 6=220800
+clock 7=2208000
+clock2 7=220800
+ 
+ 6=220800
+clock 7=2208000
+clock2 7=220800
+ 
+
+=======
+        "mocha": "~11.0.1",
+
         "sinon": "^1.10.3",
         "underscore": "~1.6.0"
     },
