@@ -1068,6 +1068,13 @@ void RenderElement::styleDidChange(StyleDifference diff, const RenderStyle* oldS
     } else if (diff == StyleDifference::LayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout(oldStyle);
 
+    if (isOutOfFlowPositioned() && oldStyle && oldStyle->isOriginalDisplayBlockType() != style().isOriginalDisplayBlockType()) {
+        if (CheckedPtr ancestor = containingBlockForObjectInFlow()) {
+            ancestor->setNeedsLayout();
+            ancestor->setOutOfFlowChildNeedsStaticPositionLayout();
+        }
+    }
+
     // Don't check for repaint here; we need to wait until the layer has been
     // updated by subclasses before we know if we have to repaint (in setStyle()).
 
@@ -1227,6 +1234,10 @@ void RenderElement::clearChildNeedsLayout()
 void RenderElement::setNeedsSimplifiedNormalFlowLayout()
 {
     ASSERT(!isSetNeedsLayoutForbidden());
+    if (CheckedPtr box = dynamicDowncast<RenderBox>(this); box && !box->canUseOverlayScrollbars() && box->scrollsOverflow()) {
+        setNeedsLayout();
+        return;
+    }
     if (needsSimplifiedNormalFlowLayout())
         return;
     setNeedsSimplifiedNormalFlowLayoutBit(true);

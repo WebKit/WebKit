@@ -620,6 +620,11 @@ RenderElement* RenderObject::markContainingBlocksForLayout(RenderElement* layout
             return { };
         }
 
+        if (simplifiedNormalFlowLayout) {
+            if (CheckedPtr box = dynamicDowncast<RenderBox>(ancestor.get()); box && !box->canUseOverlayScrollbars() && box->scrollsOverflow())
+                simplifiedNormalFlowLayout = false;
+        }
+
         if (hasOutOfFlowPosition) {
             bool willSkipRelativelyPositionedInlines = !ancestor->isRenderBlock() || ancestor->isAnonymousBlock();
             // Skip relatively positioned inlines and anonymous blocks to get to the enclosing RenderBlock.
@@ -714,17 +719,18 @@ static inline RenderBlock* nearestNonAnonymousContainingBlockIncludingSelf(Rende
     return downcast<RenderBlock>(renderer);
 }
 
+RenderBlock* RenderObject::containingBlockForObjectInFlow() const
+{
+    auto* ancestor = parent();
+    while (ancestor && ((ancestor->isInline() && !ancestor->isReplacedOrAtomicInline()) || !ancestor->isRenderBlock()))
+        ancestor = ancestor->parent();
+    return downcast<RenderBlock>(ancestor);
+};
+
 RenderBlock* RenderObject::containingBlockForPositionType(PositionType positionType, const RenderObject& renderer)
 {
-    if (positionType == PositionType::Static || positionType == PositionType::Relative || positionType == PositionType::Sticky) {
-        auto containingBlockForObjectInFlow = [&] {
-            auto* ancestor = renderer.parent();
-            while (ancestor && ((ancestor->isInline() && !ancestor->isReplacedOrAtomicInline()) || !ancestor->isRenderBlock()))
-                ancestor = ancestor->parent();
-            return downcast<RenderBlock>(ancestor);
-        };
-        return containingBlockForObjectInFlow();
-    }
+    if (positionType == PositionType::Static || positionType == PositionType::Relative || positionType == PositionType::Sticky)
+        return renderer.containingBlockForObjectInFlow();
 
     if (positionType == PositionType::Absolute) {
         auto containingBlockForAbsolutePosition = [&] {
