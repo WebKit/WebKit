@@ -143,6 +143,11 @@ void DrawingArea::didCompleteRenderingFrame()
     Ref { m_webPage.get() }->didCompleteRenderingFrame();
 }
 
+Ref<WebPage> DrawingArea::protectedWebPage() const
+{
+    return m_webPage.get();
+}
+
 bool DrawingArea::supportsGPUProcessRendering(DrawingAreaType type)
 {
     switch (type) {
