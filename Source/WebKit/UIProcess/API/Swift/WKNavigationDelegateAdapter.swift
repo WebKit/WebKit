@@ -26,14 +26,14 @@
 import Foundation
 internal import WebKit_Private
 
-fileprivate struct DefaultNavigationDecider: NavigationDeciding {
+fileprivate struct DefaultNavigationDecider: WebPage.NavigationDeciding {
 }
 
 @MainActor
 final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
     init(
         downloadProgressContinuation: AsyncStream<WebPage.DownloadEvent>.Continuation,
-        navigationDecider: (any NavigationDeciding)?
+        navigationDecider: (any WebPage.NavigationDeciding)?
     ) {
         self.downloadProgressContinuation = downloadProgressContinuation
         self.navigationDecider = navigationDecider ?? DefaultNavigationDecider()
@@ -42,7 +42,7 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
     weak var owner: WebPage? = nil
 
     private let downloadProgressContinuation: AsyncStream<WebPage.DownloadEvent>.Continuation
-    private let navigationDecider: any NavigationDeciding
+    private let navigationDecider: any WebPage.NavigationDeciding
 
     // MARK: Navigation progress reporting
 

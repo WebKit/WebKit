@@ -27,19 +27,23 @@ import Foundation
 internal import WebKit_Internal
 
 extension WebPage {
+    /// A type that contains information about a frame on a webpage.
     @MainActor
     @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
     @available(watchOS, unavailable)
     @available(tvOS, unavailable)
-    public struct FrameInfo: Sendable {
+    public struct FrameInfo {
         init(_ wrapped: WKFrameInfo) {
             self.wrapped = wrapped
         }
 
+        /// Indicates whether the frame is the web site's main frame or a subframe.
         public var isMainFrame: Bool { wrapped.isMainFrame }
 
+        /// The frame’s current request.
         public var request: URLRequest { wrapped.request }
 
+        /// The frame’s security origin.
         public var securityOrigin: WKSecurityOrigin { wrapped.securityOrigin }
 
         var wrapped: WKFrameInfo

@@ -3966,8 +3966,7 @@ void webkit_settings_set_enable_back_forward_navigation_gestures(WebKitSettings*
  *
  * Convert @pixels to the equivalent value in points.
  *
- * Convert @pixels to the equivalent value in points, based on the current
- * screen DPI. Applications can use this function to convert font size values
+ * Applications can use this function to convert font size values
  * in pixels to font size values in points when getting the font size properties
  * of #WebKitSettings.
  *
@@ -3977,7 +3976,7 @@ void webkit_settings_set_enable_back_forward_navigation_gestures(WebKitSettings*
  */
 guint32 webkit_settings_font_size_to_points(guint32 pixels)
 {
-    return std::round(pixels * 72 / WebCore::fontDPI());
+    return std::round(pixels * 72 / 96);
 }
 
 /**
@@ -3986,8 +3985,7 @@ guint32 webkit_settings_font_size_to_points(guint32 pixels)
  *
  * Convert @points to the equivalent value in pixels.
  *
- * Convert @points to the equivalent value in pixels, based on the current
- * screen DPI. Applications can use this function to convert font size values
+ * Applications can use this function to convert font size values
  * in points to font size values in pixels when setting the font size properties
  * of #WebKitSettings.
  *
@@ -3997,7 +3995,7 @@ guint32 webkit_settings_font_size_to_points(guint32 pixels)
  */
 guint32 webkit_settings_font_size_to_pixels(guint32 points)
 {
-    return std::round(points * WebCore::fontDPI() / 72);
+    return std::round(points * 96 / 72);
 }
 #endif // PLATFORM(GTK)
 

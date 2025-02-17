@@ -1968,4 +1968,14 @@ webkit.org/b/287122 [ Ventura+ ] imported/w3c/web-platform-tests/html/capability
 
 webkit.org/b/287679 [ Debug ] imported/w3c/web-platform-tests/css/selectors/invalidation/modal-pseudo-class-in-has.html [ Pass Failure ]
 
-webkit.org/b/287753 [ Debug ] http/tests/cache/network-error-during-revalidation.html [ Skip ]
+# webkit.org/b/287779 REGRESSION (290430@main): [ MacOS WK2 Debug ] ASSERTION FAILED: 10x inspector/timeline/timeline tests are consistent crashes
+[ Debug ] inspector/timeline/line-column.html [ Skip ]
+[ Debug ] inspector/timeline/recording-start-stop-timestamps.html [ Skip ]
+[ Debug ] inspector/timeline/setInstruments-programmatic-capture.html [ Skip ]
+[ Debug ] inspector/timeline/timeline-event-CancelAnimationFrame.html [ Skip ]
+[ Debug ] inspector/timeline/timeline-event-EventDispatch.html [ Skip ]
+[ Debug ] inspector/timeline/timeline-event-FireAnimationFrame.html [ Skip ]
+[ Debug ] inspector/timeline/timeline-event-RequestAnimationFrame.html [ Skip ]
+[ Debug ] inspector/timeline/timeline-event-performance-mark.html [ Skip ]
+[ Debug ] inspector/timeline/timeline-event-screenshots.html [ Skip ]
+[ Debug ] inspector/timeline/timeline-recording.html [ Skip ]

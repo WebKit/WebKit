@@ -27,12 +27,12 @@
 #include "CSSAnimation.h"
 
 #include "AnimationEffect.h"
-#include "AnimationTimelinesController.h"
 #include "CSSAnimationEvent.h"
 #include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "RenderStyle.h"
+#include "StyleOriginatedTimelinesController.h"
 #include "ViewTimeline.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -161,8 +161,8 @@ void CSSAnimation::syncStyleOriginatedTimeline()
         [&] (Animation::TimelineKeyword keyword) {
             setTimeline(keyword == Animation::TimelineKeyword::None ? nullptr : RefPtr { document->existingTimeline() });
         }, [&] (const AtomString& name) {
-            CheckedRef timelinesController = document->ensureTimelinesController();
-            timelinesController->setTimelineForName(name, *owningElement(), *this);
+            CheckedRef styleOriginatedTimelinesController = document->ensureStyleOriginatedTimelinesController();
+            styleOriginatedTimelinesController->setTimelineForName(name, *owningElement(), *this);
         }, [&] (const Animation::AnonymousScrollTimeline& anonymousScrollTimeline) {
             auto scrollTimeline = ScrollTimeline::create(anonymousScrollTimeline.scroller, anonymousScrollTimeline.axis);
             scrollTimeline->setSource(*owningElement());
@@ -178,8 +178,8 @@ void CSSAnimation::syncStyleOriginatedTimeline()
     // If we're not dealing with a named timeline, we should make sure we have no
     // pending attachment operation for this timeline name.
     if (!std::holds_alternative<AtomString>(timeline)) {
-        CheckedRef timelinesController = document->ensureTimelinesController();
-        timelinesController->removePendingOperationsForCSSAnimation(*this);
+        CheckedRef styleOriginatedTimelinesController = document->ensureStyleOriginatedTimelinesController();
+        styleOriginatedTimelinesController->removePendingOperationsForCSSAnimation(*this);
     }
 
     unsuspendEffectInvalidation();

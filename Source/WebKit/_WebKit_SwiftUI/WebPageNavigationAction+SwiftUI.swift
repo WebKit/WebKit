@@ -26,6 +26,8 @@ public import SwiftUI
 @_spi(Private) @_spi(CrossImportOverlay) import WebKit
 
 extension WebPage.NavigationAction {
+    /// The modifier keys that were pressed at the time of the navigation request.
+    @_spi(Private)
     public var modifierFlags: EventModifiers { EventModifiers(wrapped.modifierFlags) }
 }
 

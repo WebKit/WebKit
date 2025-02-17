@@ -2809,6 +2809,7 @@
 		71BF4C3529B098A8008344FC /* AcceleratedEffectStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 71BF4C3129B098A7008344FC /* AcceleratedEffectStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71C29E32203CE781008F36D2 /* CSSAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 71C29E30203CE76B008F36D2 /* CSSAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71C916081D1483A300ACA47D /* UserInterfaceLayoutDirection.h in Headers */ = {isa = PBXBuildFile; fileRef = 71C916071D1483A300ACA47D /* UserInterfaceLayoutDirection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		71D195762D61E2AB0085EB01 /* StyleOriginatedTimelinesController.h in Headers */ = {isa = PBXBuildFile; fileRef = 71D195742D61E2940085EB01 /* StyleOriginatedTimelinesController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71D6EAFB2AFA914600A323CF /* AnimationEffectTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 71D6EAFA2AFA913800A323CF /* AnimationEffectTiming.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71DB0FD929007C910071AC42 /* CSSTransformListValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 71DB0FD829007C750071AC42 /* CSSTransformListValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		71DCB7021568197600862271 /* JSSVGZoomAndPan.h in Headers */ = {isa = PBXBuildFile; fileRef = 71DCB7001568197600862271 /* JSSVGZoomAndPan.h */; };
@@ -13271,6 +13272,8 @@
 		71CE2C512209DC7F00C494BD /* MouseEventIOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseEventIOS.cpp; sourceTree = "<group>"; };
 		71D02D901DB55C4E00DD5CF5 /* main.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = main.js; sourceTree = "<group>"; };
 		71D02D921DB55C4E00DD5CF5 /* media-controller.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "media-controller.js"; sourceTree = "<group>"; };
+		71D195742D61E2940085EB01 /* StyleOriginatedTimelinesController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StyleOriginatedTimelinesController.h; sourceTree = "<group>"; };
+		71D195752D61E2940085EB01 /* StyleOriginatedTimelinesController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleOriginatedTimelinesController.cpp; sourceTree = "<group>"; };
 		71D2554F1DB900020004D76B /* skip-back-support.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = "skip-back-support.js"; sourceTree = "<group>"; };
 		71D474A22462E834002F0106 /* PlayCircle.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = PlayCircle.pdf; sourceTree = "<group>"; };
 		71D474A32462E834002F0106 /* InvalidCircle.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = InvalidCircle.pdf; sourceTree = "<group>"; };
@@ -29110,6 +29113,8 @@
 				715AD71D2050512400D592DC /* StyleOriginatedAnimation.h */,
 				717CE23929335E8E001463BC /* StyleOriginatedAnimationEvent.cpp */,
 				717CE23829335E8D001463BC /* StyleOriginatedAnimationEvent.h */,
+				71D195752D61E2940085EB01 /* StyleOriginatedTimelinesController.cpp */,
+				71D195742D61E2940085EB01 /* StyleOriginatedTimelinesController.h */,
 				1AD1326A2CB5C1BB0033BF08 /* TimelineRange.cpp */,
 				1AD132582CB0661F0033BF08 /* TimelineRange.h */,
 				1A7398462CA4A10900FDD4F8 /* TimelineRangeOffset.h */,
@@ -44368,6 +44373,7 @@
 				324EBEDB2993544F006F8973 /* StyleNonInheritedData.h in Headers */,
 				715AD7202050513200D592DC /* StyleOriginatedAnimation.h in Headers */,
 				717CE23A29335E9C001463BC /* StyleOriginatedAnimationEvent.h in Headers */,
+				71D195762D61E2AB0085EB01 /* StyleOriginatedTimelinesController.h in Headers */,
 				BCEA07462CC97009000AC148 /* StylePathComputation.h in Headers */,
 				BCB271FB2CC174D400265123 /* StylePathData.h in Headers */,
 				BCB272062CC1F1DB00265123 /* StylePathFunction.h in Headers */,

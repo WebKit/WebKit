@@ -26,7 +26,7 @@ import Foundation
 @_spi(Private) import _WebKit_SwiftUI
 
 @MainActor
-final class NavigationDecider: NavigationDeciding {
+final class NavigationDecider: WebPage.NavigationDeciding {
     weak var owner: BrowserViewModel? = nil
 
     func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {

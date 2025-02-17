@@ -28,7 +28,6 @@
 
 #include "AXObjectCache.h"
 #include "AnchorPositionEvaluator.h"
-#include "AnimationTimelinesController.h"
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ComposedTreeIterator.h"
@@ -56,6 +55,7 @@
 #include "StyleAdjuster.h"
 #include "StyleBuilder.h"
 #include "StyleFontSizeFunctions.h"
+#include "StyleOriginatedTimelinesController.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Text.h"
@@ -685,8 +685,8 @@ ElementUpdate TreeResolver::createAnimatedElementUpdate(ResolvedStyle&& resolved
         }
 
         if ((oldStyle && oldStyle->timelineScope().type != TimelineScope::Type::None) || resolvedStyle.style->timelineScope().type != TimelineScope::Type::None) {
-            CheckedRef timelinesController = element.protectedDocument()->ensureTimelinesController();
-            timelinesController->updateNamedTimelineMapForTimelineScope(resolvedStyle.style->timelineScope(), styleable);
+            CheckedRef styleOriginatedTimelinesController = element.protectedDocument()->ensureStyleOriginatedTimelinesController();
+            styleOriginatedTimelinesController->updateNamedTimelineMapForTimelineScope(resolvedStyle.style->timelineScope(), styleable);
         }
 
         // The order in which CSS Transitions and CSS Animations are updated matters since CSS Transitions define the after-change style

@@ -59,7 +59,7 @@ extension WebPage.NavigationEvent: @retroactive Equatable {
 // MARK: Supporting test types
 
 @MainActor
-fileprivate class TestNavigationDecider: NavigationDeciding {
+fileprivate class TestNavigationDecider: WebPage.NavigationDeciding {
     init() {
         (self.navigationActionStream, self.navigationActionContinuation) = AsyncStream.makeStream(of: WebPage.NavigationAction.self)
         (self.navigationResponseStream, self.navigationResponseContinuation) = AsyncStream.makeStream(of: WebPage.NavigationResponse.self)

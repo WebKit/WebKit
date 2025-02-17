@@ -242,6 +242,7 @@ class SpaceSplitString;
 class SpeechRecognition;
 class StorageConnection;
 class StringCallback;
+class StyleOriginatedTimelinesController;
 class StyleSheet;
 class StyleSheetContents;
 class StyleSheetList;
@@ -1786,6 +1787,8 @@ public:
     Vector<RefPtr<WebAnimation>> matchingAnimations(NOESCAPE const Function<bool(Element&)>&);
     AnimationTimelinesController* timelinesController() const { return m_timelinesController.get(); }
     WEBCORE_EXPORT AnimationTimelinesController& ensureTimelinesController();
+    StyleOriginatedTimelinesController* styleOriginatedTimelinesController() { return m_styleOriginatedTimelinesController.get(); }
+    StyleOriginatedTimelinesController& ensureStyleOriginatedTimelinesController();
     void keyframesRuleDidChange(const String& name);
 
     void addTopLayerElement(Element&);
@@ -2433,6 +2436,7 @@ private:
 
     RefPtr<DocumentTimeline> m_timeline;
     const std::unique_ptr<AnimationTimelinesController> m_timelinesController;
+    const std::unique_ptr<StyleOriginatedTimelinesController> m_styleOriginatedTimelinesController;
 
     RefPtr<WindowEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;

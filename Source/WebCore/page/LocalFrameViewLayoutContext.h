@@ -248,6 +248,7 @@ private:
     struct RepaintRectEnvironment {
         float m_deviceScaleFactor { 0 };
         bool m_printing { false };
+        bool m_useFixedLayout { false };
 
         bool operator==(const RepaintRectEnvironment&) const = default;
     };

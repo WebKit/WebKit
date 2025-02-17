@@ -38,8 +38,6 @@
 
 static constexpr auto WebExtensionSQLiteErrorDomain = "com.apple.WebKit.SQLite"_s;
 static constexpr auto WebExtensionSQLiteInMemoryDatabaseName = "file::memory:"_s;
-static constexpr auto WebExtensionSQLiteErrorMessageKey = "Message"_s;
-static constexpr auto WebExtensionSQLiteErrorSQLKey = "SQL"_s;
 
 using namespace WebKit;
 

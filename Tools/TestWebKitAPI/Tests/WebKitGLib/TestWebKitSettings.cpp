@@ -144,7 +144,8 @@ static void testWebKitSettings(Test*, gconstpointer)
     webkit_settings_set_minimum_font_size(settings, 7);
     g_assert_cmpuint(webkit_settings_get_minimum_font_size(settings), ==, 7);
 
-    // Test conversion between pixels and points. Use a standard DPI of 96.
+    // Test conversion between pixels and points. It's independent of DPI, and
+    // we're testing that it actually does not change when DPI changes.
     // Set DPI explicitly to avoid the tests failing for users that use a
     // different default DPI. This doesn't affect the system's DPI outside
     // of the tests scope, so we don't need to change it back to the original
@@ -172,11 +173,12 @@ static void testWebKitSettings(Test*, gconstpointer)
         g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_monospace_font_size(settings)), ==, 12);
 
         // Set DPI to 120. The scaling factor is 120 / 96 == 1.25.
+        // Results should be the same, independent of DPI changes.
         g_object_set(gtkSettings, "gtk-xft-dpi", 120 * 1024, nullptr);
         g_assert_cmpuint(webkit_settings_get_default_font_size(settings), ==, 20);
-        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_font_size(settings) * 1.25), ==, 15);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_font_size(settings)), ==, 15);
         g_assert_cmpuint(webkit_settings_get_default_monospace_font_size(settings), ==, 16);
-        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_monospace_font_size(settings) * 1.25), ==, 12);
+        g_assert_cmpuint(webkit_settings_font_size_to_points(webkit_settings_get_default_monospace_font_size(settings)), ==, 12);
 
         // Set DPI back to 96.
         g_object_set(gtkSettings, "gtk-xft-dpi", 96 * 1024, nullptr);

@@ -7692,12 +7692,8 @@ webkit.org/b/287204 [ Release ] fast/forms/date/date-input-rendering-basic.html 
 
 webkit.org/b/287291 http/tests/site-isolation/selection-focus.html [ ImageOnlyFailure ]
 
-webkit.org/b/287650 [ Debug ] compositing/repaint/scroller-repaints-once.html [ Crash ]
-
 webkit.org/b/287660 fast/forms/ios/file-upload-panel.html [ Pass Crash ]
 
 webkit.org/b/287672 imported/w3c/web-platform-tests/css/css-cascade/all-prop-initial-xml.html [ Failure ]
 
 webkit.org/b/287741 fast/viewport/ios/non-responsive-viewport-after-changing-view-scale.html [ Pass Failure ]
-
-webkit.org/b/287753 [ Debug ] http/tests/cache/network-error-during-revalidation.html [ Skip ]

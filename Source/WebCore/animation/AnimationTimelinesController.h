@@ -27,36 +27,22 @@
 
 #include "FrameRateAligner.h"
 #include "ReducedResolutionSeconds.h"
-#include "ScrollAxis.h"
-#include "Styleable.h"
-#include "TimelineScope.h"
 #include "Timer.h"
 #include <wtf/CancellableTask.h>
 #include <wtf/CheckedRef.h>
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakHashSet.h>
-#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class AnimationTimeline;
-class CSSAnimation;
 class Document;
-class ScrollTimeline;
 class WeakPtrImplWithEventTargetData;
-class WebAnimation;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 class AcceleratedEffectStackUpdater;
 #endif
-
-struct ViewTimelineInsets;
-struct TimelineMapAttachOperation {
-    WeakStyleable element;
-    AtomString name;
-    Ref<CSSAnimation> animation;
-};
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 class AnimationTimelinesController final : public CanMakeCheckedPtr<AnimationTimelinesController> {
@@ -79,17 +65,6 @@ public:
     WEBCORE_EXPORT void resumeAnimations();
     bool animationsAreSuspended() const { return m_isSuspended; }
 
-    void registerNamedScrollTimeline(const AtomString&, const Styleable&, ScrollAxis);
-    void registerNamedViewTimeline(const AtomString&, const Styleable&, ScrollAxis, ViewTimelineInsets&&);
-    void unregisterNamedTimeline(const AtomString&, const Styleable&);
-    void setTimelineForName(const AtomString&, const Styleable&, CSSAnimation&);
-    void updateNamedTimelineMapForTimelineScope(const TimelineScope&, const Styleable&);
-    void updateTimelineForTimelineScope(const Ref<ScrollTimeline>&, const AtomString&);
-    void unregisterNamedTimelinesAssociatedWithElement(const Styleable&);
-    void removePendingOperationsForCSSAnimation(const CSSAnimation&);
-    void documentDidResolveStyle();
-    void styleableWasRemoved(const Styleable&);
-
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     AcceleratedEffectStackUpdater* existingAcceleratedEffectStackUpdater() const { return m_acceleratedEffectStackUpdater.get(); }
     AcceleratedEffectStackUpdater& acceleratedEffectStackUpdater();
@@ -100,24 +75,9 @@ private:
     ReducedResolutionSeconds liveCurrentTime() const;
     void cacheCurrentTime(ReducedResolutionSeconds);
     void maybeClearCachedCurrentTime();
-
-    Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&);
-    Vector<WeakStyleable> relatedTimelineScopeElements(const AtomString&);
     bool isPendingTimelineAttachment(const WebAnimation&) const;
-    void updateCSSAnimationsAssociatedWithNamedTimeline(const AtomString&);
-
-    enum class AllowsDeferral : bool { No, Yes };
-    void setTimelineForName(const AtomString&, const Styleable&, CSSAnimation&, AllowsDeferral);
-    ScrollTimeline* determineTimelineForElement(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Vector<WeakStyleable>&);
-    ScrollTimeline* determineTreeOrder(const Vector<Ref<ScrollTimeline>>&, const Styleable&, const Vector<WeakStyleable>&);
-    ScrollTimeline& inactiveNamedTimeline(const AtomString&);
 
     Ref<Document> protectedDocument() const { return m_document.get(); }
-
-    Vector<TimelineMapAttachOperation> m_pendingAttachOperations;
-    Vector<std::pair<TimelineScope, WeakStyleable>> m_timelineScopeEntries;
-    UncheckedKeyHashMap<AtomString, Vector<Ref<ScrollTimeline>>> m_nameToTimelineMap;
-    HashSet<Ref<ScrollTimeline>> m_removedTimelines;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     std::unique_ptr<AcceleratedEffectStackUpdater> m_acceleratedEffectStackUpdater;

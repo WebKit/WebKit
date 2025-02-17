@@ -28,26 +28,39 @@ import Foundation
 // MARK: Supporting types
 
 extension WebPage {
+    /// An object that contains information about an action that causes navigation to occur.
+    ///
+    /// A `NavigationAction` value is intended to be used to make policy decisions about whether to
+    /// allow navigation within a web page via a `NavigationDeciding`.
     @MainActor
-    @_spi(Private)
-    public struct NavigationAction: Sendable {
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
+    public struct NavigationAction {
         init(_ wrapped: WKNavigationAction) {
             self.wrapped = wrapped
         }
 
+        /// The frame that requested the navigation.
         public var source: FrameInfo { .init(wrapped.sourceFrame) }
 
+        /// The frame in which to display the new content.
         public var target: FrameInfo? { wrapped.targetFrame.map(FrameInfo.init(_:)) }
 
+        /// The type of action that triggered the navigation.
         public var navigationType: WKNavigationType { wrapped.navigationType }
 
+        /// The URL request object associated with the navigation action.
         public var request: URLRequest { wrapped.request }
 
+        /// Indicates whether the web content provided an attribute that indicates a download.
         public var shouldPerformDownload: Bool { wrapped.shouldPerformDownload }
 
 #if canImport(UIKit)
+        /// The number of the mouse button that caused the navigation request.
         public var buttonNumber: UIEvent.ButtonMask { wrapped.buttonNumber }
 #else
+        /// The number of the mouse button that caused the navigation request.
         public var buttonNumber: Int { wrapped.buttonNumber }
 #endif
 
@@ -55,17 +68,26 @@ extension WebPage {
         public var wrapped: WKNavigationAction
     }
 
+    /// An object that contains the response to a navigation request, and which you use to make navigation-related policy decisions.
+    ///
+    /// A `NavigationResponse` value is intended to be used to make policy decisions about whether to
+    /// allow navigation within a web page via a `NavigationDeciding`.
     @MainActor
-    @_spi(Private)
-    public struct NavigationResponse: Sendable {
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
+    public struct NavigationResponse {
         init(_ wrapped: WKNavigationResponse) {
             self.wrapped = wrapped
         }
 
+        @_spi(Private)
         public var isForMainFrame: Bool { wrapped.isForMainFrame }
 
+        /// The frame’s response.
         public var response: URLResponse { wrapped.response }
 
+        /// Indicates whether WebKit is capable of displaying the response’s MIME type natively.
         public var canShowMimeType: Bool { wrapped.canShowMIMEType }
 
         var wrapped: WKNavigationResponse
@@ -74,32 +96,60 @@ extension WebPage {
 
 // MARK: NavigationDeciding protocol
 
-@_spi(Private)
-public protocol NavigationDeciding {
-    @MainActor
-    func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy
+extension WebPage {
+    /// Allows providing custom behavior to handle navigation changes and to coordinate these changes for the web page's main page.
+    ///
+    /// For example, you might use these methods to restrict navigation from specific links within your content.
+    @available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+    @available(watchOS, unavailable)
+    @available(tvOS, unavailable)
+    public protocol NavigationDeciding {
+        /// Determines permission to navigate to new content based on the specified preferences and action information.
+        ///
+        /// The web page calls this method after the interaction occurs but before it attempts to load any content.
+        ///
+        /// - Parameters:
+        ///   - action: Details about the action that triggered the navigation request.
+        ///   - preferences: The preferences to use when displaying the new webpage.
+        /// - Returns: The navigation policy for the action.
+        @MainActor
+        mutating func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy
 
-    @MainActor
-    func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy
+        /// Determines permission to navigate to new content after the response to the navigation request is known.
+        ///
+        /// - Parameter response: Descriptive information about the navigation response.
+        /// - Returns: The navigation policy for the response.
+        @MainActor
+        mutating func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy
 
-    @MainActor
-    func decideAuthenticationChallengeDisposition(for challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
+        /// Determines the response to an authentication challenge.
+        ///
+        /// - Parameter challenge: The authentication challenge.
+        /// - Returns: The option to use to handle the challenge, and the credential to use for authentication when the disposition is ``URLSession/AuthChallengeDisposition/useCredential``.
+        @MainActor
+        mutating func decideAuthenticationChallengeDisposition(for challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?)
+    }
 }
 
 // MARK: Default implementation
 
-@_spi(Private)
-public extension NavigationDeciding {
+@available(WK_IOS_TBA, WK_MAC_TBA, WK_XROS_TBA, *)
+@available(watchOS, unavailable)
+@available(tvOS, unavailable)
+public extension WebPage.NavigationDeciding {
+    /// By default, this method immediately returns with a policy of `.allow`.
     @MainActor
     func decidePolicy(for action: WebPage.NavigationAction, preferences: inout WebPage.NavigationPreferences) async -> WKNavigationActionPolicy {
         .allow
     }
 
+    /// By default, this method immediately returns with a policy of `.allow`.
     @MainActor
     func decidePolicy(for response: WebPage.NavigationResponse) async -> WKNavigationResponsePolicy {
         .allow
     }
 
+    /// By default, this method immediately returns with a disposition of `performDefaultHandling` and a `nil` credential.
     @MainActor
     func decideAuthenticationChallengeDisposition(for challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         (.performDefaultHandling, nil)

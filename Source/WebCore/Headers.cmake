@@ -742,6 +742,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     animation/ScrollAxis.h
     animation/ScrollTimeline.h
     animation/ScrollTimelineOptions.h
+    animation/StyleOriginatedTimelinesController.h
     animation/TimelineRange.h
     animation/TimelineRangeOffset.h
     animation/TimelineScope.h
