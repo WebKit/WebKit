@@ -14,9 +14,7 @@ PASS .flexbox 12
 PASS .flexbox 13
 PASS .flexbox 14
 PASS .flexbox 15
-PASS .flexbox 16
-PASS .flexbox 17
-FAIL .flexbox 18 assert_equals:
+FAIL .flexbox 16 assert_equals:
 <div class="flexbox" style="height:200px">
   <button data-expected-display="block" data-expected-width="100" data-expected-height="200">button</button>
   <canvas data-expected-display="block" data-expected-width="100" data-expected-height="200">canvas</canvas>
@@ -46,9 +44,6 @@ object
 
 
 
-
-Some text
-Some more text
 
 
 
