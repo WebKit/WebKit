@@ -5380,7 +5380,7 @@ MuteCameraOnMicrophoneInterruptionEnabled:
 
 NavigationAPIEnabled:
   type: bool
-  status: testable
+  status: preview
   category: dom
   humanReadableName: "Navigation API"
   humanReadableDescription: "Enable Navigation API"
