@@ -257,6 +257,8 @@ public:
 
     void updateDescendantTransformsAfterLayout();
 
+    virtual bool canPerformSimplifiedLayout() const;
+
 protected:
     RenderFragmentedFlow* locateEnclosingFragmentedFlow() const override;
     bool establishesIndependentFormattingContextIgnoringDisplayType(const RenderStyle&) const;
@@ -298,7 +300,6 @@ protected:
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) override;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) override;
 
-    virtual bool canPerformSimplifiedLayout() const;
     bool simplifiedLayout();
     virtual void simplifiedNormalFlowLayout();
 

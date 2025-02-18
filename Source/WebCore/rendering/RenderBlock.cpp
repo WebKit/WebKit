@@ -839,6 +839,8 @@ bool RenderBlock::canPerformSimplifiedLayout() const
         return false;
     if (auto wasSkippedDuringLastLayout = wasSkippedDuringLastLayoutDueToContentVisibility(); wasSkippedDuringLastLayout && *wasSkippedDuringLastLayout)
         return false;
+    if (layoutContext().isSkippedContentRootForLayout(*this) && (posChildNeedsLayout() || canContainFixedPositionObjects()))
+        return false;
     return posChildNeedsLayout() || needsSimplifiedNormalFlowLayout();
 }
 
@@ -849,10 +851,6 @@ bool RenderBlock::simplifiedLayout()
 
     LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
     if (needsPositionedMovementLayout() && !tryLayoutDoingPositionedMovementOnly())
-        return false;
-
-    bool canContainFixedPosObjects = canContainFixedPositionObjects();
-    if (layoutContext().isSkippedContentRootForLayout(*this) && (posChildNeedsLayout() || canContainFixedPosObjects))
         return false;
 
     // Lay out positioned descendants or objects that just need to recompute overflow.
@@ -869,6 +867,7 @@ bool RenderBlock::simplifiedLayout()
     // child, neither the fixed element nor its container learn of the movement since posChildNeedsLayout() is only marked as far as the 
     // relative positioned container. So if we can have fixed pos objects in our positioned objects list check if any of them
     // are statically positioned and thus need to move with their absolute ancestors.
+    bool canContainFixedPosObjects = canContainFixedPositionObjects();
     if (posChildNeedsLayout() || canContainFixedPosObjects)
         layoutPositionedObjects(RelayoutChildren::No, !posChildNeedsLayout() && canContainFixedPosObjects);
 

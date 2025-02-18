@@ -3004,13 +3004,13 @@ std::unique_ptr<RenderStyle> Document::styleForElementIgnoringPendingStylesheets
     return WTFMove(elementStyle.style);
 }
 
-bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<DimensionsCheck> dimensionsCheck)
+bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<DimensionsCheck> dimensionsCheck, OptionSet<LayoutOptions> layoutOptions)
 {
     ASSERT(isMainThread());
 
     // If the stylesheets haven't loaded, just give up and do a full layout ignoring pending stylesheets.
     if (!haveStylesheetsLoaded()) {
-        updateLayoutIgnorePendingStylesheets();
+        updateLayoutIgnorePendingStylesheets(layoutOptions);
         return true;
     }
 
@@ -3027,7 +3027,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
     // Mimic the structure of updateLayout(), but at each step, see if we have been forced into doing a full layout.
     if (RefPtr owner = ownerElement()) {
         if (owner->protectedDocument()->updateLayoutIfDimensionsOutOfDate(*owner)) {
-            updateLayout({ }, &element);
+            updateLayout(layoutOptions, &element);
             return true;
         }
     }
@@ -3036,19 +3036,41 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     updateStyleIfNeeded();
 
+    if (layoutOptions.contains(LayoutOptions::ContentVisibilityForceLayout)) {
+        if (CheckedPtr renderer = element.renderer(); renderer &&  renderer->style().hasSkippedContent()) {
+            if (auto wasSkippedDuringLastLayout = renderer->wasSkippedDuringLastLayoutDueToContentVisibility()) {
+                if (*wasSkippedDuringLastLayout)
+                    renderer->setNeedsLayout();
+            }
+        }
+    }
+
     if (!element.renderer() || !frameView->layoutContext().needsLayout()) {
         // Tree is clean, we don't need to walk the ancestor chain to figure out whether we have a sufficiently clean subtree.
         return false;
     }
 
-    // If the renderer needs layout for any reason, give up.
+    // If the renderer needs layout for any reason other than simplified (updating overflow), give up.
     // Also, turn off this optimization for input elements with shadow content.
-    bool requireFullLayout = element.renderer()->needsLayout() || is<HTMLInputElement>(element);
+    bool requireFullLayout = is<HTMLInputElement>(element);
+    {
+        CheckedPtr renderer = element.renderer();
+        if (renderer->selfNeedsLayout() || renderer->normalChildNeedsLayout() || renderer->posChildNeedsLayout() || renderer->needsPositionedMovementLayout())
+            requireFullLayout = true;
+        if (renderer->needsSimplifiedNormalFlowLayout()) {
+            if (!dimensionsCheck.contains(DimensionsCheck::IgnoreOverflow))
+                requireFullLayout = true;
+            else if (CheckedPtr block = dynamicDowncast<RenderBlock>(*renderer); !dimensionsCheck.contains(DimensionsCheck::IgnoreOverflow) || !block || !block->canPerformSimplifiedLayout())
+                requireFullLayout = true;
+        }
+    }
+
     if (!requireFullLayout) {
         CheckedPtr<RenderBox> previousBox;
         CheckedPtr<RenderBox> currentBox;
 
         CheckedPtr renderer = element.renderer();
+
         bool hasSpecifiedLogicalHeight = renderer->style().logicalMinHeight() == Length(0, LengthType::Fixed) && renderer->style().logicalHeight().isFixed() && renderer->style().logicalMaxHeight().isAuto();
         bool isVertical = !renderer->isHorizontalWritingMode();
         bool checkingLogicalWidth = (dimensionsCheck.contains(DimensionsCheck::Width) && !isVertical) || (dimensionsCheck.contains(DimensionsCheck::Height) && isVertical);
@@ -3067,6 +3089,11 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
             previousBox = std::exchange(currentBox, WTFMove(currentRendererBox));
 
             if (currentBox->style().containerType() != ContainerType::Normal) {
+                requireFullLayout = true;
+                break;
+            }
+
+            if (dimensionsCheck.containsAny({ DimensionsCheck::Left, DimensionsCheck::Top }) && (currentBox->needsPositionedMovementLayout() || currentBox->normalChildNeedsLayout())) {
                 requireFullLayout = true;
                 break;
             }
@@ -3108,7 +3135,7 @@ bool Document::updateLayoutIfDimensionsOutOfDate(Element& element, OptionSet<Dim
 
     // Only do a layout if changes have occurred that make it necessary.
     if (requireFullLayout)
-        updateLayout({ }, &element);
+        updateLayout(layoutOptions, &element);
 
     return requireFullLayout;
 }
