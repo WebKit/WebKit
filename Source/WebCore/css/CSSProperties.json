@@ -2471,9 +2471,11 @@
                 "none"
             ],
             "codegen-properties": {
-                "converter": "StyleImage<CSSPropertyBorderImageSource>",
+                "custom": "All",
                 "disables-native-appearance": true,
-                "parser-grammar": "none | <image>"
+                "parser-function": "consumeBorderImageSource",
+                "parser-grammar-unused": "none | <image>",
+                "parser-grammar-unused-reason": "Needs support for custom property value."
             },
             "specification": {
                 "category": "css-backgrounds",
@@ -4570,8 +4572,10 @@
                 "aliases": [
                     "-webkit-mask-box-image-source"
                 ],
-                "converter": "StyleImage<CSSPropertyMaskBorderSource>",
-                "parser-grammar": "none | <image>"
+                "custom": "All",
+                "parser-function": "consumeBorderImageSource",
+                "parser-grammar-unused": "none | <image>",
+                "parser-grammar-unused-reason": "Needs support for custom property value."
             },
             "specification": {
                 "category": "css-masking"
@@ -7034,8 +7038,8 @@
         },
         "-webkit-box-reflect": {
             "codegen-properties": {
-                "converter": "Reflection",
-                "parser-function": "consumeReflect",
+                "converter": "WebKitBoxReflect",
+                "parser-function": "consumeWebKitBoxReflect",
                 "parser-grammar-unused": "none | [ [ above | below | left | right ] <length-percentage>? <border-image>? ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals."
                 

@@ -38,7 +38,6 @@ class CSSStyleDeclaration;
 class CSSToLengthConversionData;
 class CachedResource;
 class DeprecatedCSSOMValue;
-class Quad;
 class Rect;
 
 struct ComputedStyleDependencies;
@@ -71,7 +70,11 @@ public:
     bool isAspectRatioValue() const { return m_classType == ClassType::AspectRatio; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
     bool isBasicShape() const { return m_classType == ClassType::BasicShape; }
+    bool isBorderImageValue() const { return m_classType == ClassType::BorderImage; }
+    bool isBorderImageOutsetValue() const { return m_classType == ClassType::BorderImageOutset; }
+    bool isBorderImageRepeatValue() const { return m_classType == ClassType::BorderImageRepeat; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
+    bool isBorderImageSourceValue() const { return m_classType == ClassType::BorderImageSource; }
     bool isBorderImageWidthValue() const { return m_classType == ClassType::BorderImageWidth; }
     bool isBoxShadowPropertyValue() const { return m_classType == ClassType::BoxShadowProperty; }
     bool isCalcValue() const { return m_classType == ClassType::Calculation; }
@@ -115,10 +118,8 @@ public:
     bool isPath() const { return m_classType == ClassType::Path; }
     bool isPendingSubstitutionValue() const { return m_classType == ClassType::PendingSubstitutionValue; }
     bool isPrimitiveValue() const { return m_classType == ClassType::Primitive; }
-    bool isQuad() const { return m_classType == ClassType::Quad; }
     bool isRayValue() const { return m_classType == ClassType::Ray; }
     bool isRect() const { return m_classType == ClassType::Rect; }
-    bool isReflectValue() const { return m_classType == ClassType::Reflect; }
     bool isScrollValue() const { return m_classType == ClassType::Scroll; }
     bool isSubgridValue() const { return m_classType == ClassType::Subgrid; }
     bool isTextShadowPropertyValue() const { return m_classType == ClassType::TextShadowProperty; }
@@ -128,6 +129,7 @@ public:
     bool isVariableReferenceValue() const { return m_classType == ClassType::VariableReference; }
     bool isViewValue() const { return m_classType == ClassType::View; }
     bool isPaintImageValue() const { return m_classType == ClassType::PaintImage; }
+    bool isWebKitBoxReflectPropertyValue() const { return m_classType == ClassType::WebKitBoxReflectProperty; }
 
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
     bool isImageGeneratorValue() const { return m_classType >= ClassType::Canvas && m_classType <= ClassType::Gradient; }
@@ -180,7 +182,6 @@ public:
     Ref<CSSValue> protectedFirst() const; // CSSValuePair
     inline const CSSValue& second() const; // CSSValuePair
     Ref<CSSValue> protectedSecond() const; // CSSValuePair
-    inline const Quad& quad() const; // CSSValueQuad
     inline const Rect& rect() const; // CSSSValueRect
 
     // FIXME: Should these be named isIdent and ident instead?
@@ -214,7 +215,11 @@ protected:
         Attr,
         BackgroundRepeat,
         BasicShape,
+        BorderImage,
+        BorderImageOutset,
+        BorderImageRepeat,
         BorderImageSlice,
+        BorderImageSource,
         BorderImageWidth,
         BoxShadowProperty,
         Calculation,
@@ -244,16 +249,15 @@ protected:
         OffsetRotate,
         Path,
         PendingSubstitutionValue,
-        Quad,
         Ray,
         Rect,
-        Reflect,
         Scroll,
         TextShadowProperty,
         UnicodeRange,
         ValuePair,
         VariableReference,
         View,
+        WebKitBoxReflectProperty,
 
         // Classes that contain vectors, which derive from CSSValueContainingVector.
         ValueList,

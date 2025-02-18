@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,37 +27,37 @@
 #include "config.h"
 #include "CSSBorderImageWidthValue.h"
 
-#include <wtf/text/WTFString.h>
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 
-CSSBorderImageWidthValue::CSSBorderImageWidthValue(Quad widths, bool overridesBorderWidths)
+CSSBorderImageWidthValue::CSSBorderImageWidthValue(CSS::BorderImageWidth&& width)
     : CSSValue(ClassType::BorderImageWidth)
-    , m_widths(WTFMove(widths))
-    , m_overridesBorderWidths(overridesBorderWidths)
+    , m_width(WTFMove(width))
 {
 }
 
 CSSBorderImageWidthValue::~CSSBorderImageWidthValue() = default;
 
-Ref<CSSBorderImageWidthValue> CSSBorderImageWidthValue::create(Quad widths, bool overridesBorderWidths)
+Ref<CSSBorderImageWidthValue> CSSBorderImageWidthValue::create(CSS::BorderImageWidth width)
 {
-    return adoptRef(*new CSSBorderImageWidthValue(WTFMove(widths), overridesBorderWidths));
+    return adoptRef(*new CSSBorderImageWidthValue(WTFMove(width)));
 }
 
 String CSSBorderImageWidthValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    // The border-image-width longhand can't set m_overridesBorderWidths to true, so serialize as empty string.
-    // This can only be created by the -webkit-border-image shorthand, which will not serialize as empty string in this case.
-    // This is an unconventional relationship between a longhand and a shorthand, which we may want to revise.
-    if (m_overridesBorderWidths)
-        return String();
-    return m_widths.cssText(context);
+    return CSS::serializationForCSS(context, m_width);
 }
 
 bool CSSBorderImageWidthValue::equals(const CSSBorderImageWidthValue& other) const
 {
-    return m_overridesBorderWidths == other.m_overridesBorderWidths && m_widths.equals(other.m_widths);
+    return m_width == other.m_width;
+}
+
+IterationStatus CSSBorderImageWidthValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
+{
+    return CSS::visitCSSValueChildren(func, m_width);
 }
 
 } // namespace WebCore

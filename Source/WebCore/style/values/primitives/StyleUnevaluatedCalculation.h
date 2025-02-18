@@ -82,6 +82,7 @@ template<CSS::Numeric CSSType> struct UnevaluatedCalculation : UnevaluatedCalcul
 } // namespace WebCore
 
 namespace WTF {
+
 template<WebCore::Style::Calc T> struct IsSmartPtr<T> {
     static constexpr bool value = true;
 };

@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,40 +23,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#pragma once
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSValue.h"
+#include "CSSValueTypes.h"
 
 namespace WebCore {
+namespace CSS {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
-{
-}
+// FIXME: This is a temporary implementation of <image> to allow other strong value types
+// to move forward while infrastructure still needed for the final implementation is ongoing.
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
+struct Image {
+    Ref<CSSValue> image;
 
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
-{
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
-}
+    Ref<CSSValue> protectedImage() const { return image; }
 
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
-{
-    return CSS::serializationForCSS(context, m_slice);
-}
+    bool operator==(const Image& other) const
+    {
+        return compareCSSValue(image, other.image);
+    }
+};
 
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
-{
-    return m_slice == other.m_slice;
-}
+template<> struct Serialize<Image> { void operator()(StringBuilder&, const SerializationContext&, const Image&); };
+template<> struct ComputedStyleDependenciesCollector<Image> { void operator()(ComputedStyleDependencies&, const Image&); };
+template<> struct CSSValueChildrenVisitor<Image> { IterationStatus operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>&, const Image&); };
 
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_slice);
-}
-
+} // namespace CSS
 } // namespace WebCore
+
+namespace WTF {
+
+// As a simple wrapper of a smart pointer, CSS::Image can also work in places a smart pointer can.
+template<> struct IsSmartPtr<WebCore::CSS::Image> {
+    static constexpr bool value = true;
+};
+
+} // namespace WTF

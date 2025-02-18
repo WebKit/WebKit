@@ -910,7 +910,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSPrimitiveValue.h
     css/CSSPrimitiveValueMappings.h
     css/CSSProperty.h
-    css/CSSQuadValue.h
     css/CSSRectValue.h
     css/CSSRegisteredCustomProperty.h
     css/CSSRule.h

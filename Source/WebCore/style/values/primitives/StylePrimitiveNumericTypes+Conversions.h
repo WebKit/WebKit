@@ -105,7 +105,7 @@ template<auto R, typename V, typename... Rest> constexpr Integer<R, V> canonical
 
 template<auto R, typename V, typename... Rest> constexpr Number<R, V> canonicalize(const CSS::NumberRaw<R, V>& raw, NoConversionDataRequiredToken, Rest&&...)
 {
-    return { raw.value };
+    return { static_cast<V>(raw.value) };
 }
 
 template<auto R, typename V, typename... Rest> constexpr Number<R, V> canonicalize(const CSS::NumberRaw<R, V>& raw, const CSSToLengthConversionData&, Rest&&... rest)
@@ -419,7 +419,7 @@ template<CSS::NumericRaw RawType> struct ToStyle<CSS::UnevaluatedCalc<RawType>> 
 
     template<typename... Rest> auto operator()(const From& value, Rest&&... rest) -> To
     {
-        return { value.evaluate(From::category, std::forward<Rest>(rest)...) };
+        return { static_cast<typename RawType::ResolvedValueType>(value.evaluate(From::category, std::forward<Rest>(rest)...)) };
     }
 };
 

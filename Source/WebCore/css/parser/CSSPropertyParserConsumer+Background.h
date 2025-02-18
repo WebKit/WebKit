@@ -31,6 +31,7 @@
 namespace WebCore {
 
 namespace CSS {
+struct BorderImage;
 struct BorderRadius;
 }
 
@@ -56,7 +57,11 @@ RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, const CSSParser
 
 // MARK: - Border Image
 
-// <'border-image-repeat> = [ stretch | repeat | round | space ]{1,2}
+// <'border-image-source'> = none | <image>
+// https://drafts.csswg.org/css-backgrounds/#propdef-border-image-source
+RefPtr<CSSValue> consumeBorderImageSource(CSSParserTokenRange&, const CSSParserContext&);
+
+// <'border-image-repeat'> = [ stretch | repeat | round | space ]{1,2}
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-image-repeat
 RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange&, const CSSParserContext&);
 
@@ -73,7 +78,7 @@ RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange&, const CSSParserC
 RefPtr<CSSValue> consumeBorderImageWidth(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentProperty);
 
 // https://drafts.csswg.org/css-backgrounds/#border-image
-bool consumeBorderImageComponents(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentProperty, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+std::optional<CSS::BorderImage> consumeUnresolvedBorderImage(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentProperty);
 
 // MARK: - Border Style
 
@@ -81,8 +86,8 @@ bool consumeBorderImageComponents(CSSParserTokenRange&, const CSSParserContext&,
 // https://drafts.csswg.org/css-backgrounds/#propdef-border-top-width
 RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentShorthand);
 
-// <'border-*-width'> = <line-width>
-// https://drafts.csswg.org/css-backgrounds/#propdef-border-top-width
+// <'border-*-color'> = <color>
+// https://drafts.csswg.org/css-backgrounds/#propdef-border-top-color
 RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentShorthand);
 
 // MARK: - Background Clip
@@ -124,7 +129,8 @@ RefPtr<CSSValue> consumeWebkitBoxShadow(CSSParserTokenRange&, const CSSParserCon
 // MARK: - Reflection (non-standard)
 
 // Non-standard addition.
-RefPtr<CSSValue> consumeReflect(CSSParserTokenRange&, const CSSParserContext&);
+// <'-webkit-box-reflect'> = none | [ [ above | below | left | right ] <length-percentage>? <border-image>? ]
+RefPtr<CSSValue> consumeWebKitBoxReflect(CSSParserTokenRange&, const CSSParserContext&);
 
 // MARK: Utilities for filling in rects / quads in the "margin" form.
 
@@ -162,6 +168,24 @@ template<typename Container, typename T> Container completeQuadFromArray(std::ar
 
     return Container { WTFMove(*optionals[0]), WTFMove(*optionals[1]), WTFMove(*optionals[2]), WTFMove(*optionals[3]) };
 }
+
+template<typename Container, typename F> std::optional<Container> consumeQuad(F&& consumer)
+{
+    auto value1 = consumer();
+    if (!value1)
+        return { };
+    auto value2 = consumer();
+    if (!value2)
+        return completeQuad<Container>(WTFMove(*value1));
+    auto value3 = consumer();
+    if (!value3)
+        return completeQuad<Container>(WTFMove(*value1), WTFMove(*value2));
+    auto value4 = consumer();
+    if (!value4)
+        return completeQuad<Container>(WTFMove(*value1), WTFMove(*value2), WTFMove(*value3));
+    return Container { WTFMove(*value1), WTFMove(*value2), WTFMove(*value3), WTFMove(*value4) };
+}
+
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

@@ -19,13 +19,30 @@
 
 #pragma once
 
-#include <wtf/RefPtr.h>
+#include "CSSBorderImage.h"
+#include "CSSValue.h"
 
 namespace WebCore {
 
-class CSSValue;
-class CSSValueList;
+class CSSBorderImageValue final : public CSSValue {
+public:
+    static Ref<CSSBorderImageValue> create(CSS::BorderImage&&);
+    ~CSSBorderImageValue();
 
-Ref<CSSValueList> createBorderImageValue(RefPtr<CSSValue>&& image, RefPtr<CSSValue>&& imageSlice, RefPtr<CSSValue>&& borderSlice, RefPtr<CSSValue>&& outset, RefPtr<CSSValue>&& repeat);
+    const CSS::BorderImage& borderImage() const { return m_borderImage; }
+
+    String customCSSText(const CSS::SerializationContext&) const;
+    bool equals(const CSSBorderImageValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
+
+    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
+
+private:
+    CSSBorderImageValue(CSS::BorderImage&&);
+
+    CSS::BorderImage m_borderImage;
+};
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSBorderImageValue, isBorderImageValue())

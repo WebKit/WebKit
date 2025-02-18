@@ -33,9 +33,9 @@ namespace WebCore {
 namespace CSS {
 
 // NOTE: This is spelled with an explicit "Or" to distinguish it from types like AnglePercentage/LengthPercentage that have behavior distinctions beyond just being a union of the two types (specifically, calc() has specific behaviors for those types).
-template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPercentage {
-    using Number = CSS::Number<nR, V>;
-    using Percentage = CSS::Percentage<pR, V>;
+template<Range nR = All, Range pR = nR, typename nV = double, typename pV = nV> struct NumberOrPercentage {
+    using Number = CSS::Number<nR, nV>;
+    using Percentage = CSS::Percentage<pR, pV>;
 
     NumberOrPercentage(std::variant<Number, Percentage>&& value)
     {
@@ -59,6 +59,16 @@ template<Range nR = All, Range pR = nR, typename V = double> struct NumberOrPerc
 
     NumberOrPercentage(Percentage value)
         : value { WTFMove(value) }
+    {
+    }
+
+    NumberOrPercentage(ValueLiteral<NumberUnit::Number> value)
+        : value { Number { value } }
+    {
+    }
+
+    NumberOrPercentage(ValueLiteral<PercentageUnit::Percentage> value)
+        : value { Percentage { value } }
     {
     }
 
@@ -166,5 +176,5 @@ private:
 } // namespace CSS
 } // namespace WebCore
 
-template<auto nR, auto pR, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::NumberOrPercentage<nR, pR, V>> = true;
+template<auto nR, auto pR, typename nV, typename pV> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::NumberOrPercentage<nR, pR, nV, pV>> = true;
 template<auto nR, auto pR, typename V> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>> = true;

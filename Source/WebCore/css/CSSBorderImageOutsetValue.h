@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,40 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#pragma once
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSBorderImageOutset.h"
+#include "CSSValue.h"
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
-{
-}
+class CSSBorderImageOutsetValue final : public CSSValue {
+public:
+    static Ref<CSSBorderImageOutsetValue> create(CSS::BorderImageOutset);
+    ~CSSBorderImageOutsetValue();
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
+    const CSS::BorderImageOutset& outset() const { return m_outset; }
 
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
-{
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
-}
+    String customCSSText(const CSS::SerializationContext&) const;
+    bool equals(const CSSBorderImageOutsetValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
-{
-    return CSS::serializationForCSS(context, m_slice);
-}
+private:
+    CSSBorderImageOutsetValue(CSS::BorderImageOutset&&);
 
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
-{
-    return m_slice == other.m_slice;
-}
-
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_slice);
-}
+    CSS::BorderImageOutset m_outset;
+};
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSBorderImageOutsetValue, isBorderImageOutsetValue())

@@ -153,7 +153,12 @@ public:
         m_data.access().borderSlices = other.m_data->borderSlices;
         m_data.access().overridesBorderWidths = other.m_data->overridesBorderWidths;
     }
-    
+
+    void copyImageFrom(const NinePieceImage& other)
+    {
+        m_data.access().image = other.m_data->image;
+    }
+
     void copyOutsetFrom(const NinePieceImage& other)
     {
         m_data.access().outset = other.m_data->outset;

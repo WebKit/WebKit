@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,39 +24,53 @@
  */
 
 #include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#include "CSSBorderImageSourceValue.h"
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "DeprecatedCSSOMPrimitiveValue.h"
+#include "DeprecatedCSSOMValueList.h"
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
+CSSBorderImageSourceValue::CSSBorderImageSourceValue(CSS::BorderImageSource&& source)
+    : CSSValue(ClassType::BorderImageSource)
+    , m_source(WTFMove(source))
 {
 }
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
+CSSBorderImageSourceValue::~CSSBorderImageSourceValue() = default;
 
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
+Ref<CSSBorderImageSourceValue> CSSBorderImageSourceValue::create(CSS::BorderImageSource source)
 {
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
+    return adoptRef(*new CSSBorderImageSourceValue(WTFMove(source)));
 }
 
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
+String CSSBorderImageSourceValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(context, m_slice);
+    return CSS::serializationForCSS(context, m_source);
 }
 
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
+bool CSSBorderImageSourceValue::equals(const CSSBorderImageSourceValue& other) const
 {
-    return m_slice == other.m_slice;
+    return m_source == other.m_source;
 }
 
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSBorderImageSourceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
-    return CSS::visitCSSValueChildren(func, m_slice);
+    return CSS::visitCSSValueChildren(func, m_source);
+}
+
+Ref<DeprecatedCSSOMValue> CSSBorderImageSourceValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+{
+    return WTF::switchOn(m_source,
+        [&](const CSS::Keyword::None& none) -> Ref<DeprecatedCSSOMValue> {
+            return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(none.value), owner);
+        },
+        [&](const CSS::Image& image) -> Ref<DeprecatedCSSOMValue> {
+            return image.protectedImage()->createDeprecatedCSSOMWrapper(owner);
+        }
+    );
 }
 
 } // namespace WebCore

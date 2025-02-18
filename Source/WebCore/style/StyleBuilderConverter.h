@@ -53,9 +53,9 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSRayValue.h"
-#include "CSSReflectValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSValuePair.h"
+#include "CSSWebKitBoxReflectPropertyValue.h"
 #include "CalculationValue.h"
 #include "FontPalette.h"
 #include "FontSelectionValueInlines.h"
@@ -151,7 +151,7 @@ public:
     static OptionSet<TextUnderlinePosition> convertTextUnderlinePosition(BuilderState&, const CSSValue&);
     static TextUnderlineOffset convertTextUnderlineOffset(BuilderState&, const CSSValue&);
     static TextDecorationThickness convertTextDecorationThickness(BuilderState&, const CSSValue&);
-    static RefPtr<StyleReflection> convertReflection(BuilderState&, const CSSValue&);
+    static RefPtr<StyleReflection> convertWebKitBoxReflect(BuilderState&, const CSSValue&);
     static TextEdge convertTextEdge(BuilderState&, const CSSValue&);
     static IntSize convertInitialLetter(BuilderState&, const CSSValue&);
     static float convertTextStrokeWidth(BuilderState&, const CSSValue&);
@@ -1050,27 +1050,72 @@ inline TextDecorationThickness BuilderConverter::convertTextDecorationThickness(
     }
 }
 
-inline RefPtr<StyleReflection> BuilderConverter::convertReflection(BuilderState& builderState, const CSSValue& value)
+inline RefPtr<StyleReflection> BuilderConverter::convertWebKitBoxReflect(BuilderState& builderState, const CSSValue& value)
 {
+    auto toReflectionDirection = [](const CSS::WebKitBoxReflect::Direction& direction) {
+        return WTF::switchOn(direction,
+            [](const CSS::Keyword::Above&) { return ReflectionDirection::Above; },
+            [](const CSS::Keyword::Below&) { return ReflectionDirection::Below; },
+            [](const CSS::Keyword::Left&)  { return ReflectionDirection::Left; },
+            [](const CSS::Keyword::Right&) { return ReflectionDirection::Right; }
+        );
+    };
+
+    auto toLength = [](const Style::LengthPercentage<>& lengthPercentage) {
+        return WTF::switchOn(lengthPercentage,
+            [](const Style::LengthPercentage<>::Dimension& length) {
+                return WebCore::Length { length.value, LengthType::Fixed };
+            },
+            [](const Style::LengthPercentage<>::Percentage& percentage) {
+                return WebCore::Length { percentage.value, LengthType::Percent };
+            },
+            [](const Style::LengthPercentage<>::Calc& calc) {
+                return WebCore::Length { calc.protectedCalculation() };
+            }
+        );
+    };
+
     if (is<CSSPrimitiveValue>(value)) {
-        ASSERT(value.valueID() == CSSValueNone);
+        switch (value.valueID()) {
+        case CSSValueNone:
+            return nullptr;
+        case CSSValueAbove:
+            return StyleReflection::create(ReflectionDirection::Above);
+        case CSSValueBelow:
+            return StyleReflection::create(ReflectionDirection::Below);
+        case CSSValueLeft:
+            return StyleReflection::create(ReflectionDirection::Left);
+        case CSSValueRight:
+            return StyleReflection::create(ReflectionDirection::Right);
+        default:
+            break;
+        }
+
+        builderState.setCurrentPropertyInvalidAtComputedValueTime();
         return nullptr;
     }
 
-    auto* reflectValue = requiredDowncast<CSSReflectValue>(builderState, value);
+    auto* reflectValue = requiredDowncast<CSSWebKitBoxReflectPropertyValue>(builderState, value);
     if (!reflectValue)
         return { };
 
-    NinePieceImage mask(NinePieceImage::Type::Mask);
-    mask.setFill(true);
+    return WTF::switchOn(reflectValue->property(),
+        [&](const CSS::Keyword::None&) -> RefPtr<StyleReflection> {
+            return nullptr;
+        },
+        [&](const CSS::WebKitBoxReflect& reflect) -> RefPtr<StyleReflection> {
+            NinePieceImage mask(NinePieceImage::Type::Mask);
+            mask.setFill(true);
 
-    builderState.styleMap().mapNinePieceImage(reflectValue->mask(), mask);
+            if (reflect.mask)
+                builderState.styleMap().mapNinePieceImage(*reflect.mask, mask);
 
-    auto reflection = StyleReflection::create();
-    reflection->setDirection(fromCSSValueID<ReflectionDirection>(reflectValue->direction()));
-    reflection->setOffset(reflectValue->offset().convertToLength<FixedIntegerConversion | PercentConversion | CalculatedConversion>(builderState.cssToLengthConversionData()));
-    reflection->setMask(mask);
-    return reflection;
+            auto reflection = StyleReflection::create(toReflectionDirection(reflect.direction));
+            reflection->setOffset(toLength(Style::toStyle(reflect.offset, builderState)));
+            reflection->setMask(WTFMove(mask));
+            return reflection;
+        }
+    );
 }
 
 inline TextEdge BuilderConverter::convertTextEdge(BuilderState& builderState, const CSSValue& value)

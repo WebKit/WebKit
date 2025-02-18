@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,39 +24,39 @@
  */
 
 #include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#include "CSSBorderImageRepeatValue.h"
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
+CSSBorderImageRepeatValue::CSSBorderImageRepeatValue(CSS::BorderImageRepeat&& repeat)
+    : CSSValue(ClassType::BorderImageRepeat)
+    , m_repeat(WTFMove(repeat))
 {
 }
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
+CSSBorderImageRepeatValue::~CSSBorderImageRepeatValue() = default;
 
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
+Ref<CSSBorderImageRepeatValue> CSSBorderImageRepeatValue::create(CSS::BorderImageRepeat repeat)
 {
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
+    return adoptRef(*new CSSBorderImageRepeatValue(WTFMove(repeat)));
 }
 
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
+String CSSBorderImageRepeatValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    return CSS::serializationForCSS(context, m_slice);
+    return CSS::serializationForCSS(context, m_repeat);
 }
 
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
+bool CSSBorderImageRepeatValue::equals(const CSSBorderImageRepeatValue& other) const
 {
-    return m_slice == other.m_slice;
+    return m_repeat == other.m_repeat;
 }
 
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
+IterationStatus CSSBorderImageRepeatValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
 {
-    return CSS::visitCSSValueChildren(func, m_slice);
+    return CSS::visitCSSValueChildren(func, m_repeat);
 }
 
 } // namespace WebCore

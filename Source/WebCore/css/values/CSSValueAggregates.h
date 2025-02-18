@@ -31,6 +31,7 @@
 #include <tuple>
 #include <utility>
 #include <variant>
+#include <wtf/CompactVariant.h>
 #include <wtf/Markable.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -121,6 +122,7 @@ template<typename T> inline constexpr auto TreatAsOptionalLike<WTF::Markable<T>>
 template<typename... Ts> inline constexpr auto TreatAsTupleLike<std::tuple<Ts...>> = true;
 
 // - Variant-like
+template<typename... Ts> inline constexpr auto TreatAsVariantLike<CompactVariant<Ts...>> = true;
 template<typename... Ts> inline constexpr auto TreatAsVariantLike<std::variant<Ts...>> = true;
 
 // MARK: - Standard Leaf Types

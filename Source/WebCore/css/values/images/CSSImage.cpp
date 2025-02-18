@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+/*
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,40 +24,25 @@
  */
 
 #include "config.h"
-#include "CSSQuadValue.h"
-#include "CSSValue.h"
+#include "CSSImage.h"
 
 namespace WebCore {
+namespace CSS {
 
-CSSQuadValue::CSSQuadValue(Quad quad)
-    : CSSValue(ClassType::Quad)
-    , m_coalesceIdenticalValues(true)
-    , m_quad(WTFMove(quad))
+void Serialize<Image>::operator()(StringBuilder& builder, const SerializationContext& context, const Image& value)
 {
+    builder.append(value.protectedImage()->cssText(context));
 }
 
-Ref<CSSQuadValue> CSSQuadValue::create(Quad quad)
+void ComputedStyleDependenciesCollector<Image>::operator()(ComputedStyleDependencies& dependencies, const Image& value)
 {
-    return adoptRef(*new CSSQuadValue(WTFMove(quad)));
+    value.protectedImage()->collectComputedStyleDependencies(dependencies);
 }
 
-String CSSQuadValue::customCSSText(const CSS::SerializationContext& context) const
+IterationStatus CSSValueChildrenVisitor<Image>::operator()(NOESCAPE const Function<IterationStatus(CSSValue&)>& func, const Image& value)
 {
-    return m_quad.cssText(context);
+    return value.protectedImage()->visitChildren(func);
 }
 
-bool CSSQuadValue::equals(const CSSQuadValue& other) const
-{
-    return m_quad.equals(other.m_quad);
-}
-
-bool CSSQuadValue::canBeCoalesced() const
-{
-    Ref top = m_quad.top();
-    Ref right = m_quad.right();
-    Ref left = m_quad.left();
-    Ref bottom = m_quad.bottom();
-    return m_coalesceIdenticalValues && top->equals(right) && top->equals(left) && top->equals(bottom);
-}
-
+} // namespace CSS
 } // namespace WebCore

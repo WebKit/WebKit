@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2022 Igalia S.L. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +26,26 @@
 
 #pragma once
 
+#include "CSSBorderImageWidth.h"
 #include "CSSValue.h"
-#include "Quad.h"
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-
 class CSSBorderImageWidthValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageWidthValue> create(Quad, bool overridesBorderWidths);
+    static Ref<CSSBorderImageWidthValue> create(CSS::BorderImageWidth);
     ~CSSBorderImageWidthValue();
 
-    const Quad& widths() const { return m_widths; }
-    bool overridesBorderWidths() const { return m_overridesBorderWidths; }
+    const CSS::BorderImageWidth& width() const { return m_width; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBorderImageWidthValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
-    CSSBorderImageWidthValue(Quad, bool overridesBorderWidths);
+    CSSBorderImageWidthValue(CSS::BorderImageWidth&&);
 
-    Quad m_widths;
-    bool m_overridesBorderWidths { false };
+    CSS::BorderImageWidth m_width;
 };
 
 } // namespace WebCore

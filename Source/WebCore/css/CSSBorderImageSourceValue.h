@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,40 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#pragma once
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSBorderImageSource.h"
+#include "CSSValue.h"
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
-{
-}
+class CSSBorderImageSourceValue final : public CSSValue {
+public:
+    static Ref<CSSBorderImageSourceValue> create(CSS::BorderImageSource);
+    ~CSSBorderImageSourceValue();
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
+    const CSS::BorderImageSource& source() const { return m_source; }
 
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
-{
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
-}
+    String customCSSText(const CSS::SerializationContext&) const;
+    bool equals(const CSSBorderImageSourceValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
-{
-    return CSS::serializationForCSS(context, m_slice);
-}
+    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
-{
-    return m_slice == other.m_slice;
-}
+private:
+    CSSBorderImageSourceValue(CSS::BorderImageSource&&);
 
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_slice);
-}
+    CSS::BorderImageSource m_source;
+};
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSBorderImageSourceValue, isBorderImageSourceValue())

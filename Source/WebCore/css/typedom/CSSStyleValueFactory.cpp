@@ -31,6 +31,8 @@
 #include "CSSStyleValueFactory.h"
 
 #include "CSSAppleColorFilterPropertyValue.h"
+#include "CSSBackgroundRepeatValue.h"
+#include "CSSBorderImageSourceValue.h"
 #include "CSSBoxShadowPropertyValue.h"
 #include "CSSCalcValue.h"
 #include "CSSCustomPropertyValue.h"
@@ -365,6 +367,28 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
             },
             [&](const auto&) -> ExceptionOr<Ref<CSSStyleValue>> {
                 return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+            }
+        );
+    } else if (RefPtr property = dynamicDowncast<CSSBackgroundRepeatValue>(cssValue)) {
+        if (property->repeat().x == property->repeat().y) {
+            return WTF::switchOn(property->repeat().x,
+                [&](const auto& constant) -> ExceptionOr<Ref<CSSStyleValue>> {
+                    return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(constant.value)));
+                }
+            );
+        }
+        if (WTF::holdsAlternative<CSS::Keyword::Repeat>(property->repeat().x) && WTF::holdsAlternative<CSS::Keyword::NoRepeat>(property->repeat().y))
+            return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueRepeatX)));
+        if (WTF::holdsAlternative<CSS::Keyword::NoRepeat>(property->repeat().x) && WTF::holdsAlternative<CSS::Keyword::Repeat>(property->repeat().y))
+            return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(CSSValueRepeatY)));
+        return CSSStyleValue::create(Ref(const_cast<CSSValue&>(cssValue)));
+    } else if (RefPtr property = dynamicDowncast<CSSBorderImageSourceValue>(cssValue)) {
+        return WTF::switchOn(property->source(),
+            [&](const CSS::Keyword::None& none) -> ExceptionOr<Ref<CSSStyleValue>> {
+                return static_reference_cast<CSSStyleValue>(CSSKeywordValue::rectifyKeywordish(nameLiteral(none.value)));
+            },
+            [&](const CSS::Image& image) -> ExceptionOr<Ref<CSSStyleValue>> {
+                return reifyValue(image.image, propertyID, document);
             }
         );
     } else if (auto* valueList = dynamicDowncast<CSSValueList>(cssValue)) {

@@ -3666,7 +3666,6 @@
 		93B0A67026D4B53900AA21E4 /* PermissionController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B0A66926D44B7F00AA21E4 /* PermissionController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B0A67A26D6A4E900AA21E4 /* PermissionObserver.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B0A66F26D4B52900AA21E4 /* PermissionObserver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B248932990CAFE00B769E4 /* CSSCounterValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B2488F2990CAEC00B769E4 /* CSSCounterValue.h */; };
-		93B248942990CB0400B769E4 /* CSSQuadValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B2488C2990CAEA00B769E4 /* CSSQuadValue.h */; };
 		93B248972990CB1500B769E4 /* CSSRectValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B248912990CAED00B769E4 /* CSSRectValue.h */; };
 		93B2489A2990CD6000B769E4 /* Quad.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B248982990CD5F00B769E4 /* Quad.h */; };
 		93B2489B2990CD6000B769E4 /* RectBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B248992990CD5F00B769E4 /* RectBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4907,7 +4906,7 @@
 		BC53C6920DA591140021EB5D /* CSSGradientValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53C6910DA591140021EB5D /* CSSGradientValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC53D911114310CC000D817E /* WebCoreJSClientData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53D910114310CC000D817E /* WebCoreJSClientData.h */; };
 		BC53DA2E1143121E000D817E /* DOMWrapperWorld.h in Headers */ = {isa = PBXBuildFile; fileRef = BC53DA2D1143121E000D817E /* DOMWrapperWorld.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5A12E00DC0414800C9AFAD /* CSSWebKitBoxReflectPropertyValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A12DE0DC0414800C9AFAD /* CSSWebKitBoxReflectPropertyValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5A86850C33676000EEA649 /* DOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86820C33676000EEA649 /* DOMSelection.h */; };
 		BC5A86B60C3367E800EEA649 /* JSDOMSelection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5A86B40C3367E800EEA649 /* JSDOMSelection.h */; };
 		BC5C762B1497FE1400BC4775 /* PlatformEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C76291497FE1400BC4775 /* PlatformEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4975,6 +4974,19 @@
 		BC96DB430F3A880E00573CB3 /* RenderBoxModelObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BC96DB420F3A880E00573CB3 /* RenderBoxModelObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC97E23A109144950010D361 /* HTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E238109144950010D361 /* HTMLAllCollection.h */; };
 		BC97E413109154FA0010D361 /* JSHTMLAllCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */; };
+		BC9C64FE2D5C3E67002B8E80 /* CSSBackgroundRepeat.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C64FD2D5C3E67002B8E80 /* CSSBackgroundRepeat.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C65002D5C41D1002B8E80 /* CSSWebKitBoxReflectProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C64FF2D5C41D1002B8E80 /* CSSWebKitBoxReflectProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C65022D5C4454002B8E80 /* CSSBorderImageSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C65012D5C4454002B8E80 /* CSSBorderImageSlice.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C65042D5C45B1002B8E80 /* CSSBorderImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C65032D5C45B1002B8E80 /* CSSBorderImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C65072D5C4882002B8E80 /* CSSBorderImageOutset.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C65062D5C4882002B8E80 /* CSSBorderImageOutset.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C65092D5C4890002B8E80 /* CSSBorderImageWidth.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C65082D5C4890002B8E80 /* CSSBorderImageWidth.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C650B2D5C4899002B8E80 /* CSSBorderImageSource.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C650A2D5C4899002B8E80 /* CSSBorderImageSource.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C650D2D5C48CD002B8E80 /* CSSBorderImageRepeat.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C650C2D5C48CD002B8E80 /* CSSBorderImageRepeat.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C65102D5D0757002B8E80 /* CSSBorderImageSourceValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C650F2D5D0756002B8E80 /* CSSBorderImageSourceValue.h */; };
+		BC9C65142D5D0917002B8E80 /* CSSBorderImageOutsetValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C65132D5D0917002B8E80 /* CSSBorderImageOutsetValue.h */; };
+		BC9C65172D5D0941002B8E80 /* CSSBorderImageRepeatValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C65162D5D0941002B8E80 /* CSSBorderImageRepeatValue.h */; };
+		BC9C65192D5D0BB8002B8E80 /* CSSImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C65182D5D0BB8002B8E80 /* CSSImage.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC9C651E2D5D17EA002B8E80 /* CSSWebKitBoxReflect.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9C651D2D5D17EA002B8E80 /* CSSWebKitBoxReflect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA088F5264E1C08003E2A6C /* ImageDataSettings.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA088F2264E1BF9003E2A6C /* ImageDataSettings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA088F5264E1C09003E2A6C /* ImageDataStorageFormat.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA088F2264E1BFA003E2A6C /* ImageDataStorageFormat.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
@@ -6035,7 +6047,7 @@
 		E164FAA318315BF400DB4E61 /* CryptoKeyRSA.h in Headers */ = {isa = PBXBuildFile; fileRef = E164FAA218315BF400DB4E61 /* CryptoKeyRSA.h */; };
 		E16982551134629D00894115 /* ObjCRuntimeObject.h in Headers */ = {isa = PBXBuildFile; fileRef = E16982541134629D00894115 /* ObjCRuntimeObject.h */; };
 		E16982601134636A00894115 /* ObjCRuntimeObject.mm in Sources */ = {isa = PBXBuildFile; fileRef = E169825F1134636A00894115 /* ObjCRuntimeObject.mm */; };
-		E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */ = {isa = PBXBuildFile; fileRef = E16A84F814C85CCC002977DF /* CSSBorderImage.h */; };
+		E16A84FA14C85CCC002977DF /* CSSBorderImageValue.h in Headers */ = {isa = PBXBuildFile; fileRef = E16A84F814C85CCC002977DF /* CSSBorderImageValue.h */; };
 		E172AF6E180F24C600FBADB9 /* CryptoAlgorithm.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E172AF70180F289500FBADB9 /* CryptoKeyUsage.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E172AF901811BC3700FBADB9 /* JSDOMPromiseDeferred.h in Headers */ = {isa = PBXBuildFile; fileRef = E172AF8E1811BC3700FBADB9 /* JSDOMPromiseDeferred.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -15260,11 +15272,9 @@
 		93B0A65226CDD14100AA21E4 /* PermissionState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PermissionState.h; sourceTree = "<group>"; };
 		93B0A66926D44B7F00AA21E4 /* PermissionController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PermissionController.h; sourceTree = "<group>"; };
 		93B0A66F26D4B52900AA21E4 /* PermissionObserver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PermissionObserver.h; sourceTree = "<group>"; };
-		93B2488C2990CAEA00B769E4 /* CSSQuadValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSQuadValue.h; sourceTree = "<group>"; };
 		93B2488D2990CAEB00B769E4 /* CSSRectValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSRectValue.cpp; sourceTree = "<group>"; };
 		93B2488E2990CAEB00B769E4 /* CSSCounterValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSCounterValue.cpp; sourceTree = "<group>"; };
 		93B2488F2990CAEC00B769E4 /* CSSCounterValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSCounterValue.h; sourceTree = "<group>"; };
-		93B248902990CAED00B769E4 /* CSSQuadValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSQuadValue.cpp; sourceTree = "<group>"; };
 		93B248912990CAED00B769E4 /* CSSRectValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSRectValue.h; sourceTree = "<group>"; };
 		93B248982990CD5F00B769E4 /* Quad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Quad.h; sourceTree = "<group>"; };
 		93B248992990CD5F00B769E4 /* RectBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectBase.h; sourceTree = "<group>"; };
@@ -18087,8 +18097,8 @@
 		BC58E4462D0A13C700CDBD94 /* CSSCalcTree+MediaProgressEvaluator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSCalcTree+MediaProgressEvaluator.cpp"; sourceTree = "<group>"; };
 		BC58E4492D0B6EEE00CDBD94 /* CSSCalcTree+ContainerProgressEvaluator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSCalcTree+ContainerProgressEvaluator.h"; sourceTree = "<group>"; };
 		BC58E44A2D0B6EEE00CDBD94 /* CSSCalcTree+ContainerProgressEvaluator.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSCalcTree+ContainerProgressEvaluator.cpp"; sourceTree = "<group>"; };
-		BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSReflectValue.cpp; sourceTree = "<group>"; };
-		BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSReflectValue.h; sourceTree = "<group>"; };
+		BC5A12DD0DC0414800C9AFAD /* CSSWebKitBoxReflectPropertyValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSWebKitBoxReflectPropertyValue.cpp; sourceTree = "<group>"; };
+		BC5A12DE0DC0414800C9AFAD /* CSSWebKitBoxReflectPropertyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSWebKitBoxReflectPropertyValue.h; sourceTree = "<group>"; };
 		BC5A86810C33676000EEA649 /* DOMSelection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DOMSelection.cpp; sourceTree = "<group>"; };
 		BC5A86820C33676000EEA649 /* DOMSelection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMSelection.h; sourceTree = "<group>"; };
 		BC5A86830C33676000EEA649 /* DOMSelection.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DOMSelection.idl; sourceTree = "<group>"; };
@@ -18332,6 +18342,27 @@
 		BC9BE3EA2CFE1CFF00D8C2CA /* StyleBoxShadow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StyleBoxShadow.cpp; sourceTree = "<group>"; };
 		BC9BE3EB2CFE1D1300D8C2CA /* CSSBoxShadow.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBoxShadow.h; sourceTree = "<group>"; };
 		BC9BE3EF2CFE297D00D8C2CA /* StylePrimitiveNumericTypes+Logging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "StylePrimitiveNumericTypes+Logging.h"; sourceTree = "<group>"; };
+		BC9C64FD2D5C3E67002B8E80 /* CSSBackgroundRepeat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBackgroundRepeat.h; sourceTree = "<group>"; };
+		BC9C64FF2D5C41D1002B8E80 /* CSSWebKitBoxReflectProperty.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSWebKitBoxReflectProperty.h; sourceTree = "<group>"; };
+		BC9C65012D5C4454002B8E80 /* CSSBorderImageSlice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageSlice.h; sourceTree = "<group>"; };
+		BC9C65032D5C45B1002B8E80 /* CSSBorderImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImage.h; sourceTree = "<group>"; };
+		BC9C65052D5C473A002B8E80 /* CSSBorderImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImage.cpp; sourceTree = "<group>"; };
+		BC9C65062D5C4882002B8E80 /* CSSBorderImageOutset.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageOutset.h; sourceTree = "<group>"; };
+		BC9C65082D5C4890002B8E80 /* CSSBorderImageWidth.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageWidth.h; sourceTree = "<group>"; };
+		BC9C650A2D5C4899002B8E80 /* CSSBorderImageSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageSource.h; sourceTree = "<group>"; };
+		BC9C650C2D5C48CD002B8E80 /* CSSBorderImageRepeat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageRepeat.h; sourceTree = "<group>"; };
+		BC9C650E2D5C59CF002B8E80 /* CSSBorderImageWidth.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageWidth.cpp; sourceTree = "<group>"; };
+		BC9C650F2D5D0756002B8E80 /* CSSBorderImageSourceValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageSourceValue.h; sourceTree = "<group>"; };
+		BC9C65112D5D0772002B8E80 /* CSSBorderImageSourceValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageSourceValue.cpp; sourceTree = "<group>"; };
+		BC9C65122D5D0917002B8E80 /* CSSBorderImageOutsetValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageOutsetValue.cpp; sourceTree = "<group>"; };
+		BC9C65132D5D0917002B8E80 /* CSSBorderImageOutsetValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageOutsetValue.h; sourceTree = "<group>"; };
+		BC9C65152D5D0941002B8E80 /* CSSBorderImageRepeatValue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageRepeatValue.cpp; sourceTree = "<group>"; };
+		BC9C65162D5D0941002B8E80 /* CSSBorderImageRepeatValue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageRepeatValue.h; sourceTree = "<group>"; };
+		BC9C65182D5D0BB8002B8E80 /* CSSImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSImage.h; sourceTree = "<group>"; };
+		BC9C651A2D5D0C8A002B8E80 /* CSSImage.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSImage.cpp; sourceTree = "<group>"; };
+		BC9C651B2D5D0E69002B8E80 /* CSSBorderImageRepeat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageRepeat.cpp; sourceTree = "<group>"; };
+		BC9C651C2D5D0E74002B8E80 /* CSSBackgroundRepeat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBackgroundRepeat.cpp; sourceTree = "<group>"; };
+		BC9C651D2D5D17EA002B8E80 /* CSSWebKitBoxReflect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CSSWebKitBoxReflect.h; sourceTree = "<group>"; };
 		BCA088F2264E1BF9003E2A6C /* ImageDataSettings.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDataSettings.h; sourceTree = "<group>"; };
 		BCA088F2264E1BFA003E2A6C /* ImageDataStorageFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageDataStorageFormat.h; sourceTree = "<group>"; };
 		BCA088F4264E1BF9003E2A6C /* ImageDataSettings.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ImageDataSettings.idl; sourceTree = "<group>"; };
@@ -20246,8 +20277,8 @@
 		E164FAA418315E1A00DB4E61 /* CryptoKeyRSAMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoKeyRSAMac.cpp; sourceTree = "<group>"; };
 		E16982541134629D00894115 /* ObjCRuntimeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCRuntimeObject.h; sourceTree = "<group>"; };
 		E169825F1134636A00894115 /* ObjCRuntimeObject.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCRuntimeObject.mm; sourceTree = "<group>"; };
-		E16A84F714C85CCC002977DF /* CSSBorderImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImage.cpp; sourceTree = "<group>"; };
-		E16A84F814C85CCC002977DF /* CSSBorderImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSBorderImage.h; sourceTree = "<group>"; };
+		E16A84F714C85CCC002977DF /* CSSBorderImageValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSBorderImageValue.cpp; sourceTree = "<group>"; };
+		E16A84F814C85CCC002977DF /* CSSBorderImageValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSBorderImageValue.h; sourceTree = "<group>"; };
 		E172AF6B180F24C600FBADB9 /* CryptoAlgorithm.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptoAlgorithm.cpp; sourceTree = "<group>"; };
 		E172AF6C180F24C600FBADB9 /* CryptoAlgorithm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoAlgorithm.h; sourceTree = "<group>"; };
 		E172AF6F180F289500FBADB9 /* CryptoKeyUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CryptoKeyUsage.h; sourceTree = "<group>"; };
@@ -35202,6 +35233,8 @@
 			children = (
 				BCB271A02CBD7D4C00265123 /* CSSGradient.cpp */,
 				BCB2719F2CBD7D4C00265123 /* CSSGradient.h */,
+				BC9C651A2D5D0C8A002B8E80 /* CSSImage.cpp */,
+				BC9C65182D5D0BB8002B8E80 /* CSSImage.h */,
 			);
 			path = images;
 			sourceTree = "<group>";
@@ -35306,10 +35339,23 @@
 		BCB271E82CC0145B00265123 /* backgrounds */ = {
 			isa = PBXGroup;
 			children = (
+				BC9C651C2D5D0E74002B8E80 /* CSSBackgroundRepeat.cpp */,
+				BC9C64FD2D5C3E67002B8E80 /* CSSBackgroundRepeat.h */,
+				BC9C65052D5C473A002B8E80 /* CSSBorderImage.cpp */,
+				BC9C65032D5C45B1002B8E80 /* CSSBorderImage.h */,
+				BC9C65062D5C4882002B8E80 /* CSSBorderImageOutset.h */,
+				BC9C651B2D5D0E69002B8E80 /* CSSBorderImageRepeat.cpp */,
+				BC9C650C2D5C48CD002B8E80 /* CSSBorderImageRepeat.h */,
+				BC9C65012D5C4454002B8E80 /* CSSBorderImageSlice.h */,
+				BC9C650A2D5C4899002B8E80 /* CSSBorderImageSource.h */,
+				BC9C650E2D5C59CF002B8E80 /* CSSBorderImageWidth.cpp */,
+				BC9C65082D5C4890002B8E80 /* CSSBorderImageWidth.h */,
 				BCB271E72CC0145B00265123 /* CSSBorderRadius.cpp */,
 				BCB271E62CC0145B00265123 /* CSSBorderRadius.h */,
 				BC9BE3EB2CFE1D1300D8C2CA /* CSSBoxShadow.h */,
 				BC3078F62D0369C000630D75 /* CSSBoxShadowProperty.h */,
+				BC9C651D2D5D17EA002B8E80 /* CSSWebKitBoxReflect.h */,
+				BC9C64FF2D5C41D1002B8E80 /* CSSWebKitBoxReflectProperty.h */,
 			);
 			path = backgrounds;
 			sourceTree = "<group>";
@@ -37634,10 +37680,16 @@
 				0FB9F15428A8417900666E64 /* CSSBackgroundRepeatValue.h */,
 				FBD6AF8615EF21D4008B7110 /* CSSBasicShapeValue.cpp */,
 				FBD6AF8715EF21D4008B7110 /* CSSBasicShapeValue.h */,
-				E16A84F714C85CCC002977DF /* CSSBorderImage.cpp */,
-				E16A84F814C85CCC002977DF /* CSSBorderImage.h */,
+				BC9C65122D5D0917002B8E80 /* CSSBorderImageOutsetValue.cpp */,
+				BC9C65132D5D0917002B8E80 /* CSSBorderImageOutsetValue.h */,
+				BC9C65152D5D0941002B8E80 /* CSSBorderImageRepeatValue.cpp */,
+				BC9C65162D5D0941002B8E80 /* CSSBorderImageRepeatValue.h */,
 				BC274B30140EBED800EADFA6 /* CSSBorderImageSliceValue.cpp */,
 				BC274B2E140EBEB200EADFA6 /* CSSBorderImageSliceValue.h */,
+				BC9C65112D5D0772002B8E80 /* CSSBorderImageSourceValue.cpp */,
+				BC9C650F2D5D0756002B8E80 /* CSSBorderImageSourceValue.h */,
+				E16A84F714C85CCC002977DF /* CSSBorderImageValue.cpp */,
+				E16A84F814C85CCC002977DF /* CSSBorderImageValue.h */,
 				357B581E27F790BD00B93E4E /* CSSBorderImageWidthValue.cpp */,
 				357B581C27F7909A00B93E4E /* CSSBorderImageWidthValue.h */,
 				BC3078EF2D03667800630D75 /* CSSBoxShadowPropertyValue.cpp */,
@@ -37799,14 +37851,10 @@
 				82E3D8DC122EA0D1003AE5BC /* CSSPropertySourceData.cpp */,
 				82E3D8DD122EA0D1003AE5BC /* CSSPropertySourceData.h */,
 				491342962B425C0100FEEF18 /* CSSPseudoSelectors.json */,
-				93B248902990CAED00B769E4 /* CSSQuadValue.cpp */,
-				93B2488C2990CAEA00B769E4 /* CSSQuadValue.h */,
 				66007A0127444CE200946C9B /* CSSRayValue.cpp */,
 				66007A0227444CE200946C9B /* CSSRayValue.h */,
 				93B2488D2990CAEB00B769E4 /* CSSRectValue.cpp */,
 				93B248912990CAED00B769E4 /* CSSRectValue.h */,
-				BC5A12DD0DC0414800C9AFAD /* CSSReflectValue.cpp */,
-				BC5A12DE0DC0414800C9AFAD /* CSSReflectValue.h */,
 				4B1706642162B42F00E578BB /* CSSRegisteredCustomProperty.cpp */,
 				4BDA3FFB2151B6F400FD6604 /* CSSRegisteredCustomProperty.h */,
 				A80E6CDC0A1989CA007FB8C5 /* CSSRule.cpp */,
@@ -37875,6 +37923,8 @@
 				A79CF86E2C59D09800F67C7A /* CSSViewTransitionRule.idl */,
 				71ED24B42B1E344100B3EFAB /* CSSViewValue.cpp */,
 				71ED24B52B1E344100B3EFAB /* CSSViewValue.h */,
+				BC5A12DD0DC0414800C9AFAD /* CSSWebKitBoxReflectPropertyValue.cpp */,
+				BC5A12DE0DC0414800C9AFAD /* CSSWebKitBoxReflectPropertyValue.h */,
 				A80E6CCA0A1989CA007FB8C5 /* DeprecatedCSSOMBoxShadowValue.cpp */,
 				A80E6CBE0A1989CA007FB8C5 /* DeprecatedCSSOMBoxShadowValue.h */,
 				9479492A1E032EDB00018D85 /* DeprecatedCSSOMCounter.h */,
@@ -40512,10 +40562,20 @@
 				319848011A1D817B00A13318 /* CSSAnimationEvent.h in Headers */,
 				CAE9F910146441F000C245B0 /* CSSAspectRatioValue.h in Headers */,
 				497CDAA62CAC59E100BC429D /* CSSAttrValue.h in Headers */,
+				BC9C64FE2D5C3E67002B8E80 /* CSSBackgroundRepeat.h in Headers */,
 				BCB272132CC1F21B00265123 /* CSSBasicShape.h in Headers */,
 				FBD6AF8815EF25C9008B7110 /* CSSBasicShapeValue.h in Headers */,
-				E16A84FA14C85CCC002977DF /* CSSBorderImage.h in Headers */,
+				BC9C65042D5C45B1002B8E80 /* CSSBorderImage.h in Headers */,
+				BC9C65072D5C4882002B8E80 /* CSSBorderImageOutset.h in Headers */,
+				BC9C65142D5D0917002B8E80 /* CSSBorderImageOutsetValue.h in Headers */,
+				BC9C650D2D5C48CD002B8E80 /* CSSBorderImageRepeat.h in Headers */,
+				BC9C65172D5D0941002B8E80 /* CSSBorderImageRepeatValue.h in Headers */,
+				BC9C65022D5C4454002B8E80 /* CSSBorderImageSlice.h in Headers */,
 				BC274B2F140EBEB200EADFA6 /* CSSBorderImageSliceValue.h in Headers */,
+				BC9C650B2D5C4899002B8E80 /* CSSBorderImageSource.h in Headers */,
+				BC9C65102D5D0757002B8E80 /* CSSBorderImageSourceValue.h in Headers */,
+				E16A84FA14C85CCC002977DF /* CSSBorderImageValue.h in Headers */,
+				BC9C65092D5C4890002B8E80 /* CSSBorderImageWidth.h in Headers */,
 				357B581D27F7909A00B93E4E /* CSSBorderImageWidthValue.h in Headers */,
 				BCB272112CC1F21B00265123 /* CSSBorderRadius.h in Headers */,
 				BC3078F72D0369C000630D75 /* CSSBoxShadowProperty.h in Headers */,
@@ -40572,6 +40632,7 @@
 				CD3E252418046BCD00E27F56 /* CSSGridTemplateAreasValue.h in Headers */,
 				FB3056C2169E5DAC0096A232 /* CSSGroupingRule.h in Headers */,
 				BC4AF41E2CF972BB0037C65C /* CSSHexColor.h in Headers */,
+				BC9C65192D5D0BB8002B8E80 /* CSSImage.h in Headers */,
 				9393E600151A99F200066F06 /* CSSImageSetValue.h in Headers */,
 				A80E6CFA0A1989CA007FB8C5 /* CSSImageValue.h in Headers */,
 				A80E6CF60A1989CA007FB8C5 /* CSSImportRule.h in Headers */,
@@ -40646,11 +40707,9 @@
 				E462E5A52D1164690058FD21 /* CSSPropertyParserConsumer+PositionTry.h in Headers */,
 				E4E387FE294E147800C6EC1B /* CSSPropertyRule.h in Headers */,
 				82E3D8DF122EA0D1003AE5BC /* CSSPropertySourceData.h in Headers */,
-				93B248942990CB0400B769E4 /* CSSQuadValue.h in Headers */,
 				BCEA07342CC6D45D000AC148 /* CSSRayFunction.h in Headers */,
 				BCB272122CC1F21B00265123 /* CSSRectFunction.h in Headers */,
 				93B248972990CB1500B769E4 /* CSSRectValue.h in Headers */,
-				BC5A12E00DC0414800C9AFAD /* CSSReflectValue.h in Headers */,
 				4BDA40012151B6F500FD6604 /* CSSRegisteredCustomProperty.h in Headers */,
 				BC4AF4202CF972D20037C65C /* CSSResolvedColor.h in Headers */,
 				2A538A2826F0103C00965FC8 /* CSSRotate.h in Headers */,
@@ -40708,6 +40767,9 @@
 				9444CBEA1D8861CA0073A074 /* CSSVariableReferenceValue.h in Headers */,
 				A79CF86F2C59D09F00F67C7A /* CSSViewTransitionRule.h in Headers */,
 				71ED24B62B1E345300B3EFAB /* CSSViewValue.h in Headers */,
+				BC9C651E2D5D17EA002B8E80 /* CSSWebKitBoxReflect.h in Headers */,
+				BC9C65002D5C41D1002B8E80 /* CSSWebKitBoxReflectProperty.h in Headers */,
+				BC5A12E00DC0414800C9AFAD /* CSSWebKitBoxReflectPropertyValue.h in Headers */,
 				BCB272192CC1F21B00265123 /* CSSXywhFunction.h in Headers */,
 				93F1992F08245E59001E9ABC /* Cursor.h in Headers */,
 				BC2272A20E82E87C00E7F975 /* CursorData.h in Headers */,

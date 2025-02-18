@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,31 +26,26 @@
 
 #pragma once
 
+#include "CSSBorderImageSlice.h"
 #include "CSSValue.h"
-#include "Quad.h"
 
 namespace WebCore {
 
-class CSSPrimitiveValue;
-
 class CSSBorderImageSliceValue final : public CSSValue {
 public:
-    static Ref<CSSBorderImageSliceValue> create(Quad, bool fill);
+    static Ref<CSSBorderImageSliceValue> create(CSS::BorderImageSlice);
     ~CSSBorderImageSliceValue();
 
-    const Quad& slices() const { return m_slices; }
-    bool fill() const { return m_fill; }
+    const CSS::BorderImageSlice& slice() const { return m_slice; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBorderImageSliceValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
-    CSSBorderImageSliceValue(Quad, bool fill);
+    CSSBorderImageSliceValue(CSS::BorderImageSlice&&);
 
-    // These four values are used to make "cuts" in the border image. They can be numbers
-    // or percentages.
-    Quad m_slices;
-    bool m_fill { false };
+    CSS::BorderImageSlice m_slice;
 };
 
 } // namespace WebCore

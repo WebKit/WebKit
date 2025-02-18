@@ -26,9 +26,14 @@
 #include "ComputedStyleExtractor.h"
 
 #include "CSSAppleColorFilterPropertyValue.h"
+#include "CSSBackgroundRepeatValue.h"
 #include "CSSBasicShapeValue.h"
-#include "CSSBorderImage.h"
+#include "CSSBorderImageOutsetValue.h"
+#include "CSSBorderImageRepeatValue.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSBorderImageSourceValue.h"
+#include "CSSBorderImageValue.h"
+#include "CSSBorderImageWidthValue.h"
 #include "CSSBoxShadowPropertyValue.h"
 #include "CSSColorSchemeValue.h"
 #include "CSSCounterValue.h"
@@ -50,10 +55,8 @@
 #include "CSSProperty.h"
 #include "CSSPropertyAnimation.h"
 #include "CSSPropertyParserConsumer+Anchor.h"
-#include "CSSQuadValue.h"
 #include "CSSRayValue.h"
 #include "CSSRectValue.h"
-#include "CSSReflectValue.h"
 #include "CSSRegisteredCustomProperty.h"
 #include "CSSScrollValue.h"
 #include "CSSSerializationContext.h"
@@ -63,6 +66,7 @@
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
 #include "CSSViewValue.h"
+#include "CSSWebKitBoxReflectPropertyValue.h"
 #include "ComposedTreeAncestorIterator.h"
 #include "ContentData.h"
 #include "CursorList.h"
@@ -253,136 +257,168 @@ void OrderedNamedLinesCollectorInSubgridLayout::collectLineNamesForIndex(Vector<
     appendLines(lineNamesValue, autoRepeatIndexInFirstRepetition, NamedLinesType::AutoRepeatNamedLines);
 }
 
-static CSSValueID valueForRepeatRule(NinePieceImageRule rule)
+static inline CSS::BorderImageSlice valueForNinePieceImageSlice(const NinePieceImage& ninePieceImage)
 {
-    switch (rule) {
-    case NinePieceImageRule::Repeat:
-        return CSSValueRepeat;
-    case NinePieceImageRule::Round:
-        return CSSValueRound;
-    case NinePieceImageRule::Space:
-        return CSSValueSpace;
-    default:
-        return CSSValueStretch;
-    }
+    auto side = [&](const Length& length) -> CSS::BorderImageSlice::Slice {
+        if (length.isPercent())
+            return CSS::BorderImageSlice::Slice { CSS::Percentage<CSS::Nonnegative, float> { length.percent() } };
+        ASSERT(length.isFixed());
+        return CSS::BorderImageSlice::Slice { CSS::Number<CSS::Nonnegative, float> { length.value() } };
+    };
+
+    auto& slices = ninePieceImage.imageSlices();
+
+    return CSS::BorderImageSlice {
+        .slices = CSS::BorderImageSlice::Slices {
+            side(slices.top()),
+            side(slices.right()),
+            side(slices.bottom()),
+            side(slices.left()),
+        },
+        .fill = ninePieceImage.fill() ? std::make_optional(CSS::Keyword::Fill { }) : std::nullopt
+    };
 }
 
-static Ref<CSSPrimitiveValue> valueForImageSliceSide(const Length& length)
+static CSS::BorderImageSource valueForNinePieceImageSource(const NinePieceImage& ninePieceImage, const RenderStyle& style)
 {
-    // These values can be percentages or numbers.
-    if (length.isPercent())
-        return CSSPrimitiveValue::create(length.percent(), CSSUnitType::CSS_PERCENTAGE);
-    ASSERT(length.isFixed());
-    return CSSPrimitiveValue::create(length.value());
+    if (ninePieceImage.hasImage())
+        return CSS::BorderImageSource { CSS::Image { ninePieceImage.image()->computedStyleValue(style) } };
+    return CSS::BorderImageSource { CSS::Keyword::None { } };
 }
 
-static inline Ref<CSSBorderImageSliceValue> valueForNinePieceImageSlice(const NinePieceImage& image)
+static inline CSS::BorderImageWidth valueForNinePieceImageWidth(const NinePieceImage& ninePieceImage, const RenderStyle& style)
 {
-    auto& slices = image.imageSlices();
+    auto side = [&](const Length& length) -> CSS::BorderImageWidth::Width {
+        if (length.isAuto())
+            return CSS::BorderImageWidth::Width { CSS::Keyword::Auto { } };
 
-    RefPtr<CSSPrimitiveValue> top = valueForImageSliceSide(slices.top());
-
-    RefPtr<CSSPrimitiveValue> right;
-    RefPtr<CSSPrimitiveValue> bottom;
-    RefPtr<CSSPrimitiveValue> left;
-    if (slices.right() == slices.top() && slices.bottom() == slices.top() && slices.left() == slices.top()) {
-        right = top;
-        bottom = top;
-        left = top;
-    } else {
-        right = valueForImageSliceSide(slices.right());
-        if (slices.bottom() == slices.top() && slices.right() == slices.left()) {
-            bottom = top;
-            left = right;
-        } else {
-            bottom = valueForImageSliceSide(slices.bottom());
-            if (slices.left() == slices.right())
-                left = right;
-            else
-                left = valueForImageSliceSide(slices.left());
+        if (length.isRelative()) {
+            return CSS::BorderImageWidth::Width {
+                Style::toCSS(Style::Number<CSS::Nonnegative> { length.value() }, style)
+            };
         }
-    }
 
-    return CSSBorderImageSliceValue::create({ top.releaseNonNull(), right.releaseNonNull(), bottom.releaseNonNull(), left.releaseNonNull() }, image.fill());
-}
-
-static Ref<CSSValue> valueForNinePieceImageQuad(const LengthBox& box, const RenderStyle& style)
-{
-    RefPtr<CSSPrimitiveValue> top;
-    RefPtr<CSSPrimitiveValue> right;
-    RefPtr<CSSPrimitiveValue> bottom;
-    RefPtr<CSSPrimitiveValue> left;
-
-    if (box.top().isRelative())
-        top = CSSPrimitiveValue::create(box.top().value());
-    else
-        top = CSSPrimitiveValue::create(box.top(), style);
-
-    if (box.right() == box.top() && box.bottom() == box.top() && box.left() == box.top()) {
-        right = top;
-        bottom = top;
-        left = top;
-    } else {
-        if (box.right().isRelative())
-            right = CSSPrimitiveValue::create(box.right().value());
-        else
-            right = CSSPrimitiveValue::create(box.right(), style);
-
-        if (box.bottom() == box.top() && box.right() == box.left()) {
-            bottom = top;
-            left = right;
-        } else {
-            if (box.bottom().isRelative())
-                bottom = CSSPrimitiveValue::create(box.bottom().value());
-            else
-                bottom = CSSPrimitiveValue::create(box.bottom(), style);
-
-            if (box.left() == box.right())
-                left = right;
-            else {
-                if (box.left().isRelative())
-                    left = CSSPrimitiveValue::create(box.left().value());
-                else
-                    left = CSSPrimitiveValue::create(box.left(), style);
-            }
+        if (length.isPercent()) {
+            return CSS::BorderImageWidth::Width {
+                Style::toCSS(
+                    Style::LengthPercentage<CSS::Nonnegative> {
+                        Style::LengthPercentage<CSS::Nonnegative>::Percentage { length.percent() }
+                    },
+                    style
+                )
+            };
         }
+
+        if (length.isCalculated()) {
+            return CSS::BorderImageWidth::Width {
+                Style::toCSS(
+                    Style::LengthPercentage<CSS::Nonnegative> {
+                        Style::LengthPercentage<CSS::Nonnegative>::Calc { length.protectedCalculationValue() }
+                    },
+                    style
+                )
+            };
+        }
+
+        ASSERT(length.isFixed());
+        return CSS::BorderImageWidth::Width {
+            Style::toCSS(
+                Style::LengthPercentage<CSS::Nonnegative> {
+                    Style::LengthPercentage<CSS::Nonnegative>::Dimension { length.value() }
+                },
+                style
+            )
+        };
+    };
+
+    auto& widths = ninePieceImage.borderSlices();
+
+    return CSS::BorderImageWidth {
+        .widths = CSS::BorderImageWidth::Widths {
+            side(widths.top()),
+            side(widths.right()),
+            side(widths.bottom()),
+            side(widths.left()),
+        },
+        .overridesBorderWidths = false
+    };
+}
+
+static inline CSS::BorderImageOutset valueForNinePieceImageOutset(const NinePieceImage& ninePieceImage, const RenderStyle& style)
+{
+    auto side = [&](const Length& length) -> CSS::BorderImageOutset::Outset {
+        if (length.isRelative()) {
+            return CSS::BorderImageOutset::Outset {
+                Style::toCSS(Style::Number<CSS::Nonnegative> { length.value() }, style)
+            };
+        }
+
+        ASSERT(length.isFixed());
+        return CSS::BorderImageOutset::Outset {
+            Style::toCSS(Style::Length<CSS::Nonnegative> { length.value() }, style)
+        };
+    };
+
+    auto& outsets = ninePieceImage.outset();
+
+    return CSS::BorderImageOutset {
+        .outsets = CSS::BorderImageOutset::Outsets {
+            side(outsets.top()),
+            side(outsets.right()),
+            side(outsets.bottom()),
+            side(outsets.left()),
+        }
+    };
+}
+
+static CSS::BorderImageRepeat valueForNinePieceImageRepeat(const NinePieceImage& ninePieceImage)
+{
+    auto axis = [](NinePieceImageRule rule) -> CSS::BorderImageRepeatSingleAxis {
+        switch (rule) {
+        case NinePieceImageRule::Repeat:
+            return CSS::Keyword::Repeat { };
+        case NinePieceImageRule::Round:
+            return CSS::Keyword::Round { };
+        case NinePieceImageRule::Space:
+            return CSS::Keyword::Space { };
+        default:
+            return CSS::Keyword::Stretch { };
+        }
+    };
+
+    return CSS::BorderImageRepeat {
+        .x = axis(ninePieceImage.horizontalRule()),
+        .y = axis(ninePieceImage.verticalRule()),
+    };
+}
+
+static std::optional<CSS::BorderImage> valueForNinePieceImage(CSSPropertyID propertyID, const NinePieceImage& ninePieceImage, const RenderStyle& style)
+{
+    if (!ninePieceImage.hasImage()) {
+        return CSS::BorderImage {
+            .source = CSS::BorderImageSource { CSS::Keyword::None { } },
+            .slice = { },
+            .width = { },
+            .outset = { },
+            .repeat = { },
+        };
     }
 
-    return CSSQuadValue::create({ top.releaseNonNull(), right.releaseNonNull(), bottom.releaseNonNull(), left.releaseNonNull() });
-}
-
-static Ref<CSSValue> valueForNinePieceImageRepeat(const NinePieceImage& image)
-{
-    auto horizontalRepeat = CSSPrimitiveValue::create(valueForRepeatRule(image.horizontalRule()));
-    RefPtr<CSSPrimitiveValue> verticalRepeat;
-    if (image.horizontalRule() == image.verticalRule())
-        verticalRepeat = horizontalRepeat.copyRef();
-    else
-        verticalRepeat = CSSPrimitiveValue::create(valueForRepeatRule(image.verticalRule()));
-    return CSSValuePair::create(WTFMove(horizontalRepeat), verticalRepeat.releaseNonNull());
-}
-
-static RefPtr<CSSValue> valueForNinePieceImage(CSSPropertyID propertyID, const NinePieceImage& image, const RenderStyle& style)
-{
-    if (!image.hasImage())
-        return CSSPrimitiveValue::create(CSSValueNone);
-
-    RefPtr<CSSValue> imageValue;
-    if (image.image())
-        imageValue = image.image()->computedStyleValue(style);
+    auto source = CSS::BorderImageSource { CSS::Image { ninePieceImage.image()->computedStyleValue(style) } };
 
     // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
-    const LengthBox& slices = image.borderSlices();
+    const LengthBox& slices = ninePieceImage.borderSlices();
     bool overridesBorderWidths = propertyID == CSSPropertyWebkitBorderImage && (slices.top().isFixed() || slices.right().isFixed() || slices.bottom().isFixed() || slices.left().isFixed());
-    if (overridesBorderWidths != image.overridesBorderWidths())
-        return nullptr;
+    if (overridesBorderWidths != ninePieceImage.overridesBorderWidths())
+        return { };
 
-    auto imageSlices = valueForNinePieceImageSlice(image);
-    auto borderSlices = valueForNinePieceImageQuad(slices, style);
-    auto outset = valueForNinePieceImageQuad(image.outset(), style);
-    auto repeat = valueForNinePieceImageRepeat(image);
-
-    return createBorderImageValue(WTFMove(imageValue), WTFMove(imageSlices), WTFMove(borderSlices), WTFMove(outset), WTFMove(repeat));
+    return CSS::BorderImage {
+        .source = WTFMove(source),
+        .slice = valueForNinePieceImageSlice(ninePieceImage),
+        .width = valueForNinePieceImageWidth(ninePieceImage, style),
+        .outset = valueForNinePieceImageOutset(ninePieceImage, style),
+        .repeat = valueForNinePieceImageRepeat(ninePieceImage),
+    };
 }
 
 static Ref<CSSValue> fontSizeAdjustFromStyle(const RenderStyle& style)
@@ -453,19 +489,43 @@ Ref<CSSPrimitiveValue> ComputedStyleExtractor::zoomAdjustedPixelValueForLength(c
     return CSSPrimitiveValue::create(length, style);
 }
 
-static inline Ref<CSSValue> valueForReflection(const StyleReflection* reflection, const RenderStyle& style)
+static CSS::WebKitBoxReflectProperty valueForReflection(const StyleReflection* reflection, const RenderStyle& style)
 {
     if (!reflection)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return CSS::WebKitBoxReflectProperty { CSS::Keyword::None { } };
 
-    // FIXME: Consider omitting 0px when the mask is null.
-    RefPtr<CSSPrimitiveValue> offset;
-    if (reflection->offset().isPercentOrCalculated())
-        offset = CSSPrimitiveValue::create(reflection->offset().percent(), CSSUnitType::CSS_PERCENTAGE);
-    else
-        offset = zoomAdjustedPixelValue(reflection->offset().value(), style);
+    auto directionValue = [&] -> CSS::WebKitBoxReflect::Direction {
+        switch (reflection->direction()) {
+        case ReflectionDirection::Above:
+            return CSS::Keyword::Above { };
+        case ReflectionDirection::Below:
+            return CSS::Keyword::Below { };
+        case ReflectionDirection::Left:
+            return CSS::Keyword::Left { };
+        case ReflectionDirection::Right:
+            return CSS::Keyword::Right { };
+        default:
+            ASSERT_NOT_REACHED();
+            return CSS::Keyword::Above { };
+        }
+    };
 
-    return CSSReflectValue::create(toCSSValueID(reflection->direction()), offset.releaseNonNull(), valueForNinePieceImage(CSSPropertyWebkitBoxReflect, reflection->mask(), style));
+    auto offsetValue = [&] -> CSS::LengthPercentage<> {
+        // FIXME: Consider omitting 0px when the mask is null.
+        auto& offset = reflection->offset();
+        if (offset.isPercent())
+            return Style::toCSS(Style::LengthPercentage<> { Style::LengthPercentage<>::Percentage { offset.percent() } }, style);
+        ASSERT(offset.isFixed());
+        return Style::toCSS(Style::LengthPercentage<> { Style::LengthPercentage<>::Dimension { offset.value() } }, style);
+    };
+
+    return CSS::WebKitBoxReflectProperty {
+        CSS::WebKitBoxReflect {
+            .direction = directionValue(),
+            .offset = offsetValue(),
+            .mask = valueForNinePieceImage(CSSPropertyWebkitBoxReflect, reflection->mask(), style),
+        }
+    };
 }
 
 static Ref<CSSValueList> createPositionListForLayer(CSSPropertyID propertyID, const FillLayer& layer, const RenderStyle& style)
@@ -2365,19 +2425,25 @@ static Ref<CSSValue> hangingPunctuationToCSSValue(OptionSet<HangingPunctuation> 
 
 static Ref<CSSValue> fillRepeatToCSSValue(FillRepeatXY repeat)
 {
-    // For backwards compatibility, if both values are equal, just return one of them. And
-    // if the two values are equivalent to repeat-x or repeat-y, just return the shorthand.
-    if (repeat.x == repeat.y)
-        return createConvertingToCSSValueID(repeat.x);
+    auto axis = [](FillRepeat rule) -> CSS::BackgroundRepeatStyleSingleAxis {
+        switch (rule) {
+        case FillRepeat::Repeat:
+            return CSS::Keyword::Repeat { };
+        case FillRepeat::Round:
+            return CSS::Keyword::Round { };
+        case FillRepeat::Space:
+            return CSS::Keyword::Space { };
+        default:
+            return CSS::Keyword::NoRepeat { };
+        }
+    };
 
-    if (repeat.x == FillRepeat::Repeat && repeat.y == FillRepeat::NoRepeat)
-        return CSSPrimitiveValue::create(CSSValueRepeatX);
-
-    if (repeat.x == FillRepeat::NoRepeat && repeat.y == FillRepeat::Repeat)
-        return CSSPrimitiveValue::create(CSSValueRepeatY);
-
-    return CSSValueList::createSpaceSeparated(createConvertingToCSSValueID(repeat.x),
-        createConvertingToCSSValueID(repeat.y));
+    return CSSBackgroundRepeatValue::create(
+        CSS::BackgroundRepeatStyle {
+            .x = axis(repeat.x),
+            .y = axis(repeat.y),
+        }
+    );
 }
 
 static Ref<CSSValue> maskSourceTypeToCSSValue(MaskMode type)
@@ -3715,9 +3781,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWebkitBorderVerticalSpacing:
         return zoomAdjustedPixelValue(style.verticalBorderSpacing(), style);
     case CSSPropertyBorderImageSource:
-        if (style.borderImageSource())
-            return style.borderImageSource()->computedStyleValue(style);
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return CSSBorderImageSourceValue::create(valueForNinePieceImageSource(style.borderImage(), style));
     case CSSPropertyBorderTopColor:
         return m_allowVisitedStyle ? cssValuePool.createColorValue(style.visitedDependentColor(CSSPropertyBorderTopColor)) : currentColorOrValidColor(style, style.borderTopColor());
     case CSSPropertyBorderRightColor:
@@ -3765,7 +3829,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyWebkitBoxPack:
         return createConvertingToCSSValueID(style.boxPack());
     case CSSPropertyWebkitBoxReflect:
-        return valueForReflection(style.boxReflect(), style);
+        return CSSWebKitBoxReflectPropertyValue::create(valueForReflection(style.boxReflect(), style));
     case CSSPropertyBoxShadow:
     case CSSPropertyWebkitBoxShadow:
         return valueForBoxShadow(style.boxShadow(), style);
@@ -4554,32 +4618,34 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return CSSPrimitiveValue::create((style.backfaceVisibility() == BackfaceVisibility::Hidden) ? CSSValueHidden : CSSValueVisible);
     case CSSPropertyBorderImage:
     case CSSPropertyWebkitBorderImage:
-        return valueForNinePieceImage(propertyID, style.borderImage(), style);
+        if (auto borderImage = valueForNinePieceImage(propertyID, style.borderImage(), style))
+            return CSSBorderImageValue::create(WTFMove(*borderImage));
+        return nullptr;
     case CSSPropertyBorderImageOutset:
-        return valueForNinePieceImageQuad(style.borderImage().outset(), style);
+        return CSSBorderImageOutsetValue::create(valueForNinePieceImageOutset(style.borderImage(), style));
     case CSSPropertyBorderImageRepeat:
-        return valueForNinePieceImageRepeat(style.borderImage());
+        return CSSBorderImageRepeatValue::create(valueForNinePieceImageRepeat(style.borderImage()));
     case CSSPropertyBorderImageSlice:
-        return valueForNinePieceImageSlice(style.borderImage());
+        return CSSBorderImageSliceValue::create(valueForNinePieceImageSlice(style.borderImage()));
     case CSSPropertyBorderImageWidth:
         if (style.borderImage().overridesBorderWidths())
             return nullptr;
-        return valueForNinePieceImageQuad(style.borderImage().borderSlices(), style);
+        return CSSBorderImageWidthValue::create(valueForNinePieceImageWidth(style.borderImage(), style));
     case CSSPropertyWebkitMaskBoxImage:
     case CSSPropertyMaskBorder:
-        return valueForNinePieceImage(propertyID, style.maskBorder(), style);
+        if (auto borderImage = valueForNinePieceImage(propertyID, style.maskBorder(), style))
+            return CSSBorderImageValue::create(WTFMove(*borderImage));
+        return nullptr;
     case CSSPropertyMaskBorderOutset:
-        return valueForNinePieceImageQuad(style.maskBorder().outset(), style);
+        return CSSBorderImageOutsetValue::create(valueForNinePieceImageOutset(style.maskBorder(), style));
     case CSSPropertyMaskBorderRepeat:
-        return valueForNinePieceImageRepeat(style.maskBorder());
+        return CSSBorderImageRepeatValue::create(valueForNinePieceImageRepeat(style.maskBorder()));
     case CSSPropertyMaskBorderSlice:
-        return valueForNinePieceImageSlice(style.maskBorder());
+        return CSSBorderImageSliceValue::create(valueForNinePieceImageSlice(style.maskBorder()));
     case CSSPropertyMaskBorderWidth:
-        return valueForNinePieceImageQuad(style.maskBorder().borderSlices(), style);
+        return CSSBorderImageWidthValue::create(valueForNinePieceImageWidth(style.maskBorder(), style));
     case CSSPropertyMaskBorderSource:
-        if (style.maskBorderSource())
-            return style.maskBorderSource()->computedStyleValue(style);
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return CSSBorderImageSourceValue::create(valueForNinePieceImageSource(style.maskBorder(), style));
     case CSSPropertyMaxLines:
         if (!style.maxLines())
             return CSSPrimitiveValue::create(CSSValueNone);

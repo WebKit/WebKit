@@ -31,14 +31,17 @@
 
 #include "Animation.h"
 #include "CSSBackgroundRepeatValue.h"
+#include "CSSBorderImageOutsetValue.h"
+#include "CSSBorderImageRepeatValue.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSBorderImageSourceValue.h"
+#include "CSSBorderImageValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSImageSetValue.h"
 #include "CSSImageValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParser.h"
-#include "CSSQuadValue.h"
 #include "CSSScrollValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSViewValue.h"
@@ -61,6 +64,16 @@ static bool treatAsInitialValue(const CSSValue& value, CSSPropertyID propertyID)
     default:
         return false;
     }
+}
+
+template<typename T, typename F> static LengthBox mapToLengthBox(const MinimallySerializingSpaceSeparatedRectEdges<T>& quad, F&& mapper)
+{
+    return LengthBox {
+        mapper(quad.top()),
+        mapper(quad.right()),
+        mapper(quad.bottom()),
+        mapper(quad.left())
+    };
 }
 
 CSSToStyleMap::CSSToStyleMap(Style::BuilderState& builderState)
@@ -171,8 +184,17 @@ void CSSToStyleMap::mapFillRepeat(CSSPropertyID propertyID, FillLayer& layer, co
     if (!backgroundRepeatValue)
         return;
 
-    auto repeatX = fromCSSValueID<FillRepeat>(backgroundRepeatValue->xValue());
-    auto repeatY = fromCSSValueID<FillRepeat>(backgroundRepeatValue->yValue());
+    auto mapToFillRepeat = [](const auto& repeat) {
+        return WTF::switchOn(repeat,
+            [](const CSS::Keyword::Repeat&)   { return FillRepeat::Repeat; },
+            [](const CSS::Keyword::Space&)    { return FillRepeat::Space; },
+            [](const CSS::Keyword::Round&)    { return FillRepeat::Round; },
+            [](const CSS::Keyword::NoRepeat&) { return FillRepeat::NoRepeat; }
+        );
+    };
+
+    auto repeatX = mapToFillRepeat(backgroundRepeatValue->repeat().x);
+    auto repeatY = mapToFillRepeat(backgroundRepeatValue->repeat().y);
     layer.setRepeat(FillRepeatXY { repeatX, repeatY });
 }
 
@@ -557,118 +579,149 @@ void CSSToStyleMap::mapAnimationRangeEnd(Animation& animation, const CSSValue& v
     animation.setRangeEnd(SingleTimelineRange::range(value, SingleTimelineRange::Type::End, &m_builderState));
 }
 
-void CSSToStyleMap::mapNinePieceImage(const CSSValue* value, NinePieceImage& image)
+void CSSToStyleMap::mapNinePieceImage(const CSS::BorderImage& css, NinePieceImage& ninePieceImage)
 {
-    // If we're not a value list, then we are "none" and don't need to alter the empty image at all.
-    auto* borderImage = dynamicDowncast<CSSValueList>(value);
-    if (!borderImage)
-        return;
+    if (css.source)
+        mapNinePieceImage(*css.source, ninePieceImage);
 
-    // Retrieve the border image value.
-    for (auto& current : *borderImage) {
-        if (current.isImage())
-            image.setImage(styleImage(current));
-        else if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(current))
-            mapNinePieceImageSlice(*imageSlice, image);
-        else if (auto* slashList = dynamicDowncast<CSSValueList>(current)) {
-            // Map in the image slices.
-            if (auto* imageSlice = dynamicDowncast<CSSBorderImageSliceValue>(slashList->item(0)))
-                mapNinePieceImageSlice(*imageSlice, image);
-
-            // Map in the border slices.
-            if (auto* borderImageWidth = dynamicDowncast<CSSBorderImageWidthValue>(slashList->item(1)))
-                mapNinePieceImageWidth(*borderImageWidth, image);
-
-            // Map in the outset.
-            if (slashList->item(2))
-                image.setOutset(mapNinePieceImageQuad(*slashList->item(2)));
-        } else if (current.isPair()) {
-            // Set the appropriate rules for stretch/round/repeat of the slices.
-            mapNinePieceImageRepeat(current, image);
+    if (css.slice) {
+        mapNinePieceImage(*css.slice, ninePieceImage);
+        if (css.width) {
+            mapNinePieceImage(*css.width, ninePieceImage);
+            if (css.outset)
+                mapNinePieceImage(*css.outset, ninePieceImage);
         }
     }
+
+    if (css.repeat)
+        mapNinePieceImage(*css.repeat, ninePieceImage);
+}
+
+void CSSToStyleMap::mapNinePieceImage(const CSS::BorderImageSource& source, NinePieceImage& ninePieceImage)
+{
+    WTF::switchOn(source,
+        [&](const CSS::Keyword::None&) {
+            ninePieceImage.setImage(nullptr);
+        },
+        [&](const CSS::Image& sourceImage) {
+            ninePieceImage.setImage(styleImage(sourceImage.image));
+        }
+    );
+}
+
+void CSSToStyleMap::mapNinePieceImage(const CSS::BorderImageSlice& slice, NinePieceImage& ninePieceImage)
+{
+    auto mapSideToLength = [&](const auto& value) {
+        return WTF::switchOn(value,
+            [](const Style::Number<CSS::Nonnegative, float>& number) {
+                return WebCore::Length { static_cast<int>(number.value), LengthType::Fixed };
+            },
+            [](const Style::Percentage<CSS::Nonnegative, float>& percentage) {
+                return WebCore::Length { percentage.value, LengthType::Percent };
+            }
+        );
+    };
+
+    ninePieceImage.setImageSlices(mapToLengthBox(Style::toStyle(slice.slices, m_builderState), mapSideToLength));
+    ninePieceImage.setFill(slice.fill.has_value());
+}
+
+void CSSToStyleMap::mapNinePieceImage(const CSS::BorderImageWidth& width, NinePieceImage& ninePieceImage)
+{
+    auto mapSideToLength = [&](const auto& value) {
+        return WTF::switchOn(value,
+            [](const Style::LengthPercentage<CSS::Nonnegative>& lengthPercentage) {
+                return WTF::switchOn(lengthPercentage,
+                    [](const Style::LengthPercentage<CSS::Nonnegative>::Dimension& length) {
+                        return WebCore::Length { length.value, LengthType::Fixed };
+                    },
+                    [](const Style::LengthPercentage<CSS::Nonnegative>::Percentage& percentage) {
+                        return WebCore::Length { percentage.value, LengthType::Percent };
+                    },
+                    [](const Style::LengthPercentage<CSS::Nonnegative>::Calc& calc) {
+                        return WebCore::Length { calc.protectedCalculation() };
+                    }
+                );
+            },
+            [](const Style::Number<CSS::Nonnegative>& number) {
+                return WebCore::Length { number.value, LengthType::Relative };
+            },
+            [](const CSS::Keyword::Auto&) {
+                return WebCore::Length { };
+            }
+        );
+    };
+
+    ninePieceImage.setBorderSlices(mapToLengthBox(Style::toStyle(width.widths, m_builderState), mapSideToLength));
+    ninePieceImage.setOverridesBorderWidths(width.overridesBorderWidths);
+}
+
+void CSSToStyleMap::mapNinePieceImage(const CSS::BorderImageOutset& outset, NinePieceImage& ninePieceImage)
+{
+    auto mapSideToLength = [&](const auto& value) {
+        return WTF::switchOn(value,
+            [](const Style::Length<CSS::Nonnegative>& length) {
+                return WebCore::Length { length.value, LengthType::Fixed };
+            },
+            [](const Style::Number<CSS::Nonnegative>& number) {
+                return WebCore::Length { number.value, LengthType::Relative };
+            }
+        );
+    };
+
+    ninePieceImage.setOutset(mapToLengthBox(Style::toStyle(outset.outsets, m_builderState), mapSideToLength));
+}
+
+void CSSToStyleMap::mapNinePieceImage(const CSS::BorderImageRepeat& repeat, NinePieceImage& ninePieceImage)
+{
+    auto mapToNinePieceImageRule = [](const CSS::BorderImageRepeatSingleAxis& repeat) {
+        return WTF::switchOn(repeat,
+            [](const CSS::Keyword::Stretch&) { return NinePieceImageRule::Stretch; },
+            [](const CSS::Keyword::Repeat&)  { return NinePieceImageRule::Repeat; },
+            [](const CSS::Keyword::Round&)   { return NinePieceImageRule::Round; },
+            [](const CSS::Keyword::Space&)   { return NinePieceImageRule::Space; }
+        );
+    };
+
+    ninePieceImage.setHorizontalRule(mapToNinePieceImageRule(repeat.x));
+    ninePieceImage.setVerticalRule(mapToNinePieceImageRule(repeat.y));
+}
+
+void CSSToStyleMap::mapNinePieceImageSource(const CSSValue& value, NinePieceImage& image)
+{
+    if (auto* sourceValue = dynamicDowncast<CSSBorderImageSourceValue>(value))
+        mapNinePieceImage(sourceValue->source(), image);
+    else
+        image.setImage(nullptr);
 }
 
 void CSSToStyleMap::mapNinePieceImageSlice(const CSSValue& value, NinePieceImage& image)
 {
     if (auto* sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value))
-        mapNinePieceImageSlice(*sliceValue, image);
-}
-
-void CSSToStyleMap::mapNinePieceImageSlice(const CSSBorderImageSliceValue& value, NinePieceImage& image)
-{
-    // Set up a length box to represent our image slices.
-    auto& conversionData = m_builderState.cssToLengthConversionData();
-    auto side = [&](const CSSPrimitiveValue& value) -> Length {
-        if (value.isPercentage())
-            return { value.resolveAsPercentage(conversionData), LengthType::Percent };
-        return { value.resolveAsNumber<int>(conversionData), LengthType::Fixed };
-    };
-    auto& slices = value.slices();
-    image.setImageSlices({
-        side(slices.top()),
-        side(slices.right()),
-        side(slices.bottom()),
-        side(slices.left())
-    });
-
-    // Set our fill mode.
-    image.setFill(value.fill());
+        mapNinePieceImage(sliceValue->slice(), image);
 }
 
 void CSSToStyleMap::mapNinePieceImageWidth(const CSSValue& value, NinePieceImage& image)
 {
     if (auto* widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value))
-        mapNinePieceImageWidth(*widthValue, image);
+        mapNinePieceImage(widthValue->width(), image);
 }
 
-void CSSToStyleMap::mapNinePieceImageWidth(const CSSBorderImageWidthValue& value, NinePieceImage& image)
+void CSSToStyleMap::mapNinePieceImageOutset(const CSSValue& value, NinePieceImage& image)
 {
-    if (!is<CSSBorderImageWidthValue>(value))
+    if (auto* outsetValue = dynamicDowncast<CSSBorderImageOutsetValue>(value)) {
+        mapNinePieceImage(outsetValue->outset(), image);
         return;
+    }
 
-    image.setBorderSlices(mapNinePieceImageQuad(value.widths()));
-    image.setOverridesBorderWidths(value.overridesBorderWidths());
-}
-
-LengthBox CSSToStyleMap::mapNinePieceImageQuad(const CSSValue& value)
-{
-    if (LIKELY(value.isQuad()))
-        return mapNinePieceImageQuad(value.quad());
-
-    // Values coming from CSS Typed OM may not have been converted to a Quad yet.
+    // Values coming from CSS Typed OM may not have been converted to a CSSBorderImageOutsetValue.
     auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value);
     if (!primitive)
-        return LengthBox();
+        return;
     if (!primitive->isNumber() && !primitive->isLength())
-        return LengthBox();
+        return;
     auto side = mapNinePieceImageSide(value);
-    return { Length { side }, Length { side }, Length { side }, Length { side } };
-}
-
-Length CSSToStyleMap::mapNinePieceImageSide(const CSSValue& value)
-{
-    auto primitiveValue = Style::BuilderConverter::requiredDowncast<CSSPrimitiveValue>(m_builderState, value);
-    if (!primitiveValue)
-        return { };
-    if (primitiveValue->valueID() == CSSValueAuto)
-        return { };
-    auto& conversionData = m_builderState.cssToLengthConversionData();
-    if (primitiveValue->isNumber())
-        return { primitiveValue->resolveAsNumber<float>(conversionData), LengthType::Relative };
-    if (primitiveValue->isPercentage())
-        return { primitiveValue->resolveAsPercentage<float>(conversionData), LengthType::Percent };
-    if (primitiveValue->isCalculatedPercentageWithLength())
-        return Length { primitiveValue->cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
-    return { primitiveValue->resolveAsLength<Length>(conversionData) };
-}
-
-LengthBox CSSToStyleMap::mapNinePieceImageQuad(const Quad& quad)
-{
-    auto side = [&](const CSSValue& value) {
-        return mapNinePieceImageSide(value);
-    };
-    return { side(quad.top()), side(quad.right()), side(quad.bottom()), side(quad.left()) };
+    image.setOutset({ Length { side }, Length { side }, Length { side }, Length { side } });
 }
 
 template<> constexpr NinePieceImageRule fromCSSValueID(CSSValueID valueID)
@@ -691,10 +744,37 @@ template<> constexpr NinePieceImageRule fromCSSValueID(CSSValueID valueID)
 
 void CSSToStyleMap::mapNinePieceImageRepeat(const CSSValue& value, NinePieceImage& image)
 {
-    if (!value.isPair())
+    if (auto* repeatValue = dynamicDowncast<CSSBorderImageRepeatValue>(value)) {
+        mapNinePieceImage(repeatValue->repeat(), image);
         return;
-    image.setHorizontalRule(fromCSSValue<NinePieceImageRule>(value.first()));
-    image.setVerticalRule(fromCSSValue<NinePieceImageRule>(value.second()));
+    }
+
+    // Values coming from CSS Typed OM may not have been converted to a CSSBorderImageRepeatValue.
+    auto* primitive = dynamicDowncast<CSSPrimitiveValue>(value);
+    if (!primitive)
+        return;
+
+    auto rule = fromCSSValue<NinePieceImageRule>(*primitive);
+    image.setHorizontalRule(rule);
+    image.setVerticalRule(rule);
+
+}
+
+Length CSSToStyleMap::mapNinePieceImageSide(const CSSValue& value)
+{
+    auto primitiveValue = Style::BuilderConverter::requiredDowncast<CSSPrimitiveValue>(m_builderState, value);
+    if (!primitiveValue)
+        return { };
+    if (primitiveValue->valueID() == CSSValueAuto)
+        return { };
+    auto& conversionData = m_builderState.cssToLengthConversionData();
+    if (primitiveValue->isNumber())
+        return { primitiveValue->resolveAsNumber<float>(conversionData), LengthType::Relative };
+    if (primitiveValue->isPercentage())
+        return { primitiveValue->resolveAsPercentage<float>(conversionData), LengthType::Percent };
+    if (primitiveValue->isCalculatedPercentageWithLength())
+        return Length { primitiveValue->cssCalcValue()->createCalculationValue(conversionData, CSSCalcSymbolTable { }) };
+    return { primitiveValue->resolveAsLength<Length>(conversionData) };
 }
 
 }

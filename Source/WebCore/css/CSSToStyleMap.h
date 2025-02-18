@@ -40,6 +40,15 @@ enum CSSPropertyID : uint16_t;
 
 struct Length;
 
+namespace CSS {
+struct BorderImage;
+struct BorderImageOutset;
+struct BorderImageRepeat;
+struct BorderImageSlice;
+struct BorderImageSource;
+struct BorderImageWidth;
+}
+
 namespace Style {
 class BuilderState;
 }
@@ -75,17 +84,21 @@ public:
     void mapAnimationRangeStart(Animation&, const CSSValue&);
     void mapAnimationRangeEnd(Animation&, const CSSValue&);
 
-    void mapNinePieceImage(const CSSValue*, NinePieceImage&);
+    void mapNinePieceImage(const CSS::BorderImage&, NinePieceImage&);
+    void mapNinePieceImage(const CSS::BorderImageSource&, NinePieceImage&);
+    void mapNinePieceImage(const CSS::BorderImageSlice&, NinePieceImage&);
+    void mapNinePieceImage(const CSS::BorderImageWidth&, NinePieceImage&);
+    void mapNinePieceImage(const CSS::BorderImageOutset&, NinePieceImage&);
+    void mapNinePieceImage(const CSS::BorderImageRepeat&, NinePieceImage&);
+
+    void mapNinePieceImageSource(const CSSValue&, NinePieceImage&);
     void mapNinePieceImageSlice(const CSSValue&, NinePieceImage&);
-    void mapNinePieceImageSlice(const CSSBorderImageSliceValue&, NinePieceImage&);
     void mapNinePieceImageWidth(const CSSValue&, NinePieceImage&);
-    void mapNinePieceImageWidth(const CSSBorderImageWidthValue&, NinePieceImage&);
-    LengthBox mapNinePieceImageQuad(const CSSValue&);
-    static void mapNinePieceImageRepeat(const CSSValue&, NinePieceImage&);
+    void mapNinePieceImageOutset(const CSSValue&, NinePieceImage&);
+    void mapNinePieceImageRepeat(const CSSValue&, NinePieceImage&);
 
 private:
     RefPtr<StyleImage> styleImage(const CSSValue&);
-    LengthBox mapNinePieceImageQuad(const Quad&);
     Length mapNinePieceImageSide(const CSSValue&);
 
     Style::BuilderState& m_builderState;

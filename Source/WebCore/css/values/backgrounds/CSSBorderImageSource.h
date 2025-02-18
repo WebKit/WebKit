@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,45 +16,51 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSReflectValue.h"
+#pragma once
 
-#include <wtf/text/MakeString.h>
+#include "CSSImage.h"
+#include "CSSPrimitiveNumericTypes.h"
+#include <wtf/CompactVariant.h>
 
 namespace WebCore {
+namespace CSS {
 
-CSSReflectValue::CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
-    : CSSValue(ClassType::Reflect)
-    , m_direction(direction)
-    , m_offset(WTFMove(offset))
-    , m_mask(WTFMove(mask))
-{
-}
+// <'border-image-source'> = none | <image>
+// https://drafts.csswg.org/css-backgrounds/#propdef-border-image-source
+struct BorderImageSource {
+    BorderImageSource(CSS::Keyword::None keyword)
+        : value { keyword }
+    {
+    }
 
-Ref<CSSReflectValue> CSSReflectValue::create(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask)
-{
-    return adoptRef(*new CSSReflectValue(direction, WTFMove(offset), WTFMove(mask)));
-}
+    BorderImageSource(CSS::Image&& image)
+        : value { WTFMove(image) }
+    {
+    }
 
-String CSSReflectValue::customCSSText(const CSS::SerializationContext& context) const
-{
-    if (m_mask)
-        return makeString(nameLiteral(m_direction), ' ', m_offset->cssText(context), ' ', m_mask->cssText(context));
-    return makeString(nameLiteral(m_direction), ' ', m_offset->cssText(context));
-}
+    template<typename T> bool holdsAlternative() const
+    {
+        return WTF::holdsAlternative<T>(value);
+    }
 
-bool CSSReflectValue::equals(const CSSReflectValue& other) const
-{
-    return m_direction == other.m_direction
-        && compareCSSValue(m_offset, other.m_offset)
-        && compareCSSValuePtr(m_mask, other.m_mask);
-}
+    template<typename... F> decltype(auto) switchOn(F&&... f) const
+    {
+        return WTF::switchOn(value, std::forward<F>(f)...);
+    }
 
+    bool operator==(const BorderImageSource&) const = default;
+
+private:
+    CompactVariant<CSS::Keyword::None, CSS::Image> value;
+};
+
+} // namespace CSS
 } // namespace WebCore
+
+template<> inline constexpr auto WebCore::TreatAsVariantLike<WebCore::CSS::BorderImageSource> = true;

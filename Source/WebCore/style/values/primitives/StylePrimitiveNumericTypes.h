@@ -32,9 +32,9 @@ namespace WebCore {
 namespace Style {
 
 // NOTE: This is spelled with an explicit "Or" to distinguish it from types like AnglePercentage/LengthPercentage that have behavior distinctions beyond just being a union of the two types (specifically, calc() has specific behaviors for those types).
-template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> struct NumberOrPercentage {
-    using Number = Style::Number<nR, V>;
-    using Percentage = Style::Percentage<pR, V>;
+template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename nV = double, typename pV = nV> struct NumberOrPercentage {
+    using Number = Style::Number<nR, nV>;
+    using Percentage = Style::Percentage<pR, pV>;
 
     NumberOrPercentage(std::variant<Number, Percentage>&& value)
     {
@@ -48,6 +48,16 @@ template<CSS::Range nR = CSS::All, CSS::Range pR = nR, typename V = double> stru
 
     NumberOrPercentage(Percentage value)
         : value { WTFMove(value) }
+    {
+    }
+
+    NumberOrPercentage(CSS::ValueLiteral<CSS::NumberUnit::Number> value)
+        : value { Number { value } }
+    {
+    }
+
+    NumberOrPercentage(CSS::ValueLiteral<CSS::PercentageUnit::Percentage> value)
+        : value { Percentage { value } }
     {
     }
 
@@ -146,8 +156,8 @@ using LengthPercentageSpaceSeparatedSizeNonnegative = SpaceSeparatedSize<LengthP
 
 // MARK: CSS -> Style
 
-template<auto nR, auto pR, typename V> struct ToStyleMapping<CSS::NumberOrPercentage<nR, pR, V>> {
-    using type = NumberOrPercentage<nR, pR, V>;
+template<auto nR, auto pR, typename nV, typename pV> struct ToStyleMapping<CSS::NumberOrPercentage<nR, pR, nV, pV>> {
+    using type = NumberOrPercentage<nR, pR, nV, pV>;
 };
 
 template<auto nR, auto pR, typename V> struct ToStyleMapping<CSS::NumberOrPercentageResolvedToNumber<nR, pR, V>> {
@@ -156,8 +166,8 @@ template<auto nR, auto pR, typename V> struct ToStyleMapping<CSS::NumberOrPercen
 
 // MARK: Style -> CSS
 
-template<auto nR, auto pR, typename V> struct ToCSSMapping<NumberOrPercentage<nR, pR, V>> {
-    using type = CSS::NumberOrPercentage<nR, pR, V>;
+template<auto nR, auto pR, typename nV, typename pV> struct ToCSSMapping<NumberOrPercentage<nR, pR, nV, pV>> {
+    using type = CSS::NumberOrPercentage<nR, pR, nV, pV>;
 };
 
 template<auto nR, auto pR, typename V> struct ToCSSMapping<NumberOrPercentageResolvedToNumber<nR, pR, V>> {
