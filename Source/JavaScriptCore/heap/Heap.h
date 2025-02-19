@@ -336,7 +336,9 @@ public:
     SlotVisitor& collectorSlotVisitor() { return *m_collectorSlotVisitor; }
 
     JS_EXPORT_PRIVATE GCActivityCallback* fullActivityCallback();
+    JS_EXPORT_PRIVATE RefPtr<GCActivityCallback> protectedFullActivityCallback();
     JS_EXPORT_PRIVATE GCActivityCallback* edenActivityCallback();
+    JS_EXPORT_PRIVATE RefPtr<GCActivityCallback> protectedEdenActivityCallback();
 
     JS_EXPORT_PRIVATE void setFullActivityCallback(RefPtr<GCActivityCallback>&&);
     JS_EXPORT_PRIVATE void setEdenActivityCallback(RefPtr<GCActivityCallback>&&);

@@ -203,8 +203,6 @@ bindings/js/JSWorkerGlobalScopeBase.cpp
 bindings/js/JSWorkerGlobalScopeCustom.cpp
 bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/ScriptCachedFrameData.cpp
-bindings/js/ScriptController.cpp
-bindings/js/ScriptControllerMac.mm
 bindings/js/ScriptModuleLoader.cpp
 bindings/js/SerializedScriptValue.cpp
 bindings/js/WebCoreJSClientData.cpp
@@ -788,7 +786,6 @@ workers/WorkerConsoleClient.cpp
 workers/WorkerGlobalScope.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerOrWorkletGlobalScope.cpp
-workers/WorkerOrWorkletScriptController.cpp
 workers/WorkerOrWorkletThread.cpp
 workers/WorkerScriptLoader.cpp
 workers/service/ExtendableEvent.cpp

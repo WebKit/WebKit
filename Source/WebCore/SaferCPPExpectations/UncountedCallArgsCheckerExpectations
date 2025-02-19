@@ -401,8 +401,6 @@ bindings/js/JSXMLHttpRequestCustom.cpp
 bindings/js/ScheduledAction.cpp
 bindings/js/ScriptBufferSourceProvider.h
 bindings/js/ScriptCachedFrameData.cpp
-bindings/js/ScriptController.cpp
-bindings/js/ScriptControllerMac.mm
 bindings/js/ScriptModuleLoader.cpp
 bindings/js/ScriptSourceCode.h
 bindings/js/SerializedScriptValue.cpp
@@ -1462,7 +1460,6 @@ workers/WorkerInspectorProxy.cpp
 workers/WorkerMessagingProxy.cpp
 workers/WorkerNotificationClient.cpp
 workers/WorkerOrWorkletGlobalScope.cpp
-workers/WorkerOrWorkletScriptController.cpp
 workers/WorkerOrWorkletThread.cpp
 workers/WorkerRunLoop.cpp
 workers/WorkerScriptLoader.cpp

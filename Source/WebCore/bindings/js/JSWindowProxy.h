@@ -61,6 +61,7 @@ public:
     WindowProxy* windowProxy() const;
 
     DOMWindow& wrapped() const;
+    Ref<DOMWindow> protectedWrapped() const;
     static WindowProxy* toWrapped(JSC::VM&, JSC::JSValue);
 
     DOMWrapperWorld& world();

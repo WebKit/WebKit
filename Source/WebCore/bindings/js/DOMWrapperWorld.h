@@ -95,8 +95,8 @@ DOMWrapperWorld& normalWorld(JSC::VM&);
 WEBCORE_EXPORT DOMWrapperWorld& mainThreadNormalWorldSingleton();
 inline Ref<DOMWrapperWorld> protectedMainThreadNormalWorld() { return mainThreadNormalWorldSingleton(); }
 
-inline DOMWrapperWorld& debuggerWorld() { return mainThreadNormalWorldSingleton(); }
-inline DOMWrapperWorld& pluginWorld() { return mainThreadNormalWorldSingleton(); }
+inline DOMWrapperWorld& debuggerWorldSingleton() { return mainThreadNormalWorldSingleton(); }
+inline DOMWrapperWorld& pluginWorldSingleton() { return mainThreadNormalWorldSingleton(); }
 
 DOMWrapperWorld& currentWorld(JSC::JSGlobalObject&);
 DOMWrapperWorld& worldForDOMObject(JSC::JSObject&);

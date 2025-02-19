@@ -585,7 +585,7 @@ void InspectorFrontendHost::showContextMenu(Event& event, Vector<ContextMenuItem
     RefPtr localMainFrame = m_frontendPage->localMainFrame();
     if (!localMainFrame)
         return;
-    auto& globalObject = *localMainFrame->script().globalObject(debuggerWorld());
+    auto& globalObject = *localMainFrame->script().globalObject(debuggerWorldSingleton());
     auto& vm = globalObject.vm();
     auto value = globalObject.get(&globalObject, JSC::Identifier::fromString(vm, "InspectorFrontendAPI"_s));
     ASSERT(value);

@@ -2548,9 +2548,19 @@ GCActivityCallback* Heap::fullActivityCallback()
     return m_fullActivityCallback.get();
 }
 
+RefPtr<GCActivityCallback> Heap::protectedFullActivityCallback()
+{
+    return m_fullActivityCallback;
+}
+
 GCActivityCallback* Heap::edenActivityCallback()
 {
     return m_edenActivityCallback.get();
+}
+
+RefPtr<GCActivityCallback> Heap::protectedEdenActivityCallback()
+{
+    return m_edenActivityCallback;
 }
 
 IncrementalSweeper& Heap::sweeper()

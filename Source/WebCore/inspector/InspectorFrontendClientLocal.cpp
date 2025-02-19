@@ -188,7 +188,7 @@ void InspectorFrontendClientLocal::windowObjectCleared()
         m_frontendHost->disconnectClient();
     
     m_frontendHost = InspectorFrontendHost::create(this, frontendPage());
-    m_frontendHost->addSelfToGlobalObjectInWorld(debuggerWorld());
+    m_frontendHost->addSelfToGlobalObjectInWorld(debuggerWorldSingleton());
 }
 
 void InspectorFrontendClientLocal::frontendLoaded()

@@ -159,6 +159,11 @@ DOMWindow& JSWindowProxy::wrapped() const
     return jsCast<JSDOMWindowBase*>(window)->wrapped();
 }
 
+Ref<DOMWindow> JSWindowProxy::protectedWrapped() const
+{
+    return wrapped();
+}
+
 JSValue toJS(JSGlobalObject* lexicalGlobalObject, WindowProxy& windowProxy)
 {
     auto* jsWindowProxy = windowProxy.jsWindowProxy(currentWorld(*lexicalGlobalObject));
