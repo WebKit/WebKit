@@ -861,8 +861,11 @@ css/CSSAspectRatioValue.cpp
 css/CSSAttrValue.cpp
 css/CSSBackgroundRepeatValue.cpp
 css/CSSBasicShapeValue.cpp
-css/CSSBorderImage.cpp
+css/CSSBorderImageValue.cpp
+css/CSSBorderImageOutsetValue.cpp
+css/CSSBorderImageRepeatValue.cpp
 css/CSSBorderImageSliceValue.cpp
+css/CSSBorderImageSourceValue.cpp
 css/CSSBorderImageWidthValue.cpp
 css/CSSBoxShadowPropertyValue.cpp
 css/CSSCanvasValue.cpp
@@ -931,10 +934,8 @@ css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
 css/CSSPropertyRule.cpp
 css/CSSPropertySourceData.cpp
-css/CSSQuadValue.cpp
 css/CSSRayValue.cpp
 css/CSSRectValue.cpp
-css/CSSReflectValue.cpp
 css/CSSRegisteredCustomProperty.cpp
 css/CSSRule.cpp
 css/CSSRuleList.cpp
@@ -964,6 +965,7 @@ css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
 css/CSSViewValue.cpp
 css/CSSViewTransitionRule.cpp
+css/CSSWebKitBoxReflectPropertyValue.cpp
 css/ComputedStyleDependencies.cpp
 css/ComputedStyleExtractor.cpp
 css/DOMCSSNamespace.cpp
@@ -1153,6 +1155,10 @@ css/typedom/transform/CSSTranslate.cpp
 css/values/CSSSerializationContext.cpp
 css/values/CSSValueAggregates.cpp
 css/values/CSSValueTypes.cpp
+css/values/backgrounds/CSSBackgroundRepeat.cpp
+css/values/backgrounds/CSSBorderImage.cpp
+css/values/backgrounds/CSSBorderImageRepeat.cpp
+css/values/backgrounds/CSSBorderImageWidth.cpp
 css/values/backgrounds/CSSBorderRadius.cpp
 css/values/color-adjust/CSSColorScheme.cpp
 css/values/color/CSSColor.cpp
@@ -1171,6 +1177,7 @@ css/values/color/CSSPlatformColorResolutionState.cpp
 css/values/color/CSSResolvedColor.cpp
 css/values/filter-effects/CSSFilterReference.cpp
 css/values/images/CSSGradient.cpp
+css/values/images/CSSImage.cpp
 css/values/motion/CSSRayFunction.cpp
 css/values/primitives/CSSPosition.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+Canonicalization.cpp

@@ -1,5 +1,5 @@
-/**
- * Copyright (C) 2023 Apple Inc. All right reserved.
+/*
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -16,40 +16,29 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CSSBorderImageRepeat.h"
 
-#include "Quad.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
+namespace CSS {
 
-class CSSQuadValue final : public CSSValue {
-public:
-    static Ref<CSSQuadValue> create(Quad);
-
-    const Quad& quad() const { return m_quad; }
-
-    String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSQuadValue&) const;
-    bool canBeCoalesced() const;
-
-private:
-    explicit CSSQuadValue(Quad);
-    bool m_coalesceIdenticalValues { true };
-    Quad m_quad;
-};
-
-inline const Quad& CSSValue::quad() const
+void Serialize<BorderImageRepeat>::operator()(StringBuilder& builder, const SerializationContext& context, const BorderImageRepeat& value)
 {
-    return downcast<CSSQuadValue>(*this).quad();
+    if (value.x == value.y) {
+        serializationForCSS(builder, context, value.x);
+        return;
+    }
+
+    serializationForCSSOnTupleLike(builder, context, value, SerializationSeparator<BorderImageRepeat>);
 }
 
+} // namespace CSS
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSQuadValue, isQuad())

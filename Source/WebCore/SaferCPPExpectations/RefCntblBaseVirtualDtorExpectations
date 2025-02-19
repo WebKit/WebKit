@@ -4,7 +4,13 @@ css/CSSAspectRatioValue.h
 css/CSSAttrValue.h
 css/CSSBackgroundRepeatValue.h
 css/CSSBasicShapeValue.h
+css/CSSBorderImageOutsetValue.h
+css/CSSBorderImageRepeatValue.h
 css/CSSBorderImageSliceValue.h
+css/CSSBorderImageSourceValue.h
+css/CSSBorderImageSourceValue.h
+css/CSSBorderImageValue.h
+css/CSSBorderImageWidthValue.h
 css/CSSBorderImageWidthValue.h
 css/CSSBoxShadowPropertyValue.h
 css/CSSCanvasValue.h
@@ -16,8 +22,8 @@ css/CSSCounterValue.h
 css/CSSCrossfadeValue.h
 css/CSSCursorImageValue.h
 css/CSSCustomPropertyValue.h
-css/CSSEasingFunctionValue.h
 css/CSSDynamicRangeLimitValue.h
+css/CSSEasingFunctionValue.h
 css/CSSFilterImageValue.h
 css/CSSFilterPropertyValue.h
 css/CSSFontFaceSrcValue.h
@@ -48,10 +54,8 @@ css/CSSPathValue.h
 css/CSSPendingSubstitutionValue.h
 css/CSSPositionTryRule.h
 css/CSSPrimitiveValue.h
-css/CSSQuadValue.h
 css/CSSRayValue.h
 css/CSSRectValue.h
-css/CSSReflectValue.h
 css/CSSScrollValue.h
 css/CSSSubgridValue.h
 css/CSSTextShadowPropertyValue.h
@@ -62,6 +66,7 @@ css/CSSValuePair.h
 css/CSSVariableReferenceValue.h
 css/CSSViewTransitionRule.h
 css/CSSViewValue.h
+css/CSSWebKitBoxReflectPropertyValue.h
 css/DOMMatrix.h
 css/DeprecatedCSSOMBoxShadowValue.h
 css/DeprecatedCSSOMFilterFunctionValue.h

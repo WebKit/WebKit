@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -24,40 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#pragma once
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSBorderImageRepeat.h"
+#include "CSSValue.h"
 
 namespace WebCore {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
-{
-}
+class CSSBorderImageRepeatValue final : public CSSValue {
+public:
+    static Ref<CSSBorderImageRepeatValue> create(CSS::BorderImageRepeat);
+    ~CSSBorderImageRepeatValue();
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
+    const CSS::BorderImageRepeat& repeat() const { return m_repeat; }
 
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
-{
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
-}
+    String customCSSText(const CSS::SerializationContext&) const;
+    bool equals(const CSSBorderImageRepeatValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
-{
-    return CSS::serializationForCSS(context, m_slice);
-}
+private:
+    CSSBorderImageRepeatValue(CSS::BorderImageRepeat&&);
 
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
-{
-    return m_slice == other.m_slice;
-}
-
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_slice);
-}
+    CSS::BorderImageRepeat m_repeat;
+};
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSBorderImageRepeatValue, isBorderImageRepeatValue())

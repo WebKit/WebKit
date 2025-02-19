@@ -91,6 +91,7 @@ public:
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderBottomRightRadius);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopLeftRadius);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderTopRightRadius);
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageSource);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(BorderImageSlice);
@@ -119,6 +120,7 @@ public:
 #if ENABLE(TEXT_AUTOSIZING)
     DECLARE_PROPERTY_CUSTOM_HANDLERS(LineHeight);
 #endif
+    DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderSource);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderOutset);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderRepeat);
     DECLARE_PROPERTY_CUSTOM_HANDLERS(MaskBorderSlice);
@@ -281,7 +283,7 @@ inline void BuilderCustom::applyValueTextIndent(BuilderState& builderState, CSSV
 }
 
 enum BorderImageType { BorderImage, MaskBorder };
-enum BorderImageModifierType { Outset, Repeat, Slice, Width };
+enum BorderImageModifierType { Source, Outset, Repeat, Slice, Width };
 template<BorderImageType type, BorderImageModifierType modifier>
 class ApplyPropertyBorderImageModifier {
 public:
@@ -289,6 +291,9 @@ public:
     {
         NinePieceImage image(getValue(builderState.style()));
         switch (modifier) {
+        case Source:
+            image.copyImageFrom(getValue(builderState.parentStyle()));
+            break;
         case Outset:
             image.copyOutsetFrom(getValue(builderState.parentStyle()));
             break;
@@ -309,6 +314,9 @@ public:
     {
         NinePieceImage image(getValue(builderState.style()));
         switch (modifier) {
+        case Source:
+            image.setImage(nullptr);
+            break;
         case Outset:
             image.setOutset(LengthBox(LengthType::Relative));
             break;
@@ -338,8 +346,11 @@ public:
     {
         NinePieceImage image(getValue(builderState.style()));
         switch (modifier) {
+        case Source:
+            builderState.styleMap().mapNinePieceImageSource(value, image);
+            break;
         case Outset:
-            image.setOutset(builderState.styleMap().mapNinePieceImageQuad(value));
+            builderState.styleMap().mapNinePieceImageOutset(value, image);
             break;
         case Repeat:
             builderState.styleMap().mapNinePieceImageRepeat(value, image);
@@ -380,10 +391,12 @@ inline void BuilderCustom::applyValue##type##modifier(BuilderState& builderState
     ApplyPropertyBorderImageModifier<type, modifier>::applyValue(builderState, value); \
 }
 
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Source)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Outset)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Slice)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(BorderImage, Width)
+DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Source)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Outset)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Repeat)
 DEFINE_BORDER_IMAGE_MODIFIER_HANDLER(MaskBorder, Slice)

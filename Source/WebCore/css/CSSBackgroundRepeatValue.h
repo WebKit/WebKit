@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSBackgroundRepeat.h"
 #include "CSSValue.h"
 
 namespace WebCore {
@@ -33,19 +34,21 @@ enum CSSValueID : uint16_t;
 
 class CSSBackgroundRepeatValue final : public CSSValue {
 public:
-    static Ref<CSSBackgroundRepeatValue> create(CSSValueID repeatXValue, CSSValueID repeatYValue);
+    static Ref<CSSBackgroundRepeatValue> create(CSS::BackgroundRepeatStyle&&);
+    ~CSSBackgroundRepeatValue();
+
+    const CSS::BackgroundRepeatStyle& repeat() const { return m_repeat; }
 
     String customCSSText(const CSS::SerializationContext&) const;
     bool equals(const CSSBackgroundRepeatValue&) const;
+    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>&) const;
 
-    CSSValueID xValue() const { return m_xValue; }
-    CSSValueID yValue() const { return m_yValue; }
+    Ref<DeprecatedCSSOMValue> createDeprecatedCSSOMWrapper(CSSStyleDeclaration&) const;
 
 private:
-    CSSBackgroundRepeatValue(CSSValueID repeatXValue, CSSValueID repeatYValue);
+    CSSBackgroundRepeatValue(CSS::BackgroundRepeatStyle&&);
 
-    CSSValueID m_xValue;
-    CSSValueID m_yValue;
+    CSS::BackgroundRepeatStyle m_repeat;
 };
 
 } // namespace WebCore

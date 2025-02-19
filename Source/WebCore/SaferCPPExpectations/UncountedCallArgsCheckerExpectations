@@ -460,8 +460,6 @@ css/CSSPrimitiveValue.cpp
 css/CSSPrimitiveValueMappings.h
 css/CSSProperty.h
 css/CSSPropertyRule.cpp
-css/CSSReflectValue.cpp
-css/CSSReflectValue.h
 css/CSSRuleList.h
 css/CSSScrollValue.cpp
 css/CSSScrollValue.h

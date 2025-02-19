@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -17,47 +16,40 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#pragma once
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSPrimitiveNumericTypes.h"
 
 namespace WebCore {
+namespace CSS {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
+// <'border-image-slice'> = [<number [0,∞]> | <percentage [0,∞]>]{1,4} && fill?
+// https://drafts.csswg.org/css-backgrounds/#propdef-border-image-slice
+struct BorderImageSlice {
+    using Slice = NumberOrPercentage<Nonnegative, Nonnegative, float>;
+    using Slices = MinimallySerializingSpaceSeparatedRectEdges<Slice>;
+
+    Slices slices;
+    std::optional<CSS::Keyword::Fill> fill;
+
+    bool operator==(const BorderImageSlice&) const = default;
+};
+
+template<size_t I> const auto& get(const BorderImageSlice& value)
 {
+    if constexpr (!I)
+        return value.slices;
+    else if constexpr (I == 1)
+        return value.fill;
 }
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
-
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
-{
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
-}
-
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
-{
-    return CSS::serializationForCSS(context, m_slice);
-}
-
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
-{
-    return m_slice == other.m_slice;
-}
-
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_slice);
-}
-
+} // namespace CSS
 } // namespace WebCore
+
+DEFINE_SPACE_SEPARATED_TUPLE_LIKE_CONFORMANCE(WebCore::CSS::BorderImageSlice, 2)

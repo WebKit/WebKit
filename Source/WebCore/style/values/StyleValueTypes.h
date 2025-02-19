@@ -126,6 +126,7 @@ template<typename T, size_t N> struct ToCSSMapping<SpaceSeparatedVector<T, N>> {
 template<typename T, size_t N> struct ToCSSMapping<CommaSeparatedVector<T, N>> { using type = CommaSeparatedVector<CSSType<T>, N>; };
 
 // Standard Variant-Like type mappings:
+template<typename... Ts> struct ToCSSMapping<CompactVariant<Ts...>> { using type = CompactVariant<CSSType<Ts>...>; };
 template<typename... Ts> struct ToCSSMapping<std::variant<Ts...>> { using type = std::variant<CSSType<Ts>...>; };
 
 // Constrained for `TreatAsNonConverting`.
@@ -249,6 +250,7 @@ template<typename T, size_t N> struct ToStyleMapping<SpaceSeparatedVector<T, N>>
 template<typename T, size_t N> struct ToStyleMapping<CommaSeparatedVector<T, N>> { using type = CommaSeparatedVector<StyleType<T>, N>; };
 
 // Standard Variant-Like type mappings:
+template<typename... Ts> struct ToStyleMapping<CompactVariant<Ts...>> { using type = CompactVariant<StyleType<Ts>...>; };
 template<typename... Ts> struct ToStyleMapping<std::variant<Ts...>> { using type = std::variant<StyleType<Ts>...>; };
 
 // Constrained for `TreatAsNonConverting`.

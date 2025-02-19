@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +24,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CSSWebKitBoxReflectPropertyValue.h"
 
-#include "CSSPrimitiveValue.h"
-#include "CSSValue.h"
-#include <wtf/Function.h>
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
 
-class CSSReflectValue final : public CSSValue {
-public:
-    static Ref<CSSReflectValue> create(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask);
+CSSWebKitBoxReflectPropertyValue::CSSWebKitBoxReflectPropertyValue(CSS::WebKitBoxReflectProperty&& property)
+    : CSSValue(ClassType::WebKitBoxReflectProperty)
+    , m_property(WTFMove(property))
+{
+}
 
-    CSSValueID direction() const { return m_direction; }
-    const CSSPrimitiveValue& offset() const { return m_offset.get(); }
-    const CSSValue* mask() const { return m_mask.get(); }
+CSSWebKitBoxReflectPropertyValue::~CSSWebKitBoxReflectPropertyValue() = default;
 
-    String customCSSText(const CSS::SerializationContext&) const;
-    bool equals(const CSSReflectValue&) const;
+Ref<CSSWebKitBoxReflectPropertyValue> CSSWebKitBoxReflectPropertyValue::create(CSS::WebKitBoxReflectProperty&& property)
+{
+    return adoptRef(*new CSSWebKitBoxReflectPropertyValue(WTFMove(property)));
+}
 
-    IterationStatus customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        if (func(m_offset.get()) == IterationStatus::Done)
-            return IterationStatus::Done;
-        if (m_mask) {
-            if (func(*m_mask) == IterationStatus::Done)
-                return IterationStatus::Done;
-        }
-        return IterationStatus::Continue;
-    }
+String CSSWebKitBoxReflectPropertyValue::customCSSText(const CSS::SerializationContext& context) const
+{
+    return CSS::serializationForCSS(context, m_property);
+}
 
-private:
-    CSSReflectValue(CSSValueID direction, Ref<CSSPrimitiveValue> offset, RefPtr<CSSValue> mask);
+bool CSSWebKitBoxReflectPropertyValue::equals(const CSSWebKitBoxReflectPropertyValue& other) const
+{
+    return m_property == other.m_property;
+}
 
-    CSSValueID m_direction;
-    Ref<CSSPrimitiveValue> m_offset;
-    RefPtr<CSSValue> m_mask;
-};
+IterationStatus CSSWebKitBoxReflectPropertyValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
+{
+    return CSS::visitCSSValueChildren(func, m_property);
+}
 
 } // namespace WebCore
-
-SPECIALIZE_TYPE_TRAITS_CSS_VALUE(CSSReflectValue, isReflectValue())

@@ -33,9 +33,9 @@ namespace WebCore {
 
 class StyleReflection : public RefCounted<StyleReflection> {
 public:
-    static Ref<StyleReflection> create()
+    static Ref<StyleReflection> create(ReflectionDirection direction)
     {
-        return adoptRef(*new StyleReflection);
+        return adoptRef(*new StyleReflection(direction));
     }
 
     bool operator==(const StyleReflection& o) const
@@ -48,12 +48,15 @@ public:
     const NinePieceImage& mask() const { return m_mask; }
 
     void setDirection(ReflectionDirection dir) { m_direction = dir; }
-    void setOffset(Length offset) { m_offset = WTFMove(offset); }
+    void setOffset(const Length& offset) { m_offset = offset; }
+    void setOffset(Length&& offset) { m_offset = WTFMove(offset); }
     void setMask(const NinePieceImage& image) { m_mask = image; }
+    void setMask(NinePieceImage&& image) { m_mask = WTFMove(image); }
 
 private:
-    StyleReflection()
-        : m_offset(0, LengthType::Fixed)
+    StyleReflection(ReflectionDirection direction)
+        : m_direction(direction)
+        , m_offset(0, LengthType::Fixed)
         , m_mask(NinePieceImage::Type::Mask)
     {
         m_mask.setFill(true);

@@ -71,6 +71,8 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
+using namespace CSS::Literals;
+
 // Used by radial gradient consumers internally.
 enum class ShapeKeyword : bool { Circle, Ellipse };
 
@@ -80,11 +82,11 @@ template<CSSValueID zeroValue, CSSValueID oneHundredValue> static std::optional<
 {
     if (range.peek().type() == IdentToken) {
         if (consumeIdent<zeroValue>(range))
-            return CSS::NumberOrPercentage<> { CSS::PercentageRaw<> { 0 } };
+            return CSS::NumberOrPercentage<> { 0_css_percentage };
         if (consumeIdent<oneHundredValue>(range))
-            return CSS::NumberOrPercentage<> { CSS::PercentageRaw<> { 100 } };
+            return CSS::NumberOrPercentage<> { 100_css_percentage };
         if (consumeIdent<CSSValueCenter>(range))
-            return CSS::NumberOrPercentage<> { CSS::PercentageRaw<> { 50 } };
+            return CSS::NumberOrPercentage<> { 50_css_percentage };
         return std::nullopt;
     }
     return MetaConsumer<CSS::Number<>, CSS::Percentage<>>::consume(range, context, { }, { });

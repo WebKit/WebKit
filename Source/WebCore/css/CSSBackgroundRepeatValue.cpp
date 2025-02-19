@@ -26,40 +26,58 @@
 #include "config.h"
 #include "CSSBackgroundRepeatValue.h"
 
-#include "CSSValueKeywords.h"
-#include <wtf/text/MakeString.h>
-#include <wtf/text/WTFString.h>
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "DeprecatedCSSOMPrimitiveValue.h"
+#include "DeprecatedCSSOMValueList.h"
 
 namespace WebCore {
 
-CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSSValueID xValue, CSSValueID yValue)
+CSSBackgroundRepeatValue::CSSBackgroundRepeatValue(CSS::BackgroundRepeatStyle&& repeat)
     : CSSValue(ClassType::BackgroundRepeat)
-    , m_xValue(xValue)
-    , m_yValue(yValue)
+    , m_repeat(WTFMove(repeat))
 {
 }
 
-Ref<CSSBackgroundRepeatValue> CSSBackgroundRepeatValue::create(CSSValueID repeatXValue, CSSValueID repeatYValue)
+CSSBackgroundRepeatValue::~CSSBackgroundRepeatValue() = default;
+
+Ref<CSSBackgroundRepeatValue> CSSBackgroundRepeatValue::create(CSS::BackgroundRepeatStyle&& repeat)
 {
-    return adoptRef(*new CSSBackgroundRepeatValue(repeatXValue, repeatYValue));
+    return adoptRef(*new CSSBackgroundRepeatValue(WTFMove(repeat)));
 }
 
-String CSSBackgroundRepeatValue::customCSSText(const CSS::SerializationContext&) const
+String CSSBackgroundRepeatValue::customCSSText(const CSS::SerializationContext& context) const
 {
-    // background-repeat/mask-repeat behave a little like a shorthand, but `repeat no-repeat` is transformed to `repeat-x`.
-    if (m_xValue != m_yValue) {
-        if (m_xValue == CSSValueRepeat && m_yValue == CSSValueNoRepeat)
-            return nameString(CSSValueRepeatX);
-        if (m_xValue == CSSValueNoRepeat && m_yValue == CSSValueRepeat)
-            return nameString(CSSValueRepeatY);
-        return makeString(nameLiteral(m_xValue), ' ', nameLiteral(m_yValue));
-    }
-    return nameString(m_xValue);
+    return CSS::serializationForCSS(context, m_repeat);
 }
 
 bool CSSBackgroundRepeatValue::equals(const CSSBackgroundRepeatValue& other) const
 {
-    return m_xValue == other.m_xValue && m_yValue == other.m_yValue;
+    return m_repeat == other.m_repeat;
+}
+
+IterationStatus CSSBackgroundRepeatValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
+{
+    return CSS::visitCSSValueChildren(func, m_repeat);
+}
+
+Ref<DeprecatedCSSOMValue> CSSBackgroundRepeatValue::createDeprecatedCSSOMWrapper(CSSStyleDeclaration& owner) const
+{
+    auto axis = [&](const CSS::BackgroundRepeatStyleSingleAxis& value) -> Ref<DeprecatedCSSOMValue> {
+        return WTF::switchOn(value,
+            [&]<CSSValueID Id>(const Constant<Id>& constant) {
+                return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(constant.value), owner);
+            }
+        );
+    };
+
+    if (m_repeat.x == m_repeat.y)
+        return axis(m_repeat.x);
+    if (WTF::holdsAlternative<CSS::Keyword::Repeat>(m_repeat.x) && WTF::holdsAlternative<CSS::Keyword::NoRepeat>(m_repeat.y))
+        return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(CSSValueRepeatX), owner);
+    if (WTF::holdsAlternative<CSS::Keyword::NoRepeat>(m_repeat.x) && WTF::holdsAlternative<CSS::Keyword::Repeat>(m_repeat.y))
+        return DeprecatedCSSOMPrimitiveValue::create(CSSPrimitiveValue::create(CSSValueRepeatY), owner);
+    return DeprecatedCSSOMValueList::create({ axis(m_repeat.x), axis(m_repeat.y) }, CSSValue::SpaceSeparator, owner);
 }
 
 } // namespace WebCore

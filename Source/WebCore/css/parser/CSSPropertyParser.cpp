@@ -31,7 +31,11 @@
 #include "config.h"
 #include "CSSPropertyParser.h"
 
+#include "CSSBorderImageOutsetValue.h"
+#include "CSSBorderImageRepeatValue.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSBorderImageSourceValue.h"
+#include "CSSBorderImageValue.h"
 #include "CSSBorderImageWidthValue.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSCustomPropertyValue.h"
@@ -76,7 +80,6 @@
 #include "CSSPropertyParserConsumer+Transitions.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
-#include "CSSQuadValue.h"
 #include "CSSTokenizer.h"
 #include "CSSTransformListValue.h"
 #include "CSSValuePair.h"
@@ -98,6 +101,8 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+using namespace CSS::Literals;
 
 bool isCustomPropertyName(StringView propertyName)
 {
@@ -1389,27 +1394,6 @@ static bool isNumber(const CSSValue& value, double number, CSSUnitType type)
     return isNumber(dynamicDowncast<CSSPrimitiveValue>(value), number, type);
 }
 
-static bool isNumber(const RectBase& quad, double number, CSSUnitType type)
-{
-    return isNumber(quad.top(), number, type)
-        && isNumber(quad.right(), number, type)
-        && isNumber(quad.bottom(), number, type)
-        && isNumber(quad.left(), number, type);
-}
-
-static bool isValueID(const RectBase& quad, CSSValueID valueID)
-{
-    return isValueID(quad.top(), valueID)
-        && isValueID(quad.right(), valueID)
-        && isValueID(quad.bottom(), valueID)
-        && isValueID(quad.left(), valueID);
-}
-
-static bool isNumericQuad(const CSSValue& value, double number, CSSUnitType type)
-{
-    return value.isQuad() && isNumber(value.quad(), number, type);
-}
-
 bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
 {
     if (value.isImplicitInitialValue())
@@ -1420,25 +1404,38 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
         if (isValueIDPair(value, CSSValueAuto))
             return true;
         break;
+
+    case CSSPropertyBorderImageSource:
+    case CSSPropertyMaskBorderSource:
+        if (auto sourceValue = dynamicDowncast<CSSBorderImageSourceValue>(value)) {
+            if (WTF::holdsAlternative<CSS::Keyword::None>(sourceValue->source()))
+                return true;
+        }
+        break;
+
     case CSSPropertyBorderImageOutset:
     case CSSPropertyMaskBorderOutset:
-        if (isNumericQuad(value, 0, CSSUnitType::CSS_NUMBER))
-            return true;
+        if (auto outsetValue = dynamicDowncast<CSSBorderImageOutsetValue>(value)) {
+            if (outsetValue->outset().outsets == CSS::BorderImageOutset::Outsets { 0_css_number })
+                return true;
+        }
         break;
     case CSSPropertyBorderImageRepeat:
     case CSSPropertyMaskBorderRepeat:
-        if (isValueIDPair(value, CSSValueStretch))
-            return true;
+        if (auto repeatValue = dynamicDowncast<CSSBorderImageRepeatValue>(value)) {
+            if (WTF::holdsAlternative<CSS::Keyword::Stretch>(repeatValue->repeat().x) && WTF::holdsAlternative<CSS::Keyword::Stretch>(repeatValue->repeat().y))
+                return true;
+        }
         break;
     case CSSPropertyBorderImageSlice:
         if (auto sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value)) {
-            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 100, CSSUnitType::CSS_PERCENTAGE))
+            if (!sliceValue->slice().fill && sliceValue->slice().slices == CSS::BorderImageSlice::Slices { 100_css_percentage })
                 return true;
         }
         break;
     case CSSPropertyBorderImageWidth:
         if (auto widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value)) {
-            if (!widthValue->overridesBorderWidths() && isNumber(widthValue->widths(), 1, CSSUnitType::CSS_NUMBER))
+            if (!widthValue->width().overridesBorderWidths && widthValue->width().widths == CSS::BorderImageWidth::Widths { 1_css_number })
                 return true;
         }
         break;
@@ -1450,13 +1447,13 @@ bool isInitialValueForLonghand(CSSPropertyID longhand, const CSSValue& value)
         break;
     case CSSPropertyMaskBorderSlice:
         if (auto sliceValue = dynamicDowncast<CSSBorderImageSliceValue>(value)) {
-            if (!sliceValue->fill() && isNumber(sliceValue->slices(), 0, CSSUnitType::CSS_NUMBER))
+            if (!sliceValue->slice().fill && sliceValue->slice().slices == CSS::BorderImageSlice::Slices { 0_css_number })
                 return true;
         }
         return false;
     case CSSPropertyMaskBorderWidth:
         if (auto widthValue = dynamicDowncast<CSSBorderImageWidthValue>(value)) {
-            if (!widthValue->overridesBorderWidths() && isValueID(widthValue->widths(), CSSValueAuto))
+            if (!widthValue->width().overridesBorderWidths && widthValue->width().widths == CSS::BorderImageWidth::Widths { CSS::Keyword::Auto { } })
                 return true;
         }
         break;
@@ -1735,25 +1732,28 @@ bool CSSPropertyParser::consumeBorderRadius(CSSPropertyID property, bool importa
 
 bool CSSPropertyParser::consumeBorderImage(CSSPropertyID property, bool important)
 {
-    RefPtr<CSSValue> source;
-    RefPtr<CSSValue> slice;
-    RefPtr<CSSValue> width;
-    RefPtr<CSSValue> outset;
-    RefPtr<CSSValue> repeat;
-    if (!consumeBorderImageComponents(m_range, m_context, property, source, slice, width, outset, repeat))
+    auto add = [&]<typename ValueType, typename T>(auto longhand, std::optional<T>&& value) {
+        if (value)
+            addProperty(longhand, property, ValueType::create(WTFMove(*value)), important);
+        else
+            addProperty(longhand, property, nullptr, important);
+    };
+
+    auto borderImage = consumeUnresolvedBorderImage(m_range, m_context, property);
+    if (!borderImage || !m_range.atEnd())
         return false;
     if (property == CSSPropertyMaskBorder || property == CSSPropertyWebkitMaskBoxImage) {
-        addProperty(CSSPropertyMaskBorderSource, property, WTFMove(source), important);
-        addProperty(CSSPropertyMaskBorderSlice, property, WTFMove(slice), important);
-        addProperty(CSSPropertyMaskBorderWidth, property, WTFMove(width), important);
-        addProperty(CSSPropertyMaskBorderOutset, property, WTFMove(outset), important);
-        addProperty(CSSPropertyMaskBorderRepeat, property, WTFMove(repeat), important);
+        add.template operator()<CSSBorderImageSourceValue>(CSSPropertyMaskBorderSource,  WTFMove(borderImage->source));
+        add.template operator()<CSSBorderImageSliceValue> (CSSPropertyMaskBorderSlice,   WTFMove(borderImage->slice));
+        add.template operator()<CSSBorderImageWidthValue> (CSSPropertyMaskBorderWidth,   WTFMove(borderImage->width));
+        add.template operator()<CSSBorderImageOutsetValue>(CSSPropertyMaskBorderOutset,  WTFMove(borderImage->outset));
+        add.template operator()<CSSBorderImageRepeatValue>(CSSPropertyMaskBorderRepeat,  WTFMove(borderImage->repeat));
     } else {
-        addProperty(CSSPropertyBorderImageSource, property, WTFMove(source), important);
-        addProperty(CSSPropertyBorderImageSlice, property, WTFMove(slice), important);
-        addProperty(CSSPropertyBorderImageWidth, property, WTFMove(width), important);
-        addProperty(CSSPropertyBorderImageOutset, property, WTFMove(outset), important);
-        addProperty(CSSPropertyBorderImageRepeat, property, WTFMove(repeat), important);
+        add.template operator()<CSSBorderImageSourceValue>(CSSPropertyBorderImageSource, WTFMove(borderImage->source));
+        add.template operator()<CSSBorderImageSliceValue> (CSSPropertyBorderImageSlice,  WTFMove(borderImage->slice));
+        add.template operator()<CSSBorderImageWidthValue> (CSSPropertyBorderImageWidth,  WTFMove(borderImage->width));
+        add.template operator()<CSSBorderImageOutsetValue>(CSSPropertyBorderImageOutset, WTFMove(borderImage->outset));
+        add.template operator()<CSSBorderImageRepeatValue>(CSSPropertyBorderImageRepeat, WTFMove(borderImage->repeat));
     }
     return true;
 }

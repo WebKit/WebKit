@@ -1,5 +1,4 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2025 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -17,7 +16,6 @@
  * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
@@ -25,39 +23,32 @@
  */
 
 #include "config.h"
-#include "CSSBorderImageSliceValue.h"
+#include "CSSBackgroundRepeat.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
 namespace WebCore {
+namespace CSS {
 
-CSSBorderImageSliceValue::CSSBorderImageSliceValue(CSS::BorderImageSlice&& slice)
-    : CSSValue(ClassType::BorderImageSlice)
-    , m_slice(WTFMove(slice))
+void Serialize<BackgroundRepeatStyle>::operator()(StringBuilder& builder, const SerializationContext& context, const BackgroundRepeatStyle& value)
 {
+    if (value.x == value.y) {
+        serializationForCSS(builder, context, value.x);
+        return;
+    }
+
+    if (WTF::holdsAlternative<CSS::Keyword::Repeat>(value.x) && WTF::holdsAlternative<CSS::Keyword::NoRepeat>(value.y)) {
+        serializationForCSS(builder, context, CSS::Keyword::RepeatX { });
+        return;
+    }
+
+    if (WTF::holdsAlternative<CSS::Keyword::NoRepeat>(value.x) && WTF::holdsAlternative<CSS::Keyword::Repeat>(value.y)) {
+        serializationForCSS(builder, context, CSS::Keyword::RepeatY { });
+        return;
+    }
+
+    serializationForCSSOnTupleLike(builder, context, value, SerializationSeparator<BackgroundRepeatStyle>);
 }
 
-CSSBorderImageSliceValue::~CSSBorderImageSliceValue() = default;
-
-Ref<CSSBorderImageSliceValue> CSSBorderImageSliceValue::create(CSS::BorderImageSlice slice)
-{
-    return adoptRef(*new CSSBorderImageSliceValue(WTFMove(slice)));
-}
-
-String CSSBorderImageSliceValue::customCSSText(const CSS::SerializationContext& context) const
-{
-    return CSS::serializationForCSS(context, m_slice);
-}
-
-bool CSSBorderImageSliceValue::equals(const CSSBorderImageSliceValue& other) const
-{
-    return m_slice == other.m_slice;
-}
-
-IterationStatus CSSBorderImageSliceValue::customVisitChildren(NOESCAPE const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_slice);
-}
-
+} // namespace CSS
 } // namespace WebCore

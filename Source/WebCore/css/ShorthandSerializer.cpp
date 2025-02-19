@@ -30,6 +30,7 @@
 #include "CSSGridTemplateAreasValue.h"
 #include "CSSParserIdioms.h"
 #include "CSSPendingSubstitutionValue.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserConsumer+Grid.h"
@@ -848,11 +849,10 @@ String ShorthandSerializer::serializeBorderImage() const
 
         // -webkit-border-image has a legacy behavior that makes fixed border slices also set the border widths.
         if (auto* width = dynamicDowncast<CSSBorderImageWidthValue>(longhand.value)) {
-            auto& widths = width->widths();
-            bool overridesBorderWidths = m_shorthand.id() == CSSPropertyWebkitBorderImage && (widths.top().isLength() || widths.right().isLength() || widths.bottom().isLength() || widths.left().isLength());
-            if (overridesBorderWidths != width->overridesBorderWidths())
+            bool overridesBorderWidths = m_shorthand.id() == CSSPropertyWebkitBorderImage && CSS::hasLength(width->width().widths);
+            if (overridesBorderWidths != width->width().overridesBorderWidths)
                 return String();
-            valueText = widths.cssText(m_serializationContext);
+            valueText = CSS::serializationForCSS(m_serializationContext, width->width().widths);
         } else
             valueText = serializeValue(longhand);
 
