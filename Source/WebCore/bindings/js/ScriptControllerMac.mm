@@ -79,8 +79,8 @@ WebScriptObject *ScriptController::windowScriptObject()
 
     if (!m_windowScriptObject) {
         JSC::JSLockHolder lock(commonVM());
-        JSC::Bindings::RootObject* root = bindingRootObject();
-        m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(&jsWindowProxy(pluginWorld())) originRootObject:root rootObject:root];
+        RefPtr root = bindingRootObject();
+        m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(&jsWindowProxy(pluginWorldSingleton())) originRootObject:root.get() rootObject:root.get()];
     }
 
     return m_windowScriptObject.get();
@@ -91,7 +91,7 @@ JSContext *ScriptController::javaScriptContext()
 #if JSC_OBJC_API_ENABLED
     if (!canExecuteScripts(ReasonForCallingCanExecuteScripts::NotAboutToExecuteScript))
         return 0;
-    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(bindingRootObject()->globalObject())];
+    JSContext *context = [JSContext contextWithJSGlobalContextRef:toGlobalRef(protectedBindingRootObject()->globalObject())];
     return context;
 #else
     return 0;
@@ -101,8 +101,8 @@ JSContext *ScriptController::javaScriptContext()
 void ScriptController::updatePlatformScriptObjects()
 {
     if (m_windowScriptObject) {
-        JSC::Bindings::RootObject* root = bindingRootObject();
-        [m_windowScriptObject _setOriginRootObject:root andRootObject:root];
+        RefPtr root = bindingRootObject();
+        [m_windowScriptObject _setOriginRootObject:root.get() andRootObject:root.get()];
     }
 }
 

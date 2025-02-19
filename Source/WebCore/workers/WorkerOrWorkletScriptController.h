@@ -111,7 +111,8 @@ public:
     void loadAndEvaluateModule(const URL& moduleURL, FetchOptions::Credentials, CompletionHandler<void(std::optional<Exception>&&)>&&);
 
 protected:
-    WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope; }
+    WorkerOrWorkletGlobalScope* globalScope() const { return m_globalScope.get(); }
+    RefPtr<WorkerOrWorkletGlobalScope> protectedGlobalScope() const;
 
     void initScriptIfNeeded()
     {
@@ -125,7 +126,7 @@ private:
     void initScriptWithSubclass();
 
     RefPtr<JSC::VM> m_vm;
-    WorkerOrWorkletGlobalScope* m_globalScope;
+    WeakPtr<WorkerOrWorkletGlobalScope> m_globalScope;
     JSC::Strong<JSDOMGlobalObject> m_globalScopeWrapper;
     std::unique_ptr<WorkerConsoleClient> m_consoleClient;
     mutable Lock m_scheduledTerminationLock;

@@ -54,6 +54,7 @@ public:
     void notifyLoadWasCanceled();
 
     UniquedStringImpl* moduleKey() const { return m_moduleKey.get(); }
+    RefPtr<UniquedStringImpl> protectedModuleKey() const { return m_moduleKey; }
 
     ModuleFetchParameters& parameters() { return m_parameters.get(); }
 
