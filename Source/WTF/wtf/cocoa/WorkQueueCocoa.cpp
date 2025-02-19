@@ -35,7 +35,6 @@ namespace {
 
 struct DispatchWorkItem {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    Ref<WorkQueueBase> m_workQueue;
     Function<void()> m_function;
     void operator()() { m_function(); }
 };
@@ -51,7 +50,7 @@ template<typename T> static void dispatchWorkItem(void* dispatchContext)
 
 void WorkQueueBase::dispatch(Function<void()>&& function)
 {
-    dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { Ref { *this }, WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
+    dispatch_async_f(m_dispatchQueue.get(), new DispatchWorkItem { WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueueBase::dispatchWithQOS(Function<void()>&& function, QOS qos)
@@ -68,7 +67,7 @@ void WorkQueueBase::dispatchWithQOS(Function<void()>&& function, QOS qos)
 
 void WorkQueueBase::dispatchAfter(Seconds duration, Function<void()>&& function)
 {
-    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { Ref { *this },  WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
+    dispatch_after_f(dispatch_time(DISPATCH_TIME_NOW, duration.nanosecondsAs<int64_t>()), m_dispatchQueue.get(), new DispatchWorkItem { WTFMove(function) }, dispatchWorkItem<DispatchWorkItem>);
 }
 
 void WorkQueueBase::dispatchSync(Function<void()>&& function)

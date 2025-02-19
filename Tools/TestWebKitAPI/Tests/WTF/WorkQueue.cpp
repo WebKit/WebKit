@@ -59,7 +59,7 @@ TEST(WTF_WorkQueue, Simple)
     static const char* longTestLabel = "longTest";
     static const char* thirdTestLabel = "thirdTest";
 
-    auto queue = WorkQueue::create("com.apple.WebKit.Test.simple"_s);
+    Ref queue = WorkQueue::create("com.apple.WebKit.Test.simple"_s);
     int initialRefCount = queue->refCount();
     EXPECT_EQ(1, initialRefCount);
 
@@ -86,8 +86,6 @@ TEST(WTF_WorkQueue, Simple)
 
         m_testCompleted.notifyOne();
     });
-
-    EXPECT_GT(queue->refCount(), 1U);
 
     m_testCompleted.wait(m_lock);
 

@@ -74,8 +74,8 @@ void SuspendableWorkQueue::suspend(Function<void()>&& suspendFunction, Completio
 
     m_state = State::WillSuspend;
     // Make sure queue will be suspended when there is no task scheduled on the queue.
-    WorkQueue::dispatch([this] {
-        suspendIfNeeded();
+    WorkQueue::dispatch([protectedThis = Ref { *this }] {
+        protectedThis->suspendIfNeeded();
     });
 }
 
@@ -97,9 +97,8 @@ void SuspendableWorkQueue::resume()
 void SuspendableWorkQueue::dispatch(Function<void()>&& function)
 {
     RELEASE_ASSERT(function);
-    // WorkQueue will protect this in dispatch().
-    WorkQueue::dispatch([this, function = WTFMove(function)] {
-        suspendIfNeeded();
+    WorkQueue::dispatch([protectedThis = Ref { *this }, function = WTFMove(function)] {
+        protectedThis->suspendIfNeeded();
         function();
     });
 }
@@ -107,8 +106,8 @@ void SuspendableWorkQueue::dispatch(Function<void()>&& function)
 void SuspendableWorkQueue::dispatchAfter(Seconds seconds, Function<void()>&& function)
 {
     RELEASE_ASSERT(function);
-    WorkQueue::dispatchAfter(seconds, [this, function = WTFMove(function)] {
-        suspendIfNeeded();
+    WorkQueue::dispatchAfter(seconds, [protectedThis = Ref { *this }, function = WTFMove(function)] {
+        protectedThis->suspendIfNeeded();
         function();
     });
 }
