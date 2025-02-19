@@ -2000,3 +2000,5 @@ webkit.org/b/288005 imported/w3c/web-platform-tests/css/selectors/invalidation/n
 webkit.org/b/288009 [ Release ] media/media-source/media-managedmse-video-with-poster.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/288011 [ Sonoma+ Release ] tiled-drawing/top-left-content-insets.html [ Pass ImageOnlyFailure ]
+
+webkit.org/b/288006 http/tests/dom/noreferrer-window-not-targetable.html [ Failure ]
