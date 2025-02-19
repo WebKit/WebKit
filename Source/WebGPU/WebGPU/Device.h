@@ -234,10 +234,6 @@ private:
         std::optional<Error> error;
         const WGPUErrorFilter filter;
     };
-#if ENABLE(WEBGPU_SWIFT)
-private PUBLIC_IN_WEBGPU_SWIFT:
-    id<MTLFunction> m_nopVertexFunction;
-#endif
 private:
     id<MTLDevice> m_device { nil };
     const Ref<Queue> m_defaultQueue;

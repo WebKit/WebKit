@@ -281,22 +281,6 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     , m_instance(adapter.weakInstance())
     , m_maxVerticesPerDrawCall(computeMaxCountForDevice(device))
 {
-#if ENABLE(WEBGPU_SWIFT)
-    NSError *error = nil;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [&] {
-        MTLCompileOptions* options = [MTLCompileOptions new];
-        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        options.fastMathEnabled = YES;
-        ALLOW_DEPRECATED_DECLARATIONS_END
-        id<MTLLibrary> library = [device newLibraryWithSource:@"[[vertex]] float4 vsNop() { return (float4)0; }" options:options error:&error];
-        if (error)
-            WTFLogAlways("%@", error); // NOLINT
-        m_nopVertexFunction = [library newFunctionWithName:@"vsNop"];
-    });
-    RELEASE_ASSERT(m_nopVertexFunction);
-    RELEASE_ASSERT(!error);
-#endif
 
 #if PLATFORM(MAC)
     auto devices = MTLCopyAllDevicesWithObserver(&m_deviceObserver, [weakThis = ThreadSafeWeakPtr { *this }](id<MTLDevice> device, MTLDeviceNotificationName) {

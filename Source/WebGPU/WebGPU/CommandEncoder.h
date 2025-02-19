@@ -111,6 +111,7 @@ public:
     void setEncoderState(EncoderState state) { m_state = state; }
     EncoderState getEncoderState() { return m_state; }
     NSString * encoderStateNameWrapper() { return encoderStateName(); }
+    static id<MTLFunction> nopVertexFunction(id<MTLDevice>);
 #endif
 
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();

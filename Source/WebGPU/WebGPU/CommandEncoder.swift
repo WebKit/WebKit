@@ -165,10 +165,14 @@ extension WebGPU.CommandEncoder {
         return result
     }
     public func clearTextureIfNeeded(destination: WGPUImageCopyTexture, slice: UInt) {
-        return WebGPU.CommandEncoder.clearTextureIfNeeded(destination, slice, m_device.ptr(), m_blitCommandEncoder)
+        return clearTextureIfNeeded(destination: destination, slice: slice, device: m_device.ptr(), blitCommandEncoder: m_blitCommandEncoder)
     }
     private func clearTextureIfNeeded(destination: WGPUImageCopyTexture , slice: UInt, device: WebGPU.Device , blitCommandEncoder: MTLBlitCommandEncoder?)
     {
+        guard destination.texture != nil else {
+            WebGPU_Internal.logString("\(#function) called with nil texture")
+            return
+        }
         let texture = WebGPU.fromAPI(destination.texture)
         let mipLevel: UInt = UInt(destination.mipLevel)
         clearTextureIfNeeded(texture, mipLevel, slice, device, blitCommandEncoder)
@@ -203,15 +207,14 @@ extension WebGPU.CommandEncoder {
         }
         
         let physicalExtent = WebGPU.Texture.physicalTextureExtent(texture.dimension(), textureFormat, logicalExtent)
-        var sourceBytesPerRow: UInt = WebGPU.Texture.bytesPerRow(textureFormat, physicalExtent.width, texture.sampleCount())
+        let sourceBytesPerRow: UInt = WebGPU.Texture.bytesPerRow(textureFormat, physicalExtent.width, texture.sampleCount())
         let depth: UInt = UInt(texture.dimension() == WGPUTextureDimension_3D ? physicalExtent.depthOrArrayLayers : 1)
+        var bytesPerImage = sourceBytesPerRow
         var didOverflow: Bool = false
-        var checkedBytesPerImage: UInt = sourceBytesPerRow
-        (checkedBytesPerImage, didOverflow) = sourceBytesPerRow.multipliedReportingOverflow(by: UInt(physicalExtent.height))
+        (bytesPerImage, didOverflow) = bytesPerImage.multipliedReportingOverflow(by: UInt(physicalExtent.height))
         if didOverflow {
             return
         }
-        let bytesPerImage = checkedBytesPerImage
         var bufferLength = bytesPerImage
         (bufferLength, didOverflow) = bufferLength.multipliedReportingOverflow(by: depth)
         if didOverflow {
@@ -253,6 +256,9 @@ extension WebGPU.CommandEncoder {
         if mutableSlice >= mtlTexture!.arrayLength {
             return
         }
+        if blitCommandEncoder == nil {
+            WebGPU_Internal.logString("\(#function): blitCommandEncoder is nil. Should not be")
+        }
         blitCommandEncoder?.copy(
             from: temporaryBuffer!,
             sourceOffset: 0,
@@ -266,20 +272,18 @@ extension WebGPU.CommandEncoder {
             options: options)
 
         if options != MTLBlitOptionNone {
-            // FIXME:  maybe it needs to be another value that is not sizeof.
-            sourceBytesPerRow /= UInt(MemoryLayout<Float>.stride)
             sourceBytesPerImage /= UInt(MemoryLayout<Float>.stride)
             blitCommandEncoder?.copy(
                 from: temporaryBuffer!,
                 sourceOffset: 0,
-                sourceBytesPerRow: Int(sourceBytesPerRow),
+                sourceBytesPerRow: Int(sourceBytesPerRow / UInt(MemoryLayout<Float>.stride),
                 sourceBytesPerImage: Int(sourceBytesPerImage),
                 sourceSize: sourceSize!,
                 to: mtlTexture!,
                 destinationSlice: Int(mutableSlice),
                 destinationLevel: Int(mipLevel),
                 destinationOrigin: MTLOrigin(x: 0, y: 0, z: 0),
-                options: options)
+                options: .stencilFromDepthStencil)
         }
     }
     public func runClearEncoder(attachmentsToClear: [NSNumber: TextureAndClearColor], depthStencilAttachmentToClear: inout MTLTexture?, depthAttachmentToClear: Bool, stencilAttachmentToClear: Bool, depthClearValue: Double, stencilClearValue: UInt32, existingEncoder: MTLRenderCommandEncoder?) {
@@ -309,7 +313,7 @@ extension WebGPU.CommandEncoder {
                 }
             }
 
-            mtlRenderPipelineDescriptor.vertexFunction = device.m_nopVertexFunction
+            mtlRenderPipelineDescriptor.vertexFunction = WebGPU.CommandEncoder.nopVertexFunction(device.device())
             mtlRenderPipelineDescriptor.fragmentFunction = nil
 
             precondition(sampleCount != 0, "sampleCount must be non-zero")
@@ -742,7 +746,9 @@ extension WebGPU.CommandEncoder {
             if (!self.protectedDevice().ptr().hasFeature(WGPUFeatureName_TimestampQuery)) {
                 return "device does not have timestamp query feature"
             }
-
+            if timestampWrites.querySet == nil {
+                return "query set is nil"
+            }
             let querySet = WebGPU.fromAPI(timestampWrites.querySet)
             if (querySet.type() != WGPUQueryType_Timestamp) {
                 return "query type is not timestamp but \(querySet.type())"
@@ -831,7 +837,9 @@ extension WebGPU.CommandEncoder {
         if let error = errorValidatingRenderPassDescriptor(descriptor: descriptor) {
             return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), error)
         }
-
+        if m_commandBuffer == nil {
+            WebGPU_Internal.logString("\(#function): m_commandBuffer is nil. Should not be.")
+        }
         guard m_commandBuffer.status.rawValue < MTLCommandBufferStatus.enqueued.rawValue else {
             return WebGPU.RenderPassEncoder.createInvalid(self, m_device.ptr(), "command buffer has already been committed")
         }
@@ -865,7 +873,7 @@ extension WebGPU.CommandEncoder {
 
         finalizeBlitCommandEncoder()
 
-        var attachmentsToClear: [NSNumber:TextureAndClearColor] = [:]
+        var attachmentsToClear: [NSNumber: TextureAndClearColor] = [:]
         var zeroColorTargets = true
         var bytesPerSample: UInt32 = 0
         let maxColorAttachmentBytesPerSample = m_device.ptr().limitsCopy().maxColorAttachmentBytesPerSample
@@ -875,7 +883,7 @@ extension WebGPU.CommandEncoder {
         for i in 0..<descriptor.colorAttachmentsSpan().count {
             let attachment = descriptor.colorAttachmentsSpan()[i]
 
-            if (attachment.view == nil) {
+            if attachment.view == nil {
                 continue
             }
 
@@ -1123,10 +1131,9 @@ extension WebGPU.CommandEncoder {
         }
 
         if (attachmentsToClear.count != 0 || depthStencilAttachmentToClear != nil) {
-            let attachment = descriptor.depthStencilAttachment
-            if attachment != nil && depthStencilAttachmentToClear != nil {
-                // FIXME: rdar://138042799 remove default argument.
-                WebGPU.fromAPI(attachment.pointee.view).setPreviouslyCleared(0, 0)
+            if descriptor.depthStencilAttachment != nil && depthStencilAttachmentToClear != nil {
+                    // FIXME: rdar://138042799 remove default argument.
+                    WebGPU.fromAPI(descriptor.depthStencilAttachment.pointee.view).setPreviouslyCleared(0, 0)
             }
             // FIXME: rdar://138042799 remove default argument.
             runClearEncoder(attachmentsToClear: attachmentsToClear, depthStencilAttachmentToClear: &depthStencilAttachmentToClear, depthAttachmentToClear: depthAttachmentToClear, stencilAttachmentToClear: stencilAttachmentToClear, depthClearValue: 0 ,stencilClearValue: 0 ,existingEncoder: nil)
@@ -1137,7 +1144,7 @@ extension WebGPU.CommandEncoder {
         }
 
         let mtlRenderCommandEncoder = m_commandBuffer.makeRenderCommandEncoder(descriptor: mtlDescriptor)
-        if (m_existingCommandEncoder != nil)  {
+        if m_existingCommandEncoder != nil  {
             assertionFailure("!m_existingCommandEncoder")
         }
         setExistingEncoder(mtlRenderCommandEncoder)

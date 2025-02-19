@@ -353,7 +353,27 @@ bool Device::isStencilOnlyFormat(MTLPixelFormat format)
         return false;
     }
 }
-
+#if ENABLE(WEBGPU_SWIFT)
+id<MTLFunction> CommandEncoder::nopVertexFunction(id<MTLDevice> device)
+{
+    static id<MTLFunction> function = nil;
+    NSError *error = nil;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [&] {
+        MTLCompileOptions* options = [MTLCompileOptions new];
+        ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+        options.fastMathEnabled = YES;
+        ALLOW_DEPRECATED_DECLARATIONS_END
+        id<MTLLibrary> library = [device newLibraryWithSource:@"[[vertex]] float4 vsNop() { return (float4)0; }" options:options error:&error];
+        if (error)
+            WTFLogAlways("%@", error); // NOLINT
+        RELEASE_ASSERT(!error);
+        function = [library newFunctionWithName:@"vsNop"];
+    });
+    RELEASE_ASSERT(function);
+    return function;
+}
+#endif
 #if !ENABLE(WEBGPU_SWIFT)
 static std::pair<id<MTLRenderPipelineState>, id<MTLDepthStencilState>> createSimplePso(NSMutableDictionary<NSNumber*, TextureAndClearColor*> *attachmentsToClear, id<MTLTexture> depthStencilAttachmentToClear, bool depthAttachmentToClear, bool stencilAttachmentToClear, id<MTLDevice> device)
 {
