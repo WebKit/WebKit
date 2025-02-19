@@ -123,7 +123,7 @@ ScriptController::~ScriptController()
 
     if (m_cacheableBindingRootObject) {
         JSLockHolder lock(commonVM());
-        m_cacheableBindingRootObject->invalidate();
+        RefPtr { m_cacheableBindingRootObject }->invalidate();
         m_cacheableBindingRootObject = nullptr;
     }
 }
@@ -239,7 +239,7 @@ JSC::JSValue ScriptController::linkAndEvaluateModuleScriptInWorld(LoadableModule
     Ref protectedFrame { m_frame.get() };
 
     NakedPtr<JSC::Exception> evaluationException;
-    auto returnValue = JSExecState::linkAndEvaluateModule(lexicalGlobalObject, Identifier::fromUid(vm, moduleScript.moduleKey()), jsUndefined(), evaluationException);
+    auto returnValue = JSExecState::linkAndEvaluateModule(lexicalGlobalObject, Identifier::fromUid(vm, RefPtr { moduleScript.moduleKey() }.get()), jsUndefined(), evaluationException);
     if (evaluationException) {
         // FIXME: Give a chance to dump the stack trace if the "crossorigin" attribute allows.
         // https://bugs.webkit.org/show_bug.cgi?id=164539
@@ -275,7 +275,7 @@ JSC::JSValue ScriptController::evaluateModule(const URL& sourceURL, AbstractModu
         // FIXME: Provide better inspector support for Wasm scripts.
         InspectorInstrumentation::willEvaluateScript(protectedFrame(), sourceURL.string(), 1, 1);
     } else if (moduleRecord.inherits<JSC::SyntheticModuleRecord>())
-        InspectorInstrumentation::willEvaluateScript(m_frame.get(), sourceURL.string(), 1, 1);
+        InspectorInstrumentation::willEvaluateScript(protectedFrame(), sourceURL.string(), 1, 1);
     else {
         auto* jsModuleRecord = jsCast<JSModuleRecord*>(&moduleRecord);
         const auto& jsSourceCode = jsModuleRecord->sourceCode();
@@ -431,7 +431,7 @@ WindowProxy& ScriptController::windowProxy()
 
 JSWindowProxy& ScriptController::jsWindowProxy(DOMWrapperWorld& world)
 {
-    auto* jsWindowProxy = m_frame->protectedWindowProxy()->jsWindowProxy(world);
+    auto* jsWindowProxy = protectedFrame()->protectedWindowProxy()->jsWindowProxy(world);
     ASSERT_WITH_MESSAGE(jsWindowProxy, "The JSWindowProxy can only be null if the frame has been destroyed");
     return *jsWindowProxy;
 }
@@ -501,7 +501,7 @@ Bindings::RootObject* ScriptController::cacheableBindingRootObject()
 
     if (!m_cacheableBindingRootObject) {
         JSLockHolder lock(commonVM());
-        m_cacheableBindingRootObject = Bindings::RootObject::create(nullptr, globalObject(pluginWorld()));
+        m_cacheableBindingRootObject = Bindings::RootObject::create(nullptr, globalObject(protectedMainThreadNormalWorld()));
     }
     return m_cacheableBindingRootObject.get();
 }
@@ -524,7 +524,7 @@ Ref<Bindings::RootObject> ScriptController::createRootObject(void* nativeHandle)
     if (it != m_rootObjects.end())
         return it->value.copyRef();
 
-    auto rootObject = Bindings::RootObject::create(nativeHandle, globalObject(pluginWorld()));
+    auto rootObject = Bindings::RootObject::create(nativeHandle, globalObject(protectedMainThreadNormalWorld()));
 
     m_rootObjects.set(nativeHandle, rootObject.copyRef());
     return rootObject;
@@ -532,9 +532,9 @@ Ref<Bindings::RootObject> ScriptController::createRootObject(void* nativeHandle)
 
 void ScriptController::collectIsolatedContexts(Vector<std::pair<JSC::JSGlobalObject*, SecurityOrigin*>>& result)
 {
-    for (auto& jsWindowProxy : windowProxy().jsWindowProxiesAsVector()) {
+    for (auto& jsWindowProxy : protectedWindowProxy()->jsWindowProxiesAsVector()) {
         auto* lexicalGlobalObject = jsWindowProxy->window();
-        auto* origin = &downcast<LocalDOMWindow>(jsWindowProxy->wrapped()).protectedDocument()->securityOrigin();
+        auto* origin = &Ref { downcast<LocalDOMWindow>(jsWindowProxy->wrapped()) }->protectedDocument()->securityOrigin();
         result.append(std::make_pair(lexicalGlobalObject, origin));
     }
 }
@@ -555,7 +555,7 @@ JSObject* ScriptController::jsObjectForPluginElement(HTMLPlugInElement* plugin)
     JSLockHolder lock(commonVM());
 
     // Create a JSObject bound to this element
-    auto* globalObj = globalObject(pluginWorld());
+    auto* globalObj = globalObject(protectedMainThreadNormalWorld());
     // FIXME: is normal okay? - used for NP plugins?
     JSValue jsElementValue = toJS(globalObj, globalObj, plugin);
     if (!jsElementValue || !jsElementValue.isObject())
