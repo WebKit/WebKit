@@ -404,7 +404,7 @@ Vector<std::pair<String, String>> collectVaryingRequestHeaders(const CookieJar* 
     });
 }
 
-static bool verifyVaryingRequestHeadersInternal(const Vector<std::pair<String, String>>& varyingRequestHeaders, Function<String(const String&)>&& headerValueForVary)
+static bool verifyVaryingRequestHeadersInternal(const Vector<std::pair<String, String>>& varyingRequestHeaders, NOESCAPE const Function<String(const String&)>& headerValueForVary)
 {
     for (auto& varyingRequestHeader : varyingRequestHeaders) {
         // FIXME: Vary: * in response would ideally trigger a cache delete instead of a store.

@@ -152,7 +152,6 @@ platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/mac/AVVideoCaptureSource.mm
 platform/mediastream/mac/RealtimeIncomingVideoSourceCocoa.mm
 platform/mediastream/mac/ScreenCaptureKitCaptureSource.mm
-platform/network/CacheValidation.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
 rendering/MotionPath.cpp
