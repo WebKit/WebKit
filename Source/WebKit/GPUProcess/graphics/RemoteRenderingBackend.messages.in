@@ -61,7 +61,7 @@ messages -> RemoteRenderingBackend Stream {
 #endif
 
     MoveToSerializedBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer)
-    MoveToImageBuffer(WebCore::RenderingResourceIdentifier destinationImageBuffer)
+    MoveToImageBuffer(WebCore::RenderingResourceIdentifier sourceImageBuffer, WebCore::RenderingResourceIdentifier destinationImageBuffer)
 
 #if PLATFORM(COCOA)
     DidDrawRemoteToPDF(WebCore::PageIdentifier pageID, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier snapshotIdentifier)

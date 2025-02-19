@@ -303,9 +303,9 @@ void RemoteRenderingBackendProxy::moveToSerializedBuffer(WebCore::RenderingResou
     send(Messages::RemoteRenderingBackend::MoveToSerializedBuffer(identifier));
 }
 
-void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier)
+void RemoteRenderingBackendProxy::moveToImageBuffer(WebCore::RenderingResourceIdentifier identifier, WebCore::RenderingResourceIdentifier newIdentifier)
 {
-    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(identifier));
+    send(Messages::RemoteRenderingBackend::MoveToImageBuffer(identifier, newIdentifier));
 }
 
 #if PLATFORM(COCOA)

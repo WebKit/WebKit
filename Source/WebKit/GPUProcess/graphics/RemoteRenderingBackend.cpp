@@ -212,7 +212,8 @@ void RemoteRenderingBackend::didFailCreateImageBuffer(RenderingResourceIdentifie
 
 void RemoteRenderingBackend::didCreateImageBuffer(Ref<ImageBuffer> imageBuffer)
 {
-    auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier();
+    auto imageBufferIdentifier = imageBuffer->renderingResourceIdentifier(); // afryer: this is what is used for communication
+    // WTFLogAlways("afryer: in GPUP didCreateImageBuffer: %lld\n", imageBufferIdentifier.toUInt64());
     auto* sharing = imageBuffer->toBackendSharing();
     auto handle = sharing ? downcast<ImageBufferBackendHandleSharing>(*sharing).createBackendHandle() : std::nullopt;
     m_remoteDisplayLists.add(imageBufferIdentifier, RemoteDisplayListRecorder::create(imageBuffer.get(), imageBufferIdentifier, *this));
@@ -224,6 +225,7 @@ void RemoteRenderingBackend::moveToSerializedBuffer(RenderingResourceIdentifier 
 {
     assertIsCurrent(workQueue());
     // Destroy the DisplayListRecorder which plays back to this image buffer.
+    // WTFLogAlways("afryer: GPUP moveToImageBuffer taking and adding: %lld\n", identifier.toUInt64());
     m_remoteDisplayLists.take(identifier);
     // This transfers ownership of the RemoteImageBuffer contents to the transfer heap.
     auto imageBuffer = takeImageBuffer(identifier);
@@ -242,9 +244,10 @@ static void adjustImageBufferCreationContext(RemoteSharedResourceCache& sharedRe
     creationContext.resourceOwner = sharedResourceCache.resourceOwner();
 }
 
-void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier identifier)
+void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier identifier, RenderingResourceIdentifier newIdentifier)
 {
     assertIsCurrent(workQueue());
+    // WTFLogAlways("afryer: GPUP moveToImageBuffer taking: %lld, creating %lld\n", identifier.toUInt64(), newIdentifier.toUInt64());
     auto imageBuffer = protectedSharedResourceCache()->takeSerializedImageBuffer(identifier);
     if (!imageBuffer) {
         ASSERT_IS_TESTING_IPC();
@@ -256,6 +259,7 @@ void RemoteRenderingBackend::moveToImageBuffer(RenderingResourceIdentifier ident
     ImageBufferCreationContext creationContext;
     adjustImageBufferCreationContext(m_sharedResourceCache, creationContext);
     imageBuffer->transferToNewContext(creationContext);
+    imageBuffer->setRenderingResourceIdentifier(newIdentifier);
     didCreateImageBuffer(imageBuffer.releaseNonNull());
 }
 

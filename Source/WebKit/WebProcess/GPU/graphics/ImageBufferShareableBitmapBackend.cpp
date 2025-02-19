@@ -126,8 +126,7 @@ std::optional<ImageBufferBackendHandle> ImageBufferShareableBitmapBackend::creat
 
 void ImageBufferShareableBitmapBackend::transferToNewContext(const ImageBufferCreationContext& creationContext)
 {
-    if (creationContext.resourceOwner)
-        m_bitmap->setOwnershipOfMemory(creationContext.resourceOwner);
+    ASSERT_NOT_REACHED();
 }
 
 unsigned ImageBufferShareableBitmapBackend::bytesPerRow() const

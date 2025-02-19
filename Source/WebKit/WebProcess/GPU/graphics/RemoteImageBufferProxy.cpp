@@ -400,7 +400,9 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 
     remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
 
-    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *remoteRenderingBackendProxy);
+    // Create a new name for the ImageBuffer to avoid races between threads when they take the ImageBuffer from the ThreadSafeObjectHeap
+    // RenderingResourceIdentifier newRenderingResourceIdentifier = RenderingResourceIdentifier::generate();
+    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *remoteRenderingBackendProxy); // remoteRenderingBackendProxy contains a RenderingResourceIdentifier that is used for IPC
 
     clearBackend();
     m_remoteRenderingBackendProxy = nullptr;
@@ -420,8 +422,11 @@ RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::Imag
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
-    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
-    backend.moveToImageBuffer(result->renderingResourceIdentifier());
+    RenderingResourceIdentifier identifier = buffer->m_renderingResourceIdentifier;
+    RenderingResourceIdentifier newIdentifier = RenderingResourceIdentifier::generate();
+    // WTFLogAlways("afryer: WCP sinkIntoImageBuffer: %lld, %lld\n", identifier.toUInt64(), newIdentifier.toUInt64());
+    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, newIdentifier));
+    backend.moveToImageBuffer(identifier, newIdentifier);
     buffer->m_connection = nullptr;
     return result;
 }

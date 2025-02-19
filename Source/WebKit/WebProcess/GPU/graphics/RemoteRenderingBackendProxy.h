@@ -69,7 +69,7 @@ namespace WebKit {
 
 class WebPage;
 class RemoteImageBufferProxy;
-class RemoteSerializedImageBufferProxy;
+// class RemoteSerializedImageBufferProxy;
 class RemoteSharedResourceCacheProxy;
 class RemoteLayerBackingStore;
 
@@ -93,9 +93,8 @@ public:
 
     RemoteResourceCacheProxy& remoteResourceCacheProxy() { return m_remoteResourceCacheProxy; }
 
-    void transferImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy>, WebCore::ImageBuffer&);
     void moveToSerializedBuffer(WebCore::RenderingResourceIdentifier);
-    void moveToImageBuffer(WebCore::RenderingResourceIdentifier);
+    void moveToImageBuffer(WebCore::RenderingResourceIdentifier, WebCore::RenderingResourceIdentifier);
 
 #if PLATFORM(COCOA)
     void didDrawRemoteToPDF(WebCore::PageIdentifier, WebCore::RenderingResourceIdentifier imageBufferIdentifier, WebCore::SnapshotIdentifier);
@@ -212,7 +211,7 @@ private:
     WeakPtr<GPUProcessConnection> m_gpuProcessConnection; // Only for main thread operation.
     RefPtr<IPC::StreamClientConnection> m_connection;
     RefPtr<RemoteSharedResourceCacheProxy> m_sharedResourceCache;
-    RenderingBackendIdentifier m_identifier { RenderingBackendIdentifier::generate() };
+    RenderingBackendIdentifier m_identifier { RenderingBackendIdentifier::generate() };  // afryer: this is what is used for communication // will this generate for every obj un-necessarily?
     RemoteResourceCacheProxy m_remoteResourceCacheProxy { *this };
     RefPtr<WebCore::SharedMemory> m_getPixelBufferSharedMemory;
     WebCore::Timer m_destroyGetPixelBufferSharedMemoryTimer { *this, &RemoteRenderingBackendProxy::destroyGetPixelBufferSharedMemory };
