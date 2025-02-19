@@ -338,6 +338,10 @@ void ComplexTextController::collectComplexTextRuns()
     }();
 
     auto fontVariantCaps = m_font.fontDescription().variantCaps();
+    bool isSmallCapsVariant = fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::AllSmall;
+    if (isJapaneseText(m_run.textAsString()) && isSmallCapsVariant)
+        fontVariantCaps = FontVariantCaps::Normal;
+
     bool dontSynthesizeSmallCaps = !m_font.fontDescription().hasAutoFontSynthesisSmallCaps();
     bool engageAllSmallCapsProcessing = fontVariantCaps == FontVariantCaps::AllSmall || fontVariantCaps == FontVariantCaps::AllPetite;
     bool engageSmallCapsProcessing = engageAllSmallCapsProcessing || fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::Petite;

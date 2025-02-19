@@ -380,6 +380,11 @@ inline void WidthIterator::advanceInternal(TextIterator& textIterator, GlyphBuff
     auto fontDescription = m_font->fontDescription();
     Ref primaryFont = m_font->primaryFont();
     AdvanceInternalState advanceInternalState(glyphBuffer, primaryFont, textIterator.currentIndex());
+    auto fontVariantCaps = fontDescription.variantCaps();
+    bool isSmallCapsVariant = fontVariantCaps == FontVariantCaps::Small || fontVariantCaps == FontVariantCaps::AllSmall;
+    if (isJapaneseText(run().textAsString()) && isSmallCapsVariant)
+        fontDescription.setVariantCaps(FontVariantCaps::Normal);
+
     SmallCapsState smallCapsState(fontDescription);
 
     char32_t character = 0;

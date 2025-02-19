@@ -28,6 +28,7 @@
 #include <unicode/uchar.h>
 #include <unicode/uscript.h>
 #include <wtf/text/StringCommon.h>
+#include <wtf/text/StringView.h>
 
 namespace WTF {
 
@@ -169,6 +170,17 @@ inline bool isCombiningMark(char32_t character)
     return 0x0300 <= character && character <= 0x036F;
 }
 
+inline bool isJapaneseText(const String& str)
+{
+    StringView textView = str;
+    for (size_t i = 0; i < textView.length(); ++i) {
+        auto ch = textView[i];
+        if ((ch >= 0x4E00 && ch <= 0x9FFF) || (ch >= 0x30A0 && ch <= 0x30FF) || (ch >= 0x4E00 && ch <= 0x9FFF))
+            return true;
+    }
+    return false;
+}
+
 } // namespace WTF
 
 using WTF::isEmojiGroupCandidate;
@@ -189,3 +201,4 @@ using WTF::isEastAsianFullWidth;
 using WTF::isCJKSymbolOrPunctuation;
 using WTF::isFullwidthMiddleDotPunctuation;
 using WTF::isCombiningMark;
+using WTF::isJapaneseText;
