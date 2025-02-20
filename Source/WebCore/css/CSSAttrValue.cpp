@@ -31,9 +31,9 @@
 
 namespace WebCore {
 
-Ref<CSSAttrValue> CSSAttrValue::create(String attributeName, RefPtr<CSSValue>&& fallback)
+Ref<CSSAttrValue> CSSAttrValue::create(String attributeName, String namespacePrefix, RefPtr<CSSValue>&& fallback)
 {
-    return adoptRef(*new CSSAttrValue(WTFMove(attributeName), WTFMove(fallback)));
+    return adoptRef(*new CSSAttrValue(WTFMove(attributeName), WTFMove(namespacePrefix), WTFMove(fallback)));
 }
 
 bool CSSAttrValue::equals(const CSSAttrValue& other) const

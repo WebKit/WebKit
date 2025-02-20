@@ -31,6 +31,7 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
+#include "CommonAtomStrings.h"
 #include <wtf/text/AtomString.h>
 
 namespace WebCore {
@@ -45,33 +46,53 @@ RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext& c
     // <attr-type> = type( <syntax> ) | string | <attr-unit>
     // https://drafts.csswg.org/css-values-5/#funcdef-attr
 
-    // FIXME: Add support for complete <attr-name> syntax, including namespace support.
-    // FIXME: Add support for <attr-type> syntax
+    AtomString namespacePrefix = nullAtom();
+    AtomString attrName = nullAtom();
 
-    if (args.peek().type() != IdentToken)
+    // Process <attr-name> syntax.
+    args.consumeWhitespace();
+    if (args.peek().type() == IdentToken) {
+        attrName = args.peek().value().toAtomString();
+        args.consume();
+    } else if (args.peek().type() == DelimiterToken && args.peek().delimiter() == '*') {
+        attrName = starAtom();
+        args.consume();
+    } else if (args.peek().type() == DelimiterToken && args.peek().delimiter() == '|')
+        attrName = emptyAtom();
+    else
         return nullptr;
 
-    CSSParserToken token = args.consumeIncludingWhitespace();
+    // If namespace delimiter is detected, attribute name must follow.
+    if (args.peek().type() == DelimiterToken && args.peek().delimiter() == '|') {
+        namespacePrefix = attrName;
+        args.consume();
+        if (args.peek().type() == IdentToken) {
+            attrName = args.peek().value().toAtomString();
+            args.consume();
+        } else
+            return nullptr;
+    }
 
-    AtomString attrName;
     if (context.isHTMLDocument)
-        attrName = token.value().convertToASCIILowercaseAtom();
-    else
-        attrName = token.value().toAtomString();
+        attrName = attrName.convertToASCIILowercase();
 
+    // FIXME: Add support for <attr-type> syntax
+
+    args.consumeWhitespace();
     if (!args.atEnd() && !consumeCommaIncludingWhitespace(args))
         return nullptr;
 
+    // Process <declaration-value> syntax.
     RefPtr<CSSValue> fallback;
     if (args.peek().type() == StringToken) {
-        token = args.consumeIncludingWhitespace();
+        CSSParserToken token = args.consumeIncludingWhitespace();
         fallback = CSSPrimitiveValue::create(token.value().toString());
     }
 
     if (!args.atEnd())
         return nullptr;
 
-    auto attr = CSSAttrValue::create(WTFMove(attrName), WTFMove(fallback));
+    auto attr = CSSAttrValue::create(WTFMove(attrName), WTFMove(namespacePrefix), WTFMove(fallback));
     // FIXME: Consider moving to a CSSFunctionValue with a custom-ident rather than a special CSS_ATTR primitive value.
 
     return CSSPrimitiveValue::create(WTFMove(attr));

@@ -35,21 +35,24 @@ class Element;
 
 class CSSAttrValue final : public CSSValue {
 public:
-    static Ref<CSSAttrValue> create(String attributeName, RefPtr<CSSValue>&& fallback = nullptr);
+    static Ref<CSSAttrValue> create(String attributeName, String namespacePrefix, RefPtr<CSSValue>&& fallback = nullptr);
     const String attributeName() const { return m_attributeName; }
+    const String namespacePrefix() const { return m_namespacePrefix; }
     const CSSValue* fallback() const { return m_fallback.get(); }
     bool equals(const CSSAttrValue& other) const;
     String customCSSText(const CSS::SerializationContext&) const;
 
 private:
-    explicit CSSAttrValue(String&& attributeName, RefPtr<CSSValue>&& fallback)
+    explicit CSSAttrValue(String&& attributeName, String&& namespacePrefix, RefPtr<CSSValue>&& fallback)
         : CSSValue(ClassType::Attr)
         , m_attributeName(WTFMove(attributeName))
+        , m_namespacePrefix(WTFMove(namespacePrefix))
         , m_fallback(WTFMove(fallback))
     {
     }
 
     String m_attributeName;
+    String m_namespacePrefix;
     RefPtr<CSSValue> m_fallback;
 };
 

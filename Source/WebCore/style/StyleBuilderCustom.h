@@ -59,6 +59,7 @@
 #include "StyleImageSet.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleSheetContents.h"
 #include "StyleTextShadow.h"
 #include "TextSizeAdjustment.h"
 
@@ -1306,11 +1307,31 @@ inline void BuilderCustom::applyValueContent(BuilderState& builderState, CSSValu
             const_cast<RenderStyle&>(builderState.parentStyle()).setHasAttrContent();
 
         auto value = primitiveValue.cssAttrValue();
-        QualifiedName attr(nullAtom(), value->attributeName().impl(), nullAtom());
-        const AtomString& attributeValue = builderState.element() ? builderState.element()->getAttribute(attr) : nullAtom();
+        AtomString attrName(value->attributeName());
+        AtomString namespacePrefix(value->namespacePrefix());
+        AtomString namespaceURI = nullAtom();
+
+        // Determine the namespace URI given the current prefix.
+        if (namespacePrefix.isEmpty())
+            namespaceURI = emptyAtom();
+        else if (namespacePrefix == starAtom())
+            namespaceURI = starAtom();
+        else {
+            for (const auto& styleSheet : builderState.document().styleScope().activeStyleSheets()) {
+                auto& styleSheetContents = styleSheet->contents();
+                namespaceURI = styleSheetContents.namespaceURIFromPrefix(namespacePrefix);
+                if (!namespaceURI.isNull())
+                    break;
+            }
+        }
+
+        QualifiedName qualifiedName = (namespacePrefix.isNull() || namespaceURI.isNull())
+            ? QualifiedName(nullAtom(), attrName, nullAtom())
+            : QualifiedName(namespacePrefix, attrName, namespaceURI);
+        const AtomString& attributeValue = builderState.element() ? builderState.element()->getAttribute(qualifiedName) : nullAtom();
 
         // Register the fact that the attribute value affects the style.
-        builderState.registerContentAttribute(attr.localName());
+        builderState.registerContentAttribute(qualifiedName.localName());
 
         if (attributeValue.isNull()) {
             auto fallback = dynamicDowncast<CSSPrimitiveValue>(value->fallback());

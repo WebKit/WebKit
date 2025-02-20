@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:foo="https://ntim.me">
+<style>
+    @namespace foo url("https://ntim.me");
+    @namespace webkit url("https://webkit.org");
+    div::after {
+        content: attr(foo|id);
+    }
+    div::before {
+        content: attr(webkit|id);
+    }
+</style>
+<div foo:id="this should be shown" id="this should not be shown"></div>
+</html>
