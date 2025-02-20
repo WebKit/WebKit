@@ -27,6 +27,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA)
 
+#include "CDMEncryptionScheme.h"
 #include "CDMInstance.h"
 #include "CDMRequirement.h"
 #include "CDMSessionType.h"
@@ -84,6 +85,7 @@ public:
     virtual bool supportsConfiguration(const CDMKeySystemConfiguration&) const = 0;
     virtual bool supportsConfigurationWithRestrictions(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
     virtual bool supportsSessionTypeWithConfiguration(const CDMSessionType&, const CDMKeySystemConfiguration&) const = 0;
+    virtual bool supportsEncryptionScheme(CDMEncryptionScheme) const { return true; }
     virtual Vector<AtomString> supportedRobustnesses() const = 0;
     virtual CDMRequirement distinctiveIdentifiersRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
     virtual CDMRequirement persistentStateRequirement(const CDMKeySystemConfiguration&, const CDMRestrictions&) const = 0;
