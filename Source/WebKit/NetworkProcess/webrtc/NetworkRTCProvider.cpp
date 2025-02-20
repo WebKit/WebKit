@@ -207,11 +207,9 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
 
         auto ipAddresses = WTF::compactMap(result.value(), [](auto& address) -> std::optional<RTCNetwork::IPAddress> {
             if (address.isIPv4())
-                // FIXME: Remove SUPPRESS_MEMORY_UNSAFE_CAST once rdar://144236356 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv4Address() } };
+                return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv4Address() } };
             if (address.isIPv6())
-                // FIXME: Remove SUPPRESS_MEMORY_UNSAFE_CAST once rdar://144236356 is fixed.
-                SUPPRESS_MEMORY_UNSAFE_CAST return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv6Address() } };
+                return RTCNetwork::IPAddress { rtc::IPAddress { address.ipv6Address() } };
             return std::nullopt;
         });
 
