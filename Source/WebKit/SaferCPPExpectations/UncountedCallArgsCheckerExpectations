@@ -231,7 +231,6 @@ UIProcess/mac/WKPrintingView.mm
 UIProcess/mac/WKSharingServicePickerDelegate.mm
 UIProcess/mac/WKTextFinderClient.mm
 UIProcess/mac/WKViewLayoutStrategy.mm
-UIProcess/mac/WebColorPickerMac.mm
 UIProcess/mac/WebContextMenuProxyMac.mm
 UIProcess/mac/WebDataListSuggestionsDropdownMac.mm
 UIProcess/mac/WebDateTimePickerMac.mm
