@@ -126,19 +126,21 @@ TestPage.registerInitializer(() => {
                                 let inputLocation = {lineNumber: line, columnNumber: 0};
                                 let resolvedLocation = script.createSourceCodeLocation(payload.lineNumber, payload.columnNumber);
                                 InspectorTest.log(`INSERTING AT: ${inputLocation.lineNumber}:${inputLocation.columnNumber}`);
-                                InspectorTest.log(`PAUSES AT: ${payload.lineNumber}:${payload.columnNumber}`);                                
+                                InspectorTest.log(`PAUSES AT: ${payload.lineNumber}:${payload.columnNumber}`);
                                 window.logResolvedBreakpointLinesWithContext(inputLocation, resolvedLocation, 3);
                             }
                         });
 
-                        let start = createLocation(script, line, 0);
-                        let end = createLocation(script, line, lines[line].length);
-                        DebuggerAgent.getBreakpointLocations(start, end, (error, locations) => {
-                            InspectorTest.log(`LOCATIONS FROM ${start.lineNumber}:${start.columnNumber} to ${end.lineNumber}:${end.columnNumber}`);
+                        let range = {
+                            start: {line, column: 0},
+                            end: {line, column: lines[line].length},
+                        };
+                        DebuggerAgent.getBreakpointSourcePositions(script.id, range, (error, locations) => {
+                            InspectorTest.log(`LOCATIONS FROM ${range.start.line}:${range.start.column} to ${range.end.line}:${range.end.column}`);
                             if (error)
                                 InspectorTest.log(`PRODUCES: ${error}`);
                             else
-                                window.logResolvedBreakpointLocationsInRange(start, end, locations.map((location) => script.createSourceCodeLocation(location.lineNumber, location.columnNumber)));
+                                window.logResolvedBreakpointLocationsInRange(range, locations.map(({line, column}) => script.createSourceCodeLocation(line, column)));
                         });
 
                         // Clear the breakpoint we just set without knowing its breakpoint identifier.
