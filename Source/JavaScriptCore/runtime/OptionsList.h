@@ -470,7 +470,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, airForceBriggsAllocator, false, Normal, nullptr) \
     v(Bool, airForceIRCAllocator, false, Normal, nullptr) \
     v(Bool, airGreedyRegAllocVerbose, false, Normal, nullptr) \
-    v(Bool, airUseGreedyRegAlloc, false, Normal, nullptr) \
+    v(Bool, airUseGreedyRegAlloc, true, Normal, nullptr) \
     v(Double, airGreedyRegAllocSplitMultiplier, 2.0, Normal, nullptr) \
     v(Bool, airDumpRegAllocStats, false, Normal, nullptr) \
     v(Bool, airValidateGreedRegAlloc, ASSERT_ENABLED, Normal, nullptr) \
