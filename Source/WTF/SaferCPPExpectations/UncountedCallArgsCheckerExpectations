@@ -1,7 +1,6 @@
 wtf/AutomaticThread.cpp
 wtf/JSONValues.cpp
 wtf/MemoryPressureHandler.cpp
-wtf/NativePromise.h
 wtf/ParallelHelperPool.cpp
 wtf/PrintStream.h
 wtf/ThreadGroup.cpp
