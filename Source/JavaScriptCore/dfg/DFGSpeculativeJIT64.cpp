@@ -3213,7 +3213,7 @@ void SpeculativeJIT::compileGetTypedArrayByteOffsetAsInt52(Node* node)
 }
 #endif // USE(LARGE_TYPED_ARRAYS)
 
-void SpeculativeJIT::compile(Node* node)
+auto SpeculativeJIT::compileNode(Node* node) -> std::tuple<bool, CodeGenerationResult>
 {
     NodeType op = node->op();
 
@@ -3228,6 +3228,7 @@ void SpeculativeJIT::compile(Node* node)
     clearRegisterAllocationOffsets();
 #endif
 
+    CodeGenerationResult codeGenerationResult = CodeGenerationResult::Generated;
     switch (op) {
     case JSConstant:
     case DoubleConstant:
@@ -3323,12 +3324,14 @@ void SpeculativeJIT::compile(Node* node)
 
     case MovHint:
     case ZombieHint: {
+        codeGenerationResult = CodeGenerationResult::NotGenerated;
         compileMovHint(m_currentNode);
         noResult(node);
         break;
     }
 
     case ExitOK: {
+        codeGenerationResult = CodeGenerationResult::NotGenerated;
         noResult(node);
         break;
     }
@@ -3643,22 +3646,22 @@ void SpeculativeJIT::compile(Node* node)
 
     case CompareLess:
         if (compare(node, LessThan, DoubleLessThanAndOrdered, operationCompareLess))
-            return;
+            return { m_compileOkay, codeGenerationResult };
         break;
 
     case CompareLessEq:
         if (compare(node, LessThanOrEqual, DoubleLessThanOrEqualAndOrdered, operationCompareLessEq))
-            return;
+            return { m_compileOkay, codeGenerationResult };
         break;
 
     case CompareGreater:
         if (compare(node, GreaterThan, DoubleGreaterThanAndOrdered, operationCompareGreater))
-            return;
+            return { m_compileOkay, codeGenerationResult };
         break;
 
     case CompareGreaterEq:
         if (compare(node, GreaterThanOrEqual, DoubleGreaterThanOrEqualAndOrdered, operationCompareGreaterEq))
-            return;
+            return { m_compileOkay, codeGenerationResult };
         break;
 
     case CompareBelow:
@@ -3671,12 +3674,12 @@ void SpeculativeJIT::compile(Node* node)
 
     case CompareEq:
         if (compare(node, Equal, DoubleEqualAndOrdered, operationCompareEq))
-            return;
+            return { m_compileOkay, codeGenerationResult };
         break;
 
     case CompareStrictEq:
         if (compileStrictEq(node))
-            return;
+            return { m_compileOkay, codeGenerationResult };
         break;
         
     case CompareEqPtr:
@@ -5737,6 +5740,7 @@ void SpeculativeJIT::compile(Node* node)
         
     case PhantomLocal:
         // This is a no-op.
+        codeGenerationResult = CodeGenerationResult::NotGenerated;
         noResult(node);
         break;
 
@@ -6506,10 +6510,12 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     if (!m_compileOkay)
-        return;
+        return { false, codeGenerationResult };
     
     if (node->hasResult() && node->mustGenerate())
         use(node);
+
+    return { true, codeGenerationResult };
 }
 
 void SpeculativeJIT::moveTrueTo(GPRReg gpr)

@@ -3482,12 +3482,26 @@ CodePtr<JSEntryPtrTag> CodeBlock::addressForCallConcurrently(const ConcurrentJSL
 
 unsigned CodeBlock::bytecodeCost() const
 {
-#if ENABLE(FTL_JIT)
-    if (jitType() == JITType::FTLJIT) {
-        if (auto* jitCode = static_cast<FTL::JITCode*>(m_jitCode.get()))
-            return std::min(static_cast<unsigned>(jitCode->numberOfCompiledDFGNodes() * Options::ratioFTLNodesToBytecodeCost()), m_bytecodeCost);
+    switch (jitType()) {
+#if ENABLE(DFG_JIT)
+    case JITType::DFGJIT: {
+        if (auto* jitCode = static_cast<DFG::JITCode*>(m_jitCode.get()))
+            return std::min(static_cast<unsigned>(jitCode->numberOfCompiledDFGNodes() * Options::ratioDFGNodesToBytecodeCost()), m_bytecodeCost);
+        break;
     }
 #endif
+
+#if ENABLE(FTL_JIT)
+    case JITType::FTLJIT: {
+        if (auto* jitCode = static_cast<FTL::JITCode*>(m_jitCode.get()))
+            return std::min(static_cast<unsigned>(jitCode->numberOfCompiledDFGNodes() * Options::ratioFTLNodesToBytecodeCost()), m_bytecodeCost);
+        break;
+    }
+#endif
+
+    default:
+        break;
+    }
     return m_bytecodeCost;
 }
 

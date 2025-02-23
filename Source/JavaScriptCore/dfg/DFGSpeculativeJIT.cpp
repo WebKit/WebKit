@@ -2024,12 +2024,12 @@ void SpeculativeJIT::bail(AbortReason reason)
     clearGenerationInfo();
 }
 
-void SpeculativeJIT::compileCurrentBlock()
+unsigned SpeculativeJIT::compileCurrentBlock()
 {
     ASSERT(m_compileOkay);
     
     if (!m_block)
-        return;
+        return 0;
     
     ASSERT(m_block->isReachable);
     
@@ -2040,7 +2040,7 @@ void SpeculativeJIT::compileCurrentBlock()
         // But to be sure that nobody has generated a jump to this block, drop in a
         // breakpoint here.
         abortWithReason(DFGUnreachableBasicBlock);
-        return;
+        return 0;
     }
 
     if (m_block->isCatchEntrypoint) {
@@ -2096,6 +2096,7 @@ void SpeculativeJIT::compileCurrentBlock()
             store8(TrustedImm32(0), &vm().didEnterVM);
     }
 
+    unsigned codeGeneratedNodes = 0;
     for (m_indexInBlock = 0; m_indexInBlock < m_block->size(); ++m_indexInBlock) {
         m_currentNode = m_block->at(m_indexInBlock);
         
@@ -2103,7 +2104,7 @@ void SpeculativeJIT::compileCurrentBlock()
         // didn't cause directly.
         if (!m_state.isValid()) {
             bail(DFGBailedAtTopOfBlock);
-            return;
+            return codeGeneratedNodes;
         }
 
         m_interpreter.startExecuting();
@@ -2142,7 +2143,9 @@ void SpeculativeJIT::compileCurrentBlock()
             sizeMarker = vm().jitSizeStatistics->markStart(id, *this);
         }
 
-        compile(m_currentNode);
+        auto [notTerminated, result] = compileNode(m_currentNode);
+        if (result == CodeGenerationResult::Generated)
+            ++codeGeneratedNodes;
 
         if (UNLIKELY(sizeMarker))
             vm().jitSizeStatistics->markEnd(WTFMove(*sizeMarker), *this, m_graph.m_plan);
@@ -2154,9 +2157,9 @@ void SpeculativeJIT::compileCurrentBlock()
         clearRegisterAllocationOffsets();
 #endif
         
-        if (!m_compileOkay) {
+        if (!notTerminated) {
             bail(DFGBailedAtEndOfNode);
-            return;
+            return codeGeneratedNodes;
         }
         
         // Make sure that the abstract state is rematerialized for the next node.
@@ -2168,6 +2171,8 @@ void SpeculativeJIT::compileCurrentBlock()
         for (auto& info : m_generationInfo)
             RELEASE_ASSERT(!info.alive());
     }
+
+    return codeGeneratedNodes;
 }
 
 // If we are making type predictions about our arguments then
@@ -2249,11 +2254,13 @@ void SpeculativeJIT::compileBody()
     checkArgumentTypes();
     
     ASSERT(!m_currentNode);
+    unsigned numberOfCompiledDFGNodes = 0;
     for (BlockIndex blockIndex = 0; blockIndex < m_graph.numBlocks(); ++blockIndex) {
         setForBlockIndex(blockIndex);
         m_block = m_graph.block(blockIndex);
-        compileCurrentBlock();
+        numberOfCompiledDFGNodes += compileCurrentBlock();
     }
+    jitCode()->setNumberOfCompiledDFGNodes(numberOfCompiledDFGNodes);
     linkBranches();
 }
 

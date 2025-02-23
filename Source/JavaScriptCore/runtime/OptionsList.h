@@ -297,6 +297,7 @@ bool hasCapacityToUseLargeGigacage();
     \
     v(Unsigned, maximumFTLCandidateBytecodeCost, 20000, Normal, nullptr) \
     \
+    v(Double, ratioDFGNodesToBytecodeCost, 1.8, Normal, "Ratio converting DFG # of DFG nodes to approx bytecode cost") \
     v(Double, ratioFTLNodesToBytecodeCost, 1.8, Normal, "Ratio converting FTL # of DFG nodes to approx bytecode cost") \
     \
     /* Depth of inline stack, so 1 = no inlining, 2 = one level, etc. */ \
@@ -605,6 +606,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useOMGInlining, true, Normal, "Use OMG inlining"_s) \
     v(Bool, freeRetiredWasmCode, true, Normal, "free BBQ/OMG-OSR wasm code once it's no longer reachable."_s) \
     v(Bool, useArrayAllocationSinking, true, Normal, "free BBQ/OMG-OSR wasm code once it's no longer reachable."_s) \
+    v(Bool, dumpDFGCodeSize, false, Normal, nullptr) \
     v(Bool, dumpFTLCodeSize, false, Normal, nullptr) \
     \
     /* Feature Flags */\

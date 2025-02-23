@@ -350,10 +350,14 @@ public:
     void addSlowPathGeneratorLambda(Function<void()>&&);
     void runSlowPathGenerators(PCToCodeOriginMapBuilder&);
     
-    void compile(Node*);
+    enum class CodeGenerationResult : uint8_t {
+        NotGenerated,
+        Generated,
+    };
+    std::tuple<bool, CodeGenerationResult> compileNode(Node*);
     void noticeOSRBirth(Node*);
     void bail(AbortReason);
-    void compileCurrentBlock();
+    unsigned compileCurrentBlock();
 
     void exceptionCheck(GPRReg exceptionReg = InvalidGPRReg);
     CallSiteIndex recordCallSiteAndGenerateExceptionHandlingOSRExitIfNeeded(const CodeOrigin& callSiteCodeOrigin, unsigned eventStreamIndex);
