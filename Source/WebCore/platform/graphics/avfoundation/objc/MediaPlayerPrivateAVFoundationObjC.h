@@ -198,7 +198,7 @@ private:
 
     void createAVPlayer() final;
     void createAVPlayerItem() final;
-    virtual void createAVPlayerLayer();
+    void createAVPlayerLayer();
     void createAVAssetForURL(const URL&) final;
     void createAVAssetForURL(const URL&, RetainPtr<NSMutableDictionary>);
     MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const final;

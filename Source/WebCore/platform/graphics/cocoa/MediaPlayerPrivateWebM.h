@@ -72,7 +72,7 @@ class VideoMediaSampleRenderer;
 class VideoLayerManagerObjC;
 class VideoTrackPrivateWebM;
 
-class MediaPlayerPrivateWebM
+class MediaPlayerPrivateWebM final
     : public MediaPlayerPrivateInterface
     , public WebMResourceClientParent
     , public WebAVSampleBufferListenerClient
