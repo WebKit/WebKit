@@ -31,7 +31,6 @@ css/StyleSheetContents.h
 css/StyleSheetList.h
 css/parser/SizesCalcParser.h
 dom/CollectionIndexCache.h
-dom/ElementAncestorIterator.h
 dom/Node.cpp
 dom/Node.h
 dom/QualifiedName.h
