@@ -70,7 +70,7 @@ public:
     template<typename T, DestructionThread destructionThread>
     void strongDeref() const
     {
-        T* object;
+        SUPPRESS_UNCOUNTED_LOCAL T* object;
         {
             Locker locker { m_lock };
             ASSERT_WITH_SECURITY_IMPLICATION(m_object);
@@ -87,7 +87,7 @@ public:
             m_weakReferenceCount++;
         }
 
-        auto deleteObject = [this, object] {
+        auto deleteObject = [this, object] SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE {
             delete static_cast<const T*>(object);
 
             bool hasOtherWeakRefs;
@@ -239,7 +239,7 @@ public:
         if (didDerefStrongOnly) {
             if (newStrongOnlyRefCount == strongOnlyFlag) {
                 ASSERT(m_bits.exchangeOr(destructionStartedFlag) == newStrongOnlyRefCount);
-                auto deleteObject = [this] {
+                auto deleteObject = [this] SUPPRESS_UNCOUNTED_LAMBDA_CAPTURE {
                     delete static_cast<const T*>(this);
                 };
                 switch (destructionThread) {
