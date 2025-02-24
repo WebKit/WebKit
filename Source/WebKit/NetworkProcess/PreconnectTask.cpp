@@ -39,6 +39,11 @@ namespace WebKit {
 
 using namespace WebCore;
 
+Ref<PreconnectTask> PreconnectTask::create(NetworkSession& networkSession, NetworkLoadParameters&& parameters, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&& completionHandler)
+{
+    return adoptRef(*new PreconnectTask(networkSession, WTFMove(parameters), WTFMove(completionHandler)));
+}
+
 PreconnectTask::PreconnectTask(NetworkSession& networkSession, NetworkLoadParameters&& parameters, CompletionHandler<void(const ResourceError&, const WebCore::NetworkLoadMetrics&)>&& completionHandler)
     : m_networkLoad(NetworkLoad::create(*this, WTFMove(parameters), networkSession))
     , m_completionHandler(WTFMove(completionHandler))
@@ -63,6 +68,8 @@ void PreconnectTask::setTimeout(Seconds timeout)
 void PreconnectTask::start()
 {
     m_timeoutTimer.startOneShot(m_timeout);
+
+    m_keepAlive = this;
     m_networkLoad->start();
 }
 
@@ -112,7 +119,8 @@ void PreconnectTask::didFinish(const ResourceError& error, const NetworkLoadMetr
 {
     if (m_completionHandler)
         m_completionHandler(error, metrics);
-    delete this;
+
+    m_keepAlive = nullptr;
 }
 
 } // namespace WebKit

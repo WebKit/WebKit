@@ -30,6 +30,7 @@
 #include "NetworkLoadClient.h"
 #include <WebCore/Timer.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebKit {
@@ -39,18 +40,22 @@ class NetworkLoadParameters;
 class NetworkProcess;
 class NetworkSession;
 
-class PreconnectTask final : public NetworkLoadClient {
+class PreconnectTask final : public RefCounted<PreconnectTask>, public NetworkLoadClient {
     WTF_MAKE_FAST_ALLOCATED;
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PreconnectTask);
 public:
-    PreconnectTask(NetworkSession&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&&);
+    static Ref<PreconnectTask> create(NetworkSession&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&&);
     ~PreconnectTask();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     void setH2PingCallback(const URL&, CompletionHandler<void(Expected<WTF::Seconds, WebCore::ResourceError>&&)>&&);
     void setTimeout(Seconds);
     void start();
 
 private:
+    PreconnectTask(NetworkSession&, NetworkLoadParameters&&, CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)>&&);
+
     // NetworkLoadClient.
     bool isSynchronous() const final { return false; }
     bool isAllowedToAskUserForCredentials() const final { return false; }
@@ -67,6 +72,7 @@ private:
     CompletionHandler<void(const WebCore::ResourceError&, const WebCore::NetworkLoadMetrics&)> m_completionHandler;
     Seconds m_timeout;
     WebCore::Timer m_timeoutTimer;
+    RefPtr<PreconnectTask> m_keepAlive;
 };
 
 } // namespace WebKit

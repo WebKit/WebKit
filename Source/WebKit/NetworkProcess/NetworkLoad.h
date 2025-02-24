@@ -93,6 +93,8 @@ public:
 
     size_t bytesTransferredOverNetwork() const;
 
+    void clearClient() { m_client = nullptr; }
+
 private:
     NetworkLoad(NetworkLoadClient&, NetworkLoadParameters&&, NetworkSession&);
 
@@ -121,7 +123,7 @@ private:
 
     void notifyDidReceiveResponse(WebCore::ResourceResponse&&, NegotiatedLegacyTLS, PrivateRelayed, ResponseCompletionHandler&&);
 
-    CheckedRef<NetworkLoadClient> m_client;
+    WeakPtr<NetworkLoadClient> m_client;
     const Ref<NetworkProcess> m_networkProcess;
     const NetworkLoadParameters m_parameters;
     RefPtr<NetworkDataTask> m_task;

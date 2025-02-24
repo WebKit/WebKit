@@ -42,6 +42,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ServiceWorkerNavigationPreloader);
 
+Ref<ServiceWorkerNavigationPreloader> ServiceWorkerNavigationPreloader::create(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetrics)
+{
+    return adoptRef(*new ServiceWorkerNavigationPreloader(session, WTFMove(parameters), state, shouldCaptureExtraNetworkLoadMetrics));
+}
+
 ServiceWorkerNavigationPreloader::ServiceWorkerNavigationPreloader(NetworkSession& session, NetworkLoadParameters&& parameters, const WebCore::NavigationPreloadState& state, bool shouldCaptureExtraNetworkLoadMetric)
     : m_session(session)
     , m_parameters(WTFMove(parameters))

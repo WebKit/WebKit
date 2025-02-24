@@ -70,7 +70,7 @@ private:
     AsyncRevalidation(Cache&, const GlobalFrameID&, const WebCore::ResourceRequest&, std::unique_ptr<NetworkCache::Entry>&&, std::optional<NavigatingToAppBoundDomain>, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, CompletionHandler<void(Result)>&&);
     void staleWhileRevalidateEnding();
 
-    std::unique_ptr<SpeculativeLoad> m_load;
+    RefPtr<SpeculativeLoad> m_load;
     WebCore::Timer m_timer;
     CompletionHandler<void(Result)> m_completionHandler;
 };

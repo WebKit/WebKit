@@ -33,6 +33,7 @@
 #include <WebCore/ServiceWorkerJobData.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 
@@ -47,15 +48,20 @@ namespace WebKit {
 class NetworkLoad;
 class NetworkSession;
 
-class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public CanMakeWeakPtr<ServiceWorkerSoftUpdateLoader> {
+class ServiceWorkerSoftUpdateLoader final : public NetworkLoadClient, public RefCounted<ServiceWorkerSoftUpdateLoader>, public CanMakeCheckedPtr<ServiceWorkerSoftUpdateLoader> {
     WTF_MAKE_TZONE_ALLOCATED(ServiceWorkerSoftUpdateLoader);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ServiceWorkerSoftUpdateLoader);
 public:
     using Handler = CompletionHandler<void(WebCore::WorkerFetchResult&&)>;
-    ServiceWorkerSoftUpdateLoader(NetworkSession&, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
+    static Ref<ServiceWorkerSoftUpdateLoader> create(NetworkSession&, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
     ~ServiceWorkerSoftUpdateLoader();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
     
 private:
+    ServiceWorkerSoftUpdateLoader(NetworkSession&, WebCore::ServiceWorkerJobData&&, bool shouldRefreshCache, WebCore::ResourceRequest&&, Handler&&);
+
     // NetworkLoadClient.
     void didSendData(uint64_t bytesSent, uint64_t totalBytesToBeSent) final { }
     bool isSynchronous() const final { return false; }
