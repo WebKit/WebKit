@@ -353,7 +353,7 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
     static void encode(Encoder& encoder, T&& tuple, std::index_sequence<Indices...>)
     {
         if constexpr (sizeof...(Indices) > 0)
-            (encoder << ... << std::get<Indices>(std::forward<T>(tuple)));
+            SUPPRESS_UNCOUNTED_ARG (encoder << ... << std::get<Indices>(std::forward<T>(tuple)));
     }
 
     template<typename Decoder, typename... DecodedTypes>
@@ -370,7 +370,7 @@ template<typename... Elements> struct ArgumentCoder<std::tuple<Elements...>> {
             return decode(decoder, WTFMove(decodedObjects)..., WTFMove(optional));
         } else {
             static_assert((std::is_same_v<DecodedTypes, Elements> && ...));
-            return std::make_optional<std::tuple<Elements...>>(*WTFMove(decodedObjects)...);
+            SUPPRESS_UNCOUNTED_ARG return std::make_optional<std::tuple<Elements...>>(*WTFMove(decodedObjects)...);
         }
     }
 };
