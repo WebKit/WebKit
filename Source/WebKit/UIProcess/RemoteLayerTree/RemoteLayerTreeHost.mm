@@ -112,16 +112,6 @@ LayerContentsType RemoteLayerTreeHost::layerContentsType() const
 #endif
 }
 
-bool RemoteLayerTreeHost::replayDynamicContentScalingDisplayListsIntoBackingStore() const
-{
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-    RefPtr page = m_drawingArea->page();
-    return page && page->protectedPreferences()->replayCGDisplayListsIntoBackingStore();
-#else
-    return false;
-#endif
-}
-
 bool RemoteLayerTreeHost::threadedAnimationResolutionEnabled() const
 {
     RefPtr page = m_drawingArea->page();

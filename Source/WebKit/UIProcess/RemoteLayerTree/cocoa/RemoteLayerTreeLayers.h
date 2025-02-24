@@ -30,15 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <QuartzCore/QuartzCore.h>
 
-namespace WebCore {
-class DynamicContentScalingDisplayList;
-}
-
 @interface WKCompositingLayer : CALayer
-
-#if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-- (void)_setWKContents:(id)contents withDisplayList:(WebCore::DynamicContentScalingDisplayList&&)data replayForTesting:(BOOL)replay;
-#endif
 
 @end
 

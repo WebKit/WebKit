@@ -6087,18 +6087,6 @@ RemoveBackgroundEnabled:
     WebKit:
       default: defaultRemoveBackgroundEnabled()
 
-ReplayCGDisplayListsIntoBackingStore:
-  type: bool
-  status: internal
-  humanReadableName: "Dynamic Content Scaling: Replay for Testing"
-  humanReadableDescription: "Replay Dynamic Content Scaling Display Lists into layer contents for testing"
-  webcoreBinding: none
-  condition: ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-  exposed: [ WebKit ]
-  defaultValue:
-    WebKit:
-      default: false
-
 RequestIdleCallbackEnabled:
   type: bool
   status: testable
