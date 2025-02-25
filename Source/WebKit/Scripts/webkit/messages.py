@@ -63,6 +63,8 @@ CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE = 'CanDispatchOutOfOrder'
 REPLY_CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE = 'ReplyCanDispatchOutOfOrder'
 NOT_USING_IPC_CONNECTION_ATTRIBUTE = 'NotUsingIPCConnection'
 
+PROCESS_NAMES = ["UI", "Networking", "GPU", "WebContent", "Model"]
+
 attributes_to_generate_validators = {
     "messageAllowedWhenWaitingForSyncReply": [ALLOWEDWHENWAITINGFORSYNCREPLY_ATTRIBUTE, SYNCHRONOUS_ATTRIBUTE, STREAM_ATTRIBUTE],
     "messageAllowedWhenWaitingForUnboundedSyncReply": [ALLOWEDWHENWAITINGFORSYNCREPLYDURINGUNBOUNDEDIPC_ATTRIBUTE],
@@ -1584,7 +1586,6 @@ def generate_message_handler(receiver):
 
     return ''.join(result)
 
-
 def generate_message_names_header(receivers):
     result = []
     result.append(_license_header)
@@ -1596,10 +1597,17 @@ def generate_message_names_header(receivers):
     result.append('\n')
     result.append('namespace IPC {\n')
     result.append('\n')
+    result.append('enum class ProcessName : uint8_t {\n')
+    for name in PROCESS_NAMES:
+        result.append('    %s,\n' % name)
+    result.append('    Unknown\n')
+    result.append('};\n')
+    result.append('\n')
     result.append('enum class ReceiverName : uint8_t {')
     result.append('\n    ')
     enums = ['%s = %d' % (e, v) for v, e in enumerate(get_receiver_enumerators(receivers), 1)]
     result.append('\n    , '.join(enums))
+    result.append('\n    , Count')
     result.append('\n    , Invalid = %d' % (len(enums) + 1))
     result.append('\n};\n')
     result.append('\n')
@@ -1629,6 +1637,8 @@ def generate_message_names_header(receivers):
     result.append('    ReceiverName receiverName;\n')
     for fname, _ in sorted(attributes_to_generate_validators.items()):
         result.append('    bool %s : 1;\n' % fname)
+    result.append('    ProcessName dispatchedFrom;\n')
+    result.append('    ProcessName dispatchedTo;\n')
     result.append('};\n')
     result.append('\n')
     result.append('using MessageDescriptionsArray = std::array<MessageDescription, static_cast<size_t>(MessageName::Count) + 1>;\n')
@@ -1651,6 +1661,29 @@ def generate_message_names_header(receivers):
     else:
         result.append('    UNUSED_PARAM(name);\n')
         result.append('    return false;\n')
+    result.append('}\n')
+    result.append('\n')
+    result.append('constexpr ASCIILiteral processLiteral(ProcessName name)\n')
+    result.append('{\n')
+    result.append('    switch (name) {\n')
+    for name in PROCESS_NAMES:
+        result.append('    case ProcessName::%s:\n' % name)
+        result.append('        return "%s";\n' % name)
+    result.append('    case ProcessName::Unknown:\n')
+    result.append('        return "Unknown";\n')
+    result.append('    default:\n')
+    result.append('        RELEASE_ASSERT_NOT_REACHED();\n')
+    result.append('    }\n')
+    result.append('}\n')
+    result.append('\n')
+    result.append('constexpr ASCIILiteral dispatchedFrom(MessageName name)\n')
+    result.append('{\n')
+    result.append('    return processLiteral(Detail::messageDescriptions[static_cast<size_t>(name)].dispatchedFrom);\n')
+    result.append('}\n')
+    result.append('\n')
+    result.append('constexpr ASCIILiteral dispatchedTo(MessageName name)\n')
+    result.append('{\n')
+    result.append('    return processLiteral(Detail::messageDescriptions[static_cast<size_t>(name)].dispatchedTo);\n')
     result.append('}\n')
     result.append('\n')
     result.append('} // namespace IPC\n')
@@ -1685,10 +1718,12 @@ def generate_message_names_implementation(receivers):
             for attr_list in sorted(attributes_to_generate_validators.values()):
                 value = "true" if set(attr_list).intersection(set(enumerator.messages[0].attributes).union(set(enumerator.receiver.attributes))) else "false"
                 result.append(', %s' % value)
+            result.append(', ProcessName::%s' % enumerator.receiver.receiver_dispatched_from if enumerator.receiver.receiver_dispatched_from else ', ProcessName::Unknown')
+            result.append(', ProcessName::%s' % enumerator.receiver.receiver_dispatched_to if enumerator.receiver.receiver_dispatched_to else ', ProcessName::Unknown')
             result.append(' },\n')
         if condition:
             result.append('#endif\n')
-    result.append('    MessageDescription { "<invalid message name>"_s, ReceiverName::Invalid%s }\n' % (", false" * len(attributes_to_generate_validators)))
+    result.append('    MessageDescription { "<invalid message name>"_s, ReceiverName::Invalid%s, ProcessName::Unknown, ProcessName::Unknown }\n' % (", false" * len(attributes_to_generate_validators)))
     result.append('};\n')
     result.append('\n')
     result.append('} // namespace IPC::Detail\n')

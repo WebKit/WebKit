@@ -22,6 +22,7 @@
 
 // Currently DispatchedFrom both the UI and Network Process
 [
+    ExceptionForDispatchedFrom,
     DispatchedTo=WebContent
 ]
 messages -> WebSharedWorkerContextManagerConnection {

@@ -22,7 +22,11 @@
 
 // Tests that WantsDispatchMessage generates sync message handing even though 
 // the message list does not have sync messages.
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> TestWithWantsDispatchNoSyncMessages WantsDispatchMessage {
     TestMessage(String url)
 }

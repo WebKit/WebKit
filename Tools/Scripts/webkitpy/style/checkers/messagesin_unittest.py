@@ -33,7 +33,10 @@ class MessagesInCheckerStyleTestCase(unittest.TestCase):
     """Test MessagesInChecker style checking issues."""
 
     test_file_content = """#if ENABLE(SOME_GUARD)
-
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo
+]
 messages -> GoodName {
     # BadHandler contains WTF:: prefix that should raise an error
 \tBadHandler(Vector<WTF::String> list) -> (bool result)
@@ -46,8 +49,8 @@ messages -> GoodName {
 """
 
     expected_errors = set([
-        (5, 'whitespace/tab', 5, 'Line contains tab character.'),
-        (5, 'build/messagesin/wtf', 5, 'Line contains WTF:: prefix.'),
+        (8, 'whitespace/tab', 5, 'Line contains tab character.'),
+        (8, 'build/messagesin/wtf', 5, 'Line contains WTF:: prefix.'),
     ])
 
     def test_checker(self):

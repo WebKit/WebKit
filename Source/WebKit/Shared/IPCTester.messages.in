@@ -22,7 +22,11 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> IPCTester {
     StartMessageTesting(String driverName)
     StopMessageTesting() -> () Synchronous

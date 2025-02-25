@@ -30,6 +30,15 @@
 
 namespace IPC {
 
+enum class ProcessName : uint8_t {
+    UI,
+    Networking,
+    GPU,
+    WebContent,
+    Model,
+    Unknown
+};
+
 enum class ReceiverName : uint8_t {
     TestWithCVPixelBuffer = 1
     , TestWithDeferSendingOption = 2
@@ -57,6 +66,7 @@ enum class ReceiverName : uint8_t {
     , TestWithoutUsingIPCConnection = 24
     , IPC = 25
     , AsyncReply = 26
+    , Count
     , Invalid = 27
 };
 
@@ -248,6 +258,8 @@ struct MessageDescription {
     ReceiverName receiverName;
     bool messageAllowedWhenWaitingForSyncReply : 1;
     bool messageAllowedWhenWaitingForUnboundedSyncReply : 1;
+    ProcessName dispatchedFrom;
+    ProcessName dispatchedTo;
 };
 
 using MessageDescriptionsArray = std::array<MessageDescription, static_cast<size_t>(MessageName::Count) + 1>;
@@ -282,6 +294,36 @@ inline bool messageAllowedWhenWaitingForUnboundedSyncReply(MessageName messageNa
 constexpr bool messageIsSync(MessageName name)
 {
     return name >= MessageName::FirstSynchronous;
+}
+
+constexpr ASCIILiteral processLiteral(ProcessName name)
+{
+    switch (name) {
+    case ProcessName::UI:
+        return "UI";
+    case ProcessName::Networking:
+        return "Networking";
+    case ProcessName::GPU:
+        return "GPU";
+    case ProcessName::WebContent:
+        return "WebContent";
+    case ProcessName::Model:
+        return "Model";
+    case ProcessName::Unknown:
+        return "Unknown";
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+    }
+}
+
+constexpr ASCIILiteral dispatchedFrom(MessageName name)
+{
+    return processLiteral(Detail::messageDescriptions[static_cast<size_t>(name)].dispatchedFrom);
+}
+
+constexpr ASCIILiteral dispatchedTo(MessageName name)
+{
+    return processLiteral(Detail::messageDescriptions[static_cast<size_t>(name)].dispatchedTo);
 }
 
 } // namespace IPC

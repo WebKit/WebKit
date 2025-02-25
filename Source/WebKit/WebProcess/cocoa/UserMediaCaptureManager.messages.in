@@ -25,6 +25,7 @@
 
 // rdar://140690546 - Can currently be dispatchedFrom UI & GPU
 [
+    ExceptionForDispatchedFrom,
     DispatchedTo=WebContent
 ]
 messages -> UserMediaCaptureManager {

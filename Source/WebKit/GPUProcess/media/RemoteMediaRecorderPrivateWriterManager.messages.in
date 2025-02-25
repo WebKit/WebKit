@@ -23,7 +23,11 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
 
-[EnabledBy=MediaRecorderEnabled]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    EnabledBy=MediaRecorderEnabled
+]
 messages -> RemoteMediaRecorderPrivateWriterManager {
     Create(WebKit::RemoteMediaRecorderPrivateWriterIdentifier identifier, String type)
     AddAudioTrack(WebKit::RemoteMediaRecorderPrivateWriterIdentifier identifier, struct WebKit::RemoteAudioInfo trackInfo) -> (std::optional<uint8_t> trackNumber) Synchronous

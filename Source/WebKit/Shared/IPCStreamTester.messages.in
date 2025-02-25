@@ -22,7 +22,11 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> IPCStreamTester Stream {
     SyncMessage(uint32_t value) -> (uint32_t sameValue) Synchronous
     SyncMessageNotStreamEncodableReply(uint32_t value) -> (uint32_t sameValue) Synchronous NotStreamEncodableReply

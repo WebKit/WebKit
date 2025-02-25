@@ -23,7 +23,11 @@
 
 #if ENABLE(MODEL_PROCESS)
 
-[EnabledBy=ModelElementEnabled && ModelProcessEnabled]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    EnabledBy=ModelElementEnabled && ModelProcessEnabled
+]
 messages -> ModelProcessModelPlayerManagerProxy {
     CreateModelPlayer(WebCore::ModelPlayerIdentifier identifier)
     DeleteModelPlayer(WebCore::ModelPlayerIdentifier identifier)

@@ -22,7 +22,11 @@
 
 #if USE(GRAPHICS_LAYER_WC)
 
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> RemoteWCLayerTreeHost {
     Update(struct WebKit::WCUpdateInfo updateInfo) -> (std::optional<WebKit::UpdateInfo> updateInfo)
 }

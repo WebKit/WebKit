@@ -346,8 +346,26 @@ class ParsingTest(unittest.TestCase):
 class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
     def test_error_at_else(self):
         with self.assertRaisesRegex(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):
-            parser.parse(StringIO("asd\n#else bla\nfoo"))
+            parser.parse(StringIO("[ExceptionForDispatchedFrom,\nExceptionForDispatchedTo]\nmessages -> ASD {\n#else bla\nfoo}"))
 
     def test_error_at_elif(self):
         with self.assertRaisesRegex(Exception, r"ERROR: '#elif.*' is not supported in the \*\.in files"):
-            parser.parse(StringIO("asd\n#elif bla\nfoo"))
+            parser.parse(StringIO("[ExceptionForDispatchedFrom,\nExceptionForDispatchedTo]messages -> ASD {\n#elif bla\nfoo}"))
+
+
+class MissingDispatchedFromTo(unittest.TestCase):
+    def test_error_missing_dispatchedFrom(self):
+        with self.assertRaisesRegex(Exception, r"ERROR <>: Receiver must be annotated with 'DispatchedFrom=' or 'ExceptionForDispatchedFrom'"):
+            parser.parse(StringIO("[ExceptionForDispatchedTo]\nmessages -> "))
+
+    def test_error_missing_dispatchedTo(self):
+        with self.assertRaisesRegex(Exception, r"ERROR <>: Receiver must be annotated with 'DispatchedTo=' or 'ExceptionForDispatchedTo'"):
+            parser.parse(StringIO("[ExceptionForDispatchedFrom]\nmessages -> "))
+
+    def test_error_multi_dispatchedTo(self):
+        with self.assertRaisesRegex(Exception, r"ERROR <>: 'ExceptionForDispatchedTo' cannot be used together with 'DispatchedTo=UI"):
+            parser.parse(StringIO("[\nExceptionForDispatchedFrom,\nExceptionForDispatchedTo,\nDispatchedTo=UI]\nmessages -> "))
+
+    def test_error_multi_dispatchedFrom(self):
+        with self.assertRaisesRegex(Exception, r"ERROR <>: 'ExceptionForDispatchedFrom' cannot be used together with 'DispatchedFrom=WebContent"):
+            parser.parse(StringIO("[\nExceptionForDispatchedFrom,\nExceptionForDispatchedTo,\nDispatchedFrom=WebContent]\nmessages -> "))

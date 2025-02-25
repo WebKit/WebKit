@@ -39,6 +39,10 @@ class ModelCheckTest(unittest.TestCase):
 
     def test_duplicate_receivers(self):
         contents = """
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo
+]
 messages -> WebPage {
     LoadURL(String url)
 }"""
@@ -47,6 +51,10 @@ messages -> WebPage {
         self.assertEqual(receiver.messages[0].name, 'LoadURL')
 
         other_contents = """
+    [
+        ExceptionForDispatchedFrom,
+        ExceptionForDispatchedTo
+    ]
     messages -> WebPage {
         LoadURL(String url)
         LoadURL2(String url)
@@ -62,6 +70,10 @@ messages -> WebPage {
 
     def test_mismatch_message_attribute_sync(self):
         contents = """
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo
+]
 messages -> WebPage {
 #if USE(COCOA)
     LoadURL(String url) Synchronous

@@ -20,7 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-[EnabledBy=SomeOtherFeature]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    EnabledBy=SomeOtherFeature
+]
 messages -> TestWithValidator {
     AlwaysEnabled(String url)
     [Validator=ValidateFunction] EnabledIfPassValidation(String url)

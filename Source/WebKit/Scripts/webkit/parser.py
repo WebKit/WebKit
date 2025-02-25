@@ -47,7 +47,9 @@ def parse(file):
     receiver_enabled_by_exception = False
     receiver_enabled_by_conjunction = None
     receiver_dispatched_from = None
+    receiver_dispatched_from_exception = False
     receiver_dispatched_to = None
+    receiver_dispatched_to_exception = False
     receiver_attributes = None
     shared_preferences_needs_connection = False
     destination = None
@@ -56,6 +58,7 @@ def parse(file):
     master_condition = None
     superclass = []
     namespace = "WebKit"
+    file_name = file.name if hasattr(file, 'name') else ""
     file_contents = file.readlines()
     match = re.search(r'\s*\[\s*(?P<extended_attributes>.*?)\s*\]\s*.*messages -> ', "".join(file_contents).replace("\n", " "), re.MULTILINE)
     if match:
@@ -78,9 +81,23 @@ def parse(file):
             elif attribute == 'ExceptionForEnabledBy':
                 receiver_enabled_by_exception = True
                 continue
+            elif attribute == 'ExceptionForDispatchedFrom':
+                receiver_dispatched_from_exception = True
+                continue
+            elif attribute == 'ExceptionForDispatchedTo':
+                receiver_dispatched_to_exception = True
+                continue
             raise Exception("ERROR: Unknown extended attribute: '%s'" % attribute)
     if receiver_enabled_by and receiver_enabled_by_exception:
-        raise Exception("ERROR: 'ExceptionForEnabledBy' cannot be used together with 'EnabledBy=%s'" % receiver_enabled_by)
+        raise Exception("ERROR <%s>: 'ExceptionForEnabledBy' cannot be used together with 'EnabledBy=%s'" % (file_name, receiver_enabled_by))
+    if receiver_dispatched_from and receiver_dispatched_from_exception:
+        raise Exception("ERROR <%s>: 'ExceptionForDispatchedFrom' cannot be used together with 'DispatchedFrom=%s'" % (file_name, receiver_dispatched_from))
+    if not (receiver_dispatched_from or receiver_dispatched_from_exception):
+        raise Exception("ERROR <%s>: Receiver must be annotated with 'DispatchedFrom=' or 'ExceptionForDispatchedFrom'" % file_name)
+    if receiver_dispatched_to and receiver_dispatched_to_exception:
+        raise Exception("ERROR <%s>: 'ExceptionForDispatchedTo' cannot be used together with 'DispatchedTo=%s'" % (file_name, receiver_dispatched_to))
+    if not (receiver_dispatched_to or receiver_dispatched_to_exception):
+        raise Exception("ERROR <%s>: Receiver must be annotated with 'DispatchedTo=' or 'ExceptionForDispatchedTo'" % file_name)
     for line in file_contents:
         line = line.strip()
         match = re.search(r'messages -> (?P<namespace>[A-Za-z]+)::(?P<destination>[A-Za-z_0-9]+) \s*(?::\s*(?P<superclass>.*?) \s*)?(?:(?P<attributes>.*?)\s+)?{', line)

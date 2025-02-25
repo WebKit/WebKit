@@ -23,7 +23,11 @@
 #if ENABLE(WEBKIT2)
 #if NESTED_MASTER_CONDITION || MASTER_OR && MASTER_AND
 
-[ExceptionForEnabledBy]
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> TestWithLegacyReceiver {
     LoadURL(String url)
 #if ENABLE(TOUCH_EVENTS)

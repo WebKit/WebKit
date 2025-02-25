@@ -2966,6 +2966,8 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
     auto nameIdent = JSC::Identifier::fromString(vm, "name"_s);
     auto replyArgumentsIdent = JSC::Identifier::fromString(vm, "replyArguments"_s);
     auto isSyncIdent = JSC::Identifier::fromString(vm, "isSync"_s);
+    auto dispatchedFromIdent = JSC::Identifier::fromString(vm, "dispatchedFrom"_s);
+    auto dispatchedToIdent = JSC::Identifier::fromString(vm, "dispatchedTo"_s);
     for (unsigned i = 0; i < static_cast<unsigned>(IPC::MessageName::Last); ++i) {
         auto name = static_cast<IPC::MessageName>(i);
 
@@ -2988,6 +2990,12 @@ JSValueRef JSIPC::messages(JSContextRef context, JSObjectRef thisObject, JSStrin
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
         dictionary->putDirect(vm, isSyncIdent, JSC::jsBoolean(messageIsSync(name)));
+        RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+        dictionary->putDirect(vm, dispatchedFromIdent, JSC::jsString(vm, String(dispatchedFrom(name))));
+        RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
+
+        dictionary->putDirect(vm, dispatchedToIdent, JSC::jsString(vm, String(dispatchedTo(name))));
         RETURN_IF_EXCEPTION(scope, JSValueMakeUndefined(context));
 
         messagesObject->putDirect(vm, JSC::Identifier::fromString(vm, description(name)), dictionary);

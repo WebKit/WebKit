@@ -24,6 +24,11 @@
 // top-level #if, avoiding generic #include for ApplePayPaymentAuthorizationResult.
 
 #if ENABLE(APPLE_PAY)
+[
+    ExceptionForDispatchedFrom,
+    ExceptionForDispatchedTo,
+    ExceptionForEnabledBy
+]
 messages -> TestWithIfReceiver {
     CompletePaymentSession(struct WebCore::ApplePayPaymentAuthorizationResult result)
 }

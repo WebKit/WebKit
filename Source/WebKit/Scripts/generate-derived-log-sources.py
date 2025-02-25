@@ -12,7 +12,11 @@ def generate_messages_file(log_messages, log_messages_receiver_input_file):
 
     with open(log_messages_receiver_input_file, 'w') as file:
         file.write("#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)\n")
-        file.write("[ExceptionForEnabledBy]\n")
+        file.write("[\n")
+        file.write("    ExceptionForDispatchedFrom,\n")
+        file.write("    ExceptionForDispatchedTo,\n")
+        file.write("    ExceptionForEnabledBy\n")
+        file.write("]\n")
         file.write("messages -> LogStream NotRefCounted Stream {\n")
         file.write("    LogOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType)\n")
         for log_message in log_messages:
