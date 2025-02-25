@@ -7702,3 +7702,14 @@ webkit.org/b/287741 fast/viewport/ios/non-responsive-viewport-after-changing-vie
 [ Debug ] http/wpt/mediarecorder/MediaRecorder-webm-AV-audio-video-dataavailable.html [ Skip ]
 
 webkit.org/b/288133 imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html [ Pass Failure ]
+
+# webkit.org/b/288492 (REGRESSION (287602@main): [ iOS debug ] 9 ipc/* layout tests are constantly crashing due to assertion failure.)
+ipc/async-with-reply-optional.html
+ipc/async-with-reply.html
+ipc/create-connection-and-send-async.html
+ipc/send-invalid-sync-message-empty-reply-check-exception.html
+ipc/send-invalid-sync-stream-message-empty-reply-check-exception.html
+ipc/send-semaphore.html
+ipc/stream-async-with-reply.html
+ipc/stream-check-autoreleasepool.html
+ipc/stream-sync-reply-shared-memory.html
