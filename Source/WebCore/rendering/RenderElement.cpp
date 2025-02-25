@@ -2445,7 +2445,12 @@ std::unique_ptr<RenderStyle> RenderElement::animatedStyle()
 
 SingleThreadWeakPtr<RenderBlockFlow> RenderElement::backdropRenderer() const
 {
-    return hasRareData() ? rareData().backdropRenderer : nullptr;
+    if (hasRareData()) {
+        WeakPtr renderer = rareData().backdropRenderer;
+        if (renderer && !renderer->beingDestroyed())
+            return renderer;
+    }
+    return nullptr;
 }
 
 void RenderElement::setBackdropRenderer(RenderBlockFlow& renderer)

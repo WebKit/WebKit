@@ -62,6 +62,7 @@
 		00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318213BA867F0035A948 /* XMLDocumentParser.h */; };
 		00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */; };
 		00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlines.h */; };
+		0139DBC42D67ABB1009215DF /* AsyncRenderObjectDeletionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0139DBC12D670933009215DF /* AsyncRenderObjectDeletionQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		016F380E29AA36A800167F2E /* ApplePayLaterAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 016F380D29AA36A200167F2E /* ApplePayLaterAvailability.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		01D22A1F2CFD826C002DC857 /* AsyncNodeDeletionQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 01D22A1C2CFD73C7002DC857 /* AsyncNodeDeletionQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0208E1832D213D9900BECD3D /* BackForwardFrameItemIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0208E1822D213D9100BECD3D /* BackForwardFrameItemIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6851,6 +6852,8 @@
 		00B9318513BA867F0035A948 /* XMLDocumentParserScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserScope.cpp; sourceTree = "<group>"; };
 		00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
 		00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupTokenizerInlines.h; sourceTree = "<group>"; };
+		0139DBC12D670933009215DF /* AsyncRenderObjectDeletionQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncRenderObjectDeletionQueue.h; sourceTree = "<group>"; };
+		0139DBC22D670933009215DF /* AsyncRenderObjectDeletionQueue.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncRenderObjectDeletionQueue.cpp; sourceTree = "<group>"; };
 		016F380929AA33E300167F2E /* ApplePayLaterAvailability.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ApplePayLaterAvailability.idl; sourceTree = "<group>"; };
 		016F380D29AA36A200167F2E /* ApplePayLaterAvailability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ApplePayLaterAvailability.h; sourceTree = "<group>"; };
 		01D22A1C2CFD73C7002DC857 /* AsyncNodeDeletionQueue.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsyncNodeDeletionQueue.h; sourceTree = "<group>"; };
@@ -38058,6 +38061,8 @@
 				48B5BF3529CA691700FEBE3B /* AccessibilityRegionContext.h */,
 				A5FD1D922ADDF9CC00F90FE5 /* AncestorSubgridIterator.cpp */,
 				A5FD1D932ADDF9CC00F90FE5 /* AncestorSubgridIterator.h */,
+				0139DBC22D670933009215DF /* AsyncRenderObjectDeletionQueue.cpp */,
+				0139DBC12D670933009215DF /* AsyncRenderObjectDeletionQueue.h */,
 				1A33AE3F28F9F290009804B4 /* AttachmentLayout.h */,
 				1A33AE4028F9F478009804B4 /* AttachmentLayout.mm */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
@@ -39932,6 +39937,7 @@
 				FD5686CA13AC180200B69C68 /* AsyncAudioDecoder.h in Headers */,
 				E1CDE9221501916900862CC5 /* AsyncFileStream.h in Headers */,
 				01D22A1F2CFD826C002DC857 /* AsyncNodeDeletionQueue.h in Headers */,
+				0139DBC42D67ABB1009215DF /* AsyncRenderObjectDeletionQueue.h in Headers */,
 				0FFD4D6118651FA300512F6E /* AsyncScrollingCoordinator.h in Headers */,
 				E5F67D962B65CDBE00CC30DE /* AttachmentAssociatedElement.h in Headers */,
 				E36D701F27B7200C006531B7 /* AttachmentElementClient.h in Headers */,

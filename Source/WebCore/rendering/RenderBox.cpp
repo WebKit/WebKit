@@ -164,10 +164,9 @@ void RenderBox::willBeDestroyed()
             view().unregisterBoxWithScrollSnapPositions(*this);
         if (style().containerType() != ContainerType::Normal)
             view().unregisterContainerQueryBox(*this);
-        if (!style().anchorNames().isEmpty())
-            view().unregisterAnchor(*this);
         if (!style().positionTryFallbacks().isEmpty())
             view().unregisterPositionTryBox(*this);
+        view().unregisterAnchor(*this);
     }
 
     RenderBoxModelObject::willBeDestroyed();

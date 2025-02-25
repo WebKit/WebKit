@@ -51,8 +51,11 @@ RenderTreeUpdater::ViewTransition::ViewTransition(RenderTreeUpdater& updater)
 void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& documentElementRenderer, StyleDifference minimalStyleDifference)
 {
     auto destroyPseudoElementTreeIfNeeded = [&documentElementRenderer, this]() {
-        if (WeakPtr viewTransitionRoot = documentElementRenderer.view().viewTransitionRoot())
+        if (WeakPtr viewTransitionRoot = documentElementRenderer.view().viewTransitionRoot()) {
+            if (viewTransitionRoot->beingDestroyed())
+                return;
             m_updater.m_builder.destroy(*viewTransitionRoot);
+        }
     };
 
     Ref document = documentElementRenderer.document();
@@ -77,7 +80,7 @@ void RenderTreeUpdater::ViewTransition::updatePseudoElementTree(RenderElement& d
 
     // Create ::view-transition as needed.
     WeakPtr viewTransitionRoot = documentElementRenderer.view().viewTransitionRoot();
-    if (viewTransitionRoot)
+    if (viewTransitionRoot && !viewTransitionRoot->beingDestroyed())
         viewTransitionRoot->setStyle(WTFMove(newRootStyle), minimalStyleDifference);
     else {
         auto newViewTransitionRoot = WebCore::createRenderer<RenderBlockFlow>(RenderObject::Type::BlockFlow, document, WTFMove(newRootStyle));

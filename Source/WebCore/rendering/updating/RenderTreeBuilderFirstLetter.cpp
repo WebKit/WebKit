@@ -157,7 +157,7 @@ void RenderTreeBuilder::FirstLetter::updateAfterDescendants(RenderBlock& block)
 
 void RenderTreeBuilder::FirstLetter::cleanupOnDestroy(RenderTextFragment& textFragment)
 {
-    if (!textFragment.firstLetter())
+    if (!textFragment.firstLetter() || textFragment.firstLetter()->beingDestroyed())
         return;
     m_builder.destroy(*textFragment.firstLetter(), CanCollapseAnonymousBlock::No);
 }

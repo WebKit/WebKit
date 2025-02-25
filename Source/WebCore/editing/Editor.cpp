@@ -2317,7 +2317,9 @@ void Editor::closeTyping()
 
 RenderInline* Editor::writingSuggestionRenderer() const
 {
-    return m_writingSuggestionRenderer.get();
+    if (m_writingSuggestionRenderer && !m_writingSuggestionRenderer->beingDestroyed())
+        return m_writingSuggestionRenderer.get();
+    return nullptr;
 }
 
 void Editor::setWritingSuggestionRenderer(RenderInline& renderer)

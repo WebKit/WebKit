@@ -2174,6 +2174,10 @@ bool RenderFlexibleBox::flexItemHasPercentHeightDescendants(const RenderBox& ren
 
     for (auto& descendant : *percentHeightDescendants) {
         bool hasOutOfFlowAncestor = false;
+        // FIXME: The to-be-async-deleted render objects are still in the percentHeightDescendantsMap because the WeakPtrs pointing to the RenderBoxes are
+        // still valid until deletion, so the set never ignores these references
+        if (descendant.beingDestroyed())
+            continue;
         for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != renderBlock.get(); ancestor = ancestor->containingBlock()) {
             if (ancestor->isOutOfFlowPositioned()) {
                 hasOutOfFlowAncestor = true;

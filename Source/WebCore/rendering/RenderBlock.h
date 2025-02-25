@@ -144,7 +144,7 @@ public:
     bool paintsContinuationOutline(RenderInline*);
 
     static RenderPtr<RenderBlock> createAnonymousWithParentRendererAndDisplay(const RenderBox& parent, DisplayType = DisplayType::Block);
-    RenderPtr<RenderBlock> createAnonymousBlock(DisplayType = DisplayType::Block) const;
+    inline RenderPtr<RenderBlock> createAnonymousBlock(DisplayType = DisplayType::Block) const;
 
     RenderPtr<RenderBox> createAnonymousBoxWithSameTypeAs(const RenderBox&) const override;
 

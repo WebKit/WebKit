@@ -75,7 +75,7 @@ RenderPtr<RenderObject> RenderTreeBuilder::FormControls::detach(RenderButton& pa
 RenderBlock& RenderTreeBuilder::FormControls::findOrCreateParentForChild(RenderButton& parent)
 {
     auto* innerRenderer = parent.innerRenderer();
-    if (innerRenderer)
+    if (innerRenderer && !innerRenderer->beingDestroyed())
         return *innerRenderer;
 
     auto wrapper = parent.createAnonymousBlock(parent.style().display());

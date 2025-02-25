@@ -791,8 +791,11 @@ void RenderBlock::dirtyForLayoutFromPercentageHeightDescendants()
     auto* descendants = percentHeightDescendantsMap->get(*this);
     if (!descendants)
         return;
-
     for (auto& descendant : *descendants) {
+        // FIXME: The to-be-async-deleted render objects are still in the percentHeightDescendantsMap because the WeakPtrs pointing to the RenderBoxes are
+        // still valid until deletion, so the set never ignores these references
+        if (descendant.beingDestroyed())
+            continue;
         // Let's not dirty the height perecentage descendant when it has an absolutely positioned containing block ancestor. We should be able to dirty such boxes through the regular invalidation logic.
         bool descendantNeedsLayout = true;
         for (auto* ancestor = descendant.containingBlock(); ancestor && ancestor != this; ancestor = ancestor->containingBlock()) {

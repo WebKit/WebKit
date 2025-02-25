@@ -4222,7 +4222,7 @@ void RenderBlockFlow::layoutExcludedChildren(RelayoutChildren relayoutChildren)
     RenderBlock::layoutExcludedChildren(relayoutChildren);
 
     auto* fragmentedFlow = multiColumnFlow();
-    if (!fragmentedFlow)
+    if (!fragmentedFlow || fragmentedFlow->beingDestroyed())
         return;
 
     fragmentedFlow->setIsExcludedFromNormalLayout(true);

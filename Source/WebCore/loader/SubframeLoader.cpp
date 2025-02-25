@@ -416,7 +416,7 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
     auto widget = m_frame->loader().client().createPlugin(pluginElement, url, paramNames, paramValues, mimeType, loadManually);
 
     // The call to createPlugin *may* cause this renderer to disappear from underneath.
-    if (!renderer)
+    if (!renderer || renderer->beingDestroyed())
         return false;
 
     if (!widget) {

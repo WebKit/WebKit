@@ -51,7 +51,8 @@ public:
 
     RenderStyle computeMarkerStyle() const;
 
-    RenderListMarker* markerRenderer() const { return m_marker.get(); }
+    RenderListMarker* markerRenderer() const;
+
     void setMarkerRenderer(RenderListMarker& marker) { m_marker = marker; }
 
     bool isInReversedOrderedList() const;

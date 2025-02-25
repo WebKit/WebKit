@@ -5151,6 +5151,7 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
     commonVM().performOpportunisticallyScheduledTasks(deadline, options);
 
     deleteRemovedNodes();
+    deleteDetachedRenderObjects();
 }
 
 void Page::deleteRemovedNodes()
@@ -5166,6 +5167,22 @@ void Page::deleteRemovedNodes()
         if (!document)
             return;
         document->asyncNodeDeletionQueue().deleteNodesNow();
+    });
+}
+
+void Page::deleteDetachedRenderObjects()
+{
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    if (!localMainFrame)
+        return;
+    RefPtr document = localMainFrame->document();
+    if (!document)
+        return;
+    forEachLocalFrame([] (LocalFrame& frame) {
+        RefPtr document = frame.document();
+        if (!document)
+            return;
+        document->checkedRenderView()->asyncRenderObjectDeletionQueue().deleteRenderObjectsNow();
     });
 }
 

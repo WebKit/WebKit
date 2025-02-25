@@ -102,6 +102,8 @@ RenderView::RenderView(Document& document, RenderStyle&& style)
 
 RenderView::~RenderView()
 {
+    // Manually delete the renderers so that the assert below passes
+    m_asyncRenderObjectDeletionQueue.deleteRenderObjectsNow();
     ASSERT_WITH_MESSAGE(m_rendererCount == 1, "All other renderers in this render tree should have been destroyed");
 
     deleteLines();
