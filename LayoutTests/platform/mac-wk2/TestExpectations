@@ -1967,5 +1967,3 @@ webkit.org/b/288120 [ Sonoma+ Release ] fast/animation/request-animation-frame-t
 webkit.org/b/288404 [ Sonoma+ Release ] fast/text/canvas-color-fonts/stroke-gradient-COLR.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/287012 [ Sonoma+ Debug ] http/tests/pdf/linearized-pdf-in-iframe.html [ Pass Crash ]
-
-webkit.org/b/288411 [ Sequoia x86_64 ] imported/w3c/web-platform-tests/webrtc/simulcast/getStats.https.html [ Failure ]
