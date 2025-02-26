@@ -103,11 +103,23 @@ public:
         return end();
     }
 
+    const_iterator find(const WeakRef<T, WeakPtrImpl>& value) const
+    {
+        increaseOperationCountSinceLastCleanup();
+        return WeakHashSetConstIterator(*this, m_set.find(value.impl()));
+    }
+
     template <typename U>
     AddResult add(const U& value)
     {
         amortizedCleanupIfNeeded();
         return m_set.add(WeakRef<T, WeakPtrImpl>(static_cast<const T&>(value)).releaseImpl());
+    }
+
+    AddResult add(WeakRef<T, WeakPtrImpl> value)
+    {
+        amortizedCleanupIfNeeded();
+        return m_set.add(value.releaseImpl());
     }
 
     T* takeAny()
@@ -125,6 +137,12 @@ public:
         if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return m_set.remove(*impl);
         return false;
+    }
+
+    bool remove(const WeakRef<T, WeakPtrImpl>& value)
+    {
+        amortizedCleanupIfNeeded();
+        return m_set.remove(value.impl());
     }
 
     bool remove(const_iterator iterator)
@@ -147,6 +165,12 @@ public:
         if (auto* impl = value.weakImplIfExists(); impl && *impl)
             return m_set.contains(*impl);
         return false;
+    }
+
+    bool contains(const WeakRef<T, WeakPtrImpl>& value) const
+    {
+        increaseOperationCountSinceLastCleanup();
+        return m_set.contains(value.impl());
     }
 
     unsigned capacity() const { return m_set.capacity(); }

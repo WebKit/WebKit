@@ -116,10 +116,12 @@ template<typename T, typename = std::enable_if_t<!WTF::IsSmartPtr<T>::value>> in
     return makeWeakPtr(object.get(), enableWeakPtrThreadingAssertions);
 }
 
-struct Int : public CanMakeWeakPtr<Int> {
+struct Int {
+    using WeakValueType = Int;
     Int(int i) : m_i(i) { }
     operator int() const { return m_i; }
     bool operator==(const Int& other) const { return m_i == other.m_i; }
+    bool operator==(int other) const { return m_i == other; }
     int m_i;
 };
 
@@ -1008,6 +1010,61 @@ TEST(WTF_WeakPtr, WeakHashSetAmortizedCleanup)
         EXPECT_FALSE(weakHashSet.hasNullReferences());
     }
 }
+
+TEST(WTF_WeakPtr, WeakHashSetWithFactory)
+{
+    WeakHashSet<Int> set;
+    {
+        Int i { 77 };
+        WeakPtrFactory<Int> iFactory;
+        auto iRef = iFactory.createWeakRef(i);
+        set.add(iRef);
+        EXPECT_EQ(1u, set.computeSize());
+        EXPECT_TRUE(set.contains(iRef));
+        Int j { 88 };
+        WeakPtrFactory<Int> jFactory;
+        WeakRef jRef = jFactory.createWeakRef(j);
+        set.add(jRef);
+        EXPECT_EQ(2u, set.computeSize());
+        EXPECT_TRUE(set.contains(iRef));
+        EXPECT_TRUE(set.contains(jRef));
+        int saw77 = 0;
+        int saw88 = 0;
+        int sawOthers = 0;
+        for (Int& v : set) {
+            if (v == 77)
+                saw77++;
+            else if (v == 88)
+                saw88++;
+            else
+                sawOthers++;
+        }
+        EXPECT_EQ(1, saw77);
+        EXPECT_EQ(1, saw88);
+        EXPECT_EQ(0, sawOthers);
+        set.remove(iRef);
+        EXPECT_EQ(1u, set.computeSize());
+        EXPECT_FALSE(set.contains(iRef));
+        EXPECT_TRUE(set.contains(jRef));
+        saw77 = 0;
+        saw88 = 0;
+        sawOthers = 0;
+        for (Int& v : set) {
+            if (v == 77)
+                saw77++;
+            else if (v == 88)
+                saw88++;
+            else
+                sawOthers++;
+        }
+        EXPECT_EQ(0, saw77);
+        EXPECT_EQ(1, saw88);
+        EXPECT_EQ(0, sawOthers);
+        EXPECT_TRUE(set.find(jRef) != set.end());
+    }
+    EXPECT_EQ(0u, set.computeSize());
+}
+
 
 template <typename T, typename U>
 unsigned computeSizeOfWeakHashMap(const WeakHashMap<T, U>& map)
