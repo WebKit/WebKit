@@ -1,4 +1,5 @@
 
 PASS e.style['font-synthesis-style'] = "auto" should set the property value
 PASS e.style['font-synthesis-style'] = "none" should set the property value
+FAIL e.style['font-synthesis-style'] = "oblique-only" should set the property value assert_not_equals: property should be set got disallowed value ""
 

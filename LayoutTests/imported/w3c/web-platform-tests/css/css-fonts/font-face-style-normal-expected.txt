@@ -1,0 +1,6 @@
+
+PASS CSS Fonts: parsing 'normal' in the font-style descriptor
+FAIL CSS Fonts: parsing 'normal' in the font-style descriptor 1 assert_equals: 'oblique 0deg' serializes as 'normal' expected "normal" but got "oblique 0deg"
+PASS CSS Fonts: parsing 'normal' in the font-style descriptor 2
+PASS CSS Fonts: parsing 'normal' in the font-style descriptor 3
+

@@ -1,0 +1,3 @@
+
+PASS Property font-size value 'calc(sign(1rem - 1px) * 100%)'
+

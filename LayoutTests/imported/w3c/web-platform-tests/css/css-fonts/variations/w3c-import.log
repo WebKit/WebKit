@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/META.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-descriptors.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/at-font-face-font-matching.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/variations/font-descriptor-range-reversed-expected.html

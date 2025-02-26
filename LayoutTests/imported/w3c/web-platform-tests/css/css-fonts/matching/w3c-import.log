@@ -20,9 +20,12 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/fixed-stretch-style-over-weight-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/fixed-stretch-style-over-weight.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-matching.css
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-unicode-PUA-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-unicode-PUA-primary-font-expected-mismatch.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-unicode-PUA-primary-font-notref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-unicode-PUA-primary-font.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-unicode-PUA-ref.html
+/LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/font-unicode-PUA.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/range-descriptor-reversed-expected.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/range-descriptor-reversed-ref.html
 /LayoutTests/imported/w3c/web-platform-tests/css/css-fonts/matching/range-descriptor-reversed.html

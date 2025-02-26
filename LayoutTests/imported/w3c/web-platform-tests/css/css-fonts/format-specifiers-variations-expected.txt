@@ -7,44 +7,44 @@ PASS Load Ahem with format woff-variations
 PASS Load Ahem with format truetype-variations
 PASS Load Ahem with format opentype-variations
 PASS Load Ahem with format woff2-variations
-PASS Do not load Ahem with format xyzwoff
-PASS Do not load Ahem with format xyztruetype
-PASS Do not load Ahem with format xyzopentype
-PASS Do not load Ahem with format xyzwoff2
-PASS Do not load Ahem with format xyzwoff-variations
-PASS Do not load Ahem with format xyztruetype-variations
-PASS Do not load Ahem with format xyzopentype-variations
-PASS Do not load Ahem with format xyzwoff2-variations
-PASS Do not load Ahem with format woffxyz
-PASS Do not load Ahem with format truetypexyz
-PASS Do not load Ahem with format opentypexyz
-PASS Do not load Ahem with format woff2xyz
-PASS Do not load Ahem with format woff-variationsxyz
-PASS Do not load Ahem with format truetype-variationsxyz
-PASS Do not load Ahem with format opentype-variationsxyz
-PASS Do not load Ahem with format woff2-variationsxyz
-PASS Do not load Ahem with format wo
-PASS Do not load Ahem with format truety
-PASS Do not load Ahem with format openty
-PASS Do not load Ahem with format wof
-PASS Do not load Ahem with format woff-variatio
-PASS Do not load Ahem with format truetype-variatio
-PASS Do not load Ahem with format opentype-variatio
-PASS Do not load Ahem with format woff2-variatio
-PASS Do not load Ahem with format ff
-PASS Do not load Ahem with format uetype
-PASS Do not load Ahem with format entype
-PASS Do not load Ahem with format ff2
-PASS Do not load Ahem with format ff-variations
-PASS Do not load Ahem with format uetype-variations
-PASS Do not load Ahem with format entype-variations
-PASS Do not load Ahem with format ff2-variations
-PASS Do not load Ahem with format wff
-PASS Do not load Ahem with format tretype
-PASS Do not load Ahem with format opntype
-PASS Do not load Ahem with format wff2
-PASS Do not load Ahem with format woff-ariations
-PASS Do not load Ahem with format truetye-variations
-PASS Do not load Ahem with format opentye-variations
-PASS Do not load Ahem with format woff2variations
+FAIL Do not load Ahem with format xyzwoff promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format xyztruetype promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format xyzopentype promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format xyzwoff2 promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format xyzwoff-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format xyztruetype-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format xyzopentype-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format xyzwoff2-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woffxyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format truetypexyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format opentypexyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woff2xyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woff-variationsxyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format truetype-variationsxyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format opentype-variationsxyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woff2-variationsxyz promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format wo promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format truety promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format openty promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format wof promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woff-variatio promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format truetype-variatio promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format opentype-variatio promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woff2-variatio promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format ff promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format uetype promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format entype promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format ff2 promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format ff-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format uetype-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format entype-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format ff2-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format wff promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format tretype promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format opntype promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format wff2 promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woff-ariations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format truetye-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format opentye-variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
+FAIL Do not load Ahem with format woff2variations promise_rejects_dom: function "function() { throw e }" threw object "NetworkError:  A network error occurred." that is not a DOMException SyntaxError: property "code" is equal to 19, expected 12
 
