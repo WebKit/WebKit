@@ -45,11 +45,11 @@ static const size_t maximumLinesToBalanceWithLineRequirement { 12 };
 // Define the penalty associated with show text wider/narrower than ideal bounds.
 // Separating stretchability and shrinkability allows us to weight under/over
 // filling the ideal bounds differently.
-static const InlineLayoutUnit textWrapPrettyStretchability = 15;
+static const InlineLayoutUnit textWrapPrettyStretchability = 10;
 static const InlineLayoutUnit textWrapPrettyShrinkability = 15;
 
 // Defines the maximum shrink/stretch factor allowed for text-wrap-pretty.
-static const float textWrapPrettyMaxStretch = 3;
+static const float textWrapPrettyMaxStretch = 2;
 static const float textWrapPrettyMaxShrink = 3;
 
 // We would like 2 or more items on the last line for text-wrap-style:pretty to avoid orphans.
