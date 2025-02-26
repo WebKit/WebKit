@@ -1786,8 +1786,10 @@ bool NetworkConnectionToWebProcess::isAlwaysOnLoggingAllowed() const
 void NetworkConnectionToWebProcess::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess)
 {
     m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess);
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     if (CheckedPtr session = networkSession())
         session->protectedStorageManager()->updateSharedPreferencesForConnection(protectedConnection(), m_sharedPreferencesForWebProcess);
+#endif
 }
 
 #if ENABLE(CONTENT_EXTENSIONS)

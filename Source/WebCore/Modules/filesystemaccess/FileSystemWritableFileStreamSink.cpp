@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FileSystemWritableFileStreamSink.h"
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 #include "FileSystemFileHandle.h"
 #include "FileSystemWritableFileStream.h"
 #include "FileSystemWriteCloseReason.h"
@@ -184,3 +186,5 @@ void FileSystemWritableFileStreamSink::error(String&&)
 }
 
 } // namespace WebCore
+
+#endif

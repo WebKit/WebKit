@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 #include "FileSystemWritableFileStreamIdentifier.h"
 #include "WritableStreamSink.h"
 
@@ -51,3 +53,5 @@ private:
 };
 
 } // namespace WebCore
+
+#endif

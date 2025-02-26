@@ -26,6 +26,7 @@
 // https://fs.spec.whatwg.org/#api-filesystemhandle
 
 [
+    Conditional=FILE_SYSTEM_WRITABLE_STREAM,
     EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled
 ] dictionary FileSystemCreateWritableOptions {
     boolean keepExistingData = false;
@@ -38,5 +39,6 @@
 ] interface FileSystemFileHandle : FileSystemHandle {
     Promise<File> getFile();
     [EnabledBySetting=AccessHandleEnabled, Exposed=Worker] Promise<FileSystemSyncAccessHandle> createSyncAccessHandle();
-    [EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled] Promise<FileSystemWritableFileStream> createWritable(optional FileSystemCreateWritableOptions options = {});
+
+    [Conditional=FILE_SYSTEM_WRITABLE_STREAM, EnabledBySetting=AccessHandleEnabled&FileSystemWritableStreamEnabled] Promise<FileSystemWritableFileStream> createWritable(optional FileSystemCreateWritableOptions options = {});
 };

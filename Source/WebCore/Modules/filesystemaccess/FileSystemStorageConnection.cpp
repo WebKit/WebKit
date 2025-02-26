@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FileSystemStorageConnection.h"
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 #include "FileSystemWritableFileStream.h"
 
 namespace WebCore {
@@ -50,3 +52,5 @@ void FileSystemStorageConnection::unregisterFileSystemWritable(FileSystemWritabl
 }
 
 } // namespace WebCore
+
+#endif

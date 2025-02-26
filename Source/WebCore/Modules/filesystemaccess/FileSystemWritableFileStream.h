@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 #include "FileSystemWriteCommandType.h"
 #include "WritableStream.h"
 
@@ -61,3 +63,5 @@ private:
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::FileSystemWritableFileStream)
     static bool isType(const WebCore::WritableStream& stream) { return stream.type() == WebCore::WritableStream::Type::FileSystem; }
 SPECIALIZE_TYPE_TRAITS_END()
+
+#endif

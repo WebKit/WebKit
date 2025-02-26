@@ -26,5 +26,7 @@
 ]
 messages -> WebFileSystemStorageConnection {
     InvalidateAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier identifier)
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     InvalidateWritable(WebCore::FileSystemWritableFileStreamIdentifier identifier)
+#endif
 }

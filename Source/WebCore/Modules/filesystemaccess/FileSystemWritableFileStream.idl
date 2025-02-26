@@ -32,6 +32,7 @@ enum WriteCommandType {
 };
 
 [
+    Conditional=FILE_SYSTEM_WRITABLE_STREAM,
     EnabledBySetting=FileSystemWritableStreamEnabled,
     JSGenerateToJSObject,
     JSGenerateToNativeObject
@@ -45,6 +46,7 @@ enum WriteCommandType {
 typedef (BufferSource or Blob or USVString or WriteParams) FileSystemWriteChunkType;
 
 [
+    Conditional=FILE_SYSTEM_WRITABLE_STREAM,
     EnabledBySetting=FileSystemWritableStreamEnabled,
     Exposed=(Window,Worker),
     SecureContext

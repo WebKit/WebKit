@@ -129,6 +129,7 @@ void FileSystemFileHandle::unregisterSyncAccessHandle(FileSystemSyncAccessHandle
 }
 
 // https://fs.spec.whatwg.org/#api-filesystemfilehandle-createwritable
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
 void FileSystemFileHandle::createWritable(const CreateWritableOptions& options, DOMPromiseDeferred<IDLInterface<FileSystemWritableFileStream>>&& promise)
 {
     if (isClosed())
@@ -187,6 +188,7 @@ void FileSystemFileHandle::executeCommandForWritable(FileSystemWritableFileStrea
         promise.settle(WTFMove(result));
     });
 }
+#endif
 
 } // namespace WebCore
 

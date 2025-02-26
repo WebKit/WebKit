@@ -47,6 +47,7 @@ WebFileSystemStorageConnection::WebFileSystemStorageConnection(Ref<IPC::Connecti
 {
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
 void WebFileSystemStorageConnection::errorWritable(WebCore::ScriptExecutionContextIdentifier contextIdentifier, WebCore::FileSystemWritableFileStreamIdentifier writableIdentifier)
 {
     if (errorFileSystemWritable(writableIdentifier))
@@ -59,6 +60,7 @@ void WebFileSystemStorageConnection::errorWritable(WebCore::ScriptExecutionConte
             connection->errorFileSystemWritable(writableIdentifier);
     });
 }
+#endif
 
 void WebFileSystemStorageConnection::connectionClosed()
 {
@@ -67,9 +69,11 @@ void WebFileSystemStorageConnection::connectionClosed()
     for (auto identifier : m_syncAccessHandles.keys())
         invalidateAccessHandle(identifier);
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     auto writableIdentifiers = std::exchange(m_writableIdentifiers, { });
     for (auto keyValue : writableIdentifiers)
         errorWritable(keyValue.value, keyValue.key);
+#endif
 }
 
 void WebFileSystemStorageConnection::closeHandle(WebCore::FileSystemHandleIdentifier identifier)
@@ -231,6 +235,7 @@ void WebFileSystemStorageConnection::invalidateAccessHandle(WebCore::FileSystemS
     }
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
 void WebFileSystemStorageConnection::createWritable(WebCore::ScriptExecutionContextIdentifier contextIdentifier, WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, StreamCallback&& completionHandler)
 {
     RefPtr connection = m_connection;
@@ -275,6 +280,7 @@ void WebFileSystemStorageConnection::executeCommandForWritable(WebCore::FileSyst
         completionHandler(convertToExceptionOr(error));
     });
 }
+#endif
 
 void WebFileSystemStorageConnection::requestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity, RequestCapacityCallback&& completionHandler)
 {

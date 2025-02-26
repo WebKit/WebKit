@@ -74,10 +74,12 @@ public:
     std::optional<FileSystemStorageError> closeSyncAccessHandle(WebCore::FileSystemSyncAccessHandleIdentifier);
     std::optional<WebCore::FileSystemSyncAccessHandleIdentifier> activeSyncAccessHandle();
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError> createWritable(bool keepExistingData);
     std::optional<FileSystemStorageError> closeWritable(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCloseReason);
     std::optional<FileSystemStorageError> executeCommandForWritable(WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError);
     Vector<WebCore::FileSystemWritableFileStreamIdentifier> writables() const;
+#endif
 
 private:
     FileSystemStorageHandle(FileSystemStorageManager&, Type, String&& path, String&& name);
@@ -94,7 +96,9 @@ private:
         uint64_t capacity { 0 };
     };
     std::optional<SyncAccessHandleInfo> m_activeSyncAccessHandle;
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     HashMap<WebCore::FileSystemWritableFileStreamIdentifier, WebCore::FileHandle> m_activeWritableFiles;
+#endif
 };
 
 } // namespace WebKit

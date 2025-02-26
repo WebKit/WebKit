@@ -45,9 +45,13 @@
     CreateSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<WebKit::FileSystemSyncAccessHandleInfo, WebKit::FileSystemStorageError> result)
     CloseSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier) -> ()
     RequestNewCapacityForSyncAccessHandle(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemSyncAccessHandleIdentifier accessHandleIdentifier, uint64_t newCapacity) -> (std::optional<uint64_t> result)
+
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     [EnabledBy=FileSystemWritableStreamEnabled] CreateWritable(WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData) -> (Expected<WebCore::FileSystemWritableFileStreamIdentifier, WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemWritableStreamEnabled] CloseWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, enum:bool WebCore::FileSystemWriteCloseReason reason) -> (std::optional<WebKit::FileSystemStorageError> result)
     [EnabledBy=FileSystemWritableStreamEnabled] ExecuteCommandForWritable(WebCore::FileSystemHandleIdentifier identifier, WebCore::FileSystemWritableFileStreamIdentifier streamIdentifier, enum:uint8_t WebCore::FileSystemWriteCommandType type, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError) ->  (std::optional<WebKit::FileSystemStorageError> result)
+#endif
+
     GetHandleNames(WebCore::FileSystemHandleIdentifier identifier) -> (Expected<Vector<String>, WebKit::FileSystemStorageError> result)
     GetHandle(WebCore::FileSystemHandleIdentifier identifier, String name) -> (Expected<std::optional<std::pair<WebCore::FileSystemHandleIdentifier, bool>>, WebKit::FileSystemStorageError> result)
 

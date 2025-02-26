@@ -125,7 +125,9 @@ public:
 
     void text(Ref<DeferredPromise>&&);
     void arrayBuffer(DOMPromiseDeferred<IDLArrayBuffer>&&);
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     void getArrayBuffer(CompletionHandler<void(ExceptionOr<Ref<JSC::ArrayBuffer>>)>&&);
+#endif
     void bytes(Ref<DeferredPromise>&&);
     ExceptionOr<Ref<ReadableStream>> stream();
 

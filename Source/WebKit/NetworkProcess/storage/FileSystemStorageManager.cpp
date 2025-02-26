@@ -220,8 +220,10 @@ void FileSystemStorageManager::close()
             if (auto accessHandleIdentifier = takenHandle->activeSyncAccessHandle())
                 IPC::Connection::send(connectionID, Messages::WebFileSystemStorageConnection::InvalidateAccessHandle(*accessHandleIdentifier), 0);
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
             for (auto writableIdentifier : takenHandle->writables())
                 IPC::Connection::send(connectionID, Messages::WebFileSystemStorageConnection::InvalidateWritable(writableIdentifier), 0);
+#endif
         }
     }
 

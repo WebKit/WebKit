@@ -585,6 +585,10 @@
 #define ENABLE_XSLT 1
 #endif
 
+#if !defined(FILE_SYSTEM_WRITABLE_STREAM)
+#define ENABLE_FILE_SYSTEM_WRITABLE_STREAM 0
+#endif
+
 /*
  * Enable this to put each IsoHeap and other allocation categories into their own malloc heaps, so that tools like vmmap can show how big each heap is.
  * Turn BENABLE_MALLOC_HEAP_BREAKDOWN on in bmalloc together when using this.

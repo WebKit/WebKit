@@ -3035,6 +3035,7 @@ FileSystemWritableStreamEnabled:
   type: bool
   status: testable
   category: dom
+  condition: ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
   humanReadableName: "File System WritableStream"
   humanReadableDescription: "Enable File System WritableStream API"
   defaultValue:

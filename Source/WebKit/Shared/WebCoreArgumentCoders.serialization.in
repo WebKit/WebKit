@@ -8879,12 +8879,14 @@ struct WebCore::ImageBufferResourceLimits {
     size_t imageBufferForCanvasLimit;
 };
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
 header: <WebCore/FileSystemWriteCommandType.h>
 enum class WebCore::FileSystemWriteCommandType : uint8_t {
     Write,
     Seek,
     Truncate
 };
+#endif
 
 enum class WebCore::FileSystemWriteCloseReason : bool;
 

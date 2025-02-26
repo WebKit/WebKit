@@ -317,6 +317,8 @@ void WorkerFileSystemStorageConnection::invalidateAccessHandle(WebCore::FileSyst
         handle->invalidate();
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 void WorkerFileSystemStorageConnection::createWritable(ScriptExecutionContextIdentifier contextIdentifier, FileSystemHandleIdentifier identifier, bool keepExistingData, StreamCallback&& callback)
 {
     if (!m_scope)
@@ -380,6 +382,8 @@ void WorkerFileSystemStorageConnection::executeCommandForWritable(FileSystemHand
         mainThreadConnection->executeCommandForWritable(identifier, streamIdentifier, type, position, size, bytes.span(), hasDataError, WTFMove(mainThreadCallback));
     });
 }
+
+#endif
 
 void WorkerFileSystemStorageConnection::getHandleNames(FileSystemHandleIdentifier identifier, GetHandleNamesCallback&& callback)
 {

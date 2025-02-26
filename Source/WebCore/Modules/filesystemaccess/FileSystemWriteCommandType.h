@@ -25,6 +25,8 @@
 
 #pragma once
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 namespace WebCore {
 
 enum class FileSystemWriteCommandType : uint8_t {
@@ -34,3 +36,5 @@ enum class FileSystemWriteCommandType : uint8_t {
 };
 
 } // namespace WebCore
+
+#endif

@@ -39,9 +39,10 @@ JSC::JSValue toJS(JSC::JSGlobalObject* lexicalGlobalObject, JSDOMGlobalObject* g
 
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<WritableStream>&& stream)
 {
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     if (is<FileSystemWritableFileStream>(stream.get()))
         return createWrapper<FileSystemWritableFileStream>(globalObject, WTFMove(stream));
-
+#endif
     return createWrapper<WritableStream>(globalObject, WTFMove(stream));
 }
 

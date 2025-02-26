@@ -50,6 +50,7 @@ public:
     void registerSyncAccessHandle(FileSystemSyncAccessHandleIdentifier, FileSystemSyncAccessHandle&);
     void unregisterSyncAccessHandle(FileSystemSyncAccessHandleIdentifier);
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     struct CreateWritableOptions {
         bool keepExistingData { false };
     };
@@ -57,6 +58,7 @@ public:
 
     void closeWritable(FileSystemWritableFileStreamIdentifier, FileSystemWriteCloseReason);
     void executeCommandForWritable(FileSystemWritableFileStreamIdentifier, FileSystemWriteCommandType, std::optional<uint64_t> position, std::optional<uint64_t> size, std::span<const uint8_t> dataBytes, bool hasDataError, DOMPromiseDeferred<void>&&);
+#endif
 
 private:
     FileSystemFileHandle(ScriptExecutionContext&, String&&, FileSystemHandleIdentifier, Ref<FileSystemStorageConnection>&&);

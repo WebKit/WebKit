@@ -26,6 +26,8 @@
 #include "config.h"
 #include "FileSystemWritableFileStream.h"
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 #include "InternalWritableStream.h"
 #include "JSBlob.h"
 #include "JSDOMPromise.h"
@@ -116,3 +118,5 @@ void FileSystemWritableFileStream::truncate(JSC::JSGlobalObject& lexicalGlobalOb
 }
 
 } // namespace WebCore
+
+#endif

@@ -88,10 +88,12 @@ void FileSystemStorageHandle::close()
     if (m_activeSyncAccessHandle)
         closeSyncAccessHandle(m_activeSyncAccessHandle->identifier);
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     auto activeWritableFileIdentifiers = copyToVector(m_activeWritableFiles.keys());
     for (auto identifier : activeWritableFileIdentifiers)
         closeWritable(identifier, WebCore::FileSystemWriteCloseReason::Aborted);
     ASSERT(m_activeWritableFiles.isEmpty());
+#endif
 
     manager->closeHandle(*this);
 }
@@ -238,6 +240,8 @@ std::optional<FileSystemStorageError> FileSystemStorageHandle::closeSyncAccessHa
     return std::nullopt;
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError> FileSystemStorageHandle::createWritable(bool keepExistingData)
 {
     RefPtr manager = m_manager.get();
@@ -359,6 +363,8 @@ Vector<WebCore::FileSystemWritableFileStreamIdentifier> FileSystemStorageHandle:
 {
     return copyToVector(m_activeWritableFiles.keys());
 }
+
+#endif
 
 Expected<Vector<String>, FileSystemStorageError> FileSystemStorageHandle::getHandleNames()
 {

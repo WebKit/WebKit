@@ -296,6 +296,7 @@ void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection&
     m_connections.add(connection);
     addAllowedSitesForConnection(connection.uniqueID(), allowedSites);
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
     protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, connection = connection.uniqueID(), preferences]() mutable {
         assertIsCurrent(workQueue());
         ASSERT(!m_preferencesForConnections.contains(connection));
@@ -303,6 +304,9 @@ void NetworkStorageManager::startReceivingMessageFromConnection(IPC::Connection&
 
         RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
+#else
+    UNUSED_PARAM(preferences);
+#endif
 }
 
 void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& connection)
@@ -329,14 +333,16 @@ void NetworkStorageManager::stopReceivingMessageFromConnection(IPC::Connection& 
         m_temporaryBlobPathsByConnection.remove(connection);
         if (m_allowedSitesForConnections)
             m_allowedSitesForConnections->remove(connection);
-
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
         ASSERT(m_preferencesForConnections.contains(connection));
         m_preferencesForConnections.remove(connection);
 
         RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
+#endif
     });
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
 void NetworkStorageManager::updateSharedPreferencesForConnection(IPC::Connection& connection, const SharedPreferencesForWebProcess& preferences)
 {
     ASSERT(RunLoop::isMain());
@@ -349,6 +355,7 @@ void NetworkStorageManager::updateSharedPreferencesForConnection(IPC::Connection
         RunLoop::protectedMain()->dispatch([protectedThis = WTFMove(protectedThis)] { });
     });
 }
+#endif
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -1023,6 +1030,7 @@ void NetworkStorageManager::requestNewCapacityForSyncAccessHandle(WebCore::FileS
     handle->requestNewCapacityForSyncAccessHandle(accessHandleIdentifier, newCapacity, WTFMove(completionHandler));
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
 void NetworkStorageManager::createWritable(WebCore::FileSystemHandleIdentifier identifier, bool keepExistingData, CompletionHandler<void(Expected<WebCore::FileSystemWritableFileStreamIdentifier, FileSystemStorageError>)>&& completionHandler)
 {
     ASSERT(!RunLoop::isMain());
@@ -1055,6 +1063,7 @@ void NetworkStorageManager::executeCommandForWritable(WebCore::FileSystemHandleI
 
     completionHandler(handle->executeCommandForWritable(streamIdentifier, type, position, size, dataBytes, hasDataError));
 }
+#endif
 
 void NetworkStorageManager::getHandleNames(WebCore::FileSystemHandleIdentifier identifier, CompletionHandler<void(Expected<Vector<String>, FileSystemStorageError>)>&& completionHandler)
 {
@@ -2245,6 +2254,7 @@ RefPtr<FileSystemStorageHandleRegistry> NetworkStorageManager::protectedFileSyst
     return m_fileSystemStorageHandleRegistry;
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
 std::optional<SharedPreferencesForWebProcess> NetworkStorageManager::sharedPreferencesForWebProcess(IPC::Connection& connection) const
 {
     assertIsCurrent(workQueue());
@@ -2255,6 +2265,7 @@ std::optional<SharedPreferencesForWebProcess> NetworkStorageManager::sharedPrefe
 
     return iter->value;
 }
+#endif
 
 } // namespace WebKit
 

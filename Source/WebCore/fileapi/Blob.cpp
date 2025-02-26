@@ -307,12 +307,16 @@ void Blob::arrayBuffer(DOMPromiseDeferred<IDLArrayBuffer>&& promise)
     });
 }
 
+#if ENABLE(FILE_SYSTEM_WRITABLE_STREAM)
+
 void Blob::getArrayBuffer(CompletionHandler<void(ExceptionOr<Ref<JSC::ArrayBuffer>>)>&& completionHandler)
 {
     loadBlob(FileReaderLoader::ReadAsArrayBuffer, [completionHandler = WTFMove(completionHandler)](BlobLoader& blobLoader) mutable {
         completionHandler(arrayBufferFromBlobLoader(blobLoader));
     });
 }
+
+#endif
 
 void Blob::bytes(Ref<DeferredPromise>&& promise)
 {
