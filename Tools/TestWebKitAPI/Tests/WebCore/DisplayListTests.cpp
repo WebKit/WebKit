@@ -72,7 +72,7 @@ TEST(DisplayListTests, AppendItems)
     auto path = createComplexPath();
 
     for (int i = 0; i < 50; ++i) {
-        list.append(SetInlineStroke(1.5));
+        list.append(SetInlineStroke(PackedColor::RGBA { Color::white }, 1.5));
         list.append(FillPath(path));
         list.append(FillRectWithGradient(FloatRect { 1., 1., 10., 10. }, gradient));
         list.append(SetInlineFillColor(Color::red));

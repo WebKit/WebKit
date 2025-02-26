@@ -122,16 +122,10 @@ void Recorder::appendStateChangeItemIfNecessary()
 
 SetInlineStroke Recorder::buildSetInlineStroke(const GraphicsContextState& state)
 {
-    ASSERT(state.containsOnlyInlineChanges());
+    ASSERT_UNUSED(state, state.containsOnlyInlineChanges());
     ASSERT(state.changes().containsAny({ GraphicsContextState::Change::StrokeBrush, GraphicsContextState::Change::StrokeThickness }));
 
-    if (!state.changes().contains(GraphicsContextState::Change::StrokeBrush))
-        return SetInlineStroke(strokeThickness());
-
     ASSERT(strokeColor().tryGetAsPackedInline());
-    if (!state.changes().contains(GraphicsContextState::Change::StrokeThickness))
-        return SetInlineStroke(*strokeColor().tryGetAsPackedInline());
-
     return SetInlineStroke(*strokeColor().tryGetAsPackedInline(), strokeThickness());
 }
 

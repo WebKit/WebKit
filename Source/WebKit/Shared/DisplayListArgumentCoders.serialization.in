@@ -59,8 +59,8 @@ headers: <WebCore/DisplayListItems.h>
 }
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetInlineStroke {
-    std::optional<WebCore::PackedColor::RGBA> colorData();
-    std::optional<float> thickness();
+    WebCore::PackedColor::RGBA colorData();
+    float thickness();
 };
 
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::SetLineCap {

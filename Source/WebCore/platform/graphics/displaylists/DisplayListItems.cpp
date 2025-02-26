@@ -111,18 +111,14 @@ void SetInlineFillColor::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 
 void SetInlineStroke::apply(GraphicsContext& context) const
 {
-    if (auto color = this->color())
-        context.setStrokeColor(*color);
-    if (auto thickness = this->thickness())
-        context.setStrokeThickness(*thickness);
+    context.setStrokeColor(color());
+    context.setStrokeThickness(thickness());
 }
 
 void SetInlineStroke::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
-    if (auto color = this->color())
-        ts.dumpProperty("color", *color);
-    if (auto thickness = this->thickness())
-        ts.dumpProperty("thickness", *thickness);
+    ts.dumpProperty("color", color());
+    ts.dumpProperty("thickness", thickness());
 }
 
 SetState::SetState(const GraphicsContextState& state)
