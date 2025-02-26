@@ -344,7 +344,7 @@ void AttributeValidator::visit(AST::Structure& structure)
             member.m_alignment = fieldAlignment;
         }
 
-        auto typeSize = type->size();
+        auto typeSize = WTF::roundUpToMultipleOf(*fieldAlignment, type->size());
         auto fieldSize = member.m_size;
         if (!fieldSize) {
             fieldSize = typeSize;
