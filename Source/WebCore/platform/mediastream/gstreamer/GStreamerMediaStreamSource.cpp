@@ -668,7 +668,7 @@ private:
         gst_audio_info_from_caps(&info, m_silentSampleCaps.get());
         {
             GstMappedBuffer map(buffer.get(), GST_MAP_WRITE);
-            webkitGstAudioFormatFillSilence(info.finfo, map.data(), map.size());
+            gst_audio_format_info_fill_silence(info.finfo, map.data(), map.size());
         }
         auto sample = adoptGRef(gst_sample_new(buffer.get(), m_silentSampleCaps.get(), nullptr, nullptr));
         pushSample(WTFMove(sample), "Pushing audio silence from disabled track"_s);

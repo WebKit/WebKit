@@ -94,13 +94,6 @@
 #include <gst/webrtc/webrtc-enumtypes.h>
 #endif
 
-#if USE(GSTREAMER_FULL) && GST_CHECK_VERSION(1, 18, 0) && !GST_CHECK_VERSION(1, 20, 0)
-#define IS_GST_FULL_1_18 1
-#include <gst/gstinitstaticplugins.h>
-#else
-#define IS_GST_FULL_1_18 0
-#endif
-
 #if USE(GBM)
 #include "DRMDeviceManager.h"
 #include <drm_fourcc.h>
@@ -421,10 +414,6 @@ void registerWebKitGStreamerElements()
     static std::once_flag onceFlag;
     bool registryWasUpdated = false;
     std::call_once(onceFlag, [&registryWasUpdated] {
-
-#if IS_GST_FULL_1_18
-        gst_init_static_plugins();
-#endif
 
         // Rank guidelines are as following:
         // - Use GST_RANK_PRIMARY for elements meant to be auto-plugged and for which we know
@@ -1937,21 +1926,5 @@ bool setGstElementGLContext(GstElement* element, const char* contextType)
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore
-
-#undef IS_GST_FULL_1_18
-
-#if !GST_CHECK_VERSION(1, 20, 0)
-GstBuffer* gst_buffer_new_memdup(gconstpointer data, gsize size)
-{
-    gpointer copiedData = nullptr;
-
-    if (data && size) {
-        copiedData = g_malloc(size);
-        memcpy(copiedData, data, size);
-    }
-
-    return gst_buffer_new_wrapped_full(static_cast<GstMemoryFlags>(0), copiedData, size, 0, size, copiedData, g_free);
-}
-#endif
 
 #endif // USE(GSTREAMER)

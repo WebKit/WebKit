@@ -168,7 +168,6 @@ void GStreamerVideoEncoder::close()
 
 static std::optional<unsigned> retrieveTemporalIndex(const GRefPtr<GstSample>& sample)
 {
-#if GST_CHECK_VERSION(1, 20, 0)
     auto caps = gst_sample_get_caps(sample.get());
     auto structure = gst_caps_get_structure(caps, 0);
     auto buffer = gst_sample_get_buffer(sample.get());
@@ -187,7 +186,6 @@ static std::optional<unsigned> retrieveTemporalIndex(const GRefPtr<GstSample>& s
 #ifndef GST_DISABLE_GST_DEBUG
     auto name = gstStructureGetName(structure);
     GST_TRACE("Retrieval of temporal index from encoded format %s is not yet supported.", reinterpret_cast<const char*>(name.rawCharacters()));
-#endif
 #endif
     return { };
 }
