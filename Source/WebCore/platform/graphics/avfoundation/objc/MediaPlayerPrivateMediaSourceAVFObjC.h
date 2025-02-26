@@ -63,7 +63,7 @@ class VideoLayerManagerObjC;
 class VideoMediaSampleRenderer;
 class VideoTrackPrivate;
 
-class MediaPlayerPrivateMediaSourceAVFObjC
+class MediaPlayerPrivateMediaSourceAVFObjC final
     : public CanMakeWeakPtr<MediaPlayerPrivateMediaSourceAVFObjC>
     , public RefCounted<MediaPlayerPrivateMediaSourceAVFObjC>
     , public MediaPlayerPrivateInterface
@@ -94,8 +94,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void removeVideoTrack(VideoTrackPrivate&);
     void removeTextTrack(InbandTextTrackPrivate&);
 
-    MediaPlayer::NetworkState networkState() const override;
-    MediaPlayer::ReadyState readyState() const override;
+    MediaPlayer::NetworkState networkState() const final;
+    MediaPlayer::ReadyState readyState() const final;
     void setReadyState(MediaPlayer::ReadyState);
     void setNetworkState(MediaPlayer::NetworkState);
 
@@ -103,7 +103,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void maybeCompleteSeek();
     void setLoadingProgresssed(bool flag) { m_loadingProgressed = flag; }
     void setHasAvailableVideoFrame(bool);
-    bool hasAvailableVideoFrame() const override;
+    bool hasAvailableVideoFrame() const final;
 ALLOW_NEW_API_WITHOUT_GUARDS_BEGIN
     void setHasAvailableAudioSample(AVSampleBufferAudioRenderer*, bool);
 ALLOW_NEW_API_WITHOUT_GUARDS_END
@@ -117,21 +117,21 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     void flushPendingSizeChanges();
     void characteristicsChanged();
 
-    MediaTime currentTime() const override;
+    MediaTime currentTime() const final;
     bool timeIsProgressing() const final;
     bool hasVideoRenderer() const;
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    RetainPtr<PlatformLayer> createVideoFullscreenLayer() override;
-    void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) override;
-    void setVideoFullscreenFrame(FloatRect) override;
+    RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
+    void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
+    void setVideoFullscreenFrame(FloatRect) final;
 #endif
 
-    void setTextTrackRepresentation(TextTrackRepresentation*) override;
-    void syncTextTrackBounds() override;
+    void setTextTrackRepresentation(TextTrackRepresentation*) final;
+    void syncTextTrackBounds() final;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    void setCDMSession(LegacyCDMSession*) override;
+    void setCDMSession(LegacyCDMSession*) final;
     CDMSessionAVContentKeySession* cdmSession() const;
     void keyAdded() final;
 #endif
@@ -145,8 +145,8 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 #endif
 
     void outputObscuredDueToInsufficientExternalProtectionChanged(bool);
-    void beginSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(true); }
-    void endSimulatedHDCPError() override { outputObscuredDueToInsufficientExternalProtectionChanged(false); }
+    void beginSimulatedHDCPError() final { outputObscuredDueToInsufficientExternalProtectionChanged(true); }
+    void endSimulatedHDCPError() final { outputObscuredDueToInsufficientExternalProtectionChanged(false); }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)
     void keyNeeded(const SharedBuffer&);
@@ -171,7 +171,7 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
-    ASCIILiteral logClassName() const override { return "MediaPlayerPrivateMediaSourceAVFObjC"_s; }
+    ASCIILiteral logClassName() const final { return "MediaPlayerPrivateMediaSourceAVFObjC"_s; }
     uint64_t logIdentifier() const final { return m_logIdentifier; }
     WTFLogChannel& logChannel() const final;
 
@@ -189,70 +189,70 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
 private:
     // MediaPlayerPrivateInterface
-    void load(const String& url) override;
-    void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) override;
+    void load(const String& url) final;
+    void load(const URL&, const LoadOptions&, MediaSourcePrivateClient&) final;
 #if ENABLE(MEDIA_STREAM)
-    void load(MediaStreamPrivate&) override;
+    void load(MediaStreamPrivate&) final;
 #endif
-    void cancelLoad() override;
+    void cancelLoad() final;
 
-    void prepareToPlay() override;
-    PlatformLayer* platformLayer() const override;
+    void prepareToPlay() final;
+    PlatformLayer* platformLayer() const final;
 
-    bool supportsPictureInPicture() const override { return true; }
-    bool supportsFullscreen() const override { return true; }
+    bool supportsPictureInPicture() const final { return true; }
+    bool supportsFullscreen() const final { return true; }
 
-    void play() override;
+    void play() final;
     void playInternal(std::optional<MonotonicTime>&& = std::nullopt);
 
-    void pause() override;
+    void pause() final;
     void pauseInternal(std::optional<MonotonicTime>&& = std::nullopt);
 
-    bool paused() const override;
+    bool paused() const final;
 
-    void setVolume(float volume) override;
-    void setMuted(bool) override;
+    void setVolume(float) final;
+    void setMuted(bool) final;
 
-    bool supportsScanning() const override;
+    bool supportsScanning() const final;
 
-    FloatSize naturalSize() const override;
+    FloatSize naturalSize() const final;
 
-    bool hasVideo() const override;
-    bool hasAudio() const override;
+    bool hasVideo() const final;
+    bool hasAudio() const final;
 
     void setPageIsVisible(bool) final;
 
-    MediaTime duration() const override;
-    MediaTime startTime() const override;
-    MediaTime initialTime() const override;
+    MediaTime duration() const final;
+    MediaTime startTime() const final;
+    MediaTime initialTime() const final;
 
     void seekToTarget(const SeekTarget&) final;
     bool seeking() const final;
-    void setRateDouble(double) override;
-    double rate() const override;
-    double effectiveRate() const override;
+    void setRateDouble(double) final;
+    double rate() const final;
+    double effectiveRate() const final;
 
-    void setPreservesPitch(bool) override;
+    void setPreservesPitch(bool) final;
 
-    MediaTime maxTimeSeekable() const override;
-    MediaTime minTimeSeekable() const override;
-    const PlatformTimeRanges& buffered() const override;
+    MediaTime maxTimeSeekable() const final;
+    MediaTime minTimeSeekable() const final;
+    const PlatformTimeRanges& buffered() const final;
 
-    bool didLoadingProgress() const override;
+    bool didLoadingProgress() const final;
 
-    RefPtr<NativeImage> nativeImageForCurrentTime() override;
+    RefPtr<NativeImage> nativeImageForCurrentTime() final;
     bool updateLastPixelBuffer();
     bool updateLastImage();
     void maybePurgeLastImage();
-    void paint(GraphicsContext&, const FloatRect&) override;
-    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) override;
+    void paint(GraphicsContext&, const FloatRect&) final;
+    void paintCurrentFrameInContext(GraphicsContext&, const FloatRect&) final;
     RefPtr<VideoFrame> videoFrameForCurrentTime() final;
     DestinationColorSpace colorSpace() final;
 
-    bool supportsAcceleratedRendering() const override;
+    bool supportsAcceleratedRendering() const final;
     // called when the rendering system flips the into or out of accelerated rendering mode.
-    void acceleratedRenderingStateChanged() override;
-    void notifyActiveSourceBuffersChanged() override;
+    void acceleratedRenderingStateChanged() final;
+    void notifyActiveSourceBuffersChanged() final;
 
     void setPresentationSize(const IntSize&) final;
     void setVideoLayerSizeFenced(const FloatSize&, WTF::MachSendRight&&) final;
@@ -265,25 +265,25 @@ private:
     // NOTE: Because the only way for MSE to recieve data is through an ArrayBuffer provided by
     // javascript running in the page, the video will, by necessity, always be CORS correct and
     // in the page's origin.
-    bool didPassCORSAccessCheck() const override { return true; }
+    bool didPassCORSAccessCheck() const final { return true; }
 
-    MediaPlayer::MovieLoadType movieLoadType() const override;
+    MediaPlayer::MovieLoadType movieLoadType() const final;
 
-    void prepareForRendering() override;
+    void prepareForRendering() final;
 
-    String engineDescription() const override;
+    String engineDescription() const final;
 
-    String languageOfPrimaryAudioTrack() const override;
+    String languageOfPrimaryAudioTrack() const final;
 
-    size_t extraMemoryCost() const override;
+    size_t extraMemoryCost() const final;
 
-    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() override;
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
 
 #if ENABLE(WIRELESS_PLAYBACK_TARGET)
-    bool isCurrentPlaybackTargetWireless() const override;
-    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) override;
-    void setShouldPlayToPlaybackTarget(bool) override;
-    bool wirelessVideoPlaybackDisabled() const override { return false; }
+    bool isCurrentPlaybackTargetWireless() const final;
+    void setWirelessPlaybackTarget(Ref<MediaPlaybackTarget>&&) final;
+    void setShouldPlayToPlaybackTarget(bool) final;
+    bool wirelessVideoPlaybackDisabled() const final { return false; }
 #endif
 
     bool performTaskAtTime(Function<void()>&&, const MediaTime&) final;
