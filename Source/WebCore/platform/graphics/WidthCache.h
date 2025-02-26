@@ -114,6 +114,12 @@ public:
         : m_interval(s_maxInterval)
         , m_countdown(m_interval)
     {
+//        WTF_ALWAYS_LOG("WidthCache built: " << this);
+    }
+
+    ~WidthCache()
+    {
+//        WTF_ALWAYS_LOG("WidthCache destroyed: " << this);
     }
 
     float* add(StringView text, float entry)
@@ -226,8 +232,8 @@ private:
     using SingleCharMap = UncheckedKeyHashMap<uint32_t, float, DefaultHash<uint32_t>, HashTraits<uint32_t>, WTF::FloatWithZeroEmptyKeyHashTraits<float>>;
 
     static constexpr int s_minInterval = -3; // A cache hit pays for about 3 cache misses.
-    static constexpr int s_maxInterval = 20; // Sampling at this interval has almost no overhead.
-    static constexpr unsigned s_maxSize = 500000; // Just enough to guard against pathological growth.
+    static constexpr int s_maxInterval = 10; // Sampling at this interval has almost no overhead.
+    static constexpr unsigned s_maxSize = 500'000'000; // Just enough to guard against pathological growth.
 
     int m_interval;
     int m_countdown;

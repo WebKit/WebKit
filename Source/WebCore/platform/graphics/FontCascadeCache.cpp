@@ -94,11 +94,14 @@ void FontCascadeCache::pruneSystemFallbackFonts()
 
 static FontCascadeCacheKey makeFontCascadeCacheKey(const FontCascadeDescription& description, FontSelector* fontSelector)
 {
+//    if (description.familyCount() && fontSelector && fontSelector)
+//        WTF_ALWAYS_LOG("fontSelector : " << description.familyAt(0) << " " <<  fontSelector->uniqueId() << " " << fontSelector->version()) ;
+
     unsigned familyCount = description.familyCount();
     return FontCascadeCacheKey {
         FontDescriptionKey(description),
         Vector<FontFamilyName, 3>(familyCount, [&](size_t i) { return description.familyAt(i); }),
-        fontSelector ? fontSelector->uniqueId() : 0,
+        0,
         fontSelector ? fontSelector->version() : 0
     };
 }
@@ -114,15 +117,15 @@ Ref<FontCascadeFonts> FontCascadeCache::retrieveOrAddCachedFonts(const FontCasca
     newEntry = makeUnique<FontCascadeCacheEntry>(FontCascadeCacheEntry { WTFMove(key), FontCascadeFonts::create(WTFMove(fontSelector)) });
     Ref<FontCascadeFonts> fonts = newEntry->fonts.get();
 
-    static constexpr unsigned unreferencedPruneInterval = 50;
-    static constexpr int maximumEntries = 400;
-    static unsigned pruneCounter;
+    // static constexpr unsigned unreferencedPruneInterval = 50;
+    // static constexpr int maximumEntries = 400;
+    // static unsigned pruneCounter;
     // Referenced FontCascadeFonts would exist anyway so pruning them saves little memory.
-    if (!(++pruneCounter % unreferencedPruneInterval))
-        pruneUnreferencedEntries();
+    // if (!(++pruneCounter % unreferencedPruneInterval))
+    //     pruneUnreferencedEntries();
     // Prevent pathological growth.
-    if (m_entries.size() > maximumEntries)
-        m_entries.remove(m_entries.random());
+    // if (m_entries.size() > maximumEntries)
+    //     m_entries.remove(m_entries.random());
     return fonts;
 }
 
