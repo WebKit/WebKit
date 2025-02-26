@@ -220,6 +220,7 @@ protected:
 
 public:
     Identifier toIdentifier(JSGlobalObject*) const;
+    AtomString ensureAtomString(JSGlobalObject*) const;
     AtomString toAtomString(JSGlobalObject*) const;
     AtomString toExistingAtomString(JSGlobalObject*) const;
 
@@ -788,6 +789,14 @@ inline JSString* asString(JSValue value)
     return jsCast<JSString*>(value.asCell());
 }
 
+inline const StringImpl* asAtomString(JSValue value)
+{
+    ASSERT(value.isString());
+    if (auto* valueImpl = asString(value)->tryGetValueImpl(); valueImpl && valueImpl->isAtom())
+        return valueImpl;
+    return nullptr;
+}
+
 // This MUST NOT GC.
 inline JSString* jsEmptyString(VM& vm)
 {
@@ -888,6 +897,17 @@ ALWAYS_INLINE AtomString JSString::toExistingAtomString(JSGlobalObject* globalOb
     if (valueInternal().impl()->isAtom())
         return static_cast<AtomStringImpl*>(valueInternal().impl());
     return AtomStringImpl::lookUp(valueInternal().impl());
+}
+
+ALWAYS_INLINE AtomString JSString::ensureAtomString(JSGlobalObject* globalObject) const
+{
+    VM& vm = getVM(globalObject);
+    auto scope = DECLARE_THROW_SCOPE(vm);
+    AtomString result = toExistingAtomString(globalObject);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (!result.isNull())
+        return result;
+    RELEASE_AND_RETURN(scope, toAtomString(globalObject));
 }
 
 inline GCOwnedDataScope<const String&> JSString::value(JSGlobalObject* globalObject) const

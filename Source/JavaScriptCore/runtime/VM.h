@@ -535,7 +535,8 @@ public:
     WriteBarrier<Structure> regExpStructure;
     WriteBarrier<Structure> symbolStructure;
     WriteBarrier<Structure> symbolTableStructure;
-    WriteBarrier<Structure> immutableButterflyStructures[NumberOfCopyOnWriteIndexingModes];
+    std::array<WriteBarrier<Structure>, NumberOfCopyOnWriteIndexingModes> immutableButterflyStructures;
+    WriteBarrier<Structure> immutableButterflyAtomStringsStructure;
     WriteBarrier<Structure> sourceCodeStructure;
     WriteBarrier<Structure> scriptFetcherStructure;
     WriteBarrier<Structure> scriptFetchParametersStructure;
@@ -622,7 +623,11 @@ public:
         return emptyPropertyNameEnumeratorSlow();
     }
 
+    bool containsAtomString(StringImpl*);
+    void cacheAtomString(StringImpl*, JSString*);
+
     WeakGCMap<SymbolImpl*, Symbol, PtrHash<SymbolImpl*>> symbolImplToSymbolMap;
+    WeakGCMap<StringImpl*, JSString, PtrHash<StringImpl*>> atomStringToJSStringMap;
 
     enum class DeletePropertyMode {
         // Default behaviour of deleteProperty, matching the spec.

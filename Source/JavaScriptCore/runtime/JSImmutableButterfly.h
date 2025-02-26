@@ -150,6 +150,10 @@ public:
 
     Butterfly* toButterfly() const { return std::bit_cast<Butterfly*>(std::bit_cast<char*>(this) + offsetOfData()); }
     static JSImmutableButterfly* fromButterfly(Butterfly* butterfly) { return std::bit_cast<JSImmutableButterfly*>(std::bit_cast<char*>(butterfly) - offsetOfData()); }
+    static bool isAtomStringsStructure(VM& vm, Butterfly* butterfly)
+    {
+        return fromButterfly(butterfly)->structure() == vm.immutableButterflyAtomStringsStructure.get();
+    }
 
     JSValue get(unsigned index) const
     {

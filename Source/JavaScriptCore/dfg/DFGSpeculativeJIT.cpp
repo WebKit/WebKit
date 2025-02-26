@@ -9628,6 +9628,30 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
         GPRReg rightCharGPR = tempRightChar.gpr();
 
         JumpList slowCase;
+
+        auto operation = operationArrayIndexOfString;
+
+        auto isCopyOnWriteArrayWithContiguous = [&]() {
+            Edge& baseEdge = m_graph.varArgChild(node, 0);
+            auto& base = m_state.forNode(baseEdge);
+            if (!base.m_structure.isFinite())
+                return false;
+            if (auto structure = base.m_structure.onlyStructure()) {
+                JSGlobalObject* globalObject = m_graph.globalObjectFor(node->origin.semantic);
+                if (structure.get() == globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous))
+                    return true;
+            }
+            return false;
+        };
+
+        if (isCopyOnWriteArrayWithContiguous()) {
+            operation = operationCopyOnWriteArrayIndexOfString;
+            loadLinkableConstant(LinkableConstant(*this, vm().immutableButterflyAtomStringsStructure.get()), compareLengthGPR);
+            emitEncodeStructureID(compareLengthGPR, compareLengthGPR);
+            addPtr(TrustedImm32(-static_cast<ptrdiff_t>(JSImmutableButterfly::offsetOfData())), storageGPR, leftStringGPR);
+            slowCase.append(branch32(Equal, Address(leftStringGPR, JSCell::structureIDOffset()), compareLengthGPR));
+        }
+
         loadPtr(Address(searchElementGPR, JSString::offsetOfValue()), rightStringGPR);
         slowCase.append(branchIfRopeStringImpl(rightStringGPR));
         slowCase.append(branchTest32(
@@ -9724,7 +9748,7 @@ void SpeculativeJIT::compileArrayIndexOfOrArrayIncludes(Node* node)
             unblessedBooleanResult(indexGPR, node);
         } else {
             addSlowPathGenerator(slowPathCall(
-                slowCase, this, operationArrayIndexOfString,
+                slowCase, this, operation,
                 indexGPR, LinkableConstant::globalObject(*this, node),
                 storageGPR, searchElementGPR, indexGPR
             ));

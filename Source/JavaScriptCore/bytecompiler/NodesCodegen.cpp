@@ -421,6 +421,7 @@ RegisterID* TaggedTemplateNode::emitBytecode(BytecodeGenerator& generator, Regis
 RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
 {
     bool hadVariableExpression = false;
+    bool allDenseStrings = true;
     unsigned length = 0;
 
     IndexingType recommendedIndexingType = ArrayWithUndecided;
@@ -434,24 +435,41 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
             JSValue constant = static_cast<ConstantNode*>(firstPutElement->value())->jsValue(generator);
             if (UNLIKELY(!constant))
                 hadVariableExpression = true;
-            else
+            else {
                 recommendedIndexingType = leastUpperBoundOfIndexingTypeAndValue(recommendedIndexingType, constant);
+                if (!constant.isString())
+                    allDenseStrings = false;
+                else if (auto* impl = asString(constant)->tryGetValueImpl(); !impl || !impl->isAtom())
+                    allDenseStrings = false;
+            }
         }
 
         ++length;
     }
+    if (hadVariableExpression)
+        allDenseStrings = false;
 
-    auto newArray = [&] (RegisterID* dst, ElementNode* elements, unsigned length, bool hadVariableExpression) {
+    auto newArray = [&](RegisterID* dst, ElementNode* elements, unsigned length) {
         if (length && !hadVariableExpression) {
+            VM& vm = generator.vm();
             recommendedIndexingType |= CopyOnWrite;
-            ASSERT(generator.vm().heap.isDeferred()); // We run bytecode generator under a DeferGC. If we stopped doing that, we'd need to put a DeferGC here as we filled in these slots.
-            auto* array = JSImmutableButterfly::create(generator.vm(), recommendedIndexingType, length);
+            ASSERT(vm.heap.isDeferred()); // We run bytecode generator under a DeferGC. If we stopped doing that, we'd need to put a DeferGC here as we filled in these slots.
+
+            Structure* immutableButterflyStructure = allDenseStrings ? vm.immutableButterflyAtomStringsStructure.get() : vm.immutableButterflyStructure(recommendedIndexingType);
+            auto* array = JSImmutableButterfly::tryCreate(generator.vm(), immutableButterflyStructure, length);
+            RELEASE_ASSERT(array);
+
             unsigned index = 0;
             for (ElementNode* element = elements; index < length; element = element->next()) {
                 ASSERT(element->value()->isConstant());
                 JSValue constant = static_cast<ConstantNode*>(element->value())->jsValue(generator);
                 ASSERT(constant);
                 array->setIndex(generator.vm(), index++, constant);
+                if (allDenseStrings) {
+                    ASSERT(constant.isString());
+                    JSString* string = asString(constant);
+                    vm.cacheAtomString(const_cast<StringImpl*>(string->getValueImpl()), string);
+                }
             }
             return generator.emitNewArrayBuffer(dst, array, recommendedIndexingType);
         }
@@ -459,7 +477,9 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     };
 
     if (!firstPutElement && !m_elision)
-        return newArray(generator.finalDestination(dst), m_element, length, hadVariableExpression);
+        return newArray(generator.finalDestination(dst), m_element, length);
+
+    allDenseStrings = false;
 
     if (firstPutElement && firstPutElement->value()->isSpreadExpression()) {
         bool hasElision = m_elision;
@@ -476,7 +496,7 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
             return generator.emitNewArrayWithSpread(generator.finalDestination(dst), m_element);
     }
 
-    RefPtr<RegisterID> array = newArray(generator.tempDestination(dst), m_element, length, hadVariableExpression);
+    RefPtr<RegisterID> array = newArray(generator.tempDestination(dst), m_element, length);
     ElementNode* n = firstPutElement;
     for (; n; n = n->next()) {
         if (n->value()->isSpreadExpression())

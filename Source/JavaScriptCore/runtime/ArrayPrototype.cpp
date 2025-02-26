@@ -1513,7 +1513,24 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncIndexOf, (JSGlobalObject* globalObject, C
     JSValue searchElement = callFrame->argument(0);
 
     if (LIKELY(isJSArray(thisObject))) {
-        JSValue result = fastIndexOf<IndexOfDirection::Forward>(globalObject, vm, asArray(thisObject), length, searchElement, index);
+        JSArray* array = asArray(thisObject);
+        Butterfly* butterfly = array->butterfly();
+        if (isCopyOnWrite(array->indexingMode()) && JSImmutableButterfly::isAtomStringsStructure(vm, butterfly) && searchElement.isString()) {
+            StringImpl* searchImpl = asString(searchElement)->ensureAtomString(globalObject).impl();
+            RETURN_IF_EXCEPTION(scope, { });
+
+            if (vm.containsAtomString(searchImpl)) {
+                auto data = butterfly->contiguous().data();
+                for (unsigned i = index; i < length; ++i) {
+                    JSValue value = data[i].get();
+                    if (auto* valueImpl = asAtomString(value); valueImpl && valueImpl == searchImpl)
+                        return JSValue::encode(jsNumber(i));
+                }
+            }
+            return JSValue::encode(jsNumber(-1));
+        }
+
+        JSValue result = fastIndexOf<IndexOfDirection::Forward>(globalObject, vm, array, length, searchElement, index);
         RETURN_IF_EXCEPTION(scope, { });
         if (result)
             return JSValue::encode(result);

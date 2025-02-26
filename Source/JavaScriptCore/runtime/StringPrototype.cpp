@@ -1381,23 +1381,34 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
 
     auto& result = vm.stringSplitIndice;
     result.shrink(0);
+    constexpr unsigned atomStringsArrayLimit = 100;
 
     auto cacheAndCreateArray = [&]() -> JSArray* {
         if (result.isEmpty())
             return constructEmptyArray(globalObject, nullptr);
 
-        if (LIKELY(limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && result.size() < MIN_SPARSE_ARRAY_INDEX)) {
-            auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, result.size());
+        unsigned resultSize = result.size();
+        if (LIKELY(limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && resultSize < MIN_SPARSE_ARRAY_INDEX)) {
+            bool makeAtomStringsArray = resultSize < atomStringsArrayLimit;
+            Structure* immutableButterflyStructure = makeAtomStringsArray ? vm.immutableButterflyAtomStringsStructure.get() : vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous);
+
+            auto* newButterfly = JSImmutableButterfly::tryCreate(vm, immutableButterflyStructure, resultSize);
+            if (UNLIKELY(!newButterfly)) {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+
             unsigned start = 0;
             auto view = thisString->view(globalObject);
             RETURN_IF_EXCEPTION(scope, { });
-            for (unsigned i = 0, size = result.size(); i < size; ++i) {
+            for (unsigned i = 0; i < resultSize; ++i) {
                 unsigned end = result[i];
                 JSString* string = nullptr;
-                if (size < 100) {
+                if (makeAtomStringsArray) {
                     auto subView = view->substring(start, end - start);
                     auto identifier = subView.is8Bit() ? Identifier::fromString(vm, subView.span8()) : Identifier::fromString(vm, subView.span16());
                     string = jsString(vm, identifier.string());
+                    vm.cacheAtomString(identifier.impl(), string);
                 } else {
                     string = jsSubstring(globalObject, thisString, start, end - start);
                     RETURN_IF_EXCEPTION(scope, { });
@@ -1410,10 +1421,10 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
             return JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly());
         }
 
-        auto* array = constructEmptyArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), result.size());
+        auto* array = constructEmptyArray(globalObject, static_cast<ArrayAllocationProfile*>(nullptr), resultSize);
         RETURN_IF_EXCEPTION(scope, { });
         unsigned start = 0;
-        for (unsigned i = 0, size = result.size(); i < size; ++i) {
+        for (unsigned i = 0; i < resultSize; ++i) {
             unsigned end = result[i];
             auto* string = jsSubstring(globalObject, thisString, start, end - start);
             RETURN_IF_EXCEPTION(scope, { });
@@ -1443,9 +1454,24 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncSplitFast, (JSGlobalObject* globalObject
         ASSERT(resultSize);
 
         if (LIKELY(limit == 0xFFFFFFFFu && !globalObject->isHavingABadTime() && resultSize < MIN_SPARSE_ARRAY_INDEX)) {
-            auto* newButterfly = JSImmutableButterfly::create(vm, CopyOnWriteArrayWithContiguous, resultSize);
-            for (unsigned i = 0; i < resultSize; ++i)
-                newButterfly->setIndex(vm, i, jsSingleCharacterString(vm, input[i]));
+            bool makeAtomStringsArray = resultSize < atomStringsArrayLimit;
+            Structure* immutableButterflyStructure = makeAtomStringsArray ? vm.immutableButterflyAtomStringsStructure.get() : vm.immutableButterflyStructure(CopyOnWriteArrayWithContiguous);
+
+            auto* newButterfly = JSImmutableButterfly::tryCreate(vm, immutableButterflyStructure, resultSize);
+            if (UNLIKELY(!newButterfly)) {
+                throwOutOfMemoryError(globalObject, scope);
+                return { };
+            }
+
+            for (unsigned i = 0; i < resultSize; ++i) {
+                auto* string = jsSingleCharacterString(vm, input[i]);
+                if (makeAtomStringsArray) {
+                    Identifier identifier = string->toIdentifier(globalObject);
+                    RETURN_IF_EXCEPTION(scope, { });
+                    vm.cacheAtomString(identifier.impl(), string);
+                }
+                newButterfly->setIndex(vm, i, string);
+            }
             vm.stringSplitCache.set(input, separator, newButterfly);
             Structure* arrayStructure = globalObject->originalArrayStructureForIndexingType(CopyOnWriteArrayWithContiguous);
             return JSValue::encode(JSArray::createWithButterfly(vm, nullptr, arrayStructure, newButterfly->toButterfly()));

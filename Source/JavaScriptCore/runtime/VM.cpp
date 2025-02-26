@@ -233,6 +233,7 @@ VM::VM(VMType vmType, HeapType heapType, WTF::RunLoop* runLoop, bool* success)
     , emptyList(new ArgList)
     , machineCodeBytesPerBytecodeWordForBaselineJIT(makeUnique<SimpleStats>())
     , symbolImplToSymbolMap(*this)
+    , atomStringToJSStringMap(*this)
     , m_regExpCache(makeUnique<RegExpCache>())
     , m_compactVariableMap(adoptRef(*new CompactTDZEnvironmentMap))
     , m_codeCache(makeUnique<CodeCache>())
@@ -312,6 +313,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     rawImmutableButterflyStructure(CopyOnWriteArrayWithDouble).setWithoutWriteBarrier(Options::allowDoubleShape() ? JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithDouble) : copyOnWriteArrayWithContiguousStructure);
     rawImmutableButterflyStructure(CopyOnWriteArrayWithContiguous).setWithoutWriteBarrier(copyOnWriteArrayWithContiguousStructure);
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+    // This is only for JSImmutableButterfly filled with atom strings.
+    immutableButterflyAtomStringsStructure.setWithoutWriteBarrier(JSImmutableButterfly::createStructure(*this, nullptr, jsNull(), CopyOnWriteArrayWithContiguous));
 
     sourceCodeStructure.setWithoutWriteBarrier(JSSourceCode::createStructure(*this, nullptr, jsNull()));
     scriptFetcherStructure.setWithoutWriteBarrier(JSScriptFetcher::createStructure(*this, nullptr, jsNull()));
@@ -1658,6 +1662,7 @@ void VM::visitAggregateImpl(Visitor& visitor)
     visitor.append(symbolTableStructure);
     for (auto& structure : immutableButterflyStructures)
         visitor.append(structure);
+    visitor.append(immutableButterflyAtomStringsStructure);
     visitor.append(sourceCodeStructure);
     visitor.append(scriptFetcherStructure);
     visitor.append(scriptFetchParametersStructure);
@@ -1841,6 +1846,18 @@ void VM::DrainMicrotaskDelayScope::decrement()
         JSLockHolder locker(*m_vm);
         m_vm->drainMicrotasks();
     }
+}
+
+bool VM::containsAtomString(StringImpl* stringImpl)
+{
+    ASSERT(stringImpl->isAtom());
+    return atomStringToJSStringMap.contains(stringImpl);
+}
+
+void VM::cacheAtomString(StringImpl* stringImpl, JSString* jsString)
+{
+    ASSERT(stringImpl->isAtom());
+    atomStringToJSStringMap.set(stringImpl, jsString);
 }
 
 } // namespace JSC
