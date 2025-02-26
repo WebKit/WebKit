@@ -321,7 +321,7 @@ PASS <textarea> - text-indent
 PASS <textarea> - text-shadow
 PASS <textarea> - text-align
 PASS <textarea> - display
-FAIL <textarea> - overflow assert_equals: expected "visible" but got "auto"
+PASS <textarea> - overflow
 PASS <textarea> - overflow-clip-margin
 PASS <textarea> - box-sizing
 PASS <table><tbody><tr><td> - letter-spacing
