@@ -23,6 +23,8 @@ address, blockquote, center, div, figure, figcaption, footer, form, header, hr, 
 }
 address, article, aside, div, footer, header, hgroup, main, nav, search, section {
 }
+:root {
+}
 html {
 }
 

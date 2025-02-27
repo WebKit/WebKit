@@ -1,8 +1,8 @@
 
 PASS (pre-req for comparison tests) all CSS short-hand supported
 PASS (pre-req for comparison tests) initial CSS value supported
-PASS Compare CSS div definitions (only valid if pre-reqs pass)
-PASS Compare CSS span definitions (only valid if pre-reqs pass)
+FAIL Compare CSS div definitions (only valid if pre-reqs pass) assert_equals: Different value for dynamic-range-limit expected "no-limit" but got "constrained-high"
+FAIL Compare CSS span definitions (only valid if pre-reqs pass) assert_equals: Different value for dynamic-range-limit expected "no-limit" but got "constrained-high"
 PASS p is display: block
 PASS ul > li is display: list-item
 PASS ol > li is display: list-item

@@ -161,12 +161,17 @@ body:-internal-media-document {
     background-color: rgb(38, 38, 38);
 }
 
+*:root {
+    dynamic-range-limit: constrained-high;
+}
+
 video {
     object-fit: contain;
 #if defined(WTF_PLATFORM_IOS_FAMILY) && WTF_PLATFORM_IOS_FAMILY
     -webkit-tap-highlight-color: transparent;
 #endif
     content: normal !important;
+    dynamic-range-limit: no-limit;
 }
 
 audio {
