@@ -12329,10 +12329,8 @@ IGNORE_CLANG_WARNINGS_END
                     unsigned numUsedSlots = WTF::roundUpToMultipleOf(stackAlignmentRegisters(), originalStackHeight / sizeof(EncodedJSValue));
                     B3::ValueRep argumentCountIncludingThisRep = params[3];
                     getValueFromRep(argumentCountIncludingThisRep, scratchGPR2);
-                    slowCase.append(jit.branch32(CCallHelpers::Above, scratchGPR2, CCallHelpers::TrustedImm32(JSC::maxArguments + 1)));
 
-                    jit.move(scratchGPR2, scratchGPR1);
-                    jit.addPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(numUsedSlots + CallFrame::headerSizeInRegisters)), scratchGPR1);
+                    jit.addPtr(CCallHelpers::TrustedImmPtr(static_cast<size_t>(numUsedSlots + CallFrame::headerSizeInRegisters)), scratchGPR2, scratchGPR1);
                     // scratchGPR1 now has the required frame size in Register units
                     // Round scratchGPR1 to next multiple of stackAlignmentRegisters()
                     jit.addPtr(CCallHelpers::TrustedImm32(stackAlignmentRegisters() - 1), scratchGPR1);
