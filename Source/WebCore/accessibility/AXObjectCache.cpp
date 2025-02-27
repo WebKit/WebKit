@@ -254,6 +254,7 @@ static const Seconds updateTreeSnapshotTimerInterval { 100_ms };
 AXObjectCache::AXObjectCache(Page& page, Document* document)
     : m_document(document)
     , m_pageID(page.identifier())
+    , m_page(page)
     , m_notificationPostTimer(*this, &AXObjectCache::notificationPostTimerFired)
     , m_passwordNotificationPostTimer(*this, &AXObjectCache::passwordNotificationPostTimerFired)
     , m_liveRegionChangedPostTimer(*this, &AXObjectCache::liveRegionChangedNotificationPostTimerFired)
@@ -1010,7 +1011,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject& renderer)
 }
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
+RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree(std::optional<FrameIdentifier> frameID)
 {
     AXTRACE(makeString("AXObjectCache::getOrCreateIsolatedTree 0x"_s, hex(reinterpret_cast<uintptr_t>(this))));
     ASSERT(isMainThread());
@@ -1032,11 +1033,11 @@ RefPtr<AXIsolatedTree> AXObjectCache::getOrCreateIsolatedTree()
     // Then we schedule building the entire isolated tree on a Timer.
     // For test clients, LayoutTests or XCTests, build the whole isolated tree.
     if (LIKELY(!clientIsInTestMode())) {
-        tree = AXIsolatedTree::createEmpty(*this);
+        tree = AXIsolatedTree::createEmpty(*this, frameID);
         if (!m_buildIsolatedTreeTimer.isActive())
             m_buildIsolatedTreeTimer.startOneShot(0_s);
     } else
-        tree = AXIsolatedTree::create(*this);
+        tree = AXIsolatedTree::create(*this, frameID);
 
     initializeAXThreadIfNeeded();
 
@@ -1057,9 +1058,9 @@ void AXObjectCache::buildIsolatedTree()
     }
 }
 
-AXCoreObject* AXObjectCache::isolatedTreeRootObject()
+AXCoreObject* AXObjectCache::isolatedTreeRootObject(std::optional<FrameIdentifier> frameID)
 {
-    if (auto tree = getOrCreateIsolatedTree())
+    if (auto tree = getOrCreateIsolatedTree(frameID))
         return tree->rootNode();
 
     // Should not get here, couldn't create the IsolatedTree.
@@ -1067,11 +1068,23 @@ AXCoreObject* AXObjectCache::isolatedTreeRootObject()
     return nullptr;
 }
 
-void AXObjectCache::setIsolatedTreeRoot(AXCoreObject* root)
+void AXObjectCache::setIsolatedTreeRoot(AXCoreObject* root, std::optional<FrameIdentifier> frameID)
 {
     ASSERT(isMainThread());
     if (RefPtr frame = m_document ? m_document->frame() : nullptr)
         frame->loader().client().setAXIsolatedTreeRoot(root);
+    else if (RefPtr localFrame = localFrameForFrameID(frameID))
+        localFrame->loader().client().setAXIsolatedTreeRoot(root);
+}
+
+LocalFrame* AXObjectCache::localFrameForFrameID(std::optional<FrameIdentifier> frameID)
+{
+    for (auto& rootFrame : m_page->rootFrames()) {
+        if (!frameID || rootFrame->frameID() == *frameID)
+            return rootFrame.ptr();
+    }
+
+    return nullptr;
 }
 #endif
 
@@ -1082,7 +1095,7 @@ AXCoreObject* AXObjectCache::rootObjectForFrame(LocalFrame& frame)
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (isIsolatedTreeEnabled())
-        return isolatedTreeRootObject();
+        return isolatedTreeRootObject(frame.frameID());
 #endif
 
     return getOrCreate(frame.view());

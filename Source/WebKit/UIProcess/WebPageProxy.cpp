@@ -5627,6 +5627,15 @@ void WebPageProxy::enableAccessibilityForAllProcesses()
     });
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void WebPageProxy::initializeIsolatedTreeInAllProcesses()
+{
+    forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPage::InitializeIsolatedTree(), pageID);
+    });
+}
+#endif
+
 void WebPageProxy::setUseFixedLayout(bool fixed)
 {
     // This check is fine as the value is initialized in the web
@@ -15973,9 +15982,9 @@ void WebPageProxy::sendScrollPositionChangedForNode(std::optional<WebCore::Frame
 }
 #endif
 
-void WebPageProxy::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
+void WebPageProxy::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, bool parentHasIsolatedTreeEnabled, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
 {
-    auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::BindRemoteAccessibilityFrames(processIdentifier, frameID, WTFMove(dataToken)));
+    auto sendResult = sendSyncToProcessContainingFrame(frameID, Messages::WebPage::BindRemoteAccessibilityFrames(processIdentifier, frameID, parentHasIsolatedTreeEnabled, WTFMove(dataToken)));
     if (!sendResult.succeeded())
         return completionHandler({ }, 0);
 

@@ -51,7 +51,7 @@ public:
     virtual String renderTreeAsText(size_t baseIndent, OptionSet<RenderAsTextFlag>) = 0;
     virtual String layerTreeAsText(size_t baseIndent, OptionSet<LayerTreeAsTextOptions>) = 0;
     virtual void closePage() = 0;
-    virtual void bindRemoteAccessibilityFrames(int processIdentifier, FrameIdentifier target, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&&) = 0;
+    virtual void bindRemoteAccessibilityFrames(int processIdentifier, FrameIdentifier target, bool parentHasIsolatedTreeEnabled, Vector<uint8_t>&& dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&&) = 0;
     virtual void updateRemoteFrameAccessibilityOffset(FrameIdentifier target, IntPoint) = 0;
     virtual void unbindRemoteAccessibilityFrames(int) = 0;
     virtual void focus() = 0;

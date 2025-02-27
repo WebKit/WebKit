@@ -703,7 +703,7 @@ void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebC
     [accessibilityRemoteObject() setRemoteFrameOffset:offset];
 }
 
-void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken, WebCore::FrameIdentifier frameID)
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken, WebCore::FrameIdentifier frameID, bool)
 {
     createMockAccessibilityElement(pid);
     [m_mockAccessibilityElement setRemoteTokenData:toNSData(elementToken).get()];

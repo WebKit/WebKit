@@ -96,6 +96,15 @@ namespace ax = WebCore::Accessibility;
     return [self accessibilityRootObjectWrapper:[self focusedLocalFrame]];
 }
 
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+- (void)initializeIsolatedTreeInAllProcesses
+{
+    WebCore::AXObjectCache::initializeAXThreadIfNeeded();
+    if (m_page)
+        m_page->initializeIsolatedTreeInAllProcesses();
+}
+#endif
+
 - (id)accessibilityRootObjectWrapper:(WebCore::LocalFrame*)frame
 {
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -115,6 +124,13 @@ namespace ax = WebCore::Accessibility;
         if (auto cache = protectedSelf.get().axObjectCache) {
             if (auto* root = frame ? cache->rootObjectForFrame(*frame) : nullptr)
                 return root->wrapper();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+            // In site isolation + isolated tree mode, we don't return a frame for thread safety reasons (see `focusedLocalFrame`). In this case, fallback
+            // to the frameID we have stored on the root object to let us search for the root frame when building the isolated tree.
+            if (auto* root = WebCore::AXObjectCache::isIsolatedTreeEnabled() ? cache->isolatedTreeRootObject(protectedSelf.get()->m_frameID) : nullptr)
+                return root->wrapper();
+#endif
         }
 
         return nil;

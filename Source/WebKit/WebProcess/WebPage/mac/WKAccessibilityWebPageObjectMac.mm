@@ -169,8 +169,14 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
                 [protectedSelf enableAccessibilityForAllProcesses];
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-            if (WebCore::AXObjectCache::isIsolatedTreeEnabled())
+            if (WebCore::AXObjectCache::isIsolatedTreeEnabled()) {
                 WebCore::AXObjectCache::initializeAXThreadIfNeeded();
+                // When site isolation is enabled, we need to inform the isolated frames to initialize their trees. This will pre-warm
+                // the trees for those frames, and allow ATs to make their first request without waiting for the tree to build.
+                auto* page = protectedSelf->m_page->corePage();
+                if (page && page->settings().siteIsolationEnabled())
+                    [protectedSelf initializeIsolatedTreeInAllProcesses];
+            }
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
             float roundedHeight = std::round(WebCore::screenRectForPrimaryScreen().size().height());
