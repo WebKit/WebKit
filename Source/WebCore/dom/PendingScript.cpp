@@ -66,8 +66,8 @@ PendingScript::~PendingScript()
 void PendingScript::notifyClientFinished()
 {
     Ref<PendingScript> protectedThis(*this);
-    if (m_client)
-        m_client->notifyFinished(*this);
+    if (CheckedPtr client = m_client)
+        client->notifyFinished(*this);
 }
 
 void PendingScript::notifyFinished(LoadableScript&)
@@ -77,12 +77,14 @@ void PendingScript::notifyFinished(LoadableScript&)
 
 bool PendingScript::isLoaded() const
 {
-    return m_loadableScript && m_loadableScript->isLoaded();
+    RefPtr loadableScript = m_loadableScript;
+    return loadableScript && loadableScript->isLoaded();
 }
 
 bool PendingScript::hasError() const
 {
-    return m_loadableScript && m_loadableScript->hasError();
+    RefPtr loadableScript = m_loadableScript;
+    return loadableScript && loadableScript->hasError();
 }
 
 void PendingScript::setClient(PendingScriptClient& client)

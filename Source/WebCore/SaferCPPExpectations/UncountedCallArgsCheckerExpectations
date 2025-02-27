@@ -580,7 +580,6 @@ dom/NodeList.h
 dom/NodeRareData.h
 dom/NodeWithIndex.h
 dom/Observable.cpp
-dom/PendingScript.cpp
 dom/Position.cpp
 dom/PositionIterator.cpp
 dom/PositionIterator.h
