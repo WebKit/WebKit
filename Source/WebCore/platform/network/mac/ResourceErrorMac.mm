@@ -314,4 +314,21 @@ String ResourceError::blockedTrackerHostName() const
 
 #endif // ENABLE(ADVANCED_PRIVACY_PROTECTIONS)
 
+bool ResourceError::hasMatchingFailingURLKeys() const
+{
+    if (id nsErrorFailingURL = [nsError().userInfo objectForKey:@"NSErrorFailingURLKey"]) {
+        auto *failingURL = dynamic_objc_cast<NSURL>(nsErrorFailingURL);
+        if (!failingURL)
+            return false;
+        if (id nsErrorFailingURLString = [nsError().userInfo objectForKey:@"NSErrorFailingURLStringKey"]) {
+            auto *failingURLString = dynamic_objc_cast<NSString>(nsErrorFailingURLString);
+            if (!failingURLString)
+                return false;
+            if (![failingURL isEqual:URL(failingURLString)])
+                return false;
+        }
+    }
+    return true;
+}
+
 } // namespace WebCore

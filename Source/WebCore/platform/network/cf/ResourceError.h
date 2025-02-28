@@ -71,6 +71,8 @@ public:
 
     WEBCORE_EXPORT ErrorRecoveryMethod errorRecoveryMethod() const;
 
+    WEBCORE_EXPORT bool hasMatchingFailingURLKeys() const;
+
     static bool platformCompare(const ResourceError& a, const ResourceError& b);
 
 
