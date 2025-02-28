@@ -167,6 +167,7 @@ video {
     -webkit-tap-highlight-color: transparent;
 #endif
     content: normal !important;
+    dynamic-range-limit: no-limit;
 }
 
 audio {

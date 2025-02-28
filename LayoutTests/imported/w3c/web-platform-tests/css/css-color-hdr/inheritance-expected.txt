@@ -1,4 +1,4 @@
 
-PASS Property dynamic-range-limit has initial value no-limit
+FAIL Property dynamic-range-limit has initial value no-limit assert_equals: expected "no-limit" but got "constrained-high"
 PASS Property dynamic-range-limit inherits
 

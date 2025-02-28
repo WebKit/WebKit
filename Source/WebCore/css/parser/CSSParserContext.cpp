@@ -58,6 +58,7 @@ static void applyUASheetBehaviorsToContext(CSSParserContext& context)
     context.popoverAttributeEnabled = true;
     context.propertySettings.cssInputSecurityEnabled = true;
     context.propertySettings.cssCounterStyleAtRulesEnabled = true;
+    context.propertySettings.supportHDRDisplayEnabled = true;
     context.propertySettings.viewTransitionsEnabled = true;
 #if HAVE(CORE_MATERIAL)
     context.propertySettings.useSystemAppearance = true;

@@ -4310,7 +4310,7 @@
         "dynamic-range-limit": {
             "animation-type": "see prose",
             "inherited": true,
-            "initial": "no-limit",
+            "initial": "constrained-high",
             "values": [
                 "standard",
                 "constrained-high",

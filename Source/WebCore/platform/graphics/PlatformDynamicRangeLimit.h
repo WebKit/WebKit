@@ -68,7 +68,7 @@ private:
     static constexpr float constrainedHighValue = 0.5;
     static constexpr float noLimitValue = 1;
 
-    float m_value { noLimitValue };
+    float m_value { constrainedHighValue };
 };
 
 WEBCORE_EXPORT WTF::TextStream& operator<<(WTF::TextStream&, PlatformDynamicRangeLimit);

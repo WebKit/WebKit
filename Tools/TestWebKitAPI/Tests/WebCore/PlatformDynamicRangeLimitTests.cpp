@@ -39,9 +39,9 @@ static_assert(WebCore::PlatformDynamicRangeLimit::noLimit().value() == 1.0f);
 TEST(PlatformDynamicRangeLimit, DefaultConstruction)
 {
     auto def = WebCore::PlatformDynamicRangeLimit();
-    EXPECT_EQ(def.value(), 1.0f);
+    EXPECT_EQ(def.value(), 0.5f);
 
-    static_assert(WebCore::PlatformDynamicRangeLimit().value() == 1);
+    static_assert(WebCore::PlatformDynamicRangeLimit().value() == 0.5);
 }
 
 static WebCore::PlatformDynamicRangeLimit mix(float standard, float constrainedHigh, float noLimit)

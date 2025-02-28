@@ -1345,7 +1345,7 @@ private:
     WeakPtr<const MediaResourceLoader> m_lastMediaResourceLoaderForTesting;
 
     std::optional<DynamicRangeMode> m_overrideDynamicRangeMode;
-    PlatformDynamicRangeLimit m_platformDynamicRangeLimit;
+    PlatformDynamicRangeLimit m_platformDynamicRangeLimit { PlatformDynamicRangeLimit::constrainedHigh() };
 
     friend class TrackDisplayUpdateScope;
 

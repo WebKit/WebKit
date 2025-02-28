@@ -2804,12 +2804,12 @@ inline Style::DynamicRangeLimit BuilderConverter::convertDynamicRangeLimit(Build
         }
 
         builderState.setCurrentPropertyInvalidAtComputedValueTime();
-        return Style::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
+        return Style::DynamicRangeLimit { CSS::Keyword::ConstrainedHigh { } };
     }
 
     RefPtr dynamicRangeLimit = requiredDowncast<CSSDynamicRangeLimitValue>(builderState, value);
     if (!dynamicRangeLimit)
-        return Style::DynamicRangeLimit { CSS::Keyword::NoLimit { } };
+        return Style::DynamicRangeLimit { CSS::Keyword::ConstrainedHigh { } };
 
     return toStyle(dynamicRangeLimit->dynamicRangeLimit(), builderState);
 }
