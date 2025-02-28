@@ -1672,7 +1672,7 @@ std::pair<URL, WebCore::DidFilterLinkDecoration> WebPage::applyLinkDecorationFil
     return { url, WebCore::DidFilterLinkDecoration::No };
 }
 
-void WebPage::bindRemoteAccessibilityFrames(int, WebCore::FrameIdentifier, Vector<uint8_t>, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
+void WebPage::bindRemoteAccessibilityFrames(int, WebCore::FrameIdentifier, bool, Vector<uint8_t>, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
 {
     completionHandler({ }, { });
 }
@@ -2720,6 +2720,27 @@ void WebPage::enableAccessibilityForAllProcesses()
 {
     send(Messages::WebPageProxy::EnableAccessibilityForAllProcesses());
 }
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+void WebPage::initializeIsolatedTreeInAllProcesses()
+{
+    send(Messages::WebPageProxy::InitializeIsolatedTreeInAllProcesses());
+}
+
+void WebPage::initializeIsolatedTree()
+{
+    // Ignore the client when determining ITM in this case, because we're calling isIsolatedTree not as a result of a client
+    // request so the client will always return false here.
+    if (WebCore::AXObjectCache::isIsolatedTreeEnabled(/* ignoreClient */ true)) {
+        WebCore::AXObjectCache::initializeAXThreadIfNeeded();
+        CheckedPtr cache = protectedCorePage()->axObjectCache();
+        if (!cache)
+            return;
+
+        cache->getOrCreateIsolatedTree();
+    }
+}
+#endif
 
 void WebPage::enableAccessibility()
 {

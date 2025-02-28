@@ -497,10 +497,14 @@ messages -> WebPage WantsAsyncDispatchMessage {
 
     CopyLinkWithHighlight()
 
-    BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken) -> (Vector<uint8_t> token, int processIdentifier) Synchronous
+    BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, bool parentHasIsolatedTreeEnabled, Vector<uint8_t> dataToken) -> (Vector<uint8_t> token, int processIdentifier) Synchronous
     UpdateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset);
     ResolveAccessibilityHitTestForTesting(WebCore::FrameIdentifier frameID, WebCore::IntPoint point) -> (String result)
     EnableAccessibility()
+    
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    InitializeIsolatedTree()
+#endif
 
 #if PLATFORM(COCOA)
     WindowAndViewFramesChanged(struct WebKit::ViewWindowCoordinates coordinates)

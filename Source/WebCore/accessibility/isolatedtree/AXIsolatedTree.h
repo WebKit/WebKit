@@ -356,9 +356,9 @@ class AXIsolatedTree : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AX
     friend WTF::TextStream& operator<<(WTF::TextStream&, AXIsolatedTree&);
     friend void streamIsolatedSubtreeOnMainThread(TextStream&, const AXIsolatedTree&, AXID, const OptionSet<AXStreamOptions>&);
 public:
-    static RefPtr<AXIsolatedTree> create(AXObjectCache&);
+    static RefPtr<AXIsolatedTree> create(AXObjectCache&, std::optional<FrameIdentifier> = std::nullopt);
     // Creates a tree consisting of only the Scrollview and the WebArea objects. This tree is used as a temporary placeholder while the whole tree is being built.
-    static Ref<AXIsolatedTree> createEmpty(AXObjectCache&);
+    static Ref<AXIsolatedTree> createEmpty(AXObjectCache&, std::optional<FrameIdentifier> = std::nullopt);
     constexpr bool isEmptyContentTree() const { return m_isEmptyContentTree; }
     virtual ~AXIsolatedTree();
 
@@ -373,6 +373,8 @@ public:
     RefPtr<AXIsolatedObject> rootWebArea();
     std::optional<AXID> focusedNodeID();
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
+    std::optional<FrameIdentifier> rootLocalFrameID() const { return m_rootLocalFrameID; }
+    void setRootLocalFrameID(std::optional<FrameIdentifier> frameID) { m_rootLocalFrameID = frameID; }
 
     AXIsolatedObject* objectForID(AXID) const;
     inline AXIsolatedObject* objectForID(std::optional<AXID> axID) const
@@ -608,6 +610,9 @@ private:
     UncheckedKeyHashMap<AXID, AXPropertySet> m_needsPropertyUpdates;
     // The key is the ID of the node being removed. The value is the ID of the parent in the core tree (if it exists).
     UncheckedKeyHashMap<AXID, std::optional<AXID>> m_needsNodeRemoval;
+
+    // The frame ID associated with this tree.
+    std::optional<FrameIdentifier> m_rootLocalFrameID;
 };
 
 inline AXObjectCache* AXIsolatedTree::axObjectCache() const

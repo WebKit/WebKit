@@ -436,7 +436,7 @@ void WebPage::updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier frame
     [accessibilityRemoteObject() setRemoteFrameOffset:offset];
 }
 
-void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken, WebCore::FrameIdentifier frameID)
+void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const uint8_t> elementToken, WebCore::FrameIdentifier frameID, bool parentHasIsolatedTreeEnabled)
 {
     RetainPtr elementTokenData = toNSData(elementToken);
     auto remoteElement = [elementTokenData length] ? adoptNS([[NSAccessibilityRemoteUIElement alloc] initWithRemoteToken:elementTokenData.get()]) : nil;
@@ -444,6 +444,14 @@ void WebPage::registerRemoteFrameAccessibilityTokens(pid_t pid, std::span<const 
     createMockAccessibilityElement(pid);
     [accessibilityRemoteObject() setRemoteParent:remoteElement.get()];
     [accessibilityRemoteObject() setFrameIdentifier:frameID];
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    // We need to propagate ITM downwards, so that the isolated frame's isolated tree is prewarmed before any AT requests.
+    if (parentHasIsolatedTreeEnabled)
+        initializeIsolatedTree();
+#else
+    UNUSED_PARAM(parentHasIsolatedTreeEnabled);
+#endif
 }
 
 void WebPage::registerUIProcessAccessibilityTokens(std::span<const uint8_t> elementToken, std::span<const uint8_t> windowToken)

@@ -79,7 +79,7 @@ void AXIsolatedTree::queueForDestruction()
     m_queuedForDestruction = true;
 }
 
-Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
+Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache, std::optional<FrameIdentifier> frameID)
 {
     AXTRACE("AXIsolatedTree::createEmpty"_s);
     ASSERT(isMainThread());
@@ -90,10 +90,20 @@ Ref<AXIsolatedTree> AXIsolatedTree::createEmpty(AXObjectCache& axObjectCache)
     if (RefPtr axRoot = axObjectCache.document() ? axObjectCache.getOrCreate(axObjectCache.document()->view()) : nullptr) {
         tree->updatingSubtree(axRoot.get());
         tree->createEmptyContent(*axRoot);
+    } else {
+        // We are likely here because site isolation is enabled, and the current page has a root frame that is a RemoteFrame.
+        // Find the LocalFrame based on the passed in FrameID.
+        if (RefPtr localFrame = axObjectCache.localFrameForFrameID(frameID)) {
+            if (RefPtr axRoot = axObjectCache.getOrCreate(localFrame->view())) {
+                tree->updatingSubtree(axRoot.get());
+                tree->createEmptyContent(*axRoot);
+            }
+        }
     }
 
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
     tree->m_processingProgress = 0;
+    tree->setRootLocalFrameID(frameID);
 
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
@@ -140,7 +150,7 @@ void AXIsolatedTree::createEmptyContent(AccessibilityObject& axRoot)
     queueAppendsAndRemovals({ rootAppend, webAreaAppend }, { });
 }
 
-RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
+RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache, std::optional<FrameIdentifier> frameID)
 {
     AXTRACE("AXIsolatedTree::create"_s);
     ASSERT(isMainThread());
@@ -151,6 +161,11 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
         tree->m_replacingTree = existingTree;
 
     RefPtr document = axObjectCache.document();
+    if (!document) {
+        if (RefPtr localFrame = axObjectCache.localFrameForFrameID(frameID))
+            document = localFrame->document();
+    }
+
     if (!document)
         return nullptr;
     if (!Accessibility::inRenderTreeOrStyleUpdate(*document))
@@ -181,6 +196,8 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
             tree->addUnconnectedNode(axObject.releaseNonNull());
     }
 
+    tree->setRootLocalFrameID(frameID);
+
     // Now that the tree is ready to take client requests, add it to the tree maps so that it can be found.
     storeTree(axObjectCache, tree);
     return tree;
@@ -200,7 +217,7 @@ void AXIsolatedTree::storeTree(AXObjectCache& cache, const Ref<AXIsolatedTree>& 
     // Once we set this tree in the AXTreeStore, the secondary thread can start using it,
     // and we can no longer access AXIsolatedTree::rootNode off the main-thread. Set the
     // root now while we still can.
-    cache.setIsolatedTreeRoot(tree->rootNode());
+    cache.setIsolatedTreeRoot(tree->rootNode(), tree->rootLocalFrameID());
     AXTreeStore::set(tree->treeID(), tree.ptr());
     tree->m_replacingTree = nullptr;
     Locker locker { s_storeLock };

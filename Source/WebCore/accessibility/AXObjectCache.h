@@ -290,6 +290,9 @@ public:
 
     // Returns the root object for a specific frame.
     WEBCORE_EXPORT AXCoreObject* rootObjectForFrame(LocalFrame&);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    WEBCORE_EXPORT AXCoreObject* isolatedTreeRootObject(std::optional<FrameIdentifier>);
+#endif
 
     // Creation/retrieval of AX objects associated with a DOM or RenderTree object.
     inline AccessibilityObject* getOrCreate(RenderObject* renderer)
@@ -611,15 +614,17 @@ public:
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     void scheduleObjectRegionsUpdate(bool scheduleImmediately = false) { m_geometryManager->scheduleObjectRegionsUpdate(scheduleImmediately); }
     void willUpdateObjectRegions() { m_geometryManager->willUpdateObjectRegions(); }
-    WEBCORE_EXPORT static bool isIsolatedTreeEnabled();
+    WEBCORE_EXPORT static bool isIsolatedTreeEnabled(bool ignoreClient = false);
     WEBCORE_EXPORT static void initializeAXThreadIfNeeded();
+    WEBCORE_EXPORT RefPtr<AXIsolatedTree> getOrCreateIsolatedTree(std::optional<FrameIdentifier> = std::nullopt);
 private:
     static bool clientSupportsIsolatedTree();
-    AXCoreObject* isolatedTreeRootObject();
     // Propagates the root of the isolated tree back into the Core and WebKit.
-    void setIsolatedTreeRoot(AXCoreObject*);
+    void setIsolatedTreeRoot(AXCoreObject*, std::optional<FrameIdentifier> = std::nullopt);
     void setIsolatedTreeFocusedObject(AccessibilityObject*);
-    RefPtr<AXIsolatedTree> getOrCreateIsolatedTree();
+    // Used in site isolation contexts to traverse a page's root local frames and find the one matching the frameID.
+    // Falls back to the first frame in the list of root frames if frameID is nullopt.
+    LocalFrame* localFrameForFrameID(std::optional<FrameIdentifier> = std::nullopt);
     void buildIsolatedTree();
     void updateIsolatedTree(AccessibilityObject&, AXNotification);
     void updateIsolatedTree(AccessibilityObject*, AXNotification);
@@ -778,6 +783,7 @@ private:
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.
+    WeakRef<Page> m_page;
     OptionSet<ActivityState> m_pageActivityState;
     UncheckedKeyHashMap<AXID, Ref<AccessibilityObject>> m_objects;
 

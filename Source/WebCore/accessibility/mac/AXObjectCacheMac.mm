@@ -674,7 +674,7 @@ bool AXObjectCache::clientSupportsIsolatedTree()
         || client == kAXClientTypeXCTest);
 }
 
-bool AXObjectCache::isIsolatedTreeEnabled()
+bool AXObjectCache::isIsolatedTreeEnabled(bool ignoreClient)
 {
     static std::atomic<bool> enabled { false };
     if (enabled)
@@ -687,7 +687,7 @@ bool AXObjectCache::isIsolatedTreeEnabled()
         enabled = DeprecatedGlobalSettings::isAccessibilityIsolatedTreeEnabled() // Used to turn off in apps other than Safari, e.g., Mail.
             && _AXSIsolatedTreeModeFunctionIsAvailable()
             && _AXSIsolatedTreeMode_Soft() != AXSIsolatedTreeModeOff // Used to switch via system defaults.
-            && clientSupportsIsolatedTree();
+            && (ignoreClient || clientSupportsIsolatedTree());
     }
 
     return enabled;

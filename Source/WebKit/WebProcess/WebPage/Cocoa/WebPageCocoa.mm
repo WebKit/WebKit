@@ -457,7 +457,7 @@ void WebPage::accessibilityManageRemoteElementStatus(bool registerStatus, int pr
 #endif
 }
 
-void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
+void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, bool parentHasIsolatedTreeEnabled, Vector<uint8_t> dataToken, CompletionHandler<void(Vector<uint8_t>, int)>&& completionHandler)
 {
     RefPtr webFrame = WebProcess::singleton().webFrame(frameID);
     if (!webFrame) {
@@ -477,7 +477,7 @@ void WebPage::bindRemoteAccessibilityFrames(int processIdentifier, WebCore::Fram
         return completionHandler({ }, 0);
     }
 
-    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken.span(), frameID);
+    registerRemoteFrameAccessibilityTokens(processIdentifier, dataToken.span(), frameID, parentHasIsolatedTreeEnabled);
 
     // Get our remote token data and send back to the RemoteFrame.
 #if PLATFORM(MAC)
