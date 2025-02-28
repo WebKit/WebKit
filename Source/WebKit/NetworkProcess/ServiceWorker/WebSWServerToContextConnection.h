@@ -98,6 +98,7 @@ public:
     void didFinishActivation(WebCore::ServiceWorkerIdentifier);
 
     void terminateIdleServiceWorkers();
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
 #if ENABLE(CONTENT_EXTENSIONS)
     void reportNetworkUsageToWorkerClient(const WebCore::ScriptExecutionContextIdentifier, size_t bytesTransferredOverNetworkDelta) final;

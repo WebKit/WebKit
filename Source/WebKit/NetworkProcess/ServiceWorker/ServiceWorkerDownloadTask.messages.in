@@ -21,9 +21,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [
-    ExceptionForEnabledBy,
     DispatchedFrom=WebContent,
-    DispatchedTo=Networking
+    DispatchedTo=Networking,
+    SharedPreferencesNeedsConnection,
+    EnabledBy=ServiceWorkersEnabled
 ]
 messages -> ServiceWorkerDownloadTask {
     DidFail(WebCore::ResourceError error)

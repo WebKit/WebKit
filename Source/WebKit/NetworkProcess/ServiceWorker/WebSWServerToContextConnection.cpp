@@ -485,5 +485,12 @@ void WebSWServerToContextConnection::reportNetworkUsageToWorkerClient(const WebC
 }
 #endif
 
+std::optional<SharedPreferencesForWebProcess> WebSWServerToContextConnection::sharedPreferencesForWebProcess() const
+{
+    if (auto connectionToWebProcess = m_connection.get())
+        return connectionToWebProcess->sharedPreferencesForWebProcess();
+
+    return std::nullopt;
+}
 #undef MESSAGE_CHECK
 } // namespace WebKit

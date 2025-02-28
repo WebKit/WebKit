@@ -278,4 +278,10 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
     });
 }
 
+std::optional<SharedPreferencesForWebProcess> ServiceWorkerDownloadTask::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+{
+    Ref networkProcess = m_networkProcess;
+    return networkProcess->webProcessConnection(connection)->sharedPreferencesForWebProcess();
+}
+
 } // namespace WebKit

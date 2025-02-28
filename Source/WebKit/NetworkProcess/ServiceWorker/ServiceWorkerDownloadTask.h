@@ -65,6 +65,7 @@ public:
     void start();
     void stop() { cancel(); }
 
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const;
 private:
     ServiceWorkerDownloadTask(NetworkSession&, NetworkDataTaskClient&, WebSWServerToContextConnection&, WebCore::ServiceWorkerIdentifier, WebCore::SWServerConnectionIdentifier, WebCore::FetchIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse& response, DownloadID);
     void startListeningForIPC();
