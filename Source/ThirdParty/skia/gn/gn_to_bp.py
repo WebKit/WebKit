@@ -10,11 +10,8 @@
 from __future__ import print_function
 
 import os
-import pprint
 import shutil
 import string
-import subprocess
-import tempfile
 
 import skqp_gn_args
 import gn_to_bp_utils

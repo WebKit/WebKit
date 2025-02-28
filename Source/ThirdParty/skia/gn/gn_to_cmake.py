@@ -27,7 +27,6 @@ import json
 import posixpath
 import os
 import string
-import sys
 
 
 def CMakeStringEscape(a):
