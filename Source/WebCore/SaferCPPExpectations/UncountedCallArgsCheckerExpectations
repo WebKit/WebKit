@@ -468,7 +468,6 @@ css/CSSToStyleMap.cpp
 css/CSSValueList.cpp
 css/CSSValuePair.cpp
 css/CSSVariableReferenceValue.cpp
-css/CSSViewTransitionRule.h
 css/CSSViewValue.cpp
 css/CSSViewValue.h
 css/ComputedStyleExtractor.cpp
@@ -545,10 +544,7 @@ dom/DataTransferItemList.cpp
 dom/Document.cpp
 dom/DocumentFontLoader.cpp
 dom/DocumentFragment.cpp
-dom/DocumentFullscreen.cpp
-dom/DocumentFullscreen.h
 dom/DocumentInlines.h
-dom/DocumentOrShadowRootFullscreen.cpp
 dom/DocumentStorageAccess.cpp
 dom/Element.cpp
 dom/ElementData.cpp
@@ -606,8 +602,6 @@ dom/TextDecoderStreamDecoder.h
 dom/Traversal.cpp
 dom/TreeScope.cpp
 dom/TreeWalker.cpp
-dom/ViewTransition.cpp
-dom/ViewTransitionTypeSet.cpp
 dom/VisitedLinkState.cpp
 dom/WindowOrWorkerGlobalScopeTrustedTypes.cpp
 dom/mac/ImageControlsMac.cpp

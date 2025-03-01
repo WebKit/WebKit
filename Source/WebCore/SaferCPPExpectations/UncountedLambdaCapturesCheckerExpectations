@@ -80,13 +80,11 @@ css/StyleRule.cpp
 css/parser/CSSParserImpl.cpp
 dom/BroadcastChannel.cpp
 dom/ContainerNode.cpp
-dom/ContentVisibilityDocumentState.cpp
 dom/CustomElementDefaultARIA.cpp
 dom/Document.cpp
 dom/MessagePort.cpp
 dom/Node.cpp
 dom/Subscriber.cpp
-dom/ViewTransition.cpp
 dom/ViewportArguments.cpp
 editing/Editor.cpp
 fileapi/Blob.cpp
@@ -94,7 +92,6 @@ fileapi/FileReader.cpp
 html/DirectoryFileListCreator.cpp
 html/FileInputType.cpp
 html/FormAssociatedCustomElement.cpp
-html/HTMLDialogElement.cpp
 html/HTMLFrameElementBase.cpp
 html/HTMLImageElement.cpp
 html/HTMLMediaElement.cpp

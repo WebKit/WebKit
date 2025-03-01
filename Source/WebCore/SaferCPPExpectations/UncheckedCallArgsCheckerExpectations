@@ -12,7 +12,6 @@ dom/Document.cpp
 dom/Element.cpp
 dom/MouseRelatedEvent.cpp
 dom/PendingScript.cpp
-dom/ViewTransition.cpp
 editing/CompositeEditCommand.cpp
 editing/Editor.cpp
 editing/EditorCommand.cpp

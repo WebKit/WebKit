@@ -18,7 +18,6 @@ dom/BroadcastChannel.cpp
 dom/Document.cpp
 dom/ScriptExecutionContext.cpp
 dom/TreeScope.cpp
-dom/ViewTransition.cpp
 editing/cocoa/DataDetection.mm
 editing/cocoa/WebContentReaderCocoa.mm
 editing/mac/FrameSelectionMac.mm
