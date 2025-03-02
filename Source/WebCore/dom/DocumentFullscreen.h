@@ -128,7 +128,6 @@ private:
 
     bool m_areKeysEnabledInFullscreen { false };
     bool m_isAnimatingFullscreen { false };
-    bool m_pendingExitFullscreen { false };
 
 #if !RELEASE_LOG_DISABLED
     const uint64_t m_logIdentifier;

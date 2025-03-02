@@ -193,10 +193,6 @@ void DocumentFullscreen::requestFullscreen(Ref<Element>&& element, FullscreenChe
         if (!checkedThis)
             return completionHandler(Exception { ExceptionCode::TypeError });
 
-        // Don't allow fullscreen if we're inside an exitFullscreen operation.
-        if (m_pendingExitFullscreen)
-            return handleError("Fullscreen request aborted by a request to exit fullscreen."_s, EmitErrorEvent::Yes, WTFMove(completionHandler));
-
         // Don't allow fullscreen if document is hidden.
         auto document = protectedDocument();
         if (document->hidden() && mode != HTMLMediaElementEnums::VideoFullscreenModeInWindow)
@@ -446,8 +442,6 @@ void DocumentFullscreen::exitFullscreen(CompletionHandler<void(ExceptionOr<void>
         element->removeFromTopLayer();
     }
 
-    m_pendingExitFullscreen = true;
-
     // Return promise, and run the remaining steps in parallel.
     exitingDocument->eventLoop().queueTask(TaskSource::MediaElement, [this, scope = CompletionHandlerScope(WTFMove(completionHandler)), weakThis = WeakPtr { *this }, mode, identifier = LOGIDENTIFIER] () mutable {
         auto completionHandler = scope.release();
@@ -457,7 +451,6 @@ void DocumentFullscreen::exitFullscreen(CompletionHandler<void(ExceptionOr<void>
 
         RefPtr page = this->page();
         if (!page) {
-            m_pendingExitFullscreen = false;
             ERROR_LOG(identifier, "task - Document not in page; bailing.");
             return completionHandler({ });
         }
@@ -466,7 +459,6 @@ void DocumentFullscreen::exitFullscreen(CompletionHandler<void(ExceptionOr<void>
         RefPtr exitedFullscreenElement = fullscreenElement();
         if (!exitedFullscreenElement) {
             INFO_LOG(identifier, "task - No fullscreen element.");
-            m_pendingExitFullscreen = false;
             return completionHandler({ });
         }
 
@@ -564,7 +556,6 @@ void DocumentFullscreen::didExitFullscreen(CompletionHandler<void(ExceptionOr<vo
 {
     if (backForwardCacheState() != Document::NotInBackForwardCache) {
         ERROR_LOG(LOGIDENTIFIER, "Document in the BackForwardCache; bailing");
-        m_pendingExitFullscreen = false;
         return completionHandler(Exception { ExceptionCode::TypeError });
     }
     INFO_LOG(LOGIDENTIFIER);
@@ -578,8 +569,6 @@ void DocumentFullscreen::didExitFullscreen(CompletionHandler<void(ExceptionOr<vo
         exitedFullscreenElement->didStopBeingFullscreenElement();
 
     m_areKeysEnabledInFullscreen = false;
-
-    m_pendingExitFullscreen = false;
 
     completionHandler({ });
 }
@@ -614,8 +603,6 @@ void DocumentFullscreen::fullyExitFullscreen()
     }
 
     INFO_LOG(LOGIDENTIFIER);
-
-    m_pendingExitFullscreen = true;
 
     protectedDocument()->eventLoop().queueTask(TaskSource::MediaElement, [this, weakThis = WeakPtr { *this }, mainFrameDocument = WTFMove(mainFrameDocument), identifier = LOGIDENTIFIER] {
 #if RELEASE_LOG_DISABLED
