@@ -122,10 +122,8 @@ using namespace WebCore;
     }
     m_manager = nullptr;
 }
-// FIXME rdar://103273450 (Replace call to SBSStatusBarTapContext with non-deprecated API)
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-- (BOOL)statusBarCoordinator:(SBSStatusBarStyleOverridesCoordinator *)coordinator receivedTapWithContext:(id<SBSStatusBarTapContext>)tapContext completionBlock:(void (^)(void))completion
-ALLOW_DEPRECATED_DECLARATIONS_END
+
+- (BOOL)statusBarCoordinator:(SBSStatusBarStyleOverridesCoordinator *)coordinator receivedTapWithStyleOverride:(UIStatusBarStyleOverrides)styleOverride completionBlock:(void (^)(void))completion
 {
     callOnMainThread([self, strongSelf = retainPtr(self), completion = makeBlockPtr(completion)]() mutable {
         if (!m_manager)

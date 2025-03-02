@@ -49,7 +49,7 @@ typedef void (^SBSStatusBarStyleOverridesAssertionAcquisitionHandler)(BOOL acqui
 @end
 
 @protocol SBSStatusBarStyleOverridesCoordinatorDelegate;
-@protocol SBSStatusBarTapContext;
+@protocol receivedTapWithStyleOverride;
 
 @interface SBSStatusBarStyleOverridesCoordinator : NSObject
 @property (nonatomic, weak, readwrite) id <SBSStatusBarStyleOverridesCoordinatorDelegate> delegate;
@@ -59,12 +59,12 @@ typedef void (^SBSStatusBarStyleOverridesAssertionAcquisitionHandler)(BOOL acqui
 
 @protocol SBSStatusBarStyleOverridesCoordinatorDelegate <NSObject>
 @optional
-- (BOOL)statusBarCoordinator:(SBSStatusBarStyleOverridesCoordinator *)coordinator receivedTapWithContext:(id<SBSStatusBarTapContext>)tapContext completionBlock:(void (^)(void))completion;
+- (BOOL)statusBarCoordinator:(SBSStatusBarStyleOverridesCoordinator *)coordinator receivedTapWithStyleOverride:(UIStatusBarStyleOverrides)styleOverride completionBlock:(void (^)(void))completion;
 @required
 - (void)statusBarCoordinator:(SBSStatusBarStyleOverridesCoordinator *)coordinator invalidatedRegistrationWithError:(NSError *)error;
 @end
 
-@protocol SBSStatusBarTapContext
+@protocol receivedTapWithStyleOverride
 @property (nonatomic, readonly) UIStatusBarStyleOverrides styleOverride;
 @end
 
