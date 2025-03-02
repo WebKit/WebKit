@@ -197,7 +197,7 @@ SubsamplingLevel BitmapImageDescriptor::maximumSubsamplingLevel() const
     if (m_cachedFlags.contains(CachedFlag::MaximumSubsamplingLevel))
         return m_maximumSubsamplingLevel;
 
-    auto decoder = m_source->decoderIfExists();
+    RefPtr decoder = m_source->decoderIfExists();
     if (!decoder)
         return SubsamplingLevel::Default;
 
