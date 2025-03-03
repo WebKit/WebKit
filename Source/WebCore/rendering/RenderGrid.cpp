@@ -89,6 +89,8 @@ void RenderGrid::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
         return;
 
     m_intrinsicLogicalHeightsForRowSizingFirstPass.reset();
+    m_gridAreaLogicalSizesCache.clear();
+
     const RenderStyle& newStyle = this->style();
 
     auto hasDifferentTrackSizes = [&newStyle, &oldStyle](GridTrackSizingDirection direction) {
@@ -341,6 +343,8 @@ static void clearGridItemOverridingSizesBeforeLayout(RenderGrid& renderGrid)
 
 void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 {
+    m_gridAreaLogicalSizesCache.clear();
+
     LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
@@ -478,6 +482,8 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
 void RenderGrid::layoutMasonry(RelayoutChildren relayoutChildren)
 {
+    m_gridAreaLogicalSizesCache.clear();
+
     LayoutRepainter repainter(*this);
     {
         LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
@@ -1326,6 +1332,8 @@ void RenderGrid::setNeedsItemPlacement(SubgridDidChange subgridDidChange)
     if (currentGrid().needsItemsPlacement())
         return;
 
+    m_gridAreaLogicalSizesCache.clear();
+
     currentGrid().setNeedsItemsPlacement(true);
 
     auto currentChild = this;
@@ -1446,7 +1454,11 @@ void RenderGrid::layoutGridItems(GridLayoutState& gridLayoutState)
         // Setting the definite grid area's sizes. It may imply that the
         // item must perform a layout if its area differs from the one
         // used during the track sizing algorithm.
-        updateGridAreaLogicalSize(gridItem, gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, GridTrackSizingDirection::ForColumns), gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, GridTrackSizingDirection::ForRows));
+        auto gridAreaLogicalWidth = gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, GridTrackSizingDirection::ForColumns);
+        auto gridAreaLogicalHeight = gridAreaBreadthForGridItemIncludingAlignmentOffsets(gridItem, GridTrackSizingDirection::ForRows);
+        m_gridAreaLogicalSizesCache.set(gridItem, GridAreaLogicalSize { gridAreaLogicalWidth, gridAreaLogicalHeight });
+
+        updateGridAreaLogicalSize(*gridItem, gridAreaLogicalWidth, gridAreaLogicalHeight);
 
         LayoutRect oldGridItemRect = gridItem.frameRect();
 
