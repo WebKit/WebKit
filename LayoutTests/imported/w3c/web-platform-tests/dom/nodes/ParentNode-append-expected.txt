@@ -15,6 +15,7 @@ PASS Element.append() with only text as an argument, on a parent having no child
 PASS Element.append() with only one element as an argument, on a parent having no child.
 PASS Element.append() with null as an argument, on a parent having a child.
 PASS Element.append() with one element and text as argument, on a parent having a child.
+PASS Element.append() with the same element twice.
 PASS DocumentFragment.append() without any argument, on a parent having no child.
 PASS DocumentFragment.append() with null as an argument, on a parent having no child.
 PASS DocumentFragment.append() with undefined as an argument, on a parent having no child.
@@ -22,4 +23,5 @@ PASS DocumentFragment.append() with only text as an argument, on a parent having
 PASS DocumentFragment.append() with only one element as an argument, on a parent having no child.
 PASS DocumentFragment.append() with null as an argument, on a parent having a child.
 PASS DocumentFragment.append() with one element and text as argument, on a parent having a child.
+PASS DocumentFragment.append() with the same element twice.
 

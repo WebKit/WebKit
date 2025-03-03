@@ -1171,6 +1171,17 @@ ExceptionOr<void> ContainerNode::append(FixedVector<NodeOrString>&& vector)
         return result.releaseException();
 
     auto newChildren = result.releaseReturnValue();
+    // If the newChildren set has duplicate values, keep only the last occurrence of each element before making them children of this node.
+    for (size_t i = 0; i < newChildren.size(); ++i) {
+        for (size_t j = i+1; j < newChildren.size(); ++j) {
+            if (newChildren[i].ptr() == newChildren[j].ptr()) {
+                newChildren.remove(i);
+                i--;
+                break;
+            }
+        }
+    }
+
     if (auto checkResult = ensurePreInsertionValidityForPhantomDocumentFragment(newChildren); checkResult.hasException())
         return checkResult;
 
