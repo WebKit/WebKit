@@ -124,6 +124,8 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
     if (previousWindow && !frame()->isMainFrame()) {
         Ref previousNavigation = previousWindow->protectedNavigation();
         bool shouldProcessPreviousNavigationEntries = [&]() {
+            if (previousNavigation->hasEntriesAndEventsDisabled())
+                return false;
             if (!previousNavigation->m_entries.size())
                 return false;
             if (!frame()->document()->protectedSecurityOrigin()->isSameOriginAs(previousWindow->document()->protectedSecurityOrigin()))
