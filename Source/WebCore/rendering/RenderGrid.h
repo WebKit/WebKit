@@ -309,6 +309,10 @@ private:
     bool m_hasAnyBaselineAlignmentItem { false };
 
     mutable std::optional<GridItemSizeCache> m_intrinsicLogicalHeightsForRowSizingFirstPass;
+
+    using GridAreaLogicalSize = std::pair<LayoutUnit, LayoutUnit>;
+    UncheckedKeyHashMap<SingleThreadWeakRef<const RenderBox>, GridAreaLogicalSize> m_gridAreaLogicalSizesCache;
+
 };
 
 } // namespace WebCore
