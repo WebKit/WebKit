@@ -536,7 +536,7 @@ inline static Vector<AuthenticatorTransport> toTransports(NSArray<ASAuthorizatio
 }
 
 #endif // HAVE(WEB_AUTHN_AS_MODERN)
-
+enum class AuthRequestType: uint8_t { PlatformRegistration, PlatformAssertion, SecurityKeyRegisteration, SecurityKeyAssertion };
 void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestData &&requestData, RequestCompletionHandler &&handler)
 {
 #if HAVE(UNIFIED_ASC_AUTH_UI)
@@ -558,6 +558,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
     auto controller = constructASController(requestData);
     if (!controller) {
         handler(WebCore::AuthenticatorResponseData { }, AuthenticatorAttachment::Platform, { ExceptionCode::NotAllowedError, @"" });
+        RELEASE_LOG_ERROR(WebAuthn, "AS controller is null.");
         return;
     }
     if (m_isConditionalMediation)
@@ -566,8 +567,11 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
     m_completionHandler = WTFMove(handler);
     m_delegate = adoptNS([[_WKASDelegate alloc] initWithPage:WTFMove(requestData.page) completionHandler:makeBlockPtr([weakThis = WeakPtr { *this }](ASAuthorization *auth, NSError *error) mutable {
         ensureOnMainRunLoop([weakThis = WTFMove(weakThis), auth = retainPtr(auth), error = retainPtr(error)]() {
-            if (!weakThis)
+            if (!weakThis) {
+                RELEASE_LOG(WebAuthn, "Early return for weakThis.");
                 return;
+            }
+            AuthRequestType requestType { };
             WebCore::AuthenticatorResponseData response = { };
             WebCore::ExceptionData exceptionData = { ExceptionCode::NotAllowedError, @"" };
             WebCore::AuthenticatorAttachment attachment = AuthenticatorAttachment::Platform;
@@ -596,7 +600,9 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     ASSERT_NOT_REACHED();
                     break;
                 }
+                RELEASE_LOG_ERROR(WebAuthn, "ASAuthorization failed with error: %ld", error.get().code);
             } else if ([auth.get().credential isKindOfClass:getASAuthorizationPlatformPublicKeyCredentialRegistrationClass()]) {
+                requestType = AuthRequestType::PlatformRegistration;
                 response.isAuthenticatorAttestationResponse = true;
                 auto credential = retainPtr((ASAuthorizationPlatformPublicKeyCredentialRegistration *)auth.get().credential);
                 response.rawId = toArrayBuffer(credential.get().credentialID);
@@ -630,6 +636,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 if (hasExtensionOutput)
                     response.extensionOutputs = extensionOutputs;
             } else if ([auth.get().credential isKindOfClass:getASAuthorizationPlatformPublicKeyCredentialAssertionClass()]) {
+                requestType = AuthRequestType::PlatformAssertion;
                 auto credential = retainPtr((ASAuthorizationPlatformPublicKeyCredentialAssertion *)auth.get().credential);
                 response.rawId = toArrayBuffer(credential.get().credentialID);
                 response.authenticatorData = toArrayBuffer(credential.get().rawAuthenticatorData);
@@ -661,6 +668,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                 if (hasExtensionOutput)
                     response.extensionOutputs = extensionOutputs;
             } else if ([auth.get().credential isKindOfClass:getASAuthorizationSecurityKeyPublicKeyCredentialRegistrationClass()]) {
+                requestType = AuthRequestType::SecurityKeyRegisteration;
                 auto credential = retainPtr((ASAuthorizationSecurityKeyPublicKeyCredentialRegistration *)auth.get().credential);
                 response.isAuthenticatorAttestationResponse = true;
                 response.rawId = toArrayBuffer(credential.get().credentialID);
@@ -671,6 +679,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     response.transports = { };
                 response.clientDataJSON = toArrayBuffer(credential.get().rawClientDataJSON);
             } else if ([auth.get().credential isKindOfClass:getASAuthorizationSecurityKeyPublicKeyCredentialAssertionClass()]) {
+                requestType = AuthRequestType::SecurityKeyAssertion;
                 auto credential = retainPtr((ASAuthorizationSecurityKeyPublicKeyCredentialAssertion *)auth.get().credential);
                 response.rawId = toArrayBuffer(credential.get().credentialID);
                 response.authenticatorData = toArrayBuffer(credential.get().rawAuthenticatorData);
@@ -683,7 +692,7 @@ void WebAuthenticatorCoordinatorProxy::performRequest(WebAuthenticationRequestDa
                     response.extensionOutputs = extensionOutputs;
                 }
             }
-
+            RELEASE_LOG(WebAuthn, "Request type: %hhu", requestType);
             if (weakThis) {
                 if (activeConditionalMediationProxy() == weakThis)
                     activeConditionalMediationProxy() = nullptr;
