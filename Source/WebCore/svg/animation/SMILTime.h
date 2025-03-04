@@ -33,25 +33,20 @@ namespace WebCore {
 
 class SMILTime {
 public:
-    SMILTime() : m_time(0) { }
-    SMILTime(double time) : m_time(time) { ASSERT(!std::isnan(time)); }
+    constexpr SMILTime() : m_time(0) { }
     SMILTime(Seconds time) : m_time(time.value()) { ASSERT(!std::isnan(time.value())); }
-    SMILTime(const SMILTime& o) : m_time(o.m_time) { }
+    constexpr SMILTime(double time) : m_time(time) { }
     
-    static SMILTime unresolved() { return unresolvedValue; }
-    static SMILTime indefinite() { return indefiniteValue; }
+    static constexpr SMILTime unresolved() { return std::numeric_limits<double>::quiet_NaN();; }
+    static constexpr SMILTime indefinite() { return std::numeric_limits<double>::infinity(); }
     
-    SMILTime& operator=(const SMILTime& o) { m_time = o.m_time; return *this; }
     double value() const { return m_time; }
     
-    bool isFinite() const { return m_time < indefiniteValue; }
-    bool isIndefinite() const { return m_time == indefiniteValue; }
-    bool isUnresolved() const { return m_time == unresolvedValue; }
+    bool isFinite() const { return std::isfinite(m_time); }
+    bool isIndefinite() const { return std::isinf(m_time); }
+    bool isUnresolved() const { return std::isnan(m_time); }
     
 private:
-    static const double unresolvedValue;
-    static const double indefiniteValue;
-
     double m_time;
 };
 
@@ -81,16 +76,19 @@ private:
     Origin m_origin;
 };
 
-inline bool operator==(const SMILTime& a, const SMILTime& b) { return a.isFinite() && a.value() == b.value(); }
+inline bool operator==(const SMILTime& a, const SMILTime& b) { return (a.isUnresolved() && b.isUnresolved()) || a.value() == b.value(); }
 inline bool operator!(const SMILTime& a) { return !a.isFinite() || !a.value(); }
-inline bool operator>(const SMILTime& a, const SMILTime& b) { return a.value() > b.value(); }
-inline bool operator<(const SMILTime& a, const SMILTime& b) { return a.value() < b.value(); }
-inline bool operator>=(const SMILTime& a, const SMILTime& b) { return a.value() > b.value() || operator==(a, b); }
-inline bool operator<=(const SMILTime& a, const SMILTime& b) { return a.value() < b.value() || operator==(a, b); }
+
+// Ordering of SMILTimes has to follow: finite < indefinite (Inf) < unresolved (NaN). The first comparison is handled by IEEE754 but
+// NaN values must be checked explicitly to guarantee that unresolved is ordered correctly too.
+inline bool operator>(const SMILTime& a, const SMILTime& b) { return a.isUnresolved() || (a.value() > b.value()); }
+inline bool operator<(const SMILTime& a, const SMILTime& b) { return operator>(b, a); }
+inline bool operator>=(const SMILTime& a, const SMILTime& b) { return operator>(a, b) || operator==(a, b); }
+inline bool operator<=(const SMILTime& a, const SMILTime& b) { return operator<(a, b) || operator==(a, b); }
 inline bool operator<(const SMILTimeWithOrigin& a, const SMILTimeWithOrigin& b) { return a.time() < b.time(); }
 
-SMILTime operator+(const SMILTime&, const SMILTime&);
-SMILTime operator-(const SMILTime&, const SMILTime&);
+inline SMILTime operator+(const SMILTime& a, const SMILTime& b) { return a.value() + b.value(); }
+inline SMILTime operator-(const SMILTime& a, const SMILTime& b) { return a.value() - b.value(); }
 // So multiplying times does not make too much sense but SMIL defines it for duration * repeatCount
 SMILTime operator*(const SMILTime&, const SMILTime&);
 

@@ -828,8 +828,11 @@ SMILTime SVGSMILElement::repeatingDuration() const
     SMILTime simpleDuration = this->simpleDuration();
     if (!simpleDuration || (repeatDur.isUnresolved() && repeatCount.isUnresolved()))
         return simpleDuration;
+    repeatDur = std::min(repeatDur, SMILTime::indefinite());
     SMILTime repeatCountDuration = simpleDuration * repeatCount;
-    return std::min(repeatCountDuration, std::min(repeatDur, SMILTime::indefinite()));
+    if (!repeatCountDuration.isUnresolved())
+        return std::min(repeatDur, repeatCountDuration);
+    return repeatDur;
 }
 
 SMILTime SVGSMILElement::resolveActiveEnd(SMILTime resolvedBegin, SMILTime resolvedEnd) const
@@ -902,7 +905,7 @@ void SVGSMILElement::resolveFirstInterval()
         m_intervalBegin = begin;
         m_intervalEnd = end;
         notifyDependentsIntervalChanged();
-        m_nextProgressTime = std::min(m_nextProgressTime, m_intervalBegin);
+        m_nextProgressTime = m_nextProgressTime.isUnresolved() ? m_intervalBegin : std::min(m_nextProgressTime, m_intervalBegin);
 
         if (RefPtr timeContainer = m_timeContainer)
             timeContainer->notifyIntervalsChanged();
@@ -920,7 +923,7 @@ bool SVGSMILElement::resolveNextInterval()
         m_intervalBegin = begin;
         m_intervalEnd = end;
         notifyDependentsIntervalChanged();
-        m_nextProgressTime = std::min(m_nextProgressTime, m_intervalBegin);
+        m_nextProgressTime = m_nextProgressTime.isUnresolved() ? m_intervalBegin : std::min(m_nextProgressTime, m_intervalBegin);
         return true;
     }
     return false;
