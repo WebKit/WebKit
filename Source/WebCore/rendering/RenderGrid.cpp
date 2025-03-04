@@ -212,6 +212,104 @@ void RenderGrid::repeatTracksSizingIfNeeded(LayoutUnit availableSpaceForColumns,
     }
 }
 
+bool RenderGrid::isEligibleForExtrinsicTrackSizesFastPath() const
+{
+    if (m_gridAreaLogicalSizesCache.isEmpty())
+        return false;
+
+    auto& gridStyle = style();
+
+    auto isInBlockBox = [&] {
+        if (auto* containingBlock = this->containingBlock())
+            return containingBlock->isBlockBox();
+        return false;
+    };
+
+    auto allTracksAreExtrinsicallySized = [&] {
+        for (auto& column : gridStyle.gridTrackSizes(GridTrackSizingDirection::ForColumns)) {
+            if (column.isContentSized())
+                return false;
+        }
+
+
+        for (auto& row : gridStyle.gridTrackSizes(GridTrackSizingDirection::ForRows)) {
+            if (row.isContentSized())
+                return false;
+        }
+        return true;
+    };
+
+    auto& currentGrid = this->currentGrid();
+    if (selfNeedsLayout()
+        || !allTracksAreExtrinsicallySized()
+        || !isInBlockBox()
+        || !gridStyle.logicalWidth().isAuto()
+        || currentGrid.needsItemsPlacement()
+        || currentGrid.autoRepeatTracks(GridTrackSizingDirection::ForColumns)
+        || currentGrid.autoRepeatTracks(GridTrackSizingDirection::ForRows)
+        || !gridStyle.logicalHeight().isFixed()
+        || isOutOfFlowPositioned()
+        || isFieldset()
+        || !firstChildBox()) {
+        return false;
+    }
+
+    for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
+        auto& gridItemStyle = gridItem.style();
+
+        if (gridItem.isOutOfFlowPositioned()
+            || hasAutoMarginsInColumnAxis(gridItem)
+            || hasAutoMarginsInRowAxis(gridItem)
+            || isBaselineAlignmentForGridItem(gridItem)
+            || GridLayoutFunctions::isOrthogonalGridItem(*this, gridItem)
+            || gridItemStyle.hasAspectRatio())
+            return false;
+
+        if (auto* renderGrid = dynamicDowncast<RenderGrid>(gridItem)) {
+            if (renderGrid->isSubgrid() || renderGrid->isMasonry())
+                return false;
+        }
+
+        if (auto* gridItemElement = gridItem.element(); gridItemElement && gridItemElement->isReplaced(gridItem.style()))
+            return false;
+    }
+    return true;
+}
+
+void RenderGrid::performExtrinsicTrackSizesFastPath(GridLayoutState& gridLayoutState, LayoutRepainter& layoutRepainter)
+{
+    ASSERT(isEligibleForExtrinsicTrackSizesFastPath());
+    {
+        for (auto& gridItem : childrenOfType<RenderBox>(*this)) {
+            auto [ gridAreaLogicalWidth, gridAreaLogicalHeight ] = m_gridAreaLogicalSizesCache.get(gridItem);
+            gridItem.setGridAreaContentLogicalWidth(gridAreaLogicalWidth);
+            gridItem.setGridAreaContentLogicalHeight(gridAreaLogicalHeight);
+
+            auto oldGridItemRect = gridItem.frameRect();
+
+            applyStretchAlignmentToGridItemIfNeeded(gridItem, gridLayoutState);
+
+            gridItem.layoutIfNeeded();
+
+            setLogicalPositionForGridItem(gridItem);
+            if (gridItem.checkForRepaintDuringLayout())
+                gridItem.repaintDuringLayoutIfMoved(oldGridItemRect);
+        }
+        endAndCommitUpdateScrollInfoAfterLayoutTransaction();
+        computeOverflow(layoutOverflowLogicalBottom(*this));
+        updateDescendantTransformsAfterLayout();
+    }
+
+
+    updateLayerTransform();
+
+    updateScrollInfoAfterLayout();
+
+    layoutRepainter.repaintAfterLayout();
+
+    clearNeedsLayout();
+}
+
 bool RenderGrid::canPerformSimplifiedLayout() const
 {
     // We cannot perform a simplified layout if we need to position the items and we have some
@@ -353,8 +451,11 @@ void RenderGrid::layoutGrid(RelayoutChildren relayoutChildren)
 
         resetLogicalHeightBeforeLayoutIfNeeded();
 
-        updateLogicalWidth();
-
+        bool logicalWidthChanged = recomputeLogicalWidth();
+        if (!logicalWidthChanged && isEligibleForExtrinsicTrackSizesFastPath()) {
+            performExtrinsicTrackSizesFastPath(gridLayoutState, repainter);
+            return;
+        }
         // Fieldsets need to find their legend and position it inside the border of the object.
         // The legend then gets skipped during normal layout. The same is true for ruby text.
         // It doesn't get included in the normal layout process but is instead skipped.

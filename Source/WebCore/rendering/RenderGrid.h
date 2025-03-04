@@ -38,6 +38,7 @@ namespace WebCore {
 class GridArea;
 class GridLayoutState;
 class GridSpan;
+class LayoutRepainter;
 
 struct ContentAlignmentData {
     LayoutUnit positionOffset;
@@ -196,6 +197,9 @@ private:
         auto itemSpan = gridAxisDirection == GridTrackSizingDirection::ForColumns ? area.columns : area.rows;
         return itemSpan.startLine() <  gridAxisLinesCount && itemSpan.endLine() < gridAxisLinesCount;
     }
+
+    bool isEligibleForExtrinsicTrackSizesFastPath() const;
+    void performExtrinsicTrackSizesFastPath(GridLayoutState&, LayoutRepainter&);
 
     bool canPerformSimplifiedLayout() const final;
     void prepareGridItemForPositionedLayout(RenderBox&);
