@@ -52,6 +52,7 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 #include <wtf/LoggerHelper.h>
+#include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if ENABLE(MATHML)
