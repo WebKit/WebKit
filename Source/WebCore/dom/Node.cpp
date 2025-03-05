@@ -712,19 +712,17 @@ ExceptionOr<void> Node::replaceWith(FixedVector<NodeOrString>&& nodeOrStringVect
     auto nodeSet = nodeSetPreTransformedFromNodeOrStringVector(nodeOrStringVector);
     RefPtr viableNextSibling = firstFollowingSiblingNotInNodeSet(*this, nodeSet);
 
-    auto result = convertNodesOrStringsIntoNode(WTFMove(nodeOrStringVector));
+    auto result = convertNodesOrStringsIntoNodeVector(WTFMove(nodeOrStringVector));
     if (result.hasException())
         return result.releaseException();
 
+    auto child = result.releaseReturnValue();
     if (parentNode() == parent) {
-        if (RefPtr node = result.releaseReturnValue())
-            return parent->replaceChild(*node, *this);
+        return parent->replaceChild(child[0], *this);
         return parent->removeChild(*this);
     }
 
-    if (RefPtr node = result.releaseReturnValue())
-        return parent->insertBefore(*node, WTFMove(viableNextSibling));
-    return { };
+    return parent->insertBefore(child[0], WTFMove(viableNextSibling));
 }
 
 ExceptionOr<void> Node::remove()
