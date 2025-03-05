@@ -274,6 +274,26 @@ AXTextMarkerRange::AXTextMarkerRange(const std::optional<SimpleRange>& range)
     }
 }
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+AXTextMarkerRange::AXTextMarkerRange(const InlineBoxAndOffset& start, const InlineBoxAndOffset& end)
+{
+    if (start.box && end.box) {
+        if (CheckedPtr cache = start.box->renderer().document().axObjectCache()) {
+            RefPtr startObject = cache->getOrCreate(const_cast<RenderObject&>(start.box->renderer()));
+            RefPtr endObject = cache->getOrCreate(const_cast<RenderObject&>(end.box->renderer()));
+            if (startObject && endObject) {
+                m_start = { *startObject, start.offset };
+                m_end = { *endObject, end.offset };
+                return;
+            }
+        }
+    }
+    // Fallback to default-initialized text markers.
+    m_start = { };
+    m_end = { };
+}
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
 AXTextMarkerRange::AXTextMarkerRange(const AXTextMarker& start, const AXTextMarker& end)
 {
     std::partial_ordering order = partialOrder(start, end);

@@ -34,6 +34,7 @@
 #include "AccessibilityTableCell.h"
 #include "AccessibilityTableRow.h"
 #include "FrameSelection.h"
+#include "InlineRunAndOffset.h"
 #include "LocalFrameView.h"
 #include "Page.h"
 #include <wtf/MonotonicTime.h>
@@ -169,7 +170,14 @@ RefPtr<AXIsolatedTree> AXIsolatedTree::create(AXObjectCache& axObjectCache)
     auto* axFocus = axObjectCache.focusedObjectForPage(document->page());
     if (axFocus)
         tree->setFocusedNodeID(axFocus->objectID());
+
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    auto selection = document->selection().selection();
+    tree->setSelectedTextMarkerRange({ selection.visibleStart().inlineBoxAndOffset(), selection.visibleEnd().inlineBoxAndOffset() });
+#else
     tree->setSelectedTextMarkerRange(document->selection().selection());
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
+
     tree->updateLoadingProgress(axObjectCache.loadingProgress());
 
     const auto relations = axObjectCache.relations();

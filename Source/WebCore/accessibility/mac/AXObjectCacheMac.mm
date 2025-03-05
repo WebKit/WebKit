@@ -33,6 +33,7 @@
 #import "AccessibilityTable.h"
 #import "CocoaAccessibilityConstants.h"
 #import "DeprecatedGlobalSettings.h"
+#import "InlineRunAndOffset.h"
 #import "LocalFrameView.h"
 #import "RenderObject.h"
 #import "WebAccessibilityObjectWrapperMac.h"
@@ -922,7 +923,11 @@ void AXObjectCache::onSelectedTextChanged(const VisiblePositionRange& selection)
                 if (auto* endObject = get(endPosition.anchorNode()))
                     createIsolatedObjectIfNeeded(*endObject);
 
+#if ENABLE(AX_THREAD_TEXT_APIS)
+                tree->setSelectedTextMarkerRange({ selection.start.inlineBoxAndOffset(), selection.end.inlineBoxAndOffset() });
+#else
                 tree->setSelectedTextMarkerRange({ selection });
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
             }
         }
     }

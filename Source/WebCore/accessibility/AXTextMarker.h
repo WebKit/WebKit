@@ -369,6 +369,9 @@ public:
     AXTextMarkerRange(const VisiblePositionRange&);
     AXTextMarkerRange(const VisibleSelection&);
     AXTextMarkerRange(const std::optional<SimpleRange>&);
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    AXTextMarkerRange(const InlineBoxAndOffset& start, const InlineBoxAndOffset& end);
+#endif
     AXTextMarkerRange(const AXTextMarker&, const AXTextMarker&);
     AXTextMarkerRange(AXTextMarker&&, AXTextMarker&&);
 #if PLATFORM(MAC)
