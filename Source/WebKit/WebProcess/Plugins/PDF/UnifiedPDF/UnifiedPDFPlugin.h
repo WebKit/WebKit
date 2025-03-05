@@ -170,6 +170,7 @@ public:
     WebCore::FloatRect convertFromPDFPageToScreenForAccessibility(const WebCore::FloatRect&, PDFDocumentLayout::PageIndex) const;
 #if PLATFORM(MAC)
     void accessibilityScrollToPage(PDFDocumentLayout::PageIndex);
+    WebCore::IntPoint convertFromPluginToScreenForAccessibility(const WebCore::IntPoint& pointInPluginCoordinate) const;
 #endif
 #if !PLATFORM(MAC)
     id accessibilityHitTestInPageForIOS(WebCore::FloatPoint);

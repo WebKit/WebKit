@@ -3612,15 +3612,9 @@ id UnifiedPDFPlugin::accessibilityHitTestIntPoint(const WebCore::IntPoint& point
 {
     Ref protectedThis { *this };
     return WebCore::Accessibility::retrieveValueFromMainThread<id>([&protectedThis, point] () -> id {
-        auto floatPoint = FloatPoint { point };
-        auto pointInDocumentSpace = protectedThis->convertDown(CoordinateSpace::Plugin, CoordinateSpace::PDFDocumentLayout, floatPoint);
-        auto hitPageIndex = protectedThis->m_presentationController->pageIndexForDocumentPoint(pointInDocumentSpace);
-        if (!hitPageIndex || *hitPageIndex >= protectedThis->m_documentLayout.pageCount())
-            return { };
-        auto pageIndex = *hitPageIndex;
-        auto pointInPDFPageSpace = protectedThis->convertDown(CoordinateSpace::PDFDocumentLayout, CoordinateSpace::PDFPage, pointInDocumentSpace, pageIndex);
-
-        return [protectedThis->m_accessibilityDocumentObject accessibilityHitTest:pointInPDFPageSpace];
+        IntPoint pluginPoint = point + (-protectedThis->m_view->location());
+        auto pointInScreenSpaceCoordinate = protectedThis->convertFromPluginToScreenForAccessibility(pluginPoint);
+        return [protectedThis->m_accessibilityDocumentObject accessibilityHitTest:pointInScreenSpaceCoordinate];
     });
 }
 
@@ -3635,6 +3629,18 @@ FloatRect UnifiedPDFPlugin::convertFromPDFPageToScreenForAccessibility(const Flo
         if (!page)
             return { };
         return page->chrome().rootViewToScreen(enclosingIntRect(rectInPluginCoordinates));
+    });
+}
+
+IntPoint UnifiedPDFPlugin::convertFromPluginToScreenForAccessibility(const IntPoint& pointInPluginCoordinate) const
+{
+    Ref protectedThis { *this };
+    return WebCore::Accessibility::retrieveValueFromMainThread<IntPoint>([&protectedThis, pointInPluginCoordinate] () -> IntPoint {
+        auto pointInRootView = protectedThis->convertFromPluginToRootView(pointInPluginCoordinate);
+        RefPtr page = protectedThis->page();
+        if (!page)
+            return { };
+        return page->chrome().rootViewToScreen(IntPoint(pointInRootView));
     });
 }
 

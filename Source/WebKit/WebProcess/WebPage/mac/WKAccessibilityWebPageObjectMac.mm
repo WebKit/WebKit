@@ -335,11 +335,11 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if (!protectedSelf->m_page)
             return WebCore::IntPoint(point);
 
-        auto convertedPoint = protectedSelf->m_page->screenToRootView(WebCore::IntPoint(point));
-
         // PDF plug-in handles the scroll view offset natively as part of the layer conversions.
         if (protectedSelf->m_page->mainFramePlugIn())
-            return convertedPoint;
+            return WebCore::IntPoint(point);
+
+        auto convertedPoint = protectedSelf->m_page->screenToRootView(WebCore::IntPoint(point));
 
         if (CheckedPtr localFrameView = protectedSelf->m_page->localMainFrameView())
             convertedPoint.moveBy(localFrameView->scrollPosition());
