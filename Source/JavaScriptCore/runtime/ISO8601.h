@@ -300,14 +300,6 @@ private:
     int32_t m_day : 6; // Starts with 1.
 };
 
-class PlainYearMonth final {
-public:
-    double year;
-    double month;
-    PlainYearMonth(double y, double m)
-        : year(y), month(m) { }
-};
-
 class PlainYearMonth {
     WTF_MAKE_TZONE_ALLOCATED(PlainYearMonth);
 public:
@@ -335,7 +327,7 @@ public:
 private:
     PlainDate m_isoPlainDate;
 };
-static_assert(sizeof(PlainYearMonth) == sizeof(int32_t));
+static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 class PlainMonthDay {
     WTF_MAKE_TZONE_ALLOCATED(PlainMonthDay);
@@ -364,7 +356,7 @@ public:
 private:
     PlainDate m_isoPlainDate;
 };
-static_assert(sizeof(PlainYearMonth) == sizeof(int32_t));
+static_assert(sizeof(PlainYearMonth) == sizeof(PlainDate));
 
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 

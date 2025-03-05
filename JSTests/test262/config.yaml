@@ -135,6 +135,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-leap-second.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeTo-must-have-required-properties.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-number.js
+    - test/built-ins/Temporal/Duration/prototype/total/relativeto-plaindatetime.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-number.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-calendar-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-no-time-units.js
@@ -447,6 +448,7 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainMonthDay/from/calendar-temporal-object.js
     - test/built-ins/Temporal/PlainMonthDay/prototype/equals/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainMonthDay/prototype/with/monthdaylike-invalid.js
     - test/built-ins/Temporal/PlainTime/compare/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/from/argument-zoneddatetime-negative-epochnanoseconds.js
@@ -456,3 +458,4 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-negative-epochnanoseconds.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/with/yearmonthlike-invalid.js

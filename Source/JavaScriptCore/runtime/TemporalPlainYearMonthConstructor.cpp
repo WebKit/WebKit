@@ -123,6 +123,9 @@ JSC_DEFINE_HOST_FUNCTION(constructTemporalPlainYearMonth, (JSGlobalObject* globa
         RETURN_IF_EXCEPTION(scope, { });
     }
 
+    if (!ISO8601::isValidISODate(isoYear, isoMonth, referenceDay)) {
+        return throwVMRangeError(globalObject, scope, "Temporal.PlainYearMonth: not a valid ISO date"_s);
+    };
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainYearMonth::tryCreateIfValid(globalObject, structure, ISO8601::PlainDate(isoYear, isoMonth, referenceDay))));
 }
 
