@@ -68,8 +68,8 @@ static inline double makeDay(double year, double month, double date)
     return days + date - 1;
 }
 
-inline // https://tc39.es/ecma262/#sec-makedate
-double makeDate(double day, double time)
+// https://tc39.es/ecma262/#sec-makedate
+static inline double makeDate(double day, double time)
 {
 #if COMPILER(CLANG)
 #pragma STDC FP_CONTRACT OFF
