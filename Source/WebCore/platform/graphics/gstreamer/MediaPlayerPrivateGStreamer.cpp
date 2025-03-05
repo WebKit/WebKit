@@ -3320,7 +3320,6 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
 
 void MediaPlayerPrivateGStreamer::setupCodecProbe(GstElement* element)
 {
-#if GST_CHECK_VERSION(1, 20, 0)
     auto sinkPad = adoptGRef(gst_element_get_static_pad(element, "sink"));
     gst_pad_add_probe(sinkPad.get(), GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM, reinterpret_cast<GstPadProbeCallback>(+[](GstPad* pad, GstPadProbeInfo* info, MediaPlayerPrivateGStreamer* player) -> GstPadProbeReturn {
         auto* event = gst_pad_probe_info_get_event(info);
@@ -3347,9 +3346,6 @@ void MediaPlayerPrivateGStreamer::setupCodecProbe(GstElement* element)
         }
         return GST_PAD_PROBE_REMOVE;
     }), this, nullptr);
-#else
-    UNUSED_PARAM(element);
-#endif
 }
 
 void MediaPlayerPrivateGStreamer::configureAudioDecoder(GstElement* decoder)

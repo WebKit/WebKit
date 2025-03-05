@@ -112,7 +112,7 @@ void RealtimeOutgoingAudioSourceLibWebRTC::pullAudioData()
         auto inBuffer = adoptGRef(gst_adapter_take_buffer(m_adapter.get(), inBufferSize));
         m_audioBuffer.grow(outBufferSize);
         if (isSilenced())
-            webkitGstAudioFormatFillSilence(m_outputStreamDescription.finfo, m_audioBuffer.data(), outBufferSize);
+            gst_audio_format_info_fill_silence(m_outputStreamDescription.finfo, m_audioBuffer.data(), outBufferSize);
         else {
             GstMappedBuffer inMap(inBuffer.get(), GST_MAP_READ);
 
