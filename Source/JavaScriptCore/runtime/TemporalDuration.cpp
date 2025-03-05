@@ -25,12 +25,12 @@
  */
 
 #include "config.h"
-#include "DateConstructor.h"
-#include "TemporalCalendar.h"
 #include "TemporalDuration.h"
 
+#include "DateConstructor.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
+#include "TemporalCalendar.h"
 #include "TemporalObject.h"
 #include <wtf/dtoa/double-conversion.h>
 #include <wtf/text/MakeString.h>
