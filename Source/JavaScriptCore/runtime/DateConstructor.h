@@ -78,7 +78,7 @@ double makeDate(double day, double time)
 }
 
 // https://tc39.es/ecma262/#sec-maketime
-inline double makeTime(double hour, double min, double sec, double ms)
+static inline double makeTime(double hour, double min, double sec, double ms)
 {
 #if COMPILER(CLANG)
 #pragma STDC FP_CONTRACT OFF
