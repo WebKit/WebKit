@@ -25,8 +25,6 @@
  */
 
 #include "config.h"
-#include "DateConstructor.h"
-#include "TemporalCalendar.h"
 #include "TemporalDuration.h"
 
 #include "DateConstructor.h"
