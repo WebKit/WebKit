@@ -896,9 +896,9 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point, HitTestSo
             if (logicalPoint.y() < bottom || (blocksAreFlipped && logicalPoint.y() == bottom)) {
                 ShouldAffinityBeDownstream shouldAffinityBeDownstream;
 #if PLATFORM(IOS_FAMILY)
-                if (logicalPoint.x() != run->logicalLeft() && point.x() < run->logicalLeft() + run->logicalWidth()) {
+                if (logicalPoint.x() != run->logicalLeft() && logicalPoint.x() < run->logicalLeft() + run->logicalWidth()) {
                     auto half = LayoutUnit { run->logicalLeft() + run->logicalWidth() / 2.f };
-                    shouldAffinityBeDownstream = point.x() < half ? AlwaysDownstream : AlwaysUpstream;
+                    shouldAffinityBeDownstream = logicalPoint.x() < half ? AlwaysDownstream : AlwaysUpstream;
                     return createVisiblePositionAfterAdjustingOffsetForBiDi(run, offsetForPositionInRun(*run, logicalPoint.x()), shouldAffinityBeDownstream);
                 }
 #endif
