@@ -1228,6 +1228,8 @@ off
 // auto
 // optimizeSpeed (deprecated)
 optimizeQuality // ( deprecated)
+// smooth
+high-quality
 crisp-edges
 pixelated
 -webkit-crisp-edges

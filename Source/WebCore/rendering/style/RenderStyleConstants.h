@@ -980,8 +980,8 @@ enum class TextWrapStyle : uint8_t {
 
 enum class ImageRendering : uint8_t {
     Auto = 0,
-    OptimizeSpeed,
-    OptimizeQuality,
+    Smooth,
+    HighQuality,
     CrispEdges,
     Pixelated
 };

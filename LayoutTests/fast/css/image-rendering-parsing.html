@@ -23,12 +23,14 @@ function testImageRendering(value, computedValue)
 }
 
 testImageRendering('auto', 'auto');
+testImageRendering('smooth', 'smooth');
+testImageRendering('high-quality', 'high-quality');
 testImageRendering('crisp-edges', 'crisp-edges');
 testImageRendering('pixelated', 'pixelated');
 testImageRendering('-webkit-crisp-edges', 'crisp-edges');
 testImageRendering('-webkit-optimize-contrast', 'crisp-edges');
-testImageRendering('optimizeSpeed', 'optimizespeed');
-testImageRendering('optimizeQuality', 'optimizequality');
+testImageRendering('optimizeSpeed', 'crisp-edges');
+testImageRendering('optimizeQuality', 'smooth');
 
 successfullyParsed = true;
 </script>

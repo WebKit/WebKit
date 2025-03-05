@@ -1966,14 +1966,14 @@ constexpr CSSValueID toCSSValueID(ImageRendering imageRendering)
     switch (imageRendering) {
     case ImageRendering::Auto:
         return CSSValueAuto;
+    case ImageRendering::Smooth:
+        return CSSValueSmooth;
+    case ImageRendering::HighQuality:
+        return CSSValueHighQuality;
     case ImageRendering::CrispEdges:
         return CSSValueCrispEdges;
     case ImageRendering::Pixelated:
         return CSSValuePixelated;
-    case ImageRendering::OptimizeSpeed:
-        return CSSValueOptimizeSpeed;
-    case ImageRendering::OptimizeQuality:
-        return CSSValueOptimizeQuality;
     }
     ASSERT_NOT_REACHED_UNDER_CONSTEXPR_CONTEXT();
     return CSSValueInvalid;
@@ -1984,16 +1984,18 @@ template<> constexpr ImageRendering fromCSSValueID(CSSValueID valueID)
     switch (valueID) {
     case CSSValueAuto:
         return ImageRendering::Auto;
+    case CSSValueSmooth:
+    case CSSValueOptimizeQuality:
+        return ImageRendering::Smooth;
+    case CSSValueHighQuality:
+        return ImageRendering::HighQuality;
     case CSSValueWebkitOptimizeContrast:
     case CSSValueCrispEdges:
     case CSSValueWebkitCrispEdges:
+    case CSSValueOptimizeSpeed:
         return ImageRendering::CrispEdges;
     case CSSValuePixelated:
         return ImageRendering::Pixelated;
-    case CSSValueOptimizeSpeed:
-        return ImageRendering::OptimizeSpeed;
-    case CSSValueOptimizeQuality:
-        return ImageRendering::OptimizeQuality;
     default:
         break;
     }

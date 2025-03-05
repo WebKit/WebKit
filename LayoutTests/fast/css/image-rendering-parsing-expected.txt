@@ -7,6 +7,12 @@ PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.C
 PASS div.style.getPropertyValue('image-rendering') is "auto"
 PASS getComputedStyle(div).getPropertyValue('image-rendering') is "auto"
 PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
+PASS div.style.getPropertyValue('image-rendering') is "smooth"
+PASS getComputedStyle(div).getPropertyValue('image-rendering') is "smooth"
+PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
+PASS div.style.getPropertyValue('image-rendering') is "high-quality"
+PASS getComputedStyle(div).getPropertyValue('image-rendering') is "high-quality"
+PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
 PASS div.style.getPropertyValue('image-rendering') is "crisp-edges"
 PASS getComputedStyle(div).getPropertyValue('image-rendering') is "crisp-edges"
 PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
@@ -20,10 +26,10 @@ PASS div.style.getPropertyValue('image-rendering') is "-webkit-optimize-contrast
 PASS getComputedStyle(div).getPropertyValue('image-rendering') is "crisp-edges"
 PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
 PASS div.style.getPropertyValue('image-rendering') is "optimizespeed"
-PASS getComputedStyle(div).getPropertyValue('image-rendering') is "optimizespeed"
+PASS getComputedStyle(div).getPropertyValue('image-rendering') is "crisp-edges"
 PASS div.style.getPropertyCSSValue('image-rendering').cssValueType is CSSValue.CSS_PRIMITIVE_VALUE
 PASS div.style.getPropertyValue('image-rendering') is "optimizequality"
-PASS getComputedStyle(div).getPropertyValue('image-rendering') is "optimizequality"
+PASS getComputedStyle(div).getPropertyValue('image-rendering') is "smooth"
 PASS successfullyParsed is true
 
 TEST COMPLETE
