@@ -53,7 +53,7 @@ JSObject* constructDate(JSGlobalObject*, JSValue newTarget, const ArgList&);
 JSValue dateNowImpl();
 
 // https://tc39.es/ecma262/#sec-makeday
-inline double makeDay(double year, double month, double date)
+static inline double makeDay(double year, double month, double date)
 {
     double additionalYears = std::floor(month / 12);
     double ym = year + additionalYears;
