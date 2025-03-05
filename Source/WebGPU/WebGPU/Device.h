@@ -195,8 +195,8 @@ public:
     id<MTLRenderPipelineState> icbCommandClampPipeline(MTLIndexType, NSUInteger rasterSampleCount);
     id<MTLFunction> icbCommandClampFunction(MTLIndexType);
     id<MTLRenderPipelineState> copyIndexIndirectArgsPipeline(NSUInteger rasterSampleCount);
-    id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeDefault) const;
     id<MTLBuffer> safeCreateBuffer(NSUInteger) const;
+    id<MTLBuffer> safeCreateBuffer(NSUInteger length, MTLStorageMode, MTLCPUCacheMode = MTLCPUCacheModeDefaultCache, MTLHazardTrackingMode = MTLHazardTrackingModeTracked) const;
     void loseTheDevice(WGPUDeviceLostReason);
     int bufferIndexForICBContainer() const;
     void setOwnerWithIdentity(id<MTLResource>) const;
@@ -299,6 +299,7 @@ private:
 #endif
     NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLCounterSampleBuffer>>*>* m_sampleCounterBuffers;
     NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLBuffer>>*>* m_resolvedSampleCounterBuffers;
+    NSMutableArray<id<MTLHeap>>* m_heaps;
     id<MTLSharedEvent> m_resolveTimestampsSharedEvent { nil };
     uint64_t m_commandEncoderId { 0 };
     bool m_supressAllErrors { false };

@@ -356,6 +356,7 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     m_placeholderDepthStencilTexture = [m_device newTextureWithDescriptor:desc];
     m_sampleCounterBuffers = [NSMapTable weakToStrongObjectsMapTable];
     m_resolvedSampleCounterBuffers = [NSMapTable weakToStrongObjectsMapTable];
+    m_heaps = [NSMutableArray array];
 }
 
 Device::Device(Adapter& adapter)
@@ -651,7 +652,7 @@ id<MTLBuffer> Device::dispatchCallBuffer()
         return nil;
 
     if (!m_dispatchCallBuffer) {
-        m_dispatchCallBuffer = [m_device newBufferWithLength:sizeof(MTLDispatchThreadgroupsIndirectArguments) options:MTLResourceStorageModePrivate];
+        m_dispatchCallBuffer = safeCreateBuffer(sizeof(MTLDispatchThreadgroupsIndirectArguments));
         setOwnerWithIdentity(m_dispatchCallBuffer);
     }
     return m_dispatchCallBuffer;

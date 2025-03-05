@@ -120,10 +120,38 @@ static MTLStorageMode storageMode(bool deviceHasUnifiedMemory, WGPUBufferUsageFl
     return MTLStorageModePrivate;
 }
 
+static NSUInteger heapSizeForResourceSize(MTLSizeAndAlign sizeAndAlign)
+{
+    ASSERT(sizeAndAlign.size > 0);
+    constexpr NSUInteger objectsPerHeap = 32;
+    constexpr NSUInteger limitedHeapSize = 4 * MB;
+    auto alignedSize = roundUpToMultipleOfNonPowerOfTwo(sizeAndAlign.align, sizeAndAlign.size);
+    return std::max(alignedSize, std::min(alignedSize * objectsPerHeap, limitedHeapSize));
+}
+
 id<MTLBuffer> Device::safeCreateBuffer(NSUInteger length, MTLStorageMode storageMode, MTLCPUCacheMode cpuCacheMode, MTLHazardTrackingMode hazardTrackingMode) const
 {
     MTLResourceOptions resourceOptions = (cpuCacheMode << MTLResourceCPUCacheModeShift) | (storageMode << MTLResourceStorageModeShift) | (hazardTrackingMode << MTLResourceHazardTrackingModeShift);
-    id<MTLBuffer> buffer = [m_device newBufferWithLength:std::max<NSUInteger>(1, length) options:resourceOptions];
+
+    length = std::max<NSUInteger>(1, length);
+    MTLSizeAndAlign sizeAndAlign = [m_device heapBufferSizeAndAlignWithLength:length options:resourceOptions];
+    id<MTLHeap> heap;
+    for (id<MTLHeap> h in [m_heaps reverseObjectEnumerator]) {
+        if (h.storageMode == storageMode && sizeAndAlign.size <= [h maxAvailableSizeWithAlignment:sizeAndAlign.align]) {
+            heap = h;
+            break;
+        }
+    }
+    if (!heap) {
+        MTLHeapDescriptor* heapDescriptor = [MTLHeapDescriptor new];
+        heapDescriptor.storageMode = storageMode;
+        heapDescriptor.size = heapSizeForResourceSize(sizeAndAlign);
+        heapDescriptor.hazardTrackingMode = hazardTrackingMode;
+        heap = [m_device newHeapWithDescriptor:heapDescriptor];
+        [m_heaps addObject:heap];
+    }
+
+    id<MTLBuffer> buffer = [heap newBufferWithLength:length options:resourceOptions];
     setOwnerWithIdentity(buffer);
     return buffer;
 }

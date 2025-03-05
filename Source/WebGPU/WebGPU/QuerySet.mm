@@ -63,7 +63,7 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
         return QuerySet::createInvalid(*this);
 #endif
     } case WGPUQueryType_Occlusion: {
-        auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
+        auto buffer = safeCreateBuffer(sizeof(uint64_t) * count);
         buffer.label = fromAPI(label);
         return QuerySet::create(buffer, count, type, *this);
     }
