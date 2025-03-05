@@ -54,6 +54,7 @@ public:
     static ISO8601::PlainDate isoDateFromFields(JSGlobalObject*, double year, double month, double day, TemporalOverflow);
     static ISO8601::PlainDate addDurationToDate(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
     static ISO8601::PlainDate isoDateAdd(JSGlobalObject*, const ISO8601::PlainDate&, const ISO8601::Duration&, TemporalOverflow);
+    static ISO8601::PlainDate balanceISODate(double, double, double);
     static ISO8601::PlainYearMonth balanceISOYearMonth(double, double);
     static ISO8601::Duration calendarDateUntil(const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
     static int32_t isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);

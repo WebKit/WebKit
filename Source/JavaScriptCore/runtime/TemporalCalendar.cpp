@@ -264,7 +264,7 @@ static int32_t epochTimeToDate(double t)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
-static ISO8601::PlainDate balanceISODate(double year, double month, double day)
+ISO8601::PlainDate TemporalCalendar::balanceISODate(double year, double month, double day)
 {
     auto epochDays = makeDay(year, month - 1, day);
     double ms = makeDate(epochDays, 0);
@@ -302,7 +302,7 @@ ISO8601::PlainDate TemporalCalendar::isoDateAdd(JSGlobalObject* globalObject, co
         return { };
     }
     auto d = intermediate1.value().day() + duration.days() + (7 * duration.weeks());
-    auto result = balanceISODate(years, months, d);
+    auto result = balanceISODate(intermediate1.value().year(), intermediate1.value().month(), d);
     if (!ISO8601::isDateTimeWithinLimits(result.year(), result.month(), result.day(), 12, 0, 0, 0, 0, 0)) {
         throwRangeError(globalObject, scope, "date time is out of range of ECMAScript representation"_s);
         return { };
@@ -330,6 +330,7 @@ static bool isoDateSurpasses(int32_t sign, double y1, double m1, double d1, cons
     return false;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-balanceisoyearmonth
 ISO8601::PlainYearMonth TemporalCalendar::balanceISOYearMonth(double year, double month)
 {
     year += std::floor((month - 1) / 12);

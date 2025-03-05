@@ -289,11 +289,16 @@ public:
     uint8_t day() const { return m_day; }
 
 private:
-    int32_t m_year : 21; // ECMAScript max / min date's year can be represented <= 20 bits.
+    // It would be tempting to write m_year : 21 because
+    // ECMAScript max / min date's year can be represented <= 20 bits.
+    // However, this type must be usable to represent any valid ISO date;
+    // this comes up when detecting errors,
+    // such as in test262 test
+    // Temporal/PlainDate/prototype/since/throws-if-rounded-date-outside-valid-iso-range.js .
+    int32_t m_year;
     int32_t m_month : 5; // Starts with 1.
     int32_t m_day : 6; // Starts with 1.
 };
-static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
 class PlainYearMonth final {
 public:
