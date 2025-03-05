@@ -25,6 +25,8 @@
  */
 
 #include "config.h"
+#include "DateConstructor.h"
+#include "TemporalCalendar.h"
 #include "TemporalDuration.h"
 
 #include "IntlObjectInlines.h"
@@ -733,7 +735,7 @@ static Nudged nudgeToCalendarUnit(JSGlobalObject* globalObject, int32_t sign, co
     case TemporalUnit::Week: {
         auto yearsMonths = adjustDateDurationRecord(globalObject, duration.dateDuration(), 0, 0, std::nullopt);
         auto weeksStart = TemporalCalendar::isoDateAdd(globalObject, isoDate, yearsMonths, TemporalOverflow::Constrain);
-        auto weeksEnd = balanceISODate(weeksStart.year(), weeksStart.month(), weeksStart.day() + duration.dateDuration().days());
+        auto weeksEnd = TemporalCalendar::balanceISODate(weeksStart.year(), weeksStart.month(), weeksStart.day() + duration.dateDuration().days());
         auto untilResult = TemporalCalendar::calendarDateUntil(weeksStart, weeksEnd, TemporalUnit::Week);
         Int128 weeks = roundNumberToIncrementInt128((Int128) (duration.dateDuration().weeks() + untilResult.weeks()),
             (Int128) increment, RoundingMode::Trunc);
@@ -1081,6 +1083,7 @@ double TemporalDuration::total(JSGlobalObject* globalObject, JSValue optionsValu
     // FIXME: Implement relativeTo parameter after PlainDateTime / ZonedDateTime.
     if (unit == TemporalUnit::Week
         || unit == TemporalUnit::Month
+        || unit == TemporalUnit::Year
         || (years() || months() || weeks() || (days() && unit < TemporalUnit::Day))) {
         throwRangeError(globalObject, scope, "Cannot total a duration of years, months, or weeks without a relativeTo option"_s);
         return { };
