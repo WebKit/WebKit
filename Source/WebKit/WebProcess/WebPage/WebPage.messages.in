@@ -513,8 +513,8 @@ messages -> WebPage WantsAsyncDispatchMessage {
     ReadSelectionFromPasteboard(String pasteboardName) -> (bool result) Synchronous
     ReplaceSelectionWithPasteboardData(Vector<String> types, std::span<const uint8_t> data)
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    InsertMultiRepresentationHEIC(std::span<const uint8_t> data, String altText)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    InsertAdaptiveImageGlyph(std::span<const uint8_t> data, String altText)
 #endif
 
     ShouldDelayWindowOrderingEvent(WebKit::WebMouseEvent event) -> (bool result) Synchronous

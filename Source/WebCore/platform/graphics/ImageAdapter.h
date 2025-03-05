@@ -29,7 +29,7 @@
 OBJC_CLASS NSImage;
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 OBJC_CLASS NSAdaptiveImageGlyph;
 #endif
 
@@ -89,8 +89,8 @@ public:
     WEBCORE_EXPORT CFDataRef tiffRepresentation();
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    NSAdaptiveImageGlyph *multiRepresentationHEIC();
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    NSAdaptiveImageGlyph *adaptiveImageGlyph();
 #endif
 
 #if PLATFORM(GTK)
@@ -124,8 +124,8 @@ private:
 #if USE(CG)
     mutable RetainPtr<CFDataRef> m_tiffRep; // Cached TIFF rep for all the frames. Only built lazily if someone queries for one.
 #endif
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    mutable RetainPtr<NSAdaptiveImageGlyph> m_multiRepHEIC;
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    mutable RetainPtr<NSAdaptiveImageGlyph> m_adaptiveImageGlyph;
 #endif
 };
 

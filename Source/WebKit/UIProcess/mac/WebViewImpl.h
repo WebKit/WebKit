@@ -651,8 +651,8 @@ public:
 
     bool isContentRichlyEditable() const;
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    void insertMultiRepresentationHEIC(NSData *, NSString *);
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    void insertAdaptiveImageGlyph(NSData *, NSString *);
 #endif
 
     void createFlagsChangedEventMonitor();

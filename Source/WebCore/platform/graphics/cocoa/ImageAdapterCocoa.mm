@@ -33,7 +33,7 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/text/WTFString.h>
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 #import "PlatformNSAdaptiveImageGlyph.h"
 #endif
 
@@ -94,22 +94,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return data;
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-NSAdaptiveImageGlyph *ImageAdapter::multiRepresentationHEIC()
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+NSAdaptiveImageGlyph *ImageAdapter::adaptiveImageGlyph()
 {
-    if (m_multiRepHEIC)
-        return m_multiRepHEIC.get();
+    if (m_adaptiveImageGlyph)
+        return m_adaptiveImageGlyph.get();
 
-    auto buffer = image().data();
+    RefPtr buffer = image().data();
     if (!buffer)
         return nullptr;
 
     Vector<uint8_t> data = buffer->copyData();
 
     RetainPtr nsData = WTF::toNSData(data.span());
-    m_multiRepHEIC = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:nsData.get()]);
+    m_adaptiveImageGlyph = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:nsData.get()]);
 
-    return m_multiRepHEIC.get();
+    return m_adaptiveImageGlyph.get();
 }
 #endif
 
@@ -119,8 +119,8 @@ void ImageAdapter::invalidate()
     m_nsImage = nullptr;
 #endif
     m_tiffRep = nullptr;
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    m_multiRepHEIC = nullptr;
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    m_adaptiveImageGlyph = nullptr;
 #endif
 }
 

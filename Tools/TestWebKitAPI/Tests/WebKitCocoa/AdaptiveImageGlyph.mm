@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
 #import "AppKitSPI.h"
 #import "DragAndDropSimulator.h"
@@ -33,14 +33,12 @@
 #import "TestInputDelegate.h"
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
-#import <CoreText/CTAdaptiveImageGlyphPriv.h>
-#import <UIFoundation/NSAdaptiveImageGlyph.h>
-#import <UIFoundation/NSAttributedString_Private.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/FontCocoa.h>
 #import <WebKit/WKPreferencesPrivate.h>
 #import <WebKit/WKPreferencesRefPrivate.h>
 #import <WebKit/WebKitPrivate.h>
+#import <pal/spi/cf/CoreTextSPI.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <pal/spi/cocoa/UIFoundationSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -948,4 +946,4 @@ TEST(AdaptiveImageGlyph, AttributedStringDocumentEditingContext)
 
 } // namespace TestWebKitAPI
 
-#endif // ENABLE(MULTI_REPRESENTATION_HEIC)
+#endif // ENABLE(ADAPTIVE_IMAGE_GLYPH)

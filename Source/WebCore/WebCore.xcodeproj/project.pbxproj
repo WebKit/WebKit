@@ -6372,7 +6372,7 @@
 		E596DD352519041400C275A7 /* ContactsSelectOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = E596DD332519041400C275A7 /* ContactsSelectOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E596DD58251BAC4A00C275A7 /* ContactProperty.h in Headers */ = {isa = PBXBuildFile; fileRef = E596DD56251BAC4A00C275A7 /* ContactProperty.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E596DD5D251BB08200C275A7 /* ContactInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = E596DD5B251BB08200C275A7 /* ContactInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		E59A1DCF2B7FEAE8007D9F0D /* MultiRepresentationHEICMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = E59A1DCE2B7FEAE8007D9F0D /* MultiRepresentationHEICMetrics.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E59A1DCF2B7FEAE8007D9F0D /* AdaptiveImageGlyphMetrics.h in Headers */ = {isa = PBXBuildFile; fileRef = E59A1DCE2B7FEAE8007D9F0D /* AdaptiveImageGlyphMetrics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E59DD4B821098287003C8B47 /* ListButtonArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = E59DD4B721098285003C8B47 /* ListButtonArrow.png */; };
 		E5BA7D63151437CA00FE1E3F /* LengthFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = E5BA7D62151437CA00FE1E3F /* LengthFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E5C59A9A24D0E1AA003B86E1 /* DateTimeChooserParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E5C59A9924D0E1AA003B86E1 /* DateTimeChooserParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -20958,7 +20958,7 @@
 		E596DD57251BAC4A00C275A7 /* ContactProperty.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContactProperty.idl; sourceTree = "<group>"; };
 		E596DD5B251BB08200C275A7 /* ContactInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ContactInfo.h; sourceTree = "<group>"; };
 		E596DD5C251BB08200C275A7 /* ContactInfo.idl */ = {isa = PBXFileReference; lastKnownFileType = text; path = ContactInfo.idl; sourceTree = "<group>"; };
-		E59A1DCE2B7FEAE8007D9F0D /* MultiRepresentationHEICMetrics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiRepresentationHEICMetrics.h; sourceTree = "<group>"; };
+		E59A1DCE2B7FEAE8007D9F0D /* AdaptiveImageGlyphMetrics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AdaptiveImageGlyphMetrics.h; sourceTree = "<group>"; };
 		E59DD4B721098285003C8B47 /* ListButtonArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ListButtonArrow.png; sourceTree = "<group>"; };
 		E5A7DF1E2D5688D500B52D7B /* CSSPropertyParserConsumer+AppleVisualEffect.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CSSPropertyParserConsumer+AppleVisualEffect.h"; sourceTree = "<group>"; };
 		E5A7DF1F2D5688D500B52D7B /* CSSPropertyParserConsumer+AppleVisualEffect.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CSSPropertyParserConsumer+AppleVisualEffect.cpp"; sourceTree = "<group>"; };
@@ -34401,6 +34401,7 @@
 			isa = PBXGroup;
 			children = (
 				72F8898D298887C500A6E07A /* controls */,
+				E59A1DCE2B7FEAE8007D9F0D /* AdaptiveImageGlyphMetrics.h */,
 				7BCD42DC2705C94900EB2127 /* ANGLEUtilitiesCocoa.h */,
 				7BCD42DA2705C94900EB2127 /* ANGLEUtilitiesCocoa.mm */,
 				CDF9950124C28149002EA062 /* AudioTrackPrivateWebM.cpp */,
@@ -34452,7 +34453,6 @@
 				CD3578AD2A28F5AA0059D97D /* MediaPlayerEnumsCocoa.mm */,
 				5AEBAD8B283583AE0069741F /* MediaPlayerPrivateWebM.h */,
 				5AEBAD8A283583AE0069741F /* MediaPlayerPrivateWebM.mm */,
-				E59A1DCE2B7FEAE8007D9F0D /* MultiRepresentationHEICMetrics.h */,
 				CDC522422A4F6E7900155FAE /* NullPlaybackSessionInterface.h */,
 				CDC522442A4F705F00155FAE /* NullVideoPresentationInterface.h */,
 				A19311012D1138B7003C8410 /* PlatformTimeRangesCocoa.mm */,
@@ -39943,6 +39943,7 @@
 				724EE5501DC80D7F00A91FFB /* ActivityState.h in Headers */,
 				F4C574762A84322A0024A071 /* ActivityState.serialization.in in Headers */,
 				724EE5511DC80D8400A91FFB /* ActivityStateChangeObserver.h in Headers */,
+				E59A1DCF2B7FEAE8007D9F0D /* AdaptiveImageGlyphMetrics.h in Headers */,
 				46BD05C525BB6E5900225F30 /* AddEventListenerOptions.h in Headers */,
 				A1677E0E213E02A000A08C34 /* AddressErrors.h in Headers */,
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
@@ -43292,7 +43293,6 @@
 				93309DFC099E64920056E581 /* MoveSelectionCommand.h in Headers */,
 				FDB1700614A2BAB200A2B5D9 /* MultiChannelResampler.h in Headers */,
 				517E03F724B6D9840054895A /* MultiGamepadProvider.h in Headers */,
-				E59A1DCF2B7FEAE8007D9F0D /* MultiRepresentationHEICMetrics.h in Headers */,
 				BCFE79AE2BE3082F00114272 /* MutableCSSSelector.h in Headers */,
 				26F756B01B3B65AC0005DD79 /* MutableRange.h in Headers */,
 				26F756B11B3B65AC0005DD79 /* MutableRangeList.h in Headers */,

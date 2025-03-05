@@ -142,8 +142,8 @@ public:
     WEBCORE_EXPORT bool isSystemPreviewImage() const;
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    bool isMultiRepresentationHEIC() const;
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    bool isAdaptiveImageGlyph() const;
 #endif
 
     void loadDeferredImage();

@@ -135,7 +135,7 @@ constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
     "image/vnd.switfview-jpeg"_s,
 #endif
     "image/webp"_s,
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
     "image/x-apple-adaptive-glyph"_s,
 #endif
 #if PLATFORM(IOS_FAMILY)

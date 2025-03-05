@@ -87,7 +87,7 @@
 #import "DataDetection.h"
 #endif
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 #import "PlatformNSAdaptiveImageGlyph.h"
 #endif
 
@@ -233,8 +233,8 @@ private:
 
     Element* _blockLevelElementForNode(Node*);
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    BOOL _addMultiRepresentationHEICAttachmentForImageElement(HTMLImageElement&);
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    BOOL _addAdaptiveImageGlyphAttachmentForImageElement(HTMLImageElement&);
 #endif
 
     void _newParagraphForElement(Element&, NSString *tag, BOOL flag, BOOL suppressTrailingSpace);
@@ -1206,14 +1206,14 @@ static Class _WebMessageDocumentClass()
     return _WebMessageDocumentClass;
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-BOOL HTMLConverter::_addMultiRepresentationHEICAttachmentForImageElement(HTMLImageElement& element)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+BOOL HTMLConverter::_addAdaptiveImageGlyphAttachmentForImageElement(HTMLImageElement& element)
 {
     RefPtr image = element.image();
     if (!image)
         return NO;
 
-    NSAdaptiveImageGlyph *attachment = image->adapter().multiRepresentationHEIC();
+    NSAdaptiveImageGlyph *attachment = image->adapter().adaptiveImageGlyph();
     if (!attachment)
         return NO;
 
@@ -1232,7 +1232,7 @@ BOOL HTMLConverter::_addMultiRepresentationHEICAttachmentForImageElement(HTMLIma
     _flags.isSoft = NO;
     return YES;
 }
-#endif // ENABLE(MULTI_REPRESENTATION_HEIC)
+#endif // ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
 BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL needsParagraph, BOOL usePlaceholder)
 {
@@ -1295,10 +1295,10 @@ BOOL HTMLConverter::_addAttachmentForElement(Element& element, NSURL *url, BOOL 
         NSRange rangeToReplace = NSMakeRange(textLength, 0);
         NSDictionary *attrs;
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
         if (RetainPtr data = [fileWrapper regularFileContents]) {
             RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element);
-            if (imageElement && imageElement->isMultiRepresentationHEIC())
+            if (imageElement && imageElement->isAdaptiveImageGlyph())
                 attachment = adoptNS([[PlatformNSAdaptiveImageGlyph alloc] initWithImageContent:data.get()]);
             if (attachment)
                 attributeName = NSAdaptiveImageGlyphAttributeName;
@@ -1794,9 +1794,9 @@ BOOL HTMLConverter::_processElement(Element& element, NSInteger depth)
         retval = NO;
 #endif
     } else if (RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element)) {
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-        if (imageElement->isMultiRepresentationHEIC())
-            retval = !_addMultiRepresentationHEICAttachmentForImageElement(*imageElement);
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+        if (imageElement->isAdaptiveImageGlyph())
+            retval = !_addAdaptiveImageGlyphAttachmentForImageElement(*imageElement);
 #endif
         RetainPtr urlString = element.imageSourceURL().createNSString();
         if (retval && urlString && [urlString length] > 0) {
@@ -2425,10 +2425,10 @@ static RetainPtr<NSAttributedString> attributedStringWithAttachmentForFileWrappe
 
 static RetainPtr<NSAttributedString> attributedStringWithAttachmentForElement(const HTMLImageElement& element)
 {
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    if (element.isMultiRepresentationHEIC()) {
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    if (element.isAdaptiveImageGlyph()) {
         if (RefPtr image = element.image()) {
-            if (NSAdaptiveImageGlyph *attachment = image->adapter().multiRepresentationHEIC()) {
+            if (NSAdaptiveImageGlyph *attachment = image->adapter().adaptiveImageGlyph()) {
                 RetainPtr attachmentString = adoptNS([[NSString alloc] initWithFormat:@"%C", static_cast<unichar>(NSAttachmentCharacter)]);
                 RetainPtr attributedString = adoptNS([[NSMutableAttributedString alloc] initWithString:attachmentString.get()]);
                 [attributedString addAttribute:NSAdaptiveImageGlyphAttributeName value:attachment range:NSMakeRange(0, 1)];

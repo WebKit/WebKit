@@ -49,8 +49,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/cf/VectorCF.h>
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-#include "MultiRepresentationHEICMetrics.h"
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+#include "AdaptiveImageGlyphMetrics.h"
 #endif
 
 #include <pal/cf/CoreTextSoftLink.h>
@@ -981,13 +981,13 @@ bool Font::hasAnyComplexColorFormatGlyphs(std::span<const GlyphBufferGlyph> glyp
     return false;
 }
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
-MultiRepresentationHEICMetrics Font::metricsForMultiRepresentationHEIC() const
+AdaptiveImageGlyphMetrics Font::metricsForAdaptiveImageGlyph() const
 {
     CGRect bounds = CTFontGetTypographicBoundsForAdaptiveImageProvider(getCTFont(), nullptr);
 
-    MultiRepresentationHEICMetrics metrics;
+    AdaptiveImageGlyphMetrics metrics;
     metrics.ascent = CGRectGetMaxY(bounds);
     metrics.descent = -CGRectGetMinY(bounds);
     metrics.width = CGRectGetMaxX(bounds);

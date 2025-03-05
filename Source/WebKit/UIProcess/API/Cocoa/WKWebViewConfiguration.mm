@@ -1518,15 +1518,15 @@ static WebKit::AttributionOverrideTesting toAttributionOverrideTesting(_WKAttrib
 
 - (void)_setMultiRepresentationHEICInsertionEnabled:(BOOL)enabled
 {
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    _pageConfiguration->setMultiRepresentationHEICInsertionEnabled(enabled);
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    _pageConfiguration->setAdaptiveImageGlyphInsertionEnabled(enabled);
 #endif
 }
 
 - (BOOL)_multiRepresentationHEICInsertionEnabled
 {
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    return _pageConfiguration->multiRepresentationHEICInsertionEnabled();
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    return _pageConfiguration->adaptiveImageGlyphInsertionEnabled();
 #else
     return NO;
 #endif

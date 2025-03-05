@@ -29,20 +29,44 @@ DECLARE_SYSTEM_HEADER
 
 #if USE(APPLE_INTERNAL_SDK)
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 #import <UIFoundation/NSAdaptiveImageGlyph_Private.h>
 #import <UIFoundation/NSEmojiImageAsset.h>
 #endif
 
 #else
 
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
 #if USE(APPKIT)
 #import <AppKit/NSAdaptiveImageGlyph.h>
 #else
 #import <UIKit/NSAdaptiveImageGlyph.h>
 #endif
+
+@interface CTEmojiImageStrike : NSObject
+
+- (instancetype)initWithImage:(CGImageRef)image alignmentInset:(CGSize)inset;
+
+#if HAVE(NS_EMOJI_IMAGE_STRIKE_PROVENANCE)
+
+- (instancetype)initWithImage:(CGImageRef)image alignmentInset:(CGSize)inset provenanceInfo:(NSDictionary*)provenanceInfo;
+
+@property (atomic, readonly) CGImageRef cgImage;
+@property (atomic, readonly) CGSize alignmentInset;
+@property (atomic, readonly, copy) NSDictionary *provenance;
+
+#endif
+
+@end
+
+@interface CTEmojiImageAsset : NSObject <NSCopying>
+
+- (instancetype)initWithContentIdentifier:(NSString*)identifier shortDescription:(NSString*)description strikeImages:(NSArray <CTEmojiImageStrike*> *)images;
+
+- (NSData *)imageData;
+
+@end
 
 @interface NSEmojiImageStrike : CTEmojiImageStrike
 @end
@@ -51,6 +75,10 @@ DECLARE_SYSTEM_HEADER
 @property (readonly) NSArray<NSEmojiImageStrike *> *strikes;
 @end
 
-#endif // ENABLE(MULTI_REPRESENTATION_HEIC)
+@interface CTAdaptiveImageGlyph : NSObject
++ (void)flushInstanceCache;
+@end
+
+#endif // ENABLE(ADAPTIVE_IMAGE_GLYPH)
 
 #endif // USE(APPLE_INTERNAL_SDK)

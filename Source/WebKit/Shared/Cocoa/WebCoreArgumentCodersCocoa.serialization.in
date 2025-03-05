@@ -230,10 +230,10 @@ header: <WebCore/AttributedString.h>
 }
 
 [Nested] struct WebCore::AttributedString::AttributeValue {
-#if ENABLE(MULTI_REPRESENTATION_HEIC)
-    Variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::MultiRepresentationHEICAttachmentData, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
+#if ENABLE(ADAPTIVE_IMAGE_GLYPH)
+    Variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::AdaptiveImageGlyphAttachmentData, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
 #endif
-#if !ENABLE(MULTI_REPRESENTATION_HEIC)
+#if !ENABLE(ADAPTIVE_IMAGE_GLYPH)
     Variant<double, String, URL, Ref<WebCore::Font>, Vector<String>, Vector<double>, WebCore::ParagraphStyle, RetainPtr<NSPresentationIntent>, RetainPtr<NSShadow>, RetainPtr<NSDate>, WebCore::AttributedString::ColorFromCGColor, WebCore::AttributedString::ColorFromPlatformColor, WebCore::TextAttachmentFileWrapper, WebCore::TextAttachmentMissingImage> value;
 #endif
 }
