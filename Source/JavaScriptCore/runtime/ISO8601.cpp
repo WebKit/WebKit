@@ -1409,7 +1409,7 @@ String temporalTimeToString(PlainTime plainTime, std::tuple<Precision, unsigned>
     return makeString(pad('0', 2, plainTime.hour()), ':', pad('0', 2, plainTime.minute()), ':', pad('0', 2, plainTime.second()), '.', pad('0', paddingLength, emptyString()), fraction);
 }
 
-String temporalDateToString(double year, double month)
+static String temporalDateToString(double year, double month)
 {
     String prefix;
     auto yearDigits = 4;
@@ -1422,7 +1422,7 @@ String temporalDateToString(double year, double month)
     return makeString(prefix, pad('0', yearDigits, year), '-', pad('0', 2, month));
 }
 
-String temporalDateToString(double year, double month, double day)
+static String temporalDateToString(double year, double month, double day)
 {
     auto first = temporalDateToString(year, month);
     return makeString(first, '-', pad('0', 2, day));
