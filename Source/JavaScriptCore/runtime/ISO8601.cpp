@@ -538,32 +538,26 @@ static bool canBeCalendar(const StringParsingBuffer<CharacterType>& buffer)
     // Annotation :::
     //     [ AnnotationCriticalFlag[opt] AnnotationKey = AnnotationValue ]
     //
-    // https://tc39.es/proposal-temporal/#prod-AnnotationCriticalFlag
     // AnnotationCriticalFlag :::
     //     !
     //
-    // https://tc39.es/proposal-temporal/#prod-AnnotationKey
     // AnnotationKey :::
     //     AKeyLeadingChar
     //     AnnotationKey AKeyChar
     //
-    // https://tc39.es/proposal-temporal/#prod-AKeyLeadingChar
     // AKeyLeadingChar :::
     //     LowercaseAlpha
     //     _
     //
-    // https://tc39.es/proposal-temporal/#prod-AKeyChar
     // AKeyChar :::
     //     AKeyLeadingChar
     //     DecimalDigit
     //     -
     //
-    // https://tc39.es/proposal-temporal/#prod-AnnotationValue
     // AnnotationValue :::
     //     AnnotationValueComponent
     //     AnnotationValueComponent - AnnotationValue
     //
-    // https://tc39.es/proposal-temporal/#prod-AnnotationValueComponent
     // AnnotationValueComponent :::
     //     Alpha AnnotationValueComponent[opt]
     //     DecimalDigit AnnotationValueComponent[opt]
