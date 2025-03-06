@@ -78,7 +78,7 @@ void MicrotaskQueue::performMicrotaskCheckpoint()
 
     m_microtaskQueue.performMicrotaskCheckpoint(vm,
         [&](JSC::QueuedTask& task) ALWAYS_INLINE_LAMBDA {
-            RefPtr dispatcher = static_cast<WebCoreMicrotaskDispatcher*>(task.dispatcher());
+            RefPtr dispatcher = downcast<WebCoreMicrotaskDispatcher>(task.dispatcher());
             if (UNLIKELY(!dispatcher))
                 return QueuedTask::Result::Discard;
 

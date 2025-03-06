@@ -93,6 +93,7 @@ public:
     virtual ~MicrotaskDispatcher() = default;
     virtual QueuedTask::Result run(QueuedTask&) = 0;
     virtual bool isRunnable() const = 0;
+    virtual bool isWebCoreMicrotaskDispatcher() const { return false; }
 };
 
 class MarkedMicrotaskDeque {

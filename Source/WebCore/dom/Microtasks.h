@@ -59,6 +59,8 @@ public:
     JSC::QueuedTask::Result currentRunnability() const;
 
 private:
+    bool isWebCoreMicrotaskDispatcher() const final { return true; }
+
     Type m_type { Type::JavaScript };
     WeakPtr<EventLoopTaskGroup> m_group;
 };
@@ -90,3 +92,7 @@ private:
 };
 
 } // namespace WebCore
+
+SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::WebCoreMicrotaskDispatcher)
+    static bool isType(const JSC::MicrotaskDispatcher& dispatcher) { return dispatcher.isWebCoreMicrotaskDispatcher(); }
+SPECIALIZE_TYPE_TRAITS_END()
