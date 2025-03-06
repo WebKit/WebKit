@@ -1,6 +1,6 @@
 
 PASS contents for selector ['auto']
 PASS contents for selector ['_abcd']
-FAIL expected empty selector when assigning blank string assert_equals: unexpected selector when assigning blank string expected "" but got "auto"
+PASS expected empty selector when assigning blank string
 FAIL CSS Paged Media: parsing @page selectors assert_equals: missing @page selectors expected 0 but got 7
 

@@ -99,7 +99,7 @@ public:
     static bool parseDeclarationList(MutableStyleProperties*, const String&, const CSSParserContext&);
     static RefPtr<StyleRuleBase> parseRule(const String&, const CSSParserContext&, StyleSheetContents*, AllowedRules, CSSParserEnum::NestedContext = { });
     static void parseStyleSheet(const String&, const CSSParserContext&, StyleSheetContents&);
-    static CSSSelectorList parsePageSelector(CSSParserTokenRange, StyleSheetContents*);
+    static CSSSelectorList parsePageSelector(CSSParserTokenRange);
 
     static Vector<std::pair<CSSValueID, double>> parseKeyframeKeyList(const String&, const CSSParserContext&);
 

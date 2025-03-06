@@ -218,7 +218,6 @@ css/CSSImageSetValue.cpp
 css/CSSImageValue.cpp
 css/CSSKeyframeRule.cpp
 css/CSSLayerBlockRule.cpp
-css/CSSPageRule.cpp
 css/CSSPrimitiveValue.cpp
 css/CSSRule.cpp
 css/CSSStyleRule.cpp

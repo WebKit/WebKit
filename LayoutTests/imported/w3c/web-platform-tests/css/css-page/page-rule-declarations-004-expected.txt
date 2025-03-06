@@ -4,7 +4,7 @@ PASS adding a blank @page rule
 PASS assigning invalid selector text ['1']
 PASS assigning invalid selector text ['-3']
 FAIL assigning invalid selector text ['--a'] assert_equals: should not be able to assign an invalid selector expected "" but got "--a"
-FAIL assigning invalid selector text ['7cm'] assert_equals: should not be able to assign an invalid selector expected "" but got "--a"
-FAIL assigning invalid selector text ['0.17'] assert_equals: should not be able to assign an invalid selector expected "" but got "--a"
-FAIL assigning invalid selector text ['a, 123'] assert_equals: should not be able to assign an invalid selector expected "" but got "--a"
+PASS assigning invalid selector text ['7cm']
+PASS assigning invalid selector text ['0.17']
+PASS assigning invalid selector text ['a, 123']
 

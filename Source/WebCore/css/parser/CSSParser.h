@@ -77,6 +77,8 @@ public:
 
     WEBCORE_EXPORT std::optional<CSSSelectorList> parseSelectorList(const String&, StyleSheetContents* = nullptr, CSSParserEnum::NestedContext = { });
 
+    WEBCORE_EXPORT std::optional<CSSSelectorList> parsePageSelector(const String&);
+
     // FIXME: All callers are not getting the right Settings, keyword resolution and calc resolution when using this
     // function and should switch to the parseColorRaw() function in CSSPropertyParserConsumer+Color.h.
     WEBCORE_EXPORT static Color parseColorWithoutContext(const String&, bool strict = false);

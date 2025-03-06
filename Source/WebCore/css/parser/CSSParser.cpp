@@ -149,6 +149,11 @@ std::optional<CSSSelectorList> CSSParser::parseSelectorList(const String& string
     return parseCSSSelectorList(CSSTokenizer(string).tokenRange(), m_context, styleSheet, nestedContext);
 }
 
+std::optional<CSSSelectorList> CSSParser::parsePageSelector(const String& string)
+{
+    return CSSParserImpl::parsePageSelector(CSSTokenizer(string).tokenRange());
+}
+
 Ref<ImmutableStyleProperties> CSSParser::parseInlineStyleDeclaration(const String& string, const Element& element)
 {
     return CSSParserImpl::parseInlineStyleDeclaration(string, element);
