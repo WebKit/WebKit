@@ -60,29 +60,29 @@ void SharedWorkerContextManager::stopSharedWorker(SharedWorkerIdentifier sharedW
 
     // FIXME: We should be able to deal with the thread being unresponsive here.
 
-    auto& thread = worker->thread();
-    thread.stop([worker = WTFMove(worker)]() mutable {
+    Ref thread = worker->thread();
+    thread->stop([worker = WTFMove(worker)]() mutable {
         // Spin the runloop before releasing the shared worker thread proxy, as there would otherwise be
         // a race towards its destruction.
         callOnMainThread([worker = WTFMove(worker)] { });
     });
 
-    if (auto* connection = SharedWorkerContextManager::singleton().connection())
+    if (RefPtr connection = SharedWorkerContextManager::singleton().connection())
         connection->sharedWorkerTerminated(sharedWorkerIdentifier);
 }
 
 void SharedWorkerContextManager::suspendSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
 {
-    auto* worker = m_workerMap.get(sharedWorkerIdentifier);
-    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::suspendSharedWorker: sharedWorkerIdentifier=%" PRIu64 ", worker=%p", sharedWorkerIdentifier.toUInt64(), worker);
+    RefPtr worker = m_workerMap.get(sharedWorkerIdentifier);
+    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::suspendSharedWorker: sharedWorkerIdentifier=%" PRIu64 ", worker=%p", sharedWorkerIdentifier.toUInt64(), worker.get());
     if (worker)
         worker->thread().suspend();
 }
 
 void SharedWorkerContextManager::resumeSharedWorker(SharedWorkerIdentifier sharedWorkerIdentifier)
 {
-    auto* worker = m_workerMap.get(sharedWorkerIdentifier);
-    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::resumeSharedWorker: sharedWorkerIdentifier=%" PRIu64 ", worker=%p", sharedWorkerIdentifier.toUInt64(), worker);
+    RefPtr worker = m_workerMap.get(sharedWorkerIdentifier);
+    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::resumeSharedWorker: sharedWorkerIdentifier=%" PRIu64 ", worker=%p", sharedWorkerIdentifier.toUInt64(), worker.get());
     if (worker)
         worker->thread().resume();
 }
@@ -118,8 +118,8 @@ void SharedWorkerContextManager::registerSharedWorkerThread(Ref<SharedWorkerThre
 void SharedWorkerContextManager::Connection::postConnectEvent(SharedWorkerIdentifier sharedWorkerIdentifier, TransferredMessagePort&& transferredPort, String&& sourceOrigin, CompletionHandler<void(bool)>&& completionHandler)
 {
     ASSERT(isMainThread());
-    auto* proxy = SharedWorkerContextManager::singleton().sharedWorker(sharedWorkerIdentifier);
-    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::Connection::postConnectEvent: sharedWorkerIdentifier=%" PRIu64 ", proxy=%p", sharedWorkerIdentifier.toUInt64(), proxy);
+    RefPtr proxy = SharedWorkerContextManager::singleton().sharedWorker(sharedWorkerIdentifier);
+    RELEASE_LOG(SharedWorker, "SharedWorkerContextManager::Connection::postConnectEvent: sharedWorkerIdentifier=%" PRIu64 ", proxy=%p", sharedWorkerIdentifier.toUInt64(), proxy.get());
     if (!proxy)
         return completionHandler(false);
 

@@ -140,9 +140,9 @@ private:
     void resetUserGesture() { m_isProcessingUserGesture = false; }
 
     ServiceWorkerContextData m_contextData;
-    Ref<ServiceWorkerRegistration> m_registration;
-    Ref<ServiceWorker> m_serviceWorker;
-    Ref<ServiceWorkerClients> m_clients;
+    const Ref<ServiceWorkerRegistration> m_registration;
+    const Ref<ServiceWorker> m_serviceWorker;
+    const Ref<ServiceWorkerClients> m_clients;
     Vector<Ref<ExtendableEvent>> m_extendedEvents;
 
     uint64_t m_lastRequestIdentifier { 0 };

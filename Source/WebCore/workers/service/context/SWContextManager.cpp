@@ -48,8 +48,8 @@ SWContextManager& SWContextManager::singleton()
 void SWContextManager::setConnection(Ref<Connection>&& connection)
 {
     ASSERT(!m_connection || m_connection->isClosed());
-    if (m_connection)
-        m_connection->stop();
+    if (RefPtr connection = m_connection)
+        connection->stop();
     m_connection = WTFMove(connection);
 }
 
@@ -82,10 +82,10 @@ void SWContextManager::registerServiceWorkerThreadForInstall(Ref<ServiceWorkerTh
 void SWContextManager::startedServiceWorker(std::optional<ServiceWorkerJobDataIdentifier> jobDataIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const String& exceptionMessage, bool doesHandleFetch)
 {
     if (!exceptionMessage.isEmpty()) {
-        connection()->serviceWorkerFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
+        protectedConnection()->serviceWorkerFailedToStart(jobDataIdentifier, serviceWorkerIdentifier, exceptionMessage);
         return;
     }
-    connection()->serviceWorkerStarted(jobDataIdentifier, serviceWorkerIdentifier, doesHandleFetch);
+    protectedConnection()->serviceWorkerStarted(jobDataIdentifier, serviceWorkerIdentifier, doesHandleFetch);
 }
 
 ServiceWorkerThreadProxy* SWContextManager::serviceWorkerThreadProxy(ServiceWorkerIdentifier identifier) const
@@ -104,7 +104,7 @@ RefPtr<ServiceWorkerThreadProxy> SWContextManager::serviceWorkerThreadProxyFromB
 
 void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireInstallEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         return;
@@ -115,7 +115,7 @@ void SWContextManager::fireInstallEvent(ServiceWorkerIdentifier identifier)
 
 void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireActivateEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         return;
@@ -126,7 +126,7 @@ void SWContextManager::fireActivateEvent(ServiceWorkerIdentifier identifier)
 
 void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::optional<Vector<uint8_t>>&& data, std::optional<NotificationPayload>&& proposedPayload, CompletionHandler<void(bool, std::optional<NotificationPayload>&&)>&& callback)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::firePushEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false, WTFMove(proposedPayload));
@@ -138,7 +138,7 @@ void SWContextManager::firePushEvent(ServiceWorkerIdentifier identifier, std::op
 
 void SWContextManager::firePushSubscriptionChangeEvent(ServiceWorkerIdentifier identifier, std::optional<PushSubscriptionData>&& newSubscriptionData, std::optional<PushSubscriptionData>&& oldSubscriptionData)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::firePushSubscriptionChangeEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         return;
@@ -149,7 +149,7 @@ void SWContextManager::firePushSubscriptionChangeEvent(ServiceWorkerIdentifier i
 
 void SWContextManager::fireNotificationEvent(ServiceWorkerIdentifier identifier, NotificationData&& data, NotificationEventType eventType, CompletionHandler<void(bool)>&& callback)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireNotificationEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false);
@@ -161,7 +161,7 @@ void SWContextManager::fireNotificationEvent(ServiceWorkerIdentifier identifier,
 
 void SWContextManager::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireBackgroundFetchEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false);
@@ -173,7 +173,7 @@ void SWContextManager::fireBackgroundFetchEvent(ServiceWorkerIdentifier identifi
 
 void SWContextManager::fireBackgroundFetchClickEvent(ServiceWorkerIdentifier identifier, BackgroundFetchInformation&& info, CompletionHandler<void(bool)>&& callback)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker) {
         RELEASE_LOG_ERROR(ServiceWorker, "SWContextManager::fireBackgroundFetchClickEvent but service worker %" PRIu64 " not found", identifier.toUInt64());
         callback(false);
@@ -208,11 +208,11 @@ void SWContextManager::stopWorker(ServiceWorkerThreadProxy& serviceWorker, Secon
 
     m_pendingServiceWorkerTerminationRequests.add(identifier, makeUnique<ServiceWorkerTerminationRequest>(*this, identifier, timeout));
 
-    auto& thread = serviceWorker.thread();
-    thread.stop([this, identifier, serviceWorker = Ref { serviceWorker }, completionHandler = WTFMove(completionHandler)]() mutable {
+    Ref thread = serviceWorker.thread();
+    thread->stop([this, identifier, serviceWorker = Ref { serviceWorker }, completionHandler = WTFMove(completionHandler)]() mutable {
         m_pendingServiceWorkerTerminationRequests.remove(identifier);
 
-        if (auto* connection = SWContextManager::singleton().connection())
+        if (RefPtr connection = SWContextManager::singleton().connection())
             connection->workerTerminated(identifier);
 
         if (completionHandler)
@@ -233,7 +233,7 @@ void SWContextManager::forEachServiceWorker(NOESCAPE const Function<Function<voi
 
 bool SWContextManager::postTaskToServiceWorker(ServiceWorkerIdentifier identifier, Function<void(ServiceWorkerGlobalScope&)>&& task)
 {
-    auto* serviceWorker = serviceWorkerThreadProxy(identifier);
+    RefPtr serviceWorker = serviceWorkerThreadProxy(identifier);
     if (!serviceWorker)
         return false;
 
@@ -270,8 +270,8 @@ void SWContextManager::stopAllServiceWorkers()
 
 void SWContextManager::setAsInspected(ServiceWorkerIdentifier identifier, bool isInspected)
 {
-    if (m_connection)
-        m_connection->setAsInspected(identifier, isInspected);
+    if (RefPtr connection = m_connection)
+        connection->setAsInspected(identifier, isInspected);
 }
 
 void SWContextManager::setInspectable(bool inspectable)
@@ -343,10 +343,12 @@ void SWContextManager::setRegistrationUpdateViaCache(ServiceWorkerRegistrationId
 void SWContextManager::removeFetch(ServiceWorkerIdentifier serviceWorkerIdentifier, SWServerConnectionIdentifier serverConnectionIdentifier, FetchIdentifier fetchIdentifier, bool isNavigationFetch)
 {
     ASSERT(isMainThread());
-    if (auto* proxy = serviceWorkerThreadProxy(serviceWorkerIdentifier))
+    if (RefPtr proxy = serviceWorkerThreadProxy(serviceWorkerIdentifier))
         proxy->removeFetch(serverConnectionIdentifier, fetchIdentifier);
-    if (isNavigationFetch && m_connection)
-        m_connection->removeNavigationFetch(serverConnectionIdentifier, fetchIdentifier);
+    if (isNavigationFetch) {
+        if (RefPtr connection = m_connection)
+            connection->removeNavigationFetch(serverConnectionIdentifier, fetchIdentifier);
+    }
 }
 
 } // namespace WebCore

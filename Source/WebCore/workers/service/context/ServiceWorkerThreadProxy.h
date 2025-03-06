@@ -41,6 +41,7 @@
 #include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/URLHash.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 
@@ -132,13 +133,13 @@ private:
     // WorkerBadgeProxy
     void setAppBadge(std::optional<uint64_t>) final;
 
-    Ref<Page> m_page;
-    Ref<Document> m_document;
+    const Ref<Page> m_page;
+    const Ref<Document> m_document;
 #if ENABLE(REMOTE_INSPECTOR)
-    Ref<ServiceWorkerDebuggable> m_remoteDebuggable;
+    const Ref<ServiceWorkerDebuggable> m_remoteDebuggable;
 #endif
-    Ref<ServiceWorkerThread> m_serviceWorkerThread;
-    CacheStorageProvider& m_cacheStorageProvider;
+    const Ref<ServiceWorkerThread> m_serviceWorkerThread;
+    WeakRef<CacheStorageProvider> m_cacheStorageProvider;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     bool m_isTerminatingOrTerminated { false };
 

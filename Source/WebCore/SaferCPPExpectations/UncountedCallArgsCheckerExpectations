@@ -1436,16 +1436,8 @@ workers/service/background-fetch/BackgroundFetch.cpp
 workers/service/background-fetch/BackgroundFetchEngine.cpp
 workers/service/background-fetch/BackgroundFetchRegistration.cpp
 workers/service/background-fetch/ServiceWorkerRegistrationBackgroundFetchAPI.cpp
-workers/service/context/SWContextManager.cpp
-workers/service/context/ServiceWorkerFetch.cpp
-workers/service/context/ServiceWorkerInspectorProxy.cpp
-workers/service/context/ServiceWorkerThread.cpp
-workers/service/context/ServiceWorkerThreadProxy.cpp
-workers/service/server/SWScriptStorage.cpp
 workers/shared/SharedWorker.cpp
 workers/shared/SharedWorkerScriptLoader.cpp
-workers/shared/context/SharedWorkerContextManager.cpp
-workers/shared/context/SharedWorkerThreadProxy.cpp
 worklets/PaintWorkletGlobalScope.cpp
 worklets/WorkletGlobalScope.cpp
 worklets/WorkletPendingTasks.cpp

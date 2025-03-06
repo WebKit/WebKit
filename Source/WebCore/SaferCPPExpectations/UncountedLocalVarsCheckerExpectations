@@ -782,11 +782,8 @@ workers/service/ServiceWorkerGlobalScope.cpp
 workers/service/ServiceWorkerRegistration.cpp
 workers/service/WorkerSWClientConnection.cpp
 workers/service/background-fetch/BackgroundFetchEngine.cpp
-workers/service/context/SWContextManager.cpp
-workers/service/context/ServiceWorkerThread.cpp
 workers/shared/SharedWorkerObjectConnection.cpp
 workers/shared/SharedWorkerScriptLoader.cpp
-workers/shared/context/SharedWorkerContextManager.cpp
 worklets/Worklet.cpp
 xml/XMLHttpRequest.cpp
 xml/XPathFunctions.cpp

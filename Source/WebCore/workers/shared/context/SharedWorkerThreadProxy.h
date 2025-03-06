@@ -96,10 +96,10 @@ private:
 
     ReportingClient* reportingClient() const final;
 
-    Ref<Page> m_page;
-    Ref<Document> m_document;
+    const Ref<Page> m_page;
+    const Ref<Document> m_document;
     ScriptExecutionContextIdentifier m_contextIdentifier;
-    Ref<SharedWorkerThread> m_workerThread;
+    const Ref<SharedWorkerThread> m_workerThread;
     WeakRef<CacheStorageProvider> m_cacheStorageProvider;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
     bool m_isTerminatingOrTerminated { false };

@@ -72,8 +72,4 @@ style/StyleResolver.cpp
 testing/Internals.cpp
 testing/ServiceWorkerInternals.cpp
 workers/WorkerGlobalScope.cpp
-workers/service/context/SWContextManager.cpp
-workers/service/context/ServiceWorkerThread.cpp
-workers/service/context/ServiceWorkerThreadProxy.cpp
-workers/shared/context/SharedWorkerContextManager.cpp
 xml/XSLTProcessor.cpp

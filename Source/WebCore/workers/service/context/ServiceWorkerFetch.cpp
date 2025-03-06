@@ -139,9 +139,10 @@ static void processResponse(Ref<Client>&& client, Expected<Ref<FetchResponse>, s
                 return;
             }
 
-            if (auto* chunk = result.returnValue())
-                client->didReceiveData(SharedBuffer::create(*chunk));
-            else
+            if (auto* chunk = result.returnValue()) {
+                Ref buffer = SharedBuffer::create(*chunk);
+                client->didReceiveData(buffer);
+            } else
                 client->didFinish(response ? response->networkLoadMetrics() : NetworkLoadMetrics { });
         });
         return;

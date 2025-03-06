@@ -9,4 +9,3 @@ platform/ios/PlaybackSessionInterfaceIOS.h
 rendering/RenderAncestorIterator.h
 svg/properties/SVGPropertyOwnerRegistry.h
 workers/DedicatedWorkerThread.h
-workers/service/context/ServiceWorkerThread.h

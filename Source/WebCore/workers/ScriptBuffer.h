@@ -50,6 +50,7 @@ public:
 
     String toString() const;
     const FragmentedSharedBuffer* buffer() const { return m_buffer.get().get(); }
+    RefPtr<const FragmentedSharedBuffer> protectedBuffer() const { return m_buffer.get(); }
 
     ScriptBuffer isolatedCopy() const { return ScriptBuffer(m_buffer ? RefPtr<FragmentedSharedBuffer>(m_buffer.copy()) : nullptr); }
     explicit operator bool() const { return !!m_buffer; }
