@@ -9,7 +9,6 @@
 
 from __future__ import print_function
 
-import fileinput
 import sys
 import struct
 
