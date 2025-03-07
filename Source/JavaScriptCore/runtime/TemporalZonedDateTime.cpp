@@ -725,8 +725,9 @@ TemporalZonedDateTime* TemporalZonedDateTime::from(JSGlobalObject* globalObject,
             throwRangeError(globalObject, scope, "string must have a time zone annotation to convert to ZonedDateTime"_s);
             return { };
     }
-        if (!(timeZoneOptional->m_z || (timeZoneOptional->m_annotation &&
-            (timeZoneOptional->m_annotation->m_offset || isUTCTimeZoneAnnotation(timeZoneOptional->m_annotation))))) {
+        if (!(timeZoneOptional->m_z || (timeZoneOptional->m_annotation
+            && (timeZoneOptional->m_annotation->m_offset
+                || isUTCTimeZoneAnnotation(timeZoneOptional->m_annotation))))) {
             throwRangeError(globalObject, scope, "in Temporal.ZonedDateTime, parsing strings with named time zones not implemented yet"_s);
             return { };
         }

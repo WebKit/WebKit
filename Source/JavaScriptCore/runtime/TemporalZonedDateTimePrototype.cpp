@@ -740,9 +740,8 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek, (JSGlob
 
     auto isoDateTime = TemporalTimeZone::getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
     auto result = TemporalCalendar::calendarDateWeekOfYear(globalObject, isoDateTime.date()).year;
-    if (!result) {
+    if (!result)
         return JSValue::encode(jsUndefined());
-    }
     return JSValue::encode(jsNumber(result.value()));
 }
 
