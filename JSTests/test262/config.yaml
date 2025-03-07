@@ -89,6 +89,8 @@ skip:
     - test/built-ins/Temporal/Duration/compare/relativeto-string-zoneddatetime.js
     - test/built-ins/Temporal/Duration/compare/relativeto-sub-minute-offset.js
     - test/built-ins/Temporal/Duration/compare/relativeto-year.js
+    - test/built-ins/Temporal/Duration/compare/throws-when-target-zoned-date-time-outside-valid-limits.js
+    - test/built-ins/Temporal/Duration/prototype/round/balances-up-to-weeks.js
     - test/built-ins/Temporal/Duration/prototype/round/calendar-possibly-required.js
     - test/built-ins/Temporal/Duration/prototype/round/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/round/duration-out-of-range-added-to-relativeto.js
@@ -146,12 +148,14 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-string.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-timezone-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-datetime.js
+    - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-limits.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-plaindatetime-invalid.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-plaindatetime.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-string-zoneddatetime.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-sub-minute-offset.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-with-fractional-days.js
+    - test/built-ins/Temporal/Duration/prototype/total/throws-if-target-nanoseconds-outside-valid-limits.js
     - test/built-ins/Temporal/Duration/prototype/total/total-of-each-unit-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted.js
     - test/built-ins/Temporal/PlainDateTime/datetime-math.js

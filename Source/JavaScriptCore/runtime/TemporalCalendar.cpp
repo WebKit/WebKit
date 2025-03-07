@@ -885,13 +885,13 @@ TemporalCalendar::interpretTemporalDateTimeFields(JSGlobalObject* globalObject, 
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
-static ISO8601::PlainDate balanceISODate(double year, double month, double day)
+ISO8601::PlainDate TemporalCalendar::balanceISODate(double year, double month, double day)
 {
     auto epochDays = makeDay(year, month - 1, day);
     double ms = makeDate(epochDays, 0);
-    int32_t y = epochTimeToEpochYear(ms);
-    int32_t m = epochTimeToMonthInYear(ms) + 1;
-    int32_t d = std::trunc(epochTimeToDate(ms));
+    int32_t y = TemporalCalendar::epochTimeToEpochYear(ms);
+    int32_t m = TemporalCalendar::epochTimeToMonthInYear(ms) + 1;
+    int32_t d = std::trunc(TemporalCalendar::epochTimeToDate(ms));
     return ISO8601::PlainDate { y, (unsigned) m, (unsigned) d };
 }
 
@@ -987,10 +987,10 @@ ISO8601::Duration TemporalCalendar::calendarDateUntil(const ISO8601::PlainDate& 
 
         auto candidateMonths = sign;
         auto intermediate = balanceISOYearMonth(one.year() + years, one.month() + candidateMonths);
-        while (!isoDateSurpasses(sign, intermediate.year, intermediate.month, one.day(), two)) {
+        while (!isoDateSurpasses(sign, intermediate.year(), intermediate.month(), one.day(), two)) {
             months = candidateMonths;
             candidateMonths += sign;
-            intermediate = balanceISOYearMonth(intermediate.year, intermediate.month + sign);
+            intermediate = balanceISOYearMonth(intermediate.year(), intermediate.month() + sign);
         }
 
         if (largestUnit == TemporalUnit::Month) {
@@ -1104,6 +1104,89 @@ bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* ot
     RETURN_IF_EXCEPTION(scope, false);
 
     RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
+}
+
+CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate) {
+    // Compute day of week
+    auto month = isoDate.month();
+    auto year = isoDate.year();
+    auto day = isoDate.day();
+    auto shiftedMonth = month + (month < 3 ? 10 : -2);
+    auto shiftedYear = year - (month < 3 ? 1 : 0);
+    auto century = std::floor(shiftedYear / 100);
+    auto yearInCentury = shiftedYear - century * 100;
+    auto monthTerm = std::floor(2.6 * shiftedMonth - 0.2);
+    auto yearTerm = yearInCentury + std::floor(yearInCentury / 4);
+    auto centuryTerm = std::floor(century / 4) - 2 * century;
+    auto dow = std::fmod(day + monthTerm + yearTerm + centuryTerm, 7);
+
+    int32_t dayOfWeek = dow + (dow <= 0 ? 7 : 0);
+
+    // Compute day of year
+    int32_t dayOfYear = day;
+    for (int32_t m = month - 1; m > 0; m--) {
+        dayOfYear += ISO8601::daysInMonth(year, m);
+    }
+
+    // Compute days in year
+    int32_t daysInYear = isLeapYear(year) ? 366 : 365;
+
+    return { dayOfWeek, dayOfYear, daysInYear };
+}
+
+static int32_t weekNumber(int32_t firstDayOfWeek, int32_t minimalDaysInFirstWeek,
+    int32_t desiredDay, int32_t dayOfWeek)
+{
+    auto periodStartDayOfWeek = (dayOfWeek - firstDayOfWeek - desiredDay + 1) % 7;
+    if (periodStartDayOfWeek < 0)
+        periodStartDayOfWeek += 7;
+    auto weekNo = std::floor((desiredDay + periodStartDayOfWeek - 1) / 7);
+    if (7 - periodStartDayOfWeek >= minimalDaysInFirstWeek)
+        weekNo++;
+    return weekNo;
+
+}
+
+// Follows the polyfill due to the definition of EpochTimeToEpochYear
+// in the spec
+YearWeekRecord TemporalCalendar::calendarDateWeekOfYear(JSGlobalObject* globalObject,
+    const ISO8601::PlainDate& isoDate)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    double yearOfWeek = isoDate.year();
+    auto [ dayOfWeek, dayOfYear, daysInYear ] = isoToDate(isoDate);
+    auto firstDayOfWeek = 1;
+    auto minimalDaysInWeek = 4;
+
+    auto relativeDayOfWeek = (dayOfWeek + 7 - firstDayOfWeek) % 7;
+    auto relativeDayOfWeekJan1 = (dayOfWeek - dayOfYear + 7001 - firstDayOfWeek) % 7;
+    auto weekOfYear = std::floor((dayOfYear - 1 + relativeDayOfWeekJan1) / 7);
+    if (7 - relativeDayOfWeekJan1 >= minimalDaysInWeek)
+        weekOfYear++;
+
+    if (weekOfYear == 0) {
+        auto prevYearCalendar = isoToDate(isoDateAdd(globalObject, isoDate,
+            { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, TemporalOverflow::Constrain));
+        auto previousDayOfYear = dayOfYear = prevYearCalendar.daysInYear;
+        RETURN_IF_EXCEPTION(scope, { });
+        weekOfYear = weekNumber(firstDayOfWeek, minimalDaysInWeek, previousDayOfYear, dayOfWeek);
+        yearOfWeek--;
+    } else {
+        auto lastDayOfYear = daysInYear;
+        if (dayOfYear >= lastDayOfYear - 5) {
+            auto lastRelativeDayOfWeek = (relativeDayOfWeek + lastDayOfYear - dayOfYear) % 7;
+            if (lastRelativeDayOfWeek < 0)
+                lastRelativeDayOfWeek += 7;
+            if (6 - lastRelativeDayOfWeek >= minimalDaysInWeek && dayOfYear + 7 - relativeDayOfWeek > lastDayOfYear) {
+                weekOfYear = 1;
+                yearOfWeek++;
+            }
+        }
+    }
+
+    return { weekOfYear, yearOfWeek };
 }
 
 } // namespace JSC

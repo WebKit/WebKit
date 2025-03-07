@@ -33,6 +33,8 @@
 #include "LazyPropertyInlines.h"
 #include "TemporalDuration.h"
 #include "TemporalPlainDateTime.h"
+#include "TemporalTimeZone.h"
+#include "TemporalZonedDateTime.h"
 #include "VMTrapsInlines.h"
 
 namespace JSC {
@@ -363,49 +365,6 @@ ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject*
             globalObject, duration, destEpochNs, isoDateTime, std::nullopt, largestUnit,
             increment, smallestUnit, roundingMode);
         RETURN_IF_EXCEPTION(scope, { });
-    }
-    // Step 9.
-    auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);
-    if (isSince)
-        result = -result;
-    return result;
-}
-
-// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
-static Int128 getUTCEpochNanoseconds(ISO8601::PlainDate isoDate)
-{
-    return getUTCEpochNanoseconds(
-        std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(
-            isoDate, ISO8601::PlainTime()));
-}
-
-ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject* globalObject, bool isSince, TemporalPlainDate* other, TemporalUnit smallestUnit, TemporalUnit largestUnit, RoundingMode roundingMode, double increment)
-{
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    // Steps 1-4 already done
-    // Step 5
-    if (!TemporalCalendar::isoDateCompare(plainDate(), other->plainDate())) {
-        // 5a.
-        return ISO8601::Duration();
-    }
-    // Step 6
-    ISO8601::Duration dateDifference = TemporalCalendar::calendarDateUntil(plainDate(), other->plainDate(), largestUnit);
-    // Step 7
-    ISO8601::InternalDuration duration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, dateDifference, 0);
-    RETURN_IF_EXCEPTION(scope, { });
-    if (smallestUnit != TemporalUnit::Day || increment != 1) {
-        // Step 8a.
-        auto isoDate = plainDate();
-        // Step 8b.
-        auto isoDateOther = other->plainDate();
-        // Step 8c.
-        Int128 destEpochNs = getUTCEpochNanoseconds(isoDateOther);
-        // Step 8d.
-        TemporalDuration::roundRelativeDuration(
-            globalObject, duration, destEpochNs, isoDate, largestUnit,
-            increment, smallestUnit, roundingMode);
     }
     // Step 9.
     auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);
