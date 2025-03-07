@@ -2132,7 +2132,6 @@ POSSIBLE_ADDITIONAL_USER_AGENT_STYLE_SHEETS = \
 USER_AGENT_STYLE_SHEETS = \
     $(WebCore)/css/counterStyles.css \
     $(WebCore)/css/fullscreen.css \
-    $(WebCore)/css/horizontalFormControls.css \
     $(WebCore)/css/html.css \
     $(WebCore)/css/htmlSwitchControl.css \
     $(WebCore)/css/mathml.css \

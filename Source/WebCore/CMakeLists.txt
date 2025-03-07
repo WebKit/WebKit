@@ -2007,7 +2007,6 @@ set(WebCore_CSS_PSEUDO_SELECTORS
 set(WebCore_USER_AGENT_STYLE_SHEETS
     ${WEBCORE_DIR}/css/counterStyles.css
     ${WEBCORE_DIR}/css/fullscreen.css
-    ${WEBCORE_DIR}/css/horizontalFormControls.css
     ${WEBCORE_DIR}/css/html.css
     ${WEBCORE_DIR}/css/htmlSwitchControl.css
     ${WEBCORE_DIR}/css/mathml.css

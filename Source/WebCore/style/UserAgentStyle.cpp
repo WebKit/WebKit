@@ -83,7 +83,6 @@ StyleSheetContents* UserAgentStyle::svgStyleSheet;
 StyleSheetContents* UserAgentStyle::mathMLStyleSheet;
 StyleSheetContents* UserAgentStyle::mediaQueryStyleSheet;
 StyleSheetContents* UserAgentStyle::popoverStyleSheet;
-StyleSheetContents* UserAgentStyle::horizontalFormControlsStyleSheet;
 StyleSheetContents* UserAgentStyle::htmlSwitchControlStyleSheet;
 StyleSheetContents* UserAgentStyle::counterStylesStyleSheet;
 StyleSheetContents* UserAgentStyle::viewTransitionsStyleSheet;
@@ -208,14 +207,6 @@ void UserAgentStyle::ensureDefaultStyleSheetsForElement(const Element& element)
             popoverStyleSheet = parseUASheet(StringImpl::createWithoutCopying(popoverUserAgentStyleSheet));
             addToDefaultStyle(*popoverStyleSheet);
         }
-
-        if ((is<HTMLFormControlElement>(element) || is<HTMLMeterElement>(element) || is<HTMLProgressElement>(element)) && !element.document().settings().verticalFormControlsEnabled()) {
-            if (!horizontalFormControlsStyleSheet) {
-                horizontalFormControlsStyleSheet = parseUASheet(StringImpl::createWithoutCopying(horizontalFormControlsUserAgentStyleSheet));
-                addToDefaultStyle(*horizontalFormControlsStyleSheet);
-            }
-        }
-
     } else if (is<SVGElement>(element)) {
         if (!svgStyleSheet) {
             svgStyleSheet = parseUASheet(StringImpl::createWithoutCopying(svgUserAgentStyleSheet));
