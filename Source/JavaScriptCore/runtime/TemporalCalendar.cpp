@@ -824,7 +824,7 @@ static void calendarResolveFields(JSGlobalObject* globalObject, CalendarID calen
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-calendardatetoiso
-ISO8601::PlainDate calendarDateToISO(JSGlobalObject* globalObject, CalendarID calendar,
+static ISO8601::PlainDate calendarDateToISO(JSGlobalObject* globalObject, CalendarID calendar,
     std::optional<double> optionalYear,
     std::optional<double> optionalMonth, std::optional<double> optionalDay,
     TemporalOverflow overflow)
@@ -847,7 +847,7 @@ ISO8601::PlainDate calendarDateToISO(JSGlobalObject* globalObject, CalendarID ca
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-calendardatefromfields
-ISO8601::PlainDate calendarDateFromFields(JSGlobalObject* globalObject,
+static ISO8601::PlainDate calendarDateFromFields(JSGlobalObject* globalObject,
     CalendarID calendar, std::optional<double> optionalYear,
     std::optional<double> optionalMonth, std::optional<String> optionalMonthCode, std::optional<double> optionalDay,
     TemporalOverflow overflow)
@@ -1106,8 +1106,7 @@ bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* ot
     RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
 }
 
-CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate)
-{
+static CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate) {
     // Compute day of week
     auto month = isoDate.month();
     auto year = isoDate.year();
