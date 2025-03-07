@@ -573,8 +573,7 @@ JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneL
     if (utcOffsetFromInstant) {
         if (utcOffsetFromInstant->isOffset())
             return TemporalTimeZone::createFromUTCOffset(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->offsetNanoseconds());
-        else
-            return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asID());
+        return TemporalTimeZone::createFromID(vm, globalObject->timeZoneStructure(), utcOffsetFromInstant->asID());
     }
 
 

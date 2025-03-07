@@ -1106,7 +1106,8 @@ bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* ot
     RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
 }
 
-CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate) {
+CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate)
+{
     // Compute day of week
     auto month = isoDate.month();
     auto year = isoDate.year();
@@ -1124,9 +1125,8 @@ CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate) {
 
     // Compute day of year
     int32_t dayOfYear = day;
-    for (int32_t m = month - 1; m > 0; m--) {
+    for (int32_t m = month - 1; m > 0; m--)
         dayOfYear += ISO8601::daysInMonth(year, m);
-    }
 
     // Compute days in year
     int32_t daysInYear = isLeapYear(year) ? 366 : 365;
@@ -1166,7 +1166,7 @@ YearWeekRecord TemporalCalendar::calendarDateWeekOfYear(JSGlobalObject* globalOb
     if (7 - relativeDayOfWeekJan1 >= minimalDaysInWeek)
         weekOfYear++;
 
-    if (weekOfYear == 0) {
+    if (!weekOfYear) {
         auto prevYearCalendar = isoToDate(isoDateAdd(globalObject, isoDate,
             { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, TemporalOverflow::Constrain));
         auto previousDayOfYear = dayOfYear = prevYearCalendar.daysInYear;
