@@ -32,6 +32,7 @@
 #include "JSCInlines.h"
 #include "TemporalCalendar.h"
 #include "TemporalObject.h"
+#include "TemporalPlainDateTime.h"
 #include "TemporalTimeZone.h"
 #include "TemporalZonedDateTime.h"
 #include <wtf/dtoa/double-conversion.h>

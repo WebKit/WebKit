@@ -272,6 +272,7 @@ ISO8601::ExactTime TemporalTimeZone::getStartOfDay(JSGlobalObject* globalObject,
 
     auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(isoDate, ISO8601::PlainTime());
     auto possibleEpochNs = getPossibleEpochNanoseconds(globalObject, timeZone, isoDateTime);
+    RETURN_IF_EXCEPTION(scope, { });
     if (possibleEpochNs.size() > 0)
         return ISO8601::ExactTime(possibleEpochNs[0]);
     ASSERT(!timeZone.isOffset());
@@ -456,6 +457,8 @@ bool canBeTimeZoneIdentifier(StringView string)
     //      .
     //      _
     //
+    if (string.isEmpty())
+        return false;
     if (string[0] == '+' || string[0] == '-')
         return true;
     if (isASCIIAlpha(string[0]) || string[0] == '.' || string[0] == '_')

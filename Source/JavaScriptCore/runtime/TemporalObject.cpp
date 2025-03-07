@@ -875,10 +875,12 @@ void rejectObjectWithCalendarOrTimeZone(JSGlobalObject* globalObject, JSObject* 
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    // FIXME: Also support PlainMonthDay, PlainYearMonth, ZonedDateTime.
     if (object->inherits<TemporalPlainDate>()
         || object->inherits<TemporalPlainDateTime>()
-        || object->inherits<TemporalPlainTime>()) {
+        || object->inherits<TemporalPlainTime>()
+        || object->inherits<TemporalPlainMonthDay>()
+        || object->inherits<TemporalPlainYearMonth>()
+        || object->inherits<TemporalZonedDateTime>()) {
         throwTypeError(globalObject, scope, "argument object must not have calendar or timeZone property"_s);
         return;
     }

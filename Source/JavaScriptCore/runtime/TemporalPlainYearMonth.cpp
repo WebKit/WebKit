@@ -124,7 +124,9 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
     // can be thrown before options-related errors (TypeError);
     // see step 4 of ToTemporalYearMonth
     TemporalPlainYearMonth* result;
-    if (itemValue.isString()) {
+    bool isString = itemValue.isString();
+
+    if (isString) {
         auto string = itemValue.toWTFString(globalObject);
         RETURN_IF_EXCEPTION(scope, { });
         result = TemporalPlainYearMonth::from(globalObject, string);

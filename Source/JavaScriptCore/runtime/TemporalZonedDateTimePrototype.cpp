@@ -739,7 +739,11 @@ JSC_DEFINE_CUSTOM_GETTER(temporalZonedDateTimePrototypeGetterYearOfWeek, (JSGlob
         return throwVMTypeError(globalObject, scope, "Temporal.ZonedDateTime.prototype.weekOfYear called on value that's not a ZonedDateTime"_s);
 
     auto isoDateTime = TemporalTimeZone::getISODateTimeFor(zonedDateTime->timeZone(), zonedDateTime->exactTime());
-    return JSValue::encode(jsNumber(ISO8601::weekOfYear(isoDateTime.date())));
+    auto result = TemporalCalendar::calendarDateWeekOfYear(globalObject, isoDateTime.date()).year;
+    if (!result) {
+        return JSValue::encode(jsUndefined());
+    }
+    return JSValue::encode(jsNumber(result.value()));
 }
 
 // https://tc39.es/proposal-temporal/#sec-get-temporal.zoneddatetime.prototype.hoursinday
