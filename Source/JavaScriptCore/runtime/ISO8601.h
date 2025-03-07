@@ -105,6 +105,7 @@ public:
 
     constexpr ExactTime() = default;
     constexpr ExactTime(const ExactTime&) = default;
+    constexpr ExactTime& operator=(const ExactTime&) = default;
     constexpr explicit ExactTime(Int128 epochNanoseconds) : m_epochNanoseconds(epochNanoseconds) { }
 
     static constexpr ExactTime fromEpochMilliseconds(int64_t epochMilliseconds)
@@ -307,8 +308,8 @@ private:
 
 class PlainDateTime {
 public:
-    PlainDate date() const { return m_date; }
-    PlainTime time() const { return m_time; }
+    constexpr PlainDate date() const { return m_date; }
+    constexpr PlainTime time() const { return m_time; }
 
     constexpr PlainDateTime(PlainDate date, PlainTime time) : m_date(date), m_time(time) { }
     constexpr PlainDateTime() = default;

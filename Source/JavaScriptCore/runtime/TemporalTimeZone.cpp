@@ -187,9 +187,11 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
     return ISO8601::ExactTime(possibleEpochNs[n - 1]);
 }
 
-static Int128 beforeFirstDST
-    = ISO8601::getUTCEpochNanoseconds(ISO8601::PlainDateTime(ISO8601::PlainDate(1847, 0, 1),
+static Int128 beforeFirstDST()
+{
+    return ISO8601::getUTCEpochNanoseconds(ISO8601::PlainDateTime(ISO8601::PlainDate(1847, 0, 1),
         ISO8601::PlainTime()));
+}
 
 static Int128 epochNsToMs(Int128 epochNanoseconds)
 {
@@ -236,8 +238,8 @@ std::optional<ISO8601::ExactTime> TemporalTimeZone::getNamedTimeZoneNextTransiti
 Int128 epochNanoseconds)
 {
     auto epochMilliseconds = epochNsToMs(epochNanoseconds);
-    if (epochMilliseconds < beforeFirstDST)
-        return getNamedTimeZoneNextTransition(timeZoneIdentifier, beforeFirstDST * 1000000);
+    if (epochMilliseconds < beforeFirstDST())
+        return getNamedTimeZoneNextTransition(timeZoneIdentifier, beforeFirstDST() * 1000000);
 
     auto now = ISO8601::ExactTime::now();
     auto base = std::max(epochMilliseconds, now.epochNanoseconds() / 1000000);
@@ -431,7 +433,7 @@ static std::optional<ISO8601::TimeZone> parseTimeZoneFromAnnotation(const ISO860
 }
 
 // https://tc39.es/proposal-temporal/#prod-TimeZoneIdentifier
-bool canBeTimeZoneIdentifier(StringView string)
+static bool canBeTimeZoneIdentifier(StringView string)
 {
     //  TimeZoneIdentifier :::
     //      UTCOffset[~SubMinutePrecision]

@@ -5505,6 +5505,7 @@
 		CD1F9B3B270C0C1A00617EB6 /* TypedArrayAdaptersForwardDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TypedArrayAdaptersForwardDeclarations.h; sourceTree = "<group>"; };
 		CD1F9B48270CFDCC00617EB6 /* HandleForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HandleForward.h; sourceTree = "<group>"; };
 		CD1F9B4A270CFE0F00617EB6 /* StrongForward.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StrongForward.h; sourceTree = "<group>"; };
+		CDD4DB992D7ACC9A002269F6 /* TemporalZonedDateTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TemporalZonedDateTime.h; path = runtime/TemporalZonedDateTime.h; sourceTree = "<group>"; };
 		CE20BD01237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PredictionFileCreatingFuzzerAgent.h; sourceTree = "<group>"; };
 		CE20BD02237D3AD40046E520 /* PredictionFileCreatingFuzzerAgent.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PredictionFileCreatingFuzzerAgent.cpp; sourceTree = "<group>"; };
 		CE20BD03237D3AD40046E520 /* FileBasedFuzzerAgentBase.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileBasedFuzzerAgentBase.h; sourceTree = "<group>"; };
@@ -6342,6 +6343,7 @@
 		0867D691FE84028FC02AAC07 /* JavaScriptCore */ = {
 			isa = PBXGroup;
 			children = (
+				CDD4DB992D7ACC9A002269F6 /* TemporalZonedDateTime.h */,
 				A73C0C4D2C06012900F625DD /* InPlaceInterpreter32_64.asm */,
 				A73C0C4E2C06012900F625DD /* InPlaceInterpreter64.asm */,
 				530A63411FA3E31D0026A545 /* Sources.txt */,

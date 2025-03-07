@@ -84,7 +84,7 @@ private:
     TimeZone m_timeZone;
 };
 
-constexpr bool isUTCTimeZoneString(StringView str)
+static inline bool isUTCTimeZoneString(StringView str)
 {
     auto lowered = str.convertToASCIILowercase();
     return (lowered.length() == 3 && lowered[0] == 'u' && lowered[1] == 't' && lowered[2] == 'c');

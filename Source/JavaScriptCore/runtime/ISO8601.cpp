@@ -1510,7 +1510,7 @@ String formatTimeZone(TimeZone tz)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-formatfractionalseconds
-String formatFractionalSeconds(int64_t subSecondNanoseconds, TemporalFractionalSecondDigits precision)
+static String formatFractionalSeconds(int64_t subSecondNanoseconds, TemporalFractionalSecondDigits precision)
 {
     WTF::String fractionString;
 

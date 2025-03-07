@@ -149,7 +149,7 @@ TemporalPlainYearMonth* TemporalPlainYearMonth::from(JSGlobalObject* globalObjec
         // so that an error can be thrown for a bad overflow option)
         if (options)
             toTemporalOverflow(globalObject, options.value());
-        RELEASE_AND_RETURN(scope, result);
+        RELEASE_AND_RETURN(scope, { });
     }
 
     if (itemValue.isObject()) {
