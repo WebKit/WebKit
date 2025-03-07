@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "JSCBytecodeCacheVersion.h"
+#pragma once
 
-#include <wtf/LibraryHash.h>
+#include <optional>
 
-namespace JSC {
+namespace WTF {
 
-namespace JSCBytecodeCacheVersionInternal {
-static constexpr bool verbose = false;
-}
+class LibraryHash {
+public:
+    WTF_EXPORT_PRIVATE static std::optional<unsigned> compute(void* function);
+};
 
-uint32_t computeJSCBytecodeCacheVersion()
-{
-    UNUSED_VARIABLE(JSCBytecodeCacheVersionInternal::verbose);
-    static LazyNeverDestroyed<uint32_t> cacheVersion;
-    static std::once_flag onceFlag;
-    std::call_once(onceFlag, [] {
-        void* jsFunctionAddr = std::bit_cast<void*>(&computeJSCBytecodeCacheVersion);
-        cacheVersion.construct(LibraryHash::compute(jsFunctionAddr).value_or(0));
-    });
-    return cacheVersion.get();
-}
+} // namespace WTF
 
-} // namespace JSC
+using WTF::LibraryHash;
