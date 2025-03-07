@@ -99,6 +99,19 @@ JS_EXPORT void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef obje
 
 /*!
  @function
+ @abstract           Returns a temporary pointer to the backing store of a JavaScript Typed Array object.
+ @param ctx          The execution context to use.
+ @param value        The JSValueRef whose Typed Array type data pointer to obtain.
+ @param exception    A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+ @param offset       A pointer to a size_t in which to store the byte offset of the Typed Array object.
+ @param length       A pointer to a size_t in which to store the byte length of the Typed Array object.
+ @result             A pointer to the raw data buffer that serves as object's backing store or NULL if object is not a Typed Array object.
+ @discussion         The pointer returned by this function is temporary and is not guaranteed to remain valid across JavaScriptCore API calls.
+ */
+JS_EXPORT void* JSValueGetTypedArrayBytesPtrFromValue(JSContextRef ctx, JSValueRef value, JSValueRef* exception, size_t* offset, size_t* length) JSC_API_AVAILABLE(macos(10.12), ios(10.0));
+
+/*!
+ @function
  @abstract           Returns the length of a JavaScript Typed Array object.
  @param ctx          The execution context to use.
  @param object       The Typed Array object whose length to return.
@@ -152,6 +165,17 @@ JS_EXPORT JSObjectRef JSObjectGetTypedArrayBuffer(JSContextRef ctx, JSObjectRef 
  @discussion               If an exception is thrown during this function the bytesDeallocator will always be called.
  */
 JS_EXPORT JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes, size_t byteLength, JSTypedArrayBytesDeallocator bytesDeallocator, void* deallocatorContext, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.12), ios(10.0));
+
+/*!
+ @function
+ @abstract           Returns a pointer to the data buffer that serves as the backing store for a JavaScript Array Buffer object.
+ @param ctx          The execution context to use.
+ @param value        The Array Buffer object whose internal backing store pointer to return.
+ @param exception    A pointer to a JSValueRef in which to store an exception, if any. Pass NULL if you do not care to store an exception.
+ @result             A pointer to the raw data buffer that serves as object's backing store or NULL if object is not an Array Buffer object.
+ @discussion         The pointer returned by this function is temporary and is not guaranteed to remain valid across JavaScriptCore API calls.
+*/
+JS_EXPORT JSValueRef JSValueFastUFT8Encoding(JSContextRef ctx, JSValueRef value, JSValueRef* exception) JSC_API_AVAILABLE(macos(10.12), ios(10.0));
 
 /*!
  @function

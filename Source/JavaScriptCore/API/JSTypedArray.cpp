@@ -262,6 +262,31 @@ void* JSObjectGetTypedArrayBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSV
     return nullptr;
 }
 
+// Get Typed Array Bytes ptr from a JSValueRef. and apply offsets.
+void* JSValueGetTypedArrayBytesPtrFromValue(JSContextRef ctx, JSValueRef valueRef, JSValueRef* exception, size_t* offset, size_t* length)
+{
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+
+    JSValue value = toJS(globalObject, valueRef);
+    JSObject* object = value.getObject();
+
+    if (JSArrayBufferView* typedArray = jsDynamicCast<JSArrayBufferView*>(object)) {
+        if (ArrayBuffer* buffer = typedArray->possiblySharedBuffer()) {
+            buffer->pinAndLock();
+            if (offset)
+                *offset = typedArray->byteOffset();
+            if (length)
+                *length = typedArray->byteLength();
+            return buffer->data();
+        }
+
+        setException(ctx, exception, createOutOfMemoryError(globalObject));
+    }
+    return nullptr;
+}
+
 bool JSObjectIsDetachedBuffer(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
 {
     JSGlobalObject* globalObject = toJS(ctx);
@@ -343,6 +368,38 @@ JSObjectRef JSObjectMakeArrayBufferWithBytesNoCopy(JSContextRef ctx, void* bytes
         return nullptr;
 
     return toRef(jsBuffer);
+}
+
+JSValueRef JSValueFastUFT8Encoding(JSContextRef ctx, JSValueRef value, JSValueRef* exception)
+{
+    JSGlobalObject* globalObject = toJS(ctx);
+    VM& vm = globalObject->vm();
+    JSLockHolder locker(vm);
+    auto scope = DECLARE_CATCH_SCOPE(vm);
+
+    JSValue jsValue = toJS(globalObject, value);
+    auto string = jsValue.toWTFString(globalObject);
+    if (handleExceptionIfNeeded(scope, ctx, exception) == ExceptionStatus::DidThrow)
+        return nullptr;
+
+    auto expectedUtf8 = string.tryGetUTF8([&](std::span<const char> span) {
+        return spanReinterpretCast<const uint8_t>(span);
+    });
+
+    if (!expectedUtf8) {
+        setException(ctx, exception, createTypeError(globalObject, "Cannot convert the value to UTF-8"_s));
+        return nullptr;
+    }
+
+    // Return array buffer with the UTF-8 encoded string.
+    auto span = expectedUtf8.value();
+    auto buffer = ArrayBuffer::tryCreate(span);
+    if (!buffer) {
+        setException(ctx, exception, createOutOfMemoryError(globalObject));
+        return nullptr;
+    }
+
+    return toRef(JSArrayBuffer::create(vm, globalObject->arrayBufferStructure(ArrayBufferSharingMode::Default), WTFMove(buffer)));
 }
 
 void* JSObjectGetArrayBufferBytesPtr(JSContextRef ctx, JSObjectRef objectRef, JSValueRef* exception)
