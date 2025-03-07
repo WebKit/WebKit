@@ -1106,7 +1106,8 @@ bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* ot
     RELEASE_AND_RETURN(scope, thisString->equal(globalObject, thatString));
 }
 
-static CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate) {
+static CalendarDateRecord isoToDate(const ISO8601::PlainDate& isoDate)
+{
     // Compute day of week
     auto month = isoDate.month();
     auto year = isoDate.year();
