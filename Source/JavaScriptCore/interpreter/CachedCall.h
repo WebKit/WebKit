@@ -83,6 +83,8 @@ public:
     ~CachedCall()
     {
         m_addressForCall = nullptr;
+        if (UNLIKELY(Options::validateDFGClobberize()))
+            m_vm.didEnterVM = true;
     }
 
     ALWAYS_INLINE JSValue call()

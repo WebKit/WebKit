@@ -137,10 +137,6 @@ ALWAYS_INLINE JSValue Interpreter::tryCallWithArguments(CachedCall& cachedCall, 
 
     StackStats::CheckPoint stackCheckPoint;
 
-    auto clobberizeValidator = makeScopeExit([&] {
-        vm.didEnterVM = true;
-    });
-
     // We don't handle `NonDebuggerAsyncEvents` explicitly here. This is a JS function (since this is CachedCall),
     // so the called JS function always handles it.
 
