@@ -162,6 +162,7 @@ public:
     TransitionProperty property() const { return m_property; }
     const Timeline& timeline() const { return m_timeline; }
     TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+    RefPtr<TimingFunction> protectedTimingFunction() const { return m_timingFunction; }
     TimingFunction* defaultTimingFunctionForKeyframes() const { return m_defaultTimingFunctionForKeyframes.get(); }
     const SingleTimelineRange rangeStart() const { return m_range.start; }
     const SingleTimelineRange rangeEnd() const { return m_range.end; }

@@ -150,6 +150,7 @@ public:
     bool canHaveBackingStore() const;
 
     virtual PlatformCALayer* superlayer() const = 0;
+    RefPtr<PlatformCALayer> protectedSuperlayer() const { return superlayer(); }
     virtual void removeFromSuperlayer() = 0;
     virtual void setSublayers(const PlatformCALayerList&) = 0;
     virtual PlatformCALayerList sublayersForLogging() const = 0;
