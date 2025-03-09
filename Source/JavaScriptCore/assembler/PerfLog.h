@@ -52,7 +52,7 @@ private:
     void write(const AbstractLocker&, const void*, size_t) WTF_REQUIRES_LOCK(m_lock);
     void flush(const AbstractLocker&) WTF_REQUIRES_LOCK(m_lock);
 
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     FILE* m_file { nullptr };
     void* m_marker { nullptr };
     uint64_t m_codeIndex { 0 };
