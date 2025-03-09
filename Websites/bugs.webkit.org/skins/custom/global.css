@@ -2334,6 +2334,7 @@ table.attachment_entry {
 .bz_first_comment_head, .bz_comment_head {
     border-radius: 0.3rem;
     background: none;
+    width: auto;
     border-bottom: 1px solid var(--horizontal-rule-color);
     display: grid;
     grid-template-areas:
