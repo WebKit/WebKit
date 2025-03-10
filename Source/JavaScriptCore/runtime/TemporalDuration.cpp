@@ -651,7 +651,7 @@ double TemporalDuration::totalTimeDuration(JSGlobalObject* globalObject, Int128 
         remainder *= 10;
         digit = (int32_t) (remainder / divisor);
         remainder = remainder % divisor;
-        appendInteger(globalObject, decimalDigits, std::abs(digit));
+        appendInteger(globalObject, decimalDigits, static_cast<double>(std::abs(digit)));
         RETURN_IF_EXCEPTION(scope, { });
         size++;
     }
