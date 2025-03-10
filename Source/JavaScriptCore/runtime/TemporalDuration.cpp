@@ -597,6 +597,19 @@ ISO8601::Duration TemporalDuration::subtract(JSGlobalObject* globalObject, JSVal
     RELEASE_AND_RETURN(scope, addDurations(globalObject, false, other, largestUnit));
 }
 
+static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, Int128 value)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* bigint = JSBigInt::createFrom(globalObject, absInt128(value));
+    RETURN_IF_EXCEPTION(scope, void());
+
+    String string = bigint->toString(globalObject, 10);
+    RETURN_IF_EXCEPTION(scope, void());
+    builder.append(string);
+}
+
 static void appendInteger(JSGlobalObject* globalObject, StringBuilder& builder, double value)
 {
     ASSERT(std::isfinite(value));
@@ -643,15 +656,10 @@ double TemporalDuration::totalTimeDuration(JSGlobalObject* globalObject, Int128 
         size++;
     }
     StringBuilder result;
-    appendInteger(globalObject, result, (double) absInt128(quotient));
+    appendInteger(globalObject, result, absInt128(quotient));
     RETURN_IF_EXCEPTION(scope, { });
     result.append('.');
     result.append(decimalDigits.toString());
-    // NOTE: if result.toString() == 9007199254740992.999,
-    // the result is rounded down to 9007199254740992.
-    // This causes the test262 test
-    // Temporal/Duration/prototype/total/precision-exact-mathematical-values-7.js
-    // to fail when unit=milliseconds, smallerUnit=microseconds, integer=2**53, fraction=1999.
     return sign * result.toString().toDouble();
 }
 

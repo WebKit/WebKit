@@ -166,9 +166,6 @@ test/built-ins/Temporal/Duration/prototype/toString/total-of-duration-time-units
 test/built-ins/Temporal/Duration/prototype/total/incorrect-properties-ignored.js:
   default: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot total a duration of years, months, or weeks without a relativeTo option'
-test/built-ins/Temporal/Duration/prototype/total/precision-exact-mathematical-values-7.js:
-  default: 'Test262Error: milliseconds=9007199254740992, microseconds=1999 Expected SameValue(«9007199254740992», «9007199254740994») to be true'
-  strict mode: 'Test262Error: milliseconds=9007199254740992, microseconds=1999 Expected SameValue(«9007199254740992», «9007199254740994») to be true'
 test/built-ins/Temporal/Duration/prototype/total/relativeto-propertybag-invalid-offset-string.js:
   default: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
   strict mode: 'Test262Error: "0 is not a valid offset string Expected a TypeError but got a RangeError'
