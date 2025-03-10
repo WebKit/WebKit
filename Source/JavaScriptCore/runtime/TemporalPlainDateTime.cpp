@@ -450,7 +450,9 @@ ISO8601::PlainDateTime TemporalPlainDateTime::balanceISODateTime(double year, do
     double hour, double minute, double second, double millisecond, double microsecond, double nanosecond)
 {
     auto balancedTime = TemporalPlainTime::balanceTime(
-        hour, minute, second, millisecond, microsecond, nanosecond);
+        static_cast<Int128>(hour), static_cast<Int128>(minute), static_cast<Int128>(second),
+        static_cast<Int128>(millisecond), static_cast<Int128>(microsecond),
+        static_cast<Int128>(nanosecond));
     auto balancedDate = TemporalCalendar::balanceISODate(year, month, day + balancedTime.days());
     return ISO8601::PlainDateTime(WTFMove(balancedDate),
         ISO8601::PlainTime(balancedTime.hours(), balancedTime.minutes(),

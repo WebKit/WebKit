@@ -307,7 +307,7 @@ TemporalZonedDateTime* TemporalZonedDateTime::round(JSGlobalObject* globalObject
         epochNanoseconds = ISO8601::ExactTime(startNs.epochNanoseconds() + roundedDayNsOptional.value());
     } else {
         auto roundResult = TemporalPlainDateTime::roundISODateTime(isoDateTime, roundingIncrement, smallestUnit, roundingMode);
-        auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds());
+        int64_t offsetNanoseconds = static_cast<int64_t>(TemporalTimeZone::getOffsetNanosecondsFor(timeZone, thisNs.epochNanoseconds()));
         epochNanoseconds = interpretISODateTimeOffset(globalObject,
             roundResult.date(), roundResult.time(), TemporalOffsetBehavior::Option, offsetNanoseconds, timeZone,
             TemporalDisambiguation::Compatible, TemporalOffset::Prefer, TemporalMatchBehavior::Exactly);
@@ -388,8 +388,8 @@ TemporalZonedDateTime* TemporalZonedDateTime::with(JSGlobalObject* globalObject,
         microsecond, nanosecond, overflow);
     RETURN_IF_EXCEPTION(scope, { });
     auto epochNanoseconds = interpretISODateTimeOffset(globalObject, dateTimeResult.date(),
-        dateTimeResult.time(), TemporalOffsetBehavior::Option, offsetNanoseconds, thisTimeZone,
-        disambiguation, offset, TemporalMatchBehavior::Exactly);
+        dateTimeResult.time(), TemporalOffsetBehavior::Option, static_cast<int64_t>(offsetNanoseconds),
+        thisTimeZone, disambiguation, offset, TemporalMatchBehavior::Exactly);
     RETURN_IF_EXCEPTION(scope, { });
     RELEASE_AND_RETURN(scope, TemporalZonedDateTime::tryCreateIfValid(globalObject,
         globalObject->zonedDateTimeStructure(), WTFMove(epochNanoseconds), WTFMove(thisTimeZone)));
