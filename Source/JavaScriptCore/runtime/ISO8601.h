@@ -290,9 +290,9 @@ public:
 
     friend bool operator==(const PlainDate&, const PlainDate&) = default;
 
-    int32_t year() const { return m_year; }
-    uint8_t month() const { return m_month; }
-    uint8_t day() const { return m_day; }
+    constexpr int32_t year() const { return m_year; }
+    constexpr uint8_t month() const { return m_month; }
+    constexpr uint8_t day() const { return m_day; }
 
 private:
     // It would be tempting to write m_year : 21 because
@@ -401,7 +401,7 @@ class TimeZone {
     int64_t offsetMinutes() const
     {
         RELEASE_ASSERT(isOffset());
-        return std::get<int64_t>(m_timezone) / ExactTime::nsPerMinute;
+        return std::get<int64_t>(m_timezone) / static_cast<int64_t>(ExactTime::nsPerMinute);
     }
     const String& offsetString() const
     {

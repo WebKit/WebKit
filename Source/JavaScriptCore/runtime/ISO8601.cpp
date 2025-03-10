@@ -1559,14 +1559,14 @@ String formatTimeString(int64_t hour, int64_t minute, int64_t second, int64_t su
 String formatUTCOffsetNanoseconds(int64_t offsetNanoseconds)
 {
     auto sign = offsetNanoseconds >= 0 ? '+' : '-';
-    auto absoluteNanoseconds = std::abs(offsetNanoseconds);
+    int64_t absoluteNanoseconds = std::abs(offsetNanoseconds);
     Int128 divisor = 3600 * 1000000000ll;
-    auto hour = std::floor((double) absoluteNanoseconds / (double) divisor);
+    auto hour = std::floor(static_cast<double>(absoluteNanoseconds) / static_cast<double>(divisor));
     divisor = 60 * 1000000000ll;
-    auto minute = std::fmod(std::floor((double) absoluteNanoseconds / (double) divisor), 60);
+    auto minute = std::fmod(std::floor(static_cast<double>(absoluteNanoseconds) / static_cast<double>(divisor)), 60);
     divisor = 1000000000ll;
-    auto second = std::fmod(std::floor((double) absoluteNanoseconds / divisor), 60);
-    auto subSecondNanoseconds = absoluteNanoseconds % ((int64_t) divisor);
+    auto second = std::fmod(std::floor(static_cast<double>(absoluteNanoseconds) / static_cast<double>(divisor)), 60);
+    auto subSecondNanoseconds = absoluteNanoseconds % (static_cast<int64_t>(divisor));
     std::optional<TemporalFractionalSecondDigits> precision = std::nullopt;
     if (!(!second && !subSecondNanoseconds))
         precision = TemporalFractionalSecondDigits::Auto;
@@ -2023,8 +2023,8 @@ void checkISODaysRange(JSGlobalObject* globalObject, ISO8601::PlainDate isoDate)
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    auto val = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
-    if (absInt128(val) > 100000000)
+    double val = makeDay(isoDate.year(), isoDate.month() - 1, isoDate.day());
+    if (std::abs(val) > 100000000)
         throwRangeError(globalObject, scope, "date/time value is outside the supported range"_s);
 }
 

@@ -254,19 +254,21 @@ ISO8601::PlainDateTime TemporalCalendar::getISOPartsFromEpoch(ISO8601::ExactTime
     Int128 remainderNs = epochNanoseconds.epochNanoseconds() % 1000000;
     if (remainderNs < 0)
         remainderNs += 1000000;
-    auto epochMilliseconds = (epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000;
-    auto year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
-    auto month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
-    auto day = TemporalCalendar::epochTimeToDate(epochMilliseconds);
-    auto hour = hourFromTime(epochMilliseconds);
-    auto minute = minFromTime(epochMilliseconds);
-    auto second = secFromTime(epochMilliseconds);
-    auto millisecond = msFromTime(epochMilliseconds);
-    auto microsecond = remainderNs / 1000;
+    double epochMilliseconds = static_cast<double>((epochNanoseconds.epochNanoseconds() - remainderNs) / 1000000);
+    int year = TemporalCalendar::epochTimeToEpochYear(epochMilliseconds);
+    int32_t month = TemporalCalendar::epochTimeToMonthInYear(epochMilliseconds) + 1;
+    int32_t day = TemporalCalendar::epochTimeToDate(epochMilliseconds);
+    double hour = hourFromTime(epochMilliseconds);
+    double minute = minFromTime(epochMilliseconds);
+    double second = secFromTime(epochMilliseconds);
+    double millisecond = msFromTime(epochMilliseconds);
+    int32_t microsecond = static_cast<int32_t>(remainderNs) / 1000;
     ASSERT(microsecond < 1000);
-    auto nanosecond = remainderNs % 1000;
+    int32_t nanosecond = static_cast<int32_t>(remainderNs) % 1000;
     auto isoDate = ISO8601::PlainDate(year, month, day);
-    auto time = ISO8601::PlainTime(hour, minute, second, millisecond, microsecond, nanosecond);
+    auto time = ISO8601::PlainTime(static_cast<unsigned>(hour), static_cast<unsigned>(minute),
+        static_cast<unsigned>(second), static_cast<unsigned>(millisecond),
+        static_cast<unsigned>(microsecond), static_cast<unsigned>(nanosecond));
     return ISO8601::PlainDateTime(WTFMove(isoDate), WTFMove(time));
 }
 

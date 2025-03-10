@@ -962,7 +962,8 @@ NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
     ASSERT(timeDurationSign(daySpan) == sign);
     auto unitLength = lengthInNanoseconds(unit);
     auto roundedTimeDuration =
-        ISO8601::roundTimeDurationToIncrement(duration.time(), increment * unitLength, roundingMode);
+        ISO8601::roundTimeDurationToIncrement(duration.time(),
+            static_cast<Int128>(increment) * unitLength, roundingMode);
     if (!roundedTimeDuration) {
         throwRangeError(globalObject, scope, "time duration too large in nudgeToZonedTime()"_s);
         return { };
@@ -975,7 +976,8 @@ NudgeResult TemporalDuration::nudgeToZonedTime(JSGlobalObject* globalObject,
         didRoundBeyondDay = true;
         dayDelta = sign;
         roundedTimeDuration =
-            ISO8601::roundTimeDurationToIncrement(beyondDaySpan, increment * unitLength, roundingMode);
+            ISO8601::roundTimeDurationToIncrement(beyondDaySpan,
+                static_cast<Int128>(increment) * unitLength, roundingMode);
         nudgedEpochNs = roundedTimeDuration.value() + endEpochNs.epochNanoseconds();
     } else {
         didRoundBeyondDay = false;

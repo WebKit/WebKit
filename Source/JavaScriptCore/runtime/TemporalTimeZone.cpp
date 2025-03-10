@@ -78,7 +78,7 @@ ISO8601::PlainDateTime TemporalTimeZone::getISODateTimeFor(ISO8601::TimeZone tim
     auto time = result.time();
     return TemporalPlainDateTime::balanceISODateTime(date.year(), date.month(), date.day(), time.hour(),
         time.minute(), time.second(), time.millisecond(), time.microsecond(),
-        time.nanosecond() + offsetNanoseconds);
+        static_cast<double>(time.nanosecond() + offsetNanoseconds));
 }
 
 // https://tc39.es/proposal-temporal/#sec-getnamedtimezoneepochnanoseconds
@@ -162,7 +162,7 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
     auto isoDate = isoDateTime.date();
 
     if (disambiguation == TemporalDisambiguation::Earlier) {
-        auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, -nanoseconds);
+        auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, static_cast<double>(-nanoseconds));
         auto earlierTime = TemporalPlainTime::addTime(isoDateTime.time(), timeDuration);
         auto earlierDate = TemporalCalendar::balanceISODate(
             isoDate.year(), isoDate.month(), isoDate.day() + earlierTime.days());
@@ -174,7 +174,7 @@ ISO8601::ExactTime TemporalTimeZone::disambiguatePossibleEpochNanoseconds(JSGlob
         ASSERT(possibleEpochNs.size() > 0);
         return ISO8601::ExactTime(possibleEpochNs[0]);
     }
-    auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, nanoseconds);
+    auto timeDuration = TemporalDuration::timeDurationFromComponents(0, 0, 0, 0, 0, static_cast<double>(nanoseconds));
     auto laterTime = TemporalPlainTime::addTime(isoDateTime.time(), timeDuration);
     auto laterDate = TemporalCalendar::balanceISODate(isoDate.year(), isoDate.month(), isoDate.day() - laterTime.days());
     auto laterDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(laterDate,
