@@ -531,8 +531,6 @@ test/staging/sm/Date/makeday-year-month-is-infinity.js:
   default: 'Test262Error: Expected SameValue(«-62167219200000», «NaN») to be true'
 test/staging/sm/Date/non-iso.js:
   default: 'Test262Error: Expected SameValue(«NaN», «857811661010») to be true'
-test/staging/sm/Date/to-temporal-instant.js:
-  default: "TypeError: min.toZonedDateTimeISO is not a function. (In 'min.toZonedDateTimeISO('UTC')', 'min.toZonedDateTimeISO' is undefined)"
 test/staging/sm/Date/two-digit-years.js:
   default: 'Test262Error: Expected SameValue(«923641200000», «NaN») to be true'
 test/staging/sm/Function/arguments-parameter-shadowing.js:

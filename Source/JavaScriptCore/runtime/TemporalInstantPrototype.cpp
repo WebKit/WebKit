@@ -44,6 +44,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToJSON);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToLocaleString);
 static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncValueOf);
+static JSC_DECLARE_HOST_FUNCTION(temporalInstantPrototypeFuncToZonedDateTimeISO);
 static JSC_DECLARE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochMilliseconds);
 static JSC_DECLARE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochNanoseconds);
 
@@ -67,6 +68,7 @@ const ClassInfo TemporalInstantPrototype::s_info = { "Temporal.Instant"_s, &Base
   toJSON             temporalInstantPrototypeFuncToJSON               DontEnum|Function 0
   toLocaleString     temporalInstantPrototypeFuncToLocaleString       DontEnum|Function 0
   valueOf            temporalInstantPrototypeFuncValueOf              DontEnum|Function 0
+  toZonedDateTimeISO temporalInstantPrototypeFuncToZonedDateTimeISO   DontEnum|Function 1
   epochMilliseconds  temporalInstantPrototypeGetterEpochMilliseconds  DontEnum|ReadOnly|CustomAccessor
   epochNanoseconds   temporalInstantPrototypeGetterEpochNanoseconds   DontEnum|ReadOnly|CustomAccessor
 @end
@@ -269,6 +271,22 @@ JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncValueOf, (JSGlobalObject* g
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.valueOf must not be called. To compare Instant values, use Temporal.Instant.compare"_s);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.instant.prototype.tozoneddatetimeiso
+JSC_DEFINE_HOST_FUNCTION(temporalInstantPrototypeFuncToZonedDateTimeISO, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    TemporalInstant* instant = jsDynamicCast<TemporalInstant*>(callFrame->thisValue());
+    if (!instant)
+        return throwVMTypeError(globalObject, scope, "Temporal.Instant.prototype.toZonedDateTime called on value that's not a Instant"_s);
+
+    ISO8601::TimeZone timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject, callFrame->argument(0));
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), instant->exactTime(), WTFMove(timeZone))));
 }
 
 JSC_DEFINE_CUSTOM_GETTER(temporalInstantPrototypeGetterEpochMilliseconds, (JSGlobalObject* globalObject, EncodedJSValue thisValue, PropertyName))
