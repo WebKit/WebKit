@@ -18,9 +18,6 @@ skip:
     - source-phase-imports
     - import-defer
   paths:
-    - test/built-ins/Temporal/Now/plainDateISO
-    - test/built-ins/Temporal/Now/plainDateTimeISO
-    - test/built-ins/Temporal/Now/plainTimeISO
     - test/built-ins/Temporal/Now/zonedDateTimeISO
     - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
@@ -422,6 +419,10 @@ skip:
     - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
 
     # Depends on support for named time zones
+    - test/built-ins/Temporal/Now/plainDateISO/return-value.js
+    - test/built-ins/Temporal/Now/plainDateTimeISO/return-value-calendar.js
+    - test/built-ins/Temporal/Now/plainDateTimeISO/time-zone-undefined.js
+    - test/built-ins/Temporal/Now/plainTimeISO/return-value.js
     - test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js
     - test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js
     - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-zoneddatetime-not-supported.js
