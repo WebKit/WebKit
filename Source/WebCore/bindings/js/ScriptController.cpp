@@ -87,9 +87,6 @@
 
 #define SCRIPTCONTROLLER_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - ScriptController::" fmt, this, ##__VA_ARGS__)
 
-#if ENABLE(LLVM_PROFILE_GENERATION)
-extern "C" char __llvm_profile_filename[] = "/private/tmp/WebKitPGO/WebCore_%m_pid%p%c.profraw";
-#endif
 
 namespace WebCore {
 using namespace JSC;

@@ -26,6 +26,10 @@
 #include "config.h"
 #include "CommonAtomStrings.h"
 
+#if ENABLE(LLVM_PROFILE_GENERATION)
+extern "C" char __llvm_profile_filename[] = "/private/tmp/WebKitPGO/WebCore_%m_pid%p%c.profraw";
+#endif
+
 namespace WebCore {
 
 #define DEFINE_COMMON_ATOM(atomName, atomValue) \
