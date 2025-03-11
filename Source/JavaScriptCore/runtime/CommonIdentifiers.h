@@ -243,6 +243,7 @@
     macro(parse) \
     macro(parseInt) \
     macro(parseFloat) \
+    macro(plainTime) \
     macro(pluralCategories) \
     macro(profiledBytecodes) \
     macro(propertyIsEnumerable) \
