@@ -18,7 +18,6 @@ skip:
     - source-phase-imports
     - import-defer
   paths:
-    - test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/built-ins/Temporal/Now/plainDateISO
     - test/built-ins/Temporal/Now/plainDateTimeISO
     - test/built-ins/Temporal/Now/plainTimeISO
