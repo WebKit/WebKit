@@ -49,6 +49,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncUntil);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncSince);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncEquals);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainDateTime);
+static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToZonedDateTime);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToString);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToJSON);
 static JSC_DECLARE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToLocaleString);
@@ -88,6 +89,7 @@ const ClassInfo TemporalPlainDatePrototype::s_info = { "Temporal.PlainDate"_s, &
   since            temporalPlainDatePrototypeFuncSince              DontEnum|Function 1
   equals           temporalPlainDatePrototypeFuncEquals             DontEnum|Function 1
   toPlainDateTime  temporalPlainDatePrototypeFuncToPlainDateTime    DontEnum|Function 0
+  toZonedDateTime  temporalPlainDatePrototypeFuncToZonedDateTime    DontEnum|Function 1
   toString         temporalPlainDatePrototypeFuncToString           DontEnum|Function 0
   toJSON           temporalPlainDatePrototypeFuncToJSON             DontEnum|Function 0
   toLocaleString   temporalPlainDatePrototypeFuncToLocaleString     DontEnum|Function 0
@@ -326,6 +328,54 @@ JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToPlainDateTime, (JSGloba
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), plainDate->plainDate(), plainTime->plainTime())));
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.tozoneddatetime
+JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToZonedDateTime, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto* temporalDate = jsDynamicCast<TemporalPlainDate*>(callFrame->thisValue());
+    if (!temporalDate)
+        return throwVMTypeError(globalObject, scope, "Temporal.PlainDate.prototype.toZonedDateTime called on value that's not a PlainDate"_s);
+
+    JSValue item = callFrame->argument(0);
+    ISO8601::TimeZone timeZone;
+    JSValue temporalTime;
+    if (item.isObject()) {
+        auto timeZoneLike = asObject(item)->get(globalObject, vm.propertyNames->timeZone);
+        RETURN_IF_EXCEPTION(scope, { });
+        if (timeZoneLike.isUndefined()) {
+            timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject, item);
+            RETURN_IF_EXCEPTION(scope, { });
+            temporalTime = jsUndefined();
+        } else {
+            timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject, timeZoneLike);
+            RETURN_IF_EXCEPTION(scope, { });
+            temporalTime = asObject(item)->get(globalObject, vm.propertyNames->plainTime);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+    } else {
+        timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject, item);
+        RETURN_IF_EXCEPTION(scope, { });
+        temporalTime = jsUndefined();
+    }
+    ISO8601::ExactTime epochNs;
+    if (temporalTime.isUndefined())
+        epochNs = TemporalTimeZone::getStartOfDay(globalObject, timeZone, temporalDate->plainDate());
+    else {
+        TemporalPlainTime* temporalPlainTime = TemporalPlainTime::from(globalObject, temporalTime, std::nullopt);
+        RETURN_IF_EXCEPTION(scope, { });
+        auto isoDateTime = TemporalPlainDateTime::combineISODateAndTimeRecord(
+            temporalDate->plainDate(), temporalPlainTime->plainTime());
+        if (!isoDateTimeWithinLimits(isoDateTime))
+            return throwVMRangeError(globalObject, scope, "Date/time outside of limits in Temporal.PlainDate.prototype.toZonedDateTime"_s);
+        epochNs = TemporalTimeZone::getEpochNanosecondsFor(globalObject, timeZone, isoDateTime,
+            TemporalDisambiguation::Compatible);
+    }
+    RETURN_IF_EXCEPTION(scope, { });
+
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(epochNs), WTFMove(timeZone))));
+}
 // https://tc39.es/proposal-temporal/#sec-temporal.plaindate.prototype.tostring
 JSC_DEFINE_HOST_FUNCTION(temporalPlainDatePrototypeFuncToString, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {

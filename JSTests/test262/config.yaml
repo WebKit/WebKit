@@ -18,7 +18,6 @@ skip:
     - source-phase-imports
     - import-defer
   paths:
-    - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
     - test/built-ins/Temporal/PlainDateTime/prototype/since
     - test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime
@@ -363,6 +362,8 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/until/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDate/prototype/until/argument-string-unknown-annotation.js
