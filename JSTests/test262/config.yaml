@@ -20,7 +20,6 @@ skip:
   paths:
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
     - test/built-ins/Temporal/PlainDateTime/prototype/since
-    - test/built-ins/Temporal/PlainDateTime/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDateTime/prototype/until
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
     - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
