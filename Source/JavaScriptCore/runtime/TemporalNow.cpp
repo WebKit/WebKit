@@ -39,6 +39,7 @@ static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncTimeZoneId);
 static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncPlainDateISO);
 static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncPlainDateTimeISO);
 static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncPlainTimeISO);
+static JSC_DECLARE_HOST_FUNCTION(temporalNowFuncZonedDateTimeISO);
 
 } // namespace JSC
 
@@ -53,6 +54,7 @@ namespace JSC {
     plainDateISO     temporalNowFuncPlainDateISO     DontEnum|Function 0
     plainDateTimeISO temporalNowFuncPlainDateTimeISO DontEnum|Function 0
     plainTimeISO     temporalNowFuncPlainTimeISO     DontEnum|Function 0
+    zonedDateTimeISO temporalNowFuncZonedDateTimeISO DontEnum|Function 0
 @end
 */
 
@@ -138,6 +140,26 @@ JSC_DEFINE_HOST_FUNCTION(temporalNowFuncPlainDateTimeISO, (JSGlobalObject* globa
     auto isoDateTime = systemDateTime(globalObject, callFrame->argument(0));
     RETURN_IF_EXCEPTION(scope, { });
     RELEASE_AND_RETURN(scope, JSValue::encode(TemporalPlainDateTime::tryCreateIfValid(globalObject, globalObject->plainDateTimeStructure(), isoDateTime.date(), isoDateTime.time())));
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal.now.zoneddatetimeiso
+JSC_DEFINE_HOST_FUNCTION(temporalNowFuncZonedDateTimeISO, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto temporalTimeZoneLike = callFrame->argument(0);
+    ISO8601::TimeZone timeZone;
+    if (temporalTimeZoneLike.isUndefined()) {
+        timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject,
+            jsNontrivialString(vm, vm.dateCache.defaultTimeZone()));
+    } else {
+        timeZone = TemporalTimeZone::toTemporalTimeZoneIdentifier(globalObject,
+            temporalTimeZoneLike);
+    }
+    RETURN_IF_EXCEPTION(scope, { });
+    auto ns = ISO8601::ExactTime::now();
+    RELEASE_AND_RETURN(scope, JSValue::encode(TemporalZonedDateTime::tryCreateIfValid(globalObject, globalObject->zonedDateTimeStructure(), WTFMove(ns), WTFMove(timeZone))));
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal.now.timezoneid
