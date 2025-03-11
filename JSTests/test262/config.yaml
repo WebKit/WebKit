@@ -19,8 +19,6 @@ skip:
     - import-defer
   paths:
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
-    - test/built-ins/Temporal/PlainDateTime/prototype/since
-    - test/built-ins/Temporal/PlainDateTime/prototype/until
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
     - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/intl402/Temporal/Now
@@ -238,6 +236,11 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-number.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-propertybag-calendar-wrong-type.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/until/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/until/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/until/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-always.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-auto.js
     - test/built-ins/Temporal/PlainDateTime/prototype/toString/calendarname-critical.js
@@ -369,6 +372,8 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-string-critical-unknown-annotation.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/since/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-string-unknown-annotation.js

@@ -118,6 +118,7 @@ public:
         TemporalUnit, TemporalUnit);
     static Int128 timeDurationFromEpochNanosecondsDifference(ISO8601::ExactTime, ISO8601::ExactTime);
     static int32_t timeDurationSign(Int128);
+    static Int128 add24HourDaysToTimeDuration(JSGlobalObject*, Int128, double);
 
 private:
     TemporalDuration(VM&, Structure*, ISO8601::Duration&&);

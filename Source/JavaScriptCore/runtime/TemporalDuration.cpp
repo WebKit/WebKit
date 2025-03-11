@@ -226,7 +226,7 @@ int32_t ISO8601::InternalDuration::sign() const
     return timeDurationSign();
 }
 
-static Int128 add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d, double days)
+Int128 TemporalDuration::add24HourDaysToTimeDuration(JSGlobalObject* globalObject, Int128 d, double days)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -793,15 +793,16 @@ static NudgeResult nudgeToDayOrTime(JSGlobalObject* globalObject, ISO8601::Inter
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Int128 timeDuration = add24HourDaysToTimeDuration(globalObject, duration.time(), duration.dateDuration().days());
+    Int128 timeDuration = TemporalDuration::add24HourDaysToTimeDuration(globalObject,
+        duration.time(), duration.dateDuration().days());
     RETURN_IF_EXCEPTION(scope, { });
     Int128 unitLength = lengthInNanoseconds(smallestUnit);
     Int128 roundedTime = roundNumberToIncrementInt128(timeDuration,
         unitLength * (Int128) std::trunc(increment), roundingMode);
     Int128 diffTime = roundedTime - timeDuration;
-    double wholeDays = TemporalDuration::totalTimeDuration(globalObject, timeDuration, TemporalUnit::Day);
+    double wholeDays = std::trunc(TemporalDuration::totalTimeDuration(globalObject, timeDuration, TemporalUnit::Day));
     RETURN_IF_EXCEPTION(scope, { });
-    double roundedWholeDays = TemporalDuration::totalTimeDuration(globalObject, roundedTime, TemporalUnit::Day);
+    double roundedWholeDays = std::trunc(TemporalDuration::totalTimeDuration(globalObject, roundedTime, TemporalUnit::Day));
     RETURN_IF_EXCEPTION(scope, { });
     auto dayDelta = roundedWholeDays - wholeDays;
     auto dayDeltaSign = dayDelta < 0 ? -1 : dayDelta > 0 ? 1 : 0;

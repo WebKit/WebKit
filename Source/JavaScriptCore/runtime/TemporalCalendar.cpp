@@ -1092,6 +1092,15 @@ int32_t TemporalCalendar::isoDateCompare(const ISO8601::PlainDate& d1, const ISO
     return 0;
 }
 
+// https://tc39.es/proposal-temporal/#sec-temporal-compareisodate
+int32_t TemporalCalendar::isoDateTimeCompare(const ISO8601::PlainDateTime& d1, const ISO8601::PlainDateTime& d2)
+{
+    auto dateResult = isoDateCompare(d1.date(), d2.date());
+    if (dateResult)
+        return dateResult;
+    return ISO8601::compareTimeRecord(d1.time(), d2.time());
+}
+
 bool TemporalCalendar::equals(JSGlobalObject* globalObject, TemporalCalendar* other)
 {
     VM& vm = globalObject->vm();
