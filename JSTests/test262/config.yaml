@@ -23,8 +23,6 @@ skip:
     - test/built-ins/Temporal/Now/plainDateTimeISO
     - test/built-ins/Temporal/Now/plainTimeISO
     - test/built-ins/Temporal/Now/zonedDateTimeISO
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainMonthDay
-    - test/built-ins/Temporal/PlainDate/prototype/toPlainYearMonth
     - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
     - test/built-ins/Temporal/PlainDateTime/prototype/since

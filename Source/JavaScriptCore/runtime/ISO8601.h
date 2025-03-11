@@ -338,7 +338,7 @@ public:
     }
 
     constexpr PlainMonthDay(unsigned month, int32_t day)
-        : m_isoPlainDate(0, month, day)
+        : m_isoPlainDate(2, month, day)
     {
     }
 
