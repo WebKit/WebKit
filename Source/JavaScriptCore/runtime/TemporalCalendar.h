@@ -87,6 +87,7 @@ public:
     static ISO8601::PlainDate balanceISODate(double, double, double);
     static ISO8601::Duration calendarDateUntil(const ISO8601::PlainDate&, const ISO8601::PlainDate&, TemporalUnit);
     static int32_t isoDateCompare(const ISO8601::PlainDate&, const ISO8601::PlainDate&);
+    static int32_t isoDateTimeCompare(const ISO8601::PlainDateTime&, const ISO8601::PlainDateTime&);
     static String formatCalendarAnnotation(TemporalShowCalendar);
     static ISO8601::PlainDateTime getISOPartsFromEpoch(ISO8601::ExactTime);
     static YearWeekRecord calendarDateWeekOfYear(JSGlobalObject*, const ISO8601::PlainDate&);

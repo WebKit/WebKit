@@ -488,6 +488,8 @@ Int128 getNamedTimeZoneOffsetNanoseconds(TimeZoneID timeZoneIdentifier, Int128);
 
 std::optional<Int128> roundTimeDurationToIncrement(Int128, Int128, RoundingMode);
 
+int32_t compareTimeRecord(const PlainTime&, const PlainTime&);
+
 } // namespace ISO8601
 
 static constexpr Int128 absInt128(const Int128& value)
