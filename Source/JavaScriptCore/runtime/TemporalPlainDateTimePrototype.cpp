@@ -92,7 +92,7 @@ const ClassInfo TemporalPlainDateTimePrototype::s_info = { "Temporal.PlainDateTi
   equals           temporalPlainDateTimePrototypeFuncEquals             DontEnum|Function 1
   toPlainDate      temporalPlainDateTimePrototypeFuncToPlainDate        DontEnum|Function 0
   toPlainTime      temporalPlainDateTimePrototypeFuncToPlainTime        DontEnum|Function 0
-  toZonedDateTime  temporalPlainDateTimePrototypeFuncToZonedDateTime    DontEnum|Function 0
+  toZonedDateTime  temporalPlainDateTimePrototypeFuncToZonedDateTime    DontEnum|Function 1
   toString         temporalPlainDateTimePrototypeFuncToString           DontEnum|Function 0
   toJSON           temporalPlainDateTimePrototypeFuncToJSON             DontEnum|Function 0
   toLocaleString   temporalPlainDateTimePrototypeFuncToLocaleString     DontEnum|Function 0
