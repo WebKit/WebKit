@@ -18,6 +18,11 @@ skip:
     - source-phase-imports
     - import-defer
   paths:
+<<<<<<< HEAD
+=======
+    - test/built-ins/Temporal/Now/zonedDateTimeISO
+    - test/built-ins/Temporal/PlainDate/prototype/toZonedDateTime
+>>>>>>> c768cd1998fb (Implement Temporal::Now::plain{Date,DateTime,Time}ISO())
     - test/built-ins/Temporal/PlainDate/prototype/withCalendar
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
     - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
@@ -426,8 +431,6 @@ skip:
     - test/built-ins/Temporal/Now/plainDateTimeISO/return-value-calendar.js
     - test/built-ins/Temporal/Now/plainDateTimeISO/time-zone-undefined.js
     - test/built-ins/Temporal/Now/plainTimeISO/return-value.js
-    - test/built-ins/Temporal/Now/zonedDateTimeISO/return-value.js
-    - test/built-ins/Temporal/Now/zonedDateTimeISO/time-zone-undefined.js
     - test/intl402/DateTimeFormat/prototype/format/temporal-zoneddatetime-not-supported.js
     - test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js
     - test/intl402/DateTimeFormat/prototype/formatRange/temporal-zoneddatetime-not-supported.js
