@@ -1,3 +1,2 @@
 wtf/PrintStream.h
 wtf/RunLoop.h
-wtf/ThreadSafeWeakPtr.h
