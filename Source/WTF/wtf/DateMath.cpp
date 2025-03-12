@@ -450,6 +450,9 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 // Parses a date with the format YYYY[-MM[-DD]].
 // Year parsing is lenient, allows any number of digits, and +/-.
+// This also allows to relax date parsing for months and days.
+// It is not explicitly forbidden per spec, but it is also not per spec,
+// but it would help with compatibility with Firefox and Chrome for new Date('2024-12-3').
 // Returns 0 if a parse error occurs, else returns the end of the parsed portion of the string.
 static bool parseES5DatePortion(std::span<const LChar>& currentPosition, int& year, long& month, long& day)
 {
@@ -463,30 +466,37 @@ static bool parseES5DatePortion(std::span<const LChar>& currentPosition, int& ye
         return false;
 
     // Check for presence of -MM portion.
-    if (!skipExactly(currentPosition, '-'))
+    if (currentPosition.empty() || currentPosition.front() != '-')
         return true;
-    
+    currentPosition = currentPosition.subspan(1);
     if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
         return false;
     auto postParsePosition = currentPosition;
     if (!parseLong(postParsePosition, 10, &month))
         return false;
-    if ((postParsePosition.data() - currentPosition.data()) != 2)
+
+    // Allow for both single and double digit months (1-12 or 01-12)
+    auto monthDigits = postParsePosition.data() - currentPosition.data();
+    if (monthDigits != 1 && monthDigits != 2)
         return false;
     currentPosition = postParsePosition;
 
     // Check for presence of -DD portion.
-    if (!skipExactly(currentPosition, '-'))
+    if (currentPosition.empty() || currentPosition.front() != '-')
         return true;
-    
+    currentPosition = currentPosition.subspan(1);
     if (currentPosition.empty() || !isASCIIDigit(currentPosition.front()))
         return false;
     postParsePosition = currentPosition;
     if (!parseLong(postParsePosition, 10, &day))
         return false;
-    if ((postParsePosition.data() - currentPosition.data()) != 2)
+
+    // Allow for both single and double digit days (1-31 or 01-31)
+    auto dayDigits = postParsePosition.data() - currentPosition.data();
+    if (dayDigits != 1 && dayDigits != 2)
         return false;
     currentPosition = postParsePosition;
+
     return true;
 }
 
