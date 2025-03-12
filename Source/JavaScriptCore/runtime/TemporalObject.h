@@ -94,6 +94,12 @@ private:
     void finishCreation(VM&);
 };
 
+enum class TemporalAuto : bool {
+    Auto
+};
+
+using TemporalLargestUnit = std::variant<TemporalUnit, TemporalAuto>;
+
 enum class RoundingMode : uint8_t {
     Ceil,
     Floor,
@@ -204,7 +210,7 @@ WTF::String ellipsizeAt(unsigned maxLength, const WTF::String&);
 PropertyName temporalUnitPluralPropertyName(VM&, TemporalUnit);
 PropertyName temporalUnitSingularPropertyName(VM&, TemporalUnit);
 std::optional<TemporalUnit> temporalUnitType(StringView);
-std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, TemporalUnit autoValue);
+std::optional<TemporalLargestUnit> temporalLargestUnit(JSGlobalObject*, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, std::optional<TemporalUnit> autoValue);
 std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject*, std::variant<JSObject*, TemporalUnit>, std::initializer_list<TemporalUnit>);
 std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject*, JSValue, UnitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit);
 TemporalShowCalendar getTemporalShowCalendarNameOption(JSGlobalObject*, JSObject*);

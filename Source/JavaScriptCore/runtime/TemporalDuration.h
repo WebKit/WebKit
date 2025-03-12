@@ -69,7 +69,7 @@ public:
     static TemporalDuration* toTemporalDuration(JSGlobalObject*, JSValue);
     static ISO8601::Duration toLimitedDuration(JSGlobalObject*, JSValue, std::initializer_list<TemporalUnit> disallowedUnits);
     static TemporalDuration* from(JSGlobalObject*, JSValue);
-    static JSValue compare(JSGlobalObject*, JSValue, JSValue);
+    static JSValue compare(JSGlobalObject*, JSValue, JSValue, JSValue);
 
 #define JSC_DEFINE_TEMPORAL_DURATION_FIELD(name, capitalizedName) \
     double name##s() const { return m_duration.name##s(); } \
@@ -94,6 +94,9 @@ public:
     ISO8601::Duration addDurations(JSGlobalObject*, bool, ISO8601::Duration, TemporalUnit) const;
     static ISO8601::Duration temporalDurationFromInternal(ISO8601::InternalDuration, TemporalUnit);
     static Int128 timeDurationFromComponents(double, double, double, double, double, double);
+    static double totalRelativeDuration(JSGlobalObject*, const ISO8601::InternalDuration&,
+        Int128, const ISO8601::PlainDateTime&, std::optional<ISO8601::TimeZone>,
+        TemporalUnit);
     static double totalTimeDuration(JSGlobalObject*, Int128, TemporalUnit);
 
     static ISO8601::Duration fromDurationLike(JSGlobalObject*, JSObject*);
@@ -127,7 +130,7 @@ private:
     template<typename CharacterType>
     static std::optional<ISO8601::Duration> parse(StringParsingBuffer<CharacterType>&);
 
-    static String toString(JSGlobalObject*, const ISO8601::Duration&, std::tuple<Precision, unsigned> precision);
+    static String toString(JSGlobalObject*, const ISO8601::Duration&, std::tuple<Precision, unsigned>);
 
     static NudgeResult nudgeToZonedTime(JSGlobalObject*, int32_t, ISO8601::InternalDuration,
         ISO8601::PlainDate, ISO8601::PlainTime,

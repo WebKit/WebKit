@@ -280,7 +280,7 @@ std::optional<TemporalUnit> temporalUnitType(StringView unit)
 
 // ToLargestTemporalUnit ( normalizedOptions, disallowedUnits, fallback [ , autoValue ] )
 // https://tc39.es/proposal-temporal/#sec-temporal-tolargesttemporalunit
-std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject* globalObject, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, TemporalUnit autoValue)
+std::optional<TemporalLargestUnit> temporalLargestUnit(JSGlobalObject* globalObject, JSObject* options, std::initializer_list<TemporalUnit> disallowedUnits, std::optional<TemporalUnit> autoValue)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -291,8 +291,11 @@ std::optional<TemporalUnit> temporalLargestUnit(JSGlobalObject* globalObject, JS
     if (!largestUnit)
         return std::nullopt;
 
-    if (largestUnit == "auto"_s)
-        return autoValue;
+    if (largestUnit == "auto"_s) {
+        if (autoValue)
+            return autoValue.value();
+        return TemporalAuto::Auto;
+    }
 
     auto unitType = temporalUnitType(largestUnit);
     if (!unitType) {
@@ -395,7 +398,11 @@ std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOp
     increment = temporalRoundingIncrement(globalObject, increment, maximumRoundingIncrement(smallestUnit), false);
     RETURN_IF_EXCEPTION(scope, { });
 
-    TemporalUnit largestUnit = largest.value_or(defaultLargestUnit);
+    TemporalUnit largestUnit = defaultLargestUnit;
+    if (largest) {
+        ASSERT(std::holds_alternative<TemporalUnit>(largest.value()));
+        largestUnit = std::get<TemporalUnit>(largest.value());
+    }
     if (smallestUnit < largestUnit) {
         throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
         return { };
@@ -447,7 +454,7 @@ static PrecisionData smallestUnitToPrecision(TemporalUnit smallestUnit)
     case TemporalUnit::Second:
         return { { Precision::Fixed, 0 }, TemporalUnit::Second, 1 };
     case TemporalUnit::Millisecond:
-            return { { Precision::Fixed, 3 }, TemporalUnit::Millisecond, 1 };
+        return { { Precision::Fixed, 3 }, TemporalUnit::Millisecond, 1 };
     case TemporalUnit::Microsecond:
         return { { Precision::Fixed, 6 }, TemporalUnit::Microsecond, 1 };
     case TemporalUnit::Nanosecond:

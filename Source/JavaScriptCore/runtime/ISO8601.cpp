@@ -446,6 +446,12 @@ std::optional<int64_t> parseUTCOffset(StringView string, Vector<LChar>& chars, b
     });
 }
 
+std::optional<int64_t> parseDateTimeUTCOffset(StringView string)
+{
+    Vector<LChar> ignore;
+    return parseUTCOffset(string, ignore, true);
+}
+
 template<typename CharacterType>
 static std::optional<int64_t> parseUTCOffsetInMinutes(StringParsingBuffer<CharacterType>& buffer)
 {
@@ -1920,7 +1926,7 @@ std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment,
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-datedurationsign
-static int32_t dateDurationSign(const Duration& d)
+int32_t dateDurationSign(const Duration& d)
 {
     if (d.years() > 0)
         return 1;

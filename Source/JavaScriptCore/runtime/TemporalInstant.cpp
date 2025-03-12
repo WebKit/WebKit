@@ -255,9 +255,13 @@ ISO8601::Duration TemporalInstant::difference(JSGlobalObject* globalObject, Temp
     TemporalUnit defaultLargestUnit = std::min(smallestUnit, TemporalUnit::Second);
     auto largest = temporalLargestUnit(globalObject, options, { TemporalUnit::Year, TemporalUnit::Month, TemporalUnit::Week, TemporalUnit::Day }, defaultLargestUnit);
     RETURN_IF_EXCEPTION(scope, { });
-    TemporalUnit largestUnit = largest.value_or(defaultLargestUnit);
+    TemporalUnit largestUnit = defaultLargestUnit;
+    if (largest) {
+        ASSERT(std::holds_alternative<TemporalUnit>(largest.value()));
+        largestUnit = std::get<TemporalUnit>(largest.value());
+    }
 
-    if (smallest && largest && smallest < largest) {
+    if (smallest && largest && smallest < largestUnit) {
         throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
         return { };
     }

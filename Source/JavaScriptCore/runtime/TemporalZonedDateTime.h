@@ -72,6 +72,20 @@ public:
     static String temporalZonedDateTimeToString(ExactTime, TimeZone,
         PrecisionData, TemporalShowCalendar, TemporalShowTimeZone, TemporalShowOffset,
         unsigned, TemporalUnit, RoundingMode);
+
+    static ISO8601::ExactTime interpretISODateTimeOffset(JSGlobalObject*, ISO8601::PlainDate,
+        ISO8601::PlainTime, TemporalOffsetBehavior, int64_t, ISO8601::TimeZone,
+        TemporalDisambiguation, TemporalOffset, TemporalMatchBehavior);
+    static ISO8601::ExactTime addZonedDateTime(JSGlobalObject*, ISO8601::ExactTime,
+        ISO8601::TimeZone, TemporalCalendar*, ISO8601::InternalDuration,
+        TemporalOverflow);
+    static ISO8601::InternalDuration differenceZonedDateTimeWithRounding(
+        JSGlobalObject*, ISO8601::ExactTime, ISO8601::ExactTime, ISO8601::TimeZone,
+        TemporalCalendar*, TemporalUnit, double, TemporalUnit, RoundingMode);
+    static double differenceZonedDateTimeWithTotal(
+        JSGlobalObject*, ISO8601::ExactTime, ISO8601::ExactTime, ISO8601::TimeZone,
+        TemporalUnit);
+
     String toString(JSGlobalObject*, JSValue options) const;
     String toString() const
     {

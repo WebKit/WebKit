@@ -72,7 +72,6 @@ public:
     static std::optional<ISO8601::TimeZone> getAvailableNamedTimeZoneIdentifier(JSGlobalObject*,
         const Vector<LChar>&);
 
-    static std::optional<int64_t> parseDateTimeUTCOffset(StringView);
     static std::optional<TimeZone> parseTemporalTimeZoneString(StringView);
     static ISO8601::TimeZone toTemporalTimeZoneIdentifier(JSGlobalObject*, JSValue);
     static String formatDateTimeUTCOffsetRounded(Int128);

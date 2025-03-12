@@ -252,6 +252,7 @@
     macro(rawJSON) \
     macro(read) \
     macro(region) \
+    macro(relativeTo) \
     macro(replace) \
     macro(resizable) \
     macro(resize) \

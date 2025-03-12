@@ -72,10 +72,17 @@ public:
 
     TemporalPlainDateTime* addDurationToDateTime(JSGlobalObject*, bool, ISO8601::Duration, JSObject*);
     static ISO8601::PlainDateTime combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::PlainTime);
+    static ISO8601::PlainDateTime combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::Duration);
     static ISO8601::PlainDateTime balanceISODateTime(double, double, double, double, double, double, double,
         double, double);
     ISO8601::Duration differenceTemporalPlainDateTime(JSGlobalObject*, bool,
         TemporalPlainDateTime*, TemporalUnit, TemporalUnit, RoundingMode, double);
+    static ISO8601::InternalDuration differencePlainDateTimeWithRounding(
+        JSGlobalObject*, const ISO8601::PlainDateTime&, const ISO8601::PlainDateTime&,
+        TemporalUnit, double, TemporalUnit, RoundingMode);
+    static double differencePlainDateTimeWithTotal(
+        JSGlobalObject*, const ISO8601::PlainDateTime&, const ISO8601::PlainDateTime&,
+        TemporalUnit);
 
     String monthCode() const;
     uint8_t dayOfWeek() const;
