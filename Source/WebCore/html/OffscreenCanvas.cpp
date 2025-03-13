@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "OffscreenCanvas.h"
+#include <wtf/TypeCasts.h>
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
@@ -68,9 +69,10 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DetachedOffscreenCanvas);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(OffscreenCanvas);
 
-DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource)
+DetachedOffscreenCanvas::DetachedOffscreenCanvas(const IntSize& size, bool originClean, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource, const AtomString& language)
     : m_placeholderSource(WTFMove(placeholderSource))
     , m_size(size)
+    , m_language(language)
     , m_originClean(originClean)
 {
 }
@@ -97,31 +99,35 @@ bool OffscreenCanvas::enabledForContext(ScriptExecutionContext& context)
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, unsigned width, unsigned height)
 {
-    auto canvas = adoptRef(*new OffscreenCanvas(scriptExecutionContext, { static_cast<int>(width), static_cast<int>(height) }, nullptr));
+    // https://html.spec.whatwg.org/#dom-offscreencanvas, step 7.
+    const AtomString& language = scriptExecutionContext.isDocument() ? WTF::downcast<Document>(scriptExecutionContext).effectiveDocumentElementLanguage() : nullAtom();
+
+    auto canvas = adoptRef(*new OffscreenCanvas(scriptExecutionContext, { static_cast<int>(width), static_cast<int>(height) }, nullptr, language));
     canvas->suspendIfNeeded();
     return canvas;
 }
 
 Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, std::unique_ptr<DetachedOffscreenCanvas>&& detachedCanvas)
 {
-    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderSource()));
+    Ref<OffscreenCanvas> clone = adoptRef(*new OffscreenCanvas(scriptExecutionContext, detachedCanvas->size(), detachedCanvas->takePlaceholderSource(), detachedCanvas->m_language));
     if (!detachedCanvas->originClean())
         clone->setOriginTainted();
     clone->suspendIfNeeded();
     return clone;
 }
 
-Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, PlaceholderRenderingContext& placeholder)
+Ref<OffscreenCanvas> OffscreenCanvas::create(ScriptExecutionContext& scriptExecutionContext, PlaceholderRenderingContext& placeholder, const AtomString& language)
 {
-    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), placeholder.source().ptr()));
+    auto offscreen = adoptRef(*new OffscreenCanvas(scriptExecutionContext, placeholder.size(), placeholder.source().ptr(), language));
     offscreen->suspendIfNeeded();
     return offscreen;
 }
 
-OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, IntSize size, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource)
+OffscreenCanvas::OffscreenCanvas(ScriptExecutionContext& scriptExecutionContext, IntSize size, RefPtr<PlaceholderRenderingContextSource>&& placeholderSource, const AtomString& language)
     : ActiveDOMObject(&scriptExecutionContext)
     , CanvasBase(WTFMove(size), scriptExecutionContext)
     , m_placeholderSource(WTFMove(placeholderSource))
+    , m_inheritedLanguage(language)
 {
 }
 
@@ -394,7 +400,7 @@ std::unique_ptr<DetachedOffscreenCanvas> OffscreenCanvas::detach()
 
     m_detached = true;
 
-    auto detached = makeUnique<DetachedOffscreenCanvas>(size(), originClean(), WTFMove(m_placeholderSource));
+    auto detached = makeUnique<DetachedOffscreenCanvas>(size(), originClean(), WTFMove(m_placeholderSource), m_inheritedLanguage);
     setSize(IntSize(0, 0));
     return detached;
 }

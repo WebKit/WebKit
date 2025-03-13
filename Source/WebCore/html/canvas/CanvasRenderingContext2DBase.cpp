@@ -84,6 +84,7 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/ASCIILiteral.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextStream.h>
@@ -98,6 +99,7 @@ static constexpr ImageSmoothingQuality defaultSmoothingQuality = ImageSmoothingQ
 
 const int CanvasRenderingContext2DBase::DefaultFontSize = 10;
 const ASCIILiteral CanvasRenderingContext2DBase::DefaultFontFamily = "sans-serif"_s;
+const ASCIILiteral CanvasRenderingContext2DBase::LanguageInherit = "inherit"_s;
 static constexpr ASCIILiteral DefaultFont = "10px sans-serif"_s;
 
 // putImageData data smaller than this is cached in anticipation for next getImageData.
@@ -252,6 +254,18 @@ CanvasRenderingContext2DBase::CanvasRenderingContext2DBase(CanvasBase& canvas, C
     ASSERT(is2dBase());
 }
 
+// Step 4 to 6 of https://html.spec.whatwg.org/#text-preparation-algorithm.
+const AtomString& CanvasRenderingContext2DBase::DetermineLanguageForTextPreparation(const AtomString& targetLanguage) const
+{
+    if (targetLanguage == LanguageInherit)
+        return DetermineInheritedLanguage();
+
+    if (targetLanguage == emptyString())
+        return nullAtom();
+
+    return targetLanguage;
+}
+
 void CanvasRenderingContext2DBase::unwindStateStack()
 {
     // Ensure that the state stack in the ImageBuffer's context
@@ -347,6 +361,8 @@ CanvasRenderingContext2DBase::State::State()
     , textAlign(StartTextAlign)
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
+    , language(LanguageInherit)
+    , actualLanguage(language)
     , filterString("none"_s)
     , letterSpacing("0px"_s)
     , wordSpacing("0px"_s)
@@ -382,6 +398,11 @@ String CanvasRenderingContext2DBase::State::fontString() const
     }
 
     return serializedFont.toString();
+}
+
+bool CanvasRenderingContext2DBase::State::doesFontRequireUpdate(const String& newFont, const AtomString& newActualLanguage) const
+{
+    return newFont != unparsedFont || newActualLanguage != actualLanguage || !font.realized();
 }
 
 CanvasLineCap CanvasRenderingContext2DBase::State::canvasLineCap() const
@@ -761,6 +782,17 @@ void CanvasRenderingContext2DBase::setWebkitLineDash(const Vector<double>& dash)
     modifiableState().lineDash = dash;
 
     applyLineDash();
+}
+
+void CanvasRenderingContext2DBase::setLang(const String& lang)
+{
+    const auto language = AtomString(lang);
+
+    if (state().language == language)
+        return;
+
+    realizeSaves();
+    modifiableState().language = language;
 }
 
 void CanvasRenderingContext2DBase::setLineDashOffset(double offset)

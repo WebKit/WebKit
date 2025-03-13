@@ -28,7 +28,9 @@
 
 #include "CustomPaintCanvas.h"
 #include "DisplayListRecorderImpl.h"
+#include <wtf/Assertions.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -42,6 +44,12 @@ std::unique_ptr<PaintRenderingContext2D> PaintRenderingContext2D::create(CustomP
 PaintRenderingContext2D::PaintRenderingContext2D(CustomPaintCanvas& canvas)
     : CanvasRenderingContext2DBase(canvas, Type::Paint, { }, false)
 {
+}
+
+const AtomString& PaintRenderingContext2D::DetermineInheritedLanguage() const
+{
+    ASSERT_NOT_REACHED();
+    return nullAtom();
 }
 
 PaintRenderingContext2D::~PaintRenderingContext2D() = default;

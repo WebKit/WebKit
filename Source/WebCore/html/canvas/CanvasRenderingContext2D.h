@@ -28,6 +28,7 @@
 #include "CanvasRenderingContext2DBase.h"
 #include "HTMLCanvasElement.h"
 #include <memory>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -69,6 +70,8 @@ private:
     void drawFocusIfNeededInternal(const Path&, Element&);
 
     TextDirection toTextDirection(CanvasRenderingContext2DBase::Direction, const RenderStyle** computedStyle = nullptr) const;
+
+    const AtomString& DetermineInheritedLanguage() const final;
 };
 
 } // namespace WebCore

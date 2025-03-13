@@ -32,6 +32,7 @@
 
 #include "config.h"
 #include "OffscreenCanvasRenderingContext2D.h"
+#include "OffscreenCanvas.h"
 
 #if ENABLE(OFFSCREEN_CANVAS)
 
@@ -44,6 +45,7 @@
 #include "StyleResolveForFont.h"
 #include "TextMetrics.h"
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/AtomString.h>
 
 namespace WebCore {
 
@@ -78,12 +80,16 @@ OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase&
 
 void OffscreenCanvasRenderingContext2D::drawText(const String& text, double x, double y, bool fill, std::optional<double> maxWidth)
 {
+    // The inherited language might've changed, hence potentially update the font.
+    setFont(state().unparsedFont);
+
     if (!canDrawText(x, y, fill, maxWidth))
         return;
 
     String normalizedText = normalizeSpaces(text);
     auto direction = (state().direction == Direction::Rtl) ? TextDirection::RTL : TextDirection::LTR;
     TextRun textRun(normalizedText, 0, 0, ExpansionBehavior::allowRightOnly(), direction, false, true);
+
     drawTextUnchecked(textRun, x, y, fill, maxWidth);
 }
 
@@ -96,7 +102,8 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     if (newFont.isEmpty())
         return;
 
-    if (newFont == state().unparsedFont && state().font.realized())
+    const AtomString newActualLanguage = DetermineLanguageForTextPreparation(state().language);
+    if (!state().doesFontRequireUpdate(newFont, newActualLanguage))
         return;
 
     // According to http://lists.w3.org/Archives/Public/public-html/2009Jul/0947.html,
@@ -109,6 +116,7 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
+    modifiableState().actualLanguage = newActualLanguage;
 
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the default font.
@@ -116,6 +124,9 @@ void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
     fontDescription.setOneFamily(DefaultFontFamily);
     fontDescription.setSpecifiedSize(DefaultFontSize);
     fontDescription.setComputedSize(DefaultFontSize);
+
+    if (!newActualLanguage.isNull())
+        fontDescription.setSpecifiedLocale(newActualLanguage);
 
     if (auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), context)) {
         ASSERT(context.cssFontSelector());
@@ -163,6 +174,11 @@ auto OffscreenCanvasRenderingContext2D::fontProxy() -> const FontProxy* {
     return &state().font;
 }
 
+const AtomString& OffscreenCanvasRenderingContext2D::DetermineInheritedLanguage() const
+{
+    return canvas().getInheritedLanguage();
+}
+
 void OffscreenCanvasRenderingContext2D::fillText(const String& text, double x, double y, std::optional<double> maxWidth)
 {
     drawText(text, x, y, true, maxWidth);
@@ -175,6 +191,9 @@ void OffscreenCanvasRenderingContext2D::strokeText(const String& text, double x,
 
 Ref<TextMetrics> OffscreenCanvasRenderingContext2D::measureText(const String& text)
 {
+    // The inherited language might've changed, hence potentially update the font.
+    setFont(state().unparsedFont);
+
     return measureTextInternal(text);
 }
 

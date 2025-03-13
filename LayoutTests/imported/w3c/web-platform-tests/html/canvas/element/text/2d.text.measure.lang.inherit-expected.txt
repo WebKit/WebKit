@@ -2,5 +2,5 @@
 Testing the lang attribute
 Actual output:
 
-FAIL Testing the lang attribute assert_true: tr_width > en_width expected true got false
+PASS Testing the lang attribute
 

@@ -40,6 +40,7 @@
 #include "Filter.h"
 #include "FloatSize.h"
 #include "FontCascade.h"
+#include "FontDescription.h"
 #include "FontSelectorClient.h"
 #include "GraphicsContext.h"
 #include "GraphicsTypes.h"
@@ -50,6 +51,7 @@
 #include "PlatformLayer.h"
 #include "Timer.h"
 #include <wtf/Vector.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -95,6 +97,7 @@ class CanvasRenderingContext2DBase : public CanvasRenderingContext, public Canva
     friend class CanvasLayerContextSwitcher;
 protected:
     CanvasRenderingContext2DBase(CanvasBase&, CanvasRenderingContext::Type, CanvasRenderingContext2DSettings&&, bool usesCSSCompatibilityParseMode);
+    const AtomString& DetermineLanguageForTextPreparation(const AtomString&) const;
 
 public:
     virtual ~CanvasRenderingContext2DBase();
@@ -125,6 +128,9 @@ public:
 
     const Vector<double>& webkitLineDash() const { return getLineDash(); }
     void setWebkitLineDash(const Vector<double>&);
+
+    const AtomString& lang() const { return state().language; }
+    void setLang(const String&);
 
     double lineDashOffset() const { return state().lineDashOffset; }
     void setLineDashOffset(double);
@@ -312,6 +318,9 @@ public:
         TextBaseline textBaseline;
         Direction direction;
 
+        AtomString language;
+        AtomString actualLanguage;
+
         String filterString;
         FilterOperations filterOperations;
 
@@ -323,6 +332,7 @@ public:
 
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
+        bool doesFontRequireUpdate(const String& newFont, const AtomString& newActualLanguage) const;
         CanvasLineCap canvasLineCap() const;
         CanvasLineJoin canvasLineJoin() const;
         CanvasTextAlign canvasTextAlign() const;
@@ -336,6 +346,7 @@ public:
 protected:
     static const int DefaultFontSize;
     static const ASCIILiteral DefaultFontFamily;
+    static const ASCIILiteral LanguageInherit;
 
     const State& state() const { return m_stateStack.last(); }
     void realizeSaves();
@@ -405,6 +416,8 @@ private:
         Ref<ByteArrayPixelBuffer> imageData;
         DeferrableOneShotTimer evictionTimer;
     };
+
+    virtual const AtomString& DetermineInheritedLanguage() const = 0;
 
     void setHasInvertibleTransform(bool);
     void applyLineDash() const;

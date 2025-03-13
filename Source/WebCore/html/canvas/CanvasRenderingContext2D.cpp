@@ -38,6 +38,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserConsumer+Font.h"
+#include "CanvasRenderingContext2DBase.h"
 #include "ContainerNodeInlines.h"
 #include "DocumentInlines.h"
 #include "Gradient.h"
@@ -63,7 +64,9 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -179,10 +182,13 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
+    ASSERT(!state().unparsedFont.isEmpty());
     if (newFont.isEmpty())
         return;
 
-    if (newFont == state().unparsedFont && state().font.realized())
+    const AtomString newActualLanguage = DetermineLanguageForTextPreparation(state().language);
+
+    if (!state().doesFontRequireUpdate(newFont, newActualLanguage))
         return;
 
     auto& document = canvas().document();
@@ -203,6 +209,9 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
         fontDescription.setComputedSize(DefaultFontSize);
     }
 
+    if (!newActualLanguage.isNull())
+        fontDescription.setSpecifiedLocale(newActualLanguage);
+
     // Map the <canvas> font into the text style. If the font uses keywords like larger/smaller, these will work
     // relative to the canvas.
     auto fontCascade = Style::resolveForUnresolvedFont(*unresolvedFont, WTFMove(fontDescription), document);
@@ -212,6 +221,7 @@ void CanvasRenderingContext2D::setFontWithoutUpdatingStyle(const String& newFont
     String newFontSafeCopy(newFont); // Create a string copy since newFont can be deleted inside realizeSaves.
     realizeSaves();
     modifiableState().unparsedFont = newFontSafeCopy;
+    modifiableState().actualLanguage = newActualLanguage;
 
     modifiableState().font.initialize(document.fontSelector(), *fontCascade);
     ASSERT(state().font.realized());
@@ -241,6 +251,11 @@ inline TextDirection CanvasRenderingContext2D::toTextDirection(Direction directi
     return TextDirection::LTR;
 }
 
+const AtomString& CanvasRenderingContext2D::DetermineInheritedLanguage() const
+{
+    return canvas().effectiveLang();
+}
+
 CanvasDirection CanvasRenderingContext2D::direction() const
 {
     if (state().direction == Direction::Inherit)
@@ -263,6 +278,9 @@ Ref<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 {
     Ref document = canvas().document();
     document->updateStyleIfNeeded();
+
+    // The inherited language might've changed, hence potentially update the font.
+    setFontWithoutUpdatingStyle(state().unparsedFont);
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
@@ -301,6 +319,9 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, double x, do
 
     if (document->settings().webAPIStatisticsEnabled())
         ResourceLoadObserver::shared().logCanvasWriteOrMeasure(document, text);
+
+    // The inherited language might've changed, hence potentially update the font.
+    setFontWithoutUpdatingStyle(state().unparsedFont);
 
     if (!canDrawText(x, y, fill, maxWidth))
         return;
