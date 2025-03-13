@@ -502,9 +502,10 @@ static ISO8601::InternalDuration differencePlainDateTimeWithRounding(JSGlobalObj
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (!TemporalCalendar::isoDateTimeCompare(isoDateTime1, isoDateTime2))
+    if (!TemporalCalendar::isoDateTimeCompare(isoDateTime1, isoDateTime2)) {
         RELEASE_AND_RETURN(scope,
             ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, ISO8601::Duration(), 0));
+    }
     if (!isoDateTimeWithinLimits(isoDateTime1) || !isoDateTimeWithinLimits(isoDateTime2))
         throwRangeError(globalObject, scope, "Date/time out of range in differencePlainDateTimeWithRounding"_s);
     auto diff = differenceISODateTime(globalObject, isoDateTime1, isoDateTime2, largestUnit);
