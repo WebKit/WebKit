@@ -94,6 +94,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/calendar-temporal-object.js
     - test/built-ins/Temporal/Duration/prototype/round/duration-out-of-range-added-to-relativeto.js
     - test/built-ins/Temporal/Duration/prototype/round/february-leap-year.js
+    - test/built-ins/Temporal/Duration/prototype/round/largestunit-plurals-accepted.js
     - test/built-ins/Temporal/Duration/prototype/round/largestunit-smallestunit-default.js
     - test/built-ins/Temporal/Duration/prototype/round/order-of-operations.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
@@ -122,6 +123,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfFloor.js
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-halfTrunc.js
     - test/built-ins/Temporal/Duration/prototype/round/roundingmode-trunc.js
+    - test/built-ins/Temporal/Duration/prototype/round/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/Duration/prototype/round/total-duration-nanoseconds-too-large-with-zoned-datetime.js
     - test/built-ins/Temporal/Duration/prototype/round/year-zero.js
     - test/built-ins/Temporal/Duration/prototype/total/balances-days-up-to-both-years-and-months.js
@@ -317,36 +319,6 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/PlainYearMonth/refisoday-undefined.js
 
-    # Depends on PlainMonthDay
-    - test/built-ins/Temporal/Duration/prototype/round/largestunit-plurals-accepted.js
-    - test/built-ins/Temporal/Duration/prototype/round/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/Duration/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js
-    - test/built-ins/Temporal/Instant/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainDate/prototype/with/plaindatelike-invalid.js
-    - test/built-ins/Temporal/PlainDateTime/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-plurals-accepted.js
-    - test/built-ins/Temporal/PlainTime/prototype/with/plaintimelike-invalid.js
-    - test/built-ins/Temporal/PlainYearMonth/compare/calendar-temporal-object.js
-    - test/built-ins/Temporal/PlainYearMonth/from/calendar-temporal-object.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/calendar-temporal-object.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/since/calendar-temporal-object.js
-    - test/built-ins/Temporal/PlainYearMonth/prototype/until/calendar-temporal-object.js
-    - test/intl402/DateTimeFormat/prototype/format/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-resolved-time-zone.js
-    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
-    - test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js
-    - test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-offset.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-datetime.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-leap-second.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offsets.js
-    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string.js
-    - test/intl402/Temporal/Instant/prototype/toString/timezone-offset.js
-    - test/intl402/Temporal/Instant/prototype/toString/timezone-string-datetime.js
-
     # Depends on annotations in datetime strings
     - test/built-ins/Temporal/Instant/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/Instant/compare/argument-string-time-zone-annotation.js
@@ -416,16 +388,25 @@ skip:
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-date-with-utc-offset.js
 
+
     # Depends on Temporal.ZonedDateTime
     - test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/Duration/prototype/round/relativeto-zoneddatetime-slots.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-zoneddatetime-with-fractional-days.js
+    - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted-string.js
+    - test/built-ins/Temporal/Duration/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/Instant/compare/argument-zoneddatetime.js
     - test/built-ins/Temporal/Instant/from/argument-zoneddatetime.js
     - test/built-ins/Temporal/Instant/prototype/equals/argument-zoneddatetime.js
     - test/built-ins/Temporal/Instant/prototype/since/argument-zoneddatetime.js
+    - test/built-ins/Temporal/Instant/prototype/toString/smallestunit-plurals-accepted.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-offset.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-datetime.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-leap-second.js
+    - test/built-ins/Temporal/Instant/prototype/toString/timezone-string-multiple-offsets.js
     - test/built-ins/Temporal/Instant/prototype/until/argument-zoneddatetime.js
     - test/built-ins/Temporal/PlainDate/compare/argument-zoneddatetime-slots.js
     - test/built-ins/Temporal/PlainDate/compare/argument-zoneddatetime.js
@@ -437,11 +418,13 @@ skip:
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainDate/prototype/toPlainDateTime/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainDate/prototype/until/argument-zoneddatetime-slots.js
+    - test/built-ins/Temporal/PlainDate/prototype/with/plaindatelike-invalid.js
     - test/built-ins/Temporal/PlainDateTime/compare/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainDateTime/from/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainDateTime/from/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainDateTime/prototype/equals/argument-zoneddatetime-negative-epochnanoseconds.js
+    - test/built-ins/Temporal/PlainDateTime/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainDateTime/prototype/withPlainTime/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainMonthDay/from/calendar-temporal-object.js
@@ -454,6 +437,23 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/equals/argument-zoneddatetime-negative-epochnanoseconds.js
     - test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/prototype/since/argument-zoneddatetime-negative-epochnanoseconds.js
+    - test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-balance-negative-time-units.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-zoneddatetime-negative-epochnanoseconds.js
+    - test/built-ins/Temporal/PlainTime/prototype/with/plaintimelike-invalid.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/from/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/calendar-temporal-object.js
     - test/built-ins/Temporal/PlainYearMonth/prototype/with/yearmonthlike-invalid.js
+    - test/intl402/Intl/DateTimeFormat/prototype/formatRange/fails-on-distinct-temporal-types.js
+    - test/intl402/Intl/DateTimeFormat/prototype/formatRangeToParts/fails-on-distinct-temporal-types.js
+    - test/intl402/Temporal/Instant/prototype/toString/timezone-offset.js
+    - test/intl402/Temporal/Instant/prototype/toString/timezone-string-datetime.js
+
+    # Depends on Temporal support in IntlDateTimeFormat::handleDateTimeValue()
+    - test/intl402/DateTimeFormat/prototype/format/temporal-objects-resolved-time-zone.js
+    - test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-resolved-time-zone.js
+    - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-resolved-time-zone.js
+    - test/intl402/DateTimeFormat/prototype/formatToParts/temporal-objects-resolved-time-zone.js
