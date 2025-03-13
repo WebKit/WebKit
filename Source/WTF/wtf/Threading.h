@@ -300,10 +300,12 @@ public:
     static Thread* currentMayBeNull();
 #endif
 
+    void lowerStackOriginInThread(void* origin);
+
 protected:
     Thread() = default;
 
-    void initializeInThread();
+    void initializeInThread(void* softStackOrigin = nullptr);
 
     // Internal platform-specific Thread establishment implementation.
     bool establishHandle(NewThreadContext*, std::optional<size_t> stackSize, QOS, SchedulingPolicy);

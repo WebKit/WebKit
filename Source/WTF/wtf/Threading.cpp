@@ -215,11 +215,14 @@ const char* Thread::normalizeThreadName(const char* threadName)
 #endif
 }
 
-void Thread::initializeInThread()
+void Thread::initializeInThread(void* softStackOrigin)
 {
     if (m_stack.isEmpty())
         m_stack = StackBounds::currentThreadStackBounds();
     m_savedLastStackTop = stack().origin();
+
+    if (softStackOrigin)
+        lowerStackOriginInThread(softStackOrigin);
 
     m_currentAtomStringTable = &m_defaultAtomStringTable;
 #if USE(WEB_THREAD)
@@ -239,8 +242,17 @@ void Thread::initializeInThread()
 #endif
 }
 
+void Thread::lowerStackOriginInThread(void* origin) {
+    if (origin < m_stack.origin()) {
+        m_stack = m_stack.withSoftOrigin(origin);
+        m_savedLastStackTop = stack().origin();
+    }
+}
+
 void Thread::entryPoint(NewThreadContext* newThreadContext)
 {
+    int softStackOrigin;
+
     Function<void()> function;
     {
         // Ref is already incremented by Thread::create.
@@ -253,7 +265,7 @@ void Thread::entryPoint(NewThreadContext* newThreadContext)
         function = WTFMove(context->entryPoint);
 
         Ref thread = WTFMove(context->thread);
-        thread->initializeInThread();
+        thread->initializeInThread(&softStackOrigin);
 
         Thread::initializeTLS(WTFMove(thread));
 

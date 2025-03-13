@@ -1114,7 +1114,7 @@ void VM::pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&
     m_checkpointSideState.append(WTFMove(payload));
 
 #if ASSERT_ENABLED
-    auto bounds = StackBounds::currentThreadStackBounds();
+    auto bounds = Thread::currentSingleton().stack();
     void* previousCallFrame = bounds.end();
     for (size_t i = m_checkpointSideState.size(); i--;) {
         auto* callFrame = m_checkpointSideState[i]->associatedCallFrame;
@@ -1137,7 +1137,7 @@ std::unique_ptr<CheckpointOSRExitSideState> VM::popCheckpointOSRSideState(CallFr
 void VM::popAllCheckpointOSRSideStateUntil(CallFrame* target)
 {
     ASSERT(currentThreadIsHoldingAPILock());
-    auto bounds = StackBounds::currentThreadStackBounds().withSoftOrigin(target);
+    auto bounds = Thread::currentSingleton().stack().withSoftOrigin(target);
     ASSERT(bounds.contains(target));
 
     // We have to worry about migrating from another thread since there may be no checkpoints in our thread but one in the other threads.

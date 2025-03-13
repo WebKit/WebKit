@@ -144,6 +144,8 @@ void RunLoop::performWork()
         }
 
         auto function = m_currentIteration.takeFirst();
+        int stackOrigin;
+        Thread::currentSingleton().lowerStackOriginInThread(&stackOrigin);
         function();
     }
 
