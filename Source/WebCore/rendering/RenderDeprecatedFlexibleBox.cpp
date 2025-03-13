@@ -137,6 +137,13 @@ RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Element& element, Rende
     m_stretchingChildren = false;
 }
 
+RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Document& document, RenderStyle&& style)
+    : RenderBlock(RenderObject::Type::DeprecatedFlexibleBox, document, WTFMove(style), { })
+{
+    setChildrenInline(false); // All of our children must be block-level
+    m_stretchingChildren = false;
+}
+
 RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox() = default;
 
 static LayoutUnit marginWidthForChild(RenderBox* child)

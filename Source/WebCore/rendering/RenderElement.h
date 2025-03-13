@@ -59,7 +59,7 @@ public:
         ListItem         = 1 << 1,
         TableOrTablePart = 1 << 2
     };
-    static RenderPtr<RenderElement> createFor(Element&, RenderStyle&&, OptionSet<ConstructBlockLevelRendererFor> = { });
+    static RenderPtr<RenderElement> createFor(Element&, RenderStyle&&, OptionSet<ConstructBlockLevelRendererFor> = { }, bool anonymous = false);
 
     bool hasInitializedStyle() const { return m_hasInitializedStyle; }
 
@@ -365,6 +365,9 @@ private:
     RenderObject* lastChildSlow() const final { return lastChild(); }
 
     RenderElement* rendererForPseudoStyleAcrossShadowBoundary() const;
+
+    template<typename T>
+    static RenderPtr<RenderElement> createForInternal(T&, RenderStyle&&, OptionSet<ConstructBlockLevelRendererFor>);
 
     // Called when an object that was floating or positioned becomes a normal flow object
     // again.  We have to make sure the render tree updates as needed to accommodate the new

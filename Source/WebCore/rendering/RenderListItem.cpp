@@ -56,6 +56,13 @@ RenderListItem::RenderListItem(Element& element, RenderStyle&& style)
     setInline(false);
 }
 
+RenderListItem::RenderListItem(Document& document, RenderStyle&& style)
+    : RenderBlockFlow(Type::ListItem, document, WTFMove(style))
+{
+    ASSERT(isRenderListItem());
+    setInline(false);
+}
+
 RenderListItem::~RenderListItem()
 {
     // Do not add any code here. Add it to willBeDestroyed() instead.

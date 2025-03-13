@@ -35,6 +35,12 @@ RenderTableCaption::RenderTableCaption(Element& element, RenderStyle&& style)
     ASSERT(isRenderTableCaption());
 }
 
+RenderTableCaption::RenderTableCaption(Document& document, RenderStyle&& style)
+    : RenderBlockFlow(Type::TableCaption, document, WTFMove(style))
+{
+    ASSERT(isRenderTableCaption());
+}
+
 RenderTableCaption::~RenderTableCaption() = default;
 
 void RenderTableCaption::insertedIntoTree()

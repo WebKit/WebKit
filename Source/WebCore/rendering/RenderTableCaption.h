@@ -30,6 +30,7 @@ class RenderTableCaption final : public RenderBlockFlow {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderTableCaption);
 public:
     RenderTableCaption(Element&, RenderStyle&&);
+    RenderTableCaption(Document&, RenderStyle&&);
     virtual ~RenderTableCaption();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

@@ -178,17 +178,26 @@ bool RenderElement::isContentDataSupported(const ContentData& contentData)
     return is<ImageContentData>(contentData) && !contentData.next();
 }
 
-RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride)
+RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride, bool anonymous)
 {
     const ContentData* contentData = style.contentData();
     if (!rendererTypeOverride && contentData && isContentDataSupported(*contentData) && !element.isPseudoElement()) {
         Style::loadPendingResources(style, element.document(), &element);
         Ref styleImage = downcast<ImageContentData>(*contentData).image();
-        auto image = createRenderer<RenderImage>(RenderObject::Type::Image, element, WTFMove(style), const_cast<StyleImage*>(styleImage.ptr()));
+        auto image = anonymous ? createRenderer<RenderImage>(RenderObject::Type::Image, element.document(), WTFMove(style), const_cast<StyleImage*>(styleImage.ptr())) : createRenderer<RenderImage>(RenderObject::Type::Image, element, WTFMove(style), const_cast<StyleImage*>(styleImage.ptr()));
         image->setIsGeneratedContent();
         return image;
     }
 
+    if (anonymous)
+        return createForInternal(element.document(), WTFMove(style), rendererTypeOverride);
+    else
+        return createForInternal(element, WTFMove(style), rendererTypeOverride);
+}
+
+template<typename T>
+RenderPtr<RenderElement> RenderElement::createForInternal(T& element, RenderStyle&& style, OptionSet<ConstructBlockLevelRendererFor> rendererTypeOverride)
+{
     switch (style.display()) {
     case DisplayType::None:
     case DisplayType::Contents:
@@ -253,6 +262,9 @@ RenderPtr<RenderElement> RenderElement::createFor(Element& element, RenderStyle&
     ASSERT_NOT_REACHED();
     return nullptr;
 }
+
+template RenderPtr<RenderElement> RenderElement::createForInternal(Element&, RenderStyle&&, OptionSet<RenderElement::ConstructBlockLevelRendererFor>);
+template RenderPtr<RenderElement> RenderElement::createForInternal(Document&, RenderStyle&&, OptionSet<RenderElement::ConstructBlockLevelRendererFor>);
 
 const RenderStyle& RenderElement::firstLineStyle() const
 {

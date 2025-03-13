@@ -34,6 +34,7 @@ class RenderListItem final : public RenderBlockFlow {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderListItem);
 public:
     RenderListItem(Element&, RenderStyle&&);
+    RenderListItem(Document&, RenderStyle&&);
     virtual ~RenderListItem();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

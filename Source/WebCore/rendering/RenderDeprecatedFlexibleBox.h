@@ -33,6 +33,7 @@ class RenderDeprecatedFlexibleBox final : public RenderBlock {
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderDeprecatedFlexibleBox);
 public:
     RenderDeprecatedFlexibleBox(Element&, RenderStyle&&);
+    RenderDeprecatedFlexibleBox(Document&, RenderStyle&&);
     virtual ~RenderDeprecatedFlexibleBox();
 
     Element& element() const { return downcast<Element>(nodeForNonAnonymous()); }

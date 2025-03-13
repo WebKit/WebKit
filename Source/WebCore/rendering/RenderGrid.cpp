@@ -62,6 +62,17 @@ RenderGrid::RenderGrid(Element& element, RenderStyle&& style)
     setChildrenInline(false);
 }
 
+RenderGrid::RenderGrid(Document& document, RenderStyle&& style)
+    : RenderBlock(Type::Grid, document, WTFMove(style), { })
+    , m_grid(*this)
+    , m_trackSizingAlgorithm(this, currentGrid())
+    , m_masonryLayout(*this)
+{
+    ASSERT(isRenderGrid());
+    // All of our children must be block level.
+    setChildrenInline(false);
+}
+
 RenderGrid::~RenderGrid() = default;
 
 StyleSelfAlignmentData RenderGrid::selfAlignmentForGridItem(GridAxis axis, const RenderBox& gridItem, const RenderStyle* gridStyle) const
