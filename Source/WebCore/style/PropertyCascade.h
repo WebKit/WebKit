@@ -74,6 +74,7 @@ public:
 
     PropertyCascade(const MatchResult&, IncludedProperties&&, const HashSet<AnimatableCSSProperty>* = nullptr, const StyleProperties* positionTryFallbackProperties = nullptr);
     PropertyCascade(const PropertyCascade&, Origin, std::optional<ScopeOrdinal> rollbackScope = { }, std::optional<CascadeLayerPriority> maximumCascadeLayerPriorityForRollback = { });
+    PropertyCascade(const PropertyCascade&, IncludedProperties&&);
 
     ~PropertyCascade();
 
@@ -106,6 +107,8 @@ public:
 
     PropertyBitSet& propertyIsPresent() { return m_propertyIsPresent; }
     const PropertyBitSet& propertyIsPresent() const { return m_propertyIsPresent; }
+
+    const IncludedProperties& includedProperties() { return m_includedProperties; }
 
     bool applyLowPriorityOnly() const { return !m_includedProperties.ids.isEmpty(); }
 

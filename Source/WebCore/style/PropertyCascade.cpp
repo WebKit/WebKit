@@ -69,6 +69,16 @@ PropertyCascade::PropertyCascade(const PropertyCascade& parent, Origin maximumOr
     buildCascade();
 }
 
+PropertyCascade::PropertyCascade(const PropertyCascade& parent, IncludedProperties&& includedProperties)
+    : m_matchResult(parent.m_matchResult)
+    , m_includedProperties(WTFMove(includedProperties))
+    , m_maximumOrigin(parent.m_maximumOrigin)
+    , m_animationLayer(parent.m_animationLayer)
+    , m_positionTryFallbackProperties(parent.m_positionTryFallbackProperties)
+{
+    buildCascade();
+}
+
 PropertyCascade::~PropertyCascade() = default;
 
 PropertyCascade::AnimationLayer::AnimationLayer(const HashSet<AnimatableCSSProperty>& properties)

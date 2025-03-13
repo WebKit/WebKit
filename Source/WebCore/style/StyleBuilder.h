@@ -58,7 +58,9 @@ public:
 
     BuilderState& state() { return m_state; }
 
-    const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const { return m_cascade.overriddenAnimatedProperties(); }
+    const HashSet<AnimatableCSSProperty> overriddenAnimatedProperties() const { return m_cascade->overriddenAnimatedProperties(); }
+
+    void resetCascadeForAppearanceBaseIfNeeded();
 
 private:
     void applyProperties(int firstProperty, int lastProperty);
@@ -86,7 +88,7 @@ private:
     using RollbackCascadeKey = std::tuple<unsigned, unsigned, unsigned>;
     RollbackCascadeKey makeRollbackCascadeKey(PropertyCascade::Origin, ScopeOrdinal = ScopeOrdinal::Element, CascadeLayerPriority = 0);
 
-    const PropertyCascade m_cascade;
+    UniqueRef<PropertyCascade> m_cascade;
     // Rollback cascades are build on demand to resolve 'revert' and 'revert-layer' keywords.
     HashMap<RollbackCascadeKey, std::unique_ptr<const PropertyCascade>> m_rollbackCascades;
 

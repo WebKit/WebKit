@@ -96,7 +96,7 @@ static auto positionTryFallbackProperties(const BuilderContext& context)
 }
 
 Builder::Builder(RenderStyle& style, BuilderContext&& context, const MatchResult& matchResult, PropertyCascade::IncludedProperties&& includedProperties, const HashSet<AnimatableCSSProperty>* animatedPropertes)
-    : m_cascade(matchResult, WTFMove(includedProperties), animatedPropertes, positionTryFallbackProperties(context))
+    : m_cascade(makeUniqueRef<PropertyCascade>(matchResult, WTFMove(includedProperties), animatedPropertes, positionTryFallbackProperties(context)))
     , m_state(style, WTFMove(context))
 {
 }
@@ -105,10 +105,11 @@ Builder::~Builder() = default;
 
 void Builder::applyAllProperties()
 {
-    if (m_cascade.isEmpty())
+    if (m_cascade->isEmpty())
         return;
 
     applyTopPriorityProperties();
+    resetCascadeForAppearanceBaseIfNeeded();
     applyHighPriorityProperties();
     applyNonHighPriorityProperties();
 
@@ -118,7 +119,7 @@ void Builder::applyAllProperties()
 // Top priority properties affect resolution of high priority properties.
 void Builder::applyTopPriorityProperties()
 {
-    if (m_cascade.applyLowPriorityOnly())
+    if (m_cascade->applyLowPriorityOnly())
         return;
 
     applyProperties(firstTopPriorityProperty, lastTopPriorityProperty);
@@ -128,7 +129,7 @@ void Builder::applyTopPriorityProperties()
 // High priority properties may affect resolution of other properties (they are mostly font related).
 void Builder::applyHighPriorityProperties()
 {
-    if (m_cascade.applyLowPriorityOnly())
+    if (m_cascade->applyLowPriorityOnly())
         return;
 
     applyProperties(firstHighPriorityProperty, lastHighPriorityProperty);
@@ -157,13 +158,13 @@ void Builder::adjustAfterApplying()
 void Builder::applyLogicalGroupProperties()
 {
     // Properties in a logical property group are applied in author specified order which is maintained separately for them.
-    for (auto id : m_cascade.logicalGroupPropertyIDs())
-        applyCascadeProperty(m_cascade.logicalGroupProperty(id));
+    for (auto id : m_cascade->logicalGroupPropertyIDs())
+        applyCascadeProperty(m_cascade->logicalGroupProperty(id));
 }
 
 void Builder::applyProperties(int firstProperty, int lastProperty)
 {
-    if (m_cascade.customProperties().isEmpty()) [[likely]]
+    if (m_cascade->customProperties().isEmpty()) [[likely]]
         return applyPropertiesImpl<CustomPropertyCycleTracking::Disabled>(firstProperty, lastProperty);
 
     return applyPropertiesImpl<CustomPropertyCycleTracking::Enabled>(firstProperty, lastProperty);
@@ -175,7 +176,7 @@ inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
     auto applyProperty = [&](size_t index) ALWAYS_INLINE_LAMBDA {
         CSSPropertyID propertyID = static_cast<CSSPropertyID>(index);
         ASSERT(propertyID != CSSPropertyCustom);
-        auto& property = m_cascade.normalProperty(propertyID);
+        auto& property = m_cascade->normalProperty(propertyID);
 
         if constexpr (trackCycles == CustomPropertyCycleTracking::Enabled) {
             m_state.m_inProgressProperties.set(propertyID);
@@ -188,14 +189,14 @@ inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
         applyCascadeProperty(property);
     };
 
-    if (m_cascade.propertyIsPresent().size() == static_cast<size_t>(lastProperty + 1)) {
-        m_cascade.propertyIsPresent().forEachSetBit(firstProperty, applyProperty);
+    if (m_cascade->propertyIsPresent().size() == static_cast<size_t>(lastProperty + 1)) {
+        m_cascade->propertyIsPresent().forEachSetBit(firstProperty, applyProperty);
         return;
     }
 
     for (int id = firstProperty; id <= lastProperty; ++id) {
         CSSPropertyID propertyID = static_cast<CSSPropertyID>(id);
-        if (!m_cascade.hasNormalProperty(propertyID))
+        if (!m_cascade->hasNormalProperty(propertyID))
             continue;
         applyProperty(id);
     }
@@ -203,7 +204,7 @@ inline void Builder::applyPropertiesImpl(int firstProperty, int lastProperty)
 
 void Builder::applyCustomProperties()
 {
-    for (auto& [name, value] : m_cascade.customProperties()) {
+    for (auto& [name, value] : m_cascade->customProperties()) {
         if (m_state.m_appliedCustomProperties.contains(name))
             continue;
         applyCustomPropertyImpl(name, value);
@@ -215,8 +216,8 @@ void Builder::applyCustomProperty(const AtomString& name)
     if (m_state.m_appliedCustomProperties.contains(name))
         return;
 
-    auto iterator = m_cascade.customProperties().find(name);
-    if (iterator == m_cascade.customProperties().end())
+    auto iterator = m_cascade->customProperties().find(name);
+    if (iterator == m_cascade->customProperties().end())
         return;
 
     applyCustomPropertyImpl(name, iterator->value);
@@ -755,6 +756,18 @@ const PropertyCascade* Builder::ensureRollbackCascadeForRevertLayer()
 auto Builder::makeRollbackCascadeKey(PropertyCascade::Origin cascadeOrigin, ScopeOrdinal scopeOrdinal, CascadeLayerPriority cascadeLayerPriority) -> RollbackCascadeKey
 {
     return { static_cast<unsigned>(cascadeOrigin), static_cast<unsigned>(scopeOrdinal), static_cast<unsigned>(cascadeLayerPriority) };
+}
+
+void Builder::resetCascadeForAppearanceBaseIfNeeded()
+{
+    if (m_state.style().appearance() != StyleAppearance::Base)
+        return;
+
+    auto includedProperties = m_cascade->includedProperties();
+    includedProperties.types.add(PropertyCascade::PropertyType::BaseAppearanceStyle);
+
+    auto cascade = makeUniqueRef<PropertyCascade>(m_cascade, WTFMove(includedProperties));
+    std::swap(m_cascade, cascade);
 }
 
 }

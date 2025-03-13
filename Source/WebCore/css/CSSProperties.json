@@ -8568,7 +8568,9 @@
                 "aliases": [
                     "-webkit-appearance"
                 ],
-                "parser-grammar": "<<values>>"
+                "parser-grammar": "<<values>>",
+                "top-priority": true,
+                "top-priority-reason": "This is a top priority property to ensure appearance: base can influence @-internal-base-appearance."
             },
             "specification": {
                 "category": "css-ui",

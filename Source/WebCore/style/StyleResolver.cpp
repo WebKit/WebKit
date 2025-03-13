@@ -739,6 +739,8 @@ void Resolver::applyMatchedProperties(State& state, const MatchResult& matchResu
     // Top priority properties may affect resolution of high priority ones.
     builder.applyTopPriorityProperties();
 
+    builder.resetCascadeForAppearanceBaseIfNeeded();
+
     // High priority properties may affect resolution of other properties (they are mostly font related).
     builder.applyHighPriorityProperties();
 

@@ -1422,3 +1422,41 @@ ins, del {
 :root::grammar-error {
     text-decoration-line: grammar-error;
 }
+
+@-internal-base-appearance {
+    input,
+    textarea,
+    button,
+    select,
+    meter,
+    progress {
+        color: inherit;
+        font: inherit;
+        box-sizing: border-box;
+        background-color: transparent;
+    }
+
+    input:not([type=file], [type=range]),
+    textarea,
+    button,
+    select,
+    meter,
+    progress {
+        border: 1px solid currentColor;
+        background-color: transparent;
+    }
+    button,
+    select,
+    input:is([type="color"], [type="button"], [type="reset"], [type="submit"]) {
+        border-radius: 0.5em;
+    }
+    :is(button, select, input:is([type="color"], [type="button"], [type="reset"], [type="submit"])):enabled:hover {
+        background-color: color-mix(in lab, currentColor 10%, transparent);
+    }
+    :is(button, select, input:is([type="color"], [type="button"], [type="reset"], [type="submit"])):enabled:active {
+        background-color: color-mix(in lab, currentColor 20%, transparent);
+    }
+    :is(button, select, input:is([type="color"], [type="button"], [type="reset"], [type="submit"])):disabled {
+        color: color-mix(in srgb, currentColor 50%, transparent);
+    }
+}
