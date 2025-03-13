@@ -220,6 +220,8 @@ media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash 
 
 webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]
 
+webkit.org/b/289639 imported/w3c/web-platform-tests/css/css-anchor-position/popover-anchor-backdrop-transition.html [ Failure ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
