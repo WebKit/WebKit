@@ -57,9 +57,7 @@ public:
     WebChromeClient(WebPage&);
     ~WebChromeClient();
 
-    // FIXME: these functions should return (ref) pointers that should be null-checked at callsites.
-    WebPage& page() const { return *m_page; }
-    Ref<WebPage> protectedPage() const;
+    WebPage* page() const { return m_page.get(); }
 
 #if PLATFORM(IOS_FAMILY)
     void relayAccessibilityNotification(const String&, const RetainPtr<NSData>&) const final;
@@ -577,7 +575,7 @@ class AXRelayProcessSuspendedNotification {
 public:
     enum class AutomaticallySend : bool { No, Yes };
 
-    explicit AXRelayProcessSuspendedNotification(Ref<WebPage>, AutomaticallySend = AutomaticallySend::Yes);
+    explicit AXRelayProcessSuspendedNotification(WebPage&, AutomaticallySend = AutomaticallySend::Yes);
     ~AXRelayProcessSuspendedNotification();
 
     void sendProcessSuspendMessage(bool suspended);
