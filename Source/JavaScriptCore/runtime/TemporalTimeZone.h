@@ -42,17 +42,18 @@ public:
         return vm.temporalTimeZoneSpace<mode>();
     }
 
+    using TimeZone = ISO8601::TimeZone;
+
     static TemporalTimeZone* createFromID(VM&, Structure*, TimeZoneID);
     static TemporalTimeZone* createFromUTCOffset(VM&, Structure*, int64_t);
+    static TemporalTimeZone* createFromTimeZone(VM&, Structure*, TimeZone);
     static Structure* createStructure(VM&, JSGlobalObject*, JSValue);
 
     DECLARE_INFO;
 
-    using TimeZone = ISO8601::TimeZone;
-
     TimeZone timeZone() const { return m_timeZone; }
 
-    static JSObject* from(JSGlobalObject*, JSValue);
+    static TemporalTimeZone* from(JSGlobalObject*, JSValue);
 
     static Int128 getOffsetNanosecondsFor(ISO8601::TimeZone, Int128);
     static ISO8601::ExactTime getEpochNanosecondsFor(JSGlobalObject*,

@@ -50,6 +50,13 @@ TemporalTimeZone* TemporalTimeZone::createFromUTCOffset(VM& vm, Structure* struc
     return format;
 }
 
+TemporalTimeZone* TemporalTimeZone::createFromTimeZone(VM& vm, Structure* structure, ISO8601::TimeZone tz)
+{
+    TemporalTimeZone* format = new (NotNull, allocateCell<TemporalTimeZone>(vm)) TemporalTimeZone(vm, structure, tz);
+    format->finishCreation(vm);
+    return format;
+}
+
 Structure* TemporalTimeZone::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
 {
     return Structure::create(vm, globalObject, prototype, TypeInfo(ObjectType, StructureFlags), info());
@@ -531,31 +538,15 @@ std::optional<ISO8601::TimeZone> TemporalTimeZone::parseTemporalTimeZoneString(S
     return std::nullopt;
 }
 
-// https://tc39.es/proposal-temporal/#sec-temporal.timezone.from
-// https://tc39.es/proposal-temporal/#sec-temporal-totemporaltimezone
-JSObject* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneLike)
+TemporalTimeZone* TemporalTimeZone::from(JSGlobalObject* globalObject, JSValue timeZoneLike)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (timeZoneLike.isObject()) {
-        JSObject* timeZoneLikeObject = jsCast<JSObject*>(timeZoneLike);
-
-        // FIXME: We need to implement code retrieving TimeZone from Temporal Date Like objects. But
-        // currently they are not implemented yet.
-
-        bool hasProperty = timeZoneLikeObject->hasProperty(globalObject, vm.propertyNames->timeZone);
-        RETURN_IF_EXCEPTION(scope, { });
-        if (!hasProperty)
-            return timeZoneLikeObject;
-
-        timeZoneLike = timeZoneLikeObject->get(globalObject, vm.propertyNames->timeZone);
-        if (timeZoneLike.isObject()) {
-            JSObject* timeZoneLikeObject = jsCast<JSObject*>(timeZoneLike);
-            bool hasProperty = timeZoneLikeObject->hasProperty(globalObject, vm.propertyNames->timeZone);
-            RETURN_IF_EXCEPTION(scope, { });
-            if (!hasProperty)
-                return timeZoneLikeObject;
+        if (timeZoneLike.inherits<TemporalZonedDateTime>()) {
+            TemporalZonedDateTime* zonedDateTime = jsCast<TemporalZonedDateTime*>(timeZoneLike);
+            return TemporalTimeZone::createFromTimeZone(vm, globalObject->timeZoneStructure(), zonedDateTime->timeZone());
         }
     }
 

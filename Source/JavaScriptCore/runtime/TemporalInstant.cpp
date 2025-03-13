@@ -38,7 +38,6 @@
 #include "StructureInlines.h"
 #include "TemporalDuration.h"
 #include "TemporalObject.h"
-#include "TemporalTimeZone.h"
 #include "TemporalZonedDateTime.h"
 #include <wtf/text/MakeString.h>
 
@@ -385,7 +384,7 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
     if (!options)
         return toString();
 
-    JSObject* timeZone = nullptr;
+    TemporalTimeZone* timeZone = nullptr;
     JSValue timeZoneValue = options->get(globalObject, vm.propertyNames->timeZone);
     RETURN_IF_EXCEPTION(scope, { });
     if (!timeZoneValue.isUndefined()) {
@@ -428,36 +427,20 @@ String TemporalInstant::toString(JSGlobalObject* globalObject, JSValue optionsVa
 
 // TemporalInstantToString ( instant, timeZone, precision )
 // https://tc39.es/proposal-temporal/#sec-temporal-temporalinstanttostring
-String TemporalInstant::toString(ISO8601::ExactTime exactTime, JSObject* timeZone, PrecisionData precision)
+String TemporalInstant::toString(ISO8601::ExactTime exactTime, TemporalTimeZone* timeZone, PrecisionData precision)
 {
-    GregorianDateTime gregorianDateTime { static_cast<double>(exactTime.epochMilliseconds()), LocalTimeOffset { } };
     StringBuilder builder;
 
-    // If the year is outside the bounds of 0 and 9999 inclusive we want to
-    // use the extended year format (PadISOYear).
-    unsigned yearLength = 4;
-    if (gregorianDateTime.year() > 9999 || gregorianDateTime.year() < 0) {
-        builder.append(gregorianDateTime.year() < 0 ? '-' : '+');
-        yearLength = 6;
-    }
-
-    builder.append(makeString(pad('0', yearLength, std::abs(gregorianDateTime.year())),
-        '-', pad('0', 2, gregorianDateTime.month() + 1),
-        '-', pad('0', 2, gregorianDateTime.monthDay()),
-        'T', pad('0', 2, gregorianDateTime.hour()),
-        ':', pad('0', 2, gregorianDateTime.minute())));
-
-    static constexpr int nsPerSecond { 1'000'000'000 };
-    int fraction { exactTime.nanosecondsFraction() };
-    if (fraction < 0)
-        fraction += nsPerSecond;
-
-    formatSecondsStringPart(builder, gregorianDateTime.second(), fraction, precision);
+    auto outputTimeZone = timeZone ? timeZone->timeZone() : ISO8601::TimeZone::utc();
+    auto epochNs = exactTime.epochNanoseconds();
+    auto isoDateTime = TemporalTimeZone::getISODateTimeFor(outputTimeZone, exactTime);
+    auto dateTimeString = ISO8601::temporalDateTimeToString(isoDateTime.date(), isoDateTime.time(), precision.precision);
+    builder.append(dateTimeString);
 
     if (timeZone) {
-        // FIXME: Missing, relies on TimeZone:
-        //   1. Let _timeZoneString_ be ? BuiltinTimeZoneGetOffsetStringFor(_timeZone_, _instant_).
-        builder.append('Z');
+        auto offsetNanoseconds = TemporalTimeZone::getOffsetNanosecondsFor(outputTimeZone,
+            epochNs);
+        builder.append(TemporalTimeZone::formatDateTimeUTCOffsetRounded(offsetNanoseconds));
     } else
         builder.append('Z');
 

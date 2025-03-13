@@ -233,7 +233,7 @@ static EncodedJSValue sinceOrUntil(bool isSince, JSGlobalObject* globalObject, C
     RETURN_IF_EXCEPTION(scope, { });
 
     auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject,
-       callFrame->argument(1), UnitGroup::DateTime, TemporalUnit::Nanosecond, TemporalUnit::Day);
+        callFrame->argument(1), UnitGroup::DateTime, TemporalUnit::Nanosecond, TemporalUnit::Day);
     RETURN_IF_EXCEPTION(scope, { });
     if (isSince)
         roundingMode = negateTemporalRoundingMode(roundingMode);
