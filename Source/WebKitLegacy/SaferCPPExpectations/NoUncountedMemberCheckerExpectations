@@ -1,12 +1,2 @@
-Storage/StorageTracker.h
-WebCoreSupport/SocketStreamHandle.h
-mac/History/WebHistory.mm
-mac/Misc/WebElementDictionary.h
-mac/Misc/WebSharingServicePickerController.h
-mac/Storage/WebDatabaseManagerClient.mm
 mac/WebCoreSupport/PopupMenuMac.h
-mac/WebCoreSupport/WebInspectorClient.mm
 mac/WebCoreSupport/WebValidationMessageClient.h
-mac/WebView/WebDynamicScrollBarsView.h
-mac/WebView/WebPreferences.h
-mac/WebView/WebHTMLView.mm
