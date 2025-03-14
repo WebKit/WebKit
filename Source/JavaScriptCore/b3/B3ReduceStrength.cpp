@@ -1469,10 +1469,27 @@ private:
                 && m_value->child(1)->hasInt()
                 && m_value->child(0)->child(1)->asInt() == m_value->child(1)->asInt()) {
                 int shiftAmount = m_value->child(1)->asInt() & (m_value->type() == Int32 ? 31 : 63);
-                Value* newConst = m_proc.addIntConstant(m_value, - static_cast<int64_t>(1ull << shiftAmount));
+                Value* newConst = m_proc.addIntConstant(m_value, -static_cast<int64_t>(1ull << shiftAmount));
                 m_insertionSet.insertValue(m_index, newConst);
                 replaceWithNew<Value>(BitAnd, m_value->origin(), m_value->child(0)->child(0), newConst);
                 break;
+            }
+
+            // Turn this: Shl(ZExt32(<S|Z>Shr(@x, @const)), @const)
+            // Into this: ZExt32(BitAnd(@x, -(1<<@const))
+            if (m_value->child(0)->opcode() == ZExt32) {
+                if ((m_value->child(0)->child(0)->opcode() == SShr || m_value->child(0)->child(0)->opcode() == ZShr)
+                    && m_value->child(0)->child(0)->child(1)->hasInt()
+                    && m_value->child(1)->hasInt()
+                    && m_value->child(0)->child(0)->child(1)->asInt() == m_value->child(1)->asInt()) {
+                    ASSERT(m_value->type() == Int64);
+                    int shiftAmount = m_value->child(1)->asInt() & 63;
+                    Value* newConst = m_proc.addIntConstant(m_value->child(0)->child(0)->child(0), -static_cast<int64_t>(1ull << shiftAmount));
+                    m_insertionSet.insertValue(m_index, newConst);
+                    auto* cleared = m_insertionSet.insert<Value>(m_index, BitAnd, m_value->origin(), m_value->child(0)->child(0)->child(0), newConst);
+                    replaceWithNew<Value>(ZExt32, m_value->origin(), cleared);
+                    break;
+                }
             }
 
             handleShiftAmount();
