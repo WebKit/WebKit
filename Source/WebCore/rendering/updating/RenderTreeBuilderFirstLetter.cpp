@@ -94,17 +94,29 @@ static std::optional<RenderStyle> styleForFirstLetter(const RenderElement& first
     return firstLetterStyle;
 }
 
-// CSS 2.1 http://www.w3.org/TR/CSS21/selector.html#first-letter
-// "Punctuation (i.e, characters defined in Unicode [UNICODE] in the "open" (Ps), "close" (Pe),
-// "initial" (Pi). "final" (Pf) and "other" (Po) punctuation classes), that precedes or follows the first letter should be included"
-static inline bool isPunctuationForFirstLetter(char32_t c)
+static inline bool isWordSeparator(char32_t c)
 {
-    return U_GET_GC_MASK(c) & (U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PO_MASK);
+    return c == space || c == noBreakSpace || c == ethiopicWordspace || c == aegeanWordSeparatorLine || c == aegeanWordSeparatorDot || c == ugariticWordDivider || c == phoenicianWordSeparator;
 }
 
-static inline bool shouldSkipForFirstLetter(char32_t c)
+static inline bool isPrecedingPunctuationForFirstLetter(char32_t c)
 {
-    return deprecatedIsSpaceOrNewline(c) || c == noBreakSpace || isPunctuationForFirstLetter(c);
+    return U_GET_GC_MASK(c) & (U_GC_PD_MASK | U_GC_PS_MASK | U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PC_MASK | U_GC_PO_MASK);
+}
+
+static inline bool isPrecedingWhitespaceForFirstLetter(char32_t c)
+{
+    return (U_GET_GC_MASK(c) & (U_GC_ZS_MASK)) && c != ideographicSpace;
+}
+
+static inline bool isFollowingPunctuationForFirstLetter(char32_t c)
+{
+    return U_GET_GC_MASK(c) & (U_GC_PE_MASK | U_GC_PI_MASK | U_GC_PF_MASK | U_GC_PC_MASK | U_GC_PO_MASK);
+}
+
+static inline bool isFollowingWhitespaceForFirstLetter(char32_t c)
+{
+    return (U_GET_GC_MASK(c) & (U_GC_ZS_MASK)) && c != ideographicSpace && !isWordSeparator(c);
 }
 
 static bool supportsFirstLetter(RenderBlock& block)
@@ -242,8 +254,12 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
     if (!oldText.isEmpty()) {
         unsigned length = 0;
 
-        // Account for leading spaces and punctuation.
-        while (length < oldText.length() && shouldSkipForFirstLetter(oldText.characterStartingAt(length)))
+        // Account for leading punctuation.
+        while (length < oldText.length() && isPrecedingPunctuationForFirstLetter(oldText.characterStartingAt(length)))
+            length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
+
+        // Account for intervening whitespace.
+        while (length < oldText.length() && isPrecedingWhitespaceForFirstLetter(oldText.characterStartingAt(length)))
             length += numCodeUnitsInGraphemeClusters(StringView(oldText).substring(length), 1);
 
         // Account for first grapheme cluster.
@@ -255,12 +271,12 @@ void RenderTreeBuilder::FirstLetter::createRenderers(RenderText& currentTextChil
         for (unsigned scanLength = length; scanLength < oldText.length(); scanLength += numCodeUnits) {
             char32_t c = oldText.characterStartingAt(scanLength);
 
-            if (!shouldSkipForFirstLetter(c))
+            if (!isFollowingWhitespaceForFirstLetter(c) && !isFollowingPunctuationForFirstLetter(c))
                 break;
 
             numCodeUnits = numCodeUnitsInGraphemeClusters(StringView(oldText).substring(scanLength), 1);
 
-            if (isPunctuationForFirstLetter(c))
+            if (isFollowingPunctuationForFirstLetter(c))
                 length = scanLength + numCodeUnits;
         }
 
